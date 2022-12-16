@@ -3,8 +3,8 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Texture.h>
-#include <tdme/engine/fileio/textures/BZ7TextureReader.h>
-#include <tdme/engine/fileio/textures/BZ7TextureWriter.h>
+#include <tdme/engine/fileio/textures/BC7TextureReader.h>
+#include <tdme/engine/fileio/textures/BC7TextureWriter.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/fileio/textures/PNGTextureReader.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
@@ -17,8 +17,8 @@ using std::vector;
 
 using tdme::engine::Texture;
 
-using tdme::engine::fileio::textures::BZ7TextureReader;
-using tdme::engine::fileio::textures::BZ7TextureWriter;
+using tdme::engine::fileio::textures::BC7TextureReader;
+using tdme::engine::fileio::textures::BC7TextureWriter;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::fileio::textures::PNGTextureReader;
 using tdme::engine::fileio::textures::PNGTextureWriter;
@@ -107,26 +107,26 @@ ByteBuffer Texture::getRGBTextureData(TextureFormat format, const ByteBuffer& te
 				//
 				return rgbTextureData;
 			}
-		case TEXTUREFORMAT_RGB_BZ7:
+		case TEXTUREFORMAT_RGB_BC7:
 			{
 				// generated rgb raw data
 				auto rgbTextureDataBytesPerPixel = getRGBDepthBitsPerPixel() / 8;
 				auto rgbTextureData = ByteBuffer(textureWidth * textureHeight * rgbTextureDataBytesPerPixel);
 
 				//
-				BZ7TextureReader::read(textureWidth, textureHeight, rgbTextureDataBytesPerPixel, *textureData.getBufferVector(), rgbTextureData);
+				BC7TextureReader::read(textureWidth, textureHeight, rgbTextureDataBytesPerPixel, *textureData.getBufferVector(), rgbTextureData);
 
 				//
 				return rgbTextureData;
 			}
-		case TEXTUREFORMAT_RGBA_BZ7:
+		case TEXTUREFORMAT_RGBA_BC7:
 			{
 				// generated rgb raw data
 				auto rgbTextureDataBytesPerPixel = getRGBDepthBitsPerPixel() / 8;
 				auto rgbTextureData = ByteBuffer(textureWidth * textureHeight * rgbTextureDataBytesPerPixel);
 
 				//
-				BZ7TextureReader::read(textureWidth, textureHeight, rgbTextureDataBytesPerPixel, *textureData.getBufferVector(), rgbTextureData);
+				BC7TextureReader::read(textureWidth, textureHeight, rgbTextureDataBytesPerPixel, *textureData.getBufferVector(), rgbTextureData);
 
 				//
 				return rgbTextureData;
@@ -137,10 +137,10 @@ ByteBuffer Texture::getRGBTextureData(TextureFormat format, const ByteBuffer& te
 	return ByteBuffer();
 }
 
-ByteBuffer Texture::getBZ7TextureData() {
-	// do we already have the requested bz7 format?
-	auto bz7Format = getBZ7FormatByPixelBitsPerPixel(getRGBDepthBitsPerPixel());
-	if (format == bz7Format) {
+ByteBuffer Texture::getBC7TextureData() {
+	// do we already have the requested bc7 format?
+	auto bc7Format = getBC7FormatByPixelBitsPerPixel(getRGBDepthBitsPerPixel());
+	if (format == bc7Format) {
 		// yup, done
 		return textureData;
 	}
@@ -150,11 +150,11 @@ ByteBuffer Texture::getBZ7TextureData() {
 	auto rgbaTextureDataBytesPerPixel = getRGBDepthBitsPerPixel() / 8;
 
 	// no?, convert it
-	vector<uint8_t> bz7Data;
-	BZ7TextureWriter::write(textureWidth, textureHeight, rgbaTextureDataBytesPerPixel, rgbaTextureData, bz7Data);
+	vector<uint8_t> bc7Data;
+	BC7TextureWriter::write(textureWidth, textureHeight, rgbaTextureDataBytesPerPixel, rgbaTextureData, bc7Data);
 
 	//
-	return ByteBuffer(bz7Data);
+	return ByteBuffer(bc7Data);
 }
 
 void Texture::setTextureData(TextureFormat format, const ByteBuffer& textureData) {
@@ -284,13 +284,13 @@ ByteBuffer Texture::generateMipMap(int textureWidth, int textureHeight, int byte
 	return generatedTextureByteBuffer;
 }
 
-vector<Texture::MipMapTexture> Texture::getMipMapTextures(bool bz7Encoded) {
+vector<Texture::MipMapTexture> Texture::getMipMapTextures(bool bc7Encoded) {
 	// do we have any mip maps stored already?
 	if (mipMapTextures.empty() == false) {
-		// for now we only support stored BZ7 mip maps and only return those if bz7 encodeding was requested
-		//	TODO: maybe conversion from BZ7 to RGB is required here conditionally, but can also be that decoding BZ7 is slower than generating new mip maps
-		auto mipMapFormatBZ7 = mipMapTextures[0].format == TEXTUREFORMAT_RGB_BZ7 || mipMapTextures[0].format == TEXTUREFORMAT_RGBA_BZ7;
-		if (mipMapFormatBZ7 == true && bz7Encoded == true) {
+		// for now we only support stored BC7 mip maps and only return those if bc7 encodeding was requested
+		//	TODO: maybe conversion from BC7 to RGB is required here conditionally, but can also be that decoding BC7 is slower than generating new mip maps
+		auto mipMapFormatBC7 = mipMapTextures[0].format == TEXTUREFORMAT_RGB_BC7 || mipMapTextures[0].format == TEXTUREFORMAT_RGBA_BC7;
+		if (mipMapFormatBC7 == true && bc7Encoded == true) {
 			return mipMapTextures;
 		}
 	}
@@ -311,16 +311,16 @@ vector<Texture::MipMapTexture> Texture::getMipMapTextures(bool bz7Encoded) {
 		mipMapTextureWidth/= 2;
 		mipMapTextureHeight/= 2;
 		//
-		if (bz7Encoded == true) {
-			vector<uint8_t> bz7Data;
-			BZ7TextureWriter::write(mipMapTextureWidth, mipMapTextureHeight, textureBytePerPixel, textureTextureData, bz7Data);
+		if (bc7Encoded == true) {
+			vector<uint8_t> bc7Data;
+			BC7TextureWriter::write(mipMapTextureWidth, mipMapTextureHeight, textureBytePerPixel, textureTextureData, bc7Data);
 			//
 			generatedMipMapTextures.push_back(
 				{
-					.format = getBZ7FormatByPixelBitsPerPixel(getRGBDepthBitsPerPixel()),
+					.format = getBC7FormatByPixelBitsPerPixel(getRGBDepthBitsPerPixel()),
 					.width = mipMapTextureWidth,
 					.height = mipMapTextureHeight,
-					.textureData = ByteBuffer(bz7Data)
+					.textureData = ByteBuffer(bc7Data)
 
 				}
 			);

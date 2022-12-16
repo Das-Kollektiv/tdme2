@@ -36,8 +36,8 @@ public:
 		TEXTUREFORMAT_RGBA,
 		TEXTUREFORMAT_RGB_PNG,
 		TEXTUREFORMAT_RGBA_PNG,
-		TEXTUREFORMAT_RGB_BZ7,
-		TEXTUREFORMAT_RGBA_BZ7
+		TEXTUREFORMAT_RGB_BC7,
+		TEXTUREFORMAT_RGBA_BC7
 	};
 
 	enum ClampMode { CLAMPMODE_EDGE, CLAMPMODE_TRANSPARENTPIXEL };
@@ -82,14 +82,14 @@ public:
 	}
 
 	/**
-	 * Return BZ7 RGB/A texture format by bits per pixel
+	 * Return BC7 RGB/A texture format by bits per pixel
 	 * @param bpp bits per pixel
-	 * @return BZ7 RGB/A texture format by bits per pixel
+	 * @return BC7 RGB/A texture format by bits per pixel
 	 */
-	inline static TextureFormat getBZ7FormatByPixelBitsPerPixel(int bpp) {
+	inline static TextureFormat getBC7FormatByPixelBitsPerPixel(int bpp) {
 		switch (bpp) {
-			case 24: return TEXTUREFORMAT_RGB_BZ7;
-			case 32: return TEXTUREFORMAT_RGBA_BZ7;
+			case 24: return TEXTUREFORMAT_RGB_BC7;
+			case 32: return TEXTUREFORMAT_RGBA_BC7;
 			default: return TEXTUREFORMAT_UNKNOWN;
 		}
 	}
@@ -202,9 +202,9 @@ public:
 	}
 
 	/**
-	 * @return BZ7 texture data wrapped in a byte buffer
+	 * @return BC7 texture data wrapped in a byte buffer
 	 */
-	ByteBuffer getBZ7TextureData();
+	ByteBuffer getBC7TextureData();
 
 	/**
 	 * Set RGB(A) texture data
@@ -336,9 +336,9 @@ public:
 
 	/**
 	 * Get mip map textures
-	 * @param bz7Encoded bz7 encoded if true or RGB/A if false
+	 * @param bc7Encoded bc7 encoded if true or RGB/A if false
 	 */
-	vector<MipMapTexture> getMipMapTextures(bool bz7Encoded);
+	vector<MipMapTexture> getMipMapTextures(bool bc7Encoded);
 
 	// overridden methods
 	virtual void onDelete() override;

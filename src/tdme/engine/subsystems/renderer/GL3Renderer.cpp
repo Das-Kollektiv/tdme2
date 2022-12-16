@@ -627,7 +627,7 @@ void GL3Renderer::uploadTexture(int contextIdx, Texture* texture)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, mipLevels - 1);
 		{
-			auto textureTextureData = texture->getBZ7TextureData();
+			auto textureTextureData = texture->getBC7TextureData();
 			// base level
 			glCompressedTexImage2D(
 				GL_TEXTURE_2D,
@@ -708,7 +708,7 @@ void GL3Renderer::uploadTexture(int contextIdx, Texture* texture)
 void GL3Renderer::uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) {
 	if (textureCompressionAvailable == true && textureLeft->isUseCompression() == true) {
 		//
-		auto textureTextureData = textureLeft->getBZ7TextureData();
+		auto textureTextureData = textureLeft->getBC7TextureData();
 		//
 		glCompressedTexImage2D(
 			GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
@@ -738,7 +738,7 @@ void GL3Renderer::uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Tex
 	}
 	if (textureCompressionAvailable == true && textureRight->isUseCompression() == true) {
 		//
-		auto textureTextureData = textureRight->getBZ7TextureData();
+		auto textureTextureData = textureRight->getBC7TextureData();
 		//
 		glCompressedTexImage2D(
 			GL_TEXTURE_CUBE_MAP_POSITIVE_X,
@@ -768,7 +768,7 @@ void GL3Renderer::uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Tex
 	}
 	if (textureCompressionAvailable == true && textureTop->isUseCompression() == true) {
 		//
-		auto textureTextureData = textureTop->getBZ7TextureData();
+		auto textureTextureData = textureTop->getBC7TextureData();
 		//
 		glCompressedTexImage2D(
 			GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
@@ -798,7 +798,7 @@ void GL3Renderer::uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Tex
 	}
 	if (textureCompressionAvailable == true && textureBottom->isUseCompression() == true) {
 		//
-		auto textureTextureData = textureBottom->getBZ7TextureData();
+		auto textureTextureData = textureBottom->getBC7TextureData();
 		//
 		glCompressedTexImage2D(
 			GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
@@ -828,7 +828,7 @@ void GL3Renderer::uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Tex
 	}
 	if (textureCompressionAvailable == true && textureFront->isUseCompression() == true) {
 		//
-		auto textureTextureData = textureFront->getBZ7TextureData();
+		auto textureTextureData = textureFront->getBC7TextureData();
 		//
 		glCompressedTexImage2D(
 			GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
@@ -858,7 +858,7 @@ void GL3Renderer::uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Tex
 	}
 	if (textureCompressionAvailable == true && textureBack->isUseCompression() == true) {
 		//
-		auto textureTextureData = textureBack->getBZ7TextureData();
+		auto textureTextureData = textureBack->getBC7TextureData();
 		//
 		glCompressedTexImage2D(
 			GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,
