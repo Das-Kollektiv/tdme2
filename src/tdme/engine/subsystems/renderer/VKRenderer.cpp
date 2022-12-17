@@ -7427,7 +7427,6 @@ ByteBuffer* VKRenderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t 
 	//
 	VkImage image = VK_NULL_HANDLE;
 	VmaAllocation allocation = VK_NULL_HANDLE;
-	auto requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
 
 	//
 	const VkImageCreateInfo imageCreateInfo = {
@@ -7445,7 +7444,7 @@ ByteBuffer* VKRenderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t 
 		.arrayLayers = 1,
 		.samples = VK_SAMPLE_COUNT_1_BIT,
 		.tiling = VK_IMAGE_TILING_LINEAR,
-		.usage = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT,
+		.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT,
 		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
 	    .queueFamilyIndexCount = 0,
 	    .pQueueFamilyIndices = 0,
@@ -7454,7 +7453,7 @@ ByteBuffer* VKRenderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t 
 
 	VmaAllocationCreateInfo imageAllocCreateInfo = {};
 	imageAllocCreateInfo.usage = VMA_MEMORY_USAGE_UNKNOWN;
-	imageAllocCreateInfo.requiredFlags = requiredFlags;
+	imageAllocCreateInfo.requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
 
 	VmaAllocationInfo allocationInfo = {};
 
@@ -7462,114 +7461,109 @@ ByteBuffer* VKRenderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t 
 	err = vmaCreateImage(vmaAllocator, &imageCreateInfo, &imageAllocCreateInfo, &image, &allocation, &allocationInfo);
 	assert(!err);
 
-	if ((requiredFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) == VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) {
-		VkImageCopy imageCopy = {
-			.srcSubresource = {
-				.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-				.mipLevel = 0,
-				.baseArrayLayer = 0,
-				.layerCount = 1
-			},
-			.srcOffset = {
-				.x = x,
-				.y = y,
-				.z = 0
-			},
-			.dstSubresource = {
-				.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-				.mipLevel = 0,
-				.baseArrayLayer = 0,
-				.layerCount = 1
-			},
-			.dstOffset = {
-				.x = 0,
-				.y = 0,
-				.z = 0
-			},
-			.extent = {
-				.width = static_cast<uint32_t>(width),
-				.height = static_cast<uint32_t>(height),
-				.depth = 1
-			}
-		};
-		auto& currentContext = contexts[CONTEXTINDEX_DEFAULT];
-		{
-			// set SRC
-			array<ThsvsAccessType, 2>  nextAccessTypes = { THSVS_ACCESS_TRANSFER_READ, THSVS_ACCESS_NONE };
-			setImageLayout3(currentContext.idx, usedImage, VK_IMAGE_ASPECT_COLOR_BIT, usedAccessTypes, nextAccessTypes, usedImageLayout, THSVS_IMAGE_LAYOUT_OPTIMAL);
-		}
-		{
-			// set DST
-			array<ThsvsAccessType, 2>  accessTypes = { THSVS_ACCESS_HOST_PREINITIALIZED, THSVS_ACCESS_NONE };
-			array<ThsvsAccessType, 2>  nextAccessTypes = { THSVS_ACCESS_TRANSFER_WRITE, THSVS_ACCESS_NONE };
-			setImageLayout3(currentContext.idx, image, VK_IMAGE_ASPECT_COLOR_BIT, accessTypes, nextAccessTypes, THSVS_IMAGE_LAYOUT_OPTIMAL, THSVS_IMAGE_LAYOUT_OPTIMAL);
-		}
-
-		prepareSetupCommandBuffer(currentContext.idx);
-		vkCmdCopyImage(
-			currentContext.setupCommandInUse,
-			usedImage,
-			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-			image,
-			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-			1,
-			&imageCopy
-		);
-		finishSetupCommandBuffer(currentContext.idx);
-
-		const VkImageSubresource imageSubResource = {
+	VkImageCopy imageCopy = {
+		.srcSubresource = {
 			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
 			.mipLevel = 0,
-			.arrayLayer = 0,
-		};
-		VkSubresourceLayout subResourceLayout;
-		vkGetImageSubresourceLayout(device, image, &imageSubResource, &subResourceLayout);
-
-		//
-		vmaSpinlock.lock();
-
-		//
-		void* data;
-		err = vmaMapMemory(vmaAllocator, allocation, &data);
-		assert(!err);
-		auto pixelBuffer = ByteBuffer::allocate(width * height * 4);
-		for (int y = height - 1; y >= 0; y--) {
-			auto row = static_cast<uint8_t*>(static_cast<uint8_t*>(data) + subResourceLayout.offset + subResourceLayout.rowPitch * y);
-			for (auto x = 0; x < width; x++) {
-				pixelBuffer->put(static_cast<uint8_t>(row[x * 4 + 2])); // b
-				pixelBuffer->put(static_cast<uint8_t>(row[x * 4 + 1])); // g
-				pixelBuffer->put(static_cast<uint8_t>(row[x * 4 + 0])); // r
-				pixelBuffer->put(static_cast<uint8_t>(row[x * 4 + 3])); // a
-			}
+			.baseArrayLayer = 0,
+			.layerCount = 1
+		},
+		.srcOffset = {
+			.x = x,
+			.y = y,
+			.z = 0
+		},
+		.dstSubresource = {
+			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+			.mipLevel = 0,
+			.baseArrayLayer = 0,
+			.layerCount = 1
+		},
+		.dstOffset = {
+			.x = 0,
+			.y = 0,
+			.z = 0
+		},
+		.extent = {
+			.width = static_cast<uint32_t>(width),
+			.height = static_cast<uint32_t>(height),
+			.depth = 1
 		}
-		vmaUnmapMemory(vmaAllocator, allocation);
-
-		//
-		vmaSpinlock.unlock();
-
-		{
-			// unset SRC
-			array<ThsvsAccessType, 2>  lastAccessTypes = { THSVS_ACCESS_TRANSFER_READ, THSVS_ACCESS_NONE };
-			setImageLayout3(currentContext.idx, usedImage, VK_IMAGE_ASPECT_COLOR_BIT, lastAccessTypes, usedAccessTypes, THSVS_IMAGE_LAYOUT_OPTIMAL, usedImageLayout);
-		}
-
-		// mark for deletion
-		deleteMutex.lock();
-		deleteImages.push_back(
-			{
-				.image = image,
-				.allocation = allocation,
-				.imageView = VK_NULL_HANDLE,
-				.sampler = VK_NULL_HANDLE,
-			});
-		deleteMutex.unlock();
-
-		//
-		return pixelBuffer;
+	};
+	auto& currentContext = contexts[CONTEXTINDEX_DEFAULT];
+	{
+		// set SRC
+		array<ThsvsAccessType, 2>  nextAccessTypes = { THSVS_ACCESS_TRANSFER_READ, THSVS_ACCESS_NONE };
+		setImageLayout3(currentContext.idx, usedImage, VK_IMAGE_ASPECT_COLOR_BIT, usedAccessTypes, nextAccessTypes, usedImageLayout, THSVS_IMAGE_LAYOUT_OPTIMAL);
+	}
+	{
+		// set DST
+		array<ThsvsAccessType, 2>  accessTypes = { THSVS_ACCESS_HOST_PREINITIALIZED, THSVS_ACCESS_NONE };
+		array<ThsvsAccessType, 2>  nextAccessTypes = { THSVS_ACCESS_TRANSFER_WRITE, THSVS_ACCESS_NONE };
+		setImageLayout3(currentContext.idx, image, VK_IMAGE_ASPECT_COLOR_BIT, accessTypes, nextAccessTypes, THSVS_IMAGE_LAYOUT_OPTIMAL, THSVS_IMAGE_LAYOUT_OPTIMAL);
 	}
 
+	prepareSetupCommandBuffer(currentContext.idx);
+	vkCmdCopyImage(
+		currentContext.setupCommandInUse,
+		usedImage,
+		VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+		image,
+		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+		1,
+		&imageCopy
+	);
+	finishSetupCommandBuffer(currentContext.idx);
+
+	const VkImageSubresource imageSubResource = {
+		.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+		.mipLevel = 0,
+		.arrayLayer = 0,
+	};
+	VkSubresourceLayout subResourceLayout;
+	vkGetImageSubresourceLayout(device, image, &imageSubResource, &subResourceLayout);
+
 	//
-	return nullptr;
+	vmaSpinlock.lock();
+
+	//
+	void* data;
+	err = vmaMapMemory(vmaAllocator, allocation, &data);
+	assert(!err);
+	auto pixelBuffer = ByteBuffer::allocate(width * height * 4);
+	for (int y = height - 1; y >= 0; y--) {
+		auto row = static_cast<uint8_t*>(static_cast<uint8_t*>(data) + subResourceLayout.offset + subResourceLayout.rowPitch * y);
+		for (auto x = 0; x < width; x++) {
+			pixelBuffer->put(static_cast<uint8_t>(row[x * 4 + 2])); // b
+			pixelBuffer->put(static_cast<uint8_t>(row[x * 4 + 1])); // g
+			pixelBuffer->put(static_cast<uint8_t>(row[x * 4 + 0])); // r
+			pixelBuffer->put(static_cast<uint8_t>(row[x * 4 + 3])); // a
+		}
+	}
+	vmaUnmapMemory(vmaAllocator, allocation);
+
+	//
+	vmaSpinlock.unlock();
+
+	{
+		// unset SRC
+		array<ThsvsAccessType, 2>  lastAccessTypes = { THSVS_ACCESS_TRANSFER_READ, THSVS_ACCESS_NONE };
+		setImageLayout3(currentContext.idx, usedImage, VK_IMAGE_ASPECT_COLOR_BIT, lastAccessTypes, usedAccessTypes, THSVS_IMAGE_LAYOUT_OPTIMAL, usedImageLayout);
+	}
+
+	// mark for deletion
+	deleteMutex.lock();
+	deleteImages.push_back(
+		{
+			.image = image,
+			.allocation = allocation,
+			.imageView = VK_NULL_HANDLE,
+			.sampler = VK_NULL_HANDLE,
+		});
+	deleteMutex.unlock();
+
+	//
+	return pixelBuffer;
 }
 
 void VKRenderer::initGuiMode()
