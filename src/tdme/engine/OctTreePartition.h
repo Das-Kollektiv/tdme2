@@ -1,5 +1,6 @@
 #pragma once
 
+#include <bitset>
 #include <list>
 #include <string>
 #include <unordered_map>
@@ -17,6 +18,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/VectorIteratorMultiple.h>
 
+using std::bitset;
 using std::list;
 using std::string;
 using std::to_string;
@@ -70,8 +72,11 @@ private:
 	VectorIteratorMultiple<Entity*> entityIterator;
 	unordered_map<string, vector<PartitionTreeNode*>> entityPartitionNodes;
 	vector<Entity*> visibleEntities;
-	unordered_set<Entity*> visibleEntitiesSet;
+	bitset<524288> visibleEntitiesBitSet;
 	PartitionTreeNode treeRoot;
+
+	unordered_map<Entity*, int> entityUniquePartitionIdMapping;
+	vector<int> freeEntityUniquePartitionIds;
 
 	// overridden methods
 	void reset() override;
@@ -223,11 +228,13 @@ private:
 				lookUps++;
 				if (frustum->isVisible(entity->getBoundingBoxTransformed()) == false) continue;
 
+				//
+				auto uniquePartitionId = entity->getUniquePartitionId();
 				// lets have this only once in result
-				if (visibleEntitiesSet.count(entity) == 1) {
+				if (visibleEntitiesBitSet.test(uniquePartitionId) == true) {
 					continue;
 				}
-				visibleEntitiesSet.insert(entity);
+				visibleEntitiesBitSet.set(uniquePartitionId);
 
 				// done
 				visibleEntities.push_back(entity);
@@ -260,7 +267,7 @@ public:
 	// overridden methods
 	const vector<Entity*>& getVisibleEntities(Frustum* frustum) override;
 	inline bool isVisibleEntity(Entity* entity) override {
-		return visibleEntitiesSet.count(entity) == 1;
+		return visibleEntitiesBitSet.test(entity->getUniquePartitionId()) == 1;
 	}
 
 	/**

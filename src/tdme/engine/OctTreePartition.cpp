@@ -1,6 +1,7 @@
 #include <tdme/engine/OctTreePartition.h>
 
 #include <algorithm>
+#include <bitset>
 #include <list>
 #include <string>
 #include <unordered_map>
@@ -15,6 +16,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/VectorIteratorMultiple.h>
 
+using std::bitset;
 using std::list;
 using std::remove;
 using std::string;
@@ -58,6 +60,31 @@ void OctTreePartition::addEntity(Entity* entity)
 	if (thisEntityPartitions != nullptr && thisEntityPartitions->empty() == false) {
 		removeEntity(entity);
 	}
+	// do we have a entity -> unique partition id mapping
+	auto entityUniquePartitionIdMappingIt = entityUniquePartitionIdMapping.find(entity);
+	// nope
+	if (entityUniquePartitionIdMappingIt == entityUniquePartitionIdMapping.end()) {
+		// reset
+		auto uniquePartitionId = Entity::UNIQUEPARTITIONID_NONE;
+		// reuse a unique partition id from freeEntityUniquePartitionIds
+		if (freeEntityUniquePartitionIds.empty() == false) {
+			// yet
+			uniquePartitionId = freeEntityUniquePartitionIds[freeEntityUniquePartitionIds.size() - 1];
+			freeEntityUniquePartitionIds.erase(freeEntityUniquePartitionIds.begin() + freeEntityUniquePartitionIds.size() - 1);
+		} else {
+			// otherwise create a id
+			uniquePartitionId = entityUniquePartitionIdMapping.size() + 1;
+			if (uniquePartitionId >= visibleEntitiesBitSet.size()) {
+				Console::println("OctTreePartition::addEntity(): too many entities: " + to_string(uniquePartitionId) + " > " + to_string(visibleEntitiesBitSet.size()));
+				return;
+			}
+		}
+		entity->setUniquePartitionId(uniquePartitionId);
+		entityUniquePartitionIdMapping[entity] = uniquePartitionId;
+	}
+	//
+	unordered_map<Entity*, int> entityUniquePartitionIdMapping;
+	vector<int> freeEntityUniquePartitionIds;
     // frustum bounding box
 	auto boundingBox = entity->getBoundingBoxTransformed();
 	// find, create root nodes if not exists
@@ -89,6 +116,12 @@ void OctTreePartition::removeEntity(Entity* entity)
 			"' not registered"
 		);
 		return;
+	}
+	//
+	auto uniquePartitionId = entity->getUniquePartitionId();
+	if (uniquePartitionId != Entity::UNIQUEPARTITIONID_NONE) {
+		freeEntityUniquePartitionIds.push_back(uniquePartitionId);
+		entity->setUniquePartitionId(Entity::UNIQUEPARTITIONID_NONE);
 	}
 	// remove object from assigned partitions
 	// TODO: remove tree root sub nodes as well not only empty root nodes
@@ -122,7 +155,7 @@ void OctTreePartition::removeEntity(Entity* entity)
 const vector<Entity*>& OctTreePartition::getVisibleEntities(Frustum* frustum)
 {
 	visibleEntities.clear();
-	visibleEntitiesSet.clear();
+	visibleEntitiesBitSet.reset();
 	auto lookUps = 0;
 	for (auto& subNode: treeRoot.subNodes) {
 		lookUps += doPartitionTreeLookUpVisibleObjects(frustum, &subNode);
