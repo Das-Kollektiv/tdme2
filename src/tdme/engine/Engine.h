@@ -1395,7 +1395,7 @@ private:
 		if (objectUniqueModelIdMappingIt == objectUniqueModelIdMapping.end()) {
 			// reset
 			auto uniqueModelId = UNIQUEMODELID_NONE;
-			// reuse a unique partition id from freeEntityUniquePartitionIds
+			// reuse a unique partition id from freeObjectUniqueModelIdIds
 			if (freeObjectUniqueModelIdIds.empty() == false) {
 				// yet
 				uniqueModelId = freeObjectUniqueModelIdIds[freeObjectUniqueModelIdIds.size() - 1];
