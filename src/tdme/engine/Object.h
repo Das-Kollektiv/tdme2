@@ -58,6 +58,7 @@ class tdme::engine::Object final
 	, public Entity
 {
 private:
+
 	friend class Engine;
 	friend class ImposterObject;
 	friend class LODObject;
@@ -85,6 +86,25 @@ private:
 	bool requiresPreRender { false };
 	bool requiresForwardShading { false };
 	bool animationComputingLODEnabled { false };
+
+	static constexpr int UNIQUEMODELID_NONE { -1 };
+
+	int uniqueModelId { UNIQUEMODELID_NONE };
+
+	/**
+	 * Set unique model id
+	 * @param uniqueModelId unique model id
+	 */
+	inline void setUniqueModelId(int uniqueModelId) {
+		this->uniqueModelId = uniqueModelId;
+	}
+
+	/**
+	 * @return unique model id
+	 */
+	inline int getUniqueModelId() {
+		return uniqueModelId;
+	}
 
 	/**
 	 * @return if this object instance requries animation computation each frame

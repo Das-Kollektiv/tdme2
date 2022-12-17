@@ -310,6 +310,16 @@ private:
 
 	vector<Action*> actions;
 
+	// TODO: put those limits into tdme.h or use dynamic arrays here
+	static constexpr int UNIQUEMODELID_MAX { 2048 };
+	static constexpr int UNIQUEMODELID_NONE { -1 };
+	struct UniqueModelId {
+		int id;
+		int count;
+	};
+	unordered_map<Model*, UniqueModelId> objectUniqueModelIdMapping;
+	vector<int> freeObjectUniqueModelIdIds;
+
 	struct EngineThreadQueueElement {
 		enum Type { TYPE_NONE, TYPE_PRERENDER, TYPE_ANIMATIONS, TYPE_RENDERING };
 
@@ -337,7 +347,7 @@ private:
 		int idx;
 		Queue<EngineThreadQueueElement>* queue { nullptr };
 		TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
-		unordered_map<uint8_t, unordered_map<Model*, vector<Object*>>> objectsByShadersAndModels;
+		array<vector<Object*>, Engine::UNIQUEMODELID_MAX> objectsByModels;
 		volatile int elementsProcessed { 0 };
 
 	private:
@@ -1375,5 +1385,56 @@ private:
 	 * @param entity entity
 	 */
 	void removeEntityFromLists(Entity* entity);
+
+	/**
+	 * Register model
+	 * @param model model
+	 */
+	int registerModel(Model* model) {
+		auto objectUniqueModelIdMappingIt = objectUniqueModelIdMapping.find(model);
+		if (objectUniqueModelIdMappingIt == objectUniqueModelIdMapping.end()) {
+			// reset
+			auto uniqueModelId = UNIQUEMODELID_NONE;
+			// reuse a unique partition id from freeEntityUniquePartitionIds
+			if (freeObjectUniqueModelIdIds.empty() == false) {
+				// yet
+				uniqueModelId = freeObjectUniqueModelIdIds[freeObjectUniqueModelIdIds.size() - 1];
+				freeObjectUniqueModelIdIds.erase(freeObjectUniqueModelIdIds.begin() + freeObjectUniqueModelIdIds.size() - 1);
+			} else {
+				// otherwise create a id
+				uniqueModelId = objectUniqueModelIdMapping.size() + 1;
+				if (uniqueModelId >= UNIQUEMODELID_MAX) {
+					Console::println("Engine::registerModel(): too many models: " + to_string(uniqueModelId) + " >= " + to_string(UNIQUEMODELID_MAX));
+					return -1;
+				}
+			}
+			objectUniqueModelIdMapping[model] = {
+				.id = uniqueModelId,
+				.count = 1
+			};
+			return uniqueModelId;
+		} else {
+			auto& uniqueModel = objectUniqueModelIdMappingIt->second;
+			uniqueModel.count++;
+			return uniqueModel.id;
+		}
+	}
+
+	/**
+	 * Deregister model
+	 * @param model model
+	 * @param uniqueModelId unique model id
+	 */
+	void deregisterModel(Model* model) {
+		auto objectUniqueModelIdMappingIt = objectUniqueModelIdMapping.find(model);
+		if (objectUniqueModelIdMappingIt != objectUniqueModelIdMapping.end()) {
+			auto& uniqueModel = objectUniqueModelIdMappingIt->second;
+			uniqueModel.count--;
+			if (uniqueModel.count == 0) {
+				freeObjectUniqueModelIdIds.push_back(uniqueModel.id);
+				objectUniqueModelIdMapping.erase(objectUniqueModelIdMappingIt);
+			}
+		}
+	}
 
 };
