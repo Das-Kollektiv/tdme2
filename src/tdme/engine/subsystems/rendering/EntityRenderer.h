@@ -16,6 +16,7 @@
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Object.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Matrix4x4Negative.h>
@@ -43,6 +44,7 @@ using tdme::engine::FogParticleSystem;
 using tdme::engine::Lines;
 using tdme::engine::Object;
 using tdme::engine::PointsParticleSystem;
+using tdme::math::Math;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 using tdme::math::Matrix4x4Negative;
@@ -185,24 +187,37 @@ private:
 		bool renderTransparentFaces,
 		int renderTypes,
 		TransparentRenderFacesPool* transparentRenderFacesPool) {
+		//
+		if (objects.empty() == true) return;
 		// reset shader
 		renderer->setShader(threadIdx, string());
 		auto effectPass = renderer->getEffectPass();
 		// sort objects by model
 		Vector3 objectCamFromAxis;
 		auto camera = engine->getCamera();
+		auto minObjectUniqueId = Engine::UNIQUEMODELID_MAX;
+		auto maxObjectUniqueId = -1;
 		for (auto objectIdx = 0; objectIdx < objects.size(); objectIdx++) {
 			auto object = objects[objectIdx];
 			if (object->enabledInstances == 0) continue;
 			if (effectPass != 0 && object->excludeFromEffectPass == effectPass) continue;
 			if (object->renderPass != renderPass) continue;
 			auto uniqueModelId = object->getUniqueModelId();
-			if (uniqueModelId != Engine::UNIQUEMODELID_NONE) objectsByModels[uniqueModelId].push_back(object);
+			if (uniqueModelId != Engine::UNIQUEMODELID_NONE) {
+				auto& objectsByModel = objectsByModels[uniqueModelId];
+				if (objectsByModel.empty() == true) {
+					minObjectUniqueId = Math::min(uniqueModelId, minObjectUniqueId);
+					maxObjectUniqueId = Math::max(uniqueModelId, maxObjectUniqueId);
+				}
+				objectsByModel.push_back(object);
+			}
 		}
+		maxObjectUniqueId++;
 
 		// render objects
 		auto& context = contexts[threadIdx];
-		for (auto& objectsByModel: objectsByModels) {
+		for (auto i = minObjectUniqueId; i < maxObjectUniqueId; i++) {
+			auto& objectsByModel = objectsByModels[i];
 			if (objectsByModel.size() == 0) {
 				continue;
 			} else
