@@ -82,9 +82,6 @@ void OctTreePartition::addEntity(Entity* entity)
 		entity->setUniquePartitionId(uniquePartitionId);
 		entityUniquePartitionIdMapping[entity] = uniquePartitionId;
 	}
-	//
-	unordered_map<Entity*, int> entityUniquePartitionIdMapping;
-	vector<int> freeEntityUniquePartitionIds;
     // frustum bounding box
 	auto boundingBox = entity->getBoundingBoxTransformed();
 	// find, create root nodes if not exists
