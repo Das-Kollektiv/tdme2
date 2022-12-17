@@ -241,7 +241,7 @@ void Engine::EngineThread::run() {
 					idx,
 					element->rendering.renderPass,
 					element->objects,
-					objectsByShadersAndModels,
+					objectsByModels,
 					element->rendering.collectTransparentFaces,
 					element->rendering.renderTypes,
 					transparentRenderFacesPool
@@ -420,10 +420,28 @@ void Engine::deregisterEntity(Entity* entity) {
 	// decompose and deregister decal and pps textures
 	DecomposedEntities decomposedEntities;
 	decomposeEntityType(entity, decomposedEntities, true);
+	// objects
+	array<vector<Object*>*, 6> objectsArray = {
+		&decomposedEntities.ezrObjects,
+		&decomposedEntities.objects,
+		&decomposedEntities.objectsForwardShading,
+		&decomposedEntities.objectsNoDepthTest,
+		&decomposedEntities.objectsPostPostProcessing,
+		&decomposedEntities.objectsGizmo,
+	};
+	for (auto& objects: objectsArray) {
+		for (auto object: *objects) {
+			if (object->getUniqueModelId() != UNIQUEMODELID_NONE) {
+				deregisterModel(object->getModel());
+				object->setUniqueModelId(UNIQUEMODELID_NONE);
+			}
+		}
+	}
+	// decal textures
 	for (auto decalEntity: decomposedEntities.decalEntities) {
 		decalsTextureAtlas.removeTexture(decalEntity->getDecalTexture());
 	}
-	// remove pps textures
+	// remove pps/fps textures
 	for (auto ppsEntity: decomposedEntities.ppses) {
 		auto entityType = ppsEntity->getEntityType();
 		switch (entityType) {
@@ -470,26 +488,28 @@ void Engine::registerEntity(Entity* entity) {
 	// decompose to engine instances to do pre render
 	DecomposedEntities decomposedEntities;
 	decomposeEntityType(entity, decomposedEntities, true);
-	array<vector<Object*>, 6> objectsArray = {
-		decomposedEntities.ezrObjects,
-		decomposedEntities.objects,
-		decomposedEntities.objectsForwardShading,
-		decomposedEntities.objectsNoDepthTest,
-		decomposedEntities.objectsPostPostProcessing,
-		decomposedEntities.objectsGizmo,
+	// objects
+	array<vector<Object*>*, 6> objectsArray = {
+		&decomposedEntities.ezrObjects,
+		&decomposedEntities.objects,
+		&decomposedEntities.objectsForwardShading,
+		&decomposedEntities.objectsNoDepthTest,
+		&decomposedEntities.objectsPostPostProcessing,
+		&decomposedEntities.objectsGizmo,
 	};
 	for (auto& objects: objectsArray) {
-		for (auto object: objects) {
+		for (auto object: *objects) {
 			object->preRender(renderer->CONTEXTINDEX_DEFAULT);
 			if (object->isRequiringPreRender() == true) requirePreRenderEntities.insert(object);
 			if (object->isRequiringAnimationComputation() == true) requireComputeAnimationEntities.insert(object);
+			if (object->getUniqueModelId() == UNIQUEMODELID_NONE) object->setUniqueModelId(registerModel(object->getModel()));
 		}
 	}
-	// register decal textures
+	// decal textures
 	for (auto decalEntity: decomposedEntities.decalEntities) {
 		decalsTextureAtlas.addTexture(decalEntity->getDecalTexture());
 	}
-	// add pps textures
+	// // remove pps/fps textures
 	for (auto ppsEntity: decomposedEntities.ppses) {
 		auto entityType = ppsEntity->getEntityType();
 		switch (entityType) {
@@ -740,6 +760,8 @@ void Engine::reset()
 	partition->reset();
 	entityRenderer->reset();
 	if (skinningShaderEnabled == true) skinningShader->reset();
+	objectUniqueModelIdMapping.clear();
+	freeObjectUniqueModelIdIds.clear();
 	// TODO: reset engine thread queue element pool
 }
 
@@ -1830,9 +1852,9 @@ Entity* Engine::getEntityByMousePosition(
 	}
 
 	// iterate visible objects, check if ray with given mouse position from near plane to far plane collides with each object's triangles
-	array<vector<Object*>, 3> objectsArray {decomposedEntities.objects, decomposedEntities.objectsForwardShading, decomposedEntities.objectsPostPostProcessing,  };
+	array<vector<Object*>*, 3> objectsArray { &decomposedEntities.objects, &decomposedEntities.objectsForwardShading, &decomposedEntities.objectsPostPostProcessing,  };
 	for (auto& objects: objectsArray) {
-		for (auto entity: objects) {
+		for (auto entity: *objects) {
 			// skip if not pickable or ignored by filter
 			if (forcePicking == false && entity->isPickable() == false) continue;
 			if (filter != nullptr && filter->filterEntity(entity) == false) continue;
@@ -1987,9 +2009,9 @@ Entity* Engine::doRayCasting(
 	}
 
 	// iterate visible objects, check if ray with given mouse position from near plane to far plane collides with each object's triangles
-	array<vector<Object*>, 3> objectsArray {decomposedEntities.objects, decomposedEntities.objectsForwardShading, decomposedEntities.objectsPostPostProcessing,  };
+	array<vector<Object*>*, 3> objectsArray { &decomposedEntities.objects, &decomposedEntities.objectsForwardShading, &decomposedEntities.objectsPostPostProcessing,  };
 	for (auto& objects: objectsArray) {
-		for (auto entity: objects) {
+		for (auto entity: *objects) {
 			// skip if not pickable or ignored by filter
 			if (forcePicking == false && entity->isPickable() == false) continue;
 			if (filter != nullptr && filter->filterEntity(entity) == false) continue;
