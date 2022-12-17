@@ -30,20 +30,46 @@ class tdme::engine::Entity
 {
 	friend class Engine;
 	friend class EntityHierarchy;
+	friend class OctTreePartition;
 	friend class ParticleSystemGroup;
 	friend class SceneConnector;
 
-private:
-	/**
-	 * @return parent entity
-	 */
-	virtual Entity* getParentEntity() = 0;
+protected:
+	Entity* parentEntity { nullptr };
 
 	/**
 	 * Set parent entity, needs to be called before adding to engine
 	 * @param entity entity
 	 */
-	virtual void setParentEntity(Entity* entity) = 0;
+	inline void setParentEntity(Entity* entity) {
+		this->parentEntity = entity;
+	}
+
+	/**
+	 * @return parent entity
+	 */
+	inline Entity* getParentEntity() {
+		return parentEntity;
+	}
+
+private:
+	static constexpr int UNIQUEPARTITIONID_NONE { -1 };
+
+	int uniquePartitionId { UNIQUEPARTITIONID_NONE };
+	/**
+	 * Set unique partition id
+	 * @param uniquePartitionId unique partition id
+	 */
+	inline void setUniquePartitionId(int uniquePartitionId) {
+		this->uniquePartitionId = uniquePartitionId;
+	}
+
+	/**
+	 * @return unique partition id
+	 */
+	inline int getUniquePartitionId() {
+		return uniquePartitionId;
+	}
 
 	/**
 	 * Apply parent transform

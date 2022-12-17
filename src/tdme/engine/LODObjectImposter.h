@@ -50,7 +50,6 @@ class tdme::engine::LODObjectImposter final:
 {
 private:
 	Engine* engine { nullptr };
-	Entity* parentEntity { nullptr };
 	bool frustumCulling { true };
 
 	Model* modelLOD1 { nullptr };
@@ -77,21 +76,6 @@ private:
 	bool enableEarlyZRejection { false };
 
 	EntityShaderParameters shaderParameters;
-
-	/**
-	 * Set parent entity, needs to be called before adding to engine
-	 * @param entity entity
-	 */
-	inline void setParentEntity(Entity* entity) override {
-		this->parentEntity = entity;
-	}
-
-	/**
-	 * @return parent entity
-	 */
-	inline Entity* getParentEntity() override {
-		return parentEntity;
-	}
 
 	// overridden methods
 	inline void applyParentTransform(const Transform& parentTransform) override {

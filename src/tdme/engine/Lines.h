@@ -41,17 +41,10 @@ private:
 	friend class Engine;
 
 	Engine* engine { nullptr };
-	Entity* parentEntity { nullptr };
 	bool frustumCulling { true };
 	RenderPass renderPass { RENDERPASS_STANDARD };
 
 	// overridden methods
-	inline void setParentEntity(Entity* entity) override {
-		this->parentEntity = entity;
-	}
-	inline Entity* getParentEntity() override {
-		return parentEntity;
-	}
 	inline void applyParentTransform(const Transform& parentTransform) override {
 		Transform::applyParentTransform(parentTransform);
 		updateBoundingBox();

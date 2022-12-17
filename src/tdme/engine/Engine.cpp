@@ -437,6 +437,8 @@ void Engine::deregisterEntity(Entity* entity) {
 				break;
 		}
 	}
+	//
+	removeEntityFromLists(entity);
 }
 
 void Engine::registerEntity(Entity* entity) {
@@ -688,6 +690,7 @@ void Engine::removeEntityFromLists(Entity* entity)
 	if (entity == nullptr) return;
 	//
 	removeFromDecomposedEntities(visibleDecomposedEntities, entity);
+	//
 	if (entity->getEntityType() == Entity::ENTITYTYPE_OBJECTRENDERGROUP) {
 		removeEntityFromLists(static_cast<ObjectRenderGroup*>(entity)->getEntity());
 	} else
@@ -717,6 +720,10 @@ void Engine::removeEntityFromLists(Entity* entity)
 		auto loi = static_cast<LODObjectImposter*>(entity);
 		removeEntityFromLists(loi->getLOD1Object());
 		for (auto subEntity: loi->getLOD2Object()->getBillboardObjects()) removeEntityFromLists(subEntity);
+	} else
+	if (entity->getEntityType() == Entity::ENTITYTYPE_PARTICLESYSTEMGROUP) {
+		auto psg = static_cast<ParticleSystemGroup*>(entity);
+		for (auto subEntity: psg->getParticleSystems()) removeEntityFromLists(subEntity);
 	}
 }
 

@@ -51,7 +51,6 @@ class tdme::engine::ObjectRenderGroup final:
 {
 private:
 	Engine* engine { nullptr };
-	Entity* parentEntity { nullptr };
 	bool frustumCulling { true };
 
 	string id;
@@ -107,12 +106,6 @@ private:
 	static void combineObjects(Model* model, const vector<Transform>& objectsTransform, Model* combinedModel);
 
 	// overridden methods
-	inline void setParentEntity(Entity* entity) override {
-		this->parentEntity = entity;
-	}
-	inline Entity* getParentEntity() override {
-		return parentEntity;
-	}
 	inline void applyParentTransform(const Transform& parentTransform) override {
 		Transform::applyParentTransform(parentTransform);
 		updateBoundingBox();

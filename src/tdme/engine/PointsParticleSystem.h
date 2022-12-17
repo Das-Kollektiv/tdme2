@@ -42,16 +42,9 @@ class tdme::engine::PointsParticleSystem final
 
 private:
 	bool frustumCulling { true };
-	Entity* parentEntity { nullptr };
 	RenderPass renderPass { RENDERPASS_STANDARD };
 
 	// overridden methods
-	inline void setParentEntity(Entity* entity) override {
-		this->parentEntity = entity;
-	}
-	inline Entity* getParentEntity() override {
-		return parentEntity;
-	}
 	inline void applyParentTransform(const Transform& parentTransform) override {
 		Transform::applyParentTransform(parentTransform);
 		updateInternal();

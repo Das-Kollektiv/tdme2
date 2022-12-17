@@ -129,7 +129,7 @@ void SimpleTextureAtlas::update() {
 		auto atlasTextureIdx = atlasTextureIdxY * textureAtlasSize + atlasTextureIdxX;
 		auto texture = atlasTextureIdxToTextureMappingVector[atlasTextureIdx];
 		if (texture != nullptr) {
-			auto* textureTextureData = &atlasTextureIdxToTextureTextureDataVector[atlasTextureIdx];
+			auto textureTextureData = &atlasTextureIdxToTextureTextureDataVector[atlasTextureIdx];
 			auto textureWidth = texture->getTextureWidth();
 			auto textureHeight = texture->getTextureHeight();
 			auto textureBytesPerPixel = texture->getRGBDepthBitsPerPixel() / 8;
