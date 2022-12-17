@@ -56,6 +56,7 @@ private:
 	static constexpr int UNIQUEPARTITIONID_NONE { -1 };
 
 	int uniquePartitionId { UNIQUEPARTITIONID_NONE };
+
 	/**
 	 * Set unique partition id
 	 * @param uniquePartitionId unique partition id

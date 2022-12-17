@@ -79,7 +79,7 @@ private:
 	Renderer* renderer { nullptr };
 
 	vector<BatchRendererTriangles*> trianglesBatchRenderers;
-	unordered_map<uint8_t, unordered_map<Model*, vector<Object*>>> objectsByShadersAndModels;
+	array<vector<Object*>, Engine::UNIQUEMODELID_MAX> objectsByModels;
 	vector<TransparentRenderFace*> nodeTransparentRenderFaces;
 	EntityRenderer_TransparentRenderFacesGroupPool* transparentRenderFacesGroupPool { nullptr };
 	TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
@@ -181,7 +181,7 @@ private:
 		int threadIdx,
 		Entity::RenderPass renderPass,
 		const vector<Object*>& objects,
-		unordered_map<uint8_t, unordered_map<Model*, vector<Object*>>>& objectsByShadersAndModels,
+		array<vector<Object*>, Engine::UNIQUEMODELID_MAX>& objectsByModels,
 		bool renderTransparentFaces,
 		int renderTypes,
 		TransparentRenderFacesPool* transparentRenderFacesPool) {
@@ -196,39 +196,34 @@ private:
 			if (object->enabledInstances == 0) continue;
 			if (effectPass != 0 && object->excludeFromEffectPass == effectPass) continue;
 			if (object->renderPass != renderPass) continue;
-			auto& objectsByShaders = objectsByShadersAndModels[object->getUniqueShaderId()];
-			auto& objectsByModel = objectsByShaders[object->getModel()];
-			objectsByModel.push_back(object);
+			auto uniqueModelId = object->getUniqueModelId();
+			if (uniqueModelId != Engine::UNIQUEMODELID_NONE) objectsByModels[uniqueModelId].push_back(object);
 		}
 
 		// render objects
 		auto& context = contexts[threadIdx];
-		for (auto& objectsByShaderAndModelIt: objectsByShadersAndModels) {
-			auto& objectsByModels = objectsByShaderAndModelIt.second;
-			for (auto& objectsByModelIt: objectsByModels) {
-				auto& objectsByModel = objectsByModelIt.second;
-				if (objectsByModel.size() == 0) {
-					continue;
-				} else
-				if (objectsByModel.size() > 0) {
-					do {
-						for (auto object: objectsByModel) {
-							if (context.objectsByModelToRender.size() == 0 ||
-								(object->instances == context.objectsByModelToRender[0]->instances &&
-								object->enabledInstances == context.objectsByModelToRender[0]->enabledInstances)) {
-								context.objectsByModelToRender.push_back(object);
-							} else {
-								context.objectsByModelNotRendered.push_back(object);
-							}
+		for (auto& objectsByModel: objectsByModels) {
+			if (objectsByModel.size() == 0) {
+				continue;
+			} else
+			if (objectsByModel.size() > 0) {
+				do {
+					for (auto object: objectsByModel) {
+						if (context.objectsByModelToRender.size() == 0 ||
+							(object->instances == context.objectsByModelToRender[0]->instances &&
+							object->enabledInstances == context.objectsByModelToRender[0]->enabledInstances)) {
+							context.objectsByModelToRender.push_back(object);
+						} else {
+							context.objectsByModelNotRendered.push_back(object);
 						}
-						renderObjectsOfSameType(threadIdx, context.objectsByModelToRender, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
-						objectsByModel = context.objectsByModelNotRendered;
-						context.objectsByModelToRender.clear();
-						context.objectsByModelNotRendered.clear();
-					} while (objectsByModel.size() > 0);
-				}
-				objectsByModel.clear();
+					}
+					renderObjectsOfSameType(threadIdx, context.objectsByModelToRender, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
+					objectsByModel = context.objectsByModelNotRendered;
+					context.objectsByModelToRender.clear();
+					context.objectsByModelNotRendered.clear();
+				} while (objectsByModel.size() > 0);
 			}
+			objectsByModel.clear();
 		}
 	}
 

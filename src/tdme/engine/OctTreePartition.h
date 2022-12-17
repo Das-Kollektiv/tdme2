@@ -72,9 +72,10 @@ private:
 	VectorIteratorMultiple<Entity*> entityIterator;
 	unordered_map<string, vector<PartitionTreeNode*>> entityPartitionNodes;
 	vector<Entity*> visibleEntities;
-	bitset<1024 * 512> visibleEntitiesBitSet;
 	PartitionTreeNode treeRoot;
 
+	// TODO: put those limits into tdme.h or use dynamic bitset here
+	bitset<1024 * 512> visibleEntitiesBitSet;
 	unordered_map<Entity*, int> entityUniquePartitionIdMapping;
 	vector<int> freeEntityUniquePartitionIds;
 

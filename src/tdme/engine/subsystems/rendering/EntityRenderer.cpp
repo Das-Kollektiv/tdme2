@@ -219,13 +219,12 @@ BatchRendererTriangles* EntityRenderer::acquireTrianglesBatchRenderer()
 
 void EntityRenderer::reset()
 {
-	objectsByShadersAndModels.clear();
 }
 
 void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object*>& objects, bool renderTransparentFaces, int32_t renderTypes)
 {
 	if (renderer->isSupportingMultithreadedRendering() == false) {
-		renderFunction(0, renderPass, objects, objectsByShadersAndModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
+		renderFunction(0, renderPass, objects, objectsByModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
 	} else {
 		auto elementsIssued = 0;
 		auto queueElement = Engine::engineThreadQueueElementPool.allocate();

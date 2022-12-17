@@ -77,7 +77,7 @@ void OctTreePartition::addEntity(Entity* entity)
 			// otherwise create a id
 			uniquePartitionId = entityUniquePartitionIdMapping.size() + 1;
 			if (uniquePartitionId >= visibleEntitiesBitSet.size()) {
-				Console::println("OctTreePartition::addEntity(): too many entities: " + to_string(uniquePartitionId) + " > " + to_string(visibleEntitiesBitSet.size()));
+				Console::println("OctTreePartition::addEntity(): too many entities: " + to_string(uniquePartitionId) + " >= " + to_string(visibleEntitiesBitSet.size()));
 				return;
 			}
 		}
