@@ -72,7 +72,7 @@ private:
 	VectorIteratorMultiple<Entity*> entityIterator;
 	unordered_map<string, vector<PartitionTreeNode*>> entityPartitionNodes;
 	vector<Entity*> visibleEntities;
-	bitset<524288> visibleEntitiesBitSet;
+	bitset<1024 * 512> visibleEntitiesBitSet;
 	PartitionTreeNode treeRoot;
 
 	unordered_map<Entity*, int> entityUniquePartitionIdMapping;
@@ -267,7 +267,8 @@ public:
 	// overridden methods
 	const vector<Entity*>& getVisibleEntities(Frustum* frustum) override;
 	inline bool isVisibleEntity(Entity* entity) override {
-		return visibleEntitiesBitSet.test(entity->getUniquePartitionId()) == 1;
+		auto uniquePartitionId = entity->getUniquePartitionId();
+		return uniquePartitionId != Entity::UNIQUEPARTITIONID_NONE && visibleEntitiesBitSet.test(uniquePartitionId) == true;
 	}
 
 	/**

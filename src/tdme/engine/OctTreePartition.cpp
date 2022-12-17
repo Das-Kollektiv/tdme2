@@ -47,6 +47,8 @@ void OctTreePartition::reset()
 	this->treeRoot.y = -1;
 	this->treeRoot.z = -1;
 	this->treeRoot.parent = nullptr;
+	this->entityUniquePartitionIdMapping.clear();
+	this->freeEntityUniquePartitionIds.clear();
 }
 
 void OctTreePartition::addEntity(Entity* entity)
@@ -81,6 +83,8 @@ void OctTreePartition::addEntity(Entity* entity)
 		}
 		entity->setUniquePartitionId(uniquePartitionId);
 		entityUniquePartitionIdMapping[entity] = uniquePartitionId;
+	} else {
+		entity->setUniquePartitionId(entityUniquePartitionIdMappingIt->second);
 	}
     // frustum bounding box
 	auto boundingBox = entity->getBoundingBoxTransformed();
@@ -117,8 +121,9 @@ void OctTreePartition::removeEntity(Entity* entity)
 	//
 	auto uniquePartitionId = entity->getUniquePartitionId();
 	if (uniquePartitionId != Entity::UNIQUEPARTITIONID_NONE) {
-		freeEntityUniquePartitionIds.push_back(uniquePartitionId);
 		entity->setUniquePartitionId(Entity::UNIQUEPARTITIONID_NONE);
+		entityUniquePartitionIdMapping.erase(entity);
+		freeEntityUniquePartitionIds.push_back(uniquePartitionId);
 	}
 	// remove object from assigned partitions
 	// TODO: remove tree root sub nodes as well not only empty root nodes
