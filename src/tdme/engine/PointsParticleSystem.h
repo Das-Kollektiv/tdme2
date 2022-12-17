@@ -42,7 +42,6 @@ class tdme::engine::PointsParticleSystem final
 
 private:
 	bool frustumCulling { true };
-	Entity* parentEntity { nullptr };
 	RenderPass renderPass { RENDERPASS_STANDARD };
 
 	// overridden methods
