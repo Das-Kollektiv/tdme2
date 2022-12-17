@@ -4784,7 +4784,7 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 
 			//
 			prepareSetupCommandBuffer(contextIdx);
-			// Copy mip levels from staging buffer
+			// copy bc7 buffer to image
 			vkCmdCopyBufferToImage(
 				currentContext.setupCommandInUse,
 				buffer,
@@ -4842,7 +4842,7 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 
 				//
 				prepareSetupCommandBuffer(contextIdx);
-				// Copy mip levels from staging buffer
+				// copy mip level bc7 buffer to image
 				vkCmdCopyBufferToImage(
 					currentContext.setupCommandInUse,
 					buffer,
@@ -5215,7 +5215,7 @@ void VKRenderer::uploadCubeMapSingleTexture(int contextIdx, texture_type* cubema
 
 		//
 		prepareSetupCommandBuffer(contextIdx);
-		// Copy mip levels from staging buffer
+		// copy bc7 buffer to image
 		vkCmdCopyBufferToImage(
 			currentContext.setupCommandInUse,
 			buffer,
