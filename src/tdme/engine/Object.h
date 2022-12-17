@@ -69,7 +69,6 @@ private:
 	friend class tdme::engine::subsystems::shadowmapping::ShadowMap;
 
 	Engine* engine { nullptr };
-	Entity* parentEntity { nullptr };
 	bool frustumCulling { true };
 	RenderPass renderPass { RENDERPASS_STANDARD };
 	string shaderId;
@@ -156,12 +155,6 @@ private:
 	}
 
 	// overridden methods
-	inline void setParentEntity(Entity* entity) override {
-		this->parentEntity = entity;
-	}
-	inline Entity* getParentEntity() override {
-		return parentEntity;
-	}
 	inline void applyParentTransform(const Transform& parentTransform) override {
 		for (auto& transform: instanceTransform) transform.applyParentTransform(parentTransform);
 		updateBoundingBox();

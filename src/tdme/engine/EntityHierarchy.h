@@ -59,7 +59,6 @@ private:
 	};
 	Engine* engine { nullptr };
 	Renderer* renderer { nullptr };
-	Entity* parentEntity { nullptr };
 	bool frustumCulling { true };
 	bool initialized { false };
 
@@ -78,12 +77,6 @@ private:
 	RenderPass renderPass { RENDERPASS_STANDARD };
 
 	// overridden methods
-	inline void setParentEntity(Entity* entity) override {
-		this->parentEntity = entity;
-	}
-	inline Entity* getParentEntity() override {
-		return parentEntity;
-	}
 	inline void applyParentTransform(const Transform& parentTransform) override {
 		Transform::applyParentTransform(parentTransform);
 		boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);

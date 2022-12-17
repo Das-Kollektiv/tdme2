@@ -39,7 +39,6 @@ class tdme::engine::ParticleSystemGroup final
 {
 private:
 	Engine* engine { nullptr };
-	Entity* parentEntity { nullptr };
 	bool frustumCulling { true };
 	RenderPass renderPass { RENDERPASS_STANDARD };
 
@@ -57,12 +56,6 @@ private:
 	Transform localTransform;
 
 	// overridden methods
-	inline void setParentEntity(Entity* entity) override {
-		this->parentEntity = entity;
-	}
-	inline Entity* getParentEntity() override {
-		return parentEntity;
-	}
 	inline void applyParentTransform(const Transform& parentTransform) override {
 		Transform::applyParentTransform(parentTransform);
 		for (auto particleSystem: particleSystems) particleSystem->applyParentTransform(parentTransform);
