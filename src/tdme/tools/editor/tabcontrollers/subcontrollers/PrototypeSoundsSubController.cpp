@@ -208,7 +208,10 @@ void PrototypeSoundsSubController::updateDetails(Prototype* prototype, Model* mo
 
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_sound"))->getActiveConditions().add("open");
-		if (sound->getFileName().empty() == false) required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sound"))->setSource("resources/engine/images/sound_big.png");
+		if (sound->getFileName().empty() == false) {
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sound"))->setSource("resources/engine/images/sound_big.png");
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sound"))->setTooltip(sound->getFileName());
+		}
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_animation"))->getController()->setValue(MutableString(sound->getAnimation()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_gain"))->getController()->setValue(MutableString(sound->getGain()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_pitch"))->getController()->setValue(MutableString(sound->getPitch()));
@@ -492,6 +495,7 @@ void PrototypeSoundsSubController::setSound(const string& soundId, const string&
 	sound->setFileName(fileName);
 	try {
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sound"))->setSource("resources/engine/images/sound_big.png");
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sound"))->setTooltip(fileName);
 	} catch (Exception& exception) {
 		Console::println(string() + "PrototypeSoundsSubController::setSound(): An error occurred: " + exception.what());
 		showInfoPopUp("Warning", (string(exception.what())));
