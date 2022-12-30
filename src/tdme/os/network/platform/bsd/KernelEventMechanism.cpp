@@ -22,12 +22,6 @@ using tdme::os::network::platform::bsd::KernelEventMechanismPSD;
 using tdme::os::network::KernelEventMechanism;
 using tdme::os::network::NIOInterest;
 
-#if defined(__NetBSD__)
-	#define KEVENT_UDATA_DATATYPE __intptr_t
-#else
-	#define KEVENT_UDATA_DATATYPE void*
-#endif
-
 KernelEventMechanism::KernelEventMechanism() : initialized(false),_psd(NULL) {
 	// allocate platform specific data
 	_psd = static_cast<void*>(new KernelEventMechanismPSD());
@@ -81,7 +75,7 @@ void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const 
 		ke->flags = EV_ADD | EV_ENABLE;
 		ke->fflags = 0;
 		ke->data = 0;
-		ke->udata = (KEVENT_UDATA_DATATYPE)cookie;
+		ke->udata = (void*)cookie;
 	} else {
 		struct kevent* ke = &psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
 		ke->ident = socket.descriptor;
@@ -89,7 +83,7 @@ void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const 
 		ke->flags = EV_ADD | EV_DISABLE;
 		ke->fflags = 0;
 		ke->data = 0;
-		ke->udata = (KEVENT_UDATA_DATATYPE)cookie;
+		ke->udata = (void*)cookie;
 	}
 	// handle write interest
 	if ((interest & NIO_INTEREST_WRITE) == NIO_INTEREST_WRITE) {
@@ -99,7 +93,7 @@ void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const 
 		ke->flags = EV_ADD | EV_ENABLE;
 		ke->fflags = 0;
 		ke->data = 0;
-		ke->udata = (KEVENT_UDATA_DATATYPE)cookie;
+		ke->udata = (void*)cookie;
 	} else {
 		struct kevent* ke = &psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
 		ke->ident = socket.descriptor;
@@ -107,7 +101,7 @@ void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const 
 		ke->flags = EV_ADD | EV_DISABLE;
 		ke->fflags = 0;
 		ke->data = 0;
-		ke->udata = (KEVENT_UDATA_DATATYPE)cookie;
+		ke->udata = (void*)cookie;
 	}
 	psd->kqMutex.unlock();
 }
