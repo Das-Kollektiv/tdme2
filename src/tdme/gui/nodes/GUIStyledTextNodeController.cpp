@@ -140,7 +140,7 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 					{
 						if (input == true) {
 							//
-							storeTypingHistoryEntry(false);
+							storeTypingHistoryEntry();
 							//
 							if (timeLastClick != -1LL &&
 								Time::getCurrentMillis() - timeLastClick < TIME_DOUBLECLICK) {
@@ -199,7 +199,7 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 					{
 						if (input == true) {
 							//
-							storeTypingHistoryEntry(false);
+							storeTypingHistoryEntry();
 							//
 							if (doubleClick == true) {
 								//
@@ -254,7 +254,7 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 								styledTextNode->scrollToIndex();
 							}
 							//
-							prepareTypingHistoryEntry();
+							unsetTypingHistoryEntryIdx();
 						}
 
 						// find URL area that had a hit and setup corresponding cursor
@@ -297,7 +297,7 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 				case GUIMouseEvent::MOUSEEVENT_DRAGGED:
 					{
 						//
-						storeTypingHistoryEntry(false);
+						storeTypingHistoryEntry();
 						//
 						dragging = true;
 						//
@@ -333,7 +333,7 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 					{
 						if (released == false) {
 							//
-							storeTypingHistoryEntry(false);
+							storeTypingHistoryEntry();
 
 							//
 							styledTextNode->unsetIndexMousePosition();
@@ -358,7 +358,7 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 							//
 							dragging = false;
 							//
-							prepareTypingHistoryEntry();
+							unsetTypingHistoryEntryIdx();
 						}
 						break;
 					}
@@ -382,26 +382,41 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 		event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) {
 		event->setProcessed(true);
 		//
-		if (event->getKeyChar() == ' ') {
-			storeTypingHistoryEntry(true);
+		auto selection = selectionIndex != -1 && index != selectionIndex;
+		if (event->getKeyChar() == ' ' || selection == true) {
+			storeTypingHistoryEntry();
 		}
 		//
-		prepareTypingHistoryEntry();
-		//
-		if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+		if (selection == true) {
+			//
+			storeDeletionHistoryEntry(Math::min(index, selectionIndex), Math::abs(index - selectionIndex), false);
+			//
 			styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 			styledTextNode->scrollToIndex();
 			forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+			//
 			index = Math::min(index, selectionIndex);
 			selectionIndex = -1;
 		}
 		if (maxLength == 0 || styledTextNode->getTextLength() < maxLength) {
+			//
+			setTypingHistoryEntryIdx();
+			//
 			styledTextNode->insertText(index, event->getKeyChar());
 			styledTextNode->scrollToIndex();
 			forwardInsertText(index, 1);
 			index++;
 			resetCursorMode();
 		}
+		//
+		typedChars = true;
+		//
+		if (selection == true) {
+			storeTypingHistoryEntry();
+			unsetTypingHistoryEntryIdx();
+		}
+		//
+		typedChars = true;
 	} else {
 		if (Character::toLowerCase(event->getKeyChar()) == 'z' && event->isControlDown() == true && event->isShiftDown() == true) {
 			if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) redo();
@@ -438,7 +453,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 					event->setProcessed(true);
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 						//
-						storeTypingHistoryEntry(false);
+						storeTypingHistoryEntry();
 						//
 						auto wordLeftIdx = -1;
 						auto lineStartIdx = styledTextNode->getPreviousNewLineUtf8(index - 1);
@@ -483,7 +498,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							resetCursorMode();
 						}
 						//
-						prepareTypingHistoryEntry();
+						unsetTypingHistoryEntryIdx();
 					}
 				}
 				break;
@@ -491,7 +506,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 					event->setProcessed(true);
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 						//
-						storeTypingHistoryEntry(false);
+						storeTypingHistoryEntry();
 						//
 						auto wordRightIdx = -1;
 						if (event->isControlDown() == true) {
@@ -538,7 +553,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							resetCursorMode();
 						}
 						//
-						prepareTypingHistoryEntry();
+						unsetTypingHistoryEntryIdx();
 					}
 				}
 				break;
@@ -546,7 +561,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 					event->setProcessed(true);
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 						//
-						storeTypingHistoryEntry(false);
+						storeTypingHistoryEntry();
 						//
 						if (event->isShiftDown() == false) {
 							selectionIndex = -1;
@@ -586,7 +601,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						styledTextNode->scrollToIndex();
 						resetCursorMode();
 						//
-						prepareTypingHistoryEntry();
+						unsetTypingHistoryEntryIdx();
 					}
 				}
 				break;
@@ -594,7 +609,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 					event->setProcessed(true);
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 						//
-						storeTypingHistoryEntry(false);
+						storeTypingHistoryEntry();
 						//
 						if (event->isShiftDown() == false) {
 							selectionIndex = -1;
@@ -633,7 +648,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						styledTextNode->scrollToIndex();
 						resetCursorMode();
 						//
-						prepareTypingHistoryEntry();
+						unsetTypingHistoryEntryIdx();
 					}
 				}
 				break;
@@ -641,7 +656,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 					event->setProcessed(true);
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 						//
-						storeTypingHistoryEntry(false);
+						storeTypingHistoryEntry();
 						//
 						if (event->isShiftDown() == false) {
 							selectionIndex = -1;
@@ -651,7 +666,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						index = styledTextNode->doPageUp();
 						resetCursorMode();
 						//
-						prepareTypingHistoryEntry();
+						unsetTypingHistoryEntryIdx();
 					}
 				}
 				break;
@@ -659,7 +674,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 					event->setProcessed(true);
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 						//
-						storeTypingHistoryEntry(false);
+						storeTypingHistoryEntry();
 						//
 						if (event->isShiftDown() == false) {
 							selectionIndex = -1;
@@ -669,7 +684,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						index = styledTextNode->doPageDown();
 						resetCursorMode();
 						//
-						prepareTypingHistoryEntry();
+						unsetTypingHistoryEntryIdx();
 					}
 				}
 				break;
@@ -678,10 +693,10 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						event->setProcessed(true);
 						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 							//
-							storeTypingHistoryEntry(true);
+							storeTypingHistoryEntry();
 							//
 							if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
-								storeDeletionHistoryEntry(true, Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+								storeDeletionHistoryEntry(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 								styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 								styledTextNode->scrollToIndex();
 								forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
@@ -689,7 +704,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 								selectionIndex = -1;
 							} else
 							if (index > 0) {
-								storeDeletionHistoryEntry(true, index - 1, 1);
+								storeDeletionHistoryEntry(index - 1, 1);
 								styledTextNode->removeText(index - 1, 1);
 								styledTextNode->scrollToIndex();
 								forwardRemoveText(index - 1, 1);
@@ -697,7 +712,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 								resetCursorMode();
 							}
 							//
-							prepareTypingHistoryEntry();
+							unsetTypingHistoryEntryIdx();
 						}
 					}
 				}
@@ -716,9 +731,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						event->setProcessed(true);
 						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 							//
-							storeTypingHistoryEntry(true);
-							//
-							prepareTypingHistoryEntry();
+							setTypingHistoryEntryIdx();
 							// find out current line indenting
 							string newLinePrefix;
 							{
@@ -752,19 +765,22 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 								index+= 1 + newLinePrefix.size();
 								resetCursorMode();
 							}
+							//
+							typedChars = true;
+							//
+							storeTypingHistoryEntry();
+							unsetTypingHistoryEntryIdx();
 						}
 					}
 				}
 				break;
 			case GUIKeyboardEvent::KEYCODE_TAB: {
 					if (disabled == false) {
-						//
-						storeTypingHistoryEntry(true);
-						//
-						prepareTypingHistoryEntry();
-						//
 						event->setProcessed(true);
 						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+							//
+							setTypingHistoryEntryIdx();
+							//
 							if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
 								styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 								styledTextNode->scrollToIndex();
@@ -779,6 +795,8 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 								index++;
 								resetCursorMode();
 							}
+							//
+							typedChars = true;
 						}
 					}
 				}
@@ -788,7 +806,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						event->setProcessed(true);
 						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 							//
-							storeTypingHistoryEntry(false);
+							storeTypingHistoryEntry();
 							//
 							resetCursorMode();
 							if (event->isShiftDown() == false) {
@@ -806,7 +824,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							}
 							styledTextNode->scrollToIndex();
 							//
-							prepareTypingHistoryEntry();
+							unsetTypingHistoryEntryIdx();
 						}
 					}
 				}
@@ -815,7 +833,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 					if (disabled == false) {
 						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 							//
-							storeTypingHistoryEntry(false);
+							storeTypingHistoryEntry();
 							//
 							resetCursorMode();
 							if (event->isShiftDown() == false) {
@@ -831,7 +849,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							}
 							styledTextNode->scrollToIndex();
 							//
-							prepareTypingHistoryEntry();
+							unsetTypingHistoryEntryIdx();
 						}
 					}
 				}
@@ -964,17 +982,29 @@ void GUIStyledTextNodeController::forwardCodeCompletion(int idx) {
 	}
 }
 
-void GUIStyledTextNodeController::storeTypingHistoryEntry(bool cutHistory) {
+void GUIStyledTextNodeController::storeTypingHistoryEntry() {
 	//
-	if (cutHistory == true && historyIdx != -1 && historyIdx < history.size() - 1) {
-		history.erase(history.begin() + historyIdx + 1, history.end());
-		historyIdx = history.size() - 1;
+	if (typedChars == false) {
+		return;
 	}
 	//
-	if (historyEntryIdx == -1) return;
+	typedChars = false;
+	//
+	if (historyEntryIdx == -1) {
+		return;
+	}
+	//
+	auto index = this->index;
+	if (selectionIndex != -1) index = Math::max(index, selectionIndex);
+	//
 	if (historyEntryIdx == index) {
 		historyEntryIdx = -1;
 		return;
+	}
+	//
+	if (historyIdx != -1 && historyIdx < history.size() - 1) {
+		history.erase(history.begin() + historyIdx + 1, history.end());
+		historyIdx = history.size() - 1;
 	}
 	//
 	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
@@ -995,9 +1025,10 @@ void GUIStyledTextNodeController::storeTypingHistoryEntry(bool cutHistory) {
 	historyEntryIdx = -1;
 	historyIdx++;
 
+	/*
 	//
-	auto historyIdxIt = 0;
-	for (auto historyEntry: history) {
+	for (auto i = history.size() - 1; i < history.size(); i++) {
+		auto& historyEntry = history[i];
 		string historyEntryTypeString;
 		switch (historyEntry.type) {
 			case HistoryEntry::TYPE_NONE:
@@ -1011,16 +1042,19 @@ void GUIStyledTextNodeController::storeTypingHistoryEntry(bool cutHistory) {
 				break;
 
 		}
-		Console::println("GUIStyledTextNodeController::storeTypingHistoryEntry(): " + to_string(historyIdxIt) + ": history entry @ " + to_string(historyEntry.idx) + ": '" + historyEntry.data + "'" + ": " + historyEntryTypeString);
-		historyIdxIt++;
+		Console::println("GUIStyledTextNodeController::storeTypingHistoryEntry(): " + to_string(i) + ": history entry @ " + to_string(historyEntry.idx) + ": '" + historyEntry.data + "'" + ": " + historyEntryTypeString);
 	}
-
-	//
-	Console::println("GUIStyledTextNodeController::storeTypingHistoryEntry(): history idx @ " + to_string(historyIdx));
+	*/
 }
 
-void GUIStyledTextNodeController::storeDeletionHistoryEntry(bool cutHistory, int index, int count) {
-	storeTypingHistoryEntry(cutHistory);
+void GUIStyledTextNodeController::storeDeletionHistoryEntry(int index, int count, bool storeTypingHistoryEntryEnabled) {
+	if (storeTypingHistoryEntryEnabled == true) storeTypingHistoryEntry();
+
+	//
+	if (historyIdx != -1 && historyIdx < history.size() - 1) {
+		history.erase(history.begin() + historyIdx + 1, history.end());
+		historyIdx = history.size() - 1;
+	}
 
 	//
 	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
@@ -1041,8 +1075,9 @@ void GUIStyledTextNodeController::storeDeletionHistoryEntry(bool cutHistory, int
 	historyIdx++;
 
 	//
-	auto historyIdxIt = 0;
-	for (auto historyEntry: history) {
+	/*
+	for (auto i = history.size() - 1; i < history.size(); i++) {
+		auto& historyEntry = history[i];
 		string historyEntryTypeString;
 		switch (historyEntry.type) {
 			case HistoryEntry::TYPE_NONE:
@@ -1056,19 +1091,16 @@ void GUIStyledTextNodeController::storeDeletionHistoryEntry(bool cutHistory, int
 				break;
 
 		}
-		Console::println("GUIStyledTextNodeController::storeDeletionHistoryEntry(): " + to_string(historyIdxIt) + ": history entry @ " + to_string(historyEntry.idx) + ": '" + historyEntry.data + "'" + ": " + historyEntryTypeString);
-		historyIdxIt++;
+		Console::println("GUIStyledTextNodeController::storeDeletionHistoryEntry(): " + to_string(i) + ": history entry @ " + to_string(historyEntry.idx) + ": '" + historyEntry.data + "'" + ": " + historyEntryTypeString);
 	}
+	*/
 
 	//
-	Console::println("GUIStyledTextNodeController::storeDeletionHistoryEntry(): history idx @ " + to_string(historyIdx));
 }
 
 void GUIStyledTextNodeController::redo() {
-	Console::println("GUIStyledTextNodeController::redo(): pre: " + to_string(historyIdx) + " / " + to_string(history.size()));
-
 	//
-	storeTypingHistoryEntry(false);
+	storeTypingHistoryEntry();
 
 	//
 	if (history.empty() == true) return;
@@ -1108,16 +1140,11 @@ void GUIStyledTextNodeController::redo() {
 
 	//
 	historyIdx++;
-
-	//
-	Console::println("GUIStyledTextNodeController::redo(): post: " + to_string(historyIdx) + " / " + to_string(history.size()));
 }
 
 void GUIStyledTextNodeController::undo() {
-	Console::println("GUIStyledTextNodeController::undo(): pre: " + to_string(historyIdx) + " / " + to_string(history.size()));
-
 	//
-	storeTypingHistoryEntry(false);
+	storeTypingHistoryEntry();
 
 	//
 	if (history.empty() == true) return;
@@ -1159,9 +1186,6 @@ void GUIStyledTextNodeController::undo() {
 
 	//
 	historyIdx--;
-
-	//
-	Console::println("GUIStyledTextNodeController::undo(): post: " + to_string(historyIdx) + " / " + to_string(history.size()));
 }
 
 void GUIStyledTextNodeController::selectAll() {
@@ -1172,16 +1196,22 @@ void GUIStyledTextNodeController::selectAll() {
 }
 
 void GUIStyledTextNodeController::cut() {
+	//
+	storeTypingHistoryEntry();
+	//
 	if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
 		auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
 		auto& text = styledTextNode->getText();
 		Application::getApplication()->setClipboardContent(StringTools::substring(text.getString(), Math::min(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex)), Math::max(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex))));
+		storeDeletionHistoryEntry(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 		styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 		styledTextNode->scrollToIndex();
 		forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 		index = Math::min(index, selectionIndex);
 		selectionIndex = -1;
 	}
+	//
+	unsetTypingHistoryEntryIdx();
 }
 
 void GUIStyledTextNodeController::copy() {
@@ -1193,12 +1223,16 @@ void GUIStyledTextNodeController::copy() {
 }
 
 void GUIStyledTextNodeController::paste() {
+	//
+	storeTypingHistoryEntry();
+	//
 	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
 	auto maxLength = 0;
 	auto clipboardContent = Application::getApplication()->getClipboardContent();
 	auto clipboardContentLength = StringTools::getUtf8Length(clipboardContent);
 	if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
 		if (maxLength == 0 || styledTextNode->getTextLength() - Math::abs(index - selectionIndex) + clipboardContentLength < maxLength) {
+			storeDeletionHistoryEntry(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 			styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 			styledTextNode->scrollToIndex();
 			forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
@@ -1206,19 +1240,30 @@ void GUIStyledTextNodeController::paste() {
 			selectionIndex = -1;
 		}
 	}
+	//
 	if (maxLength == 0 || styledTextNode->getTextLength() + clipboardContentLength < maxLength) {
+		//
+		setTypingHistoryEntryIdx();
+		typedChars = true;
+		//
 		styledTextNode->insertText(index, clipboardContent);
 		styledTextNode->scrollToIndex();
 		forwardInsertText(index, clipboardContentLength);
 		index+= clipboardContentLength;
+		//
+		storeTypingHistoryEntry();
 	}
-
+	//
+	unsetTypingHistoryEntryIdx();
 }
 
 void GUIStyledTextNodeController::delete_() {
+	//
+	storeTypingHistoryEntry();
+	//
 	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
 	if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
-		storeDeletionHistoryEntry(true, Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+		storeDeletionHistoryEntry(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 		styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 		styledTextNode->scrollToIndex();
 		forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
@@ -1226,12 +1271,12 @@ void GUIStyledTextNodeController::delete_() {
 		selectionIndex = -1;
 	} else
 	if (index < styledTextNode->getTextLength()) {
-		storeDeletionHistoryEntry(true, index, 1);
+		storeDeletionHistoryEntry(index, 1);
 		styledTextNode->removeText(index, 1);
 		styledTextNode->scrollToIndex();
 		forwardRemoveText(index, 1);
 		resetCursorMode();
 	}
 	//
-	prepareTypingHistoryEntry();
+	unsetTypingHistoryEntryIdx();
 }

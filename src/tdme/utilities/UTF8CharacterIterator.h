@@ -6,12 +6,15 @@
 #include <tdme/tdme.h>
 #include <tdme/math/Math.h>
 #include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/Console.h>
 
 using std::string;
 using std::to_string;
 using std::vector;
 
 using tdme::math::Math;
+
+using tdme::utilities::Console;
 
 /**
  * UTF8 string character iterator
@@ -185,12 +188,16 @@ private:
 	 * Add cache entry
 	 */
 	inline void addCacheEntry() const {
-		// store every 50th character position, if not yet done
+		// store every UTF8PositionCache::CACHE_ENTRY_SIZE character position, if not yet done
 		if (cache != nullptr) {
 			// binary cache
 			{
 				auto& _cache = cache->binaryCache;
 				if ((binaryPosition % UTF8PositionCache::CACHE_ENTRY_SIZE) == 0 && (_cache.empty() == true || _cache[_cache.size() - 1].binaryPosition < binaryPosition)) {
+					Console::println("UTF8CharacterIterator::addCacheEntry(): binary cache: binary: " + to_string(binaryPosition) + " / character: " + to_string(characterPosition));
+					if (_cache.empty() == false) {
+						Console::println("	was: binary cache: binary: " + to_string(_cache[_cache.size() - 1].binaryPosition) + " / character: " + to_string(_cache[_cache.size() - 1].characterPosition));
+					}
 					_cache.push_back(
 						{
 							.binaryPosition = binaryPosition,
@@ -203,6 +210,10 @@ private:
 			{
 				auto& _cache = cache->characterCache;
 				if ((characterPosition % UTF8PositionCache::CACHE_ENTRY_SIZE) == 0 && (_cache.empty() == true || _cache[_cache.size() - 1].characterPosition < characterPosition)) {
+					Console::println("UTF8CharacterIterator::addCacheEntry(): character cache: binary: " + to_string(binaryPosition) + " / character: " + to_string(characterPosition));
+					if (_cache.empty() == false) {
+						Console::println("	was: binary cache: binary: " + to_string(_cache[_cache.size() - 1].binaryPosition) + " / character: " + to_string(_cache[_cache.size() - 1].characterPosition));
+					}
 					_cache.push_back(
 						{
 							.binaryPosition = binaryPosition,

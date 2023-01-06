@@ -8,7 +8,6 @@
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINodeController.h>
-#include <tdme/utilities/Console.h>
 #include <tdme/utilities/MutableString.h>
 
 using std::string;
@@ -20,7 +19,6 @@ using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::GUIParser;
-using tdme::utilities::Console;
 using tdme::utilities::MutableString;
 
 /**
@@ -108,8 +106,8 @@ private:
 
 	vector<HistoryEntry> history;
 	int historyEntryIdx { -1 };
-	int historyEntryDeletion { -1 };
 	int historyIdx { -1 };
+	bool typedChars { false };
 
 	/**
 	 * @return must show cursor
@@ -187,27 +185,35 @@ public:
 	}
 
 	/**
-	 * Prepare typing history entry
+	 * Unset typing history entry index
 	 */
-	inline void prepareTypingHistoryEntry() {
+	inline void unsetTypingHistoryEntryIdx() {
+		typedChars = false;
+		historyEntryIdx = -1;
+	}
+
+	/**
+	 * Set typing history entry index
+	 */
+	inline void setTypingHistoryEntryIdx() {
 		if (historyEntryIdx != -1) return;
+		auto index = this->index;
+		if (selectionIndex != -1) index = Math::min(index, selectionIndex);
 		historyEntryIdx = index;
-		Console::println("GUIStyledTextNodeController::prepareTypingHistoryEntry(): " + index);
 	}
 
 	/**
 	 * Store typing history entry
-	 * @param cutHistory cut history from current to end
 	 */
-	void storeTypingHistoryEntry(bool cutHistory);
+	void storeTypingHistoryEntry();
 
 	/**
 	 * Store typing history entry
-	 * @param cutHistory cut history from current to end
 	 * @param index index
 	 * @param count count
+	 * @param storeTypingHistoryEntryEnabled store typing history entry enabled
 	 */
-	void storeDeletionHistoryEntry(bool cutHistory, int index, int count);
+	void storeDeletionHistoryEntry(int index, int count, bool storeTypingHistoryEntryEnabled = true);
 
 	/**
 	 * Redo
