@@ -11,6 +11,7 @@
 #include <tdme/utilities/MutableString.h>
 
 using std::string;
+using std::to_string;
 using std::vector;
 
 using tdme::gui::events::GUIKeyboardEvent;
@@ -78,6 +79,14 @@ public:
 	};
 
 private:
+	struct HistoryEntry {
+		enum Type { TYPE_NONE, TYPE_INSERT, TYPE_DELETE };
+		Type type { TYPE_NONE };
+		int idx { -1 };
+		string data;
+		bool joinable { false };
+	};
+
 	static constexpr int64_t TIME_DOUBLECLICK { 250LL };
 	static constexpr int64_t CURSOR_MODE_DURATION { 500LL };
 	int64_t cursorModeStarted { -1LL };
@@ -95,6 +104,10 @@ private:
 	int64_t timeLastClick { -1LL };
 	bool doubleClick { false };
 
+	vector<HistoryEntry> history;
+	int historyEntryIdx { -1 };
+	int historyIdx { -1 };
+	bool typedChars { false };
 
 	/**
 	 * @return must show cursor
@@ -170,6 +183,37 @@ public:
 	inline void setSelectionIndex(int selectionIndex) {
 		this->selectionIndex = selectionIndex;
 	}
+
+	/**
+	 * Unset typing history entry index
+	 */
+	inline void unsetTypingHistoryEntryIdx() {
+		typedChars = false;
+		historyEntryIdx = -1;
+	}
+
+	/**
+	 * Set typing history entry index
+	 */
+	inline void setTypingHistoryEntryIdx() {
+		if (historyEntryIdx != -1) return;
+		auto index = this->index;
+		if (selectionIndex != -1) index = Math::min(index, selectionIndex);
+		historyEntryIdx = index;
+	}
+
+	/**
+	 * Store typing history entry
+	 */
+	void storeTypingHistoryEntry();
+
+	/**
+	 * Store typing history entry
+	 * @param index index
+	 * @param count count
+	 * @param storeTypingHistoryEntryEnabled store typing history entry enabled
+	 */
+	void storeDeletionHistoryEntry(int index, int count, bool storeTypingHistoryEntryEnabled = true);
 
 	/**
 	 * Redo

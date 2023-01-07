@@ -91,7 +91,7 @@ else ifeq ($(OS), NetBSD)
 	OPENGL_RENDERER_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lGLEW -lGL -lglfw
 	VULKAN_RENDERER_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lGLESv2 -lEGL -lglfw
-	LIBS_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -ldl -lglfw -lopenal -lexecinfo
+	LIBS_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lglfw -lopenal -lexecinfo -lfreetype
 	OFLAGS := -O3
 else ifeq ($(OS), OpenBSD)
 	# OpenBSD
