@@ -120,60 +120,60 @@ public:
 		if (l < 1) return -1;
 		unsigned char u0 = stringReference[binaryPosition + 0];
 		if (u0 >= 0 && u0 <= 127) {
+			addCacheEntry();
 			binaryPosition++;
 			characterPosition++;
-			addCacheEntry();
 			return u0;
 		}
 		if (l < 2) {
+			addCacheEntry();
 			binaryPosition++;
 			characterPosition++;
-			addCacheEntry();
 			return -1;
 		}
 		unsigned char u1 = stringReference[binaryPosition + 1];
 		if (u0 >= 192 && u0 <= 223) {
+			addCacheEntry();
 			binaryPosition+= 2;
 			characterPosition++;
-			addCacheEntry();
 			return (u0 - 192) * 64 + (u1 - 128);
 		}
 		if (u0 == 0xed && (u1 & 0xa0) == 0xa0) {
+			addCacheEntry();
 			binaryPosition+= 2;
 			characterPosition++;
-			addCacheEntry();
 			return -1; // code points, 0xd800 to 0xdfff
 		}
 		if (l < 3) {
+			addCacheEntry();
 			binaryPosition+= 2;
 			characterPosition++;
-			addCacheEntry();
 			return -1;
 		}
 		unsigned char u2 = stringReference[binaryPosition + 2];
 		if (u0 >= 224 && u0 <= 239) {
+			addCacheEntry();
 			binaryPosition+= 3;
 			characterPosition++;
-			addCacheEntry();
 			return (u0 - 224) * 4096 + (u1 - 128) * 64 + (u2 - 128);
 		}
 		if (l < 4) {
+			addCacheEntry();
 			binaryPosition+= 3;
 			characterPosition++;
-			addCacheEntry();
 			return -1;
 		}
 		unsigned char u3 = stringReference[binaryPosition + 3];
 		if (u0 >= 240 && u0 <= 247) {
+			addCacheEntry();
 			binaryPosition+= 4;
 			characterPosition++;
-			addCacheEntry();
 			return (u0 - 240) * 262144 + (u1 - 128) * 4096 + (u2 - 128) * 64 + (u3 - 128);
 		}
 		//
+		addCacheEntry();
 		binaryPosition+= 4;
 		characterPosition++;
-		addCacheEntry();
 		//
 		return -1;
 	}
@@ -193,33 +193,33 @@ private:
 			// binary cache
 			{
 				auto& _cache = cache->binaryCache;
-				if ((binaryPosition % UTF8PositionCache::CACHE_ENTRY_SIZE) == 0 && (_cache.empty() == true || _cache[_cache.size() - 1].binaryPosition < binaryPosition)) {
-					Console::println("UTF8CharacterIterator::addCacheEntry(): binary cache: binary: " + to_string(binaryPosition) + " / character: " + to_string(characterPosition));
-					if (_cache.empty() == false) {
-						Console::println("	was: binary cache: binary: " + to_string(_cache[_cache.size() - 1].binaryPosition) + " / character: " + to_string(_cache[_cache.size() - 1].characterPosition));
-					}
+				if (binaryPosition > 0 && (binaryPosition % UTF8PositionCache::CACHE_ENTRY_SIZE) == 0 && (_cache.empty() == true || _cache[_cache.size() - 1].binaryPosition < binaryPosition)) {
 					_cache.push_back(
 						{
 							.binaryPosition = binaryPosition,
 							.characterPosition = characterPosition
 						}
 					);
+					Console::println("UTF8CharacterIterator::addCacheEntry(): binary cache: binary: " + to_string(binaryPosition) + " / character: " + to_string(characterPosition));
+					for (auto& cacheEntry: _cache) {
+						Console::println("\tbinary cache: binary: " + to_string(cacheEntry.binaryPosition) + " / character: " + to_string(cacheEntry.characterPosition));
+					}
 				}
 			}
 			// character cache
 			{
 				auto& _cache = cache->characterCache;
-				if ((characterPosition % UTF8PositionCache::CACHE_ENTRY_SIZE) == 0 && (_cache.empty() == true || _cache[_cache.size() - 1].characterPosition < characterPosition)) {
+				if (characterPosition > 0 && (characterPosition % UTF8PositionCache::CACHE_ENTRY_SIZE) == 0 && (_cache.empty() == true || _cache[_cache.size() - 1].characterPosition < characterPosition)) {
 					Console::println("UTF8CharacterIterator::addCacheEntry(): character cache: binary: " + to_string(binaryPosition) + " / character: " + to_string(characterPosition));
-					if (_cache.empty() == false) {
-						Console::println("	was: binary cache: binary: " + to_string(_cache[_cache.size() - 1].binaryPosition) + " / character: " + to_string(_cache[_cache.size() - 1].characterPosition));
-					}
 					_cache.push_back(
 						{
 							.binaryPosition = binaryPosition,
 							.characterPosition = characterPosition
 						}
 					);
+					for (auto& cacheEntry: _cache) {
+						Console::println("\tcharacter cache: binary: " + to_string(cacheEntry.binaryPosition) + " / character: " + to_string(cacheEntry.characterPosition));
+					}
 				}
 			}
 		}

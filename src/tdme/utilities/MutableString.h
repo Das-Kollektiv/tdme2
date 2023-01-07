@@ -437,7 +437,7 @@ private:
 		if (binaryIdx >= UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE) {
 			auto& _cache = cache.binaryCache;
 			auto removeFromCacheEntryIdx = (binaryIdx / UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE) - 1;
-			Console::println("\tRemoving binary: " + to_string(removeFromCacheEntryIdx) + " / " + to_string(_cache.size() - 1) + " = " + to_string(removeFromCacheEntryIdx * UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE));
+			Console::println("\tRemoving binary: " + to_string(removeFromCacheEntryIdx) + " / " + to_string(_cache.size() - 1) + " = " + to_string((removeFromCacheEntryIdx + 1) * UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE));
 			if (removeFromCacheEntryIdx < _cache.size()) {
 				_cache.erase(_cache.begin() + removeFromCacheEntryIdx, _cache.end());
 			}
@@ -448,7 +448,7 @@ private:
 		if (characterIdx >= UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE) {
 			auto& _cache = cache.characterCache;
 			auto removeFromCacheEntryIdx = (characterIdx / UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE) - 1;
-			Console::println("\tRemoving character: " + to_string(removeFromCacheEntryIdx) + " / " + to_string(_cache.size() - 1) + " = " + to_string(removeFromCacheEntryIdx * UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE));
+			Console::println("\tRemoving character: " + to_string(removeFromCacheEntryIdx) + " / " + to_string(_cache.size() - 1) + " = " + to_string((removeFromCacheEntryIdx + 1) * UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE));
 			if (removeFromCacheEntryIdx < _cache.size()) {
 				_cache.erase(_cache.begin() + removeFromCacheEntryIdx, _cache.end());
 			}
