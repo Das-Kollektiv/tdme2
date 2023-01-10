@@ -186,7 +186,7 @@ void insertStyle(int startIdx, int endIdx, const string &id) {
 	}
 	// are we advanced over new style end index
 	//	means we have a gap after a style to put our new style in
-	if (styles[i].startIdx <= endIdx) {
+	if (endIdx <= styles[i].startIdx) {
 		//
 		styles.insert(styles.begin() + i++, newStyle);
 		// advance next styles
