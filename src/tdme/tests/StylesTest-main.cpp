@@ -173,13 +173,6 @@ void insertStyle(int startIdx, int endIdx, const string &id) {
 	Console::println("insertStyle(): initial i = " + to_string(i) + " / " + to_string(styles.size()));
 	for (; i < styles.size(); i++) {
 		auto &currentStyle = styles[i];
-		Console::println("aaa");
-		// check if the current range ins within range to be removed
-		if (currentStyle.startIdx >= startIdx && currentStyle.endIdx <= endIdx) {
-			// remove the overlapping range
-			styles.erase(styles.begin() + i);
-			i--;
-		} else
 		// check if the current range overlaps with the range to be removed
 		if (currentStyle.startIdx < endIdx && currentStyle.endIdx > startIdx) {
 			Console::println("bbb");
@@ -191,16 +184,16 @@ void insertStyle(int startIdx, int endIdx, const string &id) {
 			// remove the overlapping range
 			styles.erase(styles.begin() + i);
 			// split the overlapping range into two non-overlapping ranges
-			if (currentStyleStartIdx < startIdx) {
-				styleA.endIdx = newStyle.startIdx;
+			styleA.endIdx = newStyle.startIdx;
+			if (styleA.endIdx > styleA.startIdx) {
 				styles.insert(styles.begin() + i++, styleA);
 			}
 			//
 			styles.insert(styles.begin() + i++, newStyle);
 			//
-			if (currentStyleEndIdx > endIdx) {
-				styleB.startIdx = endIdx;
-				styleB.endIdx += insertedChars;
+			styleB.startIdx = endIdx;
+			styleB.endIdx += insertedChars;
+			if (styleB.endIdx > styleB.startIdx) {
 				styles.insert(styles.begin() + i++, styleB);
 			}
 			//
@@ -252,6 +245,10 @@ int main(int argc, char **argv) {
 		insertStyle(1, 2, "1-2");
 		dumpStyles();
 		insertStyle(5, 8, "5-8");
+		dumpStyles();
+		insertStyle(16, 20, "16-20");
+		dumpStyles();
+		insertStyle(0, 7, "0-7");
 		dumpStyles();
 		/*
 		//
