@@ -143,17 +143,32 @@ void removeStyles(int startIdx, int endIdx) {
 }
 
 void insertStyle(int startIdx, int endIdx, const string &id) {
-	Console::println("insertStyle(): " + to_string(startIdx) + ", " + to_string(endIdx));
 	//
 	TextStyle newStyle;
 	newStyle.startIdx = startIdx;
 	newStyle.endIdx = endIdx;
 	newStyle.id = id;
 	//
-	auto insertedChars = endIdx - startIdx;
+	auto charsToAdvance = endIdx - startIdx;
 	//
-	if (styles.empty() == true) {
-		styles.push_back(newStyle);
+	Console::println("insertStyle(): " + to_string(startIdx) + ", " + to_string(endIdx) + ", chars to advance: " + to_string(charsToAdvance));
+	// can we put this style to the beginning
+	if (styles.empty() == true || endIdx < styles[0].startIdx) {
+		// yup
+		styles.insert(styles.begin(), newStyle);
+		// advance next styles
+		for (auto i = 1; i < styles.size(); i++) {
+			auto &currentStyle = styles[i];
+			currentStyle.startIdx += charsToAdvance;
+			currentStyle.endIdx += charsToAdvance;
+		}
+		//
+		return;
+	}
+	// can we put this style to the end
+	if (startIdx >= styles[styles.size() - 1].endIdx) {
+		// yup
+		styles.insert(styles.end(), newStyle);
 		//
 		return;
 	}
@@ -170,13 +185,12 @@ void insertStyle(int startIdx, int endIdx, const string &id) {
 		i++;
 	}
 	// adjust styles
-	Console::println("insertStyle(): initial i = " + to_string(i) + " / " + to_string(styles.size()));
 	for (; i < styles.size(); i++) {
 		auto &currentStyle = styles[i];
 		// check if the current range overlaps with the range to be removed
 		if (currentStyle.startIdx < endIdx && currentStyle.endIdx > startIdx) {
-			Console::println("bbb");
-			Console::println("Collision: " + to_string(currentStyle.startIdx) + " ... " + to_string(currentStyle.endIdx) + " / " + to_string(newStyle.startIdx) + " ... " + to_string(newStyle.endIdx));
+			//
+			auto currentStyleLength = currentStyle.endIdx - currentStyle.startIdx;
 			auto currentStyleStartIdx = currentStyle.startIdx;
 			auto currentStyleEndIdx = currentStyle.endIdx;
 			auto styleA = currentStyle;
@@ -184,24 +198,30 @@ void insertStyle(int startIdx, int endIdx, const string &id) {
 			// remove the overlapping range
 			styles.erase(styles.begin() + i);
 			// split the overlapping range into two non-overlapping ranges
+			//	range from current style start index to new style start index
 			styleA.endIdx = newStyle.startIdx;
+			//	do we have a feasible range?
 			if (styleA.endIdx > styleA.startIdx) {
+				// yes
 				styles.insert(styles.begin() + i++, styleA);
+				//
+				currentStyleLength-= styleA.endIdx - styleA.startIdx;
 			}
+			// insert new style
 			//
 			styles.insert(styles.begin() + i++, newStyle);
-			//
-			styleB.startIdx = endIdx;
-			styleB.endIdx += insertedChars;
+			//	range from new style end index to current style end index
+			styleB.startIdx = endIdx + (currentStyleStartIdx - startIdx);
+			styleB.endIdx = styleB.startIdx + currentStyleLength;
 			if (styleB.endIdx > styleB.startIdx) {
 				styles.insert(styles.begin() + i++, styleB);
+				//
+				charsToAdvance = styleB.endIdx - currentStyleEndIdx;
 			}
 			//
 			break;
 		} else {
-			Console::println("ccc");
 			if (newStyle.startIdx >= currentStyle.endIdx) {
-				Console::println("ddd");
 				styles.insert(styles.begin() + i + 1, newStyle);
 				i++;
 				i++;
@@ -210,12 +230,11 @@ void insertStyle(int startIdx, int endIdx, const string &id) {
 			}
 		}
 	}
-	Console::println("insertStyle(): advance i = " + to_string(i) + " / " + to_string(styles.size()));
 	// advance next styles
 	for (; i < styles.size(); i++) {
 		auto &currentStyle = styles[i];
-		currentStyle.startIdx += insertedChars;
-		currentStyle.endIdx += insertedChars;
+		currentStyle.startIdx += charsToAdvance;
+		currentStyle.endIdx += charsToAdvance;
 	}
 }
 
@@ -226,7 +245,7 @@ void clearStyles() {
 void dumpStyles() {
 	Console::println("dumpStyles()");
 	for (auto &style : styles) {
-		Console::println("\t" + to_string(style.startIdx) + " ... " + to_string(style.endIdx) + "(" + style.id + ")");
+		Console::println("\t" + to_string(style.startIdx) + " ... " + to_string(style.endIdx) + "(" + style.id + "), chars = " + to_string(style.endIdx - style.startIdx));
 	}
 }
 
@@ -237,21 +256,23 @@ int main(int argc, char **argv) {
 		//
 		Console::println("StylesTest: Insert Test");
 		clearStyles();
-		insertStyle(0, 3, "0-3");
-		insertStyle(3, 6, "3-6");
+		Console::println();
 		insertStyle(6, 9, "6-9");
-		insertStyle(9, 12, "9-12");
+		insertStyle(16, 19, "16-19");
 		dumpStyles();
 		insertStyle(1, 2, "1-2");
 		dumpStyles();
+		Console::println();
 		insertStyle(5, 8, "5-8");
 		dumpStyles();
+		Console::println();
 		insertStyle(16, 20, "16-20");
 		dumpStyles();
+		Console::println();
 		insertStyle(0, 7, "0-7");
 		dumpStyles();
-		/*
 		//
+		/*
 		Console::println("StylesTest: Insert Test + Unset Test");
 		clearStyles();
 		insertStyle(0, 3, "0-3");
@@ -263,6 +284,8 @@ int main(int argc, char **argv) {
 		dumpStyles();
 		unsetStyle(1, 11);
 		dumpStyles();
+		*/
+		/*
 		Console::println("StylesTest: Insert Test + Remove Test");
 		clearStyles();
 		insertStyle(0, 3, "0-3");
@@ -275,10 +298,8 @@ int main(int argc, char **argv) {
 		Console::println("StylesTest: Unset all");
 		unsetStyle(0, 14);
 		dumpStyles();
-		insertStyle(3, 6);
-		insertStyle(1, 2);
 		dumpStyles();
-		 */
+		*/
 	}
 	Console::println("StylesTest: done");
 }
