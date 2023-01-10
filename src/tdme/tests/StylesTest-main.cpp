@@ -325,10 +325,10 @@ int main(int argc, char **argv) {
 		//
 		Console::println("StylesTest: Insert Test + Unset Test");
 		clearStyles();
-		insertStyle(0, 3, "0-3");
-		insertStyle(3, 6, "3-6");
-		insertStyle(6, 9, "6-9");
-		insertStyle(9, 12, "9-12");
+		insertStyle(0, 3, "A");
+		insertStyle(3, 6, "B");
+		insertStyle(6, 9, "C");
+		insertStyle(9, 12, "D");
 		dumpStyles();
 		unsetStyle(2, 4);
 		dumpStyles();
