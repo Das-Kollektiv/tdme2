@@ -302,6 +302,7 @@ int main(int argc, char **argv) {
 	Application::installExceptionHandler();
 	Console::println("StylesTest: init");
 	{
+		/*
 		//
 		Console::println("StylesTest: Insert Test");
 		clearStyles();
@@ -320,8 +321,8 @@ int main(int argc, char **argv) {
 		Console::println();
 		insertStyle(0, 7, "F");
 		dumpStyles();
+		*/
 		//
-		/*
 		Console::println("StylesTest: Insert Test + Unset Test");
 		clearStyles();
 		insertStyle(0, 3, "0-3");
@@ -333,7 +334,6 @@ int main(int argc, char **argv) {
 		dumpStyles();
 		unsetStyle(1, 11);
 		dumpStyles();
-		*/
 		/*
 		Console::println("StylesTest: Insert Test + Remove Test");
 		clearStyles();
