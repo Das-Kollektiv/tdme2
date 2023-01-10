@@ -184,11 +184,27 @@ void insertStyle(int startIdx, int endIdx, const string &id) {
 		}
 		i++;
 	}
+	// are we advanced over new style end index
+	//	means we have a gap after a style to put our new style in
+	if (styles[i].startIdx <= endIdx) {
+		//
+		styles.insert(styles.begin() + i++, newStyle);
+		// advance next styles
+		for (; i < styles.size(); i++) {
+			auto &currentStyle = styles[i];
+			currentStyle.startIdx += charsToAdvance;
+			currentStyle.endIdx += charsToAdvance;
+		}
+		return;
+	}
+	//
+	Console::println("xxx: " + to_string(styles[i].startIdx) + " / " + to_string(styles[i].endIdx));
 	// adjust styles
 	for (; i < styles.size(); i++) {
 		auto &currentStyle = styles[i];
 		// check if the current range overlaps with the range to be removed
 		if (currentStyle.startIdx < endIdx && currentStyle.endIdx > startIdx) {
+			Console::println("aaa");
 			//
 			auto currentStyleLength = currentStyle.endIdx - currentStyle.startIdx;
 			auto currentStyleStartIdx = currentStyle.startIdx;
@@ -202,6 +218,7 @@ void insertStyle(int startIdx, int endIdx, const string &id) {
 			styleA.endIdx = newStyle.startIdx;
 			//	do we have a feasible range?
 			if (styleA.endIdx > styleA.startIdx) {
+				Console::println("aaa.1");
 				// yes
 				styles.insert(styles.begin() + i++, styleA);
 				//
@@ -214,6 +231,7 @@ void insertStyle(int startIdx, int endIdx, const string &id) {
 			styleB.startIdx = endIdx + (currentStyleStartIdx - startIdx);
 			styleB.endIdx = styleB.startIdx + currentStyleLength;
 			if (styleB.endIdx > styleB.startIdx) {
+				Console::println("aaa.2");
 				styles.insert(styles.begin() + i++, styleB);
 				//
 				charsToAdvance = styleB.endIdx - currentStyleEndIdx;
@@ -221,7 +239,12 @@ void insertStyle(int startIdx, int endIdx, const string &id) {
 			//
 			break;
 		} else {
+			Console::println("bbb.1");
+			//
 			if (newStyle.startIdx >= currentStyle.endIdx) {
+				//
+				Console::println("bbb.2");
+				//
 				styles.insert(styles.begin() + i + 1, newStyle);
 				i++;
 				i++;
