@@ -266,10 +266,36 @@ void clearStyles() {
 }
 
 void dumpStyles() {
+	Console::println();
 	Console::println("dumpStyles()");
+	Console::println();
 	for (auto &style : styles) {
-		Console::println("\t" + to_string(style.startIdx) + " ... " + to_string(style.endIdx) + "(" + style.id + "), chars = " + to_string(style.endIdx - style.startIdx));
+		Console::println(to_string(style.startIdx) + " ... " + to_string(style.endIdx) + "(" + style.id + "), chars = " + to_string(style.endIdx - style.startIdx));
 	}
+	for (auto i = 0; i < 30; i++) {
+		Console::print(string() + (char)((i % 10) + '0'));
+	}
+	Console::println();
+	for (auto i = 0; i < 30; i++) {
+		auto styleCount = 0;
+		for (auto j = 0; j < styles.size(); j++) {
+			auto& currentStyle = styles[j];
+			if (i >= currentStyle.startIdx && i < currentStyle.endIdx) {
+				styleCount++;
+				Console::print(currentStyle.id);
+			}
+		}
+		if (styleCount == 0) {
+			Console::print(" ");
+		} else
+		if (styleCount > 1) {
+			Console::println();
+			Console::println("Multiple styles!");
+			return;
+		}
+	}
+	Console::println();
+	Console::println();
 }
 
 int main(int argc, char **argv) {
@@ -280,19 +306,19 @@ int main(int argc, char **argv) {
 		Console::println("StylesTest: Insert Test");
 		clearStyles();
 		Console::println();
-		insertStyle(6, 9, "6-9");
-		insertStyle(16, 19, "16-19");
+		insertStyle(6, 9, "A");
+		insertStyle(16, 19, "B");
 		dumpStyles();
-		insertStyle(1, 2, "1-2");
-		dumpStyles();
-		Console::println();
-		insertStyle(5, 8, "5-8");
+		insertStyle(1, 2, "C");
 		dumpStyles();
 		Console::println();
-		insertStyle(16, 20, "16-20");
+		insertStyle(5, 8, "D");
 		dumpStyles();
 		Console::println();
-		insertStyle(0, 7, "0-7");
+		insertStyle(16, 20, "E");
+		dumpStyles();
+		Console::println();
+		insertStyle(0, 7, "F");
 		dumpStyles();
 		//
 		/*
