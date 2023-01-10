@@ -937,6 +937,7 @@ MAIN_SRCS = \
 	src/tdme/tests/RayTracingTest-main.cpp \
 	src/tdme/tests/SkinningTest-main.cpp \
 	src/tdme/tests/SplineTest-main.cpp \
+	src/tdme/tests/StylesTest-main.cpp \
 	src/tdme/tests/TextureAtlasTest-main.cpp \
 	src/tdme/tests/ThreadingTest-main.cpp \
 	src/tdme/tests/TreeTest-main.cpp \

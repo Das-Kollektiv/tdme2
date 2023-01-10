@@ -128,48 +128,39 @@ void GUIStyledTextNode::removeText(int32_t idx, int32_t count) {
 	// TODO: we have new node dimension after remove
 	text.remove(idx, count, &count);
 	idx = text.getUtf8BinaryIndex(idx);
-	auto adaptNextStyles = false;
-	for (auto i = 0; i < styles.size(); i++) {
-		auto& style = styles[i];
-		// adapting styles after specific style change for all succeeding styles
-		if (adaptNextStyles == true) {
-			style.startIdx-= count;
-			style.endIdx-= count;
-			if (style.startIdx < 0 && style.endIdx < 0) {
-				styles.erase(styles.begin() + i);
-				i--;
-				continue;
+	// Haha: This was answered by OpenGPT
+	auto start = idx;
+	auto end = idx + count + 1;
+	for (auto it = styles.begin(); it != styles.end();) {
+		// check if the current range overlaps with the range to be removed
+		if (it->startIdx < end && it->endIdx > start) {
+			// split the overlapping range into two non-overlapping ranges
+			if (it->startIdx < start) {
+				auto style = *it;
+				style.startIdx = it->startIdx;
+				style.endIdx = start;
+				styles.insert(it - 1, style);
 			}
-			if (style.startIdx < 0) style.startIdx = 0;
-			if (style.endIdx < 0) style.endIdx = 0;
-		} else
-		// adapting styles for all succeeding styles
-		if (idx < style.startIdx) {
-			style.startIdx-= count;
-			style.endIdx-= count;
-			if (style.startIdx < 0 && style.endIdx < 0) {
-				styles.erase(styles.begin() + i);
-				i--;
-				continue;
+			if (it->endIdx > end) {
+				auto style = *it;
+				style.startIdx = end;
+				style.endIdx = it->endIdx;
+				styles.insert(it - 1, style);
 			}
-			if (style.startIdx < 0) style.startIdx = 0;
-			if (style.endIdx < 0) style.endIdx = 0;
-			adaptNextStyles = true;
+			// remove the overlapping range
+			it = styles.erase(it);
 		} else {
-			// our index >= style start and index <= style end
-			if (idx <= style.endIdx) {
-				// idx < end idx
-				style.endIdx-= count;
-				if (style.endIdx < 0) {
-					styles.erase(styles.begin() + i);
-					i--;
-					continue;
-				}
-				if (style.endIdx < 0) style.endIdx = 0;
-				adaptNextStyles = true;
+			// adjust the indices of the remaining ranges if necessary
+			if (it->startIdx >= end) {
+				it->startIdx -= (end - start);
 			}
+			if (it->endIdx > end) {
+				it->endIdx -= (end - start);
+			}
+			++it;
 		}
 	}
+	//
 	charEndIdx = text.size();
 	startTextStyleIdx = -1;
 	// TODO: this can be optimized later
@@ -181,28 +172,35 @@ void GUIStyledTextNode::removeText(int32_t idx, int32_t count) {
 void GUIStyledTextNode::insertText(int32_t idx, int c) {
 	auto s = Character::toString(c);
 	text.insert(idx, s);
+	//
 	idx = text.getUtf8BinaryIndex(idx);
 	auto count = s.size();
-	auto adaptNextStyles = false;
-	for (auto& style: styles) {
-		// adapting styles after specific style change for all succeeding styles
-		if (adaptNextStyles == true) {
-			style.startIdx+= count;
-			style.endIdx+= count;
-		} else
-		// adapting styles for all succeeding styles
-		if (idx < style.startIdx) {
-			style.startIdx+= count;
-			style.endIdx+= count;
-			adaptNextStyles = true;
-		} else {
-			// our index >= style start and index <= style end
-			if (idx <= style.endIdx) {
-				// idx < end idx
-				style.endIdx+= count;
-				adaptNextStyles = true;
-			}
-		}
+	// Haha: ChatGPT
+	auto startIdx = idx;
+	auto endIdx = idx + count;
+	for (auto it = styles.begin(); it != styles.end();) {
+	    // check if the current range overlaps with the range to be inserted
+	    if (it->startIdx < endIdx && it->endIdx > startIdx) {
+	        // split the overlapping range into two non-overlapping ranges
+	        if (it->startIdx < startIdx) {
+	        	auto style = *it;
+	        	style.endIdx = startIdx;
+	            styles.insert(it - 1, style);
+	        }
+	        if (it->endIdx > endIdx) {
+	        	auto style = *it;
+	        	style.startIdx = endIdx;
+	            styles.insert(it - 1, style);
+	        }
+	        // remove the overlapping range
+			it = styles.erase(it);
+	    } else {
+	        // adjust the indices of the remaining ranges if necessary
+	        if (it->endIdx > startIdx) {
+	            it->endIdx += (endIdx - startIdx);
+	        }
+	        ++it;
+	    }
 	}
 	charEndIdx = text.size();
 	startTextStyleIdx = -1;
@@ -216,28 +214,36 @@ void GUIStyledTextNode::insertText(int32_t idx, const string& s) {
 	// TODO: we have new node dimension after remove
 	text.insert(idx, s);
 	idx = text.getUtf8BinaryIndex(idx);
+	//
 	auto count = s.size();
-	auto adaptNextStyles = false;
-	for (auto& style: styles) {
-		// adapting styles after specific style change for all succeeding styles
-		if (adaptNextStyles == true) {
-			style.startIdx+= count;
-			style.endIdx+= count;
-		} else
-		// adapting styles for all succeeding styles
-		if (idx < style.startIdx) {
-			style.startIdx+= count;
-			style.endIdx+= count;
-			adaptNextStyles = true;
-		} else {
-			// our index >= style start and index <= style end
-			if (idx <= style.endIdx) {
-				// idx < end idx
-				style.endIdx+= count;
-				adaptNextStyles = true;
-			}
-		}
+	// Haha: ChatGPT
+	auto startIdx = idx;
+	auto endIdx = idx + count;
+	for (auto it = styles.begin(); it != styles.end();) {
+	    // check if the current range overlaps with the range to be inserted
+	    if (it->startIdx < endIdx && it->endIdx > startIdx) {
+	        // split the overlapping range into two non-overlapping ranges
+	        if (it->startIdx < startIdx) {
+	        	auto style = *it;
+	        	style.endIdx = startIdx;
+	            styles.insert(it - 1, style);
+	        }
+	        if (it->endIdx > endIdx) {
+	        	auto style = *it;
+	        	style.startIdx = endIdx;
+	            styles.insert(it - 1, style);
+	        }
+	        // remove the overlapping range
+			it = styles.erase(it);
+	    } else {
+	        // adjust the indices of the remaining ranges if necessary
+	        if (it->endIdx > startIdx) {
+	            it->endIdx += (endIdx - startIdx);
+	        }
+	        ++it;
+	    }
 	}
+	//
 	charEndIdx = text.size();
 	startTextStyleIdx = -1;
 	// TODO: this can be optimized later
@@ -1625,32 +1631,29 @@ void GUIStyledTextNode::unsetStyles() {
 }
 
 void GUIStyledTextNode::unsetTextStyle(int startIdx, int endIdx) {
-	// Console::print("GUIStyledTextNode::unsetTextStyle(): " + to_string(startIdx) + " ... " + to_string(endIdx) + ": '");
-	// for (auto i = startIdx; i <= endIdx; i++) Console::print(string() + text.charAt(i));
-	// Console::println("'");
-	// for (auto& style: styles) Console::println("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
-	for (auto i = 0; i < styles.size(); i++) {
-		auto& style = styles[i];
-		if (startIdx >= style.startIdx && endIdx <= style.endIdx) {
-			auto styleNext = style;
-			style.endIdx = startIdx - 1;
-			styleNext.startIdx = endIdx + 1;
-			styles.insert(styles.begin() + i + 1, styleNext);
-		} else {
-			if (startIdx >= style.startIdx && startIdx <= style.endIdx) {
-				style.endIdx = startIdx - 1;
-			}
-			if (endIdx >= style.startIdx && endIdx <= style.endIdx) {
-				style.startIdx = endIdx - 1;
-			}
-		}
-		if (style.startIdx > style.endIdx ||
-			(startIdx < style.startIdx && endIdx > style.endIdx)) {
-			styles.erase(styles.begin() + i);
-			i--;
-		}
+	// HAHA: OpenGPT
+	// Iterate through the list of ranges
+	for (auto it = styles.begin(); it != styles.end();) {
+	    // Check if the start index of the range to be removed is within the range of the current range
+	    // or if the end index of the range to be removed is within the range of the current range
+	    if ((startIdx >= it->startIdx && startIdx < it->endIdx) || (endIdx > it->startIdx && endIdx <= it->endIdx)) {
+	        // Split the overlapping range into two non-overlapping ranges
+	        if (startIdx > it->startIdx) {
+	        	auto style = *it;
+	        	style.endIdx = startIdx;
+	            styles.insert(it - 1, style);
+	        }
+	        if (endIdx < it->endIdx) {
+	        	auto style = *it;
+	        	style.startIdx = endIdx;
+	            styles.insert(it - 1, style);
+	        }
+	        // Remove the overlapping range
+	        it = styles.erase(it);
+	    } else {
+	        ++it;
+	    }
 	}
-	// for (auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 }
 
 void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& color, const string& font, int size, const string& url) {
