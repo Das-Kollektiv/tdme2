@@ -89,7 +89,7 @@ int main(int argc, char** argv)
 		Console::println("Generating Makefile");
 
 		auto executableFolder = StringTools::replace(argv[0], "\\", "/");
-		auto tdme2Folder = StringTools::substring(executableFolder, 0, executableFolder.rfind("/tdme2/") + string("/tdme2/").length());
+		auto tdme2Folder = StringTools::substring(executableFolder, 0, StringTools::toLowerCase(executableFolder).rfind("/tdme2/") + string("/tdme2/").length());
 
 		auto makefileSource = FileSystem::getInstance()->getContentAsString(tdme2Folder + "/resources/engine/templates/makefiles", "Makefile");
 		makefileSource = StringTools::replace(makefileSource, "{$source-files}", sourceFilesVariable);
