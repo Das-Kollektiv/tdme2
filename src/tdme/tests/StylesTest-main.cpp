@@ -69,7 +69,7 @@ void unsetStyle(int startIdx, int endIdx) {
 void removeStyles(int startIdx, int endIdx) {
 	Console::println("removeStyle(): " + to_string(startIdx) + ", " + to_string(endIdx));
 	//
-	auto removedChars = endIdx - startIdx;
+	auto charsToRemove = endIdx - startIdx;
 	// find first style that is before new style or has collision
 	auto i = 0;
 	while (true == true) {
@@ -78,34 +78,25 @@ void removeStyles(int startIdx, int endIdx) {
 		if (startIdx > currentStyle.endIdx) {
 			// no op
 		} else {
-			i++;
 			break;
 		}
 		i++;
 	}
 	Console::println("removeStyle(): initial i = " + to_string(i) + " / " + to_string(styles.size()));
 	//
+	auto hadCollision = false;
 	for (; i < styles.size(); i++) {
 		auto &currentStyle = styles[i];
-		// check if the range to be removed is within current range
-		if (startIdx >= currentStyle.startIdx  && endIdx <= currentStyle.endIdx) {
-			Console::println("aaa");
-			// remove the overlapping range
-			styles.erase(styles.begin() + i);
-			// stop here, readvance next styles
-			break;
-		} else
-		// check if the current range ins within range to be removed
+		Console::println("Test@" + to_string(i) + ": " + to_string(currentStyle.startIdx) + " ... " + to_string(currentStyle.endIdx) + " / " + to_string(startIdx) + " ... " + to_string(endIdx) + " / " + currentStyle.id);
+		// check if remove range is in current style range
 		if (currentStyle.startIdx >= startIdx && currentStyle.endIdx <= endIdx) {
-			// remove the overlapping range
+			Console::println("Deletion: " + to_string(currentStyle.startIdx) + " ... " + to_string(currentStyle.endIdx) + " / " + to_string(startIdx) + " ... " + to_string(endIdx) + " / " + currentStyle.id);
 			styles.erase(styles.begin() + i);
-			//
 			i--;
 		} else
 		// check if the current range overlaps with the range to be removed
 		if (currentStyle.startIdx < endIdx && currentStyle.endIdx > startIdx) {
-			Console::println("bbb");
-			Console::println("Collision: " + to_string(currentStyle.startIdx) + " ... " + to_string(currentStyle.endIdx) + " / " + to_string(startIdx) + " ... " + to_string(endIdx));
+			Console::println("Collision: " + to_string(currentStyle.startIdx) + " ... " + to_string(currentStyle.endIdx) + " / " + to_string(startIdx) + " ... " + to_string(endIdx) + " / " + currentStyle.id);
 			auto currentStyleStartIdx = currentStyle.startIdx;
 			auto currentStyleEndIdx = currentStyle.endIdx;
 			auto styleA = currentStyle;
@@ -113,36 +104,55 @@ void removeStyles(int startIdx, int endIdx) {
 			// remove the overlapping range
 			styles.erase(styles.begin() + i);
 			// split the overlapping range into two non-overlapping ranges
-			if (currentStyleStartIdx < startIdx) {
-				styleA.endIdx = startIdx;
-				styles.insert(styles.begin() + i, styleA);
-			}
-			if (currentStyleEndIdx > endIdx) {
-				styleB.startIdx = endIdx;
-				styleB.endIdx -= removedChars;
-				styles.insert(styles.begin() + i, styleB);
-			}
+			styleA.endIdx = startIdx;
+			//if (styleA.endIdx > styleA.startIdx) {
+				Console::println("\tAdding left: " + to_string(styleA.startIdx) + " ... " + to_string(styleA.endIdx) + " / " + styleA.id);
+				styles.insert(styles.begin() + i++, styleA);
+			//}
+			styleB.startIdx = endIdx - 1;
+			styleB.endIdx -= charsToRemove;
+			//if (styleB.endIdx > styleB.startIdx) {
+				Console::println("\tAdding right: " + to_string(styleB.startIdx) + " ... " + to_string(styleB.endIdx) + " / " + styleB.id);
+				styles.insert(styles.begin() + i++, styleB);
+			//}
 			// stop here, readvance next styles
-			break;
+			hadCollision = true;
+			//
 		} else {
-			Console::println("ccc");
-			if (startIdx >= currentStyle.endIdx) {
-				i++;
+			if (hadCollision == true) {
+				Console::println("Done: " + to_string(currentStyle.startIdx) + " ... " + to_string(currentStyle.endIdx) + " / " + to_string(startIdx) + " ... " + to_string(endIdx) + " / " + currentStyle.id);
+				//
+				i--;
 				//
 				break;
 			}
 		}
 	}
-	Console::println("removeStyle(): advance i = " + to_string(i) + " / " + to_string(styles.size()));
+	Console::println("removeStyle(): unadvance i = " + to_string(i) + " / " + to_string(styles.size()) + " / " + to_string(charsToRemove));
 	// unadvance next styles
 	for (; i < styles.size(); i++) {
 		auto &currentStyle = styles[i];
-		currentStyle.startIdx -= removedChars;
-		currentStyle.endIdx -= removedChars;
+		Console::println("removeStyle(): unadvancing i = " + to_string(i) + " / " + to_string(styles.size()) + " from " + to_string(currentStyle.startIdx) + " ... " + to_string(currentStyle.endIdx) + " / " + to_string(currentStyle.startIdx - charsToRemove) + " ... " + to_string(currentStyle.endIdx - charsToRemove));
+		currentStyle.startIdx -= charsToRemove;
+		currentStyle.endIdx -= charsToRemove;
 	}
 }
 
+/*
+012345678901234567890123456789
+    AAA BBB CCC
+	 XXXXX
+
+012345678901234567890123456789
+    AAA BBB CCC
+	 XXXXX
+    AB CCC
+	 XXXXX
+
+*/
+
 void insertStyle(int startIdx, int endIdx, const string &id) {
+	Console::println("insertStyle(): " + to_string(startIdx) + ", " + to_string(endIdx) + " / " + id);
 	//
 	TextStyle newStyle;
 	newStyle.startIdx = startIdx;
@@ -151,7 +161,6 @@ void insertStyle(int startIdx, int endIdx, const string &id) {
 	//
 	auto charsToAdvance = endIdx - startIdx;
 	//
-	Console::println("insertStyle(): " + to_string(startIdx) + ", " + to_string(endIdx) + ", chars to advance: " + to_string(charsToAdvance));
 	// can we put this style to the beginning
 	if (styles.empty() == true || endIdx < styles[0].startIdx) {
 		// yup
@@ -198,13 +207,11 @@ void insertStyle(int startIdx, int endIdx, const string &id) {
 		return;
 	}
 	//
-	Console::println("xxx: " + to_string(styles[i].startIdx) + " / " + to_string(styles[i].endIdx));
 	// adjust styles
 	for (; i < styles.size(); i++) {
 		auto &currentStyle = styles[i];
 		// check if the current range overlaps with the range to be removed
 		if (currentStyle.startIdx < endIdx && currentStyle.endIdx > startIdx) {
-			Console::println("aaa");
 			//
 			auto currentStyleLength = currentStyle.endIdx - currentStyle.startIdx;
 			auto currentStyleStartIdx = currentStyle.startIdx;
@@ -218,7 +225,6 @@ void insertStyle(int startIdx, int endIdx, const string &id) {
 			styleA.endIdx = newStyle.startIdx;
 			//	do we have a feasible range?
 			if (styleA.endIdx > styleA.startIdx) {
-				Console::println("aaa.1");
 				// yes
 				styles.insert(styles.begin() + i++, styleA);
 				//
@@ -231,7 +237,6 @@ void insertStyle(int startIdx, int endIdx, const string &id) {
 			styleB.startIdx = endIdx + (currentStyleStartIdx - startIdx);
 			styleB.endIdx = styleB.startIdx + currentStyleLength;
 			if (styleB.endIdx > styleB.startIdx) {
-				Console::println("aaa.2");
 				styles.insert(styles.begin() + i++, styleB);
 				//
 				charsToAdvance = styleB.endIdx - currentStyleEndIdx;
@@ -239,11 +244,8 @@ void insertStyle(int startIdx, int endIdx, const string &id) {
 			//
 			break;
 		} else {
-			Console::println("bbb.1");
 			//
 			if (newStyle.startIdx >= currentStyle.endIdx) {
-				//
-				Console::println("bbb.2");
 				//
 				styles.insert(styles.begin() + i + 1, newStyle);
 				i++;
@@ -253,6 +255,7 @@ void insertStyle(int startIdx, int endIdx, const string &id) {
 			}
 		}
 	}
+	Console::println("insertStyle(): advance i = " + to_string(i) + " / " + to_string(styles.size()) + " / advance: " + to_string(charsToAdvance));
 	// advance next styles
 	for (; i < styles.size(); i++) {
 		auto &currentStyle = styles[i];
@@ -276,25 +279,29 @@ void dumpStyles() {
 		Console::print(string() + (char)((i % 10) + '0'));
 	}
 	Console::println();
+	auto multipleStyles = false;
 	for (auto i = 0; i < 30; i++) {
 		auto styleCount = 0;
 		for (auto j = 0; j < styles.size(); j++) {
 			auto& currentStyle = styles[j];
 			if (i >= currentStyle.startIdx && i < currentStyle.endIdx) {
 				styleCount++;
-				Console::print(currentStyle.id);
+				if (styleCount == 1) {
+					Console::print(currentStyle.id);
+				}
 			}
 		}
 		if (styleCount == 0) {
 			Console::print(" ");
 		} else
 		if (styleCount > 1) {
-			Console::println();
-			Console::println("Multiple styles!");
-			return;
+			multipleStyles = true;
 		}
 	}
 	Console::println();
+	if (multipleStyles == true) {
+		Console::println("Multiple styles!");
+	}
 	Console::println();
 }
 
@@ -302,8 +309,8 @@ int main(int argc, char **argv) {
 	Application::installExceptionHandler();
 	Console::println("StylesTest: init");
 	{
-		/*
 		//
+		/*
 		Console::println("StylesTest: Insert Test");
 		clearStyles();
 		Console::println();
@@ -322,6 +329,15 @@ int main(int argc, char **argv) {
 		insertStyle(0, 7, "F");
 		dumpStyles();
 		*/
+		Console::println("StylesTest: Insert Test");
+		clearStyles();
+		Console::println();
+		insertStyle(1, 10, "A");
+		insertStyle(5, 10, "B");
+		dumpStyles();
+		insertStyle(16, 20, "C");
+		dumpStyles();
+		/*
 		//
 		Console::println("StylesTest: Insert Test + Unset Test");
 		clearStyles();
@@ -334,19 +350,19 @@ int main(int argc, char **argv) {
 		dumpStyles();
 		unsetStyle(1, 11);
 		dumpStyles();
-		/*
+		*/
 		Console::println("StylesTest: Insert Test + Remove Test");
+		/*
 		clearStyles();
-		insertStyle(0, 3, "0-3");
-		insertStyle(3, 6, "3-6");
-		insertStyle(6, 9, "6-9");
-		insertStyle(9, 12, "9-12");
+		 	 01234567890123456789
+		 	 AAABBBCCCDDD
+		 	     XXXXX
+		insertStyle(0, 3, "A");
+		insertStyle(3, 6, "B");
+		insertStyle(6, 9, "C");
+		insertStyle(9, 12, "D");
 		dumpStyles();
-		removeStyles(1, 11);
-		dumpStyles();
-		Console::println("StylesTest: Unset all");
-		unsetStyle(0, 14);
-		dumpStyles();
+		removeStyles(0, 4);
 		dumpStyles();
 		*/
 	}
