@@ -200,26 +200,30 @@ private:
 							.characterPosition = characterPosition
 						}
 					);
+					/*
 					Console::println("UTF8CharacterIterator::addCacheEntry(): binary cache: binary: " + to_string(binaryPosition) + " / character: " + to_string(characterPosition));
 					for (auto& cacheEntry: _cache) {
 						Console::println("\tbinary cache: binary: " + to_string(cacheEntry.binaryPosition) + " / character: " + to_string(cacheEntry.characterPosition));
 					}
+					*/
 				}
 			}
 			// character cache
 			{
 				auto& _cache = cache->characterCache;
 				if (characterPosition > 0 && (characterPosition % UTF8PositionCache::CACHE_ENTRY_SIZE) == 0 && (_cache.empty() == true || _cache[_cache.size() - 1].characterPosition < characterPosition)) {
-					Console::println("UTF8CharacterIterator::addCacheEntry(): character cache: binary: " + to_string(binaryPosition) + " / character: " + to_string(characterPosition));
+					// Console::println("UTF8CharacterIterator::addCacheEntry(): character cache: binary: " + to_string(binaryPosition) + " / character: " + to_string(characterPosition));
 					_cache.push_back(
 						{
 							.binaryPosition = binaryPosition,
 							.characterPosition = characterPosition
 						}
 					);
+					/*
 					for (auto& cacheEntry: _cache) {
 						Console::println("\tcharacter cache: binary: " + to_string(cacheEntry.binaryPosition) + " / character: " + to_string(cacheEntry.characterPosition));
 					}
+					*/
 				}
 			}
 		}

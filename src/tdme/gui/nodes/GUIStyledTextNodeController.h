@@ -106,7 +106,7 @@ private:
 
 	vector<HistoryEntry> history;
 	int historyEntryIdx { -1 };
-	int historyIdx { -1 };
+	int historyIdx { 0 };
 	bool typedChars { false };
 
 	/**
@@ -208,12 +208,35 @@ public:
 	void storeTypingHistoryEntry();
 
 	/**
+	 * Store deletion history entry and store prior typing if we have any
+	 * @param index index
+	 * @param count count
+	 */
+	void storeDeletionHistoryEntryStoreTypingEntry(int index, int count) {
+		storeTypingHistoryEntry();
+		storeDeletionHistoryInternal(index, count);
+	}
+
+	/**
+	 * Store deletion history entry
+	 * @param index index
+	 * @param count count
+	 */
+	void storeDeletionHistoryEntry(int index, int count) {
+		//
+		if (historyIdx != -1 && historyIdx < history.size()) {
+			history.erase(history.begin() + historyIdx, history.end());
+			historyIdx = history.size();
+		}
+		storeDeletionHistoryInternal(index, count);
+	}
+
+	/**
 	 * Store typing history entry
 	 * @param index index
 	 * @param count count
-	 * @param storeTypingHistoryEntryEnabled store typing history entry enabled
 	 */
-	void storeDeletionHistoryEntry(int index, int count, bool storeTypingHistoryEntryEnabled = true);
+	void storeDeletionHistoryInternal(int index, int count);
 
 	/**
 	 * Redo

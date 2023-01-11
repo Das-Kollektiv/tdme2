@@ -389,7 +389,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 		//
 		if (selection == true) {
 			//
-			storeDeletionHistoryEntry(Math::min(index, selectionIndex), Math::abs(index - selectionIndex), false);
+			storeDeletionHistoryEntry(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 			//
 			styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 			styledTextNode->scrollToIndex();
@@ -696,7 +696,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							storeTypingHistoryEntry();
 							//
 							if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
-								storeDeletionHistoryEntry(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+								storeDeletionHistoryEntryStoreTypingEntry(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 								styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 								styledTextNode->scrollToIndex();
 								forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
@@ -704,7 +704,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 								selectionIndex = -1;
 							} else
 							if (index > 0) {
-								storeDeletionHistoryEntry(index - 1, 1);
+								storeDeletionHistoryEntryStoreTypingEntry(index - 1, 1);
 								styledTextNode->removeText(index - 1, 1);
 								styledTextNode->scrollToIndex();
 								forwardRemoveText(index - 1, 1);
@@ -983,29 +983,35 @@ void GUIStyledTextNodeController::forwardCodeCompletion(int idx) {
 }
 
 void GUIStyledTextNodeController::storeTypingHistoryEntry() {
-	//
+	// if no char has been typed we have nothing to do
 	if (typedChars == false) {
 		return;
 	}
-	//
+
+	// unset
 	typedChars = false;
-	//
+
+	// no position to start storing from?
 	if (historyEntryIdx == -1) {
 		return;
 	}
-	//
+
+	// get upper modification char bound
 	auto index = this->index;
 	if (selectionIndex != -1) index = Math::max(index, selectionIndex);
-	//
+
+	// no change?
 	if (historyEntryIdx == index) {
 		historyEntryIdx = -1;
 		return;
 	}
-	//
-	if (historyIdx != -1 && historyIdx < history.size() - 1) {
-		history.erase(history.begin() + historyIdx + 1, history.end());
-		historyIdx = history.size() - 1;
+
+	// we need to remove history from now on
+	if (historyIdx != -1 && historyIdx < history.size()) {
+		history.erase(history.begin() + historyIdx, history.end());
+		historyIdx = history.size();
 	}
+
 	//
 	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
 	auto& text = styledTextNode->getText();
@@ -1023,7 +1029,9 @@ void GUIStyledTextNodeController::storeTypingHistoryEntry() {
 	);
 	//
 	historyEntryIdx = -1;
-	historyIdx++;
+
+	// just point to the latest history entry
+	historyIdx = history.size();
 
 	/*
 	//
@@ -1047,15 +1055,7 @@ void GUIStyledTextNodeController::storeTypingHistoryEntry() {
 	*/
 }
 
-void GUIStyledTextNodeController::storeDeletionHistoryEntry(int index, int count, bool storeTypingHistoryEntryEnabled) {
-	if (storeTypingHistoryEntryEnabled == true) storeTypingHistoryEntry();
-
-	//
-	if (historyIdx != -1 && historyIdx < history.size() - 1) {
-		history.erase(history.begin() + historyIdx + 1, history.end());
-		historyIdx = history.size() - 1;
-	}
-
+void GUIStyledTextNodeController::storeDeletionHistoryInternal(int index, int count) {
 	//
 	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
 	auto& text = styledTextNode->getText();
@@ -1071,8 +1071,8 @@ void GUIStyledTextNodeController::storeDeletionHistoryEntry(int index, int count
 			.joinable = count == 1
 		}
 	);
-	//
-	historyIdx++;
+	// just point to the latest history entry
+	historyIdx = history.size();
 
 	//
 	/*
@@ -1091,7 +1091,7 @@ void GUIStyledTextNodeController::storeDeletionHistoryEntry(int index, int count
 				break;
 
 		}
-		Console::println("GUIStyledTextNodeController::storeDeletionHistoryEntry(): " + to_string(i) + ": history entry @ " + to_string(historyEntry.idx) + ": '" + historyEntry.data + "'" + ": " + historyEntryTypeString);
+		Console::println("GUIStyledTextNodeController::storeDeletionHistoryEntryStoreTypingEntry(): " + to_string(i) + ": history entry @ " + to_string(historyEntry.idx) + ": '" + historyEntry.data + "'" + ": " + historyEntryTypeString);
 	}
 	*/
 
@@ -1103,11 +1103,18 @@ void GUIStyledTextNodeController::redo() {
 	storeTypingHistoryEntry();
 
 	//
+	// Console::println("GUIStyledTextNodeController::redo(): " + to_string(historyIdx) + " / " + to_string(history.size()));
+
+	// exit if no history
 	if (history.empty() == true) return;
+
+	// after undoing everything we can point to history index of -1
 	if (historyIdx == -1) historyIdx = 0;
 
-	//
+	// do not go further than the history entries we have
 	if (historyIdx >= history.size()) return;
+
+	//
 	auto& historyEntry = history[historyIdx];
 
 	//
@@ -1136,10 +1143,10 @@ void GUIStyledTextNodeController::redo() {
 	}
 
 	//
-	styledTextNode->scrollToIndex();
+	historyIdx++;
 
 	//
-	historyIdx++;
+	styledTextNode->scrollToIndex();
 }
 
 void GUIStyledTextNodeController::undo() {
@@ -1147,11 +1154,18 @@ void GUIStyledTextNodeController::undo() {
 	storeTypingHistoryEntry();
 
 	//
+	// Console::println("GUIStyledTextNodeController::undo(): " + to_string(historyIdx) + " / " + to_string(history.size()));
+
+	// skip if empty history
 	if (history.empty() == true) return;
-	if (historyIdx == history.size()) historyIdx = history.size() - 1;
+
+	// we should not go beyond first history entry
+	if (historyIdx == 0) return;
 
 	//
-	if (historyIdx == -1 || historyIdx >= history.size()) return;
+	historyIdx--;
+
+	//
 	auto& historyEntry = history[historyIdx];
 
 	//
@@ -1183,9 +1197,6 @@ void GUIStyledTextNodeController::undo() {
 
 	//
 	styledTextNode->scrollToIndex();
-
-	//
-	historyIdx--;
 }
 
 void GUIStyledTextNodeController::selectAll() {
@@ -1203,7 +1214,7 @@ void GUIStyledTextNodeController::cut() {
 		auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
 		auto& text = styledTextNode->getText();
 		Application::getApplication()->setClipboardContent(StringTools::substring(text.getString(), Math::min(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex)), Math::max(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex))));
-		storeDeletionHistoryEntry(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+		storeDeletionHistoryEntryStoreTypingEntry(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 		styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 		styledTextNode->scrollToIndex();
 		forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
@@ -1232,7 +1243,7 @@ void GUIStyledTextNodeController::paste() {
 	auto clipboardContentLength = StringTools::getUtf8Length(clipboardContent);
 	if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
 		if (maxLength == 0 || styledTextNode->getTextLength() - Math::abs(index - selectionIndex) + clipboardContentLength < maxLength) {
-			storeDeletionHistoryEntry(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+			storeDeletionHistoryEntryStoreTypingEntry(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 			styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 			styledTextNode->scrollToIndex();
 			forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
@@ -1263,7 +1274,7 @@ void GUIStyledTextNodeController::delete_() {
 	//
 	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
 	if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
-		storeDeletionHistoryEntry(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+		storeDeletionHistoryEntryStoreTypingEntry(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 		styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 		styledTextNode->scrollToIndex();
 		forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
@@ -1271,7 +1282,7 @@ void GUIStyledTextNodeController::delete_() {
 		selectionIndex = -1;
 	} else
 	if (index < styledTextNode->getTextLength()) {
-		storeDeletionHistoryEntry(index, 1);
+		storeDeletionHistoryEntryStoreTypingEntry(index, 1);
 		styledTextNode->removeText(index, 1);
 		styledTextNode->scrollToIndex();
 		forwardRemoveText(index, 1);
