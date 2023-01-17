@@ -21,17 +21,27 @@
 #include <tdme/engine/SimplePartition.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
+#include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUIImageNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/nodes/GUIStyledTextNode.h>
+#include <tdme/gui/nodes/GUIStyledTextNodeController.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
+#include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
 #include <tdme/tools/editor/misc/CameraRotationInputHandler.h>
+#include <tdme/tools/editor/misc/TextFormatter.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/UIEditorTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::string;
 using std::unordered_set;
@@ -55,28 +65,38 @@ using tdme::engine::Object;
 using tdme::engine::SimplePartition;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::nodes::GUIStyledTextNode;
+using tdme::gui::nodes::GUIStyledTextNodeController;
 using tdme::gui::GUI;
+using tdme::gui::GUIParser;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::editor::controllers::EditorScreenController;
+using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::misc::CameraInputHandler;
+using tdme::tools::editor::misc::TextFormatter;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::UIEditorTabController;
 using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::StringTools;
 
-UIEditorTabView::UIEditorTabView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode)
+UIEditorTabView::UIEditorTabView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode, GUIScreenNode* uiScreenNode)
 {
 	this->editorView = editorView;
 	this->tabId = tabId;
 	this->screenNode = screenNode;
+	this->uiScreenNode = uiScreenNode;
 	this->popUps = editorView->getPopUps();
-	screenNodes.push_back(screenNode);
-	screenDimensions.push_back({ screenNode->getSizeConstraints().maxWidth, screenNode->getSizeConstraints().maxHeight });
+	uiScreenNodes.push_back(uiScreenNode);
+	screenDimensions.push_back({ uiScreenNode->getSizeConstraints().maxWidth, uiScreenNode->getSizeConstraints().maxHeight });
 	guiEngine = Engine::createOffScreenInstance(1920, 1080, false, false, false);
 	guiEngine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	outlinerState.expandedOutlinerParentOptionValues.push_back("0.0");
-	reAddScreens();
 }
 
 UIEditorTabView::~UIEditorTabView() {
@@ -184,12 +204,203 @@ void UIEditorTabView::initialize()
 	try {
 		uiTabController = new UIEditorTabController(this);
 		uiTabController->initialize(editorView->getScreenController()->getScreenNode());
-		screenNode->addTooltipRequestListener(uiTabController);
+		uiScreenNode->addTooltipRequestListener(uiTabController);
 	} catch (Exception& exception) {
 		Console::print(string("UIEditorTabView::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	// TODO: load settings
+
+	//
+	textNode = required_dynamic_cast<GUIStyledTextNode*>(screenNode->getInnerNodeById("text"));
+
+	// initial text format
+	TextFormatter::getInstance()->format("xml", textNode);
+	// load code completion
+	codeCompletion = TextFormatter::getInstance()->loadCodeCompletion("xml");
+
+	//
+	{
+		// add text node change listener
+		class TextChangeListener: public GUIStyledTextNodeController::ChangeListener {
+		public:
+			TextChangeListener(UIEditorTabView* uiEditorTabView): uiEditorTabView(uiEditorTabView) {
+			}
+
+			virtual ~TextChangeListener() {
+			}
+
+			virtual void onRemoveText(int idx, int count) override {
+				if (uiEditorTabView->countEnabled == true) {
+					TextFormatter::getInstance()->format("xml", uiEditorTabView->textNode, 0, uiEditorTabView->textNode->getText().size());
+					uiEditorTabView->countEnabled = false;
+				} else {
+					TextFormatter::getInstance()->format("xml", uiEditorTabView->textNode, idx, idx + count);
+				}
+			}
+			virtual void onInsertText(int idx, int count) override {
+				if (uiEditorTabView->countEnabled == true) {
+					TextFormatter::getInstance()->format("xml", uiEditorTabView->textNode, 0, uiEditorTabView->textNode->getText().size());
+					uiEditorTabView->countEnabled = false;
+				} else {
+					TextFormatter::getInstance()->format("xml", uiEditorTabView->textNode, idx, idx + count);
+				}
+			}
+		private:
+			UIEditorTabView* uiEditorTabView;
+		};
+		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->addChangeListener(textNodeChangeListener = new TextChangeListener(this));
+	}
+
+	//
+	{
+		// add code completion listener
+		class TextCodeCompletionListener: public GUIStyledTextNodeController::CodeCompletionListener {
+		public:
+			TextCodeCompletionListener(UIEditorTabView* uiEditorTabView): uiEditorTabView(uiEditorTabView) {
+			}
+
+			virtual ~TextCodeCompletionListener() {
+			}
+
+			virtual void onCodeCompletion(int idx) override {
+				auto codeCompletion = uiEditorTabView->codeCompletion;
+				if (codeCompletion == nullptr) return;
+				if (codeCompletion->delimiters.find(uiEditorTabView->textNode->getText().getCharAt(idx)) != string::npos) {
+					if (idx > 0) idx--;
+				}
+				auto previousDelimiterPos = uiEditorTabView->textNode->getPreviousDelimiter(idx, codeCompletion->delimiters);
+				string search = StringTools::substring(uiEditorTabView->textNode->getText().getString(), previousDelimiterPos == 0?0:previousDelimiterPos + 1, idx);
+				vector<CodeCompletionSymbol> codeCompletionSymbolCandidates;
+				#define MAX_ENTRIES	40
+				for (auto& symbol: codeCompletion->symbols) {
+					if (StringTools::startsWith(symbol.name, search) == true) {
+						if (symbol.overloadList.empty() == true) {
+							if (codeCompletionSymbolCandidates.size() == MAX_ENTRIES) {
+								codeCompletionSymbolCandidates.push_back(
+									{
+										.type = CodeCompletionSymbol::TYPE_NONE,
+										.display = "...",
+										.name = {},
+										.parameters = {},
+										.returnValue = {}
+									}
+								);
+								break;
+							} else {
+								codeCompletionSymbolCandidates.push_back(
+									{
+										.type = CodeCompletionSymbol::TYPE_SYMBOL,
+										.display = symbol.name,
+										.name = symbol.name,
+										.parameters = {},
+										.returnValue = {}
+									}
+								);
+							}
+						} else {
+							for (auto& overload: symbol.overloadList) {
+								if (codeCompletionSymbolCandidates.size() == MAX_ENTRIES) {
+									codeCompletionSymbolCandidates.push_back(
+										{
+											.type = CodeCompletionSymbol::TYPE_NONE,
+											.display = "...",
+											.name = {},
+											.parameters = {},
+											.returnValue = {}
+										}
+									);
+									break;
+								} else {
+									string parameters;
+									for (auto& parameter: overload.parameters) {
+										if (parameters.empty() == false) parameters+= ", ";
+										parameters+= parameter;
+									}
+									codeCompletionSymbolCandidates.push_back(
+										{
+											.type = CodeCompletionSymbol::TYPE_FUNCTION,
+											.display = symbol.name + "(" + parameters + ") = " + overload.returnValue,
+											.name = symbol.name,
+											.parameters = overload.parameters,
+											.returnValue = overload.returnValue
+										}
+									);
+								}
+							}
+							if (codeCompletionSymbolCandidates.size() == MAX_ENTRIES + 1) break;
+						}
+					}
+				}
+				auto popUps = uiEditorTabView->getPopUps();
+				// clear
+				popUps->getContextMenuScreenController()->clear();
+				//
+				sort(codeCompletionSymbolCandidates.begin(), codeCompletionSymbolCandidates.begin() + (Math::min(codeCompletionSymbolCandidates.size(), MAX_ENTRIES)), compareCodeCompletionStruct);
+				//
+				{
+					auto i = 0;
+					for (auto& codeCompletionSymbolCandidate: codeCompletionSymbolCandidates) {
+						// add light
+						class OnCodeCompletionAction: public virtual Action
+						{
+						public:
+							OnCodeCompletionAction(UIEditorTabView* uiEditorTabView, int idx, const CodeCompletionSymbol& symbol): uiEditorTabView(uiEditorTabView), idx(idx), symbol(symbol) {}
+							void performAction() override {
+								if (symbol.name.empty() == true) return;
+								auto codeCompletion = uiEditorTabView->codeCompletion;
+								if (codeCompletion == nullptr) return;
+								auto previousDelimiterPos = uiEditorTabView->textNode->getPreviousDelimiter(idx, codeCompletion->delimiters);
+								auto nextDelimiterPos = uiEditorTabView->textNode->getNextDelimiter(idx, codeCompletion->delimiters);
+								auto withoutWhiteSpaceDelimiters = codeCompletion->delimiters;
+								if (withoutWhiteSpaceDelimiters.find(' ') != string::npos) withoutWhiteSpaceDelimiters.erase(withoutWhiteSpaceDelimiters.find(' '), 1);
+								if (withoutWhiteSpaceDelimiters.find('\t') != string::npos) withoutWhiteSpaceDelimiters.erase(withoutWhiteSpaceDelimiters.find('\t'), 1);
+								if (withoutWhiteSpaceDelimiters.find('\n') != string::npos) withoutWhiteSpaceDelimiters.erase(withoutWhiteSpaceDelimiters.find('\n'), 1);
+								auto nextDelimiterPos2 = uiEditorTabView->textNode->getNextDelimiter(idx, withoutWhiteSpaceDelimiters);
+								auto idxToDelimiterString = StringTools::trim(StringTools::substring(uiEditorTabView->textNode->getText().getString(), idx + 1 < uiEditorTabView->textNode->getTextLength()?idx + 1:idx, nextDelimiterPos2));
+								string parameterString;
+								if (symbol.type == CodeCompletionSymbol::TYPE_FUNCTION && uiEditorTabView->textNode->getText().getCharAt(nextDelimiterPos2) != '(') {
+									for (auto parameter: symbol.parameters) {
+										auto parameterTokenized = StringTools::tokenize(parameter, " \t\n");
+										if (parameterString.empty() == false) parameterString+= ", ";
+										parameterString+= parameterTokenized[parameterTokenized.size() - 1];
+									}
+									parameterString = "(" + parameterString + ")"/* + codeCompletion->statementDelimiter*/;
+								}
+								uiEditorTabView->textNode->removeText(previousDelimiterPos == 0?0:previousDelimiterPos + 1, nextDelimiterPos - (previousDelimiterPos == 0?0:previousDelimiterPos + 1));
+								uiEditorTabView->textNode->insertText(previousDelimiterPos == 0?0:previousDelimiterPos + 1, symbol.name + parameterString);
+								TextFormatter::getInstance()->format("xml", uiEditorTabView->textNode, previousDelimiterPos == 0?0:previousDelimiterPos + 1, (previousDelimiterPos == 0?0:previousDelimiterPos + 1) + symbol.name.size() + parameterString.size());
+							}
+						private:
+							UIEditorTabView* uiEditorTabView;
+							int idx;
+							CodeCompletionSymbol symbol;
+						};
+						popUps->getContextMenuScreenController()->addMenuItem(codeCompletionSymbolCandidate.display, "contextmenu_codecompletion_" + to_string(i), new OnCodeCompletionAction(uiEditorTabView, idx, codeCompletionSymbolCandidate));
+						//
+						i++;
+					}
+				}
+				if (codeCompletionSymbolCandidates.empty() == false) {
+					//
+					int left, top, width, height, offsetX, offsetY;
+					auto selectedTab = uiEditorTabView->getEditorView()->getScreenController()->getSelectedTab();
+					if (selectedTab != nullptr) {
+						uiEditorTabView->getEditorView()->getViewPort(selectedTab->getFrameBufferNode(), left, top, width, height, offsetX, offsetY);
+						popUps->getContextMenuScreenController()->show(
+							left + uiEditorTabView->textNode->getIndexPositionX() - uiEditorTabView->textNode->computeParentChildrenRenderOffsetXTotal(),
+							top + uiEditorTabView->textNode->getIndexPositionY() - uiEditorTabView->textNode->computeParentChildrenRenderOffsetYTotal()
+						);
+					}
+				}
+			}
+		private:
+			UIEditorTabView* uiEditorTabView;
+		};
+		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->addCodeCompletionListener(textNodeCodeCompletionListener = new TextCodeCompletionListener(this));
+	}
+	//
+	setVisualEditor();
 }
 
 void UIEditorTabView::dispose()
@@ -204,7 +415,7 @@ void UIEditorTabView::updateRendering() {
 }
 
 inline bool UIEditorTabView::hasFixedSize() {
-	return projectedUi == false;
+	return projectedUi == false && visualEditor == false;
 }
 
 Engine* UIEditorTabView::getEngine() {
@@ -228,42 +439,46 @@ void UIEditorTabView::reloadOutliner() {
 }
 
 void UIEditorTabView::addScreen() {
-	screenNodes.push_back(nullptr);
+	uiScreenNodes.push_back(nullptr);
 	screenDimensions.push_back({ -1, -1});
 }
 
 void UIEditorTabView::setScreen(int screenIdx, GUIScreenNode* screenNode) {
-	if (screenIdx < 0 || screenIdx >= screenNodes.size()) return;
-	screenNodes[screenIdx] = screenNode;
+	if (screenIdx < 0 || screenIdx >= uiScreenNodes.size()) return;
+	uiScreenNodes[screenIdx] = screenNode;
 	screenDimensions[screenIdx] = { screenNode->getSizeConstraints().maxWidth, screenNode->getSizeConstraints().maxHeight };
 }
 
 void UIEditorTabView::unsetScreen(int screenIdx) {
-	if (screenIdx < 0 || screenIdx >= screenNodes.size()) return;
-	auto screenNode = screenNodes[screenIdx];
+	if (screenIdx < 0 || screenIdx >= uiScreenNodes.size()) return;
+	auto screenNode = uiScreenNodes[screenIdx];
 	if (screenNode != nullptr) {
 		guiEngine->getGUI()->removeScreen(screenNode->getId());
-		screenNodes[screenIdx] = nullptr;
+		uiScreenNodes[screenIdx] = nullptr;
 		screenDimensions[screenIdx] = { -1, -1 };
 	}
 }
 
 void UIEditorTabView::removeScreen(int screenIdx) {
-	if (screenIdx < 0 || screenIdx >= screenNodes.size()) return;
-	auto screenNode = screenNodes[screenIdx];
+	if (screenIdx < 0 || screenIdx >= uiScreenNodes.size()) return;
+	auto screenNode = uiScreenNodes[screenIdx];
 	if (screenNode != nullptr) {
 		guiEngine->getGUI()->removeScreen(screenNode->getId());
-		screenNodes.erase(screenNodes.begin() + screenIdx);
+		uiScreenNodes.erase(uiScreenNodes.begin() + screenIdx);
 		screenDimensions.erase(screenDimensions.begin() + screenIdx);
 	}
+}
+
+void UIEditorTabView::removeScreens() {
+	guiEngine->getGUI()->resetRenderScreens();
 }
 
 void UIEditorTabView::reAddScreens() {
 	guiEngine->getGUI()->resetRenderScreens();
 	auto screensMaxWidth = -1;
 	auto screensMaxHeight = -1;
-	for (auto i = 0; i < screenNodes.size(); i++) {
-		auto screenNode = screenNodes[i];
+	for (auto i = 0; i < uiScreenNodes.size(); i++) {
+		auto screenNode = uiScreenNodes[i];
 		auto& screenDimensionsEntity = screenDimensions[i];
 		if (screenNode == nullptr) continue;
 		auto screenMaxWidth = screenDimensionsEntity[0];
@@ -406,4 +621,60 @@ void UIEditorTabView::removePrototype() {
 
 	//
 	guiEngine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
+}
+
+void UIEditorTabView::setScreenIdx(int screenIdx) {
+	Console::println("UIEditorTabView::setScreenIdx(): " + to_string(screenIdx));
+	this->screenIdx = screenIdx;
+	if (visualEditor == true) return;
+	updateCodeEditor();
+}
+
+void UIEditorTabView::setVisualEditor() {
+	if (visualEditor == true) return;
+	visualEditor = true;
+	//
+	auto editorNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("editor"));
+	if (editorNode != nullptr) editorNode->getActiveConditions().set("visualization");
+	//
+	textNode->setText(MutableString());
+	//
+	reAddScreens();
+}
+
+void UIEditorTabView::setCodeEditor() {
+	if (visualEditor == false) return;
+	visualEditor = false;
+	//
+	removeScreens();
+	//
+	auto editorNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("editor"));
+	if (editorNode != nullptr) editorNode->getActiveConditions().set("text");
+	//
+	updateCodeEditor();
+}
+
+void UIEditorTabView::updateCodeEditor() {
+	Console::println("UIEditorTabView::updateCodeEditor(): " + to_string(screenIdx));
+	//
+	guiEngine->getGUI()->resetRenderScreens();
+	//
+	auto selectedScreenNode = screenIdx >= 0 && screenIdx < uiScreenNodes.size()?uiScreenNodes[screenIdx]:nullptr;
+	string uiCode;
+	if (selectedScreenNode != nullptr) {
+		auto screenFileName = selectedScreenNode->getFileName();
+		Console::println("UIEditorTabView::updateCodeEditor(): " + screenFileName);
+		try {
+			uiCode = FileSystem::getInstance()->getContentAsString(
+				FileSystem::getInstance()->getPathName(screenFileName),
+				FileSystem::getInstance()->getFileName(screenFileName)
+			);
+		} catch (Exception& exception) {
+			Console::println("UIEditorTabView::setCodeEditor(): An error occurred: " + string(exception.what()));
+		}
+	}
+	//
+	textNode->setText(MutableString(StringTools::replace(StringTools::replace(uiCode, "[", "\\["), "]", "\\]")));
+	// initial text format
+	TextFormatter::getInstance()->format("xml", textNode);
 }

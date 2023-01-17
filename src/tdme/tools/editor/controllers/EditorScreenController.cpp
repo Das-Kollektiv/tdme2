@@ -1586,12 +1586,12 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 						try {
 							icon = "{$icon.type_gui}";
 							colorType = "{$color.type_gui}";
-							auto screenNode = GUIParser::parse(
+							auto uiScreenNode = GUIParser::parse(
 								FileSystem::getInstance()->getPathName(absoluteFileName),
 								FileSystem::getInstance()->getFileName(absoluteFileName)
 							);
 							tabType = EditorTabView::TABTYPE_UIEDITOR;
-							tabView = new UIEditorTabView(view, tabId, screenNode);
+							tabView = new UIEditorTabView(view, tabId, screenNode, uiScreenNode);
 							viewPortTemplate = "template_viewport_ui.xml";
 							success = true;
 						} catch (Exception &exception) {
@@ -1603,7 +1603,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 							icon = "{$icon.type_gui}";
 							colorType = "{$color.type_gui}";
 							auto relativeFileName = StringTools::substring(absoluteFileName, projectPath.size() + 1);
-							auto screenNode = GUIParser::parse(
+							auto uiScreenNode = GUIParser::parse(
 								string() +
 								"<screen id='screen_template'>\n" +
 								"	<layout width='100%' height='100%' alignment='none' horizontal-align='center' vertical-align='center'>\n" +
@@ -1615,7 +1615,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 								FileSystem::getInstance()->getFileName(relativeFileName)
 							);
 							tabType = EditorTabView::TABTYPE_UIEDITOR;
-							tabView = new UIEditorTabView(view, tabId, screenNode);
+							tabView = new UIEditorTabView(view, tabId, screenNode, uiScreenNode);
 							viewPortTemplate = "template_viewport_ui.xml";
 							success = true;
 						} catch (Exception &exception) {

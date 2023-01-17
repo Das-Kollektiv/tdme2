@@ -160,6 +160,12 @@ void UIEditorTabController::onChange(GUIElementNode* node)
 	Console::println("UIEditorTabController::onChange(): " + node->getId() + " = " + node->getController()->getValue().getString());
 	if (node->getId() == "selectbox_outliner") {
 		updateDetails(node->getController()->getValue().getString());
+		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+		if (outlinerNode != "screens") {
+			//
+			auto screenIdx = Integer::parse(StringTools::substring(outlinerNode, 0, outlinerNode.find(".")));
+			view->setScreenIdx(screenIdx);
+		}
 	} else
 	if (node->getId() == "dropdown_outliner_add") {
 		auto addOutlinerType = node->getController()->getValue().getString();
@@ -175,6 +181,14 @@ void UIEditorTabController::onChange(GUIElementNode* node)
 	if (node->getId() == "projectedui_animation") {
 		prototypeMeshAnimation = node->getController()->getValue().getString();
 		view->setModelMeshAnimation(prototypeMeshAnimation);
+	} else
+	if (node->getId() == view->getTabId() + "_tab_checkbox_visualui" == true) {
+		auto visual = node->getController()->getValue().equals("1");
+		if (visual == true) {
+			view->setVisualEditor();
+		} else {
+			view->setCodeEditor();
+		}
 	}
 }
 
