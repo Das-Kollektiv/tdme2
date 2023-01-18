@@ -55,6 +55,9 @@ private:
 	string prototypeMeshNode;
 	string prototypeMeshAnimation;
 
+	bool firstSearch { true };
+	int searchIndex { -1 };
+
 public:
 	/**
 	 * Public constructor
@@ -173,6 +176,11 @@ public:
 	 * @param modelMeshAnimation model mesh animation
 	 */
 	void setPrototype(const string& pathName, const string& fileName, const string& modelMeshNode, const string& modelMeshAnimation);
+
+	/**
+	 * Close find/replace window
+	 */
+	void closeFindReplaceWindow();
 
 	/**
 	 * Show the information pop up / modal

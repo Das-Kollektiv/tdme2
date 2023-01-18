@@ -23,6 +23,7 @@
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
+#include <tdme/tools/editor/controllers/FindReplaceDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
@@ -62,6 +63,7 @@ using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
+using tdme::tools::editor::controllers::FindReplaceDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
@@ -112,7 +114,164 @@ void UIEditorTabController::dispose()
 
 void UIEditorTabController::onCommand(TabControllerCommand command)
 {
-	showInfoPopUp("Warning", "This command is not supported yet");
+	switch (command) {
+		case COMMAND_REDO:
+			view->redo();
+			break;
+		case COMMAND_UNDO:
+			view->undo();
+			break;
+		case COMMAND_CUT:
+			view->cut();
+			break;
+		case COMMAND_COPY:
+			view->copy();
+			break;
+		case COMMAND_PASTE:
+			view->paste();
+			break;
+		case COMMAND_DELETE:
+			view->delete_();
+			break;
+		case COMMAND_SELECTALL:
+			view->selectAll();
+			break;
+		case COMMAND_SAVE:
+			showInfoPopUp("Warning", "This command is not supported yet");
+			break;
+		case COMMAND_SAVEAS:
+			showInfoPopUp("Warning", "This command is not supported yet");
+			break;
+		case COMMAND_FINDREPLACE:
+			{
+				//
+				firstSearch = true;
+				searchIndex = view->getTextIndex();
+
+				//
+				class FindAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						if (uiEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText().empty() == true) {
+							uiEditorTabController->showInfoPopUp("Find", "No find string given.");
+						} else {
+							if (uiEditorTabController->view->find(
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly(),
+								uiEditorTabController->firstSearch,
+								uiEditorTabController->searchIndex
+							) == false) {
+								uiEditorTabController->showInfoPopUp("Find", "Text not found.");
+							}
+							uiEditorTabController->firstSearch = false;
+						}
+					}
+					FindAction(UIEditorTabController* uiEditorTabController): uiEditorTabController(uiEditorTabController) {
+					}
+				private:
+					UIEditorTabController* uiEditorTabController;
+				};
+				//
+				class CountAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						if (uiEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText().empty() == true) {
+							uiEditorTabController->showInfoPopUp("Count", "No find string given.");
+						} else {
+							auto count = uiEditorTabController->view->count(
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly()
+							);
+							uiEditorTabController->showInfoPopUp("Count", "The text occurred " + to_string(count) + " times.");
+						}
+					}
+					CountAction(UIEditorTabController* uiEditorTabController): uiEditorTabController(uiEditorTabController) {
+					}
+				private:
+					UIEditorTabController* uiEditorTabController;
+				};
+				//
+				class ReplaceAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						if (uiEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText().empty() == true) {
+							uiEditorTabController->showInfoPopUp("Replace", "No find string given.");
+						} else {
+							if (uiEditorTabController->view->replace(
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->getReplaceText(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly(),
+								uiEditorTabController->searchIndex
+							) == false) {
+								uiEditorTabController->showInfoPopUp("Replace", "Text not found.");
+							}
+						}
+					}
+					ReplaceAction(UIEditorTabController* uiEditorTabController): uiEditorTabController(uiEditorTabController) {
+					}
+				private:
+					UIEditorTabController* uiEditorTabController;
+				};
+				//
+				class ReplaceAllAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						if (uiEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText().empty() == true) {
+							uiEditorTabController->showInfoPopUp("Replace All", "No find string given.");
+						} else {
+							if (uiEditorTabController->view->replaceAll(
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->getReplaceText(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly()
+							) == false) {
+								uiEditorTabController->showInfoPopUp("Replace All", "Text not found.");
+							}
+						}
+					}
+					ReplaceAllAction(UIEditorTabController* uiEditorTabController): uiEditorTabController(uiEditorTabController) {
+					}
+				private:
+					UIEditorTabController* uiEditorTabController;
+				};
+				//
+				class CompleteAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						uiEditorTabController->view->cancelFind();
+						uiEditorTabController->popUps->getFindReplaceDialogScreenController()->close();
+					}
+					CompleteAction(UIEditorTabController* uiEditorTabController): uiEditorTabController(uiEditorTabController) {
+					}
+				private:
+					UIEditorTabController* uiEditorTabController;
+				};
+				//
+				popUps->getFindReplaceDialogScreenController()->show(
+					new FindAction(this),
+					new CountAction(this),
+					new ReplaceAction(this),
+					new ReplaceAllAction(this),
+					new CompleteAction(this)
+				);
+			}
+			break;
+		default:
+			showInfoPopUp("Warning", "This command is not supported yet");
+			break;
+	}
 }
 
 void UIEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
@@ -757,4 +916,8 @@ void UIEditorTabController::setPrototype(const string& pathName, const string& f
 	} else {
 		showInfoPopUp("Error", string() + "Could not load prototype");
 	}
+}
+
+void UIEditorTabController::closeFindReplaceWindow() {
+	popUps->getFindReplaceDialogScreenController()->close();
 }

@@ -123,15 +123,15 @@ public:
 	void updateMiniScriptSyntaxTree(int miniScriptScriptIdx);
 
 	/**
+	 * Close find/replace window
+	 */
+	void closeFindReplaceWindow();
+
+	/**
 	 * Show the information pop up / modal
 	 * @param caption caption
 	 * @param message message
 	 */
 	void showInfoPopUp(const string& caption, const string& message);
-
-	/**
-	 * Close find/replace window
-	 */
-	void closeFindReplaceWindow();
 
 };
