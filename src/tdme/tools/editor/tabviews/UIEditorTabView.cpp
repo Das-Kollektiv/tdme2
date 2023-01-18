@@ -212,7 +212,7 @@ void UIEditorTabView::initialize()
 	// TODO: load settings
 
 	//
-	textNode = required_dynamic_cast<GUIStyledTextNode*>(screenNode->getInnerNodeById("text"));
+	textNode = required_dynamic_cast<GUIStyledTextNode*>(screenNode->getInnerNodeById(tabId + "_tab_text"));
 
 	// initial text format
 	TextFormatter::getInstance()->format("xml", textNode);
@@ -634,7 +634,7 @@ void UIEditorTabView::setVisualEditor() {
 	if (visualEditor == true) return;
 	visualEditor = true;
 	//
-	auto editorNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("editor"));
+	auto editorNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(tabId + "_tab_editor"));
 	if (editorNode != nullptr) editorNode->getActiveConditions().set("visualization");
 	//
 	textNode->setText(MutableString());
@@ -648,7 +648,7 @@ void UIEditorTabView::setCodeEditor() {
 	//
 	removeScreens();
 	//
-	auto editorNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("editor"));
+	auto editorNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(tabId + "_tab_editor"));
 	if (editorNode != nullptr) editorNode->getActiveConditions().set("text");
 	//
 	updateCodeEditor();

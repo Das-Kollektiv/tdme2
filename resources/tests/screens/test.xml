@@ -241,7 +241,7 @@
 							<![CDATA[
 [url=https://github.com/andreasdr/tdme2.git][image]resources/github/tdme2-logo.png[/image][/url]
 
-[color={$color.font_highlight}][font=resources/engine/fonts/Roboto_bold_30.fnt]MIT License[/font][/color]
+[color={$color.font_highlight}][font=resources/engine/fonts/Roboto-Bold.ttf][size=30]MIT License[/size][/font][/color]
 
 [color={$color.font_highlight}]Developed 2012-2022 by [url=https://drewke.net]Andreas Drewke[/url], [url=https://www.mindty.com/dominikhepp]Dominik Hepp[/url], [url=https://github.com/mahula]Mathias Lenz[/url],
 [url=https://www.mindty.com/koljagumpert]Kolja Gumpert[/url], [url=https://drewke.net]drewke.net[/url], [url=https://mindty.com]mindty.com[/url], [url=https://github.com/mahula]github.com/mahula[/url]
@@ -270,9 +270,9 @@ SOFTWARE.
 Please note that TDME2 depends on several 3rd party libraries which are included
 in this repository. 
 
-[color={$color.font_highlight}][font=resources/engine/fonts/Roboto_bold_30.fnt]Third party library licenses:[/font][/color]
+[color={$color.font_highlight}][font=resources/engine/fonts/Roboto-Bold.ttf][size=30]Third party library licenses:[/size][/font][/color]
 
-    [font=resources/engine/fonts/Roboto_20.fnt]ext/blender-ui-icons/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]ext/blender-ui-icons/LICENSE[/size][/font]
     
         We are currently using some Blender(www.blender.org) user interface icons. 
 
@@ -283,7 +283,7 @@ in this repository.
         However we did not change to vector graphics file itself. 
 
 
-    [font=resources/engine/fonts/Roboto_20.fnt]ext/fbx/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]ext/fbx/LICENSE[/size][/font]
     
         This software contains Autodesk® FBX® code developed by Autodesk, Inc. Copyright 
         2016 Autodesk, Inc.  All rights, reserved. Such code is provided "as is" and 
@@ -297,7 +297,7 @@ in this repository.
         any theory of liability, whether in contract, strict liability, or tort 
         (including negligence or otherwise) arising in any way out of such code.
 
-    [font=resources/engine/fonts/Roboto_20.fnt]ext/glfw3/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]ext/glfw3/LICENSE[/size][/font]
     
         Copyright (c) 2002-2006 Marcus Geelnard
 
@@ -322,7 +322,7 @@ in this repository.
         3. This notice may not be removed or altered from any source
            distribution.
 
-    [font=resources/engine/fonts/Roboto_20.fnt]ext/libpng/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]ext/libpng/LICENSE[/size][/font]
     
         This copy of the libpng notices is provided for your convenience.  In case of
         any discrepancy between this copy and the notices in the file png.h that is
@@ -457,7 +457,7 @@ in this repository.
         glennrp at users.sourceforge.net
         March 16, 2017
 
-    [font=resources/engine/fonts/Roboto_20.fnt]ext/ogg/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]ext/ogg/LICENSE[/size][/font]
     
         Copyright (c) 2002, Xiph.org Foundation
 
@@ -488,7 +488,7 @@ in this repository.
         (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
         OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-    [font=resources/engine/fonts/Roboto_20.fnt]ext/rapidjson/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]ext/rapidjson/LICENSE[/size][/font]
     
         Tencent is pleased to support the open source community by making RapidJSON available. 
 
@@ -548,7 +548,7 @@ in this repository.
 
         THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-    [font=resources/engine/fonts/Roboto_20.fnt]ext/reactphysics3d/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]ext/reactphysics3d/LICENSE[/size][/font]
     
         Copyright (c) 2010-2018 Daniel Chappuis http://www.reactphysics3d.com
 
@@ -568,7 +568,7 @@ in this repository.
            misrepresented as being the original software.
         3. This notice may not be removed or altered from any source distribution.
 
-    [font=resources/engine/fonts/Roboto_20.fnt]ext/sha256/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]ext/sha256/LICENSE[/size][/font]
     
         Updated to C++, zedwood.com 2012
         Based on Olivier Gay's version
@@ -604,7 +604,7 @@ in this repository.
         OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
         SUCH DAMAGE.
 
-    [font=resources/engine/fonts/Roboto_20.fnt]ext/tinygltf/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]ext/tinygltf/LICENSE[/size][/font]
     
         The MIT License
 
@@ -630,7 +630,7 @@ in this repository.
         OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
         SOFTWARE.
 
-    [font=resources/engine/fonts/Roboto_20.fnt]ext/tinyxml/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]ext/tinyxml/LICENSE[/size][/font]
     
         www.sourceforge.net/projects/tinyxml
 
@@ -653,7 +653,7 @@ in this repository.
         3. This notice may not be removed or altered from any source
         distribution.
 
-    [font=resources/engine/fonts/Roboto_20.fnt]ext/v-hacd/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]ext/v-hacd/LICENSE[/size][/font]
     
         BSD 3-Clause License
 
@@ -685,7 +685,7 @@ in this repository.
         OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
         OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-    [font=resources/engine/fonts/Roboto_20.fnt]ext/vorbis/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]ext/vorbis/LICENSE[/size][/font]
     
         Copyright (c) 2002-2015 Xiph.org Foundation
 
@@ -716,7 +716,7 @@ in this repository.
         (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
         OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-    [font=resources/engine/fonts/Roboto_20.fnt]ext/vulkan/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]ext/vulkan/LICENSE[/size][/font]
     
         Here, glslang proper means core GLSL parsing, HLSL parsing, and SPIR-V code
         generation. Glslang proper requires use of two licenses, one that covers
@@ -827,7 +827,7 @@ in this repository.
         NVIDIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         \****************************************************************************/
 
-    [font=resources/engine/fonts/Roboto_20.fnt]ext/vulkan/svs/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]ext/vulkan/svs/LICENSE[/size][/font]
     
         Copyright (c) 2017 Tobias Hector
 
@@ -849,7 +849,7 @@ in this repository.
         OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
         SOFTWARE.
 
-    [font=resources/engine/fonts/Roboto_20.fnt]ext/vulkan/vma/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]ext/vulkan/vma/LICENSE[/size][/font]
     
         Copyright (c) 2017-2019 Advanced Micro Devices, Inc. All rights reserved.
 
@@ -871,7 +871,7 @@ in this repository.
         OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
         THE SOFTWARE.
 
-    [font=resources/engine/fonts/Roboto_20.fnt]ext/windows-msc/dirent/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]ext/windows-msc/dirent/LICENSE[/size][/font]
     
         The MIT License (MIT)
 
@@ -895,7 +895,7 @@ in this repository.
         OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
         SOFTWARE.
 
-    [font=resources/engine/fonts/Roboto_20.fnt]ext/windows-msc/glew/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]ext/windows-msc/glew/LICENSE[/size][/font]
     
         The OpenGL Extension Wrangler Library
         Copyright (C) 2002-2007, Milan Ikits <milan ikits\[\]ieee org>
@@ -971,7 +971,7 @@ in this repository.
         TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
         MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
 
-    [font=resources/engine/fonts/Roboto_20.fnt]ext/windows-msc/openal-soft/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]ext/windows-msc/openal-soft/LICENSE[/size][/font]
     
                   GNU LIBRARY GENERAL PUBLIC LICENSE
                        Version 2, June 1991
@@ -1456,7 +1456,7 @@ in this repository.
 
         That's all there is to it!
 
-    [font=resources/engine/fonts/Roboto_20.fnt]ext/windows-msc/pthread/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]ext/windows-msc/pthread/LICENSE[/size][/font]
     
             pthreads-win32 - a POSIX threads library for Microsoft Windows
 
@@ -1609,7 +1609,7 @@ in this repository.
             for developers writing Win32 applications to consider
             widening the potential market for their products.
 
-    [font=resources/engine/fonts/Roboto_20.fnt]ext/windows-msc/uint128_t/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]ext/windows-msc/uint128_t/LICENSE[/size][/font]
     
         The MIT License (MIT)
 
@@ -1633,7 +1633,7 @@ in this repository.
         OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
         THE SOFTWARE.
 
-    [font=resources/engine/fonts/Roboto_20.fnt]ext/windows-msc/vulkan-sdk/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]ext/windows-msc/vulkan-sdk/LICENSE[/size][/font]
     
         Copyright 2016-2021 LunarG Inc.
 
@@ -1643,7 +1643,7 @@ in this repository.
 
         ALL INFORMATION HERE IS PROVIDED "AS IS." LUNARG MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED, WITH REGARD TO THIS LIST OR ITS ACCURACY OR COMPLETENESS, OR WITH RESPECT TO ANY RESULTS TO BE OBTAINED FROM USE OR DISTRIBUTION OF THE LIST. BY USING OR DISTRIBUTING THIS LIST, YOU AGREE THAT IN NO EVENT SHALL LUNARG BE HELD LIABLE FOR ANY DAMAGES WHATSOEVER RESULTING FROM ANY USE OR DISTRIBUTION OF THIS LIST, INCLUDING, WITHOUT LIMITATION, ANY SPECIAL, CONSEQUENTIAL, INCIDENTAL OR OTHER DIRECT OR INDIRECT DAMAGES.
 
-    [font=resources/engine/fonts/Roboto_20.fnt]ext/zlib/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]ext/zlib/LICENSE[/size][/font]
     
         This software is provided 'as-is', without any express or implied
         warranty. In no event will the authors be held liable for any damages
@@ -1661,7 +1661,7 @@ in this repository.
            misrepresented as being the original software.
         3. This notice may not be removed or altered from any source distribution.
 
-    [font=resources/engine/fonts/Roboto_20.fnt]resources/engine/environments/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]resources/engine/environments/LICENSE[/size][/font]
     
                                          Apache License
                                    Version 2.0, January 2004
@@ -1865,7 +1865,7 @@ in this repository.
            See the License for the specific language governing permissions and
            limitations under the License.
 
-    [font=resources/engine/fonts/Roboto_20.fnt]resources/engine/fonts/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]resources/engine/fonts/LICENSE[/size][/font]
     
                                          Apache License
                                    Version 2.0, January 2004
@@ -2069,7 +2069,7 @@ in this repository.
            See the License for the specific language governing permissions and
            limitations under the License.
 
-    [font=resources/engine/fonts/Roboto_20.fnt]resources/installer/gui/fonts/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]resources/installer/gui/fonts/LICENSE[/size][/font]
     
                                          Apache License
                                    Version 2.0, January 2004
@@ -2273,7 +2273,7 @@ in this repository.
            See the License for the specific language governing permissions and
            limitations under the License.
 
-    [font=resources/engine/fonts/Roboto_20.fnt]shader/gl2/lighting/specular/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]shader/gl2/lighting/specular/LICENSE[/size][/font]
     
                     Copyright (C) 2002-2004  3Dlabs Inc. Ltd.
 
@@ -2308,7 +2308,7 @@ in this repository.
          ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
          POSSIBILITY OF SUCH DAMAGE.
 
-    [font=resources/engine/fonts/Roboto_20.fnt]shader/gl3/functions/pbr/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]shader/gl3/functions/pbr/LICENSE[/size][/font]
     
                                          Apache License
                                    Version 2.0, January 2004
@@ -2513,7 +2513,7 @@ in this repository.
            limitations under the License.
 
 
-    [font=resources/engine/fonts/Roboto_20.fnt]shader/gl3/functions/specular/LICENSE[/font]
+    [font=resources/engine/fonts/Roboto-Bold.ttf][size=20]shader/gl3/functions/specular/LICENSE[/size][/font]
     
                     Copyright (C) 2002-2004  3Dlabs Inc. Ltd.
 
