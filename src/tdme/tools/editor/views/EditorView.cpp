@@ -128,6 +128,13 @@ void EditorView::handleInputEvents()
 				if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_PASTE);
 			}
 			event.setProcessed(true);
+		} else
+		if (Character::toLowerCase(event.getKeyChar()) == 'f' && event.isControlDown() == true) {
+			if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+				auto selectedTab = editorScreenController->getSelectedTab();
+				if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_FINDREPLACE);
+			}
+			event.setProcessed(true);
 		} else {
 			//
 			switch (event.getKeyCode()) {
