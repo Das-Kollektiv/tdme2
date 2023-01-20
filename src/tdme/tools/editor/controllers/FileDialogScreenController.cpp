@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/events/GUITooltipRequestListener.h>
@@ -36,6 +37,7 @@ using std::vector;
 
 using tdme::tools::editor::controllers::FileDialogScreenController;
 
+using tdme::engine::Engine;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUITooltipRequestListener;
@@ -45,6 +47,7 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystem;
@@ -329,7 +332,6 @@ void FileDialogScreenController::show(const string& cwd, const string& captionTe
 		this->cwd = FileSystem::getStandardFileSystem()->getCurrentWorkingPathName();
 	}
 	setupFiles();
-	screenNode->setVisible(true);
 	if (this->applyAction != nullptr) delete this->applyAction;
 	this->applyAction = applyAction;
 	if (this->cancelAction != nullptr) delete this->cancelAction;
@@ -344,6 +346,9 @@ void FileDialogScreenController::show(const string& cwd, const string& captionTe
 	setupDrives();
 	setupFavorites();
 	setupRecents();
+	//
+	screenNode->setVisible(true);
+	Engine::getInstance()->getGUI()->setFoccussedNode(fileNameNode);
 }
 
 void FileDialogScreenController::close()

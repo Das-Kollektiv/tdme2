@@ -125,6 +125,7 @@ void FindReplaceDialogScreenController::show(Action* findAction, Action* countAc
 	this->completeAction = completeAction;
 	//
 	screenNode->setVisible(true);
+	Engine::getInstance()->getGUI()->setFoccussedNode(findText);
 }
 
 void FindReplaceDialogScreenController::close()
