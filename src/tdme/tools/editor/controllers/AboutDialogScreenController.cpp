@@ -34,6 +34,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
+using tdme::gui::GUI;
 using tdme::tools::editor::controllers::AboutDialogScreenController;
 using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
@@ -94,6 +95,13 @@ void AboutDialogScreenController::onAction(GUIActionListenerType type, GUIElemen
 			close();
 		}
 	}
+}
+
+void AboutDialogScreenController::onFocus(GUIElementNode* node) {
+	GUI::setDisableTabFocusControl(node->getScreenNode() != screenNode);
+}
+
+void AboutDialogScreenController::onUnfocus(GUIElementNode* node) {
 }
 
 void AboutDialogScreenController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {

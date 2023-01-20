@@ -7,6 +7,8 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Version.h>
 #include <tdme/gui/events/GUIActionListener.h>
+#include <tdme/gui/events/GUITooltipRequestListener.h>
+#include <tdme/gui/events/GUIFocusListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -30,11 +32,14 @@ using tdme::application::Application;
 using tdme::engine::Engine;
 using tdme::engine::Version;
 using tdme::gui::events::GUIActionListenerType;
+using tdme::gui::events::GUITooltipRequestListener;
+using tdme::gui::events::GUIFocusListener;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
@@ -44,7 +49,7 @@ using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
-FindReplaceDialogScreenController::FindReplaceDialogScreenController(PopUps* PopUps): popUps(popUps)
+FindReplaceDialogScreenController::FindReplaceDialogScreenController(PopUps* popUps): popUps(popUps)
 {
 }
 
@@ -69,6 +74,8 @@ void FindReplaceDialogScreenController::initialize()
 		screenNode = GUIParser::parse("resources/engine/gui", "popup_findreplace.xml");
 		screenNode->setVisible(false);
 		screenNode->addActionListener(this);
+		screenNode->addFocusListener(this);
+		screenNode->addTooltipRequestListener(this);
 		findText = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("findreplace_findtext"));
 		replaceText = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("findreplace_replacetext"));
 		matchCase = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("findreplace_matchcase"));
@@ -157,6 +164,13 @@ void FindReplaceDialogScreenController::onAction(GUIActionListenerType type, GUI
 			if (completeAction != nullptr) completeAction->performAction();
 		}
 	}
+}
+
+void FindReplaceDialogScreenController::onFocus(GUIElementNode* node) {
+	GUI::setDisableTabFocusControl(node->getScreenNode() != screenNode);
+}
+
+void FindReplaceDialogScreenController::onUnfocus(GUIElementNode* node) {
 }
 
 void FindReplaceDialogScreenController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {

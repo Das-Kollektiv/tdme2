@@ -5,6 +5,7 @@
 #include <tdme/tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
+#include <tdme/gui/events/GUIFocusListener.h>
 #include <tdme/gui/events/GUITooltipRequestListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/tools/editor/controllers/ScreenController.h>
@@ -15,6 +16,7 @@ using std::string;
 
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
+using tdme::gui::events::GUIFocusListener;
 using tdme::gui::events::GUITooltipRequestListener;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
@@ -29,6 +31,7 @@ using tdme::utilities::MutableString;
 class tdme::tools::editor::controllers::AboutDialogScreenController final
 	: public ScreenController
 	, public virtual GUIActionListener
+	, public virtual GUIFocusListener
 	, public virtual GUITooltipRequestListener
 {
 
@@ -48,10 +51,13 @@ public:
 	 */
 	virtual ~AboutDialogScreenController();
 
+	// overridden methods
 	GUIScreenNode* getScreenNode() override;
 	void initialize() override;
 	void dispose() override;
 	void onAction(GUIActionListenerType type, GUIElementNode* node) override;
+	void onFocus(GUIElementNode* node) override;
+	void onUnfocus(GUIElementNode* node) override;
 	void onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) override;
 	void onTooltipCloseRequest() override;
 

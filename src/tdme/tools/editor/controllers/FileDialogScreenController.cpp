@@ -507,6 +507,7 @@ void FileDialogScreenController::onAction(GUIActionListenerType type, GUIElement
 }
 
 void FileDialogScreenController::onFocus(GUIElementNode* node) {
+	GUI::setDisableTabFocusControl(node->getScreenNode() != screenNode);
 	if (node->getId() == "filedialog_filename") {
 		if (enableFilter == true) node->getController()->setValue(MutableString(""));
 	}

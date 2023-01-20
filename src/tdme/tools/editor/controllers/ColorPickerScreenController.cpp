@@ -176,6 +176,7 @@ void ColorPickerScreenController::onAction(GUIActionListenerType type, GUIElemen
 }
 
 void ColorPickerScreenController::onFocus(GUIElementNode* node) {
+	GUI::setDisableTabFocusControl(node->getScreenNode() != screenNode);
 }
 
 void ColorPickerScreenController::onUnfocus(GUIElementNode* node) {
