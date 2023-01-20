@@ -15,6 +15,7 @@ namespace misc {
 	class Gizmo;
 	class PopUps;
 	class TextFormatter;
+	class TextTools;
 	class Tools;
 }  // namespace misc
 }  // namespace editor

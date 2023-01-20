@@ -313,4 +313,12 @@ public:
 	 */
 	void removeCodeCompletionListener(CodeCompletionListener* listener);
 
+	/**
+	 * Replace text from given index with given count by string by
+	 * @param by string to insert
+	 * @param index character index
+	 * @param count character cound
+	 */
+	void replace(const string& by, int index, int count);
+
 };

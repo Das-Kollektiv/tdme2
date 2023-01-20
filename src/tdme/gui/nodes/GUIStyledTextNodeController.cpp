@@ -983,8 +983,11 @@ void GUIStyledTextNodeController::forwardCodeCompletion(int idx) {
 }
 
 void GUIStyledTextNodeController::storeTypingHistoryEntry() {
+	Console::println("storeTypingHistoryEntry()");
+
 	// if no char has been typed we have nothing to do
 	if (typedChars == false) {
+		Console::println("storeTypingHistoryEntry(): exit a");
 		return;
 	}
 
@@ -993,6 +996,7 @@ void GUIStyledTextNodeController::storeTypingHistoryEntry() {
 
 	// no position to start storing from?
 	if (historyEntryIdx == -1) {
+		Console::println("storeTypingHistoryEntry(): exit b");
 		return;
 	}
 
@@ -1003,6 +1007,7 @@ void GUIStyledTextNodeController::storeTypingHistoryEntry() {
 	// no change?
 	if (historyEntryIdx == index) {
 		historyEntryIdx = -1;
+		Console::println("storeTypingHistoryEntry(): exit c");
 		return;
 	}
 
@@ -1033,7 +1038,6 @@ void GUIStyledTextNodeController::storeTypingHistoryEntry() {
 	// just point to the latest history entry
 	historyIdx = history.size();
 
-	/*
 	//
 	for (auto i = history.size() - 1; i < history.size(); i++) {
 		auto& historyEntry = history[i];
@@ -1052,10 +1056,10 @@ void GUIStyledTextNodeController::storeTypingHistoryEntry() {
 		}
 		Console::println("GUIStyledTextNodeController::storeTypingHistoryEntry(): " + to_string(i) + ": history entry @ " + to_string(historyEntry.idx) + ": '" + historyEntry.data + "'" + ": " + historyEntryTypeString);
 	}
-	*/
 }
 
 void GUIStyledTextNodeController::storeDeletionHistoryInternal(int index, int count) {
+	Console::println("storeDeletionHistoryInternal(): " + to_string(index) + " / " + to_string(count));
 	//
 	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
 	auto& text = styledTextNode->getText();
@@ -1075,7 +1079,6 @@ void GUIStyledTextNodeController::storeDeletionHistoryInternal(int index, int co
 	historyIdx = history.size();
 
 	//
-	/*
 	for (auto i = history.size() - 1; i < history.size(); i++) {
 		auto& historyEntry = history[i];
 		string historyEntryTypeString;
@@ -1093,8 +1096,6 @@ void GUIStyledTextNodeController::storeDeletionHistoryInternal(int index, int co
 		}
 		Console::println("GUIStyledTextNodeController::storeDeletionHistoryEntryStoreTypingEntry(): " + to_string(i) + ": history entry @ " + to_string(historyEntry.idx) + ": '" + historyEntry.data + "'" + ": " + historyEntryTypeString);
 	}
-	*/
-
 	//
 }
 
@@ -1103,7 +1104,7 @@ void GUIStyledTextNodeController::redo() {
 	storeTypingHistoryEntry();
 
 	//
-	// Console::println("GUIStyledTextNodeController::redo(): " + to_string(historyIdx) + " / " + to_string(history.size()));
+	Console::println("GUIStyledTextNodeController::redo(): " + to_string(historyIdx) + " / " + to_string(history.size()));
 
 	// exit if no history
 	if (history.empty() == true) return;
@@ -1290,4 +1291,23 @@ void GUIStyledTextNodeController::delete_() {
 	}
 	//
 	unsetTypingHistoryEntryIdx();
+}
+
+void GUIStyledTextNodeController::replace(const string& by, int index, int count) {
+	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
+	// unselect
+	setSelectionIndex(-1);
+	// remove
+	storeDeletionHistoryEntryStoreTypingEntry(index, count);
+	styledTextNode->removeText(index, count);
+	// insert
+	setIndex(index);
+	setTypingHistoryEntryIdx();
+	styledTextNode->insertText(index, by);
+	typedChars = true;
+	setIndex(index + StringTools::getUtf8Length(by));
+	storeTypingHistoryEntry();
+	// unset history typing index
+	unsetTypingHistoryEntryIdx();
+
 }
