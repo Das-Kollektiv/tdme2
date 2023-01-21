@@ -2433,6 +2433,13 @@ public:
 	virtual ~MiniScript();
 
 	/**
+	 * @return if this script is valid to be executed
+	 */
+	inline bool isValid() {
+		return scriptValid;
+	}
+
+	/**
 	 * @return if this script was compiled to C++ and is executed nativly
 	 */
 	inline bool isNative() {
