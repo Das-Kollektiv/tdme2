@@ -537,7 +537,6 @@ Reading all keys as array from set:
 | array.remove(=$array: Array, $index: Integer): Void                                              |
 | array.removeOf(=$array: Array, $value: String[, $beginIndex: Integer]): Void                     |
 | bool($bool: Boolean): Boolean                                                                    |
-| concatenate(...): String                                                                         |
 | console.log(...): Void                                                                           |
 | div($a: Mixed, $b: Mixed): Mixed                                                                 |
 | else(): Void                                                                                     |
@@ -627,12 +626,27 @@ Reading all keys as array from set:
 | set.getKeys($set: Set): Array                                                                    |
 | set.insert(=$set: Set, $key: String): Void                                                       |
 | set.remove(=$set: Set, $key: String): Void                                                       |
-| space([$spaces: Integer]): String                                                                |
 | string($string: String): String                                                                  |
+| string.charAt($string: String, $index: Integer): String                                          |
+| string.concatenate(...): String                                                                  |
+| string.endsWith($string: String, $suffix: String): Boolean                                       |
+| string.equalsIgnoreCase($string1: String, $string2: String): Boolean                             |
+| string.firstIndexOf($string: String, $what: String[, $beginIndex: Integer]): Integer             |
+| string.indexOf($string: String, $what: String[, $beginIndex: Integer]): Integer                  |
+| string.lastIndexOf($string: String, $what: String[, $beginIndex: Integer]): Integer              |
+| string.length($string: String): Integer                                                          |
+| string.regexMatch($string: String, $pattern: String): Boolean                                    |
+| string.regexReplace($string: String, $pattern: String, $by: String): String                      |
+| string.replace($string: String, $what: String, $by: String[, $beginIndex: Integer]): String      |
+| string.space([$spaces: Integer]): String                                                         |
+| string.startsWith($string: String, $prefix: String): Boolean                                     |
+| string.substring($string: String, $beginIndex: Integer[, $endIndex: Integer]): String            |
+| string.toLowerCase($string: String): String                                                      |
+| string.toUpperCase($string: String): String                                                      |
+| string.tokenize($string: String, $delimiters: String): Array                                     |
+| string.trim($string: String): String                                                             |
 | sub($a: Mixed, $b: Mixed): Mixed                                                                 |
 | time.getCurrentMillis(): Integer                                                                 |
-| toLowerCase($string: String): String                                                             |
-| toUpperCase($string: String): String                                                             |
 | transform([$translation: Vector3[, $scale: Vector3[, $rotationZ: Float[, $rotationY: Float[, $rotationX: Float]]]]]): Transform|
 | transform.AXIS_X(): Vector3                                                                      |
 | transform.AXIS_Y(): Vector3                                                                      |
