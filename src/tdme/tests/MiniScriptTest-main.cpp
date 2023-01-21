@@ -17,6 +17,10 @@ int main(int argc, char *argv[]) {
 		Console::println("---------------------------------------------------------");
 		Console::println("Loaded test script: " + script->getScriptFileName() + ": runs " + (script->isNative() == true?"natively":"interpreted"));
 		Console::println("---------------------------------------------------------");
+		if (script->isValid() == false) {
+			Console::println("Script not valid. Exiting");
+			return 1;
+		}
 		// Console::println(script->getInformation());
 		while (script->isRunning() == true) {
 			script->execute();
@@ -34,6 +38,10 @@ int main(int argc, char *argv[]) {
 		Console::println("---------------------------------------------------------");
 		Console::println("Loaded test script: " + script->getScriptFileName() + ": runs " + (script->isNative() == true?"natively":"interpreted"));
 		Console::println("---------------------------------------------------------");
+		if (script->isValid() == false) {
+			Console::println("Script not valid. Exiting");
+			return 1;
+		}
 		// Console::println(script->getInformation());
 		while (script->isRunning() == true) {
 			script->execute();
@@ -51,6 +59,10 @@ int main(int argc, char *argv[]) {
 		Console::println("---------------------------------------------------------");
 		Console::println("Loaded test script: " + script->getScriptFileName() + ": runs " + (script->isNative() == true?"natively":"interpreted"));
 		Console::println("---------------------------------------------------------");
+		if (script->isValid() == false) {
+			Console::println("Script not valid. Exiting");
+			return 1;
+		}
 		// Console::println(script->getInformation());
 		while (script->isRunning() == true) {
 			script->execute();
@@ -68,6 +80,10 @@ int main(int argc, char *argv[]) {
 		Console::println("---------------------------------------------------------");
 		Console::println("Loaded test script: " + script->getScriptFileName() + ": runs " + (script->isNative() == true?"natively":"interpreted"));
 		Console::println("---------------------------------------------------------");
+		if (script->isValid() == false) {
+			Console::println("Script not valid. Exiting");
+			return 1;
+		}
 		// Console::println(script->getInformation());
 		while (script->isRunning() == true) {
 			script->execute();
