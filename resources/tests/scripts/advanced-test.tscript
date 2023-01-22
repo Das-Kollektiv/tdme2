@@ -1,3 +1,13 @@
+# sort function for ascending order
+function: sortFunctionDesc($a, $b)
+	return($a > $b)
+end
+
+# sort function for descending order
+function: sortFunctionAsc($a, $b)
+	return($a < $b)
+end
+
 # initialize
 on: initialize
 	console.log("---------------------------")
@@ -58,6 +68,11 @@ on: nothing
 	console.log("array now looks like: ", $array)
 	console.log("array indexOf 10: ", array.indexOf($array, 10))
 	console.log("array indexOf 10 beginning to search from 6: ", array.indexOf($array, 10, 6))
+	console.log("sorting of array('abc', 'def', 'ghi', 'jkl', 'mno'): ", $array = array("abc", "def", "ghi", "jkl", "mno"))
+	array.sort($array, "sortFunctionDesc")
+	console.log("array.sort($array, 'sortFunctionDesc'): ", $array)
+	array.sort($array, "sortFunctionAsc")
+	console.log("array.sort($array, 'sortFunctionAsc'): ", $array)
 	console.log("---------")
 	console.log("Maps")
 	console.log("----------")

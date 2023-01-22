@@ -2530,8 +2530,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodGreater(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "a", .optional = false, .assignBack = false },
-						{.type = ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "b", .optional = false, .assignBack = false }
+						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .assignBack = false },
+						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN),
 					miniScript(miniScript) {}
@@ -2539,14 +2539,26 @@ void MiniScript::registerMethods() {
 				return "greater";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				float floatValueA;
-				float floatValueB;
-				if (MiniScript::getFloatValue(argumentValues, 0, floatValueA, false) == true &&
-					MiniScript::getFloatValue(argumentValues, 1, floatValueB, false) == true) {
-					returnValue.setValue(floatValueA > floatValueB);
+				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_STRING) == true) {
+					string stringValueA;
+					string stringValueB;
+					if (MiniScript::getStringValue(argumentValues, 0, stringValueA, false) == true &&
+						MiniScript::getStringValue(argumentValues, 1, stringValueB, false) == true) {
+						returnValue.setValue(stringValueA > stringValueB);
+					} else {
+						Console::println("ScriptMethodGreater::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+						miniScript->startErrorScript();
+					}
 				} else {
-					Console::println("ScriptMethodGreater::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
-					miniScript->startErrorScript();
+					float floatValueA;
+					float floatValueB;
+					if (MiniScript::getFloatValue(argumentValues, 0, floatValueA, false) == true &&
+						MiniScript::getFloatValue(argumentValues, 1, floatValueB, false) == true) {
+						returnValue.setValue(floatValueA > floatValueB);
+					} else {
+						Console::println("ScriptMethodGreater::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
+						miniScript->startErrorScript();
+					}
 				}
 			}
 			ScriptOperator getOperator() override {
@@ -2564,8 +2576,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodGreaterEquals(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "a", .optional = false, .assignBack = false },
-						{.type = ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "b", .optional = false, .assignBack = false }
+						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .assignBack = false },
+						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN),
 					miniScript(miniScript) {}
@@ -2573,14 +2585,26 @@ void MiniScript::registerMethods() {
 				return "greaterequals";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				float floatValueA;
-				float floatValueB;
-				if (MiniScript::getFloatValue(argumentValues, 0, floatValueA, false) == true &&
-					MiniScript::getFloatValue(argumentValues, 1, floatValueB, false) == true) {
-					returnValue.setValue(floatValueA >= floatValueB);
+				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_STRING) == true) {
+					string stringValueA;
+					string stringValueB;
+					if (MiniScript::getStringValue(argumentValues, 0, stringValueA, false) == true &&
+						MiniScript::getStringValue(argumentValues, 1, stringValueB, false) == true) {
+						returnValue.setValue(stringValueA >= stringValueB);
+					} else {
+						Console::println("ScriptMethodGreaterEquals::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+						miniScript->startErrorScript();
+					}
 				} else {
-					Console::println("ScriptMethodGreaterEquals::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
-					miniScript->startErrorScript();
+					float floatValueA;
+					float floatValueB;
+					if (MiniScript::getFloatValue(argumentValues, 0, floatValueA, false) == true &&
+						MiniScript::getFloatValue(argumentValues, 1, floatValueB, false) == true) {
+						returnValue.setValue(floatValueA >= floatValueB);
+					} else {
+						Console::println("ScriptMethodGreaterEquals::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
+						miniScript->startErrorScript();
+					}
 				}
 			}
 			ScriptOperator getOperator() override {
@@ -2598,8 +2622,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodLesser(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "a", .optional = false, .assignBack = false },
-						{.type = ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "b", .optional = false, .assignBack = false }
+						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .assignBack = false },
+						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN),
 					miniScript(miniScript) {}
@@ -2607,14 +2631,26 @@ void MiniScript::registerMethods() {
 				return "lesser";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				float floatValueA;
-				float floatValueB;
-				if (MiniScript::getFloatValue(argumentValues, 0, floatValueA, false) == true &&
-					MiniScript::getFloatValue(argumentValues, 1, floatValueB, false) == true) {
-					returnValue.setValue(floatValueA < floatValueB);
+				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_STRING) == true) {
+					string stringValueA;
+					string stringValueB;
+					if (MiniScript::getStringValue(argumentValues, 0, stringValueA, false) == true &&
+						MiniScript::getStringValue(argumentValues, 1, stringValueB, false) == true) {
+						returnValue.setValue(stringValueA < stringValueB);
+					} else {
+						Console::println("ScriptMethodLesser::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+						miniScript->startErrorScript();
+					}
 				} else {
-					Console::println("ScriptMethodLesser::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
-					miniScript->startErrorScript();
+					float floatValueA;
+					float floatValueB;
+					if (MiniScript::getFloatValue(argumentValues, 0, floatValueA, false) == true &&
+						MiniScript::getFloatValue(argumentValues, 1, floatValueB, false) == true) {
+						returnValue.setValue(floatValueA < floatValueB);
+					} else {
+						Console::println("ScriptMethodLesser::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
+						miniScript->startErrorScript();
+					}
 				}
 			}
 			ScriptOperator getOperator() override {
@@ -2632,8 +2668,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodLesserEquals(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "a", .optional = false, .assignBack = false },
-						{.type = ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "b", .optional = false, .assignBack = false }
+						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .assignBack = false },
+						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN),
 					miniScript(miniScript) {}
@@ -2641,14 +2677,26 @@ void MiniScript::registerMethods() {
 				return "lesserequals";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				float floatValueA;
-				float floatValueB;
-				if (MiniScript::getFloatValue(argumentValues, 0, floatValueA, false) == true &&
-					MiniScript::getFloatValue(argumentValues, 1, floatValueB, false) == true) {
-					returnValue.setValue(floatValueA <= floatValueB);
+				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_STRING) == true) {
+					string stringValueA;
+					string stringValueB;
+					if (MiniScript::getStringValue(argumentValues, 0, stringValueA, false) == true &&
+						MiniScript::getStringValue(argumentValues, 1, stringValueB, false) == true) {
+						returnValue.setValue(stringValueA <= stringValueB);
+					} else {
+						Console::println("ScriptMethodLesserEquals::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+						miniScript->startErrorScript();
+					}
 				} else {
-					Console::println("ScriptMethodLesserEquals::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
-					miniScript->startErrorScript();
+					float floatValueA;
+					float floatValueB;
+					if (MiniScript::getFloatValue(argumentValues, 0, floatValueA, false) == true &&
+						MiniScript::getFloatValue(argumentValues, 1, floatValueB, false) == true) {
+						returnValue.setValue(floatValueA <= floatValueB);
+					} else {
+						Console::println("ScriptMethodLesserEquals::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
+						miniScript->startErrorScript();
+					}
 				}
 			}
 			ScriptOperator getOperator() override {
@@ -5668,6 +5716,58 @@ void MiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodArrayIndexOf(this));
+	}
+	{
+		//
+		class ScriptMethodArraySort: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodArraySort(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .assignBack = true },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "function", .optional = false, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "array.sort";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string function;
+				if (argumentValues.size() != 2 ||
+					argumentValues[0].getType() != ScriptVariableType::TYPE_ARRAY ||
+					MiniScript::getStringValue(argumentValues, 1, function, false) == false) {
+					Console::println("ScriptMethodArraySort::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: array expected, @ argument 1: string expected");
+				} else {
+					class SortClass {
+						private:
+							MiniScript* miniScript;
+							const string& function;
+						public:
+							SortClass(MiniScript* miniScript, const string& function): miniScript(miniScript), function(function) {
+							}
+							bool operator()(const MiniScript::ScriptVariable& a, const MiniScript::ScriptVariable& b) const {
+								vector<MiniScript::ScriptVariable> sortArgumentValues { a, b };
+								span sortArgumentValuesSpan(sortArgumentValues);
+								MiniScript::ScriptVariable sortReturnValue;
+								miniScript->call(function, sortArgumentValuesSpan, sortReturnValue);
+								bool result = false;
+								sortReturnValue.getBooleanValue(result, false);
+								return result;
+							}
+					};
+					//
+					auto arrayPtr = argumentValues[0].getArrayPointer();
+					if (arrayPtr != nullptr) {
+						sort(arrayPtr->begin(), arrayPtr->end(), SortClass(miniScript, function));
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodArraySort(this));
 	}
 	// map
 	{

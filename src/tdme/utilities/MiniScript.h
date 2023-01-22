@@ -1095,6 +1095,16 @@ public:
 		}
 
 		/**
+		 * @return pointer to underlying vector as array or nullptr
+		 */
+		inline vector<MiniScript::ScriptVariable>* getArrayPointer() {
+			// TODO: be verbose about misuse
+			if (type != TYPE_ARRAY) return nullptr;
+			auto& arrayValue = getArrayValueReference();
+			return &arrayValue;
+		}
+
+		/**
 		 * Get array size
 		 * @return array size
 		 */
