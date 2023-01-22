@@ -5717,6 +5717,58 @@ void MiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodArrayIndexOf(this));
 	}
+	{
+		//
+		class ScriptMethodArraySort: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodArraySort(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .assignBack = true },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "function", .optional = false, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "array.sort";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string function;
+				if (argumentValues.size() != 2 ||
+					argumentValues[0].getType() != ScriptVariableType::TYPE_ARRAY ||
+					MiniScript::getStringValue(argumentValues, 1, function, false) == false) {
+					Console::println("ScriptMethodArraySort::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: array expected, @ argument 1: string expected");
+				} else {
+					class SortClass {
+						private:
+							MiniScript* miniScript;
+							const string& function;
+						public:
+							SortClass(MiniScript* miniScript, const string& function): miniScript(miniScript), function(function) {
+							}
+							bool operator()(const MiniScript::ScriptVariable& a, const MiniScript::ScriptVariable& b) const {
+								vector<MiniScript::ScriptVariable> sortArgumentValues { a, b };
+								span sortArgumentValuesSpan(sortArgumentValues);
+								MiniScript::ScriptVariable sortReturnValue;
+								miniScript->call(function, sortArgumentValuesSpan, sortReturnValue);
+								bool result = false;
+								sortReturnValue.getBooleanValue(result, false);
+								return result;
+							}
+					};
+					//
+					auto arrayPtr = argumentValues[0].getArrayPointer();
+					if (arrayPtr != nullptr) {
+						sort(arrayPtr->begin(), arrayPtr->end(), SortClass(miniScript, function));
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodArraySort(this));
+	}
 	// map
 	{
 		//
