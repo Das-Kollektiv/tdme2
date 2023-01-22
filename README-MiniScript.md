@@ -536,6 +536,7 @@ Reading all keys as array from set:
 | array.push(=$array: Array, ...): Void                                                            |
 | array.remove(=$array: Array, $index: Integer): Void                                              |
 | array.removeOf(=$array: Array, $value: String[, $beginIndex: Integer]): Void                     |
+| array.sort(=$array: Array, $function: String): Void                                              |
 | bool($bool: Boolean): Boolean                                                                    |
 | console.log(...): Void                                                                           |
 | div($a: Mixed, $b: Mixed): Mixed                                                                 |
@@ -546,12 +547,12 @@ Reading all keys as array from set:
 | float($float: Float): Float                                                                      |
 | forCondition($condition: Boolean): Void                                                          |
 | forTime($time: Integer): Void                                                                    |
-| greater($a: Number, $b: Number): Boolean                                                         |
-| greaterequals($a: Number, $b: Number): Boolean                                                   |
+| greater($a: Mixed, $b: Mixed): Boolean                                                           |
+| greaterequals($a: Mixed, $b: Mixed): Boolean                                                     |
 | if($condition: Boolean): Void                                                                    |
 | int($int: Integer): Integer                                                                      |
-| lesser($a: Number, $b: Number): Boolean                                                          |
-| lesserequals($a: Number, $b: Number): Boolean                                                    |
+| lesser($a: Mixed, $b: Mixed): Boolean                                                            |
+| lesserequals($a: Mixed, $b: Mixed): Boolean                                                      |
 | map(): Map                                                                                       |
 | map.has($map: Map, $key: String): Boolean                                                        |
 | map.get($map: Map, $key: String): Mixed                                                          |
@@ -837,10 +838,10 @@ Reading all keys as array from set:
 | +  | add($a: Mixed, $b: Mixed): Mixed                                                            |
 | -  | sub($a: Mixed, $b: Mixed): Mixed                                                            |
 | /  | div($a: Mixed, $b: Mixed): Mixed                                                            |
-| <  | lesser($a: Number, $b: Number): Boolean                                                     |
-| <= | lesserequals($a: Number, $b: Number): Boolean                                               |
+| <  | lesser($a: Mixed, $b: Mixed): Boolean                                                       |
+| <= | lesserequals($a: Mixed, $b: Mixed): Boolean                                                 |
 | =  | setVariable($variable: String, $value: Mixed): Mixed                                        |
 | == | equals($a: Mixed, $b: Mixed): Boolean                                                       |
-| >  | greater($a: Number, $b: Number): Boolean                                                    |
-| >= | greaterequals($a: Number, $b: Number): Boolean                                              |
+| >  | greater($a: Mixed, $b: Mixed): Boolean                                                      |
+| >= | greaterequals($a: Mixed, $b: Mixed): Boolean                                                |
 | \|\|| or($a: Boolean, $b: Boolean): Boolean                                                      |
