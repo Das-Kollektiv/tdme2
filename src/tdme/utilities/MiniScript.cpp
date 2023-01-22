@@ -5116,9 +5116,9 @@ void MiniScript::registerMethods() {
 					miniScript->startErrorScript();
 				} else {
 					if (endIndex == -1) {
-						return returnValue.setValue(StringTools::substring(stringValue, beginIndex));
+						returnValue.setValue(StringTools::substring(stringValue, beginIndex));
 					} else {
-						return returnValue.setValue(StringTools::substring(stringValue, beginIndex, endIndex));
+						returnValue.setValue(StringTools::substring(stringValue, beginIndex, endIndex));
 					}
 				}
 			}
