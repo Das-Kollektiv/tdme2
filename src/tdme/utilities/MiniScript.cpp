@@ -41,6 +41,7 @@
 using std::find;
 using std::map;
 using std::remove;
+using std::reverse;
 using std::sort;
 using std::span;
 using std::stack;
@@ -5768,6 +5769,38 @@ void MiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodArraySort(this));
+	}
+	{
+		//
+		class ScriptMethodArrayReverse: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodArrayReverse(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .assignBack = true }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "array.reverse";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				if (argumentValues.size() != 1 ||
+					argumentValues[0].getType() != ScriptVariableType::TYPE_ARRAY) {
+					Console::println("ScriptMethodArraySort::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: array expected");
+				} else {
+					//
+					auto arrayPtr = argumentValues[0].getArrayPointer();
+					if (arrayPtr != nullptr) {
+						reverse(arrayPtr->begin(), arrayPtr->end());
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodArrayReverse(this));
 	}
 	// map
 	{

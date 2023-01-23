@@ -536,6 +536,7 @@ Reading all keys as array from set:
 | array.push(=$array: Array, ...): Void                                                            |
 | array.remove(=$array: Array, $index: Integer): Void                                              |
 | array.removeOf(=$array: Array, $value: String[, $beginIndex: Integer]): Void                     |
+| array.reverse(=$array: Array): Void                                                              |
 | array.sort(=$array: Array, $function: String): Void                                              |
 | bool($bool: Boolean): Boolean                                                                    |
 | console.log(...): Void                                                                           |
