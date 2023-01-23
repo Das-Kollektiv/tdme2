@@ -10,7 +10,7 @@ BEGIN
       VALUE "FileDescription", "TDME2 {__LIBRARY__}"
       VALUE "FileVersion", "1.9.9"
       VALUE "InternalName", "{__LIBRARY__}.dll"
-      VALUE "LegalCopyright", "Copyright (c) 2012-2022 Andreas Drewke, drewke.net"
+      VALUE "LegalCopyright", "Copyright (c) 2012-2023 Andreas Drewke, drewke.net"
       VALUE "OriginalFilename", "{__LIBRARY__}.dll"
       VALUE "ProductName", "TDME2"
       VALUE "ProductVersion", "2.0"
