@@ -1,0 +1,250 @@
+diff --git a/ext/reactphysics3d/src/systems/CollisionDetectionSystem.cpp b/ext/reactphysics3d/src/systems/CollisionDetectionSystem.cpp
+index 8d2f2ec55..51fd0b09f 100644
+--- a/ext/reactphysics3d/src/systems/CollisionDetectionSystem.cpp
++++ b/ext/reactphysics3d/src/systems/CollisionDetectionSystem.cpp
+@@ -23,6 +23,14 @@
+ *                                                                               *
+ ********************************************************************************/
+ 
++#include <tdme/utilities/Console.h>
++#include <tdme/utilities/Time.h>
++#include <string>
++
++using tdme::utilities::Console;
++using tdme::utilities::Time;
++using std::to_string;
++
+ // Libraries
+ #include <reactphysics3d/systems/CollisionDetectionSystem.h>
+ #include <reactphysics3d/engine/PhysicsWorld.h>
+@@ -327,62 +335,83 @@ void CollisionDetectionSystem::computeMiddlePhase(NarrowPhaseInput& narrowPhaseI
+ 
+     RP3D_PROFILE("CollisionDetectionSystem::computeMiddlePhase()", mProfiler);
+ 
+-    // Reserve memory for the narrow-phase input using cached capacity from previous frame
+-    narrowPhaseInput.reserveMemory();
++    {
++    	auto startTime = Time::getCurrentMillis();
++    	// Reserve memory for the narrow-phase input using cached capacity from previous frame
++    	narrowPhaseInput.reserveMemory();
++    	//
++    	Console::println(mWorld->getName() + ": CollisionDetectionSystem::computeMiddlePhase(): narrowPhaseInput.reserveMemory(): " + to_string(Time::getCurrentMillis() - startTime) + " ms");
++    }
+ 
+-    // Remove the obsolete last frame collision infos and mark all the others as obsolete
+-    mOverlappingPairs.clearObsoleteLastFrameCollisionInfos();
++    {
++    	auto startTime = Time::getCurrentMillis();
++    	// Remove the obsolete last frame collision infos and mark all the others as obsolete
++    	mOverlappingPairs.clearObsoleteLastFrameCollisionInfos();
++    	//
++    	Console::println(mWorld->getName() + ": CollisionDetectionSystem::computeMiddlePhase(): mOverlappingPairs.clearObsoleteLastFrameCollisionInfos(): " + to_string(Time::getCurrentMillis() - startTime) + " ms");
++    }
+ 
+-    // For each possible convex vs convex pair of bodies
+-    const uint64 nbConvexVsConvexPairs = mOverlappingPairs.mConvexPairs.size();
+-    for (uint64 i=0; i < nbConvexVsConvexPairs; i++) {
++    {
++    	auto startTime = Time::getCurrentMillis();
++		// For each possible convex vs convex pair of bodies
++		const uint64 nbConvexVsConvexPairs = mOverlappingPairs.mConvexPairs.size();
++		for (uint64 i=0; i < nbConvexVsConvexPairs; i++) {
+ 
+-        OverlappingPairs::ConvexOverlappingPair& overlappingPair = mOverlappingPairs.mConvexPairs[i];
++			OverlappingPairs::ConvexOverlappingPair& overlappingPair = mOverlappingPairs.mConvexPairs[i];
+ 
+-        assert(mCollidersComponents.getBroadPhaseId(overlappingPair.collider1) != -1);
+-        assert(mCollidersComponents.getBroadPhaseId(overlappingPair.collider2) != -1);
+-        assert(mCollidersComponents.getBroadPhaseId(overlappingPair.collider1) != mCollidersComponents.getBroadPhaseId(overlappingPair.collider2));
++			assert(mCollidersComponents.getBroadPhaseId(overlappingPair.collider1) != -1);
++			assert(mCollidersComponents.getBroadPhaseId(overlappingPair.collider2) != -1);
++			assert(mCollidersComponents.getBroadPhaseId(overlappingPair.collider1) != mCollidersComponents.getBroadPhaseId(overlappingPair.collider2));
+ 
+ 
+-        const Entity collider1Entity = overlappingPair.collider1;
+-        const Entity collider2Entity = overlappingPair.collider2;
++			const Entity collider1Entity = overlappingPair.collider1;
++			const Entity collider2Entity = overlappingPair.collider2;
+ 
+-        const uint32 collider1Index = mCollidersComponents.getEntityIndex(collider1Entity);
+-        const uint32 collider2Index = mCollidersComponents.getEntityIndex(collider2Entity);
++			const uint32 collider1Index = mCollidersComponents.getEntityIndex(collider1Entity);
++			const uint32 collider2Index = mCollidersComponents.getEntityIndex(collider2Entity);
+ 
+-        CollisionShape* collisionShape1 = mCollidersComponents.mCollisionShapes[collider1Index];
+-        CollisionShape* collisionShape2 = mCollidersComponents.mCollisionShapes[collider2Index];
++			CollisionShape* collisionShape1 = mCollidersComponents.mCollisionShapes[collider1Index];
++			CollisionShape* collisionShape2 = mCollidersComponents.mCollisionShapes[collider2Index];
+ 
+-        NarrowPhaseAlgorithmType algorithmType = overlappingPair.narrowPhaseAlgorithmType;
++			NarrowPhaseAlgorithmType algorithmType = overlappingPair.narrowPhaseAlgorithmType;
+ 
+-        const bool isCollider1Trigger = mCollidersComponents.mIsTrigger[collider1Index];
+-        const bool isCollider2Trigger = mCollidersComponents.mIsTrigger[collider2Index];
+-        const bool reportContacts = needToReportContacts && !isCollider1Trigger && !isCollider2Trigger;
++			const bool isCollider1Trigger = mCollidersComponents.mIsTrigger[collider1Index];
++			const bool isCollider2Trigger = mCollidersComponents.mIsTrigger[collider2Index];
++			const bool reportContacts = needToReportContacts && !isCollider1Trigger && !isCollider2Trigger;
+ 
+-        // No middle-phase is necessary, simply create a narrow phase info
+-        // for the narrow-phase collision detection
+-        narrowPhaseInput.addNarrowPhaseTest(overlappingPair.pairID, collider1Entity, collider2Entity, collisionShape1, collisionShape2,
+-                                            mCollidersComponents.mLocalToWorldTransforms[collider1Index],
+-                                            mCollidersComponents.mLocalToWorldTransforms[collider2Index],
+-                                            algorithmType, reportContacts, &overlappingPair.lastFrameCollisionInfo,
+-                                            mMemoryManager.getSingleFrameAllocator());
++			// No middle-phase is necessary, simply create a narrow phase info
++			// for the narrow-phase collision detection
++			narrowPhaseInput.addNarrowPhaseTest(overlappingPair.pairID, collider1Entity, collider2Entity, collisionShape1, collisionShape2,
++												mCollidersComponents.mLocalToWorldTransforms[collider1Index],
++												mCollidersComponents.mLocalToWorldTransforms[collider2Index],
++												algorithmType, reportContacts, &overlappingPair.lastFrameCollisionInfo,
++												mMemoryManager.getSingleFrameAllocator());
+ 
+-        overlappingPair.collidingInCurrentFrame = false;
++			overlappingPair.collidingInCurrentFrame = false;
++		}
++
++		Console::println(mWorld->getName() + ": CollisionDetectionSystem::computeMiddlePhase(): loop1(): " + to_string(Time::getCurrentMillis() - startTime) + " ms");
+     }
+ 
+     // For each possible convex vs concave pair of bodies
+-    const uint64 nbConcavePairs = mOverlappingPairs.mConcavePairs.size();
+-    for (uint64 i=0; i < nbConcavePairs; i++) {
++    {
++        auto startTime = Time::getCurrentMillis();
++        //
++		const uint64 nbConcavePairs = mOverlappingPairs.mConcavePairs.size();
++		for (uint64 i=0; i < nbConcavePairs; i++) {
+ 
+-        OverlappingPairs::ConcaveOverlappingPair& overlappingPair = mOverlappingPairs.mConcavePairs[i];
++			OverlappingPairs::ConcaveOverlappingPair& overlappingPair = mOverlappingPairs.mConcavePairs[i];
+ 
+-        assert(mCollidersComponents.getBroadPhaseId(overlappingPair.collider1) != -1);
+-        assert(mCollidersComponents.getBroadPhaseId(overlappingPair.collider2) != -1);
+-        assert(mCollidersComponents.getBroadPhaseId(overlappingPair.collider1) != mCollidersComponents.getBroadPhaseId(overlappingPair.collider2));
++			assert(mCollidersComponents.getBroadPhaseId(overlappingPair.collider1) != -1);
++			assert(mCollidersComponents.getBroadPhaseId(overlappingPair.collider2) != -1);
++			assert(mCollidersComponents.getBroadPhaseId(overlappingPair.collider1) != mCollidersComponents.getBroadPhaseId(overlappingPair.collider2));
+ 
+-        computeConvexVsConcaveMiddlePhase(overlappingPair, mMemoryManager.getSingleFrameAllocator(), narrowPhaseInput, needToReportContacts);
++			computeConvexVsConcaveMiddlePhase(overlappingPair, mMemoryManager.getSingleFrameAllocator(), narrowPhaseInput, needToReportContacts);
+ 
+-        overlappingPair.collidingInCurrentFrame = false;
++			overlappingPair.collidingInCurrentFrame = false;
++		}
++		//
++		Console::println(mWorld->getName() + ": CollisionDetectionSystem::computeMiddlePhase(): loop2(): " + to_string(Time::getCurrentMillis() - startTime) + " ms");
+     }
+ }
+ 
+@@ -567,21 +596,27 @@ bool CollisionDetectionSystem::testNarrowPhaseCollision(NarrowPhaseInput& narrow
+ 
+     // Compute the narrow-phase collision detection for each kind of collision shapes (for contacts)
+     if (sphereVsSphereBatchContacts.getNbObjects() > 0) {
++    	Console::println(mWorld->getName() + ": CollisionDetectionSystem::testNarrowPhaseCollision(): sphereVsSphereBatchContacts: " + to_string(sphereVsSphereBatchContacts.getNbObjects()));
+         contactFound |= sphereVsSphereAlgo->testCollision(sphereVsSphereBatchContacts, 0, sphereVsSphereBatchContacts.getNbObjects(), allocator);
+     }
+     if (sphereVsCapsuleBatchContacts.getNbObjects() > 0) {
++    	Console::println(mWorld->getName() + ": CollisionDetectionSystem::testNarrowPhaseCollision(): sphereVsCapsuleBatchContacts: " + to_string(sphereVsCapsuleBatchContacts.getNbObjects()));
+         contactFound |= sphereVsCapsuleAlgo->testCollision(sphereVsCapsuleBatchContacts, 0, sphereVsCapsuleBatchContacts.getNbObjects(), allocator);
+     }
+     if (capsuleVsCapsuleBatchContacts.getNbObjects() > 0) {
++    	Console::println(mWorld->getName() + ": CollisionDetectionSystem::testNarrowPhaseCollision(): capsuleVsCapsuleBatchContacts: " + to_string(capsuleVsCapsuleBatchContacts.getNbObjects()));
+         contactFound |= capsuleVsCapsuleAlgo->testCollision(capsuleVsCapsuleBatchContacts, 0, capsuleVsCapsuleBatchContacts.getNbObjects(), allocator);
+     }
+     if (sphereVsConvexPolyhedronBatchContacts.getNbObjects() > 0) {
++    	Console::println(mWorld->getName() + ": CollisionDetectionSystem::testNarrowPhaseCollision(): sphereVsConvexPolyhedronBatchContacts: " + to_string(sphereVsConvexPolyhedronBatchContacts.getNbObjects()));
+         contactFound |= sphereVsConvexPolyAlgo->testCollision(sphereVsConvexPolyhedronBatchContacts, 0, sphereVsConvexPolyhedronBatchContacts.getNbObjects(), clipWithPreviousAxisIfStillColliding, allocator);
+     }
+     if (capsuleVsConvexPolyhedronBatchContacts.getNbObjects() > 0) {
++    	Console::println(mWorld->getName() + ": CollisionDetectionSystem::testNarrowPhaseCollision(): capsuleVsConvexPolyhedronBatchContacts: " + to_string(capsuleVsConvexPolyhedronBatchContacts.getNbObjects()));
+         contactFound |= capsuleVsConvexPolyAlgo->testCollision(capsuleVsConvexPolyhedronBatchContacts, 0, capsuleVsConvexPolyhedronBatchContacts.getNbObjects(), clipWithPreviousAxisIfStillColliding, allocator);
+     }
+     if (convexPolyhedronVsConvexPolyhedronBatchContacts.getNbObjects() > 0) {
++    	Console::println(mWorld->getName() + ": CollisionDetectionSystem::testNarrowPhaseCollision(): convexPolyhedronVsConvexPolyhedronBatchContacts: " + to_string(convexPolyhedronVsConvexPolyhedronBatchContacts.getNbObjects()));
+         contactFound |= convexPolyVsConvexPolyAlgo->testCollision(convexPolyhedronVsConvexPolyhedronBatchContacts, 0, convexPolyhedronVsConvexPolyhedronBatchContacts.getNbObjects(), clipWithPreviousAxisIfStillColliding, allocator);
+     }
+ 
+@@ -623,24 +658,55 @@ void CollisionDetectionSystem::computeNarrowPhase() {
+ 
+     MemoryAllocator& allocator = mMemoryManager.getSingleFrameAllocator();
+ 
+-    // Swap the previous and current contacts arrays
+-    swapPreviousAndCurrentContacts();
++    {
++    	auto startTime = Time::getCurrentMillis();
++    	// Swap the previous and current contacts arrays
++    	swapPreviousAndCurrentContacts();
++    	//
++    	Console::println(mWorld->getName() + ": CollisionDetectionSystem::computeNarrowPhase(): swapPreviousAndCurrentContacts(): " + to_string(Time::getCurrentMillis() - startTime) + " ms");
++    }
+ 
+-    mPotentialContactManifolds.reserve(mNbPreviousPotentialContactManifolds);
+-    mPotentialContactPoints.reserve(mNbPreviousPotentialContactPoints);
++    {
++    	auto startTime = Time::getCurrentMillis();
++    	//
++    	mPotentialContactManifolds.reserve(mNbPreviousPotentialContactManifolds);
++    	mPotentialContactPoints.reserve(mNbPreviousPotentialContactPoints);
++    	//
++    	Console::println(mWorld->getName() + ": CollisionDetectionSystem::computeNarrowPhase(): reserve(): " + to_string(Time::getCurrentMillis() - startTime) + " ms");
++    }
+ 
+-    // Test the narrow-phase collision detection on the batches to be tested
+-    testNarrowPhaseCollision(mNarrowPhaseInput, true, allocator);
++    {
++    	auto startTime = Time::getCurrentMillis();
++    	// Test the narrow-phase collision detection on the batches to be tested
++    	testNarrowPhaseCollision(mNarrowPhaseInput, true, allocator);
++    	//
++    	Console::println(mWorld->getName() + ": CollisionDetectionSystem::computeNarrowPhase(): testNarrowPhaseCollision(): " + to_string(Time::getCurrentMillis() - startTime) + " ms");
++    }
+ 
+-    // Process all the potential contacts after narrow-phase collision
+-    processAllPotentialContacts(mNarrowPhaseInput, true, mPotentialContactPoints,
+-                                mPotentialContactManifolds, mCurrentContactPairs);
++    {
++    	auto startTime = Time::getCurrentMillis();
++    	// Process all the potential contacts after narrow-phase collision
++    	processAllPotentialContacts(mNarrowPhaseInput, true, mPotentialContactPoints,
++    								mPotentialContactManifolds, mCurrentContactPairs);
++    	//
++    	Console::println(mWorld->getName() + ": CollisionDetectionSystem::computeNarrowPhase(): processAllPotentialContacts(): " + to_string(Time::getCurrentMillis() - startTime) + " ms");
++    }
+ 
+-    // Reduce the number of contact points in the manifolds
+-    reducePotentialContactManifolds(mCurrentContactPairs, mPotentialContactManifolds, mPotentialContactPoints);
++    {
++    	auto startTime = Time::getCurrentMillis();
++    	// Reduce the number of contact points in the manifolds
++    	reducePotentialContactManifolds(mCurrentContactPairs, mPotentialContactManifolds, mPotentialContactPoints);
++    	//
++    	Console::println(mWorld->getName() + ": CollisionDetectionSystem::computeNarrowPhase(): reducePotentialContactManifolds(): " + to_string(Time::getCurrentMillis() - startTime) + " ms");
++    }
+ 
+-    // Add the contact pairs to the bodies
+-    addContactPairsToBodies();
++    {
++    	auto startTime = Time::getCurrentMillis();
++    	// Add the contact pairs to the bodies
++    	addContactPairsToBodies();
++    	//
++    	Console::println(mWorld->getName() + ": CollisionDetectionSystem::computeNarrowPhase(): addContactPairsToBodies(): " + to_string(Time::getCurrentMillis() - startTime) + " ms");
++    }
+ 
+     assert(mCurrentContactManifolds->size() == 0);
+     assert(mCurrentContactPoints->size() == 0);
+diff --git a/src/tdme/engine/physics/World.cpp b/src/tdme/engine/physics/World.cpp
+index 42e059249..bf745be30 100644
+--- a/src/tdme/engine/physics/World.cpp
++++ b/src/tdme/engine/physics/World.cpp
+@@ -210,7 +210,7 @@ void World::update(float deltaTime)
+ 	auto startTime = Time::getCurrentMillis();
+ 	world->update(deltaTime);
+ 	auto endTime = Time::getCurrentMillis();
+-	Console::println("World::update(): " + to_string(endTime - startTime) + " ms");
++	Console::println(world->getName() + ": World::update(): " + to_string(endTime - startTime) + " ms");
+ 
+ 	/*
+ 	// TODO: collision events
