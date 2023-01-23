@@ -89,15 +89,14 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::StringTools;
 
-UIEditorTabView::UIEditorTabView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode, GUIScreenNode* uiScreenNode)
+UIEditorTabView::UIEditorTabView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode, const string& fileName)
 {
 	this->editorView = editorView;
 	this->tabId = tabId;
 	this->screenNode = screenNode;
-	this->uiScreenNode = uiScreenNode;
 	this->popUps = editorView->getPopUps();
-	uiScreenNodes.push_back(uiScreenNode);
-	screenDimensions.push_back({ uiScreenNode->getSizeConstraints().maxWidth, uiScreenNode->getSizeConstraints().maxHeight });
+	addScreen();
+	setScreen(0, fileName);
 	guiEngine = Engine::createOffScreenInstance(1920, 1080, false, false, false);
 	guiEngine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	outlinerState.expandedOutlinerParentOptionValues.push_back("0.0");
@@ -207,7 +206,6 @@ void UIEditorTabView::initialize()
 	try {
 		uiTabController = new UIEditorTabController(this);
 		uiTabController->initialize(editorView->getScreenController()->getScreenNode());
-		uiScreenNode->addTooltipRequestListener(uiTabController);
 	} catch (Exception& exception) {
 		Console::print(string("UIEditorTabView::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -445,33 +443,64 @@ void UIEditorTabView::reloadOutliner() {
 }
 
 void UIEditorTabView::addScreen() {
-	uiScreenNodes.push_back(nullptr);
-	screenDimensions.push_back({ -1, -1});
+	uiScreenNodes.push_back(
+		{
+			.fileName = string(),
+			.xml = string(),
+			.screenNode = nullptr,
+			.width = -1,
+			.height = -1
+		}
+	);
 }
 
-void UIEditorTabView::setScreen(int screenIdx, GUIScreenNode* screenNode) {
+void UIEditorTabView::setScreen(int screenIdx, const string& fileName) {
+	Console::println("UIEditorTabView::setScreen(): " + to_string(screenIdx) + " / " + fileName);
 	if (screenIdx < 0 || screenIdx >= uiScreenNodes.size()) return;
-	uiScreenNodes[screenIdx] = screenNode;
-	screenDimensions[screenIdx] = { screenNode->getSizeConstraints().maxWidth, screenNode->getSizeConstraints().maxHeight };
+	string xml;
+	GUIScreenNode* screenNode { nullptr };
+	try {
+		Console::println(Tools::getPathName(screenNode->getFileName()));
+		Console::println(Tools::getFileName(screenNode->getFileName()));
+		// parse XML
+		xml = FileSystem::getInstance()->getContentAsString(
+			Tools::getPathName(screenNode->getFileName()),
+			Tools::getFileName(screenNode->getFileName())
+		);
+		// parse screen
+		screenNode = GUIParser::parse(Tools::getPathName(fileName), Tools::getFileName(fileName));
+	} catch (Exception& exception) {
+		Console::println("UIEditorTabView::setScreen(): an error occurred: " + screenNode->getFileName() + ": " + string(exception.what()));
+	}
+	//
+	uiScreenNodes[screenIdx].fileName = fileName;
+	uiScreenNodes[screenIdx].xml = xml;
+	uiScreenNodes[screenIdx].screenNode = screenNode;
+	uiScreenNodes[screenIdx].width = screenNode->getSizeConstraints().maxWidth;
+	uiScreenNodes[screenIdx].height = screenNode->getSizeConstraints().maxHeight;
 }
 
 void UIEditorTabView::unsetScreen(int screenIdx) {
+	Console::println("UIEditorTabView::unsetScreen(): " + to_string(screenIdx));
 	if (screenIdx < 0 || screenIdx >= uiScreenNodes.size()) return;
-	auto screenNode = uiScreenNodes[screenIdx];
-	if (screenNode != nullptr) {
-		guiEngine->getGUI()->removeScreen(screenNode->getId());
-		uiScreenNodes[screenIdx] = nullptr;
-		screenDimensions[screenIdx] = { -1, -1 };
+	if (uiScreenNodes[screenIdx].screenNode != nullptr) {
+		uiScreenNodes[screenIdx].screenNode->removeTooltipRequestListener(uiTabController);
+		guiEngine->getGUI()->removeScreen(uiScreenNodes[screenIdx].screenNode->getId());
 	}
+	uiScreenNodes[screenIdx].fileName.clear();
+	uiScreenNodes[screenIdx].xml.clear();
+	uiScreenNodes[screenIdx].screenNode = nullptr;
+	uiScreenNodes[screenIdx].width = -1;
+	uiScreenNodes[screenIdx].height = -1;
 }
 
 void UIEditorTabView::removeScreen(int screenIdx) {
+	Console::println("UIEditorTabView::removeScreen(): " + to_string(screenIdx));
 	if (screenIdx < 0 || screenIdx >= uiScreenNodes.size()) return;
-	auto screenNode = uiScreenNodes[screenIdx];
-	if (screenNode != nullptr) {
-		guiEngine->getGUI()->removeScreen(screenNode->getId());
+	if (uiScreenNodes[screenIdx].screenNode != nullptr) {
+		uiScreenNodes[screenIdx].screenNode->removeTooltipRequestListener(uiTabController);
+		guiEngine->getGUI()->removeScreen(uiScreenNodes[screenIdx].screenNode->getId());
 		uiScreenNodes.erase(uiScreenNodes.begin() + screenIdx);
-		screenDimensions.erase(screenDimensions.begin() + screenIdx);
 	}
 }
 
@@ -484,17 +513,32 @@ void UIEditorTabView::reAddScreens() {
 	auto screensMaxWidth = -1;
 	auto screensMaxHeight = -1;
 	for (auto i = 0; i < uiScreenNodes.size(); i++) {
-		auto screenNode = uiScreenNodes[i];
-		auto& screenDimensionsEntity = screenDimensions[i];
+		//
+		if (uiScreenNodes[i].screenNode != nullptr) {
+			guiEngine->getGUI()->removeScreen(uiScreenNodes[i].screenNode->getId());
+			uiScreenNodes[i].screenNode = nullptr;
+		}
+		//
+		GUIScreenNode* screenNode = nullptr;
+		try {
+			screenNode = GUIParser::parse(uiScreenNodes[i].xml);
+		} catch (Exception& exception) {
+			Console::println("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception.what()));
+		}
+		//
+		uiScreenNodes[i].screenNode = screenNode;
+		uiScreenNodes[i].width = screenNode == nullptr?-1:screenNode->getSizeConstraints().maxWidth;
+		uiScreenNodes[i].height = screenNode == nullptr?-1:screenNode->getSizeConstraints().maxHeight;
+		if (uiScreenNodes[i].width > screensMaxWidth) screensMaxWidth = uiScreenNodes[i].width;
+		if (uiScreenNodes[i].height > screensMaxHeight) screensMaxHeight = uiScreenNodes[i].height;
 		if (screenNode == nullptr) continue;
-		auto screenMaxWidth = screenDimensionsEntity[0];
-		auto screenMaxHeight = screenDimensionsEntity[1];
-		if (screenMaxWidth > screensMaxWidth) screensMaxWidth = screenMaxWidth;
-		if (screenMaxHeight > screensMaxHeight) screensMaxHeight = screenMaxHeight;
+		//
 		screenNode->getSizeConstraints().minWidth = -1;
 		screenNode->getSizeConstraints().minHeight = -1;
 		screenNode->getSizeConstraints().maxWidth = -1;
 		screenNode->getSizeConstraints().maxHeight = -1;
+		//
+		screenNode->addTooltipRequestListener(uiTabController);
 		guiEngine->getGUI()->addScreen(screenNode->getId(), screenNode);
 		guiEngine->getGUI()->addRenderScreen(screenNode->getId());
 	}
@@ -630,10 +674,18 @@ void UIEditorTabView::removePrototype() {
 }
 
 void UIEditorTabView::setScreenIdx(int screenIdx) {
-	Console::println("UIEditorTabView::setScreenIdx(): " + to_string(screenIdx));
+	//
+	storeUIXML();
+	//
 	this->screenIdx = screenIdx;
 	if (visualEditor == true) return;
 	updateCodeEditor();
+}
+
+void UIEditorTabView::storeUIXML() {
+	if (screenIdx < 0 || screenIdx >= uiScreenNodes.size()) return;
+	uiScreenNodes[screenIdx].xml = textNode->getText().getString();
+	Console::println(uiScreenNodes[screenIdx].xml);
 }
 
 void UIEditorTabView::setVisualEditor() {
@@ -645,8 +697,6 @@ void UIEditorTabView::setVisualEditor() {
 	//
 	auto editorNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(tabId + "_tab_editor"));
 	if (editorNode != nullptr) editorNode->getActiveConditions().set("visualization");
-	//
-	textNode->setText(MutableString());
 	//
 	reAddScreens();
 }
@@ -668,22 +718,9 @@ void UIEditorTabView::updateCodeEditor() {
 	//
 	guiEngine->getGUI()->resetRenderScreens();
 	//
-	auto selectedScreenNode = screenIdx >= 0 && screenIdx < uiScreenNodes.size()?uiScreenNodes[screenIdx]:nullptr;
-	string uiCode;
-	if (selectedScreenNode != nullptr) {
-		auto screenFileName = selectedScreenNode->getFileName();
-		Console::println("UIEditorTabView::updateCodeEditor(): " + screenFileName);
-		try {
-			uiCode = FileSystem::getInstance()->getContentAsString(
-				FileSystem::getInstance()->getPathName(screenFileName),
-				FileSystem::getInstance()->getFileName(screenFileName)
-			);
-		} catch (Exception& exception) {
-			Console::println("UIEditorTabView::setCodeEditor(): An error occurred: " + string(exception.what()));
-		}
-	}
+	if (screenIdx < 0 || screenIdx >= uiScreenNodes.size()) return;
 	//
-	textNode->setText(MutableString(StringTools::replace(StringTools::replace(uiCode, "[", "\\["), "]", "\\]")));
+	textNode->setText(MutableString(StringTools::replace(StringTools::replace(uiScreenNodes[screenIdx].xml, "[", "\\["), "]", "\\]")));
 	// initial text format
 	TextFormatter::getInstance()->format("xml", textNode);
 }

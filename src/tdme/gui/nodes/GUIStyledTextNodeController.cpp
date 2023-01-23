@@ -987,7 +987,6 @@ void GUIStyledTextNodeController::storeTypingHistoryEntry() {
 
 	// if no char has been typed we have nothing to do
 	if (typedChars == false) {
-		Console::println("storeTypingHistoryEntry(): exit a");
 		return;
 	}
 
@@ -996,7 +995,6 @@ void GUIStyledTextNodeController::storeTypingHistoryEntry() {
 
 	// no position to start storing from?
 	if (historyEntryIdx == -1) {
-		Console::println("storeTypingHistoryEntry(): exit b");
 		return;
 	}
 
@@ -1007,7 +1005,6 @@ void GUIStyledTextNodeController::storeTypingHistoryEntry() {
 	// no change?
 	if (historyEntryIdx == index) {
 		historyEntryIdx = -1;
-		Console::println("storeTypingHistoryEntry(): exit c");
 		return;
 	}
 

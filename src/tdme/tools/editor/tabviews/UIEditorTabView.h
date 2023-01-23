@@ -47,6 +47,15 @@ using tdme::utilities::Float;
  */
 class tdme::tools::editor::tabviews::UIEditorTabView final: public TabView, protected CameraRotationInputHandlerEventHandler
 {
+public:
+	struct UIScreenNode {
+		string fileName;
+		string xml;
+		GUIScreenNode* screenNode { nullptr };
+		int width { -1 };
+		int height { -1 };
+	};
+
 protected:
 	Engine* guiEngine { nullptr };
 	Engine* engine { nullptr };
@@ -62,12 +71,10 @@ private:
 	EditorView* editorView { nullptr };
 	string tabId;
 	GUIScreenNode* screenNode { nullptr };
-	GUIScreenNode* uiScreenNode { nullptr };
 	PopUps* popUps { nullptr };
 	UIEditorTabController* uiTabController { nullptr };
 	TabView::OutlinerState outlinerState;
-	vector<GUIScreenNode*> uiScreenNodes;
-	vector<array<int, 2>> screenDimensions;
+	vector<UIScreenNode> uiScreenNodes;
 	CameraRotationInputHandler* cameraRotationInputHandler { nullptr };
 	int screenIdx { 0 };
 	bool visualEditor { false };
@@ -106,9 +113,9 @@ public:
 	 * @param editorView editor view
 	 * @param tabId tab id
 	 * @param screenNode screenNode
-	 * @param uiScreenNode UI screenNode
+	 * @param fileName screen XML file name
 	 */
-	UIEditorTabView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode, GUIScreenNode* uiScreenNode);
+	UIEditorTabView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode, const string& fileName);
 
 	/**
 	 * Destructor
@@ -137,9 +144,9 @@ public:
 	}
 
 	/**
-	 * @return screen nodes
+	 * @return UI screen nodes
 	 */
-	inline const vector<GUIScreenNode*>& getScreenNodes() {
+	inline const vector<UIScreenNode>& getUIScreenNodes() {
 		return uiScreenNodes;
 	}
 
@@ -151,9 +158,9 @@ public:
 	/**
 	 * Set screen
 	 * @param screenIdx screen index
-	 * @param screenNode screen node
+	 * @param fileName file name
 	 */
-	void setScreen(int screenIdx, GUIScreenNode* screenNode);
+	void setScreen(int screenIdx, const string& fileName);
 
 	/**
 	 * Unset screen
@@ -214,6 +221,11 @@ public:
 	 * @param screenIdx screen index
 	 */
 	void setScreenIdx(int screenIdx);
+
+	/**
+	 * Store UI XML
+	 */
+	void storeUIXML();
 
 	/**
 	 * Set visual mode

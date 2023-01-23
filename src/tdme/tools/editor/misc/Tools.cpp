@@ -523,7 +523,7 @@ const string Tools::getApplicationSubPathName(const string& fileName)
 				return "engine";
 		}
 	}
-	return "";
+	return "engine";
 }
 
 const string Tools::getPathName(const string& fileName)
