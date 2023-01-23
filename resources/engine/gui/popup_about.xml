@@ -84,7 +84,7 @@
 
 							<styled-text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_disabled}" width="100%" height="auto" horizontal-align="center">
 								<![CDATA[
-									Developed 2012-2022 by [url=https://drewke.net]drewke.net[/url], [url=https://mindty.com]mindty.com[/url]
+									Developed 2012-2023 by [url=https://drewke.net]drewke.net[/url], [url=https://mindty.com]mindty.com[/url]
 								]]>
 							 </styled-text>
 						

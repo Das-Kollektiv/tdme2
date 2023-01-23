@@ -73,6 +73,8 @@ on: nothing
 	console.log("array.sort($array, 'sortFunctionDesc'): ", $array)
 	array.sort($array, "sortFunctionAsc")
 	console.log("array.sort($array, 'sortFunctionAsc'): ", $array)
+	array.reverse($array)
+	console.log("array.reverse($array): ", $array)
 	console.log("---------")
 	console.log("Maps")
 	console.log("----------")
