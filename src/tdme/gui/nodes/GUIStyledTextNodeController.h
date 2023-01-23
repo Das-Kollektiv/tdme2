@@ -26,6 +26,7 @@ using tdme::utilities::MutableString;
  * @author Andreas Drewke
  */
 class tdme::gui::nodes::GUIStyledTextNodeController
+
 	: public GUINodeController
 {
 	friend class tdme::gui::GUIParser;

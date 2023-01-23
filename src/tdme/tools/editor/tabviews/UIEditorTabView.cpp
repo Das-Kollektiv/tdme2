@@ -122,8 +122,7 @@ void UIEditorTabView::onCameraScale() {
 
 void UIEditorTabView::handleInputEvents()
 {
-	if (projectedUi == true) {
-		//
+	if (visualEditor == false && projectedUi == true) {
 		// mouse wheel events that happened to route to GUI engine
 		vector<int> checkedGUIEngineMouseEventIndices;
 		vector<int> checkedEngineMouseEventIndices;
@@ -424,6 +423,7 @@ inline bool UIEditorTabView::hasFixedSize() {
 }
 
 Engine* UIEditorTabView::getEngine() {
+	if (visualEditor == false) return nullptr;
 	return projectedUi == true?engine:guiEngine;
 }
 
