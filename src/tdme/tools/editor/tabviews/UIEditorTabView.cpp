@@ -506,9 +506,9 @@ void UIEditorTabView::removeScreen(int screenIdx) {
 	if (screenIdx < 0 || screenIdx >= uiScreenNodes.size()) return;
 	if (uiScreenNodes[screenIdx].screenNode != nullptr) {
 		uiScreenNodes[screenIdx].screenNode->removeTooltipRequestListener(uiTabController);
-		guiEngine->getGUI()->removeScreen(uiScreenNodes[screenIdx].screenNode->getId());
-		uiScreenNodes.erase(uiScreenNodes.begin() + screenIdx);
 	}
+	guiEngine->getGUI()->removeScreen(uiScreenNodes[screenIdx].screenNode->getId());
+	uiScreenNodes.erase(uiScreenNodes.begin() + screenIdx);
 }
 
 void UIEditorTabView::removeScreens() {
@@ -525,6 +525,10 @@ void UIEditorTabView::reAddScreens() {
 			guiEngine->getGUI()->removeScreen(uiScreenNodes[i].screenNode->getId());
 			uiScreenNodes[i].screenNode = nullptr;
 		}
+
+		//
+		if (uiScreenNodes[i].xml.empty() == true) continue;
+
 		// fetch root node
 		GUIScreenNode* screenNode = nullptr;
 		string xmlRootNode;
@@ -586,18 +590,23 @@ void UIEditorTabView::reAddScreens() {
 				}
 			}
 		}
+
 		//
 		uiScreenNodes[i].screenNode = screenNode;
+		if (screenNode == nullptr) continue;
+
+		//
 		uiScreenNodes[i].width = screenNode == nullptr?-1:screenNode->getSizeConstraints().maxWidth;
 		uiScreenNodes[i].height = screenNode == nullptr?-1:screenNode->getSizeConstraints().maxHeight;
 		if (uiScreenNodes[i].width > screensMaxWidth) screensMaxWidth = uiScreenNodes[i].width;
 		if (uiScreenNodes[i].height > screensMaxHeight) screensMaxHeight = uiScreenNodes[i].height;
-		if (screenNode == nullptr) continue;
+
 		//
 		screenNode->getSizeConstraints().minWidth = -1;
 		screenNode->getSizeConstraints().minHeight = -1;
 		screenNode->getSizeConstraints().maxWidth = -1;
 		screenNode->getSizeConstraints().maxHeight = -1;
+
 		//
 		screenNode->addTooltipRequestListener(uiTabController);
 		guiEngine->getGUI()->addScreen(screenNode->getId(), screenNode);
