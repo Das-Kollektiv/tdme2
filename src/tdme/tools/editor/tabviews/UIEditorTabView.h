@@ -125,6 +125,13 @@ public:
 	~UIEditorTabView();
 
 	/**
+	 * @return filename of opened file
+	 */
+	inline const string& getFileName() {
+		return screenFileName;
+	}
+
+	/**
 	 * @return editor view
 	 */
 	inline EditorView* getEditorView() {
@@ -148,7 +155,7 @@ public:
 	/**
 	 * @return UI screen nodes
 	 */
-	inline const vector<UIScreenNode>& getUIScreenNodes() {
+	inline vector<UIScreenNode>& getUIScreenNodes() {
 		return uiScreenNodes;
 	}
 
@@ -217,6 +224,13 @@ public:
 	 * Remove model
 	 */
 	void removePrototype();
+
+	/**
+	 * @return current screen index
+	 */
+	inline int getScreenIdx() {
+		return screenIdx;
+	}
 
 	/**
 	 * Set screen index
