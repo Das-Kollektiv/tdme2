@@ -453,9 +453,10 @@ void EditorScreenController::onDragRequest(GUIElementNode* node, int mouseX, int
 			}
 		};
 		//
-		auto imageSource = GUIParser::getEngineThemeProperties()->get("icon.type_" + FileDialogScreenController::getFileImageName(node->getValue()) + "_big", "resources/engine/images/tdme_big.png");
+		auto relativeFileName = getRelativePath(node->getValue());
+		auto imageSource = GUIParser::getEngineThemeProperties()->get("icon.type_" + FileDialogScreenController::getFileImageName(relativeFileName) + "_big", "resources/engine/images/tdme_big.png");
 		auto xml = "<image width=\"auto\" height=\"auto\" src=\"" + imageSource + "\" />";
-		view->getPopUps()->getDraggingScreenController()->start(mouseX, mouseY, xml, "file:" + node->getValue(), new OnDragReleaseAction(this));
+		view->getPopUps()->getDraggingScreenController()->start(mouseX, mouseY, xml, "file:" + relativeFileName, new OnDragReleaseAction(this));
 	}
 }
 
@@ -1286,7 +1287,7 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 	if (FileSystem::getInstance()->isPath(absoluteFileName)) {
 		stopScanFiles();
 		resetScanFiles();
-		setRelativeProjectPath(StringTools::substring(absoluteFileName, projectPath.size() + 1));
+		setRelativeProjectPath(getRelativePath(absoluteFileName));
 		startScanFiles();
 		return;
 	}
@@ -1581,7 +1582,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 				}
 			case FILETYPE_SCREEN_TEXT:
 				{
-					auto relativeFileName = StringTools::substring(absoluteFileName, projectPath.size() + 1);
+					auto relativeFileName = getRelativePath(absoluteFileName);
 					string xmlRootNode;
 					// try to read XML root node tag name
 					try {

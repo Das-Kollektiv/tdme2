@@ -188,6 +188,11 @@ public:
 	void save();
 
 	/**
+	 * Save as
+	 */
+	void saveAs();
+
+	/**
 	 * Show the information pop up / modal
 	 * @param caption caption
 	 * @param message message

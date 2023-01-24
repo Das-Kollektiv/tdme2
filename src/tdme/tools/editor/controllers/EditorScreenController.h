@@ -26,7 +26,7 @@
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::map;
 using std::string;
@@ -57,7 +57,7 @@ using tdme::tools::editor::controllers::ScreenController;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
-using tdme::utilities::MutableString;
+using tdme::utilities::StringTools;
 
 /**
  * Editor screen controller
@@ -656,4 +656,13 @@ public:
 	 */
 	bool isDropOnNode(int dropX, int dropY, const string& nodeId);
 
+	/**
+	 * Returns relative path within project path
+	 * @param absoluteFileName absolute file name
+	 * @return relative path within project path
+	 */
+	inline const string getRelativePath(const string& absoluteFileName) {
+		if (StringTools::startsWith(absoluteFileName, projectPath + "/") == false) return absoluteFileName;
+		return StringTools::substring(absoluteFileName, projectPath.size() + 1);
+	}
 };
