@@ -91,6 +91,13 @@ void InfoDialogScreenController::onAction(GUIActionListenerType type, GUIElement
 	}
 }
 
+void InfoDialogScreenController::onFocus(GUIElementNode* node) {
+	GUI::setDisableTabFocusControl(node->getScreenNode() != screenNode);
+}
+
+void InfoDialogScreenController::onUnfocus(GUIElementNode* node) {
+}
+
 void InfoDialogScreenController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
 	popUps->getTooltipScreenController()->show(mouseX, mouseY, node->getToolTip());
 }

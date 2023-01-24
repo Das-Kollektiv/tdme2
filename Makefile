@@ -593,6 +593,7 @@ SRCS = \
 	src/tdme/tools/editor/misc/Gizmo.cpp \
 	src/tdme/tools/editor/misc/PopUps.cpp \
 	src/tdme/tools/editor/misc/TextFormatter.cpp \
+	src/tdme/tools/editor/misc/TextTools.cpp \
 	src/tdme/tools/editor/misc/Tools.cpp \
 	src/tdme/tools/editor/tabcontrollers/DecalEditorTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/EmptyEditorTabController.cpp \

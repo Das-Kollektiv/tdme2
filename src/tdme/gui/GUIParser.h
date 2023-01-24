@@ -61,6 +61,22 @@ public:
 	}
 
 	/**
+	 * Parses a XML file and returns root node as string
+	 * @param pathName path name
+	 * @param fileName file name
+	 * @throws tdme::gui::GUIParserException
+	 * @throws tdme::os::filesystem::FileSystemException
+	 */
+	static const string getRootNode(const string& pathName, const string& fileName);
+
+	/**
+	 * Parses a XML string and returns root node as string
+	 * @param xml xml
+	 * @throws tdme::gui::GUIParserException
+	 */
+	static const string getRootNode(const string& xml);
+
+	/**
 	 * Parses a GUI XML file
 	 * @param pathName path name
 	 * @param fileName file name

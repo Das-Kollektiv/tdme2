@@ -109,6 +109,7 @@ void ContextMenuScreenController::onAction(GUIActionListenerType type, GUIElemen
 }
 
 void ContextMenuScreenController::onFocus(GUIElementNode* node) {
+	GUI::setDisableTabFocusControl(node->getScreenNode() != screenNode);
 }
 
 void ContextMenuScreenController::onUnfocus(GUIElementNode* node) {

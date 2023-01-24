@@ -365,6 +365,21 @@ public:
 	 */
 	void createMiniScriptConnections();
 
+	// overridden methods
+	void handleInputEvents() override;
+	void display() override;
+	inline const string& getTabId() override {
+		return tabId;
+	}
+	void initialize() override;
+	void dispose() override;
+	Engine* getEngine() override;
+	void activate() override;
+	void deactivate() override;
+	void reloadOutliner() override;
+	inline bool hasFixedSize() override{ return false; };
+	void updateRendering() override;
+
 	/**
 	 * @return text index
 	 */
@@ -418,21 +433,6 @@ public:
 	 * Cancel find
 	 */
 	void cancelFind();
-
-	// overridden methods
-	void handleInputEvents() override;
-	void display() override;
-	inline const string& getTabId() override {
-		return tabId;
-	}
-	void initialize() override;
-	void dispose() override;
-	Engine* getEngine() override;
-	void activate() override;
-	void deactivate() override;
-	void reloadOutliner() override;
-	inline bool hasFixedSize() override{ return false; };
-	void updateRendering() override;
 
 	/**
 	 * Redo

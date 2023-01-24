@@ -3,6 +3,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/events/GUIFocusListener.h>
@@ -31,6 +32,7 @@ using std::string;
 
 using tdme::tools::editor::controllers::ColorPickerScreenController;
 
+using tdme::engine::Engine;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
@@ -42,6 +44,7 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::tools::editor::controllers::ColorPickerImageController;
 using tdme::tools::editor::controllers::TooltipScreenController;
@@ -103,7 +106,9 @@ void ColorPickerScreenController::show(const Color4Base& color, Action* onColorC
 	this->onColorChangeAction = onColorChangeAction;
 	updateColor();
 	updateColorHex();
+	//
 	screenNode->setVisible(true);
+	Engine::getInstance()->getGUI()->setFoccussedNode(hexInput);
 }
 
 void ColorPickerScreenController::close()
@@ -176,6 +181,7 @@ void ColorPickerScreenController::onAction(GUIActionListenerType type, GUIElemen
 }
 
 void ColorPickerScreenController::onFocus(GUIElementNode* node) {
+	GUI::setDisableTabFocusControl(node->getScreenNode() != screenNode);
 }
 
 void ColorPickerScreenController::onUnfocus(GUIElementNode* node) {

@@ -21,6 +21,7 @@
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/RTTI.h>
 #include <tdme/utilities/Time.h>
 
 using std::string;
@@ -40,6 +41,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::RTTI;
 using tdme::utilities::Time;
 
 template<typename T, typename U>
@@ -47,7 +49,9 @@ static T required_dynamic_cast(U u)
 {
 	auto t = dynamic_cast<T>(u);
 	if (t == nullptr) {
+		Console::println("required_dynamic_cast: unable to perform required dynamic cast @\n\n" + RTTI::backtrace());
 		throw ExceptionBase("required_dynamic_cast did fail");
+
 	}
 	return t;
 }
