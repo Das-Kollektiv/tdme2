@@ -453,9 +453,10 @@ void EditorScreenController::onDragRequest(GUIElementNode* node, int mouseX, int
 			}
 		};
 		//
-		auto imageSource = GUIParser::getEngineThemeProperties()->get("icon.type_" + FileDialogScreenController::getFileImageName(node->getValue()) + "_big", "resources/engine/images/tdme_big.png");
+		auto relativeFileName = getRelativePath(node->getValue());
+		auto imageSource = GUIParser::getEngineThemeProperties()->get("icon.type_" + FileDialogScreenController::getFileImageName(relativeFileName) + "_big", "resources/engine/images/tdme_big.png");
 		auto xml = "<image width=\"auto\" height=\"auto\" src=\"" + imageSource + "\" />";
-		view->getPopUps()->getDraggingScreenController()->start(mouseX, mouseY, xml, "file:" + node->getValue(), new OnDragReleaseAction(this));
+		view->getPopUps()->getDraggingScreenController()->start(mouseX, mouseY, xml, "file:" + relativeFileName, new OnDragReleaseAction(this));
 	}
 }
 
@@ -971,30 +972,54 @@ void EditorScreenController::onAddFile(const string& type) {
 		void performAction() override {
 			editorScreenController->addFile(
 				editorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
-				Tools::ensureFileEnding(editorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName(), string("t") + type),
+				Tools::ensureFileEnding(editorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName(), extension),
 				type
 			);
 			editorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
-		OnAddFile(EditorScreenController* editorScreenController, const string& type): editorScreenController(editorScreenController), type(type) {
+		OnAddFile(EditorScreenController* editorScreenController, const string& type, const string& extension): editorScreenController(editorScreenController), type(type), extension(extension) {
 		}
 	private:
 		EditorScreenController* editorScreenController;
 		string type;
+		string extension;
 	};
 
+	//
+	string extension;
+	if (type == "screen" || type == "template") extension = "xml"; else extension = "t" + type;
+
+	//
 	view->getPopUps()->getFileDialogScreenController()->show(
 		projectPath + "/" + relativeProjectPath,
 		string("Add ") + type + " to project: ",
-		{ string("t") + type },
-		string("Untitled") + "." + "t" + type,
+		{ extension },
+		string("Untitled") + "." + extension,
 		true,
-		new OnAddFile(this, type)
+		new OnAddFile(this, type, extension)
 	);
 
 }
 
 void EditorScreenController::addFile(const string& pathName, const string& fileName, const string& type) {
+	if (type == "screen") {
+		try {
+			FileSystem::getInstance()->setContentFromString(pathName, fileName, FileSystem::getInstance()->getContentAsString("resources/engine/templates/gui", "screen.xml"));
+			browseTo(pathName + "/" + fileName);
+			openFile(pathName + "/" + fileName);
+		} catch (Exception& exception) {
+			showInfoPopUp("Error", string() + "An error occurred: file type: " + type + ": " + exception.what());
+		}
+	} else
+	if (type == "template") {
+		try {
+			FileSystem::getInstance()->setContentFromString(pathName, fileName, FileSystem::getInstance()->getContentAsString("resources/engine/templates/gui", "template.xml"));
+			browseTo(pathName + "/" + fileName);
+			openFile(pathName + "/" + fileName);
+		} catch (Exception& exception) {
+			showInfoPopUp("Error", string() + "An error occurred: file type: " + type + ": " + exception.what());
+		}
+	} else
 	if (type == "script") {
 		try {
 			FileSystem::getInstance()->setContentFromString(pathName, fileName, FileSystem::getInstance()->getContentAsString("resources/engine/templates/tscript", "template.tscript"));
@@ -1286,7 +1311,7 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 	if (FileSystem::getInstance()->isPath(absoluteFileName)) {
 		stopScanFiles();
 		resetScanFiles();
-		setRelativeProjectPath(StringTools::substring(absoluteFileName, projectPath.size() + 1));
+		setRelativeProjectPath(getRelativePath(absoluteFileName));
 		startScanFiles();
 		return;
 	}
@@ -1581,7 +1606,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 				}
 			case FILETYPE_SCREEN_TEXT:
 				{
-					auto relativeFileName = StringTools::substring(absoluteFileName, projectPath.size() + 1);
+					auto relativeFileName = getRelativePath(absoluteFileName);
 					string xmlRootNode;
 					// try to read XML root node tag name
 					try {
