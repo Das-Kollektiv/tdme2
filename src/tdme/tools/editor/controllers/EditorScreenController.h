@@ -438,6 +438,12 @@ public:
 	void browseTo(const string& fileName);
 
 	/**
+	 * Close tab
+	 * @param tabId tab id
+	 */
+	void closeTab(const string& tabId);
+
+	/**
 	 * Close tabs
 	 */
 	void closeTabs();
