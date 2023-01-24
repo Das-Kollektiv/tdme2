@@ -183,6 +183,11 @@ public:
 	void closeFindReplaceWindow();
 
 	/**
+	 * Save
+	 */
+	void save();
+
+	/**
 	 * Show the information pop up / modal
 	 * @param caption caption
 	 * @param message message

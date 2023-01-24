@@ -137,7 +137,7 @@ void UIEditorTabController::onCommand(TabControllerCommand command)
 			view->selectAll();
 			break;
 		case COMMAND_SAVE:
-			showInfoPopUp("Warning", "This command is not supported yet");
+			save();
 			break;
 		case COMMAND_SAVEAS:
 			showInfoPopUp("Warning", "This command is not supported yet");
@@ -910,4 +910,27 @@ void UIEditorTabController::setPrototype(const string& pathName, const string& f
 
 void UIEditorTabController::closeFindReplaceWindow() {
 	popUps->getFindReplaceDialogScreenController()->close();
+}
+
+void UIEditorTabController::save() {
+	//
+	view->storeUIXML();
+	//
+	auto& uiScreenNodes = view->getUIScreenNodes();
+	for (auto& uiScreenNode: uiScreenNodes) {
+		//
+		if (uiScreenNode.fileName.empty() == true) continue;
+
+		//
+		try {
+			FileSystem::getInstance()->setContentFromString(
+				Tools::getPathName(uiScreenNode.fileName),
+				Tools::getFileName(uiScreenNode.fileName),
+				uiScreenNode.xml
+			);
+		} catch (Exception& exception) {
+			Console::println(string("UIEditorTabController::save(): An error occurred: ") + exception.what());;
+			showInfoPopUp("Warning", string(exception.what()));
+		}
+	}
 }
