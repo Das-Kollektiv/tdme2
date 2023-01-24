@@ -1309,8 +1309,8 @@ void Installer::display()
 		remountInstallerArchive = false;
 	}
 	engine->display();
-	engine->getGUI()->handleEvents();
 	engine->getGUI()->render();
+	engine->getGUI()->handleEvents();
 	installThreadMutex.unlock();
 }
 

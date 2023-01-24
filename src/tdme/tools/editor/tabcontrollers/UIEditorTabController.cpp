@@ -23,6 +23,7 @@
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
+#include <tdme/tools/editor/controllers/FindReplaceDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
@@ -62,6 +63,7 @@ using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
+using tdme::tools::editor::controllers::FindReplaceDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
@@ -112,7 +114,164 @@ void UIEditorTabController::dispose()
 
 void UIEditorTabController::onCommand(TabControllerCommand command)
 {
-	showInfoPopUp("Warning", "This command is not supported yet");
+	switch (command) {
+		case COMMAND_REDO:
+			view->redo();
+			break;
+		case COMMAND_UNDO:
+			view->undo();
+			break;
+		case COMMAND_CUT:
+			view->cut();
+			break;
+		case COMMAND_COPY:
+			view->copy();
+			break;
+		case COMMAND_PASTE:
+			view->paste();
+			break;
+		case COMMAND_DELETE:
+			view->delete_();
+			break;
+		case COMMAND_SELECTALL:
+			view->selectAll();
+			break;
+		case COMMAND_SAVE:
+			save();
+			break;
+		case COMMAND_SAVEAS:
+			showInfoPopUp("Warning", "This command is not supported yet");
+			break;
+		case COMMAND_FINDREPLACE:
+			{
+				//
+				firstSearch = true;
+				searchIndex = view->getTextIndex();
+
+				//
+				class FindAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						if (uiEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText().empty() == true) {
+							uiEditorTabController->showInfoPopUp("Find", "No find string given.");
+						} else {
+							if (uiEditorTabController->view->find(
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly(),
+								uiEditorTabController->firstSearch,
+								uiEditorTabController->searchIndex
+							) == false) {
+								uiEditorTabController->showInfoPopUp("Find", "Text not found.");
+							}
+							uiEditorTabController->firstSearch = false;
+						}
+					}
+					FindAction(UIEditorTabController* uiEditorTabController): uiEditorTabController(uiEditorTabController) {
+					}
+				private:
+					UIEditorTabController* uiEditorTabController;
+				};
+				//
+				class CountAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						if (uiEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText().empty() == true) {
+							uiEditorTabController->showInfoPopUp("Count", "No find string given.");
+						} else {
+							auto count = uiEditorTabController->view->count(
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly()
+							);
+							uiEditorTabController->showInfoPopUp("Count", "The text occurred " + to_string(count) + " times.");
+						}
+					}
+					CountAction(UIEditorTabController* uiEditorTabController): uiEditorTabController(uiEditorTabController) {
+					}
+				private:
+					UIEditorTabController* uiEditorTabController;
+				};
+				//
+				class ReplaceAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						if (uiEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText().empty() == true) {
+							uiEditorTabController->showInfoPopUp("Replace", "No find string given.");
+						} else {
+							if (uiEditorTabController->view->replace(
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->getReplaceText(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly(),
+								uiEditorTabController->searchIndex
+							) == false) {
+								uiEditorTabController->showInfoPopUp("Replace", "Text not found.");
+							}
+						}
+					}
+					ReplaceAction(UIEditorTabController* uiEditorTabController): uiEditorTabController(uiEditorTabController) {
+					}
+				private:
+					UIEditorTabController* uiEditorTabController;
+				};
+				//
+				class ReplaceAllAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						if (uiEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText().empty() == true) {
+							uiEditorTabController->showInfoPopUp("Replace All", "No find string given.");
+						} else {
+							if (uiEditorTabController->view->replaceAll(
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->getReplaceText(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
+								uiEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly()
+							) == false) {
+								uiEditorTabController->showInfoPopUp("Replace All", "Text not found.");
+							}
+						}
+					}
+					ReplaceAllAction(UIEditorTabController* uiEditorTabController): uiEditorTabController(uiEditorTabController) {
+					}
+				private:
+					UIEditorTabController* uiEditorTabController;
+				};
+				//
+				class CompleteAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						uiEditorTabController->view->cancelFind();
+						uiEditorTabController->popUps->getFindReplaceDialogScreenController()->close();
+					}
+					CompleteAction(UIEditorTabController* uiEditorTabController): uiEditorTabController(uiEditorTabController) {
+					}
+				private:
+					UIEditorTabController* uiEditorTabController;
+				};
+				//
+				popUps->getFindReplaceDialogScreenController()->show(
+					new FindAction(this),
+					new CountAction(this),
+					new ReplaceAction(this),
+					new ReplaceAllAction(this),
+					new CompleteAction(this)
+				);
+			}
+			break;
+		default:
+			showInfoPopUp("Warning", "This command is not supported yet");
+			break;
+	}
 }
 
 void UIEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
@@ -160,12 +319,14 @@ void UIEditorTabController::onChange(GUIElementNode* node)
 	Console::println("UIEditorTabController::onChange(): " + node->getId() + " = " + node->getController()->getValue().getString());
 	if (node->getId() == "selectbox_outliner") {
 		updateDetails(node->getController()->getValue().getString());
+		auto outlinerNode = node->getController()->getValue().getString();
+		view->setScreenIdx(outlinerNode == "screens"?0:Integer::parse(StringTools::substring(outlinerNode, 0, outlinerNode.find("."))));
 	} else
 	if (node->getId() == "dropdown_outliner_add") {
-		auto addOutlinerType = node->getController()->getValue().getString();
+		auto addOutlinerType = node->getController()->getValue().getString();;
 		if (addOutlinerType == "screen") {
 			view->addScreen();
-			view->getEditorView()->reloadTabOutliner(to_string(view->getScreenNodes().size() - 1) + ".0");
+			view->getEditorView()->reloadTabOutliner(to_string(view->getUIScreenNodes().size() - 1) + ".0");
 		}
 	} else
 	if (node->getId() == "projectedui_meshnode") {
@@ -175,6 +336,15 @@ void UIEditorTabController::onChange(GUIElementNode* node)
 	if (node->getId() == "projectedui_animation") {
 		prototypeMeshAnimation = node->getController()->getValue().getString();
 		view->setModelMeshAnimation(prototypeMeshAnimation);
+	} else
+	if (node->getId() == view->getTabId() + "_tab_checkbox_visualui" == true) {
+		auto visual = node->getController()->getValue().equals("1");
+		if (visual == true) {
+			view->storeUIXML();
+			view->setVisualEditor();
+		} else {
+			view->setCodeEditor();
+		}
 	}
 }
 
@@ -207,7 +377,7 @@ void UIEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouse
 						virtual void performAction() {
 							auto view = uiEditorTabController->getView();
 							view->addScreen();
-							view->getEditorView()->reloadTabOutliner(to_string(view->getScreenNodes().size() - 1) + ".0");
+							view->getEditorView()->reloadTabOutliner(to_string(view->getUIScreenNodes().size() - 1) + ".0");
 						}
 					};
 					Engine::getInstance()->enqueueAction(
@@ -276,7 +446,7 @@ void UIEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouse
 						virtual void performAction() {
 							auto view = uiEditorTabController->getView();
 							view->removeScreen(screenIdx);
-							view->getEditorView()->reloadTabOutliner(to_string(view->getScreenNodes().size() - 1) + ".0");
+							view->getEditorView()->reloadTabOutliner(to_string(view->getUIScreenNodes().size() - 1) + ".0");
 						}
 					};
 					Engine::getInstance()->enqueueAction(
@@ -326,29 +496,28 @@ void UIEditorTabController::setOutlinerContent() {
 	string xml;
 	xml+= "<selectbox-parent-option text=\"Screens\" value=\"screens\">\n";
 	auto screenIdx = 0;
-	for (auto screenNode: view->getScreenNodes()) {
+	for (auto& uiScreenNode: view->getUIScreenNodes()) {
+		auto screenNode = uiScreenNode.screenNode;
 		if (screenNode == nullptr) {
 			xml+= "<selectbox-option text=\"<screen>\" value=\"" + to_string(screenIdx) + ".0\" />\n";
 			screenIdx++;
 			continue;
 		}
-		try {
-			auto screenXML = FileSystem::getInstance()->getContentAsString(
-				Tools::getPathName(screenNode->getFileName()),
-				Tools::getFileName(screenNode->getFileName())
-			);
-			TiXmlDocument xmlDocument;
-			xmlDocument.Parse(screenXML.c_str());
-			if (xmlDocument.Error() == true) {
-				auto message = string("UIEditorTabController::setOutlinerContent(): Could not parse XML. Error='") + string(xmlDocument.ErrorDesc()) + "':\n\n" + screenXML;
-				Console::println(message);
-				throw GUIParserException(message);
+		if (uiScreenNode.xml.empty() == false) {
+			try {
+				TiXmlDocument xmlDocument;
+				xmlDocument.Parse(uiScreenNode.xml.c_str());
+				if (xmlDocument.Error() == true) {
+					auto message = string("UIEditorTabController::setOutlinerContent(): Could not parse XML. Error='") + string(xmlDocument.ErrorDesc()) + "':\n\n" + uiScreenNode.xml;
+					Console::println(message);
+					throw GUIParserException(message);
+				}
+				TiXmlElement* xmlRoot = xmlDocument.RootElement();
+				int nodeIdx = 0;
+				createOutlinerParentNodeNodesXML(xmlRoot, xml, screenIdx, nodeIdx);
+			} catch (Exception& exception) {
+				showInfoPopUp("Warning", (string(exception.what())));
 			}
-			TiXmlElement* xmlRoot = xmlDocument.RootElement();
-			int nodeIdx = 0;
-			createOutlinerParentNodeNodesXML(xmlRoot, xml, screenIdx, nodeIdx);
-		} catch (Exception& exception) {
-			showInfoPopUp("Warning", (string(exception.what())));
 		}
 		screenIdx++;
 	}
@@ -368,6 +537,7 @@ void UIEditorTabController::updateDetails(const string& outlinerNode) {
 	} else
 	if (StringTools::endsWith(outlinerNode, ".0") == true) {
 		updateScreenDetails();
+		view->setScreenIdx(outlinerNode == "screens"?0:Integer::parse(StringTools::substring(outlinerNode, 0, outlinerNode.find("."))));
 	} else {
 		view->getEditorView()->setDetailsContent(string());
 	}
@@ -386,11 +556,11 @@ void UIEditorTabController::updateScreenDetails() {
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_screen"))->getActiveConditions().add("open");
 		if (screenIdx >= 0 &&
-			screenIdx < view->getScreenNodes().size() &&
-			view->getScreenNodes()[screenIdx] != nullptr &&
-			view->getScreenNodes()[screenIdx]->getFileName().empty() == false) {
+			screenIdx < view->getUIScreenNodes().size() &&
+			view->getUIScreenNodes()[screenIdx].screenNode != nullptr &&
+			view->getUIScreenNodes()[screenIdx].fileName.empty() == false) {
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("screen"))->setSource("resources/engine/images/gui_big.png");
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("screen"))->setTooltip(view->getScreenNodes()[screenIdx]->getFileName());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("screen"))->setTooltip(view->getUIScreenNodes()[screenIdx].fileName);
 		}
 	} catch (Exception& exception) {
 		Console::println(string("UIEditorTabController::updateScreenDetails(): An error occurred: ") + exception.what());;
@@ -520,10 +690,10 @@ void UIEditorTabController::onLoadScreen() {
 
 	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 	auto screenIdx = Integer::parse(StringTools::substring(outlinerNode, 0, outlinerNode.find(".")));
-	if (screenIdx < 0 || screenIdx >= view->getScreenNodes().size()) return;
-	auto screenNode = view->getScreenNodes()[screenIdx];
-	auto pathName = screenNode != nullptr?Tools::getPathName(screenNode->getFileName()):string();
-	auto fileName = screenNode != nullptr?Tools::getFileName(screenNode->getFileName()):string();
+	if (screenIdx < 0 || screenIdx >= view->getUIScreenNodes().size()) return;
+	auto screenNode = view->getUIScreenNodes()[screenIdx].screenNode;
+	auto pathName = screenNode != nullptr?Tools::getPathName(view->getUIScreenNodes()[screenIdx].fileName):string();
+	auto fileName = screenNode != nullptr?Tools::getFileName(view->getUIScreenNodes()[screenIdx].fileName):string();
 	popUps->getFileDialogScreenController()->show(
 		pathName,
 		"Load screen from: ",
@@ -554,7 +724,7 @@ void UIEditorTabController::onUnsetScreen() {
 	};
 	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 	auto screenIdx = Integer::parse(StringTools::substring(outlinerNode, 0, outlinerNode.find(".")));
-	if (screenIdx < 0 || screenIdx >= view->getScreenNodes().size()) return;
+	if (screenIdx < 0 || screenIdx >= view->getUIScreenNodes().size()) return;
 	Engine::getInstance()->enqueueAction(
 		new UnsetScreenAction(
 			this,
@@ -566,10 +736,10 @@ void UIEditorTabController::onUnsetScreen() {
 void UIEditorTabController::onBrowseToScreen() {
 	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 	auto screenIdx = Integer::parse(StringTools::substring(outlinerNode, 0, outlinerNode.find(".")));
-	if (screenIdx < 0 || screenIdx >= view->getScreenNodes().size()) {
+	if (screenIdx < 0 || screenIdx >= view->getUIScreenNodes().size()) {
 		showInfoPopUp("Browse To", "Nothing to browse to");
 	} else {
-		view->getEditorView()->getScreenController()->browseTo(view->getScreenNodes()[screenIdx]->getFileName());
+		view->getEditorView()->getScreenController()->browseTo(view->getUIScreenNodes()[screenIdx].fileName);
 	}
 }
 
@@ -585,24 +755,16 @@ void UIEditorTabController::reloadScreens() {
 		}
 		virtual void performAction() {
 			auto view = uiEditorTabController->getView();
-			for (auto screenIdx = 0; screenIdx < view->getScreenNodes().size(); screenIdx++) {
-				auto screenNode = view->getScreenNodes()[screenIdx];
-				if (screenNode == nullptr) continue;
-				auto fileName = screenNode->getFileName();
-				view->unsetScreen(screenIdx);
+			for (auto i = 0; i < view->getUIScreenNodes().size(); i++) {
+				auto fileName = view->getUIScreenNodes()[i].fileName;
+				view->unsetScreen(i);
 				try {
 					view->setScreen(
-						screenIdx,
-						GUIParser::parse(
-							Tools::getPathName(fileName),
-							Tools::getFileName(fileName)
-						)
+						i,
+						fileName
 					);
 				} catch (Exception& exception) {
-					Console::println(
-						string() +
-						"UIEditorTabController::onLoadScreen(): ReloadScreensAction::performAction(): An error occurred: " + exception.what()
-					);
+					Console::println("UIEditorTabController::onLoadScreen(): ReloadScreensAction::performAction(): An error occurred: " + string(exception.what()));
 				}
 			}
 			view->reAddScreens();
@@ -721,9 +883,10 @@ void UIEditorTabController::onAction(GUIActionListenerType type, GUIElementNode*
 }
 
 void UIEditorTabController::setScreen(int screenIdx, const string& fileName) {
+	Console::println("UIEditorTabController::setScreen(): " + to_string(screenIdx) + ": " + fileName);
 	view->unsetScreen(screenIdx);
 	try {
-		view->setScreen(screenIdx, GUIParser::parse(Tools::getPathName(fileName), Tools::getFileName(fileName)));
+		view->setScreen(screenIdx, fileName);
 	} catch (Exception& exception) {
 		Console::println(
 			string() +
@@ -742,5 +905,32 @@ void UIEditorTabController::setPrototype(const string& pathName, const string& f
 		view->getEditorView()->reloadTabOutliner("screens");
 	} else {
 		showInfoPopUp("Error", string() + "Could not load prototype");
+	}
+}
+
+void UIEditorTabController::closeFindReplaceWindow() {
+	popUps->getFindReplaceDialogScreenController()->close();
+}
+
+void UIEditorTabController::save() {
+	//
+	view->storeUIXML();
+	//
+	auto& uiScreenNodes = view->getUIScreenNodes();
+	for (auto& uiScreenNode: uiScreenNodes) {
+		//
+		if (uiScreenNode.fileName.empty() == true) continue;
+
+		//
+		try {
+			FileSystem::getInstance()->setContentFromString(
+				Tools::getPathName(uiScreenNode.fileName),
+				Tools::getFileName(uiScreenNode.fileName),
+				uiScreenNode.xml
+			);
+		} catch (Exception& exception) {
+			Console::println(string("UIEditorTabController::save(): An error occurred: ") + exception.what());;
+			showInfoPopUp("Warning", string(exception.what()));
+		}
 	}
 }

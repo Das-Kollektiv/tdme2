@@ -1405,11 +1405,14 @@ void Engine::display()
 	currentEngine = this;
 
 	// execute enqueued actions
-	for (auto action: actions) {
-		action->performAction();
-		delete action;
+	if (actions.empty() == false) {
+		auto currentActions = actions;
+		actions.clear();
+		for (auto action: currentActions) {
+			action->performAction();
+			delete action;
+		}
 	}
-	actions.clear();
 
 	// finish last frame
 	if (this == Engine::instance) Engine::renderer->finishFrame();

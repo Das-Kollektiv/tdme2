@@ -471,7 +471,7 @@ int GUIStyledTextNode::doPageDown() {
 
 const string GUIStyledTextNode::getNodeType()
 {
-	return "multiline-text";
+	return "styledtext";
 }
 
 bool GUIStyledTextNode::isContentNode()
@@ -1082,6 +1082,8 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 		cursorIndex = -1;
 		indexMousePositionX+= parentNode->getChildrenRenderOffsetX();
 		indexMousePositionY+= parentNode->getChildrenRenderOffsetY();
+		indexMousePositionX+= xIndentLeft;
+		indexMousePositionY+= yIndentTop;
 	}
 
 	// do we have a mouse x and y selection index position
@@ -1092,6 +1094,8 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 		cursorSelectionIndex = -1;
 		selectionIndexMousePositionX+= parentNode->getChildrenRenderOffsetX();
 		selectionIndexMousePositionY+= parentNode->getChildrenRenderOffsetY();
+		selectionIndexMousePositionX+= xIndentLeft;
+		selectionIndexMousePositionY+= yIndentTop;
 	}
 
 	//

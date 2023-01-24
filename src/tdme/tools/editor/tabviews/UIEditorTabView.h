@@ -8,9 +8,11 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/gui/nodes/GUIStyledTextNodeController.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/tools/editor/misc/CameraRotationInputHandlerEventHandler.h>
 #include <tdme/tools/editor/misc/PopUps.h>
+#include <tdme/tools/editor/misc/TextFormatter.h>
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabcontrollers/UIEditorTabController.h>
@@ -26,10 +28,13 @@ using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::nodes::GUIStyledTextNode;
+using tdme::gui::nodes::GUIStyledTextNodeController;
 using tdme::math::Matrix4x4;
 using tdme::tools::editor::misc::CameraRotationInputHandler;
 using tdme::tools::editor::misc::CameraRotationInputHandlerEventHandler;
 using tdme::tools::editor::misc::PopUps;
+using tdme::tools::editor::misc::TextFormatter;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::UIEditorTabController;
 using tdme::tools::editor::tabviews::TabView;
@@ -42,6 +47,15 @@ using tdme::utilities::Float;
  */
 class tdme::tools::editor::tabviews::UIEditorTabView final: public TabView, protected CameraRotationInputHandlerEventHandler
 {
+public:
+	struct UIScreenNode {
+		string fileName;
+		string xml;
+		GUIScreenNode* screenNode { nullptr };
+		int width { -1 };
+		int height { -1 };
+	};
+
 protected:
 	Engine* guiEngine { nullptr };
 	Engine* engine { nullptr };
@@ -60,9 +74,36 @@ private:
 	PopUps* popUps { nullptr };
 	UIEditorTabController* uiTabController { nullptr };
 	TabView::OutlinerState outlinerState;
-	vector<GUIScreenNode*> screenNodes;
-	vector<array<int, 2>> screenDimensions;
+	string screenFileName;
+	vector<UIScreenNode> uiScreenNodes;
 	CameraRotationInputHandler* cameraRotationInputHandler { nullptr };
+
+	int screenIdx { 0 };
+	bool visualEditor { false };
+
+	GUIStyledTextNode* textNode { nullptr };
+	GUIStyledTextNodeController::ChangeListener* textNodeChangeListener { nullptr };
+	GUIStyledTextNodeController::CodeCompletionListener* textNodeCodeCompletionListener { nullptr };
+	const TextFormatter::CodeCompletion* codeCompletion { nullptr };
+
+	struct CodeCompletionSymbol {
+		enum Type { TYPE_NONE, TYPE_SYMBOL, TYPE_FUNCTION };
+		Type type;
+		string display;
+		string name;
+		vector<string> parameters;
+		string returnValue;
+	};
+
+	bool countEnabled { false };
+
+	/**
+	 * Compare CodeCompletionSymbol structs
+	 * @return lhs < rhs
+	 */
+	static bool compareCodeCompletionStruct(const CodeCompletionSymbol& lhs, const CodeCompletionSymbol& rhs) {
+		return lhs.display < rhs.display;
+	}
 
 	// overridden methods
 	void onCameraRotation() override;
@@ -74,8 +115,9 @@ public:
 	 * @param editorView editor view
 	 * @param tabId tab id
 	 * @param screenNode screenNode
+	 * @param fileName screen XML file name
 	 */
-	UIEditorTabView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode);
+	UIEditorTabView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode, const string& fileName);
 
 	/**
 	 * Destructor
@@ -104,10 +146,10 @@ public:
 	}
 
 	/**
-	 * @return screen nodes
+	 * @return UI screen nodes
 	 */
-	inline const vector<GUIScreenNode*>& getScreenNodes() {
-		return screenNodes;
+	inline const vector<UIScreenNode>& getUIScreenNodes() {
+		return uiScreenNodes;
 	}
 
 	/**
@@ -118,9 +160,9 @@ public:
 	/**
 	 * Set screen
 	 * @param screenIdx screen index
-	 * @param screenNode screen node
+	 * @param fileName file name
 	 */
-	void setScreen(int screenIdx, GUIScreenNode* screenNode);
+	void setScreen(int screenIdx, const string& fileName);
 
 	/**
 	 * Unset screen
@@ -133,6 +175,11 @@ public:
 	 * @param screenIdx screen index
 	 */
 	void removeScreen(int screenIdx);
+
+	/**
+	 * Remove screens
+	 */
+	void removeScreens();
 
 	/**
 	 * Readd screens
@@ -171,6 +218,32 @@ public:
 	 */
 	void removePrototype();
 
+	/**
+	 * Set screen index
+	 * @param screenIdx screen index
+	 */
+	void setScreenIdx(int screenIdx);
+
+	/**
+	 * Store UI XML
+	 */
+	void storeUIXML();
+
+	/**
+	 * Set visual mode
+	 */
+	void setVisualEditor();
+
+	/**
+	 * Set text mode
+	 */
+	void setCodeEditor();
+
+	/**
+	 * Update code editor
+	 */
+	void updateCodeEditor();
+
 	// overridden methods
 	void handleInputEvents() override;
 	void display() override;
@@ -185,5 +258,94 @@ public:
 	void reloadOutliner() override;
 	inline bool hasFixedSize() override;
 	void updateRendering() override;
+
+	/**
+	 * @return text index
+	 */
+	int getTextIndex();
+
+	/**
+	 * Find string
+	 * @param findString find string
+	 * @param matchCase only find string that also matches case in find string
+	 * @param wholeWord only find whole worlds
+	 * @param selection only find in selection
+	 * @param firstSearch first search
+	 * @param index index
+	 * @return success
+	 */
+	bool find(const string& findString, bool matchCase, bool wholeWord, bool selection, bool firstSearch, int& index);
+
+	/**
+	 * Count string
+	 * @param findString find string
+	 * @param matchCase only find string that also matches case in find string
+	 * @param wholeWord only find whole worlds
+	 * @param selection only find in selection
+	 */
+	int count(const string& findString, bool matchCase, bool wholeWord, bool selection);
+
+	/**
+	 * Replace string
+	 * @param findString find string
+	 * @param replaceString replace string
+	 * @param matchCase only find string that also matches case in find string
+	 * @param wholeWord only find whole worlds
+	 * @param selection only find in selection
+	 * @param index index
+	 * @return success
+	 */
+	bool replace(const string& findString, const string& replaceString, bool matchCase, bool wholeWord, bool selection, int& index);
+
+	/**
+	 * Replace all string
+	 * @param findString find string
+	 * @param replaceString replace string
+	 * @param matchCase only find string that also matches case in find string
+	 * @param wholeWord only find whole worlds
+	 * @param selection only find in selection
+	 * @return success
+	 */
+	bool replaceAll(const string& findString, const string& replaceString, bool matchCase, bool wholeWord, bool selection);
+
+	/**
+	 * Cancel find
+	 */
+	void cancelFind();
+
+	/**
+	 * Redo
+	 */
+	void redo();
+
+	/**
+	 * Redo
+	 */
+	void undo();
+
+	/**
+	 * Select all
+	 */
+	void selectAll();
+
+	/**
+	 * Cut
+	 */
+	void cut();
+
+	/**
+	 * Copy
+	 */
+	void copy();
+
+	/**
+	 * Paste
+	 */
+	void paste();
+
+	/**
+	 * Delete
+	 */
+	void delete_();
 
 };
