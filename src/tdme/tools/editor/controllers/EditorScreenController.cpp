@@ -1004,7 +1004,15 @@ void EditorScreenController::onAddFile(const string& type) {
 void EditorScreenController::addFile(const string& pathName, const string& fileName, const string& type) {
 	if (type == "screen") {
 		try {
-			FileSystem::getInstance()->setContentFromString(pathName, fileName, FileSystem::getInstance()->getContentAsString("resources/engine/templates/gui", "screen.xml"));
+			FileSystem::getInstance()->setContentFromString(
+				pathName,
+				fileName,
+				StringTools::replace(
+					FileSystem::getInstance()->getContentAsString("resources/engine/templates/gui", "screen.xml"),
+					"{$screen-id}",
+					Tools::removeFileEnding(fileName)
+				)
+			);
 			browseTo(pathName + "/" + fileName);
 			openFile(pathName + "/" + fileName);
 		} catch (Exception& exception) {
