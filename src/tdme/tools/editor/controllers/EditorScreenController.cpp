@@ -306,34 +306,7 @@ void EditorScreenController::onAction(GUIActionListenerType type, GUIElementNode
 					Console::println("EditorScreenController::onAction(): close tab: " + tab.getId());
 				}
 			}
-			if (tabIdToClose.empty() == false) {
-				//
-				class CloseTabAction: public Action {
-				private:
-					EditorScreenController* editorScreenController;
-					string tabIdToClose;
-				public:
-					CloseTabAction(EditorScreenController* editorScreenController, const string& tabIdToClose): editorScreenController(editorScreenController), tabIdToClose(tabIdToClose) {}
-					virtual void performAction() {
-						editorScreenController->screenNode->removeNodeById(tabIdToClose, false);
-						editorScreenController->screenNode->removeNodeById(tabIdToClose + "-content", false);
-						auto tabIt = editorScreenController->tabViews.find(tabIdToClose);
-						if (tabIt == editorScreenController->tabViews.end()) {
-							Console::println("CloseTabAction::performAction(): close tab: " + tabIdToClose + ": not found");
-						} else {
-							auto& tab = tabIt->second;
-							tab.getTabView()->dispose();
-							delete tab.getTabView();
-							editorScreenController->tabViews.erase(tabIt);
-						}
-						editorScreenController->setDetailsContent(string());
-						editorScreenController->setOutlinerContent(string());
-						//
-						editorScreenController->updateFullScreenMenuEntry();
-					}
-				};
-				Engine::getInstance()->enqueueAction(new CloseTabAction(this, tabIdToClose));
-			}
+			if (tabIdToClose.empty() == false) closeTab(tabIdToClose);
 		} else
 		if (node->getId() == "menu_file_quit") {
 			TDMEEditor::getInstance()->quit();
@@ -343,6 +316,8 @@ void EditorScreenController::onAction(GUIActionListenerType type, GUIElementNode
 	auto selectedTab = getSelectedTab();
 	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onAction(type, node);
 }
+
+
 
 void EditorScreenController::onFocus(GUIElementNode* node) {
 	// forward onFocus to active tab tab controller
@@ -582,6 +557,35 @@ void EditorScreenController::scanProjectPaths(const string& path, string& xml) {
 			}
 		}
 	}
+}
+
+void EditorScreenController::closeTab(const string& tabId) {
+	//
+	class CloseTabAction: public Action {
+	private:
+		EditorScreenController* editorScreenController;
+		string tabIdToClose;
+	public:
+		CloseTabAction(EditorScreenController* editorScreenController, const string& tabIdToClose): editorScreenController(editorScreenController), tabIdToClose(tabIdToClose) {}
+		virtual void performAction() {
+			editorScreenController->screenNode->removeNodeById(tabIdToClose, false);
+			editorScreenController->screenNode->removeNodeById(tabIdToClose + "-content", false);
+			auto tabIt = editorScreenController->tabViews.find(tabIdToClose);
+			if (tabIt == editorScreenController->tabViews.end()) {
+				Console::println("CloseTabAction::performAction(): close tab: " + tabIdToClose + ": not found");
+			} else {
+				auto& tab = tabIt->second;
+				tab.getTabView()->dispose();
+				delete tab.getTabView();
+				editorScreenController->tabViews.erase(tabIt);
+			}
+			editorScreenController->setDetailsContent(string());
+			editorScreenController->setOutlinerContent(string());
+			//
+			editorScreenController->updateFullScreenMenuEntry();
+		}
+	};
+	Engine::getInstance()->enqueueAction(new CloseTabAction(this, tabId));
 }
 
 void EditorScreenController::closeTabs() {
