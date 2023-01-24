@@ -101,9 +101,8 @@
 										<dropdown-option text="Particle" value="particle" />
 										<dropdown-option text="Scene" value="scene" />
 										<dropdown-option text="Script" value="script" />
-										<!--
-										<dropdown-option text="GUI" value="gui" />
-										-->
+										<dropdown-option text="GUI Screen" value="screen" />
+										<dropdown-option text="GUI Template" value="template" />
 									</dropdown>
 									<space width="5"/>
 									<button id="projectlibrary_import" width="*" height="25" image="resources/engine/images/import.png" text="Import" />

@@ -140,7 +140,7 @@ void UIEditorTabController::onCommand(TabControllerCommand command)
 			save();
 			break;
 		case COMMAND_SAVEAS:
-			showInfoPopUp("Warning", "This command is not supported yet");
+			saveAs();
 			break;
 		case COMMAND_FINDREPLACE:
 			{
@@ -932,5 +932,101 @@ void UIEditorTabController::save() {
 			Console::println(string("UIEditorTabController::save(): An error occurred: ") + exception.what());;
 			showInfoPopUp("Warning", string(exception.what()));
 		}
+	}
+}
+
+void UIEditorTabController::saveAs() {
+	//
+	view->storeUIXML();
+
+	//
+	class OnUISave: public virtual Action
+	{
+	public:
+		void performAction() override {
+			//
+			if (screenIdx < 0 || screenIdx >= uiEditorTabController->view->getUIScreenNodes().size()) {
+				uiEditorTabController->popUps->getFileDialogScreenController()->close();
+				return;
+			}
+
+			//
+			try {
+				FileSystem::getInstance()->setContentFromString(
+					uiEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
+					uiEditorTabController->popUps->getFileDialogScreenController()->getFileName(),
+					uiEditorTabController->view->getUIScreenNodes()[screenIdx].xml
+				);
+			} catch (Exception& exception) {
+				uiEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
+			}
+
+			// iterate to next screen that we want to save
+			screenIdx++;
+			for (; screenIdx < uiEditorTabController->view->getUIScreenNodes().size(); screenIdx++) {
+				//
+				if (uiEditorTabController->view->getUIScreenNodes()[screenIdx].fileName.empty() == true) continue;
+				//
+				break;
+			}
+
+			// issue SAVE AS for next screen
+			if (screenIdx >= 0 && screenIdx < uiEditorTabController->view->getUIScreenNodes().size()) {
+				//
+				class UISaveAction: public Action {
+					public:
+						UISaveAction(UIEditorTabController* uiEditorTabController, int screenIdx): uiEditorTabController(uiEditorTabController), screenIdx(screenIdx) {
+						}
+						void performAction() override {
+							uiEditorTabController->popUps->getFileDialogScreenController()->show(
+								Tools::getPathName(uiEditorTabController->view->getUIScreenNodes()[screenIdx].fileName),
+								"Save to: ",
+								{ { "xml" } },
+								Tools::getFileName(uiEditorTabController->view->getUIScreenNodes()[screenIdx].fileName),
+								false,
+								new OnUISave(uiEditorTabController, screenIdx)
+							);
+						}
+					private:
+						UIEditorTabController* uiEditorTabController;
+						int screenIdx;
+				};
+				//
+				Engine::getInstance()->enqueueAction(new UISaveAction(uiEditorTabController, screenIdx));
+			}
+			// close this file dialog
+			uiEditorTabController->popUps->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param uiEditorTabController ui editor tab controller
+		 */
+		OnUISave(UIEditorTabController* uiEditorTabController, int screenIdx): uiEditorTabController(uiEditorTabController), screenIdx(screenIdx) {
+		}
+
+	private:
+		UIEditorTabController* uiEditorTabController;
+		int screenIdx;
+	};
+
+	// find first screen to be saved
+	auto& uiScreenNodes = view->getUIScreenNodes();
+	for (auto screenIdx = 0; screenIdx < uiScreenNodes.size(); screenIdx++) {
+		//
+		if (uiScreenNodes[screenIdx].fileName.empty() == true) continue;
+
+		//
+		popUps->getFileDialogScreenController()->show(
+			Tools::getPathName(uiScreenNodes[screenIdx].fileName),
+			"Save to: ",
+			{ { "xml" } },
+			Tools::getFileName(uiScreenNodes[screenIdx].fileName),
+			false,
+			new OnUISave(this, screenIdx)
+		);
+
+		//
+		break;
 	}
 }
