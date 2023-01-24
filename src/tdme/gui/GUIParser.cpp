@@ -176,9 +176,9 @@ const string GUIParser::getRootNode(const string& xml) {
 	}
 	//
 	TiXmlElement* xmlRoot = xmlDocument.RootElement();
-	return string(xmlRoot->Value());
+	auto rootNode = string(xmlRoot->Value());
+	return rootNode;
 }
-
 
 GUIScreenNode* GUIParser::parse(const string& pathName, const string& fileName, const unordered_map<string, string>& parameters)
 {

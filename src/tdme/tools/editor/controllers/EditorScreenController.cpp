@@ -972,30 +972,54 @@ void EditorScreenController::onAddFile(const string& type) {
 		void performAction() override {
 			editorScreenController->addFile(
 				editorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
-				Tools::ensureFileEnding(editorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName(), string("t") + type),
+				Tools::ensureFileEnding(editorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName(), extension),
 				type
 			);
 			editorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
-		OnAddFile(EditorScreenController* editorScreenController, const string& type): editorScreenController(editorScreenController), type(type) {
+		OnAddFile(EditorScreenController* editorScreenController, const string& type, const string& extension): editorScreenController(editorScreenController), type(type), extension(extension) {
 		}
 	private:
 		EditorScreenController* editorScreenController;
 		string type;
+		string extension;
 	};
 
+	//
+	string extension;
+	if (type == "screen" || type == "template") extension = "xml"; else extension = "t" + type;
+
+	//
 	view->getPopUps()->getFileDialogScreenController()->show(
 		projectPath + "/" + relativeProjectPath,
 		string("Add ") + type + " to project: ",
-		{ string("t") + type },
-		string("Untitled") + "." + "t" + type,
+		{ extension },
+		string("Untitled") + "." + extension,
 		true,
-		new OnAddFile(this, type)
+		new OnAddFile(this, type, extension)
 	);
 
 }
 
 void EditorScreenController::addFile(const string& pathName, const string& fileName, const string& type) {
+	if (type == "screen") {
+		try {
+			FileSystem::getInstance()->setContentFromString(pathName, fileName, FileSystem::getInstance()->getContentAsString("resources/engine/templates/gui", "screen.xml"));
+			browseTo(pathName + "/" + fileName);
+			openFile(pathName + "/" + fileName);
+		} catch (Exception& exception) {
+			showInfoPopUp("Error", string() + "An error occurred: file type: " + type + ": " + exception.what());
+		}
+	} else
+	if (type == "template") {
+		try {
+			FileSystem::getInstance()->setContentFromString(pathName, fileName, FileSystem::getInstance()->getContentAsString("resources/engine/templates/gui", "template.xml"));
+			browseTo(pathName + "/" + fileName);
+			openFile(pathName + "/" + fileName);
+		} catch (Exception& exception) {
+			showInfoPopUp("Error", string() + "An error occurred: file type: " + type + ": " + exception.what());
+		}
+	} else
 	if (type == "script") {
 		try {
 			FileSystem::getInstance()->setContentFromString(pathName, fileName, FileSystem::getInstance()->getContentAsString("resources/engine/templates/tscript", "template.tscript"));
