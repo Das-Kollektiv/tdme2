@@ -13,6 +13,8 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/editor/controllers/AboutDialogScreenController.h>
 #include <tdme/tools/editor/controllers/ColorPickerScreenController.h>
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
@@ -30,6 +32,7 @@
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::string;
 
@@ -43,6 +46,8 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
 using tdme::math::Vector3;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::editor::controllers::AboutDialogScreenController;
 using tdme::tools::editor::controllers::ColorPickerScreenController;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
@@ -62,6 +67,7 @@ using tdme::tools::editor::TDMEEditor;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::StringTools;
 
 EditorView::EditorView(PopUps* popUps)
 {
@@ -145,18 +151,24 @@ void EditorView::handleInputEvents()
 		} else {
 			//
 			switch (event.getKeyCode()) {
-				case (GUIKeyboardEvent::KEYCODE_F11):
-					{
-						if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-							editorScreenController->setFullScreen(editorScreenController->isFullScreen() == false?true:false);
+				case GUIKeyboardEvent::KEYCODE_F11:
+					if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+						editorScreenController->setFullScreen(editorScreenController->isFullScreen() == false?true:false);
+					}
+					event.setProcessed(true);
+					break;
+				case GUIKeyboardEvent::KEYCODE_F12:
+					if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+						try {
+							if (FileSystem::getStandardFileSystem()->fileExists("./screenshots") == false) FileSystem::getStandardFileSystem()->createPath("./screenshots");
+							Engine::getInstance()->makeScreenshot("./screenshots", "TDME2-Screenshot-" + StringTools::replace(Time::getAsString(), ':', '-') + ".png");
+						} catch (Exception& exception) {
+							Console::println(string("EditorView::handleInputEvents(): Could not create screenshot: ") + exception.what());
 						}
-						event.setProcessed(true);
-						break;
 					}
-				default:
-					{
-						break;
-					}
+					event.setProcessed(true);
+					break;
+				default: break;
 			}
 		}
 	}
