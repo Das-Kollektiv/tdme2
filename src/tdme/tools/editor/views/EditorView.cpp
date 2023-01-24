@@ -148,6 +148,13 @@ void EditorView::handleInputEvents()
 				if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_SAVE);
 			}
 			event.setProcessed(true);
+		} else
+		if (Character::toLowerCase(event.getKeyChar()) == 'w' && event.isControlDown() == true) {
+			if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+				auto selectedTab = editorScreenController->getSelectedTab();
+				if (selectedTab != nullptr) editorScreenController->closeTab(selectedTab->getId());
+			}
+			event.setProcessed(true);
 		} else {
 			//
 			switch (event.getKeyCode()) {
