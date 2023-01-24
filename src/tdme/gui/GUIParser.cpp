@@ -161,6 +161,25 @@ map<string, GUIElement*>* GUIParser::elements = new map<string, GUIElement*>();
 Properties* GUIParser::engineThemeProperties = new Properties();
 Properties* GUIParser::projectThemeProperties = new Properties();
 
+const string GUIParser::getRootNode(const string& pathName, const string& fileName) {
+	return getRootNode(FileSystem::getInstance()->getContentAsString(pathName, fileName));
+}
+
+const string GUIParser::getRootNode(const string& xml) {
+	//
+	TiXmlDocument xmlDocument;
+	xmlDocument.Parse(xml.c_str());
+	if (xmlDocument.Error() == true) {
+		string message = string("GUIParser::getRootNode(): Could not parse XML. Error='") + string(xmlDocument.ErrorDesc()) + "':\n\n" + xml;
+		Console::println(message);
+		throw GUIParserException(message);
+	}
+	//
+	TiXmlElement* xmlRoot = xmlDocument.RootElement();
+	return string(xmlRoot->Value());
+}
+
+
 GUIScreenNode* GUIParser::parse(const string& pathName, const string& fileName, const unordered_map<string, string>& parameters)
 {
 	return parse(FileSystem::getInstance()->getContentAsString(pathName, fileName), parameters, pathName, fileName);

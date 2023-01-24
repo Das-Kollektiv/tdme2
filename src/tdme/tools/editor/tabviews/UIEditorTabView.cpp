@@ -95,8 +95,7 @@ UIEditorTabView::UIEditorTabView(EditorView* editorView, const string& tabId, GU
 	this->tabId = tabId;
 	this->screenNode = screenNode;
 	this->popUps = editorView->getPopUps();
-	addScreen();
-	setScreen(0, fileName);
+	this->screenFileName = fileName;
 	guiEngine = Engine::createOffScreenInstance(1920, 1080, false, false, false);
 	guiEngine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	outlinerState.expandedOutlinerParentOptionValues.push_back("0.0");
@@ -401,6 +400,11 @@ void UIEditorTabView::initialize()
 		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->addCodeCompletionListener(textNodeCodeCompletionListener = new TextCodeCompletionListener(this));
 	}
 	//
+	addScreen();
+	setScreen(0, screenFileName);
+	//
+	updateCodeEditor();
+	//
 	setVisualEditor();
 }
 
@@ -455,17 +459,20 @@ void UIEditorTabView::addScreen() {
 }
 
 void UIEditorTabView::setScreen(int screenIdx, const string& fileName) {
-	Console::println("UIEditorTabView::setScreen(): " + to_string(screenIdx) + " / " + fileName);
+	//
 	if (screenIdx < 0 || screenIdx >= uiScreenNodes.size()) return;
+	//
+	this->screenIdx = screenIdx;
+	//
 	string xml;
 	GUIScreenNode* screenNode { nullptr };
 	try {
-		Console::println(Tools::getPathName(screenNode->getFileName()));
-		Console::println(Tools::getFileName(screenNode->getFileName()));
+		Console::println(Tools::getPathName(fileName));
+		Console::println(Tools::getFileName(fileName));
 		// parse XML
 		xml = FileSystem::getInstance()->getContentAsString(
-			Tools::getPathName(screenNode->getFileName()),
-			Tools::getFileName(screenNode->getFileName())
+			Tools::getPathName(fileName),
+			Tools::getFileName(fileName)
 		);
 		// parse screen
 		screenNode = GUIParser::parse(Tools::getPathName(fileName), Tools::getFileName(fileName));
@@ -478,10 +485,11 @@ void UIEditorTabView::setScreen(int screenIdx, const string& fileName) {
 	uiScreenNodes[screenIdx].screenNode = screenNode;
 	uiScreenNodes[screenIdx].width = screenNode->getSizeConstraints().maxWidth;
 	uiScreenNodes[screenIdx].height = screenNode->getSizeConstraints().maxHeight;
+	//
+	updateCodeEditor();
 }
 
 void UIEditorTabView::unsetScreen(int screenIdx) {
-	Console::println("UIEditorTabView::unsetScreen(): " + to_string(screenIdx));
 	if (screenIdx < 0 || screenIdx >= uiScreenNodes.size()) return;
 	if (uiScreenNodes[screenIdx].screenNode != nullptr) {
 		uiScreenNodes[screenIdx].screenNode->removeTooltipRequestListener(uiTabController);
@@ -495,7 +503,6 @@ void UIEditorTabView::unsetScreen(int screenIdx) {
 }
 
 void UIEditorTabView::removeScreen(int screenIdx) {
-	Console::println("UIEditorTabView::removeScreen(): " + to_string(screenIdx));
 	if (screenIdx < 0 || screenIdx >= uiScreenNodes.size()) return;
 	if (uiScreenNodes[screenIdx].screenNode != nullptr) {
 		uiScreenNodes[screenIdx].screenNode->removeTooltipRequestListener(uiTabController);
@@ -518,12 +525,66 @@ void UIEditorTabView::reAddScreens() {
 			guiEngine->getGUI()->removeScreen(uiScreenNodes[i].screenNode->getId());
 			uiScreenNodes[i].screenNode = nullptr;
 		}
-		//
+		// fetch root node
 		GUIScreenNode* screenNode = nullptr;
+		string xmlRootNode;
 		try {
-			screenNode = GUIParser::parse(uiScreenNodes[i].xml);
+			xmlRootNode = GUIParser::getRootNode(uiScreenNodes[i].xml);
 		} catch (Exception& exception) {
 			Console::println("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception.what()));
+			// error handling
+			try {
+				screenNode = GUIParser::parse(
+					"resources/engine/gui/",
+					"screen_text.xml",
+					{{ "text", StringTools::replace(StringTools::replace("An error occurred: " + string(exception.what()), "[", "\\["), "]", "\\]") }}
+				);
+			} catch (Exception& exception2) {
+				Console::println("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception2.what()));
+			}
+		}
+		if (xmlRootNode == "screen") {
+			//
+			try {
+				screenNode = GUIParser::parse(uiScreenNodes[i].xml);
+			} catch (Exception& exception) {
+				Console::println("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception.what()));
+				// error handling
+				try {
+					screenNode = GUIParser::parse(
+						"resources/engine/gui/",
+						"screen_text.xml",
+						{{ "text", StringTools::replace(StringTools::replace("An error occurred: " + string(exception.what()), "[", "\\["), "]", "\\]") }}
+					);
+				} catch (Exception& exception2) {
+					Console::println("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception2.what()));
+				}
+			}
+		} else
+		if (xmlRootNode == "template") {
+			//
+			try {
+				screenNode = GUIParser::parse(
+					string() +
+					"<screen id='screen_template'>\n" +
+					"	<layout width='100%' height='100%' alignment='none' horizontal-align='center' vertical-align='center'>\n" +
+					"		<template src='" + GUIParser::escapeQuotes(uiScreenNodes[i].fileName) + "' id='template_preview_id' />\n" +
+					"	</layout>'>\n" +
+					"</screen>>\n"
+				);
+			} catch (Exception& exception) {
+				Console::println("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception.what()));
+				// error handling
+				try {
+					screenNode = GUIParser::parse(
+						"resources/engine/gui/",
+						"screen_text.xml",
+						{{ "text", StringTools::replace(StringTools::replace("An error occurred: " + string(exception.what()), "[", "\\["), "]", "\\]") }}
+					);
+				} catch (Exception& exception2) {
+					Console::println("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception2.what()));
+				}
+			}
 		}
 		//
 		uiScreenNodes[i].screenNode = screenNode;
@@ -678,14 +739,13 @@ void UIEditorTabView::setScreenIdx(int screenIdx) {
 	storeUIXML();
 	//
 	this->screenIdx = screenIdx;
-	if (visualEditor == true) return;
+	//
 	updateCodeEditor();
 }
 
 void UIEditorTabView::storeUIXML() {
 	if (screenIdx < 0 || screenIdx >= uiScreenNodes.size()) return;
 	uiScreenNodes[screenIdx].xml = textNode->getText().getString();
-	Console::println(uiScreenNodes[screenIdx].xml);
 }
 
 void UIEditorTabView::setVisualEditor() {
@@ -715,8 +775,6 @@ void UIEditorTabView::setCodeEditor() {
 
 void UIEditorTabView::updateCodeEditor() {
 	Console::println("UIEditorTabView::updateCodeEditor(): " + to_string(screenIdx));
-	//
-	guiEngine->getGUI()->resetRenderScreens();
 	//
 	if (screenIdx < 0 || screenIdx >= uiScreenNodes.size()) return;
 	//

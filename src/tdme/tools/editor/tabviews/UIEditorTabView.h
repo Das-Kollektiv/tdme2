@@ -74,8 +74,10 @@ private:
 	PopUps* popUps { nullptr };
 	UIEditorTabController* uiTabController { nullptr };
 	TabView::OutlinerState outlinerState;
+	string screenFileName;
 	vector<UIScreenNode> uiScreenNodes;
 	CameraRotationInputHandler* cameraRotationInputHandler { nullptr };
+
 	int screenIdx { 0 };
 	bool visualEditor { false };
 

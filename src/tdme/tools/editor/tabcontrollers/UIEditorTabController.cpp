@@ -319,15 +319,11 @@ void UIEditorTabController::onChange(GUIElementNode* node)
 	Console::println("UIEditorTabController::onChange(): " + node->getId() + " = " + node->getController()->getValue().getString());
 	if (node->getId() == "selectbox_outliner") {
 		updateDetails(node->getController()->getValue().getString());
-		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
-		if (outlinerNode != "screens") {
-			//
-			auto screenIdx = Integer::parse(StringTools::substring(outlinerNode, 0, outlinerNode.find(".")));
-			view->setScreenIdx(screenIdx);
-		}
+		auto outlinerNode = node->getController()->getValue().getString();
+		view->setScreenIdx(outlinerNode == "screens"?0:Integer::parse(StringTools::substring(outlinerNode, 0, outlinerNode.find("."))));
 	} else
 	if (node->getId() == "dropdown_outliner_add") {
-		auto addOutlinerType = node->getController()->getValue().getString();
+		auto addOutlinerType = node->getController()->getValue().getString();;
 		if (addOutlinerType == "screen") {
 			view->addScreen();
 			view->getEditorView()->reloadTabOutliner(to_string(view->getUIScreenNodes().size() - 1) + ".0");
@@ -541,6 +537,7 @@ void UIEditorTabController::updateDetails(const string& outlinerNode) {
 	} else
 	if (StringTools::endsWith(outlinerNode, ".0") == true) {
 		updateScreenDetails();
+		view->setScreenIdx(outlinerNode == "screens"?0:Integer::parse(StringTools::substring(outlinerNode, 0, outlinerNode.find("."))));
 	} else {
 		view->getEditorView()->setDetailsContent(string());
 	}
