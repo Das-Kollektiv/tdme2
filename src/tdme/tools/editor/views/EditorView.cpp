@@ -168,10 +168,36 @@ void EditorView::handleInputEvents()
 		} else {
 			//
 			switch (event.getKeyCode()) {
+				case GUIKeyboardEvent::KEYCODE_PAGE_UP:
+					if (event.isControlDown() == true) {
+						if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+							if (editorScreenController->getTabCount() > 0) {
+								auto selectedTabIdx = editorScreenController->getSelectedTabIdx() - 1;
+								if (selectedTabIdx == -1) selectedTabIdx = editorScreenController->getTabCount() - 1;
+								editorScreenController->selectTabAt(selectedTabIdx);
+							}
+						}
+						event.setProcessed(true);
+					}
+					break;
+				case GUIKeyboardEvent::KEYCODE_PAGE_DOWN:
+					if (event.isControlDown() == true) {
+						if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+							if (editorScreenController->getTabCount() > 0) {
+								auto selectedTabIdx = editorScreenController->getSelectedTabIdx() + 1;
+								if (selectedTabIdx == editorScreenController->getTabCount()) selectedTabIdx = 0;
+								editorScreenController->selectTabAt(selectedTabIdx);
+							}
+						}
+						event.setProcessed(true);
+					}
+					break;
 				case GUIKeyboardEvent::KEYCODE_F4:
-					if (event.isControlDown() == true && event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-						auto selectedTab = editorScreenController->getSelectedTab();
-						if (selectedTab != nullptr) editorScreenController->closeTab(selectedTab->getId());
+					if (event.isControlDown() == true) {
+						if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+							auto selectedTab = editorScreenController->getSelectedTab();
+							if (selectedTab != nullptr) editorScreenController->closeTab(selectedTab->getId());
+						}
 						event.setProcessed(true);
 					}
 					break;
