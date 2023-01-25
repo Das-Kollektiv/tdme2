@@ -1,39 +1,41 @@
-<element id="{$id}" width="100%" height="auto">
-	<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
-		<button width="100%" height="25" text="Material Properties" on-mouse-click="{$id}.condition!=open"/>
-		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="center">			
+<template>	
+	<element id="{$id}" width="100%" height="auto">
+		<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
+			<button width="100%" height="25" text="Material Properties" on-mouse-click="{$id}.condition!=open"/>
+			<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="center">			
 
-			<space height="5" />
-			
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Embed Specular Textures" width="*" height="auto"/>
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<checkbox id="material_specular_embedtextures_enabled" width="25" height="25" value="1" />
+				<space height="5" />
+				
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Embed Specular Textures" width="*" height="auto"/>
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+						<checkbox id="material_specular_embedtextures_enabled" width="25" height="25" value="1" />
+					</layout>
 				</layout>
-			</layout>
-			
-			<space height="5" />
+				
+				<space height="5" />
 
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Embed PBR Textures" width="*" height="auto"/>
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<checkbox id="material_pbr_embedtextures_enabled" width="25" height="25" value="1" />
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Embed PBR Textures" width="*" height="auto"/>
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+						<checkbox id="material_pbr_embedtextures_enabled" width="25" height="25" value="1" />
+					</layout>
 				</layout>
-			</layout>
-			
-			<space height="10" />
-					
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Lightning Model" width="*" height="auto" />
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<dropdown id="material_lightningmodel" width="100%" height="auto" text="Default">
-						<dropdown-option text="PBR" value="pbr" />
-						<dropdown-option text="Specular" value="specular" />
-						<dropdown-option text="PBR + Specular" value="pbrspecular"/>
-					</dropdown>
-				</layout>
-			</layout>					
+				
+				<space height="10" />
+						
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Lightning Model" width="*" height="auto" />
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+						<dropdown id="material_lightningmodel" width="100%" height="auto" text="Default">
+							<dropdown-option text="PBR" value="pbr" />
+							<dropdown-option text="Specular" value="specular" />
+							<dropdown-option text="PBR + Specular" value="pbrspecular"/>
+						</dropdown>
+					</layout>
+				</layout>					
 
-		</layout>		
-	</layout>
-</element>
+			</layout>		
+		</layout>
+	</element>
+<template>

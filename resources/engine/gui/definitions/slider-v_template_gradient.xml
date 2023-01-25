@@ -1,4 +1,6 @@
-<element id="{$id}" name="{$name}" disabled="{$disabled}" focusable="true" width="auto" height="{$height}" value="{$value}" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" on-change="{$on-change}" horizontal-align="center" tooltip="{$tooltip}">
-	<image width="8" height="100%" src="resources/engine/images/gradient.png"/>
-	<image effect-color-mul="{$color.button_normal}" id="{$id}_slider" src="resources/engine/images/slider_vertical.png" />
-</element>
+<template>	
+	<element id="{$id}" name="{$name}" disabled="{$disabled}" focusable="true" width="auto" height="{$height}" value="{$value}" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" on-change="{$on-change}" horizontal-align="center" tooltip="{$tooltip}">
+		<image width="8" height="100%" src="resources/engine/images/gradient.png"/>
+		<image effect-color-mul="{$color.button_normal}" id="{$id}_slider" src="resources/engine/images/slider_vertical.png" />
+	</element>
+</template>

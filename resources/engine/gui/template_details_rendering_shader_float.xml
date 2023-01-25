@@ -1,12 +1,14 @@
-<layout alignment="vertical" width="100%" height="auto" horizontal-align="center">
+<template>	
+	<layout alignment="vertical" width="100%" height="auto" horizontal-align="center">
 
-	<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-		<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="{$name}" width="*" height="auto" />
-		<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-			<input id="{$id}" width="100%" height="auto" unit="{$unit}" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" text="{$value}" />
+		<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+			<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="{$name}" width="*" height="auto" />
+			<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+				<input id="{$id}" width="100%" height="auto" unit="{$unit}" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" text="{$value}" />
+			</layout>
 		</layout>
+
+		<space height="5" />
+
 	</layout>
-
-	<space height="5" />
-
-</layout>
+</template>

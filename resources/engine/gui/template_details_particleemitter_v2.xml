@@ -1,439 +1,440 @@
-<element id="{$id}" width="100%" height="auto">
-	<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
-		<button width="100%" height="25" text="Particle Emitter" on-mouse-click="{$id}.condition!=open"/>
-		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
+<template>	
+	<element id="{$id}" width="100%" height="auto">
+		<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
+			<button width="100%" height="25" text="Particle Emitter" on-mouse-click="{$id}.condition!=open"/>
+			<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
 
-			<dropdown id="particleemitter_type" width="100%" height="auto" text="Select Emitter">
-				<dropdown-option text="Point Emitter" value="1" on-mouse-click="particleemitter_type_details.condition=point" />
-				<dropdown-option text="Box Emitter" value="2" on-mouse-click="particleemitter_type_details.condition=box" />
-				<dropdown-option text="Circle Emitter" value="3" on-mouse-click="particleemitter_type_details.condition=circle" />
-				<dropdown-option text="Radial Emitter" value="4" on-mouse-click="particleemitter_type_details.condition=radial" />
-				<dropdown-option text="Sphere Emitter" value="5" on-mouse-click="particleemitter_type_details.condition=sphere" />
-			</dropdown>
-			
-			<element id="particleemitter_type_details" width="100%" height="auto">
-			
+				<dropdown id="particleemitter_type" width="100%" height="auto" text="Select Emitter">
+					<dropdown-option text="Point Emitter" value="1" on-mouse-click="particleemitter_type_details.condition=point" />
+					<dropdown-option text="Box Emitter" value="2" on-mouse-click="particleemitter_type_details.condition=box" />
+					<dropdown-option text="Circle Emitter" value="3" on-mouse-click="particleemitter_type_details.condition=circle" />
+					<dropdown-option text="Radial Emitter" value="4" on-mouse-click="particleemitter_type_details.condition=radial" />
+					<dropdown-option text="Sphere Emitter" value="5" on-mouse-click="particleemitter_type_details.condition=sphere" />
+				</dropdown>
+				
+				<element id="particleemitter_type_details" width="100%" height="auto">
+				
+					<layout alignment="vertical" width="100%" height="auto" horizontal-align="center" >
+						<space height="10" />
+						
+						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Location" width="*" height="auto" horizontal-align="left" />
+							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+								<layout width="5" height="25" background-color="{$color.xaxis}" />
+								<input id="particleemitter_location_x" width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
+							</layout>
+						</layout>
+						<space height="5" />
+						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+								<layout width="5" height="25" background-color="{$color.yaxis}" />
+								<input id="particleemitter_location_y"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
+							</layout>
+						</layout>
+						<space height="5" />
+						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+								<layout width="5" height="25" background-color="{$color.zaxis}" />
+								<input id="particleemitter_location_z"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
+							</layout>
+						</layout>
+						
+						<layout show-on="box,circle,radial" alignment="vertical" width="100%" height="auto" horizontal-align="center">
+							<space height="5" />
+							<menu-separator />
+							<space height="5" />
+
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Rotation" width="*" height="auto" horizontal-align="left" />
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<layout width="5" height="25" background-color="{$color.xaxis}" />
+									<input id="particleemitter_rotation_x" width="*" height="auto" text="0.0" unit="°" options="type=int,min=-360,max=360,step=1" image="resources/engine/images/inputslider.png" />
+								</layout>
+							</layout>
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<layout width="5" height="25" background-color="{$color.yaxis}" />
+									<input id="particleemitter_rotation_y"  width="*" height="auto" text="0.0" unit="°" options="type=int,min=-360,max=360,step=1" image="resources/engine/images/inputslider.png" />
+								</layout>
+							</layout>
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<layout width="5" height="25" background-color="{$color.zaxis}" />
+									<input id="particleemitter_rotation_z"  width="*" height="auto" text="0.0" unit="°" options="type=int,min=-360,max=360,step=1" image="resources/engine/images/inputslider.png" />
+								</layout>
+							</layout>
+						</layout>
+
+						<layout show-on="box" alignment="vertical" width="100%" height="auto" horizontal-align="center">				
+							<space height="5" />
+							<menu-separator />
+							<space height="5" />
+
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Half Size" width="*" height="auto" horizontal-align="left" />
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<layout width="5" height="25" background-color="{$color.xaxis}" />
+									<input id="particleemitter_halfsize_x" width="*" height="auto" text="0.0" unit="°" options="type=float,min=0.01,max=360,step=0.01" image="resources/engine/images/inputslider.png" />
+								</layout>
+							</layout>
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<layout width="5" height="25" background-color="{$color.yaxis}" />
+									<input id="particleemitter_halfsize_y"  width="*" height="auto" text="0.0" unit="°" options="type=float,min=0.01,max=360,step=0.01" image="resources/engine/images/inputslider.png" />
+								</layout>
+							</layout>
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<layout width="5" height="25" background-color="{$color.zaxis}" />
+									<input id="particleemitter_halfsize_z"  width="*" height="auto" text="0.0" unit="°" options="type=float,min=0.01,max=360,step=0.01" image="resources/engine/images/inputslider.png" />
+								</layout>
+							</layout>									
+						</layout>
+
+						<layout show-on="circle,radial,sphere" alignment="vertical" width="100%" height="auto" horizontal-align="center">
+							<space height="5" />
+							<menu-separator />
+							<space height="5" />
+
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Radius" width="*" height="auto" horizontal-align="left" />
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<input id="particleemitter_radius" width="75%" height="auto" text="0.0" unit="m" options="type=float,min=0.01,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
+								</layout>
+							</layout>
+						</layout>
+						
+					</layout>
+				</element>
+
 				<layout alignment="vertical" width="100%" height="auto" horizontal-align="center" >
+					
+					<space height="5" />
+					<menu-separator />
+					<space height="5" />
+
+					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Delay" width="*" height="auto"/>
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+							<input id="particleproperties_delay" width="75%" height="auto" text="1000" unit="ms" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"/>
+						</layout>
+					</layout>
+					
+					<space height="5" />
+					
+					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Count" width="*" height="auto"/>
+						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+							<input id="particleproperties_count" width="75%" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"/>
+						</layout>
+					</layout>
+
+					<space height="5" />
+					<menu-separator />
+					<space height="5" />				
+
+					<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Life" width="*" height="auto" />
+						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
+							<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right">
+								<input id="particleproperties_lifetime_min" width="*" height="auto" text="1000" unit="ms" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />
+							</layout>
+							<space width="5" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
+							<space width="5" />
+							<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right">
+								<input id="particleproperties_lifetime_max" width="*" height="auto" text="1000" unit="ms" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"/>
+							</layout>
+						</layout>
+					</layout>
+					
+					<space height="5" />
+
+					<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Mass" width="*" height="auto" />
+						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
+							<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right">
+								<input id="particleproperties_mass_min" width="*" height="auto" text="0" unit="kg" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />
+							</layout>
+							<space width="5" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
+							<space width="5" />
+							<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right">
+								<input id="particleproperties_mass_max" width="*" height="auto" text="0" unit="kg" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"/>
+							</layout>
+						</layout>
+					</layout>
+
+					<space height="5" />
+					<menu-separator />
+					<space height="5" />
+
+					<template src="resources/engine/gui/template_details_shared_color.xml" id="particleproperties_colorstart" name="Color   Start" />
+					<space height="5" />
+					<template src="resources/engine/gui/template_details_shared_color.xml" id="particleproperties_colorend" name="Color     End" />				
+					
+					<space height="5" />
+					<menu-separator />
+					<space height="5" />
+					
+					<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Scale" width="*" height="auto" />
+						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Start" width="auto" height="auto" />
+							<space width="5" />
+							<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
+								<input id="particleproperties_scale_start_min" width="*" height="auto" text="10.0" options="type=float,min=0.0,step=0.1,decimals=1" image="resources/engine/images/inputslider.png" />
+							</layout>
+							<space width="5" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
+							<space width="5" />
+							<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
+								<input id="particleproperties_scale_start_max" width="*" height="auto" text="10.0"  options="type=float,min=0.0,step=0.1,decimals=1" image="resources/engine/images/inputslider.png"/>
+							</layout>
+						</layout>
+					</layout>
+					
+					<space height="5" />
+
+					<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" />
+						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="End" width="auto" height="auto" />
+							<space width="5" />
+							<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
+								<input id="particleproperties_scale_end_min" width="*" height="auto" text="10.0" options="type=float,min=0.0,step=0.1,decimals=1" image="resources/engine/images/inputslider.png" />
+							</layout>
+							<space width="5" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
+							<space width="5" />
+							<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
+								<input id="particleproperties_scale_end_max" width="*" height="auto" text="10.0"  options="type=float,min=0.0,step=0.1,decimals=1" image="resources/engine/images/inputslider.png"/>
+							</layout>
+						</layout>
+					</layout>
+			
+					<space height="5" />
+					<menu-separator />
+					<space height="5" />
+					
+					<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Rot." width="*" height="auto" />
+						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Start" width="auto" height="auto" />
+							<space width="5" />
+							<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
+								<input id="particleproperties_rotation_start_min" width="*" height="auto" text="-360" unit="°" options="type=int,min=-360,max=360,step=1" image="resources/engine/images/inputslider.png" />
+							</layout>
+							<space width="5" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
+							<space width="5" />
+							<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
+								<input id="particleproperties_rotation_start_max" width="*" height="auto" text="-360" unit="°" options="type=int,min=-360,max=360,step=1" image="resources/engine/images/inputslider.png"/>
+							</layout>
+						</layout>
+					</layout>
+					
+					<space height="5" />
+
+					<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" />
+						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="End" width="auto" height="auto" />
+							<space width="5" />
+							<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
+								<input id="particleproperties_rotation_end_min" width="*" height="auto" text="-360" unit="°" options="type=int,min=-360,max=360,step=1" image="resources/engine/images/inputslider.png" />
+							</layout>
+							<space width="5" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
+							<space width="5" />
+							<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
+								<input id="particleproperties_rotation_end_max" width="*" height="auto" text="-360" unit="°" options="type=int,min=-360,max=360,step=1" image="resources/engine/images/inputslider.png"/>
+							</layout>
+						</layout>
+					</layout>
+			
+					<space height="5" />
+					<menu-separator />
+					<space height="5" />
+
+					<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Velo." width="*" height="auto" />
+						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Start" width="auto" height="auto" />
+							<space width="5" />
+							<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
+								<layout width="5" height="25" background-color="{$color.xaxis}" />
+								<input id="particleproperties_velocity_start_min_x" width="*" height="auto" text="1.0" options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png" />
+							</layout>
+							<space width="5" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
+							<space width="5" />
+							<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
+								<layout width="5" height="25" background-color="{$color.xaxis}" />
+								<input id="particleproperties_velocity_start_max_x" width="*" height="auto" text="1.0"  options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png"/>
+							</layout>
+						</layout>
+					</layout>
+
+					<space height="5" />
+
+					<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" />
+						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="40" height="auto" />
+							<space width="5" />
+							<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
+								<layout width="5" height="25" background-color="{$color.yaxis}" />
+								<input id="particleproperties_velocity_start_min_y" width="*" height="auto" text="1.0" options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png" />
+							</layout>
+							<space width="5" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
+							<space width="5" />
+							<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
+								<layout width="5" height="25" background-color="{$color.yaxis}" />
+								<input id="particleproperties_velocity_start_max_y" width="*" height="auto" text="1.0"  options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png"/>
+							</layout>
+						</layout>
+					</layout>				
+					
+					<space height="5" />
+
+					<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" />
+						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="40" height="auto" />
+							<space width="5" />
+							<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
+								<layout width="5" height="25" background-color="{$color.zaxis}" />
+								<input id="particleproperties_velocity_start_min_z" width="*" height="auto" text="1.0" options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png" />
+							</layout>
+							<space width="5" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
+							<space width="5" />
+							<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
+								<layout width="5" height="25" background-color="{$color.zaxis}" />
+								<input id="particleproperties_velocity_start_max_z" width="*" height="auto" text="1.0"  options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png"/>
+							</layout>
+						</layout>
+					</layout>
+
 					<space height="10" />
 					
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Location" width="*" height="auto" horizontal-align="left" />
-						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<layout width="5" height="25" background-color="{$color.xaxis}" />
-							<input id="particleemitter_location_x" width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
-						</layout>
-					</layout>
-					<space height="5" />
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
-						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<layout width="5" height="25" background-color="{$color.yaxis}" />
-							<input id="particleemitter_location_y"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
-						</layout>
-					</layout>
-					<space height="5" />
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
-						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<layout width="5" height="25" background-color="{$color.zaxis}" />
-							<input id="particleemitter_location_z"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
-						</layout>
-					</layout>
-					
-					<layout show-on="box,circle,radial" alignment="vertical" width="100%" height="auto" horizontal-align="center">
-						<space height="5" />
-						<menu-separator />
-						<space height="5" />
-
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Rotation" width="*" height="auto" horizontal-align="left" />
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+					<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" />
+						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="End" width="auto" height="auto" />
+							<space width="5" />
+							<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
 								<layout width="5" height="25" background-color="{$color.xaxis}" />
-								<input id="particleemitter_rotation_x" width="*" height="auto" text="0.0" unit="°" options="type=int,min=-360,max=360,step=1" image="resources/engine/images/inputslider.png" />
+								<input id="particleproperties_velocity_end_min_x" width="*" height="auto" text="1.0" options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png" />
 							</layout>
-						</layout>
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<layout width="5" height="25" background-color="{$color.yaxis}" />
-								<input id="particleemitter_rotation_y"  width="*" height="auto" text="0.0" unit="°" options="type=int,min=-360,max=360,step=1" image="resources/engine/images/inputslider.png" />
-							</layout>
-						</layout>
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<layout width="5" height="25" background-color="{$color.zaxis}" />
-								<input id="particleemitter_rotation_z"  width="*" height="auto" text="0.0" unit="°" options="type=int,min=-360,max=360,step=1" image="resources/engine/images/inputslider.png" />
-							</layout>
-						</layout>
-					</layout>
-
-					<layout show-on="box" alignment="vertical" width="100%" height="auto" horizontal-align="center">				
-						<space height="5" />
-						<menu-separator />
-						<space height="5" />
-
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Half Size" width="*" height="auto" horizontal-align="left" />
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+							<space width="5" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
+							<space width="5" />
+							<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
 								<layout width="5" height="25" background-color="{$color.xaxis}" />
-								<input id="particleemitter_halfsize_x" width="*" height="auto" text="0.0" unit="°" options="type=float,min=0.01,max=360,step=0.01" image="resources/engine/images/inputslider.png" />
+								<input id="particleproperties_velocity_end_max_x" width="*" height="auto" text="1.0"  options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png"/>
 							</layout>
 						</layout>
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+					</layout>
+
+					<space height="5" />
+
+					<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" />
+						<space width="5" />
+						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="40" height="auto" />
+							<space width="5" />
+							<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
 								<layout width="5" height="25" background-color="{$color.yaxis}" />
-								<input id="particleemitter_halfsize_y"  width="*" height="auto" text="0.0" unit="°" options="type=float,min=0.01,max=360,step=0.01" image="resources/engine/images/inputslider.png" />
+								<input id="particleproperties_velocity_end_min_y" width="*" height="auto" text="1.0" options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png" />
+							</layout>
+							<space width="5" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
+							<space width="5" />
+							<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
+								<layout width="5" height="25" background-color="{$color.yaxis}" />
+								<input id="particleproperties_velocity_end_max_y" width="*" height="auto" text="1.0"  options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png"/>
 							</layout>
 						</layout>
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+					</layout>				
+					
+					<space height="5" />
+
+					<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" />
+						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="40" height="auto" />
+							<space width="5" />
+							<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
 								<layout width="5" height="25" background-color="{$color.zaxis}" />
-								<input id="particleemitter_halfsize_z"  width="*" height="auto" text="0.0" unit="°" options="type=float,min=0.01,max=360,step=0.01" image="resources/engine/images/inputslider.png" />
+								<input id="particleproperties_velocity_end_min_z" width="*" height="auto" text="1.0" options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png" />
 							</layout>
-						</layout>									
-					</layout>
-
-					<layout show-on="circle,radial,sphere" alignment="vertical" width="100%" height="auto" horizontal-align="center">
-						<space height="5" />
-						<menu-separator />
-						<space height="5" />
-
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Radius" width="*" height="auto" horizontal-align="left" />
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<input id="particleemitter_radius" width="75%" height="auto" text="0.0" unit="m" options="type=float,min=0.01,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
+							<space width="5" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
+							<space width="5" />
+							<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
+								<layout width="5" height="25" background-color="{$color.zaxis}" />
+								<input id="particleproperties_velocity_end_max_z" width="*" height="auto" text="1.0" options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png"/>
 							</layout>
 						</layout>
 					</layout>
 					
-				</layout>
-			</element>
-
-			<layout alignment="vertical" width="100%" height="auto" horizontal-align="center" >
-				
-				<space height="5" />
-				<menu-separator />
-				<space height="5" />
-
-				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Delay" width="*" height="auto"/>
-					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-						<input id="particleproperties_delay" width="75%" height="auto" text="1000" unit="ms" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"/>
-					</layout>
-				</layout>
-				
-				<space height="5" />
-				
-				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Count" width="*" height="auto"/>
-					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-						<input id="particleproperties_count" width="75%" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"/>
-					</layout>
-				</layout>
-
-				<space height="5" />
-				<menu-separator />
-				<space height="5" />				
-
-				<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
-					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Life" width="*" height="auto" />
-					<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
-						<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right">
-							<input id="particleproperties_lifetime_min" width="*" height="auto" text="1000" unit="ms" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />
-						</layout>
-						<space width="5" />
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
-						<space width="5" />
-						<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right">
-							<input id="particleproperties_lifetime_max" width="*" height="auto" text="1000" unit="ms" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"/>
-						</layout>
-					</layout>
-				</layout>
-				
-				<space height="5" />
-
-				<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
-					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Mass" width="*" height="auto" />
-					<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
-						<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right">
-							<input id="particleproperties_mass_min" width="*" height="auto" text="0" unit="kg" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />
-						</layout>
-						<space width="5" />
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
-						<space width="5" />
-						<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right">
-							<input id="particleproperties_mass_max" width="*" height="auto" text="0" unit="kg" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"/>
-						</layout>
-					</layout>
-				</layout>
-
-				<space height="5" />
-				<menu-separator />
-				<space height="5" />
-
-				<template src="resources/engine/gui/template_details_shared_color.xml" id="particleproperties_colorstart" name="Color   Start" />
-				<space height="5" />
-				<template src="resources/engine/gui/template_details_shared_color.xml" id="particleproperties_colorend" name="Color     End" />				
-				
-				<space height="5" />
-				<menu-separator />
-				<space height="5" />
-				
-				<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
-					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Scale" width="*" height="auto" />
-					<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Start" width="auto" height="auto" />
-						<space width="5" />
-						<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
-							<input id="particleproperties_scale_start_min" width="*" height="auto" text="10.0" options="type=float,min=0.0,step=0.1,decimals=1" image="resources/engine/images/inputslider.png" />
-						</layout>
-						<space width="5" />
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
-						<space width="5" />
-						<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
-							<input id="particleproperties_scale_start_max" width="*" height="auto" text="10.0"  options="type=float,min=0.0,step=0.1,decimals=1" image="resources/engine/images/inputslider.png"/>
-						</layout>
-					</layout>
-				</layout>
-				
-				<space height="5" />
-
-				<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
-					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" />
-					<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="End" width="auto" height="auto" />
-						<space width="5" />
-						<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
-							<input id="particleproperties_scale_end_min" width="*" height="auto" text="10.0" options="type=float,min=0.0,step=0.1,decimals=1" image="resources/engine/images/inputslider.png" />
-						</layout>
-						<space width="5" />
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
-						<space width="5" />
-						<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
-							<input id="particleproperties_scale_end_max" width="*" height="auto" text="10.0"  options="type=float,min=0.0,step=0.1,decimals=1" image="resources/engine/images/inputslider.png"/>
-						</layout>
-					</layout>
-				</layout>
-		
-				<space height="5" />
-				<menu-separator />
-				<space height="5" />
-				
-				<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
-					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Rot." width="*" height="auto" />
-					<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Start" width="auto" height="auto" />
-						<space width="5" />
-						<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
-							<input id="particleproperties_rotation_start_min" width="*" height="auto" text="-360" unit="°" options="type=int,min=-360,max=360,step=1" image="resources/engine/images/inputslider.png" />
-						</layout>
-						<space width="5" />
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
-						<space width="5" />
-						<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
-							<input id="particleproperties_rotation_start_max" width="*" height="auto" text="-360" unit="°" options="type=int,min=-360,max=360,step=1" image="resources/engine/images/inputslider.png"/>
-						</layout>
-					</layout>
-				</layout>
-				
-				<space height="5" />
-
-				<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
-					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" />
-					<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="End" width="auto" height="auto" />
-						<space width="5" />
-						<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
-							<input id="particleproperties_rotation_end_min" width="*" height="auto" text="-360" unit="°" options="type=int,min=-360,max=360,step=1" image="resources/engine/images/inputslider.png" />
-						</layout>
-						<space width="5" />
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
-						<space width="5" />
-						<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
-							<input id="particleproperties_rotation_end_max" width="*" height="auto" text="-360" unit="°" options="type=int,min=-360,max=360,step=1" image="resources/engine/images/inputslider.png"/>
-						</layout>
-					</layout>
-				</layout>
-		
-				<space height="5" />
-				<menu-separator />
-				<space height="5" />
-
-				<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
-					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Velo." width="*" height="auto" />
-					<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Start" width="auto" height="auto" />
-						<space width="5" />
-						<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
-							<layout width="5" height="25" background-color="{$color.xaxis}" />
-							<input id="particleproperties_velocity_start_min_x" width="*" height="auto" text="1.0" options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png" />
-						</layout>
-						<space width="5" />
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
-						<space width="5" />
-						<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
-							<layout width="5" height="25" background-color="{$color.xaxis}" />
-							<input id="particleproperties_velocity_start_max_x" width="*" height="auto" text="1.0"  options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png"/>
-						</layout>
-					</layout>
-				</layout>
-
-				<space height="5" />
-
-				<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
-					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" />
-					<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="40" height="auto" />
-						<space width="5" />
-						<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
-							<layout width="5" height="25" background-color="{$color.yaxis}" />
-							<input id="particleproperties_velocity_start_min_y" width="*" height="auto" text="1.0" options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png" />
-						</layout>
-						<space width="5" />
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
-						<space width="5" />
-						<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
-							<layout width="5" height="25" background-color="{$color.yaxis}" />
-							<input id="particleproperties_velocity_start_max_y" width="*" height="auto" text="1.0"  options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png"/>
-						</layout>
-					</layout>
-				</layout>				
-				
-				<space height="5" />
-
-				<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
-					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" />
-					<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="40" height="auto" />
-						<space width="5" />
-						<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
-							<layout width="5" height="25" background-color="{$color.zaxis}" />
-							<input id="particleproperties_velocity_start_min_z" width="*" height="auto" text="1.0" options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png" />
-						</layout>
-						<space width="5" />
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
-						<space width="5" />
-						<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
-							<layout width="5" height="25" background-color="{$color.zaxis}" />
-							<input id="particleproperties_velocity_start_max_z" width="*" height="auto" text="1.0"  options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png"/>
-						</layout>
-					</layout>
-				</layout>
-
-				<space height="10" />
-				
-				<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
-					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" />
-					<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="End" width="auto" height="auto" />
-						<space width="5" />
-						<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
-							<layout width="5" height="25" background-color="{$color.xaxis}" />
-							<input id="particleproperties_velocity_end_min_x" width="*" height="auto" text="1.0" options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png" />
-						</layout>
-						<space width="5" />
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
-						<space width="5" />
-						<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
-							<layout width="5" height="25" background-color="{$color.xaxis}" />
-							<input id="particleproperties_velocity_end_max_x" width="*" height="auto" text="1.0"  options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png"/>
-						</layout>
-					</layout>
-				</layout>
-
-				<space height="5" />
-
-				<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
-					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" />
-					<space width="5" />
-					<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="40" height="auto" />
-						<space width="5" />
-						<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
-							<layout width="5" height="25" background-color="{$color.yaxis}" />
-							<input id="particleproperties_velocity_end_min_y" width="*" height="auto" text="1.0" options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png" />
-						</layout>
-						<space width="5" />
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
-						<space width="5" />
-						<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
-							<layout width="5" height="25" background-color="{$color.yaxis}" />
-							<input id="particleproperties_velocity_end_max_y" width="*" height="auto" text="1.0"  options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png"/>
-						</layout>
-					</layout>
-				</layout>				
-				
-				<space height="5" />
-
-				<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
-					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" />
-					<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="40" height="auto" />
-						<space width="5" />
-						<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
-							<layout width="5" height="25" background-color="{$color.zaxis}" />
-							<input id="particleproperties_velocity_end_min_z" width="*" height="auto" text="1.0" options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png" />
-						</layout>
-						<space width="5" />
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
-						<space width="5" />
-						<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
-							<layout width="5" height="25" background-color="{$color.zaxis}" />
-							<input id="particleproperties_velocity_end_max_z" width="*" height="auto" text="1.0" options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png"/>
-						</layout>
-					</layout>
-				</layout>
-				
-				<space height="5" />
-				<menu-separator />
-				<space height="5" />
-				
-				<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
-					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="A.Velo." width="*" height="auto" />
-					<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Start" width="auto" height="auto" />
-						<space width="5" />
-						<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
-							<input id="particleproperties_angularvelocity_start_min" width="*" height="auto" text="1.0" options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png" />
-						</layout>
-						<space width="5" />
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
-						<space width="5" />
-						<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
-							<input id="particleproperties_angularvelocity_start_max" width="*" height="auto" text="1.0" options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png"/>
-						</layout>
-					</layout>
-				</layout>
-				
-				<space height="5" />
-
-				<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
-					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" />
-					<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="End" width="auto" height="auto" />
-						<space width="5" />
-						<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
-							<input id="particleproperties_angularvelocity_end_min" width="*" height="auto" text="1.0" options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png" />
-						</layout>
-						<space width="5" />
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
-						<space width="5" />
-						<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
-							<input id="particleproperties_angularvelocity_end_max" width="*" height="auto" text="1.0" options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png"/>
-						</layout>
-					</layout>
-				</layout>
+					<space height="5" />
+					<menu-separator />
+					<space height="5" />
 					
+					<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="A.Velo." width="*" height="auto" />
+						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Start" width="auto" height="auto" />
+							<space width="5" />
+							<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
+								<input id="particleproperties_angularvelocity_start_min" width="*" height="auto" text="1.0" options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png" />
+							</layout>
+							<space width="5" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
+							<space width="5" />
+							<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
+								<input id="particleproperties_angularvelocity_start_max" width="*" height="auto" text="1.0" options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png"/>
+							</layout>
+						</layout>
+					</layout>
 					
-			</layout>	
-			
-		</layout>		
-	</layout>
-</element>
+					<space height="5" />
+
+					<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" />
+						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="End" width="auto" height="auto" />
+							<space width="5" />
+							<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
+								<input id="particleproperties_angularvelocity_end_min" width="*" height="auto" text="1.0" options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png" />
+							</layout>
+							<space width="5" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
+							<space width="5" />
+							<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
+								<input id="particleproperties_angularvelocity_end_max" width="*" height="auto" text="1.0" options="type=float,step=0.1,decimals=1" image="resources/engine/images/inputslider.png"/>
+							</layout>
+						</layout>
+					</layout>
+					
+				</layout>	
+				
+			</layout>		
+		</layout>
+	</element>
+</template>

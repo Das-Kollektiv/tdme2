@@ -1,13 +1,15 @@
-<layout id="{$id}" width="100%" height="100%" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
-	<layer width="100%" height="100%">
-		<image
-			id="{$id}_framebuffer"
-			width="100%" 
-			height="100%" 
-			background-color="black"
-		/>
-		<layout width="100%" height="100%" padding="5" alignment="horizontal" horizontal-align="right" vertical-align="top">
-			<checkbox id="{$id}_checkbox_visualcode" image-unchecked="resources/engine/images/visualcode.png" image-checked="resources/engine/images/script.png" value="1" selected="false"/>
-		</layout>
-	</layer>
-</layout>
+<template>
+	<layout id="{$id}" width="100%" height="100%" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
+		<layer width="100%" height="100%">
+			<image
+				id="{$id}_framebuffer"
+				width="100%" 
+				height="100%" 
+				background-color="black"
+			/>
+			<layout width="100%" height="100%" padding="5" alignment="horizontal" horizontal-align="right" vertical-align="top">
+				<checkbox id="{$id}_checkbox_visualcode" image-unchecked="resources/engine/images/visualcode.png" image-checked="resources/engine/images/script.png" value="1" selected="false"/>
+			</layout>
+		</layer>
+	</layout>
+</template>

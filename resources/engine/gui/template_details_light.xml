@@ -1,299 +1,301 @@
-<element id="{$id}" width="100%" height="auto">
-	<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
-		<button width="100%" height="25" text="Light" on-mouse-click="{$id}.condition!=open"/>
-		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
-	
-			<dropdown id="light_type" width="100%" height="auto" text="Select Type">
-				<!--
-				<dropdown-option text="Point Light" value="1" on-mouse-click="light_type_details.condition=point"/>
-				-->
-				<dropdown-option text="Spot Light" value="2" on-mouse-click="light_type_details.condition=spot" />
-				<dropdown-option text="Directional Light" value="3" on-mouse-click="light_type_details.condition=directional" />
-				<dropdown-option text="Ambient Light" value="4" on-mouse-click="light_type_details.condition=ambient"/>
-			</dropdown>
+<template>	
+	<element id="{$id}" width="100%" height="auto">
+		<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
+			<button width="100%" height="25" text="Light" on-mouse-click="{$id}.condition!=open"/>
+			<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
+		
+				<dropdown id="light_type" width="100%" height="auto" text="Select Type">
+					<!--
+					<dropdown-option text="Point Light" value="1" on-mouse-click="light_type_details.condition=point"/>
+					-->
+					<dropdown-option text="Spot Light" value="2" on-mouse-click="light_type_details.condition=spot" />
+					<dropdown-option text="Directional Light" value="3" on-mouse-click="light_type_details.condition=directional" />
+					<dropdown-option text="Ambient Light" value="4" on-mouse-click="light_type_details.condition=ambient"/>
+				</dropdown>
+						
+				<element id="light_type_details" width="100%" height="auto">  
+					<layout width="100%" height="auto" alignment="vertical">
 					
-			<element id="light_type_details" width="100%" height="auto">  
-				<layout width="100%" height="auto" alignment="vertical">
-				
-					<!-- Point Light Start -->
-					<layout show-on="point" width="100%" height="auto" alignment="vertical">
-						<space height="5" />						
-						<template src="resources/engine/gui/template_details_shared_color.xml" id="light_point_ambient" name="Ambient" />
-						<space height="5" />
-						<template src="resources/engine/gui/template_details_shared_color.xml" id="light_point_diffuse" name="Diffuse" />
-						<space height="5" />
-						<template src="resources/engine/gui/template_details_shared_color.xml" id="light_point_specular" name="Specular" />
-						<space height="5" />
-						<menu-separator />
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="C. Attenuation" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
-								<input id="light_point_constant_attenuation"  width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
+						<!-- Point Light Start -->
+						<layout show-on="point" width="100%" height="auto" alignment="vertical">
+							<space height="5" />						
+							<template src="resources/engine/gui/template_details_shared_color.xml" id="light_point_ambient" name="Ambient" />
+							<space height="5" />
+							<template src="resources/engine/gui/template_details_shared_color.xml" id="light_point_diffuse" name="Diffuse" />
+							<space height="5" />
+							<template src="resources/engine/gui/template_details_shared_color.xml" id="light_point_specular" name="Specular" />
+							<space height="5" />
+							<menu-separator />
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="C. Attenuation" width="*" height="auto"/>
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+									<input id="light_point_constant_attenuation"  width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
+								</layout>
 							</layout>
-						</layout>
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="L. Attenuation" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
-								<input id="light_point_linear_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="L. Attenuation" width="*" height="auto"/>
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+									<input id="light_point_linear_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
+								</layout>
 							</layout>
-						</layout>
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Q. Attenuation" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
-								<input id="light_point_quadratic_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Q. Attenuation" width="*" height="auto"/>
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+									<input id="light_point_quadratic_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
+								</layout>
 							</layout>
-						</layout>
-						
-						<space height="5" />
-						<menu-separator />
-						<space height="5" />
-
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Location" width="*" height="auto" horizontal-align="left" />
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<layout width="5" height="25" background-color="{$color.xaxis}" />
-								<input id="light_point_position_x" width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
-							</layout>
-						</layout>
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<layout width="5" height="25" background-color="{$color.yaxis}" />
-								<input id="light_point_position_y"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
-							</layout>
-						</layout>
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<layout width="5" height="25" background-color="{$color.zaxis}" />
-								<input id="light_point_position_z"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
-							</layout>
-						</layout>						
-						
-						<space height="5" />
-						<menu-separator />
-						<space height="5" />
-
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Radius" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<input id="light_point_radius" width="75%" height="auto" text="100.00" unit="m" options="type=float,min=0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
-							</layout>
-						</layout>
-					</layout>
-					<!-- Point Light End -->
-					
-					<!-- Spot Light Start -->
-					<layout show-on="spot" width="100%" height="auto" alignment="vertical">
-						<space height="5" />
-						<template src="resources/engine/gui/template_details_shared_color.xml" id="light_spot_ambient" name="Ambient" />
-						<space height="5" />
-						<template src="resources/engine/gui/template_details_shared_color.xml" id="light_spot_diffuse" name="Diffuse" />
-						<space height="5" />
-						<template src="resources/engine/gui/template_details_shared_color.xml" id="light_spot_specular" name="Specular" />
-						<space height="5" />
-						<menu-separator />
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="C. Attenuation" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<input id="light_spot_constant_attenuation"  width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
-							</layout>
-						</layout>
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="L. Attenuation" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<input id="light_spot_linear_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
-							</layout>
-						</layout>
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Q. Attenuation" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<input id="light_spot_quadratic_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
-							</layout>
-						</layout>
-						
-						<space height="5" />
-						<menu-separator />
-						<space height="5" />
-						
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Location" width="*" height="auto" horizontal-align="left" />
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<layout width="5" height="25" background-color="{$color.xaxis}" />
-								<input id="light_spot_position_x" width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
-							</layout>
-						</layout>
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<layout width="5" height="25" background-color="{$color.yaxis}" />
-								<input id="light_spot_position_y"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
-							</layout>
-						</layout>
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<layout width="5" height="25" background-color="{$color.zaxis}" />
-								<input id="light_spot_position_z"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
-							</layout>
-						</layout>
-						
-						<space height="5" />
-						<menu-separator />
-						<space height="5" />
-						
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Direction" width="*" height="auto" horizontal-align="left" />
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<layout width="5" height="25" background-color="{$color.xaxis}" />
-								<input id="light_spot_direction_x" width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,min=-1,max=1,decimals=2" image="resources/engine/images/inputslider.png" />
-							</layout>
-						</layout>
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<layout width="5" height="25" background-color="{$color.yaxis}" />
-								<input id="light_spot_direction_y"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,min=-1,max=1,decimals=2" image="resources/engine/images/inputslider.png" />
-							</layout>
-						</layout>
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<layout width="5" height="25" background-color="{$color.zaxis}" />
-								<input id="light_spot_direction_z"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,min=-1,max=1,decimals=2" image="resources/engine/images/inputslider.png" />
-							</layout>
-						</layout>
-											
-						<space height="5" />
-						<menu-separator />
-						<space height="5" />
-						
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Cutoff" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<input id="light_spot_cutoff" width="75%" height="auto" text="100.00" unit="m" options="type=float,min=0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
-							</layout>
-						</layout>
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Spot exponent" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<input id="light_spot_exponent" width="75%" height="auto" text="100.00" unit="m" options="type=float,min=0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
-							</layout>
-						</layout>
-					</layout>
-					<!-- Spot Light End -->
-
-					<!-- Directional Light Start -->
-					<layout show-on="directional" width="100%" height="auto" alignment="vertical">			
-						<space height="5" />
-						<template src="resources/engine/gui/template_details_shared_color.xml" id="light_directional_ambient" name="Ambient" />
-						<space height="5" />
-						<template src="resources/engine/gui/template_details_shared_color.xml" id="light_directional_diffuse" name="Diffuse" />
-						<space height="5" />
-						<template src="resources/engine/gui/template_details_shared_color.xml" id="light_directional_specular" name="Specular" />
-						<space height="5" />
-						<menu-separator />
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="C. Attenuation" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<input id="light_directional_constant_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
-							</layout>
-						</layout>
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="L. Attenuation" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<input id="light_directional_linear_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
-							</layout>
-						</layout>
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Q. Attenuation" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<input id="light_directional_quadratic_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
-							</layout>
-						</layout>	
-						<space height="5" />
-						<menu-separator />
-						<space height="5" />
-						
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Direction" width="*" height="auto" horizontal-align="left" />
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<layout width="5" height="25" background-color="{$color.xaxis}" />
-								<input id="light_directional_direction_x" width="*" height="auto" text="0.00" options="type=float,step=0.1,min=-1,max=1,decimals=2" image="resources/engine/images/inputslider.png" />
-							</layout>
-						</layout>
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<layout width="5" height="25" background-color="{$color.yaxis}" />
-								<input id="light_directional_direction_y"  width="*" height="auto" text="0.0" options="type=float,step=0.1,min=-1,max=1,decimals=2" image="resources/engine/images/inputslider.png" /> />
-							</layout>
-						</layout>
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<layout width="5" height="25" background-color="{$color.zaxis}" />
-								<input id="light_directional_direction_z"  width="*" height="auto" text="0.0" options="type=float,step=0.1,min=-1,max=1,decimals=2" image="resources/engine/images/inputslider.png" /> />
-							</layout>
-						</layout>						
 							
-					</layout>
-					<!-- Directional Light End -->
-					
-					<!-- Ambient Light Start -->
-					<layout show-on="ambient" width="100%" height="auto" alignment="vertical">
-						<space height="5" />
-						<template src="resources/engine/gui/template_details_shared_color.xml" id="light_ambient_ambient" name="Ambient" />
-						<space height="5" />
-						<template src="resources/engine/gui/template_details_shared_color.xml" id="light_ambient_diffuse" name="Diffuse" />
-						<space height="5" />
-						<template src="resources/engine/gui/template_details_shared_color.xml" id="light_ambient_specular" name="Specular" />
-						<space height="5" />
-						<menu-separator />
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="C. Attenuation" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<input id="light_ambient_constant_attenuation"  width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
+							<space height="5" />
+							<menu-separator />
+							<space height="5" />
+
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Location" width="*" height="auto" horizontal-align="left" />
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<layout width="5" height="25" background-color="{$color.xaxis}" />
+									<input id="light_point_position_x" width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
+								</layout>
+							</layout>
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<layout width="5" height="25" background-color="{$color.yaxis}" />
+									<input id="light_point_position_y"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
+								</layout>
+							</layout>
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<layout width="5" height="25" background-color="{$color.zaxis}" />
+									<input id="light_point_position_z"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
+								</layout>
+							</layout>						
+							
+							<space height="5" />
+							<menu-separator />
+							<space height="5" />
+
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Radius" width="*" height="auto"/>
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<input id="light_point_radius" width="75%" height="auto" text="100.00" unit="m" options="type=float,min=0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
+								</layout>
 							</layout>
 						</layout>
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="L. Attenuation" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<input id="light_ambient_linear_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
+						<!-- Point Light End -->
+						
+						<!-- Spot Light Start -->
+						<layout show-on="spot" width="100%" height="auto" alignment="vertical">
+							<space height="5" />
+							<template src="resources/engine/gui/template_details_shared_color.xml" id="light_spot_ambient" name="Ambient" />
+							<space height="5" />
+							<template src="resources/engine/gui/template_details_shared_color.xml" id="light_spot_diffuse" name="Diffuse" />
+							<space height="5" />
+							<template src="resources/engine/gui/template_details_shared_color.xml" id="light_spot_specular" name="Specular" />
+							<space height="5" />
+							<menu-separator />
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="C. Attenuation" width="*" height="auto"/>
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<input id="light_spot_constant_attenuation"  width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
+								</layout>
+							</layout>
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="L. Attenuation" width="*" height="auto"/>
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<input id="light_spot_linear_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
+								</layout>
+							</layout>
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Q. Attenuation" width="*" height="auto"/>
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<input id="light_spot_quadratic_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
+								</layout>
+							</layout>
+							
+							<space height="5" />
+							<menu-separator />
+							<space height="5" />
+							
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Location" width="*" height="auto" horizontal-align="left" />
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<layout width="5" height="25" background-color="{$color.xaxis}" />
+									<input id="light_spot_position_x" width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
+								</layout>
+							</layout>
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<layout width="5" height="25" background-color="{$color.yaxis}" />
+									<input id="light_spot_position_y"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
+								</layout>
+							</layout>
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<layout width="5" height="25" background-color="{$color.zaxis}" />
+									<input id="light_spot_position_z"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
+								</layout>
+							</layout>
+							
+							<space height="5" />
+							<menu-separator />
+							<space height="5" />
+							
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Direction" width="*" height="auto" horizontal-align="left" />
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<layout width="5" height="25" background-color="{$color.xaxis}" />
+									<input id="light_spot_direction_x" width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,min=-1,max=1,decimals=2" image="resources/engine/images/inputslider.png" />
+								</layout>
+							</layout>
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<layout width="5" height="25" background-color="{$color.yaxis}" />
+									<input id="light_spot_direction_y"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,min=-1,max=1,decimals=2" image="resources/engine/images/inputslider.png" />
+								</layout>
+							</layout>
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<layout width="5" height="25" background-color="{$color.zaxis}" />
+									<input id="light_spot_direction_z"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,min=-1,max=1,decimals=2" image="resources/engine/images/inputslider.png" />
+								</layout>
+							</layout>
+												
+							<space height="5" />
+							<menu-separator />
+							<space height="5" />
+							
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Cutoff" width="*" height="auto"/>
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<input id="light_spot_cutoff" width="75%" height="auto" text="100.00" unit="m" options="type=float,min=0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
+								</layout>
+							</layout>
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Spot exponent" width="*" height="auto"/>
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<input id="light_spot_exponent" width="75%" height="auto" text="100.00" unit="m" options="type=float,min=0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
+								</layout>
 							</layout>
 						</layout>
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Q. Attenuation" width="*" height="auto"/>
-							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-								<input id="light_ambient_quadratic_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
+						<!-- Spot Light End -->
+
+						<!-- Directional Light Start -->
+						<layout show-on="directional" width="100%" height="auto" alignment="vertical">			
+							<space height="5" />
+							<template src="resources/engine/gui/template_details_shared_color.xml" id="light_directional_ambient" name="Ambient" />
+							<space height="5" />
+							<template src="resources/engine/gui/template_details_shared_color.xml" id="light_directional_diffuse" name="Diffuse" />
+							<space height="5" />
+							<template src="resources/engine/gui/template_details_shared_color.xml" id="light_directional_specular" name="Specular" />
+							<space height="5" />
+							<menu-separator />
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="C. Attenuation" width="*" height="auto"/>
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<input id="light_directional_constant_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
+								</layout>
+							</layout>
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="L. Attenuation" width="*" height="auto"/>
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<input id="light_directional_linear_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
+								</layout>
+							</layout>
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Q. Attenuation" width="*" height="auto"/>
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<input id="light_directional_quadratic_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
+								</layout>
+							</layout>	
+							<space height="5" />
+							<menu-separator />
+							<space height="5" />
+							
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Direction" width="*" height="auto" horizontal-align="left" />
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<layout width="5" height="25" background-color="{$color.xaxis}" />
+									<input id="light_directional_direction_x" width="*" height="auto" text="0.00" options="type=float,step=0.1,min=-1,max=1,decimals=2" image="resources/engine/images/inputslider.png" />
+								</layout>
+							</layout>
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<layout width="5" height="25" background-color="{$color.yaxis}" />
+									<input id="light_directional_direction_y"  width="*" height="auto" text="0.0" options="type=float,step=0.1,min=-1,max=1,decimals=2" image="resources/engine/images/inputslider.png" /> />
+								</layout>
+							</layout>
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<layout width="5" height="25" background-color="{$color.zaxis}" />
+									<input id="light_directional_direction_z"  width="*" height="auto" text="0.0" options="type=float,step=0.1,min=-1,max=1,decimals=2" image="resources/engine/images/inputslider.png" /> />
+								</layout>
+							</layout>						
+								
+						</layout>
+						<!-- Directional Light End -->
+						
+						<!-- Ambient Light Start -->
+						<layout show-on="ambient" width="100%" height="auto" alignment="vertical">
+							<space height="5" />
+							<template src="resources/engine/gui/template_details_shared_color.xml" id="light_ambient_ambient" name="Ambient" />
+							<space height="5" />
+							<template src="resources/engine/gui/template_details_shared_color.xml" id="light_ambient_diffuse" name="Diffuse" />
+							<space height="5" />
+							<template src="resources/engine/gui/template_details_shared_color.xml" id="light_ambient_specular" name="Specular" />
+							<space height="5" />
+							<menu-separator />
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="C. Attenuation" width="*" height="auto"/>
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<input id="light_ambient_constant_attenuation"  width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
+								</layout>
+							</layout>
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="L. Attenuation" width="*" height="auto"/>
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<input id="light_ambient_linear_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
+								</layout>
+							</layout>
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Q. Attenuation" width="*" height="auto"/>
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<input id="light_ambient_quadratic_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
+								</layout>
 							</layout>
 						</layout>
-					</layout>
-					<!-- Ambient Light End -->					
-					
-				</layout>	
-			</element>					
-		</layout>		
-	</layout>
-</element>
+						<!-- Ambient Light End -->					
+						
+					</layout>	
+				</element>					
+			</layout>		
+		</layout>
+	</element>
+</template>

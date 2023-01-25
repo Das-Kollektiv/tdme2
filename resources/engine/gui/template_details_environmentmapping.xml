@@ -1,67 +1,69 @@
-<element id="{$id}" width="100%" height="auto">
-	<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
-		<button width="100%" height="25" text="Render Settings" on-mouse-click="{$id}.condition!=open"/>
-		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
-			<space height="5" />
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Standard" width="*" height="auto"/>
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<checkbox id="rendersettings_renderpass_standard" width="25" height="25" value="1" />
-				</layout>
-			</layout>
-			<space height="5" />
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Sky" width="*" height="auto"/>
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<checkbox id="rendersettings_renderpass_sky" width="25" height="25" value="1" />
-				</layout>
-			</layout>
-			<space height="5" />
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Terrain" width="*" height="auto"/>
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<checkbox id="rendersettings_renderpass_terrain" width="25" height="25" value="1" />
-				</layout>
-			</layout>
-			<space height="5" />
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Water" width="*" height="auto"/>
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<checkbox id="rendersettings_renderpass_water" width="25" height="25" value="1" />
-				</layout>
-			</layout>
-			<space height="5" />
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Post Processing" width="*" height="auto"/>
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<checkbox id="rendersettings_renderpass_postprocessing" width="25" height="25" value="1" />
-				</layout>
-			</layout>
-			<space height="5" />
-			<menu-separator />
-			<space height="5" />
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Frequency" width="*" height="auto" />
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<dropdown id="rendersettings_frequency" width="100%" height="auto" text="Select Frequ.">
-						<dropdown-option text="One time only" value="1" on-mouse-click="rendersettings_frequency_details.condition="/>
-						<dropdown-option text="Every frame" value="2" on-mouse-click="rendersettings_frequency_details.condition="/>
-						<dropdown-option text="Custom" value="3" on-mouse-click="rendersettings_frequency_details.condition=custom"/>
-					</dropdown>
-				</layout>
-			</layout>
-			<element id="rendersettings_frequency_details" width="100%" height="auto">
-				<layout show-on="custom" alignment="vertical" width="100%" height="auto" horizontal-align="center" >
-					<space height="5" />
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Value" width="*" height="auto"/>
-						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<input id="rendersettings_frequency_value" width="100%" height="auto" text="1000" unit="ms" options="type=int,min=0.0,step=1" image="resources/engine/images/inputslider.png" />
-						</layout>
+<template>	
+	<element id="{$id}" width="100%" height="auto">
+		<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
+			<button width="100%" height="25" text="Render Settings" on-mouse-click="{$id}.condition!=open"/>
+			<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
+				<space height="5" />
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Standard" width="*" height="auto"/>
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+						<checkbox id="rendersettings_renderpass_standard" width="25" height="25" value="1" />
 					</layout>
 				</layout>
-			</element>
-							
-		</layout>		
-	</layout>
-</element>
+				<space height="5" />
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Sky" width="*" height="auto"/>
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+						<checkbox id="rendersettings_renderpass_sky" width="25" height="25" value="1" />
+					</layout>
+				</layout>
+				<space height="5" />
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Terrain" width="*" height="auto"/>
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+						<checkbox id="rendersettings_renderpass_terrain" width="25" height="25" value="1" />
+					</layout>
+				</layout>
+				<space height="5" />
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Water" width="*" height="auto"/>
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+						<checkbox id="rendersettings_renderpass_water" width="25" height="25" value="1" />
+					</layout>
+				</layout>
+				<space height="5" />
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Post Processing" width="*" height="auto"/>
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+						<checkbox id="rendersettings_renderpass_postprocessing" width="25" height="25" value="1" />
+					</layout>
+				</layout>
+				<space height="5" />
+				<menu-separator />
+				<space height="5" />
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Frequency" width="*" height="auto" />
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+						<dropdown id="rendersettings_frequency" width="100%" height="auto" text="Select Frequ.">
+							<dropdown-option text="One time only" value="1" on-mouse-click="rendersettings_frequency_details.condition="/>
+							<dropdown-option text="Every frame" value="2" on-mouse-click="rendersettings_frequency_details.condition="/>
+							<dropdown-option text="Custom" value="3" on-mouse-click="rendersettings_frequency_details.condition=custom"/>
+						</dropdown>
+					</layout>
+				</layout>
+				<element id="rendersettings_frequency_details" width="100%" height="auto">
+					<layout show-on="custom" alignment="vertical" width="100%" height="auto" horizontal-align="center" >
+						<space height="5" />
+						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Value" width="*" height="auto"/>
+							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+								<input id="rendersettings_frequency_value" width="100%" height="auto" text="1000" unit="ms" options="type=int,min=0.0,step=1" image="resources/engine/images/inputslider.png" />
+							</layout>
+						</layout>
+					</layout>
+				</element>
+								
+			</layout>		
+		</layout>
+	</element>
+</template>
