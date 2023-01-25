@@ -1517,8 +1517,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					parentElementId,
 					node,
 					FileSystem::getInstance()->getContentAsString(
-						guiParentNode->getScreenNode()->getApplicationRootPathName() + "/" +
-						FileSystem::getInstance()->getPathName(src),
+						guiParentNode->getScreenNode()->getApplicationRootPathName() + "/" + FileSystem::getInstance()->getPathName(src),
 						FileSystem::getInstance()->getFileName(src)
 					),
 					attributes,

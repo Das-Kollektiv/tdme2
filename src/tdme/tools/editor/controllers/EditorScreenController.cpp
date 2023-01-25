@@ -426,10 +426,10 @@ void EditorScreenController::onDragRequest(GUIElementNode* node, int mouseX, int
 			}
 		};
 		//
-		auto relativeFileName = getRelativePath(node->getValue());
-		auto imageSource = GUIParser::getEngineThemeProperties()->get("icon.type_" + FileDialogScreenController::getFileImageName(relativeFileName) + "_big", "resources/engine/images/tdme_big.png");
+		auto absoluteFileName = node->getValue();
+		auto imageSource = GUIParser::getEngineThemeProperties()->get("icon.type_" + FileDialogScreenController::getFileImageName(absoluteFileName) + "_big", "resources/engine/images/tdme_big.png");
 		auto xml = "<image width=\"auto\" height=\"auto\" src=\"" + imageSource + "\" />";
-		view->getPopUps()->getDraggingScreenController()->start(mouseX, mouseY, xml, "file:" + relativeFileName, new OnDragReleaseAction(this));
+		view->getPopUps()->getDraggingScreenController()->start(mouseX, mouseY, xml, "file:" + absoluteFileName, new OnDragReleaseAction(this));
 	}
 }
 
@@ -1639,23 +1639,22 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 				}
 			case FILETYPE_SCREEN_TEXT:
 				{
-					auto relativeFileName = getRelativePath(absoluteFileName);
 					string xmlRootNode;
 					// try to read XML root node tag name
 					try {
 						xmlRootNode = GUIParser::getRootNode(
-							FileSystem::getInstance()->getPathName(relativeFileName),
-							FileSystem::getInstance()->getFileName(relativeFileName)
+							FileSystem::getInstance()->getPathName(absoluteFileName),
+							FileSystem::getInstance()->getFileName(absoluteFileName)
 						);
 					} catch (Exception& exception) {
-						Console::println("EditorScreenController::openFile(): " + relativeFileName + ": " + exception.what());
+						Console::println("EditorScreenController::openFile(): " + absoluteFileName + ": " + exception.what());
 					}
 					// gui?
 					if (xmlRootNode == "screen" || xmlRootNode == "template") {
 						icon = "{$icon.type_gui}";
 						colorType = "{$color.type_gui}";
 						tabType = EditorTabView::TABTYPE_UIEDITOR;
-						tabView = new UIEditorTabView(view, tabId, screenNode, relativeFileName);
+						tabView = new UIEditorTabView(view, tabId, screenNode, absoluteFileName);
 						viewPortTemplate = "template_viewport_ui.xml";
 					} else {
 						// nope, xml
