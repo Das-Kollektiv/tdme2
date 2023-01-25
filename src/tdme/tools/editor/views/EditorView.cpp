@@ -155,6 +155,16 @@ void EditorView::handleInputEvents()
 				if (selectedTab != nullptr) editorScreenController->closeTab(selectedTab->getId());
 			}
 			event.setProcessed(true);
+		} else
+		if (event.getKeyChar() >= '0' && event.getKeyChar() <= '9' && event.isControlDown() == true) {
+			if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+				if (event.getKeyChar() == '0') {
+					editorScreenController->selectTabAt(10);
+				} else {
+					editorScreenController->selectTabAt(event.getKeyChar() - '1');
+				}
+			}
+			event.setProcessed(true);
 		} else {
 			//
 			switch (event.getKeyCode()) {
@@ -359,14 +369,11 @@ void EditorView::setDetailsContent(const string& xml) {
 }
 
 void EditorView::reloadTabOutliner(const string& newSelectionValue) {
-	auto selectedTabId = editorScreenController->getSelectedTabId();
-	auto& tabViews = editorScreenController->getTabViews();
-	auto tabViewIt = tabViews.find(selectedTabId);
-	if (tabViewIt != tabViews.end()){
-		auto& tab = tabViewIt->second;
+	auto tabView = editorScreenController->getSelectedTab();
+	if (tabView != nullptr) {
 		TabView::OutlinerState outlinerState;
 		editorScreenController->storeOutlinerState(outlinerState);
-		tab.getTabView()->reloadOutliner();
+		tabView->getTabView()->reloadOutliner();
 		if (newSelectionValue.empty() == false) outlinerState.value = newSelectionValue;
 		editorScreenController->restoreOutlinerState(outlinerState);
 	}
