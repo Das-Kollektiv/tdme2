@@ -230,12 +230,20 @@ public:
 	static const string toUpperCase(const string& src);
 
 	/**
-	 * Do regex pattern matching
+	 * Check if pattern matches whole string
 	 * @param src source string to test
 	 * @param pattern pattern
-	 * @return if patter matches
+	 * @return if pattern matches whole string
 	 */
 	static bool regexMatch(const string& src, const string& pattern);
+
+	/**
+	 * Do regex pattern search
+	 * @param src source string to test
+	 * @param pattern pattern
+	 * @return if search was successful
+	 */
+	static bool regexSearch(const string& src, const string& pattern);
 
 	/**
 	 * Replace regex pattern with given string
