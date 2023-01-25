@@ -1,51 +1,53 @@
-<layout id="{$id}" width="100%" height="100%" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
-	<layer width="100%" height="100%">
-		<image
-			id="{$id}_framebuffer"
-			width="100%" 
-			height="100%" 
-			background-color="black"
-		/>
-		<element id="{$id}_viewport" width="100%" height="*" border="1" background-color="transparent" focusable="true" ignore-events="true">
-			<layout show-on="tools" width="100%" height="100%" padding="10" alignment="vertical" horizontal-align="left" vertical-align="top">
-				<layout show-on="select" width="100%" height="auto" alignment="vertical"> 
-					<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_button_select" name="gizmo" width="40" height="40" value="1" image="resources/engine/images/select.png" />
-					<space height="15"/>
-				</layout>
-				<space height="5"/>
-				<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_button_translate" name="gizmo" width="40" height="40" value="1" image="resources/engine/images/translate.png" />
-				<space height="5"/>
-				<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_button_rotate" name="gizmo" width="40" height="40" value="1" image="resources/engine/images/rotate.png" />
-				<space height="5"/>
-				<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_button_scale" name="gizmo" width="40" height="40" value="1" image="resources/engine/images/scale.png" />
-				<space height="5"/>
-				<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_button_gizmo" name="gizmo" width="40" height="40" value="1" image="resources/engine/images/gizmo.png" selected="true" />
-			</layout>
-			<layout width="100%" height="100%" padding="5" alignment="horizontal" horizontal-align="right" vertical-align="top">
-				<layout width="auto" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
-					<checkbox id="{$id}_checkbox_grid" image-unchecked="resources/engine/images/checkbox_gridoff.png" image-checked="resources/engine/images/checkbox_gridon.png" value="1" selected="true" />
-					<layout show-on="bvs" width="auto" height="auto" alignment="vertical">
-						<checkbox id="{$id}_checkbox_bvs" image-unchecked="resources/engine/images/checkbox_bvoff.png" image-checked="resources/engine/images/checkbox_bvon.png" value="1" />
+<template>	
+	<layout id="{$id}" width="100%" height="100%" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
+		<layer width="100%" height="100%">
+			<image
+				id="{$id}_framebuffer"
+				width="100%" 
+				height="100%" 
+				background-color="black"
+			/>
+			<element id="{$id}_viewport" width="100%" height="*" border="1" background-color="transparent" focusable="true" ignore-events="true">
+				<layout show-on="tools" width="100%" height="100%" padding="10" alignment="vertical" horizontal-align="left" vertical-align="top">
+					<layout show-on="select" width="100%" height="auto" alignment="vertical"> 
+						<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_button_select" name="gizmo" width="40" height="40" value="1" image="resources/engine/images/select.png" />
+						<space height="15"/>
 					</layout>
-					<layout show-on="snapping" width="auto" height="auto" alignment="horizontal">
-						<checkbox id="{$id}_checkbox_snapping" image-unchecked="resources/engine/images/checkbox_snappingoff.png" image-checked="resources/engine/images/checkbox_snappingon.png" value="1" on-mouse-click="snapping_details.condition!=snapping_on" />
-						<element id="{$id}_snapping_details">
-							<layout show-on="{$id}_checkbox_snapping.checked" width="auto" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
-								<text font="{$font.default}" size="{$fontsize.default}" text="X" color="{$color.font_normal}" />
-								<space width="5"/>
-								<input width="100" id="{$id}_snapping_x" text="1.00" unit="m" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
-								<space width="10"/>
-								<text font="{$font.default}" size="{$fontsize.default}" text="Z" color="{$color.font_normal}" />
-								<space width="5"/>
-								<input width="100" id="{$id}_snapping_z" text="1.00" unit="m" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
-							</layout>
-						</element>
+					<space height="5"/>
+					<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_button_translate" name="gizmo" width="40" height="40" value="1" image="resources/engine/images/translate.png" />
+					<space height="5"/>
+					<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_button_rotate" name="gizmo" width="40" height="40" value="1" image="resources/engine/images/rotate.png" />
+					<space height="5"/>
+					<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_button_scale" name="gizmo" width="40" height="40" value="1" image="resources/engine/images/scale.png" />
+					<space height="5"/>
+					<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_button_gizmo" name="gizmo" width="40" height="40" value="1" image="resources/engine/images/gizmo.png" selected="true" />
+				</layout>
+				<layout width="100%" height="100%" padding="5" alignment="horizontal" horizontal-align="right" vertical-align="top">
+					<layout width="auto" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
+						<checkbox id="{$id}_checkbox_grid" image-unchecked="resources/engine/images/checkbox_gridoff.png" image-checked="resources/engine/images/checkbox_gridon.png" value="1" selected="true" />
+						<layout show-on="bvs" width="auto" height="auto" alignment="vertical">
+							<checkbox id="{$id}_checkbox_bvs" image-unchecked="resources/engine/images/checkbox_bvoff.png" image-checked="resources/engine/images/checkbox_bvon.png" value="1" />
+						</layout>
+						<layout show-on="snapping" width="auto" height="auto" alignment="horizontal">
+							<checkbox id="{$id}_checkbox_snapping" image-unchecked="resources/engine/images/checkbox_snappingoff.png" image-checked="resources/engine/images/checkbox_snappingon.png" value="1" on-mouse-click="snapping_details.condition!=snapping_on" />
+							<element id="{$id}_snapping_details">
+								<layout show-on="{$id}_checkbox_snapping.checked" width="auto" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
+									<text font="{$font.default}" size="{$fontsize.default}" text="X" color="{$color.font_normal}" />
+									<space width="5"/>
+									<input width="100" id="{$id}_snapping_x" text="1.00" unit="m" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
+									<space width="10"/>
+									<text font="{$font.default}" size="{$fontsize.default}" text="Z" color="{$color.font_normal}" />
+									<space width="5"/>
+									<input width="100" id="{$id}_snapping_z" text="1.00" unit="m" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
+								</layout>
+							</element>
+						</layout>
 					</layout>
 				</layout>
-			</layout>
-			<layout width="100%" height="100%" padding="5" alignment="horizontal" horizontal-align="right" vertical-align="bottom">
-				<text id="{$id}_text_info" font="{$font.default}" size="{$fontsize.default}" text="width 512 height 512 | infotext | stuff" color="{$color.font_normal}" />
-			</layout>
-		</element>	
-	</layer>
-</layout>
+				<layout width="100%" height="100%" padding="5" alignment="horizontal" horizontal-align="right" vertical-align="bottom">
+					<text id="{$id}_text_info" font="{$font.default}" size="{$fontsize.default}" text="width 512 height 512 | infotext | stuff" color="{$color.font_normal}" />
+				</layout>
+			</element>	
+		</layer>
+	</layout>
+</template>

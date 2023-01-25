@@ -1,48 +1,50 @@
-<element id="{$id}" name="{$name}" value="{$value}" selected="{$selected}" disabled="{$disabled}" focusable="true" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" on-change="{$on-change}" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
+<template>	
+	<element id="{$id}" name="{$name}" value="{$value}" selected="{$selected}" disabled="{$disabled}" focusable="true" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" on-change="{$on-change}" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
 
-	<!-- unchecked -->
-	<layout width="auto" height="auto" padding-left="5" padding-right="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,checked,mouseover" >
-		<layout width="{$size}" height="{$size}" alignment="horizontal" horizontal-align="center" vertical-align="center">
-			<image effect-color-mul="{$color.font_normal}" src="{$image-unchecked}" />
+		<!-- unchecked -->
+		<layout width="auto" height="auto" padding-left="5" padding-right="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,checked,mouseover" >
+			<layout width="{$size}" height="{$size}" alignment="horizontal" horizontal-align="center" vertical-align="center">
+				<image effect-color-mul="{$color.font_normal}" src="{$image-unchecked}" />
+			</layout>
+			<text font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_normal}" />
 		</layout>
-		<text font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_normal}" />
-	</layout>
-	<!-- unchecked, mouse over -->
-	<layout width="auto" height="auto" padding-left="5" padding-right="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,checked" show-on="mouseover" >
-		<layout width="{$size}" height="{$size}" alignment="horizontal" horizontal-align="center" vertical-align="center">
-			<image effect-color-mul="{$color.font_highlight}" src="{$image-unchecked}" />
+		<!-- unchecked, mouse over -->
+		<layout width="auto" height="auto" padding-left="5" padding-right="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,checked" show-on="mouseover" >
+			<layout width="{$size}" height="{$size}" alignment="horizontal" horizontal-align="center" vertical-align="center">
+				<image effect-color-mul="{$color.font_highlight}" src="{$image-unchecked}" />
+			</layout>
+			<text font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_highlight}" />
 		</layout>
-		<text font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_highlight}" />
-	</layout>
-	<!-- unchecked, disabled -->
-	<layout width="auto" height="auto" padding-left="5" padding-right="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="checked" show-on="disabled" >
-		<layout width="{$size}" height="{$size}" alignment="horizontal" horizontal-align="center" vertical-align="center">
-			<image effect-color-mul="{$color.font_disabled}" src="{$image-unchecked}" />
+		<!-- unchecked, disabled -->
+		<layout width="auto" height="auto" padding-left="5" padding-right="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="checked" show-on="disabled" >
+			<layout width="{$size}" height="{$size}" alignment="horizontal" horizontal-align="center" vertical-align="center">
+				<image effect-color-mul="{$color.font_disabled}" src="{$image-unchecked}" />
+			</layout>
+			<text font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_disabled}" />
 		</layout>
-		<text font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_disabled}" />
-	</layout>
 
-	
-	<!-- checked -->
-	<layout width="auto" height="auto" padding-left="5" padding-right="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,unchecked,mouseover" >
-		<layout width="{$size}" height="{$size}" alignment="horizontal" horizontal-align="center" vertical-align="center">
-			<image effect-color-mul="{$color.font_normal}" src="{$image-checked}" />
+		
+		<!-- checked -->
+		<layout width="auto" height="auto" padding-left="5" padding-right="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,unchecked,mouseover" >
+			<layout width="{$size}" height="{$size}" alignment="horizontal" horizontal-align="center" vertical-align="center">
+				<image effect-color-mul="{$color.font_normal}" src="{$image-checked}" />
+			</layout>
+			<text font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_normal}" />
 		</layout>
-		<text font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_normal}" />
-	</layout>
-	<!-- checked, mouse over -->
-	<layout width="auto" height="auto" padding-left="5" padding-right="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,unchecked" show-on="mouseover" >
-		<layout width="{$size}" height="{$size}" alignment="horizontal" horizontal-align="center" vertical-align="center">
-			<image effect-color-mul="{$color.font_highlight}" src="{$image-checked}" />
+		<!-- checked, mouse over -->
+		<layout width="auto" height="auto" padding-left="5" padding-right="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,unchecked" show-on="mouseover" >
+			<layout width="{$size}" height="{$size}" alignment="horizontal" horizontal-align="center" vertical-align="center">
+				<image effect-color-mul="{$color.font_highlight}" src="{$image-checked}" />
+			</layout>
+			<text font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_highlight}" />
 		</layout>
-		<text font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_highlight}" />
-	</layout>
-	<!-- checked, disabled -->
-	<layout width="auto" height="auto" padding-left="5" padding-right="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="unchecked" show-on="disabled" >
-		<layout width="{$size}" height="{$size}" alignment="horizontal" horizontal-align="center" vertical-align="center">
-			<image effect-color-mul="{$color.font_disabled}" src="{$image-checked}" />
+		<!-- checked, disabled -->
+		<layout width="auto" height="auto" padding-left="5" padding-right="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="unchecked" show-on="disabled" >
+			<layout width="{$size}" height="{$size}" alignment="horizontal" horizontal-align="center" vertical-align="center">
+				<image effect-color-mul="{$color.font_disabled}" src="{$image-checked}" />
+			</layout>
+			<text font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_disabled}" />
 		</layout>
-		<text font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_disabled}" />
-	</layout>
 
-</element>
+	</element>
+</template>

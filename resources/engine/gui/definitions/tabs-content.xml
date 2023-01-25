@@ -1,5 +1,7 @@
-<element id="{$id}" width="100%" height="*" background-color="{$color.element_foreground}" border-left="1" border-right="1" border-bottom="1" border-color="{$color.element_frame}" ignore-events="{$ignore-events}" show-on="{$show-on}" hide-on="{$hide-on}">
-	<layer id="{$id}_inner" width="100%" height="*">
-		{__InnerXML__}
-	</layer>
-</element>
+<template>	
+	<element id="{$id}" width="100%" height="*" background-color="{$color.element_foreground}" border-left="1" border-right="1" border-bottom="1" border-color="{$color.element_frame}" ignore-events="{$ignore-events}" show-on="{$show-on}" hide-on="{$hide-on}">
+		<layer id="{$id}_inner" width="100%" height="*">
+			{__InnerXML__}
+		</layer>
+	</element>
+</template>

@@ -1,47 +1,49 @@
-<layout id="{$id}" width="100%" height="100%" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
-	<layer width="100%" height="100%">
-		<image
-			id="{$id}_framebuffer"
-			width="100%" 
-			height="100%" 
-			background-color="black"
-		/>
-		<element id="{$id}_viewport" width="100%" height="*" border="1" focusable="true" ignore-events="true">
-			<layout show-on="water" width="100%" height="100%" padding="10" alignment="vertical" horizontal-align="left" vertical-align="top">	
-				<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_water_water" name="brush" width="40" height="40" value="1" image="resources/engine/images/terrain_water.png" />
-				<space height="20"/>
-				<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_water_delete" name="brush" width="40" height="40" value="1" image="resources/engine/images/delete.png" />
-			</layout>
-			<layout show-on="terrain" width="100%" height="100%" padding="10" alignment="vertical" horizontal-align="left" vertical-align="top">	
-				<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_terrain_add" name="brush" width="40" height="40" value="1" image="resources/engine/images/terrain_add.png" />
-				<space height="5"/>
-				<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_terrain_substract" name="brush" width="40" height="40" value="1" image="resources/engine/images/terrain_substract.png" />
-				<space height="5"/>
-				<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_terrain_flatten" name="brush" width="40" height="40" value="1" image="resources/engine/images/terrain_flatten.png" />
-				<space height="5"/>
-				<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_terrain_smooth" name="brush" width="40" height="40" value="1" image="resources/engine/images/terrain_smooth.png" />
-				<space height="20"/>
-				<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_terrain_ramp" name="brush" width="40" height="40" value="1" image="resources/engine/images/terrain_ramp.png" />
-				<space height="20"/>
-				<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_terrain_delete" name="brush" width="40" height="40" value="1" image="resources/engine/images/delete.png" />
-			</layout>
-			<layout show-on="foliage" width="100%" height="100%" padding="10" alignment="vertical" horizontal-align="left" vertical-align="top">	
-				<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_foliage_add" name="brush" width="40" height="40" value="1" image="resources/engine/images/foliage_add.png" />
-				<space height="5"/>
-				<!--
-				<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_foliage_smooth" name="brush" width="40" height="40" value="1" image="resources/engine/images/terrain_smooth.png" />
-				-->
-				<space height="20"/>
-				<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_foliage_delete" name="brush" width="40" height="40" value="1" image="resources/engine/images/delete.png" />
-			</layout>
-			<layout width="100%" height="100%" padding="5" alignment="horizontal" horizontal-align="right" vertical-align="top">
-				<layout width="auto" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
-					<checkbox id="{$id}_checkbox_grid" image-unchecked="resources/engine/images/checkbox_gridoff.png" image-checked="resources/engine/images/checkbox_gridon.png" value="1" selected="true" />
+<template>	
+	<layout id="{$id}" width="100%" height="100%" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
+		<layer width="100%" height="100%">
+			<image
+				id="{$id}_framebuffer"
+				width="100%" 
+				height="100%" 
+				background-color="black"
+			/>
+			<element id="{$id}_viewport" width="100%" height="*" border="1" focusable="true" ignore-events="true">
+				<layout show-on="water" width="100%" height="100%" padding="10" alignment="vertical" horizontal-align="left" vertical-align="top">	
+					<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_water_water" name="brush" width="40" height="40" value="1" image="resources/engine/images/terrain_water.png" />
+					<space height="20"/>
+					<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_water_delete" name="brush" width="40" height="40" value="1" image="resources/engine/images/delete.png" />
 				</layout>
-			</layout>
-			<layout width="100%" height="100%" padding="5" alignment="horizontal" horizontal-align="right" vertical-align="bottom">
-				<text id="{$id}_text_info" font="{$font.default}" size="{$fontsize.default}" text="width 512 height 512 | infotext | stuff" color="{$color.font_normal}" />
-			</layout>
-		</element>
-	</layer>	
-</layout>
+				<layout show-on="terrain" width="100%" height="100%" padding="10" alignment="vertical" horizontal-align="left" vertical-align="top">	
+					<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_terrain_add" name="brush" width="40" height="40" value="1" image="resources/engine/images/terrain_add.png" />
+					<space height="5"/>
+					<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_terrain_substract" name="brush" width="40" height="40" value="1" image="resources/engine/images/terrain_substract.png" />
+					<space height="5"/>
+					<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_terrain_flatten" name="brush" width="40" height="40" value="1" image="resources/engine/images/terrain_flatten.png" />
+					<space height="5"/>
+					<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_terrain_smooth" name="brush" width="40" height="40" value="1" image="resources/engine/images/terrain_smooth.png" />
+					<space height="20"/>
+					<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_terrain_ramp" name="brush" width="40" height="40" value="1" image="resources/engine/images/terrain_ramp.png" />
+					<space height="20"/>
+					<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_terrain_delete" name="brush" width="40" height="40" value="1" image="resources/engine/images/delete.png" />
+				</layout>
+				<layout show-on="foliage" width="100%" height="100%" padding="10" alignment="vertical" horizontal-align="left" vertical-align="top">	
+					<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_foliage_add" name="brush" width="40" height="40" value="1" image="resources/engine/images/foliage_add.png" />
+					<space height="5"/>
+					<!--
+					<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_foliage_smooth" name="brush" width="40" height="40" value="1" image="resources/engine/images/terrain_smooth.png" />
+					-->
+					<space height="20"/>
+					<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_foliage_delete" name="brush" width="40" height="40" value="1" image="resources/engine/images/delete.png" />
+				</layout>
+				<layout width="100%" height="100%" padding="5" alignment="horizontal" horizontal-align="right" vertical-align="top">
+					<layout width="auto" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
+						<checkbox id="{$id}_checkbox_grid" image-unchecked="resources/engine/images/checkbox_gridoff.png" image-checked="resources/engine/images/checkbox_gridon.png" value="1" selected="true" />
+					</layout>
+				</layout>
+				<layout width="100%" height="100%" padding="5" alignment="horizontal" horizontal-align="right" vertical-align="bottom">
+					<text id="{$id}_text_info" font="{$font.default}" size="{$fontsize.default}" text="width 512 height 512 | infotext | stuff" color="{$color.font_normal}" />
+				</layout>
+			</element>
+		</layer>	
+	</layout>
+</template>

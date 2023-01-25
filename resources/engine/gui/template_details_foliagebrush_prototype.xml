@@ -1,134 +1,136 @@
-<element id="{$id}" width="100%" height="auto">
-	<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
-		<button width="100%" height="25" text="Foliage Brush Prototype" on-mouse-click="{$id}.condition!=open"/>
-		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">	
+<template>	
+	<element id="{$id}" width="100%" height="auto">
+		<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
+			<button width="100%" height="25" text="Foliage Brush Prototype" on-mouse-click="{$id}.condition!=open"/>
+			<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">	
 
-			<element id="foliagebrush_prototype_details_panel" width="100%" height="auto">
+				<element id="foliagebrush_prototype_details_panel" width="100%" height="auto">
+				
+					<layout width="100%" height="auto" alignment="vertical" vertical-align="top" horizontal-align="left">	
+						<space height="5" />
+						
+						<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="foliagebrush_prototype_file" type="Prototype" />
+													
+						<space height="5" />
+						<menu-separator />
+						<space height="5" />
 			
-				<layout width="100%" height="auto" alignment="vertical" vertical-align="top" horizontal-align="left">	
-					<space height="5" />
-					
-					<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="foliagebrush_prototype_file" type="Prototype" />
-												
-					<space height="5" />
-					<menu-separator />
-					<space height="5" />
-		
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Count" width="*" height="auto" />
-						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<input id="foliagebrush_prototype_object_count" width="100%" height="auto" text="1" options="type=float,min=0,step=0.01,decimals=2" image="resources/engine/images/inputslider.png"  />
-						</layout>
-					</layout>
-					
-					<space height="5" />
-					<menu-separator />
-					<space height="5" />
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Normal Align" width="*" height="auto"/>
-						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-							<checkbox id="foliagebrush_prototype_normalalign" width="25" height="25" value="1" on-mouse-click="foliagebrush_details_panel.condition!=normalalign" />
-						</layout>
-					</layout>
-					<space height="5" />
-					<menu-separator />
-					<space height="5" hide-on="normalalign" />
-					<layout hide-on="normalalign" width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Rotation" width="*" height="auto" />
-						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
-							<layout alignment="horizontal" width="40%" height="auto" horizontal-align="right">
-								<layout width="5" height="25" background-color="{$color.xaxis}" />
-								<input id="foliagebrush_prototype_rotationrange_x_min" width="*" height="auto" text="0" unit="°" options="type=int,step=1" image="resources/engine/images/inputslider.png" />
-							</layout>
-							<space width="5" />
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
-							<space width="5" />
-							<layout alignment="horizontal" width="40%" height="auto" horizontal-align="right">
-								<layout width="5" height="25" background-color="{$color.xaxis}" />
-								<input id="foliagebrush_prototype_rotationrange_x_max" width="*" height="auto" text="0" unit="°" options="type=int,step=1" image="resources/engine/images/inputslider.png"/>
+						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Count" width="*" height="auto" />
+							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+								<input id="foliagebrush_prototype_object_count" width="100%" height="auto" text="1" options="type=float,min=0,step=0.01,decimals=2" image="resources/engine/images/inputslider.png"  />
 							</layout>
 						</layout>
-					</layout>
-					<space height="5" />
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text show-on="normalalign" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Rotation" width="*" height="auto" />
-						<text hide-on="normalalign" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" />
-						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
-							<layout alignment="horizontal" width="40%" height="auto" horizontal-align="right">
-								<layout width="5" height="25" background-color="{$color.yaxis}" />
-								<input id="foliagebrush_prototype_rotationrange_y_min" width="*" height="auto" text="0" unit="°" options="type=int,step=1" image="resources/engine/images/inputslider.png" />
-							</layout>
-							<space width="5" />
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
-							<space width="5" />
-							<layout alignment="horizontal" width="40%" height="auto" horizontal-align="right">
-								<layout width="5" height="25" background-color="{$color.yaxis}" />
-								<input id="foliagebrush_prototype_rotationrange_y_max" width="*" height="auto" text="0"  unit="°" options="type=int,step=1" image="resources/engine/images/inputslider.png"/>
+						
+						<space height="5" />
+						<menu-separator />
+						<space height="5" />
+						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Normal Align" width="*" height="auto"/>
+							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+								<checkbox id="foliagebrush_prototype_normalalign" width="25" height="25" value="1" on-mouse-click="foliagebrush_details_panel.condition!=normalalign" />
 							</layout>
 						</layout>
-					</layout>
-					<space height="5" hide-on="normalalign" />
-					<layout hide-on="normalalign" width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" />
-						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
-							<layout alignment="horizontal" width="40%" height="auto" horizontal-align="right">
-								<layout width="5" height="25" background-color="{$color.zaxis}" />
-								<input id="foliagebrush_prototype_rotationrange_z_min" width="*" height="auto" text="0" unit="°" options="type=int,step=1" image="resources/engine/images/inputslider.png" />
-							</layout>
-							<space width="5" />
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
-							<space width="5" />
-							<layout alignment="horizontal" width="40%" height="auto" horizontal-align="right">
-								<layout width="5" height="25" background-color="{$color.zaxis}" />
-								<input id="foliagebrush_prototype_rotationrange_z_max" width="*" height="auto" text="0" unit="°" options="type=int,step=1" image="resources/engine/images/inputslider.png" />
+						<space height="5" />
+						<menu-separator />
+						<space height="5" hide-on="normalalign" />
+						<layout hide-on="normalalign" width="100%" height="auto" alignment="horizontal" vertical-align="center">
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Rotation" width="*" height="auto" />
+							<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
+								<layout alignment="horizontal" width="40%" height="auto" horizontal-align="right">
+									<layout width="5" height="25" background-color="{$color.xaxis}" />
+									<input id="foliagebrush_prototype_rotationrange_x_min" width="*" height="auto" text="0" unit="°" options="type=int,step=1" image="resources/engine/images/inputslider.png" />
+								</layout>
+								<space width="5" />
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
+								<space width="5" />
+								<layout alignment="horizontal" width="40%" height="auto" horizontal-align="right">
+									<layout width="5" height="25" background-color="{$color.xaxis}" />
+									<input id="foliagebrush_prototype_rotationrange_x_max" width="*" height="auto" text="0" unit="°" options="type=int,step=1" image="resources/engine/images/inputslider.png"/>
+								</layout>
 							</layout>
 						</layout>
-					</layout>
-					<space height="5" />
-					<menu-separator />
-					<space height="5" />
+						<space height="5" />
+						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+							<text show-on="normalalign" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Rotation" width="*" height="auto" />
+							<text hide-on="normalalign" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" />
+							<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
+								<layout alignment="horizontal" width="40%" height="auto" horizontal-align="right">
+									<layout width="5" height="25" background-color="{$color.yaxis}" />
+									<input id="foliagebrush_prototype_rotationrange_y_min" width="*" height="auto" text="0" unit="°" options="type=int,step=1" image="resources/engine/images/inputslider.png" />
+								</layout>
+								<space width="5" />
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
+								<space width="5" />
+								<layout alignment="horizontal" width="40%" height="auto" horizontal-align="right">
+									<layout width="5" height="25" background-color="{$color.yaxis}" />
+									<input id="foliagebrush_prototype_rotationrange_y_max" width="*" height="auto" text="0"  unit="°" options="type=int,step=1" image="resources/engine/images/inputslider.png"/>
+								</layout>
+							</layout>
+						</layout>
+						<space height="5" hide-on="normalalign" />
+						<layout hide-on="normalalign" width="100%" height="auto" alignment="horizontal" vertical-align="center">
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" />
+							<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
+								<layout alignment="horizontal" width="40%" height="auto" horizontal-align="right">
+									<layout width="5" height="25" background-color="{$color.zaxis}" />
+									<input id="foliagebrush_prototype_rotationrange_z_min" width="*" height="auto" text="0" unit="°" options="type=int,step=1" image="resources/engine/images/inputslider.png" />
+								</layout>
+								<space width="5" />
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
+								<space width="5" />
+								<layout alignment="horizontal" width="40%" height="auto" horizontal-align="right">
+									<layout width="5" height="25" background-color="{$color.zaxis}" />
+									<input id="foliagebrush_prototype_rotationrange_z_max" width="*" height="auto" text="0" unit="°" options="type=int,step=1" image="resources/engine/images/inputslider.png" />
+								</layout>
+							</layout>
+						</layout>
+						<space height="5" />
+						<menu-separator />
+						<space height="5" />
 
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Scale" width="*" height="auto" />
-						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
-							<input id="foliagebrush_prototype_scalerange_min" width="40%" height="auto" text="1" options="type=float,min=0.01,step=0.01,decimals=2" image="resources/engine/images/inputslider.png" />
-							<space width="5" />
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
-							<space width="5" />
-							<input id="foliagebrush_prototype_scalerange_max" width="40%" height="auto" text="1" options="type=float,min=0.01,step=0.01,decimals=2" image="resources/engine/images/inputslider.png" />
+						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Scale" width="*" height="auto" />
+							<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
+								<input id="foliagebrush_prototype_scalerange_min" width="40%" height="auto" text="1" options="type=float,min=0.01,step=0.01,decimals=2" image="resources/engine/images/inputslider.png" />
+								<space width="5" />
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
+								<space width="5" />
+								<input id="foliagebrush_prototype_scalerange_max" width="40%" height="auto" text="1" options="type=float,min=0.01,step=0.01,decimals=2" image="resources/engine/images/inputslider.png" />
+							</layout>
 						</layout>
-					</layout>
+						
+						<space height="5" />
+						<menu-separator />
+						<space height="5" />
+						
+						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Height" width="*" height="auto" />
+							<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
+								<input id="foliagebrush_prototype_heightrange_min" width="40%" height="auto" text="-100" unit="m" options="type=int,step=1" image="resources/engine/images/inputslider.png"/>
+								<space width="5" />
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
+								<space width="5" />
+								<input id="foliagebrush_prototype_heightrange_max" width="40%" height="auto" text="100" unit="m" options="type=int,step=1" image="resources/engine/images/inputslider.png" />
+							</layout>
+						</layout>
+						<space height="5" />
+						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Slope" width="*" height="auto" />
+							<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
+								<input id="foliagebrush_prototype_sloperange_min" width="40%" height="auto" text="0°" unit="°" options="type=int,min=0,max=90,step=1" image="resources/engine/images/inputslider.png"/>
+								<space width="5" />
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
+								<space width="5" />
+								<input id="foliagebrush_prototype_sloperange_max" width="40%" height="auto" text="90°" unit="°" options="type=int,min=0,max=90,step=1" image="resources/engine/images/inputslider.png"/>
+							</layout>
+						</layout>
 					
-					<space height="5" />
-					<menu-separator />
-					<space height="5" />
-					
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Height" width="*" height="auto" />
-						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
-							<input id="foliagebrush_prototype_heightrange_min" width="40%" height="auto" text="-100" unit="m" options="type=int,step=1" image="resources/engine/images/inputslider.png"/>
-							<space width="5" />
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
-							<space width="5" />
-							<input id="foliagebrush_prototype_heightrange_max" width="40%" height="auto" text="100" unit="m" options="type=int,step=1" image="resources/engine/images/inputslider.png" />
-						</layout>
-					</layout>
-					<space height="5" />
-					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Slope" width="*" height="auto" />
-						<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
-							<input id="foliagebrush_prototype_sloperange_min" width="40%" height="auto" text="0°" unit="°" options="type=int,min=0,max=90,step=1" image="resources/engine/images/inputslider.png"/>
-							<space width="5" />
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
-							<space width="5" />
-							<input id="foliagebrush_prototype_sloperange_max" width="40%" height="auto" text="90°" unit="°" options="type=int,min=0,max=90,step=1" image="resources/engine/images/inputslider.png"/>
-						</layout>
 					</layout>
 				
-				</layout>
-			
-			</element> 
-				
-		</layout>		
-	</layout>
-</element>
+				</element> 
+					
+			</layout>		
+		</layout>
+	</element>
+</template>

@@ -1,75 +1,77 @@
-<element id="{$id}" width="100%" height="auto">
-	<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
-		<button width="100%" height="25" text="Sound" on-mouse-click="{$id}.condition!=open"/>
-		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
+<template>	
+	<element id="{$id}" width="100%" height="auto">
+		<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
+			<button width="100%" height="25" text="Sound" on-mouse-click="{$id}.condition!=open"/>
+			<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
+				
+				<space height="5" />	
+				
+				<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="sound" type="Sound" />
+				
+				<space height="5" />
+				<menu-separator />
+				<space height="5" />		
 			
-			<space height="5" />	
-			
-			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="sound" type="Sound" />
-			
-			<space height="5" />
-			<menu-separator />
-			<space height="5" />		
-		
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Animation" width="*" height="auto" />
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
-					<dropdown id="sound_animation" width="100%" height="auto" text="Test">
-						<scrollarea id="sound_animation_scrollarea" width="100%" height="70">
-						</scrollarea>
-					</dropdown>
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Animation" width="*" height="auto" />
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+						<dropdown id="sound_animation" width="100%" height="auto" text="Test">
+							<scrollarea id="sound_animation_scrollarea" width="100%" height="70">
+							</scrollarea>
+						</dropdown>
+					</layout>
 				</layout>
-			</layout>
-			
-			<space height="5" />
-			<menu-separator />
-			<space height="5" />
-			
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Gain" width="*" height="auto" />
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
-					<input id="sound_gain" width="75%" height="auto" text="10.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
+				
+				<space height="5" />
+				<menu-separator />
+				<space height="5" />
+				
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Gain" width="*" height="auto" />
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+						<input id="sound_gain" width="75%" height="auto" text="10.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
+					</layout>
 				</layout>
-			</layout>
 
-			<space height="5" />
-			
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Pitch" width="*" height="auto" />
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
-					<input id="sound_pitch" width="75%" height="auto" text="10.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
+				<space height="5" />
+				
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Pitch" width="*" height="auto" />
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+						<input id="sound_pitch" width="75%" height="auto" text="10.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
+					</layout>
 				</layout>
-			</layout>
-			
-			<space height="5" />
-			
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Offset" width="*" height="auto" />
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
-					<input id="sound_offset" width="75%" height="auto" text="100" unit="ms" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"/>
+				
+				<space height="5" />
+				
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Offset" width="*" height="auto" />
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+						<input id="sound_offset" width="75%" height="auto" text="100" unit="ms" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"/>
+					</layout>
 				</layout>
-			</layout>
-			
-			<space height="5" />
-			<menu-separator />
-			<space height="5" />
-			
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Looped" width="*" height="auto" />
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
-					<checkbox id="sound_looping" width="25" height="25" value="1" />
+				
+				<space height="5" />
+				<menu-separator />
+				<space height="5" />
+				
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Looped" width="*" height="auto" />
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+						<checkbox id="sound_looping" width="25" height="25" value="1" />
+					</layout>
 				</layout>
-			</layout>
-			
-			<space height="5" />
-			
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">			
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Ambient" width="*" height="auto" />
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
-					<checkbox id="sound_ambient" width="25" height="25" value="1" />
+				
+				<space height="5" />
+				
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">			
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Ambient" width="*" height="auto" />
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+						<checkbox id="sound_ambient" width="25" height="25" value="1" />
+					</layout>
 				</layout>
-			</layout>
-								
-		</layout>		
-	</layout>
-</element>
+				
+			</layout>		
+		</layout>
+	</element>
+</template>

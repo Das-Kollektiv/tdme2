@@ -1,29 +1,31 @@
-<element id="{$id}" width="100%" height="auto">
-	<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
-		<button width="100%" height="25" text="Text Content" on-mouse-click="{$id}.condition!=open"/>
-		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
+<template>	
+	<element id="{$id}" width="100%" height="auto">
+		<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
+			<button width="100%" height="25" text="Text Content" on-mouse-click="{$id}.condition!=open"/>
+			<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
 
-			<space height="5" />
-			
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Text" width="*" height="auto" />
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<input id="{$id}_text" width="100%" height="auto" text="text" />
-				</layout>	
-			</layout>
-			
-			<space height="5" />
-			<menu-separator />
-			<space height="5" />
-			
-			<template src="resources/engine/gui/template_details_shared_color.xml" id="{$id}_color" name="Text Color" />	
-			
-			<space height="5" />
-			<menu-separator />
-			<space height="5" />
-			
-			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="{$id}_font" type="Font" />
-								
-		</layout>		
-	</layout>
-</element>
+				<space height="5" />
+				
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Text" width="*" height="auto" />
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+						<input id="{$id}_text" width="100%" height="auto" text="text" />
+					</layout>	
+				</layout>
+				
+				<space height="5" />
+				<menu-separator />
+				<space height="5" />
+				
+				<template src="resources/engine/gui/template_details_shared_color.xml" id="{$id}_color" name="Text Color" />	
+				
+				<space height="5" />
+				<menu-separator />
+				<space height="5" />
+				
+				<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="{$id}_font" type="Font" />
+									
+			</layout>		
+		</layout>
+	</element>
+</template>

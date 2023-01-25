@@ -1,17 +1,19 @@
-<layout id="{$id}" width="100%" height="100%" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
-	<element id="{$id}_editor" width="100%" height="100%" ignore-events="true">
-		<styled-input id="{$id}_text" show-on="text" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" padding="5" width="100%" height="100%" preformatted="true">
-		</styled-input>
-		<scrollarea id="{$id}_visualization" show-on="visualization" width="100%" height="100%" alignment="none" vertical-align="center" horizontal-align="center">
-			<image
-				id="{$id}_framebuffer"
-				width="auto"
-				height="auto"
-				background-color="black"
-			/>
-		</scrollarea>
-		<layout width="100%" height="100%" padding="5" alignment="horizontal" horizontal-align="right" vertical-align="top">
-			<checkbox id="{$id}_checkbox_visualui" image-unchecked="resources/engine/images/gui.png" image-checked="resources/engine/images/script.png" value="1" selected="true"/>
-		</layout>
-	</element>
-</layout>
+<template>	
+	<layout id="{$id}" width="100%" height="100%" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
+		<element id="{$id}_editor" width="100%" height="100%" ignore-events="true">
+			<styled-input id="{$id}_text" show-on="text" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" padding="5" width="100%" height="100%" preformatted="true">
+			</styled-input>
+			<scrollarea id="{$id}_visualization" show-on="visualization" width="100%" height="100%" alignment="none" vertical-align="center" horizontal-align="center">
+				<image
+					id="{$id}_framebuffer"
+					width="auto"
+					height="auto"
+					background-color="black"
+				/>
+			</scrollarea>
+			<layout width="100%" height="100%" padding="5" alignment="horizontal" horizontal-align="right" vertical-align="top">
+				<checkbox id="{$id}_checkbox_visualui" image-unchecked="resources/engine/images/gui.png" image-checked="resources/engine/images/script.png" value="1" selected="true"/>
+			</layout>
+		</element>
+	</layout>
+</template>

@@ -1,11 +1,13 @@
-<element id="{$id}" width="100%" height="auto">
-	<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
+<template>	
+	<element id="{$id}" width="100%" height="auto">
+		<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
 
-		<space height="5" />
+			<space height="5" />
 
-		<button id="prototype_place" width="auto" height="25" text="Place" />
+			<button id="prototype_place" width="auto" height="25" text="Place" />
 
-		<space height="5" />
-	
-	</layout>
-</element>
+			<space height="5" />
+		
+		</layout>
+	</element>
+</template>

@@ -1,5 +1,7 @@
-<element width="*" height="auto" focussable="true" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
-	<layout alignment="horizontal" width="auto" height="auto" flow="floating">
-		{__InnerXML__}
-	</layout>
-</element>
+<template>	
+	<element width="*" height="auto" focussable="true" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
+		<layout alignment="horizontal" width="auto" height="auto" flow="floating">
+			{__InnerXML__}
+		</layout>
+	</element>
+</template>
