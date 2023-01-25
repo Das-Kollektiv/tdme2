@@ -677,6 +677,18 @@ public:
 	bool selectTab(const string& tabId);
 
 	/**
+	 * @return tab count
+	 */
+	inline int getTabCount() {
+		return tabViewVector.size();
+	}
+
+	/**
+	 * @return selected tab index
+	 */
+	int getSelectedTabIdx();
+
+	/**
 	 * Select tab at given index
 	 * @param idx index
 	 */
