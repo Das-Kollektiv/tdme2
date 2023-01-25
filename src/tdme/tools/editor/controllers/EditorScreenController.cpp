@@ -1322,6 +1322,16 @@ void EditorScreenController::FileOpenThread::run() {
 	finished = true;
 }
 
+int EditorScreenController::getSelectedTabIdx() {
+	auto selectedTabId = getSelectedTabId();
+	auto idx = 0;
+	for (auto tab: tabViewVector) {
+		if (selectedTabId == tab->getId()) return idx;
+		idx++;
+	}
+	return -1;
+}
+
 bool EditorScreenController::selectTabAt(int idx) {
 	auto tab = getTabAt(idx);
 	if (tab != nullptr && screenNode->getNodeById(tab->getId()) != nullptr) {
