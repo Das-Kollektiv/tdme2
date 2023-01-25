@@ -421,7 +421,7 @@ void UIEditorTabView::updateRendering() {
 }
 
 inline bool UIEditorTabView::hasFixedSize() {
-	return projectedUi == false && visualEditor == false;
+	return projectedUi == false && visualEditor == true;
 }
 
 Engine* UIEditorTabView::getEngine() {
@@ -465,26 +465,23 @@ void UIEditorTabView::setScreen(int screenIdx, const string& fileName) {
 	this->screenIdx = screenIdx;
 	//
 	string xml;
-	GUIScreenNode* screenNode { nullptr };
 	try {
-		Console::println(Tools::getPathName(fileName));
-		Console::println(Tools::getFileName(fileName));
 		// parse XML
 		xml = FileSystem::getInstance()->getContentAsString(
 			Tools::getPathName(fileName),
 			Tools::getFileName(fileName)
 		);
-		// parse screen
-		screenNode = GUIParser::parse(xml, {}, Tools::getPathName(fileName), Tools::getFileName(fileName));
 	} catch (Exception& exception) {
 		Console::println("UIEditorTabView::setScreen(): an error occurred: " + screenNode->getFileName() + ": " + string(exception.what()));
 	}
 	//
 	uiScreenNodes[screenIdx].fileName = fileName;
 	uiScreenNodes[screenIdx].xml = xml;
-	uiScreenNodes[screenIdx].screenNode = screenNode;
-	uiScreenNodes[screenIdx].width = screenNode->getSizeConstraints().maxWidth;
-	uiScreenNodes[screenIdx].height = screenNode->getSizeConstraints().maxHeight;
+	uiScreenNodes[screenIdx].screenNode = nullptr;
+	uiScreenNodes[screenIdx].width = -1;
+	uiScreenNodes[screenIdx].height = -1;
+	//
+	if (visualEditor == true) reAddScreens();
 	//
 	updateCodeEditor();
 }
