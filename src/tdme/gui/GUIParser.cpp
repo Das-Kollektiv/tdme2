@@ -1735,6 +1735,56 @@ const string GUIParser::getInnerXml(TiXmlElement* node)
 	return ss.str();
 }
 
+unordered_map<string, string> GUIParser::parseTemplateAttributes(const string& templateXML) {
+	// add optiomal root tag, newer tdme requires to have a <template> tag surrounding the content
+	auto newTemplateXML = templateXML;
+	if (StringTools::regexSearch(newTemplateXML, "^\\s*(\\<\\s*template\\s*\\>)") == false) {
+		newTemplateXML =  "<template>\n" + templateXML + "</template>\n";
+	}
+
+	//
+	unordered_map<string, string> templateAttributes;
+
+	// parse defaults
+	TiXmlDocument newTemplateDocument;
+	newTemplateDocument.Parse(newTemplateXML.c_str());
+	if (newTemplateDocument.Error() == true) {
+		string message = "GUIParser::parseTemplateAttributes(): Could not parse XML. Error='" + string(newTemplateDocument.ErrorDesc()) + ":\n\n" + templateXML;
+		Console::println(message);
+		throw GUIParserException(message);
+	}
+	auto defaultsNodes = getChildrenByTagName(newTemplateDocument.RootElement(), "defaults");
+	for (auto defaultsNode: defaultsNodes) {
+		for (auto node = defaultsNode->FirstChildElement(); node != nullptr; node = node->NextSiblingElement()) {
+			auto nodeTagName = string(node->Value());
+			if (nodeTagName == "attribute") {
+				auto name =	string(AVOID_NULLPTR_STRING(node->Attribute("name")));
+				auto value = string(AVOID_NULLPTR_STRING(node->Attribute("value")));
+				templateAttributes[name] = value;
+			} else {
+				Console::println("GUIParser::parseTemplateAttributes(): unknown defaults node: " + nodeTagName);
+			}
+		}
+	}
+
+	//
+	return templateAttributes;
+}
+
+const string GUIParser::getInnerXml(const string& xml) {
+	//
+	TiXmlDocument xmlDocument;
+	xmlDocument.Parse(xml.c_str());
+	if (xmlDocument.Error() == true) {
+		string message = string("GUIParser::getInnerXml(): Could not parse XML. Error='") + string(xmlDocument.ErrorDesc()) + "':\n\n" + xml;
+		Console::println(message);
+		throw GUIParserException(message);
+	}
+	//
+	TiXmlElement* xmlRoot = xmlDocument.RootElement();
+	return getInnerXml(xmlRoot);
+}
+
 const string GUIParser::unescapeQuotes(const string& str)
 {
 	string result;
