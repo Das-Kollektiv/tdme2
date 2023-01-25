@@ -32,6 +32,8 @@
 					</menu-header-item>
 					<menu-header-item text="View">
 						<menu-item text="Full Screen" id="menu_view_fullscreen" image="resources/engine/images/fullscreen.png" shortcut="F11" />
+						<layout id="menu_view_tabs" alignment="vertical" width="auto">
+						</layout>
 					</menu-header-item>
 					<menu-header-item text="Project">
 						<menu-item text="Run Scene" image="resources/engine/images/play.png" id="menu_project_scene_run" />
