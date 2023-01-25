@@ -158,6 +158,13 @@ void EditorView::handleInputEvents()
 		} else {
 			//
 			switch (event.getKeyCode()) {
+				case GUIKeyboardEvent::KEYCODE_F4:
+					if (event.isControlDown() == true && event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+						auto selectedTab = editorScreenController->getSelectedTab();
+						if (selectedTab != nullptr) editorScreenController->closeTab(selectedTab->getId());
+						event.setProcessed(true);
+					}
+					break;
 				case GUIKeyboardEvent::KEYCODE_F11:
 					if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 						editorScreenController->setFullScreen(editorScreenController->isFullScreen() == false?true:false);
