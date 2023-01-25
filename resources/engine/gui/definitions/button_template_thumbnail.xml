@@ -1,65 +1,71 @@
-<element id="{$id}" width="auto" height="auto" horizontal-align="center" vertical-align="center" value="{$value}" disabled="{$disabled}" focusable="true" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-out="{$on-mouse-out}" on-mouse-doubleclick="{$on-mouse-doubleclick}" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
-	<!-- normal -->
-	<layout width="auto" height="auto" padding="10" hide-on="mouseover,click,selected" alignment="vertical" horizontal-align="center" vertical-align="center">
-		<layer>
-			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" background-color="{$type-color}"/>
-			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" background-color="#00000080"/>
-			<layout width="{$size}" height="{$size}" alignemnt="vertical" horizontal-align="center" vertical-align="center">
-				<image src="{$icon-big}" />
-			</layout>
-			<image id="{$id}_texture_normal" width="{$size}" height="{$size}" src="{$thumbnail}" />
-			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" border-bottom="3" border-color-bottom="{$type-color}" />
-			<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom" border-bottom="1" border-right="1" border-color="{$color.element_background}">
-				<image src="{$icon}" />
-			</layout>
-		</layer>
-		<space height="5" hide-on="empty('{$filename}')"/>
-		<styled-text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" width="{$size}" height="auto" horizontal-align="center">
-			<![CDATA[
-			{$filename}
-			]]>
-		</styled-text>
-	</layout>
-	<!-- mouse over -->
-	<layout width="auto" height="auto" padding="10" hide-on="click" show-on="mouseover,selected" alignment="vertical" horizontal-align="center" vertical-align="center" background-color="{$color.focus}">
-		<layer>
-			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" background-color="{$type-color}"/>
-			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" background-color="#00000080"/>
-			<layout width="{$size}" height="{$size}" alignemnt="vertical" horizontal-align="center" vertical-align="center">
-				<image src="{$icon-big}" />
-			</layout>
-			<image id="{$id}_texture_mouseover" width="{$size}" height="{$size}" src="{$thumbnail}" />
-			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" border-bottom="3" border-color-bottom="{$type-color}" />
-			<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom" border-bottom="1" border-right="1" border-color="{$color.element_background}">
-				<image src="{$icon}" />
-			</layout>
-		</layer>
-		<space height="5" hide-on="empty('{$filename}')"/>
-		<styled-text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_highlight}" width="{$size}" height="auto" horizontal-align="center">
-			<![CDATA[
-			{$filename}
-			]]>
-		</styled-text>
-	</layout>
-	<!-- clicked -->
-	<layout width="auto" height="auto" padding="10" show-on="click" alignment="vertical" horizontal-align="center" vertical-align="center" background-color="{$color.selected}">
-		<layer>
-			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" background-color="{$type-color}"/>
-			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" background-color="#00000080"/>
-			<layout width="{$size}" height="{$size}" alignemnt="vertical" horizontal-align="center" vertical-align="center">
-				<image src="{$icon-big}" />
-			</layout>
-			<image id="{$id}_texture_clicked" width="{$size}" height="{$size}" src="{$thumbnail}" />
-			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" border-bottom="3" border-color-bottom="{$type-color}" />
-			<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom" border-bottom="1" border-right="1" border-color="{$color.element_background}">
-				<image src="{$icon}" />
-			</layout>
-		</layer>
-		<space height="5" hide-on="empty('{$filename}')"/>
-		<styled-text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" width="{$size}" height="auto" horizontal-align="center">
-			<![CDATA[
-			{$filename}
-			]]>
-		</styled-text>
-	</layout>
-</element>
+<template>	
+	<element id="{$id}" width="auto" height="auto" horizontal-align="center" vertical-align="center" value="{$value}" disabled="{$disabled}" focusable="true" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-out="{$on-mouse-out}" on-mouse-doubleclick="{$on-mouse-doubleclick}" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
+
+		<!-- normal -->
+		<layout width="auto" height="auto" padding="10" hide-on="mouseover,click,selected" alignment="vertical" horizontal-align="center" vertical-align="center">
+			<layer>
+				<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" background-color="{$type-color}"/>
+				<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" background-color="#00000080"/>
+				<layout width="{$size}" height="{$size}" alignemnt="vertical" horizontal-align="center" vertical-align="center">
+					<image src="{$icon-big}" />
+				</layout>
+				<image id="{$id}_texture_normal" width="{$size}" height="{$size}" src="{$thumbnail}" />
+				<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" border-bottom="3" border-color-bottom="{$type-color}" />
+				<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom" border-bottom="1" border-right="1" border-color="{$color.element_background}">
+					<image src="{$icon}" />
+				</layout>
+			</layer>
+			<space height="5" hide-on="empty('{$filename}')"/>
+			<styled-text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" width="{$size}" height="auto" horizontal-align="center">
+				<![CDATA[
+				{$filename}
+				]]>
+			</styled-text>
+		</layout>
+		
+		<!-- mouse over -->
+		<layout width="auto" height="auto" padding="10" hide-on="click" show-on="mouseover,selected" alignment="vertical" horizontal-align="center" vertical-align="center" background-color="{$color.focus}">
+			<layer>
+				<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" background-color="{$type-color}"/>
+				<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" background-color="#00000080"/>
+				<layout width="{$size}" height="{$size}" alignemnt="vertical" horizontal-align="center" vertical-align="center">
+					<image src="{$icon-big}" />
+				</layout>
+				<image id="{$id}_texture_mouseover" width="{$size}" height="{$size}" src="{$thumbnail}" />
+				<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" border-bottom="3" border-color-bottom="{$type-color}" />
+				<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom" border-bottom="1" border-right="1" border-color="{$color.element_background}">
+					<image src="{$icon}" />
+				</layout>
+			</layer>
+			<space height="5" hide-on="empty('{$filename}')"/>
+			<styled-text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_highlight}" width="{$size}" height="auto" horizontal-align="center">
+				<![CDATA[
+				{$filename}
+				]]>
+			</styled-text>
+		</layout>
+		
+		<!-- clicked -->
+		<layout width="auto" height="auto" padding="10" show-on="click" alignment="vertical" horizontal-align="center" vertical-align="center" background-color="{$color.selected}">
+			<layer>
+				<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" background-color="{$type-color}"/>
+				<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" background-color="#00000080"/>
+				<layout width="{$size}" height="{$size}" alignemnt="vertical" horizontal-align="center" vertical-align="center">
+					<image src="{$icon-big}" />
+				</layout>
+				<image id="{$id}_texture_clicked" width="{$size}" height="{$size}" src="{$thumbnail}" />
+				<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" border-bottom="3" border-color-bottom="{$type-color}" />
+				<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom" border-bottom="1" border-right="1" border-color="{$color.element_background}">
+					<image src="{$icon}" />
+				</layout>
+			</layer>
+			<space height="5" hide-on="empty('{$filename}')"/>
+			<styled-text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" width="{$size}" height="auto" horizontal-align="center">
+				<![CDATA[
+				{$filename}
+				]]>
+			</styled-text>
+		</layout>
+		
+	</element>
+</template>

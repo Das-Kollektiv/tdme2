@@ -1,61 +1,62 @@
-<element id="{$id}" width="100%" height="auto">
-	<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
-		<button width="100%" height="25" text="Specular Material" on-mouse-click="{$id}.condition!=open"/>
-		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="center">			
-		
-			<space height="5" />
-			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="specularmaterial_diffuse_texture" type="Diffuse" />
-			<space height="10" />
-			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="specularmaterial_transparency_texture" type="Transparency" />
-			<space height="10" />
-			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="specularmaterial_normal_texture" type="Normal" />
-			<space height="10" />
-			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="specularmaterial_specular_texture" type="Specular" />
+<template>	
+	<element id="{$id}" width="100%" height="auto">
+		<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
+			<button width="100%" height="25" text="Specular Material" on-mouse-click="{$id}.condition!=open"/>
+			<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="center">			
 			
-			<space height="5" />
-			<menu-separator />
-			<space height="5" />
-			
-			<template src="resources/engine/gui/template_details_shared_color.xml" id="specularmaterial_ambient" name="Ambient" />
-			<space height="5" />
-			<template src="resources/engine/gui/template_details_shared_color.xml" id="specularmaterial_diffuse" name="Diffuse" />
-			<space height="5" />
-			<template src="resources/engine/gui/template_details_shared_color.xml" id="specularmaterial_emission" name="Emission" />
-			<space height="5" />
-			<template src="resources/engine/gui/template_details_shared_color.xml" id="specularmaterial_specular" name="Specular" />			
-			
-			<space height="5" />
-			<menu-separator />
-			<space height="5" />
+				<space height="5" />
+				<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="specularmaterial_diffuse_texture" type="Diffuse" />
+				<space height="10" />
+				<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="specularmaterial_transparency_texture" type="Transparency" />
+				<space height="10" />
+				<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="specularmaterial_normal_texture" type="Normal" />
+				<space height="10" />
+				<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="specularmaterial_specular_texture" type="Specular" />
+				
+				<space height="5" />
+				<menu-separator />
+				<space height="5" />
+				
+				<template src="resources/engine/gui/template_details_shared_color.xml" id="specularmaterial_ambient" name="Ambient" />
+				<space height="5" />
+				<template src="resources/engine/gui/template_details_shared_color.xml" id="specularmaterial_diffuse" name="Diffuse" />
+				<space height="5" />
+				<template src="resources/engine/gui/template_details_shared_color.xml" id="specularmaterial_emission" name="Emission" />
+				<space height="5" />
+				<template src="resources/engine/gui/template_details_shared_color.xml" id="specularmaterial_specular" name="Specular" />			
+				
+				<space height="5" />
+				<menu-separator />
+				<space height="5" />
 
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Shininess" width="*" height="auto"/>
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<input id="specularmaterial_shininess" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Shininess" width="*" height="auto"/>
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+						<input id="specularmaterial_shininess" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
+					</layout>
 				</layout>
-			</layout>
 
-			<space height="5" />
+				<space height="5" />
 
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Reflection" width="*" height="auto"/>
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<input id="specularmaterial_reflection" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Reflection" width="*" height="auto"/>
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+						<input id="specularmaterial_reflection" width="75%" height="auto" text="1000.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
+					</layout>
 				</layout>
-			</layout>
 
-			<space height="5" />
-			<menu-separator />
-			<space height="5" />
-			
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Masked Transparency" width="*" height="auto"/>
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<checkbox id="specularmaterial_maskedtransparency" width="25" height="25" value="1" />
-				</layout>
-			</layout>			
+				<space height="5" />
+				<menu-separator />
+				<space height="5" />
+				
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Masked Transparency" width="*" height="auto"/>
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+						<checkbox id="specularmaterial_maskedtransparency" width="25" height="25" value="1" />
+					</layout>
+				</layout>			
 
-										
-		</layout>		
-	</layout>
-</element>
+			</layout>		
+		</layout>
+	</element>
+</template>

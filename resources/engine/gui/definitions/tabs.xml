@@ -1,3 +1,5 @@
-<layout id="{$id}" alignment="vertical" width="{$width}" height="{$height}" ignore-events="{$ignore-events}" show-on="{$show-on}" hide-on="{$hide-on}">
-	{__InnerXML__}
-</layout>
+<template>	
+	<layout id="{$id}" alignment="vertical" width="{$width}" height="{$height}" ignore-events="{$ignore-events}" show-on="{$show-on}" hide-on="{$hide-on}">
+		{__InnerXML__}
+	</layout>
+</template>

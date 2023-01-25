@@ -1,38 +1,40 @@
-<element id="{$id}" width="100%" height="auto">
-	<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
-		<button width="100%" height="25" text="Projected UI" on-mouse-click="{$id}.condition!=open"/>
-		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
-			
-			<space height="5" />	
-			
-			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="projectedui_prototype" type="Prototype" />
-			
-			<space height="5" />
-			<menu-separator />
-			<space height="5" />		
-			
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Mesh Node" width="*" height="auto" />
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
-					<dropdown id="projectedui_meshnode" width="100%" height="auto" text="Test">
-						<scrollarea id="projectedui_meshnode_scrollarea" width="100%" height="70">
-						</scrollarea>
-					</dropdown>
+<template>	
+	<element id="{$id}" width="100%" height="auto">
+		<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
+			<button width="100%" height="25" text="Projected UI" on-mouse-click="{$id}.condition!=open"/>
+			<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
+				
+				<space height="5" />	
+				
+				<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="projectedui_prototype" type="Prototype" />
+				
+				<space height="5" />
+				<menu-separator />
+				<space height="5" />		
+				
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Mesh Node" width="*" height="auto" />
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+						<dropdown id="projectedui_meshnode" width="100%" height="auto" text="Test">
+							<scrollarea id="projectedui_meshnode_scrollarea" width="100%" height="70">
+							</scrollarea>
+						</dropdown>
+					</layout>
 				</layout>
-			</layout>
 
-			<space height="5" />
+				<space height="5" />
 
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Animation" width="*" height="auto" />
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
-					<dropdown id="projectedui_animation" width="100%" height="auto" text="Test">
-						<scrollarea id="projectedui_animation_scrollarea" width="100%" height="70">
-						</scrollarea>
-					</dropdown>
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Animation" width="*" height="auto" />
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+						<dropdown id="projectedui_animation" width="100%" height="auto" text="Test">
+							<scrollarea id="projectedui_animation_scrollarea" width="100%" height="70">
+							</scrollarea>
+						</dropdown>
+					</layout>
 				</layout>
-			</layout>
 
-		</layout>		
-	</layout>
-</element>
+			</layout>		
+		</layout>
+	</element>
+</template>

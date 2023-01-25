@@ -1,5 +1,7 @@
-<element id="{$id}" name="{$name}" width="{$width}" height="{$height}" border="1" border-color="{$color.element_frame}" disabled="{$disabled}" focusable="true" overflow-y="downsize-children" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" on-change="{$on-change}" options="{$options}" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
-	<layout id="{$id}_inner" alignment="vertical" width="100%" height="{$height}">
-		{__InnerXML__}
-	</layout>
-</element>
+<template>	
+	<element id="{$id}" name="{$name}" width="{$width}" height="{$height}" border="1" border-color="{$color.element_frame}" disabled="{$disabled}" focusable="true" overflow-y="downsize-children" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" on-change="{$on-change}" options="{$options}" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
+		<layout id="{$id}_inner" alignment="vertical" width="100%" height="{$height}">
+			{__InnerXML__}
+		</layout>
+	</element>
+</template>

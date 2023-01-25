@@ -251,9 +251,8 @@ void EditorScreenController::onAction(GUIActionListenerType type, GUIElementNode
 		} else
 		if (node->getId() == "menu_file_saveall") {
 			// forward saveAs to active tab tab controller
-			for (auto& tabViewIt: tabViews) {
-				auto& tab = tabViewIt.second;
-				tab.getTabView()->getTabController()->onCommand(TabController::COMMAND_SAVE);
+			for (auto tab: tabViewVector) {
+				tab->getTabView()->getTabController()->onCommand(TabController::COMMAND_SAVE);
 			}
 		} else
 		if (node->getId() == "menu_edit_undo") {
@@ -299,11 +298,10 @@ void EditorScreenController::onAction(GUIActionListenerType type, GUIElementNode
 		} else
 		if (StringTools::startsWith(node->getId(), "tab_viewport_") == true) {
 			string tabIdToClose;
-			for (auto& tabsIt: tabViews) {
-				auto& tab = tabsIt.second;
-				if (StringTools::startsWith(node->getId(), tab.getId() + "_close") == true) {
-					tabIdToClose = tab.getId();
-					Console::println("EditorScreenController::onAction(): close tab: " + tab.getId());
+			for (auto tab: tabViewVector) {
+				if (StringTools::startsWith(node->getId(), tab->getId() + "_close") == true) {
+					tabIdToClose = tab->getId();
+					Console::println("EditorScreenController::onAction(): close tab: " + tab->getId());
 				}
 			}
 			if (tabIdToClose.empty() == false) closeTab(tabIdToClose);
@@ -428,10 +426,10 @@ void EditorScreenController::onDragRequest(GUIElementNode* node, int mouseX, int
 			}
 		};
 		//
-		auto relativeFileName = getRelativePath(node->getValue());
-		auto imageSource = GUIParser::getEngineThemeProperties()->get("icon.type_" + FileDialogScreenController::getFileImageName(relativeFileName) + "_big", "resources/engine/images/tdme_big.png");
+		auto absoluteFileName = node->getValue();
+		auto imageSource = GUIParser::getEngineThemeProperties()->get("icon.type_" + FileDialogScreenController::getFileImageName(absoluteFileName) + "_big", "resources/engine/images/tdme_big.png");
 		auto xml = "<image width=\"auto\" height=\"auto\" src=\"" + imageSource + "\" />";
-		view->getPopUps()->getDraggingScreenController()->start(mouseX, mouseY, xml, "file:" + relativeFileName, new OnDragReleaseAction(this));
+		view->getPopUps()->getDraggingScreenController()->start(mouseX, mouseY, xml, "file:" + absoluteFileName, new OnDragReleaseAction(this));
 	}
 }
 
@@ -577,6 +575,14 @@ void EditorScreenController::closeTab(const string& tabId) {
 				auto& tab = tabIt->second;
 				tab.getTabView()->dispose();
 				delete tab.getTabView();
+				editorScreenController->tabViewVector.erase(
+					remove(
+						editorScreenController->tabViewVector.begin(),
+						editorScreenController->tabViewVector.end(),
+						&tab
+					),
+					editorScreenController->tabViewVector.end()
+				);
 				editorScreenController->tabViews.erase(tabIt);
 			}
 			editorScreenController->setDetailsContent(string());
@@ -596,6 +602,7 @@ void EditorScreenController::closeTabs() {
 		tab.getTabView()->dispose();
 		delete tab.getTabView();
 	}
+	tabViewVector.clear();
 	tabViews.clear();
 	setDetailsContent(string());
 	setOutlinerContent(string());
@@ -1309,6 +1316,24 @@ void EditorScreenController::FileOpenThread::run() {
 	finished = true;
 }
 
+bool EditorScreenController::selectTabAt(int idx) {
+	auto tab = getTabAt(idx);
+	if (tab != nullptr && screenNode->getNodeById(tab->getId()) != nullptr) {
+		tabs->getController()->setValue(MutableString(tab->getId()));
+		return true;
+	}
+	return false;
+}
+
+bool EditorScreenController::selectTab(const string& tabId) {
+	auto tab = getTab(tabId);
+	if (tab != nullptr && screenNode->getNodeById(tab->getId()) != nullptr) {
+		tabs->getController()->setValue(MutableString(tab->getId()));
+		return true;
+	}
+	return false;
+}
+
 void EditorScreenController::openFile(const string& absoluteFileName) {
 	Console::println("EditorScreenController::openFile(): " + absoluteFileName);
 
@@ -1327,6 +1352,11 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 		startScanFiles();
 		return;
 	}
+
+	//
+	auto tabId = "tab_viewport_" + StringTools::replace(absoluteFileName, ".", "_");
+	if (selectTab(tabId) == true) return;
+	tabId = GUIParser::escapeQuotes(tabId);
 
 	//
 	auto fileName = FileSystem::getInstance()->getFileName(absoluteFileName);
@@ -1400,15 +1430,6 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 		showInfoPopUp("Error", "File format not yet supported");
 		return;
 	}
-
-	//
-	auto tabId = "tab_viewport_" + StringTools::replace(absoluteFileName, ".", "_");
-	tabId = StringTools::replace(tabId, "/", "_");
-	if (screenNode->getNodeById(tabId) != nullptr) {
-		tabs->getController()->setValue(MutableString(tabId));
-		return;
-	}
-	tabId = GUIParser::escapeQuotes(tabId);
 
 	//
 	try {
@@ -1618,23 +1639,22 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 				}
 			case FILETYPE_SCREEN_TEXT:
 				{
-					auto relativeFileName = getRelativePath(absoluteFileName);
 					string xmlRootNode;
 					// try to read XML root node tag name
 					try {
 						xmlRootNode = GUIParser::getRootNode(
-							FileSystem::getInstance()->getPathName(relativeFileName),
-							FileSystem::getInstance()->getFileName(relativeFileName)
+							FileSystem::getInstance()->getPathName(absoluteFileName),
+							FileSystem::getInstance()->getFileName(absoluteFileName)
 						);
 					} catch (Exception& exception) {
-						Console::println("EditorScreenController::openFile(): " + relativeFileName + ": " + exception.what());
+						Console::println("EditorScreenController::openFile(): " + absoluteFileName + ": " + exception.what());
 					}
 					// gui?
 					if (xmlRootNode == "screen" || xmlRootNode == "template") {
 						icon = "{$icon.type_gui}";
 						colorType = "{$color.type_gui}";
 						tabType = EditorTabView::TABTYPE_UIEDITOR;
-						tabView = new UIEditorTabView(view, tabId, screenNode, relativeFileName);
+						tabView = new UIEditorTabView(view, tabId, screenNode, absoluteFileName);
 						viewPortTemplate = "template_viewport_ui.xml";
 					} else {
 						// nope, xml
@@ -1775,6 +1795,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 			if (tabFrameBuffer != nullptr) tabFrameBuffer->setTextureMatrix((new Matrix2D3x3())->identity().scale(Vector2(1.0f, -1.0f)));
 		}
 		tabViews[tabId] = EditorTabView(tabId, tabType, tabView, required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
+		tabViewVector.push_back(&tabViews[tabId]);
 		tabs->getController()->setValue(MutableString(tabId));
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::onOpenFileFinish(): An error occurred: "));

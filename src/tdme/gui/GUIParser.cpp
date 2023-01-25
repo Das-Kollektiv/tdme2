@@ -1517,8 +1517,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					parentElementId,
 					node,
 					FileSystem::getInstance()->getContentAsString(
-						guiParentNode->getScreenNode()->getApplicationRootPathName() + "/" +
-						FileSystem::getInstance()->getPathName(src),
+						guiParentNode->getScreenNode()->getApplicationRootPathName() + "/" + FileSystem::getInstance()->getPathName(src),
 						FileSystem::getInstance()->getFileName(src)
 					),
 					attributes,
@@ -1555,12 +1554,22 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 }
 
 void GUIParser::parseTemplate(GUIParentNode* parentNode, const string& parentElementId, TiXmlElement* node, const string& templateXML, const unordered_map<string, string>& attributes, GUIElement* guiElement) {
+	// add optiomal root tag, newer tdme requires to have a <template> tag surrounding the content
+	auto newTemplateXML = templateXML;
+	if (StringTools::regexSearch(newTemplateXML, "^\\s*(\\<\\s*template\\s*\\>)") == false) {
+		if (guiElement != nullptr) {
+			newTemplateXML =  "<" + guiElement->getName() + ">\n" + templateXML + "</" + guiElement->getName() + ">\n";
+		} else {
+			newTemplateXML =  "<template>\n" + templateXML + "</template>\n";
+		}
+	}
+
 	//
 	auto templateAttributes = attributes;
 	{
 		// parse defaults
 		TiXmlDocument newTemplateDocument;
-		newTemplateDocument.Parse(("<template>\n" + templateXML + "</template>\n").c_str());
+		newTemplateDocument.Parse(newTemplateXML.c_str());
 		if (newTemplateDocument.Error() == true) {
 			string message = "GUIParser::parseTemplate(): Could not parse XML. Error='" + string(newTemplateDocument.ErrorDesc()) + ":\n\n" + templateXML;
 			Console::println(message);
@@ -1582,9 +1591,6 @@ void GUIParser::parseTemplate(GUIParentNode* parentNode, const string& parentEle
 			}
 		}
 	}
-
-	//
-	auto newTemplateXML = templateXML;
 
 	//
 	auto themeProperties = parentNode->getScreenNode()->getApplicationSubPathName() == "project"?projectThemeProperties:engineThemeProperties;
@@ -1612,13 +1618,6 @@ void GUIParser::parseTemplate(GUIParentNode* parentNode, const string& parentEle
 
 	// replace inner XML
 	newTemplateXML = StringTools::replace(newTemplateXML, "{__InnerXML__}", getInnerXml(node));
-
-	// add root tag
-	if (guiElement != nullptr) {
-		newTemplateXML =  "<" + guiElement->getName() + ">\n" + newTemplateXML + "</" + guiElement->getName() + ">\n";
-	} else {
-		newTemplateXML =  "<template>\n" + newTemplateXML + "</template>\n";
-	}
 
 	// parse
 	TiXmlDocument newTemplateDocument;

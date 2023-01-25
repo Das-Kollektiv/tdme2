@@ -475,7 +475,7 @@ void UIEditorTabView::setScreen(int screenIdx, const string& fileName) {
 			Tools::getFileName(fileName)
 		);
 		// parse screen
-		screenNode = GUIParser::parse(Tools::getPathName(fileName), Tools::getFileName(fileName));
+		screenNode = GUIParser::parse(xml, {}, Tools::getPathName(fileName), Tools::getFileName(fileName));
 	} catch (Exception& exception) {
 		Console::println("UIEditorTabView::setScreen(): an error occurred: " + screenNode->getFileName() + ": " + string(exception.what()));
 	}
@@ -550,7 +550,7 @@ void UIEditorTabView::reAddScreens() {
 		if (xmlRootNode == "screen") {
 			//
 			try {
-				screenNode = GUIParser::parse(uiScreenNodes[i].xml);
+				screenNode = GUIParser::parse(uiScreenNodes[i].xml, {}, Tools::getPathName(uiScreenNodes[i].fileName), Tools::getFileName(uiScreenNodes[i].fileName));
 			} catch (Exception& exception) {
 				Console::println("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception.what()));
 				// error handling

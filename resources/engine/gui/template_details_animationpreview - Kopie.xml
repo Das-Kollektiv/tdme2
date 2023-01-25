@@ -1,110 +1,112 @@
-<element id="{$id}" width="100%" height="auto">
-	<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
-		<button width="100%" height="25" text="Preview" on-mouse-click="{$id}.condition!=open"/>
-		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
+<template>	
+	<element id="{$id}" width="100%" height="auto">
+		<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
+			<button width="100%" height="25" text="Preview" on-mouse-click="{$id}.condition!=open"/>
+			<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
+									
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Base Animation" width="*" height="auto" />
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+						<dropdown id="animationpreview_base" width="100%" height="auto" text="tdme.none">
+							<scrollarea id="animationpreview_base_scrollarea" width="100%" height="100">
+							</scrollarea>
+						</dropdown>
+					</layout>
+				</layout>
+				
+				<space height="5" />
+				
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Overlay #1" width="*" height="auto" />
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+						<dropdown id="animationpreview_overlay1" width="100%" height="auto" text="tdme.none">
+							<scrollarea id="animationpreview_overlay1_scrollarea" width="100%" height="100">
+							</scrollarea>
+						</dropdown>
+					</layout>
+				</layout>
+				
+				<space height="5" />
+				
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Overlay #2" width="*" height="auto" />
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+						<dropdown id="animationpreview_overlay2" width="100%" height="auto" text="tdme.none">
+							<scrollarea id="animationpreview_overlay2_scrollarea" width="100%" height="100">
+							</scrollarea>
+						</dropdown>
+					</layout>
+				</layout>
+				
+				<space height="5" />
+				
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Overlay #3" width="*" height="auto" />
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+						<dropdown id="animationpreview_overlay3" width="100%" height="auto" text="tdme.none">
+							<scrollarea id="animationpreview_overlay3_scrollarea" width="100%" height="100">
+							</scrollarea>
+						</dropdown>
+					</layout>
+				</layout>
+				
+				<space height="5" />
+				<menu-separator />
+				<space height="5" />
+				
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="top">
+					<layout width="*" height="auto" alignment="vertical">
+						<selectbox width="100%" id="selectbox_animationpreview_attachements" boder="0">
+							<scrollarea background-color="{$color.element_midground}" width="100%" height="150" focusable="true">
+							
+								<selectbox-option image="resources/engine/images/bone.png" text="SLOT.back_pickaxe:  Item_Grenade.tm" value="1" selected="true" />
+								<selectbox-option image="resources/engine/images/bone.png" text="SLOT.back_pickaxe:  Item_Grenade.tm" value="2" selected="true" />
+								<selectbox-option image="resources/engine/images/bone.png" text="SLOT.back_pickaxe:  Item_Grenade.tm" value="3" selected="true" />
+								<selectbox-option image="resources/engine/images/bone.png" text="SLOT.back_pickaxe:  Item_Grenade.tm" value="4" selected="true" />
 								
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Base Animation" width="*" height="auto" />
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<dropdown id="animationpreview_base" width="100%" height="auto" text="tdme.none">
-						<scrollarea id="animationpreview_base_scrollarea" width="100%" height="100">
-						</scrollarea>
-					</dropdown>
-				</layout>
-			</layout>
-			
-			<space height="5" />
-			
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Overlay #1" width="*" height="auto" />
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<dropdown id="animationpreview_overlay1" width="100%" height="auto" text="tdme.none">
-						<scrollarea id="animationpreview_overlay1_scrollarea" width="100%" height="100">
-						</scrollarea>
-					</dropdown>
-				</layout>
-			</layout>
-			
-			<space height="5" />
-			
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Overlay #2" width="*" height="auto" />
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<dropdown id="animationpreview_overlay2" width="100%" height="auto" text="tdme.none">
-						<scrollarea id="animationpreview_overlay2_scrollarea" width="100%" height="100">
-						</scrollarea>
-					</dropdown>
-				</layout>
-			</layout>
-			
-			<space height="5" />
-			
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Overlay #3" width="*" height="auto" />
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<dropdown id="animationpreview_overlay3" width="100%" height="auto" text="tdme.none">
-						<scrollarea id="animationpreview_overlay3_scrollarea" width="100%" height="100">
-						</scrollarea>
-					</dropdown>
-				</layout>
-			</layout>
-			
-			<space height="5" />
-			<menu-separator />
-			<space height="5" />
-			
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="top">
-				<layout width="*" height="auto" alignment="vertical">
-					<selectbox width="100%" id="selectbox_animationpreview_attachements" boder="0">
-						<scrollarea background-color="{$color.element_midground}" width="100%" height="150" focusable="true">
-						
-							<selectbox-option image="resources/engine/images/bone.png" text="SLOT.back_pickaxe:  Item_Grenade.tm" value="1" selected="true" />
-							<selectbox-option image="resources/engine/images/bone.png" text="SLOT.back_pickaxe:  Item_Grenade.tm" value="2" selected="true" />
-							<selectbox-option image="resources/engine/images/bone.png" text="SLOT.back_pickaxe:  Item_Grenade.tm" value="3" selected="true" />
-							<selectbox-option image="resources/engine/images/bone.png" text="SLOT.back_pickaxe:  Item_Grenade.tm" value="4" selected="true" />
-							
-							<!-- <layout alignment="horizontal" > -->
-								<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" filename="bone_name"/> -->
-								<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" filename="bone_name"/> -->
-							<!-- </layout> -->
-							
-							<!-- <layout alignment="horizontal" > -->
-								<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" filename="bone_name"/> -->
-								<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" filename="bone_name"/> -->
-							<!-- </layout> -->
+								<!-- <layout alignment="horizontal" > -->
+									<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" filename="bone_name"/> -->
+									<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" filename="bone_name"/> -->
+								<!-- </layout> -->
+								
+								<!-- <layout alignment="horizontal" > -->
+									<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" filename="bone_name"/> -->
+									<!-- <button template="button_template_thumbnail.xml" size="75" thumbnail="resources/engine/textures/terrain_dirt.png" filename="bone_name"/> -->
+								<!-- </layout> -->
 
-						</scrollarea>
-					</selectbox>
+							</scrollarea>
+						</selectbox>
+					</layout>
+					<space width="5" />
+					<layout width="auto" height="auto" alignment="vertical">
+						<button id="animationpreview_attachment_add" image="resources/engine/images/add.png" width="25" height="25" />
+						<space height="5" />
+						<button id="animationpreview_attachment_substract" image="resources/engine/images/delete.png" width="25" height="25" />
+					</layout>
 				</layout>
-				<space width="5" />
-				<layout width="auto" height="auto" alignment="vertical">
-					<button id="animationpreview_attachment_add" image="resources/engine/images/add.png" width="25" height="25" />
-					<space height="5" />
-					<button id="animationpreview_attachment_substract" image="resources/engine/images/delete.png" width="25" height="25" />
+				
+				<space height="5" />
+				<menu-separator />
+				<space height="5" />
+				
+				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Bone" width="*" height="auto" />
+					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+						<dropdown id="animationpreview_attachment_bone" width="100%" height="auto" text="tdme.none">
+							<scrollarea id="animationpreview_attachment_bone_scrollarea" width="100%" height="100">
+								<dropdown-option text="<No bone>" value="" selected="true" />
+							</scrollarea>
+						</dropdown>
+					</layout>
 				</layout>
-			</layout>
-			
-			<space height="5" />
-			<menu-separator />
-			<space height="5" />
-			
-			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Bone" width="*" height="auto" />
-				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-					<dropdown id="animationpreview_attachment_bone" width="100%" height="auto" text="tdme.none">
-						<scrollarea id="animationpreview_attachment_bone_scrollarea" width="100%" height="100">
-							<dropdown-option text="<No bone>" value="" selected="true" />
-						</scrollarea>
-					</dropdown>
-				</layout>
-			</layout>
-			
-			<space height="5" />
-			<menu-separator />
-			<space height="5" />
-			
-			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="animationpreview_attachment_model" type="Attachment" />
-								
-		</layout>		
-	</layout>
-</element>
+				
+				<space height="5" />
+				<menu-separator />
+				<space height="5" />
+				
+				<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="animationpreview_attachment_model" type="Attachment" />
+									
+			</layout>		
+		</layout>
+	</element>
+</template>
