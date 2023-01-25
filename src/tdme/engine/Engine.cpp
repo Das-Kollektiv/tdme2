@@ -410,7 +410,8 @@ void Engine::deregisterEntity(Entity* entity) {
 	visibleDecomposedEntities.noFrustumCullingEntities.erase(
 		remove(
 			visibleDecomposedEntities.noFrustumCullingEntities.begin(),
-			visibleDecomposedEntities.noFrustumCullingEntities.end(), entity
+			visibleDecomposedEntities.noFrustumCullingEntities.end(),
+			entity
 		),
 		visibleDecomposedEntities.noFrustumCullingEntities.end());
 	autoEmitParticleSystemEntities.erase(entity);

@@ -175,6 +175,7 @@ private:
 	string projectPath;
 	string relativeProjectPath;
 	unordered_map<string, EditorTabView> tabViews;
+	vector<EditorTabView*> tabViewVector;
 	string fileNameSearchTerm;
 	int64_t timeFileNameSearchTerm { -1LL };
 	string browseToFileName;
@@ -617,10 +618,11 @@ public:
 	const string getSelectedTabId();
 
 	/**
-	 * @return tabs views
+	 * Returns editor tabs
+	 * @return tabs
 	 */
-	inline unordered_map<string, EditorTabView>& getTabViews() {
-		return tabViews;
+	inline vector<EditorTabView*>& getTabs() {
+		return tabViewVector;
 	}
 
 	/**
@@ -642,6 +644,27 @@ public:
 	inline EditorTabView* getSelectedTab() {
 		return getTab(getSelectedTabId());
 	}
+
+	/**
+	 * Get tab at given index
+	 * @return tab at given index
+	 */
+	inline EditorTabView* getTabAt(int idx) {
+		if (idx < 0 || idx >= tabViewVector.size()) return nullptr;
+		return tabViewVector[idx];
+	}
+
+	/**
+	 * Select tab with given id
+	 * @param tabId tab id
+	 */
+	bool selectTab(const string& tabId);
+
+	/**
+	 * Select tab at given index
+	 * @param idx index
+	 */
+	bool selectTabAt(int idx);
 
 	/**
 	 * Tick
