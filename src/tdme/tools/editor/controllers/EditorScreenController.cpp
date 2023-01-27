@@ -506,7 +506,46 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 				OnMoveAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
 				}
 				void performAction() override {
-					// TODO: implement me!
+					class FileMoveAction: public virtual Action
+					{
+					public:
+						/**
+						 * Public constructor
+						 * @param editorScreenController editor screen controller
+						 */
+						FileMoveAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
+						}
+						// overridden methods
+						void performAction() override {
+							auto moveToPath = editorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName();
+							try {
+								// move file
+								FileSystem::getInstance()->rename(
+									absoluteFileName,
+									moveToPath + "/" + Tools::getFileName(absoluteFileName)
+								);
+								// reload file view
+								editorScreenController->reload();
+							} catch (Exception& exception) {
+								editorScreenController->showInfoPopUp("Warning", exception.what());
+							}
+							//
+							editorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
+						}
+					private:
+						EditorScreenController* editorScreenController;
+						string absoluteFileName;
+					};
+
+					//
+					editorScreenController->view->getPopUps()->getFileDialogScreenController()->show(
+						editorScreenController->projectPath + "/" + editorScreenController->relativeProjectPath,
+						"Move to folder: ",
+						{},
+						string(),
+						true,
+						new FileMoveAction(editorScreenController, absoluteFileName)
+					);
 				}
 			private:
 				EditorScreenController* editorScreenController;
@@ -692,20 +731,18 @@ void EditorScreenController::onOpenProject() {
 	class OnOpenProject: public virtual Action
 	{
 	public:
-		// overridden methods
-		void performAction() override {
-			auto projectPath = editorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName();
-			editorScreenController->openProject(projectPath);
-			editorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
-		}
-
 		/**
 		 * Public constructor
 		 * @param editorScreenController editor screen controller
 		 */
 		OnOpenProject(EditorScreenController* editorScreenController): editorScreenController(editorScreenController) {
 		}
-
+		// overridden methods
+		void performAction() override {
+			auto projectPath = editorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName();
+			editorScreenController->openProject(projectPath);
+			editorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
+		}
 	private:
 		EditorScreenController* editorScreenController;
 	};
