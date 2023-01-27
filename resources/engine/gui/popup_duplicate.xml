@@ -2,18 +2,19 @@
 	<layout alignment="none" horizontal-align="center" vertical-align="center" width="100%" height="100%">
 	
 		<moveable alignment="vertical" width="auto" height="auto">
-			<tabs width="300" height="150">
+			<tabs width="300" height="140">
 				<tabs-header id="duplicate_tabs-header">
-					<tab id="duplicate_caption" image="resources/engine/images/attention.png" text="Duplicate" closeable="true"/>
+					<tab id="duplicate_caption" image="resources/engine/images/attention.png" text="Duplicate File" closeable="true"/>
 				</tabs-header>
 				<tabs-content>
 					<tab-content tab-id="duplicate_caption" vertical-align="center">
 					
 						<layout padding="10" alignment="vertical" horizontal-align="left" vertical-align="center" width="100%" height="100%">
 							
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Name:" width="140" height="25" />
-
-							<input id="duplicate_nametext" width="*" height="25" text="" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Name" width="140" height="25" />
+							<layout padding-left="10" padding-right="10" width="100%">
+								<input id="duplicate_nametext" width="100%" height="25" text="" />
+							</layout>
 
 							<space height="20" />
 							
