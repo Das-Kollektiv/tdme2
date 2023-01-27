@@ -137,7 +137,7 @@ void PrototypeWriter::writeLODLevelToJSON(Document& jDocument, Value& jLodLevelR
 	if (lodLevel->getType() == LODObject::LODLEVELTYPE_MODEL) {
 		//
 		auto modelPathName = Tools::getPathName(lodLevel->getFileName());
-		auto modelFileName = Tools::removeFileEnding(Tools::getFileName(lodLevel->getFileName())) + ".tm";
+		auto modelFileName = Tools::removeFileExtension(Tools::getFileName(lodLevel->getFileName())) + ".tm";
 		TMWriter::write(
 			lodLevel->getModel(),
 			modelPathName,
@@ -161,7 +161,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 	auto& jAllocator = jDocument.GetAllocator();
 	if (prototype->getType() == Prototype_Type::MODEL && prototype->getModelFileName().length() > 0) {
 		auto modelPathName = Tools::getPathName(prototype->getModelFileName());
-		auto modelFileName = Tools::removeFileEnding(Tools::getFileName(prototype->getModelFileName())) + ".tm";
+		auto modelFileName = Tools::removeFileExtension(Tools::getFileName(prototype->getModelFileName())) + ".tm";
 		TMWriter::write(
 			prototype->getModel(),
 			modelPathName,
@@ -267,7 +267,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 					jObjectParticleSystem.SetObject();
 					if (particleSystem->getObjectParticleSystem()->getModelFileName().length() > 0) {
 						auto modelPathName = Tools::getPathName(particleSystem->getObjectParticleSystem()->getModelFileName());
-						auto modelFileName = Tools::removeFileEnding(Tools::getFileName(particleSystem->getObjectParticleSystem()->getModelFileName())) + ".tm";
+						auto modelFileName = Tools::removeFileExtension(Tools::getFileName(particleSystem->getObjectParticleSystem()->getModelFileName())) + ".tm";
 						TMWriter::write(
 							particleSystem->getObjectParticleSystem()->getModel(),
 							modelPathName,

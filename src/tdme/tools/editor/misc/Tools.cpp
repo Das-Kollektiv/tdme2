@@ -536,7 +536,7 @@ const string Tools::getFileName(const string& fileName)
 	return FileSystem::getInstance()->getFileName(fileName);
 }
 
-const string Tools::removeFileEnding(const string& fileName)
+const string Tools::removeFileExtension(const string& fileName)
 {
 	auto idx = fileName.rfind('.');
 	if (idx == string::npos) {
@@ -546,12 +546,22 @@ const string Tools::removeFileEnding(const string& fileName)
 	}
 }
 
-const string Tools::ensureFileEnding(const string& fileName, const string& extension)
+const string Tools::ensureFileExtension(const string& fileName, const string& extension)
 {
 	if (StringTools::endsWith(StringTools::toLowerCase(fileName), "." + extension) == true) {
 		return fileName;
 	} else {
-		return removeFileEnding(fileName) + "." + extension;
+		return removeFileExtension(fileName) + "." + extension;
+	}
+}
+
+const string Tools::getFileExtension(const string& fileName)
+{
+	auto idx = fileName.rfind('.');
+	if (idx == string::npos) {
+		return string();
+	} else {
+		return fileName.substr(idx + 1);
 	}
 }
 

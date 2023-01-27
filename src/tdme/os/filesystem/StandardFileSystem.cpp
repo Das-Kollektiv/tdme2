@@ -343,7 +343,7 @@ void StandardFileSystem::removePath(const string& pathName, bool recursive) {
 	Console::println(string("StandardFileSystem::removePath(): Removing ") + pathName);
 	int32_t status = rmdir(pathName.c_str());
 	if (status == -1) {
-		throw FileSystemException("Unable to delete folder(" + to_string(errno) + "): " + pathName);
+		throw FileSystemException("Unable to remove folder(" + to_string(errno) + "): " + pathName);
 	}
 }
 
@@ -351,7 +351,15 @@ void StandardFileSystem::removeFile(const string& pathName, const string& fileNa
 	Console::println(string("StandardFileSystem::removeFile(): Removing ") + getFileName(pathName, fileName));
 	int32_t status = unlink(getFileName(pathName, fileName).c_str());
 	if (status == -1) {
-		throw FileSystemException("Unable to delete file(" + to_string(errno) + "): " + pathName + "/" + fileName);
+		throw FileSystemException("Unable to remove file(" + to_string(errno) + "): " + pathName + "/" + fileName);
+	}
+}
+
+void StandardFileSystem::rename(const string& fileNameFrom, const string& fileNameTo) {
+	Console::println("StandardFileSystem::rename(): Rename '" + fileNameFrom + "' -> '" + fileNameTo + "'");
+	int32_t status = std::rename(fileNameFrom.c_str(), fileNameTo.c_str());
+	if (status != 0) {
+		throw FileSystemException("Unable to rename file(" + to_string(errno) + "): '" + fileNameFrom + "' -> '" + fileNameTo + "'");
 	}
 }
 

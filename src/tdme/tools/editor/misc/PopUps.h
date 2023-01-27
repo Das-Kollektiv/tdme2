@@ -11,6 +11,7 @@ using tdme::tools::editor::controllers::DraggingScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::FindReplaceDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
+using tdme::tools::editor::controllers::InputDialogScreenController;
 using tdme::tools::editor::controllers::ProgressBarScreenController;
 using tdme::tools::editor::controllers::TooltipScreenController;
 
@@ -22,6 +23,7 @@ class tdme::tools::editor::misc::PopUps final
 {
 private:
 	InfoDialogScreenController* infoDialogScreenController { nullptr };
+	InputDialogScreenController* inputDialogScreenController { nullptr };
 	FileDialogScreenController* fileDialogScreenController { nullptr };
 	ProgressBarScreenController* progressBarScreenController { nullptr };
 	ColorPickerScreenController* colorPickerScreenController { nullptr };
@@ -47,6 +49,13 @@ public:
 	 */
 	inline FileDialogScreenController* getFileDialogScreenController() {
 		return fileDialogScreenController;
+	}
+
+	/**
+	 * @return input dialog screen controller
+	 */
+	inline InputDialogScreenController* getInputDialogScreenController() {
+		return inputDialogScreenController;
 	}
 
 	/**

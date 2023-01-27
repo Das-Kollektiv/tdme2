@@ -444,6 +444,11 @@ public:
 	void scanProjectPaths(const string& path, string& xml);
 
 	/**
+	 * Reload files
+	 */
+	void reload();
+
+	/**
 	 * Browse to file name
 	 * @param fileName file name
 	 */

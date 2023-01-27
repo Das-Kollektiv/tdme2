@@ -529,8 +529,8 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 					prototype = new Prototype(
 						Prototype::ID_NONE,
 						Prototype_Type::MODEL,
-						Tools::removeFileEnding(fileName),
-						Tools::removeFileEnding(fileName),
+						Tools::removeFileExtension(fileName),
+						Tools::removeFileExtension(fileName),
 						modelPathName + "/" + modelFileName,
 						"resources/engine/models/empty.tm",
 						string(),
@@ -587,7 +587,7 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 		// export to tscene
 		SceneWriter::write(
 			pathName,
-			Tools::removeFileEnding(fileName) + ".tscene",
+			Tools::removeFileExtension(fileName) + ".tscene",
 			scene
 		);
 	} catch (Exception& exception) {

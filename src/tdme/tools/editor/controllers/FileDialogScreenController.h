@@ -62,8 +62,8 @@ private:
 	Action* applyAction { nullptr };
 	Action* cancelAction { nullptr };
 	vector<string> fileList;
-	bool enableFilter;
-	bool filtered;
+	bool enableFilter { false };
+	bool filtered { false };
 	vector<string> favorites;
 	vector<string> recents;
 	string defaultCwd;

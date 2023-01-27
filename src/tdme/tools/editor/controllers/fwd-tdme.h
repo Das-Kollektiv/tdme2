@@ -14,6 +14,7 @@ namespace controllers {
 	class FileDialogScreenController;
 	class FindReplaceDialogScreenController;
 	class InfoDialogScreenController;
+	class InputDialogScreenController;
 	class ProgressBarScreenController;
 	struct ScreenController;
 	class TooltipScreenController;

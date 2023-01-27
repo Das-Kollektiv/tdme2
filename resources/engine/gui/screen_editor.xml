@@ -90,10 +90,8 @@
 								
 								<layout alignment="horizontal" width="100%" height="auto">
 									<dropdown template="dropdown_template_button.xml" id="dropdown_projectlibrary_add" width="50%" height="25" image="resources/engine/images/add.png" text="Create">
-										<!--
 										<dropdown-option text="Folder" value="folder" />
 										<menu-separator />
-										-->
 										<dropdown-option text="Empty" value="empty" />
 										<dropdown-option text="Trigger" value="trigger" />
 										<dropdown-option text="EnvMap" value="envmap" />

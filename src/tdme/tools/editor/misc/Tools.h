@@ -151,19 +151,26 @@ public:
 	static const string getFileName(const string& fileName);
 
 	/**
-	 * Remove file ending, e.g. .dae, .fbx, ...
+	 * Remove file extension, e.g. .dae, .fbx, ...
 	 * @param fileName file name
 	 * @return file name
 	 */
-	static const string removeFileEnding(const string& fileName);
+	static const string removeFileExtension(const string& fileName);
 
 	/**
-	 * Ensure file ending
+	 * Ensure file extension
 	 * @param fileName file name
 	 * @param extension extension
 	 * @return file name
 	 */
-	static const string ensureFileEnding(const string& fileName, const string& extension);
+	static const string ensureFileExtension(const string& fileName, const string& extension);
+
+	/**
+	 * Get file extension
+	 * @param fileName file name
+	 * @return file extension
+	 */
+	static const string getFileExtension(const string& fileName);
 
 	/**
 	 * Load settings
