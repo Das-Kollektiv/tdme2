@@ -355,6 +355,14 @@ void StandardFileSystem::removeFile(const string& pathName, const string& fileNa
 	}
 }
 
+void StandardFileSystem::rename(const string& fileNameFrom, const string& fileNameTo) {
+	Console::println("StandardFileSystem::rename(): Rename '" + fileNameFrom + "' -> '" + fileNameTo + "'");
+	int32_t status = std::rename(fileNameFrom.c_str(), fileNameTo.c_str());
+	if (status != 0) {
+		throw FileSystemException("Unable to rename file(" + to_string(errno) + "): '" + fileNameFrom + "' -> '" + fileNameTo + "'");
+	}
+}
+
 bool StandardFileSystem::getThumbnailAttachment(const string& pathName, const string& fileName, vector<uint8_t>& thumbnailAttachmentContent) {
 	ifstream ifs(getFileName(pathName, fileName).c_str(), ifstream::binary);
 	if (ifs.is_open() == false) {

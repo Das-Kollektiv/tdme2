@@ -450,7 +450,46 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 				OnRenameAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
 				}
 				void performAction() override {
-					// TODO: implement me!
+					class RenameFileAction: public virtual Action
+					{
+					public:
+						RenameFileAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
+						}
+						// overridden methods
+						void performAction() override {
+							try {
+								// get duplicate file name and extension
+								string renameFileName = editorScreenController->view->getPopUps()->getInputDialogScreenController()->getInputText();
+								string extension;
+								if (FileSystem::getInstance()->isPath(absoluteFileName) == false) {
+									extension = Tools::getFileExtension(absoluteFileName);
+								}
+								// rename file
+								FileSystem::getInstance()->rename(
+									absoluteFileName,
+									Tools::getPathName(absoluteFileName) + "/" +
+										(extension.empty() == true?
+											renameFileName:
+											Tools::ensureFileExtension(renameFileName, extension)
+										)
+								);
+								// reload file view
+								editorScreenController->reload();
+							} catch (Exception& exception) {
+								editorScreenController->showInfoPopUp("Warning", exception.what());
+							}
+							editorScreenController->view->getPopUps()->getInputDialogScreenController()->close();
+						}
+					private:
+						EditorScreenController* editorScreenController;
+						string absoluteFileName;
+					};
+					//
+					editorScreenController->view->getPopUps()->getInputDialogScreenController()->show(
+						"Rename",
+						Tools::removeFileExtension(Tools::getFileName(absoluteFileName)),
+						new RenameFileAction(editorScreenController, absoluteFileName)
+					);
 				}
 			private:
 				EditorScreenController* editorScreenController;
@@ -458,6 +497,7 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 			};
 			view->getPopUps()->getContextMenuScreenController()->addMenuItem("Rename", "contextmenu_file_rename", new OnRenameAction(this, absoluteFileName));
 		}
+		//
 		{
 			// move
 			class OnMoveAction: public virtual Action

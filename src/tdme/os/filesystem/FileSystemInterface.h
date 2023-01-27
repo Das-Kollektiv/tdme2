@@ -203,6 +203,13 @@ struct tdme::os::filesystem::FileSystemInterface
 	virtual void removeFile(const string& pathName, const string& fileName) = 0;
 
 	/**
+	 * Rename file
+	 * @param fileNameFrom file name from
+	 * @param fileNameTo file name to
+	 */
+	virtual void rename(const string& fileNameFrom, const string& fileNameTo) = 0;
+
+	/**
 	 * Reads a thumbnail attachment from binary file
 	 * @param pathName path name
 	 * @param fileName file name
