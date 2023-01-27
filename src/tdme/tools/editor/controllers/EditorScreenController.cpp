@@ -44,6 +44,7 @@
 #include <tdme/tools/editor/controllers/DraggingScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
+#include <tdme/tools/editor/controllers/InputDialogScreenController.h>
 #include <tdme/tools/editor/controllers/ProgressBarScreenController.h>
 #include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
@@ -118,6 +119,7 @@ using tdme::tools::editor::controllers::DraggingScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
+using tdme::tools::editor::controllers::InputDialogScreenController;
 using tdme::tools::editor::controllers::ProgressBarScreenController;
 using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
@@ -1138,13 +1140,13 @@ void EditorScreenController::onAddFile(const string& type) {
 		// overridden methods
 		void performAction() override {
 			editorScreenController->addFile(
-				editorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
+				editorScreenController->projectPath + "/" + editorScreenController->relativeProjectPath,
 				(extension.empty() == true?
-					editorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName():
-					Tools::ensureFileEnding(editorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName(), extension)),
+					editorScreenController->view->getPopUps()->getInputDialogScreenController()->getInputText():
+					Tools::ensureFileEnding(editorScreenController->view->getPopUps()->getInputDialogScreenController()->getInputText(), extension)),
 				type
 			);
-			editorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
+			editorScreenController->view->getPopUps()->getInputDialogScreenController()->close();
 		}
 		OnAddFile(EditorScreenController* editorScreenController, const string& type, const string& extension): editorScreenController(editorScreenController), type(type), extension(extension) {
 		}
@@ -1161,12 +1163,9 @@ void EditorScreenController::onAddFile(const string& type) {
 	}
 
 	//
-	view->getPopUps()->getFileDialogScreenController()->show(
-		projectPath + "/" + relativeProjectPath,
+	view->getPopUps()->getInputDialogScreenController()->show(
 		string("Add ") + type + " to project: ",
-		{ extension },
-		string("Untitled") + "." + extension,
-		true,
+		string("Untitled") + (extension.empty() == false?"." + extension:""),
 		new OnAddFile(this, type, extension)
 	);
 

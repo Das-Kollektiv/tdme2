@@ -134,8 +134,8 @@ void InputDialogScreenController::onAction(GUIActionListenerType type, GUIElemen
 				applyAction = nullptr;
 			}
 		} else
-		if (node->getId() == "inputdialog_abort" ||
-			StringTools::startsWith(node->getId(), "filedialog_caption_close_") == true) { // TODO: a.drewke, check with DH
+		if (node->getId() == "inputdialog_cancel" ||
+			StringTools::startsWith(node->getId(), "inputdialog_caption_close_") == true) { // TODO: a.drewke, check with DH
 			if (cancelAction != nullptr) {
 				cancelAction->performAction();
 				delete cancelAction;
