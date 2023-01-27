@@ -206,7 +206,7 @@ void ModelEditorTabController::onCommand(TabControllerCommand command)
 				if (fileName.length() == 0) {
 					fileName = view->getFileName();
 					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmodel") == false) {
-						fileName = Tools::removeFileEnding(fileName) + ".tmodel";
+						fileName = Tools::removeFileExtension(fileName) + ".tmodel";
 					}
 				}
 				vector<string> extensions = {
@@ -2417,7 +2417,7 @@ void ModelEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 						}
 						if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
 						auto billboardModelPathName = Tools::getPathName(fileName);
-						auto billboardModelFileName = Tools::removeFileEnding(Tools::getFileName(fileName)) + ".lod" + to_string(prototype->getLODLevel2() == nullptr?2:3) + ".tm";
+						auto billboardModelFileName = Tools::removeFileExtension(Tools::getFileName(fileName)) + ".lod" + to_string(prototype->getLODLevel2() == nullptr?2:3) + ".tm";
 						auto billboardLODModel = GenerateBillboardLOD::generate(
 							model,
 							billboardModelPathName,
@@ -2479,7 +2479,7 @@ void ModelEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 					try {
 						if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
 						auto imposterModelPathName = Tools::getPathName(fileName);
-						auto imposterModelFileName = Tools::removeFileEnding(Tools::getFileName(fileName)) + ".lod" + to_string(prototype->getLODLevel2() == nullptr?2:3) + ".tm";
+						auto imposterModelFileName = Tools::removeFileExtension(Tools::getFileName(fileName)) + ".lod" + to_string(prototype->getLODLevel2() == nullptr?2:3) + ".tm";
 						vector<Model*> imposterLODModels {};
 						vector<string> imposterLODFileNames;
 						GenerateImposterLOD::generate(

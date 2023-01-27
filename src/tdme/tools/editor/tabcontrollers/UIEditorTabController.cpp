@@ -929,7 +929,7 @@ void UIEditorTabController::save() {
 
 			// get new path and file name
 			auto pathName = uiEditorTabController->popUps->getFileDialogScreenController()->getPathName();
-			auto fileName = Tools::ensureFileEnding(uiEditorTabController->popUps->getFileDialogScreenController()->getFileName(), "xml");
+			auto fileName = Tools::ensureFileExtension(uiEditorTabController->popUps->getFileDialogScreenController()->getFileName(), "xml");
 			uiEditorTabController->view->getUIScreenNodes()[screenIdx].fileName = pathName + "/" + fileName;
 
 			// save
@@ -1058,7 +1058,7 @@ void UIEditorTabController::saveAs() {
 
 			// get new path and file name
 			auto pathName = uiEditorTabController->popUps->getFileDialogScreenController()->getPathName();
-			auto fileName = Tools::ensureFileEnding(uiEditorTabController->popUps->getFileDialogScreenController()->getFileName(), "xml");
+			auto fileName = Tools::ensureFileExtension(uiEditorTabController->popUps->getFileDialogScreenController()->getFileName(), "xml");
 			uiEditorTabController->view->getUIScreenNodes()[screenIdx].fileName = pathName + "/" + fileName;
 
 			// save

@@ -110,9 +110,9 @@ void GenerateImposterLOD::generate(
 		//
 		osEngine->display();
 		//
-		auto modelId = Tools::removeFileEnding(fileName) + "-y" + to_string(static_cast<int>(yRotation)) + "deg";
+		auto modelId = Tools::removeFileExtension(fileName) + "-y" + to_string(static_cast<int>(yRotation)) + "deg";
 		auto modelFileName = modelId + ".tm";
-		auto textureFileName = Tools::removeFileEnding(fileName) + "-y" + to_string(static_cast<int>(yRotation)) + "deg.png";
+		auto textureFileName = Tools::removeFileExtension(fileName) + "-y" + to_string(static_cast<int>(yRotation)) + "deg.png";
 		osEngine->makeScreenshot(pathName, textureFileName, false);
 
 		//

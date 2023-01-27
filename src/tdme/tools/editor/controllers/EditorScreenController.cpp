@@ -387,7 +387,53 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 				OnDuplicateAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
 				}
 				void performAction() override {
-					// TODO: implement me!
+					class DuplicateFileAction: public virtual Action
+					{
+					public:
+						DuplicateFileAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
+						}
+						// overridden methods
+						void performAction() override {
+							try {
+								// get duplicate file name and extension
+								string duplicateFileName = editorScreenController->view->getPopUps()->getInputDialogScreenController()->getInputText();
+								string extension;
+								if (FileSystem::getInstance()->isPath(absoluteFileName) == false) {
+									extension = Tools::getFileExtension(absoluteFileName);
+								}
+								// read file
+								vector<uint8_t> fileContent;
+								FileSystem::getInstance()->getContent(
+									Tools::getPathName(absoluteFileName),
+									Tools::getFileName(absoluteFileName),
+									fileContent
+								);
+								// write file
+								FileSystem::getInstance()->setContent(
+									Tools::getPathName(absoluteFileName),
+									(extension.empty() == true?
+										duplicateFileName:
+										Tools::ensureFileExtension(duplicateFileName, extension)
+									),
+									fileContent
+								);
+								// reload file view
+								editorScreenController->reload();
+							} catch (Exception& exception) {
+								editorScreenController->showInfoPopUp("Warning", exception.what());
+							}
+							editorScreenController->view->getPopUps()->getInputDialogScreenController()->close();
+						}
+					private:
+						EditorScreenController* editorScreenController;
+						string absoluteFileName;
+					};
+					//
+					editorScreenController->view->getPopUps()->getInputDialogScreenController()->show(
+						"Duplicate",
+						Tools::removeFileExtension(Tools::getFileName(absoluteFileName)),
+						new DuplicateFileAction(editorScreenController, absoluteFileName)
+					);
 				}
 			private:
 				EditorScreenController* editorScreenController;
@@ -1137,18 +1183,18 @@ void EditorScreenController::onAddFile(const string& type) {
 	class OnAddFile: public virtual Action
 	{
 	public:
+		OnAddFile(EditorScreenController* editorScreenController, const string& type, const string& extension): editorScreenController(editorScreenController), type(type), extension(extension) {
+		}
 		// overridden methods
 		void performAction() override {
 			editorScreenController->addFile(
 				editorScreenController->projectPath + "/" + editorScreenController->relativeProjectPath,
 				(extension.empty() == true?
 					editorScreenController->view->getPopUps()->getInputDialogScreenController()->getInputText():
-					Tools::ensureFileEnding(editorScreenController->view->getPopUps()->getInputDialogScreenController()->getInputText(), extension)),
+					Tools::ensureFileExtension(editorScreenController->view->getPopUps()->getInputDialogScreenController()->getInputText(), extension)),
 				type
 			);
 			editorScreenController->view->getPopUps()->getInputDialogScreenController()->close();
-		}
-		OnAddFile(EditorScreenController* editorScreenController, const string& type, const string& extension): editorScreenController(editorScreenController), type(type), extension(extension) {
 		}
 	private:
 		EditorScreenController* editorScreenController;
@@ -1165,10 +1211,9 @@ void EditorScreenController::onAddFile(const string& type) {
 	//
 	view->getPopUps()->getInputDialogScreenController()->show(
 		string("Add ") + type + " to project: ",
-		string("Untitled") + (extension.empty() == false?"." + extension:""),
+		string("Untitled"),
 		new OnAddFile(this, type, extension)
 	);
-
 }
 
 void EditorScreenController::addFile(const string& pathName, const string& fileName, const string& type) {
@@ -1188,7 +1233,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 				StringTools::replace(
 					FileSystem::getInstance()->getContentAsString("resources/engine/templates/gui", "screen.xml"),
 					"{$screen-id}",
-					Tools::removeFileEnding(fileName)
+					Tools::removeFileExtension(fileName)
 				)
 			);
 			browseTo(pathName + "/" + fileName);
@@ -1221,8 +1266,8 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			prototype = new Prototype(
 				Prototype::ID_NONE,
 				Prototype_Type::EMPTY,
-				Tools::removeFileEnding(fileName),
-				Tools::removeFileEnding(fileName),
+				Tools::removeFileExtension(fileName),
+				Tools::removeFileExtension(fileName),
 				pathName + "/" + fileName,
 				"resources/engine/models/empty.tm",
 				string(),
@@ -1238,8 +1283,8 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			prototype = new Prototype(
 				Prototype::ID_NONE,
 				Prototype_Type::TRIGGER,
-				Tools::removeFileEnding(fileName),
-				Tools::removeFileEnding(fileName),
+				Tools::removeFileExtension(fileName),
+				Tools::removeFileExtension(fileName),
 				pathName + "/" + fileName,
 				string(),
 				string(),
@@ -1257,8 +1302,8 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			prototype = new Prototype(
 				Prototype::ID_NONE,
 				Prototype_Type::ENVIRONMENTMAPPING,
-				Tools::removeFileEnding(fileName),
-				Tools::removeFileEnding(fileName),
+				Tools::removeFileExtension(fileName),
+				Tools::removeFileExtension(fileName),
 				pathName + "/" + fileName,
 				string(),
 				string(),
@@ -1276,8 +1321,8 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			prototype = new Prototype(
 				Prototype::ID_NONE,
 				Prototype_Type::DECAL,
-				Tools::removeFileEnding(fileName),
-				Tools::removeFileEnding(fileName),
+				Tools::removeFileExtension(fileName),
+				Tools::removeFileExtension(fileName),
 				pathName + "/" + fileName,
 				string(),
 				string(),
@@ -1291,8 +1336,8 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			prototype = new Prototype(
 				Prototype::ID_NONE,
 				Prototype_Type::MODEL,
-				Tools::removeFileEnding(fileName),
-				Tools::removeFileEnding(fileName),
+				Tools::removeFileExtension(fileName),
+				Tools::removeFileExtension(fileName),
 				pathName + "/" + fileName,
 				"resources/engine/models/empty.tm",
 				string(),
@@ -1304,8 +1349,8 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			prototype = new Prototype(
 				Prototype::ID_NONE,
 				Prototype_Type::TERRAIN,
-				Tools::removeFileEnding(fileName),
-				Tools::removeFileEnding(fileName),
+				Tools::removeFileExtension(fileName),
+				Tools::removeFileExtension(fileName),
 				pathName + "/" + fileName,
 				string(),
 				string(),
@@ -1317,8 +1362,8 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			prototype = new Prototype(
 				Prototype::ID_NONE,
 				Prototype_Type::PARTICLESYSTEM,
-				Tools::removeFileEnding(fileName),
-				Tools::removeFileEnding(fileName),
+				Tools::removeFileExtension(fileName),
+				Tools::removeFileExtension(fileName),
 				pathName + "/" + fileName,
 				string(),
 				string(),
@@ -1328,8 +1373,8 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 		} else
 		if (type == "scene") {
 			scene = new Scene(
-				Tools::removeFileEnding(fileName),
-				Tools::removeFileEnding(fileName)
+				Tools::removeFileExtension(fileName),
+				Tools::removeFileExtension(fileName)
 			);
 		}
 		if (prototype != nullptr) {
@@ -1371,9 +1416,9 @@ void EditorScreenController::FileOpenThread::run() {
 					prototype = new Prototype(
 						Prototype::ID_NONE,
 						Prototype_Type::MODEL,
-						Tools::removeFileEnding(fileName),
-						Tools::removeFileEnding(fileName),
-						FileSystem::getInstance()->getPathName(absoluteFileName) + "/" + Tools::removeFileEnding(fileName) + ".tmodel",
+						Tools::removeFileExtension(fileName),
+						Tools::removeFileExtension(fileName),
+						FileSystem::getInstance()->getPathName(absoluteFileName) + "/" + Tools::removeFileExtension(fileName) + ".tmodel",
 						absoluteFileName,
 						string(),
 						model,

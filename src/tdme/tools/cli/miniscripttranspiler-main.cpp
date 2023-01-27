@@ -264,7 +264,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	}
 
 	//
-	string miniScriptClassName = Tools::removeFileEnding(Tools::getFileName(miniscriptTranspilationFileName));
+	string miniScriptClassName = Tools::removeFileExtension(Tools::getFileName(miniscriptTranspilationFileName));
 	string generatedDeclarations = "\n";
 	generatedDeclarations+= string() + "public:" + "\n";
 	generatedDeclarations+= headerIndent + "// overridden methods" + "\n";
@@ -527,7 +527,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	{
 		vector<string> miniScriptClassHeader;
 		vector<string> miniScriptClassHeaderNew;
-		auto miniscriptTranspilationHeaderFileName = Tools::getPathName(miniscriptTranspilationFileName) + "/" + Tools::removeFileEnding(Tools::getFileName(miniscriptTranspilationFileName)) + ".h";
+		auto miniscriptTranspilationHeaderFileName = Tools::getPathName(miniscriptTranspilationFileName) + "/" + Tools::removeFileExtension(Tools::getFileName(miniscriptTranspilationFileName)) + ".h";
 		FileSystem::getInstance()->getContentAsStringArray(Tools::getPathName(miniscriptTranspilationHeaderFileName), Tools::getFileName(miniscriptTranspilationHeaderFileName), miniScriptClassHeader);
 		auto reject = false;
 		auto injectedGeneratedCode = false;

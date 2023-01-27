@@ -891,7 +891,7 @@ void TerrainEditorTabController::setOutlinerContent() {
 		auto i = 0;
 		for (auto prototypeIdx: foliagePrototypeIndices) {
 			auto foliagePrototype = terrain->getFoliagePrototype(prototypeIdx);
-			xml+= "<selectbox-option image=\"resources/engine/images/mesh.png\" text=\"" + GUIParser::escapeQuotes(Tools::removeFileEnding(Tools::getFileName(foliagePrototype->getFileName()))) + "\" value=\"" + GUIParser::escapeQuotes("terrain.foliageprototypes." + to_string(prototypeIdx)) + "\" />\n";
+			xml+= "<selectbox-option image=\"resources/engine/images/mesh.png\" text=\"" + GUIParser::escapeQuotes(Tools::removeFileExtension(Tools::getFileName(foliagePrototype->getFileName()))) + "\" value=\"" + GUIParser::escapeQuotes("terrain.foliageprototypes." + to_string(prototypeIdx)) + "\" />\n";
 			i++;
 		}
 		xml+= "</selectbox-parent-option>\n";
