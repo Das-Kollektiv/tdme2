@@ -65,9 +65,6 @@ FileDialogScreenController::FileDialogScreenController(PopUps* popUps)
 {
 	this->popUps = popUps;
 	this->cwd = FileSystem::getStandardFileSystem()->getCurrentWorkingPathName();
-	this->applyAction = nullptr;
-	this->enableFilter = false;
-	this->filtered = false;
 }
 
 FileDialogScreenController::~FileDialogScreenController() {

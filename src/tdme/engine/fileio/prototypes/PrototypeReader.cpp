@@ -149,8 +149,8 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const string& f
 		return new Prototype(
 			Prototype::ID_NONE,
 			Prototype_Type::MODEL,
-			Tools::removeFileEnding(fileName),
-			Tools::removeFileEnding(fileName),
+			Tools::removeFileExtension(fileName),
+			Tools::removeFileExtension(fileName),
 			pathName + "/" + fileName,
 			pathName + "/" + fileName,
 			string(),

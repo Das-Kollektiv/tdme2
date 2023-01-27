@@ -1,3 +1,5 @@
-<layout width="100%" height="100%" align="none" horizontal-align="center" vertical-align="center" background-color="{$color.element_background}">
-	<text id="text" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" padding="5" width="auto" height="auto" text="Hi! We love to have you onboard. Thank you! Your mindty crew!" />
-</layout>
+<template>
+	<layout width="100%" height="100%" align="none" horizontal-align="center" vertical-align="center" background-color="{$color.element_background}">
+		<text id="text" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" padding="5" width="auto" height="auto" text="Hi! We love to have you onboard. Thank you! Your mindty crew!" />
+	</layout>
+</template>

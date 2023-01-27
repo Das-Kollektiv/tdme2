@@ -2,27 +2,27 @@
 	<layout alignment="none" horizontal-align="center" vertical-align="center" width="100%" height="100%">
 	
 		<moveable alignment="vertical" width="auto" height="auto">
-			<tabs width="500" height="330">
+			<tabs width="480" height="375">
 				<tabs-header id="findreplace_tabs-header">
 					<tab id="findreplace_caption" image="resources/engine/images/attention.png" text="Find and Replace" closeable="true"/>
 				</tabs-header>
 				<tabs-content>
-					<tab-content tab-id="findreplace_caption" vertical-align="center">
+					<tab-content tab-id="findreplace_caption" vertical-align="top">
 					
-						<layout padding="10" alignment="vertical" horizontal-align="center" vertical-align="center" width="100%" height="100%">
+						<layout padding="10" alignment="vertical" horizontal-align="left" vertical-align="center" width="100%" height="100%">
 						
-							<layout alignment="horizontal" horizontal-align="center" vertical-align="center" width="100%" height="auto">
-								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Find:" width="140" height="25" />
-								<input id="findreplace_findtext" width="*" height="25" text="" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Find" width="140" height="25" />
+							<layout padding-left="10" padding-right="10" width="100%">
+								<input id="findreplace_findtext" width="100%" height="25" text="" />
 							</layout>
+
+							<space height="15" />
 							
-							<space height="10" />
-							
-							<layout alignment="horizontal" horizontal-align="center" vertical-align="center" width="100%" height="auto">
-								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Replace with:" width="140" height="25" />
-								<input id="findreplace_replacetext" width="*" height="25" text="" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Replace with" width="140" height="25" />
+							<layout padding-left="10" padding-right="10" width="100%">
+								<input id="findreplace_replacetext" width="100%" height="25" text="" />
 							</layout>
-					
+
 							<space height="20" />
 							
 							<layout alignment="vertical" horizontal-align="left" vertical-align="center" width="100%" height="auto">
@@ -33,7 +33,7 @@
 								<checkbox id="findreplace_inselectiononly" width="25" height="25" value="1" text="in selection only" />
 							</layout>
 							
-							<space height="40" />
+							<space height="30" />
 							
 							<element id="button_panel" width="100%" height="auto" horizontal-align="center" vertical-align="center">
 								

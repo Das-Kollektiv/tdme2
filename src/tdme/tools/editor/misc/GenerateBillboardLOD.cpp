@@ -89,7 +89,7 @@ Model* GenerateBillboardLOD::generate(
 	//
 	osEngine->display();
 	//
-	auto textureFileName = Tools::removeFileEnding(fileName) + ".png";
+	auto textureFileName = Tools::removeFileExtension(fileName) + ".png";
 	osEngine->makeScreenshot(pathName, textureFileName, false);
 	//
 	osEngine->dispose();
@@ -159,7 +159,7 @@ Model* GenerateBillboardLOD::generate(
 	auto top = boundingBox->getMin().getY();
 	auto bottom = boundingBox->getMax().getY();
 	auto depth = boundingBox->getCenter().getZ();
-	auto modelId = Tools::removeFileEnding(textureFileName) + ".tm";
+	auto modelId = Tools::removeFileExtension(textureFileName) + ".tm";
 	auto billboard = new Model(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
 	auto billboardMaterial = new Material("billboard");
 	billboardMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());

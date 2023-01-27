@@ -139,7 +139,7 @@ bool ArchiveFileSystem::isExecutable(const string& pathName, const string& fileN
 }
 
 void ArchiveFileSystem::setExecutable(const string& pathName, const string& fileName) {
-	throw FileSystemException("ArchiveFileSystem::createPath(): Not implemented yet");
+	throw FileSystemException("ArchiveFileSystem::createPath(): This operation is not supported in archive file system");
 }
 
 uint64_t ArchiveFileSystem::getFileSize(const string& pathName, const string& fileName) {
@@ -269,7 +269,7 @@ const string ArchiveFileSystem::getContentAsString(const string& pathName, const
 }
 
 void ArchiveFileSystem::setContentFromString(const string& pathName, const string& fileName, const string& content) {
-	throw FileSystemException("ArchiveFileSystem::setContentFromString(): Not implemented yet");
+	throw FileSystemException("ArchiveFileSystem::setContentFromString(): This operation is not supported in archive file system");
 }
 
 void ArchiveFileSystem::getContent(const string& pathName, const string& fileName, vector<uint8_t>& content)
@@ -307,7 +307,7 @@ void ArchiveFileSystem::getContent(const string& pathName, const string& fileNam
 }
 
 void ArchiveFileSystem::setContent(const string& pathName, const string& fileName, const vector<uint8_t>& content) {
-	throw FileSystemException("ArchiveFileSystem::setContent(): Not implemented yet");
+	throw FileSystemException("ArchiveFileSystem::setContent(): This operation is not supported in archive file system");
 }
 
 void ArchiveFileSystem::getContentAsStringArray(const string& pathName, const string& fileName, vector<string>& content)
@@ -323,7 +323,7 @@ void ArchiveFileSystem::getContentAsStringArray(const string& pathName, const st
 
 void ArchiveFileSystem::setContentFromStringArray(const string& pathName, const string& fileName, const vector<string>& content)
 {
-	throw FileSystemException("ArchiveFileSystem::setContentFromStringArray(): Not implemented yet");
+	throw FileSystemException("ArchiveFileSystem::setContentFromStringArray(): This operation is not supported in archive file system");
 }
 
 const string ArchiveFileSystem::getCanonicalPath(const string& pathName, const string& fileName) {
@@ -406,23 +406,27 @@ const string ArchiveFileSystem::getFileName(const string& fileName) {
 }
 
 void ArchiveFileSystem::createPath(const string& pathName) {
-	throw FileSystemException("ArchiveFileSystem::createPath(): Not implemented yet");
+	throw FileSystemException("ArchiveFileSystem::createPath(): This operation is not supported in archive file system");
 }
 
 void ArchiveFileSystem::removePath(const string& pathName, bool recursive) {
-	throw FileSystemException("ArchiveFileSystem::removePath(): Not implemented yet");
+	throw FileSystemException("ArchiveFileSystem::removePath(): This operation is not supported in archive file system");
 }
 
 void ArchiveFileSystem::removeFile(const string& pathName, const string& fileName) {
-	throw FileSystemException("ArchiveFileSystem::removeFile(): Not implemented yet");
+	throw FileSystemException("ArchiveFileSystem::removeFile(): This operation is not supported in archive file system");
+}
+
+void ArchiveFileSystem::rename(const string& fileNameFrom, const string& fileNameTo) {
+	throw FileSystemException("ArchiveFileSystem::rename(): This operation is not supported in archive file system");
 }
 
 bool ArchiveFileSystem::getThumbnailAttachment(const string& pathName, const string& fileName, vector<uint8_t>& thumbnailAttachmentContent) {
-	throw FileSystemException("ArchiveFileSystem::removeFile(): Not implemented yet");
+	throw FileSystemException("ArchiveFileSystem::removeFile(): This operation is not supported in archive file system");
 }
 
 bool ArchiveFileSystem::getThumbnailAttachment(const vector<uint8_t>& content, vector<uint8_t>& thumbnailAttachmentContent) {
-	throw FileSystemException("ArchiveFileSystem::removeFile(): Not implemented yet");
+	throw FileSystemException("ArchiveFileSystem::removeFile(): This operation is not supported in archive file system");
 }
 
 const string ArchiveFileSystem::computeSHA256Hash() {
