@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/application/Application.h>
 #include <tdme/audio/VorbisAudioStream.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
@@ -79,6 +80,7 @@ using std::string;
 using std::unordered_set;
 using std::vector;
 
+using tdme::application::Application;
 using tdme::audio::VorbisAudioStream;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::prototypes::PrototypeReader;
@@ -335,61 +337,200 @@ void EditorScreenController::onUnfocus(GUIElementNode* node) {
 
 void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
 	if (StringTools::startsWith(node->getId(), "projectpathfiles_file_") == true) {
+		//
 		auto absoluteFileName = required_dynamic_cast<GUIElementNode*>(node)->getValue();
-		auto selectedTab = getSelectedTab();
-		if (selectedTab == nullptr) return;
-		switch (selectedTab->getType()) {
-			case EditorTabView::TABTYPE_MODELEDITOR:
-				break;
-			case EditorTabView::TABTYPE_SCENEEDITOR:
-				{
-					// clear
-					view->getPopUps()->getContextMenuScreenController()->clear();
-
-					// load
-					class OnAddToSceneAction: public virtual Action
-					{
-					public:
-						void performAction() override {
-							auto currentTab = editorScreenController->getSelectedTab();
-							if (currentTab == nullptr) return;
-							SceneEditorTabView* sceneEditorTabView = dynamic_cast<SceneEditorTabView*>(currentTab->getTabView());
-							if (sceneEditorTabView == nullptr) return;
-							try {
-								auto prototype = PrototypeReader::read(
-									Tools::getPathName(absoluteFileName),
-									Tools::getFileName(absoluteFileName)
-								);
-								sceneEditorTabView->addPrototype(prototype);
-							} catch (Exception& exception) {
-								Console::println(string("OnAddToSceneAction::performAction(): An error occurred: ") + exception.what());;
-								editorScreenController->showInfoPopUp("Warning", (string(exception.what())));
-							}
-						}
-						OnAddToSceneAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
-						}
-					private:
-						EditorScreenController* editorScreenController;
-						string absoluteFileName;
-					};
-					view->getPopUps()->getContextMenuScreenController()->addMenuItem("Add to scene", "contextmenu_addtoscene", new OnAddToSceneAction(this, absoluteFileName));
-
-					//
-					view->getPopUps()->getContextMenuScreenController()->show(mouseX, mouseY);
+		// clear context menu
+		view->getPopUps()->getContextMenuScreenController()->clear();
+		{
+			// open
+			class OnOpenAction: public virtual Action
+			{
+			public:
+				OnOpenAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
 				}
-				break;
-			case EditorTabView::TABTYPE_TEXTURE:
-				break;
-			case EditorTabView::TABTYPE_FONT:
-				break;
-			case EditorTabView::TABTYPE_UIEDITOR:
-				break;
-			default: break;
+				void performAction() override {
+					editorScreenController->openFile(absoluteFileName);
+				}
+			private:
+				EditorScreenController* editorScreenController;
+				string absoluteFileName;
+			};
+			view->getPopUps()->getContextMenuScreenController()->addMenuItem("Open", "contextmenu_file_open", new OnOpenAction(this, absoluteFileName));
 		}
+		//
+		view->getPopUps()->getContextMenuScreenController()->addMenuSeparator();
+		//
+		{
+			// copy path
+			class OnCopyPathAction: public virtual Action
+			{
+			public:
+				OnCopyPathAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
+				}
+				void performAction() override {
+					Application::getApplication()->setClipboardContent(absoluteFileName);
+				}
+			private:
+				EditorScreenController* editorScreenController;
+				string absoluteFileName;
+			};
+			view->getPopUps()->getContextMenuScreenController()->addMenuItem("Copy Path", "contextmenu_file_copypath", new OnCopyPathAction(this, absoluteFileName));
+		}
+		//
+		{
+			// duplicate
+			class OnDuplicateAction: public virtual Action
+			{
+			public:
+				OnDuplicateAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
+				}
+				void performAction() override {
+					// TODO: implement me!
+				}
+			private:
+				EditorScreenController* editorScreenController;
+				string absoluteFileName;
+			};
+			view->getPopUps()->getContextMenuScreenController()->addMenuItem("Duplicate", "contextmenu_file_duplicate", new OnDuplicateAction(this, absoluteFileName));
+		}
+		//
+		{
+			// rename
+			class OnRenameAction: public virtual Action
+			{
+			public:
+				OnRenameAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
+				}
+				void performAction() override {
+					// TODO: implement me!
+				}
+			private:
+				EditorScreenController* editorScreenController;
+				string absoluteFileName;
+			};
+			view->getPopUps()->getContextMenuScreenController()->addMenuItem("Rename", "contextmenu_file_rename", new OnRenameAction(this, absoluteFileName));
+		}
+		{
+			// move
+			class OnMoveAction: public virtual Action
+			{
+			public:
+				OnMoveAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
+				}
+				void performAction() override {
+					// TODO: implement me!
+				}
+			private:
+				EditorScreenController* editorScreenController;
+				string absoluteFileName;
+			};
+			view->getPopUps()->getContextMenuScreenController()->addMenuItem("Move", "contextmenu_file_move", new OnMoveAction(this, absoluteFileName));
+		}
+		{
+			// delete
+			class OnDeleteAction: public virtual Action
+			{
+			public:
+				OnDeleteAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
+				}
+				void performAction() override {
+					try {
+						if (FileSystem::getInstance()->isPath(absoluteFileName) == true) {
+							FileSystem::getInstance()->removePath(absoluteFileName, true);
+						} else {
+							FileSystem::getInstance()->removeFile(Tools::getPathName(absoluteFileName), Tools::getFileName(absoluteFileName));
+						}
+						//
+						editorScreenController->reload();
+					} catch (Exception& exception) {
+						Console::println("OnDeleteAction::performAction(): An error occurred: " + string(exception.what()));
+					}
+				}
+			private:
+				EditorScreenController* editorScreenController;
+				string absoluteFileName;
+			};
+			view->getPopUps()->getContextMenuScreenController()->addMenuItem("Delete", "contextmenu_file_delete", new OnDeleteAction(this, absoluteFileName));
+		}
+
+		{
+			//
+			auto selectedTab = getSelectedTab();
+			if (selectedTab != nullptr) {
+				switch (selectedTab->getType()) {
+					case EditorTabView::TABTYPE_SCENEEDITOR:
+						{
+
+							// add to scene
+							class OnAddToSceneAction: public virtual Action
+							{
+							public:
+								OnAddToSceneAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
+								}
+								void performAction() override {
+									auto currentTab = editorScreenController->getSelectedTab();
+									if (currentTab == nullptr) return;
+									SceneEditorTabView* sceneEditorTabView = dynamic_cast<SceneEditorTabView*>(currentTab->getTabView());
+									if (sceneEditorTabView == nullptr) return;
+									try {
+										auto prototype = PrototypeReader::read(
+											Tools::getPathName(absoluteFileName),
+											Tools::getFileName(absoluteFileName)
+										);
+										sceneEditorTabView->addPrototype(prototype);
+									} catch (Exception& exception) {
+										Console::println(string("OnOpenAction::performAction(): An error occurred: ") + exception.what());;
+										editorScreenController->showInfoPopUp("Warning", (string(exception.what())));
+									}
+								}
+							private:
+								EditorScreenController* editorScreenController;
+								string absoluteFileName;
+							};
+							view->getPopUps()->getContextMenuScreenController()->addMenuSeparator();
+							view->getPopUps()->getContextMenuScreenController()->addMenuItem("Add to scene", "contextmenu_file_addtoscene", new OnAddToSceneAction(this, absoluteFileName));
+
+							//
+						}
+						break;
+					default: break;
+				}
+			}
+		}
+		//
+		view->getPopUps()->getContextMenuScreenController()->addMenuSeparator();
+		//
+		{
+			// show in file browser
+			class OnShowInFileBrowserAction: public virtual Action
+			{
+			public:
+				OnShowInFileBrowserAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
+				}
+				void performAction() override {
+					try {
+						if (FileSystem::getInstance()->isPath(absoluteFileName) == true) {
+							Application::openBrowser(absoluteFileName);
+						} else {
+							Application::openBrowser(Tools::getPathName(absoluteFileName));
+						}
+					} catch (Exception& exception) {
+						Console::println("OnShowInFileBrowserAction::performAction(): An error occurred: " + string(exception.what()));
+					}
+				}
+			private:
+				EditorScreenController* editorScreenController;
+				string absoluteFileName;
+			};
+			view->getPopUps()->getContextMenuScreenController()->addMenuItem("Show in File Browser", "contextmenu_file_showinfilebrowser", new OnShowInFileBrowserAction(this, absoluteFileName));
+		}
+		//
+		view->getPopUps()->getContextMenuScreenController()->show(mouseX, mouseY);
+	} else {
+		// forward onContextMenuRequest to active tab tab controller
+		auto selectedTab = getSelectedTab();
+		if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onContextMenuRequest(node, mouseX, mouseY);
 	}
-	// forward onContextMenuRequest to active tab tab controller
-	auto selectedTab = getSelectedTab();
-	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onContextMenuRequest(node, mouseX, mouseY);
 }
 
 void EditorScreenController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
@@ -716,6 +857,15 @@ void EditorScreenController::resetScanFiles() {
 	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectpathfiles_search"))->getController()->setValue(MutableString());
 }
 
+void EditorScreenController::reload() {
+	Console::println("EditorScreenController::reload()");
+	stopScanFiles();
+	resetScanFiles();
+	browseToFileName.clear();
+	setRelativeProjectPath(relativeProjectPath);
+	startScanFiles();
+}
+
 void EditorScreenController::browseTo(const string& fileName) {
 	Console::println("EditorScreenController::browseTo(): " + fileName);
 	stopScanFiles();
@@ -989,7 +1139,9 @@ void EditorScreenController::onAddFile(const string& type) {
 		void performAction() override {
 			editorScreenController->addFile(
 				editorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
-				Tools::ensureFileEnding(editorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName(), extension),
+				(extension.empty() == true?
+					editorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName():
+					Tools::ensureFileEnding(editorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName(), extension)),
 				type
 			);
 			editorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
@@ -1004,7 +1156,9 @@ void EditorScreenController::onAddFile(const string& type) {
 
 	//
 	string extension;
-	if (type == "screen" || type == "template") extension = "xml"; else extension = "t" + type;
+	if (type != "folder") {
+		if (type == "screen" || type == "template") extension = "xml"; else extension = "t" + type;
+	}
 
 	//
 	view->getPopUps()->getFileDialogScreenController()->show(
@@ -1019,6 +1173,14 @@ void EditorScreenController::onAddFile(const string& type) {
 }
 
 void EditorScreenController::addFile(const string& pathName, const string& fileName, const string& type) {
+	if (type == "folder") {
+		try {
+			FileSystem::getInstance()->createPath(pathName + "/" + fileName);
+			browseTo(pathName + "/" + fileName);
+		} catch (Exception& exception) {
+			showInfoPopUp("Error", string() + "An error occurred: file type: " + type + ": " + exception.what());
+		}
+	} else
 	if (type == "screen") {
 		try {
 			FileSystem::getInstance()->setContentFromString(
