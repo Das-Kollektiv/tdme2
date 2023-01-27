@@ -80,7 +80,7 @@ public:
 	 * Parses a GUI XML file
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @param parameters parameters aka key value paris for substitution
+	 * @param parameters parameters aka key value pairs for substitution
 	 * @return GUI screen node
 	 * @throws tdme::gui::GUIParserException
 	 * @throws tdme::os::filesystem::FileSystemException
@@ -90,7 +90,7 @@ public:
 	/**
 	 * Parses a GUI XML content
 	 * @param xml xml
-	 * @param parameters parameters aka key value paris for substitution
+	 * @param parameters parameters aka key value pair for substitution
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @return GUI screen node
@@ -201,6 +201,20 @@ private:
 	static int parseInteger(const string& value, int defaultValue);
 
 public:
+	/**
+	 * Parse template attributes
+	 * @param templateXML template xml
+	 * @param guiElement GUI element
+	 * @return parsed template attributes
+	 */
+	static unordered_map<string, string> parseTemplateAttributes(const string& templateXML);
+
+	/**
+	 * Get inner XML from XML string
+	 * @param xml xml
+	 * @return string
+	 */
+	static const string getInnerXml(const string& xml);
 
 	/**
 	 * Unescape quotes

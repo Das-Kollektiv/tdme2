@@ -421,7 +421,7 @@ void UIEditorTabView::updateRendering() {
 }
 
 inline bool UIEditorTabView::hasFixedSize() {
-	return projectedUi == false && visualEditor == false;
+	return projectedUi == false && visualEditor == true;
 }
 
 Engine* UIEditorTabView::getEngine() {
@@ -465,26 +465,23 @@ void UIEditorTabView::setScreen(int screenIdx, const string& fileName) {
 	this->screenIdx = screenIdx;
 	//
 	string xml;
-	GUIScreenNode* screenNode { nullptr };
 	try {
-		Console::println(Tools::getPathName(fileName));
-		Console::println(Tools::getFileName(fileName));
 		// parse XML
 		xml = FileSystem::getInstance()->getContentAsString(
 			Tools::getPathName(fileName),
 			Tools::getFileName(fileName)
 		);
-		// parse screen
-		screenNode = GUIParser::parse(xml, {}, Tools::getPathName(fileName), Tools::getFileName(fileName));
 	} catch (Exception& exception) {
 		Console::println("UIEditorTabView::setScreen(): an error occurred: " + screenNode->getFileName() + ": " + string(exception.what()));
 	}
 	//
 	uiScreenNodes[screenIdx].fileName = fileName;
 	uiScreenNodes[screenIdx].xml = xml;
-	uiScreenNodes[screenIdx].screenNode = screenNode;
-	uiScreenNodes[screenIdx].width = screenNode->getSizeConstraints().maxWidth;
-	uiScreenNodes[screenIdx].height = screenNode->getSizeConstraints().maxHeight;
+	uiScreenNodes[screenIdx].screenNode = nullptr;
+	uiScreenNodes[screenIdx].width = -1;
+	uiScreenNodes[screenIdx].height = -1;
+	//
+	if (visualEditor == true) reAddScreens();
 	//
 	updateCodeEditor();
 }
@@ -550,7 +547,12 @@ void UIEditorTabView::reAddScreens() {
 		if (xmlRootNode == "screen") {
 			//
 			try {
-				screenNode = GUIParser::parse(uiScreenNodes[i].xml, {}, Tools::getPathName(uiScreenNodes[i].fileName), Tools::getFileName(uiScreenNodes[i].fileName));
+				screenNode = GUIParser::parse(
+					uiScreenNodes[i].xml,
+					{},
+					Tools::getPathName(uiScreenNodes[i].fileName),
+					Tools::getFileName(uiScreenNodes[i].fileName)
+				);
 			} catch (Exception& exception) {
 				Console::println("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception.what()));
 				// error handling
@@ -566,15 +568,37 @@ void UIEditorTabView::reAddScreens() {
 			}
 		} else
 		if (xmlRootNode == "template") {
+			/*
+				<!-- You can now specify default preview attributes within templates -->
+				<defaults>
+					<attribute name="preview-id" value="sound-preview" />
+					<attribute name="preview-container-width" value="300" />
+					<attribute name="preview-container-height" value="400" />
+				</defaults>
+			 */
+			unordered_map<string, string> templateAttributes;
+			//
+			try {
+				templateAttributes = GUIParser::parseTemplateAttributes(uiScreenNodes[i].xml);
+			} catch (Exception& exception) {
+				Console::println("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception.what()));
+			}
+			//
+			if (templateAttributes.find("preview-id") == templateAttributes.end()) templateAttributes["preview-id"] = "preview-id";
+			if (templateAttributes.find("preview-container-width") == templateAttributes.end()) templateAttributes["preview-container-width"] = "100%";
+			if (templateAttributes.find("preview-container-height") == templateAttributes.end()) templateAttributes["preview-container-height"] = "100%";
 			//
 			try {
 				screenNode = GUIParser::parse(
 					string() +
 					"<screen id='screen_template'>\n" +
-					"	<layout width='100%' height='100%' alignment='none' horizontal-align='center' vertical-align='center'>\n" +
-					"		<template src='" + GUIParser::escapeQuotes(uiScreenNodes[i].fileName) + "' id='template_preview_id' />\n" +
+					"	<layout width='{$preview-container-width}' height='{$preview-container-height}' alignment='none' horizontal-align='center' vertical-align='center'>\n" +
+					GUIParser::getInnerXml(StringTools::replace(uiScreenNodes[i].xml, "{$id}", "{$preview-id}")) +
 					"	</layout>'>\n" +
-					"</screen>>\n"
+					"</screen>>\n",
+					templateAttributes,
+					Tools::getPathName(uiScreenNodes[i].fileName),
+					Tools::getFileName(uiScreenNodes[i].fileName)
 				);
 			} catch (Exception& exception) {
 				Console::println("UIEditorTabView::reAddScreens(): an error occurred: " + string(exception.what()));

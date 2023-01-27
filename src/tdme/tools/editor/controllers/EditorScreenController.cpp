@@ -69,6 +69,7 @@
 #include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/Properties.h>
 #include <tdme/utilities/StringTools.h>
@@ -140,6 +141,7 @@ using tdme::tools::editor::TDMEEditor;
 using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 using tdme::utilities::Properties;
 using tdme::utilities::StringTools;
@@ -189,6 +191,7 @@ void EditorScreenController::initialize()
 
 		//
 		updateFullScreenMenuEntry();
+		updateTabsMenuEntries();
 		disableSceneMenuEntry();
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::initialize(): An error occurred: "));
@@ -296,6 +299,9 @@ void EditorScreenController::onAction(GUIActionListenerType type, GUIElementNode
 		if (StringTools::startsWith(node->getId(), "projectpathfiles_file_") == true) {
 			onOpenFile(required_dynamic_cast<GUIElementNode*>(node)->getValue());
 		} else
+		if (StringTools::startsWith(node->getId(), "menu_view_tab_") == true) {
+			selectTabAt(Integer::parse(StringTools::substring(node->getId(), string("menu_view_tab_").size())));
+		} else
 		if (StringTools::startsWith(node->getId(), "tab_viewport_") == true) {
 			string tabIdToClose;
 			for (auto tab: tabViewVector) {
@@ -314,8 +320,6 @@ void EditorScreenController::onAction(GUIActionListenerType type, GUIElementNode
 	auto selectedTab = getSelectedTab();
 	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onAction(type, node);
 }
-
-
 
 void EditorScreenController::onFocus(GUIElementNode* node) {
 	// forward onFocus to active tab tab controller
@@ -589,6 +593,7 @@ void EditorScreenController::closeTab(const string& tabId) {
 			editorScreenController->setOutlinerContent(string());
 			//
 			editorScreenController->updateFullScreenMenuEntry();
+			editorScreenController->updateTabsMenuEntries();
 		}
 	};
 	Engine::getInstance()->enqueueAction(new CloseTabAction(this, tabId));
@@ -608,6 +613,7 @@ void EditorScreenController::closeTabs() {
 	setOutlinerContent(string());
 	//
 	updateFullScreenMenuEntry();
+	updateTabsMenuEntries();
 }
 
 void EditorScreenController::closeProject() {
@@ -1316,6 +1322,16 @@ void EditorScreenController::FileOpenThread::run() {
 	finished = true;
 }
 
+int EditorScreenController::getSelectedTabIdx() {
+	auto selectedTabId = getSelectedTabId();
+	auto idx = 0;
+	for (auto tab: tabViewVector) {
+		if (selectedTabId == tab->getId()) return idx;
+		idx++;
+	}
+	return -1;
+}
+
 bool EditorScreenController::selectTabAt(int idx) {
 	auto tab = getTabAt(idx);
 	if (tab != nullptr && screenNode->getNodeById(tab->getId()) != nullptr) {
@@ -1794,7 +1810,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 			auto tabFrameBuffer = dynamic_cast<GUIImageNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"));
 			if (tabFrameBuffer != nullptr) tabFrameBuffer->setTextureMatrix((new Matrix2D3x3())->identity().scale(Vector2(1.0f, -1.0f)));
 		}
-		tabViews[tabId] = EditorTabView(tabId, tabType, tabView, required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
+		tabViews[tabId] = EditorTabView(tabId, Tools::getFileName(absoluteFileName), tabType, tabView, required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
 		tabViewVector.push_back(&tabViews[tabId]);
 		tabs->getController()->setValue(MutableString(tabId));
 	} catch (Exception& exception) {
@@ -1808,6 +1824,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 
 	//
 	updateFullScreenMenuEntry();
+	updateTabsMenuEntries();
 }
 
 void EditorScreenController::storeOutlinerState(TabView::OutlinerState& outlinerState) {
@@ -1867,6 +1884,25 @@ bool EditorScreenController::isFullScreen() {
 
 void EditorScreenController::updateFullScreenMenuEntry() {
 	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("menu_view_fullscreen"))->getController()->setDisabled(tabViews.empty() == true);
+}
+
+void EditorScreenController::updateTabsMenuEntries() {
+	required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("menu_view_tabs"))->clearSubNodes();
+	//
+	if (tabViewVector.empty() == true) return;
+	auto tabIdx = 0;
+	string xml = "<menu-separator />\n";
+	for (auto tab: tabViewVector) {
+		auto imageSource = GUIParser::getEngineThemeProperties()->get("icon.type_" + FileDialogScreenController::getFileImageName(tab->getName()), "resources/engine/images/tdme.png");
+		xml+= "<menu-item image='" + imageSource + "' text='" + GUIParser::escapeQuotes(tab->getName()) + "' id='menu_view_tab_" + to_string(tabIdx) + "' shortcut='Ctrl+" + to_string(tabIdx + 1) + "' />\n";
+		tabIdx++;
+	}
+	try {
+		required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("menu_view_tabs"))->addSubNodes(xml, true);
+	} catch (Exception& exception) {
+		Console::print(string("EditorScreenController::updateTabsMenuEntries(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
 }
 
 void EditorScreenController::setFullScreen(bool fullScreen) {

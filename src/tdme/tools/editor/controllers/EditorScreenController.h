@@ -101,6 +101,7 @@ public:
 
 	private:
 		string id;
+		string name;
 		TabType type { TABTYPE_UNKNOWN };
 		TabView* tabView { nullptr };
 		GUIImageNode* frameBufferNode { nullptr };
@@ -114,17 +115,20 @@ public:
 		/**
 		 * Public constructor
 		 * @param id id
+		 * @param name name
 		 * @param type type
 		 * @param tabView tab view
 		 * @param frameBufferNode frame buffer node
 		 */
 		EditorTabView(
-			string id,
+			const string& id,
+			const string& name,
 			TabType type,
 			TabView* tabView,
 			GUIImageNode* frameBufferNode
 		):
 			id(id),
+			name(name),
 			type(type),
 			tabView(tabView),
 			frameBufferNode(frameBufferNode)
@@ -135,6 +139,13 @@ public:
 		 */
 		inline const string& getId() {
 			return id;
+		}
+
+		/**
+		 * @return id
+		 */
+		inline const string& getName() {
+			return name;
 		}
 
 		/**
@@ -580,6 +591,11 @@ public:
 	void updateFullScreenMenuEntry();
 
 	/**
+	 * Update tabs menu entries
+	 */
+	void updateTabsMenuEntries();
+
+	/**
 	 * Set fullscreen
 	 * @param fullScreen full screen
 	 */
@@ -659,6 +675,18 @@ public:
 	 * @param tabId tab id
 	 */
 	bool selectTab(const string& tabId);
+
+	/**
+	 * @return tab count
+	 */
+	inline int getTabCount() {
+		return tabViewVector.size();
+	}
+
+	/**
+	 * @return selected tab index
+	 */
+	int getSelectedTabIdx();
 
 	/**
 	 * Select tab at given index
