@@ -3,18 +3,18 @@
 	
 		<moveable alignment="vertical" width="auto" height="auto">
 			<tabs width="300" height="140">
-				<tabs-header id="input_tabs-header">
-					<tab id="input_caption" image="resources/engine/images/attention.png" text="Rename File" closeable="true"/>
+				<tabs-header id="inputdialog_tabs-header">
+					<tab id="inputdialog_caption" image="resources/engine/images/attention.png" text="Rename File" closeable="true"/>
 				</tabs-header>
 				<tabs-content>
-					<tab-content tab-id="input_caption" vertical-align="center">
+					<tab-content tab-id="inputdialog_caption" vertical-align="center">
 					
 						<layout padding="10" alignment="vertical" horizontal-align="left" vertical-align="center" width="100%" height="100%">
 							
 							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Name" width="140" height="25" />
 
 							<layout padding-left="10" padding-right="10" width="100%">
-								<input id="input_text" width="100%" height="25" text="" />
+								<input id="inputdialog_text" width="100%" height="25" text="" />
 							</layout>
 
 							<space height="20" />
@@ -22,9 +22,9 @@
 							<element id="button_panel" width="100%" height="auto" horizontal-align="center" vertical-align="center">
 								
 								<layout width="100%" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center" >
-									<button width="*" id="input_ok" text="Ok" />
+									<button width="*" id="inputdialog_apply" text="Apply" />
 									<space width="10" />
-									<button width="*" id="input_cancel" text="Cancel" />
+									<button width="*" id="inputdialog_cancel" text="Cancel" />
 								</layout>
 								
 							</element>
