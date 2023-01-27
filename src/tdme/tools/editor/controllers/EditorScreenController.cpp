@@ -341,6 +341,13 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 	if (StringTools::startsWith(node->getId(), "projectpathfiles_file_") == true) {
 		//
 		auto absoluteFileName = required_dynamic_cast<GUIElementNode*>(node)->getValue();
+		// check if file is a path
+		auto path = false;
+		try {
+			path = FileSystem::getInstance()->isPath(absoluteFileName);
+		} catch (Exception& exception) {
+			// no op
+		}
 		// clear context menu
 		view->getPopUps()->getContextMenuScreenController()->clear();
 		{
@@ -379,7 +386,7 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 			view->getPopUps()->getContextMenuScreenController()->addMenuItem("Copy Path", "contextmenu_file_copypath", new OnCopyPathAction(this, absoluteFileName));
 		}
 		//
-		{
+		if (path == false) {
 			// duplicate
 			class OnDuplicateAction: public virtual Action
 			{
