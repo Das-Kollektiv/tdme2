@@ -1,8 +1,6 @@
 #pragma once
 
 #include <string>
-#include <unordered_map>
-#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
@@ -16,8 +14,6 @@
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
-using std::unordered_map;
-using std::vector;
 
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
@@ -27,11 +23,9 @@ using tdme::gui::events::GUITooltipRequestListener;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::nodes::GUITextNode;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::controllers::ScreenController;
 using tdme::utilities::Action;
-using tdme::utilities::MutableString;
 
 /**
  * Input dialog screen controller

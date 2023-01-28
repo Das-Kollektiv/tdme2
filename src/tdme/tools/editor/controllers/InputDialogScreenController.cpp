@@ -1,9 +1,6 @@
 #include <tdme/tools/editor/controllers/InputDialogScreenController.h>
 
-#include <algorithm>
 #include <string>
-#include <unordered_map>
-#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Engine.h>
@@ -15,7 +12,6 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/tools/editor/controllers/TooltipScreenController.h>
@@ -23,14 +19,9 @@
 #include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
-#include <tdme/utilities/MutableString.h>
-#include <tdme/utilities/Properties.h>
 #include <tdme/utilities/StringTools.h>
 
-using std::remove;
 using std::string;
-using std::unordered_map;
-using std::vector;
 
 using tdme::tools::editor::controllers::InputDialogScreenController;
 
@@ -43,7 +34,6 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::tools::editor::controllers::TooltipScreenController;
@@ -51,8 +41,6 @@ using tdme::tools::editor::misc::PopUps;
 using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
-using tdme::utilities::MutableString;
-using tdme::utilities::Properties;
 using tdme::utilities::StringTools;
 
 InputDialogScreenController::InputDialogScreenController(PopUps* popUps)
