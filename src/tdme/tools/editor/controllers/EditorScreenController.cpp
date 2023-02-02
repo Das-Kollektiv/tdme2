@@ -201,6 +201,8 @@ void EditorScreenController::initialize()
 		Console::print(string("EditorScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
+	//
+	onOpenProject();
 }
 
 void EditorScreenController::dispose()
