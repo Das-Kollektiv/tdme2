@@ -139,151 +139,151 @@ void GUILayoutNode::layoutSubNodes()
 {
 	if (conditionsMet == false) return;
 	GUIParentNode::layoutSubNodes();
-	{
-		if (alignment == GUILayoutNode_Alignment::VERTICAL) {
-			auto starCount = 0;
-			auto width = computedConstraints.width - border.left - border.right - padding.left - padding.right;
-			auto height = computedConstraints.height - border.top - border.bottom - padding.top - padding.bottom;
-			auto nodesHeight = 0;
-			auto finalNodesHeight = 0;
-			for (auto i = 0; i < subNodes.size(); i++) {
-				auto guiSubNode = subNodes[i];
-				if (guiSubNode->conditionsMet == false) continue;
-				if (guiSubNode->flow == GUINode_Flow::FLOATING) {
-					continue;
-				}
-				if (guiSubNode->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
-					starCount++;
-				} else {
-					nodesHeight += guiSubNode->computedConstraints.height;
-					finalNodesHeight += guiSubNode->computedConstraints.height;
-				}
-			}
-			auto verticalStarPixelRest = 0.0f;
-			for (auto i = 0; i < subNodes.size(); i++) {
-				auto guiSubNode = subNodes[i];
-				if (guiSubNode->conditionsMet == false) continue;
-				if (guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
-					guiSubNode->requestedConstraints.width = width;
-					guiSubNode->computedConstraints.width = width;
-				}
-				if (guiSubNode->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
-					auto nodeStarHeight = (static_cast<float>(height) - static_cast<float>(nodesHeight)) / static_cast<float>(starCount);
-					auto nodeStarHeightInt = static_cast<int>(nodeStarHeight);
-					verticalStarPixelRest += nodeStarHeight - nodeStarHeightInt;
-					if (static_cast<int>(verticalStarPixelRest) > 0) {
-						nodeStarHeightInt += static_cast<int>(verticalStarPixelRest);
-						verticalStarPixelRest -= static_cast<int>(verticalStarPixelRest);
-					}
-					guiSubNode->requestedConstraints.height = nodeStarHeightInt;
-					guiSubNode->computedConstraints.height = nodeStarHeightInt;
-					if (guiSubNode->computedConstraints.height < 0) {
-						guiSubNode->computedConstraints.height = 0;
-					}
-					finalNodesHeight += guiSubNode->computedConstraints.height;
-					if (dynamic_cast<GUIParentNode*>(guiSubNode) != nullptr) {
-						required_dynamic_cast<GUIParentNode*>(guiSubNode)->layoutSubNodes();
-					}
-				}
-			}
-			if (alignments.vertical == GUINode_AlignmentVertical::TOP) {
-				for (auto i = 0; i < subNodes.size(); i++) {
-					auto guiSubNode = subNodes[i];
-					if (guiSubNode->conditionsMet == false) continue;
-					guiSubNode->computedConstraints.alignmentTop = Math::max(0, border.top + padding.top);
-				}
-			} else
-			if (alignments.vertical == GUINode_AlignmentVertical::CENTER) {
-				for (auto i = 0; i < subNodes.size(); i++) {
-					auto guiSubNode = subNodes[i];
-					if (guiSubNode->conditionsMet == false) continue;
-					guiSubNode->computedConstraints.alignmentTop = Math::max(0, border.top + padding.top + ((height - finalNodesHeight) / 2));
-				}
-			} else
-			if (alignments.vertical == GUINode_AlignmentVertical::BOTTOM) {
-				for (auto i = 0; i < subNodes.size(); i++) {
-					auto guiSubNode = subNodes[i];
-					if (guiSubNode->conditionsMet == false) continue;
-					guiSubNode->computedConstraints.alignmentTop = Math::max(0, height - finalNodesHeight); // TODO: take bottom padding into account
-				}
-			}
 
-			computeHorizontalChildrenAlignment();
-		} else
-		if (alignment == GUILayoutNode_Alignment::HORIZONTAL) {
-			auto starCount = 0;
-			auto width = computedConstraints.width - border.left - border.right - padding.left - padding.right;
-			auto height = computedConstraints.height - border.top - border.bottom - padding.top - padding.bottom;
-			auto nodesWidth = 0;
-			auto finalNodesWidth = 0;
-			for (auto i = 0; i < subNodes.size(); i++) {
-				auto guiSubNode = subNodes[i];
-				if (guiSubNode->conditionsMet == false) continue;
-				if (guiSubNode->flow == GUINode_Flow::FLOATING) {
-					continue;
-				}
-				if (guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
-					starCount++;
-				} else {
-					nodesWidth += guiSubNode->computedConstraints.width;
-					finalNodesWidth += guiSubNode->computedConstraints.width;
-				}
+	//
+	if (alignment == GUILayoutNode_Alignment::VERTICAL) {
+		auto starCount = 0;
+		auto width = computedConstraints.width - border.left - border.right - padding.left - padding.right;
+		auto height = computedConstraints.height - border.top - border.bottom - padding.top - padding.bottom;
+		auto nodesHeight = 0;
+		auto finalNodesHeight = 0;
+		for (auto i = 0; i < subNodes.size(); i++) {
+			auto guiSubNode = subNodes[i];
+			if (guiSubNode->conditionsMet == false) continue;
+			if (guiSubNode->flow == GUINode_Flow::FLOATING) {
+				continue;
 			}
-			auto horizontalStarPixelRest = 0.0f;
-			for (auto i = 0; i < subNodes.size(); i++) {
-				auto guiSubNode = subNodes[i];
-				if (guiSubNode->conditionsMet == false) continue;
-				if (guiSubNode->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
-					guiSubNode->requestedConstraints.height = height;
-					guiSubNode->computedConstraints.height = height;
-				}
-				if (guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
-					auto nodeStarWidth = (static_cast<float>(width) - static_cast<float>(nodesWidth)) / static_cast<float>(starCount);
-					auto nodeStarWidthInt = static_cast<int>(nodeStarWidth);
-					horizontalStarPixelRest += nodeStarWidth - nodeStarWidthInt;
-					if (static_cast<int>(horizontalStarPixelRest) > 0) {
-						nodeStarWidthInt += static_cast<int>(horizontalStarPixelRest);
-						horizontalStarPixelRest -= static_cast<int>(horizontalStarPixelRest);
-					}
-					guiSubNode->requestedConstraints.width = nodeStarWidthInt;
-					guiSubNode->computedConstraints.width = nodeStarWidthInt;
-					if (guiSubNode->computedConstraints.width < 0) {
-						guiSubNode->computedConstraints.width = 0;
-					}
-					finalNodesWidth += guiSubNode->computedConstraints.width;
-					if (dynamic_cast<GUIParentNode*>(guiSubNode) != nullptr) {
-						required_dynamic_cast<GUIParentNode*>(guiSubNode)->layoutSubNodes();
-					}
-				}
+			if (guiSubNode->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
+				starCount++;
+			} else {
+				nodesHeight += guiSubNode->computedConstraints.height;
+				finalNodesHeight += guiSubNode->computedConstraints.height;
 			}
-
-			if (alignments.horizontal == GUINode_AlignmentHorizontal::LEFT) {
-				for (auto i = 0; i < subNodes.size(); i++) {
-					auto guiSubNode = subNodes[i];
-					if (guiSubNode->conditionsMet == false) continue;
-					guiSubNode->computedConstraints.alignmentLeft = Math::max(0, border.left + padding.left);
-				}
-			} else
-			if (alignments.horizontal == GUINode_AlignmentHorizontal::CENTER) {
-				for (auto i = 0; i < subNodes.size(); i++) {
-					auto guiSubNode = subNodes[i];
-					if (guiSubNode->conditionsMet == false) continue;
-					guiSubNode->computedConstraints.alignmentLeft = Math::max(0, border.left + padding.left + ((width - finalNodesWidth) / 2));
-				}
-			} else
-			if (alignments.horizontal == GUINode_AlignmentHorizontal::RIGHT) {
-				for (auto i = 0; i < subNodes.size(); i++) {
-					auto guiSubNode = subNodes[i];
-					if (guiSubNode->conditionsMet == false) continue;
-					guiSubNode->computedConstraints.alignmentLeft = Math::max(0, width - finalNodesWidth); // TODO: take right padding into account
-				}
-			}
-
-			computeVerticalChildrenAlignment();
-		} else {
-			computeHorizontalChildrenAlignment();
-			computeVerticalChildrenAlignment();
 		}
+		auto verticalStarPixelRest = 0.0f;
+		for (auto i = 0; i < subNodes.size(); i++) {
+			auto guiSubNode = subNodes[i];
+			if (guiSubNode->conditionsMet == false) continue;
+			if (guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
+				guiSubNode->requestedConstraints.width = width;
+				guiSubNode->computedConstraints.width = width;
+			}
+			if (guiSubNode->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
+				auto nodeStarHeight = (static_cast<float>(height) - static_cast<float>(nodesHeight)) / static_cast<float>(starCount);
+				auto nodeStarHeightInt = static_cast<int>(nodeStarHeight);
+				verticalStarPixelRest += nodeStarHeight - nodeStarHeightInt;
+				if (static_cast<int>(verticalStarPixelRest) > 0) {
+					nodeStarHeightInt += static_cast<int>(verticalStarPixelRest);
+					verticalStarPixelRest -= static_cast<int>(verticalStarPixelRest);
+				}
+				guiSubNode->requestedConstraints.height = nodeStarHeightInt;
+				guiSubNode->computedConstraints.height = nodeStarHeightInt;
+				if (guiSubNode->computedConstraints.height < 0) {
+					guiSubNode->computedConstraints.height = 0;
+				}
+				finalNodesHeight += guiSubNode->computedConstraints.height;
+				if (dynamic_cast<GUIParentNode*>(guiSubNode) != nullptr) {
+					required_dynamic_cast<GUIParentNode*>(guiSubNode)->layoutSubNodes();
+				}
+			}
+		}
+		if (alignments.vertical == GUINode_AlignmentVertical::TOP) {
+			for (auto i = 0; i < subNodes.size(); i++) {
+				auto guiSubNode = subNodes[i];
+				if (guiSubNode->conditionsMet == false) continue;
+				guiSubNode->computedConstraints.alignmentTop = Math::max(0, border.top + padding.top);
+			}
+		} else
+		if (alignments.vertical == GUINode_AlignmentVertical::CENTER) {
+			for (auto i = 0; i < subNodes.size(); i++) {
+				auto guiSubNode = subNodes[i];
+				if (guiSubNode->conditionsMet == false) continue;
+				guiSubNode->computedConstraints.alignmentTop = Math::max(0, border.top + padding.top + ((height - finalNodesHeight) / 2));
+			}
+		} else
+		if (alignments.vertical == GUINode_AlignmentVertical::BOTTOM) {
+			for (auto i = 0; i < subNodes.size(); i++) {
+				auto guiSubNode = subNodes[i];
+				if (guiSubNode->conditionsMet == false) continue;
+				guiSubNode->computedConstraints.alignmentTop = Math::max(0, height - finalNodesHeight); // TODO: take bottom padding into account
+			}
+		}
+
+		computeHorizontalChildrenAlignment();
+	} else
+	if (alignment == GUILayoutNode_Alignment::HORIZONTAL) {
+		auto starCount = 0;
+		auto width = computedConstraints.width - border.left - border.right - padding.left - padding.right;
+		auto height = computedConstraints.height - border.top - border.bottom - padding.top - padding.bottom;
+		auto nodesWidth = 0;
+		auto finalNodesWidth = 0;
+		for (auto i = 0; i < subNodes.size(); i++) {
+			auto guiSubNode = subNodes[i];
+			if (guiSubNode->conditionsMet == false) continue;
+			if (guiSubNode->flow == GUINode_Flow::FLOATING) {
+				continue;
+			}
+			if (guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
+				starCount++;
+			} else {
+				nodesWidth += guiSubNode->computedConstraints.width;
+				finalNodesWidth += guiSubNode->computedConstraints.width;
+			}
+		}
+		auto horizontalStarPixelRest = 0.0f;
+		for (auto i = 0; i < subNodes.size(); i++) {
+			auto guiSubNode = subNodes[i];
+			if (guiSubNode->conditionsMet == false) continue;
+			if (guiSubNode->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
+				guiSubNode->requestedConstraints.height = height;
+				guiSubNode->computedConstraints.height = height;
+			}
+			if (guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
+				auto nodeStarWidth = (static_cast<float>(width) - static_cast<float>(nodesWidth)) / static_cast<float>(starCount);
+				auto nodeStarWidthInt = static_cast<int>(nodeStarWidth);
+				horizontalStarPixelRest += nodeStarWidth - nodeStarWidthInt;
+				if (static_cast<int>(horizontalStarPixelRest) > 0) {
+					nodeStarWidthInt += static_cast<int>(horizontalStarPixelRest);
+					horizontalStarPixelRest -= static_cast<int>(horizontalStarPixelRest);
+				}
+				guiSubNode->requestedConstraints.width = nodeStarWidthInt;
+				guiSubNode->computedConstraints.width = nodeStarWidthInt;
+				if (guiSubNode->computedConstraints.width < 0) {
+					guiSubNode->computedConstraints.width = 0;
+				}
+				finalNodesWidth += guiSubNode->computedConstraints.width;
+				if (dynamic_cast<GUIParentNode*>(guiSubNode) != nullptr) {
+					required_dynamic_cast<GUIParentNode*>(guiSubNode)->layoutSubNodes();
+				}
+			}
+		}
+
+		if (alignments.horizontal == GUINode_AlignmentHorizontal::LEFT) {
+			for (auto i = 0; i < subNodes.size(); i++) {
+				auto guiSubNode = subNodes[i];
+				if (guiSubNode->conditionsMet == false) continue;
+				guiSubNode->computedConstraints.alignmentLeft = Math::max(0, border.left + padding.left);
+			}
+		} else
+		if (alignments.horizontal == GUINode_AlignmentHorizontal::CENTER) {
+			for (auto i = 0; i < subNodes.size(); i++) {
+				auto guiSubNode = subNodes[i];
+				if (guiSubNode->conditionsMet == false) continue;
+				guiSubNode->computedConstraints.alignmentLeft = Math::max(0, border.left + padding.left + ((width - finalNodesWidth) / 2));
+			}
+		} else
+		if (alignments.horizontal == GUINode_AlignmentHorizontal::RIGHT) {
+			for (auto i = 0; i < subNodes.size(); i++) {
+				auto guiSubNode = subNodes[i];
+				if (guiSubNode->conditionsMet == false) continue;
+				guiSubNode->computedConstraints.alignmentLeft = Math::max(0, width - finalNodesWidth); // TODO: take right padding into account
+			}
+		}
+
+		computeVerticalChildrenAlignment();
+	} else {
+		computeHorizontalChildrenAlignment();
+		computeVerticalChildrenAlignment();
 	}
 
 	for (auto i = 0; i < subNodes.size(); i++) {
