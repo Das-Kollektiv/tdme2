@@ -108,6 +108,30 @@ private:
 	unordered_map<string, GUIFont*> fontCache;
 	unordered_map<string, Texture*> imageCache;
 
+	struct ForwardEvent {
+		enum EventType {
+			EVENTTYPE_NONE,
+			EVENTTYPE_ACTION,
+			EVENTTYPE_CHANGE,
+			EVENTTYPE_MOUSEOVER,
+			EVENTTYPE_CONTEXTMENUREQUEST,
+			EVENTTYPE_FOCUS,
+			EVENTTYPE_UNFOCUS,
+			EVENTTYPE_MOVE,
+			EVENTTYPE_MOVERELEASE,
+			EVENTTYPE_TOOLTIPSHOWREQUEST,
+			EVENTTYPE_TOOLTIPCLOSEREQUEST,
+			EVENTTYPE_DRAGREQUEST
+		};
+		EventType eventType { EVENTTYPE_NONE };
+		string nodeId;
+		int mouseX { -1 };
+		int mouseY { -1 };
+		int type { -1 };
+	};
+
+	vector<ForwardEvent> forwardEventList;
+
 public:
 	/**
 	 * @return screen filename or complete file path
@@ -293,6 +317,18 @@ private:
 	 * Calls registered tick nodes controller tick method
 	 */
 	void tick();
+
+	/**
+	 * Forward events
+	 */
+	void forwardEvents();
+
+	/**
+	 * Clear events
+	 */
+	inline void clearEvents() {
+		forwardEventList.clear();
+	}
 
 public:
 	/**

@@ -1,0 +1,853 @@
+diff --git a/resources/engine/gui/definitions/menu-item.xml b/resources/engine/gui/definitions/menu-item.xml
+index d07a47939..65e705927 100644
+--- a/resources/engine/gui/definitions/menu-item.xml
++++ b/resources/engine/gui/definitions/menu-item.xml
+@@ -1,80 +1,79 @@
+ <template>	
+-	<element id="{$id}" width="auto" height="auto" disabled="{$disabled}" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
+-		
+-		<layer width="auto" >
+-		
+-			<!-- normal -->
+-			<layout width="250" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,selected,mouseover" >
+-				<space width="5" />
+-				<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+-					<image src="{$image}" />
+-				</layout>
+-				<text
+-					text="{$text}"
+-					font="{$font.default}" size="{$fontsize.default}" 
+-					color="{$color.font_normal}"
+-					
+-					width="auto" 
+-					height="25"				
+-					padding-left="5" 
+-					vertical-align="center"
+-				/>
++	<element id="{$id}" width="max-sibling-auto" height="auto" disabled="{$disabled}" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
++	
++		<!-- normal -->
++		<layout width="auto" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,selected,mouseover" >
++			<space width="5" />
++			<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
++				<image src="{$image}" />
+ 			</layout>
+-		
+-			<!-- mouse over / focussed -->
+-			<layout width="250" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled" show-on="mouseover,selected" background-color="{$color.focus}" >
+-				<space width="5" />
+-				<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+-					<image src="{$image}" />
+-				</layout>
+-				<text
+-					text="{$text}"
+-					font="{$font.default}" size="{$fontsize.default}"
+-					color="{$color.font_highlight}"
+-					
+-					width="auto"
+-					height="25"
+-					padding-left="5"
+-					vertical-align="center"
+-				/>
+-			</layout>
+-		
+-			<!-- disabled -->
+-			<layout width="250" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" show-on="disabled" >
+-				<space width="5" />
+-				<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+-					<image src="{$image}" />
+-				</layout>
+-				<text
+-					text="{$text}"
+-					font="{$font.default}" size="{$fontsize.default}"
+-					color="{$color.font_disabled}"
+-					
+-					width="auto"
+-					height="25"
+-					padding-left="5"
+-					vertical-align="center"
+-				/>
++			<text
++				text="{$text}"
++				font="{$font.default}" size="{$fontsize.default}" 
++				color="{$color.font_normal}"
++				
++				width="100" 
++				height="25"				
++				padding-left="5" 
++				vertical-align="center"
++			/>
++			<space width="**" />
++		</layout>
++	
++		<!-- mouse over / focussed -->
++		<layout width="auto" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled" show-on="mouseover,selected" background-color="{$color.focus}" >
++			<space width="5" />
++			<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
++				<image src="{$image}" />
+ 			</layout>
++			<text
++				text="{$text}"
++				font="{$font.default}" size="{$fontsize.default}"
++				color="{$color.font_highlight}"
+ 				
+-			<!-- shortcut and child -->
+-			<layout width="250" height="auto" alignment="horizontal" horizontal-align="right" vertical-align="center">
+-				<space width="*" />
+-				<layer>
+-					<text padding-right="5" width="auto" height="25" vertical-align="center" font="{$font.default}" size="{$fontsize.default}" text="{$shortcut}" color="{$color.font_disabled}" />
+-					<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+-						<!-- <image show-on="parent" src="resources/engine/images/arrow_right.png" /> -->
+-					</layout>
+-				</layer>
+-				<space width="5"/>
++				width="100"
++				height="25"
++				padding-left="5"
++				vertical-align="center"
++			/>
++			<space width="**" />
++		</layout>
++	
++		<!-- disabled -->
++		<layout width="auto" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" show-on="disabled" >
++			<space width="5" />
++			<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
++				<image src="{$image}" />
+ 			</layout>
++			<text
++				text="{$text}"
++				font="{$font.default}" size="{$fontsize.default}"
++				color="{$color.font_disabled}"
++				
++				width="100"
++				height="25"
++				padding-left="5"
++				vertical-align="center"
++			/>
++			<space width="**" />
++		</layout>
+ 			
+-			<!-- additional elements -->
+-			<layout width="250" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" >
+-				{__InnerXML__}
+-			</layout>
+-
+-		</layer>
++		<!-- shortcut and child -->
++		<layout width="auto" height="auto" alignment="horizontal" horizontal-align="right" vertical-align="center">
++			<space width="**" />
++			<layer>
++				<text padding-right="5" width="auto" height="25" vertical-align="center" font="{$font.default}" size="{$fontsize.default}" text="{$shortcut}" color="{$color.font_disabled}" />
++				<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
++					<!-- <image show-on="parent" src="resources/engine/images/arrow_right.png" /> -->
++				</layout>
++			</layer>
++			<space width="5"/>
++		</layout>
++		
++		<!-- additional elements -->
++		<layout width="auto" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" >
++			{__InnerXML__}
++		</layout>
+ 
+ 	</element>
+ </template>
+\ No newline at end of file
+diff --git a/src/tdme/gui/nodes/GUIGradientNode.cpp b/src/tdme/gui/nodes/GUIGradientNode.cpp
+index 689b92531..bf5231fb8 100644
+--- a/src/tdme/gui/nodes/GUIGradientNode.cpp
++++ b/src/tdme/gui/nodes/GUIGradientNode.cpp
+@@ -111,7 +111,8 @@ bool GUIGradientNode::isContentNode()
+ 
+ int GUIGradientNode::getContentWidth()
+ {
+-	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
++	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
++		requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::MAX_SIBLING_AUTO) {
+ 		return border.left + border.right + padding.left + padding.right;
+ 	} else {
+ 		return computedConstraints.width;
+@@ -120,7 +121,8 @@ int GUIGradientNode::getContentWidth()
+ 
+ int GUIGradientNode::getContentHeight()
+ {
+-	if (requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
++	if (requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
++		requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::MAX_SIBLING_AUTO) {
+ 		return border.top + border.bottom + padding.top + padding.bottom;
+ 	} else {
+ 		return computedConstraints.height;
+diff --git a/src/tdme/gui/nodes/GUILayoutNode.cpp b/src/tdme/gui/nodes/GUILayoutNode.cpp
+index c06a638ec..cfe6289e0 100644
+--- a/src/tdme/gui/nodes/GUILayoutNode.cpp
++++ b/src/tdme/gui/nodes/GUILayoutNode.cpp
+@@ -139,157 +139,256 @@ void GUILayoutNode::layoutSubNodes()
+ {
+ 	if (conditionsMet == false) return;
+ 	GUIParentNode::layoutSubNodes();
+-	{
+-		if (alignment == GUILayoutNode_Alignment::VERTICAL) {
+-			auto starCount = 0;
+-			auto width = computedConstraints.width - border.left - border.right - padding.left - padding.right;
+-			auto height = computedConstraints.height - border.top - border.bottom - padding.top - padding.bottom;
+-			auto nodesHeight = 0;
+-			auto finalNodesHeight = 0;
++
++	if (alignment == GUILayoutNode_Alignment::VERTICAL) {
++		auto starCount = 0;
++		auto width = computedConstraints.width - border.left - border.right - padding.left - padding.right;
++		auto height = computedConstraints.height - border.top - border.bottom - padding.top - padding.bottom;
++		auto nodesHeight = 0;
++		auto finalNodesHeight = 0;
++		for (auto i = 0; i < subNodes.size(); i++) {
++			auto guiSubNode = subNodes[i];
++			if (guiSubNode->conditionsMet == false) continue;
++			if (guiSubNode->flow == GUINode_Flow::FLOATING) {
++				continue;
++			}
++			if (guiSubNode->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
++				starCount++;
++			} else {
++				nodesHeight += guiSubNode->computedConstraints.height;
++				finalNodesHeight += guiSubNode->computedConstraints.height;
++			}
++		}
++		auto verticalStarPixelRest = 0.0f;
++		for (auto i = 0; i < subNodes.size(); i++) {
++			auto guiSubNode = subNodes[i];
++			if (guiSubNode->conditionsMet == false) continue;
++			if (guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
++				guiSubNode->requestedConstraints.width = width;
++				guiSubNode->computedConstraints.width = width;
++			}
++			if (guiSubNode->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
++				auto nodeStarHeight = (static_cast<float>(height) - static_cast<float>(nodesHeight)) / static_cast<float>(starCount);
++				auto nodeStarHeightInt = static_cast<int>(nodeStarHeight);
++				verticalStarPixelRest += nodeStarHeight - nodeStarHeightInt;
++				if (static_cast<int>(verticalStarPixelRest) > 0) {
++					nodeStarHeightInt += static_cast<int>(verticalStarPixelRest);
++					verticalStarPixelRest -= static_cast<int>(verticalStarPixelRest);
++				}
++				guiSubNode->requestedConstraints.height = nodeStarHeightInt;
++				guiSubNode->computedConstraints.height = nodeStarHeightInt;
++				if (guiSubNode->computedConstraints.height < 0) {
++					guiSubNode->computedConstraints.height = 0;
++				}
++				finalNodesHeight += guiSubNode->computedConstraints.height;
++				if (dynamic_cast<GUIParentNode*>(guiSubNode) != nullptr) {
++					required_dynamic_cast<GUIParentNode*>(guiSubNode)->layoutSubNodes();
++				}
++			}
++		}
++
++		if (alignments.vertical == GUINode_AlignmentVertical::TOP) {
+ 			for (auto i = 0; i < subNodes.size(); i++) {
+ 				auto guiSubNode = subNodes[i];
+ 				if (guiSubNode->conditionsMet == false) continue;
+-				if (guiSubNode->flow == GUINode_Flow::FLOATING) {
+-					continue;
+-				}
+-				if (guiSubNode->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
+-					starCount++;
+-				} else {
+-					nodesHeight += guiSubNode->computedConstraints.height;
+-					finalNodesHeight += guiSubNode->computedConstraints.height;
+-				}
++				guiSubNode->computedConstraints.alignmentTop = Math::max(0, border.top + padding.top);
+ 			}
+-			auto verticalStarPixelRest = 0.0f;
++		} else
++		if (alignments.vertical == GUINode_AlignmentVertical::CENTER) {
+ 			for (auto i = 0; i < subNodes.size(); i++) {
+ 				auto guiSubNode = subNodes[i];
+ 				if (guiSubNode->conditionsMet == false) continue;
+-				if (guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
+-					guiSubNode->requestedConstraints.width = width;
+-					guiSubNode->computedConstraints.width = width;
+-				}
+-				if (guiSubNode->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
+-					auto nodeStarHeight = (static_cast<float>(height) - static_cast<float>(nodesHeight)) / static_cast<float>(starCount);
+-					auto nodeStarHeightInt = static_cast<int>(nodeStarHeight);
+-					verticalStarPixelRest += nodeStarHeight - nodeStarHeightInt;
+-					if (static_cast<int>(verticalStarPixelRest) > 0) {
+-						nodeStarHeightInt += static_cast<int>(verticalStarPixelRest);
+-						verticalStarPixelRest -= static_cast<int>(verticalStarPixelRest);
+-					}
+-					guiSubNode->requestedConstraints.height = nodeStarHeightInt;
+-					guiSubNode->computedConstraints.height = nodeStarHeightInt;
+-					if (guiSubNode->computedConstraints.height < 0) {
+-						guiSubNode->computedConstraints.height = 0;
+-					}
+-					finalNodesHeight += guiSubNode->computedConstraints.height;
+-					if (dynamic_cast<GUIParentNode*>(guiSubNode) != nullptr) {
+-						required_dynamic_cast<GUIParentNode*>(guiSubNode)->layoutSubNodes();
+-					}
+-				}
++				guiSubNode->computedConstraints.alignmentTop = Math::max(0, border.top + padding.top + ((height - finalNodesHeight) / 2));
+ 			}
+-			if (alignments.vertical == GUINode_AlignmentVertical::TOP) {
+-				for (auto i = 0; i < subNodes.size(); i++) {
+-					auto guiSubNode = subNodes[i];
+-					if (guiSubNode->conditionsMet == false) continue;
+-					guiSubNode->computedConstraints.alignmentTop = Math::max(0, border.top + padding.top);
+-				}
+-			} else
+-			if (alignments.vertical == GUINode_AlignmentVertical::CENTER) {
+-				for (auto i = 0; i < subNodes.size(); i++) {
+-					auto guiSubNode = subNodes[i];
+-					if (guiSubNode->conditionsMet == false) continue;
+-					guiSubNode->computedConstraints.alignmentTop = Math::max(0, border.top + padding.top + ((height - finalNodesHeight) / 2));
+-				}
+-			} else
+-			if (alignments.vertical == GUINode_AlignmentVertical::BOTTOM) {
+-				for (auto i = 0; i < subNodes.size(); i++) {
+-					auto guiSubNode = subNodes[i];
+-					if (guiSubNode->conditionsMet == false) continue;
+-					guiSubNode->computedConstraints.alignmentTop = Math::max(0, height - finalNodesHeight); // TODO: take bottom padding into account
+-				}
++		} else
++		if (alignments.vertical == GUINode_AlignmentVertical::BOTTOM) {
++			for (auto i = 0; i < subNodes.size(); i++) {
++				auto guiSubNode = subNodes[i];
++				if (guiSubNode->conditionsMet == false) continue;
++				guiSubNode->computedConstraints.alignmentTop = Math::max(0, height - finalNodesHeight); // TODO: take bottom padding into account
+ 			}
++		}
+ 
+-			computeHorizontalChildrenAlignment();
+-		} else
+-		if (alignment == GUILayoutNode_Alignment::HORIZONTAL) {
+-			auto starCount = 0;
+-			auto width = computedConstraints.width - border.left - border.right - padding.left - padding.right;
+-			auto height = computedConstraints.height - border.top - border.bottom - padding.top - padding.bottom;
++		computeHorizontalChildrenAlignment();
++	} else
++	if (alignment == GUILayoutNode_Alignment::HORIZONTAL) {
++		{
++			auto starstarCount = 0;
+ 			auto nodesWidth = 0;
+-			auto finalNodesWidth = 0;
++			// determine nodes width and final nodes width(including star width)
+ 			for (auto i = 0; i < subNodes.size(); i++) {
+ 				auto guiSubNode = subNodes[i];
+ 				if (guiSubNode->conditionsMet == false) continue;
+ 				if (guiSubNode->flow == GUINode_Flow::FLOATING) {
+ 					continue;
+ 				}
+-				if (guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
+-					starCount++;
++				if (guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STARSTAR) {
++					starstarCount++;
+ 				} else {
+ 					nodesWidth += guiSubNode->computedConstraints.width;
+-					finalNodesWidth += guiSubNode->computedConstraints.width;
+ 				}
+ 			}
+-			auto horizontalStarPixelRest = 0.0f;
+-			for (auto i = 0; i < subNodes.size(); i++) {
+-				auto guiSubNode = subNodes[i];
+-				if (guiSubNode->conditionsMet == false) continue;
+-				if (guiSubNode->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
+-					guiSubNode->requestedConstraints.height = height;
+-					guiSubNode->computedConstraints.height = height;
+-				}
+-				if (guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
+-					auto nodeStarWidth = (static_cast<float>(width) - static_cast<float>(nodesWidth)) / static_cast<float>(starCount);
+-					auto nodeStarWidthInt = static_cast<int>(nodeStarWidth);
+-					horizontalStarPixelRest += nodeStarWidth - nodeStarWidthInt;
+-					if (static_cast<int>(horizontalStarPixelRest) > 0) {
+-						nodeStarWidthInt += static_cast<int>(horizontalStarPixelRest);
+-						horizontalStarPixelRest -= static_cast<int>(horizontalStarPixelRest);
+-					}
+-					guiSubNode->requestedConstraints.width = nodeStarWidthInt;
+-					guiSubNode->computedConstraints.width = nodeStarWidthInt;
+-					if (guiSubNode->computedConstraints.width < 0) {
+-						guiSubNode->computedConstraints.width = 0;
+-					}
+-					finalNodesWidth += guiSubNode->computedConstraints.width;
+-					if (dynamic_cast<GUIParentNode*>(guiSubNode) != nullptr) {
+-						required_dynamic_cast<GUIParentNode*>(guiSubNode)->layoutSubNodes();
+-					}
++			//
++			auto maxSiblingAutoWidth = 0;
++			GUIParentNode* _parentNode = this;
++			while (_parentNode != nullptr) {
++				if (_parentNode->computedConstraints.maxAutoSiblingWidth > 0) {
++					maxSiblingAutoWidth = _parentNode->computedConstraints.maxAutoSiblingWidth;
++					break;
+ 				}
++				_parentNode = _parentNode->parentNode;
+ 			}
+-
+-			if (alignments.horizontal == GUINode_AlignmentHorizontal::LEFT) {
++			if (maxSiblingAutoWidth > 0) {
+ 				for (auto i = 0; i < subNodes.size(); i++) {
+ 					auto guiSubNode = subNodes[i];
+ 					if (guiSubNode->conditionsMet == false) continue;
+-					guiSubNode->computedConstraints.alignmentLeft = Math::max(0, border.left + padding.left);
++					if (guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STARSTAR) {
++						auto nodeStarStarWidth = (static_cast<float>(maxSiblingAutoWidth) - static_cast<float>(nodesWidth)) / static_cast<float>(starstarCount);
++						auto nodeStarStarWidthInt = static_cast<int>(nodeStarStarWidth);
++						//
++						guiSubNode->requestedConstraints.width = nodeStarStarWidthInt;
++						guiSubNode->computedConstraints.width = nodeStarStarWidthInt;
++					}
+ 				}
++				//
++				setTop(computedConstraints.top);
++				setLeft(computedConstraints.left);
++				//
++				parentNode->computedConstraints.width = maxSiblingAutoWidth;
++				//
++				Console::println("YYY: " + getId());
++				Console::println("GUINode::dumpNode()");
++				GUINode::dumpNode(this);
++				Console::println("GUINode::dumpParentNodes()");
++				GUINode::dumpParentNodes(this);
++			}
++		}
++		auto starCount = 0;
++		auto starstarCount = 0;
++		auto width = computedConstraints.width - border.left - border.right - padding.left - padding.right;
++		auto height = computedConstraints.height - border.top - border.bottom - padding.top - padding.bottom;
++		auto nodesWidth = 0;
++		auto finalNodesWidth = 0;
++		// determine nodes width and final nodes width(including star width)
++		for (auto i = 0; i < subNodes.size(); i++) {
++			auto guiSubNode = subNodes[i];
++			if (guiSubNode->conditionsMet == false) continue;
++			if (guiSubNode->flow == GUINode_Flow::FLOATING) {
++				continue;
++			}
++			if (guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
++				starCount++;
+ 			} else
+-			if (alignments.horizontal == GUINode_AlignmentHorizontal::CENTER) {
+-				for (auto i = 0; i < subNodes.size(); i++) {
+-					auto guiSubNode = subNodes[i];
+-					if (guiSubNode->conditionsMet == false) continue;
+-					guiSubNode->computedConstraints.alignmentLeft = Math::max(0, border.left + padding.left + ((width - finalNodesWidth) / 2));
++			if (guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STARSTAR) {
++				starstarCount++;
++			} else {
++				nodesWidth += guiSubNode->computedConstraints.width;
++				finalNodesWidth += guiSubNode->computedConstraints.width;
++			}
++		}
++		auto horizontalStarPixelRest = 0.0f;
++		for (auto i = 0; i < subNodes.size(); i++) {
++			auto guiSubNode = subNodes[i];
++			if (guiSubNode->conditionsMet == false) continue;
++			if (guiSubNode->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
++				guiSubNode->requestedConstraints.height = height;
++				guiSubNode->computedConstraints.height = height;
++			}
++			if (guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
++				auto nodeStarWidth = (static_cast<float>(width) - static_cast<float>(nodesWidth)) / static_cast<float>(starCount);
++				auto nodeStarWidthInt = static_cast<int>(nodeStarWidth);
++				horizontalStarPixelRest += nodeStarWidth - nodeStarWidthInt;
++				if (static_cast<int>(horizontalStarPixelRest) > 0) {
++					nodeStarWidthInt += static_cast<int>(horizontalStarPixelRest);
++					horizontalStarPixelRest -= static_cast<int>(horizontalStarPixelRest);
+ 				}
+-			} else
+-			if (alignments.horizontal == GUINode_AlignmentHorizontal::RIGHT) {
+-				for (auto i = 0; i < subNodes.size(); i++) {
+-					auto guiSubNode = subNodes[i];
+-					if (guiSubNode->conditionsMet == false) continue;
+-					guiSubNode->computedConstraints.alignmentLeft = Math::max(0, width - finalNodesWidth); // TODO: take right padding into account
++				guiSubNode->requestedConstraints.width = nodeStarWidthInt;
++				guiSubNode->computedConstraints.width = nodeStarWidthInt;
++				if (guiSubNode->computedConstraints.width < 0) {
++					guiSubNode->computedConstraints.width = 0;
++				}
++				finalNodesWidth += guiSubNode->computedConstraints.width;
++				//
++				setTop(computedConstraints.top);
++				setLeft(computedConstraints.left);
++				/*
++				if (dynamic_cast<GUIParentNode*>(guiSubNode) != nullptr) {
++					required_dynamic_cast<GUIParentNode*>(guiSubNode)->layoutSubNodes();
+ 				}
++				*/
+ 			}
++		}
+ 
+-			computeVerticalChildrenAlignment();
+-		} else {
+-			computeHorizontalChildrenAlignment();
+-			computeVerticalChildrenAlignment();
++		if (alignments.horizontal == GUINode_AlignmentHorizontal::LEFT) {
++			for (auto i = 0; i < subNodes.size(); i++) {
++				auto guiSubNode = subNodes[i];
++				if (guiSubNode->conditionsMet == false) continue;
++				guiSubNode->computedConstraints.alignmentLeft = Math::max(0, border.left + padding.left);
++			}
++		} else
++		if (alignments.horizontal == GUINode_AlignmentHorizontal::CENTER) {
++			for (auto i = 0; i < subNodes.size(); i++) {
++				auto guiSubNode = subNodes[i];
++				if (guiSubNode->conditionsMet == false) continue;
++				guiSubNode->computedConstraints.alignmentLeft = Math::max(0, border.left + padding.left + ((width - finalNodesWidth) / 2));
++			}
++		} else
++		if (alignments.horizontal == GUINode_AlignmentHorizontal::RIGHT) {
++			for (auto i = 0; i < subNodes.size(); i++) {
++				auto guiSubNode = subNodes[i];
++				if (guiSubNode->conditionsMet == false) continue;
++				guiSubNode->computedConstraints.alignmentLeft = Math::max(0, width - finalNodesWidth); // TODO: take right padding into account
++			}
+ 		}
++
++		computeVerticalChildrenAlignment();
++	} else {
++		computeHorizontalChildrenAlignment();
++		computeVerticalChildrenAlignment();
+ 	}
+ 
+ 	for (auto i = 0; i < subNodes.size(); i++) {
+ 		auto guiSubNode = subNodes[i];
+ 		guiSubNode->computeContentAlignment();
+ 	}
++
++	//
++	if (alignment == GUILayoutNode_Alignment::VERTICAL) {
++		// determine max width for max sibling auto nodes
++		auto haveMaxSiblingAuto = false;
++		auto lastMaxAutoSiblingWidth = computedConstraints.maxAutoSiblingWidth;
++		computedConstraints.maxAutoSiblingWidth = 0;
++		for (auto i = 0; i < subNodes.size(); i++) {
++			auto guiSubNode = subNodes[i];
++			if (guiSubNode->conditionsMet == false) continue;
++			if (guiSubNode->flow == GUINode_Flow::FLOATING) {
++				continue;
++			}
++			//
++			if (guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::MAX_SIBLING_AUTO) {
++				computedConstraints.maxAutoSiblingWidth = Math::max(computedConstraints.maxAutoSiblingWidth, guiSubNode->computedConstraints.width);
++				haveMaxSiblingAuto = true;
++			}
++		}
++		if (haveMaxSiblingAuto == true) {
++			// apply max width for max sibling auto to max sibling auto nodes
++			if (computedConstraints.maxAutoSiblingWidth > 0) {
++				for (auto i = 0; i < subNodes.size(); i++) {
++					auto guiSubNode = subNodes[i];
++					if (guiSubNode->conditionsMet == false) continue;
++					if (guiSubNode->flow == GUINode_Flow::FLOATING) {
++						continue;
++					}
++					//
++					if (guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::MAX_SIBLING_AUTO) {
++						guiSubNode->computedConstraints.width = computedConstraints.maxAutoSiblingWidth;
++					}
++				}
++			}
++			//
++		}
++	}
++
+ 	setTop(computedConstraints.top);
+ 	setLeft(computedConstraints.left);
+ }
+diff --git a/src/tdme/gui/nodes/GUINode.cpp b/src/tdme/gui/nodes/GUINode.cpp
+index 103cf6e86..cf059fb06 100644
+--- a/src/tdme/gui/nodes/GUINode.cpp
++++ b/src/tdme/gui/nodes/GUINode.cpp
+@@ -160,7 +160,8 @@ const string GUINode::getHierarchicalId() {
+ 
+ int GUINode::getAutoWidth()
+ {
+-	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
++	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
++		requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::MAX_SIBLING_AUTO) {
+ 		return getContentWidth();
+ 	} else {
+ 		return computedConstraints.width;
+@@ -169,7 +170,8 @@ int GUINode::getAutoWidth()
+ 
+ int GUINode::getAutoHeight()
+ {
+-	if (requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
++	if (requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
++		requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::MAX_SIBLING_AUTO) {
+ 		return getContentHeight();
+ 	} else {
+ 		return computedConstraints.height;
+@@ -250,9 +252,15 @@ int GUINode::layoutConstraintPixel(GUINode_RequestedConstraints_RequestedConstra
+ 	if (type->equals(GUINode_RequestedConstraints_RequestedConstraintsType::AUTO)) {
+ 		return autoValue;
+ 	} else
++	if (type->equals(GUINode_RequestedConstraints_RequestedConstraintsType::MAX_SIBLING_AUTO)) {
++		return autoValue;
++	} else
+ 	if (type->equals(GUINode_RequestedConstraints_RequestedConstraintsType::STAR)) {
+ 		return value;
+ 	} else
++	if (type->equals(GUINode_RequestedConstraints_RequestedConstraintsType::STARSTAR)) {
++		return value;
++	} else
+ 	if (type->equals(GUINode_RequestedConstraints_RequestedConstraintsType::TABLECELL)) {
+ 		return value;
+ 	}
+@@ -293,9 +301,15 @@ GUINode_RequestedConstraints_RequestedConstraintsType* GUINode::getRequestedCons
+ 	if (constraint.compare("auto") == 0) {
+ 		return GUINode_RequestedConstraints_RequestedConstraintsType::AUTO;
+ 	} else
++	if (constraint.compare("max-sibling-auto") == 0) {
++		return GUINode_RequestedConstraints_RequestedConstraintsType::MAX_SIBLING_AUTO;
++	} else
+ 	if (constraint.compare("*") == 0) {
+ 		return GUINode_RequestedConstraints_RequestedConstraintsType::STAR;
+ 	} else
++	if (constraint.compare("**") == 0) {
++		return GUINode_RequestedConstraints_RequestedConstraintsType::STARSTAR;
++	} else
+ 	if (StringTools::endsWith(constraint, "%")) {
+ 		return GUINode_RequestedConstraints_RequestedConstraintsType::PERCENT;
+ 	} else {
+@@ -311,9 +325,15 @@ int GUINode::getRequestedConstraintsValue(const string& constraint, int defaultC
+ 	if (constraint.compare("auto") == 0) {
+ 		return -1;
+ 	} else
++	if (constraint.compare("max-sibling-auto") == 0) {
++		return -1;
++	} else
+ 	if (constraint.compare("*") == 0) {
+ 		return -1;
+ 	} else
++	if (constraint.compare("**") == 0) {
++		return -1;
++	} else
+ 	if (StringTools::endsWith(constraint, "%")) {
+ 		return (Integer::parse(constraint.substr(0, constraint.length() - 1)));
+ 	} else {
+@@ -1101,9 +1121,9 @@ void GUINode::dumpNode(GUINode* node, int depth, int indent, int depthIdx) {
+ 		node->id + ": " +
+ 		node->getNodeType() + ": constaints: " +
+ 		to_string(node->computedConstraints.left) + ", " +
+-		to_string(node->computedConstraints.top) + ", " +
+-		to_string(node->computedConstraints.width) + "; " +
+-		to_string(node->computedConstraints.height) + ", alignment: " +
++		to_string(node->computedConstraints.top) + "; " +
++		to_string(node->computedConstraints.width) + ", " +
++		to_string(node->computedConstraints.height) + "; alignment: " +
+ 		to_string(node->computedConstraints.alignmentLeft) + ", " +
+ 		to_string(node->computedConstraints.alignmentTop) + "; content alignment: " +
+ 		to_string(node->computedConstraints.contentAlignmentLeft) + ", " +
+diff --git a/src/tdme/gui/nodes/GUINode_ComputedConstraints.h b/src/tdme/gui/nodes/GUINode_ComputedConstraints.h
+index caeb08347..3a85de47a 100644
+--- a/src/tdme/gui/nodes/GUINode_ComputedConstraints.h
++++ b/src/tdme/gui/nodes/GUINode_ComputedConstraints.h
+@@ -29,4 +29,6 @@ struct tdme::gui::nodes::GUINode_ComputedConstraints
+ 	int contentAlignmentTop { 0 };
+ 	int additionalAlignmentLeft { 0 };
+ 	int additionalAlignmentTop { 0 };
++	int maxAutoSiblingWidth { 0 };
++	int maxAutoSiblingHeight { 0 };
+ };
+diff --git a/src/tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.cpp b/src/tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.cpp
+index afd6a7473..7b28b7949 100644
+--- a/src/tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.cpp
++++ b/src/tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.cpp
+@@ -16,19 +16,23 @@ GUINode_RequestedConstraints_RequestedConstraintsType::GUINode_RequestedConstrai
+ }
+ 
+ GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::NONE = new GUINode_RequestedConstraints_RequestedConstraintsType("NONE", 0);
+-GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL = new GUINode_RequestedConstraints_RequestedConstraintsType("PIXEL", 0);
+-GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::PERCENT = new GUINode_RequestedConstraints_RequestedConstraintsType("PERCENT", 1);
+-GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::STAR = new GUINode_RequestedConstraints_RequestedConstraintsType("STAR", 2);
+-GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::AUTO = new GUINode_RequestedConstraints_RequestedConstraintsType("AUTO", 3);
+-GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::TABLECELL = new GUINode_RequestedConstraints_RequestedConstraintsType("TABLECELL", 5);
++GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL = new GUINode_RequestedConstraints_RequestedConstraintsType("PIXEL", 1);
++GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::PERCENT = new GUINode_RequestedConstraints_RequestedConstraintsType("PERCENT", 2);
++GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::STAR = new GUINode_RequestedConstraints_RequestedConstraintsType("STAR", 3);
++GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::STARSTAR = new GUINode_RequestedConstraints_RequestedConstraintsType("STARSTAR", 4);
++GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::AUTO = new GUINode_RequestedConstraints_RequestedConstraintsType("AUTO", 5);
++GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::MAX_SIBLING_AUTO = new GUINode_RequestedConstraints_RequestedConstraintsType("MAX-SIBLING-AUTO", 6);
++GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::TABLECELL = new GUINode_RequestedConstraints_RequestedConstraintsType("TABLECELL", 7);
+ 
+ GUINode_RequestedConstraints_RequestedConstraintsType* GUINode_RequestedConstraints_RequestedConstraintsType::valueOf(const string& name)
+ {
+ 	if (NONE->getName() == name) return NONE;
+ 	if (AUTO->getName() == name) return AUTO;
++	if (MAX_SIBLING_AUTO->getName() == name) return MAX_SIBLING_AUTO;
+ 	if (PERCENT->getName() == name) return PERCENT;
+ 	if (PIXEL->getName() == name) return PIXEL;
+ 	if (STAR->getName() == name) return STAR;
++	if (STARSTAR->getName() == name) return STARSTAR;
+ 	if (TABLECELL->getName() == name) return TABLECELL;
+ 	// TODO: throw exception here maybe
+ 	return nullptr;
+diff --git a/src/tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h b/src/tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h
+index 9fa359d7d..8403b2304 100644
+--- a/src/tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h
++++ b/src/tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h
+@@ -31,7 +31,9 @@ public:
+ 	STATIC_DLL_IMPEXT static GUINode_RequestedConstraints_RequestedConstraintsType* PIXEL;
+ 	STATIC_DLL_IMPEXT static GUINode_RequestedConstraints_RequestedConstraintsType* PERCENT;
+ 	STATIC_DLL_IMPEXT static GUINode_RequestedConstraints_RequestedConstraintsType* STAR;
++	STATIC_DLL_IMPEXT static GUINode_RequestedConstraints_RequestedConstraintsType* STARSTAR;
+ 	STATIC_DLL_IMPEXT static GUINode_RequestedConstraints_RequestedConstraintsType* AUTO;
++	STATIC_DLL_IMPEXT static GUINode_RequestedConstraints_RequestedConstraintsType* MAX_SIBLING_AUTO;
+ 	STATIC_DLL_IMPEXT static GUINode_RequestedConstraints_RequestedConstraintsType* TABLECELL;
+ 
+ 	/**
+diff --git a/src/tdme/gui/nodes/GUIScreenNode.cpp b/src/tdme/gui/nodes/GUIScreenNode.cpp
+index 17fd57dfb..f010b2018 100644
+--- a/src/tdme/gui/nodes/GUIScreenNode.cpp
++++ b/src/tdme/gui/nodes/GUIScreenNode.cpp
+@@ -236,9 +236,13 @@ GUINode* GUIScreenNode::forceInvalidateLayout(GUINode* node) {
+ 		_node->parentNode != nullptr &&
+ 		// auto depends on its children dimensions, so do relayout the parent
+ 		((_node->requestedConstraints.leftType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
++		_node->requestedConstraints.leftType == GUINode_RequestedConstraints_RequestedConstraintsType::MAX_SIBLING_AUTO ||
+ 		_node->requestedConstraints.topType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
++		_node->requestedConstraints.topType == GUINode_RequestedConstraints_RequestedConstraintsType::MAX_SIBLING_AUTO ||
+ 		_node->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
+-		_node->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) ||
++		_node->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::MAX_SIBLING_AUTO ||
++		_node->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
++		_node->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::MAX_SIBLING_AUTO) ||
+ 		// percent depend on its parent dimensions so make sure its already layouted
+ 		(_node->layouted == false &&
+ 		(_node->requestedConstraints.leftType == GUINode_RequestedConstraints_RequestedConstraintsType::PERCENT ||
+@@ -248,9 +252,13 @@ GUINode* GUIScreenNode::forceInvalidateLayout(GUINode* node) {
+ 		// star depend on its parent dimensions, so make sure its already layouted
+ 		(_node->layouted == false &&
+ 		(_node->requestedConstraints.leftType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR ||
++		_node->requestedConstraints.leftType == GUINode_RequestedConstraints_RequestedConstraintsType::STARSTAR ||
+ 		_node->requestedConstraints.topType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR ||
++		_node->requestedConstraints.topType == GUINode_RequestedConstraints_RequestedConstraintsType::STARSTAR ||
+ 		_node->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR ||
+-		_node->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR)))) {
++		_node->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STARSTAR ||
++		_node->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR ||
++		_node->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STARSTAR)))) {
+ 		_node->layouted = false;
+ 		_node = _node->parentNode;
+ 	}
+diff --git a/src/tdme/gui/nodes/GUIStyledTextNode.cpp b/src/tdme/gui/nodes/GUIStyledTextNode.cpp
+index d54781e37..28c081505 100644
+--- a/src/tdme/gui/nodes/GUIStyledTextNode.cpp
++++ b/src/tdme/gui/nodes/GUIStyledTextNode.cpp
+@@ -475,7 +475,8 @@ bool GUIStyledTextNode::isContentNode()
+ 
+ int GUIStyledTextNode::getContentWidth()
+ {
+-	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
++	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
++		requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::MAX_SIBLING_AUTO) {
+ 		return font != nullptr?autoWidth + border.left + border.right + padding.left + padding.right:0;
+ 	} else {
+ 		return computedConstraints.width;
+@@ -483,7 +484,8 @@ int GUIStyledTextNode::getContentWidth()
+ }
+ 
+ int GUIStyledTextNode::getContentHeight()
+-{	if (requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
++{	if (requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
++		requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::MAX_SIBLING_AUTO) {
+ 		return font != nullptr?autoHeight + border.top + border.bottom + padding.top + padding.bottom:0;
+ 	} else {
+ 		return computedConstraints.height;
+@@ -492,9 +494,11 @@ int GUIStyledTextNode::getContentHeight()
+ 
+ void GUIStyledTextNode::computeContentAlignmentInternal() {
+ 	// If fixed width requested and no computed constraints yet, abort
+-	if (requestedConstraints.widthType != GUINode_RequestedConstraints_RequestedConstraintsType::AUTO && computedConstraints.width == -1) return;
++	if ((requestedConstraints.widthType != GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
++		requestedConstraints.widthType != GUINode_RequestedConstraints_RequestedConstraintsType::MAX_SIBLING_AUTO) && computedConstraints.width == -1) return;
+ 	// width did not change, but relayout has been requested
+-	if (requestedConstraints.widthType != GUINode_RequestedConstraints_RequestedConstraintsType::AUTO && widthLast == computedConstraints.width) return;
++	if ((requestedConstraints.widthType != GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
++		requestedConstraints.widthType != GUINode_RequestedConstraints_RequestedConstraintsType::MAX_SIBLING_AUTO) && widthLast == computedConstraints.width) return;
+ 	// no font, exit
+ 	if (font == nullptr) return;
+ 
+@@ -784,7 +788,11 @@ void GUIStyledTextNode::dispose()
+ 
+ void GUIStyledTextNode::determineNextLineConstraints(UTF8CharacterIterator& u8It, int charEndIdx, int textStyleIdx) {
+ 	//
+-	auto maxLineWidth = requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO?Float::MAX_VALUE:computedConstraints.width - (border.left + border.right + padding.left + padding.right);
++	auto maxLineWidth =
++		requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
++		requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::MAX_SIBLING_AUTO?
++			Float::MAX_VALUE:
++			computedConstraints.width - (border.left + border.right + padding.left + padding.right);
+ 
+ 	// determine line to render
+ 	if (preformatted == true) {
+diff --git a/src/tdme/gui/nodes/GUIStyledTextNodeController.cpp b/src/tdme/gui/nodes/GUIStyledTextNodeController.cpp
+index 297358765..d1946e1fd 100644
+--- a/src/tdme/gui/nodes/GUIStyledTextNodeController.cpp
++++ b/src/tdme/gui/nodes/GUIStyledTextNodeController.cpp
+@@ -93,7 +93,8 @@ void GUIStyledTextNodeController::postLayout()
+ 
+ 	// extend styledTextNode auto width to parent width if this is larger
+ 	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
+-	if (styledTextNode->getRequestsConstraints().widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
++	if (styledTextNode->getRequestsConstraints().widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
++		styledTextNode->getRequestsConstraints().widthType == GUINode_RequestedConstraints_RequestedConstraintsType::MAX_SIBLING_AUTO) {
+ 		auto& styledTextNodeBorder = styledTextNode->getBorder();
+ 		auto& styledTextNodePadding = styledTextNode->getPadding();
+ 		auto styledTextNodeAutoWidth = styledTextNode->getContentWidth();
+@@ -108,7 +109,8 @@ void GUIStyledTextNodeController::postLayout()
+ 					- (styledTextNodeBorder.left + styledTextNodeBorder.right + styledTextNodePadding.left + styledTextNodePadding.right);
+ 		}
+ 	}
+-	if (styledTextNode->getRequestsConstraints().heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
++	if (styledTextNode->getRequestsConstraints().heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
++		styledTextNode->getRequestsConstraints().heightType == GUINode_RequestedConstraints_RequestedConstraintsType::MAX_SIBLING_AUTO) {
+ 		auto& styledTextNodeBorder = styledTextNode->getBorder();
+ 		auto& styledTextNodePadding = styledTextNode->getPadding();
+ 		auto styledTextNodeAutoHeight = styledTextNode->getContentHeight();
+diff --git a/src/tdme/gui/nodes/GUITableNode.cpp b/src/tdme/gui/nodes/GUITableNode.cpp
+index 4729c4013..f93e2f80b 100644
+--- a/src/tdme/gui/nodes/GUITableNode.cpp
++++ b/src/tdme/gui/nodes/GUITableNode.cpp
+@@ -227,7 +227,8 @@ int GUITableNode::getTableCellMaxWidth(int x) {
+ 		if (requestedConstaints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
+ 			maxWidth = Math::max(maxWidth, computedConstraints.width);
+ 		} else
+-		if (requestedConstaints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
++		if (requestedConstaints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
++			requestedConstaints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::MAX_SIBLING_AUTO) {
+ 			maxWidth = Math::max(maxWidth, guiTableCellNode->getAutoWidth());
+ 		} else {
+ 			// TODO: percent, star
+@@ -245,7 +246,8 @@ int GUITableNode::getTableCellMaxHeight(int y) {
+ 		if (requestedConstaints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
+ 			maxHeight = Math::max(maxHeight, computedConstraints.height);
+ 		} else
+-		if (requestedConstaints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
++		if (requestedConstaints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
++			requestedConstaints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::MAX_SIBLING_AUTO) {
+ 			maxHeight = Math::max(maxHeight, guiTableCellNode->getAutoHeight());
+ 		} else {
+ 			// TODO: percent, star
+diff --git a/src/tdme/gui/nodes/GUITextureBaseNode.cpp b/src/tdme/gui/nodes/GUITextureBaseNode.cpp
+index c0376b43f..382ed2fb7 100644
+--- a/src/tdme/gui/nodes/GUITextureBaseNode.cpp
++++ b/src/tdme/gui/nodes/GUITextureBaseNode.cpp
+@@ -88,7 +88,8 @@ bool GUITextureBaseNode::isContentNode()
+ 
+ int GUITextureBaseNode::getContentWidth()
+ {
+-	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
++	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
++		requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::MAX_SIBLING_AUTO) {
+ 		return textureWidth * requestedDimensionConstraints.horizontalScale + border.left + border.right + padding.left + padding.right;
+ 	} else {
+ 		return computedConstraints.width;
+@@ -97,7 +98,8 @@ int GUITextureBaseNode::getContentWidth()
+ 
+ int GUITextureBaseNode::getContentHeight()
+ {
+-	if (requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
++	if (requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
++		requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::MAX_SIBLING_AUTO) {
+ 		return textureHeight * requestedDimensionConstraints.verticalScale + border.top + border.bottom + padding.top + padding.bottom;
+ 	} else {
+ 		return computedConstraints.height;

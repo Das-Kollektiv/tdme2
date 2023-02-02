@@ -31,6 +31,7 @@
 #include <tdme/utilities/StringTools.h>
 
 using std::remove;
+using std::reverse;
 using std::string;
 using std::unordered_map;
 using std::vector;
@@ -239,7 +240,9 @@ void FileDialogScreenController::setupRecents() {
 	string recentsInnerNodeSubNodesXML;
 	recentsInnerNodeSubNodesXML+=
 		"<scrollarea width=\"100%\" height=\"100%\" background-color=\"{$color.element_midground}\">\n";
-	for (auto& recent: recents) {
+	auto recentsReversed = recents;
+	reverse(recentsReversed.begin(), recentsReversed.end());
+	for (auto& recent: recentsReversed) {
 		auto fileImageName = "folder";
 		recentsInnerNodeSubNodesXML+=
 			"<selectbox-option text=\"" +

@@ -3,6 +3,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -11,6 +12,7 @@
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
+#include <tdme/utilities/Properties.h>
 #include <tdme/utilities/StringTools.h>
 
 #include <ext/tinyxml/tinyxml.h>
@@ -22,6 +24,7 @@ using std::to_string;
 
 using tdme::tools::editor::misc::TextFormatter;
 
+using tdme::gui::GUIParser;
 using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
@@ -30,6 +33,7 @@ using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::Float;
 using tdme::utilities::Integer;
+using tdme::utilities::Properties;
 using tdme::utilities::StringTools;
 
 using tinyxml::TiXmlAttribute;
@@ -39,6 +43,14 @@ using tinyxml::TiXmlElement;
 TextFormatter* TextFormatter::instance = nullptr;
 
 TextFormatter::TextFormatter() {
+	// read colors from theme
+	commentLineColor = GUIColor(GUIParser::getEngineThemeProperties()->get("color.text.commentline", "#888a85"));
+	commentInlineColor = GUIColor(GUIParser::getEngineThemeProperties()->get("color.text.commentinline", "#888a85"));
+	literalColor = GUIColor(GUIParser::getEngineThemeProperties()->get("color.text.literalcolor", "#8ae234"));
+	keyword1Color = GUIColor(GUIParser::getEngineThemeProperties()->get("color.text.keyword1color", "#cb551a"));
+	keyword2Color = GUIColor(GUIParser::getEngineThemeProperties()->get("color.text.keyword2color", "#eabc19"));
+	preprocessorColor = GUIColor(GUIParser::getEngineThemeProperties()->get("color.text.preprocessorcolor", "#ab7779"));
+	//
 	for (auto& language: languages) {
 		language.preprocessorLineKeywordsTokenized = StringTools::tokenize(language.preprocessorLineKeywords, " ");
 		language.keywords1Tokenized = StringTools::tokenize(language.keywords1, " ");
