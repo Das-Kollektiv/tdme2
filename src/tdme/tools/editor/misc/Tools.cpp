@@ -198,10 +198,10 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	ground->getMaterials()["ground"] = groundMaterial;
 	auto groundNode = new Node(ground, nullptr, "ground", "ground");
 	vector<Vector3> groundVertices;
-	groundVertices.push_back(Vector3(-width, y, -depth));
-	groundVertices.push_back(Vector3(-width, y, +depth));
-	groundVertices.push_back(Vector3(+width, y, +depth));
-	groundVertices.push_back(Vector3(+width, y, -depth));
+	groundVertices.push_back(Vector3(-width/2, y, -depth/2));
+	groundVertices.push_back(Vector3(-width/2, y, +depth/2));
+	groundVertices.push_back(Vector3(+width/2, y, +depth/2));
+	groundVertices.push_back(Vector3(+width/2, y, -depth/2));
 	vector<Vector3> groundNormals;
 	groundNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
 	vector<TextureCoordinate> groundTextureCoordinates;
@@ -395,13 +395,14 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 
 	// generate ground
 	auto ground = createGroundModel(
-		Math::ceil(maxAxisDimension),
-		Math::ceil(maxAxisDimension),
+		50.0f,
+		50.0f,
 		0.0f
 	);
 	auto groundObject = new Object("ground", ground);
 	groundObject->setEnabled(false);
 	groundObject->setScale(objectScale);
+	groundObject->setShader("solid");
 	groundObject->update();
 	engine->addEntity(groundObject);
 

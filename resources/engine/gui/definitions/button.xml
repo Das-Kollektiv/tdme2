@@ -3,7 +3,7 @@
 
 		<!-- normal -->
 		<layout width="{$width}" height="{$height}" padding="5" hide-on="disabled,mouseover,click" alignment="horizontal" horizontal-align="center" vertical-align="center" background-image="{$background-image}" background-image-scale9="10" background-image-effect-color-mul="{$color.button_normal}">
-			<image src="{$image}" />
+			<image src="{$image}"/>
 			<space hide-on="empty('{$image}'),empty('{$text}')" width="10"/>
 			<text id="{$id}_text_unselected" font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_highlight}"/>
 		</layout>
