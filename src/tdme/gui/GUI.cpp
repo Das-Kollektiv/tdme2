@@ -694,7 +694,13 @@ void GUI::handleEvents(bool clearEvents)
 		if (screen->getInputEventHandler() != nullptr) {
 			screen->getInputEventHandler()->handleInputEvents();
 		}
+		screen->forwardEvents();
 		if (screen->isPopUp() == true) break;
+	}
+
+	// clear events
+	for (auto screen: renderScreensCopy) {
+		screen->clearEvents();
 	}
 
 	//
