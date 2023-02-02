@@ -24,9 +24,11 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/gui/GUIParserException.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Properties.h>
 #include <tdme/utilities/Time.h>
 
 using std::map;
@@ -51,9 +53,11 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::GUI;
+using tdme::gui::GUIParser;
 using tdme::gui::GUIParserException;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::Properties;
 using tdme::utilities::Time;
 
 bool GUI::disableTabFocusControl = false;
@@ -65,12 +69,7 @@ GUI::GUI(Engine* engine, GUIRenderer* guiRenderer)
 	this->guiRenderer = guiRenderer;
 	this->width = engine->getWidth();
 	this->height = engine->getHeight();
-	try {
-		this->foccussedBorderColor = GUIColor("#5680C2");
-	} catch (Exception& exception) {
-		Console::print(string("GUI(): An error occurred: "));
-		Console::println(string(exception.what()));
-	}
+	this->foccussedBorderColor = GUIColor(GUIParser::getEngineThemeProperties()->get("color.focus", "#ff0000"));
 }
 
 GUI::~GUI() {
@@ -695,7 +694,13 @@ void GUI::handleEvents(bool clearEvents)
 		if (screen->getInputEventHandler() != nullptr) {
 			screen->getInputEventHandler()->handleInputEvents();
 		}
+		screen->forwardEvents();
 		if (screen->isPopUp() == true) break;
+	}
+
+	// clear events
+	for (auto screen: renderScreensCopy) {
+		screen->clearEvents();
 	}
 
 	//

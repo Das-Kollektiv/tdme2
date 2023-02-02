@@ -1,8 +1,7 @@
 <template>	
+
 	<element id="{$id}" width="auto" height="auto" disabled="{$disabled}" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
-		
-		<layer width="auto" >
-		
+			
 			<!-- normal -->
 			<layout width="250" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,selected,mouseover" >
 				<space width="5" />
@@ -74,7 +73,6 @@
 				{__InnerXML__}
 			</layout>
 
-		</layer>
-
 	</element>
+
 </template>

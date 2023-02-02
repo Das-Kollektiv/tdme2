@@ -1101,9 +1101,9 @@ void GUINode::dumpNode(GUINode* node, int depth, int indent, int depthIdx) {
 		node->id + ": " +
 		node->getNodeType() + ": constaints: " +
 		to_string(node->computedConstraints.left) + ", " +
-		to_string(node->computedConstraints.top) + ", " +
-		to_string(node->computedConstraints.width) + "; " +
-		to_string(node->computedConstraints.height) + ", alignment: " +
+		to_string(node->computedConstraints.top) + "; " +
+		to_string(node->computedConstraints.width) + ", " +
+		to_string(node->computedConstraints.height) + "; alignment: " +
 		to_string(node->computedConstraints.alignmentLeft) + ", " +
 		to_string(node->computedConstraints.alignmentTop) + "; content alignment: " +
 		to_string(node->computedConstraints.contentAlignmentLeft) + ", " +
