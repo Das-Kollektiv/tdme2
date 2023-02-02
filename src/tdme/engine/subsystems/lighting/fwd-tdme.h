@@ -11,6 +11,7 @@ namespace lighting {
 	class DeferredLightingShaderPBRFoliageImplementation;
 	class DeferredLightingShaderPBRTreeImplementation;
 	class DeferredLightingShaderSkyImplementation;
+	class DeferredLightingShaderSolidImplementation;
 	class DeferredLightingShaderTerrainImplementation;
 	class DeferredLightingShaderTreeImplementation;
 	class LightingShader;
@@ -27,6 +28,7 @@ namespace lighting {
 	class LightingShaderPBRFoliageImplementation;
 	class LightingShaderPBRTreeImplementation;
 	class LightingShaderSkyImplementation;
+	class LightingShaderSolidImplementation;
 	class LightingShaderTerrainImplementation;
 	class LightingShaderTerrainEditorImplementation;
 	class LightingShaderTreeImplementation;
