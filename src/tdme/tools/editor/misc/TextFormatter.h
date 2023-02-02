@@ -25,12 +25,12 @@ using tinyxml::TiXmlElement;
 class tdme::tools::editor::misc::TextFormatter final
 {
 private:
-	// These were grabbed from gedit, yaaaa, not sure about License
+	// these were grabbed from gedit, yaaaa, not sure about License
 	GUIColor commentLineColor { "#888a85" };
 	GUIColor commentInlineColor { "#888a85" };
-	GUIColor literalColor { "#eabc19" };
+	GUIColor literalColor { "#8ae234" };
 	GUIColor keyword1Color { "#cb551a" };
-	GUIColor keyword2Color { "#8ae234" };
+	GUIColor keyword2Color { "#eabc19" };
 	GUIColor preprocessorColor { "#ab7779" };
 
 	struct Language {
