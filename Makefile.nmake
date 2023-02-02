@@ -191,6 +191,7 @@ SRCS = \
 	src/tdme/engine/subsystems/lighting/DeferredLightingShaderPBRFoliageImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/DeferredLightingShaderPBRTreeImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/DeferredLightingShaderSkyImplementation.cpp \
+	src/tdme/engine/subsystems/lighting/DeferredLightingShaderSolidImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/DeferredLightingShaderTerrainImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/DeferredLightingShaderTreeImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShader.cpp \
@@ -205,6 +206,7 @@ SRCS = \
 	src/tdme/engine/subsystems/lighting/LightingShaderPBRFoliageImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderPBRTreeImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderSkyImplementation.cpp \
+	src/tdme/engine/subsystems/lighting/LightingShaderSolidImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderTerrainEditorImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderTerrainImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderTreeImplementation.cpp \
