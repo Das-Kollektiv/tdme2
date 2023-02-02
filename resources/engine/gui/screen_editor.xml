@@ -3,8 +3,7 @@
 		<layout id="fullscreen-content" show-on="fullscreen" alignment="vertical" width="100%" height="100%">
 		</layout>
 		<layout hide-on="fullscreen" alignment="vertical" width="100%" height="100%">
-			<layout padding="5" alignment="horizontal" vertical-align="center" width="100%" height="30">
-				<space width="5"/>
+			<layout padding="5" alignment="horizontal" vertical-align="center" width="100%" height="auto">
 				<image src="resources/engine/images/tdme.png"/>
 				<space width="5"/>
 				<menu-header>
@@ -30,7 +29,7 @@
 						<menu-item text="Select All" id="menu_edit_selectall" shortcut="Ctrl A" />
 						<menu-item text="Find/Replace" id="menu_edit_findreplace" image="resources/engine/images/search.png" shortcut="Ctrl F" />
 					</menu-header-item>
-					<menu-header-item text="View">
+					<menu-header-item text="Viewport">
 						<menu-item text="Full Screen" id="menu_view_fullscreen" image="resources/engine/images/fullscreen.png" shortcut="F11" />
 						<layout id="menu_view_tabs" alignment="vertical" width="auto">
 						</layout>
@@ -54,8 +53,8 @@
 						<menu-item id="menu_help_about" image="resources/engine/images/tdme.png" text="About"  />
 					</menu-header-item>
 				</menu-header>
+				
 			</layout>
-			
 			<layout alignment="horizontal" width="100%" height="*">
 			
 				<space width="5"/>
@@ -125,16 +124,30 @@
 				
 				<space width="5"/>
 				
-				
-				<!-- viewport -------------------------------------------------------->
-				<tabs id="tabs" alignment="vertical" width="*" height="100%" ignore-events="true">
-					<tabs-header id="tabs-header">
-					</tabs-header>
-					<tabs-content id="tabs-content" ignore-events="true">
-					</tabs-content>
-				</tabs>
-				<!------------------------------------------------------------------->
-				
+				<layout alignment="vertical" width="*" height="100%">
+					<!-- viewport -------------------------------------------------------->
+					<tabs id="tabs" alignment="vertical" width="100%" height="*" ignore-events="true">
+						<tabs-header id="tabs-header">
+						</tabs-header>
+						<tabs-content id="tabs-content" ignore-events="true">
+						</tabs-content>
+					</tabs>
+					<!------------------------------------------------------------------->
+					<space height="5"/>
+					<layout alignment="vertical" width="100%" height="auto" padding="5" background-color="{$color.element_foreground}">
+						<element id="log_panel" width="100%" height="auto">
+							<layout show-on="open" alignment="vertical" width="100%" height="250" padding="5" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
+								<styled-text width="100%" height="*" font="{$font.default}" color="{$color.font_normal}" size="{$fontsize.default}">
+									Lorem ipsum und so weiter
+								</styled-text>
+								<space height="5"/>
+							</layout>
+						</element>
+						<layout alignment="horizontal" width="100%" height="auto">
+							<checkbox template="checkbox_template_toolbar.xml" width="auto" value="1" image-unchecked="" image-checked="" text="Log" on-change="log_panel.condition!=open"/>
+						</layout>				
+					</layout>	
+				</layout>
 				
 				<space width="5"/>
 				

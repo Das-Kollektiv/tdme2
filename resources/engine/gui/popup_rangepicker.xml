@@ -48,7 +48,7 @@
 									<input id="rangepicker_highest_max" width="*" height="auto" text="10.0"  options="type=float,min=0.0,step=0.1,decimals=1" image="resources/engine/images/inputslider.png"/>
 								</layout>
 								<space width="10" />
-								<radiobutton template="radiobutton_template_gizmo.xml" id="rangepicker_highest_link" name="highestlink" width="25" height="25" value="1" image="resources/engine/images/checkbox_linked.png" />
+								<radiobutton template="radiobutton_template_toolbar.xml" id="rangepicker_highest_link" name="highestlink" width="25" height="25" value="1" image="resources/engine/images/checkbox_linked.png" />
 							</layout>
 						</layout>
 						<space height="5" />
@@ -65,7 +65,7 @@
 									<input id="rangepicker_lowest_max" width="*" height="auto" text="10.0"  options="type=float,min=0.0,step=0.1,decimals=1" image="resources/engine/images/inputslider.png"/>
 								</layout>
 								<space width="10" />
-								<radiobutton template="radiobutton_template_gizmo.xml" id="rangepicker_lowest_link" name="lowestlink" width="25" height="25" value="1" image="resources/engine/images/checkbox_linked.png" />
+								<radiobutton template="radiobutton_template_toolbar.xml" id="rangepicker_lowest_link" name="lowestlink" width="25" height="25" value="1" image="resources/engine/images/checkbox_linked.png" />
 							</layout>
 						</layout>
 						<space height="10" />
