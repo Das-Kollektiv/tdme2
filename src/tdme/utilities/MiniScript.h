@@ -447,6 +447,17 @@ public:
 		}
 
 		/**
+		 * Move constructor
+		 * @param scriptVariable script variable to move from
+		 */
+		inline ScriptVariable(ScriptVariable&& scriptVariable) {
+			type = scriptVariable.type;
+			valuePtr = scriptVariable.valuePtr;
+			scriptVariable.type = TYPE_VOID;
+			scriptVariable.valuePtr = 0LL;
+		}
+
+		/**
 		 * Constructor
 		 */
 		inline ScriptVariable() {
