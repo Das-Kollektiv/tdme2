@@ -30,6 +30,7 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
@@ -105,6 +106,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
 using tdme::math::Matrix2D3x3;
@@ -184,6 +186,7 @@ void EditorScreenController::initialize()
 		outlinerScrollarea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_outliner_scrollarea"));
 		detailsScrollarea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_details_scrollarea"));
 		outlinerAddDropDown = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dropdown_outliner_add"));
+		logStyledTextNode = required_dynamic_cast<GUIStyledTextNode*>(screenNode->getInnerNodeById("log"));
 
 		//
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectlibrary_import"))->getController()->setDisabled(true);
@@ -201,6 +204,32 @@ void EditorScreenController::initialize()
 		Console::print(string("EditorScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
+	//
+	class EditorLogger: public Console::Logger {
+		public:
+			EditorLogger(EditorScreenController* editorScreenController): editorScreenController(editorScreenController) {
+			}
+			void println(const string& str) {
+				editorScreenController->logMessages.push_back(str);
+				if (editorScreenController->logMessages.size() == 100) editorScreenController->logMessages.erase(editorScreenController->logMessages.begin());
+				editorScreenController->logUpdateRequired = true;
+			}
+			void print(const string& str) {
+				if (editorScreenController->logMessages.empty() == true) editorScreenController->logMessages.push_back(str);
+				editorScreenController->logMessages[editorScreenController->logMessages.size() - 1]+= str;
+				if (editorScreenController->logMessages.size() == 100) editorScreenController->logMessages.erase(editorScreenController->logMessages.begin());
+				editorScreenController->logUpdateRequired = true;
+			}
+			void println() {
+				editorScreenController->logMessages.push_back(string());
+				if (editorScreenController->logMessages.size() == 100) editorScreenController->logMessages.erase(editorScreenController->logMessages.begin());
+				editorScreenController->logUpdateRequired = true;
+			}
+		private:
+			EditorScreenController* editorScreenController { nullptr };
+	};
+	//
+	Console::setLogger(new EditorLogger(this));
 	//
 	onOpenProject();
 }
@@ -2293,6 +2322,17 @@ void EditorScreenController::tick() {
 		} else {
 			view->getPopUps()->getProgressBarScreenController()->progress2(fileOpenThread->getProgress());
 		}
+	}
+	//
+	if (logUpdateRequired == true) {
+		logUpdateRequired = false;
+		//
+		MutableString log;
+		for (auto& logMessage: logMessages) {
+			log.append(StringTools::replace(StringTools::replace(logMessage, "[", "\\["), "]", "\\]"));
+			log.append("\n");
+		}
+		logStyledTextNode->setText(log);
 	}
 }
 

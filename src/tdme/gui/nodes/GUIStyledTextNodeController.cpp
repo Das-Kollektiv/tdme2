@@ -75,7 +75,8 @@ void GUIStyledTextNodeController::initialize()
 	auto inputControllerNodeCandidate = node->getParentControllerNode();
 	while (inputControllerNodeCandidate != nullptr) {
 		if (dynamic_cast<GUIStyledInputController*>(inputControllerNodeCandidate->getController()) != nullptr) {
-			input = true;
+			input = required_dynamic_cast<GUIStyledTextNode*>(this->node)->isEditable();
+			//
 			break;
 		}
 		inputControllerNodeCandidate = inputControllerNodeCandidate->getParentControllerNode();

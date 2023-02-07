@@ -25,6 +25,20 @@ using tdme::os::threading::Thread;
 class tdme::utilities::Console
 {
 public:
+	struct Logger
+	{
+		virtual ~Logger() {}
+		virtual void println(const string& str) = 0;
+		virtual void print(const string& str) = 0;
+		virtual void println() = 0;
+	};
+
+	/**
+	 * Set logger
+	 * @param logger logger
+	 */
+	static void setLogger(Logger* logger);
+
 	/**
 	 * Print given string and trailing newline to console
 	 * @param str string
@@ -66,4 +80,5 @@ private:
 	STATIC_DLL_IMPEXT static Mutex* mutex;
 	STATIC_DLL_IMPEXT static vector<string>* messages;
 	STATIC_DLL_IMPEXT static LogWriterThread logWriterThread;
+	STATIC_DLL_IMPEXT static Logger* logger;
 };

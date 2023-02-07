@@ -1099,6 +1099,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
 					unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("tooltip")))),
+					node->Attribute("editable") == nullptr?false:StringTools::toLowerCase(StringTools::trim(node->Attribute("editable"))) == "true",
 					node->Attribute("preformatted") == nullptr?false:StringTools::toLowerCase(StringTools::trim(node->Attribute("preformatted"))) == "true",
 					StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("font")))),
 					parseInteger(StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("size")))), FONTSIZE_FALLBACK),
