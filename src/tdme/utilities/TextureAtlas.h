@@ -20,6 +20,7 @@ using tdme::engine::Texture;
  */
 class tdme::utilities::TextureAtlas {
 public:
+	static constexpr bool VERBOSE { false };
 	static constexpr int TEXTURE_IDX_NONE { -1 };
 
 	/**

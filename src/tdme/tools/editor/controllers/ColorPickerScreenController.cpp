@@ -90,8 +90,7 @@ void ColorPickerScreenController::initialize()
 		auto colorPickerImage = dynamic_cast<GUIImageNode*>(screenNode->getNodeById("colorpicker_image"));
 		colorPickerImage->setController(new ColorPickerImageController(colorPickerImage, this));
 	} catch (Exception& exception) {
-		Console::print(string("ColorPickerScreenController::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::println("ColorPickerScreenController::initialize(): An error occurred: " + string(exception.what()));
 	}
 }
 

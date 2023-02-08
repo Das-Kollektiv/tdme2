@@ -88,8 +88,8 @@ void PrototypeScriptSubController::setScriptDetails(Prototype* prototype) {
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_script"))->getActiveConditions().add("open");
 	} catch (Exception& exception) {
-		Console::println(string("PrototypeScriptSubController::setScriptDetails(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("PrototypeScriptSubController::setScriptDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 	//
 	updateScriptDetails(prototype);
@@ -106,8 +106,8 @@ void PrototypeScriptSubController::updateScriptDetails(Prototype* prototype) {
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("script"))->setTooltip(prototype->getScript());
 		}
 	} catch (Exception& exception) {
-		Console::println(string("PrototypeScriptSubController::updateScriptDetails(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("PrototypeScriptSubController::updateScriptDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
 
@@ -131,7 +131,6 @@ void PrototypeScriptSubController::onChange(GUIElementNode* node, Prototype* pro
 void PrototypeScriptSubController::onAction(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype)
 {
 	if (type != GUIActionListenerType::PERFORMED) return;
-	Console::println("PrototypeScriptSubController::onAction(): " + node->getId());
 	if (node->getId() == "script_open") {
 		onScriptSet(prototype);
 	} else
@@ -208,7 +207,6 @@ void PrototypeScriptSubController::setScript(const string& fileName, Prototype* 
 }
 
 bool PrototypeScriptSubController::onDrop(const string& payload, int mouseX, int mouseY, Prototype* prototype) {
-	Console::println("PrototypeScriptSubController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
 	if (StringTools::startsWith(payload, "file:") == false) {
 		return false;
 	} else {

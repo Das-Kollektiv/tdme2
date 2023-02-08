@@ -105,7 +105,7 @@ void EnvMapEditorTabController::onCommand(TabControllerCommand command)
 						Tools::getFileName(fileName)
 					);
 				} catch (Exception& exception) {
-					showInfoPopUp("Warning", (string(exception.what())));
+					showInfoPopUp("Warning", string(exception.what()));
 				}
 			}
 			break;
@@ -121,7 +121,7 @@ void EnvMapEditorTabController::onCommand(TabControllerCommand command)
 								envMapEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 							);
 						} catch (Exception& exception) {
-							envMapEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
+							envMapEditorTabController->showInfoPopUp("Warning", string(exception.what()));
 						}
 						envMapEditorTabController->popUps->getFileDialogScreenController()->close();
 					}
@@ -152,7 +152,6 @@ void EnvMapEditorTabController::onCommand(TabControllerCommand command)
 }
 
 void EnvMapEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
-	Console::println("EnvMapEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
 	showInfoPopUp("Warning", "You can not drop a file here");
 }
 
@@ -213,8 +212,6 @@ void EnvMapEditorTabController::setOutlinerAddDropDownContent() {
 }
 
 void EnvMapEditorTabController::updateDetails(const string& outlinerNode) {
-	Console::println("EnvMapEditorTabController::updateDetails(): ");
-
 	view->getEditorView()->setDetailsContent(
 		string("<template id=\"details_environmentmapping\" src=\"resources/engine/gui/template_details_environmentmapping.xml\" />\n") +
 		string("<template id=\"details_location\" src=\"resources/engine/gui/template_details_location.xml\" />\n")
@@ -252,8 +249,8 @@ void EnvMapEditorTabController::updateDetails(const string& outlinerNode) {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("location_translation_y"))->getController()->setValue(MutableString(environmentMapTranslation.getY()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("location_translation_z"))->getController()->setValue(MutableString(environmentMapTranslation.getZ()));
 	} catch (Exception& exception) {
-		Console::println(string("EnvMapEditorTabController::updateDetails(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("EnvMapEditorTabController::updateDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
 
@@ -289,8 +286,8 @@ void EnvMapEditorTabController::applyRenderPasses() {
 		view->setEnvironmentMapRenderPassMask(renderPassMask);
 		prototype->setEnvironmentMapRenderPassMask(renderPassMask);
 	} catch (Exception& exception) {
-		Console::println(string("EnvMapEditorTabController::applyRenderPasses(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("EnvMapEditorTabController::applyRenderPasses(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
 
@@ -303,8 +300,8 @@ void EnvMapEditorTabController::applyLocation() {
 		);
 		view->setEnvironmentMapTranslation(environmentMapTranslation);
 	} catch (Exception& exception) {
-		Console::println(string("EnvMapEditorTabController::applyLocation(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("EnvMapEditorTabController::applyLocation(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
 

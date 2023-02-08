@@ -27,6 +27,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
+#include <tdme/utilities/RTTI.h>
 #include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
@@ -59,6 +60,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::utilities::Console;
 using tdme::utilities::Float;
 using tdme::utilities::Integer;
+using tdme::utilities::RTTI;
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
 using tdme::utilities::Time;
@@ -319,7 +321,7 @@ void GUIElementNode::executeExpression(GUIScreenNode* screenNode, const string& 
 			while(t1.hasMoreTokens() == true) value+= t1.nextToken() + ";";
 			screenNode->addTimedExpression(Time::getCurrentMillis() + delay, value);
 		} else {
-			Console::println("GUIElementController::executeExpression(): Unknown sub command in expression: " + subCommand);
+			Console::println("GUIElementController::executeExpression(): Unknown sub command in expression: expression = " + expression + ", sub command = " + subCommand);
 		}
 	}
 }

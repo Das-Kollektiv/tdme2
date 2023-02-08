@@ -70,8 +70,7 @@ void ContextMenuScreenController::initialize()
 		screenNode->addTooltipRequestListener(this);
 		contextMenuNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("contextmenu"));
 	} catch (Exception& exception) {
-		Console::print(string("ContextMenuScreenController::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::println("ContextMenuScreenController::initialize(): An error occurred: " + string(exception.what()));
 	}
 }
 

@@ -129,7 +129,7 @@ void DecalEditorTabController::onCommand(TabControllerCommand command)
 						Tools::getFileName(fileName)
 					);
 				} catch (Exception& exception) {
-					showInfoPopUp("Warning", (string(exception.what())));
+					showInfoPopUp("Warning", string(exception.what()));
 				}
 			}
 			break;
@@ -145,7 +145,7 @@ void DecalEditorTabController::onCommand(TabControllerCommand command)
 								decalEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 							);
 						} catch (Exception& exception) {
-							decalEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
+							decalEditorTabController->showInfoPopUp("Warning", string(exception.what()));
 						}
 						decalEditorTabController->popUps->getFileDialogScreenController()->close();
 					}
@@ -176,7 +176,6 @@ void DecalEditorTabController::onCommand(TabControllerCommand command)
 }
 
 void DecalEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
-	Console::println("DecalEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
 	if (prototypePhysicsSubController->onDrop(payload, mouseX, mouseY, view->getPrototype()) == true) return;
 	if (prototypeScriptSubController->onDrop(payload, mouseX, mouseY, view->getPrototype()) == true) return;
 	if (StringTools::startsWith(payload, "file:") == false) {
@@ -339,8 +338,8 @@ void DecalEditorTabController::setDecalTexture(const string& fileName) {
 			physicsSubView->updateGizmo(prototype);
 		}
 	} catch (Exception& exception) {
-		Console::println(string() + "OnDecalTextureFileOpenAction::performAction(): An error occurred: " + exception.what());
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("OnDecalTextureFileOpenAction::performAction(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 	required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("decal_texture"))->setSource(decal->getTextureFileName());
 	required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("decal_texture"))->setTooltip(decal->getTextureFileName());
@@ -383,8 +382,8 @@ void DecalEditorTabController::setDecalDetails() {
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("decal_texture"))->setSource(decal->getTextureFileName());
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("decal_texture"))->setTooltip(decal->getTextureFileName());
 	} catch (Exception& exception) {
-		Console::println(string("DecalEditorTabController::setDecalDetails(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("DecalEditorTabController::setDecalDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
 

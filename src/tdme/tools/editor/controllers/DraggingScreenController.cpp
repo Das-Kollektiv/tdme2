@@ -65,9 +65,8 @@ void DraggingScreenController::initialize()
 		screenNode->setVisible(false);
 		GUINode::dumpNode(screenNode);
 		draggableNode = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("draggable"));
-			} catch (Exception& exception) {
-		Console::print(string("DraggingScreenController::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+	} catch (Exception& exception) {
+		Console::println("DraggingScreenController::initialize(): An error occurred: " + string(exception.what()));
 	}
 }
 
@@ -79,7 +78,6 @@ void DraggingScreenController::onMove(GUINode* node) {
 }
 
 void DraggingScreenController::onRelease(GUINode* node, int mouseX, int mouseY) {
-	Console::println("DraggingScreenController::onRelease(): " + node->getId() + ", x: " + to_string(mouseX) + ", y: " + to_string(mouseY));
 	dragReleaseMouseX = mouseX;
 	dragReleaseMouseY = mouseY;
 	close();
@@ -101,8 +99,7 @@ void DraggingScreenController::start(int mouseX, int mouseY, const string& xml, 
 	try {
 		draggableNode->replaceSubNodes(xml, true);
 	} catch (Exception& exception) {
-		Console::print(string("DraggingScreenController::start(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::println("DraggingScreenController::start(): An error occurred: " + string(exception.what()));
 	}
 	auto scaledMouseX = Engine::getInstance()->getGUI()->getScaledX(screenNode, mouseX);
 	auto scaledMouseY = Engine::getInstance()->getGUI()->getScaledY(screenNode, mouseY);
@@ -122,8 +119,7 @@ void DraggingScreenController::start(int mouseX, int mouseY, const string& xml, 
 	try {
 		((GUIMoveableController*)(draggableNode->getController()))->startMoving(scaledMouseX, scaledMouseY);
 	} catch (Exception& exception) {
-		Console::print(string("DraggingScreenController::start(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::println("DraggingScreenController::start(): An error occurred: " + string(exception.what()));
 	}
 }
 

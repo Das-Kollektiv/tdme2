@@ -75,8 +75,7 @@ void InputDialogScreenController::initialize()
 		tabsHeaderNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("inputdialog_tabs-header"));
 		inputNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("inputdialog_inputtext"));
 	} catch (Exception& exception) {
-		Console::print(string("InputDialogScreenController::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::println("InputDialogScreenController::initialize(): An error occurred: " + string(exception.what()));
 	}
 }
 

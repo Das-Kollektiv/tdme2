@@ -441,10 +441,8 @@ const vector<TiXmlElement*> TextFormatter::getChildren(TiXmlElement* parent)
 }
 
 const TextFormatter::CodeCompletion* TextFormatter::loadCodeCompletion(const string& extension) {
-	Console::println("TextFormatter::loadCodeCompletion()");
 	for (auto& language: languages) {
 		if (std::find(language.extensions.begin(), language.extensions.end(), extension) != language.extensions.end()) {
-			Console::println("TextFormatter::loadCodeCompletion(): found language: '" + language.name + "'");
 			try {
 				// load dae xml document
 				auto xmlContent = FileSystem::getInstance()->getContentAsString("resources/engine/code-completion", StringTools::toLowerCase(language.name) + ".xml");
@@ -473,7 +471,7 @@ const TextFormatter::CodeCompletion* TextFormatter::loadCodeCompletion(const str
 				codeCompletion->statementDelimiter = language.statementDelimiter;
 				return codeCompletion;
 			} catch (Exception &exception) {
-				Console::println("TextFormatter::loadCodeCompletion(): found language: '" + language.name + "': An error occurred: " + exception.what());
+				Console::println("TextFormatter::loadCodeCompletion(): found language: '" + language.name + "': An error occurred: " + string(exception.what()));
 			}
 			break;
 		}

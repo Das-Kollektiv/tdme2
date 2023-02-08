@@ -143,7 +143,7 @@ void TextEditorTabController::onCommand(TabControllerCommand command)
 						Tools::getFileName(fileName)
 					);
 				} catch (Exception& exception) {
-					showInfoPopUp("Warning", (string(exception.what())));
+					showInfoPopUp("Warning", string(exception.what()));
 				}
 			}
 			break;
@@ -159,7 +159,7 @@ void TextEditorTabController::onCommand(TabControllerCommand command)
 								textEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 							);
 						} catch (Exception& exception) {
-							textEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
+							textEditorTabController->showInfoPopUp("Warning", string(exception.what()));
 						}
 						textEditorTabController->popUps->getFileDialogScreenController()->close();
 					}
@@ -322,7 +322,6 @@ void TextEditorTabController::onCommand(TabControllerCommand command)
 }
 
 void TextEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
-	Console::println("TextEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
 	showInfoPopUp("Warning", "You can not drop a file here");
 }
 

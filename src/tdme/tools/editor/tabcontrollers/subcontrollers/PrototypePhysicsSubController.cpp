@@ -181,8 +181,8 @@ void PrototypePhysicsSubController::setPhysicsDetails(Prototype* prototype) {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_inertiatensor_z"))->getController()->setValue(physics->getInertiaTensor().getZ());
 
 	} catch (Exception& exception) {
-		Console::println(string("PrototypePhysicsSubController::setPhysicsDetails(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("PrototypePhysicsSubController::setPhysicsDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
 
@@ -204,8 +204,8 @@ void PrototypePhysicsSubController::applyPhysicsDetails(Prototype* prototype) {
 			)
 		);
 	} catch (Exception& exception) {
-		Console::println(string("PrototypePhysicsSubController::applyPhysicsDetails(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("PrototypePhysicsSubController::applyPhysicsDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
 
@@ -238,8 +238,8 @@ void PrototypePhysicsSubController::setBoundingVolumeSphereDetails(const Vector3
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_sphere_z"))->getController()->setValue(MutableString(center.getZ()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_sphere_radius"))->getController()->setValue(MutableString(radius));
 	} catch (Exception& exception) {
-		Console::println(string("PrototypePhysicsSubController::setBoundingVolumeSphereDetails(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("PrototypePhysicsSubController::setBoundingVolumeSphereDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
 
@@ -253,8 +253,8 @@ void PrototypePhysicsSubController::setBoundingVolumeCapsuleDetails(const Vector
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_b_z"))->getController()->setValue(MutableString(b.getZ()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_radius"))->getController()->setValue(MutableString(radius));
 	} catch (Exception& exception) {
-		Console::println(string("PrototypePhysicsSubController::setBoundingVolumeCapsuleDetails(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("PrototypePhysicsSubController::setBoundingVolumeCapsuleDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
 
@@ -274,8 +274,8 @@ void PrototypePhysicsSubController::setBoundingVolumeOBBDetails(const Vector3& c
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_height"))->getController()->setValue(MutableString(halfExtension.getY() * 2.0f));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_depth"))->getController()->setValue(MutableString(halfExtension.getZ() * 2.0f));
 	} catch (Exception& exception) {
-		Console::println(string("PrototypePhysicsSubController::setBoundingVolumeOBBDetails(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("PrototypePhysicsSubController::setBoundingVolumeOBBDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
 
@@ -287,8 +287,8 @@ void PrototypePhysicsSubController::setImportConvexMeshFromModelDetails() {
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_importconvexmesh"))->getActiveConditions().add("open");
 	} catch (Exception& exception) {
-		Console::println(string("PrototypePhysicsSubController::setImportConvexMeshFromModelDetails(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("PrototypePhysicsSubController::setImportConvexMeshFromModelDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
 
@@ -300,8 +300,8 @@ void PrototypePhysicsSubController::setGenerateConvexMeshFromModelDetails() {
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_generateconvexmesh"))->getActiveConditions().add("open");
 	} catch (Exception& exception) {
-		Console::println(string("PrototypePhysicsSubController::setGenerateConvexMeshFromModelDetails(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("PrototypePhysicsSubController::setGenerateConvexMeshFromModelDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
 
@@ -448,12 +448,12 @@ void PrototypePhysicsSubController::setBoundingVolumeDetails(Prototype* prototyp
 				required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("boundingvolume_convexmesh_file"))->setTexture(thumbnailTexture);
 				required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("boundingvolume_convexmesh_file"))->setTooltip(thumbnailTooltip);
 			} else {
-				Console::println(string("PrototypePhysicsSubController::setBoundingVolumeDetails(): invalid bounding volume@" + to_string(boundingVolumeIdx)));
+				Console::println("PrototypePhysicsSubController::setBoundingVolumeDetails(): invalid bounding volume@" + to_string(boundingVolumeIdx));
 			}
 		}
 	} catch (Exception& exception) {
-		Console::println(string("PrototypePhysicsSubController::setBoundingVolumeDetails(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("PrototypePhysicsSubController::setBoundingVolumeDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
 
@@ -471,7 +471,7 @@ void PrototypePhysicsSubController::applyBoundingVolumeSphereDetails(Prototype* 
 			Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_sphere_radius"))->getController()->getValue().getString())
 		);
 	} catch (Exception& exception) {
-		showInfoPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 	view->updateGizmo(prototype);
 }
@@ -495,7 +495,7 @@ void PrototypePhysicsSubController::applyBoundingVolumeCapsuleDetails(Prototype*
 			Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_radius"))->getController()->getValue().getString())
 		);
 	} catch (Exception& exception) {
-		showInfoPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 	view->updateGizmo(prototype);
 }
@@ -530,7 +530,7 @@ void PrototypePhysicsSubController::applyBoundingVolumeObbDetails(Prototype* pro
 			)
 		);
 	} catch (Exception& exception) {
-		showInfoPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 	view->updateGizmo(prototype);
 }
@@ -544,7 +544,7 @@ void PrototypePhysicsSubController::applyBoundingVolumeConvexMeshDetails(Prototy
 			boundingVolume != nullptr?boundingVolume->getConvexMeshFile():string()
 		);
 	} catch (Exception& exception) {
-		showInfoPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 	view->removeGizmo();
 }
@@ -888,8 +888,8 @@ void PrototypePhysicsSubController::setBoundingVolumeConvexMeshFile(int bounding
 			fileName
 		);
 	} catch (Exception& exception) {
-		Console::println(string("PrototypePhysicsSubController::setBoundingVolumeConvexMeshFile(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("PrototypePhysicsSubController::setBoundingVolumeConvexMeshFile(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 	view->removeGizmo();
 	setBoundingVolumeDetails(prototype, boundingVolumeIdx);
@@ -920,13 +920,13 @@ void PrototypePhysicsSubController::importBoundingVolumeConvexMeshFile(const str
 					prototypeBoundingVolume->setupConvexMesh(convexMeshTMData);
 					prototype->addBoundingVolume(prototypeBoundingVolume->getId(), prototypeBoundingVolume);
 				} catch (Exception& exception) {
-					Console::println(string("PrototypePhysicsSubController::importBoundingVolumeConvexMeshFile(): An error occurred: ") + exception.what());
+					Console::println("PrototypePhysicsSubController::importBoundingVolumeConvexMeshFile(): An error occurred: " + string(exception.what()));
 				}
 			}
 		}
 	} catch (Exception& exception) {
-		Console::println(string("PrototypePhysicsSubController::importBoundingVolumeConvexMeshFile(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("PrototypePhysicsSubController::importBoundingVolumeConvexMeshFile(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 	editorView->reloadTabOutliner("physics");
 
@@ -972,13 +972,13 @@ void PrototypePhysicsSubController::generateBoundingVolumeConvexMeshFiles(const 
 					prototypeBoundingVolume->setupConvexMesh(convexMeshTMData);
 					prototype->addBoundingVolume(prototypeBoundingVolume->getId(), prototypeBoundingVolume);
 				} catch (Exception& exception) {
-					Console::println(string("generateBoundingVolumeConvexMeshFiles::performAction(): An error occurred: ") + exception.what());
+					Console::println("PrototypePhysicsSubController::generateBoundingVolumeConvexMeshFiles(): An error occurred: " + string(exception.what()));
 				}
 			}
 		}
 	} catch (Exception& exception) {
-		Console::println(string("generateBoundingVolumeConvexMeshFiles::performAction(): An error occurred: ") + exception.what());
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("generateBoundingVolumeConvexMeshFiles::generateBoundingVolumeConvexMeshFiles(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 
 
@@ -991,7 +991,6 @@ void PrototypePhysicsSubController::generateBoundingVolumeConvexMeshFiles(const 
 }
 
 bool PrototypePhysicsSubController::onDrop(const string& payload, int mouseX, int mouseY, Prototype* prototype) {
-	Console::println("PrototypePhysicsSubController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
 	if (StringTools::startsWith(payload, "file:") == false) {
 		return false;
 	} else {
