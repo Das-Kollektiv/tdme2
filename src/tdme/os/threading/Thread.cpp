@@ -75,7 +75,6 @@ void Thread::start() {
 		size_t currentStackSize;
 		pthread_attr_getstacksize(&pThreadAttr, &currentStackSize);
 		if (currentStackSize != stackSize) {
-			Console::println("Thread::start(): " + name + ": changing stack size from " + to_string(currentStackSize) + " to " + to_string(stackSize));
 			pthread_attr_setstacksize(&pThreadAttr, stackSize);
 		}
 

@@ -162,8 +162,6 @@ void PrototypeSoundsSubController::createOutlinerSoundsXML(Prototype* prototype,
 }
 
 void PrototypeSoundsSubController::updateDetails(Prototype* prototype, Model* model, const string& outlinerNode) {
-	Console::println("PrototypeSoundsSubController::updateDetails(): " + outlinerNode);
-
 	if (StringTools::startsWith(outlinerNode, "sounds.") == false) return;
 
 	auto soundId = StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size());
@@ -201,8 +199,7 @@ void PrototypeSoundsSubController::updateDetails(Prototype* prototype, Model* mo
 		try {
 			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("sound_animation_scrollarea"))->replaceSubNodes(animationsDropDownXML, true);
 		} catch (Exception& exception) {
-			Console::print(string("PrototypeSoundsSubController::setSoundDetails(): An error occurred: "));
-			Console::println(string(exception.what()));
+			Console::println("PrototypeSoundsSubController::setSoundDetails(): An error occurred: " + string(exception.what()));
 		}
 	}
 
@@ -220,8 +217,8 @@ void PrototypeSoundsSubController::updateDetails(Prototype* prototype, Model* mo
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_ambient"))->getController()->setValue(MutableString(sound->isFixed() == true?"1":""));
 
 	} catch (Exception& exception) {
-		Console::println(string("PrototypeSoundsSubController::setSoundDetails(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("PrototypeSoundsSubController::setSoundDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
 
@@ -236,8 +233,8 @@ void PrototypeSoundsSubController::applySoundDetails(Prototype* prototype, const
 		sound->setFixed(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_ambient"))->getController()->getValue().getString() == "1");
 		playableSoundView->playSound(sound->getId());
 	} catch (Exception& exception) {
-		Console::println(string("PrototypeSoundsSubController::updateSoundDetails(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("PrototypeSoundsSubController::updateSoundDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
 
@@ -255,8 +252,8 @@ const string PrototypeSoundsSubController::applySoundDetailsRename(Prototype* pr
 		sound->setId(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_key"))->getController()->getValue().getString());
 		playableSoundView->playSound(sound->getId());
 	} catch (Exception& exception) {
-		Console::println(string("PrototypeSoundsSubController::updateSoundDetailsRename(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("PrototypeSoundsSubController::updateSoundDetailsRename(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 	return newSoundId;
 }
@@ -282,8 +279,8 @@ void PrototypeSoundsSubController::createSound(Prototype* prototype) {
 			throw ExceptionBase("Could not create sound");
 		}
 	} catch (Exception& exception) {
-		Console::println(string("PrototypeSoundsSubController::createSound(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("PrototypeSoundsSubController::createSound(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 
 	if (soundCreate == true) {
@@ -319,8 +316,8 @@ void PrototypeSoundsSubController::renameSound(Prototype* prototype) {
 			throw ExceptionBase("Could not rename sound");
 		}
 	} catch (Exception& exception) {
-		Console::println(string("PrototypeSoundsSubController::renameSound(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("PrototypeSoundsSubController::renameSound(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 		return;
 	}
 
@@ -497,14 +494,13 @@ void PrototypeSoundsSubController::setSound(const string& soundId, const string&
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sound"))->setSource("resources/engine/images/sound_big.png");
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sound"))->setTooltip(fileName);
 	} catch (Exception& exception) {
-		Console::println(string() + "PrototypeSoundsSubController::setSound(): An error occurred: " + exception.what());
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("PrototypeSoundsSubController::setSound(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 	playableSoundView->playSound(sound->getId());
 }
 
 bool PrototypeSoundsSubController::onDrop(const string& payload, int mouseX, int mouseY, Prototype* prototype) {
-	Console::println("PrototypeSoundsSubController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
 	if (StringTools::startsWith(payload, "file:") == false) {
 		return false;
 	} else {

@@ -18,6 +18,7 @@ using tdme::utilities::Time;
 Mutex* Console::mutex = nullptr;
 vector<string>* Console::messages = nullptr;
 Console::LogWriterThread Console::logWriterThread;
+Console::Logger* Console::logger = nullptr;
 
 Console::LogWriterThread::LogWriterThread(): Thread("console-logwriter-thread") {
 	Console::mutex = new Mutex("console");
@@ -31,7 +32,6 @@ Console::LogWriterThread::~LogWriterThread() {
 	Console::logWriterThread.stop();
 	Console::logWriterThread.join();
 }
-
 
 void Console::LogWriterThread::run() {
 	Console::println("Console::LogWriterThread(): start");
@@ -58,28 +58,45 @@ void Console::LogWriterThread::flush() {
 	Console::messages->clear();
 }
 
+void Console::setLogger(Console::Logger* logger) {
+	if (Console::logger != nullptr) delete Console::logger;
+	Console::logger = logger;
+}
+
 void Console::println(const string& str)
 {
 	mutex->lock();
-	cout << str << endl;
 	messages->push_back(str);
+	if (logger != nullptr) {
+		logger->println(str);
+	} else {
+		cout << str << endl;
+	}
 	mutex->unlock();
 }
 
 void Console::print(const string& str)
 {
 	mutex->lock();
-	cout << str;
 	if (messages->size() == 0) messages->push_back("");
 	(*messages)[messages->size() - 1]+= str;
+	if (logger != nullptr) {
+		logger->print(str);
+	} else {
+		cout << str;
+	}
 	mutex->unlock();
 }
 
 void Console::println()
 {
 	mutex->lock();
-	cout << endl;
 	messages->push_back("");
+	if (logger != nullptr) {
+		logger->println();
+	} else {
+		cout << endl;
+	}
 	mutex->unlock();
 }
 

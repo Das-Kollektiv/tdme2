@@ -61,8 +61,7 @@ void TextureTabView::initialize()
 		textureTabController->initialize(editorView->getScreenController()->getScreenNode());
 		screenNode->addTooltipRequestListener(textureTabController);
 	} catch (Exception& exception) {
-		Console::print(string("TextureTabView::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::println("TextureTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
 	// TODO: load settings
 }

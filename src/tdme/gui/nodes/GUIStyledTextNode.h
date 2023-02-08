@@ -67,6 +67,7 @@ private:
 		GUIColor effectColorAdd;
 	};
 
+	bool editable;
 	bool preformatted;
 	GUIFont* font { nullptr };
 	int size;
@@ -260,6 +261,7 @@ protected:
 	 * @param size font size
 	 * @param color color
 	 * @param text text
+	 * @param editable editable
 	 * @throws tdme::gui::GUIParserException
 	 */
 	GUIStyledTextNode(
@@ -279,6 +281,7 @@ protected:
 		const GUINodeConditions& showOn,
 		const GUINodeConditions& hideOn,
 		const string& tooltip,
+		bool editable,
 		bool preformatted,
 		const string& font,
 		int size,
@@ -299,16 +302,23 @@ public:
 	void render(GUIRenderer* guiRenderer) override;
 
 	/**
+	 * @return if is editable
+	 */
+	inline bool isEditable() {
+		return editable;
+	}
+
+	/**
 	 * @return index position x
 	 */
-	int getIndexPositionX() {
+	inline int getIndexPositionX() {
 		return indexPositionX;
 	}
 
 	/**
 	 * @return index position x
 	 */
-	int getIndexPositionY() {
+	inline int getIndexPositionY() {
 		return indexPositionY;
 	}
 

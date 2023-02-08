@@ -448,22 +448,18 @@ void SceneEditorTabView::handleInputEvents()
 		}
 	}
 	if (keyDelete == true) {
-		Console::println("SceneEditorTabView::handleInputEvents(): Backspace");
 		removeGizmo();
 		removeEntities();
 	}
 	if (keyControlX == true) {
-		Console::println("SceneEditorTabView::handleInputEvents(): CTRL-X");
 		removeGizmo();
 		copyEntities();
 		removeEntities();
 	}
 	if (keyControlC == true) {
-		Console::println("SceneEditorTabView::handleInputEvents(): CTRL-C");
 		copyEntities();
 	}
 	if (keyControlV == true) {
-		Console::println("SceneEditorTabView::handleInputEvents(): CTRL-V");
 		removeGizmo();
 		setPasteMode();
 	}
@@ -566,8 +562,7 @@ void SceneEditorTabView::initialize()
 		sceneEditorTabController = new SceneEditorTabController(this);
 		sceneEditorTabController->initialize(editorView->getScreenController()->getScreenNode());
 	} catch (Exception& exception) {
-		Console::print(string("SceneEditorTabView::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::println("SceneEditorTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
 	//
 	for (auto i = 1; i < engine->getLightCount(); i++) engine->getLightAt(i)->setEnabled(false);
@@ -765,7 +760,6 @@ void SceneEditorTabView::selectEntities(const vector<string>& entityIds)
 	selectedEntityIds.clear();
 	selectedEntityIdsById.clear();
 	for (auto entityId: entityIds) {
-		Console::println("SceneEditorTabView::selectEntities(): " + entityId);
 		auto selectedEntity = engine->getEntity(entityId);
 		if (selectedEntity == nullptr) continue;
 		selectEntityInternal(selectedEntity);
@@ -795,7 +789,6 @@ void SceneEditorTabView::unselectEntities()
 		auto entityToUnselect = engine->getEntity(entityIdToUnselect);
 		if (entityToUnselect == nullptr) continue;
 		resetEntity(entityToUnselect);
-		Console::println("SceneEditorTabView::unselectEntities(): " + entityIdToUnselect);
 	}
 	selectedEntityIds.clear();
 	selectedEntityIdsById.clear();
@@ -1461,8 +1454,8 @@ void SceneEditorTabView::addPrototype(Prototype* prototype) {
 			sceneLibrary->addPrototype(prototype);
 		}
 	} catch (Exception& exception) {
-		Console::println(string("SceneEditorTabView::addPrototype(): An error occurred: ") + exception.what());;
-		sceneEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("SceneEditorTabView::addPrototype(): An error occurred: " + string(exception.what()));
+		sceneEditorTabController->showInfoPopUp("Warning", string(exception.what()));
 	}
 	reloadOutliner("scene.prototypes." + to_string(prototype->getId()));
 }

@@ -206,8 +206,7 @@ void UIEditorTabView::initialize()
 		uiTabController = new UIEditorTabController(this);
 		uiTabController->initialize(editorView->getScreenController()->getScreenNode());
 	} catch (Exception& exception) {
-		Console::print(string("UIEditorTabView::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::println("UIEditorTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
 	// TODO: load settings
 
@@ -657,8 +656,7 @@ Prototype* UIEditorTabView::loadPrototype(const string& pathName, const string& 
 	try {
 		prototype = PrototypeReader::read(pathName, fileName);
 	} catch (Exception& exception) {
-		Console::print(string("UIEditorTabView::loadPrototype(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::println("UIEditorTabView::loadPrototype(): An error occurred: " + string(exception.what()));
 		//
 		return nullptr;
 	}
@@ -807,7 +805,6 @@ void UIEditorTabView::setCodeEditor() {
 }
 
 void UIEditorTabView::updateCodeEditor() {
-	Console::println("UIEditorTabView::updateCodeEditor(): " + to_string(screenIdx));
 	//
 	if (screenIdx < 0 || screenIdx >= uiScreenNodes.size()) return;
 	//

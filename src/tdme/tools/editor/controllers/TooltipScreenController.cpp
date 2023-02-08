@@ -58,8 +58,7 @@ void TooltipScreenController::initialize()
 		screenNode->setVisible(false);
 		tooltipNode = required_dynamic_cast<GUITextNode*>(screenNode->getNodeById("tooltip"));
 	} catch (Exception& exception) {
-		Console::print(string("TooltipScreenController::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::println("TooltipScreenController::initialize(): An error occurred: " + string(exception.what()));
 	}
 }
 

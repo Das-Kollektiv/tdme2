@@ -180,7 +180,6 @@ void SceneEditorTabController::onCommand(TabControllerCommand command)
 }
 
 void SceneEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
-	Console::println("SceneEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
 	if (StringTools::startsWith(payload, "file:") == false) {
 		showInfoPopUp("Warning", "Unknown payload in drop");
 	} else {
@@ -214,8 +213,8 @@ void SceneEditorTabController::onDrop(const string& payload, int mouseX, int mou
 							showInfoPopUp("Warning", "Could not place prototype entity.");
 						}
 					} catch (Exception& exception) {
-						Console::println(string("SceneEditorTabController::onDrop(): An error occurred: ") + exception.what());;
-						showInfoPopUp("Warning", (string(exception.what())));
+						Console::println("SceneEditorTabController::onDrop(): An error occurred: " + string(exception.what()));
+						showInfoPopUp("Warning", string(exception.what()));
 					}
 				}
 			} else {
@@ -230,8 +229,6 @@ void SceneEditorTabController::save(const string& pathName, const string& fileNa
 	auto scene = view->getScene();
 	if (scene == nullptr) return;
 
-	Console::println("SceneEditorTabController::save(): " + Tools::getPathName(pathName) + "/" + Tools::getFileName(fileName));
-
 	//
 	try {
 		SceneWriter::write(
@@ -240,8 +237,8 @@ void SceneEditorTabController::save(const string& pathName, const string& fileNa
 			scene
 		);
 	} catch (Exception& exception) {
-		Console::println(string("SceneEditorTabController::save(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("SceneEditorTabController::save(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
 
@@ -310,8 +307,8 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 						)
 					);
 				} catch (Exception& exception) {
-					Console::println(string("SceneEditorTabController::onChange(): An error occurred: ") + exception.what());;
-					showInfoPopUp("Warning", (string(exception.what())));
+					Console::println("SceneEditorTabController::onChange(): An error occurred: " + string(exception.what()));
+					showInfoPopUp("Warning", string(exception.what()));
 				}
 				//
 				break;
@@ -329,8 +326,8 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 						)
 					);
 				} catch (Exception& exception) {
-					Console::println(string("SceneEditorTabController::onChange(): An error occurred: ") + exception.what());;
-					showInfoPopUp("Warning", (string(exception.what())));
+					Console::println("SceneEditorTabController::onChange(): An error occurred: " + string(exception.what()));
+					showInfoPopUp("Warning", string(exception.what()));
 				}
 				//
 				break;
@@ -348,8 +345,8 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 						)
 					);
 				} catch (Exception& exception) {
-					Console::println(string("SceneEditorTabController::onChange(): An error occurred: ") + exception.what());;
-					showInfoPopUp("Warning", (string(exception.what())));
+					Console::println("SceneEditorTabController::onChange(): An error occurred: " + string(exception.what()));
+					showInfoPopUp("Warning", string(exception.what()));
 				}
 				//
 				break;
@@ -369,8 +366,8 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 					);
 					view->updateSky();
 				} catch (Exception& exception) {
-					Console::println(string("SceneEditorTabController::onChange(): An error occurred: ") + exception.what());;
-					showInfoPopUp("Warning", (string(exception.what())));
+					Console::println("SceneEditorTabController::onChange(): An error occurred: " + string(exception.what()));
+					showInfoPopUp("Warning", string(exception.what()));
 				}
 				//
 				break;
@@ -382,8 +379,8 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 				try {
 					view->applyReflectionEnvironmentMappingId(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("reflection_environmentmap"))->getController()->getValue().getString());
 				} catch (Exception& exception) {
-					Console::println(string("SceneEditorTabController::onChange(): An error occurred: ") + exception.what());;
-					showInfoPopUp("Warning", (string(exception.what())));
+					Console::println("SceneEditorTabController::onChange(): An error occurred: " + string(exception.what()));
+					showInfoPopUp("Warning", string(exception.what()));
 				}
 				//
 				break;
@@ -424,8 +421,8 @@ void SceneEditorTabController::onUnfocus(GUIElementNode* node) {
 						throw ExceptionBase("Could not rename entity");
 					}
 				} catch (Exception& exception) {
-					Console::println(string("SceneEditorTabController::onChange(): An error occurred: ") + exception.what());;
-					showInfoPopUp("Warning", (string(exception.what())));
+					Console::println("SceneEditorTabController::onChange(): An error occurred: " + string(exception.what()));
+					showInfoPopUp("Warning", string(exception.what()));
 				}
 				//
 				break;
@@ -696,8 +693,8 @@ void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 					sceneEditorTabController->view->updateSky();
 					sceneEditorTabController->setSkyDetails();
 				} catch (Exception& exception) {
-					Console::println(string("OnLoadSkyModel::performAction(): An error occurred: ") + exception.what());;
-					sceneEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
+					Console::println("OnLoadSkyModel::performAction(): An error occurred: " + string(exception.what()));
+					sceneEditorTabController->showInfoPopUp("Warning", string(exception.what()));
 				}
 				sceneEditorTabController->updateDetails("scene");
 				sceneEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
@@ -845,8 +842,6 @@ void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 }
 
 void SceneEditorTabController::setSkyDetails() {
-	Console::println("SceneEditorTabController::setSkyDetails(): ");
-
 	auto scene = view->getScene();
 
 	view->getEditorView()->setDetailsContent(
@@ -862,14 +857,12 @@ void SceneEditorTabController::setSkyDetails() {
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sky_model"))->setSource(scene->getSkyModelFileName());
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sky_model"))->setTooltip(scene->getSkyModelFileName());
 	} catch (Exception& exception) {
-		Console::println(string("SceneEditorTabController::setSkyDetails(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("SceneEditorTabController::setSkyDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
 
 void SceneEditorTabController::setLightDetails(int lightIdx) {
-	Console::println("SceneEditorTabController::setLightDetails(): " + to_string(lightIdx));
-
 	auto scene = view->getScene();
 	if (scene == nullptr) return;
 	auto light = scene->getLightAt(lightIdx);
@@ -938,8 +931,8 @@ void SceneEditorTabController::setLightDetails(int lightIdx) {
 				}
 		}
 	} catch (Exception& exception) {
-		Console::println(string("SceneEditorTabController::setLightDetails(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("SceneEditorTabController::setLightDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 
 	//
@@ -968,8 +961,8 @@ void SceneEditorTabController::updateLightDetails(int lightIdx) {
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_directional_diffuse"))->setEffectColorMul(Color4(light->getDiffuse()));
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_directional_specular"))->setEffectColorMul(Color4(light->getSpecular()));
 	} catch (Exception& exception) {
-		Console::println(string("SceneEditorTabController::updateLightDetails(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("SceneEditorTabController::updateLightDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 
 	//
@@ -977,8 +970,6 @@ void SceneEditorTabController::updateLightDetails(int lightIdx) {
 }
 
 void SceneEditorTabController::applyLightDetails(int lightIdx) {
-	Console::println("SceneEditorTabController::applyLightDetails(): " + to_string(lightIdx));
-
 	//
 	auto scene = view->getScene();
 	if (scene == nullptr) return;
@@ -1057,8 +1048,8 @@ void SceneEditorTabController::applyLightDetails(int lightIdx) {
 				}
 		}
 	} catch (Exception& exception) {
-		Console::println(string("SceneEditorTabController::applyLightDetails(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("SceneEditorTabController::applyLightDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 
 	//
@@ -1076,8 +1067,8 @@ void SceneEditorTabController::setPrototypeDetails() {
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_prototype"))->getActiveConditions().add("open");
 	} catch (Exception& exception) {
-		Console::println(string("SceneEditorTabController::setEntityDetails(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("SceneEditorTabController::setEntityDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
 
@@ -1101,14 +1092,11 @@ void SceneEditorTabController::updateReflectionEnvironmentMappingDetailsDropDown
 	try {
 		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("reflection_environmentmap"))->replaceSubNodes(reflectionEnvironmentMappingIdsXML, true);
 	} catch (Exception& exception) {
-		Console::print(string("SceneEditorTabController::updateReflectionEnvironmentMappingDetailsDropDown(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::println("SceneEditorTabController::updateReflectionEnvironmentMappingDetailsDropDown(): An error occurred: " + string(exception.what()));
 	}
 }
 
 void SceneEditorTabController::setEntityDetails(const string& entityId) {
-	Console::println("SceneEditorTabController::setEntityDetails(): " + entityId);
-
 	auto scene = view->getScene();
 	auto entity = scene->getEntity(entityId);
 	if (entity == nullptr) return;
@@ -1131,8 +1119,8 @@ void SceneEditorTabController::setEntityDetails(const string& entityId) {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_name"))->getController()->setValue(entity->getId());
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_description"))->getController()->setValue(entity->getDescription());
 	} catch (Exception& exception) {
-		Console::println(string("SceneEditorTabController::setEntityDetails(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("SceneEditorTabController::setEntityDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 
 	//
@@ -1141,8 +1129,6 @@ void SceneEditorTabController::setEntityDetails(const string& entityId) {
 }
 
 void SceneEditorTabController::setEntityDetailsMultiple(const Vector3& pivot, const string& selectedReflectionEnvironmentMappingId) {
-	Console::println("SceneEditorTabController::setEntityDetailsMultiple(): ");
-
 	auto scene = view->getScene();
 
 	view->getEditorView()->setDetailsContent(
@@ -1156,8 +1142,8 @@ void SceneEditorTabController::setEntityDetailsMultiple(const Vector3& pivot, co
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_transform"))->getActiveConditions().add("rotation");
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_reflections"))->getActiveConditions().add("open");
 	} catch (Exception& exception) {
-		Console::println(string("SceneEditorTabController::setEntityDetails(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("SceneEditorTabController::setEntityDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 
 	//
@@ -1198,8 +1184,8 @@ void SceneEditorTabController::updateEntityDetails(const Vector3& translation, c
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transform_scale_y"))->getController()->setValue(scale.getY());
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transform_scale_z"))->getController()->setValue(scale.getZ());
 	} catch (Exception& exception) {
-		Console::println(string("SceneEditorTabController::updateEntityDetails(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("SceneEditorTabController::updateEntityDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
 
@@ -1366,8 +1352,8 @@ void SceneEditorTabController::onReplacePrototype() {
 				};
 				Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(sceneEditorTabController->view->getEditorView(), "scene.entities"));
 			} catch (Exception& exception) {
-				Console::println(string("OnReplacePrototypeAction::performAction(): An error occurred: ") + exception.what());;
-				sceneEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
+				Console::println("OnReplacePrototypeAction::performAction(): An error occurred: " + string(exception.what()));
+				sceneEditorTabController->showInfoPopUp("Warning", string(exception.what()));
 			}
 			sceneEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
@@ -1427,8 +1413,8 @@ void SceneEditorTabController::renameEntity() {
 			}
 			view->reloadScene();
 		} catch (Exception& exception) {
-			Console::println(string("SceneEditorTabController::renameProperty(): An error occurred: ") + exception.what());;
-			showInfoPopUp("Warning", (string(exception.what())));
+			Console::println("SceneEditorTabController::renameProperty(): An error occurred: " + string(exception.what()));
+			showInfoPopUp("Warning", string(exception.what()));
 		}
 	}
 

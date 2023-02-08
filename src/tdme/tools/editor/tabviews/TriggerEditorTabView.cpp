@@ -90,8 +90,7 @@ void TriggerEditorTabView::initialize()
 		prototypeDisplayView = triggerEditorTabController->getPrototypeDisplaySubController()->getView();
 		prototypePhysicsView = triggerEditorTabController->getPrototypePhysicsSubController()->getView();
 	} catch (Exception& exception) {
-		Console::print(string("TriggerEditorTabView::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::println("TriggerEditorTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
 	// TODO: load settings
 	if (prototypePhysicsView != nullptr) prototypePhysicsView->setObjectScale(objectScale);

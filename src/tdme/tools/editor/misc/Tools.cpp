@@ -573,21 +573,15 @@ void Tools::loadSettings(Application* application) {
 	try {
 		settings.load("settings", "settings.properties");
 	} catch (FileSystemException &exception) {
-		Console::println(string("Error loading properties: ") + exception.what());
+		Console::println("Tools::loadSettings(): An error occurred: " + string(exception.what()));
 	}
 
 	// 4k
 	if (settings.get("4k", "false") == "true") {
-		Console::println("Settings: enable 4k");
 		Engine::set4K(true);
 	}
 
 	// Window
-	Console::println("Settings: window width: " + settings.get("window_width", "1024"));
-	Console::println("Settings: window height: " + settings.get("window_height", "768"));
-	Console::println("Settings: window X position: " + settings.get("window_x", "-1"));
-	Console::println("Settings: window Y position: " + settings.get("window_y", "-1"));
-	Console::println("Settings: fullscreen: " + settings.get("fullscreen", "false"));
 	application->setWindowWidth(Integer::parse(settings.get("window_width", "1024")));
 	application->setWindowHeight(Integer::parse(settings.get("window_height", "768")));
 	application->setWindowXPosition(Integer::parse(settings.get("window_x", "-1")));

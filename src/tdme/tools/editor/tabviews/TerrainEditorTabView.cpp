@@ -295,8 +295,7 @@ void TerrainEditorTabView::initialize()
 		skyDomePrototype = PrototypeReader::read("resources/engine/models", "sky_dome.tmodel");
 		skyPanoramaPrototype = PrototypeReader::read("resources/engine/models", "sky_panorama.tmodel");
 	} catch (Exception& exception) {
-		Console::print(string("TerrainEditorTabView::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::println("TerrainEditorTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
 	// TODO: load settings
 	initializeTerrain();
