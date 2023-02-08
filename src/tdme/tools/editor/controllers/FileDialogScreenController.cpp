@@ -266,7 +266,7 @@ void FileDialogScreenController::setupDrives() {
 			try {
 				if (FileSystem::getStandardFileSystem()->fileExists(fileName + "/") == true) drives.push_back(fileName);
 			} catch (Exception& exception) {
-				Console::println("FileDialogScreenController::setupDrives(): " + string(exception.what());
+				Console::println("FileDialogScreenController::setupDrives(): " + string(exception.what()));
 			}
 		}
 	#else
