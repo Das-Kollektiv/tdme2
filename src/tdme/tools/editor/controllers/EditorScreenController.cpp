@@ -24,6 +24,7 @@
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/elements/GUISelectBoxController.h>
+#include <tdme/gui/elements/GUIScrollAreaController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIImageNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -100,6 +101,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::gui::elements::GUISelectBoxController;
+using tdme::gui::elements::GUIScrollAreaController;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUINode;
@@ -187,6 +189,7 @@ void EditorScreenController::initialize()
 		detailsScrollarea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_details_scrollarea"));
 		outlinerAddDropDown = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dropdown_outliner_add"));
 		logStyledTextNode = required_dynamic_cast<GUIStyledTextNode*>(screenNode->getInnerNodeById("log"));
+		logScrollarea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("log_scrollarea"));
 
 		//
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectlibrary_import"))->getController()->setDisabled(true);
@@ -2304,6 +2307,9 @@ void EditorScreenController::tick() {
 			log.append("\n");
 		}
 		logStyledTextNode->setText(log);
+		//
+		auto logScrollareaController = required_dynamic_cast<GUIScrollAreaController*>(logScrollarea->getController());
+		if (logScrollareaController->isAtBottom() == true) logScrollareaController->scrollToBottom();
 	}
 }
 

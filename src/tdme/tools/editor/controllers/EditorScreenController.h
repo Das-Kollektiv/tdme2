@@ -193,6 +193,7 @@ private:
 	string browseToFileName;
 
 	GUIStyledTextNode* logStyledTextNode { nullptr };
+	GUIParentNode* logScrollarea { nullptr };
 	vector<string> logMessages;
 	bool logUpdateRequired { false };
 
