@@ -102,7 +102,22 @@ private:
 	    .statementDelimiter = "\n"
 	};
 
-	vector<Language> languages { cpp, glsl, tscript };
+	Language makefile = {
+		.name = "MAKEFILE",
+		.extensions = {"makefile", "nmake"},
+		.commentLine = "#",
+		.commentInlineStart = "",
+		.commentInlineEnd = "",
+		.preprocessorLineKeywords = "",
+		.keywordDelimiters = "",
+		.keywordQuotes = "\"",
+		.keywords1 = "",
+	    .keywords2 = "",
+	    .datatypeLiteralSuffixes = "",
+	    .statementDelimiter = ""
+	};
+
+	vector<Language> languages { cpp, glsl, tscript, makefile };
 
 	struct XMLLanguage {
 		vector<string> extensions = { "xml" };
