@@ -139,27 +139,25 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 			switch(event->getType()) {
 				case GUIMouseEvent::MOUSEEVENT_PRESSED:
 					{
-						if (input == true) {
-							//
-							storeTypingHistoryEntry();
-							//
-							if (timeLastClick != -1LL &&
-								Time::getCurrentMillis() - timeLastClick < TIME_DOUBLECLICK) {
-								doubleClick = true;
-								timeLastClick = -1LL;
-							} else {
-								timeLastClick = Time::getCurrentMillis();
-								doubleClick = false;
-							}
-
-							// submit to styled text node
-							selectionIndex = -1;
-							styledTextNode->setIndexMousePosition(nodeMouseCoordinateNoOffsets.getX(), nodeMouseCoordinateNoOffsets.getY());
-							//
-							resetCursorMode();
-							//
-							event->setProcessed(true);
+						//
+						if (input == true) storeTypingHistoryEntry();
+						//
+						if (timeLastClick != -1LL &&
+							Time::getCurrentMillis() - timeLastClick < TIME_DOUBLECLICK) {
+							doubleClick = true;
+							timeLastClick = -1LL;
+						} else {
+							timeLastClick = Time::getCurrentMillis();
+							doubleClick = false;
 						}
+
+						// submit to styled text node
+						selectionIndex = -1;
+						styledTextNode->setIndexMousePosition(nodeMouseCoordinateNoOffsets.getX(), nodeMouseCoordinateNoOffsets.getY());
+						//
+						resetCursorMode();
+						//
+						event->setProcessed(true);
 
 						//
 						break;
@@ -198,65 +196,64 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 					}
 				case GUIMouseEvent::MOUSEEVENT_RELEASED:
 					{
-						if (input == true) {
 							//
-							storeTypingHistoryEntry();
+						if (input == true) storeTypingHistoryEntry();
+						//
+						if (doubleClick == true) {
 							//
-							if (doubleClick == true) {
-								//
-								auto& text = styledTextNode->getText();
-								auto textLength = text.length();
-								if (textLength > 0) {
-									auto wordLeftIdx = 0;
-									for (auto i = 0; i < index && i < textLength; i++) {
-										auto c = text.getUTF8CharAt(i);
-										if (Character::isAlphaNumeric(c) == false) {
-											wordLeftIdx = i + 1;
-										}
+							auto& text = styledTextNode->getText();
+							auto textLength = text.length();
+							if (textLength > 0) {
+								auto wordLeftIdx = 0;
+								for (auto i = 0; i < index && i < textLength; i++) {
+									auto c = text.getUTF8CharAt(i);
+									if (Character::isAlphaNumeric(c) == false) {
+										wordLeftIdx = i + 1;
 									}
-									auto wordRightIdx = textLength;
-									for (auto i = index; i < textLength; i++) {
-										auto c = text.getUTF8CharAt(i);
-										if (Character::isAlphaNumeric(c) == false) {
-											wordRightIdx = i;
-											break;
-										}
+								}
+								auto wordRightIdx = textLength;
+								for (auto i = index; i < textLength; i++) {
+									auto c = text.getUTF8CharAt(i);
+									if (Character::isAlphaNumeric(c) == false) {
+										wordRightIdx = i;
+										break;
 									}
-									if (wordLeftIdx != wordRightIdx) {
-										index = wordLeftIdx;
-										selectionIndex = wordRightIdx;
-									}
-									//
-									resetCursorMode();
+								}
+								if (wordLeftIdx != wordRightIdx) {
+									index = wordLeftIdx;
+									selectionIndex = wordRightIdx;
 								}
 								//
-								doubleClick = false;
-							} else {
-								//
-								styledTextNode->unsetIndexMousePosition();
-								styledTextNode->unsetSelectionIndexMousePosition();
-
-								//
-								styledTextNode->getScreenNode()->removeTickNode(styledTextNode);
-
-								//
-								if (dragging == true && selectionIndex != -1) {
-									auto _index = index;
-									index = selectionIndex;
-									selectionIndex = _index;
-								}
-
-								//
-								released = true;
-
-								//
-								scrollMode = SCROLLMODE_NONE;
-								//
-								styledTextNode->scrollToIndex();
+								resetCursorMode();
 							}
 							//
-							unsetTypingHistoryEntryIdx();
+							doubleClick = false;
+						} else {
+							//
+							styledTextNode->unsetIndexMousePosition();
+							styledTextNode->unsetSelectionIndexMousePosition();
+
+							//
+							styledTextNode->getScreenNode()->removeTickNode(styledTextNode);
+
+							//
+							if (dragging == true && selectionIndex != -1) {
+								auto _index = index;
+								index = selectionIndex;
+								selectionIndex = _index;
+							}
+
+							//
+							released = true;
+
+							//
+							scrollMode = SCROLLMODE_NONE;
+							//
+							styledTextNode->scrollToIndex();
 						}
+
+						//
+						if (input == true) unsetTypingHistoryEntryIdx();
 
 						// find URL area that had a hit and setup corresponding cursor
 						auto& urlAreas = styledTextNode->getURLAreas();
@@ -291,81 +288,78 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 		//
 		nodeMouseCoordinateNoOffsets = nodeMouseCoordinate.clone().sub(Vector2(styledTextNode->getParentNode()->getChildrenRenderOffsetX(), styledTextNode->getParentNode()->getChildrenRenderOffsetY()));
 
-		//
-		if (input == true) {
-			// dragging, releasing
-			switch(event->getType()) {
-				case GUIMouseEvent::MOUSEEVENT_DRAGGED:
-					{
+		// dragging, releasing
+		switch(event->getType()) {
+			case GUIMouseEvent::MOUSEEVENT_DRAGGED:
+				{
+					//
+					if (input == true) storeTypingHistoryEntry();
+					//
+					dragging = true;
+					//
+					if (nodeMouseCoordinateNoOffsets.getY() < 50) {
+						scrollMode = SCROLLMODE_UP;
+						// unset
+						styledTextNode->unsetIndexMousePosition();
+						styledTextNode->unsetSelectionIndexMousePosition();
 						//
-						storeTypingHistoryEntry();
+						styledTextNode->getScreenNode()->addTickNode(styledTextNode);
+					} else
+					if (nodeMouseCoordinateNoOffsets.getY() > styledTextNode->getParentNode()->getComputedConstraints().height - 50) {
+						scrollMode = SCROLLMODE_DOWN;
+						// unset
+						styledTextNode->unsetIndexMousePosition();
+						styledTextNode->unsetSelectionIndexMousePosition();
 						//
-						dragging = true;
+						styledTextNode->getScreenNode()->addTickNode(styledTextNode);
+					} else {
+						styledTextNode->getScreenNode()->removeTickNode(styledTextNode);
 						//
-						if (nodeMouseCoordinateNoOffsets.getY() < 50) {
-							scrollMode = SCROLLMODE_UP;
-							// unset
-							styledTextNode->unsetIndexMousePosition();
-							styledTextNode->unsetSelectionIndexMousePosition();
-							//
-							styledTextNode->getScreenNode()->addTickNode(styledTextNode);
-						} else
-						if (nodeMouseCoordinateNoOffsets.getY() > styledTextNode->getParentNode()->getComputedConstraints().height - 50) {
-							scrollMode = SCROLLMODE_DOWN;
-							// unset
-							styledTextNode->unsetIndexMousePosition();
-							styledTextNode->unsetSelectionIndexMousePosition();
-							//
-							styledTextNode->getScreenNode()->addTickNode(styledTextNode);
-						} else {
-							styledTextNode->getScreenNode()->removeTickNode(styledTextNode);
-							//
-							scrollMode = SCROLLMODE_NONE;
-							// submit to styled text node
-							styledTextNode->setSelectionIndexMousePosition(nodeMouseCoordinateNoOffsets.getX(), nodeMouseCoordinateNoOffsets.getY());
+						scrollMode = SCROLLMODE_NONE;
+						// submit to styled text node
+						styledTextNode->setSelectionIndexMousePosition(nodeMouseCoordinateNoOffsets.getX(), nodeMouseCoordinateNoOffsets.getY());
+					}
+					//
+					resetCursorMode();
+					//
+					event->setProcessed(true);
+					break;
+				}
+			case GUIMouseEvent::MOUSEEVENT_RELEASED:
+				{
+					if (released == false) {
+						//
+						if (input == true) storeTypingHistoryEntry();
+
+						//
+						styledTextNode->unsetIndexMousePosition();
+						styledTextNode->unsetSelectionIndexMousePosition();
+
+						//
+						styledTextNode->getScreenNode()->removeTickNode(styledTextNode);
+
+						//
+						if (dragging == true && selectionIndex != -1) {
+							auto _index = index;
+							index = selectionIndex;
+							selectionIndex = _index;
 						}
+
 						//
-						resetCursorMode();
+						scrollMode = SCROLLMODE_NONE;
+						//
+						styledTextNode->scrollToIndex();
 						//
 						event->setProcessed(true);
-						break;
+						//
+						dragging = false;
+						//
+						unsetTypingHistoryEntryIdx();
 					}
-				case GUIMouseEvent::MOUSEEVENT_RELEASED:
-					{
-						if (released == false) {
-							//
-							storeTypingHistoryEntry();
-
-							//
-							styledTextNode->unsetIndexMousePosition();
-							styledTextNode->unsetSelectionIndexMousePosition();
-
-							//
-							styledTextNode->getScreenNode()->removeTickNode(styledTextNode);
-
-							//
-							if (dragging == true && selectionIndex != -1) {
-								auto _index = index;
-								index = selectionIndex;
-								selectionIndex = _index;
-							}
-
-							//
-							scrollMode = SCROLLMODE_NONE;
-							//
-							styledTextNode->scrollToIndex();
-							//
-							event->setProcessed(true);
-							//
-							dragging = false;
-							//
-							unsetTypingHistoryEntryIdx();
-						}
-						break;
-					}
-				default:
 					break;
-			}
+				}
+			default:
+				break;
 		}
 	}
 }

@@ -136,7 +136,7 @@
 					<space height="5"/>
 					<layout alignment="vertical" width="100%" height="auto" padding="5" background-color="{$color.element_foreground}">
 						<element id="log_panel" width="100%" height="auto">
-							<layout show-on="open" alignment="vertical" width="100%" height="250" padding="5" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
+							<layout show-on="open" alignment="vertical" width="100%" height="250" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
 								<styled-input id="log" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" padding="5" width="100%" height="*" preformatted="true" editable="false">
 								</styled-input>
 								<space height="5"/>
