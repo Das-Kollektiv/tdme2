@@ -16,6 +16,7 @@ using tdme::utilities::Console;
 using tdme::utilities::Time;
 
 Mutex* Console::mutex = nullptr;
+bool Console::newline = false;
 vector<string>* Console::messages = nullptr;
 Console::LogWriterThread Console::logWriterThread;
 Console::Logger* Console::logger = nullptr;
@@ -66,37 +67,56 @@ void Console::setLogger(Console::Logger* logger) {
 void Console::println(const string& str)
 {
 	mutex->lock();
-	messages->push_back(str);
+	//
+	auto& messages = *Console::messages;
+	if (messages.empty() == true || newline == true) messages.push_back(string());
+	messages[messages.size() - 1]+= str;
+	if (messages.size() == 100) messages.erase(messages.begin());
+	newline = true;
+	//
 	if (logger != nullptr) {
 		logger->println(str);
 	} else {
 		cout << str << endl;
 	}
+	//
 	mutex->unlock();
 }
 
 void Console::print(const string& str)
 {
 	mutex->lock();
-	if (messages->size() == 0) messages->push_back("");
-	(*messages)[messages->size() - 1]+= str;
+	//
+	auto& messages = *Console::messages;
+	if (messages.empty() == true || newline == true) messages.push_back(string());
+	messages[messages.size() - 1]+= str;
+	if (messages.size() == 100) messages.erase(messages.begin());
+	newline = false;
+	//
 	if (logger != nullptr) {
 		logger->print(str);
 	} else {
 		cout << str;
 	}
+	//
 	mutex->unlock();
 }
 
 void Console::println()
 {
 	mutex->lock();
-	messages->push_back("");
+	//
+	auto& messages = *Console::messages;
+	messages.push_back(string());
+	if (messages.size() == 100) messages.erase(messages.begin());
+	newline = true;
+	//
 	if (logger != nullptr) {
 		logger->println();
 	} else {
 		cout << endl;
 	}
+	//
 	mutex->unlock();
 }
 
