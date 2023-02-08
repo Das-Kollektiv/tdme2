@@ -78,6 +78,7 @@ private:
 
 	//
 	STATIC_DLL_IMPEXT static Mutex* mutex;
+	STATIC_DLL_IMPEXT static bool newline;
 	STATIC_DLL_IMPEXT static vector<string>* messages;
 	STATIC_DLL_IMPEXT static LogWriterThread logWriterThread;
 	STATIC_DLL_IMPEXT static Logger* logger;
