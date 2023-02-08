@@ -21,11 +21,13 @@
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/Properties.h>
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/UTF8CharacterIterator.h>
 
@@ -52,11 +54,13 @@ using tdme::gui::renderer::GUICharacter;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::GUI;
+using tdme::gui::GUIParser;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
 using tdme::utilities::MutableString;
+using tdme::utilities::Properties;
 using tdme::utilities::StringTools;
 using tdme::utilities::UTF8CharacterIterator;
 
@@ -102,6 +106,7 @@ GUIStyledTextNode::GUIStyledTextNode(
 	this->startTextStyleIdx = -1;
 	this->editable = editable;
 	this->preformatted = preformatted;
+	this->selectionBackgroundColor = GUIColor(GUIParser::getEngineThemeProperties()->get("color.focus", "#ff0000"));
 	if (this->font != nullptr) this->font->initialize();
 	setText(text);
 }
