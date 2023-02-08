@@ -77,6 +77,7 @@ GUIStyledTextNode::GUIStyledTextNode(
 	const GUINodeConditions& showOn,
 	const GUINodeConditions& hideOn,
 	const string& tooltip,
+	bool editable,
 	bool preformatted,
 	const string& font,
 	int size,
@@ -99,6 +100,7 @@ GUIStyledTextNode::GUIStyledTextNode(
 	this->widthLast = -1;
 	this->heightLast = -1;
 	this->startTextStyleIdx = -1;
+	this->editable = editable;
 	this->preformatted = preformatted;
 	if (this->font != nullptr) this->font->initialize();
 	setText(text);

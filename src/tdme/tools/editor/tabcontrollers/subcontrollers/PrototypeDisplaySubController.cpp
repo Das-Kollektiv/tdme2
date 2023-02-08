@@ -138,8 +138,8 @@ void PrototypeDisplaySubController::setDisplayDetails(Prototype* prototype) {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_render_groups"))->getController()->setValue(MutableString(prototype->isRenderGroups() == true?"1":""));
 
 	} catch (Exception& exception) {
-		Console::println(string("PrototypeDisplaySubController::setDisplayDetails(): An error occurred: ") + exception.what());
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("PrototypeDisplaySubController::setDisplayDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 
 	//
@@ -157,8 +157,8 @@ void PrototypeDisplaySubController::applyDisplayDetails(Prototype* prototype) {
 		prototype->setReceivesShadows(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_receives_shadows"))->getController()->getValue().getString() == "1");
 		prototype->setRenderGroups(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_render_groups"))->getController()->getValue().getString() == "1");
 	} catch (Exception& exception) {
-		Console::println(string("PrototypeDisplaySubController::applyDisplayDetails(): An error occurred: ") + exception.what());
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("PrototypeDisplaySubController::applyDisplayDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 	setDisplayShaderDetails(prototype);
 }
@@ -219,8 +219,8 @@ void PrototypeDisplaySubController::setDisplayShaderDetails(Prototype* prototype
 	try {
 		required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("rendering_shader_details"))->replaceSubNodes(xml, false);
 	} catch (Exception& exception) {
-		Console::println(string("PrototypeDisplaySubController::setDisplayShaderDetails(): An error occurred: ") + exception.what());
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("PrototypeDisplaySubController::setDisplayShaderDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
 
@@ -292,8 +292,8 @@ void PrototypeDisplaySubController::applyDisplayShaderDetails(Prototype* prototy
 				break;
 		}
 	} catch (Exception& exception) {
-		Console::println(string("PrototypeDisplaySubController::applyDisplayShaderDetails(): An error occurred: ") + exception.what());
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("PrototypeDisplaySubController::applyDisplayShaderDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
 

@@ -419,8 +419,7 @@ void TextEditorTabView::initialize()
 		textEditorTabController->initialize(editorView->getScreenController()->getScreenNode());
 		screenNode->addTooltipRequestListener(textEditorTabController);
 	} catch (Exception& exception) {
-		Console::print(string("TextEditorTabView::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::println("TextEditorTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
 	// TODO: load settings
 }
@@ -572,7 +571,7 @@ void TextEditorTabView::createMiniScriptScriptNode(const string& id, MiniScript:
 			Console::println("TextEditorTabView::createMiniScriptNodes(): missing argument input node: " + argumentInputNodeId);
 		} else
 		if (argumentOutputNode == nullptr) {
-			Console::println(string() + "TextEditorTabView::createMiniScriptNodes(): missing argument output node: " + argumentOutputNodeId);
+			Console::println("TextEditorTabView::createMiniScriptNodes(): missing argument output node: " + argumentOutputNodeId);
 		} else {
 
 			//
@@ -905,7 +904,7 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int syntaxTreeNo
 			continue;
 		}
 		if (argumentOutputNode == nullptr) {
-			Console::println(string() + "TextEditorTabView::createMiniScriptNodes(): missing argument output node: " + argumentOutputNodeId);
+			Console::println("TextEditorTabView::createMiniScriptNodes(): missing argument output node: " + argumentOutputNodeId);
 			continue;
 		}
 
@@ -1162,7 +1161,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(const string& id, int syntax
 			continue;
 		}
 		if (conditionOutputNode == nullptr) {
-			Console::println(string() + "TextEditorTabView::createMiniScriptIfBranchNodes(): missing condition output node: " + conditionOutputNodeId);
+			Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): missing condition output node: " + conditionOutputNodeId);
 			continue;
 		}
 

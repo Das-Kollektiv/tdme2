@@ -90,8 +90,7 @@ void DecalEditorTabView::initialize()
 		prototypeDisplayView = decalEditorTabController->getPrototypeDisplaySubController()->getView();
 		prototypePhysicsView = decalEditorTabController->getPrototypePhysicsSubController()->getView();
 	} catch (Exception& exception) {
-		Console::print(string("DecalEditorTabView::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::println("DecalEditorTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
 	// TODO: load settings
 	if (prototypePhysicsView != nullptr) prototypePhysicsView->setObjectScale(objectScale);

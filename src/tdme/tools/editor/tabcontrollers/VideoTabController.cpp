@@ -81,7 +81,6 @@ void VideoTabController::onCommand(TabControllerCommand command)
 }
 
 void VideoTabController::onDrop(const string& payload, int mouseX, int mouseY) {
-	Console::println("VideoTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
 	showInfoPopUp("Warning", "You can not drop a file here");
 }
 

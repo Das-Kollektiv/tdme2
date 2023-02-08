@@ -275,10 +275,6 @@ void UIEditorTabController::onCommand(TabControllerCommand command)
 }
 
 void UIEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
-	/*
-	 * uiEditorTabController->setPrototype(pathName, fileName, uiEditorTabController->prototypeMeshNode, uiEditorTabController->prototypeMeshAnimation);
-	 */
-	Console::println("UIEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
 	if (StringTools::startsWith(payload, "file:") == false) {
 		showInfoPopUp("Warning", "Unknown payload in drop");
 	} else {
@@ -316,7 +312,6 @@ void UIEditorTabController::showInfoPopUp(const string& caption, const string& m
 
 void UIEditorTabController::onChange(GUIElementNode* node)
 {
-	Console::println("UIEditorTabController::onChange(): " + node->getId() + " = " + node->getController()->getValue().getString());
 	if (node->getId() == "selectbox_outliner") {
 		updateDetails(node->getController()->getValue().getString());
 		auto outlinerNode = node->getController()->getValue().getString();
@@ -508,7 +503,7 @@ void UIEditorTabController::setOutlinerContent() {
 				TiXmlDocument xmlDocument;
 				xmlDocument.Parse(uiScreenNode.xml.c_str());
 				if (xmlDocument.Error() == true) {
-					auto message = string("UIEditorTabController::setOutlinerContent(): Could not parse XML. Error='") + string(xmlDocument.ErrorDesc()) + "':\n\n" + uiScreenNode.xml;
+					auto message = "UIEditorTabController::setOutlinerContent(): Could not parse XML. Error='" + string(xmlDocument.ErrorDesc()) + "':\n\n" + uiScreenNode.xml;
 					Console::println(message);
 					throw GUIParserException(message);
 				}
@@ -516,7 +511,7 @@ void UIEditorTabController::setOutlinerContent() {
 				int nodeIdx = 0;
 				createOutlinerParentNodeNodesXML(xmlRoot, xml, screenIdx, nodeIdx);
 			} catch (Exception& exception) {
-				showInfoPopUp("Warning", (string(exception.what())));
+				showInfoPopUp("Warning", string(exception.what()));
 			}
 		}
 		screenIdx++;
@@ -563,8 +558,8 @@ void UIEditorTabController::updateScreenDetails() {
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("screen"))->setTooltip(view->getUIScreenNodes()[screenIdx].fileName);
 		}
 	} catch (Exception& exception) {
-		Console::println(string("UIEditorTabController::updateScreenDetails(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("UIEditorTabController::updateScreenDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
 
@@ -579,8 +574,8 @@ void UIEditorTabController::updateScreensDetails() {
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("projectedui_prototype"))->setSource(prototypeFileName);
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("projectedui_prototype"))->setTooltip(prototypeFileName);
 	} catch (Exception& exception) {
-		Console::println(string("UIEditorTabController::updateScreensDetails(): An error occurred: ") + exception.what());;
-		showInfoPopUp("Warning", (string(exception.what())));
+		Console::println("UIEditorTabController::updateScreensDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 
 	//
@@ -607,8 +602,7 @@ void UIEditorTabController::updateScreensDetails() {
 		try {
 			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("projectedui_meshnode_scrollarea"))->replaceSubNodes(modelMeshNodesXML, true);
 		} catch (Exception& exception) {
-			Console::print(string("UIEditorTabController::updateScreensDetails(): An error occurred: "));
-			Console::println(string(exception.what()));
+			Console::print("UIEditorTabController::updateScreensDetails(): An error occurred: " + string(exception.what()));
 		}
 	}
 
@@ -631,8 +625,7 @@ void UIEditorTabController::updateScreensDetails() {
 		try {
 			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("projectedui_animation_scrollarea"))->replaceSubNodes(animationsXML, true);
 		} catch (Exception& exception) {
-			Console::print(string("ModelEditorTabController::setAnimationPreviewDetails(): An error occurred: "));
-			Console::println(string(exception.what()));
+			Console::println("ModelEditorTabController::setAnimationPreviewDetails(): An error occurred: " + string(exception.what()));
 		}
 	}
 }
@@ -775,7 +768,6 @@ void UIEditorTabController::reloadScreens() {
 }
 
 void UIEditorTabController::onLoadPrototype() {
-	Console::println("UIEditorTabController::onLoadPrototype()");
 	class OnLoadPrototype: public virtual Action
 	{
 	public:
@@ -831,7 +823,6 @@ void UIEditorTabController::onLoadPrototype() {
 }
 
 void UIEditorTabController::onRemovePrototype() {
-	Console::println("UIEditorTabController::onRemoveModel()");
 	//
 	class RemovePrototypeAction: public Action {
 	private:
@@ -861,7 +852,6 @@ void UIEditorTabController::onBrowseToPrototype() {
 void UIEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type != GUIActionListenerType::PERFORMED) return;
-	Console::println("UIEditorTabController::onAction(): " + node->getId());
 	if (node->getId() == "screen_open") {
 		onLoadScreen();
 	} else
@@ -883,16 +873,12 @@ void UIEditorTabController::onAction(GUIActionListenerType type, GUIElementNode*
 }
 
 void UIEditorTabController::setScreen(int screenIdx, const string& fileName) {
-	Console::println("UIEditorTabController::setScreen(): " + to_string(screenIdx) + ": " + fileName);
 	view->unsetScreen(screenIdx);
 	try {
 		view->setScreen(screenIdx, fileName);
 	} catch (Exception& exception) {
-		Console::println(
-			string() +
-			"UIEditorTabController::setScreen(): An error occurred: " + exception.what()
-		);
-		showInfoPopUp("Error", string() + "An error occurred: " + exception.what());
+		Console::println("UIEditorTabController::setScreen(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Error", "An error occurred: " + string(exception.what()));
 	}
 	view->reAddScreens();
 	view->getEditorView()->reloadTabOutliner(to_string(screenIdx) + ".0");
@@ -944,7 +930,7 @@ void UIEditorTabController::save() {
 					uiEditorTabController->view->getEditorView()->reloadTabOutliner(to_string(screenIdx) + ".0");
 				}
 			} catch (Exception& exception) {
-				uiEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
+				uiEditorTabController->showInfoPopUp("Warning", string(exception.what()));
 			}
 
 			// iterate to next screen that we want to save
@@ -1020,7 +1006,7 @@ void UIEditorTabController::save() {
 				uiScreenNode.xml
 			);
 		} catch (Exception& exception) {
-			Console::println(string("UIEditorTabController::save(): An error occurred: ") + exception.what());;
+			Console::println("UIEditorTabController::save(): An error occurred: " + string(exception.what()));
 			showInfoPopUp("Warning", string(exception.what()));
 		}
 	}
@@ -1073,7 +1059,7 @@ void UIEditorTabController::saveAs() {
 					uiEditorTabController->view->getEditorView()->reloadTabOutliner(to_string(screenIdx) + ".0");
 				}
 			} catch (Exception& exception) {
-				uiEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
+				uiEditorTabController->showInfoPopUp("Warning", string(exception.what()));
 			}
 
 			// iterate to next screen that we want to save

@@ -71,8 +71,7 @@ void AboutDialogScreenController::initialize()
 		required_dynamic_cast<GUIStyledTextNode*>(screenNode->getNodeById("about_graphics"))->setText(MutableString("Graphics: " + StringTools::replace(StringTools::replace(Engine::getInstance()->getGraphicsRenderer(), "[", "\\["), "]", "\\]")));
 		screenNode->invalidateLayouts();
 	} catch (Exception& exception) {
-		Console::print(string("AboutDialogScreenController::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::println("AboutDialogScreenController::initialize(): An error occurred: " + string(exception.what()));
 	}
 }
 

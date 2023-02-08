@@ -50,6 +50,7 @@ using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
@@ -190,6 +191,10 @@ private:
 	string fileNameSearchTerm;
 	int64_t timeFileNameSearchTerm { -1LL };
 	string browseToFileName;
+
+	GUIStyledTextNode* logStyledTextNode { nullptr };
+	vector<string> logMessages;
+	bool logUpdateRequired { false };
 
 	//
 	class FileOpenThread: public Thread {
@@ -727,4 +732,9 @@ public:
 		if (StringTools::startsWith(absoluteFileName, projectPath + "/") == false) return absoluteFileName;
 		return StringTools::substring(absoluteFileName, projectPath.size() + 1);
 	}
+
+	/**
+	 * Update log
+	 */
+	void updateLog();
 };

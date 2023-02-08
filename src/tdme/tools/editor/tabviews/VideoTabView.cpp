@@ -61,8 +61,7 @@ void VideoTabView::initialize()
 		videoTabController->initialize(editorView->getScreenController()->getScreenNode());
 		screenNode->addTooltipRequestListener(videoTabController);
 	} catch (Exception& exception) {
-		Console::print(string("VideoTabView::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::println("VideoTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
 	// TODO: load settings
 }

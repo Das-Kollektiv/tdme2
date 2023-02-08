@@ -74,8 +74,7 @@ void EmptyEditorTabView::initialize()
 		emptyEditorTabController = new EmptyEditorTabController(this);
 		emptyEditorTabController->initialize(editorView->getScreenController()->getScreenNode());
 	} catch (Exception& exception) {
-		Console::print(string("EmptyEditorTabView::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::println("EmptyEditorTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
 	// TODO: load settings
 }

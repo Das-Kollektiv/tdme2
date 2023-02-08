@@ -81,8 +81,7 @@ void EnvMapEditorTabView::initialize()
 		skyDomePrototype = PrototypeReader::read("resources/engine/models", "sky_dome.tmodel");
 		skyPanoramaPrototype = PrototypeReader::read("resources/engine/models", "sky_panorama.tmodel");
 	} catch (Exception& exception) {
-		Console::print(string("EnvMapEditorTabView::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
+		Console::println("EnvMapEditorTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
 	// TODO: load settings
 	// TODO: reloadTabOutliner

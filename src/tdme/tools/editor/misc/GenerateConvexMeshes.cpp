@@ -212,16 +212,8 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 				IVHACD::ConvexHull convexHull;
 				for (auto i = 0; i < convexHulls; i++) {
 					vhacd->GetConvexHull(i, convexHull);
-					auto convexHullFileName = fileName + ".cm." + to_string(i) + ".tm";
-					Console::println(
-						"GenerateConvexMeshes::generateConvexMeshes(): VHACD: Saving convex hull@" +
-						to_string(i) +
-						": " + convexHullFileName +
-						", points = " + to_string(convexHull.m_nPoints) +
-						", triangles = " + to_string(convexHull.m_nTriangles)
-					);
 					auto convexHullModel = createModel(
-						convexHullFileName,
+						fileName + ".cm." + to_string(i) + ".tm",
 						convexHull.m_points,
 						convexHull.m_triangles,
 						convexHull.m_nPoints,
@@ -241,7 +233,7 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 				);
 			}
 			*/
-			Console::println(string("Could not create convex hulls: ") + exception.what());
+			Console::println("Could not create convex hulls: " + string(exception.what()));
 			convexMeshTMsData.clear();
 			success = false;
 		}
@@ -260,15 +252,8 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 				for (auto i = 0; i < meshObjectModel.getNodeCount(); i++) {
 					vector<Triangle> nodeTriangles;
 					meshObjectModel.getTriangles(nodeTriangles, i);
-					auto convexHullFileName = fileName + ".cm." + to_string(i) + ".tm";
-					Console::println(
-						"GenerateConvexMeshes::generateConvexMeshes(): Model: Saving convex hull@" +
-						to_string(i) +
-						": " + convexHullFileName +
-						", triangles = " + to_string(nodeTriangles.size())
-					);
 					auto convexHullModel = createModel(
-						convexHullFileName,
+						fileName + ".cm." + to_string(i) + ".tm",
 						nodeTriangles
 					);
 					convexMeshTMsData.push_back(vector<uint8_t>());
@@ -286,7 +271,7 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 				);
 			}
 			*/
-			Console::println(string("Could not create convex hulls: ") + exception.what());
+			Console::println("Could not create convex hulls: " + string(exception.what()));
 			convexMeshTMsData.clear();
 			success = false;
 		}
