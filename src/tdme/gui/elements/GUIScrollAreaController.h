@@ -25,6 +25,7 @@ class tdme::gui::elements::GUIScrollAreaController final: public GUINodeControll
 private:
 	MutableString value;
 	GUIActionListener* actionListener { nullptr };
+	bool scrollToBottomIssued { false };
 
 	/**
 	 * Private constructor
@@ -32,7 +33,15 @@ private:
 	 */
 	GUIScrollAreaController(GUINode* node);
 
+	/**
+	 * Scroll to bottom internal
+	 */
+	void scrollToBottomInternal();
+
 public:
+	bool isAtBottom();
+	void scrollToBottom();
+
 	// overridden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
