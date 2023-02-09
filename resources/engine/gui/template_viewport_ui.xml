@@ -7,7 +7,7 @@
 		<element id="{$id}_editor" width="100%" height="*" ignore-events="true">
 			<styled-input id="{$id}_text" show-on="text" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" padding="5" width="100%" height="100%" preformatted="true">
 			</styled-input>
-			<scrollarea id="{$id}_visualization" show-on="visualization" width="100%" height="100%" alignment="none" vertical-align="center" horizontal-align="center">
+			<scrollarea id="{$id}_visualization" show-on="visualization" border="1" border-color="{$color.element-frame}" width="100%" height="100%" alignment="none" vertical-align="center" horizontal-align="center">
 				<image
 					id="{$id}_framebuffer"
 					width="auto"
