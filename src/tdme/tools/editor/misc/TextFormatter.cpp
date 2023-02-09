@@ -257,7 +257,6 @@ void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 				auto endIdx = -1;
 				auto lc = '\0';
 				auto llc = '\0';
-				auto nc = '\0';
 				auto inlineComment = false;
 				auto lineComment = false;
 				auto preprocessorLine = false;
@@ -289,8 +288,14 @@ void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 				for (auto i = charStartIdx; i >= 0 && i <= charEndIdx; i++) {
 					auto c = code[i];
 					auto nc = i + 1 < code.size()?code[i + 1]:'\0';
+					auto nnc = i + 2 < code.size()?code[i + 2]:'\0';
+					auto nnnc = i + 3 < code.size()?code[i + 3]:'\0';
 					if (inlineComment == false && lineComment == false && preprocessorLine == false && quote == '\0') {
-						if (language.commentLine.empty() == false && (language.commentLine.size() == 1 || c == language.commentLine[0]) && nc == language.commentLine[language.commentLine.size() - 1]) {
+						if (language.commentLine.empty() == false &&
+							(c == language.commentLine[0]) &&
+							(language.commentLine.size() <= 1 || nc == language.commentLine[1]) &&
+							(language.commentLine.size() <= 2 || nnc == language.commentLine[2]) &&
+							(language.commentLine.size() <= 3 || nnnc == language.commentLine[3])) {
 							lineComment = true;
 							startIdx = i;
 							endIdx = -1;

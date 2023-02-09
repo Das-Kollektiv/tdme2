@@ -688,9 +688,27 @@ const string FileDialogScreenController::getFileImageName(const string& fileName
 	if (StringTools::endsWith(fileNameLowerCase, ".tscript") == true) {
 		return "script";
 	} else
-		// xml
+	// xml
 	if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) {
 		return "gui";
+	} else
+	// nmake
+	if (StringTools::endsWith(fileNameLowerCase, ".nmake") == true) {
+		return "script";
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".nmake.main") == true) {
+		return "script";
+	} else
+	// bat
+	if (StringTools::endsWith(fileNameLowerCase, ".bat") == true) {
+		return "script";
+	} else
+	// bash
+	if (StringTools::endsWith(fileNameLowerCase, ".sh") == true) {
+		return "script";
+	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".bash") == true) {
+		return "script";
 	} else
 	// files without ending
 	if (fileName.rfind(".") == string::npos ||
