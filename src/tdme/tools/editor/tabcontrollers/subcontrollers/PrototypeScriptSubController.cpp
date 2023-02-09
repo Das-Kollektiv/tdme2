@@ -121,8 +121,10 @@ bool PrototypeScriptSubController::onChange(GUIElementNode* node, Prototype* pro
 {
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
-		if (outlinerNode == "script") setScriptDetails(prototype);
-		return true;
+		if (outlinerNode == "script") {
+			setScriptDetails(prototype);
+			return true;
+		}
 	} else
 	if (node->getId() == "script_hid") {
 		prototype->setScriptHandlingHID(node->getController()->getValue().equals("1"));

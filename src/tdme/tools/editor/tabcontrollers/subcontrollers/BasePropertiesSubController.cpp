@@ -238,16 +238,16 @@ bool BasePropertiesSubController::onChange(GUIElementNode* node, BaseProperties*
 		auto addOutlinerType = node->getController()->getValue().getString();
 		if (addOutlinerType == "property") {
 			createProperty(baseProperties);
+			return true;
 		}
-		return true;
 	} else
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "properties.") == true) {
 			auto selectedPropertyName = StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size());
 			setPropertyDetails(baseProperties, selectedPropertyName);
+			return true;
 		}
-		return true;
 	} else
 	if (prototype != nullptr && node->getId() == "base_prototype_entityhierarchy") {
 		prototype->setEntityHierarchy(node->getController()->getValue().equals("1"));
