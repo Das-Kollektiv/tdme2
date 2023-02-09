@@ -697,7 +697,7 @@ void UIEditorTabController::onLoadPrototype() {
 	popUps->getFileDialogScreenController()->show(
 		pathName,
 		"Load prototype from: ",
-		{ "tmodel" },
+		PrototypeReader::getPrototypeExtensions(),
 		fileName,
 		true,
 		new OnLoadPrototype(this)

@@ -628,11 +628,10 @@ void TerrainEditorTabController::onAction(GUIActionListenerType type, GUIElement
 			auto brushPrototype = brush->getPrototype(foliageBrushPrototypeIdx);
 			if (brushPrototype == nullptr) return;
 
-			vector<string> extensions = {"tmodel"};
 			view->getPopUps()->getFileDialogScreenController()->show(
 				brushPrototype->getFileName().empty() == false?Tools::getPathName(brushPrototype->getFileName()):string(),
 				"Load terrain brush texture from: ",
-				extensions,
+				PrototypeReader::getPrototypeExtensions(),
 				Tools::getFileName(brushPrototype->getFileName()),
 				true,
 				new OnTerrainBrushPrototypeFileOpenAction(this)
