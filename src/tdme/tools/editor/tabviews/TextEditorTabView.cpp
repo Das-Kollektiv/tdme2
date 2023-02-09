@@ -80,11 +80,12 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 	this->tabId = tabId;
 	this->screenNode = screenNode;
 	this->popUps = editorView->getPopUps();
-	this->extension = extension;
 	this->textNode = required_dynamic_cast<GUIStyledTextNode*>(screenNode->getInnerNodeById("text"));
 	this->fileName = fileName;
 	auto fileNameLowerCase = StringTools::toLowerCase(fileName);
-	this->extension = StringTools::substring(fileNameLowerCase, fileNameLowerCase.rfind('.') + 1, fileNameLowerCase.size());
+	this->extension =
+		fileNameLowerCase == "makefile" || StringTools::endsWith(fileNameLowerCase, "/makefile")?"makefile":
+		StringTools::substring(fileNameLowerCase, fileNameLowerCase.rfind('.') + 1, fileNameLowerCase.size());
 	engine = Engine::createOffScreenInstance(512, 512, false, false, false);
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	engine->getGUI()->addScreen(screenNode->getId(), screenNode);
