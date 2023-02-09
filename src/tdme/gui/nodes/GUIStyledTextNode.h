@@ -123,8 +123,8 @@ private:
 	int indexMousePositionY { MOUSEPOSITION_NONE };
 	int selectionIndexMousePositionX { MOUSEPOSITION_NONE };
 	int selectionIndexMousePositionY { MOUSEPOSITION_NONE };
-	GUIColor selectionTextColor { "#a0a0a0" };
-	GUIColor selectionBackgroundColor { "#5050d0" };
+
+	GUIColor selectionBackgroundColor;
 
 	bool editMode { false };
 

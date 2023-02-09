@@ -22,6 +22,34 @@ GUIScrollAreaController::GUIScrollAreaController(GUINode* node)
 {
 }
 
+bool GUIScrollAreaController::isAtBottom() {
+	auto contentNode = required_dynamic_cast<GUIParentNode*>(node->getScreenNode()->getNodeById(node->getId() + "_inner"));
+	float elementHeight = contentNode->getComputedConstraints().height;
+	float contentHeight = contentNode->getContentHeight();
+	auto scrollableHeight = contentHeight - elementHeight;
+	if (scrollableHeight <= 0.0f) return true;
+	auto childrenRenderOffsetY = contentHeight - contentNode->getComputedConstraints().height;
+	return contentNode->getChildrenRenderOffsetY() == childrenRenderOffsetY;
+
+}
+
+void GUIScrollAreaController::scrollToBottomInternal() {
+	auto contentNode = required_dynamic_cast<GUIParentNode*>(node->getScreenNode()->getNodeById(node->getId() + "_inner"));
+	float elementHeight = contentNode->getComputedConstraints().height;
+	float contentHeight = contentNode->getContentHeight();
+	auto scrollableHeight = contentHeight - elementHeight;
+	if (scrollableHeight <= 0.0f) return;
+	auto childrenRenderOffsetY = contentHeight - contentNode->getComputedConstraints().height;
+	contentNode->setChildrenRenderOffsetY(childrenRenderOffsetY);
+}
+
+void GUIScrollAreaController::scrollToBottom() {
+	// TODO: Currently we might need a layout pass after changing a scroll area content, hence this work around (1)
+	scrollToBottomIssued = true;
+	//
+	scrollToBottomInternal();
+}
+
 bool GUIScrollAreaController::isDisabled()
 {
 	return false;
@@ -139,6 +167,11 @@ void GUIScrollAreaController::dispose()
 
 void GUIScrollAreaController::postLayout()
 {
+	// TODO: Currently we might need a layout pass after changing a scroll area content, hence this work around (2)
+	if (scrollToBottomIssued == true) {
+		scrollToBottomInternal();
+		scrollToBottomIssued = false;
+	}
 	//
 	{
 		auto const contentNode = required_dynamic_cast<GUIParentNode*>(node->getScreenNode()->getNodeById(node->getId() + "_inner"));
