@@ -2207,6 +2207,11 @@ void ModelEditorTabController::onChange(GUIElementNode* node)
 	if (prototypePhysicsSubController->onChange(node, view->getPrototype()) == true) return;
 	if (prototypeScriptSubController->onChange(node, view->getPrototype()) == true) return;
 	//
+	auto model = getSelectedModel();
+	if (model != nullptr) {
+		if (prototypeSoundsSubController->onChange(node, view->getPrototype(), model) == true) return;
+	}
+	//
 	if (node->getId() == "dropdown_outliner_add") {
 		auto addOutlinerType = node->getController()->getValue().getString();
 		if (addOutlinerType == "animation") {
@@ -2224,7 +2229,6 @@ void ModelEditorTabController::onChange(GUIElementNode* node)
 		}
 	} else
 	if (node->getId() == "selectbox_outliner") {
-		auto haveAppliedNode = false;
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		auto haveDetails = false;
 		if (outlinerNode == "lod2.model" ||
@@ -2234,7 +2238,6 @@ void ModelEditorTabController::onChange(GUIElementNode* node)
 				haveDetails = true;
 				setLODDetails(2);
 			}
-			haveAppliedNode = true;
 		} else
 		if (outlinerNode == "lod3.model" ||
 			StringTools::startsWith(outlinerNode, "lod3.model.") == true) {
@@ -2243,7 +2246,6 @@ void ModelEditorTabController::onChange(GUIElementNode* node)
 				haveDetails = true;
 				setLODDetails(3);
 			}
-			haveAppliedNode = true;
 		} else
 		if (outlinerNode == "lod4.model" ||
 			StringTools::startsWith(outlinerNode, "lod4.model.") == true) {
@@ -2252,7 +2254,6 @@ void ModelEditorTabController::onChange(GUIElementNode* node)
 				haveDetails = true;
 				setLODDetails(4);
 			}
-			haveAppliedNode = true;
 		} else {
 			if (view->getLODLevel() != 1) view->setLODLevel(1);
 		}
@@ -2262,14 +2263,12 @@ void ModelEditorTabController::onChange(GUIElementNode* node)
 		for (auto& applyAnimationNode: applyAnimationNodes) {
 			if (node->getId() == applyAnimationNode) {
 				applyAnimationDetails();
-				haveAppliedNode = true;
 				break;
 			}
 		}
 		for (auto& applyMaterialBaseNode: applyMaterialBaseNodes) {
 			if (node->getId() == applyMaterialBaseNode) {
 				applyMaterialBaseDetails();
-				haveAppliedNode = true;
 				break;
 			}
 		}
@@ -2282,14 +2281,12 @@ void ModelEditorTabController::onChange(GUIElementNode* node)
 		for (auto& applyPBRMaterialNode: applyPBRMaterialNodes) {
 			if (node->getId() == applyPBRMaterialNode) {
 				applyPBRMaterialDetails();
-				haveAppliedNode = true;
 				break;
 			}
 		}
 		for (auto& applyAnimationPreviewNode: applyAnimationPreviewNodes) {
 			if (node->getId() == applyAnimationPreviewNode) {
 				applyAnimationPreviewDetails();
-				haveAppliedNode = true;
 				break;
 			}
 		}
@@ -2303,15 +2300,7 @@ void ModelEditorTabController::onChange(GUIElementNode* node)
 					lodLevel = 3;
 				}
 				if (lodLevel != -1) applyLODDetails(lodLevel);
-				haveAppliedNode = true;
 				break;
-			}
-		}
-		//
-		if (haveAppliedNode == false) {
-			{
-				auto model = getSelectedModel();
-				if (model != nullptr) prototypeSoundsSubController->onChange(node, view->getPrototype(), model);
 			}
 		}
 	}
