@@ -156,8 +156,9 @@ public:
 	 * On value changed
 	 * @param node node
 	 * @param prototype prototype
+	 * @return if the change event has been handled
 	 */
-	void onChange(GUIElementNode* node, Prototype* prototype);
+	bool onChange(GUIElementNode* node, Prototype* prototype);
 
 	/**
 	 * Show the information pop up / modal

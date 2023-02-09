@@ -256,16 +256,18 @@ public:
 	 * On value changed
 	 * @param node node
 	 * @param prototype prototype
+	 * @return if this event has been handled
 	 */
-	void onChange(GUIElementNode* node, Prototype* prototype);
+	bool onChange(GUIElementNode* node, Prototype* prototype);
 
 	/**
 	 * On action performed
 	 * @param type type
 	 * @param node node
 	 * @param prototype prototype
+	 * @return if this event has been handled
 	 */
-	void onAction(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype);
+	bool onAction(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype);
 
 	/**
 	 * On context menu requested

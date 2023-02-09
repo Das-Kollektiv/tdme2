@@ -253,6 +253,8 @@ void SceneEditorTabController::showInfoPopUp(const string& caption, const string
 
 void SceneEditorTabController::onChange(GUIElementNode* node)
 {
+	if (basePropertiesSubController->onChange(node, view->getScene()) == true) return;
+	//
 	if (node->getId() == "dropdown_outliner_add") {
 		auto addOutlinerType = node->getController()->getValue().getString();
 		// TODO
@@ -295,7 +297,6 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 			Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_snapping_z"))->getController()->getValue().getString())
 		);
 	} else {
-		auto haveAppliedNode = false;
 		for (auto& applyTranslationNode: applyTranslationNodes) {
 			if (node->getId() == applyTranslationNode) {
 				//
@@ -311,8 +312,6 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 					Console::println("SceneEditorTabController::onChange(): An error occurred: " + string(exception.what()));
 					showInfoPopUp("Warning", string(exception.what()));
 				}
-				//
-				haveAppliedNode = true;
 				//
 				break;
 			}
@@ -333,8 +332,6 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 					showInfoPopUp("Warning", string(exception.what()));
 				}
 				//
-				haveAppliedNode = true;
-				//
 				break;
 			}
 		}
@@ -353,8 +350,6 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 					Console::println("SceneEditorTabController::onChange(): An error occurred: " + string(exception.what()));
 					showInfoPopUp("Warning", string(exception.what()));
 				}
-				//
-				haveAppliedNode = true;
 				//
 				break;
 			}
@@ -377,8 +372,6 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 					showInfoPopUp("Warning", string(exception.what()));
 				}
 				//
-				haveAppliedNode = true;
-				//
 				break;
 			}
 		}
@@ -392,8 +385,6 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 					showInfoPopUp("Warning", string(exception.what()));
 				}
 				//
-				haveAppliedNode = true;
-				//
 				break;
 			}
 		}
@@ -404,26 +395,24 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 				if (node->getId() == applyLightNode) {
 					applyLightDetails(lightIdx);
 					//
-					haveAppliedNode = true;
-					//
 					break;
 				}
 			}
 		}
 		//
-		if (haveAppliedNode == false) basePropertiesSubController->onChange(node, view->getScene());
 	}
 }
 
 void SceneEditorTabController::onFocus(GUIElementNode* node) {
-	basePropertiesSubController->onFocus(node, view->getScene());
+	if (basePropertiesSubController->onFocus(node, view->getScene()) == true) return;
 }
 
 void SceneEditorTabController::onUnfocus(GUIElementNode* node) {
+	if (basePropertiesSubController->onUnfocus(node, view->getScene()) == true) return;
+	//
 	if (node->getId() == "tdme.entities.rename_input") {
 		renameEntity();
 	} else {
-		auto haveAppliedNode = false;
 		for (auto& applyBaseNode: applyBaseNodes) {
 			if (node->getId() == applyBaseNode) {
 				//
@@ -441,14 +430,8 @@ void SceneEditorTabController::onUnfocus(GUIElementNode* node) {
 					showInfoPopUp("Warning", string(exception.what()));
 				}
 				//
-				haveAppliedNode = true;
-				//
 				break;
 			}
-		}
-		//
-		if (haveAppliedNode == false) {
-			basePropertiesSubController->onUnfocus(node, view->getScene());
 		}
 	}
 }
@@ -660,6 +643,9 @@ void SceneEditorTabController::onTooltipCloseRequest() {
 
 void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
+	//
+	if (basePropertiesSubController->onAction(type, node, view->getScene()) == true) return;
+	//
 	if (type != GUIActionListenerType::PERFORMED) return;
 	if (node->getId() == "menu_project_scene_run") {
 		view->runScene();
@@ -835,8 +821,6 @@ void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 			if (light == nullptr) return;
 			popUps->getColorPickerScreenController()->show(light->getSpecular(), new OnColorChangeAction(this, lightIdx));
 		}
-	} else {
-		basePropertiesSubController->onAction(type, node, view->getScene());
 	}
 }
 

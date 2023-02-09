@@ -246,6 +246,8 @@ void TerrainEditorTabController::showInfoPopUp(const string& caption, const stri
 
 void TerrainEditorTabController::onChange(GUIElementNode* node)
 {
+	if (basePropertiesSubController->onChange(node, view->getPrototype()) == true) return;
+	//
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		updateDetails(outlinerNode);
@@ -341,15 +343,14 @@ void TerrainEditorTabController::onChange(GUIElementNode* node)
 			}
 		}
 	}
-	basePropertiesSubController->onChange(node, view->getPrototype());
 }
 
 void TerrainEditorTabController::onFocus(GUIElementNode* node) {
-	basePropertiesSubController->onFocus(node, view->getPrototype());
+	if (basePropertiesSubController->onFocus(node, view->getPrototype()) == true) return;
 }
 
 void TerrainEditorTabController::onUnfocus(GUIElementNode* node) {
-	basePropertiesSubController->onUnfocus(node, view->getPrototype());
+	if (basePropertiesSubController->onUnfocus(node, view->getPrototype()) == true) return;
 }
 
 void TerrainEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
@@ -509,6 +510,9 @@ void TerrainEditorTabController::onTooltipCloseRequest() {
 
 void TerrainEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
+	//
+	if (basePropertiesSubController->onAction(type, node, view->getPrototype()) == true) return;
+	//
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId() == "terrain_create") {
 			onCreateTerrain();
@@ -783,7 +787,6 @@ void TerrainEditorTabController::onAction(GUIActionListenerType type, GUIElement
 			view->initializeTerrain();
 		}
 	}
-	basePropertiesSubController->onAction(type, node, view->getPrototype());
 }
 
 void TerrainEditorTabController::setOutlinerContent() {

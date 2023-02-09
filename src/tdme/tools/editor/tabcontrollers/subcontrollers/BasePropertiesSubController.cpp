@@ -232,13 +232,14 @@ void BasePropertiesSubController::renameProperty(BaseProperties* baseProperties)
 	editorView->reloadTabOutliner("properties" + (property != nullptr?"." + property->getName():""));
 }
 
-void BasePropertiesSubController::onChange(GUIElementNode* node, BaseProperties* baseProperties, Prototype* prototype)
+bool BasePropertiesSubController::onChange(GUIElementNode* node, BaseProperties* baseProperties, Prototype* prototype)
 {
 	if (node->getId() == "dropdown_outliner_add") {
 		auto addOutlinerType = node->getController()->getValue().getString();
 		if (addOutlinerType == "property") {
 			createProperty(baseProperties);
 		}
+		return true;
 	} else
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
@@ -246,41 +247,52 @@ void BasePropertiesSubController::onChange(GUIElementNode* node, BaseProperties*
 			auto selectedPropertyName = StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size());
 			setPropertyDetails(baseProperties, selectedPropertyName);
 		}
+		return true;
 	} else
 	if (prototype != nullptr && node->getId() == "base_prototype_entityhierarchy") {
 		prototype->setEntityHierarchy(node->getController()->getValue().equals("1"));
+		return true;
 	}
+	//
+	return false;
 }
 
-void BasePropertiesSubController::onAction(GUIActionListenerType type, GUIElementNode* node, BaseProperties* baseProperties)
+bool BasePropertiesSubController::onAction(GUIActionListenerType type, GUIElementNode* node, BaseProperties* baseProperties)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId() == "tdme.properties.rename_input") {
 			renameProperty(baseProperties);
+			return true;
 		}
 	}
+	//
+	return false;
 }
 
-void BasePropertiesSubController::onFocus(GUIElementNode* node, BaseProperties* baseProperties) {
+bool BasePropertiesSubController::onFocus(GUIElementNode* node, BaseProperties* baseProperties) {
+	return false;
 }
 
-void BasePropertiesSubController::onUnfocus(GUIElementNode* node, BaseProperties* baseProperties) {
+bool BasePropertiesSubController::onUnfocus(GUIElementNode* node, BaseProperties* baseProperties) {
 	if (node->getId() == "tdme.properties.rename_input") {
 		renameProperty(baseProperties);
+		return true;
 	} else {
 		for (auto& applyPropertyNode: applyPropertyNodes) {
 			if (node->getId() == applyPropertyNode) {
 				applyPropertyValue(baseProperties);
-				break;
+				return true;
 			}
 		}
 		for (auto& applyBaseNode: applyBaseNodes) {
 			if (node->getId() == applyBaseNode) {
 				applyPropertyDetails(baseProperties);
-				break;
+				return true;
 			}
 		}
 	}
+	//
+	return false;
 }
 
 void BasePropertiesSubController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY, BaseProperties* baseProperties) {

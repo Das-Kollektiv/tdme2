@@ -328,11 +328,12 @@ void PrototypeSoundsSubController::renameSound(Prototype* prototype) {
 	editorView->reloadTabOutliner(string("sounds") + "." + newSoundName);
 }
 
-void PrototypeSoundsSubController::onChange(GUIElementNode* node, Prototype* prototype, Model* model) {
+bool PrototypeSoundsSubController::onChange(GUIElementNode* node, Prototype* prototype, Model* model) {
 	if (node->getId() == "dropdown_outliner_add") {
 		auto addOutlinerType = node->getController()->getValue().getString();
 		if (addOutlinerType == "sound") {
 			createSound(prototype);
+			return true;
 		}
 	} else {
 		for (auto& audioChangeNode: applyAudioNodes) {
@@ -340,6 +341,7 @@ void PrototypeSoundsSubController::onChange(GUIElementNode* node, Prototype* pro
 				auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 				if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
 					applySoundDetails(prototype, StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size()));
+					return true;
 				}
 			}
 		}
@@ -349,53 +351,68 @@ void PrototypeSoundsSubController::onChange(GUIElementNode* node, Prototype* pro
 				auto soundId = StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size());
 				updateDetails(prototype, model, soundId);
 				playableSoundView->playSound(soundId);
+				return true;
 			} else {
 				playableSoundView->stopSound();
+				return false;
 			}
 		}
 	}
+	//
+	return false;
 }
 
-void PrototypeSoundsSubController::onAction(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype)
+bool PrototypeSoundsSubController::onAction(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype)
 {
-	if (type != GUIActionListenerType::PERFORMED) return;
+	if (type != GUIActionListenerType::PERFORMED) return false;
 	if (StringTools::startsWith(node->getId(), "sound_open") == true) {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
 			onSoundLoad(prototype, StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size()));
+			return true;
 		}
 	} else
 	if (StringTools::startsWith(node->getId(), "sound_remove") == true) {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
 			onSoundClear(prototype, StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size()));
+			return true;
 		}
 	} else
 	if (StringTools::startsWith(node->getId(), "sound_browseto") == true) {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
 			onSoundBrowseTo(prototype, StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size()));
+			return true;
 		}
 	} else
 	if (node->getId() == "tdme.sounds.rename_input") {
 		renameSound(prototype);
+		return true;
 	}
+	//
+	return false;
 }
 
-void PrototypeSoundsSubController::onFocus(GUIElementNode* node, Prototype* prototype) {
+bool PrototypeSoundsSubController::onFocus(GUIElementNode* node, Prototype* prototype) {
+	return false;
 }
 
-void PrototypeSoundsSubController::onUnfocus(GUIElementNode* node, Prototype* prototype) {
+bool PrototypeSoundsSubController::onUnfocus(GUIElementNode* node, Prototype* prototype) {
 	if (node->getId() == "tdme.sounds.rename_input") {
 		renameSound(prototype);
+		return true;
 	} else
 	if (node->getId() == "sound_key") {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
 			auto soundId = StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size());
 			editorView->reloadTabOutliner(applySoundDetailsRename(prototype, soundId));
+			return true;
 		}
 	}
+	//
+	return false;
 }
 
 void PrototypeSoundsSubController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype) {

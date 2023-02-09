@@ -169,22 +169,23 @@ void TriggerEditorTabController::onDrop(const string& payload, int mouseX, int m
 
 void TriggerEditorTabController::onChange(GUIElementNode* node)
 {
+	if (basePropertiesSubController->onChange(node, view->getPrototype()) == true) return;
+	if (prototypeDisplaySubController->onChange(node, view->getPrototype()) == true) return;
+	if (prototypePhysicsSubController->onChange(node, view->getPrototype()) == true) return;
+	if (prototypeScriptSubController->onChange(node, view->getPrototype()) == true) return;
+	//
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		updateDetails(outlinerNode);
 	}
-	basePropertiesSubController->onChange(node, view->getPrototype());
-	prototypeDisplaySubController->onChange(node, view->getPrototype());
-	prototypePhysicsSubController->onChange(node, view->getPrototype());
-	prototypeScriptSubController->onChange(node, view->getPrototype());
 }
 
 void TriggerEditorTabController::onFocus(GUIElementNode* node) {
-	basePropertiesSubController->onFocus(node, view->getPrototype());
+	if (basePropertiesSubController->onFocus(node, view->getPrototype()) == true) return;
 }
 
 void TriggerEditorTabController::onUnfocus(GUIElementNode* node) {
-	basePropertiesSubController->onUnfocus(node, view->getPrototype());
+	if (basePropertiesSubController->onUnfocus(node, view->getPrototype()) == true) return;
 }
 
 void TriggerEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
@@ -205,9 +206,9 @@ void TriggerEditorTabController::onTooltipCloseRequest() {
 
 void TriggerEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
-	basePropertiesSubController->onAction(type, node, view->getPrototype());
-	prototypePhysicsSubController->onAction(type, node, view->getPrototype());
-	prototypeScriptSubController->onAction(type, node, view->getPrototype());
+	if (basePropertiesSubController->onAction(type, node, view->getPrototype()) == true) return;
+	if (prototypePhysicsSubController->onAction(type, node, view->getPrototype()) == true) return;
+	if (prototypeScriptSubController->onAction(type, node, view->getPrototype()) == true) return;
 }
 
 void TriggerEditorTabController::setOutlinerContent() {

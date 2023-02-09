@@ -2202,6 +2202,11 @@ bool ModelEditorTabController::getOutlinerNodeLOD(const string& outlinerNode, st
 
 void ModelEditorTabController::onChange(GUIElementNode* node)
 {
+	if (basePropertiesSubController->onChange(node, view->getPrototype()) == true) return;
+	if (prototypeDisplaySubController->onChange(node, view->getPrototype()) == true) return;
+	if (prototypePhysicsSubController->onChange(node, view->getPrototype()) == true) return;
+	if (prototypeScriptSubController->onChange(node, view->getPrototype()) == true) return;
+	//
 	if (node->getId() == "dropdown_outliner_add") {
 		auto addOutlinerType = node->getController()->getValue().getString();
 		if (addOutlinerType == "animation") {
@@ -2304,10 +2309,6 @@ void ModelEditorTabController::onChange(GUIElementNode* node)
 		}
 		//
 		if (haveAppliedNode == false) {
-			basePropertiesSubController->onChange(node, view->getPrototype(), view->getPrototype());
-			prototypeDisplaySubController->onChange(node, view->getPrototype());
-			prototypePhysicsSubController->onChange(node, view->getPrototype());
-			prototypeScriptSubController->onChange(node, view->getPrototype());
 			{
 				auto model = getSelectedModel();
 				if (model != nullptr) prototypeSoundsSubController->onChange(node, view->getPrototype(), model);
@@ -2317,13 +2318,14 @@ void ModelEditorTabController::onChange(GUIElementNode* node)
 }
 
 void ModelEditorTabController::onFocus(GUIElementNode* node) {
-	basePropertiesSubController->onFocus(node, view->getPrototype());
-	prototypeSoundsSubController->onFocus(node, view->getPrototype());
+	if (basePropertiesSubController->onFocus(node, view->getPrototype()) == true) return;
+	if (prototypeSoundsSubController->onFocus(node, view->getPrototype()) == true) return;
 }
 
 void ModelEditorTabController::onUnfocus(GUIElementNode* node) {
-	basePropertiesSubController->onUnfocus(node, view->getPrototype());
-	prototypeSoundsSubController->onUnfocus(node, view->getPrototype());
+	if (basePropertiesSubController->onUnfocus(node, view->getPrototype()) == true) return;
+	if (prototypeSoundsSubController->onUnfocus(node, view->getPrototype()) == true) return;
+	//
 	if (node->getId() == "tdme.animations.rename_input") {
 		renameAnimation();
 	}
@@ -2689,10 +2691,12 @@ void ModelEditorTabController::onTooltipCloseRequest() {
 void ModelEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	auto prototype = view->getPrototype();
-	basePropertiesSubController->onAction(type, node, prototype);
-	prototypePhysicsSubController->onAction(type, node, prototype);
-	prototypeSoundsSubController->onAction(type, node, prototype);
-	prototypeScriptSubController->onAction(type, node, prototype);
+	//
+	if (basePropertiesSubController->onAction(type, node, prototype) == true) return;
+	if (prototypePhysicsSubController->onAction(type, node, prototype) == true) return;
+	if (prototypeSoundsSubController->onAction(type, node, prototype) == true) return;
+	if (prototypeScriptSubController->onAction(type, node, prototype) == true) return;
+	//
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId().compare("specularmaterial_diffuse_texture_open") == 0) {
 			onMaterialLoadDiffuseTexture();

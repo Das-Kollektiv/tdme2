@@ -142,30 +142,34 @@ public:
 	 * @param node node
 	 * @param baseProperties base properties
 	 * @param prototype prototype or nullptr
+	 * @return if this event has been handled
 	 */
-	void onChange(GUIElementNode* node, BaseProperties* baseProperties, Prototype* prototype = nullptr);
+	bool onChange(GUIElementNode* node, BaseProperties* baseProperties, Prototype* prototype = nullptr);
 
 	/**
 	 * On action performed
 	 * @param type type
 	 * @param node node
 	 * @param baseProperties base properties
+	 * @return if this event has been handled
 	 */
-	void onAction(GUIActionListenerType type, GUIElementNode* node, BaseProperties* baseProperties);
+	bool onAction(GUIActionListenerType type, GUIElementNode* node, BaseProperties* baseProperties);
 
 	/**
 	 * On focus
 	 * @param node node
 	 * @param baseProperties base properties
+	 * @return if this event has been handled
 	 */
-	void onFocus(GUIElementNode* node, BaseProperties* baseProperties);
+	bool onFocus(GUIElementNode* node, BaseProperties* baseProperties);
 
 	/**
 	 * On unfocus
 	 * @param node node
 	 * @param baseProperties base properties
+	 * @return if this event has been handled
 	 */
-	void onUnfocus(GUIElementNode* node, BaseProperties* baseProperties);
+	bool onUnfocus(GUIElementNode* node, BaseProperties* baseProperties);
 
 	/**
 	 * On context menu requested
