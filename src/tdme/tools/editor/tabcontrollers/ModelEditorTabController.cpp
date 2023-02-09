@@ -1963,18 +1963,7 @@ void ModelEditorTabController::renameAnimation() {
 		}
 	}
 
-	//
-	class ReloadTabOutlinerAction: public Action {
-	private:
-		EditorView* editorView;
-		string outlinerNode;
-	public:
-		ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
-		virtual void performAction() {
-			editorView->reloadTabOutliner(outlinerNode);
-		}
-	};
-	Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(view->getEditorView(), (renameAnimationLOD == 1?"model":"lod" + to_string(renameAnimationLOD) + ".model") + ".animations" + (animationSetup != nullptr?"." + animationSetup->getId():"")));
+	view->getEditorView()->reloadTabOutliner((renameAnimationLOD == 1?"model":"lod" + to_string(renameAnimationLOD) + ".model") + ".animations" + (animationSetup != nullptr?"." + animationSetup->getId():""));
 	renameAnimationLOD = -1;
 }
 
@@ -2230,6 +2219,7 @@ void ModelEditorTabController::onChange(GUIElementNode* node)
 		}
 	} else
 	if (node->getId() == "selectbox_outliner") {
+		auto haveAppliedNode = false;
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		auto haveDetails = false;
 		if (outlinerNode == "lod2.model" ||
@@ -2239,6 +2229,7 @@ void ModelEditorTabController::onChange(GUIElementNode* node)
 				haveDetails = true;
 				setLODDetails(2);
 			}
+			haveAppliedNode = true;
 		} else
 		if (outlinerNode == "lod3.model" ||
 			StringTools::startsWith(outlinerNode, "lod3.model.") == true) {
@@ -2247,6 +2238,7 @@ void ModelEditorTabController::onChange(GUIElementNode* node)
 				haveDetails = true;
 				setLODDetails(3);
 			}
+			haveAppliedNode = true;
 		} else
 		if (outlinerNode == "lod4.model" ||
 			StringTools::startsWith(outlinerNode, "lod4.model.") == true) {
@@ -2255,20 +2247,24 @@ void ModelEditorTabController::onChange(GUIElementNode* node)
 				haveDetails = true;
 				setLODDetails(4);
 			}
+			haveAppliedNode = true;
 		} else {
 			if (view->getLODLevel() != 1) view->setLODLevel(1);
 		}
+		//
 		if (haveDetails == false) updateDetails(outlinerNode);
-	} else {
-		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+		//
 		for (auto& applyAnimationNode: applyAnimationNodes) {
 			if (node->getId() == applyAnimationNode) {
 				applyAnimationDetails();
+				haveAppliedNode = true;
+				break;
 			}
 		}
 		for (auto& applyMaterialBaseNode: applyMaterialBaseNodes) {
 			if (node->getId() == applyMaterialBaseNode) {
 				applyMaterialBaseDetails();
+				haveAppliedNode = true;
 				break;
 			}
 		}
@@ -2281,12 +2277,14 @@ void ModelEditorTabController::onChange(GUIElementNode* node)
 		for (auto& applyPBRMaterialNode: applyPBRMaterialNodes) {
 			if (node->getId() == applyPBRMaterialNode) {
 				applyPBRMaterialDetails();
+				haveAppliedNode = true;
 				break;
 			}
 		}
 		for (auto& applyAnimationPreviewNode: applyAnimationPreviewNodes) {
 			if (node->getId() == applyAnimationPreviewNode) {
 				applyAnimationPreviewDetails();
+				haveAppliedNode = true;
 				break;
 			}
 		}
@@ -2300,17 +2298,21 @@ void ModelEditorTabController::onChange(GUIElementNode* node)
 					lodLevel = 3;
 				}
 				if (lodLevel != -1) applyLODDetails(lodLevel);
+				haveAppliedNode = true;
 				break;
 			}
 		}
-	}
-	basePropertiesSubController->onChange(node, view->getPrototype(), view->getPrototype());
-	prototypeDisplaySubController->onChange(node, view->getPrototype());
-	prototypePhysicsSubController->onChange(node, view->getPrototype());
-	prototypeScriptSubController->onChange(node, view->getPrototype());
-	{
-		auto model = getSelectedModel();
-		if (model != nullptr) prototypeSoundsSubController->onChange(node, view->getPrototype(), model);
+		//
+		if (haveAppliedNode == false) {
+			basePropertiesSubController->onChange(node, view->getPrototype(), view->getPrototype());
+			prototypeDisplaySubController->onChange(node, view->getPrototype());
+			prototypePhysicsSubController->onChange(node, view->getPrototype());
+			prototypeScriptSubController->onChange(node, view->getPrototype());
+			{
+				auto model = getSelectedModel();
+				if (model != nullptr) prototypeSoundsSubController->onChange(node, view->getPrototype(), model);
+			}
+		}
 	}
 }
 
@@ -2383,61 +2385,49 @@ void ModelEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 			popUps->getContextMenuScreenController()->addMenuItem("Reimport", "contextmenu_reimport", new OnModelReimportAction(this));
 
 			// generate billboard lod
-			class OnModelGenerateBillboardLodAction: public virtual Action
-			{
-			public:
-				void performAction() override {
-					auto prototype = modelEditorTabController->getView()->getPrototype();
-					if (prototype == nullptr) return;
-					auto model = prototype->getModel();
-					auto fileName = prototype->getModelFileName();
-					try {
-						if (prototype->getLODLevel2() != nullptr && prototype->getLODLevel3() != nullptr) {
-							throw ExceptionBase("All 3 LOD levels are in use");
-						}
-						if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
-						auto billboardModelPathName = Tools::getPathName(fileName);
-						auto billboardModelFileName = Tools::removeFileExtension(Tools::getFileName(fileName)) + ".lod" + to_string(prototype->getLODLevel2() == nullptr?2:3) + ".tm";
-						auto billboardLODModel = GenerateBillboardLOD::generate(
-							model,
-							billboardModelPathName,
-							billboardModelFileName
-						);
-						if (prototype->getLODLevel2() == nullptr) {
-							prototype->setLODLevel2(
-								new PrototypeLODLevel(
-									LODObject::LODLEVELTYPE_MODEL,
-									billboardModelPathName + "/" + billboardModelFileName,
-									billboardLODModel,
-									75.0f
-								)
-							);
-						} else
-						if (prototype->getLODLevel2() == nullptr) {
-							prototype->setLODLevel3(
-								new PrototypeLODLevel(
-									LODObject::LODLEVELTYPE_MODEL,
-									billboardModelPathName + "/" + billboardModelFileName,
-									billboardLODModel,
-									150.0f
-								)
-							);
-						}
-						modelEditorTabController->getView()->reloadPrototype();
-					} catch (Exception& exception) {
-						modelEditorTabController->showInfoPopUp("Warning", string(exception.what()));
-					}
-				}
-				OnModelGenerateBillboardLodAction(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
-				}
-			private:
-				ModelEditorTabController* modelEditorTabController;
-			};
-
 			class EnqueueOnModelGenerateBillboardLodAction: public virtual Action {
 				public:
 					void performAction() override {
-						Engine::getInstance()->enqueueAction(new OnModelGenerateBillboardLodAction(modelEditorTabController));
+						auto prototype = modelEditorTabController->getView()->getPrototype();
+						if (prototype == nullptr) return;
+						auto model = prototype->getModel();
+						auto fileName = prototype->getModelFileName();
+						try {
+							if (prototype->getLODLevel2() != nullptr && prototype->getLODLevel3() != nullptr) {
+								throw ExceptionBase("All 3 LOD levels are in use");
+							}
+							if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
+							auto billboardModelPathName = Tools::getPathName(fileName);
+							auto billboardModelFileName = Tools::removeFileExtension(Tools::getFileName(fileName)) + ".lod" + to_string(prototype->getLODLevel2() == nullptr?2:3) + ".tm";
+							auto billboardLODModel = GenerateBillboardLOD::generate(
+								model,
+								billboardModelPathName,
+								billboardModelFileName
+							);
+							if (prototype->getLODLevel2() == nullptr) {
+								prototype->setLODLevel2(
+									new PrototypeLODLevel(
+										LODObject::LODLEVELTYPE_MODEL,
+										billboardModelPathName + "/" + billboardModelFileName,
+										billboardLODModel,
+										75.0f
+									)
+								);
+							} else
+							if (prototype->getLODLevel2() == nullptr) {
+								prototype->setLODLevel3(
+									new PrototypeLODLevel(
+										LODObject::LODLEVELTYPE_MODEL,
+										billboardModelPathName + "/" + billboardModelFileName,
+										billboardLODModel,
+										150.0f
+									)
+								);
+							}
+							modelEditorTabController->getView()->reloadPrototype();
+						} catch (Exception& exception) {
+							modelEditorTabController->showInfoPopUp("Warning", string(exception.what()));
+						}
 					}
 					EnqueueOnModelGenerateBillboardLodAction(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
 					}
@@ -2448,50 +2438,38 @@ void ModelEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 			popUps->getContextMenuScreenController()->addMenuItem("Generate billboard LOD", "contextmenu_generatebillboardlod", new EnqueueOnModelGenerateBillboardLodAction(this));
 
 			// generate imposter lod
-			class OnModelGenerateImposterLodAction: public virtual Action
-			{
-			public:
-				void performAction() override {
-					auto prototype = modelEditorTabController->getView()->getPrototype();
-					if (prototype == nullptr) return;
-					auto model = prototype->getModel();
-					auto fileName = prototype->getModelFileName();
-					try {
-						if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
-						auto imposterModelPathName = Tools::getPathName(fileName);
-						auto imposterModelFileName = Tools::removeFileExtension(Tools::getFileName(fileName)) + ".lod" + to_string(prototype->getLODLevel2() == nullptr?2:3) + ".tm";
-						vector<Model*> imposterLODModels {};
-						vector<string> imposterLODFileNames;
-						GenerateImposterLOD::generate(
-							model,
-							imposterModelPathName,
-							imposterModelFileName,
-							24,
-							imposterLODFileNames,
-							imposterLODModels
-						);
-						prototype->setImposterLOD(
-							new PrototypeImposterLOD(
-								imposterLODFileNames,
-								imposterLODModels,
-								75.0f
-							)
-						);
-						modelEditorTabController->getView()->reloadPrototype();
-					} catch (Exception& exception) {
-						modelEditorTabController->showInfoPopUp("Warning", string(exception.what()));
-					}
-				}
-				OnModelGenerateImposterLodAction(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
-				}
-			private:
-				ModelEditorTabController* modelEditorTabController;
-			};
-
 			class EnqueueOnModelGenerateImposterLodAction: public virtual Action {
 				public:
 					void performAction() override {
-						Engine::getInstance()->enqueueAction(new OnModelGenerateImposterLodAction(modelEditorTabController));
+						auto prototype = modelEditorTabController->getView()->getPrototype();
+						if (prototype == nullptr) return;
+						auto model = prototype->getModel();
+						auto fileName = prototype->getModelFileName();
+						try {
+							if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
+							auto imposterModelPathName = Tools::getPathName(fileName);
+							auto imposterModelFileName = Tools::removeFileExtension(Tools::getFileName(fileName)) + ".lod" + to_string(prototype->getLODLevel2() == nullptr?2:3) + ".tm";
+							vector<Model*> imposterLODModels;
+							vector<string> imposterLODFileNames;
+							GenerateImposterLOD::generate(
+								model,
+								imposterModelPathName,
+								imposterModelFileName,
+								24,
+								imposterLODFileNames,
+								imposterLODModels
+							);
+							prototype->setImposterLOD(
+								new PrototypeImposterLOD(
+									imposterLODFileNames,
+									imposterLODModels,
+									75.0f
+								)
+							);
+							modelEditorTabController->getView()->reloadPrototype();
+						} catch (Exception& exception) {
+							modelEditorTabController->showInfoPopUp("Warning", string(exception.what()));
+						}
 					}
 					EnqueueOnModelGenerateImposterLodAction(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
 					}

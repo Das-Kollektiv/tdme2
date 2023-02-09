@@ -325,17 +325,7 @@ void PrototypeSoundsSubController::renameSound(Prototype* prototype) {
 	renameSoundName.clear();
 
 	//
-	class ReloadTabOutlinerAction: public Action {
-	private:
-		EditorView* editorView;
-		string outlinerNode;
-	public:
-		ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
-		virtual void performAction() {
-			editorView->reloadTabOutliner(outlinerNode);
-		}
-	};
-	Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(editorView, string("sounds") + "." + newSoundName));
+	editorView->reloadTabOutliner(string("sounds") + "." + newSoundName);
 }
 
 void PrototypeSoundsSubController::onChange(GUIElementNode* node, Prototype* prototype, Model* model) {

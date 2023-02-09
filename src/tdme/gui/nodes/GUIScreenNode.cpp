@@ -853,108 +853,111 @@ Texture* GUIScreenNode::getImage(const string& applicationRootPath, const string
 }
 
 void GUIScreenNode::forwardEvents() {
-	auto forwardEventListCopy = forwardEventList;
-	forwardEventList.clear();
-	for (auto& event: forwardEventListCopy) {
-		switch(event.eventType) {
-			case ForwardEvent::EVENTTYPE_ACTION:
-				{
-					for (auto i = 0; i < actionListener.size(); i++) {
-						auto elementNode = dynamic_cast<GUIElementNode*>(getNodeById(event.nodeId));
-						if (elementNode == nullptr) break;
-						actionListener[i]->onAction(static_cast<GUIActionListenerType>(event.type), elementNode);
+	auto forwardEventCount = 0;
+	while (forwardEventList.empty() == false && forwardEventCount++ < 10) {
+		auto forwardEventListCopy = forwardEventList;
+		forwardEventList.clear();
+		for (auto& event: forwardEventListCopy) {
+			switch(event.eventType) {
+				case ForwardEvent::EVENTTYPE_ACTION:
+					{
+						for (auto i = 0; i < actionListener.size(); i++) {
+							auto elementNode = dynamic_cast<GUIElementNode*>(getNodeById(event.nodeId));
+							if (elementNode == nullptr) break;
+							actionListener[i]->onAction(static_cast<GUIActionListenerType>(event.type), elementNode);
+						}
 					}
-				}
-				break;
-			case ForwardEvent::EVENTTYPE_CHANGE:
-				{
-					for (auto i = 0; i < changeListener.size(); i++) {
-						auto elementNode = dynamic_cast<GUIElementNode*>(getNodeById(event.nodeId));
-						if (elementNode == nullptr) break;
-						changeListener[i]->onChange(elementNode);
+					break;
+				case ForwardEvent::EVENTTYPE_CHANGE:
+					{
+						for (auto i = 0; i < changeListener.size(); i++) {
+							auto elementNode = dynamic_cast<GUIElementNode*>(getNodeById(event.nodeId));
+							if (elementNode == nullptr) break;
+							changeListener[i]->onChange(elementNode);
+						}
 					}
-				}
-				break;
-			case ForwardEvent::EVENTTYPE_MOUSEOVER:
-				{
-					for (auto i = 0; i < mouseOverListener.size(); i++) {
-						auto elementNode = dynamic_cast<GUIElementNode*>(getNodeById(event.nodeId));
-						if (elementNode == nullptr) break;
-						mouseOverListener[i]->onMouseOver(elementNode);
+					break;
+				case ForwardEvent::EVENTTYPE_MOUSEOVER:
+					{
+						for (auto i = 0; i < mouseOverListener.size(); i++) {
+							auto elementNode = dynamic_cast<GUIElementNode*>(getNodeById(event.nodeId));
+							if (elementNode == nullptr) break;
+							mouseOverListener[i]->onMouseOver(elementNode);
+						}
 					}
-				}
-				break;
-			case ForwardEvent::EVENTTYPE_CONTEXTMENUREQUEST:
-				{
-					for (auto i = 0; i < contextMenuRequestListener.size(); i++) {
-						auto elementNode = dynamic_cast<GUIElementNode*>(getNodeById(event.nodeId));
-						if (elementNode == nullptr) break;
-						contextMenuRequestListener[i]->onContextMenuRequest(elementNode, event.mouseX, event.mouseY);
+					break;
+				case ForwardEvent::EVENTTYPE_CONTEXTMENUREQUEST:
+					{
+						for (auto i = 0; i < contextMenuRequestListener.size(); i++) {
+							auto elementNode = dynamic_cast<GUIElementNode*>(getNodeById(event.nodeId));
+							if (elementNode == nullptr) break;
+							contextMenuRequestListener[i]->onContextMenuRequest(elementNode, event.mouseX, event.mouseY);
+						}
 					}
-				}
-				break;
-			case ForwardEvent::EVENTTYPE_FOCUS:
-				{
-					for (auto i = 0; i < focusListener.size(); i++) {
-						auto elementNode = dynamic_cast<GUIElementNode*>(getNodeById(event.nodeId));
-						if (elementNode == nullptr) break;
-						focusListener[i]->onFocus(elementNode);
+					break;
+				case ForwardEvent::EVENTTYPE_FOCUS:
+					{
+						for (auto i = 0; i < focusListener.size(); i++) {
+							auto elementNode = dynamic_cast<GUIElementNode*>(getNodeById(event.nodeId));
+							if (elementNode == nullptr) break;
+							focusListener[i]->onFocus(elementNode);
+						}
 					}
-				}
-				break;
-			case ForwardEvent::EVENTTYPE_UNFOCUS:
-				{
-					for (auto i = 0; i < focusListener.size(); i++) {
-						auto elementNode = dynamic_cast<GUIElementNode*>(getNodeById(event.nodeId));
-						if (elementNode == nullptr) break;
-						focusListener[i]->onUnfocus(elementNode);
+					break;
+				case ForwardEvent::EVENTTYPE_UNFOCUS:
+					{
+						for (auto i = 0; i < focusListener.size(); i++) {
+							auto elementNode = dynamic_cast<GUIElementNode*>(getNodeById(event.nodeId));
+							if (elementNode == nullptr) break;
+							focusListener[i]->onUnfocus(elementNode);
+						}
 					}
-				}
-				break;
-			case ForwardEvent::EVENTTYPE_MOVE:
-				{
-					for (auto i = 0; i < moveListener.size(); i++) {
-						auto node = getNodeById(event.nodeId);
-						if (node == nullptr) break;
-						moveListener[i]->onMove(node);
+					break;
+				case ForwardEvent::EVENTTYPE_MOVE:
+					{
+						for (auto i = 0; i < moveListener.size(); i++) {
+							auto node = getNodeById(event.nodeId);
+							if (node == nullptr) break;
+							moveListener[i]->onMove(node);
+						}
 					}
-				}
-				break;
-			case ForwardEvent::EVENTTYPE_MOVERELEASE:
-				{
-					for (auto i = 0; i < moveListener.size(); i++) {
-						auto node = getNodeById(event.nodeId);
-						if (node == nullptr) break;
-						moveListener[i]->onRelease(node, event.mouseX, event.mouseY);
+					break;
+				case ForwardEvent::EVENTTYPE_MOVERELEASE:
+					{
+						for (auto i = 0; i < moveListener.size(); i++) {
+							auto node = getNodeById(event.nodeId);
+							if (node == nullptr) break;
+							moveListener[i]->onRelease(node, event.mouseX, event.mouseY);
+						}
 					}
-				}
-				break;
-			case ForwardEvent::EVENTTYPE_TOOLTIPSHOWREQUEST:
-				{
-					for (auto i = 0; i < tooltipRequestListener.size(); i++) {
-						auto node = getNodeById(event.nodeId);
-						if (node == nullptr) break;
-						tooltipRequestListener[i]->onTooltipShowRequest(node, event.mouseX, event.mouseY);
+					break;
+				case ForwardEvent::EVENTTYPE_TOOLTIPSHOWREQUEST:
+					{
+						for (auto i = 0; i < tooltipRequestListener.size(); i++) {
+							auto node = getNodeById(event.nodeId);
+							if (node == nullptr) break;
+							tooltipRequestListener[i]->onTooltipShowRequest(node, event.mouseX, event.mouseY);
+						}
 					}
-				}
-				break;
-			case ForwardEvent::EVENTTYPE_TOOLTIPCLOSEREQUEST: {
-				{
-					for (auto i = 0; i < tooltipRequestListener.size(); i++) {
-						tooltipRequestListener[i]->onTooltipCloseRequest();
+					break;
+				case ForwardEvent::EVENTTYPE_TOOLTIPCLOSEREQUEST: {
+					{
+						for (auto i = 0; i < tooltipRequestListener.size(); i++) {
+							tooltipRequestListener[i]->onTooltipCloseRequest();
+						}
 					}
+					break;
 				}
-				break;
+				case ForwardEvent::EVENTTYPE_DRAGREQUEST:
+					{
+						for (auto i = 0; i < dragRequestListener.size(); i++) {
+							auto elementNode = dynamic_cast<GUIElementNode*>(getNodeById(event.nodeId));
+							if (elementNode == nullptr) break;
+							dragRequestListener[i]->onDragRequest(elementNode, event.mouseX, event.mouseY);
+						}
+					}
+					break;
 			}
-			case ForwardEvent::EVENTTYPE_DRAGREQUEST:
-				{
-					for (auto i = 0; i < dragRequestListener.size(); i++) {
-						auto elementNode = dynamic_cast<GUIElementNode*>(getNodeById(event.nodeId));
-						if (elementNode == nullptr) break;
-						dragRequestListener[i]->onDragRequest(elementNode, event.mouseX, event.mouseY);
-					}
-				}
-				break;
 		}
 	}
 }

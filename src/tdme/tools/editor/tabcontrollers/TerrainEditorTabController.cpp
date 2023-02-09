@@ -367,17 +367,7 @@ void TerrainEditorTabController::onContextMenuRequest(GUIElementNode* node, int 
 					auto waterIdx = Integer::parse(StringTools::substring(outlinerNode, string("terrain.waters.").size(), outlinerNode.size()));
 					terrainEditorTabController->deleteWater(waterIdx);
 					//
-					class ReloadOutlinerAction: public Action {
-					public:
-						void performAction() override {
-							terrainEditorTabController->view->getEditorView()->reloadTabOutliner("terrain.waters");
-						}
-						ReloadOutlinerAction(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
-						}
-					private:
-						TerrainEditorTabController* terrainEditorTabController;
-					};
-					Engine::getInstance()->enqueueAction(new ReloadOutlinerAction(terrainEditorTabController));
+					terrainEditorTabController->view->getEditorView()->reloadTabOutliner("terrain.waters");
 				}
 				OnTerrainWaterDelete(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
 				}
@@ -402,21 +392,7 @@ void TerrainEditorTabController::onContextMenuRequest(GUIElementNode* node, int 
 					if (terrain == nullptr) return;
 					auto brush = terrain->addBrush();
 					//
-					class ReloadOutlinerAction: public Action {
-					public:
-						void performAction() override {
-							string outlinerNode = "terrain.foliage";
-							auto prototype = terrainEditorTabController->view->getPrototype();
-							auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
-							if (terrain != nullptr) outlinerNode = "terrain.foliage." + to_string(terrain->getBrushes().size() - 1);
-							terrainEditorTabController->view->getEditorView()->reloadTabOutliner(outlinerNode);
-						}
-						ReloadOutlinerAction(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
-						}
-					private:
-						TerrainEditorTabController* terrainEditorTabController;
-					};
-					Engine::getInstance()->enqueueAction(new ReloadOutlinerAction(terrainEditorTabController));
+					terrainEditorTabController->view->getEditorView()->reloadTabOutliner("terrain.foliage." + to_string(terrain->getBrushes().size() - 1));
 				}
 				OnTerrainFoliageAddBrush(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
 				}
@@ -447,20 +423,8 @@ void TerrainEditorTabController::onContextMenuRequest(GUIElementNode* node, int 
 					auto brush = terrain->getBrush(foliageBrushIdx);
 					brush->removePrototype(foliageBrushPrototypeIdx);
 					auto newOutlinerNode = "terrain.brushes." + to_string(foliageBrushIdx);
-
 					//
-					class ReloadOutlinerAction: public Action {
-					public:
-						void performAction() override {
-							terrainEditorTabController->view->getEditorView()->reloadTabOutliner(outlinerNode);
-						}
-						ReloadOutlinerAction(TerrainEditorTabController* terrainEditorTabController, const string& outlinerNode): terrainEditorTabController(terrainEditorTabController), outlinerNode(outlinerNode) {
-						}
-					private:
-						TerrainEditorTabController* terrainEditorTabController;
-						string outlinerNode;
-					};
-					Engine::getInstance()->enqueueAction(new ReloadOutlinerAction(terrainEditorTabController, newOutlinerNode));
+					terrainEditorTabController->view->getEditorView()->reloadTabOutliner(newOutlinerNode);
 				}
 				OnTerrainDeleteFoliageBrush(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
 				}
@@ -492,20 +456,8 @@ void TerrainEditorTabController::onContextMenuRequest(GUIElementNode* node, int 
 					if (brush == nullptr) return;
 					auto brushPrototype = brush->addPrototype();
 					auto newOutlinerNode = "terrain.foliagebrushes." + to_string(foliageBrushIdx) + "." + to_string(brush->getPrototypes().size() - 1);
-
 					//
-					class ReloadOutlinerAction: public Action {
-					public:
-						void performAction() override {
-							terrainEditorTabController->view->getEditorView()->reloadTabOutliner(outlinerNode);
-						}
-						ReloadOutlinerAction(TerrainEditorTabController* terrainEditorTabController, const string& outlinerNode): terrainEditorTabController(terrainEditorTabController), outlinerNode(outlinerNode) {
-						}
-					private:
-						TerrainEditorTabController* terrainEditorTabController;
-						string outlinerNode;
-					};
-					Engine::getInstance()->enqueueAction(new ReloadOutlinerAction(terrainEditorTabController, newOutlinerNode));
+					terrainEditorTabController->view->getEditorView()->reloadTabOutliner(newOutlinerNode);
 				}
 				OnTerrainAddFoliageBrushPrototype(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
 				}
@@ -527,19 +479,8 @@ void TerrainEditorTabController::onContextMenuRequest(GUIElementNode* node, int 
 					auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
 					if (terrain == nullptr) return;
 					terrain->removeBrush(foliageBrushIdx);
-
 					//
-					class ReloadOutlinerAction: public Action {
-					public:
-						void performAction() override {
-							terrainEditorTabController->view->getEditorView()->reloadTabOutliner("terrain.foliage");
-						}
-						ReloadOutlinerAction(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
-						}
-					private:
-						TerrainEditorTabController* terrainEditorTabController;
-					};
-					Engine::getInstance()->enqueueAction(new ReloadOutlinerAction(terrainEditorTabController));
+					terrainEditorTabController->view->getEditorView()->reloadTabOutliner("terrain.foliage");
 				}
 				OnTerrainDeleteFoliageBrush(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
 				}
@@ -930,17 +871,7 @@ void TerrainEditorTabController::onCreateTerrain() {
 	}
 
 	//
-	class ReloadOutlinerAction: public Action {
-	public:
-		void performAction() override {
-			terrainEditorTabController->view->getEditorView()->reloadTabOutliner("terrain");
-		}
-		ReloadOutlinerAction(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
-		}
-	private:
-		TerrainEditorTabController* terrainEditorTabController;
-	};
-	Engine::getInstance()->enqueueAction(new ReloadOutlinerAction(this));
+	view->getEditorView()->reloadTabOutliner("terrain");
 }
 
 void TerrainEditorTabController::setBrushScale(float scale) {

@@ -295,6 +295,7 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 			Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_snapping_z"))->getController()->getValue().getString())
 		);
 	} else {
+		auto haveAppliedNode = false;
 		for (auto& applyTranslationNode: applyTranslationNodes) {
 			if (node->getId() == applyTranslationNode) {
 				//
@@ -310,6 +311,8 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 					Console::println("SceneEditorTabController::onChange(): An error occurred: " + string(exception.what()));
 					showInfoPopUp("Warning", string(exception.what()));
 				}
+				//
+				haveAppliedNode = true;
 				//
 				break;
 			}
@@ -330,6 +333,8 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 					showInfoPopUp("Warning", string(exception.what()));
 				}
 				//
+				haveAppliedNode = true;
+				//
 				break;
 			}
 		}
@@ -348,6 +353,8 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 					Console::println("SceneEditorTabController::onChange(): An error occurred: " + string(exception.what()));
 					showInfoPopUp("Warning", string(exception.what()));
 				}
+				//
+				haveAppliedNode = true;
 				//
 				break;
 			}
@@ -370,6 +377,8 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 					showInfoPopUp("Warning", string(exception.what()));
 				}
 				//
+				haveAppliedNode = true;
+				//
 				break;
 			}
 		}
@@ -383,6 +392,8 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 					showInfoPopUp("Warning", string(exception.what()));
 				}
 				//
+				haveAppliedNode = true;
+				//
 				break;
 			}
 		}
@@ -392,11 +403,15 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 			for (auto& applyLightNode: applyLightNodes) {
 				if (node->getId() == applyLightNode) {
 					applyLightDetails(lightIdx);
+					//
+					haveAppliedNode = true;
+					//
 					break;
 				}
 			}
 		}
-		basePropertiesSubController->onChange(node, view->getScene());
+		//
+		if (haveAppliedNode == false) basePropertiesSubController->onChange(node, view->getScene());
 	}
 }
 
@@ -408,6 +423,7 @@ void SceneEditorTabController::onUnfocus(GUIElementNode* node) {
 	if (node->getId() == "tdme.entities.rename_input") {
 		renameEntity();
 	} else {
+		auto haveAppliedNode = false;
 		for (auto& applyBaseNode: applyBaseNodes) {
 			if (node->getId() == applyBaseNode) {
 				//
@@ -425,11 +441,16 @@ void SceneEditorTabController::onUnfocus(GUIElementNode* node) {
 					showInfoPopUp("Warning", string(exception.what()));
 				}
 				//
+				haveAppliedNode = true;
+				//
 				break;
 			}
 		}
+		//
+		if (haveAppliedNode == false) {
+			basePropertiesSubController->onUnfocus(node, view->getScene());
+		}
 	}
-	basePropertiesSubController->onUnfocus(node, view->getScene());
 }
 
 void SceneEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
@@ -449,19 +470,8 @@ void SceneEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 						auto light = scene->addLight();
 						if (light == nullptr) return;
 						light->setEnabled(true);
-
 						//
-						class ReloadTabOutlinerAction: public Action {
-						private:
-							EditorView* editorView;
-							string outlinerNode;
-						public:
-							ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
-							virtual void performAction() {
-								editorView->reloadTabOutliner(outlinerNode);
-							}
-						};
-						Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(sceneEditorTabController->view->getEditorView(), "scene.lights.light" + to_string(light->getId())));
+						sceneEditorTabController->view->getEditorView()->reloadTabOutliner("scene.lights.light" + to_string(light->getId()));
 					}
 					OnAddLightAction(SceneEditorTabController* sceneEditorTabController): sceneEditorTabController(sceneEditorTabController) {
 					}
@@ -492,19 +502,8 @@ void SceneEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 						auto scene = sceneEditorTabController->view->getScene();
 						if (scene == nullptr) return;
 						scene->removeLightAt(lightIdx);
-
 						//
-						class ReloadTabOutlinerAction: public Action {
-						private:
-							EditorView* editorView;
-							string outlinerNode;
-						public:
-							ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
-							virtual void performAction() {
-								editorView->reloadTabOutliner(outlinerNode);
-							}
-						};
-						Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(sceneEditorTabController->view->getEditorView(), "scene.lights"));
+						sceneEditorTabController->view->getEditorView()->reloadTabOutliner("scene.lights");
 					}
 					OnDeleteLightAction(SceneEditorTabController* sceneEditorTabController, int lightIdx): sceneEditorTabController(sceneEditorTabController), lightIdx(lightIdx) {
 					}
@@ -643,9 +642,9 @@ void SceneEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 			//
 			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
 		}
-	} else {
-		basePropertiesSubController->onContextMenuRequest(node, mouseX, mouseY, view->getScene());
 	}
+	//
+	basePropertiesSubController->onContextMenuRequest(node, mouseX, mouseY, view->getScene());
 }
 
 void SceneEditorTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
@@ -1338,19 +1337,8 @@ void SceneEditorTabController::onReplacePrototype() {
 				scene->replacePrototypeByIds(prototype->getId(), newPrototype->getId());
 				sceneLibrary->removePrototype(prototype->getId());
 				sceneEditorTabController->view->reloadScene();
-
 				//
-				class ReloadTabOutlinerAction: public Action {
-				private:
-					EditorView* editorView;
-					string outlinerNode;
-				public:
-					ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
-					virtual void performAction() {
-						editorView->reloadTabOutliner(outlinerNode);
-					}
-				};
-				Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(sceneEditorTabController->view->getEditorView(), "scene.entities"));
+				sceneEditorTabController->view->getEditorView()->reloadTabOutliner("scene.entities");
 			} catch (Exception& exception) {
 				Console::println("OnReplacePrototypeAction::performAction(): An error occurred: " + string(exception.what()));
 				sceneEditorTabController->showInfoPopUp("Warning", string(exception.what()));
@@ -1419,15 +1407,5 @@ void SceneEditorTabController::renameEntity() {
 	}
 
 	//
-	class ReloadTabOutlinerAction: public Action {
-	private:
-		EditorView* editorView;
-		string outlinerNode;
-	public:
-		ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
-		virtual void performAction() {
-			editorView->reloadTabOutliner(outlinerNode);
-		}
-	};
-	Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(view->getEditorView(), "scene.entities" + (sceneEntity != nullptr?"." + sceneEntity->getName():"")));
+	view->getEditorView()->reloadTabOutliner("scene.entities" + (sceneEntity != nullptr?"." + sceneEntity->getName():""));
 }

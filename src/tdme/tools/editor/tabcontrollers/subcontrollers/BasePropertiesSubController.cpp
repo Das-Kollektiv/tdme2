@@ -229,17 +229,7 @@ void BasePropertiesSubController::renameProperty(BaseProperties* baseProperties)
 	}
 
 	//
-	class ReloadTabOutlinerAction: public Action {
-	private:
-		EditorView* editorView;
-		string outlinerNode;
-	public:
-		ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
-		virtual void performAction() {
-			editorView->reloadTabOutliner(outlinerNode);
-		}
-	};
-	Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(editorView, "properties" + (property != nullptr?"." + property->getName():"")));
+	editorView->reloadTabOutliner("properties" + (property != nullptr?"." + property->getName():""));
 }
 
 void BasePropertiesSubController::onChange(GUIElementNode* node, BaseProperties* baseProperties, Prototype* prototype)
@@ -373,18 +363,7 @@ void BasePropertiesSubController::applyPropertyValue(BaseProperties* basePropert
 	auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 	auto selectedPropertyName = StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size());
 	applyPropertyDetails(baseProperties, selectedPropertyName);
-	//
-	class ReloadTabOutlinerAction: public Action {
-	private:
-		EditorView* editorView;
-		string outlinerNode;
-	public:
-		ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
-		virtual void performAction() {
-			editorView->reloadTabOutliner(outlinerNode);
-		}
-	};
-	Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(editorView, outlinerNode));
+	editorView->reloadTabOutliner(outlinerNode);
 }
 
 void BasePropertiesSubController::showInfoPopUp(const string& caption, const string& message)
