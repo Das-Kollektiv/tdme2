@@ -156,7 +156,7 @@ public:
 	 * On value changed
 	 * @param node node
 	 * @param prototype prototype
-	 * @return if the change event has been handled
+	 * @return if this event has been handled
 	 */
 	bool onChange(GUIElementNode* node, Prototype* prototype);
 

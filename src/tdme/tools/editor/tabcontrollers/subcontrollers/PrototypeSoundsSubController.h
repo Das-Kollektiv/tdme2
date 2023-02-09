@@ -165,7 +165,7 @@ public:
 	 * @param node node
 	 * @param prototype prototype
 	 * @param model model
-	 * @return if event has been handled
+	 * @return if this event has been handled
 	 */
 	bool onChange(GUIElementNode* node, Prototype* prototype, Model* model);
 
@@ -173,7 +173,7 @@ public:
 	 * On focus
 	 * @param node node
 	 * @param prototype prototype
-	 * @return if event has been handled
+	 * @return if this event has been handled
 	 */
 	bool onFocus(GUIElementNode* node, Prototype* prototype);
 
@@ -181,7 +181,7 @@ public:
 	 * On unfocus
 	 * @param node node
 	 * @param prototype prototype
-	 * @return if event has been handled
+	 * @return if this event has been handled
 	 */
 	bool onUnfocus(GUIElementNode* node, Prototype* prototype);
 
@@ -190,7 +190,7 @@ public:
 	 * @param type type
 	 * @param node node
 	 * @param prototype prototype
-	 * @return if event has been handled
+	 * @return if this event has been handled
 	 */
 	bool onAction(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype);
 
