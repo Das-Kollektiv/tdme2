@@ -6277,11 +6277,11 @@ void MiniScript::registerMethods() {
 	// time
 	{
 		//
-		class ScriptMethodGetCurrentMillis: public ScriptMethod {
+		class ScriptMethodTimeGetCurrentMillis: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGetCurrentMillis(MiniScript* miniScript):
+			ScriptMethodTimeGetCurrentMillis(MiniScript* miniScript):
 				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -6291,7 +6291,36 @@ void MiniScript::registerMethods() {
 				returnValue.setValue(Time::getCurrentMillis());
 			}
 		};
-		registerMethod(new ScriptMethodGetCurrentMillis(this));
+		registerMethod(new ScriptMethodTimeGetCurrentMillis(this));
+	}
+	{
+		//
+		class ScriptMethodTimeGetAsString: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodTimeGetAsString(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "format", .optional = true, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_STRING
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "time.getAsString";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string format = "%Y-%m-%d %H:%M:%S";
+				if (MiniScript::getStringValue(argumentValues, 0, format, true) == false) {
+					Console::println("ScriptMethodTimeGetAsString::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				} else {
+					returnValue.setValue(Time::getAsString(format));
+				}
+			}
+		};
+		registerMethod(new ScriptMethodTimeGetAsString(this));
 	}
 
 	// register math functions

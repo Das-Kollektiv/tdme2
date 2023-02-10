@@ -3,6 +3,8 @@
 		<space height="*" />
 		<button id="btn" text="Hi there! Click me!!!" />
 		<space height="20" />
+		<checkbox id="chkbox" value="1" text="I love me! Check me too" />
+		<space height="20" />
 		<text id="text" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" padding="5" width="auto" height="auto" text="Hi! Check my mighty screen with a script attached!" />
 		<space height="*" />
 	</layout>
