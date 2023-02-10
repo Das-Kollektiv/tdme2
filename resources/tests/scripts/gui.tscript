@@ -92,6 +92,7 @@ function: onTick()
 #	console.log("onTick(): " + screen.getId())
 #	console.log("----------------------------------------------------------")
 #	console.log()
+	gui.textnode.setText("time", time.getAsString())
 end
 
 # on initialize

@@ -648,6 +648,7 @@ Reading all keys as array from set:
 | string.tokenize($string: String, $delimiters: String): Array                                     |
 | string.trim($string: String): String                                                             |
 | sub($a: Mixed, $b: Mixed): Mixed                                                                 |
+| time.getAsString([$format: String]): String                                                      |
 | time.getCurrentMillis(): Integer                                                                 |
 | transform([$translation: Vector3[, $scale: Vector3[, $rotationZ: Float[, $rotationY: Float[, $rotationX: Float]]]]]): Transform|
 | transform.AXIS_X(): Vector3                                                                      |
@@ -837,6 +838,8 @@ Reading all keys as array from set:
 | gui.node.controller.getValue($elementNodeId: String): String                                     |
 | gui.node.controller.setValue($elementNodeId: String, $value: String): String                     |
 | gui.screen.getId(): String                                                                       |
+| gui.textnode.getText($textNodeId: String): String                                                |
+| gui.textnode.setText($textNodeId: String, $text: String): Void                                   |
 
 # 9. Operators
 

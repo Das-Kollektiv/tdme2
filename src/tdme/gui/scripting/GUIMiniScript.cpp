@@ -7,8 +7,12 @@
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUIImageNode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/nodes/GUIStyledTextNode.h>
+#include <tdme/gui/nodes/GUITextNode.h>
+#include <tdme/gui/nodes/GUIVideoNode.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/MiniScript.h>
 #include <tdme/utilities/MutableString.h>
@@ -21,8 +25,12 @@ using tdme::gui::GUI;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::nodes::GUIStyledTextNode;
+using tdme::gui::nodes::GUITextNode;
+using tdme::gui::nodes::GUIVideoNode;
 using tdme::gui::scripting::GUIMiniScript;
 using tdme::utilities::MiniScript;
 using tdme::utilities::MutableString;
@@ -168,6 +176,88 @@ void GUIMiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodGUINodeControllerSetValue(this));
+	}
+	{
+		//
+		class ScriptMethodGUITextNodeGetText: public ScriptMethod {
+		private:
+			GUIMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodGUITextNodeGetText(GUIMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "textNodeId", .optional = false, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_STRING
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "gui.textnode.getText";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string textNodeId;
+				string text;
+				if (MiniScript::getStringValue(argumentValues, 0, textNodeId, false) == false) {
+					Console::println("ScriptMethodGUITextNodeGetText::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					miniScript->startErrorScript();
+				} else {
+					auto textNode = dynamic_cast<GUITextNode*>(miniScript->screenNode->getNodeById(textNodeId));
+					auto styledTextNode = textNode == nullptr?dynamic_cast<GUIStyledTextNode*>(miniScript->screenNode->getNodeById(textNodeId)):nullptr;
+					if (textNode != nullptr) {
+						returnValue.setValue(textNode->getText().getString());
+					} else
+					if (styledTextNode != nullptr) {
+						returnValue.setValue(styledTextNode->getText().getString());
+					} else {
+						Console::println("ScriptMethodGUITextNodeGetText::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no text or styled text node found for given node id '" + textNodeId + "'");
+						miniScript->startErrorScript();
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodGUITextNodeGetText(this));
+	}
+	{
+		//
+		class ScriptMethodGUITextNodeSetText: public ScriptMethod {
+		private:
+			GUIMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodGUITextNodeSetText(GUIMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "textNodeId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "text", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "gui.textnode.setText";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string textNodeId;
+				string text;
+				if (MiniScript::getStringValue(argumentValues, 0, textNodeId, false) == false ||
+					MiniScript::getStringValue(argumentValues, 1, text, false) == false) {
+					Console::println("ScriptMethodGUITextNodeGetText::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					miniScript->startErrorScript();
+				} else {
+					auto textNode = dynamic_cast<GUITextNode*>(miniScript->screenNode->getNodeById(textNodeId));
+					auto styledTextNode = textNode == nullptr?dynamic_cast<GUIStyledTextNode*>(miniScript->screenNode->getNodeById(textNodeId)):nullptr;
+					if (textNode != nullptr) {
+						textNode->setText(MutableString(text));
+					} else
+					if (styledTextNode != nullptr) {
+						styledTextNode->setText(MutableString(text));
+					} else {
+						Console::println("ScriptMethodGUITextNodeGetText::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no text or styled text node found for given node id '" + textNodeId + "'");
+						miniScript->startErrorScript();
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodGUITextNodeSetText(this));
 	}
 }
 

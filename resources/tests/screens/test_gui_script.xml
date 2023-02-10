@@ -6,6 +6,8 @@
 		<checkbox id="chkbox" value="1" text="I love me! Check me too" />
 		<space height="20" />
 		<text id="text" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" padding="5" width="auto" height="auto" text="Hi! Check my mighty screen with a script attached!" />
+		<space height="20" />
+		<text id="time" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" padding="5" width="auto" height="auto" text="Hm. What time is it???" />
 		<space height="*" />
 	</layout>
 </screen>
