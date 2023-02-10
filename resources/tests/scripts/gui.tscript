@@ -1,7 +1,7 @@
 # on action
-function: onAction($type, $elementNodeId)
+function: onAction($actionType, $elementNodeId)
 	console.log("----------------------------------------------------------")
-	console.log("onAction(): " + screen.getId() + ": " + $elementNodeId + "(" + $type + ")")
+	console.log("onAction(): " + screen.getId() + ": " + $elementNodeId + "(" + $actionType + ")")
 	console.log("----------------------------------------------------------")
 	console.log()
 end
@@ -73,7 +73,7 @@ end
 # on tooltip close request
 function: onTooltipCloseRequest()
 	console.log("----------------------------------------------------------")
-	console.log("onTooltipCloseRequest(): " + screen.getId() + ": " + $nodeId + "@" + $mouseX + ", " + $mouseY)
+	console.log("onTooltipCloseRequest()")
 	console.log("----------------------------------------------------------")
 	console.log()
 end
@@ -88,10 +88,10 @@ end
 
 # on tick
 function: onTick()
-	console.log("----------------------------------------------------------")
-	console.log("onTick(): " + screen.getId())
-	console.log("----------------------------------------------------------")
-	console.log()
+#	console.log("----------------------------------------------------------")
+#	console.log("onTick(): " + screen.getId())
+#	console.log("----------------------------------------------------------")
+#	console.log()
 end
 
 # on initialize

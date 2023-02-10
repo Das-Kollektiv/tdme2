@@ -135,6 +135,18 @@ private:
 	vector<ForwardEvent> forwardEventList;
 
 	GUIMiniScript* script { nullptr };
+	bool scriptOnActionAvailable { false };
+	bool scriptOnChangeAvailable { false };
+	bool scriptOnMouseOverAvailable { false };
+	bool scriptOnContextMenuRequestAvailable { false };
+	bool scriptOnFocusAvailable { false };
+	bool scriptOnUnfocusAvailable { false };
+	bool scriptOnMoveAvailable { false };
+	bool scriptOnMoveReleaseAvailable { false };
+	bool scriptOnTooltipShowRequestAvailable { false };
+	bool scriptOnTooltipCloseRequestAvailable { false };
+	bool scriptOnDragRequestAvailable { false };
+	bool scriptOnTickAvailable { false };
 
 public:
 	/**

@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <map>
+#include <span>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -36,11 +37,13 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Integer.h>
+#include <tdme/utilities/MiniScript.h>
 #include <tdme/utilities/MutableString.h>
 
 using std::map;
 using std::remove;
 using std::reverse;
+using std::span;
 using std::string;
 using std::to_string;
 using std::unordered_map;
@@ -76,6 +79,7 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Integer;
+using tdme::utilities::MiniScript;
 using tdme::utilities::MutableString;
 
 GUIScreenNode::GUIScreenNode(
@@ -124,7 +128,36 @@ GUIScreenNode::GUIScreenNode(
 			FileSystem::getInstance()->getPathName(script),
 			FileSystem::getInstance()->getFileName(script)
 		);
+		//
 		Console::println(this->script->getInformation());
+		//
+		this->scriptOnActionAvailable = this->script->hasFunction("onAction");
+		this->scriptOnChangeAvailable = this->script->hasFunction("onChange");
+		this->scriptOnMouseOverAvailable = this->script->hasFunction("onMouseOver");
+		this->scriptOnContextMenuRequestAvailable = this->script->hasFunction("onContextMenuRequest");
+		this->scriptOnFocusAvailable = this->script->hasFunction("onFocus");
+		this->scriptOnUnfocusAvailable = this->script->hasFunction("onUnfocus");
+		this->scriptOnMoveAvailable = this->script->hasFunction("onMove");
+		this->scriptOnMoveReleaseAvailable = this->script->hasFunction("onMoveRelease");
+		this->scriptOnTooltipShowRequestAvailable = this->script->hasFunction("onTooltipShowRequest");
+		this->scriptOnTooltipCloseRequestAvailable = this->script->hasFunction("onTooltipCloseRequest");
+		this->scriptOnDragRequestAvailable = this->script->hasFunction("onDragRequest");
+		this->scriptOnTickAvailable = this->script->hasFunction("onTick");
+		//
+		Console::println("Available event script handler functions:");
+		Console::println("onAction: " + string(this->scriptOnActionAvailable == true?"YES":"NO"));
+		Console::println("onChange: " + string(this->scriptOnChangeAvailable == true?"YES":"NO"));
+		Console::println("onMouseOver: " + string(this->scriptOnMouseOverAvailable == true?"YES":"NO"));
+		Console::println("onContextMenuRequest: " + string(this->scriptOnContextMenuRequestAvailable == true?"YES":"NO"));
+		Console::println("onFocus: " + string(this->scriptOnFocusAvailable == true?"YES":"NO"));
+		Console::println("onUnfocus: " + string(this->scriptOnUnfocusAvailable == true?"YES":"NO"));
+		Console::println("onMove: " + string(this->scriptOnMoveAvailable == true?"YES":"NO"));
+		Console::println("onMoveRelease: " + string(this->scriptOnMoveReleaseAvailable == true?"YES":"NO"));
+		Console::println("onTooltipShowRequest: " + string(this->scriptOnTooltipShowRequestAvailable == true?"YES":"NO"));
+		Console::println("onTooltipCloseRequest: " + string(this->scriptOnTooltipCloseRequestAvailable == true?"YES":"NO"));
+		Console::println("onDragRequest: " + string(this->scriptOnDragRequestAvailable == true?"YES":"NO"));
+		Console::println("onTick: " + string(this->scriptOnTickAvailable == true?"YES":"NO"));
+		Console::println();
 	}
 }
 
@@ -728,6 +761,13 @@ void GUIScreenNode::tick() {
 		auto node = tickNodesByIdIt.second;
 		if (node->controller != nullptr) node->controller->tick();
 	}
+	//
+	if (scriptOnTickAvailable == true) {
+		vector<MiniScript::ScriptVariable> argumentValues(0);
+		span argumentValuesSpan(argumentValues);
+		MiniScript::ScriptVariable returnValue;
+		script->call("onTick", argumentValuesSpan, returnValue);
+	}
 }
 
 void GUIScreenNode::getValues(unordered_map<string, MutableString>& values)
@@ -878,6 +918,17 @@ void GUIScreenNode::forwardEvents() {
 							actionListener[i]->onAction(static_cast<GUIActionListenerType>(event.type), elementNode);
 						}
 					}
+					//
+					if (scriptOnActionAvailable == true) {
+						vector<MiniScript::ScriptVariable> argumentValues {
+							static_cast<int64_t>(event.type),
+							event.nodeId
+						};
+						span argumentValuesSpan(argumentValues);
+						MiniScript::ScriptVariable returnValue;
+						script->call("onAction", argumentValuesSpan, returnValue);
+					}
+					//
 					break;
 				case ForwardEvent::EVENTTYPE_CHANGE:
 					{
@@ -887,6 +938,16 @@ void GUIScreenNode::forwardEvents() {
 							changeListener[i]->onChange(elementNode);
 						}
 					}
+					//
+					if (scriptOnChangeAvailable == true) {
+						vector<MiniScript::ScriptVariable> argumentValues {
+							event.nodeId
+						};
+						span argumentValuesSpan(argumentValues);
+						MiniScript::ScriptVariable returnValue;
+						script->call("onChange", argumentValuesSpan, returnValue);
+					}
+					//
 					break;
 				case ForwardEvent::EVENTTYPE_MOUSEOVER:
 					{
@@ -896,6 +957,16 @@ void GUIScreenNode::forwardEvents() {
 							mouseOverListener[i]->onMouseOver(elementNode);
 						}
 					}
+					//
+					if (scriptOnMouseOverAvailable == true) {
+						vector<MiniScript::ScriptVariable> argumentValues {
+							event.nodeId
+						};
+						span argumentValuesSpan(argumentValues);
+						MiniScript::ScriptVariable returnValue;
+						script->call("onMouseOver", argumentValuesSpan, returnValue);
+					}
+					//
 					break;
 				case ForwardEvent::EVENTTYPE_CONTEXTMENUREQUEST:
 					{
@@ -905,6 +976,18 @@ void GUIScreenNode::forwardEvents() {
 							contextMenuRequestListener[i]->onContextMenuRequest(elementNode, event.mouseX, event.mouseY);
 						}
 					}
+					//
+					if (scriptOnContextMenuRequestAvailable == true) {
+						vector<MiniScript::ScriptVariable> argumentValues {
+							event.nodeId,
+							static_cast<int64_t>(event.mouseX),
+							static_cast<int64_t>(event.mouseY)
+						};
+						span argumentValuesSpan(argumentValues);
+						MiniScript::ScriptVariable returnValue;
+						script->call("onContextMenuRequest", argumentValuesSpan, returnValue);
+					}
+					//
 					break;
 				case ForwardEvent::EVENTTYPE_FOCUS:
 					{
@@ -914,6 +997,16 @@ void GUIScreenNode::forwardEvents() {
 							focusListener[i]->onFocus(elementNode);
 						}
 					}
+					//
+					if (scriptOnFocusAvailable == true) {
+						vector<MiniScript::ScriptVariable> argumentValues {
+							event.nodeId
+						};
+						span argumentValuesSpan(argumentValues);
+						MiniScript::ScriptVariable returnValue;
+						script->call("onFocus", argumentValuesSpan, returnValue);
+					}
+					//
 					break;
 				case ForwardEvent::EVENTTYPE_UNFOCUS:
 					{
@@ -923,6 +1016,16 @@ void GUIScreenNode::forwardEvents() {
 							focusListener[i]->onUnfocus(elementNode);
 						}
 					}
+					//
+					if (scriptOnUnfocusAvailable == true) {
+						vector<MiniScript::ScriptVariable> argumentValues {
+							event.nodeId
+						};
+						span argumentValuesSpan(argumentValues);
+						MiniScript::ScriptVariable returnValue;
+						script->call("onUnfocus", argumentValuesSpan, returnValue);
+					}
+					//
 					break;
 				case ForwardEvent::EVENTTYPE_MOVE:
 					{
@@ -932,6 +1035,16 @@ void GUIScreenNode::forwardEvents() {
 							moveListener[i]->onMove(node);
 						}
 					}
+					//
+					if (scriptOnMoveAvailable == true) {
+						vector<MiniScript::ScriptVariable> argumentValues {
+							event.nodeId
+						};
+						span argumentValuesSpan(argumentValues);
+						MiniScript::ScriptVariable returnValue;
+						script->call("onMove", argumentValuesSpan, returnValue);
+					}
+					//
 					break;
 				case ForwardEvent::EVENTTYPE_MOVERELEASE:
 					{
@@ -941,6 +1054,18 @@ void GUIScreenNode::forwardEvents() {
 							moveListener[i]->onRelease(node, event.mouseX, event.mouseY);
 						}
 					}
+					//
+					if (scriptOnMoveReleaseAvailable == true) {
+						vector<MiniScript::ScriptVariable> argumentValues {
+							event.nodeId,
+							static_cast<int64_t>(event.mouseX),
+							static_cast<int64_t>(event.mouseY)
+						};
+						span argumentValuesSpan(argumentValues);
+						MiniScript::ScriptVariable returnValue;
+						script->call("onMoveRelease", argumentValuesSpan, returnValue);
+					}
+					//
 					break;
 				case ForwardEvent::EVENTTYPE_TOOLTIPSHOWREQUEST:
 					{
@@ -950,6 +1075,18 @@ void GUIScreenNode::forwardEvents() {
 							tooltipRequestListener[i]->onTooltipShowRequest(node, event.mouseX, event.mouseY);
 						}
 					}
+					//
+					if (scriptOnTooltipShowRequestAvailable == true) {
+						vector<MiniScript::ScriptVariable> argumentValues {
+							event.nodeId,
+							static_cast<int64_t>(event.mouseX),
+							static_cast<int64_t>(event.mouseY)
+						};
+						span argumentValuesSpan(argumentValues);
+						MiniScript::ScriptVariable returnValue;
+						script->call("onTooltipShowRequest", argumentValuesSpan, returnValue);
+					}
+					//
 					break;
 				case ForwardEvent::EVENTTYPE_TOOLTIPCLOSEREQUEST: {
 					{
@@ -957,6 +1094,14 @@ void GUIScreenNode::forwardEvents() {
 							tooltipRequestListener[i]->onTooltipCloseRequest();
 						}
 					}
+					//
+					if (scriptOnTooltipCloseRequestAvailable == true) {
+						vector<MiniScript::ScriptVariable> argumentValues(0);
+						span argumentValuesSpan(argumentValues);
+						MiniScript::ScriptVariable returnValue;
+						script->call("onTooltipCloseRequest", argumentValuesSpan, returnValue);
+					}
+					//
 					break;
 				}
 				case ForwardEvent::EVENTTYPE_DRAGREQUEST:
@@ -967,6 +1112,18 @@ void GUIScreenNode::forwardEvents() {
 							dragRequestListener[i]->onDragRequest(elementNode, event.mouseX, event.mouseY);
 						}
 					}
+					//
+					if (scriptOnDragRequestAvailable == true) {
+						vector<MiniScript::ScriptVariable> argumentValues {
+							event.nodeId,
+							static_cast<int64_t>(event.mouseX),
+							static_cast<int64_t>(event.mouseY)
+						};
+						span argumentValuesSpan(argumentValues);
+						MiniScript::ScriptVariable returnValue;
+						script->call("onDragRequest", argumentValuesSpan, returnValue);
+					}
+					//
 					break;
 			}
 		}

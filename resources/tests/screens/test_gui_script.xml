@@ -1,5 +1,9 @@
 <screen id="test_gui_script" script="resources/tests/scripts/gui.tscript">
-	<layout width="100%" height="100%" align="none" horizontal-align="center" vertical-align="center">
+	<layout width="100%" height="100%" alignment="vertical" horizontal-align="center" vertical-align="center">
+		<space height="*" />
+		<button id="btn" text="Hi there! Click me!!!" />
+		<space height="20" />
 		<text id="text" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" padding="5" width="auto" height="auto" text="Hi! Check my mighty screen with a script attached!" />
+		<space height="*" />
 	</layout>
 </screen>

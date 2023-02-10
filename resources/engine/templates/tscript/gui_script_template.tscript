@@ -1,7 +1,7 @@
 # on action
-function: onAction($type, $elementNodeId)
+function: onAction($actionType, $elementNodeId)
 	console.log("----------------------------------------------------------")
-	console.log("onAction(): " + screen.getId() + ": " + $elementNodeId + "(" + $type + ")")
+	console.log("onAction(): " + screen.getId() + ": " + $elementNodeId + "(" + $actionType + ")")
 	console.log("----------------------------------------------------------")
 	console.log()
 end
