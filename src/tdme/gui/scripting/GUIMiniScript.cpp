@@ -530,6 +530,152 @@ void GUIMiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodGUIElementNodeConditionsRemoveAll(this));
 	}
+	{
+		//
+		class ScriptMethodGUIImageNodeGetSource: public ScriptMethod {
+		private:
+			GUIMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodGUIImageNodeGetSource(GUIMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "imageNodeId", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_STRING
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "gui.imagenode.getSource";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string imageNodeId;
+				if (MiniScript::getStringValue(argumentValues, 0, imageNodeId, false) == false) {
+					Console::println("ScriptMethodGUIImageNodeGetSource::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				} else {
+					auto imageNode = dynamic_cast<GUIImageNode*>(miniScript->screenNode->getNodeById(imageNodeId));
+					if (imageNode != nullptr) {
+						returnValue.setValue(imageNode->getSource());
+					} else {
+						Console::println("ScriptMethodGUIImageNodeGetSource::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no image node found for given image node id '" + imageNodeId + "'");
+						miniScript->startErrorScript();
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodGUIImageNodeGetSource(this));
+	}
+	{
+		//
+		class ScriptMethodGUIImageNodeSetSource: public ScriptMethod {
+		private:
+			GUIMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodGUIImageNodeSetSource(GUIMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "imageNodeId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "source", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "gui.imagenode.setSource";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string imageNodeId;
+				string source;
+				if (MiniScript::getStringValue(argumentValues, 0, imageNodeId, false) == false ||
+					MiniScript::getStringValue(argumentValues, 1, source, false) == false) {
+					Console::println("ScriptMethodGUIImageNodeSetSource::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					miniScript->startErrorScript();
+				} else {
+					auto imageNode = dynamic_cast<GUIImageNode*>(miniScript->screenNode->getNodeById(imageNodeId));
+					if (imageNode != nullptr) {
+						imageNode->setSource(source);
+					} else {
+						Console::println("ScriptMethodGUIImageNodeSetSource::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no image node found for given image node id '" + imageNodeId + "'");
+						miniScript->startErrorScript();
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodGUIImageNodeSetSource(this));
+	}
+	{
+		//
+		class ScriptMethodGUIVideoNodeGetSource: public ScriptMethod {
+		private:
+			GUIMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodGUIVideoNodeGetSource(GUIMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "videoNodeId", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_STRING
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "gui.videonode.getSource";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string videoNodeId;
+				if (MiniScript::getStringValue(argumentValues, 0, videoNodeId, false) == false) {
+					Console::println("ScriptMethodGUIVideoNodeGetSource::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				} else {
+					auto videoNode = dynamic_cast<GUIVideoNode*>(miniScript->screenNode->getNodeById(videoNodeId));
+					if (videoNode != nullptr) {
+						returnValue.setValue(videoNode->getSource());
+					} else {
+						Console::println("ScriptMethodGUIVideoNodeGetSource::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no video node found for given video node id '" + videoNodeId + "'");
+						miniScript->startErrorScript();
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodGUIVideoNodeGetSource(this));
+	}
+	{
+		//
+		class ScriptMethodGUIVideoNodeSetSource: public ScriptMethod {
+		private:
+			GUIMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodGUIVideoNodeSetSource(GUIMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "videoNodeId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "source", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "gui.videonode.setSource";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string videoNodeId;
+				string source;
+				if (MiniScript::getStringValue(argumentValues, 0, videoNodeId, false) == false ||
+					MiniScript::getStringValue(argumentValues, 1, source, false) == false) {
+					Console::println("ScriptMethodGUIVideoNodeSetSource::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					miniScript->startErrorScript();
+				} else {
+					auto videoNode = dynamic_cast<GUIVideoNode*>(miniScript->screenNode->getNodeById(videoNodeId));
+					if (videoNode != nullptr) {
+						videoNode->setSource(source);
+					} else {
+						Console::println("ScriptMethodGUIVideoNodeSetSource::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no video node found for given video node id '" + videoNodeId + "'");
+						miniScript->startErrorScript();
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodGUIVideoNodeSetSource(this));
+	}
 }
 
 void GUIMiniScript::registerVariables() {

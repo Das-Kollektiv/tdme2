@@ -842,11 +842,15 @@ Reading all keys as array from set:
 | gui.elementnode.conditions.removeAll($elementNodeId: String): Void                               |
 | gui.event.ACTIONTYPE_PERFORMED(): Integer                                                        |
 | gui.event.ACTIONTYPE_PERFORMING(): Integer                                                       |
+| gui.imagenode.getSource($imageNodeId: String): String                                            |
+| gui.imagenode.setSource($imageNodeId: String, $source: String): Void                             |
 | gui.node.controller.getValue($elementNodeId: String): String                                     |
 | gui.node.controller.setValue($elementNodeId: String, $value: String): Void                       |
 | gui.screen.getId(): String                                                                       |
 | gui.textnode.getText($textNodeId: String): String                                                |
 | gui.textnode.setText($textNodeId: String, $text: String): Void                                   |
+| gui.videonode.getSource($videoNodeId: String): String                                            |
+| gui.videonode.setSource($videoNodeId: String, $source: String): Void                             |
 
 # 9. Operators
 
