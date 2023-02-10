@@ -10,6 +10,16 @@
 			<text id="welcome" show-on="welcome" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" padding="5" width="auto" height="auto" text="Hi there! I love you!!!" />
 			<text id="time" show-on="time" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" padding="5" width="auto" height="auto" text="Hm. What time is it???" />
 		</element>
+		<space height="20" />
+		<button id="btn_clearsubnodes" text="Clear Container" />
+		<space height="20" />
+		<button id="btn_insertsubnodes" text="Put more love into Container" />
+		<space height="20" />
+		<button id="btn_replacesubnodes" text="Replace the love of Container" />
+		<space height="20" />
+		<layout id="container" width="auto" height="auto" alignment="vertical">
+			<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" padding="5" width="auto" height="auto" text="This is a initial fancy line in my container here. LOL!" />
+		</layout>
 		<space height="*" />
 	</layout>
 </screen>

@@ -676,6 +676,123 @@ void GUIMiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodGUIVideoNodeSetSource(this));
 	}
+	{
+		//
+		class ScriptMethodGUIParentNodeClearSubNodes: public ScriptMethod {
+		private:
+			GUIMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodGUIParentNodeClearSubNodes(GUIMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "parentNodeId", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "gui.parentnode.clearSubNodes";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string parentNodeId;
+				if (MiniScript::getStringValue(argumentValues, 0, parentNodeId, false) == false) {
+					Console::println("ScriptMethodGUIParentNodeClearSubNodes::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				} else {
+					auto parentNode = dynamic_cast<GUIParentNode*>(miniScript->screenNode->getNodeById(parentNodeId));
+					if (parentNode != nullptr) {
+						parentNode->clearSubNodes();
+					} else {
+						Console::println("ScriptMethodGUIParentNodeClearSubNodes::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no parent node found for given parent node id '" + parentNodeId + "'");
+						miniScript->startErrorScript();
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodGUIParentNodeClearSubNodes(this));
+	}
+	{
+		//
+		class ScriptMethodGUIParentNodeAddSubNodes: public ScriptMethod {
+		private:
+			GUIMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodGUIParentNodeAddSubNodes(GUIMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "parentNodeId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "xml", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "resetScrollOffsets", .optional = true, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "gui.parentnode.addSubNodes";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string parentNodeId;
+				string xml;
+				bool resetScrollOffsets = true;
+				if (MiniScript::getStringValue(argumentValues, 0, parentNodeId, false) == false ||
+					MiniScript::getStringValue(argumentValues, 1, xml, false) == false ||
+					MiniScript::getBooleanValue(argumentValues, 2, resetScrollOffsets, true) == false) {
+					Console::println("ScriptMethodGUIParentNodeAddSubNodes::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					miniScript->startErrorScript();
+				} else {
+					auto parentNode = dynamic_cast<GUIParentNode*>(miniScript->screenNode->getNodeById(parentNodeId));
+					if (parentNode != nullptr) {
+						parentNode->addSubNodes(xml, resetScrollOffsets);
+					} else {
+						Console::println("ScriptMethodGUIParentNodeAddSubNodes::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no parent node found for given parent node id '" + parentNodeId + "'");
+						miniScript->startErrorScript();
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodGUIParentNodeAddSubNodes(this));
+	}
+	{
+		//
+		class ScriptMethodGUIParentNodeReplaceSubNodes: public ScriptMethod {
+		private:
+			GUIMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodGUIParentNodeReplaceSubNodes(GUIMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "parentNodeId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "xml", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "resetScrollOffsets", .optional = true, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "gui.parentnode.replaceSubNodes";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string parentNodeId;
+				string xml;
+				bool resetScrollOffsets = true;
+				if (MiniScript::getStringValue(argumentValues, 0, parentNodeId, false) == false ||
+					MiniScript::getStringValue(argumentValues, 1, xml, false) == false ||
+					MiniScript::getBooleanValue(argumentValues, 2, resetScrollOffsets, true) == false) {
+					Console::println("ScriptMethodGUIParentNodeReplaceSubNodes::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					miniScript->startErrorScript();
+				} else {
+					auto parentNode = dynamic_cast<GUIParentNode*>(miniScript->screenNode->getNodeById(parentNodeId));
+					if (parentNode != nullptr) {
+						parentNode->replaceSubNodes(xml, resetScrollOffsets);
+					} else {
+						Console::println("ScriptMethodGUIParentNodeReplaceSubNodes::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no parent node found for given parent node id '" + parentNodeId + "'");
+						miniScript->startErrorScript();
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodGUIParentNodeReplaceSubNodes(this));
+	}
 }
 
 void GUIMiniScript::registerVariables() {

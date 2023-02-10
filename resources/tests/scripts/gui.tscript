@@ -9,6 +9,12 @@ function: onAction($actionType, $elementNodeId)
 			gui.elementnode.conditions.set("info", "welcome")
 		elseif ($elementNodeId == "btn_time")
 			gui.elementnode.conditions.set("info", "time")
+		elseif ($elementNodeId == "btn_clearsubnodes")
+			gui.parentnode.clearSubNodes("container")
+		elseif ($elementNodeId == "btn_insertsubnodes")
+			gui.parentnode.addSubNodes("container", "<text font='{$font.default}' size='{$fontsize.default}' color='{$color.font_normal}' padding='5' width='auto' height='auto' text='This is a another fancy line in my container here. You love it!!!' />")
+		elseif ($elementNodeId == "btn_replacesubnodes")
+			gui.parentnode.replaceSubNodes("container", "<text font='{$font.default}' size='{$fontsize.default}' color='{$color.font_normal}' padding='5' width='auto' height='auto' text='This is the fancy replacement line in my container here. You like that!!!' />")
 		end
 	end
 end
