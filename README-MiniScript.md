@@ -828,7 +828,17 @@ Reading all keys as array from set:
 | world.doRayCasting($collisionTypeIds: Integer, $start: Vector3, $end: Vector3, =$hitPoint: Vector3, =$bodyId: String[, $actorId: String]): Boolean|
 | world.doesCollideWith($collisionTypeIds: Integer, $bodyId: String): Array                        |
 
-# 8. Operators
+# 8. MiniScript GUI methods
+
+| MiniScript GUI methods                                                                           |
+|--------------------------------------------------------------------------------------------------|
+| action.ACTIONTYPE_PERFORMED(): Integer                                                           |
+| action.ACTIONTYPE_PERFORMING(): Integer                                                          |
+| node.controller.getValue($elementNodeId: String): String                                         |
+| node.controller.setValue($elementNodeId: String, $value: String): String                         |
+| screen.getId(): String                                                                           |
+
+# 9. Operators
 
 | Op | Method                                                                                      |
 |----|---------------------------------------------------------------------------------------------|
