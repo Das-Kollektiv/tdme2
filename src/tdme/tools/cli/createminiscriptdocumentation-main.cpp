@@ -222,7 +222,7 @@ int main(int argc, char** argv)
 		auto scriptMethods = guiMiniScript->getMethods();
 		for (auto scriptMethod: scriptMethods) {
 			if (baseMiniScript->hasMethod(scriptMethod->getMethodName()) == true) continue;
-			Console::println("miniscript.gui." + scriptMethod->getMethodName() + "=");
+			Console::println("miniscript." + scriptMethod->getMethodName() + "=");
 		}
 	}
 }

@@ -832,11 +832,11 @@ Reading all keys as array from set:
 
 | MiniScript GUI methods                                                                           |
 |--------------------------------------------------------------------------------------------------|
-| action.ACTIONTYPE_PERFORMED(): Integer                                                           |
-| action.ACTIONTYPE_PERFORMING(): Integer                                                          |
-| node.controller.getValue($elementNodeId: String): String                                         |
-| node.controller.setValue($elementNodeId: String, $value: String): String                         |
-| screen.getId(): String                                                                           |
+| gui.event.ACTIONTYPE_PERFORMED(): Integer                                                        |
+| gui.event.ACTIONTYPE_PERFORMING(): Integer                                                       |
+| gui.node.controller.getValue($elementNodeId: String): String                                     |
+| gui.node.controller.setValue($elementNodeId: String, $value: String): String                     |
+| gui.screen.getId(): String                                                                       |
 
 # 9. Operators
 

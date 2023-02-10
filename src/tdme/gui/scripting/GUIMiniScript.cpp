@@ -50,7 +50,7 @@ void GUIMiniScript::registerMethods() {
 				ScriptMethod({}, ScriptVariableType::TYPE_STRING),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "screen.getId";
+				return "gui.screen.getId";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue.setValue(miniScript->screenNode->getId());
@@ -60,47 +60,47 @@ void GUIMiniScript::registerMethods() {
 	}
 	{
 		//
-		class ScriptMethodActionACTIONTYPE_PERFORMING: public ScriptMethod {
+		class ScriptMethodGUIEventACTIONTYPE_PERFORMING: public ScriptMethod {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodActionACTIONTYPE_PERFORMING(GUIMiniScript* miniScript):
+			ScriptMethodGUIEventACTIONTYPE_PERFORMING(GUIMiniScript* miniScript):
 				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "action.ACTIONTYPE_PERFORMING";
+				return "gui.event.ACTIONTYPE_PERFORMING";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue.setValue(static_cast<int64_t>(GUIActionListenerType::PERFORMING));
 			}
 		};
-		registerMethod(new ScriptMethodActionACTIONTYPE_PERFORMING(this));
+		registerMethod(new ScriptMethodGUIEventACTIONTYPE_PERFORMING(this));
 	}
 	{
 		//
-		class ScriptMethodActionACTIONTYPE_PERFORMED: public ScriptMethod {
+		class ScriptMethodGUIEventACTIONTYPE_PERFORMED: public ScriptMethod {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodActionACTIONTYPE_PERFORMED(GUIMiniScript* miniScript):
+			ScriptMethodGUIEventACTIONTYPE_PERFORMED(GUIMiniScript* miniScript):
 				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "action.ACTIONTYPE_PERFORMED";
+				return "gui.event.ACTIONTYPE_PERFORMED";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue.setValue(static_cast<int64_t>(GUIActionListenerType::PERFORMED));
 			}
 		};
-		registerMethod(new ScriptMethodActionACTIONTYPE_PERFORMED(this));
+		registerMethod(new ScriptMethodGUIEventACTIONTYPE_PERFORMED(this));
 	}
 	{
 		//
-		class ScriptMethodNodeControllerGetValue: public ScriptMethod {
+		class ScriptMethodGUINodeControllerGetValue: public ScriptMethod {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodNodeControllerGetValue(GUIMiniScript* miniScript):
+			ScriptMethodGUINodeControllerGetValue(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .assignBack = false }
@@ -109,12 +109,12 @@ void GUIMiniScript::registerMethods() {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "node.controller.getValue";
+				return "gui.node.controller.getValue";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string elementNodeId;
 				if (MiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false) {
-					Console::println("ScriptMethodNodeControllerGetValue::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println("ScriptMethodGUINodeControllerSetValue::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript();
 				} else {
 					auto elementNode = dynamic_cast<GUIElementNode*>(miniScript->screenNode->getNodeById(elementNodeId));
@@ -122,21 +122,21 @@ void GUIMiniScript::registerMethods() {
 					if (controller != nullptr) {
 						returnValue.setValue(controller->getValue().getString());
 					} else {
-						Console::println("ScriptMethodNodeControllerGetValue::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no node controller found for given element node id '" + elementNodeId + "'");
+						Console::println("ScriptMethodGUINodeControllerSetValue::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no node controller found for given element node id '" + elementNodeId + "'");
 						miniScript->startErrorScript();
 					}
 				}
 			}
 		};
-		registerMethod(new ScriptMethodNodeControllerGetValue(this));
+		registerMethod(new ScriptMethodGUINodeControllerGetValue(this));
 	}
 	{
 		//
-		class ScriptMethodNodeControllerSetValue: public ScriptMethod {
+		class ScriptMethodGUINodeControllerSetValue: public ScriptMethod {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodNodeControllerSetValue(GUIMiniScript* miniScript):
+			ScriptMethodGUINodeControllerSetValue(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .assignBack = false },
@@ -146,14 +146,14 @@ void GUIMiniScript::registerMethods() {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "node.controller.setValue";
+				return "gui.node.controller.setValue";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string elementNodeId;
 				string value;
 				if (MiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
 					MiniScript::getStringValue(argumentValues, 1, value, false) == false) {
-					Console::println("ScriptMethodNodeControllerSetValue::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					Console::println("ScriptMethodGUINodeControllerSetValue::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
 					miniScript->startErrorScript();
 				} else {
 					auto elementNode = dynamic_cast<GUIElementNode*>(miniScript->screenNode->getNodeById(elementNodeId));
@@ -161,13 +161,13 @@ void GUIMiniScript::registerMethods() {
 					if (controller != nullptr) {
 						controller->setValue(MutableString(value));
 					} else {
-						Console::println("ScriptMethodNodeControllerSetValue::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no node controller found for given element node id '" + elementNodeId + "'");
+						Console::println("ScriptMethodGUINodeControllerSetValue::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no node controller found for given element node id '" + elementNodeId + "'");
 						miniScript->startErrorScript();
 					}
 				}
 			}
 		};
-		registerMethod(new ScriptMethodNodeControllerSetValue(this));
+		registerMethod(new ScriptMethodGUINodeControllerSetValue(this));
 	}
 }
 
