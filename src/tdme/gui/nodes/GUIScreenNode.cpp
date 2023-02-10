@@ -180,6 +180,9 @@ GUIScreenNode::~GUIScreenNode() {
 		imageCacheIt.second->releaseReference();
 	}
 	imageCache.clear();
+
+	// delete miniscript
+	if (script != nullptr) delete script;
 }
 
 GUI* GUIScreenNode::getGUI()

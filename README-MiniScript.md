@@ -833,10 +833,17 @@ Reading all keys as array from set:
 
 | MiniScript GUI methods                                                                           |
 |--------------------------------------------------------------------------------------------------|
+| gui.elementnode.conditions.has($elementNodeId: String, $condition: String): Boolean              |
+| gui.elementnode.conditions.get($elementNodeId: String): Array                                    |
+| gui.elementnode.conditions.set($elementNodeId: String, $condition: String): Void                 |
+| gui.elementnode.conditions.setAll($elementNodeId: String, $conditions: Array): Void              |
+| gui.elementnode.conditions.add($elementNodeId: String, $condition: String): Void                 |
+| gui.elementnode.conditions.remove($elementNodeId: String, $condition: String): Void              |
+| gui.elementnode.conditions.removeAll($elementNodeId: String): Void                               |
 | gui.event.ACTIONTYPE_PERFORMED(): Integer                                                        |
 | gui.event.ACTIONTYPE_PERFORMING(): Integer                                                       |
 | gui.node.controller.getValue($elementNodeId: String): String                                     |
-| gui.node.controller.setValue($elementNodeId: String, $value: String): String                     |
+| gui.node.controller.setValue($elementNodeId: String, $value: String): Void                       |
 | gui.screen.getId(): String                                                                       |
 | gui.textnode.getText($textNodeId: String): String                                                |
 | gui.textnode.setText($textNodeId: String, $text: String): Void                                   |

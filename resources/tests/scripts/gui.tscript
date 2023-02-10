@@ -1,105 +1,50 @@
 # on action
 function: onAction($actionType, $elementNodeId)
-	console.log("----------------------------------------------------------")
-	console.log("onAction(): " + screen.getId() + ": " + $elementNodeId + "(" + $actionType + ")")
-	console.log("----------------------------------------------------------")
-	console.log()
+	#console.log("----------------------------------------------------------")
+	#console.log("onAction(): " + gui.screen.getId() + ": " + $elementNodeId + "(" + $actionType + ")")
+	#console.log("----------------------------------------------------------")
+	#console.log()
+	if ($actionType == gui.event.ACTIONTYPE_PERFORMED())
+		if ($elementNodeId == "btn_hello")
+			gui.elementnode.conditions.set("info", "welcome")
+		elseif ($elementNodeId == "btn_time")
+			gui.elementnode.conditions.set("info", "time")
+		end
+	end
 end
 
 # on change
 function: onChange($elementNodeId)
-	console.log("----------------------------------------------------------")
-	console.log("onChange(): " + screen.getId() + ": " + $elementNodeId)
-	console.log("----------------------------------------------------------")
-	console.log()
+	#console.log("----------------------------------------------------------")
+	#console.log("onChange(): " + gui.screen.getId() + ": " + $elementNodeId)
+	#console.log("----------------------------------------------------------")
+	#console.log()
 end
 
 # on mouse over
 function: onMouseOver($elementNodeId)
-	console.log("----------------------------------------------------------")
-	console.log("onMouseOver(): " + screen.getId() + ": " + $elementNodeId)
-	console.log("----------------------------------------------------------")
-	console.log()
-end
-
-# on context menu request
-function: onContextMenuRequest($elementNodeId, $mouseX, $mouseY)
-	console.log("----------------------------------------------------------")
-	console.log("onContextMenuRequest(): " + screen.getId() + ": " + $elementNodeId + "@" + $mouseX + ", " + $mouseY)
-	console.log("----------------------------------------------------------")
-	console.log()
-end
-
-# on focus
-function: onFocus($elementNodeId)
-	console.log("----------------------------------------------------------")
-	console.log("onFocus(): " + screen.getId() + ": " + $elementNodeId)
-	console.log("----------------------------------------------------------")
-	console.log()
-end
-
-# on unfocus
-function: onUnfocus($elementNodeId)
-	console.log("----------------------------------------------------------")
-	console.log("onUnfocus(): " + screen.getId() + ": " + $elementNodeId)
-	console.log("----------------------------------------------------------")
-	console.log()
-end
-
-# on move
-function: onMove($nodeId)
-	console.log("----------------------------------------------------------")
-	console.log("onMove(): " + screen.getId() + ": " + $nodeId)
-	console.log("----------------------------------------------------------")
-	console.log()
-end
-
-# on move release
-function: onMoveRelease($nodeId, $mouseX, $mouseY)
-	console.log("----------------------------------------------------------")
-	console.log("onMoveRelease(): " + screen.getId() + ": " + $nodeId + "@" + $mouseX + ", " + $mouseY)
-	console.log("----------------------------------------------------------")
-	console.log()
-end
-
-# on tooltip show request
-function: onTooltipShowRequest($nodeId, $mouseX, $mouseY)
-	console.log("----------------------------------------------------------")
-	console.log("onTooltipShowRequest(): " + screen.getId() + ": " + $nodeId + "@" + $mouseX + ", " + $mouseY)
-	console.log("----------------------------------------------------------")
-	console.log()
-end
-
-# on tooltip close request
-function: onTooltipCloseRequest()
-	console.log("----------------------------------------------------------")
-	console.log("onTooltipCloseRequest()")
-	console.log("----------------------------------------------------------")
-	console.log()
-end
-
-# on drag request
-function: onDragRequest($elementNodeId, $mouseX, $mouseY)
-	console.log("----------------------------------------------------------")
-	console.log("onDragRequest(): " + screen.getId() + ": " + $elementNodeId + "@" + $mouseX + ", " + $mouseY)
-	console.log("----------------------------------------------------------")
-	console.log()
+	#console.log("----------------------------------------------------------")
+	#console.log("onMouseOver(): " + gui.screen.getId() + ": " + $elementNodeId)
+	#console.log("----------------------------------------------------------")
+	#console.log()
 end
 
 # on tick
 function: onTick()
-#	console.log("----------------------------------------------------------")
-#	console.log("onTick(): " + screen.getId())
-#	console.log("----------------------------------------------------------")
-#	console.log()
-	gui.textnode.setText("time", time.getAsString())
+	#console.log("----------------------------------------------------------")
+	#console.log("onTick(): " + gui.screen.getId())
+	#console.log("----------------------------------------------------------")
+	#console.log()
+	if (gui.elementnode.conditions.has("info", "time") == true)
+		gui.textnode.setText("time", time.getAsString())
+	end
 end
 
 # on initialize
 on: initialize
 	# this is not yet called
 	console.log("----------------------------------------------------------")
-	console.log("initialize: " + screen.getId())
+	console.log("initialize: " + gui.screen.getId())
 	console.log("----------------------------------------------------------")
 	console.log()
 end
@@ -107,7 +52,7 @@ end
 # if no condition is met, nothing will be executed, lol :D
 on: nothing
 	console.log("----------------------------------------------------------")
-	console.log("Nothing: " + screen.getId())
+	console.log("Nothing: " + gui.screen.getId())
 	console.log("----------------------------------------------------------")
 	console.log()
 end

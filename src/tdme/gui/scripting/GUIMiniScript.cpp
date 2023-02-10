@@ -150,7 +150,7 @@ void GUIMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "value", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_STRING
+					ScriptVariableType::TYPE_VOID
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -196,7 +196,6 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string textNodeId;
-				string text;
 				if (MiniScript::getStringValue(argumentValues, 0, textNodeId, false) == false) {
 					Console::println("ScriptMethodGUITextNodeGetText::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
 					miniScript->startErrorScript();
@@ -258,6 +257,278 @@ void GUIMiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodGUITextNodeSetText(this));
+	}
+	{
+		//
+		class ScriptMethodGUIElementNodeConditionsHas: public ScriptMethod {
+		private:
+			GUIMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodGUIElementNodeConditionsHas(GUIMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "condition", .optional = false, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "gui.elementnode.conditions.has";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string elementNodeId;
+				string condition;
+				if (MiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
+					MiniScript::getStringValue(argumentValues, 1, condition, false) == false) {
+					Console::println("ScriptMethodGUIElementNodeConditionsHas::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					miniScript->startErrorScript();
+				} else {
+					auto elementNode = dynamic_cast<GUIElementNode*>(miniScript->screenNode->getNodeById(elementNodeId));
+					if (elementNode != nullptr) {
+						returnValue.setValue(elementNode->getActiveConditions().has(condition));
+					} else {
+						Console::println("ScriptMethodGUIElementNodeConditionsHas::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no element node found for given node id '" + elementNodeId + "'");
+						miniScript->startErrorScript();
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodGUIElementNodeConditionsHas(this));
+	}
+	{
+		//
+		class ScriptMethodGUIElementNodeConditionsGet: public ScriptMethod {
+		private:
+			GUIMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodGUIElementNodeConditionsGet(GUIMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_ARRAY
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "gui.elementnode.conditions.get";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string elementNodeId;
+				if (MiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false) {
+					Console::println("ScriptMethodGUIElementNodeConditionsGet::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				} else {
+					auto elementNode = dynamic_cast<GUIElementNode*>(miniScript->screenNode->getNodeById(elementNodeId));
+					if (elementNode != nullptr) {
+						auto conditions = elementNode->getActiveConditions().getConditions();
+						returnValue.setType(TYPE_ARRAY);
+						for (auto& condition: conditions) {
+							returnValue.pushArrayValue(condition);
+						}
+					} else {
+						Console::println("ScriptMethodGUIElementNodeConditionsGet::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no element node found for given node id '" + elementNodeId + "'");
+						miniScript->startErrorScript();
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodGUIElementNodeConditionsGet(this));
+	}
+	{
+		//
+		class ScriptMethodGUIElementNodeConditionsSet: public ScriptMethod {
+		private:
+			GUIMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodGUIElementNodeConditionsSet(GUIMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "condition", .optional = false, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "gui.elementnode.conditions.set";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string elementNodeId;
+				string condition;
+				if (MiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
+					MiniScript::getStringValue(argumentValues, 1, condition, false) == false) {
+					Console::println("ScriptMethodGUIElementNodeConditionsSet::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					miniScript->startErrorScript();
+				} else {
+					auto elementNode = dynamic_cast<GUIElementNode*>(miniScript->screenNode->getNodeById(elementNodeId));
+					if (elementNode != nullptr) {
+						elementNode->getActiveConditions().set(condition);
+					} else {
+						Console::println("ScriptMethodGUIElementNodeConditionsSet::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no element node found for given node id '" + elementNodeId + "'");
+						miniScript->startErrorScript();
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodGUIElementNodeConditionsSet(this));
+	}
+	{
+		//
+		class ScriptMethodGUIElementNodeConditionsAdd: public ScriptMethod {
+		private:
+			GUIMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodGUIElementNodeConditionsAdd(GUIMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "condition", .optional = false, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "gui.elementnode.conditions.add";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string elementNodeId;
+				string condition;
+				if (MiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
+					MiniScript::getStringValue(argumentValues, 1, condition, false) == false) {
+					Console::println("ScriptMethodGUIElementNodeConditionsAdd::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					miniScript->startErrorScript();
+				} else {
+					auto elementNode = dynamic_cast<GUIElementNode*>(miniScript->screenNode->getNodeById(elementNodeId));
+					if (elementNode != nullptr) {
+						elementNode->getActiveConditions().add(condition);
+					} else {
+						Console::println("ScriptMethodGUIElementNodeConditionsAdd::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no element node found for given node id '" + elementNodeId + "'");
+						miniScript->startErrorScript();
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodGUIElementNodeConditionsAdd(this));
+	}
+	{
+		//
+		class ScriptMethodGUIElementNodeConditionsSetAll: public ScriptMethod {
+		private:
+			GUIMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodGUIElementNodeConditionsSetAll(GUIMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "conditions", .optional = false, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "gui.elementnode.conditions.setAll";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string elementNodeId;
+				if (MiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
+					argumentValues.size() <= 1 || argumentValues[1].getType() != ScriptVariableType::TYPE_ARRAY) {
+					Console::println("ScriptMethodGUIElementNodeConditionsSetAll::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: array of string expected");
+					miniScript->startErrorScript();
+				} else {
+					auto elementNode = dynamic_cast<GUIElementNode*>(miniScript->screenNode->getNodeById(elementNodeId));
+					if (elementNode != nullptr) {
+						vector<string> conditions;
+						for (auto i = 0; i < argumentValues[1].getArraySize(); i++) {
+							string condition;
+							if (argumentValues[1].getArrayValue(i).getStringValue(condition, false) == false) {
+								Console::println("ScriptMethodGUIElementNodeConditionsSet::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 1: array of strings expected");
+							} else {
+								conditions.push_back(condition);
+							}
+						}
+						elementNode->getActiveConditions().set(conditions);
+					} else {
+						Console::println("ScriptMethodGUIElementNodeConditionsSetAll::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no element node found for given node id '" + elementNodeId + "'");
+						miniScript->startErrorScript();
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodGUIElementNodeConditionsSetAll(this));
+	}
+	{
+		//
+		class ScriptMethodGUIElementNodeConditionsRemove: public ScriptMethod {
+		private:
+			GUIMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodGUIElementNodeConditionsRemove(GUIMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "condition", .optional = false, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "gui.elementnode.conditions.remove";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string elementNodeId;
+				string condition;
+				if (MiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
+					MiniScript::getStringValue(argumentValues, 1, condition, false) == false) {
+					Console::println("ScriptMethodGUIElementNodeConditionsRemove::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					miniScript->startErrorScript();
+				} else {
+					auto elementNode = dynamic_cast<GUIElementNode*>(miniScript->screenNode->getNodeById(elementNodeId));
+					if (elementNode != nullptr) {
+						elementNode->getActiveConditions().remove(condition);
+					} else {
+						Console::println("ScriptMethodGUIElementNodeConditionsRemove::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no element node found for given node id '" + elementNodeId + "'");
+						miniScript->startErrorScript();
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodGUIElementNodeConditionsRemove(this));
+	}
+	{
+		//
+		class ScriptMethodGUIElementNodeConditionsRemoveAll: public ScriptMethod {
+		private:
+			GUIMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodGUIElementNodeConditionsRemoveAll(GUIMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "gui.elementnode.conditions.removeAll";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string elementNodeId;
+				if (MiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false) {
+					Console::println("ScriptMethodGUIElementNodeConditionsRemoveAll::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				} else {
+					auto elementNode = dynamic_cast<GUIElementNode*>(miniScript->screenNode->getNodeById(elementNodeId));
+					if (elementNode != nullptr) {
+						elementNode->getActiveConditions().removeAll();
+					} else {
+						Console::println("ScriptMethodGUIElementNodeConditionsRemoveAll::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no element node found for given node id '" + elementNodeId + "'");
+						miniScript->startErrorScript();
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodGUIElementNodeConditionsRemoveAll(this));
 	}
 }
 
