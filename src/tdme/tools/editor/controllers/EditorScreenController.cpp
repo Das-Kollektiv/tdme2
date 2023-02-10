@@ -1306,7 +1306,10 @@ void EditorScreenController::onAddFile(const string& type) {
 	//
 	string extension;
 	if (type != "folder") {
-		if (type == "screen" || type == "template") extension = "xml"; else extension = "t" + type;
+		if (type == "logic_script") extension = "tscript"; else
+		if (type == "gui_script") extension = "tscript"; else
+		if (type == "screen" || type == "template") extension = "xml"; else
+			extension = "t" + type;
 	}
 
 	//
@@ -1352,9 +1355,18 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			showInfoPopUp("Error", string() + "An error occurred: file type: " + type + ": " + exception.what());
 		}
 	} else
-	if (type == "script") {
+	if (type == "logic_script") {
 		try {
-			FileSystem::getInstance()->setContentFromString(pathName, fileName, FileSystem::getInstance()->getContentAsString("resources/engine/templates/tscript", "template.tscript"));
+			FileSystem::getInstance()->setContentFromString(pathName, fileName, FileSystem::getInstance()->getContentAsString("resources/engine/templates/tscript", "logic_script_template.tscript"));
+			browseTo(pathName + "/" + fileName);
+			openFile(pathName + "/" + fileName);
+		} catch (Exception& exception) {
+			showInfoPopUp("Error", string() + "An error occurred: file type: " + type + ": " + exception.what());
+		}
+	} else
+	if (type == "gui_script") {
+		try {
+			FileSystem::getInstance()->setContentFromString(pathName, fileName, FileSystem::getInstance()->getContentAsString("resources/engine/templates/tscript", "gui_script_template.tscript"));
 			browseTo(pathName + "/" + fileName);
 			openFile(pathName + "/" + fileName);
 		} catch (Exception& exception) {
