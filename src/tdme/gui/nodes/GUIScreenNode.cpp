@@ -30,6 +30,7 @@
 #include <tdme/gui/nodes/GUIScreenNode_SizeConstraints.h>
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
+#include <tdme/gui/scripting/GUIMiniScript.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
@@ -69,6 +70,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIScreenNode_SizeConstraints;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::gui::scripting::GUIMiniScript;
 using tdme::gui::GUI;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
@@ -98,7 +100,8 @@ GUIScreenNode::GUIScreenNode(
 	const GUINodeConditions& hideOn,
 	const string& tooltip,
 	bool scrollable,
-	bool popUp
+	bool popUp,
+	const string& script
 ):
 	GUIParentNode(this, nullptr, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn, tooltip)
 {
@@ -115,6 +118,14 @@ GUIScreenNode::GUIScreenNode(
 	this->parentNode = nullptr;
 	this->visible = true;
 	this->popUp = popUp;
+	if (script.empty() == false) {
+		this->script = new GUIMiniScript(this);
+		this->script->loadScript(
+			FileSystem::getInstance()->getPathName(script),
+			FileSystem::getInstance()->getFileName(script)
+		);
+		Console::println(this->script->getInformation());
+	}
 }
 
 GUIScreenNode::~GUIScreenNode() {
