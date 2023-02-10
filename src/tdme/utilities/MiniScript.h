@@ -2510,11 +2510,21 @@ public:
 	}
 
 	/**
-	 * Returns if method with given name does already exist
+	 * Returns if method with given name does exist
 	 * @param methodName method name
+	 * @return method exists
 	 */
 	inline bool hasMethod(const string& methodName) {
 		return scriptMethods.find(methodName) != scriptMethods.end();
+	}
+
+	/**
+	 * Returns if function with given name does exist
+	 * @param functionName method name
+	 * @return function exists
+	 */
+	inline bool hasFunction(const string& functionName) {
+		return scriptFunctions.find(functionName) != scriptFunctions.end();
 	}
 
 	/**
