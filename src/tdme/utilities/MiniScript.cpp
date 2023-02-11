@@ -7005,7 +7005,7 @@ const string MiniScript::createSourceCode(Script::ScriptType scriptType, const s
 
 const string MiniScript::createSourceCode() {
 	string result;
-	// create syntax tree
+	// create source code
 	for (auto& script: scripts) {
 		result+= createSourceCode(script.scriptType, script.emitCondition == true?script.condition:string(), script.arguments, script.name, script.conditionSyntaxTree, script.syntaxTree);
 	}
