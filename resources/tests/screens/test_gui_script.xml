@@ -20,6 +20,12 @@
 		<layout id="container" width="auto" height="auto" alignment="vertical">
 			<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" padding="5" width="auto" height="auto" text="This is a initial fancy line in my container here. LOL!" />
 		</layout>
+		<space height="20" />
+		<button id="btn_evualuate" text="Evaluate" />
+		<space height="20" />
+		<text id="result_evualuate" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" padding="5" width="auto" height="auto" text="Arr. Press the 'Evaluate' button" />
+		<space height="20" />
 		<space height="*" />
+		
 	</layout>
 </screen>

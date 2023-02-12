@@ -266,7 +266,7 @@ bool MiniScript::parseScriptStatement(const string_view& statement, string_view&
 		}
 		Console::println();
 	}
-	if (bracketCount > 0) {
+	if (bracketCount != 0) {
 		Console::println("MiniScript::parseScriptStatement(): '" + scriptFileName + "': '" + string(statement) + "': unbalanced bracket count: " + to_string(bracketCount) + " still open");
 		return false;
 	}
@@ -1536,6 +1536,8 @@ bool MiniScript::call(int scriptIdx, span<ScriptVariable>& argumentValues, Scrip
 const vector<MiniScript::ScriptMethod*> MiniScript::getMethods() {
 	vector<ScriptMethod*> methods;
 	for (auto& scriptMethodIt: scriptMethods) {
+		auto scriptMethod = scriptMethodIt.second;
+		if (scriptMethod->isPrivate() == true) continue;
 		methods.push_back(scriptMethodIt.second);
 	}
 	struct {
@@ -1664,6 +1666,7 @@ const string MiniScript::getInformation() {
 			vector<string> methods;
 			for (auto& scriptMethodIt: scriptMethods) {
 				auto scriptMethod = scriptMethodIt.second;
+				if (scriptMethod->isPrivate() == true) continue;
 				string method;
 				method+= scriptMethod->getMethodName();
 				method+= "(";
@@ -1839,6 +1842,39 @@ void MiniScript::registerStateMachineStates() {
 }
 
 void MiniScript::registerMethods() {
+	// script intern base methods
+	{
+		//
+		class ScriptMethodInternalScriptEvaluate: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInternalScriptEvaluate(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "statement", .optional = false, .assignBack = false }
+					},
+					TYPE_PSEUDO_MIXED
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "internal.script.evaluate";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				if (argumentValues.size() != 1) {
+					Console::println("ScriptMethodInternalScriptEvaluate::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected");
+					miniScript->startErrorScript();
+				} else
+				if (argumentValues.size() == 1) {
+					returnValue = argumentValues[0];
+				}
+			}
+			bool isPrivate() override {
+				return true;
+			}
+		};
+		registerMethod(new ScriptMethodInternalScriptEvaluate(this));
+	}
 	// script base methods
 	{
 		//
@@ -1846,20 +1882,28 @@ void MiniScript::registerMethods() {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodScriptEvaluate(MiniScript* miniScript): ScriptMethod({}, TYPE_PSEUDO_MIXED), miniScript(miniScript) {}
+			ScriptMethodScriptEvaluate(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_STRING, .name = "statement", .optional = false, .assignBack = false }
+					},
+					TYPE_PSEUDO_MIXED
+				),
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "script.evaluate";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				if (argumentValues.size() > 1) {
-					Console::println("ScriptMethodReturn::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected");
-				} else
-				if (argumentValues.size() == 1) {
-					returnValue = argumentValues[0];
+				string statementString;
+				if (miniScript->getStringValue(argumentValues, 0, statementString, false) == false) {
+					Console::println("ScriptMethodScriptEvaluate::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				} else {
+					statementString = miniScript->doStatementPreProcessing(StringTools::trim(statementString));
+					if (miniScript->evaluate(statementString, returnValue) == false) {
+						Console::println("ScriptMethodScriptEvaluate::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": '" + statementString + "': An error occurred");
+					}
 				}
-			}
-			bool isVariadic() override {
-				return true;
 			}
 		};
 		registerMethod(new ScriptMethodScriptEvaluate(this));

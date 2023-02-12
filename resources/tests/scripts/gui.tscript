@@ -15,6 +15,8 @@ function: onAction($actionType, $elementNodeId)
 			gui.parentnode.addSubNodes("container", "<text font='{$font.default}' size='{$fontsize.default}' color='{$color.font_normal}' padding='5' width='auto' height='auto' text='This is a another fancy line in my container here. You love it!!!' />")
 		elseif ($elementNodeId == "btn_replacesubnodes")
 			gui.parentnode.replaceSubNodes("container", "<text font='{$font.default}' size='{$fontsize.default}' color='{$color.font_normal}' padding='5' width='auto' height='auto' text='This is the fancy replacement line in my container here. You like that!!!' />")
+		elseif ($elementNodeId == "btn_evualuate")
+			gui.textnode.setText("result_evualuate", script.evaluate("10 + 10"))
 		end
 	end
 end

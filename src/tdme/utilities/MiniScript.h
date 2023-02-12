@@ -1696,6 +1696,13 @@ public:
 		}
 
 		/**
+		 * @return if private
+		 */
+		virtual bool isPrivate() {
+			return false;
+		}
+
+		/**
 		 * @return operator
 		 */
 		virtual ScriptOperator getOperator() {
@@ -2952,11 +2959,11 @@ public:
 			{
 				.line = LINEIDX_NONE,
 				.statementIdx = 0,
-				.statement = "script.evaluate(" + statement + ")",
-				.executableStatement = "script.evaluate(" + statement + ")",
+				.statement = "internal.script.evaluate(" + statement + ")",
+				.executableStatement = "internal.script.evaluate(" + statement + ")",
 				.gotoStatementIdx = STATEMENTIDX_NONE
 			};
-		auto scriptEvaluateStatement = "script.evaluate(" + statement + ")";
+		auto scriptEvaluateStatement = "internal.script.evaluate(" + statement + ")";
 		//
 		string_view method;
 		vector<string_view> arguments;
@@ -2978,6 +2985,7 @@ public:
 				evaluateSyntaxTree,
 				evaluateStatement
 			);
+			//
 			popScriptState();
 			return true;
 		}
