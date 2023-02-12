@@ -1171,7 +1171,7 @@ int MiniScript::determineScriptIdxToStart() {
 		} else {
 			auto conditionMet = true;
 			auto returnValue = ScriptVariable();
-			if (evaluate(script.executableCondition, returnValue) == true) {
+			if (evaluateInternal(script.executableCondition, returnValue) == true) {
 				auto returnValueBoolValue = false;
 				if (returnValue.getBooleanValue(returnValueBoolValue, false) == false) {
 					Console::println("MiniScript::determineScriptIdxToStart(): '" + script.condition + "': expecting boolean return value, but got: " + returnValue.getAsString());
@@ -1212,7 +1212,7 @@ int MiniScript::determineNamedScriptIdxToStart() {
 			} else {
 				auto conditionMet = true;
 				ScriptVariable returnValue;
-				if (evaluate(script.executableCondition, returnValue) == true) {
+				if (evaluateInternal(script.executableCondition, returnValue) == true) {
 					auto returnValueBoolValue = false;
 					if (returnValue.getBooleanValue(returnValueBoolValue, false) == false) {
 						Console::println("MiniScript::determineNamedScriptIdxToStart(): '" + script.condition + "': expecting boolean return value, but got: " + returnValue.getAsString());
@@ -1903,7 +1903,6 @@ void MiniScript::registerMethods() {
 					Console::println("ScriptMethodScriptEvaluate::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript();
 				} else {
-					statementString = miniScript->doStatementPreProcessing(StringTools::trim(statementString));
 					if (miniScript->evaluate(statementString, returnValue) == false) {
 						Console::println("ScriptMethodScriptEvaluate::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": '" + statementString + "': An error occurred");
 					}
