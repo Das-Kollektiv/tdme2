@@ -44,7 +44,6 @@ This is the documentation of supported TDME2-GUI XML elements and their attribut
 | show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
 | hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
 | tooltip                           | optional tooltip                                                                       | none              |
-| script                            | a script can be attached to a screen, see [README-MiniScript.md](./README-MiniScript.md)(WIP)| none              |
 
 ## 1.2. \<screen\> node
 
@@ -59,6 +58,7 @@ This is the documentation of supported TDME2-GUI XML elements and their attribut
 | min-height                        | minimal supported screen height, if screen height < min-height, the screen gets scaled | none              |
 | max-width                         | maximal supported screen width, if screen width > max-width, the screen gets scaled    | none              |
 | max-height                        | maximal supported screen height, if screen width > max-height, the screen gets scaled  | none              |
+| script                            | a script can be attached to a screen, see [README-MiniScript.md](./README-MiniScript.md)(WIP)| none        |
 
 This element supports all other elements as sub elements.
 
