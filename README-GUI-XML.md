@@ -44,7 +44,7 @@ This is the documentation of supported TDME2-GUI XML elements and their attribut
 | show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
 | hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
 | tooltip                           | optional tooltip                                                                       | none              |
-| script                            | a script can be attached to a screen, see README-MiniScript.md](./README-MiniScript.md)(WIP)| none              |
+| script                            | a script can be attached to a screen, see [README-MiniScript.md](./README-MiniScript.md)(WIP)| none              |
 
 ## 1.2. \<screen\> node
 
