@@ -199,6 +199,10 @@
     - includes a simple script language
         - to react on events with like on-mouse-click, ... and on-change for elements
         - to manipulate conditions of elements, values of element controller and node properties
+    - a MiniScript script can be attached to screen nodes
+        - to react on events
+        - to modify the gui nodes tree or gui nodes state
+        - to implement GUI application flow(WIP)
     - supports position and color based effects in combination with conditions that can also be defined via XML
     - unicode support via UTF8
 - MiniScript
