@@ -619,7 +619,7 @@ Reading all keys as array from set:
 | script.disableNamedCondition($name: String): Void                                                |
 | script.emit($condition: String): Void                                                            |
 | script.enableNamedCondition($name: String): Void                                                 |
-| script.evaluate(...): Mixed                                                                      |
+| script.evaluate($statement: String): Mixed                                                       |
 | script.stop(): Void                                                                              |
 | script.wait($time: Integer): Void                                                                |
 | script.waitForCondition(): Void                                                                  |
@@ -629,6 +629,8 @@ Reading all keys as array from set:
 | set.insert(=$set: Set, $key: String): Void                                                       |
 | set.remove(=$set: Set, $key: String): Void                                                       |
 | string($string: String): String                                                                  |
+| string.isFloat($string: String): Boolean                                                         |
+| string.isInteger($string: String): Boolean                                                       |
 | string.charAt($string: String, $index: Integer): String                                          |
 | string.concatenate(...): String                                                                  |
 | string.endsWith($string: String, $suffix: String): Boolean                                       |

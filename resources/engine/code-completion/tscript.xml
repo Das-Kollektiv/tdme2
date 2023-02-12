@@ -78,14 +78,20 @@
 			<parameter name="[Integer $beginIndex]" />
 		</overload>
 	</keyword>
+	<keyword name="array.reverse" func="yes">
+		<overload return-value="Void" descr="">
+			<parameter name="Array =$array" />
+		</overload>
+	</keyword>
+	<keyword name="array.sort" func="yes">
+		<overload return-value="Void" descr="">
+			<parameter name="Array =$array" />
+			<parameter name="String $function" />
+		</overload>
+	</keyword>
 	<keyword name="bool" func="yes">
 		<overload return-value="Boolean" descr="">
 			<parameter name="Boolean $bool" />
-		</overload>
-	</keyword>
-	<keyword name="concatenate" func="yes">
-		<overload return-value="String" descr="">
-			<parameter name="..." />
 		</overload>
 	</keyword>
 	<keyword name="console.log" func="yes">
@@ -135,14 +141,14 @@
 	</keyword>
 	<keyword name="greater" func="yes">
 		<overload return-value="Boolean" descr="">
-			<parameter name="Number $a" />
-			<parameter name="Number $b" />
+			<parameter name="Mixed $a" />
+			<parameter name="Mixed $b" />
 		</overload>
 	</keyword>
 	<keyword name="greaterequals" func="yes">
 		<overload return-value="Boolean" descr="">
-			<parameter name="Number $a" />
-			<parameter name="Number $b" />
+			<parameter name="Mixed $a" />
+			<parameter name="Mixed $b" />
 		</overload>
 	</keyword>
 	<keyword name="if" func="yes">
@@ -157,14 +163,14 @@
 	</keyword>
 	<keyword name="lesser" func="yes">
 		<overload return-value="Boolean" descr="">
-			<parameter name="Number $a" />
-			<parameter name="Number $b" />
+			<parameter name="Mixed $a" />
+			<parameter name="Mixed $b" />
 		</overload>
 	</keyword>
 	<keyword name="lesserequals" func="yes">
 		<overload return-value="Boolean" descr="">
-			<parameter name="Number $a" />
-			<parameter name="Number $b" />
+			<parameter name="Mixed $a" />
+			<parameter name="Mixed $b" />
 		</overload>
 	</keyword>
 	<keyword name="map" func="yes">
@@ -506,7 +512,7 @@
 	</keyword>
 	<keyword name="script.evaluate" func="yes">
 		<overload return-value="Mixed" descr="">
-			<parameter name="..." />
+			<parameter name="String $statement" />
 		</overload>
 	</keyword>
 	<keyword name="script.stop" func="yes">
@@ -549,12 +555,126 @@
 			<parameter name="String $key" />
 		</overload>
 	</keyword>
-	<keyword name="space" func="yes">
+	<keyword name="string" func="yes">
+		<overload return-value="String" descr="">
+			<parameter name="String $string" />
+		</overload>
+	</keyword>
+	<keyword name="string.isFloat" func="yes">
+		<overload return-value="Boolean" descr="">
+			<parameter name="String $string" />
+		</overload>
+	</keyword>
+	<keyword name="string.isInteger" func="yes">
+		<overload return-value="Boolean" descr="">
+			<parameter name="String $string" />
+		</overload>
+	</keyword>
+	<keyword name="string.charAt" func="yes">
+		<overload return-value="String" descr="">
+			<parameter name="String $string" />
+			<parameter name="Integer $index" />
+		</overload>
+	</keyword>
+	<keyword name="string.concatenate" func="yes">
+		<overload return-value="String" descr="">
+			<parameter name="..." />
+		</overload>
+	</keyword>
+	<keyword name="string.endsWith" func="yes">
+		<overload return-value="Boolean" descr="">
+			<parameter name="String $string" />
+			<parameter name="String $suffix" />
+		</overload>
+	</keyword>
+	<keyword name="string.equalsIgnoreCase" func="yes">
+		<overload return-value="Boolean" descr="">
+			<parameter name="String $string1" />
+			<parameter name="String $string2" />
+		</overload>
+	</keyword>
+	<keyword name="string.firstIndexOf" func="yes">
+		<overload return-value="Integer" descr="">
+			<parameter name="String $string" />
+			<parameter name="String $what" />
+			<parameter name="[Integer $beginIndex]" />
+		</overload>
+	</keyword>
+	<keyword name="string.indexOf" func="yes">
+		<overload return-value="Integer" descr="">
+			<parameter name="String $string" />
+			<parameter name="String $what" />
+			<parameter name="[Integer $beginIndex]" />
+		</overload>
+	</keyword>
+	<keyword name="string.lastIndexOf" func="yes">
+		<overload return-value="Integer" descr="">
+			<parameter name="String $string" />
+			<parameter name="String $what" />
+			<parameter name="[Integer $beginIndex]" />
+		</overload>
+	</keyword>
+	<keyword name="string.length" func="yes">
+		<overload return-value="Integer" descr="">
+			<parameter name="String $string" />
+		</overload>
+	</keyword>
+	<keyword name="string.regexMatch" func="yes">
+		<overload return-value="Boolean" descr="">
+			<parameter name="String $string" />
+			<parameter name="String $pattern" />
+		</overload>
+	</keyword>
+	<keyword name="string.regexReplace" func="yes">
+		<overload return-value="String" descr="">
+			<parameter name="String $string" />
+			<parameter name="String $pattern" />
+			<parameter name="String $by" />
+		</overload>
+	</keyword>
+	<keyword name="string.replace" func="yes">
+		<overload return-value="String" descr="">
+			<parameter name="String $string" />
+			<parameter name="String $what" />
+			<parameter name="String $by" />
+			<parameter name="[Integer $beginIndex]" />
+		</overload>
+	</keyword>
+	<keyword name="string.space" func="yes">
 		<overload return-value="String" descr="">
 			<parameter name="[Integer $spaces]" />
 		</overload>
 	</keyword>
-	<keyword name="string" func="yes">
+	<keyword name="string.startsWith" func="yes">
+		<overload return-value="Boolean" descr="">
+			<parameter name="String $string" />
+			<parameter name="String $prefix" />
+		</overload>
+	</keyword>
+	<keyword name="string.substring" func="yes">
+		<overload return-value="String" descr="">
+			<parameter name="String $string" />
+			<parameter name="Integer $beginIndex" />
+			<parameter name="[Integer $endIndex]" />
+		</overload>
+	</keyword>
+	<keyword name="string.toLowerCase" func="yes">
+		<overload return-value="String" descr="">
+			<parameter name="String $string" />
+		</overload>
+	</keyword>
+	<keyword name="string.toUpperCase" func="yes">
+		<overload return-value="String" descr="">
+			<parameter name="String $string" />
+		</overload>
+	</keyword>
+	<keyword name="string.tokenize" func="yes">
+		<overload return-value="Array" descr="">
+			<parameter name="String $string" />
+			<parameter name="String $delimiters" />
+		</overload>
+	</keyword>
+	<keyword name="string.trim" func="yes">
 		<overload return-value="String" descr="">
 			<parameter name="String $string" />
 		</overload>
@@ -565,18 +685,13 @@
 			<parameter name="Mixed $b" />
 		</overload>
 	</keyword>
+	<keyword name="time.getAsString" func="yes">
+		<overload return-value="String" descr="">
+			<parameter name="[String $format]" />
+		</overload>
+	</keyword>
 	<keyword name="time.getCurrentMillis" func="yes">
 		<overload return-value="Integer" descr="">
-		</overload>
-	</keyword>
-	<keyword name="toLowerCase" func="yes">
-		<overload return-value="String" descr="">
-			<parameter name="String $string" />
-		</overload>
-	</keyword>
-	<keyword name="toUpperCase" func="yes">
-		<overload return-value="String" descr="">
-			<parameter name="String $string" />
 		</overload>
 	</keyword>
 	<keyword name="transform" func="yes">
