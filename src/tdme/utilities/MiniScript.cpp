@@ -75,6 +75,8 @@ using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
+using tdme::utilities::Float;
+using tdme::utilities::Integer;
 using tdme::utilities::MiniScript;
 using tdme::utilities::MiniScriptMath;
 using tdme::utilities::StringTokenizer;
