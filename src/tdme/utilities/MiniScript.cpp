@@ -1928,11 +1928,13 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string function;
 				if (miniScript->getStringValue(argumentValues, 0, function) == false) {
-					Console::println("ScriptMethodReturn::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println("ScriptMethodScriptCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
 				} else {
 					auto scriptIdx = miniScript->getFunctionScriptIdx(function);
 					if (scriptIdx == SCRIPTIDX_NONE) {
-						Console::println("ScriptMethodReturn::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": function not found: " + function);
+						Console::println("ScriptMethodScriptCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": function not found: " + function);
+						miniScript->startErrorScript();
 					} else {
 						#if defined (__APPLE__)
 							// MACOSX currently does not support initializing span using begin and end iterators,
@@ -1969,6 +1971,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				if (miniScript->isFunctionRunning() == false) {
 					Console::println("ScriptMethodReturn::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no function is being executed, return($value) has no effect");
+					miniScript->startErrorScript();
 				} else
 				if (argumentValues.size() == 1) {
 					auto& scriptState = miniScript->getScriptState();
