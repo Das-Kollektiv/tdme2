@@ -128,36 +128,44 @@ GUIScreenNode::GUIScreenNode(
 			FileSystem::getInstance()->getPathName(script),
 			FileSystem::getInstance()->getFileName(script)
 		);
-		//
-		Console::println(this->script->getInformation());
-		//
-		this->scriptOnActionAvailable = this->script->hasFunction("onAction");
-		this->scriptOnChangeAvailable = this->script->hasFunction("onChange");
-		this->scriptOnMouseOverAvailable = this->script->hasFunction("onMouseOver");
-		this->scriptOnContextMenuRequestAvailable = this->script->hasFunction("onContextMenuRequest");
-		this->scriptOnFocusAvailable = this->script->hasFunction("onFocus");
-		this->scriptOnUnfocusAvailable = this->script->hasFunction("onUnfocus");
-		this->scriptOnMoveAvailable = this->script->hasFunction("onMove");
-		this->scriptOnMoveReleaseAvailable = this->script->hasFunction("onMoveRelease");
-		this->scriptOnTooltipShowRequestAvailable = this->script->hasFunction("onTooltipShowRequest");
-		this->scriptOnTooltipCloseRequestAvailable = this->script->hasFunction("onTooltipCloseRequest");
-		this->scriptOnDragRequestAvailable = this->script->hasFunction("onDragRequest");
-		this->scriptOnTickAvailable = this->script->hasFunction("onTick");
-		//
-		Console::println("Available event script handler functions:");
-		Console::println("onAction: " + string(this->scriptOnActionAvailable == true?"YES":"NO"));
-		Console::println("onChange: " + string(this->scriptOnChangeAvailable == true?"YES":"NO"));
-		Console::println("onMouseOver: " + string(this->scriptOnMouseOverAvailable == true?"YES":"NO"));
-		Console::println("onContextMenuRequest: " + string(this->scriptOnContextMenuRequestAvailable == true?"YES":"NO"));
-		Console::println("onFocus: " + string(this->scriptOnFocusAvailable == true?"YES":"NO"));
-		Console::println("onUnfocus: " + string(this->scriptOnUnfocusAvailable == true?"YES":"NO"));
-		Console::println("onMove: " + string(this->scriptOnMoveAvailable == true?"YES":"NO"));
-		Console::println("onMoveRelease: " + string(this->scriptOnMoveReleaseAvailable == true?"YES":"NO"));
-		Console::println("onTooltipShowRequest: " + string(this->scriptOnTooltipShowRequestAvailable == true?"YES":"NO"));
-		Console::println("onTooltipCloseRequest: " + string(this->scriptOnTooltipCloseRequestAvailable == true?"YES":"NO"));
-		Console::println("onDragRequest: " + string(this->scriptOnDragRequestAvailable == true?"YES":"NO"));
-		Console::println("onTick: " + string(this->scriptOnTickAvailable == true?"YES":"NO"));
-		Console::println();
+		// check if valid
+		if (this->script->isValid() == false) {
+			// nope
+			Console::println("GUIScreenNode::GUIScreenNode(): " + script + ": script not valid. Not using it.");
+			delete this->script;
+			this->script = nullptr;
+		} else {
+			// yup
+			Console::println(this->script->getInformation());
+			//
+			this->scriptOnActionAvailable = this->script->hasFunction("onAction");
+			this->scriptOnChangeAvailable = this->script->hasFunction("onChange");
+			this->scriptOnMouseOverAvailable = this->script->hasFunction("onMouseOver");
+			this->scriptOnContextMenuRequestAvailable = this->script->hasFunction("onContextMenuRequest");
+			this->scriptOnFocusAvailable = this->script->hasFunction("onFocus");
+			this->scriptOnUnfocusAvailable = this->script->hasFunction("onUnfocus");
+			this->scriptOnMoveAvailable = this->script->hasFunction("onMove");
+			this->scriptOnMoveReleaseAvailable = this->script->hasFunction("onMoveRelease");
+			this->scriptOnTooltipShowRequestAvailable = this->script->hasFunction("onTooltipShowRequest");
+			this->scriptOnTooltipCloseRequestAvailable = this->script->hasFunction("onTooltipCloseRequest");
+			this->scriptOnDragRequestAvailable = this->script->hasFunction("onDragRequest");
+			this->scriptOnTickAvailable = this->script->hasFunction("onTick");
+			//
+			Console::println("Available event script handler functions:");
+			Console::println("onAction: " + string(this->scriptOnActionAvailable == true?"YES":"NO"));
+			Console::println("onChange: " + string(this->scriptOnChangeAvailable == true?"YES":"NO"));
+			Console::println("onMouseOver: " + string(this->scriptOnMouseOverAvailable == true?"YES":"NO"));
+			Console::println("onContextMenuRequest: " + string(this->scriptOnContextMenuRequestAvailable == true?"YES":"NO"));
+			Console::println("onFocus: " + string(this->scriptOnFocusAvailable == true?"YES":"NO"));
+			Console::println("onUnfocus: " + string(this->scriptOnUnfocusAvailable == true?"YES":"NO"));
+			Console::println("onMove: " + string(this->scriptOnMoveAvailable == true?"YES":"NO"));
+			Console::println("onMoveRelease: " + string(this->scriptOnMoveReleaseAvailable == true?"YES":"NO"));
+			Console::println("onTooltipShowRequest: " + string(this->scriptOnTooltipShowRequestAvailable == true?"YES":"NO"));
+			Console::println("onTooltipCloseRequest: " + string(this->scriptOnTooltipCloseRequestAvailable == true?"YES":"NO"));
+			Console::println("onDragRequest: " + string(this->scriptOnDragRequestAvailable == true?"YES":"NO"));
+			Console::println("onTick: " + string(this->scriptOnTickAvailable == true?"YES":"NO"));
+			Console::println();
+		}
 	}
 }
 
