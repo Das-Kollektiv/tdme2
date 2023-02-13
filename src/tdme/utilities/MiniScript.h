@@ -2217,8 +2217,10 @@ private:
 		// evaluate array index
 		auto arrayIdxExpressionStringView = StringTools::viewTrim(string_view(&name.data()[arrayAccessOperatorLeftIdx + 1], arrayAccessOperatorRightIdx - arrayAccessOperatorLeftIdx - 2));
 		if (arrayIdxExpressionStringView.empty() == false) {
+			// TODO: as evaluate statement we also might need the expression that had not yet a preprocessor run for error messages and such
 			ScriptVariable statementReturnValue;
-			if (evaluateInternal(string(arrayIdxExpressionStringView), statementReturnValue) == false || statementReturnValue.getIntegerValue(arrayIdx, false) == false) {
+			auto evaluateStatement = string(arrayIdxExpressionStringView);
+			if (evaluateInternal(evaluateStatement, evaluateStatement, statementReturnValue) == false || statementReturnValue.getIntegerValue(arrayIdx, false) == false) {
 				if (statement != nullptr) {
 					Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': failed to evaluate expression: '" + string(arrayIdxExpressionStringView) + "'");
 				} else {
@@ -2432,19 +2434,20 @@ private:
 	/**
 	 * Evaluate given statement without executing preprocessor run
 	 * @param statement script statement
+	 * @param executableStatement executable script statement
 	 * @param returnValue script return value
 	 * @return success
 	 */
-	inline bool evaluateInternal(const string& statement, ScriptVariable& returnValue) {
+	inline bool evaluateInternal(const string& statement, const string& executableStatement, ScriptVariable& returnValue) {
 		ScriptStatement evaluateStatement =
 			{
 				.line = LINEIDX_NONE,
 				.statementIdx = 0,
 				.statement = "internal.script.evaluate(" + statement + ")",
-				.executableStatement = "internal.script.evaluate(" + statement + ")",
+				.executableStatement = "internal.script.evaluate(" + executableStatement + ")",
 				.gotoStatementIdx = STATEMENTIDX_NONE
 			};
-		auto scriptEvaluateStatement = "internal.script.evaluate(" + statement + ")";
+		auto scriptEvaluateStatement = "internal.script.evaluate(" + executableStatement + ")";
 		//
 		string_view method;
 		vector<string_view> arguments;
@@ -3048,7 +3051,7 @@ public:
 	 * @return success
 	 */
 	inline bool evaluate(const string& statement, ScriptVariable& returnValue) {
-		return evaluateInternal(doStatementPreProcessing(statement), returnValue);
+		return evaluateInternal(statement, doStatementPreProcessing(statement), returnValue);
 	}
 
 	/**
