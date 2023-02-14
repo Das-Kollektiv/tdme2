@@ -2220,7 +2220,7 @@ void EditorScreenController::setFullScreen(bool fullScreen) {
 		if (selectedTab != nullptr) {
 			Application::getApplication()->setFullScreen(true);
 			fullScreenTabId = selectedTab->getId();
-			required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("fullscreen-content"))->moveNodes(
+			required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("fullscreen-content"))->moveSubNodes(
 				required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById(fullScreenTabId + "-content"))
 			);
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("screen_editor_screen"))->getActiveConditions().add("fullscreen");
@@ -2228,7 +2228,7 @@ void EditorScreenController::setFullScreen(bool fullScreen) {
 	} else
 	if (fullScreenTabId.empty() == false) {
 		Application::getApplication()->setFullScreen(false);
-		required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById(fullScreenTabId + "-content"))->moveNodes(
+		required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById(fullScreenTabId + "-content"))->moveSubNodes(
 			required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("fullscreen-content"))
 		);
 		fullScreenTabId.clear();

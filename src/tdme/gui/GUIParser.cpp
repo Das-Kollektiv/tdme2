@@ -291,9 +291,7 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 	//
 	vector<GUINode*> childControllerNodes;
 	guiScreenNode->getChildControllerNodes(childControllerNodes);
-	for (auto node: childControllerNodes) {
-		node->getController()->onSubTreeChange();
-	}
+	for (auto node: childControllerNodes) node->getController()->onSubTreeChange();
 
 	//
 	return guiScreenNode;

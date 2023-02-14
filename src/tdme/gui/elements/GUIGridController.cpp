@@ -421,17 +421,19 @@ void GUIGridController::setValue(const MutableString& value)
 }
 
 void GUIGridController::onSubTreeChange() {
+	// TODO: find a better way later maybe, this is working, but has some issues with adding nodes
 	if (onSubTreeChangeRun == true) return;
 	//
 	onSubTreeChangeRun = true;
-	//
-	Console::println("GUIGridController::onSubTreeChange(): horizontal-items: " + to_string(horizontalItems));
 	//
 	determineItems();
 	//
 	auto unlayoutedParentNode = required_dynamic_cast<GUIParentNode*>(node->getScreenNode()->getNodeById(node->getId() + "_unlayouted"));
 	auto layoutedParentNode = required_dynamic_cast<GUIParentNode*>(node->getScreenNode()->getInnerNodeById(node->getId()));
-	layoutedParentNode->moveNodes(unlayoutedParentNode);
+	layoutedParentNode->clearSubNodes();
+	while (unlayoutedParentNode->getSubNodesCount() > 0) {
+		layoutedParentNode->moveSubNode(unlayoutedParentNode, 0);
+	}
 	//
 	onSubTreeChangeRun = false;
 }
