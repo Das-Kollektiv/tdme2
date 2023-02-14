@@ -13,6 +13,8 @@
 #include <tdme/gui/elements/GUIDropDown.h>
 #include <tdme/gui/elements/GUIDropDownOption.h>
 #include <tdme/gui/elements/GUIElement.h>
+#include <tdme/gui/elements/GUIGrid.h>
+#include <tdme/gui/elements/GUIGridItem.h>
 #include <tdme/gui/elements/GUIImageButton.h>
 #include <tdme/gui/elements/GUIInput.h>
 #include <tdme/gui/elements/GUIKnob.h>
@@ -90,6 +92,8 @@ using tdme::gui::elements::GUIContextMenuItem;
 using tdme::gui::elements::GUIDropDown;
 using tdme::gui::elements::GUIDropDownOption;
 using tdme::gui::elements::GUIElement;
+using tdme::gui::elements::GUIGrid;
+using tdme::gui::elements::GUIGridItem;
 using tdme::gui::elements::GUIImageButton;
 using tdme::gui::elements::GUIInput;
 using tdme::gui::elements::GUIKnob;
@@ -2034,6 +2038,20 @@ void GUIParser::initialize()
 	}
 	try {
 		auto guiElement = new GUIMoveable();
+		addElement(guiElement);
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	try {
+		auto guiElement = new GUIGrid();
+		addElement(guiElement);
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	try {
+		auto guiElement = new GUIGridItem();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));

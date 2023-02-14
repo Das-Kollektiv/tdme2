@@ -13,6 +13,8 @@
 using std::string;
 using std::vector;
 
+using tdme::gui::elements::GUIGrid;
+using tdme::gui::elements::GUIGridItemController;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
@@ -22,20 +24,20 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::utilities::MutableString;
 
 /**
- * GUI select box controller
+ * Grid controller
  * @author Andreas Drewke
  */
-class tdme::gui::elements::GUISelectBoxController final
+class tdme::gui::elements::GUIGridController final
 	: public GUIElementController
 {
-	friend class GUISelectBox;
-	friend class GUISelectBoxOptionController;
+	friend class GUIGrid;
+	friend class GUIGridItemController;
 
 private:
 	STATIC_DLL_IMPEXT static string CONDITION_DISABLED;
 	STATIC_DLL_IMPEXT static string CONDITION_ENABLED;
 	STATIC_DLL_IMPEXT static constexpr char VALUE_DELIMITER { '|' };
-	vector<GUISelectBoxOptionController*> selectBoxOptionControllers;
+	vector<GUIGridItemController*> gridItemControllers;
 	bool disabled;
 	bool multipleSelection;
 	int focussedOptionIdx;
@@ -48,7 +50,7 @@ private:
 	 * Private constructor
 	 * @param node node
 	 */
-	GUISelectBoxController(GUINode* node);
+	GUIGridController(GUINode* node);
 
 	/**
 	 * @return if multiple selection is enabled
@@ -61,49 +63,49 @@ private:
 	bool isKeyControlDown();
 
 	/**
-	 * Get focussed option idx
+	 * Get focussed item idx
 	 */
-	int getFocussedOptionIdx();
+	int getFocussedItemIdx();
 
 	/**
-	 * Get focussed option idx
+	 * Get item idx
 	 * @param optionElementNode option element node
 	 */
-	int getOptionIdx(GUIElementNode* optionElementNode);
+	int getItemIdx(GUIElementNode* gridItemElementNode);
 
 	/**
-	 * Unselect all nodes
+	 * Unselect all items
 	 */
 	void unselect();
 
 	/**
 	 * Select
-	 * @param optionIdx option index
+	 * @param itemIdx item index
 	 */
-	void select(int optionIdx);
+	void select(int itemIdx);
 
 	/**
 	 * Select
-	 * @param optionElementNode option element node
+	 * @param gridItemElementNode grid item element node
 	 */
-	void select(GUIElementNode* optionElementNode);
+	void select(GUIElementNode* gridItemElementNode);
 
 	/**
-	 * Unfocus all nodes
+	 * Unfocus all items
 	 */
 	void unfocus();
 
 	/**
 	 * Focus
-	 * @param optionIdx option index
+	 * @param itemIdx item index
 	 */
-	void focus(int optionIdx);
+	void focus(int itemIdx);
 
 	/**
 	 * Focus
 	 * @param optionElementNode option element node
 	 */
-	void focus(GUIElementNode* optionElementNode);
+	void focus(GUIElementNode* gridItemElementNode);
 
 	/**
 	 * Select current options
@@ -111,12 +113,12 @@ private:
 	void selectCurrent();
 
 	/**
-	 * Focus next option
+	 * Focus next item
 	 */
 	void focusNext();
 
 	/**
-	 * Focus previous option
+	 * Focus previous item
 	 */
 	void focusPrevious();
 
@@ -128,9 +130,9 @@ private:
 
 	/**
 	 * Toggle
-	 * @param optionElementNode option element node
+	 * @param gridItemElementNode grid item element node
 	 */
-	void toggle(GUIElementNode* optionElementNode);
+	void toggle(GUIElementNode* gridItemElementNode);
 
 	/**
 	 * Select focussed node
@@ -140,42 +142,9 @@ private:
 	/**
 	 * Determine all options
 	 */
-	void determineAllOptions();
-
-	/**
-	 * Determine expanded options
-	 */
-	void determineExpandedOptions();
-
-	/**
-	 * Determine parent options
-	 */
-	void determineParentOptions();
-
-	/**
-	 * Toggle open state of current parent option
-	 * @param optionIdx option index
-	 */
-	void toggleOpenState(int optionIdx);
-
-	/**
-	 * Expand
-	 * @param optionIdx option index
-	 */
-	void expand(int optionIdx);
-
-	/**
-	 * Collapse
-	 * @param optionIdx option index
-	 */
-	void collapse(int optionIdx);
+	void determineItems();
 
 public:
-	/**
-	 * Toggle open state of current parent option
-	 * @param optionElementNode option element node
-	 */
-	void toggleOpenState(GUIElementNode* optionElementNode);
 
 	// overridden methods
 	void initialize() override;
@@ -190,17 +159,5 @@ public:
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
 	void onSubTreeChange() override;
-
-	/**
-	 * Determine expanded parent option values
-	 * @param expandedParentOptionValues expanded parent option values
-	 */
-	void determineExpandedParentOptionValues(vector<string>& expandedParentOptionValues);
-
-	/**
-	 * Expand parent options by values
-	 * @param expandedParentOptionValues expanded parent option values
-	 */
-	void expandParentOptionsByValues(const vector<string>& expandedParentOptionValues);
 
 };
