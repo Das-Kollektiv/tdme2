@@ -124,9 +124,9 @@ private:
 
 	/**
 	 * Toggle
-	 * @param optionIdx option index
+	 * @param itemIdx item index
 	 */
-	void toggle(int optionIdx);
+	void toggle(int itemIdx);
 
 	/**
 	 * Toggle
@@ -140,7 +140,7 @@ private:
 	void select();
 
 	/**
-	 * Determine all options
+	 * Determine items
 	 */
 	void determineItems();
 

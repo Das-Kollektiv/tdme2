@@ -208,17 +208,17 @@ void GUIGridController::focusPrevious()
 	focus(optionIdx);
 }
 
-void GUIGridController::toggle(int optionIdx)
+void GUIGridController::toggle(int itemIdx)
 {
-	if (optionIdx < 0 || optionIdx >= gridItemControllers.size()) return;
-	gridItemControllers[optionIdx]->toggle();
-	gridItemControllers[optionIdx]->getNode()->scrollToNodeX(required_dynamic_cast<GUIParentNode*>(node));
-	gridItemControllers[optionIdx]->getNode()->scrollToNodeY(required_dynamic_cast<GUIParentNode*>(node));
+	if (itemIdx < 0 || itemIdx >= gridItemControllers.size()) return;
+	gridItemControllers[itemIdx]->toggle();
+	gridItemControllers[itemIdx]->getNode()->scrollToNodeX(required_dynamic_cast<GUIParentNode*>(node));
+	gridItemControllers[itemIdx]->getNode()->scrollToNodeY(required_dynamic_cast<GUIParentNode*>(node));
 	string selectionValue;
 	selectionValue+= VALUE_DELIMITER;
-	selectionValue+= required_dynamic_cast<GUIElementNode*>(gridItemControllers[optionIdx]->getNode())->getValue();
+	selectionValue+= required_dynamic_cast<GUIElementNode*>(gridItemControllers[itemIdx]->getNode())->getValue();
 	selectionValue+= VALUE_DELIMITER;
-	if (gridItemControllers[optionIdx]->isSelected() == true) {
+	if (gridItemControllers[itemIdx]->isSelected() == true) {
 		value.append(value.getString().empty() == false?selectionValue.substr(1):selectionValue);
 	} else {
 		value.replace(selectionValue, "|");
