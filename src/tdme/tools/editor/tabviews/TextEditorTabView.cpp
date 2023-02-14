@@ -87,7 +87,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 		fileNameLowerCase == "makefile" || StringTools::endsWith(fileNameLowerCase, "/makefile")?"makefile":
 		StringTools::substring(fileNameLowerCase, fileNameLowerCase.rfind('.') + 1, fileNameLowerCase.size());
 	engine = Engine::createOffScreenInstance(512, 512, false, false, false);
-	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
+	engine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
 	engine->getGUI()->addScreen(screenNode->getId(), screenNode);
 	engine->getGUI()->addRenderScreen(screenNode->getId());
 
