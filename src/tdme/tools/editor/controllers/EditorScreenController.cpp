@@ -1097,6 +1097,14 @@ void EditorScreenController::ScanFilesThread::run() {
 				if (StringTools::endsWith(fileNameLowerCase, ".tterrain") == true) return true;
 				// xml
 				if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) return true;
+				// nmake files
+				if (StringTools::endsWith(fileNameLowerCase, ".nmake") == true) return true;
+				if (StringTools::endsWith(fileNameLowerCase, ".nmake.main") == true) return true;
+				// batch files
+				if (StringTools::endsWith(fileNameLowerCase, ".bat") == true) return true;
+				// bash files
+				if (StringTools::endsWith(fileNameLowerCase, ".sh") == true) return true;
+				if (StringTools::endsWith(fileNameLowerCase, ".bash") == true) return true;
 				// files without ending
 				if (fileName.rfind(".") == string::npos ||
 					(fileName.rfind("/") != string::npos &&
@@ -1731,6 +1739,11 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 		StringTools::endsWith(fileNameLowerCase, ".glsl") == true ||
 		StringTools::endsWith(fileNameLowerCase, ".vert") == true ||
 		StringTools::endsWith(fileNameLowerCase, ".xml") == true ||
+		StringTools::endsWith(fileNameLowerCase, ".nmake") == true ||
+		StringTools::endsWith(fileNameLowerCase, ".nmake.main") == true ||
+		StringTools::endsWith(fileNameLowerCase, ".bat") == true ||
+		StringTools::endsWith(fileNameLowerCase, ".sh") == true ||
+		StringTools::endsWith(fileNameLowerCase, ".bash") == true ||
 		(fileName.rfind(".") == string::npos || (fileName.rfind("/") != string::npos && fileName.rfind(".") < fileName.rfind("/")))) {
 		fileType = FILETYPE_TEXT;
 	} else {
