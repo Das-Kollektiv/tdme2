@@ -16,6 +16,7 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MutableString.h>
@@ -39,6 +40,7 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
+using tdme::gui::GUIParser;
 using tdme::utilities::Exception;
 using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
@@ -422,18 +424,32 @@ void GUIGridController::setValue(const MutableString& value)
 
 void GUIGridController::onSubTreeChange() {
 	// TODO: find a better way later maybe, this is working, but has some issues with adding nodes
+	//	we need a <grid-layout> later for the following code
 	if (onSubTreeChangeRun == true) return;
 	//
 	onSubTreeChangeRun = true;
 	//
+	auto unlayoutedParentNode = required_dynamic_cast<GUIParentNode*>(node->getScreenNode()->getNodeById(node->getId() + "_unlayouted"));
+	if (unlayoutedParentNode->getSubNodesCount() == 0) return;
+	//
 	determineItems();
 	//
-	auto unlayoutedParentNode = required_dynamic_cast<GUIParentNode*>(node->getScreenNode()->getNodeById(node->getId() + "_unlayouted"));
 	auto layoutedParentNode = required_dynamic_cast<GUIParentNode*>(node->getScreenNode()->getInnerNodeById(node->getId()));
 	layoutedParentNode->clearSubNodes();
+	auto gridItemIdx = 0;
+	auto gridHorizontalLayoutIdx = 0;
+	auto gridHorizontalLayoutId = node->getId() +"_hl_" + to_string(gridHorizontalLayoutIdx++);
+	GUIParser::parse(layoutedParentNode, "<layout id=\"" + gridHorizontalLayoutId + "\" alignment=\"horizontal\" width=\"auto\"></layout>\n");
+	//
 	while (unlayoutedParentNode->getSubNodesCount() > 0) {
-		layoutedParentNode->moveSubNode(unlayoutedParentNode, 0);
+		required_dynamic_cast<GUIParentNode*>(node->getScreenNode()->getNodeById(gridHorizontalLayoutId))->moveSubNode(unlayoutedParentNode, 0);
+		gridItemIdx++;
+		if ((gridItemIdx % 2) == 0 && unlayoutedParentNode->getSubNodesCount() > 0) {
+			gridHorizontalLayoutId = node->getId() +"_hl_" + to_string(gridHorizontalLayoutIdx++);
+			GUIParser::parse(layoutedParentNode, "<layout id=\"" + gridHorizontalLayoutId + "\" alignment=\"horizontal\" width=\"auto\"></layout>\n");
+		}
 	}
+	GUINode::dumpNode(layoutedParentNode);
 	//
 	onSubTreeChangeRun = false;
 }

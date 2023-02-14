@@ -40,7 +40,7 @@ unordered_map<string, string> GUIGrid::getAttributes(GUIScreenNode* screenNode)
 {
 	unordered_map<string, string> attributes;
 	attributes["id"] = screenNode->allocateNodeId();
-	attributes["width"] = "100%";
+	attributes["width"] = "auto";
 	attributes["height"] = "auto";
 	return attributes;
 }

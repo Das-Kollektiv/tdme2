@@ -2684,7 +2684,7 @@ in this repository.
 					</context-menu>
 				</tab-content>
 				<tab-content tab-id="tab13" vertical-align="center">
-					<grid id="test_grid" width="50%" height="auto" options="multiple,horizontal-items=2">
+					<grid id="test_grid" width="auto" height="auto" options="multiple,horizontal-items=2">
 						<grid-item text="My mighty item 1" />
 						<grid-item text="My mighty item 2" />
 						<grid-item text="My mighty item 3" />
