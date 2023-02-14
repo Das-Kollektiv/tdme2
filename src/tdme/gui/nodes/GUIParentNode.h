@@ -130,12 +130,26 @@ protected:
 	virtual void computeVerticalChildrenAlignment();
 
 	/**
+	 * Detach sub node at given index
+	 * @param index sub node index
+	 * @returns sub node at given index
+	 */
+	GUINode* detachSubNode(int index);
+
+	/**
 	 * Detach sub nodes
 	 * @returns sub nodes
 	 */
 	vector<GUINode*> detachSubNodes();
 
 public:
+
+	/**
+	 * @return sub nodes count
+	 */
+	inline int getSubNodesCount() {
+		return subNodes.size();
+	}
 
 	/**
 	 * Clear sub nodes
@@ -166,10 +180,17 @@ public:
 	void addSubNode(GUINode* node);
 
 	/**
+	 * Move children node from other parent node into this parent node
+	 * @param otherParentNode other parent node
+	 * @param index other parent node sub node index
+	 */
+	void moveSubNode(GUIParentNode* otherParentNode, int index);
+
+	/**
 	 * Move children nodes from other parent node into this parent node
 	 * @param otherParentNode other parent node
 	 */
-	void moveNodes(GUIParentNode* otherParentNode);
+	void moveSubNodes(GUIParentNode* otherParentNode);
 
 	/**
 	 * @return overflow x

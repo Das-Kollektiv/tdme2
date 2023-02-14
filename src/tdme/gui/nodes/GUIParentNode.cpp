@@ -88,6 +88,41 @@ GUIParentNode::GUIParentNode(
 	this->computeViewportCache = true;
 }
 
+GUINode* GUIParentNode::detachSubNode(int index) {
+	if (index < 0 || index >= subNodes.size()) return nullptr;
+	//
+	auto detachedSubNode = subNodes[index];
+	subNodes.erase(subNodes.begin() + index);
+
+	//
+	auto parentControllerNode = controller != nullptr?this:getParentControllerNode();
+
+	{
+		auto _parentControllerNode = parentControllerNode;
+		while (_parentControllerNode != nullptr) {
+			_parentControllerNode->getController()->onSubTreeChange();
+			_parentControllerNode = _parentControllerNode->getParentControllerNode();
+		}
+	}
+
+	screenNode->invalidateLayout(this);
+
+	setConditionsMet();
+	floatingNodesCache.clear();
+	invalidateRenderCaches();
+
+	{
+		auto _parentControllerNode = parentControllerNode;
+		while (_parentControllerNode != nullptr) {
+			_parentControllerNode->getController()->onSubTreeChange();
+			_parentControllerNode = _parentControllerNode->getParentControllerNode();
+		}
+	}
+
+	//
+	return detachedSubNode;
+}
+
 vector<GUINode*> GUIParentNode::detachSubNodes()
 {
 	//
@@ -270,7 +305,42 @@ void GUIParentNode::addSubNode(GUINode* node)
 	}
 }
 
-void GUIParentNode::moveNodes(GUIParentNode* otherParentNode) {
+void GUIParentNode::moveSubNode(GUIParentNode* otherParentNode, int index) {
+	auto detachedSubNode = otherParentNode->detachSubNode(index);
+	if (detachedSubNode == nullptr) return;
+
+	//
+	screenNode->invalidateLayout(this);
+
+	// attach detached sub nodes here
+	detachedSubNode->parentNode = this;
+	subNodes.push_back(detachedSubNode);
+
+	floatingNodesCache.clear();
+	for (auto i = 0; i < subNodes.size(); i++) {
+		auto guiSubNode = subNodes[i];
+		if (guiSubNode->flow == GUINode_Flow::FLOATING) {
+			floatingNodesCache.push_back(guiSubNode);
+		}
+	}
+
+	invalidateRenderCaches();
+	setConditionsMet();
+
+	if (overflowX == GUIParentNode_Overflow::SCROLL) childrenRenderOffsetX = 0.0f;
+	if (overflowY == GUIParentNode_Overflow::SCROLL) childrenRenderOffsetY = 0.0f;
+
+	//
+	{
+		auto parentControllerNode = controller != nullptr?this:getParentControllerNode();
+		while (parentControllerNode != nullptr) {
+			parentControllerNode->getController()->onSubTreeChange();
+			parentControllerNode = parentControllerNode->getParentControllerNode();
+		}
+	}
+}
+
+void GUIParentNode::moveSubNodes(GUIParentNode* otherParentNode) {
 	auto detachedSubNodes = otherParentNode->detachSubNodes();
 
 	//

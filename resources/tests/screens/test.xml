@@ -36,6 +36,7 @@
 				<tab id="tab10" text="Conditions" />
 				<tab id="tab11" text="Table" />
 				<tab id="tab12" text="Contextmenu" />
+				<tab id="tab13" text="Grid" />
 			</tabs-header>
 			<tabs-content>
 				<tab-content tab-id="tab1" vertical-align="top">
@@ -2682,6 +2683,20 @@ in this repository.
 						<context-menu-item text="Delete" />
 					</context-menu>
 				</tab-content>
+				<tab-content tab-id="tab13" vertical-align="center">
+					<grid id="test_grid" width="auto" height="auto" options="multiple,horizontal-items=2">
+						<grid-item text="My mighty item 1" />
+						<grid-item text="My mighty item 2" />
+						<grid-item text="My mighty item 3" />
+						<grid-item text="My mighty item 4" />
+						<grid-item text="My mighty item 5" />
+						<grid-item text="My mighty item 6" />
+						<grid-item text="My mighty item 7" />
+						<grid-item text="My mighty item 8" />
+						<grid-item text="My mighty item 9" />
+						<grid-item text="My mighty item 10" />
+					</grid>
+				</tab-content>			
 			</tabs-content>
 		</tabs>
 	</layout>
