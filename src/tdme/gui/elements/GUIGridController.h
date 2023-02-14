@@ -40,7 +40,7 @@ private:
 	vector<GUIGridItemController*> gridItemControllers;
 	bool disabled;
 	bool multipleSelection;
-	int focussedOptionIdx;
+	int focussedItemIdx;
 	MutableString value;
 	MutableString singleValue;
 

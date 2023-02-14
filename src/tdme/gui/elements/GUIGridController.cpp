@@ -46,7 +46,7 @@ GUIGridController::GUIGridController(GUINode* node)
 	this->disabled = required_dynamic_cast<GUIElementNode*>(node)->isDisabled();
 	this->multipleSelection = required_dynamic_cast<GUIElementNode*>(node)->hasOption("multiple");
 	this->keyControl = false;
-	this->focussedOptionIdx = -1;
+	this->focussedItemIdx = -1;
 }
 
 bool GUIGridController::isMultipleSelection() {
@@ -90,18 +90,18 @@ void GUIGridController::postLayout()
 int GUIGridController::getFocussedItemIdx()
 {
 	if (gridItemControllers.empty() == true) {
-		focussedOptionIdx = -1;
+		focussedItemIdx = -1;
 	} else
-	if (focussedOptionIdx == -1) {
-		focussedOptionIdx = 0;
+	if (focussedItemIdx == -1) {
+		focussedItemIdx = 0;
 	} else
-	if (focussedOptionIdx < 0) {
-		focussedOptionIdx = 0;
+	if (focussedItemIdx < 0) {
+		focussedItemIdx = 0;
 	} else
-	if (focussedOptionIdx >= gridItemControllers.size()) {
-		focussedOptionIdx = gridItemControllers.size() - 1;
+	if (focussedItemIdx >= gridItemControllers.size()) {
+		focussedItemIdx = gridItemControllers.size() - 1;
 	}
-	return focussedOptionIdx;
+	return focussedItemIdx;
 }
 
 int GUIGridController::getItemIdx(GUIElementNode* gridItemElementNode) {
@@ -151,7 +151,7 @@ void GUIGridController::focus(int itemIdx)
 	gridItemControllers[itemIdx]->focus();
 	gridItemControllers[itemIdx]->getNode()->scrollToNodeX(required_dynamic_cast<GUIParentNode*>(node));
 	gridItemControllers[itemIdx]->getNode()->scrollToNodeY(required_dynamic_cast<GUIParentNode*>(node));
-	focussedOptionIdx = itemIdx;
+	focussedItemIdx = itemIdx;
 }
 
 void GUIGridController::focus(GUIElementNode* gridItemElementNode)
