@@ -117,29 +117,41 @@ void PrototypeScriptSubController::updateDetails(Prototype* prototype, const str
 	}
 }
 
-void PrototypeScriptSubController::onChange(GUIElementNode* node, Prototype* prototype)
+bool PrototypeScriptSubController::onChange(GUIElementNode* node, Prototype* prototype)
 {
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
-		if (outlinerNode == "script") setScriptDetails(prototype);
+		if (outlinerNode == "script") {
+			setScriptDetails(prototype);
+			return true;
+		}
 	} else
 	if (node->getId() == "script_hid") {
 		prototype->setScriptHandlingHID(node->getController()->getValue().equals("1"));
+		return true;
 	}
+	//
+	return false;
 }
 
-void PrototypeScriptSubController::onAction(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype)
+bool PrototypeScriptSubController::onAction(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype)
 {
-	if (type != GUIActionListenerType::PERFORMED) return;
+	if (type != GUIActionListenerType::PERFORMED) return false;
+	//
 	if (node->getId() == "script_open") {
 		onScriptSet(prototype);
+		return true;
 	} else
 	if (node->getId() == "script_remove") {
 		onScriptUnset(prototype);
+		return true;
 	} else
 	if (node->getId() == "script_browseto") {
 		onScriptBrowseTo(prototype);
+		return true;
 	}
+	//
+	return false;
 }
 
 void PrototypeScriptSubController::onScriptSet(Prototype* prototype) {

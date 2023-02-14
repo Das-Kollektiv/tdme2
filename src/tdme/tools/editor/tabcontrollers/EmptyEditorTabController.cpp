@@ -150,16 +150,16 @@ void EmptyEditorTabController::onDrop(const string& payload, int mouseX, int mou
 
 void EmptyEditorTabController::onChange(GUIElementNode* node)
 {
-	basePropertiesSubController->onChange(node, view->getPrototype());
-	prototypeScriptSubController->onChange(node, view->getPrototype());
+	if (basePropertiesSubController->onChange(node, view->getPrototype()) == true) return;
+	if (prototypeScriptSubController->onChange(node, view->getPrototype()) == true) return;
 }
 
 void EmptyEditorTabController::onFocus(GUIElementNode* node) {
-	basePropertiesSubController->onFocus(node, view->getPrototype());
+	if (basePropertiesSubController->onFocus(node, view->getPrototype()) == true) return;
 }
 
 void EmptyEditorTabController::onUnfocus(GUIElementNode* node) {
-	basePropertiesSubController->onUnfocus(node, view->getPrototype());
+	if (basePropertiesSubController->onUnfocus(node, view->getPrototype()) == true) return;
 }
 
 void EmptyEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
@@ -180,8 +180,8 @@ void EmptyEditorTabController::onTooltipCloseRequest() {
 void EmptyEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	auto prototype = view->getPrototype();
-	basePropertiesSubController->onAction(type, node, prototype);
-	prototypeScriptSubController->onAction(type, node, prototype);
+	if (basePropertiesSubController->onAction(type, node, prototype) == true) return;
+	if (prototypeScriptSubController->onAction(type, node, prototype) == true) return;
 }
 
 void EmptyEditorTabController::setOutlinerContent() {

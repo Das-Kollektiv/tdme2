@@ -1696,6 +1696,13 @@ public:
 		}
 
 		/**
+		 * @return if private
+		 */
+		virtual bool isPrivate() {
+			return false;
+		}
+
+		/**
 		 * @return operator
 		 */
 		virtual ScriptOperator getOperator() {
@@ -2210,8 +2217,10 @@ private:
 		// evaluate array index
 		auto arrayIdxExpressionStringView = StringTools::viewTrim(string_view(&name.data()[arrayAccessOperatorLeftIdx + 1], arrayAccessOperatorRightIdx - arrayAccessOperatorLeftIdx - 2));
 		if (arrayIdxExpressionStringView.empty() == false) {
+			// TODO: as evaluate statement we also might need the expression that had not yet a preprocessor run for error messages and such
 			ScriptVariable statementReturnValue;
-			if (evaluate(string(arrayIdxExpressionStringView), statementReturnValue) == false || statementReturnValue.getIntegerValue(arrayIdx, false) == false) {
+			auto evaluateStatement = string(arrayIdxExpressionStringView);
+			if (evaluateInternal(evaluateStatement, evaluateStatement, statementReturnValue) == false || statementReturnValue.getIntegerValue(arrayIdx, false) == false) {
 				if (statement != nullptr) {
 					Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': failed to evaluate expression: '" + string(arrayIdxExpressionStringView) + "'");
 				} else {
@@ -2423,6 +2432,50 @@ private:
 	}
 
 	/**
+	 * Evaluate given statement without executing preprocessor run
+	 * @param statement script statement
+	 * @param executableStatement executable script statement
+	 * @param returnValue script return value
+	 * @return success
+	 */
+	inline bool evaluateInternal(const string& statement, const string& executableStatement, ScriptVariable& returnValue) {
+		ScriptStatement evaluateStatement =
+			{
+				.line = LINEIDX_NONE,
+				.statementIdx = 0,
+				.statement = "internal.script.evaluate(" + statement + ")",
+				.executableStatement = "internal.script.evaluate(" + executableStatement + ")",
+				.gotoStatementIdx = STATEMENTIDX_NONE
+			};
+		auto scriptEvaluateStatement = "internal.script.evaluate(" + executableStatement + ")";
+		//
+		string_view method;
+		vector<string_view> arguments;
+		ScriptSyntaxTreeNode evaluateSyntaxTree;
+		if (parseScriptStatement(scriptEvaluateStatement, method, arguments) == false) {
+			Console::println("MiniScript::evaluate(): '" + scriptFileName + "': " + evaluateStatement.statement + "@" + to_string(evaluateStatement.line) + ": failed to parse evaluation statement");
+			return false;
+		} else
+		if (createScriptStatementSyntaxTree(method, arguments, evaluateStatement, evaluateSyntaxTree) == false) {
+			Console::println("MiniScript::evaluate(): '" + scriptFileName + "': " + evaluateStatement.statement + "@" + to_string(evaluateStatement.line) + ": failed to create syntax tree for evaluation statement");
+			return false;
+		} else {
+			//
+			pushScriptState();
+			resetScriptExecutationState(SCRIPTIDX_NONE, STATEMACHINESTATE_NEXT_STATEMENT);
+			getScriptState().running = true;
+			//
+			returnValue = executeScriptStatement(
+				evaluateSyntaxTree,
+				evaluateStatement
+			);
+			//
+			popScriptState();
+			return true;
+		}
+	}
+
+	/**
 	 * Transpile a script statement
 	 * @param generatedCode generated code
 	 * @param scriptIdx script index
@@ -2510,11 +2563,21 @@ public:
 	}
 
 	/**
-	 * Returns if method with given name does already exist
+	 * Returns if method with given name does exist
 	 * @param methodName method name
+	 * @return method exists
 	 */
 	inline bool hasMethod(const string& methodName) {
 		return scriptMethods.find(methodName) != scriptMethods.end();
+	}
+
+	/**
+	 * Returns if function with given name does exist
+	 * @param functionName method name
+	 * @return function exists
+	 */
+	inline bool hasFunction(const string& functionName) {
+		return scriptFunctions.find(functionName) != scriptFunctions.end();
 	}
 
 	/**
@@ -2933,47 +2996,6 @@ public:
 	virtual void execute();
 
 	/**
-	 * Evaluate given statement
-	 * @param statement
-	 * @return return value
-	 */
-	inline bool evaluate(const string& statement, ScriptVariable& returnValue) {
-		ScriptStatement evaluateStatement =
-			{
-				.line = LINEIDX_NONE,
-				.statementIdx = 0,
-				.statement = "script.evaluate(" + statement + ")",
-				.executableStatement = "script.evaluate(" + statement + ")",
-				.gotoStatementIdx = STATEMENTIDX_NONE
-			};
-		auto scriptEvaluateStatement = "script.evaluate(" + statement + ")";
-		//
-		string_view method;
-		vector<string_view> arguments;
-		ScriptSyntaxTreeNode evaluateSyntaxTree;
-		if (parseScriptStatement(scriptEvaluateStatement, method, arguments) == false) {
-			Console::println("MiniScript::evaluate(): '" + scriptFileName + "': " + evaluateStatement.statement + "@" + to_string(evaluateStatement.line) + ": failed to parse evaluation statement");
-			return false;
-		} else
-		if (createScriptStatementSyntaxTree(method, arguments, evaluateStatement, evaluateSyntaxTree) == false) {
-			Console::println("MiniScript::evaluate(): '" + scriptFileName + "': " + evaluateStatement.statement + "@" + to_string(evaluateStatement.line) + ": failed to create syntax tree for evaluation statement");
-			return false;
-		} else {
-			//
-			pushScriptState();
-			resetScriptExecutationState(SCRIPTIDX_NONE, STATEMACHINESTATE_NEXT_STATEMENT);
-			getScriptState().running = true;
-			//
-			returnValue = executeScriptStatement(
-				evaluateSyntaxTree,
-				evaluateStatement
-			);
-			popScriptState();
-			return true;
-		}
-	}
-
-	/**
 	 * Call (script user) function
 	 * @param function (script user) function
 	 * @param argumentValues argument values
@@ -3020,6 +3042,16 @@ public:
 		auto scriptIdx = scriptFunctionsIt->second;
 		// call it
 		return call(scriptIdx, argumentValues, returnValue);
+	}
+
+	/**
+	 * Evaluate given statement
+	 * @param statement script statement
+	 * @param returnValue script return value
+	 * @return success
+	 */
+	inline bool evaluate(const string& statement, ScriptVariable& returnValue) {
+		return evaluateInternal(statement, doStatementPreProcessing(statement), returnValue);
 	}
 
 	/**

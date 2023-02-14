@@ -557,17 +557,18 @@ void PrototypePhysicsSubController::createBoundingVolume(Prototype* prototype) {
 	editorView->reloadTabOutliner(string() + "physics.boundingvolumes." + to_string(boundingVolumeIdx));
 }
 
-void PrototypePhysicsSubController::onChange(GUIElementNode* node, Prototype* prototype) {
+bool PrototypePhysicsSubController::onChange(GUIElementNode* node, Prototype* prototype) {
 	if (node->getId() == "dropdown_outliner_add") {
 		auto addOutlinerType = node->getController()->getValue().getString();
 		if (addOutlinerType == "boundingvolume") {
 			createBoundingVolume(prototype);
+			return true;
 		}
 	} else {
 		for (auto& applyPhysicsNode: applyPhysicsNodes) {
 			if (node->getId() == applyPhysicsNode) {
 				applyPhysicsDetails(prototype);
-				break;
+				return true;
 			}
 		}
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
@@ -580,23 +581,24 @@ void PrototypePhysicsSubController::onChange(GUIElementNode* node, Prototype* pr
 				if (boundingVolumeType == "obb") applyBoundingVolumeObbDetails(prototype, boundingVolumeIdx); else
 				if (boundingVolumeType == "convexmesh") applyBoundingVolumeConvexMeshDetails(prototype, boundingVolumeIdx); else
 					view->applyBoundingVolumeNone(prototype, boundingVolumeIdx);
+				return true;
 			} else {
 				for (auto& applyBoundingVolumeSphereNode: applyBoundingVolumSphereNodes) {
 					if (node->getId() == applyBoundingVolumeSphereNode) {
 						applyBoundingVolumeSphereDetails(prototype, boundingVolumeIdx);
-						break;
+						return true;
 					}
 				}
 				for (auto& applyBoundingVolumeCapsuleNode: applyBoundingVolumCapsuleNodes) {
 					if (node->getId() == applyBoundingVolumeCapsuleNode) {
 						applyBoundingVolumeCapsuleDetails(prototype, boundingVolumeIdx);
-						break;
+						return true;
 					}
 				}
 				for (auto& applyBoundingVolumeOBBNode: applyBoundingVolumOBBNodes) {
 					if (node->getId() == applyBoundingVolumeOBBNode) {
 						applyBoundingVolumeObbDetails(prototype, boundingVolumeIdx);
-						break;
+						return true;
 					}
 				}
 			}
@@ -608,22 +610,28 @@ void PrototypePhysicsSubController::onChange(GUIElementNode* node, Prototype* pr
 	if (node->getId() == tabView->getTabId() + "_tab_button_translate") {
 		view->setGizmoType(Gizmo::GIZMOTYPE_TRANSLATE);
 		view->updateGizmo(prototype);
+		return true;
 	} else
 	if (node->getId() == tabView->getTabId() + "_tab_button_rotate") {
 		view->setGizmoType(Gizmo::GIZMOTYPE_ROTATE);
 		view->updateGizmo(prototype);
+		return true;
 	} else
 	if (node->getId() == tabView->getTabId() + "_tab_button_scale") {
 		view->setGizmoType(Gizmo::GIZMOTYPE_SCALE);
 		view->updateGizmo(prototype);
+		return true;
 	} else
 	if (node->getId() == tabView->getTabId() + "_tab_button_gizmo") {
 		view->setGizmoType(Gizmo::GIZMOTYPE_ALL);
 		view->updateGizmo(prototype);
+		return true;
 	}
+	//
+	return false;
 }
 
-void PrototypePhysicsSubController::onAction(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype)
+bool PrototypePhysicsSubController::onAction(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId() == "boundingvolume_convexmesh_file_open") {
@@ -664,6 +672,8 @@ void PrototypePhysicsSubController::onAction(GUIActionListenerType type, GUIElem
 					);
 				}
 			}
+			//
+			return true;
 		} else
 		if (node->getId() == "boundingvolume_convexmesh_file_remove") {
 			if (prototype != nullptr) {
@@ -674,6 +684,8 @@ void PrototypePhysicsSubController::onAction(GUIActionListenerType type, GUIElem
 					setBoundingVolumeDetails(prototype, boundingVolumeIdxActivated);
 				}
 			}
+			//
+			return true;
 		} else
 		if (node->getId() == "boundingvolume_convexmesh_file_browseto") {
 			if (prototype != nullptr) {
@@ -689,6 +701,8 @@ void PrototypePhysicsSubController::onAction(GUIActionListenerType type, GUIElem
 					}
 				}
 			}
+			//
+			return true;
 		} else
 		if (node->getId() == "importconvexmesh_file_open") {
 			if (prototype != nullptr) {
@@ -722,6 +736,8 @@ void PrototypePhysicsSubController::onAction(GUIActionListenerType type, GUIElem
 					new OnConvexMeshesFileImport(this, prototype)
 				);
 			}
+			//
+			return true;
 		} else
 		if (node->getId() == "generateconvexmesh_file_open") {
 			if (prototype != nullptr) {
@@ -754,8 +770,12 @@ void PrototypePhysicsSubController::onAction(GUIActionListenerType type, GUIElem
 					new OnConvexMeshesFileOpen(this, prototype)
 				);
 			}
+			//
+			return true;
 		}
 	}
+	//
+	return false;
 }
 
 void PrototypePhysicsSubController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype) {

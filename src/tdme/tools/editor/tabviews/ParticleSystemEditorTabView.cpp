@@ -334,6 +334,7 @@ void ParticleSystemEditorTabView::initParticleSystem() {
 
 void ParticleSystemEditorTabView::uninitParticleSystem() {
 	engine->removeEntity("model");
+	removeGizmo();
 }
 
 int ParticleSystemEditorTabView::getParticleSystemIndex() {

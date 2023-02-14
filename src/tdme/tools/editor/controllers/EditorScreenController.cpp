@@ -867,39 +867,28 @@ void EditorScreenController::scanProjectPaths(const string& path, string& xml) {
 }
 
 void EditorScreenController::closeTab(const string& tabId) {
+	screenNode->removeNodeById(tabId, false);
+	screenNode->removeNodeById(tabId + "-content", false);
+	auto tabIt = tabViews.find(tabId);
+	if (tabIt != tabViews.end()) {
+		auto& tab = tabIt->second;
+		tab.getTabView()->dispose();
+		delete tab.getTabView();
+		tabViewVector.erase(
+			remove(
+				tabViewVector.begin(),
+				tabViewVector.end(),
+				&tab
+			),
+			tabViewVector.end()
+		);
+		tabViews.erase(tabIt);
+	}
+	setDetailsContent(string());
+	setOutlinerContent(string());
 	//
-	class CloseTabAction: public Action {
-	private:
-		EditorScreenController* editorScreenController;
-		string tabIdToClose;
-	public:
-		CloseTabAction(EditorScreenController* editorScreenController, const string& tabIdToClose): editorScreenController(editorScreenController), tabIdToClose(tabIdToClose) {}
-		virtual void performAction() {
-			editorScreenController->screenNode->removeNodeById(tabIdToClose, false);
-			editorScreenController->screenNode->removeNodeById(tabIdToClose + "-content", false);
-			auto tabIt = editorScreenController->tabViews.find(tabIdToClose);
-			if (tabIt != editorScreenController->tabViews.end()) {
-				auto& tab = tabIt->second;
-				tab.getTabView()->dispose();
-				delete tab.getTabView();
-				editorScreenController->tabViewVector.erase(
-					remove(
-						editorScreenController->tabViewVector.begin(),
-						editorScreenController->tabViewVector.end(),
-						&tab
-					),
-					editorScreenController->tabViewVector.end()
-				);
-				editorScreenController->tabViews.erase(tabIt);
-			}
-			editorScreenController->setDetailsContent(string());
-			editorScreenController->setOutlinerContent(string());
-			//
-			editorScreenController->updateFullScreenMenuEntry();
-			editorScreenController->updateTabsMenuEntries();
-		}
-	};
-	Engine::getInstance()->enqueueAction(new CloseTabAction(this, tabId));
+	updateFullScreenMenuEntry();
+	updateTabsMenuEntries();
 }
 
 void EditorScreenController::closeTabs() {
@@ -1317,7 +1306,10 @@ void EditorScreenController::onAddFile(const string& type) {
 	//
 	string extension;
 	if (type != "folder") {
-		if (type == "screen" || type == "template") extension = "xml"; else extension = "t" + type;
+		if (type == "logic_script") extension = "tscript"; else
+		if (type == "gui_script") extension = "tscript"; else
+		if (type == "screen" || type == "template") extension = "xml"; else
+			extension = "t" + type;
 	}
 
 	//
@@ -1363,9 +1355,18 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			showInfoPopUp("Error", string() + "An error occurred: file type: " + type + ": " + exception.what());
 		}
 	} else
-	if (type == "script") {
+	if (type == "logic_script") {
 		try {
-			FileSystem::getInstance()->setContentFromString(pathName, fileName, FileSystem::getInstance()->getContentAsString("resources/engine/templates/tscript", "template.tscript"));
+			FileSystem::getInstance()->setContentFromString(pathName, fileName, FileSystem::getInstance()->getContentAsString("resources/engine/templates/tscript", "logic_script_template.tscript"));
+			browseTo(pathName + "/" + fileName);
+			openFile(pathName + "/" + fileName);
+		} catch (Exception& exception) {
+			showInfoPopUp("Error", string() + "An error occurred: file type: " + type + ": " + exception.what());
+		}
+	} else
+	if (type == "gui_script") {
+		try {
+			FileSystem::getInstance()->setContentFromString(pathName, fileName, FileSystem::getInstance()->getContentAsString("resources/engine/templates/tscript", "gui_script_template.tscript"));
 			browseTo(pathName + "/" + fileName);
 			openFile(pathName + "/" + fileName);
 		} catch (Exception& exception) {

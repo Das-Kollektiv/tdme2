@@ -286,31 +286,23 @@ void ParticleSystemEditorTabController::showInfoPopUp(const string& caption, con
 
 void ParticleSystemEditorTabController::onChange(GUIElementNode* node)
 {
+	if (basePropertiesSubController->onChange(node, view->getPrototype()) == true) return;
+	if (prototypeDisplaySubController->onChange(node, view->getPrototype()) == true) return;
+	if (prototypePhysicsSubController->onChange(node, view->getPrototype()) == true) return;
+	if (prototypeSoundsSubController->onChange(node, view->getPrototype(), nullptr) == true) return;
+	if (prototypeScriptSubController->onChange(node, view->getPrototype()) == true) return;
 	//
 	if (node->getId() == "dropdown_outliner_add") {
 		if (node->getController()->getValue().getString() == "particlesystem") {
 			// TODO: move me into a method as I am using it also in context menu, too lazy right now :D
 			auto prototype = view->getPrototype();
-			if (prototype == nullptr) return;
-			auto particleSystem = prototype->addParticleSystem();
-			if (particleSystem == nullptr) return;
-			auto particleSystemIdx = prototype->getParticleSystemsCount() - 1;
-
-			//
-			class ReloadTabOutlinerAction: public Action {
-			private:
-				ParticleSystemEditorTabController* particleSystemEditorTabController;
-				string outlinerNode;
-			public:
-				ReloadTabOutlinerAction(ParticleSystemEditorTabController* particleSystemEditorTabController, const string& outlinerNode): particleSystemEditorTabController(particleSystemEditorTabController), outlinerNode(outlinerNode) {}
-				virtual void performAction() {
-					particleSystemEditorTabController->view->uninitParticleSystem();
-					auto editorView = particleSystemEditorTabController->view->getEditorView();
-					editorView->reloadTabOutliner(outlinerNode);
-					particleSystemEditorTabController->view->initParticleSystem();
-				}
-			};
-			Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(this, "particlesystems." + to_string(particleSystemIdx)));
+			auto particleSystem = prototype == nullptr?nullptr:prototype->addParticleSystem();
+			auto particleSystemIdx = particleSystem == nullptr?-1:prototype->getParticleSystemsCount() - 1;
+			if (particleSystemIdx != -1) {
+				view->uninitParticleSystem();
+				view->getEditorView()->reloadTabOutliner("particlesystems." + to_string(particleSystemIdx));
+				view->initParticleSystem();
+			}
 		}
 	} else
 	if (node->getId() == "selectbox_outliner") {
@@ -382,22 +374,16 @@ void ParticleSystemEditorTabController::onChange(GUIElementNode* node)
 			}
 		}
 	}
-	//
-	basePropertiesSubController->onChange(node, view->getPrototype());
-	prototypeDisplaySubController->onChange(node, view->getPrototype());
-	prototypePhysicsSubController->onChange(node, view->getPrototype());
-	prototypeSoundsSubController->onChange(node, view->getPrototype(), nullptr);
-	prototypeScriptSubController->onChange(node, view->getPrototype());
 }
 
 void ParticleSystemEditorTabController::onFocus(GUIElementNode* node) {
-	basePropertiesSubController->onFocus(node, view->getPrototype());
-	prototypeSoundsSubController->onFocus(node, view->getPrototype());
+	if (basePropertiesSubController->onFocus(node, view->getPrototype()) == true) return;
+	if (prototypeSoundsSubController->onFocus(node, view->getPrototype()) == true) return;
 }
 
 void ParticleSystemEditorTabController::onUnfocus(GUIElementNode* node) {
-	basePropertiesSubController->onUnfocus(node, view->getPrototype());
-	prototypeSoundsSubController->onUnfocus(node, view->getPrototype());
+	if (basePropertiesSubController->onUnfocus(node, view->getPrototype()) == true) return;
+	if (prototypeSoundsSubController->onUnfocus(node, view->getPrototype()) == true) return;
 }
 
 void ParticleSystemEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
@@ -421,22 +407,12 @@ void ParticleSystemEditorTabController::onContextMenuRequest(GUIElementNode* nod
 					auto particleSystem = prototype->addParticleSystem();
 					if (particleSystem == nullptr) return;
 					auto particleSystemIdx = prototype->getParticleSystemsCount() - 1;
-
 					//
-					class ReloadTabOutlinerAction: public Action {
-					private:
-						ParticleSystemEditorTabController* particleSystemEditorTabController;
-						string outlinerNode;
-					public:
-						ReloadTabOutlinerAction(ParticleSystemEditorTabController* particleSystemEditorTabController, const string& outlinerNode): particleSystemEditorTabController(particleSystemEditorTabController), outlinerNode(outlinerNode) {}
-						virtual void performAction() {
-							particleSystemEditorTabController->view->uninitParticleSystem();
-							auto editorView = particleSystemEditorTabController->view->getEditorView();
-							editorView->reloadTabOutliner(outlinerNode);
-							particleSystemEditorTabController->view->initParticleSystem();
-						}
-					};
-					Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(particleSystemEditorTabController, "particlesystems." + to_string(particleSystemIdx)));
+					auto view = particleSystemEditorTabController->view;
+					view->uninitParticleSystem();
+					auto editorView = particleSystemEditorTabController->view->getEditorView();
+					editorView->reloadTabOutliner("particlesystems." + to_string(particleSystemIdx));
+					view->initParticleSystem();
 				}
 				OnAddParticleSystemAction(ParticleSystemEditorTabController* particleSystemEditorTabController): particleSystemEditorTabController(particleSystemEditorTabController) {
 				}
@@ -461,23 +437,13 @@ void ParticleSystemEditorTabController::onContextMenuRequest(GUIElementNode* nod
 				void performAction() override {
 					auto prototype = particleSystemEditorTabController->view->getPrototype();
 					if (prototype == nullptr) return;
-					prototype->removeParticleSystemAt(particleSystemIdx);
-
 					//
-					class ReloadTabOutlinerAction: public Action {
-					private:
-						ParticleSystemEditorTabController* particleSystemEditorTabController;
-						string outlinerNode;
-					public:
-						ReloadTabOutlinerAction(ParticleSystemEditorTabController* particleSystemEditorTabController, const string& outlinerNode): particleSystemEditorTabController(particleSystemEditorTabController), outlinerNode(outlinerNode) {}
-						virtual void performAction() {
-							particleSystemEditorTabController->view->uninitParticleSystem();
-							auto editorView = particleSystemEditorTabController->view->getEditorView();
-							editorView->reloadTabOutliner(outlinerNode);
-							particleSystemEditorTabController->view->initParticleSystem();
-						}
-					};
-					Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(particleSystemEditorTabController, "particlesystems"));
+					prototype->removeParticleSystemAt(particleSystemIdx);
+					//
+					particleSystemEditorTabController->view->uninitParticleSystem();
+					auto editorView = particleSystemEditorTabController->view->getEditorView();
+					editorView->reloadTabOutliner("particlesystems");
+					particleSystemEditorTabController->view->initParticleSystem();
 				}
 				OnRemoveParticleSystemAction(ParticleSystemEditorTabController* particleSystemEditorTabController, int particleSystemIdx): particleSystemEditorTabController(particleSystemEditorTabController), particleSystemIdx(particleSystemIdx) {
 				}
@@ -508,7 +474,11 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 {
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return;
-
+	//
+	if (basePropertiesSubController->onAction(type, node, prototype) == true) return;
+	if (prototypePhysicsSubController->onAction(type, node, prototype) == true) return;
+	if (prototypeSoundsSubController->onAction(type, node, prototype) == true) return;
+	if (prototypeScriptSubController->onAction(type, node, prototype) == true) return;
 	//
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId().compare("particleemitter_box_colorstart_edit") == 0) {
@@ -1240,11 +1210,6 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 			}
 		}
 	}
-
-	basePropertiesSubController->onAction(type, node, prototype);
-	prototypePhysicsSubController->onAction(type, node, prototype);
-	prototypeSoundsSubController->onAction(type, node, prototype);
-	prototypeScriptSubController->onAction(type, node, prototype);
 }
 
 void ParticleSystemEditorTabController::setOutlinerContent() {
@@ -1493,6 +1458,7 @@ void ParticleSystemEditorTabController::setParticleSystemDetails(int particleSys
 }
 
 void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleSystemIdx) {
+	Console::println("ParticleSystemEditorTabController::applyParticleSystemDetails(): xxx");
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return;
 	auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
@@ -1517,18 +1483,8 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 				view->uninitParticleSystem();
 				particleSystem->setType(newParticleSystemType);
 				//
-				class ChangeTypeAction: public Action {
-				private:
-					ParticleSystemEditorTabController* editorView;
-					int particleSystemIdx;
-				public:
-					ChangeTypeAction(ParticleSystemEditorTabController* particleSystemEditorTabController, int particleSystemIdx): editorView(particleSystemEditorTabController), particleSystemIdx(particleSystemIdx) {}
-					virtual void performAction() {
-						editorView->setParticleSystemDetails(particleSystemIdx);
-						editorView->view->initParticleSystem();
-					}
-				};
-				Engine::getInstance()->enqueueAction(new ChangeTypeAction(this, particleSystemIdx));
+				setParticleSystemDetails(particleSystemIdx);
+				view->initParticleSystem();
 				return;
 			}
 		}
@@ -1578,18 +1534,9 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 			view->uninitParticleSystem();
 			particleSystem->setEmitter(newEmitterType);
 			//
-			class ChangeEmitterAction: public Action {
-			private:
-				ParticleSystemEditorTabController* editorView;
-				int particleSystemIdx;
-			public:
-				ChangeEmitterAction(ParticleSystemEditorTabController* particleSystemEditorTabController, int particleSystemIdx): editorView(particleSystemEditorTabController), particleSystemIdx(particleSystemIdx) {}
-				virtual void performAction() {
-					editorView->setParticleSystemDetails(particleSystemIdx);
-					editorView->view->initParticleSystem();
-				}
-			};
-			Engine::getInstance()->enqueueAction(new ChangeEmitterAction(this, particleSystemIdx));
+			setParticleSystemDetails(particleSystemIdx);
+			view->initParticleSystem();
+			//
 			return;
 		}
 

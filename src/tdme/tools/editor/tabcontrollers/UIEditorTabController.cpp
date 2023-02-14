@@ -360,26 +360,12 @@ void UIEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouse
 			class OnAddScreenAction: public virtual Action
 			{
 			public:
-				void performAction() override {
-					//
-					class AddScreenAction: public Action {
-					private:
-						UIEditorTabController* uiEditorTabController;
-					public:
-						AddScreenAction(UIEditorTabController* uiEditorTabController):
-							uiEditorTabController(uiEditorTabController) {
-						}
-						virtual void performAction() {
-							auto view = uiEditorTabController->getView();
-							view->addScreen();
-							view->getEditorView()->reloadTabOutliner(to_string(view->getUIScreenNodes().size() - 1) + ".0");
-						}
-					};
-					Engine::getInstance()->enqueueAction(
-						new AddScreenAction(uiEditorTabController)
-					);
-				}
 				OnAddScreenAction(UIEditorTabController* uiEditorTabController): uiEditorTabController(uiEditorTabController) {
+				}
+				void performAction() override {
+					auto view = uiEditorTabController->getView();
+					view->addScreen();
+					view->getEditorView()->reloadTabOutliner(to_string(view->getUIScreenNodes().size() - 1) + ".0");
 				}
 			private:
 				UIEditorTabController* uiEditorTabController;
@@ -390,24 +376,10 @@ void UIEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouse
 			class OnScreensReloadAction: public virtual Action
 			{
 			public:
-				void performAction() override {
-					//
-					class ReloadScreensAction: public Action {
-					private:
-						UIEditorTabController* uiEditorTabController;
-					public:
-						ReloadScreensAction(UIEditorTabController* uiEditorTabController):
-							uiEditorTabController(uiEditorTabController) {
-						}
-						virtual void performAction() {
-							uiEditorTabController->reloadScreens();
-						}
-					};
-					Engine::getInstance()->enqueueAction(
-						new ReloadScreensAction(uiEditorTabController)
-					);
-				}
 				OnScreensReloadAction(UIEditorTabController* uiEditorTabController): uiEditorTabController(uiEditorTabController) {
+				}
+				void performAction() override {
+					uiEditorTabController->reloadScreens();
 				}
 			private:
 				UIEditorTabController* uiEditorTabController;
@@ -427,28 +399,12 @@ void UIEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouse
 			class OnScreenRemoveAction: public virtual Action
 			{
 			public:
-				void performAction() override {
-					//
-					class AddScreenAction: public Action {
-					private:
-						UIEditorTabController* uiEditorTabController;
-						int screenIdx;
-					public:
-						AddScreenAction(UIEditorTabController* uiEditorTabController, int screenIdx):
-							uiEditorTabController(uiEditorTabController),
-							screenIdx(screenIdx) {
-						}
-						virtual void performAction() {
-							auto view = uiEditorTabController->getView();
-							view->removeScreen(screenIdx);
-							view->getEditorView()->reloadTabOutliner(to_string(view->getUIScreenNodes().size() - 1) + ".0");
-						}
-					};
-					Engine::getInstance()->enqueueAction(
-						new AddScreenAction(uiEditorTabController, screenIdx)
-					);
-				}
 				OnScreenRemoveAction(UIEditorTabController* uiEditorTabController, int screenIdx): uiEditorTabController(uiEditorTabController), screenIdx(screenIdx) {
+				}
+				void performAction() override {
+					auto view = uiEditorTabController->getView();
+					view->removeScreen(screenIdx);
+					view->getEditorView()->reloadTabOutliner(to_string(view->getUIScreenNodes().size() - 1) + ".0");
 				}
 			private:
 				UIEditorTabController* uiEditorTabController;
@@ -636,34 +592,11 @@ void UIEditorTabController::onLoadScreen() {
 	public:
 		void performAction() override {
 			//
-			class LoadScreenAction: public Action {
-			private:
-				UIEditorTabController* uiEditorTabController;
-				int screenIdx;
-				string pathName;
-				string fileName;
-			public:
-				LoadScreenAction(UIEditorTabController* uiEditorTabController, int screenIdx, const string& pathName, const string& fileName):
-					uiEditorTabController(uiEditorTabController),
-					screenIdx(screenIdx),
-					pathName(pathName),
-					fileName(fileName) {
-				}
-				virtual void performAction() {
-					uiEditorTabController->setScreen(
-						screenIdx,
-						pathName + "/" + fileName
-					);
-				}
-			};
-			Engine::getInstance()->enqueueAction(
-				new LoadScreenAction(
-					uiEditorTabController,
-					screenIdx,
-					uiEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
-					uiEditorTabController->popUps->getFileDialogScreenController()->getFileName()
-				)
+			uiEditorTabController->setScreen(
+				screenIdx,
+				uiEditorTabController->popUps->getFileDialogScreenController()->getPathName() + "/" + uiEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 			);
+			//
 			uiEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
@@ -698,32 +631,12 @@ void UIEditorTabController::onLoadScreen() {
 }
 
 void UIEditorTabController::onUnsetScreen() {
-	//
-	class UnsetScreenAction: public Action {
-	private:
-		UIEditorTabController* uiEditorTabController;
-		int screenIdx;
-	public:
-		UnsetScreenAction(UIEditorTabController* uiEditorTabController, int screenIdx):
-			uiEditorTabController(uiEditorTabController),
-			screenIdx(screenIdx) {
-		}
-		virtual void performAction() {
-			auto view = uiEditorTabController->getView();
-			view->unsetScreen(screenIdx);
-			view->reAddScreens();
-			view->getEditorView()->reloadTabOutliner(to_string(screenIdx) + ".0");
-		}
-	};
 	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 	auto screenIdx = Integer::parse(StringTools::substring(outlinerNode, 0, outlinerNode.find(".")));
 	if (screenIdx < 0 || screenIdx >= view->getUIScreenNodes().size()) return;
-	Engine::getInstance()->enqueueAction(
-		new UnsetScreenAction(
-			this,
-			screenIdx
-		)
-	);
+	view->unsetScreen(screenIdx);
+	view->reAddScreens();
+	view->getEditorView()->reloadTabOutliner(to_string(screenIdx) + ".0");
 }
 
 void UIEditorTabController::onBrowseToScreen() {
@@ -737,34 +650,20 @@ void UIEditorTabController::onBrowseToScreen() {
 }
 
 void UIEditorTabController::reloadScreens() {
-	//
-	class ReloadScreensAction: public Action {
-	private:
-		UIEditorTabController* uiEditorTabController;
-	public:
-		ReloadScreensAction(UIEditorTabController* uiEditorTabController):
-			uiEditorTabController(uiEditorTabController) {
-			//
+	for (auto i = 0; i < view->getUIScreenNodes().size(); i++) {
+		auto fileName = view->getUIScreenNodes()[i].fileName;
+		view->unsetScreen(i);
+		try {
+			view->setScreen(
+				i,
+				fileName
+			);
+		} catch (Exception& exception) {
+			Console::println("UIEditorTabController::reloadScreens(): An error occurred: " + string(exception.what()));
 		}
-		virtual void performAction() {
-			auto view = uiEditorTabController->getView();
-			for (auto i = 0; i < view->getUIScreenNodes().size(); i++) {
-				auto fileName = view->getUIScreenNodes()[i].fileName;
-				view->unsetScreen(i);
-				try {
-					view->setScreen(
-						i,
-						fileName
-					);
-				} catch (Exception& exception) {
-					Console::println("UIEditorTabController::onLoadScreen(): ReloadScreensAction::performAction(): An error occurred: " + string(exception.what()));
-				}
-			}
-			view->reAddScreens();
-			view->getEditorView()->reloadTabOutliner("screens");
-		}
-	};
-	Engine::getInstance()->enqueueAction(new ReloadScreensAction(this));
+	}
+	view->reAddScreens();
+	view->getEditorView()->reloadTabOutliner("screens");
 }
 
 void UIEditorTabController::onLoadPrototype() {
@@ -772,28 +671,11 @@ void UIEditorTabController::onLoadPrototype() {
 	{
 	public:
 		void performAction() override {
-			//
-			class LoadPrototypeAction: public Action {
-			private:
-				UIEditorTabController* uiEditorTabController;
-				string pathName;
-				string fileName;
-			public:
-				LoadPrototypeAction(UIEditorTabController* uiEditorTabController, const string& pathName, const string& fileName):
-					uiEditorTabController(uiEditorTabController),
-					pathName(pathName),
-					fileName(fileName) {
-				}
-				virtual void performAction() {
-					uiEditorTabController->setPrototype(pathName, fileName, uiEditorTabController->prototypeMeshNode, uiEditorTabController->prototypeMeshAnimation);
-				}
-			};
-			Engine::getInstance()->enqueueAction(
-				new LoadPrototypeAction(
-					uiEditorTabController,
-					uiEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
-					uiEditorTabController->popUps->getFileDialogScreenController()->getFileName()
-				)
+			uiEditorTabController->setPrototype(
+				uiEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
+				uiEditorTabController->popUps->getFileDialogScreenController()->getFileName(),
+				uiEditorTabController->prototypeMeshNode,
+				uiEditorTabController->prototypeMeshAnimation
 			);
 			uiEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
@@ -815,7 +697,7 @@ void UIEditorTabController::onLoadPrototype() {
 	popUps->getFileDialogScreenController()->show(
 		pathName,
 		"Load prototype from: ",
-		{ "tmodel" },
+		PrototypeReader::getPrototypeExtensions(),
 		fileName,
 		true,
 		new OnLoadPrototype(this)
@@ -823,22 +705,10 @@ void UIEditorTabController::onLoadPrototype() {
 }
 
 void UIEditorTabController::onRemovePrototype() {
-	//
-	class RemovePrototypeAction: public Action {
-	private:
-		UIEditorTabController* uiEditorTabController;
-	public:
-		RemovePrototypeAction(UIEditorTabController* uiEditorTabController): uiEditorTabController(uiEditorTabController) {
-		}
-		virtual void performAction() {
-			auto view = uiEditorTabController->getView();
-			uiEditorTabController->prototypeFileName.clear();
-			view->removePrototype();
-			view->reAddScreens();
-			view->getEditorView()->reloadTabOutliner("screens");
-		}
-	};
-	Engine::getInstance()->enqueueAction(new RemovePrototypeAction(this));
+	prototypeFileName.clear();
+	view->removePrototype();
+	view->reAddScreens();
+	view->getEditorView()->reloadTabOutliner("screens");
 }
 
 void UIEditorTabController::onBrowseToPrototype() {
@@ -946,28 +816,15 @@ void UIEditorTabController::save() {
 
 			// issue SAVE AS for next screen
 			if (screenIdx >= 0 && screenIdx < uiEditorTabController->view->getUIScreenNodes().size()) {
-				//
-				class UISaveAction: public Action {
-					public:
-						UISaveAction(UIEditorTabController* uiEditorTabController, int screenIdx): uiEditorTabController(uiEditorTabController), screenIdx(screenIdx) {
-						}
-						void performAction() override {
-							auto fileName = Tools::getPathName(uiEditorTabController->view->getFileName()) + "/Untitled.xml";
-							uiEditorTabController->popUps->getFileDialogScreenController()->show(
-								Tools::getPathName(fileName),
-								"Save to: ",
-								{ { "xml" } },
-								Tools::getFileName(fileName),
-								false,
-								new OnUISave(uiEditorTabController, screenIdx)
-							);
-						}
-					private:
-						UIEditorTabController* uiEditorTabController;
-						int screenIdx;
-				};
-				//
-				Engine::getInstance()->enqueueAction(new UISaveAction(uiEditorTabController, screenIdx));
+				auto fileName = Tools::getPathName(uiEditorTabController->view->getFileName()) + "/Untitled.xml";
+				uiEditorTabController->popUps->getFileDialogScreenController()->show(
+					Tools::getPathName(fileName),
+					"Save to: ",
+					{ { "xml" } },
+					Tools::getFileName(fileName),
+					false,
+					new OnUISave(uiEditorTabController, screenIdx)
+				);
 			}
 			// close this file dialog
 			uiEditorTabController->popUps->getFileDialogScreenController()->close();
@@ -1035,6 +892,13 @@ void UIEditorTabController::saveAs() {
 	class OnUISaveAs: public virtual Action
 	{
 	public:
+		/**
+		 * Public constructor
+		 * @param uiEditorTabController ui editor tab controller
+		 */
+		OnUISaveAs(UIEditorTabController* uiEditorTabController, int screenIdx): uiEditorTabController(uiEditorTabController), screenIdx(screenIdx) {
+		}
+
 		void performAction() override {
 			// skip if wrong screen index
 			if (screenIdx < 0 || screenIdx >= uiEditorTabController->view->getUIScreenNodes().size()) {
@@ -1073,39 +937,19 @@ void UIEditorTabController::saveAs() {
 
 			// issue SAVE AS for next screen
 			if (screenIdx >= 0 && screenIdx < uiEditorTabController->view->getUIScreenNodes().size()) {
-				//
-				class UISaveAction: public Action {
-					public:
-						UISaveAction(UIEditorTabController* uiEditorTabController, int screenIdx): uiEditorTabController(uiEditorTabController), screenIdx(screenIdx) {
-						}
-						void performAction() override {
-							auto fileName = uiEditorTabController->view->getUIScreenNodes()[screenIdx].fileName;
-							if (fileName.empty() == true) fileName = Tools::getPathName(uiEditorTabController->view->getFileName()) + "/Untitled.xml";
-							uiEditorTabController->popUps->getFileDialogScreenController()->show(
-								Tools::getPathName(fileName),
-								"Save to: ",
-								{ { "xml" } },
-								Tools::getFileName(fileName),
-								false,
-								new OnUISaveAs(uiEditorTabController, screenIdx)
-							);
-						}
-					private:
-						UIEditorTabController* uiEditorTabController;
-						int screenIdx;
-				};
-				//
-				Engine::getInstance()->enqueueAction(new UISaveAction(uiEditorTabController, screenIdx));
+				auto fileName = uiEditorTabController->view->getUIScreenNodes()[screenIdx].fileName;
+				if (fileName.empty() == true) fileName = Tools::getPathName(uiEditorTabController->view->getFileName()) + "/Untitled.xml";
+				uiEditorTabController->popUps->getFileDialogScreenController()->show(
+					Tools::getPathName(fileName),
+					"Save to: ",
+					{ { "xml" } },
+					Tools::getFileName(fileName),
+					false,
+					new OnUISaveAs(uiEditorTabController, screenIdx)
+				);
 			}
 			// close this file dialog
 			uiEditorTabController->popUps->getFileDialogScreenController()->close();
-		}
-
-		/**
-		 * Public constructor
-		 * @param uiEditorTabController ui editor tab controller
-		 */
-		OnUISaveAs(UIEditorTabController* uiEditorTabController, int screenIdx): uiEditorTabController(uiEditorTabController), screenIdx(screenIdx) {
 		}
 
 	private:

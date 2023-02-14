@@ -165,30 +165,34 @@ public:
 	 * @param node node
 	 * @param prototype prototype
 	 * @param model model
+	 * @return if this event has been handled
 	 */
-	void onChange(GUIElementNode* node, Prototype* prototype, Model* model);
+	bool onChange(GUIElementNode* node, Prototype* prototype, Model* model);
 
 	/**
 	 * On focus
 	 * @param node node
 	 * @param prototype prototype
+	 * @return if this event has been handled
 	 */
-	void onFocus(GUIElementNode* node, Prototype* prototype);
+	bool onFocus(GUIElementNode* node, Prototype* prototype);
 
 	/**
 	 * On unfocus
 	 * @param node node
 	 * @param prototype prototype
+	 * @return if this event has been handled
 	 */
-	void onUnfocus(GUIElementNode* node, Prototype* prototype);
+	bool onUnfocus(GUIElementNode* node, Prototype* prototype);
 
 	/**
 	 * On action performed
 	 * @param type type
 	 * @param node node
 	 * @param prototype prototype
+	 * @return if this event has been handled
 	 */
-	void onAction(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype);
+	bool onAction(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype);
 
 	/**
 	 * On context menu requested

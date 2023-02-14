@@ -275,7 +275,8 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 		GUINode::createConditions(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("hide-on")))),
 		unescapeQuotes(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("tooltip")))),
 		StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("scrollable")))), "true"),
-		StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("popup")))), "true")
+		StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("popup")))), "true"),
+		string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("script")))
 	);
 	// workaround for having GUINode constructor to be called before GUIScreenNode constructor
 	// so GUIScreenNode::applicationRootPath is not available at GUIScreenNode::GUINode construction time

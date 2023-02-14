@@ -196,22 +196,23 @@ void DecalEditorTabController::onDrop(const string& payload, int mouseX, int mou
 
 void DecalEditorTabController::onChange(GUIElementNode* node)
 {
+	if (basePropertiesSubController->onChange(node, view->getPrototype()) == true) return;
+	if (prototypeDisplaySubController->onChange(node, view->getPrototype()) == true) return;
+	if (prototypePhysicsSubController->onChange(node, view->getPrototype()) == true) return;
+	if (prototypeScriptSubController->onChange(node, view->getPrototype()) == true) return;
+	//
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		updateDetails(outlinerNode);
 	}
-	basePropertiesSubController->onChange(node, view->getPrototype());
-	prototypeDisplaySubController->onChange(node, view->getPrototype());
-	prototypePhysicsSubController->onChange(node, view->getPrototype());
-	prototypeScriptSubController->onChange(node, view->getPrototype());
 }
 
 void DecalEditorTabController::onFocus(GUIElementNode* node) {
-	basePropertiesSubController->onFocus(node, view->getPrototype());
+	if (basePropertiesSubController->onFocus(node, view->getPrototype()) == true) return;
 }
 
 void DecalEditorTabController::onUnfocus(GUIElementNode* node) {
-	basePropertiesSubController->onUnfocus(node, view->getPrototype());
+	if (basePropertiesSubController->onUnfocus(node, view->getPrototype()) == true) return;
 }
 
 void DecalEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
@@ -232,6 +233,10 @@ void DecalEditorTabController::onTooltipCloseRequest() {
 
 void DecalEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
+	if (basePropertiesSubController->onAction(type, node, view->getPrototype()) == true) return;
+	if (prototypePhysicsSubController->onAction(type, node, view->getPrototype()) == true) return;
+	if (prototypeScriptSubController->onAction(type, node, view->getPrototype()) == true) return;
+	//
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId() == "decal_texture_open") {
 			//
@@ -293,9 +298,6 @@ void DecalEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 			}
 		}
 	}
-	basePropertiesSubController->onAction(type, node, view->getPrototype());
-	prototypePhysicsSubController->onAction(type, node, view->getPrototype());
-	prototypeScriptSubController->onAction(type, node, view->getPrototype());
 }
 
 void DecalEditorTabController::setDecalTexture(const string& fileName) {

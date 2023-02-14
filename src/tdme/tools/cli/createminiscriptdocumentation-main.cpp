@@ -7,6 +7,7 @@
 #include <tdme/application/Application.h>
 #include <tdme/engine/logics/LogicMiniScript.h>
 #include <tdme/engine/Version.h>
+#include <tdme/gui/scripting/GUIMiniScript.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/MiniScript.h>
 #include <tdme/utilities/StringTools.h>
@@ -19,6 +20,7 @@ using std::vector;
 using tdme::application::Application;
 using tdme::engine::logics::LogicMiniScript;
 using tdme::engine::Version;
+using tdme::gui::scripting::GUIMiniScript;
 using tdme::utilities::Console;
 using tdme::utilities::MiniScript;
 using tdme::utilities::StringTools;
@@ -36,6 +38,10 @@ int main(int argc, char** argv)
 	//
 	auto logicMiniScript = new LogicMiniScript();
 	logicMiniScript->registerMethods();
+
+	//
+	auto guiMiniScript = new GUIMiniScript(nullptr);
+	guiMiniScript->registerMethods();
 
 	// base methods
 	{
@@ -81,6 +87,45 @@ int main(int argc, char** argv)
 		Console::println("| MiniScript logic methods                                                                         |");
 		Console::println("|--------------------------------------------------------------------------------------------------|");
 		auto scriptMethods = logicMiniScript->getMethods();
+		vector<string> methods;
+		for (auto scriptMethod: scriptMethods) {
+			if (baseMiniScript->hasMethod(scriptMethod->getMethodName()) == true) continue;
+			string method;
+			method+= "| ";
+			method+= scriptMethod->getMethodName();
+			method+= "(";
+			auto argumentIdx = 0;
+			auto optionalArgumentCount = 0;
+			for (auto& argumentType: scriptMethod->getArgumentTypes()) {
+				if (argumentType.optional == true) {
+					method+= "[";
+					optionalArgumentCount++;
+				}
+				if (argumentIdx > 0) method+= ", ";
+				if (argumentType.assignBack == true) method+= "=";
+				method+= "$" + argumentType.name + ": " + MiniScript::ScriptVariable::getTypeAsString(argumentType.type);
+				argumentIdx++;
+			}
+			if (scriptMethod->isVariadic() == true) {
+				if (argumentIdx > 0) method+= ", ";
+				method+="...";
+			}
+			for (auto i = 0; i < optionalArgumentCount; i++) method+= "]";
+			method+= "): ";
+			method+= MiniScript::ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType());
+			while (method.size() < 99) method+= " ";
+			method+= "|";
+			methods.push_back(method);
+		}
+		for (auto& method: methods) Console::println(method);
+	}
+
+	// methods
+	{
+		Console::println();
+		Console::println("| MiniScript GUI methods                                                                           |");
+		Console::println("|--------------------------------------------------------------------------------------------------|");
+		auto scriptMethods = guiMiniScript->getMethods();
 		vector<string> methods;
 		for (auto scriptMethod: scriptMethods) {
 			if (baseMiniScript->hasMethod(scriptMethod->getMethodName()) == true) continue;
@@ -170,6 +215,14 @@ int main(int argc, char** argv)
 		for (auto scriptMethod: scriptMethods) {
 			if (baseMiniScript->hasMethod(scriptMethod->getMethodName()) == true) continue;
 			Console::println("miniscript.logicmethod." + scriptMethod->getMethodName() + "=");
+		}
+	}
+	{
+		Console::println("# miniscript gui methods");
+		auto scriptMethods = guiMiniScript->getMethods();
+		for (auto scriptMethod: scriptMethods) {
+			if (baseMiniScript->hasMethod(scriptMethod->getMethodName()) == true) continue;
+			Console::println("miniscript." + scriptMethod->getMethodName() + "=");
 		}
 	}
 }
