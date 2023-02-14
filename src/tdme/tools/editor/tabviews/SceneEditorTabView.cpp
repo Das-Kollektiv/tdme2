@@ -95,7 +95,7 @@ SceneEditorTabView::SceneEditorTabView(EditorView* editorView, const string& tab
 	this->tabId = tabId;
 	this->popUps = editorView->getPopUps();
 	engine = Engine::createOffScreenInstance(512, 512, true, true, true);
-	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
+	engine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
 	this->scene = scene;
 	this->cameraInputHandler = new CameraInputHandler(engine, this);
 	this->keyControl = false;

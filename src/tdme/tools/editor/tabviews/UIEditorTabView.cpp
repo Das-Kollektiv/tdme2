@@ -97,7 +97,7 @@ UIEditorTabView::UIEditorTabView(EditorView* editorView, const string& tabId, GU
 	this->popUps = editorView->getPopUps();
 	this->screenFileName = fileName;
 	guiEngine = Engine::createOffScreenInstance(1920, 1080, false, false, false);
-	guiEngine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
+	guiEngine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
 	outlinerState.expandedOutlinerParentOptionValues.push_back("0.0");
 }
 
@@ -667,7 +667,7 @@ Prototype* UIEditorTabView::loadPrototype(const string& pathName, const string& 
 		engine = Engine::createOffScreenInstance(512, 512, true, true, false);
 		engine->setPartition(new SimplePartition());
 		engine->setShadowMapLightEyeDistanceScale(0.1f);
-		engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
+		engine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
 		guiEngine->setSceneColor(Color4(0.0f, 0.0f, 0.0f, 0.0f));
 		cameraRotationInputHandler = new CameraRotationInputHandler(engine, this);
 		projectedUi = true;
@@ -762,7 +762,7 @@ void UIEditorTabView::removePrototype() {
 	prototype = nullptr;
 
 	//
-	guiEngine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
+	guiEngine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
 }
 
 void UIEditorTabView::setScreenIdx(int screenIdx) {
