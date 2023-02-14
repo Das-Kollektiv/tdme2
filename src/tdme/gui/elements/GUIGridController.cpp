@@ -1,7 +1,9 @@
 #include <tdme/gui/elements/GUIGridController.h>
 
 #include <algorithm>
+#include <string>
 #include <unordered_set>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/gui/elements/GUIGridItemController.h>
@@ -14,13 +16,17 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/StringTools.h>
 
-
 using std::count;
+using std::string;
+using std::to_string;
 using std::unordered_set;
+using std::vector;
 
 using tdme::gui::elements::GUIGridController;
 using tdme::gui::elements::GUIGridItemController;
@@ -33,6 +39,8 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
+using tdme::utilities::Exception;
+using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
@@ -76,6 +84,11 @@ void GUIGridController::initialize()
 	}
 	determineItems();
 	selectCurrent();
+	try {
+		horizontalItems = Integer::parse(required_dynamic_cast<GUIElementNode*>(node)->getOptionValue("horizontal-items"));
+	} catch (Exception &exception) {
+		Console::println("GUIGridController::initialize(): options: horizontal-items: invalid value: " + required_dynamic_cast<GUIElementNode*>(node)->getOptionValue("horizontal-items"));
+	}
 }
 
 void GUIGridController::dispose()
@@ -408,5 +421,17 @@ void GUIGridController::setValue(const MutableString& value)
 }
 
 void GUIGridController::onSubTreeChange() {
+	if (onSubTreeChangeRun == true) return;
+	//
+	onSubTreeChangeRun = true;
+	//
+	Console::println("GUIGridController::onSubTreeChange(): horizontal-items: " + to_string(horizontalItems));
+	//
 	determineItems();
+	//
+	auto unlayoutedParentNode = required_dynamic_cast<GUIParentNode*>(node->getScreenNode()->getNodeById(node->getId() + "_unlayouted"));
+	auto layoutedParentNode = required_dynamic_cast<GUIParentNode*>(node->getScreenNode()->getInnerNodeById(node->getId()));
+	layoutedParentNode->moveNodes(unlayoutedParentNode);
+	//
+	onSubTreeChangeRun = false;
 }

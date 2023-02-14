@@ -46,6 +46,9 @@ private:
 
 	bool keyControl;
 
+	bool onSubTreeChangeRun { false };
+	int horizontalItems { 1 };
+
 	/**
 	 * Private constructor
 	 * @param node node
