@@ -821,25 +821,13 @@ void SceneEditorTabView::unsetPlaceEntityMode(bool cancelled) {
 	engine->removeEntity("tdme.sceneeditor.placeentity");
 	//
 	if (cancelled == false || selectedEntityIds.empty() == false) {
-		class ReloadOutlinerWithNewSelectionAction: public Action {
-		public:
-			void performAction() override {
-				sceneEditorTabView->reloadOutliner();
-				// select selected entities
-				sceneEditorTabView->sceneEditorTabController->unselectEntities();
-				for (auto& entityId: entitiesToSelect) {
-					sceneEditorTabView->sceneEditorTabController->selectEntity(entityId);
-				}
-				sceneEditorTabView->selectEntities(entitiesToSelect);
-			}
-			ReloadOutlinerWithNewSelectionAction(SceneEditorTabView* sceneEditorTabView, const vector<string>& entitiesToSelect): sceneEditorTabView(sceneEditorTabView), entitiesToSelect(entitiesToSelect) {
-
-			}
-		private:
-			SceneEditorTabView* sceneEditorTabView;
-			vector<string> entitiesToSelect;
-		};
-		Engine::getInstance()->enqueueAction(new ReloadOutlinerWithNewSelectionAction(this, selectedEntityIds));
+		reloadOutliner();
+		// select selected entities
+		sceneEditorTabController->unselectEntities();
+		for (auto& entityId: selectedEntityIds) {
+			sceneEditorTabController->selectEntity(entityId);
+		}
+		selectEntities(selectedEntityIds);
 	}
 }
 
@@ -913,19 +901,7 @@ void SceneEditorTabView::removeEntities()
 	cameraInputHandler->setSceneCenter(Vector3(scene->getCenter().getX(), scene->getBoundingBox()->getMax().getY() + 3.0f, scene->getCenter().getZ()));
 
 	//
-	class ReloadOutlinerAction: public Action {
-	public:
-		void performAction() override {
-			sceneEditorTabView->reloadOutliner(outlinerNode);
-		}
-		ReloadOutlinerAction(SceneEditorTabView* sceneEditorTabView, const string& outlinerNode): sceneEditorTabView(sceneEditorTabView), outlinerNode(outlinerNode) {
-
-		}
-	private:
-		SceneEditorTabView* sceneEditorTabView;
-		string outlinerNode;
-	};
-	Engine::getInstance()->enqueueAction(new ReloadOutlinerAction(this, "scene.entities"));
+	reloadOutliner("scene.entities");
 }
 
 void SceneEditorTabView::setPasteMode() {
@@ -1037,26 +1013,13 @@ void SceneEditorTabView::pasteEntities(bool displayOnly)
 
 	//
 	if (displayOnly == false) {
-		//
-		class ReloadOutlinerWithNewSelectionAction: public Action {
-		public:
-			void performAction() override {
-				sceneEditorTabView->reloadOutliner();
-				// select selected entities
-				sceneEditorTabView->sceneEditorTabController->unselectEntities();
-				for (auto& entityId: entitiesToSelect) {
-					sceneEditorTabView->sceneEditorTabController->selectEntity(entityId);
-				}
-				sceneEditorTabView->selectEntities(entitiesToSelect);
-			}
-			ReloadOutlinerWithNewSelectionAction(SceneEditorTabView* sceneEditorTabView, const vector<string>& entitiesToSelect): sceneEditorTabView(sceneEditorTabView), entitiesToSelect(entitiesToSelect) {
-
-			}
-		private:
-			SceneEditorTabView* sceneEditorTabView;
-			vector<string> entitiesToSelect;
-		};
-		Engine::getInstance()->enqueueAction(new ReloadOutlinerWithNewSelectionAction(this, entitiesToSelect));
+		reloadOutliner();
+		// select selected entities
+		sceneEditorTabController->unselectEntities();
+		for (auto& entityId: entitiesToSelect) {
+			sceneEditorTabController->selectEntity(entityId);
+		}
+		selectEntities(entitiesToSelect);
 	}
 }
 
@@ -1213,19 +1176,7 @@ bool SceneEditorTabView::applyBase(const string& name, const string& description
 			entity->setPickable(true);
 			engine->addEntity(entity);
 			//
-			class ReloadOutlinerAction: public Action {
-			public:
-				void performAction() override {
-					sceneEditorTabView->reloadOutliner(outlinerNode);
-				}
-				ReloadOutlinerAction(SceneEditorTabView* sceneEditorTabView, const string& outlinerNode): sceneEditorTabView(sceneEditorTabView), outlinerNode(outlinerNode) {
-
-				}
-			private:
-				SceneEditorTabView* sceneEditorTabView;
-				string outlinerNode;
-			};
-			Engine::getInstance()->enqueueAction(new ReloadOutlinerAction(this, "scene.entities." + entity->getId()));
+			reloadOutliner("scene.entities." + entity->getId());
 		}
 		return true;
 	} else {

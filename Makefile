@@ -513,6 +513,7 @@ SRCS = \
 	src/tdme/gui/renderer/GUIFont.cpp \
 	src/tdme/gui/renderer/GUIRenderer.cpp \
 	src/tdme/gui/renderer/GUIShader.cpp \
+	src/tdme/gui/scripting/GUIMiniScript.cpp \
 	src/tdme/network/httpclient/HTTPClient.cpp \
 	src/tdme/network/httpclient/HTTPClientException.cpp \
 	src/tdme/network/httpclient/HTTPDownloadClient.cpp \

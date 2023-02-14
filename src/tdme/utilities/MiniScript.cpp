@@ -32,6 +32,8 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/Float.h>
+#include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MiniScriptMath.h>
 #include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/StringTools.h>
@@ -73,6 +75,8 @@ using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
+using tdme::utilities::Float;
+using tdme::utilities::Integer;
 using tdme::utilities::MiniScript;
 using tdme::utilities::MiniScriptMath;
 using tdme::utilities::StringTokenizer;
@@ -266,7 +270,7 @@ bool MiniScript::parseScriptStatement(const string_view& statement, string_view&
 		}
 		Console::println();
 	}
-	if (bracketCount > 0) {
+	if (bracketCount != 0) {
 		Console::println("MiniScript::parseScriptStatement(): '" + scriptFileName + "': '" + string(statement) + "': unbalanced bracket count: " + to_string(bracketCount) + " still open");
 		return false;
 	}
@@ -1167,7 +1171,7 @@ int MiniScript::determineScriptIdxToStart() {
 		} else {
 			auto conditionMet = true;
 			auto returnValue = ScriptVariable();
-			if (evaluate(script.executableCondition, returnValue) == true) {
+			if (evaluateInternal(script.condition, script.executableCondition, returnValue) == true) {
 				auto returnValueBoolValue = false;
 				if (returnValue.getBooleanValue(returnValueBoolValue, false) == false) {
 					Console::println("MiniScript::determineScriptIdxToStart(): '" + script.condition + "': expecting boolean return value, but got: " + returnValue.getAsString());
@@ -1208,7 +1212,7 @@ int MiniScript::determineNamedScriptIdxToStart() {
 			} else {
 				auto conditionMet = true;
 				ScriptVariable returnValue;
-				if (evaluate(script.executableCondition, returnValue) == true) {
+				if (evaluateInternal(script.condition, script.executableCondition, returnValue) == true) {
 					auto returnValueBoolValue = false;
 					if (returnValue.getBooleanValue(returnValueBoolValue, false) == false) {
 						Console::println("MiniScript::determineNamedScriptIdxToStart(): '" + script.condition + "': expecting boolean return value, but got: " + returnValue.getAsString());
@@ -1536,6 +1540,8 @@ bool MiniScript::call(int scriptIdx, span<ScriptVariable>& argumentValues, Scrip
 const vector<MiniScript::ScriptMethod*> MiniScript::getMethods() {
 	vector<ScriptMethod*> methods;
 	for (auto& scriptMethodIt: scriptMethods) {
+		auto scriptMethod = scriptMethodIt.second;
+		if (scriptMethod->isPrivate() == true) continue;
 		methods.push_back(scriptMethodIt.second);
 	}
 	struct {
@@ -1664,6 +1670,7 @@ const string MiniScript::getInformation() {
 			vector<string> methods;
 			for (auto& scriptMethodIt: scriptMethods) {
 				auto scriptMethod = scriptMethodIt.second;
+				if (scriptMethod->isPrivate() == true) continue;
 				string method;
 				method+= scriptMethod->getMethodName();
 				method+= "(";
@@ -1839,6 +1846,39 @@ void MiniScript::registerStateMachineStates() {
 }
 
 void MiniScript::registerMethods() {
+	// script intern base methods
+	{
+		//
+		class ScriptMethodInternalScriptEvaluate: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInternalScriptEvaluate(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "statement", .optional = false, .assignBack = false }
+					},
+					TYPE_PSEUDO_MIXED
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "internal.script.evaluate";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				if (argumentValues.size() != 1) {
+					Console::println("ScriptMethodInternalScriptEvaluate::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected");
+					miniScript->startErrorScript();
+				} else
+				if (argumentValues.size() == 1) {
+					returnValue = argumentValues[0];
+				}
+			}
+			bool isPrivate() override {
+				return true;
+			}
+		};
+		registerMethod(new ScriptMethodInternalScriptEvaluate(this));
+	}
 	// script base methods
 	{
 		//
@@ -1846,20 +1886,27 @@ void MiniScript::registerMethods() {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodScriptEvaluate(MiniScript* miniScript): ScriptMethod({}, TYPE_PSEUDO_MIXED), miniScript(miniScript) {}
+			ScriptMethodScriptEvaluate(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_STRING, .name = "statement", .optional = false, .assignBack = false }
+					},
+					TYPE_PSEUDO_MIXED
+				),
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "script.evaluate";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				if (argumentValues.size() > 1) {
-					Console::println("ScriptMethodReturn::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected");
-				} else
-				if (argumentValues.size() == 1) {
-					returnValue = argumentValues[0];
+				string statementString;
+				if (miniScript->getStringValue(argumentValues, 0, statementString, false) == false) {
+					Console::println("ScriptMethodScriptEvaluate::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				} else {
+					if (miniScript->evaluate(statementString, returnValue) == false) {
+						Console::println("ScriptMethodScriptEvaluate::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": '" + statementString + "': An error occurred");
+					}
 				}
-			}
-			bool isVariadic() override {
-				return true;
 			}
 		};
 		registerMethod(new ScriptMethodScriptEvaluate(this));
@@ -1884,11 +1931,13 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string function;
 				if (miniScript->getStringValue(argumentValues, 0, function) == false) {
-					Console::println("ScriptMethodReturn::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println("ScriptMethodScriptCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
 				} else {
 					auto scriptIdx = miniScript->getFunctionScriptIdx(function);
 					if (scriptIdx == SCRIPTIDX_NONE) {
-						Console::println("ScriptMethodReturn::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": function not found: " + function);
+						Console::println("ScriptMethodScriptCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": function not found: " + function);
+						miniScript->startErrorScript();
 					} else {
 						#if defined (__APPLE__)
 							// MACOSX currently does not support initializing span using begin and end iterators,
@@ -1925,6 +1974,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				if (miniScript->isFunctionRunning() == false) {
 					Console::println("ScriptMethodReturn::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no function is being executed, return($value) has no effect");
+					miniScript->startErrorScript();
 				} else
 				if (argumentValues.size() == 1) {
 					auto& scriptState = miniScript->getScriptState();
@@ -5451,6 +5501,64 @@ void MiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodToStringLowerCase(this));
 	}
+	{
+		//
+		class ScriptMethodStringIsFloat: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodStringIsFloat(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "string.isFloat";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string stringValue;
+				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == true) {
+					returnValue.setValue(Float::is(stringValue));
+				} else {
+					Console::println("ScriptMethodStringIsFloat::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodStringIsFloat(this));
+	}
+	{
+		//
+		class ScriptMethodStringIsInteger: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodStringIsInteger(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "string.isInteger";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string stringValue;
+				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == true) {
+					returnValue.setValue(Integer::is(stringValue));
+				} else {
+					Console::println("ScriptMethodStringIsInteger::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodStringIsInteger(this));
+	}
 	// array methods
 	{
 		//
@@ -6277,11 +6385,11 @@ void MiniScript::registerMethods() {
 	// time
 	{
 		//
-		class ScriptMethodGetCurrentMillis: public ScriptMethod {
+		class ScriptMethodTimeGetCurrentMillis: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGetCurrentMillis(MiniScript* miniScript):
+			ScriptMethodTimeGetCurrentMillis(MiniScript* miniScript):
 				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -6291,7 +6399,36 @@ void MiniScript::registerMethods() {
 				returnValue.setValue(Time::getCurrentMillis());
 			}
 		};
-		registerMethod(new ScriptMethodGetCurrentMillis(this));
+		registerMethod(new ScriptMethodTimeGetCurrentMillis(this));
+	}
+	{
+		//
+		class ScriptMethodTimeGetAsString: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodTimeGetAsString(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "format", .optional = true, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_STRING
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "time.getAsString";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string format = "%Y-%m-%d %H:%M:%S";
+				if (MiniScript::getStringValue(argumentValues, 0, format, true) == false) {
+					Console::println("ScriptMethodTimeGetAsString::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				} else {
+					returnValue.setValue(Time::getAsString(format));
+				}
+			}
+		};
+		registerMethod(new ScriptMethodTimeGetAsString(this));
 	}
 
 	// register math functions
@@ -6976,7 +7113,7 @@ const string MiniScript::createSourceCode(Script::ScriptType scriptType, const s
 
 const string MiniScript::createSourceCode() {
 	string result;
-	// create syntax tree
+	// create source code
 	for (auto& script: scripts) {
 		result+= createSourceCode(script.scriptType, script.emitCondition == true?script.condition:string(), script.arguments, script.name, script.conditionSyntaxTree, script.syntaxTree);
 	}

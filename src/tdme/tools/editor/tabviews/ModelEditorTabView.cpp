@@ -153,68 +153,30 @@ void ModelEditorTabView::setPrototype(Prototype* prototype)
 	this->prototype = prototype;
 	lodLevel = 1;
 	//
-	class SetPrototypeAction: public Action {
-	private:
-		ModelEditorTabView* modelEditorTabView;
-	public:
-		SetPrototypeAction(ModelEditorTabView* modelEditorTabView): modelEditorTabView(modelEditorTabView) {}
-		virtual void performAction() {
-			modelEditorTabView->initModel(false);
-			modelEditorTabView->modelEditorTabController->setOutlinerContent();
-		}
-	};
-	engine->enqueueAction(new SetPrototypeAction(this));
+	initModel(false);
+	// if setting a prototype before initalize() we have no controller yet
+	if (modelEditorTabController != nullptr) modelEditorTabController->setOutlinerContent();
 }
 
 void ModelEditorTabView::resetPrototype()
 {
 	engine->reset();
-	//
-	class ResetPrototypeAction: public Action {
-	private:
-		ModelEditorTabView* modelEditorTabView;
-	public:
-		ResetPrototypeAction(ModelEditorTabView* modelEditorTabView): modelEditorTabView(modelEditorTabView) {}
-		virtual void performAction() {
-			modelEditorTabView->initModel(true);
-			modelEditorTabView->modelEditorTabController->setOutlinerContent();
-		}
-	};
-	engine->enqueueAction(new ResetPrototypeAction(this));
+	initModel(true);
+	modelEditorTabController->setOutlinerContent();
 }
 
 void ModelEditorTabView::reloadPrototype()
 {
 	engine->reset();
-	//
-	class ReloadPrototypeAction: public Action {
-	private:
-		ModelEditorTabView* modelEditorTabView;
-	public:
-		ReloadPrototypeAction(ModelEditorTabView* modelEditorTabView): modelEditorTabView(modelEditorTabView) {}
-		virtual void performAction() {
-			modelEditorTabView->initModel(true);
-			modelEditorTabView->modelEditorTabController->setOutlinerContent();
-		}
-	};
-	engine->enqueueAction(new ReloadPrototypeAction(this));
+	initModel(true);
+	modelEditorTabController->setOutlinerContent();
 }
 
 void ModelEditorTabView::reimportPrototype()
 {
 	engine->reset();
-	//
-	class ReimportPrototypeAction: public Action {
-	private:
-		ModelEditorTabView* modelEditorTabView;
-	public:
-		ReimportPrototypeAction(ModelEditorTabView* modelEditorTabView): modelEditorTabView(modelEditorTabView) {}
-		virtual void performAction() {
-			modelEditorTabView->initModel(false);
-			modelEditorTabView->modelEditorTabController->setOutlinerContent();
-		}
-	};
-	engine->enqueueAction(new ReimportPrototypeAction(this));
+	initModel(false);
+	modelEditorTabController->setOutlinerContent();
 }
 
 void ModelEditorTabView::initModel(bool resetup)
@@ -346,20 +308,9 @@ void ModelEditorTabView::saveFile(const string& pathName, const string& fileName
 void ModelEditorTabView::reloadFile()
 {
 	engine->reset();
-	//
-	class ReloadFileAction: public Action {
-	private:
-		ModelEditorTabView* modelEditorTabView;
-	public:
-		ReloadFileAction(ModelEditorTabView* modelEditorTabView): modelEditorTabView(modelEditorTabView)  {}
-		virtual void performAction() {
-			modelEditorTabView->loadModel();
-			modelEditorTabView->initModel(true);
-			modelEditorTabView->modelEditorTabController->setOutlinerContent();
-		}
-	};
-	engine->enqueueAction(new ReloadFileAction(this));
-
+	loadModel();
+	initModel(true);
+	modelEditorTabController->setOutlinerContent();
 }
 
 void ModelEditorTabView::pivotApply(float x, float y, float z)

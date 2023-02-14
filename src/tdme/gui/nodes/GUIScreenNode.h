@@ -14,6 +14,7 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode_SizeConstraints.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
+#include <tdme/gui/scripting/fwd-tdme.h>
 #include <tdme/utilities/MutableString.h>
 
 using std::string;
@@ -50,6 +51,7 @@ using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode_SizeConstraints;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::gui::scripting::GUIMiniScript;
 using tdme::gui::GUI;
 using tdme::utilities::MutableString;
 
@@ -131,6 +133,20 @@ private:
 	};
 
 	vector<ForwardEvent> forwardEventList;
+
+	GUIMiniScript* script { nullptr };
+	bool scriptOnActionAvailable { false };
+	bool scriptOnChangeAvailable { false };
+	bool scriptOnMouseOverAvailable { false };
+	bool scriptOnContextMenuRequestAvailable { false };
+	bool scriptOnFocusAvailable { false };
+	bool scriptOnUnfocusAvailable { false };
+	bool scriptOnMoveAvailable { false };
+	bool scriptOnMoveReleaseAvailable { false };
+	bool scriptOnTooltipShowRequestAvailable { false };
+	bool scriptOnTooltipCloseRequestAvailable { false };
+	bool scriptOnDragRequestAvailable { false };
+	bool scriptOnTickAvailable { false };
 
 public:
 	/**
@@ -262,6 +278,7 @@ protected:
 	 * @param tooltip tooltip
 	 * @param scrollable scrollable
 	 * @param popUp pop up
+	 * @param script MiniScript script
 	 * @throws tdme::gui::GUIParserException
 	 */
 	GUIScreenNode(
@@ -286,7 +303,8 @@ protected:
 		const GUINodeConditions& hideOn,
 		const string& tooltip,
 		bool scrollable,
-		bool popUp
+		bool popUp,
+		const string& script
 	);
 
 	/**

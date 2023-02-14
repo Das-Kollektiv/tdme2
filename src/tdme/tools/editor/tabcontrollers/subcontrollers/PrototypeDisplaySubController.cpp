@@ -297,26 +297,34 @@ void PrototypeDisplaySubController::applyDisplayShaderDetails(Prototype* prototy
 	}
 }
 
-void PrototypeDisplaySubController::onChange(GUIElementNode* node, Prototype* prototype) {
+bool PrototypeDisplaySubController::onChange(GUIElementNode* node, Prototype* prototype) {
 	for (auto& applyDisplayNode: applyDisplayNodes) {
 		if (node->getId() == applyDisplayNode) {
 			applyDisplayDetails(prototype);
-			break;
+			return true;
 		}
 	}
 	for (auto& applyDisplayUpdateRenderingNode: applyDisplayUpdateRenderingNodes) {
 		if (node->getId() == applyDisplayUpdateRenderingNode) {
 			tabView->updateRendering();
-			break;
+			return true;
 		}
 	}
+	if (node->getId() == tabView->getTabId() + "_tab_checkbox_grid") {
+		view->setDisplayGroundPlate(node->getController()->getValue().equals("1"));
+		//
+		return true;
+	} else
 	if (StringTools::startsWith(node->getId(), "rendering.shader.") == true) {
 		auto shaderParameters = prototype->getShaderParameters();
 		applyDisplayShaderDetails(prototype, "rendering.shader.", StringTools::substring(node->getId(), string("rendering.shader.").size(), node->getId().size()), shaderParameters);
 		prototype->setShaderParameters(shaderParameters);
 		view->updateShaderParameters(prototype);
+		//
+		return true;
 	}
-	if (node->getId() == tabView->getTabId() + "_tab_checkbox_grid") view->setDisplayGroundPlate(node->getController()->getValue().equals("1"));
+	//
+	return false;
 }
 
 void PrototypeDisplaySubController::showInfoPopUp(const string& caption, const string& message)

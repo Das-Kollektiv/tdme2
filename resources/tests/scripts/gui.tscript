@@ -1,0 +1,72 @@
+# on action
+function: onAction($actionType, $elementNodeId)
+	#console.log("----------------------------------------------------------")
+	#console.log("onAction(): " + gui.screen.getId() + ": " + $elementNodeId + "(" + $actionType + ")")
+	#console.log("----------------------------------------------------------")
+	#console.log()
+	if ($actionType == gui.event.ACTIONTYPE_PERFORMED())
+		if ($elementNodeId == "btn_hello")
+			gui.elementnode.conditions.set("info", "welcome")
+		elseif ($elementNodeId == "btn_time")
+			gui.elementnode.conditions.set("info", "time")
+		elseif ($elementNodeId == "btn_clearsubnodes")
+			gui.parentnode.clearSubNodes("container")
+		elseif ($elementNodeId == "btn_insertsubnodes")
+			gui.parentnode.addSubNodes("container", "<text font='{$font.default}' size='{$fontsize.default}' color='{$color.font_normal}' padding='5' width='auto' height='auto' text='This is a another fancy line in my container here. You love it!!!' />")
+		elseif ($elementNodeId == "btn_replacesubnodes")
+			gui.parentnode.replaceSubNodes("container", "<text font='{$font.default}' size='{$fontsize.default}' color='{$color.font_normal}' padding='5' width='auto' height='auto' text='This is the fancy replacement line in my container here. You like that!!!' />")
+		elseif ($elementNodeId == "btn_evualuate")
+			gui.textnode.setText("result_evualuate", script.evaluate("10 + 10"))
+		end
+	end
+end
+
+# on change
+function: onChange($elementNodeId)
+	#console.log("----------------------------------------------------------")
+	#console.log("onChange(): " + gui.screen.getId() + ": " + $elementNodeId)
+	#console.log("----------------------------------------------------------")
+	#console.log()
+end
+
+# on mouse over
+function: onMouseOver($elementNodeId)
+	#console.log("----------------------------------------------------------")
+	#console.log("onMouseOver(): " + gui.screen.getId() + ": " + $elementNodeId)
+	#console.log("----------------------------------------------------------")
+	#console.log()
+end
+
+# on tick
+function: onTick()
+	#console.log("----------------------------------------------------------")
+	#console.log("onTick(): " + gui.screen.getId())
+	#console.log("----------------------------------------------------------")
+	#console.log()
+	if (gui.elementnode.conditions.has("info", "time") == true)
+		gui.textnode.setText("time", time.getAsString())
+	end
+end
+
+# on initialize
+on: initialize
+	# this is not yet called
+	console.log("----------------------------------------------------------")
+	console.log("initialize: " + gui.screen.getId())
+	console.log("----------------------------------------------------------")
+	console.log()
+end
+
+# if no condition is met, nothing will be executed, lol :D
+on: nothing
+	console.log("----------------------------------------------------------")
+	console.log("Nothing: " + gui.screen.getId())
+	console.log("----------------------------------------------------------")
+	console.log()
+end
+
+# on error
+on: error
+	console.log("An error occurred")
+	script.stop()
+end

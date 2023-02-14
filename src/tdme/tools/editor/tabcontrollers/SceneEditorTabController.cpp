@@ -253,6 +253,8 @@ void SceneEditorTabController::showInfoPopUp(const string& caption, const string
 
 void SceneEditorTabController::onChange(GUIElementNode* node)
 {
+	if (basePropertiesSubController->onChange(node, view->getScene()) == true) return;
+	//
 	if (node->getId() == "dropdown_outliner_add") {
 		auto addOutlinerType = node->getController()->getValue().getString();
 		// TODO
@@ -392,19 +394,22 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 			for (auto& applyLightNode: applyLightNodes) {
 				if (node->getId() == applyLightNode) {
 					applyLightDetails(lightIdx);
+					//
 					break;
 				}
 			}
 		}
-		basePropertiesSubController->onChange(node, view->getScene());
+		//
 	}
 }
 
 void SceneEditorTabController::onFocus(GUIElementNode* node) {
-	basePropertiesSubController->onFocus(node, view->getScene());
+	if (basePropertiesSubController->onFocus(node, view->getScene()) == true) return;
 }
 
 void SceneEditorTabController::onUnfocus(GUIElementNode* node) {
+	if (basePropertiesSubController->onUnfocus(node, view->getScene()) == true) return;
+	//
 	if (node->getId() == "tdme.entities.rename_input") {
 		renameEntity();
 	} else {
@@ -429,7 +434,6 @@ void SceneEditorTabController::onUnfocus(GUIElementNode* node) {
 			}
 		}
 	}
-	basePropertiesSubController->onUnfocus(node, view->getScene());
 }
 
 void SceneEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
@@ -449,19 +453,8 @@ void SceneEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 						auto light = scene->addLight();
 						if (light == nullptr) return;
 						light->setEnabled(true);
-
 						//
-						class ReloadTabOutlinerAction: public Action {
-						private:
-							EditorView* editorView;
-							string outlinerNode;
-						public:
-							ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
-							virtual void performAction() {
-								editorView->reloadTabOutliner(outlinerNode);
-							}
-						};
-						Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(sceneEditorTabController->view->getEditorView(), "scene.lights.light" + to_string(light->getId())));
+						sceneEditorTabController->view->getEditorView()->reloadTabOutliner("scene.lights.light" + to_string(light->getId()));
 					}
 					OnAddLightAction(SceneEditorTabController* sceneEditorTabController): sceneEditorTabController(sceneEditorTabController) {
 					}
@@ -492,19 +485,8 @@ void SceneEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 						auto scene = sceneEditorTabController->view->getScene();
 						if (scene == nullptr) return;
 						scene->removeLightAt(lightIdx);
-
 						//
-						class ReloadTabOutlinerAction: public Action {
-						private:
-							EditorView* editorView;
-							string outlinerNode;
-						public:
-							ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
-							virtual void performAction() {
-								editorView->reloadTabOutliner(outlinerNode);
-							}
-						};
-						Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(sceneEditorTabController->view->getEditorView(), "scene.lights"));
+						sceneEditorTabController->view->getEditorView()->reloadTabOutliner("scene.lights");
 					}
 					OnDeleteLightAction(SceneEditorTabController* sceneEditorTabController, int lightIdx): sceneEditorTabController(sceneEditorTabController), lightIdx(lightIdx) {
 					}
@@ -643,9 +625,9 @@ void SceneEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 			//
 			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
 		}
-	} else {
-		basePropertiesSubController->onContextMenuRequest(node, mouseX, mouseY, view->getScene());
 	}
+	//
+	basePropertiesSubController->onContextMenuRequest(node, mouseX, mouseY, view->getScene());
 }
 
 void SceneEditorTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
@@ -661,6 +643,9 @@ void SceneEditorTabController::onTooltipCloseRequest() {
 
 void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
+	//
+	if (basePropertiesSubController->onAction(type, node, view->getScene()) == true) return;
+	//
 	if (type != GUIActionListenerType::PERFORMED) return;
 	if (node->getId() == "menu_project_scene_run") {
 		view->runScene();
@@ -836,8 +821,6 @@ void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 			if (light == nullptr) return;
 			popUps->getColorPickerScreenController()->show(light->getSpecular(), new OnColorChangeAction(this, lightIdx));
 		}
-	} else {
-		basePropertiesSubController->onAction(type, node, view->getScene());
 	}
 }
 
@@ -1338,19 +1321,8 @@ void SceneEditorTabController::onReplacePrototype() {
 				scene->replacePrototypeByIds(prototype->getId(), newPrototype->getId());
 				sceneLibrary->removePrototype(prototype->getId());
 				sceneEditorTabController->view->reloadScene();
-
 				//
-				class ReloadTabOutlinerAction: public Action {
-				private:
-					EditorView* editorView;
-					string outlinerNode;
-				public:
-					ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
-					virtual void performAction() {
-						editorView->reloadTabOutliner(outlinerNode);
-					}
-				};
-				Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(sceneEditorTabController->view->getEditorView(), "scene.entities"));
+				sceneEditorTabController->view->getEditorView()->reloadTabOutliner("scene.entities");
 			} catch (Exception& exception) {
 				Console::println("OnReplacePrototypeAction::performAction(): An error occurred: " + string(exception.what()));
 				sceneEditorTabController->showInfoPopUp("Warning", string(exception.what()));
@@ -1419,15 +1391,5 @@ void SceneEditorTabController::renameEntity() {
 	}
 
 	//
-	class ReloadTabOutlinerAction: public Action {
-	private:
-		EditorView* editorView;
-		string outlinerNode;
-	public:
-		ReloadTabOutlinerAction(EditorView* editorView, const string& outlinerNode): editorView(editorView), outlinerNode(outlinerNode) {}
-		virtual void performAction() {
-			editorView->reloadTabOutliner(outlinerNode);
-		}
-	};
-	Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(view->getEditorView(), "scene.entities" + (sceneEntity != nullptr?"." + sceneEntity->getName():"")));
+	view->getEditorView()->reloadTabOutliner("scene.entities" + (sceneEntity != nullptr?"." + sceneEntity->getName():""));
 }

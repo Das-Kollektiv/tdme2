@@ -619,7 +619,7 @@ Reading all keys as array from set:
 | script.disableNamedCondition($name: String): Void                                                |
 | script.emit($condition: String): Void                                                            |
 | script.enableNamedCondition($name: String): Void                                                 |
-| script.evaluate(...): Mixed                                                                      |
+| script.evaluate($statement: String): Mixed                                                       |
 | script.stop(): Void                                                                              |
 | script.wait($time: Integer): Void                                                                |
 | script.waitForCondition(): Void                                                                  |
@@ -629,6 +629,8 @@ Reading all keys as array from set:
 | set.insert(=$set: Set, $key: String): Void                                                       |
 | set.remove(=$set: Set, $key: String): Void                                                       |
 | string($string: String): String                                                                  |
+| string.isFloat($string: String): Boolean                                                         |
+| string.isInteger($string: String): Boolean                                                       |
 | string.charAt($string: String, $index: Integer): String                                          |
 | string.concatenate(...): String                                                                  |
 | string.endsWith($string: String, $suffix: String): Boolean                                       |
@@ -648,6 +650,7 @@ Reading all keys as array from set:
 | string.tokenize($string: String, $delimiters: String): Array                                     |
 | string.trim($string: String): String                                                             |
 | sub($a: Mixed, $b: Mixed): Mixed                                                                 |
+| time.getAsString([$format: String]): String                                                      |
 | time.getCurrentMillis(): Integer                                                                 |
 | transform([$translation: Vector3[, $scale: Vector3[, $rotationZ: Float[, $rotationY: Float[, $rotationX: Float]]]]]): Transform|
 | transform.AXIS_X(): Vector3                                                                      |
@@ -828,7 +831,33 @@ Reading all keys as array from set:
 | world.doRayCasting($collisionTypeIds: Integer, $start: Vector3, $end: Vector3, =$hitPoint: Vector3, =$bodyId: String[, $actorId: String]): Boolean|
 | world.doesCollideWith($collisionTypeIds: Integer, $bodyId: String): Array                        |
 
-# 8. Operators
+# 8. MiniScript GUI methods
+
+| MiniScript GUI methods                                                                           |
+|--------------------------------------------------------------------------------------------------|
+| gui.elementnode.conditions.has($elementNodeId: String, $condition: String): Boolean              |
+| gui.elementnode.conditions.get($elementNodeId: String): Array                                    |
+| gui.elementnode.conditions.set($elementNodeId: String, $condition: String): Void                 |
+| gui.elementnode.conditions.setAll($elementNodeId: String, $conditions: Array): Void              |
+| gui.elementnode.conditions.add($elementNodeId: String, $condition: String): Void                 |
+| gui.elementnode.conditions.remove($elementNodeId: String, $condition: String): Void              |
+| gui.elementnode.conditions.removeAll($elementNodeId: String): Void                               |
+| gui.event.ACTIONTYPE_PERFORMED(): Integer                                                        |
+| gui.event.ACTIONTYPE_PERFORMING(): Integer                                                       |
+| gui.imagenode.getSource($imageNodeId: String): String                                            |
+| gui.imagenode.setSource($imageNodeId: String, $source: String): Void                             |
+| gui.node.controller.getValue($elementNodeId: String): String                                     |
+| gui.node.controller.setValue($elementNodeId: String, $value: String): Void                       |
+| gui.parentnode.addSubNodes($parentNodeId: String, $xml: String[, $resetScrollOffsets: Boolean]): Void|
+| gui.parentnode.clearSubNodes($parentNodeId: String): Void                                        |
+| gui.parentnode.replaceSubNodes($parentNodeId: String, $xml: String[, $resetScrollOffsets: Boolean]): Void|
+| gui.screen.getId(): String                                                                       |
+| gui.textnode.getText($textNodeId: String): String                                                |
+| gui.textnode.setText($textNodeId: String, $text: String): Void                                   |
+| gui.videonode.getSource($videoNodeId: String): String                                            |
+| gui.videonode.setSource($videoNodeId: String, $source: String): Void                             |
+
+# 9. Operators
 
 | Op | Method                                                                                      |
 |----|---------------------------------------------------------------------------------------------|
