@@ -427,10 +427,10 @@ void GUIGridController::onSubTreeChange() {
 	//	we need a <grid-layout> later for the following code
 	if (onSubTreeChangeRun == true) return;
 	//
-	onSubTreeChangeRun = true;
-	//
 	auto unlayoutedParentNode = required_dynamic_cast<GUIParentNode*>(node->getScreenNode()->getNodeById(node->getId() + "_unlayouted"));
 	if (unlayoutedParentNode->getSubNodesCount() == 0) return;
+	//
+	onSubTreeChangeRun = true;
 	//
 	determineItems();
 	//
