@@ -47,6 +47,13 @@ public:
 	inline MiniScriptLogic(Context* context, const string& id, bool handlingHIDInput, LogicMiniScript* miniScript): Logic(context, id, handlingHIDInput), miniScript(miniScript) {
 		miniScript->setContext(context);
 		miniScript->setLogic(this);
+		// execute initialize() function
+		vector<MiniScript::ScriptVariable> argumentValues(0);
+		MiniScript::ScriptVariable returnValue;
+		span argumentValuesSpan(argumentValues);
+		if (miniScript->call("initialize", argumentValuesSpan, returnValue) == false) {
+			Console::println("MiniScriptLogic::onLogicsProcessed()(): Failed to call initialize() function");
+		}
 	}
 
 	// overridden methods
@@ -81,7 +88,7 @@ public:
 			miniScript->enginePrototypesToAdd.clear();
 			miniScript->prototypesToAddMutex.unlock();
 		}
-		//
+		// execute updateEngine() function
 		vector<MiniScript::ScriptVariable> argumentValues(0);
 		MiniScript::ScriptVariable returnValue;
 		span argumentValuesSpan(argumentValues);
@@ -123,7 +130,9 @@ public:
 			miniScript->physicsPrototypesToAdd.clear();
 			miniScript->prototypesToAddMutex.unlock();
 		}
-		//
+		// execute on: nothing and other event polling and execution
+		miniScript->execute();
+		// execute updateLogic() function
 		vector<MiniScript::ScriptVariable> argumentValues(0);
 		MiniScript::ScriptVariable returnValue;
 		span argumentValuesSpan(argumentValues);
@@ -133,6 +142,7 @@ public:
 	}
 
 	inline void onLogicAdded() override {
+		// execute onLogicAdded() function
 		vector<MiniScript::ScriptVariable> argumentValues(0);
 		MiniScript::ScriptVariable returnValue;
 		span argumentValuesSpan(argumentValues);
@@ -142,6 +152,7 @@ public:
 	}
 
 	inline void onLogicsProcessed() override {
+		// execute onLogicsProcessed() function
 		vector<MiniScript::ScriptVariable> argumentValues(0);
 		MiniScript::ScriptVariable returnValue;
 		span argumentValuesSpan(argumentValues);
@@ -152,4 +163,5 @@ public:
 
 private:
 	LogicMiniScript* miniScript { nullptr };
+
 };
