@@ -512,15 +512,12 @@ void UIEditorTabView::removeScreens() {
 }
 
 void UIEditorTabView::reAddScreens() {
-	guiEngine->getGUI()->resetRenderScreens();
+	guiEngine->getGUI()->reset();
 	auto screensMaxWidth = -1;
 	auto screensMaxHeight = -1;
 	for (auto i = 0; i < uiScreenNodes.size(); i++) {
 		//
-		if (uiScreenNodes[i].screenNode != nullptr) {
-			guiEngine->getGUI()->removeScreen(uiScreenNodes[i].screenNode->getId());
-			uiScreenNodes[i].screenNode = nullptr;
-		}
+		uiScreenNodes[i].screenNode = nullptr;
 
 		//
 		if (uiScreenNodes[i].xml.empty() == true) continue;
