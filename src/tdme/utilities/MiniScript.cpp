@@ -1967,7 +1967,14 @@ void MiniScript::registerMethods() {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodReturn(MiniScript* miniScript): ScriptMethod(), miniScript(miniScript) {}
+			ScriptMethodReturn(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = true, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "return";
 			}
@@ -1976,16 +1983,16 @@ void MiniScript::registerMethods() {
 					Console::println("ScriptMethodReturn::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no function is being executed, return($value) has no effect");
 					miniScript->startErrorScript();
 				} else
+				if (argumentValues.size() == 0) {
+					miniScript->stopRunning();
+				} else
 				if (argumentValues.size() == 1) {
 					auto& scriptState = miniScript->getScriptState();
 					scriptState.returnValue = argumentValues[0];
 					miniScript->stopRunning();
 				} else {
-					Console::println("ScriptMethodReturn::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected");
+					Console::println("ScriptMethodReturn::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: optional mixed expected");
 				}
-			}
-			bool isVariadic() override {
-				return true;
 			}
 		};
 		registerMethod(new ScriptMethodReturn(this));
