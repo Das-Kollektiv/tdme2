@@ -68,6 +68,7 @@ class tdme::gui::nodes::GUIScreenNode final
 	friend class GUINode;
 	friend class GUINodeConditions;
 	friend class GUIParentNode;
+	friend class tdme::gui::scripting::GUIMiniScript;
 
 private:
 	string applicationRootPathName;

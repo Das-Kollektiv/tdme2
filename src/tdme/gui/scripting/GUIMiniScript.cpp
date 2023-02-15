@@ -5,6 +5,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIImageNode.h>
@@ -13,6 +14,8 @@
 #include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/nodes/GUIVideoNode.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/MiniScript.h>
 #include <tdme/utilities/MutableString.h>
@@ -22,6 +25,7 @@ using std::string;
 using std::to_string;
 
 using tdme::gui::GUI;
+using tdme::gui::GUIParser;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
@@ -31,6 +35,8 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::nodes::GUIVideoNode;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::gui::scripting::GUIMiniScript;
 using tdme::utilities::MiniScript;
 using tdme::utilities::MutableString;
@@ -50,21 +56,68 @@ void GUIMiniScript::registerMethods() {
 	MiniScript::registerMethods();
 	{
 		//
-		class ScriptMethodScreenGetId: public ScriptMethod {
+		class ScriptMethodGUIChangeScreen: public ScriptMethod {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodScreenGetId(GUIMiniScript* miniScript):
+			ScriptMethodGUIChangeScreen(GUIMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "fileName", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "arguments", .optional = true, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_STRING
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "gui.changeScreen";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string fileName;
+				if (argumentValues.size() > 2 ||
+					MiniScript::getStringValue(argumentValues, 0, fileName, false) == false) {
+					Console::println("ScriptMethodGUIChangeScreen::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: optional mixed expected");
+					miniScript->startErrorScript();
+				} else {
+					// delete next screen node if given
+					if (miniScript->nextScreenNode != nullptr) {
+						delete miniScript->nextScreenNode;
+						miniScript->nextScreenNode = nullptr;
+						miniScript->nextScreenArguments = MiniScript::ScriptVariable();
+					}
+					// setup next screen node
+					try {
+						miniScript->nextScreenNode = GUIParser::parse(
+							FileSystem::getInstance()->getPathName(fileName),
+							FileSystem::getInstance()->getFileName(fileName)
+						);
+						miniScript->nextScreenArguments = argumentValues.size() == 2?argumentValues[1]:MiniScript::ScriptVariable();
+					} catch (Exception& exception) {
+						Console::println("ScriptMethodGUIChangeScreen::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": an error occurred with changing screen to '" + fileName + "': " + string(exception.what()));
+						miniScript->startErrorScript();
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodGUIChangeScreen(this));
+	}
+	{
+		//
+		class ScriptMethodScreenNodeGetId: public ScriptMethod {
+		private:
+			GUIMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodScreenNodeGetId(GUIMiniScript* miniScript):
 				ScriptMethod({}, ScriptVariableType::TYPE_STRING),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "gui.screen.getId";
+				return "gui.screennode.getId";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue.setValue(miniScript->screenNode->getId());
 			}
 		};
-		registerMethod(new ScriptMethodScreenGetId(this));
+		registerMethod(new ScriptMethodScreenNodeGetId(this));
 	}
 	{
 		//

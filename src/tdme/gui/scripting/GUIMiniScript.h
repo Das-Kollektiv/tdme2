@@ -34,4 +34,7 @@ public:
 
 private:
 	GUIScreenNode* screenNode { nullptr };
+	GUIScreenNode* nextScreenNode { nullptr };
+	MiniScript::ScriptVariable nextScreenArguments;
+
 };
