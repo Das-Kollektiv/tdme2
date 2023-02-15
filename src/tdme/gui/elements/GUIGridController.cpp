@@ -120,9 +120,9 @@ int GUIGridController::getFocussedItemIdx()
 }
 
 int GUIGridController::getItemIdx(GUIElementNode* gridItemElementNode) {
-	auto optionElementNodeController = gridItemElementNode->getController();
+	auto itemElementNodeController = gridItemElementNode->getController();
 	for (auto i = 0; i < gridItemControllers.size(); i++) {
-		if (gridItemControllers[i] == optionElementNodeController) return i;
+		if (gridItemControllers[i] == itemElementNodeController) return i;
 	}
 	return -1;
 }
@@ -130,34 +130,34 @@ int GUIGridController::getItemIdx(GUIElementNode* gridItemElementNode) {
 void GUIGridController::unselect()
 {
 	value.set(MutableString());
-	auto optionIdx = getFocussedItemIdx();
-	if (optionIdx == -1) return;
-	gridItemControllers[optionIdx]->unselect();
+	auto itemIdx = getFocussedItemIdx();
+	if (itemIdx == -1) return;
+	gridItemControllers[itemIdx]->unselect();
 }
 
-void GUIGridController::select(int optionIdx) {
-	if (optionIdx < 0 || optionIdx >= gridItemControllers.size()) return;
+void GUIGridController::select(int itemIdx) {
+	if (itemIdx < 0 || itemIdx >= gridItemControllers.size()) return;
 	if (multipleSelection == true) {
-		for (auto selectBoxOptionController: gridItemControllers) selectBoxOptionController->unselect();
+		for (auto gridItemController: gridItemControllers) gridItemController->unselect();
 	}
-	gridItemControllers[optionIdx]->select();
+	gridItemControllers[itemIdx]->select();
 	value.reset();
 	if (multipleSelection == true) value.append(VALUE_DELIMITER);
-	value.append(required_dynamic_cast<GUIElementNode*>(gridItemControllers[optionIdx]->getNode())->getValue());
+	value.append(required_dynamic_cast<GUIElementNode*>(gridItemControllers[itemIdx]->getNode())->getValue());
 	if (multipleSelection == true) value.append(VALUE_DELIMITER);
 }
 
 void GUIGridController::select(GUIElementNode* gridItemElementNode) {
-	auto optionIdx = getItemIdx(gridItemElementNode);
-	if (optionIdx == -1) return;
-	select(optionIdx);
+	auto itemIdx = getItemIdx(gridItemElementNode);
+	if (itemIdx == -1) return;
+	select(itemIdx);
 }
 
 void GUIGridController::unfocus()
 {
-	auto optionIdx = getFocussedItemIdx();
-	if (optionIdx == -1) return;
-	gridItemControllers[optionIdx]->unfocus();
+	auto itemIdx = getFocussedItemIdx();
+	if (itemIdx == -1) return;
+	gridItemControllers[itemIdx]->unfocus();
 }
 
 void GUIGridController::focus(int itemIdx)
@@ -171,9 +171,9 @@ void GUIGridController::focus(int itemIdx)
 
 void GUIGridController::focus(GUIElementNode* gridItemElementNode)
 {
-	auto optionIdx = getItemIdx(gridItemElementNode);
-	if (optionIdx == -1) return;
-	focus(optionIdx);
+	auto itemIdx = getItemIdx(gridItemElementNode);
+	if (itemIdx == -1) return;
+	focus(itemIdx);
 }
 
 void GUIGridController::selectCurrent()
@@ -183,44 +183,44 @@ void GUIGridController::selectCurrent()
 
 void GUIGridController::focusNext()
 {
-	auto optionIdx = getFocussedItemIdx();
-	if (optionIdx == -1) return;
+	auto itemIdx = getFocussedItemIdx();
+	if (itemIdx == -1) return;
 
 	unfocus();
 
 	auto disabledCount = 0;
 	while (disabledCount < gridItemControllers.size()) {
-		if (++optionIdx >= gridItemControllers.size()) optionIdx = gridItemControllers.size() - 1;
-		if (gridItemControllers[optionIdx]->isDisabled() == false) break;
+		if (++itemIdx >= gridItemControllers.size()) itemIdx = gridItemControllers.size() - 1;
+		if (gridItemControllers[itemIdx]->isDisabled() == false) break;
 		disabledCount++;
 	}
 	if (disabledCount == gridItemControllers.size()) {
-		optionIdx = -1;
+		itemIdx = -1;
 		return;
 	}
 
-	focus(optionIdx);
+	focus(itemIdx);
 }
 
 void GUIGridController::focusPrevious()
 {
-	auto optionIdx = getFocussedItemIdx();
-	if (optionIdx == -1) return;
+	auto itemIdx = getFocussedItemIdx();
+	if (itemIdx == -1) return;
 
 	unfocus();
 
 	auto disabledCount = 0;
 	while (disabledCount < gridItemControllers.size()) {
-		if (--optionIdx < 0) optionIdx = 0;
-		if (gridItemControllers[optionIdx]->isDisabled() == false) break;
+		if (--itemIdx < 0) itemIdx = 0;
+		if (gridItemControllers[itemIdx]->isDisabled() == false) break;
 		disabledCount++;
 	}
 	if (disabledCount == gridItemControllers.size()) {
-		optionIdx = -1;
+		itemIdx = -1;
 		return;
 	}
 
-	focus(optionIdx);
+	focus(itemIdx);
 }
 
 void GUIGridController::toggle(int itemIdx)
@@ -243,18 +243,18 @@ void GUIGridController::toggle(int itemIdx)
 
 void GUIGridController::toggle(GUIElementNode* gridItemElementNode)
 {
-	auto optionIdx = getItemIdx(gridItemElementNode);
-	if (optionIdx == -1) return;
-	toggle(optionIdx);
+	auto itemIdx = getItemIdx(gridItemElementNode);
+	if (itemIdx == -1) return;
+	toggle(itemIdx);
 }
 
 void GUIGridController::select()
 {
-	auto optionIdx = getFocussedItemIdx();
-	if (optionIdx == -1) return;
-	gridItemControllers[optionIdx]->select();
-	gridItemControllers[optionIdx]->getNode()->scrollToNodeX(required_dynamic_cast<GUIParentNode*>(node));
-	gridItemControllers[optionIdx]->getNode()->scrollToNodeY(required_dynamic_cast<GUIParentNode*>(node));
+	auto itemIdx = getFocussedItemIdx();
+	if (itemIdx == -1) return;
+	gridItemControllers[itemIdx]->select();
+	gridItemControllers[itemIdx]->getNode()->scrollToNodeX(required_dynamic_cast<GUIParentNode*>(node));
+	gridItemControllers[itemIdx]->getNode()->scrollToNodeY(required_dynamic_cast<GUIParentNode*>(node));
 }
 
 void GUIGridController::determineItems() {
@@ -385,14 +385,14 @@ void GUIGridController::setValue(const MutableString& value)
 	}
 	MutableString searchValue;
 	GUIGridItemController* gridItemControllerLast = nullptr;
-	// TODO: actually we should rebuild value to remove options that have not been found
+	// TODO: actually we should rebuild value to remove items that have not been found
 	for (auto i = 0; i < gridItemControllers.size(); i++) {
 		auto gridItemController = gridItemControllers[i];
 		auto gridItemNode = required_dynamic_cast<GUIElementNode*>(gridItemController->getNode());
-		auto optionValue = gridItemNode->getValue();
+		auto itemValue = gridItemNode->getValue();
 		if (gridItemController->isSelected() == true) gridItemController->unselect();
 		if (gridItemController->isFocussed() == true) gridItemController->unfocus();
-		if (valueSet.find(optionValue) != valueSet.end()) {
+		if (valueSet.find(itemValue) != valueSet.end()) {
 			if (multipleSelection == true) toggle(i);
 			gridItemControllerLast = gridItemController;
 		}
@@ -427,10 +427,10 @@ void GUIGridController::onSubTreeChange() {
 	//	we need a <grid-layout> later for the following code
 	if (onSubTreeChangeRun == true) return;
 	//
-	onSubTreeChangeRun = true;
-	//
 	auto unlayoutedParentNode = required_dynamic_cast<GUIParentNode*>(node->getScreenNode()->getNodeById(node->getId() + "_unlayouted"));
 	if (unlayoutedParentNode->getSubNodesCount() == 0) return;
+	//
+	onSubTreeChangeRun = true;
 	//
 	determineItems();
 	//

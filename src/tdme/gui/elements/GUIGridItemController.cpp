@@ -137,15 +137,15 @@ void GUIGridItemController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
 			auto gridController = required_dynamic_cast<GUIGridController*>(gridNode->getController());
-			auto optionElementNode = required_dynamic_cast<GUIElementNode*>(node);
+			auto gridItemElementNode = required_dynamic_cast<GUIElementNode*>(node);
 			gridController->unfocus();
 			if (multipleSelection == true && gridController->isKeyControlDown() == true) {
-				gridController->toggle(optionElementNode);
-				gridController->focus(optionElementNode);
+				gridController->toggle(gridItemElementNode);
+				gridController->focus(gridItemElementNode);
 			} else {
 				gridController->unselect();
-				gridController->select(optionElementNode);
-				gridController->focus(optionElementNode);
+				gridController->select(gridItemElementNode);
+				gridController->focus(gridItemElementNode);
 			}
 			node->getScreenNode()->getGUI()->setFoccussedNode(required_dynamic_cast<GUIElementNode*>(gridNode));
 			node->scrollToNodeX(gridNode);
