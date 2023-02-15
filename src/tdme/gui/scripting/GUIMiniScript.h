@@ -32,9 +32,14 @@ public:
 	void registerMethods() override;
 	void registerVariables() override;
 
+	/**
+	 * @return next screen node
+	 */
+	inline GUIScreenNode* getNextScreenNode() {
+		return nextScreenNode;
+	}
 private:
 	GUIScreenNode* screenNode { nullptr };
 	GUIScreenNode* nextScreenNode { nullptr };
-	MiniScript::ScriptVariable nextScreenArguments;
 
 };

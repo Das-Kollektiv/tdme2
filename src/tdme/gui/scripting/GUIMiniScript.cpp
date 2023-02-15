@@ -66,7 +66,7 @@ void GUIMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "fileName", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "arguments", .optional = true, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_STRING
+					ScriptVariableType::TYPE_VOID
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -83,15 +83,15 @@ void GUIMiniScript::registerMethods() {
 					if (miniScript->nextScreenNode != nullptr) {
 						delete miniScript->nextScreenNode;
 						miniScript->nextScreenNode = nullptr;
-						miniScript->nextScreenArguments = MiniScript::ScriptVariable();
 					}
 					// setup next screen node
 					try {
 						miniScript->nextScreenNode = GUIParser::parse(
 							FileSystem::getInstance()->getPathName(fileName),
-							FileSystem::getInstance()->getFileName(fileName)
+							FileSystem::getInstance()->getFileName(fileName),
+							{},
+							argumentValues.size() == 2?argumentValues[1]:MiniScript::ScriptVariable()
 						);
-						miniScript->nextScreenArguments = argumentValues.size() == 2?argumentValues[1]:MiniScript::ScriptVariable();
 					} catch (Exception& exception) {
 						Console::println("ScriptMethodGUIChangeScreen::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": an error occurred with changing screen to '" + fileName + "': " + string(exception.what()));
 						miniScript->startErrorScript();

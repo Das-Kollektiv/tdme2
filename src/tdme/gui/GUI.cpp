@@ -708,6 +708,12 @@ void GUI::handleEvents(bool clearEvents)
 		mouseEvents.clear();
 		keyboardEvents.clear();
 	}
+
+	//
+	for (int i = 0; i < renderScreensCopy.size(); i++) {
+		auto screen = renderScreensCopy[i];
+		auto screenMiniScript = screen->getMiniScript();
+	}
 }
 
 void GUI::onChar(int key, int x, int y) {
