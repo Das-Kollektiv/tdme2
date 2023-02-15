@@ -193,6 +193,16 @@ GUIScreenNode::~GUIScreenNode() {
 	if (script != nullptr) delete script;
 }
 
+void GUIScreenNode::initializeMiniScript(const MiniScript::ScriptVariable& miniScriptArguments) {
+	//
+	if (script != nullptr && script->hasFunction("initialize") == true) {
+		vector<MiniScript::ScriptVariable> argumentValues { miniScriptArguments };
+		span argumentValuesSpan(argumentValues);
+		MiniScript::ScriptVariable returnValue;
+		script->call("initialize", argumentValuesSpan, returnValue);
+	}
+}
+
 GUI* GUIScreenNode::getGUI()
 {
 	return gui;

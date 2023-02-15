@@ -11,7 +11,8 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/GUIParserException.h>
 #include <tdme/os/filesystem/FileSystemException.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/MiniScript.h>
+#include <tdme/utilities/Properties.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
@@ -26,6 +27,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUIParserException;
 using tdme::os::filesystem::FileSystemException;
+using tdme::utilities::MiniScript;
 using tdme::utilities::Properties;
 
 using tinyxml::TiXmlElement;
@@ -81,11 +83,12 @@ public:
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @param parameters parameters aka key value pairs for substitution
+	 * @param miniScriptArguments mini script arguments
 	 * @return GUI screen node
 	 * @throws tdme::gui::GUIParserException
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	static GUIScreenNode* parse(const string& pathName, const string& fileName, const unordered_map<string, string>& parameters = {});
+	static GUIScreenNode* parse(const string& pathName, const string& fileName, const unordered_map<string, string>& parameters = {}, const MiniScript::ScriptVariable& miniScriptArguments = MiniScript::ScriptVariable());
 
 	/**
 	 * Parses a GUI XML content
@@ -93,11 +96,12 @@ public:
 	 * @param parameters parameters aka key value pair for substitution
 	 * @param pathName path name
 	 * @param fileName file name
+	 * @param miniScriptArguments mini script arguments
 	 * @return GUI screen node
 	 * @throws tdme::gui::GUIParserException
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	static GUIScreenNode* parse(const string& xml, const unordered_map<string, string>& parameters = {}, const string& pathName = string(), const string& fileName = string());
+	static GUIScreenNode* parse(const string& xml, const unordered_map<string, string>& parameters = {}, const string& pathName = string(), const string& fileName = string(), const MiniScript::ScriptVariable& miniScriptArguments = MiniScript::ScriptVariable());
 
 	/**
 	 * Parses a GUI XML file into parent node

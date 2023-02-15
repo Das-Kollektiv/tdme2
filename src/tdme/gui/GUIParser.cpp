@@ -184,12 +184,12 @@ const string GUIParser::getRootNode(const string& xml) {
 	return rootNode;
 }
 
-GUIScreenNode* GUIParser::parse(const string& pathName, const string& fileName, const unordered_map<string, string>& parameters)
+GUIScreenNode* GUIParser::parse(const string& pathName, const string& fileName, const unordered_map<string, string>& parameters, const MiniScript::ScriptVariable& miniScriptArguments)
 {
-	return parse(FileSystem::getInstance()->getContentAsString(pathName, fileName), parameters, pathName, fileName);
+	return parse(FileSystem::getInstance()->getContentAsString(pathName, fileName), parameters, pathName, fileName, miniScriptArguments);
 }
 
-GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, string>& parameters, const string& pathName, const string& fileName)
+GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, string>& parameters, const string& pathName, const string& fileName, const MiniScript::ScriptVariable& miniScriptArguments)
 {
 	auto applicationRootPath = Tools::getApplicationRootPathName(pathName);
 	auto applicationSubPathName = Tools::getApplicationSubPathName(pathName);
@@ -292,6 +292,9 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 	vector<GUINode*> childControllerNodes;
 	guiScreenNode->getChildControllerNodes(childControllerNodes);
 	for (auto node: childControllerNodes) node->getController()->onSubTreeChange();
+
+	//
+	guiScreenNode->initializeMiniScript(miniScriptArguments);
 
 	//
 	return guiScreenNode;

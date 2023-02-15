@@ -267,8 +267,9 @@ public:
 	/**
 	 * Add render screen
 	 * @param screenId screenId
+	 * @param screenIdx screen index or -1 to push to the end
 	 */
-	void addRenderScreen(const string& screenId);
+	void addRenderScreen(const string& screenId, int screenIdx = -1);
 
 	/**
 	 * Remove render screen

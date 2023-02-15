@@ -1,0 +1,9 @@
+<screen id="test_gui_script2" script="resources/tests/scripts/test_gui_script2.tscript">
+	<layout width="100%" height="100%" alignment="vertical" horizontal-align="center" vertical-align="center">
+		<space height="*" />
+		<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" padding="5" width="auto" height="auto" text="Press Back Button to get Back" />
+		<space height="20" />
+		<button id="btn_backscreen" text="Back" />
+		<space height="*" />
+	</layout>
+</screen>
