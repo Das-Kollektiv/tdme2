@@ -317,6 +317,12 @@ protected:
 	const string getNodeType() override;
 
 private:
+
+	/**
+	 * Initialize
+	 */
+	void initialize();
+
 	/**
 	 * Add node
 	 * @param node node

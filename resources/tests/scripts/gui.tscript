@@ -1,3 +1,10 @@
+function: initialize()
+	console.log("----------------------------------------------------------")
+	console.log("initialize(): " + gui.screen.getId())
+	console.log("----------------------------------------------------------")
+	console.log()
+end
+
 # on action
 function: onAction($actionType, $elementNodeId)
 	#console.log("----------------------------------------------------------")
@@ -46,23 +53,6 @@ function: onTick()
 	if (gui.elementnode.conditions.has("info", "time") == true)
 		gui.textnode.setText("time", time.getAsString())
 	end
-end
-
-# on initialize
-on: initialize
-	# this is not yet called
-	console.log("----------------------------------------------------------")
-	console.log("initialize: " + gui.screen.getId())
-	console.log("----------------------------------------------------------")
-	console.log()
-end
-
-# if no condition is met, nothing will be executed, lol :D
-on: nothing
-	console.log("----------------------------------------------------------")
-	console.log("Nothing: " + gui.screen.getId())
-	console.log("----------------------------------------------------------")
-	console.log()
 end
 
 # on error

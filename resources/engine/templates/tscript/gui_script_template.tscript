@@ -1,3 +1,11 @@
+# initialize
+function: initialize()
+	console.log("----------------------------------------------------------")
+	console.log("initialize(): " + gui.screen.getId())
+	console.log("----------------------------------------------------------")
+	console.log()
+end
+
 # on action
 function: onAction($actionType, $elementNodeId)
 	console.log("----------------------------------------------------------")
@@ -90,23 +98,6 @@ end
 function: onTick()
 	console.log("----------------------------------------------------------")
 	console.log("onTick(): " + screen.getId())
-	console.log("----------------------------------------------------------")
-	console.log()
-end
-
-# on initialize
-on: initialize
-	# this is not yet called
-	console.log("----------------------------------------------------------")
-	console.log("initialize: " + screen.getId())
-	console.log("----------------------------------------------------------")
-	console.log()
-end
-
-# if no condition is met, nothing will be executed, lol :D
-on: nothing
-	console.log("----------------------------------------------------------")
-	console.log("Nothing: " + screen.getId())
 	console.log("----------------------------------------------------------")
 	console.log()
 end
