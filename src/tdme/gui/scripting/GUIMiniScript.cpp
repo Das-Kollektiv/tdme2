@@ -56,11 +56,11 @@ void GUIMiniScript::registerMethods() {
 	MiniScript::registerMethods();
 	{
 		//
-		class ScriptMethodGUIChangeScreen: public ScriptMethod {
+		class ScriptMethodGUIGotoScreen: public ScriptMethod {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIChangeScreen(GUIMiniScript* miniScript):
+			ScriptMethodGUIGotoScreen(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "fileName", .optional = false, .assignBack = false },
@@ -70,7 +70,7 @@ void GUIMiniScript::registerMethods() {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "gui.changeScreen";
+				return "gui.gotoScreen";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string fileName;
@@ -93,13 +93,13 @@ void GUIMiniScript::registerMethods() {
 							argumentValues.size() == 2?argumentValues[1]:MiniScript::ScriptVariable()
 						);
 					} catch (Exception& exception) {
-						Console::println("ScriptMethodGUIChangeScreen::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": an error occurred with changing screen to '" + fileName + "': " + string(exception.what()));
+						Console::println("ScriptMethodGUIGotoScreen::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": an error occurred with changing screen to '" + fileName + "': " + string(exception.what()));
 						miniScript->startErrorScript();
 					}
 				}
 			}
 		};
-		registerMethod(new ScriptMethodGUIChangeScreen(this));
+		registerMethod(new ScriptMethodGUIGotoScreen(this));
 	}
 	{
 		//
