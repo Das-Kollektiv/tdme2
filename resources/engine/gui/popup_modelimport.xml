@@ -2,75 +2,114 @@
 	<layout alignment="none" horizontal-align="center" vertical-align="center" width="100%" height="100%">
 
 		<moveable alignment="vertical" width="auto" height="auto">
-			<tabs width="300" height="515">
+			<tabs width="350" height="400">
 				<tabs-header id="modelimport_tabs-header">
 					<tab id="modelimport_caption" image="resources/engine/images/attention.png" text="Import Model" closeable="true"/>
 				</tabs-header>
 				<tabs-content>
-					<tab-content tab-id="modelimport_caption">
+					<tab-content tab-id="modelimport_caption" vertical-align="top" >
 					
-						<layout padding="5" border="0" border-color="{$color.element_frame}" width="auto" height="auto" alignment="vertical" background-color="{$color.element_foreground}">
-							<layout alignment="horizontal" width="200" height="auto">
+						<layout padding="10" width="100%" height="auto" alignment="vertical" background-color="{$color.element_foreground}">
+						
+							<menu-separator />
+							<space height="10" />
+							
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Import Type" width="*" height="auto"/>
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<space width="5" />
+									<dropdown width="*" height="25" id="modelimport_importtype">
+										<dropdown-option text="Import Hierarchy" value="1" selected="true"/>
+										<dropdown-option text="Combine Meshes" value="2"/>
+										<dropdown-option text="Seperate Meshes" value="3"/>
+									</dropdown>
+								</layout>
 							</layout>
+							
 							<space height="5" />
-							<menu-separator />
-							<layout padding="5" width="290" height="auto" alignment="vertical">	
-								<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-									<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Import Type" width="*" height="auto"/>
-									<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-										<dropdown width="100%" height="25" id="modelimport_importtype" text="">
-										</dropdown>
-									</layout>
-								</layout>
-								<space height="5" />
-								<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-									<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Bounding Volumes" width="*" height="auto"/>
-									<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-										<dropdown width="100%" height="25" id="modelimport_bv" text="">
-										</dropdown>								
-									</layout>
-								</layout>
-								<space height="5" />
-								<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-									<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Import LODs" width="*" height="auto"/>
-									<layout alignment="horizontal" width="50%" height="auto" horizontal-align="left">
-										<checkbox id="modelimport_importlods" value="1"/>								
-									</layout>
-								</layout>
-								<space height="5" />
-								<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-									<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Embed LODs" width="*" height="auto"/>
-									<layout alignment="horizontal" width="50%" height="auto" horizontal-align="left">
-										<checkbox id="modelimport_embedlods" value="1"/>								
-									</layout>
+								
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Bounding Volumes" width="*" height="auto"/>
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<space width="5" />
+									<dropdown width="*" height="25" id="modelimport_bv">
+										<dropdown-option text="None" value="1" selected="true"/>
+										<dropdown-option text="Generate BV" value="2"/>
+										<dropdown-option text="Import BV" value="3"/>
+									</dropdown>								
 								</layout>
 							</layout>
-							<menu-separator />
-		
-							<layout padding="5" width="*" height="auto" alignment="vertical">	
-								<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-									<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Embed Textures" width="*" height="auto"/>
-									<layout alignment="horizontal" width="50%" height="auto" horizontal-align="left">
-										<checkbox id="modelimport_embedtextures" value="1"/>								
-									</layout>
-								</layout>
-								<space height="5" />
-								<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-									<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Texture Size" width="*" height="auto"/>
-									<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-										<dropdown width="100%" height="25" id="modelimport_texturesize" text="">
-										</dropdown>								
-									</layout>
+							
+							<space height="5" />
+							
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Import LODs" width="*" height="auto"/>
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="left">
+									<checkbox id="modelimport_importlods" value="1"/>								
 								</layout>
 							</layout>
+							
+							<space height="5" />
+								
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Embed LODs" width="*" height="auto"/>
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="left">
+									<checkbox id="modelimport_embedlods" value="1"/>								
+								</layout>
+							</layout>
+
+							<space height="10" />
 							<menu-separator />
+							<space height="10" />
+			
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Texture Size" width="*" height="auto"/>
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<space width="5" />
+									<dropdown width="*" height="25" id="modelimport_texturesize">
+										<dropdown-option text="512" value="1" selected="true"/>
+										<dropdown-option text="1024" value="2"/>
+										<dropdown-option text="2048" value="3"/>
+										<dropdown-option text="4096" value="4"/>
+									</dropdown>								
+								</layout>
+							</layout>
+							
+							<space height="5" />
+							
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Embed Textures" width="*" height="auto"/>
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="left">
+									<checkbox id="modelimport_embedtextures" value="1"/>								
+								</layout>
+							</layout>
+
+							<space height="10" />
+							<menu-separator />
+							<space height="10" />
+							
 							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Shader" width="*" height="auto"/>
 								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-									<dropdown width="100%" height="25" id="modelimport_shader" text="">
+									<space width="5" />
+									<dropdown width="*" height="25" id="modelimport_shader">
+										<dropdown-option text="Specular" value="1" selected="true"/>
+										<dropdown-option text="PBR" value="2"/>
+										<dropdown-option text="Specular + PBR" value="3"/>
 									</dropdown>								
 								</layout>
-							</layout>							
+							</layout>
+							
+							<space height="10" />
+							<menu-separator />
+							<space height="15" />
+							
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<button id="modelimport_import" width="*" height="25" text="Import"/>
+								<space width="5" />
+								<button id="modelimport_cancel" width="*" height="25" text="Cancel"/>
+							</layout>
+														
 						</layout>
 					
 					</tab-content>
