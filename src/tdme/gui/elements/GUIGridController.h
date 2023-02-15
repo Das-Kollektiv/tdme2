@@ -72,7 +72,7 @@ private:
 
 	/**
 	 * Get item idx
-	 * @param optionElementNode option element node
+	 * @param gridItemElementNode grid item element node
 	 */
 	int getItemIdx(GUIElementNode* gridItemElementNode);
 
@@ -106,12 +106,12 @@ private:
 
 	/**
 	 * Focus
-	 * @param optionElementNode option element node
+	 * @param gridItemElementNode grid item element node
 	 */
 	void focus(GUIElementNode* gridItemElementNode);
 
 	/**
-	 * Select current options
+	 * Select current item
 	 */
 	void selectCurrent();
 

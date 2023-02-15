@@ -21,7 +21,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::utilities::MutableString;
 
 /**
- * GUI select box option controller
+ * GUI grid item controller
  * @author Andreas Drewke
  */
 class tdme::gui::elements::GUIGridItemController: public GUIElementController
