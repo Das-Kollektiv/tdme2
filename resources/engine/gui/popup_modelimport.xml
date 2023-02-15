@@ -1,0 +1,82 @@
+<screen id="popup_modelimport" popup="true" min-width="1024" min-height="768" max-width="3200" max-height="1800">
+	<layout alignment="none" horizontal-align="center" vertical-align="center" width="100%" height="100%">
+
+		<moveable alignment="vertical" width="auto" height="auto">
+			<tabs width="300" height="515">
+				<tabs-header id="modelimport_tabs-header">
+					<tab id="modelimport_caption" image="resources/engine/images/attention.png" text="Import Model" closeable="true"/>
+				</tabs-header>
+				<tabs-content>
+					<tab-content tab-id="modelimport_caption">
+					
+						<layout padding="5" border="0" border-color="{$color.element_frame}" width="auto" height="auto" alignment="vertical" background-color="{$color.element_foreground}">
+							<layout alignment="horizontal" width="200" height="auto">
+							</layout>
+							<space height="5" />
+							<menu-separator />
+							<layout padding="5" width="290" height="auto" alignment="vertical">	
+								<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Import Type" width="*" height="auto"/>
+									<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+										<dropdown width="100%" height="25" id="modelimport_importtype" text="">
+										</dropdown>
+									</layout>
+								</layout>
+								<space height="5" />
+								<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Bounding Volumes" width="*" height="auto"/>
+									<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+										<dropdown width="100%" height="25" id="modelimport_bv" text="">
+										</dropdown>								
+									</layout>
+								</layout>
+								<space height="5" />
+								<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Import LODs" width="*" height="auto"/>
+									<layout alignment="horizontal" width="50%" height="auto" horizontal-align="left">
+										<checkbox id="modelimport_importlods" value="1"/>								
+									</layout>
+								</layout>
+								<space height="5" />
+								<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Embed LODs" width="*" height="auto"/>
+									<layout alignment="horizontal" width="50%" height="auto" horizontal-align="left">
+										<checkbox id="modelimport_embedlods" value="1"/>								
+									</layout>
+								</layout>
+							</layout>
+							<menu-separator />
+		
+							<layout padding="5" width="*" height="auto" alignment="vertical">	
+								<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Embed Textures" width="*" height="auto"/>
+									<layout alignment="horizontal" width="50%" height="auto" horizontal-align="left">
+										<checkbox id="modelimport_embedtextures" value="1"/>								
+									</layout>
+								</layout>
+								<space height="5" />
+								<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Texture Size" width="*" height="auto"/>
+									<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+										<dropdown width="100%" height="25" id="modelimport_texturesize" text="">
+										</dropdown>								
+									</layout>
+								</layout>
+							</layout>
+							<menu-separator />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Shader" width="*" height="auto"/>
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<dropdown width="100%" height="25" id="modelimport_shader" text="">
+									</dropdown>								
+								</layout>
+							</layout>							
+						</layout>
+					
+					</tab-content>
+				</tabs-content>
+			</tabs>
+		</moveable>
+
+	</layout>
+</screen>
