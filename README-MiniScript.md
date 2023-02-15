@@ -835,6 +835,7 @@ Reading all keys as array from set:
 
 | MiniScript GUI methods                                                                           |
 |--------------------------------------------------------------------------------------------------|
+| gui.changeScreen($fileName: String[, $arguments: Mixed]): Void                                   |
 | gui.elementnode.conditions.has($elementNodeId: String, $condition: String): Boolean              |
 | gui.elementnode.conditions.get($elementNodeId: String): Array                                    |
 | gui.elementnode.conditions.set($elementNodeId: String, $condition: String): Void                 |
@@ -851,7 +852,7 @@ Reading all keys as array from set:
 | gui.parentnode.addSubNodes($parentNodeId: String, $xml: String[, $resetScrollOffsets: Boolean]): Void|
 | gui.parentnode.clearSubNodes($parentNodeId: String): Void                                        |
 | gui.parentnode.replaceSubNodes($parentNodeId: String, $xml: String[, $resetScrollOffsets: Boolean]): Void|
-| gui.screen.getId(): String                                                                       |
+| gui.screennode.getId(): String                                                                   |
 | gui.textnode.getText($textNodeId: String): String                                                |
 | gui.textnode.setText($textNodeId: String, $text: String): Void                                   |
 | gui.videonode.getSource($videoNodeId: String): String                                            |

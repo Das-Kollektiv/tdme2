@@ -1,0 +1,53 @@
+function: initialize($context)
+	console.log("----------------------------------------------------------")
+	console.log("initialize(): " + gui.screennode.getId())
+	console.log("----------------------------------------------------------")
+	console.log()
+	$GLOBAL.context = $context
+	$GLOBAL.context.screenIdx = 2
+	console.log($GLOBAL.context)
+end
+
+# on action
+function: onAction($actionType, $elementNodeId)
+	#console.log("----------------------------------------------------------")
+	#console.log("onAction(): " + gui.screennode.getId() + ": " + $elementNodeId + "(" + $actionType + ")")
+	#console.log("----------------------------------------------------------")
+	#console.log()
+	if ($actionType == gui.event.ACTIONTYPE_PERFORMED())
+		if ($elementNodeId == "btn_backscreen")
+			console.log("YYYYYYYYY")
+			gui.changeScreen("resources/tests/screens/test_gui_script.xml", $GLOBAL.context)
+		end
+	end
+end
+
+# on change
+function: onChange($elementNodeId)
+	#console.log("----------------------------------------------------------")
+	#console.log("onChange(): " + gui.screennode.getId() + ": " + $elementNodeId)
+	#console.log("----------------------------------------------------------")
+	#console.log()
+end
+
+# on mouse over
+function: onMouseOver($elementNodeId)
+	#console.log("----------------------------------------------------------")
+	#console.log("onMouseOver(): " + gui.screennode.getId() + ": " + $elementNodeId)
+	#console.log("----------------------------------------------------------")
+	#console.log()
+end
+
+# on tick
+function: onTick()
+	#console.log("----------------------------------------------------------")
+	#console.log("onTick(): " + gui.screennode.getId())
+	#console.log("----------------------------------------------------------")
+	#console.log()
+end
+
+# on error
+on: error
+	console.log("An error occurred")
+	script.stop()
+end
