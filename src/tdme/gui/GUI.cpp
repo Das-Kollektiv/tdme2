@@ -24,6 +24,7 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
+#include <tdme/gui/scripting/GUIMiniScript.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/GUIParserException.h>
 #include <tdme/utilities/Console.h>
@@ -31,6 +32,7 @@
 #include <tdme/utilities/Properties.h>
 #include <tdme/utilities/Time.h>
 
+using std::find;
 using std::map;
 using std::remove;
 using std::reverse;
@@ -52,6 +54,7 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::gui::scripting::GUIMiniScript;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::gui::GUIParserException;
@@ -151,7 +154,7 @@ void GUI::resetRenderScreens()
 	renderScreens.clear();
 }
 
-void GUI::addRenderScreen(const string& screenId)
+void GUI::addRenderScreen(const string& screenId, int screenIdx)
 {
 	auto screenIt = screens.find(screenId);
 	if (screenIt == screens.end()) return;
@@ -163,7 +166,11 @@ void GUI::addRenderScreen(const string& screenId)
 	auto screen = screenIt->second;
 	screen->setGUI(this);
 	screen->setConditionsMet();
-	renderScreens.push_back(screenIt->second);
+	if (screenIdx == -1) {
+		renderScreens.push_back(screenIt->second);
+	} else {
+		renderScreens.insert(renderScreens.begin() + screenIdx, screenIt->second);
+	}
 
 	// focussed node
 	focussedNodeScreenId.clear();
@@ -713,6 +720,16 @@ void GUI::handleEvents(bool clearEvents)
 	for (int i = 0; i < renderScreensCopy.size(); i++) {
 		auto screen = renderScreensCopy[i];
 		auto screenMiniScript = screen->getMiniScript();
+		if (screenMiniScript == nullptr) continue;
+		auto nextScreen = screen->getMiniScript()->getNextScreenNode();
+		if (nextScreen == nullptr) continue;
+		auto screenIt = find(renderScreens.begin(), renderScreens.end(), screen);
+		if (screenIt != renderScreens.end()) {
+			auto screenIdx = screenIt - renderScreens.begin();
+			removeScreen(screen->getId());
+			addScreen(nextScreen->getId(), nextScreen);
+			addRenderScreen(nextScreen->getId(), screenIdx);
+		}
 	}
 }
 
