@@ -17,6 +17,10 @@ namespace elements {
 	class GUIDropDownOption;
 	class GUIDropDownOptionController;
 	class GUIElement;
+	class GUIGrid;
+	class GUIGridController;
+	class GUIGridItem;
+	class GUIGridItemController;
 	class GUIInput;
 	class GUIInputController;
 	class GUIImageButton;

@@ -111,12 +111,12 @@ private:
 	void selectCurrent();
 
 	/**
-	 * Focus next node
+	 * Focus next option
 	 */
 	void focusNext();
 
 	/**
-	 * Focus previous
+	 * Focus previous option
 	 */
 	void focusPrevious();
 

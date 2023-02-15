@@ -180,6 +180,7 @@
             - button
             - checkbox
             - dropdown
+            - grid (needs some love still)
             - image button
             - input
             - knob
