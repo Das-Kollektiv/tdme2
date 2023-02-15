@@ -16,8 +16,7 @@ function: onAction($actionType, $elementNodeId)
 	#console.log()
 	if ($actionType == gui.event.ACTIONTYPE_PERFORMED())
 		if ($elementNodeId == "btn_backscreen")
-			console.log("YYYYYYYYY")
-			gui.changeScreen("resources/tests/screens/test_gui_script.xml", $GLOBAL.context)
+			gui.gotoScreen("resources/tests/screens/test_gui_script.xml", $GLOBAL.context)
 		end
 	end
 end

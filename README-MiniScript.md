@@ -835,7 +835,6 @@ Reading all keys as array from set:
 
 | MiniScript GUI methods                                                                           |
 |--------------------------------------------------------------------------------------------------|
-| gui.changeScreen($fileName: String[, $arguments: Mixed]): Void                                   |
 | gui.elementnode.conditions.has($elementNodeId: String, $condition: String): Boolean              |
 | gui.elementnode.conditions.get($elementNodeId: String): Array                                    |
 | gui.elementnode.conditions.set($elementNodeId: String, $condition: String): Void                 |
@@ -845,6 +844,7 @@ Reading all keys as array from set:
 | gui.elementnode.conditions.removeAll($elementNodeId: String): Void                               |
 | gui.event.ACTIONTYPE_PERFORMED(): Integer                                                        |
 | gui.event.ACTIONTYPE_PERFORMING(): Integer                                                       |
+| gui.gotoScreen($fileName: String[, $arguments: Mixed]): Void                                     |
 | gui.imagenode.getSource($imageNodeId: String): String                                            |
 | gui.imagenode.setSource($imageNodeId: String, $source: String): Void                             |
 | gui.node.controller.getValue($elementNodeId: String): String                                     |
