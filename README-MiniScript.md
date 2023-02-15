@@ -612,7 +612,7 @@ Reading all keys as array from set:
 | quaternion.multiply($quaternion: Quaternion, ...): Mixed                                         |
 | quaternion.normalize($quaternion: Quaternion): Quaternion                                        |
 | quaternion.rotate($axis: Vector3, $angle: Float): Quaternion                                     |
-| return(...): Void                                                                                |
+| return([$value: Mixed]): Void                                                                    |
 | script.getNamedConditions(): String                                                              |
 | script.getVariables(): Map                                                                       |
 | script.call($function: String, ...): Mixed                                                       |
