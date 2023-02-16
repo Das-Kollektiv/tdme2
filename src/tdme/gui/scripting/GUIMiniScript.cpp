@@ -56,11 +56,11 @@ void GUIMiniScript::registerMethods() {
 	MiniScript::registerMethods();
 	{
 		//
-		class ScriptMethodGUIGotoScreen: public ScriptMethod {
+		class ScriptMethodGUIScreenGoto: public ScriptMethod {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIGotoScreen(GUIMiniScript* miniScript):
+			ScriptMethodGUIScreenGoto(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "fileName", .optional = false, .assignBack = false },
@@ -70,13 +70,13 @@ void GUIMiniScript::registerMethods() {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "gui.gotoScreen";
+				return "gui.screen.goto";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string fileName;
 				if (argumentValues.size() > 2 ||
 					MiniScript::getStringValue(argumentValues, 0, fileName, false) == false) {
-					Console::println("ScriptMethodGUIGotoScreen::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: optional mixed expected");
+					Console::println("ScriptMethodGUIScreenGoto::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: optional mixed expected");
 					miniScript->startErrorScript();
 				} else {
 					// delete next screen node if given
@@ -93,21 +93,21 @@ void GUIMiniScript::registerMethods() {
 							argumentValues.size() == 2?argumentValues[1]:MiniScript::ScriptVariable()
 						);
 					} catch (Exception& exception) {
-						Console::println("ScriptMethodGUIGotoScreen::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": an error occurred with goto screen to '" + fileName + "': " + string(exception.what()));
+						Console::println("ScriptMethodGUIScreenGoto::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": an error occurred with goto screen to '" + fileName + "': " + string(exception.what()));
 						miniScript->startErrorScript();
 					}
 				}
 			}
 		};
-		registerMethod(new ScriptMethodGUIGotoScreen(this));
+		registerMethod(new ScriptMethodGUIScreenGoto(this));
 	}
 	{
 		//
-		class ScriptMethodGUIPushScreen: public ScriptMethod {
+		class ScriptMethodGUIScreenPush: public ScriptMethod {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIPushScreen(GUIMiniScript* miniScript):
+			ScriptMethodGUIScreenPush(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "fileName", .optional = false, .assignBack = false },
@@ -117,13 +117,13 @@ void GUIMiniScript::registerMethods() {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "gui.pushScreen";
+				return "gui.screen.push";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string fileName;
 				if (argumentValues.size() > 2 ||
 					MiniScript::getStringValue(argumentValues, 0, fileName, false) == false) {
-					Console::println("ScriptMethodGUIPushScreen::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: optional mixed expected");
+					Console::println("ScriptMethodGUIScreenPush::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: optional mixed expected");
 					miniScript->startErrorScript();
 				} else {
 					// push screen node
@@ -137,21 +137,21 @@ void GUIMiniScript::registerMethods() {
 						miniScript->screenNode->getGUI()->addScreen(screenNode->getId(), screenNode);
 						miniScript->screenNode->getGUI()->addRenderScreen(screenNode->getId());
 					} catch (Exception& exception) {
-						Console::println("ScriptMethodGUIPushScreen::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": an error occurred with pushing screen '" + fileName + "': " + string(exception.what()));
+						Console::println("ScriptMethodGUIScreenPush::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": an error occurred with pushing screen '" + fileName + "': " + string(exception.what()));
 						miniScript->startErrorScript();
 					}
 				}
 			}
 		};
-		registerMethod(new ScriptMethodGUIPushScreen(this));
+		registerMethod(new ScriptMethodGUIScreenPush(this));
 	}
 	{
 		//
-		class ScriptMethodGUIPopScreen: public ScriptMethod {
+		class ScriptMethodGUIScreenPop: public ScriptMethod {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIPopScreen(GUIMiniScript* miniScript):
+			ScriptMethodGUIScreenPop(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{},
 					ScriptVariableType::TYPE_VOID
@@ -159,13 +159,13 @@ void GUIMiniScript::registerMethods() {
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				// mark as popped
-				return "gui.popScreen";
+				return "gui.screen.pop";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				miniScript->popped = true;
 			}
 		};
-		registerMethod(new ScriptMethodGUIPopScreen(this));
+		registerMethod(new ScriptMethodGUIScreenPop(this));
 	}
 	{
 		//

@@ -28,7 +28,7 @@ function: onAction($actionType, $elementNodeId)
 		elseif ($elementNodeId == "btn_evualuate")
 			gui.textnode.setText("result_evualuate", script.evaluate("10 + 10"))
 		elseif ($elementNodeId == "btn_nextscreen")
-			gui.gotoScreen("resources/tests/screens/test_gui_script2.xml", $GLOBAL.context)
+			gui.screen.goto("resources/tests/screens/test_gui_script2.xml", $GLOBAL.context)
 			#gui.screenNode.call("blahblah", $GLOBAL.context)
 			#script.stop()
 		end

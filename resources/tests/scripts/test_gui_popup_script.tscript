@@ -16,9 +16,9 @@ function: onAction($actionType, $elementNodeId)
 	#console.log()
 	if ($actionType == gui.event.ACTIONTYPE_PERFORMED())
 		if ($elementNodeId == "inputdialog_apply")
-			gui.popScreen()
+			gui.screen.pop()
 		elseif ($elementNodeId == "inputdialog_cancel")
-			gui.popScreen()
+			gui.screen.pop()
 		end
 	end
 end
