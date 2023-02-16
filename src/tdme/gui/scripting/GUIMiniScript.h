@@ -38,8 +38,17 @@ public:
 	inline GUIScreenNode* getNextScreenNode() {
 		return nextScreenNode;
 	}
+
+	/**
+	 * @return if screen has been popped
+	 */
+	inline bool isPopped() {
+		return popped;
+	}
+
 private:
 	GUIScreenNode* screenNode { nullptr };
 	GUIScreenNode* nextScreenNode { nullptr };
+	bool popped { false };
 
 };

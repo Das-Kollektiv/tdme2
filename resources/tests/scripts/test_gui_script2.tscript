@@ -15,8 +15,10 @@ function: onAction($actionType, $elementNodeId)
 	#console.log("----------------------------------------------------------")
 	#console.log()
 	if ($actionType == gui.event.ACTIONTYPE_PERFORMED())
-		if ($elementNodeId == "btn_backscreen")
-			gui.gotoScreen("resources/tests/screens/test_gui_script.xml", $GLOBAL.context)
+		if ($elementNodeId == "btn_popup")
+			gui.screen.push("resources/tests/screens/test_gui_popup.xml", $GLOBAL.context)
+		elseif ($elementNodeId == "btn_backscreen")
+			gui.screen.goto("resources/tests/screens/test_gui_script.xml", $GLOBAL.context)
 		end
 	end
 end
@@ -49,4 +51,8 @@ end
 on: error
 	console.log("An error occurred")
 	script.stop()
+end
+
+function: setWelcome($welcome)
+	gui.textnode.setText("welcome", $welcome)
 end

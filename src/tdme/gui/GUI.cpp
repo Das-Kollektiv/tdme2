@@ -719,9 +719,16 @@ void GUI::handleEvents(bool clearEvents)
 	//
 	for (int i = 0; i < renderScreensCopy.size(); i++) {
 		auto screen = renderScreensCopy[i];
+		// miniscript?
 		auto screenMiniScript = screen->getMiniScript();
 		if (screenMiniScript == nullptr) continue;
-		auto nextScreen = screen->getMiniScript()->getNextScreenNode();
+		// pop screen if requested
+		if (screenMiniScript->isPopped() == true) {
+			removeScreen(screen->getId());
+			continue;
+		}
+		// try to goTo next screen
+		auto nextScreen = screenMiniScript->getNextScreenNode();
 		if (nextScreen == nullptr) continue;
 		auto screenIt = find(renderScreens.begin(), renderScreens.end(), screen);
 		if (screenIt != renderScreens.end()) {
