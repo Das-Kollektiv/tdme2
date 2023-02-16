@@ -15,9 +15,11 @@ function: onAction($actionType, $elementNodeId)
 	#console.log("----------------------------------------------------------")
 	#console.log()
 	if ($actionType == gui.event.ACTIONTYPE_PERFORMED())
-		if ($elementNodeId == "inputdialog_apply")
+		if ($elementNodeId == "popup_apply")
+			gui.screen.call("test_gui_script2", "setWelcome", "Hi, now that we know us: " + gui.node.controller.getValue("popup_inputtext"))
 			gui.screen.pop()
-		elseif ($elementNodeId == "inputdialog_cancel")
+		elseif ($elementNodeId == "popup_cancel")
+			gui.screen.call("test_gui_script2", "setWelcome", "Hi Cancel Bob")
 			gui.screen.pop()
 		end
 	end

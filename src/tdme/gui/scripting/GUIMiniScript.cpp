@@ -169,6 +169,68 @@ void GUIMiniScript::registerMethods() {
 	}
 	{
 		//
+		class ScriptMethodGUIScreenCall: public ScriptMethod {
+		private:
+			GUIMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodGUIScreenCall(GUIMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_STRING, .name = "screenId", .optional = false, .assignBack = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "function", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_PSEUDO_MIXED
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "gui.screen.call";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string screenId;
+				string function;
+				if (miniScript->getStringValue(argumentValues, 0, screenId) == false ||
+					miniScript->getStringValue(argumentValues, 1, function) == false) {
+					Console::println("ScriptMethodGUIScreenCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					miniScript->startErrorScript();
+				} else {
+					auto screen = miniScript->screenNode->getGUI()->getScreen(screenId);
+					auto screenMiniScript = screen != nullptr?screen->getMiniScript():nullptr;
+					auto scriptIdx = screenMiniScript != nullptr?screenMiniScript->getFunctionScriptIdx(function):SCRIPTIDX_NONE;
+					if (screen == nullptr) {
+						Console::println("ScriptMethodGUIScreenCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": screen not found: " + screenId);
+						miniScript->startErrorScript();
+					} else
+					if (screenMiniScript == nullptr) {
+						Console::println("ScriptMethodGUIScreenCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": screen mini script not found for given screen: " + screenId);
+						miniScript->startErrorScript();
+					} else
+					if (scriptIdx == SCRIPTIDX_NONE) {
+						Console::println("ScriptMethodGUIScreenCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": screen: " + screenId + ", function not found: " + function);
+						miniScript->startErrorScript();
+					} else {
+						#if defined (__APPLE__)
+							// MACOSX currently does not support initializing span using begin and end iterators,
+							// so we need to make a copy of argumentValues beginning from second element
+							vector<ScriptVariable> callArgumentValues;
+							for (auto i = 2; i < argumentValues.size(); i++) callArgumentValues.push_back(argumentValues[i]);
+							// call
+							span callArgumentValuesSpan(callArgumentValues);
+							screenMiniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
+						#else
+							span callArgumentValuesSpan(argumentValues.begin() + 2, argumentValues.end());
+							screenMiniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
+						#endif
+					}
+				}
+			}
+			bool isVariadic() override {
+				return true;
+			}
+		};
+		registerMethod(new ScriptMethodGUIScreenCall(this));
+	}
+	{
+		//
 		class ScriptMethodScreenNodeGetId: public ScriptMethod {
 		private:
 			GUIMiniScript* miniScript { nullptr };
