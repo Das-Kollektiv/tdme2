@@ -3,6 +3,8 @@
 		<space height="*" />
 		<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" padding="5" width="auto" height="auto" text="Press Back Button to get Back" />
 		<space height="20" />
+		<button id="btn_popup" text="Pop Up" />
+		<space height="20" />
 		<button id="btn_backscreen" text="Back" />
 		<space height="*" />
 	</layout>

@@ -15,10 +15,10 @@ function: onAction($actionType, $elementNodeId)
 	#console.log("----------------------------------------------------------")
 	#console.log()
 	if ($actionType == gui.event.ACTIONTYPE_PERFORMED())
-		if ($elementNodeId == "btn_popup")
-			gui.pushScreen("resources/tests/screens/test_gui_popup.xml", $GLOBAL.context)
-		elseif ($elementNodeId == "btn_backscreen")
-			gui.gotoScreen("resources/tests/screens/test_gui_script.xml", $GLOBAL.context)
+		if ($elementNodeId == "inputdialog_apply")
+			gui.popScreen()
+		elseif ($elementNodeId == "inputdialog_cancel")
+			gui.popScreen()
 		end
 	end
 end

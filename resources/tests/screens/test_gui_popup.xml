@@ -1,0 +1,41 @@
+<screen id="test_gui_popup" background-color="#00000000" popup="false" min-width="1024" min-height="768" max-width="3200" max-height="1800" script="resources/tests/scripts/test_gui_popup_script.tscript">
+	<layout alignment="none" horizontal-align="center" vertical-align="center" width="100%" height="100%">
+	
+		<moveable alignment="vertical" width="auto" height="auto">
+			<tabs width="300" height="140">
+				<tabs-header id="inputdialog_tabs-header">
+					<tab id="inputdialog_caption" image="resources/engine/images/attention.png" text="Rename File" closeable="true"/>
+				</tabs-header>
+				<tabs-content>
+					<tab-content tab-id="inputdialog_caption" vertical-align="center">
+					
+						<layout padding="10" alignment="vertical" horizontal-align="left" vertical-align="center" width="100%" height="100%">
+							
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Name" width="140" height="25" />
+
+							<layout padding-left="10" padding-right="10" width="100%">
+								<input id="inputdialog_inputtext" width="100%" height="25" text="" />
+							</layout>
+
+							<space height="20" />
+							
+							<element id="button_panel" width="100%" height="auto" horizontal-align="center" vertical-align="center">
+								
+								<layout width="100%" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center" >
+									<button width="*" id="inputdialog_apply" text="Apply" />
+									<space width="10" />
+									<button width="*" id="inputdialog_cancel" text="Cancel" />
+								</layout>
+								
+							</element>
+					
+						</layout>
+						
+					</tab-content>
+				</tabs-content>
+			</tabs>
+		</moveable>
+
+	</layout>
+</screen>
+

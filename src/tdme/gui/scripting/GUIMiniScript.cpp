@@ -76,7 +76,7 @@ void GUIMiniScript::registerMethods() {
 				string fileName;
 				if (argumentValues.size() > 2 ||
 					MiniScript::getStringValue(argumentValues, 0, fileName, false) == false) {
-					Console::println("ScriptMethodGUIChangeScreen::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: optional mixed expected");
+					Console::println("ScriptMethodGUIGotoScreen::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: optional mixed expected");
 					miniScript->startErrorScript();
 				} else {
 					// delete next screen node if given
@@ -93,13 +93,79 @@ void GUIMiniScript::registerMethods() {
 							argumentValues.size() == 2?argumentValues[1]:MiniScript::ScriptVariable()
 						);
 					} catch (Exception& exception) {
-						Console::println("ScriptMethodGUIGotoScreen::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": an error occurred with changing screen to '" + fileName + "': " + string(exception.what()));
+						Console::println("ScriptMethodGUIGotoScreen::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": an error occurred with goto screen to '" + fileName + "': " + string(exception.what()));
 						miniScript->startErrorScript();
 					}
 				}
 			}
 		};
 		registerMethod(new ScriptMethodGUIGotoScreen(this));
+	}
+	{
+		//
+		class ScriptMethodGUIPushScreen: public ScriptMethod {
+		private:
+			GUIMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodGUIPushScreen(GUIMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "fileName", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "arguments", .optional = true, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "gui.pushScreen";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string fileName;
+				if (argumentValues.size() > 2 ||
+					MiniScript::getStringValue(argumentValues, 0, fileName, false) == false) {
+					Console::println("ScriptMethodGUIPushScreen::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: optional mixed expected");
+					miniScript->startErrorScript();
+				} else {
+					// push screen node
+					try {
+						auto screenNode = GUIParser::parse(
+							FileSystem::getInstance()->getPathName(fileName),
+							FileSystem::getInstance()->getFileName(fileName),
+							{},
+							argumentValues.size() == 2?argumentValues[1]:MiniScript::ScriptVariable()
+						);
+						miniScript->screenNode->getGUI()->addScreen(screenNode->getId(), screenNode);
+						miniScript->screenNode->getGUI()->addRenderScreen(screenNode->getId());
+					} catch (Exception& exception) {
+						Console::println("ScriptMethodGUIPushScreen::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": an error occurred with pushing screen '" + fileName + "': " + string(exception.what()));
+						miniScript->startErrorScript();
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodGUIPushScreen(this));
+	}
+	{
+		//
+		class ScriptMethodGUIPopScreen: public ScriptMethod {
+		private:
+			GUIMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodGUIPopScreen(GUIMiniScript* miniScript):
+				ScriptMethod(
+					{},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				// mark as popped
+				return "gui.popScreen";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				miniScript->popped = true;
+			}
+		};
+		registerMethod(new ScriptMethodGUIPopScreen(this));
 	}
 	{
 		//
