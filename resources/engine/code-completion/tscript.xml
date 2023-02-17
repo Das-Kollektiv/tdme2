@@ -478,7 +478,7 @@
 	</keyword>
 	<keyword name="return" func="yes">
 		<overload return-value="Void" descr="">
-			<parameter name="..." />
+			<parameter name="[Mixed $value]" />
 		</overload>
 	</keyword>
 	<keyword name="script.getNamedConditions" func="yes">

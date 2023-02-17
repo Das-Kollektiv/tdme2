@@ -292,7 +292,7 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUINodeControllerGetValue(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_STRING
 				),
@@ -301,17 +301,17 @@ void GUIMiniScript::registerMethods() {
 				return "gui.node.controller.getValue";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				string elementNodeId;
-				if (MiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false) {
+				string nodeId;
+				if (MiniScript::getStringValue(argumentValues, 0, nodeId, false) == false) {
 					Console::println("ScriptMethodGUINodeControllerSetValue::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript();
 				} else {
-					auto elementNode = dynamic_cast<GUIElementNode*>(miniScript->screenNode->getNodeById(elementNodeId));
-					auto controller = elementNode != nullptr?elementNode->getController():nullptr;
+					auto node = miniScript->screenNode->getNodeById(nodeId);
+					auto controller = node != nullptr?node->getController():nullptr;
 					if (controller != nullptr) {
 						returnValue.setValue(controller->getValue().getString());
 					} else {
-						Console::println("ScriptMethodGUINodeControllerSetValue::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no node controller found for given element node id '" + elementNodeId + "'");
+						Console::println("ScriptMethodGUINodeControllerSetValue::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no node controller found for given node id '" + nodeId + "'");
 						miniScript->startErrorScript();
 					}
 				}
@@ -328,7 +328,7 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUINodeControllerSetValue(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "value", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
@@ -338,19 +338,19 @@ void GUIMiniScript::registerMethods() {
 				return "gui.node.controller.setValue";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				string elementNodeId;
+				string nodeId;
 				string value;
-				if (MiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
+				if (MiniScript::getStringValue(argumentValues, 0, nodeId, false) == false ||
 					MiniScript::getStringValue(argumentValues, 1, value, false) == false) {
 					Console::println("ScriptMethodGUINodeControllerSetValue::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
 					miniScript->startErrorScript();
 				} else {
-					auto elementNode = dynamic_cast<GUIElementNode*>(miniScript->screenNode->getNodeById(elementNodeId));
-					auto controller = elementNode != nullptr?elementNode->getController():nullptr;
+					auto node = miniScript->screenNode->getNodeById(nodeId);
+					auto controller = node != nullptr?node->getController():nullptr;
 					if (controller != nullptr) {
 						controller->setValue(MutableString(value));
 					} else {
-						Console::println("ScriptMethodGUINodeControllerSetValue::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no node controller found for given element node id '" + elementNodeId + "'");
+						Console::println("ScriptMethodGUINodeControllerSetValue::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no node controller found for given node id '" + nodeId + "'");
 						miniScript->startErrorScript();
 					}
 				}
