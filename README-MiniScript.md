@@ -846,8 +846,8 @@ Reading all keys as array from set:
 | gui.event.ACTIONTYPE_PERFORMING(): Integer                                                       |
 | gui.imagenode.getSource($imageNodeId: String): String                                            |
 | gui.imagenode.setSource($imageNodeId: String, $source: String): Void                             |
-| gui.node.controller.getValue($elementNodeId: String): String                                     |
-| gui.node.controller.setValue($elementNodeId: String, $value: String): Void                       |
+| gui.node.controller.getValue($nodeId: String): String                                            |
+| gui.node.controller.setValue($nodeId: String, $value: String): Void                              |
 | gui.parentnode.addSubNodes($parentNodeId: String, $xml: String[, $resetScrollOffsets: Boolean]): Void|
 | gui.parentnode.clearSubNodes($parentNodeId: String): Void                                        |
 | gui.parentnode.replaceSubNodes($parentNodeId: String, $xml: String[, $resetScrollOffsets: Boolean]): Void|
