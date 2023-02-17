@@ -92,6 +92,7 @@ void GUIGridController::initialize()
 	} catch (Exception &exception) {
 		Console::println("GUIGridController::initialize(): options: horizontal-items: invalid value: " + required_dynamic_cast<GUIElementNode*>(node)->getOptionValue("horizontal-items"));
 	}
+	if (horizontalItems == 0) horizontalItems = 1;
 }
 
 void GUIGridController::dispose()
