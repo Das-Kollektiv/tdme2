@@ -1,7 +1,17 @@
+function: initialize($arguments)
+	console.log("----------------------------------------------------------")
+	console.log("initialize(): " + gui.screennode.getId())
+	console.log("----------------------------------------------------------")
+	console.log()
+	$GLOBAL.context = map()
+	$GLOBAL.context.screenIdx = 1
+	console.log($GLOBAL.context)
+end
+
 # on action
 function: onAction($actionType, $elementNodeId)
 	#console.log("----------------------------------------------------------")
-	#console.log("onAction(): " + gui.screen.getId() + ": " + $elementNodeId + "(" + $actionType + ")")
+	#console.log("onAction(): " + gui.screennode.getId() + ": " + $elementNodeId + "(" + $actionType + ")")
 	#console.log("----------------------------------------------------------")
 	#console.log()
 	if ($actionType == gui.event.ACTIONTYPE_PERFORMED())
@@ -17,6 +27,8 @@ function: onAction($actionType, $elementNodeId)
 			gui.parentnode.replaceSubNodes("container", "<text font='{$font.default}' size='{$fontsize.default}' color='{$color.font_normal}' padding='5' width='auto' height='auto' text='This is the fancy replacement line in my container here. You like that!!!' />")
 		elseif ($elementNodeId == "btn_evualuate")
 			gui.textnode.setText("result_evualuate", script.evaluate("10 + 10"))
+		elseif ($elementNodeId == "btn_nextscreen")
+			gui.screen.goto("resources/tests/screens/test_gui_script2.xml", $GLOBAL.context)
 		end
 	end
 end
@@ -24,7 +36,7 @@ end
 # on change
 function: onChange($elementNodeId)
 	#console.log("----------------------------------------------------------")
-	#console.log("onChange(): " + gui.screen.getId() + ": " + $elementNodeId)
+	#console.log("onChange(): " + gui.screennode.getId() + ": " + $elementNodeId)
 	#console.log("----------------------------------------------------------")
 	#console.log()
 end
@@ -32,7 +44,7 @@ end
 # on mouse over
 function: onMouseOver($elementNodeId)
 	#console.log("----------------------------------------------------------")
-	#console.log("onMouseOver(): " + gui.screen.getId() + ": " + $elementNodeId)
+	#console.log("onMouseOver(): " + gui.screennode.getId() + ": " + $elementNodeId)
 	#console.log("----------------------------------------------------------")
 	#console.log()
 end
@@ -40,29 +52,12 @@ end
 # on tick
 function: onTick()
 	#console.log("----------------------------------------------------------")
-	#console.log("onTick(): " + gui.screen.getId())
+	#console.log("onTick(): " + gui.screennode.getId())
 	#console.log("----------------------------------------------------------")
 	#console.log()
 	if (gui.elementnode.conditions.has("info", "time") == true)
 		gui.textnode.setText("time", time.getAsString())
 	end
-end
-
-# on initialize
-on: initialize
-	# this is not yet called
-	console.log("----------------------------------------------------------")
-	console.log("initialize: " + gui.screen.getId())
-	console.log("----------------------------------------------------------")
-	console.log()
-end
-
-# if no condition is met, nothing will be executed, lol :D
-on: nothing
-	console.log("----------------------------------------------------------")
-	console.log("Nothing: " + gui.screen.getId())
-	console.log("----------------------------------------------------------")
-	console.log()
 end
 
 # on error

@@ -87,10 +87,12 @@ void GUIGridController::initialize()
 	determineItems();
 	selectCurrent();
 	try {
-		horizontalItems = Integer::parse(required_dynamic_cast<GUIElementNode*>(node)->getOptionValue("horizontal-items"));
+		auto horizontalItemsOptionValue = required_dynamic_cast<GUIElementNode*>(node)->getOptionValue("horizontal-items");
+		if (horizontalItemsOptionValue.empty() == false) horizontalItems = Integer::parse(horizontalItemsOptionValue);
 	} catch (Exception &exception) {
 		Console::println("GUIGridController::initialize(): options: horizontal-items: invalid value: " + required_dynamic_cast<GUIElementNode*>(node)->getOptionValue("horizontal-items"));
 	}
+	if (horizontalItems <= 0) horizontalItems = 1;
 }
 
 void GUIGridController::dispose()
@@ -444,12 +446,11 @@ void GUIGridController::onSubTreeChange() {
 	while (unlayoutedParentNode->getSubNodesCount() > 0) {
 		required_dynamic_cast<GUIParentNode*>(node->getScreenNode()->getNodeById(gridHorizontalLayoutId))->moveSubNode(unlayoutedParentNode, 0);
 		gridItemIdx++;
-		if ((gridItemIdx % 2) == 0 && unlayoutedParentNode->getSubNodesCount() > 0) {
+		if ((gridItemIdx % horizontalItems) == 0 && unlayoutedParentNode->getSubNodesCount() > 0) {
 			gridHorizontalLayoutId = node->getId() +"_hl_" + to_string(gridHorizontalLayoutIdx++);
 			GUIParser::parse(layoutedParentNode, "<layout id=\"" + gridHorizontalLayoutId + "\" alignment=\"horizontal\" width=\"auto\"></layout>\n");
 		}
 	}
-	GUINode::dumpNode(layoutedParentNode);
 	//
 	onSubTreeChangeRun = false;
 }

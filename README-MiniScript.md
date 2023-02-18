@@ -612,7 +612,7 @@ Reading all keys as array from set:
 | quaternion.multiply($quaternion: Quaternion, ...): Mixed                                         |
 | quaternion.normalize($quaternion: Quaternion): Quaternion                                        |
 | quaternion.rotate($axis: Vector3, $angle: Float): Quaternion                                     |
-| return(...): Void                                                                                |
+| return([$value: Mixed]): Void                                                                    |
 | script.getNamedConditions(): String                                                              |
 | script.getVariables(): Map                                                                       |
 | script.call($function: String, ...): Mixed                                                       |
@@ -846,12 +846,16 @@ Reading all keys as array from set:
 | gui.event.ACTIONTYPE_PERFORMING(): Integer                                                       |
 | gui.imagenode.getSource($imageNodeId: String): String                                            |
 | gui.imagenode.setSource($imageNodeId: String, $source: String): Void                             |
-| gui.node.controller.getValue($elementNodeId: String): String                                     |
-| gui.node.controller.setValue($elementNodeId: String, $value: String): Void                       |
+| gui.node.controller.getValue($nodeId: String): String                                            |
+| gui.node.controller.setValue($nodeId: String, $value: String): Void                              |
 | gui.parentnode.addSubNodes($parentNodeId: String, $xml: String[, $resetScrollOffsets: Boolean]): Void|
 | gui.parentnode.clearSubNodes($parentNodeId: String): Void                                        |
 | gui.parentnode.replaceSubNodes($parentNodeId: String, $xml: String[, $resetScrollOffsets: Boolean]): Void|
-| gui.screen.getId(): String                                                                       |
+| gui.screen.call($screenId: String, $function: String, ...): Mixed                                |
+| gui.screen.goto($fileName: String[, $arguments: Mixed]): Void                                    |
+| gui.screen.pop(): Void                                                                           |
+| gui.screen.push($fileName: String[, $arguments: Mixed]): Void                                    |
+| gui.screennode.getId(): String                                                                   |
 | gui.textnode.getText($textNodeId: String): String                                                |
 | gui.textnode.setText($textNodeId: String, $text: String): Void                                   |
 | gui.videonode.getSource($videoNodeId: String): String                                            |

@@ -1,4 +1,4 @@
-<screen id="test_gui_script" script="resources/tests/scripts/gui.tscript">
+<screen id="test_gui_script" script="resources/tests/scripts/test_gui_script.tscript">
 	<layout width="100%" height="100%" alignment="vertical" horizontal-align="center" vertical-align="center">
 		<space height="*" />
 		<button id="btn_hello" text="Hi there! Click here for a warm hello!!!" />
@@ -25,7 +25,7 @@
 		<space height="20" />
 		<text id="result_evualuate" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" padding="5" width="auto" height="auto" text="Arr. Press the 'Evaluate' button" />
 		<space height="20" />
+		<button id="btn_nextscreen" text="Next Screen" />
 		<space height="*" />
-		
 	</layout>
 </screen>

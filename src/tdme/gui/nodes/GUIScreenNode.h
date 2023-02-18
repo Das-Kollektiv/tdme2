@@ -15,6 +15,7 @@
 #include <tdme/gui/nodes/GUIScreenNode_SizeConstraints.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/gui/scripting/fwd-tdme.h>
+#include <tdme/utilities/MiniScript.h>
 #include <tdme/utilities/MutableString.h>
 
 using std::string;
@@ -53,6 +54,7 @@ using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::scripting::GUIMiniScript;
 using tdme::gui::GUI;
+using tdme::utilities::MiniScript;
 using tdme::utilities::MutableString;
 
 /**
@@ -68,6 +70,7 @@ class tdme::gui::nodes::GUIScreenNode final
 	friend class GUINode;
 	friend class GUINodeConditions;
 	friend class GUIParentNode;
+	friend class tdme::gui::scripting::GUIMiniScript;
 
 private:
 	string applicationRootPathName;
@@ -317,6 +320,13 @@ protected:
 	const string getNodeType() override;
 
 private:
+
+	/**
+	 * Initialize mini script
+	 * @param miniScriptArguments mini script arguments
+	 */
+	void initializeMiniScript(const MiniScript::ScriptVariable& miniScriptArguments);
+
 	/**
 	 * Add node
 	 * @param node node
@@ -732,4 +742,10 @@ public:
 	 */
 	Texture* getImage(const string& applicationRootPath, const string& fileName);
 
+	/**
+	 * @return mini script script attached to this screen
+	 */
+	inline GUIMiniScript* getMiniScript() {
+		return script;
+	}
 };

@@ -1,3 +1,26 @@
+function: initialize()
+	#console.log("-----------------------------")
+	#console.log("initialize(): " + logic.getId())
+	#console.log("-----------------------------")
+	#console.log()
+	#
+	$GLOBAL.transform = engine.entity.getTransform(logic.getId())
+	$GLOBAL.velocity = vec3(0.0, 0.0, 0.0)
+	$GLOBAL.speed = 4.0
+	$GLOBAL.rotation = 180.0
+	$GLOBAL.rotationLast = 180.0
+	$GLOBAL.mouseX = -1
+	$GLOBAL.mouseY = -1
+	$GLOBAL.entityId = ""
+	$GLOBAL.rotationTimePassed = 0.0
+	$GLOBAL.pathFinding = map()
+	$GLOBAL.pathFinding.enabled = false
+	$GLOBAL.pathFinding.start = vec3(0.0, 0.0, 0.0)
+	$GLOBAL.pathFinding.end = vec3(0.0, 0.0, 0.0)
+	$GLOBAL.pathFinding.path = array()
+	$GLOBAL.pathFinding.pathIdx = -1
+end
+
 # update engine
 function: updateEngine()
 	#console.log("-----------------------------")
@@ -153,22 +176,6 @@ function: onLogicAdded()
 	#console.log("onLogicAdded(): " + logic.getId())
 	#console.log("-----------------------------")
 	#console.log()
-	# initializing
-	$GLOBAL.transform = engine.entity.getTransform(logic.getId())
-	$GLOBAL.velocity = vec3(0.0, 0.0, 0.0)
-	$GLOBAL.speed = 4.0
-	$GLOBAL.rotation = 180.0
-	$GLOBAL.rotationLast = 180.0
-	$GLOBAL.mouseX = -1
-	$GLOBAL.mouseY = -1
-	$GLOBAL.entityId = ""
-	$GLOBAL.rotationTimePassed = 0.0
-	$GLOBAL.pathFinding = map()
-	$GLOBAL.pathFinding.enabled = false
-	$GLOBAL.pathFinding.start = vec3(0.0, 0.0, 0.0)
-	$GLOBAL.pathFinding.end = vec3(0.0, 0.0, 0.0)
-	$GLOBAL.pathFinding.path = array()
-	$GLOBAL.pathFinding.pathIdx = -1
 end
 
 # logics processed
@@ -179,21 +186,19 @@ function: onLogicsProcessed()
 	#console.log()
 end
 
-# initialize
 on: initialize
-	# this is not yet called
-	#console.log("-----------------------------")
-	#console.log("initialize: " + logic.getId())
-	#console.log("-----------------------------")
-	#console.log()
+	console.log("-----------------------------")
+	console.log("on: initialize: " + logic.getId())
+	console.log("-----------------------------")
+	console.log()
 end
 
 # if no condition is met, nothing will be executed, lol :D
 on: nothing
-	#console.log("-----------------------------")
-	#console.log("Nothing: " + logic.getId())
-	#console.log("-----------------------------")
-	#console.log()
+	console.log("-----------------------------")
+	console.log("on: nothing: " + logic.getId())
+	console.log("-----------------------------")
+	console.log()
 end
 
 # an error has occurred
