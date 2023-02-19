@@ -373,7 +373,7 @@
 					</context-menu>
 				</tab-content>
 				<tab-content tab-id="tab13" vertical-align="center">
-					<grid id="test_grid" width="150" height="400" options="multiple,horizontal-items=2">
+					<grid id="test_grid" width="180" height="400" options="multiple,horizontal-items=2">
 						<grid-item text="Item 1" image="resources/engine/images/folder_big.png" size="60" />
 						<grid-item text="Item 2" image="resources/engine/images/folder_big.png" size="60" />
 						<grid-item text="Item 3" image="resources/engine/images/folder_big.png" size="60" />
