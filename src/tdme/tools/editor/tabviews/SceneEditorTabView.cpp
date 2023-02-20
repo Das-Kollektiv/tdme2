@@ -200,7 +200,7 @@ void SceneEditorTabView::handleInputEvents()
 		applicationClient->handleHIDEvents(gui->getMouseEvents(), gui->getKeyboardEvents());
 		// clear events
 		gui->getMouseEvents().clear();
-		gui->getKeyboardEvents();
+		gui->getKeyboardEvents().clear();
 		//
 		return;
 	}
