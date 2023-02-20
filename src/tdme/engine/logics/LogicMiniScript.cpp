@@ -135,7 +135,7 @@ void LogicMiniScript::registerMethods() {
 					auto logic = static_cast<Logic*>(miniScript->context->getLogic(logicId));
 					if (logic == nullptr) {
 						Console::println("ScriptMethodLogicSignalSend::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no logic with given id: " + logicId);
-						return;
+						miniScript->startErrorScript();
 					} else {
 						vector<ScriptVariable> arguments(argumentValues.size() - 2);
 						for (auto i = 2; i < argumentValues.size(); i++) arguments.push_back(argumentValues[i]);
