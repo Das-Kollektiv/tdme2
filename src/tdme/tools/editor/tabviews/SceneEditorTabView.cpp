@@ -193,9 +193,14 @@ void SceneEditorTabView::handleInputEvents()
 {
 	// if scene is running, no not do HID input except camera
 	if (applicationClient != nullptr) {
-		engine->getGUI()->handleEvents();
-		//
-		applicationClient->handleHIDEvents(engine->getGUI()->getMouseEvents(), engine->getGUI()->getKeyboardEvents());
+		auto gui = engine->getGUI();
+		// handle events in GUI
+		gui->handleEvents(false);
+		// forward HID to logics
+		applicationClient->handleHIDEvents(gui->getMouseEvents(), gui->getKeyboardEvents());
+		// clear events
+		gui->getMouseEvents().clear();
+		gui->getKeyboardEvents();
 		//
 		return;
 	}

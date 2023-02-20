@@ -3768,6 +3768,8 @@ void LogicMiniScript::collectHIDEvents(vector<GUIMouseEvent>& mouseEvents, vecto
 	keyboardAltDown = false;
 	keyboardShiftDown = false;
 	for (auto& event: keyEvents) {
+		// processed already?
+		if (event.isProcessed() == true) continue;
 		// key pressed
 		if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 			keyboardChars.insert(event.getKeyChar());
@@ -3799,17 +3801,17 @@ void LogicMiniScript::collectHIDEvents(vector<GUIMouseEvent>& mouseEvents, vecto
 	mouseWheelZ = 0.0f;
 	for (auto& event: mouseEvents) {
 		// mouse move
-		if (event.getType() == GUIMouseEvent::MOUSEEVENT_MOVED) {
+		if (event.isProcessed() == false && event.getType() == GUIMouseEvent::MOUSEEVENT_MOVED) {
 			mouseMoved = true;
 		} else
 		// on press and drag
 		//	store button and mouse dragging properties
-		if (event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
+		if (event.isProcessed() == false && event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
 			if (event.getButton() != GUIMouseEvent::MOUSEEVENT_BUTTON_NONE) {
 				mouseDown[event.getButton() - 1] = true;
 			}
 		} else
-		if (event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
+		if (event.isProcessed() == false && event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
 			if (event.getButton() != GUIMouseEvent::MOUSEEVENT_BUTTON_NONE) {
 				mouseDragging[event.getButton() - 1] = true;
 			}
@@ -3822,7 +3824,7 @@ void LogicMiniScript::collectHIDEvents(vector<GUIMouseEvent>& mouseEvents, vecto
 			}
 		} else
 		// wheel
-		if (event.getType() == GUIMouseEvent::MOUSEEVENT_WHEEL_MOVED) {
+		if (event.isProcessed() == false && event.getType() == GUIMouseEvent::MOUSEEVENT_WHEEL_MOVED) {
 			mouseWheelX+= event.getWheelX();
 			mouseWheelY+= event.getWheelY();
 			mouseWheelZ+= event.getWheelZ();
