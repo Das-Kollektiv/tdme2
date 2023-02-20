@@ -54,6 +54,7 @@ private:
 	string skyModelFileName;
 	Model* skyModel { nullptr };
 	Vector3 skyModelScale;
+	string guiFileName;
 
 	/**
 	 * Computes scene bounding box
@@ -326,6 +327,21 @@ public:
 	 */
 	void setSkyModelScale(const Vector3& skyModelScale) {
 		this->skyModelScale = skyModelScale;
+	}
+
+	/**
+	 * @return Scene GUI file name including relative path
+	 */
+	inline const string& getGUIFileName() {
+		return guiFileName;
+	}
+
+	/**
+	 * Set up scene GUI file name including relative path
+	 * @param fileName scene GUI file name including relative path
+	 */
+	inline void setGUIFileName(const string& fileName) {
+		this->guiFileName = fileName;
 	}
 
 	/**

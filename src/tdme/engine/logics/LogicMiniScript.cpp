@@ -135,7 +135,7 @@ void LogicMiniScript::registerMethods() {
 					auto logic = static_cast<Logic*>(miniScript->context->getLogic(logicId));
 					if (logic == nullptr) {
 						Console::println("ScriptMethodLogicSignalSend::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no logic with given id: " + logicId);
-						return;
+						miniScript->startErrorScript();
 					} else {
 						vector<ScriptVariable> arguments(argumentValues.size() - 2);
 						for (auto i = 2; i < argumentValues.size(); i++) arguments.push_back(argumentValues[i]);
@@ -3768,6 +3768,8 @@ void LogicMiniScript::collectHIDEvents(vector<GUIMouseEvent>& mouseEvents, vecto
 	keyboardAltDown = false;
 	keyboardShiftDown = false;
 	for (auto& event: keyEvents) {
+		// processed already?
+		if (event.isProcessed() == true) continue;
 		// key pressed
 		if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 			keyboardChars.insert(event.getKeyChar());
@@ -3799,17 +3801,17 @@ void LogicMiniScript::collectHIDEvents(vector<GUIMouseEvent>& mouseEvents, vecto
 	mouseWheelZ = 0.0f;
 	for (auto& event: mouseEvents) {
 		// mouse move
-		if (event.getType() == GUIMouseEvent::MOUSEEVENT_MOVED) {
+		if (event.isProcessed() == false && event.getType() == GUIMouseEvent::MOUSEEVENT_MOVED) {
 			mouseMoved = true;
 		} else
 		// on press and drag
 		//	store button and mouse dragging properties
-		if (event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
+		if (event.isProcessed() == false && event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
 			if (event.getButton() != GUIMouseEvent::MOUSEEVENT_BUTTON_NONE) {
 				mouseDown[event.getButton() - 1] = true;
 			}
 		} else
-		if (event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
+		if (event.isProcessed() == false && event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
 			if (event.getButton() != GUIMouseEvent::MOUSEEVENT_BUTTON_NONE) {
 				mouseDragging[event.getButton() - 1] = true;
 			}
@@ -3822,7 +3824,7 @@ void LogicMiniScript::collectHIDEvents(vector<GUIMouseEvent>& mouseEvents, vecto
 			}
 		} else
 		// wheel
-		if (event.getType() == GUIMouseEvent::MOUSEEVENT_WHEEL_MOVED) {
+		if (event.isProcessed() == false && event.getType() == GUIMouseEvent::MOUSEEVENT_WHEEL_MOVED) {
 			mouseWheelX+= event.getWheelX();
 			mouseWheelY+= event.getWheelY();
 			mouseWheelZ+= event.getWheelZ();

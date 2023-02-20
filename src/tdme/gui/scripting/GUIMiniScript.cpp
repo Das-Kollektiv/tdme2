@@ -4,6 +4,10 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/logics/Context.h>
+#include <tdme/engine/logics/Logic.h>
+#include <tdme/engine/logics/LogicMiniScript.h>
+#include <tdme/engine/logics/MiniScriptLogic.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/GUIActionListener.h>
@@ -16,6 +20,7 @@
 #include <tdme/gui/nodes/GUIVideoNode.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/os/threading/Mutex.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/MiniScript.h>
 #include <tdme/utilities/MutableString.h>
@@ -24,6 +29,10 @@ using std::span;
 using std::string;
 using std::to_string;
 
+using tdme::engine::logics::Context;
+using tdme::engine::logics::Logic;
+using tdme::engine::logics::LogicMiniScript;
+using tdme::engine::logics::MiniScriptLogic;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::gui::events::GUIActionListener;
@@ -37,10 +46,10 @@ using tdme::gui::nodes::GUITextNode;
 using tdme::gui::nodes::GUIVideoNode;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::os::threading::Mutex;
 using tdme::gui::scripting::GUIMiniScript;
 using tdme::utilities::MiniScript;
 using tdme::utilities::MutableString;
-
 
 GUIMiniScript::GUIMiniScript(GUIScreenNode* screenNode): MiniScript(), screenNode(screenNode) {
 }
@@ -90,7 +99,8 @@ void GUIMiniScript::registerMethods() {
 							FileSystem::getInstance()->getPathName(fileName),
 							FileSystem::getInstance()->getFileName(fileName),
 							{},
-							argumentValues.size() == 2?argumentValues[1]:MiniScript::ScriptVariable()
+							argumentValues.size() == 2?argumentValues[1]:MiniScript::ScriptVariable(),
+							miniScript->screenNode->getContext()
 						);
 					} catch (Exception& exception) {
 						Console::println("ScriptMethodGUIScreenGoto::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": an error occurred with goto screen to '" + fileName + "': " + string(exception.what()));
@@ -132,7 +142,8 @@ void GUIMiniScript::registerMethods() {
 							FileSystem::getInstance()->getPathName(fileName),
 							FileSystem::getInstance()->getFileName(fileName),
 							{},
-							argumentValues.size() == 2?argumentValues[1]:MiniScript::ScriptVariable()
+							argumentValues.size() == 2?argumentValues[1]:MiniScript::ScriptVariable(),
+							miniScript->screenNode->getContext()
 						);
 						miniScript->screenNode->getGUI()->addScreen(screenNode->getId(), screenNode);
 						miniScript->screenNode->getGUI()->addRenderScreen(screenNode->getId());
@@ -973,6 +984,121 @@ void GUIMiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodGUIParentNodeReplaceSubNodes(this));
+	}
+	{
+		//
+		class ScriptMethodLogicSignalSend: public ScriptMethod {
+		private:
+			GUIMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodLogicSignalSend(GUIMiniScript* miniScript):
+				ScriptMethod({
+					{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false, .assignBack = false },
+					{ .type = ScriptVariableType::TYPE_STRING, .name = "signal", .optional = false, .assignBack = false }
+				}),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "logic.signal.send";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				auto context = miniScript->screenNode->getContext();
+				if (context != nullptr) {
+					string logicId;
+					string signal;
+					if (MiniScript::getStringValue(argumentValues, 0, logicId) == true &&
+						MiniScript::getStringValue(argumentValues, 1, signal) == true) {
+						context->getLogicsMutex()->lock();
+						auto logic = static_cast<Logic*>(context->getLogic(logicId));
+						if (logic == nullptr) {
+							Console::println("ScriptMethodLogicSignalSend::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no logic with given id: " + logicId);
+							miniScript->startErrorScript();
+						} else {
+							vector<ScriptVariable> arguments(argumentValues.size() - 2);
+							for (auto i = 2; i < argumentValues.size(); i++) arguments.push_back(argumentValues[i]);
+							logic->addSignal(signal, arguments);
+						}
+						context->getLogicsMutex()->unlock();
+					} else {
+						Console::println("ScriptMethodLogicSignalSend::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, argument 1: string expected");
+						miniScript->startErrorScript();
+					}
+				} else {
+					Console::println("ScriptMethodLogicSignalSend::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no application logic context available");
+					miniScript->startErrorScript();
+				}
+			}
+			bool isVariadic() override {
+				return true;
+			}
+		};
+		registerMethod(new ScriptMethodLogicSignalSend(this));
+	}
+	{
+		//
+		class ScriptMethodLogicCall: public ScriptMethod {
+		private:
+			GUIMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodLogicCall(GUIMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "function", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_PSEUDO_MIXED
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "logic.call";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				auto context = miniScript->screenNode->getContext();
+				if (context != nullptr) {
+					string logicId;
+					string function;
+					if (MiniScript::getStringValue(argumentValues, 0, logicId) == false ||
+						MiniScript::getStringValue(argumentValues, 1, function) == false) {
+						Console::println("ScriptMethodLogicCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+						miniScript->startErrorScript();
+					} else {
+						context->getLogicsMutex()->lock();
+						auto logic = dynamic_cast<MiniScriptLogic*>(context->getLogic(logicId));
+						if (logic == nullptr || logic->getMiniScript() == nullptr) {
+							Console::println("ScriptMethodLogicCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no mini script logic with given id: " + logicId);
+							miniScript->startErrorScript();
+						} else {
+							auto logicMiniScript = logic->getMiniScript();
+							auto scriptIdx = logicMiniScript->getFunctionScriptIdx(function);
+							if (scriptIdx == SCRIPTIDX_NONE) {
+								Console::println("ScriptMethodLogicCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": function not found: " + function);
+								miniScript->startErrorScript();
+							} else {
+								#if defined (__APPLE__)
+									// MACOSX currently does not support initializing span using begin and end iterators,
+									// so we need to make a copy of argumentValues beginning from second element
+									vector<ScriptVariable> callArgumentValues;
+									for (auto i = 2; i < argumentValues.size(); i++) callArgumentValues.push_back(argumentValues[i]);
+									// call
+									span callArgumentValuesSpan(callArgumentValues);
+									logicMiniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
+								#else
+									span callArgumentValuesSpan(argumentValues.begin() + 2, argumentValues.end());
+									logicMiniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
+								#endif
+							}
+						}
+						context->getLogicsMutex()->unlock();
+					}
+				} else {
+					Console::println("ScriptMethodLogicCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no application logic context available");
+					miniScript->startErrorScript();
+				}
+			}
+			bool isVariadic() override {
+				return true;
+			}
+		};
+		registerMethod(new ScriptMethodLogicCall(this));
 	}
 }
 
