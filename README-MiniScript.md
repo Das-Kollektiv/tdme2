@@ -860,6 +860,7 @@ Reading all keys as array from set:
 | gui.textnode.setText($textNodeId: String, $text: String): Void                                   |
 | gui.videonode.getSource($videoNodeId: String): String                                            |
 | gui.videonode.setSource($videoNodeId: String, $source: String): Void                             |
+| logic.call($logicId: String, $function: String, ...): Mixed                                      |
 | logic.signal.send($logicId: String, $signal: String, ...): Void                                  |
 
 # 9. Operators
