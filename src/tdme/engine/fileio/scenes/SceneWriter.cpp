@@ -61,127 +61,144 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene* s
 	auto& jAllocator = jDocument.GetAllocator();
 	jDocument.AddMember("version", Value("1.99", jAllocator), jAllocator);
 	jDocument.AddMember("ro", Value(scene->getRotationOrder()->getName(), jAllocator), jAllocator);
-	Value jLights;
-	jLights.SetArray();
-	for (auto i = 0; i < scene->getLightCount(); i++) {
-		auto light = scene->getLightAt(i);
-		Value jLight;
-		jLight.SetObject();
-		jLight.AddMember("id", Value(i), jAllocator);
-		jLight.AddMember("ar", Value(light->getAmbient().getRed()), jAllocator);
-		jLight.AddMember("ag", Value(light->getAmbient().getGreen()), jAllocator);
-		jLight.AddMember("ab", Value(light->getAmbient().getBlue()), jAllocator);
-		jLight.AddMember("aa", Value(light->getAmbient().getAlpha()), jAllocator);
-		jLight.AddMember("dr", Value(light->getDiffuse().getRed()), jAllocator);
-		jLight.AddMember("dg", Value(light->getDiffuse().getGreen()), jAllocator);
-		jLight.AddMember("db", Value(light->getDiffuse().getBlue()), jAllocator);
-		jLight.AddMember("da", Value(light->getDiffuse().getAlpha()), jAllocator);
-		jLight.AddMember("sr", Value(light->getSpecular().getRed()), jAllocator);
-		jLight.AddMember("sg", Value(light->getSpecular().getGreen()), jAllocator);
-		jLight.AddMember("sb", Value(light->getSpecular().getBlue()), jAllocator);
-		jLight.AddMember("sa", Value(light->getSpecular().getAlpha()), jAllocator);
-		jLight.AddMember("px", Value(light->getPosition().getX()), jAllocator);
-		jLight.AddMember("py", Value(light->getPosition().getY()), jAllocator);
-		jLight.AddMember("pz", Value(light->getPosition().getZ()), jAllocator);
-		jLight.AddMember("pw", Value(light->getPosition().getW()), jAllocator);
-		jLight.AddMember("sdx", Value(light->getSpotDirection().getX()), jAllocator);
-		jLight.AddMember("sdy", Value(light->getSpotDirection().getY()), jAllocator);
-		jLight.AddMember("sdz", Value(light->getSpotDirection().getZ()), jAllocator);
-		jLight.AddMember("se", Value(light->getSpotExponent()), jAllocator);
-		jLight.AddMember("sco", Value(light->getSpotCutOff()), jAllocator);
-		jLight.AddMember("ca", Value(light->getConstantAttenuation()), jAllocator);
-		jLight.AddMember("la", Value(light->getLinearAttenuation()), jAllocator);
-		jLight.AddMember("qa", Value(light->getQuadraticAttenuation()), jAllocator);
-		jLight.AddMember("e", Value(light->isEnabled()), jAllocator);
-		jLights.PushBack(jLight, jAllocator);
-	}
-	jDocument.AddMember("lights", jLights, jAllocator);
-	Value jSceneLibrary;
-	jSceneLibrary.SetArray();
-	for (auto i = 0; i < sceneLibrary->getPrototypeCount(); i++) {
-		auto prototype = sceneLibrary->getPrototypeAt(i);
-		Value jPrototype;
-		jPrototype.SetObject();
-		if (prototype->isEmbedded() == true) {
-			Value jEmbeddedPrototype;
-			jEmbeddedPrototype.SetObject();
-			PrototypeWriter::write(
-				jDocument,
-				jEmbeddedPrototype,
-				prototype
-			);
-			jPrototype.AddMember("type", Value(prototype->getType()->getName(), jAllocator), jAllocator);
-			jPrototype.AddMember("entity", jEmbeddedPrototype, jAllocator);
+	// lights
+	{
+		Value jLights;
+		jLights.SetArray();
+		for (auto i = 0; i < scene->getLightCount(); i++) {
+			auto light = scene->getLightAt(i);
+			Value jLight;
+			jLight.SetObject();
+			jLight.AddMember("id", Value(i), jAllocator);
+			jLight.AddMember("ar", Value(light->getAmbient().getRed()), jAllocator);
+			jLight.AddMember("ag", Value(light->getAmbient().getGreen()), jAllocator);
+			jLight.AddMember("ab", Value(light->getAmbient().getBlue()), jAllocator);
+			jLight.AddMember("aa", Value(light->getAmbient().getAlpha()), jAllocator);
+			jLight.AddMember("dr", Value(light->getDiffuse().getRed()), jAllocator);
+			jLight.AddMember("dg", Value(light->getDiffuse().getGreen()), jAllocator);
+			jLight.AddMember("db", Value(light->getDiffuse().getBlue()), jAllocator);
+			jLight.AddMember("da", Value(light->getDiffuse().getAlpha()), jAllocator);
+			jLight.AddMember("sr", Value(light->getSpecular().getRed()), jAllocator);
+			jLight.AddMember("sg", Value(light->getSpecular().getGreen()), jAllocator);
+			jLight.AddMember("sb", Value(light->getSpecular().getBlue()), jAllocator);
+			jLight.AddMember("sa", Value(light->getSpecular().getAlpha()), jAllocator);
+			jLight.AddMember("px", Value(light->getPosition().getX()), jAllocator);
+			jLight.AddMember("py", Value(light->getPosition().getY()), jAllocator);
+			jLight.AddMember("pz", Value(light->getPosition().getZ()), jAllocator);
+			jLight.AddMember("pw", Value(light->getPosition().getW()), jAllocator);
+			jLight.AddMember("sdx", Value(light->getSpotDirection().getX()), jAllocator);
+			jLight.AddMember("sdy", Value(light->getSpotDirection().getY()), jAllocator);
+			jLight.AddMember("sdz", Value(light->getSpotDirection().getZ()), jAllocator);
+			jLight.AddMember("se", Value(light->getSpotExponent()), jAllocator);
+			jLight.AddMember("sco", Value(light->getSpotCutOff()), jAllocator);
+			jLight.AddMember("ca", Value(light->getConstantAttenuation()), jAllocator);
+			jLight.AddMember("la", Value(light->getLinearAttenuation()), jAllocator);
+			jLight.AddMember("qa", Value(light->getQuadraticAttenuation()), jAllocator);
+			jLight.AddMember("e", Value(light->isEnabled()), jAllocator);
+			jLights.PushBack(jLight, jAllocator);
 		}
-		jPrototype.AddMember("id", Value().SetInt(prototype->getId()), jAllocator);
-		jPrototype.AddMember("e", Value(prototype->isEmbedded()), jAllocator);
-		jPrototype.AddMember("pf", Value(prototype->getFileName(), jAllocator), jAllocator);
-		jSceneLibrary.PushBack(jPrototype, jAllocator);
+		jDocument.AddMember("lights", jLights, jAllocator);
 	}
-	jDocument.AddMember("models", jSceneLibrary, jAllocator);
-	Value jSceneProperties;
-	jSceneProperties.SetArray();
-	for (auto i = 0; i < scene->getPropertyCount(); i++) {
-		auto sceneProperty = scene->getPropertyByIndex(i);
-		Value jSceneProperty;
-		jSceneProperty.SetObject();
-		jSceneProperty.AddMember("name", Value(sceneProperty->getName(), jAllocator), jAllocator);
-		jSceneProperty.AddMember("value", Value(sceneProperty->getValue(), jAllocator), jAllocator);
-		jSceneProperties.PushBack(jSceneProperty, jAllocator);
-	}
-	jDocument.AddMember("properties", jSceneProperties, jAllocator);
-	Value jObjects;
-	jObjects.SetArray();
-	for (auto i = 0; i < scene->getEntityCount(); i++) {
-		auto sceneEntity = scene->getEntityAt(i);
-		Value jObject;
-		jObject.SetObject();
-		auto& transform = sceneEntity->getTransform();
-		auto& translation = transform.getTranslation();
-		auto& scale = transform.getScale();
-		auto& rotationAroundXAxis = transform.getRotation(scene->getRotationOrder()->getAxisXIndex());
-		auto& rotationAroundYAxis = transform.getRotation(scene->getRotationOrder()->getAxisYIndex());
-		auto& rotationAroundZAxis = transform.getRotation(scene->getRotationOrder()->getAxisZIndex());
-		jObject.AddMember("id", Value(sceneEntity->getId(), jAllocator), jAllocator);
-		jObject.AddMember("descr", Value(sceneEntity->getDescription(), jAllocator), jAllocator);;
-		jObject.AddMember("mid", Value(sceneEntity->getPrototype()->getId()), jAllocator);
-		jObject.AddMember("tx", Value(translation.getX()), jAllocator);
-		jObject.AddMember("ty", Value(translation.getY()), jAllocator);
-		jObject.AddMember("tz", Value(translation.getZ()), jAllocator);
-		jObject.AddMember("sx", Value(scale.getX()), jAllocator);
-		jObject.AddMember("sy", Value(scale.getY()), jAllocator);
-		jObject.AddMember("sz", Value(scale.getZ()), jAllocator);
-		jObject.AddMember("rx", Value(rotationAroundXAxis.getAngle()), jAllocator);
-		jObject.AddMember("ry", Value(rotationAroundYAxis.getAngle()), jAllocator);
-		jObject.AddMember("rz", Value(rotationAroundZAxis.getAngle()), jAllocator);
-		jObject.AddMember("r", Value(sceneEntity->getReflectionEnvironmentMappingId(), jAllocator), jAllocator);
-		Value jEntityProperties;
-		jEntityProperties.SetArray();
-		for (auto i = 0; i < sceneEntity->getPropertyCount(); i++) {
-			auto sceneEntityProperty = sceneEntity->getPropertyByIndex(i);
-			Value jSceneEntityProperty;
-			jSceneEntityProperty.SetObject();
-			jSceneEntityProperty.AddMember("name", Value(sceneEntityProperty->getName(), jAllocator), jAllocator);
-			jSceneEntityProperty.AddMember("value", Value(sceneEntityProperty->getValue(), jAllocator), jAllocator);
-			jEntityProperties.PushBack(jSceneEntityProperty, jAllocator);
+	// scene library
+	{
+		Value jSceneLibrary;
+		jSceneLibrary.SetArray();
+		for (auto i = 0; i < sceneLibrary->getPrototypeCount(); i++) {
+			auto prototype = sceneLibrary->getPrototypeAt(i);
+			Value jPrototype;
+			jPrototype.SetObject();
+			if (prototype->isEmbedded() == true) {
+				Value jEmbeddedPrototype;
+				jEmbeddedPrototype.SetObject();
+				PrototypeWriter::write(
+					jDocument,
+					jEmbeddedPrototype,
+					prototype
+				);
+				jPrototype.AddMember("type", Value(prototype->getType()->getName(), jAllocator), jAllocator);
+				jPrototype.AddMember("entity", jEmbeddedPrototype, jAllocator);
+			}
+			jPrototype.AddMember("id", Value().SetInt(prototype->getId()), jAllocator);
+			jPrototype.AddMember("e", Value(prototype->isEmbedded()), jAllocator);
+			jPrototype.AddMember("pf", Value(prototype->getFileName(), jAllocator), jAllocator);
+			jSceneLibrary.PushBack(jPrototype, jAllocator);
 		}
-		jObject.AddMember("properties", jEntityProperties, jAllocator);
-		jObjects.PushBack(jObject, jAllocator);
+		jDocument.AddMember("models", jSceneLibrary, jAllocator);
 	}
-	jDocument.AddMember("objects", jObjects, jAllocator);
-	jDocument.AddMember("objects_eidx", Value(scene->getEntityIdx()), jAllocator);
+	// scene properties
+	{
+		Value jSceneProperties;
+		jSceneProperties.SetArray();
+		for (auto i = 0; i < scene->getPropertyCount(); i++) {
+			auto sceneProperty = scene->getPropertyByIndex(i);
+			Value jSceneProperty;
+			jSceneProperty.SetObject();
+			jSceneProperty.AddMember("name", Value(sceneProperty->getName(), jAllocator), jAllocator);
+			jSceneProperty.AddMember("value", Value(sceneProperty->getValue(), jAllocator), jAllocator);
+			jSceneProperties.PushBack(jSceneProperty, jAllocator);
+		}
+		jDocument.AddMember("properties", jSceneProperties, jAllocator);
+	}
+	// entities
+	{
+		Value jEntities;
+		jEntities.SetArray();
+		for (auto i = 0; i < scene->getEntityCount(); i++) {
+			auto sceneEntity = scene->getEntityAt(i);
+			Value jEntity;
+			jEntity.SetObject();
+			auto& transform = sceneEntity->getTransform();
+			auto& translation = transform.getTranslation();
+			auto& scale = transform.getScale();
+			auto& rotationAroundXAxis = transform.getRotation(scene->getRotationOrder()->getAxisXIndex());
+			auto& rotationAroundYAxis = transform.getRotation(scene->getRotationOrder()->getAxisYIndex());
+			auto& rotationAroundZAxis = transform.getRotation(scene->getRotationOrder()->getAxisZIndex());
+			jEntity.AddMember("id", Value(sceneEntity->getId(), jAllocator), jAllocator);
+			jEntity.AddMember("descr", Value(sceneEntity->getDescription(), jAllocator), jAllocator);;
+			jEntity.AddMember("mid", Value(sceneEntity->getPrototype()->getId()), jAllocator);
+			jEntity.AddMember("tx", Value(translation.getX()), jAllocator);
+			jEntity.AddMember("ty", Value(translation.getY()), jAllocator);
+			jEntity.AddMember("tz", Value(translation.getZ()), jAllocator);
+			jEntity.AddMember("sx", Value(scale.getX()), jAllocator);
+			jEntity.AddMember("sy", Value(scale.getY()), jAllocator);
+			jEntity.AddMember("sz", Value(scale.getZ()), jAllocator);
+			jEntity.AddMember("rx", Value(rotationAroundXAxis.getAngle()), jAllocator);
+			jEntity.AddMember("ry", Value(rotationAroundYAxis.getAngle()), jAllocator);
+			jEntity.AddMember("rz", Value(rotationAroundZAxis.getAngle()), jAllocator);
+			jEntity.AddMember("r", Value(sceneEntity->getReflectionEnvironmentMappingId(), jAllocator), jAllocator);
+			Value jEntityProperties;
+			jEntityProperties.SetArray();
+			for (auto i = 0; i < sceneEntity->getPropertyCount(); i++) {
+				auto sceneEntityProperty = sceneEntity->getPropertyByIndex(i);
+				Value jSceneEntityProperty;
+				jSceneEntityProperty.SetObject();
+				jSceneEntityProperty.AddMember("name", Value(sceneEntityProperty->getName(), jAllocator), jAllocator);
+				jSceneEntityProperty.AddMember("value", Value(sceneEntityProperty->getValue(), jAllocator), jAllocator);
+				jEntityProperties.PushBack(jSceneEntityProperty, jAllocator);
+			}
+			jEntity.AddMember("properties", jEntityProperties, jAllocator);
+			jEntities.PushBack(jEntity, jAllocator);
+		}
+		jDocument.AddMember("objects", jEntities, jAllocator);
+		jDocument.AddMember("objects_eidx", Value(scene->getEntityIdx()), jAllocator);
+	}
+	{
+		Value jSky;
+		jSky.SetObject();
+		jSky.AddMember("file", Value(scene->getSkyModelFileName(), jAllocator), jAllocator);
+		jSky.AddMember("sx", Value(scene->getSkyModelScale().getX()), jAllocator);
+		jSky.AddMember("sy", Value(scene->getSkyModelScale().getY()), jAllocator);
+		jSky.AddMember("sz", Value(scene->getSkyModelScale().getZ()), jAllocator);
+		jDocument.AddMember("sky", jSky, jAllocator);
+	}
+	//
+	jDocument.AddMember("gui", Value(scene->getGUIFileName(), jAllocator), jAllocator);
 
-	Value jSky;
-	jSky.SetObject();
-	jSky.AddMember("file", Value(scene->getSkyModelFileName(), jAllocator), jAllocator);
-	jSky.AddMember("sx", Value(scene->getSkyModelScale().getX()), jAllocator);
-	jSky.AddMember("sy", Value(scene->getSkyModelScale().getY()), jAllocator);
-	jSky.AddMember("sz", Value(scene->getSkyModelScale().getZ()), jAllocator);
-	jDocument.AddMember("sky", jSky, jAllocator);
-
+	//
 	StringBuffer strbuf;
 	Writer<StringBuffer> writer(strbuf);
 	jDocument.Accept(writer);
 
+	//
 	FileSystem::getInstance()->setContentFromString(pathName, fileName, strbuf.GetString());
 }

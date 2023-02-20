@@ -319,6 +319,11 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 	}
 
 	//
+	if (jRoot.FindMember("gui") != jRoot.MemberEnd()) {
+		scene->setGUIFileName(jRoot["gui"].GetString());
+	}
+
+	//
 	if (progressCallback != nullptr) {
 		progressCallback->progress(1.0f);
 		delete progressCallback;

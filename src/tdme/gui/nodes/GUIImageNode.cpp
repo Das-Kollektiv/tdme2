@@ -151,6 +151,7 @@ void GUIImageNode::setSource(const string& source) {
 	disposeTexture();
 	this->source = source;
 	if (source.empty() == false) {
+		// tdme mesh
 		if (StringTools::endsWith(StringTools::toLowerCase(source), ".tm") == true) {
 			try {
 				vector<uint8_t> thumbnailPNGData;
@@ -177,6 +178,7 @@ void GUIImageNode::setSource(const string& source) {
 				Console::println(string() + "GUIImageNode::setSource(): " + exception.what());
 			}
 		} else
+		// tmodel
 		if (StringTools::endsWith(StringTools::toLowerCase(source), ".tmodel") == true) {
 			try {
 				vector<uint8_t> thumbnailPNGData;
@@ -197,7 +199,17 @@ void GUIImageNode::setSource(const string& source) {
 					}
 				} else {
 					this->texture = screenNode->getImage(screenNode->getApplicationRootPathName(), "resources/engine/images/tdme_big.png");
+					this->releaseTextureReference = false;
 				}
+			} catch (Exception& exception) {
+				Console::println(string() + "GUIImageNode::setSource(): " + exception.what());
+			}
+		} else
+		// gui xml
+		if (StringTools::endsWith(StringTools::toLowerCase(source), ".xml") == true) {
+			try {
+				this->texture = screenNode->getImage(screenNode->getApplicationRootPathName(), "resources/engine/images/gui_big.png");
+				this->releaseTextureReference = false;
 			} catch (Exception& exception) {
 				Console::println(string() + "GUIImageNode::setSource(): " + exception.what());
 			}
