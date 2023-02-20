@@ -320,7 +320,10 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 
 	//
 	if (jRoot.FindMember("gui") != jRoot.MemberEnd()) {
-		scene->setGUIFileName(jRoot["gui"].GetString());
+		auto guiFileName = jRoot["gui"].GetString();
+		auto externalPrototypePathName = PrototypeReader::getResourcePathName(pathName, guiFileName);
+		auto externalPrototypeFileName = FileSystem::getInstance()->getFileName(guiFileName);
+		scene->setGUIFileName(guiFileName);
 	}
 
 	//
