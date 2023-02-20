@@ -10,6 +10,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/logics/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/events/GUIContextMenuRequestListener.h>
@@ -51,6 +52,7 @@ using std::unordered_set;
 
 using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::logics::Context;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIContextMenuRequestListener;
@@ -105,7 +107,8 @@ GUIScreenNode::GUIScreenNode(
 	const string& tooltip,
 	bool scrollable,
 	bool popUp,
-	const string& script
+	const string& script,
+	Context* context
 ):
 	GUIParentNode(this, nullptr, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn, tooltip)
 {
@@ -165,6 +168,8 @@ GUIScreenNode::GUIScreenNode(
 			Console::println("onDragRequest: " + string(this->scriptOnDragRequestAvailable == true?"YES":"NO"));
 			Console::println("onTick: " + string(this->scriptOnTickAvailable == true?"YES":"NO"));
 			Console::println();
+			//
+			this->context = context;
 		}
 	}
 }

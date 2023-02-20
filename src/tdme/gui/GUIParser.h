@@ -5,6 +5,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/logics/fwd-tdme.h>
 #include <tdme/gui/effects/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
@@ -20,6 +21,7 @@ using std::map;
 using std::unordered_map;
 using std::vector;
 
+using tdme::engine::logics::Context;
 using tdme::gui::effects::GUIEffect;
 using tdme::gui::elements::GUIElement;
 using tdme::gui::nodes::GUINode;
@@ -84,11 +86,12 @@ public:
 	 * @param fileName file name
 	 * @param parameters parameters aka key value pairs for substitution
 	 * @param miniScriptArguments mini script arguments
+	 * @param context application logic context
 	 * @return GUI screen node
 	 * @throws tdme::gui::GUIParserException
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	static GUIScreenNode* parse(const string& pathName, const string& fileName, const unordered_map<string, string>& parameters = {}, const MiniScript::ScriptVariable& miniScriptArguments = MiniScript::ScriptVariable());
+	static GUIScreenNode* parse(const string& pathName, const string& fileName, const unordered_map<string, string>& parameters = {}, const MiniScript::ScriptVariable& miniScriptArguments = MiniScript::ScriptVariable(), Context* context = nullptr);
 
 	/**
 	 * Parses a GUI XML content
@@ -97,11 +100,12 @@ public:
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @param miniScriptArguments mini script arguments
+	 * @param context application logic context
 	 * @return GUI screen node
 	 * @throws tdme::gui::GUIParserException
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	static GUIScreenNode* parse(const string& xml, const unordered_map<string, string>& parameters = {}, const string& pathName = string(), const string& fileName = string(), const MiniScript::ScriptVariable& miniScriptArguments = MiniScript::ScriptVariable());
+	static GUIScreenNode* parse(const string& xml, const unordered_map<string, string>& parameters = {}, const string& pathName = string(), const string& fileName = string(), const MiniScript::ScriptVariable& miniScriptArguments = MiniScript::ScriptVariable(), Context* context = nullptr);
 
 	/**
 	 * Parses a GUI XML file into parent node

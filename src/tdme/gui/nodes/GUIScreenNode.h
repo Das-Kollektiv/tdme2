@@ -7,6 +7,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
+#include <tdme/engine/logics/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/fwd-tdme.h>
@@ -25,6 +26,7 @@ using std::unordered_set;
 using std::vector;
 
 using tdme::engine::Texture;
+using tdme::engine::logics::Context;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
@@ -150,6 +152,8 @@ private:
 	bool scriptOnTooltipCloseRequestAvailable { false };
 	bool scriptOnDragRequestAvailable { false };
 	bool scriptOnTickAvailable { false };
+
+	Context* context { nullptr };
 
 public:
 	/**
@@ -282,6 +286,7 @@ protected:
 	 * @param scrollable scrollable
 	 * @param popUp pop up
 	 * @param script MiniScript script
+	 * @param context application logic context
 	 * @throws tdme::gui::GUIParserException
 	 */
 	GUIScreenNode(
@@ -307,7 +312,8 @@ protected:
 		const string& tooltip,
 		bool scrollable,
 		bool popUp,
-		const string& script
+		const string& script,
+		Context* context
 	);
 
 	/**
@@ -748,4 +754,12 @@ public:
 	inline GUIMiniScript* getMiniScript() {
 		return script;
 	}
+
+	/**
+	 * @return application logic context
+	 */
+	inline Context* getContext() {
+		return context;
+	}
+
 };

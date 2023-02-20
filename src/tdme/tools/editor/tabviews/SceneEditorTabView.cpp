@@ -29,6 +29,7 @@
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/misc/CameraInputHandler.h>
 #include <tdme/tools/editor/misc/CameraInputHandlerEventHandler.h>
@@ -75,6 +76,7 @@ using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
+using tdme::gui::GUIParser;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::misc::CameraInputHandler;
 using tdme::tools::editor::misc::CameraInputHandlerEventHandler;
@@ -191,10 +193,14 @@ void SceneEditorTabView::handleInputEvents()
 {
 	// if scene is running, no not do HID input except camera
 	if (applicationClient != nullptr) {
-		//
-		applicationClient->handleHIDEvents(engine->getGUI()->getMouseEvents(), engine->getGUI()->getKeyboardEvents());
-		// TODO: only call this, if camera has not been changed or something
-		// cameraInputHandler->handleInputEvents();
+		auto gui = engine->getGUI();
+		// handle events in GUI
+		gui->handleEvents(false);
+		// forward HID to logics
+		applicationClient->handleHIDEvents(gui->getMouseEvents(), gui->getKeyboardEvents());
+		// clear events
+		gui->getMouseEvents().clear();
+		gui->getKeyboardEvents().clear();
 		//
 		return;
 	}
@@ -479,6 +485,7 @@ void SceneEditorTabView::display()
 		//
 		applicationClient->update();
 		engine->display();
+		engine->getGUI()->render();
 		//
 		return;
 	}
@@ -1445,6 +1452,23 @@ void SceneEditorTabView::runScene() {
 	applicationClient = new ApplicationClient(applicationContext);
 	applicationContext->initialize();
 
+	// add gui
+	if (scene->getGUIFileName().empty() == false) {
+		try {
+			auto screenNode = GUIParser::parse(
+				Tools::getPathName(scene->getGUIFileName()),
+				Tools::getFileName(scene->getGUIFileName()),
+				{},
+				MiniScript::ScriptVariable(),
+				applicationContext
+			);
+			engine->getGUI()->addScreen(screenNode->getId(), screenNode);
+			engine->getGUI()->addRenderScreen(screenNode->getId());
+		} catch (Exception& exception) {
+			Console::println("SceneEditorTabView::runScene(): an error occurred: " + string(exception.what()));
+		}
+	}
+
 	// add logics
 	for (auto i = 0; i < scene->getEntityCount(); i++) {
 		auto entity = scene->getEntityAt(i);
@@ -1491,6 +1515,7 @@ void SceneEditorTabView::stopScene() {
 	applicationContext = nullptr;
 
 	// reset scene
+	engine->getGUI()->reset();
 	SceneConnector::resetEngine(engine, scene);
 	SceneConnector::setLights(engine, scene, Vector3());
 	SceneConnector::addScene(engine, scene, true, true, true, true, true);

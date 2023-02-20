@@ -184,12 +184,12 @@ const string GUIParser::getRootNode(const string& xml) {
 	return rootNode;
 }
 
-GUIScreenNode* GUIParser::parse(const string& pathName, const string& fileName, const unordered_map<string, string>& parameters, const MiniScript::ScriptVariable& miniScriptArguments)
+GUIScreenNode* GUIParser::parse(const string& pathName, const string& fileName, const unordered_map<string, string>& parameters, const MiniScript::ScriptVariable& miniScriptArguments, Context* context)
 {
-	return parse(FileSystem::getInstance()->getContentAsString(pathName, fileName), parameters, pathName, fileName, miniScriptArguments);
+	return parse(FileSystem::getInstance()->getContentAsString(pathName, fileName), parameters, pathName, fileName, miniScriptArguments, context);
 }
 
-GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, string>& parameters, const string& pathName, const string& fileName, const MiniScript::ScriptVariable& miniScriptArguments)
+GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, string>& parameters, const string& pathName, const string& fileName, const MiniScript::ScriptVariable& miniScriptArguments, Context* context)
 {
 	auto applicationRootPath = Tools::getApplicationRootPathName(pathName);
 	auto applicationSubPathName = Tools::getApplicationSubPathName(pathName);
@@ -280,7 +280,8 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 		unescapeQuotes(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("tooltip")))),
 		StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("scrollable")))), "true"),
 		StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("popup")))), "true"),
-		string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("script")))
+		string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("script"))),
+		context
 	);
 	// workaround for having GUINode constructor to be called before GUIScreenNode constructor
 	// so GUIScreenNode::applicationRootPath is not available at GUIScreenNode::GUINode construction time

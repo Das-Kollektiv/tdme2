@@ -56,6 +56,13 @@ public:
 		}
 	}
 
+	/**
+	 * @return Returns mini script
+	 */
+	inline LogicMiniScript* getMiniScript() {
+		return miniScript;
+	}
+
 	// overridden methods
 	inline void handleHIDEvents(vector<GUIMouseEvent>& mouseEvents, vector<GUIKeyboardEvent>& keyEvents) {
 		miniScript->collectHIDEvents(mouseEvents, keyEvents);
