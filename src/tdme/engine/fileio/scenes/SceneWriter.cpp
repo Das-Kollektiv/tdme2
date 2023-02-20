@@ -182,6 +182,7 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene* s
 		jDocument.AddMember("objects", jEntities, jAllocator);
 		jDocument.AddMember("objects_eidx", Value(scene->getEntityIdx()), jAllocator);
 	}
+	// sky
 	{
 		Value jSky;
 		jSky.SetObject();
