@@ -1,9 +1,13 @@
 <template>	
 	<layout id="{$id}" width="100%" height="100%" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
-		<layout width="100%" height="35" padding-bottom="5" alignment="horizontal" horizontal-align="left" vertical-align="top">
-			<space width="*"/>
-			<checkbox id="{$id}_checkbox_visualui" image-unchecked="resources/engine/images/gui.png" image-checked="resources/engine/images/script.png" value="1" selected="true"/>
-		</layout>	
+
+		<element id="{$id}_toolbar" width="100%">	
+			<layout hide-on="fullscreen" width="100%" height="35" padding-bottom="5" alignment="horizontal" horizontal-align="left" vertical-align="top">
+				<space width="*"/>
+				<checkbox id="{$id}_checkbox_visualui" image-unchecked="resources/engine/images/gui.png" image-checked="resources/engine/images/script.png" value="1" selected="true"/>
+			</layout>
+		</element>
+			
 		<element id="{$id}_editor" width="100%" height="*" ignore-events="true">
 			<styled-input id="{$id}_text" show-on="text" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" padding="5" width="100%" height="100%" preformatted="true">
 			</styled-input>
