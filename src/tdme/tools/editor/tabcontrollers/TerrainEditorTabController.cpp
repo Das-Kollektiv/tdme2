@@ -1150,39 +1150,39 @@ void TerrainEditorTabController::updateDetails(const string& outlinerNode) {
 		currentTerrainBrushOperation = getUITerrainBrushOperation();
 		currentFoliageBrushOperation = Terrain::BRUSHOPERATION_NONE;
 		view->setBrush(currentTerrainBrushOperation == Terrain::BRUSHOPERATION_RAMP?rampTerrainBrushTexture:currentTerrainBrushTexture, currentTerrainBrushScale, currentTerrainBrushStrength);
-		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_viewport"))->getActiveConditions().set("terrain");
+		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_toolbar"))->getActiveConditions().set("terrain");
 	} else
 	if (outlinerNode == "terrain.brush") {
 		setTerrainBrushDetails();
 		currentTerrainBrushOperation = getUITerrainBrushOperation();
 		currentFoliageBrushOperation = Terrain::BRUSHOPERATION_NONE;
 		view->unsetBrush();
-		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_viewport"))->getActiveConditions().set("terrain");
+		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_toolbar"))->getActiveConditions().set("terrain");
 	} else
 	if (outlinerNode == "terrain.waters" || StringTools::startsWith(outlinerNode, "terrain.waters.") == true) {
 		currentTerrainBrushOperation = getUIWaterOperation();
 		currentFoliageBrushOperation = Terrain::BRUSHOPERATION_NONE;
 		view->unsetBrush();
-		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_viewport"))->getActiveConditions().set("water");
+		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_toolbar"))->getActiveConditions().set("water");
 	} else
 	if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == true) {
 		setFoliageBrushDetails();
 		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_NONE;
 		currentFoliageBrushOperation = getUIFoliageBrushOperation();
 		updateFoliageBrush();
-		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_viewport"))->getActiveConditions().set("foliage");
+		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_toolbar"))->getActiveConditions().set("foliage");
 	} else
 	if (StringTools::startsWith(outlinerNode, "terrain.foliagebrushes.") == true) {
 		setFoliageBrushPrototypeDetails();
 		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_NONE;
 		currentFoliageBrushOperation = getUIFoliageBrushOperation();
 		updateFoliageBrush();
-		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_viewport"))->getActiveConditions().set("foliage");
+		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_toolbar"))->getActiveConditions().set("foliage");
 	} else {
 		view->unsetBrush();
 		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_NONE;
 		currentFoliageBrushOperation = Terrain::BRUSHOPERATION_NONE;
-		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_viewport"))->getActiveConditions().removeAll();
+		required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById(view->getTabId() + "_tab_toolbar"))->getActiveConditions().removeAll();
 		basePropertiesSubController->updateDetails(view->getPrototype(), outlinerNode);
 	}
 }

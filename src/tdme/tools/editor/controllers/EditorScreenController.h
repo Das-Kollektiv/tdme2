@@ -18,6 +18,7 @@
 #include <tdme/gui/events/GUIFocusListener.h>
 #include <tdme/gui/events/GUITooltipRequestListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/gui/nodes/GUINode_Padding.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/tools/editor/controllers/fwd-tdme.h>
@@ -48,6 +49,7 @@ using tdme::gui::events::GUITooltipRequestListener;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUINode;
+using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIStyledTextNode;
@@ -360,6 +362,7 @@ private:
 	vector<FileEntity*> fileEntities;
 
 	string fullScreenTabId;
+	GUINode_Padding fullScreenTabPadding;
 
 	/**
 	 * Lock file entities mutex
