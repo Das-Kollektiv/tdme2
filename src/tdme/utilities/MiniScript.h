@@ -338,60 +338,6 @@ public:
 		}
 
 	public:
-		/**
-		 * Assignment operator
-		 * @param scriptVariable script variable to copy
-		 * @return this script variable
-		 */
-		inline ScriptVariable& operator=(const ScriptVariable& scriptVariable) {
-			switch(scriptVariable.type) {
-				case TYPE_VOID:
-					break;
-				case TYPE_BOOLEAN:
-					setValue(scriptVariable.getBooleanValueReference());
-					break;
-				case TYPE_INTEGER:
-					setValue(scriptVariable.getIntegerValueReference());
-					break;
-				case TYPE_FLOAT:
-					setValue(scriptVariable.getFloatValueReference());
-					break;
-				case TYPE_STRING:
-					setValue(scriptVariable.getStringValueReference());
-					break;
-				case TYPE_VECTOR2:
-					setValue(scriptVariable.getVector2ValueReference());
-					break;
-				case TYPE_VECTOR3:
-					setValue(scriptVariable.getVector3ValueReference());
-					break;
-				case TYPE_VECTOR4:
-					setValue(scriptVariable.getVector4ValueReference());
-					break;
-				case TYPE_QUATERNION:
-					setValue(scriptVariable.getQuaternionValueReference());
-					break;
-				case TYPE_MATRIX3x3:
-					setValue(scriptVariable.getMatrix3x3ValueReference());
-					break;
-				case TYPE_MATRIX4x4:
-					setValue(scriptVariable.getMatrix4x4ValueReference());
-					break;
-				case TYPE_TRANSFORM:
-					setValue(scriptVariable.getTransformValueReference());
-					break;
-				case TYPE_ARRAY:
-					setValue(scriptVariable.getArrayValueReference());
-					break;
-				case TYPE_MAP:
-					setValue(scriptVariable.getMapValueReference());
-					break;
-				case TYPE_SET:
-					setValue(scriptVariable.getSetValueReference());
-					break;
-			}
-			return *this;
-		}
 
 		/**
 		 * Copy constructor
@@ -455,6 +401,74 @@ public:
 			valuePtr = scriptVariable.valuePtr;
 			scriptVariable.type = TYPE_VOID;
 			scriptVariable.valuePtr = 0LL;
+		}
+
+		/**
+		 * Assignment operator
+		 * @param scriptVariable script variable to copy
+		 * @return this script variable
+		 */
+		inline ScriptVariable& operator=(const ScriptVariable& scriptVariable) {
+			switch(scriptVariable.type) {
+				case TYPE_VOID:
+					break;
+				case TYPE_BOOLEAN:
+					setValue(scriptVariable.getBooleanValueReference());
+					break;
+				case TYPE_INTEGER:
+					setValue(scriptVariable.getIntegerValueReference());
+					break;
+				case TYPE_FLOAT:
+					setValue(scriptVariable.getFloatValueReference());
+					break;
+				case TYPE_STRING:
+					setValue(scriptVariable.getStringValueReference());
+					break;
+				case TYPE_VECTOR2:
+					setValue(scriptVariable.getVector2ValueReference());
+					break;
+				case TYPE_VECTOR3:
+					setValue(scriptVariable.getVector3ValueReference());
+					break;
+				case TYPE_VECTOR4:
+					setValue(scriptVariable.getVector4ValueReference());
+					break;
+				case TYPE_QUATERNION:
+					setValue(scriptVariable.getQuaternionValueReference());
+					break;
+				case TYPE_MATRIX3x3:
+					setValue(scriptVariable.getMatrix3x3ValueReference());
+					break;
+				case TYPE_MATRIX4x4:
+					setValue(scriptVariable.getMatrix4x4ValueReference());
+					break;
+				case TYPE_TRANSFORM:
+					setValue(scriptVariable.getTransformValueReference());
+					break;
+				case TYPE_ARRAY:
+					setValue(scriptVariable.getArrayValueReference());
+					break;
+				case TYPE_MAP:
+					setValue(scriptVariable.getMapValueReference());
+					break;
+				case TYPE_SET:
+					setValue(scriptVariable.getSetValueReference());
+					break;
+			}
+			return *this;
+		}
+
+		/**
+		 * Move operator
+		 * @param scriptVariable script variable to move from
+		 * @return this script variable
+		 */
+		inline ScriptVariable& operator=(ScriptVariable&& scriptVariable) {
+			type = scriptVariable.type;
+			valuePtr = scriptVariable.valuePtr;
+			scriptVariable.type = TYPE_VOID;
+			scriptVariable.valuePtr = 0LL;
+			return *this;
 		}
 
 		/**
