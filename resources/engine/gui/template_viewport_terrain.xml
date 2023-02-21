@@ -1,33 +1,33 @@
 <template>	
 	<layout id="{$id}" width="100%" height="100%" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
 
-			<element id="{$id}_viewport" width="100%" height="35" focusable="true" ignore-events="true">
+			<element id="{$id}_viewport" width="100%" height="35" padding-bottom="5" vertical-align="top" focusable="true" ignore-events="true">
 				<layout show-on="water" width="100%" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center">	
-					<radiobutton template="radiobutton_template_toolbar.xml" id="{$id}_water_water" name="brush" value="1" image="resources/engine/images/terrain_water.png" />
+					<radiobutton template="radiobutton_template_toolbar.xml" id="{$id}_water_water" name="brush" width="30" height="30" value="1" image="resources/engine/images/terrain_water.png" />
 					<space width="5"/>
 					<space width="1" background-color="{$color.font_normal}"/>
 					<space width="5"/>
-					<radiobutton template="radiobutton_template_toolbar.xml" id="{$id}_water_delete" name="brush" value="1" image="resources/engine/images/delete.png" />
+					<radiobutton template="radiobutton_template_toolbar.xml" id="{$id}_water_delete" name="brush" width="30" height="30" value="1" image="resources/engine/images/delete.png" />
 				</layout>
 				<layout show-on="terrain" width="100%" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center">	
-					<radiobutton template="radiobutton_template_toolbar.xml" id="{$id}_terrain_add" name="brush" value="1" image="resources/engine/images/terrain_add.png" />
+					<radiobutton template="radiobutton_template_toolbar.xml" id="{$id}_terrain_add" name="brush" width="30" height="30" value="1" image="resources/engine/images/terrain_add.png" />
 					<space width="5"/>
-					<radiobutton template="radiobutton_template_toolbar.xml" id="{$id}_terrain_substract" name="brush" value="1" image="resources/engine/images/terrain_substract.png" />
+					<radiobutton template="radiobutton_template_toolbar.xml" id="{$id}_terrain_substract" name="brush" width="30" height="30" value="1" image="resources/engine/images/terrain_substract.png" />
 					<space width="5"/>
-					<radiobutton template="radiobutton_template_toolbar.xml" id="{$id}_terrain_flatten" name="brush" value="1" image="resources/engine/images/terrain_flatten.png" />
+					<radiobutton template="radiobutton_template_toolbar.xml" id="{$id}_terrain_flatten" name="brush" width="30" height="30" value="1" image="resources/engine/images/terrain_flatten.png" />
 					<space width="5"/>
-					<radiobutton template="radiobutton_template_toolbar.xml" id="{$id}_terrain_smooth" name="brush" value="1" image="resources/engine/images/terrain_smooth.png" />
-					<space width="5"/>
-					<space width="1" background-color="{$color.font_normal}"/>
-					<space width="5"/>
-					<radiobutton template="radiobutton_template_toolbar.xml" id="{$id}_terrain_ramp" name="brush" value="1" image="resources/engine/images/terrain_ramp.png" />
+					<radiobutton template="radiobutton_template_toolbar.xml" id="{$id}_terrain_smooth" name="brush" width="30" height="30" value="1" image="resources/engine/images/terrain_smooth.png" />
 					<space width="5"/>
 					<space width="1" background-color="{$color.font_normal}"/>
 					<space width="5"/>
-					<radiobutton template="radiobutton_template_toolbar.xml" id="{$id}_terrain_delete" name="brush" value="1" image="resources/engine/images/delete.png" />
+					<radiobutton template="radiobutton_template_toolbar.xml" id="{$id}_terrain_ramp" name="brush" width="30" height="30" value="1" image="resources/engine/images/terrain_ramp.png" />
+					<space width="5"/>
+					<space width="1" background-color="{$color.font_normal}"/>
+					<space width="5"/>
+					<radiobutton template="radiobutton_template_toolbar.xml" id="{$id}_terrain_delete" name="brush" width="30" height="30" value="1" image="resources/engine/images/delete.png" />
 				</layout>
 				<layout show-on="foliage" width="100%" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center">	
-					<radiobutton template="radiobutton_template_toolbar.xml" id="{$id}_foliage_add" name="brush" width="40" height="40" value="1" image="resources/engine/images/foliage_add.png" />
+					<radiobutton template="radiobutton_template_toolbar.xml" id="{$id}_foliage_add" name="brush" width="30" height="30" value="1" image="resources/engine/images/foliage_add.png" />
 					<space width="5"/>
 					<!--
 					<radiobutton template="radiobutton_template_toolbar.xml" id="{$id}_foliage_smooth" name="brush" width="40" height="40" value="1" image="resources/engine/images/terrain_smooth.png" />
@@ -35,10 +35,10 @@
 					<space width="5"/>
 					<space width="1" background-color="{$color.font_normal}"/>
 					<space width="5"/>
-					<radiobutton template="radiobutton_template_toolbar.xml" id="{$id}_foliage_delete" name="brush" value="1" image="resources/engine/images/delete.png" />
+					<radiobutton template="radiobutton_template_toolbar.xml" id="{$id}_foliage_delete" name="brush" width="30" height="30" value="1" image="resources/engine/images/delete.png" />
 				</layout>
 				<layout width="100%" height="auto" alignment="horizontal" horizontal-align="right" vertical-align="center">
-					<checkbox template="checkbox_template_toolbar.xml" id="{$id}_checkbox_grid" image-unchecked="resources/engine/images/checkbox_gridoff.png" image-checked="resources/engine/images/checkbox_gridon.png" value="1" selected="true" />
+					<checkbox template="checkbox_template_toolbar.xml" id="{$id}_checkbox_grid" image-unchecked="resources/engine/images/checkbox_gridoff.png" width="30" height="30" image-checked="resources/engine/images/checkbox_gridon.png" value="1" selected="true" />
 				</layout>
 
 			</element>
