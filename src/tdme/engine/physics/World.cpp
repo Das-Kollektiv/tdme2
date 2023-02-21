@@ -73,13 +73,13 @@ World::World(const string& id)
 {
 	// logger
 	if (physicsCommon.getLogger() == nullptr) {
-		// Create the default logger 
+		// create the default logger
 		auto logger = physicsCommon.createDefaultLogger();
-		// Log level (warnings and errors) 
+		// log level (warnings and errors)
 		auto logLevel = static_cast<uint32_t>(static_cast<uint32_t>(reactphysics3d::Logger::Level::Warning) | static_cast<uint32_t>(reactphysics3d::Logger::Level::Error));
-		// Output the logs into the standard output 
+		// output the logs into the standard output
 		logger->addStreamDestination(std::cout, logLevel, reactphysics3d::DefaultLogger::Format::Text);
-		// Set the logger 
+		// set the logger
 		physicsCommon.setLogger(logger);
 	}
 	//
@@ -92,6 +92,9 @@ World::World(const string& id)
 
 World::~World()
 {
+	// we need to unset logger here otherwise RP3D will crash
+	physicsCommon.setLogger(nullptr);
+	//
 	for (auto worldListener: worldListeners) delete worldListener;
 	worldListeners.clear();
 	reset();
