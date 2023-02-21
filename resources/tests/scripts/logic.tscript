@@ -195,10 +195,10 @@ end
 
 # if no condition is met, nothing will be executed, lol :D
 on: nothing
-	console.log("-----------------------------")
-	console.log("on: nothing: " + logic.getId())
-	console.log("-----------------------------")
-	console.log()
+	#console.log("-----------------------------")
+	#console.log("on: nothing: " + logic.getId())
+	#console.log("-----------------------------")
+	#console.log()
 end
 
 # an error has occurred

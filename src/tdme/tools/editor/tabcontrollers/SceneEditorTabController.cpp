@@ -662,6 +662,12 @@ void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 	if (basePropertiesSubController->onAction(type, node, view->getScene()) == true) return;
 	//
 	if (type != GUIActionListenerType::PERFORMED) return;
+	if (node->getId() == view->getTabId() + "_tab_button_play") {
+		view->runScene();
+	} else
+	if (node->getId() == view->getTabId() + "_tab_button_stop") {
+		view->stopScene();
+	} else
 	if (node->getId() == "menu_view_scene_run") {
 		view->runScene();
 	} else
