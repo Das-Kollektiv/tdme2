@@ -30,14 +30,14 @@
 						<menu-item text="Find/Replace" id="menu_edit_findreplace" image="resources/engine/images/search.png" shortcut="Ctrl F" />
 					</menu-header-item>
 					<menu-header-item text="Viewport">
+						<menu-item text="Run Scene" image="resources/engine/images/play.png" id="menu_view_scene_run" />
+						<menu-item text="Stop Scene" image="resources/engine/images/stop.png" id="menu_view_scene_stop" />
+						<menu-separator />
 						<menu-item text="Full Screen" id="menu_view_fullscreen" image="resources/engine/images/fullscreen.png" shortcut="F11" />
 						<layout id="menu_view_tabs" alignment="vertical" width="auto">
 						</layout>
 					</menu-header-item>
 					<menu-header-item text="Project">
-						<menu-item text="Run Scene" image="resources/engine/images/play.png" id="menu_project_scene_run" />
-						<menu-item text="Stop Scene" image="resources/engine/images/stop.png" id="menu_project_scene_stop" />
-						<menu-separator />
 						<menu-item text="Clean" id="menu_project_clean" />
 						<menu-item text="Build" id="menu_project_build" />
 						<menu-separator />
