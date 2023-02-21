@@ -1,6 +1,6 @@
 <template>	
 	<layout id="{$id}" width="100%" height="100%" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
-		<layout width="100%" height="35" alignment="horizontal" horizontal-align="left" vertical-align="top">
+		<layout width="100%" height="35" padding-bottom="5" alignment="horizontal" horizontal-align="left" vertical-align="top">
 			<space width="*"/>
 			<checkbox id="{$id}_checkbox_visualui" image-unchecked="resources/engine/images/gui.png" image-checked="resources/engine/images/script.png" value="1" selected="true"/>
 		</layout>	
