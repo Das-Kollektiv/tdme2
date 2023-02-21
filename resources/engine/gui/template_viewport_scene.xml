@@ -17,12 +17,12 @@
 					<space width="10"/>
 					<radiobutton template="radiobutton_template_toolbar.xml" id="{$id}_button_gizmo" name="gizmo" width="30" height="30" value="1" image="resources/engine/images/gizmo.png" selected="true" />
 				</layout>
-				<layout width="100%" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
+				<layout show-on="scene" width="100%" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
 					<button template="button_template_toolbar.xml" id="{$id}_button_play" width="30" height="30" image="resources/engine/images/play.png" />
 					<space width="10"/>
 					<button template="button_template_toolbar.xml" id="{$id}_button_stop" width="30" height="30" image="resources/engine/images/stop.png" />
 				</layout>
-				<layout show-on="tools" width="100%" height="auto" alignment="horizontal" horizontal-align="right" vertical-align="center">
+				<layout width="100%" height="auto" alignment="horizontal" horizontal-align="right" vertical-align="center">
 					<layout width="auto" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
 						<checkbox template="checkbox_template_toolbar.xml" id="{$id}_checkbox_grid" width="30" height="30" image-unchecked="resources/engine/images/checkbox_gridoff.png" image-checked="resources/engine/images/checkbox_gridon.png" value="1" selected="true" />
 						<layout show-on="bvs" width="auto" height="auto" alignment="vertical">

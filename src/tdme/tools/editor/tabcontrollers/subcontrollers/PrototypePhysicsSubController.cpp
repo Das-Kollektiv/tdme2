@@ -893,11 +893,11 @@ void PrototypePhysicsSubController::onContextMenuRequest(GUIElementNode* node, i
 }
 
 void PrototypePhysicsSubController::enableTools() {
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(tabView->getTabId() + "_tab_viewport"))->getActiveConditions().add("tools");
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(tabView->getTabId() + "_tab_toolbar"))->getActiveConditions().add("tools");
 }
 
 void PrototypePhysicsSubController::disableTools() {
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(tabView->getTabId() + "_tab_viewport"))->getActiveConditions().remove("tools");
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(tabView->getTabId() + "_tab_toolbar"))->getActiveConditions().remove("tools");
 }
 
 void PrototypePhysicsSubController::setBoundingVolumeConvexMeshFile(int boundingVolumeIdx, const string& fileName, Prototype* prototype) {
