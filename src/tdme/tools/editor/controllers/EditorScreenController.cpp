@@ -28,6 +28,7 @@
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIImageNode.h>
 #include <tdme/gui/nodes/GUINode.h>
+#include <tdme/gui/nodes/GUINode_Padding.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -106,6 +107,7 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
+using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIStyledTextNode;
@@ -347,7 +349,7 @@ void EditorScreenController::onAction(GUIActionListenerType type, GUIElementNode
 		if (StringTools::startsWith(node->getId(), "menu_view_tab_") == true) {
 			selectTabAt(Integer::parse(StringTools::substring(node->getId(), string("menu_view_tab_").size())));
 		} else
-		if (StringTools::startsWith(node->getId(), "tab_viewport_") == true) {
+		if (StringTools::startsWith(node->getId(), "tab_") == true) {
 			string tabIdToClose;
 			for (auto tab: tabViewVector) {
 				if (StringTools::startsWith(node->getId(), tab->getId() + "_close") == true) {
@@ -1684,7 +1686,7 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 	}
 
 	//
-	auto tabId = "tab_viewport_" + StringTools::replace(absoluteFileName, ".", "_");
+	auto tabId = "tab_" + StringTools::replace(absoluteFileName, ".", "_");
 	if (selectTab(tabId) == true) return;
 	tabId = GUIParser::escapeQuotes(tabId);
 
@@ -2224,6 +2226,14 @@ void EditorScreenController::setFullScreen(bool fullScreen) {
 				required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById(fullScreenTabId + "-content"))
 			);
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("screen_editor_screen"))->getActiveConditions().add("fullscreen");
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(fullScreenTabId + "_tab_toolbar"))->getActiveConditions().add("fullscreen");
+			//
+			auto selectedTabNode = screenNode->getNodeById(fullScreenTabId + "_tab");
+			fullScreenTabPadding = selectedTabNode->getPadding();
+			selectedTabNode->getPadding().left = 0;
+			selectedTabNode->getPadding().top = 0;
+			selectedTabNode->getPadding().right = 0;
+			selectedTabNode->getPadding().bottom = 0;
 		}
 	} else
 	if (fullScreenTabId.empty() == false) {
@@ -2231,6 +2241,9 @@ void EditorScreenController::setFullScreen(bool fullScreen) {
 		required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById(fullScreenTabId + "-content"))->moveSubNodes(
 			required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("fullscreen-content"))
 		);
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(fullScreenTabId + "_tab_toolbar"))->getActiveConditions().remove("fullscreen");
+		auto selectedTabNode = screenNode->getNodeById(fullScreenTabId + "_tab");
+		selectedTabNode->getPadding() = fullScreenTabPadding;
 		fullScreenTabId.clear();
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("screen_editor_screen"))->getActiveConditions().remove("fullscreen");
 	}
