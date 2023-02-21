@@ -1647,6 +1647,8 @@ void GUIStyledTextNode::unsetTextStyle(int startIdx, int endIdx) {
 			style.endIdx = startIdx - 1;
 			styleNext.startIdx = endIdx + 1;
 			styles.insert(styles.begin() + i + 1, styleNext);
+			i++;
+			continue;
 		} else {
 			if (startIdx >= style.startIdx && startIdx <= style.endIdx) {
 				style.endIdx = startIdx - 1;

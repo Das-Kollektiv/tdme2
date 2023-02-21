@@ -2237,13 +2237,13 @@ void EditorScreenController::setFullScreen(bool fullScreen) {
 }
 
 void EditorScreenController::enableSceneMenuEntry() {
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("menu_project_scene_run"))->getController()->setDisabled(false);
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("menu_project_scene_stop"))->getController()->setDisabled(false);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("menu_view_scene_run"))->getController()->setDisabled(false);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("menu_view_scene_stop"))->getController()->setDisabled(false);
 }
 
 void EditorScreenController::disableSceneMenuEntry() {
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("menu_project_scene_run"))->getController()->setDisabled(true);
-	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("menu_project_scene_stop"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("menu_view_scene_run"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("menu_view_scene_stop"))->getController()->setDisabled(true);
 }
 
 void EditorScreenController::getViewPort(GUINode* viewPortNode, int& left, int& top, int& width, int& height) {
