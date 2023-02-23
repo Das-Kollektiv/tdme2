@@ -47,7 +47,7 @@
 			</layer>
 		</element>	
 		
-		<layer width="100%" height="*" border="1" border-color="{$color.element_frame}">
+		<layer width="100%" height="*">
 			<image
 				id="{$id}_framebuffer"
 				width="100%" 
