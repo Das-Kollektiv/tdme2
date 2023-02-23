@@ -209,6 +209,13 @@ public:
 	void storeTypingHistoryEntry();
 
 	/**
+	 * Store typing history entry
+	 * @param index index
+	 * @param data data
+	 */
+	void storeTypingHistoryEntry2(int index, const string& data);
+
+	/**
 	 * Store deletion history entry and store prior typing if we have any
 	 * @param index index
 	 * @param count count
