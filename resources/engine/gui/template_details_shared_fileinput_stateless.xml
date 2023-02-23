@@ -6,7 +6,7 @@
 			<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
 				<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
 					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_hint}" text="Select"  />
-					<image id="{$id}" width="100%" height="100%" />
+					<image id="{$id}" width="100%" height="100%" background-color="{$color.element_midground}" />
 				</element>
 				<space width="5" />
 				<layout width="auto" height="auto" alignment="vertical">
