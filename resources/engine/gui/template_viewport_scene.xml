@@ -17,11 +17,10 @@
 					<space width="10"/>
 					<radiobutton template="radiobutton_template_toolbar.xml" id="{$id}_button_gizmo" name="gizmo" width="30" height="30" value="1" image="resources/engine/images/gizmo.png" selected="true" />
 				</layout>
-				<layout show-on="scene" width="100%" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
-					<button template="button_template_toolbar.xml" id="{$id}_button_play" width="30" height="30" image="resources/engine/images/play.png" />
-					<space width="10"/>
-					<button template="button_template_toolbar.xml" id="{$id}_button_stop" width="30" height="30" image="resources/engine/images/stop.png" />
-				</layout>
+				<layer show-on="scene" width="100%" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
+					<button hide-on="running" template="button_template_toolbar.xml" id="{$id}_button_play" width="30" height="30" image="resources/engine/images/play.png" on-mouse-click="{$id}_toolbar.condition+=running" />
+					<button show-on="running" template="button_template_toolbar.xml" id="{$id}_button_stop" width="30" height="30" image="resources/engine/images/stop.png" on-mouse-click="{$id}_toolbar.condition-=running" />
+				</layer>
 				<layout width="100%" height="auto" alignment="horizontal" horizontal-align="right" vertical-align="center">
 					<layout width="auto" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
 						<checkbox template="checkbox_template_toolbar.xml" id="{$id}_checkbox_grid" width="30" height="30" image-unchecked="resources/engine/images/checkbox_gridoff.png" image-checked="resources/engine/images/checkbox_gridon.png" value="1" selected="true" />
@@ -47,7 +46,7 @@
 			</layer>
 		</element>	
 		
-		<layer width="100%" height="*" border="1" border-color="{$color.element_frame}">
+		<layer width="100%" height="*">
 			<image
 				id="{$id}_framebuffer"
 				width="100%" 

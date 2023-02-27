@@ -141,7 +141,8 @@ void GL3Renderer::initialize()
 	glDepthFunc(GL_LEQUAL);
 	glBlendEquation(GL_FUNC_ADD);
 	glDisable(GL_BLEND);
-	#if !defined (__APPLE__)
+	#if !defined (__APPLE__) && !defined(__HAIKU__)
+		// TODO: can this be removed???
 		glEnable(GL_POINT_SPRITE);
 	#endif
 	glEnable(GL_PROGRAM_POINT_SIZE);
@@ -194,7 +195,7 @@ void GL3Renderer::initialize()
 	int glMaxDrawBuffers = 0;
 	glGetIntegerv(GL_MAX_DRAW_BUFFERS, &glMaxDrawBuffers);
 	deferredShadingAvailable = glMaxColorAttachments >= 8 && glMaxDrawBuffers >= 8;
-	#if !defined (__APPLE__)
+	#if !defined (__APPLE__) && !defined(__HAIKU__)
 		// texture compression
 		int textureCompressionParam = 0;
 		glGetInternalformativ(
