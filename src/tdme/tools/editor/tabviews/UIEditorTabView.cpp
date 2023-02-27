@@ -195,6 +195,7 @@ void UIEditorTabView::handleInputEvents()
 
 void UIEditorTabView::display()
 {
+
 	guiEngine->display();
 	guiEngine->getGUI()->render();
 	if (projectedUi == true) engine->display();
