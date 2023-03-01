@@ -308,7 +308,6 @@ void EditorView::display()
 {
 	auto tabView = editorScreenController->getSelectedTab();
 	if (tabView != nullptr) {
-		GUINode::dumpNode(editorScreenController->getScreenNode()->getNodeById("fullscreen-content"));
 		auto xScale = static_cast<float>(engine->getWidth()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenWidth());
 		auto yScale = static_cast<float>(engine->getHeight()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenHeight());
 		int left, top, width, height, offsetX, offsetY;

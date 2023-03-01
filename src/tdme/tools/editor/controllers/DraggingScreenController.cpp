@@ -63,7 +63,6 @@ void DraggingScreenController::initialize()
 		screenNode = GUIParser::parse("resources/engine/gui", "popup_dragging.xml");
 		screenNode->addMoveListener(this);
 		screenNode->setVisible(false);
-		GUINode::dumpNode(screenNode);
 		draggableNode = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("draggable"));
 	} catch (Exception& exception) {
 		Console::println("DraggingScreenController::initialize(): An error occurred: " + string(exception.what()));
