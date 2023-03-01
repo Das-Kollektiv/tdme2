@@ -178,7 +178,8 @@ void GUIScrollAreaController::postLayout()
 		float elementHeight = contentNode->getComputedConstraints().height;
 		float contentHeight = contentNode->getContentHeight();
 		auto scrollableHeight = contentHeight - elementHeight;
-		if (contentHeight > elementHeight) {
+		auto horizontalScrollBarNode = required_dynamic_cast<GUIParentNode*>(node->getScreenNode()->getNodeById(node->getId() + "_horizontal-scrollbar"));;
+		if (contentHeight > elementHeight + horizontalScrollBarNode->getComputedConstraints().height) {
 			required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions().add("vertical-scrollbar");
 			if (contentNode->getChildrenRenderOffsetY() + elementHeight > contentHeight) {
 				contentNode->setChildrenRenderOffsetY(contentHeight - elementHeight);
@@ -193,7 +194,8 @@ void GUIScrollAreaController::postLayout()
 		float elementWidth = contentNode->getComputedConstraints().width;
 		float contentWidth = contentNode->getContentWidth();
 		auto scrollableWidth = contentWidth - elementWidth;
-		if (contentWidth > elementWidth) {
+		auto verticalScrollBarNode = required_dynamic_cast<GUIParentNode*>(node->getScreenNode()->getNodeById(node->getId() + "_vertical-scrollbar"));;
+		if (contentWidth > elementWidth + verticalScrollBarNode->getComputedConstraints().width) {
 			required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions().add("horizontal-scrollbar");
 			if (contentNode->getChildrenRenderOffsetX() + elementWidth > contentWidth) {
 				contentNode->setChildrenRenderOffsetX(contentWidth - elementWidth);
@@ -242,4 +244,3 @@ void GUIScrollAreaController::setValue(const MutableString& value)
 void GUIScrollAreaController::onSubTreeChange()
 {
 }
-
