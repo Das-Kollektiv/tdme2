@@ -457,10 +457,9 @@ void Application::setFullScreen(bool fullScreen) {
 	if (initialized == true) {
 		auto windowMonitor = glfwGetWindowMonitor(glfwWindow);
 		if (windowMonitor == nullptr && fullScreen == true) {
-			int monitorCount = -1;
-			auto monitors = glfwGetMonitors(&monitorCount);
-			auto mode = glfwGetVideoMode(monitors[1]);
-			glfwSetWindowMonitor(glfwWindow, monitors[1], 0, 0, mode->width, mode->height, mode->refreshRate);
+			auto monitor = glfwGetPrimaryMonitor();
+			auto mode = glfwGetVideoMode(monitor);
+			glfwSetWindowMonitor(glfwWindow, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
 		} else
 		if (windowMonitor != nullptr && fullScreen == false) {
 			glfwSetWindowMonitor(glfwWindow, NULL, windowXPosition, windowYPosition, windowWidth, windowHeight, 0);
