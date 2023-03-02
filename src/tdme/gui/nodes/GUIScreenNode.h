@@ -285,7 +285,7 @@ protected:
 	 * @param tooltip tooltip
 	 * @param scrollable scrollable
 	 * @param popUp pop up
-	 * @param script MiniScript script
+	 * @param scriptFileName MiniScript script file name
 	 * @param context application logic context
 	 * @throws tdme::gui::GUIParserException
 	 */
@@ -312,7 +312,7 @@ protected:
 		const string& tooltip,
 		bool scrollable,
 		bool popUp,
-		const string& script,
+		const string& scriptFileName,
 		Context* context
 	);
 
@@ -731,22 +731,20 @@ public:
 
 	/**
 	 * Get font
-	 * @param applicationRootPath application root path
 	 * @param fileName file name
 	 * @param size size
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @return font
 	 */
-	GUIFont* getFont(const string& applicationRootPath, const string& fileName, int size);
+	GUIFont* getFont(const string& fileName, int size);
 
 	/**
 	 * Get image
-	 * @param applicationRootPath application root path
 	 * @param fileName file name
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @return texture
 	 */
-	Texture* getImage(const string& applicationRootPath, const string& fileName);
+	Texture* getImage(const string& fileName);
 
 	/**
 	 * @return mini script script attached to this screen
@@ -761,5 +759,13 @@ public:
 	inline Context* getContext() {
 		return context;
 	}
+
+	/**
+	 * Get project path and filename of given file name
+	 * @param fileName project fileName that can be relative to project path or absolute
+	 * @param projectFilePathName computed project file path name
+	 * @param projectFileFileName computed project file file name
+	 */
+	void getProjectFilePathNameAndFileName(const string &fileName, string& projectFilePathName, string& projectFileFileName);
 
 };

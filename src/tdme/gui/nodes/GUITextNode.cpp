@@ -52,7 +52,7 @@ GUITextNode::GUITextNode(
 ):
 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn, tooltip)
 {
-	this->font = font.empty() == true?nullptr:screenNode->getFont(screenNode->getApplicationRootPathName(), font, size);
+	this->font = font.empty() == true?nullptr:screenNode->getFont(font, size);
 	this->color = color.empty() == true || color.length() == 0?GUIColor():GUIColor(color);
 	this->text.set(text);
 	if (this->font != nullptr) this->font->initialize();
