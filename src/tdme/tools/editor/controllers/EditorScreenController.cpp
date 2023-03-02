@@ -241,7 +241,7 @@ void EditorScreenController::initialize()
 			bool newline { false };
 	};
 	//
-	// Console::setLogger(new EditorLogger(this));
+	Console::setLogger(new EditorLogger(this));
 	//
 	onOpenProject();
 }
