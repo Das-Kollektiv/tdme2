@@ -257,6 +257,6 @@ void GUIGradientNode::setMask(const string& mask) {
 		maskTexture = nullptr;
 	}
 	this->mask = mask;
-	this->maskTexture = mask.empty() == true?nullptr:screenNode->getImage(screenNode->getApplicationRootPathName(), mask);
+	this->maskTexture = mask.empty() == true?nullptr:screenNode->getImage(mask);
 	this->maskTextureId = maskTexture == nullptr?0:Engine::getInstance()->getTextureManager()->addTexture(maskTexture, 0);
 }

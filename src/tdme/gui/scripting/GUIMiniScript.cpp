@@ -95,9 +95,13 @@ void GUIMiniScript::registerMethods() {
 					}
 					// setup next screen node
 					try {
+						string screenPathName;
+						string screenFileName;
+						miniScript->screenNode->getProjectFilePathNameAndFileName(fileName, screenPathName, screenFileName);
+						//
 						miniScript->nextScreenNode = GUIParser::parse(
-							FileSystem::getInstance()->getPathName(fileName),
-							FileSystem::getInstance()->getFileName(fileName),
+							screenPathName,
+							screenFileName,
 							{},
 							argumentValues.size() == 2?argumentValues[1]:MiniScript::ScriptVariable(),
 							miniScript->screenNode->getContext()
@@ -138,9 +142,13 @@ void GUIMiniScript::registerMethods() {
 				} else {
 					// push screen node
 					try {
+						string screenPathName;
+						string screenFileName;
+						miniScript->screenNode->getProjectFilePathNameAndFileName(fileName, screenPathName, screenFileName);
+						//
 						auto screenNode = GUIParser::parse(
-							FileSystem::getInstance()->getPathName(fileName),
-							FileSystem::getInstance()->getFileName(fileName),
+							screenPathName,
+							screenFileName,
 							{},
 							argumentValues.size() == 2?argumentValues[1]:MiniScript::ScriptVariable(),
 							miniScript->screenNode->getContext()
