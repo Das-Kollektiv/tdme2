@@ -107,7 +107,7 @@ GUIScreenNode::GUIScreenNode(
 	const string& tooltip,
 	bool scrollable,
 	bool popUp,
-	const string& script,
+	const string& scriptFileName,
 	Context* context
 ):
 	GUIParentNode(this, nullptr, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn, tooltip)
@@ -125,16 +125,21 @@ GUIScreenNode::GUIScreenNode(
 	this->parentNode = nullptr;
 	this->visible = true;
 	this->popUp = popUp;
-	if (script.empty() == false) {
+	if (scriptFileName.empty() == false) {
 		this->script = new GUIMiniScript(this);
+		// compute project script path and file name
+		string projectScriptPathName;
+		string projectScriptFileName;
+		getProjectFilePathNameAndFileName(scriptFileName, projectScriptPathName, projectScriptFileName);
+		//
 		this->script->loadScript(
-			FileSystem::getInstance()->getPathName(script),
-			FileSystem::getInstance()->getFileName(script)
+			projectScriptPathName,
+			projectScriptFileName
 		);
 		// check if valid
 		if (this->script->isValid() == false) {
 			// nope
-			Console::println("GUIScreenNode::GUIScreenNode(): " + script + ": script not valid. Not using it.");
+			Console::println("GUIScreenNode::GUIScreenNode(): " + projectScriptFileName + ": script not valid. Not using it.");
 			delete this->script;
 			this->script = nullptr;
 		} else {
@@ -848,33 +853,20 @@ GUIScreenNode_SizeConstraints GUIScreenNode::createSizeConstraints(const string&
 	return constraints;
 }
 
-GUIFont* GUIScreenNode::getFont(const string& applicationRootPath, const string& fileName, int size)
+GUIFont* GUIScreenNode::getFont(const string& fileName, int size)
 {
 	// get canonical file name
-	string canonicalFile;
-	string path;
-	string file;
-	GUIFont* font = nullptr;
-	try {
-		if (FileSystem::getInstance()->fileExists(fileName) == true) {
-			canonicalFile = fileName;
-		} else {
-			canonicalFile = FileSystem::getInstance()->getCanonicalPath(applicationRootPath, fileName);
-		}
-		path = FileSystem::getInstance()->getPathName(canonicalFile);
-		file = FileSystem::getInstance()->getFileName(canonicalFile);
-	} catch (Exception& exception) {
-		Console::print(string("GUI::getFont(): An error occurred: "));
-		Console::println(string(exception.what()));
-		return nullptr;
-	}
+	string fontPathName;
+	string fontFileName;
+	getProjectFilePathNameAndFileName(fileName, fontPathName, fontFileName);
 
 	// use cache or load font
-	auto cacheId = canonicalFile + ":" + to_string(size);
+	GUIFont* font = nullptr;
+	auto cacheId = fontPathName + "/" + fontFileName + ":" + to_string(size);
 	auto fontCacheIt = fontCache.find(cacheId);
 	if (fontCacheIt == fontCache.end()) {
 		try {
-			font = GUIFont::parse(path, file, size);
+			font = GUIFont::parse(fontPathName, fontFileName, size);
 		} catch (Exception& exception) {
 			Console::print(string("GUIScreenNode::getFont(): An error occurred: "));
 			Console::println(string(exception.what()));
@@ -884,35 +876,23 @@ GUIFont* GUIScreenNode::getFont(const string& applicationRootPath, const string&
 	} else {
 		font = fontCacheIt->second;
 	}
+	//
 	return font;
 }
 
-Texture* GUIScreenNode::getImage(const string& applicationRootPath, const string& fileName)
+Texture* GUIScreenNode::getImage(const string& fileName)
 {
 	// get canonical file name
-	string canonicalFile;
-	string path;
-	string file;
-	try {
-		if (FileSystem::getInstance()->fileExists(fileName) == true) {
-			canonicalFile = fileName;
-		} else {
-			canonicalFile = FileSystem::getInstance()->getCanonicalPath(applicationRootPath, fileName);
-		}
-		path = FileSystem::getInstance()->getPathName(canonicalFile);
-		file = FileSystem::getInstance()->getFileName(canonicalFile);
-	} catch (Exception& exception) {
-		Console::print(string("GUIScreenNode::getImage(): An error occurred: "));
-		Console::println(string(exception.what()));
-		return nullptr;
-	}
+	string imagePathName;
+	string imageFileName;
+	getProjectFilePathNameAndFileName(fileName, imagePathName, imageFileName);
 
 	//
-	auto imageIt = imageCache.find("tdme.gui." + screenNode->getId() + "." + canonicalFile);
+	auto imageIt = imageCache.find("tdme.gui." + screenNode->getId() + "." + imagePathName + "/" + imageFileName);
 	auto image = imageIt != imageCache.end()?imageIt->second:nullptr;
 	if (image == nullptr) {
 		try {
-			image = TextureReader::read(path, file, false, false, "tdme.gui." + screenNode->getId() + ".");
+			image = TextureReader::read(imagePathName, imageFileName, false, false, "tdme.gui." + screenNode->getId() + ".");
 			if (image != nullptr) {
 				image->setUseCompression(false);
 				image->setUseMipMap(false);
@@ -920,11 +900,10 @@ Texture* GUIScreenNode::getImage(const string& applicationRootPath, const string
 				image->setClampMode(Texture::CLAMPMODE_TRANSPARENTPIXEL);
 			}
 		} catch (Exception& exception) {
-			Console::print(string("GUIScreenNode::getImage(): An error occurred: "));
-			Console::println(string(exception.what()));
+			Console::print("GUIScreenNode::getImage(): An error occurred: " + string(exception.what()));
 			throw;
 		}
-		if (image != nullptr) imageCache[canonicalFile] = image;
+		if (image != nullptr) imageCache[imagePathName + "/" + imageFileName] = image;
 	}
 	return image;
 }
@@ -1153,5 +1132,20 @@ void GUIScreenNode::forwardEvents() {
 					break;
 			}
 		}
+	}
+}
+
+void GUIScreenNode::getProjectFilePathNameAndFileName(const string &fileName, string& projectFilePathName, string& projectFileFileName) {
+	try {
+		string projectFileCanonicalFileName;
+		if (FileSystem::getInstance()->fileExists(fileName) == true) {
+			projectFileCanonicalFileName = fileName;
+		} else {
+			projectFileCanonicalFileName = FileSystem::getInstance()->getCanonicalPath(applicationRootPathName, fileName);
+		}
+		projectFilePathName = FileSystem::getInstance()->getPathName(projectFileCanonicalFileName);
+		projectFileFileName = FileSystem::getInstance()->getFileName(projectFileCanonicalFileName);
+	} catch (Exception& exception) {
+		Console::print("GUIScreenNode::getProjectFilePathNameAndFileName(): An error occurred: " + string(exception.what()));
 	}
 }

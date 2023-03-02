@@ -167,11 +167,11 @@ void GUIImageNode::setSource(const string& source) {
 						this->texture = thumbnailTexture;
 						this->releaseTextureReference = true;
 					} else {
-						this->texture = screenNode->getImage(screenNode->getApplicationRootPathName(), "resources/engine/images/mesh_big.png");
+						this->texture = screenNode->getImage("resources/engine/images/mesh_big.png");
 						this->releaseTextureReference = false;
 					}
 				} else {
-					this->texture = screenNode->getImage(screenNode->getApplicationRootPathName(), "resources/engine/images/mesh_big.png");
+					this->texture = screenNode->getImage("resources/engine/images/mesh_big.png");
 					this->releaseTextureReference = false;
 				}
 			} catch (Exception& exception) {
@@ -194,11 +194,11 @@ void GUIImageNode::setSource(const string& source) {
 						this->texture = thumbnailTexture;
 						this->releaseTextureReference = true;
 					} else {
-						this->texture = screenNode->getImage(screenNode->getApplicationRootPathName(), "resources/engine/images/tdme_big.png");
+						this->texture = screenNode->getImage("resources/engine/images/tdme_big.png");
 						this->releaseTextureReference = false;
 					}
 				} else {
-					this->texture = screenNode->getImage(screenNode->getApplicationRootPathName(), "resources/engine/images/tdme_big.png");
+					this->texture = screenNode->getImage("resources/engine/images/tdme_big.png");
 					this->releaseTextureReference = false;
 				}
 			} catch (Exception& exception) {
@@ -208,7 +208,7 @@ void GUIImageNode::setSource(const string& source) {
 		// gui xml
 		if (StringTools::endsWith(StringTools::toLowerCase(source), ".xml") == true) {
 			try {
-				this->texture = screenNode->getImage(screenNode->getApplicationRootPathName(), "resources/engine/images/gui_big.png");
+				this->texture = screenNode->getImage("resources/engine/images/gui_big.png");
 				this->releaseTextureReference = false;
 			} catch (Exception& exception) {
 				Console::println(string() + "GUIImageNode::setSource(): " + exception.what());
@@ -217,7 +217,7 @@ void GUIImageNode::setSource(const string& source) {
 			// other model without thumbnail
 			for (auto& extension: ModelReader::getModelExtensions()) {
 				if (StringTools::endsWith(StringTools::toLowerCase(source), "." + extension) == true) {
-					this->texture = screenNode->getImage(screenNode->getApplicationRootPathName(), "resources/engine/images/mesh_big.png");
+					this->texture = screenNode->getImage("resources/engine/images/mesh_big.png");
 					this->releaseTextureReference = false;
 					// done
 					break;
@@ -225,7 +225,7 @@ void GUIImageNode::setSource(const string& source) {
 			}
 			// load it
 			if (this->texture == nullptr) {
-				this->texture = source.empty() == true?nullptr:screenNode->getImage(screenNode->getApplicationRootPathName(), source);
+				this->texture = source.empty() == true?nullptr:screenNode->getImage(source);
 				this->releaseTextureReference = false;
 			}
 		}
