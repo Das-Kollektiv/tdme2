@@ -696,6 +696,7 @@ Reading all keys as array from set:
 | vec4.getY($vec4: Vector4): Float                                                                 |
 | vec4.getZ($vec4: Vector4): Float                                                                 |
 | vec4.normalize($vec4: Vector4): Vector4                                                          |
+| xml.createTag($name: String[, $attributes: Map[, $innerXML: String]]): String                    |
 
 # 7. MiniScript logic methods
 

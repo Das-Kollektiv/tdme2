@@ -20,6 +20,7 @@
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transform.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
@@ -63,6 +64,7 @@ using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::Rotation;
 using tdme::engine::Transform;
+using tdme::gui::GUIParser;
 using tdme::math::Math;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
@@ -6436,6 +6438,55 @@ void MiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodTimeGetAsString(this));
+	}
+	{
+		//
+		class ScriptMethodXMLCreateTag: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodXMLCreateTag(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "name", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_MAP, .name = "attributes", .optional = true, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "innerXML", .optional = true, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_STRING
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "xml.createTag";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				//
+				string name;
+				string innerXML;
+				if (MiniScript::getStringValue(argumentValues, 0, name, false) == false ||
+					(argumentValues.size() >= 2 && argumentValues[1].getType() != ScriptVariableType::TYPE_MAP) ||
+					MiniScript::getStringValue(argumentValues, 2, innerXML, true) == false) {
+					Console::println("ScriptMethodXMLCreateTag::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: optional map expected, @ argument 2: optional string expected");
+					miniScript->startErrorScript();
+				} else {
+					auto mapPtr = argumentValues[1].getMapPointer();
+					string xml;
+					xml+= "<" + name;
+					if (mapPtr != nullptr && mapPtr->empty() == false) {
+						for(auto& mapIt: *mapPtr) {
+							xml+= " " + mapIt.first + "=\"" + GUIParser::escapeQuotes(mapIt.second.getValueString()) + "\"";
+						}
+					}
+					if (innerXML.empty() == true) {
+						xml+= "/>";
+					} else {
+						xml+= ">" + innerXML + "</" + name + ">";
+					}
+					//
+					returnValue.setValue(xml);
+				}
+			}
+		};
+		registerMethod(new ScriptMethodXMLCreateTag(this));
 	}
 
 	// register math functions
