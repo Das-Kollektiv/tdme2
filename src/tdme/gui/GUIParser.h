@@ -84,19 +84,19 @@ public:
 	 * Parses a GUI XML file
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @param parameters parameters aka key value pairs for substitution
+	 * @param variables variables
 	 * @param miniScriptArguments mini script arguments
 	 * @param context application logic context
 	 * @return GUI screen node
 	 * @throws tdme::gui::GUIParserException
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	static GUIScreenNode* parse(const string& pathName, const string& fileName, const unordered_map<string, string>& parameters = {}, const MiniScript::ScriptVariable& miniScriptArguments = MiniScript::ScriptVariable(), Context* context = nullptr);
+	static GUIScreenNode* parse(const string& pathName, const string& fileName, const unordered_map<string, string>& variables = {}, const MiniScript::ScriptVariable& miniScriptArguments = MiniScript::ScriptVariable(), Context* context = nullptr);
 
 	/**
 	 * Parses a GUI XML content
 	 * @param xml xml
-	 * @param parameters parameters aka key value pair for substitution
+	 * @param variables variables
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @param miniScriptArguments mini script arguments
@@ -105,7 +105,7 @@ public:
 	 * @throws tdme::gui::GUIParserException
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	static GUIScreenNode* parse(const string& xml, const unordered_map<string, string>& parameters = {}, const string& pathName = string(), const string& fileName = string(), const MiniScript::ScriptVariable& miniScriptArguments = MiniScript::ScriptVariable(), Context* context = nullptr);
+	static GUIScreenNode* parse(const string& xml, const unordered_map<string, string>& variables = {}, const string& pathName = string(), const string& fileName = string(), const MiniScript::ScriptVariable& miniScriptArguments = MiniScript::ScriptVariable(), Context* context = nullptr);
 
 	/**
 	 * Parses a GUI XML file into parent node

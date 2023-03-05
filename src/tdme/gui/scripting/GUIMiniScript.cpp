@@ -2,6 +2,7 @@
 
 #include <span>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/logics/Context.h>
@@ -28,6 +29,7 @@
 using std::span;
 using std::string;
 using std::to_string;
+using std::unordered_map;
 
 using tdme::engine::logics::Context;
 using tdme::engine::logics::Logic;
@@ -73,6 +75,7 @@ void GUIMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "fileName", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_MAP, .name = "variables", .optional = true, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "arguments", .optional = true, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
@@ -83,15 +86,25 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string fileName;
-				if (argumentValues.size() > 2 ||
+				if (argumentValues.size() > 3 ||
 					MiniScript::getStringValue(argumentValues, 0, fileName, false) == false) {
-					Console::println("ScriptMethodGUIScreenGoto::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: optional mixed expected");
+					Console::println("ScriptMethodGUIScreenGoto::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: optional map expected, @ argument 2: optional mixed expected");
 					miniScript->startErrorScript();
 				} else {
 					// delete next screen node if given
 					if (miniScript->nextScreenNode != nullptr) {
 						delete miniScript->nextScreenNode;
 						miniScript->nextScreenNode = nullptr;
+					}
+					// variables
+					unordered_map<string, string> variables;
+					if (argumentValues.size() >= 2) {
+						auto mapPtr = argumentValues[1].getMapPointer();
+						if (mapPtr != nullptr) {
+							for (auto& mapIt: *mapPtr) {
+								variables[mapIt.first] = mapIt.second.getValueString();
+							}
+						}
 					}
 					// setup next screen node
 					try {
@@ -102,8 +115,8 @@ void GUIMiniScript::registerMethods() {
 						miniScript->nextScreenNode = GUIParser::parse(
 							screenPathName,
 							screenFileName,
-							{},
-							argumentValues.size() == 2?argumentValues[1]:MiniScript::ScriptVariable(),
+							variables,
+							argumentValues.size() == 3?argumentValues[2]:MiniScript::ScriptVariable(),
 							miniScript->screenNode->getContext()
 						);
 					} catch (Exception& exception) {
@@ -125,6 +138,7 @@ void GUIMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "fileName", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_MAP, .name = "variables", .optional = true, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "arguments", .optional = true, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
@@ -135,11 +149,21 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string fileName;
-				if (argumentValues.size() > 2 ||
+				if (argumentValues.size() > 3 ||
 					MiniScript::getStringValue(argumentValues, 0, fileName, false) == false) {
-					Console::println("ScriptMethodGUIScreenPush::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: optional mixed expected");
+					Console::println("ScriptMethodGUIScreenPush::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: optional map expected, @ argument 2: optional mixed expected");
 					miniScript->startErrorScript();
 				} else {
+					// variables
+					unordered_map<string, string> variables;
+					if (argumentValues.size() >= 2) {
+						auto mapPtr = argumentValues[1].getMapPointer();
+						if (mapPtr != nullptr) {
+							for (auto& mapIt: *mapPtr) {
+								variables[mapIt.first] = mapIt.second.getValueString();
+							}
+						}
+					}
 					// push screen node
 					try {
 						string screenPathName;
@@ -149,8 +173,8 @@ void GUIMiniScript::registerMethods() {
 						auto screenNode = GUIParser::parse(
 							screenPathName,
 							screenFileName,
-							{},
-							argumentValues.size() == 2?argumentValues[1]:MiniScript::ScriptVariable(),
+							variables,
+							argumentValues.size() == 3?argumentValues[2]:MiniScript::ScriptVariable(),
 							miniScript->screenNode->getContext()
 						);
 						miniScript->screenNode->getGUI()->addScreen(screenNode->getId(), screenNode);

@@ -852,9 +852,9 @@ Reading all keys as array from set:
 | gui.parentnode.clearSubNodes($parentNodeId: String): Void                                        |
 | gui.parentnode.replaceSubNodes($parentNodeId: String, $xml: String[, $resetScrollOffsets: Boolean]): Void|
 | gui.screen.call($screenId: String, $function: String, ...): Mixed                                |
-| gui.screen.goto($fileName: String[, $arguments: Mixed]): Void                                    |
+| gui.screen.goto($fileName: String[, $variables: Map[, $arguments: Mixed]]): Void                 |
 | gui.screen.pop(): Void                                                                           |
-| gui.screen.push($fileName: String[, $arguments: Mixed]): Void                                    |
+| gui.screen.push($fileName: String[, $variables: Map[, $arguments: Mixed]]): Void                 |
 | gui.screennode.getId(): String                                                                   |
 | gui.textnode.getText($textNodeId: String): String                                                |
 | gui.textnode.setText($textNodeId: String, $text: String): Void                                   |

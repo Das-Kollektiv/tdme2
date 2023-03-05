@@ -1120,7 +1120,7 @@ public:
 		}
 
 		/**
-		 * @return pointer to underlying vector as array or nullptr
+		 * @return pointer to underlying vector or nullptr
 		 */
 		inline vector<MiniScript::ScriptVariable>* getArrayPointer() {
 			// TODO: be verbose about misuse
@@ -1185,6 +1185,16 @@ public:
 			auto& arrayValue = getArrayValueReference();
 			if (idx >= 0 && idx < arrayValue.size()) arrayValue.erase(arrayValue.begin() + idx);
 			return;
+		}
+
+		/**
+		 * @return pointer to underlying unordered_map or nullptr
+		 */
+		inline unordered_map<string, ScriptVariable>* getMapPointer() {
+			// TODO: be verbose about misuse
+			if (type != TYPE_MAP) return nullptr;
+			auto& mapValue = getMapValueReference();
+			return &mapValue;
 		}
 
 		/**
@@ -1277,6 +1287,16 @@ public:
 				values.push_back(it.second);
 			}
 			return values;
+		}
+
+		/**
+		 * @return pointer to underlying unordered_set or nullptr
+		 */
+		inline unordered_set<string>* getSetPointer() {
+			// TODO: be verbose about misuse
+			if (type != TYPE_SET) return nullptr;
+			auto& setValue = getSetValueReference();
+			return &setValue;
 		}
 
 		/**
