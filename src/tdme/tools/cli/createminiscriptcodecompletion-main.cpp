@@ -47,7 +47,7 @@ int main(int argc, char** argv)
 		keywords1.push_back(scriptMethod->getMethodName());
 		Console::println("Adding method: " + scriptMethod->getMethodName());
 		lines.push_back("	<keyword name=\"" + scriptMethod->getMethodName() + "\" func=\"yes\">");
-		lines.push_back("		<overload return-value=\"" + MiniScript::ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType()) + "\" descr=\"\">");
+		lines.push_back("		<overload return-value=\"" + MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType()) + "\" descr=\"\">");
 		for (auto& argumentType: scriptMethod->getArgumentTypes()) {
 			string argumentValueString;
 			if (argumentType.optional == true) argumentValueString+= "[";

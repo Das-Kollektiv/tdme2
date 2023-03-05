@@ -41,6 +41,10 @@
 #include <tdme/utilities/SHA256.h>
 #include <tdme/utilities/Time.h>
 
+#include <ext/rapidjson/document.h>
+#include <ext/rapidjson/stringbuffer.h>
+#include <ext/rapidjson/writer.h>
+
 using std::find;
 using std::map;
 using std::remove;
@@ -85,6 +89,11 @@ using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
 using tdme::utilities::SHA256;
 using tdme::utilities::Time;
+
+using rapidjson::Document;
+using rapidjson::StringBuffer;
+using rapidjson::Value;
+using rapidjson::Writer;
 
 string MiniScript::OPERATOR_CHARS = "!*/%+-<>&|=";
 string MiniScript::METHOD_SCRIPTCALL = "script.call";
@@ -378,7 +387,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 			for (auto& argumentType: scriptMethod->getArgumentTypes()) {
 				auto argumentOk = true;
 				switch(argumentType.type) {
-					case TYPE_VOID:
+					case TYPE_NULL:
 						break;
 					case TYPE_BOOLEAN:
 						{
@@ -534,7 +543,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 				string("MiniScript::executeScriptStatement(): ") +
 				getStatementInformation(statement) +
 				": method '" + string(syntaxTree.value.getValueString()) + "'" +
-				": return value: expected " + ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType()) + ", but got: " + ScriptVariable::getTypeAsString(returnValue.getType()));
+				": return value: expected " + ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType()) + ", but got: " + ScriptVariable::getReturnTypeAsString(returnValue.getType()));
 		}
 		return returnValue;
 	}
@@ -1696,7 +1705,7 @@ const string MiniScript::getInformation() {
 				}
 				for (auto i = 0; i < optionalArgumentCount; i++) method+= "]";
 				method+= "): ";
-				method+= ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType());
+				method+= ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType());
 				methods.push_back(method);
 			}
 			sort(methods.begin(), methods.end());
@@ -1736,7 +1745,7 @@ const string MiniScript::getInformation() {
 				}
 				for (auto i = 0; i < optionalArgumentCount; i++) operatorString+= "]";
 				operatorString+= "): ";
-				operatorString+= ScriptVariable::getTypeAsString(method->getReturnValueType());
+				operatorString+= ScriptVariable::getReturnTypeAsString(method->getReturnValueType());
 				operators.push_back(operatorString);
 			}
 			sort(operators.begin(), operators.end());
@@ -1974,7 +1983,7 @@ void MiniScript::registerMethods() {
 					{
 						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = true, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -4314,7 +4323,7 @@ void MiniScript::registerMethods() {
 						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = true },
 						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "translation", .optional = false, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID),
+					ScriptVariableType::TYPE_NULL),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "transform.setTranslation";
@@ -4375,7 +4384,7 @@ void MiniScript::registerMethods() {
 						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = true },
 						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "scale", .optional = false, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID),
+					ScriptVariableType::TYPE_NULL),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "transform.setScale";
@@ -4481,7 +4490,7 @@ void MiniScript::registerMethods() {
 						{.type = ScriptVariableType::TYPE_INTEGER, .name = "idx", .optional = false, .assignBack = false },
 						{.type = ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID),
+					ScriptVariableType::TYPE_NULL),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "transform.setRotationAngle";
@@ -4584,7 +4593,7 @@ void MiniScript::registerMethods() {
 						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "axis", .optional = false, .assignBack = false },
 						{.type = ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID),
+					ScriptVariableType::TYPE_NULL),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "transform.applyRotation";
@@ -5634,7 +5643,7 @@ void MiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .assignBack = true }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -5698,7 +5707,7 @@ void MiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .assignBack = true },
 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "index", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -5731,7 +5740,7 @@ void MiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .assignBack = true },
 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "index", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -5762,7 +5771,7 @@ void MiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "value", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "beginIndex", .optional = true, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -5847,7 +5856,7 @@ void MiniScript::registerMethods() {
 						{.type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .assignBack = true },
 						{.type = ScriptVariableType::TYPE_STRING, .name = "function", .optional = false, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -5898,7 +5907,7 @@ void MiniScript::registerMethods() {
 					{
 						{.type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .assignBack = true }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -5953,7 +5962,7 @@ void MiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_MAP, .name = "map", .optional = false, .assignBack = true },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -6052,7 +6061,7 @@ void MiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_MAP, .name = "map", .optional = false, .assignBack = true },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -6172,7 +6181,7 @@ void MiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_SET, .name = "set", .optional = false, .assignBack = true },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -6236,7 +6245,7 @@ void MiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_SET, .name = "set", .optional = false, .assignBack = true },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -6370,7 +6379,7 @@ void MiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {
 				//
@@ -6439,6 +6448,7 @@ void MiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodTimeGetAsString(this));
 	}
+	// xml
 	{
 		//
 		class ScriptMethodXMLCreateTag: public ScriptMethod {
@@ -6487,6 +6497,36 @@ void MiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodXMLCreateTag(this));
+	}
+	// json
+	{
+		//
+		class ScriptMethodJSONSerialize: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodJSONSerialize(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_MAP, .name = "value", .optional = false, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_STRING
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "json.serialize";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				//
+				if (argumentValues.size() != 1) {
+					Console::println("ScriptMethodJSONSerialize::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected");
+					miniScript->startErrorScript();
+				} else {
+					returnValue.setValue(MiniScript::serializeAsJson(argumentValues[0]));
+				}
+			}
+		};
+		registerMethod(new ScriptMethodJSONSerialize(this));
 	}
 
 	// register math functions
@@ -6627,7 +6667,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
 					{
 						switch (argument.value.getType())  {
-							case TYPE_VOID:
+							case TYPE_NULL:
 								break;
 							case TYPE_BOOLEAN:
 								{
@@ -7054,7 +7094,7 @@ const string MiniScript::createSourceCode(const ScriptSyntaxTreeNode& syntaxTree
 		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
 			{
 				switch(syntaxTreeNode.value.getType()) {
-					case TYPE_VOID:
+					case TYPE_NULL:
 						{
 							result+= (result.empty() == false?", ":"") + string("<VOID>");
 							break;
@@ -7177,4 +7217,323 @@ const string MiniScript::createSourceCode() {
 	}
 	//
 	return result;
+}
+
+void MiniScript::serializeMapAsJson(Document& jParent, const ScriptVariable& variable) {
+	auto& value = variable.getMapValueReference();
+	for (auto& mapIt: value) {
+		auto& subName = mapIt.first;
+		auto& subVariable = mapIt.second;
+		//
+		switch(subVariable.getType()) {
+			case TYPE_NULL:
+				jParent.AddMember(Value(subName, jParent.GetAllocator()), Value(), jParent.GetAllocator());
+				break;
+			case TYPE_BOOLEAN:
+				{
+					auto& value = subVariable.getBooleanValueReference();
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), Value(value), jParent.GetAllocator());
+				}
+				break;
+			case TYPE_INTEGER:
+				{
+					auto& value = subVariable.getIntegerValueReference();
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), Value(value), jParent.GetAllocator());
+				}
+				break;
+			case TYPE_FLOAT:
+				{
+					auto& value = subVariable.getFloatValueReference();
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), Value(value), jParent.GetAllocator());
+				}
+				break;
+			case TYPE_STRING:
+				{
+					auto& value = subVariable.getStringValueReference();
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), Value(value, jParent.GetAllocator()), jParent.GetAllocator());
+				}
+				break;
+			case TYPE_VECTOR2:
+				{
+					auto& value = subVariable.getVector2ValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value.getArray()) {
+						jSubArray.PushBack(Value(v), jParent.GetAllocator());
+					}
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), jSubArray, jParent.GetAllocator());
+				}
+				break;
+			case TYPE_VECTOR3:
+				{
+					auto& value = subVariable.getVector3ValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value.getArray()) {
+						jSubArray.PushBack(Value(v), jParent.GetAllocator());
+					}
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), jSubArray, jParent.GetAllocator());
+				}
+				break;
+			case TYPE_VECTOR4:
+				{
+					auto& value = subVariable.getVector4ValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value.getArray()) {
+						jSubArray.PushBack(Value(v), jParent.GetAllocator());
+					}
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), jSubArray, jParent.GetAllocator());
+				}
+				break;
+			case TYPE_QUATERNION:
+				{
+					auto& value = subVariable.getQuaternionValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value.getArray()) {
+						jSubArray.PushBack(Value(v), jParent.GetAllocator());
+					}
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), jSubArray, jParent.GetAllocator());
+				}
+				break;
+			case TYPE_MATRIX3x3:
+				{
+					auto& value = subVariable.getMatrix3x3ValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value.getArray()) {
+						jSubArray.PushBack(Value(v), jParent.GetAllocator());
+					}
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), jSubArray, jParent.GetAllocator());
+				}
+				break;
+			case TYPE_MATRIX4x4:
+				{
+					auto& value = subVariable.getMatrix4x4ValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value.getArray()) {
+						jSubArray.PushBack(Value(v), jParent.GetAllocator());
+					}
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), jSubArray, jParent.GetAllocator());
+				}
+				break;
+			case TYPE_TRANSFORM:
+				{
+					auto& value = subVariable.getTransformValueReference();
+					auto transformMatrix = value.getTransformMatrix();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: transformMatrix.getArray()) {
+						jSubArray.PushBack(Value(v), jParent.GetAllocator());
+					}
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), jSubArray, jParent.GetAllocator());
+				}
+				break;
+			case TYPE_ARRAY:
+				{
+					Value jSubParent;
+					jSubParent.SetArray();
+					serializeArrayAsJson(jParent, jSubParent, subVariable);
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), jSubParent, jParent.GetAllocator());
+				}
+				break;
+			case TYPE_MAP:
+				{
+					Document jSubParent;
+					jSubParent.SetObject();
+					serializeMapAsJson(jSubParent, subVariable);
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), jSubParent, jParent.GetAllocator());
+				}
+				break;
+			case TYPE_SET:
+				{
+					auto& value = subVariable.getSetValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value) {
+						jSubArray.PushBack(Value(v, jParent.GetAllocator()), jParent.GetAllocator());
+					}
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), jSubArray, jParent.GetAllocator());
+				}
+				break;
+		}
+	}
+}
+
+void MiniScript::serializeArrayAsJson(Document& jDocument, Value& jParent, const ScriptVariable& variable) {
+	auto& value = variable.getArrayValueReference();
+	for (auto& subVariable: value) {
+		//
+		switch(subVariable.getType()) {
+			case TYPE_NULL:
+				jParent.PushBack(Value(), jDocument.GetAllocator());
+				break;
+			case TYPE_BOOLEAN:
+				{
+					auto& value = subVariable.getBooleanValueReference();
+					jParent.PushBack(Value(value), jDocument.GetAllocator());
+				}
+				break;
+			case TYPE_INTEGER:
+				{
+					auto& value = subVariable.getIntegerValueReference();
+					jParent.PushBack(Value(value), jDocument.GetAllocator());
+				}
+				break;
+			case TYPE_FLOAT:
+				{
+					auto& value = subVariable.getFloatValueReference();
+					jParent.PushBack(Value(value), jDocument.GetAllocator());
+				}
+				break;
+			case TYPE_STRING:
+				{
+					auto& value = subVariable.getStringValueReference();
+					jParent.PushBack(Value(value, jDocument.GetAllocator()), jDocument.GetAllocator());
+				}
+				break;
+			case TYPE_VECTOR2:
+				{
+					auto& value = subVariable.getVector2ValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value.getArray()) {
+						jSubArray.PushBack(Value(v), jDocument.GetAllocator());
+					}
+					jParent.PushBack(jSubArray, jDocument.GetAllocator());
+				}
+				break;
+			case TYPE_VECTOR3:
+				{
+					auto& value = subVariable.getVector3ValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value.getArray()) {
+						jSubArray.PushBack(Value(v), jDocument.GetAllocator());
+					}
+					jParent.PushBack(jSubArray, jDocument.GetAllocator());
+				}
+				break;
+			case TYPE_VECTOR4:
+				{
+					auto& value = subVariable.getVector4ValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value.getArray()) {
+						jSubArray.PushBack(Value(v), jDocument.GetAllocator());
+					}
+					jParent.PushBack(jSubArray, jDocument.GetAllocator());
+				}
+				break;
+			case TYPE_QUATERNION:
+				{
+					auto& value = subVariable.getQuaternionValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value.getArray()) {
+						jSubArray.PushBack(Value(v), jDocument.GetAllocator());
+					}
+					jParent.PushBack(jSubArray, jDocument.GetAllocator());
+				}
+				break;
+			case TYPE_MATRIX3x3:
+				{
+					auto& value = subVariable.getMatrix3x3ValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value.getArray()) {
+						jSubArray.PushBack(Value(v), jDocument.GetAllocator());
+					}
+					jParent.PushBack(jSubArray, jDocument.GetAllocator());
+				}
+				break;
+			case TYPE_MATRIX4x4:
+				{
+					auto& value = subVariable.getMatrix4x4ValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value.getArray()) {
+						jSubArray.PushBack(Value(v), jDocument.GetAllocator());
+					}
+					jParent.PushBack(jSubArray, jDocument.GetAllocator());
+				}
+				break;
+			case TYPE_TRANSFORM:
+				{
+					auto& value = subVariable.getTransformValueReference();
+					auto transformMatrix = value.getTransformMatrix();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: transformMatrix.getArray()) {
+						jSubArray.PushBack(Value(v), jDocument.GetAllocator());
+					}
+					jParent.PushBack(jSubArray, jDocument.GetAllocator());
+				}
+				break;
+			case TYPE_ARRAY:
+				{
+					Value jSubParent;
+					jSubParent.SetArray();
+					serializeArrayAsJson(jDocument, jSubParent, subVariable);
+					jParent.PushBack(jSubParent, jDocument.GetAllocator());
+				}
+				break;
+			case TYPE_MAP:
+				{
+					Document jSubParent;
+					jSubParent.SetObject();
+					serializeMapAsJson(jSubParent, subVariable);
+					jParent.PushBack(jSubParent, jDocument.GetAllocator());
+				}
+				break;
+			case TYPE_SET:
+				{
+					auto& value = subVariable.getSetValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value) {
+						jSubArray.PushBack(Value(v, jDocument.GetAllocator()), jDocument.GetAllocator());
+					}
+					jParent.PushBack(jSubArray, jDocument.GetAllocator());
+				}
+				break;
+		}
+	}
+}
+
+const string MiniScript::serializeAsJson(const ScriptVariable& variable) {
+	//
+	switch(variable.getType()) {
+		case TYPE_NULL:
+		case TYPE_BOOLEAN:
+		case TYPE_INTEGER:
+		case TYPE_FLOAT:
+		case TYPE_STRING:
+		case TYPE_VECTOR2:
+		case TYPE_VECTOR3:
+		case TYPE_VECTOR4:
+		case TYPE_QUATERNION:
+		case TYPE_MATRIX3x3:
+		case TYPE_MATRIX4x4:
+		case TYPE_TRANSFORM:
+		case TYPE_ARRAY:
+		case TYPE_SET:
+			Console::println("MiniScript::serializeAsJson(): unsupported JSON root variable type: " + variable.getTypeAsString() + ", the root variable type must be map");
+			break;
+		case TYPE_MAP:
+			{
+				Document jRoot;
+				jRoot.SetObject();
+				serializeMapAsJson(jRoot, variable);
+				StringBuffer stringBuffer;
+				Writer<StringBuffer> writer(stringBuffer);
+				jRoot.Accept(writer);
+				return stringBuffer.GetString();
+			}
+			break;
+	}
+	//
+	return string();
 }

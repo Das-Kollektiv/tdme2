@@ -966,7 +966,7 @@ void GUIMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_MAP, .name = "variables", .optional = true, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "arguments", .optional = true, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1029,7 +1029,7 @@ void GUIMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_MAP, .name = "variables", .optional = true, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "arguments", .optional = true, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1085,7 +1085,7 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUIScreenPop(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1262,7 +1262,7 @@ void GUIMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "value", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1340,7 +1340,7 @@ void GUIMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "textNodeId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "text", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1459,7 +1459,7 @@ void GUIMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "condition", .optional = false, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1497,7 +1497,7 @@ void GUIMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "condition", .optional = false, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1535,7 +1535,7 @@ void GUIMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "conditions", .optional = false, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1581,7 +1581,7 @@ void GUIMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "condition", .optional = false, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1618,7 +1618,7 @@ void GUIMiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1689,7 +1689,7 @@ void GUIMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "imageNodeId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "source", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1762,7 +1762,7 @@ void GUIMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "videoNodeId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "source", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1799,7 +1799,7 @@ void GUIMiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "parentNodeId", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1836,7 +1836,7 @@ void GUIMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "xml", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "resetScrollOffsets", .optional = true, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1877,7 +1877,7 @@ void GUIMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "xml", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "resetScrollOffsets", .optional = true, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {

@@ -25,6 +25,8 @@
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
 
+#include <ext/rapidjson/document.h>
+
 using std::array;
 using std::remove;
 using std::span;
@@ -49,6 +51,9 @@ using tdme::utilities::Float;
 using tdme::utilities::Integer;
 using tdme::utilities::StringTools;
 using tdme::utilities::Time;
+
+using rapidjson::Document;
+using rapidjson::Value;
 
 namespace tdme {
 namespace tools {
@@ -111,7 +116,7 @@ public:
 	};
 
 	enum ScriptVariableType {
-		TYPE_VOID,
+		TYPE_NULL,
 		TYPE_BOOLEAN,
 		TYPE_INTEGER,
 		TYPE_FLOAT,
@@ -138,7 +143,7 @@ public:
 
 	private:
 
-		ScriptVariableType type { TYPE_VOID };
+		ScriptVariableType type { TYPE_NULL };
 		uint64_t valuePtr { 0LL };
 
 		/**
@@ -165,7 +170,7 @@ public:
 		/**
 		 * @return const integer value reference
 		 */
-		inline const int64_t getIntegerValueReference() const {
+		inline const int64_t& getIntegerValueReference() const {
 			return *(int64_t*)(&valuePtr);
 		}
 
@@ -345,7 +350,7 @@ public:
 		 */
 		inline ScriptVariable(const ScriptVariable& scriptVariable) {
 			switch(scriptVariable.type) {
-				case TYPE_VOID:
+				case TYPE_NULL:
 					break;
 				case TYPE_BOOLEAN:
 					setValue(scriptVariable.getBooleanValueReference());
@@ -399,7 +404,7 @@ public:
 		inline ScriptVariable(ScriptVariable&& scriptVariable) {
 			type = scriptVariable.type;
 			valuePtr = scriptVariable.valuePtr;
-			scriptVariable.type = TYPE_VOID;
+			scriptVariable.type = TYPE_NULL;
 			scriptVariable.valuePtr = 0LL;
 		}
 
@@ -410,7 +415,7 @@ public:
 		 */
 		inline ScriptVariable& operator=(const ScriptVariable& scriptVariable) {
 			switch(scriptVariable.type) {
-				case TYPE_VOID:
+				case TYPE_NULL:
 					break;
 				case TYPE_BOOLEAN:
 					setValue(scriptVariable.getBooleanValueReference());
@@ -466,7 +471,7 @@ public:
 		inline ScriptVariable& operator=(ScriptVariable&& scriptVariable) {
 			type = scriptVariable.type;
 			valuePtr = scriptVariable.valuePtr;
-			scriptVariable.type = TYPE_VOID;
+			scriptVariable.type = TYPE_NULL;
 			scriptVariable.valuePtr = 0LL;
 			return *this;
 		}
@@ -481,7 +486,7 @@ public:
 		 * Destructor
 		 */
 		inline ~ScriptVariable() {
-			setType(TYPE_VOID);
+			setType(TYPE_NULL);
 		}
 
 		/**
@@ -602,7 +607,7 @@ public:
 		inline void setType(ScriptVariableType newType) {
 			if (type == newType) return;
 			switch(type) {
-				case TYPE_VOID:
+				case TYPE_NULL:
 					break;
 				case TYPE_BOOLEAN:
 					break;
@@ -647,7 +652,7 @@ public:
 			this->valuePtr = 0LL;
 			this->type = newType;
 			switch(type) {
-				case TYPE_VOID:
+				case TYPE_NULL:
 					break;
 				case TYPE_BOOLEAN:
 					break;
@@ -988,6 +993,14 @@ public:
 					return optional;
 			}
 			return false;
+		}
+
+		/**
+		 * Set boolean value from given value into variable
+		 * @param value value
+		 */
+		inline void setNullValue() {
+			setType(TYPE_NULL);
 		}
 
 		/**
@@ -1366,6 +1379,9 @@ public:
 		 * @param value value
 		 */
 		inline void setImplicitTypedValue(const string& value) {
+			if (value == "null") {
+				setNullValue();
+			} else
 			if (value == "true") {
 				setValue(true);
 			} else
@@ -1387,6 +1403,9 @@ public:
 		 * @param value value
 		 */
 		inline void setImplicitTypedValueFromStringView(const string_view& value) {
+			if (value == "null") {
+				setNullValue();
+			} else
 			if (value == "true") {
 				setValue(true);
 			} else
@@ -1426,7 +1445,7 @@ public:
 		 */
 		inline static const string getTypeAsString(ScriptVariableType type) {
 			switch(type) {
-				case TYPE_VOID: return "Void";
+				case TYPE_NULL: return "Null";
 				case TYPE_BOOLEAN: return "Boolean";
 				case TYPE_INTEGER: return "Integer";
 				case TYPE_FLOAT: return "Float";
@@ -1455,6 +1474,39 @@ public:
 		}
 
 		/**
+		 * @return return value string representation of script variable type
+		 */
+		inline static const string getReturnTypeAsString(ScriptVariableType type) {
+			switch(type) {
+				case TYPE_NULL: return "Void";
+				case TYPE_BOOLEAN: return "Boolean";
+				case TYPE_INTEGER: return "Integer";
+				case TYPE_FLOAT: return "Float";
+				case TYPE_STRING: return "String";
+				case TYPE_VECTOR2: return "Vector2";
+				case TYPE_VECTOR3: return "Vector3";
+				case TYPE_VECTOR4: return "Vector4";
+				case TYPE_QUATERNION: return "Quaternion";
+				case TYPE_MATRIX3x3: return "Matrix3x3";
+				case TYPE_MATRIX4x4: return "Matrix4x4";
+				case TYPE_TRANSFORM: return "Transform";
+				case TYPE_ARRAY: return "Array";
+				case TYPE_MAP: return "Map";
+				case TYPE_SET: return "Set";
+				case TYPE_PSEUDO_NUMBER: return "Number";
+				case TYPE_PSEUDO_MIXED: return "Mixed";
+			}
+			return string();
+		}
+
+		/**
+		 * @return return value string representation of variable
+		 */
+		inline const string getReturnTypeAsString() const {
+			return getReturnTypeAsString(type);
+		}
+
+		/**
 		 * @return string representation of script variable type
 		 */
 		inline const string getAsString() const {
@@ -1472,8 +1524,8 @@ public:
 		inline const string getValueString() const {
 			string result;
 			switch (type) {
-				case TYPE_VOID:
-					result+= "<VOID>";
+				case TYPE_NULL:
+					result+= "<Null>";
 					break;
 				case TYPE_BOOLEAN:
 					result+= getBooleanValueReference() == true?"1":"0";
@@ -1688,7 +1740,7 @@ public:
 		 * @param argumentTypes argument types
 		 * @param returnValueType return value type
 		 */
-		ScriptMethod(const vector<ArgumentType>& argumentTypes = {}, ScriptVariableType returnValueType = ScriptVariableType::TYPE_VOID): returnValueType(returnValueType), argumentTypes(argumentTypes) {}
+		ScriptMethod(const vector<ArgumentType>& argumentTypes = {}, ScriptVariableType returnValueType = ScriptVariableType::TYPE_NULL): returnValueType(returnValueType), argumentTypes(argumentTypes) {}
 
 		/**
 		 * Destructor
@@ -2020,7 +2072,7 @@ private:
 			switch (argument.type) {
 				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
 					switch(argument.value.getType()) {
-						case TYPE_VOID:
+						case TYPE_NULL:
 							{
 								argumentsString+= (argumentsString.empty() == false?", ":"") + string("<VOID>");
 								break;
@@ -2528,6 +2580,21 @@ private:
 	 * @return success
 	 */
 	bool transpileScriptCondition(string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap, const string& returnValue, const string& injectCode, int depth = 0);
+
+	/**
+	 * Serialize map as JSON
+	 * @param jParent JSON parent document
+	 * @param variable variable
+	 */
+	static void serializeMapAsJson(Document& jParent, const ScriptVariable& variable);
+
+	/**
+	 * Serialize array as JSON
+	 * @param jDocument JSON document
+	 * @param jParent JSON parent document
+	 * @param variable variable
+	 */
+	static void serializeArrayAsJson(Document& jDocument, Value& jParent, const ScriptVariable& variable);
 
 public:
 	/**
@@ -3140,5 +3207,12 @@ public:
 	 * Create source code for whole script
 	 */
 	const string createSourceCode();
+
+	/**
+	 * Serialize as JSON
+	 * @param variable variable
+	 * @return JSON representation
+	 */
+	static const string serializeAsJson(const ScriptVariable& variable);
 
 };

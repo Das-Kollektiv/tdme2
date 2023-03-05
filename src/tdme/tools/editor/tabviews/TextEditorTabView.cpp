@@ -507,7 +507,7 @@ void TextEditorTabView::createMiniScriptScriptNode(const string& id, MiniScript:
 		//
 		nodes[id] = {
 			.id = id,
-			.returnValueType = MiniScript::ScriptVariableType::TYPE_VOID
+			.returnValueType = MiniScript::ScriptVariableType::TYPE_NULL
 		};
 		//
 
@@ -644,7 +644,7 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int syntaxTreeNo
 				//
 				nodes[id] = {
 					.id = id,
-					.returnValueType = syntaxTreeNode->method != nullptr?syntaxTreeNode->method->getReturnValueType():MiniScript::ScriptVariableType::TYPE_VOID
+					.returnValueType = syntaxTreeNode->method != nullptr?syntaxTreeNode->method->getReturnValueType():MiniScript::ScriptVariableType::TYPE_NULL
 				};
 				//
 				auto nodeName = syntaxTreeNode->value.getValueString();
@@ -803,7 +803,7 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int syntaxTreeNo
 					}
 				}
 				// return value
-				if (syntaxTreeNode->method != nullptr && syntaxTreeNode->method->getReturnValueType() != MiniScript::ScriptVariableType::TYPE_VOID) {
+				if (syntaxTreeNode->method != nullptr && syntaxTreeNode->method->getReturnValueType() != MiniScript::ScriptVariableType::TYPE_NULL) {
 					string xml;
 					//
 					xml+=
@@ -922,7 +922,7 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int syntaxTreeNo
 				auto nodeIt = nodes.find(id + "." + to_string(argumentIdx));
 				if (nodeIt != nodes.end()) {
 					auto& node = nodeIt->second;
-					if (node.returnValueType != MiniScript::ScriptVariableType::TYPE_VOID) {
+					if (node.returnValueType != MiniScript::ScriptVariableType::TYPE_NULL) {
 						pinColor = getScriptVariableTypePinColor(node.returnValueType);
 					}
 				}
@@ -991,7 +991,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(const string& id, int syntax
 		//
 		nodes[id] = {
 			.id = id,
-			.returnValueType = MiniScript::ScriptVariableType::TYPE_VOID
+			.returnValueType = MiniScript::ScriptVariableType::TYPE_NULL
 		};
 		//
 		string nodeName = syntaxTreeNode->value.getValueString();

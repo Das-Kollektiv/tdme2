@@ -1208,7 +1208,7 @@ void LogicMiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "lookFrom", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1255,7 +1255,7 @@ void LogicMiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "lookAt", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1302,7 +1302,7 @@ void LogicMiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "upVector", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1381,7 +1381,7 @@ void LogicMiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "fovX", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1643,7 +1643,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1720,7 +1720,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "enabled", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1797,7 +1797,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "pickable", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1875,7 +1875,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_VECTOR4, .name = "effectColorMul", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1953,7 +1953,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_VECTOR4, .name = "effectColorAdd", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -2031,7 +2031,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "speed", .optional = true, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -2073,7 +2073,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "speed", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -2190,7 +2190,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -2230,7 +2230,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -2269,7 +2269,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -2306,7 +2306,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -2467,7 +2467,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_MATRIX4x4, .name = "matrix", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -2510,7 +2510,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -2552,7 +2552,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -2592,7 +2592,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -3063,7 +3063,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "enabled", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -3168,7 +3168,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "collisionTypeId", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -3239,7 +3239,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "collisionTypeIds", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -3310,7 +3310,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "linearDamping", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -3381,7 +3381,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "angularDamping", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -3452,7 +3452,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "linearVelocity", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -3523,7 +3523,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "angularVelocity", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -3561,7 +3561,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "force", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "origin", .optional = true, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -3608,7 +3608,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "torque", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -3691,7 +3691,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -4069,7 +4069,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityHierarchyId", .optional = true, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityHierarchyParentId", .optional = true, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
