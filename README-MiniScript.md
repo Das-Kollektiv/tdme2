@@ -774,6 +774,7 @@ Reading all keys as array from set:
 | input.mouse.getY(): Integer                                                                      |
 | input.mouse.getYUnscaled(): Integer                                                              |
 | logic.getId(): String                                                                            |
+| logic.call($logicId: String, $function: String, ...): Mixed                                      |
 | logic.signal.has(): Boolean                                                                      |
 | logic.signal.getArgument($argumentIndex: Integer): Mixed                                         |
 | logic.signal.getName(): String                                                                   |

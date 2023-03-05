@@ -154,6 +154,65 @@ void LogicMiniScript::registerMethods() {
 	}
 	{
 		//
+		class ScriptMethodLogicCall: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodLogicCall(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "function", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_PSEUDO_MIXED
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "logic.call";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string logicId;
+				string function;
+				if (MiniScript::getStringValue(argumentValues, 0, logicId) == false ||
+					MiniScript::getStringValue(argumentValues, 1, function) == false) {
+					Console::println("ScriptMethodLogicCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					miniScript->startErrorScript();
+				} else {
+					auto logic = dynamic_cast<MiniScriptLogic*>(miniScript->context->getLogic(logicId));
+					if (logic == nullptr || logic->getMiniScript() == nullptr) {
+						Console::println("ScriptMethodLogicCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no mini script logic with given id: " + logicId);
+						miniScript->startErrorScript();
+					} else {
+						auto logicMiniScript = logic->getMiniScript();
+						auto scriptIdx = logicMiniScript->getFunctionScriptIdx(function);
+						if (scriptIdx == SCRIPTIDX_NONE) {
+							Console::println("ScriptMethodLogicCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": function not found: " + function);
+							miniScript->startErrorScript();
+						} else {
+							#if defined (__APPLE__)
+								// MACOSX currently does not support initializing span using begin and end iterators,
+								// so we need to make a copy of argumentValues beginning from second element
+								vector<ScriptVariable> callArgumentValues;
+								for (auto i = 2; i < argumentValues.size(); i++) callArgumentValues.push_back(argumentValues[i]);
+								// call
+								span callArgumentValuesSpan(callArgumentValues);
+								logicMiniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
+							#else
+								span callArgumentValuesSpan(argumentValues.begin() + 2, argumentValues.end());
+								logicMiniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
+							#endif
+						}
+					}
+				}
+			}
+			bool isVariadic() override {
+				return true;
+			}
+		};
+		registerMethod(new ScriptMethodLogicCall(this));
+	}
+	{
+		//
 		class ScriptMethodLogicSignalHas: public ScriptMethod {
 		private:
 			LogicMiniScript* miniScript { nullptr };
