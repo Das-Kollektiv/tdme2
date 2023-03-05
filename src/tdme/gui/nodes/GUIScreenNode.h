@@ -153,6 +153,8 @@ private:
 	bool scriptOnDragRequestAvailable { false };
 	bool scriptOnTickAvailable { false };
 
+	MiniScript::ScriptVariable miniScriptArguments;
+
 	Context* context { nullptr };
 
 public:
@@ -286,6 +288,7 @@ protected:
 	 * @param scrollable scrollable
 	 * @param popUp pop up
 	 * @param scriptFileName MiniScript script file name
+	 * @param miniScriptArguments mini script arguments
 	 * @param context application logic context
 	 * @throws tdme::gui::GUIParserException
 	 */
@@ -313,6 +316,7 @@ protected:
 		bool scrollable,
 		bool popUp,
 		const string& scriptFileName,
+		const MiniScript::ScriptVariable& miniScriptArguments,
 		Context* context
 	);
 
@@ -329,9 +333,8 @@ private:
 
 	/**
 	 * Initialize mini script
-	 * @param miniScriptArguments mini script arguments
 	 */
-	void initializeMiniScript(const MiniScript::ScriptVariable& miniScriptArguments);
+	void initializeMiniScript();
 
 	/**
 	 * Add node

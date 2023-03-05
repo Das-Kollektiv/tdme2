@@ -281,6 +281,7 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 		StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("scrollable")))), "true"),
 		StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("popup")))), "true"),
 		string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("script"))),
+		miniScriptArguments,
 		context
 	);
 	// workaround for having GUINode constructor to be called before GUIScreenNode constructor
@@ -293,9 +294,6 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 	vector<GUINode*> childControllerNodes;
 	guiScreenNode->getChildControllerNodes(childControllerNodes);
 	for (auto node: childControllerNodes) node->getController()->onSubTreeChange();
-
-	//
-	guiScreenNode->initializeMiniScript(miniScriptArguments);
 
 	//
 	return guiScreenNode;

@@ -108,6 +108,7 @@ GUIScreenNode::GUIScreenNode(
 	bool scrollable,
 	bool popUp,
 	const string& scriptFileName,
+	const MiniScript::ScriptVariable& miniScriptArguments,
 	Context* context
 ):
 	GUIParentNode(this, nullptr, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn, tooltip)
@@ -145,6 +146,8 @@ GUIScreenNode::GUIScreenNode(
 		} else {
 			// yup
 			Console::println(this->script->getInformation());
+			//
+			this->miniScriptArguments = miniScriptArguments;
 			//
 			this->scriptOnActionAvailable = this->script->hasFunction("onAction");
 			this->scriptOnChangeAvailable = this->script->hasFunction("onChange");
@@ -203,7 +206,7 @@ GUIScreenNode::~GUIScreenNode() {
 	if (script != nullptr) delete script;
 }
 
-void GUIScreenNode::initializeMiniScript(const MiniScript::ScriptVariable& miniScriptArguments) {
+void GUIScreenNode::initializeMiniScript() {
 	//
 	if (script != nullptr && script->hasFunction("initialize") == true) {
 		vector<MiniScript::ScriptVariable> argumentValues { miniScriptArguments };

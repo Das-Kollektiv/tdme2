@@ -176,6 +176,9 @@ void GUI::addRenderScreen(const string& screenId, int screenIdx)
 	focussedNodeScreenId.clear();
 	focussedNodeNodeId.clear();
 	determineFocussedNodes();
+
+	//
+	screen->initializeMiniScript();
 }
 
 void GUI::removeRenderScreen(const string& screenId)
