@@ -70,7 +70,6 @@ private:
 	GUIRenderer* guiRenderer { nullptr };
 	Engine* engine { nullptr };
 	unordered_map<string, GUIScreenNode*> screens;
-	GUIColor foccussedBorderColor;
 	vector<GUIElementNode*> focusableNodes;
 	vector<GUIScreenNode*> focusableScreenNodes;
 	string focussedNodeScreenId;
@@ -276,13 +275,6 @@ public:
 	 * @param screenId screenId
 	 */
 	void removeRenderScreen(const string& screenId);
-
-	/**
-	 * @return focussed border color
-	 */
-	inline GUIColor& getFoccussedBorderColor() {
-		return foccussedBorderColor;
-	}
 
 	/**
 	 * Invalidate focussed node

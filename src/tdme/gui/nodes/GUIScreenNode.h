@@ -12,6 +12,7 @@
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode_SizeConstraints.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
@@ -49,6 +50,7 @@ using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINodeConditions;
+using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode_SizeConstraints;
@@ -138,6 +140,8 @@ private:
 	};
 
 	vector<ForwardEvent> forwardEventList;
+
+	GUIColor foccussedBorderColor;
 
 	GUIMiniScript* script { nullptr };
 	bool scriptOnActionAvailable { false };
@@ -748,6 +752,13 @@ public:
 	 * @return texture
 	 */
 	Texture* getImage(const string& fileName);
+
+	/**
+	 * @return foccussed border color
+	 */
+	inline const GUIColor& getFoccussedBorderColor() {
+		return foccussedBorderColor;
+	}
 
 	/**
 	 * @return mini script script attached to this screen

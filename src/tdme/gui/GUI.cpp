@@ -72,7 +72,6 @@ GUI::GUI(Engine* engine, GUIRenderer* guiRenderer)
 	this->guiRenderer = guiRenderer;
 	this->width = engine->getWidth();
 	this->height = engine->getHeight();
-	this->foccussedBorderColor = GUIColor(GUIParser::getEngineThemeProperties()->get("color.focus", "#ff0000"));
 }
 
 GUI::~GUI() {
@@ -257,10 +256,10 @@ void GUI::focusNode()
 		unfocussedNodeBorderLeftColor = focussedNode->getBorder().leftColor;
 		unfocussedNodeBorderBottomColor = focussedNode->getBorder().bottomColor;
 		unfocussedNodeBorderRightColor = focussedNode->getBorder().rightColor;
-		focussedNode->getBorder().topColor = foccussedBorderColor;
-		focussedNode->getBorder().leftColor = foccussedBorderColor;
-		focussedNode->getBorder().bottomColor = foccussedBorderColor;
-		focussedNode->getBorder().rightColor = foccussedBorderColor;
+		focussedNode->getBorder().topColor = focussedNodeScreen->getFoccussedBorderColor();
+		focussedNode->getBorder().leftColor = focussedNodeScreen->getFoccussedBorderColor();
+		focussedNode->getBorder().bottomColor = focussedNodeScreen->getFoccussedBorderColor();
+		focussedNode->getBorder().rightColor = focussedNodeScreen->getFoccussedBorderColor();
 		if (focussedNode->getController() != nullptr) focussedNode->getController()->onFocusGained();
 		focussedNode->getScreenNode()->forwardFocus(focussedNode);
 	}

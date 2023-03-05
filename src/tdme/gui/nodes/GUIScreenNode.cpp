@@ -20,6 +20,7 @@
 #include <tdme/gui/events/GUIMouseOverListener.h>
 #include <tdme/gui/events/GUIMoveListener.h>
 #include <tdme/gui/events/GUITooltipRequestListener.h>
+#include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -34,12 +35,14 @@
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/gui/scripting/GUIMiniScript.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MiniScript.h>
 #include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/Properties.h>
 
 using std::map;
 using std::remove;
@@ -62,6 +65,7 @@ using tdme::gui::events::GUIInputEventHandler;
 using tdme::gui::events::GUIMouseOverListener;
 using tdme::gui::events::GUIMoveListener;
 using tdme::gui::events::GUITooltipRequestListener;
+using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -77,12 +81,14 @@ using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::scripting::GUIMiniScript;
 using tdme::gui::GUI;
+using tdme::gui::GUIParser;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Integer;
 using tdme::utilities::MiniScript;
 using tdme::utilities::MutableString;
+using tdme::utilities::Properties;
 
 GUIScreenNode::GUIScreenNode(
 	const string& fileName,
@@ -126,6 +132,7 @@ GUIScreenNode::GUIScreenNode(
 	this->parentNode = nullptr;
 	this->visible = true;
 	this->popUp = popUp;
+	this->foccussedBorderColor = GUIColor(applicationSubPathName == "project"?GUIParser::getProjectThemeProperties()->get("color.focus", "#ff0000"):GUIParser::getEngineThemeProperties()->get("color.focus", "#ff0000"));
 	if (scriptFileName.empty() == false) {
 		this->script = new GUIMiniScript(this);
 		// compute project script path and file name

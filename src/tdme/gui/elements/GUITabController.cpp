@@ -70,7 +70,7 @@ void GUITabController::setSelected(bool selected)
 	nodeConditions.add(this->selected == true?CONDITION_SELECTED:CONDITION_UNSELECTED);
 	if (required_dynamic_cast<GUITabsHeaderController*>(tabsHeaderNode->getController())->hasFocus() == true) {
 		if (selected == true) {
-			auto focussedBorderColor = node->getScreenNode()->getGUI()->getFoccussedBorderColor();
+			auto focussedBorderColor = node->getScreenNode()->getFoccussedBorderColor();
 			auto border = node->getBorder();
 			border.topColor = focussedBorderColor;
 			border.leftColor = focussedBorderColor;
