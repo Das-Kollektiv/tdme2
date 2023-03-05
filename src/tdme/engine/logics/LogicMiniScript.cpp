@@ -369,6 +369,114 @@ void LogicMiniScript::registerMethods() {
 	}
 	{
 		//
+		class ScriptMethodInputKeyboardKEYCODE_POS1: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_POS1(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_POS1";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_POS1);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_POS1(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_END: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_END(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_END";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_END);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_END(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_PAGEUP: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_PAGEUP(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_PAGEUP";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_PAGE_UP);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_PAGEUP(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_PAGEDOWN: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_PAGEDOWN(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_PAGEDOWN";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_PAGE_DOWN);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_PAGEDOWN(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_BACKSPACE: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_BACKSPACE(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_BACKSPACE";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_BACKSPACE);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_BACKSPACE(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_DELETE: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_DELETE(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_DELETE";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_DELETE);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_DELETE(this));
+	}
+	{
+		//
 		class ScriptMethodInputKeyboardKEYCODE_SPACE: public ScriptMethod {
 		private:
 			LogicMiniScript* miniScript { nullptr };
@@ -420,6 +528,222 @@ void LogicMiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_ESCAPE(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_F1: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_F1(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_F1";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F1);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F1(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_F2: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_F2(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_F2";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F2);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F2(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_F3: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_F3(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_F3";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F3);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F3(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_F4: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_F4(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_F4";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F4);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F4(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_F5: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_F5(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_F5";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F5);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F5(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_F6: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_F6(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_F6";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F6);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F6(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_F7: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_F7(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_F7";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F7);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F7(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_F8: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_F8(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_F8";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F8);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F8(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_F9: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_F9(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_F9";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F9);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F9(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_F10: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_F10(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_F10";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F10);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F10(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_F11: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_F11(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_F11";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F11);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F11(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_F12: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_F12(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_F12";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F12);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F12(this));
 	}
 	{
 		//
