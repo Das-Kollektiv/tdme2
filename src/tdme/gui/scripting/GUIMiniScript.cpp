@@ -955,6 +955,44 @@ void GUIMiniScript::registerMethods() {
 	// gui
 	{
 		//
+		class ScriptMethodGUIScreenSetVisible: public ScriptMethod {
+		private:
+			GUIMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodGUIScreenSetVisible(GUIMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_STRING, .name = "screenId", .optional = false, .assignBack = false },
+						{.type = ScriptVariableType::TYPE_BOOLEAN, .name = "visible", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_NULL
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "gui.screen.setVisible";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string screenId;
+				bool visible;
+				if (miniScript->getStringValue(argumentValues, 0, screenId, false) == false ||
+					miniScript->getBooleanValue(argumentValues, 1, visible, false) == false) {
+					Console::println("ScriptMethodGUIScreenSetVisible::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: boolean expected");
+					miniScript->startErrorScript();
+				} else {
+					auto screen = miniScript->screenNode->getGUI()->getScreen(screenId);
+					if (screen != nullptr) {
+						screen->setVisible(visible);
+					} else {
+						Console::println("ScriptMethodGUIScreenSetVisible::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no screen with given id: " + screenId);
+						miniScript->startErrorScript();
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodGUIScreenSetVisible(this));
+	}
+	{
+		//
 		class ScriptMethodGUIScreenGoto: public ScriptMethod {
 		private:
 			GUIMiniScript* miniScript { nullptr };
