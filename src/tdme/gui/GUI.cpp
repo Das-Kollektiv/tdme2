@@ -704,6 +704,9 @@ void GUI::handleEvents(bool clearEvents)
 			screen->getInputEventHandler()->handleInputEvents();
 		}
 		screen->forwardEvents();
+		if (screen->getMiniScript() != nullptr) {
+			screen->getMiniScript()->collectHIDEvents(mouseEvents, keyboardEvents);
+		}
 		if (screen->isPopUp() == true) break;
 	}
 

@@ -879,6 +879,52 @@ Reading all keys as array from set:
 | gui.textnode.setText($textNodeId: String, $text: String): Void                                   |
 | gui.videonode.getSource($videoNodeId: String): String                                            |
 | gui.videonode.setSource($videoNodeId: String, $source: String): Void                             |
+| input.keyboard.isAltDown(): Boolean                                                              |
+| input.keyboard.isCharDown($charAsString: String): Boolean                                        |
+| input.keyboard.isControlDown(): Boolean                                                          |
+| input.keyboard.KEYCODE_BACKSPACE(): Integer                                                      |
+| input.keyboard.KEYCODE_DELETE(): Integer                                                         |
+| input.keyboard.KEYCODE_DOWN(): Integer                                                           |
+| input.keyboard.KEYCODE_END(): Integer                                                            |
+| input.keyboard.KEYCODE_ESCAPE(): Integer                                                         |
+| input.keyboard.KEYCODE_F1(): Integer                                                             |
+| input.keyboard.KEYCODE_F10(): Integer                                                            |
+| input.keyboard.KEYCODE_F11(): Integer                                                            |
+| input.keyboard.KEYCODE_F12(): Integer                                                            |
+| input.keyboard.KEYCODE_F2(): Integer                                                             |
+| input.keyboard.KEYCODE_F3(): Integer                                                             |
+| input.keyboard.KEYCODE_F4(): Integer                                                             |
+| input.keyboard.KEYCODE_F5(): Integer                                                             |
+| input.keyboard.KEYCODE_F6(): Integer                                                             |
+| input.keyboard.KEYCODE_F7(): Integer                                                             |
+| input.keyboard.KEYCODE_F8(): Integer                                                             |
+| input.keyboard.KEYCODE_F9(): Integer                                                             |
+| input.keyboard.KEYCODE_LEFT(): Integer                                                           |
+| input.keyboard.KEYCODE_PAGEDOWN(): Integer                                                       |
+| input.keyboard.KEYCODE_PAGEUP(): Integer                                                         |
+| input.keyboard.KEYCODE_POS1(): Integer                                                           |
+| input.keyboard.KEYCODE_RETURN(): Integer                                                         |
+| input.keyboard.KEYCODE_RIGHT(): Integer                                                          |
+| input.keyboard.KEYCODE_SPACE(): Integer                                                          |
+| input.keyboard.KEYCODE_UP(): Integer                                                             |
+| input.keyboard.isKeyDown($keyCode: Integer): Boolean                                             |
+| input.keyboard.isMetaDown(): Boolean                                                             |
+| input.keyboard.isShiftDown(): Boolean                                                            |
+| input.keyboard.getTypedString(): String                                                          |
+| input.mouse.BUTTON_LEFT(): Integer                                                               |
+| input.mouse.BUTTON_MIDDLE(): Integer                                                             |
+| input.mouse.BUTTON_RIGHT(): Integer                                                              |
+| input.mouse.isButtonDown($button: Integer): Boolean                                              |
+| input.mouse.isButtonUp($button: Integer): Boolean                                                |
+| input.mouse.isDragging($button: Integer): Boolean                                                |
+| input.mouse.hasMoved(): Boolean                                                                  |
+| input.mouse.getWheelX(): Float                                                                   |
+| input.mouse.getWheelY(): Float                                                                   |
+| input.mouse.getWheelZ(): Float                                                                   |
+| input.mouse.getX(): Integer                                                                      |
+| input.mouse.getXUnscaled(): Integer                                                              |
+| input.mouse.getY(): Integer                                                                      |
+| input.mouse.getYUnscaled(): Integer                                                              |
 | logic.call($logicId: String, $function: String, ...): Mixed                                      |
 | logic.signal.send($logicId: String, $signal: String, ...): Void                                  |
 
