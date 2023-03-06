@@ -6528,6 +6528,35 @@ void MiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodJSONSerialize(this));
 	}
+	{
+		//
+		class ScriptMethodJSONDeserialize: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodJSONDeserialize(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "json", .optional = false, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_MAP
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "json.deserialize";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string json;
+				if (MiniScript::getStringValue(argumentValues, 0, json, false) == false) {
+					Console::println("ScriptMethodJSONDeserialize::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				} else {
+					returnValue = MiniScript::deserializeJson(json);
+				}
+			}
+		};
+		registerMethod(new ScriptMethodJSONDeserialize(this));
+	}
 
 	// register math functions
 	MiniScriptMath::registerMethods(this);
@@ -7536,4 +7565,88 @@ const string MiniScript::serializeAsJson(const ScriptVariable& variable) {
 	}
 	//
 	return string();
+}
+
+const MiniScript::ScriptVariable MiniScript::deserializeMapJson(Value& jObjectValue) {
+	//
+	ScriptVariable result;
+	result.setType(MiniScript::TYPE_MAP);
+	//
+	auto jObject = jObjectValue.GetObject();
+	//
+	for (auto& jObjectIt: jObject) {
+		auto name = string(jObjectIt.name.GetString());
+		auto& value = jObjectIt.value;
+		//
+		if (value.IsNull() == true) {
+			result.setMapValue(name, ScriptVariable());
+		} else
+		if (value.IsBool() == true) {
+			result.setMapValue(name, ScriptVariable(value.GetBool()));
+		} else
+		if (value.IsInt64() == true) {
+			result.setMapValue(name, ScriptVariable(value.GetInt64()));
+		} else
+		if (value.IsFloat() == true) {
+			result.setMapValue(name, ScriptVariable(value.GetFloat()));
+		} else
+		if (value.IsString() == true) {
+			result.setMapValue(name, ScriptVariable(string(value.GetString())));
+		} else
+		if (value.IsArray() == true) {
+			result.setMapValue(name, deserializeArrayJson(value));
+		} else
+		if (value.IsObject() == true) {
+			result.setMapValue(name, deserializeMapJson(value));
+		} else {
+			Console::println("MiniScript::deserializeMapJson(): unknown json data type for: " + name);
+		}
+	}
+	//
+	return result;
+}
+
+const MiniScript::ScriptVariable MiniScript::deserializeArrayJson(Value& jArrayValue) {
+	//
+	ScriptVariable result;
+	result.setType(MiniScript::TYPE_ARRAY);
+	//
+	auto jArray = jArrayValue.GetArray();
+	for (auto i = 0; i < jArray.Size(); i++) {
+		auto& value = jArray[i];
+		//
+		if (value.IsNull() == true) {
+			result.pushArrayValue(ScriptVariable());
+		} else
+		if (value.IsBool() == true) {
+			result.pushArrayValue(ScriptVariable(value.GetBool()));
+		} else
+		if (value.IsInt64() == true) {
+			result.pushArrayValue(ScriptVariable(value.GetInt64()));
+		} else
+		if (value.IsFloat() == true) {
+			result.pushArrayValue(ScriptVariable(value.GetFloat()));
+		} else
+		if (value.IsString() == true) {
+			result.pushArrayValue(ScriptVariable(string(value.GetString())));
+		} else
+		if (value.IsArray() == true) {
+			result.pushArrayValue(deserializeArrayJson(value));
+		} else
+		if (value.IsObject() == true) {
+			result.pushArrayValue(deserializeMapJson(value));
+		} else {
+			Console::println("MiniScript::deserializeArrayJson(): unknown json data type");
+		}
+	}
+	//
+	return result;
+}
+
+const MiniScript::ScriptVariable MiniScript::deserializeJson(const string& json) {
+	//
+	Document jRoot;
+	jRoot.Parse(json.c_str());
+	//
+	return deserializeMapJson(jRoot.GetObject());
 }

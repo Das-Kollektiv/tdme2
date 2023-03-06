@@ -2596,6 +2596,20 @@ private:
 	 */
 	static void serializeArrayAsJson(Document& jDocument, Value& jParent, const ScriptVariable& variable);
 
+	/**
+	 * Deserialize map from JSON value
+	 * @param jObjectValue JSON object value
+	 * @return script variable
+	 */
+	static const ScriptVariable deserializeMapJson(Value& jObjectValue);
+
+	/**
+	 * Deserialize array from JSON value
+	 * @param jArrayValue JSON array value
+	 * @return script variable
+	 */
+	static const ScriptVariable deserializeArrayJson(Value& jArrayValue);
+
 public:
 	/**
 	 * Default constructor
@@ -3214,5 +3228,12 @@ public:
 	 * @return JSON representation
 	 */
 	static const string serializeAsJson(const ScriptVariable& variable);
+
+	/**
+	 * Deserialize as JSON
+	 * @param variable variable
+	 * @return JSON representation
+	 */
+	static const ScriptVariable deserializeJson(const string& json);
 
 };

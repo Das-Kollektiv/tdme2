@@ -161,6 +161,11 @@
 			<parameter name="Integer $int" />
 		</overload>
 	</keyword>
+	<keyword name="json.deserialize" func="yes">
+		<overload return-value="Map" descr="">
+			<parameter name="String $json" />
+		</overload>
+	</keyword>
 	<keyword name="json.serialize" func="yes">
 		<overload return-value="String" descr="">
 			<parameter name="Map $value" />
