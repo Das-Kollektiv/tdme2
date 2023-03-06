@@ -552,8 +552,8 @@ Reading all keys as array from set:
 | greaterequals($a: Mixed, $b: Mixed): Boolean                                                     |
 | if($condition: Boolean): Void                                                                    |
 | int($int: Integer): Integer                                                                      |
-| json.deserialize($json: String): Map                                                             |
-| json.serialize($value: Map): String                                                              |
+| json.deserialize($json: String): Mixed                                                           |
+| json.serialize($value: Mixed): String                                                            |
 | lesser($a: Mixed, $b: Mixed): Boolean                                                            |
 | lesserequals($a: Mixed, $b: Mixed): Boolean                                                      |
 | map(): Map                                                                                       |

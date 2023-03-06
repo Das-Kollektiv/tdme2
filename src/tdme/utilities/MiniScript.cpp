@@ -6508,7 +6508,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodJSONSerialize(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_MAP, .name = "value", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .assignBack = false },
 					},
 					ScriptVariableType::TYPE_STRING
 				),
@@ -6539,7 +6539,7 @@ void MiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "json", .optional = false, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_MAP
+					ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {

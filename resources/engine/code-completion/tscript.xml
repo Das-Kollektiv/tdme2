@@ -162,13 +162,13 @@
 		</overload>
 	</keyword>
 	<keyword name="json.deserialize" func="yes">
-		<overload return-value="Map" descr="">
+		<overload return-value="Mixed" descr="">
 			<parameter name="String $json" />
 		</overload>
 	</keyword>
 	<keyword name="json.serialize" func="yes">
 		<overload return-value="String" descr="">
-			<parameter name="Map $value" />
+			<parameter name="Mixed $value" />
 		</overload>
 	</keyword>
 	<keyword name="lesser" func="yes">
