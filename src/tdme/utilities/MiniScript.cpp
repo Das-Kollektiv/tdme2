@@ -7547,9 +7547,32 @@ const string MiniScript::serializeAsJson(const ScriptVariable& variable) {
 		case TYPE_MATRIX3x3:
 		case TYPE_MATRIX4x4:
 		case TYPE_TRANSFORM:
-		case TYPE_ARRAY:
+			Console::println("MiniScript::serializeAsJson(): unsupported root variable type: " + variable.getTypeAsString() + ", the root variable type must be map, set or array");
+			break;
 		case TYPE_SET:
-			Console::println("MiniScript::serializeAsJson(): unsupported JSON root variable type: " + variable.getTypeAsString() + ", the root variable type must be map");
+			{
+				Document jRoot;
+				jRoot.SetArray();
+				auto& value = variable.getSetValueReference();
+				for (auto v: value) {
+					jRoot.PushBack(Value(v, jRoot.GetAllocator()), jRoot.GetAllocator());
+				}
+				StringBuffer stringBuffer;
+				Writer<StringBuffer> writer(stringBuffer);
+				jRoot.Accept(writer);
+				return stringBuffer.GetString();
+			}
+			break;
+		case TYPE_ARRAY:
+			{
+				Document jRoot;
+				jRoot.SetArray();
+				serializeArrayAsJson(jRoot, jRoot, variable);
+				StringBuffer stringBuffer;
+				Writer<StringBuffer> writer(stringBuffer);
+				jRoot.Accept(writer);
+				return stringBuffer.GetString();
+			}
 			break;
 		case TYPE_MAP:
 			{
@@ -7599,7 +7622,7 @@ const MiniScript::ScriptVariable MiniScript::deserializeMapJson(Value& jObjectVa
 		if (value.IsObject() == true) {
 			result.setMapValue(name, deserializeMapJson(value));
 		} else {
-			Console::println("MiniScript::deserializeMapJson(): unknown json data type for: " + name);
+			Console::println("MiniScript::deserializeMapJson(): unknown JSON data type for: " + name);
 		}
 	}
 	//
@@ -7636,7 +7659,7 @@ const MiniScript::ScriptVariable MiniScript::deserializeArrayJson(Value& jArrayV
 		if (value.IsObject() == true) {
 			result.pushArrayValue(deserializeMapJson(value));
 		} else {
-			Console::println("MiniScript::deserializeArrayJson(): unknown json data type");
+			Console::println("MiniScript::deserializeArrayJson(): unknown JSON data type in JSON array @ " + to_string(i));
 		}
 	}
 	//
@@ -7647,6 +7670,13 @@ const MiniScript::ScriptVariable MiniScript::deserializeJson(const string& json)
 	//
 	Document jRoot;
 	jRoot.Parse(json.c_str());
-	//
-	return deserializeMapJson(jRoot.GetObject());
+	if (jRoot.IsArray() == true) {
+		return deserializeArrayJson(jRoot);
+	} else
+	if (jRoot.IsObject() == true) {
+		return deserializeMapJson(jRoot);
+	} else {
+		Console::println("MiniScript::deserializeJson(): unknown JSON root data type: root data type must be array or object");
+		return ScriptVariable();
+	}
 }
