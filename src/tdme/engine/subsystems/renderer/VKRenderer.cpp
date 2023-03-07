@@ -1982,32 +1982,26 @@ void VKRenderer::finishFrame()
 				continue;
 			}
 			// mark for deletion
-			deleteImages.push_back(
-				{
-					.image = texture->image,
-					.allocation = texture->allocation,
-					.imageView = texture->view,
-					.sampler = texture->sampler
-				}
+			deleteImages.emplace_back(
+				texture->image,
+				texture->allocation,
+				texture->view,
+				texture->sampler
 			);
 			if (texture->cubemapColorBuffer != nullptr) {
-				deleteImages.push_back(
-					{
-						.image = texture->cubemapColorBuffer->image,
-						.allocation = texture->cubemapColorBuffer->allocation,
-						.imageView = texture->cubemapColorBuffer->view,
-						.sampler = texture->cubemapColorBuffer->sampler
-					}
+				deleteImages.emplace_back(
+					texture->cubemapColorBuffer->image,
+					texture->cubemapColorBuffer->allocation,
+					texture->cubemapColorBuffer->view,
+					texture->cubemapColorBuffer->sampler
 				);
 			}
 			if (texture->cubemapDepthBuffer != nullptr) {
-				deleteImages.push_back(
-					{
-						.image = texture->cubemapDepthBuffer->image,
-						.allocation = texture->cubemapDepthBuffer->allocation,
-						.imageView = texture->cubemapDepthBuffer->view,
-						.sampler = texture->cubemapDepthBuffer->sampler
-					}
+				deleteImages.emplace_back(
+					texture->cubemapDepthBuffer->image,
+					texture->cubemapDepthBuffer->allocation,
+					texture->cubemapDepthBuffer->view,
+					texture->cubemapDepthBuffer->sampler
 				);
 			 }
 			//
@@ -2030,11 +2024,9 @@ void VKRenderer::finishFrame()
 				auto& reusableBuffer = reusableBufferIt;
 				if (reusableBuffer.size == 0) continue;
 				// mark staging buffer for deletion when finishing frame
-				deleteBuffers.push_back(
-					{
-						.buffer = reusableBuffer.buffer,
-						.allocation = reusableBuffer.allocation
-					}
+				deleteBuffers.emplace_back(
+					reusableBuffer.buffer,
+					reusableBuffer.allocation
 				);
 			}
 			buffers[bufferObjectId] = nullptr;
@@ -3945,13 +3937,11 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 	if (cubeMapTexture == nullptr) {
 		// mark for deletion
 		deleteMutex.lock();
-		deleteImages.push_back(
-			{
-				.image = depthBufferTexture.image,
-				.allocation = depthBufferTexture.allocation,
-				.imageView = depthBufferTexture.view,
-				.sampler = depthBufferTexture.sampler
-			}
+		deleteImages.emplace_back(
+			depthBufferTexture.image,
+			depthBufferTexture.allocation,
+			depthBufferTexture.view,
+			depthBufferTexture.sampler
 		);
 		deleteMutex.unlock();
 
@@ -4109,13 +4099,12 @@ void VKRenderer::createBufferTexture(int32_t textureId, int32_t width, int32_t h
 	if (cubeMapTexture == nullptr) {
 		// mark for deletion
 		deleteMutex.lock();
-		deleteImages.push_back(
-			{
-				.image = colorBufferTexture.image,
-				.allocation = colorBufferTexture.allocation,
-				.imageView = colorBufferTexture.view,
-				.sampler = colorBufferTexture.sampler
-			});
+		deleteImages.emplace_back(
+			colorBufferTexture.image,
+			colorBufferTexture.allocation,
+			colorBufferTexture.view,
+			colorBufferTexture.sampler
+		);
 		deleteMutex.unlock();
 
 		//
@@ -4951,13 +4940,11 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 		);
 		finishSetupCommandBuffer(currentContext.idx);
 		//
-		deleteStagingImages.push_back(
-			{
-				.image = stagingTexture.image,
-				.allocation = stagingTexture.allocation,
-				.imageView = VK_NULL_HANDLE,
-				.sampler = VK_NULL_HANDLE
-			}
+		deleteStagingImages.emplace_back(
+			stagingTexture.image,
+			stagingTexture.allocation,
+			VK_NULL_HANDLE,
+			VK_NULL_HANDLE
 		);
 		// mip maps
 		if (texture->isUseMipMap() == true) {
@@ -5027,13 +5014,11 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 				);
 				finishSetupCommandBuffer(currentContext.idx);
 				//
-				deleteStagingImages.push_back(
-					{
-						.image = mipMapStagingTexture.image,
-						.allocation = mipMapStagingTexture.allocation,
-						.imageView = VK_NULL_HANDLE,
-						.sampler = VK_NULL_HANDLE
-					}
+				deleteStagingImages.emplace_back(
+					mipMapStagingTexture.image,
+					mipMapStagingTexture.allocation,
+					VK_NULL_HANDLE,
+					VK_NULL_HANDLE
 				);
 				//
 				level++;
@@ -5055,13 +5040,11 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 		// mark for deletion
 		deleteMutex.lock();
 		for (auto& deleteStagingImage: deleteStagingImages) {
-			deleteImages.push_back(
-				{
-					.image = deleteStagingImage.image,
-					.allocation = deleteStagingImage.allocation,
-					.imageView = VK_NULL_HANDLE,
-					.sampler = VK_NULL_HANDLE
-				}
+			deleteImages.emplace_back(
+				deleteStagingImage.image,
+				deleteStagingImage.allocation,
+				VK_NULL_HANDLE,
+				VK_NULL_HANDLE
 			);
 		}
 		deleteMutex.unlock();
@@ -5314,13 +5297,11 @@ void VKRenderer::uploadCubeMapSingleTexture(int contextIdx, texture_type* cubema
 
 		// mark for deletion
 		deleteMutex.lock();
-		deleteImages.push_back(
-			{
-				.image = staging_texture.image,
-				.allocation = staging_texture.allocation,
-				.imageView = VK_NULL_HANDLE,
-				.sampler = VK_NULL_HANDLE
-			}
+		deleteImages.emplace_back(
+			staging_texture.image,
+			staging_texture.allocation,
+			VK_NULL_HANDLE,
+			VK_NULL_HANDLE
 		);
 		deleteMutex.unlock();
 	} else
@@ -6389,7 +6370,7 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 
 	// nope, create one
 	if (reusableBuffer == nullptr) {
-		buffer->buffers.push_back(buffer_object_type::reusable_buffer());
+		buffer->buffers.emplace_back();
 		reusableBuffer = &buffer->buffers.back();
 		buffer->bufferCount++;
 	}
@@ -6424,11 +6405,9 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 		createBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, stagingBuffer, stagingBufferAllocation, stagingBufferAllocationInfo);
 		// mark staging buffer for deletion when finishing frame
 		deleteMutex.lock();
-		deleteBuffers.push_back(
-			{
-				.buffer = stagingBuffer,
-				.allocation = stagingBufferAllocation
-			}
+		deleteBuffers.emplace_back(
+			stagingBuffer,
+			stagingBufferAllocation
 		);
 		deleteMutex.unlock();
 
@@ -7374,11 +7353,9 @@ float VKRenderer::readPixelDepth(int32_t x, int32_t y)
 
 	// mark buffer for deletion
 	deleteMutex.lock();
-	deleteBuffers.push_back(
-		{
-			.buffer = buffer,
-			.allocation = allocation
-		}
+	deleteBuffers.emplace_back(
+		buffer,
+		allocation
 	);
 	deleteMutex.unlock();
 
@@ -7553,13 +7530,12 @@ ByteBuffer* VKRenderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t 
 
 	// mark for deletion
 	deleteMutex.lock();
-	deleteImages.push_back(
-		{
-			.image = image,
-			.allocation = allocation,
-			.imageView = VK_NULL_HANDLE,
-			.sampler = VK_NULL_HANDLE,
-		});
+	deleteImages.emplace_back(
+		image,
+		allocation,
+		VK_NULL_HANDLE,
+		VK_NULL_HANDLE
+	);
 	deleteMutex.unlock();
 
 	//

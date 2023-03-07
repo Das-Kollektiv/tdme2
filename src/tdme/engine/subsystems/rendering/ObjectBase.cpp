@@ -103,12 +103,10 @@ void ObjectBase::getTriangles(vector<Triangle>& triangles, int nodeIdx)
 			for (auto& facesEntity : objectNode->node->getFacesEntities())
 			for (auto& face : facesEntity.getFaces()) {
 				auto faceVertexIndices = face.getVertexIndices();
-				triangles.push_back(
-					Triangle(
-						(*nodeVerticesTransformed)[faceVertexIndices[0]],
-						(*nodeVerticesTransformed)[faceVertexIndices[1]],
-						(*nodeVerticesTransformed)[faceVertexIndices[2]]
-					)
+				triangles.emplace_back(
+					(*nodeVerticesTransformed)[faceVertexIndices[0]],
+					(*nodeVerticesTransformed)[faceVertexIndices[1]],
+					(*nodeVerticesTransformed)[faceVertexIndices[2]]
 				);
 			}
 		}
@@ -118,12 +116,10 @@ void ObjectBase::getTriangles(vector<Triangle>& triangles, int nodeIdx)
 		for (auto& facesEntity : objectNode->node->getFacesEntities())
 		for (auto& face : facesEntity.getFaces()) {
 			auto faceVertexIndices = face.getVertexIndices();
-			triangles.push_back(
-				Triangle(
-					(*nodeVerticesTransformed)[faceVertexIndices[0]],
-					(*nodeVerticesTransformed)[faceVertexIndices[1]],
-					(*nodeVerticesTransformed)[faceVertexIndices[2]]
-				)
+			triangles.emplace_back(
+				(*nodeVerticesTransformed)[faceVertexIndices[0]],
+				(*nodeVerticesTransformed)[faceVertexIndices[1]],
+				(*nodeVerticesTransformed)[faceVertexIndices[2]]
 			);
 		}
 	}

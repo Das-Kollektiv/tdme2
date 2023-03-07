@@ -1034,13 +1034,11 @@ void GUIStyledTextNodeController::storeTypingHistoryEntry() {
 	u8It.seekCharacterPosition(historyEntryIdx);
 	string data;
 	for (; u8It.hasNext() == true && u8It.getCharacterPosition() < index;) Character::appendToString(data, u8It.next());
-	history.push_back(
-		{
-			.type = HistoryEntry::TYPE_INSERT,
-			.idx = historyEntryIdx,
-			.data = data,
-			.joinable = false
-		}
+	history.emplace_back(
+		HistoryEntry::TYPE_INSERT,
+		historyEntryIdx,
+		data,
+		false
 	);
 	//
 	historyEntryIdx = -1;
@@ -1078,13 +1076,11 @@ void GUIStyledTextNodeController::storeTypingHistoryEntry2(int index, const stri
 	}
 
 	//
-	history.push_back(
-		{
-			.type = HistoryEntry::TYPE_INSERT,
-			.idx = index,
-			.data = data,
-			.joinable = false
-		}
+	history.emplace_back(
+		HistoryEntry::TYPE_INSERT,
+		index,
+		data,
+		false
 	);
 	//
 	historyEntryIdx = -1;
@@ -1121,13 +1117,11 @@ void GUIStyledTextNodeController::storeDeletionHistoryInternal(int index, int co
 	u8It.seekCharacterPosition(index);
 	string data;
 	for (auto i = 0; u8It.hasNext() == true && i < count; i++) Character::appendToString(data, u8It.next());
-	history.push_back(
-		{
-			.type = HistoryEntry::TYPE_DELETE,
-			.idx = index,
-			.data = data,
-			.joinable = count == 1
-		}
+	history.emplace_back(
+		HistoryEntry::TYPE_DELETE,
+		index,
+		data,
+		count == 1
 	);
 	// just point to the latest history entry
 	historyIdx = history.size();

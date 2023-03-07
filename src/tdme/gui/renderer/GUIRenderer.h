@@ -360,13 +360,11 @@ public:
 	 * @oaran effects effects
 	 */
 	inline void pushEffects(const vector<GUIEffect*>& effects) {
-		this->stackedEffects.push_back(
-			{
-				.guiEffectColorMul = guiEffectColorMul,
-				.guiEffectColorAdd = guiEffectColorAdd,
-				.guiEffectOffsetX = guiEffectOffsetX,
-				.guiEffectOffsetY = guiEffectOffsetY,
-			}
+		this->stackedEffects.emplace_back(
+			guiEffectColorMul,
+			guiEffectColorAdd,
+			guiEffectOffsetX,
+			guiEffectOffsetY
 		);
 		for (auto effect: effects) effect->apply(this);
 	}

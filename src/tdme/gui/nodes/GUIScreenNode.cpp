@@ -581,14 +581,12 @@ void GUIScreenNode::setInputEventHandler(GUIInputEventHandler* inputEventHandler
 
 void GUIScreenNode::forwardAction(GUIActionListenerType type, GUIElementNode* node)
 {
-	forwardEventList.push_back(
-		{
-			.eventType = ForwardEvent::EVENTTYPE_ACTION,
-			.nodeId = node->getId(),
-			.mouseX = -1,
-			.mouseY = -1,
-			.type = type
-		}
+	forwardEventList.emplace_back(
+		ForwardEvent::EVENTTYPE_ACTION,
+		node->getId(),
+		-1,
+		-1,
+		type
 	);
 }
 
@@ -607,14 +605,12 @@ void GUIScreenNode::forwardChange(GUIElementNode* node)
 {
 	node->executeOnChangeExpression();
 	//
-	forwardEventList.push_back(
-		{
-			.eventType = ForwardEvent::EVENTTYPE_CHANGE,
-			.nodeId = node->getId(),
-			.mouseX = -1,
-			.mouseY = -1,
-			.type = -1
-		}
+	forwardEventList.emplace_back(
+		ForwardEvent::EVENTTYPE_CHANGE,
+		node->getId(),
+		-1,
+		-1,
+		-1
 	);
 }
 
@@ -631,14 +627,12 @@ void GUIScreenNode::removeMouseOverListener(GUIMouseOverListener* listener)
 
 void GUIScreenNode::forwardMouseOver(GUIElementNode* node)
 {
-	forwardEventList.push_back(
-		{
-			.eventType = ForwardEvent::EVENTTYPE_MOUSEOVER,
-			.nodeId = node->getId(),
-			.mouseX = -1,
-			.mouseY = -1,
-			.type = -1
-		}
+	forwardEventList.emplace_back(
+		ForwardEvent::EVENTTYPE_MOUSEOVER,
+		node->getId(),
+		-1,
+		-1,
+		-1
 	);
 }
 
@@ -652,14 +646,12 @@ void GUIScreenNode::removeContextMenuRequestListener(GUIContextMenuRequestListen
 }
 
 void GUIScreenNode::forwardContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
-	forwardEventList.push_back(
-		{
-			.eventType = ForwardEvent::EVENTTYPE_CONTEXTMENUREQUEST,
-			.nodeId = node->getId(),
-			.mouseX = mouseX,
-			.mouseY = mouseY,
-			.type = -1
-		}
+	forwardEventList.emplace_back(
+		ForwardEvent::EVENTTYPE_CONTEXTMENUREQUEST,
+		node->getId(),
+		mouseX,
+		mouseY,
+		-1
 	);
 }
 
@@ -675,26 +667,22 @@ void GUIScreenNode::removeFocusListener(GUIFocusListener* listener)
 }
 
 void GUIScreenNode::forwardFocus(GUIElementNode* node) {
-	forwardEventList.push_back(
-		{
-			.eventType = ForwardEvent::EVENTTYPE_FOCUS,
-			.nodeId = node->getId(),
-			.mouseX = -1,
-			.mouseY = -1,
-			.type = -1
-		}
+	forwardEventList.emplace_back(
+		ForwardEvent::EVENTTYPE_FOCUS,
+		node->getId(),
+		-1,
+		-1,
+		-1
 	);
 }
 
 void GUIScreenNode::forwardUnfocus(GUIElementNode* node) {
-	forwardEventList.push_back(
-		{
-			.eventType = ForwardEvent::EVENTTYPE_UNFOCUS,
-			.nodeId = node->getId(),
-			.mouseX = -1,
-			.mouseY = -1,
-			.type = -1
-		}
+	forwardEventList.emplace_back(
+		ForwardEvent::EVENTTYPE_UNFOCUS,
+		node->getId(),
+		-1,
+		-1,
+		-1
 	);
 }
 
@@ -708,26 +696,22 @@ void GUIScreenNode::removeMoveListener(GUIMoveListener* listener) {
 }
 
 void GUIScreenNode::forwardMove(GUINode* node) {
-	forwardEventList.push_back(
-		{
-			.eventType = ForwardEvent::EVENTTYPE_MOVE,
-			.nodeId = node->getId(),
-			.mouseX = -1,
-			.mouseY = -1,
-			.type = -1
-		}
+	forwardEventList.emplace_back(
+		ForwardEvent::EVENTTYPE_MOVE,
+		node->getId(),
+		-1,
+		-1,
+		-1
 	);
 }
 
 void GUIScreenNode::forwardMoveRelease(GUINode* node, int mouseX, int mouseY) {
-	forwardEventList.push_back(
-		{
-			.eventType = ForwardEvent::EVENTTYPE_MOVERELEASE,
-			.nodeId = node->getId(),
-			.mouseX = mouseX,
-			.mouseY = mouseY,
-			.type = -1
-		}
+	forwardEventList.emplace_back(
+		ForwardEvent::EVENTTYPE_MOVERELEASE,
+		node->getId(),
+		mouseX,
+		mouseY,
+		-1
 	);
 }
 
@@ -741,26 +725,22 @@ void GUIScreenNode::removeTooltipRequestListener(GUITooltipRequestListener* list
 }
 
 void GUIScreenNode::forwardTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
-	forwardEventList.push_back(
-		{
-			.eventType = ForwardEvent::EVENTTYPE_TOOLTIPSHOWREQUEST,
-			.nodeId = node->getId(),
-			.mouseX = mouseX,
-			.mouseY = mouseY,
-			.type = -1
-		}
+	forwardEventList.emplace_back(
+		ForwardEvent::EVENTTYPE_TOOLTIPSHOWREQUEST,
+		node->getId(),
+		mouseX,
+		mouseY,
+		-1
 	);
 }
 
 void GUIScreenNode::forwardTooltipCloseRequest() {
-	forwardEventList.push_back(
-		{
-			.eventType = ForwardEvent::EVENTTYPE_TOOLTIPCLOSEREQUEST,
-			.nodeId = string(),
-			.mouseX = -1,
-			.mouseY = -1,
-			.type = -1
-		}
+	forwardEventList.emplace_back(
+		ForwardEvent::EVENTTYPE_TOOLTIPCLOSEREQUEST,
+		string(),
+		-1,
+		-1,
+		-1
 	);
 }
 
@@ -774,14 +754,12 @@ void GUIScreenNode::removeDragRequestListener(GUIDragRequestListener* listener) 
 }
 
 void GUIScreenNode::forwardDragRequest(GUIElementNode* node, int mouseX, int mouseY) {
-	forwardEventList.push_back(
-		{
-			.eventType = ForwardEvent::EVENTTYPE_DRAGREQUEST,
-			.nodeId = node->getId(),
-			.mouseX = mouseX,
-			.mouseY = mouseY,
-			.type = -1
-		}
+	forwardEventList.emplace_back(
+		ForwardEvent::EVENTTYPE_DRAGREQUEST,
+		node->getId(),
+		mouseX,
+		mouseY,
+		-1
 	);
 }
 

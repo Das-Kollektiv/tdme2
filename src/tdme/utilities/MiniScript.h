@@ -1998,7 +1998,7 @@ protected:
 	 * Push a new script state
 	 */
 	inline void pushScriptState() {
-		scriptStateStack.push_back(ScriptState());
+		scriptStateStack.emplace_back();
 	}
 
 	/**

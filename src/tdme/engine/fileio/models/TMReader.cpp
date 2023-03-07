@@ -253,13 +253,11 @@ void TMReader::readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture
 				auto mipMapWidth = static_cast<uint16_t>(is->readInt());
 				auto mipMapHeight = static_cast<uint16_t>(is->readInt());
 				auto mipMapSize = is->readInt();
-				mipMapTextures.push_back(
-					{
-						.format = mipMapTextureFormat,
-						.width = mipMapWidth,
-						.height = mipMapHeight,
-						.textureData = ByteBuffer(mipMapSize)
-					}
+				mipMapTextures.emplace_back(
+					mipMapTextureFormat,
+					mipMapWidth,
+					mipMapHeight,
+					ByteBuffer(mipMapSize)
 				);
 				auto& mipMapBC7Data = mipMapTextures[mipMapTextures.size() - 1].textureData;
 				for (auto k = 0; k < mipMapSize; k++) {

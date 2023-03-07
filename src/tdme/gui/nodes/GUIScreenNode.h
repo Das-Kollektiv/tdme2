@@ -245,11 +245,9 @@ public:
 	 * @param toNode to node
 	 */
 	inline void scrollToNodeX(const string& node, const string& toNode) {
-		scrollToNodesX.push_back(
-			{
-				.node = node,
-				.toNode = toNode
-			}
+		scrollToNodesX.emplace_back(
+			node,
+			toNode
 		);
 	}
 
@@ -259,11 +257,9 @@ public:
 	 * @param toNode to node
 	 */
 	inline void scrollToNodeY(const string& node, const string& toNode) {
-		scrollToNodesY.push_back(
-			{
-				.node = node,
-				.toNode = toNode
-			}
+		scrollToNodesY.emplace_back(
+			node,
+			toNode
 		);
 	}
 

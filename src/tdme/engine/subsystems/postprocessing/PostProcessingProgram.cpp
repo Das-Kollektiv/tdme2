@@ -30,30 +30,29 @@ void PostProcessingProgram::addEffectPass(
 	bool renderLightSources,
 	bool skipOnLightSourceNotVisible
 ) {
-	PostProcessingProgramEffectPass effectPass;
-	effectPass.effectPassIdx = effectPassIdx;
-	effectPass.frameBufferWidthDivideFactor = frameBufferWidthDivideFactor;
-	effectPass.frameBufferHeightDivideFactor = frameBufferHeightDivideFactor;
-	effectPass.shaderPrefix = shaderPrefix;
-	effectPass.useEZR = useEZR;
-	effectPass.applyShadowMapping = applyShadowMapping;
-	effectPass.applyPostProcessing = applyPostProcessing;
-	effectPass.renderTypes = renderTypes;
-	effectPass.clearColor = clearColor;
-	effectPass.renderLightSources = renderLightSources;
-	effectPass.skipOnLightSourceNotVisible = skipOnLightSourceNotVisible;
-	//effectPass
-	effectPasses.push_back(effectPass);
+	effectPasses.emplace_back(
+		effectPassIdx,
+		frameBufferWidthDivideFactor,
+		frameBufferHeightDivideFactor,
+		shaderPrefix,
+		useEZR,
+		applyShadowMapping,
+		applyPostProcessing,
+		renderTypes,
+		clearColor,
+		renderLightSources,
+		skipOnLightSourceNotVisible
+	);
 }
 
 void PostProcessingProgram::addPostProcessingStep(string shaderId, PostProcessingProgram::FrameBufferSource source, PostProcessingProgram::FrameBufferTarget target, bool bindTemporary, PostProcessingProgram::FrameBufferSource blendToSource) {
-	PostProcessingProgramStep step;
-	step.shaderId = shaderId;
-	step.source = source;
-	step.target = target;
-	step.bindTemporary = bindTemporary;
-	step.blendToSource = blendToSource;
-	steps.push_back(step);
+	steps.emplace_back(
+		shaderId,
+		source,
+		target,
+		bindTemporary,
+		blendToSource
+	);
 }
 
 bool PostProcessingProgram::isSupported() {

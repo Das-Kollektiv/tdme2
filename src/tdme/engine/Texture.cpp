@@ -314,25 +314,19 @@ vector<Texture::MipMapTexture> Texture::getMipMapTextures(bool bc7Encoded) {
 			vector<uint8_t> bc7Data;
 			BC7TextureWriter::write(mipMapTextureWidth, mipMapTextureHeight, textureBytePerPixel, textureTextureData, bc7Data);
 			//
-			generatedMipMapTextures.push_back(
-				{
-					.format = getBC7FormatByPixelBitsPerPixel(getRGBDepthBitsPerPixel()),
-					.width = mipMapTextureWidth,
-					.height = mipMapTextureHeight,
-					.textureData = ByteBuffer(bc7Data)
-
-				}
+			generatedMipMapTextures.emplace_back(
+				getBC7FormatByPixelBitsPerPixel(getRGBDepthBitsPerPixel()),
+				mipMapTextureWidth,
+				mipMapTextureHeight,
+				ByteBuffer(bc7Data)
 			);
 		} else {
 			//
-			generatedMipMapTextures.push_back(
-				{
-					.format = getRGBFormatByPixelBitsPerPixel(getRGBDepthBitsPerPixel()),
-					.width = mipMapTextureWidth,
-					.height = mipMapTextureHeight,
-					.textureData = textureTextureData
-
-				}
+			generatedMipMapTextures.emplace_back(
+				getRGBFormatByPixelBitsPerPixel(getRGBDepthBitsPerPixel()),
+				mipMapTextureWidth,
+				mipMapTextureHeight,
+				textureTextureData
 			);
 		}
 	}

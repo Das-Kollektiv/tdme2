@@ -24,9 +24,9 @@ void Transform::fromMatrix(const Matrix4x4& matrix, RotationOrder* rotationOrder
 	matrix.getTranslation(translation);
 	auto eulerAngles = matrix.computeEulerAngles();
 	rotations.clear();
-	rotations.push_back(Rotation(rotationOrder->getAxis0(), eulerAngles[rotationOrder->getAxis0VectorIndex()]));
-	rotations.push_back(Rotation(rotationOrder->getAxis1(), eulerAngles[rotationOrder->getAxis1VectorIndex()]));
-	rotations.push_back(Rotation(rotationOrder->getAxis2(), eulerAngles[rotationOrder->getAxis2VectorIndex()]));
+	rotations.emplace_back(rotationOrder->getAxis0(), eulerAngles[rotationOrder->getAxis0VectorIndex()]);
+	rotations.emplace_back(rotationOrder->getAxis1(), eulerAngles[rotationOrder->getAxis1VectorIndex()]);
+	rotations.emplace_back(rotationOrder->getAxis2(), eulerAngles[rotationOrder->getAxis2VectorIndex()]);
 	update();
 }
 

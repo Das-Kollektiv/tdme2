@@ -676,12 +676,10 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 								outLocation++;
 							}
 						}
-						shader.attributeLayouts.push_back(
-							{
-								.name = outName,
-								.type = outType,
-								.location = static_cast<uint8_t>(outLocation)
-							}
+						shader.attributeLayouts.emplace_back(
+							outName,
+							outType,
+							static_cast<uint8_t>(outLocation)
 						);
 						if (VERBOSE == true) {
 							Console::println(
@@ -938,12 +936,10 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 						auto outName = vkShaderCache.get("shader.attributelayout_name_" + to_string(i), "");
 						auto outType = vkShaderCache.get("shader.attributelayout_type_" + to_string(i), "");
 						uint8_t outLocation = Integer::parse(vkShaderCache.get("shader.attributelayout_location_" + to_string(i), "-1"));
-						shader->attributeLayouts.push_back(
-							{
-								.name = outName,
-								.type = outType,
-								.location = static_cast<uint8_t>(outLocation)
-							}
+						shader->attributeLayouts.emplace_back(
+							outName,
+							outType,
+							static_cast<uint8_t>(outLocation)
 						);
 						i++;
 					}

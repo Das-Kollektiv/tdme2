@@ -60,31 +60,31 @@ ObjectAnimation::ObjectAnimation(Model* model, Engine::AnimationProcessingTarget
 	// animation
 	setAnimation(Model::ANIMATIONSETUP_DEFAULT);
 	// create transform matrices
-	transformMatrices.push_back(map<string, Matrix4x4*>());
-	nodeLists.push_back(vector<FlattenedNode>());
+	transformMatrices.emplace_back();
+	nodeLists.emplace_back();
 	createNodesTransformMatrices(transformMatrices[0], nodeLists[0], model->getSubNodes());
 	// calculate transform matrices
 	computeNodesTransformMatrices(nodeLists[0], model->getImportTransformMatrix(), baseAnimations.size() == 0?nullptr:&baseAnimations[0]);
 	// skinning ...
 	if (hasSkinning == true) {
 		for (auto i = 0; i < skinningNodes.size(); i++) {
-			skinningNodesNodeSkinningJoints.push_back(vector<NodeSkinningJoint>());
+			skinningNodesNodeSkinningJoints.emplace_back();
 			for (auto& skinningJoint: skinningNodes[i]->getSkinning()->getJoints()) {
 				auto transformMatrixIt = transformMatrices[0].find(skinningJoint.getNodeId());
 				if (transformMatrixIt == transformMatrices[0].end()) continue;
 				auto skinningNodeMatrixIt = skinningNodesMatrices[i].find(skinningJoint.getNodeId());
 				if (skinningNodeMatrixIt == skinningNodesMatrices[i].end()) continue;
-				skinningNodesNodeSkinningJoints[i].push_back({
-					.joint = &skinningJoint,
-					.nodeTransformMatrix = transformMatrixIt->second,
-					.skinningNodeTransformMatrix = skinningNodeMatrixIt->second
-				});
+				skinningNodesNodeSkinningJoints[i].emplace_back(
+					&skinningJoint,
+					transformMatrixIt->second,
+					skinningNodeMatrixIt->second
+				);
 			}
 		}
 		updateSkinningJoints();
 	}
 	// reset animation
-	if (baseAnimations.size() == 0) baseAnimations.push_back(AnimationState());
+	if (baseAnimations.size() == 0) baseAnimations.emplace_back();
 	baseAnimations[baseAnimationIdx].endAtTime = -1LL;
 	baseAnimations[baseAnimationIdx].lastAtTime = Timing::UNDEFINED;
 	baseAnimations[baseAnimationIdx].currentAtTime = 0LL;
@@ -110,34 +110,50 @@ ObjectAnimation::~ObjectAnimation() {
 
 void ObjectAnimation::setAnimation(const string& id, float speed)
 {
-	auto _animationActiveSetup = model->getAnimationSetup(id);
+	auto animationActiveSetup = model->getAnimationSetup(id);
 
 	// only switch animation if we have one
-	if (_animationActiveSetup != nullptr) {
-		AnimationState baseAnimation;
-		baseAnimation.setup = _animationActiveSetup;
-		baseAnimation.endAtTime = -1LL;
-		baseAnimation.lastAtTime = Timing::UNDEFINED;
-		baseAnimation.currentAtTime = 0LL;
-		baseAnimation.time = 0.0f;
-		baseAnimation.speed = speed;
-		baseAnimation.finished = false;
+	if (animationActiveSetup != nullptr) {
 		if (baseAnimations.size() == 0) {
-			baseAnimations.push_back(baseAnimation);
+			baseAnimations.emplace_back(
+				animationActiveSetup,
+				-1LL,
+				0LL,
+				Timing::UNDEFINED,
+				false,
+				0.0f,
+				speed
+			);
 			baseAnimationIdx = 0;
 		} else
 		if (baseAnimations.size() == 1) {
-			baseAnimations.push_back(baseAnimation);
+			baseAnimations.emplace_back(
+				animationActiveSetup,
+				-1LL,
+				0LL,
+				Timing::UNDEFINED,
+				false,
+				0.0f,
+				speed
+			);
 			baseAnimationIdx = 1;
-			transformMatrices.push_back(map<string, Matrix4x4*>());
-			nodeLists.push_back(vector<FlattenedNode>());
+			transformMatrices.emplace_back();
+			nodeLists.emplace_back();
 			createNodesTransformMatrices(transformMatrices[1], nodeLists[1], model->getSubNodes());
-			transformMatrices.push_back(map<string, Matrix4x4*>());
-			nodeLists.push_back(vector<FlattenedNode>());
+			transformMatrices.emplace_back();
+			nodeLists.emplace_back();
 			createNodesTransformMatrices(transformMatrices[2], nodeLists[2], model->getSubNodes());
 		} else {
 			baseAnimationIdx = (baseAnimationIdx + 1) % 2;
-			baseAnimations[baseAnimationIdx] = baseAnimation;
+			baseAnimations[baseAnimationIdx] = {
+				.setup = animationActiveSetup,
+				.endAtTime = -1LL,
+				.currentAtTime = 0LL,
+				.lastAtTime = Timing::UNDEFINED,
+				.finished = false,
+				.time = 0.0f,
+				.speed = speed
+			};
 		}
 		if (baseAnimations.size() > 1) {
 			auto baseAnimationIdxLast = (baseAnimationIdx + 1) % 2;
@@ -308,15 +324,15 @@ void ObjectAnimation::createNodesTransformMatrices(map<string, Matrix4x4*>& matr
 		if (overlayAnimationIt != overlayAnimationsByJointId.end()) {
 			nodeAnimationState = overlayAnimationIt->second;
 		}
-		nodeList.push_back({
-			.nodeId = node->getId(),
-			.nodeTransformMatrix = &node->getTransformMatrix(),
-			.nodeOverriddenTransformMatrix = overriddenTransformMatrix,
-			.nodeAnimation = node->getAnimation(),
-			.nodeAnimationState = animationState,
-			.parentTransformMatrix = parentTransformMatrix,
-			.transformMatrix = matrix
-		});
+		nodeList.emplace_back(
+			node->getId(),
+			&node->getTransformMatrix(),
+			overriddenTransformMatrix,
+			node->getAnimation(),
+			animationState,
+			parentTransformMatrix,
+			matrix
+		);
 		// do sub nodes
 		auto& subNodes = node->getSubNodes();
 		if (subNodes.size() > 0) {

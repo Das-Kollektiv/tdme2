@@ -4107,22 +4107,19 @@ void LogicMiniScript::registerMethods() {
 								.prototype = prototype
 							};
 						}
-						miniScript->enginePrototypesToAdd.push_back(
-							{
-								.prototype = prototype,
-								.id = id,
-								.transform = transform,
-								.entityHierarchyId = entityHierarchyId,
-								.entityHierarchyParentId = entityHierarchyParentId
-							}
+						miniScript->enginePrototypesToAdd.emplace_back(
+							prototype,
+							id,
+							transform,
+							entityHierarchyId,
+							entityHierarchyParentId
 						);
-						miniScript->physicsPrototypesToAdd.push_back(
-							{
-								.prototype = prototype,
-								.id = id,
-								.transform = transform,
-								.entityHierarchyParentId = entityHierarchyParentId
-							}
+						miniScript->physicsPrototypesToAdd.emplace_back(
+							prototype,
+							id,
+							transform,
+							entityHierarchyParentId,
+							string()
 						);
 					} catch (Exception& exception) {
 						miniScript->prototypesToAddMutex.unlock();

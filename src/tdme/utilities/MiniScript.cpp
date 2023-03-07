@@ -1,6 +1,7 @@
 #include <tdme/utilities/MiniScript.h>
 
 #include <algorithm>
+#include <initializer_list>
 #include <map>
 #include <span>
 #include <stack>
@@ -46,6 +47,7 @@
 #include <ext/rapidjson/writer.h>
 
 using std::find;
+using std::initializer_list;
 using std::map;
 using std::remove;
 using std::reverse;
@@ -575,19 +577,19 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& method, cons
 			}
 
 			//
-			syntaxTree.arguments.push_back(
-				{
-					.type = ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD,
-					.value = MiniScript::ScriptVariable(methodName),
-					.method = method,
-					.arguments = {
+			syntaxTree.arguments.emplace_back(
+				ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD,
+				MiniScript::ScriptVariable(methodName),
+				method,
+				initializer_list<ScriptSyntaxTreeNode>
+					{
 						{
-							.type = ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL,
-							.value = value,
-							.arguments = {}
+							ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL,
+							value,
+							nullptr,
+							{}
 						}
 					}
-				}
 			);
 		} else
 		// method call
@@ -621,26 +623,22 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& method, cons
 				ScriptVariable value;
 				value.setValue(string(StringTools::viewSubstring(argument, 1, argument.size() - 1)));
 				//
-				syntaxTree.arguments.push_back(
-					{
-						.type = ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL,
-						.value = value,
-						.method = nullptr,
-						.arguments = {}
-					}
+				syntaxTree.arguments.emplace_back(
+					ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL,
+					value,
+					nullptr,
+					initializer_list<ScriptSyntaxTreeNode>{}
 				);
 			} else {
 				// implicitely literal
 				ScriptVariable value;
 				value.setImplicitTypedValueFromStringView(argument);
 				//
-				syntaxTree.arguments.push_back(
-					{
-						.type = ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL,
-						.value = value,
-						.method = nullptr,
-						.arguments = {}
-					}
+				syntaxTree.arguments.emplace_back(
+					ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL,
+					value,
+					nullptr,
+					initializer_list<ScriptSyntaxTreeNode>{}
 				);
 			}
 		}
@@ -904,11 +902,9 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 									argumentNameTrimmed = StringTools::trim(StringTools::substring(argumentNameTrimmed, 1));
 								}
 								if (StringTools::regexMatch(argumentNameTrimmed, "\\$[a-zA-Z0-9]+") == true) {
-									arguments.push_back(
-										{
-											.name = argumentNameTrimmed,
-											.assignBack = assignBack
-										}
+									arguments.emplace_back(
+										argumentNameTrimmed,
+										assignBack
 									);
 								} else {
 									Console::println("MiniScript::MiniScript(): '" + scriptFileName + "': @" + to_string(line) + ": 'function:': invalid argument name: '" + argumentNameTrimmed + "'");
@@ -929,26 +925,18 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 				}
 
 				// push to scripts
-				scripts.push_back(
-					{
-						.scriptType = scriptType,
-						.line = line,
-						.condition = conditionOrName,
-						.executableCondition = conditionOrNameExecutable,
-						.conditionStatement = {
-							.line = line,
-							.statementIdx = statementIdx,
-							.statement = conditionOrName,
-							.executableStatement = conditionOrNameExecutable,
-							.gotoStatementIdx = STATEMENTIDX_NONE
-						},
-						.conditionSyntaxTree = ScriptSyntaxTreeNode(),
-						.name = name,
-						.emitCondition = emitCondition,
-						.statements = {},
-						.syntaxTree = {},
-						.arguments = arguments,
-					}
+				scripts.emplace_back(
+					scriptType,
+					line,
+					conditionOrName,
+					conditionOrNameExecutable,
+					ScriptStatement(line, statementIdx, conditionOrName, conditionOrNameExecutable, STATEMENTIDX_NONE),
+					ScriptSyntaxTreeNode(),
+					name,
+					emitCondition,
+					initializer_list<ScriptStatement>{},
+					initializer_list<ScriptSyntaxTreeNode>{},
+					arguments
 				);
 			} else {
 				Console::println("MiniScript::MiniScript(): '" + scriptFileName + "': @" + to_string(line) + ": expecting 'on:', 'on-enabled:', 'on-function:' script condition");
@@ -966,31 +954,31 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 					switch(gotoStatementStackElement.type) {
 						case GOTOSTATEMENTTYPE_FOR:
 							{
-								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = scriptLine, .gotoStatementIdx = gotoStatementStackElement.statementIdx });
+								scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, scriptLine, gotoStatementStackElement.statementIdx);
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
 							}
 							break;
 						case GOTOSTATEMENTTYPE_IF:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = scriptLine, .gotoStatementIdx = STATEMENTIDX_NONE });
+								scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, scriptLine, STATEMENTIDX_NONE);
 							}
 							break;
 						case GOTOSTATEMENTTYPE_ELSE:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = scriptLine, .gotoStatementIdx = STATEMENTIDX_NONE });
+								scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, scriptLine, STATEMENTIDX_NONE);
 							}
 							break;
 						case GOTOSTATEMENTTYPE_ELSEIF:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = scriptLine, .gotoStatementIdx = STATEMENTIDX_NONE });
+								scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, scriptLine, STATEMENTIDX_NONE);
 							}
 							break;
 					}
 				} else{
-					scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = scriptLine, .gotoStatementIdx = STATEMENTIDX_NONE });
+					scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, scriptLine, STATEMENTIDX_NONE);
 					haveScript = false;
 				}
 			} else
@@ -1002,13 +990,13 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 						case GOTOSTATEMENTTYPE_IF:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = scriptLine, .gotoStatementIdx = STATEMENTIDX_NONE });
+								scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, scriptLine, STATEMENTIDX_NONE);
 							}
 							break;
 						case GOTOSTATEMENTTYPE_ELSEIF:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = scriptLine, .gotoStatementIdx = STATEMENTIDX_NONE });
+								scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, scriptLine, STATEMENTIDX_NONE);
 							}
 							break;
 						default:
@@ -1036,13 +1024,13 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 						case GOTOSTATEMENTTYPE_IF:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = executableStatement, .gotoStatementIdx = STATEMENTIDX_NONE });
+								scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, executableStatement, STATEMENTIDX_NONE);
 							}
 							break;
 						case GOTOSTATEMENTTYPE_ELSEIF:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = executableStatement, .gotoStatementIdx = STATEMENTIDX_NONE });
+								scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, executableStatement, STATEMENTIDX_NONE);
 							}
 							break;
 						default:
@@ -1078,7 +1066,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 						}
 					);
 				}
-				scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = executableStatement, .gotoStatementIdx = STATEMENTIDX_NONE });
+				scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, executableStatement, STATEMENTIDX_NONE);
 			}
 			statementIdx++;
 		}
@@ -1111,7 +1099,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 		// create script syntax tree
 		for (auto statementIdx = 0; statementIdx < script.statements.size(); statementIdx++) {
 			auto& statement = script.statements[statementIdx];
-			script.syntaxTree.push_back(ScriptSyntaxTreeNode());
+			script.syntaxTree.emplace_back();
 			auto& sytaxTree = script.syntaxTree[script.syntaxTree.size() - 1];
 			string_view method;
 			vector<string_view> arguments;
