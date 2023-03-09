@@ -42,7 +42,7 @@ LIBS_LDFLAGS = \
 	/LIBPATH "ext\freetype\lib\win64\freetype.lib" \
 	/LIBPATH "ext\fbx\win64\lib\libfbxsdk.lib"
 
-FLAGS = /MT /MP /EHsc /O2 /std:c++20 /Zi /F 8388608 /D RAPIDJSON_HAS_STDSTRING /D GLFW_DLL
+FLAGS = /MT /MP /EHsc /O2 /std:c++20 /Zi /F 8388608 /D RAPIDJSON_HAS_STDSTRING /D RAPIDJSON_HAS_CXX11_RANGE_FOR /D GLFW_DLL
 # /NODEFAULTLIB:msvcrt
 
 LD_FLAGS =

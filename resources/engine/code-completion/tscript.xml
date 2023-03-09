@@ -161,6 +161,16 @@
 			<parameter name="Integer $int" />
 		</overload>
 	</keyword>
+	<keyword name="json.deserialize" func="yes">
+		<overload return-value="Mixed" descr="">
+			<parameter name="String $json" />
+		</overload>
+	</keyword>
+	<keyword name="json.serialize" func="yes">
+		<overload return-value="String" descr="">
+			<parameter name="Mixed $value" />
+		</overload>
+	</keyword>
 	<keyword name="lesser" func="yes">
 		<overload return-value="Boolean" descr="">
 			<parameter name="Mixed $a" />
@@ -939,6 +949,13 @@
 	<keyword name="vec4.normalize" func="yes">
 		<overload return-value="Vector4" descr="">
 			<parameter name="Vector4 $vec4" />
+		</overload>
+	</keyword>
+	<keyword name="xml.createTag" func="yes">
+		<overload return-value="String" descr="">
+			<parameter name="String $name" />
+			<parameter name="[Map $attributes]" />
+			<parameter name="[String $innerXML]" />
 		</overload>
 	</keyword>
 </code-completion>

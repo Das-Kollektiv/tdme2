@@ -1,7 +1,7 @@
 # initialize
 function: initialize()
 	console.log("----------------------------------------------------------")
-	console.log("initialize(): " + gui.screen.getId())
+	console.log("initialize(): " + gui.screennode.getId())
 	console.log("----------------------------------------------------------")
 	console.log()
 end
@@ -9,7 +9,7 @@ end
 # on action
 function: onAction($actionType, $elementNodeId)
 	console.log("----------------------------------------------------------")
-	console.log("onAction(): " + screen.getId() + ": " + $elementNodeId + "(" + $actionType + ")")
+	console.log("onAction(): " + gui.screennode.getId() + ": " + $elementNodeId + "(" + $actionType + ")")
 	console.log("----------------------------------------------------------")
 	console.log()
 end
@@ -17,7 +17,7 @@ end
 # on change
 function: onChange($elementNodeId)
 	console.log("----------------------------------------------------------")
-	console.log("onChange(): " + screen.getId() + ": " + $elementNodeId)
+	console.log("onChange(): " + gui.screennode.getId() + ": " + $elementNodeId)
 	console.log("----------------------------------------------------------")
 	console.log()
 end
@@ -25,7 +25,7 @@ end
 # on mouse over
 function: onMouseOver($elementNodeId)
 	console.log("----------------------------------------------------------")
-	console.log("onMouseOver(): " + screen.getId() + ": " + $elementNodeId)
+	console.log("onMouseOver(): " + gui.screennode.getId() + ": " + $elementNodeId)
 	console.log("----------------------------------------------------------")
 	console.log()
 end
@@ -33,7 +33,7 @@ end
 # on context menu request
 function: onContextMenuRequest($elementNodeId, $mouseX, $mouseY)
 	console.log("----------------------------------------------------------")
-	console.log("onContextMenuRequest(): " + screen.getId() + ": " + $elementNodeId + "@" + $mouseX + ", " + $mouseY)
+	console.log("onContextMenuRequest(): " + gui.screennode.getId() + ": " + $elementNodeId + "@" + $mouseX + ", " + $mouseY)
 	console.log("----------------------------------------------------------")
 	console.log()
 end
@@ -41,7 +41,7 @@ end
 # on focus
 function: onFocus($elementNodeId)
 	console.log("----------------------------------------------------------")
-	console.log("onFocus(): " + screen.getId() + ": " + $elementNodeId)
+	console.log("onFocus(): " + gui.screennode.getId() + ": " + $elementNodeId)
 	console.log("----------------------------------------------------------")
 	console.log()
 end
@@ -49,7 +49,7 @@ end
 # on unfocus
 function: onUnfocus($elementNodeId)
 	console.log("----------------------------------------------------------")
-	console.log("onUnfocus(): " + screen.getId() + ": " + $elementNodeId)
+	console.log("onUnfocus(): " + gui.screennode.getId() + ": " + $elementNodeId)
 	console.log("----------------------------------------------------------")
 	console.log()
 end
@@ -57,7 +57,7 @@ end
 # on move
 function: onMove($nodeId)
 	console.log("----------------------------------------------------------")
-	console.log("onMove(): " + screen.getId() + ": " + $nodeId)
+	console.log("onMove(): " + gui.screennode.getId() + ": " + $nodeId)
 	console.log("----------------------------------------------------------")
 	console.log()
 end
@@ -65,7 +65,7 @@ end
 # on move release
 function: onMoveRelease($nodeId, $mouseX, $mouseY)
 	console.log("----------------------------------------------------------")
-	console.log("onMoveRelease(): " + screen.getId() + ": " + $nodeId + "@" + $mouseX + ", " + $mouseY)
+	console.log("onMoveRelease(): " + gui.screennode.getId() + ": " + $nodeId + "@" + $mouseX + ", " + $mouseY)
 	console.log("----------------------------------------------------------")
 	console.log()
 end
@@ -73,7 +73,7 @@ end
 # on tooltip show request
 function: onTooltipShowRequest($nodeId, $mouseX, $mouseY)
 	console.log("----------------------------------------------------------")
-	console.log("onTooltipShowRequest(): " + screen.getId() + ": " + $nodeId + "@" + $mouseX + ", " + $mouseY)
+	console.log("onTooltipShowRequest(): " + gui.screennode.getId() + ": " + $nodeId + "@" + $mouseX + ", " + $mouseY)
 	console.log("----------------------------------------------------------")
 	console.log()
 end
@@ -81,7 +81,7 @@ end
 # on tooltip close request
 function: onTooltipCloseRequest()
 	console.log("----------------------------------------------------------")
-	console.log("onTooltipCloseRequest(): " + screen.getId() + ": " + $nodeId + "@" + $mouseX + ", " + $mouseY)
+	console.log("onTooltipCloseRequest(): " + gui.screennode.getId() + ": " + $nodeId + "@" + $mouseX + ", " + $mouseY)
 	console.log("----------------------------------------------------------")
 	console.log()
 end
@@ -89,7 +89,7 @@ end
 # on drag request
 function: onDragRequest($elementNodeId, $mouseX, $mouseY)
 	console.log("----------------------------------------------------------")
-	console.log("onDragRequest(): " + screen.getId() + ": " + $elementNodeId + "@" + $mouseX + ", " + $mouseY)
+	console.log("onDragRequest(): " + gui.screennode.getId() + ": " + $elementNodeId + "@" + $mouseX + ", " + $mouseY)
 	console.log("----------------------------------------------------------")
 	console.log()
 end
@@ -97,7 +97,7 @@ end
 # on tick
 function: onTick()
 	console.log("----------------------------------------------------------")
-	console.log("onTick(): " + screen.getId())
+	console.log("onTick(): " + gui.screennode.getId())
 	console.log("----------------------------------------------------------")
 	console.log()
 end

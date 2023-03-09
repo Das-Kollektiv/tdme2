@@ -141,7 +141,7 @@ void Installer::initializeScreens() {
 
 		installerProperties.load("resources/installer", "installer.properties");
 		if (installerProperties.get("installer_version", "") != "1.9.161") throw ExceptionBase("Installer is outdated. Please uninstall and update installer");
-		unordered_map<string, string> parameters = {
+		unordered_map<string, string> variables = {
 			{"name", installerProperties.get("name", "TDME2 based application")},
 			{"diskspace", installerProperties.get("diskspace", "Unknown")},
 			{"installfolder", installFolder.empty() == true?homeFolder + "/Applications/" + installerProperties.get("install_path", "TDME2-based-application"):installFolder}
@@ -151,7 +151,7 @@ void Installer::initializeScreens() {
 			GUIParser::parse(
 				"resources/installer",
 				"installer_welcome.xml",
-				parameters
+				variables
 			)
 		);
 		engine->getGUI()->addScreen(
@@ -159,7 +159,7 @@ void Installer::initializeScreens() {
 			GUIParser::parse(
 				"resources/installer",
 				"installer_license.xml",
-				parameters
+				variables
 			)
 		);
 		dynamic_cast<GUIStyledTextNode*>(engine->getGUI()->getScreen("installer_license")->getNodeById("licence_text"))->setText(MutableString(FileSystem::getInstance()->getContentAsString(".", "LICENSE")));
@@ -168,7 +168,7 @@ void Installer::initializeScreens() {
 			GUIParser::parse(
 				"resources/installer",
 				"installer_components.xml",
-				parameters
+				variables
 			)
 		);
 		string componentsXML = "<space height=\"10\" />\n";
@@ -202,7 +202,7 @@ void Installer::initializeScreens() {
 			GUIParser::parse(
 				"resources/installer",
 				"installer_folder.xml",
-				parameters
+				variables
 			)
 		);
 		engine->getGUI()->addScreen(
@@ -210,7 +210,7 @@ void Installer::initializeScreens() {
 			GUIParser::parse(
 				"resources/installer",
 				"installer_installing.xml",
-				parameters
+				variables
 			)
 		);
 		engine->getGUI()->addScreen(
@@ -218,7 +218,7 @@ void Installer::initializeScreens() {
 			GUIParser::parse(
 				"resources/installer",
 				"installer_finished.xml",
-				parameters
+				variables
 			)
 		);
 		engine->getGUI()->addScreen(
@@ -226,7 +226,7 @@ void Installer::initializeScreens() {
 			GUIParser::parse(
 				"resources/installer",
 				"installer_welcome2.xml",
-				parameters
+				variables
 			)
 		);
 		engine->getGUI()->addScreen(
@@ -234,7 +234,7 @@ void Installer::initializeScreens() {
 			GUIParser::parse(
 				"resources/installer",
 				"installer_uninstalling.xml",
-				parameters
+				variables
 			)
 		);
 		engine->getGUI()->getScreen("installer_welcome")->addActionListener(this);

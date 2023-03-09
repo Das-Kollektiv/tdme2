@@ -151,7 +151,7 @@ private:
 			case MiniScript::ScriptVariableType::TYPE_MAP:
 			case MiniScript::ScriptVariableType::TYPE_SET:
 			case MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED:
-			case MiniScript::ScriptVariableType::TYPE_VOID:
+			case MiniScript::ScriptVariableType::TYPE_NULL:
 				return string("color.pintype_undefined");
 			case MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER:
 				return string("color.pintype_float");

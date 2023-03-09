@@ -366,34 +366,53 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 	FbxVector4* fbxControlPoints = fbxMesh->GetControlPoints();
 	for (auto i = 0; i < fbxMesh->GetControlPointsCount(); i++) {
 		auto fbxControlPoint = fbxControlPoints[i];
-		vertices.push_back(Vector3(fbxControlPoint[0], fbxControlPoint[1], fbxControlPoint[2]));
+		vertices.emplace_back(
+			static_cast<float>(fbxControlPoint[0]),
+			static_cast<float>(fbxControlPoint[1]),
+			static_cast<float>(fbxControlPoint[2])
+		);
 	}
 	for (auto l = 0; l < fbxMesh->GetElementUVCount() && l < 1; ++l) {
 		auto fbxUV = fbxMesh->GetElementUV(l);
 		for (int i = 0; i < fbxUV->GetDirectArray().GetCount(); i++) {
 			auto fbxUVArray = fbxUV->GetDirectArray().GetAt(i);
-			textureCoordinates.push_back(TextureCoordinate(fbxUVArray[0], fbxUVArray[1]));
+			textureCoordinates.emplace_back(
+				static_cast<float>(fbxUVArray[0]),
+				static_cast<float>(fbxUVArray[1])
+			);
 		}
 	}
 	for (auto l = 0; l < fbxMesh->GetElementNormalCount() && l < 1; ++l) {
 		auto fbxNormal = fbxMesh->GetElementNormal(l);
 		for (int i = 0; i < fbxNormal->GetDirectArray().GetCount(); i++) {
 			auto fbxNormalArray = fbxNormal->GetDirectArray().GetAt(i);
-			normals.push_back(Vector3(fbxNormalArray[0], fbxNormalArray[1], fbxNormalArray[2]));
+			normals.emplace_back(
+				static_cast<float>(fbxNormalArray[0]),
+				static_cast<float>(fbxNormalArray[1]),
+				static_cast<float>(fbxNormalArray[2])
+			);
 		}
 	}
 	for (auto l = 0; l < fbxMesh->GetElementTangentCount() && l < 1; ++l) {
 		auto fbxTangent = fbxMesh->GetElementTangent(l);
 		for (int i = 0; i < fbxTangent->GetDirectArray().GetCount(); i++) {
 			auto fbxTangentArray = fbxTangent->GetDirectArray().GetAt(i);
-			tangents.push_back(Vector3(fbxTangentArray[0], fbxTangentArray[1], fbxTangentArray[2]));
+			tangents.emplace_back(
+				static_cast<float>(fbxTangentArray[0]),
+				static_cast<float>(fbxTangentArray[1]),
+				static_cast<float>(fbxTangentArray[2])
+			);
 		}
 	}
 	for (auto l = 0; l < fbxMesh->GetElementBinormalCount() && l < 1; ++l) {
 		auto fbxBinormal = fbxMesh->GetElementBinormal(l);
 		for (int i = 0; i < fbxBinormal->GetDirectArray().GetCount(); i++) {
 			auto fbxBinormalArray = fbxBinormal->GetDirectArray().GetAt(i);
-			bitangents.push_back(Vector3(fbxBinormalArray[0], fbxBinormalArray[1], fbxBinormalArray[2]));
+			bitangents.emplace_back(
+				static_cast<float>(fbxBinormalArray[0]),
+				static_cast<float>(fbxBinormalArray[1]),
+				static_cast<float>(fbxBinormalArray[2])
+			);
 		}
 	}
 
@@ -672,7 +691,7 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 				facesEntity->setFaces(faces);
 				faces.clear();
 			}
-			facesEntities.push_back(FacesEntity(node, facesEntityName));
+			facesEntities.emplace_back(node, facesEntityName);
 			facesEntity = &facesEntities[facesEntities.size() - 1];
 			facesEntity->setMaterial(material);
 		}
@@ -901,14 +920,17 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 				int fbxControlPointIndex = fbxClusterControlPointIndices[fbxClusterControlPointIndex];
 				auto weightIndex = weights.size();
 				weights.push_back(fbxCluster->GetControlPointWeights()[fbxClusterControlPointIndex]);
-				jointWeightsByVertices[fbxControlPointIndex].push_back(JointWeight(jointIndex, weightIndex));
+				jointWeightsByVertices[fbxControlPointIndex].emplace_back(
+					static_cast<int32_t>(jointIndex),
+					static_cast<int32_t>(weightIndex)
+				);
 			}
 		}
 		skinning->setJoints(joints);
 		skinning->setWeights(weights);
 		vector<vector<JointWeight>> verticesJointsWeights;
 		for (auto vertexIndex = 0; vertexIndex < vertices.size(); vertexIndex++) {
-			verticesJointsWeights.push_back(vector<JointWeight>());
+			verticesJointsWeights.emplace_back();
 			auto jointWeightsByVerticesIt = jointWeightsByVertices.find(vertexIndex);
 			if (jointWeightsByVerticesIt != jointWeightsByVertices.end()) {
 				for (auto& jointWeight: jointWeightsByVerticesIt->second) {

@@ -124,18 +124,18 @@ int KernelEventMechanism::doKernelEventMechanism() {
 	psd->events.clear();
 	for (auto fdIt = psd->fds.begin(); fdIt != psd->fds.end(); ++fdIt) {
 		if (FD_ISSET(fdIt->first, &rfds) != 0) {
-			KernelEventMechanismPSD::Event event;
-			event.descriptor = fdIt->first;
-			event.interest = NIO_INTEREST_READ;
-			event.cookie = fdIt->second;
-			psd->events.push_back(event);
+			psd->events.emplace_back(
+				fdIt->first,
+				NIO_INTEREST_READ,
+				fdIt->second
+			);
 		}
 		if (FD_ISSET(fdIt->first, &wfds) != 0) {
-			KernelEventMechanismPSD::Event event;
-			event.descriptor = fdIt->first;
-			event.interest = NIO_INTEREST_WRITE;
-			event.cookie = fdIt->second;
-			psd->events.push_back(event);
+			psd->events.emplace_back(
+				fdIt->first,
+				NIO_INTEREST_WRITE,
+				fdIt->second
+			);
 		}
 	}
 	psd->fdsMutex.unlock();

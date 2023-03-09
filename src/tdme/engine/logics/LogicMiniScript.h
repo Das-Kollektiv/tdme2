@@ -7,8 +7,7 @@
 #include <tdme/engine/logics/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
-#include <tdme/gui/events/GUIKeyboardEvent.h>
-#include <tdme/gui/events/GUIMouseEvent.h>
+#include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/utilities/MiniScript.h>
 

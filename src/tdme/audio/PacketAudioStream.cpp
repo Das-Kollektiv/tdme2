@@ -38,7 +38,7 @@ bool PacketAudioStream::initialize()
 
 void PacketAudioStream::addPacket(ByteBuffer* byteBuffer) {
 	if (byteBuffer->getPosition() == 0LL) return;
-	packets.push_back(vector<uint8_t>(byteBuffer->getPosition()));
+	packets.emplace_back(byteBuffer->getPosition());
 	auto& packet = packets[packets.size() - 1];
 	// TODO: use memcpy or similar
 	for (auto i = 0LL; i < byteBuffer->getPosition(); i++) {

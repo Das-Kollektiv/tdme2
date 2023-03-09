@@ -178,16 +178,14 @@ void Terrain::createTerrainModels(float width, float depth, float y, vector<floa
 		auto trianglesPerX = partitionTerrainTriangles[partitionIdx].begin()->second;
 		auto trianglesPerZ = partitionTerrainTriangles[partitionIdx].size();
 		for (auto& faceIndices: partitionTerrainFaces[partitionIdx]) {
-			nodeFaces.push_back(
-				Face(
-					terrainNode,
-					faceIndices[0],
-					faceIndices[1],
-					faceIndices[2],
-					faceIndices[3],
-					faceIndices[4],
-					faceIndices[5]
-				)
+			nodeFaces.emplace_back(
+				terrainNode,
+				faceIndices[0],
+				faceIndices[1],
+				faceIndices[2],
+				faceIndices[3],
+				faceIndices[4],
+				faceIndices[5]
 			);
 		};
 
@@ -1304,16 +1302,14 @@ void Terrain::createWaterModels(
 		vector<FacesEntity> nodeFacesEntities;
 		vector<Face> nodeFaces;
 		for (auto faceIndices: partitionWaterFaces[partitionIdx]) {
-			nodeFaces.push_back(
-				Face(
-					waterNode,
-					faceIndices[0],
-					faceIndices[1],
-					faceIndices[2],
-					faceIndices[3],
-					faceIndices[4],
-					faceIndices[5]
-				)
+			nodeFaces.emplace_back(
+				waterNode,
+				faceIndices[0],
+				faceIndices[1],
+				faceIndices[2],
+				faceIndices[3],
+				faceIndices[4],
+				faceIndices[5]
 			);
 		};
 		nodeFacesEntityWater.setFaces(nodeFaces);

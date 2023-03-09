@@ -568,7 +568,7 @@ Node* DAEReader::readVisualSceneInstanceController(const string& pathName, Model
 		if (string(AVOID_NULLPTR_STRING(xmlSkinSource->Attribute("id"))) == xmlJointsSource) {
 			t.tokenize(string(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlSkinSource, "Name_array").at(0)->GetText())), " \n\r");
 			while (t.hasMoreTokens()) {
-				joints.push_back(Joint(t.nextToken()));
+				joints.emplace_back(t.nextToken());
 			}
 		}
 	}
@@ -683,7 +683,7 @@ Node* DAEReader::readVisualSceneInstanceController(const string& pathName, Model
 				}
 				offset++;
 			}
-			vertexJointsWeights.push_back(JointWeight(vertexJoint, vertexWeight));
+			vertexJointsWeights.emplace_back(vertexJoint, vertexWeight);
 		}
 		verticesJointsWeights.push_back(vertexJointsWeights);
 	}
@@ -697,11 +697,11 @@ Node* DAEReader::readVisualSceneInstanceController(const string& pathName, Model
 void DAEReader::readGeometry(const string& pathName, Model* model, Node* node, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>& materialSymbols)
 {
 	vector<FacesEntity> facesEntities = node->getFacesEntities();
-	auto verticesOffset = node->getVertices().size();
+	auto verticesOffset = static_cast<int32_t>(node->getVertices().size());
 	vector<Vector3> vertices = node->getVertices();
-	auto normalsOffset = node->getNormals().size();
+	auto normalsOffset = static_cast<int32_t>(node->getNormals().size());
 	vector<Vector3> normals = node->getNormals();;
-	auto textureCoordinatesOffset = node->getTextureCoordinates().size();
+	auto textureCoordinatesOffset = static_cast<int32_t>(node->getTextureCoordinates().size());
 	auto textureCoordinates = node->getTextureCoordinates();
 	auto xmlLibraryGeometries = getChildrenByTagName(xmlRoot, "library_geometries").at(0);
 	for (auto xmlGeometry: getChildrenByTagName(xmlLibraryGeometries, "geometry")) {
@@ -835,7 +835,7 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Node* node, T
 							float x = Float::parse(t.nextToken());
 							float y = Float::parse(t.nextToken());
 							float z = Float::parse(t.nextToken());
-							vertices.push_back(Vector3(x, y, z));
+							vertices.emplace_back(x, y, z);
 						}
 					} else
 					// normals
@@ -848,7 +848,7 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Node* node, T
 							float x = Float::parse(t.nextToken());
 							float y = Float::parse(t.nextToken());
 							float z = Float::parse(t.nextToken());
-							normals.push_back(Vector3(x, y, z));
+							normals.emplace_back(x, y, z);
 						}
 					} else
 					// texture coordinates
@@ -861,7 +861,7 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Node* node, T
 							while (t.hasMoreTokens()) {
 								float u = Float::parse(t.nextToken());
 								float v = Float::parse(t.nextToken());
-								textureCoordinates.push_back(TextureCoordinate(u, v));
+								textureCoordinates.emplace_back(u, v);
 							}
 						}
 					}
@@ -913,23 +913,30 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Node* node, T
 							// only add valid faces
 							if (valid == true) {
 								// add face
-								Face f(
-									node,
-									vi[0] + verticesOffset,
-									vi[1] + verticesOffset,
-									vi[2] + verticesOffset,
-									ni[0] + normalsOffset,
-									ni[1] + normalsOffset,
-									ni[2] + normalsOffset
-								);
-								if (xmlTexCoordSource.length() != 0) {
-									f.setTextureCoordinateIndices(
+								if (xmlTexCoordSource.empty() == false) {
+									faces.emplace_back(
+										node,
+										vi[0] + verticesOffset,
+										vi[1] + verticesOffset,
+										vi[2] + verticesOffset,
+										ni[0] + normalsOffset,
+										ni[1] + normalsOffset,
+										ni[2] + normalsOffset,
 										ti[0] + textureCoordinatesOffset,
 										ti[1] + textureCoordinatesOffset,
 										ti[2] + textureCoordinatesOffset
 									);
+								} else {
+									faces.emplace_back(
+										node,
+										vi[0] + verticesOffset,
+										vi[1] + verticesOffset,
+										vi[2] + verticesOffset,
+										ni[0] + normalsOffset,
+										ni[1] + normalsOffset,
+										ni[2] + normalsOffset
+									);
 								}
-								faces.push_back(f);
 							}
 							viIdx = 0;
 							niIdx = 0;
