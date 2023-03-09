@@ -37,7 +37,7 @@ SRCS_PLATFORM =
 #
 CPPVERSION = -std=c++2a
 OFLAGS =
-EXTRAFLAGS = -DRAPIDJSON_HAS_STDSTRING -RAPIDJSON_HAS_CXX11_RANGE_FOR
+EXTRAFLAGS = -DRAPIDJSON_HAS_STDSTRING
 INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/src/ -Iext/v-hacd/src/VHACD_Lib/inc/ -Iext/cpp-spline/src
 
 #
