@@ -194,11 +194,9 @@ private:
 			{
 				auto& _cache = cache->binaryCache;
 				if (binaryPosition > 0 && (binaryPosition % UTF8PositionCache::CACHE_ENTRY_SIZE) == 0 && (_cache.empty() == true || _cache[_cache.size() - 1].binaryPosition < binaryPosition)) {
-					_cache.push_back(
-						{
-							.binaryPosition = binaryPosition,
-							.characterPosition = characterPosition
-						}
+					_cache.emplace_back(
+						binaryPosition,
+						characterPosition
 					);
 					/*
 					Console::println("UTF8CharacterIterator::addCacheEntry(): binary cache: binary: " + to_string(binaryPosition) + " / character: " + to_string(characterPosition));
@@ -213,11 +211,9 @@ private:
 				auto& _cache = cache->characterCache;
 				if (characterPosition > 0 && (characterPosition % UTF8PositionCache::CACHE_ENTRY_SIZE) == 0 && (_cache.empty() == true || _cache[_cache.size() - 1].characterPosition < characterPosition)) {
 					// Console::println("UTF8CharacterIterator::addCacheEntry(): character cache: binary: " + to_string(binaryPosition) + " / character: " + to_string(characterPosition));
-					_cache.push_back(
-						{
-							.binaryPosition = binaryPosition,
-							.characterPosition = characterPosition
-						}
+					_cache.emplace_back(
+						binaryPosition,
+						characterPosition
 					);
 					/*
 					for (auto& cacheEntry: _cache) {

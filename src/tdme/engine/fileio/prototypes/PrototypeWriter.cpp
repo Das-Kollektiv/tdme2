@@ -123,11 +123,11 @@ void PrototypeWriter::write(const string& pathName, const string& fileName, Prot
 	jRoot.SetObject();
 	write(jRoot, jRoot, prototype);
 
-	StringBuffer strbuf;
-	Writer<StringBuffer> writer(strbuf);
+	StringBuffer stringBuffer;
+	Writer<StringBuffer> writer(stringBuffer);
 	jRoot.Accept(writer);
 
-	FileSystem::getInstance()->setContentFromString(pathName, fileName, strbuf.GetString());
+	FileSystem::getInstance()->setContentFromString(pathName, fileName, stringBuffer.GetString());
 }
 
 void PrototypeWriter::writeLODLevelToJSON(Document& jDocument, Value& jLodLevelRoot, PrototypeLODLevel* lodLevel) {

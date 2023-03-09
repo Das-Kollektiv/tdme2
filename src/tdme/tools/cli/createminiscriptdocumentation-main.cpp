@@ -73,7 +73,7 @@ int main(int argc, char** argv)
 			}
 			for (auto i = 0; i < optionalArgumentCount; i++) method+= "]";
 			method+= "): ";
-			method+= MiniScript::ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType());
+			method+= MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType());
 			while (method.size() < 99) method+= " ";
 			method+= "|";
 			methods.push_back(method);
@@ -112,7 +112,7 @@ int main(int argc, char** argv)
 			}
 			for (auto i = 0; i < optionalArgumentCount; i++) method+= "]";
 			method+= "): ";
-			method+= MiniScript::ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType());
+			method+= MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType());
 			while (method.size() < 99) method+= " ";
 			method+= "|";
 			methods.push_back(method);
@@ -151,7 +151,7 @@ int main(int argc, char** argv)
 			}
 			for (auto i = 0; i < optionalArgumentCount; i++) method+= "]";
 			method+= "): ";
-			method+= MiniScript::ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType());
+			method+= MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType());
 			while (method.size() < 99) method+= " ";
 			method+= "|";
 			methods.push_back(method);
@@ -188,7 +188,7 @@ int main(int argc, char** argv)
 		}
 		for (auto i = 0; i < optionalArgumentCount; i++) operatorString+= "]";
 		operatorString+= "): ";
-		operatorString+= MiniScript::ScriptVariable::getTypeAsString(method->getReturnValueType());
+		operatorString+= MiniScript::ScriptVariable::getReturnTypeAsString(method->getReturnValueType());
 		while (operatorString.size() < 99) operatorString+= " ";
 		operatorString+= "|";
 		operators.push_back(operatorString);

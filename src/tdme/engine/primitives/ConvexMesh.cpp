@@ -127,10 +127,10 @@ void ConvexMesh::createConvexMesh(const vector<Vector3>& vertices, const vector<
 	faces.clear();
 	int indexIdx = 0;
 	for (auto faceVerticesCount: facesVerticesCount) {
-		reactphysics3d::PolygonVertexArray::PolygonFace face;
-		face.nbVertices = faceVerticesCount;
-		face.indexBase = indexIdx;
-		faces.push_back(face);
+		faces.emplace_back(
+			faceVerticesCount,
+			indexIdx
+		);
 		indexIdx+= faceVerticesCount;
 	}
 

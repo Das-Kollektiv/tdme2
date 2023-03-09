@@ -1,6 +1,7 @@
 #include <tdme/utilities/MiniScript.h>
 
 #include <algorithm>
+#include <initializer_list>
 #include <map>
 #include <span>
 #include <stack>
@@ -20,6 +21,7 @@
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transform.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
@@ -40,7 +42,12 @@
 #include <tdme/utilities/SHA256.h>
 #include <tdme/utilities/Time.h>
 
+#include <ext/rapidjson/document.h>
+#include <ext/rapidjson/stringbuffer.h>
+#include <ext/rapidjson/writer.h>
+
 using std::find;
+using std::initializer_list;
 using std::map;
 using std::remove;
 using std::reverse;
@@ -63,6 +70,7 @@ using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::Rotation;
 using tdme::engine::Transform;
+using tdme::gui::GUIParser;
 using tdme::math::Math;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
@@ -83,6 +91,11 @@ using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
 using tdme::utilities::SHA256;
 using tdme::utilities::Time;
+
+using rapidjson::Document;
+using rapidjson::StringBuffer;
+using rapidjson::Value;
+using rapidjson::Writer;
 
 string MiniScript::OPERATOR_CHARS = "!*/%+-<>&|=";
 string MiniScript::METHOD_SCRIPTCALL = "script.call";
@@ -376,7 +389,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 			for (auto& argumentType: scriptMethod->getArgumentTypes()) {
 				auto argumentOk = true;
 				switch(argumentType.type) {
-					case TYPE_VOID:
+					case TYPE_NULL:
 						break;
 					case TYPE_BOOLEAN:
 						{
@@ -532,7 +545,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 				string("MiniScript::executeScriptStatement(): ") +
 				getStatementInformation(statement) +
 				": method '" + string(syntaxTree.value.getValueString()) + "'" +
-				": return value: expected " + ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType()) + ", but got: " + ScriptVariable::getTypeAsString(returnValue.getType()));
+				": return value: expected " + ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType()) + ", but got: " + ScriptVariable::getReturnTypeAsString(returnValue.getType()));
 		}
 		return returnValue;
 	}
@@ -564,19 +577,19 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& method, cons
 			}
 
 			//
-			syntaxTree.arguments.push_back(
-				{
-					.type = ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD,
-					.value = MiniScript::ScriptVariable(methodName),
-					.method = method,
-					.arguments = {
+			syntaxTree.arguments.emplace_back(
+				ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD,
+				MiniScript::ScriptVariable(methodName),
+				method,
+				initializer_list<ScriptSyntaxTreeNode>
+					{
 						{
-							.type = ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL,
-							.value = value,
-							.arguments = {}
+							ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL,
+							value,
+							nullptr,
+							{}
 						}
 					}
-				}
 			);
 		} else
 		// method call
@@ -610,26 +623,22 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& method, cons
 				ScriptVariable value;
 				value.setValue(string(StringTools::viewSubstring(argument, 1, argument.size() - 1)));
 				//
-				syntaxTree.arguments.push_back(
-					{
-						.type = ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL,
-						.value = value,
-						.method = nullptr,
-						.arguments = {}
-					}
+				syntaxTree.arguments.emplace_back(
+					ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL,
+					value,
+					nullptr,
+					initializer_list<ScriptSyntaxTreeNode>{}
 				);
 			} else {
 				// implicitely literal
 				ScriptVariable value;
 				value.setImplicitTypedValueFromStringView(argument);
 				//
-				syntaxTree.arguments.push_back(
-					{
-						.type = ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL,
-						.value = value,
-						.method = nullptr,
-						.arguments = {}
-					}
+				syntaxTree.arguments.emplace_back(
+					ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL,
+					value,
+					nullptr,
+					initializer_list<ScriptSyntaxTreeNode>{}
 				);
 			}
 		}
@@ -893,11 +902,9 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 									argumentNameTrimmed = StringTools::trim(StringTools::substring(argumentNameTrimmed, 1));
 								}
 								if (StringTools::regexMatch(argumentNameTrimmed, "\\$[a-zA-Z0-9]+") == true) {
-									arguments.push_back(
-										{
-											.name = argumentNameTrimmed,
-											.assignBack = assignBack
-										}
+									arguments.emplace_back(
+										argumentNameTrimmed,
+										assignBack
 									);
 								} else {
 									Console::println("MiniScript::MiniScript(): '" + scriptFileName + "': @" + to_string(line) + ": 'function:': invalid argument name: '" + argumentNameTrimmed + "'");
@@ -918,26 +925,18 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 				}
 
 				// push to scripts
-				scripts.push_back(
-					{
-						.scriptType = scriptType,
-						.line = line,
-						.condition = conditionOrName,
-						.executableCondition = conditionOrNameExecutable,
-						.conditionStatement = {
-							.line = line,
-							.statementIdx = statementIdx,
-							.statement = conditionOrName,
-							.executableStatement = conditionOrNameExecutable,
-							.gotoStatementIdx = STATEMENTIDX_NONE
-						},
-						.conditionSyntaxTree = ScriptSyntaxTreeNode(),
-						.name = name,
-						.emitCondition = emitCondition,
-						.statements = {},
-						.syntaxTree = {},
-						.arguments = arguments,
-					}
+				scripts.emplace_back(
+					scriptType,
+					line,
+					conditionOrName,
+					conditionOrNameExecutable,
+					ScriptStatement(line, statementIdx, conditionOrName, conditionOrNameExecutable, STATEMENTIDX_NONE),
+					ScriptSyntaxTreeNode(),
+					name,
+					emitCondition,
+					initializer_list<ScriptStatement>{},
+					initializer_list<ScriptSyntaxTreeNode>{},
+					arguments
 				);
 			} else {
 				Console::println("MiniScript::MiniScript(): '" + scriptFileName + "': @" + to_string(line) + ": expecting 'on:', 'on-enabled:', 'on-function:' script condition");
@@ -955,31 +954,31 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 					switch(gotoStatementStackElement.type) {
 						case GOTOSTATEMENTTYPE_FOR:
 							{
-								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = scriptLine, .gotoStatementIdx = gotoStatementStackElement.statementIdx });
+								scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, scriptLine, gotoStatementStackElement.statementIdx);
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
 							}
 							break;
 						case GOTOSTATEMENTTYPE_IF:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = scriptLine, .gotoStatementIdx = STATEMENTIDX_NONE });
+								scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, scriptLine, STATEMENTIDX_NONE);
 							}
 							break;
 						case GOTOSTATEMENTTYPE_ELSE:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = scriptLine, .gotoStatementIdx = STATEMENTIDX_NONE });
+								scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, scriptLine, STATEMENTIDX_NONE);
 							}
 							break;
 						case GOTOSTATEMENTTYPE_ELSEIF:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = scriptLine, .gotoStatementIdx = STATEMENTIDX_NONE });
+								scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, scriptLine, STATEMENTIDX_NONE);
 							}
 							break;
 					}
 				} else{
-					scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = scriptLine, .gotoStatementIdx = STATEMENTIDX_NONE });
+					scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, scriptLine, STATEMENTIDX_NONE);
 					haveScript = false;
 				}
 			} else
@@ -991,13 +990,13 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 						case GOTOSTATEMENTTYPE_IF:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = scriptLine, .gotoStatementIdx = STATEMENTIDX_NONE });
+								scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, scriptLine, STATEMENTIDX_NONE);
 							}
 							break;
 						case GOTOSTATEMENTTYPE_ELSEIF:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = scriptLine, .gotoStatementIdx = STATEMENTIDX_NONE });
+								scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, scriptLine, STATEMENTIDX_NONE);
 							}
 							break;
 						default:
@@ -1025,13 +1024,13 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 						case GOTOSTATEMENTTYPE_IF:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = executableStatement, .gotoStatementIdx = STATEMENTIDX_NONE });
+								scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, executableStatement, STATEMENTIDX_NONE);
 							}
 							break;
 						case GOTOSTATEMENTTYPE_ELSEIF:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = executableStatement, .gotoStatementIdx = STATEMENTIDX_NONE });
+								scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, executableStatement, STATEMENTIDX_NONE);
 							}
 							break;
 						default:
@@ -1067,7 +1066,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 						}
 					);
 				}
-				scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = executableStatement, .gotoStatementIdx = STATEMENTIDX_NONE });
+				scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, executableStatement, STATEMENTIDX_NONE);
 			}
 			statementIdx++;
 		}
@@ -1100,7 +1099,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 		// create script syntax tree
 		for (auto statementIdx = 0; statementIdx < script.statements.size(); statementIdx++) {
 			auto& statement = script.statements[statementIdx];
-			script.syntaxTree.push_back(ScriptSyntaxTreeNode());
+			script.syntaxTree.emplace_back();
 			auto& sytaxTree = script.syntaxTree[script.syntaxTree.size() - 1];
 			string_view method;
 			vector<string_view> arguments;
@@ -1694,7 +1693,7 @@ const string MiniScript::getInformation() {
 				}
 				for (auto i = 0; i < optionalArgumentCount; i++) method+= "]";
 				method+= "): ";
-				method+= ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType());
+				method+= ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType());
 				methods.push_back(method);
 			}
 			sort(methods.begin(), methods.end());
@@ -1734,7 +1733,7 @@ const string MiniScript::getInformation() {
 				}
 				for (auto i = 0; i < optionalArgumentCount; i++) operatorString+= "]";
 				operatorString+= "): ";
-				operatorString+= ScriptVariable::getTypeAsString(method->getReturnValueType());
+				operatorString+= ScriptVariable::getReturnTypeAsString(method->getReturnValueType());
 				operators.push_back(operatorString);
 			}
 			sort(operators.begin(), operators.end());
@@ -1972,7 +1971,7 @@ void MiniScript::registerMethods() {
 					{
 						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = true, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -4312,7 +4311,7 @@ void MiniScript::registerMethods() {
 						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = true },
 						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "translation", .optional = false, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID),
+					ScriptVariableType::TYPE_NULL),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "transform.setTranslation";
@@ -4373,7 +4372,7 @@ void MiniScript::registerMethods() {
 						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = true },
 						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "scale", .optional = false, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID),
+					ScriptVariableType::TYPE_NULL),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "transform.setScale";
@@ -4479,7 +4478,7 @@ void MiniScript::registerMethods() {
 						{.type = ScriptVariableType::TYPE_INTEGER, .name = "idx", .optional = false, .assignBack = false },
 						{.type = ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID),
+					ScriptVariableType::TYPE_NULL),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "transform.setRotationAngle";
@@ -4582,7 +4581,7 @@ void MiniScript::registerMethods() {
 						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "axis", .optional = false, .assignBack = false },
 						{.type = ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID),
+					ScriptVariableType::TYPE_NULL),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "transform.applyRotation";
@@ -5632,7 +5631,7 @@ void MiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .assignBack = true }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -5696,7 +5695,7 @@ void MiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .assignBack = true },
 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "index", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -5729,7 +5728,7 @@ void MiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .assignBack = true },
 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "index", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -5760,7 +5759,7 @@ void MiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "value", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "beginIndex", .optional = true, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -5845,7 +5844,7 @@ void MiniScript::registerMethods() {
 						{.type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .assignBack = true },
 						{.type = ScriptVariableType::TYPE_STRING, .name = "function", .optional = false, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -5896,7 +5895,7 @@ void MiniScript::registerMethods() {
 					{
 						{.type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .assignBack = true }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -5951,7 +5950,7 @@ void MiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_MAP, .name = "map", .optional = false, .assignBack = true },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -6050,7 +6049,7 @@ void MiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_MAP, .name = "map", .optional = false, .assignBack = true },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -6170,7 +6169,7 @@ void MiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_SET, .name = "set", .optional = false, .assignBack = true },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -6234,7 +6233,7 @@ void MiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_SET, .name = "set", .optional = false, .assignBack = true },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -6368,7 +6367,7 @@ void MiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {
 				//
@@ -6436,6 +6435,115 @@ void MiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodTimeGetAsString(this));
+	}
+	// xml
+	{
+		//
+		class ScriptMethodXMLCreateTag: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodXMLCreateTag(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "name", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_MAP, .name = "attributes", .optional = true, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "innerXML", .optional = true, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_STRING
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "xml.createTag";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				//
+				string name;
+				string innerXML;
+				if (MiniScript::getStringValue(argumentValues, 0, name, false) == false ||
+					(argumentValues.size() >= 2 && argumentValues[1].getType() != ScriptVariableType::TYPE_MAP) ||
+					MiniScript::getStringValue(argumentValues, 2, innerXML, true) == false) {
+					Console::println("ScriptMethodXMLCreateTag::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: optional map expected, @ argument 2: optional string expected");
+					miniScript->startErrorScript();
+				} else {
+					auto mapPtr = argumentValues[1].getMapPointer();
+					string xml;
+					xml+= "<" + name;
+					if (mapPtr != nullptr && mapPtr->empty() == false) {
+						for(auto& mapIt: *mapPtr) {
+							xml+= " " + mapIt.first + "=\"" + GUIParser::escapeQuotes(mapIt.second.getValueString()) + "\"";
+						}
+					}
+					if (innerXML.empty() == true) {
+						xml+= "/>";
+					} else {
+						xml+= ">" + innerXML + "</" + name + ">";
+					}
+					//
+					returnValue.setValue(xml);
+				}
+			}
+		};
+		registerMethod(new ScriptMethodXMLCreateTag(this));
+	}
+	// json
+	{
+		//
+		class ScriptMethodJSONSerialize: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodJSONSerialize(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_STRING
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "json.serialize";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				//
+				if (argumentValues.size() != 1) {
+					Console::println("ScriptMethodJSONSerialize::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected");
+					miniScript->startErrorScript();
+				} else {
+					returnValue.setValue(MiniScript::serializeAsJson(argumentValues[0]));
+				}
+			}
+		};
+		registerMethod(new ScriptMethodJSONSerialize(this));
+	}
+	{
+		//
+		class ScriptMethodJSONDeserialize: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodJSONDeserialize(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "json", .optional = false, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_PSEUDO_MIXED
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "json.deserialize";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string json;
+				if (MiniScript::getStringValue(argumentValues, 0, json, false) == false) {
+					Console::println("ScriptMethodJSONDeserialize::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				} else {
+					returnValue = MiniScript::deserializeJson(json);
+				}
+			}
+		};
+		registerMethod(new ScriptMethodJSONDeserialize(this));
 	}
 
 	// register math functions
@@ -6576,7 +6684,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
 					{
 						switch (argument.value.getType())  {
-							case TYPE_VOID:
+							case TYPE_NULL:
 								break;
 							case TYPE_BOOLEAN:
 								{
@@ -7003,7 +7111,7 @@ const string MiniScript::createSourceCode(const ScriptSyntaxTreeNode& syntaxTree
 		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
 			{
 				switch(syntaxTreeNode.value.getType()) {
-					case TYPE_VOID:
+					case TYPE_NULL:
 						{
 							result+= (result.empty() == false?", ":"") + string("<VOID>");
 							break;
@@ -7126,4 +7234,437 @@ const string MiniScript::createSourceCode() {
 	}
 	//
 	return result;
+}
+
+void MiniScript::serializeMapAsJson(Document& jParent, const ScriptVariable& variable) {
+	auto& value = variable.getMapValueReference();
+	for (auto& mapIt: value) {
+		auto& subName = mapIt.first;
+		auto& subVariable = mapIt.second;
+		//
+		switch(subVariable.getType()) {
+			case TYPE_NULL:
+				jParent.AddMember(Value(subName, jParent.GetAllocator()), Value(), jParent.GetAllocator());
+				break;
+			case TYPE_BOOLEAN:
+				{
+					auto& value = subVariable.getBooleanValueReference();
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), Value(value), jParent.GetAllocator());
+				}
+				break;
+			case TYPE_INTEGER:
+				{
+					auto& value = subVariable.getIntegerValueReference();
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), Value(value), jParent.GetAllocator());
+				}
+				break;
+			case TYPE_FLOAT:
+				{
+					auto& value = subVariable.getFloatValueReference();
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), Value(value), jParent.GetAllocator());
+				}
+				break;
+			case TYPE_STRING:
+				{
+					auto& value = subVariable.getStringValueReference();
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), Value(value, jParent.GetAllocator()), jParent.GetAllocator());
+				}
+				break;
+			case TYPE_VECTOR2:
+				{
+					auto& value = subVariable.getVector2ValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value.getArray()) {
+						jSubArray.PushBack(Value(v), jParent.GetAllocator());
+					}
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), jSubArray, jParent.GetAllocator());
+				}
+				break;
+			case TYPE_VECTOR3:
+				{
+					auto& value = subVariable.getVector3ValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value.getArray()) {
+						jSubArray.PushBack(Value(v), jParent.GetAllocator());
+					}
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), jSubArray, jParent.GetAllocator());
+				}
+				break;
+			case TYPE_VECTOR4:
+				{
+					auto& value = subVariable.getVector4ValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value.getArray()) {
+						jSubArray.PushBack(Value(v), jParent.GetAllocator());
+					}
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), jSubArray, jParent.GetAllocator());
+				}
+				break;
+			case TYPE_QUATERNION:
+				{
+					auto& value = subVariable.getQuaternionValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value.getArray()) {
+						jSubArray.PushBack(Value(v), jParent.GetAllocator());
+					}
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), jSubArray, jParent.GetAllocator());
+				}
+				break;
+			case TYPE_MATRIX3x3:
+				{
+					auto& value = subVariable.getMatrix3x3ValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value.getArray()) {
+						jSubArray.PushBack(Value(v), jParent.GetAllocator());
+					}
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), jSubArray, jParent.GetAllocator());
+				}
+				break;
+			case TYPE_MATRIX4x4:
+				{
+					auto& value = subVariable.getMatrix4x4ValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value.getArray()) {
+						jSubArray.PushBack(Value(v), jParent.GetAllocator());
+					}
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), jSubArray, jParent.GetAllocator());
+				}
+				break;
+			case TYPE_TRANSFORM:
+				{
+					auto& value = subVariable.getTransformValueReference();
+					auto transformMatrix = value.getTransformMatrix();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: transformMatrix.getArray()) {
+						jSubArray.PushBack(Value(v), jParent.GetAllocator());
+					}
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), jSubArray, jParent.GetAllocator());
+				}
+				break;
+			case TYPE_ARRAY:
+				{
+					Value jSubParent;
+					jSubParent.SetArray();
+					serializeArrayAsJson(jParent, jSubParent, subVariable);
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), jSubParent, jParent.GetAllocator());
+				}
+				break;
+			case TYPE_MAP:
+				{
+					Document jSubParent;
+					jSubParent.SetObject();
+					serializeMapAsJson(jSubParent, subVariable);
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), jSubParent, jParent.GetAllocator());
+				}
+				break;
+			case TYPE_SET:
+				{
+					auto& value = subVariable.getSetValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value) {
+						jSubArray.PushBack(Value(v, jParent.GetAllocator()), jParent.GetAllocator());
+					}
+					jParent.AddMember(Value(subName, jParent.GetAllocator()), jSubArray, jParent.GetAllocator());
+				}
+				break;
+		}
+	}
+}
+
+void MiniScript::serializeArrayAsJson(Document& jDocument, Value& jParent, const ScriptVariable& variable) {
+	auto& value = variable.getArrayValueReference();
+	for (auto& subVariable: value) {
+		//
+		switch(subVariable.getType()) {
+			case TYPE_NULL:
+				jParent.PushBack(Value(), jDocument.GetAllocator());
+				break;
+			case TYPE_BOOLEAN:
+				{
+					auto& value = subVariable.getBooleanValueReference();
+					jParent.PushBack(Value(value), jDocument.GetAllocator());
+				}
+				break;
+			case TYPE_INTEGER:
+				{
+					auto& value = subVariable.getIntegerValueReference();
+					jParent.PushBack(Value(value), jDocument.GetAllocator());
+				}
+				break;
+			case TYPE_FLOAT:
+				{
+					auto& value = subVariable.getFloatValueReference();
+					jParent.PushBack(Value(value), jDocument.GetAllocator());
+				}
+				break;
+			case TYPE_STRING:
+				{
+					auto& value = subVariable.getStringValueReference();
+					jParent.PushBack(Value(value, jDocument.GetAllocator()), jDocument.GetAllocator());
+				}
+				break;
+			case TYPE_VECTOR2:
+				{
+					auto& value = subVariable.getVector2ValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value.getArray()) {
+						jSubArray.PushBack(Value(v), jDocument.GetAllocator());
+					}
+					jParent.PushBack(jSubArray, jDocument.GetAllocator());
+				}
+				break;
+			case TYPE_VECTOR3:
+				{
+					auto& value = subVariable.getVector3ValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value.getArray()) {
+						jSubArray.PushBack(Value(v), jDocument.GetAllocator());
+					}
+					jParent.PushBack(jSubArray, jDocument.GetAllocator());
+				}
+				break;
+			case TYPE_VECTOR4:
+				{
+					auto& value = subVariable.getVector4ValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value.getArray()) {
+						jSubArray.PushBack(Value(v), jDocument.GetAllocator());
+					}
+					jParent.PushBack(jSubArray, jDocument.GetAllocator());
+				}
+				break;
+			case TYPE_QUATERNION:
+				{
+					auto& value = subVariable.getQuaternionValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value.getArray()) {
+						jSubArray.PushBack(Value(v), jDocument.GetAllocator());
+					}
+					jParent.PushBack(jSubArray, jDocument.GetAllocator());
+				}
+				break;
+			case TYPE_MATRIX3x3:
+				{
+					auto& value = subVariable.getMatrix3x3ValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value.getArray()) {
+						jSubArray.PushBack(Value(v), jDocument.GetAllocator());
+					}
+					jParent.PushBack(jSubArray, jDocument.GetAllocator());
+				}
+				break;
+			case TYPE_MATRIX4x4:
+				{
+					auto& value = subVariable.getMatrix4x4ValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value.getArray()) {
+						jSubArray.PushBack(Value(v), jDocument.GetAllocator());
+					}
+					jParent.PushBack(jSubArray, jDocument.GetAllocator());
+				}
+				break;
+			case TYPE_TRANSFORM:
+				{
+					auto& value = subVariable.getTransformValueReference();
+					auto transformMatrix = value.getTransformMatrix();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: transformMatrix.getArray()) {
+						jSubArray.PushBack(Value(v), jDocument.GetAllocator());
+					}
+					jParent.PushBack(jSubArray, jDocument.GetAllocator());
+				}
+				break;
+			case TYPE_ARRAY:
+				{
+					Value jSubParent;
+					jSubParent.SetArray();
+					serializeArrayAsJson(jDocument, jSubParent, subVariable);
+					jParent.PushBack(jSubParent, jDocument.GetAllocator());
+				}
+				break;
+			case TYPE_MAP:
+				{
+					Document jSubParent;
+					jSubParent.SetObject();
+					serializeMapAsJson(jSubParent, subVariable);
+					jParent.PushBack(jSubParent, jDocument.GetAllocator());
+				}
+				break;
+			case TYPE_SET:
+				{
+					auto& value = subVariable.getSetValueReference();
+					Value jSubArray;
+					jSubArray.SetArray();
+					for (auto v: value) {
+						jSubArray.PushBack(Value(v, jDocument.GetAllocator()), jDocument.GetAllocator());
+					}
+					jParent.PushBack(jSubArray, jDocument.GetAllocator());
+				}
+				break;
+		}
+	}
+}
+
+const string MiniScript::serializeAsJson(const ScriptVariable& variable) {
+	//
+	switch(variable.getType()) {
+		case TYPE_NULL:
+		case TYPE_BOOLEAN:
+		case TYPE_INTEGER:
+		case TYPE_FLOAT:
+		case TYPE_STRING:
+		case TYPE_VECTOR2:
+		case TYPE_VECTOR3:
+		case TYPE_VECTOR4:
+		case TYPE_QUATERNION:
+		case TYPE_MATRIX3x3:
+		case TYPE_MATRIX4x4:
+		case TYPE_TRANSFORM:
+			Console::println("MiniScript::serializeAsJson(): unsupported root variable type: " + variable.getTypeAsString() + ", the root variable type must be map, set or array");
+			break;
+		case TYPE_SET:
+			{
+				Document jRoot;
+				jRoot.SetArray();
+				auto& value = variable.getSetValueReference();
+				for (auto v: value) {
+					jRoot.PushBack(Value(v, jRoot.GetAllocator()), jRoot.GetAllocator());
+				}
+				StringBuffer stringBuffer;
+				Writer<StringBuffer> writer(stringBuffer);
+				jRoot.Accept(writer);
+				return stringBuffer.GetString();
+			}
+			break;
+		case TYPE_ARRAY:
+			{
+				Document jRoot;
+				jRoot.SetArray();
+				serializeArrayAsJson(jRoot, jRoot, variable);
+				StringBuffer stringBuffer;
+				Writer<StringBuffer> writer(stringBuffer);
+				jRoot.Accept(writer);
+				return stringBuffer.GetString();
+			}
+			break;
+		case TYPE_MAP:
+			{
+				Document jRoot;
+				jRoot.SetObject();
+				serializeMapAsJson(jRoot, variable);
+				StringBuffer stringBuffer;
+				Writer<StringBuffer> writer(stringBuffer);
+				jRoot.Accept(writer);
+				return stringBuffer.GetString();
+			}
+			break;
+	}
+	//
+	return string();
+}
+
+const MiniScript::ScriptVariable MiniScript::deserializeMapJson(Value& jObjectValue) {
+	//
+	ScriptVariable result;
+	result.setType(MiniScript::TYPE_MAP);
+	//
+	auto jObject = jObjectValue.GetObject();
+	//
+	for (auto& jObjectIt: jObject) {
+		auto name = string(jObjectIt.name.GetString());
+		auto& value = jObjectIt.value;
+		//
+		if (value.IsNull() == true) {
+			result.setMapValue(name, ScriptVariable());
+		} else
+		if (value.IsBool() == true) {
+			result.setMapValue(name, ScriptVariable(value.GetBool()));
+		} else
+		if (value.IsInt64() == true) {
+			result.setMapValue(name, ScriptVariable(value.GetInt64()));
+		} else
+		if (value.IsFloat() == true) {
+			result.setMapValue(name, ScriptVariable(value.GetFloat()));
+		} else
+		if (value.IsString() == true) {
+			result.setMapValue(name, ScriptVariable(string(value.GetString())));
+		} else
+		if (value.IsArray() == true) {
+			result.setMapValue(name, deserializeArrayJson(value));
+		} else
+		if (value.IsObject() == true) {
+			result.setMapValue(name, deserializeMapJson(value));
+		} else {
+			Console::println("MiniScript::deserializeMapJson(): unknown JSON data type for: " + name);
+		}
+	}
+	//
+	return result;
+}
+
+const MiniScript::ScriptVariable MiniScript::deserializeArrayJson(Value& jArrayValue) {
+	//
+	ScriptVariable result;
+	result.setType(MiniScript::TYPE_ARRAY);
+	//
+	auto jArray = jArrayValue.GetArray();
+	for (auto i = 0; i < jArray.Size(); i++) {
+		auto& value = jArray[i];
+		//
+		if (value.IsNull() == true) {
+			result.pushArrayValue(ScriptVariable());
+		} else
+		if (value.IsBool() == true) {
+			result.pushArrayValue(ScriptVariable(value.GetBool()));
+		} else
+		if (value.IsInt64() == true) {
+			result.pushArrayValue(ScriptVariable(value.GetInt64()));
+		} else
+		if (value.IsFloat() == true) {
+			result.pushArrayValue(ScriptVariable(value.GetFloat()));
+		} else
+		if (value.IsString() == true) {
+			result.pushArrayValue(ScriptVariable(string(value.GetString())));
+		} else
+		if (value.IsArray() == true) {
+			result.pushArrayValue(deserializeArrayJson(value));
+		} else
+		if (value.IsObject() == true) {
+			result.pushArrayValue(deserializeMapJson(value));
+		} else {
+			Console::println("MiniScript::deserializeArrayJson(): unknown JSON data type in JSON array @ " + to_string(i));
+		}
+	}
+	//
+	return result;
+}
+
+const MiniScript::ScriptVariable MiniScript::deserializeJson(const string& json) {
+	//
+	Document jRoot;
+	jRoot.Parse(json.c_str());
+	if (jRoot.IsArray() == true) {
+		return deserializeArrayJson(jRoot);
+	} else
+	if (jRoot.IsObject() == true) {
+		return deserializeMapJson(jRoot);
+	} else {
+		Console::println("MiniScript::deserializeJson(): unknown JSON root data type: root data type must be array or object");
+		return ScriptVariable();
+	}
 }

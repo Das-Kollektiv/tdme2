@@ -12,6 +12,7 @@
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode_SizeConstraints.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
@@ -49,6 +50,7 @@ using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINodeConditions;
+using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode_SizeConstraints;
@@ -139,6 +141,8 @@ private:
 
 	vector<ForwardEvent> forwardEventList;
 
+	GUIColor foccussedBorderColor;
+
 	GUIMiniScript* script { nullptr };
 	bool scriptOnActionAvailable { false };
 	bool scriptOnChangeAvailable { false };
@@ -152,6 +156,8 @@ private:
 	bool scriptOnTooltipCloseRequestAvailable { false };
 	bool scriptOnDragRequestAvailable { false };
 	bool scriptOnTickAvailable { false };
+
+	MiniScript::ScriptVariable miniScriptArguments;
 
 	Context* context { nullptr };
 
@@ -239,11 +245,9 @@ public:
 	 * @param toNode to node
 	 */
 	inline void scrollToNodeX(const string& node, const string& toNode) {
-		scrollToNodesX.push_back(
-			{
-				.node = node,
-				.toNode = toNode
-			}
+		scrollToNodesX.emplace_back(
+			node,
+			toNode
 		);
 	}
 
@@ -253,11 +257,9 @@ public:
 	 * @param toNode to node
 	 */
 	inline void scrollToNodeY(const string& node, const string& toNode) {
-		scrollToNodesY.push_back(
-			{
-				.node = node,
-				.toNode = toNode
-			}
+		scrollToNodesY.emplace_back(
+			node,
+			toNode
 		);
 	}
 
@@ -286,6 +288,7 @@ protected:
 	 * @param scrollable scrollable
 	 * @param popUp pop up
 	 * @param scriptFileName MiniScript script file name
+	 * @param miniScriptArguments mini script arguments
 	 * @param context application logic context
 	 * @throws tdme::gui::GUIParserException
 	 */
@@ -313,6 +316,7 @@ protected:
 		bool scrollable,
 		bool popUp,
 		const string& scriptFileName,
+		const MiniScript::ScriptVariable& miniScriptArguments,
 		Context* context
 	);
 
@@ -329,9 +333,8 @@ private:
 
 	/**
 	 * Initialize mini script
-	 * @param miniScriptArguments mini script arguments
 	 */
-	void initializeMiniScript(const MiniScript::ScriptVariable& miniScriptArguments);
+	void initializeMiniScript();
 
 	/**
 	 * Add node
@@ -745,6 +748,13 @@ public:
 	 * @return texture
 	 */
 	Texture* getImage(const string& fileName);
+
+	/**
+	 * @return foccussed border color
+	 */
+	inline const GUIColor& getFoccussedBorderColor() {
+		return foccussedBorderColor;
+	}
 
 	/**
 	 * @return mini script script attached to this screen

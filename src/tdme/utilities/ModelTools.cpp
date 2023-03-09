@@ -1325,7 +1325,7 @@ void ModelTools::computeTangentsAndBitangents(Node* node)
 	for (auto& faceEntity: facesEntities) {
 		auto faces = faceEntity.getFaces();
 		for (auto& face: faces) {
-			// Shortcuts for vertices
+			// shortcuts for vertices
 			auto verticesIndexes = face.getVertexIndices();
 			auto v0 = vertices[verticesIndexes[0]];
 			auto v1 = vertices[verticesIndexes[1]];

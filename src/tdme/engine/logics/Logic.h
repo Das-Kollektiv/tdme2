@@ -115,17 +115,15 @@ public:
 	 * @param ignoreIfPlaying ignore if already playing
 	 */
 	inline void queueSound(const string& id, int delay = 0, float gain = 1.0, float pitch = 1.0, bool ignoreIfPlaying = false) {
-		queuedSounds.push_back(
-			{
-				.id = id,
-				.attachedToLogic = true,
-				.position = Vector3(),
-				.timeIssuedAt = Time::getCurrentMillis(),
-				.timeDelay = delay,
-				.gain = gain,
-				.pitch = pitch,
-				.ignoreIfPlaying = ignoreIfPlaying
-			}
+		queuedSounds.emplace_back(
+			id,
+			true,
+			Vector3(),
+			Time::getCurrentMillis(),
+			delay,
+			gain,
+			pitch,
+			ignoreIfPlaying
 		);
 	}
 
@@ -140,17 +138,15 @@ public:
 	 * @param ignoreIfPlaying ignore if already playing
 	 */
 	inline void queueSound(const string& id, const Vector3& position, int delay = 0, float gain = 1.0, float pitch = 1.0, bool ignoreIfPlaying = false) {
-		queuedSounds.push_back(
-			{
-				.id = id,
-				.attachedToLogic = false,
-				.position = position,
-				.timeIssuedAt = Time::getCurrentMillis(),
-				.timeDelay = delay,
-				.gain = gain,
-				.pitch = pitch,
-				.ignoreIfPlaying = ignoreIfPlaying
-			}
+		queuedSounds.emplace_back(
+			id,
+			false,
+			position,
+			Time::getCurrentMillis(),
+			delay,
+			gain,
+			pitch,
+			ignoreIfPlaying
 		);
 	}
 
@@ -190,11 +186,9 @@ public:
 	 * @param arguments arguments
 	 */
 	inline void addSignal(const string& signal, const vector<MiniScript::ScriptVariable>& arguments) {
-		signals.push_back(
-			{
-				.signal = signal,
-				.arguments = arguments
-			}
+		signals.emplace_back(
+			signal,
+			arguments
 		);
 	}
 

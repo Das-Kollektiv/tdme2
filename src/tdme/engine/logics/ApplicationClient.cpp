@@ -116,15 +116,13 @@ void ApplicationClient::run() {
 					auto logicTypeId = packet->getInt();
 					// Console::println(string("got packet logic ") + (char)logicTypeId);
 					// create network packet
-					inNetworkPackets.push_back(
-						LogicNetworkPacket(
-							message->getMessageId(),
-							safe,
-							message->getRetryCount(),
-							logicTypeId,
-							packet,
-							size
-						)
+					inNetworkPackets.emplace_back(
+						message->getMessageId(),
+						safe,
+						message->getRetryCount(),
+						logicTypeId,
+						packet,
+						size
 					);
 				}
 				delete message;
@@ -367,17 +365,15 @@ void ApplicationClient::update() {
 		auto gameLogicId = logic->getId();
 		for (auto& queuedSound: logic->getQueuedSounds()) {
 			if (now > queuedSound.timeIssuedAt + static_cast<int64_t>(queuedSound.timeDelay)) {
-				queuedSounds.push_back(
-					{
-						.gameLogicId = gameLogicId,
-						.id = queuedSound.id,
-						.gain = queuedSound.gain,
-						.pitch = queuedSound.pitch,
-						.ignoreIfPlaying = queuedSound.ignoreIfPlaying,
-						.attachedToLogic = queuedSound.attachedToLogic,
-						.position = queuedSound.position,
-						.distanceFromCamera = 0
-					}
+				queuedSounds.emplace_back(
+					gameLogicId,
+					queuedSound.id,
+					queuedSound.gain,
+					queuedSound.pitch,
+					queuedSound.ignoreIfPlaying,
+					queuedSound.attachedToLogic,
+					queuedSound.position,
+					0.0f
 				);
 			} else{
 				requeueSounds.push_back(queuedSound);

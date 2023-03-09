@@ -184,21 +184,21 @@ const string GUIParser::getRootNode(const string& xml) {
 	return rootNode;
 }
 
-GUIScreenNode* GUIParser::parse(const string& pathName, const string& fileName, const unordered_map<string, string>& parameters, const MiniScript::ScriptVariable& miniScriptArguments, Context* context)
+GUIScreenNode* GUIParser::parse(const string& pathName, const string& fileName, const unordered_map<string, string>& variables, const MiniScript::ScriptVariable& miniScriptArguments, Context* context)
 {
-	return parse(FileSystem::getInstance()->getContentAsString(pathName, fileName), parameters, pathName, fileName, miniScriptArguments, context);
+	return parse(FileSystem::getInstance()->getContentAsString(pathName, fileName), variables, pathName, fileName, miniScriptArguments, context);
 }
 
-GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, string>& parameters, const string& pathName, const string& fileName, const MiniScript::ScriptVariable& miniScriptArguments, Context* context)
+GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, string>& variables, const string& pathName, const string& fileName, const MiniScript::ScriptVariable& miniScriptArguments, Context* context)
 {
 	auto applicationRootPath = Tools::getApplicationRootPathName(pathName);
 	auto applicationSubPathName = Tools::getApplicationSubPathName(pathName);
 	auto themeProperties = applicationSubPathName == "project"?projectThemeProperties:engineThemeProperties;
 
-	// replace with parameters
+	// replace with variables
 	auto newXML = xml;
-	for (auto& parameterIt: parameters) {
-		newXML = StringTools::replace(newXML, "{$" + parameterIt.first + "}", escapeQuotes(parameterIt.second));
+	for (auto& variableIt: variables) {
+		newXML = StringTools::replace(newXML, "{$" + variableIt.first + "}", escapeQuotes(variableIt.second));
 	}
 	// replace with theme properties
 	for (auto& themePropertyIt: themeProperties->getProperties()) {
@@ -281,6 +281,7 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 		StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("scrollable")))), "true"),
 		StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("popup")))), "true"),
 		string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("script"))),
+		miniScriptArguments,
 		context
 	);
 	// workaround for having GUINode constructor to be called before GUIScreenNode constructor
@@ -293,9 +294,6 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 	vector<GUINode*> childControllerNodes;
 	guiScreenNode->getChildControllerNodes(childControllerNodes);
 	for (auto node: childControllerNodes) node->getController()->onSubTreeChange();
-
-	//
-	guiScreenNode->initializeMiniScript(miniScriptArguments);
 
 	//
 	return guiScreenNode;
@@ -311,7 +309,7 @@ void GUIParser::parse(GUIParentNode* parentNode, const string& xml)
 {
 	//
 	auto themeProperties = parentNode->getScreenNode()->getApplicationSubPathName() == "project"?projectThemeProperties:engineThemeProperties;
-	// replace with parameters
+	//
 	auto newXML = xml;
 	// replace with theme properties
 	for (auto& themePropertyIt: themeProperties->getProperties()) {
@@ -1621,7 +1619,7 @@ void GUIParser::parseTemplate(GUIParentNode* parentNode, const string& parentEle
 		newTemplateXML = StringTools::replace(newTemplateXML, "{$" + newGuiElementAttributesIt.first + "}", guiElementAttributeValue);
 	}
 
-	// replace remaining unset parameters with empty spaces
+	// replace remaining unset variables with empty spaces
 	newTemplateXML = StringTools::regexReplace(newTemplateXML, "\\{\\$[a-zA-Z\\-_0-9]{1,}\\}", "");
 
 	// replace inner XML
@@ -1665,7 +1663,7 @@ void GUIParser::parseInnerXML(GUIParentNode* parentNode, const string& parentEle
 		newInnerXML = StringTools::replace(newInnerXML, "{$" + newGuiElementAttributesIt.first + "}", guiElementAttributeValue);
 	}
 
-	// replace remaining unset parameters with empty spaces
+	// replace remaining unset variables with empty spaces
 	newInnerXML = StringTools::regexReplace(newInnerXML, "\\{\\$[a-zA-Z\\-_0-9]{1,}\\}", "");
 
 	// replace inner XML

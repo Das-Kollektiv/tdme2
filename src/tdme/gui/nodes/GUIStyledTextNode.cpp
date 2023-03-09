@@ -367,11 +367,9 @@ int GUIStyledTextNode::doPageUp() {
 
 		// if reached cursor index try to find index of a page down height
 		for (auto& lineConstraintsEntity: lineConstraints) {
-			lines.push_back(
-				{
-					.charIdx = lineCharIdxs[0],
-					.y = y
-				}
+			lines.emplace_back(
+				lineCharIdxs[0],
+				y
 			);
 			y+= lineConstraintsEntity.height;
 		}
@@ -861,15 +859,14 @@ void GUIStyledTextNode::determineNextLineConstraints(UTF8CharacterIterator& u8It
 
 	if (line.empty() == true) {
 		//
-		lineConstraints.push_back(
-			{
-				.binaryIdx = 0,
-				.width = 0.0f,
-				.height = font->getLineHeight(),
-				.lineHeight = font->getLineHeight(),
-				.baseLine = font->getBaseLine(),
-				.spaceWrap = true
-			}
+		lineConstraints.emplace_back(
+			0,
+			0,
+			0.0f,
+			font->getLineHeight(),
+			font->getLineHeight(),
+			font->getBaseLine(),
+			true
 		);
 	} else {
 		// determine baseline and part of line to render
@@ -884,16 +881,14 @@ void GUIStyledTextNode::determineNextLineConstraints(UTF8CharacterIterator& u8It
 
 		//
 		lineConstraints.clear();
-		lineConstraints.push_back(
-			{
-				.binaryIdx = -1,
-				.charIdx = -1,
-				.width = 0.0f,
-				.height = 0.0f,
-				.lineHeight = 0.0f,
-				.baseLine = 0.0f,
-				.spaceWrap = false
-			}
+		lineConstraints.emplace_back(
+			-1,
+			-1,
+			0.0f,
+			0.0f,
+			0.0f,
+			0.0f,
+			false
 		);
 		{
 			auto currentTextStyleIdx = textStyleIdx;
@@ -930,16 +925,14 @@ void GUIStyledTextNode::determineNextLineConstraints(UTF8CharacterIterator& u8It
 						lineWidth = lineWidthSpaceWrap;
 						lineHeight = lineHeightSpaceWrap;
 						baseLine = baseLineSpaceWrap;
-						lineConstraints.push_back(
-							{
-								.binaryIdx = -1,
-								.charIdx = kc,
-								.width = 0.0f,
-								.height = 0.0f,
-								.lineHeight = 0.0f,
-								.baseLine = 0.0f,
-								.spaceWrap = false
-							}
+						lineConstraints.emplace_back(
+							-1,
+							kc,
+							0.0f,
+							0.0f,
+							0.0f,
+							0.0f,
+							false
 						);
 					}
 					lineWidth+= textStyle->width;
@@ -984,16 +977,14 @@ void GUIStyledTextNode::determineNextLineConstraints(UTF8CharacterIterator& u8It
 								lineHeight = lineHeightSpaceWrap;
 								baseLine = baseLineSpaceWrap;
 							}
-							lineConstraints.push_back(
-								{
-									.binaryIdx = -1,
-									.charIdx = -1,
-									.width = 0.0f,
-									.height = 0.0f,
-									.lineHeight = 0.0f,
-									.baseLine = 0.0f,
-									.spaceWrap = false
-								}
+							lineConstraints.emplace_back(
+								-1,
+								-1,
+								0.0f,
+								0.0f,
+								0.0f,
+								0.0f,
+								false
 							);
 						}
 						auto charXAdvance = c == '\t'?character->getXAdvance() * tabSize:character->getXAdvance();
@@ -1330,14 +1321,12 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 						currentURL.clear();
 						// add url area if URL is given
 						if (textStyle->url.empty() == false) {
-							urlAreas.push_back(
-								{
-									.left = static_cast<int>(x),
-									.top = static_cast<int>(y),
-									.width = static_cast<int>(textStyle->width),
-									.height = static_cast<int>(textStyle->height),
-									.url = textStyle->url
-								}
+							urlAreas.emplace_back(
+								static_cast<int>(x),
+								static_cast<int>(y),
+								static_cast<int>(textStyle->width),
+								static_cast<int>(textStyle->height),
+								textStyle->url
 							);
 						}
 						//
@@ -1558,14 +1547,12 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 										urlArea.height = lineConstraints[lineIdx].lineHeight;
 									}
 									if (styleURL.empty() == false) {
-										urlAreas.push_back(
-											{
-												.left = static_cast<int>(x),
-												.top = static_cast<int>(y),
-												.width = -1,
-												.height = 1,
-												.url = styleURL
-											}
+										urlAreas.emplace_back(
+											static_cast<int>(x),
+											static_cast<int>(y),
+											-1,
+											1,
+											styleURL
 										);
 									}
 									currentURL = styleURL;

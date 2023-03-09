@@ -154,6 +154,65 @@ void LogicMiniScript::registerMethods() {
 	}
 	{
 		//
+		class ScriptMethodLogicCall: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodLogicCall(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "function", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_PSEUDO_MIXED
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "logic.call";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string logicId;
+				string function;
+				if (MiniScript::getStringValue(argumentValues, 0, logicId) == false ||
+					MiniScript::getStringValue(argumentValues, 1, function) == false) {
+					Console::println("ScriptMethodLogicCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					miniScript->startErrorScript();
+				} else {
+					auto logic = dynamic_cast<MiniScriptLogic*>(miniScript->context->getLogic(logicId));
+					if (logic == nullptr || logic->getMiniScript() == nullptr) {
+						Console::println("ScriptMethodLogicCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no mini script logic with given id: " + logicId);
+						miniScript->startErrorScript();
+					} else {
+						auto logicMiniScript = logic->getMiniScript();
+						auto scriptIdx = logicMiniScript->getFunctionScriptIdx(function);
+						if (scriptIdx == SCRIPTIDX_NONE) {
+							Console::println("ScriptMethodLogicCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": function not found: " + function);
+							miniScript->startErrorScript();
+						} else {
+							#if defined (__APPLE__)
+								// MACOSX currently does not support initializing span using begin and end iterators,
+								// so we need to make a copy of argumentValues beginning from second element
+								vector<ScriptVariable> callArgumentValues;
+								for (auto i = 2; i < argumentValues.size(); i++) callArgumentValues.push_back(argumentValues[i]);
+								// call
+								span callArgumentValuesSpan(callArgumentValues);
+								logicMiniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
+							#else
+								span callArgumentValuesSpan(argumentValues.begin() + 2, argumentValues.end());
+								logicMiniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
+							#endif
+						}
+					}
+				}
+			}
+			bool isVariadic() override {
+				return true;
+			}
+		};
+		registerMethod(new ScriptMethodLogicCall(this));
+	}
+	{
+		//
 		class ScriptMethodLogicSignalHas: public ScriptMethod {
 		private:
 			LogicMiniScript* miniScript { nullptr };
@@ -310,6 +369,114 @@ void LogicMiniScript::registerMethods() {
 	}
 	{
 		//
+		class ScriptMethodInputKeyboardKEYCODE_POS1: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_POS1(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_POS1";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_POS1);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_POS1(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_END: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_END(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_END";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_END);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_END(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_PAGEUP: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_PAGEUP(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_PAGEUP";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_PAGE_UP);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_PAGEUP(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_PAGEDOWN: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_PAGEDOWN(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_PAGEDOWN";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_PAGE_DOWN);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_PAGEDOWN(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_BACKSPACE: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_BACKSPACE(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_BACKSPACE";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_BACKSPACE);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_BACKSPACE(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_DELETE: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_DELETE(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_DELETE";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_DELETE);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_DELETE(this));
+	}
+	{
+		//
 		class ScriptMethodInputKeyboardKEYCODE_SPACE: public ScriptMethod {
 		private:
 			LogicMiniScript* miniScript { nullptr };
@@ -361,6 +528,222 @@ void LogicMiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_ESCAPE(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_F1: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_F1(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_F1";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F1);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F1(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_F2: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_F2(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_F2";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F2);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F2(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_F3: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_F3(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_F3";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F3);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F3(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_F4: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_F4(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_F4";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F4);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F4(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_F5: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_F5(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_F5";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F5);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F5(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_F6: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_F6(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_F6";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F6);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F6(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_F7: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_F7(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_F7";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F7);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F7(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_F8: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_F8(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_F8";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F8);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F8(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_F9: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_F9(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_F9";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F9);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F9(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_F10: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_F10(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_F10";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F10);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F10(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_F11: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_F11(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_F11";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F11);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F11(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_F12: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_F12(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_F12";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F12);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F12(this));
 	}
 	{
 		//
@@ -825,7 +1208,7 @@ void LogicMiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "lookFrom", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -872,7 +1255,7 @@ void LogicMiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "lookAt", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -919,7 +1302,7 @@ void LogicMiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "upVector", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -998,7 +1381,7 @@ void LogicMiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "fovX", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1260,7 +1643,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1337,7 +1720,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "enabled", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1414,7 +1797,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "pickable", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1492,7 +1875,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_VECTOR4, .name = "effectColorMul", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1570,7 +1953,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_VECTOR4, .name = "effectColorAdd", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1648,7 +2031,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "speed", .optional = true, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1690,7 +2073,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "speed", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1807,7 +2190,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1847,7 +2230,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1886,7 +2269,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1923,7 +2306,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -2084,7 +2467,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_MATRIX4x4, .name = "matrix", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -2127,7 +2510,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -2169,7 +2552,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -2209,7 +2592,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -2680,7 +3063,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "enabled", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -2785,7 +3168,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "collisionTypeId", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -2856,7 +3239,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "collisionTypeIds", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -2927,7 +3310,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "linearDamping", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -2998,7 +3381,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "angularDamping", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -3069,7 +3452,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "linearVelocity", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -3140,7 +3523,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "angularVelocity", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -3178,7 +3561,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "force", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "origin", .optional = true, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -3225,7 +3608,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "torque", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -3308,7 +3691,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -3686,7 +4069,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityHierarchyId", .optional = true, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityHierarchyParentId", .optional = true, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -3724,22 +4107,19 @@ void LogicMiniScript::registerMethods() {
 								.prototype = prototype
 							};
 						}
-						miniScript->enginePrototypesToAdd.push_back(
-							{
-								.prototype = prototype,
-								.id = id,
-								.transform = transform,
-								.entityHierarchyId = entityHierarchyId,
-								.entityHierarchyParentId = entityHierarchyParentId
-							}
+						miniScript->enginePrototypesToAdd.emplace_back(
+							prototype,
+							id,
+							transform,
+							entityHierarchyId,
+							entityHierarchyParentId
 						);
-						miniScript->physicsPrototypesToAdd.push_back(
-							{
-								.prototype = prototype,
-								.id = id,
-								.transform = transform,
-								.entityHierarchyParentId = entityHierarchyParentId
-							}
+						miniScript->physicsPrototypesToAdd.emplace_back(
+							prototype,
+							id,
+							transform,
+							entityHierarchyParentId,
+							string()
 						);
 					} catch (Exception& exception) {
 						miniScript->prototypesToAddMutex.unlock();
