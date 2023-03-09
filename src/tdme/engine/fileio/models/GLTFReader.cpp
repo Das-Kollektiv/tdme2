@@ -808,7 +808,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 					for (auto j = 0; j < 4; j++) {
 						// TODO: reuse weights
 						if (weights[i * 4 + j] > Math::EPSILON) {
-							skinningJointWeights[i].emplace_back(joints[i * 4 + j], skinningWeights.size());
+							skinningJointWeights[i].emplace_back(joints[i * 4 + j], static_cast<int32_t>(skinningWeights.size()));
 							skinningWeights.push_back(weights[i * 4 + j]);
 						}
 					}

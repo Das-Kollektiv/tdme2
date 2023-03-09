@@ -373,7 +373,7 @@ void ApplicationClient::update() {
 					queuedSound.ignoreIfPlaying,
 					queuedSound.attachedToLogic,
 					queuedSound.position,
-					0
+					0.0f
 				);
 			} else{
 				requeueSounds.push_back(queuedSound);

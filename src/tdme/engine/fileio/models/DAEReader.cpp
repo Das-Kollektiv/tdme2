@@ -697,11 +697,11 @@ Node* DAEReader::readVisualSceneInstanceController(const string& pathName, Model
 void DAEReader::readGeometry(const string& pathName, Model* model, Node* node, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>& materialSymbols)
 {
 	vector<FacesEntity> facesEntities = node->getFacesEntities();
-	auto verticesOffset = node->getVertices().size();
+	auto verticesOffset = static_cast<int32_t>(node->getVertices().size());
 	vector<Vector3> vertices = node->getVertices();
-	auto normalsOffset = node->getNormals().size();
+	auto normalsOffset = static_cast<int32_t>(node->getNormals().size());
 	vector<Vector3> normals = node->getNormals();;
-	auto textureCoordinatesOffset = node->getTextureCoordinates().size();
+	auto textureCoordinatesOffset = static_cast<int32_t>(node->getTextureCoordinates().size());
 	auto textureCoordinates = node->getTextureCoordinates();
 	auto xmlLibraryGeometries = getChildrenByTagName(xmlRoot, "library_geometries").at(0);
 	for (auto xmlGeometry: getChildrenByTagName(xmlLibraryGeometries, "geometry")) {
