@@ -101,7 +101,7 @@ private:
 	unordered_set<string> invalidateLayoutNodeIds;
 	unordered_map<string, unordered_set<string>> elementNodeToNodeMapping;
 
-	bool visible;
+	bool enabled;
 	bool popUp;
 
 	unordered_map<int64_t, string> timedExpressions;
@@ -209,17 +209,17 @@ public:
 	}
 
 	/**
-	 * @return is visible
+	 * @return is enabled
 	 */
-	inline bool isVisible() {
-		return visible;
+	inline bool isEnabled() {
+		return enabled;
 	}
 
 	/**
-	 * Set visible
-	 * @param visible visible
+	 * Set enabled
+	 * @param enabled enabled
 	 */
-	void setVisible(bool visible);
+	void setEnabled(bool enabled);
 
 	/**
 	 * @return is pop up

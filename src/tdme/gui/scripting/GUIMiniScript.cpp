@@ -955,41 +955,76 @@ void GUIMiniScript::registerMethods() {
 	// gui
 	{
 		//
-		class ScriptMethodGUIScreenSetVisible: public ScriptMethod {
+		class ScriptMethodGUIScreenSetEnabled: public ScriptMethod {
 		private:
 			GUIMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodGUIScreenSetVisible(GUIMiniScript* miniScript):
+			ScriptMethodGUIScreenSetEnabled(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
 						{.type = ScriptVariableType::TYPE_STRING, .name = "screenId", .optional = false, .assignBack = false },
-						{.type = ScriptVariableType::TYPE_BOOLEAN, .name = "visible", .optional = false, .assignBack = false }
+						{.type = ScriptVariableType::TYPE_BOOLEAN, .name = "enabled", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "gui.screen.setVisible";
+				return "gui.screen.setEnabled";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string screenId;
-				bool visible;
+				bool enabled;
 				if (miniScript->getStringValue(argumentValues, 0, screenId, false) == false ||
-					miniScript->getBooleanValue(argumentValues, 1, visible, false) == false) {
-					Console::println("ScriptMethodGUIScreenSetVisible::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: boolean expected");
+					miniScript->getBooleanValue(argumentValues, 1, enabled, false) == false) {
+					Console::println("ScriptMethodGUIScreenSetEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: boolean expected");
 					miniScript->startErrorScript();
 				} else {
 					auto screen = miniScript->screenNode->getGUI()->getScreen(screenId);
 					if (screen != nullptr) {
-						screen->setVisible(visible);
+						screen->setEnabled(enabled);
 					} else {
-						Console::println("ScriptMethodGUIScreenSetVisible::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no screen with given id: " + screenId);
+						Console::println("ScriptMethodGUIScreenSetEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no screen with given id: " + screenId);
 						miniScript->startErrorScript();
 					}
 				}
 			}
 		};
-		registerMethod(new ScriptMethodGUIScreenSetVisible(this));
+		registerMethod(new ScriptMethodGUIScreenSetEnabled(this));
+	}
+	{
+		//
+		class ScriptMethodGUIScreenIsEnabled: public ScriptMethod {
+		private:
+			GUIMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodGUIScreenIsEnabled(GUIMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_STRING, .name = "screenId", .optional = false, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "gui.screen.isEnabled";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string screenId;
+				if (miniScript->getStringValue(argumentValues, 0, screenId, false) == false) {
+					Console::println("ScriptMethodGUIScreenIsEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				} else {
+					auto screen = miniScript->screenNode->getGUI()->getScreen(screenId);
+					if (screen != nullptr) {
+						returnValue.setValue(screen->isEnabled());
+					} else {
+						Console::println("ScriptMethodGUIScreenIsEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no screen with given id: " + screenId);
+						miniScript->startErrorScript();
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodGUIScreenIsEnabled(this));
 	}
 	{
 		//

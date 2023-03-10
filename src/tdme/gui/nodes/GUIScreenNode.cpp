@@ -130,7 +130,7 @@ GUIScreenNode::GUIScreenNode(
 	this->inputEventHandler = nullptr;
 	this->screenNode = this;
 	this->parentNode = nullptr;
-	this->visible = true;
+	this->enabled = true;
 	this->popUp = popUp;
 	this->foccussedBorderColor = GUIColor(applicationSubPathName == "project"?GUIParser::getProjectThemeProperties()->get("color.focus", "#ff0000"):GUIParser::getEngineThemeProperties()->get("color.focus", "#ff0000"));
 	if (scriptFileName.empty() == false) {
@@ -233,13 +233,13 @@ void GUIScreenNode::setGUI(GUI* gui)
 	this->gui = gui;
 }
 
-void GUIScreenNode::setVisible(bool visible)
+void GUIScreenNode::setEnabled(bool enabled)
 {
-	if (this->visible == visible) return;
-	this->visible = visible;
+	if (this->enabled == enabled) return;
+	this->enabled = enabled;
 	if (gui != nullptr &&
-		((visible == false && gui->getFocussedNode() != nullptr && gui->getFocussedNode()->getScreenNode() == this) ||
-		visible == true)) {
+		((enabled == false && gui->getFocussedNode() != nullptr && gui->getFocussedNode()->getScreenNode() == this) ||
+		enabled == true)) {
 		//
 		gui->invalidateFocussedNode();
 	}

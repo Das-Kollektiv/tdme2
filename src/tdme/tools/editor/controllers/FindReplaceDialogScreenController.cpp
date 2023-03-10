@@ -72,7 +72,7 @@ void FindReplaceDialogScreenController::initialize()
 {
 	try {
 		screenNode = GUIParser::parse("resources/engine/gui", "popup_findreplace.xml");
-		screenNode->setVisible(false);
+		screenNode->setEnabled(false);
 		screenNode->addActionListener(this);
 		screenNode->addFocusListener(this);
 		screenNode->addTooltipRequestListener(this);
@@ -123,13 +123,13 @@ void FindReplaceDialogScreenController::show(Action* findAction, Action* countAc
 	this->replaceAllAction = replaceAllAction;
 	this->completeAction = completeAction;
 	//
-	screenNode->setVisible(true);
+	screenNode->setEnabled(true);
 	Engine::getInstance()->getGUI()->setFoccussedNode(findText);
 }
 
 void FindReplaceDialogScreenController::close()
 {
-	screenNode->setVisible(false);
+	screenNode->setEnabled(false);
 	if (findAction != nullptr) delete findAction;
 	if (countAction != nullptr) delete countAction;
 	if (replaceAction != nullptr) delete replaceAction;

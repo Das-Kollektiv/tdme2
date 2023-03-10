@@ -54,7 +54,7 @@ void InfoDialogScreenController::initialize()
 {
 	try {
 		screenNode = GUIParser::parse("resources/engine/gui", "popup_infodialog.xml");
-		screenNode->setVisible(false);
+		screenNode->setEnabled(false);
 		screenNode->addActionListener(this);
 		screenNode->addTooltipRequestListener(this);
 		tabsHeaderNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("infodialog_tabs-header"));
@@ -70,14 +70,14 @@ void InfoDialogScreenController::dispose()
 
 void InfoDialogScreenController::show(const string& caption, const string& message)
 {
-	screenNode->setVisible(true);
+	screenNode->setEnabled(true);
 	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsHeaderNode->getId()))->replaceSubNodes("<tab id=\"infodialog_caption\" image=\"resources/engine/images/attention.png\" text=\"" + caption + "\" closeable=\"true\"/>", true);
 	messageNode->setText(message);
 }
 
 void InfoDialogScreenController::close()
 {
-	screenNode->setVisible(false);
+	screenNode->setEnabled(false);
 }
 
 void InfoDialogScreenController::onAction(GUIActionListenerType type, GUIElementNode* node)

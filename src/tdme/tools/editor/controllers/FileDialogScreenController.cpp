@@ -96,7 +96,7 @@ void FileDialogScreenController::initialize()
 {
 	try {
 		screenNode = GUIParser::parse("resources/engine/gui", "popup_filedialog.xml");
-		screenNode->setVisible(false);
+		screenNode->setEnabled(false);
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		screenNode->addFocusListener(this);
@@ -338,13 +338,13 @@ void FileDialogScreenController::show(const string& cwd, const string& captionTe
 	setupFavorites();
 	setupRecents();
 	//
-	screenNode->setVisible(true);
+	screenNode->setEnabled(true);
 	Engine::getInstance()->getGUI()->setFoccussedNode(fileNameNode);
 }
 
 void FileDialogScreenController::close()
 {
-	screenNode->setVisible(false);
+	screenNode->setEnabled(false);
 	if (applyAction != nullptr) delete applyAction;
 	if (cancelAction != nullptr) delete cancelAction;
 	applyAction = nullptr;
