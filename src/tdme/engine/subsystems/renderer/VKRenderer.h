@@ -102,11 +102,29 @@ private:
 	static constexpr int CUBEMAPTEXTUREINDEX_MIN { 1 };
 
 	struct delete_buffer_type {
+		delete_buffer_type(
+			VkBuffer buffer,
+			VmaAllocation allocation
+		):
+			buffer(buffer),
+			allocation(allocation)
+		{}
 		VkBuffer buffer;
 		VmaAllocation allocation;
 	};
 
 	struct delete_image_type {
+		delete_image_type(
+			VkImage image,
+			VmaAllocation allocation,
+			VkImageView imageView,
+			VkSampler sampler
+		):
+			image(image),
+			allocation(allocation),
+			imageView(imageView),
+			sampler(sampler)
+		{}
 		VkImage image;
 		VmaAllocation allocation;
 		VkImageView imageView;
@@ -148,6 +166,15 @@ private:
 
 	struct shader_type {
 		struct attribute_layout {
+			attribute_layout(
+				const string& name,
+				const string& type,
+				const uint8_t location
+			):
+				name(name),
+				type(type),
+				location(location)
+			{}
 			string name;
 			string type;
 			uint8_t location;

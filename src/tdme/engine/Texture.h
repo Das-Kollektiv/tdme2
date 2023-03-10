@@ -98,6 +98,17 @@ public:
 	 * Mip Map Texture
 	 */
 	struct MipMapTexture {
+		MipMapTexture(
+			TextureFormat format,
+			uint16_t width,
+			uint16_t height,
+			ByteBuffer textureData)
+		:
+			format(format),
+			width(width),
+			height(height),
+			textureData(textureData)
+		{}
 		TextureFormat format;
 		uint16_t width;
 		uint16_t height;

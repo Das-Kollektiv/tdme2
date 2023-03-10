@@ -108,6 +108,19 @@ public:
 	};
 
 	struct ScriptStatement {
+		ScriptStatement(
+			int line,
+			int statementIdx,
+			string statement,
+			string executableStatement,
+			int gotoStatementIdx
+		):
+			line(line),
+			statementIdx(statementIdx),
+			statement(statement),
+			executableStatement(executableStatement),
+			gotoStatementIdx(gotoStatementIdx)
+		{}
 		int line;
 		int statementIdx;
 		string statement;
@@ -1802,9 +1815,26 @@ public:
 
 	struct ScriptSyntaxTreeNode {
 		enum Type { SCRIPTSYNTAXTREENODE_NONE, SCRIPTSYNTAXTREENODE_LITERAL, SCRIPTSYNTAXTREENODE_EXECUTE_METHOD, SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION };
-		Type type { SCRIPTSYNTAXTREENODE_NONE };
+		ScriptSyntaxTreeNode():
+			type(SCRIPTSYNTAXTREENODE_NONE),
+			value(ScriptVariable()),
+			method(nullptr),
+			arguments({})
+		{}
+		ScriptSyntaxTreeNode(
+			Type type,
+			const ScriptVariable& value,
+			ScriptMethod* method,
+			const vector<ScriptSyntaxTreeNode>& arguments
+		):
+			type(type),
+			value(value),
+			method(method),
+			arguments(arguments)
+		{}
+		Type type;
 		ScriptVariable value;
-		ScriptMethod* method { nullptr };
+		ScriptMethod* method;
 		vector<ScriptSyntaxTreeNode> arguments;
 	};
 
@@ -1813,6 +1843,13 @@ public:
 	 */
 	struct Script {
 		struct ScriptArgument {
+			ScriptArgument(
+				const string& name,
+				bool assignBack
+			):
+				name(name),
+				assignBack(assignBack)
+			{}
 			string name;
 			bool assignBack;
 		};
@@ -2525,14 +2562,13 @@ private:
 	 * @return success
 	 */
 	inline bool evaluateInternal(const string& statement, const string& executableStatement, ScriptVariable& returnValue) {
-		ScriptStatement evaluateStatement =
-			{
-				.line = LINEIDX_NONE,
-				.statementIdx = 0,
-				.statement = "internal.script.evaluate(" + statement + ")",
-				.executableStatement = "internal.script.evaluate(" + executableStatement + ")",
-				.gotoStatementIdx = STATEMENTIDX_NONE
-			};
+		ScriptStatement evaluateStatement(
+			LINEIDX_NONE,
+			0,
+			"internal.script.evaluate(" + statement + ")",
+			"internal.script.evaluate(" + executableStatement + ")",
+			STATEMENTIDX_NONE
+		);
 		auto scriptEvaluateStatement = "internal.script.evaluate(" + executableStatement + ")";
 		//
 		string_view method;

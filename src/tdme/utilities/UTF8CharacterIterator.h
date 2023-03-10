@@ -28,6 +28,13 @@ public:
 	struct UTF8PositionCache {
 		static constexpr int CACHE_ENTRY_SIZE { 100 };
 		struct UTF8PositionCacheEntry {
+			UTF8PositionCacheEntry(
+				int binaryPosition,
+				int characterPosition
+			):
+				binaryPosition(binaryPosition),
+				characterPosition(characterPosition)
+			{}
 			int binaryPosition;
 			int characterPosition;
 		};

@@ -82,10 +82,21 @@ public:
 private:
 	struct HistoryEntry {
 		enum Type { TYPE_NONE, TYPE_INSERT, TYPE_DELETE };
-		Type type { TYPE_NONE };
-		int idx { -1 };
+		HistoryEntry(
+			Type type,
+			int idx,
+			const string& data,
+			bool joinable
+		):
+			type(type),
+			idx(idx),
+			data(data),
+			joinable(joinable)
+		{}
+		Type type;
+		int idx;
 		string data;
-		bool joinable { false };
+		bool joinable;
 	};
 
 	static constexpr int64_t TIME_DOUBLECLICK { 250LL };

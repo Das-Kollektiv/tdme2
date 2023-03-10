@@ -52,6 +52,17 @@ private:
 	static constexpr int QUAD_COUNT { 16384 };
 
 	struct GUIEffectStackEntity {
+		GUIEffectStackEntity(
+			const GUIColor& guiEffectColorMul,
+			const GUIColor& guiEffectColorAdd,
+			float guiEffectOffsetX,
+			float guiEffectOffsetY
+		):
+			guiEffectColorMul(guiEffectColorMul),
+			guiEffectColorAdd(guiEffectColorAdd),
+			guiEffectOffsetX(guiEffectOffsetX),
+			guiEffectOffsetY(guiEffectOffsetY)
+		{}
 		GUIColor guiEffectColorMul;
 		GUIColor guiEffectColorAdd;
 		float guiEffectOffsetX;

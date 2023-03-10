@@ -70,6 +70,25 @@ public:
 
 private:
 	struct QueuedSound {
+		QueuedSound(
+			const string& gameLogicId,
+			const string& id,
+			float gain,
+			float pitch,
+			bool ignoreIfPlaying,
+			bool attachedToLogic,
+			const Vector3& position,
+			float distanceFromCamera
+		):
+			gameLogicId(gameLogicId),
+			id(id),
+			gain(gain),
+			pitch(pitch),
+			ignoreIfPlaying(ignoreIfPlaying),
+			attachedToLogic(attachedToLogic),
+			position(position),
+			distanceFromCamera(distanceFromCamera)
+		{}
 		string gameLogicId;
 		string id;
 		float gain;

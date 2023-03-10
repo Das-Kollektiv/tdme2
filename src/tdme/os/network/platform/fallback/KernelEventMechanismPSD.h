@@ -30,6 +30,15 @@ class tdme::os::network::platform::fallback::KernelEventMechanismPSD {
 
 private:
 	struct Event {
+		Event(
+			int descriptor,
+			NIOInterest interest,
+			void* cookie
+		):
+			descriptor(descriptor),
+			interest(interest),
+			cookie(cookie)
+		{}
 		int descriptor;
 		NIOInterest interest;
 		void* cookie;

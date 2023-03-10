@@ -107,6 +107,13 @@ private:
 	unordered_map<int64_t, string> timedExpressions;
 
 	struct ScrollToNodeStruct {
+		ScrollToNodeStruct(
+			const string& node,
+			const string& toNode
+		):
+			node(node),
+			toNode(toNode)
+		{}
 		string node;
 		string toNode;
 	};
@@ -132,6 +139,19 @@ private:
 			EVENTTYPE_TOOLTIPCLOSEREQUEST,
 			EVENTTYPE_DRAGREQUEST
 		};
+		ForwardEvent(
+			EventType eventType,
+			const string& nodeId,
+			int mouseX,
+			int mouseY,
+			int type
+		):
+			eventType(eventType),
+			nodeId(nodeId),
+			mouseX(mouseX),
+			mouseY(mouseY),
+			type(type)
+		{}
 		EventType eventType { EVENTTYPE_NONE };
 		string nodeId;
 		int mouseX { -1 };

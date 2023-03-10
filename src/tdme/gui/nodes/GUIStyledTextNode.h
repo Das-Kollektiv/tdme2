@@ -90,6 +90,23 @@ private:
 	int startTextStyleIdx { -1 };
 
 	struct Line {
+		Line(
+			int binaryIdx,
+			int charIdx,
+			float width,
+			float height,
+			float lineHeight,
+			float baseLine,
+			bool spaceWrap
+		):
+			binaryIdx(binaryIdx),
+			charIdx(charIdx),
+			width(width),
+			height(height),
+			lineHeight(lineHeight),
+			baseLine(baseLine),
+			spaceWrap(spaceWrap)
+		{}
 		int binaryIdx;
 		int charIdx;
 		float width;
@@ -108,6 +125,19 @@ private:
 	vector<Line> lineConstraints;
 
 	struct URLArea {
+		URLArea(
+			int left,
+			int top,
+			int width,
+			int height,
+			const string& url
+		):
+			left(left),
+			top(top),
+			width(width),
+			height(height),
+			url(url)
+		{}
 		int left;
 		int top;
 		int width;

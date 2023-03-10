@@ -27,6 +27,31 @@ public:
 
 private:
 	struct PostProcessingProgramEffectPass {
+		PostProcessingProgramEffectPass(
+			int effectPassIdx,
+			int frameBufferWidthDivideFactor,
+			int frameBufferHeightDivideFactor,
+			const string& shaderPrefix,
+			bool useEZR,
+			bool applyShadowMapping,
+			bool applyPostProcessing,
+			int32_t renderTypes,
+			const Color4& clearColor,
+			bool renderLightSources,
+			bool skipOnLightSourceNotVisible
+		):
+			effectPassIdx(effectPassIdx),
+			frameBufferWidthDivideFactor(frameBufferWidthDivideFactor),
+			frameBufferHeightDivideFactor(frameBufferHeightDivideFactor),
+			shaderPrefix(shaderPrefix),
+			useEZR(useEZR),
+			applyShadowMapping(applyShadowMapping),
+			applyPostProcessing(applyPostProcessing),
+			renderTypes(renderTypes),
+			clearColor(clearColor),
+			renderLightSources(renderLightSources),
+			skipOnLightSourceNotVisible(skipOnLightSourceNotVisible)
+		{}
 		int effectPassIdx;
 		int frameBufferWidthDivideFactor;
 		int frameBufferHeightDivideFactor;
@@ -40,6 +65,19 @@ private:
 		bool skipOnLightSourceNotVisible;
 	};
 	struct PostProcessingProgramStep {
+		PostProcessingProgramStep(
+			const string& shaderId,
+			FrameBufferSource source,
+			FrameBufferTarget target,
+			bool bindTemporary,
+			FrameBufferSource blendToSource
+		):
+			shaderId(shaderId),
+			source(source),
+			target(target),
+			bindTemporary(bindTemporary),
+			blendToSource(blendToSource)
+		{}
 		string shaderId;
 		FrameBufferSource source;
 		FrameBufferTarget target;

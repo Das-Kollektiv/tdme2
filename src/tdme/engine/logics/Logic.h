@@ -28,6 +28,25 @@ using tdme::utilities::Time;
 class tdme::engine::logics::Logic {
 public:
 	struct QueuedSound {
+		QueuedSound(
+			const string& id,
+			bool attachedToLogic,
+			const Vector3& position,
+			int64_t timeIssuedAt,
+			int timeDelay,
+			float gain,
+			float pitch,
+			bool ignoreIfPlaying
+		):
+			id(id),
+			attachedToLogic(attachedToLogic),
+			position(position),
+			timeIssuedAt(timeIssuedAt),
+			timeDelay(timeDelay),
+			gain(gain),
+			pitch(pitch),
+			ignoreIfPlaying(ignoreIfPlaying)
+		{}
 		string id;
 		bool attachedToLogic;
 		Vector3 position;
@@ -39,6 +58,10 @@ public:
 	};
 
 	struct SignalStruct {
+		SignalStruct(
+			const string& signal,
+			const vector<MiniScript::ScriptVariable>& arguments
+		): signal(signal), arguments(arguments) {}
 		string signal;
 		vector<MiniScript::ScriptVariable> arguments;
 	};
