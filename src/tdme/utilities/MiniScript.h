@@ -111,8 +111,8 @@ public:
 		ScriptStatement(
 			int line,
 			int statementIdx,
-			string statement,
-			string executableStatement,
+			const string& statement,
+			const string& executableStatement,
 			int gotoStatementIdx
 		):
 			line(line),
@@ -1854,19 +1854,44 @@ public:
 			bool assignBack;
 		};
 		enum ScriptType { SCRIPTTYPE_NONE, SCRIPTTYPE_FUNCTION, SCRIPTTYPE_ON, SCRIPTTYPE_ONENABLED };
+		Script(
+			ScriptType scriptType,
+			int line,
+			// applies only for on and on-enabled
+			const string& condition,
+			const string& executableCondition,
+			ScriptStatement conditionStatement,
+			ScriptSyntaxTreeNode conditionSyntaxTree,
+			// applies only for on-enabled
+			const string& name,
+			bool emitCondition,
+			const vector<ScriptStatement>& statements,
+			const vector<ScriptSyntaxTreeNode>& syntaxTree,
+			// applies only for functions
+			const vector<ScriptArgument>& arguments
+		):
+			scriptType(scriptType),
+			line(line),
+			condition(condition),
+			executableCondition(executableCondition),
+			conditionStatement(conditionStatement),
+			conditionSyntaxTree(conditionSyntaxTree),
+			name(name),
+			emitCondition(emitCondition),
+			statements(statements),
+			syntaxTree(syntaxTree),
+			arguments(arguments)
+		{}
 		ScriptType scriptType;
 		int line;
-		// applies only for on and on-enabled
 		string condition;
 		string executableCondition;
 		ScriptStatement conditionStatement;
 		ScriptSyntaxTreeNode conditionSyntaxTree;
-		// applies only for on-enabled
 		string name;
 		bool emitCondition;
 		vector<ScriptStatement> statements;
 		vector<ScriptSyntaxTreeNode> syntaxTree;
-		// applies only for functions
 		vector<ScriptArgument> arguments;
 	};
 
