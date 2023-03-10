@@ -127,10 +127,11 @@ void ConvexMesh::createConvexMesh(const vector<Vector3>& vertices, const vector<
 	faces.clear();
 	int indexIdx = 0;
 	for (auto faceVerticesCount: facesVerticesCount) {
-		faces.emplace_back(
-			faceVerticesCount,
-			indexIdx
-		);
+		// TODO: reactphysics3d::PolygonVertexArray::PolygonFace could use a constructor here to be able to use emplace_back on MacOSX
+		reactphysics3d::PolygonVertexArray::PolygonFace polygonFace;
+		polygonFace.indexBase = indexIdx;
+		polygonFace.nbVertices = faceVerticesCount;
+		faces.push_back(polygonFace);
 		indexIdx+= faceVerticesCount;
 	}
 
