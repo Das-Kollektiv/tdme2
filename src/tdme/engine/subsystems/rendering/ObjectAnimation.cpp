@@ -145,15 +145,15 @@ void ObjectAnimation::setAnimation(const string& id, float speed)
 			createNodesTransformMatrices(transformMatrices[2], nodeLists[2], model->getSubNodes());
 		} else {
 			baseAnimationIdx = (baseAnimationIdx + 1) % 2;
-			baseAnimations[baseAnimationIdx] = {
-				.setup = animationActiveSetup,
-				.endAtTime = -1LL,
-				.currentAtTime = 0LL,
-				.lastAtTime = Timing::UNDEFINED,
-				.finished = false,
-				.time = 0.0f,
-				.speed = speed
-			};
+			baseAnimations[baseAnimationIdx] = AnimationState(
+				animationActiveSetup,
+				-1LL,
+				0LL,
+				Timing::UNDEFINED,
+				false,
+				0.0f,
+				speed
+			);
 		}
 		if (baseAnimations.size() > 1) {
 			auto baseAnimationIdxLast = (baseAnimationIdx + 1) % 2;
