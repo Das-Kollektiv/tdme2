@@ -582,7 +582,7 @@ Reading all keys as array from set:
 | math.G(): Float                                                                                  |
 | math.PI(): Float                                                                                 |
 | math.abs($value: Number): Number                                                                 |
-| math.absmod($value: Float, $range: Float): Float                                                 |
+| math.absmod($value: Number, $range: Number): Number                                              |
 | math.acos($value: Float): Float                                                                  |
 | math.asin($value: Float): Float                                                                  |
 | math.atan($value: Float): Float                                                                  |
@@ -595,7 +595,7 @@ Reading all keys as array from set:
 | math.log($value: Float): Float                                                                   |
 | math.max($a: Number, $b: Number): Number                                                         |
 | math.min($a: Number, $b: Number): Number                                                         |
-| math.mod($value: Float, $range: Float): Float                                                    |
+| math.mod($value: Number, $range: Number): Number                                                 |
 | math.pow($a: Number, $b: Number): Number                                                         |
 | math.random(): Float                                                                             |
 | math.round($value: Float): Float                                                                 |
@@ -873,7 +873,8 @@ Reading all keys as array from set:
 | gui.parentnode.addSubNodes($parentNodeId: String, $xml: String[, $resetScrollOffsets: Boolean]): Void|
 | gui.parentnode.clearSubNodes($parentNodeId: String): Void                                        |
 | gui.parentnode.replaceSubNodes($parentNodeId: String, $xml: String[, $resetScrollOffsets: Boolean]): Void|
-| gui.screen.setVisible($screenId: String, $visible: Boolean): Void                                |
+| gui.screen.isEnabled($screenId: String): Boolean                                                 |
+| gui.screen.setEnabled($screenId: String, $enabled: Boolean): Void                                |
 | gui.screen.call($screenId: String, $function: String, ...): Mixed                                |
 | gui.screen.goto($fileName: String[, $variables: Map[, $arguments: Mixed]]): Void                 |
 | gui.screen.pop(): Void                                                                           |

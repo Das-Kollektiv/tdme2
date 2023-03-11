@@ -55,7 +55,7 @@ void TooltipScreenController::initialize()
 {
 	try {
 		screenNode = GUIParser::parse("resources/engine/gui", "popup_tooltip.xml");
-		screenNode->setVisible(false);
+		screenNode->setEnabled(false);
 		tooltipNode = required_dynamic_cast<GUITextNode*>(screenNode->getNodeById("tooltip"));
 	} catch (Exception& exception) {
 		Console::println("TooltipScreenController::initialize(): An error occurred: " + string(exception.what()));
@@ -77,11 +77,11 @@ void TooltipScreenController::show(int mouseX, int mouseY, const string& tooltip
 	tooltipNode->getRequestsConstraints().left = scaledX;
 	tooltipNode->getRequestsConstraints().topType = GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL;
 	tooltipNode->getRequestsConstraints().top = scaledY;
-	screenNode->setVisible(true);
+	screenNode->setEnabled(true);
 	screenNode->layout();
 }
 
 void TooltipScreenController::close()
 {
-	screenNode->setVisible(false);
+	screenNode->setEnabled(false);
 }

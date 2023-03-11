@@ -62,7 +62,7 @@ void DraggingScreenController::initialize()
 	try {
 		screenNode = GUIParser::parse("resources/engine/gui", "popup_dragging.xml");
 		screenNode->addMoveListener(this);
-		screenNode->setVisible(false);
+		screenNode->setEnabled(false);
 		draggableNode = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("draggable"));
 	} catch (Exception& exception) {
 		Console::println("DraggingScreenController::initialize(): An error occurred: " + string(exception.what()));
@@ -110,7 +110,7 @@ void DraggingScreenController::start(int mouseX, int mouseY, const string& xml, 
 	draggableNode->getRequestsConstraints().left = scaledX;
 	draggableNode->getRequestsConstraints().topType = GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL;
 	draggableNode->getRequestsConstraints().top = scaledY;
-	screenNode->setVisible(true);
+	screenNode->setEnabled(true);
 	screenNode->layout();
 	//
 	Engine::getInstance()->getGUI()->startMouseDragging(draggableNode);
@@ -124,5 +124,5 @@ void DraggingScreenController::start(int mouseX, int mouseY, const string& xml, 
 
 void DraggingScreenController::close()
 {
-	screenNode->setVisible(false);
+	screenNode->setEnabled(false);
 }

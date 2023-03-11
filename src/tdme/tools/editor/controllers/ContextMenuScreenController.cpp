@@ -64,7 +64,7 @@ void ContextMenuScreenController::initialize()
 {
 	try {
 		screenNode = GUIParser::parse("resources/engine/gui", "popup_contextmenu.xml");
-		screenNode->setVisible(false);
+		screenNode->setEnabled(false);
 		screenNode->addActionListener(this);
 		screenNode->addFocusListener(this);
 		screenNode->addTooltipRequestListener(this);
@@ -88,14 +88,14 @@ void ContextMenuScreenController::show(int mouseX, int mouseY)
 	contextMenuNode->getRequestsConstraints().left = x;
 	contextMenuNode->getRequestsConstraints().topType = GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL;
 	contextMenuNode->getRequestsConstraints().top = y;
-	screenNode->setVisible(true);
+	screenNode->setEnabled(true);
 	screenNode->layout();
 	Engine::getInstance()->getGUI()->setFoccussedNode(contextMenuNode);
 }
 
 void ContextMenuScreenController::close()
 {
-	screenNode->setVisible(false);
+	screenNode->setEnabled(false);
 }
 
 void ContextMenuScreenController::onAction(GUIActionListenerType type, GUIElementNode* node)

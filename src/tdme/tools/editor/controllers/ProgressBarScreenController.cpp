@@ -55,7 +55,7 @@ void ProgressBarScreenController::initialize()
 	try {
 		screenNode = GUIParser::parse("resources/engine/gui", "popup_progressbar.xml");
 		screenNode->addTooltipRequestListener(this);
-		screenNode->setVisible(false);
+		screenNode->setEnabled(false);
 		progressBarNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("progressbar"));
 		progressBarParent = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("progressbar_parent"));
 		progressMessageNode = dynamic_cast<GUITextNode*>(screenNode->getNodeById("progress_message"));
@@ -77,7 +77,7 @@ void ProgressBarScreenController::show(const string& message, bool showProgressB
 	} else {
 		progressBarParent->getActiveConditions().remove("show-progressbar");
 	}
-	screenNode->setVisible(true);
+	screenNode->setEnabled(true);
 	progress2(0.0f);
 }
 
@@ -95,7 +95,7 @@ void ProgressBarScreenController::progress2(float value) {
 
 void ProgressBarScreenController::close()
 {
-	screenNode->setVisible(false);
+	screenNode->setEnabled(false);
 }
 
 void ProgressBarScreenController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
