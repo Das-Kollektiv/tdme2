@@ -11,11 +11,37 @@ using tdme::engine::model::AnimationSetup;
  * @author Andreas Drewke
  */
 struct tdme::engine::subsystems::rendering::AnimationState final {
-	AnimationSetup* setup { nullptr };
-	int64_t endAtTime { -1LL };
-	int64_t currentAtTime { -1LL };
-	int64_t lastAtTime { -1LL };
-	bool finished { true };
-	float time { -1LL };
-	float speed { 1.0f };
+	AnimationState():
+		setup(nullptr),
+		endAtTime(-1LL),
+		currentAtTime(-1LL),
+		lastAtTime(-1LL),
+		finished(true),
+		time(-1LL),
+		speed(1.0f)
+	{}
+	AnimationState(
+		AnimationSetup* setup,
+		int64_t endAtTime,
+		int64_t currentAtTime,
+		int64_t lastAtTime,
+		bool finished,
+		float time,
+		float speed
+	):
+		setup(setup),
+		endAtTime(endAtTime),
+		currentAtTime(currentAtTime),
+		lastAtTime(lastAtTime),
+		finished(finished),
+		time(time),
+		speed(speed)
+	{}
+	AnimationSetup* setup;
+	int64_t endAtTime;
+	int64_t currentAtTime;
+	int64_t lastAtTime;
+	bool finished;
+	float time;
+	float speed;
 };

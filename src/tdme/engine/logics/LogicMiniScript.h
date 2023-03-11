@@ -62,6 +62,19 @@ protected:
 	unordered_map<string, PrototypeCounter> prototypes;
 
 	struct PrototypeToAdd {
+		PrototypeToAdd(
+			Prototype* prototype,
+			const string& id,
+			const Transform& transform,
+			const string& entityHierarchyId,
+			const string& entityHierarchyParentId
+		):
+			prototype(prototype),
+			id(id),
+			transform(transform),
+			entityHierarchyId(entityHierarchyId),
+			entityHierarchyParentId(entityHierarchyParentId)
+		{}
 		Prototype* prototype { nullptr };
 		string id;
 		Transform transform;

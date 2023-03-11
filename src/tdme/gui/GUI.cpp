@@ -208,7 +208,7 @@ void GUI::determineFocussedNodes()
 	focusableScreenNodes.clear();
 	for (int i = renderScreens.size() - 1; i >= 0; i--) {
 		auto screen = renderScreens[i];
-		if (screen->isVisible() == false)
+		if (screen->isEnabled() == false)
 			continue;
 
 		focusableScreenNodes.push_back(screen);
@@ -332,7 +332,7 @@ void GUI::render()
 	for (int i = renderScreens.size() - 1; i >= 0; i--) {
 		auto screen = renderScreens[i];
 
-		if (screen->isVisible() == false) continue;
+		if (screen->isEnabled() == false) continue;
 
 		screen->invalidateLayouts();
 		screen->scrollToNodes();
@@ -345,7 +345,7 @@ void GUI::render()
 	for (auto i = 0; i < renderScreens.size(); i++) {
 		auto screen = renderScreens[i];
 
-		if (screen->isVisible() == false) continue;
+		if (screen->isEnabled() == false) continue;
 
 		//
 		screen->render(guiRenderer);
@@ -504,7 +504,7 @@ void GUI::handleEvents(bool clearEvents)
 				auto screen = renderScreensCopy[i];
 
 				// skip on invisible
-				if (screen->isVisible() == false) continue;
+				if (screen->isEnabled() == false) continue;
 
 				//
 				auto& floatingNodes = screen->getFloatingNodes();
@@ -540,7 +540,7 @@ void GUI::handleEvents(bool clearEvents)
 
 				//
 				auto screen = renderScreensCopy[i];
-				if (screen->isVisible() == false) continue;
+				if (screen->isEnabled() == false) continue;
 
 				//
 				screen->determineMouseEventNodes(&lastMouseEvent, screen->flow == GUINode_Flow::FLOATING, eventNodeIds, eventFloatingNodeIds, GUINode::DETERMINEMOUSEEVENTNODES_FLAG_TOOLTIP);
@@ -630,7 +630,7 @@ void GUI::handleEvents(bool clearEvents)
 			auto screen = renderScreensCopy[i];
 
 			// skip on invisible
-			if (screen->isVisible() == false) continue;
+			if (screen->isEnabled() == false) continue;
 
 			//
 			auto processed = false;
@@ -665,7 +665,7 @@ void GUI::handleEvents(bool clearEvents)
 		if (event.isProcessed() == false) {
 			for (int i = renderScreensCopy.size() - 1; i >= 0; i--) {
 				auto screen = renderScreensCopy[i];
-				if (screen->isVisible() == false) continue;
+				if (screen->isEnabled() == false) continue;
 				handleMouseEvent(screen, &event, _mouseOutCandidateEventNodeIds[screen->getId()], _mouseOutClickCandidateEventNodeIds[screen->getId()], mousePressedEventNodeIds[screen->getId()], false);
 				if (screen->isPopUp() == true) break;
 			}
@@ -698,7 +698,7 @@ void GUI::handleEvents(bool clearEvents)
 	// call tick and input event handler
 	for (int i = renderScreensCopy.size() - 1; i >= 0; i--) {
 		auto screen = renderScreensCopy[i];
-		if (screen->isVisible() == false) continue;
+		if (screen->isEnabled() == false) continue;
 		screen->tick();
 		if (screen->getInputEventHandler() != nullptr) {
 			screen->getInputEventHandler()->handleInputEvents();

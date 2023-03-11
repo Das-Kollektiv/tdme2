@@ -76,7 +76,7 @@ void ColorPickerScreenController::initialize()
 {
 	try {
 		screenNode = GUIParser::parse("resources/engine/gui", "popup_colorpicker.xml");
-		screenNode->setVisible(false);
+		screenNode->setEnabled(false);
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		screenNode->addFocusListener(this);
@@ -106,7 +106,7 @@ void ColorPickerScreenController::show(const Color4Base& color, Action* onColorC
 	updateColor();
 	updateColorHex();
 	//
-	screenNode->setVisible(true);
+	screenNode->setEnabled(true);
 	Engine::getInstance()->getGUI()->setFoccussedNode(hexInput);
 }
 
@@ -116,7 +116,7 @@ void ColorPickerScreenController::close()
 		delete onColorChangeAction;
 		onColorChangeAction = nullptr;
 	}
-	screenNode->setVisible(false);
+	screenNode->setEnabled(false);
 }
 
 void ColorPickerScreenController::onChange(GUIElementNode* node) {

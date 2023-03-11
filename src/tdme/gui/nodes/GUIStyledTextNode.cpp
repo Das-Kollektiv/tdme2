@@ -346,6 +346,13 @@ int GUIStyledTextNode::doPageUp() {
 	auto textStyleIdx = 0;
 	auto reachedCursorIndex = false;
 	struct LineInfo {
+		LineInfo(
+			int charIdx,
+			float y
+		):
+			charIdx(charIdx),
+			y(y)
+		{}
 		int charIdx;
 		float y;
 	};
@@ -907,15 +914,15 @@ void GUIStyledTextNode::determineNextLineConstraints(UTF8CharacterIterator& u8It
 				// render a image
 				if (textStyle != nullptr && textStyle->image != nullptr) {
 					if (lineConstraints[lineConstraints.size() - 1].spaceWrap == false) {
-						lineConstraints[lineConstraints.size() - 1] = {
-							.binaryIdx = k,
-							.charIdx = kc,
-							.width = lineWidth,
-							.height = Math::max(lineHeight, baseLine + imageHeight),
-							.lineHeight = lineHeight,
-							.baseLine = baseLine,
-							.spaceWrap = false
-						};
+						lineConstraints[lineConstraints.size() - 1] = Line(
+							k,
+							kc,
+							lineWidth,
+							Math::max(lineHeight, baseLine + imageHeight),
+							lineHeight,
+							baseLine,
+							false
+						);
 						lineWidthSpaceWrap = 0.0f;
 						lineHeightSpaceWrap = 0.0f;
 						baseLineSpaceWrap = 0.0f;
@@ -941,15 +948,15 @@ void GUIStyledTextNode::determineNextLineConstraints(UTF8CharacterIterator& u8It
 				} else {
 					// render text
 					if (c == ' ') {
-						lineConstraints[lineConstraints.size() - 1] = {
-							.binaryIdx = k,
-							.charIdx = kc,
-							.width = lineWidth,
-							.height = Math::max(lineHeight, baseLine + imageHeight),
-							.lineHeight = lineHeight,
-							.baseLine = baseLine,
-							.spaceWrap = true
-						};
+						lineConstraints[lineConstraints.size() - 1] = Line(
+							k,
+							kc,
+							lineWidth,
+							Math::max(lineHeight, baseLine + imageHeight),
+							lineHeight,
+							baseLine,
+							true
+						);
 						lineWidthSpaceWrap = 0.0f;
 						lineHeightSpaceWrap = 0.0f;
 						baseLineSpaceWrap = 0.0f;
@@ -957,15 +964,15 @@ void GUIStyledTextNode::determineNextLineConstraints(UTF8CharacterIterator& u8It
 					auto character = currentFont->getCharacter(c == '\t'?' ':c);
 					if (character != nullptr) {
 						if (lineConstraints[lineConstraints.size() - 1].spaceWrap == false) {
-							lineConstraints[lineConstraints.size() - 1] = {
-								.binaryIdx = k,
-								.charIdx = kc,
-								.width = lineWidth,
-								.height = Math::max(lineHeight, baseLine + imageHeight),
-								.lineHeight = lineHeight,
-								.baseLine = baseLine,
-								.spaceWrap = false
-							};
+							lineConstraints[lineConstraints.size() - 1] = Line(
+								k,
+								kc,
+								lineWidth,
+								Math::max(lineHeight, baseLine + imageHeight),
+								lineHeight,
+								baseLine,
+								false
+							);
 							lineWidthSpaceWrap = 0.0f;
 							lineHeightSpaceWrap = 0.0f;
 							baseLineSpaceWrap = 0.0f;
@@ -996,15 +1003,15 @@ void GUIStyledTextNode::determineNextLineConstraints(UTF8CharacterIterator& u8It
 		}
 
 		//
-		lineConstraints[lineConstraints.size() - 1] = {
-			.binaryIdx = static_cast<int>(line.size()),
-			.charIdx = charIdx,
-			.width = lineWidth,
-			.height = Math::max(lineHeight, baseLine + imageHeight),
-			.lineHeight = lineHeight,
-			.baseLine = baseLine,
-			.spaceWrap = false
-		};
+		lineConstraints[lineConstraints.size() - 1] = Line(
+			static_cast<int>(line.size()),
+			charIdx,
+			lineWidth,
+			Math::max(lineHeight, baseLine + imageHeight),
+			lineHeight,
+			baseLine,
+			false
+		);
 	}
 }
 

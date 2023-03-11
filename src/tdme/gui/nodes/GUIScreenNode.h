@@ -101,12 +101,19 @@ private:
 	unordered_set<string> invalidateLayoutNodeIds;
 	unordered_map<string, unordered_set<string>> elementNodeToNodeMapping;
 
-	bool visible;
+	bool enabled;
 	bool popUp;
 
 	unordered_map<int64_t, string> timedExpressions;
 
 	struct ScrollToNodeStruct {
+		ScrollToNodeStruct(
+			const string& node,
+			const string& toNode
+		):
+			node(node),
+			toNode(toNode)
+		{}
 		string node;
 		string toNode;
 	};
@@ -132,6 +139,19 @@ private:
 			EVENTTYPE_TOOLTIPCLOSEREQUEST,
 			EVENTTYPE_DRAGREQUEST
 		};
+		ForwardEvent(
+			EventType eventType,
+			const string& nodeId,
+			int mouseX,
+			int mouseY,
+			int type
+		):
+			eventType(eventType),
+			nodeId(nodeId),
+			mouseX(mouseX),
+			mouseY(mouseY),
+			type(type)
+		{}
 		EventType eventType { EVENTTYPE_NONE };
 		string nodeId;
 		int mouseX { -1 };
@@ -209,17 +229,17 @@ public:
 	}
 
 	/**
-	 * @return is visible
+	 * @return is enabled
 	 */
-	inline bool isVisible() {
-		return visible;
+	inline bool isEnabled() {
+		return enabled;
 	}
 
 	/**
-	 * Set visible
-	 * @param visible visible
+	 * Set enabled
+	 * @param enabled enabled
 	 */
-	void setVisible(bool visible);
+	void setEnabled(bool enabled);
 
 	/**
 	 * @return is pop up

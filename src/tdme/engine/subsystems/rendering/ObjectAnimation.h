@@ -60,6 +60,23 @@ private:
 
 protected:
 	struct FlattenedNode {
+		FlattenedNode(
+			const string& nodeId,
+			const Matrix4x4* nodeTransformMatrix,
+			Matrix4x4* nodeOverriddenTransformMatrix,
+			const Animation* nodeAnimation,
+			AnimationState* nodeAnimationState,
+			const Matrix4x4* parentTransformMatrix,
+			Matrix4x4* transformMatrix
+		):
+			nodeId(nodeId),
+			nodeTransformMatrix(nodeTransformMatrix),
+			nodeOverriddenTransformMatrix(nodeOverriddenTransformMatrix),
+			nodeAnimation(nodeAnimation),
+			nodeAnimationState(nodeAnimationState),
+			parentTransformMatrix(parentTransformMatrix),
+			transformMatrix(transformMatrix)
+		{}
 		const string nodeId;
 		const Matrix4x4* nodeTransformMatrix;
 		Matrix4x4* nodeOverriddenTransformMatrix;
@@ -69,6 +86,15 @@ protected:
 		Matrix4x4* transformMatrix;
 	};
 	struct NodeSkinningJoint {
+		NodeSkinningJoint(
+			const Joint* joint,
+			const Matrix4x4* nodeTransformMatrix,
+			Matrix4x4* skinningNodeTransformMatrix
+		):
+			joint(joint),
+			nodeTransformMatrix(nodeTransformMatrix),
+			skinningNodeTransformMatrix(skinningNodeTransformMatrix)
+		{}
 		const Joint* joint;
 		const Matrix4x4* nodeTransformMatrix;
 		Matrix4x4* skinningNodeTransformMatrix;

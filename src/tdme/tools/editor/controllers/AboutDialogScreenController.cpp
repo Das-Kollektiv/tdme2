@@ -63,7 +63,7 @@ void AboutDialogScreenController::initialize()
 {
 	try {
 		screenNode = GUIParser::parse("resources/engine/gui", "popup_about.xml");
-		screenNode->setVisible(false);
+		screenNode->setEnabled(false);
 		screenNode->addActionListener(this);
 		screenNode->addTooltipRequestListener(this);
 		required_dynamic_cast<GUITextNode*>(screenNode->getNodeById("about_version"))->setText(MutableString(Version::getVersion()));
@@ -81,12 +81,12 @@ void AboutDialogScreenController::dispose()
 
 void AboutDialogScreenController::show()
 {
-	screenNode->setVisible(true);
+	screenNode->setEnabled(true);
 }
 
 void AboutDialogScreenController::close()
 {
-	screenNode->setVisible(false);
+	screenNode->setEnabled(false);
 }
 
 void AboutDialogScreenController::onAction(GUIActionListenerType type, GUIElementNode* node)

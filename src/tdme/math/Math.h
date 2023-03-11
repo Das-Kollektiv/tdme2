@@ -370,8 +370,50 @@ public:
 	 * @param range range
 	 * @return modulo of value
 	 */
+	inline static int32_t mod(int32_t value, int32_t range) {
+		return value % range;
+	}
+
+	/**
+	 * Returns modulo of value, so that return value is -range < value < range
+	 * @param value value
+	 * @param range range
+	 * @return modulo of value
+	 */
+	inline static int64_t mod(int64_t value, int64_t range) {
+		return value % range;
+	}
+
+	/**
+	 * Returns modulo of value, so that return value is -range < value < range
+	 * @param value value
+	 * @param range range
+	 * @return modulo of value
+	 */
 	inline static float mod(float value, float range) {
 		return std::fmod(value, range);
+	}
+
+	/**
+	 * Returns absolute modulo of value, so that return value is 0 <= value < range
+	 * @param value value
+	 * @param range range
+	 * @return modulo of value
+	 */
+	inline static int32_t absmod(int32_t value, int32_t range) {
+		while (value < 0.0f) value+= range;
+		return value % range;
+	}
+
+	/**
+	 * Returns absolute modulo of value, so that return value is 0 <= value < range
+	 * @param value value
+	 * @param range range
+	 * @return modulo of value
+	 */
+	inline static int64_t absmod(int64_t value, int64_t range) {
+		while (value < 0.0f) value+= range;
+		return value % range;
 	}
 
 	/**

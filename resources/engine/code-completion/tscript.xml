@@ -316,9 +316,9 @@
 		</overload>
 	</keyword>
 	<keyword name="math.absmod" func="yes">
-		<overload return-value="Float" descr="">
-			<parameter name="Float $value" />
-			<parameter name="Float $range" />
+		<overload return-value="Number" descr="">
+			<parameter name="Number $value" />
+			<parameter name="Number $range" />
 		</overload>
 	</keyword>
 	<keyword name="math.acos" func="yes">
@@ -387,9 +387,9 @@
 		</overload>
 	</keyword>
 	<keyword name="math.mod" func="yes">
-		<overload return-value="Float" descr="">
-			<parameter name="Float $value" />
-			<parameter name="Float $range" />
+		<overload return-value="Number" descr="">
+			<parameter name="Number $value" />
+			<parameter name="Number $range" />
 		</overload>
 	</keyword>
 	<keyword name="math.pow" func="yes">

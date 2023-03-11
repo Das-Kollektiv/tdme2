@@ -67,7 +67,7 @@ void InputDialogScreenController::initialize()
 {
 	try {
 		screenNode = GUIParser::parse("resources/engine/gui", "popup_inputdialog.xml");
-		screenNode->setVisible(false);
+		screenNode->setEnabled(false);
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		screenNode->addFocusListener(this);
@@ -94,13 +94,13 @@ void InputDialogScreenController::show(const string& captionText, const string& 
 	if (this->cancelAction != nullptr) delete this->cancelAction;
 	this->cancelAction = cancelAction;
 	//
-	screenNode->setVisible(true);
+	screenNode->setEnabled(true);
 	Engine::getInstance()->getGUI()->setFoccussedNode(inputNode);
 }
 
 void InputDialogScreenController::close()
 {
-	screenNode->setVisible(false);
+	screenNode->setEnabled(false);
 	if (applyAction != nullptr) delete applyAction;
 	if (cancelAction != nullptr) delete cancelAction;
 	applyAction = nullptr;
