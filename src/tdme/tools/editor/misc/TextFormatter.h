@@ -224,4 +224,13 @@ public:
 	 * Parse code completion
 	 */
 	const CodeCompletion* loadCodeCompletion(const string& extension);
+
+	/**
+	 * Create mark down GUI XML
+	 * @param pathName markdown path name
+	 * @param pathName markdown file name
+	 * @returns GUI XML
+	 */
+	static const string createMarkdownGUIXML(const string& pathName, const string& fileName);
+
 };

@@ -483,3 +483,105 @@ const TextFormatter::CodeCompletion* TextFormatter::loadCodeCompletion(const str
 	}
 	return nullptr;
 }
+
+const string TextFormatter::createMarkdownGUIXML(const string& pathName, const string& fileName) {
+	vector<string> markdownLines;
+	FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, markdownLines);
+	string xml;
+	xml+= "<screen id='markdown' min-width='1024' min-height='768' max-width='3200' max-height='1800'>\n";
+	xml+= "\t<scrollarea width='100%' height='100%'>\n";
+	xml+= "\t\t<layout alignment='vertical' width='auto' height='auto'>\n";
+	auto inTable = false;
+	for (auto markdownLine: markdownLines) {
+		markdownLine = StringTools::replace(markdownLine, "\\<", "<");
+		markdownLine = StringTools::replace(markdownLine, "\\>", ">");
+		//
+		if (inTable == true && StringTools::startsWith(markdownLine, "|") == false) {
+			inTable = false;
+			xml+= "</table>\n";
+		}
+		// image
+		if (StringTools::startsWith(markdownLine, "!") == true) {
+			string tooltip;
+			{
+				auto tooltipStartPosition = StringTools::indexOf(markdownLine, '[');
+				auto tooltipEndPosition = StringTools::indexOf(markdownLine, ']');
+				if (tooltipStartPosition != string::npos &&
+					tooltipEndPosition != string::npos &&
+					tooltipEndPosition > tooltipStartPosition) {
+					tooltip = StringTools::substring(markdownLine, tooltipStartPosition + 1, tooltipEndPosition);
+				}
+			}
+			string source;
+			{
+				string url;
+				auto urlStartPosition = StringTools::indexOf(markdownLine, '(');
+				auto urlEndPosition = StringTools::indexOf(markdownLine, ')');
+				if (urlStartPosition != string::npos &&
+					urlEndPosition != string::npos &&
+					urlEndPosition > urlStartPosition) {
+					url = StringTools::substring(markdownLine, urlStartPosition + 1, urlEndPosition);
+				}
+				if (StringTools::startsWith(url, "https://raw.githubusercontent.com/andreasdr/tdme2/master/") == true) {
+					source = StringTools::substring(url, string("https://raw.githubusercontent.com/andreasdr/tdme2/master/").size());
+				}
+			}
+			//
+			if (source.empty() == false) {
+				xml+= "<image src='" + GUIParser::escapeQuotes(FileSystem::getInstance()->getCurrentWorkingPathName() + "/" + source) + "' tooltip='" + GUIParser::escapeQuotes(tooltip) + "' />\n";
+			}
+		} else
+		if (StringTools::startsWith(markdownLine, "|") == true) {
+			if (inTable == false) {
+				inTable = true;
+				xml+= "<table width='auto' height='auto'>\n";
+			}
+			markdownLine = StringTools::trim(markdownLine);
+			vector<string> tableColumnStrings = { "" };
+			auto separator = true;
+			for (auto i = 1; i < markdownLine.size(); i++) {
+				if (markdownLine[i - 1] != '\\' && markdownLine[i] == '|') {
+					if (i != markdownLine.size() - 1) tableColumnStrings.push_back(string());
+					continue;
+				}
+				tableColumnStrings[tableColumnStrings.size() - 1]+= markdownLine[i];
+				if (markdownLine[i] != '-' && markdownLine[i] != ' ' && markdownLine[i] != '\t' && markdownLine[i] != '|') separator = false;
+			}
+			if (separator == false) {
+				xml+= "<table-row>\n";
+				for (auto& tableColumnString: tableColumnStrings) {
+					string textSize = "{$fontsize.default}";
+					xml+= "<table-cell padding='5' border='1' border-color='white'>\n";
+					xml+= "\t<text font='{$font.default}' size='" + textSize + "' text='" + GUIParser::escapeQuotes(StringTools::trim(tableColumnString)) + "' color='{$color.font_normal}' width='auto' height='auto' />\n";
+					xml+= "</table-cell>\n";
+				}
+				xml+= "</table-row>\n";
+			}
+		} else {
+			// text
+			string textSize = "{$fontsize.default}";
+			if (StringTools::startsWith(markdownLine, "####") == true) {
+				markdownLine = StringTools::substring(markdownLine, 4);
+				textSize = "{$fontsize.h4}";
+			} else
+			if (StringTools::startsWith(markdownLine, "###") == true) {
+				markdownLine = StringTools::substring(markdownLine, 3);
+				textSize = "{$fontsize.h3}";
+			} else
+			if (StringTools::startsWith(markdownLine, "##") == true) {
+				markdownLine = StringTools::substring(markdownLine, 2);
+				textSize = "{$fontsize.h2}";
+			} else
+			if (StringTools::startsWith(markdownLine, "#") == true) {
+				markdownLine = StringTools::substring(markdownLine, 1);
+				textSize = "{$fontsize.h1}";
+			}
+			xml+= "<text font='{$font.default}' size='" + textSize + "' text='" + GUIParser::escapeQuotes(markdownLine) + "' color='{$color.font_normal}' width='auto' height='auto' />\n";
+		}
+	}
+	xml+= "\t\t</layout>\n";
+	xml+= "\t</scrollarea>\n";
+	xml+= "</screen>\n";
+	Console::println(xml);
+	return xml;
+}

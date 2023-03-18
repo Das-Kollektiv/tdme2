@@ -9,6 +9,7 @@ namespace tabcontrollers {
 	class EmptyEditorTabController;
 	class EnvMapEditorTabController;
 	class FontTabController;
+	class MarkdownTabController;
 	class ModelEditorTabController;
 	class ParticleSystemEditorTabController;
 	class SceneEditorTabController;
