@@ -1,0 +1,25 @@
+diff --git a/src/tdme/application/Application.h b/src/tdme/application/Application.h
+index 91eb99d21..d9fce487b 100644
+--- a/src/tdme/application/Application.h
++++ b/src/tdme/application/Application.h
+@@ -39,6 +39,8 @@ class tdme::application::Application
+ 
+ public:
+ 
++	CLASS_FORBID_COPY(Application)
++
+ 	static constexpr int WINDOW_HINT_NONE { 0 };
+ 	static constexpr int WINDOW_HINT_NOTRESIZEABLE { 1 };
+ 	static constexpr int WINDOW_HINT_NOTDECORATED { 2 };
+diff --git a/src/tdme/tdme.h b/src/tdme/tdme.h
+index b89560d4c..a3285e81d 100644
+--- a/src/tdme/tdme.h
++++ b/src/tdme/tdme.h
+@@ -18,3 +18,7 @@
+ #else
+ 	#error "Unknown register width or missing size macros"
+ #endif
++
++#define CLASS_FORBID_COPY(C) \
++	C(C const &) = delete; \
++	C& operator=(C const&) = delete;
