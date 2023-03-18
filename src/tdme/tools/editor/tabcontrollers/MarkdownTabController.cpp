@@ -114,8 +114,9 @@ void MarkdownTabController::onTooltipCloseRequest() {
 }
 
 void MarkdownTabController::setOutlinerContent() {
+	// TODO: markdown structure
 	string xml;
-	xml+= "<selectbox-option text=\"Texture\" value=\"texture\" />\n";
+	xml+= "<selectbox-option text=\"Markdown\" value=\"markdown\" />\n";
 	view->getEditorView()->setOutlinerContent(xml);
 }
 
