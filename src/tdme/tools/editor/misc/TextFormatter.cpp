@@ -490,7 +490,7 @@ const string TextFormatter::createMarkdownGUIXML(const string& pathName, const s
 	string xml;
 	xml+= "<screen id='markdown' min-width='1024' min-height='768' max-width='3200' max-height='1800'>\n";
 	xml+= "\t<scrollarea width='100%' height='100%'>\n";
-	xml+= "\t\t<layout alignment='vertical' width='1920' height='auto'>\n";
+	xml+= "\t\t<layout alignment='vertical' width='100%' height='auto'>\n";
 	auto inTable = false;
 	auto inTableIdx = 0;
 	auto inCode = false;
@@ -513,7 +513,7 @@ const string TextFormatter::createMarkdownGUIXML(const string& pathName, const s
 				inCode = true;
 			} else {
 				xml+= "<space height='10'/>\n";
-				xml+= "<styled-text font='{$font.default}' size='{$fontsize.default}' color='{$color.font_normal}' background-color='{$color.element_midground}' border-color='{$color.element_frame}' border='1' padding='5' width='1920' height='auto' preformatted='true'>\n";
+				xml+= "<styled-text font='{$font.default}' size='{$fontsize.default}' color='{$color.font_normal}' background-color='{$color.element_midground}' border-color='{$color.element_frame}' border='1' padding='5' width='*' height='auto' preformatted='true'>\n";
 				xml+= "	<![CDATA[\n";
 				xml+= StringTools::replace(StringTools::replace(inCodeString, "[", "\\["), "]", "\\]");
 				xml+= "	]]>\n";
@@ -610,12 +610,12 @@ const string TextFormatter::createMarkdownGUIXML(const string& pathName, const s
 				markdownLine = StringTools::trim(StringTools::substring(markdownLine, 1));
 				textSize = "{$fontsize.h1}";
 			}
-			xml+= "<text font='{$font.default}' size='" + textSize + "' text='" + GUIParser::escapeQuotes(markdownLine) + "' color='{$color.font_normal}' width='auto' height='auto' />\n";
+			xml+= "<styled-text font='{$font.default}' size='" + textSize + "' color='{$color.font_normal}' width='*' height='auto'>" + GUIParser::escapeQuotes(markdownLine) + "</styled-text>\n";
 		}
 	}
 	if (inCode == true) {
 		xml+= "<space height='10'/>\n";
-		xml+= "<styled-text font='{$font.default}' size='{$fontsize.default}' color='{$color.font_normal}' background-color='{$color.element_midground}' border-color='{$color.element_frame}' border='1' padding='5' width='1920' height='auto' preformatted='true'>\n";
+		xml+= "<styled-text font='{$font.default}' size='{$fontsize.default}' color='{$color.font_normal}' background-color='{$color.element_midground}' border-color='{$color.element_frame}' border='1' padding='5' width='*' height='auto' preformatted='true'>\n";
 		xml+= "	<![CDATA[\n";
 		xml+= StringTools::replace(StringTools::replace(inCodeString, "[", "\\["), "]", "\\]");
 		xml+= "	]]>\n";
