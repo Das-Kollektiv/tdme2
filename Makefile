@@ -607,6 +607,7 @@ SRCS = \
 	src/tdme/tools/editor/tabcontrollers/EmptyEditorTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/EnvMapEditorTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/FontTabController.cpp \
+	src/tdme/tools/editor/tabcontrollers/MarkdownTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/ModelEditorTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/ParticleSystemEditorTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/SceneEditorTabController.cpp \
@@ -627,6 +628,7 @@ SRCS = \
 	src/tdme/tools/editor/tabviews/EmptyEditorTabView.cpp \
 	src/tdme/tools/editor/tabviews/EnvMapEditorTabView.cpp \
 	src/tdme/tools/editor/tabviews/FontTabView.cpp \
+	src/tdme/tools/editor/tabviews/MarkdownTabView.cpp \
 	src/tdme/tools/editor/tabviews/ModelEditorTabView.cpp \
 	src/tdme/tools/editor/tabviews/ParticleSystemEditorTabView.cpp \
 	src/tdme/tools/editor/tabviews/SceneEditorTabView.cpp \

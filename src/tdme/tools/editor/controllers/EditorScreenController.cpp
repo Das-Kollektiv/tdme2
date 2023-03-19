@@ -51,6 +51,7 @@
 #include <tdme/tools/editor/controllers/ProgressBarScreenController.h>
 #include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
+#include <tdme/tools/editor/misc/TextFormatter.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
@@ -58,6 +59,7 @@
 #include <tdme/tools/editor/tabviews/EmptyEditorTabView.h>
 #include <tdme/tools/editor/tabviews/EnvMapEditorTabView.h>
 #include <tdme/tools/editor/tabviews/FontTabView.h>
+#include <tdme/tools/editor/tabviews/MarkdownTabView.h>
 #include <tdme/tools/editor/tabviews/ModelEditorTabView.h>
 #include <tdme/tools/editor/tabviews/ParticleSystemEditorTabView.h>
 #include <tdme/tools/editor/tabviews/SceneEditorTabView.h>
@@ -129,12 +131,14 @@ using tdme::tools::editor::controllers::InputDialogScreenController;
 using tdme::tools::editor::controllers::ProgressBarScreenController;
 using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
+using tdme::tools::editor::misc::TextFormatter;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::DecalEditorTabView;
 using tdme::tools::editor::tabviews::EmptyEditorTabView;
 using tdme::tools::editor::tabviews::EnvMapEditorTabView;
 using tdme::tools::editor::tabviews::FontTabView;
+using tdme::tools::editor::tabviews::MarkdownTabView;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
 using tdme::tools::editor::tabviews::ParticleSystemEditorTabView;
 using tdme::tools::editor::tabviews::SceneEditorTabView;
@@ -241,7 +245,7 @@ void EditorScreenController::initialize()
 			bool newline { false };
 	};
 	//
-	Console::setLogger(new EditorLogger(this));
+	//Console::setLogger(new EditorLogger(this));
 	//
 	onOpenProject();
 }
@@ -339,6 +343,12 @@ void EditorScreenController::onAction(GUIActionListenerType type, GUIElementNode
 		} else
 		if (node->getId() == "menu_view_fullscreen") {
 			setFullScreen(isFullScreen() == false?true:false);
+		} else
+		if (node->getId() == "menu_help_guixml_documentation") {
+			openFile(FileSystem::getInstance()->getCurrentWorkingPathName() + "/README-GUI-XML.md");
+		} else
+		if (node->getId() == "menu_help_miniscript_documentation") {
+			openFile(FileSystem::getInstance()->getCurrentWorkingPathName() + "/README-MiniScript.md");
 		} else
 		if (node->getId() == "menu_help_about") {
 			view->getPopUps()->getAboutDialogScreenController()->show();
@@ -1730,8 +1740,10 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 	if (StringTools::endsWith(fileNameLowerCase, ".mpg") == true) {
 		fileType = FILETYPE_VIDEO;
 	} else
-	if (StringTools::endsWith(fileNameLowerCase, ".md") == true ||
-		fileNameLowerCase == "license" ||
+	if (StringTools::endsWith(fileNameLowerCase, ".md") == true) {
+		fileType = FILETYPE_MARKDOWN;
+	} else
+	if (fileNameLowerCase == "license" ||
 		StringTools::endsWith(fileNameLowerCase, ".h") == true ||
 		StringTools::endsWith(fileNameLowerCase, ".cpp") == true ||
 		StringTools::endsWith(fileNameLowerCase, ".c") == true ||
@@ -1865,6 +1877,11 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 					break;
 				}
 			case FILETYPE_TEXT:
+				{
+					onOpenFileFinish(tabId, fileType, absoluteFileName, nullptr, nullptr);
+					break;
+				}
+			case FILETYPE_MARKDOWN:
 				{
 					onOpenFileFinish(tabId, fileType, absoluteFileName, nullptr, nullptr);
 					break;
@@ -2093,6 +2110,21 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 					tabType = EditorTabView::TABTYPE_TEXT;
 					tabView = new TextEditorTabView(view, tabId, screenNode, absoluteFileName);
 					viewPortTemplate = hasVisualCode == true?"template_viewport_visualcode.xml":"template_viewport_plain.xml";
+					break;
+				}
+			case FILETYPE_MARKDOWN:
+				{
+					icon = "{$icon.type_script}";
+					colorType = "{$color.type_script}";
+					auto screenNode = GUIParser::parse(
+						TextFormatter::createMarkdownGUIXML(
+							FileSystem::getInstance()->getPathName(absoluteFileName),
+							FileSystem::getInstance()->getFileName(absoluteFileName)
+						)
+					);
+					tabType = EditorTabView::TABTYPE_MARKDOWN;
+					tabView = new MarkdownTabView(view, tabId, screenNode);
+					viewPortTemplate = "template_viewport_plain.xml";
 					break;
 				}
 			default:
