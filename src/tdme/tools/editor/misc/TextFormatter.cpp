@@ -490,16 +490,45 @@ const string TextFormatter::createMarkdownGUIXML(const string& pathName, const s
 	string xml;
 	xml+= "<screen id='markdown' min-width='1024' min-height='768' max-width='3200' max-height='1800'>\n";
 	xml+= "\t<scrollarea width='100%' height='100%'>\n";
-	xml+= "\t\t<layout alignment='vertical' width='auto' height='auto'>\n";
+	xml+= "\t\t<layout alignment='vertical' width='1920' height='auto'>\n";
 	auto inTable = false;
+	auto inTableIdx = 0;
+	auto inCode = false;
+	string inCodeString;
 	for (auto markdownLine: markdownLines) {
+		// TODO: we should not have here \r \n
+		markdownLine = StringTools::replace(markdownLine, "\r", "");
+		markdownLine = StringTools::replace(markdownLine, "\n", "");
+		//
 		markdownLine = StringTools::replace(markdownLine, "\\<", "<");
 		markdownLine = StringTools::replace(markdownLine, "\\>", ">");
 		//
 		if (inTable == true && StringTools::startsWith(markdownLine, "|") == false) {
 			inTable = false;
+			inTableIdx = 0;
 			xml+= "</table>\n";
 		}
+		if (StringTools::startsWith(markdownLine, "```") == true) {
+			if (inCode == false) {
+				inCode = true;
+			} else {
+				xml+= "<space height='10'/>\n";
+				xml+= "<styled-text font='{$font.default}' size='{$fontsize.default}' color='{$color.font_normal}' background-color='{$color.element_midground}' border-color='{$color.element_frame}' border='1' padding='5' width='1920' height='auto' preformatted='true'>\n";
+				xml+= "	<![CDATA[\n";
+				xml+= StringTools::replace(StringTools::replace(inCodeString, "[", "\\["), "]", "\\]");
+				xml+= "	]]>\n";
+				xml+= "</styled-text>\n";
+				xml+= "<space height='10'/>\n";
+				inCodeString.clear();
+				inCode = false;
+			}
+		} else
+		if (inCode == true) {
+			inCodeString+= markdownLine + "\n";
+		} else
+		if (inTable == false && StringTools::trim(markdownLine).empty() == true) {
+			xml+= "<space height='20'/>\n";
+		} else
 		// image
 		if (StringTools::startsWith(markdownLine, "!") == true) {
 			string tooltip;
@@ -549,39 +578,55 @@ const string TextFormatter::createMarkdownGUIXML(const string& pathName, const s
 			}
 			if (separator == false) {
 				xml+= "<table-row>\n";
-				for (auto& tableColumnString: tableColumnStrings) {
+				for (auto tableColumnString: tableColumnStrings) {
+					tableColumnString = StringTools::replace(tableColumnString, "\\<", "<");
+					tableColumnString = StringTools::replace(tableColumnString, "\\>", ">");
+					tableColumnString = StringTools::replace(tableColumnString, "\\|", "|");
 					string textSize = "{$fontsize.default}";
-					xml+= "<table-cell padding='5' border='1' border-color='white'>\n";
+					string backgroundColor = (inTableIdx % 2) == 0?"{$color.element_midground}":"{$color.element_background}";
+					xml+= "<table-cell padding='5' background-color='" + backgroundColor + "' border='1' border-color='{$color.element_frame}'>\n";
 					xml+= "\t<text font='{$font.default}' size='" + textSize + "' text='" + GUIParser::escapeQuotes(StringTools::trim(tableColumnString)) + "' color='{$color.font_normal}' width='auto' height='auto' />\n";
 					xml+= "</table-cell>\n";
 				}
 				xml+= "</table-row>\n";
+				inTableIdx++;
 			}
 		} else {
 			// text
 			string textSize = "{$fontsize.default}";
 			if (StringTools::startsWith(markdownLine, "####") == true) {
-				markdownLine = StringTools::substring(markdownLine, 4);
+				markdownLine = StringTools::trim(StringTools::substring(markdownLine, 4));
 				textSize = "{$fontsize.h4}";
 			} else
 			if (StringTools::startsWith(markdownLine, "###") == true) {
-				markdownLine = StringTools::substring(markdownLine, 3);
+				markdownLine = StringTools::trim(StringTools::substring(markdownLine, 3));
 				textSize = "{$fontsize.h3}";
 			} else
 			if (StringTools::startsWith(markdownLine, "##") == true) {
-				markdownLine = StringTools::substring(markdownLine, 2);
+				markdownLine = StringTools::trim(StringTools::substring(markdownLine, 2));
 				textSize = "{$fontsize.h2}";
 			} else
 			if (StringTools::startsWith(markdownLine, "#") == true) {
-				markdownLine = StringTools::substring(markdownLine, 1);
+				markdownLine = StringTools::trim(StringTools::substring(markdownLine, 1));
 				textSize = "{$fontsize.h1}";
 			}
 			xml+= "<text font='{$font.default}' size='" + textSize + "' text='" + GUIParser::escapeQuotes(markdownLine) + "' color='{$color.font_normal}' width='auto' height='auto' />\n";
 		}
 	}
+	if (inCode == true) {
+		xml+= "<space height='10'/>\n";
+		xml+= "<styled-text font='{$font.default}' size='{$fontsize.default}' color='{$color.font_normal}' background-color='{$color.element_midground}' border-color='{$color.element_frame}' border='1' padding='5' width='1920' height='auto' preformatted='true'>\n";
+		xml+= "	<![CDATA[\n";
+		xml+= StringTools::replace(StringTools::replace(inCodeString, "[", "\\["), "]", "\\]");
+		xml+= "	]]>\n";
+		xml+= "</styled-text>\n";
+		xml+= "<space height='10'/>\n";
+	}
+	if (inTable == true) xml+= "</table>\n";
+	//
 	xml+= "\t\t</layout>\n";
 	xml+= "\t</scrollarea>\n";
 	xml+= "</screen>\n";
-	Console::println(xml);
+	// FileSystem::getStandardFileSystem()->setContentFromString(".", "xxx.xml", xml);
 	return xml;
 }

@@ -1796,14 +1796,20 @@ const string GUIParser::unescapeQuotes(const string& str)
 	string result;
 	result = StringTools::replace(str, "&quot;", "\"");
 	result = StringTools::replace(result, "&#39;", "'");
+	result = StringTools::replace(result, "&lt;", "<");
+	result = StringTools::replace(result, "&gt;", ">");
+	result = StringTools::replace(result, "&amp;", "&");
 	return result;
 }
 
 const string GUIParser::escapeQuotes(const string& str)
 {
 	string result;
-	result = StringTools::replace(str, "\"", "&quot;");
+	result = StringTools::replace(str, "&", "&amp;");
+	result = StringTools::replace(result, "\"", "&quot;");
 	result = StringTools::replace(result, "'", "&#39;");
+	result = StringTools::replace(result, "<", "&lt;");
+	result = StringTools::replace(result, ">", "&gt;");
 	return result;
 }
 
