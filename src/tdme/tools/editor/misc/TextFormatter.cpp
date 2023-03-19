@@ -503,6 +503,8 @@ const string TextFormatter::createMarkdownGUIXML(const string& pathName, const s
 		markdownLine = StringTools::replace(markdownLine, "\\<", "<");
 		markdownLine = StringTools::replace(markdownLine, "\\>", ">");
 		//
+		auto markdownLineTrimmed = StringTools::trim(markdownLine);
+		//
 		if (inTable == true && StringTools::startsWith(markdownLine, "|") == false) {
 			inTable = false;
 			inTableIdx = 0;
@@ -526,8 +528,18 @@ const string TextFormatter::createMarkdownGUIXML(const string& pathName, const s
 		if (inCode == true) {
 			inCodeString+= markdownLine + "\n";
 		} else
-		if (inTable == false && StringTools::trim(markdownLine).empty() == true) {
+		if (inTable == false && markdownLineTrimmed.empty() == true) {
 			xml+= "<space height='20'/>\n";
+		} else
+		if (inTable == false && StringTools::startsWith(markdownLineTrimmed, "-") == true) {
+			string textSize = "{$fontsize.default}";
+			auto bulletPointIdx = StringTools::firstIndexOf(markdownLine, '-');
+			auto bulletPoint = StringTools::trim(StringTools::substring(markdownLine, bulletPointIdx + 1));
+			auto indent = bulletPointIdx / 2;
+			xml+= "<layout alignment='horizontal' width='100%' height='auto'>\n";
+			xml+= "\t<space width='" + to_string((bulletPointIdx + 1) * 10) + "'/>\n";
+			xml+= "\t<styled-text font='{$font.default}' size='" + textSize + "' color='{$color.font_normal}' width='*' height='auto'>• " + GUIParser::escapeQuotes(bulletPoint) + "</styled-text>\n";
+			xml+= "</layout>\n";
 		} else
 		// image
 		if (StringTools::startsWith(markdownLine, "!") == true) {
