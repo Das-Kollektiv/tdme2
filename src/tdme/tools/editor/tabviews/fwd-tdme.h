@@ -9,6 +9,7 @@ namespace tabviews {
 	class EmptyEditorTabView;
 	class EnvMapEditorTabView;
 	class FontTabView;
+	class MarkdownTabView;
 	class ModelEditorTabView;
 	class ParticleSystemEditorTabView;
 	class SceneEditorTabView;
