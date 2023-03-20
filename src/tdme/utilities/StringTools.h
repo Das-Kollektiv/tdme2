@@ -262,6 +262,22 @@ public:
 	static const vector<string> tokenize(const string& str, const string& delimiters);
 
 	/**
+	 * Pad a string left
+	 * @param src source
+	 * @param by by
+	 * @param toSize to size
+	 */
+	static const string padLeft(const string& src, const string& by, int toSize);
+
+	/**
+	 * Pad a string right
+	 * @param src source
+	 * @param by by
+	 * @param toSize to size
+	 */
+	static const string padRight(const string& src, const string& by, int toSize);
+
+	/**
 	 * Get Utf8 string length
 	 * @param str string
 	 * @return utf8 string length

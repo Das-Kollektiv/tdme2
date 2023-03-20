@@ -13,6 +13,7 @@ namespace misc {
 	class GenerateConvexMeshes;
 	class GenerateImposterLOD;
 	class Gizmo;
+	class Markdown;
 	class PopUps;
 	class TextFormatter;
 	class TextTools;

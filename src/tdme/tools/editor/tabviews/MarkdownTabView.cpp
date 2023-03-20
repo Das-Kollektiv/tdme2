@@ -1,6 +1,7 @@
 #include <tdme/tools/editor/tabviews/MarkdownTabView.h>
 
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Engine.h>
@@ -14,6 +15,7 @@
 #include <tdme/utilities/Exception.h>
 
 using std::string;
+using std::vector;
 
 using tdme::tools::editor::tabviews::MarkdownTabView;
 
@@ -26,12 +28,13 @@ using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 
-MarkdownTabView::MarkdownTabView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode)
+MarkdownTabView::MarkdownTabView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode, const vector<Markdown::TOCEntry>& toc)
 {
 	this->editorView = editorView;
 	this->tabId = tabId;
 	this->screenNode = screenNode;
 	this->popUps = editorView->getPopUps();
+	this->toc = toc;
 	engine = Engine::createOffScreenInstance(512, 512, false, false, false);
 	engine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
 	engine->getGUI()->addScreen(screenNode->getId(), screenNode);

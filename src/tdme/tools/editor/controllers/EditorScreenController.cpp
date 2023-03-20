@@ -50,6 +50,7 @@
 #include <tdme/tools/editor/controllers/InputDialogScreenController.h>
 #include <tdme/tools/editor/controllers/ProgressBarScreenController.h>
 #include <tdme/tools/editor/controllers/TooltipScreenController.h>
+#include <tdme/tools/editor/misc/Markdown.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/TextFormatter.h>
 #include <tdme/tools/editor/misc/Tools.h>
@@ -130,6 +131,7 @@ using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::InputDialogScreenController;
 using tdme::tools::editor::controllers::ProgressBarScreenController;
 using tdme::tools::editor::controllers::TooltipScreenController;
+using tdme::tools::editor::misc::Markdown;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::TextFormatter;
 using tdme::tools::editor::misc::Tools;
@@ -2116,14 +2118,16 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 				{
 					icon = "{$icon.type_script}";
 					colorType = "{$color.type_script}";
+					vector<Markdown::TOCEntry> toc;
 					auto screenNode = GUIParser::parse(
-						TextFormatter::createMarkdownGUIXML(
+						Markdown::createGUIXML(
 							FileSystem::getInstance()->getPathName(absoluteFileName),
-							FileSystem::getInstance()->getFileName(absoluteFileName)
+							FileSystem::getInstance()->getFileName(absoluteFileName),
+							toc
 						)
 					);
 					tabType = EditorTabView::TABTYPE_MARKDOWN;
-					tabView = new MarkdownTabView(view, tabId, screenNode);
+					tabView = new MarkdownTabView(view, tabId, screenNode, toc);
 					viewPortTemplate = "template_viewport_plain.xml";
 					break;
 				}
