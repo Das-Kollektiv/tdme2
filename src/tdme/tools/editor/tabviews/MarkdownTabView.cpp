@@ -1,6 +1,7 @@
 #include <tdme/tools/editor/tabviews/MarkdownTabView.h>
 
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Engine.h>
@@ -14,6 +15,7 @@
 #include <tdme/utilities/Exception.h>
 
 using std::string;
+using std::vector;
 
 using tdme::tools::editor::tabviews::MarkdownTabView;
 

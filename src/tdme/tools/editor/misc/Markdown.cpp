@@ -1,6 +1,7 @@
 #include <tdme/tools/editor/misc/Markdown.h>
 
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/gui/GUIParser.h>
@@ -10,6 +11,7 @@
 
 using std::string;
 using std::to_string;
+using std::vector;
 
 using tdme::tools::editor::misc::Markdown;
 
