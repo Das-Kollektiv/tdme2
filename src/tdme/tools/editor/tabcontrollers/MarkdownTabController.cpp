@@ -129,7 +129,7 @@ void MarkdownTabController::onTooltipCloseRequest() {
 
 void MarkdownTabController::setOutlinerContent() {
 	string xml;
-	xml+= "<selectbox-parent-option text='Markdown TOC' value='toc' >\n";
+	xml+= "<selectbox-parent-option text='Table of Contents' value='toc' >\n";
 	auto levelCounter = 1;
 	auto& toc = view->getTableOfContent();
 	if (toc.empty() == false) {

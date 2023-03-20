@@ -30,7 +30,7 @@ public:
 	 * @param pathName markdown path name
 	 * @param pathName markdown file name
 	 * @param xml resulting xml
-	 * @param toc resulting toc
+	 * @param toc resulting table of contents
 	 * @returns GUI XML
 	 */
 	static const string createGUIXML(const string& pathName, const string& fileName, vector<TOCEntry>& toc);
