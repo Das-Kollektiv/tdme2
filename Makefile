@@ -599,6 +599,7 @@ SRCS = \
 	src/tdme/tools/editor/misc/GenerateConvexMeshes.cpp \
 	src/tdme/tools/editor/misc/GenerateImposterLOD.cpp \
 	src/tdme/tools/editor/misc/Gizmo.cpp \
+	src/tdme/tools/editor/misc/Markdown.cpp \
 	src/tdme/tools/editor/misc/PopUps.cpp \
 	src/tdme/tools/editor/misc/TextFormatter.cpp \
 	src/tdme/tools/editor/misc/TextTools.cpp \

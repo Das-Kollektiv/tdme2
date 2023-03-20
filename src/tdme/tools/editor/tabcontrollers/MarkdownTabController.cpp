@@ -5,7 +5,9 @@
 #include <tdme/tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
+#include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
+#include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
@@ -29,7 +31,9 @@ using tdme::tools::editor::tabcontrollers::MarkdownTabController;
 using std::string;
 
 using tdme::gui::events::GUIActionListenerType;
+using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
+using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
@@ -91,6 +95,16 @@ void MarkdownTabController::showInfoPopUp(const string& caption, const string& m
 
 void MarkdownTabController::onChange(GUIElementNode* node)
 {
+	if (node->getId() == "selectbox_outliner") {
+		auto selection = node->getController()->getValue().getString();
+		if (StringTools::startsWith(selection, "toc_") == true) {
+			auto node = view->getScreenNode()->getNodeById(StringTools::substring(selection, 4));
+			if (node != nullptr) {
+				node->scrollToNodeX();
+				node->scrollToNodeY();
+			}
+		}
+	}
 }
 
 void MarkdownTabController::onFocus(GUIElementNode* node) {
@@ -114,9 +128,32 @@ void MarkdownTabController::onTooltipCloseRequest() {
 }
 
 void MarkdownTabController::setOutlinerContent() {
-	// TODO: markdown structure
 	string xml;
-	xml+= "<selectbox-option text=\"Markdown\" value=\"markdown\" />\n";
+	xml+= "<selectbox-parent-option text='Markdown TOC' value='toc' >\n";
+	auto levelCounter = 1;
+	auto& toc = view->getTableOfContent();
+	if (toc.empty() == false) {
+		string lastLevel = toc[0].level;
+		for (auto i = 0; i < toc.size(); i++) {
+			auto& tocEntry = toc[i];
+			//
+			if (i > 0 && tocEntry.level.size() < lastLevel.size()) {
+				xml+= "</selectbox-parent-option>\n";
+				levelCounter--;
+			}
+			//
+			if (i == toc.size() - 1 || toc[i + 1].level.size() <= tocEntry.level.size()) {
+				xml+= "<selectbox-option text='" + GUIParser::escapeQuotes(tocEntry.title) + "' value='toc_" + GUIParser::escapeQuotes(tocEntry.id) + "' />\n";
+			} else {
+				xml+= "<selectbox-parent-option text='" + GUIParser::escapeQuotes(tocEntry.title) + "' value='toc_" + GUIParser::escapeQuotes(tocEntry.id) + "'>\n";
+				levelCounter++;
+			}
+			lastLevel = tocEntry.level;
+		}
+	}
+	for (auto i = 0; i < levelCounter; i++) {
+		xml+= "</selectbox-parent-option>\n";
+	}
 	view->getEditorView()->setOutlinerContent(xml);
 }
 
