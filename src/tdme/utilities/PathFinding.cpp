@@ -941,8 +941,7 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 							to_string(minCostsNode == node) + "; " +
 							to_string(cellPosition.getX()) + ", " +
 							to_string(cellPosition.getY()) + ", " +
-							to_string(cellPosition.getZ()) + "; " +
-							cellId
+							to_string(cellPosition.getZ())
 						);
 					}
 					flowMap->addCell(

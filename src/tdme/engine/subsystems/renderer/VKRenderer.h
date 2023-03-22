@@ -60,7 +60,7 @@ using tdme::utilities::ShortBuffer;
 	#define SAMPLER_HASH_MAX	8
 	#define SAMPLER_HASH_TYPE uint128_t
 	struct UINT128_T_Hash {
-		std::size_t operator()(uint128_t k) const {
+		std::size_t operator()(const uint128_t k) const {
 			std::hash<uint64_t> hashVal;
 			return hashVal(k.lower() ^ k.upper());
 		}
