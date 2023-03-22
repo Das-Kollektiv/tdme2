@@ -98,23 +98,23 @@ public:
 	}
 
 	/**
-	 * Return string representation of given x,y,z for path finding id
+	 * Return path finding node id of given x, y, z position components
 	 * @param x x
 	 * @param y y
 	 * @param z z
-	 * @param stepSize step size
-	 * @return string representation
+	 * @return path finding node id of given x, y, z position components
 	 */
 	inline tuple<int, int, int> toId(float x, float y, float z) {
 		return toId(x, y, z, stepSize);
 	}
 
 	/**
-	 * Return string representation of given x,y,z for path finding id
+	 * Return path finding node id of given x, y, z position components
 	 * @param x x
 	 * @param y y
 	 * @param z z
-	 * @return string representation
+	 * @param stepSize step size
+	 * @return path finding node id of given x, y, z position components
 	 */
 	inline static tuple<int, int, int> toId(float x, float y, float z, float stepSize) {
 		return tuple<int, int, int> {

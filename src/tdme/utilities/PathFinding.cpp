@@ -286,27 +286,27 @@ void PathFinding::step(PathFindingNode* node, float stepSize, float scaleActorBo
 			}
 		}
 
-		// Sucessor node is the node with least cost to this point
+		// successor node is the node with least cost to this point
 		successorNode->hasPreviousNode = true;
 		successorNode->previousNodeId = nodeId;
 		successorNode->costsReachPoint = successorCostsReachPoint;
 		successorNode->costsEstimated = computeDistanceToEnd(successorNode);
 		successorNode->costsAll = successorNode->costsReachPoint + successorNode->costsEstimated;
 
-		// Remove found node from open nodes list, since it was less optimal
+		// remove found node from open nodes list, since it was less optimal
 		if (openListNode != nullptr) {
 			// remove open list node
 			pathFindingNodesPool.release(openListNode);
 			openNodes.erase(openListNodeIt);
 		}
 
-		// Remove found node from closed nodes list, since it was less optimal
+		// remove found node from closed nodes list, since it was less optimal
 		if (closedListNode != nullptr) {
 			pathFindingNodesPool.release(closedListNode);
 			closedNodes.erase(closedListNodeIt);
 		}
 
-		// Add successor node to open nodes list, as we might want to check its successors to find a path to the end
+		// add successor node to open nodes list, as we might want to check its successors to find a path to the end
 		openNodes[successorNode->id] = successorNode;
 
 		// remove it from stack
@@ -316,7 +316,7 @@ void PathFinding::step(PathFindingNode* node, float stepSize, float scaleActorBo
 	// add node to closed nodes list, as we checked its successors
 	closedNodes[nodeId] = node;
 
-	// Remove node from open nodes, as we checked its successors
+	// remove node from open nodes, as we checked its successors
 	openNodes.erase(nodeId);
 }
 
