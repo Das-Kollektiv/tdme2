@@ -336,21 +336,21 @@ private:
 	};
 
 	struct PathFindingNodeId_Hash {
-		std::size_t operator()(const tuple<int, int, int> k) const {
+		std::size_t operator()(const tuple<int, int, int>& k) const {
 			std::hash<uint64_t> hashVal;
 			return hashVal(get<0>(k) ^ get<1>(k) ^ get<2>(k));
 		}
 	};
 
 	struct WalkableCache_Hash {
-		std::size_t operator()(const tuple<uint8_t, uint8_t, int, int, int, uint16_t, bool> k) const {
+		std::size_t operator()(const tuple<uint8_t, uint8_t, int, int, int, uint16_t, bool>& k) const {
 			std::hash<uint64_t> hashVal;
 			return hashVal(static_cast<int>(get<0>(k)) ^ static_cast<int>(get<1>(k)) ^ get<2>(k) ^ get<3>(k) ^ get<4>(k) ^ static_cast<int>(get<5>(k)) ^ static_cast<int>(get<6>(k)));
 		}
 	};
 
 	struct WalkableSlopeCache_Hash {
-		std::size_t operator()(const tuple<uint8_t, uint8_t, int, int, int, uint16_t, int16_t> k) const {
+		std::size_t operator()(const tuple<uint8_t, uint8_t, int, int, int, uint16_t, int16_t>& k) const {
 			std::hash<uint64_t> hashVal;
 			return hashVal(static_cast<int>(get<0>(k)) ^ static_cast<int>(get<1>(k)) ^ get<2>(k) ^ get<3>(k) ^ get<4>(k) ^ static_cast<int>(get<5>(k)) ^ static_cast<int>(get<6>(k)));
 		}

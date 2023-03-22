@@ -35,7 +35,7 @@ class tdme::utilities::FlowMap final: public Reference {
 friend class PathFinding;
 private:
 	struct FlowMapCellId_Hash {
-		std::size_t operator()(tuple<int, int> k) const {
+		std::size_t operator()(const tuple<int, int>& k) const {
 			std::hash<uint64_t> hashVal;
 			return hashVal(get<0>(k) ^ get<1>(k));
 		}
