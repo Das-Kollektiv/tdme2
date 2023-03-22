@@ -60,6 +60,7 @@ private:
 		list<PartitionTreeNode> subNodes;
 
 		// sub nodes of oct tree nodes by partition coordinate, only used in root node
+		// TODO: use a tuple here
 		unordered_map<string, PartitionTreeNode*> subNodesByCoordinate;
 
 		// or finally our partition entities
@@ -70,6 +71,7 @@ private:
 	static constexpr float PARTITION_SIZE_MAX { 512.0f };
 
 	VectorIteratorMultiple<Entity*> entityIterator;
+	// TODO: use a tuple here
 	unordered_map<string, vector<PartitionTreeNode*>> entityPartitionNodes;
 	vector<Entity*> visibleEntities;
 	PartitionTreeNode treeRoot;

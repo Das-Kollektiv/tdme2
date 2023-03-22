@@ -85,6 +85,7 @@ private:
 	vector<TransparentRenderFace*> nodeTransparentRenderFaces;
 	EntityRenderer_TransparentRenderFacesGroupPool* transparentRenderFacesGroupPool { nullptr };
 	TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
+	// TODO: use a tuple here
 	unordered_map<string, TransparentRenderFacesGroup*> transparentRenderFacesGroups;
 	RenderTransparentRenderPointsPool* renderTransparentRenderPointsPool { nullptr };
 	BatchRendererPoints* psePointBatchRenderer { nullptr };
