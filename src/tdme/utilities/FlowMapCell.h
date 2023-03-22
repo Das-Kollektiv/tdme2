@@ -36,6 +36,23 @@ public:
 	}
 
 	/**
+	 * Private constructor
+	 * @param position position
+	 * @param walkable walkable
+	 * @param direction direction
+	 * @param pathNodeIdx path node index
+	 * @param missingNeighborCell missing neighbor cell
+	 */
+	FlowMapCell(const Vector3& position, bool walkable, const Vector3& direction, int pathNodeIdx, bool missingNeighborCell):
+		position(position),
+		walkable(walkable),
+		direction(direction),
+		pathNodeIdx(pathNodeIdx),
+		missingNeighborCell(missingNeighborCell) {
+		//
+	}
+
+	/**
 	 * @return cell position
 	 */
 	inline const Vector3& getPosition() const {
@@ -69,6 +86,19 @@ public:
 	 */
 	inline bool hasMissingNeighborCell() {
 		return missingNeighborCell;
+	}
+
+	/**
+	 * @return cloned flow map cell
+	 */
+	inline FlowMapCell* clone() {
+		return new FlowMapCell(
+			position,
+			walkable,
+			direction,
+			pathNodeIdx,
+			missingNeighborCell
+		);
 	}
 
 private:

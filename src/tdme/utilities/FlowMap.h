@@ -2,7 +2,9 @@
 
 #include <map>
 #include <string>
+#include <tuple>
 #include <unordered_map>
+#include <variant>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -12,8 +14,10 @@
 #include <tdme/utilities/FlowMapCell.h>
 #include <tdme/utilities/Reference.h>
 
+using std::get;
 using std::string;
 using std::to_string;
+using std::tuple;
 using std::unordered_map;
 using std::vector;
 
@@ -30,9 +34,16 @@ using tdme::utilities::Reference;
 class tdme::utilities::FlowMap final: public Reference {
 friend class PathFinding;
 private:
+	struct FlowMapCellId_Hash {
+		std::size_t operator()(const tuple<int, int>& k) const {
+			std::hash<uint64_t> hashVal;
+			return hashVal(get<0>(k) ^ get<1>(k));
+		}
+	};
+
 	bool complete;
 	float stepSize;
-	unordered_map<string, FlowMapCell> cells;
+	unordered_map<tuple<int, int>, FlowMapCell*, FlowMapCellId_Hash> cells;
 	vector<Vector3> endPositions;
 	vector<Vector3> path;
 
@@ -40,6 +51,7 @@ private:
 	 * Private destructor
 	 */
 	inline ~FlowMap() {
+		for (auto& cellIt: cells) delete cellIt.second;
 	}
 
 	/**
@@ -58,15 +70,15 @@ private:
 	 * @param direction direction
 	 * @param pathIdx path index
 	 */
-	inline void addCell(const string& id, const Vector3& position, bool walkable, const Vector3& direction, int pathIdx) {
-		cells[id] = FlowMapCell(position, walkable, direction, pathIdx);
+	inline void addCell(const tuple<int, int>& id, const Vector3& position, bool walkable, const Vector3& direction, int pathIdx) {
+		cells[id] = new FlowMapCell(position, walkable, direction, pathIdx);
 	}
 
 	/**
 	 * Checks if a cell exists in flow map
 	 * @param id id
 	 */
-	inline bool hasCell(const string& id) const {
+	inline bool hasCell(const tuple<int, int>& id) const {
 		auto cellIt = cells.find(id);
 		return cellIt != cells.end();
 	}
@@ -78,7 +90,7 @@ public:
 	 * @param z z
 	 * @return string representation
 	 */
-	inline string toId(float x, float z) const {
+	inline const tuple<int, int> toId(float x, float z) const {
 		return toId(x, z, stepSize);
 	}
 
@@ -89,15 +101,8 @@ public:
 	 * @param stepSize step size
 	 * @return string representation
 	 */
-	inline static string toId(float x, float z, float stepSize) {
-		string result;
-		int32_t value = 0;
-		result.reserve(sizeof(value) * 2);
-		value = static_cast<int>(Math::ceil(x / stepSize));
-		result.append((char*)&value, sizeof(value));
-		value = static_cast<int>(Math::ceil(z / stepSize));
-		result.append((char*)&value, sizeof(value));
-		return result;
+	inline static const tuple<int, int> toId(float x, float z, float stepSize) {
+		return tuple<int, int> { static_cast<int>(Math::ceil(x / stepSize)), static_cast<int>(Math::ceil(z / stepSize)) };
 	}
 
 	/**
@@ -142,13 +147,8 @@ public:
 	 * @param z z
 	 * @return string representation
 	 */
-	inline static string toIdInt(int x, int z) {
-		string result;
-		int32_t value = 0;
-		result.reserve(sizeof(x) * 2);
-		result.append((char*)&x, sizeof(x));
-		result.append((char*)&z, sizeof(z));
-		return result;
+	inline static const tuple<int, int> toIdInt(int x, int z) {
+		return tuple<int, int> { x, z };
 	}
 
 	/**
@@ -195,10 +195,10 @@ public:
 	 * @param id id
 	 * @return cell
 	 */
-	inline const FlowMapCell* getCell(const string& id) const {
+	inline const FlowMapCell* getCell(const tuple<int, int>& id) const {
 		auto cellIt = cells.find(id);
 		if (cellIt == cells.end()) return nullptr;
-		return &cellIt->second;
+		return cellIt->second;
 	}
 
 	/**
@@ -206,10 +206,10 @@ public:
 	 * @param id id
 	 * @return cell
 	 */
-	inline FlowMapCell* getCell(const string& id) {
+	inline FlowMapCell* getCell(const tuple<int, int>& id) {
 		auto cellIt = cells.find(id);
 		if (cellIt == cells.end()) return nullptr;
-		return &cellIt->second;
+		return cellIt->second;
 	}
 
 	/**
@@ -225,7 +225,7 @@ public:
 		);
 		auto cellIt = cells.find(id);
 		if (cellIt == cells.end()) return nullptr;
-		return &cellIt->second;
+		return cellIt->second;
 	}
 
 	/**
@@ -241,7 +241,7 @@ public:
 		);
 		auto cellIt = cells.find(cellId);
 		if (cellIt == cells.end()) return nullptr;
-		return &cellIt->second;
+		return cellIt->second;
 	}
 
 	/**
@@ -272,7 +272,7 @@ public:
 	 * Cell map getter
 	 * @returns cell map
 	 */
-	inline const unordered_map<string, FlowMapCell>& getCellMap() const {
+	inline const unordered_map<tuple<int, int>, FlowMapCell*, FlowMapCellId_Hash>& getCellMap() const {
 		return cells;
 	}
 
@@ -280,7 +280,7 @@ public:
 	 * Remove cell by id
 	 * @param id id
 	 */
-	inline void removeCell(const string& id) {
+	inline void removeCell(const tuple<int, int>& id) {
 		auto cellIt = cells.find(id);
 		if (cellIt == cells.end()) return;
 		cells.erase(cellIt);
@@ -302,9 +302,9 @@ public:
 		// add cells
 		// TODO: check again cell misssing neighbour cells
 		for (auto& cellIt: flowMap->cells) {
-			auto cellExists = cells.find(cellIt.first) != cells.end();
-			cells[cellIt.first] = cellIt.second;
-			cells[cellIt.first].pathNodeIdx+= pathSize;
+			auto clonedCell = cellIt.second->clone();
+			clonedCell->pathNodeIdx+= pathSize;
+			cells[cellIt.first] = clonedCell;
 		}
 		// check if we have missing neighbour cells
 		for (auto& cellIt: flowMap->cells) {
