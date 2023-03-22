@@ -66,6 +66,7 @@
   - https://stackoverflow.com/questions/15370033/how-to-use-inet-pton-with-the-mingw-compiler
   - https://stackoverflow.com/questions/154536/encode-decode-urls-in-c
   - https://stackoverflow.com/questions/180947/base64-decode-snippet-in-c/34571089#34571089
+  - https://stackoverflow.com/questions/20834838/using-tuple-in-unordered-map
   - https://stackoverflow.com/questions/34963738/c11-get-current-date-and-time-as-string
   - https://stackoverflow.com/questions/478898/how-to-execute-a-command-and-get-output-of-command-within-c-using-posix
   - https://stackoverflow.com/questions/496664/c-dynamic-shared-library-on-linux
