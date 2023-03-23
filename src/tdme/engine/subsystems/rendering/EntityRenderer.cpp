@@ -372,7 +372,7 @@ void EntityRenderer::prepareTransparentFaces(const vector<TransparentRenderFace*
 		}
 		textureCoordinates = facesEntity->isTextureCoordinatesAvailable();
 		// create node key
-		auto transparentRenderFacesNodeKey = TransparentRenderFacesGroup::createKey(model, objectNode, facesEntityIdx, effectColorAdd, effectColorMul, material, textureCoordinates, object->getShader());
+		auto transparentRenderFacesNodeKey = TransparentRenderFacesGroup::createKey(model, objectNode, facesEntityIdx, effectColorAdd, effectColorMul, material, textureCoordinates, object->getUniqueShaderId());
 		// get node
 		TransparentRenderFacesGroup* trfNode = nullptr;
 		auto trfNodeIt = transparentRenderFacesGroups.find(transparentRenderFacesNodeKey);

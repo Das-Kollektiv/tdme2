@@ -78,7 +78,7 @@ public:
 		// priority 5
 		OPERATOR_DIVISION,
 		OPERATOR_MULTIPLICATION,
-		OPERATOR_REMAINDER, // TODO: not yet
+		OPERATOR_MODULO,
 		// priority 6
 		OPERATOR_ADDITION,
 		OPERATOR_SUBTRACTION,
@@ -2789,7 +2789,7 @@ public:
 			case(OPERATOR_NOT): return "!";
 			case(OPERATOR_MULTIPLICATION): return "*";
 			case(OPERATOR_DIVISION): return "/";
-			case(OPERATOR_REMAINDER): return "%";
+			case(OPERATOR_MODULO): return "%";
 			case(OPERATOR_ADDITION): return "+";
 			case(OPERATOR_SUBTRACTION): return "-";
 			case(OPERATOR_LESSER): return "<";

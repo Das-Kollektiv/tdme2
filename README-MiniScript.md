@@ -604,6 +604,7 @@ Reading all keys as array from set:
 | math.sqrt($value: Float): Float                                                                  |
 | math.square($value: Number): Number                                                              |
 | math.tan($value: Float): Float                                                                   |
+| mod($value: Number, $range: Number): Number                                                      |
 | mul($a: Mixed, $b: Mixed): Mixed                                                                 |
 | not($bool: Boolean): Boolean                                                                     |
 | notequal($a: Mixed, $b: Mixed): Boolean                                                          |
@@ -641,6 +642,8 @@ Reading all keys as array from set:
 | string.indexOf($string: String, $what: String[, $beginIndex: Integer]): Integer                  |
 | string.lastIndexOf($string: String, $what: String[, $beginIndex: Integer]): Integer              |
 | string.length($string: String): Integer                                                          |
+| string.padLeft($src: String, $by: String, $toSize: Integer): String                              |
+| string.padRight($src: String, $by: String, $toSize: Integer): String                             |
 | string.regexMatch($string: String, $pattern: String): Boolean                                    |
 | string.regexReplace($string: String, $pattern: String, $by: String): String                      |
 | string.replace($string: String, $what: String, $by: String[, $beginIndex: Integer]): String      |
@@ -939,6 +942,7 @@ Reading all keys as array from set:
 |----|---------------------------------------------------------------------------------------------|
 | !  | not($bool: Boolean): Boolean                                                                |
 | != | notequal($a: Mixed, $b: Mixed): Boolean                                                     |
+| %  | mod($value: Number, $range: Number): Number                                                 |
 | && | and($a: Boolean, $b: Boolean): Boolean                                                      |
 | *  | mul($a: Mixed, $b: Mixed): Mixed                                                            |
 | +  | add($a: Mixed, $b: Mixed): Mixed                                                            |

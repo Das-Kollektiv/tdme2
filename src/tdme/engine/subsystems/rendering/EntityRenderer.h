@@ -1,7 +1,9 @@
 #pragma once
 
 #include <string>
+#include <tuple>
 #include <unordered_map>
+#include <variant>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -24,8 +26,10 @@
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Pool.h>
 
+using std::get;
 using std::string;
 using std::to_string;
+using std::tuple;
 using std::unordered_map;
 using std::vector;
 
@@ -85,7 +89,30 @@ private:
 	vector<TransparentRenderFace*> nodeTransparentRenderFaces;
 	EntityRenderer_TransparentRenderFacesGroupPool* transparentRenderFacesGroupPool { nullptr };
 	TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
-	unordered_map<string, TransparentRenderFacesGroup*> transparentRenderFacesGroups;
+
+	struct TransparentRenderFacesGroup_Hash {
+		std::size_t operator()(const tuple<Model*, ObjectNode*, int32_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, int32_t, const Material*, bool, uint8_t>& k) const {
+			std::hash<uint64_t> hashVal;
+			return hashVal(
+				reinterpret_cast<uint64_t>(get<0>(k)) ^
+				reinterpret_cast<uint64_t>(get<1>(k)) ^
+				static_cast<uint64_t>(get<2>(k)) ^
+				static_cast<uint64_t>(get<3>(k)) ^
+				static_cast<uint64_t>(get<4>(k)) ^
+				static_cast<uint64_t>(get<5>(k)) ^
+				static_cast<uint64_t>(get<6>(k)) ^
+				static_cast<uint64_t>(get<7>(k)) ^
+				static_cast<uint64_t>(get<8>(k)) ^
+				static_cast<uint64_t>(get<9>(k)) ^
+				static_cast<uint64_t>(get<10>(k)) ^
+				reinterpret_cast<uint64_t>(get<11>(k)) ^
+				static_cast<uint64_t>(get<12>(k)) ^
+				static_cast<uint64_t>(get<13>(k))
+			);
+		}
+	};
+	unordered_map<tuple<Model*, ObjectNode*, int32_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, int32_t, const Material*, bool, uint8_t>, TransparentRenderFacesGroup*, TransparentRenderFacesGroup_Hash> transparentRenderFacesGroups;
+
 	RenderTransparentRenderPointsPool* renderTransparentRenderPointsPool { nullptr };
 	BatchRendererPoints* psePointBatchRenderer { nullptr };
 	int threadCount;

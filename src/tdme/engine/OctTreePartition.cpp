@@ -4,6 +4,7 @@
 #include <bitset>
 #include <list>
 #include <string>
+#include <tuple>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -21,6 +22,7 @@ using std::list;
 using std::remove;
 using std::string;
 using std::to_string;
+using std::tuple;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
@@ -146,7 +148,11 @@ void OctTreePartition::removeEntity(Entity* entity)
 						break;
 					}
 				}
-				string key = to_string(rootPartitionTreeNode->x) + "," + to_string(rootPartitionTreeNode->y) + "," + to_string(rootPartitionTreeNode->z);
+				tuple<int32_t, int32_t, int32_t> key = {
+					rootPartitionTreeNode->x,
+					rootPartitionTreeNode->y,
+					rootPartitionTreeNode->z
+				};
 				treeRoot.subNodesByCoordinate.erase(key);
 			}
 		}

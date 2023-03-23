@@ -1,0 +1,10 @@
+<template>
+	<context-menu>
+		<layout padding="5" width="100%" height="35" alignment="vertical">
+			<input width="100%" height="25" hint="Search" image="resources/engine/images/search.png"/>
+		</layout>
+		<scrollarea width="250" height="150">
+			<context-menu-item template="context-menu-item_template_addnode.xml" category="Data Structures" name="Map" />
+		</scrollarea>
+	</context-menu>
+</template>
