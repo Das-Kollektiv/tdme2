@@ -3,8 +3,10 @@
 #include <bitset>
 #include <list>
 #include <string>
+#include <tuple>
 #include <unordered_map>
 #include <unordered_set>
+#include <variant>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -19,9 +21,11 @@
 #include <tdme/utilities/VectorIteratorMultiple.h>
 
 using std::bitset;
+using std::get;
 using std::list;
 using std::string;
 using std::to_string;
+using std::tuple;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
@@ -40,6 +44,13 @@ using tdme::utilities::VectorIteratorMultiple;
 class tdme::engine::OctTreePartition final: public Partition
 {
 private:
+	struct PartitionTreeNodeId_Hash {
+		std::size_t operator()(const tuple<int32_t, int32_t, int32_t>& k) const {
+			std::hash<uint64_t> hashVal;
+			return hashVal(get<0>(k) ^ get<1>(k) ^ get<2>(k));
+		}
+	};
+
 	struct PartitionTreeNode
 	{
 		// partition size
@@ -60,8 +71,7 @@ private:
 		list<PartitionTreeNode> subNodes;
 
 		// sub nodes of oct tree nodes by partition coordinate, only used in root node
-		// TODO: use a tuple here
-		unordered_map<string, PartitionTreeNode*> subNodesByCoordinate;
+		unordered_map<tuple<int32_t, int32_t, int32_t>, PartitionTreeNode*, PartitionTreeNodeId_Hash> subNodesByCoordinate;
 
 		// or finally our partition entities
 		vector<Entity*> partitionEntities;
@@ -71,7 +81,6 @@ private:
 	static constexpr float PARTITION_SIZE_MAX { 512.0f };
 
 	VectorIteratorMultiple<Entity*> entityIterator;
-	// TODO: use a tuple here
 	unordered_map<string, vector<PartitionTreeNode*>> entityPartitionNodes;
 	vector<Entity*> visibleEntities;
 	PartitionTreeNode treeRoot;
@@ -100,7 +109,7 @@ private:
 	 */
 	inline void updatePartitionTree(PartitionTreeNode* parent, int32_t x, int32_t y, int32_t z, float partitionSize, Entity* entity) {
 		// key
-		string key = to_string(x) + "," + to_string(y) + "," + to_string(z);
+		tuple<int32_t, int32_t, int32_t> key = { x, y, z };
 		auto storedNodeIt = parent->subNodesByCoordinate.find(key);
 		auto storedNode = storedNodeIt != parent->subNodesByCoordinate.end()?storedNodeIt->second:nullptr;
 
