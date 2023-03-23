@@ -127,6 +127,51 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		};
 		miniScript->registerMethod(new ScriptMethodDiv(miniScript));
 	}
+	{
+		//
+		class ScriptMethodMod: public MiniScript::ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodMod(MiniScript* miniScript): MiniScript::ScriptMethod(
+				{
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "range", .optional = false, .assignBack = false },
+				},
+				MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER
+			), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "mod";
+			}
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_INTEGER) == true) {
+					int64_t value;
+					int64_t range;
+					if (MiniScript::getIntegerValue(argumentValues, 0, value, false) == true &&
+						MiniScript::getIntegerValue(argumentValues, 1, range, false) == true) {
+						returnValue.setValue(Math::mod(value, range));
+					} else {
+						Console::println("ScriptMethodMod::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: number expected, @ argument 1: number expected");
+						miniScript->startErrorScript();
+					}
+				} else {
+					float value;
+					float range;
+					if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true &&
+						MiniScript::getFloatValue(argumentValues, 1, range, false) == true) {
+						returnValue.setValue(Math::mod(value, range));
+					} else {
+						Console::println("ScriptMethodMod::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: number expected, @ argument 1: number expected");
+						miniScript->startErrorScript();
+					}
+				}
+			}
+			MiniScript::ScriptOperator getOperator() override {
+				return MiniScript::OPERATOR_MODULO;
+			}
+		};
+		miniScript->registerMethod(new ScriptMethodMod(miniScript));
+	}
 	// constants
 	{
 		//
