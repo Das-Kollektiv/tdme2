@@ -51,43 +51,6 @@ void TransparentRenderFacesGroup::set(EntityRenderer* objectRenderer, Model* mod
 	this->shader = shader;
 }
 
-const string TransparentRenderFacesGroup::createKey(Model* model, ObjectNode* objectNode, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader)
-{
-	auto& efcmData = effectColorMul.getArray();
-	auto& efcaData = effectColorAdd.getArray();
-	string key =
-		model->getId() +
-		"," +
-		objectNode->id +
-		"," +
-		(textureCoordinates == true ? "TCT" : "TCF");
-		"," +
-		shader +
-		",";
-		(material == nullptr ? "tdme.material.none" : material->getId()) + // TODO: material id could contain this "," delimiter
-		",";
-	key.append((const char*)&objectNode->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx], sizeof(objectNode->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx]));
-	key.append(",");
-	key.append((const char*)&facesEntityIdx, sizeof(facesEntityIdx));
-	key.append(",");
-	key.append((const char*)&efcmData[0], sizeof(efcmData[0]));
-	key.append(",");
-	key.append((const char*)&efcmData[1], sizeof(efcmData[1]));
-	key.append(",");
-	key.append((const char*)&efcmData[2], sizeof(efcmData[2]));
-	key.append(",");
-	key.append((const char*)&efcmData[3], sizeof(efcmData[3]));
-	key.append(",");
-	key.append((const char*)&efcaData[0], sizeof(efcaData[0]));
-	key.append(",");
-	key.append((const char*)&efcaData[1], sizeof(efcaData[1]));
-	key.append(",");
-	key.append((const char*)&efcaData[2], sizeof(efcaData[2]));
-	key.append(",");
-	key.append((const char*)&efcaData[3], sizeof(efcaData[3]));
-	return key;
-}
-
 void TransparentRenderFacesGroup::render(Engine* engine, Renderer* renderer, int contextIdx)
 {
 	//

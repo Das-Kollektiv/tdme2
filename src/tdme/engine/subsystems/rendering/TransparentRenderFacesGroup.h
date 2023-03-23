@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <tuple>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -18,6 +19,7 @@
 #include <tdme/utilities/Console.h>
 
 using std::string;
+using std::tuple;
 using std::vector;
 
 using tdme::engine::model::Color4;
@@ -86,10 +88,27 @@ private:
 	 * @param effectColorMul effect color mul
 	 * @param material material
 	 * @param textureCoordinates texture coordinates
-	 * @param shader shader
-	 * @return
+	 * @param unique shader id
+	 * @return key
 	 */
-	static const string createKey(Model* model, ObjectNode* objectNode, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader);
+	inline static const tuple<Model*, ObjectNode*, int32_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, int32_t, const Material*, bool, uint8_t> createKey(Model* model, ObjectNode* objectNode, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, uint8_t uniqueShaderId) {
+		return {
+			model,
+			objectNode,
+			facesEntityIdx,
+			static_cast<uint8_t>(effectColorAdd.getRed() * 255.0f),
+			static_cast<uint8_t>(effectColorAdd.getGreen() * 255.0f),
+			static_cast<uint8_t>(effectColorAdd.getBlue() * 255.0f),
+			static_cast<uint8_t>(effectColorAdd.getAlpha() * 255.0f),
+			static_cast<uint8_t>(effectColorMul.getRed() * 255.0f),
+			static_cast<uint8_t>(effectColorMul.getGreen() * 255.0f),
+			static_cast<uint8_t>(effectColorMul.getBlue() * 255.0f),
+			static_cast<uint8_t>(effectColorMul.getAlpha() * 255.0f),
+			material,
+			textureCoordinates,
+			uniqueShaderId
+		};
+	}
 
 	/**
 	 * Adds a vertex to this transparent render faces group

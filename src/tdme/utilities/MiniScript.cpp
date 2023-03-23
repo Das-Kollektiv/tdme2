@@ -5565,6 +5565,76 @@ void MiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodStringIsInteger(this));
 	}
+	{
+		//
+		class ScriptMethodStringPadLeft: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodStringPadLeft(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_STRING, .name = "src", .optional = false, .assignBack = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "by", .optional = false, .assignBack = false },
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "toSize", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_STRING
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "string.padLeft";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string stringValue;
+				string by;
+				int64_t toSize;
+				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
+					MiniScript::getStringValue(argumentValues, 1, by, false) == false ||
+					MiniScript::getIntegerValue(argumentValues, 2, toSize, false) == false) {
+					Console::println("ScriptMethodStringPadLeft::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: integer expected");
+					miniScript->startErrorScript();
+				} else {
+					returnValue.setValue(StringTools::padLeft(stringValue, by, toSize));
+				}
+			}
+		};
+		registerMethod(new ScriptMethodStringPadLeft(this));
+	}
+	{
+		//
+		class ScriptMethodStringPadRight: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodStringPadRight(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_STRING, .name = "src", .optional = false, .assignBack = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "by", .optional = false, .assignBack = false },
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "toSize", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_STRING
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "string.padRight";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string stringValue;
+				string by;
+				int64_t toSize;
+				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
+					MiniScript::getStringValue(argumentValues, 1, by, false) == false ||
+					MiniScript::getIntegerValue(argumentValues, 2, toSize, false) == false) {
+					Console::println("ScriptMethodStringPadRight::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: integer expected");
+					miniScript->startErrorScript();
+				} else {
+					returnValue.setValue(StringTools::padRight(stringValue, by, toSize));
+				}
+			}
+		};
+		registerMethod(new ScriptMethodStringPadRight(this));
+	}
 	// array methods
 	{
 		//
