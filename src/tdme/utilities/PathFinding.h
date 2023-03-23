@@ -2,8 +2,10 @@
 
 #include <stack>
 #include <string>
+#include <tuple>
 #include <unordered_map>
 #include <unordered_set>
+#include <variant>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -16,11 +18,14 @@
 #include <tdme/utilities/FlowMap.h>
 #include <tdme/utilities/FlowMapCell.h>
 #include <tdme/utilities/PathFindingCustomTest.h>
+#include <tdme/utilities/Pool.h>
 
+using std::get;
 using std::map;
 using std::stack;
 using std::string;
 using std::to_string;
+using std::tuple;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
@@ -34,6 +39,7 @@ using tdme::utilities::Console;
 using tdme::utilities::FlowMap;
 using tdme::utilities::FlowMapCell;
 using tdme::utilities::PathFindingCustomTest;
+using tdme::utilities::Pool;
 
 /**
  * Path finding class
@@ -92,35 +98,30 @@ public:
 	}
 
 	/**
-	 * Return string representation of given x,y,z for path finding id
+	 * Return path finding node id of given x, y, z position components
 	 * @param x x
 	 * @param y y
 	 * @param z z
-	 * @param stepSize step size
-	 * @return string representation
+	 * @return path finding node id of given x, y, z position components
 	 */
-	inline string toId(float x, float y, float z) {
+	inline const tuple<int, int, int> toId(float x, float y, float z) {
 		return toId(x, y, z, stepSize);
 	}
 
 	/**
-	 * Return string representation of given x,y,z for path finding id
+	 * Return path finding node id of given x, y, z position components
 	 * @param x x
 	 * @param y y
 	 * @param z z
-	 * @return string representation
+	 * @param stepSize step size
+	 * @return path finding node id of given x, y, z position components
 	 */
-	inline static string toId(float x, float y, float z, float stepSize) {
-		string result;
-		int32_t value = 0;
-		result.reserve(sizeof(value) * 3);
-		value = static_cast<int>(Math::ceil(x / stepSize));
-		result.append((char*)&value, sizeof(value));
-		value = static_cast<int>(Math::ceil(y / 0.1f));
-		result.append((char*)&value, sizeof(value));
-		value = static_cast<int>(Math::ceil(z / stepSize));
-		result.append((char*)&value, sizeof(value));
-		return result;
+	inline static const tuple<int, int, int> toId(float x, float y, float z, float stepSize) {
+		return tuple<int, int, int> {
+			static_cast<int>(Math::ceil(x / stepSize)),
+			static_cast<int>(Math::ceil(y / 0.1f)),
+			static_cast<int>(Math::ceil(z / stepSize))
+		};
 	}
 
 	/**
@@ -166,13 +167,12 @@ public:
 	 * @param z z
 	 * @return string representation
 	 */
-	inline static string toIdInt(int x, int y, int z) {
-		string result;
-		result.reserve(sizeof(x) * 3);
-		result.append((char*)&x, sizeof(x));
-		result.append((char*)&y, sizeof(y));
-		result.append((char*)&z, sizeof(z));
-		return result;
+	inline static const tuple<int, int, int> toIdInt(int x, int y, int z) {
+		return tuple<int, int, int> {
+			x,
+			y,
+			z
+		};
 	}
 
 	/**
@@ -266,12 +266,17 @@ private:
 		/**
 		 * Node id
 		 */
-		string id;
+		tuple<int, int, int> id;
+
+		/**
+		 * Has previous node
+		 */
+		bool hasPreviousNode;
 
 		/**
 		 * Previous node
 		 */
-		string previousNodeId;
+		tuple<int, int, int> previousNodeId;
 
 		/**
 		 * Position
@@ -310,13 +315,55 @@ private:
 	};
 
 	/**
+	 * Path finding node pool
+	 */
+	class PathFindingNodesPool: public Pool<PathFindingNode*> {
+	public:
+		/**
+		 * Public constructor
+		 */
+		inline PathFindingNodesPool() {
+		}
+
+	protected:
+		/**
+		 * Instantiate a path finding node
+		 */
+		inline PathFindingNode* instantiate() override {
+			return new PathFindingNode();
+		}
+
+	};
+
+	struct PathFindingNodeId_Hash {
+		std::size_t operator()(const tuple<int, int, int>& k) const {
+			std::hash<uint64_t> hashVal;
+			return hashVal(get<0>(k) ^ get<1>(k) ^ get<2>(k));
+		}
+	};
+
+	struct WalkableCache_Hash {
+		std::size_t operator()(const tuple<uint8_t, uint8_t, int, int, int, uint16_t, bool>& k) const {
+			std::hash<uint64_t> hashVal;
+			return hashVal(static_cast<int>(get<0>(k)) ^ static_cast<int>(get<1>(k)) ^ get<2>(k) ^ get<3>(k) ^ get<4>(k) ^ static_cast<int>(get<5>(k)) ^ static_cast<int>(get<6>(k)));
+		}
+	};
+
+	struct WalkableSlopeCache_Hash {
+		std::size_t operator()(const tuple<uint8_t, uint8_t, int, int, int, uint16_t, int16_t>& k) const {
+			std::hash<uint64_t> hashVal;
+			return hashVal(static_cast<int>(get<0>(k)) ^ static_cast<int>(get<1>(k)) ^ get<2>(k) ^ get<3>(k) ^ get<4>(k) ^ static_cast<int>(get<5>(k)) ^ static_cast<int>(get<6>(k)));
+		}
+	};
+
+	/**
 	 * Computes non square rooted distance between a and b
 	 * @param a node a
 	 * @param b node b
 	 * @return non square rooted distance
 	 */
-	inline float computeDistance(const PathFindingNode& a, const PathFindingNode& b) {
-		return a.position.clone().sub(b.position).computeLengthSquared();
+	inline float computeDistance(const PathFindingNode* a, const PathFindingNode* b) {
+		return a->position.clone().sub(b->position).computeLengthSquared();
 	}
 
 	/**
@@ -324,8 +371,8 @@ private:
 	 * @param node node
 	 * @return non square rooted distance
 	 */
-	inline float computeDistanceToEnd(const PathFindingNode& node) {
-		return node.position.clone().sub(end.position).computeLengthSquared();
+	inline float computeDistanceToEnd(const PathFindingNode* node) {
+		return node->position.clone().sub(end.position).computeLengthSquared();
 	}
 
 	/**
@@ -336,8 +383,8 @@ private:
 	 * @param bZ b z coordinate
 	 * @return if node a == node b
 	 */
-	inline bool equals(const PathFindingNode& a, float bX, float bY, float bZ) {
-		return a.position.clone().sub(Vector3(bX, bY, bZ)).computeLengthSquared() < Math::square(0.1f);
+	inline bool equals(const PathFindingNode* a, float bX, float bY, float bZ) {
+		return a->position.clone().sub(Vector3(bX, bY, bZ)).computeLengthSquared() < Math::square(0.1f);
 	}
 
 	/**
@@ -346,8 +393,8 @@ private:
 	 * @param lastNode b
 	 * @return if node a == node b
 	 */
-	inline bool equalsLastNode(const PathFindingNode& a, const PathFindingNode& b) {
-		return a.position.clone().sub(b.position).setY(0.0f).computeLengthSquared() < stepSizeLast * stepSizeLast + stepSizeLast * stepSizeLast + 0.1f;
+	inline bool equalsLastNode(const PathFindingNode* a, const PathFindingNode* b) {
+		return a->position.clone().sub(b->position).setY(0.0f).computeLengthSquared() < stepSizeLast * stepSizeLast + stepSizeLast * stepSizeLast + 0.1f;
 	}
 
 	/**
@@ -389,7 +436,7 @@ private:
 	 * @param flowMapRequest flow map request
 	 * @return step status
 	 */
-	void step(const PathFindingNode& node, float stepSize, float scaleActorBoundingVolumes, const unordered_set<string>* nodesToTest, bool flowMapRequest);
+	void step(PathFindingNode* node, float stepSize, float scaleActorBoundingVolumes, const unordered_set<tuple<int, int, int>, PathFindingNodeId_Hash>* nodesToTest, bool flowMapRequest);
 
 	// properties
 	World* world { nullptr };
@@ -406,9 +453,11 @@ private:
 	float flowMapStepSize;
 	float flowMapScaleActorBoundingVolumes;
 	PathFindingNode end;
-	unordered_map<string, PathFindingNode> openNodes;
-	unordered_map<string, PathFindingNode> closedNodes;
+	unordered_map<tuple<int, int, int>, PathFindingNode*, PathFindingNodeId_Hash> openNodes;
+	unordered_map<tuple<int, int, int>, PathFindingNode*, PathFindingNodeId_Hash> closedNodes;
+	PathFindingNodesPool pathFindingNodesPool;
 	BoundingVolume* actorBoundingVolume { nullptr };
 	BoundingVolume* actorBoundingVolumeSlopeTest { nullptr };
-	unordered_map<string, float> walkableCache;
+	unordered_map<tuple<uint8_t, uint8_t, int, int, int, uint16_t, bool>, float, WalkableCache_Hash> walkableCache;
+	unordered_map<tuple<uint8_t, uint8_t, int, int, int, uint16_t, int16_t>, float, WalkableSlopeCache_Hash> walkableSlopeCache;
 };
