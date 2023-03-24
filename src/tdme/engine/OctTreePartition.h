@@ -81,7 +81,7 @@ private:
 	static constexpr float PARTITION_SIZE_MAX { 512.0f };
 
 	VectorIteratorMultiple<Entity*> entityIterator;
-	unordered_map<string, vector<PartitionTreeNode*>> entityPartitionNodes;
+	unordered_map<Entity*, vector<PartitionTreeNode*>> entityPartitionNodes;
 	vector<Entity*> visibleEntities;
 	PartitionTreeNode treeRoot;
 
@@ -170,7 +170,7 @@ private:
 			}
 		} else {
 			storedNode->partitionEntities.push_back(entity);
-			entityPartitionNodes[entity->getId()].push_back(storedNode);
+			entityPartitionNodes[entity].push_back(storedNode);
 		}
 	}
 
