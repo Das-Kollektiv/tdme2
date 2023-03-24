@@ -57,7 +57,7 @@ void OctTreePartition::addEntity(Entity* entity)
 {
 	// update if already exists
 	vector<PartitionTreeNode*>* thisEntityPartitions = nullptr;
-	auto thisEntityPartitionsIt = entityPartitionNodes.find(entity->getId());
+	auto thisEntityPartitionsIt = entityPartitionNodes.find(entity);
 	if (thisEntityPartitionsIt != entityPartitionNodes.end()) {
 		thisEntityPartitions = &thisEntityPartitionsIt->second;
 	}
@@ -108,7 +108,7 @@ void OctTreePartition::removeEntity(Entity* entity)
 {
 	// check if we have entity in oct tree
 	vector<PartitionTreeNode*>* objectPartitionsVector = nullptr;
-	auto objectPartitionsVectorIt = entityPartitionNodes.find(entity->getId());
+	auto objectPartitionsVectorIt = entityPartitionNodes.find(entity);
 	if (objectPartitionsVectorIt != entityPartitionNodes.end()) {
 		objectPartitionsVector = &objectPartitionsVectorIt->second;
 	}
