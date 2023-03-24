@@ -51,8 +51,8 @@ int main(int argc, char** argv)
 	// base methods
 	{
 		Console::println();
-		Console::println("| Methods                                                                                          | Description                                                                                      |");
-		Console::println("|--------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|");
+		Console::println("| Methods                                                                                          |");
+		Console::println("|--------------------------------------------------------------------------------------------------|");
 		auto scriptMethods = baseMiniScript->getMethods();
 		vector<string> methods;
 		for (auto scriptMethod: scriptMethods) {
@@ -81,10 +81,14 @@ int main(int argc, char** argv)
 			method+= MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType());
 			while (method.size() < 99) method+= " ";
 			method+= "|";
-			method+= methodDescriptions.get("miniscript.basemethod." + scriptMethod->getMethodName(), "Not documented");
-			while (method.size() < 199) method+= " ";
-			method+= "|";
 			methods.push_back(method);
+			string description;
+			description+= "| <sub>";
+			description+= methodDescriptions.get("miniscript.basemethod." + scriptMethod->getMethodName(), "Not documented");
+			description+= "</sub>";
+			while (description.size() < 99) description+= " ";
+			description+= "|";
+			methods.push_back(description);
 		}
 		for (auto& method: methods) Console::println(method);
 	}

@@ -521,187 +521,366 @@ Reading all keys as array from set:
 
 # 6. MiniScript methods
 
-| Methods                                                                                          | Description                                                                                      |
-|--------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
-| getVariable($variable: String): Mixed                                                            |Get Variable                                                                                       |
-| setVariable($variable: String, $value: Mixed): Mixed                                             |Set Variable                                                                                       |
-| unsetVariable($variable: String): Void                                                           |Unset Variable                                                                                     |
-| add($a: Mixed, $b: Mixed): Mixed                                                                 |Add                                                                                                |
-| and($a: Boolean, $b: Boolean): Boolean                                                           |Logical And                                                                                        |
-| array(...): Array                                                                                |Create Array                                                                                       |
-| array.get($array: Array, $index: Integer): Mixed                                                 |Get Array Entry                                                                                    |
-| array.set(=$array: Array, $index: Integer, ...): Void                                            |Set Array Entry                                                                                    |
-| array.indexOf($array: Array, $value: String[, $beginIndex: Integer, ...]): Integer               |Get Array Index by Value                                                                           |
-| array.length($array: Array): Integer                                                             |Get Array Length                                                                                   |
-| array.push(=$array: Array, ...): Void                                                            |Add to Array                                                                                       |
-| array.remove(=$array: Array, $index: Integer): Void                                              |Remove Array by Index                                                                              |
-| array.removeOf(=$array: Array, $value: String[, $beginIndex: Integer]): Void                     |Remove Array Entry by Value                                                                        |
-| array.reverse(=$array: Array): Void                                                              |Reverse Array                                                                                      |
-| array.sort(=$array: Array, $function: String): Void                                              |Sort Array                                                                                         |
-| bool($bool: Boolean): Boolean                                                                    |Create Bool                                                                                        |
-| console.log(...): Void                                                                           |Print to Console                                                                                   |
-| div($a: Mixed, $b: Mixed): Mixed                                                                 |Divide                                                                                             |
-| else(): Void                                                                                     |Else                                                                                               |
-| elseif($condition: Boolean): Void                                                                |Else If                                                                                            |
-| end(): Void                                                                                      |End                                                                                                |
-| equals($a: Mixed, $b: Mixed): Boolean                                                            |Equals                                                                                             |
-| float($float: Float): Float                                                                      |Create Float                                                                                       |
-| forCondition($condition: Boolean): Void                                                          |For Condition                                                                                      |
-| forTime($time: Integer): Void                                                                    |For Time                                                                                           |
-| greater($a: Mixed, $b: Mixed): Boolean                                                           |Greater                                                                                            |
-| greaterequals($a: Mixed, $b: Mixed): Boolean                                                     |Greater Equals                                                                                     |
-| if($condition: Boolean): Void                                                                    |If                                                                                                 |
-| int($int: Integer): Integer                                                                      |Create Integer                                                                                     |
-| json.deserialize($json: String): Mixed                                                           |Deserialize JSON                                                                                   |
-| json.serialize($value: Mixed): String                                                            |Serialize JSON                                                                                     |
-| lesser($a: Mixed, $b: Mixed): Boolean                                                            |Lesser                                                                                             |
-| lesserequals($a: Mixed, $b: Mixed): Boolean                                                      |Lesser Equals                                                                                      |
-| map(): Map                                                                                       |Create Map                                                                                         |
-| map.has($map: Map, $key: String): Boolean                                                        |Has Entry by Key                                                                                   |
-| map.get($map: Map, $key: String): Mixed                                                          |Get Map Value by Key                                                                               |
-| map.set(=$map: Map, $key: String, ...): Void                                                     |Set Map Entry                                                                                      |
-| map.getKeys($map: Map): Array                                                                    |Get Map Keys                                                                                       |
-| map.getValues($map: Map): Array                                                                  |Get Map Values                                                                                     |
-| map.remove(=$map: Map, $key: String): Void                                                       |Remove Map Entry                                                                                   |
-| mat3.identity(): Matrix3x3                                                                       |Create Identity 3x3 Matrix                                                                         |
-| mat3.multiply($mat3: Matrix3x3, ...): Mixed                                                      |Multiply 3x3 Matrix with 3x3 Matrix or Vector2                                                     |
-| mat3.rotate($angle: Float): Matrix3x3                                                            |Create Rotation 3x3 Matrix                                                                         |
-| mat3.rotateAroundPoint($point: Vector2, $angle: Float): Matrix3x3                                |Create 3x3 Matrix which rotates around Point                                                       |
-| mat3.rotateAroundTextureCenter($angle: Float): Matrix3x3                                         |Create 3x3 Matrix which rotates around Texture Center                                              |
-| mat3.scale(...): Matrix3x3                                                                       |Create Scale 3x3 Matrix                                                                            |
-| mat3.translate($translation: Vector2): Matrix3x3                                                 |Create Translation 3x3 Matrix                                                                      |
-| mat4.computeEulerAngles($mat4: Matrix4x4): Vector3                                               |Compute Euler Angles from 4x4 Matrix                                                               |
-| mat4.identity(): Matrix4x4                                                                       |Create Identity 4x4 Matrix                                                                         |
-| mat4.invert($mat4: Matrix4x4): Matrix4x4                                                         |Create 4x4 Matrix Inverse                                                                          |
-| mat4.multiply($mat4: Matrix4x4, ...): Mixed                                                      |Multiply 4x4 Matrix with 4x4 Matrix or Vector3 or Vector4                                          |
-| mat4.rotate($axis: Vector3, $angle: Float): Matrix4x4                                            |Create Rotation 4x4 Matrix                                                                         |
-| mat4.scale(...): Matrix4x4                                                                       |Create Scale 4x4 Matrix                                                                            |
-| mat4.translate($translation: Vector3): Matrix4x4                                                 |Create Translation 4x4 Matrix                                                                      |
-| math.DEG2RAD(): Float                                                                            |Degree to Radian Factor                                                                            |
-| math.EPSILON(): Float                                                                            |Epsilon                                                                                            |
-| math.G(): Float                                                                                  |G                                                                                                  |
-| math.PI(): Float                                                                                 |PI                                                                                                 |
-| math.abs($value: Number): Number                                                                 |Return Number as Positive Number                                                                   |
-| math.absmod($value: Number, $range: Number): Number                                              |Return Number to be Positive within given Range                                                    |
-| math.acos($value: Float): Float                                                                  |Compute acos                                                                                       |
-| math.asin($value: Float): Float                                                                  |Compute asin                                                                                       |
-| math.atan($value: Float): Float                                                                  |Compute atan                                                                                       |
-| math.atan2($y: Float, $x: Float): Float                                                          |Compute atan2                                                                                      |
-| math.ceil($value: Float): Float                                                                  |Round Float up to next higher Integer                                                              |
-| math.clamp($value: Number, $min: Number, $max: Number): Number                                   |Return Number clamped to be in given Range                                                         |
-| math.cos($value: Float): Float                                                                   |Compute acos                                                                                       |
-| math.exp($value: Float): Float                                                                   |Compute exp                                                                                        |
-| math.floor($value: Float): Float                                                                 |Round Float down to next lower Integer                                                             |
-| math.log($value: Float): Float                                                                   |Compute log                                                                                        |
-| math.max($a: Number, $b: Number): Number                                                         |Return maximum Number of given Values                                                              |
-| math.min($a: Number, $b: Number): Number                                                         |Return minimum Number of given Values                                                              |
-| math.mod($value: Number, $range: Number): Number                                                 |Compute Modulo/Remainder                                                                           |
-| math.pow($a: Number, $b: Number): Number                                                         |Compute pow                                                                                        |
-| math.random(): Float                                                                             |Create a random Number between 0.0 and 1.0                                                         |
-| math.round($value: Float): Float                                                                 |Round Float Up or Down to Integer                                                                  |
-| math.sign($value: Number): Number                                                                |Return Sign of given Number                                                                        |
-| math.sin($value: Float): Float                                                                   |Compute sin                                                                                        |
-| math.sqrt($value: Float): Float                                                                  |Compute Square Root                                                                                |
-| math.square($value: Number): Number                                                              |Compute Square Product                                                                             |
-| math.tan($value: Float): Float                                                                   |Compute tan                                                                                        |
-| mod($value: Number, $range: Number): Number                                                      |Compute Modulo                                                                                     |
-| mul($a: Mixed, $b: Mixed): Mixed                                                                 |Multiply                                                                                           |
-| not($bool: Boolean): Boolean                                                                     |Logical Not                                                                                        |
-| notequal($a: Mixed, $b: Mixed): Boolean                                                          |Logical Not Equal                                                                                  |
-| or($a: Boolean, $b: Boolean): Boolean                                                            |Logical Or                                                                                         |
-| quaternion.computeMatrix($quaternion: Quaternion): Matrix4x4                                     |Compute 4x4 Rotation Matrix from Quaternion                                                        |
-| quaternion.identity(): Quaternion                                                                |Create Identity Quaternion                                                                         |
-| quaternion.invert($quaternion: Vector4): Quaternion                                              |Create Quaternion Inverse                                                                          |
-| quaternion.multiply($quaternion: Quaternion, ...): Mixed                                         |Multiply Quaternion with Quaternion or Vector3                                                     |
-| quaternion.normalize($quaternion: Quaternion): Quaternion                                        |Normalize Quaternion                                                                               |
-| quaternion.rotate($axis: Vector3, $angle: Float): Quaternion                                     |Create Rotation Quaternion                                                                         |
-| return([$value: Mixed]): Void                                                                    |Return from Function with optional Return Value                                                    |
-| script.getNamedConditions(): String                                                              |Get Named Conditions                                                                               |
-| script.getVariables(): Map                                                                       |Get Script Variables                                                                               |
-| script.call($function: String, ...): Mixed                                                       |Call Script Function                                                                               |
-| script.disableNamedCondition($name: String): Void                                                |Disable a specific Named Condition                                                                 |
-| script.emit($condition: String): Void                                                            |Emit a Condition                                                                                   |
-| script.enableNamedCondition($name: String): Void                                                 |Enable a specific Named Condition                                                                  |
-| script.evaluate($statement: String): Mixed                                                       |Evaluate a Script Statement                                                                        |
-| script.stop(): Void                                                                              |Stop Script                                                                                        |
-| script.wait($time: Integer): Void                                                                |Wait for given Milliseconds                                                                        |
-| script.waitForCondition(): Void                                                                  |Wait for Condition to happen                                                                       |
-| set(): Set                                                                                       |Create Set                                                                                         |
-| set.has($set: Set, $key: String): Boolean                                                        |Has Key in Set                                                                                     |
-| set.getKeys($set: Set): Array                                                                    |Get Set Keys                                                                                       |
-| set.insert(=$set: Set, $key: String): Void                                                       |Insert Key into Set                                                                                |
-| set.remove(=$set: Set, $key: String): Void                                                       |Remove Key from Set                                                                                |
-| string($string: String): String                                                                  |Create String                                                                                      |
-| string.isFloat($string: String): Boolean                                                         |Not documented                                                                                     |
-| string.isInteger($string: String): Boolean                                                       |Not documented                                                                                     |
-| string.charAt($string: String, $index: Integer): String                                          |Return Character of String at given Position                                                       |
-| string.concatenate(...): String                                                                  |Concatenate Strings                                                                                |
-| string.endsWith($string: String, $suffix: String): Boolean                                       |Test if String ends with specific String                                                           |
-| string.equalsIgnoreCase($string1: String, $string2: String): Boolean                             |Test if 2 Strings matches ignoring Case Sensitivity                                                |
-| string.firstIndexOf($string: String, $what: String[, $beginIndex: Integer]): Integer             |Return First Index of specific String in String                                                    |
-| string.indexOf($string: String, $what: String[, $beginIndex: Integer]): Integer                  |Return Index of specific String in String                                                          |
-| string.lastIndexOf($string: String, $what: String[, $beginIndex: Integer]): Integer              |Return Last Index of specific String in String                                                     |
-| string.length($string: String): Integer                                                          |Return String Length                                                                               |
-| string.padLeft($src: String, $by: String, $toSize: Integer): String                              |Pad String Left                                                                                    |
-| string.padRight($src: String, $by: String, $toSize: Integer): String                             |Pad String Right                                                                                   |
-| string.regexMatch($string: String, $pattern: String): Boolean                                    |RegEx Match                                                                                        |
-| string.regexReplace($string: String, $pattern: String, $by: String): String                      |RegEx Replace                                                                                      |
-| string.replace($string: String, $what: String, $by: String[, $beginIndex: Integer]): String      |Replace specific String in String with given String                                                |
-| string.space([$spaces: Integer]): String                                                         |Create Spaces as String                                                                            |
-| string.startsWith($string: String, $prefix: String): Boolean                                     |Test if given String starts with specific String                                                   |
-| string.substring($string: String, $beginIndex: Integer[, $endIndex: Integer]): String            |Return Substring of String                                                                         |
-| string.toLowerCase($string: String): String                                                      |Compute Lower Case String of String                                                                |
-| string.toUpperCase($string: String): String                                                      |Compute Upper Case String of String                                                                |
-| string.tokenize($string: String, $delimiters: String): Array                                     |Tokenize String                                                                                    |
-| string.trim($string: String): String                                                             |Trim String                                                                                        |
-| sub($a: Mixed, $b: Mixed): Mixed                                                                 |Subtract                                                                                           |
-| time.getAsString([$format: String]): String                                                      |Not documented                                                                                     |
-| time.getCurrentMillis(): Integer                                                                 |Get Current Time in Milliseconds                                                                   |
-| transform([$translation: Vector3[, $scale: Vector3[, $rotationZ: Float[, $rotationY: Float[, $rotationX: Float]]]]]): Transform|Create Transform                                                     |
-| transform.AXIS_X(): Vector3                                                                      |X Axis as Vector3                                                                                  |
-| transform.AXIS_Y(): Vector3                                                                      |Y Axis as Vector3                                                                                  |
-| transform.AXIS_Z(): Vector3                                                                      |Z Axis as Vector3                                                                                  |
-| transform.getRotationAngle($transform: Transform, $idx: Integer): Float                          |Get Rotation Angle of specific Rotation of Transform                                               |
-| transform.setRotationAngle(=$transform: Transform, $idx: Integer, $angle: Float): Void           |Set Rotation Angle of specific Rotation of Transform                                               |
-| transform.getRotationAxis($transform: Transform, $idx: Integer): Vector3                         |Set Rotation Axis of specific Rotation of Transform                                                |
-| transform.getRotationsQuaternion($transform: Transform): Quaternion                              |Compute Transform Rotations Quaternion                                                             |
-| transform.getScale($transform: Transform): Vector3                                               |Get Transfrom Scale                                                                                |
-| transform.setScale(=$transform: Transform, $scale: Vector3): Void                                |Set Transfrom Scale                                                                                |
-| transform.getTransformMatrix($transform: Transform): Matrix4x4                                   |Get 4x4 Transform Matrix                                                                           |
-| transform.getTranslation($transform: Transform): Vector3                                         |Get Transform Translation                                                                          |
-| transform.setTranslation(=$transform: Transform, $translation: Vector3): Void                    |Set Transform Translation                                                                          |
-| transform.applyRotation(=$transform: Transform, $axis: Vector3, $angle: Float): Void             |Apply a Rotation to Transform                                                                      |
-| transform.fromMatrix($transformMatrix: Matrix4x4): Transform                                     |Create Transform from 4x4 Matrix                                                                   |
-| transform.interpolateRotation($currentAngle: Float, $targetAngle: Float, $timePassedSeconds: Float, $degreesPerSeconds: Float, =$interpolatedAngle: Float): Boolean|Interpolate Rotation             |
-| transform.multiply($transform: Transform, $vec3: Vector3): Vector3                               |Multiply Transform with Vector3                                                                    |
-| transform.rotate($transform: Transform, $vec3: Vector3): Vector3                                 |Rotate Vector3 using Transform                                                                     |
-| vec2($x: Float, $y: Float): Vector2                                                              |Create Vector2                                                                                     |
-| vec2.computeDotProduct($a: Vector2, $b: Vector2): Float                                          |Compute Vector2 Dot Product                                                                        |
-| vec2.computeLength($vec2: Vector2): Float                                                        |Compute Vector2 Length                                                                             |
-| vec2.computeLengthSquared($vec2: Vector2): Float                                                 |Compute Vector2 Squared Length                                                                     |
-| vec2.getX($vec2: Vector2): Float                                                                 |Return Vector2 X Component                                                                         |
-| vec2.getY($vec2: Vector2): Float                                                                 |Return Vector2 Y Component                                                                         |
-| vec2.normalize($vec2: Vector2): Vector2                                                          |Normalize Vector2                                                                                  |
-| vec3($x: Float, $y: Float, $z: Float): Vector3                                                   |Create Vector3                                                                                     |
-| vec3.computeAngle($a: Vector3, $b: Vector3, $n: Vector3): Float                                  |Compute Angle between two Vector3                                                                  |
-| vec3.computeCrossProduct($a: Vector3, $b: Vector3): Vector3                                      |Compute Vector3 Cross Product                                                                      |
-| vec3.computeDotProduct($a: Vector3, $b: Vector3): Float                                          |Compute Vector3 Dot Product                                                                        |
-| vec3.computeLength($vec3: Vector3): Float                                                        |Compute Vector3 Length                                                                             |
-| vec3.computeLengthSquared($vec3: Vector3): Float                                                 |Compute Vector3 Squared Length                                                                     |
-| vec3.getX($vec3: Vector3): Float                                                                 |Return Vector3 X Component                                                                         |
-| vec3.getY($vec3: Vector3): Float                                                                 |Return Vector3 Y Component                                                                         |
-| vec3.getZ($vec3: Vector3): Float                                                                 |Return Vector3 Z Component                                                                         |
-| vec3.normalize($vec3: Vector3): Vector3                                                          |Normalize Vector3                                                                                  |
-| vec4($x: Float, $y: Float, $z: Float, $w: Float): Vector4                                        |Create Vector4                                                                                     |
-| vec4.computeDotProduct($a: Vector4, $b: Vector4): Float                                          |Compute Vector4 Dot Product                                                                        |
-| vec4.computeLength($vec4: Vector4): Float                                                        |Compute Vector4 Length                                                                             |
-| vec4.computeLengthSquared($vec4: Vector4): Float                                                 |Compute Vector4 Squared Length                                                                     |
-| vec4.getW($vec4: Vector4): Float                                                                 |Return Vector4 W Component                                                                         |
-| vec4.getX($vec4: Vector4): Float                                                                 |Return Vector4 X Component                                                                         |
-| vec4.getY($vec4: Vector4): Float                                                                 |Return Vector4 Y Component                                                                         |
-| vec4.getZ($vec4: Vector4): Float                                                                 |Return Vector4 Z Component                                                                         |
-| vec4.normalize($vec4: Vector4): Vector4                                                          |Normalize Vector4                                                                                  |
-| xml.createTag($name: String[, $attributes: Map[, $innerXML: String]]): String                    |Create XML Tag                                                                                     |
+| Methods                                                                                          |
+|--------------------------------------------------------------------------------------------------|
+| getVariable($variable: String): Mixed                                                            |
+| <sub>Get Variable</sub>                                                                          |
+| setVariable($variable: String, $value: Mixed): Mixed                                             |
+| <sub>Set Variable</sub>                                                                          |
+| unsetVariable($variable: String): Void                                                           |
+| <sub>Unset Variable</sub>                                                                        |
+| add($a: Mixed, $b: Mixed): Mixed                                                                 |
+| <sub>Add</sub>                                                                                   |
+| and($a: Boolean, $b: Boolean): Boolean                                                           |
+| <sub>Logical And</sub>                                                                           |
+| array(...): Array                                                                                |
+| <sub>Create Array</sub>                                                                          |
+| array.get($array: Array, $index: Integer): Mixed                                                 |
+| <sub>Get Array Entry</sub>                                                                       |
+| array.set(=$array: Array, $index: Integer, ...): Void                                            |
+| <sub>Set Array Entry</sub>                                                                       |
+| array.indexOf($array: Array, $value: String[, $beginIndex: Integer, ...]): Integer               |
+| <sub>Get Array Index by Value</sub>                                                              |
+| array.length($array: Array): Integer                                                             |
+| <sub>Get Array Length</sub>                                                                      |
+| array.push(=$array: Array, ...): Void                                                            |
+| <sub>Add to Array</sub>                                                                          |
+| array.remove(=$array: Array, $index: Integer): Void                                              |
+| <sub>Remove Array by Index</sub>                                                                 |
+| array.removeOf(=$array: Array, $value: String[, $beginIndex: Integer]): Void                     |
+| <sub>Remove Array Entry by Value</sub>                                                           |
+| array.reverse(=$array: Array): Void                                                              |
+| <sub>Reverse Array</sub>                                                                         |
+| array.sort(=$array: Array, $function: String): Void                                              |
+| <sub>Sort Array</sub>                                                                            |
+| bool($bool: Boolean): Boolean                                                                    |
+| <sub>Create Bool</sub>                                                                           |
+| console.log(...): Void                                                                           |
+| <sub>Print to Console</sub>                                                                      |
+| div($a: Mixed, $b: Mixed): Mixed                                                                 |
+| <sub>Divide</sub>                                                                                |
+| else(): Void                                                                                     |
+| <sub>Else</sub>                                                                                  |
+| elseif($condition: Boolean): Void                                                                |
+| <sub>Else If</sub>                                                                               |
+| end(): Void                                                                                      |
+| <sub>End</sub>                                                                                   |
+| equals($a: Mixed, $b: Mixed): Boolean                                                            |
+| <sub>Equals</sub>                                                                                |
+| float($float: Float): Float                                                                      |
+| <sub>Create Float</sub>                                                                          |
+| forCondition($condition: Boolean): Void                                                          |
+| <sub>For Condition</sub>                                                                         |
+| forTime($time: Integer): Void                                                                    |
+| <sub>For Time</sub>                                                                              |
+| greater($a: Mixed, $b: Mixed): Boolean                                                           |
+| <sub>Greater</sub>                                                                               |
+| greaterequals($a: Mixed, $b: Mixed): Boolean                                                     |
+| <sub>Greater Equals</sub>                                                                        |
+| if($condition: Boolean): Void                                                                    |
+| <sub>If</sub>                                                                                    |
+| int($int: Integer): Integer                                                                      |
+| <sub>Create Integer</sub>                                                                        |
+| json.deserialize($json: String): Mixed                                                           |
+| <sub>Deserialize JSON</sub>                                                                      |
+| json.serialize($value: Mixed): String                                                            |
+| <sub>Serialize JSON</sub>                                                                        |
+| lesser($a: Mixed, $b: Mixed): Boolean                                                            |
+| <sub>Lesser</sub>                                                                                |
+| lesserequals($a: Mixed, $b: Mixed): Boolean                                                      |
+| <sub>Lesser Equals</sub>                                                                         |
+| map(): Map                                                                                       |
+| <sub>Create Map</sub>                                                                            |
+| map.has($map: Map, $key: String): Boolean                                                        |
+| <sub>Has Entry by Key</sub>                                                                      |
+| map.get($map: Map, $key: String): Mixed                                                          |
+| <sub>Get Map Value by Key</sub>                                                                  |
+| map.set(=$map: Map, $key: String, ...): Void                                                     |
+| <sub>Set Map Entry</sub>                                                                         |
+| map.getKeys($map: Map): Array                                                                    |
+| <sub>Get Map Keys</sub>                                                                          |
+| map.getValues($map: Map): Array                                                                  |
+| <sub>Get Map Values</sub>                                                                        |
+| map.remove(=$map: Map, $key: String): Void                                                       |
+| <sub>Remove Map Entry</sub>                                                                      |
+| mat3.identity(): Matrix3x3                                                                       |
+| <sub>Create Identity 3x3 Matrix</sub>                                                            |
+| mat3.multiply($mat3: Matrix3x3, ...): Mixed                                                      |
+| <sub>Multiply 3x3 Matrix with 3x3 Matrix or Vector2</sub>                                        |
+| mat3.rotate($angle: Float): Matrix3x3                                                            |
+| <sub>Create Rotation 3x3 Matrix</sub>                                                            |
+| mat3.rotateAroundPoint($point: Vector2, $angle: Float): Matrix3x3                                |
+| <sub>Create 3x3 Matrix which rotates around Point</sub>                                          |
+| mat3.rotateAroundTextureCenter($angle: Float): Matrix3x3                                         |
+| <sub>Create 3x3 Matrix which rotates around Texture Center</sub>                                 |
+| mat3.scale(...): Matrix3x3                                                                       |
+| <sub>Create Scale 3x3 Matrix</sub>                                                               |
+| mat3.translate($translation: Vector2): Matrix3x3                                                 |
+| <sub>Create Translation 3x3 Matrix</sub>                                                         |
+| mat4.computeEulerAngles($mat4: Matrix4x4): Vector3                                               |
+| <sub>Compute Euler Angles from 4x4 Matrix</sub>                                                  |
+| mat4.identity(): Matrix4x4                                                                       |
+| <sub>Create Identity 4x4 Matrix</sub>                                                            |
+| mat4.invert($mat4: Matrix4x4): Matrix4x4                                                         |
+| <sub>Create 4x4 Matrix Inverse</sub>                                                             |
+| mat4.multiply($mat4: Matrix4x4, ...): Mixed                                                      |
+| <sub>Multiply 4x4 Matrix with 4x4 Matrix or Vector3 or Vector4</sub>                             |
+| mat4.rotate($axis: Vector3, $angle: Float): Matrix4x4                                            |
+| <sub>Create Rotation 4x4 Matrix</sub>                                                            |
+| mat4.scale(...): Matrix4x4                                                                       |
+| <sub>Create Scale 4x4 Matrix</sub>                                                               |
+| mat4.translate($translation: Vector3): Matrix4x4                                                 |
+| <sub>Create Translation 4x4 Matrix</sub>                                                         |
+| math.DEG2RAD(): Float                                                                            |
+| <sub>Degree to Radian Factor</sub>                                                               |
+| math.EPSILON(): Float                                                                            |
+| <sub>Epsilon</sub>                                                                               |
+| math.G(): Float                                                                                  |
+| <sub>G</sub>                                                                                     |
+| math.PI(): Float                                                                                 |
+| <sub>PI</sub>                                                                                    |
+| math.abs($value: Number): Number                                                                 |
+| <sub>Return Number as Positive Number</sub>                                                      |
+| math.absmod($value: Number, $range: Number): Number                                              |
+| <sub>Return Number to be Positive within given Range</sub>                                       |
+| math.acos($value: Float): Float                                                                  |
+| <sub>Compute acos</sub>                                                                          |
+| math.asin($value: Float): Float                                                                  |
+| <sub>Compute asin</sub>                                                                          |
+| math.atan($value: Float): Float                                                                  |
+| <sub>Compute atan</sub>                                                                          |
+| math.atan2($y: Float, $x: Float): Float                                                          |
+| <sub>Compute atan2</sub>                                                                         |
+| math.ceil($value: Float): Float                                                                  |
+| <sub>Round Float up to next higher Integer</sub>                                                 |
+| math.clamp($value: Number, $min: Number, $max: Number): Number                                   |
+| <sub>Return Number clamped to be in given Range</sub>                                            |
+| math.cos($value: Float): Float                                                                   |
+| <sub>Compute acos</sub>                                                                          |
+| math.exp($value: Float): Float                                                                   |
+| <sub>Compute exp</sub>                                                                           |
+| math.floor($value: Float): Float                                                                 |
+| <sub>Round Float down to next lower Integer</sub>                                                |
+| math.log($value: Float): Float                                                                   |
+| <sub>Compute log</sub>                                                                           |
+| math.max($a: Number, $b: Number): Number                                                         |
+| <sub>Return maximum Number of given Values</sub>                                                 |
+| math.min($a: Number, $b: Number): Number                                                         |
+| <sub>Return minimum Number of given Values</sub>                                                 |
+| math.mod($value: Number, $range: Number): Number                                                 |
+| <sub>Compute Modulo/Remainder</sub>                                                              |
+| math.pow($a: Number, $b: Number): Number                                                         |
+| <sub>Compute pow</sub>                                                                           |
+| math.random(): Float                                                                             |
+| <sub>Create a random Number between 0.0 and 1.0</sub>                                            |
+| math.round($value: Float): Float                                                                 |
+| <sub>Round Float Up or Down to Integer</sub>                                                     |
+| math.sign($value: Number): Number                                                                |
+| <sub>Return Sign of given Number</sub>                                                           |
+| math.sin($value: Float): Float                                                                   |
+| <sub>Compute sin</sub>                                                                           |
+| math.sqrt($value: Float): Float                                                                  |
+| <sub>Compute Square Root</sub>                                                                   |
+| math.square($value: Number): Number                                                              |
+| <sub>Compute Square Product</sub>                                                                |
+| math.tan($value: Float): Float                                                                   |
+| <sub>Compute tan</sub>                                                                           |
+| mod($value: Number, $range: Number): Number                                                      |
+| <sub>Compute Modulo</sub>                                                                        |
+| mul($a: Mixed, $b: Mixed): Mixed                                                                 |
+| <sub>Multiply</sub>                                                                              |
+| not($bool: Boolean): Boolean                                                                     |
+| <sub>Logical Not</sub>                                                                           |
+| notequal($a: Mixed, $b: Mixed): Boolean                                                          |
+| <sub>Logical Not Equal</sub>                                                                     |
+| or($a: Boolean, $b: Boolean): Boolean                                                            |
+| <sub>Logical Or</sub>                                                                            |
+| quaternion.computeMatrix($quaternion: Quaternion): Matrix4x4                                     |
+| <sub>Compute 4x4 Rotation Matrix from Quaternion</sub>                                           |
+| quaternion.identity(): Quaternion                                                                |
+| <sub>Create Identity Quaternion</sub>                                                            |
+| quaternion.invert($quaternion: Vector4): Quaternion                                              |
+| <sub>Create Quaternion Inverse</sub>                                                             |
+| quaternion.multiply($quaternion: Quaternion, ...): Mixed                                         |
+| <sub>Multiply Quaternion with Quaternion or Vector3</sub>                                        |
+| quaternion.normalize($quaternion: Quaternion): Quaternion                                        |
+| <sub>Normalize Quaternion</sub>                                                                  |
+| quaternion.rotate($axis: Vector3, $angle: Float): Quaternion                                     |
+| <sub>Create Rotation Quaternion</sub>                                                            |
+| return([$value: Mixed]): Void                                                                    |
+| <sub>Return from Function with optional Return Value</sub>                                       |
+| script.getNamedConditions(): String                                                              |
+| <sub>Get Named Conditions</sub>                                                                  |
+| script.getVariables(): Map                                                                       |
+| <sub>Get Script Variables</sub>                                                                  |
+| script.call($function: String, ...): Mixed                                                       |
+| <sub>Call Script Function</sub>                                                                  |
+| script.disableNamedCondition($name: String): Void                                                |
+| <sub>Disable a specific Named Condition</sub>                                                    |
+| script.emit($condition: String): Void                                                            |
+| <sub>Emit a Condition</sub>                                                                      |
+| script.enableNamedCondition($name: String): Void                                                 |
+| <sub>Enable a specific Named Condition</sub>                                                     |
+| script.evaluate($statement: String): Mixed                                                       |
+| <sub>Evaluate a Script Statement</sub>                                                           |
+| script.stop(): Void                                                                              |
+| <sub>Stop Script</sub>                                                                           |
+| script.wait($time: Integer): Void                                                                |
+| <sub>Wait for given Milliseconds</sub>                                                           |
+| script.waitForCondition(): Void                                                                  |
+| <sub>Wait for Condition to happen</sub>                                                          |
+| set(): Set                                                                                       |
+| <sub>Create Set</sub>                                                                            |
+| set.has($set: Set, $key: String): Boolean                                                        |
+| <sub>Has Key in Set</sub>                                                                        |
+| set.getKeys($set: Set): Array                                                                    |
+| <sub>Get Set Keys</sub>                                                                          |
+| set.insert(=$set: Set, $key: String): Void                                                       |
+| <sub>Insert Key into Set</sub>                                                                   |
+| set.remove(=$set: Set, $key: String): Void                                                       |
+| <sub>Remove Key from Set</sub>                                                                   |
+| string($string: String): String                                                                  |
+| <sub>Create String</sub>                                                                         |
+| string.isFloat($string: String): Boolean                                                         |
+| <sub>Not documented</sub>                                                                        |
+| string.isInteger($string: String): Boolean                                                       |
+| <sub>Not documented</sub>                                                                        |
+| string.charAt($string: String, $index: Integer): String                                          |
+| <sub>Return Character of String at given Position</sub>                                          |
+| string.concatenate(...): String                                                                  |
+| <sub>Concatenate Strings</sub>                                                                   |
+| string.endsWith($string: String, $suffix: String): Boolean                                       |
+| <sub>Test if String ends with specific String</sub>                                              |
+| string.equalsIgnoreCase($string1: String, $string2: String): Boolean                             |
+| <sub>Test if 2 Strings matches ignoring Case Sensitivity</sub>                                   |
+| string.firstIndexOf($string: String, $what: String[, $beginIndex: Integer]): Integer             |
+| <sub>Return First Index of specific String in String</sub>                                       |
+| string.indexOf($string: String, $what: String[, $beginIndex: Integer]): Integer                  |
+| <sub>Return Index of specific String in String</sub>                                             |
+| string.lastIndexOf($string: String, $what: String[, $beginIndex: Integer]): Integer              |
+| <sub>Return Last Index of specific String in String</sub>                                        |
+| string.length($string: String): Integer                                                          |
+| <sub>Return String Length</sub>                                                                  |
+| string.padLeft($src: String, $by: String, $toSize: Integer): String                              |
+| <sub>Pad String Left</sub>                                                                       |
+| string.padRight($src: String, $by: String, $toSize: Integer): String                             |
+| <sub>Pad String Right</sub>                                                                      |
+| string.regexMatch($string: String, $pattern: String): Boolean                                    |
+| <sub>RegEx Match</sub>                                                                           |
+| string.regexReplace($string: String, $pattern: String, $by: String): String                      |
+| <sub>RegEx Replace</sub>                                                                         |
+| string.replace($string: String, $what: String, $by: String[, $beginIndex: Integer]): String      |
+| <sub>Replace specific String in String with given String</sub>                                   |
+| string.space([$spaces: Integer]): String                                                         |
+| <sub>Create Spaces as String</sub>                                                               |
+| string.startsWith($string: String, $prefix: String): Boolean                                     |
+| <sub>Test if given String starts with specific String</sub>                                      |
+| string.substring($string: String, $beginIndex: Integer[, $endIndex: Integer]): String            |
+| <sub>Return Substring of String</sub>                                                            |
+| string.toLowerCase($string: String): String                                                      |
+| <sub>Compute Lower Case String of String</sub>                                                   |
+| string.toUpperCase($string: String): String                                                      |
+| <sub>Compute Upper Case String of String</sub>                                                   |
+| string.tokenize($string: String, $delimiters: String): Array                                     |
+| <sub>Tokenize String</sub>                                                                       |
+| string.trim($string: String): String                                                             |
+| <sub>Trim String</sub>                                                                           |
+| sub($a: Mixed, $b: Mixed): Mixed                                                                 |
+| <sub>Subtract</sub>                                                                              |
+| time.getAsString([$format: String]): String                                                      |
+| <sub>Not documented</sub>                                                                        |
+| time.getCurrentMillis(): Integer                                                                 |
+| <sub>Get Current Time in Milliseconds</sub>                                                      |
+| transform([$translation: Vector3[, $scale: Vector3[, $rotationZ: Float[, $rotationY: Float[, $rotationX: Float]]]]]): Transform|
+| <sub>Create Transform</sub>                                                                      |
+| transform.AXIS_X(): Vector3                                                                      |
+| <sub>X Axis as Vector3</sub>                                                                     |
+| transform.AXIS_Y(): Vector3                                                                      |
+| <sub>Y Axis as Vector3</sub>                                                                     |
+| transform.AXIS_Z(): Vector3                                                                      |
+| <sub>Z Axis as Vector3</sub>                                                                     |
+| transform.getRotationAngle($transform: Transform, $idx: Integer): Float                          |
+| <sub>Get Rotation Angle of specific Rotation of Transform</sub>                                  |
+| transform.setRotationAngle(=$transform: Transform, $idx: Integer, $angle: Float): Void           |
+| <sub>Set Rotation Angle of specific Rotation of Transform</sub>                                  |
+| transform.getRotationAxis($transform: Transform, $idx: Integer): Vector3                         |
+| <sub>Set Rotation Axis of specific Rotation of Transform</sub>                                   |
+| transform.getRotationsQuaternion($transform: Transform): Quaternion                              |
+| <sub>Compute Transform Rotations Quaternion</sub>                                                |
+| transform.getScale($transform: Transform): Vector3                                               |
+| <sub>Get Transfrom Scale</sub>                                                                   |
+| transform.setScale(=$transform: Transform, $scale: Vector3): Void                                |
+| <sub>Set Transfrom Scale</sub>                                                                   |
+| transform.getTransformMatrix($transform: Transform): Matrix4x4                                   |
+| <sub>Get 4x4 Transform Matrix</sub>                                                              |
+| transform.getTranslation($transform: Transform): Vector3                                         |
+| <sub>Get Transform Translation</sub>                                                             |
+| transform.setTranslation(=$transform: Transform, $translation: Vector3): Void                    |
+| <sub>Set Transform Translation</sub>                                                             |
+| transform.applyRotation(=$transform: Transform, $axis: Vector3, $angle: Float): Void             |
+| <sub>Apply a Rotation to Transform</sub>                                                         |
+| transform.fromMatrix($transformMatrix: Matrix4x4): Transform                                     |
+| <sub>Create Transform from 4x4 Matrix</sub>                                                      |
+| transform.interpolateRotation($currentAngle: Float, $targetAngle: Float, $timePassedSeconds: Float, $degreesPerSeconds: Float, =$interpolatedAngle: Float): Boolean|
+| <sub>Interpolate Rotation</sub>                                                                  |
+| transform.multiply($transform: Transform, $vec3: Vector3): Vector3                               |
+| <sub>Multiply Transform with Vector3</sub>                                                       |
+| transform.rotate($transform: Transform, $vec3: Vector3): Vector3                                 |
+| <sub>Rotate Vector3 using Transform</sub>                                                        |
+| vec2($x: Float, $y: Float): Vector2                                                              |
+| <sub>Create Vector2</sub>                                                                        |
+| vec2.computeDotProduct($a: Vector2, $b: Vector2): Float                                          |
+| <sub>Compute Vector2 Dot Product</sub>                                                           |
+| vec2.computeLength($vec2: Vector2): Float                                                        |
+| <sub>Compute Vector2 Length</sub>                                                                |
+| vec2.computeLengthSquared($vec2: Vector2): Float                                                 |
+| <sub>Compute Vector2 Squared Length</sub>                                                        |
+| vec2.getX($vec2: Vector2): Float                                                                 |
+| <sub>Return Vector2 X Component</sub>                                                            |
+| vec2.getY($vec2: Vector2): Float                                                                 |
+| <sub>Return Vector2 Y Component</sub>                                                            |
+| vec2.normalize($vec2: Vector2): Vector2                                                          |
+| <sub>Normalize Vector2</sub>                                                                     |
+| vec3($x: Float, $y: Float, $z: Float): Vector3                                                   |
+| <sub>Create Vector3</sub>                                                                        |
+| vec3.computeAngle($a: Vector3, $b: Vector3, $n: Vector3): Float                                  |
+| <sub>Compute Angle between two Vector3</sub>                                                     |
+| vec3.computeCrossProduct($a: Vector3, $b: Vector3): Vector3                                      |
+| <sub>Compute Vector3 Cross Product</sub>                                                         |
+| vec3.computeDotProduct($a: Vector3, $b: Vector3): Float                                          |
+| <sub>Compute Vector3 Dot Product</sub>                                                           |
+| vec3.computeLength($vec3: Vector3): Float                                                        |
+| <sub>Compute Vector3 Length</sub>                                                                |
+| vec3.computeLengthSquared($vec3: Vector3): Float                                                 |
+| <sub>Compute Vector3 Squared Length</sub>                                                        |
+| vec3.getX($vec3: Vector3): Float                                                                 |
+| <sub>Return Vector3 X Component</sub>                                                            |
+| vec3.getY($vec3: Vector3): Float                                                                 |
+| <sub>Return Vector3 Y Component</sub>                                                            |
+| vec3.getZ($vec3: Vector3): Float                                                                 |
+| <sub>Return Vector3 Z Component</sub>                                                            |
+| vec3.normalize($vec3: Vector3): Vector3                                                          |
+| <sub>Normalize Vector3</sub>                                                                     |
+| vec4($x: Float, $y: Float, $z: Float, $w: Float): Vector4                                        |
+| <sub>Create Vector4</sub>                                                                        |
+| vec4.computeDotProduct($a: Vector4, $b: Vector4): Float                                          |
+| <sub>Compute Vector4 Dot Product</sub>                                                           |
+| vec4.computeLength($vec4: Vector4): Float                                                        |
+| <sub>Compute Vector4 Length</sub>                                                                |
+| vec4.computeLengthSquared($vec4: Vector4): Float                                                 |
+| <sub>Compute Vector4 Squared Length</sub>                                                        |
+| vec4.getW($vec4: Vector4): Float                                                                 |
+| <sub>Return Vector4 W Component</sub>                                                            |
+| vec4.getX($vec4: Vector4): Float                                                                 |
+| <sub>Return Vector4 X Component</sub>                                                            |
+| vec4.getY($vec4: Vector4): Float                                                                 |
+| <sub>Return Vector4 Y Component</sub>                                                            |
+| vec4.getZ($vec4: Vector4): Float                                                                 |
+| <sub>Return Vector4 Z Component</sub>                                                            |
+| vec4.normalize($vec4: Vector4): Vector4                                                          |
+| <sub>Normalize Vector4</sub>                                                                     |
+| xml.createTag($name: String[, $attributes: Map[, $innerXML: String]]): String                    |
+| <sub>Create XML Tag</sub>                                                                        |
 
 # 7. MiniScript logic methods
 
