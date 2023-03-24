@@ -102,6 +102,13 @@ int main(int argc, char** argv)
 		vector<string> methods;
 		for (auto scriptMethod: scriptMethods) {
 			if (baseMiniScript->hasMethod(scriptMethod->getMethodName()) == true) continue;
+			string description;
+			description+= "| <sub>";
+			description+= methodDescriptions.get("miniscript.logicmethod." + scriptMethod->getMethodName(), "Not documented");
+			description+= "</sub>";
+			while (description.size() < 99) description+= " ";
+			description+= "|";
+			methods.push_back(description);
 			string method;
 			method+= "| ";
 			method+= scriptMethod->getMethodName();
@@ -141,6 +148,13 @@ int main(int argc, char** argv)
 		vector<string> methods;
 		for (auto scriptMethod: scriptMethods) {
 			if (baseMiniScript->hasMethod(scriptMethod->getMethodName()) == true) continue;
+			string description;
+			description+= "| <sub>";
+			description+= methodDescriptions.get("miniscript." + scriptMethod->getMethodName(), "Not documented");
+			description+= "</sub>";
+			while (description.size() < 99) description+= " ";
+			description+= "|";
+			methods.push_back(description);
 			string method;
 			method+= "| ";
 			method+= scriptMethod->getMethodName();
