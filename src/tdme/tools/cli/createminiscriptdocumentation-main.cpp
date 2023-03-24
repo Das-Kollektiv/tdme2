@@ -10,6 +10,7 @@
 #include <tdme/gui/scripting/GUIMiniScript.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/MiniScript.h>
+#include <tdme/utilities/Properties.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::set;
@@ -23,6 +24,7 @@ using tdme::engine::Version;
 using tdme::gui::scripting::GUIMiniScript;
 using tdme::utilities::Console;
 using tdme::utilities::MiniScript;
+using tdme::utilities::Properties;
 using tdme::utilities::StringTools;
 
 int main(int argc, char** argv)
@@ -30,6 +32,9 @@ int main(int argc, char** argv)
 	Console::println(string("createminiscriptdocumentation ") + Version::getVersion());
 	Console::println(Version::getCopyright());
 	Console::println();
+
+	Properties methodDescriptions;
+	methodDescriptions.load("resources/engine/code-completion", "tscript-methods.properties");
 
 	//
 	auto baseMiniScript = new MiniScript();
@@ -51,6 +56,13 @@ int main(int argc, char** argv)
 		auto scriptMethods = baseMiniScript->getMethods();
 		vector<string> methods;
 		for (auto scriptMethod: scriptMethods) {
+			string description;
+			description+= "| <sub>";
+			description+= methodDescriptions.get("miniscript.basemethod." + scriptMethod->getMethodName(), "Not documented");
+			description+= "</sub>";
+			while (description.size() < 99) description+= " ";
+			description+= "|";
+			methods.push_back(description);
 			string method;
 			method+= "| ";
 			method+= scriptMethod->getMethodName();
@@ -90,6 +102,13 @@ int main(int argc, char** argv)
 		vector<string> methods;
 		for (auto scriptMethod: scriptMethods) {
 			if (baseMiniScript->hasMethod(scriptMethod->getMethodName()) == true) continue;
+			string description;
+			description+= "| <sub>";
+			description+= methodDescriptions.get("miniscript.logicmethod." + scriptMethod->getMethodName(), "Not documented");
+			description+= "</sub>";
+			while (description.size() < 99) description+= " ";
+			description+= "|";
+			methods.push_back(description);
 			string method;
 			method+= "| ";
 			method+= scriptMethod->getMethodName();
@@ -129,6 +148,13 @@ int main(int argc, char** argv)
 		vector<string> methods;
 		for (auto scriptMethod: scriptMethods) {
 			if (baseMiniScript->hasMethod(scriptMethod->getMethodName()) == true) continue;
+			string description;
+			description+= "| <sub>";
+			description+= methodDescriptions.get("miniscript." + scriptMethod->getMethodName(), "Not documented");
+			description+= "</sub>";
+			while (description.size() < 99) description+= " ";
+			description+= "|";
+			methods.push_back(description);
 			string method;
 			method+= "| ";
 			method+= scriptMethod->getMethodName();
