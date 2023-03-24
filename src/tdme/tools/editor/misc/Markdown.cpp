@@ -43,6 +43,9 @@ const string Markdown::createGUIXML(const string& pathName, const string& fileNa
 		//
 		markdownLine = StringTools::replace(markdownLine, "\\<", "<");
 		markdownLine = StringTools::replace(markdownLine, "\\>", ">");
+		// TODO: support <sub> and </sub>
+		markdownLine = StringTools::replace(markdownLine, "<sub>", "");
+		markdownLine = StringTools::replace(markdownLine, "</sub>", "");
 		//
 		auto markdownLineTrimmed = StringTools::trim(markdownLine);
 		//
