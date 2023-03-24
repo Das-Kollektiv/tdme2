@@ -10,6 +10,7 @@
 #include <tdme/gui/scripting/GUIMiniScript.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/MiniScript.h>
+#include <tdme/utilities/Properties.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::set;
@@ -23,6 +24,7 @@ using tdme::engine::Version;
 using tdme::gui::scripting::GUIMiniScript;
 using tdme::utilities::Console;
 using tdme::utilities::MiniScript;
+using tdme::utilities::Properties;
 using tdme::utilities::StringTools;
 
 int main(int argc, char** argv)
@@ -30,6 +32,9 @@ int main(int argc, char** argv)
 	Console::println(string("createminiscriptdocumentation ") + Version::getVersion());
 	Console::println(Version::getCopyright());
 	Console::println();
+
+	Properties methodDescriptions;
+	methodDescriptions.load("resources/engine/code-completion", "tscript-methods.properties");
 
 	//
 	auto baseMiniScript = new MiniScript();
@@ -46,8 +51,8 @@ int main(int argc, char** argv)
 	// base methods
 	{
 		Console::println();
-		Console::println("| Methods                                                                                          |");
-		Console::println("|--------------------------------------------------------------------------------------------------|");
+		Console::println("| Methods                                                                                          | Description                                                                                      |");
+		Console::println("|--------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|");
 		auto scriptMethods = baseMiniScript->getMethods();
 		vector<string> methods;
 		for (auto scriptMethod: scriptMethods) {
@@ -75,6 +80,9 @@ int main(int argc, char** argv)
 			method+= "): ";
 			method+= MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType());
 			while (method.size() < 99) method+= " ";
+			method+= "|";
+			method+= methodDescriptions.get("miniscript.basemethod." + scriptMethod->getMethodName(), "Not documented");
+			while (method.size() < 199) method+= " ";
 			method+= "|";
 			methods.push_back(method);
 		}
