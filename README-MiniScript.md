@@ -741,9 +741,9 @@ Reading all keys as array from set:
 | set.remove(=$set: Set, $key: String): Void                                                       |
 | <sub>Create String</sub>                                                                         |
 | string($string: String): String                                                                  |
-| <sub>Not documented</sub>                                                                        |
+| <sub>Test if String Value is a Float Number</sub>                                                |
 | string.isFloat($string: String): Boolean                                                         |
-| <sub>Not documented</sub>                                                                        |
+| <sub>Test if String Value is a Integer Number</sub>                                              |
 | string.isInteger($string: String): Boolean                                                       |
 | <sub>Return Character of String at given Position</sub>                                          |
 | string.charAt($string: String, $index: Integer): String                                          |
@@ -787,7 +787,7 @@ Reading all keys as array from set:
 | string.trim($string: String): String                                                             |
 | <sub>Subtract</sub>                                                                              |
 | sub($a: Mixed, $b: Mixed): Mixed                                                                 |
-| <sub>Not documented</sub>                                                                        |
+| <sub>Get Time as String</sub>                                                                    |
 | time.getAsString([$format: String]): String                                                      |
 | <sub>Get Current Time in Milliseconds</sub>                                                      |
 | time.getCurrentMillis(): Integer                                                                 |
