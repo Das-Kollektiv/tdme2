@@ -88,7 +88,7 @@ void OctTreePartition::addEntity(Entity* entity)
 	} else {
 		entity->setUniquePartitionId(entityUniquePartitionIdMappingIt->second);
 	}
-    // frustum bounding box
+	// frustum bounding box
 	auto boundingBox = entity->getBoundingBoxTransformed();
 	// find, create root nodes if not exists
 	auto minXPartition = static_cast< int32_t >(Math::floor(boundingBox->getMin().getX() / PARTITION_SIZE_MAX));
