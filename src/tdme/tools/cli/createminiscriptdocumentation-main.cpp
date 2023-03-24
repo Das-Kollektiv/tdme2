@@ -56,6 +56,13 @@ int main(int argc, char** argv)
 		auto scriptMethods = baseMiniScript->getMethods();
 		vector<string> methods;
 		for (auto scriptMethod: scriptMethods) {
+			string description;
+			description+= "| <sub>";
+			description+= methodDescriptions.get("miniscript.basemethod." + scriptMethod->getMethodName(), "Not documented");
+			description+= "</sub>";
+			while (description.size() < 99) description+= " ";
+			description+= "|";
+			methods.push_back(description);
 			string method;
 			method+= "| ";
 			method+= scriptMethod->getMethodName();
@@ -82,13 +89,6 @@ int main(int argc, char** argv)
 			while (method.size() < 99) method+= " ";
 			method+= "|";
 			methods.push_back(method);
-			string description;
-			description+= "| <sub>";
-			description+= methodDescriptions.get("miniscript.basemethod." + scriptMethod->getMethodName(), "Not documented");
-			description+= "</sub>";
-			while (description.size() < 99) description+= " ";
-			description+= "|";
-			methods.push_back(description);
 		}
 		for (auto& method: methods) Console::println(method);
 	}
