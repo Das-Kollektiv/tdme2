@@ -958,57 +958,6 @@ public:
 		}
 
 		/**
-		 * Get array value from given variable
-		 * @param value value
-		 * @param optional optional
-		 * @return success
-		 */
-		inline bool getArrayValue(vector<ScriptVariable>& value, bool optional = false) const {
-			switch(type) {
-				case TYPE_ARRAY:
-					value = getArrayValueReference();
-					return true;
-				default:
-					return optional;
-			}
-			return false;
-		}
-
-		/**
-		 * Get map value from given variable
-		 * @param value value
-		 * @param optional optional
-		 * @return success
-		 */
-		inline bool getMapValue(unordered_map<string, ScriptVariable>& value, bool optional = false) const {
-			switch(type) {
-				case TYPE_MAP:
-					value = getMapValueReference();
-					return true;
-				default:
-					return optional;
-			}
-			return false;
-		}
-
-		/**
-		 * Get set value from given variable
-		 * @param value value
-		 * @param optional optional
-		 * @return success
-		 */
-		inline bool getSetValue(unordered_set<string>& value, bool optional = false) const {
-			switch(type) {
-				case TYPE_SET:
-					value = getSetValueReference();
-					return true;
-				default:
-					return optional;
-			}
-			return false;
-		}
-
-		/**
 		 * Set boolean value from given value into variable
 		 * @param value value
 		 */
@@ -2969,34 +2918,6 @@ public:
 		if (idx >= arguments.size()) return optional;
 		auto& argument = arguments[idx];
 		return argument.getTransformValue(value, optional);
-	}
-
-	/**
-	 * Get array value from given variable
-	 * @param arguments arguments
-	 * @param idx argument index
-	 * @param value value
-	 * @param optional optional
-	 * @return success
-	 */
-	inline static bool getArrayValue(const span<ScriptVariable>& arguments, int idx, vector<ScriptVariable>& value, bool optional = false) {
-		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
-		return argument.getArrayValue(value, optional);
-	}
-
-	/**
-	 * Get map value from given variable
-	 * @param arguments arguments
-	 * @param idx argument index
-	 * @param value value
-	 * @param optional optional
-	 * @return success
-	 */
-	inline static bool getMapValue(const span<ScriptVariable>& arguments, int idx, unordered_map<string, ScriptVariable>& value, bool optional = false) {
-		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
-		return argument.getMapValue(value, optional);
 	}
 
 	/**

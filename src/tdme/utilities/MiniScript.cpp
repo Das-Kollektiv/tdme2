@@ -417,56 +417,74 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 						break;
 					case TYPE_VECTOR2:
 						{
-							Vector2 vector3Value;
-							argumentOk = getVector2Value(argumentValues, argumentIdx, vector3Value, argumentType.optional);
+							argumentOk =
+								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
+									argumentType.optional:
+									argumentValues[argumentIdx].type == TYPE_VECTOR2;
 							break;
 						}
 					case TYPE_VECTOR3:
 						{
-							Vector3 vector3Value;
-							argumentOk = getVector3Value(argumentValues, argumentIdx, vector3Value, argumentType.optional);
+							argumentOk =
+								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
+									argumentType.optional:
+									argumentValues[argumentIdx].type == TYPE_VECTOR3;
 							break;
 						}
 					case TYPE_VECTOR4:
 						{
-							Vector4 vector3Value;
-							argumentOk = getVector4Value(argumentValues, argumentIdx, vector3Value, argumentType.optional);
+							argumentOk =
+								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
+									argumentType.optional:
+									argumentValues[argumentIdx].type == TYPE_VECTOR4;
 							break;
 						}
 					case TYPE_QUATERNION:
 						{
-							Quaternion quaternionValue;
-							argumentOk = getQuaternionValue(argumentValues, argumentIdx, quaternionValue, argumentType.optional);
+							argumentOk =
+								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
+									argumentType.optional:
+									argumentValues[argumentIdx].type == TYPE_QUATERNION;
 							break;
 						}
 					case TYPE_MATRIX3x3:
 						{
-							Matrix2D3x3 matrix3x3Value;
-							argumentOk = getMatrix3x3Value(argumentValues, argumentIdx, matrix3x3Value, argumentType.optional);
+							argumentOk =
+								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
+									argumentType.optional:
+									argumentValues[argumentIdx].type == TYPE_MATRIX3x3;
 							break;
 						}
 					case TYPE_MATRIX4x4:
 						{
-							Matrix4x4 matrix4x4Value;
-							argumentOk = getMatrix4x4Value(argumentValues, argumentIdx, matrix4x4Value, argumentType.optional);
+							argumentOk =
+								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
+									argumentType.optional:
+									argumentValues[argumentIdx].type == TYPE_MATRIX4x4;
 							break;
 						}
 					case TYPE_TRANSFORM:
 						{
-							Transform transformValue;
-							argumentOk = getTransformValue(argumentValues, argumentIdx, transformValue, argumentType.optional);
+							argumentOk =
+								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
+									argumentType.optional:
+									argumentValues[argumentIdx].type == TYPE_TRANSFORM;
 							break;
 						}
 					case TYPE_ARRAY:
 						{
-							vector<ScriptVariable> arrayValue;
-							argumentOk = getArrayValue(argumentValues, argumentIdx, arrayValue, argumentType.optional);
+							argumentOk =
+								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
+									argumentType.optional:
+									argumentValues[argumentIdx].type == TYPE_ARRAY;
 							break;
 						}
 					case TYPE_MAP:
 						{
-							unordered_map<string, ScriptVariable> mapValue;
-							argumentOk = getMapValue(argumentValues, argumentIdx, mapValue, argumentType.optional);
+							argumentOk =
+								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
+									argumentType.optional:
+									argumentValues[argumentIdx].type == TYPE_MAP;
 							break;
 						}
 					case TYPE_PSEUDO_NUMBER:
