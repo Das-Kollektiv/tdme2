@@ -76,7 +76,7 @@ forTime takes a single argument "time" - it repeats the loop until "time" in mil
 	forTime(2000)
 		console.log($i, ": Hello World")
 		script.wait(500)
-		$i = $i + 1
+		++$i
 	end
 ...
 ```
@@ -87,7 +87,7 @@ forCondition takes a single boolean value as argument. The loop will be executed
 	$i = 0
 	forCondition($i < 5)
 		console.log("$ = ", $i)
-		$i = $i + 1
+		++$i
 	end
 ...
 ```
@@ -334,7 +334,7 @@ Iterating arrays using array.length() and array.get():
 	$i = 0
 	forCondition($i < array.length($array))
 		console.log($i + ": " + array.get($array, $i))
-		$i = $i + 1
+		++$i
 	end
 ...
 ```
@@ -345,7 +345,7 @@ Iterating arrays using array.length() and [] operator:
 	$i = 0
 	forCondition($i < array.length($array))
 		console.log($i + ": " + $array[$i])
-		$i = $i + 1
+		++$i
 	end
 ...
 ```
@@ -443,7 +443,7 @@ Reading all keys and values from map using map.get() and map.getKeys()
 	$i = 0
 	forCondition($i < array.length($mapKeys))
 		console.log($mapKeys[$i] + " = " + map.get($map, $mapKeys[$i]))
-		$i = $i + 1
+		++$i
 	end
 ...
 ```
