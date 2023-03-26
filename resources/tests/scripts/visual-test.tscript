@@ -47,13 +47,13 @@ on: nothing
 	forTime(2000)
 		console.log($i, ": Hello World")
 		script.wait(500)
-		$i = $i + 1
+		++$i
 	end
 	$i = 1
 	forCondition($i != 6)
 		console.log($i, ": Hello World")
 		script.wait(500)
-		$i = $i + 1
+		++$i
 	end
 	# loops + if, elseif, else, end
 	$i = 1
@@ -70,7 +70,7 @@ on: nothing
 		else
 			console.log("else: ", $i)
 		end
-		$i = $i + 1
+		++$i
 	end
 	# 
 	script.stop()

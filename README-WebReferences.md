@@ -26,6 +26,7 @@
   - http://www.zedwood.com/article/cpp-utf8-char-to-codepoint
   - https://aras-p.info/blog/2020/12/08/Texture-Compression-in-2020/
   - https://asmaloney.com/2017/08/code/crash-reporting-for-mingw-32-windows-and-clang-macos-with-qt/
+  - https://en.cppreference.com/w/cpp/language/operator_precedence
   - https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
   - https://forum.unity.com/threads/how-do-i-find-the-closest-point-on-a-line.340058/
   - https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821

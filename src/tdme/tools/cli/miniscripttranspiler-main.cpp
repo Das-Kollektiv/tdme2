@@ -325,6 +325,14 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".line = " + to_string(script.line) + "," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".condition = \"" + StringTools::replace(script.condition, "\"", "\\\"") + "\"," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".executableCondition = \"" + StringTools::replace(script.executableCondition, "\"", "\\\"") + "\"," + "\n";
+			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".conditionStatement = {" + "\n";
+			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + ".line = " + to_string(script.conditionStatement.line) + "," + "\n";
+			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + ".statementIdx = " + to_string(script.conditionStatement.statementIdx) + "," + "\n";
+			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + ".statement = \"" + StringTools::replace(script.conditionStatement.statement, "\"", "\\\"") + "\"," + "\n";
+			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + ".executableStatement = \"" + StringTools::replace(script.conditionStatement.executableStatement, "\"", "\\\"") + "\"," + "\n";
+			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + ".gotoStatementIdx = " + to_string(script.conditionStatement.gotoStatementIdx) + "\n";
+			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "}," + "\n";
+			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".conditionSyntaxTree = {}," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".name = \"" + script.name + "\"," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".emitCondition = " + (script.emitCondition == true?"true":"false") + "," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".statements = {" + "\n";
@@ -340,6 +348,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 				statementIdx++;
 			}
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "}," + "\n";
+			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".syntaxTree = {},\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".arguments = {\n";
 			auto argumentIdx = 0;
 			for (auto& argument: script.arguments) {
