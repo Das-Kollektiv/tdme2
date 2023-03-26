@@ -72,9 +72,14 @@ class tdme::utilities::MiniScript {
 
 public:
 	enum ScriptOperator {
+		// see: https://en.cppreference.com/w/cpp/language/operator_precedence
 		OPERATOR_NONE,
+		// priority 2
+		OPERATOR_INCREMENT,
+		OPERATOR_DECREMENT,
 		// priority 3
 		OPERATOR_NOT,
+		OPERATOR_BITWISENOT,
 		// priority 5
 		OPERATOR_DIVISION,
 		OPERATOR_MULTIPLICATION,
@@ -90,6 +95,12 @@ public:
 		// priority 10
 		OPERATOR_EQUALS,
 		OPERATOR_NOTEQUAL,
+		// priority 11
+		OPERATOR_BITWISEAND,
+		// priority 12
+		OPERATOR_BITWISEXOR,
+		// priority 12
+		OPERATOR_BITWISEOR,
 		// priority 14
 		OPERATOR_AND,
 		// priority 15
@@ -2735,7 +2746,10 @@ public:
 	inline static string getOperatorAsString(ScriptOperator scriptOperator) {
 		switch(scriptOperator) {
 			case(OPERATOR_NONE): return "NONE";
+			case(OPERATOR_INCREMENT): return "++";
+			case(OPERATOR_DECREMENT): return "--";
 			case(OPERATOR_NOT): return "!";
+			case(OPERATOR_BITWISENOT): return "~";
 			case(OPERATOR_MULTIPLICATION): return "*";
 			case(OPERATOR_DIVISION): return "/";
 			case(OPERATOR_MODULO): return "%";
@@ -2747,6 +2761,9 @@ public:
 			case(OPERATOR_GREATEREQUALS): return ">=";
 			case(OPERATOR_EQUALS): return "==";
 			case(OPERATOR_NOTEQUAL): return "!=";
+			case(OPERATOR_BITWISEAND): return "&";
+			case(OPERATOR_BITWISEXOR): return "^";
+			case(OPERATOR_BITWISEOR): return "|";
 			case(OPERATOR_AND): return "&&";
 			case(OPERATOR_OR): return "||";
 			case(OPERATOR_SET): return "=";

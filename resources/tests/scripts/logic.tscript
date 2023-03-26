@@ -115,7 +115,7 @@ function: updateLogic()
 	if ($GLOBAL.pathFinding.pathIdx >= 0)
 		$GLOBAL.velocity = getPathFindingMovementDirection() * $GLOBAL.speed 
 		if (vec3.computeLengthSquared($GLOBAL.velocity) < math.square(math.EPSILON()))
-			$GLOBAL.pathFinding.pathIdx = $GLOBAL.pathFinding.pathIdx + 1
+			++$GLOBAL.pathFinding.pathIdx
 			if ($GLOBAL.pathFinding.pathIdx >= array.length($GLOBAL.pathFinding.path))
 				$GLOBAL.pathFinding.pathIdx = -1
 			end

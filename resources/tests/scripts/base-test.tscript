@@ -25,6 +25,18 @@ on: nothing
 	console.log("2 > 1: ", 2 > 1)
 	console.log("2 < 1: ", 2 < 1)
 	console.log("7 % 4: ", 7 % 4)
+	$i = 2
+	console.log("$i = 2 && ++$i: ", ++$i)
+	$i = 2
+	console.log("$i = 2 && --$i: ", --$i)
+	console.log("--------------------------")
+	console.log("Check int bit operations")
+	console.log("--------------------------")
+	console.log("~1 & 255: ", ~1 & 255)
+	console.log("~0 & 255: ", ~0 & 255)
+	console.log("128 | 64: ", 128 | 64)
+	console.log("128 ^ 64: ", 128 ^ 64)
+	console.log("64 ^ 64: ", 64 ^ 64)
 	console.log("-------------------------")
 	console.log("Check float computation")
 	console.log("-------------------------")
@@ -249,7 +261,7 @@ on: nothing
 	forTime(2000)
 		console.log($i, ": Hello World")
 		script.wait(500)
-		$i = $i + 1
+		++$i
 	end
 	console.log("-------------------------")
 	console.log("Lets check forCondition")
@@ -258,7 +270,7 @@ on: nothing
 	forCondition($i != 6)
 		console.log($i, ": Hello World")
 		script.wait(500)
-		$i = $i + 1
+		++$i
 	end
 	console.log("i -> ", $i)
 	console.log("---------------------------------------------")
@@ -278,7 +290,7 @@ on: nothing
 		else
 			console.log("else: ", $i)
 		end
-		$i = $i + 1
+		++$i
 	end
 	$i = 1
 	$j = 2
