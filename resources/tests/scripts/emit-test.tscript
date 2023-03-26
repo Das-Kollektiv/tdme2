@@ -49,10 +49,10 @@ on: emittest
 	forCondition($i < 500000)
 		$a = 123 + 456 * (25 / 12) + (7.5 * 12.25) - 8
 		if ($j == 0)
-			$k = $k + 1
+			++$k
 		end
-		$i = $i + 1
-		$j = $j + 1
+		++$i
+		++$j
 		if ($j == 2)
 			$j = 0
 		end

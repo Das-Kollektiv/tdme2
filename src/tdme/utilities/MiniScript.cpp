@@ -2513,7 +2513,7 @@ void MiniScript::registerMethods() {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "notequal";
+				return "notEqual";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				if (argumentValues.size() != 2) {
@@ -2657,7 +2657,7 @@ void MiniScript::registerMethods() {
 					ScriptVariableType::TYPE_BOOLEAN),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "greaterequals";
+				return "greaterEquals";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_STRING) == true) {
@@ -2749,7 +2749,7 @@ void MiniScript::registerMethods() {
 					ScriptVariableType::TYPE_BOOLEAN),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "lesserequals";
+				return "lesserEquals";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_STRING) == true) {
@@ -6632,6 +6632,208 @@ void MiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodJSONDeserialize(this));
+	}
+	{
+		//
+		class ScriptMethodIncrement: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodIncrement(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "variable", .optional = false, .assignBack = true },
+					},
+					ScriptVariableType::TYPE_INTEGER
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "prefixIncrement";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				int64_t value;
+				if (MiniScript::getIntegerValue(argumentValues, 0, value, false) == false) {
+					Console::println("ScriptMethodIncrement::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
+					miniScript->startErrorScript();
+				} else {
+					++value;
+					argumentValues[0] = value;
+					returnValue.setValue(value);
+				}
+			}
+			ScriptOperator getOperator() override {
+				return OPERATOR_INCREMENT;
+			}
+		};
+		registerMethod(new ScriptMethodIncrement(this));
+	}
+	{
+		//
+		class ScriptMethodDecrement: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodDecrement(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "variable", .optional = false, .assignBack = true },
+					},
+					ScriptVariableType::TYPE_INTEGER
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "prefixDecrement";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				int64_t value;
+				if (MiniScript::getIntegerValue(argumentValues, 0, value, false) == false) {
+					Console::println("ScriptMethodDecrement::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
+					miniScript->startErrorScript();
+				} else {
+					--value;
+					argumentValues[0] = value;
+					returnValue.setValue(value);
+				}
+			}
+			ScriptOperator getOperator() override {
+				return OPERATOR_DECREMENT;
+			}
+		};
+		registerMethod(new ScriptMethodDecrement(this));
+	}
+	//
+	{
+		//
+		class ScriptMethodBitwiseNot: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBitwiseNot(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "value", .optional = false, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_INTEGER),
+					miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "bitwiseNot";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				int64_t value;
+				if (MiniScript::getIntegerValue(argumentValues, 0, value, false) == false) {
+					Console::println("ScriptMethodBitwiseNot::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
+					miniScript->startErrorScript();
+				} else {
+					returnValue.setValue(~value);
+				}
+			}
+			ScriptOperator getOperator() override {
+				return OPERATOR_BITWISENOT;
+			}
+		};
+		registerMethod(new ScriptMethodBitwiseNot(this));
+	}
+	//
+	{
+		class ScriptMethodBitwiseAnd: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBitwiseAnd(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "a", .optional = false, .assignBack = false },
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "b", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_INTEGER),
+					miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "bitwiseAnd";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				int64_t valueA;
+				int64_t valueB;
+				if (MiniScript::getIntegerValue(argumentValues, 0, valueA, false) == false ||
+					MiniScript::getIntegerValue(argumentValues, 1, valueB, false) == false) {
+					Console::println("ScriptMethodBitwiseAnd::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected, @ argument 1: integer expected");
+					miniScript->startErrorScript();
+				} else {
+					returnValue.setValue(valueA & valueB);
+				}
+			}
+			ScriptOperator getOperator() override {
+				return OPERATOR_BITWISEAND;
+			}
+		};
+		registerMethod(new ScriptMethodBitwiseAnd(this));
+	}
+	//
+	{
+		class ScriptMethodBitwiseOr: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBitwiseOr(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "a", .optional = false, .assignBack = false },
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "b", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_INTEGER),
+					miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "bitwiseOr";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				int64_t valueA;
+				int64_t valueB;
+				if (MiniScript::getIntegerValue(argumentValues, 0, valueA, false) == false ||
+					MiniScript::getIntegerValue(argumentValues, 1, valueB, false) == false) {
+					Console::println("ScriptMethodBitwiseOr::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected, @ argument 1: integer expected");
+					miniScript->startErrorScript();
+				} else {
+					returnValue.setValue(valueA | valueB);
+				}
+			}
+			ScriptOperator getOperator() override {
+				return OPERATOR_BITWISEOR;
+			}
+		};
+		registerMethod(new ScriptMethodBitwiseOr(this));
+	}
+	//
+	{
+		class ScriptMethodBitwiseXor: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBitwiseXor(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "a", .optional = false, .assignBack = false },
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "b", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_INTEGER),
+					miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "bitwiseXor";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				int64_t valueA;
+				int64_t valueB;
+				if (MiniScript::getIntegerValue(argumentValues, 0, valueA, false) == false ||
+					MiniScript::getIntegerValue(argumentValues, 1, valueB, false) == false) {
+					Console::println("ScriptMethodBitwiseXor::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected, @ argument 1: integer expected");
+					miniScript->startErrorScript();
+				} else {
+					returnValue.setValue(valueA ^ valueB);
+				}
+			}
+			ScriptOperator getOperator() override {
+				return OPERATOR_BITWISEXOR;
+			}
+		};
+		registerMethod(new ScriptMethodBitwiseXor(this));
 	}
 
 	// register math functions

@@ -3,25 +3,32 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Version.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/MiniScript.h>
+#include <tdme/utilities/Properties.h>
 
 using std::string;
 using std::vector;
 
 using tdme::engine::Version;
+using tdme::gui::GUIParser;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
 using tdme::utilities::MiniScript;
+using tdme::utilities::Properties;
 
 int main(int argc, char** argv)
 {
 	Console::println(string("createminiscriptcodecompletion ") + Version::getVersion());
 	Console::println(Version::getCopyright());
 	Console::println();
+
+	Properties methodDescriptions;
+	methodDescriptions.load("resources/engine/code-completion", "tscript-methods.properties");
 
 	//
 	auto miniScript = new MiniScript();
@@ -45,9 +52,13 @@ int main(int argc, char** argv)
 	vector<string> methods;
 	for (auto scriptMethod: scriptMethods) {
 		keywords1.push_back(scriptMethod->getMethodName());
+		string description;
+		if (description.empty() == true) description = methodDescriptions.get("miniscript.basemethod." + scriptMethod->getMethodName(), string());
+		if (description.empty() == true) description = methodDescriptions.get("miniscript.logicmethod." + scriptMethod->getMethodName(), string());
+		if (description.empty() == true) description = methodDescriptions.get("miniscript." + scriptMethod->getMethodName(), string());
 		Console::println("Adding method: " + scriptMethod->getMethodName());
 		lines.push_back("	<keyword name=\"" + scriptMethod->getMethodName() + "\" func=\"yes\">");
-		lines.push_back("		<overload return-value=\"" + MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType()) + "\" descr=\"\">");
+		lines.push_back("		<overload return-value=\"" + MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType()) + "\" descr=\"" + GUIParser::escapeQuotes(description) + "\">");
 		for (auto& argumentType: scriptMethod->getArgumentTypes()) {
 			string argumentValueString;
 			if (argumentType.optional == true) argumentValueString+= "[";

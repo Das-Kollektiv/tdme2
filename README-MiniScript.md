@@ -76,7 +76,7 @@ forTime takes a single argument "time" - it repeats the loop until "time" in mil
 	forTime(2000)
 		console.log($i, ": Hello World")
 		script.wait(500)
-		$i = $i + 1
+		++$i
 	end
 ...
 ```
@@ -87,7 +87,7 @@ forCondition takes a single boolean value as argument. The loop will be executed
 	$i = 0
 	forCondition($i < 5)
 		console.log("$ = ", $i)
-		$i = $i + 1
+		++$i
 	end
 ...
 ```
@@ -334,7 +334,7 @@ Iterating arrays using array.length() and array.get():
 	$i = 0
 	forCondition($i < array.length($array))
 		console.log($i + ": " + array.get($array, $i))
-		$i = $i + 1
+		++$i
 	end
 ...
 ```
@@ -345,7 +345,7 @@ Iterating arrays using array.length() and [] operator:
 	$i = 0
 	forCondition($i < array.length($array))
 		console.log($i + ": " + $array[$i])
-		$i = $i + 1
+		++$i
 	end
 ...
 ```
@@ -443,7 +443,7 @@ Reading all keys and values from map using map.get() and map.getKeys()
 	$i = 0
 	forCondition($i < array.length($mapKeys))
 		console.log($mapKeys[$i] + " = " + map.get($map, $mapKeys[$i]))
-		$i = $i + 1
+		++$i
 	end
 ...
 ```
@@ -553,6 +553,14 @@ Reading all keys as array from set:
 | array.reverse(=$array: Array): Void                                                              |
 | <sub>Sort Array</sub>                                                                            |
 | array.sort(=$array: Array, $function: String): Void                                              |
+| <sub>Bitwise And</sub>                                                                           |
+| bitwiseAnd($a: Integer, $b: Integer): Integer                                                    |
+| <sub>Bitwise Not</sub>                                                                           |
+| bitwiseNot($value: Integer): Integer                                                             |
+| <sub>Bitwise Or</sub>                                                                            |
+| bitwiseOr($a: Integer, $b: Integer): Integer                                                     |
+| <sub>Bitwise Xor</sub>                                                                           |
+| bitwiseXor($a: Integer, $b: Integer): Integer                                                    |
 | <sub>Create Bool</sub>                                                                           |
 | bool($bool: Boolean): Boolean                                                                    |
 | <sub>Print to Console</sub>                                                                      |
@@ -576,7 +584,7 @@ Reading all keys as array from set:
 | <sub>Greater</sub>                                                                               |
 | greater($a: Mixed, $b: Mixed): Boolean                                                           |
 | <sub>Greater Equals</sub>                                                                        |
-| greaterequals($a: Mixed, $b: Mixed): Boolean                                                     |
+| greaterEquals($a: Mixed, $b: Mixed): Boolean                                                     |
 | <sub>If</sub>                                                                                    |
 | if($condition: Boolean): Void                                                                    |
 | <sub>Create Integer</sub>                                                                        |
@@ -588,7 +596,7 @@ Reading all keys as array from set:
 | <sub>Lesser</sub>                                                                                |
 | lesser($a: Mixed, $b: Mixed): Boolean                                                            |
 | <sub>Lesser Equals</sub>                                                                         |
-| lesserequals($a: Mixed, $b: Mixed): Boolean                                                      |
+| lesserEquals($a: Mixed, $b: Mixed): Boolean                                                      |
 | <sub>Create Map</sub>                                                                            |
 | map(): Map                                                                                       |
 | <sub>Has Entry by Key</sub>                                                                      |
@@ -692,9 +700,13 @@ Reading all keys as array from set:
 | <sub>Logical Not</sub>                                                                           |
 | not($bool: Boolean): Boolean                                                                     |
 | <sub>Logical Not Equal</sub>                                                                     |
-| notequal($a: Mixed, $b: Mixed): Boolean                                                          |
+| notEqual($a: Mixed, $b: Mixed): Boolean                                                          |
 | <sub>Logical Or</sub>                                                                            |
 | or($a: Boolean, $b: Boolean): Boolean                                                            |
+| <sub>Prefix Decrement</sub>                                                                      |
+| prefixDecrement(=$variable: Integer): Integer                                                    |
+| <sub>Prefix Increment</sub>                                                                      |
+| prefixIncrement(=$variable: Integer): Integer                                                    |
 | <sub>Compute 4x4 Rotation Matrix from Quaternion</sub>                                           |
 | quaternion.computeMatrix($quaternion: Quaternion): Matrix4x4                                     |
 | <sub>Create Identity Quaternion</sub>                                                            |
@@ -1340,20 +1352,27 @@ Reading all keys as array from set:
 
 # 9. Operators
 
+
 | Op | Method                                                                                      |
 |----|---------------------------------------------------------------------------------------------|
 | !  | not($bool: Boolean): Boolean                                                                |
-| != | notequal($a: Mixed, $b: Mixed): Boolean                                                     |
+| != | notEqual($a: Mixed, $b: Mixed): Boolean                                                     |
 | %  | mod($value: Number, $range: Number): Number                                                 |
+| &  | bitwiseAnd($a: Integer, $b: Integer): Integer                                               |
 | && | and($a: Boolean, $b: Boolean): Boolean                                                      |
 | *  | mul($a: Mixed, $b: Mixed): Mixed                                                            |
 | +  | add($a: Mixed, $b: Mixed): Mixed                                                            |
+| ++ | prefixIncrement(=$variable: Integer): Integer                                               |
 | -  | sub($a: Mixed, $b: Mixed): Mixed                                                            |
+| -- | prefixDecrement(=$variable: Integer): Integer                                               |
 | /  | div($a: Mixed, $b: Mixed): Mixed                                                            |
 | <  | lesser($a: Mixed, $b: Mixed): Boolean                                                       |
-| <= | lesserequals($a: Mixed, $b: Mixed): Boolean                                                 |
+| <= | lesserEquals($a: Mixed, $b: Mixed): Boolean                                                 |
 | =  | setVariable($variable: String, $value: Mixed): Mixed                                        |
 | == | equals($a: Mixed, $b: Mixed): Boolean                                                       |
 | >  | greater($a: Mixed, $b: Mixed): Boolean                                                      |
-| >= | greaterequals($a: Mixed, $b: Mixed): Boolean                                                |
+| >= | greaterEquals($a: Mixed, $b: Mixed): Boolean                                                |
+| \| | bitwiseOr($a: Integer, $b: Integer): Integer                                                |
 | \|\|| or($a: Boolean, $b: Boolean): Boolean                                                      |
+| ^  | bitwiseXor($a: Integer, $b: Integer): Integer                                               |
+| ~  | bitwiseNot($value: Integer): Integer                                                        |

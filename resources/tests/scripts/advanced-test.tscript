@@ -46,20 +46,20 @@ on: nothing
 	$i = 0
 	forCondition($i < array.length($array))
 		console.log($i + ": " + array.get($array, $i))
-		$i = $i + 1
+		++$i
 	end 
 	console.log("array iteration with [] operator: ")
 	$i = 0
 	forCondition($i < array.length($array))
 		console.log($i + ": " + $array[$i])
-		$i = $i + 1
+		++$i
 	end
 	console.log("array iteration with [] opertator and some index math: ")
 	$i = 0
 	forCondition($i < array.length($array) / 2)
 		console.log($i + "-a: " + $array[$i * 2 + 0])
 		console.log($i + "-b: " + $array[$i * 2 + 1])
-		$i = $i + 1
+		++$i
 	end
 	console.log("array removal of 123, 1234, 12345 using array.removeOf")
 	array.removeOf($array, 123)
@@ -116,7 +116,7 @@ on: nothing
 	$i = 0
 	forCondition($i < array.length($mapKeys))
 		console.log($mapKeys[$i] + " = " + map.get($map, $mapKeys[$i]))
-		$i = $i + 1
+		++$i
 	end
 	console.log("---------")
 	console.log("Sets")
