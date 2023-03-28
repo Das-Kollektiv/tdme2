@@ -86,8 +86,8 @@ PathFinding::~PathFinding() {
 
 bool PathFinding::isWalkableInternal(float x, float y, float z, float& height, float stepSize, float scaleActorBoundingVolumes, bool flowMapRequest, uint16_t collisionTypeIds, bool ignoreStepUpMax) {
 	// navigation map
-	//	TODO: step size is currently 1m defined in Terrain.h, use Terrain::STEP_SIZE
-	if (navigationMap != nullptr && navigationMap->getTextureData()->get(static_cast<int>(z) * static_cast<int>(navigationMap->getTextureWidth()) * 3 + static_cast<int>(x) * 3) == 255) {
+	if (navigationMap != nullptr &&
+		navigationMap->getTextureData()->get(static_cast<int>((z * 2.0f) / Terrain::STEP_SIZE) * static_cast<int>(navigationMap->getTextureWidth()) * 3 + static_cast<int>((x * 2.0f) / Terrain::STEP_SIZE) * 3) == 255) {
 		return false;
 	}
 	//
@@ -116,8 +116,8 @@ bool PathFinding::isWalkableInternal(float x, float y, float z, float& height, f
 
 bool PathFinding::isSlopeWalkableInternal(float x, float y, float z, float successorX, float successorY, float successorZ, float stepSize, float scaleActorBoundingVolumes, bool flowMapRequest, uint16_t collisionTypeIds) {
 	// navigation map
-	//	TODO: step size is currently 1m defined in Terrain.h, use Terrain::STEP_SIZE
-	if (navigationMap != nullptr && navigationMap->getTextureData()->get(static_cast<int>(z) * static_cast<int>(navigationMap->getTextureWidth()) * 3 + static_cast<int>(x) * 3) == 255) {
+	if (navigationMap != nullptr &&
+		navigationMap->getTextureData()->get(static_cast<int>((z * 2.0f) / Terrain::STEP_SIZE) * static_cast<int>(navigationMap->getTextureWidth()) * 3 + static_cast<int>((x * 2.0f) / Terrain::STEP_SIZE) * 3) == 255) {
 		return false;
 	}
 
