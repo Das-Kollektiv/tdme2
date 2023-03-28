@@ -30,6 +30,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/ModelTools.h>
 
@@ -64,8 +65,59 @@ using tdme::math::Matrix2D3x3;
 using tdme::math::Vector2;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::Float;
 using tdme::utilities::Integer;
 using tdme::utilities::ModelTools;
+
+Texture* Terrain::createTerrainNavigationMap(float width, float depth, vector<float>& terrainHeightVector, float maxNavigationSlope) {
+	auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(width / STEP_SIZE));
+	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(depth / STEP_SIZE));
+	//
+	auto walkMeshTextureByteBuffer = ByteBuffer(terrainHeightVectorVerticesPerX * terreinHeightVectorVerticesPerZ * 3);
+	//
+	for (float z = 0.0f; z < depth; z+= STEP_SIZE) {
+		for (float x = 0.0f; x < width; x+= STEP_SIZE) {
+
+			auto terrainHeightVectorX = static_cast<int>(x / STEP_SIZE);
+			auto terrainHeightVectorZ = static_cast<int>(z / STEP_SIZE);
+
+			auto topNormal = computeTerrainVertexNormal(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, terrainHeightVectorX, terrainHeightVectorZ - 1);
+			auto topLeftNormal = computeTerrainVertexNormal(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, terrainHeightVectorX - 1, terrainHeightVectorZ - 1);
+			auto leftNormal = computeTerrainVertexNormal(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, terrainHeightVectorX - 1, terrainHeightVectorZ);
+			auto normal = computeTerrainVertexNormal(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, terrainHeightVectorX, terrainHeightVectorZ);
+
+			auto terrainSlopeTop = Math::abs(180.0f / 3.14f * Math::acos(Math::clamp(Vector3::computeDotProduct(topNormal, Vector3(0.0f, 1.0f, 0.0f)), -1.0f, 1.0f)));
+			auto terrainSlopeTopLeft = Math::abs(180.0f / 3.14f * Math::acos(Math::clamp(Vector3::computeDotProduct(topLeftNormal, Vector3(0.0f, 1.0f, 0.0f)), -1.0f, 1.0f)));
+			auto terrainSlopeLeft = Math::abs(180.0f / 3.14f * Math::acos(Math::clamp(Vector3::computeDotProduct(leftNormal, Vector3(0.0f, 1.0f, 0.0f)), -1.0f, 1.0f)));
+			auto terrainSlope = Math::abs(180.0f / 3.14f * Math::acos(Math::clamp(Vector3::computeDotProduct(normal, Vector3(0.0f, 1.0f, 0.0f)), -1.0f, 1.0f)));
+			auto terrainSlopeMax = Math::max(terrainSlopeTop, Math::max(terrainSlopeTopLeft, Math::max(terrainSlopeLeft, terrainSlope)));
+			if (terrainSlopeMax > maxNavigationSlope) {
+				walkMeshTextureByteBuffer.put(255);
+				walkMeshTextureByteBuffer.put(0);
+				walkMeshTextureByteBuffer.put(0);
+			} else {
+				walkMeshTextureByteBuffer.put(0);
+				walkMeshTextureByteBuffer.put(255);
+				walkMeshTextureByteBuffer.put(0);
+			}
+		}
+	}
+	//
+	auto navigationMapTexture = new Texture(
+		"terrain-navigationmaptexture",
+		Texture::TEXTUREDEPTH_RGB,
+		Texture::TEXTUREFORMAT_RGB,
+		terrainHeightVectorVerticesPerX,
+		terreinHeightVectorVerticesPerZ,
+		terrainHeightVectorVerticesPerX,
+		terreinHeightVectorVerticesPerZ,
+		Texture::TEXTUREFORMAT_RGB,
+		walkMeshTextureByteBuffer
+	);
+	navigationMapTexture->acquireReference();
+	//
+	return navigationMapTexture;
+}
 
 void Terrain::createTerrainModels(float width, float depth, float y, vector<float>& terrainHeightVector, BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, bool createLODLevels)
 {

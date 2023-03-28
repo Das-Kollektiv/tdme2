@@ -215,6 +215,16 @@ public:
 	};
 
 	/**
+	 * Create terrain navigation map
+	 * @param width width
+	 * @param depth depth
+	 * @param terrainHeightVector terrain height vector
+	 * @param maxNavigationSlope max navigation slope
+	 * @return navigation map texture
+	 */
+	static Texture* createTerrainNavigationMap(float width, float depth, vector<float>& terrainHeightVector, float maxNavigationSlope = 30.0f);
+
+	/**
 	 * Create terrain models
 	 * @param width width
 	 * @param depth depth

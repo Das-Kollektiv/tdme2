@@ -13,6 +13,7 @@
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
@@ -20,6 +21,7 @@
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/PathFindingCustomTest.h>
 #include <tdme/utilities/Pool.h>
+#include <tdme/utilities/Terrain.h>
 #include <tdme/utilities/Time.h>
 
 using std::map;
@@ -35,6 +37,7 @@ using tdme::engine::physics::Body;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::OrientedBoundingBox;
+using tdme::engine::Texture;
 using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Vector3;
@@ -42,6 +45,7 @@ using tdme::utilities::Console;
 using tdme::utilities::Float;
 using tdme::utilities::PathFindingCustomTest;
 using tdme::utilities::Pool;
+using tdme::utilities::Terrain;
 using tdme::utilities::Time;
 
 using tdme::utilities::PathFinding;
@@ -77,9 +81,16 @@ PathFinding::PathFinding(
 }
 
 PathFinding::~PathFinding() {
+	if (navigationMap != nullptr) navigationMap->releaseReference();
 }
 
 bool PathFinding::isWalkableInternal(float x, float y, float z, float& height, float stepSize, float scaleActorBoundingVolumes, bool flowMapRequest, uint16_t collisionTypeIds, bool ignoreStepUpMax) {
+	// navigation map
+	//	TODO: step size is currently 1m defined in Terrain.h, use Terrain::STEP_SIZE
+	if (navigationMap != nullptr && navigationMap->getTextureData()->get(static_cast<int>(z) * static_cast<int>(navigationMap->getTextureWidth()) * 3 + static_cast<int>(x) * 3) == 255) {
+		return false;
+	}
+	//
 	tuple<uint8_t, uint8_t, int, int, int, uint16_t, bool> cacheId;
 	if (flowMapRequest == true) {
 		cacheId = tuple<uint8_t, uint8_t, int, int, int, uint16_t, bool> {
@@ -104,6 +115,13 @@ bool PathFinding::isWalkableInternal(float x, float y, float z, float& height, f
 }
 
 bool PathFinding::isSlopeWalkableInternal(float x, float y, float z, float successorX, float successorY, float successorZ, float stepSize, float scaleActorBoundingVolumes, bool flowMapRequest, uint16_t collisionTypeIds) {
+	// navigation map
+	//	TODO: step size is currently 1m defined in Terrain.h, use Terrain::STEP_SIZE
+	if (navigationMap != nullptr && navigationMap->getTextureData()->get(static_cast<int>(z) * static_cast<int>(navigationMap->getTextureWidth()) * 3 + static_cast<int>(x) * 3) == 255) {
+		return false;
+	}
+
+	//
 	float slopeAngle = 0.0f;
 
 	// slope angle and center
