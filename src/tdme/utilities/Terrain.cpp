@@ -73,12 +73,12 @@ Texture* Terrain::createTerrainNavigationMap(float width, float depth, vector<fl
 	auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(width / STEP_SIZE));
 	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(depth / STEP_SIZE));
 	//
-	auto walkMeshTextureByteBuffer = ByteBuffer(terrainHeightVectorVerticesPerX * 2 * terreinHeightVectorVerticesPerZ * 2 * 3);
+	auto navigationMapTextureByteBuffer = ByteBuffer(terrainHeightVectorVerticesPerX * 2 * terreinHeightVectorVerticesPerZ * 2 * 3);
 	for (auto z = 0; z < terreinHeightVectorVerticesPerZ * 2; z++) {
 		for (auto x = 0; x < terrainHeightVectorVerticesPerX * 2; x++) {
-			walkMeshTextureByteBuffer.put(0);
-			walkMeshTextureByteBuffer.put(0);
-			walkMeshTextureByteBuffer.put(0);
+			navigationMapTextureByteBuffer.put(0);
+			navigationMapTextureByteBuffer.put(0);
+			navigationMapTextureByteBuffer.put(0);
 		}
 	}
 	//
@@ -96,57 +96,57 @@ Texture* Terrain::createTerrainNavigationMap(float width, float depth, vector<fl
 			//
 			{
 				auto terrainSlopeTop = Math::abs(180.0f / 3.14f * Math::acos(Math::clamp(Vector3::computeDotProduct(topNormal, Vector3(0.0f, 1.0f, 0.0f)), -1.0f, 1.0f)));
-				walkMeshTextureByteBuffer.setPosition((terrainHeightVectorZ * 2 * terrainHeightVectorVerticesPerX * 2) * 3 + (terrainHeightVectorX * 2 + 1) * 3);
+				navigationMapTextureByteBuffer.setPosition((terrainHeightVectorZ * 2 * terrainHeightVectorVerticesPerX * 2) * 3 + (terrainHeightVectorX * 2 + 1) * 3);
 				if (terrainSlopeTop > maxNavigationSlope) {
-					walkMeshTextureByteBuffer.put(255);
-					walkMeshTextureByteBuffer.put(0);
-					walkMeshTextureByteBuffer.put(0);
+					navigationMapTextureByteBuffer.put(255);
+					navigationMapTextureByteBuffer.put(0);
+					navigationMapTextureByteBuffer.put(0);
 				} else {
-					walkMeshTextureByteBuffer.put(0);
-					walkMeshTextureByteBuffer.put(255);
-					walkMeshTextureByteBuffer.put(0);
+					navigationMapTextureByteBuffer.put(0);
+					navigationMapTextureByteBuffer.put(255);
+					navigationMapTextureByteBuffer.put(0);
 				}
 			}
 			//
 			{
 				auto terrainSlopeTopLeft = Math::abs(180.0f / 3.14f * Math::acos(Math::clamp(Vector3::computeDotProduct(topLeftNormal, Vector3(0.0f, 1.0f, 0.0f)), -1.0f, 1.0f)));
-				walkMeshTextureByteBuffer.setPosition((terrainHeightVectorZ * 2 * terrainHeightVectorVerticesPerX * 2) * 3 + terrainHeightVectorX * 2 * 3);
+				navigationMapTextureByteBuffer.setPosition((terrainHeightVectorZ * 2 * terrainHeightVectorVerticesPerX * 2) * 3 + terrainHeightVectorX * 2 * 3);
 				if (terrainSlopeTopLeft > maxNavigationSlope) {
-					walkMeshTextureByteBuffer.put(255);
-					walkMeshTextureByteBuffer.put(0);
-					walkMeshTextureByteBuffer.put(0);
+					navigationMapTextureByteBuffer.put(255);
+					navigationMapTextureByteBuffer.put(0);
+					navigationMapTextureByteBuffer.put(0);
 				} else {
-					walkMeshTextureByteBuffer.put(0);
-					walkMeshTextureByteBuffer.put(255);
-					walkMeshTextureByteBuffer.put(0);
+					navigationMapTextureByteBuffer.put(0);
+					navigationMapTextureByteBuffer.put(255);
+					navigationMapTextureByteBuffer.put(0);
 				}
 			}
 			//
 			{
 				auto terrainSlopeLeft = Math::abs(180.0f / 3.14f * Math::acos(Math::clamp(Vector3::computeDotProduct(leftNormal, Vector3(0.0f, 1.0f, 0.0f)), -1.0f, 1.0f)));
-				walkMeshTextureByteBuffer.setPosition(((terrainHeightVectorZ * 2 + 1) * terrainHeightVectorVerticesPerX * 2) * 3 + terrainHeightVectorX * 2 * 3);
+				navigationMapTextureByteBuffer.setPosition(((terrainHeightVectorZ * 2 + 1) * terrainHeightVectorVerticesPerX * 2) * 3 + terrainHeightVectorX * 2 * 3);
 				if (terrainSlopeLeft > maxNavigationSlope) {
-					walkMeshTextureByteBuffer.put(255);
-					walkMeshTextureByteBuffer.put(0);
-					walkMeshTextureByteBuffer.put(0);
+					navigationMapTextureByteBuffer.put(255);
+					navigationMapTextureByteBuffer.put(0);
+					navigationMapTextureByteBuffer.put(0);
 				} else {
-					walkMeshTextureByteBuffer.put(0);
-					walkMeshTextureByteBuffer.put(255);
-					walkMeshTextureByteBuffer.put(0);
+					navigationMapTextureByteBuffer.put(0);
+					navigationMapTextureByteBuffer.put(255);
+					navigationMapTextureByteBuffer.put(0);
 				}
 			}
 			//
 			{
 				auto terrainSlope = Math::abs(180.0f / 3.14f * Math::acos(Math::clamp(Vector3::computeDotProduct(normal, Vector3(0.0f, 1.0f, 0.0f)), -1.0f, 1.0f)));
-				walkMeshTextureByteBuffer.setPosition(((terrainHeightVectorZ * 2 + 1) * terrainHeightVectorVerticesPerX * 2) * 3 + (terrainHeightVectorX * 2 + 1) * 3);
+				navigationMapTextureByteBuffer.setPosition(((terrainHeightVectorZ * 2 + 1) * terrainHeightVectorVerticesPerX * 2) * 3 + (terrainHeightVectorX * 2 + 1) * 3);
 				if (terrainSlope > maxNavigationSlope) {
-					walkMeshTextureByteBuffer.put(255);
-					walkMeshTextureByteBuffer.put(0);
-					walkMeshTextureByteBuffer.put(0);
+					navigationMapTextureByteBuffer.put(255);
+					navigationMapTextureByteBuffer.put(0);
+					navigationMapTextureByteBuffer.put(0);
 				} else {
-					walkMeshTextureByteBuffer.put(0);
-					walkMeshTextureByteBuffer.put(255);
-					walkMeshTextureByteBuffer.put(0);
+					navigationMapTextureByteBuffer.put(0);
+					navigationMapTextureByteBuffer.put(255);
+					navigationMapTextureByteBuffer.put(0);
 				}
 			}
 		}
@@ -161,7 +161,7 @@ Texture* Terrain::createTerrainNavigationMap(float width, float depth, vector<fl
 		terrainHeightVectorVerticesPerX * 2,
 		terreinHeightVectorVerticesPerZ * 2,
 		Texture::TEXTUREFORMAT_RGB,
-		walkMeshTextureByteBuffer
+		navigationMapTextureByteBuffer
 	);
 	navigationMapTexture->acquireReference();
 	//
