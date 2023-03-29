@@ -16,6 +16,7 @@
 #include <tdme/utilities/MiniScript.h>
 
 using std::string;
+using std::to_string;
 using std::unordered_map;
 
 using tdme::engine::DynamicColorTexture;
@@ -273,15 +274,32 @@ public:
 	void setCodeEditor();
 
 	/**
+	 * Get MiniScript node flattened id from hierarchical id
+	 * @param hierarchicalId hierarchical id
+	 * @return flattened id
+	 */
+	const string getMiniScriptNodeFlattenedId(unordered_map<string, string>& idMapping, const string& hierarchicalId) {
+		auto idMappingIt = idMapping.find(hierarchicalId);
+		if (idMappingIt != idMapping.end()) {
+			return idMappingIt->second;
+		}
+		auto flattenedId = to_string(idMapping.size());
+		idMapping[hierarchicalId] = flattenedId;
+		return flattenedId;
+	}
+
+	/**
 	 * Adds a delta X value to UI node with given id and all nodes down the statement syntax tree
+	 * @param idMapping id mapping
 	 * @param id id
 	 * @param syntaxTreeNode syntax tree node
 	 * @param deltaX delta X
 	 */
-	void addMiniScriptNodeDeltaX(const string& id, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, int deltaX);
+	void addMiniScriptNodeDeltaX(unordered_map<string, string>& idMapping, const string& id, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, int deltaX);
 
 	/**
 	 * Create UI nodes for MiniScript script node syntax tree, which matches a event or function in MiniScript
+	 * @param idMapping id mapping
 	 * @param id id
 	 * @param scriptType script type
 	 * @param condition condition
@@ -293,10 +311,11 @@ public:
 	 * @param height height
 	 * @param createdNodeIds created node ids
 	 */
-	void createMiniScriptScriptNode(const string& id, MiniScript::Script::ScriptType scriptType, const string& condition, const string& readableName, const MiniScript::ScriptSyntaxTreeNode* conditionSyntaxTreeNode, int x, int y, int& width, int& height);
+	void createMiniScriptScriptNode(unordered_map<string, string>& idMapping, const string& id, MiniScript::Script::ScriptType scriptType, const string& condition, const string& readableName, const MiniScript::ScriptSyntaxTreeNode* conditionSyntaxTreeNode, int x, int y, int& width, int& height);
 
 	/**
 	 * Create UI nodes for given statement syntax tree, which matches a statement in miniscript
+	 * @param idMapping id mapping
 	 * @param id id
 	 * @param syntaxTreeNodeIdx syntax tree node index
 	 * @param syntaxTreeNodeCount syntax tree node count
@@ -308,10 +327,11 @@ public:
 	 * @oaram createdNodeIds created node ids
 	 * @param depth depth
 	 */
-	void createMiniScriptNodes(const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth = 0);
+	void createMiniScriptNodes(unordered_map<string, string>& idMapping, const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth = 0);
 
 	/**
 	 * Create UI nodes for branch nodes like if, elseif, else, end; forTime, end; forCondition, end
+	 * @param idMapping id mapping
 	 * @param id id
 	 * @param syntaxTreeNodeIdx syntax tree node index
 	 * @param syntaxTreeNodeCount syntax tree node count
@@ -324,7 +344,7 @@ public:
 	 * @oaram createdNodeIds created node ids
 	 * @param depth depth
 	 */
-	void createMiniScriptBranchNodes(const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, const vector<MiniScriptBranch>& branches, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth = 0);
+	void createMiniScriptBranchNodes(unordered_map<string, string>& idMapping, const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, const vector<MiniScriptBranch>& branches, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth = 0);
 
 	/**
 	 * @return MiniScript script index
@@ -343,6 +363,7 @@ public:
 
 	/**
 	 * Handle MiniScript branch
+	 * @param idMapping id mapping
 	 * @param idPrefix id prefix
 	 * @param syntaxTree syntax tree
 	 * @param i iterator
@@ -352,7 +373,7 @@ public:
 	 * @param height height
 	 * @oaram createdNodeIds created node ids
 	 */
-	bool handleMiniScriptBranch(const string& idPrefix, const vector<MiniScript::ScriptSyntaxTreeNode*>& syntaxTree, int& i, int x, int y, int& width, int& height, vector<string>& createdNodeIds);
+	bool handleMiniScriptBranch(unordered_map<string, string>& idMapping, const string& idPrefix, const vector<MiniScript::ScriptSyntaxTreeNode*>& syntaxTree, int& i, int x, int y, int& width, int& height, vector<string>& createdNodeIds);
 
 	/**
 	 * Update miniscript syntax tree
