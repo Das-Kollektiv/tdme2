@@ -278,7 +278,7 @@ public:
 	 * @param hierarchicalId hierarchical id
 	 * @return flattened id
 	 */
-	const string getMiniScriptNodeFlattenedId(unordered_map<string, string>& idMapping, const string& hierarchicalId) {
+	inline const string getMiniScriptNodeFlattenedId(unordered_map<string, string>& idMapping, const string& hierarchicalId) {
 		auto idMappingIt = idMapping.find(hierarchicalId);
 		if (idMappingIt != idMapping.end()) {
 			return idMappingIt->second;
