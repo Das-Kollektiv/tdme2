@@ -827,6 +827,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 		FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, scriptLines);
 	} catch (FileSystemException& fse)	{
 		Console::println("MiniScript::loadScript(): " + pathName + "/" + fileName + ": an error occurred: " + fse.what());
+		// TODO: exit here
 	}
 
 	//

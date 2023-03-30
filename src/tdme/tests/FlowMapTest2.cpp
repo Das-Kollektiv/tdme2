@@ -20,8 +20,10 @@
 #include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
+#include <tdme/engine/prototype/PrototypeTerrain.h>
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/scene/SceneEntity.h>
+#include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
@@ -40,6 +42,7 @@
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/PathFinding.h>
 #include <tdme/utilities/Primitives.h>
+#include <tdme/utilities/Terrain.h>
 
 using std::string;
 using std::to_string;
@@ -61,8 +64,10 @@ using tdme::engine::prototype::BaseProperties;
 using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeBoundingVolume;
+using tdme::engine::prototype::PrototypeTerrain;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
+using tdme::engine::scene::SceneLibrary;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
@@ -81,6 +86,7 @@ using tdme::utilities::FlowMapCell;
 using tdme::utilities::Integer;
 using tdme::utilities::PathFinding;
 using tdme::utilities::Primitives;
+using tdme::utilities::Terrain;
 using tdme::utilities::Time;
 
 FlowMapTest2::FlowMapTest2()
@@ -738,8 +744,16 @@ void FlowMapTest2::initialize()
 		engine->addEntity(combatUnit.object);
 		combatUnits.push_back(combatUnit);
 	}
+	//
 	pathFinding = new PathFinding(world, true, 2000, 1.8f, 0.4f, 0.81f, 1.0f, Body::COLLISION_TYPEID_DYNAMIC);
-
+	auto sceneTerrainPrototype = scene->getLibrary()->getTerrainPrototype();
+	pathFinding->setNavigationMap(
+		Terrain::createTerrainNavigationMap(
+			sceneTerrainPrototype->getTerrain()->getWidth(),
+			sceneTerrainPrototype->getTerrain()->getDepth(),
+			sceneTerrainPrototype->getTerrain()->getHeightVector()
+		)
+	);
 	//
 	for (auto i = 0; i < combatUnitFormationTransform.size(); i++) {
 		auto emptyName = "Waypoint_" + to_string(i);

@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabcontrollers/TextEditorTabController.h>
 
+#include <array>
 #include <string>
 #include <unordered_map>
 
@@ -14,6 +15,7 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/scripting/GUIMiniScript.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -40,6 +42,7 @@
 
 using tdme::tools::editor::tabcontrollers::TextEditorTabController;
 
+using std::array;
 using std::string;
 using std::unordered_map;
 
@@ -52,6 +55,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::scripting::GUIMiniScript;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::os::filesystem::FileSystem;
@@ -402,9 +406,84 @@ void TextEditorTabController::setOutlinerAddDropDownContent() {
 
 void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
 	auto scriptFileName = view->getFileName();
+
+	// we need to detect MiniScript variant
+	vector<string> scriptAsStringArray;
+	try {
+		FileSystem::getInstance()->getContentAsStringArray(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName), scriptAsStringArray);
+	} catch (Exception& exception) {
+		miniScriptSyntaxTrees.clear();
+		view->setMiniScriptMethodOperatorMap({});
+		view->updateMiniScriptSyntaxTree(miniScriptScriptIdx);
+		//
+		showInfoPopUp("Warning", "Could not load script");
+		//
+		return;
+	}
+
+	// detect MiniScript variant
+	auto logicMiniScript = false;
+	auto guiMiniScript = false;
+	array<string, 2> logicMiniScriptFunctions {
+		"updateEngine",
+		"updateLogic"
+	};
+	array<string, 12> guiMiniScriptFunctions {
+		"onAction",
+		"onChange",
+		"onMouseOver",
+		"onContextMenuRequest",
+		"onFocus",
+		"onUnfocus",
+		"onMove",
+		"onMoveRelease",
+		"onTooltipShowRequest",
+		"onTooltipCloseRequest",
+		"onDragRequest",
+		"onTick"
+	};
+	for (const auto& scriptLine: scriptAsStringArray) {
+		for (const auto& functionName: logicMiniScriptFunctions) {
+			if (StringTools::regexMatch(scriptLine, "^[\\s]*function:[\\s]*" + functionName + "[\\s]*\\(.*\\).*$") == true)
+			logicMiniScript = true;
+			break;
+		}
+		if (logicMiniScript == true) break;
+		for (const auto& functionName: guiMiniScriptFunctions) {
+			if (StringTools::regexMatch(scriptLine, "^[\\s]*function:[\\s]*" + functionName + "[\\s]*\\(.*\\).*$") == true)
+			guiMiniScript = true;
+			break;
+		}
+		if (guiMiniScript == true) break;
+	}
+
+	// load specific MiniScript
+	MiniScript* scriptInstance = nullptr;
+	if (logicMiniScript == true) {
+		Console::println("TextEditorTabController::updateMiniScriptSyntaxTree(): " + scriptFileName + ": Detected Logic MiniScript");
+		scriptInstance = new LogicMiniScript();
+		scriptInstance->loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName));
+	} else
+	if (guiMiniScript == true) {
+		Console::println("TextEditorTabController::updateMiniScriptSyntaxTree(): " + scriptFileName + ": Detected GUI MiniScript");
+		scriptInstance = new GUIMiniScript(nullptr);
+		scriptInstance->loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName));
+	} else {
+		Console::println("TextEditorTabController::updateMiniScriptSyntaxTree(): " + scriptFileName + ": Detected no specific Miniscript, using default MiniScript");
+		scriptInstance = new MiniScript();
+		scriptInstance->loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName));
+	}
+
 	//
-	LogicMiniScript* scriptInstance = new LogicMiniScript();
-	scriptInstance->loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName));
+	if (scriptInstance->isValid() == false)  {
+		miniScriptSyntaxTrees.clear();
+		view->setMiniScriptMethodOperatorMap({});
+		view->updateMiniScriptSyntaxTree(miniScriptScriptIdx);
+		//
+		showInfoPopUp("Warning", "Could not load script. Script not valid!");
+		//
+		return;
+	}
 
 	//
 	unordered_map<string, string> methodOperatorMap;
