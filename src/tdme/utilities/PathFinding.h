@@ -12,6 +12,7 @@
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/Transform.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
@@ -33,6 +34,7 @@ using std::vector;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::Transform;
+using tdme::engine::Texture;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
@@ -82,6 +84,14 @@ public:
 	 * Destructor
 	 */
 	~PathFinding();
+
+	/**
+	 * Set navigation map which allows fast look ups if Terrain::STEP_SIZE dimensioned cells are walkable
+	 * @param navigationMap navigation map
+	 */
+	inline void setNavigationMap(Texture* navigationMap) {
+		this->navigationMap	= navigationMap;
+	}
 
 	/**
 	 * @return step size
@@ -460,4 +470,5 @@ private:
 	BoundingVolume* actorBoundingVolumeSlopeTest { nullptr };
 	unordered_map<tuple<uint8_t, uint8_t, int, int, int, uint16_t, bool>, float, WalkableCache_Hash> walkableCache;
 	unordered_map<tuple<uint8_t, uint8_t, int, int, int, uint16_t, int16_t>, float, WalkableSlopeCache_Hash> walkableSlopeCache;
+	Texture* navigationMap { nullptr };
 };
