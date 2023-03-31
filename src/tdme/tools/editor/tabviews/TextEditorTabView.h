@@ -176,6 +176,36 @@ private:
 	}
 
 	/**
+	 * Find argument node id
+	 * @param nodeId node id
+	 * @param argumentIdx argument index
+	 * @return argument node id
+	 */
+	inline const string getArgumentNodeId(const string& nodeId, int argumentIdx) {
+		return nodeId + "_a" + to_string(argumentIdx);
+	}
+
+	/**
+	 * Find argument node id
+	 * @param nodeId node id
+	 * @param argumentIdx argument index
+	 * @return argument node id
+	 */
+	inline const string getConnectedArgumentNodeId(const string& nodeId, int argumentIdx) {
+		auto argumentNodeId = getArgumentNodeId(nodeId, argumentIdx);
+		for (auto& connection: connections) {
+			if (connection.type != Connection::CONNECTIONTYPE_ARGUMENT) continue;
+			if (connection.srcNodeId == argumentNodeId) {
+				//
+				if (StringTools::endsWith(connection.dstNodeId, "_r") == true) {
+					return StringTools::substring(connection.dstNodeId, 0, connection.dstNodeId.size() - 2);
+				}
+			}
+		}
+		return string();
+	}
+
+	/**
 	 * Get node by id
 	 * @param nodeId node id
 	 * @return node
@@ -554,4 +584,10 @@ public:
 	 */
 	void delete_();
 
+	/**
+	 * Dump MiniScript node from visualization
+	 * @param node node
+	 * @param depth depth
+	 */
+	void dumpVisualizationMiniScriptNode(const Node* node, int depth = 0);
 };

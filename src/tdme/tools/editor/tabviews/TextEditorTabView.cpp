@@ -497,28 +497,15 @@ void TextEditorTabView::setCodeEditor() {
 		auto i = 0;
 		string nextNodeId;
 		Node* node = getNodeById(getStartNodeId());
-		if (node != nullptr) {
-			string nodeType;
-			switch (node->type) {
-				case Node::NODETYPE_NONE: nodeType = "None"; break;
-				case Node::NODETYPE_FLOW: nodeType = "Flow"; break;
-				case Node::NODETYPE_ARGUMENT: nodeType = "Argument"; break;
-			}
-			Console::println("Node[" + to_string(i++) + "]: " + node->id + ": " + node->value + "(" + nodeType + ")");
-		}
-		while (node != nullptr && (nextNodeId = getNextNodeId(node->id)).empty() == false) {
-			node = getNodeById(nextNodeId);
+		while (node != nullptr) {
 			if (node == nullptr) {
 				// produce some warning or something
 				break;
 			}
-			string nodeType;
-			switch (node->type) {
-				case Node::NODETYPE_NONE: nodeType = "None"; break;
-				case Node::NODETYPE_FLOW: nodeType = "Flow"; break;
-				case Node::NODETYPE_ARGUMENT: nodeType = "Argument"; break;
-			}
-			Console::println("Node[" + to_string(i++) + "]: " + node->id + ": " + node->value + "(" + nodeType + ")");
+			dumpVisualizationMiniScriptNode(node);
+			nextNodeId = getNextNodeId(node->id);
+			if (nextNodeId.empty() == true) break;
+			node = getNodeById(nextNodeId);
 		}
 	}
 	auto editorNode = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen(screenNode->getId())->getNodeById("editor"));
@@ -1754,5 +1741,49 @@ void TextEditorTabView::paste() {
 void TextEditorTabView::delete_() {
 	if (visualEditor == false) {
 		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->delete_();
+	}
+}
+
+void TextEditorTabView::dumpVisualizationMiniScriptNode(const Node* node, int depth) {
+	//
+	string spacePrefix;
+	for (auto i = 0; i < depth; i++) spacePrefix+= "\t\t";
+	//
+	{
+		string nodeType;
+		switch (node->type) {
+			case Node::NODETYPE_NONE: nodeType = "None"; break;
+			case Node::NODETYPE_FLOW: nodeType = "Flow"; break;
+			case Node::NODETYPE_ARGUMENT: nodeType = "Argument"; break;
+		}
+		Console::println(spacePrefix + "Node: " + node->id + ": " + node->value + "(" + nodeType + ")");
+	}
+	// arguments
+	for (auto argumentIdx = 0; argumentIdx < 100; argumentIdx++) {
+		auto argumentNodeId = getConnectedArgumentNodeId(node->id, argumentIdx);
+		if (argumentNodeId.empty() == true) {
+			// check for literal
+			auto argumentNodeId = getArgumentNodeId(node->id, argumentIdx);
+			auto literalInput = dynamic_cast<GUINode*>(screenNode->getNodeById(argumentNodeId + "_input"));
+			if (literalInput != nullptr) {
+				auto literalInputValue = literalInput->getController()->getValue().getString();
+				Console::println(spacePrefix + "\tLiteral[" + to_string(argumentIdx) + "]: " + literalInputValue);
+			}
+		} else {
+			// check for connected argument
+			auto argumentNode = getNodeById(argumentNodeId);
+			if (argumentNode == nullptr) continue;
+			{
+				string nodeType;
+				switch (node->type) {
+					case Node::NODETYPE_NONE: nodeType = "None"; break;
+					case Node::NODETYPE_FLOW: nodeType = "Flow"; break;
+					case Node::NODETYPE_ARGUMENT: nodeType = "Argument"; break;
+				}
+				Console::println(spacePrefix + "\tArgument Node[" + to_string(argumentIdx) + "]: " + argumentNode->id + ": " + argumentNode->value + "(" + nodeType + ")");
+			}
+			//
+			dumpVisualizationMiniScriptNode(argumentNode, depth + 1);
+		}
 	}
 }
