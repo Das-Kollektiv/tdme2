@@ -493,21 +493,8 @@ void TextEditorTabView::setCodeEditor() {
 		}
 	}
 	//
-	{
-		auto i = 0;
-		string nextNodeId;
-		Node* node = getNodeById(getStartNodeId());
-		while (node != nullptr) {
-			if (node == nullptr) {
-				// produce some warning or something
-				break;
-			}
-			dumpVisualizationMiniScriptNode(node);
-			nextNodeId = getNextNodeId(node->id);
-			if (nextNodeId.empty() == true) break;
-			node = getNodeById(nextNodeId);
-		}
-	}
+	auto startNode = getNodeById(getStartNodeId());
+	dumpVisualizationMiniScriptNodes(startNode);
 	auto editorNode = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen(screenNode->getId())->getNodeById("editor"));
 	if (editorNode != nullptr) editorNode->getActiveConditions().set("text");
 	visualEditor = false;
@@ -1741,6 +1728,15 @@ void TextEditorTabView::paste() {
 void TextEditorTabView::delete_() {
 	if (visualEditor == false) {
 		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->delete_();
+	}
+}
+
+void TextEditorTabView::dumpVisualizationMiniScriptNodes(const Node* node, int depth) {
+	while (node != nullptr) {
+		dumpVisualizationMiniScriptNode(node);
+		auto nextNodeId = getNextNodeId(node->id);
+		if (nextNodeId.empty() == true) break;
+		node = getNodeById(nextNodeId);
 	}
 }
 

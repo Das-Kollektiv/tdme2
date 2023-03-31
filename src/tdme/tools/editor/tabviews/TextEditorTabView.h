@@ -167,16 +167,15 @@ private:
 			if (connection.type != Connection::CONNECTIONTYPE_FLOW) continue;
 			if (connection.srcNodeId == flowNodeId) {
 				//
-				if (StringTools::endsWith(connection.dstNodeId, "_fi") == true) {
-					return StringTools::substring(connection.dstNodeId, 0, connection.dstNodeId.size() - 3);
-				}
+				auto separatorIdx = connection.dstNodeId.find('_');
+				return StringTools::substring(connection.dstNodeId, 0, separatorIdx == string::npos?connection.dstNodeId.size():separatorIdx);
 			}
 		}
 		return string();
 	}
 
 	/**
-	 * Find argument node id
+	 * Create argument node id
 	 * @param nodeId node id
 	 * @param argumentIdx argument index
 	 * @return argument node id
@@ -197,12 +196,31 @@ private:
 			if (connection.type != Connection::CONNECTIONTYPE_ARGUMENT) continue;
 			if (connection.srcNodeId == argumentNodeId) {
 				//
-				if (StringTools::endsWith(connection.dstNodeId, "_r") == true) {
-					return StringTools::substring(connection.dstNodeId, 0, connection.dstNodeId.size() - 2);
-				}
+				auto separatorIdx = connection.dstNodeId.find('_');
+				return StringTools::substring(connection.dstNodeId, 0, separatorIdx == string::npos?connection.dstNodeId.size():separatorIdx);
 			}
 		}
 		return string();
+	}
+
+	/**
+	 * Create condition node id
+	 * @param nodeId node id
+	 * @param conditionIdx condition index
+	 * @return condition node id
+	 */
+	inline const string getConditionNodeId(const string& nodeId, int conditionIdx) {
+		return nodeId + "_c" + to_string(conditionIdx);
+	}
+
+	/**
+	 * Create branch node id
+	 * @param nodeId node id
+	 * @param branchIdx branch index
+	 * @return branch node id
+	 */
+	inline const string getBranchNodeId(const string& nodeId, int branchIdx) {
+		return nodeId + "_b" + to_string(branchIdx);
 	}
 
 	/**
@@ -583,6 +601,13 @@ public:
 	 * Delete
 	 */
 	void delete_();
+
+	/**
+	 * Dump MiniScript node sequence from visualization
+	 * @param node node
+	 * @param depth depth
+	 */
+	void dumpVisualizationMiniScriptNodes(const Node* node, int depth = 0);
 
 	/**
 	 * Dump MiniScript node from visualization
