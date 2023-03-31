@@ -1733,7 +1733,7 @@ void TextEditorTabView::delete_() {
 
 void TextEditorTabView::dumpVisualizationMiniScriptNodes(const Node* node, int depth) {
 	while (node != nullptr) {
-		dumpVisualizationMiniScriptNode(node);
+		dumpVisualizationMiniScriptNode(node, depth);
 		auto nextNodeId = getNextNodeId(node->id);
 		if (nextNodeId.empty() == true) break;
 		node = getNodeById(nextNodeId);
@@ -1780,6 +1780,38 @@ void TextEditorTabView::dumpVisualizationMiniScriptNode(const Node* node, int de
 			}
 			//
 			dumpVisualizationMiniScriptNode(argumentNode, depth + 1);
+		}
+	}
+	//
+	for (auto conditionIdx = 0; conditionIdx < 100; conditionIdx++) {
+		{
+			auto conditionNodeId = getConnectedConditionNodeId(node->id, conditionIdx);
+			auto conditionNode = getNodeById(conditionNodeId);
+			if (conditionNode != nullptr) {
+				string nodeType;
+				switch (node->type) {
+					case Node::NODETYPE_NONE: nodeType = "None"; break;
+					case Node::NODETYPE_FLOW: nodeType = "Flow"; break;
+					case Node::NODETYPE_ARGUMENT: nodeType = "Argument"; break;
+				}
+				Console::println(spacePrefix + "\tCondition Node[" + to_string(conditionIdx) + "]:");
+				dumpVisualizationMiniScriptNodes(conditionNode, depth + 1);
+			}
+		}
+		//
+		{
+			auto branchNodeId = getConnectedBranchNodeId(node->id, conditionIdx);
+			auto branchNode = getNodeById(branchNodeId);
+			if (branchNode != nullptr) {
+				string nodeType;
+				switch (node->type) {
+					case Node::NODETYPE_NONE: nodeType = "None"; break;
+					case Node::NODETYPE_FLOW: nodeType = "Flow"; break;
+					case Node::NODETYPE_ARGUMENT: nodeType = "Argument"; break;
+				}
+				Console::println(spacePrefix + "\tBranch Node[" + to_string(conditionIdx) + "]:");
+				dumpVisualizationMiniScriptNodes(branchNode, depth + 1);
+			}
 		}
 	}
 }

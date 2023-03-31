@@ -214,6 +214,25 @@ private:
 	}
 
 	/**
+	 * Find condition node id
+	 * @param nodeId node id
+	 * @param conditionIdx condition index
+	 * @return condition node id
+	 */
+	inline const string getConnectedConditionNodeId(const string& nodeId, int conditionIdx) {
+		auto conditionNodeId = getConditionNodeId(nodeId, conditionIdx);
+		for (auto& connection: connections) {
+			if (connection.type != Connection::CONNECTIONTYPE_ARGUMENT) continue;
+			if (connection.srcNodeId == conditionNodeId) {
+				//
+				auto separatorIdx = connection.dstNodeId.find('_');
+				return StringTools::substring(connection.dstNodeId, 0, separatorIdx == string::npos?connection.dstNodeId.size():separatorIdx);
+			}
+		}
+		return string();
+	}
+
+	/**
 	 * Create branch node id
 	 * @param nodeId node id
 	 * @param branchIdx branch index
@@ -221,6 +240,25 @@ private:
 	 */
 	inline const string getBranchNodeId(const string& nodeId, int branchIdx) {
 		return nodeId + "_b" + to_string(branchIdx);
+	}
+
+	/**
+	 * Find branch node id
+	 * @param nodeId node id
+	 * @param branchIdx branch index
+	 * @return branch node id
+	 */
+	inline const string getConnectedBranchNodeId(const string& nodeId, int branchIdx) {
+		auto branchNodeId = getBranchNodeId(nodeId, branchIdx);
+		for (auto& connection: connections) {
+			if (connection.type != Connection::CONNECTIONTYPE_FLOW) continue;
+			if (connection.srcNodeId == branchNodeId) {
+				//
+				auto separatorIdx = connection.dstNodeId.find('_');
+				return StringTools::substring(connection.dstNodeId, 0, separatorIdx == string::npos?connection.dstNodeId.size():separatorIdx);
+			}
+		}
+		return string();
 	}
 
 	/**
