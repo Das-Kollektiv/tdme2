@@ -1749,7 +1749,7 @@ void TextEditorTabView::createSourceCodeFromNodes(string& sourceCode, const Node
 void TextEditorTabView::createSourceCodeFromNode(string& sourceCode, const Node* node, int depth) {
 	//
 	string spacePrefix;
-	for (auto i = 0; i < depth; i++) spacePrefix+= "\t\t";
+	for (auto i = 0; i < depth; i++) spacePrefix+= "\t";
 	if (node->value == "if") {
 		//
 		for (auto conditionIdx = 0; conditionIdx < 100; conditionIdx++) {
@@ -1759,22 +1759,42 @@ void TextEditorTabView::createSourceCodeFromNode(string& sourceCode, const Node*
 			auto conditionNodeId = getConnectedConditionNodeId(node->id, conditionIdx);
 			auto conditionNode = getNodeById(conditionNodeId);
 			if (conditionNode != nullptr) {
-				sourceCode+= (conditionIdx == 0?string("if"):(branchNode != nullptr?"elseif":"else")) + "(";
-				createSourceCodeFromNode(sourceCode, conditionNode, depth + 1);
+				sourceCode+= spacePrefix;
+				if (conditionIdx == 0) {
+					sourceCode+= "if ";
+				} else {
+					sourceCode+= "elseif ";
+				}
+				sourceCode+= "(";
+				createSourceCodeFromNode(sourceCode, conditionNode, 0);
 				sourceCode+= ")";
 				sourceCode+= "\n";
 			}
-			//
 			if (branchNode != nullptr) {
-				createSourceCodeFromNodes(sourceCode, branchNode, depth + 2);
-			}
-			//
-			if (conditionNode == nullptr && branchNode == nullptr) {
-				sourceCode+= "end";
+				if (conditionNode == nullptr) {
+					sourceCode+= spacePrefix;
+					sourceCode+= "else";
+					sourceCode+= "\n";
+				}
+				createSourceCodeFromNodes(sourceCode, branchNode, depth + 1);
+				if (conditionNode == nullptr) {
+					sourceCode+= spacePrefix;
+					sourceCode+= "end";
+					sourceCode+= "\n";
+					break;
+				} else
+				if (getNodeById(getConnectedConditionNodeId(node->id, conditionIdx + 1)) == nullptr) {
+					sourceCode+= spacePrefix;
+					sourceCode+= "end";
+					sourceCode+= "\n";
+					break;
+				}
+			} else {
 				break;
 			}
 		}
 	} else {
+		sourceCode+= spacePrefix;
 		sourceCode+= node->value + "(";
 		// arguments
 		string argumentsSourceCode;
@@ -1803,7 +1823,7 @@ void TextEditorTabView::createSourceCodeFromNode(string& sourceCode, const Node*
 				if (argumentNode == nullptr) continue;
 				//
 				if (argumentsSourceCode.empty() == false) argumentsSourceCode+= ", ";
-				createSourceCodeFromNode(argumentsSourceCode, argumentNode, depth + 1);
+				createSourceCodeFromNode(argumentsSourceCode, argumentNode, 0);
 			}
 		}
 		sourceCode+= argumentsSourceCode + ")";
