@@ -493,8 +493,13 @@ void TextEditorTabView::setCodeEditor() {
 		}
 	}
 	//
+	string sourceCode;
 	auto startNode = getNodeById(getStartNodeId());
-	dumpVisualizationMiniScriptNodes(startNode);
+	createSourceCodeFromNodes(sourceCode, startNode);
+	Console::println(
+		"Generated Source Code:\n\n" +
+		sourceCode
+	);
 	auto editorNode = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen(screenNode->getId())->getNodeById("editor"));
 	if (editorNode != nullptr) editorNode->getActiveConditions().set("text");
 	visualEditor = false;
@@ -1731,87 +1736,76 @@ void TextEditorTabView::delete_() {
 	}
 }
 
-void TextEditorTabView::dumpVisualizationMiniScriptNodes(const Node* node, int depth) {
+void TextEditorTabView::createSourceCodeFromNodes(string& sourceCode, const Node* node, int depth) {
 	while (node != nullptr) {
-		dumpVisualizationMiniScriptNode(node, depth);
+		createSourceCodeFromNode(sourceCode, node, depth);
+		sourceCode+= "\n";
 		auto nextNodeId = getNextNodeId(node->id);
 		if (nextNodeId.empty() == true) break;
 		node = getNodeById(nextNodeId);
 	}
 }
 
-void TextEditorTabView::dumpVisualizationMiniScriptNode(const Node* node, int depth) {
+void TextEditorTabView::createSourceCodeFromNode(string& sourceCode, const Node* node, int depth) {
 	//
 	string spacePrefix;
 	for (auto i = 0; i < depth; i++) spacePrefix+= "\t\t";
-	//
-	{
-		string nodeType;
-		switch (node->type) {
-			case Node::NODETYPE_NONE: nodeType = "None"; break;
-			case Node::NODETYPE_FLOW: nodeType = "Flow"; break;
-			case Node::NODETYPE_ARGUMENT: nodeType = "Argument"; break;
-		}
-		Console::println(spacePrefix + "Node: " + node->id + ": " + node->value + "(" + nodeType + ")");
-	}
-	// arguments
-	for (auto argumentIdx = 0; argumentIdx < 100; argumentIdx++) {
-		auto argumentNodeId = getConnectedArgumentNodeId(node->id, argumentIdx);
-		if (argumentNodeId.empty() == true) {
-			// check for literal
-			auto argumentNodeId = getArgumentNodeId(node->id, argumentIdx);
-			auto literalInput = dynamic_cast<GUINode*>(screenNode->getNodeById(argumentNodeId + "_input"));
-			if (literalInput != nullptr) {
-				auto literalInputValue = literalInput->getController()->getValue().getString();
-				Console::println(spacePrefix + "\tLiteral[" + to_string(argumentIdx) + "]: " + literalInputValue);
-			}
-		} else {
-			// check for connected argument
-			auto argumentNode = getNodeById(argumentNodeId);
-			if (argumentNode == nullptr) continue;
-			{
-				string nodeType;
-				switch (node->type) {
-					case Node::NODETYPE_NONE: nodeType = "None"; break;
-					case Node::NODETYPE_FLOW: nodeType = "Flow"; break;
-					case Node::NODETYPE_ARGUMENT: nodeType = "Argument"; break;
-				}
-				Console::println(spacePrefix + "\tArgument Node[" + to_string(argumentIdx) + "]: " + argumentNode->id + ": " + argumentNode->value + "(" + nodeType + ")");
-			}
+	if (node->value == "if") {
+		//
+		for (auto conditionIdx = 0; conditionIdx < 100; conditionIdx++) {
+			auto branchNodeId = getConnectedBranchNodeId(node->id, conditionIdx);
+			auto branchNode = getNodeById(branchNodeId);
 			//
-			dumpVisualizationMiniScriptNode(argumentNode, depth + 1);
-		}
-	}
-	//
-	for (auto conditionIdx = 0; conditionIdx < 100; conditionIdx++) {
-		{
 			auto conditionNodeId = getConnectedConditionNodeId(node->id, conditionIdx);
 			auto conditionNode = getNodeById(conditionNodeId);
 			if (conditionNode != nullptr) {
-				string nodeType;
-				switch (node->type) {
-					case Node::NODETYPE_NONE: nodeType = "None"; break;
-					case Node::NODETYPE_FLOW: nodeType = "Flow"; break;
-					case Node::NODETYPE_ARGUMENT: nodeType = "Argument"; break;
-				}
-				Console::println(spacePrefix + "\tCondition Node[" + to_string(conditionIdx) + "]:");
-				dumpVisualizationMiniScriptNodes(conditionNode, depth + 1);
+				sourceCode+= (conditionIdx == 0?string("if"):(branchNode != nullptr?"elseif":"else")) + "(";
+				createSourceCodeFromNode(sourceCode, conditionNode, depth + 1);
+				sourceCode+= ")";
+				sourceCode+= "\n";
 			}
-		}
-		//
-		{
-			auto branchNodeId = getConnectedBranchNodeId(node->id, conditionIdx);
-			auto branchNode = getNodeById(branchNodeId);
+			//
 			if (branchNode != nullptr) {
-				string nodeType;
-				switch (node->type) {
-					case Node::NODETYPE_NONE: nodeType = "None"; break;
-					case Node::NODETYPE_FLOW: nodeType = "Flow"; break;
-					case Node::NODETYPE_ARGUMENT: nodeType = "Argument"; break;
-				}
-				Console::println(spacePrefix + "\tBranch Node[" + to_string(conditionIdx) + "]:");
-				dumpVisualizationMiniScriptNodes(branchNode, depth + 1);
+				createSourceCodeFromNodes(sourceCode, branchNode, depth + 2);
+			}
+			//
+			if (conditionNode == nullptr && branchNode == nullptr) {
+				sourceCode+= "end";
+				break;
 			}
 		}
+	} else {
+		sourceCode+= node->value + "(";
+		// arguments
+		string argumentsSourceCode;
+		for (auto argumentIdx = 0; argumentIdx < 100; argumentIdx++) {
+			auto argumentNodeId = getConnectedArgumentNodeId(node->id, argumentIdx);
+			if (argumentNodeId.empty() == true) {
+				// check for literal
+				auto argumentNodeId = getArgumentNodeId(node->id, argumentIdx);
+				auto literalInput = dynamic_cast<GUINode*>(screenNode->getNodeById(argumentNodeId + "_input"));
+				if (literalInput != nullptr) {
+					auto literalInputValue = literalInput->getController()->getValue().getString();
+					if (argumentsSourceCode.empty() == false) argumentsSourceCode+= ", ";
+					// implicitely literal
+					//	TODO: first version, improve me
+					MiniScript::ScriptVariable value;
+					value.setImplicitTypedValueFromStringView(literalInputValue);
+					if (value.getType() == MiniScript::TYPE_STRING) {
+						argumentsSourceCode+= "\"" + StringTools::replace(literalInputValue, "\"", "\\\"") + "\"";
+					} else {
+						argumentsSourceCode+= literalInputValue;
+					}
+				}
+			} else {
+				// check for connected argument
+				auto argumentNode = getNodeById(argumentNodeId);
+				if (argumentNode == nullptr) continue;
+				//
+				if (argumentsSourceCode.empty() == false) argumentsSourceCode+= ", ";
+				createSourceCodeFromNode(argumentsSourceCode, argumentNode, depth + 1);
+			}
+		}
+		sourceCode+= argumentsSourceCode + ")";
 	}
 }

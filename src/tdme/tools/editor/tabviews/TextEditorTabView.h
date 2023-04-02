@@ -641,16 +641,18 @@ public:
 	void delete_();
 
 	/**
-	 * Dump MiniScript node sequence from visualization
+	 * Create source code from nodes
+	 * @param sourceCode source code
 	 * @param node node
 	 * @param depth depth
 	 */
-	void dumpVisualizationMiniScriptNodes(const Node* node, int depth = 0);
+	void createSourceCodeFromNodes(string& sourceCode, const Node* node, int depth = 0);
 
 	/**
-	 * Dump MiniScript node from visualization
+	 * Create source code from node
+	 * @param sourceCode source code
 	 * @param node node
 	 * @param depth depth
 	 */
-	void dumpVisualizationMiniScriptNode(const Node* node, int depth = 0);
+	void createSourceCodeFromNode(string& sourceCode, const Node* node, int depth = 0);
 };
