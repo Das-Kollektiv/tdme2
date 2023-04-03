@@ -556,11 +556,11 @@ void TextEditorTabView::createMiniScriptScriptNode(unordered_map<string, string>
 		string nodeTypeColor = string("color.nodetype_condition");
 		//
 		{
-			string xml = "<template src='resources/engine/gui/template_visualcode_node.xml' id='" + flattenedId + "' left='" + to_string(x) + "' top='" + to_string(y) + "' node-name='" + GUIParser::escapeQuotes(nodeName) + "' node-type-color='{$" + GUIParser::escapeQuotes(nodeTypeColor) + "}' />";
+			string xml = "<template src='resources/engine/gui/template_visualcode_node.xml' id='" + flattenedId + "' left='" + to_string(x) + "' top='" + to_string(y) + "' node-name='" + GUIParser::escapeQuotes(nodeName + "(" + flattenedId + ")") + "' node-type-color='{$" + GUIParser::escapeQuotes(nodeTypeColor) + "}' />";
 			try {
 				GUIParser::parse(visualisationNode, xml);
 			} catch (Exception& exception) {
-				Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
+				Console::println("TextEditorTabView::createMiniScriptScriptNode(): method/function: " + string(exception.what()));
 			}
 		}
 		//
@@ -596,7 +596,7 @@ void TextEditorTabView::createMiniScriptScriptNode(unordered_map<string, string>
 					required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(flattenedId + "_c_pin_type_panel"))->getActiveConditions().add("connected");
 				}
 			} catch (Exception& exception) {
-				Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
+				Console::println("TextEditorTabView::createMiniScriptScriptNode(): method/function: " + string(exception.what()));
 			}
 		}
 	}
@@ -718,7 +718,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 				}
 				//
 				{
-					string xml = "<template src='resources/engine/gui/template_visualcode_node.xml' id='" + flattenedId + "' left='" + to_string(x) + "' top='" + to_string(y) + "' node-name='" + GUIParser::escapeQuotes(nodeName) + "' node-type-color='{$" + GUIParser::escapeQuotes(nodeTypeColor) + "}' />";
+					string xml = "<template src='resources/engine/gui/template_visualcode_node.xml' id='" + flattenedId + "' left='" + to_string(x) + "' top='" + to_string(y) + "' node-name='" + GUIParser::escapeQuotes(nodeName + "(" + flattenedId + ")") + "' node-type-color='{$" + GUIParser::escapeQuotes(nodeTypeColor) + "}' />";
 					try {
 						GUIParser::parse(visualisationNode, xml);
 					} catch (Exception& exception) {
@@ -827,7 +827,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 					}
 				}
 				// pin output aka flow output
-				if (depth == 0 && syntaxTreeNodeIdx < syntaxTreeNodeCount - 1) {
+				if (depth == 0) {
 					string xml;
 					//
 					xml+=
@@ -1046,7 +1046,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 		string nodeTypeColor = string("color.nodetype_flowcontrol");
 		//
 		{
-			string xml = "<template src='resources/engine/gui/template_visualcode_node.xml' id='" + flattenedId + "' left='" + to_string(x) + "' top='" + to_string(y) + "' node-name='" + GUIParser::escapeQuotes(nodeName) + "' node-type-color='{$" + GUIParser::escapeQuotes(nodeTypeColor) + "}' />";
+			string xml = "<template src='resources/engine/gui/template_visualcode_node.xml' id='" + flattenedId + "' left='" + to_string(x) + "' top='" + to_string(y) + "' node-name='" + GUIParser::escapeQuotes(nodeName + "(" + flattenedId + ")") + "' node-type-color='{$" + GUIParser::escapeQuotes(nodeTypeColor) + "}' />";
 			try {
 				GUIParser::parse(visualisationNode, xml);
 			} catch (Exception& exception) {
@@ -1078,7 +1078,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 			}
 		}
 		// pin output aka flow output
-		if (depth == 0 && syntaxTreeNodeIdx < syntaxTreeNodeCount - 1) {
+		{
 			string xml;
 			//
 			xml+=
@@ -1259,7 +1259,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 			auto branchNodeIdx = i;
 			branchNodesWidth = 0;
 			branchNodesHeight = 0;
-			if (handleMiniScriptBranch(idMapping, id + ".b." + to_string(branchIdx) + ".", branchSyntaxTreeNodes, i, x, y, branchNodesWidth, branchNodesHeight, rightNodeIds) == true) {
+			while (handleMiniScriptBranch(idMapping, id + ".b." + to_string(branchIdx) + ".", branchSyntaxTreeNodes, i, x, y, branchNodesWidth, branchNodesHeight, rightNodeIds) == true) {
 				// advance x
 				x+= branchNodesWidth + 100;
 				// store max
@@ -1290,11 +1290,17 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 					);
 				}
 				//
+				if (i >= branchSyntaxTreeNodes.size()) break;
+				//
 				previousNodeFlowNode = nodeFlowOut;
+				//
+				branchNodeIdx = i;
+				branchNodesWidth = 0;
+				branchNodesHeight = 0;
 			}
 
 			//
-			if (i >= branchSyntaxTreeNodes.size()) continue;
+			if (i >= branchSyntaxTreeNodes.size()) break;
 			branchSyntaxTreeNode = branchSyntaxTreeNodes[i];
 
 			//
@@ -1452,13 +1458,6 @@ bool TextEditorTabView::handleMiniScriptBranch(unordered_map<string, string>& id
 				stackDepth--;
 				// done?
 				if (stackDepth == 0) {
-					// yup
-					for (auto& branch: branches) {
-						auto j = 0;
-						for (auto node: branch.syntaxTreeNodes) {
-							j++;
-						}
-					}
 					//
 					createMiniScriptBranchNodes(idMapping, idPrefix + to_string(syntaxTreeNodeIdx), syntaxTreeNodeIdx, syntaxTree.size(), syntaxTreeNode, Node::NODETYPE_FLOW, branches, x, y, width, height, createdNodeIds);
 					//
@@ -1541,7 +1540,7 @@ void TextEditorTabView::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
 			width = 0;
 			height = 0;
 			auto branchNodeIdx = i;
-			if (handleMiniScriptBranch(idMapping, string(), syntaxTreeNodes, i, x, y, width, height, createdNodeIds) == true) {
+			while (handleMiniScriptBranch(idMapping, string(), syntaxTreeNodes, i, x, y, width, height, createdNodeIds) == true) {
 				//
 				x+= width + 100;
 				yMax = Math::max(y + height, yMax);
@@ -1570,11 +1569,17 @@ void TextEditorTabView::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
 					);
 				}
 				//
+				if (i >= syntaxTreeNodes.size()) break;
+				//
 				previousNodeFlowNode = nodeFlowOut;
+				//
+				branchNodeIdx = i;
+				width = 0;
+				height = 0;
 			}
 
 			//
-			if (i >= syntaxTreeNodes.size()) continue;
+			if (i >= syntaxTreeNodes.size()) break;
 			syntaxTreeNode = syntaxTreeNodes[i];
 
 			//
@@ -1780,16 +1785,12 @@ void TextEditorTabView::createSourceCodeFromNode(string& sourceCode, const Node*
 				if (conditionNode == nullptr) {
 					sourceCode+= spacePrefix;
 					sourceCode+= "end";
-					sourceCode+= "\n";
-					break;
-				} else
-				if (getNodeById(getConnectedConditionNodeId(node->id, conditionIdx + 1)) == nullptr) {
-					sourceCode+= spacePrefix;
-					sourceCode+= "end";
-					sourceCode+= "\n";
 					break;
 				}
-			} else {
+			}
+			if (conditionNode == nullptr && branchNode == nullptr) {
+				sourceCode+= spacePrefix;
+				sourceCode+= "end";
 				break;
 			}
 		}
