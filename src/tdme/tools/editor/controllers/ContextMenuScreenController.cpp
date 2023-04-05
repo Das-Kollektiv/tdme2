@@ -146,14 +146,12 @@ void ContextMenuScreenController::onChange(GUIElementNode* node) {
 				methodName = StringTools::substring(methodNameCandidate, string("miniscript.").size());
 			}
 			if (StringTools::toLowerCase(methodName).find(searchValue) != string::npos) {
-				GUIParser::parse(
-					required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("context_menu_addnode_list")),
-					"<context-menu-item template=\"context-menu-item_template_addnode.xml\" category=\"" + GUIParser::escapeQuotes(methodName) + "\" name=\"" + GUIParser::escapeQuotes(methodDescription) + "\" />"
+				required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("context_menu_addnode_list"))->addSubNodes(
+					"<context-menu-item template=\"context-menu-item_template_addnode.xml\" category=\"" + GUIParser::escapeQuotes(methodName) + "\" name=\"" + GUIParser::escapeQuotes(methodDescription) + "\" />",
+					true
 				);
 			}
 		}
-		//
-		screenNode->invalidateLayouts();
 	}
 }
 
@@ -171,9 +169,9 @@ void ContextMenuScreenController::clear() {
 }
 
 void ContextMenuScreenController::setupVisualCodeAddNodeContextMenu() {
-	GUIParser::parse(
-		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(contextMenuNode->getId())),
-		"<template src=\"resources/engine/gui/template_visualcode_addnodemenu.xml\" />"
+	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(contextMenuNode->getId()))->addSubNodes(
+		"<template src=\"resources/engine/gui/template_visualcode_addnodemenu.xml\" />",
+		true
 	);
 	//
 	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("context_menu_addnode_list"))->clearSubNodes();
@@ -192,13 +190,11 @@ void ContextMenuScreenController::setupVisualCodeAddNodeContextMenu() {
 		if (StringTools::startsWith(methodNameCandidate, "miniscript.") == true) {
 			methodName = StringTools::substring(methodNameCandidate, string("miniscript.").size());
 		}
-		GUIParser::parse(
-			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("context_menu_addnode_list")),
-			"<context-menu-item template=\"context-menu-item_template_addnode.xml\" category=\"" + GUIParser::escapeQuotes(methodName) + "\" name=\"" + GUIParser::escapeQuotes(methodDescription) + "\" />"
+		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("context_menu_addnode_list"))->addSubNodes(
+			"<context-menu-item template=\"context-menu-item_template_addnode.xml\" category=\"" + GUIParser::escapeQuotes(methodName) + "\" name=\"" + GUIParser::escapeQuotes(methodDescription) + "\" />",
+			true
 		);
 	}
-	//
-	screenNode->invalidateLayouts();
 }
 
 void ContextMenuScreenController::addMenuItem(const string& text, const string& id, Action* action) {
