@@ -89,12 +89,8 @@ private:
 		NodeType type { NODETYPE_NONE };
 		string value;
 		MiniScript::ScriptVariableType returnValueType;
-		/*
-		int x1;
-		int y1;
-		int x2;
-		int y2;
-		*/
+		int left;
+		int top;
 	};
 
 	struct Connection {
@@ -655,4 +651,10 @@ public:
 	 * @param depth depth
 	 */
 	void createSourceCodeFromNode(string& sourceCode, const Node* node, int depth = 0);
+
+	/**
+	 * Delete node
+	 * @param nodeId node id
+	 */
+	void deleteNode(const string& nodeId);
 };

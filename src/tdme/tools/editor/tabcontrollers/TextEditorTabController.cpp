@@ -20,6 +20,7 @@
 #include <tdme/gui/GUIParser.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/FindReplaceDialogScreenController.h>
@@ -60,6 +61,7 @@ using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::FindReplaceDialogScreenController;
@@ -375,6 +377,33 @@ void TextEditorTabController::onUnfocus(GUIElementNode* node) {
 }
 
 void TextEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
+	auto nodeValue = node->getValue();
+	if (StringTools::startsWith(nodeValue, "node_") == true) {
+		// TODO: rename getCurrentTabTooltipPosition() as it also satisfy to resolve here context menu location
+		int contextMenuLeft, contextMenuTop;
+		if (view->getEditorView()->getCurrentTabTooltipPosition(screenNode, mouseX, mouseY, contextMenuLeft, contextMenuTop) == false) return;
+
+		// clear
+		popUps->getContextMenuScreenController()->clear();
+
+		// delete
+		class OnNodeDeleteAction: public virtual Action
+		{
+		public:
+			void performAction() override {
+				textEditorTabController->view->deleteNode(nodeId);
+			}
+			OnNodeDeleteAction(TextEditorTabController* textEditorTabController, const string& nodeId): textEditorTabController(textEditorTabController), nodeId(nodeId) {
+			}
+		private:
+			TextEditorTabController* textEditorTabController;
+			string nodeId;
+		};
+		popUps->getContextMenuScreenController()->addMenuItem("Delete Node", "contextmenu_delete", new OnNodeDeleteAction(this, StringTools::substring(nodeValue, string("node_").size())));
+
+		//
+		popUps->getContextMenuScreenController()->show(contextMenuLeft, contextMenuTop);
+	}
 }
 
 void TextEditorTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {

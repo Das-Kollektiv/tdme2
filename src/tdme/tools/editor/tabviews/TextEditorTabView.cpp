@@ -418,6 +418,7 @@ void TextEditorTabView::initialize()
 	try {
 		textEditorTabController = new TextEditorTabController(this);
 		textEditorTabController->initialize(editorView->getScreenController()->getScreenNode());
+		screenNode->addContextMenuRequestListener(textEditorTabController);
 		screenNode->addTooltipRequestListener(textEditorTabController);
 	} catch (Exception& exception) {
 		Console::println("TextEditorTabView::initialize(): An error occurred: " + string(exception.what()));
@@ -548,7 +549,9 @@ void TextEditorTabView::createMiniScriptScriptNode(unordered_map<string, string>
 			.id = flattenedId,
 			.type = Node::NODETYPE_ARGUMENT,
 			.value = conditionSyntaxTreeNode->value.getValueString(),
-			.returnValueType = MiniScript::ScriptVariableType::TYPE_NULL
+			.returnValueType = MiniScript::ScriptVariableType::TYPE_NULL,
+			.left = x,
+			.top = y
 		};
 
 		//
@@ -689,7 +692,9 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 					.id = flattenedId,
 					.type = nodeType,
 					.value = syntaxTreeNode->value.getValueString(),
-					.returnValueType = syntaxTreeNode->method != nullptr?syntaxTreeNode->method->getReturnValueType():MiniScript::ScriptVariableType::TYPE_NULL
+					.returnValueType = syntaxTreeNode->method != nullptr?syntaxTreeNode->method->getReturnValueType():MiniScript::ScriptVariableType::TYPE_NULL,
+					.left = x,
+					.top = y
 				};
 				//
 				auto nodeName = syntaxTreeNode->value.getValueString();
@@ -1039,7 +1044,9 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 			.id = flattenedId,
 			.type = nodeType,
 			.value = syntaxTreeNode->value.getValueString(),
-			.returnValueType = MiniScript::ScriptVariableType::TYPE_NULL
+			.returnValueType = MiniScript::ScriptVariableType::TYPE_NULL,
+			.left = x,
+			.top = y
 		};
 		//
 		string nodeName = syntaxTreeNode->value.getValueString();
@@ -1829,4 +1836,25 @@ void TextEditorTabView::createSourceCodeFromNode(string& sourceCode, const Node*
 		}
 		sourceCode+= argumentsSourceCode + ")";
 	}
+}
+
+void TextEditorTabView::deleteNode(const string& nodeId) {
+	auto nodeIt = nodes.find(nodeId);
+	if (nodeIt == nodes.end()) return;
+	nodes.erase(nodeIt);
+	screenNode->removeNodeById(nodeId, false);
+	for (auto i = 0; i < connections.size(); i++) {
+		auto& connection = connections[i];
+		if (connection.srcNodeId == nodeId || StringTools::startsWith(connection.srcNodeId, nodeId + "_") == true ||
+			connection.dstNodeId == nodeId || StringTools::startsWith(connection.dstNodeId, nodeId + "_") == true) {
+			connections.erase(connections.begin() + i);
+			i--;
+		}
+	}
+
+	// Bug: Work around! Sometimes layouting is not issued! Need to check!
+	screenNode->forceInvalidateLayout(screenNode);
+
+	//
+	createConnectionsPasses = 3;
 }
