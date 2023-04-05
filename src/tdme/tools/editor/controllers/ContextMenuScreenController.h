@@ -45,6 +45,11 @@ class tdme::tools::editor::controllers::ContextMenuScreenController final
 	, public virtual GUITooltipRequestListener
 	, public virtual GUIInputEventHandler
 {
+public:
+	struct MiniScriptMethodSelectionListener {
+		virtual ~MiniScriptMethodSelectionListener() {}
+		virtual void onMethodSelection(const string& methodName) = 0;
+	};
 
 private:
 	PopUps* popUps { nullptr };
@@ -53,6 +58,8 @@ private:
 	unordered_map<string, Action*> actions;
 
 	Properties tscriptMethods;
+
+	MiniScriptMethodSelectionListener* miniScriptMethodSelectionListener { nullptr };
 
 public:
 	/**
@@ -65,6 +72,14 @@ public:
 	 * Destructor
 	 */
 	virtual ~ContextMenuScreenController();
+
+	/**
+	 * Set MiniScript method selection listener
+	 * @param miniScriptMethodSelectionListener MiniScript method selection listener
+	 */
+	inline void setMiniScriptMethodSelectionListener(MiniScriptMethodSelectionListener* miniScriptMethodSelectionListener) {
+		this->miniScriptMethodSelectionListener = miniScriptMethodSelectionListener;
+	}
 
 	/**
 	 * Clear

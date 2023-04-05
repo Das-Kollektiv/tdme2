@@ -121,6 +121,12 @@ void ContextMenuScreenController::onAction(GUIActionListenerType type, GUIElemen
 		if (actionIt != actions.end()) {
 			close();
 			if (actionIt->second != nullptr) actionIt->second->performAction();
+		} else
+		if (StringTools::startsWith(node->getValue(), "miniscript.method.") == true) {
+			close();
+			if (miniScriptMethodSelectionListener != nullptr) {
+				miniScriptMethodSelectionListener->onMethodSelection(StringTools::substring(node->getValue(), string("miniscript.method.").size()));
+			}
 		}
 	}
 }
@@ -147,7 +153,7 @@ void ContextMenuScreenController::onChange(GUIElementNode* node) {
 			}
 			if (StringTools::toLowerCase(methodName).find(searchValue) != string::npos) {
 				required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("context_menu_addnode_list"))->addSubNodes(
-					"<context-menu-item template=\"context-menu-item_template_addnode.xml\" category=\"" + GUIParser::escapeQuotes(methodName) + "\" name=\"" + GUIParser::escapeQuotes(methodDescription) + "\" />",
+					"<context-menu-item value=\"miniscript.method." + GUIParser::escapeQuotes(methodName) + "\" template=\"context-menu-item_template_addnode.xml\" category=\"" + GUIParser::escapeQuotes(methodName) + "\" name=\"" + GUIParser::escapeQuotes(methodDescription) + "\" />",
 					true
 				);
 			}
@@ -163,6 +169,7 @@ void ContextMenuScreenController::onUnfocus(GUIElementNode* node) {
 }
 
 void ContextMenuScreenController::clear() {
+	miniScriptMethodSelectionListener = nullptr;
 	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(contextMenuNode->getId()))->clearSubNodes();
 	for (auto& actionIt: actions) delete actionIt.second;
 	actions.clear();
@@ -191,7 +198,7 @@ void ContextMenuScreenController::setupVisualCodeAddNodeContextMenu() {
 			methodName = StringTools::substring(methodNameCandidate, string("miniscript.").size());
 		}
 		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("context_menu_addnode_list"))->addSubNodes(
-			"<context-menu-item template=\"context-menu-item_template_addnode.xml\" category=\"" + GUIParser::escapeQuotes(methodName) + "\" name=\"" + GUIParser::escapeQuotes(methodDescription) + "\" />",
+			"<context-menu-item value=\"miniscript.method." + GUIParser::escapeQuotes(methodName) + "\" template=\"context-menu-item_template_addnode.xml\" category=\"" + GUIParser::escapeQuotes(methodName) + "\" name=\"" + GUIParser::escapeQuotes(methodDescription) + "\" />",
 			true
 		);
 	}

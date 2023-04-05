@@ -7,6 +7,7 @@
 #include <tdme/engine/DynamicColorTexture.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIStyledTextNodeController.h>
+#include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/TextFormatter.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
@@ -24,6 +25,7 @@ using tdme::engine::Engine;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUIStyledTextNodeController;
+using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::TextFormatter;
 using tdme::tools::editor::tabcontrollers::TabController;
@@ -38,6 +40,7 @@ using tdme::utilities::MiniScript;
  */
 class tdme::tools::editor::tabviews::TextEditorTabView final
 	: public TabView
+	, public ContextMenuScreenController::MiniScriptMethodSelectionListener
 {
 protected:
 	Engine* engine { nullptr };
@@ -122,6 +125,8 @@ private:
 
 	GUIParentNode* visualisationNode { nullptr };
 	bool countEnabled { false };
+
+	int nodeIdx;
 
 	/**
 	 * @return start node which is the node with a flow output but no flow input
@@ -418,6 +423,15 @@ public:
 	void setCodeEditor();
 
 	/**
+	 * Create MiniScript node
+	 * @param methodName method name
+	 * @param id id
+	 * @param x x
+	 * @param y y
+	 */
+	void createMiniScriptNode(const string& methodName, int x, int y);
+
+	/**
 	 * Get MiniScript node flattened id from hierarchical id
 	 * @param hierarchicalId hierarchical id
 	 * @return flattened id
@@ -546,6 +560,7 @@ public:
 	void reloadOutliner() override;
 	inline bool hasFixedSize() override{ return false; };
 	void updateRendering() override;
+	void onMethodSelection(const string& methodName);
 
 	/**
 	 * @return text index

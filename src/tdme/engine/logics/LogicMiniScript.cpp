@@ -146,7 +146,7 @@ void LogicMiniScript::registerMethods() {
 					miniScript->startErrorScript();
 				}
 			}
-			bool isVariadic() override {
+			bool isVariadic() const override {
 				return true;
 			}
 		};
@@ -205,7 +205,7 @@ void LogicMiniScript::registerMethods() {
 					}
 				}
 			}
-			bool isVariadic() override {
+			bool isVariadic() const override {
 				return true;
 			}
 		};

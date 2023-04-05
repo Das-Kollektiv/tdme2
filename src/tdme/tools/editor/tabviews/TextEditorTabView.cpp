@@ -442,6 +442,10 @@ void TextEditorTabView::dispose()
 void TextEditorTabView::updateRendering() {
 }
 
+void TextEditorTabView::onMethodSelection(const string& methodName) {
+	createMiniScriptNode(methodName, textEditorTabController->getAddNodeX(), textEditorTabController->getAddNodeY());
+}
+
 Engine* TextEditorTabView::getEngine() {
 	return engine;
 }
@@ -510,6 +514,196 @@ void TextEditorTabView::setCodeEditor() {
 	auto editorNode = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen(screenNode->getId())->getNodeById("editor"));
 	if (editorNode != nullptr) editorNode->getActiveConditions().set("text");
 	visualEditor = false;
+}
+
+void TextEditorTabView::createMiniScriptNode(const string& methodName, int x, int y) {
+	auto flattenedId = to_string(nodeIdx++);
+	auto method = textEditorTabController->getMiniScript()->getMethod(methodName);
+
+	//
+	nodes[flattenedId] = {
+		.id = flattenedId,
+		.type = Node::NODETYPE_FLOW,
+		.value = methodName,
+		.returnValueType = method->getReturnValueType(),
+		.left = x,
+		.top = y
+	};
+	//
+	auto nodeName = methodName;
+	auto nodeTypeColor = string("color.nodetype_method");
+	auto methodOperatorMapIt = methodOperatorMap.find(nodeName);
+	if (methodOperatorMapIt != methodOperatorMap.end()) {
+		nodeName = methodOperatorMapIt->second;
+		nodeTypeColor = "color.nodetype_math";
+	}
+
+	if (method == nullptr) {
+		nodeTypeColor = "color.nodetype_function";
+	} else {
+		for (auto& flowControlNode: flowControlNodes) {
+			if (nodeName == flowControlNode) {
+				nodeTypeColor = "color.nodetype_flowcontrol";
+				break;
+			}
+		}
+		for (auto& mathNode: mathNodes) {
+			if (nodeName == mathNode || StringTools::startsWith(nodeName, mathNode + ".")) {
+				nodeTypeColor = "color.nodetype_math";
+				break;
+			}
+		}
+	}
+	//
+	{
+		string xml = "<template src='resources/engine/gui/template_visualcode_node.xml' id='" + flattenedId + "' left='" + to_string(x) + "' top='" + to_string(y) + "' node-name='" + GUIParser::escapeQuotes(nodeName + "(" + flattenedId + ")") + "' node-type-color='{$" + GUIParser::escapeQuotes(nodeTypeColor) + "}' />";
+		try {
+			GUIParser::parse(visualisationNode, xml);
+		} catch (Exception& exception) {
+			Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
+		}
+	}
+	//
+	auto nodeInputContainer = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById(flattenedId + "_input_container"));
+	auto nodeOutputContainer = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById(flattenedId + "_output_container"));
+	// pin input aka flow input
+	{
+		string xml;
+		//
+		xml+=
+			string() +
+			"<template " +
+			"	id='" + flattenedId + "_fi' " +
+			"	src='resources/engine/gui/template_visualcode_input.xml' " +
+			"	pin_type_connected='resources/engine/images/visualcode_flow_connected.png' " +
+			"	pin_type_unconnected='resources/engine/images/visualcode_flow_unconnected.png' " +
+			"/>";
+		//
+		try {
+			GUIParser::parse(nodeInputContainer, xml);
+			// update to be connected
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(flattenedId + "_fi_pin_type_panel"))->getActiveConditions().add("connected");
+		} catch (Exception& exception) {
+			Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
+		}
+	}
+	// inputs aka arguments
+	{
+		//
+		auto argumentIdx = 0;
+		if (method != nullptr) {
+			auto& argumentTypes = method->getArgumentTypes();
+			for (argumentIdx = 0; argumentIdx < argumentTypes.size(); argumentIdx++) {
+				//
+				auto isLiteral = true;
+				auto literal = string("");
+				auto argumentName = argumentTypes[argumentIdx].name;
+				if (argumentName.empty() == false) argumentName[0] = Character::toUpperCase(argumentName[0]);
+				//
+				string xml =
+					string() +
+					"<template " +
+					"	id='" + flattenedId + "_a" + to_string(argumentIdx) + "' " +
+					"	src='resources/engine/gui/template_visualcode_input.xml' " +
+					"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
+					"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
+					"	pin_color='{$" + GUIParser::escapeQuotes(getScriptVariableTypePinColor(argumentTypes[argumentIdx].type)) + "}' " +
+					"	text='" + GUIParser::escapeQuotes(argumentName) + "' ";
+				if (isLiteral == true) {
+					xml+= "	input_text='" + GUIParser::escapeQuotes(literal) + "' ";
+				}
+				xml+= "/>";
+				//
+				try {
+					GUIParser::parse(nodeInputContainer, xml);
+					//
+					if (isLiteral == true) {
+						// update to be a literal
+						required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(flattenedId + "_a" + to_string(argumentIdx) + "_input_type_panel"))->getActiveConditions().add("input");
+					} else {
+						// update to be connected
+						required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(flattenedId + "_a" + to_string(argumentIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
+					}
+
+				} catch (Exception& exception) {
+					Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
+				}
+			}
+		}
+	}
+	// pin output aka flow output
+	{
+		string xml;
+		//
+		xml+=
+			string() +
+			"<template " +
+			"	id='" + flattenedId + "_fo' " +
+			"	src='resources/engine/gui/template_visualcode_output.xml' " +
+			"	pin_type_connected='resources/engine/images/visualcode_flow_connected.png' " +
+			"	pin_type_unconnected='resources/engine/images/visualcode_flow_unconnected.png' " +
+			"/>";
+		//
+		try {
+			GUIParser::parse(nodeOutputContainer, xml);
+			// update to be connected
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(flattenedId + "_fo_pin_type_panel"))->getActiveConditions().add("connected");
+		} catch (Exception& exception) {
+			Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
+		}
+	}
+	// return value
+	if (method != nullptr && method->getReturnValueType() != MiniScript::ScriptVariableType::TYPE_NULL) {
+		string xml;
+		//
+		xml+=
+			string() +
+			"<template " +
+			"	id='" + flattenedId + "_r' " +
+			"	src='resources/engine/gui/template_visualcode_output.xml' " +
+			"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
+			"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
+			"	pin_color='{$" + GUIParser::escapeQuotes(getScriptVariableTypePinColor(method->getReturnValueType())) + "}' " +
+			"	text='Return' " +
+			"/>";
+
+		//
+		try {
+			GUIParser::parse(nodeOutputContainer, xml);
+			// update to be connected
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(flattenedId + "_r_pin_type_panel"))->getActiveConditions().add("connected");
+		} catch (Exception& exception) {
+			Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
+		}
+	} else
+	// functions have a return value pin by default for now
+	//	TODO: MiniScript user functions need also formal return values a) to find out if we have a return value at all and to know the type
+	if (method == nullptr) {
+		string xml;
+		//
+		xml+=
+			string() +
+			"<template " +
+			"	id='" + flattenedId + "_r' " +
+			"	src='resources/engine/gui/template_visualcode_output.xml' " +
+			"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
+			"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
+			"	pin_color='{$color.pintype_undefined}' " +
+			"	text='Return Value' " +
+			"/>";
+
+		//
+		try {
+			GUIParser::parse(nodeOutputContainer, xml);
+			// update to be connected
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(flattenedId + "_r_pin_type_panel"))->getActiveConditions().add("connected");
+		} catch (Exception& exception) {
+			Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
+		}
+	}
+
+	// Bug: Work around! Sometimes layouting is not issued! Need to check!
+	screenNode->forceInvalidateLayout(screenNode);
 }
 
 void TextEditorTabView::addMiniScriptNodeDeltaX(unordered_map<string, string>& idMapping, const string& id, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, int deltaX) {
@@ -1643,6 +1837,9 @@ void TextEditorTabView::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
 	screenNode->forceInvalidateLayout(screenNode);
 
 	//
+	nodeIdx = idMapping.size();
+
+	//
 	createConnectionsPasses = 3;
 }
 
@@ -1897,6 +2094,7 @@ void TextEditorTabView::setupContextMenu() {
 			{
 				// clear
 				popUps->getContextMenuScreenController()->clear();
+				popUps->getContextMenuScreenController()->setMiniScriptMethodSelectionListener(this);
 				popUps->getContextMenuScreenController()->setupVisualCodeAddNodeContextMenu();
 
 				//

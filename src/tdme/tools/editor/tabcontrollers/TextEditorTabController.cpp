@@ -390,6 +390,9 @@ void TextEditorTabController::onContextMenuRequest(GUIElementNode* node, int mou
 	if (contextMenuType != CONTEXTMENUTYPE_NODE) {
 		//
 		contextMenuType = CONTEXTMENUTYPE_CANVAS;
+		addNodeX = mouseX;
+		addNodeY = mouseY;
+
 	}
 }
 
@@ -474,7 +477,8 @@ void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx
 	}
 
 	// load specific MiniScript
-	MiniScript* scriptInstance = nullptr;
+	if (scriptInstance != nullptr) delete scriptInstance;
+	scriptInstance = nullptr;
 	if (logicMiniScript == true) {
 		Console::println("TextEditorTabController::updateMiniScriptSyntaxTree(): " + scriptFileName + ": Detected Logic MiniScript");
 		scriptInstance = new LogicMiniScript();

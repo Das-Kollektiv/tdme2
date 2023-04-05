@@ -71,6 +71,11 @@ private:
 	int contextMenuY { -1 };
 	string contextMenuNodeId;
 
+	int addNodeX { -1 };
+	int addNodeY { -1 };
+
+	MiniScript* scriptInstance { nullptr };
+
 public:
 	/**
 	 * Public constructor
@@ -90,6 +95,13 @@ public:
 
 	// overridden method
 	GUIScreenNode* getScreenNode() override;
+
+	/**
+	 * @return MiniScript
+	 */
+	inline MiniScript* getMiniScript() {
+		return scriptInstance;
+	}
 
 	/**
 	 * Reset context menu
@@ -127,6 +139,20 @@ public:
 	 */
 	inline const string& getContextMenuNodeId() {
 		return contextMenuNodeId;
+	}
+
+	/**
+	 * @return add node x
+	 */
+	inline int getAddNodeX() {
+		return addNodeX;
+	}
+
+	/**
+	 * @return add node y
+	 */
+	inline int getAddNodeY() {
+		return addNodeY;
 	}
 
 	// overridden methods
