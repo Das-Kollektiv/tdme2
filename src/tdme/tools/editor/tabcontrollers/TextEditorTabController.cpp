@@ -377,32 +377,19 @@ void TextEditorTabController::onUnfocus(GUIElementNode* node) {
 }
 
 void TextEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
+	if (view->isVisualEditor() == false) return;
+	//
+	if (view->getEditorView()->getCurrentTabTooltipPosition(screenNode, mouseX, mouseY, contextMenuX, contextMenuY) == false) return;
+	//
 	auto nodeValue = node->getValue();
+	//
 	if (StringTools::startsWith(nodeValue, "node_") == true) {
-		// TODO: rename getCurrentTabTooltipPosition() as it also satisfy to resolve here context menu location
-		int contextMenuLeft, contextMenuTop;
-		if (view->getEditorView()->getCurrentTabTooltipPosition(screenNode, mouseX, mouseY, contextMenuLeft, contextMenuTop) == false) return;
-
-		// clear
-		popUps->getContextMenuScreenController()->clear();
-
-		// delete
-		class OnNodeDeleteAction: public virtual Action
-		{
-		public:
-			void performAction() override {
-				textEditorTabController->view->deleteNode(nodeId);
-			}
-			OnNodeDeleteAction(TextEditorTabController* textEditorTabController, const string& nodeId): textEditorTabController(textEditorTabController), nodeId(nodeId) {
-			}
-		private:
-			TextEditorTabController* textEditorTabController;
-			string nodeId;
-		};
-		popUps->getContextMenuScreenController()->addMenuItem("Delete Node", "contextmenu_delete", new OnNodeDeleteAction(this, StringTools::substring(nodeValue, string("node_").size())));
-
+		contextMenuType = CONTEXTMENUTYPE_NODE;
+		contextMenuNodeId = StringTools::substring(nodeValue, string("node_").size());
+	} else
+	if (contextMenuType != CONTEXTMENUTYPE_NODE) {
 		//
-		popUps->getContextMenuScreenController()->show(contextMenuLeft, contextMenuTop);
+		contextMenuType = CONTEXTMENUTYPE_CANVAS;
 	}
 }
 

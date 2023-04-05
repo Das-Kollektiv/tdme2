@@ -336,10 +336,16 @@ void TextEditorTabView::handleInputEvents()
 	engine->getGUI()->handleEvents();
 }
 
+
+
 void TextEditorTabView::display()
 {
 	//
 	if (visualCodingEnabled == true) {
+		//
+		setupContextMenu();
+
+		//
 		auto visualizationNode = required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("visualization"));
 
 		auto scrolled = false;
@@ -1857,4 +1863,52 @@ void TextEditorTabView::deleteNode(const string& nodeId) {
 
 	//
 	createConnectionsPasses = 3;
+}
+
+void TextEditorTabView::setupContextMenu() {
+	switch (textEditorTabController->getContextMenuType()) {
+		case TextEditorTabController::CONTEXTMENUTYPE_NODE:
+			{
+				// clear
+				popUps->getContextMenuScreenController()->clear();
+
+				// delete
+				class OnNodeDeleteAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						textEditorTabView->deleteNode(nodeId);
+					}
+					OnNodeDeleteAction(TextEditorTabView* textEditorTabView, const string& nodeId): textEditorTabView(textEditorTabView), nodeId(nodeId) {
+					}
+				private:
+					TextEditorTabView* textEditorTabView;
+					string nodeId;
+				};
+				popUps->getContextMenuScreenController()->addMenuItem("Delete Node", "contextmenu_delete", new OnNodeDeleteAction(this, textEditorTabController->getContextMenuNodeId()));
+
+				//
+				popUps->getContextMenuScreenController()->show(textEditorTabController->getContextMenuX(), textEditorTabController->getContextMenuY());
+
+				//
+				break;
+			}
+		case TextEditorTabController::CONTEXTMENUTYPE_CANVAS:
+			{
+				// clear
+				popUps->getContextMenuScreenController()->clear();
+				popUps->getContextMenuScreenController()->setupVisualCodeAddNodeContextMenu();
+
+				//
+				popUps->getContextMenuScreenController()->show(textEditorTabController->getContextMenuX(), textEditorTabController->getContextMenuY());
+
+				//
+				break;
+			}
+		default:
+			break;
+	}
+
+	//
+	textEditorTabController->resetContextMenu();
 }

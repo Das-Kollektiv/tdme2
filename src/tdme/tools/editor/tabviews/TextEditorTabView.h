@@ -657,4 +657,9 @@ public:
 	 * @param nodeId node id
 	 */
 	void deleteNode(const string& nodeId);
+
+	/**
+	 * Set up context menu
+	 */
+	void setupContextMenu();
 };
