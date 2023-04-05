@@ -84,7 +84,10 @@ private:
 	int createConnectionsPasses { -1 };
 
 	struct Node {
+		enum NodeType { NODETYPE_NONE, NODETYPE_FLOW, NODETYPE_ARGUMENT };
 		string id;
+		NodeType type { NODETYPE_NONE };
+		string value;
 		MiniScript::ScriptVariableType returnValueType;
 		/*
 		int x1;
@@ -123,6 +126,151 @@ private:
 
 	GUIParentNode* visualisationNode { nullptr };
 	bool countEnabled { false };
+
+	/**
+	 * @return start node which is the node with a flow output but no flow input
+	 */
+	inline const string getStartNodeId() {
+		// we only look for flow node ids
+		vector<string> flowNodeIds;
+		for (auto& nodeIt: nodes) {
+			auto& node = nodeIt.second;
+			if (node.type != Node::NODETYPE_FLOW) continue;
+			flowNodeIds.push_back(node.id);
+		}
+		// iterate over node ids
+		// iterate over connections
+		// check if a flow connection exists from any node to current node id
+		// if so its not the start node :D
+		for (const auto& nodeId: flowNodeIds) {
+			auto flowNodeId = nodeId + "_fi";
+			auto foundFlowInput = false;
+			for (auto& connection: connections) {
+				if (connection.type != Connection::CONNECTIONTYPE_FLOW) continue;
+				if (connection.dstNodeId == flowNodeId) {
+					foundFlowInput = true;
+				}
+			}
+			if (foundFlowInput == false) return nodeId;
+		}
+		return string();
+	}
+
+	/**
+	 * Find next node
+	 * @param nodeId node id to find next node to
+	 * @return next node id
+	 */
+	inline const string getNextNodeId(const string& nodeId) {
+		auto flowNodeId = nodeId + "_fo";
+		for (auto& connection: connections) {
+			if (connection.type != Connection::CONNECTIONTYPE_FLOW) continue;
+			if (connection.srcNodeId == flowNodeId) {
+				//
+				auto separatorIdx = connection.dstNodeId.find('_');
+				return StringTools::substring(connection.dstNodeId, 0, separatorIdx == string::npos?connection.dstNodeId.size():separatorIdx);
+			}
+		}
+		return string();
+	}
+
+	/**
+	 * Create argument node id
+	 * @param nodeId node id
+	 * @param argumentIdx argument index
+	 * @return argument node id
+	 */
+	inline const string getArgumentNodeId(const string& nodeId, int argumentIdx) {
+		return nodeId + "_a" + to_string(argumentIdx);
+	}
+
+	/**
+	 * Find argument node id
+	 * @param nodeId node id
+	 * @param argumentIdx argument index
+	 * @return argument node id
+	 */
+	inline const string getConnectedArgumentNodeId(const string& nodeId, int argumentIdx) {
+		auto argumentNodeId = getArgumentNodeId(nodeId, argumentIdx);
+		for (auto& connection: connections) {
+			if (connection.type != Connection::CONNECTIONTYPE_ARGUMENT) continue;
+			if (connection.srcNodeId == argumentNodeId) {
+				//
+				auto separatorIdx = connection.dstNodeId.find('_');
+				return StringTools::substring(connection.dstNodeId, 0, separatorIdx == string::npos?connection.dstNodeId.size():separatorIdx);
+			}
+		}
+		return string();
+	}
+
+	/**
+	 * Create condition node id
+	 * @param nodeId node id
+	 * @param conditionIdx condition index
+	 * @return condition node id
+	 */
+	inline const string getConditionNodeId(const string& nodeId, int conditionIdx) {
+		return nodeId + "_c" + to_string(conditionIdx);
+	}
+
+	/**
+	 * Find condition node id
+	 * @param nodeId node id
+	 * @param conditionIdx condition index
+	 * @return condition node id
+	 */
+	inline const string getConnectedConditionNodeId(const string& nodeId, int conditionIdx) {
+		auto conditionNodeId = getConditionNodeId(nodeId, conditionIdx);
+		for (auto& connection: connections) {
+			if (connection.type != Connection::CONNECTIONTYPE_ARGUMENT) continue;
+			if (connection.srcNodeId == conditionNodeId) {
+				//
+				auto separatorIdx = connection.dstNodeId.find('_');
+				return StringTools::substring(connection.dstNodeId, 0, separatorIdx == string::npos?connection.dstNodeId.size():separatorIdx);
+			}
+		}
+		return string();
+	}
+
+	/**
+	 * Create branch node id
+	 * @param nodeId node id
+	 * @param branchIdx branch index
+	 * @return branch node id
+	 */
+	inline const string getBranchNodeId(const string& nodeId, int branchIdx) {
+		return nodeId + "_b" + to_string(branchIdx);
+	}
+
+	/**
+	 * Find branch node id
+	 * @param nodeId node id
+	 * @param branchIdx branch index
+	 * @return branch node id
+	 */
+	inline const string getConnectedBranchNodeId(const string& nodeId, int branchIdx) {
+		auto branchNodeId = getBranchNodeId(nodeId, branchIdx);
+		for (auto& connection: connections) {
+			if (connection.type != Connection::CONNECTIONTYPE_FLOW) continue;
+			if (connection.srcNodeId == branchNodeId) {
+				//
+				auto separatorIdx = connection.dstNodeId.find('_');
+				return StringTools::substring(connection.dstNodeId, 0, separatorIdx == string::npos?connection.dstNodeId.size():separatorIdx);
+			}
+		}
+		return string();
+	}
+
+	/**
+	 * Get node by id
+	 * @param nodeId node id
+	 * @return node
+	 */
+	inline Node* getNodeById(const string& nodeId) {
+		auto nodeIt = nodes.find(nodeId);
+		if (nodeIt != nodes.end()) return &nodeIt->second;
+		return nullptr;
+	}
 
 	/**
 	 * Get script variable type pin color
@@ -320,6 +468,7 @@ public:
 	 * @param syntaxTreeNodeIdx syntax tree node index
 	 * @param syntaxTreeNodeCount syntax tree node count
 	 * @param syntaxTreeNode syntax tree node
+	 * @param nodeType node type
 	 * @param x x
 	 * @param y y
 	 * @param width width
@@ -327,7 +476,7 @@ public:
 	 * @oaram createdNodeIds created node ids
 	 * @param depth depth
 	 */
-	void createMiniScriptNodes(unordered_map<string, string>& idMapping, const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth = 0);
+	void createMiniScriptNodes(unordered_map<string, string>& idMapping, const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, Node::NodeType nodeType, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth = 0);
 
 	/**
 	 * Create UI nodes for branch nodes like if, elseif, else, end; forTime, end; forCondition, end
@@ -336,6 +485,7 @@ public:
 	 * @param syntaxTreeNodeIdx syntax tree node index
 	 * @param syntaxTreeNodeCount syntax tree node count
 	 * @param syntaxTreeNode syntax tree node
+	 * @param nodeType node type
 	 * @param branches branches
 	 * @param x x
 	 * @param y y
@@ -344,7 +494,7 @@ public:
 	 * @oaram createdNodeIds created node ids
 	 * @param depth depth
 	 */
-	void createMiniScriptBranchNodes(unordered_map<string, string>& idMapping, const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, const vector<MiniScriptBranch>& branches, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth = 0);
+	void createMiniScriptBranchNodes(unordered_map<string, string>& idMapping, const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, Node::NodeType nodeType, const vector<MiniScriptBranch>& branches, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth = 0);
 
 	/**
 	 * @return MiniScript script index
@@ -490,4 +640,19 @@ public:
 	 */
 	void delete_();
 
+	/**
+	 * Create source code from nodes
+	 * @param sourceCode source code
+	 * @param node node
+	 * @param depth depth
+	 */
+	void createSourceCodeFromNodes(string& sourceCode, const Node* node, int depth = 0);
+
+	/**
+	 * Create source code from node
+	 * @param sourceCode source code
+	 * @param node node
+	 * @param depth depth
+	 */
+	void createSourceCodeFromNode(string& sourceCode, const Node* node, int depth = 0);
 };
