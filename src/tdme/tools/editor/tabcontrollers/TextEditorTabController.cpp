@@ -20,6 +20,7 @@
 #include <tdme/gui/GUIParser.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/FindReplaceDialogScreenController.h>
@@ -60,6 +61,7 @@ using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::FindReplaceDialogScreenController;
@@ -375,6 +377,23 @@ void TextEditorTabController::onUnfocus(GUIElementNode* node) {
 }
 
 void TextEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
+	if (view->isVisualEditor() == false) return;
+	//
+	if (view->getEditorView()->getCurrentTabTooltipPosition(screenNode, mouseX, mouseY, contextMenuX, contextMenuY) == false) return;
+	//
+	auto nodeValue = node->getValue();
+	//
+	if (StringTools::startsWith(nodeValue, "node_") == true) {
+		contextMenuType = CONTEXTMENUTYPE_NODE;
+		contextMenuNodeId = StringTools::substring(nodeValue, string("node_").size());
+	} else
+	if (contextMenuType != CONTEXTMENUTYPE_NODE) {
+		//
+		contextMenuType = CONTEXTMENUTYPE_CANVAS;
+		addNodeX = mouseX;
+		addNodeY = mouseY;
+
+	}
 }
 
 void TextEditorTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
@@ -458,7 +477,8 @@ void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx
 	}
 
 	// load specific MiniScript
-	MiniScript* scriptInstance = nullptr;
+	if (scriptInstance != nullptr) delete scriptInstance;
+	scriptInstance = nullptr;
 	if (logicMiniScript == true) {
 		Console::println("TextEditorTabController::updateMiniScriptSyntaxTree(): " + scriptFileName + ": Detected Logic MiniScript");
 		scriptInstance = new LogicMiniScript();

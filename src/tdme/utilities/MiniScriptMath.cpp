@@ -40,7 +40,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				MiniScriptMath::add(miniScript, argumentValues, returnValue, statement);
 			}
-			MiniScript::ScriptOperator getOperator() override {
+			MiniScript::ScriptOperator getOperator() const override {
 				return MiniScript::OPERATOR_ADDITION;
 			}
 		};
@@ -67,7 +67,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				MiniScriptMath::sub(miniScript, argumentValues, returnValue, statement);
 			}
-			MiniScript::ScriptOperator getOperator() override {
+			MiniScript::ScriptOperator getOperator() const override {
 				return MiniScript::OPERATOR_SUBTRACTION;
 			}
 		};
@@ -94,7 +94,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				MiniScriptMath::mul(miniScript, argumentValues, returnValue, statement);
 			}
-			MiniScript::ScriptOperator getOperator() override {
+			MiniScript::ScriptOperator getOperator() const override {
 				return MiniScript::OPERATOR_MULTIPLICATION;
 			}
 		};
@@ -121,7 +121,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				MiniScriptMath::div(miniScript, argumentValues, returnValue, statement);
 			}
-			MiniScript::ScriptOperator getOperator() override {
+			MiniScript::ScriptOperator getOperator() const override {
 				return MiniScript::OPERATOR_DIVISION;
 			}
 		};
@@ -166,7 +166,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 					}
 				}
 			}
-			MiniScript::ScriptOperator getOperator() override {
+			MiniScript::ScriptOperator getOperator() const override {
 				return MiniScript::OPERATOR_MODULO;
 			}
 		};

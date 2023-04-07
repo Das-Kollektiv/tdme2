@@ -1227,7 +1227,7 @@ void GUIMiniScript::registerMethods() {
 					}
 				}
 			}
-			bool isVariadic() override {
+			bool isVariadic() const override {
 				return true;
 			}
 		};
@@ -2020,7 +2020,7 @@ void GUIMiniScript::registerMethods() {
 					miniScript->startErrorScript();
 				}
 			}
-			bool isVariadic() override {
+			bool isVariadic() const override {
 				return true;
 			}
 		};
@@ -2087,7 +2087,7 @@ void GUIMiniScript::registerMethods() {
 					miniScript->startErrorScript();
 				}
 			}
-			bool isVariadic() override {
+			bool isVariadic() const override {
 				return true;
 			}
 		};
