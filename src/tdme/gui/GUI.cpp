@@ -486,6 +486,7 @@ void GUI::handleKeyboardEvent(GUIKeyboardEvent* event) {
 
 void GUI::handleEvents(bool clearEvents)
 {
+	//
 	unordered_map<string, unordered_set<string>> _mouseOutCandidateEventNodeIds;
 	unordered_map<string, unordered_set<string>> _mouseOutClickCandidateEventNodeIds;
 

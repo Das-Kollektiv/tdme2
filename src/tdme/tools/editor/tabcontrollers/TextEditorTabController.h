@@ -58,6 +58,7 @@ public:
 		vector<MiniScript::ScriptSyntaxTreeNode> syntaxTree;
 	};
 
+	enum ContextMenuType { CONTEXTMENUTYPE_NONE, CONTEXTMENUTYPE_NODE, CONTEXTMENUTYPE_CANVAS };
 private:
 	TextEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
@@ -65,6 +66,15 @@ private:
 	vector<MiniScriptScriptSyntaxTree> miniScriptSyntaxTrees;
 	bool firstSearch { true };
 	int searchIndex { -1 };
+	ContextMenuType contextMenuType { CONTEXTMENUTYPE_NONE };
+	int contextMenuX { -1 };
+	int contextMenuY { -1 };
+	string contextMenuNodeId;
+
+	int addNodeX { -1 };
+	int addNodeY { -1 };
+
+	MiniScript* scriptInstance { nullptr };
 
 public:
 	/**
@@ -85,6 +95,65 @@ public:
 
 	// overridden method
 	GUIScreenNode* getScreenNode() override;
+
+	/**
+	 * @return MiniScript
+	 */
+	inline MiniScript* getMiniScript() {
+		return scriptInstance;
+	}
+
+	/**
+	 * Reset context menu
+	 */
+	inline void resetContextMenu() {
+		contextMenuType = CONTEXTMENUTYPE_NONE;
+		contextMenuX = -1;
+		contextMenuY = -1;
+		contextMenuNodeId.clear();
+	}
+
+	/**
+	 * @return context menu type
+	 */
+	inline ContextMenuType getContextMenuType() {
+		return contextMenuType;
+	}
+
+	/**
+	 * @return context menu x
+	 */
+	inline int getContextMenuX() {
+		return contextMenuX;
+	}
+
+	/**
+	 * @return context menu y
+	 */
+	inline int getContextMenuY() {
+		return contextMenuY;
+	}
+
+	/**
+	 * @return context menu node id
+	 */
+	inline const string& getContextMenuNodeId() {
+		return contextMenuNodeId;
+	}
+
+	/**
+	 * @return add node x
+	 */
+	inline int getAddNodeX() {
+		return addNodeX;
+	}
+
+	/**
+	 * @return add node y
+	 */
+	inline int getAddNodeY() {
+		return addNodeY;
+	}
 
 	// overridden methods
 	void initialize(GUIScreenNode* screenNode) override;

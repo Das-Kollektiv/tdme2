@@ -52,7 +52,8 @@ void GUIMoveableController::postLayout() {
 
 void GUIMoveableController::handleMouseEvent(GUINode* node, GUIMouseEvent* event) {
 	if (node == this->node &&
-		event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED == true) {
+		event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED == true &&
+		event->getButton() == MOUSE_BUTTON_LEFT) {
 		//
 		event->setProcessed(true);
 		//

@@ -1736,35 +1736,35 @@ public:
 		/**
 		 * @return arguments
 		 */
-		const vector<ArgumentType>& getArgumentTypes() {
+		const vector<ArgumentType>& getArgumentTypes() const {
 			return argumentTypes;
 		}
 
 		/**
 		 * @return return value type
 		 */
-		const ScriptVariableType& getReturnValueType() {
+		const ScriptVariableType& getReturnValueType() const {
 			return returnValueType;
 		}
 
 		/**
 		 * @return if variadic method
 		 */
-		virtual bool isVariadic() {
+		virtual bool isVariadic() const {
 			return false;
 		}
 
 		/**
 		 * @return if private
 		 */
-		virtual bool isPrivate() {
+		virtual bool isPrivate() const {
 			return false;
 		}
 
 		/**
 		 * @return operator
 		 */
-		virtual ScriptOperator getOperator() {
+		virtual ScriptOperator getOperator() const {
 			return OPERATOR_NONE;
 		}
 
@@ -3173,6 +3173,20 @@ public:
 	 */
 	inline bool isRunning() {
 		return getScriptState().running;
+	}
+
+	/**
+	 * Get method by method name
+	 * @param methodName method name
+	 * @return script method or nullptr
+	 */
+	inline const ScriptMethod* getMethod(const string& methodName) {
+		auto scriptMethodIt = scriptMethods.find(methodName);
+		if (scriptMethodIt != scriptMethods.end()) {
+			return scriptMethodIt->second;
+		} else {
+			return nullptr;
+		}
 	}
 
 	/**

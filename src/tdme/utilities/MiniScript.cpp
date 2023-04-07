@@ -1891,7 +1891,7 @@ void MiniScript::registerMethods() {
 					returnValue = argumentValues[0];
 				}
 			}
-			bool isPrivate() override {
+			bool isPrivate() const override {
 				return true;
 			}
 		};
@@ -1972,7 +1972,7 @@ void MiniScript::registerMethods() {
 					}
 				}
 			}
-			bool isVariadic() override {
+			bool isVariadic() const override {
 				return true;
 			}
 		};
@@ -2436,7 +2436,7 @@ void MiniScript::registerMethods() {
 				}
 				Console::println();
 			}
-			bool isVariadic() override {
+			bool isVariadic() const override {
 				return true;
 			}
 		};
@@ -2492,7 +2492,7 @@ void MiniScript::registerMethods() {
 					}
 				}
 			}
-			ScriptOperator getOperator() override {
+			ScriptOperator getOperator() const override {
 				return OPERATOR_EQUALS;
 			}
 		};
@@ -2530,7 +2530,7 @@ void MiniScript::registerMethods() {
 					}
 				}
 			}
-			ScriptOperator getOperator() override {
+			ScriptOperator getOperator() const override {
 				return OPERATOR_NOTEQUAL;
 			}
 		};
@@ -2637,7 +2637,7 @@ void MiniScript::registerMethods() {
 					}
 				}
 			}
-			ScriptOperator getOperator() override {
+			ScriptOperator getOperator() const override {
 				return OPERATOR_GREATER;
 			}
 		};
@@ -2683,7 +2683,7 @@ void MiniScript::registerMethods() {
 					}
 				}
 			}
-			ScriptOperator getOperator() override {
+			ScriptOperator getOperator() const override {
 				return OPERATOR_GREATEREQUALS;
 			}
 		};
@@ -2729,7 +2729,7 @@ void MiniScript::registerMethods() {
 					}
 				}
 			}
-			ScriptOperator getOperator() override {
+			ScriptOperator getOperator() const override {
 				return OPERATOR_LESSER;
 			}
 		};
@@ -2775,7 +2775,7 @@ void MiniScript::registerMethods() {
 					}
 				}
 			}
-			ScriptOperator getOperator() override {
+			ScriptOperator getOperator() const override {
 				return OPERATOR_LESSEREQUALS;
 			}
 		};
@@ -3703,7 +3703,7 @@ void MiniScript::registerMethods() {
 					miniScript->startErrorScript();
 				}
 			}
-			bool isVariadic() override {
+			bool isVariadic() const override {
 				return true;
 			}
 		};
@@ -3901,7 +3901,7 @@ void MiniScript::registerMethods() {
 					miniScript->startErrorScript();
 				}
 			}
-			bool isVariadic() override {
+			bool isVariadic() const override {
 				return true;
 			}
 
@@ -3948,7 +3948,7 @@ void MiniScript::registerMethods() {
 					miniScript->startErrorScript();
 				}
 			}
-			bool isVariadic() override {
+			bool isVariadic() const override {
 				return true;
 			}
 		};
@@ -4059,7 +4059,7 @@ void MiniScript::registerMethods() {
 					miniScript->startErrorScript();
 				}
 			}
-			bool isVariadic() override {
+			bool isVariadic() const override {
 				return true;
 			}
 
@@ -4168,7 +4168,7 @@ void MiniScript::registerMethods() {
 					miniScript->startErrorScript();
 				}
 			}
-			bool isVariadic() override {
+			bool isVariadic() const override {
 				return true;
 			}
 		};
@@ -4818,7 +4818,7 @@ void MiniScript::registerMethods() {
 					return;
 				}
 			}
-			ScriptOperator getOperator() override {
+			ScriptOperator getOperator() const override {
 				return OPERATOR_NOT;
 			}
 		};
@@ -4862,7 +4862,7 @@ void MiniScript::registerMethods() {
 					}
 				}
 			}
-			ScriptOperator getOperator() override {
+			ScriptOperator getOperator() const override {
 				return OPERATOR_AND;
 			}
 		};
@@ -4906,7 +4906,7 @@ void MiniScript::registerMethods() {
 					}
 				}
 			}
-			ScriptOperator getOperator() override {
+			ScriptOperator getOperator() const override {
 				return OPERATOR_OR;
 			}
 		};
@@ -5462,7 +5462,7 @@ void MiniScript::registerMethods() {
 				}
 				returnValue.setValue(result);
 			}
-			bool isVariadic() override {
+			bool isVariadic() const override {
 				return true;
 			}
 		};
@@ -5670,7 +5670,7 @@ void MiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "array";
 			}
-			bool isVariadic() override {
+			bool isVariadic() const override {
 				return true;
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
@@ -5726,7 +5726,7 @@ void MiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "array.push";
 			}
-			bool isVariadic() override {
+			bool isVariadic() const override {
 				return true;
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
@@ -5799,7 +5799,7 @@ void MiniScript::registerMethods() {
 					argumentValues[0].setArrayValue(index, argumentValues[2]);
 				}
 			}
-			bool isVariadic() override {
+			bool isVariadic() const override {
 				return true;
 			}
 		};
@@ -5915,7 +5915,7 @@ void MiniScript::registerMethods() {
 					}
 				}
 			}
-			bool isVariadic() override {
+			bool isVariadic() const override {
 				return true;
 			}
 		};
@@ -6045,7 +6045,7 @@ void MiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "map.set";
 			}
-			bool isVariadic() override {
+			bool isVariadic() const override {
 				return true;
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
@@ -6438,7 +6438,7 @@ void MiniScript::registerMethods() {
 					returnValue = argumentValues[1];
 				}
 			}
-			ScriptOperator getOperator() override {
+			ScriptOperator getOperator() const override {
 				return OPERATOR_SET;
 			}
 		};
@@ -6662,7 +6662,7 @@ void MiniScript::registerMethods() {
 					returnValue.setValue(value);
 				}
 			}
-			ScriptOperator getOperator() override {
+			ScriptOperator getOperator() const override {
 				return OPERATOR_INCREMENT;
 			}
 		};
@@ -6696,7 +6696,7 @@ void MiniScript::registerMethods() {
 					returnValue.setValue(value);
 				}
 			}
-			ScriptOperator getOperator() override {
+			ScriptOperator getOperator() const override {
 				return OPERATOR_DECREMENT;
 			}
 		};
@@ -6728,7 +6728,7 @@ void MiniScript::registerMethods() {
 					returnValue.setValue(~value);
 				}
 			}
-			ScriptOperator getOperator() override {
+			ScriptOperator getOperator() const override {
 				return OPERATOR_BITWISENOT;
 			}
 		};
@@ -6762,7 +6762,7 @@ void MiniScript::registerMethods() {
 					returnValue.setValue(valueA & valueB);
 				}
 			}
-			ScriptOperator getOperator() override {
+			ScriptOperator getOperator() const override {
 				return OPERATOR_BITWISEAND;
 			}
 		};
@@ -6796,7 +6796,7 @@ void MiniScript::registerMethods() {
 					returnValue.setValue(valueA | valueB);
 				}
 			}
-			ScriptOperator getOperator() override {
+			ScriptOperator getOperator() const override {
 				return OPERATOR_BITWISEOR;
 			}
 		};
@@ -6830,7 +6830,7 @@ void MiniScript::registerMethods() {
 					returnValue.setValue(valueA ^ valueB);
 				}
 			}
-			ScriptOperator getOperator() override {
+			ScriptOperator getOperator() const override {
 				return OPERATOR_BITWISEXOR;
 			}
 		};

@@ -1,7 +1,7 @@
 <template>
 	<moveable id="{$id}" alignment="vertical" horizontal-align="center" vertical-align="center" left="{$left}" top="{$top}" width="auto" height="auto">	
 
-		<layer width="315" height="auto" horizontal-align="center">
+		<element width="315" height="auto" horizontal-align="center" value="node_{$id}">
 
 			<layout border-right="1" border-bottom="1" border-color="{$color.element_frame}" width="300" height="*" alignment="vertical" vertical-align="top" background-color="{$color.element_foreground}">
 
@@ -77,7 +77,7 @@
 
 			</layout>		
 		
-		</layer>
+		</element>
 				
 	</moveable>
 </template>

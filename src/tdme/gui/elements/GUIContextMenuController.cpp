@@ -121,7 +121,8 @@ void GUIContextMenuController::selectPrevious()
 		return;
 	}
 
-	menuItemControllers[selectedMenuItemControllerIdx]->select();}
+	menuItemControllers[selectedMenuItemControllerIdx]->select();
+}
 
 void GUIContextMenuController::handleCurrentMenuItemKeyboardEvent(GUIKeyboardEvent* event)
 {
