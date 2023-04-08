@@ -1018,6 +1018,16 @@ GUIParentNode* GUINode::getParentControllerNode()
 	return node;
 }
 
+void GUINode::determineNodesByCoordinate(const Vector2& coordinate, unordered_set<string>& nodeIds) {
+	if (conditionsMet == false)
+		return;
+
+	//
+	if (isCoordinateBelongingToNode(coordinate) == true) {
+		nodeIds.insert(id);
+	}
+}
+
 void GUINode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds, int flags)
 {
 	if (conditionsMet == false)

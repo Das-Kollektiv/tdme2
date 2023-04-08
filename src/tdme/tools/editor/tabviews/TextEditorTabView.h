@@ -671,6 +671,12 @@ public:
 	void createSourceCodeFromNode(string& sourceCode, const Node* node, int depth = 0);
 
 	/**
+	 * Delete connection
+	 * @param nodeId node id
+	 */
+	void deleteConnection(const string& nodeId);
+
+	/**
 	 * Delete node
 	 * @param nodeId node id
 	 */
@@ -692,8 +698,10 @@ public:
 
 	/**
 	 * Finish creating connection
+	 * @param mouseX mouse X
+	 * @param mouseY mouse Y
 	 */
-	void finishCreateConnection();
+	void finishCreateConnection(int mouseX, int mouseY);
 
 	/**
 	 * Set up context menu

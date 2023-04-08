@@ -634,6 +634,13 @@ public:
 	GUIParentNode* getParentControllerNode();
 
 	/**
+	 * Determine nodes by coordinate
+	 * @param coordinate coordinate
+	 * @param nodeIds node ids
+	 */
+	virtual void determineNodesByCoordinate(const Vector2& coordinate, unordered_set<string>& nodeIds);
+
+	/**
 	 * Determine mouse event nodes
 	 * @param event event
 	 * @param floatingNode if node is floating node

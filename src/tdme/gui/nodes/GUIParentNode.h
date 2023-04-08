@@ -258,6 +258,7 @@ public:
 	void dispose() override;
 	void setConditionsMet() override;
 	void render(GUIRenderer* guiRenderer) override;
+	void determineNodesByCoordinate(const Vector2& coordinate, unordered_set<string>& nodeIds) override;
 	void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds, int flags = DETERMINEMOUSEEVENTNODES_FLAG_NONE) override;
 
 	/**
