@@ -19,6 +19,12 @@ struct tdme::gui::events::GUIMoveListener
 	virtual ~GUIMoveListener() {}
 
 	/**
+	 * Accept move
+	 * @param node node
+	 */
+	virtual bool accept(GUINode* node) = 0;
+
+	/**
 	 * On move
 	 * @param node node
 	 */

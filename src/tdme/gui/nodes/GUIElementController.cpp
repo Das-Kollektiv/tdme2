@@ -77,7 +77,6 @@ void GUIElementController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 	if (disabled == true) return;
 	auto elementNode = required_dynamic_cast<GUIElementNode*>(this->node);
 	if (node == elementNode && elementNode->isEventBelongingToNode(event) == true && event->getButton() == MOUSE_BUTTON_LEFT) {
-		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
 			elementNode->getActiveConditions().add(GUIElementNode::CONDITION_CLICK);
 			isActionPerforming = true;
@@ -86,12 +85,13 @@ void GUIElementController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 			}
 			mouseLastX = event->getXUnscaled();
 			mouseLastY = event->getYUnscaled();
+			event->setProcessed(true);
 		} else
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
 			isActionPerforming = true;
 			//
-			if (Math::abs(mouseLastX - event->getX()) > 5 ||
-				Math::abs(mouseLastY - event->getY()) > 5) {
+			if (Math::abs(mouseLastX - event->getX()) > 7 ||
+				Math::abs(mouseLastY - event->getY()) > 7) {
 				node->getScreenNode()->forwardDragRequest(elementNode, event->getXUnscaled(), event->getYUnscaled());
 			}
 		} else
@@ -129,6 +129,7 @@ void GUIElementController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 			//
 			mouseLastX = -1;
 			mouseLastY = -1;
+			event->setProcessed(true);
 		}
 	} else
 	if (node == elementNode && elementNode->isEventBelongingToNode(event) == true && event->getButton() == MOUSE_BUTTON_RIGHT) {

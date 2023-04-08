@@ -1,5 +1,5 @@
 <template>	
-	<layout id="{$id}" left="{$left}" top="{$top}" width="{$width}" height="{$height}" horizontal-align="{$horizontal-align}" vertical-align="{$vertical-align}" alignment="{$alignment}" show-on="{$show-on}" hide-on="{$hide-on}">
+	<element id="{$id}" left="{$left}" top="{$top}" width="{$width}" height="{$height}" horizontal-align="{$horizontal-align}" vertical-align="{$vertical-align}" show-on="{$show-on}" hide-on="{$hide-on}">
 		{__InnerXML__}
-	</layout>
+	</element>
 </template>

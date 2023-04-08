@@ -1,7 +1,7 @@
 <screen id="popup_modelimport" popup="true" min-width="1024" min-height="768" max-width="3200" max-height="1800">
 	<layout alignment="none" horizontal-align="center" vertical-align="center" width="100%" height="100%">
 
-		<moveable alignment="vertical" width="auto" height="auto">
+		<moveable width="auto" height="auto">
 			<tabs width="350" height="400">
 				<tabs-header id="modelimport_tabs-header">
 					<tab id="modelimport_caption" image="resources/engine/images/attention.png" text="Import Model" closeable="true"/>

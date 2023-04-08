@@ -625,6 +625,13 @@ public:
 	void removeMoveListener(GUIMoveListener* listener);
 
 	/**
+	 * Returns if move is accepted by move listener
+	 * @param node node
+	 * @return move is accepted
+	 */
+	bool isMoveAccepted(GUINode* node);
+
+	/**
 	 * Forward move event
 	 * @param node node
 	 */

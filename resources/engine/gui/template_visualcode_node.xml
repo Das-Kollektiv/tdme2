@@ -1,5 +1,5 @@
 <template>
-	<moveable id="{$id}" alignment="vertical" horizontal-align="center" vertical-align="center" left="{$left}" top="{$top}" width="auto" height="auto">	
+	<moveable id="{$id}" horizontal-align="center" vertical-align="center" left="{$left}" top="{$top}" width="auto" height="auto">	
 
 		<element width="315" height="auto" horizontal-align="center" value="node_{$id}">
 

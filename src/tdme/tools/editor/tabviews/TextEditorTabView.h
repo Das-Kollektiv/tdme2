@@ -119,6 +119,9 @@ private:
 
 	unordered_map<string, string> methodOperatorMap;
 	unordered_map<string, Node> nodes;
+	enum CreateConnectionMode { CREATECONNECTIONMODE_NONE, CREATECONNECTIONMODE_FLOW, CREATECONNECTIONMODE_ARGUMENT };
+	CreateConnectionMode createConnectionMode { CREATECONNECTIONMODE_NONE };
+	int createConnectionIdx = -1;
 	vector<Connection> connections;
 	bool visualEditor { false };
 	bool visualCodingEnabled { false };
@@ -672,6 +675,24 @@ public:
 	 * @param nodeId node id
 	 */
 	void deleteNode(const string& nodeId);
+
+	/**
+	 * Returns if creating a connection currently
+	 */
+	inline bool isCreatingConnection() {
+		return createConnectionMode != CREATECONNECTIONMODE_NONE;
+	}
+
+	/**
+	 * Create connection with given start node id
+	 * @param nodeId node id
+	 */
+	void createConnection(const string& nodeId);
+
+	/**
+	 * Finish creating connection
+	 */
+	void finishCreateConnection();
 
 	/**
 	 * Set up context menu

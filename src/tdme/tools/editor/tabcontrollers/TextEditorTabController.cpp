@@ -91,6 +91,7 @@ TextEditorTabController::TextEditorTabController(TextEditorTabView* view)
 	this->view = view;
 	this->popUps = view->getPopUps();
 	this->view->getTabScreenNode()->addFocusListener(this);
+	this->view->getTabScreenNode()->addActionListener(this);
 }
 
 TextEditorTabController::~TextEditorTabController() {
@@ -561,6 +562,7 @@ void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx
 
 void TextEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
+	Console::println("TextEditorTabController::onAction(): " + to_string(type) + ": " + node->getId());
 }
 
 void TextEditorTabController::closeFindReplaceWindow() {

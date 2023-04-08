@@ -40,13 +40,10 @@ unordered_map<string, string> GUIMoveable::getAttributes(GUIScreenNode* screenNo
 {
 	unordered_map<string, string> attributes;
 	attributes["id"] = screenNode->allocateNodeId();
-	attributes["left"] = "0";
-	attributes["top"] = "0";
 	attributes["width"] = "auto";
 	attributes["height"] = "auto";
 	attributes["horizontal-align"] = "center";
 	attributes["vertical-align"] = "center";
-	attributes["alignment"] = "none";
 	return attributes;
 }
 
