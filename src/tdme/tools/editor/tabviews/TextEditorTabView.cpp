@@ -2096,7 +2096,7 @@ void TextEditorTabView::deleteNode(const string& nodeId) {
 
 void TextEditorTabView::createConnection(const string& nodeId) {
 	Console::println("TextEditorTabView::createConnection(): " + nodeId);
-	// argument
+	// return value as argument
 	if (nodeId.find("_r_") != string::npos) {
 		auto connectionNodeId = StringTools::substring(nodeId, 0, nodeId.find("_r_") + 3);
 		auto argumentOutputNode = dynamic_cast<GUINode*>(screenNode->getNodeById(nodeId));
@@ -2124,6 +2124,7 @@ void TextEditorTabView::createConnection(const string& nodeId) {
 			createConnectionMode = CREATECONNECTIONMODE_ARGUMENT;
 		}
 	} else
+	// flow output
 	if (nodeId.find("_fo_") != string::npos) {
 		auto connectionNodeId = StringTools::substring(nodeId, 0, nodeId.find("_fo_") + 3);
 		auto flowOutputFlowNode = dynamic_cast<GUINode*>(screenNode->getNodeById(nodeId));
@@ -2151,6 +2152,7 @@ void TextEditorTabView::createConnection(const string& nodeId) {
 			createConnectionMode = CREATECONNECTIONMODE_FLOW;
 		}
 	} else
+	// flow input
 	if (nodeId.find("_fi_") != string::npos) {
 		auto connectionNodeId = StringTools::substring(nodeId, 0, nodeId.find("_fi_") + 3);
 		auto flowInputNode = dynamic_cast<GUINode*>(screenNode->getNodeById(nodeId));
@@ -2178,6 +2180,7 @@ void TextEditorTabView::createConnection(const string& nodeId) {
 			createConnectionMode = CREATECONNECTIONMODE_FLOW;
 		}
 	} else
+	// argument
 	if (nodeId.find("_a") != string::npos) {
 		auto connectionNodeId = StringTools::substring(nodeId, 0, nodeId.find("_", nodeId.find("_a") + 2));
 		auto argumentInputNode = dynamic_cast<GUINode*>(screenNode->getNodeById(nodeId));

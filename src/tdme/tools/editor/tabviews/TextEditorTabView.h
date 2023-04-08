@@ -678,13 +678,14 @@ public:
 
 	/**
 	 * Returns if creating a connection currently
+	 * @return if creating a connection currently
 	 */
 	inline bool isCreatingConnection() {
 		return createConnectionMode != CREATECONNECTIONMODE_NONE;
 	}
 
 	/**
-	 * Create connection with given start node id
+	 * Create connection with given start or end node id
 	 * @param nodeId node id
 	 */
 	void createConnection(const string& nodeId);
