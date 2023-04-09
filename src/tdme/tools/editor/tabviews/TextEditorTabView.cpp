@@ -350,8 +350,10 @@ void TextEditorTabView::handleInputEvents()
 			if (event.getButton() != GUIMouseEvent::MOUSEEVENT_BUTTON_LEFT) continue;
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 				//
+				finishCreateConnection(event.getX(), event.getY());
 				//
-				finishCreateConnection(scrollX + event.getX(), scrollY + event.getY());
+				event.setProcessed(true);
+				//
 				break;
 			} else
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
@@ -366,9 +368,12 @@ void TextEditorTabView::handleInputEvents()
 				}
 				//
 				createConnectionsPasses = 3;
+				//
+				event.setProcessed(true);
 			}
 		}
 	}
+	//
 	engine->getGUI()->handleEvents();
 }
 
@@ -479,7 +484,10 @@ void TextEditorTabView::updateRendering() {
 }
 
 void TextEditorTabView::onMethodSelection(const string& methodName) {
-	createMiniScriptNode(methodName, textEditorTabController->getAddNodeX(), textEditorTabController->getAddNodeY());
+	auto visualizationNode = required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("visualization"));
+	auto scrollX = visualizationNode->getChildrenRenderOffsetX();
+	auto scrollY = visualizationNode->getChildrenRenderOffsetY();
+	createMiniScriptNode(methodName, scrollX + textEditorTabController->getAddNodeX(), scrollY + textEditorTabController->getAddNodeY());
 }
 
 Engine* TextEditorTabView::getEngine() {
