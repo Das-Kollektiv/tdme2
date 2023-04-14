@@ -567,7 +567,7 @@ void TextEditorTabView::createMiniScriptNode(const string& methodName, int x, in
 	//
 	nodes[flattenedId] = {
 		.id = flattenedId,
-		.type = Node::NODETYPE_FLOW,
+		.type = Node::NODETYPE_NONE,
 		.value = methodName,
 		.returnValueType = method->getReturnValueType(),
 		.left = x,
@@ -2138,7 +2138,7 @@ void TextEditorTabView::createConnection(const string& nodeId) {
 			);
 			//
 			createConnectionIdx = connections.size() - 1;
-			createConnectionMode = CREATECONNECTIONMODE_ARGUMENT;
+			createConnectionMode = CREATECONNECTIONMODE_ARGUMENT_OUT;
 		}
 	} else
 	// flow output
@@ -2167,7 +2167,7 @@ void TextEditorTabView::createConnection(const string& nodeId) {
 			);
 			//
 			createConnectionIdx = connections.size() - 1;
-			createConnectionMode = CREATECONNECTIONMODE_FLOW;
+			createConnectionMode = CREATECONNECTIONMODE_FLOW_OUT;
 		}
 	} else
 	// flow input
@@ -2196,7 +2196,7 @@ void TextEditorTabView::createConnection(const string& nodeId) {
 			);
 			//
 			createConnectionIdx = connections.size() - 1;
-			createConnectionMode = CREATECONNECTIONMODE_FLOW;
+			createConnectionMode = CREATECONNECTIONMODE_FLOW_IN;
 		}
 	} else
 	// argument
@@ -2225,7 +2225,7 @@ void TextEditorTabView::createConnection(const string& nodeId) {
 			);
 			//
 			createConnectionIdx = connections.size() - 1;
-			createConnectionMode = CREATECONNECTIONMODE_ARGUMENT;
+			createConnectionMode = CREATECONNECTIONMODE_ARGUMENT_IN;
 		}
 	}
 }
@@ -2239,102 +2239,94 @@ void TextEditorTabView::finishCreateConnection(int mouseX, int mouseY) {
 	for (auto& nodeId: nodeIds) {
 		// return value as argument
 		if (nodeId.find("_r_") != string::npos) {
-			auto connectionNodeId = StringTools::substring(nodeId, 0, nodeId.find("_r_") + 2);
-			auto argumentNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connectionNodeId));
-			if (argumentNode != nullptr) {
-				auto connection = connections[createConnectionIdx];
-				connections.erase(connections.begin() + createConnectionIdx);
-				createConnectionIdx = -1;
-				deleteConnection(connectionNodeId);
-				auto& argumentNodeComputedConstraints = argumentNode->getComputedConstraints();
-				if (connection.srcNodeId.empty() == true) {
-					connection.srcNodeId = connectionNodeId;
-					connection.x1 = argumentNodeComputedConstraints.left + argumentNodeComputedConstraints.width;
-					connection.y1 = argumentNodeComputedConstraints.top + argumentNodeComputedConstraints.height / 2;
-				} else
-				if (connection.dstNodeId.empty() == true) {
+			if (createConnectionMode != CREATECONNECTIONMODE_ARGUMENT_IN) {
+				textEditorTabController->showInfoPopUp("Warning", "You can not connect a Argument Input with a " + getCreateConnectionModeName(createConnectionMode));
+			} else {
+				auto connectionNodeId = StringTools::substring(nodeId, 0, nodeId.find("_r_") + 2);
+				auto argumentNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connectionNodeId));
+				if (argumentNode != nullptr) {
+					// TODO: set node type
+					auto connection = connections[createConnectionIdx];
+					connections.erase(connections.begin() + createConnectionIdx);
+					createConnectionIdx = -1;
+					deleteConnection(connectionNodeId);
+					auto& argumentNodeComputedConstraints = argumentNode->getComputedConstraints();
 					connection.dstNodeId = connectionNodeId;
 					connection.x2 = argumentNodeComputedConstraints.left + argumentNodeComputedConstraints.width;
 					connection.y2 = argumentNodeComputedConstraints.top + argumentNodeComputedConstraints.height / 2;
+					connections.push_back(connection);
+					//
+					break;
 				}
-				connections.push_back(connection);
-				//
-				break;
 			}
 		} else
 		// flow output
 		if (nodeId.find("_fo_") != string::npos) {
 			auto connectionNodeId = StringTools::substring(nodeId, 0, nodeId.find("_fo_") + 3);
-			auto flowNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connectionNodeId));
-			if (flowNode != nullptr) {
-				auto connection = connections[createConnectionIdx];
-				connections.erase(connections.begin() + createConnectionIdx);
-				createConnectionIdx = -1;
-				deleteConnection(connectionNodeId);
-				auto& flowNodeComputedConstraints = flowNode->getComputedConstraints();
-				if (connection.srcNodeId.empty() == true) {
+			if (createConnectionMode != CREATECONNECTIONMODE_FLOW_IN) {
+				textEditorTabController->showInfoPopUp("Warning", "You can not connect a Flow Input with a " + getCreateConnectionModeName(createConnectionMode));
+			} else {
+				auto flowNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connectionNodeId));
+				if (flowNode != nullptr) {
+					// TODO: set node type
+					auto connection = connections[createConnectionIdx];
+					connections.erase(connections.begin() + createConnectionIdx);
+					createConnectionIdx = -1;
+					deleteConnection(connectionNodeId);
+					auto& flowNodeComputedConstraints = flowNode->getComputedConstraints();
 					connection.srcNodeId = connectionNodeId;
 					connection.x1 = flowNodeComputedConstraints.left;
 					connection.y1 = flowNodeComputedConstraints.top + flowNodeComputedConstraints.height / 2;
-				} else
-				if (connection.dstNodeId.empty() == true) {
-					connection.dstNodeId = connectionNodeId;
-					connection.x2 = flowNodeComputedConstraints.left + flowNodeComputedConstraints.width;
-					connection.y2 = flowNodeComputedConstraints.top + flowNodeComputedConstraints.height / 2;
+					connections.push_back(connection);
+					//
+					break;
 				}
-				connections.push_back(connection);
-				//
-				break;
 			}
 		} else
 		// flow input
 		if (nodeId.find("_fi_") != string::npos) {
 			auto connectionNodeId = StringTools::substring(nodeId, 0, nodeId.find("_fi_") + 3);
-			auto flowNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connectionNodeId));
-			if (flowNode != nullptr) {
-				auto connection = connections[createConnectionIdx];
-				connections.erase(connections.begin() + createConnectionIdx);
-				createConnectionIdx = -1;
-				deleteConnection(connectionNodeId);
-				auto& flowNodeComputedConstraints = flowNode->getComputedConstraints();
-				if (connection.srcNodeId.empty() == true) {
-					connection.srcNodeId = connectionNodeId;
-					connection.x1 = flowNodeComputedConstraints.left;
-					connection.y1 = flowNodeComputedConstraints.top + flowNodeComputedConstraints.height / 2;
-				} else
-				if (connection.dstNodeId.empty() == true) {
+			if (createConnectionMode != CREATECONNECTIONMODE_FLOW_OUT) {
+				textEditorTabController->showInfoPopUp("Warning", "You can not connect a Flow Output with a " + getCreateConnectionModeName(createConnectionMode));
+			} else {
+				auto flowNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connectionNodeId));
+				if (flowNode != nullptr) {
+					// TODO: set node type
+					auto connection = connections[createConnectionIdx];
+					connections.erase(connections.begin() + createConnectionIdx);
+					createConnectionIdx = -1;
+					deleteConnection(connectionNodeId);
+					auto& flowNodeComputedConstraints = flowNode->getComputedConstraints();
 					connection.dstNodeId = connectionNodeId;
 					connection.x2 = flowNodeComputedConstraints.left + flowNodeComputedConstraints.width;
 					connection.y2 = flowNodeComputedConstraints.top + flowNodeComputedConstraints.height / 2;
+					connections.push_back(connection);
+					//
+					break;
 				}
-				connections.push_back(connection);
-				//
-				break;
 			}
 		} else
 		// argument
 		if (nodeId.find("_a") != string::npos) {
 			auto connectionNodeId = StringTools::substring(nodeId, 0, nodeId.find("_", nodeId.find("_a") + 2));
-			auto argumentNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connectionNodeId));
-			if (argumentNode != nullptr) {
-				auto connection = connections[createConnectionIdx];
-				connections.erase(connections.begin() + createConnectionIdx);
-				createConnectionIdx = -1;
-				deleteConnection(connectionNodeId);
-				auto& argumentNodeComputedConstraints = argumentNode->getComputedConstraints();
-				if (connection.srcNodeId.empty() == true) {
+			if (createConnectionMode != CREATECONNECTIONMODE_ARGUMENT_OUT) {
+				textEditorTabController->showInfoPopUp("Warning", "You can not connect a Argument Output with a " + getCreateConnectionModeName(createConnectionMode));
+			} else {
+				auto argumentNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connectionNodeId));
+				if (argumentNode != nullptr) {
+					// TODO: set node type
+					auto connection = connections[createConnectionIdx];
+					connections.erase(connections.begin() + createConnectionIdx);
+					createConnectionIdx = -1;
+					deleteConnection(connectionNodeId);
+					auto& argumentNodeComputedConstraints = argumentNode->getComputedConstraints();
 					connection.srcNodeId = connectionNodeId;
 					connection.x1 = argumentNodeComputedConstraints.left;
 					connection.y1 = argumentNodeComputedConstraints.top + argumentNodeComputedConstraints.height / 2;
-				} else
-				if (connection.dstNodeId.empty() == true) {
-					connection.dstNodeId = connectionNodeId;
-					connection.x2 = argumentNodeComputedConstraints.left + argumentNodeComputedConstraints.width;
-					connection.y2 = argumentNodeComputedConstraints.top + argumentNodeComputedConstraints.height / 2;
+					connections.push_back(connection);
+					//
+					break;
 				}
-				connections.push_back(connection);
-				//
-				break;
 			}
 		}
 	}

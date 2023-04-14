@@ -119,7 +119,26 @@ private:
 
 	unordered_map<string, string> methodOperatorMap;
 	unordered_map<string, Node> nodes;
-	enum CreateConnectionMode { CREATECONNECTIONMODE_NONE, CREATECONNECTIONMODE_FLOW, CREATECONNECTIONMODE_ARGUMENT };
+	enum CreateConnectionMode {
+		CREATECONNECTIONMODE_NONE,
+		CREATECONNECTIONMODE_FLOW_OUT,
+		CREATECONNECTIONMODE_FLOW_IN,
+		CREATECONNECTIONMODE_ARGUMENT_OUT,
+		CREATECONNECTIONMODE_ARGUMENT_IN
+	};
+	/**
+	 * @return Returns the create connection mode name
+	 */
+	inline static const string getCreateConnectionModeName(CreateConnectionMode createConnectionMode) {
+		switch (createConnectionMode) {
+			case CREATECONNECTIONMODE_FLOW_OUT: return "Flow Output";
+			case CREATECONNECTIONMODE_FLOW_IN: return "Flow Input";
+			case CREATECONNECTIONMODE_ARGUMENT_OUT: return "Argument Output";
+			case CREATECONNECTIONMODE_ARGUMENT_IN: return "Argument Input";
+			case CREATECONNECTIONMODE_NONE: return "None";
+			default: return "Invalid";
+		}
+	}
 	CreateConnectionMode createConnectionMode { CREATECONNECTIONMODE_NONE };
 	int createConnectionIdx = -1;
 	vector<Connection> connections;
