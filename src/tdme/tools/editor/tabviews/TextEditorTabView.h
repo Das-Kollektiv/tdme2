@@ -711,9 +711,9 @@ public:
 
 	/**
 	 * Create connection with given start or end node id
-	 * @param nodeId node id
+	 * @param guiNodeId GUI node id
 	 */
-	void createConnection(const string& nodeId);
+	void createConnection(const string& guiNodeId);
 
 	/**
 	 * Finish creating connection

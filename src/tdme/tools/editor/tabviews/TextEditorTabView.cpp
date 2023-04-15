@@ -1212,11 +1212,10 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 			}
 			// no color?, try return value
 			if (pinColor == "color.pintype_undefined") {
-				auto nodeIt = nodes.find(flattenedId + "." + to_string(argumentIdx));
-				if (nodeIt != nodes.end()) {
-					auto& node = nodeIt->second;
-					if (node.returnValueType != MiniScript::ScriptVariableType::TYPE_NULL) {
-						pinColor = getScriptVariableTypePinColor(node.returnValueType);
+				auto node = getNodeById(flattenedId + "." + to_string(argumentIdx));
+				if (node != nullptr) {
+					if (node->returnValueType != MiniScript::ScriptVariableType::TYPE_NULL) {
+						pinColor = getScriptVariableTypePinColor(node->returnValueType);
 					}
 				}
 			}
@@ -1892,11 +1891,9 @@ void TextEditorTabView::createMiniScriptConnections() {
 		auto srcNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connection.srcNodeId));
 		auto dstNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connection.dstNodeId));
 		if (srcNode == nullptr) {
-			Console::println("TextEditorTabView::createMiniScriptConnections(): could not find src node with id: " + connection.srcNodeId);
 			continue;
 		} else
 		if (dstNode == nullptr) {
-			Console::println("TextEditorTabView::createMiniScriptConnections(): could not find dst node with id: " + connection.dstNodeId);
 			continue;
 		}
 		auto& srcNodeComputedConstraints = srcNode->getComputedConstraints();
@@ -2088,8 +2085,9 @@ void TextEditorTabView::createSourceCodeFromNode(string& sourceCode, const Node*
 void TextEditorTabView::deleteConnection(const string& nodeId) {
 	for (auto i = 0; i < connections.size(); i++) {
 		auto& connection = connections[i];
-		if (connection.srcNodeId == nodeId || StringTools::startsWith(connection.srcNodeId, nodeId + "_") == true ||
-			connection.dstNodeId == nodeId || StringTools::startsWith(connection.dstNodeId, nodeId + "_") == true) {
+		auto srcNodeMatch = connection.srcNodeId == nodeId || StringTools::startsWith(connection.srcNodeId, nodeId + "_") == true;
+		auto dstNodeMatch = connection.dstNodeId == nodeId || StringTools::startsWith(connection.dstNodeId, nodeId + "_") == true
+		if (srcNodeMatch == true || dstNodeMatch == true) {
 			connections.erase(connections.begin() + i);
 			i--;
 		}
@@ -2110,11 +2108,12 @@ void TextEditorTabView::deleteNode(const string& nodeId) {
 	createConnectionsPasses = 3;
 }
 
-void TextEditorTabView::createConnection(const string& nodeId) {
-	Console::println("TextEditorTabView::createConnection(): " + nodeId);
+void TextEditorTabView::createConnection(const string& guiNodeId) {
+	Console::println("TextEditorTabView::createConnection(): " + guiNodeId);
 	// return value as argument
-	if (nodeId.find("_r_") != string::npos) {
-		auto connectionNodeId = StringTools::substring(nodeId, 0, nodeId.find("_r_") + 2);
+	if (guiNodeId.find("_r_") != string::npos) {
+		auto connectionNodeId = StringTools::substring(guiNodeId, 0, guiNodeId.find("_r_") + 2);
+		auto nodeId = StringTools::substring(guiNodeId, 0, guiNodeId.find("_r_"));
 		auto argumentOutputNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connectionNodeId));
 		if (argumentOutputNode != nullptr) {
 			deleteConnection(connectionNodeId);
@@ -2142,8 +2141,8 @@ void TextEditorTabView::createConnection(const string& nodeId) {
 		}
 	} else
 	// flow output
-	if (nodeId.find("_fo_") != string::npos) {
-		auto connectionNodeId = StringTools::substring(nodeId, 0, nodeId.find("_fo_") + 3);
+	if (guiNodeId.find("_fo_") != string::npos) {
+		auto connectionNodeId = StringTools::substring(guiNodeId, 0, guiNodeId.find("_fo_") + 3);
 		auto flowOutputFlowNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connectionNodeId));
 		if (flowOutputFlowNode != nullptr) {
 			deleteConnection(connectionNodeId);
@@ -2171,8 +2170,8 @@ void TextEditorTabView::createConnection(const string& nodeId) {
 		}
 	} else
 	// flow input
-	if (nodeId.find("_fi_") != string::npos) {
-		auto connectionNodeId = StringTools::substring(nodeId, 0, nodeId.find("_fi_") + 3);
+	if (guiNodeId.find("_fi_") != string::npos) {
+		auto connectionNodeId = StringTools::substring(guiNodeId, 0, guiNodeId.find("_fi_") + 3);
 		auto flowInputNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connectionNodeId));
 		if (flowInputNode != nullptr) {
 			deleteConnection(connectionNodeId);
@@ -2200,8 +2199,8 @@ void TextEditorTabView::createConnection(const string& nodeId) {
 		}
 	} else
 	// argument
-	if (nodeId.find("_a") != string::npos) {
-		auto connectionNodeId = StringTools::substring(nodeId, 0, nodeId.find("_", nodeId.find("_a") + 2));
+	if (guiNodeId.find("_a") != string::npos) {
+		auto connectionNodeId = StringTools::substring(guiNodeId, 0, guiNodeId.find("_", guiNodeId.find("_a") + 2));
 		auto argumentInputNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connectionNodeId));
 		if (argumentInputNode != nullptr) {
 			deleteConnection(connectionNodeId);
@@ -2211,7 +2210,7 @@ void TextEditorTabView::createConnection(const string& nodeId) {
 			connections.push_back(
 				{
 					.type = Connection::CONNECTIONTYPE_ARGUMENT,
-					.srcNodeId = nodeId,
+					.srcNodeId = guiNodeId,
 					.dstNodeId = string(),
 					.red = static_cast<uint8_t>(color.getRed() * 255.0f),
 					.green = static_cast<uint8_t>(color.getGreen() * 255.0f),
