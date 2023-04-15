@@ -2086,7 +2086,7 @@ void TextEditorTabView::deleteConnection(const string& nodeId) {
 	for (auto i = 0; i < connections.size(); i++) {
 		auto& connection = connections[i];
 		auto srcNodeMatch = connection.srcNodeId == nodeId || StringTools::startsWith(connection.srcNodeId, nodeId + "_") == true;
-		auto dstNodeMatch = connection.dstNodeId == nodeId || StringTools::startsWith(connection.dstNodeId, nodeId + "_") == true
+		auto dstNodeMatch = connection.dstNodeId == nodeId || StringTools::startsWith(connection.dstNodeId, nodeId + "_") == true;
 		if (srcNodeMatch == true || dstNodeMatch == true) {
 			connections.erase(connections.begin() + i);
 			i--;
