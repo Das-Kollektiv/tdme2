@@ -399,12 +399,33 @@ void GUI::handleMouseEvent(GUINode* node, GUIMouseEvent* event, const unordered_
 		mouseEventNodeIds.insert(eventNodeId);
 	}
 
-	// handle mouse event for each node we collected
+	// sort this list by hierarichal ids and execute processing reversed
+	//	means nodes deeper in the hierarchy are processed first
+	map<string, string> sortedMouseEventNodeIds;
 	for (auto eventNodeId: mouseEventNodeIds) {
 		// node event occurred on
 		auto eventNode = node->getScreenNode()->getNodeById(eventNodeId);
 		if (eventNode == nullptr) continue;
+		//
+		sortedMouseEventNodeIds[to_string(eventNode->isEventBelongingToNode(event) != true) + "_" + eventNode->getHierarchicalId()] = eventNodeId;
+	}
+	vector<string> sortedMouseEventNodeIdsVector;
+	for (auto& eventNodeIdIt: sortedMouseEventNodeIds) {
+		sortedMouseEventNodeIdsVector.push_back(eventNodeIdIt.second);
+	}
+	reverse(sortedMouseEventNodeIdsVector.begin(), sortedMouseEventNodeIdsVector.end());
+
+	// handle mouse event for each node we collected
+	for (auto& eventNodeId: sortedMouseEventNodeIdsVector) {
+		// node event occurred on
+		auto eventNode = node->getScreenNode()->getNodeById(eventNodeId);
+		if (eventNode == nullptr) continue;
+
+		//
 		if (floatingNodes == false && eventNode->flow == GUINode_Flow::FLOATING) continue;
+
+		// we only want to process drag event once
+		if (event->getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED && event->isProcessed() == true) break;
 
 		// controller node
 		auto controllerNode = eventNode;

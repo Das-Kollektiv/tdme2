@@ -105,6 +105,14 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 		public:
 			NodeMoveListener(TextEditorTabView* textEditorTabView): textEditorTabView(textEditorTabView) {
 			}
+			bool accept(GUINode* node) {
+				if (node->getId().find("_") != string::npos) {
+					textEditorTabView->createConnection(node->getId());
+					return false;
+				} else {
+					return textEditorTabView->isCreatingConnection() == false;
+				}
+			}
 			void onMove(GUINode* node) {
 				auto visualisationNode = textEditorTabView->visualisationNode;
 				auto& nodeComputedConstraints = node->getComputedConstraints();
@@ -333,6 +341,39 @@ void TextEditorTabView::saveFile(const string& pathName, const string& fileName)
 
 void TextEditorTabView::handleInputEvents()
 {
+	if (isCreatingConnection() == true) {
+		auto visualizationNode = required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("visualization"));
+		auto scrollX = visualizationNode->getChildrenRenderOffsetX();
+		auto scrollY = visualizationNode->getChildrenRenderOffsetY();
+		auto& mouseEvents = engine->getGUI()->getMouseEvents();
+		for (auto& event: mouseEvents) {
+			if (event.getButton() != GUIMouseEvent::MOUSEEVENT_BUTTON_LEFT) continue;
+			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
+				//
+				finishCreateConnection(event.getX(), event.getY());
+				//
+				event.setProcessed(true);
+				//
+				break;
+			} else
+			if (event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
+				auto& connection = connections[createConnectionIdx];
+				if (connection.srcNodeId.empty() == true) {
+					connection.x1 = scrollX + event.getX();
+					connection.y1 = scrollY + event.getY();
+				} else
+				if (connection.dstNodeId.empty() == true) {
+					connection.x2 = scrollX + event.getX();
+					connection.y2 = scrollY + event.getY();
+				}
+				//
+				createConnectionsPasses = 3;
+				//
+				event.setProcessed(true);
+			}
+		}
+	}
+	//
 	engine->getGUI()->handleEvents();
 }
 
@@ -443,7 +484,10 @@ void TextEditorTabView::updateRendering() {
 }
 
 void TextEditorTabView::onMethodSelection(const string& methodName) {
-	createMiniScriptNode(methodName, textEditorTabController->getAddNodeX(), textEditorTabController->getAddNodeY());
+	auto visualizationNode = required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("visualization"));
+	auto scrollX = visualizationNode->getChildrenRenderOffsetX();
+	auto scrollY = visualizationNode->getChildrenRenderOffsetY();
+	createMiniScriptNode(methodName, scrollX + textEditorTabController->getAddNodeX(), scrollY + textEditorTabController->getAddNodeY());
 }
 
 Engine* TextEditorTabView::getEngine() {
@@ -523,7 +567,7 @@ void TextEditorTabView::createMiniScriptNode(const string& methodName, int x, in
 	//
 	nodes[flattenedId] = {
 		.id = flattenedId,
-		.type = Node::NODETYPE_FLOW,
+		.type = Node::NODETYPE_NONE,
 		.value = methodName,
 		.returnValueType = method->getReturnValueType(),
 		.left = x,
@@ -1168,11 +1212,10 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 			}
 			// no color?, try return value
 			if (pinColor == "color.pintype_undefined") {
-				auto nodeIt = nodes.find(flattenedId + "." + to_string(argumentIdx));
-				if (nodeIt != nodes.end()) {
-					auto& node = nodeIt->second;
-					if (node.returnValueType != MiniScript::ScriptVariableType::TYPE_NULL) {
-						pinColor = getScriptVariableTypePinColor(node.returnValueType);
+				auto node = getNodeById(flattenedId + "." + to_string(argumentIdx));
+				if (node != nullptr) {
+					if (node->returnValueType != MiniScript::ScriptVariableType::TYPE_NULL) {
+						pinColor = getScriptVariableTypePinColor(node->returnValueType);
 					}
 				}
 			}
@@ -1848,11 +1891,9 @@ void TextEditorTabView::createMiniScriptConnections() {
 		auto srcNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connection.srcNodeId));
 		auto dstNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connection.dstNodeId));
 		if (srcNode == nullptr) {
-			Console::println("TextEditorTabView::createMiniScriptConnections(): could not find src node with id: " + connection.srcNodeId);
 			continue;
 		} else
 		if (dstNode == nullptr) {
-			Console::println("TextEditorTabView::createMiniScriptConnections(): could not find dst node with id: " + connection.dstNodeId);
 			continue;
 		}
 		auto& srcNodeComputedConstraints = srcNode->getComputedConstraints();
@@ -2041,22 +2082,258 @@ void TextEditorTabView::createSourceCodeFromNode(string& sourceCode, const Node*
 	}
 }
 
-void TextEditorTabView::deleteNode(const string& nodeId) {
-	auto nodeIt = nodes.find(nodeId);
-	if (nodeIt == nodes.end()) return;
-	nodes.erase(nodeIt);
-	screenNode->removeNodeById(nodeId, false);
+void TextEditorTabView::deleteConnection(const string& nodeId) {
 	for (auto i = 0; i < connections.size(); i++) {
 		auto& connection = connections[i];
-		if (connection.srcNodeId == nodeId || StringTools::startsWith(connection.srcNodeId, nodeId + "_") == true ||
-			connection.dstNodeId == nodeId || StringTools::startsWith(connection.dstNodeId, nodeId + "_") == true) {
+		auto srcNodeMatch = connection.srcNodeId == nodeId || StringTools::startsWith(connection.srcNodeId, nodeId + "_") == true;
+		auto dstNodeMatch = connection.dstNodeId == nodeId || StringTools::startsWith(connection.dstNodeId, nodeId + "_") == true;
+		if (srcNodeMatch == true || dstNodeMatch == true) {
 			connections.erase(connections.begin() + i);
 			i--;
 		}
 	}
+}
+
+void TextEditorTabView::deleteNode(const string& nodeId) {
+	auto nodeIt = nodes.find(nodeId);
+	if (nodeIt == nodes.end()) return;
+	nodes.erase(nodeIt);
+	deleteConnection(nodeId);
+	screenNode->removeNodeById(nodeId, false);
 
 	// Bug: Work around! Sometimes layouting is not issued! Need to check!
 	screenNode->forceInvalidateLayout(screenNode);
+
+	//
+	createConnectionsPasses = 3;
+}
+
+void TextEditorTabView::createConnection(const string& guiNodeId) {
+	Console::println("TextEditorTabView::createConnection(): " + guiNodeId);
+	// return value as argument
+	if (guiNodeId.find("_r_") != string::npos) {
+		auto connectionNodeId = StringTools::substring(guiNodeId, 0, guiNodeId.find("_r_") + 2);
+		auto nodeId = StringTools::substring(guiNodeId, 0, guiNodeId.find("_r_"));
+		auto argumentOutputNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connectionNodeId));
+		if (argumentOutputNode != nullptr) {
+			deleteConnection(connectionNodeId);
+			auto& argumentOutputNodeComputedConstraints = argumentOutputNode->getComputedConstraints();
+			auto pinColor = string("color.pintype_undefined");
+			GUIColor color(GUIParser::getEngineThemeProperties()->get(pinColor, "#ffffff"));
+			connections.push_back(
+				{
+					.type = Connection::CONNECTIONTYPE_ARGUMENT,
+					.srcNodeId = string(),
+					.dstNodeId = connectionNodeId,
+					.red = static_cast<uint8_t>(color.getRed() * 255.0f),
+					.green = static_cast<uint8_t>(color.getGreen() * 255.0f),
+					.blue = static_cast<uint8_t>(color.getBlue() * 255.0f),
+					.alpha = static_cast<uint8_t>(color.getAlpha() * 255.0f),
+					.x1 = argumentOutputNodeComputedConstraints.left + argumentOutputNodeComputedConstraints.width,
+					.y1 = argumentOutputNodeComputedConstraints.top + argumentOutputNodeComputedConstraints.height / 2,
+					.x2 = argumentOutputNodeComputedConstraints.left + argumentOutputNodeComputedConstraints.width,
+					.y2 = argumentOutputNodeComputedConstraints.top + argumentOutputNodeComputedConstraints.height / 2,
+				}
+			);
+			//
+			createConnectionIdx = connections.size() - 1;
+			createConnectionMode = CREATECONNECTIONMODE_ARGUMENT_OUT;
+		}
+	} else
+	// flow output
+	if (guiNodeId.find("_fo_") != string::npos) {
+		auto connectionNodeId = StringTools::substring(guiNodeId, 0, guiNodeId.find("_fo_") + 3);
+		auto flowOutputFlowNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connectionNodeId));
+		if (flowOutputFlowNode != nullptr) {
+			deleteConnection(connectionNodeId);
+			auto& flowOutputNodeComputedConstraints = flowOutputFlowNode->getComputedConstraints();
+			auto pinColor = string("color.pintype_undefined");
+			GUIColor color(GUIParser::getEngineThemeProperties()->get(pinColor, "#ffffff"));
+			connections.push_back(
+				{
+					.type = Connection::CONNECTIONTYPE_FLOW,
+					.srcNodeId = connectionNodeId,
+					.dstNodeId = string(),
+					.red = 255,
+					.green = 255,
+					.blue = 255,
+					.alpha = 255,
+					.x1 = flowOutputNodeComputedConstraints.left + flowOutputNodeComputedConstraints.width,
+					.y1 = flowOutputNodeComputedConstraints.top + flowOutputNodeComputedConstraints.height / 2,
+					.x2 = flowOutputNodeComputedConstraints.left + flowOutputNodeComputedConstraints.width,
+					.y2 = flowOutputNodeComputedConstraints.top + flowOutputNodeComputedConstraints.height / 2,
+				}
+			);
+			//
+			createConnectionIdx = connections.size() - 1;
+			createConnectionMode = CREATECONNECTIONMODE_FLOW_OUT;
+		}
+	} else
+	// flow input
+	if (guiNodeId.find("_fi_") != string::npos) {
+		auto connectionNodeId = StringTools::substring(guiNodeId, 0, guiNodeId.find("_fi_") + 3);
+		auto flowInputNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connectionNodeId));
+		if (flowInputNode != nullptr) {
+			deleteConnection(connectionNodeId);
+			auto& flowInputNodeComputedConstraints = flowInputNode->getComputedConstraints();
+			auto pinColor = string("color.pintype_undefined");
+			GUIColor color(GUIParser::getEngineThemeProperties()->get(pinColor, "#ffffff"));
+			connections.push_back(
+				{
+					.type = Connection::CONNECTIONTYPE_FLOW,
+					.srcNodeId = string(),
+					.dstNodeId = connectionNodeId,
+					.red = 255,
+					.green = 255,
+					.blue = 255,
+					.alpha = 255,
+					.x1 = flowInputNodeComputedConstraints.left,
+					.y1 = flowInputNodeComputedConstraints.top + flowInputNodeComputedConstraints.height / 2,
+					.x2 = flowInputNodeComputedConstraints.left,
+					.y2 = flowInputNodeComputedConstraints.top + flowInputNodeComputedConstraints.height / 2,
+				}
+			);
+			//
+			createConnectionIdx = connections.size() - 1;
+			createConnectionMode = CREATECONNECTIONMODE_FLOW_IN;
+		}
+	} else
+	// argument
+	if (guiNodeId.find("_a") != string::npos) {
+		auto connectionNodeId = StringTools::substring(guiNodeId, 0, guiNodeId.find("_", guiNodeId.find("_a") + 2));
+		auto argumentInputNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connectionNodeId));
+		if (argumentInputNode != nullptr) {
+			deleteConnection(connectionNodeId);
+			auto& argumentInputNodeComputedConstraints = argumentInputNode->getComputedConstraints();
+			auto pinColor = string("color.pintype_undefined");
+			GUIColor color(GUIParser::getEngineThemeProperties()->get(pinColor, "#ffffff"));
+			connections.push_back(
+				{
+					.type = Connection::CONNECTIONTYPE_ARGUMENT,
+					.srcNodeId = guiNodeId,
+					.dstNodeId = string(),
+					.red = static_cast<uint8_t>(color.getRed() * 255.0f),
+					.green = static_cast<uint8_t>(color.getGreen() * 255.0f),
+					.blue = static_cast<uint8_t>(color.getBlue() * 255.0f),
+					.alpha = static_cast<uint8_t>(color.getAlpha() * 255.0f),
+					.x1 = argumentInputNodeComputedConstraints.left,
+					.y1 = argumentInputNodeComputedConstraints.top + argumentInputNodeComputedConstraints.height / 2,
+					.x2 = argumentInputNodeComputedConstraints.left,
+					.y2 = argumentInputNodeComputedConstraints.top + argumentInputNodeComputedConstraints.height / 2,
+				}
+			);
+			//
+			createConnectionIdx = connections.size() - 1;
+			createConnectionMode = CREATECONNECTIONMODE_ARGUMENT_IN;
+		}
+	}
+}
+
+void TextEditorTabView::finishCreateConnection(int mouseX, int mouseY) {
+	if (isCreatingConnection() == false) return;
+
+	//
+	unordered_set<string> nodeIds;
+	screenNode->determineNodesByCoordinate(Vector2(mouseX, mouseY), nodeIds);
+	for (auto& nodeId: nodeIds) {
+		// return value as argument
+		if (nodeId.find("_r_") != string::npos) {
+			if (createConnectionMode != CREATECONNECTIONMODE_ARGUMENT_IN) {
+				textEditorTabController->showInfoPopUp("Warning", "You can not connect a Argument Input with a " + getCreateConnectionModeName(createConnectionMode));
+			} else {
+				auto connectionNodeId = StringTools::substring(nodeId, 0, nodeId.find("_r_") + 2);
+				auto argumentNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connectionNodeId));
+				if (argumentNode != nullptr) {
+					// TODO: set node type
+					auto connection = connections[createConnectionIdx];
+					connections.erase(connections.begin() + createConnectionIdx);
+					createConnectionIdx = -1;
+					deleteConnection(connectionNodeId);
+					auto& argumentNodeComputedConstraints = argumentNode->getComputedConstraints();
+					connection.dstNodeId = connectionNodeId;
+					connection.x2 = argumentNodeComputedConstraints.left + argumentNodeComputedConstraints.width;
+					connection.y2 = argumentNodeComputedConstraints.top + argumentNodeComputedConstraints.height / 2;
+					connections.push_back(connection);
+					//
+					break;
+				}
+			}
+		} else
+		// flow output
+		if (nodeId.find("_fo_") != string::npos) {
+			auto connectionNodeId = StringTools::substring(nodeId, 0, nodeId.find("_fo_") + 3);
+			if (createConnectionMode != CREATECONNECTIONMODE_FLOW_IN) {
+				textEditorTabController->showInfoPopUp("Warning", "You can not connect a Flow Input with a " + getCreateConnectionModeName(createConnectionMode));
+			} else {
+				auto flowNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connectionNodeId));
+				if (flowNode != nullptr) {
+					// TODO: set node type
+					auto connection = connections[createConnectionIdx];
+					connections.erase(connections.begin() + createConnectionIdx);
+					createConnectionIdx = -1;
+					deleteConnection(connectionNodeId);
+					auto& flowNodeComputedConstraints = flowNode->getComputedConstraints();
+					connection.srcNodeId = connectionNodeId;
+					connection.x1 = flowNodeComputedConstraints.left;
+					connection.y1 = flowNodeComputedConstraints.top + flowNodeComputedConstraints.height / 2;
+					connections.push_back(connection);
+					//
+					break;
+				}
+			}
+		} else
+		// flow input
+		if (nodeId.find("_fi_") != string::npos) {
+			auto connectionNodeId = StringTools::substring(nodeId, 0, nodeId.find("_fi_") + 3);
+			if (createConnectionMode != CREATECONNECTIONMODE_FLOW_OUT) {
+				textEditorTabController->showInfoPopUp("Warning", "You can not connect a Flow Output with a " + getCreateConnectionModeName(createConnectionMode));
+			} else {
+				auto flowNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connectionNodeId));
+				if (flowNode != nullptr) {
+					// TODO: set node type
+					auto connection = connections[createConnectionIdx];
+					connections.erase(connections.begin() + createConnectionIdx);
+					createConnectionIdx = -1;
+					deleteConnection(connectionNodeId);
+					auto& flowNodeComputedConstraints = flowNode->getComputedConstraints();
+					connection.dstNodeId = connectionNodeId;
+					connection.x2 = flowNodeComputedConstraints.left + flowNodeComputedConstraints.width;
+					connection.y2 = flowNodeComputedConstraints.top + flowNodeComputedConstraints.height / 2;
+					connections.push_back(connection);
+					//
+					break;
+				}
+			}
+		} else
+		// argument
+		if (nodeId.find("_a") != string::npos) {
+			auto connectionNodeId = StringTools::substring(nodeId, 0, nodeId.find("_", nodeId.find("_a") + 2));
+			if (createConnectionMode != CREATECONNECTIONMODE_ARGUMENT_OUT) {
+				textEditorTabController->showInfoPopUp("Warning", "You can not connect a Argument Output with a " + getCreateConnectionModeName(createConnectionMode));
+			} else {
+				auto argumentNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connectionNodeId));
+				if (argumentNode != nullptr) {
+					// TODO: set node type
+					auto connection = connections[createConnectionIdx];
+					connections.erase(connections.begin() + createConnectionIdx);
+					createConnectionIdx = -1;
+					deleteConnection(connectionNodeId);
+					auto& argumentNodeComputedConstraints = argumentNode->getComputedConstraints();
+					connection.srcNodeId = connectionNodeId;
+					connection.x1 = argumentNodeComputedConstraints.left;
+					connection.y1 = argumentNodeComputedConstraints.top + argumentNodeComputedConstraints.height / 2;
+					connections.push_back(connection);
+					//
+					break;
+				}
+			}
+		}
+	}
+
+	//
+	if (createConnectionIdx != -1) connections.erase(connections.begin() + createConnectionIdx);
+	createConnectionMode = CREATECONNECTIONMODE_NONE;
+	createConnectionIdx = -1;
 
 	//
 	createConnectionsPasses = 3;

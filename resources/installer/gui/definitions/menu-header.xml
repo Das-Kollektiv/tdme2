@@ -1,6 +1,6 @@
 <template>	
-	<element width="100%" height="auto" focusable="true" border="1" border-color="#FFFFFF">
-		<layout alignment="horizontal" width="100%" height="auto" background-color="#ffffff" border-bottom="1" border-color="#000000">
+	<element width="*" height="auto" focussable="true" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
+		<layout alignment="horizontal" width="auto" height="auto" flow="floating">
 			{__InnerXML__}
 		</layout>
 	</element>

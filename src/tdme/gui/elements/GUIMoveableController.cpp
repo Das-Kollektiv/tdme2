@@ -64,13 +64,15 @@ void GUIMoveableController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 	if (node == this->node && node->isEventBelongingToNode(event) == true &&
 		event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED == true &&
 		event->getButton() == MOUSE_BUTTON_LEFT) {
-		//
-		mouseLastX = event->getX();
-		mouseLastY = event->getY();
+		if (node->getScreenNode()->isMoveAccepted(node) == true) {
+			//
+			mouseLastX = event->getX();
+			mouseLastY = event->getY();
+			//
+			dragging = true;
+		}
 		//
 		event->setProcessed(true);
-		//
-		dragging = true;
 	} else
 	if (dragging == true &&
 		event->getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED == true &&

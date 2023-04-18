@@ -9,6 +9,7 @@ using tdme::gui::nodes::GUINode;
 /**
  * GUI move listener interface
  * @author Andreas Drewke
+ * TODO: seems like we can switch here to GUIElementNode instead of GUINode
  */
 struct tdme::gui::events::GUIMoveListener
 {
@@ -17,6 +18,13 @@ struct tdme::gui::events::GUIMoveListener
 	 * Destructor
 	 */
 	virtual ~GUIMoveListener() {}
+
+	/**
+	 * Accept move
+	 * @param node node
+	 * @return if node has been accepted for move
+	 */
+	virtual bool accept(GUINode* node) = 0;
 
 	/**
 	 * On move

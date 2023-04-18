@@ -119,6 +119,28 @@ private:
 
 	unordered_map<string, string> methodOperatorMap;
 	unordered_map<string, Node> nodes;
+	enum CreateConnectionMode {
+		CREATECONNECTIONMODE_NONE,
+		CREATECONNECTIONMODE_FLOW_OUT,
+		CREATECONNECTIONMODE_FLOW_IN,
+		CREATECONNECTIONMODE_ARGUMENT_OUT,
+		CREATECONNECTIONMODE_ARGUMENT_IN
+	};
+	/**
+	 * @return Returns the create connection mode name
+	 */
+	inline static const string getCreateConnectionModeName(CreateConnectionMode createConnectionMode) {
+		switch (createConnectionMode) {
+			case CREATECONNECTIONMODE_FLOW_OUT: return "Flow Output";
+			case CREATECONNECTIONMODE_FLOW_IN: return "Flow Input";
+			case CREATECONNECTIONMODE_ARGUMENT_OUT: return "Argument Output";
+			case CREATECONNECTIONMODE_ARGUMENT_IN: return "Argument Input";
+			case CREATECONNECTIONMODE_NONE: return "None";
+			default: return "Invalid";
+		}
+	}
+	CreateConnectionMode createConnectionMode { CREATECONNECTIONMODE_NONE };
+	int createConnectionIdx = -1;
 	vector<Connection> connections;
 	bool visualEditor { false };
 	bool visualCodingEnabled { false };
@@ -668,10 +690,37 @@ public:
 	void createSourceCodeFromNode(string& sourceCode, const Node* node, int depth = 0);
 
 	/**
+	 * Delete connection
+	 * @param nodeId node id
+	 */
+	void deleteConnection(const string& nodeId);
+
+	/**
 	 * Delete node
 	 * @param nodeId node id
 	 */
 	void deleteNode(const string& nodeId);
+
+	/**
+	 * Returns if creating a connection currently
+	 * @return if creating a connection currently
+	 */
+	inline bool isCreatingConnection() {
+		return createConnectionMode != CREATECONNECTIONMODE_NONE;
+	}
+
+	/**
+	 * Create connection with given start or end node id
+	 * @param guiNodeId GUI node id
+	 */
+	void createConnection(const string& guiNodeId);
+
+	/**
+	 * Finish creating connection
+	 * @param mouseX mouse X
+	 * @param mouseY mouse Y
+	 */
+	void finishCreateConnection(int mouseX, int mouseY);
 
 	/**
 	 * Set up context menu

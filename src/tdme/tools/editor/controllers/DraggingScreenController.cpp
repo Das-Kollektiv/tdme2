@@ -73,6 +73,10 @@ void DraggingScreenController::dispose()
 {
 }
 
+bool DraggingScreenController::accept(GUINode* node) {
+	return true;
+}
+
 void DraggingScreenController::onMove(GUINode* node) {
 }
 

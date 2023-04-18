@@ -1,12 +1,40 @@
 <template>	
-	<element id="{$id}" width="100%" height="auto" value="{$value}" selected="{$selected}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
-		<!-- unselected, no mouse over -->
-		<text id="{$id}_unselected" padding-top="2" padding-bottom="2" width="100%" hide-on="selected,mouseover,hidden" font="resources/installer/gui/fonts/Roboto-Light.ttf" size="20" text="{$text}" color="#000000" background-color="#F0F0F0" />
-		<!-- unselected, mouse over -->
-		<text id="{$id}_unselected,mouseover" padding-top="2" padding-bottom="2" width="100%" hide-on="selected,hidden" show-on="mouseover" font="resources/installer/gui/fonts/Roboto-Light.ttf" size="20" text="{$text}" color="#000000" background-color="#B0B0FF" />
-		<!-- selected, no mouse over -->
-		<text id="{$id}_selected" padding-top="2" padding-bottom="2" width="100%" hide-on="unselected,mouseover,hidden" font="resources/installer/gui/fonts/Roboto-Light.ttf" size="20" text="{$text}" color="#ffffff" background-color="#B0B0FF" />
-		<!-- selected, mouse over -->
-		<text id="{$id}_selected,mouseover" padding-top="2" padding-bottom="2" width="100%" hide-on="unselected,hidden" show-on="mouseover" font="resources/installer/gui/fonts/Roboto-Light.ttf" size="20" text="{$text}" color="#ffffff" background-color="#B0B0FF" />
+	<element id="{$id}" width="100%" height="25" value="{$value}" selected="{$selected}" disabled="{$disabled}" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
+		<!-- normal -->
+		<text
+			id="{$id}_unselected"
+			text="{$text}"	
+			font="{$font.default}" size="{$fontsize.default}"
+			color="{$color.font_highlight}"
+			
+			width="100%"
+			height="25"
+			padding-left="5"
+			vertical-align="center"		
+
+			hide-on="mouseover,selected,hidden"
+		/>
+		
+		<!-- mouse over / focussed -->
+		<text 
+			id="{$id}_unselected,mouseover"
+			text="{$text}"
+			font="{$font.default}" size="{$fontsize.default}" 
+			color="{$color.font_highlight}"
+			 
+			width="100%"
+			height="25"
+			padding-left="5"
+			background-color="{$color.focus}"
+			vertical-align="center"
+
+			show-on="mouseover,selected"
+			hide-on="hidden"
+		/>
+		
+		<!-- <!-- additional elements --> -->
+		<!-- <layout width="100%" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" > -->
+			<!-- {__InnerXML__} -->
+		<!-- </layout> -->
 	</element>
 </template>

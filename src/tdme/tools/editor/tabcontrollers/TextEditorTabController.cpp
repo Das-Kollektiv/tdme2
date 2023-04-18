@@ -90,6 +90,8 @@ TextEditorTabController::TextEditorTabController(TextEditorTabView* view)
 {
 	this->view = view;
 	this->popUps = view->getPopUps();
+	this->view->getTabScreenNode()->addChangeListener(this);
+	this->view->getTabScreenNode()->addActionListener(this);
 	this->view->getTabScreenNode()->addFocusListener(this);
 }
 
@@ -360,6 +362,10 @@ void TextEditorTabController::onChange(GUIElementNode* node)
 	}
 }
 
+void TextEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
+{
+}
+
 void TextEditorTabController::onFocus(GUIElementNode* node) {
 	// if a node in this tab gets focussed, invalidate focus in main engine GUI
 	if (node->getScreenNode() == view->getTabScreenNode()) {
@@ -557,10 +563,6 @@ void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx
 
 	//
 	setOutlinerContent();
-}
-
-void TextEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
-{
 }
 
 void TextEditorTabController::closeFindReplaceWindow() {
