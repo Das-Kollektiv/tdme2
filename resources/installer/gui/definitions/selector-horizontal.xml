@@ -1,0 +1,13 @@
+<template>	
+	<element id="{$id}" name="{$name}" width="auto" height="auto" border="1" border-color="{$color.element_frame}" focusable="true" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" on-change="{$on-change}" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
+		<layout alignment="horizontal" width="auto" height="auto">
+			<button id="{$id}_left" width="25" height="25" image="resources/engine/images/arrow_left.png" />
+			<space width="10" />
+			<layer id="{$id}_inner" width="auto" height="auto">
+				{__InnerXML__}
+			</layer>
+			<space width="10" />
+			<button id="{$id}_right" width="25" height="25" image="resources/engine/images/arrow_right.png" />
+		</layout>
+	</element>
+</template>

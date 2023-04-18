@@ -1,7 +1,8 @@
 <template>	
-
 	<element id="{$id}" width="auto" height="auto" disabled="{$disabled}" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
-			
+		
+		<layer width="auto" >
+		
 			<!-- normal -->
 			<layout width="250" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,selected,mouseover" >
 				<space width="5" />
@@ -59,13 +60,10 @@
 			<!-- shortcut and child -->
 			<layout width="250" height="auto" alignment="horizontal" horizontal-align="right" vertical-align="center">
 				<space width="*" />
-				<layer>
-					<text padding-right="5" width="auto" height="25" vertical-align="center" font="{$font.default}" size="{$fontsize.default}" text="{$shortcut}" color="{$color.font_disabled}" />
-					<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
-						<!-- <image show-on="parent" src="resources/engine/images/arrow_right.png" /> -->
-					</layout>
-				</layer>
-				<space width="5"/>
+				<text padding-right="5" width="auto" height="25" vertical-align="center" font="{$font.default}" size="{$fontsize.default}" text="{$shortcut}" color="{$color.font_disabled}" />
+				<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+					<!-- <image show-on="parent" src="resources/engine/images/arrow_right.png" /> -->
+				</layout>
 			</layout>
 			
 			<!-- additional elements -->
@@ -73,6 +71,7 @@
 				{__InnerXML__}
 			</layout>
 
-	</element>
+		</layer>
 
+	</element>
 </template>

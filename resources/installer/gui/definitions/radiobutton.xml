@@ -1,32 +1,45 @@
 <template>	
-	<element id="{$id}" name="{$name}" value="{$value}" selected="{$selected}" disabled="{$disabled}" focusable="true" on-change="{$on-change}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
-		<!-- unselected, no mouse over -->
-		<image effect-color-mul="#F0F0F0" hide-on="disabled,focus,selected,mouseover" src="resources/installer/gui/images/radiobutton/background.png" />
-		<image effect-color-mul="#000000" hide-on="disabled,focus,selected,mouseover" src="resources/installer/gui/images/radiobutton/border.png" />
+	<element id="{$id}" name="{$name}" value="{$value}" selected="{$selected}" disabled="{$disabled}" focusable="true" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" on-change="{$on-change}" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
+
+		<!-- unselected -->
+		<layout width="auto" height="auto" padding="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,selected,mouseover" >
+			<image effect-color-mul="{$color.font_normal}" src="resources/engine/images/radiobutton_unselected.png" />
+			<space hide-on="empty('{$text}')" width="5"/>
+			<text font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_normal}" />
+		</layout>
 		<!-- unselected, mouse over -->
-		<image effect-color-mul="#B0B0FF" hide-on="disabled,focus,selected" show-on="mouseover" src="resources/installer/gui/images/radiobutton/background.png" />
-		<image effect-color-mul="#000000" hide-on="disabled,focus,selected" show-on="mouseover" src="resources/installer/gui/images/radiobutton/border.png" />
-		<!-- selected, no mouse over -->
-		<image effect-color-mul="#8080FF" hide-on="disabled,focus,unselected,mouseover" src="resources/installer/gui/images/radiobutton/background.png" />
-		<image effect-color-mul="#000000" hide-on="disabled,focus,unselected,mouseover" src="resources/installer/gui/images/radiobutton/border.png" />
-		<image effect-color-mul="#FFFFFF" hide-on="disabled,focus,unselected,mouseover" src="resources/installer/gui/images/radiobutton/dotmark.png" />
-		<!-- selected, mouse over -->
-		<image effect-color-mul="#8080FF" hide-on="disabled,focus,unselected" show-on="mouseover" src="resources/installer/gui/images/radiobutton/background.png" />
-		<image effect-color-mul="#000000" hide-on="disabled,focus,unselected" show-on="mouseover" src="resources/installer/gui/images/radiobutton/border.png" />
-		<image effect-color-mul="#FFFFFF" hide-on="disabled,focus,unselected" show-on="mouseover" src="resources/installer/gui/images/radiobutton/dotmark.png" />
-		<!-- unselected, focus -->
-		<image effect-color-mul="#B0B0FF" hide-on="disabled,selected" show-on="focus" src="resources/installer/gui/images/radiobutton/background.png" />
-		<image effect-color-mul="#8080FF" hide-on="disabled,selected" show-on="focus" src="resources/installer/gui/images/radiobutton/border.png" />
-		<!-- selected, focus -->
-		<image effect-color-mul="#B0B0FF" hide-on="disabled,unselected" show-on="focus" src="resources/installer/gui/images/radiobutton/background.png" />
-		<image effect-color-mul="#8080FF" hide-on="disabled,unselected" show-on="focus" src="resources/installer/gui/images/radiobutton/border.png" />
-		<image effect-color-mul="#FFFFFF" hide-on="disabled,unselected" show-on="focus" src="resources/installer/gui/images/radiobutton/dotmark.png" />
+		<layout width="auto" height="auto" padding="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,selected" show-on="mouseover" >
+			<image effect-color-mul="{$color.font_highlight}" src="resources/engine/images/radiobutton_unselected.png" />
+			<space hide-on="empty('{$text}')" width="5"/>
+			<text font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_highlight}" />
+		</layout>
 		<!-- unselected, disabled -->
-		<image effect-color-mul="#A0A0A0" hide-on="selected" show-on="disabled" src="resources/installer/gui/images/radiobutton/background.png" />
-		<image effect-color-mul="#A0A0A0" hide-on="selected" show-on="disabled" src="resources/installer/gui/images/radiobutton/border.png" />
+		<layout width="auto" height="auto" padding="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="selected" show-on="disabled" >
+			<image effect-color-mul="{$color.font_disabled}" src="resources/engine/images/radiobutton_unselected.png" />
+			<space hide-on="empty('{$text}')" width="5"/>
+			<text font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_disabled}" />
+		</layout>
+		
+		
+		<!-- selected -->
+		<layout width="auto" height="auto" padding="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,unselected,mouseover" >
+			<image effect-color-mul="{$color.font_normal}" src="resources/engine/images/radiobutton_selected.png" />
+			<space hide-on="empty('{$text}')" width="5"/>
+			<text font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_normal}" />
+		</layout>
+		
+		<!-- selected, mouse over -->
+		<layout width="auto" height="auto" padding="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,unselected" show-on="mouseover" >
+			<image effect-color-mul="{$color.font_highlight}" src="resources/engine/images/radiobutton_selected.png" />
+			<space hide-on="empty('{$text}')" width="5"/>
+			<text font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_highlight}" />
+		</layout>
 		<!-- selected, disabled -->
-		<image effect-color-mul="#A0A0A0" hide-on="unselected" show-on="disabled" src="resources/installer/gui/images/radiobutton/background.png" />
-		<image effect-color-mul="#A0A0A0" hide-on="unselected" show-on="disabled" src="resources/installer/gui/images/radiobutton/border.png" />
-		<image effect-color-mul="#D0D0D0" hide-on="unselected" show-on="disabled" src="resources/installer/gui/images/radiobutton/dotmark.png" />
+		<layout width="auto" height="auto" padding="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="unselected" show-on="disabled" >
+			<image effect-color-mul="{$color.font_disabled}" src="resources/engine/images/radiobutton_selected.png" />
+			<space hide-on="empty('{$text}')" width="5"/>
+			<text font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_disabled}" />
+		</layout>
+		
 	</element>
 </template>

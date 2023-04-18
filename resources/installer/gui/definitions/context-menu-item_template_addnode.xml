@@ -1,0 +1,86 @@
+<template>	
+	<element id="{$id}" value="{$value}" width="auto" height="auto" disabled="{$disabled}" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
+		
+		<layer width="auto" padding-left="5" >
+		
+			<!-- normal -->
+			<layout width="245" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,selected,mouseover" >
+				<text
+					text="{$category}:"
+					font="{$font.default}" size="{$fontsize.default}" 
+					color="{$color.font_normal}80"
+					
+					width="auto" 
+					height="25"
+					padding-left="5"				
+					vertical-align="center"
+				/>
+				<space width="10"/>
+				<text
+					text="{$name}"
+					font="{$font.default}" size="{$fontsize.default}" 
+					color="{$color.font_normal}"
+					
+					width="auto" 
+					height="25"				
+					vertical-align="center"
+				/>
+			</layout>
+		
+			<!-- mouse over / focussed -->
+			<layout width="245" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled" show-on="mouseover,selected" background-color="{$color.focus}" >
+				<text
+					text="{$category}:"
+					font="{$font.default}" size="{$fontsize.default}" 
+					color="{$color.font_highlight}80"
+					
+					width="auto" 
+					height="25"
+					padding-left="5"				
+					vertical-align="center"
+				/>
+				<space width="10"/>
+				<text
+					text="{$name}"
+					font="{$font.default}" size="{$fontsize.default}"
+					color="{$color.font_highlight}"
+					
+					width="auto"
+					height="25"
+					vertical-align="center"
+				/>
+			</layout>
+		
+			<!-- disabled -->
+			<layout width="245" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" show-on="disabled" >
+				<text
+					text="{$category}:"
+					font="{$font.default}" size="{$fontsize.default}" 
+					color="{$color.font_disabled}80"
+					
+					width="auto" 
+					height="25"
+					padding-left="5"				
+					vertical-align="center"
+				/>
+				<space width="10"/>
+				<text
+					text="{$text}"
+					font="{$font.default}" size="{$fontsize.default}"
+					color="{$color.font_disabled}"
+					
+					width="auto"
+					height="25"
+					vertical-align="center"
+				/>
+			</layout>
+			
+			<!-- additional elements -->
+			<layout width="245" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" >
+				{__InnerXML__}
+			</layout>
+
+		</layer>
+
+	</element>
+</template>
