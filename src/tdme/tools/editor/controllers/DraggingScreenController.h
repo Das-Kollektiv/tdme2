@@ -72,6 +72,7 @@ public:
 	GUIScreenNode* getScreenNode() override;
 	void initialize() override;
 	void dispose() override;
+	bool accept(GUINode* node) override;
 	void onMove(GUINode* node) override;
 	void onRelease(GUINode* node, int mouseX, int mouseY) override;
 

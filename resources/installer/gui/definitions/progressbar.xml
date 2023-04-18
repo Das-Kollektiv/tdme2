@@ -1,7 +1,7 @@
 <template>	
-	<element border="1" on-initialize="{$id}.condition={$text-on}" id="{$id}" name="{$name}" disabled="{$disabled}" width="{$width}" height="{$height}" value="{$value}">
-		<image width="100%" height="100%" scale9="8" id="{$id}_background" src="resources/installer/gui/images/progressbar/progressbar_fill.png" effect-color-mul="#DCDCDC"/>
-		<image width="100%" height="100%" scale9="8" id="{$id}_bar" src="resources/installer/gui/images/progressbar/progressbar_fill.png" effect-color-mul="#B0B0FF"/>
-		<text show-on="true" width="100%" height="100%" font="resources/installer/gui/fonts/Roboto-Light.ttf" size="20" text="{$text}" color="#000000" horizontal-align="center" vertical-align="center" id="{$id}_text" />
+	<element border="1" border-color="{$color.element_frame}" on-initialize="{$id}.condition={$text-on}" id="{$id}" disabled="{$disabled}" width="{$width}" height="25" value="{$value}" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
+		<image width="100%" height="100%" scale9="8" id="{$id}_background" src="resources/engine/images/progressbar.png" effect-color-mul="{$color.element_midground}"/>
+		<image width="100%" height="100%" scale9="8" id="{$id}_bar" src="resources/engine/images/progressbar.png" effect-color-mul="{$color.focus}"/>
+		<text show-on="true" width="100%" height="100%" font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_normal}" horizontal-align="center" vertical-align="center" id="{$id}_text" />
 	</element>
 </template>

@@ -1,16 +1,150 @@
 <template>	
-	<element id="{$id}" width="auto" height="auto" border="1" border-color="black" disabled="{$disabled}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
-		<!-- unselected, no mouse over -->
-		<text background-color="#F0F0F0" hide-on="disabled,selected,mouseover" width="auto" height="28" padding="5" horizontal-align="center" font="resources/installer/gui/fonts/Roboto-Light.ttf" size="20" text="{$text}" color="#000000" />
-		<!-- unselected, mouse over -->
-		<text background-color="#B0B0FF" hide-on="disabled,selected" show-on="mouseover" width="auto" height="28" padding="5" horizontal-align="center" font="resources/installer/gui/fonts/Roboto-Light.ttf" size="20" text="{$text}" color="#000000" />
-		<!-- selected, no mouse over -->
-		<text background-color="#8080FF" hide-on="disabled,unselected,mouseover" width="auto" height="28" padding="5" horizontal-align="center" font="resources/installer/gui/fonts/Roboto-Light.ttf" size="20" text="{$text}" color="#FFFFFF" />
-		<!-- selected, mouse over -->
-		<text background-color="#8080FF" hide-on="disabled,unselected" show-on="mouseover" width="auto" height="28" padding="5" horizontal-align="center" font="resources/installer/gui/fonts/Roboto-Light.ttf" size="20" text="{$text}" color="#FFFFFF" />
-		<!-- unselected, disabled -->
-		<text background-color="#A0A0A0" hide-on="selected" show-on="disabled" width="auto" height="28" padding="5" horizontal-align="center" font="resources/installer/gui/fonts/Roboto-Light.ttf" size="20" text="{$text}" color="#D0D0D0" />
-		<!-- selected, disabled -->
-		<text background-color="#A0A0A0" hide-on="unselected" show-on="disabled" width="auto" height="28" padding="5" horizontal-align="center" font="resources/installer/gui/fonts/Roboto-Light.ttf" size="20" text="{$text}" color="#FFFFFF" />
+	<element id="{$id}" width="auto" height="25" disabled="{$disabled}" on-initialize="{$id}.condition+={$closeable}; {$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" vertical-align="center" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
+		
+		<!-- normal -->
+		<layout 
+			width="auto" 
+			height="25" 
+			padding-left="10" 
+			padding-right="10"
+			alignment="horizontal" 
+			horizontal-align="center" 
+			vertical-align="center"
+			background-color="{$color.element_midground}"
+			
+			border-left="1" 
+			border-right="1" 
+			border-color="{$color.element_background}"
+			border-top="1"
+			border-color-top="{$type-color}"
+			border-bottom="1" 
+			border-color-bottom="{$color.element_frame}"
+			
+			hide-on="disabled,selected,mouseover" 
+		>
+			<image src="{$image}" />
+			<space hide-on="empty('{$image}')" width="5"/>
+			<text
+				text="{$text}"
+				font="{$font.default}" size="{$fontsize.default}" 
+				color="{$color.font_normal}"
+				
+				width="auto" 
+				height="25"				
+				vertical-align="center"
+			/>
+			<space show-on="true" width="10"/>
+			<button show-on="true" template="button_template_tab.xml" id="{$id}_close_normal" width="18" height="18" image="resources/engine/images/cross.png" />
+		</layout>
+		
+		<!-- mouse over / focussed -->
+		<layout 
+			width="auto" 
+			height="25" 
+			padding-left="10" 
+			padding-right="10"
+			alignment="horizontal" 
+			horizontal-align="center" 
+			vertical-align="center"
+			background-color="{$color.focus}"
+			
+			border-left="1" 
+			border-right="1" 
+			border-color="{$color.element_frame}"
+			border-top="1"
+			border-color-top="{$type-color}"
+			border-bottom="1" 
+			border-color-bottom="{$color.element_foreground}"
+			
+			show-on="mouseover,focussed"
+			hide-on="disabled"
+		>
+			<image src="{$image}" />
+			<space hide-on="empty('{$image}')" width="5"/>
+			<text
+				text="{$text}"
+				font="{$font.default}" size="{$fontsize.default}" 
+				color="{$color.font_normal}"
+				
+				width="auto" 
+				height="25"				
+				vertical-align="center"
+			/>
+			<space show-on="true" width="10"/>
+			<button show-on="true" template="button_template_tab.xml" id="{$id}_close_mouseover" width="18" height="18" image="resources/engine/images/cross.png" />
+		</layout>
+		
+		<!-- selected -->
+		<layout 
+			width="auto" 
+			height="25" 
+			padding-left="10" 
+			padding-right="10"
+			alignment="horizontal" 
+			horizontal-align="center" 
+			vertical-align="center"
+			background-color="{$color.element_foreground}"
+			
+			border-left="1" 
+			border-right="1" 
+			border-color="{$color.element_frame}"
+			border-top="1"
+			border-color-top="{$type-color}"
+			border-bottom="1" 
+			border-color-bottom="{$color.element_foreground}"
+			
+			hide-on="disabled,unselected,mouseover"
+		>
+			<image src="{$image}" />
+			<space hide-on="empty('{$image}')" width="5"/>
+			<text
+				text="{$text}"
+				font="{$font.default}" size="{$fontsize.default}"
+				color="{$color.font_highlight}"
+				
+				width="auto" 
+				height="25"				
+				vertical-align="center"
+			/>
+			<space show-on="true" width="10"/>
+			<button show-on="true" template="button_template_tab.xml" id="{$id}_close_selected" width="18" height="18" image="resources/engine/images/cross.png" />
+		</layout>
+		
+		<!-- disabled -->
+		<layout 
+			width="auto" 
+			height="25" 
+			padding-left="10" 
+			padding-right="10"
+			alignment="horizontal" 
+			horizontal-align="center" 
+			vertical-align="center"
+			background-color="{$color.element_foreground}"
+			
+			border-left="1" 
+			border-right="1" 
+			border-color="{$color.element_background}"
+			border-top="1"
+			border-color-top="{$type-color}"
+			border-bottom="1" 
+			border-color-bottom="{$color.element_frame}"
+			
+			show-on="disabled"
+		>
+			<image src="{$image}" />
+			<space hide-on="empty('{$image}')" width="5"/>
+			<text
+				text="{$text}"
+				font="{$font.default}" size="{$fontsize.default}"
+				color="{$color.font_disabled}"
+				
+				width="auto" 
+				height="25"				
+				vertical-align="center"
+			/>
+			<space show-on="true" width="10"/>
+			<button show-on="true" template="button_template_tab.xml" id="{$id}_close_disabled" width="18" height="18" image="resources/engine/images/cross.png" />
+		</layout>
+
 	</element>
 </template>

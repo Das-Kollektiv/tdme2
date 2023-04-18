@@ -1,0 +1,33 @@
+<template>	
+	<element id="{$id}" name="{$name}" horizontal-align="center" vertical-align="center" value="{$value}" disabled="{$disabled}" focusable="true" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
+
+		<!-- normal -->
+		<layout width="{$width}" height="{$height}" padding="5" hide-on="disabled,mouseover,click" alignment="horizontal" horizontal-align="center" vertical-align="center">
+			<image src="{$image}" image-effect-color-mul="{$color.font_normal}"/>
+			<space hide-on="empty('{$image}'),empty('{$text}')" width="10"/>
+			<text id="{$id}_text_unselected" font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_normal}"/>
+		</layout>
+		
+		<!-- mouse over -->
+		<layout width="{$width}" height="{$height}" padding="5" hide-on="disabled,click" show-on="mouseover" alignment="horizontal" horizontal-align="center" vertical-align="center" background-color="{$color.focus}">
+			<image src="{$image}" image-effect-color-mul="{$color.font_highlight}"/>
+			<space hide-on="empty('{$image}'),empty('{$text}')" width="10"/>
+			<text id="{$id}_text_mouseover" font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_highlight}"/>
+		</layout>
+		
+		<!-- clicked -->
+		<layout width="{$width}" height="{$height}" padding="5" hide-on="disabled" show-on="click" alignment="horizontal" horizontal-align="center" vertical-align="center" background-color="{$color.selected}" >
+			<image src="{$image}" image-effect-color-mul="{$color.font_highlight}"/>
+			<space hide-on="empty('{$image}'),empty('{$text}')" width="10"/>
+			<text id="{$id}_text_click" font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_highlight}"/>
+		</layout>
+		
+		<!-- disabled -->
+		<layout width="{$width}" height="{$height}" padding="5" show-on="disabled" alignment="horizontal" horizontal-align="center" vertical-align="center" >
+			<image src="{$image}" image-effect-color-mul="{$color.font_disabled}"/>
+			<space hide-on="empty('{$image}'),empty('{$text}')" width="10"/>
+			<text id="{$id}_text_disabled" font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_disabled}"/>
+		</layout>
+		
+	</element>
+</template>

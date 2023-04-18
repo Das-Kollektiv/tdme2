@@ -695,6 +695,13 @@ void GUIScreenNode::removeMoveListener(GUIMoveListener* listener) {
 	moveListener.erase(std::remove(moveListener.begin(), moveListener.end(), listener), moveListener.end());
 }
 
+bool GUIScreenNode::isMoveAccepted(GUINode* node) {
+	for (auto listener: moveListener) {
+		if (listener->accept(node) == true) return true;
+	}
+	return moveListener.empty();
+}
+
 void GUIScreenNode::forwardMove(GUINode* node) {
 	forwardEventList.emplace_back(
 		ForwardEvent::EVENTTYPE_MOVE,

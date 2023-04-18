@@ -666,6 +666,22 @@ void GUIParentNode::render(GUIRenderer* guiRenderer)
 	guiRenderer->setRenderAreaBottom(renderAreaBottomCurrent);
 }
 
+void GUIParentNode::determineNodesByCoordinate(const Vector2& coordinate, unordered_set<string>& nodeIds) {
+	if (conditionsMet == false)
+		return;
+
+	//
+	if (isCoordinateBelongingToNode(coordinate) == true || flow == GUINode_Flow::FLOATING) {
+		for (auto i = 0; i < vieportSubNodesCache.size(); i++) {
+			auto subNode = vieportSubNodesCache[i];
+			subNode->determineNodesByCoordinate(coordinate, nodeIds);
+		}
+	}
+
+	//
+	GUINode::determineNodesByCoordinate(coordinate, nodeIds);
+}
+
 void GUIParentNode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds, int flags)
 {
 	if (conditionsMet == false)

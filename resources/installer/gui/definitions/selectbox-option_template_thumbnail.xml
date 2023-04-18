@@ -1,0 +1,76 @@
+<template>	
+	<element id="{$id}" parent-id="{$parent-id}" width="100%" height="auto" value="{$value}" selected="{$selected}" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" on-change="{$on-change}" tooltip="{$tooltip}">
+		<layer width="100%" >
+			
+			<!-- normal -->		
+			<layout width="auto" height="auto" padding="10" hide-on="disabled,selected,mouseover,focussed" alignment="vertical" horizontal-align="center" vertical-align="center">
+				<element>
+					<image width="{$size}" height="{$size}" src="{$thumbnail}" />
+					<layout width="{$size}" height="{$size}" border-bottom="3" border-color-bottom="{$type-color}"/>
+					<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom">
+						<image src="{$icon}" />
+					</layout>
+				</element>
+				<space height="5" hide-on="empty('{$filename}')"/>
+				<styled-text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" width="{$size}" height="auto" horizontal-align="center">
+					<![CDATA[
+					{$filename}
+					]]>
+				</styled-text>
+			</layout>
+		
+			<!-- mouse over / focussed -->		
+			<layout width="auto" height="auto" padding="10" show-on="mouseover,focussed" alignment="vertical" horizontal-align="center" vertical-align="center" background-color="{$color.focus}">
+				<element>
+					<image width="{$size}" height="{$size}" src="{$thumbnail}" />
+					<layout width="{$size}" height="{$size}" border-bottom="3" border-color-bottom="{$type-color}"/>
+					<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom">
+						<image src="{$icon}" />
+					</layout>
+				</element>
+				<space height="5" hide-on="empty('{$filename}')"/>
+				<styled-text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_highlight}" width="{$size}" height="auto" horizontal-align="center">
+					<![CDATA[
+					{$filename}
+					]]>
+				</styled-text>
+			</layout>
+			
+			<!-- selected -->		
+			<layout width="auto" height="auto" padding="10" show-on="click" alignment="vertical" horizontal-align="center" vertical-align="center" hide-on="disabled,unselected,mouseover,focussed" background-color="{$color.selected}">
+				<element>
+					<image width="{$size}" height="{$size}" src="{$thumbnail}" />
+					<layout width="{$size}" height="{$size}" border-bottom="3" border-color-bottom="{$type-color}"/>
+					<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom">
+						<image src="{$icon}" />
+					</layout>
+				</element>
+				<space height="5" hide-on="empty('{$filename}')"/>
+				<styled-text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" width="{$size}" height="auto" horizontal-align="center">
+					<![CDATA[
+					{$filename}
+					]]>
+				</styled-text>
+			</layout>
+		
+			<!-- disabled -->		
+			<layout width="auto" height="auto" padding="10" show-on="disabled" alignment="vertical" horizontal-align="center" vertical-align="center">
+				<element>
+					<image width="{$size}" height="{$size}" src="{$thumbnail}" color-effect-mul="{$color.font_disabled}" />
+					<layout width="{$size}" height="{$size}" border-bottom="3" border-color-bottom="{$type-color}"/>
+					<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom">
+						<image src="{$icon}" />
+					</layout>
+				</element>
+				<space height="5" hide-on="empty('{$filename}')"/>
+				<styled-text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_disabled}" width="{$size}" height="auto" horizontal-align="center">
+					<![CDATA[
+					{$filename}
+					]]>
+				</styled-text>
+			</layout>
+		
+		</layer>
+			
+	</element>
+</template>
