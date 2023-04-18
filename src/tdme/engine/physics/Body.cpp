@@ -20,9 +20,6 @@
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
-#include <tdme/engine/primitives/Capsule.h>
-#include <tdme/engine/primitives/OrientedBoundingBox.h>
-#include <tdme/engine/primitives/TerrainMesh.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
@@ -41,9 +38,6 @@ using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
-using tdme::engine::primitives::Capsule;
-using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::engine::primitives::TerrainMesh;
 using tdme::engine::Rotation;
 using tdme::engine::Transform;
 using tdme::math::Math;
