@@ -1,6 +1,6 @@
 <screen id="popup_textureoptions" popup="true" min-width="1024" min-height="768" max-width="3200" max-height="1800">
 	<layout alignment="vertical" horizontal-align="center" vertical-align="center" width="100%" height="100%">	
-		<tabs width="220" height="400">
+		<tabs width="320" height="600">
 			<tabs-header id="textureoptions_tabs-header">
 				<tab id="textureoptions_caption" image="resources/engine/images/attention.png" text="Texture Options" closeable="true"/>
 			</tabs-header>
@@ -8,8 +8,8 @@
 				<tab-content tab-id="textureoptions_caption">
 				
 					<layout padding="5" border="0" border-color="{$color.element_frame}" width="auto" height="auto" alignment="vertical" background-color="{$color.element_foreground}">
-						<layout alignment="horizontal" width="200" height="auto">
-							<image width="200" height="200" id="textureoptions_image" src="resources/engine/textures/terrain_dirt.png" />
+						<layout alignment="horizontal" width="300" height="auto">
+							<image width="300" height="300" id="textureoptions_image" src="resources/engine/textures/terrain_dirt.png" />
 						</layout>
 						<space height="5" />
 						<layout width="*" alignment="horizontal" horizontal-align="center" vertical-align="center">
@@ -34,7 +34,7 @@
 							</layout>
 						</layout>
 						<menu-separator />
-						<layout padding="5" width="200" height="auto" alignment="vertical">	
+						<layout padding="5" width="300" height="auto" alignment="vertical">	
 							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Flip Horizontal" width="*" height="auto"/>
 								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
@@ -50,6 +50,42 @@
 							</layout>
 						</layout>
 						<menu-separator />
+						<layout padding="5" width="300" height="auto" alignment="vertical">	
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Filter Min" width="*" height="auto"/>
+								<layout alignment="horizontal" width="65%" height="auto" horizontal-align="right">
+									<dropdown width="100%" height="25" id="textureoptions_filteringmin">
+										<dropdown-option text="Linear" value="1" selected="true"/>
+										<dropdown-option text="Nearest" value="2"/>
+										<dropdown-option text="Nearest Mipmap Nearest" value="3"/>
+										<dropdown-option text="Linear Mipmap Nearest" value="4"/>
+										<dropdown-option text="Nearest Mipmap Linear" value="5"/>
+										<dropdown-option text="Linear Mipmap Linear" value="6"/>
+									</dropdown>
+								</layout>
+							</layout>
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Filter Mag" width="*" height="auto"/>
+								<layout alignment="horizontal" width="65%" height="auto" horizontal-align="right">
+									<dropdown width="100%" height="25" id="textureoptions_filteringmag">
+										<dropdown-option text="Linear" value="1" selected="true"/>
+										<dropdown-option text="Nearest" value="2"/>
+										<dropdown-option text="Nearest Mipmap Nearest" value="3"/>
+										<dropdown-option text="Linear Mipmap Nearest" value="4"/>
+										<dropdown-option text="Nearest Mipmap Linear" value="5"/>
+										<dropdown-option text="Linear Mipmap Linear" value="6"/>
+									</dropdown>
+								</layout>
+							</layout>
+							<space height="5" />
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Texture Compression" width="*" height="auto"/>
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+									<checkbox id="textureoptions_compression" width="25" height="25" value="1" />
+								</layout>
+							</layout>
+						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 							<button id="textureoptions_apply" width="*" height="25" text="Apply"/>
