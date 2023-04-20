@@ -1170,11 +1170,13 @@ Reading all keys as array from set:
 | world.body.getLinearVelocity($bodyId: String): Vector3                                           |
 | <sub>Set Physics World Entity Linear Velocity</sub>                                              |
 | world.body.setLinearVelocity($bodyId: String, $linearVelocity: Vector3): Void                    |
-| <sub>Returns Physics World Collision Body Type Integer Code</sub>                                |
-| world.body.TYPE_COLLISION(): Integer                                                             |
+| <sub>Returns Physics World Dynamic Collision Body Type Integer Code</sub>                        |
+| world.body.TYPE_COLLISION_DYNAMIC(): Integer                                                     |
+| <sub>Returns Physics World Static Collision Body Type Integer Code</sub>                         |
+| world.body.TYPE_COLLISION_STATIC(): Integer                                                      |
 | <sub>Returns Physics World Dynamic Rigid Body Type Integer Code</sub>                            |
 | world.body.TYPE_DYNAMIC(): Integer                                                               |
-| <sub>=Returns Physics World Static Rigid Body Type Integer Code</sub>                            |
+| <sub>Returns Physics World Static Rigid Body Type Integer Code</sub>                             |
 | world.body.TYPE_STATIC(): Integer                                                                |
 | <sub>Get Physics World Entity Transform</sub>                                                    |
 | world.body.getTransform($bodyId: String): Transform                                              |
