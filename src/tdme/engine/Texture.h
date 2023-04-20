@@ -40,6 +40,15 @@ public:
 		TEXTUREFORMAT_RGBA_BC7
 	};
 
+	enum TextureFilter {
+		TEXTURE_FILTER_NEAREST,
+		TEXTURE_FILTER_LINEAR,
+		TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST,
+		TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST,
+		TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR,
+		TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR
+	};
+
 	enum ClampMode { CLAMPMODE_EDGE, CLAMPMODE_TRANSPARENTPIXEL };
 
 	/**
@@ -147,6 +156,8 @@ public:
 		useMipMap(true),
 		repeat(true),
 		clampMode(CLAMPMODE_EDGE),
+		minFilter(TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR),
+		magFilter(TEXTURE_FILTER_LINEAR),
 		atlasSize(1) {
 		//
 		setTextureData(textureDataFormat, textureData);
@@ -292,6 +303,36 @@ public:
 	}
 
 	/**
+	 * @return texture min filter
+	 */
+	inline TextureFilter getMinFilter() const {
+		return minFilter;
+	}
+
+	/**
+	 * Set texture min filter
+	 * @param filter filter
+	 */
+	inline void setMinFilter(TextureFilter filter) {
+		this->minFilter = filter;
+	}
+
+	/**
+	 * @return texture mag filter
+	 */
+	inline TextureFilter getMagFilter() const {
+		return magFilter;
+	}
+
+	/**
+	 * Set texture mag filter
+	 * @param filter filter
+	 */
+	inline void setMagFilter(TextureFilter filter) {
+		this->magFilter = filter;
+	}
+
+	/**
 	 * @return atlas size
 	 */
 	inline uint16_t getAtlasSize() const {
@@ -367,6 +408,8 @@ private:
 	bool useMipMap;
 	bool repeat;
 	ClampMode clampMode;
+	TextureFilter minFilter;
+	TextureFilter magFilter;
 	uint16_t atlasSize;
 	vector<MipMapTexture> mipMapTextures;
 

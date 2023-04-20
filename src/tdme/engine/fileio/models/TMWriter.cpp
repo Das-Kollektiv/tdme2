@@ -88,9 +88,9 @@ void TMWriter::write(Model* model, const string& pathName, const string& fileNam
 void TMWriter::write(Model* model, vector<uint8_t>& data) {
 	TMWriterOutputStream os(&data);
 	os.writeString("TDME Model");
-	os.writeByte(static_cast< uint8_t >(1));
-	os.writeByte(static_cast< uint8_t >(9));
-	os.writeByte(static_cast< uint8_t >(18));
+	os.writeByte(static_cast<uint8_t>(1));
+	os.writeByte(static_cast<uint8_t>(9));
+	os.writeByte(static_cast<uint8_t>(19));
 	os.writeString(model->getName());
 	os.writeString(model->getUpVector()->getName());
 	os.writeString(model->getRotationOrder()->getName());
@@ -142,6 +142,8 @@ void TMWriter::writeEmbeddedTextures(TMWriterOutputStream* os, Model* m) {
 		vector<uint8_t> pngData;
 		PNGTextureWriter::write(texture, pngData, false, false);
 		os->writeByte(1); // PNG
+		os->writeByte(texture->getMinFilter());
+		os->writeByte(texture->getMagFilter());
 		os->writeInt(pngData.size());
 		os->writeUInt8tArray(pngData);
 		*/
@@ -154,6 +156,8 @@ void TMWriter::writeEmbeddedTextures(TMWriterOutputStream* os, Model* m) {
 		os->writeInt(texture->getTextureWidth());
 		os->writeInt(texture->getTextureHeight());
 		os->writeByte(texture->getRGBDepthBitsPerPixel());
+		os->writeByte(texture->getMinFilter());
+		os->writeByte(texture->getMagFilter());
 		BC7TextureWriter::write(texture->getTextureWidth(), texture->getTextureHeight(), texture->getRGBDepthBitsPerPixel() / 8, texture->getRGBTextureData(), bc7Data);
 		os->writeInt(bc7Data.size());
 		os->writeUInt8tArray(bc7Data);
@@ -165,23 +169,30 @@ void TMWriter::writeEmbeddedTextures(TMWriterOutputStream* os, Model* m) {
 		os->writeInt(texture->getTextureWidth());
 		os->writeInt(texture->getTextureHeight());
 		os->writeByte(texture->getRGBDepthBitsPerPixel());
+		os->writeByte(texture->getMinFilter());
+		os->writeByte(texture->getMagFilter());
 		BC7TextureWriter::write(texture->getTextureWidth(), texture->getTextureHeight(), texture->getRGBDepthBitsPerPixel() / 8, texture->getRGBTextureData(), bc7Data);
 		os->writeInt(bc7Data.size());
 		os->writeUInt8tArray(bc7Data);
-		auto mipMapTextures = texture->getMipMapTextures(true);
-		os->writeByte(mipMapTextures.size());
-		for (auto& mipMapTexture: mipMapTextures) {
-			os->writeByte(mipMapTexture.format);
-			os->writeInt(mipMapTexture.width);
-			os->writeInt(mipMapTexture.height);
-			os->writeInt(mipMapTexture.textureData.getBufferVector()->size());
-			os->writeUInt8tArray(*mipMapTexture.textureData.getBufferVector());
+		if (texture->isUseMipMap() == false) {
+			os->writeByte(0);
+		} else {
+			auto mipMapTextures = texture->getMipMapTextures(true);
+			os->writeByte(mipMapTextures.size());
+			for (auto& mipMapTexture: mipMapTextures) {
+				os->writeByte(mipMapTexture.format);
+				os->writeInt(mipMapTexture.width);
+				os->writeInt(mipMapTexture.height);
+				os->writeInt(mipMapTexture.textureData.getBufferVector()->size());
+				os->writeUInt8tArray(*mipMapTexture.textureData.getBufferVector());
+			}
 		}
 	}
 }
 
 void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m)
 {
+	// TODO: minFilter, magFilter for non embedded textures
 	auto smp = m->getSpecularMaterialProperties();
 	auto pmp = m->getPBRMaterialProperties();
 	os->writeString(m->getId());
