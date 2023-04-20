@@ -31,7 +31,6 @@
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/model/UpVector.h>
-#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
@@ -71,7 +70,6 @@ using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
-using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
