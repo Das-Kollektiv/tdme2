@@ -31,6 +31,7 @@
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/model/UpVector.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
@@ -70,6 +71,7 @@ using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
+using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
@@ -499,10 +501,31 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 							Texture::getRGBFormatByPixelBitsPerPixel(image.bits * image.component),
 							textureData
 						);
+						//
 						pbrMaterialProperties->setBaseColorTexture(texture);
 						if (pbrMaterialProperties->hasBaseColorTextureTransparency() == true) pbrMaterialProperties->setBaseColorTextureMaskedTransparency(true);
 						specularMaterialProperties->setDiffuseTexture(texture);
 						if (specularMaterialProperties->hasDiffuseTextureTransparency() == true) specularMaterialProperties->setDiffuseTextureMaskedTransparency(true);
+						//
+						if (gltfTexture.sampler != -1) {
+							auto& sampler = gltfModel.samplers[gltfTexture.sampler];
+							switch (sampler.minFilter) {
+								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST); texture->setUseMipMap(false); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR); texture->setUseMipMap(false); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+							}
+							switch (sampler.magFilter) {
+								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+							}
+						}
 					} catch (Exception& exception) {
 						Console::println("GLTFReader::parseNode(): " + node->getId() + ": An error occurred: " + exception.what());
 					}
@@ -533,6 +556,26 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 							textureData
 						);
 						pbrMaterialProperties->setMetallicRoughnessTexture(texture);
+						//
+						if (gltfTexture.sampler != -1) {
+							auto& sampler = gltfModel.samplers[gltfTexture.sampler];
+							switch (sampler.minFilter) {
+								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST); texture->setUseMipMap(false); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR); texture->setUseMipMap(false); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+							}
+							switch (sampler.magFilter) {
+								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+							}
+						}
 					} catch (Exception& exception) {
 						Console::println("GLTFReader::parseNode(): " + node->getId() + ": An error occurred: " + exception.what());
 					}
@@ -563,6 +606,26 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 							textureData
 						);
 						pbrMaterialProperties->setNormalTexture(texture);
+						//
+						if (gltfTexture.sampler != -1) {
+							auto& sampler = gltfModel.samplers[gltfTexture.sampler];
+							switch (sampler.minFilter) {
+								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST); texture->setUseMipMap(false); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR); texture->setUseMipMap(false); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+							}
+							switch (sampler.magFilter) {
+								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+							}
+						}
 					} catch (Exception& exception) {
 						Console::println("GLTFReader::parseNode(): " + node->getId() + ": An error occurred: " + exception.what());
 					}

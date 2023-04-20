@@ -280,7 +280,7 @@ private:
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return material
 	 */
-	static void readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture*>& embeddedTextures);
+	static void readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture*>& embeddedTextures, const array<uint8_t, 3>& version);
 
 	/**
 	 * Read material
