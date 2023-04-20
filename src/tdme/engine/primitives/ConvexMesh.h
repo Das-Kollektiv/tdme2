@@ -2,22 +2,26 @@
 
 #include <vector>
 
-#include <ext/reactphysics3d/src/collision/PolygonVertexArray.h>
-#include <ext/reactphysics3d/src/collision/PolyhedronMesh.h>
+#include <reactphysics3d/collision/PolygonVertexArray.h>
+#include <reactphysics3d/collision/PolyhedronMesh.h>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/Triangle.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 
 using std::vector;
 
+using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Triangle;
 using tdme::engine::ObjectModel;
+using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::FloatBuffer;
@@ -31,6 +35,8 @@ class tdme::engine::primitives::ConvexMesh final
 	: public BoundingVolume
 {
 private:
+	static constexpr float VERTEX_COMPARE_EPSILON { Math::EPSILON };
+
 	vector<Vector3> vertices;
 	vector<int> facesVerticesCount;
 	vector<int> indices;
@@ -50,6 +56,11 @@ private:
 	 * @param scale scale
 	 */
 	ConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
+
+	/**
+	 * Public destructor
+	 */
+	~ConvexMesh();
 
 	/**
 	 * Checks if vertex lives on triangle plane
@@ -77,6 +88,10 @@ private:
 	 */
 	void createConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, const Vector3& scale);
 
+	// overriden methods
+	void destroyCollisionShape() override;
+	void createCollisionShape(World* world) override;
+
 public:
 	/**
 	 * Public constructor
@@ -89,11 +104,6 @@ public:
 	 * @param scale scale
 	 */
 	ConvexMesh(ObjectModel* model, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
-
-	/**
-	 * Public denstructor
-	 */
-	~ConvexMesh();
 
 	// overridden methods
 	void setScale(const Vector3& scale) override;

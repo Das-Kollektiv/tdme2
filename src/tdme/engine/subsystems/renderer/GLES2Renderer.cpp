@@ -512,8 +512,34 @@ void GLES2Renderer::uploadTexture(int contextIdx, Texture* texture)
 			*/
 		}
 	}
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	switch (texture->getMinFilter()) {
+		case Texture::TEXTURE_FILTER_NEAREST:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); break;
+		case Texture::TEXTURE_FILTER_LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); break;
+		case Texture::TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_NEAREST_MIPMAP_NEAREST:GL_NEAREST); break;
+		case Texture::TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_NEAREST:GL_NEAREST); break;
+		case Texture::TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_NEAREST_MIPMAP_LINEAR:GL_LINEAR); break;
+		case Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR); break;
+	}
+	switch (texture->getMagFilter()) {
+		case Texture::TEXTURE_FILTER_NEAREST:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); break;
+		case Texture::TEXTURE_FILTER_LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); break;
+		case Texture::TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texture->isUseMipMap() == true?GL_NEAREST_MIPMAP_NEAREST:GL_NEAREST); break;
+		case Texture::TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_NEAREST:GL_NEAREST); break;
+		case Texture::TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texture->isUseMipMap() == true?GL_NEAREST_MIPMAP_LINEAR:GL_LINEAR); break;
+		case Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR); break;
+	}
 	statistics.textureUploads++;
 }
 

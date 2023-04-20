@@ -1442,7 +1442,7 @@ void SceneEditorTabView::runScene() {
 	removeGizmo();
 
 	// execute scene
-	auto world = new World();
+	auto world = new World("applicationclient-world");
 	SceneConnector::addScene(world, scene, true);
 	applicationContext = new Context(false);
 	applicationContext->setApplicationRootPathName(editorView->getScreenController()->getProjectPath());

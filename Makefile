@@ -38,7 +38,7 @@ SRCS_PLATFORM =
 CPPVERSION = -std=c++2a
 OFLAGS =
 EXTRAFLAGS = -DRAPIDJSON_HAS_STDSTRING
-INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/src/ -Iext/v-hacd/src/VHACD_Lib/inc/ -Iext/cpp-spline/src
+INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/v-hacd/src/VHACD_Lib/inc/ -Iext/cpp-spline/src
 
 #
 CXX := $(CXX) -fPIC
@@ -70,7 +70,7 @@ ifeq ($(OS), Darwin)
 		VULKAN_RENDERER_LDFLAGS := $(VULKAN_RENDERER_LDFLAGS) -Lext/glfw3/lib/macosx/arm64 -lglfw.3
 		OPENGLES2_RENDERER_LDFLAGS := $(OPENGLES2_RENDERER_LDFLAGS) -Lext/glfw3/lib/macosx/arm64 -lglfw.3
 	endif
-	OFLAGS := -O2
+	OFLAGS := -O3
 else ifeq ($(OS), FreeBSD)
 	# FreeBSD
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
@@ -81,7 +81,7 @@ else ifeq ($(OS), FreeBSD)
 	VULKAN_RENDERER_LDFLAGS := -L/usr/local/lib -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -L/usr/local/lib -lGLESv2 -lEGL -lglfw
 	LIBS_LDFLAGS := -L/usr/local/lib -ldl -lglfw -lopenal -lexecinfo
-	OFLAGS := -O2
+	OFLAGS := -O3
 else ifeq ($(OS), NetBSD)
 	# NetBSD
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
@@ -92,7 +92,7 @@ else ifeq ($(OS), NetBSD)
 	VULKAN_RENDERER_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lGLESv2 -lEGL -lglfw
 	LIBS_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lglfw -lopenal -lexecinfo -lfreetype
-	OFLAGS := -O2
+	OFLAGS := -O3
 else ifeq ($(OS), OpenBSD)
 	# OpenBSD
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
@@ -103,7 +103,7 @@ else ifeq ($(OS), OpenBSD)
 	VULKAN_RENDERER_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -lGLESv2 -lEGL -lglfw
 	LIBS_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -ldl -lglfw -lopenal
-	OFLAGS := -O2
+	OFLAGS := -O3
 else ifeq ($(OS), Haiku)
 	# Haiku
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
@@ -114,7 +114,7 @@ else ifeq ($(OS), Haiku)
 	VULKAN_RENDERER_LDFLAGS := -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -lGLESv2 -lEGL -lglfw
 	LIBS_LDFLAGS := -lnetwork -lglfw -lopenal -lfreetype
-	OFLAGS := -O2
+	OFLAGS := -O3
 else ifeq ($(OS), Linux)
 	# Linux
 	INCLUDES := $(INCLUDES) -I/usr/include/freetype2
@@ -149,7 +149,7 @@ else
 	LIBS_LDFLAGS := -L/mingw64/lib -lws2_32 -ldl -lglfw3 -lopenal -lfreetype -ldbghelp
 	LDFLAG_LIB := $(NAME)$(LIB_EXT)
 	LDFLAG_EXT_LIB := $(EXT_NAME)$(LIB_EXT)
-	OFLAGS := -O2
+	OFLAGS := -O3
 endif
 
 CPPFLAGS := $(INCLUDES)
@@ -757,22 +757,21 @@ EXT_VHACD_SRCS = \
 	ext/v-hacd/src/VHACD_Lib/src/vhacdVolume.cpp
 
 EXT_REACTPHYSICS3D_SRCS = \
-	ext/reactphysics3d/src/body/Body.cpp \
 	ext/reactphysics3d/src/body/CollisionBody.cpp \
 	ext/reactphysics3d/src/body/RigidBody.cpp \
-	ext/reactphysics3d/src/collision/ContactManifoldInfo.cpp \
-	ext/reactphysics3d/src/collision/broadphase/BroadPhaseAlgorithm.cpp \
 	ext/reactphysics3d/src/collision/broadphase/DynamicAABBTree.cpp \
-	ext/reactphysics3d/src/collision/narrowphase/DefaultCollisionDispatch.cpp \
+	ext/reactphysics3d/src/collision/narrowphase/CollisionDispatch.cpp \
 	ext/reactphysics3d/src/collision/narrowphase/GJK/VoronoiSimplex.cpp \
 	ext/reactphysics3d/src/collision/narrowphase/GJK/GJKAlgorithm.cpp \
 	ext/reactphysics3d/src/collision/narrowphase/SAT/SATAlgorithm.cpp \
+	ext/reactphysics3d/src/collision/narrowphase/SphereVsSphereAlgorithm.cpp \
 	ext/reactphysics3d/src/collision/narrowphase/CapsuleVsCapsuleAlgorithm.cpp \
 	ext/reactphysics3d/src/collision/narrowphase/SphereVsCapsuleAlgorithm.cpp \
-	ext/reactphysics3d/src/collision/narrowphase/SphereVsSphereAlgorithm.cpp \
 	ext/reactphysics3d/src/collision/narrowphase/SphereVsConvexPolyhedronAlgorithm.cpp \
 	ext/reactphysics3d/src/collision/narrowphase/CapsuleVsConvexPolyhedronAlgorithm.cpp \
 	ext/reactphysics3d/src/collision/narrowphase/ConvexPolyhedronVsConvexPolyhedronAlgorithm.cpp \
+	ext/reactphysics3d/src/collision/narrowphase/NarrowPhaseInput.cpp \
+	ext/reactphysics3d/src/collision/narrowphase/NarrowPhaseInfoBatch.cpp \
 	ext/reactphysics3d/src/collision/shapes/AABB.cpp \
 	ext/reactphysics3d/src/collision/shapes/ConvexShape.cpp \
 	ext/reactphysics3d/src/collision/shapes/ConvexPolyhedronShape.cpp \
@@ -786,42 +785,60 @@ EXT_REACTPHYSICS3D_SRCS = \
 	ext/reactphysics3d/src/collision/shapes/ConcaveMeshShape.cpp \
 	ext/reactphysics3d/src/collision/shapes/HeightFieldShape.cpp \
 	ext/reactphysics3d/src/collision/RaycastInfo.cpp \
-	ext/reactphysics3d/src/collision/ProxyShape.cpp \
+	ext/reactphysics3d/src/collision/Collider.cpp \
 	ext/reactphysics3d/src/collision/TriangleVertexArray.cpp \
 	ext/reactphysics3d/src/collision/PolygonVertexArray.cpp \
 	ext/reactphysics3d/src/collision/TriangleMesh.cpp \
 	ext/reactphysics3d/src/collision/PolyhedronMesh.cpp \
 	ext/reactphysics3d/src/collision/HalfEdgeStructure.cpp \
-	ext/reactphysics3d/src/collision/CollisionDetection.cpp \
-	ext/reactphysics3d/src/collision/NarrowPhaseInfo.cpp \
 	ext/reactphysics3d/src/collision/ContactManifold.cpp \
-	ext/reactphysics3d/src/collision/ContactManifoldSet.cpp \
-	ext/reactphysics3d/src/collision/MiddlePhaseTriangleCallback.cpp \
 	ext/reactphysics3d/src/constraint/BallAndSocketJoint.cpp \
 	ext/reactphysics3d/src/constraint/ContactPoint.cpp \
 	ext/reactphysics3d/src/constraint/FixedJoint.cpp \
 	ext/reactphysics3d/src/constraint/HingeJoint.cpp \
 	ext/reactphysics3d/src/constraint/Joint.cpp \
 	ext/reactphysics3d/src/constraint/SliderJoint.cpp \
-	ext/reactphysics3d/src/engine/CollisionWorld.cpp \
-	ext/reactphysics3d/src/engine/ConstraintSolver.cpp \
-	ext/reactphysics3d/src/engine/ContactSolver.cpp \
-	ext/reactphysics3d/src/engine/DynamicsWorld.cpp \
+	ext/reactphysics3d/src/engine/PhysicsCommon.cpp \
+	ext/reactphysics3d/src/systems/ConstraintSolverSystem.cpp \
+	ext/reactphysics3d/src/systems/ContactSolverSystem.cpp \
+	ext/reactphysics3d/src/systems/DynamicsSystem.cpp \
+	ext/reactphysics3d/src/systems/CollisionDetectionSystem.cpp \
+	ext/reactphysics3d/src/systems/SolveBallAndSocketJointSystem.cpp \
+	ext/reactphysics3d/src/systems/SolveFixedJointSystem.cpp \
+	ext/reactphysics3d/src/systems/SolveHingeJointSystem.cpp \
+	ext/reactphysics3d/src/systems/SolveSliderJointSystem.cpp \
+	ext/reactphysics3d/src/engine/PhysicsWorld.cpp \
 	ext/reactphysics3d/src/engine/Island.cpp \
 	ext/reactphysics3d/src/engine/Material.cpp \
-	ext/reactphysics3d/src/engine/OverlappingPair.cpp \
-	ext/reactphysics3d/src/engine/Timer.cpp \
+	ext/reactphysics3d/src/engine/OverlappingPairs.cpp \
+	ext/reactphysics3d/src/engine/Entity.cpp \
+	ext/reactphysics3d/src/engine/EntityManager.cpp \
+	ext/reactphysics3d/src/systems/BroadPhaseSystem.cpp \
+	ext/reactphysics3d/src/components/Components.cpp \
+	ext/reactphysics3d/src/components/CollisionBodyComponents.cpp \
+	ext/reactphysics3d/src/components/RigidBodyComponents.cpp \
+	ext/reactphysics3d/src/components/TransformComponents.cpp \
+	ext/reactphysics3d/src/components/ColliderComponents.cpp \
+	ext/reactphysics3d/src/components/JointComponents.cpp \
+	ext/reactphysics3d/src/components/BallAndSocketJointComponents.cpp \
+	ext/reactphysics3d/src/components/FixedJointComponents.cpp \
+	ext/reactphysics3d/src/components/HingeJointComponents.cpp \
+	ext/reactphysics3d/src/components/SliderJointComponents.cpp \
 	ext/reactphysics3d/src/collision/CollisionCallback.cpp \
-	ext/reactphysics3d/src/mathematics/mathematics_functions.cpp \
+	ext/reactphysics3d/src/collision/OverlapCallback.cpp \
 	ext/reactphysics3d/src/mathematics/Matrix2x2.cpp \
 	ext/reactphysics3d/src/mathematics/Matrix3x3.cpp \
 	ext/reactphysics3d/src/mathematics/Quaternion.cpp \
 	ext/reactphysics3d/src/mathematics/Transform.cpp \
 	ext/reactphysics3d/src/mathematics/Vector2.cpp \
 	ext/reactphysics3d/src/mathematics/Vector3.cpp \
+	ext/reactphysics3d/src/memory/PoolAllocator.cpp \
+	ext/reactphysics3d/src/memory/SingleFrameAllocator.cpp \
+	ext/reactphysics3d/src/memory/HeapAllocator.cpp \
 	ext/reactphysics3d/src/memory/MemoryManager.cpp \
-	ext/reactphysics3d/src/memory/DefaultSingleFrameAllocator.cpp \
-	ext/reactphysics3d/src/memory/DefaultPoolAllocator.cpp
+	ext/reactphysics3d/src/utils/Profiler.cpp \
+	ext/reactphysics3d/src/utils/DefaultLogger.cpp \
+	ext/reactphysics3d/src/utils/DebugRenderer.cpp
 
 EXT_UINT128_T_SRCS = \
 	ext/uint128_t/uint128_t.cpp

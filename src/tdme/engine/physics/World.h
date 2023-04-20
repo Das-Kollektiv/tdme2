@@ -4,9 +4,9 @@
 #include <string>
 #include <vector>
 
-
-#include <ext/reactphysics3d/src/constraint/Joint.h>
-#include <ext/reactphysics3d/src/engine/DynamicsWorld.h>
+#include <reactphysics3d/constraint/Joint.h>
+#include <reactphysics3d/engine/PhysicsCommon.h>
+#include <reactphysics3d/engine/PhysicsWorld.h>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -23,7 +23,6 @@ using std::vector;
 using tdme::engine::physics::Body;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::WorldListener;
-using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::Engine;
 using tdme::engine::Transform;
@@ -37,6 +36,12 @@ using tdme::math::Vector3;
 class tdme::engine::physics::World final
 {
 	friend class Body;
+	friend class tdme::engine::primitives::Capsule;
+	friend class tdme::engine::primitives::ConvexMesh;
+	friend class tdme::engine::primitives::HeightMap;
+	friend class tdme::engine::primitives::OrientedBoundingBox;
+	friend class tdme::engine::primitives::Sphere;
+	friend class tdme::engine::primitives::TerrainMesh;
 
 private:
 	struct BodyCollisionStruct {
@@ -44,7 +49,8 @@ private:
 		string body2Id;
 	};
 
-	reactphysics3d::DynamicsWorld world;
+	reactphysics3d::PhysicsCommon physicsCommon;
+	reactphysics3d::PhysicsWorld* world { nullptr };
 
 	vector<Body*> bodies;
 	vector<Body*> rigidBodiesDynamic;
@@ -63,8 +69,9 @@ private:
 public:
 	/**
 	 * Public constructor
+	 * @param id id
 	 */
-	World();
+	World(const string& id);
 
 	/**
 	 * Destructor
@@ -92,7 +99,7 @@ public:
 	Body* addRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes);
 
 	/**
-	 * Add a collision body
+	 * Add a static collision body
 	 * @param id id
 	 * @param enabled enabled
 	 * @param collisionTypeId collision type id
@@ -100,7 +107,18 @@ public:
 	 * @param boundingVolumes bounding volumes
 	 * @return body
 	 */
-	Body* addCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes);
+	Body* addStaticCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes);
+
+	/**
+	 * Add a dynamic collision body
+	 * @param id id
+	 * @param enabled enabled
+	 * @param collisionTypeId collision type id
+	 * @param transform transform
+	 * @param boundingVolumes bounding volumes
+	 * @return body
+	 */
+	Body* addDynamicCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes);
 
 	/**
 	 * Add a static rigid body
@@ -216,9 +234,10 @@ public:
 
 	/**
 	 * Clone this world
+	 * @param id id
 	 * @param collisionTypeIds collision type ids to clone
 	 */
-	World* clone(uint16_t collisionTypeIds = ~0);
+	World* clone(const string& id, uint16_t collisionTypeIds = ~0);
 
 	/**
 	 * Updates given world with this world

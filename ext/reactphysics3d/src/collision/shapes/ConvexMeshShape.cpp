@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2018 Daniel Chappuis                                       *
+* Copyright (c) 2010-2022 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -24,10 +24,10 @@
 ********************************************************************************/
 
 // Libraries
-#include "configuration.h"
-#include "ConvexMeshShape.h"
-#include "engine/CollisionWorld.h"
-#include "collision/RaycastInfo.h"
+#include <reactphysics3d/configuration.h>
+#include <reactphysics3d/collision/shapes/ConvexMeshShape.h>
+#include <reactphysics3d/engine/PhysicsWorld.h>
+#include <reactphysics3d/collision/RaycastInfo.h>
 
 using namespace reactphysics3d;
 
@@ -39,9 +39,9 @@ using namespace reactphysics3d;
  * @param stride Stride between the beginning of two elements in the vertices array
  * @param margin Collision margin (in meters) around the collision shape
  */
-ConvexMeshShape::ConvexMeshShape(PolyhedronMesh* polyhedronMesh, const Vector3& scaling)
-                : ConvexPolyhedronShape(CollisionShapeName::CONVEX_MESH), mPolyhedronMesh(polyhedronMesh),
-                  mMinBounds(0, 0, 0), mMaxBounds(0, 0, 0), mScaling(scaling) {
+ConvexMeshShape::ConvexMeshShape(PolyhedronMesh* polyhedronMesh, MemoryAllocator& allocator, const Vector3& scale)
+                : ConvexPolyhedronShape(CollisionShapeName::CONVEX_MESH, allocator), mPolyhedronMesh(polyhedronMesh),
+                  mMinBounds(0, 0, 0), mMaxBounds(0, 0, 0), mScale(scale) {
 
     // Recalculate the bounds of the mesh
     recalculateBounds();
@@ -49,7 +49,7 @@ ConvexMeshShape::ConvexMeshShape(PolyhedronMesh* polyhedronMesh, const Vector3& 
 
 // Return a local support point in a given direction without the object margin.
 /// If the edges information is not used for collision detection, this method will go through
-/// the whole vertices list and pick up the vertex with the largest dot product in the support
+/// the whole vertices array and pick up the vertex with the largest dot product in the support
 /// direction. This is an O(n) process with "n" being the number of vertices in the mesh.
 /// However, if the edges information is used, we can cache the previous support vertex and use
 /// it as a start in a hill-climbing (local search) process to find the new support vertex which
@@ -58,10 +58,10 @@ ConvexMeshShape::ConvexMeshShape(PolyhedronMesh* polyhedronMesh, const Vector3& 
 Vector3 ConvexMeshShape::getLocalSupportPointWithoutMargin(const Vector3& direction) const {
 
     decimal maxDotProduct = DECIMAL_SMALLEST;
-    uint indexMaxDotProduct = 0;
+    uint32 indexMaxDotProduct = 0;
 
     // For each vertex of the mesh
-    for (uint i=0; i<mPolyhedronMesh->getNbVertices(); i++) {
+    for (uint32 i=0; i<mPolyhedronMesh->getNbVertices(); i++) {
 
         // Compute the dot product of the current vertex
         decimal dotProduct = direction.dot(mPolyhedronMesh->getVertex(i));
@@ -76,7 +76,7 @@ Vector3 ConvexMeshShape::getLocalSupportPointWithoutMargin(const Vector3& direct
     assert(maxDotProduct >= decimal(0.0));
 
     // Return the vertex with the largest dot product in the support direction
-    return mPolyhedronMesh->getVertex(indexMaxDotProduct) * mScaling;
+    return mPolyhedronMesh->getVertex(indexMaxDotProduct) * mScale;
 }
 
 // Recompute the bounds of the mesh
@@ -86,7 +86,7 @@ void ConvexMeshShape::recalculateBounds() {
     mMaxBounds = mPolyhedronMesh->getVertex(0);
 
     // For each vertex of the mesh
-    for (uint i=1; i<mPolyhedronMesh->getNbVertices(); i++) {
+    for (uint32 i=1; i<mPolyhedronMesh->getNbVertices(); i++) {
 
         if (mPolyhedronMesh->getVertex(i).x > mMaxBounds.x) mMaxBounds.x = mPolyhedronMesh->getVertex(i).x;
         if (mPolyhedronMesh->getVertex(i).x < mMinBounds.x) mMinBounds.x = mPolyhedronMesh->getVertex(i).x;
@@ -99,14 +99,14 @@ void ConvexMeshShape::recalculateBounds() {
     }
 
     // Apply the local scaling factor
-    mMaxBounds = mMaxBounds * mScaling;
-    mMinBounds = mMinBounds * mScaling;
+    mMaxBounds = mMaxBounds * mScale;
+    mMinBounds = mMinBounds * mScale;
 }
 
 // Raycast method with feedback information
 /// This method implements the technique in the book "Real-time Collision Detection" by
 /// Christer Ericson.
-bool ConvexMeshShape::raycast(const Ray& ray, RaycastInfo& raycastInfo, ProxyShape* proxyShape, MemoryAllocator& allocator) const {
+bool ConvexMeshShape::raycast(const Ray& ray, RaycastInfo& raycastInfo, Collider* collider, MemoryAllocator& /*allocator*/) const {
 
     // Ray direction
     Vector3 direction = ray.point2 - ray.point1;
@@ -119,7 +119,7 @@ bool ConvexMeshShape::raycast(const Ray& ray, RaycastInfo& raycastInfo, ProxySha
     const HalfEdgeStructure& halfEdgeStructure = mPolyhedronMesh->getHalfEdgeStructure();
 
     // For each face of the convex mesh
-    for (uint f=0; f < mPolyhedronMesh->getNbFaces(); f++) {
+    for (uint32 f=0; f < mPolyhedronMesh->getNbFaces(); f++) {
 
         const HalfEdgeStructure::Face& face = halfEdgeStructure.getFace(f);
         const Vector3 faceNormal = mPolyhedronMesh->getFaceNormal(f);
@@ -172,8 +172,8 @@ bool ConvexMeshShape::raycast(const Ray& ray, RaycastInfo& raycastInfo, ProxySha
         Vector3 localHitPoint = ray.point1 + tMin * direction;
 
         raycastInfo.hitFraction = tMin;
-        raycastInfo.body = proxyShape->getBody();
-        raycastInfo.proxyShape = proxyShape;
+        raycastInfo.body = collider->getBody();
+        raycastInfo.collider = collider;
         raycastInfo.worldPoint = localHitPoint;
         raycastInfo.worldNormal = currentFaceNormal;
 
@@ -184,12 +184,12 @@ bool ConvexMeshShape::raycast(const Ray& ray, RaycastInfo& raycastInfo, ProxySha
 }
 
 // Return true if a point is inside the collision shape
-bool ConvexMeshShape::testPointInside(const Vector3& localPoint, ProxyShape* proxyShape) const {
+bool ConvexMeshShape::testPointInside(const Vector3& localPoint, Collider* /*collider*/) const {
 
     const HalfEdgeStructure& halfEdgeStructure = mPolyhedronMesh->getHalfEdgeStructure();
 
     // For each face plane of the convex mesh
-    for (uint f=0; f < mPolyhedronMesh->getNbFaces(); f++) {
+    for (uint32 f=0; f < mPolyhedronMesh->getNbFaces(); f++) {
 
         const HalfEdgeStructure::Face& face = halfEdgeStructure.getFace(f);
         const Vector3 faceNormal = mPolyhedronMesh->getFaceNormal(f);
@@ -213,7 +213,7 @@ std::string ConvexMeshShape::to_string() const {
 
     ss << "vertices=[";
 
-    for (uint v=0; v < mPolyhedronMesh->getNbVertices(); v++) {
+    for (uint32 v=0; v < mPolyhedronMesh->getNbVertices(); v++) {
 
         Vector3 vertex = mPolyhedronMesh->getVertex(v);
         ss << vertex.to_string();
@@ -225,13 +225,13 @@ std::string ConvexMeshShape::to_string() const {
     ss << "], faces=[";
 
     HalfEdgeStructure halfEdgeStruct = mPolyhedronMesh->getHalfEdgeStructure();
-    for (uint f=0; f < mPolyhedronMesh->getNbFaces(); f++) {
+    for (uint32 f=0; f < mPolyhedronMesh->getNbFaces(); f++) {
 
         const HalfEdgeStructure::Face& face = halfEdgeStruct.getFace(f);
 
         ss << "[";
 
-        for (uint v=0; v < face.faceVertices.size(); v++) {
+        for (uint32 v=0; v < face.faceVertices.size(); v++) {
 
             ss << face.faceVertices[v];
             if (v != face.faceVertices.size() - 1) {

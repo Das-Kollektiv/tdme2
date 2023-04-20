@@ -3,20 +3,24 @@
 #include <array>
 #include <vector>
 
-#include <ext/reactphysics3d/src/collision/shapes/BoxShape.h>
+#include <reactphysics3d/collision/shapes/BoxShape.h>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/utilities/Console.h>
 
 using std::array;
 using std::vector;
 
+using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::math::Math;
 using tdme::math::Vector3;
+using tdme::utilities::Console;
 
 const array<int32_t, 3> OrientedBoundingBox::FACE0_INDICES = {{ 0, 4, 7 }};
 const array<int32_t, 3> OrientedBoundingBox::FACE1_INDICES = {{ 7, 3, 0 }};
@@ -69,6 +73,10 @@ OrientedBoundingBox::OrientedBoundingBox()
 	this->axes[2].set(AABB_AXIS_Z);
 	this->halfExtension.set(0.0f, 0.0f, 0.0f);
 	setScale(Vector3(1.0f, 1.0f, 1.0f));
+}
+
+OrientedBoundingBox::~OrientedBoundingBox() {
+	destroyCollisionShape();
 }
 
 const array<Vector3, 8> OrientedBoundingBox::getVertices() const {
@@ -151,9 +159,6 @@ void OrientedBoundingBox::setScale(const Vector3& scale) {
 	// store new scale
 	this->scale.set(scale);
 
-	// remove old collision shape
-	if (collisionShape != nullptr) delete collisionShape;
-
 	//
 	collisionShapeLocalTranslation.set(center).scale(scale);
 	collisionShapeLocalTransform.setPosition(reactphysics3d::Vector3(collisionShapeLocalTranslation.getX(), collisionShapeLocalTranslation.getY(), collisionShapeLocalTranslation.getZ()));
@@ -172,15 +177,29 @@ void OrientedBoundingBox::setScale(const Vector3& scale) {
 			)
 		)
 	);
-	collisionShape = new reactphysics3d::BoxShape(
+}
+
+void OrientedBoundingBox::destroyCollisionShape() {
+	if (collisionShape == nullptr) return;
+	this->world->physicsCommon.destroyBoxShape(static_cast<reactphysics3d::BoxShape*>(collisionShape));
+	collisionShape = nullptr;
+	world = nullptr;
+}
+
+void OrientedBoundingBox::createCollisionShape(World* world) {
+	if (this->world != nullptr && this->world != world) {
+		Console::println("OrientedBoundingBox::createCollisionShape(): already attached to a world.");
+	}
+	this->world = world;
+
+	//
+	collisionShape = world->physicsCommon.createBoxShape(
 		reactphysics3d::Vector3(
 			Math::max(Math::EPSILON, Math::abs(halfExtension.getX() * scale.getX())),
 			Math::max(Math::EPSILON, Math::abs(halfExtension.getY() * scale.getY())),
 			Math::max(Math::EPSILON, Math::abs(halfExtension.getZ() * scale.getZ()))
 		)
 	);
-	// compute bounding box
-	computeBoundingBox();
 }
 
 BoundingVolume* OrientedBoundingBox::clone() const

@@ -6,20 +6,19 @@
 #include <string>
 #include <unordered_set>
 
+#include <reactphysics3d/utils/DefaultLogger.h>
 
-#include <ext/reactphysics3d/src/collision/shapes/AABB.h>
-#include <ext/reactphysics3d/src/collision/ContactManifold.h>
-#include <ext/reactphysics3d/src/collision/OverlapCallback.h>
-#include <ext/reactphysics3d/src/collision/RaycastInfo.h>
-#include <ext/reactphysics3d/src/constraint/ContactPoint.h>
-#include <ext/reactphysics3d/src/constraint/FixedJoint.h>
-#include <ext/reactphysics3d/src/constraint/Joint.h>
-
-#include <ext/reactphysics3d/src/engine/CollisionWorld.h>
-#include <ext/reactphysics3d/src/engine/DynamicsWorld.h>
-#include <ext/reactphysics3d/src/engine/EventListener.h>
-#include <ext/reactphysics3d/src/mathematics/Ray.h>
-#include <ext/reactphysics3d/src/mathematics/Vector3.h>
+#include <reactphysics3d/collision/shapes/AABB.h>
+#include <reactphysics3d/collision/ContactManifold.h>
+#include <reactphysics3d/collision/OverlapCallback.h>
+#include <reactphysics3d/collision/RaycastInfo.h>
+#include <reactphysics3d/constraint/ContactPoint.h>
+#include <reactphysics3d/constraint/FixedJoint.h>
+#include <reactphysics3d/constraint/Joint.h>
+#include <reactphysics3d/engine/PhysicsWorld.h>
+#include <reactphysics3d/engine/EventListener.h>
+#include <reactphysics3d/mathematics/Ray.h>
+#include <reactphysics3d/mathematics/Vector3.h>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/physics/Body.h>
@@ -39,6 +38,7 @@
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/Time.h>
 #include <tdme/utilities/VectorIteratorMultiple.h>
 
 using std::find;
@@ -66,17 +66,26 @@ using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
+using tdme::utilities::Time;
 using tdme::utilities::VectorIteratorMultiple;
 
-World::World(): world(reactphysics3d::Vector3(0.0, -9.81, 0.0))
+World::World(const string& id)
 {
+	//
+    reactphysics3d::PhysicsWorld::WorldSettings worldSettings;
+    worldSettings.worldName = id;
+
+	//
+	world = physicsCommon.createPhysicsWorld(worldSettings);
 }
 
 World::~World()
 {
+	//
 	for (auto worldListener: worldListeners) delete worldListener;
 	worldListeners.clear();
 	reset();
+	physicsCommon.destroyPhysicsWorld(world);
 }
 
 void World::reset()
@@ -88,15 +97,11 @@ void World::reset()
 			jointIds.push_back(jointIt.first);
 		}
 		for (auto& jointId: jointIds) removeJoint(jointId);
-		jointsById.clear();
 	}
 	// bodies
 	{
 		auto _bodies = bodies;
 		for (auto body: _bodies) removeBody(body->getId());
-		bodies.clear();
-		rigidBodiesDynamic.clear();
-		bodiesById.clear();
 		bodyCollisionsLastFrame.clear();
 	}
 }
@@ -104,23 +109,34 @@ void World::reset()
 Body* World::addRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes)
 {
 	removeBody(id);
-	auto body = new Body(this, id, Body::TYPE_DYNAMIC, enabled, collisionTypeId, transform, restitution, friction, mass, inertiaTensor, boundingVolumes);
+	auto body = new Body(this, id, Body::BODYTYPE_DYNAMIC, enabled, collisionTypeId, transform, restitution, friction, mass, inertiaTensor, boundingVolumes);
 	bodies.push_back(body);
 	rigidBodiesDynamic.push_back(body);
 	bodiesById[id] = body;
 	for (auto listener: worldListeners) {
-		listener->onAddedBody(id, Body::TYPE_DYNAMIC, enabled, collisionTypeId, transform, restitution, friction, mass, inertiaTensor, boundingVolumes);
+		listener->onAddedBody(id, Body::BODYTYPE_DYNAMIC, enabled, collisionTypeId, transform, restitution, friction, mass, inertiaTensor, boundingVolumes);
 	}
 	return body;
 }
 
-Body* World::addCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes) {
+Body* World::addStaticCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes) {
 	removeBody(id);
-	auto body = new Body(this, id, Body::TYPE_COLLISION, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
+	auto body = new Body(this, id, Body::BODYTYPE_COLLISION_STATIC, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
 	bodies.push_back(body);
 	bodiesById[id] = body;
 	for (auto listener: worldListeners) {
-		listener->onAddedBody(id, Body::TYPE_COLLISION, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
+		listener->onAddedBody(id, Body::BODYTYPE_COLLISION_STATIC, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
+	}
+	return body;
+}
+
+Body* World::addDynamicCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes) {
+	removeBody(id);
+	auto body = new Body(this, id, Body::BODYTYPE_COLLISION_DYNAMIC, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
+	bodies.push_back(body);
+	bodiesById[id] = body;
+	for (auto listener: worldListeners) {
+		listener->onAddedBody(id, Body::BODYTYPE_COLLISION_DYNAMIC, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
 	}
 	return body;
 }
@@ -128,11 +144,11 @@ Body* World::addCollisionBody(const string& id, bool enabled, uint16_t collision
 Body* World::addStaticRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, float friction, const vector<BoundingVolume*>& boundingVolumes)
 {
 	removeBody(id);
-	auto body = new Body(this, id, Body::TYPE_STATIC, enabled, collisionTypeId, transform, 0.0f, friction, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
+	auto body = new Body(this, id, Body::BODYTYPE_STATIC, enabled, collisionTypeId, transform, 0.0f, friction, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
 	bodies.push_back(body);
 	bodiesById[id] = body;
 	for (auto listener: worldListeners) {
-		listener->onAddedBody(id, Body::TYPE_STATIC, enabled, collisionTypeId, transform, 0.0f, friction, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
+		listener->onAddedBody(id, Body::BODYTYPE_STATIC, enabled, collisionTypeId, transform, 0.0f, friction, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
 	}
 	return body;
 }
@@ -150,17 +166,13 @@ void World::removeBody(const string& id) {
 	auto bodyByIdIt = bodiesById.find(id);
 	if (bodyByIdIt != bodiesById.end()) {
 		auto body = bodyByIdIt->second;
-		if (body->rigidBody != nullptr) {
-			world.destroyRigidBody(body->rigidBody);
-		} else {
-			world.destroyCollisionBody(body->collisionBody);
-		}
 		bodies.erase(remove(bodies.begin(), bodies.end(), body), bodies.end());
 		rigidBodiesDynamic.erase(remove(rigidBodiesDynamic.begin(), rigidBodiesDynamic.end(), body), rigidBodiesDynamic.end());
 		bodiesById.erase(bodyByIdIt);
 		for (auto listener: worldListeners) {
 			listener->onRemovedBody(id, body->getType(), body->getCollisionTypeId());
 		}
+		//
 		delete body;
 	}
 }
@@ -177,14 +189,14 @@ void World::addFixedJoint(const string& id, Body* body1, Body* body2) {
 	}
 	Vector3 anchorPoint = body1->getTransform().getTranslation().clone().add(body2->getTransform().getTranslation()).scale(0.5f);
 	reactphysics3d::FixedJointInfo jointInfo(body1->rigidBody, body2->rigidBody, reactphysics3d::Vector3(anchorPoint.getX(), anchorPoint.getY(), anchorPoint.getZ()));
-	jointsById[id] = dynamic_cast<reactphysics3d::FixedJoint*>(world.createJoint(jointInfo));
+	jointsById[id] = dynamic_cast<reactphysics3d::FixedJoint*>(world->createJoint(jointInfo));
 }
 
 void World::removeJoint(const string& id) {
 	auto jointByIdIt = jointsById.find(id);
 	if (jointByIdIt != jointsById.end()) {
 		auto joint = jointByIdIt->second;
-		world.destroyJoint(joint);
+		world->destroyJoint(joint);
 		jointsById.erase(jointByIdIt);
 	}
 }
@@ -194,14 +206,16 @@ void World::update(float deltaTime)
 	if (deltaTime < Math::EPSILON) return;
 
 	// do the job
-	world.update(deltaTime);
+	world->update(deltaTime);
 
+	/*
+	// TODO: collision events
 	// collision events
 	{
 		// fire on collision begin, on collision
 		map<string, BodyCollisionStruct> bodyCollisionsCurrentFrame;
 		CollisionResponse collision;
-		auto manifolds = world.getContactsList();
+		auto manifolds = world->getContactsList();
 		for (auto manifold: manifolds) {
 			auto body1 = static_cast<Body*>(manifold->getBody1()->getUserData());
 			auto body2 = static_cast<Body*>(manifold->getBody2()->getUserData());
@@ -267,6 +281,7 @@ void World::update(float deltaTime)
 		// swap rigid body collisions current and last frame
 		bodyCollisionsLastFrame = bodyCollisionsCurrentFrame;
 	}
+	*/
 
 	// update transform for rigid body
 	for (auto i = 0; i < rigidBodiesDynamic.size(); i++) {
@@ -370,10 +385,11 @@ Body* World::determineHeight(uint16_t collisionTypeIds, float stepUpMax, const V
 	reactphysics3d::Vector3 endPoint(point.getX(), minHeight, point.getZ());
 	reactphysics3d::Ray ray(startPoint, endPoint);
 	CustomCallbackClass customCallbackObject(stepUpMax, point, maxHeight);
-	world.raycast(ray, &customCallbackObject, collisionTypeIds);
+	world->raycast(ray, &customCallbackObject, collisionTypeIds);
 	if (customCallbackObject.getBody() != nullptr) {
 		heightPoint.set(point);
 		heightPoint.setY(customCallbackObject.getHeight());
+		//
 		return customCallbackObject.getBody();
 	} else {
 		return nullptr;
@@ -411,7 +427,7 @@ Body* World::doRayCasting(uint16_t collisionTypeIds, const Vector3& start, const
 	reactphysics3d::Vector3 endPoint(end.getX(), end.getY(), end.getZ());
 	reactphysics3d::Ray ray(startPoint, endPoint);
 	CustomCallbackClass customCallbackObject(actorId);
-	world.raycast(ray, &customCallbackObject, collisionTypeIds);
+	world->raycast(ray, &customCallbackObject, collisionTypeIds);
 	if (customCallbackObject.getBody() != nullptr) {
 		hitPoint.set(customCallbackObject.getHitPoint());
 		return customCallbackObject.getBody();
@@ -424,33 +440,41 @@ bool World::doesCollideWith(uint16_t collisionTypeIds, Body* body, vector<Body*>
 	// callback
 	class CustomOverlapCallback: public reactphysics3d::OverlapCallback {
 	    public:
-			CustomOverlapCallback(vector<Body*>& rigidBodies): rigidBodies(rigidBodies) {
+			CustomOverlapCallback(int collisionTypeIds, Body* body, vector<Body*>& rigidBodies): collisionTypeIds(collisionTypeIds), body(body), rigidBodies(rigidBodies) {
 			}
 
-			virtual void notifyOverlap(reactphysics3d::CollisionBody* collisionBody) {
-				rigidBodies.push_back(static_cast<Body*>(collisionBody->getUserData()));
+			void onOverlap(CallbackData &callbackData) {
+				for (auto i = 0; i < callbackData.getNbOverlappingPairs(); i++) {
+					auto overlappingPair = callbackData.getOverlappingPair(i);
+					auto body1 = static_cast<Body*>(overlappingPair.getBody1()->getUserData());
+					auto body2 = static_cast<Body*>(overlappingPair.getBody2()->getUserData());
+					if (body1 != body && (body1->getCollisionTypeId() & collisionTypeIds) != 0) rigidBodies.push_back(body1);
+					if (body2 != body && (body2->getCollisionTypeId() & collisionTypeIds) != 0) rigidBodies.push_back(body2);
+				}
 			}
 	    private:
+			int collisionTypeIds;
+			Body* body;
 			vector<Body*>& rigidBodies;
 	};
 
 	// do the test
-	CustomOverlapCallback customOverlapCallback(collisionBodies);
-	world.testOverlap(body->collisionBody, &customOverlapCallback, collisionTypeIds);
+	CustomOverlapCallback customOverlapCallback(collisionTypeIds, body, collisionBodies);
+	world->testOverlap(body->rigidBody, customOverlapCallback);
 
 	// done
 	return collisionBodies.size() > 0;
 }
 
 bool World::doesCollideWith(uint16_t collisionTypeIds, const Transform& transform, vector<BoundingVolume*> boundingVolumes, vector<Body*>& collisionBodies) {
-	auto collisionBody = addCollisionBody("tdme.world.doescollidewith", true, 32768, transform, boundingVolumes);
+	auto collisionBody = addStaticCollisionBody("tdme.world->doescollidewith", true, 32768, transform, boundingVolumes);
 	doesCollideWith(collisionTypeIds, collisionBody, collisionBodies);
-	removeBody("tdme.world.doescollidewith");
+	removeBody("tdme.world->doescollidewith");
 	return collisionBodies.size() > 0;
 }
 
 bool World::doCollide(Body* body1, Body* body2) {
-	return world.testOverlap(body1->collisionBody, body2->collisionBody);
+	return world->testOverlap(body1->rigidBody, body2->rigidBody);
 }
 
 bool World::getCollisionResponse(Body* body1, Body* body2, CollisionResponse& collision) {
@@ -460,28 +484,28 @@ bool World::getCollisionResponse(Body* body1, Body* body2, CollisionResponse& co
 			CustomCollisionCallback(CollisionResponse& collision): collision(collision) {
 			}
 
-			void notifyContact(const CollisionCallbackInfo& collisionCallbackInfo) {
-				auto manifold = collisionCallbackInfo.contactManifoldElements;
-				while (manifold != nullptr) {
-					auto contactPoint = manifold->getContactManifold()->getContactPoints();
-					while (contactPoint != nullptr) {
+			void onContact(const CallbackData &callbackData) {
+				for (auto i = 0; i < callbackData.getNbContactPairs(); i++) {
+					auto contactPair = callbackData.getContactPair(i);
+					auto body1 = contactPair.getBody1();
+					auto body2 = contactPair.getBody2();
+					auto collider1 = contactPair.getCollider1();
+					auto collider2 = contactPair.getCollider2();
+					for (auto j = 0; j < contactPair.getNbContactPoints(); j++) {
+						auto contactPoint = contactPair.getContactPoint(j);
 						// construct collision
-						auto entity = collision.addResponse(-contactPoint->getPenetrationDepth());
-						auto normal = contactPoint->getNormal();
+						auto entity = collision.addResponse(-contactPoint.getPenetrationDepth());
+						auto normal = contactPoint.getWorldNormal();
 						entity->setNormal(Vector3(normal.x, normal.y, normal.z));
-						auto shape1 = manifold->getContactManifold()->getShape1();
-						auto shape2 = manifold->getContactManifold()->getShape2();
-						auto& shapeLocalToWorldTransform1 = shape1->getLocalToWorldTransform();
-						auto& shapeLocalToWorldTransform2 = shape2->getLocalToWorldTransform();
-						auto& localPoint1 = contactPoint->getLocalPointOnShape1();
-						auto& localPoint2 = contactPoint->getLocalPointOnShape2();
-						auto worldPoint1 = shapeLocalToWorldTransform1 * localPoint1;
-						auto worldPoint2 = shapeLocalToWorldTransform2 * localPoint2;
+						auto& collider1LocalToWorldTransform1 = collider1->getLocalToWorldTransform();
+						auto& collider2LocalToWorldTransform2 = collider2->getLocalToWorldTransform();
+						auto& localPoint1 = contactPoint.getLocalPointOnCollider1();
+						auto& localPoint2 = contactPoint.getLocalPointOnCollider2();
+						auto worldPoint1 = collider1LocalToWorldTransform1 * localPoint1;
+						auto worldPoint2 = collider2LocalToWorldTransform2 * localPoint2;
 						entity->addHitPoint(Vector3(worldPoint1.x, worldPoint1.y, worldPoint1.z));
 						entity->addHitPoint(Vector3(worldPoint2.x, worldPoint2.y, worldPoint2.z));
-						contactPoint = contactPoint->getNext();
 					}
-					manifold = collisionCallbackInfo.contactManifoldElements->getNext();
 				}
 			}
 
@@ -490,13 +514,13 @@ bool World::getCollisionResponse(Body* body1, Body* body2, CollisionResponse& co
 	};
 	// do the test
 	CustomCollisionCallback customCollisionCallback(collision);
-	world.testCollision(body1->collisionBody, body2->collisionBody, &customCollisionCallback);
+	world->testCollision(body1->rigidBody, body2->rigidBody, customCollisionCallback);
 	return collision.getEntityCount() > 0;
 }
 
-World* World::clone(uint16_t collisionTypeIds)
+World* World::clone(const string& id, uint16_t collisionTypeIds)
 {
-	auto clonedWorld = new World();
+	auto clonedWorld = new World(id);
 	for (auto i = 0; i < bodies.size(); i++) {
 		auto body = bodies[i];
 		// clone obv
@@ -508,22 +532,22 @@ World* World::clone(uint16_t collisionTypeIds)
 
 		// clone rigid body
 		switch(bodyType) {
-			case Body::TYPE_STATIC:
+			case Body::BODYTYPE_STATIC:
 				clonedBody = clonedWorld->addStaticRigidBody(body->id, body->isEnabled(), body->getCollisionTypeId(), body->transform, body->getFriction(), body->boundingVolumes);
 				break;
-			case Body::TYPE_DYNAMIC:
+			case Body::BODYTYPE_DYNAMIC:
 				clonedBody = clonedWorld->addRigidBody(body->id, body->isEnabled(), body->getCollisionTypeId(), body->transform, body->getRestitution(), body->getFriction(), body->getMass(), body->inertiaTensor, body->boundingVolumes);
 				break;
-			case Body::TYPE_COLLISION:
-				clonedBody = clonedWorld->addCollisionBody(body->id, body->isEnabled(), body->getCollisionTypeId(), body->transform, body->boundingVolumes);
+			case Body::BODYTYPE_COLLISION_STATIC:
+				clonedBody = clonedWorld->addStaticCollisionBody(body->id, body->isEnabled(), body->getCollisionTypeId(), body->transform, body->boundingVolumes);
+				break;
+			case Body::BODYTYPE_COLLISION_DYNAMIC:
+				clonedBody = clonedWorld->addDynamicCollisionBody(body->id, body->isEnabled(), body->getCollisionTypeId(), body->transform, body->boundingVolumes);
 				break;
 			default:
 				Console::println("World::clone(): Unsupported type: " + to_string(bodyType));
 				continue;
 		}
-
-		// set cloned
-		clonedBody->setCloned(true);
 
 		// synch additional properties
 		synch(clonedBody, clonedBody);
@@ -537,7 +561,7 @@ void World::synch(Body* clonedBody, Body* body)
 	clonedBody->setEnabled(body->isEnabled());
 	clonedBody->setMass(body->getMass());
 	clonedBody->setTransform(body->transform);
-	if (clonedBody->getType() == Body::TYPE_DYNAMIC) {
+	if (clonedBody->getType() == Body::BODYTYPE_DYNAMIC) {
 		clonedBody->setLinearVelocity(body->getLinearVelocity());
 		clonedBody->setAngularVelocity(body->getAngularVelocity());
 	}

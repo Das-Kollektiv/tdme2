@@ -1,8 +1,8 @@
 #pragma once
 
-#include <ext/reactphysics3d/src/collision/shapes/AABB.h>
-#include <ext/reactphysics3d/src/collision/shapes/CollisionShape.h>
-#include <ext/reactphysics3d/src/mathematics/Transform.h>
+#include <reactphysics3d/collision/shapes/AABB.h>
+#include <reactphysics3d/collision/shapes/CollisionShape.h>
+#include <reactphysics3d/mathematics/Transform.h>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -13,6 +13,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
 
+using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::Transform;
 using tdme::math::Vector3;
@@ -23,7 +24,6 @@ using tdme::math::Vector3;
  */
 class tdme::engine::primitives::BoundingVolume
 {
-	friend class BoundingBox;
 	friend class Capsule;
 	friend class ConvexMesh;
 	friend class OrientedBoundingBox;
@@ -33,20 +33,30 @@ class tdme::engine::primitives::BoundingVolume
 	friend class tdme::utilities::Primitives;
 
 protected:
+	World* world { nullptr };
 	Vector3 scale;
 	Vector3 center;
 	Vector3 collisionShapeLocalTranslation;
 	reactphysics3d::CollisionShape* collisionShape { nullptr };
 	reactphysics3d::Transform collisionShapeLocalTransform;
 	reactphysics3d::Transform collisionShapeTransform;
-	reactphysics3d::AABB collisionShapeAABB;
-	BoundingBox boundingBoxTransformed;
-	Vector3 centerTransformed;
 
 	/**
-	 * Compute bounding box
+	 * Destroy collision shape
 	 */
-	void computeBoundingBox();
+	virtual void destroyCollisionShape() = 0;
+
+	/**
+	 * Create collision shap
+	 */
+	virtual void createCollisionShape(World* world) = 0;
+
+	/**
+	 * @return is attached to world
+	 */
+	inline bool isAttachedToWorld() {
+		return world != nullptr;
+	}
 
 public:
 	/**
@@ -76,17 +86,6 @@ public:
 	 * @return center
 	 */
 	const Vector3& getCenter() const;
-
-	/**
-	 * @return transformed center
-	 */
-	const Vector3& getCenterTransformed() const;
-
-	/**
-	 * Get bounding box transformed
-	 * @return bounding box
-	 */
-	BoundingBox& getBoundingBoxTransformed();
 
 	/**
 	 * Clones this bounding volume

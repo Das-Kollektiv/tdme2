@@ -6,9 +6,12 @@
 #include <unordered_set>
 #include <vector>
 
-#include <ext/reactphysics3d/src/collision/shapes/ConvexMeshShape.h>
+#include <reactphysics3d/collision/shapes/ConvexMeshShape.h>
+
+#include <tdme/engine/fileio/models/WFObjWriter.h>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/primitives/Triangle.h>
@@ -18,6 +21,9 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/ByteBuffer.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/FloatBuffer.h>
 #include <tdme/utilities/IntBuffer.h>
@@ -32,6 +38,9 @@ using std::unique;
 using std::unordered_set;
 using std::vector;
 
+using tdme::engine::fileio::models::WFObjWriter;
+
+using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::LineSegment;
@@ -41,6 +50,9 @@ using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::utilities::ByteBuffer;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::ExceptionBase;
 using tdme::utilities::Float;
 using tdme::utilities::FloatBuffer;
 using tdme::utilities::IntBuffer;
@@ -50,17 +62,9 @@ ConvexMesh::ConvexMesh()
 {
 }
 
-ConvexMesh::~ConvexMesh()
-{
-	if (polyhedronMesh != nullptr) delete polyhedronMesh;
-	if (polygonVertexArray != nullptr) delete polygonVertexArray;
-	if (verticesByteBuffer != nullptr) delete verticesByteBuffer;
-	if (indicesByteBuffer != nullptr) delete indicesByteBuffer;
-}
-
 inline bool ConvexMesh::isVertexOnTrianglePlane(Triangle& triangle, const Vector3& vertex) {
 	for (auto& triangleVertex: triangle.getVertices()) {
-		if (triangleVertex.equals(vertex) == true) return true;
+		if (triangleVertex.equals(vertex, VERTEX_COMPARE_EPSILON) == true) return true;
 	}
 	// see: http://www.ambrsoft.com/TrigoCalc/Plan3D/PointsCoplanar.htm
 	Vector3 v1;
@@ -70,29 +74,22 @@ inline bool ConvexMesh::isVertexOnTrianglePlane(Triangle& triangle, const Vector
 	v2.set(triangle.getVertices()[2]).sub(triangle.getVertices()[0]).normalize();
 	v3.set(vertex).sub(triangle.getVertices()[0]);
 	auto v1Dotv2v3Cross = Vector3::computeDotProduct(v1, Vector3::computeCrossProduct(v2, v3).normalize());
-	return Math::abs(v1Dotv2v3Cross) < Math::EPSILON;
+	return Math::abs(v1Dotv2v3Cross) < 0.001;
 }
 
 inline bool ConvexMesh::areTrianglesAdjacent(Triangle& triangle1, Triangle& triangle2) {
 	auto equalVertices = 0;
 	for (auto& triangle1Vertex: triangle1.getVertices()) {
 		for (auto& triangle2Vertex: triangle2.getVertices()) {
-			if (triangle1Vertex.equals(triangle2Vertex)) equalVertices++;
+			if (triangle1Vertex.equals(triangle2Vertex, VERTEX_COMPARE_EPSILON)) equalVertices++;
 		}
 	}
-	return equalVertices == 2;
+	return equalVertices > 0;
 }
 
 void ConvexMesh::createConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, const Vector3& scale) {
-	// delete old collision shape if we have any
-	if (collisionShape != nullptr) delete collisionShape;
-	if (polyhedronMesh != nullptr) delete polyhedronMesh;
-	if (polygonVertexArray != nullptr) delete polygonVertexArray;
-	if (verticesByteBuffer != nullptr) delete verticesByteBuffer;
-	if (indicesByteBuffer != nullptr) delete indicesByteBuffer;
-
 	// check if local translation is given
-	// determine center/position transformed
+	// 	determine center/position transformed
 	collisionShapeLocalTranslation.set(0.0f, 0.0f, 0.0f);
 	for (auto vertexIdx: indices) {
 		auto& vertex = vertices[vertexIdx];
@@ -109,53 +106,8 @@ void ConvexMesh::createConvexMesh(const vector<Vector3>& vertices, const vector<
 	// local transform
 	collisionShapeLocalTransform.setPosition(reactphysics3d::Vector3(collisionShapeLocalTranslation.getX(), collisionShapeLocalTranslation.getY(), collisionShapeLocalTranslation.getZ()));
 
-	// generate vertices and indices buffers
-	verticesByteBuffer = ByteBuffer::allocate(vertices.size() * 3 * sizeof(float));
-	indicesByteBuffer = ByteBuffer::allocate(indices.size() * sizeof(int));
-	auto verticesBuffer = verticesByteBuffer->asFloatBuffer();
-	auto indicesBuffer = indicesByteBuffer->asIntBuffer();
-	Vector3 vertexTransformed;
-	for (auto& vertex: vertices) {
-		vertexTransformed.set(vertex);
-		vertexTransformed.sub(center);
-		vertexTransformed.scale(scale);
-		verticesBuffer.put(vertexTransformed.getArray());
-	}
-	for (auto& index: indices) {
-		indicesBuffer.put(index);
-	}
-	faces.clear();
-	int indexIdx = 0;
-	for (auto faceVerticesCount: facesVerticesCount) {
-		// TODO: reactphysics3d::PolygonVertexArray::PolygonFace could use a constructor here to be able to use emplace_back on MacOSX
-		reactphysics3d::PolygonVertexArray::PolygonFace polygonFace;
-		polygonFace.indexBase = indexIdx;
-		polygonFace.nbVertices = faceVerticesCount;
-		faces.push_back(polygonFace);
-		indexIdx+= faceVerticesCount;
-	}
-
-	//
-	polygonVertexArray = new reactphysics3d::PolygonVertexArray(
-		vertices.size(),
-		verticesByteBuffer->getBuffer(),
-		3 * sizeof(float),
-		indicesByteBuffer->getBuffer(),
-		sizeof(int),
-		faces.size(),
-		faces.data(),
-		reactphysics3d::PolygonVertexArray::VertexDataType::VERTEX_FLOAT_TYPE,
-		reactphysics3d::PolygonVertexArray::IndexDataType::INDEX_INTEGER_TYPE
-	);
-	polyhedronMesh = new reactphysics3d::PolyhedronMesh(polygonVertexArray);
-	// create convex mesh shape
-	auto convexMeshShape = new reactphysics3d::ConvexMeshShape(polyhedronMesh);
-	// set up new collision shape
-	collisionShape = convexMeshShape;
 	// transform
 	collisionShapeTransform = reactphysics3d::Transform();
-	// compute bounding box
-	computeBoundingBox();
 }
 
 ConvexMesh::ConvexMesh(ObjectModel* model, const Vector3& scale)
@@ -168,36 +120,52 @@ ConvexMesh::ConvexMesh(ObjectModel* model, const Vector3& scale)
 	{
 		auto triangle1Idx = 0;
 		unordered_set<int> trianglesProcessed;
-
+		//
 		for (auto& triangle1: triangles) {
 			if (trianglesProcessed.find(triangle1Idx) != trianglesProcessed.end()) {
 				triangle1Idx++;
 				continue;
 			}
+			// if not processed add outer triangle
 			trianglesCoplanar[triangle1Idx].push_back(&triangle1);
 			trianglesProcessed.insert(triangle1Idx);
+			//
 			auto triangle2Added = 0;
 			do {
 				auto triangle2Idx = 0;
 				triangle2Added = 0;
 				for (auto& triangle2: triangles) {
+					// if alreaedy processed skip triangle2
 					if (trianglesProcessed.find(triangle2Idx) != trianglesProcessed.end()) {
 						triangle2Idx++;
 						continue;
 					}
+					// adjacent?
 					auto adjacent = areTrianglesAdjacent(triangle1, triangle2);
+					if (adjacent == false) {
+						for (auto triangle1CoplanarTriangle: trianglesCoplanar[triangle1Idx]) {
+							if (areTrianglesAdjacent(*triangle1CoplanarTriangle, triangle2) == true) {
+								adjacent = true;
+								break;
+							}
+						}
+					}
+					// same plane?
 					auto triangle2OnTriangle1Plane =
 						isVertexOnTrianglePlane(triangle1, triangle2.getVertices()[0]) &&
 						isVertexOnTrianglePlane(triangle1, triangle2.getVertices()[1]) &&
 						isVertexOnTrianglePlane(triangle1, triangle2.getVertices()[2]);
 					if (adjacent == true && triangle2OnTriangle1Plane == true) {
 						trianglesCoplanar[triangle1Idx].push_back(&triangle2);
+						// mark as processed
 						trianglesProcessed.insert(triangle2Idx);
+						// mark as added
 						triangle2Added++;
 					}
 					triangle2Idx++;
 				}
 			} while (triangle2Added > 0);
+			//
 			triangle1Idx++;
 		}
 	}
@@ -214,7 +182,7 @@ ConvexMesh::ConvexMesh(ObjectModel* model, const Vector3& scale)
 			for (auto& triangleVertex: triangle->getVertices()) {
 				bool foundVertex = false;
 				for (auto& polygonVertex: polygonVertices) {
-					if (polygonVertex.equals(triangleVertex) == true) {
+					if (polygonVertex.equals(triangleVertex, VERTEX_COMPARE_EPSILON) == true) {
 						foundVertex = true;
 						break;
 					}
@@ -241,7 +209,7 @@ ConvexMesh::ConvexMesh(ObjectModel* model, const Vector3& scale)
 							polygonVertices[k],
 							c
 						);
-						if (polygonVertices[k].equals(c) == true) polygonVerticesToRemove.push_back(k);
+						if (polygonVertices[k].equals(c, VERTEX_COMPARE_EPSILON) == true) polygonVerticesToRemove.push_back(k);
 					}
 				}
 			}
@@ -264,7 +232,7 @@ ConvexMesh::ConvexMesh(ObjectModel* model, const Vector3& scale)
 				for (auto i = 0; i < faceVertexCount; i++) {
 					auto foundVertex = false;
 					for (auto& polygonVertex: polygonVertices) {
-						if (polygonVertex.equals(vertices[indices[idx]]) == true) {
+						if (polygonVertex.equals(vertices[indices[idx]], VERTEX_COMPARE_EPSILON) == true) {
 							foundIndices.insert(indices[idx]);
 							break;
 						}
@@ -338,10 +306,9 @@ ConvexMesh::ConvexMesh(ObjectModel* model, const Vector3& scale)
 			auto& polygonVertexOrderedLast = polygonVertices[polygonVerticesOrdered[1]];
 			Vector3 ac;
 			Vector3 bc;
-			Vector3 acbcCross;
 			ac.set(polygonVertexOrderedFirst).sub(polygonCenter);
 			bc.set(polygonVertexOrderedLast).sub(polygonCenter);
-			Vector3::computeCrossProduct(ac, bc, acbcCross);
+			auto acbcCross = Vector3::computeCrossProduct(ac, bc);
 			// counter clockwise???
 			if ((Vector3::computeDotProduct(polygonNormal, acbcCross) > 0.0f) == false) {
 				// yep, reverse
@@ -359,7 +326,7 @@ ConvexMesh::ConvexMesh(ObjectModel* model, const Vector3& scale)
 			// check if to insert vertex
 			int vertexIdx = 0;
 			for (auto& vertexExisting: vertices) {
-				if (vertexExisting.equals(polygonVertex) == true) {
+				if (vertexExisting.equals(polygonVertex, VERTEX_COMPARE_EPSILON) == true) {
 					break;
 				}
 				vertexIdx++;
@@ -373,6 +340,22 @@ ConvexMesh::ConvexMesh(ObjectModel* model, const Vector3& scale)
 		}
 	}
 
+	/*
+	static int wfObjIdx = 0;
+
+	WFObjWriter wfObjWriter;
+	for (auto& vertex: vertices) wfObjWriter.addVertex(vertex);
+	auto faceVertexIdx = 0;
+	for (auto& faceVertexCount: facesVerticesCount) {
+		vector<int> faceVertexIndices;
+		for (auto i = 0; i <  faceVertexCount; i++) {
+			faceVertexIndices.push_back(indices[faceVertexIdx++]);
+		}
+		wfObjWriter.addFace(faceVertexIndices);
+	}
+	wfObjWriter.write(".", "wfobj." + to_string(wfObjIdx++) + ".obj");
+	*/
+
 	// create convex mesh
 	setScale(scale);
 }
@@ -384,11 +367,99 @@ ConvexMesh::ConvexMesh(const vector<Vector3>& vertices, const vector<int>& faces
 	setScale(scale);
 }
 
+ConvexMesh::~ConvexMesh() {
+	destroyCollisionShape();
+}
+
 void ConvexMesh::setScale(const Vector3& scale) {
 	// store new scale
 	this->scale.set(scale);
 	// recreate convex mesh
 	createConvexMesh(vertices, facesVerticesCount, indices, scale);
+	//
+	// generate vertices and indices buffers
+	verticesByteBuffer = ByteBuffer::allocate(vertices.size() * 3 * sizeof(float));
+	indicesByteBuffer = ByteBuffer::allocate(indices.size() * sizeof(int));
+	auto verticesBuffer = verticesByteBuffer->asFloatBuffer();
+	auto indicesBuffer = indicesByteBuffer->asIntBuffer();
+	Vector3 vertexTransformed;
+	for (auto& vertex: vertices) {
+		vertexTransformed.set(vertex);
+		vertexTransformed.sub(center);
+		vertexTransformed.scale(scale);
+		verticesBuffer.put(vertexTransformed.getArray());
+	}
+	for (auto& index: indices) {
+		indicesBuffer.put(index);
+	}
+	faces.clear();
+	int indexIdx = 0;
+	for (auto faceVerticesCount: facesVerticesCount) {
+		reactphysics3d::PolygonVertexArray::PolygonFace face;
+		face.nbVertices = faceVerticesCount;
+		face.indexBase = indexIdx;
+		faces.push_back(face);
+		indexIdx+= faceVerticesCount;
+	}
+}
+
+void ConvexMesh::destroyCollisionShape() {
+	if (collisionShape == nullptr) return;
+	this->world->physicsCommon.destroyConvexMeshShape(static_cast<reactphysics3d::ConvexMeshShape*>(collisionShape));
+	this->world->physicsCommon.destroyPolyhedronMesh(polyhedronMesh);
+	delete polygonVertexArray;
+	delete verticesByteBuffer;
+	delete indicesByteBuffer;
+	collisionShape = nullptr;
+	polyhedronMesh = nullptr;
+	polygonVertexArray = nullptr;
+	verticesByteBuffer = nullptr;
+	indicesByteBuffer = nullptr;
+	world = nullptr;
+}
+
+void ConvexMesh::createCollisionShape(World* world) {
+	if (this->world != nullptr && this->world != world) {
+		Console::println("ConvexMesh::createCollisionShape(): already attached to a world.");
+	}
+	this->world = world;
+
+	//
+	try {
+		//
+		polygonVertexArray = new reactphysics3d::PolygonVertexArray(
+			vertices.size(),
+			verticesByteBuffer->getBuffer(),
+			3 * sizeof(float),
+			indicesByteBuffer->getBuffer(),
+			sizeof(int),
+			faces.size(),
+			faces.data(),
+			reactphysics3d::PolygonVertexArray::VertexDataType::VERTEX_FLOAT_TYPE,
+			reactphysics3d::PolygonVertexArray::IndexDataType::INDEX_INTEGER_TYPE
+		);
+		polyhedronMesh = world->physicsCommon.createPolyhedronMesh(polygonVertexArray);
+		if (polyhedronMesh == nullptr) {
+			throw ExceptionBase("Invalid polyhedron mesh");
+		}
+		// create convex mesh shape
+		collisionShape = world->physicsCommon.createConvexMeshShape(polyhedronMesh);
+	} catch (Exception& exception) {
+		Console::println("ConvexMesh::createCollisionShape(): an error occurred: " + string(exception.what()));
+		if (collisionShape != nullptr) {
+			this->world->physicsCommon.destroyConvexMeshShape(static_cast<reactphysics3d::ConvexMeshShape*>(collisionShape));
+			collisionShape = nullptr;
+		}
+		if (polyhedronMesh != nullptr) {
+			this->world->physicsCommon.destroyPolyhedronMesh(polyhedronMesh);
+			polyhedronMesh = nullptr;
+		}
+		if (polygonVertexArray != nullptr) {
+			delete polygonVertexArray;
+			polygonVertexArray = nullptr;
+		}
+		this->world = nullptr;
+	}
 }
 
 BoundingVolume* ConvexMesh::clone() const

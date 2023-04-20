@@ -378,7 +378,7 @@ bool PathFinding::findPathCustom(
 	Transform actorTransform;
 	actorTransform.setTranslation(startPosition);
 	actorTransform.update();
-	world->addCollisionBody("tdme.pathfinding.actor", true, 32768, actorTransform, {actorBoundingVolume});
+	world->addDynamicCollisionBody("tdme.pathfinding.actor", true, 32768, actorTransform, {actorBoundingVolume});
 
 	// init bounding volume for slope testcollision body
 	actorBoundingVolumeSlopeTest = new OrientedBoundingBox(
@@ -388,7 +388,7 @@ bool PathFinding::findPathCustom(
 		OrientedBoundingBox::AABB_AXIS_Z,
 		Vector3(stepSize * scaleActorBoundingVolumes * 2.5f, actorHeight / 2.0f, stepSize * scaleActorBoundingVolumes * 2.5f)
 	);
-	world->addCollisionBody("tdme.pathfinding.actor.slopetest", true, 32768, actorTransform, {actorBoundingVolumeSlopeTest});
+	world->addDynamicCollisionBody("tdme.pathfinding.actor.slopetest", true, 32768, actorTransform, {actorBoundingVolumeSlopeTest});
 
 	//
 	bool success = false;
@@ -775,7 +775,7 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 	Transform actorTransform;
 	actorTransform.setTranslation(endPositions[0]);
 	actorTransform.update();
-	world->addCollisionBody("tdme.pathfinding.actor", true, 32768, actorTransform, {actorBoundingVolume});
+	world->addDynamicCollisionBody("tdme.pathfinding.actor", true, 32768, actorTransform, {actorBoundingVolume});
 
 	// init bounding volume for slope testcollision body
 	actorBoundingVolumeSlopeTest =	new OrientedBoundingBox(
@@ -785,7 +785,7 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 		OrientedBoundingBox::AABB_AXIS_Z,
 		Vector3(flowMapStepSize * flowMapScaleActorBoundingVolumes * 2.5f, actorHeight / 2.0f, flowMapStepSize * flowMapScaleActorBoundingVolumes * 2.5f)
 	);
-	world->addCollisionBody("tdme.pathfinding.actor.slopetest", true, 32768, actorTransform, {actorBoundingVolumeSlopeTest});
+	world->addDynamicCollisionBody("tdme.pathfinding.actor.slopetest", true, 32768, actorTransform, {actorBoundingVolumeSlopeTest});
 
 	//
 	auto zMin = static_cast<int>(Math::ceil(-depth / 2.0f / flowMapStepSize));

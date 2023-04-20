@@ -621,6 +621,7 @@ int32_t GL3Renderer::createGBufferColorTexture(int32_t width, int32_t height) {
 
 void GL3Renderer::uploadTexture(int contextIdx, Texture* texture)
 {
+	//
 	if (textureCompressionAvailable == true && texture->isUseCompression() == true) {
 		//
 		auto level = 0;
@@ -642,19 +643,22 @@ void GL3Renderer::uploadTexture(int contextIdx, Texture* texture)
 			);
 		}
 
-		// mip levels
-		auto textureMipMaps = texture->getMipMapTextures(true);
-		for (auto& textureMipMap: textureMipMaps) {
-			glCompressedTexImage2D(
-				GL_TEXTURE_2D,
-				level++,
-				GL_COMPRESSED_RGBA_BPTC_UNORM,
-				textureMipMap.width,
-				textureMipMap.height,
-				0,
-				textureMipMap.textureData.getCapacity(),
-				textureMipMap.textureData.getBuffer()
-			);
+		//
+		if (texture->isUseMipMap() == true) {
+			// mip levels
+			auto textureMipMaps = texture->getMipMapTextures(true);
+			for (auto& textureMipMap: textureMipMaps) {
+				glCompressedTexImage2D(
+					GL_TEXTURE_2D,
+					level++,
+					GL_COMPRESSED_RGBA_BPTC_UNORM,
+					textureMipMap.width,
+					textureMipMap.height,
+					0,
+					textureMipMap.textureData.getCapacity(),
+					textureMipMap.textureData.getBuffer()
+				);
+			}
 		}
 	} else {
 		//
@@ -701,8 +705,34 @@ void GL3Renderer::uploadTexture(int contextIdx, Texture* texture)
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, texture->getClampMode() == Texture::CLAMPMODE_EDGE?GL_CLAMP_TO_EDGE:GL_CLAMP_TO_BORDER);
 		}
 	}
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	switch (texture->getMinFilter()) {
+		case Texture::TEXTURE_FILTER_NEAREST:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); break;
+		case Texture::TEXTURE_FILTER_LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); break;
+		case Texture::TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_NEAREST_MIPMAP_NEAREST:GL_NEAREST); break;
+		case Texture::TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_NEAREST:GL_NEAREST); break;
+		case Texture::TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_NEAREST_MIPMAP_LINEAR:GL_LINEAR); break;
+		case Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR); break;
+	}
+	switch (texture->getMagFilter()) {
+		case Texture::TEXTURE_FILTER_NEAREST:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); break;
+		case Texture::TEXTURE_FILTER_LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); break;
+		case Texture::TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texture->isUseMipMap() == true?GL_NEAREST_MIPMAP_NEAREST:GL_NEAREST); break;
+		case Texture::TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_NEAREST:GL_NEAREST); break;
+		case Texture::TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texture->isUseMipMap() == true?GL_NEAREST_MIPMAP_LINEAR:GL_LINEAR); break;
+		case Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR); break;
+	}
 	statistics.textureUploads++;
 }
 

@@ -5064,13 +5064,35 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 		);
 	}
 
+	//
+	VkSamplerMipmapMode mipmapMode;
+	VkFilter minFilter;
+	switch (texture->getMinFilter()) {
+		case Texture::TEXTURE_FILTER_NEAREST: minFilter = VK_FILTER_NEAREST; mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST; break;
+		case Texture::TEXTURE_FILTER_LINEAR: minFilter = VK_FILTER_LINEAR; mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST; break;
+		case Texture::TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: minFilter = VK_FILTER_NEAREST; mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST; break;
+		case Texture::TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: minFilter = VK_FILTER_NEAREST; mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR; break;
+		case Texture::TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: minFilter = VK_FILTER_LINEAR; mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST; break;
+		case Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: minFilter = VK_FILTER_LINEAR; mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR; break;
+	}
+	VkFilter magFilter;
+	switch (texture->getMagFilter()) {
+		case Texture::TEXTURE_FILTER_NEAREST: magFilter = VK_FILTER_NEAREST; break;
+		case Texture::TEXTURE_FILTER_LINEAR: magFilter = VK_FILTER_LINEAR; break;
+		case Texture::TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: magFilter = VK_FILTER_NEAREST; break;
+		case Texture::TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: magFilter = VK_FILTER_NEAREST; break;
+		case Texture::TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: magFilter = VK_FILTER_LINEAR; break;
+		case Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: magFilter = VK_FILTER_LINEAR; break;
+	}
+
+	//
 	const VkSamplerCreateInfo samplerCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.magFilter = VK_FILTER_LINEAR,
-		.minFilter = VK_FILTER_LINEAR,
-		.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
+		.magFilter = minFilter,
+		.minFilter = magFilter,
+		.mipmapMode = mipmapMode,
 		.addressModeU = texture->isRepeat() == true?VK_SAMPLER_ADDRESS_MODE_REPEAT:(texture->getClampMode() == Texture::CLAMPMODE_EDGE?VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE:VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER),
 		.addressModeV = texture->isRepeat() == true?VK_SAMPLER_ADDRESS_MODE_REPEAT:(texture->getClampMode() == Texture::CLAMPMODE_EDGE?VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE:VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER),
 		.addressModeW = texture->isRepeat() == true?VK_SAMPLER_ADDRESS_MODE_REPEAT:(texture->getClampMode() == Texture::CLAMPMODE_EDGE?VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE:VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER),

@@ -73,7 +73,7 @@ FlowMapTest::FlowMapTest()
 {
 	Application::setLimitFPS(true);
 	engine = Engine::getInstance();
-	world = new World();
+	world = new World("world");
 	timeLastUpdate = -1;
 }
 

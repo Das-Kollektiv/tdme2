@@ -86,7 +86,7 @@ Context::PathFindingThread::PathFindingThread(Context* context, int idx):
 	worldActionsMutex("pathfindingthread-world-actions-mutex")
 {
 	reset();
-	world = context->getWorld()->clone(context->rigidBodyTypeIdCloneMask);
+	world = context->getWorld()->clone("pathfinding" +  to_string(idx) + "-world", context->rigidBodyTypeIdCloneMask);
 	pathFinding = new tdme::utilities::PathFinding(world, true, 1000, 1.8f, 0.4f, 0.81f, 0.4f, context->skipOnRigidBodyTypeIdMask, 5, 0.5f, 2.0f);
 }
 
@@ -557,8 +557,8 @@ void Context::PathFinding::notifyCancel(const string& actorId) {
 Context::ContextWorldListener::ContextWorldListener(Context* context): context(context) {
 }
 
-void Context::ContextWorldListener::onAddedBody(const string& id, int32_t type, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes) {
-	if (type != Body::TYPE_STATIC) return;
+void Context::ContextWorldListener::onAddedBody(const string& id, Body::BodyType type, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes) {
+	if (type != Body::BODYTYPE_STATIC) return;
 	Context::PathFindingThread::WorldActionStruct worldAction;
 	worldAction.action = Context::PathFindingThread::WorldActionStruct::ACTION_ADDED;
 	worldAction.id = id;
@@ -574,8 +574,8 @@ void Context::ContextWorldListener::onAddedBody(const string& id, int32_t type, 
 	context->getPathFinding()->addWorldAction(worldAction);
 }
 
-void Context::ContextWorldListener::onRemovedBody(const string& id, int32_t type, uint16_t collisionTypeId) {
-	if (type != Body::TYPE_STATIC) return;
+void Context::ContextWorldListener::onRemovedBody(const string& id, Body::BodyType type, uint16_t collisionTypeId) {
+	if (type != Body::BODYTYPE_STATIC) return;
 	Context::PathFindingThread::WorldActionStruct worldAction;
 	worldAction.action = Context::PathFindingThread::WorldActionStruct::ACTION_REMOVED;
 	worldAction.id = id;
@@ -591,7 +591,6 @@ Context::Context(bool server): pathFinding(this), world(nullptr), server(server)
 
 Context::~Context() {
 	Console::println("Context::~Context()");
-	for (auto logic: logics) delete logic;
 	if (world != nullptr) delete world;
 	if (scene != nullptr) delete scene;
 }
@@ -618,10 +617,14 @@ void Context::initialize() {
 }
 
 void Context::shutdown() {
-	if (initialized == false) return;
+	Console::println("Context::shutdown()");
 	// TODO: optionally pathfinding should be set enabled in client and/or server
 	pathFinding.shutdown();
 	world->removeWorldListener(worldListener);
+	//
+	for (auto logic: logics) delete logic;
+	logics.clear();
+	logicsById.clear();
 }
 
 void Context::addLogic(Logic* logic) {

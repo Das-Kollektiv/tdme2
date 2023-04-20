@@ -331,8 +331,8 @@ private:
 		 */
 		ContextWorldListener(Context* context);
 		// overridden methods
-		virtual void onAddedBody(const string& id, int32_t type, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes) override;
-		virtual void onRemovedBody(const string& id, int32_t type, uint16_t collisionTypeId) override;
+		virtual void onAddedBody(const string& id, Body::BodyType type, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes) override;
+		virtual void onRemovedBody(const string& id, Body::BodyType type, uint16_t collisionTypeId) override;
 	};
 
 	struct PacketState {

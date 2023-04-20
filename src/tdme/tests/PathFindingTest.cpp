@@ -67,7 +67,7 @@ PathFindingTest::PathFindingTest()
 {
 	Application::setLimitFPS(true);
 	engine = Engine::getInstance();
-	world = new World();
+	world = new World("world");
 	pathFinding = nullptr;
 	timeLastUpdate = -1;
 	pathIdx = 0;

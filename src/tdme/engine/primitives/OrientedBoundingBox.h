@@ -3,12 +3,14 @@
 #include <array>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/math/Vector3.h>
 
 using std::array;
 
+using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
@@ -35,12 +37,15 @@ private:
 	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE11_INDICES;
 	STATIC_DLL_IMPEXT static const array<array<int32_t,3>,12> facesVerticesIndexes;
 
+	// overriden methods
+	void destroyCollisionShape() override;
+	void createCollisionShape(World* world) override;
+
 public:
 	STATIC_DLL_IMPEXT static const Vector3 AABB_AXIS_X;
 	STATIC_DLL_IMPEXT static const Vector3 AABB_AXIS_Y;
 	STATIC_DLL_IMPEXT static const Vector3 AABB_AXIS_Z;
 
-public:
 	/**
 	 * Public constructor
 	 * @param center center
@@ -63,6 +68,11 @@ public:
 	 * Public constructor
 	 */
 	OrientedBoundingBox();
+
+	/**
+	 * Public destructor
+	 */
+	~OrientedBoundingBox();
 
 	/**
 	 * @return 3 axes

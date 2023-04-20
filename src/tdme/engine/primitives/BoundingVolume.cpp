@@ -2,18 +2,17 @@
 
 #include <string>
 
-#include <ext/reactphysics3d/src/body/CollisionBody.h>
-#include <ext/reactphysics3d/src/collision/narrowphase/DefaultCollisionDispatch.h>
-#include <ext/reactphysics3d/src/collision/narrowphase/NarrowPhaseAlgorithm.h>
-#include <ext/reactphysics3d/src/collision/shapes/CollisionShape.h>
-#include <ext/reactphysics3d/src/collision/CollisionCallback.h>
-#include <ext/reactphysics3d/src/collision/NarrowPhaseInfo.h>
-#include <ext/reactphysics3d/src/collision/ProxyShape.h>
-#include <ext/reactphysics3d/src/constraint/ContactPoint.h>
-#include <ext/reactphysics3d/src/engine/CollisionWorld.h>
-#include <ext/reactphysics3d/src/engine/OverlappingPair.h>
-#include <ext/reactphysics3d/src/mathematics/Transform.h>
-#include <ext/reactphysics3d/src/memory/MemoryAllocator.h>
+#include <reactphysics3d/body/CollisionBody.h>
+#include <reactphysics3d/collision/narrowphase/CollisionDispatch.h>
+#include <reactphysics3d/collision/narrowphase/NarrowPhaseAlgorithm.h>
+#include <reactphysics3d/collision/shapes/CollisionShape.h>
+#include <reactphysics3d/collision/CollisionCallback.h>
+#include <reactphysics3d/collision/shapes/CollisionShape.h>
+#include <reactphysics3d/constraint/ContactPoint.h>
+#include <reactphysics3d/engine/PhysicsWorld.h>
+#include <reactphysics3d/engine/OverlappingPairs.h>
+#include <reactphysics3d/mathematics/Transform.h>
+#include <reactphysics3d/memory/MemoryAllocator.h>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Transform.h>
@@ -27,16 +26,6 @@ using tdme::engine::Transform;
 using tdme::math::Vector3;
 
 BoundingVolume::~BoundingVolume() {
-	if (collisionShape != nullptr) delete collisionShape;
-}
-
-void BoundingVolume::computeBoundingBox() {
-	collisionShape->computeAABB(collisionShapeAABB, collisionShapeTransform * collisionShapeLocalTransform);
-	boundingBoxTransformed = BoundingBox(
-		Vector3(collisionShapeAABB.getMin().x, collisionShapeAABB.getMin().y, collisionShapeAABB.getMin().z),
-		Vector3(collisionShapeAABB.getMax().x, collisionShapeAABB.getMax().y, collisionShapeAABB.getMax().z)
-	);
-	centerTransformed = boundingBoxTransformed.getCenter();
 }
 
 void BoundingVolume::setTransform(const Transform& transform) {
@@ -59,9 +48,6 @@ void BoundingVolume::setTransform(const Transform& transform) {
 			transform.getRotationsQuaternion().getW()
 		)
 	);
-
-	// compute bounding box
-	computeBoundingBox();
 }
 
 const Vector3& BoundingVolume::getScale() {
@@ -70,12 +56,4 @@ const Vector3& BoundingVolume::getScale() {
 
 const Vector3& BoundingVolume::getCenter() const {
 	return center;
-}
-
-const Vector3& BoundingVolume::getCenterTransformed() const {
-	return centerTransformed;
-}
-
-BoundingBox& BoundingVolume::getBoundingBoxTransformed() {
-	return boundingBoxTransformed;
 }

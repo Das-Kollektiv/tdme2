@@ -42,7 +42,7 @@ void ApplicationServer::start() {
 	//
 	context = createContext();
 	context->getPathFinding()->setThreadCount(pathFindingThreadCount);
-	context->setWorld(new World());
+	context->setWorld(new World("applicationserver-world"));
 	// set up logics
 	setupLogics();
 	//
@@ -62,12 +62,12 @@ ApplicationServer::~ApplicationServer() {
 	Console::println("ApplicationServer::~ApplicationServer(): Shutting down");
 
 	//
-	context->shutdown();
-
-	//
 	logicsThread->stop();
 	logicsThread->join();
 	delete logicsThread;
+
+	//
+	context->shutdown();
 
 	//
 	delete context;
