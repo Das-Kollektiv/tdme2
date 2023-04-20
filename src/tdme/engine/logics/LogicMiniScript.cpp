@@ -2670,7 +2670,7 @@ void LogicMiniScript::registerMethods() {
 				return "world.body.TYPE_STATIC";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue = static_cast<int64_t>(Body::TYPE_STATIC);
+				returnValue = static_cast<int64_t>(Body::BODYTYPE_STATIC);
 			}
 		};
 		registerMethod(new ScriptMethodBodyTYPE_STATIC(this));
@@ -2688,28 +2688,46 @@ void LogicMiniScript::registerMethods() {
 				return "world.body.TYPE_DYNAMIC";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue = static_cast<int64_t>(Body::TYPE_DYNAMIC);
+				returnValue = static_cast<int64_t>(Body::BODYTYPE_DYNAMIC);
 			}
 		};
 		registerMethod(new ScriptMethodBodyTYPE_DYNAMIC(this));
 	}
 	{
 		//
-		class ScriptMethodBodyTYPE_COLLISION: public ScriptMethod {
+		class ScriptMethodBodyTYPE_COLLISIONSTATIC: public ScriptMethod {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodBodyTYPE_COLLISION(LogicMiniScript* miniScript):
+			ScriptMethodBodyTYPE_COLLISIONSTATIC(LogicMiniScript* miniScript):
 				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "world.body.TYPE_COLLISION";
+				return "world.body.TYPE_COLLISION_STATIC";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue = static_cast<int64_t>(Body::TYPE_COLLISION);
+				returnValue = static_cast<int64_t>(Body::BODYTYPE_COLLISION_STATIC);
 			}
 		};
-		registerMethod(new ScriptMethodBodyTYPE_COLLISION(this));
+		registerMethod(new ScriptMethodBodyTYPE_COLLISIONSTATIC(this));
+	}
+	{
+		//
+		class ScriptMethodBodyTYPE_COLLISIONDYNAMIC: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyTYPE_COLLISIONDYNAMIC(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.TYPE_COLLISION_DYNAMIC";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Body::BODYTYPE_COLLISION_DYNAMIC);
+			}
+		};
+		registerMethod(new ScriptMethodBodyTYPE_COLLISIONDYNAMIC(this));
 	}
 	{
 		//

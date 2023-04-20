@@ -844,7 +844,7 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 			if (index == -1 || index == j) boundingVolumes.push_back(entityBv->getBoundingVolume());
 		}
 		if (boundingVolumes.size() == 0) return nullptr;
-		return world->addCollisionBody(
+		return world->addStaticCollisionBody(
 			id,
 			true,
 			collisionTypeId == 0?RIGIDBODY_TYPEID_TRIGGER:collisionTypeId,
@@ -857,7 +857,7 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 		ObjectModel terrainModel(prototype->getModel());
 		auto terrainMesh = new TerrainMesh(&terrainModel, transform);
 		if (physicsType == PrototypePhysics_BodyType::COLLISION_BODY) {
-			return world->addCollisionBody(
+			return world->addStaticCollisionBody(
 				id,
 				true,
 				collisionTypeId == 0?RIGIDBODY_TYPEID_COLLISION:collisionTypeId,
@@ -896,7 +896,7 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 		}
 		if (boundingVolumes.size() == 0) return nullptr;
 		if (physicsType == PrototypePhysics_BodyType::COLLISION_BODY) {
-			return world->addCollisionBody(
+			return world->addStaticCollisionBody(
 				id,
 				true,
 				collisionTypeId == 0?RIGIDBODY_TYPEID_COLLISION:collisionTypeId,

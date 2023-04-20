@@ -99,7 +99,7 @@ public:
 	Body* addRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes);
 
 	/**
-	 * Add a collision body
+	 * Add a static collision body
 	 * @param id id
 	 * @param enabled enabled
 	 * @param collisionTypeId collision type id
@@ -107,7 +107,18 @@ public:
 	 * @param boundingVolumes bounding volumes
 	 * @return body
 	 */
-	Body* addCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes);
+	Body* addStaticCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes);
+
+	/**
+	 * Add a dynamic collision body
+	 * @param id id
+	 * @param enabled enabled
+	 * @param collisionTypeId collision type id
+	 * @param transform transform
+	 * @param boundingVolumes bounding volumes
+	 * @return body
+	 */
+	Body* addDynamicCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes);
 
 	/**
 	 * Add a static rigid body

@@ -686,7 +686,6 @@ Collider* RigidBody::addCollider(CollisionShape* collisionShape, const Transform
 
 	// Set the profiler
     collider->setProfiler(mProfiler);
-    collisionShape->setProfiler(mProfiler);
 
 #endif
 

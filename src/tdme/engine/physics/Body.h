@@ -5,8 +5,6 @@
 #include <vector>
 
 #include <reactphysics3d/body/RigidBody.h>
-#include <reactphysics3d/body/CollisionBody.h>
-#include <reactphysics3d/body/RigidBody.h>
 #include <reactphysics3d/collision/shapes/CollisionShape.h>
 
 #include <tdme/tdme.h>
@@ -43,10 +41,13 @@ class tdme::engine::physics::Body final
 	friend class World;
 
 public:
-	static constexpr int32_t TYPE_STATIC { 0 };
-	static constexpr int32_t TYPE_DYNAMIC { 2 };
-	static constexpr int32_t TYPE_KINEMATIC { 1 };
-	static constexpr int32_t TYPE_COLLISION { 3 };
+	enum BodyType {
+		BODYTYPE_STATIC,
+		BODYTYPE_DYNAMIC,
+		BODYTYPE_KINEMATIC,
+		BODYTYPE_COLLISION_STATIC,
+		BODYTYPE_COLLISION_DYNAMIC
+	};
 
 	static constexpr uint16_t COLLISION_TYPEID_STATIC { 1 };
 	static constexpr uint16_t COLLISION_TYPEID_DYNAMIC { 2 };
@@ -69,19 +70,19 @@ public:
 	/**
 	 * @return no rotation inertia tensor
 	 */
-	static const Vector3 getNoRotationInertiaTensor();
+	inline static const Vector3 getNoRotationInertiaTensor() {
+		return Vector3(0.0f, 0.0f, 0.0f);
+	}
 
 private:
 	World* world { nullptr };
 	reactphysics3d::RigidBody* rigidBody { nullptr };
-	reactphysics3d::CollisionBody* collisionBody { nullptr };
-	bool cloned { false };
 	string id;
-	int type;
+	BodyType type;
 	float restitution;
 	float friction;
 	float mass;
-	uint16_t collideTypeIds;
+	uint16_t collisionTypeIds;
 	uint16_t collisionTypeId;
 	Vector3 inertiaTensor;
 	Transform transform;
@@ -104,23 +105,12 @@ private:
 	 * @param inertiaTensor inertia tensor vector
 	 * @param boundingVolumes bounding volumes
 	 */
-	Body(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*> boundingVolumes);
+	Body(World* world, const string& id, BodyType type, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*> boundingVolumes);
 
 	/**
 	 * Destructor
 	 */
 	~Body();
-
-	/**
-	 * @return if rigid body has been cloned from another rigid body
-	 */
-	bool isCloned();
-
-	/**
-	 * Set cloned
-	 * @param cloned cloned
-	 */
-	void setCloned(bool cloned);
 
 	/**
 	 * Reset proxy shapes
@@ -152,18 +142,24 @@ public:
 	/**
 	 * @return id
 	 */
-	const string& getId();
+	inline const string& getId() {
+		return id;
+	}
 
 	/**
 	 * Return type, see TYPE_*
 	 * @return type
 	 */
-	int getType();
+	inline BodyType getType() {
+		return type;
+	}
 
 	/**
 	 * @return type id
 	 */
-	uint16_t getCollisionTypeId();
+	inline uint16_t getCollisionTypeId() {
+		return collisionTypeId;
+	}
 
 	/**
 	 * Set collision type id
@@ -174,7 +170,9 @@ public:
 	/**
 	 * @return collision type ids bitmask
 	 */
-	uint16_t getCollisionTypeIds();
+	inline uint16_t getCollisionTypeIds() {
+		return collisionTypeIds;
+	}
 
 	/**
 	 * Set up collision type ids
@@ -185,30 +183,41 @@ public:
 	/**
 	 * @return if enabled
 	 */
-	bool isEnabled();
+	inline bool isEnabled() {
+		return rigidBody->isActive();
+	}
 
 	/**
 	 * Set up if rigid body is enabled
 	 * @param enabled enabled
 	 */
-	void setEnabled(bool enabled);
+	inline void setEnabled(bool enabled) {
+		rigidBody->setIsActive(enabled);
+		if (enabled == true) rigidBody->setIsSleeping(false);
+	}
 
 	/**
 	 * @return if sleeping
 	 */
-	bool isSleeping();
+	inline bool isSleeping() {
+		return rigidBody->isSleeping();
+	}
 
 	/**
 	 * Set sleeping
 	 * @param sleeping sleeping
 	 */
-	void setSleeping(bool sleeping);
+	inline void setSleeping(bool sleeping) {
+		rigidBody->setIsSleeping(sleeping);
+	}
 
 	/**
 	 * @deprecated this method should be removed
 	 * @return bounding volumes
 	 */
-	vector<BoundingVolume*>& getBoundingVolumes();
+	inline vector<BoundingVolume*>& getBoundingVolumes() {
+		return boundingVolumes;
+	}
 
 	/**
 	 * Add bounding volume
@@ -219,12 +228,28 @@ public:
 	/**
 	 * Compute bounding box transformed
 	 */
-	BoundingBox computeBoundingBoxTransformed();
+	inline BoundingBox computeBoundingBoxTransformed() {
+		auto aabb = rigidBody->getAABB();
+		return BoundingBox(
+			Vector3(
+				aabb.getMin().x,
+				aabb.getMin().y,
+				aabb.getMin().z
+			),
+			Vector3(
+				aabb.getMax().x,
+				aabb.getMax().y,
+				aabb.getMax().z
+			)
+		);
+	}
 
 	/**
 	 * @return friction
 	 */
-	float getFriction();
+	inline float getFriction() {
+		return friction;
+	}
 
 	/**
 	 * Set up friction
@@ -235,7 +260,9 @@ public:
 	/**
 	 * @return restitution / bouncyness
 	 */
-	float getRestitution();
+	inline float getRestitution() {
+		return restitution;
+	}
 
 	/**
 	 * Set up restitution
@@ -246,87 +273,177 @@ public:
 	/**
 	 * @return mass
 	 */
-	float getMass();
+	inline float getMass() {
+		return mass;
+	}
 
 	/**
 	 * Set up mass
 	 * @param mass mass
 	 */
-	void setMass(float mass);
+	inline void setMass(float mass) {
+		this->mass = mass;
+		rigidBody->setMass(mass);
+	}
 
 	/**
 	 * @return linear velocity
 	 */
-	const Vector3 getLinearVelocity();
+	inline const Vector3 getLinearVelocity() {
+		return Vector3(
+			rigidBody->getLinearVelocity().x,
+			rigidBody->getLinearVelocity().y,
+			rigidBody->getLinearVelocity().z
+		);
+	}
 
 	/**
 	 * Set linear velocity
 	 * @param linearVelocity velocity
 	 */
-	void setLinearVelocity(const Vector3& linearVelocity);
+	inline void setLinearVelocity(const Vector3& linearVelocity) {
+		rigidBody->setLinearVelocity(reactphysics3d::Vector3(linearVelocity.getX(), linearVelocity.getY(), linearVelocity.getZ()));
+	}
 
 	/**
 	 * @return angular velocity
 	 */
-	const Vector3 getAngularVelocity();
+	inline const Vector3 getAngularVelocity() {
+		return Vector3(
+			rigidBody->getAngularVelocity().x,
+			rigidBody->getAngularVelocity().y,
+			rigidBody->getAngularVelocity().z
+		);
+	}
 
 	/**
 	 * Set angular velocity
 	 * @param angularVelocity angular velocity
 	 */
-	void setAngularVelocity(const Vector3& angularVelocity);
+	inline void setAngularVelocity(const Vector3& angularVelocity) {
+		rigidBody->setAngularVelocity(reactphysics3d::Vector3(angularVelocity.getX(), angularVelocity.getY(), angularVelocity.getZ()));
+	}
 
 	/**
 	 * @return return linear damping
 	 */
-	float getLinearDamping();
+	inline float getLinearDamping() {
+		return rigidBody->getLinearDamping();
+	}
 
 	/**
 	 * Set linear damping
 	 * @param linearDamping linear damping
 	 */
-	void setLinearDamping(float linearDamping);
+	inline void setLinearDamping(float linearDamping) {
+		rigidBody->setLinearDamping(linearDamping);
+	}
 
 	/**
 	 * @return return angular damping
 	 */
-	float getAngularDamping();
+	inline float getAngularDamping() {
+		return rigidBody->getAngularDamping();
+	}
 
 	/**
 	 * Set angular damping
 	 * @param angularDamping anuglar damping
 	 */
-	void setAngularDamping(float angularDamping);
+	inline void setAngularDamping(float angularDamping) {
+		rigidBody->setAngularDamping(angularDamping);
+	}
 
 	/**
 	 * @return transform
 	 */
-	const Transform& getTransform();
+	inline const Transform& getTransform() {
+		return transform;
+	}
 
 	/**
 	 * Set transform
 	 * @param transform transform
 	 */
-	void setTransform(const Transform& transform);
+	inline void setTransform(const Transform& transform) {
+		// store engine transform
+		this->transform.setTransform(transform);
+
+		// reset proxy shapes if bounding volumes do not match proxy shapes or if scaling has changed
+		if (colliders.size() != boundingVolumes.size() || transformScale.equals(transform.getScale()) == false) {
+			resetColliders();
+			transformScale.set(transform.getScale());
+		}
+
+		/*
+		// TODO: center of mass ~ pivot
+		// set center of mass which is basically center of bv for now
+		body->setCenterOfMassLocal(boundingVolume->collisionShapeLocalTransform.getPosition());
+		// find final position, not sure yet if its working 100%, but still works with some tests
+		auto centerOfMassWorld = transform * boundingVolume->collisionShapeLocalTransform.getPosition();
+		transform.setPosition(
+			transform.getPosition() +
+			transform.getPosition() -
+			centerOfMassWorld +
+			(
+				reactphysics3d::Vector3(
+					boundingVolume->collisionShapeLocalTranslation.getX(),
+					boundingVolume->collisionShapeLocalTranslation.getY(),
+					boundingVolume->collisionShapeLocalTranslation.getZ()
+				) * scaleVectorTransformed
+			)
+		);
+		*/
+
+		// set transform
+		rigidBody->setTransform(
+			reactphysics3d::Transform(
+				reactphysics3d::Vector3(
+					this->transform.getTranslation().getX(),
+					this->transform.getTranslation().getY(),
+					this->transform.getTranslation().getZ()
+				),
+				reactphysics3d::Quaternion(
+					this->transform.getRotationsQuaternion().getX(),
+					this->transform.getRotationsQuaternion().getY(),
+					this->transform.getRotationsQuaternion().getZ(),
+					this->transform.getRotationsQuaternion().getW()
+				)
+			)
+		);
+	}
 
 	/**
 	 * Add force
 	 * @param forceOrigin position of world force
 	 * @param force force
 	 */
-	void addForce(const Vector3& forceOrigin, const Vector3& force);
+	inline void addForce(const Vector3& forceOrigin, const Vector3& force) {
+		rigidBody->applyWorldForceAtWorldPosition(
+			reactphysics3d::Vector3(force.getX(), force.getY(), force.getZ()),
+			reactphysics3d::Vector3(forceOrigin.getX(), forceOrigin.getY(), forceOrigin.getZ())
+		);
+	}
 
 	/**
 	 * Add force to center of mass
 	 * @param force force
 	 */
-	void addForce(const Vector3& force);
+	inline void addForce(const Vector3& force) {
+		rigidBody->applyWorldForceAtCenterOfMass(
+			reactphysics3d::Vector3(force.getX(), force.getY(), force.getZ())
+		);
+	}
 
 	/**
 	 * Add torque
 	 * @param torque torque
 	 */
-	void addTorque(const Vector3& torque);
+	inline void addTorque(const Vector3& torque) {
+		rigidBody->applyWorldTorque(
+			reactphysics3d::Vector3(torque.getX(), torque.getY(), torque.getZ())
+		);
+	}
 
 	/**
 	 * Add a collision listener to this rigid body

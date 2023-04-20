@@ -557,8 +557,8 @@ void Context::PathFinding::notifyCancel(const string& actorId) {
 Context::ContextWorldListener::ContextWorldListener(Context* context): context(context) {
 }
 
-void Context::ContextWorldListener::onAddedBody(const string& id, int32_t type, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes) {
-	if (type != Body::TYPE_STATIC) return;
+void Context::ContextWorldListener::onAddedBody(const string& id, Body::BodyType type, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes) {
+	if (type != Body::BODYTYPE_STATIC) return;
 	Context::PathFindingThread::WorldActionStruct worldAction;
 	worldAction.action = Context::PathFindingThread::WorldActionStruct::ACTION_ADDED;
 	worldAction.id = id;
@@ -574,8 +574,8 @@ void Context::ContextWorldListener::onAddedBody(const string& id, int32_t type, 
 	context->getPathFinding()->addWorldAction(worldAction);
 }
 
-void Context::ContextWorldListener::onRemovedBody(const string& id, int32_t type, uint16_t collisionTypeId) {
-	if (type != Body::TYPE_STATIC) return;
+void Context::ContextWorldListener::onRemovedBody(const string& id, Body::BodyType type, uint16_t collisionTypeId) {
+	if (type != Body::BODYTYPE_STATIC) return;
 	Context::PathFindingThread::WorldActionStruct worldAction;
 	worldAction.action = Context::PathFindingThread::WorldActionStruct::ACTION_REMOVED;
 	worldAction.id = id;

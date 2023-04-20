@@ -106,7 +106,6 @@ Collider* CollisionBody::addCollider(CollisionShape* collisionShape, const Trans
 
 	// Set the profiler
     collider->setProfiler(mProfiler);
-    collisionShape->setProfiler(mProfiler);
 
 #endif
 
