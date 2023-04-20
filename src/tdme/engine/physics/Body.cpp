@@ -156,7 +156,6 @@ void Body::resetColliders() {
 	}
 	*/
 	// add bounding volumes with mass
-	auto idx = 0;
 	for (auto boundingVolume: boundingVolumes) {
 		// skip if not attached
 		if (boundingVolume->isAttachedToWorld() == false) continue;
