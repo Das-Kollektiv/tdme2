@@ -223,7 +223,7 @@ public:
 	/**
 	 * Multiplies this transform with another transform
 	 * @param t transform
-	 * @return this matrix
+	 * @return this transform
 	 */
 	inline Transform& multiply(const Transform& t) {
 		update();
@@ -241,17 +241,17 @@ public:
 
 	/*
 	 * Operator *=
-	 * @param m matrix to multiply by
-	 * @return this matrix multiplied by m
+	 * @param t transform to multiply by
+	 * @return this transform multiplied by t
 	 */
 	inline Transform& operator *=(const Transform& t) {
 		return this->multiply(t);
 	}
 
 	/**
-	 * Operator * (Matrix4x4&)
-	 * @param m matrix to multiply by
-	 * @return new matrix (this * m)
+	 * Operator *
+	 * @param t transform to multiply by
+	 * @return new transform (this * t)
 	 */
 	inline Transform operator *(const Transform& t) const {
 		auto r = this->clone().multiply(t);
