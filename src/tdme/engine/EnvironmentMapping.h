@@ -54,9 +54,14 @@ private:
 	int32_t renderPassMask { Entity::RENDERPASS_ALL - Entity::RENDERPASS_WATER };
 	int64_t timeRenderUpdateFrequency { 100LL };
 
+	Transform parentTransform;
+	Matrix4x4 transformMatrix;
+
 	// overridden methods
 	inline void applyParentTransform(const Transform& parentTransform) override {
-		Transform::applyParentTransform(parentTransform);
+		this->parentTransform = parentTransform;
+		auto entityTransform = parentTransform * (*this);
+		transformMatrix = entityTransform.getTransformMatrix();
 	}
 
 	/**
@@ -210,7 +215,7 @@ public:
 	}
 
 	inline const Matrix4x4& getTransformMatrix() const override {
-		return Transform::getTransformMatrix();
+		return transformMatrix;
 	}
 
 	inline const Transform& getTransform() const override {

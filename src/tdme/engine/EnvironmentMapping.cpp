@@ -54,8 +54,12 @@ void EnvironmentMapping::dispose() {
 void EnvironmentMapping::setTransform(const Transform& transform)
 {
 	Transform::setTransform(transform);
+	//
+	auto entityTransform = parentTransform * (*this);
+	transformMatrix = entityTransform.getTransformMatrix();
+	//
 	Transform translationTransform;
-	translationTransform.setTranslation(getTranslation());
+	translationTransform.setTranslation(entityTransform.getTranslation());
 	translationTransform.update();
 	boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, translationTransform);
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
@@ -64,8 +68,12 @@ void EnvironmentMapping::setTransform(const Transform& transform)
 void EnvironmentMapping::update()
 {
 	Transform::update();
+	//
+	auto entityTransform = parentTransform * (*this);
+	transformMatrix = entityTransform.getTransformMatrix();
+	//
 	Transform translationTransform;
-	translationTransform.setTranslation(getTranslation());
+	translationTransform.setTranslation(entityTransform.getTranslation());
 	translationTransform.update();
 	boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, translationTransform);
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);

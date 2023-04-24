@@ -13,9 +13,11 @@
 #include <tdme/engine/Transform.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Math.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector3.h>
 
 using std::string;
+using std::to_string;
 using std::vector;
 
 using tdme::engine::primitives::BoundingBox;
@@ -55,10 +57,17 @@ private:
 	vector<ParticleSystem*> particleSystems;
 	Transform localTransform;
 
+	Transform parentTransform;
+	Matrix4x4 transformMatrix;
+
 	// overridden methods
 	inline void applyParentTransform(const Transform& parentTransform) override {
-		Transform::applyParentTransform(parentTransform);
-		for (auto particleSystem: particleSystems) particleSystem->applyParentTransform(parentTransform);
+		//
+		this->parentTransform = parentTransform;
+		auto entityTransform = parentTransform * (*this);
+		transformMatrix = entityTransform.getTransformMatrix();
+		//
+		for (auto particleSystem: particleSystems) particleSystem->applyParentTransform(entityTransform);
 	}
 
 public:
@@ -261,7 +270,7 @@ public:
 	}
 
 	inline const Matrix4x4& getTransformMatrix() const override {
-		return Transform::getTransformMatrix();
+		return transformMatrix;
 	}
 
 	inline const Transform& getTransform() const override {

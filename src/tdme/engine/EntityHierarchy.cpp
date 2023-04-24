@@ -7,6 +7,7 @@
 #include <tdme/engine/Object.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/Transform.h>
+#include <tdme/utilities/Console.h>
 
 using std::string;
 
@@ -15,6 +16,7 @@ using tdme::engine::EntityHierarchy;
 using tdme::engine::Object;
 using tdme::engine::Partition;
 using tdme::engine::Transform;
+using tdme::utilities::Console;
 
 EntityHierarchy::EntityHierarchy(const string& id): id(id)
 {
@@ -126,19 +128,20 @@ const vector<Entity*> EntityHierarchy::query(const string& parentId) {
 }
 
 void EntityHierarchy::updateHierarchy(const Transform& parentTransform, EntityHierarchyLevel& entityHierarchyLevel, int depth, bool& firstEntity) {
+	auto levelParentTransform = parentTransform;
+	if (entityHierarchyLevel.entity != nullptr) levelParentTransform*= entityHierarchyLevel.entity->getTransform();
 	for (auto entityIt: entityHierarchyLevel.children) {
 		auto entity = entityIt.second.entity;
-		entity->update();
+		entity->applyParentTransform(levelParentTransform);
 		if (firstEntity == true) {
 			boundingBox = entity->getBoundingBoxTransformed();
 			firstEntity = false;
 		} else {
 			boundingBox.extend(entity->getBoundingBoxTransformed());
 		}
-		entity->applyParentTransform(parentTransform);
 	}
 	for (auto& childIt: entityHierarchyLevel.children) {
-		updateHierarchy(childIt.second.entity->getTransform(), childIt.second, depth + 1, firstEntity);
+		updateHierarchy(levelParentTransform, childIt.second, depth + 1, firstEntity);
 	}
 	if (depth == 0) {
 		// bounding boxes
@@ -151,7 +154,10 @@ void EntityHierarchy::updateHierarchy(const Transform& parentTransform, EntityHi
 
 void EntityHierarchy::setTransform(const Transform& transform)
 {
+	//
 	Transform::setTransform(transform);
+	auto entityTransform = parentTransform * (*this);
+	transformMatrix = entityTransform.getTransformMatrix();
 	// update hierarchy
 	auto firstEntity = true;
 	updateHierarchy(*this, entityRoot, 0, firstEntity);
@@ -159,10 +165,13 @@ void EntityHierarchy::setTransform(const Transform& transform)
 
 void EntityHierarchy::update()
 {
+	//
 	Transform::update();
+	auto entityTransform = parentTransform * (*this);
+	transformMatrix = entityTransform.getTransformMatrix();
 	// update hierarchy
 	auto firstEntity = true;
-	updateHierarchy(*this, entityRoot, 0, firstEntity);
+	updateHierarchy(entityTransform, entityRoot, 0, firstEntity);
 }
 
 void EntityHierarchy::setEnabled(bool enabled)

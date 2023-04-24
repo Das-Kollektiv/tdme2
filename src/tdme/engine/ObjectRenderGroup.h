@@ -19,7 +19,8 @@
 #include <tdme/engine/Object.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transform.h>
-#include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector3.h>
 
 using std::array;
 using std::string;
@@ -76,6 +77,9 @@ private:
 
 	bool optimizeModels;
 
+	Transform parentTransform;
+	Matrix4x4 transformMatrix;
+
 	/**
 	 * Compute bounding box
 	 */
@@ -107,7 +111,11 @@ private:
 
 	// overridden methods
 	inline void applyParentTransform(const Transform& parentTransform) override {
-		Transform::applyParentTransform(parentTransform);
+		//
+		this->parentTransform = parentTransform;
+		auto entityTransform = parentTransform * (*this);
+		transformMatrix = entityTransform.getTransformMatrix();
+		//
 		updateBoundingBox();
 	}
 
@@ -292,7 +300,7 @@ public:
 	}
 
 	inline const Matrix4x4& getTransformMatrix() const override {
-		return Transform::getTransformMatrix();
+		return transformMatrix;
 	}
 
 	inline const Transform& getTransform() const override {

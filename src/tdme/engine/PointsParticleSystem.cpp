@@ -31,12 +31,21 @@ void PointsParticleSystem::initialize()
 void PointsParticleSystem::setTransform(const Transform& transform)
 {
 	PointsParticleSystemInternal::setTransform(transform);
+	//
+	auto entityTransform = parentTransform * (*this);
+	transformMatrix = entityTransform.getTransformMatrix();
+	//
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
 void PointsParticleSystem::update()
 {
+	//
 	PointsParticleSystemInternal::update();
+	//
+	auto entityTransform = parentTransform * (*this);
+	transformMatrix = entityTransform.getTransformMatrix();
+	//
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 

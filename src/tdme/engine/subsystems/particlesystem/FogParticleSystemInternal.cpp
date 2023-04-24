@@ -77,8 +77,7 @@ void FogParticleSystemInternal::initialize() {
 	auto& localTransformMatrix = localTransform.getTransformMatrix();
 	localTransformMatrix.getTranslation(center);
 	center.add(emitter->getCenter());
-	// transform
-	auto& transformMatrix = getTransformMatrix();
+
 	//
 	Vector3 point;
 
@@ -179,8 +178,6 @@ void FogParticleSystemInternal::updateParticles()
 	auto& bbMaxXYZ = boundingBox.getMax().getArray();
 	//
 	auto haveBoundingBox = false;
-	// transform
-	auto& transformMatrix = getTransformMatrix();
 	// process particles
 	pointsRenderPool->reset();
 	auto activeParticles = 0;

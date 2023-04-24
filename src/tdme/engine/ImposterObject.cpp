@@ -64,8 +64,11 @@ void ImposterObject::setRenderer(Renderer* renderer)
 void ImposterObject::setTransform(const Transform& transform)
 {
 	Transform::setTransform(transform);
+	//
+	auto entityTransform = parentTransform * (*this);
+	transformMatrix = entityTransform.getTransformMatrix();
 	// delegate to billboard objects
-	auto imposterObjectTransform = this->getTransform();
+	auto imposterObjectTransform = entityTransform;
 	imposterObjectTransform.addRotation(Vector3(0.0f, 1.0f, 0.0f), -(360.0f / billboardModels.size()) * 0.5f);
 	for (auto billboardObject: billboardObjects) {
 		imposterObjectTransform.setRotationAngle(
@@ -82,8 +85,11 @@ void ImposterObject::setTransform(const Transform& transform)
 void ImposterObject::update()
 {
 	Transform::update();
+	//
+	auto entityTransform = parentTransform * (*this);
+	transformMatrix = entityTransform.getTransformMatrix();
 	// delegate to billboard objects
-	auto imposterObjectTransform = this->getTransform();
+	auto imposterObjectTransform = entityTransform;
 	imposterObjectTransform.addRotation(Vector3(0.0f, 1.0f, 0.0f), -(360.0f / billboardModels.size()) * 0.5f);
 	for (auto billboardObject: billboardObjects) {
 		imposterObjectTransform.setRotationAngle(

@@ -32,12 +32,16 @@ void Decal::setTransform(const Transform& transform)
 {
 	DecalInternal::setTransform(transform);
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
+	auto entityTransform = parentTransform * (*this);
+	transformMatrix = entityTransform.getTransformMatrix();
 }
 
 void Decal::update()
 {
 	DecalInternal::update();
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
+	auto entityTransform = parentTransform * (*this);
+	transformMatrix = entityTransform.getTransformMatrix();
 }
 
 void Decal::setEnabled(bool enabled)

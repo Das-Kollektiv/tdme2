@@ -69,16 +69,20 @@ protected:
 	Color4 effectColorMul;
 	Color4 effectColorAdd;
 	float particlesToSpawnRemainder;
+
+	Transform parentTransform;
 	Transform localTransform;
+	Matrix4x4 transformMatrix;
 
 	/**
 	 * Update internal
 	 */
 	inline void updateInternal() {
 		Vector3 scale;
-		getTransformMatrix().getScale(scale);
+		transformMatrix.getScale(scale);
 		scale.scale(objectScale);
 		scale.scale(localTransform.getScale());
+		scale.scale(parentTransform.getScale());
 		for (auto object: objects) {
 			object->setScale(scale);
 			object->update();
@@ -188,7 +192,16 @@ public:
 	int emitParticles() override;
 	void updateParticles() override;
 	void dispose();
-
+	inline const Transform& getParentTransform() {
+		return parentTransform;
+	}
+	inline void setParentTransform(const Transform& transform) {
+		parentTransform = transform;
+		auto entityTransform = parentTransform * (*this);
+		transformMatrix = entityTransform.getTransformMatrix();
+		//
+		updateInternal();
+	}
 	inline const Transform& getLocalTransform() override {
 		return localTransform;
 	}

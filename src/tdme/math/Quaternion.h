@@ -27,6 +27,13 @@ private:
 public:
 	/**
 	 * Public constructor
+	 */
+	inline Quaternion() {
+		data.fill(0.0f);
+	}
+
+	/**
+	 * Public constructor
 	 * @param q quaternion
 	 */
 	inline Quaternion(const Quaternion& q) {
@@ -427,7 +434,7 @@ public:
 	 * @param q quaternion to substract
 	 * @return this quaternion substracted by q
 	 */
-	inline Quaternion& operator -=(Quaternion& q) {
+	inline Quaternion& operator -=(const Quaternion& q) {
 		return this->sub(q);
 	}
 
@@ -436,7 +443,7 @@ public:
 	 * @param q quaternion to multiply by
 	 * @return this quaternion multiplied by q
 	 */
-	inline Quaternion& operator *=(Quaternion& q) {
+	inline Quaternion& operator *=(const Quaternion& q) {
 		return this->multiply(q);
 	}
 
@@ -445,7 +452,7 @@ public:
 	 * @param q quaternion to devide by
 	 * @return this quaternion devided by q
 	 */
-	inline Quaternion& operator /=(Quaternion& q) {
+	inline Quaternion& operator /=(const Quaternion& q) {
 		auto qInverted = Quaternion(1.0f / q[0], 1.0f / q[1], 1.0f / q[2], 1.0f / q[3]);
 		return this->multiply(qInverted);
 	}
@@ -504,10 +511,26 @@ public:
 	}
 
 	/**
-	 * Public constructor
+	 * Compute Euler angles (rotation around x, y, z axes)
+	 * @return vector 3 containing euler angles
 	 */
-	inline Quaternion() {
-		data.fill(0.0f);
+	inline Vector3 computeEulerAngles() const {
+		// https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+		Vector3 euler;
+		// roll (x-axis rotation)
+		float sinr_cosp = 2.0f * (data[3] * data[0] + data[1] * data[2]);
+		float cosr_cosp = 1.0f - 2.0f * (data[0] * data[0] + data[1] * data[1]);
+		euler[0] = Math::atan2(sinr_cosp, cosr_cosp) / Math::DEG2RAD;
+		// pitch (y-axis rotation)
+		float sinp = Math::sqrt(1.0f + 2.0f * (data[3] * data[1] - data[0] * data[2]));
+		float cosp = Math::sqrt(1.0f - 2.0f * (data[3] * data[1] - data[0] * data[2]));
+		euler[1] = (2.0f * Math::atan2(sinp, cosp) - M_PI / 2.0f) / Math::DEG2RAD;
+		// yaw (z-axis rotation)
+		float siny_cosp = 2.0f * (data[3] * data[2] + data[0] * data[1]);
+		float cosy_cosp = 1.0f - 2.0f * (data[1] * data[1] + data[2] * data[2]);
+		euler[2] = Math::atan2(siny_cosp, cosy_cosp) / Math::DEG2RAD;
+		//
+		return euler;
 	}
 
 };

@@ -18,8 +18,8 @@
 #include <tdme/engine/Object.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transform.h>
-#include <tdme/math/fwd-tdme.h>
-#include <tdme/utilities/Console.h>
+#include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector3.h>
 
 using std::map;
 using std::remove;
@@ -39,7 +39,6 @@ using tdme::engine::Rotation;
 using tdme::engine::Transform;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::utilities::Console;
 
 /**
  * Entity hierarchy to be used with engine class
@@ -76,9 +75,16 @@ private:
 
 	RenderPass renderPass { RENDERPASS_STANDARD };
 
+	Transform parentTransform;
+	Matrix4x4 transformMatrix;
+
 	// overridden methods
 	inline void applyParentTransform(const Transform& parentTransform) override {
-		Transform::applyParentTransform(parentTransform);
+		//
+		this->parentTransform = parentTransform;
+		auto entityTransform = parentTransform * (*this);
+		transformMatrix = entityTransform.getTransformMatrix();
+		//
 		boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
 	}
 
@@ -324,7 +330,7 @@ public:
 	}
 
 	inline const Matrix4x4& getTransformMatrix() const override {
-		return Transform::getTransformMatrix();
+		return transformMatrix;
 	}
 
 	inline const Transform& getTransform() const override {

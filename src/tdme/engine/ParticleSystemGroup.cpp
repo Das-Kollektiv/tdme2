@@ -61,7 +61,10 @@ void ParticleSystemGroup::setTransform(const Transform& transform)
 {
 	Transform::setTransform(transform);
 	//
-	for (auto particleSystem: particleSystems) dynamic_cast<Entity*>(particleSystem)->setTransform(transform);
+	auto entityTransform = parentTransform * (*this);
+	transformMatrix = entityTransform.getTransformMatrix();
+	//
+	for (auto particleSystem: particleSystems) dynamic_cast<Entity*>(particleSystem)->setTransform(*this);
 	// update bounding box transformed
 	boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
 	// update object

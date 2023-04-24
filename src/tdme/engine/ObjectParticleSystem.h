@@ -14,7 +14,8 @@
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/ParticleSystem.h>
 #include <tdme/engine/Transform.h>
-#include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
@@ -48,8 +49,7 @@ private:
 
 	// overridden methods
 	inline void applyParentTransform(const Transform& parentTransform) override {
-		Transform::applyParentTransform(parentTransform);
-		// TODO: a.drewke, bounding box and emitter needs a update here
+		setParentTransform(parentTransform);
 	}
 
 public:
@@ -216,7 +216,7 @@ public:
 	}
 
 	inline const Matrix4x4& getTransformMatrix() const override {
-		return Transform::getTransformMatrix();
+		return transformMatrix;
 	}
 
 	inline const Transform& getTransform() const override {

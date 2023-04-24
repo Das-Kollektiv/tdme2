@@ -67,14 +67,16 @@ protected:
 	Color4 effectColorAdd;
 	bool pickable;
 
+	Transform parentTransform;
 	Transform localTransform;
+	Matrix4x4 transformMatrix;
 
 	/**
 	 * Update bounding volume
 	 */
 	inline void updateInternal() {
 		Vector3 scale;
-		getTransformMatrix().getScale(scale);
+		transformMatrix.getScale(scale);
 		pointSizeScale = Math::max(scale.getX(), Math::max(scale.getY(), scale.getZ()));
 		pointSizeScale*= Math::max(localTransform.getScale().getX(), Math::max(localTransform.getScale().getY(), localTransform.getScale().getZ()));
 		boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
@@ -240,6 +242,16 @@ public:
 	void dispose();
 	inline int emitParticles() override {
 		return 0;
+	}
+	inline const Transform& getParentTransform() {
+		return parentTransform;
+	}
+	inline void setParentTransform(const Transform& transform) {
+		parentTransform = transform;
+		auto entityTransform = parentTransform * (*this);
+		transformMatrix = entityTransform.getTransformMatrix();
+		//
+		updateInternal();
 	}
 	inline const Transform& getLocalTransform() override {
 		return localTransform;

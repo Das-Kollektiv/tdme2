@@ -406,6 +406,9 @@ void ObjectRenderGroup::setRenderer(Renderer* renderer)
 void ObjectRenderGroup::setTransform(const Transform& transform)
 {
 	Transform::setTransform(transform);
+	//
+	auto entityTransform = parentTransform * (*this);
+	transformMatrix = entityTransform.getTransformMatrix();
 	// update bounding box transformed
 	boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
 	// update object
@@ -415,6 +418,9 @@ void ObjectRenderGroup::setTransform(const Transform& transform)
 void ObjectRenderGroup::update()
 {
 	Transform::update();
+	//
+	auto entityTransform = parentTransform * (*this);
+	transformMatrix = entityTransform.getTransformMatrix();
 	// update bounding box transformed
 	boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
 	// update object

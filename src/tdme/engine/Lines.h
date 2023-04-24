@@ -44,9 +44,16 @@ private:
 	bool frustumCulling { true };
 	RenderPass renderPass { RENDERPASS_STANDARD };
 
+	Transform parentTransform;
+	Matrix4x4 transformMatrix;
+
 	// overridden methods
 	inline void applyParentTransform(const Transform& parentTransform) override {
-		Transform::applyParentTransform(parentTransform);
+		//
+		this->parentTransform = parentTransform;
+		auto entityTransform = parentTransform * (*this);
+		transformMatrix = entityTransform.getTransformMatrix();
+		//
 		updateBoundingBox();
 	}
 
@@ -207,7 +214,7 @@ public:
 	}
 
 	inline const Matrix4x4& getTransformMatrix() const override {
-		return Transform::getTransformMatrix();
+		return transformMatrix;
 	}
 
 	inline const Transform& getTransform() const override {

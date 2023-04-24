@@ -15,7 +15,8 @@
 #include <tdme/engine/Object.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transform.h>
-#include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
 
 using std::string;
@@ -84,13 +85,19 @@ private:
 
 	EntityShaderParameters shaderParameters;
 
+	Transform parentTransform;
+	Matrix4x4 transformMatrix;
+
 	// overridden methods
 	inline void applyParentTransform(const Transform& parentTransform) override {
-		Transform::applyParentTransform(parentTransform);
+		//
+		this->parentTransform = parentTransform;
+		auto entityTransform = parentTransform * (*this);
+		transformMatrix = entityTransform.getTransformMatrix();
 		// delegate to LOD objects
-		if (objectLOD1 != nullptr) objectLOD1->setTransform(*this);
-		if (objectLOD2 != nullptr) objectLOD2->setTransform(*this);
-		if (objectLOD3 != nullptr) objectLOD3->setTransform(*this);
+		if (objectLOD1 != nullptr) objectLOD1->setTransform(entityTransform);
+		if (objectLOD2 != nullptr) objectLOD2->setTransform(entityTransform);
+		if (objectLOD3 != nullptr) objectLOD3->setTransform(entityTransform);
 	}
 
 public:
@@ -431,7 +438,7 @@ public:
 	}
 
 	inline const Matrix4x4& getTransformMatrix() const override {
-		return Transform::getTransformMatrix();
+		return transformMatrix;
 	}
 
 	inline const Transform& getTransform() const override {

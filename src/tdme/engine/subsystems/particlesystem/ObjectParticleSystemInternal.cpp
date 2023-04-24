@@ -166,8 +166,6 @@ void ObjectParticleSystemInternal::updateParticles()
 	auto& localTransformMatrix = localTransform.getTransformMatrix();
 	localTransformMatrix.getTranslation(center);
 	center.add(emitter->getCenter());
-	// transform
-	auto& transformMatrix = getTransformMatrix();
 	//
 	Vector3 point;
 	Vector3 velocityForTime;

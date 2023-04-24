@@ -28,6 +28,7 @@
 
 using std::map;
 using std::string;
+using std::to_string;
 
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
@@ -90,6 +91,9 @@ private:
 	static constexpr int UNIQUEMODELID_NONE { -1 };
 
 	int uniqueModelId { UNIQUEMODELID_NONE };
+
+	Transform parentTransform;
+	vector<Matrix4x4> instanceTransformMatrices;
 
 	/**
 	 * Set unique model id
@@ -176,7 +180,17 @@ private:
 
 	// overridden methods
 	inline void applyParentTransform(const Transform& parentTransform) override {
-		for (auto& transform: instanceTransform) transform.applyParentTransform(parentTransform);
+		//
+		this->parentTransform = parentTransform;
+		//
+		auto i = 0;
+		for (const auto& transform: instanceTransform) {
+			auto entityTransform = parentTransform * transform;
+			instanceTransformMatrices[i] = entityTransform.getTransformMatrix();
+			//
+			++i;
+		}
+		//
 		updateBoundingBox();
 	}
 
@@ -336,7 +350,7 @@ public:
 	}
 
 	inline const Matrix4x4& getTransformMatrix() const override {
-		return instanceTransform[currentInstance].getTransformMatrix();
+		return instanceTransformMatrices[currentInstance];
 	}
 
 	inline const Transform& getTransform() const override {

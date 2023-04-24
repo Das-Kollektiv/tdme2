@@ -111,8 +111,6 @@ void PointsParticleSystemInternal::updateParticles()
 	auto haveBoundingBox = false;
 	// compute distance from camera
 	float distanceFromCamera;
-	// transform
-	auto& transformMatrix = getTransformMatrix();
 	// process particles
 	pointsRenderPool->reset();
 	auto activeParticles = 0;
