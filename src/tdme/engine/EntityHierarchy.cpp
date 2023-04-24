@@ -160,7 +160,7 @@ void EntityHierarchy::setTransform(const Transform& transform)
 	transformMatrix = entityTransform.getTransformMatrix();
 	// update hierarchy
 	auto firstEntity = true;
-	updateHierarchy(*this, entityRoot, 0, firstEntity);
+	updateHierarchy(entityTransform, entityRoot, 0, firstEntity);
 }
 
 void EntityHierarchy::update()
