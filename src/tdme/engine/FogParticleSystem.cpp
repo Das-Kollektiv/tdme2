@@ -31,17 +31,17 @@ void FogParticleSystem::initialize()
 void FogParticleSystem::setTransform(const Transform& transform)
 {
 	FogParticleSystemInternal::setTransform(transform);
-	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 	auto entityTransform = parentTransform * (*this);
 	transformMatrix = entityTransform.getTransformMatrix();
+	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
 void FogParticleSystem::update()
 {
 	FogParticleSystemInternal::update();
-	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 	auto entityTransform = parentTransform * (*this);
 	transformMatrix = entityTransform.getTransformMatrix();
+	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
 void FogParticleSystem::setEnabled(bool enabled)

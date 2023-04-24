@@ -82,7 +82,6 @@ protected:
 		transformMatrix.getScale(scale);
 		scale.scale(objectScale);
 		scale.scale(localTransform.getScale());
-		scale.scale(parentTransform.getScale());
 		for (auto object: objects) {
 			object->setScale(scale);
 			object->update();

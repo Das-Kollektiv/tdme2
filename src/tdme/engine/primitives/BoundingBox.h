@@ -7,6 +7,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
 using std::array;
@@ -14,6 +15,7 @@ using std::vector;
 
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::Transform;
+using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
 /**
@@ -134,11 +136,20 @@ public:
 	void fromBoundingVolume(BoundingBox* original);
 
 	/**
+	 * Create bounding volume from given original(of same type) with applied transform matrix
+	 * @param original original bounding box
+	 * @param transformMatrix transform matrix
+	 */
+	void fromBoundingVolumeWithTransformMatrix(BoundingBox* original, const Matrix4x4& transformMatrix);
+
+	/**
 	 * Create bounding volume from given original(of same type) with applied transform
 	 * @param original original bounding box
 	 * @param transform transform
 	 */
-	void fromBoundingVolumeWithTransform(BoundingBox* original, const Transform& transform);
+	inline void fromBoundingVolumeWithTransform(BoundingBox* original, const Transform& transform) {
+		fromBoundingVolumeWithTransformMatrix(original, transform.getTransformMatrix());
+	}
 
 	/**
 	 * Extend bounding box with given bounding box
