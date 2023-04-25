@@ -36,11 +36,12 @@ public:
 	 * Reads GLTF file
 	 * @param pathName path name
 	 * @param fileName file name
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @return model instance
 	 */
-	static Model* read(const string& pathName, const string& fileName);
+	static Model* read(const string& pathName, const string& fileName, bool useBC7TextureCompression = true);
 
 private:
 
@@ -140,9 +141,10 @@ private:
 	 * @param model TDME model
 	 * @param parentNode TDME parent node
 	 * @param anonymousNodeIdx anonymous node index
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @return node
 	 */
-	static Node* parseNode(const string& pathName, tinygltf::Model& gltfModel, int gltfNodeIdx, Model* model, Node* parentNode, int& anonymousNodeIdx);
+	static Node* parseNode(const string& pathName, tinygltf::Model& gltfModel, int gltfNodeIdx, Model* model, Node* parentNode, int& anonymousNodeIdx, bool useBC7TextureCompression);
 
 	/**
 	 * Parse GLTF node children into TDME node
@@ -151,8 +153,9 @@ private:
 	 * @param gltfNodeChildrenIdx GLTF node children indices
 	 * @param parentNode TDME parent node
 	 * @param anonymousNodeIdx anonymous node index
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 */
-	static void parseNodeChildren(const string& pathName, tinygltf::Model& gltfModel, const vector<int>& gltfNodeChildrenIdx, Node* parentNode, int& anonymousNodeIdx);
+	static void parseNodeChildren(const string& pathName, tinygltf::Model& gltfModel, const vector<int>& gltfNodeChildrenIdx, Node* parentNode, int& anonymousNodeIdx, bool useBC7TextureCompression);
 
 	/**
 	 * Determine texture file name

@@ -83,7 +83,7 @@ using tdme::utilities::ExceptionBase;
 using tdme::utilities::ModelTools;
 using tdme::utilities::StringTools;
 
-Model* GLTFReader::read(const string& pathName, const string& fileName)
+Model* GLTFReader::read(const string& pathName, const string& fileName, bool useBC7TextureCompression)
 {
 	// hello
 	Console::println("GLTFReader::read(): Loading model: " + pathName + "/" + fileName);
@@ -132,13 +132,13 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 	for (auto& gltfScene: gltfModel.scenes) {
 		for (auto gltfNodeIdx: gltfScene.nodes) {
 			auto& glTfNode = gltfModel.nodes[gltfNodeIdx];
-			auto node = parseNode(pathName, gltfModel, gltfNodeIdx, model, nullptr, anonymousNodeIdx);
+			auto node = parseNode(pathName, gltfModel, gltfNodeIdx, model, nullptr, anonymousNodeIdx, useBC7TextureCompression);
 			model->getNodes()[node->getId()] = node;
 			if (model->getSubNodes().find(node->getId()) != model->getSubNodes().end()) {
 				Console::println("GLTFReader::read(): node already exists: " + node->getId());
 			}
 			model->getSubNodes()[node->getId()] = node;
-			if (glTfNode.children.empty() == false) parseNodeChildren(pathName, gltfModel, glTfNode.children, node, anonymousNodeIdx);
+			if (glTfNode.children.empty() == false) parseNodeChildren(pathName, gltfModel, glTfNode.children, node, anonymousNodeIdx, useBC7TextureCompression);
 		}
 	}
 
@@ -341,7 +341,7 @@ void GLTFReader::interpolateKeyFrames(int frameTimeCount, const float* frameTime
 	}
 }
 
-Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, int gltfNodeIdx, Model* model, Node* parentNode, int& anonymousNodeIdx) {
+Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, int gltfNodeIdx, Model* model, Node* parentNode, int& anonymousNodeIdx, bool useBC7TextureCompression) {
 	auto& gltfNode = gltfModel.nodes[gltfNodeIdx];
 	// this fixes nodes that have no name
 	auto nodeId = gltfNode.name.empty() == true?"<" + to_string(anonymousNodeIdx++) + ">":gltfNode.name;
@@ -499,6 +499,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 							Texture::getRGBFormatByPixelBitsPerPixel(image.bits * image.component),
 							textureData
 						);
+						texture->setUseCompression(useBC7TextureCompression);
 						//
 						pbrMaterialProperties->setBaseColorTexture(texture);
 						if (pbrMaterialProperties->hasBaseColorTextureTransparency() == true) pbrMaterialProperties->setBaseColorTextureMaskedTransparency(true);
@@ -553,6 +554,8 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 							Texture::getRGBFormatByPixelBitsPerPixel(image.bits * image.component),
 							textureData
 						);
+						texture->setUseCompression(useBC7TextureCompression);
+						//
 						pbrMaterialProperties->setMetallicRoughnessTexture(texture);
 						//
 						if (gltfTexture.sampler != -1) {
@@ -603,7 +606,60 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 							Texture::getRGBFormatByPixelBitsPerPixel(image.bits * image.component),
 							textureData
 						);
+						texture->setUseCompression(useBC7TextureCompression);
+						//
 						pbrMaterialProperties->setNormalTexture(texture);
+						//
+						if (gltfTexture.sampler != -1) {
+							auto& sampler = gltfModel.samplers[gltfTexture.sampler];
+							switch (sampler.minFilter) {
+								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST); texture->setUseMipMap(false); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR); texture->setUseMipMap(false); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+							}
+							switch (sampler.magFilter) {
+								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+							}
+						}
+					} catch (Exception& exception) {
+						Console::println("GLTFReader::parseNode(): " + node->getId() + ": An error occurred: " + exception.what());
+					}
+				}
+				if (gltfMaterial.emissiveTexture.index != -1) {
+					auto& gltfTexture = gltfModel.textures[gltfMaterial.emissiveTexture.index];
+					auto& image = gltfModel.images[gltfTexture.source];
+					try {
+						if (image.component != 3 && image.component != 4) throw ExceptionBase("We only support RGB or RGBA textures for now");
+						if (image.bits != 8) throw ExceptionBase("We only support 8 bit channels for now");
+						auto fileName = determineTextureFileName(image.name);
+						Console::println("GLTFReader::parseNode(): " + node->getId() + ": have emissive texture with " + to_string(image.width) + " x " + to_string(image.height) + " x " + to_string(image.component) + " x " + to_string(image.bits) + ": " + fileName);
+						auto textureData = ByteBuffer(image.width * image.height * image.component * image.bits / 8);
+						for (int y = image.height - 1; y >= 0; y--) {
+							textureData.put(&image.image[y * image.width * image.component * image.bits / 8], image.width * image.component * image.bits / 8);
+						}
+						auto texture = new Texture(
+							fileName,
+							Texture::getRGBDepthByPixelBitsPerPixel(image.bits * image.component),
+							Texture::getPNGFormatByPixelBitsPerPixel(image.bits * image.component),
+							image.width,
+							image.height,
+							image.width,
+							image.height,
+							Texture::getRGBFormatByPixelBitsPerPixel(image.bits * image.component),
+							textureData
+						);
+						texture->setUseCompression(useBC7TextureCompression);
+						//
+						pbrMaterialProperties->setEmissiveFactor(Color4(gltfMaterial.emissiveFactor[0], gltfMaterial.emissiveFactor[1], gltfMaterial.emissiveFactor[2], 1.0f));
+						pbrMaterialProperties->setEmissiveTexture(texture);
 						//
 						if (gltfTexture.sampler != -1) {
 							auto& sampler = gltfModel.samplers[gltfTexture.sampler];
@@ -891,16 +947,16 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 	return node;
 }
 
-void GLTFReader::parseNodeChildren(const string& pathName, tinygltf::Model& gltfModel, const vector<int>& gltfNodeChildrenIdx, Node* parentNode, int& anonymousNodeIdx) {
+void GLTFReader::parseNodeChildren(const string& pathName, tinygltf::Model& gltfModel, const vector<int>& gltfNodeChildrenIdx, Node* parentNode, int& anonymousNodeIdx, bool useBC7TextureCompression) {
 	for (auto gltfNodeIdx: gltfNodeChildrenIdx) {
 		auto& gltfNode = gltfModel.nodes[gltfNodeIdx];
-		auto node = parseNode(pathName, gltfModel, gltfNodeIdx, parentNode->getModel(), parentNode, anonymousNodeIdx);
+		auto node = parseNode(pathName, gltfModel, gltfNodeIdx, parentNode->getModel(), parentNode, anonymousNodeIdx, useBC7TextureCompression);
 		parentNode->getModel()->getNodes()[node->getId()] = node;
 		if (parentNode->getSubNodes().find(node->getId()) != parentNode->getSubNodes().end()) {
 			Console::println("GLTFReader::parseNodeChildren(): node already exists: " + node->getId());
 		}
 		parentNode->getSubNodes()[node->getId()] = node;
-		if (gltfNode.children.empty() == false) parseNodeChildren(pathName, gltfModel, gltfNode.children, node, anonymousNodeIdx);
+		if (gltfNode.children.empty() == false) parseNodeChildren(pathName, gltfModel, gltfNode.children, node, anonymousNodeIdx, useBC7TextureCompression);
 	}
 }
 

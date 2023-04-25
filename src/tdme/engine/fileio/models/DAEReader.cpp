@@ -26,6 +26,7 @@
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/subsystems/rendering/ModelStatistics.h>
 #include <tdme/engine/ModelUtilities.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
@@ -72,6 +73,7 @@ using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
 using tdme::engine::subsystems::rendering::ModelStatistics;
 using tdme::engine::ModelUtilities;
+using tdme::engine::Texture;
 using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
@@ -93,7 +95,7 @@ using tinyxml::TiXmlElement;
 
 const Color4 DAEReader::BLENDER_AMBIENT_NONE(0.0f, 0.0f, 0.0f, 1.0f);
 
-Model* DAEReader::read(const string& pathName, const string& fileName)
+Model* DAEReader::read(const string& pathName, const string& fileName, bool useBC7TextureCompression)
 {
 	// load dae xml document
 	auto xmlContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
@@ -166,7 +168,7 @@ Model* DAEReader::read(const string& pathName, const string& fileName)
 			model->setFPS(fps);
 			// visual scene root nodes
 			for (auto xmlNode: getChildrenByTagName(xmlLibraryVisualScene, "node")) {
-				auto node = readVisualSceneNode(pathName, model, nullptr, xmlRoot, xmlNode, fps);
+				auto node = readVisualSceneNode(pathName, model, nullptr, xmlRoot, xmlNode, fps, useBC7TextureCompression);
 				if (node != nullptr) {
 					model->getSubNodes()[node->getId()] = node;
 					model->getNodes()[node->getId()] = node;
@@ -255,17 +257,17 @@ void DAEReader::setupModelImportScaleMatrix(TiXmlElement* xmlRoot, Model* model)
 	}
 }
 
-Node* DAEReader::readVisualSceneNode(const string& pathName, Model* model, Node* parentNode, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps)
+Node* DAEReader::readVisualSceneNode(const string& pathName, Model* model, Node* parentNode, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps, bool useBC7TextureCompression)
 {
 	auto xmlInstanceControllers = getChildrenByTagName(xmlNode, "instance_controller");
 	if (xmlInstanceControllers.empty() == false) {
-		return readVisualSceneInstanceController(pathName, model, parentNode, xmlRoot, xmlNode);
+		return readVisualSceneInstanceController(pathName, model, parentNode, xmlRoot, xmlNode, useBC7TextureCompression);
 	} else {
-		return readNode(pathName, model, parentNode, xmlRoot, xmlNode, fps);
+		return readNode(pathName, model, parentNode, xmlRoot, xmlNode, fps, useBC7TextureCompression);
 	}
 }
 
-Node* DAEReader::readNode(const string& pathName, Model* model, Node* parentNode, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps)
+Node* DAEReader::readNode(const string& pathName, Model* model, Node* parentNode, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps, bool useBC7TextureCompression)
 {
 	auto xmlNodeId = string(AVOID_NULLPTR_STRING(xmlNode->Attribute("id")));
 	auto xmlNodeName = string(AVOID_NULLPTR_STRING(xmlNode->Attribute("name")));
@@ -323,9 +325,7 @@ Node* DAEReader::readNode(const string& pathName, Model* model, Node* parentNode
 			// check for sampler source
 			if (xmlSamplerOutputSource.length() == 0) {
 				throw ModelFileIOException(
-					"Could not find xml sampler output source for animation for '" +
-					(xmlNodeId) +
-					"'"
+					"Could not find xml sampler output source for animation for '" + xmlNodeId + "'"
 				);
 			}
 			// load animation input matrices
@@ -411,7 +411,7 @@ Node* DAEReader::readNode(const string& pathName, Model* model, Node* parentNode
 
 	// parse sub nodes
 	for (auto _xmlNode: getChildrenByTagName(xmlNode, "node")) {
-		auto _node = readVisualSceneNode(pathName, model, node, xmlRoot, _xmlNode, fps);
+		auto _node = readVisualSceneNode(pathName, model, node, xmlRoot, _xmlNode, fps, useBC7TextureCompression);
 		if (_node != nullptr) {
 			node->getSubNodes()[_node->getId()] = _node;
 			model->getNodes()[_node->getId()] = _node;
@@ -434,7 +434,7 @@ Node* DAEReader::readNode(const string& pathName, Model* model, Node* parentNode
 				string(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("target")));
 		}
 		// parse geometry
-		readGeometry(pathName, model, node, xmlRoot, xmlInstanceGeometryId, materialSymbols);
+		readGeometry(pathName, model, node, xmlRoot, xmlInstanceGeometryId, materialSymbols, useBC7TextureCompression);
 		return node;
 	}
 
@@ -450,7 +450,7 @@ Node* DAEReader::readNode(const string& pathName, Model* model, Node* parentNode
 		if (string(AVOID_NULLPTR_STRING(xmlLibraryNode->Attribute("id"))) == xmlInstanceNodeId) {
 			// parse sub nodes
 			for (auto _xmlNode: getChildrenByTagName(xmlLibraryNode, "node")) {
-				auto _node = readVisualSceneNode(pathName, model, parentNode, xmlRoot, _xmlNode, fps);
+				auto _node = readVisualSceneNode(pathName, model, parentNode, xmlRoot, _xmlNode, fps, useBC7TextureCompression);
 				if (_node != nullptr) {
 					node->getSubNodes()[_node->getId()] = _node;
 					model->getNodes()[_node->getId()] = _node;
@@ -468,14 +468,14 @@ Node* DAEReader::readNode(const string& pathName, Model* model, Node* parentNode
 						string(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("target")));
 				}
 				// parse geometry
-				readGeometry(pathName, model, node, xmlRoot, xmlGeometryId, materialSymbols);
+				readGeometry(pathName, model, node, xmlRoot, xmlGeometryId, materialSymbols, useBC7TextureCompression);
 			}
 		}
 	}
 	return node;
 }
 
-Node* DAEReader::readVisualSceneInstanceController(const string& pathName, Model* model, Node* parentNode, TiXmlElement* xmlRoot, TiXmlElement* xmlNode)
+Node* DAEReader::readVisualSceneInstanceController(const string& pathName, Model* model, Node* parentNode, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, bool useBC7TextureCompression)
 {
 	auto xmlNodeId = string(AVOID_NULLPTR_STRING(xmlNode->Attribute("id")));
 	auto xmlNodeName = string(AVOID_NULLPTR_STRING(xmlNode->Attribute("name")));
@@ -511,9 +511,7 @@ Node* DAEReader::readVisualSceneInstanceController(const string& pathName, Model
 	// check for xml skin
 	if (xmlSkin == nullptr) {
 		throw ModelFileIOException(
-			"skin not found for instance controller '" +
-			(xmlNodeId) +
-			"'"
+			"skin not found for instance controller '" + xmlNodeId + "'"
 		);
 	}
 
@@ -538,7 +536,7 @@ Node* DAEReader::readVisualSceneInstanceController(const string& pathName, Model
 	auto skinning = new Skinning();
 
 	// parse geometry
-	readGeometry(pathName, model, node, xmlRoot, xmlGeometryId, materialSymbols);
+	readGeometry(pathName, model, node, xmlRoot, xmlGeometryId, materialSymbols, useBC7TextureCompression);
 
 	// parse joints
 	string xmlJointsSource;
@@ -556,9 +554,7 @@ Node* DAEReader::readVisualSceneInstanceController(const string& pathName, Model
 	// check for joints sources
 	if (xmlJointsSource.length() == 0) {
 		throw ModelFileIOException(
-			"joint source not found for instance controller '" +
-			(xmlNodeId) +
-			"'"
+			"joint source not found for instance controller '" + xmlNodeId + "'"
 		);
 	}
 
@@ -576,9 +572,7 @@ Node* DAEReader::readVisualSceneInstanceController(const string& pathName, Model
 	// check for inverse bind matrices source
 	if (xmlJointsInverseBindMatricesSource.length() == 0) {
 		throw ModelFileIOException(
-			"inverse bind matrices source not found for instance controller '" +
-			(xmlNodeId) +
-			"'"
+			"inverse bind matrices source not found for instance controller '" + xmlNodeId + "'"
 		);
 	}
 
@@ -627,23 +621,17 @@ Node* DAEReader::readVisualSceneInstanceController(const string& pathName, Model
 	// check for vertex weight parameter
 	if (xmlJointOffset == -1) {
 		throw ModelFileIOException(
-			"xml vertex weight joint offset missing for node '" +
-			(xmlNodeId) +
-			"'"
+			"xml vertex weight joint offset missing for node '" + xmlNodeId + "'"
 		);
 	}
 	if (xmlWeightOffset == -1) {
 		throw ModelFileIOException(
-			"xml vertex weight weight offset missing for node " +
-			(xmlNodeId) +
-			"'"
+			"xml vertex weight weight offset missing for node " + xmlNodeId + "'"
 		);
 	}
 	if (xmlWeightsSource.length() == 0) {
 		throw ModelFileIOException(
-			"xml vertex weight weight source missing for node '" +
-			(xmlNodeId) +
-			"'"
+			"xml vertex weight weight source missing for node '" + xmlNodeId + "'"
 		);
 	}
 
@@ -694,7 +682,7 @@ Node* DAEReader::readVisualSceneInstanceController(const string& pathName, Model
 	return node;
 }
 
-void DAEReader::readGeometry(const string& pathName, Model* model, Node* node, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>& materialSymbols)
+void DAEReader::readGeometry(const string& pathName, Model* model, Node* node, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>& materialSymbols, bool useBC7TextureCompression)
 {
 	vector<FacesEntity> facesEntities = node->getFacesEntities();
 	auto verticesOffset = static_cast<int32_t>(node->getVertices().size());
@@ -731,9 +719,7 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Node* node, T
 						auto vertexCount = Integer::parse(t.nextToken());
 						if (vertexCount != 3) {
 							throw ModelFileIOException(
-								 "we only support triangles in '" +
-								 (xmlNodeId) +
-								 "'"
+								 "we only support triangles in '" + xmlNodeId + "'"
 							);
 						}
 					}
@@ -761,7 +747,7 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Node* node, T
 						material = materialIt->second;
 					} else {
 						// parse material as we do not have it yet
-						material = readMaterial(pathName, model, xmlRoot, xmlMaterialId);
+						material = readMaterial(pathName, model, xmlRoot, xmlMaterialId, useBC7TextureCompression);
 					}
 					// set it up
 					facesEntity.setMaterial(material);
@@ -810,17 +796,13 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Node* node, T
 				// check for triangles vertices sources
 				if (xmlVerticesSource.length() == 0) {
 					throw ModelFileIOException(
-						"Could not determine triangles vertices source for '" +
-						(xmlNodeId) +
-						"'"
+						"Could not determine triangles vertices source for '" + xmlNodeId + "'"
 					);
 				}
 				// check for triangles normals sources
 				if (xmlNormalsSource.length() == 0) {
 					throw ModelFileIOException(
-						"Could not determine triangles normal source for '" +
-						(xmlNodeId) +
-						"'"
+						"Could not determine triangles normal source for '" + xmlNodeId + "'"
 					);
 				}
 				// load vertices, normals, texture coordinates
@@ -962,7 +944,7 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Node* node, T
 	node->setFacesEntities(facesEntities);
 }
 
-Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlElement* xmlRoot, const string& xmlNodeId)
+Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlElement* xmlRoot, const string& xmlNodeId, bool useBC7TextureCompression)
 {
 	// determine effect id
 	string xmlEffectId;
@@ -1185,6 +1167,7 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 			xmlDiffuseTextureFilename = makeFileNameRelative(xmlDiffuseTextureFilename);
 			// add texture
 			specularMaterialProperties->setDiffuseTexture(pathName, xmlDiffuseTextureFilename, pathName, xmlTransparencyTextureFilename);
+			if (specularMaterialProperties->getDiffuseTexture() != nullptr) specularMaterialProperties->getDiffuseTexture()->setUseCompression(useBC7TextureCompression);
 			if (specularMaterialProperties->hasDiffuseTextureTransparency() == true) specularMaterialProperties->setDiffuseTextureMaskedTransparency(true);
 		}
 	}
@@ -1198,6 +1181,7 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 			xmlSpecularTextureFilename = makeFileNameRelative(xmlSpecularTextureFilename);
 			// add texture
 			specularMaterialProperties->setSpecularTexture(pathName, xmlSpecularTextureFilename);
+			if (specularMaterialProperties->getSpecularTexture() != nullptr) specularMaterialProperties->getSpecularTexture()->setUseCompression(useBC7TextureCompression);
 		}
 	}
 
@@ -1210,6 +1194,7 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 			xmlBumpTextureFilename = makeFileNameRelative(xmlBumpTextureFilename);
 			// add texture
 			specularMaterialProperties->setNormalTexture(pathName, xmlBumpTextureFilename);
+			if (specularMaterialProperties->getNormalTexture() != nullptr) specularMaterialProperties->getNormalTexture()->setUseCompression(useBC7TextureCompression);
 		}
 	}
 

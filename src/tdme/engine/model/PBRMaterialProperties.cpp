@@ -26,6 +26,8 @@ PBRMaterialProperties::PBRMaterialProperties()
 	metallicRoughnessTexture = nullptr;
 	normalScale = 1.0f;
 	normalTexture = nullptr;
+	emissiveTexture = nullptr;
+	emissiveFactor.set(1.0f, 1.0f, 1.0f, 1.0f);
 	exposure = 1.0f;
 }
 
@@ -86,6 +88,22 @@ void PBRMaterialProperties::setNormalTexture(const string& pathName, const strin
 	normalTexturePathName = pathName;
 	normalTextureFileName = fileName;
 	normalTexture = TextureReader::read(pathName, fileName);
+}
+
+void PBRMaterialProperties::setEmissiveTexture(Texture* emissiveTexture) {
+	if (this->emissiveTexture == emissiveTexture) return;
+	if (this->emissiveTexture != nullptr) this->emissiveTexture->releaseReference();
+	emissiveTexturePathName.clear();
+	emissiveTextureFileName = emissiveTexture->getId();
+	emissiveTexture->acquireReference();
+	this->emissiveTexture = emissiveTexture;
+}
+
+void PBRMaterialProperties::setEmissiveTexture(const string& pathName, const string& fileName) {
+	if (emissiveTexture != nullptr) emissiveTexture->releaseReference();
+	emissiveTexturePathName = pathName;
+	emissiveTextureFileName = fileName;
+	emissiveTexture = TextureReader::read(pathName, fileName);
 }
 
 void PBRMaterialProperties::checkBaseColorTextureTransparency()

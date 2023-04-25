@@ -40,10 +40,13 @@ protected:
 	int32_t uniformMetallicFactor { -1 };
 	int32_t uniformMetallicRoughnessSampler { -1 };
 	int32_t uniformMetallicRoughnessSamplerAvailable { -1 };
+	int32_t uniformRoughnessFactor { -1 };
 	int32_t uniformNormalSampler { -1 };
 	int32_t uniformNormalSamplerAvailable { -1 };
 	int32_t uniformNormalScale { -1 };
-	int32_t uniformRoughnessFactor { -1 };
+	int32_t uniformEmissiveSampler { -1 };
+	int32_t uniformEmissiveSamplerAvailable { -1 };
+	int32_t uniformEmissiveFactor { -1 };
 	int32_t uniformViewProjectionMatrix { -1 };
 	int32_t uniformDiffuseEnvSampler { -1 };
 	int32_t uniformSpecularEnvSampler { -1 };

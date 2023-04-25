@@ -114,7 +114,8 @@ public:
 	/**
 	 * Set model file
 	 * @param modelFileName model file name
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 */
-	void setModelFile(const string& modelFileName);
+	void setModelFile(const string& modelFileName, bool useBC7TextureCompression = true);
 
 };

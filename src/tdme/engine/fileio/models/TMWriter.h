@@ -227,17 +227,19 @@ public:
 	 * @param model model
 	 * @param pathName path name
 	 * @param fileName file name
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void write(Model* model, const string& pathName, const string& fileName);
+	static void write(Model* model, const string& pathName, const string& fileName, bool useBC7TextureCompression = true);
 
 	/**
 	 * TDME model format writer
 	 * @param model model
 	 * @param data data to write TM to
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 */
-	static void write(Model* model, vector<uint8_t>& data);
+	static void write(Model* model, vector<uint8_t>& data, bool useBC7TextureCompression = true);
 
 private:
 
@@ -245,9 +247,10 @@ private:
 	 * Write embedded textures
 	 * @param os output stream
 	 * @param m model
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @throws model file IO exception
 	 */
-	static void writeEmbeddedTextures(TMWriterOutputStream* os, Model* m);
+	static void writeEmbeddedTextures(TMWriterOutputStream* os, Model* m, bool useBC7TextureCompression);
 
 	/**
 	 * Write material

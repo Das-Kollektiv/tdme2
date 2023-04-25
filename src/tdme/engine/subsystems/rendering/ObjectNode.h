@@ -66,6 +66,7 @@ private:
 	vector<int32_t> pbrMaterialBaseColorTextureIdsByEntities;
 	vector<int32_t> pbrMaterialMetallicRoughnessTextureIdsByEntities;
 	vector<int32_t> pbrMaterialNormalTextureIdsByEntities;
+	vector<int32_t> pbrMaterialEmissiveTextureIdsByEntities;
 	ObjectNodeRenderer* renderer { nullptr };
 	ObjectNodeMesh* mesh { nullptr };
 	Matrix4x4* nodeTransformMatrix { nullptr };

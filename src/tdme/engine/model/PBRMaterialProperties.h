@@ -36,6 +36,10 @@ private:
 	string normalTexturePathName;
 	string normalTextureFileName;
 	Texture* normalTexture;
+	Color4 emissiveFactor;
+	string emissiveTexturePathName;
+	string emissiveTextureFileName;
+	Texture* emissiveTexture;
 	float exposure;
 
 	/**
@@ -280,6 +284,62 @@ public:
 	 */
 	inline Texture* getNormalTexture() const {
 		return normalTexture;
+	}
+
+	/**
+	 * @return emissive factor
+	 */
+	inline const Color4& getEmissiveFactor() const {
+		return emissiveFactor;
+	}
+
+	/**
+	 * Set emissive factor
+	 * @param emissiveFactor emissive factor
+	 */
+	inline void setEmissiveFactor(const Color4& emissiveFactor) {
+		this->emissiveFactor = emissiveFactor;
+	}
+
+	/**
+	 * @return emissive texture path name
+	 */
+	inline const string& getEmissiveTexturePathName() const {
+		return emissiveTexturePathName;
+	}
+
+	/**
+	 * @return emissive texture file name
+	 */
+	inline const string& getEmissiveTextureFileName() const {
+		return emissiveTextureFileName;
+	}
+
+	/**
+	 * Set up a emissive texture by the texture itself
+	 * @param normalTexture normal texture
+	 */
+	void setEmissiveTexture(Texture* emissiveTexture);
+
+	/**
+	 * Set up a emissive texture
+	 * @param pathName path name
+	 * @param fileName file name
+	 */
+	void setEmissiveTexture(const string& pathName, const string& fileName);
+
+	/**
+	 * @return if material has a emissive texture
+	 */
+	inline bool hasEmissiveTexture() const {
+		return emissiveTexture != nullptr;
+	}
+
+	/**
+	 * @return the material's emissive texture
+	 */
+	inline Texture* getEmissiveTexture() const {
+		return emissiveTexture;
 	}
 
 	/**

@@ -49,11 +49,12 @@ public:
 	 * Reads Collada DAE file
 	 * @param pathName path name
 	 * @param fileName file name
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @return model instance
 	 */
-	static Model* read(const string& pathName, const string& fileName);
+	static Model* read(const string& pathName, const string& fileName, bool useBC7TextureCompression = true);
 
 private:
 
@@ -94,9 +95,10 @@ private:
 	 * @param xmlRoot xml node
 	 * @param xmlNode xml root
 	 * @param fps frames per second
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @return node
 	 */
-	static Node* readVisualSceneNode(const string& pathName, Model* model, Node* parentNode, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps);
+	static Node* readVisualSceneNode(const string& pathName, Model* model, Node* parentNode, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps, bool useBC7TextureCompression);
 
 	/**
 	 * Reads a DAE visual scene node node
@@ -106,10 +108,11 @@ private:
 	 * @param xmlRoot xml node
 	 * @param xmlNode xml root
 	 * @param fps frames per seconds
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return node
 	 */
-	static Node* readNode(const string& pathName, Model* model, Node* parentNode, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps);
+	static Node* readNode(const string& pathName, Model* model, Node* parentNode, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps, bool useBC7TextureCompression);
 
 	/**
 	 * Reads a instance controller
@@ -118,11 +121,12 @@ private:
 	 * @param parentNode parent node
 	 * @param xmlRoot xml root
 	 * @param xmlNode xml node
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return Node
 	 * @throws tdme::utilities::Exception
 	 */
-	static Node* readVisualSceneInstanceController(const string& pathName, Model* model, Node* parentNode, TiXmlElement* xmlRoot, TiXmlElement* xmlNode);
+	static Node* readVisualSceneInstanceController(const string& pathName, Model* model, Node* parentNode, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, bool useBC7TextureCompression);
 
 	/**
 	 * Reads a geometry
@@ -132,9 +136,10 @@ private:
 	 * @param xmlRoot xml root
 	 * @param xmlNodeId xml node id
 	 * @param materialSymbols material symbols
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void readGeometry(const string& pathName, Model* model, Node* node, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>& materialSymbols);
+	static void readGeometry(const string& pathName, Model* model, Node* node, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>& materialSymbols, bool useBC7TextureCompression);
 
 	/**
 	 * Reads a material
@@ -142,9 +147,10 @@ private:
 	 * @param model model
 	 * @param xmlRoot xml root
 	 * @param xmlNodeId xml node id
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @return material
 	 */
-	static Material* readMaterial(const string& pathName, Model* model, TiXmlElement* xmlRoot, const string& xmlNodeId);
+	static Material* readMaterial(const string& pathName, Model* model, TiXmlElement* xmlRoot, const string& xmlNodeId, bool useBC7TextureCompression);
 
 	/**
 	 * Make file name relative

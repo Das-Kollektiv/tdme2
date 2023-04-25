@@ -54,6 +54,7 @@ in vec3 v_Position;
 uniform float u_MetallicFactor;
 uniform float u_RoughnessFactor;
 uniform vec4 u_BaseColorFactor;
+uniform vec3 u_EmissiveFactor;
 uniform float u_Exposure;
 uniform float u_AlphaCutoff;
 uniform int u_AlphaCutoffEnabled;
@@ -71,6 +72,7 @@ void main() {
 	pbrMaterial.metallicFactor = u_MetallicFactor;
 	pbrMaterial.roughnessFactor = u_RoughnessFactor;
 	pbrMaterial.baseColorFactor = u_BaseColorFactor;
+	pbrMaterial.emissiveFactor = u_EmissiveFactor;
 	pbrMaterial.exposure = u_Exposure;
 	pbrMaterial.alphaCutoff = u_AlphaCutoff;
 	pbrMaterial.alphaCutoffEnabled = u_AlphaCutoffEnabled;
@@ -83,6 +85,7 @@ void main() {
 	pbrMaterial.baseColorSamplerAvailable = u_BaseColorSamplerAvailable;
 	pbrMaterial.metallicRoughnessSamplerAvailable = u_MetallicRoughnessSamplerAvailable;
 	pbrMaterial.normal = getNormal();
+	pbrMaterial.emissiveSamplerAvailable = u_EmissiveSamplerAvailable;
 	#ifdef MATERIAL_SPECULARGLOSSINESS
 		pbrMaterial.specularGlossinessColor = getSpecularGlossinessColor();
 	#endif
@@ -92,6 +95,7 @@ void main() {
 	pbrMaterial.vertexColor = getVertexColor();
 	pbrMaterial.metallicRoughnessColor = pbrMaterial.metallicRoughnessSamplerAvailable == 1?getMetallicRoughnessColor():vec4(0.0, 1.0, 1.0, 0.0);
 	pbrMaterial.baseColor = pbrMaterial.baseColorSamplerAvailable == 1?getBaseColor():vec4(1.0, 1.0, 1.0, 1.0);
+	pbrMaterial.emissiveColor = pbrMaterial.emissiveSamplerAvailable == 1?getEmissiveColor():vec4(0.0, 0.0, 0.0, 1.0);
 	#ifdef DEBUG_NORMAL
 		pbrMaterial.normalColor = getNormalColor().rgb;
 	#endif
