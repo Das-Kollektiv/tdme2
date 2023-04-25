@@ -234,21 +234,23 @@ public:
 	 * TDME model format reader
 	 * @param pathName path name
 	 * @param fileName file name
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return model
 	 */
-	static Model* read(const string& pathName, const string& fileName);
+	static Model* read(const string& pathName, const string& fileName, bool useBC7TextureCompression = true);
 
 	/**
 	 * TDME model format reader
 	 * @param data data vector to read TM from
 	 * @param pathName path name file was read from
 	 * @param fileName file name was read from
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return model
 	 */
-	static Model* read(const vector<uint8_t>& data, const string& pathName = string(), const string& fileName = string());
+	static Model* read(const vector<uint8_t>& data, const string& pathName = string(), const string& fileName = string(), bool useBC7TextureCompression = true);
 
 private:
 	/**
@@ -276,6 +278,7 @@ private:
 	 * @param pathName path name
 	 * @param is input stream
 	 * @param embeddedTextures embedded textures
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @param version version
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return material
@@ -292,7 +295,7 @@ private:
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return material
 	 */
-	static Material* readMaterial(const string& pathName, TMReaderInputStream* is, Model* model, const map<string, Texture*>& embeddedTextures, const array<uint8_t, 3>& version);
+	static Material* readMaterial(const string& pathName, TMReaderInputStream* is, Model* model, const map<string, Texture*>& embeddedTextures, bool useBC7TextureCompression, const array<uint8_t, 3>& version);
 
 	/**
 	 * Read animation setup

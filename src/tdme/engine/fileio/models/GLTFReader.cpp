@@ -83,7 +83,7 @@ using tdme::utilities::ExceptionBase;
 using tdme::utilities::ModelTools;
 using tdme::utilities::StringTools;
 
-Model* GLTFReader::read(const string& pathName, const string& fileName)
+Model* GLTFReader::read(const string& pathName, const string& fileName, bool useBC7TextureCompression)
 {
 	// hello
 	Console::println("GLTFReader::read(): Loading model: " + pathName + "/" + fileName);
@@ -132,13 +132,13 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 	for (auto& gltfScene: gltfModel.scenes) {
 		for (auto gltfNodeIdx: gltfScene.nodes) {
 			auto& glTfNode = gltfModel.nodes[gltfNodeIdx];
-			auto node = parseNode(pathName, gltfModel, gltfNodeIdx, model, nullptr, anonymousNodeIdx);
+			auto node = parseNode(pathName, gltfModel, gltfNodeIdx, model, nullptr, anonymousNodeIdx, useBC7TextureCompression);
 			model->getNodes()[node->getId()] = node;
 			if (model->getSubNodes().find(node->getId()) != model->getSubNodes().end()) {
 				Console::println("GLTFReader::read(): node already exists: " + node->getId());
 			}
 			model->getSubNodes()[node->getId()] = node;
-			if (glTfNode.children.empty() == false) parseNodeChildren(pathName, gltfModel, glTfNode.children, node, anonymousNodeIdx);
+			if (glTfNode.children.empty() == false) parseNodeChildren(pathName, gltfModel, glTfNode.children, node, anonymousNodeIdx, useBC7TextureCompression);
 		}
 	}
 
@@ -341,7 +341,7 @@ void GLTFReader::interpolateKeyFrames(int frameTimeCount, const float* frameTime
 	}
 }
 
-Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, int gltfNodeIdx, Model* model, Node* parentNode, int& anonymousNodeIdx) {
+Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, int gltfNodeIdx, Model* model, Node* parentNode, int& anonymousNodeIdx, bool useBC7TextureCompression) {
 	auto& gltfNode = gltfModel.nodes[gltfNodeIdx];
 	// this fixes nodes that have no name
 	auto nodeId = gltfNode.name.empty() == true?"<" + to_string(anonymousNodeIdx++) + ">":gltfNode.name;
@@ -499,6 +499,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 							Texture::getRGBFormatByPixelBitsPerPixel(image.bits * image.component),
 							textureData
 						);
+						texture->setUseCompression(useBC7TextureCompression);
 						//
 						pbrMaterialProperties->setBaseColorTexture(texture);
 						if (pbrMaterialProperties->hasBaseColorTextureTransparency() == true) pbrMaterialProperties->setBaseColorTextureMaskedTransparency(true);
@@ -553,6 +554,8 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 							Texture::getRGBFormatByPixelBitsPerPixel(image.bits * image.component),
 							textureData
 						);
+						texture->setUseCompression(useBC7TextureCompression);
+						//
 						pbrMaterialProperties->setMetallicRoughnessTexture(texture);
 						//
 						if (gltfTexture.sampler != -1) {
@@ -603,6 +606,8 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 							Texture::getRGBFormatByPixelBitsPerPixel(image.bits * image.component),
 							textureData
 						);
+						texture->setUseCompression(useBC7TextureCompression);
+						//
 						pbrMaterialProperties->setNormalTexture(texture);
 						//
 						if (gltfTexture.sampler != -1) {
@@ -891,16 +896,16 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 	return node;
 }
 
-void GLTFReader::parseNodeChildren(const string& pathName, tinygltf::Model& gltfModel, const vector<int>& gltfNodeChildrenIdx, Node* parentNode, int& anonymousNodeIdx) {
+void GLTFReader::parseNodeChildren(const string& pathName, tinygltf::Model& gltfModel, const vector<int>& gltfNodeChildrenIdx, Node* parentNode, int& anonymousNodeIdx, bool useBC7TextureCompression) {
 	for (auto gltfNodeIdx: gltfNodeChildrenIdx) {
 		auto& gltfNode = gltfModel.nodes[gltfNodeIdx];
-		auto node = parseNode(pathName, gltfModel, gltfNodeIdx, parentNode->getModel(), parentNode, anonymousNodeIdx);
+		auto node = parseNode(pathName, gltfModel, gltfNodeIdx, parentNode->getModel(), parentNode, anonymousNodeIdx, useBC7TextureCompression);
 		parentNode->getModel()->getNodes()[node->getId()] = node;
 		if (parentNode->getSubNodes().find(node->getId()) != parentNode->getSubNodes().end()) {
 			Console::println("GLTFReader::parseNodeChildren(): node already exists: " + node->getId());
 		}
 		parentNode->getSubNodes()[node->getId()] = node;
-		if (gltfNode.children.empty() == false) parseNodeChildren(pathName, gltfModel, gltfNode.children, node, anonymousNodeIdx);
+		if (gltfNode.children.empty() == false) parseNodeChildren(pathName, gltfModel, gltfNode.children, node, anonymousNodeIdx, useBC7TextureCompression);
 	}
 }
 

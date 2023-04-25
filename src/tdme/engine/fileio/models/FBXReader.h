@@ -36,11 +36,12 @@ public:
 	 * Reads FBX file
 	 * @param pathName path name
 	 * @param fileName file name
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @return model instance
 	 */
-	static Model* read(const string& pathName, const string& fileName);
+	static Model* read(const string& pathName, const string& fileName, bool useBC7TextureCompression = true);
 
 private:
 	STATIC_DLL_IMPEXT static const Color4 BLENDER_AMBIENT_NONE;
@@ -80,8 +81,9 @@ private:
 	 * @param model model
 	 * @param pathName path name
 	 * @param possibleArmatureNodeIds possible armature node ids
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 */
-	static void processScene(FbxScene* fbxScene, Model* model, const string& pathName, vector<string>& possibleArmatureNodeIds);
+	static void processScene(FbxScene* fbxScene, Model* model, const string& pathName, vector<string>& possibleArmatureNodeIds, bool useBC7TextureCompression);
 
 	/**
 	 * Process FBX node
@@ -90,8 +92,9 @@ private:
 	 * @param parentNode parent node
 	 * @param pathName path name
 	 * @param possibleArmatureNodeIds possible armature node ids
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 */
-	static void processNode(FbxNode* fbxNode, Model* model, Node* parentNode, const string& pathName, vector<string>& possibleArmatureNodeIds);
+	static void processNode(FbxNode* fbxNode, Model* model, Node* parentNode, const string& pathName, vector<string>& possibleArmatureNodeIds, bool useBC7TextureCompression);
 
 	/**
 	 * Process FBX mesh node
@@ -99,8 +102,9 @@ private:
 	 * @param model model
 	 * @param parentNode parent node
 	 * @param pathName path name
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 */
-	static Node* processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNode, const string& pathName);
+	static Node* processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNode, const string& pathName, bool useBC7TextureCompression);
 
 	/**
 	 * Process FBX skeleton node

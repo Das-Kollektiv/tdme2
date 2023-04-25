@@ -59,12 +59,13 @@ public:
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @param transformFilter transform filter or nullptr
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return prototype
 	 */
-	inline static Prototype* read(const string& pathName, const string& fileName, PrototypeTransformFilter* transformFilter = nullptr) {
-		return read(Prototype::ID_NONE, pathName, fileName, transformFilter);
+	inline static Prototype* read(const string& pathName, const string& fileName, PrototypeTransformFilter* transformFilter = nullptr, bool useBC7TextureCompression = true) {
+		return read(Prototype::ID_NONE, pathName, fileName, transformFilter, useBC7TextureCompression);
 	}
 
 	/**
@@ -73,11 +74,12 @@ public:
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @param transformFilter transform filter or nullptr
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return prototype
 	 */
-	static Prototype* read(int id, const string& pathName, const string& fileName, PrototypeTransformFilter* transformFilter = nullptr);
+	static Prototype* read(int id, const string& pathName, const string& fileName, PrototypeTransformFilter* transformFilter = nullptr, bool useBC7TextureCompression = true);
 
 	/**
 	 * Get resource path name
@@ -94,11 +96,12 @@ private:
 	 * @param pathName path name or null
 	 * @param jPrototypeRoot JSON entity root
 	 * @param transformFilter transform filter or nullptr
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return prototype
 	 */
-	static Prototype* read(int id, const string& pathName, Value& jPrototypeRoot, PrototypeTransformFilter* transformFilter = nullptr);
+	static Prototype* read(int id, const string& pathName, Value& jPrototypeRoot, PrototypeTransformFilter* transformFilter = nullptr, bool useBC7TextureCompression = true);
 
 	/**
 	 * Parse bounding volume
@@ -116,24 +119,27 @@ private:
 	 * Parse LOD level
 	 * @param pathName path name
 	 * @param jLodLevel JSON LOD level
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @return prototype lod level
 	 */
-	static PrototypeLODLevel* parseLODLevel(const string& pathName, Value& jLodLevel);
+	static PrototypeLODLevel* parseLODLevel(const string& pathName, Value& jLodLevel, bool useBC7TextureCompression);
 
 	/**
 	 * Parse LOD level
 	 * @param pathName path name
 	 * @param jImposterLOD JSON Imposter LOD level
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @return prototype imposter LOD
 	 */
-	static PrototypeImposterLOD* parseImposterLODLevel(const string& pathName, Value& jImposterLOD);
+	static PrototypeImposterLOD* parseImposterLODLevel(const string& pathName, Value& jImposterLOD, bool useBC7TextureCompression);
 
 	/**
 	 * Parse particle system
 	 * @param particleSystem particle system to be parsed into
 	 * @param pathName path name
 	 * @param jParticleSystem JSON particle system object
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 */
-	static void parseParticleSystem(PrototypeParticleSystem* particleSystem, const string& pathName, Value& jParticleSystem);
+	static void parseParticleSystem(PrototypeParticleSystem* particleSystem, const string& pathName, Value& jParticleSystem, bool useBC7TextureCompression);
 
 };

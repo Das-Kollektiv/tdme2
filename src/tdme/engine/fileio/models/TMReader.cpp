@@ -67,14 +67,14 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::ModelTools;
 
-Model* TMReader::read(const string& pathName, const string& fileName)
+Model* TMReader::read(const string& pathName, const string& fileName, bool useBC7TextureCompression)
 {
 	vector<uint8_t> data;
 	FileSystem::getInstance()->getContent(pathName, fileName, data);
-	return read(data, pathName, fileName);
+	return read(data, pathName, fileName, useBC7TextureCompression);
 }
 
-Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const string& fileName) {
+Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const string& fileName, bool useBC7TextureCompression) {
 	TMReaderInputStream is(&data);
 	auto fileId = is.readString();
 	if (fileId.length() == 0 || fileId != "TDME Model") {
@@ -151,7 +151,7 @@ Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const
 	}
 	auto materialCount = is.readInt();
 	for (auto i = 0; i < materialCount; i++) {
-		auto material = readMaterial(pathName, &is, model, embeddedTextures, version);
+		auto material = readMaterial(pathName, &is, model, embeddedTextures, useBC7TextureCompression, version);
 		model->getMaterials()[material->getId()] = material;
 	}
 	readSubNodes(&is, model, nullptr, model->getSubNodes());
@@ -205,6 +205,7 @@ void TMReader::readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture
 					embeddedTexture->setMinFilter(minFilter);
 					embeddedTexture->setMagFilter(magFilter);
 				}
+				embeddedTexture->setUseCompression(false);
 				embeddedTexture->acquireReference();
 				embeddedTextures[embeddedTextureId] = embeddedTexture;
 			}
@@ -242,6 +243,7 @@ void TMReader::readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture
 					embeddedTexture->setMinFilter(minFilter);
 					embeddedTexture->setMagFilter(magFilter);
 				}
+				embeddedTexture->setUseCompression(true);
 				embeddedTexture->acquireReference();
 				embeddedTextures[embeddedTextureId] = embeddedTexture;
 			}
@@ -303,13 +305,14 @@ void TMReader::readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture
 			//
 			if (embeddedTexture != nullptr) {
 				embeddedTexture->acquireReference();
+				embeddedTexture->setUseCompression(true);
 				embeddedTextures[embeddedTextureId] = embeddedTexture;
 			}
 		}
 	}
 }
 
-Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is, Model* model, const map<string, Texture*>& embeddedTextures, const array<uint8_t, 3>& version)
+Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is, Model* model, const map<string, Texture*>& embeddedTextures, bool useBC7TextureCompression, const array<uint8_t, 3>& version)
 {
 	// TODO: minFilter, magFilter for non embedded textures
 	auto id = is->readString();
@@ -347,6 +350,7 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 			getTexturePath(pathName, diffuseTransparencyTexturePathName, diffuseTransparencyTextureFileName),
 			diffuseTransparencyTextureFileName
 		);
+		if (smp->getDiffuseTexture() != nullptr) smp->getDiffuseTexture()->setUseCompression(useBC7TextureCompression);
 	}
 	auto specularTexturePathName = is->readString();
 	auto specularTextureFileName = is->readString();
@@ -355,6 +359,7 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 			getTexturePath(pathName, specularTexturePathName, specularTextureFileName),
 			specularTextureFileName
 		);
+		if (smp->getSpecularTexture() != nullptr) smp->getSpecularTexture()->setUseCompression(useBC7TextureCompression);
 	}
 	auto normalTexturePathName = is->readString();
 	auto normalTextureFileName = is->readString();
@@ -363,6 +368,7 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 			getTexturePath(pathName, normalTexturePathName, normalTextureFileName),
 			normalTextureFileName
 		);
+		if (smp->getNormalTexture() != nullptr) smp->getNormalTexture()->setUseCompression(useBC7TextureCompression);
 	}
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 9) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 10) ||
@@ -456,6 +462,7 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 			auto baseColorTextureFileName = is->readString();
 			if (pmpEmbeddedTextures == false && baseColorTextureFileName.empty() == false) {
 				pmp->setBaseColorTexture(baseColorTexturePathName, baseColorTextureFileName);
+				if (pmp->getBaseColorTexture() != nullptr) pmp->getBaseColorTexture()->setUseCompression(useBC7TextureCompression);
 			}
 			pmp->setBaseColorTextureMaskedTransparency(is->readBoolean());
 			pmp->setBaseColorTextureMaskedTransparency(is->readFloat());
@@ -465,12 +472,14 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 			auto metallicRoughnessTextureFileName = is->readString();
 			if (pmpEmbeddedTextures && metallicRoughnessTextureFileName.empty() == false) {
 				pmp->setMetallicRoughnessTexture(metallicRoughnessTexturePathName, metallicRoughnessTextureFileName);
+				if (pmp->getMetallicRoughnessTexture() != nullptr) pmp->getMetallicRoughnessTexture()->setUseCompression(useBC7TextureCompression);
 			}
 			pmp->setNormalScale(is->readFloat());
 			auto pbrNormalTexturePathName = is->readString();
 			auto pbrNormalTextureFileName = is->readString();
 			if (pmpEmbeddedTextures == false && pbrNormalTextureFileName.empty() == false) {
 				pmp->setNormalTexture(pbrNormalTexturePathName, pbrNormalTextureFileName);
+				if (pmp->getNormalTexture() != nullptr) pmp->getNormalTexture()->setUseCompression(useBC7TextureCompression);
 			}
 			pmp->setExposure(is->readFloat());
 			if ((version[0] == 1 && version[1] == 9 && version[2] == 17) ||

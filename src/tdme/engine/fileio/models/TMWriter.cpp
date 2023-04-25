@@ -78,14 +78,14 @@ using tdme::tools::editor::misc::Tools;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 
-void TMWriter::write(Model* model, const string& pathName, const string& fileName)
+void TMWriter::write(Model* model, const string& pathName, const string& fileName, bool useBC7TextureCompression)
 {
 	vector<uint8_t> data;
-	write(model, data);
+	write(model, data, useBC7TextureCompression);
 	FileSystem::getInstance()->setContent(pathName, fileName, data);
 }
 
-void TMWriter::write(Model* model, vector<uint8_t>& data) {
+void TMWriter::write(Model* model, vector<uint8_t>& data, bool useBC7TextureCompression) {
 	TMWriterOutputStream os(&data);
 	os.writeString("TDME Model");
 	os.writeByte(static_cast<uint8_t>(1));
@@ -101,7 +101,7 @@ void TMWriter::write(Model* model, vector<uint8_t>& data) {
 	os.writeFloatArray(model->getBoundingBox()->getMax().getArray());
 	os.writeFloat(model->getFPS());
 	os.writeFloatArray(model->getImportTransformMatrix().getArray());
-	writeEmbeddedTextures(&os, model);
+	writeEmbeddedTextures(&os, model, useBC7TextureCompression);
 	os.writeInt(model->getMaterials().size());
 	for (auto it: model->getMaterials()) {
 		Material* material = it.second;
@@ -116,7 +116,7 @@ void TMWriter::write(Model* model, vector<uint8_t>& data) {
 	if (Application::hasApplication() == true && os.getData()->size() < 10 * 1024 * 1024) writeThumbnail(&os, model);
 }
 
-void TMWriter::writeEmbeddedTextures(TMWriterOutputStream* os, Model* m) {
+void TMWriter::writeEmbeddedTextures(TMWriterOutputStream* os, Model* m, bool useBC7TextureCompression) {
 	map<string, Texture*> embeddedTextures;
 	for (auto it: m->getMaterials()) {
 		Material* material = it.second;
@@ -138,54 +138,40 @@ void TMWriter::writeEmbeddedTextures(TMWriterOutputStream* os, Model* m) {
 		auto texture = it.second;
 		os->writeString(texture->getId());
 		// optional PNG
-		/*
-		vector<uint8_t> pngData;
-		PNGTextureWriter::write(texture, pngData, false, false);
-		os->writeByte(1); // PNG
-		os->writeByte(texture->getMinFilter());
-		os->writeByte(texture->getMagFilter());
-		os->writeInt(pngData.size());
-		os->writeUInt8tArray(pngData);
-		*/
-		//
-		/*
-		os->writeByte(2); // BC7
-		vector<uint8_t> bc7Data;
-		os->writeInt(texture->getWidth());
-		os->writeInt(texture->getHeight());
-		os->writeInt(texture->getTextureWidth());
-		os->writeInt(texture->getTextureHeight());
-		os->writeByte(texture->getRGBDepthBitsPerPixel());
-		os->writeByte(texture->getMinFilter());
-		os->writeByte(texture->getMagFilter());
-		BC7TextureWriter::write(texture->getTextureWidth(), texture->getTextureHeight(), texture->getRGBDepthBitsPerPixel() / 8, texture->getRGBTextureData(), bc7Data);
-		os->writeInt(bc7Data.size());
-		os->writeUInt8tArray(bc7Data);
-		*/
-		os->writeByte(3); // BC7 with mip maps
-		vector<uint8_t> bc7Data;
-		os->writeInt(texture->getWidth());
-		os->writeInt(texture->getHeight());
-		os->writeInt(texture->getTextureWidth());
-		os->writeInt(texture->getTextureHeight());
-		os->writeByte(texture->getRGBDepthBitsPerPixel());
-		os->writeByte(texture->getMinFilter());
-		os->writeByte(texture->getMagFilter());
-		BC7TextureWriter::write(texture->getTextureWidth(), texture->getTextureHeight(), texture->getRGBDepthBitsPerPixel() / 8, texture->getRGBTextureData(), bc7Data);
-		os->writeInt(bc7Data.size());
-		os->writeUInt8tArray(bc7Data);
-		if (texture->isUseMipMap() == false) {
-			os->writeByte(0);
-		} else {
-			auto mipMapTextures = texture->getMipMapTextures(true);
-			os->writeByte(mipMapTextures.size());
-			for (auto& mipMapTexture: mipMapTextures) {
-				os->writeByte(mipMapTexture.format);
-				os->writeInt(mipMapTexture.width);
-				os->writeInt(mipMapTexture.height);
-				os->writeInt(mipMapTexture.textureData.getBufferVector()->size());
-				os->writeUInt8tArray(*mipMapTexture.textureData.getBufferVector());
+		if (useBC7TextureCompression == true) {
+			os->writeByte(3); // BC7 with mip maps
+			vector<uint8_t> bc7Data;
+			os->writeInt(texture->getWidth());
+			os->writeInt(texture->getHeight());
+			os->writeInt(texture->getTextureWidth());
+			os->writeInt(texture->getTextureHeight());
+			os->writeByte(texture->getRGBDepthBitsPerPixel());
+			os->writeByte(texture->getMinFilter());
+			os->writeByte(texture->getMagFilter());
+			BC7TextureWriter::write(texture->getTextureWidth(), texture->getTextureHeight(), texture->getRGBDepthBitsPerPixel() / 8, texture->getRGBTextureData(), bc7Data);
+			os->writeInt(bc7Data.size());
+			os->writeUInt8tArray(bc7Data);
+			if (texture->isUseMipMap() == false) {
+				os->writeByte(0);
+			} else {
+				auto mipMapTextures = texture->getMipMapTextures(true);
+				os->writeByte(mipMapTextures.size());
+				for (auto& mipMapTexture: mipMapTextures) {
+					os->writeByte(mipMapTexture.format);
+					os->writeInt(mipMapTexture.width);
+					os->writeInt(mipMapTexture.height);
+					os->writeInt(mipMapTexture.textureData.getBufferVector()->size());
+					os->writeUInt8tArray(*mipMapTexture.textureData.getBufferVector());
+				}
 			}
+		} else {
+			vector<uint8_t> pngData;
+			PNGTextureWriter::write(texture, pngData, false, false);
+			os->writeByte(1); // PNG
+			os->writeByte(texture->getMinFilter());
+			os->writeByte(texture->getMagFilter());
+			os->writeInt(pngData.size());
+			os->writeUInt8tArray(pngData);
 		}
 	}
 }
