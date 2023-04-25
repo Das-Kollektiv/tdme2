@@ -388,9 +388,8 @@ vec4 computePBRLighting(in vec3 position, in PBRMaterial pbrMaterial)
     color = mix(color, color * ao, pbrMaterial.occlusionStrength);
 #endif
 
-	vec3 emissive = vec3(0);
-	emissive = pbrMaterial.emissiveColor.rgb * pbrMaterial.emissiveFactor;
-	color += emissive;
+	vec3 emissive = pbrMaterial.emissiveColor.rgb * pbrMaterial.emissiveFactor;
+	color += pbrMaterial.emissiveColor.rgb * pbrMaterial.emissiveFactor;
 
 #ifndef DEBUG_OUTPUT // no debug
 
