@@ -68,14 +68,23 @@ void LightingShaderPBRBaseImplementation::initialize()
 	if (uniformMetallicRoughnessSampler == -1) return;
 	uniformMetallicRoughnessSamplerAvailable = renderer->getProgramUniformLocation(programId, "u_MetallicRoughnessSamplerAvailable");
 	if (uniformMetallicRoughnessSamplerAvailable == -1) return;
+	uniformRoughnessFactor = renderer->getProgramUniformLocation(programId, "u_RoughnessFactor");
+	if (uniformRoughnessFactor == -1) return;
 	uniformNormalSampler = renderer->getProgramUniformLocation(programId, "u_NormalSampler");
 	if (uniformNormalSampler == -1) return;
 	uniformNormalSamplerAvailable = renderer->getProgramUniformLocation(programId, "u_NormalSamplerAvailable");
 	if (uniformNormalSamplerAvailable == -1) return;
 	uniformNormalScale = renderer->getProgramUniformLocation(programId, "u_NormalScale");
 	if (uniformNormalScale == -1) return;
-	uniformRoughnessFactor = renderer->getProgramUniformLocation(programId, "u_RoughnessFactor");
-	if (uniformRoughnessFactor == -1) return;
+	uniformEmissiveSampler = renderer->getProgramUniformLocation(programId, "u_EmissiveSampler");
+	// TODO
+	// if (uniformEmissiveSampler == -1) return;
+	uniformEmissiveSamplerAvailable = renderer->getProgramUniformLocation(programId, "u_EmissiveSamplerAvailable");
+	// TODO
+	// if (uniformEmissiveSamplerAvailable == -1) return;
+	uniformEmissiveFactor = renderer->getProgramUniformLocation(programId, "u_EmissiveFactor");
+	// TODO
+	// if (uniformEmissiveFactor == -1) return;
 	uniformViewProjectionMatrix = renderer->getProgramUniformLocation(programId, "u_ViewProjectionMatrix");
 	if (uniformViewProjectionMatrix == -1) return;
 	for (auto i = 0; i < Engine::LIGHTS_MAX; i++) {
@@ -132,6 +141,7 @@ void LightingShaderPBRBaseImplementation::useProgram(Engine* engine, int context
 	renderer->setProgramUniformInteger(contextIdx, uniformBaseColorSampler, LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR);
 	renderer->setProgramUniformInteger(contextIdx, uniformMetallicRoughnessSampler, LightingShaderConstants::PBR_TEXTUREUNIT_METALLICROUGHNESS);
 	renderer->setProgramUniformInteger(contextIdx, uniformNormalSampler, LightingShaderConstants::PBR_TEXTUREUNIT_NORMAL);
+	renderer->setProgramUniformInteger(contextIdx, uniformEmissiveSampler, LightingShaderConstants::PBR_TEXTUREUNIT_EMISSIVE);
 	renderer->setProgramUniformInteger(contextIdx, uniformDiffuseEnvSampler, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_DIFFUSE);
 	renderer->setProgramUniformInteger(contextIdx, uniformSpecularEnvSampler, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_SPECULAR);
 	renderer->setProgramUniformInteger(contextIdx, uniformbrdfLUT, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_BRDF);
@@ -151,6 +161,8 @@ void LightingShaderPBRBaseImplementation::unUseProgram(int contextIdx)
 	renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_METALLICROUGHNESS);
 	renderer->bindTexture(contextIdx, renderer->ID_NONE);
 	renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_NORMAL);
+	renderer->bindTexture(contextIdx, renderer->ID_NONE);
+	renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_EMISSIVE);
 	renderer->bindTexture(contextIdx, renderer->ID_NONE);
 	renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_DIFFUSE);
 	renderer->bindTexture(contextIdx, renderer->ID_NONE);

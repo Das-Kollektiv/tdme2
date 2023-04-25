@@ -1204,6 +1204,9 @@ void EntityRenderer::setupMaterial(int contextIdx, ObjectNode* objectNode, int32
 				// bind normal texture
 				renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_NORMAL);
 				renderer->bindTexture(contextIdx, objectNode->pbrMaterialNormalTextureIdsByEntities[facesEntityIdx]);
+				// bind emissive texture
+				renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_EMISSIVE);
+				renderer->bindTexture(contextIdx, objectNode->pbrMaterialEmissiveTextureIdsByEntities[facesEntityIdx]);
 				// switch back texture unit to base color unit
 				renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR);
 			}
@@ -1284,6 +1287,9 @@ void EntityRenderer::clearMaterial(int contextIdx)
 		renderer->bindTexture(contextIdx, renderer->ID_NONE);
 		// unbind normal texture
 		renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_NORMAL);
+		renderer->bindTexture(contextIdx, renderer->ID_NONE);
+		// unbind emissive texture
+		renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_EMISSIVE);
 		renderer->bindTexture(contextIdx, renderer->ID_NONE);
 		// set diffuse texture unit
 		renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR);
