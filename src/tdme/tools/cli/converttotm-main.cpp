@@ -240,7 +240,7 @@ int main(int argc, char** argv)
 	Console::println(Version::getCopyright());
 	Console::println();
 	if (argc < 2) {
-		Console::println("Usage: converttotm [--no-bc7] inputfile1 [inputfileN]");
+		Console::println("Usage: converttotm [-no-texture-compression] inputfile1 [inputfileN]");
 		Application::exit(1);
 	}
 	tdme::tools::cli::ConvertToTMApplication::main(argc, argv);
