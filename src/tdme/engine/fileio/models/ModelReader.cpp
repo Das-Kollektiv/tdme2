@@ -40,20 +40,20 @@ const vector<string>& ModelReader::getModelExtensions() {
 	return extensions;
 }
 
-Model* ModelReader::read(const string& pathName, const string& fileName)
+Model* ModelReader::read(const string& pathName, const string& fileName, bool useBC7TextureCompression)
 {
 	try {
 		if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".dae") == true) {
-			return DAEReader::read(pathName, fileName);
+			return DAEReader::read(pathName, fileName, useBC7TextureCompression);
 		} else
 		if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".glb") == true) {
-			return GLTFReader::read(pathName, fileName);
+			return GLTFReader::read(pathName, fileName, useBC7TextureCompression);
 		} else
 		if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".gltf") == true) {
-			return GLTFReader::read(pathName, fileName);
+			return GLTFReader::read(pathName, fileName, useBC7TextureCompression);
 		} else
 		if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tm") == true) {
-			return TMReader::read(pathName, fileName);
+			return TMReader::read(pathName, fileName, useBC7TextureCompression);
 		} else
 		if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmodel") == true) {
 			auto prototype = PrototypeReader::read(pathName, fileName);

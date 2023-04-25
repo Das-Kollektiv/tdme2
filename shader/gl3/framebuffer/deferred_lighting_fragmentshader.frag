@@ -153,6 +153,7 @@ void main(void) {
 		pbrMaterial.metallicFactor = fragmentParameters[0];
 		pbrMaterial.roughnessFactor = fragmentParameters[1];
 		pbrMaterial.baseColorFactor = texture(colorBufferTextureUnit3, vsFragTextureUV);
+		pbrMaterial.emissiveFactor = texture(colorBufferTextureUnit5, vsFragTextureUV).rgb;
 		pbrMaterial.exposure = fragmentParameters[2];
 		pbrMaterial.alphaCutoff = -1;
 		pbrMaterial.alphaCutoffEnabled = -1;
@@ -165,6 +166,7 @@ void main(void) {
 		pbrMaterial.baseColorSamplerAvailable = -1;
 		pbrMaterial.metallicRoughnessSamplerAvailable = -1;
 		pbrMaterial.normal = texture(geometryBufferTextureId2, vsFragTextureUV).xyz;
+		pbrMaterial.emissiveSamplerAvailable = -1;
 		#ifdef MATERIAL_SPECULARGLOSSINESS
 			pbrMaterial.specularGlossinessColor = ...
 		#endif
@@ -174,6 +176,7 @@ void main(void) {
 		pbrMaterial.vertexColor = vec4(1.0, 1.0, 1.0, 1.0);
 		pbrMaterial.metallicRoughnessColor = texture(colorBufferTextureUnit2, vsFragTextureUV);
 		pbrMaterial.baseColor = texture(colorBufferTextureUnit1, vsFragTextureUV);
+		pbrMaterial.emissiveColor = texture(colorBufferTextureUnit4, vsFragTextureUV);
 		#ifdef DEBUG_NORMAL
 			pbrMaterial.normalColor = ...
 		#endif

@@ -1,18 +1,15 @@
 in vec2 v_UVCoord1;
 in vec2 v_UVCoord2;
 
-// General Material
+// general material
 uniform int u_NormalSamplerAvailable;
 uniform sampler2D u_NormalSampler;
 uniform float u_NormalScale;
 in mat3 v_TBN;
 
-#ifdef HAS_EMISSIVE_MAP
+// emissive
+uniform int u_EmissiveSamplerAvailable;
 uniform sampler2D u_EmissiveSampler;
-uniform int u_EmissiveUVSet;
-uniform vec3 u_EmissiveFactor;
-uniform mat3 u_EmissiveUVTransform;
-#endif
 
 #ifdef HAS_OCCLUSION_MAP
 uniform sampler2D u_OcclusionSampler;
@@ -21,11 +18,9 @@ uniform float u_OcclusionStrength;
 uniform mat3 u_OcclusionUVTransform;
 #endif
 
-#ifdef MATERIAL_METALLICROUGHNESS
 // Metallic Roughness Material
 uniform int u_BaseColorSamplerAvailable;
 uniform sampler2D u_BaseColorSampler;
-#endif
 
 uniform int u_MetallicRoughnessSamplerAvailable;
 uniform sampler2D u_MetallicRoughnessSampler;
@@ -73,22 +68,19 @@ vec3 getNormal()
     return n;
 }
 
-#ifdef HAS_EMISSIVE_MAP
 vec2 getEmissiveUV()
 {
-    vec3 uv = vec3(v_UVCoord1, 1.0);
-    uv.xy = u_EmissiveUVSet < 1 ? v_UVCoord1 : v_UVCoord2;
-    #ifdef HAS_EMISSIVE_UV_TRANSFORM
-    uv *= u_EmissiveUVTransform;
-    #endif
-    return uv.xy;
+	return v_UVCoord1;
 }
 
 vec4 getEmissiveColor()
 {
-	return texture(u_EmissiveSampler, getEmissiveUV());
+	if (u_EmissiveSamplerAvailable == 1) {
+		return texture(u_EmissiveSampler, getEmissiveUV());
+	} else {
+		return vec4(0.0);
+	}
 }
-#endif
 
 #ifdef HAS_OCCLUSION_MAP
 vec2 getOcclusionUV()
@@ -117,7 +109,6 @@ vec4 getBaseColor()
     return texture(u_BaseColorSampler, getBaseColorUV());
 }
 
-#ifdef MATERIAL_METALLICROUGHNESS
 vec2 getMetallicRoughnessUV()
 {
     return v_UVCoord1;
@@ -127,7 +118,6 @@ vec4 getMetallicRoughnessColor()
 {
     return texture(u_MetallicRoughnessSampler, getMetallicRoughnessUV());
 }
-#endif
 
 #ifdef HAS_SPECULAR_GLOSSINESS_MAP
 vec2 getSpecularGlossinessUV()

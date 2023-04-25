@@ -141,7 +141,7 @@ bool PrototypeReader::readThumbnail(const string& pathName, const string& fileNa
 	}
 }
 
-Prototype* PrototypeReader::read(int id, const string& pathName, const string& fileName, PrototypeTransformFilter* transformFilter)
+Prototype* PrototypeReader::read(int id, const string& pathName, const string& fileName, PrototypeTransformFilter* transformFilter, bool useBC7TextureCompression)
 {
 	//
 	if (Tools::hasFileExtension(fileName, {{"tmodel"}}) == false &&
@@ -154,7 +154,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const string& f
 			pathName + "/" + fileName,
 			pathName + "/" + fileName,
 			string(),
-			ModelReader::read(pathName, fileName),
+			ModelReader::read(pathName, fileName, useBC7TextureCompression),
 			Vector3(0.0f, 0.0f, 0.0f)
 		);
 	}
@@ -170,7 +170,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const string& f
 	return prototype;
 }
 
-Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototypeRoot, PrototypeTransformFilter* transformFilter)
+Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototypeRoot, PrototypeTransformFilter* transformFilter, bool useBC7TextureCompression)
 {
 	//
 	Prototype* prototype = nullptr;
@@ -202,13 +202,14 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 	}
 	Model* model = nullptr;
 	if (prototypeType == Prototype_Type::EMPTY) {
-		model = ModelReader::read("resources/engine/models", "empty.tm");
+		model = ModelReader::read("resources/engine/models", "empty.tm", useBC7TextureCompression);
 	} else
 	if (modelFileName.length() > 0) {
 		modelPathName = getResourcePathName(pathName, modelFileName);
 		model = ModelReader::read(
 			modelPathName,
-			FileSystem::getInstance()->getFileName(modelFileName)
+			FileSystem::getInstance()->getFileName(modelFileName),
+			useBC7TextureCompression
 		);
 	}
 	prototype = new Prototype(
@@ -307,21 +308,21 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 	}
 	if (prototypeType == Prototype_Type::MODEL) {
 		prototype->setTerrainMesh(jPrototypeRoot["tm"].GetBool());
-		if (jPrototypeRoot.FindMember("ll2") != jPrototypeRoot.MemberEnd()) prototype->setLODLevel2(parseLODLevel(pathName, jPrototypeRoot["ll2"]));
-		if (jPrototypeRoot.FindMember("ll3") != jPrototypeRoot.MemberEnd()) prototype->setLODLevel3(parseLODLevel(pathName, jPrototypeRoot["ll3"]));
-		if (jPrototypeRoot.FindMember("ll3") != jPrototypeRoot.MemberEnd()) prototype->setLODLevel3(parseLODLevel(pathName, jPrototypeRoot["ll3"]));
-		if (jPrototypeRoot.FindMember("il") != jPrototypeRoot.MemberEnd()) prototype->setImposterLOD(parseImposterLODLevel(pathName, jPrototypeRoot["il"]));
+		if (jPrototypeRoot.FindMember("ll2") != jPrototypeRoot.MemberEnd()) prototype->setLODLevel2(parseLODLevel(pathName, jPrototypeRoot["ll2"], useBC7TextureCompression));
+		if (jPrototypeRoot.FindMember("ll3") != jPrototypeRoot.MemberEnd()) prototype->setLODLevel3(parseLODLevel(pathName, jPrototypeRoot["ll3"], useBC7TextureCompression));
+		if (jPrototypeRoot.FindMember("ll3") != jPrototypeRoot.MemberEnd()) prototype->setLODLevel3(parseLODLevel(pathName, jPrototypeRoot["ll3"], useBC7TextureCompression));
+		if (jPrototypeRoot.FindMember("il") != jPrototypeRoot.MemberEnd()) prototype->setImposterLOD(parseImposterLODLevel(pathName, jPrototypeRoot["il"], useBC7TextureCompression));
 	} else
 	if (prototypeType == Prototype_Type::PARTICLESYSTEM) {
 		if (jPrototypeRoot.FindMember("ps") != jPrototypeRoot.MemberEnd()) {
 			prototype->addParticleSystem();
-			parseParticleSystem(prototype->getParticleSystemAt(0), pathName, jPrototypeRoot["ps"]);
+			parseParticleSystem(prototype->getParticleSystemAt(0), pathName, jPrototypeRoot["ps"], useBC7TextureCompression);
 		} else
 		if (jPrototypeRoot.FindMember("pss") != jPrototypeRoot.MemberEnd()) {
 			auto jParticleSystems = jPrototypeRoot["pss"].GetArray();
 			for (auto i = 0; i < jParticleSystems.Size(); i++) {
 				prototype->addParticleSystem();
-				parseParticleSystem(prototype->getParticleSystemAt(prototype->getParticleSystemsCount() - 1), pathName, jParticleSystems[i]);
+				parseParticleSystem(prototype->getParticleSystemAt(prototype->getParticleSystemsCount() - 1), pathName, jParticleSystems[i], useBC7TextureCompression);
 			}
 		}
 	}
@@ -607,7 +608,7 @@ PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(int idx, Prototype
 	return prototypeBoundingVolume;
 }
 
-PrototypeLODLevel* PrototypeReader::parseLODLevel(const string& pathName, Value& jLodLevel) {
+PrototypeLODLevel* PrototypeReader::parseLODLevel(const string& pathName, Value& jLodLevel, bool useBC7TextureCompression) {
 	auto lodType = static_cast<LODObject::LODLevelType>(jLodLevel["t"].GetInt());
 	auto lodLevel = new PrototypeLODLevel(
 		lodType,
@@ -621,7 +622,8 @@ PrototypeLODLevel* PrototypeReader::parseLODLevel(const string& pathName, Value&
 		lodLevel->setModel(
 			ModelReader::read(
 				modelPathName,
-				FileSystem::getInstance()->getFileName(modelFileName)
+				FileSystem::getInstance()->getFileName(modelFileName),
+				useBC7TextureCompression
 			)
 		);
 		lodLevel->setFileName(modelPathName + "/" + FileSystem::getInstance()->getFileName(modelFileName));
@@ -645,7 +647,7 @@ PrototypeLODLevel* PrototypeReader::parseLODLevel(const string& pathName, Value&
 	return lodLevel;
 }
 
-PrototypeImposterLOD* PrototypeReader::parseImposterLODLevel(const string& pathName, Value& jImposterLOD) {
+PrototypeImposterLOD* PrototypeReader::parseImposterLODLevel(const string& pathName, Value& jImposterLOD, bool useBC7TextureCompression) {
 	auto imposterLOD = new PrototypeImposterLOD(
 		{},
 		{},
@@ -663,7 +665,8 @@ PrototypeImposterLOD* PrototypeReader::parseImposterLODLevel(const string& pathN
 		models.push_back(
 			ModelReader::read(
 				modelPathName,
-				FileSystem::getInstance()->getFileName(modelFileName)
+				FileSystem::getInstance()->getFileName(modelFileName),
+				useBC7TextureCompression
 			)
 		);
 		fileNames.push_back(fileName);
@@ -693,7 +696,7 @@ PrototypeImposterLOD* PrototypeReader::parseImposterLODLevel(const string& pathN
 	return imposterLOD;
 }
 
-void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSystem, const string& pathName, Value& jParticleSystem) {
+void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSystem, const string& pathName, Value& jParticleSystem, bool useBC7TextureCompression) {
 	particleSystem->setType(PrototypeParticleSystem_Type::valueOf((jParticleSystem["t"].GetString())));
 	{
 		auto v = particleSystem->getType();
@@ -716,7 +719,8 @@ void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSyste
 				auto particleModelFile = (jObjectParticleSystem["mf"].GetString());
 				auto particleModelPath = getResourcePathName(pathName, particleModelFile);
 				objectParticleSystem->setModelFile(
-					particleModelPath + "/" + Tools::getFileName(particleModelFile)
+					particleModelPath + "/" + Tools::getFileName(particleModelFile),
+					useBC7TextureCompression
 				);
 			} catch (Exception& exception) {
 				Console::print(string("PrototypeReader::doImport(): An error occurred: "));

@@ -23,6 +23,7 @@
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/model/UpVector.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Vector2.h>
@@ -52,6 +53,7 @@ using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
+using tdme::engine::Texture;
 using tdme::math::Math;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Vector2;
@@ -65,7 +67,7 @@ using tdme::utilities::StringTools;
 
 const Color4 FBXReader::BLENDER_AMBIENT_NONE(0.0f, 0.0f, 0.0f, 1.0f);
 
-Model* FBXReader::read(const string& pathName, const string& fileName) {
+Model* FBXReader::read(const string& pathName, const string& fileName, bool useBC7TextureCompression) {
 	// init fbx sdk
 	FbxManager* fbxManager = NULL;
 	FbxScene* fbxScene = NULL;
@@ -129,7 +131,7 @@ Model* FBXReader::read(const string& pathName, const string& fileName) {
 	vector<string> possibleArmatureNodeIds;
 
 	// process nodes
-	processScene(fbxScene, model, pathName, possibleArmatureNodeIds);
+	processScene(fbxScene, model, pathName, possibleArmatureNodeIds, useBC7TextureCompression);
 
 	//
 	Console::println("FBXReader::read(): setting up animations");
@@ -275,15 +277,15 @@ void FBXReader::setupModelScaleRotationMatrix(FbxScene* fbxScene, Model* model) 
 	model->setImportTransformMatrix(model->getImportTransformMatrix().clone().scale(static_cast<float>(fbxSceneSystemUnit.GetConversionFactorTo(FbxSystemUnit::m))));
 }
 
-void FBXReader::processScene(FbxScene* fbxScene, Model* model, const string& pathName, vector<string>& possibleArmatureNodeIds) {
+void FBXReader::processScene(FbxScene* fbxScene, Model* model, const string& pathName, vector<string>& possibleArmatureNodeIds, bool useBC7TextureCompression) {
 	FbxNode* fbxNode = fbxScene->GetRootNode();
 	if (fbxNode == nullptr) return;
 	for(auto i = 0; i < fbxNode->GetChildCount(); i++) {
-		processNode(fbxNode->GetChild(i), model, nullptr, pathName, possibleArmatureNodeIds);
+		processNode(fbxNode->GetChild(i), model, nullptr, pathName, possibleArmatureNodeIds, useBC7TextureCompression);
 	}
 }
 
-void FBXReader::processNode(FbxNode* fbxNode, Model* model, Node* parentNode, const string& pathName, vector<string>& possibleArmatureNodeIds) {
+void FBXReader::processNode(FbxNode* fbxNode, Model* model, Node* parentNode, const string& pathName, vector<string>& possibleArmatureNodeIds, bool useBC7TextureCompression) {
 	Node* node = nullptr;
 	if (fbxNode->GetNodeAttribute() != nullptr) {
 		auto fbxAttributeType = fbxNode->GetNodeAttribute()->GetAttributeType();
@@ -295,7 +297,7 @@ void FBXReader::processNode(FbxNode* fbxNode, Model* model, Node* parentNode, co
 				}
 			case FbxNodeAttribute::eMesh:
 				{
-					node = processMeshNode(fbxNode, model, parentNode, pathName);
+					node = processMeshNode(fbxNode, model, parentNode, pathName, useBC7TextureCompression);
 					break;
 				}
 			case FbxNodeAttribute::eSkeleton:
@@ -342,11 +344,11 @@ void FBXReader::processNode(FbxNode* fbxNode, Model* model, Node* parentNode, co
 	model->getNodes()[node->getId()] = node;
 	parentNode = node;
 	for(auto i = 0; i < fbxNode->GetChildCount(); i++) {
-		processNode(fbxNode->GetChild(i), model, parentNode, pathName, possibleArmatureNodeIds);
+		processNode(fbxNode->GetChild(i), model, parentNode, pathName, possibleArmatureNodeIds, useBC7TextureCompression);
 	}
 }
 
-Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNode, const string& pathName) {
+Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNode, const string& pathName, bool useBC7TextureCompression) {
 	string fbxNodeName = fbxNode->GetName();
 	FbxMesh* fbxMesh = (FbxMesh*)fbxNode->GetNodeAttribute();
 
@@ -614,6 +616,7 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 						)?pathName:FileSystem::getInstance()->getPathName(diffuseTransparencyTextureFileName),
 						FileSystem::getInstance()->getFileName(diffuseTransparencyTextureFileName)
 					);
+					if (specularMaterialProperties->getDiffuseTexture() != nullptr) specularMaterialProperties->getDiffuseTexture()->setUseCompression(useBC7TextureCompression);
 					if (specularMaterialProperties->hasDiffuseTextureTransparency() == true) specularMaterialProperties->setDiffuseTextureMaskedTransparency(true);
 				}
 				fbxProperty = fbxMaterial->FindProperty(FbxSurfaceMaterial::sNormalMap);
@@ -631,6 +634,7 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 						)?pathName:FileSystem::getInstance()->getPathName(normalTextureFileName),
 						FileSystem::getInstance()->getFileName(normalTextureFileName)
 					);
+					if (specularMaterialProperties->getNormalTexture() != nullptr) specularMaterialProperties->getNormalTexture()->setUseCompression(useBC7TextureCompression);
 				}
 				fbxProperty = fbxMaterial->FindProperty(FbxSurfaceMaterial::sSpecular);
 				string specularTextureFileName =
@@ -647,6 +651,7 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 						)?pathName:FileSystem::getInstance()->getPathName(specularTextureFileName),
 						FileSystem::getInstance()->getFileName(specularTextureFileName)
 					);
+					if (specularMaterialProperties->getSpecularTexture() != nullptr) specularMaterialProperties->getSpecularTexture()->setUseCompression(useBC7TextureCompression);
 				}
 				// adjust ambient light with blender
 				if (model->getAuthoringTool() == Model::AUTHORINGTOOL_BLENDER && specularMaterialProperties->getAmbientColor().equals(BLENDER_AMBIENT_NONE)) {

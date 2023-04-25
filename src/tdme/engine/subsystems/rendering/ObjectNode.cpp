@@ -162,6 +162,7 @@ void ObjectNode::createNodes(ObjectBase* object, const map<string, Node*>& nodes
 			objectNode->pbrMaterialBaseColorTextureIdsByEntities.resize(node->getFacesEntities().size());
 			objectNode->pbrMaterialMetallicRoughnessTextureIdsByEntities.resize(node->getFacesEntities().size());
 			objectNode->pbrMaterialNormalTextureIdsByEntities.resize(node->getFacesEntities().size());
+			objectNode->pbrMaterialEmissiveTextureIdsByEntities.resize(node->getFacesEntities().size());
 			for (auto j = 0; j < node->getFacesEntities().size(); j++) {
 				objectNode->specularMaterialDiffuseTextureIdsByEntities[j] = TEXTUREID_NONE;
 				objectNode->specularMaterialDynamicDiffuseTextureIdsByEntities[j] = TEXTUREID_NONE;
@@ -170,6 +171,7 @@ void ObjectNode::createNodes(ObjectBase* object, const map<string, Node*>& nodes
 				objectNode->pbrMaterialBaseColorTextureIdsByEntities[j] = TEXTUREID_NONE;
 				objectNode->pbrMaterialMetallicRoughnessTextureIdsByEntities[j] = TEXTUREID_NONE;
 				objectNode->pbrMaterialNormalTextureIdsByEntities[j] = TEXTUREID_NONE;
+				objectNode->pbrMaterialEmissiveTextureIdsByEntities[j] = TEXTUREID_NONE;
 			}
 			// update node transformations matrix
 			objectNode->updateNodeTransformationsMatrix();
@@ -246,6 +248,14 @@ void ObjectNode::setupTextures(Renderer* renderer, int contextIdx, ObjectNode* o
 				objectNode->pbrMaterialNormalTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
 			}
 		}
+		// load PBR emissive texture
+		if (objectNode->pbrMaterialEmissiveTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
+			if (pbrMaterialProperties->getEmissiveTexture() != nullptr) {
+				objectNode->pbrMaterialEmissiveTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(pbrMaterialProperties->getEmissiveTexture(), contextIdx);
+			} else {
+				objectNode->pbrMaterialEmissiveTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
+			}
+		}
 	}
 }
 
@@ -317,6 +327,15 @@ void ObjectNode::dispose()
 					textureManager->removeTexture(pbrMaterialProperties->getNormalTexture()->getId());
 				// mark as removed
 				pbrMaterialNormalTextureIdsByEntities[j] = ObjectNode::TEXTUREID_NONE;
+			}
+			// PBR emissive texture
+			auto pbrEmissiveTextureId = pbrMaterialEmissiveTextureIdsByEntities[j];
+			if (pbrEmissiveTextureId != ObjectNode::TEXTUREID_NONE && pbrEmissiveTextureId != ObjectNode::TEXTUREID_NOTUSED) {
+				// remove texture from texture manager
+				if (pbrMaterialProperties->getEmissiveTexture() != nullptr)
+					textureManager->removeTexture(pbrMaterialProperties->getEmissiveTexture()->getId());
+				// mark as removed
+				pbrMaterialEmissiveTextureIdsByEntities[j] = ObjectNode::TEXTUREID_NONE;
 			}
 		}
 	}

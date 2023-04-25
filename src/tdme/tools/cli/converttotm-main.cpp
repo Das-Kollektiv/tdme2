@@ -49,13 +49,15 @@ class ConvertToTMApplication final
 {
 private:
 	vector<string> modelFileNames;
+	bool useBC7TextureCompression { true };
 
 public:
 	/**
 	 * Public constructor
 	 * @param modelFileNames model file names
 	 */
-	ConvertToTMApplication(const vector<string>& modelFileNames):
+	ConvertToTMApplication(bool useBC7TextureCompression, const vector<string>& modelFileNames):
+		useBC7TextureCompression(useBC7TextureCompression),
 		modelFileNames(modelFileNames) {
 	}
 
@@ -71,14 +73,23 @@ public:
 	 * @param argv argument values
 	 */
 	inline static void main(int argc, char** argv) {
+		auto useBC7TextureCompression = true;
 		vector<string> modelFileNames;
-		for (auto i = 1; i < argc; i++) modelFileNames.push_back(argv[i]);
-		auto convertToTMApplication = new ConvertToTMApplication(modelFileNames);
+		for (auto i = 1; i < argc; i++) {
+			string argumentValue = argv[i];
+			if (argumentValue == "-no-texture-compression") {
+				useBC7TextureCompression = false;
+				continue;
+			}
+			modelFileNames.push_back(argumentValue);
+		}
+		auto convertToTMApplication = new ConvertToTMApplication(useBC7TextureCompression, modelFileNames);
 		convertToTMApplication->run(argc, argv, "Convert to tm Application", nullptr, Application::WINDOW_HINT_INVISIBLE);
 	}
 
 	// overridden methods
 	void display() override {
+		Console::println("Exporting models: Using BC7 texture compression: " + string(useBC7TextureCompression == true?"true":"false"));
 		try {
 			//
 			auto scaleTo = 1024.0f;
@@ -89,7 +100,8 @@ public:
 					Console::println("Loading model: " + inputFileName);
 					auto model = ModelReader::read(
 						FileSystem::getInstance()->getPathName(inputFileName),
-						FileSystem::getInstance()->getFileName(inputFileName)
+						FileSystem::getInstance()->getFileName(inputFileName),
+						useBC7TextureCompression
 					);
 					for (auto& materialIt: model->getMaterials()) {
 						auto material = materialIt.second;
@@ -192,7 +204,8 @@ public:
 					TMWriter::write(
 						model,
 						FileSystem::getInstance()->getPathName(outputFileName),
-						FileSystem::getInstance()->getFileName(outputFileName)
+						FileSystem::getInstance()->getFileName(outputFileName),
+						useBC7TextureCompression
 					);
 				} catch (Exception& exception) {
 					Console::println("An error occurred: " + string(exception.what()));
@@ -227,7 +240,7 @@ int main(int argc, char** argv)
 	Console::println(Version::getCopyright());
 	Console::println();
 	if (argc < 2) {
-		Console::println("Usage: converttotm inputfile1 [inputfileN]");
+		Console::println("Usage: converttotm [-no-texture-compression] inputfile1 [inputfileN]");
 		Application::exit(1);
 	}
 	tdme::tools::cli::ConvertToTMApplication::main(argc, argv);
