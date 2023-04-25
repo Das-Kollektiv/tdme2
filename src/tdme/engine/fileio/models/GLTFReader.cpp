@@ -633,6 +633,57 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 						Console::println("GLTFReader::parseNode(): " + node->getId() + ": An error occurred: " + exception.what());
 					}
 				}
+				if (gltfMaterial.emissiveTexture.index != -1) {
+					auto& gltfTexture = gltfModel.textures[gltfMaterial.emissiveTexture.index];
+					auto& image = gltfModel.images[gltfTexture.source];
+					try {
+						if (image.component != 3 && image.component != 4) throw ExceptionBase("We only support RGB or RGBA textures for now");
+						if (image.bits != 8) throw ExceptionBase("We only support 8 bit channels for now");
+						auto fileName = determineTextureFileName(image.name);
+						Console::println("GLTFReader::parseNode(): " + node->getId() + ": have emissive texture with " + to_string(image.width) + " x " + to_string(image.height) + " x " + to_string(image.component) + " x " + to_string(image.bits) + ": " + fileName);
+						auto textureData = ByteBuffer(image.width * image.height * image.component * image.bits / 8);
+						for (int y = image.height - 1; y >= 0; y--) {
+							textureData.put(&image.image[y * image.width * image.component * image.bits / 8], image.width * image.component * image.bits / 8);
+						}
+						auto texture = new Texture(
+							fileName,
+							Texture::getRGBDepthByPixelBitsPerPixel(image.bits * image.component),
+							Texture::getPNGFormatByPixelBitsPerPixel(image.bits * image.component),
+							image.width,
+							image.height,
+							image.width,
+							image.height,
+							Texture::getRGBFormatByPixelBitsPerPixel(image.bits * image.component),
+							textureData
+						);
+						texture->setUseCompression(useBC7TextureCompression);
+						//
+						pbrMaterialProperties->setEmissiveFactor(Color4(gltfMaterial.emissiveFactor[0], gltfMaterial.emissiveFactor[1], gltfMaterial.emissiveFactor[2], 1.0f));
+						pbrMaterialProperties->setEmissiveTexture(texture);
+						//
+						if (gltfTexture.sampler != -1) {
+							auto& sampler = gltfModel.samplers[gltfTexture.sampler];
+							switch (sampler.minFilter) {
+								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST); texture->setUseMipMap(false); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR); texture->setUseMipMap(false); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+							}
+							switch (sampler.magFilter) {
+								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+							}
+						}
+					} catch (Exception& exception) {
+						Console::println("GLTFReader::parseNode(): " + node->getId() + ": An error occurred: " + exception.what());
+					}
+				}
 				material->setSpecularMaterialProperties(specularMaterialProperties);
 				material->setPBRMaterialProperties(pbrMaterialProperties);
 				model->getMaterials()[material->getId()] = material;
