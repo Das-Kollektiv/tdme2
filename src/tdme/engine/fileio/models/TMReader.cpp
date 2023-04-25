@@ -95,9 +95,10 @@ Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const
 		(version[0] != 1 || version[1] != 9 || version[2] != 16) &&
 		(version[0] != 1 || version[1] != 9 || version[2] != 17) &&
 		(version[0] != 1 || version[1] != 9 || version[2] != 18) &&
-		(version[0] != 1 || version[1] != 9 || version[2] != 19)) {
+		(version[0] != 1 || version[1] != 9 || version[2] != 19) &&
+		(version[0] != 1 || version[1] != 9 || version[2] != 20)) {
 		throw ModelFileIOException(
-			"Version mismatch, should be 1.0.0, 1.9.9, 1.9.10, 1.9.11, 1.9.12, 1.9.13, 1.9.14, 1.9.15, 1.9.16, 1.9.17, 1.9.18, 1.9.19 but is " +
+			"Version mismatch, should be 1.0.0, 1.9.9, 1.9.10, 1.9.11, 1.9.12, 1.9.13, 1.9.14, 1.9.15, 1.9.16, 1.9.17, 1.9.18, 1.9.19, 1.9.20 but is " +
 			to_string(version[0]) +
 			"." +
 			to_string(version[1]) +
@@ -114,13 +115,15 @@ Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const
 		(version[0] == 1 && version[1] == 9 && version[2] == 16) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 17) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 18) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 19)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 19) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 		shaderModel = ShaderModel::valueOf(is.readString());
 	}
 	auto embedSpecularTextures = false;
 	auto embedPBRTextures = false;
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 18) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 19)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 19) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 		embedSpecularTextures = is.readBoolean();
 		embedPBRTextures = is.readBoolean();
 	}
@@ -146,7 +149,8 @@ Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const
 	map<string, Texture*> embeddedTextures;
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 17) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 18) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 19)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 19) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 		readEmbeddedTextures(&is, embeddedTextures, version);
 	}
 	auto materialCount = is.readInt();
@@ -191,7 +195,8 @@ void TMReader::readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture
 		if (embeddedTextureType == 1) {
 			auto minFilter = Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR;
 			auto magFilter = Texture::TEXTURE_FILTER_LINEAR;
-			if (version[0] == 1 && version[1] == 9 && version[2] == 19) {
+			if ((version[0] == 1 && version[1] == 9 && version[2] == 19) ||
+				(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 				minFilter = static_cast<Texture::TextureFilter>(is->readByte());
 				magFilter = static_cast<Texture::TextureFilter>(is->readByte());
 			}
@@ -201,7 +206,8 @@ void TMReader::readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture
 			for (auto j = 0; j < textureSize; j++) pngData[j] = is->readByte();
 			auto embeddedTexture = PNGTextureReader::read(embeddedTextureId, pngData, true);
 			if (embeddedTexture != nullptr) {
-				if (version[0] == 1 && version[1] == 9 && version[2] == 19) {
+				if ((version[0] == 1 && version[1] == 9 && version[2] == 19) ||
+					(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 					embeddedTexture->setMinFilter(minFilter);
 					embeddedTexture->setMagFilter(magFilter);
 				}
@@ -219,7 +225,8 @@ void TMReader::readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture
 			auto bitsPerPixel = is->readByte();
 			auto minFilter = Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR;
 			auto magFilter = Texture::TEXTURE_FILTER_LINEAR;
-			if (version[0] == 1 && version[1] == 9 && version[2] == 19) {
+			if ((version[0] == 1 && version[1] == 9 && version[2] == 19) ||
+				(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 				minFilter = static_cast<Texture::TextureFilter>(is->readByte());
 				magFilter = static_cast<Texture::TextureFilter>(is->readByte());
 			}
@@ -239,7 +246,8 @@ void TMReader::readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture
 					bc7Data
 				);
 			if (embeddedTexture != nullptr) {
-				if (version[0] == 1 && version[1] == 9 && version[2] == 19) {
+				if ((version[0] == 1 && version[1] == 9 && version[2] == 19) ||
+					(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 					embeddedTexture->setMinFilter(minFilter);
 					embeddedTexture->setMagFilter(magFilter);
 				}
@@ -258,7 +266,8 @@ void TMReader::readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture
 			auto bitsPerPixel = is->readByte();
 			auto minFilter = Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR;
 			auto magFilter = Texture::TEXTURE_FILTER_LINEAR;
-			if (version[0] == 1 && version[1] == 9 && version[2] == 19) {
+			if ((version[0] == 1 && version[1] == 9 && version[2] == 19) ||
+				(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 				minFilter = static_cast<Texture::TextureFilter>(is->readByte());
 				magFilter = static_cast<Texture::TextureFilter>(is->readByte());
 			}
@@ -277,7 +286,8 @@ void TMReader::readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture
 					Texture::getBC7FormatByPixelBitsPerPixel(bitsPerPixel),
 					bc7Data
 				);
-			if (version[0] == 1 && version[1] == 9 && version[2] == 19) {
+			if ((version[0] == 1 && version[1] == 9 && version[2] == 19) ||
+				(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 				embeddedTexture->setMinFilter(minFilter);
 				embeddedTexture->setMagFilter(magFilter);
 			}
@@ -336,7 +346,8 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 		(version[0] == 1 && version[1] == 9 && version[2] == 16) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 17) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 18) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 19)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 19) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 		smp->setTextureAtlasSize(is->readInt());
 	}
 	auto diffuseTexturePathName = is->readString();
@@ -380,7 +391,8 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 		(version[0] == 1 && version[1] == 9 && version[2] == 16) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 17) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 18) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 19)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 19) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 		smp->setDiffuseTextureTransparency(is->readBoolean());
 	}
 	smp->setDiffuseTextureMaskedTransparency(is->readBoolean());
@@ -394,13 +406,15 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 		(version[0] == 1 && version[1] == 9 && version[2] == 16) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 17) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 18) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 19))  {
+		(version[0] == 1 && version[1] == 9 && version[2] == 19) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 20))  {
 		smp->setDiffuseTextureMaskedTransparencyThreshold(is->readFloat());
 	}
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 16) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 17) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 18) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 19)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 19) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 		m->setDoubleSided(is->readBoolean());
 	}
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 10) ||
@@ -412,14 +426,16 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 		(version[0] == 1 && version[1] == 9 && version[2] == 16) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 17) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 18) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 19)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 19) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 		array<float, 9> textureMatrix;
 		is->readFloatArray(textureMatrix);
 		smp->setTextureMatrix(Matrix2D3x3(textureMatrix));
 	}
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 17) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 18) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 19)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 19) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 		if (smpEmbbededTextures == true) {
 			// diffuse
 			if (diffuseTextureFileName.empty() == false) {
@@ -449,7 +465,8 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 		(version[0] == 1 && version[1] == 9 && version[2] == 16) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 17) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 18) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 19)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 19) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 		if (is->readBoolean() == true) {
 			auto pmp = new PBRMaterialProperties();
 			auto pmpEmbeddedTextures = model->hasEmbeddedPBRTextures();
@@ -481,10 +498,23 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 				pmp->setNormalTexture(pbrNormalTexturePathName, pbrNormalTextureFileName);
 				if (pmp->getNormalTexture() != nullptr) pmp->getNormalTexture()->setUseCompression(useBC7TextureCompression);
 			}
+			string pbrEmissiveTexturePathName;
+			string pbrEmissiveTextureFileName;
+			if ((version[0] == 1 && version[1] == 9 && version[2] == 20)) {
+				is->readFloatArray(colorRGBAArray);
+				pmp->setEmissiveFactor(Color4(colorRGBAArray));
+				pbrEmissiveTexturePathName = is->readString();
+				pbrEmissiveTextureFileName = is->readString();
+				if (pmpEmbeddedTextures == false && pbrEmissiveTextureFileName.empty() == false) {
+					pmp->setEmissiveTexture(pbrEmissiveTexturePathName, pbrEmissiveTextureFileName);
+					if (pmp->getEmissiveTexture() != nullptr) pmp->getEmissiveTexture()->setUseCompression(useBC7TextureCompression);
+				}
+			}
 			pmp->setExposure(is->readFloat());
 			if ((version[0] == 1 && version[1] == 9 && version[2] == 17) ||
 				(version[0] == 1 && version[1] == 9 && version[2] == 18) ||
-				(version[0] == 1 && version[1] == 9 && version[2] == 19)) {
+				(version[0] == 1 && version[1] == 9 && version[2] == 19) ||
+				(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 				if (pmpEmbeddedTextures == true) {
 					// base color
 					if (baseColorTextureFileName.empty() == false) {
@@ -504,6 +534,13 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 					if (pbrNormalTextureFileName.empty() == false) {
 						auto pbrNormalTexture = getEmbeddedTexture(embeddedTextures, pbrNormalTextureFileName);
 						if (pbrNormalTexture != nullptr) pmp->setNormalTexture(pbrNormalTexture);
+					}
+					// emissive
+					if ((version[0] == 1 && version[1] == 9 && version[2] == 20)) {
+						if (pbrEmissiveTextureFileName.empty() == false) {
+							auto pbrEmissiveTexture = getEmbeddedTexture(embeddedTextures, pbrEmissiveTextureFileName);
+							if (pbrEmissiveTexture != nullptr) pmp->setEmissiveTexture(pbrEmissiveTexture);
+						}
 					}
 				}
 			}
@@ -528,7 +565,8 @@ void TMReader::readAnimationSetup(TMReaderInputStream* is, Model* model, const a
 		(version[0] == 1 && version[1] == 9 && version[2] == 16) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 17) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 18) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 19)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 19) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 		speed = is->readFloat();
 	}
 	if (overlayFromNodeId.length() == 0) {

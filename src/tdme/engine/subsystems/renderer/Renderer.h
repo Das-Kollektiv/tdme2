@@ -76,6 +76,7 @@ public:
 		float metallicFactor { 1.0f };
 		float roughnessFactor { 1.0f };
 		float normalScale { 1.0f };
+		array<float, 3> emissiveFactor {{ 1.0f, 1.0f, 1.0f }};
 		float exposure { 1.0f };
 		int baseColorTextureMaskedTransparency { 0 };
 		float baseColorTextureMaskedTransparencyThreshold { 0.0f };

@@ -1183,6 +1183,7 @@ void EntityRenderer::setupMaterial(int contextIdx, ObjectNode* objectNode, int32
 					rendererMaterial.metallicFactor = 1.0f;
 					rendererMaterial.roughnessFactor = 1.0f;
 					rendererMaterial.normalScale = 1.0f;
+					rendererMaterial.emissiveFactor = {{ 1.0f, 1.0f, 1.0f }};
 					rendererMaterial.exposure = 1.0f;
 					rendererMaterial.baseColorTextureMaskedTransparency = 0;
 					rendererMaterial.baseColorTextureMaskedTransparencyThreshold = 0.0f;
@@ -1191,6 +1192,12 @@ void EntityRenderer::setupMaterial(int contextIdx, ObjectNode* objectNode, int32
 					rendererMaterial.metallicFactor = pbrMaterialProperties->getMetallicFactor();
 					rendererMaterial.roughnessFactor = pbrMaterialProperties->getRoughnessFactor();
 					rendererMaterial.normalScale = pbrMaterialProperties->getNormalScale();
+					rendererMaterial.emissiveFactor =
+						{
+							pbrMaterialProperties->getEmissiveFactor()[0],
+							pbrMaterialProperties->getEmissiveFactor()[1],
+							pbrMaterialProperties->getEmissiveFactor()[2]
+						};
 					rendererMaterial.exposure = pbrMaterialProperties->getExposure();
 					rendererMaterial.baseColorTextureMaskedTransparency = pbrMaterialProperties->hasBaseColorTextureMaskedTransparency() == true?1:0;
 					rendererMaterial.baseColorTextureMaskedTransparencyThreshold = pbrMaterialProperties->getBaseColorTextureMaskedTransparencyThreshold();

@@ -47,6 +47,7 @@ struct PBRMaterial {
 	float metallicFactor;
 	float roughnessFactor;
 	vec4 baseColorFactor;
+	vec3 emissiveFactor;
 	float exposure;
 	float alphaCutoff;
 	int alphaCutoffEnabled;
@@ -58,6 +59,7 @@ struct PBRMaterial {
 	int normalSamplerAvailable;
 	int baseColorSamplerAvailable;
 	int metallicRoughnessSamplerAvailable;
+	int emissiveSamplerAvailable;
 	vec3 normal;
 	#ifdef MATERIAL_SPECULARGLOSSINESS
 		vec4 specularGlossinessColor
@@ -68,6 +70,7 @@ struct PBRMaterial {
 	vec4 vertexColor;
 	vec4 metallicRoughnessColor;
 	vec4 baseColor;
+	vec4 emissiveColor;
 	#ifdef DEBUG_NORMAL
 		vec3 normalColor;
 	#endif
@@ -297,7 +300,6 @@ vec4 computePBRLighting(in vec3 position, in PBRMaterial pbrMaterial)
 
 #endif // ! MATERIAL_SPECULARGLOSSINESS
 
-#ifdef MATERIAL_METALLICROUGHNESS
     // Roughness is stored in the 'g' channel, metallic is stored in the 'b' channel.
     // This layout intentionally reserves the 'r' channel for (optional) occlusion map data
     vec4 mrSample = pbrMaterial.metallicRoughnessColor;
@@ -312,8 +314,6 @@ vec4 computePBRLighting(in vec3 position, in PBRMaterial pbrMaterial)
     diffuseColor = baseColor.rgb * (vec3(1.0) - f0) * (1.0 - metallic);
 
     specularColor = mix(f0, baseColor.rgb, metallic);
-
-#endif // ! MATERIAL_METALLICROUGHNESS
 
     if (pbrMaterial.alphaCutoffEnabled == 1) {
 		if (baseColor.a < pbrMaterial.alphaCutoff) discard;
@@ -388,11 +388,9 @@ vec4 computePBRLighting(in vec3 position, in PBRMaterial pbrMaterial)
     color = mix(color, color * ao, pbrMaterial.occlusionStrength);
 #endif
 
-    vec3 emissive = vec3(0);
-#ifdef HAS_EMISSIVE_MAP
-    emissive = SRGBtoLINEAR(pbrMaterial.emissiveColor).rgb * pbrMaterial.emissiveFactor;
-    color += emissive;
-#endif
+	vec3 emissive = vec3(0);
+	emissive = pbrMaterial.emissiveColor.rgb * pbrMaterial.emissiveFactor;
+	color += emissive;
 
 #ifndef DEBUG_OUTPUT // no debug
 

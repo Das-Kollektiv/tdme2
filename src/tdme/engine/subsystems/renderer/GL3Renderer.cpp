@@ -195,6 +195,7 @@ void GL3Renderer::initialize()
 	int glMaxDrawBuffers = 0;
 	glGetIntegerv(GL_MAX_DRAW_BUFFERS, &glMaxDrawBuffers);
 	deferredShadingAvailable = glMaxColorAttachments >= 8 && glMaxDrawBuffers >= 8;
+	//
 	#if !defined (__APPLE__) && !defined(__HAIKU__)
 		// texture compression
 		int textureCompressionParam = 0;
