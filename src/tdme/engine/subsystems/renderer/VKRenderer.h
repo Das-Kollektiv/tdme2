@@ -17,6 +17,8 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <tuple>
+#include <variant>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -32,11 +34,11 @@
 #include <tdme/os/threading/SpinLock.h>
 #include <tdme/utilities/fwd-tdme.h>
 
-#include <ext/uint128_t/uint128_t.h>
-
 using std::array;
+using std::get;
 using std::list;
 using std::string;
+using std::tuple;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
@@ -56,19 +58,16 @@ using tdme::utilities::FloatBuffer;
 using tdme::utilities::IntBuffer;
 using tdme::utilities::ShortBuffer;
 
-#if defined(CPU_64BIT)
-	#define SAMPLER_HASH_MAX	8
-	#define SAMPLER_HASH_TYPE uint128_t
-	struct UINT128_T_Hash {
-		std::size_t operator()(const uint128_t& k) const {
-			std::hash<uint64_t> hashVal;
-			return hashVal(k.lower() ^ k.upper());
-		}
-	};
-#else
-	#define SAMPLER_HASH_MAX 4
-	#define SAMPLER_HASH_TYPE uint64_t
-#endif
+#define TEXTUREDESCRIPTORSET_MAX_TEXTURES 8
+struct TextureDescriptorSet_Hash {
+	std::size_t operator()(const tuple<uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t>& k) const {
+		std::hash<uint64_t> hashVal;
+		return hashVal(
+			static_cast<uint64_t>(get<0>(k)) ^ (static_cast<uint64_t>(get<1>(k)) << 16) ^ (static_cast<uint64_t>(get<2>(k)) << 32) ^ (static_cast<uint64_t>(get<3>(k)) << 48) ^
+			static_cast<uint64_t>(get<4>(k)) ^ (static_cast<uint64_t>(get<5>(k)) << 16) ^ (static_cast<uint64_t>(get<6>(k)) << 32) ^ (static_cast<uint64_t>(get<7>(k)) << 48)
+		);
+	}
+};
 
 /**
  * Vulkan renderer
@@ -227,13 +226,8 @@ private:
 		struct context {
 			uint32_t descriptorSets2Idx;
 			array<VkDescriptorSet, DESC_MAX_CACHED> descriptorSets2; // TODO: rename those fuckers
-			#if defined(CPU_64BIT)
-				unordered_map<SAMPLER_HASH_TYPE, int, UINT128_T_Hash> texturesDescriptorSetsCache;
-				unordered_map<int32_t, unordered_set<SAMPLER_HASH_TYPE, UINT128_T_Hash>> texturesDescriptorSetsCacheTextureIds;
-			#else
-				unordered_map<SAMPLER_HASH_TYPE, int> texturesDescriptorSetsCache;
-				unordered_map<int32_t, unordered_set<SAMPLER_HASH_TYPE>> texturesDescriptorSetsCacheTextureIds;
-			#endif
+			unordered_map<tuple<uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t>, int, TextureDescriptorSet_Hash> texturesDescriptorSetsCache;
+			unordered_map<int32_t, unordered_set<tuple<uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t>, TextureDescriptorSet_Hash>> texturesDescriptorSetsCacheTextureIds;
 			vector<uint32_t> freeTextureDescriptorSetsIds;
 			array<command_buffer, DRAW_COMMANDBUFFER_MAX> commandBuffers;
 		};
