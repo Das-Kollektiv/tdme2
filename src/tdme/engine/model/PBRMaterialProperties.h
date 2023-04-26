@@ -302,6 +302,20 @@ public:
 	}
 
 	/**
+	 * @return emissive texture path name
+	 */
+	inline const string& getEmissiveTexturePathName() const {
+		return emissiveTexturePathName;
+	}
+
+	/**
+	 * @return emissive texture file name
+	 */
+	inline const string& getEmissiveTextureFileName() const {
+		return emissiveTextureFileName;
+	}
+
+	/**
 	 * Set up a emissive texture by the texture itself
 	 * @param normalTexture normal texture
 	 */

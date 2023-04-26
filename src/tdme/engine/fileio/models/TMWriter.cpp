@@ -90,7 +90,7 @@ void TMWriter::write(Model* model, vector<uint8_t>& data, bool useBC7TextureComp
 	os.writeString("TDME Model");
 	os.writeByte(static_cast<uint8_t>(1));
 	os.writeByte(static_cast<uint8_t>(9));
-	os.writeByte(static_cast<uint8_t>(19));
+	os.writeByte(static_cast<uint8_t>(20));
 	os.writeString(model->getName());
 	os.writeString(model->getUpVector()->getName());
 	os.writeString(model->getRotationOrder()->getName());
@@ -131,6 +131,7 @@ void TMWriter::writeEmbeddedTextures(TMWriterOutputStream* os, Model* m, bool us
 			if (pmp->getBaseColorTexture() != nullptr) embeddedTextures[pmp->getBaseColorTexture()->getId()] = pmp->getBaseColorTexture();
 			if (pmp->getMetallicRoughnessTexture() != nullptr) embeddedTextures[pmp->getMetallicRoughnessTexture()->getId()] = pmp->getMetallicRoughnessTexture();
 			if (pmp->getNormalTexture() != nullptr) embeddedTextures[pmp->getNormalTexture()->getId()] = pmp->getNormalTexture();
+			if (pmp->getEmissiveTexture() != nullptr) embeddedTextures[pmp->getEmissiveTexture()->getId()] = pmp->getEmissiveTexture();
 		}
 	}
 	os->writeInt(embeddedTextures.size());
@@ -217,6 +218,9 @@ void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m)
 		os->writeFloat(pmp->getNormalScale());
 		os->writeString(pmp->getNormalTexturePathName());
 		os->writeString(pmp->getNormalTextureFileName());
+		os->writeFloatArray(pmp->getEmissiveFactor().getArray());
+		os->writeString(pmp->getEmissiveTexturePathName());
+		os->writeString(pmp->getEmissiveTextureFileName());
 		os->writeFloat(pmp->getExposure());
 	}
 }

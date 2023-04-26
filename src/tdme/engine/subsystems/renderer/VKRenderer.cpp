@@ -6651,12 +6651,16 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 
 	//
 	auto uboIdx = 0;
-	SAMPLER_HASH_TYPE textureDescriptorSetCacheId = 0LL;
-	#if defined(CPU_64BIT)
-		array<int, 8> textureIds { ID_NONE, ID_NONE, ID_NONE, ID_NONE, ID_NONE , ID_NONE , ID_NONE , ID_NONE  };
-	#else
-		array<int, 4> textureIds { ID_NONE, ID_NONE, ID_NONE, ID_NONE };
-	#endif
+	array<uint16_t, 8> textureIds {
+		static_cast<uint16_t>(ID_NONE),
+		static_cast<uint16_t>(ID_NONE),
+		static_cast<uint16_t>(ID_NONE),
+		static_cast<uint16_t>(ID_NONE),
+		static_cast<uint16_t>(ID_NONE),
+		static_cast<uint16_t>(ID_NONE),
+		static_cast<uint16_t>(ID_NONE),
+		static_cast<uint16_t>(ID_NONE)
+	};
 	// get texture set cache id
 	auto samplers = -1;
 	{
@@ -6665,7 +6669,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 		for (auto shader: currentContext.program->shaders) {
 			// sampler2D + samplerCube
 			for (auto uniform: shader->samplerUniformList) {
-				if (samplerIdx < SAMPLER_HASH_MAX) {
+				if (samplerIdx < TEXTUREDESCRIPTORSET_MAX_TEXTURES) {
 					if (uniform->textureUnit == -1) {
 						textureIds[samplerIdx] = ID_NONE;
 					} else {
@@ -6674,7 +6678,6 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 							textureIds[samplerIdx] = ID_NONE;
 						} else {
 							textureIds[samplerIdx] = boundTexture.id;
-							textureDescriptorSetCacheId+= (SAMPLER_HASH_TYPE)boundTexture.id << (SAMPLER_HASH_TYPE)(samplerIdx * 16);
 						}
 					}
 				}
@@ -6722,12 +6725,16 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 		samplers = samplerIdx;
 	}
 
+	tuple<uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t> textureDescriptorSetCacheId = {
+		textureIds[0], textureIds[1], textureIds[2], textureIds[3],
+		textureIds[4], textureIds[5], textureIds[6], textureIds[7]
+	};
 	//
 	auto& textureDescriptorSetCache = programContext.texturesDescriptorSetsCache;
-	auto textureDescriptorSetCacheIt = samplers > SAMPLER_HASH_MAX?textureDescriptorSetCache.end():textureDescriptorSetCache.find(textureDescriptorSetCacheId);
+	auto textureDescriptorSetCacheIt = samplers > TEXTUREDESCRIPTORSET_MAX_TEXTURES?textureDescriptorSetCache.end():textureDescriptorSetCache.find(textureDescriptorSetCacheId);
 	auto textureDescriptorSetCacheHit = textureDescriptorSetCacheIt != textureDescriptorSetCache.end();
 	if (textureDescriptorSetCacheHit == false) {
-		if (samplers <= SAMPLER_HASH_MAX) {
+		if (samplers <= TEXTUREDESCRIPTORSET_MAX_TEXTURES) {
 			auto textureDescriptorSetsIdx = -1;
 			if (programContext.freeTextureDescriptorSetsIds.empty() == false) {
 				auto freeTextureDescriptorSetsIdsIdx = programContext.freeTextureDescriptorSetsIds.size() - 1;

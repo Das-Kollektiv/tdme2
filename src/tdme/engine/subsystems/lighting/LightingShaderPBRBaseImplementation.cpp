@@ -184,6 +184,7 @@ void LightingShaderPBRBaseImplementation::updateMaterial(Renderer* renderer, int
 	renderer->setProgramUniformFloat(contextIdx, uniformExposure, material.exposure);
 	renderer->setProgramUniformFloat(contextIdx, uniformMetallicFactor, material.metallicFactor);
 	renderer->setProgramUniformFloat(contextIdx, uniformRoughnessFactor, material.roughnessFactor);
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformEmissiveFactor, material.emissiveFactor);
 	renderer->setProgramUniformFloat(contextIdx, uniformNormalScale, material.normalScale);
 	renderer->setProgramUniformInteger(contextIdx, uniformAlphaCutoffEnabled, material.baseColorTextureMaskedTransparency);
 	renderer->setProgramUniformFloat(contextIdx, uniformAlphaCutoff, material.baseColorTextureMaskedTransparency == 0?0.0f:material.baseColorTextureMaskedTransparencyThreshold);
@@ -250,6 +251,9 @@ void LightingShaderPBRBaseImplementation::bindTexture(Renderer* renderer, int co
 			break;
 		case LightingShaderConstants::PBR_TEXTUREUNIT_NORMAL:
 			if (uniformNormalSamplerAvailable != -1) renderer->setProgramUniformInteger(contextIdx, uniformNormalSamplerAvailable, textureId == 0 ? 0 : 1);
+			break;
+		case LightingShaderConstants::PBR_TEXTUREUNIT_EMISSIVE:
+			if (uniformEmissiveSamplerAvailable != -1) renderer->setProgramUniformInteger(contextIdx, uniformEmissiveSamplerAvailable, textureId == 0 ? 0 : 1);
 			break;
 	}
 }

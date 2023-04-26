@@ -37,6 +37,8 @@ in vec3 v_Position;
 uniform float u_MetallicFactor;
 uniform float u_RoughnessFactor;
 uniform vec4 u_BaseColorFactor;
+uniform vec3 u_EmissiveFactor;
+uniform vec3 u_EmissiveColor;
 uniform float u_Exposure;
 uniform float u_AlphaCutoff;
 uniform int u_AlphaCutoffEnabled;
@@ -54,8 +56,8 @@ layout (location = 2) out vec4 outMaterialMetallicFactorRoughnessFactorExposureT
 layout (location = 3) out vec4 outMaterialBaseColor;
 layout (location = 4) out vec4 outMaterialMetallicRoughness;
 layout (location = 5) out vec4 outMaterialBaseColorFactor;
-layout (location = 6) out vec4 outMaterialUnused2;
-layout (location = 7) out vec4 outMaterialUnused3;
+layout (location = 6) out vec4 outMaterialEmissiveColor;
+layout (location = 7) out vec4 outMaterialEmissiveFactor;
 
 void main(void) {
 	// masked transparency
@@ -72,4 +74,6 @@ void main(void) {
 	outMaterialMetallicRoughness = u_MetallicRoughnessSamplerAvailable == 1?getMetallicRoughnessColor():vec4(0.0, 1.0, 1.0, 0.0);
 	outMaterialBaseColor = baseColor;
 	outMaterialBaseColorFactor = u_BaseColorFactor;
+	outMaterialEmissiveFactor = vec4(u_EmissiveFactor, 1.0);
+	outMaterialEmissiveColor = u_EmissiveSamplerAvailable == 1?getEmissiveColor():vec4(0.0, 0.0, 0.0, 1.0);
 }
