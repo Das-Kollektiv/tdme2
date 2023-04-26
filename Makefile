@@ -190,7 +190,6 @@ SPIRV = vulkan/spirv
 GLSLANG = vulkan/glslang
 OGLCOMPILERSDLL = vulkan/OGLCompilersDLL
 VMA = vulkan/vma
-UINT128_T = uint128_t
 CPPSPLINE = cpp-spline
 BC7 = bc7enc_rdo
 
@@ -840,9 +839,6 @@ EXT_REACTPHYSICS3D_SRCS = \
 	ext/reactphysics3d/src/utils/DefaultLogger.cpp \
 	ext/reactphysics3d/src/utils/DebugRenderer.cpp
 
-EXT_UINT128_T_SRCS = \
-	ext/uint128_t/uint128_t.cpp
-
 EXT_CPPSPLINE_SRCS = \
 	ext/cpp-spline/src/Bezier.cpp \
 	ext/cpp-spline/src/BSpline.cpp \
@@ -1012,7 +1008,6 @@ EXT_OGG_OBJS = $(EXT_OGG_SRCS:ext/$(OGG)/%.c=$(OBJ)/%.o)
 EXT_SHA256_OBJS = $(EXT_SHA256_SRCS:ext/$(SHA256)/%.cpp=$(OBJ)/%.o)
 EXT_VHACD_OBJS = $(EXT_VHACD_SRCS:ext/$(VHACD)/%.cpp=$(OBJ)/%.o)
 EXT_REACTPHYSICS3D_OBJS = $(EXT_REACTPHYSICS3D_SRCS:ext/$(REACTPHYSICS3D)/%.cpp=$(OBJ)/%.o)
-EXT_UINT128_T_OBJS = $(EXT_UINT128_T_SRCS:ext/$(UINT128_T)/%.cpp=$(OBJ)/%.o)
 EXT_CPPSPLINE_OBJS = $(EXT_CPPSPLINE_SRCS:ext/$(CPPSPLINE)/%.cpp=$(OBJ)/%.o)
 EXT_BC7_OBJS = $(EXT_BC7_SRCS:ext/$(BC7)/%.cpp=$(OBJ)/%.o)
 EXT_SPIRV_OBJS = $(EXT_SPIRV_SRCS:ext/$(SPIRV)/%.cpp=$(OBJ)/vulkan/%.o)
@@ -1079,9 +1074,6 @@ $(EXT_VHACD_OBJS):$(OBJ)/%.o: ext/$(VHACD)/%.cpp | print-opts
 
 $(EXT_REACTPHYSICS3D_OBJS):$(OBJ)/%.o: ext/$(REACTPHYSICS3D)/%.cpp | print-opts
 	$(cpp-command-ext-rp3d)
-
-$(EXT_UINT128_T_OBJS):$(OBJ)/%.o: ext/$(UINT128_T)/%.cpp | print-opts
-	$(cpp-command)
 
 $(EXT_CPPSPLINE_OBJS):$(OBJ)/%.o: ext/$(CPPSPLINE)/%.cpp | print-opts
 	$(cpp-command)
@@ -1211,7 +1203,7 @@ endif
 
 $(LIB_DIR)/$(LIB): $(OBJS) $(OBJS_DEBUG)
 
-$(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_SHA256_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_UINT128_T_OBJS) $(EXT_CPPSPLINE_OBJS) $(EXT_BC7_OBJS)
+$(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_SHA256_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_CPPSPLINE_OBJS) $(EXT_BC7_OBJS)
 
 $(LIB_DIR)/$(OPENGL2_RENDERER_LIB): $(OPENGL2_RENDERER_LIB_OBJS)
 

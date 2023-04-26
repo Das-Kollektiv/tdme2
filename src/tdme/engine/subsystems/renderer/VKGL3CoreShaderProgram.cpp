@@ -1123,14 +1123,14 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 	// print shaders with more than SAMPLER_HASH_MAX samplers as our hashing depends of 4 samplers max
 	if (program.type == 1/*PROGRAM_OBJECTS*/) {
 		for (auto shader: program.shaders) {
-			if (shader->samplerUniformList.size() > SAMPLER_HASH_MAX) {
+			if (shader->samplerUniformList.size() > TEXTUREDESCRIPTORSET_MAX_TEXTURES) {
 				Console::println(
 					string("VKGL3CoreShaderProgram::") +
 					string(__FUNCTION__) +
 					string("[") +
 					to_string(shader->id) +
 					string("]") +
-					string(": warning: more than ") + to_string(SAMPLER_HASH_MAX) + string(" samplers @ ") +
+					string(": warning: more than ") + to_string(TEXTUREDESCRIPTORSET_MAX_TEXTURES) + string(" samplers @ ") +
 					shader->file
 				);
 				for (auto samplerUniform: shader->samplerUniformList) {
