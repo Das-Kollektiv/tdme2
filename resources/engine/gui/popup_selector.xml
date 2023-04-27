@@ -1,18 +1,18 @@
-<screen id="popup_nodeselector" popup="true" min-width="1024" min-height="768" max-width="3200" max-height="1800">
+<screen id="popup_selector" popup="true" min-width="1024" min-height="768" max-width="3200" max-height="1800">
 	<layout alignment="none" horizontal-align="center" vertical-align="center" width="100%" height="100%">
 
 		<moveable width="auto" height="auto">
 			<tabs alignment="vertical" width="200" height="300">
 				<tabs-header>
-					<tab id="tab_nodeselector" text="Node Selector" />
+					<tab id="tab_selector" text="Node Selector" />
 				</tabs-header>
 				<tabs-content>
-					<tab-content tab-id="tab_nodeselector" vertical-align="center">
+					<tab-content tab-id="tab_selector" vertical-align="center">
 						<layout padding="5" alignment="vertical" width="100%" height="100%">
 								
-							<selectbox id="nodeselector_selectbox" boder="0" height="*">
+							<selectbox id="selector_selectbox" boder="0" height="*">
 								
-								<scrollarea id="nodeselector_scrollarea" background-color="{$color.element_midground}" width="100%" height="100%" focusable="true">
+								<scrollarea id="selector_scrollarea" background-color="{$color.element_midground}" width="100%" height="100%" focusable="true">
 	
 	
 	
@@ -23,9 +23,9 @@
 							<space height="10"/>
 							
 							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-								<button id="nodeselector_select" width="*" height="25" text="Select"/>
+								<button id="selector_select" width="*" height="25" text="Select"/>
 								<space width="5" />
-								<button id="nodeselector_cancel" width="*" height="25" text="Cancel"/>
+								<button id="selector_cancel" width="*" height="25" text="Cancel"/>
 							</layout>
 									
 						</layout>

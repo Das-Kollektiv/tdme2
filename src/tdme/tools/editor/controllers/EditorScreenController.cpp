@@ -2401,5 +2401,5 @@ bool EditorScreenController::isDropOnNode(int dropX, int dropY, const string& no
 
 void EditorScreenController::onDrop(const vector<string>& paths) {
 	// WIP
-	view->getPopUps()->getImportDialogScreenController()->show();
+	view->getPopUps()->getImportDialogScreenController()->show(paths[0]);
 }

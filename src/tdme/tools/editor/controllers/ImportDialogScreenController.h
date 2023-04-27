@@ -63,8 +63,10 @@ public:
 
 	/**
 	 * Shows the pop up
+	 * @param fileName file name
 	 */
-	void show();
+	void show(const string& fileName);
+
 	/**
 	 * Closes the pop up
 	 */
