@@ -851,6 +851,17 @@ void ModelEditorTabController::updateMaterialDetails() {
 					"/" +
 					pbrMaterialProperties->getNormalTextureFileName()
 				);
+			auto emissiveTextureFileName =
+				pbrMaterialProperties->getEmissiveTextureFileName().empty() == true?
+					string():
+					(
+						PrototypeReader::getResourcePathName(
+							view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
+							pbrMaterialProperties->getEmissiveTexturePathName() + "/" + pbrMaterialProperties->getEmissiveTextureFileName()
+					) +
+					"/" +
+					pbrMaterialProperties->getEmissiveTextureFileName()
+				);
 			//
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_basecolor_texture"))->setTexture(pbrMaterialProperties->getBaseColorTexture());
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_basecolor_texture"))->setTooltip(baseColorTextureFileName);
@@ -858,6 +869,8 @@ void ModelEditorTabController::updateMaterialDetails() {
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_metallic_roughness_texture"))->setTooltip(metallicRoughnessTextureFileName);
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_normal_texture"))->setTexture(pbrMaterialProperties->getNormalTexture());
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_normal_texture"))->setTooltip(normalTextureFileName);
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_emissive_texture"))->setTexture(pbrMaterialProperties->getEmissiveTexture());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_emissive_texture"))->setTooltip(emissiveTextureFileName);
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_metallic_factor"))->getController()->setValue(pbrMaterialProperties->getMetallicFactor());
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_roughness_factor"))->getController()->setValue(pbrMaterialProperties->getRoughnessFactor());
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_normal_scale"))->getController()->setValue(pbrMaterialProperties->getNormalScale());
@@ -888,6 +901,7 @@ void ModelEditorTabController::updateMaterialColorDetails() {
 
 		if (pbrMaterialProperties != nullptr) {
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_basecolor"))->setEffectColorMul(Color4(pbrMaterialProperties->getBaseColorFactor()));
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("pbrmaterial_emissivefactor"))->setEffectColorMul(Color4(pbrMaterialProperties->getEmissiveFactor()));
 		}
 	} catch (Exception& exception) {
 		Console::println("ModelEditorTabController::updateMaterialColorDetails(): An error occurred: " + string(exception.what()));
@@ -1920,6 +1934,99 @@ void ModelEditorTabController::onMaterialBrowseToPBRNormalTexture() {
 	view->getEditorView()->getScreenController()->browseTo(pbrMaterialProperties->getNormalTexturePathName() + "/" + pbrMaterialProperties->getNormalTextureFileName());
 }
 
+void ModelEditorTabController::setMaterialPBREmissiveTexture(const string& fileName) {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
+	if (pbrMaterialProperties == nullptr) return;
+	//
+	view->reloadPrototype();
+	pbrMaterialProperties->setEmissiveTexture(
+		Tools::getPathName(fileName),
+		Tools::getFileName(fileName)
+	);
+	updateMaterialDetails();
+}
+
+void ModelEditorTabController::onMaterialLoadPBREmissiveTexture() {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
+	if (pbrMaterialProperties == nullptr) return;
+
+	class OnLoadTexture: public virtual Action
+	{
+	public:
+		void performAction() override {
+			modelEditorTabController->setMaterialPBREmissiveTexture(
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() + "/" + modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+			);
+			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param modelEditorTabController model editor tab controller
+		 * @param specularMaterialProperties specular material properties
+		 */
+		OnLoadTexture(ModelEditorTabController* modelEditorTabController, PBRMaterialProperties* pbrMaterialProperties)
+			: modelEditorTabController(modelEditorTabController)
+			, pbrMaterialProperties(pbrMaterialProperties) {
+		}
+
+
+	private:
+		ModelEditorTabController* modelEditorTabController;
+		PBRMaterialProperties* pbrMaterialProperties;
+	};
+
+	auto extensions = TextureReader::getTextureExtensions();
+	popUps->getFileDialogScreenController()->show(
+		pbrMaterialProperties->getEmissiveTextureFileName().empty() == false?pbrMaterialProperties->getEmissiveTexturePathName():string(),
+		"Load PBR emissive texture from: ",
+		extensions,
+		pbrMaterialProperties->getEmissiveTextureFileName(),
+		true,
+		new OnLoadTexture(this, pbrMaterialProperties)
+	);
+}
+
+void ModelEditorTabController::onMaterialClearPBREmissiveTexture() {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
+	if (pbrMaterialProperties == nullptr) return;
+	view->reloadPrototype();
+	pbrMaterialProperties->setEmissiveTexture(
+		string(),
+		string()
+	);
+	updateMaterialDetails();
+}
+
+void ModelEditorTabController::onMaterialBrowseToPBREmissiveTexture() {
+	auto model = getSelectedModel();
+	if (model == nullptr) {
+		showInfoPopUp("Browse To", "Nothing to browse to");
+		return;
+	}
+	if (model->hasEmbeddedPBRTextures() == true) {
+		showInfoPopUp("Browse To", "This model has embedded PBR material textures");
+		return;
+	}
+	auto material = getSelectedMaterial();
+	if (material == nullptr) {
+		showInfoPopUp("Browse To", "Nothing to browse to");
+		return;
+	}
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
+	if (pbrMaterialProperties == nullptr || pbrMaterialProperties->getEmissiveTextureFileName().empty() == true) {
+		showInfoPopUp("Browse To", "Nothing to browse to");
+		return;
+	}
+	view->getEditorView()->getScreenController()->browseTo(pbrMaterialProperties->getEmissiveTexturePathName() + "/" + pbrMaterialProperties->getEmissiveTextureFileName());
+}
+
 void ModelEditorTabController::startRenameAnimation(int lodLevel, const string& animationId) {
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return;
@@ -2750,6 +2857,15 @@ void ModelEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 		if (node->getId().compare("pbrmaterial_normal_texture_browseto") == 0) {
 			onMaterialBrowseToPBRNormalTexture();
 		} else
+		if (node->getId().compare("pbrmaterial_emissive_texture_open") == 0) {
+			onMaterialLoadPBREmissiveTexture();
+		} else
+		if (node->getId().compare("pbrmaterial_emissive_texture_remove") == 0) {
+			onMaterialClearPBREmissiveTexture();
+		} else
+		if (node->getId().compare("pbrmaterial_emissive_texture_browseto") == 0) {
+			onMaterialBrowseToPBREmissiveTexture();
+		} else
 		if (node->getId().compare("animationpreview_attachment1_model_open") == 0) {
 			onPreviewAnimationsAttachment1ModelLoad();
 		} else
@@ -2857,6 +2973,26 @@ void ModelEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 					Material* material;
 				};
 				popUps->getColorPickerScreenController()->show(pbrMaterialProperties->getBaseColorFactor(), new OnColorChangeAction(this, material));
+			}
+		} else
+		if (node->getId().compare("pbrmaterial_emissivefactor_edit") == 0) {
+			auto material = getSelectedMaterial();
+			auto pbrMaterialProperties = material != nullptr?material->getPBRMaterialProperties():nullptr;
+			if (pbrMaterialProperties != nullptr) {
+				class OnColorChangeAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						material->getPBRMaterialProperties()->setEmissiveFactor(Color4(modelEditorTabController->popUps->getColorPickerScreenController()->getColor()));
+						modelEditorTabController->updateMaterialColorDetails();
+					}
+					OnColorChangeAction(ModelEditorTabController* modelEditorTabController, Material* material): modelEditorTabController(modelEditorTabController), material(material) {
+					}
+				private:
+					ModelEditorTabController* modelEditorTabController;
+					Material* material;
+				};
+				popUps->getColorPickerScreenController()->show(pbrMaterialProperties->getEmissiveFactor(), new OnColorChangeAction(this, material));
 			}
 		} else
 		if (node->getId().compare("lod_color_add_edit") == 0) {
