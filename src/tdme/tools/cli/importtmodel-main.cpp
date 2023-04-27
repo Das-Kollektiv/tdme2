@@ -81,7 +81,7 @@ public:
 	 */
 	inline static void main(int argc, char** argv) {
 		auto useBC7TextureCompression = true;
-		if (argv[1] == "-no-texture-compression") useBC7TextureCompression = false;
+		if (string(argv[1]) == "-no-texture-compression") useBC7TextureCompression = false;
 		string tModelFileName = argv[1 + (useBC7TextureCompression == false?1:0)];
 		string modelFileName = argv[2 + (useBC7TextureCompression == false?1:0)];
 		string bvsModelFileName = argc >= 4 + (useBC7TextureCompression == false?1:0)?argv[3 + (useBC7TextureCompression == false?1:0)]:"";
