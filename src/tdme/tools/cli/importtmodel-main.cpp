@@ -55,15 +55,17 @@ private:
 	string tModelFileName;
 	string modelFileName;
 	string bvsModelFileName;
+	bool useBC7TextureCompression { true };
 
 public:
 	/**
 	 * Public constructor
 	 */
-	ImportTModelApplication(const string& tModelFileName, const string& modelFileName, const string& bvsModelFileName):
+	ImportTModelApplication(const string& tModelFileName, const string& modelFileName, const string& bvsModelFileName, bool useBC7TextureCompression):
 		tModelFileName(tModelFileName),
 		modelFileName(modelFileName),
-		bvsModelFileName(bvsModelFileName) {
+		bvsModelFileName(bvsModelFileName),
+		useBC7TextureCompression(useBC7TextureCompression) {
 	}
 
 	/**
@@ -78,10 +80,12 @@ public:
 	 * @param argv argument values
 	 */
 	inline static void main(int argc, char** argv) {
-		string tModelFileName = argv[1];
-		string modelFileName = argv[2];
-		string bvsModelFileName = argc >= 4?argv[3]:"";
-		auto importTModelApplication = new ImportTModelApplication(tModelFileName, modelFileName, bvsModelFileName);
+		auto useBC7TextureCompression = true;
+		if (argv[1] == "-no-texture-compression") useBC7TextureCompression = false;
+		string tModelFileName = argv[1 + (useBC7TextureCompression == false?1:0)];
+		string modelFileName = argv[2 + (useBC7TextureCompression == false?1:0)];
+		string bvsModelFileName = argc >= 4 + (useBC7TextureCompression == false?1:0)?argv[3 + (useBC7TextureCompression == false?1:0)]:"";
+		auto importTModelApplication = new ImportTModelApplication(tModelFileName, modelFileName, bvsModelFileName, useBC7TextureCompression);
 		importTModelApplication->run(argc, argv, "Import TModel Application", nullptr, Application::WINDOW_HINT_INVISIBLE);
 	}
 
@@ -93,7 +97,8 @@ public:
 			Console::println("Loading model: " + modelFileName);
 			auto model = ModelReader::read(
 				FileSystem::getInstance()->getPathName(modelFileName),
-				FileSystem::getInstance()->getFileName(modelFileName)
+				FileSystem::getInstance()->getFileName(modelFileName),
+				useBC7TextureCompression
 			);
 			// load tmm
 			if (FileSystem::getInstance()->fileExists(tModelFileName) == false) {
@@ -116,7 +121,9 @@ public:
 				Console::println("Loading tmodel: " + tModelFileName);
 				prototype = PrototypeReader::read(
 					FileSystem::getInstance()->getPathName(tModelFileName),
-					FileSystem::getInstance()->getFileName(tModelFileName)
+					FileSystem::getInstance()->getFileName(tModelFileName),
+					nullptr,
+					useBC7TextureCompression
 				);
 				prototype->setModel(model);
 			}
@@ -150,7 +157,8 @@ public:
 			PrototypeWriter::write(
 				FileSystem::getInstance()->getPathName(tModelFileName),
 				FileSystem::getInstance()->getFileName(tModelFileName),
-				prototype
+				prototype,
+				useBC7TextureCompression
 			);
 		} catch (Exception& exception) {
 			Console::println("An error occurred: " + string(exception.what()));
@@ -181,7 +189,7 @@ int main(int argc, char** argv)
 	Console::println(Version::getCopyright());
 	Console::println();
 	if (argc < 3) {
-		Console::println("Usage: importtmodel model.tmodel modelfile.ext [bvs-model.ext]");
+		Console::println("Usage: importtmodel [-no-texture-compression] model.tmodel modelfile.ext [bvs-model.ext]");
 		Application::exit(1);
 	}
 	tdme::tools::cli::ImportTModelApplication::main(argc, argv);

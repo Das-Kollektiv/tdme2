@@ -30,21 +30,14 @@ class tdme::engine::fileio::prototypes::PrototypeWriter final
 private:
 
 	/**
-	 * Copy file
-	 * @param source source
-	 * @param dest dest
-	 * @throws tdme::os::filesystem::FileSystemException
-	 */
-	static void copyFile(const string& source, const string& dest);
-
-	/**
 	 * Writes LOD level to JSON
 	 * @param jDocument JSON document
 	 * @param jLodLevelRoot JSON LOD level root value
 	 * @param lodLevel lod level
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @return json root
 	 */
-	static void writeLODLevelToJSON(Document& jDocument, Value& jLodLevelRoot, PrototypeLODLevel* lodLevel);
+	static void writeLODLevelToJSON(Document& jDocument, Value& jLodLevelRoot, PrototypeLODLevel* lodLevel, bool useBC7TextureCompression);
 
 public:
 
@@ -53,19 +46,21 @@ public:
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @param prototype prototype
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void write(const string& pathName, const string& fileName, Prototype* prototype);
+	static void write(const string& pathName, const string& fileName, Prototype* prototype, bool useBC7TextureCompression = true);
 
 	/**
 	 * Writes a prototype to JSON
 	 * @param document JSON document
 	 * @param jPrototypeRoot JSON value to store data in
 	 * @param prototype prototype
+	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void write(Document& jDocument, Value& jPrototypeRoot, Prototype* prototype);
+	static void write(Document& jDocument, Value& jPrototypeRoot, Prototype* prototype, bool useBC7TextureCompression = true);
 
 };
