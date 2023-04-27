@@ -14,6 +14,7 @@ using tdme::tools::editor::controllers::ImportDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::InputDialogScreenController;
 using tdme::tools::editor::controllers::ProgressBarScreenController;
+using tdme::tools::editor::controllers::SelectorDialogScreenController;
 using tdme::tools::editor::controllers::TooltipScreenController;
 
 /**
@@ -32,6 +33,7 @@ private:
 	AboutDialogScreenController* aboutDialogScreenController { nullptr };
 	FindReplaceDialogScreenController* findReplaceDialogScreenController { nullptr };
 	ImportDialogScreenController* importDialogScreenController { nullptr };
+	SelectorDialogScreenController* selectorDialogScreenController { nullptr };
 	TooltipScreenController* tooltipScreenController { nullptr };
 	DraggingScreenController* draggingScreenController { nullptr };
 
@@ -107,6 +109,13 @@ public:
 	 */
 	inline ImportDialogScreenController* getImportDialogScreenController() {
 		return importDialogScreenController;
+	}
+
+	/**
+	 * @return selector dialog screen controller
+	 */
+	inline SelectorDialogScreenController* getSelectorDialogScreenController() {
+		return selectorDialogScreenController;
 	}
 
 	/**

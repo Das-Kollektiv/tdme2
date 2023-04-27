@@ -27,6 +27,7 @@
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InputDialogScreenController.h>
 #include <tdme/tools/editor/controllers/ProgressBarScreenController.h>
+#include <tdme/tools/editor/controllers/SelectorDialogScreenController.h>
 #include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
@@ -63,6 +64,7 @@ using tdme::tools::editor::controllers::ImportDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::InputDialogScreenController;
 using tdme::tools::editor::controllers::ProgressBarScreenController;
+using tdme::tools::editor::controllers::SelectorDialogScreenController;
 using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::CameraRotationInputHandler;
 using tdme::tools::editor::misc::PopUps;
@@ -366,6 +368,7 @@ void EditorView::activate()
 	engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getFindReplaceDialogScreenController()->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getInputDialogScreenController()->getScreenNode()->getId());
+	engine->getGUI()->addRenderScreen(popUps->getSelectorDialogScreenController()->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getContextMenuScreenController()->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getProgressBarScreenController()->getScreenNode()->getId());

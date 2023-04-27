@@ -17,12 +17,16 @@
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
+#include <tdme/tools/editor/controllers/FileDialogScreenController.h>
+#include <tdme/tools/editor/controllers/SelectorDialogScreenController.h>
 #include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
+
+using tdme::tools::editor::controllers::ImportDialogScreenController;
 
 using std::string;
 
@@ -41,7 +45,8 @@ using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
 using tdme::gui::GUI;
-using tdme::tools::editor::controllers::ImportDialogScreenController;
+using tdme::tools::editor::controllers::FileDialogScreenController;
+using tdme::tools::editor::controllers::SelectorDialogScreenController;
 using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::utilities::Console;
@@ -94,6 +99,45 @@ void ImportDialogScreenController::close()
 void ImportDialogScreenController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
+		if (node->getId() == "modelimport_boundingvolume_node") {
+			popUps->getSelectorDialogScreenController()->show();
+		} else
+		if (node->getId() == "modelimport_lod1_node") {
+			popUps->getSelectorDialogScreenController()->show();
+		} else
+		if (node->getId() == "modelimport_lod2_node") {
+			popUps->getSelectorDialogScreenController()->show();
+		} else
+		if (node->getId() == "modelimport_boundingvolume_open") {
+			popUps->getFileDialogScreenController()->show(
+				string(),
+				"Load bounding volume model from: ",
+				ModelReader::getModelExtensions(),
+				string(),
+				true,
+				nullptr
+			);
+		} else
+		if (node->getId() == "modelimport_lod1_open") {
+			popUps->getFileDialogScreenController()->show(
+				string(),
+				"Load LOD1 model from: ",
+				ModelReader::getModelExtensions(),
+				string(),
+				true,
+				nullptr
+			);
+		} else
+		if (node->getId() == "modelimport_lod2_open") {
+			popUps->getFileDialogScreenController()->show(
+				string(),
+				"Load LOD2 model from: ",
+				ModelReader::getModelExtensions(),
+				string(),
+				true,
+				nullptr
+			);
+		} else
 		if (StringTools::startsWith(node->getId(), "modelimport_caption_close_") == true) { // TODO: a.drewke, check with DH) {
 			close();
 		}
