@@ -12,12 +12,15 @@
 				<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="pbrmaterial_metallic_roughness_texture" type="Met./Roug." />
 				<space height="10" />
 				<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="pbrmaterial_normal_texture" type="Normal" />
+				<space height="10" />
+				<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="pbrmaterial_emissive_texture" type="Emissive" />
 				
 				<space height="5" />
 				<menu-separator />
 				<space height="5" />
 
 				<template src="resources/engine/gui/template_details_shared_color.xml" id="pbrmaterial_basecolor" name="Base Color" />					
+				<template src="resources/engine/gui/template_details_shared_color.xml" id="pbrmaterial_emissivefactor" name="Emissive Factor" />
 				
 				<space height="5" />
 				<menu-separator />
