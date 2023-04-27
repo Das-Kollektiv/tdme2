@@ -12,10 +12,10 @@
 #define MOUSE_CURSOR_ENABLED 1
 #define MOUSE_CURSOR_NORMAL 1
 #define MOUSE_CURSOR_HAND 2
-#include <array>
-using std::array;
 
+#include <array>
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/application/fwd-tdme.h>
@@ -23,7 +23,9 @@ using std::array;
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 
+using std::array;
 using std::string;
+using std::vector;
 
 using tdme::application::InputEventHandler;
 using tdme::engine::subsystems::renderer::Renderer;
@@ -321,6 +323,12 @@ public:
 	 */
 	virtual void onClose();
 
+	/**
+	 * On drop
+	 * @param paths paths of items that were dropped
+	 */
+	virtual void onDrop(const vector<string>& paths);
+
 private:
 	STATIC_DLL_IMPEXT static Renderer* renderer;
 	STATIC_DLL_IMPEXT static Application* application;
@@ -418,5 +426,13 @@ private:
 	 * GLFW on close
 	 */
 	static void glfwOnClose(GLFWwindow* window);
+
+	/**
+	 * GLFW on drop
+	 * @param window window
+	 * @param count count
+	 * @param paths paths
+	 */
+	static void glfwOnDrop(GLFWwindow* window, int count, const char** paths);
 
 };
