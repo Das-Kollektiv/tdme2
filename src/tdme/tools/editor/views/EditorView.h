@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <vector>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
@@ -10,6 +13,9 @@
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
 #include <tdme/tools/editor/views/View.h>
+
+using std::string;
+using std::vector;
 
 using tdme::engine::Engine;
 using tdme::gui::events::GUIInputEventHandler;
@@ -131,5 +137,11 @@ public:
 	 * @return success
 	 */
 	bool getCurrentTabTooltipPosition(GUIScreenNode* screenNode, int mouseX, int mouseY, int& tooltipLeft, int& tooltipTop);
+
+	/**
+	 * On drop
+	 * @param paths paths of items that were dropped
+	 */
+	void onDrop(const vector<string>& paths);
 
 };

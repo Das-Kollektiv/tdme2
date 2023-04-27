@@ -739,6 +739,12 @@ public:
 	}
 
 	/**
+	 * On drop
+	 * @param paths paths of items that were dropped
+	 */
+	void onDrop(const vector<string>& paths);
+
+	/**
 	 * Update log
 	 */
 	void updateLog();

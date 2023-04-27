@@ -140,7 +140,7 @@ void Installer::initializeScreens() {
 		popUps->initialize();
 
 		installerProperties.load("resources/installer", "installer.properties");
-		if (installerProperties.get("installer_version", "") != "1.9.161") throw ExceptionBase("Installer is outdated. Please uninstall and update installer");
+		if (installerProperties.get("installer_version", "") != "1.9.176") throw ExceptionBase("Installer is outdated. Please uninstall and update installer");
 		unordered_map<string, string> variables = {
 			{"name", installerProperties.get("name", "TDME2 based application")},
 			{"diskspace", installerProperties.get("diskspace", "Unknown")},

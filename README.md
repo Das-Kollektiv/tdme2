@@ -35,6 +35,7 @@
       - swapping double buffered buffers (to screen) manually if required
       - checking if application is active (port-mingw, port-msc only for now)
       - setting and getting data from clipboard
+      - receives and forwards file/folder drop events
     - provides
       - a crash handler for port-msc and port-mingw which also saves backtrace to crash.log
       - application life cycle
@@ -133,10 +134,11 @@
     - screenshot ability
     - multiple renderer backends, which are loaded at runtime
       - GLES2, GL2, GL3+/CORE and Vulkan
-- Physics via ReactPhysics3D 0.7.0
+- Physics via ReactPhysics3D 0.9.0
     - have sphere, capsule, obb, convex mesh, concave terrain mesh, height map bounding volumes
     - have multiple bounding volumes per body
     - have static, dynamic rigid bodies and collision bodies
+    - have joints(WIP)
     - uses discrete collision detection
     - rigid body simulator
     - ray tracing
@@ -145,6 +147,7 @@
     - uses A*
     - is paired with physics world to determine if a "cell" is walkable
     - optional custom walkable test
+    - additional optional navigation map test
     - path finding utility supports generating flow maps
 - 3D audio
     - decoder

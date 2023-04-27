@@ -490,6 +490,27 @@ public:
 	void onMaterialBrowseToPBRNormalTexture();
 
 	/**
+	 * Set material PBR emissive texture
+	 * @param fileName file name
+	 */
+	void setMaterialPBREmissiveTexture(const string& fileName);
+
+	/**
+	 * On material load PBR emissive texture
+	 */
+	void onMaterialLoadPBREmissiveTexture();
+
+	/**
+	 * On material load PBR emissive texture
+	 */
+	void onMaterialClearPBREmissiveTexture();
+
+	/**
+	 * On material browse to PBR emissive texture
+	 */
+	void onMaterialBrowseToPBREmissiveTexture();
+
+	/**
 	 * Set preview animations attachment 1 model
 	 * @param fileName file name
 	 */
