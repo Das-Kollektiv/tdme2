@@ -13,6 +13,7 @@ namespace controllers {
 	class EditorScreenController;
 	class FileDialogScreenController;
 	class FindReplaceDialogScreenController;
+	class ImportDialogScreenController;
 	class InfoDialogScreenController;
 	class InputDialogScreenController;
 	class ProgressBarScreenController;

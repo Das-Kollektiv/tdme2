@@ -681,6 +681,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 	glfwSetScrollCallback(glfwWindow, Application::glfwOnMouseWheel);
 	glfwSetWindowSizeCallback(glfwWindow, Application::glfwOnWindowResize);
 	glfwSetWindowCloseCallback(glfwWindow, Application::glfwOnClose);
+	glfwSetDropCallback(glfwWindow, glfwOnDrop);
 	if ((windowHints & WINDOW_HINT_MAXIMIZED) == WINDOW_HINT_MAXIMIZED) {
 		glfwGetWindowPos(glfwWindow, &windowXPosition, &windowYPosition);
 		glfwGetWindowSize(glfwWindow, &windowWidth, &windowHeight);
@@ -839,6 +840,18 @@ void Application::glfwOnClose(GLFWwindow* window) {
 	Application::application->onClose();
 }
 
+void Application::glfwOnDrop(GLFWwindow* window, int count, const char** paths) {
+	Console::println("Application::glfwOnDrop(): " + to_string(count) + " items have been dropped");
+	vector<string> pathsVector;
+	for (auto i = 0; i < count; i++) {
+		Console::println("\t" + string(paths[i]));
+		pathsVector.push_back(paths[i]);
+	}
+	Application::application->onDrop(pathsVector);
+}
+
 void Application::onClose() {
 }
 
+void Application::onDrop(const vector<string>& paths) {
+}

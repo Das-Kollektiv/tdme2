@@ -1,6 +1,7 @@
 #include <tdme/tools/editor/views/EditorView.h>
 
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/audio/Audio.h>
@@ -22,6 +23,7 @@
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/FindReplaceDialogScreenController.h>
+#include <tdme/tools/editor/controllers/ImportDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InputDialogScreenController.h>
 #include <tdme/tools/editor/controllers/ProgressBarScreenController.h>
@@ -36,6 +38,7 @@
 #include <tdme/utilities/StringTools.h>
 
 using std::string;
+using std::vector;
 
 using tdme::audio::Audio;
 using tdme::engine::Engine;
@@ -56,6 +59,7 @@ using tdme::tools::editor::controllers::DraggingScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::FindReplaceDialogScreenController;
+using tdme::tools::editor::controllers::ImportDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::InputDialogScreenController;
 using tdme::tools::editor::controllers::ProgressBarScreenController;
@@ -357,6 +361,7 @@ void EditorView::activate()
 	engine->getGUI()->resetRenderScreens();
 	engine->getGUI()->addRenderScreen(editorScreenController->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getAboutDialogScreenController()->getScreenNode()->getId());
+	engine->getGUI()->addRenderScreen(popUps->getImportDialogScreenController()->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getColorPickerScreenController()->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getFindReplaceDialogScreenController()->getScreenNode()->getId());
@@ -438,4 +443,8 @@ bool EditorView::getCurrentTabTooltipPosition(GUIScreenNode* screenNode, int mou
 	tooltipTop = top + mouseY * yScale - offsetY * yScale;
 	//
 	return true;
+}
+
+void EditorView::onDrop(const vector<string>& paths) {
+	editorScreenController->onDrop(paths);
 }
