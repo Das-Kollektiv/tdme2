@@ -588,6 +588,7 @@ SRCS = \
 	src/tdme/tools/editor/controllers/EditorScreenController.cpp \
 	src/tdme/tools/editor/controllers/FileDialogScreenController.cpp \
 	src/tdme/tools/editor/controllers/FindReplaceDialogScreenController.cpp \
+	src/tdme/tools/editor/controllers/ImportDialogScreenController.cpp \
 	src/tdme/tools/editor/controllers/InfoDialogScreenController.cpp \
 	src/tdme/tools/editor/controllers/InputDialogScreenController.cpp \
 	src/tdme/tools/editor/controllers/ProgressBarScreenController.cpp \
