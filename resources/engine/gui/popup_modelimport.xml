@@ -2,7 +2,7 @@
 	<layout alignment="none" horizontal-align="center" vertical-align="center" width="100%" height="100%">
 
 		<moveable width="auto" height="auto">
-			<tabs width="350" height="400">
+			<tabs width="350" height="430">
 				<tabs-header id="modelimport_tabs-header">
 					<tab id="modelimport_caption" image="resources/engine/images/attention.png" text="Import Model" closeable="true"/>
 				</tabs-header>
@@ -81,6 +81,15 @@
 								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Embed Textures" width="*" height="auto"/>
 								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="left">
 									<checkbox id="modelimport_embedtextures" value="1"/>								
+								</layout>
+							</layout>
+							
+							<space height="5" />
+							
+							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Texture Compression" width="*" height="auto"/>
+								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="left">
+									<checkbox id="modelimport_texturecompression" value="1"/>								
 								</layout>
 							</layout>
 
