@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/utilities/Time.h>
@@ -20,6 +21,7 @@
 #include <tdme/utilities/Console.h>
 
 using std::string;
+using std::vector;
 
 using tdme::tools::editor::TDMEEditor;
 
@@ -144,4 +146,8 @@ void TDMEEditor::initialize()
 void TDMEEditor::reshape(int width, int height)
 {
 	engine->reshape(width, height);
+}
+
+void TDMEEditor::onDrop(const vector<string>& paths) {
+	editorView->onDrop(paths);
 }

@@ -111,11 +111,7 @@ using rapidjson::StringBuffer;
 using rapidjson::Value;
 using rapidjson::Writer;
 
-void PrototypeWriter::copyFile(const string& source, const string& dest)
-{
-}
-
-void PrototypeWriter::write(const string& pathName, const string& fileName, Prototype* prototype)
+void PrototypeWriter::write(const string& pathName, const string& fileName, Prototype* prototype, bool useBC7TextureCompression)
 {
 	prototype->setFileName((pathName.empty() == false?pathName + "/":"") + fileName);
 
@@ -130,7 +126,7 @@ void PrototypeWriter::write(const string& pathName, const string& fileName, Prot
 	FileSystem::getInstance()->setContentFromString(pathName, fileName, stringBuffer.GetString());
 }
 
-void PrototypeWriter::writeLODLevelToJSON(Document& jDocument, Value& jLodLevelRoot, PrototypeLODLevel* lodLevel) {
+void PrototypeWriter::writeLODLevelToJSON(Document& jDocument, Value& jLodLevelRoot, PrototypeLODLevel* lodLevel, bool useBC7TextureCompression) {
 	auto& jAllocator = jDocument.GetAllocator();
 	jLodLevelRoot.SetObject();
 	jLodLevelRoot.AddMember("t", Value(lodLevel->getType()), jAllocator);
@@ -141,7 +137,8 @@ void PrototypeWriter::writeLODLevelToJSON(Document& jDocument, Value& jLodLevelR
 		TMWriter::write(
 			lodLevel->getModel(),
 			modelPathName,
-			modelFileName
+			modelFileName,
+			useBC7TextureCompression
 		);
 		jLodLevelRoot.AddMember("f", Value(modelPathName + "/" + modelFileName, jAllocator), jAllocator);
 	}
@@ -156,7 +153,7 @@ void PrototypeWriter::writeLODLevelToJSON(Document& jDocument, Value& jLodLevelR
 	jLodLevelRoot.AddMember("caa", Value(lodLevel->getColorAdd().getAlpha()), jAllocator);
 }
 
-void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototype* prototype)
+void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototype* prototype, bool useBC7TextureCompression)
 {
 	auto& jAllocator = jDocument.GetAllocator();
 	if (prototype->getType() == Prototype_Type::MODEL && prototype->getModelFileName().length() > 0) {
@@ -165,7 +162,8 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 		TMWriter::write(
 			prototype->getModel(),
 			modelPathName,
-			modelFileName
+			modelFileName,
+			useBC7TextureCompression
 		);
 
 		// we can only use the offscreen engine currently if having a GL/Vulkan window and context
@@ -190,7 +188,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 				//
 				Value jLodLevel;
 				jLodLevel.SetObject();
-				writeLODLevelToJSON(jDocument, jLodLevel, lodLevel);
+				writeLODLevelToJSON(jDocument, jLodLevel, lodLevel, useBC7TextureCompression);
 				jPrototypeRoot.AddMember(Value("ll" + to_string(lodLevelIdx), jAllocator), jLodLevel, jAllocator);
 				lodLevelIdx++;
 			}
@@ -205,7 +203,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 				//
 				Value jLodLevel;
 				jLodLevel.SetObject();
-				writeLODLevelToJSON(jDocument, jLodLevel, lodLevel);
+				writeLODLevelToJSON(jDocument, jLodLevel, lodLevel, useBC7TextureCompression);
 				jPrototypeRoot.AddMember(Value("ll" + to_string(lodLevelIdx), jAllocator), jLodLevel, jAllocator);
 				lodLevelIdx++;
 			}
@@ -271,7 +269,8 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 						TMWriter::write(
 							particleSystem->getObjectParticleSystem()->getModel(),
 							modelPathName,
-							modelFileName
+							modelFileName,
+							useBC7TextureCompression
 						);
 						particleSystem->getObjectParticleSystem()->setModelFile(modelPathName + "/" + modelFileName);
 					}
