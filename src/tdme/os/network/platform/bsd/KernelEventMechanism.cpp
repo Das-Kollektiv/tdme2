@@ -2,6 +2,7 @@
 #if defined(__FreeBSD__) || defined(__OpenBSD__)
 	#include <sys/types.h>
 #endif
+
 #include <sys/event.h>
 #include <sys/time.h>
 
@@ -11,12 +12,18 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <array>
+#include <vector>
+
 #include <tdme/tdme.h>
 #include <tdme/os/network/fwd-tdme.h>
 #include <tdme/os/network/platform/bsd/fwd-tdme.h>
 #include <tdme/os/network/platform/bsd/KernelEventMechanismPSD.h>
 #include <tdme/os/network/KernelEventMechanism.h>
 #include <tdme/os/network/NIOInterest.h>
+
+using std::array;
+using std::vector;
 
 using tdme::os::network::platform::bsd::KernelEventMechanismPSD;
 using tdme::os::network::KernelEventMechanism;
@@ -44,39 +51,39 @@ void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const 
 	}
 	// handle read interest
 	if ((interest & NIO_INTEREST_READ) == NIO_INTEREST_READ) {
-		struct kevent* ke = &psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
-		ke->ident = socket.descriptor;
-		ke->filter = EVFILT_READ;
-		ke->flags = EV_ADD | EV_ENABLE;
-		ke->fflags = 0;
-		ke->data = 0;
-		ke->udata = (void*)cookie;
+		auto& ke = psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
+		ke.ident = socket.descriptor;
+		ke.filter = EVFILT_READ;
+		ke.flags = EV_ADD | EV_ENABLE;
+		ke.fflags = 0;
+		ke.data = 0;
+		ke.udata = (void*)cookie;
 	} else {
-		struct kevent* ke = &psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
-		ke->ident = socket.descriptor;
-		ke->filter = EVFILT_READ;
-		ke->flags = EV_ADD | EV_DISABLE;
-		ke->fflags = 0;
-		ke->data = 0;
-		ke->udata = (void*)cookie;
+		auto& ke = psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
+		ke.ident = socket.descriptor;
+		ke.filter = EVFILT_READ;
+		ke.flags = EV_ADD | EV_DISABLE;
+		ke.fflags = 0;
+		ke.data = 0;
+		ke.udata = (void*)cookie;
 	}
 	// handle write interest
 	if ((interest & NIO_INTEREST_WRITE) == NIO_INTEREST_WRITE) {
-		struct kevent* ke = &psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
-		ke->ident = socket.descriptor;
-		ke->filter = EVFILT_WRITE;
-		ke->flags = EV_ADD | EV_ENABLE;
-		ke->fflags = 0;
-		ke->data = 0;
-		ke->udata = (void*)cookie;
+		auto& ke = psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
+		ke.ident = socket.descriptor;
+		ke.filter = EVFILT_WRITE;
+		ke.flags = EV_ADD | EV_ENABLE;
+		ke.fflags = 0;
+		ke.data = 0;
+		ke.udata = (void*)cookie;
 	} else {
-		struct kevent* ke = &psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
-		ke->ident = socket.descriptor;
-		ke->filter = EVFILT_WRITE;
-		ke->flags = EV_ADD | EV_DISABLE;
-		ke->fflags = 0;
-		ke->data = 0;
-		ke->udata = (void*)cookie;
+		auto& ke = psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
+		ke.ident = socket.descriptor;
+		ke.filter = EVFILT_WRITE;
+		ke.flags = EV_ADD | EV_DISABLE;
+		ke.fflags = 0;
+		ke.data = 0;
+		ke.udata = (void*)cookie;
 	}
 	//
 	psd->kqMutex.unlock();
@@ -178,9 +185,9 @@ void KernelEventMechanism::decodeKernelEvent(const unsigned int index, NIOIntere
 	// platform specific data
 	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
-	struct kevent* ke = &psd->kqEventList[index];
-	cookie = (void*)ke->udata;
-	switch (ke->filter) {
+	auto& ke = psd->kqEventList[index];
+	cookie = (void*)ke.udata;
+	switch (ke.filter) {
 		case(EVFILT_READ):
 			interest = NIO_INTEREST_READ;
 			break;
