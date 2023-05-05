@@ -38,7 +38,7 @@ SRCS_PLATFORM =
 CPPVERSION = -std=c++2a
 OFLAGS =
 EXTRAFLAGS = -DRAPIDJSON_HAS_STDSTRING
-INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/v-hacd/src/VHACD_Lib/inc/ -Iext/cpp-spline/src
+INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src
 
 #
 CXX := $(CXX) -fPIC
@@ -185,7 +185,6 @@ VORBIS = vorbis
 OGG = ogg
 REACTPHYSICS3D = reactphysics3d
 SHA256 = sha256
-VHACD = v-hacd
 SPIRV = vulkan/spirv
 GLSLANG = vulkan/glslang
 OGLCOMPILERSDLL = vulkan/OGLCompilersDLL
@@ -745,18 +744,6 @@ EXT_OGG_SRCS = \
 EXT_SHA256_SRCS = \
 	ext/sha256/sha256.cpp
 
-EXT_VHACD_SRCS = \
-	ext/v-hacd/src/VHACD_Lib/src/FloatMath.cpp \
-	ext/v-hacd/src/VHACD_Lib/src/VHACD-ASYNC.cpp \
-	ext/v-hacd/src/VHACD_Lib/src/VHACD.cpp \
-	ext/v-hacd/src/VHACD_Lib/src/btAlignedAllocator.cpp \
-	ext/v-hacd/src/VHACD_Lib/src/btConvexHullComputer.cpp \
-	ext/v-hacd/src/VHACD_Lib/src/vhacdICHull.cpp \
-	ext/v-hacd/src/VHACD_Lib/src/vhacdManifoldMesh.cpp \
-	ext/v-hacd/src/VHACD_Lib/src/vhacdMesh.cpp \
-	ext/v-hacd/src/VHACD_Lib/src/vhacdRaycastMesh.cpp \
-	ext/v-hacd/src/VHACD_Lib/src/vhacdVolume.cpp
-
 EXT_REACTPHYSICS3D_SRCS = \
 	ext/reactphysics3d/src/body/CollisionBody.cpp \
 	ext/reactphysics3d/src/body/RigidBody.cpp \
@@ -1007,7 +994,6 @@ EXT_LIBPNG_OBJS = $(EXT_LIBPNG_SRCS:ext/$(LIBPNG)/%.c=$(OBJ)/%.o)
 EXT_VORBIS_OBJS = $(EXT_VORBIS_SRCS:ext/$(VORBIS)/%.c=$(OBJ)/%.o)
 EXT_OGG_OBJS = $(EXT_OGG_SRCS:ext/$(OGG)/%.c=$(OBJ)/%.o)
 EXT_SHA256_OBJS = $(EXT_SHA256_SRCS:ext/$(SHA256)/%.cpp=$(OBJ)/%.o)
-EXT_VHACD_OBJS = $(EXT_VHACD_SRCS:ext/$(VHACD)/%.cpp=$(OBJ)/%.o)
 EXT_REACTPHYSICS3D_OBJS = $(EXT_REACTPHYSICS3D_SRCS:ext/$(REACTPHYSICS3D)/%.cpp=$(OBJ)/%.o)
 EXT_CPPSPLINE_OBJS = $(EXT_CPPSPLINE_SRCS:ext/$(CPPSPLINE)/%.cpp=$(OBJ)/%.o)
 EXT_BC7_OBJS = $(EXT_BC7_SRCS:ext/$(BC7)/%.cpp=$(OBJ)/%.o)
@@ -1068,9 +1054,6 @@ $(EXT_OGG_OBJS):$(OBJ)/%.o: ext/$(OGG)/%.c | print-opts
 	$(c-command)
 
 $(EXT_SHA256_OBJS):$(OBJ)/%.o: ext/$(SHA256)/%.cpp | print-opts
-	$(cpp-command)
-
-$(EXT_VHACD_OBJS):$(OBJ)/%.o: ext/$(VHACD)/%.cpp | print-opts
 	$(cpp-command)
 
 $(EXT_REACTPHYSICS3D_OBJS):$(OBJ)/%.o: ext/$(REACTPHYSICS3D)/%.cpp | print-opts
@@ -1204,7 +1187,7 @@ endif
 
 $(LIB_DIR)/$(LIB): $(OBJS) $(OBJS_DEBUG)
 
-$(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_SHA256_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_CPPSPLINE_OBJS) $(EXT_BC7_OBJS)
+$(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_SHA256_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_CPPSPLINE_OBJS) $(EXT_BC7_OBJS)
 
 $(LIB_DIR)/$(OPENGL2_RENDERER_LIB): $(OPENGL2_RENDERER_LIB_OBJS)
 

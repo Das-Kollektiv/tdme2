@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include <VHACD.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/Texture.h>
@@ -965,14 +967,9 @@ void PrototypePhysicsSubController::generateBoundingVolumeConvexMeshFiles(const 
 	try {
 		VHACD::IVHACD::Parameters parameters;
 		parameters.m_resolution = Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_resolution"))->getController()->getValue().getString());
-		parameters.m_concavity = Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_concavity"))->getController()->getValue().getString());
-		parameters.m_planeDownsampling = Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_planedownsampling"))->getController()->getValue().getString());
-		parameters.m_convexhullDownsampling = Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_convexhullownsampling"))->getController()->getValue().getString());
-		parameters.m_alpha = Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_alpha"))->getController()->getValue().getString());
-		parameters.m_beta = Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_beta"))->getController()->getValue().getString());
-		parameters.m_pca = Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_pca"))->getController()->getValue().getString());
+		parameters.m_minimumVolumePercentErrorAllowed = Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_minvolumepercent"))->getController()->getValue().getString());
+		parameters.m_maxConvexHulls = Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_maxconvexhulls"))->getController()->getValue().getString());
 		parameters.m_maxNumVerticesPerCH = Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_maxverticesperch"))->getController()->getValue().getString());
-		parameters.m_minVolumePerCH = Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_minvolumeperch"))->getController()->getValue().getString());
 
 		vector<vector<uint8_t>> convexMeshTMsData;
 		if (GenerateConvexMeshes::generateConvexMeshes(

@@ -860,8 +860,8 @@ Third party library licenses:
 		distribution.
 
 
-	ext/v-hacd/LICENSE
-	--------------------
+	ext/vhacd/LICENSE
+	-------------------
 
 		BSD 3-Clause License
 
@@ -2794,3 +2794,4 @@ Third party library licenses:
 		 LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 		 ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 		 POSSIBILITY OF SUCH DAMAGE.
+

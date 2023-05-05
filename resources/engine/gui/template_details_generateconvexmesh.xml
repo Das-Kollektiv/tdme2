@@ -9,79 +9,34 @@
 				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Resolution" width="*" height="auto"/>
 					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-						<input id="generateconvexmesh_resolution" width="75%" height="auto" text="100000" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />
+						<input id="generateconvexmesh_resolution" width="75%" height="auto" text="50000" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />
 					</layout>
 				</layout>
 
 				<space height="5" />
 				
 				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Concavity" width="*" height="auto"/>
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Error tolerance" width="*" height="auto"/>
 					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-						<input id="generateconvexmesh_concavity" width="75%" height="auto" text="0.001" options="type=float,min=0.0,step=0.0001" image="resources/engine/images/inputslider.png" />
+						<input id="generateconvexmesh_minvolumepercent" width="75%" height="auto" text="5" options="type=float,min=0.0,max=100.0,step=1.0" image="resources/engine/images/inputslider.png" />
 					</layout>
 				</layout>
 
-				<space height="5" />
-				
+				<space height="5" />		
+					
 				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="P down sampling" width="*" height="auto"/>
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Max convex hulls" width="*" height="auto"/>
 					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-						<input id="generateconvexmesh_planedownsampling" width="75%" height="auto" text="4" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />
+						<input id="generateconvexmesh_maxconvexhulls" width="75%" height="auto" text="16" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />
 					</layout>
 				</layout>
 
-				<space height="5" />
-
-				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="CH down sampling" width="*" height="auto"/>
-					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-						<input id="generateconvexmesh_convexhullownsampling" width="75%" height="auto" text="4" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />
-					</layout>
-				</layout>
-
-				<space height="5" />
-				
-				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Alpha" width="*" height="auto"/>
-					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-						<input id="generateconvexmesh_alpha" width="75%" height="auto" text="0.05" options="type=float,min=0.0,step=0.0001,decimals=2" image="resources/engine/images/inputslider.png" />
-					</layout>
-				</layout>
-
-				<space height="5" />
-				
-				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Beta" width="*" height="auto"/>
-					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-						<input id="generateconvexmesh_beta" width="75%" height="auto" text="0.05" options="type=float,min=0.0,step=0.0001,decimals=2" image="resources/engine/images/inputslider.png" />
-					</layout>
-				</layout>
-
-	v			<space height="5" />
-				
-				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="PCA" width="*" height="auto"/>
-					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-						<input id="generateconvexmesh_pca" width="75%" height="auto" text="0" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />
-					</layout>
-				</layout>
-
-				<space height="5" />
-				
+				<space height="5" />		
+					
 				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Max vertices / CH" width="*" height="auto"/>
 					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-						<input id="generateconvexmesh_maxverticesperch" width="75%" height="auto" text="64" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />
-					</layout>
-				</layout>
-
-				<space height="5" />
-				
-				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Min volume / CH" width="*" height="auto"/>
-					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-						<input id="generateconvexmesh_minvolumeperch" width="75%" height="auto" text="0.0001" options="type=float,min=0.0,step=0.0001,decimals=4" image="resources/engine/images/inputslider.png" />
+						<input id="generateconvexmesh_maxverticesperch" width="75%" height="auto" text="256" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />
 					</layout>
 				</layout>
 
