@@ -7,14 +7,21 @@
 	#include <sys/time.h>
 #endif
 
+#include <unordered_map>
+#include <vector>
+
 #include <tdme/os/network/fwd-tdme.h>
 #include <tdme/os/network/platform/fallback/fwd-tdme.h>
 #include <tdme/os/network/platform/fallback/KernelEventMechanismPSD.h>
 #include <tdme/os/network/KernelEventMechanism.h>
 #include <tdme/os/network/NIOInterest.h>
 
-using tdme::os::network::platform::fallback::KernelEventMechanismPSD;
 using tdme::os::network::KernelEventMechanism;
+
+using std::unordered_map;
+using std::vector;
+
+using tdme::os::network::platform::fallback::KernelEventMechanismPSD;
 using tdme::os::network::NIOInterest;
 
 KernelEventMechanism::KernelEventMechanism() : initialized(false), _psd(NULL) {
@@ -152,7 +159,7 @@ void KernelEventMechanism::decodeKernelEvent(const unsigned int index, NIOIntere
 	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
 	// read interest and cookie from event
-	KernelEventMechanismPSD::Event& event = psd->events[index];
+	auto& event = psd->events[index];
 	interest = event.interest;
 	cookie = event.cookie;
 }

@@ -6,7 +6,7 @@
 	#include <sys/select.h>
 #endif
 
-#include <map>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -16,7 +16,7 @@
 
 #include <tdme/os/threading/Mutex.h>
 
-using std::map;
+using std::unordered_map;
 using std::vector;
 
 using tdme::os::threading::Mutex;
@@ -58,6 +58,6 @@ private:
 	Mutex fdsMutex;
 	fd_set rfds;
 	fd_set wfds;
-	map<int, void*> fds;
+	unordered_map<int, void*> fds;
 	vector<Event> events;
 };

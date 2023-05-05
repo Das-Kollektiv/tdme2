@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include <ext/v-hacd/src/VHACD_Lib/public/VHACD.h>
+#include <VHACD.h>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
@@ -46,8 +46,6 @@ using std::string;
 using std::to_string;
 using std::unordered_map;
 using std::vector;
-
-using namespace VHACD;
 
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::models::TMWriter;
@@ -111,7 +109,7 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 {
 	auto success = true;
 	if (mode == MODE_GENERATE) {
-		class VHACDCallback : public IVHACD::IUserCallback {
+		class VHACDCallback : public VHACD::IVHACD::IUserCallback {
 			private:
 				ProgressBarScreenController* progressBarScreenController;
 			public:
@@ -128,7 +126,7 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 				};
 		};
 
-		class VHACDLogger : public IVHACD::IUserLogger {
+		class VHACDLogger : public VHACD::IVHACD::IUserLogger {
 			public:
 				VHACDLogger() {}
 				~VHACDLogger() {};
@@ -140,35 +138,24 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 
 		//
 		// if (popUps != nullptr) popUps->getProgressBarScreenController()->show("Generate convex meshes ...");
-		IVHACD* vhacd = CreateVHACD();
+		auto vhacd = VHACD::CreateVHACD();
 		try {
+			//
+			parameters.m_maxRecursionDepth = 15;
+			//
 			if (parameters.m_resolution < 10000 || parameters.m_resolution > 64000000) {
 				throw ExceptionBase("Resolution must be between 10000 and 64000000");
 			}
-			if (parameters.m_concavity < 0.0f || parameters.m_concavity > 1.0f) {
-				throw ExceptionBase("Concavity must be between 0.0 and 1.0");
-			}
-			if (parameters.m_planeDownsampling < 1 || parameters.m_planeDownsampling > 16) {
-				throw ExceptionBase("Plane down sampling must be between 1 and 16");
-			}
-			if (parameters.m_convexhullDownsampling < 1 || parameters.m_convexhullDownsampling > 16) {
-				throw ExceptionBase("Convex hull down sampling must be between 1 and 16");
-			}
-			if (parameters.m_alpha < 0.0f || parameters.m_alpha > 1.0f) {
-				throw ExceptionBase("Alpha must be between 0.0 and 1.0");
-			}
-			if (parameters.m_beta < 0.0f || parameters.m_beta > 1.0f) {
-				throw ExceptionBase("Beta must be between 0.0 and 1.0");
+			if (parameters.m_minimumVolumePercentErrorAllowed < 0.0f || parameters.m_minimumVolumePercentErrorAllowed > 100.0f) {
+				throw ExceptionBase("Concavity must be between 0.0 and 100.0");
 			}
 			if (parameters.m_maxNumVerticesPerCH < 4 || parameters.m_maxNumVerticesPerCH > 1024) {
 				throw ExceptionBase("Max number of vertices per convex hull must be between 4 and 1024");
 			}
-			if (parameters.m_minVolumePerCH < 0.0f || parameters.m_minVolumePerCH > 0.01f) {
-				throw ExceptionBase("Min volume per convex hull must be between 0.0 and 0.01");
+			if (parameters.m_maxConvexHulls < 1 || parameters.m_maxConvexHulls > 64) {
+				throw ExceptionBase("Max number of convex hulls must be between 1 and 64");
 			}
-			if (parameters.m_pca > 1) {
-				throw ExceptionBase("PCA must be between 0 and 1");
-			}
+			//
 			VHACDLogger vhacdLogger;
 			parameters.m_logger = &vhacdLogger;
 			/*
@@ -209,15 +196,13 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 				);
 			if (vhacdResult == true) {
 				auto convexHulls = vhacd->GetNConvexHulls();
-				IVHACD::ConvexHull convexHull;
+				VHACD::IVHACD::ConvexHull convexHull;
 				for (auto i = 0; i < convexHulls; i++) {
 					vhacd->GetConvexHull(i, convexHull);
 					auto convexHullModel = createModel(
 						fileName + ".cm." + to_string(i) + ".tm",
 						convexHull.m_points,
-						convexHull.m_triangles,
-						convexHull.m_nPoints,
-						convexHull.m_nTriangles
+						convexHull.m_triangles
 					);
 					convexMeshTMsData.push_back(vector<uint8_t>());
 					TMWriter::write(convexHullModel, convexMeshTMsData[convexMeshTMsData.size() - 1]);
@@ -279,7 +264,7 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 	return success;
 }
 
-Model* GenerateConvexMeshes::createModel(const string& id, double* points, unsigned int* triangles, unsigned int pointCount, unsigned int triangleCount) {
+Model* GenerateConvexMeshes::createModel(const string& id, const vector<VHACD::Vertex>& points, const vector<VHACD::Triangle>& triangles) {
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto material = new Material("primitive");
 	material->setSpecularMaterialProperties(new SpecularMaterialProperties());
@@ -292,22 +277,22 @@ Model* GenerateConvexMeshes::createModel(const string& id, double* points, unsig
 	vector<Vector3> normals;
 	vector<Face> faces;
 	int normalIndex = -1;
-	for (auto i = 0; i < pointCount; i++) {
+	for (auto& vertex: points) {
 		vertices.push_back(
 			Vector3(
-				static_cast<float>(points[i * 3 + 0]),
-				static_cast<float>(points[i * 3 + 1]),
-				static_cast<float>(points[i * 3 + 2])
+				static_cast<float>(vertex.mX),
+				static_cast<float>(vertex.mY),
+				static_cast<float>(vertex.mZ)
 			)
 		);
 	}
-	for (auto i = 0; i < triangleCount; i++) {
+	for (auto& triangle: triangles) {
 		normalIndex = normals.size();
 		{
 			array<Vector3, 3> faceVertices = {
-				vertices[triangles[i * 3 + 0]],
-				vertices[triangles[i * 3 + 1]],
-				vertices[triangles[i * 3 + 2]]
+				vertices[triangle.mI0],
+				vertices[triangle.mI1],
+				vertices[triangle.mI2]
 			};
 			for (auto& normal: ModelTools::computeNormals(faceVertices)) {
 				normals.push_back(normal);
@@ -316,9 +301,9 @@ Model* GenerateConvexMeshes::createModel(const string& id, double* points, unsig
 		faces.push_back(
 			Face(
 				node,
-				triangles[i * 3 + 0],
-				triangles[i * 3 + 1],
-				triangles[i * 3 + 2],
+				triangle.mI0,
+				triangle.mI1,
+				triangle.mI2,
 				normalIndex + 0,
 				normalIndex + 1,
 				normalIndex + 2
