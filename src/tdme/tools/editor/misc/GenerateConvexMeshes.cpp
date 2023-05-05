@@ -140,6 +140,9 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 		// if (popUps != nullptr) popUps->getProgressBarScreenController()->show("Generate convex meshes ...");
 		auto vhacd = VHACD::CreateVHACD();
 		try {
+			//
+			parameters.m_maxRecursionDepth = 15;
+			//
 			if (parameters.m_resolution < 10000 || parameters.m_resolution > 64000000) {
 				throw ExceptionBase("Resolution must be between 10000 and 64000000");
 			}
@@ -152,6 +155,7 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 			if (parameters.m_maxConvexHulls < 1 || parameters.m_maxConvexHulls > 64) {
 				throw ExceptionBase("Max number of convex hulls must be between 1 and 64");
 			}
+			//
 			VHACDLogger vhacdLogger;
 			parameters.m_logger = &vhacdLogger;
 			/*
