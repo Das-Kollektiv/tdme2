@@ -64,7 +64,7 @@ void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const 
 	}
 
 	// have interest?
-	bool haveInterest = false;
+	auto haveInterest = false;
 
 	// add read interest
 	if ((interest & NIO_INTEREST_READ) == NIO_INTEREST_READ) {
