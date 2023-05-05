@@ -42,9 +42,9 @@ private:
 	unsigned int kqChangeListMax;
 	unsigned int kqChangeListBuffer;
 	unsigned int kqChangeListCurrent;
-	array<vector<kevent>, 2> kqChangeList;
+	array<vector<::kevent>, 2> kqChangeList;
 	Mutex kqMutex;
 
 	unsigned int kqEventListMax;
-	vector<kevent> kqEventList;
+	vector<::kevent> kqEventList;
 };
