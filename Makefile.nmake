@@ -11,7 +11,7 @@ INCLUDES = \
 	/I "src" \
 	/I "ext" \
 	/I "ext\src" \
-	/I "ext\v-hacd\src\VHACD_Lib\inc" \
+	/I "ext\vhacd\include" \
 	/I "ext\reactphysics3d\include" \
 	/I "ext\fbx\win64\include" \
 	/I "ext\glfw3\include" \
@@ -53,7 +53,6 @@ ZLIB = zlib
 LIBPNG = libpng
 VORBIS = vorbis
 OGG = ogg
-VHACD = v-hacd
 REACTPHYSICS3D = reactphysics3d
 CPPSPLINE = cppspline
 BC7 = bc7enc_rdo
@@ -611,18 +610,6 @@ EXT_OGG_SRCS = \
 EXT_SHA256_SRCS = \
     ext/sha256/sha256.cpp
 
-EXT_VHACD_SRCS = \
-	ext/v-hacd/src/VHACD_Lib/src/FloatMath.cpp \
-	ext/v-hacd/src/VHACD_Lib/src/VHACD-ASYNC.cpp \
-	ext/v-hacd/src/VHACD_Lib/src/VHACD.cpp \
-	ext/v-hacd/src/VHACD_Lib/src/btAlignedAllocator.cpp \
-	ext/v-hacd/src/VHACD_Lib/src/btConvexHullComputer.cpp \
-	ext/v-hacd/src/VHACD_Lib/src/vhacdICHull.cpp \
-	ext/v-hacd/src/VHACD_Lib/src/vhacdManifoldMesh.cpp \
-	ext/v-hacd/src/VHACD_Lib/src/vhacdMesh.cpp \
-	ext/v-hacd/src/VHACD_Lib/src/vhacdRaycastMesh.cpp \
-	ext/v-hacd/src/VHACD_Lib/src/vhacdVolume.cpp
-
 EXT_REACTPHYSICS3D_SRCS = \
 	ext/reactphysics3d/src/body/CollisionBody.cpp \
 	ext/reactphysics3d/src/body/RigidBody.cpp \
@@ -725,7 +712,6 @@ EXT_SRCS = \
 	$(EXT_VORBIS_SRCS) \
 	$(EXT_OGG_SRCS) \
 	$(EXT_SHA256_SRCS) \
-	$(EXT_VHACD_SRCS) \
 	$(EXT_REACTPHYSICS3D_SRCS) \
 	$(EXT_CPPSPLINE_SRCS) \
 	$(EXT_BC7_SRCS)

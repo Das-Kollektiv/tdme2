@@ -2,6 +2,7 @@
 #if defined(__FreeBSD__) || defined(__OpenBSD__)
 	#include <sys/types.h>
 #endif
+
 #include <sys/event.h>
 #include <sys/time.h>
 
@@ -11,12 +12,18 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <array>
+#include <vector>
+
 #include <tdme/tdme.h>
 #include <tdme/os/network/fwd-tdme.h>
 #include <tdme/os/network/platform/bsd/fwd-tdme.h>
 #include <tdme/os/network/platform/bsd/KernelEventMechanismPSD.h>
 #include <tdme/os/network/KernelEventMechanism.h>
 #include <tdme/os/network/NIOInterest.h>
+
+using std::array;
+using std::vector;
 
 using tdme::os::network::platform::bsd::KernelEventMechanismPSD;
 using tdme::os::network::KernelEventMechanism;
@@ -39,70 +46,46 @@ void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const 
 	psd->kqMutex.lock();
 	// check for change list overrun
 	if (psd->kqChangeListCurrent + 2 >= psd->kqChangeListMax) {
-		// try to enlarge buffers
-		bool reallocated = false;
-		auto kqChangeList0Resized = (struct kevent*)realloc(psd->kqChangeList[0], sizeof(struct kevent) * (psd->kqChangeListMax << 1));
-		auto kqChangeList1Resized = (struct kevent*)realloc(psd->kqChangeList[1], sizeof(struct kevent) * (psd->kqChangeListMax << 1));
-
-		// realloc failed?
-		if (kqChangeList0Resized == NULL || kqChangeList1Resized == NULL) {
-			// yep
-			reallocated = false;
-			// only change kq change list if successfully reallocated
-			if (kqChangeList0Resized != NULL) psd->kqChangeList[0] = kqChangeList0Resized;
-			if (kqChangeList1Resized != NULL) psd->kqChangeList[1] = kqChangeList1Resized;
-		} else {
-			// success
-			reallocated = true;
-			// enlarge kq change list max
-			psd->kqChangeListMax<<=1;
-			// change kq change lists
-			psd->kqChangeList[0] = kqChangeList0Resized;
-			psd->kqChangeList[1] = kqChangeList1Resized;
-		}
-
-		// failed to reallocate
-		if (reallocated == false) {
-			psd->kqMutex.unlock();
-			throw NetworkKEMException("kqueue change list too small");
-		}
+		psd->kqChangeList[0].resize(psd->kqChangeListMax << 1);
+		psd->kqChangeList[1].resize(psd->kqChangeListMax << 1);
 	}
 	// handle read interest
 	if ((interest & NIO_INTEREST_READ) == NIO_INTEREST_READ) {
-		struct kevent* ke = &psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
-		ke->ident = socket.descriptor;
-		ke->filter = EVFILT_READ;
-		ke->flags = EV_ADD | EV_ENABLE;
-		ke->fflags = 0;
-		ke->data = 0;
-		ke->udata = (void*)cookie;
+		auto& ke = psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
+		ke.ident = socket.descriptor;
+		ke.filter = EVFILT_READ;
+		ke.flags = EV_ADD | EV_ENABLE;
+		ke.fflags = 0;
+		ke.data = 0;
+		ke.udata = (void*)cookie;
 	} else {
-		struct kevent* ke = &psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
-		ke->ident = socket.descriptor;
-		ke->filter = EVFILT_READ;
-		ke->flags = EV_ADD | EV_DISABLE;
-		ke->fflags = 0;
-		ke->data = 0;
-		ke->udata = (void*)cookie;
+		auto& ke = psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
+		ke.ident = socket.descriptor;
+		ke.filter = EVFILT_READ;
+		ke.flags = EV_ADD | EV_DISABLE;
+		ke.fflags = 0;
+		ke.data = 0;
+		ke.udata = (void*)cookie;
 	}
 	// handle write interest
 	if ((interest & NIO_INTEREST_WRITE) == NIO_INTEREST_WRITE) {
-		struct kevent* ke = &psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
-		ke->ident = socket.descriptor;
-		ke->filter = EVFILT_WRITE;
-		ke->flags = EV_ADD | EV_ENABLE;
-		ke->fflags = 0;
-		ke->data = 0;
-		ke->udata = (void*)cookie;
+		auto& ke = psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
+		ke.ident = socket.descriptor;
+		ke.filter = EVFILT_WRITE;
+		ke.flags = EV_ADD | EV_ENABLE;
+		ke.fflags = 0;
+		ke.data = 0;
+		ke.udata = (void*)cookie;
 	} else {
-		struct kevent* ke = &psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
-		ke->ident = socket.descriptor;
-		ke->filter = EVFILT_WRITE;
-		ke->flags = EV_ADD | EV_DISABLE;
-		ke->fflags = 0;
-		ke->data = 0;
-		ke->udata = (void*)cookie;
+		auto& ke = psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
+		ke.ident = socket.descriptor;
+		ke.filter = EVFILT_WRITE;
+		ke.flags = EV_ADD | EV_DISABLE;
+		ke.fflags = 0;
+		ke.data = 0;
+		ke.udata = (void*)cookie;
 	}
+	//
 	psd->kqMutex.unlock();
 }
 
@@ -114,31 +97,12 @@ void KernelEventMechanism::initKernelEventMechanism(const unsigned int maxCCU)  
 	// can still be too less as you could change the filter a lot in a single request
 	psd->kqChangeListMax = maxCCU * 2;
 	psd->kqChangeListCurrent = 0;
-	psd->kqChangeList = (struct kevent**)malloc(sizeof(void*) * 2);
-	psd->kqChangeList[0] = (struct kevent*)malloc(sizeof(struct kevent) * psd->kqChangeListMax);
-	psd->kqChangeList[1] = (struct kevent*)malloc(sizeof(struct kevent) * psd->kqChangeListMax);
-	if (psd->kqChangeList == NULL) {
-		throw NetworkKEMException("Could not allocate kqueue change list array");
-	}
-	if (psd->kqChangeList[0] == NULL) {
-		free(psd->kqChangeList);
-		throw NetworkKEMException("Could not allocate kqueue change list 0");
-	}
-	if (psd->kqChangeList[1] == NULL) {
-		free(psd->kqChangeList[0]);
-		free(psd->kqChangeList);
-		throw NetworkKEMException("Could not allocate kqueue change list 1");
-	}
+	psd->kqChangeList[0].resize(psd->kqChangeListMax);
+	psd->kqChangeList[1].resize(psd->kqChangeListMax);
 
 	// kqueue event list, maxCCU * (read + write change)
 	psd->kqEventListMax = maxCCU * 2;
-	psd->kqEventList = (struct kevent*)malloc(sizeof(struct kevent) * psd->kqEventListMax);
-	if (psd->kqEventList == NULL) {
-		free(psd->kqChangeList[0]);
-		free(psd->kqChangeList[1]);
-		free(psd->kqChangeList);
-		throw NetworkKEMException("Could not allocate kqueue event list");
-	}
+	psd->kqEventList.resize(psd->kqEventListMax);
 
 	// start kqueue and get the descriptor
 	psd->kq = kqueue();
@@ -161,10 +125,6 @@ void KernelEventMechanism::shutdownKernelEventMechanism() {
 	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
 	//
-	free(psd->kqChangeList[0]);
-	free(psd->kqChangeList[1]);
-	free(psd->kqChangeList);
-	free(psd->kqEventList);
 	close(psd->kq);
 }
 
@@ -198,9 +158,9 @@ int KernelEventMechanism::doKernelEventMechanism()  {
 		// kevent
 		int events = kevent(
 			psd->kq,
-			psd->kqChangeList[kqChangeListFilledBuffer],
+			psd->kqChangeList[kqChangeListFilledBuffer].data(),
 			kqChangeListFilledCurrent,
-			psd->kqEventList,
+			psd->kqEventList.data(),
 			psd->kqEventListMax,
 			&timeout
 		);
@@ -225,9 +185,9 @@ void KernelEventMechanism::decodeKernelEvent(const unsigned int index, NIOIntere
 	// platform specific data
 	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
-	struct kevent* ke = &psd->kqEventList[index];
-	cookie = (void*)ke->udata;
-	switch (ke->filter) {
+	auto& ke = psd->kqEventList[index];
+	cookie = (void*)ke.udata;
+	switch (ke.filter) {
 		case(EVFILT_READ):
 			interest = NIO_INTEREST_READ;
 			break;

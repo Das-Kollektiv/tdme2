@@ -266,7 +266,7 @@ public:
 		auto angle = Vector3::computeAngle(a, b);
 		auto sign = Math::sign(Vector3::computeDotProduct(n, Vector3::computeCrossProduct(a, b)));
 		if (Float::isNaN(sign) == true) sign = 1.0f;
-		return std::fmod(((angle * sign) + 360.0f), 360.0f);
+		return Math::mod(((angle * sign) + 360.0f), 360.0f);
 	}
 
 	/**

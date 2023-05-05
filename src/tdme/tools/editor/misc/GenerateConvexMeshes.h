@@ -3,7 +3,9 @@
 #include <string>
 #include <vector>
 
-#include <ext/v-hacd/src/VHACD_Lib/public/VHACD.h>
+#define ENABLE_VHACD_IMPLEMENTATION 1
+#define VHACD_DISABLE_THREADING 0
+#include <VHACD.h>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -61,10 +63,8 @@ private:
 	 * @param id id
 	 * @param points points
 	 * @param triangles triangles
-	 * @param pointCount point count
-	 * @param triangleCount triangle count
 	 */
-	static Model* createModel(const string& id, double* points, unsigned int* triangles, unsigned int pointCount, unsigned int triangleCount);
+	static Model* createModel(const string& id, const vector<VHACD::Vertex>& points, const vector<VHACD::Triangle>& triangles);
 
 	/**
 	 * Create model
