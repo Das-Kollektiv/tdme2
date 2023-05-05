@@ -11,7 +11,7 @@ INCLUDES = \
 	/I "src" \
 	/I "ext" \
 	/I "ext\src" \
-	/I "ext\vhacd\include\" \
+	/I "ext\vhacd\include" \
 	/I "ext\reactphysics3d\include" \
 	/I "ext\fbx\win64\include" \
 	/I "ext\glfw3\include" \
