@@ -9,14 +9,14 @@
 				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Resolution" width="*" height="auto"/>
 					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-						<input id="generateconvexmesh_resolution" width="75%" height="auto" text="50000" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />
+						<input id="generateconvexmesh_resolution" width="75%" height="auto" text="50000" options="type=int,min=10000,max=64000000,step=10000" image="resources/engine/images/inputslider.png" />
 					</layout>
 				</layout>
 
 				<space height="5" />
 				
 				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Error tolerance" width="*" height="auto"/>
+					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Error tolerance %" width="*" height="auto"/>
 					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 						<input id="generateconvexmesh_minvolumepercent" width="75%" height="auto" text="5" options="type=float,min=0.0,max=100.0,step=1.0" image="resources/engine/images/inputslider.png" />
 					</layout>
