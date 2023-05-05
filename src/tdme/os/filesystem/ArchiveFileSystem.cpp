@@ -89,7 +89,7 @@ void ArchiveFileSystem::list(const string& pathName, vector<string>& files, File
 	auto _pathName = pathName;
 	if (_pathName.empty() == false && StringTools::endsWith(pathName, "/") == false) _pathName+= "/";
 	for (auto& fileInformationIt: fileInformations) {
-		auto fileName = fileInformationIt.second.name;
+		auto& fileName = fileInformationIt.second.name;
 		if (StringTools::startsWith(fileName, _pathName) == true) {
 			try {
 				if (filter != nullptr && filter->accept(
