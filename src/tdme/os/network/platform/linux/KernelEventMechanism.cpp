@@ -1,11 +1,10 @@
-/**
- */
-
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/epoll.h>
 #include <unistd.h>
+
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/os/network/fwd-tdme.h>
@@ -13,6 +12,8 @@
 #include <tdme/os/network/platform/linux/KernelEventMechanismPSD.h>
 #include <tdme/os/network/KernelEventMechanism.h>
 #include <tdme/os/network/NIOInterest.h>
+
+using std::vector;
 
 using tdme::os::network::platform::_linux::KernelEventMechanismPSD;
 using tdme::os::network::KernelEventMechanism;
@@ -33,7 +34,7 @@ void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const 
 	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
 	// setup new event
-	struct epoll_event event;
+	epoll_event event;
 	event.events = EPOLLET;
 	event.data.ptr = (void*)cookie;
 
@@ -65,12 +66,11 @@ void KernelEventMechanism::initKernelEventMechanism(const unsigned int maxCCU)  
 
 	// epoll event list, maxCCU
 	psd->epEventListMax = maxCCU;
-	psd->epEventList = new epoll_event[psd->epEventListMax];
+	psd->epEventList.resize(psd->epEventListMax);
 
 	// start epoll and get the descriptor
 	psd->ep = epoll_create1(0);
 	if (psd->ep == -1) {
-		delete [] psd->epEventList;
 		std::string msg = "Could not create epoll: ";
 		msg+= strerror(errno);
 		throw NetworkKEMException(msg);
@@ -89,7 +89,6 @@ void KernelEventMechanism::shutdownKernelEventMechanism() {
 
 	//
 	close(psd->ep);
-	delete [] psd->epEventList;
 }
 
 int KernelEventMechanism::doKernelEventMechanism()  {
@@ -98,7 +97,7 @@ int KernelEventMechanism::doKernelEventMechanism()  {
 
 	while (true == true) {
 		//
-		auto events = epoll_wait(psd->ep, psd->epEventList, psd->epEventListMax, 5);
+		auto events = epoll_wait(psd->ep, psd->epEventList.data(), psd->epEventListMax, 5);
 
 		// check for error
 		if (events == -1) {
@@ -121,17 +120,17 @@ void KernelEventMechanism::decodeKernelEvent(const unsigned int index, NIOIntere
 	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
 	//
-	auto event = &psd->epEventList[index];
+	auto& event = psd->epEventList[index];
 
 	// we only support user data
-	cookie = (void*)event->data.ptr;
+	cookie = (void*)event.data.ptr;
 
 	// set up interest
 	interest = NIO_INTEREST_NONE;
-	if ((event->events & EPOLLIN) == EPOLLIN) {
+	if ((event.events & EPOLLIN) == EPOLLIN) {
 		interest|= NIO_INTEREST_READ;
 	}
-	if ((event->events & EPOLLOUT) == EPOLLOUT) {
+	if ((event.events & EPOLLOUT) == EPOLLOUT) {
 		interest|= NIO_INTEREST_WRITE;
 	}
 }
