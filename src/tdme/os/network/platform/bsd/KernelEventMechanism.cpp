@@ -160,7 +160,7 @@ int KernelEventMechanism::doKernelEventMechanism()  {
 			psd->kq,
 			psd->kqChangeList[kqChangeListFilledBuffer].data(),
 			kqChangeListFilledCurrent,
-			psd->kqEventList,
+			psd->kqEventList.data(),
 			psd->kqEventListMax,
 			&timeout
 		);
