@@ -518,7 +518,6 @@ SRCS = \
 	src/tdme/utilities/PathFinding.cpp \
 	src/tdme/utilities/Primitives.cpp \
 	src/tdme/utilities/Properties.cpp \
-	src/tdme/utilities/Reference.cpp \
 	src/tdme/utilities/RTTI.cpp \
 	src/tdme/utilities/SimpleTextureAtlas.cpp \
 	src/tdme/utilities/SHA256.cpp \
