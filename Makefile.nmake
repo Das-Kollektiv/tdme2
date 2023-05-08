@@ -15,7 +15,6 @@ INCLUDES = \
 	/I "ext\reactphysics3d\include" \
 	/I "ext\fbx\win64\include" \
 	/I "ext\glfw3\include" \
-	/I "ext\windows-msc\pthread\includes" \
 	/I "ext\windows-msc\openal-soft\includes" \
 	/I "ext\windows-msc\glew\include" \
 	/I "ext\windows-msc\dirent\include" \
@@ -37,7 +36,6 @@ LIBS_LDFLAGS = \
 	/LIBPATH "$(WINDOWS_SDK_DIR)\um\x64\ws2_32.lib" \
 	/LIBPATH "$(WINDOWS_SDK_DIR)\um\x64\dbghelp.lib" \
 	/LIBPATH "ext\glfw3\lib\win64\glfw3dll.lib" \
-	/LIBPATH "ext\windows-msc\pthread\libs\pthreadVC2.lib" \
 	/LIBPATH "ext\windows-msc\openal-soft\libs\OpenAL32.lib" \
 	/LIBPATH "ext\freetype\lib\win64\freetype.lib" \
 	/LIBPATH "ext\fbx\win64\lib\libfbxsdk.lib"
