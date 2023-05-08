@@ -1,9 +1,9 @@
 #pragma once
 
-#include <tdme/tdme.h>
 #include <tdme/os/threading/fwd-tdme.h>
 
-#include <pthread.h>
+#include <tdme/tdme.h>
+
 #include <string>
 
 #include <tdme/os/threading/Condition.h>
@@ -25,7 +25,7 @@ public:
 	 * @param name name
 	 * @param count Number of threads that need to "wait" on barrier to complete barrier
 	 */
-	Barrier(const string& name, const unsigned int count);
+	inline Barrier(const string& name, const unsigned int count): name(name), count(count), entered(0), exited(0), m("barrier_mutex"), c("barrier_condition") {}
 
 	/**
 	 * @brief Destroys the barrier

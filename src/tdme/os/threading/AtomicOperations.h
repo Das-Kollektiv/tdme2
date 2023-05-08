@@ -1,7 +1,8 @@
 #pragma once
 
-#include <tdme/tdme.h>
 #include <tdme/os/threading/fwd-tdme.h>
+
+#include <tdme/tdme.h>
 
 #if defined(_WIN32) && defined(_MSC_VER)
 	#define NOMINMAX

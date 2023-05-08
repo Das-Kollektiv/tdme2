@@ -1,8 +1,8 @@
 #include <tdme/engine/fileio/models/FBXReader.h>
 
 #define FBXSDK_SHARED
-
 #include <fbxsdk.h>
+#undef isnan
 
 #include <map>
 #include <string>

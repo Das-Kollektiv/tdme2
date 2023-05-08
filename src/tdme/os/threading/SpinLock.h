@@ -1,7 +1,8 @@
 #pragma once
 
-#include <tdme/tdme.h>
 #include <tdme/os/threading/fwd-tdme.h>
+
+#include <tdme/tdme.h>
 
 #include <atomic>
 #include <string>
@@ -19,12 +20,12 @@ public:
 	 * @brief Public constructor
 	 * @param name name
 	 */
-	SpinLock(const string& name);
+	inline SpinLock(const string& name): name(name) {}
 
 	/**
 	 * @brief Destroys the spin lock
 	 */
-	~SpinLock();
+	inline ~SpinLock() {}
 
 	/**
 	 * @brief Tries to locks the spin lock
