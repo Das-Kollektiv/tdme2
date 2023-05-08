@@ -35,24 +35,24 @@ public:
 	 * @brief Tries to locks the mutex
 	 */
 	inline bool tryLock() {
-		return mutex.try_lock();
+		return stlMutex.try_lock();
 	}
 
 	/**
 	 * @brief Locks the mutex, additionally mutex locks will block until other locks have been unlocked.
 	 */
 	inline void lock() {
-		mutex.lock();
+		stlMutex.lock();
 	}
 
 	/**
 	 * @brief Unlocks this mutex
 	 */
 	inline void unlock() {
-		mutex.unlock();
+		stlMutex.unlock();
 	}
 
 private:
 	string name;
-	mutex mutex;
+	mutex stlMutex;
 };

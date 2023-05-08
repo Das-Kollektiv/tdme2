@@ -31,24 +31,24 @@ public:
 	 * @brief Locks for reading / shared lock
 	 */
 	inline void readLock() {
-		sharedMutex.lock_shared();
+		sltSharedMutex.lock_shared();
 	}
 
 	/**
 	 * @brief Locks for writing / exclusive lock
 	 */
 	inline void writeLock() {
-		sharedMutex.lock();
+		sltSharedMutex.lock();
 	}
 
 	/**
 	 * @brief Unlocks this read write lock
 	 */
 	inline void unlock() {
-		sharedMutex.unlock();
+		sltSharedMutex.unlock();
 	}
 
 private:
 	string name;
-	shared_mutex sharedMutex;
+	shared_mutex sltSharedMutex;
 };

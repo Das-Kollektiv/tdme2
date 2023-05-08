@@ -22,7 +22,7 @@ public:
 	 * @param name name
 	 * @param stackSize stack size, defaults to 2MB
 	 */
-	inline Thread(const string& name, size_t stackSize = 2 * 1024 * 1024): name(name), thread(nullptr), stopRequested(false), stackSize(stackSize) {}
+	inline Thread(const string& name, size_t stackSize = 2 * 1024 * 1024): name(name), stlThread(nullptr), stopRequested(false), stackSize(stackSize) {}
 
 	/**
 	 * @brief Public destructor
@@ -48,14 +48,14 @@ public:
 	 * @brief Blocks caller thread until this thread has been terminated
 	 */
 	inline void join() {
-		thread->join();
+		stlThread->join();
 	}
 
 	/**
 	 * @brief Starts this objects thread
 	 */
 	inline virtual void start() {
-		thread = new std::thread(threadRun, (void*)this);
+		stlThread = new std::thread(threadRun, (void*)this);
 	}
 
 	/**
@@ -85,7 +85,7 @@ private:
 	}
 
 	string name;
-	thread* thread;
+	thread* stlThread;
 	volatile bool stopRequested;
 	size_t stackSize;
 };

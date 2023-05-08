@@ -37,24 +37,24 @@ public:
 	 * @brief wake ups a waiting thread on this condition, associated mutex should protect signal
 	 */
 	inline void signal() {
-		condition.notify_one();
+		stlCondition.notify_one();
 	}
 
 	/**
 	 * @brief wake ups all waiting threads on this condition, associated mutex should protect broadcast
 	 */
 	inline void broadcast() {
-		condition.notify_all();
+		stlCondition.notify_all();
 	}
 
 	/**
 	 * @brief Blocks current thread until signaled/broadcasted, associated mutex should protect wait
 	 */
 	inline void wait(Mutex &mutex) {
-		condition.wait(mutex.mutex);
+		stlCondition.wait(mutex.stlMutex);
 	}
 
 private:
 	string name;
-	condition_variable_any condition;
+	condition_variable_any stlCondition;
 };
