@@ -5528,6 +5528,35 @@ void MiniScript::registerMethods() {
 	}
 	{
 		//
+		class ScriptMethodStringIsEmpty: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodStringIsEmpty(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "string.isEmpty";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string stringValue;
+				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == true) {
+					returnValue.setValue(stringValue.empty());
+				} else {
+					Console::println("ScriptMethodStringIsEmpty::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodStringIsEmpty(this));
+	}
+	{
+		//
 		class ScriptMethodStringIsFloat: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
@@ -5782,7 +5811,8 @@ void MiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .assignBack = true },
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "index", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "index", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -5798,9 +5828,6 @@ void MiniScript::registerMethods() {
 				} else {
 					argumentValues[0].setArrayValue(index, argumentValues[2]);
 				}
-			}
-			bool isVariadic() const override {
-				return true;
 			}
 		};
 		registerMethod(new ScriptMethodArraySet(this));
@@ -5914,9 +5941,6 @@ void MiniScript::registerMethods() {
 						}
 					}
 				}
-			}
-			bool isVariadic() const override {
-				return true;
 			}
 		};
 		registerMethod(new ScriptMethodArrayIndexOf(this));
