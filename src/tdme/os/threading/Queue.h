@@ -1,7 +1,8 @@
 #pragma once
 
-#include <tdme/tdme.h>
 #include <tdme/os/threading/fwd-tdme.h>
+
+#include <tdme/tdme.h>
 
 #include <queue>
 
@@ -9,6 +10,7 @@
 #include <tdme/os/threading/Mutex.h>
 
 using std::queue;
+
 using tdme::os::threading::Condition;
 using tdme::os::threading::Mutex;
 

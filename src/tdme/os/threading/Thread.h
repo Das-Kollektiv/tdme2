@@ -4,20 +4,12 @@
 
 #include <tdme/tdme.h>
 
-#if defined(CPPTHREADS)
-	#include <thread>
-	using std::thread;
-#else
-	#include <pthread.h>
-#endif
-
-#if !defined(_MSC_VER)
-	#include <time.h>
-#endif
-
+#include <chrono>
+#include <thread>
 #include <string>
 
 using std::string;
+using std::thread;
 
 /**
  * Base class for threads.
@@ -30,38 +22,48 @@ public:
 	 * @param name name
 	 * @param stackSize stack size, defaults to 2MB
 	 */
-	Thread(const string& name, size_t stackSize = 2 * 1024 * 1024);
+	inline Thread(const string& name, size_t stackSize = 2 * 1024 * 1024): name(name), thread(nullptr), stopRequested(false), stackSize(stackSize) {}
 
 	/**
 	 * @brief Public destructor
 	 */
-	virtual ~Thread();
+	inline virtual ~Thread() {}
 
 	/**
 	 * @return hardware thread count
 	 */
-	static int getHardwareThreadCount();
+	inline static int getHardwareThreadCount() {
+		return std::thread::hardware_concurrency();
+	}
 
 	/**
 	 * @brief sleeps current thread for given time in milliseconds
 	 * @param milliseconds uint64_t milliseconds to wait
 	 */
-	static void sleep(const uint64_t milliseconds);
+	inline static void sleep(const uint64_t milliseconds) {
+		std::this_thread::sleep_for(std::chrono::duration<uint64_t, std::milli>(milliseconds));
+	}
 
 	/**
 	 * @brief Blocks caller thread until this thread has been terminated
 	 */
-	void join();
+	inline void join() {
+		thread->join();
+	}
 
 	/**
 	 * @brief Starts this objects thread
 	 */
-	virtual void start();
+	inline virtual void start() {
+		thread = new std::thread(threadRun, (void*)this);
+	}
 
 	/**
 	 * @brief Requests that this thread should be stopped
 	 */
-	virtual void stop();
+	inline virtual void stop() {
+		stopRequested = true;
+	}
 
 	/**
 	 * @brief Returns if stop has been requested
@@ -78,14 +80,12 @@ protected:
 	virtual void run() = 0;
 
 private:
-	static void *pThreadRun(void *thread);
-	#if defined(CPPTHREADS)
-		thread* thread;
-	#else
-		pthread_t pThread;
-	#endif
+	inline static void threadRun(void *thread) {
+		static_cast<Thread*>(thread)->run();
+	}
+
 	string name;
-	bool pThreadCreated;
+	thread* thread;
 	volatile bool stopRequested;
 	size_t stackSize;
 };
