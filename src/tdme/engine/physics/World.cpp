@@ -324,7 +324,7 @@ void World::update(float deltaTime)
 	}
 }
 
-void World::synch(Engine* engine)
+void World::synchronize(Engine* engine)
 {
 	for (auto i = 0; i < rigidBodiesDynamic.size(); i++) {
 		// update rigid body
@@ -550,12 +550,12 @@ World* World::clone(const string& id, uint16_t collisionTypeIds)
 		}
 
 		// synch additional properties
-		synch(clonedBody, clonedBody);
+		synchronize(clonedBody, clonedBody);
 	}
 	return clonedWorld;
 }
 
-void World::synch(Body* clonedBody, Body* body)
+void World::synchronize(Body* clonedBody, Body* body)
 {
 	clonedBody->setCollisionTypeIds(body->getCollisionTypeIds());
 	clonedBody->setEnabled(body->isEnabled());
@@ -567,7 +567,7 @@ void World::synch(Body* clonedBody, Body* body)
 	}
 }
 
-void World::synch(World* world)
+void World::synchronize(World* world)
 {
 	for (auto i = 0; i < rigidBodiesDynamic.size(); i++) {
 		auto body = rigidBodiesDynamic.at(i);
@@ -581,7 +581,7 @@ void World::synch(World* world)
 			continue;
 		}
 		// synch rigid bodies
-		synch(clonedBody, body);
+		synchronize(clonedBody, body);
 	}
 }
 
