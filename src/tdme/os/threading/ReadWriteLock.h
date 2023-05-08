@@ -1,17 +1,13 @@
 #pragma once
 
-#include <tdme/tdme.h>
 #include <tdme/os/threading/fwd-tdme.h>
 
-#if defined(CPPTHREADS)
-	#include <shared_mutex>
-	using std::shared_mutex;
-#else
-	#include <pthread.h>
-#endif
+#include <tdme/tdme.h>
 
+#include <shared_mutex>
 #include <string>
 
+using std::shared_mutex;
 using std::string;
 
 /**
@@ -24,32 +20,35 @@ public:
 	 * @brief Public constructor
 	 * @param name name
 	 */
-	ReadWriteLock(const string& name);
+	inline ReadWriteLock(const string& name): name(name) {}
 
 	/**
 	 * @brief Destroys the read write lock
 	 */
-	~ReadWriteLock();
+	inline ~ReadWriteLock() {}
 
 	/**
 	 * @brief Locks for reading / shared lock
 	 */
-	void readLock();
+	inline void readLock() {
+		sltSharedMutex.lock_shared();
+	}
 
 	/**
 	 * @brief Locks for writing / exclusive lock
 	 */
-	void writeLock();
+	inline void writeLock() {
+		sltSharedMutex.lock();
+	}
 
 	/**
 	 * @brief Unlocks this read write lock
 	 */
-	void unlock();
+	inline void unlock() {
+		sltSharedMutex.unlock();
+	}
+
 private:
 	string name;
-	#if defined(CPPTHREADS)
-		shared_mutex sharedMutex;
-	#else
-		pthread_rwlock_t pReadWriteLock;
-	#endif
+	shared_mutex sltSharedMutex;
 };

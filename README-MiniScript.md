@@ -538,9 +538,9 @@ Reading all keys as array from set:
 | <sub>Get Array Entry</sub>                                                                       |
 | array.get($array: Array, $index: Integer): Mixed                                                 |
 | <sub>Set Array Entry</sub>                                                                       |
-| array.set(=$array: Array, $index: Integer, ...): Void                                            |
+| array.set(=$array: Array, $index: Integer, $value: Mixed): Void                                  |
 | <sub>Get Array Index by Value</sub>                                                              |
-| array.indexOf($array: Array, $value: String[, $beginIndex: Integer, ...]): Integer               |
+| array.indexOf($array: Array, $value: String[, $beginIndex: Integer]): Integer                    |
 | <sub>Get Array Length</sub>                                                                      |
 | array.length($array: Array): Integer                                                             |
 | <sub>Add to Array</sub>                                                                          |
@@ -753,6 +753,8 @@ Reading all keys as array from set:
 | set.remove(=$set: Set, $key: String): Void                                                       |
 | <sub>Create String</sub>                                                                         |
 | string($string: String): String                                                                  |
+| <sub>Test if String Value is Empty</sub>                                                         |
+| string.isEmpty($string: String): Boolean                                                         |
 | <sub>Test if String Value is a Float Number</sub>                                                |
 | string.isFloat($string: String): Boolean                                                         |
 | <sub>Test if String Value is a Integer Number</sub>                                              |

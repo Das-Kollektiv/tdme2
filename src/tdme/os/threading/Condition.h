@@ -1,22 +1,17 @@
 #pragma once
 
-#include <tdme/tdme.h>
 #include <tdme/os/threading/fwd-tdme.h>
 
-#if defined(CPPTHREADS)
-	#include <condition_variable>
-	#include <mutex>
-	using std::condition_variable_any;
-	using std::mutex;
-#else
-	#include <pthread.h>
-#endif
+#include <tdme/tdme.h>
 
+#include <condition_variable>
+#include <mutex>
 #include <string>
 
-#include <tdme/os/threading/fwd-tdme.h>
 #include <tdme/os/threading/Mutex.h>
 
+using std::condition_variable_any;
+using std::mutex;
 using std::string;
 
 using tdme::os::threading::Mutex;
@@ -31,33 +26,35 @@ public:
 	 * @brief Public constructor, creates condition variable
 	 * @param name string
 	 */
-	Condition(const string& name);
+	inline Condition(const string& name): name(name) {}
 
 	/**
 	 * @brief Destructor, removes condition variable
 	 */
-	~Condition();
+	inline ~Condition() {}
 
 	/**
 	 * @brief wake ups a waiting thread on this condition, associated mutex should protect signal
 	 */
-	void signal();
+	inline void signal() {
+		stlCondition.notify_one();
+	}
 
 	/**
 	 * @brief wake ups all waiting threads on this condition, associated mutex should protect broadcast
 	 */
-	void broadcast();
+	inline void broadcast() {
+		stlCondition.notify_all();
+	}
 
 	/**
 	 * @brief Blocks current thread until signaled/broadcasted, associated mutex should protect wait
 	 */
-	void wait(Mutex &mutex);
+	inline void wait(Mutex &mutex) {
+		stlCondition.wait(mutex.stlMutex);
+	}
 
 private:
 	string name;
-	#if defined(CPPTHREADS)
-		condition_variable_any condition;
-	#else
-		pthread_cond_t pThreadCond;
-	#endif
+	condition_variable_any stlCondition;
 };

@@ -1,22 +1,14 @@
 #pragma once
 
-#include <tdme/tdme.h>
 #include <tdme/os/threading/fwd-tdme.h>
 
-#if defined(CPPTHREADS)
-	#include <mutex>
-	using std::mutex;
-#else
-	#include <pthread.h>
-#endif
+#include <tdme/tdme.h>
 
+#include <mutex>
 #include <string>
 
-#include <tdme/os/threading/Condition.h>
-
+using std::mutex;
 using std::string;
-
-using tdme::os::threading::Condition;
 
 /**
  * Mutex implementation.
@@ -32,34 +24,35 @@ public:
 	 * @brief Public constructor
 	 * @param name name
 	 */
-	Mutex(const string& name);
+	inline Mutex(const string& name): name(name) {};
 
 	/**
 	 * @brief Destroys the mutex
 	 */
-	~Mutex();
+	inline ~Mutex() {}
 
 	/**
 	 * @brief Tries to locks the mutex
 	 */
-	bool tryLock();
+	inline bool tryLock() {
+		return stlMutex.try_lock();
+	}
 
 	/**
 	 * @brief Locks the mutex, additionally mutex locks will block until other locks have been unlocked.
 	 */
-	void lock();
+	inline void lock() {
+		stlMutex.lock();
+	}
 
 	/**
 	 * @brief Unlocks this mutex
 	 */
-	void unlock();
+	inline void unlock() {
+		stlMutex.unlock();
+	}
 
 private:
 	string name;
-	#if defined(CPPTHREADS)
-		mutex mutex;
-	#else
-		pthread_mutex_t pThreadMutex;
-	#endif
-
+	mutex stlMutex;
 };
