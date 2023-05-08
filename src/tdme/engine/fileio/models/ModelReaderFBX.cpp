@@ -1,5 +1,11 @@
 #include <tdme/engine/fileio/models/ModelReader.h>
 
+// Workaround for:
+// 	C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.34.31933\include\format(2311): error C2039: '_isnan': is not a member of 'std' (compiling source file src/tdme/engine/fileio/models/ModelReaderFBX.cpp)
+// 	C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.34.31933\include\format(71): note: see declaration of 'std' (compiling source file src/tdme/engine/fileio/models/ModelReaderFBX.cpp)
+#include <cmath>
+
+//
 #include <string>
 #include <vector>
 
