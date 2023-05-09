@@ -1108,6 +1108,8 @@ Reading all keys as array from set:
 | pathfinding.STATE_TRYLOCK_FAILED(): Integer                                                      |
 | <sub>Issue Pathfinding</sub>                                                                     |
 | pathfinding.findPath($logicId: String, $startPosition: Vector3, $endPosition: Vector3, =$path: Array): Integer|
+| <sub>Get Scene Dimensions</sub>                                                                  |
+| scene.getDimensions(): Vector3                                                                   |
 | <sub>Add Prototype using SceneConnector</sub>                                                    |
 | sceneconnector.addPrototype($pathName: String, $fileName: String, $id: String, $transform: Transform[, $entityHierarchyId: String[, $entityHierarchyParentId: String]]): Void|
 | <sub>Get Physics World Entity Angular Damping</sub>                                              |
