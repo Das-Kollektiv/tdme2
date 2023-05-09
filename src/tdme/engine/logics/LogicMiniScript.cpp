@@ -4073,7 +4073,6 @@ void LogicMiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodPathFindingFindPath(this));
 	}
-	// gui
 	// scene
 	{
 		//
