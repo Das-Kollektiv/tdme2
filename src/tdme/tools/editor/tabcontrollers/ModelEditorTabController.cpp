@@ -285,6 +285,13 @@ void ModelEditorTabController::onDrop(const string& payload, int mouseX, int mou
 				setMaterialPBRNormalTexture(fileName);
 			}
 		} else
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "pbrmaterial_emissive_texture") == true) {
+			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			} else {
+				setMaterialPBREmissiveTexture(fileName);
+			}
+		} else
 		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "animationpreview_attachment1_model") == true) {
 			if (Tools::hasFileExtension(fileName, ModelReader::getModelExtensions()) == false) {
 				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(ModelReader::getModelExtensions()));

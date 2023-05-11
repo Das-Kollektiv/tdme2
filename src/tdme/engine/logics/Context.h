@@ -508,6 +508,13 @@ public:
 	}
 
 	/**
+	 * Unset scene
+	 */
+	inline void unsetScene() {
+		this->scene = nullptr;
+	}
+
+	/**
 	 * Initialize logics
 	 */
 	virtual void initialize();

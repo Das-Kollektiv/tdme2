@@ -38,7 +38,7 @@ public:
 
 	/**
 	 * @brief sleeps current thread for given time in milliseconds
-	 * @param milliseconds uint64_t milliseconds to wait
+	 * @param milliseconds milliseconds to wait
 	 */
 	inline static void sleep(const uint64_t milliseconds) {
 		std::this_thread::sleep_for(std::chrono::duration<uint64_t, std::milli>(milliseconds));

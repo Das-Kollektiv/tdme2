@@ -720,7 +720,6 @@ EXT_VORBIS_SRCS = \
 	ext/vorbis/lsp.c \
 	ext/vorbis/mapping0.c \
 	ext/vorbis/mdct.c \
-	ext/vorbis/misc.c \
 	ext/vorbis/psy.c \
 	ext/vorbis/registry.c \
 	ext/vorbis/res0.c \
