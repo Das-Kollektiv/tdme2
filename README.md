@@ -339,7 +339,6 @@
         - OpenGL
         - OpenAL
         - glew
-        - pthreads
         - GLFW3
         - freetype2
         - xml2(port-linux for FBXSDK)

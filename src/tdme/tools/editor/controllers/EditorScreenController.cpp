@@ -1895,6 +1895,8 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 		}
 	} catch (Exception& exception) {
 		Console::println("EditorScreenController::openFile(): An error occurred: " + string(exception.what()));
+		view->getPopUps()->getProgressBarScreenController()->close();
+		view->getPopUps()->getInfoDialogScreenController()->close();
 		showInfoPopUp("Error", "An error occurred: " + string(exception.what()));
 	}
 }
@@ -2169,6 +2171,8 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 		tabs->getController()->setValue(MutableString(tabId));
 	} catch (Exception& exception) {
 		Console::println("EditorScreenController::onOpenFileFinish(): An error occurred: " + string(exception.what()));
+		view->getPopUps()->getProgressBarScreenController()->close();
+		view->getPopUps()->getInfoDialogScreenController()->close();
 		showInfoPopUp("Error", "An error occurred: " + string(exception.what()));
 	}
 
@@ -2342,6 +2346,8 @@ void EditorScreenController::tick() {
 		if (fileOpenThread->isFinished() == true) {
 			fileOpenThread->join();
 			if (fileOpenThread->isError() == true) {
+				view->getPopUps()->getProgressBarScreenController()->close();
+				view->getPopUps()->getInfoDialogScreenController()->close();
 				if (fileOpenThread->getErrorMessage().empty() == true) {
 					showInfoPopUp("Error", string() + "An error occurred: Unknown error");
 				} else {

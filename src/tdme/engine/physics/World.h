@@ -60,11 +60,11 @@ private:
 	vector<WorldListener*> worldListeners;
 
 	/**
-	 * Synch into cloned body from body
+	 * Synchronize cloned body from body
 	 * @param clonedBody cloned body
 	 * @param body body
 	 */
-	void synch(Body* clonedBody, Body* body);
+	void synchronize(Body* clonedBody, Body* body);
 
 public:
 	/**
@@ -166,10 +166,10 @@ public:
 	void update(float deltaTime);
 
 	/**
-	 * Synch physics world with engine
+	 * Synchronize physics world with engine
 	 * @param engine engine
 	 */
-	void synch(Engine* engine);
+	void synchronize(Engine* engine);
 
 	/**
 	 * Determine height on x,y,u while respecting step up max
@@ -240,11 +240,11 @@ public:
 	World* clone(const string& id, uint16_t collisionTypeIds = ~0);
 
 	/**
-	 * Updates given world with this world
+	 * Synchronize given world with this world
 	 * Given world should be a clone of this world
 	 * @param world world
 	 */
-	void synch(World* world);
+	void synchronize(World* world);
 
 	/**
 	 * Add a world listener

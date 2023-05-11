@@ -108,6 +108,10 @@ static void scanPathResources(const string& path, vector<string>& totalFiles) {
 				if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) return true;
 				// plist
 				if (StringTools::endsWith(fileNameLowerCase, ".plist") == true) return true;
+				// markdown
+				if (StringTools::endsWith(fileNameLowerCase, ".md") == true) return true;
+				// license
+				if (fileNameLowerCase == "license") return true;
 				// files without ending
 				if (fileName.rfind(".") == string::npos ||
 					(fileName.rfind("/") != string::npos &&

@@ -9,7 +9,6 @@ INCLUDES = \
 	/I "ext\reactphysics3d\include" \
 	/I "ext\fbx\win64\include" \
 	/I "ext\glfw3\include" \
-	/I "ext\windows-msc\pthread\includes" \
 	/I "ext\windows-msc\openal-soft\includes" \
 	/I "ext\windows-msc\glew\include" \
 	/I "ext\windows-msc\dirent\include" \

@@ -10,6 +10,8 @@
 #include <tdme/engine/logics/Logic.h>
 #include <tdme/engine/logics/MiniScriptLogic.h>
 #include <tdme/engine/model/Color4.h>
+#include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/EntityHierarchy.h>
@@ -44,6 +46,8 @@ using tdme::engine::logics::Context;
 using tdme::engine::logics::Logic;
 using tdme::engine::logics::MiniScriptLogic;
 using tdme::engine::model::Color4;
+using tdme::engine::primitives::BoundingBox;
+using tdme::engine::scene::Scene;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::EntityHierarchy;
@@ -4069,7 +4073,25 @@ void LogicMiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodPathFindingFindPath(this));
 	}
-	// gui
+	// scene
+	{
+		//
+		class ScriptMethodSceneGetDimensions: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodSceneGetDimensions(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_VECTOR3),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "scene.getDimensions";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = miniScript->context->getScene()->getBoundingBox()->getDimensions();
+			}
+		};
+		registerMethod(new ScriptMethodSceneGetDimensions(this));
+	}
 	// sceneconnector
 	{
 		//

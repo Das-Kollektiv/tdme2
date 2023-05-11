@@ -1446,6 +1446,7 @@ void SceneEditorTabView::runScene() {
 	SceneConnector::addScene(world, scene, true);
 	applicationContext = new Context(false);
 	applicationContext->setApplicationRootPathName(editorView->getScreenController()->getProjectPath());
+	applicationContext->setScene(scene);
 	applicationContext->setEngine(engine);
 	applicationContext->setAudio(Audio::getInstance());
 	applicationContext->setWorld(world);
@@ -1503,6 +1504,7 @@ void SceneEditorTabView::stopScene() {
 
 	// shutdown application client context
 	if (applicationContext != nullptr) {
+		applicationContext->unsetScene();
 		applicationContext->shutdown();
 		delete applicationContext;
 	}

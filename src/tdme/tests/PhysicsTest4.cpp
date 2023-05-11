@@ -76,7 +76,7 @@ void PhysicsTest4::display()
 {
 	auto start = Time::getCurrentMillis();
 	world->update(1.0f / 60.0f);
-	world->synch(engine);
+	world->synchronize(engine);
 	engine->display();
 	auto end = Time::getCurrentMillis();
 	auto rendererStatistics = engine->getRendererStatistics();

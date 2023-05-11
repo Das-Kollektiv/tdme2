@@ -2047,7 +2047,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				if (miniScript->getScriptState().endTypeStack.empty() == true) {
 					if (miniScript->getScriptState().statementIdx < miniScript->scripts[miniScript->getScriptState().scriptIdx].statements.size() - 1) {
-						Console::println("ScriptMethodEnd::executeMethod(): end without forXXX/if");
+						Console::println("ScriptMethodEnd::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": end without forXXX/if");
 						miniScript->startErrorScript();
 					} else
 					if (miniScript->isFunctionRunning() == true && miniScript->scriptStateStack.size() == 2) {

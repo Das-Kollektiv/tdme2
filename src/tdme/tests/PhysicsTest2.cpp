@@ -70,7 +70,7 @@ void PhysicsTest2::display()
 	auto start = Time::getCurrentMillis();
 	auto fps = 60.0f;
 	world->update(1.0f / fps);
-	world->synch(engine);
+	world->synchronize(engine);
 	engine->display();
 	auto end = Time::getCurrentMillis();
 	auto rendererStatistics = engine->getRendererStatistics();
