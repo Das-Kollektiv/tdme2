@@ -58,6 +58,8 @@ void Object::setTransform(const Transform& transform)
 		++i;
 	}
 	//
+	updateBoundingBox();
+	//
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
@@ -72,6 +74,8 @@ void Object::update()
 		instanceTransformMatrices[i] = entityTransform.getTransformMatrix();
 		++i;
 	}
+	//
+	updateBoundingBox();
 	//
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }

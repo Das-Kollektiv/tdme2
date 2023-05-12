@@ -62,6 +62,7 @@ FogParticleSystemInternal::FogParticleSystemInternal(const string& id, ParticleE
 	this->fps = fps;
 	if (texture != nullptr) texture->acquireReference();
 	this->texture = texture != nullptr?texture:TextureReader::read("resources/engine/textures", "point.png");
+	this->entityTransformMatrix.identity();
 }
 
 FogParticleSystemInternal::~FogParticleSystemInternal() {
@@ -153,12 +154,20 @@ void FogParticleSystemInternal::initialize() {
 void FogParticleSystemInternal::setTransform(const Transform& transform)
 {
 	Transform::setTransform(transform);
+	//
+	auto entityTransform = parentTransform * (*this);
+	entityTransformMatrix = entityTransform.getTransformMatrix();
+	//
 	updateInternal();
 }
 
 void FogParticleSystemInternal::update()
 {
 	Transform::update();
+	//
+	auto entityTransform = parentTransform * (*this);
+	entityTransformMatrix = entityTransform.getTransformMatrix();
+	//
 	updateInternal();
 }
 
@@ -207,7 +216,7 @@ void FogParticleSystemInternal::updateParticles()
 			if (pointXYZ[2] > bbMaxXYZ[2]) bbMaxXYZ[2] = pointXYZ[2];
 		}
 		// transform particle according to its transform
-		point = transformMatrix.multiply(point);
+		point = entityTransformMatrix.multiply(point);
 		// add to render points pool
 		pointsRenderPool->addPoint(point, static_cast<uint16_t>(particle.spriteIndex) % (textureHorizontalSprites * textureVerticalSprites), particle.color, 1, this);
 	}

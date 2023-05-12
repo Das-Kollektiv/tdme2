@@ -76,16 +76,18 @@ private:
 	RenderPass renderPass { RENDERPASS_STANDARD };
 
 	Transform parentTransform;
-	Matrix4x4 transformMatrix;
+	Matrix4x4 entityTransformMatrix;
+	Matrix4x4 entityTransformMatrixInverted;
 
 	// overridden methods
-	inline void applyParentTransform(const Transform& parentTransform) override {
+	inline void setParentTransform(const Transform& parentTransform) override {
 		//
 		this->parentTransform = parentTransform;
 		auto entityTransform = parentTransform * (*this);
-		transformMatrix = entityTransform.getTransformMatrix();
+		entityTransformMatrix = entityTransform.getTransformMatrix();
+		entityTransformMatrixInverted = entityTransformMatrix.clone().invert();
 		//
-		worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
+		worldBoundingBox.fromBoundingVolumeWithTransformMatrix(&boundingBox, entityTransformMatrix);
 	}
 
 	/**
@@ -330,7 +332,7 @@ public:
 	}
 
 	inline const Matrix4x4& getTransformMatrix() const override {
-		return transformMatrix;
+		return entityTransformMatrix;
 	}
 
 	inline const Transform& getTransform() const override {

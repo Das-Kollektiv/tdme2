@@ -108,12 +108,20 @@ void ObjectParticleSystemInternal::setRenderer(Renderer* renderer)
 void ObjectParticleSystemInternal::update()
 {
 	Transform::update();
+	//
+	auto entityTransform = parentTransform * (*this);
+	entityTransformMatrix = entityTransform.getTransformMatrix();
+	//
 	updateInternal();
 }
 
 void ObjectParticleSystemInternal::setTransform(const Transform& transform)
 {
 	Transform::setTransform(transform);
+	//
+	auto entityTransform = parentTransform * (*this);
+	entityTransformMatrix = entityTransform.getTransformMatrix();
+	//
 	updateInternal();
 }
 
@@ -202,7 +210,7 @@ void ObjectParticleSystemInternal::updateParticles()
 		point = localTransformMatrix.multiply(particle.position);
 		point.add(center);
 		// transform particle according to its transform
-		point = transformMatrix.multiply(point);
+		point = entityTransformMatrix.multiply(point);
 		// apply to object
 		object->setTranslation(point);
 		object->update();
@@ -223,7 +231,7 @@ void ObjectParticleSystemInternal::updateParticles()
 	}
 	// compute bounding boxes
 	worldBoundingBox.update();
-	boundingBox.fromBoundingVolumeWithTransform(&worldBoundingBox, inverseTransform);
+	boundingBox.fromBoundingVolumeWithTransformMatrix(&worldBoundingBox, inverseTransformMatrix);
 }
 
 void ObjectParticleSystemInternal::dispose()

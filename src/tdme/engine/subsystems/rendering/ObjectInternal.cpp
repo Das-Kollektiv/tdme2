@@ -143,9 +143,9 @@ void ObjectInternal::update()
 void ObjectInternal::updateBoundingBox() {
 	BoundingBox instanceBoundingBox;
 	boundingBox.fromBoundingVolume(model->getBoundingBox());
-	worldBoundingBox.fromBoundingVolumeWithTransform(model->getBoundingBox(), instanceTransform[0]);
+	worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, parentTransform * instanceTransform[0]);
 	for (auto i = 1; i < instances; i++) {
-		instanceBoundingBox.fromBoundingVolumeWithTransform(model->getBoundingBox(), instanceTransform[i]);
+		instanceBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, parentTransform * instanceTransform[i]);
 		worldBoundingBox.extend(&instanceBoundingBox);
 	}
 }

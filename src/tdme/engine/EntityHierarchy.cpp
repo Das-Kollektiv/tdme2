@@ -26,6 +26,8 @@ EntityHierarchy::EntityHierarchy(const string& id): id(id)
 	this->receivesShadows = false;
 	this->effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
+	this->entityTransformMatrix.identity();
+	this->entityTransformMatrixInverted.identity();
 }
 
 EntityHierarchy::~EntityHierarchy()
@@ -128,16 +130,18 @@ const vector<Entity*> EntityHierarchy::query(const string& parentId) {
 }
 
 void EntityHierarchy::updateHierarchy(const Transform& parentTransform, EntityHierarchyLevel& entityHierarchyLevel, int depth, bool& firstEntity) {
+	BoundingBox entityBoundingBox;
 	auto levelParentTransform = parentTransform;
 	if (entityHierarchyLevel.entity != nullptr) levelParentTransform*= entityHierarchyLevel.entity->getTransform();
 	for (auto entityIt: entityHierarchyLevel.children) {
 		auto entity = entityIt.second.entity;
-		entity->applyParentTransform(levelParentTransform);
+		entity->setParentTransform(levelParentTransform);
+		entityBoundingBox.fromBoundingVolumeWithTransformMatrix(entity->getWorldBoundingBox(), entityTransformMatrixInverted);
 		if (firstEntity == true) {
-			boundingBox = entity->getWorldBoundingBox();
+			boundingBox = entityBoundingBox;
 			firstEntity = false;
 		} else {
-			boundingBox.extend(entity->getWorldBoundingBox());
+			boundingBox.extend(&entityBoundingBox);
 		}
 	}
 	for (auto& childIt: entityHierarchyLevel.children) {
@@ -146,7 +150,7 @@ void EntityHierarchy::updateHierarchy(const Transform& parentTransform, EntityHi
 	if (depth == 0) {
 		// bounding boxes
 		boundingBox.update();
-		worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
+		worldBoundingBox.fromBoundingVolumeWithTransformMatrix(&boundingBox, entityTransformMatrix);
 		// update entity
 		if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 	}
@@ -156,8 +160,11 @@ void EntityHierarchy::setTransform(const Transform& transform)
 {
 	//
 	Transform::setTransform(transform);
+	//
 	auto entityTransform = parentTransform * (*this);
-	transformMatrix = entityTransform.getTransformMatrix();
+	entityTransformMatrix = entityTransform.getTransformMatrix();
+	//
+	this->entityTransformMatrixInverted = entityTransformMatrix.clone().invert();
 	// update hierarchy
 	auto firstEntity = true;
 	updateHierarchy(entityTransform, entityRoot, 0, firstEntity);
@@ -167,8 +174,11 @@ void EntityHierarchy::update()
 {
 	//
 	Transform::update();
+	//
 	auto entityTransform = parentTransform * (*this);
-	transformMatrix = entityTransform.getTransformMatrix();
+	entityTransformMatrix = entityTransform.getTransformMatrix();
+	//
+	this->entityTransformMatrixInverted = entityTransformMatrix.clone().invert();
 	// update hierarchy
 	auto firstEntity = true;
 	updateHierarchy(entityTransform, entityRoot, 0, firstEntity);

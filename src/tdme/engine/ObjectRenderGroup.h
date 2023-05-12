@@ -86,7 +86,7 @@ private:
 	inline void updateBoundingBox() {
 		if (combinedEntity == nullptr) return;
 		boundingBox.fromBoundingVolume(combinedEntity->getBoundingBox());
-		worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
+		worldBoundingBox.fromBoundingVolumeWithTransformMatrix(&boundingBox, transformMatrix);
 	}
 
 	/**
@@ -110,7 +110,7 @@ private:
 	static void combineObjects(Model* model, const vector<Transform>& objectsTransform, Model* combinedModel);
 
 	// overridden methods
-	inline void applyParentTransform(const Transform& parentTransform) override {
+	inline void setParentTransform(const Transform& parentTransform) override {
 		//
 		this->parentTransform = parentTransform;
 		auto entityTransform = parentTransform * (*this);

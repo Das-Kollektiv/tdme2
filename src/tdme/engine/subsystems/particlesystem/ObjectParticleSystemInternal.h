@@ -63,7 +63,7 @@ protected:
 	vector<Object*> enabledObjects;
 	BoundingBox boundingBox;
 	BoundingBox worldBoundingBox;
-	Transform inverseTransform;
+	Matrix4x4 inverseTransformMatrix;
 	ParticleEmitter* emitter { nullptr };
 	bool pickable;
 	Color4 effectColorMul;
@@ -72,22 +72,22 @@ protected:
 
 	Transform parentTransform;
 	Transform localTransform;
-	Matrix4x4 transformMatrix;
+	Matrix4x4 entityTransformMatrix;
 
 	/**
 	 * Update internal
 	 */
 	inline void updateInternal() {
 		Vector3 scale;
-		transformMatrix.getScale(scale);
+		entityTransformMatrix.getScale(scale);
 		scale.scale(objectScale);
 		scale.scale(localTransform.getScale());
 		for (auto object: objects) {
 			object->setScale(scale);
 			object->update();
 		}
-		inverseTransform.setTransform(*this);
-		inverseTransform.invert();
+		inverseTransformMatrix = entityTransformMatrix;
+		inverseTransformMatrix.invert();
 	}
 
 public:
@@ -197,7 +197,7 @@ public:
 	inline void setParentTransform(const Transform& transform) {
 		parentTransform = transform;
 		auto entityTransform = parentTransform * (*this);
-		transformMatrix = entityTransform.getTransformMatrix();
+		entityTransformMatrix = entityTransform.getTransformMatrix();
 		//
 		updateInternal();
 	}

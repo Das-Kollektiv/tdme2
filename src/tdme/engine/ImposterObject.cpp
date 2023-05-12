@@ -31,6 +31,7 @@ ImposterObject::ImposterObject(
 	this->receivesShadows = false;
 	this->effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
+	this->entityTransformMatrix.identity();
 
 	billboardObjects.resize(billboardModels.size());
 	for (auto i = 0; i < billboardModels.size(); i++) {
@@ -66,7 +67,7 @@ void ImposterObject::setTransform(const Transform& transform)
 	Transform::setTransform(transform);
 	//
 	auto entityTransform = parentTransform * (*this);
-	transformMatrix = entityTransform.getTransformMatrix();
+	entityTransformMatrix = entityTransform.getTransformMatrix();
 	// delegate to billboard objects
 	auto imposterObjectTransform = entityTransform;
 	imposterObjectTransform.addRotation(Vector3(0.0f, 1.0f, 0.0f), -(360.0f / billboardModels.size()) * 0.5f);
@@ -87,7 +88,7 @@ void ImposterObject::update()
 	Transform::update();
 	//
 	auto entityTransform = parentTransform * (*this);
-	transformMatrix = entityTransform.getTransformMatrix();
+	entityTransformMatrix = entityTransform.getTransformMatrix();
 	// delegate to billboard objects
 	auto imposterObjectTransform = entityTransform;
 	imposterObjectTransform.addRotation(Vector3(0.0f, 1.0f, 0.0f), -(360.0f / billboardModels.size()) * 0.5f);

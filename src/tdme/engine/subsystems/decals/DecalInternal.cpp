@@ -32,6 +32,7 @@ DecalInternal::DecalInternal(const string& id, OrientedBoundingBox* obb, Texture
 	this->contributesShadows = false;
 	this->receivesShadows = false;
 	this->obb = obb;
+	this->entityTransformMatrix.identity();
 	boundingBox = BoundingBox(obb);
 	obbMatrix.identity();
 	obbMatrix.translate(obb->getCenter());
@@ -52,12 +53,20 @@ DecalInternal::~DecalInternal() {
 void DecalInternal::update()
 {
 	Transform::update();
+	//
+	auto entityTransform = parentTransform * (*this);
+	entityTransformMatrix = entityTransform.getTransformMatrix();
+	//
 	updateInternal();
 }
 
 void DecalInternal::setTransform(const Transform& transform)
 {
 	Transform::setTransform(transform);
+	//
+	auto entityTransform = parentTransform * (*this);
+	entityTransformMatrix = entityTransform.getTransformMatrix();
+	//
 	updateInternal();
 }
 

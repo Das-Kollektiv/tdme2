@@ -38,6 +38,7 @@ LODObjectImposter::LODObjectImposter(
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 	this->effectColorMulLOD2.set(1.0f, 1.0f, 1.0f, 1.0f);
 	this->effectColorAddLOD2.set(0.0f, 0.0f, 0.0f, 0.0f);
+	this->entityTransformMatrix.identity();
 
 	objectLOD1 = new Object(id + ".lod1", modelLOD1);
 	objectLOD1->setParentEntity(this);
@@ -78,7 +79,7 @@ void LODObjectImposter::setTransform(const Transform& transform)
 	Transform::setTransform(transform);
 	//
 	auto entityTransform = parentTransform * (*this);
-	transformMatrix = entityTransform.getTransformMatrix();
+	entityTransformMatrix = entityTransform.getTransformMatrix();
 	// delegate to LOD objects
 	objectLOD1->setTransform(entityTransform);
 	objectLOD2->setTransform(entityTransform);
@@ -93,7 +94,7 @@ void LODObjectImposter::update()
 	Transform::update();
 	//
 	auto entityTransform = parentTransform * (*this);
-	transformMatrix = entityTransform.getTransformMatrix();
+	entityTransformMatrix = entityTransform.getTransformMatrix();
 	// delegate to LOD objects
 	objectLOD1->setTransform(entityTransform);
 	objectLOD2->setTransform(entityTransform);

@@ -47,6 +47,7 @@ LODObject::LODObject(
 	this->effectColorAddLOD2.set(0.0f, 0.0f, 0.0f, 0.0f);
 	this->effectColorMulLOD3.set(1.0f, 1.0f, 1.0f, 1.0f);
 	this->effectColorAddLOD3.set(0.0f, 0.0f, 0.0f, 0.0f);
+	this->entityTransformMatrix.identity();
 
 	if (modelLOD1 != nullptr) {
 		objectLOD1 = new Object(id + ".lod1", modelLOD1);
@@ -98,7 +99,7 @@ void LODObject::setTransform(const Transform& transform)
 	Transform::setTransform(transform);
 	//
 	auto entityTransform = parentTransform * (*this);
-	transformMatrix = entityTransform.getTransformMatrix();
+	entityTransformMatrix = entityTransform.getTransformMatrix();
 	// delegate to LOD objects
 	if (objectLOD1 != nullptr) objectLOD1->setTransform(entityTransform);
 	if (objectLOD2 != nullptr) objectLOD2->setTransform(entityTransform);
@@ -114,7 +115,7 @@ void LODObject::update()
 	Transform::update();
 	//
 	auto entityTransform = parentTransform * (*this);
-	transformMatrix = entityTransform.getTransformMatrix();
+	entityTransformMatrix = entityTransform.getTransformMatrix();
 	// delegate to LOD objects
 	if (objectLOD1 != nullptr) objectLOD1->setTransform(entityTransform);
 	if (objectLOD2 != nullptr) objectLOD2->setTransform(entityTransform);

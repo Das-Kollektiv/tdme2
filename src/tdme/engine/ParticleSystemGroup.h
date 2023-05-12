@@ -58,16 +58,16 @@ private:
 	Transform localTransform;
 
 	Transform parentTransform;
-	Matrix4x4 transformMatrix;
+	Matrix4x4 entityTransformMatrix;
 
 	// overridden methods
-	inline void applyParentTransform(const Transform& parentTransform) override {
+	inline void setParentTransform(const Transform& parentTransform) override {
 		//
 		this->parentTransform = parentTransform;
 		auto entityTransform = parentTransform * (*this);
-		transformMatrix = entityTransform.getTransformMatrix();
+		entityTransformMatrix = entityTransform.getTransformMatrix();
 		//
-		for (auto particleSystem: particleSystems) particleSystem->applyParentTransform(entityTransform);
+		for (auto particleSystem: particleSystems) particleSystem->setParentTransform(entityTransform);
 	}
 
 public:
@@ -125,9 +125,6 @@ public:
 				boundingBox.extend(dynamic_cast<Entity*>(particleSystems[i])->getBoundingBox());
 			}
 			boundingBox.update();
-
-			// update bounding box transformed
-			worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
 		}
 
 		//
@@ -135,17 +132,8 @@ public:
 	}
 
 	inline BoundingBox* getWorldBoundingBox() override {
-		if (particleSystems.empty() == false) {
-			// compute new bounding box
-			boundingBox.fromBoundingVolume(dynamic_cast<Entity*>(particleSystems[0])->getBoundingBox());
-			for (auto i = 1; i < particleSystems.size(); i++) {
-				boundingBox.extend(dynamic_cast<Entity*>(particleSystems[i])->getBoundingBox());
-			}
-			boundingBox.update();
-
-			// update world bounding box
-			worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
-		}
+		// update bounding box transformed
+		worldBoundingBox.fromBoundingVolumeWithTransformMatrix(getBoundingBox(), entityTransformMatrix);
 
 		//
 		return &worldBoundingBox;
@@ -270,7 +258,7 @@ public:
 	}
 
 	inline const Matrix4x4& getTransformMatrix() const override {
-		return transformMatrix;
+		return entityTransformMatrix;
 	}
 
 	inline const Transform& getTransform() const override {

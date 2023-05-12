@@ -32,6 +32,7 @@ EnvironmentMapping::EnvironmentMapping(const string& id, int width, int height, 
 	this->width = width;
 	this->height = height;
 	this->boundingBox = boundingBox;
+	this->entityTransformMatrix.identity();
 }
 
 void EnvironmentMapping::setEngine(Engine* engine) {
@@ -56,7 +57,7 @@ void EnvironmentMapping::setTransform(const Transform& transform)
 	Transform::setTransform(transform);
 	//
 	auto entityTransform = parentTransform * (*this);
-	transformMatrix = entityTransform.getTransformMatrix();
+	entityTransformMatrix = entityTransform.getTransformMatrix();
 	//
 	Transform translationTransform;
 	translationTransform.setTranslation(entityTransform.getTranslation());
@@ -70,7 +71,7 @@ void EnvironmentMapping::update()
 	Transform::update();
 	//
 	auto entityTransform = parentTransform * (*this);
-	transformMatrix = entityTransform.getTransformMatrix();
+	entityTransformMatrix = entityTransform.getTransformMatrix();
 	//
 	Transform translationTransform;
 	translationTransform.setTranslation(entityTransform.getTranslation());

@@ -64,6 +64,7 @@ ObjectRenderGroup::ObjectRenderGroup(
 	this->receivesShadows = false;
 	this->effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
+	this->transformMatrix.identity();
 	this->combinedModels.resize(Math::clamp(lodLevels, 1, 3));
 	this->combinedEntity = nullptr;
 	this->lodReduceBy[0] = 1;

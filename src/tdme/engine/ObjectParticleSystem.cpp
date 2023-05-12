@@ -34,18 +34,12 @@ void ObjectParticleSystem::setTransform(const Transform& transform)
 {
 	ObjectParticleSystemInternal::setTransform(transform);
 	//
-	auto entityTransform = parentTransform * (*this);
-	transformMatrix = entityTransform.getTransformMatrix();
-	//
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
 void ObjectParticleSystem::update()
 {
 	ObjectParticleSystemInternal::update();
-	//
-	auto entityTransform = parentTransform * (*this);
-	transformMatrix = entityTransform.getTransformMatrix();
 	//
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }

@@ -48,8 +48,8 @@ private:
 	RenderPass renderPass { RENDERPASS_STANDARD };
 
 	// overridden methods
-	inline void applyParentTransform(const Transform& parentTransform) override {
-		setParentTransform(parentTransform);
+	inline void setParentTransform(const Transform& transform) override {
+		ObjectParticleSystemInternal::setParentTransform(transform);
 	}
 
 public:
@@ -216,7 +216,7 @@ public:
 	}
 
 	inline const Matrix4x4& getTransformMatrix() const override {
-		return transformMatrix;
+		return entityTransformMatrix;
 	}
 
 	inline const Transform& getTransform() const override {

@@ -68,6 +68,7 @@ PointsParticleSystemInternal::PointsParticleSystemInternal(const string& id, Par
 	this->pointsRenderPool = new TransparentRenderPointsPool(maxPoints);
 	if (texture != nullptr) texture->acquireReference();
 	this->texture = texture != nullptr?texture:TextureReader::read("resources/engine/textures", "point.png");
+	this->entityTransformMatrix.identity();
 }
 
 PointsParticleSystemInternal::~PointsParticleSystemInternal() {
@@ -82,12 +83,20 @@ void PointsParticleSystemInternal::initialize() {
 void PointsParticleSystemInternal::update()
 {
 	Transform::update();
+	//
+	auto entityTransform = parentTransform * (*this);
+	entityTransformMatrix = entityTransform.getTransformMatrix();
+	//
 	updateInternal();
 }
 
 void PointsParticleSystemInternal::setTransform(const Transform& transform)
 {
 	Transform::setTransform(transform);
+	//
+	auto entityTransform = parentTransform * (*this);
+	entityTransformMatrix = entityTransform.getTransformMatrix();
+	//
 	updateInternal();
 }
 
@@ -164,7 +173,7 @@ void PointsParticleSystemInternal::updateParticles()
 			if (pointXYZ[2] > bbMaxXYZ[2]) bbMaxXYZ[2] = pointXYZ[2];
 		}
 		// transform particle according to its transform
-		point = transformMatrix.multiply(point);
+		point = entityTransformMatrix.multiply(point);
 		// add to render points pool
 		pointsRenderPool->addPoint(point, static_cast<uint16_t>(particle.spriteIndex) % (textureHorizontalSprites * textureVerticalSprites), color, 0, this);
 	}

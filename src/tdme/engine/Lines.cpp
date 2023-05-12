@@ -37,21 +37,12 @@ void Lines::setEngine(Engine* engine) {
 void Lines::setTransform(const Transform& transform)
 {
 	LinesInternal::setTransform(transform);
-	//
-	auto entityTransform = parentTransform * (*this);
-	transformMatrix = entityTransform.getTransformMatrix();
-	//
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
 void Lines::update()
 {
-	//
 	LinesInternal::update();
-	//
-	auto entityTransform = parentTransform * (*this);
-	transformMatrix = entityTransform.getTransformMatrix();
-	//
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 

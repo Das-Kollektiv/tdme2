@@ -73,10 +73,10 @@ private:
 	}
 
 	/**
-	 * Apply parent transform
+	 * Set parent transform
 	 * @param parentTransform parent transform
 	 */
-	virtual void applyParentTransform(const Transform& parentTransform) = 0;
+	virtual void setParentTransform(const Transform& parentTransform) = 0;
 
 public:
 	static constexpr int RENDERPASS_MAX { 5 };

@@ -53,6 +53,7 @@ LinesInternal::LinesInternal(const string& id, float lineWidth, const vector<Vec
 	this->colors = colors;
 	this->texture = texture;
 	this->textureId = 0;
+	this->entityTransformMatrix.identity();
 	if (points.size() > 1) {
 		boundingBox.getMin().set(points[0]);
 		boundingBox.getMax().set(points[0]);
@@ -79,12 +80,20 @@ LinesInternal::~LinesInternal() {
 void LinesInternal::update()
 {
 	Transform::update();
+	//
+	auto entityTransform = parentTransform * (*this);
+	entityTransformMatrix = entityTransform.getTransformMatrix();
+	//
 	updateBoundingBox();
 }
 
 void LinesInternal::setTransform(const Transform& transform)
 {
 	Transform::setTransform(transform);
+	//
+	auto entityTransform = parentTransform * (*this);
+	entityTransformMatrix = entityTransform.getTransformMatrix();
+	//
 	updateBoundingBox();
 }
 

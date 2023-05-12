@@ -7,12 +7,14 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/utilities/Float.h>
 
 using std::array;
 
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
+using tdme::utilities::Float;
 
 /**
  * Quaternion class
@@ -529,6 +531,10 @@ public:
 		float siny_cosp = 2.0f * (data[3] * data[2] + data[0] * data[1]);
 		float cosy_cosp = 1.0f - 2.0f * (data[1] * data[1] + data[2] * data[2]);
 		euler[2] = Math::atan2(siny_cosp, cosy_cosp) / Math::DEG2RAD;
+		//
+		if (Float::isNaN(euler[0]) == true) euler[0] = 0.0f;
+		if (Float::isNaN(euler[1]) == true) euler[1] = 0.0f;
+		if (Float::isNaN(euler[2]) == true) euler[2] = 0.0f;
 		//
 		return euler;
 	}

@@ -92,7 +92,6 @@ private:
 
 	int uniqueModelId { UNIQUEMODELID_NONE };
 
-	Transform parentTransform;
 	vector<Matrix4x4> instanceTransformMatrices;
 
 	/**
@@ -179,9 +178,9 @@ private:
 	}
 
 	// overridden methods
-	inline void applyParentTransform(const Transform& parentTransform) override {
+	inline void setParentTransform(const Transform& parentTransform) override {
 		//
-		this->parentTransform = parentTransform;
+		ObjectInternal::setParentTransform(parentTransform);
 		//
 		auto i = 0;
 		for (const auto& transform: instanceTransform) {

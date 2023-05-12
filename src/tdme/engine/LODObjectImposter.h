@@ -79,14 +79,14 @@ private:
 	EntityShaderParameters shaderParameters;
 
 	Transform parentTransform;
-	Matrix4x4 transformMatrix;
+	Matrix4x4 entityTransformMatrix;
 
 	// overridden methods
-	inline void applyParentTransform(const Transform& parentTransform) override {
+	inline void setParentTransform(const Transform& parentTransform) override {
 		//
 		this->parentTransform = parentTransform;
 		auto entityTransform = parentTransform * (*this);
-		transformMatrix = entityTransform.getTransformMatrix();
+		entityTransformMatrix = entityTransform.getTransformMatrix();
 		// delegate to LOD objects
 		objectLOD1->setTransform(entityTransform);
 		objectLOD2->setTransform(entityTransform);
@@ -330,7 +330,7 @@ public:
 	}
 
 	inline const Matrix4x4& getTransformMatrix() const override {
-		return transformMatrix;
+		return entityTransformMatrix;
 	}
 
 	inline const Transform& getTransform() const override {
