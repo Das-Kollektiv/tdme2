@@ -134,7 +134,7 @@ public:
 			}
 			boundingBox.update();
 
-			// update bounding box transformed
+			// update world bounding box
 			worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
 		}
 
