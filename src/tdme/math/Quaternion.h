@@ -518,23 +518,19 @@ public:
 	 */
 	inline Vector3 computeEulerAngles() const {
 		// https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+		// https://math.stackexchange.com/questions/2975109/how-to-convert-euler-angles-to-quaternions-and-get-the-same-euler-angles-back-fr
 		Vector3 euler;
 		// roll (x-axis rotation)
-		float sinr_cosp = 2.0f * (data[3] * data[0] + data[1] * data[2]);
-		float cosr_cosp = 1.0f - 2.0f * (data[0] * data[0] + data[1] * data[1]);
-		euler[0] = Math::atan2(sinr_cosp, cosr_cosp) / Math::DEG2RAD;
+		auto t0 = 2.0f * (data[3] * data[0] + data[1] * data[2]);
+		auto t1 = 1.0f - 2.0f * (data[0] * data[0] + data[1] * data[1]);
+		euler[0] = Math::atan2(t0, t1) / Math::DEG2RAD;
 		// pitch (y-axis rotation)
-		float sinp = Math::sqrt(1.0f + 2.0f * (data[3] * data[1] - data[0] * data[2]));
-		float cosp = Math::sqrt(1.0f - 2.0f * (data[3] * data[1] - data[0] * data[2]));
-		euler[1] = (2.0f * Math::atan2(sinp, cosp) - M_PI / 2.0f) / Math::DEG2RAD;
+		auto t2 = Math::clamp(2.0f * (data[3] * data[1] - data[2] * data[0]), -1.0f, 1.0f);
+		euler[1] = Math::asin(t2) / Math::DEG2RAD;
 		// yaw (z-axis rotation)
-		float siny_cosp = 2.0f * (data[3] * data[2] + data[0] * data[1]);
-		float cosy_cosp = 1.0f - 2.0f * (data[1] * data[1] + data[2] * data[2]);
-		euler[2] = Math::atan2(siny_cosp, cosy_cosp) / Math::DEG2RAD;
-		//
-		if (Float::isNaN(euler[0]) == true) euler[0] = 0.0f;
-		if (Float::isNaN(euler[1]) == true) euler[1] = 0.0f;
-		if (Float::isNaN(euler[2]) == true) euler[2] = 0.0f;
+		auto t3 = 2.0f * (data[3] * data[2] + data[0] * data[1]);
+		auto t4 = 1.0f - 2.0f * (data[1] * data[1] + data[2] * data[2]);
+		euler[2] = Math::atan2(t3, t4) / Math::DEG2RAD;
 		//
 		return euler;
 	}
