@@ -407,7 +407,7 @@ void ObjectRenderGroup::setTransform(const Transform& transform)
 {
 	Transform::setTransform(transform);
 	// update bounding box transformed
-	boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
+	worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
 	// update object
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
@@ -416,7 +416,7 @@ void ObjectRenderGroup::update()
 {
 	Transform::update();
 	// update bounding box transformed
-	boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
+	worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
 	// update object
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }

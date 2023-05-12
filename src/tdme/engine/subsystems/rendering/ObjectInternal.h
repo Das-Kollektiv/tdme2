@@ -42,7 +42,7 @@ protected:
 	Color4 effectColorMul;
 	Color4 effectColorAdd;
 	BoundingBox boundingBox;
-	BoundingBox boundingBoxTransformed;
+	BoundingBox worldBoundingBox;
 	bool nodeTransformMatrixUpdate;
 
 	/**
@@ -171,11 +171,11 @@ public:
 	}
 
 	/**
-	 * Retrieves bounding sphere with transform applied
-	 * @return bounding sphere
+	 * Retrieves world bounding box
+	 * @return world bounding box
 	 */
-	inline BoundingBox* getBoundingBoxTransformed() {
-		return &boundingBoxTransformed;
+	inline BoundingBox* getWorldBoundingBox() {
+		return &worldBoundingBox;
 	}
 
 	/**

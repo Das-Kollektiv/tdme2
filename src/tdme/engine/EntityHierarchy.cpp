@@ -130,10 +130,10 @@ void EntityHierarchy::updateHierarchy(const Transform& parentTransform, EntityHi
 		auto entity = entityIt.second.entity;
 		entity->update();
 		if (firstEntity == true) {
-			boundingBox = entity->getBoundingBoxTransformed();
+			boundingBox = entity->getWorldBoundingBox();
 			firstEntity = false;
 		} else {
-			boundingBox.extend(entity->getBoundingBoxTransformed());
+			boundingBox.extend(entity->getWorldBoundingBox());
 		}
 		entity->applyParentTransform(parentTransform);
 	}
@@ -143,7 +143,7 @@ void EntityHierarchy::updateHierarchy(const Transform& parentTransform, EntityHi
 	if (depth == 0) {
 		// bounding boxes
 		boundingBox.update();
-		boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
+		worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
 		// update entity
 		if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 	}

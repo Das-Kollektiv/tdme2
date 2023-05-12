@@ -49,7 +49,7 @@ protected:
 	int32_t textureId { -1 };
 
 	BoundingBox boundingBox;
-	BoundingBox boundingBoxTransformed;
+	BoundingBox worldBoundingBox;
 	Color4 effectColorMul;
 	Color4 effectColorAdd;
 	bool pickable;
@@ -66,10 +66,10 @@ protected:
 	 * Update bounding volume
 	 */
 	inline void updateBoundingBox() {
-		boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
-		boundingBoxTransformed.getMin().sub(0.05f); // scale a bit up to make picking work better
-		boundingBoxTransformed.getMax().add(0.05f); // same here
-		boundingBoxTransformed.update();
+		worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
+		worldBoundingBox.getMin().sub(0.05f); // scale a bit up to make picking work better
+		worldBoundingBox.getMax().add(0.05f); // same here
+		worldBoundingBox.update();
 	}
 
 public:
@@ -210,10 +210,10 @@ public:
 	}
 
 	/**
-	 * @return bounding box transformed
+	 * @return world bounding box
 	 */
-	inline BoundingBox* getBoundingBoxTransformed() {
-		return &boundingBoxTransformed;
+	inline BoundingBox* getWorldBoundingBox() {
+		return &worldBoundingBox;
 	}
 
 	/**

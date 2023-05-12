@@ -38,7 +38,7 @@ private:
 	float defaultScale;
 	float scale;
 	bool resetRequested;
-	BoundingBox boundingBoxTransformed;
+	BoundingBox worldBoundingBox;
 	CameraRotationInputHandlerEventHandler* eventHandler { nullptr };
 
 public:

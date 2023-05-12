@@ -121,7 +121,7 @@ private:
 		auto timing = engine->getTiming();
 		auto currentFrameAtTime = timing->getCurrentFrameAtTime();
 		auto currentFrame = timing->getFrame();
-		auto distanceFromCamera = (engine->getCamera()->getLookFrom() - getBoundingBoxTransformed()->computeClosestPointInBoundingBox(engine->getCamera()->getLookFrom())).computeLengthSquared();
+		auto distanceFromCamera = (engine->getCamera()->getLookFrom() - getWorldBoundingBox()->computeClosestPointInBoundingBox(engine->getCamera()->getLookFrom())).computeLengthSquared();
 		if (animationComputingLODEnabled == true) {
 			if (distanceFromCamera > Math::square(Engine::getAnimationComputationReduction2Distance())) {
 				if (frameTransformLast != -1LL && currentFrame - frameTransformLast < 4) return;
@@ -227,8 +227,8 @@ public:
 		return ObjectInternal::getBoundingBox();
 	}
 
-	inline BoundingBox* getBoundingBoxTransformed() override {
-		return ObjectInternal::getBoundingBoxTransformed();
+	inline BoundingBox* getWorldBoundingBox() override {
+		return ObjectInternal::getWorldBoundingBox();
 	}
 
 	inline const Color4& getEffectColorAdd() const override {

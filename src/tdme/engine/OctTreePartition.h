@@ -143,7 +143,7 @@ private:
 		// create sub nodes
 		if (partitionSize > PARTITION_SIZE_MIN) {
 			// frustum bounding box
-			auto boundingBox = entity->getBoundingBoxTransformed();
+			auto boundingBox = entity->getWorldBoundingBox();
 			// create partitions if not yet done
 			auto minXPartition = static_cast<int32_t>((Math::floor(boundingBox->getMin().getX() - x * partitionSize) / (partitionSize / 2.0f)));
 			auto minYPartition = static_cast<int32_t>((Math::floor(boundingBox->getMin().getY() - y * partitionSize) / (partitionSize / 2.0f)));
@@ -238,7 +238,7 @@ private:
 
 				// look up
 				lookUps++;
-				if (frustum->isVisible(entity->getBoundingBoxTransformed()) == false) continue;
+				if (frustum->isVisible(entity->getWorldBoundingBox()) == false) continue;
 
 				//
 				auto uniquePartitionId = entity->getUniquePartitionId();

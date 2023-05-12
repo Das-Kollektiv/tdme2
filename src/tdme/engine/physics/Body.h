@@ -226,9 +226,9 @@ public:
 	void addBoundingVolume(BoundingVolume* boundingVolume);
 
 	/**
-	 * Compute bounding box transformed
+	 * Compute world bounding box
 	 */
-	inline BoundingBox computeBoundingBoxTransformed() {
+	inline BoundingBox computeWorldBoundingBox() {
 		auto aabb = rigidBody->getAABB();
 		return BoundingBox(
 			Vector3(
