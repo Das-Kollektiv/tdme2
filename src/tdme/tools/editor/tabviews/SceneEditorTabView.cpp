@@ -1074,7 +1074,7 @@ void SceneEditorTabView::centerEntities()
 	for (auto selectedEntityId: selectedEntityIds) {
 		auto selectedEntity = engine->getEntity(selectedEntityId);
 		if (selectedEntity == nullptr) continue;
-		center.add(selectedEntity->getBoundingBoxTransformed()->getMin().clone().add(selectedEntity->getBoundingBoxTransformed()->getMax()).scale(0.5f));
+		center.add(selectedEntity->getWorldBoundingBox()->getMin().clone().add(selectedEntity->getWorldBoundingBox()->getMax()).scale(0.5f));
 	}
 	engine->getCamera()->setLookAt(center.scale(1.0f / selectedEntityIds.size()));
 }

@@ -216,9 +216,9 @@ public:
 	virtual BoundingBox* getBoundingBox() = 0;
 
 	/**
-	 * @return bounding box transformed / in world coordinate space
+	 * @return world bounding box
 	 */
-	virtual BoundingBox* getBoundingBoxTransformed() = 0;
+	virtual BoundingBox* getWorldBoundingBox() = 0;
 
 	/**
 	 * @return entity translation

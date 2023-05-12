@@ -51,7 +51,7 @@ private:
 	bool pickable;
 	bool autoEmit;
 	BoundingBox boundingBox;
-	BoundingBox boundingBoxTransformed;
+	BoundingBox worldBoundingBox;
 	Color4 effectColorMul;
 	Color4 effectColorAdd;
 	vector<ParticleSystem*> particleSystems;
@@ -127,14 +127,14 @@ public:
 			boundingBox.update();
 
 			// update bounding box transformed
-			boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
+			worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
 		}
 
 		//
 		return &boundingBox;
 	}
 
-	inline BoundingBox* getBoundingBoxTransformed() override {
+	inline BoundingBox* getWorldBoundingBox() override {
 		if (particleSystems.empty() == false) {
 			// compute new bounding box
 			boundingBox.fromBoundingVolume(dynamic_cast<Entity*>(particleSystems[0])->getBoundingBox());
@@ -143,12 +143,12 @@ public:
 			}
 			boundingBox.update();
 
-			// update bounding box transformed
-			boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
+			// update world bounding box
+			worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
 		}
 
 		//
-		return &boundingBoxTransformed;
+		return &worldBoundingBox;
 	}
 
 	inline ParticleEmitter* getEmitter() override {

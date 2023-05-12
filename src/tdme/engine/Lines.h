@@ -105,8 +105,8 @@ public:
 		return LinesInternal::getBoundingBox();
 	}
 
-	inline BoundingBox* getBoundingBoxTransformed() override {
-		return LinesInternal::getBoundingBoxTransformed();
+	inline BoundingBox* getWorldBoundingBox() override {
+		return LinesInternal::getWorldBoundingBox();
 	}
 
 	inline const Color4& getEffectColorAdd() const override {

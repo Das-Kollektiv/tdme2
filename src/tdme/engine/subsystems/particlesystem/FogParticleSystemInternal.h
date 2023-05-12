@@ -62,7 +62,7 @@ protected:
 	TransparentRenderPointsPool* pointsRenderPool { nullptr };
 
 	BoundingBox boundingBox;
-	BoundingBox boundingBoxTransformed;
+	BoundingBox worldBoundingBox;
 	Color4 effectColorMul;
 	Color4 effectColorAdd;
 	bool pickable;
@@ -79,10 +79,10 @@ protected:
 		transformMatrix.getScale(scale);
 		pointSizeScale = Math::max(scale.getX(), Math::max(scale.getY(), scale.getZ()));
 		pointSizeScale*= Math::max(localTransform.getScale().getX(), Math::max(localTransform.getScale().getY(), localTransform.getScale().getZ()));
-		boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
-		boundingBoxTransformed.getMin().sub(0.05f); // scale a bit up to make picking work better
-		boundingBoxTransformed.getMax().add(0.05f); // same here
-		boundingBoxTransformed.update();
+		worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
+		worldBoundingBox.getMin().sub(0.05f); // scale a bit up to make picking work better
+		worldBoundingBox.getMax().add(0.05f); // same here
+		worldBoundingBox.update();
 	}
 
 public:

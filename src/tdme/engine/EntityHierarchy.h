@@ -69,7 +69,7 @@ private:
 	Color4 effectColorMul;
 	Color4 effectColorAdd;
 	BoundingBox boundingBox;
-	BoundingBox boundingBoxTransformed;
+	BoundingBox worldBoundingBox;
 	vector<Entity*> entities;
 	EntityHierarchyLevel entityRoot;
 
@@ -85,7 +85,7 @@ private:
 		auto entityTransform = parentTransform * (*this);
 		transformMatrix = entityTransform.getTransformMatrix();
 		//
-		boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
+		worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
 	}
 
 	/**
@@ -216,8 +216,8 @@ public:
 		return &boundingBox;
 	}
 
-	inline BoundingBox* getBoundingBoxTransformed() override {
-		return &boundingBoxTransformed;
+	inline BoundingBox* getWorldBoundingBox() override {
+		return &worldBoundingBox;
 	}
 
 	inline const Color4& getEffectColorMul() const override {

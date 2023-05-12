@@ -345,7 +345,7 @@ void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype) {
 void PrototypePhysicsSubView::updateGizmo(Prototype* prototype) {
 	auto selectedEntity = engine->getEntity("tdme.prototype.bv.editing");
 	if (selectedEntity != nullptr) {
-		Gizmo::updateGizmo(selectedEntity->getBoundingBoxTransformed()->getCenter(), selectedEntity->getTransform());
+		Gizmo::updateGizmo(selectedEntity->getWorldBoundingBox()->getCenter(), selectedEntity->getTransform());
 	} else {
 		removeGizmo();
 	}

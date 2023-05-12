@@ -45,7 +45,7 @@ private:
 	EnvironmentMappingRenderer* environmentMappingRenderer { nullptr };
 	bool enabled { true };
 	BoundingBox boundingBox;
-	BoundingBox boundingBoxTransformed;
+	BoundingBox worldBoundingBox;
 	Color4 effectColorMul { 1.0f, 1.0f, 1.0f, 1.0f };
 	Color4 effectColorAdd { 0.0f, 0.0f, 0.0f, 0.0f };
 	string id;
@@ -111,8 +111,8 @@ public:
 		return &boundingBox;
 	}
 
-	inline BoundingBox* getBoundingBoxTransformed() override {
-		return &boundingBoxTransformed;
+	inline BoundingBox* getWorldBoundingBox() override {
+		return &worldBoundingBox;
 	}
 
 	inline const Color4& getEffectColorAdd() const override {

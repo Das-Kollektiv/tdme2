@@ -126,7 +126,7 @@ public:
 	 * @return LOD object to render
 	 */
 	inline Object* determineBillboardObject(Camera* camera) {
-		Vector3 cameraForwardVector = getBoundingBoxTransformed()->getCenter().clone().sub(camera->getLookFrom()).setY(0.0f).normalize();
+		Vector3 cameraForwardVector = getWorldBoundingBox()->getCenter().clone().sub(camera->getLookFrom()).setY(0.0f).normalize();
 		auto angle = Vector3::computeAngle(Vector3(0.0, 0.0f, -1.0f), cameraForwardVector, Rotation::Y_AXIS);
 		auto imposterIdx = static_cast<int>(angle / 360.0f * billboardModels.size()) % billboardModels.size();
 		billboardObject = billboardObjects[imposterIdx];
@@ -153,8 +153,8 @@ public:
 		return billboardObject->getBoundingBox();
 	}
 
-	inline BoundingBox* getBoundingBoxTransformed() override {
-		return billboardObject->getBoundingBoxTransformed();
+	inline BoundingBox* getWorldBoundingBox() override {
+		return billboardObject->getWorldBoundingBox();
 	}
 
 	inline const Color4& getEffectColorMul() const override {

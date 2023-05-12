@@ -94,8 +94,8 @@ public:
 		return DecalInternal::getBoundingBox();
 	}
 
-	inline BoundingBox* getBoundingBoxTransformed() override {
-		return DecalInternal::getBoundingBoxTransformed();
+	inline BoundingBox* getWorldBoundingBox() override {
+		return DecalInternal::getWorldBoundingBox();
 	}
 
 	inline const Color4& getEffectColorAdd() const override {

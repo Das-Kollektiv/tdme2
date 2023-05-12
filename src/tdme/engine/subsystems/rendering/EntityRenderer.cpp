@@ -556,7 +556,7 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object*>& 
 				}
 				auto currentVBOLods = _objectNode->renderer->vboLods;
 				if (currentVBOLods != nullptr) {
-					auto distanceSquared = objectCamFromAxis.set(object->getBoundingBoxTransformed()->computeClosestPointInBoundingBox(camera->getLookFrom())).sub(camera->getLookFrom()).computeLengthSquared();
+					auto distanceSquared = objectCamFromAxis.set(object->getWorldBoundingBox()->computeClosestPointInBoundingBox(camera->getLookFrom())).sub(camera->getLookFrom()).computeLengthSquared();
 					// index buffer
 					auto lodLevel = 0;
 					if (currentVBOLods->size() >= 3 && distanceSquared >= Math::square(_objectNode->node->getFacesEntities()[faceEntityIdx].getLOD3Distance())) {
@@ -922,7 +922,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 					}
 					auto currentVBOLods = _objectNode->renderer->vboLods;
 					if (currentVBOLods != nullptr) {
-						auto distanceSquared = objectCamFromAxis.set(object->getBoundingBoxTransformed()->computeClosestPointInBoundingBox(camera->getLookFrom())).sub(camera->getLookFrom()).computeLengthSquared();
+						auto distanceSquared = objectCamFromAxis.set(object->getWorldBoundingBox()->computeClosestPointInBoundingBox(camera->getLookFrom())).sub(camera->getLookFrom()).computeLengthSquared();
 						// index buffer
 						auto lodLevel = 0;
 						if (currentVBOLods->size() >= 3 && distanceSquared >= Math::square(_objectNode->node->getFacesEntities()[faceEntityIdx].getLOD3Distance())) {

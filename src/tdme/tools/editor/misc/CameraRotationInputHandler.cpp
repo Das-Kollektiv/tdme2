@@ -176,20 +176,20 @@ void CameraRotationInputHandler::handleInputEvents()
 		resetRequested) {
 		lookFromRotations.update();
 		if (entity != nullptr) {
-			boundingBoxTransformed = *entity->getBoundingBoxTransformed();
+			worldBoundingBox = *entity->getWorldBoundingBox();
 		}
 	}
 	auto cam = engine->getCamera();
 	auto lookAt = cam->getLookAt();
 	if (resetRequested == true) {
 		if (entity != nullptr) {
-			auto entityBoundingBoxTransformed = entity->getBoundingBoxTransformed();
+			auto entityWorldBoundingBox = entity->getWorldBoundingBox();
 			for (auto i = 0; i < 3; i++) {
-				if (entityBoundingBoxTransformed->getMin()[i] < boundingBoxTransformed.getMin()[i]) boundingBoxTransformed.getMin()[i] = entityBoundingBoxTransformed->getMin()[i];
-				if (entityBoundingBoxTransformed->getMax()[i] > boundingBoxTransformed.getMax()[i]) boundingBoxTransformed.getMax()[i] = entityBoundingBoxTransformed->getMax()[i];
+				if (entityWorldBoundingBox->getMin()[i] < worldBoundingBox.getMin()[i]) worldBoundingBox.getMin()[i] = entityWorldBoundingBox->getMin()[i];
+				if (entityWorldBoundingBox->getMax()[i] > worldBoundingBox.getMax()[i]) worldBoundingBox.getMax()[i] = entityWorldBoundingBox->getMax()[i];
 			}
-			boundingBoxTransformed.update();
-			lookAt.set(boundingBoxTransformed.getCenter());
+			worldBoundingBox.update();
+			lookAt.set(worldBoundingBox.getCenter());
 		} else {
 			lookAt.set(0.0f, 0.0f, 0.0f);
 		}
