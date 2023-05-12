@@ -35,7 +35,6 @@ void Transform::update()
 	// matrices
 	Matrix4x4 translationMatrix;
 	Matrix4x4 scaleMatrix;
-	Matrix4x4 rotationsMatrix;
 
 	// transform matrix identity
 	transformMatrix.identity();
@@ -50,13 +49,9 @@ void Transform::update()
 		rotationsQuaternion.multiply(rotation.getQuaternion());
 	}
 	rotationsQuaternion.normalize();
-	// apply rotations
-	rotationsMatrix.identity();
-	//	rotations
-	rotationsMatrix.multiply(rotationsQuaternion.computeMatrix());
 	// apply to transform matrix
 	transformMatrix.multiply(scaleMatrix);
-	transformMatrix.multiply(rotationsMatrix);
+	transformMatrix.multiply(rotationsQuaternion.computeMatrix());
 	transformMatrix.multiply(translationMatrix);
 }
 
