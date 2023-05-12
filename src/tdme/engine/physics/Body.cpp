@@ -150,9 +150,9 @@ void Body::resetColliders() {
 		if (boundingVolume->isAttachedToWorld() == false) continue;
 		//
 		volumeTotal+=
-			boundingVolume->boundingBoxTransformed.getDimensions().getX() *
-			boundingVolume->boundingBoxTransformed.getDimensions().getY() *
-			boundingVolume->boundingBoxTransformed.getDimensions().getZ();
+			boundingVolume->worldBoundingBox.getDimensions().getX() *
+			boundingVolume->worldBoundingBox.getDimensions().getY() *
+			boundingVolume->worldBoundingBox.getDimensions().getZ();
 	}
 	*/
 	// add bounding volumes with mass
@@ -162,9 +162,9 @@ void Body::resetColliders() {
 		//
 		/*
 		float volumeBoundingVolume =
-			boundingVolume->boundingBoxTransformed.getDimensions().getX() *
-			boundingVolume->boundingBoxTransformed.getDimensions().getY() *
-			boundingVolume->boundingBoxTransformed.getDimensions().getZ();
+			boundingVolume->worldBoundingBox.getDimensions().getX() *
+			boundingVolume->worldBoundingBox.getDimensions().getY() *
+			boundingVolume->worldBoundingBox.getDimensions().getZ();
 		*/
 		auto collider = rigidBody->addCollider(boundingVolume->collisionShape, boundingVolume->collisionShapeLocalTransform);
 		collider->getMaterial().setBounciness(restitution);

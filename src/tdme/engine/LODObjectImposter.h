@@ -140,7 +140,7 @@ public:
 	 */
 	inline Object* determineLODObject(Camera* camera) {
 		// determine LOD object and level type
-		auto objectCamFromLengthSquared = getBoundingBoxTransformed()->computeClosestPointInBoundingBox(camera->getLookFrom()).sub(camera->getLookFrom()).computeLengthSquared();
+		auto objectCamFromLengthSquared = getWorldBoundingBox()->computeClosestPointInBoundingBox(camera->getLookFrom()).sub(camera->getLookFrom()).computeLengthSquared();
 		if (objectCamFromLengthSquared >= Math::square(lodNoneMinDistance)) {
 			objectLOD = nullptr;
 			levelLOD = 3;
@@ -206,8 +206,8 @@ public:
 		return objectLOD1->getBoundingBox();
 	}
 
-	inline BoundingBox* getBoundingBoxTransformed() override {
-		return objectLOD1->getBoundingBoxTransformed();
+	inline BoundingBox* getWorldBoundingBox() override {
+		return objectLOD1->getWorldBoundingBox();
 	}
 
 	inline const Color4& getEffectColorMul() const override {

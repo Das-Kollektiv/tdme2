@@ -62,7 +62,7 @@ protected:
 	vector<Object*> objects;
 	vector<Object*> enabledObjects;
 	BoundingBox boundingBox;
-	BoundingBox boundingBoxTransformed;
+	BoundingBox worldBoundingBox;
 	Transform inverseTransform;
 	ParticleEmitter* emitter { nullptr };
 	bool pickable;

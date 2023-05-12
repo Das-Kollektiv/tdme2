@@ -41,7 +41,7 @@ protected:
 	Texture* texture { nullptr };
 
 	BoundingBox boundingBox;
-	BoundingBox boundingBoxTransformed;
+	BoundingBox worldBoundingBox;
 	Color4 effectColorMul;
 	Color4 effectColorAdd;
 	bool pickable;
@@ -56,7 +56,7 @@ protected:
 	 * Update bounding volume and obb matrix with transform and finally world to decal space matrix
 	 */
 	inline void updateInternal() {
-		boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
+		worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
 		obbMatrixTransformed = obbMatrix.clone().multiply(this->getTransformMatrix());
 		worldToDecalSpaceMatrix = obbMatrixTransformed.clone().invert();
 	}
@@ -196,10 +196,10 @@ public:
 	}
 
 	/**
-	 * @return bounding box transformed
+	 * @return world bounding box
 	 */
-	inline BoundingBox* getBoundingBoxTransformed() {
-		return &boundingBoxTransformed;
+	inline BoundingBox* getWorldBoundingBox() {
+		return &worldBoundingBox;
 	}
 
 	/**

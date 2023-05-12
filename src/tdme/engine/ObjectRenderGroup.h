@@ -61,7 +61,7 @@ private:
 	Color4 effectColorMul;
 	Color4 effectColorAdd;
 	BoundingBox boundingBox;
-	BoundingBox boundingBoxTransformed;
+	BoundingBox worldBoundingBox;
 	float modelLOD2MinDistance;
 	float modelLOD3MinDistance;
 	Entity* combinedEntity;
@@ -82,7 +82,7 @@ private:
 	inline void updateBoundingBox() {
 		if (combinedEntity == nullptr) return;
 		boundingBox.fromBoundingVolume(combinedEntity->getBoundingBox());
-		boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
+		worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
 	}
 
 	/**
@@ -181,8 +181,8 @@ public:
 		return &boundingBox;
 	}
 
-	inline BoundingBox* getBoundingBoxTransformed() override {
-		return &boundingBoxTransformed;
+	inline BoundingBox* getWorldBoundingBox() override {
+		return &worldBoundingBox;
 	}
 
 	inline const Color4& getEffectColorMul() const override {

@@ -177,10 +177,10 @@ void PointsParticleSystemInternal::updateParticles()
 	}
 	// scale a bit up to make picking work better
 	boundingBox.update();
-	boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
-	boundingBoxTransformed.getMin().sub(0.05f + pointSize * pointSizeScale);
-	boundingBoxTransformed.getMax().add(0.05f + pointSize * pointSizeScale);
-	boundingBoxTransformed.update();
+	worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
+	worldBoundingBox.getMin().sub(0.05f + pointSize * pointSizeScale);
+	worldBoundingBox.getMax().add(0.05f + pointSize * pointSizeScale);
+	worldBoundingBox.update();
 }
 
 void PointsParticleSystemInternal::dispose()

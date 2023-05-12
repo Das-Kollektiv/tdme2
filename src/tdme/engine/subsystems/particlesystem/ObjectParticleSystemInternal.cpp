@@ -71,7 +71,7 @@ ObjectParticleSystemInternal::ObjectParticleSystemInternal(const string& id, Mod
 		objects[i]->setPickable(false);
 	}
 	this->boundingBox = new BoundingBox();
-	this->boundingBoxTransformed = new BoundingBox();
+	this->worldBoundingBox = new BoundingBox();
 	this->emitter = emitter;
 	this->effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
@@ -172,8 +172,8 @@ void ObjectParticleSystemInternal::updateParticles()
 	Vector3 point;
 	Vector3 velocityForTime;
 	auto first = true;
-	auto& bbMinXYZ = boundingBoxTransformed.getMin().getArray();
-	auto& bbMaxXYZ = boundingBoxTransformed.getMax().getArray();
+	auto& bbMinXYZ = worldBoundingBox.getMin().getArray();
+	auto& bbMaxXYZ = worldBoundingBox.getMax().getArray();
 	auto timeDelta = engine->getTiming()->getDeltaTime();
 	for (auto i = 0; i < particles.size(); i++) {
 		auto& particle = particles[i];
@@ -209,12 +209,12 @@ void ObjectParticleSystemInternal::updateParticles()
 		object->setTranslation(point);
 		object->update();
 		if (first == true) {
-			boundingBoxTransformed.getMin().set(object->getBoundingBoxTransformed()->getMin());
-			boundingBoxTransformed.getMax().set(object->getBoundingBoxTransformed()->getMax());
+			worldBoundingBox.getMin().set(object->getWorldBoundingBox()->getMin());
+			worldBoundingBox.getMax().set(object->getWorldBoundingBox()->getMax());
 			first = false;
 		} else {
-			auto& objBbMinXYZ = object->getBoundingBoxTransformed()->getMin().getArray();
-			auto& objBbMaxXYZ = object->getBoundingBoxTransformed()->getMax().getArray();
+			auto& objBbMinXYZ = object->getWorldBoundingBox()->getMin().getArray();
+			auto& objBbMaxXYZ = object->getWorldBoundingBox()->getMax().getArray();
 			if (objBbMinXYZ[0] < bbMinXYZ[0]) bbMinXYZ[0] = objBbMinXYZ[0];
 			if (objBbMinXYZ[1] < bbMinXYZ[1]) bbMinXYZ[1] = objBbMinXYZ[1];
 			if (objBbMinXYZ[2] < bbMinXYZ[2]) bbMinXYZ[2] = objBbMinXYZ[2];
@@ -224,8 +224,8 @@ void ObjectParticleSystemInternal::updateParticles()
 		}
 	}
 	// compute bounding boxes
-	boundingBoxTransformed.update();
-	boundingBox.fromBoundingVolumeWithTransform(&boundingBoxTransformed, inverseTransform);
+	worldBoundingBox.update();
+	boundingBox.fromBoundingVolumeWithTransform(&worldBoundingBox, inverseTransform);
 }
 
 void ObjectParticleSystemInternal::dispose()

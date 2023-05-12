@@ -373,7 +373,7 @@ void ParticleSystemEditorTabView::updateGizmo() {
 		if (pse != nullptr) {
 			Gizmo::updateGizmo(pse->getEmitter()->getCenter().clone().scale(objectScale).add(selectedEntity->getTranslation()), selectedEntity->getTransform());
 		} else {
-			Gizmo::updateGizmo(selectedEntity->getBoundingBoxTransformed()->getCenter(), selectedEntity->getTransform());
+			Gizmo::updateGizmo(selectedEntity->getWorldBoundingBox()->getCenter(), selectedEntity->getTransform());
 		}
 	} else {
 		removeGizmo();

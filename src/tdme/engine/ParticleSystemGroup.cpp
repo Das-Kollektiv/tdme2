@@ -63,7 +63,7 @@ void ParticleSystemGroup::setTransform(const Transform& transform)
 	//
 	for (auto particleSystem: particleSystems) dynamic_cast<Entity*>(particleSystem)->setTransform(transform);
 	// update bounding box transformed
-	boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
+	worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
 	// update object
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
@@ -74,7 +74,7 @@ void ParticleSystemGroup::update()
 	//
 	for (auto particleSystem: particleSystems) dynamic_cast<Entity*>(particleSystem)->setTransform(*this);
 	// update bounding box transformed
-	boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
+	worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
 	// update object
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }

@@ -57,7 +57,7 @@ void EnvironmentMapping::setTransform(const Transform& transform)
 	Transform translationTransform;
 	translationTransform.setTranslation(getTranslation());
 	translationTransform.update();
-	boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, translationTransform);
+	worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, translationTransform);
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
@@ -67,7 +67,7 @@ void EnvironmentMapping::update()
 	Transform translationTransform;
 	translationTransform.setTranslation(getTranslation());
 	translationTransform.update();
-	boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, translationTransform);
+	worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, translationTransform);
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 

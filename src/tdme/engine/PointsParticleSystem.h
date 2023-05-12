@@ -86,8 +86,8 @@ public:
 	inline BoundingBox* getBoundingBox() override {
 		return &boundingBox;
 	}
-	inline BoundingBox* getBoundingBoxTransformed() override {
-		return &boundingBoxTransformed;
+	inline BoundingBox* getWorldBoundingBox() override {
+		return &worldBoundingBox;
 	}
 
 	inline ParticleEmitter* getEmitter() override {
