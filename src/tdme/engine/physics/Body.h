@@ -375,26 +375,6 @@ public:
 			transformScale.set(transform.getScale());
 		}
 
-		/*
-		// TODO: center of mass ~ pivot
-		// set center of mass which is basically center of bv for now
-		body->setCenterOfMassLocal(boundingVolume->collisionShapeLocalTransform.getPosition());
-		// find final position, not sure yet if its working 100%, but still works with some tests
-		auto centerOfMassWorld = transform * boundingVolume->collisionShapeLocalTransform.getPosition();
-		transform.setPosition(
-			transform.getPosition() +
-			transform.getPosition() -
-			centerOfMassWorld +
-			(
-				reactphysics3d::Vector3(
-					boundingVolume->collisionShapeLocalTranslation.getX(),
-					boundingVolume->collisionShapeLocalTranslation.getY(),
-					boundingVolume->collisionShapeLocalTranslation.getZ()
-				) * scaleVectorTransformed
-			)
-		);
-		*/
-
 		// set transform
 		rigidBody->setTransform(
 			reactphysics3d::Transform(

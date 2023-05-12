@@ -97,11 +97,10 @@ private:
 	 * @param description description
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @param pivot pivot
 	 * @return prototype
 	 * @throws tdme::utilities::Exception
 	 */
-	virtual Prototype* loadModelPrototype(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot);
+	virtual Prototype* loadModelPrototype(const string& name, const string& description, const string& pathName, const string& fileName);
 
 	// overridden methods
 	void onCameraRotation() override;
@@ -203,14 +202,6 @@ public:
 	 * Issue file reloading
 	 */
 	void reloadFile();
-
-	/**
-	 * Apply pivot
-	 * @param x x
-	 * @param y y
-	 * @param z z
-	 */
-	void pivotApply(float x, float y, float z);
 
 	/**
 	 * Compute normals

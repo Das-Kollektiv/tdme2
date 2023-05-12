@@ -375,8 +375,7 @@ void TMWriter::writeThumbnail(TMWriterOutputStream* os, Model* model) {
 		"",
 		model->getId(),
 		string(),
-		model,
-		Vector3(0.0f, 0.0f, 0.0f)
+		model
 	);
 	vector<uint8_t> pngData;
 	string base64PNGData;

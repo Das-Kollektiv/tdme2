@@ -243,17 +243,6 @@ public:
 	virtual void setScale(const Vector3& scale) = 0;
 
 	/**
-	 * @return pivot or center of rotations
-	 */
-	virtual const Vector3& getPivot() const = 0;
-
-	/**
-	 * Set pivot
-	 * @param pivot pivot
-	 */
-	virtual void setPivot(const Vector3& pivot) = 0;
-
-	/**
 	 * @return rotation count
 	 */
 	virtual const int getRotationCount() const = 0;

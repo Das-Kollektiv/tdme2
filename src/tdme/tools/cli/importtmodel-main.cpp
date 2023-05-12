@@ -114,8 +114,7 @@ public:
 					pathName + "/" + fileName,
 					FileSystem::getInstance()->getPathName(modelFileName) + "/" + FileSystem::getInstance()->getFileName(modelFileName),
 					string(),
-					model,
-					Vector3(0.0f, 0.0f, 0.0f)
+					model
 				);
 			} else {
 				Console::println("Loading tmodel: " + tModelFileName);

@@ -201,8 +201,7 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 				prototypeName + ".tempty",
 				"resources/engine/models/empty.tm",
 				string(),
-				ModelReader::read("resources/engine/models", "empty.tm"), // TODO: exception
-				Vector3(0.0f, 0.0f, 0.0f)
+				ModelReader::read("resources/engine/models", "empty.tm") // TODO: exception
 			);
 		}
 		if (prototype == nullptr) {
@@ -238,7 +237,6 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 		}
 
 		Transform transform;
-		transform.setPivot(prototype->getPivot());
 		transform.setTranslation(
 			Vector3(
 				jSceneEntity["tx"].GetFloat(),
@@ -542,8 +540,7 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 						modelPathName + "/" + modelFileName,
 						"resources/engine/models/empty.tm",
 						string(),
-						model,
-						Vector3(0.0f, 0.0f, 0.0f)
+						model
 					);
 					sceneLibrary->addPrototype(prototype);
 				}
@@ -558,8 +555,7 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 						string(),
 						"resources/engine/models/empty.tm",
 						string(),
-						ModelReader::read("resources/engine/models", "empty.tm"), // TODO: exception
-						Vector3(0.0f, 0.0f, 0.0f)
+						ModelReader::read("resources/engine/models", "empty.tm") // TODO: exception
 					);
 					sceneLibrary->addPrototype(emptyPrototype);
 				}

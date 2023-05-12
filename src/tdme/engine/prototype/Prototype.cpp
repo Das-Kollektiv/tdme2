@@ -25,7 +25,7 @@ using tdme::engine::prototype::PrototypeTerrain;
 using tdme::math::Vector3;
 using tdme::utilities::StringTools;
 
-Prototype::Prototype(int id, Prototype_Type* entityType, const string& name, const string& description, const string& fileName, const string& modelFileName, const string& thumbnail, Model* model, const Vector3& pivot):
+Prototype::Prototype(int id, Prototype_Type* entityType, const string& name, const string& description, const string& fileName, const string& modelFileName, const string& thumbnail, Model* model):
 	BaseProperties(name, description)
 {
 	this->id = id;
@@ -36,7 +36,6 @@ Prototype::Prototype(int id, Prototype_Type* entityType, const string& name, con
 	this->modelFileName = modelFileName;
 	this->thumbnail = thumbnail;
 	this->model = model;
-	this->pivot.set(pivot);
 	if (this->type == Prototype_Type::PARTICLESYSTEM) {
 		this->physics = new PrototypePhysics();
 	} else

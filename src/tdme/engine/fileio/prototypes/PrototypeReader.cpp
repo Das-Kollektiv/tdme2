@@ -154,8 +154,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const string& f
 			pathName + "/" + fileName,
 			pathName + "/" + fileName,
 			string(),
-			ModelReader::read(pathName, fileName, useBC7TextureCompression),
-			Vector3(0.0f, 0.0f, 0.0f)
+			ModelReader::read(pathName, fileName, useBC7TextureCompression)
 		);
 	}
 
@@ -174,11 +173,6 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 {
 	//
 	Prototype* prototype = nullptr;
-	auto pivot = Vector3(
-		static_cast<float>(jPrototypeRoot["px"].GetFloat()),
-		static_cast<float>(jPrototypeRoot["py"].GetFloat()),
-		static_cast<float>(jPrototypeRoot["pz"].GetFloat())
-	);
 	auto prototypeType = Prototype_Type::valueOf(jPrototypeRoot["type"].GetString());
 	auto thumbnail = jPrototypeRoot.FindMember("thumbnail") != jPrototypeRoot.MemberEnd()?jPrototypeRoot["thumbnail"].GetString():"";
 	auto name = (jPrototypeRoot["name"].GetString());
@@ -220,8 +214,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 		string(),
 		modelFileName.length() > 0?modelPathName + "/" + FileSystem::getInstance()->getFileName(modelFileName):"",
 		thumbnail,
-		model,
-		pivot
+		model
 	);
 	if (jPrototypeRoot.FindMember("sc") != jPrototypeRoot.MemberEnd()) {
 		string scriptFileName = jPrototypeRoot["sc"].GetString();

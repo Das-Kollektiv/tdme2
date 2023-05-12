@@ -30,7 +30,6 @@ class tdme::engine::Transform {
 private:
 	Vector3 translation;
 	Vector3 scale;
-	Vector3 pivot;
 	Quaternion rotationsQuaternion;
 	vector<Rotation> rotations;
 	Matrix4x4 transformMatrix;
@@ -79,21 +78,6 @@ public:
 	 */
 	inline void setScale(const Vector3& scale) {
 		this->scale.set(scale);
-	}
-
-	/**
-	 * @return pivot or center of rotations
-	 */
-	inline const Vector3& getPivot() const {
-		return pivot;
-	}
-
-	/**
-	 * Set pivot
-	 * @param pivot pivot
-	 */
-	inline void setPivot(const Vector3& pivot) {
-		this->pivot.set(pivot);
 	}
 
 	/**
@@ -212,7 +196,6 @@ public:
 		Transform clonedTransform;
 		clonedTransform.translation = translation;
 		clonedTransform.scale = scale;
-		clonedTransform.pivot = pivot;
 		clonedTransform.rotationsQuaternion = rotationsQuaternion;
 		clonedTransform.rotations = rotations;
 		clonedTransform.transformMatrix = transformMatrix;

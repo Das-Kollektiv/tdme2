@@ -304,14 +304,6 @@ public:
 		instanceTransform[currentInstance].setScale(scale);
 	}
 
-	inline const Vector3& getPivot() const override {
-		return instanceTransform[currentInstance].getPivot();
-	}
-
-	inline void setPivot(const Vector3& pivot) override {
-		instanceTransform[currentInstance].setPivot(pivot);
-	}
-
 	inline const int getRotationCount() const override {
 		return instanceTransform[currentInstance].getRotationCount();
 	}

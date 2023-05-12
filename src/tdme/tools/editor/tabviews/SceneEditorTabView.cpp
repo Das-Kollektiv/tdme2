@@ -845,7 +845,6 @@ void SceneEditorTabView::placeEntity()
 	Transform sceneEntityTransform;
 	sceneEntityTransform.setTranslation(placeEntityTranslation);
 	sceneEntityTransform.setScale(Vector3(1.0f, 1.0f, 1.0f));
-	sceneEntityTransform.setPivot(selectedPrototype->getPivot());
 	sceneEntityTransform.addRotation(scene->getRotationOrder()->getAxis0(), 0.0f);
 	sceneEntityTransform.addRotation(scene->getRotationOrder()->getAxis1(), 0.0f);
 	sceneEntityTransform.addRotation(scene->getRotationOrder()->getAxis2(), 0.0f);

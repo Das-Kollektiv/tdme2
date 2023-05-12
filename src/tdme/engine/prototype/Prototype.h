@@ -63,7 +63,6 @@ private:
 	string modelFileName;
 	string thumbnail;
 	Model* model { nullptr };
-	Vector3 pivot;
 	bool entityHierachy { false };
 	bool scriptHandlingHID { false };
 	string script;
@@ -106,9 +105,8 @@ public:
 	 * @param modelFileName model file name
 	 * @param thumbnail thumbnail PNG data
 	 * @param model model
-	 * @param pivot pivot
 	 */
-	Prototype(int id, Prototype_Type* prototypeType, const string& name, const string& description, const string& fileName, const string& modelFileName, const string& thumbnail, Model* model, const Vector3& pivot);
+	Prototype(int id, Prototype_Type* prototypeType, const string& name, const string& description, const string& fileName, const string& modelFileName, const string& thumbnail, Model* model);
 
 	/**
 	 * Destructor
@@ -210,13 +208,6 @@ public:
 		auto currentModel = model;
 		model = nullptr;
 		return currentModel;
-	}
-
-	/**
-	 * @return pivot
-	 */
-	inline Vector3& getPivot() {
-		return pivot;
 	}
 
 	/**

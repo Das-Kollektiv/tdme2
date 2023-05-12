@@ -140,9 +140,7 @@ void PrototypePhysicsSubView::setupModelBoundingVolume(Prototype* prototype, int
 				}
 				auto modelBoundingVolumeEntity = new Object(modelBoundingVolumeEntityId, prototypeBoundingVolume->getModel());
 				modelBoundingVolumeEntity->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
-				modelBoundingVolumeEntity->setPivot(pivot);
 				modelBoundingVolumeEntity->setScale(boundingVolumesEntity->getScale());
-				modelBoundingVolumeEntity->setPivot(modelBoundingVolumeEntity->getPivot().clone().scale(boundingVolumesEntity->getScale()));
 				modelBoundingVolumeEntity->setEnabled(false);
 				modelBoundingVolumeEntity->update();
 				engine->addEntity(modelBoundingVolumeEntity);
@@ -392,7 +390,6 @@ void PrototypePhysicsSubView::applyBoundingVolumeTransform(Prototype* prototype,
 		auto a = capsule->getA();
 		auto b = capsule->getB();
 		transform.setTranslation(transform.getTranslation().clone().scale(objectScaleInverted));
-		transform.setPivot(transform.getPivot().clone().scale(objectScaleInverted));
 		transform.update();
 		a = transform.getTransformMatrix().multiply(a);
 		b = transform.getTransformMatrix().multiply(b);

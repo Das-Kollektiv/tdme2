@@ -36,7 +36,6 @@ void Transform::update()
 	Matrix4x4 translationMatrix;
 	Matrix4x4 scaleMatrix;
 	Matrix4x4 rotationsMatrix;
-	Matrix4x4 rotationsTranslationsMatrix;
 
 	// transform matrix identity
 	transformMatrix.identity();
@@ -53,13 +52,8 @@ void Transform::update()
 	rotationsQuaternion.normalize();
 	// apply rotations
 	rotationsMatrix.identity();
-	//	pivot
-	rotationsMatrix.translate(pivot.clone().scale(-1.0f));
 	//	rotations
 	rotationsMatrix.multiply(rotationsQuaternion.computeMatrix());
-	//	pivot
-	rotationsTranslationsMatrix.identity().translate(pivot);
-	rotationsMatrix.multiply(rotationsTranslationsMatrix);
 	// apply to transform matrix
 	transformMatrix.multiply(scaleMatrix);
 	transformMatrix.multiply(rotationsMatrix);
