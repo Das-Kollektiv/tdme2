@@ -64,7 +64,7 @@ ObjectRenderGroup::ObjectRenderGroup(
 	this->receivesShadows = false;
 	this->effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
-	this->transformMatrix.identity();
+	this->entityTransformMatrix.identity();
 	this->combinedModels.resize(Math::clamp(lodLevels, 1, 3));
 	this->combinedEntity = nullptr;
 	this->lodReduceBy[0] = 1;
@@ -341,6 +341,7 @@ void ObjectRenderGroup::updateRenderGroup() {
 	if (combinedModels.size() == 1) {
 		auto combinedObject = new Object(id + ".o3rg", combinedModels[0]);
 		combinedObject->setParentEntity(this);
+		combinedObject->setParentTransform(parentTransform);
 		combinedObject->setShader(shaderId);
 		combinedObject->setContributesShadows(contributesShadows);
 		combinedObject->setReceivesShadows(receivesShadows);
@@ -364,6 +365,7 @@ void ObjectRenderGroup::updateRenderGroup() {
 			combinedModels[2]
 		);
 		combinedLODObject->setParentEntity(this);
+		combinedLODObject->setParentTransform(parentTransform);
 		combinedLODObject->setShader(shaderId);
 		combinedLODObject->setContributesShadows(contributesShadows);
 		combinedLODObject->setReceivesShadows(receivesShadows);
@@ -409,9 +411,11 @@ void ObjectRenderGroup::setTransform(const Transform& transform)
 	Transform::setTransform(transform);
 	//
 	auto entityTransform = parentTransform * (*this);
-	transformMatrix = entityTransform.getTransformMatrix();
+	entityTransformMatrix = entityTransform.getTransformMatrix();
 	// update bounding box transformed
-	worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
+	worldBoundingBox.fromBoundingVolumeWithTransformMatrix(&boundingBox, entityTransformMatrix);
+	//
+	if (combinedEntity != nullptr) combinedEntity->setParentTransform(parentTransform);
 	// update object
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
@@ -421,9 +425,11 @@ void ObjectRenderGroup::update()
 	Transform::update();
 	//
 	auto entityTransform = parentTransform * (*this);
-	transformMatrix = entityTransform.getTransformMatrix();
+	entityTransformMatrix = entityTransform.getTransformMatrix();
 	// update bounding box transformed
-	worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
+	worldBoundingBox.fromBoundingVolumeWithTransformMatrix(&boundingBox, entityTransformMatrix);
+	//
+	if (combinedEntity != nullptr) combinedEntity->setParentTransform(parentTransform);
 	// update object
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }

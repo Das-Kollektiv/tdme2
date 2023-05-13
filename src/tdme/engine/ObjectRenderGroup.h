@@ -78,7 +78,7 @@ private:
 	bool optimizeModels;
 
 	Transform parentTransform;
-	Matrix4x4 transformMatrix;
+	Matrix4x4 entityTransformMatrix;
 
 	/**
 	 * Compute bounding box
@@ -86,7 +86,7 @@ private:
 	inline void updateBoundingBox() {
 		if (combinedEntity == nullptr) return;
 		boundingBox.fromBoundingVolume(combinedEntity->getBoundingBox());
-		worldBoundingBox.fromBoundingVolumeWithTransformMatrix(&boundingBox, transformMatrix);
+		worldBoundingBox.fromBoundingVolumeWithTransformMatrix(&boundingBox, entityTransformMatrix);
 	}
 
 	/**
@@ -114,7 +114,9 @@ private:
 		//
 		this->parentTransform = parentTransform;
 		auto entityTransform = parentTransform * (*this);
-		transformMatrix = entityTransform.getTransformMatrix();
+		entityTransformMatrix = entityTransform.getTransformMatrix();
+		//
+		if (combinedEntity != nullptr) combinedEntity->setParentTransform(parentTransform);
 		//
 		updateBoundingBox();
 	}
@@ -292,7 +294,7 @@ public:
 	}
 
 	inline const Matrix4x4& getTransformMatrix() const override {
-		return transformMatrix;
+		return entityTransformMatrix;
 	}
 
 	inline const Transform& getTransform() const override {

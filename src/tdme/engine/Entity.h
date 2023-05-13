@@ -31,6 +31,7 @@ class tdme::engine::Entity
 	friend class Engine;
 	friend class EntityHierarchy;
 	friend class OctTreePartition;
+	friend class ObjectRenderGroup;
 	friend class ParticleSystemGroup;
 	friend class SceneConnector;
 
