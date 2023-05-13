@@ -73,17 +73,19 @@ protected:
 	bool pickable;
 	float particlesToSpawnRemainder;
 
+	Transform parentTransform;
 	Transform localTransform;
+	Matrix4x4 entityTransformMatrix;
 
 	/**
 	 * Update bounding volume
 	 */
 	inline void updateInternal() {
 		Vector3 scale;
-		getTransformMatrix().getScale(scale);
+		entityTransformMatrix.getScale(scale);
 		pointSizeScale = Math::max(scale.getX(), Math::max(scale.getY(), scale.getZ()));
 		pointSizeScale*= Math::max(localTransform.getScale().getX(), Math::max(localTransform.getScale().getY(), localTransform.getScale().getZ()));
-		worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
+		worldBoundingBox.fromBoundingVolumeWithTransformMatrix(&boundingBox, entityTransformMatrix);
 		worldBoundingBox.getMin().sub(0.05f); // scale a bit up to make picking work better
 		worldBoundingBox.getMax().add(0.05f); // same here
 		worldBoundingBox.update();
@@ -228,6 +230,16 @@ public:
 	void updateParticles() override;
 	void dispose();
 	int emitParticles() override;
+	inline const Transform& getParentTransform() {
+		return parentTransform;
+	}
+	inline void setParentTransform(const Transform& transform) {
+		parentTransform = transform;
+		auto entityTransform = parentTransform * (*this);
+		entityTransformMatrix = entityTransform.getTransformMatrix();
+		//
+		updateInternal();
+	}
 	inline const Transform& getLocalTransform() override {
 		return localTransform;
 	}

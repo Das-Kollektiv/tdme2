@@ -63,28 +63,31 @@ protected:
 	vector<Object*> enabledObjects;
 	BoundingBox boundingBox;
 	BoundingBox worldBoundingBox;
-	Transform inverseTransform;
+	Matrix4x4 inverseTransformMatrix;
 	ParticleEmitter* emitter { nullptr };
 	bool pickable;
 	Color4 effectColorMul;
 	Color4 effectColorAdd;
 	float particlesToSpawnRemainder;
+
+	Transform parentTransform;
 	Transform localTransform;
+	Matrix4x4 entityTransformMatrix;
 
 	/**
 	 * Update internal
 	 */
 	inline void updateInternal() {
 		Vector3 scale;
-		getTransformMatrix().getScale(scale);
+		entityTransformMatrix.getScale(scale);
 		scale.scale(objectScale);
 		scale.scale(localTransform.getScale());
 		for (auto object: objects) {
 			object->setScale(scale);
 			object->update();
 		}
-		inverseTransform.setTransform(*this);
-		inverseTransform.invert();
+		inverseTransformMatrix = entityTransformMatrix;
+		inverseTransformMatrix.invert();
 	}
 
 public:
@@ -188,7 +191,16 @@ public:
 	int emitParticles() override;
 	void updateParticles() override;
 	void dispose();
-
+	inline const Transform& getParentTransform() {
+		return parentTransform;
+	}
+	inline void setParentTransform(const Transform& transform) {
+		parentTransform = transform;
+		auto entityTransform = parentTransform * (*this);
+		entityTransformMatrix = entityTransform.getTransformMatrix();
+		//
+		updateInternal();
+	}
 	inline const Transform& getLocalTransform() override {
 		return localTransform;
 	}

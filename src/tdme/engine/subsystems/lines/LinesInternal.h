@@ -62,11 +62,26 @@ protected:
 
 	vector<int32_t>* vboIds;
 
+	Transform parentTransform;
+	Matrix4x4 entityTransformMatrix;
+
 	/**
+	 * Set parent transform
+	 * @param parentTransform parent transform
+	 */
+	inline void setParentTransform(const Transform& parentTransform) {
+		//
+		this->parentTransform = parentTransform;
+		auto entityTransform = parentTransform * (*this);
+		entityTransformMatrix = entityTransform.getTransformMatrix();
+		//
+		updateBoundingBox();
+	}
+/**
 	 * Update bounding volume
 	 */
 	inline void updateBoundingBox() {
-		worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
+		worldBoundingBox.fromBoundingVolumeWithTransformMatrix(&boundingBox, entityTransformMatrix);
 		worldBoundingBox.getMin().sub(0.05f); // scale a bit up to make picking work better
 		worldBoundingBox.getMax().add(0.05f); // same here
 		worldBoundingBox.update();

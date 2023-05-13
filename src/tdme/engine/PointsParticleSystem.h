@@ -14,7 +14,8 @@
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/ParticleSystem.h>
 #include <tdme/engine/Transform.h>
-#include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector3.h>
 
 using std::string;
 
@@ -45,9 +46,8 @@ private:
 	RenderPass renderPass { RENDERPASS_STANDARD };
 
 	// overridden methods
-	inline void applyParentTransform(const Transform& parentTransform) override {
-		Transform::applyParentTransform(parentTransform);
-		updateInternal();
+	inline void setParentTransform(const Transform& parentTransform) override {
+		PointsParticleSystemInternal::setParentTransform(parentTransform);
 	}
 
 public:
@@ -154,14 +154,6 @@ public:
 		Transform::setScale(scale);
 	}
 
-	inline const Vector3& getPivot() const override {
-		return Transform::getPivot();
-	}
-
-	inline void setPivot(const Vector3& pivot) override {
-		Transform::setPivot(pivot);
-	}
-
 	inline const int getRotationCount() const override {
 		return Transform::getRotationCount();
 	}
@@ -199,7 +191,7 @@ public:
 	}
 
 	inline const Matrix4x4& getTransformMatrix() const override {
-		return Transform::getTransformMatrix();
+		return entityTransformMatrix;
 	}
 
 	inline const Transform& getTransform() const override {

@@ -47,6 +47,7 @@ LODObject::LODObject(
 	this->effectColorAddLOD2.set(0.0f, 0.0f, 0.0f, 0.0f);
 	this->effectColorMulLOD3.set(1.0f, 1.0f, 1.0f, 1.0f);
 	this->effectColorAddLOD3.set(0.0f, 0.0f, 0.0f, 0.0f);
+	this->entityTransformMatrix.identity();
 
 	if (modelLOD1 != nullptr) {
 		objectLOD1 = new Object(id + ".lod1", modelLOD1);
@@ -96,10 +97,13 @@ void LODObject::setRenderer(Renderer* renderer)
 void LODObject::setTransform(const Transform& transform)
 {
 	Transform::setTransform(transform);
+	//
+	auto entityTransform = parentTransform * (*this);
+	entityTransformMatrix = entityTransform.getTransformMatrix();
 	// delegate to LOD objects
-	if (objectLOD1 != nullptr) objectLOD1->setTransform(*this);
-	if (objectLOD2 != nullptr) objectLOD2->setTransform(*this);
-	if (objectLOD3 != nullptr) objectLOD3->setTransform(*this);
+	if (objectLOD1 != nullptr) objectLOD1->setTransform(entityTransform);
+	if (objectLOD2 != nullptr) objectLOD2->setTransform(entityTransform);
+	if (objectLOD3 != nullptr) objectLOD3->setTransform(entityTransform);
 	// update entity
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 	// reset current LOD object
@@ -109,10 +113,13 @@ void LODObject::setTransform(const Transform& transform)
 void LODObject::update()
 {
 	Transform::update();
+	//
+	auto entityTransform = parentTransform * (*this);
+	entityTransformMatrix = entityTransform.getTransformMatrix();
 	// delegate to LOD objects
-	if (objectLOD1 != nullptr) objectLOD1->setTransform(*this);
-	if (objectLOD2 != nullptr) objectLOD2->setTransform(*this);
-	if (objectLOD3 != nullptr) objectLOD3->setTransform(*this);
+	if (objectLOD1 != nullptr) objectLOD1->setTransform(entityTransform);
+	if (objectLOD2 != nullptr) objectLOD2->setTransform(entityTransform);
+	if (objectLOD3 != nullptr) objectLOD3->setTransform(entityTransform);
 	// update entity
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 	// reset current LOD object

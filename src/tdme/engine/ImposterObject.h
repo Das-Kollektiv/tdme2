@@ -16,7 +16,8 @@
 #include <tdme/engine/Object.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transform.h>
-#include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
 
 using std::string;
@@ -70,11 +71,17 @@ private:
 
 	EntityShaderParameters shaderParameters;
 
+	Transform parentTransform;
+	Matrix4x4 entityTransformMatrix;
+
 	// overridden methods
-	inline void applyParentTransform(const Transform& parentTransform) override {
-		Transform::applyParentTransform(parentTransform);
+	inline void setParentTransform(const Transform& parentTransform) override {
+		//
+		this->parentTransform = parentTransform;
+		auto entityTransform = parentTransform * (*this);
+		entityTransformMatrix = entityTransform.getTransformMatrix();
 		// delegate to LOD objects
-		for (auto billboardObject: billboardObjects) billboardObject->setTransform(*this);
+		for (auto billboardObject: billboardObjects) billboardObject->setTransform(entityTransform);
 	}
 
 public:
@@ -218,14 +225,6 @@ public:
 		Transform::setScale(scale);
 	}
 
-	inline const Vector3& getPivot() const override {
-		return Transform::getPivot();
-	}
-
-	inline void setPivot(const Vector3& pivot) override {
-		Transform::setPivot(pivot);
-	}
-
 	inline const int getRotationCount() const override {
 		return Transform::getRotationCount();
 	}
@@ -263,7 +262,7 @@ public:
 	}
 
 	inline const Matrix4x4& getTransformMatrix() const override {
-		return Transform::getTransformMatrix();
+		return entityTransformMatrix;
 	}
 
 	inline const Transform& getTransform() const override {

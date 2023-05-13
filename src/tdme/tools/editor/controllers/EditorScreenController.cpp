@@ -1400,8 +1400,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 				pathName + "/" + fileName,
 				"resources/engine/models/empty.tm",
 				string(),
-				ModelReader::read("resources/engine/models", "empty.tm"), // TODO: exception
-				Vector3(0.0f, 0.0f, 0.0f)
+				ModelReader::read("resources/engine/models", "empty.tm") // TODO: exception
 			);
 		} else
 		if (type == "trigger") {
@@ -1417,8 +1416,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 				pathName + "/" + fileName,
 				string(),
 				string(),
-				nullptr,
-				Vector3()
+				nullptr
 			);
 			prototype->addBoundingVolume(0, new PrototypeBoundingVolume(0, prototype));
 			prototype->getBoundingVolume(0)->setupAabb(boundingBox.getMin(), boundingBox.getMax());
@@ -1436,8 +1434,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 				pathName + "/" + fileName,
 				string(),
 				string(),
-				nullptr,
-				Vector3()
+				nullptr
 			);
 			prototype->addBoundingVolume(0, new PrototypeBoundingVolume(0, prototype));
 			prototype->getBoundingVolume(0)->setupAabb(boundingBox.getMin(), boundingBox.getMax());
@@ -1455,8 +1452,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 				pathName + "/" + fileName,
 				string(),
 				string(),
-				nullptr,
-				Vector3()
+				nullptr
 			);
 			prototype->addBoundingVolume(0, new PrototypeBoundingVolume(0, prototype));
 			prototype->getBoundingVolume(0)->setupAabb(boundingBox.getMin(), boundingBox.getMax());
@@ -1470,8 +1466,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 				pathName + "/" + fileName,
 				"resources/engine/models/empty.tm",
 				string(),
-				ModelReader::read("resources/engine/models", "empty.tm"), // TODO: exception
-				Vector3(0.0f, 0.0f, 0.0f)
+				ModelReader::read("resources/engine/models", "empty.tm") // TODO: exception
 			);
 		} else
 		if (type == "terrain") {
@@ -1483,8 +1478,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 				pathName + "/" + fileName,
 				string(),
 				string(),
-				nullptr,
-				Vector3()
+				nullptr
 			);
 		} else
 		if (type == "particle") {
@@ -1496,8 +1490,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 				pathName + "/" + fileName,
 				string(),
 				string(),
-				nullptr,
-				Vector3()
+				nullptr
 			);
 		} else
 		if (type == "scene") {
@@ -1548,8 +1541,7 @@ void EditorScreenController::FileOpenThread::run() {
 						FileSystem::getInstance()->getPathName(absoluteFileName) + "/" + Tools::removeFileExtension(fileName) + ".tmodel",
 						absoluteFileName,
 						string(),
-						model,
-						Vector3(0.0f, 0.0f, 0.0f)
+						model
 					);
 					break;
 				}

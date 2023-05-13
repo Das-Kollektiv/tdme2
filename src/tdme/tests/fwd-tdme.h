@@ -18,7 +18,6 @@ namespace tests {
 	class MiniScriptEmitTest;
 	class MiniScriptFunctionsTest;
 	class PathFindingTest;
-	class PivotTest;
 	class PhysicsTest1;
 	class PhysicsTest2;
 	class PhysicsTest3;

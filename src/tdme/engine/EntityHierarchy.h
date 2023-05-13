@@ -18,8 +18,8 @@
 #include <tdme/engine/Object.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transform.h>
-#include <tdme/math/fwd-tdme.h>
-#include <tdme/utilities/Console.h>
+#include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector3.h>
 
 using std::map;
 using std::remove;
@@ -39,7 +39,6 @@ using tdme::engine::Rotation;
 using tdme::engine::Transform;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::utilities::Console;
 
 /**
  * Entity hierarchy to be used with engine class
@@ -76,10 +75,19 @@ private:
 
 	RenderPass renderPass { RENDERPASS_STANDARD };
 
+	Transform parentTransform;
+	Matrix4x4 entityTransformMatrix;
+	Matrix4x4 entityTransformMatrixInverted;
+
 	// overridden methods
-	inline void applyParentTransform(const Transform& parentTransform) override {
-		Transform::applyParentTransform(parentTransform);
-		worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
+	inline void setParentTransform(const Transform& parentTransform) override {
+		//
+		this->parentTransform = parentTransform;
+		auto entityTransform = parentTransform * (*this);
+		entityTransformMatrix = entityTransform.getTransformMatrix();
+		entityTransformMatrixInverted = entityTransformMatrix.clone().invert();
+		//
+		worldBoundingBox.fromBoundingVolumeWithTransformMatrix(&boundingBox, entityTransformMatrix);
 	}
 
 	/**
@@ -279,14 +287,6 @@ public:
 		Transform::setScale(scale);
 	}
 
-	inline const Vector3& getPivot() const override {
-		return Transform::getPivot();
-	}
-
-	inline void setPivot(const Vector3& pivot) override {
-		Transform::setPivot(pivot);
-	}
-
 	inline const int getRotationCount() const override {
 		return Transform::getRotationCount();
 	}
@@ -324,7 +324,7 @@ public:
 	}
 
 	inline const Matrix4x4& getTransformMatrix() const override {
-		return Transform::getTransformMatrix();
+		return entityTransformMatrix;
 	}
 
 	inline const Transform& getTransform() const override {

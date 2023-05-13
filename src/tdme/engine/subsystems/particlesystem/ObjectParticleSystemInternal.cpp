@@ -108,12 +108,20 @@ void ObjectParticleSystemInternal::setRenderer(Renderer* renderer)
 void ObjectParticleSystemInternal::update()
 {
 	Transform::update();
+	//
+	auto entityTransform = parentTransform * (*this);
+	entityTransformMatrix = entityTransform.getTransformMatrix();
+	//
 	updateInternal();
 }
 
 void ObjectParticleSystemInternal::setTransform(const Transform& transform)
 {
 	Transform::setTransform(transform);
+	//
+	auto entityTransform = parentTransform * (*this);
+	entityTransformMatrix = entityTransform.getTransformMatrix();
+	//
 	updateInternal();
 }
 
@@ -166,14 +174,10 @@ void ObjectParticleSystemInternal::updateParticles()
 	auto& localTransformMatrix = localTransform.getTransformMatrix();
 	localTransformMatrix.getTranslation(center);
 	center.add(emitter->getCenter());
-	// transform
-	auto& transformMatrix = getTransformMatrix();
 	//
 	Vector3 point;
 	Vector3 velocityForTime;
 	auto first = true;
-	auto& bbMinXYZ = worldBoundingBox.getMin().getArray();
-	auto& bbMaxXYZ = worldBoundingBox.getMax().getArray();
 	auto timeDelta = engine->getTiming()->getDeltaTime();
 	for (auto i = 0; i < particles.size(); i++) {
 		auto& particle = particles[i];
@@ -204,28 +208,20 @@ void ObjectParticleSystemInternal::updateParticles()
 		point = localTransformMatrix.multiply(particle.position);
 		point.add(center);
 		// transform particle according to its transform
-		point = transformMatrix.multiply(point);
+		point = entityTransformMatrix.multiply(point);
 		// apply to object
 		object->setTranslation(point);
 		object->update();
 		if (first == true) {
-			worldBoundingBox.getMin().set(object->getWorldBoundingBox()->getMin());
-			worldBoundingBox.getMax().set(object->getWorldBoundingBox()->getMax());
+			worldBoundingBox = *object->getWorldBoundingBox();
 			first = false;
 		} else {
-			auto& objBbMinXYZ = object->getWorldBoundingBox()->getMin().getArray();
-			auto& objBbMaxXYZ = object->getWorldBoundingBox()->getMax().getArray();
-			if (objBbMinXYZ[0] < bbMinXYZ[0]) bbMinXYZ[0] = objBbMinXYZ[0];
-			if (objBbMinXYZ[1] < bbMinXYZ[1]) bbMinXYZ[1] = objBbMinXYZ[1];
-			if (objBbMinXYZ[2] < bbMinXYZ[2]) bbMinXYZ[2] = objBbMinXYZ[2];
-			if (objBbMaxXYZ[0] > bbMaxXYZ[0]) bbMaxXYZ[0] = objBbMaxXYZ[0];
-			if (objBbMaxXYZ[1] > bbMaxXYZ[1]) bbMaxXYZ[1] = objBbMaxXYZ[1];
-			if (objBbMaxXYZ[2] > bbMaxXYZ[2]) bbMaxXYZ[2] = objBbMaxXYZ[2];
+			worldBoundingBox.extend(object->getWorldBoundingBox());
 		}
 	}
 	// compute bounding boxes
 	worldBoundingBox.update();
-	boundingBox.fromBoundingVolumeWithTransform(&worldBoundingBox, inverseTransform);
+	boundingBox.fromBoundingVolumeWithTransformMatrix(&worldBoundingBox, inverseTransformMatrix);
 }
 
 void ObjectParticleSystemInternal::dispose()

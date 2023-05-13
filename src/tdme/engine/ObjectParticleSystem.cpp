@@ -33,12 +33,14 @@ void ObjectParticleSystem::initialize()
 void ObjectParticleSystem::setTransform(const Transform& transform)
 {
 	ObjectParticleSystemInternal::setTransform(transform);
+	//
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
 void ObjectParticleSystem::update()
 {
 	ObjectParticleSystemInternal::update();
+	//
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 

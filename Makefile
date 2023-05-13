@@ -557,7 +557,6 @@ SRCS = \
 	src/tdme/tests/MiniScriptEmitTest.cpp \
 	src/tdme/tests/MiniScriptFunctionsTest.cpp \
 	src/tdme/tests/PathFindingTest.cpp \
-	src/tdme/tests/PivotTest.cpp \
 	src/tdme/tests/PhysicsTest1.cpp \
 	src/tdme/tests/PhysicsTest2.cpp \
 	src/tdme/tests/PhysicsTest3.cpp \
@@ -935,7 +934,6 @@ MAIN_SRCS = \
 	src/tdme/tests/MathOperatorTest-main.cpp \
 	src/tdme/tests/MiniScriptTest-main.cpp \
 	src/tdme/tests/PathFindingTest-main.cpp \
-	src/tdme/tests/PivotTest-main.cpp \
 	src/tdme/tests/PhysicsTest1-main.cpp \
 	src/tdme/tests/PhysicsTest2-main.cpp \
 	src/tdme/tests/PhysicsTest3-main.cpp \

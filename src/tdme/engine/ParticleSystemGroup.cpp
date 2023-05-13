@@ -37,6 +37,7 @@ ParticleSystemGroup::ParticleSystemGroup(const string& id, bool autoEmit, bool c
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 	this->contributesShadows = false;
 	this->receivesShadows = false;
+	this->entityTransformMatrix.identity();
 	// TODO: put parent entity into a interface
 	for (auto particleSystem: particleSystems) {
 		auto ops = dynamic_cast<ObjectParticleSystem*>(particleSystem);
@@ -61,9 +62,12 @@ void ParticleSystemGroup::setTransform(const Transform& transform)
 {
 	Transform::setTransform(transform);
 	//
-	for (auto particleSystem: particleSystems) dynamic_cast<Entity*>(particleSystem)->setTransform(transform);
+	auto entityTransform = parentTransform * (*this);
+	entityTransformMatrix = entityTransform.getTransformMatrix();
+	//
+	for (auto particleSystem: particleSystems) dynamic_cast<Entity*>(particleSystem)->setTransform(*this);
 	// update bounding box transformed
-	worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
+	worldBoundingBox.fromBoundingVolumeWithTransformMatrix(getBoundingBox(), entityTransformMatrix);
 	// update object
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
@@ -74,7 +78,7 @@ void ParticleSystemGroup::update()
 	//
 	for (auto particleSystem: particleSystems) dynamic_cast<Entity*>(particleSystem)->setTransform(*this);
 	// update bounding box transformed
-	worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
+	worldBoundingBox.fromBoundingVolumeWithTransformMatrix(getBoundingBox(), entityTransformMatrix);
 	// update object
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }

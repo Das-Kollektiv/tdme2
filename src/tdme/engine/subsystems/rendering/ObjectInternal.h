@@ -4,6 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -44,11 +45,21 @@ protected:
 	BoundingBox boundingBox;
 	BoundingBox worldBoundingBox;
 	bool nodeTransformMatrixUpdate;
+	Transform parentTransform;
 
 	/**
 	 * Update bounding volume
 	 */
 	void updateBoundingBox();
+
+	/**
+	 * Set parent transform
+	 * @param parentTransform parent transform
+	 */
+	inline void setParentTransform(const Transform& parentTransform) {
+		this->parentTransform = parentTransform;
+		updateBoundingBox();
+	}
 
 public:
 	/**

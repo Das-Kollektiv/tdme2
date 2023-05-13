@@ -68,6 +68,7 @@ PointsParticleSystemInternal::PointsParticleSystemInternal(const string& id, Par
 	this->pointsRenderPool = new TransparentRenderPointsPool(maxPoints);
 	if (texture != nullptr) texture->acquireReference();
 	this->texture = texture != nullptr?texture:TextureReader::read("resources/engine/textures", "point.png");
+	this->entityTransformMatrix.identity();
 }
 
 PointsParticleSystemInternal::~PointsParticleSystemInternal() {
@@ -82,12 +83,20 @@ void PointsParticleSystemInternal::initialize() {
 void PointsParticleSystemInternal::update()
 {
 	Transform::update();
+	//
+	auto entityTransform = parentTransform * (*this);
+	entityTransformMatrix = entityTransform.getTransformMatrix();
+	//
 	updateInternal();
 }
 
 void PointsParticleSystemInternal::setTransform(const Transform& transform)
 {
 	Transform::setTransform(transform);
+	//
+	auto entityTransform = parentTransform * (*this);
+	entityTransformMatrix = entityTransform.getTransformMatrix();
+	//
 	updateInternal();
 }
 
@@ -104,15 +113,10 @@ void PointsParticleSystemInternal::updateParticles()
 	//
 	Vector3 point;
 	Vector3 velocityForTime;
-	// bounding box transformed min, max xyz
-	auto& bbMinXYZ = boundingBox.getMin().getArray();
-	auto& bbMaxXYZ = boundingBox.getMax().getArray();
 	//
-	auto haveBoundingBox = false;
+	auto first = false;
 	// compute distance from camera
 	float distanceFromCamera;
-	// transform
-	auto& transformMatrix = getTransformMatrix();
 	// process particles
 	pointsRenderPool->reset();
 	auto activeParticles = 0;
@@ -152,21 +156,15 @@ void PointsParticleSystemInternal::updateParticles()
 		point = localTransformMatrix.multiply(particle.position);
 		point.add(center);
 		//
-		auto& pointXYZ = point.getArray();
-		if (haveBoundingBox == false) {
-			bbMinXYZ = pointXYZ;
-			bbMaxXYZ = pointXYZ;
-			haveBoundingBox = true;
+		if (first == false) {
+			boundingBox.getMin().set(point);
+			boundingBox.getMax().set(point);
+			first = true;
 		} else {
-			if (pointXYZ[0] < bbMinXYZ[0]) bbMinXYZ[0] = pointXYZ[0];
-			if (pointXYZ[1] < bbMinXYZ[1]) bbMinXYZ[1] = pointXYZ[1];
-			if (pointXYZ[2] < bbMinXYZ[2]) bbMinXYZ[2] = pointXYZ[2];
-			if (pointXYZ[0] > bbMaxXYZ[0]) bbMaxXYZ[0] = pointXYZ[0];
-			if (pointXYZ[1] > bbMaxXYZ[1]) bbMaxXYZ[1] = pointXYZ[1];
-			if (pointXYZ[2] > bbMaxXYZ[2]) bbMaxXYZ[2] = pointXYZ[2];
+			boundingBox.extend(point);
 		}
 		// transform particle according to its transform
-		point = transformMatrix.multiply(point);
+		point = entityTransformMatrix.multiply(point);
 		// add to render points pool
 		pointsRenderPool->addPoint(point, static_cast<uint16_t>(particle.spriteIndex) % (textureHorizontalSprites * textureVerticalSprites), color, 0, this);
 	}
@@ -177,7 +175,7 @@ void PointsParticleSystemInternal::updateParticles()
 	}
 	// scale a bit up to make picking work better
 	boundingBox.update();
-	worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
+	worldBoundingBox.fromBoundingVolumeWithTransformMatrix(&boundingBox, entityTransformMatrix);
 	worldBoundingBox.getMin().sub(0.05f + pointSize * pointSizeScale);
 	worldBoundingBox.getMax().add(0.05f + pointSize * pointSizeScale);
 	worldBoundingBox.update();

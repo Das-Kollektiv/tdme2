@@ -48,16 +48,31 @@ protected:
 	bool contributesShadows;
 	bool receivesShadows;
 
+	Matrix4x4 entityTransformMatrix;
 	Matrix4x4 obbMatrix;
 	Matrix4x4 obbMatrixTransformed;
 	Matrix4x4 worldToDecalSpaceMatrix;
+
+	Transform parentTransform;
+
+	/**
+	 * Set parent transform
+	 * @param parentTransform parent transform
+	 */
+	inline void setParentTransform(const Transform& parentTransform) {
+		this->parentTransform = parentTransform;
+		auto entityTransform = parentTransform * (*this);
+		entityTransformMatrix = entityTransform.getTransformMatrix();
+		//
+		updateInternal();
+	}
 
 	/**
 	 * Update bounding volume and obb matrix with transform and finally world to decal space matrix
 	 */
 	inline void updateInternal() {
-		worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
-		obbMatrixTransformed = obbMatrix.clone().multiply(this->getTransformMatrix());
+		worldBoundingBox.fromBoundingVolumeWithTransformMatrix(&boundingBox, entityTransformMatrix);
+		obbMatrixTransformed = obbMatrix.clone().multiply(entityTransformMatrix);
 		worldToDecalSpaceMatrix = obbMatrixTransformed.clone().invert();
 	}
 

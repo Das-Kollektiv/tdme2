@@ -13,9 +13,11 @@
 #include <tdme/engine/Transform.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Math.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector3.h>
 
 using std::string;
+using std::to_string;
 using std::vector;
 
 using tdme::engine::primitives::BoundingBox;
@@ -55,10 +57,17 @@ private:
 	vector<ParticleSystem*> particleSystems;
 	Transform localTransform;
 
+	Transform parentTransform;
+	Matrix4x4 entityTransformMatrix;
+
 	// overridden methods
-	inline void applyParentTransform(const Transform& parentTransform) override {
-		Transform::applyParentTransform(parentTransform);
-		for (auto particleSystem: particleSystems) particleSystem->applyParentTransform(parentTransform);
+	inline void setParentTransform(const Transform& parentTransform) override {
+		//
+		this->parentTransform = parentTransform;
+		auto entityTransform = parentTransform * (*this);
+		entityTransformMatrix = entityTransform.getTransformMatrix();
+		//
+		for (auto particleSystem: particleSystems) particleSystem->setParentTransform(entityTransform);
 	}
 
 public:
@@ -116,9 +125,6 @@ public:
 				boundingBox.extend(dynamic_cast<Entity*>(particleSystems[i])->getBoundingBox());
 			}
 			boundingBox.update();
-
-			// update bounding box transformed
-			worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
 		}
 
 		//
@@ -126,17 +132,8 @@ public:
 	}
 
 	inline BoundingBox* getWorldBoundingBox() override {
-		if (particleSystems.empty() == false) {
-			// compute new bounding box
-			boundingBox.fromBoundingVolume(dynamic_cast<Entity*>(particleSystems[0])->getBoundingBox());
-			for (auto i = 1; i < particleSystems.size(); i++) {
-				boundingBox.extend(dynamic_cast<Entity*>(particleSystems[i])->getBoundingBox());
-			}
-			boundingBox.update();
-
-			// update world bounding box
-			worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
-		}
+		// update bounding box transformed
+		worldBoundingBox.fromBoundingVolumeWithTransformMatrix(getBoundingBox(), entityTransformMatrix);
 
 		//
 		return &worldBoundingBox;
@@ -216,14 +213,6 @@ public:
 		Transform::setScale(scale);
 	}
 
-	inline const Vector3& getPivot() const override {
-		return Transform::getPivot();
-	}
-
-	inline void setPivot(const Vector3& pivot) override {
-		Transform::setPivot(pivot);
-	}
-
 	inline const int getRotationCount() const override {
 		return Transform::getRotationCount();
 	}
@@ -261,7 +250,7 @@ public:
 	}
 
 	inline const Matrix4x4& getTransformMatrix() const override {
-		return Transform::getTransformMatrix();
+		return entityTransformMatrix;
 	}
 
 	inline const Transform& getTransform() const override {

@@ -32,6 +32,7 @@ EnvironmentMapping::EnvironmentMapping(const string& id, int width, int height, 
 	this->width = width;
 	this->height = height;
 	this->boundingBox = boundingBox;
+	this->entityTransformMatrix.identity();
 }
 
 void EnvironmentMapping::setEngine(Engine* engine) {
@@ -54,8 +55,12 @@ void EnvironmentMapping::dispose() {
 void EnvironmentMapping::setTransform(const Transform& transform)
 {
 	Transform::setTransform(transform);
+	//
+	auto entityTransform = parentTransform * (*this);
+	entityTransformMatrix = entityTransform.getTransformMatrix();
+	//
 	Transform translationTransform;
-	translationTransform.setTranslation(getTranslation());
+	translationTransform.setTranslation(entityTransform.getTranslation());
 	translationTransform.update();
 	worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, translationTransform);
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
@@ -64,8 +69,12 @@ void EnvironmentMapping::setTransform(const Transform& transform)
 void EnvironmentMapping::update()
 {
 	Transform::update();
+	//
+	auto entityTransform = parentTransform * (*this);
+	entityTransformMatrix = entityTransform.getTransformMatrix();
+	//
 	Transform translationTransform;
-	translationTransform.setTranslation(getTranslation());
+	translationTransform.setTranslation(entityTransform.getTranslation());
 	translationTransform.update();
 	worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, translationTransform);
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);

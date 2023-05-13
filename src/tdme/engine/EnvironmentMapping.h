@@ -54,9 +54,14 @@ private:
 	int32_t renderPassMask { Entity::RENDERPASS_ALL - Entity::RENDERPASS_WATER };
 	int64_t timeRenderUpdateFrequency { 100LL };
 
+	Transform parentTransform;
+	Matrix4x4 entityTransformMatrix;
+
 	// overridden methods
-	inline void applyParentTransform(const Transform& parentTransform) override {
-		Transform::applyParentTransform(parentTransform);
+	inline void setParentTransform(const Transform& parentTransform) override {
+		this->parentTransform = parentTransform;
+		auto entityTransform = parentTransform * (*this);
+		entityTransformMatrix = entityTransform.getTransformMatrix();
 	}
 
 	/**
@@ -165,14 +170,6 @@ public:
 		Transform::setScale(scale);
 	}
 
-	inline const Vector3& getPivot() const override {
-		return Transform::getPivot();
-	}
-
-	inline void setPivot(const Vector3& pivot) override {
-		Transform::setPivot(pivot);
-	}
-
 	inline const int getRotationCount() const override {
 		return Transform::getRotationCount();
 	}
@@ -210,7 +207,7 @@ public:
 	}
 
 	inline const Matrix4x4& getTransformMatrix() const override {
-		return Transform::getTransformMatrix();
+		return entityTransformMatrix;
 	}
 
 	inline const Transform& getTransform() const override {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -12,6 +13,8 @@
 #include <tdme/math/Vector3.h>
 
 using std::vector;
+using std::string;
+using std::to_string;
 
 using tdme::engine::model::RotationOrder;
 using tdme::engine::Rotation;
@@ -27,7 +30,6 @@ class tdme::engine::Transform {
 private:
 	Vector3 translation;
 	Vector3 scale;
-	Vector3 pivot;
 	Quaternion rotationsQuaternion;
 	vector<Rotation> rotations;
 	Matrix4x4 transformMatrix;
@@ -76,21 +78,6 @@ public:
 	 */
 	inline void setScale(const Vector3& scale) {
 		this->scale.set(scale);
-	}
-
-	/**
-	 * @return pivot or center of rotations
-	 */
-	inline const Vector3& getPivot() const {
-		return pivot;
-	}
-
-	/**
-	 * Set pivot
-	 * @param pivot pivot
-	 */
-	inline void setPivot(const Vector3& pivot) {
-		this->pivot.set(pivot);
 	}
 
 	/**
@@ -197,16 +184,81 @@ public:
 	virtual void update();
 
 	/**
-	 * Apply parent transform
-	 * @param parentTransform parent transform
-	 */
-	inline virtual void applyParentTransform(const Transform& parentTransform) {
-		transformMatrix.multiply(parentTransform.getTransformMatrix());
-	}
-
-	/**
 	 * Invert this transform
 	 */
 	virtual void invert();
+
+	/**
+	 * Clones the transform
+	 * @return new cloned transform
+	 */
+	inline Transform clone() const {
+		Transform clonedTransform;
+		clonedTransform.translation = translation;
+		clonedTransform.scale = scale;
+		clonedTransform.rotationsQuaternion = rotationsQuaternion;
+		clonedTransform.rotations = rotations;
+		clonedTransform.transformMatrix = transformMatrix;
+		return clonedTransform;
+
+	}
+
+	/**
+	 * Multiplies this transform with another transform
+	 * @param t transform
+	 * @return this transform
+	 */
+	inline Transform& multiply(const Transform& t) {
+		update();
+		translation+= rotationsQuaternion * (t.translation * scale);
+		scale*= t.scale;
+		rotationsQuaternion*= t.rotationsQuaternion;
+		auto eulerAngles = rotationsQuaternion.computeEulerAngles();
+		rotations.clear();
+		rotations.emplace_back(Vector3(0.0f, 0.0f, 1.0f), eulerAngles[2]);
+		rotations.emplace_back(Vector3(0.0f, 1.0f, 0.0f), eulerAngles[1]);
+		rotations.emplace_back(Vector3(1.0f, 0.0f, 0.0f), eulerAngles[0]);
+		update();
+		return *this;
+	}
+
+	/*
+	 * Operator *=
+	 * @param t transform to multiply by
+	 * @return this transform multiplied by t
+	 */
+	inline Transform& operator *=(const Transform& t) {
+		return this->multiply(t);
+	}
+
+	/**
+	 * Operator *
+	 * @param t transform to multiply by
+	 * @return new transform (this * t)
+	 */
+	inline Transform operator *(const Transform& t) const {
+		auto r = this->clone().multiply(t);
+		return r;
+	}
+
+	/**
+	 * Equality comparison operator
+	 * @param t transform to compare to
+	 * @return equality
+	 */
+
+	inline bool operator ==(const Transform& t) const {
+		return transformMatrix.equals(t.transformMatrix);
+	}
+
+	/**
+	 * Non equality comparison operator
+	 * @param t transform to compare to
+	 * @return non equality
+	 */
+
+	inline bool operator !=(const Transform& t) const {
+		return transformMatrix.equals(t.transformMatrix);
+	}
 
 };

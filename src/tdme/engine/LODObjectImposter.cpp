@@ -38,6 +38,7 @@ LODObjectImposter::LODObjectImposter(
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 	this->effectColorMulLOD2.set(1.0f, 1.0f, 1.0f, 1.0f);
 	this->effectColorAddLOD2.set(0.0f, 0.0f, 0.0f, 0.0f);
+	this->entityTransformMatrix.identity();
 
 	objectLOD1 = new Object(id + ".lod1", modelLOD1);
 	objectLOD1->setParentEntity(this);
@@ -76,9 +77,12 @@ void LODObjectImposter::setRenderer(Renderer* renderer)
 void LODObjectImposter::setTransform(const Transform& transform)
 {
 	Transform::setTransform(transform);
+	//
+	auto entityTransform = parentTransform * (*this);
+	entityTransformMatrix = entityTransform.getTransformMatrix();
 	// delegate to LOD objects
-	objectLOD1->setTransform(*this);
-	objectLOD2->setTransform(*this);
+	objectLOD1->setTransform(entityTransform);
+	objectLOD2->setTransform(entityTransform);
 	// update entity
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 	// reset current LOD object
@@ -88,9 +92,12 @@ void LODObjectImposter::setTransform(const Transform& transform)
 void LODObjectImposter::update()
 {
 	Transform::update();
+	//
+	auto entityTransform = parentTransform * (*this);
+	entityTransformMatrix = entityTransform.getTransformMatrix();
 	// delegate to LOD objects
-	objectLOD1->setTransform(*this);
-	objectLOD2->setTransform(*this);
+	objectLOD1->setTransform(entityTransform);
+	objectLOD2->setTransform(entityTransform);
 	// update entity
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 	// reset current LOD object

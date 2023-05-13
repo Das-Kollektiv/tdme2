@@ -7,6 +7,7 @@
 #include <tdme/engine/Object.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/Transform.h>
+#include <tdme/utilities/Console.h>
 
 using std::string;
 
@@ -15,6 +16,7 @@ using tdme::engine::EntityHierarchy;
 using tdme::engine::Object;
 using tdme::engine::Partition;
 using tdme::engine::Transform;
+using tdme::utilities::Console;
 
 EntityHierarchy::EntityHierarchy(const string& id): id(id)
 {
@@ -24,6 +26,8 @@ EntityHierarchy::EntityHierarchy(const string& id): id(id)
 	this->receivesShadows = false;
 	this->effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
+	this->entityTransformMatrix.identity();
+	this->entityTransformMatrixInverted.identity();
 }
 
 EntityHierarchy::~EntityHierarchy()
@@ -126,24 +130,27 @@ const vector<Entity*> EntityHierarchy::query(const string& parentId) {
 }
 
 void EntityHierarchy::updateHierarchy(const Transform& parentTransform, EntityHierarchyLevel& entityHierarchyLevel, int depth, bool& firstEntity) {
+	BoundingBox entityBoundingBox;
+	auto levelParentTransform = parentTransform;
+	if (entityHierarchyLevel.entity != nullptr) levelParentTransform*= entityHierarchyLevel.entity->getTransform();
 	for (auto entityIt: entityHierarchyLevel.children) {
 		auto entity = entityIt.second.entity;
-		entity->update();
+		entity->setParentTransform(levelParentTransform);
+		entityBoundingBox.fromBoundingVolumeWithTransformMatrix(entity->getWorldBoundingBox(), entityTransformMatrixInverted);
 		if (firstEntity == true) {
-			boundingBox = entity->getWorldBoundingBox();
+			boundingBox = entityBoundingBox;
 			firstEntity = false;
 		} else {
-			boundingBox.extend(entity->getWorldBoundingBox());
+			boundingBox.extend(&entityBoundingBox);
 		}
-		entity->applyParentTransform(parentTransform);
 	}
 	for (auto& childIt: entityHierarchyLevel.children) {
-		updateHierarchy(childIt.second.entity->getTransform(), childIt.second, depth + 1, firstEntity);
+		updateHierarchy(levelParentTransform, childIt.second, depth + 1, firstEntity);
 	}
 	if (depth == 0) {
 		// bounding boxes
 		boundingBox.update();
-		worldBoundingBox.fromBoundingVolumeWithTransform(&boundingBox, *this);
+		worldBoundingBox.fromBoundingVolumeWithTransformMatrix(&boundingBox, entityTransformMatrix);
 		// update entity
 		if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 	}
@@ -151,18 +158,30 @@ void EntityHierarchy::updateHierarchy(const Transform& parentTransform, EntityHi
 
 void EntityHierarchy::setTransform(const Transform& transform)
 {
+	//
 	Transform::setTransform(transform);
+	//
+	auto entityTransform = parentTransform * (*this);
+	entityTransformMatrix = entityTransform.getTransformMatrix();
+	//
+	this->entityTransformMatrixInverted = entityTransformMatrix.clone().invert();
 	// update hierarchy
 	auto firstEntity = true;
-	updateHierarchy(*this, entityRoot, 0, firstEntity);
+	updateHierarchy(entityTransform, entityRoot, 0, firstEntity);
 }
 
 void EntityHierarchy::update()
 {
+	//
 	Transform::update();
+	//
+	auto entityTransform = parentTransform * (*this);
+	entityTransformMatrix = entityTransform.getTransformMatrix();
+	//
+	this->entityTransformMatrixInverted = entityTransformMatrix.clone().invert();
 	// update hierarchy
 	auto firstEntity = true;
-	updateHierarchy(*this, entityRoot, 0, firstEntity);
+	updateHierarchy(entityTransform, entityRoot, 0, firstEntity);
 }
 
 void EntityHierarchy::setEnabled(bool enabled)

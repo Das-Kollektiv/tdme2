@@ -313,12 +313,6 @@ void ModelEditorTabView::reloadFile()
 	modelEditorTabController->setOutlinerContent();
 }
 
-void ModelEditorTabView::pivotApply(float x, float y, float z)
-{
-	if (prototype == nullptr) return;
-	prototype->getPivot().set(x, y, z);
-}
-
 void ModelEditorTabView::computeNormals() {
 	if (prototype == nullptr || prototype->getModel() == nullptr) return;
 	engine->removeEntity("model");
@@ -453,8 +447,7 @@ void ModelEditorTabView::loadModel()
 				FileSystem::getInstance()->getFileName(prototypeFileName),
 				"",
 				FileSystem::getInstance()->getPathName(prototypeFileName),
-				FileSystem::getInstance()->getFileName(prototypeFileName),
-				Vector3()
+				FileSystem::getInstance()->getFileName(prototypeFileName)
 			)
 		);
 	} catch (Exception& exception) {
@@ -462,7 +455,7 @@ void ModelEditorTabView::loadModel()
 	}
 }
 
-Prototype* ModelEditorTabView::loadModelPrototype(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot)
+Prototype* ModelEditorTabView::loadModelPrototype(const string& name, const string& description, const string& pathName, const string& fileName)
 {
 	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmodel") == true) {
 		auto prototype = PrototypeReader::read(
@@ -483,9 +476,8 @@ Prototype* ModelEditorTabView::loadModelPrototype(const string& name, const stri
 			"",
 			pathName + "/" + fileName,
 			StringTools::replace(StringTools::replace(StringTools::replace(model->getId(), "\\", "_"), "/", "_"), ":", "_") + ".png",
-			model,
-			pivot
-			);
+			model
+		);
 		return prototype;
 
 	}

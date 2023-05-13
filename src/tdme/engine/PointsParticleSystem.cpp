@@ -31,12 +31,15 @@ void PointsParticleSystem::initialize()
 void PointsParticleSystem::setTransform(const Transform& transform)
 {
 	PointsParticleSystemInternal::setTransform(transform);
+	//
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
 void PointsParticleSystem::update()
 {
+	//
 	PointsParticleSystemInternal::update();
+	//
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 

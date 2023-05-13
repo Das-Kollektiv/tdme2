@@ -418,7 +418,6 @@ SRCS = \
 	src/tdme/tests/MiniScriptEmitTest.cpp \
 	src/tdme/tests/MiniScriptFunctionsTest.cpp \
 	src/tdme/tests/PathFindingTest.cpp \
-	src/tdme/tests/PivotTest.cpp \
 	src/tdme/tests/PhysicsTest1.cpp \
 	src/tdme/tests/PhysicsTest2.cpp \
 	src/tdme/tests/PhysicsTest3.cpp \
@@ -784,7 +783,6 @@ all: \
 	MiniScriptTest \
 	PathFindingTest \
 	PhysicsTest1 PhysicsTest2 PhysicsTest3 PhysicsTest4 PhysicsTest5 \
-	PivotTest \
 	RayTracingTest \
 	SkinningTest \
 	SplineTest \
@@ -1055,11 +1053,6 @@ PhysicsTest5:
 	rc $(MSCBIN)\PhysicsTest5.exe.rc
 	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\PhysicsTest5 /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest5-main.cpp $(MSCBIN)\PhysicsTest5.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
-PivotTest:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc PhysicsTest1.exe $(MSCBIN)\PivotTest.exe.rc
-	rc $(MSCBIN)\PivotTest.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\PivotTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PivotTest-main.cpp $(MSCBIN)\PivotTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
-
 RayTracingTest:
 	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc RayTracingTest.exe $(MSCBIN)\RayTracingTest.exe.rc
 	rc $(MSCBIN)\RayTracingTest.exe.rc
@@ -1283,7 +1276,6 @@ copy-executables:
 	copy $(MSCBIN)\PhysicsTest3.exe bin\tdme\tests\.
 	copy $(MSCBIN)\PhysicsTest4.exe bin\tdme\tests\.
 	copy $(MSCBIN)\PhysicsTest5.exe bin\tdme\tests\.
-	copy $(MSCBIN)\PivotTest.exe bin\tdme\tests\.
 	copy $(MSCBIN)\RayTracingTest.exe bin\tdme\tests\.
 	copy $(MSCBIN)\SkinningTest.exe bin\tdme\tests\.
 	copy $(MSCBIN)\SplineTest.exe bin\tdme\tests\.

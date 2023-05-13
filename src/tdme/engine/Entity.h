@@ -31,6 +31,7 @@ class tdme::engine::Entity
 	friend class Engine;
 	friend class EntityHierarchy;
 	friend class OctTreePartition;
+	friend class ObjectRenderGroup;
 	friend class ParticleSystemGroup;
 	friend class SceneConnector;
 
@@ -73,10 +74,10 @@ private:
 	}
 
 	/**
-	 * Apply parent transform
+	 * Set parent transform
 	 * @param parentTransform parent transform
 	 */
-	virtual void applyParentTransform(const Transform& parentTransform) = 0;
+	virtual void setParentTransform(const Transform& parentTransform) = 0;
 
 public:
 	static constexpr int RENDERPASS_MAX { 5 };
@@ -241,17 +242,6 @@ public:
 	 * @param scale scale
 	 */
 	virtual void setScale(const Vector3& scale) = 0;
-
-	/**
-	 * @return pivot or center of rotations
-	 */
-	virtual const Vector3& getPivot() const = 0;
-
-	/**
-	 * Set pivot
-	 * @param pivot pivot
-	 */
-	virtual void setPivot(const Vector3& pivot) = 0;
 
 	/**
 	 * @return rotation count
