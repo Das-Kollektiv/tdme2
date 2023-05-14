@@ -60,6 +60,6 @@ void PointParticleEmitter::setTransform(const Transform& transform)
 {
 	//
 	auto& transformMatrix = transform.getTransformMatrix();
-	// apply translations
+	// world position
 	worldPosition = transformMatrix.multiply(position);
 }
