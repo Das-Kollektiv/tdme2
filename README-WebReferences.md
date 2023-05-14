@@ -2,7 +2,7 @@
 
 # 1. Web References
 - This is a detailed, but for sure still incomplete, list of web references that I used to implement certain engine features
-- http://blog.selfshadow.com/publications/s2012-shading-course/burley/s2012_pbs_disney_brdf_notes_v3.pdf
+  - http://blog.selfshadow.com/publications/s2012-shading-course/burley/s2012_pbs_disney_brdf_notes_v3.pdf
   - http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
   - http://chilliant.blogspot.com/2012/08/srgb-approximations-for-hlsl.html
   - http://db-in.com/blog/2011/04/cameras-on-opengl-es-2-x/
