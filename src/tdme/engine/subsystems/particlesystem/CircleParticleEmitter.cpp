@@ -82,7 +82,7 @@ void CircleParticleEmitter::setTransform(const Transform& transform)
 	// apply transform rotation + scale to axis
 	worldAxis0 = transformMatrix.multiplyNoTranslation(axis0).normalize();
 	worldAxis1 = transformMatrix.multiplyNoTranslation(axis1).normalize();
-	// scale and radius transformed
+	// world radius
 	Vector3 scale;
 	transformMatrix.getScale(scale);
 	worldRadius = radius * Math::max(scale.getX(), Math::max(scale.getY(), scale.getZ()));
