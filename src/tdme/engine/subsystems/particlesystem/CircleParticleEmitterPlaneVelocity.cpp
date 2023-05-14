@@ -33,10 +33,10 @@ CircleParticleEmitterPlaneVelocity::CircleParticleEmitterPlaneVelocity(int32_t c
 	this->velocityRnd = velocityRnd;
 	this->colorStart.set(colorStart);
 	this->colorEnd.set(colorEnd);
-	this->centerTransformed.set(center);
-	this->radiusTransformed = radius;
-	this->axis0Transformed.set(axis0).normalize();
-	this->axis1Transformed.set(axis1).normalize();
+	this->worldCenter.set(center);
+	this->worldRadius = radius;
+	this->worldAxis0.set(axis0).normalize();
+	this->worldAxis1.set(axis1).normalize();
 }
 
 void CircleParticleEmitterPlaneVelocity::emit(Particle* particle)
@@ -48,11 +48,11 @@ void CircleParticleEmitterPlaneVelocity::emit(Particle* particle)
 	particle->spriteIndex = 0.0f;
 	// emit particle on circle spanned on axis 0 and axis 1
 	auto rnd = Math::random();
-	cosOnAxis0.set(axis0Transformed).scale(Math::cos(Math::PI * 2 * rnd));
-	sinOnAxis1.set(axis1Transformed).scale(Math::sin(Math::PI * 2 * rnd));
+	cosOnAxis0.set(worldAxis0).scale(Math::cos(Math::PI * 2 * rnd));
+	sinOnAxis1.set(worldAxis1).scale(Math::sin(Math::PI * 2 * rnd));
 	particle->position.set(cosOnAxis0);
 	particle->position.add(sinOnAxis1);
-	particle->position.scale(radiusTransformed);
+	particle->position.scale(worldRadius);
 	// compute velocity
 	particle->velocity.set(particle->position).normalize().scale(velocity + (Math::random() * velocityRnd));
 	// mass
@@ -73,12 +73,12 @@ void CircleParticleEmitterPlaneVelocity::setTransform(const Transform& transform
 {
 	auto& transformMatrix = transform.getTransformMatrix();
 	// apply rotation, scale, translation
-	centerTransformed = transformMatrix.multiply(center);
+	worldCenter = transformMatrix.multiply(center);
 	// apply transform rotation + scale to axis
-	axis0Transformed = transformMatrix.multiplyNoTranslation(axis0);
-	axis1Transformed = transformMatrix.multiplyNoTranslation(axis1);
+	worldAxis0 = transformMatrix.multiplyNoTranslation(axis0);
+	worldAxis1 = transformMatrix.multiplyNoTranslation(axis1);
 	// scale and radius transformed
 	Vector3 scale;
 	transformMatrix.getScale(scale);
-	radiusTransformed = radius * Math::max(scale.getX(), Math::max(scale.getY(), scale.getZ()));
+	worldRadius = radius * Math::max(scale.getX(), Math::max(scale.getY(), scale.getZ()));
 }

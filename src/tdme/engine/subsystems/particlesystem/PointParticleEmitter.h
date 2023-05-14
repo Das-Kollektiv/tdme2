@@ -30,7 +30,7 @@ private:
 	float mass;
 	float massRnd;
 	Vector3 position;
-	Vector3 positionTransformed;
+	Vector3 worldPosition;
 	Vector3 velocity;
 	Vector3 velocityRnd;
 	Vector3 zeroPosition;
@@ -55,7 +55,7 @@ public:
 
 	// overridden methods
 	inline const Vector3& getCenter() const override {
-		return positionTransformed;
+		return worldPosition;
 	}
 
 	inline int32_t getCount() const override {

@@ -32,7 +32,7 @@ private:
 	float mass;
 	float massRnd;
 	Sphere* sphere { nullptr };
-	Sphere* sphereTransformed { nullptr };
+	Sphere* worldSphere { nullptr };
 	Vector3 velocity;
 	Vector3 velocityRnd;
 	Color4 colorStart;
@@ -60,7 +60,7 @@ public:
 
 	// overridden methods
 	inline const Vector3& getCenter() const override {
-		return sphereTransformed->getCenter();
+		return worldSphere->getCenter();
 	}
 
 	inline int32_t getCount() const override {

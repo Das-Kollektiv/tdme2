@@ -28,7 +28,7 @@ SphereParticleEmitter::SphereParticleEmitter(int32_t count, int64_t lifeTime, in
 	this->mass = mass;
 	this->massRnd = massRnd;
 	this->sphere = sphere;
-	this->sphereTransformed = static_cast<Sphere*>(sphere->clone());
+	this->worldSphere = static_cast<Sphere*>(sphere->clone());
 	this->velocity.set(velocity);
 	this->velocityRnd.set(velocityRnd);
 	this->colorStart.set(colorStart);
@@ -37,7 +37,7 @@ SphereParticleEmitter::SphereParticleEmitter(int32_t count, int64_t lifeTime, in
 
 SphereParticleEmitter::~SphereParticleEmitter() {
 	delete sphere;
-	delete sphereTransformed;
+	delete worldSphere;
 }
 
 void SphereParticleEmitter::emit(Particle* particle)
@@ -49,7 +49,7 @@ void SphereParticleEmitter::emit(Particle* particle)
 		Math::random() * 2.0f - 1.0f,
 		Math::random() * 2.0f - 1.0f,
 		Math::random() * 2.0f - 1.0f
-	).normalize().scale(sphereTransformed->getRadius());
+	).normalize().scale(worldSphere->getRadius());
 	particle->velocity.set(
 		velocity[0] + (Math::random() * velocityRnd[0] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
 		velocity[1] + (Math::random() * velocityRnd[1] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
@@ -78,5 +78,5 @@ void SphereParticleEmitter::setTransform(const Transform& transform)
 	// scale and radius transformed
 	Vector3 scale;
 	transformMatrix.getScale(scale);
-	*sphereTransformed = Sphere(center, sphere->getRadius() * Math::max(scale.getX(), Math::max(scale.getY(), scale.getZ())));
+	*worldSphere = Sphere(center, sphere->getRadius() * Math::max(scale.getX(), Math::max(scale.getY(), scale.getZ())));
 }

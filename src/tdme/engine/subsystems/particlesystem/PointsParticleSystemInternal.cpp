@@ -210,8 +210,6 @@ int32_t PointsParticleSystemInternal::emitParticles()
 	if (particlesToSpawn == 0) return 0;
 	//
 	Vector3 velocityForTime;
-	//
-	auto& center = emitter->getCenter();
 	// spawn
 	auto particlesSpawned = 0;
 	for (auto i = 0; i < particles.size(); i++) {

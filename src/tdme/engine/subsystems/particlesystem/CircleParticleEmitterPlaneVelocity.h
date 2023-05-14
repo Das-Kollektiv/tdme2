@@ -37,10 +37,10 @@ private:
 	float velocityRnd;
 	Color4 colorStart;
 	Color4 colorEnd;
-	Vector3 centerTransformed;
-	float radiusTransformed;
-	Vector3 axis0Transformed;
-	Vector3 axis1Transformed;
+	Vector3 worldCenter;
+	float worldRadius;
+	Vector3 worldAxis0;
+	Vector3 worldAxis1;
 
 public:
 	/**
@@ -63,7 +63,7 @@ public:
 
 	// overridden methods
 	inline const Vector3& getCenter() const override {
-		return centerTransformed;
+		return worldCenter;
 	}
 
 	inline int32_t getCount() const override {

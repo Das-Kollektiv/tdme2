@@ -32,12 +32,12 @@ BoundingBoxParticleEmitter::BoundingBoxParticleEmitter(int32_t count, int64_t li
 	this->velocityRnd.set(velocityRnd);
 	this->colorStart.set(colorStart);
 	this->colorEnd.set(colorEnd);
-	this->obbTransformed = static_cast<OrientedBoundingBox*>(obb->clone());
+	this->worldObb = static_cast<OrientedBoundingBox*>(obb->clone());
 }
 
 BoundingBoxParticleEmitter::~BoundingBoxParticleEmitter() {
 	delete obb;
-	delete obbTransformed;
+	delete worldObb;
 }
 
 void BoundingBoxParticleEmitter::emit(Particle* particle)
@@ -46,8 +46,8 @@ void BoundingBoxParticleEmitter::emit(Particle* particle)
 	// set up particle
 	particle->active = true;
 	particle->spriteIndex = 0.0f;
-	auto obbAxes = obbTransformed->getAxes();
-	auto& obbHalfExtensionXYZ = obbTransformed->getHalfExtension().getArray();
+	auto obbAxes = worldObb->getAxes();
+	auto& obbHalfExtensionXYZ = worldObb->getHalfExtension().getArray();
 	// emit particle in oriented bounding box
 	particle->position.set(0.0f, 0.0f, 0.0f);
 	particle->position.add(tmpAxis.set(obbAxes[0]).scale((static_cast<float>(Math::random()) * obbHalfExtensionXYZ[0] * 2.0f) - obbHalfExtensionXYZ[0]));
@@ -100,5 +100,5 @@ void BoundingBoxParticleEmitter::setTransform(const Transform& transform)
 	// apply scale to half extension
 	halfExtension.set(obb->getHalfExtension());
 	halfExtension.scale(scale);
-	*obbTransformed = OrientedBoundingBox(center, axes[0], axes[1], axes[2], halfExtension);
+	*worldObb = OrientedBoundingBox(center, axes[0], axes[1], axes[2], halfExtension);
 }

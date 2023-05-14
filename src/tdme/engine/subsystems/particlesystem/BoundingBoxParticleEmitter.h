@@ -31,7 +31,7 @@ private:
 	float mass;
 	float massRnd;
 	OrientedBoundingBox* obb { nullptr };
-	OrientedBoundingBox* obbTransformed { nullptr };
+	OrientedBoundingBox* worldObb { nullptr };
 	Vector3 velocity;
 	Vector3 velocityRnd;
 	Color4 colorStart;
@@ -59,7 +59,7 @@ public:
 
 	// overridden methods
 	inline const Vector3& getCenter() const override {
-		return obbTransformed->getCenter();
+		return worldObb->getCenter();
 	}
 
 	inline int32_t getCount() const override {

@@ -26,7 +26,7 @@ PointParticleEmitter::PointParticleEmitter(int32_t count, int64_t lifeTime, int6
 	this->mass = mass;
 	this->massRnd = massRnd;
 	this->position.set(position);
-	this->positionTransformed.set(position);
+	this->worldPosition.set(position);
 	this->velocity.set(velocity);
 	this->velocityRnd.set(velocityRnd);
 	this->colorStart.set(colorStart);
@@ -61,5 +61,5 @@ void PointParticleEmitter::setTransform(const Transform& transform)
 	//
 	auto& transformMatrix = transform.getTransformMatrix();
 	// apply translations
-	positionTransformed = transformMatrix.multiply(position);
+	worldPosition = transformMatrix.multiply(position);
 }
