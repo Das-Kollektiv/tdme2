@@ -2,7 +2,7 @@
 
 # 1. Web References
 - This is a detailed, but for sure still incomplete, list of web references that I used to implement certain engine features
-  - http://blog.selfshadow.com/publications/s2012-shading-course/burley/s2012_pbs_disney_brdf_notes_v3.pdf
+- http://blog.selfshadow.com/publications/s2012-shading-course/burley/s2012_pbs_disney_brdf_notes_v3.pdf
   - http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
   - http://chilliant.blogspot.com/2012/08/srgb-approximations-for-hlsl.html
   - http://db-in.com/blog/2011/04/cameras-on-opengl-es-2-x/
@@ -27,25 +27,26 @@
   - https://aras-p.info/blog/2020/12/08/Texture-Compression-in-2020/
   - https://asmaloney.com/2017/08/code/crash-reporting-for-mingw-32-windows-and-clang-macos-with-qt/
   - https://en.cppreference.com/w/cpp/language/operator_precedence
+  - https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
   - https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
   - https://forum.unity.com/threads/how-do-i-find-the-closest-point-on-a-line.340058/
   - https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
-  - https://gist.github.com/niw/5963798
   - https://gist.github.com/Youka/4153f12cf2e17a77314c
-  - https://github.com/danielscherzer/NotepaddPP-glsl-integration.git
-  - https://github.com/diharaw/deferred-decals
-  - https://github.com/floooh/sokol/blob/master/sokol_app.h
+  - https://gist.github.com/niw/5963798
   - https://github.com/KhronosGroup/Vulkan-Docs/wiki/Synchronization-Examples
+  - https://github.com/KhronosGroup/Vulkan-Samples/blob/master/samples/performance/texture_compression_basisu/texture_compression_basisu.cpp
   - https://github.com/KhronosGroup/glTF-WebGL-PBR/
   - https://github.com/KhronosGroup/glTF-WebGL-PBR/#environment-maps
   - https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_lights_punctual/README.md#inner-and-outer-cone-angles
   - https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_lights_punctual/README.md#range-property
   - https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_materials_pbrSpecularGlossiness/examples/convert-between-workflows/js/three.pbrUtilities.js#L34
   - https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_lights_punctual
-  - https://github.com/KhronosGroup/Vulkan-Samples/blob/master/samples/performance/texture_compression_basisu/texture_compression_basisu.cpp
   - https://github.com/SaschaWillems/Vulkan
   - https://github.com/SaschaWillems/Vulkan-glTF-PBR
+  - https://github.com/danielscherzer/NotepaddPP-glsl-integration.git
+  - https://github.com/diharaw/deferred-decals
   - https://github.com/erich666/GraphicsGems/tree/master/gemsiv/euler_angle
+  - https://github.com/floooh/sokol/blob/master/sokol_app.h
   - https://github.com/glfw/glfw/blob/master/tests/vulkan.c
   - https://github.com/richgel999/bc7enc_rdo
   - https://google.github.io/filament/Filament.md.html#materialsystem/specularbrdf/geometricshadowing(specularg)
@@ -57,9 +58,7 @@
   - https://knarkowicz.wordpress.com/2016/01/06/aces-filmic-tone-mapping-curve/
   - https://learnopengl.com/Advanced-Lighting/Deferred-Shading
   - https://martindevans.me/game-development/2015/02/27/Drawing-Stuff-On-Other-Stuff-With-Deferred-Screenspace-Decals/
-  - https://www.opengl-tutorial.org/intermediate-tutorials/tutorial-13-normal-mapping/
-  - https://www.reddit.com/r/vulkan/comments/4u7z7w/multiple_vkdescriptorsetlayouts_in_the/d5nkyht/
-  - https://www-ui.is.s.u-tokyo.ac.jp/~takeo/papers/i3dg2001.pdf
+  - https://math.stackexchange.com/questions/2975109/how-to-convert-euler-angles-to-quaternions-and-get-the-same-euler-angles-back-fr
   - https://seblagarde.wordpress.com/2012/01/08/pi-or-not-to-pi-in-game-lighting-equation/
   - https://stackoverflow.com/questions/12280472/stackwalk64-does-not-work-with-release-build
   - https://stackoverflow.com/questions/12748103/how-to-change-freeglut-main-window-icon-in-c
@@ -69,15 +68,18 @@
   - https://stackoverflow.com/questions/180947/base64-decode-snippet-in-c/34571089#34571089
   - https://stackoverflow.com/questions/20834838/using-tuple-in-unordered-map
   - https://stackoverflow.com/questions/34963738/c11-get-current-date-and-time-as-string
+  - https://stackoverflow.com/questions/42883404/vulkan-depth-buffer-position-reconstruction
   - https://stackoverflow.com/questions/478898/how-to-execute-a-command-and-get-output-of-command-within-c-using-posix
   - https://stackoverflow.com/questions/496664/c-dynamic-shared-library-on-linux
   - https://stackoverflow.com/questions/8696653/dynamically-load-a-function-from-a-dll
-  - https://stackoverflow.com/questions/42883404/vulkan-depth-buffer-position-reconstruction
   - https://twvideo01.ubm-us.net/o1/vault/gdc2018/presentations/Sobek_Martin_Real-time_Reflections_in_MafiaIII.pdf
   - https://vkguide.dev/docs/chapter-4/storage_buffers/
   - https://vulkan-tutorial.com
+  - https://www-ui.is.s.u-tokyo.ac.jp/~takeo/papers/i3dg2001.pdf
   - https://www.cs.virginia.edu/~jdl/bib/appearance/analytic%20models/schlick94b.pdf
   - https://www.gamedev.net/forums/topic/478943-stackwalk64-and-x86/
+  - https://www.opengl-tutorial.org/intermediate-tutorials/tutorial-13-normal-mapping/
+  - https://www.reddit.com/r/vulkan/comments/4u7z7w/multiple_vkdescriptorsetlayouts_in_the/d5nkyht/
   - https://www.zlib.net/zpipe.c
 
 # 2. Other information
