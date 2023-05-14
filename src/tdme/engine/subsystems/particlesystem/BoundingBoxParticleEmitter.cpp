@@ -75,30 +75,30 @@ void BoundingBoxParticleEmitter::emit(Particle* particle)
 
 void BoundingBoxParticleEmitter::setTransform(const Transform& transform)
 {
-	Vector3 center;
-	Vector3 scale;
-	array<Vector3, 3> axes;
-	array<Vector3, 3> axesTransformed;
-	Vector3 halfExtension;
+	Vector3 worldCenter;
+	Vector3 worldScale;
+	array<Vector3, 3> worldAxes;
+	array<Vector3, 3> worldAxesUnnormalized;
+	Vector3 worldHalfExtension;
 	auto& transformMatrix = transform.getTransformMatrix();
 	// apply rotation, scale, translation
-	center = transformMatrix.multiply(obb->getCenter());
+	worldCenter = transformMatrix.multiply(obb->getCenter());
 	// apply transform rotation to axis
-	axesTransformed[0] = transformMatrix.multiplyNoTranslation(obb->getAxes()[0]);
-	axesTransformed[1] = transformMatrix.multiplyNoTranslation(obb->getAxes()[1]);
-	axesTransformed[2] = transformMatrix.multiplyNoTranslation(obb->getAxes()[2]);
+	worldAxesUnnormalized[0] = transformMatrix.multiplyNoTranslation(obb->getAxes()[0]);
+	worldAxesUnnormalized[1] = transformMatrix.multiplyNoTranslation(obb->getAxes()[1]);
+	worldAxesUnnormalized[2] = transformMatrix.multiplyNoTranslation(obb->getAxes()[2]);
 	// scale
-	scale.set(
-		axesTransformed[0].computeLength(),
-		axesTransformed[1].computeLength(),
-		axesTransformed[2].computeLength()
+	worldScale.set(
+		worldAxesUnnormalized[0].computeLength(),
+		worldAxesUnnormalized[1].computeLength(),
+		worldAxesUnnormalized[2].computeLength()
 	);
 	// set up axes
-	axes[0].set(axesTransformed[0]).normalize();
-	axes[1].set(axesTransformed[1]).normalize();
-	axes[2].set(axesTransformed[2]).normalize();
+	worldAxes[0].set(worldAxesUnnormalized[0]).normalize();
+	worldAxes[1].set(worldAxesUnnormalized[1]).normalize();
+	worldAxes[2].set(worldAxesUnnormalized[2]).normalize();
 	// apply scale to half extension
-	halfExtension.set(obb->getHalfExtension());
-	halfExtension.scale(scale);
-	*worldObb = OrientedBoundingBox(center, axes[0], axes[1], axes[2], halfExtension);
+	worldHalfExtension.set(obb->getHalfExtension());
+	worldHalfExtension.scale(worldScale);
+	*worldObb = OrientedBoundingBox(worldCenter, worldAxes[0], worldAxes[1], worldAxes[2], worldHalfExtension);
 }

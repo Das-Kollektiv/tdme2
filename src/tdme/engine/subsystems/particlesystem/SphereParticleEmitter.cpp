@@ -71,12 +71,11 @@ void SphereParticleEmitter::setTransform(const Transform& transform)
 {
 	auto& transformMatrix = transform.getTransformMatrix();
 	// apply translations
-	Vector3 center;
-	Vector3 axis;
+	Vector3 worldCenter;
 	// 	translate center
-	center = transformMatrix.multiply(sphere->getCenter());
+	worldCenter = transformMatrix.multiply(sphere->getCenter());
 	// world sphere
-	Vector3 scale;
-	transformMatrix.getScale(scale);
-	*worldSphere = Sphere(center, sphere->getRadius() * Math::max(scale.getX(), Math::max(scale.getY(), scale.getZ())));
+	Vector3 worldScale;
+	transformMatrix.getScale(worldScale);
+	*worldSphere = Sphere(worldCenter, sphere->getRadius() * Math::max(worldScale.getX(), Math::max(worldScale.getY(), worldScale.getZ())));
 }

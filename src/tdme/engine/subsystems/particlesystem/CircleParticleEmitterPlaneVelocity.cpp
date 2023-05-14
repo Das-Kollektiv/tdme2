@@ -78,7 +78,7 @@ void CircleParticleEmitterPlaneVelocity::setTransform(const Transform& transform
 	worldAxis0 = transformMatrix.multiplyNoTranslation(axis0);
 	worldAxis1 = transformMatrix.multiplyNoTranslation(axis1);
 	// world radius
-	Vector3 scale;
-	transformMatrix.getScale(scale);
-	worldRadius = radius * Math::max(scale.getX(), Math::max(scale.getY(), scale.getZ()));
+	Vector3 worldScale;
+	transformMatrix.getScale(worldScale);
+	worldRadius = radius * Math::max(worldScale.getX(), Math::max(worldScale.getY(), worldScale.getZ()));
 }
