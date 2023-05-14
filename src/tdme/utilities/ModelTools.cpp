@@ -128,10 +128,10 @@ void ModelTools::prepareForIndexedRendering(const map<string, Node*>& nodes)
 					auto nodeBitangentIndex = faceBitangentIndices[idx];
 					auto vertex = &nodeVertices[nodeVertexIndex];
 					auto normal = &nodeNormals[nodeNormalIndex];
-					auto textureCoordinate = nodeTextureCoordinates.size() > 0 ? &nodeTextureCoordinates[nodeTextureCoordinateIndex] : static_cast< TextureCoordinate* >(nullptr);
-					auto tangent = nodeTangents.size() > 0 ? &nodeTangents[nodeTangentIndex] : static_cast< Vector3* >(nullptr);
-					auto bitangent = nodeBitangents.size() > 0 ? &nodeBitangents[nodeBitangentIndex] : static_cast< Vector3* >(nullptr);
-					auto origin = nodeOrigins.size() > 0 ? &nodeOrigins[nodeVertexIndex] : static_cast< Vector3* >(nullptr);
+					auto textureCoordinate = nodeTextureCoordinates.size() > 0?&nodeTextureCoordinates[nodeTextureCoordinateIndex]:static_cast<TextureCoordinate*>(nullptr);
+					auto tangent = nodeTangents.size() > 0 ? &nodeTangents[nodeTangentIndex] : static_cast<Vector3*>(nullptr);
+					auto bitangent = nodeBitangents.size() > 0 ? &nodeBitangents[nodeBitangentIndex] : static_cast<Vector3*>(nullptr);
+					auto origin = nodeOrigins.size() > 0 ? &nodeOrigins[nodeVertexIndex] : static_cast<Vector3*>(nullptr);
 					auto newIndex = preparedIndices;
 					for (auto i = 0; i < preparedIndices; i++)
 					if (indexedVertices[i].equals(*vertex) &&

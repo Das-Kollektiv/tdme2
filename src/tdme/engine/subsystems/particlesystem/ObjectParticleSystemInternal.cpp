@@ -132,7 +132,7 @@ int32_t ObjectParticleSystemInternal::emitParticles()
 	{
 		auto particlesToSpawnWithFraction = emitter->getCount() * engine->getTiming()->getDeltaTime() / 1000.0f;
 		if (autoEmit == true) {
-			particlesToSpawn = static_cast< int32_t >(particlesToSpawnWithFraction);
+			particlesToSpawn = static_cast<int32_t>(particlesToSpawnWithFraction);
 			particlesToSpawnRemainder += particlesToSpawnWithFraction - particlesToSpawn;
 			if (particlesToSpawnRemainder > 1.0f) {
 				particlesToSpawn++;

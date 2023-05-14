@@ -239,7 +239,7 @@ public:
 		while (true == true) {
 			auto remainder = i % 10;
 			i = i / 10;
-			insert(idx, static_cast< char >(('0' + remainder)));
+			insert(idx, static_cast<char>(('0' + remainder)));
 			if (i == 0) {
 				break;
 			}

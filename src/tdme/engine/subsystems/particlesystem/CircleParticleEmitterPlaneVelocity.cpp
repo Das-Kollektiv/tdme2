@@ -58,7 +58,7 @@ void CircleParticleEmitterPlaneVelocity::emit(Particle* particle)
 	// mass
 	particle->mass = mass + static_cast<float>((Math::random() * (massRnd)));
 	// life time
-	particle->lifeTimeMax = lifeTime + static_cast< int64_t >((Math::random() * lifeTimeRnd));
+	particle->lifeTimeMax = lifeTime + static_cast<int64_t>((Math::random() * lifeTimeRnd));
 	particle->lifeTimeCurrent = 0LL;
 	// color
 	particle->color.set(colorStart);

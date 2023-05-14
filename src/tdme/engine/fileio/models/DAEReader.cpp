@@ -372,7 +372,7 @@ Node* DAEReader::readNode(const string& pathName, Model* model, Node* parentNode
 								keyFrameIdx++;
 							}
 
-							auto frames = static_cast< int32_t >(Math::ceil(keyFrameTimes[keyFrameTimes.size() - 1] * fps));
+							auto frames = static_cast<int32_t>(Math::ceil(keyFrameTimes[keyFrameTimes.size() - 1] * fps));
 							if (frames > 0) {
 								ModelTools::createDefaultAnimation(model, frames);
 								auto animation = new Animation();

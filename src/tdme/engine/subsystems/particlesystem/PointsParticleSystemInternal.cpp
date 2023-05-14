@@ -196,7 +196,7 @@ int32_t PointsParticleSystemInternal::emitParticles()
 	{
 		if (autoEmit == true) {
 			auto particlesToSpawnWithFraction = emitter->getCount() * engine->getTiming()->getDeltaTime() / 1000.0f;
-			particlesToSpawn = static_cast< int32_t >(particlesToSpawnWithFraction);
+			particlesToSpawn = static_cast<int32_t>(particlesToSpawnWithFraction);
 			particlesToSpawnRemainder += particlesToSpawnWithFraction - particlesToSpawn;
 			if (particlesToSpawnRemainder > 1.0f) {
 				particlesToSpawn++;
@@ -222,7 +222,7 @@ int32_t PointsParticleSystemInternal::emitParticles()
 		emitter->emit(&particle);
 		// add gravity if our particle have a noticable mass, add translation
 		// add some movement with a min of 0 time delta and a max of engine time delta
-		auto timeDeltaRnd = static_cast< int64_t >((Math::random() * timeDelta));
+		auto timeDeltaRnd = static_cast<int64_t>((Math::random() * timeDelta));
 		if (particle.mass > Math::EPSILON)
 			particle.velocity.sub(Vector3(0.0f, 0.5f * Math::G * static_cast<float>(timeDeltaRnd) / 1000.0f, 0.0f));
 		particle.position.add(velocityForTime.set(particle.velocity).scale(timeDeltaRnd / 1000.0f));

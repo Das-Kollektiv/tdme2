@@ -28,7 +28,7 @@ SphereParticleEmitter::SphereParticleEmitter(int32_t count, int64_t lifeTime, in
 	this->mass = mass;
 	this->massRnd = massRnd;
 	this->sphere = sphere;
-	this->sphereTransformed = static_cast< Sphere* >(sphere->clone());
+	this->sphereTransformed = static_cast<Sphere*>(sphere->clone());
 	this->velocity.set(velocity);
 	this->velocityRnd.set(velocityRnd);
 	this->colorStart.set(colorStart);
@@ -56,7 +56,7 @@ void SphereParticleEmitter::emit(Particle* particle)
 		velocity[2] + (Math::random() * velocityRnd[2] * (Math::random() > 0.5 ? +1.0f : -1.0f))
 	);
 	particle->mass = mass + (Math::random() * (massRnd));
-	particle->lifeTimeMax = lifeTime + static_cast< int64_t >((Math::random() * lifeTimeRnd));
+	particle->lifeTimeMax = lifeTime + static_cast<int64_t>((Math::random() * lifeTimeRnd));
 	particle->lifeTimeCurrent = 0LL;
 	particle->color.set(colorStart);
 	particle->colorAdd.set(

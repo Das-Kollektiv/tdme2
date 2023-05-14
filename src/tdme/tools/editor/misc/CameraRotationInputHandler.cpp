@@ -183,12 +183,7 @@ void CameraRotationInputHandler::handleInputEvents()
 	auto lookAt = cam->getLookAt();
 	if (resetRequested == true) {
 		if (entity != nullptr) {
-			auto entityWorldBoundingBox = entity->getWorldBoundingBox();
-			for (auto i = 0; i < 3; i++) {
-				if (entityWorldBoundingBox->getMin()[i] < worldBoundingBox.getMin()[i]) worldBoundingBox.getMin()[i] = entityWorldBoundingBox->getMin()[i];
-				if (entityWorldBoundingBox->getMax()[i] > worldBoundingBox.getMax()[i]) worldBoundingBox.getMax()[i] = entityWorldBoundingBox->getMax()[i];
-			}
-			worldBoundingBox.update();
+			worldBoundingBox = *entity->getWorldBoundingBox();
 			lookAt.set(worldBoundingBox.getCenter());
 		} else {
 			lookAt.set(0.0f, 0.0f, 0.0f);

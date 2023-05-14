@@ -483,7 +483,7 @@ int32_t GL2Renderer::createColorBufferTexture(int32_t width, int32_t height, int
 	glGenTextures(1, &colorBufferTextureId);
 	glBindTexture(GL_TEXTURE_2D, colorBufferTextureId);
 	// create color texture
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, static_cast< Buffer* >(nullptr));
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, static_cast<Buffer*>(nullptr));
 	// color texture parameter
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -1020,7 +1020,7 @@ void GL2Renderer::drawInstancedIndexedTrianglesFromBufferObjects(int contextIdx,
 void GL2Renderer::drawIndexedTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset)
 {
 	#define BUFFER_OFFSET(i) ((void*)(i))
-	glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 4LL));
+	glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, BUFFER_OFFSET(static_cast<int64_t>(trianglesOffset) * 3LL * 4LL));
 	statistics.renderCalls++;
 	statistics.instances+= 1;
 	statistics.triangles+= triangles;
