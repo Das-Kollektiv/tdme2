@@ -1,8 +1,8 @@
 #pragma once
 
 #include <algorithm>
-#include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -21,10 +21,10 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
-using std::map;
 using std::remove;
 using std::string;
 using std::to_string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::model::Color4;
@@ -50,11 +50,11 @@ class tdme::engine::EntityHierarchy final:
 {
 private:
 	struct EntityHierarchyLevel {
+		EntityHierarchyLevel(const string& id, EntityHierarchyLevel* parent, Entity* entity): id(id), parent(parent), entity(entity) {}
 		string id;
 		EntityHierarchyLevel* parent { nullptr };
 		Entity* entity { nullptr };
-		// TODO: change to unordered_map and pointers to EntityHierarchyLevel
-		map<string, EntityHierarchyLevel> children;
+		unordered_map<string, EntityHierarchyLevel*> children;
 	};
 	Engine* engine { nullptr };
 	Renderer* renderer { nullptr };
@@ -71,7 +71,7 @@ private:
 	BoundingBox boundingBox;
 	BoundingBox worldBoundingBox;
 	vector<Entity*> entities;
-	EntityHierarchyLevel entityRoot;
+	EntityHierarchyLevel entityRoot { string(), nullptr, nullptr };
 
 	RenderPass renderPass { RENDERPASS_STANDARD };
 
@@ -107,7 +107,7 @@ private:
 	inline EntityHierarchyLevel* getEntityHierarchyLevel(EntityHierarchyLevel* entityHierarchyLevel, const string& id) {
 		if (id == entityHierarchyLevel->id) return entityHierarchyLevel;
 		for (auto& it: entityHierarchyLevel->children) {
-			auto childEntityHierarchyLevel = getEntityHierarchyLevel(&it.second, id);
+			auto childEntityHierarchyLevel = getEntityHierarchyLevel(it.second, id);
 			if (childEntityHierarchyLevel != nullptr) return childEntityHierarchyLevel;
 		}
 		return nullptr;
@@ -120,7 +120,7 @@ private:
 	 * @param depth depth
 	 * @param firstEntity first entity
 	 */
-	void updateHierarchy(const Transform& parentTransform, EntityHierarchyLevel& entityHierarchyLevel, int depth, bool& firstEntity);
+	void updateHierarchy(const Transform& parentTransform, EntityHierarchyLevel* entityHierarchyLevel, int depth, bool& firstEntity);
 
 public:
 	/**
