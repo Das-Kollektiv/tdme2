@@ -45,7 +45,6 @@ protected:
 	BoundingBox boundingBox;
 	BoundingBox worldBoundingBox;
 	bool nodeTransformMatrixUpdate;
-	Transform parentTransform;
 
 	/**
 	 * Update bounding volume
@@ -57,7 +56,7 @@ protected:
 	 * @param parentTransform parent transform
 	 */
 	inline void setParentTransform(const Transform& parentTransform) {
-		this->parentTransform = parentTransform;
+		ObjectBase::setParentTransform(parentTransform);
 		updateBoundingBox();
 	}
 
