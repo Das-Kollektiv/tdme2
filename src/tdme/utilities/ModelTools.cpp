@@ -716,10 +716,6 @@ void ModelTools::prepareForShader(Model* model, const string& shader) {
 		for (auto nodeIt: model->getSubNodes()) prepareForFoliageTreeShader(nodeIt.second, model->getImportTransformMatrix(), shader);
 		model->setImportTransformMatrix(Matrix4x4().identity());
 		model->setUpVector(UpVector::Y_UP);
-	} else {
-		for (auto nodeIt: model->getSubNodes()) prepareForDefaultShader(nodeIt.second, model->getImportTransformMatrix());
-		model->setImportTransformMatrix(Matrix4x4().identity());
-		model->setUpVector(UpVector::Y_UP);
 	}
 }
 
