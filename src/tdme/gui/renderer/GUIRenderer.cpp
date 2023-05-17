@@ -75,12 +75,12 @@ void GUIRenderer::initialize()
 		if (renderer->isUsingShortIndices() == true) {
 			auto sbIndices = sbIndicesByteBuffer->asShortBuffer();
 			for (auto i = 0; i < QUAD_COUNT; i++) {
-				sbIndices.put(static_cast< uint16_t >((i * 4 + 0)));
-				sbIndices.put(static_cast< uint16_t >((i * 4 + 1)));
-				sbIndices.put(static_cast< uint16_t >((i * 4 + 2)));
-				sbIndices.put(static_cast< uint16_t >((i * 4 + 2)));
-				sbIndices.put(static_cast< uint16_t >((i * 4 + 3)));
-				sbIndices.put(static_cast< uint16_t >((i * 4 + 0)));
+				sbIndices.put(static_cast<uint16_t>((i * 4 + 0)));
+				sbIndices.put(static_cast<uint16_t>((i * 4 + 1)));
+				sbIndices.put(static_cast<uint16_t>((i * 4 + 2)));
+				sbIndices.put(static_cast<uint16_t>((i * 4 + 2)));
+				sbIndices.put(static_cast<uint16_t>((i * 4 + 3)));
+				sbIndices.put(static_cast<uint16_t>((i * 4 + 0)));
 			}
 			renderer->uploadIndicesBufferObject(renderer->CONTEXTINDEX_DEFAULT, (*vboIds)[0], sbIndices.getPosition() * sizeof(uint16_t), &sbIndices);
 		} else {

@@ -26,7 +26,7 @@ PointParticleEmitter::PointParticleEmitter(int32_t count, int64_t lifeTime, int6
 	this->mass = mass;
 	this->massRnd = massRnd;
 	this->position.set(position);
-	this->positionTransformed.set(position);
+	this->worldPosition.set(position);
 	this->velocity.set(velocity);
 	this->velocityRnd.set(velocityRnd);
 	this->colorStart.set(colorStart);
@@ -45,7 +45,7 @@ void PointParticleEmitter::emit(Particle* particle)
 		velocity[2] + (Math::random() * velocityRnd[2] * (Math::random() > 0.5 ? +1.0f : -1.0f))
 	);
 	particle->mass = mass + static_cast<float>((Math::random() * (massRnd)));
-	particle->lifeTimeMax = lifeTime + static_cast< int64_t >((Math::random() * lifeTimeRnd));
+	particle->lifeTimeMax = lifeTime + static_cast<int64_t>((Math::random() * lifeTimeRnd));
 	particle->lifeTimeCurrent = 0LL;
 	particle->color.set(colorStart);
 	particle->colorAdd.set(
@@ -60,6 +60,6 @@ void PointParticleEmitter::setTransform(const Transform& transform)
 {
 	//
 	auto& transformMatrix = transform.getTransformMatrix();
-	// apply translations
-	positionTransformed = transformMatrix.multiply(position);
+	// world position
+	worldPosition = transformMatrix.multiply(position);
 }

@@ -55,7 +55,7 @@ private:
 	string tModelFileName;
 	string modelFileName;
 	string bvsModelFileName;
-	bool useBC7TextureCompression { true };
+	bool useBC7TextureCompression;
 
 public:
 	/**

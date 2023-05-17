@@ -73,9 +73,6 @@ void Light::dispose() {
 
 void Light::update(int contextIdx) {
 	if (enabled == true) {
-		Vector4 lightPositionTransformed;
-		Vector4 spotDirection4;
-		Vector4 spotDirection4Transformed;
 		auto& light = renderer->getLight(contextIdx, id);
 		light.enabled = 1;
 		light.ambient = ambient.getArray();

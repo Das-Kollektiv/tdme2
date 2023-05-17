@@ -119,7 +119,7 @@ public:
 			writeBoolean(true);
 			writeInt(s.size());
 			for (auto i = 0; i < s.size(); i++) {
-				writeByte(static_cast< uint8_t >(s[i]));
+				writeByte(static_cast<uint8_t>(s[i]));
 			}
 		}
 	}

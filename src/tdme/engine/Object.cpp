@@ -26,12 +26,12 @@ using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::utilities::StringTools;
 
-Object::Object(const string& id, Model* model, int instances): ObjectInternal(id, model, instances), instanceTransformMatrices(instances, Matrix4x4().identity())
+Object::Object(const string& id, Model* model, int instances): ObjectInternal(id, model, instances)
 {
 	setShader("default");
 }
 
-Object::Object(const string& id, Model* model): ObjectInternal(id, model, 1), instanceTransformMatrices(1, Matrix4x4().identity())
+Object::Object(const string& id, Model* model): ObjectInternal(id, model, 1)
 {
 	setShader("default");
 }
@@ -51,31 +51,12 @@ void Object::setTransform(const Transform& transform)
 {
 	ObjectInternal::setTransform(transform);
 	//
-	auto i = 0;
-	for (const auto& transform: instanceTransform) {
-		auto entityTransform = parentTransform * transform;
-		instanceTransformMatrices[i] = entityTransform.getTransformMatrix();
-		++i;
-	}
-	//
-	updateBoundingBox();
-	//
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
 void Object::update()
 {
 	ObjectInternal::update();
-	//
-	auto i = 0;
-	for (const auto& transform: instanceTransform) {
-		auto entityTransform = parentTransform * transform;
-		//
-		instanceTransformMatrices[i] = entityTransform.getTransformMatrix();
-		++i;
-	}
-	//
-	updateBoundingBox();
 	//
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }

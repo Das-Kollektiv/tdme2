@@ -14,7 +14,7 @@
 #include <tdme/engine/subsystems/skinning/fwd-tdme.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Transform.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
 
 using std::map;
 using std::string;
@@ -29,6 +29,7 @@ using tdme::engine::subsystems::rendering::ObjectNode;
 using tdme::engine::subsystems::rendering::ObjectNodeMesh;
 using tdme::engine::Engine;
 using tdme::engine::Transform;
+using tdme::math::Matrix4x4;
 
 /**
  * Object base class
@@ -56,6 +57,16 @@ protected:
 	vector<Transform> instanceTransform;
 	int currentInstance;
 	Engine::AnimationProcessingTarget animationProcessingTarget;
+	Transform parentTransform;
+	mutable Matrix4x4 currentTransformMatrix;
+
+	/**
+	 * Set parent transform
+	 * @param parentTransform parent transform
+	 */
+	inline void setParentTransform(const Transform& parentTransform) {
+		this->parentTransform = parentTransform;
+	}
 
 	/**
 	 * Private constructor
@@ -277,7 +288,7 @@ public:
 	 * @return this transform matrix
 	 */
 	inline const Matrix4x4& getTransformMatrix() const {
-		return instanceTransform[currentInstance].getTransformMatrix();
+		return currentTransformMatrix.set((parentTransform * instanceTransform[currentInstance]).getTransformMatrix());
 	}
 
 };

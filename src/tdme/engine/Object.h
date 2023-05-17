@@ -92,8 +92,6 @@ private:
 
 	int uniqueModelId { UNIQUEMODELID_NONE };
 
-	vector<Matrix4x4> instanceTransformMatrices;
-
 	/**
 	 * Set unique model id
 	 * @param uniqueModelId unique model id
@@ -181,14 +179,6 @@ private:
 	inline void setParentTransform(const Transform& parentTransform) override {
 		//
 		ObjectInternal::setParentTransform(parentTransform);
-		//
-		auto i = 0;
-		for (const auto& transform: instanceTransform) {
-			auto entityTransform = parentTransform * transform;
-			instanceTransformMatrices[i] = entityTransform.getTransformMatrix();
-			//
-			++i;
-		}
 		//
 		updateBoundingBox();
 	}
@@ -341,7 +331,7 @@ public:
 	}
 
 	inline const Matrix4x4& getTransformMatrix() const override {
-		return instanceTransformMatrices[currentInstance];
+		return ObjectBase::getTransformMatrix();
 	}
 
 	inline const Transform& getTransform() const override {

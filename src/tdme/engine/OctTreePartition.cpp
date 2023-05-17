@@ -91,12 +91,12 @@ void OctTreePartition::addEntity(Entity* entity)
 	// frustum bounding box
 	auto boundingBox = entity->getWorldBoundingBox();
 	// find, create root nodes if not exists
-	auto minXPartition = static_cast< int32_t >(Math::floor(boundingBox->getMin().getX() / PARTITION_SIZE_MAX));
-	auto minYPartition = static_cast< int32_t >(Math::floor(boundingBox->getMin().getY() / PARTITION_SIZE_MAX));
-	auto minZPartition = static_cast< int32_t >(Math::floor(boundingBox->getMin().getZ() / PARTITION_SIZE_MAX));
-	auto maxXPartition = static_cast< int32_t >(Math::floor(boundingBox->getMax().getX() / PARTITION_SIZE_MAX));
-	auto maxYPartition = static_cast< int32_t >(Math::floor(boundingBox->getMax().getY() / PARTITION_SIZE_MAX));
-	auto maxZPartition = static_cast< int32_t >(Math::floor(boundingBox->getMax().getZ() / PARTITION_SIZE_MAX));
+	auto minXPartition = static_cast<int32_t>(Math::floor(boundingBox->getMin().getX() / PARTITION_SIZE_MAX));
+	auto minYPartition = static_cast<int32_t>(Math::floor(boundingBox->getMin().getY() / PARTITION_SIZE_MAX));
+	auto minZPartition = static_cast<int32_t>(Math::floor(boundingBox->getMin().getZ() / PARTITION_SIZE_MAX));
+	auto maxXPartition = static_cast<int32_t>(Math::floor(boundingBox->getMax().getX() / PARTITION_SIZE_MAX));
+	auto maxYPartition = static_cast<int32_t>(Math::floor(boundingBox->getMax().getY() / PARTITION_SIZE_MAX));
+	auto maxZPartition = static_cast<int32_t>(Math::floor(boundingBox->getMax().getZ() / PARTITION_SIZE_MAX));
 	for (auto yPartition = minYPartition; yPartition <= maxYPartition; yPartition++)
 	for (auto xPartition = minXPartition; xPartition <= maxXPartition; xPartition++)
 	for (auto zPartition = minZPartition; zPartition <= maxZPartition; zPartition++) {

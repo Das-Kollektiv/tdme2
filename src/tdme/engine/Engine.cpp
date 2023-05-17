@@ -1298,7 +1298,9 @@ void Engine::preRender(Camera* camera, DecomposedEntities& decomposedEntities, b
 	// pre render
 	for (auto entity: requirePreRenderEntities) {
 		// skip on disabled entities
-		if (partition->isVisibleEntity(entity) == false) continue;
+		auto parentEntity = entity->getParentEntity();
+		if ((parentEntity != nullptr && partition->isVisibleEntity(parentEntity) == false) ||
+			(parentEntity == nullptr && partition->isVisibleEntity(entity) == false)) continue;
 		//
 		decomposedEntities.requirePreRenderEntities.push_back(static_cast<Object*>(entity));
 	}
@@ -1307,7 +1309,9 @@ void Engine::preRender(Camera* camera, DecomposedEntities& decomposedEntities, b
 	if (computeAnimations == true) {
 		for (auto entity: requireComputeAnimationEntities) {
 			// skip on disabled entities
-			if (partition->isVisibleEntity(entity) == false) continue;
+			auto parentEntity = entity->getParentEntity();
+			if ((parentEntity != nullptr && partition->isVisibleEntity(parentEntity) == false) ||
+				(parentEntity == nullptr && partition->isVisibleEntity(entity) == false)) continue;
 			//
 			decomposedEntities.requireComputeAnimationEntities.push_back(static_cast<Object*>(entity));
 		}

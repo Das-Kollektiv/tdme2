@@ -132,7 +132,7 @@ public:
 	}
 
 	inline BoundingBox* getWorldBoundingBox() override {
-		// update bounding box transformed
+		// update world bounding box
 		worldBoundingBox.fromBoundingVolumeWithTransformMatrix(getBoundingBox(), entityTransformMatrix);
 
 		//

@@ -93,8 +93,8 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBox(ObjectModelInternal* obje
 				}
 			}
 		}
-		animationState.currentAtTime = static_cast< int64_t >((t * 1000.0f));
-		animationState.lastAtTime = static_cast< int64_t >((t * 1000.0f));
+		animationState.currentAtTime = static_cast<int64_t>((t * 1000.0f));
+		animationState.lastAtTime = static_cast<int64_t>((t * 1000.0f));
 	}
 	// skip on models without mesh
 	if (firstVertex == true) return nullptr;
@@ -142,8 +142,8 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBoxNoMesh(ObjectModelInternal
 				if (vertex[2] > maxZ) maxZ = vertex[2];
 			}
 		}
-		animationState.currentAtTime = static_cast< int64_t >((t * 1000.0f));
-		animationState.lastAtTime = static_cast< int64_t >((t * 1000.0f));
+		animationState.currentAtTime = static_cast<int64_t>((t * 1000.0f));
+		animationState.lastAtTime = static_cast<int64_t>((t * 1000.0f));
 	}
 	// skip on models without nodes
 	if (firstVertex == true) return nullptr;

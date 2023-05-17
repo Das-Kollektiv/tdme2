@@ -82,11 +82,7 @@ void EntityHierarchy::addEntity(Entity* entity, const string& parentId) {
 		Console::println("EntityHierarchy::addEntity(): parent '" + parentId + "': not found");
 		return;
 	}
-	EntityHierarchyLevel childEntityHierarchyLevel;
-	childEntityHierarchyLevel.id = entity->getId();
-	childEntityHierarchyLevel.parent = parentEntityHierarchyLevel;
-	childEntityHierarchyLevel.entity = entity;
-	parentEntityHierarchyLevel->children[entity->getId()] = childEntityHierarchyLevel;
+	parentEntityHierarchyLevel->children[entity->getId()] = new EntityHierarchyLevel(entity->getId(), parentEntityHierarchyLevel, entity);
 
 	// and entities
 	entities.push_back(entity);
@@ -107,7 +103,13 @@ void EntityHierarchy::removeEntity(const string& id) {
 	//
 	auto entity = entityHierarchyLevel->entity;
 	entities.erase(remove(entities.begin(), entities.end(), entity), entities.end());
-	entityHierarchyLevel->parent->children.erase(id);
+
+	//
+	auto entityHierarchyLevelIt = entityHierarchyLevel->parent->children.find(id);
+	if (entityHierarchyLevelIt != entityHierarchyLevel->parent->children.end()) {
+		delete entityHierarchyLevelIt->second;
+		entityHierarchyLevel->parent->children.erase(entityHierarchyLevelIt);
+	}
 
 	//
 	if (engine != nullptr) engine->removeEntityFromLists(entity);
@@ -124,17 +126,17 @@ const vector<Entity*> EntityHierarchy::query(const string& parentId) {
 		return entities;
 	}
 	for (auto entityIt: parentEntityHierarchyLevel->children) {
-		entities.push_back(entityIt.second.entity);
+		entities.push_back(entityIt.second->entity);
 	}
 	return entities;
 }
 
-void EntityHierarchy::updateHierarchy(const Transform& parentTransform, EntityHierarchyLevel& entityHierarchyLevel, int depth, bool& firstEntity) {
+void EntityHierarchy::updateHierarchy(const Transform& parentTransform, EntityHierarchyLevel* entityHierarchyLevel, int depth, bool& firstEntity) {
 	BoundingBox entityBoundingBox;
 	auto levelParentTransform = parentTransform;
-	if (entityHierarchyLevel.entity != nullptr) levelParentTransform*= entityHierarchyLevel.entity->getTransform();
-	for (auto entityIt: entityHierarchyLevel.children) {
-		auto entity = entityIt.second.entity;
+	if (entityHierarchyLevel->entity != nullptr) levelParentTransform*= entityHierarchyLevel->entity->getTransform();
+	for (auto entityIt: entityHierarchyLevel->children) {
+		auto entity = entityIt.second->entity;
 		entity->setParentTransform(levelParentTransform);
 		entityBoundingBox.fromBoundingVolumeWithTransformMatrix(entity->getWorldBoundingBox(), entityTransformMatrixInverted);
 		if (firstEntity == true) {
@@ -144,7 +146,7 @@ void EntityHierarchy::updateHierarchy(const Transform& parentTransform, EntityHi
 			boundingBox.extend(&entityBoundingBox);
 		}
 	}
-	for (auto& childIt: entityHierarchyLevel.children) {
+	for (auto& childIt: entityHierarchyLevel->children) {
 		updateHierarchy(levelParentTransform, childIt.second, depth + 1, firstEntity);
 	}
 	if (depth == 0) {
@@ -167,7 +169,7 @@ void EntityHierarchy::setTransform(const Transform& transform)
 	this->entityTransformMatrixInverted = entityTransformMatrix.clone().invert();
 	// update hierarchy
 	auto firstEntity = true;
-	updateHierarchy(entityTransform, entityRoot, 0, firstEntity);
+	updateHierarchy(entityTransform, &entityRoot, 0, firstEntity);
 }
 
 void EntityHierarchy::update()
@@ -181,7 +183,7 @@ void EntityHierarchy::update()
 	this->entityTransformMatrixInverted = entityTransformMatrix.clone().invert();
 	// update hierarchy
 	auto firstEntity = true;
-	updateHierarchy(entityTransform, entityRoot, 0, firstEntity);
+	updateHierarchy(entityTransform, &entityRoot, 0, firstEntity);
 }
 
 void EntityHierarchy::setEnabled(bool enabled)
@@ -227,14 +229,18 @@ void EntityHierarchy::dispose()
 {
 	//
 	initialized = false;
-	// delegate to objects
-	for (auto entity: entities) entity->dispose();
+	//
+	// delegate to entities
+	for (auto entity: entities) {
+		if (engine != nullptr) engine->removeEntityFromLists(entity);
+		entity->dispose();
+	}
 }
 
 void EntityHierarchy::initialize()
 {
 	//
 	initialized = true;
-	// delegate to objects
+	// delegate to entities
 	for (auto entity: entities) entity->initialize();
 }

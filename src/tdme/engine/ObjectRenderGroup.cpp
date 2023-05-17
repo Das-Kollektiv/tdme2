@@ -412,7 +412,7 @@ void ObjectRenderGroup::setTransform(const Transform& transform)
 	//
 	auto entityTransform = parentTransform * (*this);
 	entityTransformMatrix = entityTransform.getTransformMatrix();
-	// update bounding box transformed
+	// update world bounding box
 	worldBoundingBox.fromBoundingVolumeWithTransformMatrix(&boundingBox, entityTransformMatrix);
 	//
 	if (combinedEntity != nullptr) combinedEntity->setParentTransform(parentTransform);
@@ -426,7 +426,7 @@ void ObjectRenderGroup::update()
 	//
 	auto entityTransform = parentTransform * (*this);
 	entityTransformMatrix = entityTransform.getTransformMatrix();
-	// update bounding box transformed
+	// update world bounding box
 	worldBoundingBox.fromBoundingVolumeWithTransformMatrix(&boundingBox, entityTransformMatrix);
 	//
 	if (combinedEntity != nullptr) combinedEntity->setParentTransform(parentTransform);

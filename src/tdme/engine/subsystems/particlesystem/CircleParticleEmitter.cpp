@@ -27,10 +27,10 @@ CircleParticleEmitter::CircleParticleEmitter(int32_t count, int64_t lifeTime, in
 	this->axis1.set(axis1).normalize();
 	this->center.set(center);
 	this->radius = radius;
-	this->axis0Transformed.set(axis0).normalize();
-	this->axis1Transformed.set(axis1).normalize();
-	this->centerTransformed.set(center);
-	this->radiusTransformed = radius;
+	this->worldAxis0.set(axis0).normalize();
+	this->worldAxis1.set(axis1).normalize();
+	this->worldCenter.set(center);
+	this->worldRadius = radius;
 	this->mass = mass;
 	this->massRnd = massRnd;
 	this->velocity.set(velocity);
@@ -48,11 +48,11 @@ void CircleParticleEmitter::emit(Particle* particle)
 	particle->spriteIndex = 0.0f;
 	// emit particle in circle spanned on axis 0 and axis 1
 	auto rnd = static_cast<float>(Math::random());
-	cosOnAxis0.set(axis0Transformed).scale(Math::cos(Math::PI * 2 * rnd));
-	sinOnAxis1.set(axis1Transformed).scale(Math::sin(Math::PI * 2 * rnd));
+	cosOnAxis0.set(worldAxis0).scale(Math::cos(Math::PI * 2 * rnd));
+	sinOnAxis1.set(worldAxis1).scale(Math::sin(Math::PI * 2 * rnd));
 	particle->position.set(cosOnAxis0);
 	particle->position.add(sinOnAxis1);
-	particle->position.scale(radiusTransformed);
+	particle->position.scale(worldRadius);
 	// compute velocity
 	particle->velocity.set(
 		velocity[0] + (Math::random() * velocityRnd[0] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
@@ -62,7 +62,7 @@ void CircleParticleEmitter::emit(Particle* particle)
 	// mass
 	particle->mass = mass + static_cast<float>((Math::random() * (massRnd)));
 	// life time
-	particle->lifeTimeMax = lifeTime + static_cast< int64_t >((Math::random() * lifeTimeRnd));
+	particle->lifeTimeMax = lifeTime + static_cast<int64_t>((Math::random() * lifeTimeRnd));
 	particle->lifeTimeCurrent = 0LL;
 	// color
 	particle->color.set(colorStart);
@@ -78,12 +78,12 @@ void CircleParticleEmitter::setTransform(const Transform& transform)
 {
 	auto& transformMatrix = transform.getTransformMatrix();
 	// apply rotation, scale, translation
-	centerTransformed = transformMatrix.multiply(center);
+	worldCenter = transformMatrix.multiply(center);
 	// apply transform rotation + scale to axis
-	axis0Transformed = transformMatrix.multiplyNoTranslation(axis0).normalize();
-	axis1Transformed = transformMatrix.multiplyNoTranslation(axis1).normalize();
-	// scale and radius transformed
-	Vector3 scale;
-	transformMatrix.getScale(scale);
-	radiusTransformed = radius * Math::max(scale.getX(), Math::max(scale.getY(), scale.getZ()));
+	worldAxis0 = transformMatrix.multiplyNoTranslation(axis0).normalize();
+	worldAxis1 = transformMatrix.multiplyNoTranslation(axis1).normalize();
+	// world radius
+	Vector3 worldScale;
+	transformMatrix.getScale(worldScale);
+	worldRadius = radius * Math::max(worldScale.getX(), Math::max(worldScale.getY(), worldScale.getZ()));
 }

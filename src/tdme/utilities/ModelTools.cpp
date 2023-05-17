@@ -128,10 +128,10 @@ void ModelTools::prepareForIndexedRendering(const map<string, Node*>& nodes)
 					auto nodeBitangentIndex = faceBitangentIndices[idx];
 					auto vertex = &nodeVertices[nodeVertexIndex];
 					auto normal = &nodeNormals[nodeNormalIndex];
-					auto textureCoordinate = nodeTextureCoordinates.size() > 0 ? &nodeTextureCoordinates[nodeTextureCoordinateIndex] : static_cast< TextureCoordinate* >(nullptr);
-					auto tangent = nodeTangents.size() > 0 ? &nodeTangents[nodeTangentIndex] : static_cast< Vector3* >(nullptr);
-					auto bitangent = nodeBitangents.size() > 0 ? &nodeBitangents[nodeBitangentIndex] : static_cast< Vector3* >(nullptr);
-					auto origin = nodeOrigins.size() > 0 ? &nodeOrigins[nodeVertexIndex] : static_cast< Vector3* >(nullptr);
+					auto textureCoordinate = nodeTextureCoordinates.size() > 0?&nodeTextureCoordinates[nodeTextureCoordinateIndex]:static_cast<TextureCoordinate*>(nullptr);
+					auto tangent = nodeTangents.size() > 0 ? &nodeTangents[nodeTangentIndex] : static_cast<Vector3*>(nullptr);
+					auto bitangent = nodeBitangents.size() > 0 ? &nodeBitangents[nodeBitangentIndex] : static_cast<Vector3*>(nullptr);
+					auto origin = nodeOrigins.size() > 0 ? &nodeOrigins[nodeVertexIndex] : static_cast<Vector3*>(nullptr);
 					auto newIndex = preparedIndices;
 					for (auto i = 0; i < preparedIndices; i++)
 					if (indexedVertices[i].equals(*vertex) &&
@@ -714,10 +714,6 @@ int ModelTools::determineFaceCount(Node* node) {
 void ModelTools::prepareForShader(Model* model, const string& shader) {
 	if (shader == "foliage" || shader == "pbr-foliage" || shader == "tree" || shader == "pbr-tree") {
 		for (auto nodeIt: model->getSubNodes()) prepareForFoliageTreeShader(nodeIt.second, model->getImportTransformMatrix(), shader);
-		model->setImportTransformMatrix(Matrix4x4().identity());
-		model->setUpVector(UpVector::Y_UP);
-	} else {
-		for (auto nodeIt: model->getSubNodes()) prepareForDefaultShader(nodeIt.second, model->getImportTransformMatrix());
 		model->setImportTransformMatrix(Matrix4x4().identity());
 		model->setUpVector(UpVector::Y_UP);
 	}

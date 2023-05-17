@@ -50,7 +50,7 @@ protected:
 
 	Matrix4x4 entityTransformMatrix;
 	Matrix4x4 obbMatrix;
-	Matrix4x4 obbMatrixTransformed;
+	Matrix4x4 worldObbMatrix;
 	Matrix4x4 worldToDecalSpaceMatrix;
 
 	Transform parentTransform;
@@ -72,8 +72,8 @@ protected:
 	 */
 	inline void updateInternal() {
 		worldBoundingBox.fromBoundingVolumeWithTransformMatrix(&boundingBox, entityTransformMatrix);
-		obbMatrixTransformed = obbMatrix.clone().multiply(entityTransformMatrix);
-		worldToDecalSpaceMatrix = obbMatrixTransformed.clone().invert();
+		worldObbMatrix = obbMatrix.clone().multiply(entityTransformMatrix);
+		worldToDecalSpaceMatrix = worldObbMatrix.clone().invert();
 	}
 
 public:
