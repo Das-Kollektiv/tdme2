@@ -45,7 +45,6 @@ void PrototypeDisplaySubView::updateShaderParameters(Prototype* prototype) {
 	}
 }
 
-
 void PrototypeDisplaySubView::display(Prototype* prototype)
 {
 	if (prototype != nullptr) {

@@ -301,11 +301,6 @@ bool PrototypeDisplaySubController::onChange(GUIElementNode* node, Prototype* pr
 	for (auto& applyDisplayNode: applyDisplayNodes) {
 		if (node->getId() == applyDisplayNode) {
 			applyDisplayDetails(prototype);
-			return true;
-		}
-	}
-	for (auto& applyDisplayUpdateRenderingNode: applyDisplayUpdateRenderingNodes) {
-		if (node->getId() == applyDisplayUpdateRenderingNode) {
 			tabView->updateRendering();
 			return true;
 		}

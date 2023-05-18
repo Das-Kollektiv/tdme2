@@ -775,6 +775,9 @@ void ModelTools::prepareForDefaultShader(Node* node, const Matrix4x4& parentTran
 }
 
 void ModelTools::prepareForFoliageTreeShader(Node* node, const Matrix4x4& parentTransformMatrix, const string& shader) {
+	//
+	node->setAnimation(nullptr);
+	//
 	auto transformMatrix = node->getTransformMatrix().clone().multiply(parentTransformMatrix);
 	// do not continue on non mesh datas
 	if (node->isEmpty() == true || node->isJoint() == true) {
