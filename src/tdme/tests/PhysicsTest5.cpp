@@ -266,8 +266,12 @@ void PhysicsTest5::initialize()
 		botEntityHierarchy->addEntity(SceneConnector::createEntity(weaponPrototype, "weapon_left", weaponAttachmentLocalTransform));
 		botEntityHierarchy->update();
 
-		//
-		SceneConnector::createSubBody(world, weaponPrototype, "bot", botEntityHierarchy, "weapon_left", weaponAttachmentLocalTransform);
+		{
+			//
+			SceneConnector::SubBodyStruct subBodyStruct;
+			SceneConnector::createEntityHierarchySubBodyStruct(botEntityHierarchy, "weapon_left", weaponAttachmentLocalTransform, subBodyStruct);
+			SceneConnector::createSubBody(world, weaponPrototype, "bot", subBodyStruct);
+		}
 
 		{
 			auto box2 = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(0.50f, 0.25f, 0.25f)));
@@ -281,8 +285,9 @@ void PhysicsTest5::initialize()
 			botEntityHierarchy->addEntity(box2Object, "weapon_left");
 			botEntityHierarchy->update();
 
-			//
-			SceneConnector::createSubBody(world, "bot", botEntityHierarchy, "box2", box2Object->getTransform(), { box2 });
+			SceneConnector::SubBodyStruct subBodyStruct;
+			SceneConnector::createEntityHierarchySubBodyStruct(botEntityHierarchy, "box2", box2Object->getTransform(), subBodyStruct);
+			SceneConnector::createSubBody(world, "bot", subBodyStruct, { box2 });
 		}
 
 		//world->addRigidBody("cone", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {coneBoundingVolume});

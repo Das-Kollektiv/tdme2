@@ -550,6 +550,33 @@ Entity* SceneConnector::createEntity(SceneEntity* sceneEntity, const Vector3& tr
 	return createEntity(sceneEntity->getPrototype(), sceneEntity->getId(), transform, instances, parentEntity);
 }
 
+bool SceneConnector::createEntityHierarchySubBodyStruct(Engine* engine, const string& id, const string& childId, const Transform& localTransform, SubBodyStruct& subBodyStruct) {
+	auto entityHierarchy = dynamic_cast<EntityHierarchy*>(engine->getEntity(id));
+	if (entityHierarchy == nullptr) {
+		Console::println("SceneConnector::createEntityHierarchySubBodyStruct(): no entity hierarchy: " + id);
+		return false;
+	}
+	//
+	return createEntityHierarchySubBodyStruct(entityHierarchy, childId, localTransform, subBodyStruct);
+}
+
+bool SceneConnector::createEntityHierarchySubBodyStruct(EntityHierarchy* entityHierarchy, const string& childId, const Transform& localTransform, SubBodyStruct& subBodyStruct) {
+	//
+	auto childEntity = entityHierarchy->getEntity(childId);
+	if (childEntity == nullptr) {
+		Console::println("SceneConnector::createEntityHierarchySubBodyStruct(): entity hierarchy: " + entityHierarchy->getId() + ": " + childId);
+		return false;
+	}
+	//
+	auto rootTransformInverse = entityHierarchy->getTransform().clone().invert();
+	//
+	subBodyStruct.id = childId;
+	subBodyStruct.hierarchyParentTransform = rootTransformInverse * childEntity->getParentTransform();
+	subBodyStruct.localTransform = localTransform;
+	//
+	return true;
+}
+
 void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool useEditorDecals, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
 {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
@@ -953,12 +980,7 @@ Body* SceneConnector::createBody(World* world, SceneEntity* sceneEntity, const V
 	return createBody(world, sceneEntity->getPrototype(), sceneEntity->getId(), transform, hierarchy, collisionTypeId, index, overrideType);
 }
 
-void SceneConnector::createSubBody(World* world, const string& id, EntityHierarchy* entityHierarchy, const string& childId, const Transform& localTransform, const vector<BoundingVolume*>& boundingVolumes) {
-	//
-	auto rootTransformInverse = entityHierarchy->getTransform().clone().invert();
-	auto childParentTransform = entityHierarchy->getEntity(childId)->getParentTransform();
-	auto hierarchyParentTransform = rootTransformInverse * childParentTransform;
-
+void SceneConnector::createSubBody(World* world, const string& id, const SubBodyStruct& subBodyStruct, const vector<BoundingVolume*>& boundingVolumes) {
 	//
 	auto hierarchyBody = world->getHierarchyBody(id);
 	if (hierarchyBody == nullptr) {
@@ -966,9 +988,8 @@ void SceneConnector::createSubBody(World* world, const string& id, EntityHierarc
 		return;
 	}
 
-	// create weapon body in physics
-	hierarchyBody->addBody(childId, rootTransformInverse * childParentTransform, localTransform, boundingVolumes);
-
+	// create body in physics
+	hierarchyBody->addBody(subBodyStruct.id, subBodyStruct.hierarchyParentTransform, subBodyStruct.localTransform, boundingVolumes);
 }
 
 void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
