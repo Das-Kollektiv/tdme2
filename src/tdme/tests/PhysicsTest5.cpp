@@ -224,7 +224,6 @@ void PhysicsTest5::initialize()
 	auto sphereModel = modelDeleter.add(Primitives::createModel(sphere, "sphere_model"));
 	sphereModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.5f, 0.8f, 0.8f, 1.0f));
 	sphereModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(0.0f, 1.0f, 1.0f, 1.0f));
-	/*
 	for (auto i = 0; i < SPHERE_COUNT; i++) {
 		entity = new Object("sphere" + to_string(i), sphereModel);
 		entity->setContributesShadows(true);
@@ -234,7 +233,6 @@ void PhysicsTest5::initialize()
 		engine->addEntity(entity);
 		world->addRigidBody("sphere" + to_string(i), true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.75f, 0.4f, 10.0f, Vector3(1.0f, 1.0f, 1.0f), {sphere});
 	}
-	*/
 	try {
 		auto botPrototype = PrototypeReader::read("resources/botrts", "unit_bot.tmodel");
 		// create bot body in engine
@@ -268,16 +266,8 @@ void PhysicsTest5::initialize()
 		botEntityHierarchy->addEntity(SceneConnector::createEntity(weaponPrototype, "weapon_left", weaponAttachmentLocalTransform));
 		botEntityHierarchy->update();
 
-		{
-			//
-			auto botTransformInverse = dynamic_cast<EntityHierarchy*>(engine->getEntity("bot"))->getTransform().clone().invert();
-			auto weaponLeftParentTransform =
-				dynamic_cast<Object*>(dynamic_cast<EntityHierarchy*>(engine->getEntity("bot"))->getEntity("weapon_left"))->getParentTransform();
-			auto hierarchyParentTransform = botTransformInverse * weaponLeftParentTransform;
-
-			// create weapon body in physics
-			botBody->addBody("weapon_left", botTransformScale * (hierarchyParentTransform) * weaponAttachmentLocalTransform, weaponPrototype->getBoundingVolumePrimitives());
-		}
+		//
+		SceneConnector::createSubBody(world, weaponPrototype, "bot", botEntityHierarchy, "weapon_left", weaponAttachmentLocalTransform);
 
 		{
 			auto box2 = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(0.50f, 0.25f, 0.25f)));
@@ -292,13 +282,7 @@ void PhysicsTest5::initialize()
 			botEntityHierarchy->update();
 
 			//
-			auto botTransformInverse = dynamic_cast<EntityHierarchy*>(engine->getEntity("bot"))->getTransform().clone().invert();
-			auto weaponLeftParentTransform =
-				dynamic_cast<Object*>(dynamic_cast<EntityHierarchy*>(engine->getEntity("bot"))->getEntity("box2"))->getParentTransform();
-			auto hierarchyParentTransform = botTransformInverse * weaponLeftParentTransform;
-
-			// create weapon body in physics
-			botBody->addBody("box2", botTransformScale * (hierarchyParentTransform) * box2Object->getTransform(), { box2 });
+			SceneConnector::createSubBody(world, "bot", botEntityHierarchy, "box2", box2Object->getTransform(), { box2 });
 		}
 
 		//world->addRigidBody("cone", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {coneBoundingVolume});

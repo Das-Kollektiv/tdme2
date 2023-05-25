@@ -1,22 +1,31 @@
 #pragma once
 
+#include <string>
+#include <vector>
+
 #include <tdme/tdme.h>
 #include <tdme/audio/fwd-tdme.h>
 #include <tdme/engine/fileio/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
+#include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
+
+using std::string;
+using std::vector;
 
 using tdme::audio::Audio;
 using tdme::engine::fileio::ProgressCallback;
 using tdme::engine::model::Model;
 using tdme::engine::physics::Body;
 using tdme::engine::physics::World;
+using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeParticleSystem;
 using tdme::engine::prototype::PrototypePhysics_BodyType;
@@ -312,6 +321,30 @@ public:
 	 * @return rigid body
 	 */
 	static Body* createBody(World* world, SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), bool hierarchy = false, uint16_t collisionTypeId = 0, int index = -1, PrototypePhysics_BodyType* overrideType = nullptr);
+
+	/**
+	 * Create sub body from entity hierarchy child
+	 * @param world world
+	 * @param prototype prototype
+	 * @param id id
+	 * @param entityHierarchy engine entity hierarchy
+	 * @param childId entity hierarchy child id
+	 * @param localTransform local transform
+	 */
+	inline static void createSubBody(World* world, Prototype* prototype, const string& id, EntityHierarchy* entityHierarchy, const string& childId, const Transform& localTransform) {
+		createSubBody(world, id, entityHierarchy, childId, localTransform, prototype->getBoundingVolumePrimitives());
+	}
+
+	/**
+	 * Create sub body from entity hierarchy child
+	 * @param world world
+	 * @param id id
+	 * @param entityHierarchy engine entity hierarchy
+	 * @param childId entity hierarchy child id
+	 * @param localTransform local transform
+	 * @param boundingVolumes bounding volumes
+	 */
+	static void createSubBody(World* world, const string& id, EntityHierarchy* entityHierarchy, const string& childId, const Transform& localTransform, const vector<BoundingVolume*>& boundingVolumes);
 
 	/**
 	 * Add scene to physics world

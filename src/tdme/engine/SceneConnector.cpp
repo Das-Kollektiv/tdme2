@@ -18,6 +18,7 @@
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/physics/Body.h>
+#include <tdme/engine/physics/HierarchyBody.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/ConvexMesh.h>
 #include <tdme/engine/primitives/HeightMap.h>
@@ -100,6 +101,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::engine::model::Model;
 using tdme::engine::physics::Body;
+using tdme::engine::physics::HierarchyBody;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::HeightMap;
@@ -949,6 +951,24 @@ Body* SceneConnector::createBody(World* world, SceneEntity* sceneEntity, const V
 		transform.update();
 	}
 	return createBody(world, sceneEntity->getPrototype(), sceneEntity->getId(), transform, hierarchy, collisionTypeId, index, overrideType);
+}
+
+void SceneConnector::createSubBody(World* world, const string& id, EntityHierarchy* entityHierarchy, const string& childId, const Transform& localTransform, const vector<BoundingVolume*>& boundingVolumes) {
+	//
+	auto rootTransformInverse = entityHierarchy->getTransform().clone().invert();
+	auto childParentTransform = entityHierarchy->getEntity(childId)->getParentTransform();
+	auto hierarchyParentTransform = rootTransformInverse * childParentTransform;
+
+	//
+	auto hierarchyBody = world->getHierarchyBody(id);
+	if (hierarchyBody == nullptr) {
+		Console::println("SceneConnector::createSubBody(): no hierarchy body found with id: " + id);
+		return;
+	}
+
+	// create weapon body in physics
+	hierarchyBody->addBody(childId, rootTransformInverse * childParentTransform, localTransform, boundingVolumes);
+
 }
 
 void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vector3& translation, ProgressCallback* progressCallback)

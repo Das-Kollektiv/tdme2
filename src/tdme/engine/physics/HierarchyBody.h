@@ -43,7 +43,7 @@ protected:
 	 * @param inertiaTensor inertia tensor vector
 	 * @param boundingVolumes bounding volumes
 	 */
-	HierarchyBody(World* world, const string& id, BodyType type, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*> boundingVolumes);
+	HierarchyBody(World* world, const string& id, BodyType type, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes);
 
 	/**
 	 * Destructor
@@ -80,17 +80,19 @@ public:
 	/**
 	 * Add sub body
 	 * @param id id
+	 * @param parentTransform hierarchy parent transform
 	 * @param transform local transform
 	 * @param boundingVolumes bounding volumes
 	 */
-	void addBody(const string& id, const Transform& transform, const vector<BoundingVolume*> boundingVolumes);
+	void addBody(const string& id, const Transform& parentTransform, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes);
 
 	/**
 	 * Update sub body
 	 * @param id id
+	 * @param parentTransform hierarchy parent transform
 	 * @param transform transform
 	 */
-	void updateBody(const string& id, const Transform& transform);
+	void updateBody(const string& id, const Transform& parentTransform, const Transform& transform);
 
 	/**
 	 * Remove sub body
