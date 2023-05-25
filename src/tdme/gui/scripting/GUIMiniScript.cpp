@@ -1018,8 +1018,7 @@ void GUIMiniScript::registerMethods() {
 					if (screen != nullptr) {
 						returnValue.setValue(screen->isEnabled());
 					} else {
-						Console::println("ScriptMethodGUIScreenIsEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no screen with given id: " + screenId);
-						miniScript->startErrorScript();
+						returnValue.setValue(false);
 					}
 				}
 			}
