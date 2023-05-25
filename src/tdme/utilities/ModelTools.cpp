@@ -713,9 +713,11 @@ int ModelTools::determineFaceCount(Node* node) {
 
 void ModelTools::prepareForShader(Model* model, const string& shader) {
 	if (shader == "foliage" || shader == "pbr-foliage" || shader == "tree" || shader == "pbr-tree") {
+		model->getAnimationSetups().clear();
 		for (auto nodeIt: model->getSubNodes()) prepareForFoliageTreeShader(nodeIt.second, model->getImportTransformMatrix(), shader);
 		model->setImportTransformMatrix(Matrix4x4().identity());
 		model->setUpVector(UpVector::Y_UP);
+		createDefaultAnimation(model, 0);
 	}
 }
 
@@ -775,6 +777,9 @@ void ModelTools::prepareForDefaultShader(Node* node, const Matrix4x4& parentTran
 }
 
 void ModelTools::prepareForFoliageTreeShader(Node* node, const Matrix4x4& parentTransformMatrix, const string& shader) {
+	//
+	node->setAnimation(nullptr);
+	//
 	auto transformMatrix = node->getTransformMatrix().clone().multiply(parentTransformMatrix);
 	// do not continue on non mesh datas
 	if (node->isEmpty() == true || node->isJoint() == true) {

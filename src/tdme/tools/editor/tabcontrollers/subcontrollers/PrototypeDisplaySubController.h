@@ -57,10 +57,6 @@ private:
 		"rendering_receives_shadows",
 		"rendering_render_groups"
 	};
-	array<string, 2> applyDisplayUpdateRenderingNodes = {
-		"rendering_shader",
-		"rendering_distance_shader"
-	};
 
 public:
 	/**

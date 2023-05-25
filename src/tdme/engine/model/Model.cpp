@@ -77,25 +77,6 @@ void Model::deleteSubNodes(const map<string, Node*>& subNodes) {
 	}
 }
 
-Node* Model::getNodeById(const string& id)
-{
-	auto nodeIt = nodes.find(id);
-	if (nodeIt != nodes.end()) {
-		return nodeIt->second;
-	}
-	return nullptr;
-
-}
-
-Node* Model::getSubNodeById(const string& id)
-{
-	auto nodeIt = subNodes.find(id);
-	if (nodeIt != subNodes.end()) {
-		return nodeIt->second;
-	}
-	return nullptr;
-}
-
 AnimationSetup* Model::addAnimationSetup(const string& id, int32_t startFrame, int32_t endFrame, bool loop, float speed)
 {
 	auto animationSetupIt = animationSetups.find(id);
@@ -110,23 +91,20 @@ AnimationSetup* Model::addAnimationSetup(const string& id, int32_t startFrame, i
 
 AnimationSetup* Model::addOverlayAnimationSetup(const string& id, const string& overlayFromNodeId, int32_t startFrame, int32_t endFrame, bool loop, float speed)
 {
+	auto animationSetupIt = animationSetups.find(id);
+	if (animationSetupIt != animationSetups.end()) {
+		delete animationSetupIt->second;
+		animationSetups.erase(animationSetupIt);
+	}
 	auto animationSetup = new AnimationSetup(this, id, startFrame, endFrame, loop, overlayFromNodeId, speed);
 	animationSetups[id] = animationSetup;
 	return animationSetup;
 }
 
-AnimationSetup* Model::getAnimationSetup(const string& id)
-{
-	auto animationSetupIt = animationSetups.find(id);
-	if (animationSetupIt != animationSetups.end()) {
-		return animationSetupIt->second;
-	}
-	return nullptr;
-}
-
 bool Model::removeAnimationSetup(const string& id) {
 	auto animationSetupIt = animationSetups.find(id);
 	if (animationSetupIt == animationSetups.end()) return false;
+	delete animationSetupIt->second;
 	animationSetups.erase(animationSetupIt);
 	return true;
 }

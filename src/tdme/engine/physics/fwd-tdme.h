@@ -8,6 +8,7 @@ namespace physics {
 	struct CollisionListener;
 	class CollisionResponse;
 	class CollisionResponse_Entity;
+	class HierarchyBody;
 	class Body;
 	class World;
 	class WorldListener;

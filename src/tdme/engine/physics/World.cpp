@@ -22,6 +22,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/physics/Body.h>
+#include <tdme/engine/physics/HierarchyBody.h>
 #include <tdme/engine/physics/CollisionResponse.h>
 #include <tdme/engine/physics/CollisionResponse_Entity.h>
 #include <tdme/engine/physics/WorldListener.h>
@@ -38,6 +39,7 @@
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
 #include <tdme/utilities/VectorIteratorMultiple.h>
 
@@ -49,6 +51,7 @@ using std::to_string;
 using std::unordered_set;
 
 using tdme::engine::physics::Body;
+using tdme::engine::physics::HierarchyBody;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::CollisionResponse_Entity;
 using tdme::engine::physics::World;
@@ -66,6 +69,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
+using tdme::utilities::StringTools;
 using tdme::utilities::Time;
 using tdme::utilities::VectorIteratorMultiple;
 
@@ -106,10 +110,13 @@ void World::reset()
 	}
 }
 
-Body* World::addRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes)
+Body* World::addRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy)
 {
 	removeBody(id);
-	auto body = new Body(this, id, Body::BODYTYPE_DYNAMIC, enabled, collisionTypeId, transform, restitution, friction, mass, inertiaTensor, boundingVolumes);
+	auto body =
+		hierarchy == true?
+			new HierarchyBody(this, id, Body::BODYTYPE_DYNAMIC, enabled, collisionTypeId, transform, restitution, friction, mass, inertiaTensor, boundingVolumes):
+			new Body(this, id, Body::BODYTYPE_DYNAMIC, enabled, collisionTypeId, transform, restitution, friction, mass, inertiaTensor, boundingVolumes);
 	bodies.push_back(body);
 	rigidBodiesDynamic.push_back(body);
 	bodiesById[id] = body;
@@ -119,9 +126,12 @@ Body* World::addRigidBody(const string& id, bool enabled, uint16_t collisionType
 	return body;
 }
 
-Body* World::addStaticCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes) {
+Body* World::addStaticCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy) {
 	removeBody(id);
-	auto body = new Body(this, id, Body::BODYTYPE_COLLISION_STATIC, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
+	auto body =
+		hierarchy == true?
+			new HierarchyBody(this, id, Body::BODYTYPE_COLLISION_STATIC, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes):
+			new Body(this, id, Body::BODYTYPE_COLLISION_STATIC, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
 	bodies.push_back(body);
 	bodiesById[id] = body;
 	for (auto listener: worldListeners) {
@@ -130,9 +140,12 @@ Body* World::addStaticCollisionBody(const string& id, bool enabled, uint16_t col
 	return body;
 }
 
-Body* World::addDynamicCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes) {
+Body* World::addDynamicCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy) {
 	removeBody(id);
-	auto body = new Body(this, id, Body::BODYTYPE_COLLISION_DYNAMIC, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
+	auto body =
+		hierarchy == true?
+			new HierarchyBody(this, id, Body::BODYTYPE_COLLISION_DYNAMIC, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes):
+			new Body(this, id, Body::BODYTYPE_COLLISION_DYNAMIC, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
 	bodies.push_back(body);
 	bodiesById[id] = body;
 	for (auto listener: worldListeners) {
@@ -141,10 +154,14 @@ Body* World::addDynamicCollisionBody(const string& id, bool enabled, uint16_t co
 	return body;
 }
 
-Body* World::addStaticRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, float friction, const vector<BoundingVolume*>& boundingVolumes)
+Body* World::addStaticRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, float friction, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy)
 {
 	removeBody(id);
-	auto body = new Body(this, id, Body::BODYTYPE_STATIC, enabled, collisionTypeId, transform, 0.0f, friction, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
+	auto body =
+		hierarchy == true?
+			new HierarchyBody(this, id, Body::BODYTYPE_STATIC, enabled, collisionTypeId, transform, 0.0f, friction, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes):
+			new Body(this, id, Body::BODYTYPE_STATIC, enabled, collisionTypeId, transform, 0.0f, friction, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
+
 	bodies.push_back(body);
 	bodiesById[id] = body;
 	for (auto listener: worldListeners) {
@@ -153,13 +170,10 @@ Body* World::addStaticRigidBody(const string& id, bool enabled, uint16_t collisi
 	return body;
 }
 
-Body* World::getBody(const string& id)
-{
-	auto bodyByIdIt = bodiesById.find(id);
-	if (bodyByIdIt != bodiesById.end()) {
-		return bodyByIdIt->second;
-	}
-	return nullptr;
+HierarchyBody* World::getHierarchyBody(const string& id) {
+	auto body = getBody(id);
+	if (body == nullptr) return nullptr;
+	return dynamic_cast<HierarchyBody*>(body);
 }
 
 void World::removeBody(const string& id) {
@@ -189,6 +203,7 @@ void World::addFixedJoint(const string& id, Body* body1, Body* body2) {
 	}
 	Vector3 anchorPoint = body1->getTransform().getTranslation().clone().add(body2->getTransform().getTranslation()).scale(0.5f);
 	reactphysics3d::FixedJointInfo jointInfo(body1->rigidBody, body2->rigidBody, reactphysics3d::Vector3(anchorPoint.getX(), anchorPoint.getY(), anchorPoint.getZ()));
+	jointInfo.isCollisionEnabled = false;
 	jointsById[id] = dynamic_cast<reactphysics3d::FixedJoint*>(world->createJoint(jointInfo));
 }
 
@@ -313,8 +328,16 @@ void World::update(float deltaTime)
 		}
 
 		// rotations
-		Quaternion rotationsQuaternion(transformOrientation.x, transformOrientation.y, transformOrientation.z, transformOrientation.w);
-		physicsTransform.getRotation(0).fromQuaternion(rotationsQuaternion);
+		physicsTransform.getRotation(0).fromRotation(
+			Rotation::fromQuaternion(
+				Quaternion(
+					transformOrientation.x,
+					transformOrientation.y,
+					transformOrientation.z,
+					transformOrientation.w
+				)
+			)
+		);
 		// scale
 		physicsTransform.setScale(body->transformScale);
 		// translation
@@ -333,24 +356,31 @@ void World::synchronize(Engine* engine)
 		// skip on sleeping objects
 		if (body->isSleeping() == true) continue;
 
+		//
+		auto bodyId = body->getId();
+		string subBodyId;
+		auto bodyIdSeparatorPosition = bodyId.find('|');
+		if (bodyIdSeparatorPosition != string::npos) {
+			subBodyId = StringTools::substring(bodyId, bodyIdSeparatorPosition + 1, bodyId.size());
+			bodyId = StringTools::substring(bodyId, 0, bodyIdSeparatorPosition);
+		}
+
 		// synch with engine entity
-		auto engineEntity = engine->getEntity(body->id);
-		if (engineEntity == nullptr) {
+		auto entity = engine->getEntity(bodyId);
+		if (entity == nullptr) {
 			Console::println(
 				string("World::entity '") +
-				body->id +
+				bodyId +
 				string("' not found")
 			);
 			continue;
 		}
 
 		// enable
-		engineEntity->setEnabled(body->isEnabled());
+		entity->setEnabled(body->isEnabled());
 
-		//apply inverse local transform for engine update
-		if (body->isEnabled() == true) {
-			engineEntity->setTransform(body->transform);
-		}
+		// apply transform to engine entity
+		if (body->isEnabled() == true) entity->setTransform(body->transform);
 	}
 }
 

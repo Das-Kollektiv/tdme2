@@ -5,9 +5,11 @@
 #include <reactphysics3d/collision/narrowphase/CollisionDispatch.h>
 #include <reactphysics3d/collision/narrowphase/NarrowPhaseAlgorithm.h>
 #include <reactphysics3d/collision/shapes/CollisionShape.h>
+#include <reactphysics3d/collision/Collider.h>
 #include <reactphysics3d/collision/CollisionCallback.h>
 #include <reactphysics3d/constraint/ContactPoint.h>
 #include <reactphysics3d/engine/PhysicsWorld.h>
+#include <reactphysics3d/mathematics/Quaternion.h>
 #include <reactphysics3d/mathematics/Transform.h>
 #include <reactphysics3d/mathematics/Vector3.h>
 #include <reactphysics3d/memory/MemoryAllocator.h>
@@ -45,7 +47,7 @@ using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
 
-Body::Body(World* world, const string& id, BodyType type, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*> boundingVolumes)
+Body::Body(World* world, const string& id, BodyType type, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes)
 {
 	this->world = world;
 	this->id = id;
@@ -100,15 +102,9 @@ Body::Body(World* world, const string& id, BodyType type, bool enabled, uint16_t
 
 Body::~Body() {
 	// remove colliders
-	for (auto collider: colliders) {
-		rigidBody->removeCollider(collider);
-	}
+	removeColliders(colliders, boundingVolumes);
 	// destroy rigid body
 	this->world->world->destroyRigidBody(rigidBody);
-	// delete bounding volumes
-	for (auto boundingVolume: boundingVolumes) {
-		delete boundingVolume;
-	}
 }
 
 void Body::setCollisionTypeId(uint16_t typeId)
@@ -128,6 +124,28 @@ void Body::setCollisionTypeIds(uint16_t collisionTypeIds)
 }
 
 void Body::resetColliders() {
+	// we need the scale from our body transform to be passed as local transform when resetting colliders
+	Transform localTransform;
+	localTransform.setScale(transform.getScale());
+	localTransform.update();
+	// reset colliders, means remove and add them and create colliders with correct scale
+	resetColliders(colliders, boundingVolumes, localTransform);
+	// set up inverse inertia tensor local
+	if (type == BODYTYPE_DYNAMIC) rigidBody->setLocalInertiaTensor(reactphysics3d::Vector3(inertiaTensor.getX(), inertiaTensor.getY(), inertiaTensor.getZ()));
+}
+
+void Body::removeColliders(vector<reactphysics3d::Collider*>& colliders, vector<BoundingVolume*>& boundingVolumes) {
+	// remove colliders
+	for (auto collider: colliders) {
+		rigidBody->removeCollider(collider);
+	}
+	// delete bounding volumes
+	for (auto boundingVolume: boundingVolumes) {
+		delete boundingVolume;
+	}
+}
+
+void Body::resetColliders(vector<reactphysics3d::Collider*>& colliders, vector<BoundingVolume*>& boundingVolumes, const Transform& localTransform) {
 	// remove colliders
 	for (auto collider: colliders) rigidBody->removeCollider(collider);
 	colliders.clear();
@@ -135,9 +153,9 @@ void Body::resetColliders() {
 	// set up scale
 	for (auto boundingVolume: boundingVolumes) {
 		// scale bounding volume and recreate it if nessessary
-		if (boundingVolume->getScale().equals(transform.getScale()) == false) {
+		if (boundingVolume->getScale().equals(localTransform.getScale()) == false) {
 			boundingVolume->destroyCollisionShape();
-			boundingVolume->setScale(transform.getScale());
+			boundingVolume->setScale(localTransform.getScale());
 			boundingVolume->createCollisionShape(world);
 		}
 	}
@@ -155,6 +173,7 @@ void Body::resetColliders() {
 			boundingVolume->worldBoundingBox.getDimensions().getZ();
 	}
 	*/
+
 	// add bounding volumes with mass
 	for (auto boundingVolume: boundingVolumes) {
 		// skip if not attached
@@ -166,7 +185,15 @@ void Body::resetColliders() {
 			boundingVolume->worldBoundingBox.getDimensions().getY() *
 			boundingVolume->worldBoundingBox.getDimensions().getZ();
 		*/
-		auto collider = rigidBody->addCollider(boundingVolume->collisionShape, boundingVolume->collisionShapeLocalTransform);
+		//
+
+		reactphysics3d::Transform localTransformRP3D(
+			reactphysics3d::Vector3(localTransform.getTranslation().getX(), localTransform.getTranslation().getY(), localTransform.getTranslation().getZ()),
+			reactphysics3d::Quaternion(localTransform.getRotationsQuaternion().getX(), localTransform.getRotationsQuaternion().getY(), localTransform.getRotationsQuaternion().getZ(), localTransform.getRotationsQuaternion().getW())
+		);
+
+		//
+		auto collider = rigidBody->addCollider(boundingVolume->collisionShape, localTransformRP3D * boundingVolume->collisionShapeLocalTransform);
 		collider->getMaterial().setBounciness(restitution);
 		collider->getMaterial().setFrictionCoefficient(friction);
 		if (type == BODYTYPE_COLLISION_STATIC || type == BODYTYPE_COLLISION_DYNAMIC) collider->setIsTrigger(true);
@@ -179,15 +206,6 @@ void Body::resetColliders() {
 		//
 		colliders.push_back(collider);
 	}
-
-	// set up inverse inertia tensor local
-	if (type != BODYTYPE_COLLISION_STATIC && type != BODYTYPE_COLLISION_DYNAMIC) {
-		// 	this method is only used when setting TDME2 transform, so no need to transform back
-		reactphysics3d::Transform transform;
-		rigidBody->setTransform(transform);
-		// set inverse inertia tensor local
-		rigidBody->setLocalInertiaTensor(reactphysics3d::Vector3(inertiaTensor.getX(), inertiaTensor.getY(), inertiaTensor.getZ()));
-	};
 }
 
 void Body::setFriction(float friction)

@@ -187,7 +187,13 @@ public:
 	 * @param id id
 	 * @return
 	 */
-	Node* getNodeById(const string& id);
+	inline Node* getNodeById(const string& id) {
+		auto nodeIt = nodes.find(id);
+		if (nodeIt != nodes.end()) {
+			return nodeIt->second;
+		}
+		return nullptr;
+	}
 
 	/**
 	 * Returns object's sub nodes
@@ -202,7 +208,13 @@ public:
 	 * @param id id
 	 * @return
 	 */
-	Node* getSubNodeById(const string& id);
+	inline Node* getSubNodeById(const string& id) {
+		auto nodeIt = subNodes.find(id);
+		if (nodeIt != subNodes.end()) {
+			return nodeIt->second;
+		}
+		return nullptr;
+	}
 
 	/**
 	 * @return has skinning
@@ -252,7 +264,13 @@ public:
 	/**
 	 * @return animation setup for given id or null
 	 */
-	AnimationSetup* getAnimationSetup(const string& id);
+	inline AnimationSetup* getAnimationSetup(const string& id) {
+		auto animationSetupIt = animationSetups.find(id);
+		if (animationSetupIt != animationSetups.end()) {
+			return animationSetupIt->second;
+		}
+		return nullptr;
+	}
 
 	/**
 	 * Remove animation setup

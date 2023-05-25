@@ -1,22 +1,31 @@
 #pragma once
 
+#include <string>
+#include <vector>
+
 #include <tdme/tdme.h>
 #include <tdme/audio/fwd-tdme.h>
 #include <tdme/engine/fileio/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
+#include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
+
+using std::string;
+using std::vector;
 
 using tdme::audio::Audio;
 using tdme::engine::fileio::ProgressCallback;
 using tdme::engine::model::Model;
 using tdme::engine::physics::Body;
 using tdme::engine::physics::World;
+using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeParticleSystem;
 using tdme::engine::prototype::PrototypePhysics_BodyType;
@@ -41,6 +50,12 @@ public:
 	static constexpr int32_t RIGIDBODY_TYPEID_COLLISION { 4 };
 	static constexpr int32_t RIGIDBODY_TYPEID_TRIGGER { 8 };
 
+	struct SubBodyStruct {
+		string id;
+		Transform hierarchyParentTransform;
+		Transform localTransform;
+	};
+
 	STATIC_DLL_IMPEXT static float renderGroupsPartitionWidth;
 	STATIC_DLL_IMPEXT static float renderGroupsPartitionHeight;
 	STATIC_DLL_IMPEXT static float renderGroupsPartitionDepth;
@@ -51,8 +66,6 @@ public:
 	STATIC_DLL_IMPEXT static int renderGroupsLOD2ReduceBy;
 	STATIC_DLL_IMPEXT static int renderGroupsLOD3ReduceBy;
 	STATIC_DLL_IMPEXT static bool enableEarlyZRejection;
-
-public:
 
 	/**
 	 * @return render groups partition size / width
@@ -272,6 +285,27 @@ public:
 	static Entity* createEntity(SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), int instances = 1, Entity* parentEntity = nullptr);
 
 	/**
+	 * Create sub body creation information structure from entity hierarchy and given child id
+	 * @param engine engine
+	 * @param id entity hierarchy id
+	 * @param childId entity hierarchy child id
+	 * @param localTransform local transform
+	 * @param subBodyStruct sub body struct
+	 * @@return success
+	 */
+	static bool createEntityHierarchySubBodyStruct(Engine* engine, const string& id, const string& childId, const Transform& localTransform, SubBodyStruct& subBodyStruct);
+
+	/**
+	 * Create sub body creation information structure from entity hierarchy and given child id
+	 * @param entityHierarchy engine entity hierarchy
+	 * @param childId entity hierarchy child id
+	 * @param localTransform local transform
+	 * @param subBodyStruct sub body struct
+	 * @@return success
+	 */
+	static bool createEntityHierarchySubBodyStruct(EntityHierarchy* entityHierarchy, const string& childId, const Transform& localTransform, SubBodyStruct& subBodyStruct);
+
+	/**
 	 * Add scene to engine
 	 * @param engine engine
 	 * @param scene scene
@@ -292,24 +326,46 @@ public:
 	 * @param prototype prototype
 	 * @param id id
 	 * @param transform transform
+	 * @param hierarchy hierarchy
 	 * @param collisionTypeId collision type id or 0 for default
 	 * @param index use a optional index or all bounding volumes
 	 * @param overrideType override physics type if required
 	 * @return rigid body
 	 */
-	static Body* createBody(World* world, Prototype* prototype, const string& id, const Transform& transform, uint16_t collisionTypeId = 0, int index = -1, PrototypePhysics_BodyType* overrideType = nullptr);
+	static Body* createBody(World* world, Prototype* prototype, const string& id, const Transform& transform, bool hierarchy = false, uint16_t collisionTypeId = 0, int index = -1, PrototypePhysics_BodyType* overrideType = nullptr);
 
 	/**
 	 * Create rigid body
 	 * @param world world
 	 * @param sceneEntity scene entity
 	 * @param translation translation
+	 * @param hierarchy hierarchy
 	 * @param collisionTypeId collision type id or 0 for default
 	 * @param index use a optional index or all bounding volumes
 	 * @param overrideType override physics type if required
 	 * @return rigid body
 	 */
-	static Body* createBody(World* world, SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), uint16_t collisionTypeId = 0, int index = -1, PrototypePhysics_BodyType* overrideType = nullptr);
+	static Body* createBody(World* world, SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), bool hierarchy = false, uint16_t collisionTypeId = 0, int index = -1, PrototypePhysics_BodyType* overrideType = nullptr);
+
+	/**
+	 * Create sub body
+	 * @param world world
+	 * @param prototype prototype
+	 * @param id body id
+	 * @param subBodyStruct sub body creation information struct
+	 */
+	inline static void createSubBody(World* world, Prototype* prototype, const string& id, const SubBodyStruct& subBodyStruct) {
+		createSubBody(world, id, subBodyStruct, prototype->getBoundingVolumePrimitives());
+	}
+
+	/**
+	 * Create sub body
+	 * @param world world
+	 * @param id id
+	 * @param subBodyStruct sub body creation information struct
+	 * @param boundingVolumes bounding volumes
+	 */
+	static void createSubBody(World* world, const string& id, const SubBodyStruct& subBodyStruct, const vector<BoundingVolume*>& boundingVolumes);
 
 	/**
 	 * Add scene to physics world
