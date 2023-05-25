@@ -292,24 +292,26 @@ public:
 	 * @param prototype prototype
 	 * @param id id
 	 * @param transform transform
+	 * @param hierarchy hierarchy
 	 * @param collisionTypeId collision type id or 0 for default
 	 * @param index use a optional index or all bounding volumes
 	 * @param overrideType override physics type if required
 	 * @return rigid body
 	 */
-	static Body* createBody(World* world, Prototype* prototype, const string& id, const Transform& transform, uint16_t collisionTypeId = 0, int index = -1, PrototypePhysics_BodyType* overrideType = nullptr);
+	static Body* createBody(World* world, Prototype* prototype, const string& id, const Transform& transform, bool hierarchy = false, uint16_t collisionTypeId = 0, int index = -1, PrototypePhysics_BodyType* overrideType = nullptr);
 
 	/**
 	 * Create rigid body
 	 * @param world world
 	 * @param sceneEntity scene entity
 	 * @param translation translation
+	 * @param hierarchy hierarchy
 	 * @param collisionTypeId collision type id or 0 for default
 	 * @param index use a optional index or all bounding volumes
 	 * @param overrideType override physics type if required
 	 * @return rigid body
 	 */
-	static Body* createBody(World* world, SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), uint16_t collisionTypeId = 0, int index = -1, PrototypePhysics_BodyType* overrideType = nullptr);
+	static Body* createBody(World* world, SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), bool hierarchy = false, uint16_t collisionTypeId = 0, int index = -1, PrototypePhysics_BodyType* overrideType = nullptr);
 
 	/**
 	 * Add scene to physics world

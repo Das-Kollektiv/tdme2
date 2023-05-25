@@ -5,9 +5,11 @@
 #include <reactphysics3d/collision/narrowphase/CollisionDispatch.h>
 #include <reactphysics3d/collision/narrowphase/NarrowPhaseAlgorithm.h>
 #include <reactphysics3d/collision/shapes/CollisionShape.h>
+#include <reactphysics3d/collision/Collider.h>
 #include <reactphysics3d/collision/CollisionCallback.h>
 #include <reactphysics3d/constraint/ContactPoint.h>
 #include <reactphysics3d/engine/PhysicsWorld.h>
+#include <reactphysics3d/mathematics/Quaternion.h>
 #include <reactphysics3d/mathematics/Transform.h>
 #include <reactphysics3d/mathematics/Vector3.h>
 #include <reactphysics3d/memory/MemoryAllocator.h>
@@ -100,15 +102,9 @@ Body::Body(World* world, const string& id, BodyType type, bool enabled, uint16_t
 
 Body::~Body() {
 	// remove colliders
-	for (auto collider: colliders) {
-		rigidBody->removeCollider(collider);
-	}
+	removeColliders(colliders, boundingVolumes);
 	// destroy rigid body
 	this->world->world->destroyRigidBody(rigidBody);
-	// delete bounding volumes
-	for (auto boundingVolume: boundingVolumes) {
-		delete boundingVolume;
-	}
 }
 
 void Body::setCollisionTypeId(uint16_t typeId)
@@ -128,19 +124,54 @@ void Body::setCollisionTypeIds(uint16_t collisionTypeIds)
 }
 
 void Body::resetColliders() {
+	// we need the scale from our body transform to be passed as local transform when resetting colliders
+	Transform localTransform;
+	localTransform.setScale(transform.getScale());
+	localTransform.update();
+	// reset colliders, means remove and add them and create colliders with correct scale
+	resetColliders(colliders, boundingVolumes, localTransform);
+	// set up inverse inertia tensor local
+	if (type == BODYTYPE_DYNAMIC) rigidBody->setLocalInertiaTensor(reactphysics3d::Vector3(inertiaTensor.getX(), inertiaTensor.getY(), inertiaTensor.getZ()));
+}
+
+void Body::removeColliders(vector<reactphysics3d::Collider*>& colliders, vector<BoundingVolume*>& boundingVolumes) {
+	// remove colliders
+	for (auto collider: colliders) {
+		rigidBody->removeCollider(collider);
+	}
+	// delete bounding volumes
+	for (auto boundingVolume: boundingVolumes) {
+		delete boundingVolume;
+	}
+}
+
+void Body::resetColliders(vector<reactphysics3d::Collider*>& colliders, vector<BoundingVolume*>& boundingVolumes, const Transform& transform) {
 	// remove colliders
 	for (auto collider: colliders) rigidBody->removeCollider(collider);
 	colliders.clear();
 
 	// set up scale
-	for (auto boundingVolume: boundingVolumes) {
-		// scale bounding volume and recreate it if nessessary
-		if (boundingVolume->getScale().equals(transform.getScale()) == false) {
-			boundingVolume->destroyCollisionShape();
-			boundingVolume->setScale(transform.getScale());
-			boundingVolume->createCollisionShape(world);
+	{
+		auto i = 0;
+		for (auto boundingVolume: boundingVolumes) {
+			Console::println(
+				"bv[" + to_string(i) + "]: scale: " +
+				to_string(boundingVolume->getScale().getX()) + ", " +
+				to_string(boundingVolume->getScale().getY()) + ", " +
+				to_string(boundingVolume->getScale().getZ())
+			);
+			// scale bounding volume and recreate it if nessessary
+			if (boundingVolume->getScale().equals(transform.getScale()) == false) {
+				boundingVolume->destroyCollisionShape();
+				boundingVolume->setScale(transform.getScale());
+				boundingVolume->createCollisionShape(world);
+			}
+			//
+			i++;
 		}
 	}
+
+	// transform: local transform
 
 	// determine total volume
 	/*
@@ -155,6 +186,7 @@ void Body::resetColliders() {
 			boundingVolume->worldBoundingBox.getDimensions().getZ();
 	}
 	*/
+
 	// add bounding volumes with mass
 	for (auto boundingVolume: boundingVolumes) {
 		// skip if not attached
@@ -166,7 +198,118 @@ void Body::resetColliders() {
 			boundingVolume->worldBoundingBox.getDimensions().getY() *
 			boundingVolume->worldBoundingBox.getDimensions().getZ();
 		*/
-		auto collider = rigidBody->addCollider(boundingVolume->collisionShape, boundingVolume->collisionShapeLocalTransform);
+		//
+
+		// RP3D collision shape local transform -> TDME2 collision shape local transform
+		Transform collisionShapeLocalTransform;
+		collisionShapeLocalTransform.setTranslation(
+			Vector3(
+				boundingVolume->collisionShapeLocalTransform.getPosition().x,
+				boundingVolume->collisionShapeLocalTransform.getPosition().y,
+				boundingVolume->collisionShapeLocalTransform.getPosition().z
+			)
+		);
+		//
+		auto collisionShapeLocalTransformRotation = Rotation::fromQuaternion(
+			Quaternion(
+				boundingVolume->collisionShapeLocalTransform.getOrientation().x,
+				boundingVolume->collisionShapeLocalTransform.getOrientation().y,
+				boundingVolume->collisionShapeLocalTransform.getOrientation().z,
+				boundingVolume->collisionShapeLocalTransform.getOrientation().w
+			)
+		);
+		//
+		collisionShapeLocalTransform.addRotation(collisionShapeLocalTransformRotation.getAxis(), collisionShapeLocalTransformRotation.getAngle());
+		collisionShapeLocalTransform.update();
+
+		Console::println(
+			"collisionShapeLocalTransform: translation: " +
+			to_string(collisionShapeLocalTransform.getTranslation().getX()) + ", " +
+			to_string(collisionShapeLocalTransform.getTranslation().getY()) + ", " +
+			to_string(collisionShapeLocalTransform.getTranslation().getZ()));
+		Console::println(
+			"collisionShapeLocalTransform: scale: " +
+			to_string(collisionShapeLocalTransform.getScale().getX()) + ", " +
+			to_string(collisionShapeLocalTransform.getScale().getY()) + ", " +
+			to_string(collisionShapeLocalTransform.getScale().getZ())
+		);
+		for (auto i = 0; i < collisionShapeLocalTransform.getRotationCount(); i++) {
+			Console::println(
+				"\tRotation: " + to_string(i) + ": " +
+				to_string(collisionShapeLocalTransform.getRotationAxis(i).getX()) + ", " +
+				to_string(collisionShapeLocalTransform.getRotationAxis(i).getY()) + ", " +
+				to_string(collisionShapeLocalTransform.getRotationAxis(i).getZ()) + "; " +
+				to_string(collisionShapeLocalTransform.getRotationAngle(i))
+			);
+		}
+
+		Console::println(
+			"transform: translation: " +
+			to_string(transform.getTranslation().getX()) + ", " +
+			to_string(transform.getTranslation().getY()) + ", " +
+			to_string(transform.getTranslation().getZ())
+		);
+		Console::println(
+			"transform: scale: " +
+			to_string(transform.getScale().getX()) + ", " +
+			to_string(transform.getScale().getY()) + ", " +
+			to_string(transform.getScale().getZ())
+		);
+		for (auto i = 0; i < transform.getRotationCount(); i++) {
+			Console::println(
+				"\tRotation: " + to_string(i) + ": " +
+				to_string(transform.getRotationAxis(i).getX()) + ", " +
+				to_string(transform.getRotationAxis(i).getY()) + ", " +
+				to_string(transform.getRotationAxis(i).getZ()) + "; " +
+				to_string(transform.getRotationAngle(i))
+			);
+		}
+
+		//
+		auto _transform = transform;
+		_transform.setScale(Vector3(1.0f, 1.0f, 1.0f));
+		_transform.update();
+		auto transformXCollisionShapeLocalTransform = _transform * collisionShapeLocalTransform;
+
+		Console::println(
+			"transform: translation: " +
+			to_string(transformXCollisionShapeLocalTransform.getTranslation().getX()) + ", " +
+			to_string(transformXCollisionShapeLocalTransform.getTranslation().getY()) + ", " +
+			to_string(transformXCollisionShapeLocalTransform.getTranslation().getZ())
+		);
+		Console::println(
+			"transform: scale: " +
+			to_string(transformXCollisionShapeLocalTransform.getScale().getX()) + ", " +
+			to_string(transformXCollisionShapeLocalTransform.getScale().getY()) + ", " +
+			to_string(transformXCollisionShapeLocalTransform.getScale().getZ())
+		);
+		for (auto i = 0; i < transformXCollisionShapeLocalTransform.getRotationCount(); i++) {
+			Console::println(
+				"\tRotation: " + to_string(i) + ": " +
+				to_string(transformXCollisionShapeLocalTransform.getRotationAxis(i).getX()) + ", " +
+				to_string(transformXCollisionShapeLocalTransform.getRotationAxis(i).getY()) + ", " +
+				to_string(transformXCollisionShapeLocalTransform.getRotationAxis(i).getZ()) + "; " +
+				to_string(transformXCollisionShapeLocalTransform.getRotationAngle(i))
+			);
+		}
+		Console::println();
+
+		/*
+			this = parent
+			t = collisionShapeLocalTransform
+
+		translation+= rotationsQuaternion * (t.translation * scale);
+		scale*= t.scale;
+		rotationsQuaternion*= t.rotationsQuaternion;
+		*/
+
+		reactphysics3d::Transform collisionShapeTransform(
+			reactphysics3d::Vector3(transformXCollisionShapeLocalTransform.getTranslation().getX(), transformXCollisionShapeLocalTransform.getTranslation().getY(), transformXCollisionShapeLocalTransform.getTranslation().getZ()),
+			reactphysics3d::Quaternion(transformXCollisionShapeLocalTransform.getRotationsQuaternion().getX(), transformXCollisionShapeLocalTransform.getRotationsQuaternion().getY(), transformXCollisionShapeLocalTransform.getRotationsQuaternion().getZ(), transformXCollisionShapeLocalTransform.getRotationsQuaternion().getW())
+		);
+
+		//
+		auto collider = rigidBody->addCollider(boundingVolume->collisionShape, collisionShapeTransform);
 		collider->getMaterial().setBounciness(restitution);
 		collider->getMaterial().setFrictionCoefficient(friction);
 		if (type == BODYTYPE_COLLISION_STATIC || type == BODYTYPE_COLLISION_DYNAMIC) collider->setIsTrigger(true);
@@ -179,15 +322,6 @@ void Body::resetColliders() {
 		//
 		colliders.push_back(collider);
 	}
-
-	// set up inverse inertia tensor local
-	if (type != BODYTYPE_COLLISION_STATIC && type != BODYTYPE_COLLISION_DYNAMIC) {
-		// 	this method is only used when setting TDME2 transform, so no need to transform back
-		reactphysics3d::Transform transform;
-		rigidBody->setTransform(transform);
-		// set inverse inertia tensor local
-		rigidBody->setLocalInertiaTensor(reactphysics3d::Vector3(inertiaTensor.getX(), inertiaTensor.getY(), inertiaTensor.getZ()));
-	};
 }
 
 void Body::setFriction(float friction)

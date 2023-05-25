@@ -55,13 +55,9 @@ void Transform::update()
 	transformMatrix.multiply(translationMatrix);
 }
 
-void Transform::invert() {
-	translation.scale(-1.0f);
-	scale.setX(1.0f / scale.getX());
-	scale.setY(1.0f / scale.getY());
-	scale.setZ(1.0f / scale.getZ());
-	for (auto& rotation: rotations) {
-		rotation.setAngle(rotation.getAngle() - 180.0f);
-	}
-	transformMatrix.invert();
+Transform& Transform::invert() {
+	//
+	fromMatrix(transformMatrix.clone().invert(), RotationOrder::ZYX);
+	//
+	return *this;
 }

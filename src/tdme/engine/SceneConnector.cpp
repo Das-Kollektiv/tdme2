@@ -833,10 +833,11 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 	}
 }
 
-Body* SceneConnector::createBody(World* world, Prototype* prototype, const string& id, const Transform& transform, uint16_t collisionTypeId, int index, PrototypePhysics_BodyType* overrideType) {
+Body* SceneConnector::createBody(World* world, Prototype* prototype, const string& id, const Transform& transform, bool hierarchy, uint16_t collisionTypeId, int index, PrototypePhysics_BodyType* overrideType) {
 	if (prototype->getType() == Prototype_Type::EMPTY) return nullptr;
 
 	auto physicsType = overrideType != nullptr?overrideType:prototype->getPhysics()->getType();
+	// trigger
 	if (prototype->getType() == Prototype_Type::TRIGGER) {
 		vector<BoundingVolume*> boundingVolumes;
 		for (auto j = 0; j < prototype->getBoundingVolumeCount(); j++) {
@@ -849,9 +850,11 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 			true,
 			collisionTypeId == 0?RIGIDBODY_TYPEID_TRIGGER:collisionTypeId,
 			transform,
-			boundingVolumes
+			boundingVolumes,
+			hierarchy
 		);
 	} else
+	// model as terrain mesh
 	if (prototype->getType() == Prototype_Type::MODEL &&
 		prototype->isTerrainMesh() == true) {
 		ObjectModel terrainModel(prototype->getModel());
@@ -862,7 +865,8 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 				true,
 				collisionTypeId == 0?RIGIDBODY_TYPEID_COLLISION:collisionTypeId,
 				Transform(),
-				{terrainMesh}
+				{terrainMesh},
+				hierarchy
 			);
 		} else
 		if (physicsType == PrototypePhysics_BodyType::STATIC_RIGIDBODY) {
@@ -872,7 +876,8 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 				collisionTypeId == 0?RIGIDBODY_TYPEID_STATIC:collisionTypeId,
 				Transform(),
 				prototype->getPhysics()->getFriction(),
-				{terrainMesh}
+				{terrainMesh},
+				hierarchy
 			);
 		} else
 		if (physicsType == PrototypePhysics_BodyType::DYNAMIC_RIGIDBODY) {
@@ -885,10 +890,12 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 				prototype->getPhysics()->getFriction(),
 				prototype->getPhysics()->getMass(),
 				prototype->getPhysics()->getInertiaTensor(),
-				{terrainMesh}
+				{terrainMesh},
+				hierarchy
 			);
 		}
 	} else {
+		// normal body
 		vector<BoundingVolume*> boundingVolumes;
 		for (auto j = 0; j < prototype->getBoundingVolumeCount(); j++) {
 			auto entityBv = prototype->getBoundingVolume(j);
@@ -901,7 +908,8 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 				true,
 				collisionTypeId == 0?RIGIDBODY_TYPEID_COLLISION:collisionTypeId,
 				transform,
-				boundingVolumes
+				boundingVolumes,
+				hierarchy
 			);
 		} else
 		if (physicsType == PrototypePhysics_BodyType::STATIC_RIGIDBODY) {
@@ -911,7 +919,8 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 				collisionTypeId == 0?RIGIDBODY_TYPEID_STATIC:collisionTypeId,
 				transform,
 				prototype->getPhysics()->getFriction(),
-				boundingVolumes
+				boundingVolumes,
+				hierarchy
 			);
 		} else
 		if (physicsType == PrototypePhysics_BodyType::DYNAMIC_RIGIDBODY) {
@@ -924,21 +933,22 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 				prototype->getPhysics()->getFriction(),
 				prototype->getPhysics()->getMass(),
 				prototype->getPhysics()->getInertiaTensor(),
-				boundingVolumes
+				boundingVolumes,
+				hierarchy
 			);
 		}
 	}
 	return nullptr;
 }
 
-Body* SceneConnector::createBody(World* world, SceneEntity* sceneEntity, const Vector3& translation, uint16_t collisionTypeId, int index, PrototypePhysics_BodyType* overrideType) {
+Body* SceneConnector::createBody(World* world, SceneEntity* sceneEntity, const Vector3& translation, bool hierarchy, uint16_t collisionTypeId, int index, PrototypePhysics_BodyType* overrideType) {
 	Transform transform;
 	transform.setTransform(sceneEntity->getTransform());
 	if (translation.equals(Vector3()) == false) {
 		transform.setTranslation(transform.getTranslation().clone().add(translation));
 		transform.update();
 	}
-	return createBody(world, sceneEntity->getPrototype(), sceneEntity->getId(), transform, collisionTypeId, index, overrideType);
+	return createBody(world, sceneEntity->getPrototype(), sceneEntity->getId(), transform, hierarchy, collisionTypeId, index, overrideType);
 }
 
 void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vector3& translation, ProgressCallback* progressCallback)

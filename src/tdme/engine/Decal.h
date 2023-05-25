@@ -194,6 +194,10 @@ public:
 		return entityTransformMatrix;
 	}
 
+	inline const Transform& getParentTransform() const override {
+		return parentTransform;
+	}
+
 	inline const Transform& getTransform() const override {
 		return *this;
 	}

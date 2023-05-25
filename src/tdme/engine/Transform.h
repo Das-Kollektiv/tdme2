@@ -186,7 +186,7 @@ public:
 	/**
 	 * Invert this transform
 	 */
-	virtual void invert();
+	virtual Transform& invert();
 
 	/**
 	 * Clones the transform

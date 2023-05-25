@@ -310,6 +310,11 @@ public:
 	virtual void update() = 0;
 
 	/**
+	 * @return parent transform
+	 */
+	virtual const Transform& getParentTransform() const = 0;
+
+	/**
 	 * @return transform
 	 */
 	virtual const Transform& getTransform() const = 0;

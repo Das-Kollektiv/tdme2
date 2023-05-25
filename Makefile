@@ -275,6 +275,7 @@ SRCS = \
 	src/tdme/engine/model/SpecularMaterialProperties.cpp \
 	src/tdme/engine/model/TextureCoordinate.cpp \
 	src/tdme/engine/physics/Body.cpp \
+	src/tdme/engine/physics/HierarchyBody.cpp \
 	src/tdme/engine/physics/World.cpp \
 	src/tdme/engine/primitives/BoundingBox.cpp \
 	src/tdme/engine/primitives/BoundingVolume.cpp \

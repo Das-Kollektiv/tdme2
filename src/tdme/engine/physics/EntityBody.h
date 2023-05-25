@@ -5,7 +5,6 @@
 #include <vector>
 
 #include <reactphysics3d/body/RigidBody.h>
-#include <reactphysics3d/collision/Collider.h>
 #include <reactphysics3d/collision/shapes/CollisionShape.h>
 
 #include <tdme/tdme.h>
@@ -37,7 +36,7 @@ using tdme::math::Vector3;
  * Dynamic rigid/static rigid/collision body class
  * @author Andreas Drewke
  */
-class tdme::engine::physics::Body
+class tdme::engine::physics::HierarchyBody final
 {
 	friend class World;
 
@@ -75,7 +74,7 @@ public:
 		return Vector3(0.0f, 0.0f, 0.0f);
 	}
 
-protected:
+private:
 	World* world { nullptr };
 	reactphysics3d::RigidBody* rigidBody { nullptr };
 	string id;
@@ -111,27 +110,12 @@ protected:
 	/**
 	 * Destructor
 	 */
-	virtual ~Body();
+	~Body();
 
 	/**
-	 * Remove colliders
-	 * @param colliders colliders
-	 * @param boundingVolumes bounding volumes
+	 * Reset proxy shapes
 	 */
-	void removeColliders(vector<reactphysics3d::Collider*>& colliders, vector<BoundingVolume*>& boundingVolumes);
-
-	/**
-	 * Reset given colliders with given bounding volumes and local transform
-	 * @param colliders colliders
-	 * @param boundingVolumes bounding volumes
-	 * @param transform transform
-	 */
-	void resetColliders(vector<reactphysics3d::Collider*>& colliders, vector<BoundingVolume*>& boundingVolumes, const Transform& transform);
-
-	/**
-	 * Reset body colliders
-	 */
-	virtual void resetColliders();
+	void resetColliders();
 
 	/**
 	 * Fire on collision
@@ -234,6 +218,12 @@ public:
 	inline vector<BoundingVolume*>& getBoundingVolumes() {
 		return boundingVolumes;
 	}
+
+	/**
+	 * Add bounding volume
+	 * @param boundingVolume bounding volume
+	 */
+	void addBoundingVolume(BoundingVolume* boundingVolume);
 
 	/**
 	 * Compute world bounding box
@@ -380,12 +370,6 @@ public:
 		this->transform.setTransform(transform);
 
 		// reset proxy shapes if bounding volumes do not match proxy shapes or if scaling has changed
-		Console::println(
-			"Body::setTransform(): " + id + ": " +
-			to_string(transformScale.getX()) + ", " +
-			to_string(transformScale.getY()) + ", " +
-			to_string(transformScale.getZ())
-		);
 		if (colliders.size() != boundingVolumes.size() || transformScale.equals(transform.getScale()) == false) {
 			resetColliders();
 			transformScale.set(transform.getScale());
@@ -441,22 +425,9 @@ public:
 		);
 	}
 
-	/**
-	 * Set angular lock axis factor
-	 * @param factor factor
-	 */
-	inline void setAngularLockAxisFactor(const Vector3& factor) {
-		rigidBody->setAngularLockAxisFactor(reactphysics3d::Vector3(factor.getX(), factor.getY(), factor.getZ()));
+	inline void setAngularLockAxisFactor() {
+		rigidBody->setAngularLockAxisFactor(reactphysics3d::Vector3(0.0f, 0.0f, 0.0f));
 	}
-
-	/**
-	 * Set linear lock axis factor
-	 * @param factor factor
-	 */
-	inline void setLinearLockAxisFactor(const Vector3& factor) {
-		rigidBody->setLinearLockAxisFactor(reactphysics3d::Vector3(factor.getX(), factor.getY(), factor.getZ()));
-	}
-
 	/**
 	 * Add a collision listener to this rigid body
 	 * @param listener listener
