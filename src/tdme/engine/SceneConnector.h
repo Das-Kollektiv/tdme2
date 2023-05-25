@@ -287,7 +287,7 @@ public:
 	/**
 	 * Create sub body creation information structure from entity hierarchy and given child id
 	 * @param engine engine
-	 * @param id id entity hierarchy id
+	 * @param id entity hierarchy id
 	 * @param childId entity hierarchy child id
 	 * @param localTransform local transform
 	 * @param subBodyStruct sub body struct
