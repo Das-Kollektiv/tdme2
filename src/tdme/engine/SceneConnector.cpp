@@ -564,7 +564,7 @@ bool SceneConnector::createEntityHierarchySubBodyStruct(EntityHierarchy* entityH
 	//
 	auto childEntity = entityHierarchy->getEntity(childId);
 	if (childEntity == nullptr) {
-		Console::println("SceneConnector::createEntityHierarchySubBodyStruct(): entity hierarchy: " + entityHierarchy->getId() + ": " + childId);
+		Console::println("SceneConnector::createEntityHierarchySubBodyStruct(): entity hierarchy: " + entityHierarchy->getId() + ": no child " + childId);
 		return false;
 	}
 	//

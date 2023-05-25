@@ -285,8 +285,9 @@ public:
 	static Entity* createEntity(SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), int instances = 1, Entity* parentEntity = nullptr);
 
 	/**
-	 * Create sub body from entity hierarchy child
-	 * @param entityHierarchy engine entity hierarchy
+	 * Create sub body creation information structure from entity hierarchy and given child id
+	 * @param engine engine
+	 * @param id id entity hierarchy id
 	 * @param childId entity hierarchy child id
 	 * @param localTransform local transform
 	 * @param subBodyStruct sub body struct
@@ -295,7 +296,7 @@ public:
 	static bool createEntityHierarchySubBodyStruct(Engine* engine, const string& id, const string& childId, const Transform& localTransform, SubBodyStruct& subBodyStruct);
 
 	/**
-	 * Create sub body from entity hierarchy child
+	 * Create sub body creation information structure from entity hierarchy and given child id
 	 * @param entityHierarchy engine entity hierarchy
 	 * @param childId entity hierarchy child id
 	 * @param localTransform local transform
@@ -350,8 +351,8 @@ public:
 	 * Create sub body
 	 * @param world world
 	 * @param prototype prototype
-	 * @param id id
-	 * @param subBodyStruct sub body struct
+	 * @param id body id
+	 * @param subBodyStruct sub body creation information struct
 	 */
 	inline static void createSubBody(World* world, Prototype* prototype, const string& id, const SubBodyStruct& subBodyStruct) {
 		createSubBody(world, id, subBodyStruct, prototype->getBoundingVolumePrimitives());
@@ -361,7 +362,7 @@ public:
 	 * Create sub body
 	 * @param world world
 	 * @param id id
-	 * @param subBodyStruct sub body struct
+	 * @param subBodyStruct sub body creation information struct
 	 * @param boundingVolumes bounding volumes
 	 */
 	static void createSubBody(World* world, const string& id, const SubBodyStruct& subBodyStruct, const vector<BoundingVolume*>& boundingVolumes);
