@@ -193,8 +193,8 @@ void TMReader::readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture
 		auto embeddedTextureType = is->readByte();
 		// png
 		if (embeddedTextureType == 1) {
-			auto minFilter = Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR;
-			auto magFilter = Texture::TEXTURE_FILTER_LINEAR;
+			auto minFilter = Texture::TEXTUREFILTER_LINEAR_MIPMAP_LINEAR;
+			auto magFilter = Texture::TEXTUREFILTER_LINEAR;
 			if ((version[0] == 1 && version[1] == 9 && version[2] == 19) ||
 				(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 				minFilter = static_cast<Texture::TextureFilter>(is->readByte());
@@ -223,8 +223,8 @@ void TMReader::readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture
 			auto textureWidth = is->readInt();
 			auto textureHeight = is->readInt();
 			auto bitsPerPixel = is->readByte();
-			auto minFilter = Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR;
-			auto magFilter = Texture::TEXTURE_FILTER_LINEAR;
+			auto minFilter = Texture::TEXTUREFILTER_LINEAR_MIPMAP_LINEAR;
+			auto magFilter = Texture::TEXTUREFILTER_LINEAR;
 			if ((version[0] == 1 && version[1] == 9 && version[2] == 19) ||
 				(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 				minFilter = static_cast<Texture::TextureFilter>(is->readByte());
@@ -264,8 +264,8 @@ void TMReader::readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture
 			auto textureWidth = is->readInt();
 			auto textureHeight = is->readInt();
 			auto bitsPerPixel = is->readByte();
-			auto minFilter = Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR;
-			auto magFilter = Texture::TEXTURE_FILTER_LINEAR;
+			auto minFilter = Texture::TEXTUREFILTER_LINEAR_MIPMAP_LINEAR;
+			auto magFilter = Texture::TEXTUREFILTER_LINEAR;
 			if ((version[0] == 1 && version[1] == 9 && version[2] == 19) ||
 				(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 				minFilter = static_cast<Texture::TextureFilter>(is->readByte());
