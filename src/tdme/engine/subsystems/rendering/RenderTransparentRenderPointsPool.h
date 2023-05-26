@@ -4,7 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderPoint.h>
 #include <tdme/math/Matrix4x4.h>
@@ -13,7 +13,7 @@
 
 using std::vector;
 
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::subsystems::rendering::TransparentRenderPoint;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::math::Matrix4x4;

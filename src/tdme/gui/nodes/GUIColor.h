@@ -5,8 +5,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/model/Color4Base.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/GUIParserException.h>
 
@@ -14,8 +13,7 @@ using std::array;
 using std::string;
 using std::vector;
 
-using tdme::engine::model::Color4;
-using tdme::engine::model::Color4Base;
+using tdme::engine::Color4;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::GUIParserException;
 
@@ -24,7 +22,7 @@ using tdme::gui::GUIParserException;
  * @author Andreas Drewke
  */
 class tdme::gui::nodes::GUIColor final
-	: public Color4Base
+	: public Color4
 {
 
 public:

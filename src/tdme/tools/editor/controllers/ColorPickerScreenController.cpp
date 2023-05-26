@@ -99,7 +99,7 @@ void ColorPickerScreenController::dispose()
 	screenNode = nullptr;
 }
 
-void ColorPickerScreenController::show(const Color4Base& color, Action* onColorChangeAction)
+void ColorPickerScreenController::show(const Color4& color, Action* onColorChangeAction)
 {
 	this->color = color;
 	this->onColorChangeAction = onColorChangeAction;
@@ -210,7 +210,7 @@ void ColorPickerScreenController::updateColorHex() {
 	hexInput->getController()->setValue(MutableString("#" + hexRed + hexGreen + hexBlue + (hexAlpha == "ff"?"":hexAlpha)));
 }
 
-void ColorPickerScreenController::setColor(const Color4Base& color) {
+void ColorPickerScreenController::setColor(const Color4& color) {
 	this->color = color;
 	updateColor();
 	updateColorHex();

@@ -10,7 +10,7 @@
 #include <tdme/engine/fileio/scenes/SceneWriter.h>
 #include <tdme/engine/fileio/ProgressCallback.h>
 #include <tdme/engine/model/Animation.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/RotationOrder.h>
@@ -49,7 +49,7 @@ using tdme::engine::fileio::scenes::SceneReader;
 using tdme::engine::fileio::scenes::SceneWriter;
 using tdme::engine::fileio::ProgressCallback;
 using tdme::engine::model::Animation;
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::model::RotationOrder;

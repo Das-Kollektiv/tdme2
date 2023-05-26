@@ -12,7 +12,7 @@
 #include <tdme/engine/Texture.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/AnimationSetup.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Joint.h>
@@ -52,7 +52,7 @@ using tdme::engine::fileio::textures::PNGTextureWriter;
 using tdme::engine::Texture;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Joint;

@@ -11,7 +11,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Version.h>
 #include <tdme/gui/effects/GUIColorEffect.h>
@@ -61,7 +61,7 @@ using std::unordered_set;
 using std::vector;
 
 using tdme::application::Application;
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::Version;
 using tdme::gui::effects::GUIColorEffect;

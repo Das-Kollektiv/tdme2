@@ -2,7 +2,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Texture.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
@@ -11,7 +11,7 @@
 #include <tdme/math/Vector4.h>
 
 using tdme::engine::Texture;
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;

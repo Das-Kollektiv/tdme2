@@ -18,7 +18,7 @@ using std::string;
 using std::vector;
 
 using tdme::application::Application;
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::prototype::Prototype;

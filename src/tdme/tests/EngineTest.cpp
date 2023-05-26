@@ -7,7 +7,7 @@
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Material.h>
@@ -51,7 +51,7 @@ using std::vector;
 
 using tdme::application::Application;
 using tdme::engine::fileio::models::ModelReader;
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Material;

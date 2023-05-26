@@ -9,7 +9,7 @@
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/models/TMReader.h>
 #include <tdme/engine/fileio/models/TMWriter.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/Capsule.h>
@@ -64,7 +64,7 @@ using tdme::engine::fileio::prototypes::PrototypeWriter;
 using tdme::application::Application;
 using tdme::engine::fileio::models::TMReader;
 using tdme::engine::fileio::models::TMWriter;
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Capsule;

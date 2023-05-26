@@ -5,8 +5,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/model/Color4.h>
-#include <tdme/engine/model/Color4Base.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderPoint.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderPointsPool.h>
 #include <tdme/math/Matrix4x4.h>
@@ -16,8 +15,7 @@
 using std::string;
 using std::vector;
 
-using tdme::engine::model::Color4;
-using tdme::engine::model::Color4Base;
+using tdme::engine::Color4;
 using tdme::engine::subsystems::rendering::RenderTransparentRenderPointsPool;
 using tdme::engine::subsystems::rendering::TransparentRenderPoint;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;

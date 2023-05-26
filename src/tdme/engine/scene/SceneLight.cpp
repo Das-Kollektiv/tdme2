@@ -1,11 +1,11 @@
 #include <tdme/engine/scene/SceneLight.h>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::scene::SceneLight;
 using tdme::math::Vector3;
 using tdme::math::Vector4;

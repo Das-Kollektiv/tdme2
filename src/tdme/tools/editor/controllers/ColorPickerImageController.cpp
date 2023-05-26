@@ -4,7 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Texture.h>
-#include <tdme/engine/model/Color4Base.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
@@ -26,7 +26,7 @@ using std::to_string;
 using tdme::tools::editor::controllers::ColorPickerImageController;
 
 using tdme::engine::Texture;
-using tdme::engine::model::Color4Base;
+using tdme::engine::Color4;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
@@ -94,7 +94,7 @@ void ColorPickerImageController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 				}
 				auto texturePixelOffset = textureY * textureWidth * textureBytesPerPixel + textureX * textureBytesPerPixel;
 				colorPickerScreenController->setColor(
-					Color4Base(
+					Color4(
 						static_cast<float>(textureData.get(texturePixelOffset + 0)) / 255.0f,
 						static_cast<float>(textureData.get(texturePixelOffset + 1)) / 255.0f,
 						static_cast<float>(textureData.get(texturePixelOffset + 2)) / 255.0f,

@@ -9,7 +9,7 @@
 
 using std::string;
 
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::Transform;
 

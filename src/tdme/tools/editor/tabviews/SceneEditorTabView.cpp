@@ -9,7 +9,7 @@
 #include <tdme/engine/logics/Context.h>
 #include <tdme/engine/logics/LogicMiniScript.h>
 #include <tdme/engine/logics/MiniScriptLogic.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -56,7 +56,7 @@ using tdme::engine::logics::ApplicationClient;
 using tdme::engine::logics::Context;
 using tdme::engine::logics::LogicMiniScript;
 using tdme::engine::logics::MiniScriptLogic;
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::physics::World;
 using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::Prototype;

@@ -6,7 +6,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/BatchRendererTriangles.h>
@@ -22,7 +22,7 @@ using std::string;
 using std::tuple;
 using std::vector;
 
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::TextureCoordinate;

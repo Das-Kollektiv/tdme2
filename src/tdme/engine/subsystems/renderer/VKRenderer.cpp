@@ -5068,21 +5068,21 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 	VkSamplerMipmapMode mipmapMode;
 	VkFilter minFilter;
 	switch (texture->getMinFilter()) {
-		case Texture::TEXTURE_FILTER_NEAREST: minFilter = VK_FILTER_NEAREST; mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST; break;
-		case Texture::TEXTURE_FILTER_LINEAR: minFilter = VK_FILTER_LINEAR; mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST; break;
-		case Texture::TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: minFilter = VK_FILTER_NEAREST; mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST; break;
-		case Texture::TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: minFilter = VK_FILTER_NEAREST; mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR; break;
-		case Texture::TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: minFilter = VK_FILTER_LINEAR; mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST; break;
-		case Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: minFilter = VK_FILTER_LINEAR; mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR; break;
+		case Texture::TEXTUREFILTER_NEAREST: minFilter = VK_FILTER_NEAREST; mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST; break;
+		case Texture::TEXTUREFILTER_LINEAR: minFilter = VK_FILTER_LINEAR; mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST; break;
+		case Texture::TEXTUREFILTER_NEAREST_MIPMAP_NEAREST: minFilter = VK_FILTER_NEAREST; mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST; break;
+		case Texture::TEXTUREFILTER_LINEAR_MIPMAP_NEAREST: minFilter = VK_FILTER_NEAREST; mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR; break;
+		case Texture::TEXTUREFILTER_NEAREST_MIPMAP_LINEAR: minFilter = VK_FILTER_LINEAR; mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST; break;
+		case Texture::TEXTUREFILTER_LINEAR_MIPMAP_LINEAR: minFilter = VK_FILTER_LINEAR; mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR; break;
 	}
 	VkFilter magFilter;
 	switch (texture->getMagFilter()) {
-		case Texture::TEXTURE_FILTER_NEAREST: magFilter = VK_FILTER_NEAREST; break;
-		case Texture::TEXTURE_FILTER_LINEAR: magFilter = VK_FILTER_LINEAR; break;
-		case Texture::TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: magFilter = VK_FILTER_NEAREST; break;
-		case Texture::TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: magFilter = VK_FILTER_NEAREST; break;
-		case Texture::TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: magFilter = VK_FILTER_LINEAR; break;
-		case Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: magFilter = VK_FILTER_LINEAR; break;
+		case Texture::TEXTUREFILTER_NEAREST: magFilter = VK_FILTER_NEAREST; break;
+		case Texture::TEXTUREFILTER_LINEAR: magFilter = VK_FILTER_LINEAR; break;
+		case Texture::TEXTUREFILTER_NEAREST_MIPMAP_NEAREST: magFilter = VK_FILTER_NEAREST; break;
+		case Texture::TEXTUREFILTER_LINEAR_MIPMAP_NEAREST: magFilter = VK_FILTER_NEAREST; break;
+		case Texture::TEXTUREFILTER_NEAREST_MIPMAP_LINEAR: magFilter = VK_FILTER_LINEAR; break;
+		case Texture::TEXTUREFILTER_LINEAR_MIPMAP_LINEAR: magFilter = VK_FILTER_LINEAR; break;
 	}
 
 	//

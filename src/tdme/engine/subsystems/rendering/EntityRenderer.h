@@ -9,7 +9,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
@@ -33,7 +33,7 @@ using std::tuple;
 using std::unordered_map;
 using std::vector;
 
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::subsystems::renderer::Renderer;

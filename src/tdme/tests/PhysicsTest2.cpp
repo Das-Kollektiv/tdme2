@@ -6,7 +6,7 @@
 #include <tdme/utilities/Time.h>
 
 #include <tdme/application/Application.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
@@ -31,7 +31,7 @@ using tdme::tests::PhysicsTest2;
 using tdme::utilities::Time;
 
 using tdme::application::Application;
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::SpecularMaterialProperties;

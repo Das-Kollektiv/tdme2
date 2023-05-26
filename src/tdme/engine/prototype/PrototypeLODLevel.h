@@ -3,14 +3,14 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/LODObject.h>
 
 using std::string;
 
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::LODObject;
 

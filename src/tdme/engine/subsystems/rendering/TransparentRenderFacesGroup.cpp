@@ -3,7 +3,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
@@ -16,7 +16,7 @@
 using std::string;
 using std::to_string;
 
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::subsystems::renderer::Renderer;

@@ -10,8 +10,7 @@
 #include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/engine/fileio/scenes/SceneWriter.h>
 #include <tdme/engine/model/Animation.h>
-#include <tdme/engine/model/Color4.h>
-#include <tdme/engine/model/Color4Base.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Joint.h>
@@ -57,8 +56,7 @@ using tdme::engine::fileio::models::DAEReader;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::model::Animation;
-using tdme::engine::model::Color4;
-using tdme::engine::model::Color4Base;
+using tdme::engine::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Joint;

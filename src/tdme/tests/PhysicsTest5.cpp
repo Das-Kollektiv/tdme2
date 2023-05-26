@@ -8,7 +8,7 @@
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/RotationOrder.h>
@@ -47,7 +47,7 @@ using tdme::utilities::Time;
 using tdme::application::Application;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::prototypes::PrototypeReader;
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::RotationOrder;
@@ -268,9 +268,9 @@ void PhysicsTest5::initialize()
 
 		{
 			//
-			SceneConnector::SubBodyStruct subBodyStruct;
-			SceneConnector::createEntityHierarchySubBodyStruct(botEntityHierarchy, "weapon_left", weaponAttachmentLocalTransform, subBodyStruct);
-			SceneConnector::createSubBody(world, weaponPrototype, "bot", subBodyStruct);
+			SceneConnector::SubBodyCreationStruct subBodyCreationStruct;
+			SceneConnector::createEntityHierarchySubBodyCreationStruct(botEntityHierarchy, "weapon_left", weaponAttachmentLocalTransform, subBodyCreationStruct);
+			SceneConnector::createSubBody(world, weaponPrototype, "bot", subBodyCreationStruct);
 		}
 
 		{
@@ -285,9 +285,9 @@ void PhysicsTest5::initialize()
 			botEntityHierarchy->addEntity(box2Object, "weapon_left");
 			botEntityHierarchy->update();
 
-			SceneConnector::SubBodyStruct subBodyStruct;
-			SceneConnector::createEntityHierarchySubBodyStruct(botEntityHierarchy, "box2", box2Object->getTransform(), subBodyStruct);
-			SceneConnector::createSubBody(world, "bot", subBodyStruct, { box2 });
+			SceneConnector::SubBodyCreationStruct subBodyCreationStruct;
+			SceneConnector::createEntityHierarchySubBodyCreationStruct(botEntityHierarchy, "box2", box2Object->getTransform(), subBodyCreationStruct);
+			SceneConnector::createSubBody(world, "bot", subBodyCreationStruct, { box2 });
 		}
 
 		//world->addRigidBody("cone", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {coneBoundingVolume});

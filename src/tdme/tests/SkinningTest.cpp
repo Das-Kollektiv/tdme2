@@ -7,7 +7,7 @@
 
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
@@ -36,7 +36,7 @@ using tdme::tests::SkinningTest;
 
 using tdme::application::Application;
 using tdme::engine::fileio::models::ModelReader;
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::SpecularMaterialProperties;

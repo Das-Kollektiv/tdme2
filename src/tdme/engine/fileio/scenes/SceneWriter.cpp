@@ -7,7 +7,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -31,7 +31,7 @@ using std::string;
 
 using tdme::engine::fileio::prototypes::PrototypeWriter;
 using tdme::engine::fileio::scenes::SceneWriter;
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::Prototype;

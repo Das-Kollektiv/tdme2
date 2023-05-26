@@ -5,13 +5,13 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/math/Matrix2D3x3.h>
 
 using std::string;
 
 using tdme::engine::Texture;
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::math::Matrix2D3x3;
 
 /**

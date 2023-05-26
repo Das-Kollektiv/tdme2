@@ -15,8 +15,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/engine/model/Animation.h>
-#include <tdme/engine/model/Color4.h>
-#include <tdme/engine/model/Color4Base.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Joint.h>
@@ -54,8 +53,7 @@ using tdme::engine::fileio::models::GLTFReader;
 
 using tdme::engine::Texture;
 using tdme::engine::model::Animation;
-using tdme::engine::model::Color4;
-using tdme::engine::model::Color4Base;
+using tdme::engine::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Joint;
@@ -509,20 +507,20 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 						if (gltfTexture.sampler != -1) {
 							auto& sampler = gltfModel.samplers[gltfTexture.sampler];
 							switch (sampler.minFilter) {
-								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST); texture->setUseMipMap(false); break;
-								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR); texture->setUseMipMap(false); break;
-								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
-								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
-								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
-								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMinFilter(Texture::TEXTUREFILTER_NEAREST); texture->setUseMipMap(false); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMinFilter(Texture::TEXTUREFILTER_LINEAR); texture->setUseMipMap(false); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: texture->setMinFilter(Texture::TEXTUREFILTER_NEAREST_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: texture->setMinFilter(Texture::TEXTUREFILTER_LINEAR_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: texture->setMinFilter(Texture::TEXTUREFILTER_NEAREST_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: texture->setMinFilter(Texture::TEXTUREFILTER_LINEAR_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
 							}
 							switch (sampler.magFilter) {
-								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST); break;
-								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR); break;
-								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
-								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
-								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
-								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMagFilter(Texture::TEXTUREFILTER_NEAREST); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMagFilter(Texture::TEXTUREFILTER_LINEAR); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: texture->setMagFilter(Texture::TEXTUREFILTER_NEAREST_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: texture->setMagFilter(Texture::TEXTUREFILTER_LINEAR_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: texture->setMagFilter(Texture::TEXTUREFILTER_NEAREST_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: texture->setMagFilter(Texture::TEXTUREFILTER_LINEAR_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
 							}
 						}
 					} catch (Exception& exception) {
@@ -561,20 +559,20 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 						if (gltfTexture.sampler != -1) {
 							auto& sampler = gltfModel.samplers[gltfTexture.sampler];
 							switch (sampler.minFilter) {
-								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST); texture->setUseMipMap(false); break;
-								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR); texture->setUseMipMap(false); break;
-								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
-								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
-								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
-								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMinFilter(Texture::TEXTUREFILTER_NEAREST); texture->setUseMipMap(false); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMinFilter(Texture::TEXTUREFILTER_LINEAR); texture->setUseMipMap(false); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: texture->setMinFilter(Texture::TEXTUREFILTER_NEAREST_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: texture->setMinFilter(Texture::TEXTUREFILTER_LINEAR_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: texture->setMinFilter(Texture::TEXTUREFILTER_NEAREST_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: texture->setMinFilter(Texture::TEXTUREFILTER_LINEAR_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
 							}
 							switch (sampler.magFilter) {
-								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST); break;
-								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR); break;
-								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
-								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
-								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
-								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMagFilter(Texture::TEXTUREFILTER_NEAREST); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMagFilter(Texture::TEXTUREFILTER_LINEAR); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: texture->setMagFilter(Texture::TEXTUREFILTER_NEAREST_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: texture->setMagFilter(Texture::TEXTUREFILTER_LINEAR_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: texture->setMagFilter(Texture::TEXTUREFILTER_NEAREST_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: texture->setMagFilter(Texture::TEXTUREFILTER_LINEAR_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
 							}
 						}
 					} catch (Exception& exception) {
@@ -613,20 +611,20 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 						if (gltfTexture.sampler != -1) {
 							auto& sampler = gltfModel.samplers[gltfTexture.sampler];
 							switch (sampler.minFilter) {
-								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST); texture->setUseMipMap(false); break;
-								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR); texture->setUseMipMap(false); break;
-								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
-								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
-								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
-								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMinFilter(Texture::TEXTUREFILTER_NEAREST); texture->setUseMipMap(false); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMinFilter(Texture::TEXTUREFILTER_LINEAR); texture->setUseMipMap(false); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: texture->setMinFilter(Texture::TEXTUREFILTER_NEAREST_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: texture->setMinFilter(Texture::TEXTUREFILTER_LINEAR_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: texture->setMinFilter(Texture::TEXTUREFILTER_NEAREST_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: texture->setMinFilter(Texture::TEXTUREFILTER_LINEAR_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
 							}
 							switch (sampler.magFilter) {
-								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST); break;
-								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR); break;
-								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
-								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
-								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
-								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMagFilter(Texture::TEXTUREFILTER_NEAREST); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMagFilter(Texture::TEXTUREFILTER_LINEAR); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: texture->setMagFilter(Texture::TEXTUREFILTER_NEAREST_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: texture->setMagFilter(Texture::TEXTUREFILTER_LINEAR_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: texture->setMagFilter(Texture::TEXTUREFILTER_NEAREST_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: texture->setMagFilter(Texture::TEXTUREFILTER_LINEAR_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
 							}
 						}
 					} catch (Exception& exception) {
@@ -664,20 +662,20 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 						if (gltfTexture.sampler != -1) {
 							auto& sampler = gltfModel.samplers[gltfTexture.sampler];
 							switch (sampler.minFilter) {
-								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST); texture->setUseMipMap(false); break;
-								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR); texture->setUseMipMap(false); break;
-								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
-								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
-								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
-								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: texture->setMinFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMinFilter(Texture::TEXTUREFILTER_NEAREST); texture->setUseMipMap(false); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMinFilter(Texture::TEXTUREFILTER_LINEAR); texture->setUseMipMap(false); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: texture->setMinFilter(Texture::TEXTUREFILTER_NEAREST_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: texture->setMinFilter(Texture::TEXTUREFILTER_LINEAR_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: texture->setMinFilter(Texture::TEXTUREFILTER_NEAREST_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: texture->setMinFilter(Texture::TEXTUREFILTER_LINEAR_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
 							}
 							switch (sampler.magFilter) {
-								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST); break;
-								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR); break;
-								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
-								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
-								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
-								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: texture->setMagFilter(Texture::TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMagFilter(Texture::TEXTUREFILTER_NEAREST); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMagFilter(Texture::TEXTUREFILTER_LINEAR); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST: texture->setMagFilter(Texture::TEXTUREFILTER_NEAREST_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST: texture->setMagFilter(Texture::TEXTUREFILTER_LINEAR_MIPMAP_NEAREST); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR: texture->setMagFilter(Texture::TEXTUREFILTER_NEAREST_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
+								case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: texture->setMagFilter(Texture::TEXTUREFILTER_LINEAR_MIPMAP_LINEAR); texture->setUseMipMap(true); break;
 							}
 						}
 					} catch (Exception& exception) {

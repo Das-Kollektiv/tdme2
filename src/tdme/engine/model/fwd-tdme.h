@@ -7,8 +7,6 @@ namespace engine {
 namespace model {
 	class Animation;
 	class AnimationSetup;
-	class Color4;
-	class Color4Base;
 	class Face;
 	class FacesEntity;
 	class Node;

@@ -12,7 +12,7 @@
 #include <tdme/application/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/earlyzrejection/fwd-tdme.h>
 #include <tdme/engine/subsystems/environmentmapping/fwd-tdme.h>
@@ -55,7 +55,7 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;

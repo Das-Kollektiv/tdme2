@@ -7,7 +7,7 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
@@ -25,7 +25,7 @@ using std::string;
 using std::vector;
 
 using tdme::engine::Texture;
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;

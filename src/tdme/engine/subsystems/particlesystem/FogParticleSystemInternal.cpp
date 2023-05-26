@@ -6,7 +6,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
@@ -26,7 +26,7 @@ using std::vector;
 
 using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::particlesystem::FogParticleSystemInternal;
