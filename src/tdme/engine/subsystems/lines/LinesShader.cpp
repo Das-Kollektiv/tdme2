@@ -30,45 +30,45 @@ void LinesShader::initialize()
 	auto shaderVersion = renderer->getShaderVersion();
 	// particles
 	//	fragment shader
-	renderFragmentShaderId = renderer->loadShader(
+	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lines",
 		"render_fragmentshader.frag"
 	);
-	if (renderFragmentShaderId == 0)
+	if (fragmentShaderId == 0)
 		return;
 	//	vertex shader
-	renderVertexShaderId = renderer->loadShader(
+	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lines",
 		"render_vertexshader.vert"
 	);
-	if (renderVertexShaderId == 0)
+	if (vertexShaderId == 0)
 		return;
 	// create, attach and link program
-	renderProgramId = renderer->createProgram(renderer->PROGRAM_LINES);
-	renderer->attachShaderToProgram(renderProgramId, renderVertexShaderId);
-	renderer->attachShaderToProgram(renderProgramId, renderFragmentShaderId);
+	programId = renderer->createProgram(renderer->PROGRAM_LINES);
+	renderer->attachShaderToProgram(programId, vertexShaderId);
+	renderer->attachShaderToProgram(programId, fragmentShaderId);
 	// map inputs to attributes
 	if (renderer->isUsingProgramAttributeLocation() == true) {
-		renderer->setProgramAttributeLocation(renderProgramId, 0, "inVertex");
-		renderer->setProgramAttributeLocation(renderProgramId, 3, "inColor");
+		renderer->setProgramAttributeLocation(programId, 0, "inVertex");
+		renderer->setProgramAttributeLocation(programId, 3, "inColor");
 	}
 	// link program
-	if (renderer->linkProgram(renderProgramId) == false)
+	if (renderer->linkProgram(programId) == false)
 		return;
 
 	// get uniforms
-	uniformMVPMatrix = renderer->getProgramUniformLocation(renderProgramId, "mvpMatrix");
+	uniformMVPMatrix = renderer->getProgramUniformLocation(programId, "mvpMatrix");
 	if (uniformMVPMatrix == -1)
 		return;
-	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(renderProgramId, "diffuseTextureUnit");
+	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(programId, "diffuseTextureUnit");
 	if (uniformDiffuseTextureUnit == -1)
 		return;
-	uniformEffectColorMul = renderer->getProgramUniformLocation(renderProgramId, "effectColorMul");
+	uniformEffectColorMul = renderer->getProgramUniformLocation(programId, "effectColorMul");
 	if (uniformEffectColorMul == -1)
 		return;
-	uniformEffectColorAdd = renderer->getProgramUniformLocation(renderProgramId, "effectColorAdd");
+	uniformEffectColorAdd = renderer->getProgramUniformLocation(programId, "effectColorAdd");
 	if (uniformEffectColorAdd == -1)
 		return;
 	initialized = true;
@@ -77,7 +77,7 @@ void LinesShader::initialize()
 void LinesShader::useProgram(int contextIdx)
 {
 	isRunning = true;
-	renderer->useProgram(contextIdx, renderProgramId);
+	renderer->useProgram(contextIdx, programId);
 	renderer->setLighting(contextIdx, renderer->LIGHTING_NONE);
 	renderer->setProgramUniformInteger(contextIdx, uniformDiffuseTextureUnit, 0);
 }
