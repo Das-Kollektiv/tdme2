@@ -57,16 +57,8 @@ LinesInternal::LinesInternal(const string& id, float lineWidth, const vector<Vec
 	if (points.size() > 1) {
 		boundingBox.getMin().set(points[0]);
 		boundingBox.getMax().set(points[0]);
-		auto& bbMinXYZ = boundingBox.getMin().getArray();
-		auto& bbMaxXYZ = boundingBox.getMax().getArray();
 		for (auto& point: points) {
-			auto& pointXYZ = point.getArray();
-			if (pointXYZ[0] < bbMinXYZ[0]) bbMinXYZ[0] = pointXYZ[0];
-			if (pointXYZ[1] < bbMinXYZ[1]) bbMinXYZ[1] = pointXYZ[1];
-			if (pointXYZ[2] < bbMinXYZ[2]) bbMinXYZ[2] = pointXYZ[2];
-			if (pointXYZ[0] > bbMaxXYZ[0]) bbMaxXYZ[0] = pointXYZ[0];
-			if (pointXYZ[1] > bbMaxXYZ[1]) bbMaxXYZ[1] = pointXYZ[1];
-			if (pointXYZ[2] > bbMaxXYZ[2]) bbMaxXYZ[2] = pointXYZ[2];
+			boundingBox.extend(point);
 		}
 		boundingBox.update();
 		updateBoundingBox();
