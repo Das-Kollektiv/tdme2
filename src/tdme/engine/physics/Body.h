@@ -34,7 +34,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
 /**
- * Dynamic rigid/static rigid/collision body class
+ * Rigid body class
  * @author Andreas Drewke
  */
 class tdme::engine::physics::Body
