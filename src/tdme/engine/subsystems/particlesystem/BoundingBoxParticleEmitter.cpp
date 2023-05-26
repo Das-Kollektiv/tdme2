@@ -1,8 +1,7 @@
 #include <tdme/engine/subsystems/particlesystem/BoundingBoxParticleEmitter.h>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/model/Color4.h>
-#include <tdme/engine/model/Color4Base.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
@@ -10,8 +9,7 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 
-using tdme::engine::model::Color4;
-using tdme::engine::model::Color4Base;
+using tdme::engine::Color4;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::subsystems::particlesystem::BoundingBoxParticleEmitter;

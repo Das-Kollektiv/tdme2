@@ -4,13 +4,13 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/subsystems/postprocessing/fwd-tdme.h>
 
 using std::string;
 using std::vector;
 
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 
 /**
  * Post processing program

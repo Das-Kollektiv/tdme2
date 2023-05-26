@@ -4,7 +4,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Model.h>
 
 using tdme::engine::prototype::PrototypeImposterLOD;
@@ -12,7 +12,7 @@ using tdme::engine::prototype::PrototypeImposterLOD;
 using std::string;
 using std::vector;
 
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::model::Model;
 
 PrototypeImposterLOD::PrototypeImposterLOD(

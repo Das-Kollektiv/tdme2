@@ -6,7 +6,7 @@
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeTransformFilter.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -56,7 +56,7 @@ using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::fileio::prototypes::PrototypeTransformFilter;
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::Prototype;

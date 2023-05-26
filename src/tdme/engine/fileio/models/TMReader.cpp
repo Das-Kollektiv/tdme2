@@ -10,7 +10,7 @@
 #include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/PNGTextureReader.h>
 #include <tdme/engine/model/Animation.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Joint.h>
@@ -45,7 +45,7 @@ using tdme::engine::fileio::models::TMReaderInputStream;
 using tdme::engine::Texture;
 using tdme::engine::fileio::textures::PNGTextureReader;
 using tdme::engine::model::Animation;
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Joint;

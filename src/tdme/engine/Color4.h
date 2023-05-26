@@ -3,7 +3,7 @@
 #include <array>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/math/Math.h>
 
 using std::array;
@@ -11,10 +11,10 @@ using std::array;
 using tdme::math::Math;
 
 /**
- * Color 4 base definition class
+ * Color 4 definition class
  * @author Andreas Drewke
  */
-class tdme::engine::model::Color4Base
+class tdme::engine::Color4
 {
 protected:
 	array<float, 4> data;
@@ -23,7 +23,7 @@ public:
 	/**
 	 * Public constructor
 	 */
-	inline Color4Base() {
+	inline Color4() {
 		data[0] = 0.0f;
 		data[1] = 0.0f;
 		data[2] = 0.0f;
@@ -34,7 +34,7 @@ public:
 	 * Public constructor
 	 * @param color color
 	 */
-	inline Color4Base(const Color4Base& color) {
+	inline Color4(const Color4& color) {
 		data = color.data;
 	}
 
@@ -42,7 +42,7 @@ public:
 	 * Public constructor
 	 * @param color color
 	 */
-	inline Color4Base(const array<float, 4>& color) {
+	inline Color4(const array<float, 4>& color) {
 		this->data = color;
 	}
 
@@ -53,7 +53,7 @@ public:
 	 * @param b blue
 	 * @param a alpha
 	 */
-	inline Color4Base(float r, float g, float b, float a) {
+	inline Color4(float r, float g, float b, float a) {
 		data[0] = r;
 		data[1] = g;
 		data[2] = b;
@@ -86,7 +86,7 @@ public:
 	 * Sets up this color with given color
 	 * @param color color
 	 */
-	inline void set(const Color4Base& color) {
+	inline void set(const Color4& color) {
 		data = color.data;
 	}
 
@@ -165,7 +165,7 @@ public:
 	 * @param scale scale
 	 * @return this color
 	 */
-	inline Color4Base& scale(float scale) {
+	inline Color4& scale(float scale) {
 		data[0] *= scale;
 		data[1] *= scale;
 		data[2] *= scale;
@@ -178,7 +178,7 @@ public:
 	 * @param scale scale
 	 * @return this color
 	 */
-	inline Color4Base& scale(const Color4Base& scale) {
+	inline Color4& scale(const Color4& scale) {
 		data[0] *= scale.data[0];
 		data[1] *= scale.data[1];
 		data[2] *= scale.data[2];
@@ -191,7 +191,7 @@ public:
 	 * @param color color
 	 * @return this color
 	 */
-	inline Color4Base& add(const Color4Base& color) {
+	inline Color4& add(const Color4& color) {
 		data[0] += color.data[0];
 		data[1] += color.data[1];
 		data[2] += color.data[2];
@@ -204,7 +204,7 @@ public:
 	 * @param color color
 	 * @return this color
 	 */
-	inline Color4Base& sub(const Color4Base& color) {
+	inline Color4& sub(const Color4& color) {
 		data[0] -= color.data[0];
 		data[1] -= color.data[1];
 		data[2] -= color.data[2];
@@ -241,7 +241,7 @@ public:
 	 * Compares this color with given color
 	 * @return equality
 	 */
-	inline bool equals(const Color4Base& c) const {
+	inline bool equals(const Color4& c) const {
 		return (this == &c) || (
 			Math::abs(data[0] - c.data[0]) < Math::EPSILON &&
 			Math::abs(data[1] - c.data[1]) < Math::EPSILON &&

@@ -6,7 +6,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/ObjectAnimation.h>
@@ -15,7 +15,7 @@
 
 using std::string;
 
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::rendering::ObjectAnimation;

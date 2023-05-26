@@ -10,8 +10,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Texture.h>
-#include <tdme/engine/model/Color4.h>
-#include <tdme/engine/model/Color4Base.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Material.h>
@@ -78,8 +77,7 @@ using std::unordered_set;
 using std::vector;
 
 using tdme::engine::Texture;
-using tdme::engine::model::Color4;
-using tdme::engine::model::Color4Base;
+using tdme::engine::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Material;

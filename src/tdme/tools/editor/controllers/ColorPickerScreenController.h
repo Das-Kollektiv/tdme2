@@ -3,7 +3,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/model/Color4Base.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
@@ -16,7 +16,7 @@
 
 using std::string;
 
-using tdme::engine::model::Color4Base;
+using tdme::engine::Color4;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
@@ -50,7 +50,7 @@ private:
 	GUIElementNode* alphaInput { nullptr };
 	GUIElementNode* hexInput { nullptr };
 	GUIElementNode* brightnessSlider { nullptr };
-	Color4Base color;
+	Color4 color;
 	Action* onColorChangeAction { nullptr };
 
 	/**
@@ -101,7 +101,7 @@ public:
 	 * @param color color
 	 * @param onColorChangeAction on color change action
 	 */
-	void show(const Color4Base& color, Action* onColorChangeAction);
+	void show(const Color4& color, Action* onColorChangeAction);
 
 	/**
 	 * Closes the pop up
@@ -112,12 +112,12 @@ public:
 	 * Set color
 	 * @param color color
 	 */
-	void setColor(const Color4Base& color);
+	void setColor(const Color4& color);
 
 	/**
 	 * @return color
 	 */
-	inline Color4Base getColor() {
+	inline Color4 getColor() {
 		return color;
 	}
 

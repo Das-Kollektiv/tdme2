@@ -7,13 +7,13 @@ using std::string;
 #include <tdme/engine/subsystems/postprocessing/PostProcessing.h>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingProgram.h>
 #include <tdme/engine/subsystems/rendering/EntityRenderer.h>
 
 using tdme::engine::subsystems::postprocessing::PostProcessing;
 
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::subsystems::postprocessing::PostProcessingProgram;
 using tdme::engine::subsystems::rendering::EntityRenderer;
 

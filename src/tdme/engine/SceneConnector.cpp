@@ -14,8 +14,7 @@
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fileio/ProgressCallback.h>
-#include <tdme/engine/model/Color4.h>
-#include <tdme/engine/model/Color4Base.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/physics/Body.h>
 #include <tdme/engine/physics/HierarchyBody.h>
@@ -97,8 +96,7 @@ using tdme::audio::Sound;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::fileio::ProgressCallback;
-using tdme::engine::model::Color4;
-using tdme::engine::model::Color4Base;
+using tdme::engine::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::physics::Body;
 using tdme::engine::physics::HierarchyBody;

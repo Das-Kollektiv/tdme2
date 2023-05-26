@@ -9,7 +9,7 @@
 #include <tdme/engine/logics/Context.h>
 #include <tdme/engine/logics/Logic.h>
 #include <tdme/engine/logics/MiniScriptLogic.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/Camera.h>
@@ -45,7 +45,7 @@ using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::logics::Context;
 using tdme::engine::logics::Logic;
 using tdme::engine::logics::MiniScriptLogic;
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::scene::Scene;
 using tdme::engine::Camera;

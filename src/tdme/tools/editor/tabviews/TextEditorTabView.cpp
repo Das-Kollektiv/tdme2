@@ -6,7 +6,7 @@
 #include <unordered_map>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/ColorTextureCanvas.h>
 #include <tdme/engine/DynamicColorTexture.h>
 #include <tdme/engine/Engine.h>
@@ -44,7 +44,7 @@ using std::unordered_map;
 
 using tdme::tools::editor::tabviews::TextEditorTabView;
 
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::ColorTextureCanvas;
 using tdme::engine::DynamicColorTexture;
 using tdme::engine::Engine;

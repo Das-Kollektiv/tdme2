@@ -6,8 +6,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/model/Color4.h>
-#include <tdme/engine/model/Color4Base.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/gui/GUIParserException.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/StringTools.h>
@@ -16,8 +15,7 @@ using std::array;
 using std::string;
 using std::vector;
 
-using tdme::engine::model::Color4;
-using tdme::engine::model::Color4Base;
+using tdme::engine::Color4;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::GUIParserException;
 using tdme::utilities::Console;
@@ -50,23 +48,23 @@ vector<string> GUIColor::COLOR_NAMES = {{
 	"TRANSPARENT"
 }};
 
-GUIColor::GUIColor() : Color4Base()
+GUIColor::GUIColor() : Color4()
 {
 }
 
-GUIColor::GUIColor(const Color4& color) : Color4Base(color)
+GUIColor::GUIColor(const Color4& color) : Color4(color)
 {
 }
 
-GUIColor::GUIColor(float r, float g, float b, float a) : Color4Base(r,g,b,a)
+GUIColor::GUIColor(float r, float g, float b, float a) : Color4(r,g,b,a)
 {
 }
 
-GUIColor::GUIColor(const array<float, 4>& color): Color4Base(color)
+GUIColor::GUIColor(const array<float, 4>& color): Color4(color)
 {
 }
 
-GUIColor::GUIColor(const string& colorString) : Color4Base()
+GUIColor::GUIColor(const string& colorString) : Color4()
 {
 	if (colorString.empty() == true) {
 		Console::println("GUI: Warning: No color given");

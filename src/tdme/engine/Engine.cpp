@@ -9,7 +9,7 @@
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -92,7 +92,7 @@ using tdme::application::Application;
 using tdme::engine::fileio::textures::PNGTextureWriter;
 using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::model::Node;
 using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;

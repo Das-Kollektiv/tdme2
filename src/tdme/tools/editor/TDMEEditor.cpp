@@ -7,7 +7,7 @@
 #include <tdme/tdme.h>
 #include <tdme/utilities/Time.h>
 
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/Engine.h>
@@ -27,7 +27,7 @@ using tdme::tools::editor::TDMEEditor;
 
 using tdme::utilities::Time;
 
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::Engine;

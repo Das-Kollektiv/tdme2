@@ -6,7 +6,7 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
@@ -16,7 +16,7 @@
 using std::to_string;
 
 using tdme::engine::Texture;
-using tdme::engine::model::Color4;
+using tdme::engine::Color4;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Math;
 using tdme::math::Vector3;
