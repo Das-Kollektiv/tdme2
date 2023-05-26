@@ -18,9 +18,9 @@ using tdme::math::Matrix4x4;
 class tdme::engine::subsystems::lines::LinesShader final
 {
 private:
-	int32_t renderProgramId { -1 };
-	int32_t renderFragmentShaderId { -1 };
-	int32_t renderVertexShaderId { -1 };
+	int32_t programId { -1 };
+	int32_t fragmentShaderId { -1 };
+	int32_t vertexShaderId { -1 };
 	int32_t uniformMVPMatrix { -1 };
 	int32_t uniformDiffuseTextureUnit { -1 };
 	int32_t uniformEffectColorMul { -1 };

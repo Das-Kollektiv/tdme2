@@ -20,7 +20,7 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::Transform;
 
 /**
- * Dynamic rigid/static rigid/collision body class
+ * Rigid body class that supports sub rigid bodies
  * @author Andreas Drewke
  */
 class tdme::engine::physics::HierarchyBody final: public Body
