@@ -548,7 +548,7 @@ World* World::clone(const string& id, uint16_t collisionTypeIds)
 		if (((body->getCollisionTypeId() & collisionTypeIds) == body->getCollisionTypeId()) == false) continue;
 
 		// clone rigid body
-		switch(bodyType) {
+		switch (bodyType) {
 			case Body::BODYTYPE_STATIC:
 				clonedBody = clonedWorld->addStaticRigidBody(body->id, body->isEnabled(), body->getCollisionTypeId(), body->transform, body->getFriction(), body->boundingVolumes);
 				break;
@@ -567,8 +567,9 @@ World* World::clone(const string& id, uint16_t collisionTypeIds)
 		}
 
 		// synch additional properties
-		synchronize(clonedBody, clonedBody);
+		synchronize(clonedBody, body);
 	}
+	//
 	return clonedWorld;
 }
 
