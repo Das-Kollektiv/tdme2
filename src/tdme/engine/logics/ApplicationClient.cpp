@@ -58,11 +58,13 @@ void ApplicationClient::run() {
 	Console::println("ApplicationClient::run(): init");
 
 	//
-	int64_t timeLast = Time::getCurrentMillis();
+	auto timeLast = Time::getCurrentMillis();
 	vector<LogicNetworkPacket> inLogicsNetworkPacketsUnhandled;
+	vector<LogicNetworkPacket> safeLogicNetworkPackets;
+	vector<LogicNetworkPacket> fastLogicNetworkPackets;
+	vector<LogicNetworkPacket> inNetworkPackets;
 	while(isStopRequested() == false) {
-		int64_t timeNow = Time::getCurrentMillis();
-		vector<LogicNetworkPacket> inNetworkPackets;
+		auto timeNow = Time::getCurrentMillis();
 
 		// push unhandlet packets to IN packets, display an warning if not handled for 1s
 		for (auto& logicNetworkPacket: inLogicsNetworkPacketsUnhandled) {
@@ -183,6 +185,8 @@ void ApplicationClient::run() {
 				inLogicsNetworkPacketsUnhandled.push_back(packet);
 			}
 		}
+		//
+		inNetworkPackets.clear();
 
 		// network sending
 		if (udpClient == nullptr) {
@@ -198,9 +202,6 @@ void ApplicationClient::run() {
 			}
 		} else {
 			// We have a UDP client, so send packages
-			// TODO: reuse this vectors
-			vector<LogicNetworkPacket> safeLogicNetworkPackets;
-			vector<LogicNetworkPacket> fastLogicNetworkPackets;
 			for (auto logic: context->getLogics()) {
 				NetworkLogic* networkLogic = dynamic_cast<NetworkLogic*>(logic);
 				if (networkLogic != nullptr) {
@@ -260,6 +261,8 @@ void ApplicationClient::run() {
 				} else {
 					delete udpClientPacket;
 				}
+				//
+				safeLogicNetworkPackets.clear();
 			}
 			// send fast messages
 			{
@@ -300,6 +303,8 @@ void ApplicationClient::run() {
 				} else {
 					delete udpClientPacket;
 				}
+				//
+				fastLogicNetworkPackets.clear();
 			}
 		}
 

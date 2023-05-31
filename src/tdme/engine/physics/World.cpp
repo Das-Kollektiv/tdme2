@@ -356,22 +356,11 @@ void World::synchronize(Engine* engine)
 		// skip on sleeping objects
 		if (body->isSleeping() == true) continue;
 
-		//
-		auto bodyId = body->getId();
-		string subBodyId;
-		auto bodyIdSeparatorPosition = bodyId.find('|');
-		if (bodyIdSeparatorPosition != string::npos) {
-			subBodyId = StringTools::substring(bodyId, bodyIdSeparatorPosition + 1, bodyId.size());
-			bodyId = StringTools::substring(bodyId, 0, bodyIdSeparatorPosition);
-		}
-
 		// synch with engine entity
-		auto entity = engine->getEntity(bodyId);
+		auto entity = engine->getEntity(body->getId());
 		if (entity == nullptr) {
 			Console::println(
-				string("World::entity '") +
-				bodyId +
-				string("' not found")
+				"World::entity '" + body->getId() + "' not found"
 			);
 			continue;
 		}
