@@ -1,5 +1,6 @@
 #include <string>
 #include <unordered_set>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -139,7 +140,7 @@ void ServerThread::createDatagrams(vector<LogicNetworkPacket>& safeLogicNetworkP
 	}
 }
 
-string ServerThread::getLogicNetworkPacketsLogicTypes(vector<LogicNetworkPacket>& logicNetworkPackets) {
+const string ServerThread::getLogicNetworkPacketsLogicTypes(vector<LogicNetworkPacket>& logicNetworkPackets) {
 	unordered_set<uint32_t> networkPacketTypesSet;
 	string networkPacketTypes;
 	for (auto& logicNetworkPacket: logicNetworkPackets) {
@@ -156,17 +157,44 @@ void ServerThread::run() {
 	int64_t timeLast = Time::getCurrentMillis();
 	auto clientKeySetLast = server->getClientKeySet();
 	vector<string> newClientKeys;
-	map<string, vector<LogicNetworkPacket>> clientNetworkPacketsUnhandled;
+	unordered_map<string, vector<LogicNetworkPacket>> clientNetworkPacketsUnhandled;
+	// multicast packets to send for update
+	unordered_map<string, vector<LogicNetworkPacket>> mcUpdateSafeLogicNetworkPackets;
+	unordered_map<string, vector<LogicNetworkPacket>> mcUpdateFastLogicNetworkPackets;
+	// broadcast packets to send for update
+	vector<LogicNetworkPacket> bcUpdateSafeLogicNetworkPackets;
+	vector<LogicNetworkPacket> bcUpdateFastLogicNetworkPackets;
+	// multicast packets to send for initiation
+	unordered_map<string, vector<LogicNetworkPacket>> mcInitialSafeLogicNetworkPackets;
+	unordered_map<string, vector<LogicNetworkPacket>> mcInitialFastLogicNetworkPackets;
+	// broadcast packets to send for initialization
+	vector<LogicNetworkPacket> bcInitialSafeLogicNetworkPackets;
+	vector<LogicNetworkPacket> bcInitialFastLogicNetworkPackets;
+	//
+	unordered_map<string, vector<LogicNetworkPacket>> clientNetworkPackets;
+	//
+	vector<ApplicationServerClient*> clients;
+	vector<ApplicationServerClient*> updateClients;
+	//
+	vector<UDPPacket*> bcSendInitialPacketsSafe;
+	vector<UDPPacket*> bcSendInitialPacketsFast;
+	//
+	vector<UDPPacket*> mcSendInitialPacketsSafe;
+	vector<UDPPacket*> mcSendInitialPacketsFast;
+	//
+	vector<UDPPacket*> bcSendUpdatePacketsSafe;
+	vector<UDPPacket*> bcSendUpdatePacketsFast;
+	//
+	vector<UDPPacket*> mcSendUpdatePacketsSafe;
+	vector<UDPPacket*> mcSendUpdatePacketsFast;
+	//
 	auto initializedLastFrame = false;
 	while(isStopRequested() == false) {
 		int64_t timeNow = Time::getCurrentMillis();
-		map<string, vector<LogicNetworkPacket>> clientNetworkPackets;
 
 		// determine current clients
-		vector<ApplicationServerClient*> clients;
-		vector<ApplicationServerClient*> updateClients;
 		auto clientKeySet = server->getClientKeySet();
-		for (auto clientKey: clientKeySet) {
+		for (auto& clientKey: clientKeySet) {
 			auto client = static_cast<ApplicationServerClient*>(server->getClientByKey(clientKey));
 			if (client == nullptr) continue;
 			// new client?
@@ -191,23 +219,6 @@ void ServerThread::run() {
 			}
 		}
 		clientNetworkPacketsUnhandled.clear();
-
-		// multicast packets to send for update
-		// TODO: reuse this vectors
-		map<string, vector<LogicNetworkPacket>> mcUpdateSafeLogicNetworkPackets;
-		map<string, vector<LogicNetworkPacket>> mcUpdateFastLogicNetworkPackets;
-		// broadcast packets to send for update
-		// TODO: reuse this vectors
-		vector<LogicNetworkPacket> bcUpdateSafeLogicNetworkPackets;
-		vector<LogicNetworkPacket> bcUpdateFastLogicNetworkPackets;
-		// multicast packets to send for initiation
-		// TODO: reuse this vectors
-		map<string, vector<LogicNetworkPacket>> mcInitialSafeLogicNetworkPackets;
-		map<string, vector<LogicNetworkPacket>> mcInitialFastLogicNetworkPackets;
-		// broadcast packets to send for initialization
-		// TODO: reuse this vectors
-		vector<LogicNetworkPacket> bcInitialSafeLogicNetworkPackets;
-		vector<LogicNetworkPacket> bcInitialFastLogicNetworkPackets;
 
 		// logic + handle network packets
 		mutex.lock();
@@ -426,9 +437,6 @@ void ServerThread::run() {
 			// broad cast
 			{
 				// broadcast datagrams to send for initialization
-				// TODO: reuse this vectors
-				vector<UDPPacket*> bcSendInitialPacketsSafe;
-				vector<UDPPacket*> bcSendInitialPacketsFast;
 				createDatagrams(bcInitialSafeLogicNetworkPackets, bcInitialFastLogicNetworkPackets, bcSendInitialPacketsSafe, bcSendInitialPacketsFast);
 				if (VERBOSE_NETWORK == true && bcSendInitialPacketsSafe.size() > 0) {
 					Console::println(
@@ -450,13 +458,13 @@ void ServerThread::run() {
 				}
 				for (auto packet: bcSendInitialPacketsSafe) delete packet;
 				for (auto packet: bcSendInitialPacketsFast) delete packet;
+				//
+				bcSendInitialPacketsSafe.clear();
+				bcSendInitialPacketsFast.clear();
 			}
 			{
 				// multi cast
 				for (auto client: newClients) {
-					// TODO: reuse this vectors
-					vector<UDPPacket*> mcSendInitialPacketsSafe;
-					vector<UDPPacket*> mcSendInitialPacketsFast;
 					auto& mcInitialSafePacketsClient = mcInitialSafeLogicNetworkPackets[client->getKey()];
 					auto& mcInitialFastPacketsClient = mcInitialFastLogicNetworkPackets[client->getKey()];
 					createDatagrams(mcInitialSafePacketsClient, mcInitialFastPacketsClient, mcSendInitialPacketsSafe, mcSendInitialPacketsFast);
@@ -478,6 +486,9 @@ void ServerThread::run() {
 					}
 					for (auto packet: mcSendInitialPacketsSafe) client->send(packet, true);
 					for (auto packet: mcSendInitialPacketsFast) client->send(packet, false);
+					//
+					mcSendInitialPacketsSafe.clear();
+					mcSendInitialPacketsFast.clear();
 				}
 			}
 		}
@@ -487,9 +498,6 @@ void ServerThread::run() {
 			// broad cast
 			{
 				// broadcast datagrams to send for update
-				// TODO: reuse this vectors
-				vector<UDPPacket*> bcSendUpdatePacketsSafe;
-				vector<UDPPacket*> bcSendUpdatePacketsFast;
 				createDatagrams(bcUpdateSafeLogicNetworkPackets, bcUpdateFastLogicNetworkPackets, bcSendUpdatePacketsSafe, bcSendUpdatePacketsFast);
 				if (VERBOSE_NETWORK == true && bcSendUpdatePacketsSafe.size() > 0) {
 					Console::println(
@@ -511,13 +519,13 @@ void ServerThread::run() {
 				}
 				for (auto packet: bcSendUpdatePacketsSafe) delete packet;
 				for (auto packet: bcSendUpdatePacketsFast) delete packet;
+				//
+				bcSendUpdatePacketsSafe.clear();
+				bcSendUpdatePacketsFast.clear();
 			}
 			// multi cast
 			{
 				for (auto client: clients) {
-					// TODO: reuse this vectors
-					vector<UDPPacket*> mcSendUpdatePacketsSafe;
-					vector<UDPPacket*> mcSendUpdatePacketsFast;
 					auto& mcUpdateSafePacketsClient = mcUpdateSafeLogicNetworkPackets[client->getKey()];
 					auto& mcUpdateFastPacketsClient = mcUpdateFastLogicNetworkPackets[client->getKey()];
 					if (VERBOSE_NETWORK == true && mcSendUpdatePacketsSafe.size() > 0) {
@@ -539,6 +547,9 @@ void ServerThread::run() {
 					createDatagrams(mcUpdateSafePacketsClient, mcUpdateFastPacketsClient, mcSendUpdatePacketsSafe, mcSendUpdatePacketsFast);
 					for (auto packet: mcSendUpdatePacketsSafe) client->send(packet, true);
 					for (auto packet: mcSendUpdatePacketsFast) client->send(packet, false);
+					//
+					mcSendUpdatePacketsSafe.clear();
+					mcSendUpdatePacketsFast.clear();
 				}
 			}
 		}
@@ -547,6 +558,21 @@ void ServerThread::run() {
 		for (auto client: clients) {
 			client->releaseReference();
 		}
+
+		//
+		clientNetworkPackets.clear();
+		clients.clear();
+		updateClients.clear();
+
+		//
+		mcUpdateSafeLogicNetworkPackets.clear();
+		mcUpdateFastLogicNetworkPackets.clear();
+		bcUpdateSafeLogicNetworkPackets.clear();
+		bcUpdateFastLogicNetworkPackets.clear();
+		mcInitialSafeLogicNetworkPackets.clear();
+		mcInitialFastLogicNetworkPackets.clear();
+		bcInitialSafeLogicNetworkPackets.clear();
+		bcInitialFastLogicNetworkPackets.clear();
 
 		// set last client key set
 		clientKeySetLast = clientKeySet;

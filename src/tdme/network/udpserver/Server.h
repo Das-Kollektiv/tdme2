@@ -87,7 +87,7 @@ s			 * @param maxCCU max ccu
 	 * @brief get a copy of current client keys
 	 * @return client list
 	 */
-	inline ClientKeySet getClientKeySet() {
+	ClientKeySet getClientKeySet() {
 		// make a copy of the client key set
 		ClientKeySet _clientKeySet;
 		clientKeyListsReadWriteLock.readLock();
@@ -102,7 +102,7 @@ s			 * @param maxCCU max ccu
 	 * @param clientKey client identification key
 	 * @return client or nullptr
 	 */
-	inline CLIENT* getClientByKey(const string& clientKey) {
+	CLIENT* getClientByKey(const string& clientKey) {
 		clientKeyListsReadWriteLock.readLock();
 		auto it = clientKeyMap.find(clientKey);
 		auto client = it != clientKeyMap.end()?it->second:nullptr;
@@ -118,7 +118,7 @@ s			 * @param maxCCU max ccu
 	 * @brief get a copy of current group keys
 	 * @return group list
 	 */
-	inline ClientKeySet getGroupKeySet() {
+	ClientKeySet getGroupKeySet() {
 		// make a copy of the group key set
 		GroupKeySet _groupKeySet;
 		groupKeyListsReadWriteLock.readLock();
@@ -133,7 +133,7 @@ s			 * @param maxCCU max ccu
 	 * @param groupKey group identification key
 	 * @return group or nullptr
 	 */
-	inline GROUP* getGroupByKey(const string& groupKey) {
+	GROUP* getGroupByKey(const string& groupKey) {
 		groupKeyListsReadWriteLock.readLock();
 		auto it = groupKeyMap.find(groupKey);
 		auto group = it != groupKeyMap.end()?it->second:nullptr;
@@ -156,7 +156,7 @@ protected:
 	 * @param &clientKey client identification key
 	 * @return if setting the key was successful
 	 */
-	inline bool setClientKey(CLIENT* client, const string &clientKey) {
+	bool setClientKey(CLIENT* client, const string &clientKey) {
 		clientKeyListsReadWriteLock.writeLock();
 		// set new client key association
 		auto it = clientKeyMap.find(clientKey);
@@ -182,7 +182,7 @@ protected:
 	 * @brief closes a client connection
 	 * @param client client
 	 */
-	inline void closeClient(CLIENT* client) {
+	void closeClient(CLIENT* client) {
 		clientKeyListsReadWriteLock.writeLock();
 		// erase client in client map
 		clientKeyMap.erase(client->getKey());
@@ -198,7 +198,7 @@ protected:
 	 * @param &groupKey group identification key
 	 * @return if setting the key was successful
 	 */
-	inline bool setGroupKey(GROUP* group, const string &groupKey) {
+	bool setGroupKey(GROUP* group, const string &groupKey) {
 		groupKeyListsReadWriteLock.writeLock();
 		// set new client key association
 		auto it = groupKeyMap.find(groupKey);
@@ -224,7 +224,7 @@ protected:
 	 * @brief closes a group connection
 	 * @param group group
 	 */
-	inline void closeGroup(GROUP* group) {
+	void closeGroup(GROUP* group) {
 		groupKeyListsReadWriteLock.writeLock();
 		// erase client in client map
 		groupKeyMap.erase(group->getKey());
