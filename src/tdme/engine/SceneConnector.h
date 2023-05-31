@@ -50,7 +50,7 @@ public:
 	static constexpr uint16_t RIGIDBODY_TYPEID_COLLISION { 4 };
 	static constexpr uint16_t RIGIDBODY_TYPEID_TRIGGER { 8 };
 
-	static constexpr int COLLISION_TYPEID_STANDARD { 0 };
+	static constexpr int RIGIDBODY_TYPEID_STANDARD { 0 };
 	static constexpr int BOUNDINGVOLUME_INDEX_NONE { -1 };
 
 	/**
@@ -338,7 +338,7 @@ public:
 	 * @param overrideType override physics type if required
 	 * @return rigid body
 	 */
-	static Body* createBody(World* world, Prototype* prototype, const string& id, const Transform& transform, uint16_t collisionTypeId = COLLISION_TYPEID_STANDARD, bool hierarchy = false, int index = BOUNDINGVOLUME_INDEX_NONE, PrototypePhysics_BodyType* overrideType = nullptr);
+	static Body* createBody(World* world, Prototype* prototype, const string& id, const Transform& transform, uint16_t collisionTypeId = RIGIDBODY_TYPEID_STANDARD, bool hierarchy = false, int index = BOUNDINGVOLUME_INDEX_NONE, PrototypePhysics_BodyType* overrideType = nullptr);
 
 	/**
 	 * Create rigid body
@@ -351,7 +351,7 @@ public:
 	 * @param overrideType override physics type if required
 	 * @return rigid body
 	 */
-	static Body* createBody(World* world, SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), uint16_t collisionTypeId = COLLISION_TYPEID_STANDARD, bool hierarchy = false, int index = BOUNDINGVOLUME_INDEX_NONE, PrototypePhysics_BodyType* overrideType = nullptr);
+	static Body* createBody(World* world, SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), uint16_t collisionTypeId = RIGIDBODY_TYPEID_STANDARD, bool hierarchy = false, int index = BOUNDINGVOLUME_INDEX_NONE, PrototypePhysics_BodyType* overrideType = nullptr);
 
 	/**
 	 * Create sub body from sub body creation structure

@@ -248,7 +248,7 @@ void PhysicsTest5::initialize()
 		engine->addEntity(botEntityHierarchy);
 
 		// create bot body in physics
-		auto botBody = dynamic_cast<HierarchyBody*>(SceneConnector::createBody(world, botPrototype, "bot", botTransform, SceneConnector::COLLISION_TYPEID_STANDARD, true));
+		auto botBody = dynamic_cast<HierarchyBody*>(SceneConnector::createBody(world, botPrototype, "bot", botTransform, SceneConnector::RIGIDBODY_TYPEID_STANDARD, true));
 
 		// we only need scale for now as parent transform for attaching weapon to bot
 		Transform botTransformScale;
