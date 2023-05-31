@@ -1,11 +1,14 @@
 #pragma once
 
+#include <vector>
+
 #include <tdme/tdme.h>
+#include <tdme/network/udpserver/ServerRequest.h>
+#include <tdme/network/udpserver/ServerWorkerThread.h>
 #include <tdme/os/threading/Barrier.h>
 #include <tdme/os/threading/Queue.h>
 
-#include <tdme/network/udpserver/ServerRequest.h>
-#include <tdme/network/udpserver/ServerWorkerThread.h>
+using std::vector;
 
 using tdme::os::threading::Barrier;
 using tdme::os::threading::Queue;
@@ -20,7 +23,7 @@ class ServerRequest;
  * @brief Simple server worker thread pool class
  * @author Andreas Drewke
  */
-class ServerWorkerThreadPool : public Queue<ServerRequest> {
+class ServerWorkerThreadPool final: public Queue<ServerRequest> {
 	friend class ServerWorkerThread;
 
 public:
@@ -50,7 +53,7 @@ public:
 private:
 	Barrier* startUpBarrier;
 	unsigned int workerCount;
-	ServerWorkerThread** worker;
+	vector<ServerWorkerThread*> worker;
 };
 
 };

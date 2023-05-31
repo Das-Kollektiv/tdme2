@@ -1,9 +1,5 @@
 #pragma once
 
-#include <stdint.h>
-
-#include <exception>
-#include <sstream>
 #include <string>
 
 #include <tdme/tdme.h>

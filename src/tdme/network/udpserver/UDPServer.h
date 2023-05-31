@@ -1,9 +1,8 @@
 #pragma once
 
-#include <map>
-#include <set>
-#include <sstream>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 
 #include <tdme/network/udpserver/fwd-tdme.h>
 
@@ -19,7 +18,9 @@
 #include <tdme/os/threading/ReadWriteLock.h>
 #include <tdme/os/threading/Thread.h>
 
-using std::stringstream;
+using std::string;
+using std::unordered_map;
+using std::unordered_set;
 
 using tdme::network::udp::UDPPacket;
 using tdme::network::udpserver::NetworkServerException;
@@ -58,7 +59,7 @@ public:
 	 * @param port port to listen on
 	 * @param maxCCU max ccu
 	 */
-	UDPServer(const std::string& name, const std::string& host, const unsigned int port, const unsigned int maxCCU);
+	UDPServer(const string& name, const string& host, const unsigned int port, const unsigned int maxCCU);
 
 	/**
 	 * @brief destructor
@@ -80,7 +81,7 @@ protected:
 	 * @param port port
 	 * @return server client class
 	 */
-	virtual UDPServerClient* accept(const uint32_t clientId, const std::string& ip, const unsigned int port);
+	virtual UDPServerClient* accept(const uint32_t clientId, const string& ip, const uint16_t port);
 
 	/**
 	 * Identifies a client message
@@ -125,9 +126,9 @@ private:
 		UDPServerClient* client;
 		uint64_t time;
 	};
-	typedef std::map<uint32_t, ClientId*> ClientIdMap;
-	typedef std::map<string, UDPServerClient*> ClientIpMap;
-	typedef std::set<UDPServerClient*> ClientSet;
+	typedef unordered_map<uint32_t, ClientId*> ClientIdMap;
+	typedef unordered_map<string, UDPServerClient*> ClientIpMap;
+	typedef unordered_set<UDPServerClient*> ClientSet;
 	static const uint32_t MESSAGE_ID_NONE = 0;
 
 	/**
@@ -163,7 +164,7 @@ private:
 	 * @param port port
 	 * @return client
 	 */
-	UDPServerClient* getClientByIp(const string& ip, const unsigned int port);
+	UDPServerClient* getClientByIp(const string& ip, const uint16_t port);
 
 	/**
 	 * @brief Clean up clients that have been idle for some time or are flagged to be shut down
@@ -203,8 +204,7 @@ private:
 	ClientIpMap clientIpMap;
 	ReadWriteLock clientIpMapReadWriteLock;
 
-	unsigned int ioThreadCurrent;
-	UDPServerIOThread** ioThreads;
+	vector<UDPServerIOThread*> ioThreads;
 	ServerWorkerThreadPool* workerThreadPool;
 
 	uint32_t clientCount;

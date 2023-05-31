@@ -21,7 +21,7 @@ class ServerClient;
  * @brief Server request bean
  * @author Andreas Drewke
  */
-class ServerRequest {
+class ServerRequest final {
 
 public:
 	enum RequestType {
@@ -103,6 +103,7 @@ public:
 	inline const uint8_t getMessageRetries() {
 		return messageRetries;
 	}
+
 private:
 	RequestType requestType;
 	void* object;

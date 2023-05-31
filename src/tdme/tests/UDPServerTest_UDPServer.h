@@ -21,7 +21,7 @@ using tdme::network::udpserver::UDPServer;
 using tdme::network::udpserver::UDPServerClient;
 using tdme::utilities::Exception;
 
-class CRHShutdown : public ServerClientRequestHandler<UDPServerClient,string> {
+class CRHShutdown final: public ServerClientRequestHandler<UDPServerClient,string> {
 public:
 	CRHShutdown();
 
@@ -30,7 +30,7 @@ public:
 	void handleRequest(UDPServerClient *client, string& data, const uint32_t messageId, const uint8_t retries);
 };
 
-class CRHDefault : public ServerClientRequestHandler<UDPServerClient,string> {
+class CRHDefault final: public ServerClientRequestHandler<UDPServerClient,string> {
 public:
 	CRHDefault();
 
@@ -39,14 +39,14 @@ public:
 	void handleRequest(UDPServerClient *client, string& data, const uint32_t messageId, const uint8_t retries);
 };
 
-class EchoUDPServer : public UDPServer {
+class EchoUDPServer final: public UDPServer {
 	friend class EchoUDPServerClient;
 public:
 	EchoUDPServer(const string& host, const unsigned int port, const unsigned int maxCCU);
 
 	virtual ~EchoUDPServer();
 protected:
-	UDPServerClient* accept(const uint32_t clientId, const string& ip, const unsigned int port);
+	UDPServerClient* accept(const uint32_t clientId, const string& ip, const uint16_t port);
 
 	ServerClientRequestHandlerHub<UDPServerClient,string> requestHandlerHub;
 };

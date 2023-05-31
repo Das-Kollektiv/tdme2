@@ -1,8 +1,7 @@
 #include <tdme/network/udpclient/UDPClientMessage.h>
 
-#include <string.h>
+#include <cstring>
 
-#include <sstream>
 #include <string>
 #include <string_view>
 
@@ -15,7 +14,7 @@
 
 using tdme::network::udpclient::UDPClientMessage;
 
-using std::ios_base;
+using std::memcpy;
 using std::string;
 using std::string_view;
 using std::to_string;

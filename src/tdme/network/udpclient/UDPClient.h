@@ -4,10 +4,9 @@
 	#define ssize_t int
 #endif
 
-#include <stdint.h>
-
-#include <map>
 #include <queue>
+#include <string>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 #include <tdme/network/udp/UDPPacket.h>
@@ -20,9 +19,9 @@
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/Thread.h>
 
-using std::map;
 using std::queue;
 using std::string;
+using std::unordered_map;
 
 using tdme::os::network::KernelEventMechanism;
 using tdme::os::network::UDPSocket;
@@ -37,7 +36,7 @@ using tdme::network::udpclient::UDPClientMessage;
  * UDP client
  * @author Andreas Drewke
  */
-class tdme::network::udpclient::UDPClient : public Thread {
+class tdme::network::udpclient::UDPClient final: public Thread {
 public:
 	struct UDPClient_Statistics {
 		int64_t time { -1LL };
@@ -51,45 +50,66 @@ public:
 	 * @param retries retry count
 	 * @return approximatly retry time in ms
 	 */
-	static uint64_t getRetryTime(const uint8_t retries);
+	inline static uint64_t getRetryTime(const uint8_t retries) {
+		if (retries == 0) return 0L;
+		if (retries > UDPClient::MESSAGEACK_RESENDTIMES_TRIES) return 0L;
+		return UDPClient::MESSAGEACK_RESENDTIMES[retries - 1];
+	}
 
 	/**
 	 * Public constructor
 	 * @param ip server ip
 	 * @param port server port
 	 */
-	UDPClient(const string& ip, const unsigned int port);
+	UDPClient(const string& ip, const uint16_t port);
+
+	/**
+	 * Destructor
+	 */
+	~UDPClient();
 
 	/**
 	 * @return initialized
 	 */
-	bool isInitialized();
+	inline bool isInitialized() {
+		return initialized;
+	}
 
 	/**
 	 * @return initialized
 	 */
-	bool isConnected();
+	inline bool isConnected() {
+		return connected;
+	}
 
 	/**
 	 * @return server ip
 	 */
-	const string& getIp();
+	inline const string& getIp() {
+		return ip;
+	}
 
 	/**
 	 * @return server port
 	 */
-	const unsigned int getPort();
+	inline const unsigned int getPort() {
+		return port;
+	}
 
 	/**
 	 * @return client key
 	 */
-	const string& getClientKey();
+	inline const string& getClientKey() {
+		return clientKey;
+	}
 
 	/**
 	 * Set client key
 	 * @param clientKey client key
 	 */
-	void setClientKey(const string& clientKey);
+	inline void setClientKey(const string& clientKey) {
+		this->clientKey = clientKey;
+	}
 
 	/**
 	 * Returns if a message should be processed or already have been processed
@@ -151,7 +171,7 @@ private:
 	bool initialized;
 	bool connected;
 	string ip;
-	uint32_t port;
+	uint16_t port;
 	uint32_t clientId;
 	uint32_t messageCount;
 	string clientKey;
@@ -169,7 +189,7 @@ private:
 		uint16_t bytes;
 	};
 	typedef queue<Message*> MessageQueue;
-	typedef map<uint32_t, Message*> MessageMapAck;
+	typedef unordered_map<uint32_t, Message*> MessageMapAck;
 	typedef queue<UDPClientMessage*> RecvMessageQueue;
 
 	static const uint64_t MESSAGESSAFE_KEEPTIME = 5000L;
@@ -178,7 +198,7 @@ private:
 		uint64_t time;
 		uint8_t receptions;
 	};
-	typedef map<uint32_t, SafeMessage*> MessageMapSafe;
+	typedef unordered_map<uint32_t, SafeMessage*> MessageMapSafe;
 
 
 	KernelEventMechanism kem;

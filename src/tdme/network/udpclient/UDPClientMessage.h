@@ -16,7 +16,7 @@ using tdme::utilities::Time;
  * UDP client message
  * @author Andreas Drewke
  */
-class tdme::network::udpclient::UDPClientMessage {
+class tdme::network::udpclient::UDPClientMessage final {
 	friend UDPClient;
 
 public:

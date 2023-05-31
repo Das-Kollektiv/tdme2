@@ -1,8 +1,5 @@
 #pragma once
 
-#include <stdint.h>
-
-#include <exception>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -45,7 +42,7 @@ public:
 	 * @brief returns client port
 	 * @return client port
 	 */
-	virtual const unsigned int getPort() const = 0;
+	virtual const uint16_t getPort() const = 0;
 
 	/**
 	 * @brief Client identification key
@@ -98,12 +95,12 @@ protected:
 	virtual void onCustom(const string& type) = 0;
 
 	/**
-	 * @brief Event, which will be called if frame has been received, defaults to worker thread pool
+	 * @brief Event, which will be called if packet has been received, defaults to worker thread pool
 	 * @param packet packet
 	 * @param messageId message id (upd server only)
 	 * @param retries retries (udp server only)
 	 */
-	virtual void onFrameReceived(const UDPPacket* packet, const uint32_t messageId = 0, const uint8_t retries = 0) = 0;
+	virtual void onPacketReceived(const UDPPacket* packet, const uint32_t messageId = 0, const uint8_t retries = 0) = 0;
 
 	/**
 	 * @brief Shuts down this network client
@@ -111,6 +108,6 @@ protected:
 	virtual void close() = 0;
 
 	//
-	std::string key;
+	string key;
 };
 

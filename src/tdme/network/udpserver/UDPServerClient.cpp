@@ -1,31 +1,29 @@
 #include <stdio.h>
 
-#include <map>
 #include <string>
 #include <typeinfo>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 #include <tdme/network/udp/UDPPacket.h>
 #include <tdme/network/udpserver/UDPServerClient.h>
+#include <tdme/network/udpserver/NetworkServerException.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/Integer.h>
 #include <tdme/utilities/RTTI.h>
 #include <tdme/utilities/Time.h>
 
-using std::ios_base;
-using std::map;
-using std::pair;
 using std::string;
+using std::unordered_map;
 
 using tdme::network::udpserver::UDPServerClient;
 
 using tdme::network::udp::UDPPacket;
+using tdme::network::udpserver::NetworkServerException;
 using tdme::utilities::Console;
-using tdme::utilities::Integer;
 using tdme::utilities::RTTI;
 using tdme::utilities::Time;
 
-UDPServerClient::UDPServerClient(const uint32_t clientId, const string& ip, const unsigned int port) :
+UDPServerClient::UDPServerClient(const uint32_t clientId, const string& ip, const uint16_t port) :
 	server(nullptr),
 	ioThread(nullptr),
 	clientId(clientId),
@@ -38,26 +36,7 @@ UDPServerClient::UDPServerClient(const uint32_t clientId, const string& ip, cons
 }
 
 UDPServerClient::~UDPServerClient() {
-}
-
-UDPServer* UDPServerClient::getServer() {
-	return server;
-}
-
-const uint32_t UDPServerClient::getClientId() {
-	return clientId;
-}
-
-const string& UDPServerClient::getIp() const {
-	return ip;
-}
-
-const unsigned int UDPServerClient::getPort() const {
-	return port;
-}
-
-const string& UDPServerClient::getKey() const {
-	return key;
+	for (auto& it: messageMapSafe) delete it.second;
 }
 
 const bool UDPServerClient::setKey(const string &key) {
@@ -87,37 +66,36 @@ void UDPServerClient::send(UDPPacket* packet, bool safe, bool deleteFrame) {
 		// log
 		Console::println(
 			"UDPServerClient::send(): send failed for client '" +
-			(ip) +
+			ip +
 			"': " +
-			(RTTI::demangle(typeid(exception).name())) +
+			RTTI::demangle(typeid(exception).name()) +
 			": " +
-			(exception.what())
+			string(exception.what())
 		);
 	}
 }
 
 bool UDPServerClient::processSafeMessage(const uint32_t messageId) {
 	bool messageProcessed = false;
-	MessageMapSafe::iterator it;
 
 	//
 	messageMapSafeMutex.lock();
 
 	// check if message has been already processed
-	it = messageMapSafe.find(messageId);
+	auto it = messageMapSafe.find(messageId);
 	if (it != messageMapSafe.end()) {
 		// yep, we did
 		messageProcessed = true;
-		Message* message = &it->second;
+		auto message = it->second;
 		message->receptions++;
 	} else {
 		// nope, just remember message
-		Message message;
-		message.messageId = messageId;
-		message.receptions = 1;
-		message.time = Time::getCurrentMillis();
+		auto message = new Message();
+		message->messageId = messageId;
+		message->receptions = 1;
+		message->time = Time::getCurrentMillis();
 		// TODO: check for overflow
-		messageMapSafe.insert(it, pair<uint32_t, Message>(messageId, message));
+		messageMapSafe[messageId] = message;
 	}
 
 	//
@@ -133,12 +111,12 @@ bool UDPServerClient::processSafeMessage(const uint32_t messageId) {
 
 		// log
 		Console::println(
-			"UDPServerClient::sendAcknowledgement(): send failed for client '" +
-			(ip) +
+			"UDPServerClient::processSafeMessage(): send failed for client '" +
+			ip +
 			"': " +
-			(RTTI::demangle(typeid(exception).name())) +
+			RTTI::demangle(typeid(exception).name()) +
 			": " +
-			(exception.what())
+			string(exception.what())
 		);
 	}
 
@@ -158,11 +136,11 @@ void UDPServerClient::sendConnected() {
 		// log
 		Console::println(
 			"UDPServerClient::sendConnected(): send failed for client '" +
-			(ip) +
+			ip +
 			"': " +
-			(RTTI::demangle(typeid(exception).name())) +
+			RTTI::demangle(typeid(exception).name()) +
 			": " +
-			(exception.what())
+			string(exception.what())
 		);
 	}
 }
@@ -171,9 +149,9 @@ void UDPServerClient::shutdown() {
 	shutdownRequested = true;
 }
 
-void UDPServerClient::onFrameReceived(const UDPPacket* packet, const uint32_t messageId, const uint8_t retries) {
+void UDPServerClient::onPacketReceived(const UDPPacket* packet, const uint32_t messageId, const uint8_t retries) {
 	// create request
-	ServerRequest* request = new ServerRequest(
+	auto request = new ServerRequest(
 		ServerRequest::REQUESTTYPE_CLIENT_REQUEST,
 		this,
 		ServerRequest::EVENT_CUSTOM_NONE,
@@ -184,7 +162,7 @@ void UDPServerClient::onFrameReceived(const UDPPacket* packet, const uint32_t me
 	// delegate it to thread pool, but make it declinable
 	if (server->workerThreadPool->addElement(request, true) == false) {
 		// element was declined
-		Console::println("UDPServerClient::onFrameReceived(): client request declined from '" + (ip) + "'. Shutting down client");
+		Console::println("UDPServerClient::onPacketReceived(): client request declined from '" + (ip) + "'. Shutting down client");
 		// 	release client reference
 		releaseReference();
 		// 	delete packet
@@ -198,7 +176,7 @@ void UDPServerClient::onFrameReceived(const UDPPacket* packet, const uint32_t me
 
 void UDPServerClient::close() {
 	// create request
-	ServerRequest* request = new ServerRequest(
+	auto request = new ServerRequest(
 		ServerRequest::REQUESTTYPE_CLIENT_CLOSE,
 		this,
 		ServerRequest::EVENT_CUSTOM_NONE,
@@ -217,7 +195,7 @@ void UDPServerClient::init() {
 	acquireReference();
 
 	// create request
-	ServerRequest* request = new ServerRequest(
+	auto request = new ServerRequest(
 		ServerRequest::REQUESTTYPE_CLIENT_INIT,
 		this,
 		ServerRequest::EVENT_CUSTOM_NONE,
@@ -234,7 +212,7 @@ void UDPServerClient::fireEvent(const string &type) {
 	acquireReference();
 
 	// create request
-	ServerRequest* request = new ServerRequest(
+	auto request = new ServerRequest(
 		ServerRequest::REQUESTTYPE_CLIENT_CUSTOM,
 		this,
 		type,
@@ -253,11 +231,12 @@ void UDPServerClient::cleanUpSafeMessages() {
 	messageMapSafeMutex.lock();
 
 	// check if message has been already processed
-	uint64_t now = Time::getCurrentMillis();
-	MessageMapSafe::iterator it = messageMapSafe.begin();
+	auto now = Time::getCurrentMillis();
+	auto it = messageMapSafe.begin();
 	while (it != messageMapSafe.end()) {
-		Message* message = &it->second;
+		auto message = it->second;
 		if (message->time < now - MESSAGESSAFE_KEEPTIME) {
+			delete it->second;
 			messageMapSafe.erase(it++);
 			continue;
 		}

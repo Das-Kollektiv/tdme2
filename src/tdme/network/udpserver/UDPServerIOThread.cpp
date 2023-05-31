@@ -1,8 +1,8 @@
 #include <string.h>
 
-#include <map>
 #include <string>
 #include <typeinfo>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 #include <tdme/network/udp/UDPPacket.h>
@@ -18,11 +18,9 @@
 #include <tdme/utilities/RTTI.h>
 #include <tdme/utilities/Time.h>
 
-using std::ios_base;
-using std::map;
-using std::pair;
 using std::string;
 using std::to_string;
+using std::unordered_map;
 
 using tdme::network::udp::UDPPacket;
 using tdme::network::udpserver::ServerRequest;
@@ -52,6 +50,21 @@ UDPServerIOThread::UDPServerIOThread(const unsigned int id, UDPServer *server, c
 	//
 }
 
+UDPServerIOThread::~UDPServerIOThread() {
+	//
+	messageQueueMutex.lock();
+	while (messageQueue.empty() == false) {
+		delete messageQueue.front();
+		messageQueue.pop();
+	}
+	messageQueueMutex.unlock();
+	//
+	messageMapAckMutex.lock();
+	for (auto& it: messageMapAck) delete it.second;
+	messageMapAck.clear();
+	messageMapAckMutex.unlock();
+}
+
 void UDPServerIOThread::run() {
 	Console::println("UDPServerIOThread[" + to_string(id) + "]::run(): start");
 
@@ -68,9 +81,9 @@ void UDPServerIOThread::run() {
 		kem.setSocketInterest(socket, NIO_INTEREST_NONE, NIO_INTEREST_READ, nullptr);
 
 		// do event loop
-		uint64_t lastMessageQueueAckTime = Time::getCurrentMillis();
-		while(isStopRequested() == false) {
-			uint64_t now = Time::getCurrentMillis();
+		auto lastMessageQueueAckTime = Time::getCurrentMillis();
+		while (isStopRequested() == false) {
+			auto now = Time::getCurrentMillis();
 
 			// process ack messages every 25ms
 			if (now >= lastMessageQueueAckTime + 25L) {
@@ -79,10 +92,10 @@ void UDPServerIOThread::run() {
 			}
 
 			// do kernel event mechanism
-			int events = kem.doKernelEventMechanism();
+			auto events = kem.doKernelEventMechanism();
 
 			// iterate the event list
-			for(unsigned int i = 0; i < (unsigned int)events; i++) {
+			for (auto i = 0; i < events; i++) {
 				NIOInterest keInterest;
 				void* nil;
 
@@ -90,11 +103,11 @@ void UDPServerIOThread::run() {
 				kem.decodeKernelEvent(i, keInterest, (void*&)nil);
 
 				// interests
-				bool hasReadInterest = (keInterest & NIO_INTEREST_READ) == NIO_INTEREST_READ;
-				bool hasWriteInterest = (keInterest & NIO_INTEREST_WRITE) == NIO_INTEREST_WRITE;
+				auto hasReadInterest = (keInterest & NIO_INTEREST_READ) == NIO_INTEREST_READ;
+				auto hasWriteInterest = (keInterest & NIO_INTEREST_WRITE) == NIO_INTEREST_WRITE;
 
 				// process read interest
-				if (hasReadInterest) {
+				if (hasReadInterest == true) {
 					ssize_t bytesReceived;
 					string ip;
 					unsigned int port;
@@ -190,7 +203,7 @@ void UDPServerIOThread::run() {
 											throw NetworkServerException("message invalid");
 										}
 										// delegate
-										client->onFrameReceived(packet, messageId, retries);
+										client->onPacketReceived(packet, messageId, retries);
 										break;
 									}
 								case(UDPServer::MESSAGETYPE_ACKNOWLEDGEMENT):
@@ -233,12 +246,12 @@ void UDPServerIOThread::run() {
 				}
 
 				// process write interest
-				while (hasWriteInterest) {
+				while (hasWriteInterest == true) {
 					// fetch batch of messages to be send
 					MessageQueue messageQueueBatch;
 					messageQueueMutex.lock();
 					for (int i = 0; i < MESSAGEQUEUE_SEND_BATCH_SIZE && messageQueue.empty() == false; i++) {
-						Message* message = messageQueue.front();
+						auto message = messageQueue.front();
 						messageQueueBatch.push(message);
 						messageQueue.pop();
 					}
@@ -246,7 +259,7 @@ void UDPServerIOThread::run() {
 
 					// try to send batch
 					while (messageQueueBatch.empty() == false) {
-						Message* message = messageQueueBatch.front();
+						auto message = messageQueueBatch.front();
 						if (socket.write(message->ip, message->port, (void*)message->message, message->bytes) == -1) {
 							// sending would block, stop trying to sendin
 							AtomicOperations::increment(server->statistics.errors);
@@ -278,7 +291,7 @@ void UDPServerIOThread::run() {
 					} else {
 						messageQueueMutex.lock();
 						do {
-							Message* message = messageQueueBatch.front();
+							auto message = messageQueueBatch.front();
 							messageQueue.push(message);
 							messageQueueBatch.pop();
 						} while (messageQueueBatch.empty() == false);
@@ -313,12 +326,8 @@ void UDPServerIOThread::run() {
 }
 
 void UDPServerIOThread::sendMessage(const UDPServerClient* client, const uint8_t messageType, const uint32_t messageId, const UDPPacket* packet, const bool safe, const bool deleteFrame) {
-	// FIXME:
-	//	We could use lock free queues here
-	//	For now, we will go with plain mutexes
-
 	// create message
-	Message* message = new Message();
+	auto message = new Message();
 	message->ip = client->ip;
 	message->port = client->port;
 	message->time = Time::getCurrentMillis();
@@ -342,9 +351,8 @@ void UDPServerIOThread::sendMessage(const UDPServerClient* client, const uint8_t
 	// requires ack and retransmission ?
 	if (safe == true) {
 		messageMapAckMutex.lock();
-		MessageMapAck::iterator it;
 		// 	check if message has already be pushed to ack
-		it = messageMapAck.find(messageId);
+		auto it = messageMapAck.find(messageId);
 		if (it != messageMapAck.end()) {
  			// its on ack queue already, so unlock
 			messageMapAckMutex.unlock();
@@ -359,9 +367,9 @@ void UDPServerIOThread::sendMessage(const UDPServerClient* client, const uint8_t
 		}
 		// 	push to message queue ack
 		// 	create message ack
-		Message* messageAck = new Message();
+		auto messageAck = new Message();
 		*messageAck = *message;
-		messageMapAck.insert(it, pair<uint32_t, Message*>(messageId, messageAck));
+		messageMapAck[messageId] = messageAck;
 		messageMapAckMutex.unlock();
 	}
 
@@ -392,21 +400,20 @@ void UDPServerIOThread::sendMessage(const UDPServerClient* client, const uint8_t
 
 void UDPServerIOThread::processAckReceived(UDPServerClient* client, const uint32_t messageId) {
 	bool messageAckValid = true;
-	MessageMapAck::iterator iterator;
 
 	// delete message from message queue ack
 	messageMapAckMutex.lock();
-	iterator = messageMapAck.find(messageId);
-	if (iterator != messageMapAck.end()) {
+	auto it = messageMapAck.find(messageId);
+	if (it != messageMapAck.end()) {
 		// message exists
-		Message* messageAck = iterator->second;
+		auto messageAck = it->second;
 		// message ack valid?
 		messageAckValid = messageAck->ip == client->ip && messageAck->port == client->port;
 		// remove if valid
 		if (messageAckValid == true) {
 			// remove message from message queue ack
-			delete iterator->second;
-			messageMapAck.erase(iterator);
+			delete it->second;
+			messageMapAck.erase(it);
 		}
 	}
 	messageMapAckMutex.unlock();
@@ -422,12 +429,12 @@ void UDPServerIOThread::processAckReceived(UDPServerClient* client, const uint32
 
 void UDPServerIOThread::processAckMessages() {
 	MessageQueue messageQueueResend;
-	uint64_t now = Time::getCurrentMillis();
+	auto now = Time::getCurrentMillis();
 
 	messageMapAckMutex.lock();
-	MessageMapAck::iterator it = messageMapAck.begin();
+	auto it = messageMapAck.begin();
 	while (it != messageMapAck.end()) {
-		Message* messageAck = it->second;
+		auto messageAck = it->second;
 		// message ack timed out?
 		//	most likely the client is gone
 		if (messageAck->retries == MESSAGEACK_RESENDTIMES_TRIES) {
@@ -443,7 +450,7 @@ void UDPServerIOThread::processAckMessages() {
 			messageAck->retries++;
 
 			// construct message
-			Message* message = new Message();
+			auto message = new Message();
 			*message = *messageAck;
 
 			// recreate packet header with updated hash and retries
@@ -464,7 +471,7 @@ void UDPServerIOThread::processAckMessages() {
 	if (messageQueueResend.empty() == false) {
 		messageQueueMutex.lock();
 		do {
-			Message* message = messageQueueResend.front();
+			auto message = messageQueueResend.front();
 			messageQueue.push(message);
 			messageQueueResend.pop();
 

@@ -1,7 +1,8 @@
 #pragma once
 
-#include <exception>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 
 #include <tdme/tdme.h>
 
@@ -14,6 +15,8 @@
 
 using std::string;
 using std::to_string;
+using std::unordered_map;
+using std::unordered_set;
 
 using tdme::os::threading::ReadWriteLock;
 using tdme::utilities::Exception;
@@ -30,7 +33,7 @@ namespace udpserver {
 template <typename SERVER, typename CLIENT, typename GROUP>
 class ServerGroup : public ServerGroupBase {
 public:
-	typedef std::set<std::string> ClientKeySet;
+	typedef unordered_set<string> ClientKeySet;
 
 	ServerGroup(const uint32_t groupId) :
 		server(nullptr),
@@ -44,7 +47,7 @@ public:
 	 * @brief group identification key
 	 * @return group key
 	 */
-	const string& getKey() {
+	inline const string& getKey() {
 		return key;
 	}
 
@@ -82,7 +85,7 @@ public:
 	 */
 	virtual const bool addClient(CLIENT* client) {
 		clientKeyListsReadWriteLock.writeLock();
-		typename ClientKeySet::iterator it = clientKeySet.find(client->getKey());
+		auto it = clientKeySet.find(client->getKey());
 		// check if already exists
 		if (it != clientKeySet.end()) {
 			clientKeyListsReadWriteLock.unlock();
@@ -99,7 +102,7 @@ public:
 	 */
 	virtual const bool removeClient(CLIENT* client) {
 		clientKeyListsReadWriteLock.writeLock();
-		typename ClientKeySet::iterator it = clientKeySet.find(client->getKey());
+		auto it = clientKeySet.find(client->getKey());
 		// check if not exists
 		if (it == clientKeySet.end()) {
 			clientKeyListsReadWriteLock.unlock();
@@ -115,7 +118,7 @@ public:
 	 */
 	virtual void shutdown() = 0;
 protected:
-	typedef std::map<const std::string, CLIENT*> ClientKeyMap;
+	typedef unordered_map<string, CLIENT*> ClientKeyMap;
 
 	/*
 	 * @brief event method called if group will be created, will be called from worker
@@ -147,7 +150,7 @@ protected:
 	//
 	SERVER* server;
 	uint32_t groupId;
-	std::string key;
+	string key;
 
 	ClientKeySet clientKeySet;
 

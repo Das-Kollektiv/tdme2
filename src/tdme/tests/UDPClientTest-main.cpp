@@ -35,7 +35,7 @@ public:
 		while (isStopRequested() == false) {
 			string input;
 			cin >> input;
-			UDPPacket* packet = new UDPPacket();
+			auto packet = new UDPPacket();
 			packet->putString(input);
 			if (client != nullptr) {
 				client->sendMessage(client->createMessage(packet), true);
@@ -73,10 +73,10 @@ int main(int argc, char *argv[]) {
 	client->start();
 
 	// handle incoming messages
-	while(client->isStopRequested() == false) {
+	while (client->isStopRequested() == false) {
 		Thread::sleep(1L);
 		// process incoming messages
-		UDPClientMessage* message = client->receiveMessage();
+		auto message = client->receiveMessage();
 		if (message != nullptr) {
 			if (client->processSafeMessage(message) == true) {
 				Console::println("Received message: " + message->getPacket()->getString());

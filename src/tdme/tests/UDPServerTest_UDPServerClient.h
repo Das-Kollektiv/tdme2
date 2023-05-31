@@ -17,11 +17,11 @@ using tdme::network::udpserver::UDPServer;
 using tdme::network::udpserver::UDPServerClient;
 using tdme::utilities::Exception;
 
-class EchoUDPServerClient : public UDPServerClient {
+class EchoUDPServerClient final: public UDPServerClient {
 	friend class EchoUDPServer;
 
 public:
-	EchoUDPServerClient(const uint32_t clientId, const std::string& ip, const unsigned int port);
+	EchoUDPServerClient(const uint32_t clientId, const std::string& ip, const uint16_t port);
 
 protected:
 	virtual ~EchoUDPServerClient();

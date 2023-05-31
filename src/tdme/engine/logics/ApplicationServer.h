@@ -33,7 +33,7 @@ public:
 	 * @param maxCCU max CCU
 	 * @param pathFindingThreadCount path finding thread count
 	 */
-	ApplicationServer(const string& name, const string& host, const unsigned int port, const unsigned int maxCCU, int pathFindingThreadCount);
+	ApplicationServer(const string& name, const string& host, const uint16_t port, const unsigned int maxCCU, int pathFindingThreadCount);
 
 	/**
 	 * Destructor
@@ -57,7 +57,7 @@ protected:
 	 * @param ip ip
 	 * @param port port
 	 */
-	virtual UDPServerClient* accept(const uint32_t clientId, const string& ip, const unsigned int port) override;
+	virtual UDPServerClient* accept(const uint32_t clientId, const string& ip, const uint16_t port) override;
 
 	/**
 	 * Setup default / minumum required logics
