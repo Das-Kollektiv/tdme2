@@ -2,7 +2,7 @@
 
 #include <algorithm>
 #include <array>
-#include <map>
+#include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
@@ -35,6 +35,7 @@ using std::map;
 using std::reverse;
 using std::sort;
 using std::unique;
+using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
@@ -116,7 +117,7 @@ ConvexMesh::ConvexMesh(ObjectModel* model, const Vector3& scale)
 	model->getTriangles(triangles);
 
 	// determine coplanar faces of model
-	map<int, vector<Triangle*>> trianglesCoplanar;
+	unordered_map<int, vector<Triangle*>> trianglesCoplanar;
 	{
 		auto triangle1Idx = 0;
 		unordered_set<int> trianglesProcessed;

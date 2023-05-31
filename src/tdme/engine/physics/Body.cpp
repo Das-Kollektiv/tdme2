@@ -139,10 +139,12 @@ void Body::removeColliders(vector<reactphysics3d::Collider*>& colliders, vector<
 	for (auto collider: colliders) {
 		rigidBody->removeCollider(collider);
 	}
+	colliders.clear();
 	// delete bounding volumes
 	for (auto boundingVolume: boundingVolumes) {
 		delete boundingVolume;
 	}
+	boundingVolumes.clear();
 }
 
 void Body::resetColliders(vector<reactphysics3d::Collider*>& colliders, vector<BoundingVolume*>& boundingVolumes, const Transform& localTransform) {
@@ -186,7 +188,6 @@ void Body::resetColliders(vector<reactphysics3d::Collider*>& colliders, vector<B
 			boundingVolume->worldBoundingBox.getDimensions().getZ();
 		*/
 		//
-
 		reactphysics3d::Transform localTransformRP3D(
 			reactphysics3d::Vector3(localTransform.getTranslation().getX(), localTransform.getTranslation().getY(), localTransform.getTranslation().getZ()),
 			reactphysics3d::Quaternion(localTransform.getRotationsQuaternion().getX(), localTransform.getRotationsQuaternion().getY(), localTransform.getRotationsQuaternion().getZ(), localTransform.getRotationsQuaternion().getW())
@@ -206,6 +207,10 @@ void Body::resetColliders(vector<reactphysics3d::Collider*>& colliders, vector<B
 		//
 		colliders.push_back(collider);
 	}
+	// seems to be a bug here, I have no idea why I have to set here a identity transform
+	rigidBody->setTransform(reactphysics3d::Transform());
+	// set inverse inertia tensor local
+	rigidBody->setLocalInertiaTensor(reactphysics3d::Vector3(inertiaTensor.getX(), inertiaTensor.getY(), inertiaTensor.getZ()));
 }
 
 void Body::setFriction(float friction)
