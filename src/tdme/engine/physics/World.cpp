@@ -359,9 +359,7 @@ void World::synchronize(Engine* engine)
 		// synch with engine entity
 		auto entity = engine->getEntity(body->getId());
 		if (entity == nullptr) {
-			Console::println(
-				"World::entity '" + body->getId() + "' not found"
-			);
+			Console::println("World::entity '" + body->getId() + "' not found");
 			continue;
 		}
 
@@ -592,11 +590,7 @@ void World::synchronize(World* world)
 		auto body = rigidBodiesDynamic.at(i);
 		auto clonedBody = world->getBody(body->id);
 		if (clonedBody == nullptr) {
-			Console::println(
-				string("Cloned world::entity '") +
-				body->id +
-				string("' not found")
-			);
+			Console::println("Cloned world::entity '" + body->id + "' not found");
 			continue;
 		}
 		// synch rigid bodies
