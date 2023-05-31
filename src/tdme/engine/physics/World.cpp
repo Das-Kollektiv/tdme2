@@ -359,9 +359,7 @@ void World::synchronize(Engine* engine)
 		// synch with engine entity
 		auto entity = engine->getEntity(body->getId());
 		if (entity == nullptr) {
-			Console::println(
-				"World::entity '" + body->getId() + "' not found"
-			);
+			Console::println("World::entity '" + body->getId() + "' not found");
 			continue;
 		}
 
@@ -550,7 +548,7 @@ World* World::clone(const string& id, uint16_t collisionTypeIds)
 		if (((body->getCollisionTypeId() & collisionTypeIds) == body->getCollisionTypeId()) == false) continue;
 
 		// clone rigid body
-		switch(bodyType) {
+		switch (bodyType) {
 			case Body::BODYTYPE_STATIC:
 				clonedBody = clonedWorld->addStaticRigidBody(body->id, body->isEnabled(), body->getCollisionTypeId(), body->transform, body->getFriction(), body->boundingVolumes);
 				break;
@@ -569,8 +567,9 @@ World* World::clone(const string& id, uint16_t collisionTypeIds)
 		}
 
 		// synch additional properties
-		synchronize(clonedBody, clonedBody);
+		synchronize(clonedBody, body);
 	}
+	//
 	return clonedWorld;
 }
 
@@ -592,11 +591,7 @@ void World::synchronize(World* world)
 		auto body = rigidBodiesDynamic.at(i);
 		auto clonedBody = world->getBody(body->id);
 		if (clonedBody == nullptr) {
-			Console::println(
-				string("Cloned world::entity '") +
-				body->id +
-				string("' not found")
-			);
+			Console::println("Cloned world::entity '" + body->id + "' not found");
 			continue;
 		}
 		// synch rigid bodies
