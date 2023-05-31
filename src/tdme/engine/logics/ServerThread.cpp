@@ -157,6 +157,7 @@ void ServerThread::run() {
 	int64_t timeLast = Time::getCurrentMillis();
 	auto clientKeySetLast = server->getClientKeySet();
 	vector<string> newClientKeys;
+	//
 	unordered_map<string, vector<LogicNetworkPacket>> clientNetworkPacketsUnhandled;
 	// multicast packets to send for update
 	unordered_map<string, vector<LogicNetworkPacket>> mcUpdateSafeLogicNetworkPackets;
