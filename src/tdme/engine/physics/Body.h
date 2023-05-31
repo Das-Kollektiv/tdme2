@@ -379,13 +379,7 @@ public:
 		// store engine transform
 		this->transform.setTransform(transform);
 
-		// reset proxy shapes if bounding volumes do not match proxy shapes or if scaling has changed
-		Console::println(
-			"Body::setTransform(): " + id + ": " +
-			to_string(transformScale.getX()) + ", " +
-			to_string(transformScale.getY()) + ", " +
-			to_string(transformScale.getZ())
-		);
+		// reset colliders if bounding volumes do not match proxy shapes or if scaling has changed
 		if (colliders.size() != boundingVolumes.size() || transformScale.equals(transform.getScale()) == false) {
 			resetColliders();
 			transformScale.set(transform.getScale());

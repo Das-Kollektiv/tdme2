@@ -45,10 +45,13 @@ class tdme::engine::SceneConnector final
 {
 
 public:
-	static constexpr int32_t RIGIDBODY_TYPEID_STATIC { 1 };
-	static constexpr int32_t RIGIDBODY_TYPEID_DYNAMIC { 2 };
-	static constexpr int32_t RIGIDBODY_TYPEID_COLLISION { 4 };
-	static constexpr int32_t RIGIDBODY_TYPEID_TRIGGER { 8 };
+	static constexpr uint16_t RIGIDBODY_TYPEID_STATIC { 1 };
+	static constexpr uint16_t RIGIDBODY_TYPEID_DYNAMIC { 2 };
+	static constexpr uint16_t RIGIDBODY_TYPEID_COLLISION { 4 };
+	static constexpr uint16_t RIGIDBODY_TYPEID_TRIGGER { 8 };
+
+	static constexpr int COLLISION_TYPEID_STANDARD { 0 };
+	static constexpr int BOUNDINGVOLUME_INDEX_NONE { -1 };
 
 	/**
 	 * Sub body creation structure
@@ -329,26 +332,26 @@ public:
 	 * @param prototype prototype
 	 * @param id id
 	 * @param transform transform
-	 * @param hierarchy hierarchy
 	 * @param collisionTypeId collision type id or 0 for default
+	 * @param hierarchy hierarchy
 	 * @param index use a optional index or all bounding volumes
 	 * @param overrideType override physics type if required
 	 * @return rigid body
 	 */
-	static Body* createBody(World* world, Prototype* prototype, const string& id, const Transform& transform, bool hierarchy = false, uint16_t collisionTypeId = 0, int index = -1, PrototypePhysics_BodyType* overrideType = nullptr);
+	static Body* createBody(World* world, Prototype* prototype, const string& id, const Transform& transform, uint16_t collisionTypeId = COLLISION_TYPEID_STANDARD, bool hierarchy = false, int index = BOUNDINGVOLUME_INDEX_NONE, PrototypePhysics_BodyType* overrideType = nullptr);
 
 	/**
 	 * Create rigid body
 	 * @param world world
 	 * @param sceneEntity scene entity
 	 * @param translation translation
-	 * @param hierarchy hierarchy
 	 * @param collisionTypeId collision type id or 0 for default
+	 * @param hierarchy hierarchy
 	 * @param index use a optional index or all bounding volumes
 	 * @param overrideType override physics type if required
 	 * @return rigid body
 	 */
-	static Body* createBody(World* world, SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), bool hierarchy = false, uint16_t collisionTypeId = 0, int index = -1, PrototypePhysics_BodyType* overrideType = nullptr);
+	static Body* createBody(World* world, SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), uint16_t collisionTypeId = COLLISION_TYPEID_STANDARD, bool hierarchy = false, int index = BOUNDINGVOLUME_INDEX_NONE, PrototypePhysics_BodyType* overrideType = nullptr);
 
 	/**
 	 * Create sub body from sub body creation structure

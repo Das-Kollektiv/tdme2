@@ -118,6 +118,7 @@ void FlowMapTest2::display()
 		- handle if combat unit is stuck
 		- fix getting back to flow map
 		- sometimes they move to 0/0/0
+		- dont use path nodes of flowmap to align all the units, rather use a new to be generated flowmap center
 	*/
 	auto cam = engine->getCamera();
 	cam->setLookAt(combatUnits[0].object->getTransform().getTranslation());
