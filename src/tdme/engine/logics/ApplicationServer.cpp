@@ -32,6 +32,7 @@ ApplicationServer::ApplicationServer(const string& name, const string& host, con
 }
 
 Context* ApplicationServer::createContext() {
+	Console::println("ApplicationServer::createContext()");
 	return new Context(true);
 }
 

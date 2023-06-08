@@ -1486,7 +1486,9 @@ public:
 			string result;
 			result+= getTypeAsString();
 			result+= "(";
+			if (type == TYPE_STRING) result+= "\"";
 			result+= getValueString();
+			if (type == TYPE_STRING) result+= "\"";
 			result+= ")";
 			return result;
 		}

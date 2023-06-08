@@ -588,7 +588,7 @@ public:
 	/**
 	 * @return rigid body type id mask to skip on in path finding
 	 */
-	inline uint16_t getSkipOnRigidBodyTypeIdStaticMask() {
+	inline uint16_t getSkipOnRigidBodyTypeIdMask() {
 		return skipOnRigidBodyTypeIdMask;
 	}
 

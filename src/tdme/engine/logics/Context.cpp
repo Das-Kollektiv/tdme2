@@ -86,7 +86,7 @@ Context::PathFindingThread::PathFindingThread(Context* context, int idx):
 	worldActionsMutex("pathfindingthread-world-actions-mutex")
 {
 	reset();
-	world = context->getWorld()->clone("pathfinding" +  to_string(idx) + "-world", context->rigidBodyTypeIdCloneMask);
+	world = context->getWorld()->clone("pathfinding" +  to_string(idx) + "-world-" + (context->isServer() == true?"server":"client"), context->rigidBodyTypeIdCloneMask);
 	pathFinding = new tdme::utilities::PathFinding(world, true, 1000, 1.8f, 0.4f, 0.81f, 0.4f, context->skipOnRigidBodyTypeIdMask, 5, 0.5f, 2.0f);
 }
 
@@ -653,12 +653,12 @@ bool Context::doProcessPacket(NetworkLogic* logic, LogicNetworkPacket& packet, c
 
 	// clean up packet states
 	vector<string> packetsToRemove;
-	for (auto packetStateIt: packetStates) {
+	for (auto& packetStateIt: packetStates) {
 		if (packetStateIt.second.timeCreated > now - 120000L) {
 			packetsToRemove.push_back(packetStateIt.first);
 		}
 	}
-	for (auto packetToRemove: packetsToRemove) {
+	for (auto& packetToRemove: packetsToRemove) {
 		// Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::doProcessPacket(): " + packetToRemove + ": removing");
 		packetStates.erase(packetToRemove);
 	}

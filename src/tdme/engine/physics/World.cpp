@@ -373,6 +373,7 @@ void World::synchronize(Engine* engine)
 
 Body* World::determineHeight(uint16_t collisionTypeIds, float stepUpMax, const Vector3& point, Vector3& heightPoint, float minHeight, float maxHeight)
 {
+	//
 	class CustomCallbackClass : public reactphysics3d::RaycastCallback {
 	public:
 		CustomCallbackClass(float stepUpMax, const Vector3& point, float height = 10000.0f): stepUpMax(stepUpMax), point(point), height(height), body(nullptr) {
@@ -457,7 +458,7 @@ bool World::doesCollideWith(uint16_t collisionTypeIds, Body* body, vector<Body*>
 	// callback
 	class CustomOverlapCallback: public reactphysics3d::OverlapCallback {
 	    public:
-			CustomOverlapCallback(int collisionTypeIds, Body* body, vector<Body*>& rigidBodies): collisionTypeIds(collisionTypeIds), body(body), rigidBodies(rigidBodies) {
+			CustomOverlapCallback(int collisionTypeIds, Body* body, vector<Body*>& collisionBodies): collisionTypeIds(collisionTypeIds), body(body), collisionBodies(collisionBodies) {
 			}
 
 			void onOverlap(CallbackData &callbackData) {
@@ -465,14 +466,14 @@ bool World::doesCollideWith(uint16_t collisionTypeIds, Body* body, vector<Body*>
 					auto overlappingPair = callbackData.getOverlappingPair(i);
 					auto body1 = static_cast<Body*>(overlappingPair.getBody1()->getUserData());
 					auto body2 = static_cast<Body*>(overlappingPair.getBody2()->getUserData());
-					if (body1 != body && (body1->getCollisionTypeId() & collisionTypeIds) != 0) rigidBodies.push_back(body1);
-					if (body2 != body && (body2->getCollisionTypeId() & collisionTypeIds) != 0) rigidBodies.push_back(body2);
+					if (body1 != body && (body1->getCollisionTypeId() & collisionTypeIds) != 0) collisionBodies.push_back(body1);
+					if (body2 != body && (body2->getCollisionTypeId() & collisionTypeIds) != 0) collisionBodies.push_back(body2);
 				}
 			}
 	    private:
 			int collisionTypeIds;
 			Body* body;
-			vector<Body*>& rigidBodies;
+			vector<Body*>& collisionBodies;
 	};
 
 	// do the test
@@ -537,6 +538,7 @@ bool World::getCollisionResponse(Body* body1, Body* body2, CollisionResponse& co
 
 World* World::clone(const string& id, uint16_t collisionTypeIds)
 {
+	//
 	auto clonedWorld = new World(id);
 	for (auto i = 0; i < bodies.size(); i++) {
 		auto body = bodies[i];
@@ -545,7 +547,7 @@ World* World::clone(const string& id, uint16_t collisionTypeIds)
 		auto bodyType = body->getType();
 
 		// test type
-		if (((body->getCollisionTypeId() & collisionTypeIds) == body->getCollisionTypeId()) == false) continue;
+		if ((body->getCollisionTypeId() & collisionTypeIds) == 0) continue;
 
 		// clone rigid body
 		switch (bodyType) {
@@ -569,6 +571,7 @@ World* World::clone(const string& id, uint16_t collisionTypeIds)
 		// synch additional properties
 		synchronize(clonedBody, body);
 	}
+
 	//
 	return clonedWorld;
 }

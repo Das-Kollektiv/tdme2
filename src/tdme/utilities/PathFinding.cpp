@@ -397,21 +397,10 @@ bool PathFinding::findPathCustom(
 	if (endPosition.clone().sub(startPosition).computeLengthSquared() < Math::square(0.1f)) {
 		if (VERBOSE == true) Console::println("PathFinding::findPath(): start position == end position! Exiting!");
 		path.push_back(startPosition);
-		float endYHeight = endPosition.getY();
-		if (isWalkableInternal(
-			endPosition.getX(),
-			endPosition.getY(),
-			endPosition.getZ(),
-			endYHeight,
-			stepSize,
-			scaleActorBoundingVolumes,
-			false
-		) == false) {
-			path.push_back(endPosition);
-			success = true;
-		}
+		path.push_back(endPosition);
+		success = true;
 	} else
-	// equal start and end position?
+	// nearby start and end position?
 	if (startPosition.clone().sub(endPosition).computeLengthSquared() < stepSizeLast * stepSizeLast + stepSizeLast * stepSizeLast + 0.1f) {
 		if (VERBOSE == true) Console::println("PathFinding::findPath(): end - start position < stepSizeLast! Exiting!");
 		path.push_back(startPosition);
@@ -425,9 +414,11 @@ bool PathFinding::findPathCustom(
 			scaleActorBoundingVolumes,
 			false
 		) == false) {
+			path.push_back(startPosition);
+		} else {
 			path.push_back(endPosition);
-			success = true;
 		}
+		success = true;
 	}
 
 	//
