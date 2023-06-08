@@ -86,8 +86,8 @@ Context::PathFindingThread::PathFindingThread(Context* context, int idx):
 	worldActionsMutex("pathfindingthread-world-actions-mutex")
 {
 	reset();
-	world = context->getWorld()->clone("pathfinding" +  to_string(idx) + "-world-" + (context->isServer() == true?"server":"client"), context->rigidBodyTypeIdCloneMask);
-	pathFinding = new tdme::utilities::PathFinding(world, true, 1000, 1.8f, 0.4f, 0.81f, 0.4f, context->skipOnRigidBodyTypeIdMask, 5, 0.5f, 2.0f);
+	world = context->getWorld()->clone("pathfinding" +  to_string(idx) + "-world-" + (context->isServer() == true?"server":"client"), context->bodyCollisionTypeIdCloneMask);
+	pathFinding = new tdme::utilities::PathFinding(world, true, 1000, 1.8f, 0.4f, 0.81f, 0.4f, context->skipOnBodyCollisionTypeIdMask, 5, 0.5f, 2.0f);
 }
 
 Context::PathFindingThread::~PathFindingThread() {
@@ -252,7 +252,7 @@ void Context::PathFindingThread::run() {
 		}
 		for (auto& worldActionStruct: worldActionsCopy) {
 			if (worldActionStruct.action == WorldActionStruct::ACTION_ADDED) {
-				if ((worldActionStruct.collisionTypeId & context->rigidBodyTypeIdCloneMask) != 0) {
+				if ((worldActionStruct.collisionTypeId & context->bodyCollisionTypeIdCloneMask) != 0) {
 					world->addStaticRigidBody(
 						worldActionStruct.id,
 						worldActionStruct.enabled,
@@ -264,7 +264,7 @@ void Context::PathFindingThread::run() {
 				}
 			} else
 			if (worldActionStruct.action == WorldActionStruct::ACTION_REMOVED) {
-				if (worldActionStruct.collisionTypeId & context->rigidBodyTypeIdCloneMask != 0) {
+				if (worldActionStruct.collisionTypeId & context->bodyCollisionTypeIdCloneMask != 0) {
 					world->removeBody(
 						worldActionStruct.id
 					);
@@ -309,7 +309,7 @@ void Context::PathFindingThread::run() {
 					if (pathFinding->findFlowMapPath(
 						startPosition,
 						endPosition,
-						context->rigidBodyCollisionTypeIdMask,
+						context->bodyCollisionTypeIdMask,
 						path,
 						alternativeEndSteps/*,
 						customTest*/
@@ -332,7 +332,7 @@ void Context::PathFindingThread::run() {
 							Vector3(),
 							flowMapWidth,
 							flowMapDepth,
-							context->rigidBodyCollisionTypeIdMask,
+							context->bodyCollisionTypeIdMask,
 							partialPath,
 							path.size() > 20?false:true
 						);
@@ -345,7 +345,7 @@ void Context::PathFindingThread::run() {
 					if (pathFinding->findPath(
 						startPosition,
 						endPosition,
-						context->rigidBodyCollisionTypeIdMask,
+						context->bodyCollisionTypeIdMask,
 						path,
 						alternativeEndSteps/*,
 						customTest*/
@@ -371,7 +371,7 @@ void Context::PathFindingThread::run() {
 						Vector3(),
 						flowMapRequest.flowMapWidth,
 						flowMapRequest.flowMapDepth,
-						context->rigidBodyCollisionTypeIdMask,
+						context->bodyCollisionTypeIdMask,
 						partialPath,
 						pathIdx >= path.size()?true:false
 					);
