@@ -1747,7 +1747,6 @@ public:
 		 * @return arguments information
 		 */
 		inline const string getArgumentsInformation() const {
-			// TODO: this could get moved to ScriptMethod class
 			string result;
 			auto optionalArgumentCount = 0;
 			auto argumentIdx = 0;
