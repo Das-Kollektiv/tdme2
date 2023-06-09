@@ -7012,7 +7012,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 								{
 									int64_t value;
 									argument.value.getIntegerValue(value);
-									argumentValuesCode.push_back("argumentValues[" + to_string(subArgumentIdx) + "].setValue(static_cast<int64_t>(" + to_string(value) + "));");
+									argumentValuesCode.push_back("argumentValues[" + to_string(subArgumentIdx) + "].setValue(" + to_string(value) + "l);");
 								}
 								break;
 							case TYPE_FLOAT:
