@@ -352,11 +352,10 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 						if (StringTools::startsWith(variableName, "$") == true) {
 							setVariable(variableName, argumentValues[argumentIdx], &statement);
 						} else {
-							Console::println("MiniScript::executeScriptStatement(): " + getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + variableName + "'");
+							Console::println(getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + variableName + "'");
 						}
 					} else {
 						Console::println(
-							"MiniScript::executeScriptStatement(): " +
 							getStatementInformation(statement) +
 							": Can not assign back argument value @ " +
 							to_string(argumentIdx) +
@@ -377,7 +376,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 			//
 			return returnValue;
 		} else {
-			Console::println("MiniScript::executeScriptStatement(): " + getStatementInformation(statement) + ": unknown function '" + string(syntaxTree.value.getValueString()) + "'");
+			Console::println(getStatementInformation(statement) + ": unknown function '" + string(syntaxTree.value.getValueString()) + "'");
 			startErrorScript();
 		}
 	} else {
@@ -496,7 +495,6 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 				}
 				if (argumentOk == false) {
 					Console::println(
-						string("MiniScript::executeScriptStatement(): ") +
 						getStatementInformation(statement) +
 						": method '" + string(syntaxTree.value.getValueString()) + "'" +
 						": argument value @ " + to_string(argumentIdx) + ": expected " + ScriptVariable::getTypeAsString(argumentType.type) + ", but got: " + (argumentIdx < argumentValues.size()?argumentValues[argumentIdx].getAsString():"nothing"));
@@ -505,7 +503,6 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 			}
 			if (scriptMethod->isVariadic() == false && argumentValues.size() > scriptMethod->getArgumentTypes().size()) {
 				Console::println(
-					string("MiniScript::executeScriptStatement(): ") +
 					getStatementInformation(statement) +
 					": method '" + string(syntaxTree.value.getValueString()) + "'" +
 					": too many arguments: expected: " + to_string(scriptMethod->getArgumentTypes().size()) + ", got " + to_string(argumentValues.size()));
@@ -533,11 +530,10 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 						if (StringTools::startsWith(variableName, "$") == true) {
 							setVariable(variableName, argumentValues[argumentIdx], &statement);
 						} else {
-							Console::println("MiniScript::executeScriptStatement(): " + getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + variableName + "'");
+							Console::println(getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + variableName + "'");
 						}
 					} else {
 						Console::println(
-							"MiniScript::executeScriptStatement(): " +
 							getStatementInformation(statement) +
 							": Can not assign back argument value @ " +
 							to_string(argumentIdx) +
@@ -560,7 +556,6 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 		// check return type
 		if (MiniScript::ScriptVariable::isExpectedType(returnValue.getType(), scriptMethod->getReturnValueType()) == false) {
 			Console::println(
-				string("MiniScript::executeScriptStatement(): ") +
 				getStatementInformation(statement) +
 				": method '" + string(syntaxTree.value.getValueString()) + "'" +
 				": return value: expected " + ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType()) + ", but got: " + ScriptVariable::getReturnTypeAsString(returnValue.getType()));

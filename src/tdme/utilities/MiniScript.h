@@ -2769,7 +2769,7 @@ public:
 	 * @return script statement information
 	 */
 	inline const string getStatementInformation(const ScriptStatement& statement) {
-		return "'" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "'";
+		return scriptFileName + ":" + to_string(statement.line) +  ": " + statement.statement;
 	}
 
 	/**
