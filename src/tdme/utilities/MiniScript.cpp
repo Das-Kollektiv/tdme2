@@ -1884,7 +1884,7 @@ void MiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				if (argumentValues.size() != 1) {
-					Console::println("ScriptMethodInternalScriptEvaluate::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected");
 					miniScript->startErrorScript();
 				} else
 				if (argumentValues.size() == 1) {
@@ -1918,11 +1918,11 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string statementString;
 				if (miniScript->getStringValue(argumentValues, 0, statementString, false) == false) {
-					Console::println("ScriptMethodScriptEvaluate::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript();
 				} else {
 					if (miniScript->evaluate(statementString, returnValue) == false) {
-						Console::println("ScriptMethodScriptEvaluate::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": '" + statementString + "': An error occurred");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": '" + statementString + "': An error occurred");
 					}
 				}
 			}
@@ -1949,12 +1949,12 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string function;
 				if (miniScript->getStringValue(argumentValues, 0, function) == false) {
-					Console::println("ScriptMethodScriptCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript();
 				} else {
 					auto scriptIdx = miniScript->getFunctionScriptIdx(function);
 					if (scriptIdx == SCRIPTIDX_NONE) {
-						Console::println("ScriptMethodScriptCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": function not found: " + function);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": function not found: " + function);
 						miniScript->startErrorScript();
 					} else {
 						#if defined (__APPLE__)
@@ -1998,7 +1998,7 @@ void MiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				if (miniScript->isFunctionRunning() == false) {
-					Console::println("ScriptMethodReturn::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no function is being executed, return($value) has no effect");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no function is being executed, return($value) has no effect");
 					miniScript->startErrorScript();
 				} else
 				if (argumentValues.size() == 0) {
@@ -2009,7 +2009,7 @@ void MiniScript::registerMethods() {
 					scriptState.returnValue = argumentValues[0];
 					miniScript->stopRunning();
 				} else {
-					Console::println("ScriptMethodReturn::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: optional mixed expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: optional mixed expected");
 				}
 			}
 		};
@@ -2047,7 +2047,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				if (miniScript->getScriptState().endTypeStack.empty() == true) {
 					if (miniScript->getScriptState().statementIdx < miniScript->scripts[miniScript->getScriptState().scriptIdx].statements.size() - 1) {
-						Console::println("ScriptMethodEnd::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": end without forXXX/if");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": end without forXXX/if");
 						miniScript->startErrorScript();
 					} else
 					if (miniScript->isFunctionRunning() == true && miniScript->scriptStateStack.size() == 2) {
@@ -2092,7 +2092,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				int64_t time;
 				if (miniScript->getIntegerValue(argumentValues, 0, time) == false) {
-					Console::println("ScriptMethodForTime::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
 					miniScript->startErrorScript();
 				} else {
 					//
@@ -2136,7 +2136,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				bool booleanValue;
 				if (miniScript->getBooleanValue(argumentValues, 0, booleanValue, false) == false) {
-					Console::println("ScriptMethodForCondition::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: boolean expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: boolean expected");
 					miniScript->startErrorScript();
 				} else {
 					//
@@ -2171,7 +2171,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				bool booleanValue;
 				if (miniScript->getBooleanValue(argumentValues, 0, booleanValue, false) == false) {
-					Console::println("ScriptMethodIfCondition::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: boolean expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: boolean expected");
 					miniScript->startErrorScript();
 				} else {
 					//
@@ -2206,7 +2206,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				bool booleanValue;
 				if (miniScript->getBooleanValue(argumentValues, 0, booleanValue, false) == false) {
-					Console::println("ScriptMethodElseIfCondition::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: boolean expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: boolean expected");
 					miniScript->startErrorScript();
 				} else
 				if (miniScript->getScriptState().conditionStack.empty() == true) {
@@ -2293,7 +2293,7 @@ void MiniScript::registerMethods() {
 					miniScript->getScriptState().timeWaitTime = time;
 					miniScript->setScriptStateState(STATEMACHINESTATE_WAIT);
 				} else {
-					Console::println("ScriptMethodScriptWait::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
 				}
 			}
 		};
@@ -2320,7 +2320,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getStringValue(argumentValues, 0, condition, false) == true) {
 					miniScript->emit(condition);
 				} else {
-					Console::println("ScriptMethodScriptWait::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -2356,7 +2356,7 @@ void MiniScript::registerMethods() {
 					);
 					miniScript->enabledNamedConditions.push_back(name);
 				} else {
-					Console::println("ScriptMethodScriptWait::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -2391,7 +2391,7 @@ void MiniScript::registerMethods() {
 						miniScript->enabledNamedConditions.end()
 					);
 				} else {
-					Console::println("ScriptMethodScriptWait::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -2480,7 +2480,7 @@ void MiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				if (argumentValues.size() != 2) {
-					Console::println("ScriptMethodEquals::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(true);
@@ -2518,7 +2518,7 @@ void MiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				if (argumentValues.size() != 2) {
-					Console::println("ScriptMethodNotEqual::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(true);
@@ -2559,7 +2559,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getIntegerValue(argumentValues, 0, integerValue, false) == true) {
 					returnValue.setValue(integerValue);
 				} else {
-					Console::println("ScriptMethodInt::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -2589,7 +2589,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
 					returnValue.setValue(floatValue);
 				} else {
-					Console::println("ScriptMethodFloat::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -2622,7 +2622,7 @@ void MiniScript::registerMethods() {
 						MiniScript::getStringValue(argumentValues, 1, stringValueB, false) == true) {
 						returnValue.setValue(stringValueA > stringValueB);
 					} else {
-						Console::println("ScriptMethodGreater::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
 						miniScript->startErrorScript();
 					}
 				} else {
@@ -2632,7 +2632,7 @@ void MiniScript::registerMethods() {
 						MiniScript::getFloatValue(argumentValues, 1, floatValueB, false) == true) {
 						returnValue.setValue(floatValueA > floatValueB);
 					} else {
-						Console::println("ScriptMethodGreater::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
 						miniScript->startErrorScript();
 					}
 				}
@@ -2668,7 +2668,7 @@ void MiniScript::registerMethods() {
 						MiniScript::getStringValue(argumentValues, 1, stringValueB, false) == true) {
 						returnValue.setValue(stringValueA >= stringValueB);
 					} else {
-						Console::println("ScriptMethodGreaterEquals::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
 						miniScript->startErrorScript();
 					}
 				} else {
@@ -2678,7 +2678,7 @@ void MiniScript::registerMethods() {
 						MiniScript::getFloatValue(argumentValues, 1, floatValueB, false) == true) {
 						returnValue.setValue(floatValueA >= floatValueB);
 					} else {
-						Console::println("ScriptMethodGreaterEquals::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
 						miniScript->startErrorScript();
 					}
 				}
@@ -2714,7 +2714,7 @@ void MiniScript::registerMethods() {
 						MiniScript::getStringValue(argumentValues, 1, stringValueB, false) == true) {
 						returnValue.setValue(stringValueA < stringValueB);
 					} else {
-						Console::println("ScriptMethodLesser::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
 						miniScript->startErrorScript();
 					}
 				} else {
@@ -2724,7 +2724,7 @@ void MiniScript::registerMethods() {
 						MiniScript::getFloatValue(argumentValues, 1, floatValueB, false) == true) {
 						returnValue.setValue(floatValueA < floatValueB);
 					} else {
-						Console::println("ScriptMethodLesser::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
 						miniScript->startErrorScript();
 					}
 				}
@@ -2760,7 +2760,7 @@ void MiniScript::registerMethods() {
 						MiniScript::getStringValue(argumentValues, 1, stringValueB, false) == true) {
 						returnValue.setValue(stringValueA <= stringValueB);
 					} else {
-						Console::println("ScriptMethodLesserEquals::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
 						miniScript->startErrorScript();
 					}
 				} else {
@@ -2770,7 +2770,7 @@ void MiniScript::registerMethods() {
 						MiniScript::getFloatValue(argumentValues, 1, floatValueB, false) == true) {
 						returnValue.setValue(floatValueA <= floatValueB);
 					} else {
-						Console::println("ScriptMethodLesserEquals::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
 						miniScript->startErrorScript();
 					}
 				}
@@ -2808,7 +2808,7 @@ void MiniScript::registerMethods() {
 					MiniScript::getFloatValue(argumentValues, 1, yValue, false) == true) {
 					returnValue.setValue(Vector2(xValue, yValue));
 				} else {
-					Console::println("ScriptMethodVec2::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -2836,7 +2836,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getVector2Value(argumentValues, 0, vec2, false) == true) {
 					returnValue.setValue(vec2.computeLength());
 				} else {
-					Console::println("ScriptMethodVec2ComputeLength::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector2 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector2 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -2864,7 +2864,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getVector2Value(argumentValues, 0, vec2, false) == true) {
 					returnValue.setValue(vec2.computeLengthSquared());
 				} else {
-					Console::println("ScriptMethodVec2ComputeLengthSquared::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector2 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector2 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -2895,7 +2895,7 @@ void MiniScript::registerMethods() {
 					MiniScript::getVector2Value(argumentValues, 1, b, false) == true) {
 					returnValue.setValue(Vector2::computeDotProduct(a, b));
 				} else {
-					Console::println("ScriptMethodVec2ComputeDotProduct::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector2 expected, @ argument 1: vector2 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector2 expected, @ argument 1: vector2 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -2923,7 +2923,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getVector2Value(argumentValues, 0, vec2, false) == true) {
 					returnValue.setValue(vec2.normalize());
 				} else {
-					Console::println("ScriptMethodVec2Normalize::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector2 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector2 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -2951,7 +2951,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getVector2Value(argumentValues, 0, vec2, false) == true) {
 					returnValue.setValue(vec2.getX());
 				} else {
-					Console::println("ScriptMethodVec2GetX::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector2 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector2 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -2979,7 +2979,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getVector2Value(argumentValues, 0, vec2, false) == true) {
 					returnValue.setValue(vec2.getY());
 				} else {
-					Console::println("ScriptMethodVec2GetY::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector2 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector2 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3016,7 +3016,7 @@ void MiniScript::registerMethods() {
 					MiniScript::getFloatValue(argumentValues, 2, zValue, false) == true) {
 					returnValue.setValue(Vector3(xValue, yValue, zValue));
 				} else {
-					Console::println("ScriptMethodVec3::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected, @ argument 1: float expected, @ argument 2: float expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected, @ argument 1: float expected, @ argument 2: float expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3044,7 +3044,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getVector3Value(argumentValues, 0, vec3, false) == true) {
 					returnValue.setValue(vec3.computeLength());
 				} else {
-					Console::println("ScriptMethodVec3ComputeLength::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3072,7 +3072,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getVector3Value(argumentValues, 0, vec3, false) == true) {
 					returnValue.setValue(vec3.computeLengthSquared());
 				} else {
-					Console::println("ScriptMethodVec3ComputeLengthSquared::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3103,7 +3103,7 @@ void MiniScript::registerMethods() {
 					MiniScript::getVector3Value(argumentValues, 1, b, false) == true) {
 					returnValue.setValue(Vector3::computeDotProduct(a, b));
 				} else {
-					Console::println("ScriptMethodVec3ComputeDotProduct::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected, @ argument 1: vector3 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected, @ argument 1: vector3 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3134,7 +3134,7 @@ void MiniScript::registerMethods() {
 					MiniScript::getVector3Value(argumentValues, 1, b, false) == true) {
 					returnValue.setValue(Vector3::computeCrossProduct(a, b));
 				} else {
-					Console::println("ScriptMethodVec3ComputeCrossProduct::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected, @ argument 1: vector3 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected, @ argument 1: vector3 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3162,7 +3162,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getVector3Value(argumentValues, 0, vec3, false) == true) {
 					returnValue.setValue(vec3.normalize());
 				} else {
-					Console::println("ScriptMethodVec3Normalize::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3196,7 +3196,7 @@ void MiniScript::registerMethods() {
 					MiniScript::getVector3Value(argumentValues, 2, n, false) == true) {
 					returnValue.setValue(Vector3::computeAngle(a, b, n));
 				} else {
-					Console::println("ScriptMethodVec3ComputeAngle::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected, @ argument 1: vector3 expected @ argument 2: vector3 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected, @ argument 1: vector3 expected @ argument 2: vector3 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3224,7 +3224,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getVector3Value(argumentValues, 0, vec3, false) == true) {
 					returnValue.setValue(vec3.getX());
 				} else {
-					Console::println("ScriptMethodVec3GetX::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3252,7 +3252,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getVector3Value(argumentValues, 0, vec3, false) == true) {
 					returnValue.setValue(vec3.getY());
 				} else {
-					Console::println("ScriptMethodVec3GetY::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3280,7 +3280,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getVector3Value(argumentValues, 0, vec3, false) == true) {
 					returnValue.setValue(vec3.getZ());
 				} else {
-					Console::println("ScriptMethodVec3GetZ::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3320,7 +3320,7 @@ void MiniScript::registerMethods() {
 					MiniScript::getFloatValue(argumentValues, 3, wValue, false) == true) {
 					returnValue.setValue(Vector4(xValue, yValue, zValue, wValue));
 				} else {
-					Console::println("ScriptMethodVec4::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected, @ argument 1: float expected, @ argument 2: float expected, @ argument 3: float expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected, @ argument 1: float expected, @ argument 2: float expected, @ argument 3: float expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3348,7 +3348,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getVector4Value(argumentValues, 0, vec4, false) == true) {
 					returnValue.setValue(vec4.computeLength());
 				} else {
-					Console::println("ScriptMethodVec4ComputeLength::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector4 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector4 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3376,7 +3376,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getVector4Value(argumentValues, 0, vec4, false) == true) {
 					returnValue.setValue(vec4.computeLengthSquared());
 				} else {
-					Console::println("ScriptMethodVec4ComputeLengthSquared::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector4 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector4 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3407,7 +3407,7 @@ void MiniScript::registerMethods() {
 					MiniScript::getVector4Value(argumentValues, 1, b, false) == true) {
 					returnValue.setValue(Vector4::computeDotProduct(a, b));
 				} else {
-					Console::println("ScriptMethodVec4ComputeDotProduct::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector4 expected, @ argument 1: vector4 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector4 expected, @ argument 1: vector4 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3435,7 +3435,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getVector4Value(argumentValues, 0, vec4, false) == true) {
 					returnValue.setValue(vec4.normalize());
 				} else {
-					Console::println("ScriptMethodVec4Normalize::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector4 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector4 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3463,7 +3463,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getVector4Value(argumentValues, 0, vec4, false) == true) {
 					returnValue.setValue(vec4.getX());
 				} else {
-					Console::println("ScriptMethodVec4GetX::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector4 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector4 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3491,7 +3491,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getVector4Value(argumentValues, 0, vec4, false) == true) {
 					returnValue.setValue(vec4.getY());
 				} else {
-					Console::println("ScriptMethodVec4GetY::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector4 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector4 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3519,7 +3519,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getVector4Value(argumentValues, 0, vec4, false) == true) {
 					returnValue.setValue(vec4.getZ());
 				} else {
-					Console::println("ScriptMethodVec4GetZ::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector4 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector4 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3547,7 +3547,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getVector4Value(argumentValues, 0, vec4, false) == true) {
 					returnValue.setValue(vec4.getW());
 				} else {
-					Console::println("ScriptMethodVec4GetW::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector4 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector4 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3595,7 +3595,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getQuaternionValue(argumentValues, 0, quaternion, false) == true) {
 					returnValue.setValue(quaternion.invert());
 				} else {
-					Console::println("ScriptMethodQuaternionInvert::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: quaternion expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: quaternion expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3627,7 +3627,7 @@ void MiniScript::registerMethods() {
 					MiniScript::getFloatValue(argumentValues, 1, angle, false) == true) {
 					returnValue.setValue(Quaternion().rotate(axis, angle));
 				} else {
-					Console::println("ScriptMethodQuaternionRotate::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vec3 expected, @ argument 1: float expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vec3 expected, @ argument 1: float expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3656,7 +3656,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getQuaternionValue(argumentValues, 0, quaternion, false) == true) {
 					returnValue.setValue(quaternion.normalize());
 				} else {
-					Console::println("ScriptMethodQuaternionNormalize::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: quaternion expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: quaternion expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3685,7 +3685,7 @@ void MiniScript::registerMethods() {
 				Quaternion quaternionValue;
 				Vector3 vec3Value;
 				if (argumentValues.size() != 2) {
-					Console::println("ScriptMethodQuaternionMultiply::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: quaternion expected, @ argument 1: quaternion or vec3 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: quaternion expected, @ argument 1: quaternion or vec3 expected");
 					miniScript->startErrorScript();
 				} else
 				if (MiniScript::getQuaternionValue(argumentValues, 0, quaternion, false) == true) {
@@ -3695,11 +3695,11 @@ void MiniScript::registerMethods() {
 					if (MiniScript::getVector3Value(argumentValues, 1, vec3Value, false) == true) {
 						returnValue.setValue(quaternion.multiply(vec3Value));
 					} else {
-						Console::println("ScriptMethodQuaternionMultiply::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: quaternion expected, @ argument 1: quaternion or vec3 expected");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: quaternion expected, @ argument 1: quaternion or vec3 expected");
 						miniScript->startErrorScript();
 					}
 				} else {
-					Console::println("ScriptMethodQuaternionMultiply::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: quaternion expected, @ argument 1: quaternion or vec3 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: quaternion expected, @ argument 1: quaternion or vec3 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3731,7 +3731,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getQuaternionValue(argumentValues, 0, quaternion, false) == true) {
 					returnValue.setValue(quaternion.computeMatrix());
 				} else {
-					Console::println("ScriptMethodQuaternionComputeMatrix::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: quaternion expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: quaternion expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3779,7 +3779,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getVector2Value(argumentValues, 0, translation, false) == true) {
 					returnValue.setValue(Matrix2D3x3().identity().translate(translation));
 				} else {
-					Console::println("ScriptMethodMatrix3x3Translate::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector2 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector2 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3808,7 +3808,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getFloatValue(argumentValues, 0, angle, false) == true) {
 					returnValue.setValue(Matrix2D3x3().identity().rotate(angle));
 				} else {
-					Console::println("ScriptMethodMatrix3x3Rotate::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3837,7 +3837,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getFloatValue(argumentValues, 0, angle, false) == true) {
 					returnValue.setValue(Matrix2D3x3::rotateAroundTextureCenter(angle));
 				} else {
-					Console::println("ScriptMethodMatrix3x3RotateAroundCenter::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3869,7 +3869,7 @@ void MiniScript::registerMethods() {
 					MiniScript::getFloatValue(argumentValues, 1, angle, false) == true) {
 					returnValue.setValue(Matrix2D3x3().rotateAroundPoint(point, angle));
 				} else {
-					Console::println("ScriptMethodMatrix3x3RotateAroundPoint::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector2 expected, @ argument 1: float expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector2 expected, @ argument 1: float expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3897,7 +3897,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
 					returnValue.setValue(Matrix2D3x3().identity().scale(floatValue));
 				} else {
-					Console::println("ScriptMethodMatrix3x3Scale::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector2 or float expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector2 or float expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3930,7 +3930,7 @@ void MiniScript::registerMethods() {
 				Matrix2D3x3 mat3Value;
 				Vector2 vec2Value;
 				if (argumentValues.size() != 2) {
-					Console::println("ScriptMethodMatrix3x3Multiply::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: matrix3x3 expected, @ argument 1: vec2 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: matrix3x3 expected, @ argument 1: vec2 expected");
 					miniScript->startErrorScript();
 				} else
 				if (MiniScript::getMatrix3x3Value(argumentValues, 0, mat3, false) == true) {
@@ -3940,11 +3940,11 @@ void MiniScript::registerMethods() {
 					if (MiniScript::getVector2Value(argumentValues, 1, vec2Value, false) == true) {
 						returnValue.setValue(mat3.multiply(vec2Value));
 					} else {
-						Console::println("ScriptMethodMatrix3x3Multiply::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: matrix3x3 expected, @ argument 1: vec2 expected");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: matrix3x3 expected, @ argument 1: vec2 expected");
 						miniScript->startErrorScript();
 					}
 				} else {
-					Console::println("ScriptMethodMatrix3x3Multiply::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: matrix3x3 expected, @ argument 1: vec2 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: matrix3x3 expected, @ argument 1: vec2 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3995,7 +3995,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getVector3Value(argumentValues, 0, translation, false) == true) {
 					returnValue.setValue(Matrix4x4().identity().translate(translation));
 				} else {
-					Console::println("ScriptMethodMatrix4x4Translate::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -4027,7 +4027,7 @@ void MiniScript::registerMethods() {
 					MiniScript::getFloatValue(argumentValues, 1, angle, false) == true) {
 					returnValue.setValue(Matrix4x4().identity().rotate(axis, angle));
 				} else {
-					Console::println("ScriptMethodMatrix4x4Rotate::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected, @ argument 1: float expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected, @ argument 1: float expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -4055,7 +4055,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
 					returnValue.setValue(Matrix4x4().identity().scale(floatValue));
 				} else {
-					Console::println("ScriptMethodMatrix4x4Scale::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 or float expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 or float expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -4088,7 +4088,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getMatrix4x4Value(argumentValues, 0, mat4, false) == true) {
 					returnValue.setValue(mat4.invert());
 				} else {
-					Console::println("ScriptMethodMatrix4x4Invert::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: matrix4x4 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: matrix4x4 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -4117,7 +4117,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getMatrix4x4Value(argumentValues, 0, mat4, false) == true) {
 					returnValue.setValue(mat4.computeEulerAngles());
 				} else {
-					Console::println("ScriptMethodMatrix4x4EulerAngles::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: matrix4x4 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: matrix4x4 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -4147,7 +4147,7 @@ void MiniScript::registerMethods() {
 				Vector3 vec3Value;
 				Vector4 vec4Value;
 				if (argumentValues.size() != 2) {
-					Console::println("ScriptMethodMatrix4x4Multiply::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: matrix4x4 expected, @ argument 1: vec3 or vec4 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: matrix4x4 expected, @ argument 1: vec3 or vec4 expected");
 					miniScript->startErrorScript();
 				} else
 				if (MiniScript::getMatrix4x4Value(argumentValues, 0, mat4, false) == true) {
@@ -4160,11 +4160,11 @@ void MiniScript::registerMethods() {
 					if (MiniScript::getVector4Value(argumentValues, 1, vec4Value, false) == true) {
 						returnValue.setValue(mat4.multiply(vec4Value));
 					} else {
-						Console::println("ScriptMethodMatrix4x4Multiply::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: matrix4x4 expected, @ argument 1: vec3 or vec4 expected");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: matrix4x4 expected, @ argument 1: vec3 or vec4 expected");
 						miniScript->startErrorScript();
 					}
 				} else {
-					Console::println("ScriptMethodMatrix4x4Multiply::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: matrix4x4 expected, @ argument 1: vec3 or vec4 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: matrix4x4 expected, @ argument 1: vec3 or vec4 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -4258,7 +4258,7 @@ void MiniScript::registerMethods() {
 					if (MiniScript::getVector3Value(argumentValues, 0, vec3Value, true) == true) {
 						transform.setTranslation(vec3Value);
 					} else {
-						Console::println("ScriptMethodTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected");
 						miniScript->startErrorScript();
 					}
 				}
@@ -4267,7 +4267,7 @@ void MiniScript::registerMethods() {
 					if (MiniScript::getVector3Value(argumentValues, 1, vec3Value, true) == true) {
 						transform.setScale(vec3Value);
 					} else {
-						Console::println("ScriptMethodTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 1: vector3 expected");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 1: vector3 expected");
 						miniScript->startErrorScript();
 					}
 				}
@@ -4280,7 +4280,7 @@ void MiniScript::registerMethods() {
 					if (MiniScript::getFloatValue(argumentValues, i, floatValue, true) == true) {
 						transform.setRotationAngle(i - 2, floatValue);
 					} else {
-						Console::println("ScriptMethodTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument " + to_string(i) + ": float expected");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument " + to_string(i) + ": float expected");
 						miniScript->startErrorScript();
 					}
 				}
@@ -4311,7 +4311,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true) {
 					returnValue.setValue(transform.getTranslation());
 				} else {
-					Console::println("ScriptMethodTransformGetTranslation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: transform expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: transform expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -4344,7 +4344,7 @@ void MiniScript::registerMethods() {
 					transform.update();
 					argumentValues[0].setValue(transform);
 				} else {
-					Console::println("ScriptMethodTransformSetTranslation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: transform expected, @ argument 1: vector3 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: transform expected, @ argument 1: vector3 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -4372,7 +4372,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true) {
 					returnValue.setValue(transform.getScale());
 				} else {
-					Console::println("ScriptMethodTransformGetScale::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: transform expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: transform expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -4405,7 +4405,7 @@ void MiniScript::registerMethods() {
 					transform.update();
 					argumentValues[0].setValue(transform);
 				} else {
-					Console::println("ScriptMethodTransformSetScale::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: transform expected, @ argument 1: vector3 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: transform expected, @ argument 1: vector3 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -4437,11 +4437,11 @@ void MiniScript::registerMethods() {
 					if (idx < transform.getRotationCount()) {
 						returnValue.setValue(transform.getRotationAxis(idx));
 					} else {
-						Console::println("ScriptMethodTransformGetRotationAxis::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": rotation index invalid: " + to_string(idx) + " / " + to_string(transform.getRotationCount()));
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": rotation index invalid: " + to_string(idx) + " / " + to_string(transform.getRotationCount()));
 						miniScript->startErrorScript();
 					}
 				} else {
-					Console::println("ScriptMethodTransformGetRotationAxis::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: transform expected, @ argument 1: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: transform expected, @ argument 1: integer expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -4473,11 +4473,11 @@ void MiniScript::registerMethods() {
 					if (idx < transform.getRotationCount()) {
 						returnValue.setValue(transform.getRotationAngle(idx));
 					} else {
-						Console::println("ScriptMethodTransformGetRotationAngle::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": rotation index invalid: " + to_string(idx) + " / " + to_string(transform.getRotationCount()));
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": rotation index invalid: " + to_string(idx) + " / " + to_string(transform.getRotationCount()));
 						miniScript->startErrorScript();
 					}
 				} else {
-					Console::println("ScriptMethodTransformGetRotationAngle::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: transform expected, @ argument 1: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: transform expected, @ argument 1: integer expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -4514,11 +4514,11 @@ void MiniScript::registerMethods() {
 						transform.update();
 						argumentValues[0].setValue(transform);
 					} else {
-						Console::println("ScriptMethodTransformSetRotationAngle::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": rotation index invalid: " + to_string(idx) + " / " + to_string(transform.getRotationCount()));
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": rotation index invalid: " + to_string(idx) + " / " + to_string(transform.getRotationCount()));
 						miniScript->startErrorScript();
 					}
 				} else {
-					Console::println("ScriptMethodTransformSetRotationAngle::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: transform expected, @ argument 1: integer expected, @ argument 2: float expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: transform expected, @ argument 1: integer expected, @ argument 2: float expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -4549,7 +4549,7 @@ void MiniScript::registerMethods() {
 					MiniScript::getVector3Value(argumentValues, 1, vec3, false) == true) {
 					returnValue.setValue(transform.getTransformMatrix() * vec3);
 				} else {
-					Console::println("ScriptMethodTransformSetScale::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: transform expected, @ argument 1: vector3 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: transform expected, @ argument 1: vector3 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -4580,7 +4580,7 @@ void MiniScript::registerMethods() {
 					MiniScript::getVector3Value(argumentValues, 1, vec3, false) == true) {
 					returnValue.setValue(transform.getRotationsQuaternion() * vec3);
 				} else {
-					Console::println("ScriptMethodTransformSetScale::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: transform expected, @ argument 1: vector3 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: transform expected, @ argument 1: vector3 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -4628,7 +4628,7 @@ void MiniScript::registerMethods() {
 					transform.update();
 					returnValue = transform;
 				} else {
-					Console::println("ScriptMethodTransformApplyRotation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: transform expected, @ argument 1: vector3 expected, @ argument 2: float expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: transform expected, @ argument 1: vector3 expected, @ argument 2: float expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -4669,7 +4669,7 @@ void MiniScript::registerMethods() {
 					returnValue = Rotation::interpolate(currentAngle, targetAngle, timePassedSeconds, degreesPerSeconds, interpolatedAngle);
 					argumentValues[4] = interpolatedAngle;
 				} else {
-					Console::println("ScriptMethodTransformInterpolateRotation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected, @ argument 1: float expected, @ argument 2: float expected, @ argument 3: float expected, @ argument 4: float for assign back expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected, @ argument 1: float expected, @ argument 2: float expected, @ argument 3: float expected, @ argument 4: float for assign back expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -4697,7 +4697,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true) {
 					returnValue.setValue(transform.getTransformMatrix());
 				} else {
-					Console::println("ScriptMethodTransformGetTransformMatrix::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: transform expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: transform expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -4725,7 +4725,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true) {
 					returnValue.setValue(transform.getRotationsQuaternion());
 				} else {
-					Console::println("ScriptMethodTransformGetRotationsQuaternion::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: transform expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: transform expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -4755,7 +4755,7 @@ void MiniScript::registerMethods() {
 					transform.fromMatrix(transformMatrix, RotationOrder::ZYX);
 					returnValue.setValue(transform);
 				} else {
-					Console::println("ScriptMethodTransformFromMatrix::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: matrix4x4 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: matrix4x4 expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -4785,7 +4785,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getBooleanValue(argumentValues, 0, boolValue, false) == true) {
 					returnValue.setValue(boolValue);
 				} else {
-					Console::println("ScriptMethodBool::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: boolean expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: boolean expected");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -4813,7 +4813,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getBooleanValue(argumentValues, 0, booleanValue, false) == true) {
 					returnValue.setValue(!booleanValue);
 				} else {
-					Console::println("ScriptMethodNot::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: boolean expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: boolean expected");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -4845,14 +4845,14 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				if (argumentValues.size() != 2) {
 					returnValue.setValue(false);
-					Console::println("ScriptMethodOr::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: boolean expected, @ argument 1: boolean expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: boolean expected, @ argument 1: boolean expected");
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(true);
 					for (auto i = 0; i < argumentValues.size(); i++) {
 						bool booleanValue;
 						if (MiniScript::getBooleanValue(argumentValues, i, booleanValue, false) == false) {
-							Console::println("ScriptMethodAnd::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument " + to_string(i) + ": boolean expected");
+							Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument " + to_string(i) + ": boolean expected");
 							miniScript->startErrorScript();
 						} else
 						if (booleanValue == false) {
@@ -4889,14 +4889,14 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				if (argumentValues.size() != 2) {
 					returnValue.setValue(false);
-					Console::println("ScriptMethodOr::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: boolean expected, @ argument 1: boolean expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: boolean expected, @ argument 1: boolean expected");
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(false);
 					for (auto i = 0; i < argumentValues.size(); i++) {
 						bool booleanValue;
 						if (MiniScript::getBooleanValue(argumentValues, i, booleanValue, false) == false) {
-							Console::println("ScriptMethodOr::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument " + to_string(i) + ": boolean expected");
+							Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument " + to_string(i) + ": boolean expected");
 							miniScript->startErrorScript();
 						} else
 						if (booleanValue == true) {
@@ -4935,7 +4935,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == true) {
 					returnValue.setValue(stringValue);
 				} else {
-					Console::println("ScriptMethodString::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -4964,7 +4964,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == true) {
 					returnValue.setValue(static_cast<int64_t>(stringValue.size()));
 				} else {
-					Console::println("ScriptMethodStringLength::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -4994,7 +4994,7 @@ void MiniScript::registerMethods() {
 				int64_t index;
 				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
 					MiniScript::getIntegerValue(argumentValues, 1, index, false) == false) {
-					Console::println("ScriptMethodStringCharAt::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: integer expected");
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(index >= 0 && index < stringValue.size()?string(&stringValue[index], 1):string());
@@ -5026,7 +5026,7 @@ void MiniScript::registerMethods() {
 				string prefix;
 				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
 					MiniScript::getStringValue(argumentValues, 1, prefix, false) == false) {
-					Console::println("ScriptMethodStringStartsWith::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(StringTools::startsWith(stringValue, prefix));
@@ -5058,7 +5058,7 @@ void MiniScript::registerMethods() {
 				string suffix;
 				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
 					MiniScript::getStringValue(argumentValues, 1, suffix, false) == false) {
-					Console::println("ScriptMethodStringEndsWith::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(StringTools::endsWith(stringValue, suffix));
@@ -5096,7 +5096,7 @@ void MiniScript::registerMethods() {
 					MiniScript::getStringValue(argumentValues, 1, what, false) == false ||
 					MiniScript::getStringValue(argumentValues, 2, by, false) == false ||
 					MiniScript::getIntegerValue(argumentValues, 3, beginIndex, true) == false) {
-					Console::println("ScriptMethodStringReplace::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: string expected, @ argument 3: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: string expected, @ argument 3: integer expected");
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(StringTools::replace(stringValue, what, by, beginIndex));
@@ -5131,7 +5131,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
 					MiniScript::getStringValue(argumentValues, 1, what, false) == false ||
 					MiniScript::getIntegerValue(argumentValues, 2, beginIndex, true) == false) {
-					Console::println("ScriptMethodStringCharAt::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: integer expected");
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(static_cast<int64_t>(StringTools::indexOf(stringValue, what, beginIndex)));
@@ -5166,7 +5166,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
 					MiniScript::getStringValue(argumentValues, 1, what, false) == false ||
 					MiniScript::getIntegerValue(argumentValues, 2, beginIndex, true) == false) {
-					Console::println("ScriptMethodStringFirstIndexOf::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: integer expected");
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(static_cast<int64_t>(StringTools::firstIndexOf(stringValue, what, beginIndex)));
@@ -5201,7 +5201,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
 					MiniScript::getStringValue(argumentValues, 1, what, false) == false ||
 					MiniScript::getIntegerValue(argumentValues, 2, beginIndex, true) == false) {
-					Console::println("ScriptMethodStringLastIndexOf::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: integer expected");
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(static_cast<int64_t>(StringTools::lastIndexOf(stringValue, what, beginIndex)));
@@ -5236,7 +5236,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
 					MiniScript::getIntegerValue(argumentValues, 1, beginIndex, false) == false ||
 					MiniScript::getIntegerValue(argumentValues, 2, endIndex, true) == false) {
-					Console::println("ScriptMethodStringSubString::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: integer expected, @ argument 2: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: integer expected, @ argument 2: integer expected");
 					miniScript->startErrorScript();
 				} else {
 					if (endIndex == -1) {
@@ -5272,7 +5272,7 @@ void MiniScript::registerMethods() {
 				string string2Value;
 				if (MiniScript::getStringValue(argumentValues, 0, string1Value, false) == false ||
 					MiniScript::getStringValue(argumentValues, 1, string2Value, false) == false) {
-					Console::println("ScriptMethodStringEqualsIgnoreCase::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(StringTools::equalsIgnoreCase(string1Value, string2Value));
@@ -5301,7 +5301,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string stringValue;
 				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false) {
-					Console::println("ScriptMethodStringTrim::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(StringTools::trim(stringValue));
@@ -5333,7 +5333,7 @@ void MiniScript::registerMethods() {
 				string pattern;
 				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
 					MiniScript::getStringValue(argumentValues, 1, pattern, false) == false) {
-					Console::println("ScriptMethodStringRegexMatch::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(StringTools::regexMatch(stringValue, pattern));
@@ -5368,7 +5368,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
 					MiniScript::getStringValue(argumentValues, 1, pattern, false) == false ||
 					MiniScript::getStringValue(argumentValues, 2, by, false) == false) {
-					Console::println("ScriptMethodStringRegexReplace::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: string expected");
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(StringTools::regexReplace(stringValue, pattern, by));
@@ -5400,7 +5400,7 @@ void MiniScript::registerMethods() {
 				string delimiters;
 				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
 					MiniScript::getStringValue(argumentValues, 1, delimiters, false) == false) {
-					Console::println("ScriptMethodStringTokenize::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
 					miniScript->startErrorScript();
 				} else {
 					auto tokenizedStringVector = StringTools::tokenize(stringValue, delimiters);
@@ -5434,7 +5434,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				int64_t spaces = 1;
 				if (MiniScript::getIntegerValue(argumentValues, 0, spaces, true) == false) {
-					Console::println("ScriptMethodStringSpace::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
 					miniScript->startErrorScript();
 				} else {
 					string spacesString;
@@ -5490,7 +5490,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == true) {
 					returnValue.setValue(StringTools::toUpperCase(stringValue));
 				} else {
-					Console::println("ScriptMethodToStringUpperCase::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -5519,7 +5519,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == true) {
 					returnValue.setValue(StringTools::toLowerCase(stringValue));
 				} else {
-					Console::println("ScriptMethodToStringLowerCase::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -5548,7 +5548,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == true) {
 					returnValue.setValue(stringValue.empty());
 				} else {
-					Console::println("ScriptMethodStringIsEmpty::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -5577,7 +5577,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == true) {
 					returnValue.setValue(Float::is(stringValue));
 				} else {
-					Console::println("ScriptMethodStringIsFloat::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -5606,7 +5606,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == true) {
 					returnValue.setValue(Integer::is(stringValue));
 				} else {
-					Console::println("ScriptMethodStringIsInteger::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -5639,7 +5639,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
 					MiniScript::getStringValue(argumentValues, 1, by, false) == false ||
 					MiniScript::getIntegerValue(argumentValues, 2, toSize, false) == false) {
-					Console::println("ScriptMethodStringPadLeft::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: integer expected");
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(StringTools::padLeft(stringValue, by, toSize));
@@ -5674,7 +5674,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
 					MiniScript::getStringValue(argumentValues, 1, by, false) == false ||
 					MiniScript::getIntegerValue(argumentValues, 2, toSize, false) == false) {
-					Console::println("ScriptMethodStringPadRight::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: integer expected");
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(StringTools::padRight(stringValue, by, toSize));
@@ -5730,7 +5730,7 @@ void MiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				if (argumentValues.size() != 1 || argumentValues[0].getType() != ScriptVariableType::TYPE_ARRAY) {
-					Console::println("ScriptMethodArrayLength::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: array expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: array expected");
 				} else {
 					returnValue.setValue(static_cast<int64_t>(argumentValues[0].getArraySize()));
 				}
@@ -5761,7 +5761,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				//
 				if (argumentValues.size() < 1 || argumentValues[0].getType() != ScriptVariableType::TYPE_ARRAY) {
-					Console::println("ScriptMethodArrayPush::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: array expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: array expected");
 				} else {
 					for (auto i = 1; i < argumentValues.size(); i++) {
 						argumentValues[0].pushArrayValue(argumentValues[i]);
@@ -5793,7 +5793,7 @@ void MiniScript::registerMethods() {
 				int64_t index;
 				if ((argumentValues.size() <= 1 || argumentValues[0].getType() != ScriptVariableType::TYPE_ARRAY) ||
 					MiniScript::getIntegerValue(argumentValues, 1, index, false) == false) {
-					Console::println("ScriptMethodArrayGet::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: array expected, @argument 1: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: array expected, @argument 1: integer expected");
 				} else {
 					returnValue = argumentValues[0].getArrayValue(index);
 				}
@@ -5824,7 +5824,7 @@ void MiniScript::registerMethods() {
 				int64_t index;
 				if ((argumentValues.size() <= 2 || argumentValues[0].getType() != ScriptVariableType::TYPE_ARRAY) ||
 					MiniScript::getIntegerValue(argumentValues, 1, index, false) == false) {
-					Console::println("ScriptMethodArraySet::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: array expected, @argument 1: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: array expected, @argument 1: integer expected");
 				} else {
 					argumentValues[0].setArrayValue(index, argumentValues[2]);
 				}
@@ -5854,7 +5854,7 @@ void MiniScript::registerMethods() {
 				int64_t index;
 				if ((argumentValues.size() < 2 || argumentValues[0].getType() != ScriptVariableType::TYPE_ARRAY) ||
 					MiniScript::getIntegerValue(argumentValues, 1, index, false) == false) {
-					Console::println("ScriptMethodArraySet::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: array expected, @argument 1: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: array expected, @argument 1: integer expected");
 				} else {
 					argumentValues[0].removeArrayValue(index);
 				}
@@ -5888,7 +5888,7 @@ void MiniScript::registerMethods() {
 					argumentValues[0].getType() != ScriptVariableType::TYPE_ARRAY ||
 					MiniScript::getStringValue(argumentValues, 1, stringValue, false) == false ||
 					MiniScript::getIntegerValue(argumentValues, 2, beginIndex, true) == false) {
-					Console::println("ScriptMethodArrayRemoveOf::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: array expected, @argument 1: mixed expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: array expected, @argument 1: mixed expected");
 				} else {
 					auto& array = argumentValues[0];
 					for (auto i = beginIndex; i < array.getArraySize(); i++) {
@@ -5929,7 +5929,7 @@ void MiniScript::registerMethods() {
 					argumentValues[0].getType() != ScriptVariableType::TYPE_ARRAY ||
 					MiniScript::getStringValue(argumentValues, 1, stringValue, false) == false ||
 					MiniScript::getIntegerValue(argumentValues, 2, beginIndex, true) == false) {
-					Console::println("ScriptMethodArrayIndexOf::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: array expected, @argument 1: mixed expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: array expected, @argument 1: mixed expected");
 				} else {
 					auto& array = argumentValues[0];
 					returnValue.setValue(static_cast<int64_t>(-1));
@@ -5968,7 +5968,7 @@ void MiniScript::registerMethods() {
 				if (argumentValues.size() != 2 ||
 					argumentValues[0].getType() != ScriptVariableType::TYPE_ARRAY ||
 					MiniScript::getStringValue(argumentValues, 1, function, false) == false) {
-					Console::println("ScriptMethodArraySort::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: array expected, @ argument 1: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: array expected, @ argument 1: string expected");
 				} else {
 					class SortClass {
 						private:
@@ -6017,7 +6017,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				if (argumentValues.size() != 1 ||
 					argumentValues[0].getType() != ScriptVariableType::TYPE_ARRAY) {
-					Console::println("ScriptMethodArraySort::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: array expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: array expected");
 				} else {
 					//
 					auto arrayPtr = argumentValues[0].getArrayPointer();
@@ -6078,7 +6078,7 @@ void MiniScript::registerMethods() {
 				if (argumentValues.size() < 3 ||
 					argumentValues[0].getType() != ScriptVariableType::TYPE_MAP ||
 					MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
-					Console::println("ScriptMethodMapSet::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: map expected, @ argument 1: string, @ argument 2: mixed expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: map expected, @ argument 1: string, @ argument 2: mixed expected");
 				} else {
 					argumentValues[0].setMapValue(key, argumentValues[2]);
 				}
@@ -6110,7 +6110,7 @@ void MiniScript::registerMethods() {
 				if (argumentValues.size() < 2 ||
 					argumentValues[0].getType() != ScriptVariableType::TYPE_MAP ||
 					MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
-					Console::println("ScriptMethodMapHas::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: map expected, @ argument 1: string");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: map expected, @ argument 1: string");
 				} else {
 					returnValue.setValue(argumentValues[0].hasMapValue(key));
 				}
@@ -6142,7 +6142,7 @@ void MiniScript::registerMethods() {
 				if (argumentValues.size() < 2 ||
 					argumentValues[0].getType() != ScriptVariableType::TYPE_MAP ||
 					MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
-					Console::println("ScriptMethodMapGet::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: map expected, @ argument 1: string");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: map expected, @ argument 1: string");
 				} else {
 					returnValue = argumentValues[0].getMapValue(key);
 				}
@@ -6174,7 +6174,7 @@ void MiniScript::registerMethods() {
 				if (argumentValues.size() < 2 ||
 					argumentValues[0].getType() != ScriptVariableType::TYPE_MAP ||
 					MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
-					Console::println("ScriptMethodMapRemove::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: map expected, @ argument 1: string");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: map expected, @ argument 1: string");
 				} else {
 					argumentValues[0].removeMapValue(key);
 				}
@@ -6203,7 +6203,7 @@ void MiniScript::registerMethods() {
 				//
 				if (argumentValues.size() != 1 ||
 					argumentValues[0].getType() != ScriptVariableType::TYPE_MAP) {
-					Console::println("ScriptMethodMapGetKeys::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: map expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: map expected");
 				} else {
 					auto keys = argumentValues[0].getMapKeys();
 					returnValue.setType(TYPE_ARRAY);
@@ -6236,7 +6236,7 @@ void MiniScript::registerMethods() {
 				//
 				if (argumentValues.size() != 1 ||
 					argumentValues[0].getType() != ScriptVariableType::TYPE_MAP) {
-					Console::println("ScriptMethodMapGetValues::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: map expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: map expected");
 				} else {
 					auto values = argumentValues[0].getMapValues();
 					returnValue.setType(TYPE_ARRAY);
@@ -6294,7 +6294,7 @@ void MiniScript::registerMethods() {
 				if (argumentValues.size() != 2 ||
 					argumentValues[0].getType() != ScriptVariableType::TYPE_SET ||
 					MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
-					Console::println("ScriptMethodSetInsert::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: set expected, @ argument 1: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: set expected, @ argument 1: string expected");
 				} else {
 					argumentValues[0].insertSetKey(key);
 				}
@@ -6326,7 +6326,7 @@ void MiniScript::registerMethods() {
 				if (argumentValues.size() < 2 ||
 					argumentValues[0].getType() != ScriptVariableType::TYPE_SET ||
 					MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
-					Console::println("ScriptMethodSetHas::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: set expected, @ argument 1: string");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: set expected, @ argument 1: string");
 				} else {
 					returnValue.setValue(argumentValues[0].hasSetKey(key));
 				}
@@ -6358,7 +6358,7 @@ void MiniScript::registerMethods() {
 				if (argumentValues.size() < 2 ||
 					argumentValues[0].getType() != ScriptVariableType::TYPE_SET ||
 					MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
-					Console::println("ScriptMethodSetRemove::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: set expected, @ argument 1: string");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: set expected, @ argument 1: string");
 				} else {
 					argumentValues[0].removeSetKey(key);
 				}
@@ -6387,7 +6387,7 @@ void MiniScript::registerMethods() {
 				//
 				if (argumentValues.size() != 1 ||
 					argumentValues[0].getType() != ScriptVariableType::TYPE_SET) {
-					Console::println("ScriptMethodSetGetKeys::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: map expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: map expected");
 				} else {
 					auto keys = argumentValues[0].getSetKeys();
 					returnValue.setType(TYPE_ARRAY);
@@ -6422,7 +6422,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
 					returnValue = miniScript->getVariable(variable);
 				} else {
-					Console::println("ScriptMethodGetVariable::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -6455,7 +6455,7 @@ void MiniScript::registerMethods() {
 				string variable;
 				if (argumentValues.size() != 2 ||
 					MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
-					Console::println("ScriptMethodSetVariable::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 					miniScript->startErrorScript();
 				} else {
 					miniScript->setVariable(variable, argumentValues[1], &statement);
@@ -6492,7 +6492,7 @@ void MiniScript::registerMethods() {
 				string variable;
 				if (argumentValues.size() != 1 ||
 					MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
-					Console::println("ScriptMethodUnsetVariable::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript();
 				} else {
 					miniScript->unsetVariable(variable, &statement);
@@ -6540,7 +6540,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string format = "%Y-%m-%d %H:%M:%S";
 				if (MiniScript::getStringValue(argumentValues, 0, format, true) == false) {
-					Console::println("ScriptMethodTimeGetAsString::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(Time::getAsString(format));
@@ -6576,7 +6576,7 @@ void MiniScript::registerMethods() {
 				if (MiniScript::getStringValue(argumentValues, 0, name, false) == false ||
 					(argumentValues.size() >= 2 && argumentValues[1].getType() != ScriptVariableType::TYPE_MAP) ||
 					MiniScript::getStringValue(argumentValues, 2, innerXML, true) == false) {
-					Console::println("ScriptMethodXMLCreateTag::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: optional map expected, @ argument 2: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: optional map expected, @ argument 2: optional string expected");
 					miniScript->startErrorScript();
 				} else {
 					auto mapPtr = argumentValues[1].getMapPointer();
@@ -6620,7 +6620,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				//
 				if (argumentValues.size() != 1) {
-					Console::println("ScriptMethodJSONSerialize::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected");
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(MiniScript::serializeAsJson(argumentValues[0]));
@@ -6649,7 +6649,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string json;
 				if (MiniScript::getStringValue(argumentValues, 0, json, false) == false) {
-					Console::println("ScriptMethodJSONDeserialize::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript();
 				} else {
 					returnValue = MiniScript::deserializeJson(json);
@@ -6678,7 +6678,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				int64_t value;
 				if (MiniScript::getIntegerValue(argumentValues, 0, value, false) == false) {
-					Console::println("ScriptMethodIncrement::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
 					miniScript->startErrorScript();
 				} else {
 					++value;
@@ -6712,7 +6712,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				int64_t value;
 				if (MiniScript::getIntegerValue(argumentValues, 0, value, false) == false) {
-					Console::println("ScriptMethodDecrement::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
 					miniScript->startErrorScript();
 				} else {
 					--value;
@@ -6746,7 +6746,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				int64_t value;
 				if (MiniScript::getIntegerValue(argumentValues, 0, value, false) == false) {
-					Console::println("ScriptMethodBitwiseNot::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(~value);
@@ -6780,7 +6780,7 @@ void MiniScript::registerMethods() {
 				int64_t valueB;
 				if (MiniScript::getIntegerValue(argumentValues, 0, valueA, false) == false ||
 					MiniScript::getIntegerValue(argumentValues, 1, valueB, false) == false) {
-					Console::println("ScriptMethodBitwiseAnd::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected, @ argument 1: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected, @ argument 1: integer expected");
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(valueA & valueB);
@@ -6814,7 +6814,7 @@ void MiniScript::registerMethods() {
 				int64_t valueB;
 				if (MiniScript::getIntegerValue(argumentValues, 0, valueA, false) == false ||
 					MiniScript::getIntegerValue(argumentValues, 1, valueB, false) == false) {
-					Console::println("ScriptMethodBitwiseOr::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected, @ argument 1: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected, @ argument 1: integer expected");
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(valueA | valueB);
@@ -6848,7 +6848,7 @@ void MiniScript::registerMethods() {
 				int64_t valueB;
 				if (MiniScript::getIntegerValue(argumentValues, 0, valueA, false) == false ||
 					MiniScript::getIntegerValue(argumentValues, 1, valueB, false) == false) {
-					Console::println("ScriptMethodBitwiseXor::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected, @ argument 1: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected, @ argument 1: integer expected");
 					miniScript->startErrorScript();
 				} else {
 					returnValue.setValue(valueA ^ valueB);
