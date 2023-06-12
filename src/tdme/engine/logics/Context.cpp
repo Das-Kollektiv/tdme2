@@ -255,8 +255,8 @@ void Context::PathFindingThread::run() {
 				if ((worldActionStruct.collisionTypeId & context->bodyCollisionTypeIdCloneMask) != 0) {
 					world->addStaticRigidBody(
 						worldActionStruct.id,
-						worldActionStruct.enabled,
 						worldActionStruct.collisionTypeId,
+						worldActionStruct.enabled,
 						worldActionStruct.transform,
 						worldActionStruct.friction,
 						worldActionStruct.boundingVolumes
