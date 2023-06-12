@@ -70,7 +70,7 @@ private:
 	BodyHierarchyLevel bodyRoot { string(), nullptr, Transform(), {} };
 
 	/**
-	 * Get body hierarchy level by given entity id
+	 * Get body hierarchy level by given body id
 	 * @param id id
 	 * @return body hierarchy level
 	 *
@@ -119,7 +119,7 @@ public:
 	 * @param id unique body id in hierarchy
 	 * @param transform transform
 	 * @param boundingVolumes bounding volumes
-	 * @param parentId parent body id to add entity to
+	 * @param parentId parent body id to add body to
 	 */
 	void addBody(const string& id, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes, const string& parentId = string());
 
