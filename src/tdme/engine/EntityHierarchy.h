@@ -162,7 +162,7 @@ public:
 	void removeEntity(const string& id);
 
 	/**
-	 * Query sub entities for parent entity
+	 * Query sub entities of parent entity
 	 * @param parentId parent entity id
 	 * @return entities
 	 */
