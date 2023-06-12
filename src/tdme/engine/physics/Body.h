@@ -91,6 +91,7 @@ protected:
 	vector<BoundingVolume*> boundingVolumes;
 	vector<reactphysics3d::Collider*> colliders;
 	vector<CollisionListener*> collisionListener;
+	bool initiation;
 
 	/**
 	 * Protected constructor
@@ -380,7 +381,8 @@ public:
 		this->transform.setTransform(transform);
 
 		// reset colliders if bounding volumes do not match proxy shapes or if scaling has changed
-		if (colliders.size() != boundingVolumes.size() || transformScale.equals(transform.getScale()) == false) {
+		if (initiation == true || colliders.size() != boundingVolumes.size() || transformScale.equals(transform.getScale()) == false) {
+			initiation = false;
 			resetColliders();
 			transformScale.set(transform.getScale());
 		}

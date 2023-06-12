@@ -21,7 +21,7 @@ using std::string;
 using std::vector;
 
 using tdme::engine::physics::Body;
-using tdme::engine::physics::HierarchyBody;
+using tdme::engine::physics::BodyHierarchy;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::WorldListener;
 using tdme::engine::primitives::BoundingVolume;
@@ -154,11 +154,11 @@ public:
 	}
 
 	/**
-	 * Returns hierarchy body identified by id
+	 * Returns body hierarchy identified by id
 	 * @param id id
-	 * @return hierarchy body
+	 * @return body hierarchy
 	 */
-	HierarchyBody* getHierarchyBody(const string& id);
+	BodyHierarchy* getBodyHierarchy(const string& id);
 
 	/**
 	 * Removes body identified by id

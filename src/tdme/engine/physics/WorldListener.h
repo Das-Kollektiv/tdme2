@@ -28,26 +28,49 @@ struct tdme::engine::physics::WorldListener
 	virtual ~WorldListener() {}
 
 	/**
-	 * Event fired when rigid body was added
-	 * @param id id
+	 * Event fired when body was added
+	 * @param id body id
 	 * @param type body type
-	 * @param enabled enabled
 	 * @param collisionTypeId collision type id
+	 * @param enabled enabled
 	 * @param transform transform
 	 * @param restitution restitution
 	 * @param friction friction
 	 * @param mass mass
 	 * @param inertiaTensor inertia tensor
 	 * @param boundingVolumes bounding volumes
+	 * @param hierarchy hierarchy
 	 */
-	virtual void onAddedBody(const string& id, Body::BodyType type, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes) = 0;
+	virtual void onAddedBody(const string& id, Body::BodyType type, uint16_t collisionTypeId, bool enabled, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy = false) = 0;
 
 	/**
-	 * Event fired when rigid body was removed
-	 * @param id id
-	 * @param type rigid body type
+	 * Event fired when body was removed
+	 * @param id body id
+	 * @param type body type
 	 * @param collisionTypeId collision type id
 	 */
 	virtual void onRemovedBody(const string& id, Body::BodyType type, uint16_t collisionTypeId) = 0;
+
+	/**
+	 * Event fired when child body was added to a body hierarchy
+	 * @param id body id
+	 * @param type body type
+	 * @param collisionTypeId collision type id
+	 * @param subBodyParentId sub body parent id
+	 * @param subBodyId sub body id
+	 * @param transform transform
+	 * @param boundingVolumes bounding volumes
+	 */
+	virtual void onAddedSubBody(const string& id, Body::BodyType type, uint16_t collisionTypeId, const string& subBodyParentId, const string& subBodyId, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes) = 0;
+
+	/**
+	 * Event fired when body was removed
+	 * @param id body id
+	 * @param type body type
+	 * @param collisionTypeId collision type id
+	 * @param subBodyParentId sub body parent id
+	 * @param subBodyId sub body id
+	 */
+	virtual void onRemovedSubBody(const string& id, Body::BodyType type, uint16_t collisionTypeId, const string& subBodyParentId, const string& subBodyId) = 0;
 
 };

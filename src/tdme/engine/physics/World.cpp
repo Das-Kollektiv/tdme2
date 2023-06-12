@@ -22,7 +22,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/physics/Body.h>
-#include <tdme/engine/physics/HierarchyBody.h>
+#include <tdme/engine/physics/BodyHierarchy.h>
 #include <tdme/engine/physics/CollisionResponse.h>
 #include <tdme/engine/physics/CollisionResponse_Entity.h>
 #include <tdme/engine/physics/WorldListener.h>
@@ -51,7 +51,7 @@ using std::to_string;
 using std::unordered_set;
 
 using tdme::engine::physics::Body;
-using tdme::engine::physics::HierarchyBody;
+using tdme::engine::physics::BodyHierarchy;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::CollisionResponse_Entity;
 using tdme::engine::physics::World;
@@ -113,67 +113,102 @@ void World::reset()
 Body* World::addRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy)
 {
 	removeBody(id);
+	//
 	auto body =
 		hierarchy == true?
-			new HierarchyBody(this, id, Body::BODYTYPE_DYNAMIC, enabled, collisionTypeId, transform, restitution, friction, mass, inertiaTensor, boundingVolumes):
+			new BodyHierarchy(this, id, Body::BODYTYPE_DYNAMIC, enabled, collisionTypeId, transform, restitution, friction, mass, inertiaTensor):
 			new Body(this, id, Body::BODYTYPE_DYNAMIC, enabled, collisionTypeId, transform, restitution, friction, mass, inertiaTensor, boundingVolumes);
+	//
+	if (hierarchy == true) {
+		static_cast<BodyHierarchy*>(body)->addBody(id, Transform(), boundingVolumes);
+		static_cast<BodyHierarchy*>(body)->update();
+	}
+	//
 	bodies.push_back(body);
 	rigidBodiesDynamic.push_back(body);
 	bodiesById[id] = body;
+	//
 	for (auto listener: worldListeners) {
-		listener->onAddedBody(id, Body::BODYTYPE_DYNAMIC, enabled, collisionTypeId, transform, restitution, friction, mass, inertiaTensor, boundingVolumes);
+		listener->onAddedBody(id, Body::BODYTYPE_DYNAMIC, collisionTypeId, enabled, transform, restitution, friction, mass, inertiaTensor, boundingVolumes);
 	}
+	//
 	return body;
 }
 
 Body* World::addStaticCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy) {
 	removeBody(id);
+	//
 	auto body =
 		hierarchy == true?
-			new HierarchyBody(this, id, Body::BODYTYPE_COLLISION_STATIC, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes):
+			new BodyHierarchy(this, id, Body::BODYTYPE_COLLISION_STATIC, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor()):
 			new Body(this, id, Body::BODYTYPE_COLLISION_STATIC, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
+	//
+	if (hierarchy == true) {
+		static_cast<BodyHierarchy*>(body)->addBody(id, Transform(), boundingVolumes);
+		static_cast<BodyHierarchy*>(body)->update();
+	}
+	//
 	bodies.push_back(body);
 	bodiesById[id] = body;
+	//
 	for (auto listener: worldListeners) {
-		listener->onAddedBody(id, Body::BODYTYPE_COLLISION_STATIC, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
+		listener->onAddedBody(id, Body::BODYTYPE_COLLISION_STATIC, collisionTypeId, enabled, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
 	}
+	//
 	return body;
 }
 
 Body* World::addDynamicCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy) {
 	removeBody(id);
+	//
 	auto body =
 		hierarchy == true?
-			new HierarchyBody(this, id, Body::BODYTYPE_COLLISION_DYNAMIC, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes):
+			new BodyHierarchy(this, id, Body::BODYTYPE_COLLISION_DYNAMIC, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor()):
 			new Body(this, id, Body::BODYTYPE_COLLISION_DYNAMIC, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
+	//
+	if (hierarchy == true) {
+		static_cast<BodyHierarchy*>(body)->addBody(id, Transform(), boundingVolumes);
+		static_cast<BodyHierarchy*>(body)->update();
+	}
+	//
 	bodies.push_back(body);
 	bodiesById[id] = body;
+	//
 	for (auto listener: worldListeners) {
-		listener->onAddedBody(id, Body::BODYTYPE_COLLISION_DYNAMIC, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
+		listener->onAddedBody(id, Body::BODYTYPE_COLLISION_DYNAMIC, collisionTypeId, enabled, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
 	}
+	//
 	return body;
 }
 
 Body* World::addStaticRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, float friction, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy)
 {
 	removeBody(id);
+	//
 	auto body =
 		hierarchy == true?
-			new HierarchyBody(this, id, Body::BODYTYPE_STATIC, enabled, collisionTypeId, transform, 0.0f, friction, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes):
+			new BodyHierarchy(this, id, Body::BODYTYPE_STATIC, enabled, collisionTypeId, transform, 0.0f, friction, 0.0f, Body::getNoRotationInertiaTensor()):
 			new Body(this, id, Body::BODYTYPE_STATIC, enabled, collisionTypeId, transform, 0.0f, friction, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
-
+	//
+	if (hierarchy == true) {
+		static_cast<BodyHierarchy*>(body)->addBody(id, Transform(), boundingVolumes);
+		static_cast<BodyHierarchy*>(body)->update();
+	}
+	//
 	bodies.push_back(body);
 	bodiesById[id] = body;
+	//
 	for (auto listener: worldListeners) {
-		listener->onAddedBody(id, Body::BODYTYPE_STATIC, enabled, collisionTypeId, transform, 0.0f, friction, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
+		listener->onAddedBody(id, Body::BODYTYPE_STATIC, collisionTypeId, enabled, transform, 0.0f, friction, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
 	}
+	//
 	return body;
 }
 
-HierarchyBody* World::getHierarchyBody(const string& id) {
+BodyHierarchy* World::getBodyHierarchy(const string& id) {
 	auto body = getBody(id);
 	if (body == nullptr) return nullptr;
-	return dynamic_cast<HierarchyBody*>(body);
+	return dynamic_cast<BodyHierarchy*>(body);
 }
 
 void World::removeBody(const string& id) {

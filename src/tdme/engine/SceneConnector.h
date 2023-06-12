@@ -53,15 +53,6 @@ public:
 	static constexpr int RIGIDBODY_TYPEID_STANDARD { 0 };
 	static constexpr int BOUNDINGVOLUME_INDEX_NONE { -1 };
 
-	/**
-	 * Sub body creation structure
-	 */
-	struct SubBodyCreationStruct {
-		string id;
-		Transform hierarchyParentTransform;
-		Transform localTransform;
-	};
-
 	STATIC_DLL_IMPEXT static float renderGroupsPartitionWidth;
 	STATIC_DLL_IMPEXT static float renderGroupsPartitionHeight;
 	STATIC_DLL_IMPEXT static float renderGroupsPartitionDepth;
@@ -291,27 +282,6 @@ public:
 	static Entity* createEntity(SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), int instances = 1, Entity* parentEntity = nullptr);
 
 	/**
-	 * Create sub body creation structure from entity hierarchy and given child id
-	 * @param engine engine
-	 * @param id entity hierarchy id
-	 * @param childId entity hierarchy child id
-	 * @param localTransform local transform
-	 * @param subBodyCreationStruct sub body creation structure
-	 * @@return success
-	 */
-	static bool createEntityHierarchySubBodyCreationStruct(Engine* engine, const string& id, const string& childId, const Transform& localTransform, SubBodyCreationStruct& subBodyCreationStruct);
-
-	/**
-	 * Create sub body creation structure from entity hierarchy and given child id
-	 * @param entityHierarchy engine entity hierarchy
-	 * @param childId entity hierarchy child id
-	 * @param localTransform local transform
-	 * @param subBodyCreationStruct sub body creation structure
-	 * @@return success
-	 */
-	static bool createEntityHierarchySubBodyCreationStruct(EntityHierarchy* entityHierarchy, const string& childId, const Transform& localTransform, SubBodyCreationStruct& subBodyCreationStruct);
-
-	/**
 	 * Add scene to engine
 	 * @param engine engine
 	 * @param scene scene
@@ -352,26 +322,6 @@ public:
 	 * @return rigid body
 	 */
 	static Body* createBody(World* world, SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), uint16_t collisionTypeId = RIGIDBODY_TYPEID_STANDARD, bool hierarchy = false, int index = BOUNDINGVOLUME_INDEX_NONE, PrototypePhysics_BodyType* overrideType = nullptr);
-
-	/**
-	 * Create sub body from sub body creation structure
-	 * @param world world
-	 * @param prototype prototype
-	 * @param id body id
-	 * @param subBodyCreationStruct sub body creation structure
-	 */
-	inline static void createSubBody(World* world, Prototype* prototype, const string& id, const SubBodyCreationStruct& subBodyCreationStruct) {
-		createSubBody(world, id, subBodyCreationStruct, prototype->getBoundingVolumePrimitives());
-	}
-
-	/**
-	 * Create sub body from sub body creation structure
-	 * @param world world
-	 * @param id id
-	 * @param subBodyCreationStruct sub body creation structure
-	 * @param boundingVolumes bounding volumes
-	 */
-	static void createSubBody(World* world, const string& id, const SubBodyCreationStruct& subBodyCreationStruct, const vector<BoundingVolume*>& boundingVolumes);
 
 	/**
 	 * Add scene to physics world

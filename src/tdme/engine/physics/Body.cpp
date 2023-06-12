@@ -58,6 +58,7 @@ Body::Body(World* world, const string& id, BodyType type, bool enabled, uint16_t
 	this->mass = mass;
 	this->collisionTypeIds = ~0;
 	this->collisionTypeId = collisionTypeId;
+	this->initiation = true;
 	//
 	switch (type) {
 		case BODYTYPE_STATIC:
@@ -91,7 +92,7 @@ Body::Body(World* world, const string& id, BodyType type, bool enabled, uint16_t
 	for (auto boundingVolume: boundingVolumes) {
 		this->boundingVolumes.push_back(boundingVolume->clone());
 	}
-	// finally create collision shapes
+	// create collision shapes
 	for (auto boundingVolume: this->boundingVolumes) {
 		boundingVolume->createCollisionShape(world);
 	}
@@ -125,11 +126,11 @@ void Body::setCollisionTypeIds(uint16_t collisionTypeIds)
 
 void Body::resetColliders() {
 	// we need the scale from our body transform to be passed as local transform when resetting colliders
-	Transform localTransform;
-	localTransform.setScale(transform.getScale());
-	localTransform.update();
+	Transform scaleTransform;
+	scaleTransform.setScale(transform.getScale());
+	scaleTransform.update();
 	// reset colliders, means remove and add them and create colliders with correct scale
-	resetColliders(colliders, boundingVolumes, localTransform);
+	resetColliders(colliders, boundingVolumes, scaleTransform);
 	// set up inverse inertia tensor local
 	if (type == BODYTYPE_DYNAMIC) rigidBody->setLocalInertiaTensor(reactphysics3d::Vector3(inertiaTensor.getX(), inertiaTensor.getY(), inertiaTensor.getZ()));
 }
