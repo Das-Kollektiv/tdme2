@@ -23,7 +23,7 @@ using tdme::network::udpserver::UDPServer;
 using tdme::network::udpserver::UDPServerClient;
 using tdme::utilities::Console;
 
-ApplicationServer::ApplicationServer(const string& name, const string& host, const unsigned int port, const unsigned int maxCCU, int pathFindingThreadCount) : UDPServer(name, host, port, maxCCU), pathFindingThreadCount(pathFindingThreadCount) {
+ApplicationServer::ApplicationServer(const string& name, const string& host, const uint16_t port, const unsigned int maxCCU, int pathFindingThreadCount) : UDPServer(name, host, port, maxCCU), pathFindingThreadCount(pathFindingThreadCount) {
 	setIOThreadCount(2);
 	setWorkerThreadCount(2);
 
@@ -32,6 +32,7 @@ ApplicationServer::ApplicationServer(const string& name, const string& host, con
 }
 
 Context* ApplicationServer::createContext() {
+	Console::println("ApplicationServer::createContext()");
 	return new Context(true);
 }
 
@@ -73,7 +74,7 @@ ApplicationServer::~ApplicationServer() {
 	delete context;
 }
 
-UDPServerClient* ApplicationServer::accept(const uint32_t clientId, const std::string& ip, const unsigned int port) {
+UDPServerClient* ApplicationServer::accept(const uint32_t clientId, const std::string& ip, const uint16_t port) {
 	Console::println("Accepting client connection with '" + ip + ":" + to_string(port) + "'");
 
 	//

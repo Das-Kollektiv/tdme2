@@ -1,24 +1,18 @@
 #pragma once
 
-#include <stdint.h>
-
-#include <exception>
-#include <map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 #include <tdme/network/udp/UDPPacket.h>
-#include <tdme/network/udpserver/NetworkServerException.h>
 #include <tdme/network/udpserver/ServerClient.h>
 #include <tdme/network/udpserver/UDPServer.h>
 #include <tdme/network/udpserver/UDPServerIOThread.h>
-#include <tdme/os/network/NetworkException.h>
 #include <tdme/os/threading/Mutex.h>
-#include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Reference.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::network::udp::UDPPacket;
 using tdme::network::udpserver::UDPServer;
@@ -40,7 +34,7 @@ public:
 	 * @param ip ip
 	 * @param port port
 	 */
-	UDPServerClient(const uint32_t clientId, const std::string& ip, const unsigned int port);
+	UDPServerClient(const uint32_t clientId, const std::string& ip, const uint16_t port);
 
 	/**
 	 * @brief Returns server
@@ -52,25 +46,33 @@ public:
 	 * @brief Get client id
 	 * @return client id
 	 */
-	const uint32_t getClientId();
+	inline const uint32_t getClientId() {
+		return clientId;
+	}
 
 	/**
 	 * @brief returns client's ip
 	 * @return client ip
 	 */
-	const string& getIp() const;
+	inline const string& getIp() const {
+		return ip;
+	}
 
 	/**
 	 * @brief returns client port
 	 * @return client port
 	 */
-	const unsigned int getPort() const;
+	inline const uint16_t getPort() const {
+		return port;
+	}
 
 	/**
 	 * @brief Client identification key
 	 * @return client key
 	 */
-	const string& getKey() const;
+	inline const string& getKey() const {
+		return key;
+	}
 
 	/**
 	 * @brief sets the clients identification key
@@ -134,12 +136,12 @@ protected:
 	virtual void onClose() = 0;
 
 	/**
-	 * @brief Event, which will be called if frame has been received, defaults to worker thread pool
+	 * @brief Event, which will be called if packet has been received, defaults to worker thread pool
 	 * @param packet packet
 	 * @param messageId message id (upd server only)
 	 * @param retries retries (udp server only)
 	 */
-	virtual void onFrameReceived(const UDPPacket* packet, const uint32_t messageId = 0, const uint8_t retries = 0);
+	virtual void onPacketReceived(const UDPPacket* packet, const uint32_t messageId = 0, const uint8_t retries = 0);
 
 	/**
 	 * @brief Shuts down this network client
@@ -155,8 +157,8 @@ protected:
 	UDPServer* server;
 	UDPServerIOThread* ioThread;
 	uint32_t clientId;
-	std::string ip;
-	unsigned int port;
+	string ip;
+	uint16_t port;
 
 private:
 	static const uint64_t MESSAGESSAFE_KEEPTIME = 5000L;
@@ -165,7 +167,7 @@ private:
 		uint64_t time;
 		uint8_t receptions;
 	};
-	typedef map<uint32_t, Message> MessageMapSafe;
+	typedef unordered_map<uint32_t, Message*> MessageMapSafe;
 
 	/**
 	 * @brief Sends an connect message to client

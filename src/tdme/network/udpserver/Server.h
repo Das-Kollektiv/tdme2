@@ -1,13 +1,17 @@
 #pragma once
 
-#include <map>
-#include <set>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 
 #include <tdme/tdme.h>
 #include <tdme/network/udpserver/ServerWorkerThreadPool.h>
 #include <tdme/os/threading/Barrier.h>
 #include <tdme/os/threading/ReadWriteLock.h>
+
+using std::string;
+using std::unordered_map;
+using std::unordered_set;
 
 using tdme::os::threading::Barrier;
 using tdme::os::threading::ReadWriteLock;
@@ -25,8 +29,8 @@ class ServerWorkerThreadPool;
 template <typename CLIENT, typename GROUP>
 class Server {
 public:
-	typedef std::set<std::string> ClientKeySet;
-	typedef std::set<std::string> GroupKeySet;
+	typedef unordered_set<string> ClientKeySet;
+	typedef unordered_set<string> GroupKeySet;
 
 	/**
 	 * @brief Public constructor
@@ -35,7 +39,7 @@ public:
 	 * @param port port to listen on
 s			 * @param maxCCU max ccu
 	 */
-	Server(const std::string& name, const std::string& host, const unsigned int port, const unsigned int maxCCU) :
+	Server(const string& name, const string& host, uint16_t port, int maxCCU) :
 		name(name),
 		host(host),
 		port(port),
@@ -53,7 +57,7 @@ s			 * @param maxCCU max ccu
 	 * @brief Sets up the numbers of threads to handle IO and framing
 	 * @param ioThreadCount IO thread count
 	 */
-	void setIOThreadCount(const unsigned int ioThreadCount) {
+	inline void setIOThreadCount(int ioThreadCount) {
 		this->ioThreadCount = ioThreadCount;
 	}
 
@@ -61,7 +65,7 @@ s			 * @param maxCCU max ccu
 	 * @brief Sets up the number of workers that handle requests in thread pool
 	 * @param workerThreadCount number of workers in thread pool
 	 */
-	void setWorkerThreadCount(const unsigned int workerThreadCount) {
+	inline void setWorkerThreadCount(int workerThreadCount) {
 		workerThreadPoolCount = workerThreadCount;
 	}
 
@@ -69,7 +73,7 @@ s			 * @param maxCCU max ccu
 	 * @brief Sets up max number of elements in worker thread pool queue
 	 * @param maxElements max elements
 	 */
-	void setThreadPoolMaxElements(const unsigned int maxElements) {
+	inline void setThreadPoolMaxElements(int maxElements) {
 		workerThreadPoolMaxElements = maxElements;
 	}
 
@@ -98,10 +102,10 @@ s			 * @param maxCCU max ccu
 	 * @param clientKey client identification key
 	 * @return client or nullptr
 	 */
-	CLIENT* getClientByKey(const std::string& clientKey) {
+	CLIENT* getClientByKey(const string& clientKey) {
 		clientKeyListsReadWriteLock.readLock();
-		typename ClientKeyMap::iterator it = clientKeyMap.find(clientKey);
-		CLIENT* client = it != clientKeyMap.end()?it->second:nullptr;
+		auto it = clientKeyMap.find(clientKey);
+		auto client = it != clientKeyMap.end()?it->second:nullptr;
 		if (client != nullptr) {
 			client->acquireReference();
 		}
@@ -129,10 +133,10 @@ s			 * @param maxCCU max ccu
 	 * @param groupKey group identification key
 	 * @return group or nullptr
 	 */
-	GROUP* getGroupByKey(const std::string& groupKey) {
+	GROUP* getGroupByKey(const string& groupKey) {
 		groupKeyListsReadWriteLock.readLock();
-		typename GroupKeyMap::iterator it = groupKeyMap.find(groupKey);
-		GROUP* group = it != groupKeyMap.end()?it->second:nullptr;
+		auto it = groupKeyMap.find(groupKey);
+		auto group = it != groupKeyMap.end()?it->second:nullptr;
 		if (group != nullptr) {
 			group->acquireReference();
 		}
@@ -142,9 +146,9 @@ s			 * @param maxCCU max ccu
 	}
 
 protected:
-	typedef std::map<const std::string, CLIENT*> ClientKeyMap;
-	typedef std::map<const std::string, CLIENT*> GroupKeyMap;
-	typedef std::set<CLIENT*> ClientSet;
+	typedef unordered_map<string, CLIENT*> ClientKeyMap;
+	typedef unordered_map<string, CLIENT*> GroupKeyMap;
+	typedef unordered_set<CLIENT*> ClientSet;
 
 	/**
 	 * @brief sets a client identification key
@@ -152,10 +156,10 @@ protected:
 	 * @param &clientKey client identification key
 	 * @return if setting the key was successful
 	 */
-	bool setClientKey(CLIENT* client, const std::string &clientKey) {
+	bool setClientKey(CLIENT* client, const string &clientKey) {
 		clientKeyListsReadWriteLock.writeLock();
 		// set new client key association
-		typename ClientKeyMap::iterator it = clientKeyMap.find(clientKey);
+		auto it = clientKeyMap.find(clientKey);
 		if (it != clientKeyMap.end()) {
 			clientKeyListsReadWriteLock.unlock();
 			// nope, we could't set the key
@@ -166,7 +170,7 @@ protected:
 			clientKeyMap.erase(client->getKey());
 		}
 		// set client in map
-		clientKeyMap.insert(make_pair(clientKey, client));
+		clientKeyMap[clientKey] = client;
 		// set client key in set
 		clientKeySet.insert(clientKey);
 		clientKeyListsReadWriteLock.unlock();
@@ -194,10 +198,10 @@ protected:
 	 * @param &groupKey group identification key
 	 * @return if setting the key was successful
 	 */
-	bool setGroupKey(GROUP* group, const std::string &groupKey) {
+	bool setGroupKey(GROUP* group, const string &groupKey) {
 		groupKeyListsReadWriteLock.writeLock();
 		// set new client key association
-		typename GroupKeyMap::iterator it = groupKeyMap.find(groupKey);
+		auto it = groupKeyMap.find(groupKey);
 		if (it != groupKeyMap.end()) {
 			groupKeyListsReadWriteLock.unlock();
 			// nope, we could't set the key
@@ -208,7 +212,7 @@ protected:
 			groupKeyMap.erase(group->getKey());
 		}
 		// set group in map
-		groupKeyMap.insert(make_pair(groupKey, group));
+		groupKeyMap[groupKey] = group;
 		// set client key in set
 		groupKeySet.insert(groupKey);
 		groupKeyListsReadWriteLock.unlock();
@@ -230,10 +234,10 @@ protected:
 		groupKeyListsReadWriteLock.unlock();
 	}
 
-	std::string name;
-	std::string host;
-	unsigned int port;
-	unsigned int maxCCU;
+	string name;
+	string host;
+	uint16_t port;
+	int maxCCU;
 
 	Barrier* startUpBarrier;
 
@@ -247,9 +251,9 @@ protected:
 
 	ReadWriteLock groupKeyListsReadWriteLock;
 
-	unsigned int ioThreadCount;
-	unsigned int workerThreadPoolCount;
-	unsigned int workerThreadPoolMaxElements;
+	int ioThreadCount;
+	int workerThreadPoolCount;
+	int workerThreadPoolMaxElements;
 };
 
 };

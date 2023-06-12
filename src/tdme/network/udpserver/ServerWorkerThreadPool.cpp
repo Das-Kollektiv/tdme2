@@ -1,18 +1,26 @@
 #include <tdme/network/udpserver/ServerWorkerThreadPool.h>
 
+#include <vector>
+
 #include <tdme/tdme.h>
-#include <tdme/utilities/Console.h>
+#include <tdme/network/udpserver/ServerRequest.h>
+#include <tdme/network/udpserver/ServerWorkerThread.h>
+#include <tdme/os/threading/Barrier.h>
+#include <tdme/os/threading/Queue.h>
+
+using std::vector;
 
 using tdme::network::udpserver::ServerWorkerThreadPool;
+
+using tdme::network::udpserver::ServerRequest;
+using tdme::os::threading::Barrier;
 using tdme::os::threading::Queue;
-using tdme::utilities::Console;
 
 ServerWorkerThreadPool::ServerWorkerThreadPool(Barrier* startUpBarrier, const unsigned int workerCount, const unsigned int maxElements) :
 	Queue<ServerRequest>(maxElements),
 
 	startUpBarrier(startUpBarrier),
-	workerCount(workerCount),
-	worker(nullptr) {
+	workerCount(workerCount) {
 	//
 }
 
@@ -20,8 +28,8 @@ ServerWorkerThreadPool::~ServerWorkerThreadPool() {
 }
 
 void ServerWorkerThreadPool::start() {
-	worker = new ServerWorkerThread*[workerCount];
-	for(unsigned int i = 0; i < workerCount; i++) {
+	worker.resize(workerCount);
+	for(auto i = 0; i < workerCount; i++) {
 		worker[i] = new ServerWorkerThread(i, this);
 		worker[i]->start();
 	}
@@ -32,11 +40,11 @@ void ServerWorkerThreadPool::stop() {
 	Queue<ServerRequest>::stop();
 
 	// stop worker
-	for(unsigned int i = 0; i < workerCount; i++) {
+	for(auto i = 0; i < worker.size(); i++) {
 		// wait until worker has finished
 		worker[i]->join();
 		// delete worker
 		delete worker[i];
 	}
-	delete [] worker;
+	worker.clear();
 }

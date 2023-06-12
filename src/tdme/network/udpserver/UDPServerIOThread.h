@@ -1,8 +1,7 @@
 #pragma once
 
-#include <map>
 #include <queue>
-#include <utility>
+#include <unordered_map>
 
 #include <tdme/network/udpserver/fwd-tdme.h>
 
@@ -16,8 +15,8 @@
 #include <tdme/network/udpserver/UDPServer.h>
 #include <tdme/network/udpserver/UDPServerClient.h>
 
-using std::map;
 using std::queue;
+using std::unordered_map;
 
 using tdme::network::udp::UDPPacket;
 using tdme::network::udpserver::UDPServer;
@@ -31,7 +30,7 @@ using tdme::os::threading::Thread;
  * UDP Network server IO thread
  * @author Andreas Drewke
  */
-class tdme::network::udpserver::UDPServerIOThread : private Thread {
+class tdme::network::udpserver::UDPServerIOThread final: private Thread {
 	friend class UDPServer;
 	friend class UDPServerClient;
 
@@ -52,7 +51,7 @@ private:
 		uint16_t bytes;
 	};
 	typedef queue<Message*> MessageQueue;
-	typedef map<uint32_t, Message*> MessageMapAck;
+	typedef unordered_map<uint32_t, Message*> MessageMapAck;
 
 	/**
 	 * @brief public constructor should be called in TCPServer
@@ -61,6 +60,11 @@ private:
 	 * @param maxCCU max ccu
 	 */
 	UDPServerIOThread(const unsigned int id, UDPServer *server, const unsigned int maxCCU);
+
+	/**
+	 * @brief Destructor
+	 */
+	~UDPServerIOThread();
 
 	/**
 	 * @brief thread program

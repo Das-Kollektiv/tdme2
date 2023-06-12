@@ -38,8 +38,8 @@ public:
 	}
 
 	/**
-	 * Adds vector to iterator
-	 * @param vector vector
+	 * Adds object
+	 * @param object object
 	 */
 	T* add(T* object) {
 		if (find(objects.begin(), objects.end(), object) != objects.end()) return object;

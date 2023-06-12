@@ -13,12 +13,11 @@ using std::to_string;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 
-EchoUDPServerClient::EchoUDPServerClient(const uint32_t clientId, const string& ip, const unsigned int port) :
+EchoUDPServerClient::EchoUDPServerClient(const uint32_t clientId, const string& ip, const uint16_t port) :
 	UDPServerClient(clientId, ip, port) {
 }
 
 EchoUDPServerClient::~EchoUDPServerClient() {
-	Console::println("EchoUDPServerClient::~EchoUDPServerClient()");
 }
 
 void EchoUDPServerClient::onRequest(const UDPPacket* packet, const uint32_t messageId, const uint8_t retries) {

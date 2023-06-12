@@ -18,7 +18,7 @@ class ServerWorkerThreadPool;
  * @brief Server worker thread
  * @author Andreas Drewke
  */
-class ServerWorkerThread : public Thread {
+class ServerWorkerThread final: public Thread {
 public:
 	/**
 	 * @brief Public constructor

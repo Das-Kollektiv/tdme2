@@ -1,4 +1,3 @@
-
 #include <exception>
 #include <string>
 #include <string_view>
@@ -41,8 +40,6 @@ UDPServer::UDPServer(const std::string& name, const std::string& host, const uns
 	Thread("nioudpserver"),
 	clientIdMapReadWriteLock("nioudpserver_clientidmap"),
 	clientIpMapReadWriteLock("nioudpserver_clientipmap"),
-	ioThreadCurrent(0),
-	ioThreads(nullptr),
 	workerThreadPool(nullptr),
 	clientCount(0),
 	messageCount(0) {
@@ -71,8 +68,8 @@ void UDPServer::run() {
 	startUpBarrier = new Barrier("nioudpserver_startup_iothreads", ioThreadCount + 1);
 
 	// create and start IO threads
-	ioThreads = new UDPServerIOThread*[ioThreadCount];
-	for(unsigned int i = 0; i < ioThreadCount; i++) {
+	ioThreads.resize(ioThreadCount);
+	for(auto i = 0; i < ioThreadCount; i++) {
 		ioThreads[i] = new UDPServerIOThread(i, this, (int)Math::ceil((float)maxCCU / (float)ioThreadCount));
 		ioThreads[i] ->start();
 	}
@@ -87,11 +84,11 @@ void UDPServer::run() {
 	Console::println("UDPServer::run(): ready");
 
 	// do main event loop, waiting until stop requested
-	uint64_t lastCleanUpClientsTime = Time::getCurrentMillis();
-	uint64_t lastCleanUpClientsSafeMessagesTime = Time::getCurrentMillis();
-	while(isStopRequested() == false) {
+	auto lastCleanUpClientsTime = Time::getCurrentMillis();
+	auto lastCleanUpClientsSafeMessagesTime = Time::getCurrentMillis();
+	while (isStopRequested() == false) {
 		// start time
-		uint64_t now = Time::getCurrentMillis();
+		auto now = Time::getCurrentMillis();
 
 		// clean up clients
 		if (now >= lastCleanUpClientsTime + 100L) {
@@ -101,9 +98,9 @@ void UDPServer::run() {
 
 		//	iterate over clients and clean up safe messages
 		if (now >= lastCleanUpClientsSafeMessagesTime + 100L) {
-			ClientKeySet _clientKeySet = getClientKeySet();
-			for (ClientKeySet::iterator i = _clientKeySet.begin(); i != _clientKeySet.end(); ++i) {
-				UDPServerClient* client = getClientByKey(*i);
+			auto _clientKeySet = getClientKeySet();
+			for (auto& it: _clientKeySet) {
+				auto client = getClientByKey(it);
 
 				// skip on clients that have been gone
 				if (client == nullptr) continue;
@@ -118,7 +115,7 @@ void UDPServer::run() {
 		}
 
 		// duration
-		uint64_t duration = Time::getCurrentMillis() - now;
+		auto duration = Time::getCurrentMillis() - now;
 
 		// wait total of 100ms seconds before repeat
 		if (duration < 100L) {
@@ -126,16 +123,10 @@ void UDPServer::run() {
 		}
 	}
 
-	// we stopped accept, now stop io threads, but leave them intact
-	for(unsigned int i = 0; i < ioThreadCount; i++) {
-		ioThreads[i]->stop();
-		ioThreads[i]->join();
-	}
-
-	//	iterate over clients and close them
-	ClientKeySet _clientKeySet = getClientKeySet();
-	for (ClientKeySet::iterator i = _clientKeySet.begin(); i != _clientKeySet.end(); ++i) {
-		UDPServerClient* client = getClientByKey(*i);
+	// we stopped accept, now iterate over clients and close them
+	auto _clientKeySet = getClientKeySet();
+	for (auto& it: _clientKeySet) {
+		auto client = getClientByKey(it);
 		// continue if gone already
 		if (client == nullptr) continue;
 		// client close logic
@@ -144,23 +135,24 @@ void UDPServer::run() {
 		removeClient(client);
 	}
 
+	// now stop io threads
+	for(auto ioThread: ioThreads) {
+		ioThread->stop();
+		ioThread->join();
+		delete ioThread;
+	}
+	ioThreads.clear();
+
 	// stop thread pool
 	workerThreadPool->stop();
 	delete workerThreadPool;
 	workerThreadPool = nullptr;
 
-	// delete io threads
-	for(unsigned int i = 0; i < ioThreadCount; i++) {
-		delete ioThreads[i];
-	}
-	delete [] ioThreads;
-	ioThreads = nullptr;
-
 	//
 	Console::println("UDPServer::run(): done");
 }
 
-UDPServerClient* UDPServer::accept(const uint32_t clientId, const std::string& ip, const unsigned int port) {
+UDPServerClient* UDPServer::accept(const uint32_t clientId, const std::string& ip, const uint16_t port) {
 	return nullptr;
 }
 
@@ -273,7 +265,7 @@ void UDPServer::writeHeader(UDPPacket* packet, MessageType messageType, const ui
 }
 
 void UDPServer::addClient(UDPServerClient* client) {
-	uint32_t clientId = client->clientId;
+	auto clientId = client->clientId;
 
 	//
 	clientIdMapReadWriteLock.writeLock();
@@ -287,7 +279,7 @@ void UDPServer::addClient(UDPServerClient* client) {
 	}
 
 	// check if client id was mapped already?
-	ClientIdMap::iterator clientIdMapIt = clientIdMap.find(clientId);
+	auto clientIdMapIt = clientIdMap.find(clientId);
 	if (clientIdMapIt != clientIdMap.end()) {
 		// should actually never happen
 		clientIdMapReadWriteLock.unlock();
@@ -310,7 +302,7 @@ void UDPServer::addClient(UDPServerClient* client) {
 
 	// check if ip exists already?
 	string clientIp = client->getIp() + ":" + to_string(client->getPort());
-	ClientIpMap::iterator clientIpMapIt = clientIpMap.find(clientIp);
+	auto clientIpMapIt = clientIpMap.find(clientIp);
 	if (clientIpMapIt != clientIpMap.end()) {
 		// should actually never happen
 		clientIpMapReadWriteLock.unlock();
@@ -340,7 +332,7 @@ void UDPServer::removeClient(UDPServerClient* client) {
 	clientIdMapReadWriteLock.writeLock();
 
 	// check if client id was mapped already?
-	ClientIdMap::iterator clientIdMapit = clientIdMap.find(clientId);
+	auto clientIdMapit = clientIdMap.find(clientId);
 	if (clientIdMapit == clientIdMap.end()) {
 		// should actually never happen
 		clientIdMapReadWriteLock.unlock();
@@ -357,8 +349,8 @@ void UDPServer::removeClient(UDPServerClient* client) {
 	clientIpMapReadWriteLock.writeLock();
 
 	// check if ip exists already?
-	string clientIp = client->getIp() + ":" + to_string(client->getPort());
-	ClientIpMap::iterator clientIpMapIt = clientIpMap.find(clientIp);
+	auto clientIp = client->getIp() + ":" + to_string(client->getPort());
+	auto clientIpMapIt = clientIpMap.find(clientIp);
 	if (clientIpMapIt == clientIpMap.end()) {
 		// should actually never happen
 		clientIpMapReadWriteLock.unlock();
@@ -383,13 +375,12 @@ void UDPServer::removeClient(UDPServerClient* client) {
 
 UDPServerClient* UDPServer::lookupClient(const uint32_t clientId) {
 	UDPServerClient* client = nullptr;
-	ClientIdMap::iterator it;
 
 	//
 	clientIdMapReadWriteLock.readLock();
 
 	// check if client id was mapped already?
-	it = clientIdMap.find(clientId);
+	auto it = clientIdMap.find(clientId);
 	if (it == clientIdMap.end()) {
 		// should actually never happen
 		clientIdMapReadWriteLock.unlock();
@@ -399,7 +390,7 @@ UDPServerClient* UDPServer::lookupClient(const uint32_t clientId) {
 	}
 
 	// get client
-	ClientId* _client = it->second;
+	auto _client = it->second;
 	//	update last access time
 	_client->time = Time::getCurrentMillis();
 	//	get client
@@ -415,11 +406,11 @@ UDPServerClient* UDPServer::lookupClient(const uint32_t clientId) {
 	return client;
 }
 
-UDPServerClient* UDPServer::getClientByIp(const string& ip, const unsigned int port) {
+UDPServerClient* UDPServer::getClientByIp(const string& ip, const uint16_t port) {
 	UDPServerClient* client = nullptr;
 	clientIpMapReadWriteLock.readLock();
-	string clientIp = ip + ":" + to_string(port);
-	ClientIpMap::iterator clientIpMapIt = clientIpMap.find(clientIp);
+	auto clientIp = ip + ":" + to_string(port);
+	auto clientIpMapIt = clientIpMap.find(clientIp);
 	if (clientIpMapIt != clientIpMap.end()) {
 		client = clientIpMapIt->second;
 		client->acquireReference();
@@ -434,9 +425,9 @@ void UDPServer::cleanUpClients() {
 	// determine clients that are idle or beeing flagged to be shut down
 	clientIdMapReadWriteLock.readLock();
 
-	uint64_t now = Time::getCurrentMillis();
-	for(ClientIdMap::iterator it = clientIdMap.begin(); it != clientIdMap.end(); ++it) {
-		ClientId* client = it->second;
+	auto now = Time::getCurrentMillis();
+	for (auto& it: clientIdMap) {
+		auto client = it.second;
 		if (client->client->shutdownRequested == true ||
 			client->time < now - CLIENT_CLEANUP_IDLETIME) {
 
@@ -452,8 +443,8 @@ void UDPServer::cleanUpClients() {
 	clientIdMapReadWriteLock.unlock();
 
 	// erase clients
-	for (ClientSet::iterator it = clientCloseList.begin(); it != clientCloseList.end(); ++it) {
-		UDPServerClient* client = *it;
+	for (auto& it: clientCloseList) {
+		auto client = it;
 		// client close logic
 		client->close();
 		// remove from udp client list
@@ -478,13 +469,13 @@ void UDPServer::sendMessage(const UDPServerClient* client, UDPPacket* packet, co
 			throw NetworkServerException("Invalid message type");
 	}
 
-	unsigned int threadIdx = _messageId % ioThreadCount;
+	unsigned int threadIdx = _messageId % ioThreads.size();
 	writeHeader(packet, messageType, client->clientId, _messageId, 0);
 	ioThreads[threadIdx]->sendMessage(client, (uint8_t)messageType, _messageId, packet, safe, deleteFrame);
 }
 
 void UDPServer::processAckReceived(UDPServerClient* client, const uint32_t messageId) {
-	unsigned int threadIdx = messageId % ioThreadCount;
+	unsigned int threadIdx = messageId % ioThreads.size();
 	ioThreads[threadIdx]->processAckReceived(client, messageId);
 }
 

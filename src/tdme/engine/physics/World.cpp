@@ -356,23 +356,10 @@ void World::synchronize(Engine* engine)
 		// skip on sleeping objects
 		if (body->isSleeping() == true) continue;
 
-		//
-		auto bodyId = body->getId();
-		string subBodyId;
-		auto bodyIdSeparatorPosition = bodyId.find('|');
-		if (bodyIdSeparatorPosition != string::npos) {
-			subBodyId = StringTools::substring(bodyId, bodyIdSeparatorPosition + 1, bodyId.size());
-			bodyId = StringTools::substring(bodyId, 0, bodyIdSeparatorPosition);
-		}
-
 		// synch with engine entity
-		auto entity = engine->getEntity(bodyId);
+		auto entity = engine->getEntity(body->getId());
 		if (entity == nullptr) {
-			Console::println(
-				string("World::entity '") +
-				bodyId +
-				string("' not found")
-			);
+			Console::println("World::entity '" + body->getId() + "' not found");
 			continue;
 		}
 
@@ -386,6 +373,7 @@ void World::synchronize(Engine* engine)
 
 Body* World::determineHeight(uint16_t collisionTypeIds, float stepUpMax, const Vector3& point, Vector3& heightPoint, float minHeight, float maxHeight)
 {
+	//
 	class CustomCallbackClass : public reactphysics3d::RaycastCallback {
 	public:
 		CustomCallbackClass(float stepUpMax, const Vector3& point, float height = 10000.0f): stepUpMax(stepUpMax), point(point), height(height), body(nullptr) {
@@ -470,7 +458,7 @@ bool World::doesCollideWith(uint16_t collisionTypeIds, Body* body, vector<Body*>
 	// callback
 	class CustomOverlapCallback: public reactphysics3d::OverlapCallback {
 	    public:
-			CustomOverlapCallback(int collisionTypeIds, Body* body, vector<Body*>& rigidBodies): collisionTypeIds(collisionTypeIds), body(body), rigidBodies(rigidBodies) {
+			CustomOverlapCallback(int collisionTypeIds, Body* body, vector<Body*>& collisionBodies): collisionTypeIds(collisionTypeIds), body(body), collisionBodies(collisionBodies) {
 			}
 
 			void onOverlap(CallbackData &callbackData) {
@@ -478,14 +466,14 @@ bool World::doesCollideWith(uint16_t collisionTypeIds, Body* body, vector<Body*>
 					auto overlappingPair = callbackData.getOverlappingPair(i);
 					auto body1 = static_cast<Body*>(overlappingPair.getBody1()->getUserData());
 					auto body2 = static_cast<Body*>(overlappingPair.getBody2()->getUserData());
-					if (body1 != body && (body1->getCollisionTypeId() & collisionTypeIds) != 0) rigidBodies.push_back(body1);
-					if (body2 != body && (body2->getCollisionTypeId() & collisionTypeIds) != 0) rigidBodies.push_back(body2);
+					if (body1 != body && (body1->getCollisionTypeId() & collisionTypeIds) != 0) collisionBodies.push_back(body1);
+					if (body2 != body && (body2->getCollisionTypeId() & collisionTypeIds) != 0) collisionBodies.push_back(body2);
 				}
 			}
 	    private:
 			int collisionTypeIds;
 			Body* body;
-			vector<Body*>& rigidBodies;
+			vector<Body*>& collisionBodies;
 	};
 
 	// do the test
@@ -550,6 +538,7 @@ bool World::getCollisionResponse(Body* body1, Body* body2, CollisionResponse& co
 
 World* World::clone(const string& id, uint16_t collisionTypeIds)
 {
+	//
 	auto clonedWorld = new World(id);
 	for (auto i = 0; i < bodies.size(); i++) {
 		auto body = bodies[i];
@@ -558,10 +547,10 @@ World* World::clone(const string& id, uint16_t collisionTypeIds)
 		auto bodyType = body->getType();
 
 		// test type
-		if (((body->getCollisionTypeId() & collisionTypeIds) == body->getCollisionTypeId()) == false) continue;
+		if ((body->getCollisionTypeId() & collisionTypeIds) == 0) continue;
 
 		// clone rigid body
-		switch(bodyType) {
+		switch (bodyType) {
 			case Body::BODYTYPE_STATIC:
 				clonedBody = clonedWorld->addStaticRigidBody(body->id, body->isEnabled(), body->getCollisionTypeId(), body->transform, body->getFriction(), body->boundingVolumes);
 				break;
@@ -580,8 +569,10 @@ World* World::clone(const string& id, uint16_t collisionTypeIds)
 		}
 
 		// synch additional properties
-		synchronize(clonedBody, clonedBody);
+		synchronize(clonedBody, body);
 	}
+
+	//
 	return clonedWorld;
 }
 
@@ -603,11 +594,7 @@ void World::synchronize(World* world)
 		auto body = rigidBodiesDynamic.at(i);
 		auto clonedBody = world->getBody(body->id);
 		if (clonedBody == nullptr) {
-			Console::println(
-				string("Cloned world::entity '") +
-				body->id +
-				string("' not found")
-			);
+			Console::println("Cloned world::entity '" + body->id + "' not found");
 			continue;
 		}
 		// synch rigid bodies

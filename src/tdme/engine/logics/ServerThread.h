@@ -60,5 +60,5 @@ private:
 	 * @param logicNetworkPackets logic network packets
 	 * @return network packet logics string
 	 */
-	string getLogicNetworkPacketsLogicTypes(vector<LogicNetworkPacket>& logicNetworkPackets);
+	const string getLogicNetworkPacketsLogicTypes(vector<LogicNetworkPacket>& logicNetworkPackets);
 };

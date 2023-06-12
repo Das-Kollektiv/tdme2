@@ -4,11 +4,7 @@
 
 #include <string>
 
-#include <tdme/utilities/Exception.h>
-
 using std::string;
-
-using tdme::utilities::Exception;
 
 namespace tdme {
 namespace network {
@@ -37,7 +33,7 @@ public:
 	/**
 	 * @brief Returns this requests handler command name
 	 */
-	const string& getCommand() {
+	inline const string& getCommand() {
 		return command;
 	}
 

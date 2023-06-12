@@ -345,9 +345,9 @@ private:
 	int64_t timeStarted;
 
 	// path finding which is context bound too
-	uint16_t rigidBodyCollisionTypeIdMask { 1/*Body::TYPEID_STATIC*/ };
-	uint16_t skipOnRigidBodyTypeIdMask { 0 };
-	uint16_t rigidBodyTypeIdCloneMask { 1/*Body::TYPEID_STATIC*/ };
+	uint16_t bodyCollisionTypeIdMask { 1/*Body::TYPEID_STATIC*/ };
+	uint16_t skipOnBodyCollisionTypeIdMask { 0 };
+	uint16_t bodyCollisionTypeIdCloneMask { 1/*Body::TYPEID_STATIC*/ };
 	PathFinding pathFinding;
 
 	// context main data
@@ -571,48 +571,48 @@ public:
 	}
 
 	/**
-	 * @return path finding rigid body collision type id mask
+	 * @return path finding body collision type id mask
 	 */
-	inline uint16_t getRigidBodyCollisionTypeIdMask() {
-		return rigidBodyCollisionTypeIdMask;
+	inline uint16_t getBodyCollisionTypeIdMask() {
+		return bodyCollisionTypeIdMask;
 	}
 
 	/**
-	 * Set path finding rigid body collision type id mask
-	 * @param rigidBodyCollisionTypeIdMask rigid body collision type id mask
+	 * Set path finding body collision type id mask
+	 * @param bodyCollisionTypeIdMask body collision type id mask
 	 */
-	inline void setRigidBodyCollisionTypeIdMask(uint16_t rigidBodyCollisionTypeIdMask) {
-		this->rigidBodyCollisionTypeIdMask = rigidBodyCollisionTypeIdMask;
+	inline void setBodyCollisionTypeIdMask(uint16_t bodyCollisionTypeIdMask) {
+		this->bodyCollisionTypeIdMask = bodyCollisionTypeIdMask;
 	}
 
 	/**
-	 * @return rigid body type id mask to skip on in path finding
+	 * @return body collision type id mask to skip on in path finding
 	 */
-	inline uint16_t getSkipOnRigidBodyTypeIdStaticMask() {
-		return skipOnRigidBodyTypeIdMask;
+	inline uint16_t getSkipOnBodyCollisionTypeIdMask() {
+		return skipOnBodyCollisionTypeIdMask;
 	}
 
 	/**
-	 * Set rigid body type id mask to skip on in path finding
-	 * @param skipOnRigidBodyTypeIdMask skip on rigid body type id mask
+	 * Set body collision type id mask to skip on in path finding
+	 * @param skipOnBodyCollisionTypeIdMask skip on body collision type id mask
 	 */
-	inline void setSkipOnRigidBodyTypeIdMask(uint16_t skipOnRigidBodyTypeIdMask) {
-		this->skipOnRigidBodyTypeIdMask = skipOnRigidBodyTypeIdMask;
+	inline void setSkipOnBodyCollisionTypeIdMask(uint16_t skipOnBodyCollisionTypeIdMask) {
+		this->skipOnBodyCollisionTypeIdMask = skipOnBodyCollisionTypeIdMask;
 	}
 
 	/**
-	 * @return rigid body type id clone mask
+	 * @return body collision type id clone mask
 	 */
-	inline uint16_t getRigidBodyTypeIdCloneMask() {
-		return rigidBodyTypeIdCloneMask;
+	inline uint16_t getBodyCollisionTypeIdCloneMask() {
+		return bodyCollisionTypeIdCloneMask;
 	}
 
 	/**
-	 * Set rigid body type id clone mask, which is used for path finding
-	 * @param rigidBodyTypeIdCloneMask rigid body type id clone mask
+	 * Set body collision type id clone mask, which is used for path finding
+	 * @param bodyCollisionTypeIdCloneMask body type id clone mask
 	 */
-	inline void setRigidBodyTypeIdCloneMask(uint16_t rigidBodyTypeIdCloneMask) {
-		this->rigidBodyTypeIdCloneMask = rigidBodyTypeIdCloneMask;
+	inline void setBodyCollisionTypeIdCloneMask(uint16_t bodyCollisionTypeIdCloneMask) {
+		this->bodyCollisionTypeIdCloneMask = bodyCollisionTypeIdCloneMask;
 	}
 
 	/**

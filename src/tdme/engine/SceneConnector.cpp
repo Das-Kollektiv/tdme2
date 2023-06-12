@@ -860,7 +860,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 	}
 }
 
-Body* SceneConnector::createBody(World* world, Prototype* prototype, const string& id, const Transform& transform, bool hierarchy, uint16_t collisionTypeId, int index, PrototypePhysics_BodyType* overrideType) {
+Body* SceneConnector::createBody(World* world, Prototype* prototype, const string& id, const Transform& transform, uint16_t collisionTypeId, bool hierarchy, int index, PrototypePhysics_BodyType* overrideType) {
 	if (prototype->getType() == Prototype_Type::EMPTY) return nullptr;
 
 	auto physicsType = overrideType != nullptr?overrideType:prototype->getPhysics()->getType();
@@ -968,14 +968,14 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 	return nullptr;
 }
 
-Body* SceneConnector::createBody(World* world, SceneEntity* sceneEntity, const Vector3& translation, bool hierarchy, uint16_t collisionTypeId, int index, PrototypePhysics_BodyType* overrideType) {
+Body* SceneConnector::createBody(World* world, SceneEntity* sceneEntity, const Vector3& translation, uint16_t collisionTypeId, bool hierarchy, int index, PrototypePhysics_BodyType* overrideType) {
 	Transform transform;
 	transform.setTransform(sceneEntity->getTransform());
 	if (translation.equals(Vector3()) == false) {
 		transform.setTranslation(transform.getTranslation().clone().add(translation));
 		transform.update();
 	}
-	return createBody(world, sceneEntity->getPrototype(), sceneEntity->getId(), transform, hierarchy, collisionTypeId, index, overrideType);
+	return createBody(world, sceneEntity->getPrototype(), sceneEntity->getId(), transform, collisionTypeId, hierarchy, index, overrideType);
 }
 
 void SceneConnector::createSubBody(World* world, const string& id, const SubBodyCreationStruct& subBodyCreationStruct, const vector<BoundingVolume*>& boundingVolumes) {

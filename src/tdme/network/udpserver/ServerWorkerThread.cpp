@@ -3,12 +3,10 @@
 #include <typeinfo>
 
 #include <tdme/tdme.h>
-#include <tdme/network/udpserver/fwd-tdme.h>
 #include <tdme/network/udpserver/ServerClient.h>
 #include <tdme/network/udpserver/ServerGroup.h>
 #include <tdme/network/udpserver/ServerWorkerThread.h>
 #include <tdme/network/udpserver/ServerWorkerThreadPool.h>
-#include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/RTTI.h>
@@ -41,16 +39,16 @@ void ServerWorkerThread::run() {
 	threadPool->startUpBarrier->wait();
 
 	ServerRequest* request;
-	while((request = threadPool->getElement()) != nullptr) {
+	while ((request = threadPool->getElement()) != nullptr) {
 		// get request parameter
-		ServerRequest::RequestType requestType = request->getRequestType();
+		auto requestType = request->getRequestType();
 		ServerClient* client = nullptr;
 		ServerGroupBase* group = nullptr;
 
 		// handle request types
 		switch(requestType) {
 			case(ServerRequest::REQUESTTYPE_CLIENT_REQUEST): {
-				client = (ServerClient*)request->getObject();
+				client = static_cast<ServerClient*>(request->getObject());
 				auto packet = request->getMessagePacket();
 				auto messageId = request->getMessageId();
 				auto retries = request->getMessageRetries();
@@ -79,7 +77,7 @@ void ServerWorkerThread::run() {
 				break;
 			}
 			case(ServerRequest::REQUESTTYPE_CLIENT_INIT): {
-				client = (ServerClient*)request->getObject();
+				client = static_cast<ServerClient*>(request->getObject());
 				// handle close
 				try {
 					client->onInit();
@@ -96,7 +94,7 @@ void ServerWorkerThread::run() {
 				break;
 			}
 			case(ServerRequest::REQUESTTYPE_CLIENT_CLOSE): {
-				client = (ServerClient*)request->getObject();
+				client = static_cast<ServerClient*>(request->getObject());
 				// handle close
 				try {
 					client->onClose();
@@ -113,7 +111,7 @@ void ServerWorkerThread::run() {
 				break;
 			}
 			case(ServerRequest::REQUESTTYPE_CLIENT_CUSTOM): {
-				client = (ServerClient*)request->getObject();
+				client = static_cast<ServerClient*>(request->getObject());
 				// handle close
 				try {
 					client->onCustom(request->getCustomEvent());
@@ -130,7 +128,7 @@ void ServerWorkerThread::run() {
 				break;
 			}
 			case(ServerRequest::REQUESTTYPE_GROUP_INIT): {
-				group = (ServerGroupBase*)request->getObject();
+				group = static_cast<ServerGroupBase*>(request->getObject());
 				// handle close
 				try {
 					group->onInit();
@@ -147,7 +145,7 @@ void ServerWorkerThread::run() {
 				break;
 			}
 			case(ServerRequest::REQUESTTYPE_GROUP_CLOSE): {
-				group = (ServerGroupBase*)request->getObject();
+				group = static_cast<ServerGroupBase*>(request->getObject());
 				// handle close
 				try {
 					group->onClose();
@@ -164,7 +162,7 @@ void ServerWorkerThread::run() {
 				break;
 			}
 			case(ServerRequest::REQUESTTYPE_GROUP_CUSTOM): {
-				group = (ServerGroupBase*)request->getObject();
+				group = static_cast<ServerGroupBase*>(request->getObject());
 				// handle close
 				try {
 					group->onCustomEvent(request->getCustomEvent());

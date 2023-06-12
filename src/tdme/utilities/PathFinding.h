@@ -105,6 +105,7 @@ public:
 	 */
 	inline void reset() {
 		walkableCache.clear();
+		walkableSlopeCache.clear();
 	}
 
 	/**

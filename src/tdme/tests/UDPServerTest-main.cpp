@@ -30,9 +30,9 @@ public:
 			Thread::sleep(1000);
 			if (++time == 5) {
 				// get client key list
-				EchoUDPServer::ClientKeySet clientKeySet = server->getClientKeySet();
-				for (EchoUDPServer::ClientKeySet::iterator i = clientKeySet.begin(); i != clientKeySet.end(); ++i) {
-					EchoUDPServerClient* client = static_cast<EchoUDPServerClient*>(server->getClientByKey(*i));
+				auto clientKeySet = server->getClientKeySet();
+				for (auto& clientKey: clientKeySet) {
+					auto client = static_cast<EchoUDPServerClient*>(server->getClientByKey(clientKey));
 					if (client != NULL) {
 						auto packet = client->createPacket();
 						packet->putString("broadcast test");
@@ -49,12 +49,12 @@ private:
 	unsigned int time;
 };
 
-EchoUDPServer* server = NULL;
-ServerBroadcaster* bc = NULL;
+EchoUDPServer* server = nullptr;
+ServerBroadcaster* bc = nullptr;
 
 void sigHandlerINT(int signal) {
 	Console::println("Interrupt signal catched");
-	if (server != NULL) {
+	if (server != nullptr) {
 		// stop broad caster
 		server->stop();
 	}

@@ -80,6 +80,13 @@ public:
 	~World();
 
 	/**
+	 * @return id
+	 */
+	const string& getId() {
+		return world->getName();
+	}
+
+	/**
 	 * Resets the physic world
 	 */
 	void reset();

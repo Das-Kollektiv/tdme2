@@ -59,12 +59,9 @@ EchoUDPServer::EchoUDPServer(const string& host, const unsigned int port, const 
 EchoUDPServer::~EchoUDPServer() {
 }
 
-UDPServerClient* EchoUDPServer::accept(const uint32_t clientId, const std::string& ip, const unsigned int port) {
+UDPServerClient* EchoUDPServer::accept(const uint32_t clientId, const string& ip, const uint16_t port) {
 	Console::println("accepting client connection with '" + (ip) + ":" + to_string(port) + "'");
 
 	// create client
-	EchoUDPServerClient* client = new EchoUDPServerClient(clientId, ip, port);
-
-	//
-	return client;
+	return new EchoUDPServerClient(clientId, ip, port);
 }

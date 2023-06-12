@@ -1486,7 +1486,9 @@ public:
 			string result;
 			result+= getTypeAsString();
 			result+= "(";
+			if (type == TYPE_STRING) result+= "\"";
 			result+= getValueString();
+			if (type == TYPE_STRING) result+= "\"";
 			result+= ")";
 			return result;
 		}
@@ -1738,6 +1740,35 @@ public:
 		 */
 		const vector<ArgumentType>& getArgumentTypes() const {
 			return argumentTypes;
+		}
+
+		/**
+		 * Get arguments information
+		 * @return arguments information
+		 */
+		inline const string getArgumentsInformation() const {
+			string result;
+			auto optionalArgumentCount = 0;
+			auto argumentIdx = 0;
+			for (auto& argumentType: argumentTypes) {
+				if (argumentType.optional == true) {
+					result+= "[";
+					optionalArgumentCount++;
+				}
+				if (argumentIdx > 0) result+= ", ";
+				if (argumentType.assignBack == true) {
+					result+= "=";
+				}
+				result+= "$" + argumentType.name + ": " + ScriptVariable::getTypeAsString(argumentType.type);
+				argumentIdx++;
+			}
+			if (isVariadic() == true) {
+				if (argumentIdx > 0) result+= ", ";
+				result+="...";
+			}
+			for (auto i = 0; i < optionalArgumentCount; i++) result+= "]";
+			//
+			return result;
 		}
 
 		/**
@@ -2732,10 +2763,26 @@ public:
 	virtual void registerVariables();
 
 	/**
+	 * Return script statement information
+	 * @param statement statement
 	 * @return script statement information
 	 */
-	inline const string getStatementInformation(const ScriptStatement& statement) const {
-		return "'" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "'";
+	inline const string getStatementInformation(const ScriptStatement& statement) {
+		return scriptFileName + ":" + to_string(statement.line) +  ": " + statement.statement;
+	}
+
+	/**
+	 * Get script argument information
+	 * @param method method
+	 * @return script argument information
+	 */
+	inline const string getArgumentInformation(const string& method) {
+		auto scriptMethod = getMethod(method);
+		if (scriptMethod == nullptr) {
+			Console::println("MiniScript::getArgumentInformation(): method not found: " + method);
+			return "No information available";
+		}
+		return scriptMethod->getArgumentsInformation();
 	}
 
 	/**

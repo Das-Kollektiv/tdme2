@@ -67,23 +67,7 @@ int main(int argc, char** argv)
 			method+= "| ";
 			method+= scriptMethod->getMethodName();
 			method+= "(";
-			auto optionalArgumentCount = 0;
-			auto argumentIdx = 0;
-			for (auto& argumentType: scriptMethod->getArgumentTypes()) {
-				if (argumentType.optional == true) {
-					method+= "[";
-					optionalArgumentCount++;
-				}
-				if (argumentIdx > 0) method+= ", ";
-				if (argumentType.assignBack == true) method+= "=";
-				method+= "$" + argumentType.name + ": " + MiniScript::ScriptVariable::getTypeAsString(argumentType.type);
-				argumentIdx++;
-			}
-			if (scriptMethod->isVariadic() == true) {
-				if (argumentIdx > 0) method+= ", ";
-				method+="...";
-			}
-			for (auto i = 0; i < optionalArgumentCount; i++) method+= "]";
+			method+= scriptMethod->getArgumentsInformation();
 			method+= "): ";
 			method+= MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType());
 			while (method.size() < 99) method+= " ";
@@ -113,23 +97,7 @@ int main(int argc, char** argv)
 			method+= "| ";
 			method+= scriptMethod->getMethodName();
 			method+= "(";
-			auto argumentIdx = 0;
-			auto optionalArgumentCount = 0;
-			for (auto& argumentType: scriptMethod->getArgumentTypes()) {
-				if (argumentType.optional == true) {
-					method+= "[";
-					optionalArgumentCount++;
-				}
-				if (argumentIdx > 0) method+= ", ";
-				if (argumentType.assignBack == true) method+= "=";
-				method+= "$" + argumentType.name + ": " + MiniScript::ScriptVariable::getTypeAsString(argumentType.type);
-				argumentIdx++;
-			}
-			if (scriptMethod->isVariadic() == true) {
-				if (argumentIdx > 0) method+= ", ";
-				method+="...";
-			}
-			for (auto i = 0; i < optionalArgumentCount; i++) method+= "]";
+			method+= scriptMethod->getArgumentsInformation();
 			method+= "): ";
 			method+= MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType());
 			while (method.size() < 99) method+= " ";
@@ -159,23 +127,7 @@ int main(int argc, char** argv)
 			method+= "| ";
 			method+= scriptMethod->getMethodName();
 			method+= "(";
-			auto argumentIdx = 0;
-			auto optionalArgumentCount = 0;
-			for (auto& argumentType: scriptMethod->getArgumentTypes()) {
-				if (argumentType.optional == true) {
-					method+= "[";
-					optionalArgumentCount++;
-				}
-				if (argumentIdx > 0) method+= ", ";
-				if (argumentType.assignBack == true) method+= "=";
-				method+= "$" + argumentType.name + ": " + MiniScript::ScriptVariable::getTypeAsString(argumentType.type);
-				argumentIdx++;
-			}
-			if (scriptMethod->isVariadic() == true) {
-				if (argumentIdx > 0) method+= ", ";
-				method+="...";
-			}
-			for (auto i = 0; i < optionalArgumentCount; i++) method+= "]";
+			method+= scriptMethod->getArgumentsInformation();
 			method+= "): ";
 			method+= MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType());
 			while (method.size() < 99) method+= " ";
@@ -188,33 +140,17 @@ int main(int argc, char** argv)
 	// operators
 	auto scriptOperatorMethods = baseMiniScript->getOperatorMethods();
 	vector<string> operators;
-	for (auto method: scriptOperatorMethods) {
+	for (auto scriptMethod: scriptOperatorMethods) {
 		string operatorString;
 		operatorString = "| ";
-		operatorString+= StringTools::replace(MiniScript::getOperatorAsString(method->getOperator()), "|", "\\|");
+		operatorString+= StringTools::replace(MiniScript::getOperatorAsString(scriptMethod->getOperator()), "|", "\\|");
 		while (operatorString.size() < 5) operatorString+= " ";
 		operatorString+= "| ";
-		operatorString+= method->getMethodName();
+		operatorString+= scriptMethod->getMethodName();
 		operatorString+= "(";
-		auto optionalArgumentCount = 0;
-		auto argumentIdx = 0;
-		for (auto& argumentType: method->getArgumentTypes()) {
-			if (argumentType.optional == true) {
-				operatorString+= "[";
-				optionalArgumentCount++;
-			}
-			if (argumentIdx > 0) operatorString+= ", ";
-			if (argumentType.assignBack == true) operatorString+= "=";
-			operatorString+= "$" + argumentType.name + ": " + MiniScript::ScriptVariable::getTypeAsString(argumentType.type);
-			argumentIdx++;
-		}
-		if (method->isVariadic() == true) {
-			if (argumentIdx > 0) operatorString+= ", ";
-			operatorString+="...";
-		}
-		for (auto i = 0; i < optionalArgumentCount; i++) operatorString+= "]";
+		operatorString+= scriptMethod->getArgumentsInformation();
 		operatorString+= "): ";
-		operatorString+= MiniScript::ScriptVariable::getReturnTypeAsString(method->getReturnValueType());
+		operatorString+= MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType());
 		while (operatorString.size() < 99) operatorString+= " ";
 		operatorString+= "|";
 		operators.push_back(operatorString);
