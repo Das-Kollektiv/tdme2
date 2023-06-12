@@ -47,7 +47,7 @@ using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
 
-Body::Body(World* world, const string& id, BodyType type, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes)
+Body::Body(World* world, const string& id, BodyType type, uint16_t collisionTypeId, bool enabled, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes)
 {
 	this->world = world;
 	this->id = id;

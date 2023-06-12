@@ -185,7 +185,7 @@ void PhysicsTest5::initialize()
 	entity->setReceivesShadows(true);
 	entity->update();
 	engine->addEntity(entity);
-	world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.5f, {ground});
+	world->addStaticRigidBody("ground", RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.5f, {ground});
 	auto side = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(1.0f, 16.0f, 8.0f)));
 	auto sideModel = modelDeleter.add(Primitives::createModel(side, "side_model"));
 	sideModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
@@ -198,24 +198,24 @@ void PhysicsTest5::initialize()
 	entity->setTranslation(Vector3(0.0f, 0.0f, +9.0f));
 	entity->update();
 	engine->addEntity(entity);
-	world->addStaticRigidBody("far", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.5f, {nearFar});
+	world->addStaticRigidBody("far", RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.5f, {nearFar});
 	entity = new Object("near", nearFarModel);
 	entity->setTranslation(Vector3(0.0f, 0.0f, -9.0f));
 	entity->setEffectColorMul(Color4(1.0f, 1.0f, 1.0f, 0.0f));
 	entity->update();
 	entity->setEnabled(false);
 	engine->addEntity(entity);
-	world->addStaticRigidBody("near", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.5f, {nearFar});
+	world->addStaticRigidBody("near", RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.5f, {nearFar});
 	entity = new Object("sideright", sideModel);
 	entity->setTranslation(Vector3(-9.0f, 0.0f, 0.0f));
 	entity->update();
 	engine->addEntity(entity);
-	world->addStaticRigidBody("sideright", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.5f, {side});
+	world->addStaticRigidBody("sideright", RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.5f, {side});
 	entity = new Object("sideleft", sideModel);
 	entity->setTranslation(Vector3(9.0f, 0.0f, 0.0f));
 	entity->update();
 	engine->addEntity(entity);
-	world->addStaticRigidBody("sideleft", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.5f, {side});
+	world->addStaticRigidBody("sideleft", RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.5f, {side});
 	auto box = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(0.6f, 0.6f, 0.6f)));
 	auto boxModel = modelDeleter.add(Primitives::createModel(box, "box_model"));
 	boxModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.5f, 0.5f, 1.0f));
@@ -231,7 +231,7 @@ void PhysicsTest5::initialize()
 		entity->setTranslation(Vector3(0.0f, 3.0f + (i * 1.0f), 0.0f));
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody("sphere" + to_string(i), true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.75f, 0.4f, 10.0f, Vector3(1.0f, 1.0f, 1.0f), {sphere});
+		world->addRigidBody("sphere" + to_string(i), RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.75f, 0.4f, 10.0f, Vector3(1.0f, 1.0f, 1.0f), {sphere});
 	}
 	try {
 		auto botPrototype = PrototypeReader::read("resources/botrts", "unit_bot.tmodel");

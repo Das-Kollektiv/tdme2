@@ -129,7 +129,7 @@ void PhysicsTest2::initialize()
 	entity->update();
 	entity->setReceivesShadows(true);
 	engine->addEntity(entity);
-	world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.5f, {ground});
+	world->addStaticRigidBody("ground", RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.5f, {ground});
 	auto box = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(1.0f, 1.0f, 1.0f)));
 	auto boxModel = modelDeleter.add(Primitives::createModel(box, "box_model"));
 	boxModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.5f, 0.5f, 1.0f));
@@ -141,7 +141,7 @@ void PhysicsTest2::initialize()
 		entity->setTranslation(Vector3(0.0f, i * 2.0f + 1.0f, 0.0f));
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody("box" + to_string(i), true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.0f, 0.8f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {box});
+		world->addRigidBody("box" + to_string(i), RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.0f, 0.8f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {box});
 	}
 }
 

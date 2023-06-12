@@ -847,8 +847,8 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 		if (boundingVolumes.size() == 0) return nullptr;
 		return world->addStaticCollisionBody(
 			id,
-			true,
 			collisionTypeId == 0?RIGIDBODY_TYPEID_TRIGGER:collisionTypeId,
+			true,
 			transform,
 			boundingVolumes,
 			hierarchy
@@ -862,8 +862,8 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 		if (physicsType == PrototypePhysics_BodyType::COLLISION_BODY) {
 			return world->addStaticCollisionBody(
 				id,
-				true,
 				collisionTypeId == 0?RIGIDBODY_TYPEID_COLLISION:collisionTypeId,
+				true,
 				Transform(),
 				{terrainMesh},
 				hierarchy
@@ -872,8 +872,8 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 		if (physicsType == PrototypePhysics_BodyType::STATIC_RIGIDBODY) {
 			return world->addStaticRigidBody(
 				id,
-				true,
 				collisionTypeId == 0?RIGIDBODY_TYPEID_STATIC:collisionTypeId,
+				true,
 				Transform(),
 				prototype->getPhysics()->getFriction(),
 				{terrainMesh},
@@ -883,8 +883,8 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 		if (physicsType == PrototypePhysics_BodyType::DYNAMIC_RIGIDBODY) {
 			return world->addRigidBody(
 				id,
-				true,
 				collisionTypeId == 0?RIGIDBODY_TYPEID_DYNAMIC:collisionTypeId,
+				true,
 				Transform(),
 				prototype->getPhysics()->getRestitution(),
 				prototype->getPhysics()->getFriction(),
@@ -905,8 +905,8 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 		if (physicsType == PrototypePhysics_BodyType::COLLISION_BODY) {
 			return world->addStaticCollisionBody(
 				id,
-				true,
 				collisionTypeId == 0?RIGIDBODY_TYPEID_COLLISION:collisionTypeId,
+				true,
 				transform,
 				boundingVolumes,
 				hierarchy
@@ -926,8 +926,8 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 		if (physicsType == PrototypePhysics_BodyType::DYNAMIC_RIGIDBODY) {
 			return world->addRigidBody(
 				id,
-				true,
 				collisionTypeId == 0?RIGIDBODY_TYPEID_DYNAMIC:collisionTypeId,
+				true,
 				transform,
 				prototype->getPhysics()->getRestitution(),
 				prototype->getPhysics()->getFriction(),
@@ -982,8 +982,8 @@ void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vec
 				transform.update();
 				auto rigidBody = world->addStaticRigidBody(
 					"tdme.terrain",
-					true,
 					RIGIDBODY_TYPEID_STATIC,
+					true,
 					transform,
 					0.5f,
 					{

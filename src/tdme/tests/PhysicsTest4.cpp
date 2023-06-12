@@ -135,7 +135,7 @@ void PhysicsTest4::initialize()
 	entity->setTranslation(Vector3(0.0f, 3.0f, 0.0f));
 	entity->update();
 	engine->addEntity(entity);
-	world->addRigidBody("box", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {box});
+	world->addRigidBody("box", RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {box});
 	world->getBody("box")->setLinearVelocity(world->getBody("box")->getLinearVelocity().clone().setX(1.0f));
 	try {
 		auto _terrainModel = modelDeleter.add(ModelReader::read("resources/tests/models/physicstest4", "TestGround.fbx.tm"));
@@ -146,7 +146,7 @@ void PhysicsTest4::initialize()
 		engine->addEntity(entity);
 		ObjectModel terrainModel(_terrainModel);
 		auto terrainMesh = new TerrainMesh(&terrainModel, entity->getTransform());
-		world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, Transform(), 0.5f, {terrainMesh});
+		world->addStaticRigidBody("ground", RIGID_TYPEID_STANDARD, true, Transform(), 0.5f, {terrainMesh});
 	} catch (Exception& exception) {
 		Console::print(string("PhysicsTest4::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));

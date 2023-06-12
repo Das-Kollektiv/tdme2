@@ -110,14 +110,14 @@ void World::reset()
 	}
 }
 
-Body* World::addRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy)
+Body* World::addRigidBody(const string& id, uint16_t collisionTypeId, bool enabled, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy)
 {
 	removeBody(id);
 	//
 	auto body =
 		hierarchy == true?
-			new BodyHierarchy(this, id, Body::BODYTYPE_DYNAMIC, enabled, collisionTypeId, transform, restitution, friction, mass, inertiaTensor):
-			new Body(this, id, Body::BODYTYPE_DYNAMIC, enabled, collisionTypeId, transform, restitution, friction, mass, inertiaTensor, boundingVolumes);
+			new BodyHierarchy(this, id, Body::BODYTYPE_DYNAMIC, collisionTypeId, enabled, transform, restitution, friction, mass, inertiaTensor):
+			new Body(this, id, Body::BODYTYPE_DYNAMIC, collisionTypeId, enabled, transform, restitution, friction, mass, inertiaTensor, boundingVolumes);
 	//
 	if (hierarchy == true) {
 		static_cast<BodyHierarchy*>(body)->addBody(id, Transform(), boundingVolumes);
@@ -135,7 +135,7 @@ Body* World::addRigidBody(const string& id, bool enabled, uint16_t collisionType
 	return body;
 }
 
-Body* World::addStaticCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy) {
+Body* World::addStaticCollisionBody(const string& id, uint16_t collisionTypeId, bool enabled, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy) {
 	removeBody(id);
 	//
 	auto body =
@@ -158,7 +158,7 @@ Body* World::addStaticCollisionBody(const string& id, bool enabled, uint16_t col
 	return body;
 }
 
-Body* World::addDynamicCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy) {
+Body* World::addDynamicCollisionBody(const string& id, uint16_t collisionTypeId, bool enabled, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy) {
 	removeBody(id);
 	//
 	auto body =
@@ -181,7 +181,7 @@ Body* World::addDynamicCollisionBody(const string& id, bool enabled, uint16_t co
 	return body;
 }
 
-Body* World::addStaticRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, float friction, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy)
+Body* World::addStaticRigidBody(const string& id, uint16_t collisionTypeId, bool enabled, const Transform& transform, float friction, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy)
 {
 	removeBody(id);
 	//
@@ -587,16 +587,16 @@ World* World::clone(const string& id, uint16_t collisionTypeIds)
 		// clone rigid body
 		switch (bodyType) {
 			case Body::BODYTYPE_STATIC:
-				clonedBody = clonedWorld->addStaticRigidBody(body->id, body->isEnabled(), body->getCollisionTypeId(), body->transform, body->getFriction(), body->boundingVolumes);
+				clonedBody = clonedWorld->addStaticRigidBody(body->id, body->getCollisionTypeId(), body->isEnabled(), body->transform, body->getFriction(), body->boundingVolumes);
 				break;
 			case Body::BODYTYPE_DYNAMIC:
-				clonedBody = clonedWorld->addRigidBody(body->id, body->isEnabled(), body->getCollisionTypeId(), body->transform, body->getRestitution(), body->getFriction(), body->getMass(), body->inertiaTensor, body->boundingVolumes);
+				clonedBody = clonedWorld->addRigidBody(body->id, body->getCollisionTypeId(), body->isEnabled(), body->transform, body->getRestitution(), body->getFriction(), body->getMass(), body->inertiaTensor, body->boundingVolumes);
 				break;
 			case Body::BODYTYPE_COLLISION_STATIC:
-				clonedBody = clonedWorld->addStaticCollisionBody(body->id, body->isEnabled(), body->getCollisionTypeId(), body->transform, body->boundingVolumes);
+				clonedBody = clonedWorld->addStaticCollisionBody(body->id, body->getCollisionTypeId(), body->isEnabled(), body->transform, body->boundingVolumes);
 				break;
 			case Body::BODYTYPE_COLLISION_DYNAMIC:
-				clonedBody = clonedWorld->addDynamicCollisionBody(body->id, body->isEnabled(), body->getCollisionTypeId(), body->transform, body->boundingVolumes);
+				clonedBody = clonedWorld->addDynamicCollisionBody(body->id, body->getCollisionTypeId(), body->isEnabled(), body->transform, body->boundingVolumes);
 				break;
 			default:
 				Console::println("World::clone(): Unsupported type: " + to_string(bodyType));

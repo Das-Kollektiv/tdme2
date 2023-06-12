@@ -18,7 +18,7 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
 
-BodyHierarchy::BodyHierarchy(World* world, const string& id, BodyType type, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor)
+BodyHierarchy::BodyHierarchy(World* world, const string& id, BodyType type, uint16_t collisionTypeId, bool enabled, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor)
 	: Body(world, id, type, enabled, collisionTypeId, transform, restitution, friction, mass, inertiaTensor, {})
 {
 }
