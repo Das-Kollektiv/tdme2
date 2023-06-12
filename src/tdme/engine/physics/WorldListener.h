@@ -52,7 +52,7 @@ struct tdme::engine::physics::WorldListener
 	virtual void onRemovedBody(const string& id, Body::BodyType type, uint16_t collisionTypeId) = 0;
 
 	/**
-	 * Event fired when child body was added to a body hierarchy
+	 * Event fired when sub body was added to a body hierarchy
 	 * @param id body id
 	 * @param type body type
 	 * @param collisionTypeId collision type id
@@ -64,7 +64,7 @@ struct tdme::engine::physics::WorldListener
 	virtual void onAddedSubBody(const string& id, Body::BodyType type, uint16_t collisionTypeId, const string& subBodyParentId, const string& subBodyId, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes) = 0;
 
 	/**
-	 * Event fired when body was removed
+	 * Event fired when sub body was removed from body hierarchy
 	 * @param id body id
 	 * @param type body type
 	 * @param collisionTypeId collision type id
