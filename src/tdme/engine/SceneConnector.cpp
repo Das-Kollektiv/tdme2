@@ -847,7 +847,7 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 		if (boundingVolumes.size() == 0) return nullptr;
 		return world->addStaticCollisionBody(
 			id,
-			collisionTypeId == 0?RIGIDBODY_TYPEID_TRIGGER:collisionTypeId,
+			collisionTypeId == 0?BODY_TYPEID_TRIGGER:collisionTypeId,
 			true,
 			transform,
 			boundingVolumes,
@@ -862,7 +862,7 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 		if (physicsType == PrototypePhysics_BodyType::COLLISION_BODY) {
 			return world->addStaticCollisionBody(
 				id,
-				collisionTypeId == 0?RIGIDBODY_TYPEID_COLLISION:collisionTypeId,
+				collisionTypeId == 0?BODY_TYPEID_COLLISION:collisionTypeId,
 				true,
 				Transform(),
 				{terrainMesh},
@@ -872,7 +872,7 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 		if (physicsType == PrototypePhysics_BodyType::STATIC_RIGIDBODY) {
 			return world->addStaticRigidBody(
 				id,
-				collisionTypeId == 0?RIGIDBODY_TYPEID_STATIC:collisionTypeId,
+				collisionTypeId == 0?BODY_TYPEID_STATIC:collisionTypeId,
 				true,
 				Transform(),
 				prototype->getPhysics()->getFriction(),
@@ -883,7 +883,7 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 		if (physicsType == PrototypePhysics_BodyType::DYNAMIC_RIGIDBODY) {
 			return world->addRigidBody(
 				id,
-				collisionTypeId == 0?RIGIDBODY_TYPEID_DYNAMIC:collisionTypeId,
+				collisionTypeId == 0?BODY_TYPEID_DYNAMIC:collisionTypeId,
 				true,
 				Transform(),
 				prototype->getPhysics()->getRestitution(),
@@ -905,7 +905,7 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 		if (physicsType == PrototypePhysics_BodyType::COLLISION_BODY) {
 			return world->addStaticCollisionBody(
 				id,
-				collisionTypeId == 0?RIGIDBODY_TYPEID_COLLISION:collisionTypeId,
+				collisionTypeId == 0?BODY_TYPEID_COLLISION:collisionTypeId,
 				true,
 				transform,
 				boundingVolumes,
@@ -916,7 +916,7 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 			return world->addStaticRigidBody(
 				id,
 				true,
-				collisionTypeId == 0?RIGIDBODY_TYPEID_STATIC:collisionTypeId,
+				collisionTypeId == 0?BODY_TYPEID_STATIC:collisionTypeId,
 				transform,
 				prototype->getPhysics()->getFriction(),
 				boundingVolumes,
@@ -926,7 +926,7 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 		if (physicsType == PrototypePhysics_BodyType::DYNAMIC_RIGIDBODY) {
 			return world->addRigidBody(
 				id,
-				collisionTypeId == 0?RIGIDBODY_TYPEID_DYNAMIC:collisionTypeId,
+				collisionTypeId == 0?BODY_TYPEID_DYNAMIC:collisionTypeId,
 				true,
 				transform,
 				prototype->getPhysics()->getRestitution(),
@@ -949,6 +949,17 @@ Body* SceneConnector::createBody(World* world, SceneEntity* sceneEntity, const V
 		transform.update();
 	}
 	return createBody(world, sceneEntity->getPrototype(), sceneEntity->getId(), transform, collisionTypeId, hierarchy, index, overrideType);
+}
+
+BodyHierarchy* SceneConnector::createSubBody(World* world, Prototype* prototype, const string& id, const Transform& transform, const string& bodyHierarchyId, const string& bodyHierarchyParentId) {
+	auto bodyHierarchy = world->getBodyHierarchy(bodyHierarchyId);
+	if (bodyHierarchy == nullptr) {
+		Console::println("SceneConnector::createSubBody(): body hierarchy not found: " + bodyHierarchyId);
+		return nullptr;
+	}
+	bodyHierarchy->addBody(id, transform, prototype->getBoundingVolumePrimitives(), bodyHierarchyParentId);
+	bodyHierarchy->update();
+	return bodyHierarchy;
 }
 
 void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
@@ -982,7 +993,7 @@ void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vec
 				transform.update();
 				auto rigidBody = world->addStaticRigidBody(
 					"tdme.terrain",
-					RIGIDBODY_TYPEID_STATIC,
+					BODY_TYPEID_STATIC,
 					true,
 					transform,
 					0.5f,

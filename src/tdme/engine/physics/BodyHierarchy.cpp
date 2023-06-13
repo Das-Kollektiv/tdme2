@@ -89,7 +89,6 @@ void BodyHierarchy::removeBody(const string& id) {
 	// remove from hierarchy and bodies
 	auto bodyHierarchyLevel = getBodyHierarchyLevel(id);
 	if (bodyHierarchyLevel == nullptr || bodyHierarchyLevel->parent == nullptr) {
-		Console::println("BodyHierarchy::removeBody(): '" + id + "': not found");
 		return;
 	}
 

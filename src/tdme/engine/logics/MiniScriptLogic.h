@@ -109,14 +109,24 @@ public:
 		if (miniScript->physicsPrototypesToAdd.empty() == false) {
 			miniScript->prototypesToAddMutex.lock();
 			for (auto& prototypeToAdd: miniScript->physicsPrototypesToAdd) {
-				// TODO: hierarchies, I guess via fixed joints :DDD
-				SceneConnector::createBody(
-					context->getWorld(),
-					prototypeToAdd.prototype,
-					prototypeToAdd.id,
-					prototypeToAdd.transform,
-					Body::COLLISION_TYPEID_DYNAMIC
-				);
+				if (prototypeToAdd.entityHierarchyId.empty() == false) {
+					SceneConnector::createSubBody(
+						context->getWorld(),
+						prototypeToAdd.prototype,
+						prototypeToAdd.id,
+						prototypeToAdd.transform,
+						prototypeToAdd.entityHierarchyId,
+						prototypeToAdd.entityHierarchyParentId
+					);
+				} else {
+					SceneConnector::createBody(
+						context->getWorld(),
+						prototypeToAdd.prototype,
+						prototypeToAdd.id,
+						prototypeToAdd.transform,
+						Body::COLLISION_TYPEID_DYNAMIC
+					);
+				}
 				if (prototypeToAdd.prototype->hasScript() == true) {
 					auto prototype = prototypeToAdd.prototype;
 					auto logicMiniScript = new LogicMiniScript();

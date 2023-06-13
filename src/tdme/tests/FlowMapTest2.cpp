@@ -203,7 +203,7 @@ void FlowMapTest2::display()
 				if (pathFinding->findPath(
 					combatUnit.object->getTransform().getTranslation(),
 					combatUnit.endPosition,
-					SceneConnector::RIGIDBODY_TYPEID_STATIC,
+					SceneConnector::BODY_TYPEID_STATIC,
 					combatUnit.path,
 					6, // TODO: check me
 					6
@@ -353,7 +353,7 @@ void FlowMapTest2::display()
 							if (pathFinding->findPath(
 								combatUnitTranslation,
 								flowMapPosition,
-								SceneConnector::RIGIDBODY_TYPEID_STATIC,
+								SceneConnector::BODY_TYPEID_STATIC,
 								combatUnit.path,
 								3,
 								static_cast<int>(minDistance * 6.0f)
@@ -814,7 +814,7 @@ void FlowMapTest2::doPathFinding(const Vector3& newEndPosition) {
 	pathFinding->findPath(
 		combatUnits[0].object->getTransform().getTranslation(),
 		endPosition,
-		SceneConnector::RIGIDBODY_TYPEID_STATIC,
+		SceneConnector::BODY_TYPEID_STATIC,
 		path
 	);
 	Console::println("Found a path: steps: " + to_string(path.size()));
@@ -850,7 +850,7 @@ void FlowMapTest2::doPathFinding(const Vector3& newEndPosition) {
 			center,
 			10.0f,
 			10.0f,
-			SceneConnector::RIGIDBODY_TYPEID_STATIC,
+			SceneConnector::BODY_TYPEID_STATIC,
 			pathA,
 			false
 		);
@@ -862,7 +862,7 @@ void FlowMapTest2::doPathFinding(const Vector3& newEndPosition) {
 			center,
 			10.0f,
 			10.0f,
-			SceneConnector::RIGIDBODY_TYPEID_STATIC,
+			SceneConnector::BODY_TYPEID_STATIC,
 			pathB,
 			true
 		);
@@ -878,7 +878,7 @@ void FlowMapTest2::doPathFinding(const Vector3& newEndPosition) {
 			center,
 			12.0f,
 			12.0f,
-			SceneConnector::RIGIDBODY_TYPEID_STATIC,
+			SceneConnector::BODY_TYPEID_STATIC,
 			path,
 			true
 		);

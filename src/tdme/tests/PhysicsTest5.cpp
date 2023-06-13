@@ -247,7 +247,7 @@ void PhysicsTest5::initialize()
 		engine->addEntity(botEntityHierarchy);
 
 		// create bot body in physics
-		auto botBody = dynamic_cast<BodyHierarchy*>(SceneConnector::createBody(world, botPrototype, "bot", botTransform, SceneConnector::RIGIDBODY_TYPEID_STANDARD, true));
+		auto botBody = dynamic_cast<BodyHierarchy*>(SceneConnector::createBody(world, botPrototype, "bot", botTransform, SceneConnector::BODY_TYPEID_STANDARD, true));
 
 		// we only need scale for now as parent transform for attaching weapon to bot
 		Transform botTransformScale;
@@ -266,9 +266,9 @@ void PhysicsTest5::initialize()
 		botEntityHierarchy->update();
 
 		// create weapon in physics
-		botBody->addBody("weapon_left", weaponAttachmentLocalTransform, weaponPrototype->getBoundingVolumePrimitives(), "bot");
-		botBody->update();
+		SceneConnector::createSubBody(world, weaponPrototype, "weapon_left", weaponAttachmentLocalTransform, "bot", "bot");
 
+		//
 		{
 			auto box2 = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(0.50f, 0.25f, 0.25f)));
 			auto box2Model = modelDeleter.add(Primitives::createModel(box2, "box2_model"));
@@ -281,8 +281,6 @@ void PhysicsTest5::initialize()
 			botEntityHierarchy->addEntity(box2Object, "weapon_left");
 			botEntityHierarchy->update();
 
-			//
-			// create weapon in physics
 			botBody->addBody("box2_model", box2Object->getTransform(), { box2 }, "weapon_left");
 			botBody->update();
 		}

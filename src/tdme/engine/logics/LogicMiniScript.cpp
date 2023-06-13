@@ -31,6 +31,7 @@
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 #include <tdme/utilities/MiniScript.h>
 #include <tdme/utilities/UTF8CharacterIterator.h>
 
@@ -67,6 +68,7 @@ using tdme::os::threading::Mutex;
 using tdme::tools::editor::misc::Tools;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
+using tdme::utilities::Exception;
 using tdme::utilities::MiniScript;
 using tdme::utilities::UTF8CharacterIterator;
 
@@ -4158,8 +4160,8 @@ void LogicMiniScript::registerMethods() {
 							prototype,
 							id,
 							transform,
-							entityHierarchyParentId,
-							string()
+							entityHierarchyId,
+							entityHierarchyParentId
 						);
 					} catch (Exception& exception) {
 						miniScript->prototypesToAddMutex.unlock();

@@ -24,6 +24,7 @@ using tdme::audio::Audio;
 using tdme::engine::fileio::ProgressCallback;
 using tdme::engine::model::Model;
 using tdme::engine::physics::Body;
+using tdme::engine::physics::BodyHierarchy;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::prototype::Prototype;
@@ -45,12 +46,12 @@ class tdme::engine::SceneConnector final
 {
 
 public:
-	static constexpr uint16_t RIGIDBODY_TYPEID_STATIC { 1 };
-	static constexpr uint16_t RIGIDBODY_TYPEID_DYNAMIC { 2 };
-	static constexpr uint16_t RIGIDBODY_TYPEID_COLLISION { 4 };
-	static constexpr uint16_t RIGIDBODY_TYPEID_TRIGGER { 8 };
+	static constexpr uint16_t BODY_TYPEID_STATIC { 1 };
+	static constexpr uint16_t BODY_TYPEID_DYNAMIC { 2 };
+	static constexpr uint16_t BODY_TYPEID_COLLISION { 4 };
+	static constexpr uint16_t BODY_TYPEID_TRIGGER { 8 };
 
-	static constexpr int RIGIDBODY_TYPEID_STANDARD { 0 };
+	static constexpr int BODY_TYPEID_STANDARD { 0 };
 	static constexpr int BOUNDINGVOLUME_INDEX_NONE { -1 };
 
 	STATIC_DLL_IMPEXT static float renderGroupsPartitionWidth;
@@ -297,7 +298,7 @@ public:
 	static void addScene(Engine* engine, Scene* scene, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool useEditorDecals, bool pickable, bool enable = true, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), ProgressCallback* progressCallback = nullptr);
 
 	/**
-	 * Create rigid body
+	 * Create body
 	 * @param world world
 	 * @param prototype prototype
 	 * @param id id
@@ -306,12 +307,12 @@ public:
 	 * @param hierarchy hierarchy
 	 * @param index use a optional index or all bounding volumes
 	 * @param overrideType override physics type if required
-	 * @return rigid body
+	 * @return body
 	 */
-	static Body* createBody(World* world, Prototype* prototype, const string& id, const Transform& transform, uint16_t collisionTypeId = RIGIDBODY_TYPEID_STANDARD, bool hierarchy = false, int index = BOUNDINGVOLUME_INDEX_NONE, PrototypePhysics_BodyType* overrideType = nullptr);
+	static Body* createBody(World* world, Prototype* prototype, const string& id, const Transform& transform, uint16_t collisionTypeId = BODY_TYPEID_STANDARD, bool hierarchy = false, int index = BOUNDINGVOLUME_INDEX_NONE, PrototypePhysics_BodyType* overrideType = nullptr);
 
 	/**
-	 * Create rigid body
+	 * Create body
 	 * @param world world
 	 * @param sceneEntity scene entity
 	 * @param translation translation
@@ -319,9 +320,21 @@ public:
 	 * @param hierarchy hierarchy
 	 * @param index use a optional index or all bounding volumes
 	 * @param overrideType override physics type if required
-	 * @return rigid body
+	 * @return body
 	 */
-	static Body* createBody(World* world, SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), uint16_t collisionTypeId = RIGIDBODY_TYPEID_STANDARD, bool hierarchy = false, int index = BOUNDINGVOLUME_INDEX_NONE, PrototypePhysics_BodyType* overrideType = nullptr);
+	static Body* createBody(World* world, SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), uint16_t collisionTypeId = BODY_TYPEID_STANDARD, bool hierarchy = false, int index = BOUNDINGVOLUME_INDEX_NONE, PrototypePhysics_BodyType* overrideType = nullptr);
+
+	/**
+	 * Create sub body in body hierarchy
+	 * @param world world
+	 * @param prototype prototype
+	 * @param id id
+	 * @param transform transform
+	 * @param bodyHierarchyId body hierarchy id
+	 * @param bodyHierarchyParentId body hierarchy parent id
+	 * @return body hierarchy
+	 */
+	static BodyHierarchy* createSubBody(World* world, Prototype* prototype, const string& id, const Transform& transform, const string& bodyHierarchyId, const string& bodyHierarchyParentId);
 
 	/**
 	 * Add scene to physics world
