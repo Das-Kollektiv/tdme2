@@ -120,6 +120,42 @@ void LogicMiniScript::registerMethods() {
 	}
 	{
 		//
+		class ScriptMethodLogicGetHierarchyId: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodLogicGetHierarchyId(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_STRING),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "logic.getHierarchyId";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue.setValue(miniScript->logic->getHierarchyId());
+			}
+		};
+		registerMethod(new ScriptMethodLogicGetHierarchyId(this));
+	}
+	{
+		//
+		class ScriptMethodLogicGetHierarchyParentId: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodLogicGetHierarchyParentId(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_STRING),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "logic.getHierarchyParentId";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue.setValue(miniScript->logic->getHierarchyParentId());
+			}
+		};
+		registerMethod(new ScriptMethodLogicGetHierarchyParentId(this));
+	}
+	{
+		//
 		class ScriptMethodLogicSignalSend: public ScriptMethod {
 		private:
 			LogicMiniScript* miniScript { nullptr };

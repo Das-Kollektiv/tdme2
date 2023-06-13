@@ -637,16 +637,16 @@ void Context::shutdown() {
 }
 
 void Context::addLogic(Logic* logic) {
-	if (VERBOSE == true) Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::addLogic(): adding '" + logic->getId() + "'");
+	Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::addLogic(): adding '" + logic->getId() + "'");
 	// check if exists in current game logics
 	if (logicsById.find(logic->getId()) != logicsById.end()) {
-		if (VERBOSE == true) Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::addLogic(): NOT adding '" + logic->getId() + "', logic exists!");
+		Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::addLogic(): NOT adding '" + logic->getId() + "', logic exists!");
 		return;
 	}
 	// check if exists in new game logics
 	for (auto newLogic: newLogics) {
 		if (logic->getId() == newLogic->getId()) {
-			if (VERBOSE == true) Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::addLogic(): NOT adding '" + logic->getId() + "', logic exists!");
+			Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::addLogic(): NOT adding '" + logic->getId() + "', logic exists!");
 			return;
 		}
 	}

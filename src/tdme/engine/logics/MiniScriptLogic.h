@@ -44,7 +44,9 @@ public:
 	 * @param handlingHIDInput handling hid input
 	 * @param miniScript logic mini script
 	 */
-	inline MiniScriptLogic(Context* context, const string& id, bool handlingHIDInput, LogicMiniScript* miniScript): Logic(context, id, handlingHIDInput), miniScript(miniScript) {
+	inline MiniScriptLogic(Context* context, const string& id, bool handlingHIDInput, LogicMiniScript* miniScript, const string& hierarchyId = string(), const string& hierarchyParentId = string()):
+		Logic(context, id, handlingHIDInput), miniScript(miniScript), hierarchyId(hierarchyId), hierarchyParentId(hierarchyParentId) {
+		//
 		miniScript->setContext(context);
 		miniScript->setLogic(this);
 		// execute initialize() function
@@ -61,6 +63,20 @@ public:
 	 */
 	inline LogicMiniScript* getMiniScript() {
 		return miniScript;
+	}
+
+	/**
+	 * @return hierarchy id
+	 */
+	inline const string& getHierarchyId() {
+		return hierarchyId;
+	}
+
+	/**
+	 * @return hierarchy parent id
+	 */
+	inline const string& getHierarchyParentId() {
+		return hierarchyParentId;
 	}
 
 	// overridden methods
@@ -137,9 +153,11 @@ public:
 					miniScript->context->addLogic(
 						new MiniScriptLogic(
 							miniScript->context,
-							id,
+							prototypeToAdd.id,
 							prototype->isScriptHandlingHID(),
-							logicMiniScript
+							logicMiniScript,
+							prototypeToAdd.entityHierarchyId,
+							prototypeToAdd.entityHierarchyParentId
 						)
 					);
 				}
@@ -180,5 +198,6 @@ public:
 
 private:
 	LogicMiniScript* miniScript { nullptr };
-
+	string hierarchyId;
+	string hierarchyParentId;
 };
