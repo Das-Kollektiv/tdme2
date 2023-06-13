@@ -286,7 +286,7 @@ void ParticleSystemEditorTabController::showInfoPopUp(const string& caption, con
 
 void ParticleSystemEditorTabController::onChange(GUIElementNode* node)
 {
-	if (basePropertiesSubController->onChange(node, view->getPrototype()) == true) return;
+	if (basePropertiesSubController->onChange(node, view->getPrototype(), view->getPrototype()) == true) return;
 	if (prototypeDisplaySubController->onChange(node, view->getPrototype()) == true) return;
 	if (prototypePhysicsSubController->onChange(node, view->getPrototype()) == true) return;
 	if (prototypeSoundsSubController->onChange(node, view->getPrototype(), nullptr) == true) return;

@@ -169,7 +169,7 @@ void TriggerEditorTabController::onDrop(const string& payload, int mouseX, int m
 
 void TriggerEditorTabController::onChange(GUIElementNode* node)
 {
-	if (basePropertiesSubController->onChange(node, view->getPrototype()) == true) return;
+	if (basePropertiesSubController->onChange(node, view->getPrototype(), view->getPrototype()) == true) return;
 	if (prototypeDisplaySubController->onChange(node, view->getPrototype()) == true) return;
 	if (prototypePhysicsSubController->onChange(node, view->getPrototype()) == true) return;
 	if (prototypeScriptSubController->onChange(node, view->getPrototype()) == true) return;

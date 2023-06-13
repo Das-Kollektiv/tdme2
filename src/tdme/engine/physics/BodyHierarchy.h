@@ -108,7 +108,7 @@ public:
 	/**
 	 * @return body from hierarchy by given unique id
 	 */
-	inline SubBody* getBody(const string& id) {
+	inline const SubBody* getBody(const string& id) {
 		auto bodyHierarchyLevel = getBodyHierarchyLevel(id);
 		if (bodyHierarchyLevel == nullptr || bodyHierarchyLevel->parent == nullptr) return nullptr;
 		return bodyHierarchyLevel;

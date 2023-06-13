@@ -851,7 +851,7 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 			true,
 			transform,
 			boundingVolumes,
-			hierarchy
+			hierarchy == true || prototype->isEntityHierarchy() == true
 		);
 	} else
 	// model as terrain mesh
@@ -866,7 +866,7 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 				true,
 				Transform(),
 				{terrainMesh},
-				hierarchy
+				hierarchy == true || prototype->isEntityHierarchy() == true
 			);
 		} else
 		if (physicsType == PrototypePhysics_BodyType::STATIC_RIGIDBODY) {
@@ -877,7 +877,7 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 				Transform(),
 				prototype->getPhysics()->getFriction(),
 				{terrainMesh},
-				hierarchy
+				hierarchy == true || prototype->isEntityHierarchy() == true
 			);
 		} else
 		if (physicsType == PrototypePhysics_BodyType::DYNAMIC_RIGIDBODY) {
@@ -891,7 +891,7 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 				prototype->getPhysics()->getMass(),
 				prototype->getPhysics()->getInertiaTensor(),
 				{terrainMesh},
-				hierarchy
+				hierarchy == true || prototype->isEntityHierarchy() == true
 			);
 		}
 	} else {
@@ -909,7 +909,7 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 				true,
 				transform,
 				boundingVolumes,
-				hierarchy
+				hierarchy == true || prototype->isEntityHierarchy() == true
 			);
 		} else
 		if (physicsType == PrototypePhysics_BodyType::STATIC_RIGIDBODY) {
@@ -920,7 +920,7 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 				transform,
 				prototype->getPhysics()->getFriction(),
 				boundingVolumes,
-				hierarchy
+				hierarchy == true || prototype->isEntityHierarchy() == true
 			);
 		} else
 		if (physicsType == PrototypePhysics_BodyType::DYNAMIC_RIGIDBODY) {
@@ -934,7 +934,7 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 				prototype->getPhysics()->getMass(),
 				prototype->getPhysics()->getInertiaTensor(),
 				boundingVolumes,
-				hierarchy
+				hierarchy == true || prototype->isEntityHierarchy() == true
 			);
 		}
 	}
