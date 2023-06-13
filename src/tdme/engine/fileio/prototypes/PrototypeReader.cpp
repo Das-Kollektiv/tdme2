@@ -230,7 +230,6 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 	}
 	if (jPrototypeRoot.FindMember("eh") != jPrototypeRoot.MemberEnd()) {
 		prototype->setEntityHierarchy(jPrototypeRoot["eh"].GetBool());
-		Console::println(to_string(jPrototypeRoot["eh"].GetBool()));
 	}
 	if (jPrototypeRoot.FindMember("sch") != jPrototypeRoot.MemberEnd()) {
 		prototype->setScriptHandlingHID(jPrototypeRoot["sch"].GetBool());
