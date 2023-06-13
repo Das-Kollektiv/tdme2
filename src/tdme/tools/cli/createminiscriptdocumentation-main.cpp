@@ -57,19 +57,19 @@ int main(int argc, char** argv)
 		vector<string> methods;
 		for (auto scriptMethod: scriptMethods) {
 			string description;
-			description+= "| <sub>";
+			description+= "| ";
 			description+= methodDescriptions.get("miniscript.basemethod." + scriptMethod->getMethodName(), "Not documented");
-			description+= "</sub>";
 			while (description.size() < 99) description+= " ";
 			description+= "|";
 			methods.push_back(description);
 			string method;
-			method+= "| ";
+			method+= "| <sub>";
 			method+= scriptMethod->getMethodName();
 			method+= "(";
 			method+= scriptMethod->getArgumentsInformation();
 			method+= "): ";
 			method+= MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType());
+			method+= "</sub>";
 			while (method.size() < 99) method+= " ";
 			method+= "|";
 			methods.push_back(method);
@@ -87,19 +87,19 @@ int main(int argc, char** argv)
 		for (auto scriptMethod: scriptMethods) {
 			if (baseMiniScript->hasMethod(scriptMethod->getMethodName()) == true) continue;
 			string description;
-			description+= "| <sub>";
+			description+= "| ";
 			description+= methodDescriptions.get("miniscript.logicmethod." + scriptMethod->getMethodName(), "Not documented");
-			description+= "</sub>";
 			while (description.size() < 99) description+= " ";
 			description+= "|";
 			methods.push_back(description);
 			string method;
-			method+= "| ";
+			method+= "| <sub>";
 			method+= scriptMethod->getMethodName();
 			method+= "(";
 			method+= scriptMethod->getArgumentsInformation();
 			method+= "): ";
 			method+= MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType());
+			method+= "</sub>";
 			while (method.size() < 99) method+= " ";
 			method+= "|";
 			methods.push_back(method);
@@ -117,19 +117,19 @@ int main(int argc, char** argv)
 		for (auto scriptMethod: scriptMethods) {
 			if (baseMiniScript->hasMethod(scriptMethod->getMethodName()) == true) continue;
 			string description;
-			description+= "| <sub>";
+			description+= "| ";
 			description+= methodDescriptions.get("miniscript." + scriptMethod->getMethodName(), "Not documented");
-			description+= "</sub>";
 			while (description.size() < 99) description+= " ";
 			description+= "|";
 			methods.push_back(description);
 			string method;
-			method+= "| ";
+			method+= "| <sub>";
 			method+= scriptMethod->getMethodName();
 			method+= "(";
 			method+= scriptMethod->getArgumentsInformation();
 			method+= "): ";
 			method+= MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType());
+			method+= "</sub>";
 			while (method.size() < 99) method+= " ";
 			method+= "|";
 			methods.push_back(method);
