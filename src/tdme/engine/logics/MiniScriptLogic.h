@@ -90,8 +90,8 @@ public:
 			miniScript->prototypesToAddMutex.lock();
 			for (auto& prototypeToAdd: miniScript->enginePrototypesToAdd) {
 				EntityHierarchy* parentEntity = nullptr;
-				if (prototypeToAdd.entityHierarchyId.empty() == false) {
-					parentEntity = dynamic_cast<EntityHierarchy*>(context->getEngine()->getEntity(prototypeToAdd.entityHierarchyId));
+				if (prototypeToAdd.hierarchyId.empty() == false) {
+					parentEntity = dynamic_cast<EntityHierarchy*>(context->getEngine()->getEntity(prototypeToAdd.hierarchyId));
 				}
 				auto entity =
 					SceneConnector::createEntity(
@@ -104,7 +104,7 @@ public:
 				if (parentEntity == nullptr) {
 					context->getEngine()->addEntity(entity);
 				} else {
-					parentEntity->addEntity(entity, prototypeToAdd.entityHierarchyParentId);
+					parentEntity->addEntity(entity, prototypeToAdd.hierarchyParentId);
 					parentEntity->update();
 				}
 			}
@@ -125,14 +125,14 @@ public:
 		if (miniScript->physicsPrototypesToAdd.empty() == false) {
 			miniScript->prototypesToAddMutex.lock();
 			for (auto& prototypeToAdd: miniScript->physicsPrototypesToAdd) {
-				if (prototypeToAdd.entityHierarchyId.empty() == false) {
+				if (prototypeToAdd.hierarchyId.empty() == false) {
 					SceneConnector::createSubBody(
 						context->getWorld(),
 						prototypeToAdd.prototype,
 						prototypeToAdd.id,
 						prototypeToAdd.transform,
-						prototypeToAdd.entityHierarchyId,
-						prototypeToAdd.entityHierarchyParentId
+						prototypeToAdd.hierarchyId,
+						prototypeToAdd.hierarchyParentId
 					);
 				} else {
 					SceneConnector::createBody(
@@ -156,8 +156,8 @@ public:
 							prototypeToAdd.id,
 							prototype->isScriptHandlingHID(),
 							logicMiniScript,
-							prototypeToAdd.entityHierarchyId,
-							prototypeToAdd.entityHierarchyParentId
+							prototypeToAdd.hierarchyId,
+							prototypeToAdd.hierarchyParentId
 						)
 					);
 				}

@@ -1080,6 +1080,10 @@ Reading all keys as array from set:
 | input.mouse.getY(): Integer                                                                      |
 | <sub>Get Unscaled Y Mouse Position</sub>                                                         |
 | input.mouse.getYUnscaled(): Integer                                                              |
+| <sub>Get Hierarchy Id</sub>                                                                      |
+| logic.getHierarchyId(): String                                                                   |
+| <sub>Get Hierarchy Parent Id</sub>                                                               |
+| logic.getHierarchyParentId(): String                                                             |
 | <sub>Get Logic Id</sub>                                                                          |
 | logic.getId(): String                                                                            |
 | <sub>Call specific Logic Function</sub>                                                          |
@@ -1111,7 +1115,7 @@ Reading all keys as array from set:
 | <sub>Get Scene Dimensions</sub>                                                                  |
 | scene.getDimensions(): Vector3                                                                   |
 | <sub>Add Prototype using SceneConnector</sub>                                                    |
-| sceneconnector.addPrototype($pathName: String, $fileName: String, $id: String, $transform: Transform[, $entityHierarchyId: String[, $entityHierarchyParentId: String]]): Void|
+| sceneconnector.addPrototype($pathName: String, $fileName: String, $id: String, $transform: Transform[, $hierarchyId: String[, $hierarchyParentId: String]]): Void|
 | <sub>Get Physics World Entity Angular Damping</sub>                                              |
 | world.body.getAngularDamping($bodyId: String): Float                                             |
 | <sub>Set Physics World Entity Angular Damping</sub>                                              |

@@ -66,20 +66,20 @@ protected:
 			Prototype* prototype,
 			const string& id,
 			const Transform& transform,
-			const string& entityHierarchyId,
-			const string& entityHierarchyParentId
+			const string& hierarchyId,
+			const string& hierarchyParentId
 		):
 			prototype(prototype),
 			id(id),
 			transform(transform),
-			entityHierarchyId(entityHierarchyId),
-			entityHierarchyParentId(entityHierarchyParentId)
+			hierarchyId(hierarchyId),
+			hierarchyParentId(hierarchyParentId)
 		{}
 		Prototype* prototype { nullptr };
 		string id;
 		Transform transform;
-		string entityHierarchyId;
-		string entityHierarchyParentId;
+		string hierarchyId;
+		string hierarchyParentId;
 	};
 	Mutex prototypesToAddMutex;
 	vector<PrototypeToAdd> enginePrototypesToAdd;
