@@ -71,6 +71,7 @@
   - https://stackoverflow.com/questions/42883404/vulkan-depth-buffer-position-reconstruction
   - https://stackoverflow.com/questions/478898/how-to-execute-a-command-and-get-output-of-command-within-c-using-posix
   - https://stackoverflow.com/questions/496664/c-dynamic-shared-library-on-linux
+  - https://stackoverflow.com/questions/7885203/opengl-alpha-blending
   - https://stackoverflow.com/questions/8696653/dynamically-load-a-function-from-a-dll
   - https://twvideo01.ubm-us.net/o1/vault/gdc2018/presentations/Sobek_Martin_Real-time_Reflections_in_MafiaIII.pdf
   - https://vkguide.dev/docs/chapter-4/storage_buffers/

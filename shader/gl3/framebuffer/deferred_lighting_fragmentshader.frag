@@ -133,9 +133,14 @@ void main(void) {
 		// decals
 		vec4 decalColor = getDecalColor(vsFragTextureUV, depth);
 		if (decalColor.a > 0.0) {
-			float diffuseAlpha = diffuse.a;
-			diffuse = decalColor;
-			diffuse.a = diffuseAlpha;
+			// https://stackoverflow.com/questions/7885203/opengl-alpha-blending
+			vec4 dest = diffuse;
+			vec4 src = decalColor;
+			vec4 result = vec4(0.0);
+			result.a = dest.a * (1.0 - src.a) + src.a;
+			result.rgb = (dest.rgb * dest.a * (1.0 - src.a) + src.rgb * src.a) / result.a;
+			//
+			diffuse = result;
 		}
 
 		//
@@ -187,9 +192,14 @@ void main(void) {
 		// decals
 		vec4 decalColor = getDecalColor(vsFragTextureUV, depth);
 		if (decalColor.a > 0.0) {
-			float baseColorAlpha = pbrMaterial.baseColor.a;
-			pbrMaterial.baseColor = decalColor;
-			pbrMaterial.baseColor.a = baseColorAlpha;
+			// https://stackoverflow.com/questions/7885203/opengl-alpha-blending
+			vec4 dest = pbrMaterial.baseColor;
+			vec4 src = decalColor;
+			vec4 result = vec4(0.0);
+			result.a = dest.a * (1.0 - src.a) + src.a;
+			result.rgb = (dest.rgb * dest.a * (1.0 - src.a) + src.rgb * src.a) / result.a;
+			//
+			pbrMaterial.baseColor = result;
 		}
 
 		//
