@@ -88,6 +88,9 @@ static void generateMiniScriptDocumentation(const string& heading, int mainHeadi
 				if (categories.contains(methodName) == true) {
 					auto& methodMarkup = method.second;
 					methodByCategory2[methodName].insert(methodByCategory2[methodName].begin(), methodMarkup);
+				} else {
+					auto& methodMarkup = method.second;
+					methodByCategory2[string()].insert(methodByCategory2[string()].begin(), methodMarkup);
 				}
 			}
 		}
