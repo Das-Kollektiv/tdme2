@@ -523,6 +523,7 @@ Reading all keys as array from set:
 
 ## 6.1 MiniScript Base Methods - Array Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Create Array                                                                                     |
 | <sub>array(...): Array</sub>                                                                     |
@@ -547,12 +548,14 @@ Reading all keys as array from set:
 
 ## 6.2 MiniScript Base Methods - Console Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Print to Console                                                                                 |
 | <sub>console.log(...): Void</sub>                                                                |
 
 ## 6.3 MiniScript Base Methods - JSON Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Deserialize JSON                                                                                 |
 | <sub>json.deserialize($json: String): Mixed</sub>                                                |
@@ -561,6 +564,7 @@ Reading all keys as array from set:
 
 ## 6.4 MiniScript Base Methods - Map Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Create Map                                                                                       |
 | <sub>map(): Map</sub>                                                                            |
@@ -579,6 +583,7 @@ Reading all keys as array from set:
 
 ## 6.5 MiniScript Base Methods - Matrix3x3 Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Create Identity 3x3 Matrix                                                                       |
 | <sub>mat3.identity(): Matrix3x3</sub>                                                            |
@@ -597,6 +602,7 @@ Reading all keys as array from set:
 
 ## 6.6 MiniScript Base Methods - Matrix4x4 Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Compute Euler Angles from 4x4 Matrix                                                             |
 | <sub>mat4.computeEulerAngles($mat4: Matrix4x4): Vector3</sub>                                    |
@@ -615,6 +621,7 @@ Reading all keys as array from set:
 
 ## 6.7 MiniScript Base Methods - Math Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Degree to Radian Factor                                                                          |
 | <sub>math.DEG2RAD(): Float</sub>                                                                 |
@@ -673,6 +680,7 @@ Reading all keys as array from set:
 
 ## 6.8 MiniScript Base Methods - Quaternion Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Compute 4x4 Rotation Matrix from Quaternion                                                      |
 | <sub>quaternion.computeMatrix($quaternion: Quaternion): Matrix4x4</sub>                          |
@@ -689,6 +697,7 @@ Reading all keys as array from set:
 
 ## 6.9 MiniScript Base Methods - Script Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Get Named Conditions                                                                             |
 | <sub>script.getNamedConditions(): String</sub>                                                   |
@@ -713,6 +722,7 @@ Reading all keys as array from set:
 
 ## 6.10 MiniScript Base Methods - Set Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Create Set                                                                                       |
 | <sub>set(): Set</sub>                                                                            |
@@ -727,6 +737,7 @@ Reading all keys as array from set:
 
 ## 6.11 MiniScript Base Methods - String Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Create String                                                                                    |
 | <sub>string($string: String): String</sub>                                                       |
@@ -779,6 +790,7 @@ Reading all keys as array from set:
 
 ## 6.12 MiniScript Base Methods - Time Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Get Time as String                                                                               |
 | <sub>time.getAsString([$format: String]): String</sub>                                           |
@@ -787,6 +799,7 @@ Reading all keys as array from set:
 
 ## 6.13 MiniScript Base Methods - Transform Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Create Transform                                                                                 |
 | <sub>transform([$translation: Vector3[, $scale: Vector3[, $rotationZ: Float[, $rotationY: Float[, $rotationX: Float]]]]]): Transform</sub>|
@@ -827,6 +840,7 @@ Reading all keys as array from set:
 
 ## 6.14 MiniScript Base Methods - Vector2 Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Create Vector2                                                                                   |
 | <sub>vec2($x: Float, $y: Float): Vector2</sub>                                                   |
@@ -845,6 +859,7 @@ Reading all keys as array from set:
 
 ## 6.15 MiniScript Base Methods - Vector3 Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Create Vector3                                                                                   |
 | <sub>vec3($x: Float, $y: Float, $z: Float): Vector3</sub>                                        |
@@ -869,6 +884,7 @@ Reading all keys as array from set:
 
 ## 6.16 MiniScript Base Methods - Vector4 Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Create Vector4                                                                                   |
 | <sub>vec4($x: Float, $y: Float, $z: Float, $w: Float): Vector4</sub>                             |
@@ -891,6 +907,7 @@ Reading all keys as array from set:
 
 ## 6.17 MiniScript Base Methods - XML Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Create XML Tag                                                                                   |
 | <sub>xml.createTag($name: String[, $attributes: Map[, $innerXML: String]]): String</sub>         |
@@ -898,6 +915,7 @@ Reading all keys as array from set:
 
 ## 7.1 MiniScript Logic Methods - Engine Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Get Engine Entity Id by Mouse Position                                                           |
 | <sub>engine.getEntityIdByMousePosition($mouseX: Integer, $mouseY: Integer): String</sub>         |
@@ -912,6 +930,7 @@ Reading all keys as array from set:
 
 ## 7.2 MiniScript Logic Methods - Engine Camera Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Get Camera horizontal Field Of View                                                              |
 | <sub>engine.camera.getFovX(): Float</sub>                                                        |
@@ -934,6 +953,7 @@ Reading all keys as array from set:
 
 ## 7.3 MiniScript Logic Methods - Engine Entity Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Get Engine Entity Animation                                                                      |
 | <sub>engine.entity.getAnimation($entityId: String[, $childEntityId: String]): String</sub>       |
@@ -992,6 +1012,7 @@ Reading all keys as array from set:
 
 ## 7.4 MiniScript Logic Methods - Engine Timing Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Get Engine Timing Avarage FPS                                                                    |
 | <sub>engine.timing.getAvarageFPS(): Float</sub>                                                  |
@@ -1002,6 +1023,7 @@ Reading all keys as array from set:
 
 ## 7.5 MiniScript Logic Methods - Keyboard Input Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Returns if ALT Key is currently pressed                                                          |
 | <sub>input.keyboard.isAltDown(): Boolean</sub>                                                   |
@@ -1070,6 +1092,7 @@ Reading all keys as array from set:
 
 ## 7.6 MiniScript Logic Methods - Mouse Input Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Left Mouse Button Integer Code                                                                   |
 | <sub>input.mouse.BUTTON_LEFT(): Integer</sub>                                                    |
@@ -1102,6 +1125,7 @@ Reading all keys as array from set:
 
 ## 7.7 MiniScript Logic Methods - Logic Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Get Hierarchy Id                                                                                 |
 | <sub>logic.getHierarchyId(): String</sub>                                                        |
@@ -1114,6 +1138,7 @@ Reading all keys as array from set:
 
 ## 7.8 MiniScript Logic Methods - Logic Signal Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Returns if Signal has been sent                                                                  |
 | <sub>logic.signal.has(): Boolean</sub>                                                           |
@@ -1128,6 +1153,7 @@ Reading all keys as array from set:
 
 ## 7.9 MiniScript Logic Methods - PathFinding Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Pathfinding Idle State Integer Code                                                              |
 | <sub>pathfinding.STATE_IDLE(): Integer</sub>                                                     |
@@ -1146,18 +1172,21 @@ Reading all keys as array from set:
 
 ## 7.10 MiniScript Logic Methods - Scene Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Get Scene Dimensions                                                                             |
 | <sub>scene.getDimensions(): Vector3</sub>                                                        |
 
 ## 7.11 MiniScript Logic Methods - SceneConnector Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Add Prototype using SceneConnector                                                               |
 | <sub>sceneconnector.addPrototype($pathName: String, $fileName: String, $id: String, $transform: Transform[, $hierarchyId: String[, $hierarchyParentId: String]]): Void</sub>|
 
 ## 7.12 MiniScript Logic Methods - Physics World Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Determine Height at specific Position in Physics World                                           |
 | <sub>world.determineHeight($collisionTypeIds: Integer, $stepUpMax: Float, $point: Vector3, =$heightPoint: Vector3[, =$bodyId: String[, $minHeight: Float[, $maxHeight: Float]]]): Boolean</sub>|
@@ -1170,6 +1199,7 @@ Reading all keys as array from set:
 
 ## 7.13 MiniScript Logic Methods - Physics World Body Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Get Physics World Entity Angular Damping                                                         |
 | <sub>world.body.getAngularDamping($bodyId: String): Float</sub>                                  |
@@ -1255,6 +1285,7 @@ Reading all keys as array from set:
 
 ## 8.1 MiniScript GUI Methods - Element Node Condition Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Returns if GUI Element Node has a specific Condition enabled                                     |
 | <sub>gui.elementnode.conditions.has($elementNodeId: String, $condition: String): Boolean</sub>   |
@@ -1273,6 +1304,7 @@ Reading all keys as array from set:
 
 ## 8.2 MiniScript GUI Methods - Event Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Returns GUI Event Performed Action Type Integer Code                                             |
 | <sub>gui.event.ACTIONTYPE_PERFORMED(): Integer</sub>                                             |
@@ -1281,6 +1313,7 @@ Reading all keys as array from set:
 
 ## 8.3 MiniScript GUI Methods - Image Node Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Get Image Source of GUI Image Node                                                               |
 | <sub>gui.imagenode.getSource($imageNodeId: String): String</sub>                                 |
@@ -1289,6 +1322,7 @@ Reading all keys as array from set:
 
 ## 8.4 MiniScript GUI Methods - Node Controller Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Get GUI Node Controller Value                                                                    |
 | <sub>gui.node.controller.getValue($nodeId: String): String</sub>                                 |
@@ -1297,6 +1331,7 @@ Reading all keys as array from set:
 
 ## 8.5 MiniScript GUI Methods - Parent Node Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Add Sub Nodes using XML to GUI Parent Node                                                       |
 | <sub>gui.parentnode.addSubNodes($parentNodeId: String, $xml: String[, $resetScrollOffsets: Boolean]): Void</sub>|
@@ -1307,6 +1342,7 @@ Reading all keys as array from set:
 
 ## 8.6 MiniScript GUI Methods - Screen Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Return if GUI Screen is enabled                                                                  |
 | <sub>gui.screen.isEnabled($screenId: String): Boolean</sub>                                      |
@@ -1323,12 +1359,14 @@ Reading all keys as array from set:
 
 ## 8.7 MiniScript GUI Methods - Screen Node Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Get Current Screen Node Id                                                                       |
 | <sub>gui.screennode.getId(): String</sub>                                                        |
 
 ## 8.8 MiniScript GUI Methods - Text Node Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Get Text of GUI Text Node                                                                        |
 | <sub>gui.textnode.getText($textNodeId: String): String</sub>                                     |
@@ -1337,6 +1375,7 @@ Reading all keys as array from set:
 
 ## 8.9 MiniScript GUI Methods - Video Node Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Get Video Source of GUI Video Node                                                               |
 | <sub>gui.videonode.getSource($videoNodeId: String): String</sub>                                 |
@@ -1345,6 +1384,7 @@ Reading all keys as array from set:
 
 ## 8.10 MiniScript GUI Methods - Keyboard Input Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Returns if ALT Key is currently pressed                                                          |
 | <sub>input.keyboard.isAltDown(): Boolean</sub>                                                   |
@@ -1413,6 +1453,7 @@ Reading all keys as array from set:
 
 ## 8.11 MiniScript GUI Methods - Mouse Input Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Left Mouse Button Integer Code                                                                   |
 | <sub>input.mouse.BUTTON_LEFT(): Integer</sub>                                                    |
@@ -1445,12 +1486,14 @@ Reading all keys as array from set:
 
 ## 8.12 MiniScript GUI Methods - Logic Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Call specific Logic Function                                                                     |
 | <sub>logic.call($logicId: String, $function: String, ...): Mixed</sub>                           |
 
 ## 8.13 MiniScript GUI Methods - Logic Signal Methods
 
+| Table of Methods                                                                                 |
 |--------------------------------------------------------------------------------------------------|
 | Send Signal                                                                                      |
 | <sub>logic.signal.send($logicId: String, $signal: String, ...): Void</sub>                       |
