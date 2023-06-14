@@ -1,6 +1,3 @@
-table {
-    width:100%;
-}
 ![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/github/tdme2-logo.png)
 
 This is the documentation of MiniScript language. This document is WIP.
@@ -523,10 +520,8 @@ Reading all keys as array from set:
 ... TODO ...
 
 # 6. MiniScript Base Methods
-
-## 6.1 MiniScript Base Methods - Array Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 6.1 MiniScript Base Methods - Array Methods |
 |--------------------------------------------------------------------------------------------------|
 | Create Array                                                                                     |
 | <sub>array(...): Array</sub>                                                                     |
@@ -548,26 +543,20 @@ Reading all keys as array from set:
 | <sub>array.reverse(=$array: Array): Void</sub>                                                   |
 | Sort Array                                                                                       |
 | <sub>array.sort(=$array: Array, $function: String): Void</sub>                                   |
-
-## 6.2 MiniScript Base Methods - Console Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 6.2 MiniScript Base Methods - Console Methods |
 |--------------------------------------------------------------------------------------------------|
 | Print to Console                                                                                 |
 | <sub>console.log(...): Void</sub>                                                                |
-
-## 6.3 MiniScript Base Methods - JSON Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 6.3 MiniScript Base Methods - JSON Methods |
 |--------------------------------------------------------------------------------------------------|
 | Deserialize JSON                                                                                 |
 | <sub>json.deserialize($json: String): Mixed</sub>                                                |
 | Serialize JSON                                                                                   |
 | <sub>json.serialize($value: Mixed): String</sub>                                                 |
-
-## 6.4 MiniScript Base Methods - Map Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 6.4 MiniScript Base Methods - Map Methods |
 |--------------------------------------------------------------------------------------------------|
 | Create Map                                                                                       |
 | <sub>map(): Map</sub>                                                                            |
@@ -583,10 +572,8 @@ Reading all keys as array from set:
 | <sub>map.getValues($map: Map): Array</sub>                                                       |
 | Remove Map Entry                                                                                 |
 | <sub>map.remove(=$map: Map, $key: String): Void</sub>                                            |
-
-## 6.5 MiniScript Base Methods - Matrix3x3 Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 6.5 MiniScript Base Methods - Matrix3x3 Methods |
 |--------------------------------------------------------------------------------------------------|
 | Create Identity 3x3 Matrix                                                                       |
 | <sub>mat3.identity(): Matrix3x3</sub>                                                            |
@@ -602,10 +589,8 @@ Reading all keys as array from set:
 | <sub>mat3.scale(...): Matrix3x3</sub>                                                            |
 | Create Translation 3x3 Matrix                                                                    |
 | <sub>mat3.translate($translation: Vector2): Matrix3x3</sub>                                      |
-
-## 6.6 MiniScript Base Methods - Matrix4x4 Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 6.6 MiniScript Base Methods - Matrix4x4 Methods |
 |--------------------------------------------------------------------------------------------------|
 | Compute Euler Angles from 4x4 Matrix                                                             |
 | <sub>mat4.computeEulerAngles($mat4: Matrix4x4): Vector3</sub>                                    |
@@ -621,10 +606,8 @@ Reading all keys as array from set:
 | <sub>mat4.scale(...): Matrix4x4</sub>                                                            |
 | Create Translation 4x4 Matrix                                                                    |
 | <sub>mat4.translate($translation: Vector3): Matrix4x4</sub>                                      |
-
-## 6.7 MiniScript Base Methods - Math Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 6.7 MiniScript Base Methods - Math Methods |
 |--------------------------------------------------------------------------------------------------|
 | Degree to Radian Factor                                                                          |
 | <sub>math.DEG2RAD(): Float</sub>                                                                 |
@@ -680,10 +663,8 @@ Reading all keys as array from set:
 | <sub>math.square($value: Number): Number</sub>                                                   |
 | Compute tan                                                                                      |
 | <sub>math.tan($value: Float): Float</sub>                                                        |
-
-## 6.8 MiniScript Base Methods - Quaternion Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 6.8 MiniScript Base Methods - Quaternion Methods |
 |--------------------------------------------------------------------------------------------------|
 | Compute 4x4 Rotation Matrix from Quaternion                                                      |
 | <sub>quaternion.computeMatrix($quaternion: Quaternion): Matrix4x4</sub>                          |
@@ -697,10 +678,8 @@ Reading all keys as array from set:
 | <sub>quaternion.normalize($quaternion: Quaternion): Quaternion</sub>                             |
 | Create Rotation Quaternion                                                                       |
 | <sub>quaternion.rotate($axis: Vector3, $angle: Float): Quaternion</sub>                          |
-
-## 6.9 MiniScript Base Methods - Script Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 6.9 MiniScript Base Methods - Script Methods |
 |--------------------------------------------------------------------------------------------------|
 | Get Named Conditions                                                                             |
 | <sub>script.getNamedConditions(): String</sub>                                                   |
@@ -722,10 +701,8 @@ Reading all keys as array from set:
 | <sub>script.wait($time: Integer): Void</sub>                                                     |
 | Wait for Condition to happen                                                                     |
 | <sub>script.waitForCondition(): Void</sub>                                                       |
-
-## 6.10 MiniScript Base Methods - Set Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 6.10 MiniScript Base Methods - Set Methods |
 |--------------------------------------------------------------------------------------------------|
 | Create Set                                                                                       |
 | <sub>set(): Set</sub>                                                                            |
@@ -737,10 +714,8 @@ Reading all keys as array from set:
 | <sub>set.insert(=$set: Set, $key: String): Void</sub>                                            |
 | Remove Key from Set                                                                              |
 | <sub>set.remove(=$set: Set, $key: String): Void</sub>                                            |
-
-## 6.11 MiniScript Base Methods - String Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 6.11 MiniScript Base Methods - String Methods |
 |--------------------------------------------------------------------------------------------------|
 | Create String                                                                                    |
 | <sub>string($string: String): String</sub>                                                       |
@@ -790,19 +765,15 @@ Reading all keys as array from set:
 | <sub>string.tokenize($string: String, $delimiters: String): Array</sub>                          |
 | Trim String                                                                                      |
 | <sub>string.trim($string: String): String</sub>                                                  |
-
-## 6.12 MiniScript Base Methods - Time Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 6.12 MiniScript Base Methods - Time Methods |
 |--------------------------------------------------------------------------------------------------|
 | Get Time as String                                                                               |
 | <sub>time.getAsString([$format: String]): String</sub>                                           |
 | Get Current Time in Milliseconds                                                                 |
 | <sub>time.getCurrentMillis(): Integer</sub>                                                      |
-
-## 6.13 MiniScript Base Methods - Transform Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 6.13 MiniScript Base Methods - Transform Methods |
 |--------------------------------------------------------------------------------------------------|
 | Create Transform                                                                                 |
 | <sub>transform([$translation: Vector3[, $scale: Vector3[, $rotationZ: Float[, $rotationY: Float[, $rotationX: Float]]]]]): Transform</sub>|
@@ -840,10 +811,8 @@ Reading all keys as array from set:
 | <sub>transform.multiply($transform: Transform, $vec3: Vector3): Vector3</sub>                    |
 | Rotate Vector3 using Transform                                                                   |
 | <sub>transform.rotate($transform: Transform, $vec3: Vector3): Vector3</sub>                      |
-
-## 6.14 MiniScript Base Methods - Vector2 Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 6.14 MiniScript Base Methods - Vector2 Methods |
 |--------------------------------------------------------------------------------------------------|
 | Create Vector2                                                                                   |
 | <sub>vec2($x: Float, $y: Float): Vector2</sub>                                                   |
@@ -859,10 +828,8 @@ Reading all keys as array from set:
 | <sub>vec2.getY($vec2: Vector2): Float</sub>                                                      |
 | Normalize Vector2                                                                                |
 | <sub>vec2.normalize($vec2: Vector2): Vector2</sub>                                               |
-
-## 6.15 MiniScript Base Methods - Vector3 Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 6.15 MiniScript Base Methods - Vector3 Methods |
 |--------------------------------------------------------------------------------------------------|
 | Create Vector3                                                                                   |
 | <sub>vec3($x: Float, $y: Float, $z: Float): Vector3</sub>                                        |
@@ -884,10 +851,8 @@ Reading all keys as array from set:
 | <sub>vec3.getZ($vec3: Vector3): Float</sub>                                                      |
 | Normalize Vector3                                                                                |
 | <sub>vec3.normalize($vec3: Vector3): Vector3</sub>                                               |
-
-## 6.16 MiniScript Base Methods - Vector4 Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 6.16 MiniScript Base Methods - Vector4 Methods |
 |--------------------------------------------------------------------------------------------------|
 | Create Vector4                                                                                   |
 | <sub>vec4($x: Float, $y: Float, $z: Float, $w: Float): Vector4</sub>                             |
@@ -907,18 +872,14 @@ Reading all keys as array from set:
 | <sub>vec4.getZ($vec4: Vector4): Float</sub>                                                      |
 | Normalize Vector4                                                                                |
 | <sub>vec4.normalize($vec4: Vector4): Vector4</sub>                                               |
-
-## 6.17 MiniScript Base Methods - XML Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 6.17 MiniScript Base Methods - XML Methods |
 |--------------------------------------------------------------------------------------------------|
 | Create XML Tag                                                                                   |
 | <sub>xml.createTag($name: String[, $attributes: Map[, $innerXML: String]]): String</sub>         |
 # 6. MiniScript Base Methods
-
-## 7.1 MiniScript Logic Methods - Engine Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 7.1 MiniScript Logic Methods - Engine Methods |
 |--------------------------------------------------------------------------------------------------|
 | Get Engine Entity Id by Mouse Position                                                           |
 | <sub>engine.getEntityIdByMousePosition($mouseX: Integer, $mouseY: Integer): String</sub>         |
@@ -930,10 +891,8 @@ Reading all keys as array from set:
 | <sub>engine.getWidth(): Integer</sub>                                                            |
 | Compute Engine World Coordinate by Mouse Position                                                |
 | <sub>engine.computeWorldCoordinateByMousePosition($mouseX: Integer, $mouseY: Integer): Vector3</sub>|
-
-## 7.2 MiniScript Logic Methods - Engine Camera Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 7.2 MiniScript Logic Methods - Engine Camera Methods |
 |--------------------------------------------------------------------------------------------------|
 | Get Camera horizontal Field Of View                                                              |
 | <sub>engine.camera.getFovX(): Float</sub>                                                        |
@@ -953,10 +912,8 @@ Reading all keys as array from set:
 | <sub>engine.camera.setUpVector($upVector: Vector3): Void</sub>                                   |
 | Compute Camera Up Vector                                                                         |
 | <sub>engine.camera.computeUpVector($lookFrom: Vector3, $lookAt: Vector3): Vector3</sub>          |
-
-## 7.3 MiniScript Logic Methods - Engine Entity Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 7.3 MiniScript Logic Methods - Engine Entity Methods |
 |--------------------------------------------------------------------------------------------------|
 | Get Engine Entity Animation                                                                      |
 | <sub>engine.entity.getAnimation($entityId: String[, $childEntityId: String]): String</sub>       |
@@ -1012,10 +969,8 @@ Reading all keys as array from set:
 | <sub>engine.entity.removeOverlayAnimation($entityId: String, $animation: String[, $childEntityId: String]): Void</sub>|
 | Remove Overlay Animations                                                                        |
 | <sub>engine.entity.removeOverlayAnimations($entityId: String[, $childEntityId: String]): Void</sub>|
-
-## 7.4 MiniScript Logic Methods - Engine Timing Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 7.4 MiniScript Logic Methods - Engine Timing Methods |
 |--------------------------------------------------------------------------------------------------|
 | Get Engine Timing Avarage FPS                                                                    |
 | <sub>engine.timing.getAvarageFPS(): Float</sub>                                                  |
@@ -1023,10 +978,8 @@ Reading all keys as array from set:
 | <sub>engine.timing.getDeltaTime(): Integer</sub>                                                 |
 | Get Engine Timing Frame Delta Time in Seconds                                                    |
 | <sub>engine.timing.getDeltaTimeSeconds(): Float</sub>                                            |
-
-## 7.5 MiniScript Logic Methods - Keyboard Input Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 7.5 MiniScript Logic Methods - Keyboard Input Methods |
 |--------------------------------------------------------------------------------------------------|
 | Returns if ALT Key is currently pressed                                                          |
 | <sub>input.keyboard.isAltDown(): Boolean</sub>                                                   |
@@ -1092,10 +1045,8 @@ Reading all keys as array from set:
 | <sub>input.keyboard.isShiftDown(): Boolean</sub>                                                 |
 | Returns last typed String                                                                        |
 | <sub>input.keyboard.getTypedString(): String</sub>                                               |
-
-## 7.6 MiniScript Logic Methods - Mouse Input Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 7.6 MiniScript Logic Methods - Mouse Input Methods |
 |--------------------------------------------------------------------------------------------------|
 | Left Mouse Button Integer Code                                                                   |
 | <sub>input.mouse.BUTTON_LEFT(): Integer</sub>                                                    |
@@ -1125,10 +1076,8 @@ Reading all keys as array from set:
 | <sub>input.mouse.getY(): Integer</sub>                                                           |
 | Get Unscaled Y Mouse Position                                                                    |
 | <sub>input.mouse.getYUnscaled(): Integer</sub>                                                   |
-
-## 7.7 MiniScript Logic Methods - Logic Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 7.7 MiniScript Logic Methods - Logic Methods |
 |--------------------------------------------------------------------------------------------------|
 | Get Hierarchy Id                                                                                 |
 | <sub>logic.getHierarchyId(): String</sub>                                                        |
@@ -1138,10 +1087,8 @@ Reading all keys as array from set:
 | <sub>logic.getId(): String</sub>                                                                 |
 | Call specific Logic Function                                                                     |
 | <sub>logic.call($logicId: String, $function: String, ...): Mixed</sub>                           |
-
-## 7.8 MiniScript Logic Methods - Logic Signal Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 7.8 MiniScript Logic Methods - Logic Signal Methods |
 |--------------------------------------------------------------------------------------------------|
 | Returns if Signal has been sent                                                                  |
 | <sub>logic.signal.has(): Boolean</sub>                                                           |
@@ -1153,10 +1100,8 @@ Reading all keys as array from set:
 | <sub>logic.signal.next(): Void</sub>                                                             |
 | Send Signal                                                                                      |
 | <sub>logic.signal.send($logicId: String, $signal: String, ...): Void</sub>                       |
-
-## 7.9 MiniScript Logic Methods - PathFinding Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 7.9 MiniScript Logic Methods - PathFinding Methods |
 |--------------------------------------------------------------------------------------------------|
 | Pathfinding Idle State Integer Code                                                              |
 | <sub>pathfinding.STATE_IDLE(): Integer</sub>                                                     |
@@ -1172,24 +1117,18 @@ Reading all keys as array from set:
 | <sub>pathfinding.STATE_TRYLOCK_FAILED(): Integer</sub>                                           |
 | Issue Pathfinding                                                                                |
 | <sub>pathfinding.findPath($logicId: String, $startPosition: Vector3, $endPosition: Vector3, =$path: Array): Integer</sub>|
-
-## 7.10 MiniScript Logic Methods - Scene Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 7.10 MiniScript Logic Methods - Scene Methods |
 |--------------------------------------------------------------------------------------------------|
 | Get Scene Dimensions                                                                             |
 | <sub>scene.getDimensions(): Vector3</sub>                                                        |
-
-## 7.11 MiniScript Logic Methods - SceneConnector Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 7.11 MiniScript Logic Methods - SceneConnector Methods |
 |--------------------------------------------------------------------------------------------------|
 | Add Prototype using SceneConnector                                                               |
 | <sub>sceneconnector.addPrototype($pathName: String, $fileName: String, $id: String, $transform: Transform[, $hierarchyId: String[, $hierarchyParentId: String]]): Void</sub>|
-
-## 7.12 MiniScript Logic Methods - Physics World Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 7.12 MiniScript Logic Methods - Physics World Methods |
 |--------------------------------------------------------------------------------------------------|
 | Determine Height at specific Position in Physics World                                           |
 | <sub>world.determineHeight($collisionTypeIds: Integer, $stepUpMax: Float, $point: Vector3, =$heightPoint: Vector3[, =$bodyId: String[, $minHeight: Float[, $maxHeight: Float]]]): Boolean</sub>|
@@ -1199,10 +1138,8 @@ Reading all keys as array from set:
 | <sub>world.doRayCasting($collisionTypeIds: Integer, $start: Vector3, $end: Vector3, =$hitPoint: Vector3, =$bodyId: String[, $actorId: String]): Boolean</sub>|
 | Determine Collision of Specific Body in Physics World                                            |
 | <sub>world.doesCollideWith($collisionTypeIds: Integer, $bodyId: String): Array</sub>             |
-
-## 7.13 MiniScript Logic Methods - Physics World Body Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 7.13 MiniScript Logic Methods - Physics World Body Methods |
 |--------------------------------------------------------------------------------------------------|
 | Get Physics World Entity Angular Damping                                                         |
 | <sub>world.body.getAngularDamping($bodyId: String): Float</sub>                                  |
@@ -1285,10 +1222,8 @@ Reading all keys as array from set:
 | Add Torque to Physics World Entity                                                               |
 | <sub>world.body.addTorque($bodyId: String, $torque: Vector3): Void</sub>                         |
 # 6. MiniScript Base Methods
-
-## 8.1 MiniScript GUI Methods - Element Node Condition Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 8.1 MiniScript GUI Methods - Element Node Condition Methods |
 |--------------------------------------------------------------------------------------------------|
 | Returns if GUI Element Node has a specific Condition enabled                                     |
 | <sub>gui.elementnode.conditions.has($elementNodeId: String, $condition: String): Boolean</sub>   |
@@ -1304,37 +1239,29 @@ Reading all keys as array from set:
 | <sub>gui.elementnode.conditions.remove($elementNodeId: String, $condition: String): Void</sub>   |
 | Remove All enabled GUI Element Node Conditions                                                   |
 | <sub>gui.elementnode.conditions.removeAll($elementNodeId: String): Void</sub>                    |
-
-## 8.2 MiniScript GUI Methods - Event Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 8.2 MiniScript GUI Methods - Event Methods |
 |--------------------------------------------------------------------------------------------------|
 | Returns GUI Event Performed Action Type Integer Code                                             |
 | <sub>gui.event.ACTIONTYPE_PERFORMED(): Integer</sub>                                             |
 | Returns GUI Event Performing Action Type Integer Code                                            |
 | <sub>gui.event.ACTIONTYPE_PERFORMING(): Integer</sub>                                            |
-
-## 8.3 MiniScript GUI Methods - Image Node Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 8.3 MiniScript GUI Methods - Image Node Methods |
 |--------------------------------------------------------------------------------------------------|
 | Get Image Source of GUI Image Node                                                               |
 | <sub>gui.imagenode.getSource($imageNodeId: String): String</sub>                                 |
 | Set Image Source of GUI Image Node                                                               |
 | <sub>gui.imagenode.setSource($imageNodeId: String, $source: String): Void</sub>                  |
-
-## 8.4 MiniScript GUI Methods - Node Controller Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 8.4 MiniScript GUI Methods - Node Controller Methods |
 |--------------------------------------------------------------------------------------------------|
 | Get GUI Node Controller Value                                                                    |
 | <sub>gui.node.controller.getValue($nodeId: String): String</sub>                                 |
 | Set GUI Node Controller Value                                                                    |
 | <sub>gui.node.controller.setValue($nodeId: String, $value: String): Void</sub>                   |
-
-## 8.5 MiniScript GUI Methods - Parent Node Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 8.5 MiniScript GUI Methods - Parent Node Methods |
 |--------------------------------------------------------------------------------------------------|
 | Add Sub Nodes using XML to GUI Parent Node                                                       |
 | <sub>gui.parentnode.addSubNodes($parentNodeId: String, $xml: String[, $resetScrollOffsets: Boolean]): Void</sub>|
@@ -1342,10 +1269,8 @@ Reading all keys as array from set:
 | <sub>gui.parentnode.clearSubNodes($parentNodeId: String): Void</sub>                             |
 | Replace Sub Nodes using XML of GUI Parent Node                                                   |
 | <sub>gui.parentnode.replaceSubNodes($parentNodeId: String, $xml: String[, $resetScrollOffsets: Boolean]): Void</sub>|
-
-## 8.6 MiniScript GUI Methods - Screen Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 8.6 MiniScript GUI Methods - Screen Methods |
 |--------------------------------------------------------------------------------------------------|
 | Return if GUI Screen is enabled                                                                  |
 | <sub>gui.screen.isEnabled($screenId: String): Boolean</sub>                                      |
@@ -1359,35 +1284,27 @@ Reading all keys as array from set:
 | <sub>gui.screen.pop(): Void</sub>                                                                |
 | Push Screen to current Screen Stack                                                              |
 | <sub>gui.screen.push($fileName: String[, $variables: Map[, $arguments: Mixed]]): Void</sub>      |
-
-## 8.7 MiniScript GUI Methods - Screen Node Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 8.7 MiniScript GUI Methods - Screen Node Methods |
 |--------------------------------------------------------------------------------------------------|
 | Get Current Screen Node Id                                                                       |
 | <sub>gui.screennode.getId(): String</sub>                                                        |
-
-## 8.8 MiniScript GUI Methods - Text Node Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 8.8 MiniScript GUI Methods - Text Node Methods |
 |--------------------------------------------------------------------------------------------------|
 | Get Text of GUI Text Node                                                                        |
 | <sub>gui.textnode.getText($textNodeId: String): String</sub>                                     |
 | Set Text of GUI Text Node                                                                        |
 | <sub>gui.textnode.setText($textNodeId: String, $text: String): Void</sub>                        |
-
-## 8.9 MiniScript GUI Methods - Video Node Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 8.9 MiniScript GUI Methods - Video Node Methods |
 |--------------------------------------------------------------------------------------------------|
 | Get Video Source of GUI Video Node                                                               |
 | <sub>gui.videonode.getSource($videoNodeId: String): String</sub>                                 |
 | Set Video Source of GUI Video Node                                                               |
 | <sub>gui.videonode.setSource($videoNodeId: String, $source: String): Void</sub>                  |
-
-## 8.10 MiniScript GUI Methods - Keyboard Input Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 8.10 MiniScript GUI Methods - Keyboard Input Methods |
 |--------------------------------------------------------------------------------------------------|
 | Returns if ALT Key is currently pressed                                                          |
 | <sub>input.keyboard.isAltDown(): Boolean</sub>                                                   |
@@ -1453,10 +1370,8 @@ Reading all keys as array from set:
 | <sub>input.keyboard.isShiftDown(): Boolean</sub>                                                 |
 | Returns last typed String                                                                        |
 | <sub>input.keyboard.getTypedString(): String</sub>                                               |
-
-## 8.11 MiniScript GUI Methods - Mouse Input Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 8.11 MiniScript GUI Methods - Mouse Input Methods |
 |--------------------------------------------------------------------------------------------------|
 | Left Mouse Button Integer Code                                                                   |
 | <sub>input.mouse.BUTTON_LEFT(): Integer</sub>                                                    |
@@ -1486,17 +1401,13 @@ Reading all keys as array from set:
 | <sub>input.mouse.getY(): Integer</sub>                                                           |
 | Get Unscaled Y Mouse Position                                                                    |
 | <sub>input.mouse.getYUnscaled(): Integer</sub>                                                   |
-
-## 8.12 MiniScript GUI Methods - Logic Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 8.12 MiniScript GUI Methods - Logic Methods |
 |--------------------------------------------------------------------------------------------------|
 | Call specific Logic Function                                                                     |
 | <sub>logic.call($logicId: String, $function: String, ...): Mixed</sub>                           |
-
-## 8.13 MiniScript GUI Methods - Logic Signal Methods
-
-| Table of Methods                                                                                 |
+|--------------------------------------------------------------------------------------------------|
+| ## 8.13 MiniScript GUI Methods - Logic Signal Methods |
 |--------------------------------------------------------------------------------------------------|
 | Send Signal                                                                                      |
 | <sub>logic.signal.send($logicId: String, $signal: String, ...): Void</sub>                       |
