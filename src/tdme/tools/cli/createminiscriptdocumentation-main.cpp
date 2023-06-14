@@ -100,6 +100,7 @@ static void generateMiniScriptDocumentation(const string& heading, int mainHeadi
 		Console::println();
 		Console::println("## " + to_string(mainHeadingIdx) + "." + to_string(categoryIdx++) + " " + heading + " - " + categoryName);
 		Console::println();
+		Console::println("| Table of Methods                                                                                 |");
 		Console::println("|--------------------------------------------------------------------------------------------------|");
 		auto& methodsMarkup = methodByCategoryIt.second;
 		for (auto& methodMarkup: methodsMarkup) Console::print(methodMarkup);
