@@ -97,8 +97,10 @@ static void generateMiniScriptDocumentation(const string& heading, int mainHeadi
 	for (auto& methodByCategoryIt: methodByCategory2) {
 		auto& category = methodByCategoryIt.first;
 		auto categoryName = descriptions.get(descriptionPrefix + "group." + (category.empty() == true?"uncategorized":category), "Not documented");
-		Console::println("|--------------------------------------------------------------------------------------------------|");
-		Console::println(string() + "| " + "## " + to_string(mainHeadingIdx) + "." + to_string(categoryIdx++) + " " + heading + " - " + categoryName + " |");
+		Console::println();
+		Console::println("## " + to_string(mainHeadingIdx) + "." + to_string(categoryIdx++) + " " + heading + " - " + categoryName);
+		Console::println();
+		Console::println("| --------------------------------------- Table of Methods --------------------------------------- |");
 		Console::println("|--------------------------------------------------------------------------------------------------|");
 		auto& methodsMarkup = methodByCategoryIt.second;
 		for (auto& methodMarkup: methodsMarkup) Console::print(methodMarkup);
