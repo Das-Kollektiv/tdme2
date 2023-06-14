@@ -525,72 +525,72 @@ Reading all keys as array from set:
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Subtract                                                                                         |
-| <sub>sub($a: Mixed, $b: Mixed): Mixed</sub>                                                      |
-| Return from Function with optional Return Value                                                  |
-| <sub>return([$value: Mixed]): Void</sub>                                                         |
-| Prefix Increment                                                                                 |
-| <sub>prefixIncrement(=$variable: Integer): Integer</sub>                                         |
-| Prefix Decrement                                                                                 |
-| <sub>prefixDecrement(=$variable: Integer): Integer</sub>                                         |
-| Logical Or                                                                                       |
-| <sub>or($a: Boolean, $b: Boolean): Boolean</sub>                                                 |
-| Logical Not Equal                                                                                |
-| <sub>notEqual($a: Mixed, $b: Mixed): Boolean</sub>                                               |
-| Logical Not                                                                                      |
-| <sub>not($bool: Boolean): Boolean</sub>                                                          |
-| Multiply                                                                                         |
-| <sub>mul($a: Mixed, $b: Mixed): Mixed</sub>                                                      |
-| Compute Modulo                                                                                   |
-| <sub>mod($value: Number, $range: Number): Number</sub>                                           |
-| Lesser Equals                                                                                    |
-| <sub>lesserEquals($a: Mixed, $b: Mixed): Boolean</sub>                                           |
-| Lesser                                                                                           |
-| <sub>lesser($a: Mixed, $b: Mixed): Boolean</sub>                                                 |
-| Create Integer                                                                                   |
-| <sub>int($int: Integer): Integer</sub>                                                           |
-| If                                                                                               |
-| <sub>if($condition: Boolean): Void</sub>                                                         |
-| Greater Equals                                                                                   |
-| <sub>greaterEquals($a: Mixed, $b: Mixed): Boolean</sub>                                          |
-| Greater                                                                                          |
-| <sub>greater($a: Mixed, $b: Mixed): Boolean</sub>                                                |
-| For Time                                                                                         |
-| <sub>forTime($time: Integer): Void</sub>                                                         |
-| For Condition                                                                                    |
-| <sub>forCondition($condition: Boolean): Void</sub>                                               |
-| Create Float                                                                                     |
-| <sub>float($float: Float): Float</sub>                                                           |
-| Equals                                                                                           |
-| <sub>equals($a: Mixed, $b: Mixed): Boolean</sub>                                                 |
-| End                                                                                              |
-| <sub>end(): Void</sub>                                                                           |
-| Else If                                                                                          |
-| <sub>elseif($condition: Boolean): Void</sub>                                                     |
-| Else                                                                                             |
-| <sub>else(): Void</sub>                                                                          |
-| Divide                                                                                           |
-| <sub>div($a: Mixed, $b: Mixed): Mixed</sub>                                                      |
-| Create Bool                                                                                      |
-| <sub>bool($bool: Boolean): Boolean</sub>                                                         |
-| Bitwise Xor                                                                                      |
-| <sub>bitwiseXor($a: Integer, $b: Integer): Integer</sub>                                         |
-| Bitwise Or                                                                                       |
-| <sub>bitwiseOr($a: Integer, $b: Integer): Integer</sub>                                          |
-| Bitwise Not                                                                                      |
-| <sub>bitwiseNot($value: Integer): Integer</sub>                                                  |
-| Bitwise And                                                                                      |
-| <sub>bitwiseAnd($a: Integer, $b: Integer): Integer</sub>                                         |
-| Logical And                                                                                      |
-| <sub>and($a: Boolean, $b: Boolean): Boolean</sub>                                                |
-| Add                                                                                              |
-| <sub>add($a: Mixed, $b: Mixed): Mixed</sub>                                                      |
-| Unset Variable                                                                                   |
-| <sub>unsetVariable($variable: String): Void</sub>                                                |
-| Set Variable                                                                                     |
-| <sub>setVariable($variable: String, $value: Mixed): Mixed</sub>                                  |
 | Get Variable                                                                                     |
 | <sub>getVariable($variable: String): Mixed</sub>                                                 |
+| Set Variable                                                                                     |
+| <sub>setVariable($variable: String, $value: Mixed): Mixed</sub>                                  |
+| Unset Variable                                                                                   |
+| <sub>unsetVariable($variable: String): Void</sub>                                                |
+| Add                                                                                              |
+| <sub>add($a: Mixed, $b: Mixed): Mixed</sub>                                                      |
+| Logical And                                                                                      |
+| <sub>and($a: Boolean, $b: Boolean): Boolean</sub>                                                |
+| Bitwise And                                                                                      |
+| <sub>bitwiseAnd($a: Integer, $b: Integer): Integer</sub>                                         |
+| Bitwise Not                                                                                      |
+| <sub>bitwiseNot($value: Integer): Integer</sub>                                                  |
+| Bitwise Or                                                                                       |
+| <sub>bitwiseOr($a: Integer, $b: Integer): Integer</sub>                                          |
+| Bitwise Xor                                                                                      |
+| <sub>bitwiseXor($a: Integer, $b: Integer): Integer</sub>                                         |
+| Create Bool                                                                                      |
+| <sub>bool($bool: Boolean): Boolean</sub>                                                         |
+| Divide                                                                                           |
+| <sub>div($a: Mixed, $b: Mixed): Mixed</sub>                                                      |
+| Else                                                                                             |
+| <sub>else(): Void</sub>                                                                          |
+| Else If                                                                                          |
+| <sub>elseif($condition: Boolean): Void</sub>                                                     |
+| End                                                                                              |
+| <sub>end(): Void</sub>                                                                           |
+| Equals                                                                                           |
+| <sub>equals($a: Mixed, $b: Mixed): Boolean</sub>                                                 |
+| Create Float                                                                                     |
+| <sub>float($float: Float): Float</sub>                                                           |
+| For Condition                                                                                    |
+| <sub>forCondition($condition: Boolean): Void</sub>                                               |
+| For Time                                                                                         |
+| <sub>forTime($time: Integer): Void</sub>                                                         |
+| Greater                                                                                          |
+| <sub>greater($a: Mixed, $b: Mixed): Boolean</sub>                                                |
+| Greater Equals                                                                                   |
+| <sub>greaterEquals($a: Mixed, $b: Mixed): Boolean</sub>                                          |
+| If                                                                                               |
+| <sub>if($condition: Boolean): Void</sub>                                                         |
+| Create Integer                                                                                   |
+| <sub>int($int: Integer): Integer</sub>                                                           |
+| Lesser                                                                                           |
+| <sub>lesser($a: Mixed, $b: Mixed): Boolean</sub>                                                 |
+| Lesser Equals                                                                                    |
+| <sub>lesserEquals($a: Mixed, $b: Mixed): Boolean</sub>                                           |
+| Compute Modulo                                                                                   |
+| <sub>mod($value: Number, $range: Number): Number</sub>                                           |
+| Multiply                                                                                         |
+| <sub>mul($a: Mixed, $b: Mixed): Mixed</sub>                                                      |
+| Logical Not                                                                                      |
+| <sub>not($bool: Boolean): Boolean</sub>                                                          |
+| Logical Not Equal                                                                                |
+| <sub>notEqual($a: Mixed, $b: Mixed): Boolean</sub>                                               |
+| Logical Or                                                                                       |
+| <sub>or($a: Boolean, $b: Boolean): Boolean</sub>                                                 |
+| Prefix Decrement                                                                                 |
+| <sub>prefixDecrement(=$variable: Integer): Integer</sub>                                         |
+| Prefix Increment                                                                                 |
+| <sub>prefixIncrement(=$variable: Integer): Integer</sub>                                         |
+| Return from Function with optional Return Value                                                  |
+| <sub>return([$value: Mixed]): Void</sub>                                                         |
+| Subtract                                                                                         |
+| <sub>sub($a: Mixed, $b: Mixed): Mixed</sub>                                                      |
 
 ## 6.2 Array Methods
 
