@@ -1,8 +1,6 @@
-<style>
-    table {
-        width: 100%;
-    }
-</style>
+table {
+    width:100%;
+}
 ![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/github/tdme2-logo.png)
 
 This is the documentation of MiniScript language. This document is WIP.
