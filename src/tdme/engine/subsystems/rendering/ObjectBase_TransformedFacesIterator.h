@@ -139,18 +139,16 @@ public:
 				auto vertexIndex = faceVertexIndices[faceVertexIndex];
 				vertex = &nodeVertices[vertexIndex];
 				vertices[faceVertexIndex].set(0.0f, 0.0f, 0.0f);
-				// compute every influence on vertex and vertex normals
+				// compute every influence on vertex
 				totalWeights = 0.0f;
 				for (auto vertexJointWeightIdx = 0; vertexJointWeightIdx < jointsWeights[vertexIndex].size(); vertexJointWeightIdx++) {
-					auto weight = objectNode->mesh->skinningJointWeight[vertexIndex][vertexJointWeightIdx];
 					// skip on missing matrix
 					auto skinningJointTransformMatrix = objectNode->mesh->skinningJointTransformMatrices[instanceIdx][vertexIndex][vertexJointWeightIdx];
 					if (skinningJointTransformMatrix == nullptr) continue;
-					//
+					// assemble vertex
+					auto weight = objectNode->mesh->skinningJointWeight[vertexIndex][vertexJointWeightIdx];
 					transformMatrix.set(*skinningJointTransformMatrix).multiply(objectBase->getTransformMatrix());
-					// vertex
 					vertices[faceVertexIndex].add(transformMatrix.multiply(*vertex).scale(weight));
-					//
 					totalWeights += weight;
 				}
 				// scale to full weight

@@ -250,7 +250,7 @@ void ObjectNodeMesh::computeSkinning(int contextIdx, ObjectBase* objectBase)
 				if (objectBase->instanceEnabled[i] == false) continue;
 				objectBase->setCurrentInstance(i);
 				for (auto vertexIndex = 0; vertexIndex < nodeVertices.size(); vertexIndex++) {
-					// do vertices
+					// do vertices, normals, tangents and bitangents
 					vertex = &nodeVertices[vertexIndex];
 					transformedVertex = &transformedVertices[nodeVertices.size() * j + vertexIndex].set(0.0f, 0.0f, 0.0f);
 					normal = &nodeNormals[vertexIndex];
@@ -259,19 +259,14 @@ void ObjectNodeMesh::computeSkinning(int contextIdx, ObjectBase* objectBase)
 					transformedTangent = tangents != nullptr?&transformedTangents[nodeVertices.size() * j + vertexIndex].set(0.0f, 0.0f, 0.0f):nullptr;
 					bitangent = bitangents != nullptr?&nodeBitangent[vertexIndex]:nullptr;
 					transformedBitangent = bitangents != nullptr?&transformedBitangents[nodeVertices.size() * j + vertexIndex].set(0.0f, 0.0f, 0.0f):nullptr;
-					// compute every influence on vertex and vertex normals
+					// compute every influence on vertex and ...
 					totalWeights = 0.0f;
 					for (auto vertexJointWeightIdx = 0; vertexJointWeightIdx < jointsWeights[vertexIndex].size(); vertexJointWeightIdx++) {
-						auto weight = skinningJointWeight[vertexIndex][vertexJointWeightIdx];
-						/*
-						// skip on missing transform matrix
-						if (i >= cSkinningJointTransformMatrices.size() ||
-							vertexIndex >= cSkinningJointTransformMatrices[i].size() ||
-							vertexJointWeightIdx >= cSkinningJointTransformMatrices[i][vertexIndex].size()) continue;
-						*/
 						// skip on missing matrix
 						auto skinningJointTransformMatrix = skinningJointTransformMatrices[i][vertexIndex][vertexJointWeightIdx];
 						if (skinningJointTransformMatrix == nullptr) continue;
+						//
+						auto weight = skinningJointWeight[vertexIndex][vertexJointWeightIdx];
 						//
 						transformMatrix.set(*skinningJointTransformMatrix).multiply(objectBase->getTransformMatrix());
 						// vertex
