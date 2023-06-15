@@ -211,7 +211,7 @@ void PathFindingTest::doPathFinding() {
 	if (pathFinding->findPath(
 			playerObject->getTransform().getTranslation(),
 			pathPositions[(int)(Math::random() * pathPositions.size())],
-			SceneConnector::RIGIDBODY_TYPEID_STATIC,
+			SceneConnector::BODY_TYPEID_STATIC,
 			path
 		) == true) {
 		Console::println("Found a path: steps: " + to_string(path.size()));

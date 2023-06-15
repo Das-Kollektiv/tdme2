@@ -31,6 +31,7 @@
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 #include <tdme/utilities/MiniScript.h>
 #include <tdme/utilities/UTF8CharacterIterator.h>
 
@@ -67,6 +68,7 @@ using tdme::os::threading::Mutex;
 using tdme::tools::editor::misc::Tools;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
+using tdme::utilities::Exception;
 using tdme::utilities::MiniScript;
 using tdme::utilities::UTF8CharacterIterator;
 
@@ -115,6 +117,42 @@ void LogicMiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodLogicGetId(this));
+	}
+	{
+		//
+		class ScriptMethodLogicGetHierarchyId: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodLogicGetHierarchyId(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_STRING),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "logic.getHierarchyId";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue.setValue(miniScript->logic->getHierarchyId());
+			}
+		};
+		registerMethod(new ScriptMethodLogicGetHierarchyId(this));
+	}
+	{
+		//
+		class ScriptMethodLogicGetHierarchyParentId: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodLogicGetHierarchyParentId(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_STRING),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "logic.getHierarchyParentId";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue.setValue(miniScript->logic->getHierarchyParentId());
+			}
+		};
+		registerMethod(new ScriptMethodLogicGetHierarchyParentId(this));
 	}
 	{
 		//
@@ -4106,8 +4144,8 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "fileName", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "id", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityHierarchyId", .optional = true, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityHierarchyParentId", .optional = true, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "hierarchyId", .optional = true, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "hierarchyParentId", .optional = true, .assignBack = false },
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -4120,14 +4158,14 @@ void LogicMiniScript::registerMethods() {
 				string fileName;
 				string id;
 				Transform transform;
-				string entityHierarchyId;
-				string entityHierarchyParentId;
+				string hierarchyId;
+				string hierarchyParentId;
 				if (miniScript->getStringValue(argumentValues, 0, pathName) == true &&
 					miniScript->getStringValue(argumentValues, 1, fileName) == true &&
 					miniScript->getStringValue(argumentValues, 2, id) == true &&
 					miniScript->getTransformValue(argumentValues, 3, transform) == true &&
-					miniScript->getStringValue(argumentValues, 4, entityHierarchyId, true) == true &&
-					miniScript->getStringValue(argumentValues, 5, entityHierarchyParentId, true) == true) {
+					miniScript->getStringValue(argumentValues, 4, hierarchyId, true) == true &&
+					miniScript->getStringValue(argumentValues, 5, hierarchyParentId, true) == true) {
 					miniScript->prototypesToAddMutex.lock();
 					try {
 						auto _pathName = pathName;
@@ -4151,15 +4189,15 @@ void LogicMiniScript::registerMethods() {
 							prototype,
 							id,
 							transform,
-							entityHierarchyId,
-							entityHierarchyParentId
+							hierarchyId,
+							hierarchyParentId
 						);
 						miniScript->physicsPrototypesToAdd.emplace_back(
 							prototype,
 							id,
 							transform,
-							entityHierarchyParentId,
-							string()
+							hierarchyId,
+							hierarchyParentId
 						);
 					} catch (Exception& exception) {
 						miniScript->prototypesToAddMutex.unlock();

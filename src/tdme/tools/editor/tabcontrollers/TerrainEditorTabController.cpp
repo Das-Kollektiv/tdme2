@@ -246,7 +246,7 @@ void TerrainEditorTabController::showInfoPopUp(const string& caption, const stri
 
 void TerrainEditorTabController::onChange(GUIElementNode* node)
 {
-	if (basePropertiesSubController->onChange(node, view->getPrototype()) == true) return;
+	if (basePropertiesSubController->onChange(node, view->getPrototype(), view->getPrototype()) == true) return;
 	//
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();

@@ -92,6 +92,7 @@ private:
 
 	/**
 	 * Get entity hierarchy level by given entity id
+	 * @param id id
 	 */
 	inline EntityHierarchyLevel* getEntityHierarchyLevel(const string& id) {
 		if (id.empty()) return &entityRoot;
@@ -142,7 +143,11 @@ public:
 	/**
 	 * @return entity from hierarchy by given unique id
 	 */
-	Entity* getEntity(const string& id);
+	inline Entity* getEntity(const string& id) {
+		auto entityHierarchyLevel = getEntityHierarchyLevel(id);
+		if (entityHierarchyLevel == nullptr || entityHierarchyLevel->parent == nullptr) return nullptr;
+		return entityHierarchyLevel->entity;
+	}
 
 	/**
 	 * Adds a entity to the hierarchy
@@ -157,8 +162,8 @@ public:
 	void removeEntity(const string& id);
 
 	/**
-	 * Query direct sub entities for given parent entity id
-	 * @param parentId parent id to entities from
+	 * Query sub entities of parent entity
+	 * @param parentId parent entity id
 	 * @return entities
 	 */
 	const vector<Entity*> query(const string& parentId = string());

@@ -29,6 +29,7 @@ class tdme::engine::primitives::BoundingVolume
 	friend class OrientedBoundingBox;
 	friend class Sphere;
 	friend class tdme::engine::physics::Body;
+	friend class tdme::engine::physics::BodyHierarchy;
 	friend class tdme::engine::physics::World;
 	friend class tdme::utilities::Primitives;
 

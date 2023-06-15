@@ -40,7 +40,7 @@ public:
 		this->fileName = fileName;
 	}
 
-	// override methods
+	// overridden methods
 	bool isPlaying() override;
 	void rewind() override;
 	void play() override;

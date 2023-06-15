@@ -49,12 +49,6 @@ void EntityHierarchy::setRenderer(Renderer* renderer)
 	for (auto entity: entities) entity->setRenderer(renderer);
 }
 
-Entity* EntityHierarchy::getEntity(const string& id) {
-	auto entityHierarchyLevel = getEntityHierarchyLevel(id);
-	if (entityHierarchyLevel == nullptr || entityHierarchyLevel->parent == nullptr) return nullptr;
-	return entityHierarchyLevel->entity;
-}
-
 void EntityHierarchy::addEntity(Entity* entity, const string& parentId) {
 	auto _entity = getEntity(entity->getId());
 	if (_entity == entity) {
@@ -125,7 +119,7 @@ const vector<Entity*> EntityHierarchy::query(const string& parentId) {
 	if (parentEntityHierarchyLevel == nullptr) {
 		return entities;
 	}
-	for (auto entityIt: parentEntityHierarchyLevel->children) {
+	for (auto& entityIt: parentEntityHierarchyLevel->children) {
 		entities.push_back(entityIt.second->entity);
 	}
 	return entities;
@@ -135,7 +129,7 @@ void EntityHierarchy::updateHierarchy(const Transform& parentTransform, EntityHi
 	BoundingBox entityBoundingBox;
 	auto levelParentTransform = parentTransform;
 	if (entityHierarchyLevel->entity != nullptr) levelParentTransform*= entityHierarchyLevel->entity->getTransform();
-	for (auto entityIt: entityHierarchyLevel->children) {
+	for (auto& entityIt: entityHierarchyLevel->children) {
 		auto entity = entityIt.second->entity;
 		entity->setParentTransform(levelParentTransform);
 		entityBoundingBox.fromBoundingVolumeWithTransformMatrix(entity->getWorldBoundingBox(), entityTransformMatrixInverted);

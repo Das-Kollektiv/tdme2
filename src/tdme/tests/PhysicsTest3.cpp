@@ -174,24 +174,24 @@ void PhysicsTest3::initialize()
 	entity->setTranslation(Vector3(0.0f, 0.0f, +9.0f));
 	entity->update();
 	engine->addEntity(entity);
-	world->addStaticRigidBody("far", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.5f, {nearFar});
+	world->addStaticRigidBody("far", RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.5f, {nearFar});
 	entity = new Object("near", nearFarModel);
 	entity->setTranslation(Vector3(0.0f, 0.0f, -9.0f));
 	entity->setEffectColorMul(Color4(1.0f, 1.0f, 1.0f, 0.0f));
 	entity->update();
 	entity->setEnabled(false);
 	engine->addEntity(entity);
-	world->addStaticRigidBody("near", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.5f, {nearFar});
+	world->addStaticRigidBody("near", RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.5f, {nearFar});
 	entity = new Object("sideright", sideModel);
 	entity->setTranslation(Vector3(-9.0f, 0.0f, 0.0f));
 	entity->update();
 	engine->addEntity(entity);
-	world->addStaticRigidBody("sideright", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.5f, {side});
+	world->addStaticRigidBody("sideright", RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.5f, {side});
 	entity = new Object("sideleft", sideModel);
 	entity->setTranslation(Vector3(9.0f, 0.0f, 0.0f));
 	entity->update();
 	engine->addEntity(entity);
-	world->addStaticRigidBody("sideleft", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.5f, {side});
+	world->addStaticRigidBody("sideleft", RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.5f, {side});
 	auto box = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(0.6f, 0.6f, 0.6f)));
 	auto boxModel = modelDeleter.add(Primitives::createModel(box, "box_model"));
 	boxModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.5f, 0.5f, 1.0f));
@@ -203,7 +203,7 @@ void PhysicsTest3::initialize()
 		entity->setTranslation(Vector3(-2.0f + i * 0.1f, 10.0f + i * 3.0f, 0.0f));
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody("box" + to_string(i), true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {box});
+		world->addRigidBody("box" + to_string(i), RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {box});
 	}
 	for (auto i = 0; i < BOXSTACK_COUNT; i++) {
 		entity = new Object("box" + to_string(BOX_COUNT + i), boxModel);
@@ -212,7 +212,7 @@ void PhysicsTest3::initialize()
 		entity->setTranslation(Vector3(+3.0f, 1.6f + (i * 1.2f), -5.0f));
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody("box" + to_string(BOX_COUNT + i), true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {box});
+		world->addRigidBody("box" + to_string(BOX_COUNT + i), RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {box});
 	}
 	auto sphere = bvDeleter.add(new Sphere(Vector3(0.0f, 0.0f, 0.0f), 0.4f));
 	auto sphereModel = modelDeleter.add(Primitives::createModel(sphere, "sphere_model"));
@@ -225,7 +225,7 @@ void PhysicsTest3::initialize()
 		entity->setTranslation(Vector3(0.45f * i - 3.0f, 12.0f + (i * 1.0f), 0.1f * i - 3.0f));
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody("sphere" + to_string(i), true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.75f, 0.4f, 10.0f, Vector3(1.0f, 1.0f, 1.0f), {sphere});
+		world->addRigidBody("sphere" + to_string(i), RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.75f, 0.4f, 10.0f, Vector3(1.0f, 1.0f, 1.0f), {sphere});
 	}
 	auto capsule = bvDeleter.add(new Capsule(Vector3(0.0f, 0.5f, 0.0f), Vector3(0.0f, -0.5f, 0.0f), 0.25f));
 	auto capsuleModel = modelDeleter.add(Primitives::createModel(capsule, "capsule_model"));
@@ -238,7 +238,7 @@ void PhysicsTest3::initialize()
 		entity->setTranslation(Vector3((i * 0.5f), 14.0f + (i * 2.0f), 0.0f));
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody("capsule" + to_string(i), true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.0f, 0.4f, 3.0f, Vector3(1.0f, 1.0f, 1.0f), {capsule});
+		world->addRigidBody("capsule" + to_string(i), RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.0f, 0.4f, 3.0f, Vector3(1.0f, 1.0f, 1.0f), {capsule});
 	}
 	auto capsuleBig = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(0.5f, 1.0f, 0.5f)));
 	auto capsuleBigModel = modelDeleter.add(Primitives::createModel(capsuleBig, "capsulebig_model"));
@@ -250,14 +250,14 @@ void PhysicsTest3::initialize()
 	entity->setTranslation(Vector3(-2.0f, 5.0f, 0.0f));
 	entity->update();
 	engine->addEntity(entity);
-	world->addRigidBody("capsulebig1", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.0f, 1.0f, 80.0f, Body::getNoRotationInertiaTensor(), {capsuleBig});
+	world->addRigidBody("capsulebig1", RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.0f, 1.0f, 80.0f, Body::getNoRotationInertiaTensor(), {capsuleBig});
 	entity = new Object("capsulebig2", capsuleBigModel);
 	entity->setContributesShadows(true);
 	entity->setReceivesShadows(true);
 	entity->setTranslation(Vector3(+2.0f, 5.0f, 0.0f));
 	entity->update();
 	engine->addEntity(entity);
-	world->addRigidBody("capsulebig2", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.0f, 1.0f, 100.0f, Body::getNoRotationInertiaTensor(), {capsuleBig});
+	world->addRigidBody("capsulebig2", RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.0f, 1.0f, 100.0f, Body::getNoRotationInertiaTensor(), {capsuleBig});
 	try {
 		auto _terrainModel = modelDeleter.add(ModelReader::read("resources/tests/environment/terrain_test", "terrain_test4.dae"));
 		entity = new Object("terrain", _terrainModel);
@@ -269,7 +269,7 @@ void PhysicsTest3::initialize()
 		engine->addEntity(entity);
 		ObjectModel terrainModel(_terrainModel);
 		auto terrainMesh = new TerrainMesh(&terrainModel, entity->getTransform());
-		world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, Transform(), 0.5f, {terrainMesh});
+		world->addStaticRigidBody("ground", RIGID_TYPEID_STANDARD, true, Transform(), 0.5f, {terrainMesh});
 		auto _barrel = modelDeleter.add(ModelReader::read("resources/tests/models/barrel", "barrel.dae"));
 		auto barrelBoundingVolume = bvDeleter.add(new ConvexMesh(objectModelDeleter.add(new ObjectModel(_barrel))));
 		entity = new Object("barrel1", _barrel);
@@ -279,7 +279,7 @@ void PhysicsTest3::initialize()
 		entity->setScale(Vector3(2.0f, 2.0f, 2.0f));
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody("barrel1", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {barrelBoundingVolume});
+		world->addRigidBody("barrel1", RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {barrelBoundingVolume});
 		entity = new Object("barrel2", _barrel);
 		entity->setContributesShadows(true);
 		entity->setReceivesShadows(true);
@@ -287,7 +287,7 @@ void PhysicsTest3::initialize()
 		entity->setScale(Vector3(2.0f, 2.0f, 2.0f));
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody("barrel2", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {barrelBoundingVolume});
+		world->addRigidBody("barrel2", RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {barrelBoundingVolume});
 		auto _cone = modelDeleter.add(ModelReader::read("resources/tests/models/cone", "cone.dae"));
 		auto coneBoundingVolume = bvDeleter.add(new ConvexMesh(objectModelDeleter.add(new ObjectModel(_cone))));
 		entity = new Object("cone1", _cone);
@@ -297,7 +297,7 @@ void PhysicsTest3::initialize()
 		entity->setScale(Vector3(3.0f, 3.0f, 3.0f));
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody("cone1", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {coneBoundingVolume});
+		world->addRigidBody("cone1", RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {coneBoundingVolume});
 		entity = new Object("cone2", _cone);
 		entity->setContributesShadows(true);
 		entity->setReceivesShadows(true);
@@ -305,7 +305,7 @@ void PhysicsTest3::initialize()
 		entity->setScale(Vector3(3.0f, 3.0f, 3.0f));
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody("cone2", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {coneBoundingVolume});
+		world->addRigidBody("cone2", RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {coneBoundingVolume});
 		auto _tire = modelDeleter.add(ModelReader::read("resources/tests/models/tire", "tire.dae"));
 		auto tireBoundingVolume = bvDeleter.add(new ConvexMesh(objectModelDeleter.add(new ObjectModel(_tire))));
 		entity = new Object("tire1", _tire);
@@ -316,7 +316,7 @@ void PhysicsTest3::initialize()
 		entity->setScale(Vector3(2.0f, 2.0f, 2.0f));
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody("tire1", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {tireBoundingVolume});
+		world->addRigidBody("tire1", RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {tireBoundingVolume});
 		entity = new Object("tire2", _tire);
 		entity->setContributesShadows(true);
 		entity->setReceivesShadows(true);
@@ -325,7 +325,7 @@ void PhysicsTest3::initialize()
 		entity->setScale(Vector3(2.0f, 2.0f, 2.0f));
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody("tire2", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {tireBoundingVolume});
+		world->addRigidBody("tire2", RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {tireBoundingVolume});
 	} catch (Exception& exception) {
 		Console::print(string("PhysicsTest3::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));

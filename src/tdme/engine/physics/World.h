@@ -21,7 +21,7 @@ using std::string;
 using std::vector;
 
 using tdme::engine::physics::Body;
-using tdme::engine::physics::HierarchyBody;
+using tdme::engine::physics::BodyHierarchy;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::WorldListener;
 using tdme::engine::primitives::BoundingVolume;
@@ -94,8 +94,8 @@ public:
 	/**
 	 * Add a rigid body
 	 * @param id id
-	 * @param enabled enabled
 	 * @param collisionTypeId collision type id
+	 * @param enabled enabled
 	 * @param transform transform
 	 * @param restitution restitution
 	 * @param friction friction
@@ -104,41 +104,41 @@ public:
 	 * @param boundingVolumes bounding volumes
 	 * @return body
 	 */
-	Body* addRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy = false);
+	Body* addRigidBody(const string& id, uint16_t collisionTypeId, bool enabled, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy = false);
 
 	/**
 	 * Add a static collision body
 	 * @param id id
-	 * @param enabled enabled
 	 * @param collisionTypeId collision type id
+	 * @param enabled enabled
 	 * @param transform transform
 	 * @param boundingVolumes bounding volumes
 	 * @return body
 	 */
-	Body* addStaticCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy = false);
+	Body* addStaticCollisionBody(const string& id, uint16_t collisionTypeId, bool enabled, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy = false);
 
 	/**
 	 * Add a dynamic collision body
 	 * @param id id
-	 * @param enabled enabled
 	 * @param collisionTypeId collision type id
+	 * @param enabled enabled
 	 * @param transform transform
 	 * @param boundingVolumes bounding volumes
 	 * @return body
 	 */
-	Body* addDynamicCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy = false);
+	Body* addDynamicCollisionBody(const string& id, uint16_t collisionTypeId, bool enabled, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy = false);
 
 	/**
 	 * Add a static rigid body
 	 * @param id id
-	 * @param enabled enabled
 	 * @param collisionTypeId collision type id
+	 * @param enabled enabled
 	 * @param transform transform
 	 * @param friction friction
 	 * @param boundingVolumes bounding volumes
 	 * @return body
 	 */
-	Body* addStaticRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, float friction, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy = false);
+	Body* addStaticRigidBody(const string& id, uint16_t collisionTypeId, bool enabled, const Transform& transform, float friction, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy = false);
 
 	/**
 	 * Returns body identified by id
@@ -154,11 +154,11 @@ public:
 	}
 
 	/**
-	 * Returns hierarchy body identified by id
+	 * Returns body hierarchy identified by id
 	 * @param id id
-	 * @return hierarchy body
+	 * @return body hierarchy
 	 */
-	HierarchyBody* getHierarchyBody(const string& id);
+	BodyHierarchy* getBodyHierarchy(const string& id);
 
 	/**
 	 * Removes body identified by id

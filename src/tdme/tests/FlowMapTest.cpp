@@ -200,7 +200,7 @@ void FlowMapTest::doPathFinding() {
 	pathFinding->findPath(
 		startPlayerObject->getTransform().getTranslation(),
 		endPlayerObject1->getTransform().getTranslation(),
-		SceneConnector::RIGIDBODY_TYPEID_STATIC,
+		SceneConnector::BODY_TYPEID_STATIC,
 		path
 	);
 	Console::println("Found a path: steps: " + to_string(path.size()));
@@ -215,7 +215,7 @@ void FlowMapTest::doPathFinding() {
 		center,
 		width * 2.0f,
 		depth * 2.0f,
-		SceneConnector::RIGIDBODY_TYPEID_STATIC,
+		SceneConnector::BODY_TYPEID_STATIC,
 		path
 	);
 	auto i = 0;

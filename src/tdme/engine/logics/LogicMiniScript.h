@@ -15,7 +15,7 @@ using std::string;
 using std::unordered_map;
 
 using tdme::engine::logics::Context;
-using tdme::engine::logics::Logic;
+using tdme::engine::logics::MiniScriptLogic;
 using tdme::engine::physics::Body;
 using tdme::engine::prototype::Prototype;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -31,7 +31,7 @@ class tdme::engine::logics::LogicMiniScript: public MiniScript {
 
 protected:
 	Context* context { nullptr };
-	Logic* logic { nullptr };
+	MiniScriptLogic* logic { nullptr };
 
 	// keys
 	unordered_set<int32_t> keyboardChars;
@@ -66,20 +66,20 @@ protected:
 			Prototype* prototype,
 			const string& id,
 			const Transform& transform,
-			const string& entityHierarchyId,
-			const string& entityHierarchyParentId
+			const string& hierarchyId,
+			const string& hierarchyParentId
 		):
 			prototype(prototype),
 			id(id),
 			transform(transform),
-			entityHierarchyId(entityHierarchyId),
-			entityHierarchyParentId(entityHierarchyParentId)
+			hierarchyId(hierarchyId),
+			hierarchyParentId(hierarchyParentId)
 		{}
 		Prototype* prototype { nullptr };
 		string id;
 		Transform transform;
-		string entityHierarchyId;
-		string entityHierarchyParentId;
+		string hierarchyId;
+		string hierarchyParentId;
 	};
 	Mutex prototypesToAddMutex;
 	vector<PrototypeToAdd> enginePrototypesToAdd;
@@ -97,7 +97,7 @@ protected:
 	 * Set logic
 	 * @param logic logic
 	 */
-	inline void setLogic(Logic* logic) {
+	inline void setLogic(MiniScriptLogic* logic) {
 		this->logic = logic;
 	}
 

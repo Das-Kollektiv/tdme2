@@ -89,6 +89,7 @@ public:
 			float mass;
 			Vector3 inertiaTensor;
 			vector<BoundingVolume*> boundingVolumes;
+			bool hierarchy;
 		};
 
 		enum FlowMapExtensionState {
@@ -330,9 +331,12 @@ private:
 		 * @param context context
 		 */
 		ContextWorldListener(Context* context);
+
 		// overridden methods
-		virtual void onAddedBody(const string& id, Body::BodyType type, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes) override;
-		virtual void onRemovedBody(const string& id, Body::BodyType type, uint16_t collisionTypeId) override;
+		void onAddedBody(const string& id, Body::BodyType type, uint16_t collisionTypeId, bool enabled, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy = false) override;
+		void onRemovedBody(const string& id, Body::BodyType type, uint16_t collisionTypeId) override;
+		void onAddedSubBody(const string& id, Body::BodyType type, uint16_t collisionTypeId, const string& subBodyParentId, const string& subBodyId, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes) override;
+		void onRemovedSubBody(const string& id, Body::BodyType type, uint16_t collisionTypeId, const string& subBodyParentId, const string& subBodyId) override;
 	};
 
 	struct PacketState {

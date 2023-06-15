@@ -14,7 +14,7 @@
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/physics/Body.h>
-#include <tdme/engine/physics/HierarchyBody.h>
+#include <tdme/engine/physics/BodyHierarchy.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/Capsule.h>
@@ -53,7 +53,7 @@ using tdme::engine::model::Model;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::physics::Body;
-using tdme::engine::physics::HierarchyBody;
+using tdme::engine::physics::BodyHierarchy;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::Capsule;
 using tdme::engine::primitives::ConvexMesh;
@@ -185,7 +185,7 @@ void PhysicsTest5::initialize()
 	entity->setReceivesShadows(true);
 	entity->update();
 	engine->addEntity(entity);
-	world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.5f, {ground});
+	world->addStaticRigidBody("ground", RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.5f, {ground});
 	auto side = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(1.0f, 16.0f, 8.0f)));
 	auto sideModel = modelDeleter.add(Primitives::createModel(side, "side_model"));
 	sideModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
@@ -198,24 +198,24 @@ void PhysicsTest5::initialize()
 	entity->setTranslation(Vector3(0.0f, 0.0f, +9.0f));
 	entity->update();
 	engine->addEntity(entity);
-	world->addStaticRigidBody("far", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.5f, {nearFar});
+	world->addStaticRigidBody("far", RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.5f, {nearFar});
 	entity = new Object("near", nearFarModel);
 	entity->setTranslation(Vector3(0.0f, 0.0f, -9.0f));
 	entity->setEffectColorMul(Color4(1.0f, 1.0f, 1.0f, 0.0f));
 	entity->update();
 	entity->setEnabled(false);
 	engine->addEntity(entity);
-	world->addStaticRigidBody("near", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.5f, {nearFar});
+	world->addStaticRigidBody("near", RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.5f, {nearFar});
 	entity = new Object("sideright", sideModel);
 	entity->setTranslation(Vector3(-9.0f, 0.0f, 0.0f));
 	entity->update();
 	engine->addEntity(entity);
-	world->addStaticRigidBody("sideright", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.5f, {side});
+	world->addStaticRigidBody("sideright", RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.5f, {side});
 	entity = new Object("sideleft", sideModel);
 	entity->setTranslation(Vector3(9.0f, 0.0f, 0.0f));
 	entity->update();
 	engine->addEntity(entity);
-	world->addStaticRigidBody("sideleft", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.5f, {side});
+	world->addStaticRigidBody("sideleft", RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.5f, {side});
 	auto box = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(0.6f, 0.6f, 0.6f)));
 	auto boxModel = modelDeleter.add(Primitives::createModel(box, "box_model"));
 	boxModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.5f, 0.5f, 1.0f));
@@ -231,7 +231,7 @@ void PhysicsTest5::initialize()
 		entity->setTranslation(Vector3(0.0f, 3.0f + (i * 1.0f), 0.0f));
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody("sphere" + to_string(i), true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.75f, 0.4f, 10.0f, Vector3(1.0f, 1.0f, 1.0f), {sphere});
+		world->addRigidBody("sphere" + to_string(i), RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.75f, 0.4f, 10.0f, Vector3(1.0f, 1.0f, 1.0f), {sphere});
 	}
 	try {
 		auto botPrototype = PrototypeReader::read("resources/botrts", "unit_bot.tmodel");
@@ -241,14 +241,13 @@ void PhysicsTest5::initialize()
 		botTransform.setScale(botTransform.getScale() * 2.0f);
 		botTransform.update();
 		auto botEntityHierarchy = new EntityHierarchy("bot");
-		auto botEntityHierarchyBot = SceneConnector::createEntity(botPrototype, "bot", Transform());
 		botEntityHierarchy->setTransform(botTransform);
-		botEntityHierarchy->addEntity(botEntityHierarchyBot);
+		botEntityHierarchy->addEntity(SceneConnector::createEntity(botPrototype, "bot", Transform()));
 		botEntityHierarchy->update();
 		engine->addEntity(botEntityHierarchy);
 
 		// create bot body in physics
-		auto botBody = dynamic_cast<HierarchyBody*>(SceneConnector::createBody(world, botPrototype, "bot", botTransform, SceneConnector::RIGIDBODY_TYPEID_STANDARD, true));
+		auto botBody = dynamic_cast<BodyHierarchy*>(SceneConnector::createBody(world, botPrototype, "bot", botTransform, SceneConnector::BODY_TYPEID_STANDARD, true));
 
 		// we only need scale for now as parent transform for attaching weapon to bot
 		Transform botTransformScale;
@@ -261,18 +260,15 @@ void PhysicsTest5::initialize()
 		weaponAttachmentLocalTransform.setScale(weaponAttachmentLocalTransform.getScale() * 0.6f);
 		weaponAttachmentLocalTransform.update();
 
-		// create weapon
+		// create weapon in engine
 		auto weaponPrototype = PrototypeReader::read("resources/botrts", "weapon_flamethrower.tmodel");
 		botEntityHierarchy->addEntity(SceneConnector::createEntity(weaponPrototype, "weapon_left", weaponAttachmentLocalTransform));
 		botEntityHierarchy->update();
 
-		{
-			//
-			SceneConnector::SubBodyCreationStruct subBodyCreationStruct;
-			SceneConnector::createEntityHierarchySubBodyCreationStruct(botEntityHierarchy, "weapon_left", weaponAttachmentLocalTransform, subBodyCreationStruct);
-			SceneConnector::createSubBody(world, weaponPrototype, "bot", subBodyCreationStruct);
-		}
+		// create weapon in physics
+		SceneConnector::createSubBody(world, weaponPrototype, "weapon_left", weaponAttachmentLocalTransform, "bot", "bot");
 
+		//
 		{
 			auto box2 = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(0.50f, 0.25f, 0.25f)));
 			auto box2Model = modelDeleter.add(Primitives::createModel(box2, "box2_model"));
@@ -285,9 +281,8 @@ void PhysicsTest5::initialize()
 			botEntityHierarchy->addEntity(box2Object, "weapon_left");
 			botEntityHierarchy->update();
 
-			SceneConnector::SubBodyCreationStruct subBodyCreationStruct;
-			SceneConnector::createEntityHierarchySubBodyCreationStruct(botEntityHierarchy, "box2", box2Object->getTransform(), subBodyCreationStruct);
-			SceneConnector::createSubBody(world, "bot", subBodyCreationStruct, { box2 });
+			botBody->addBody("box2_model", box2Object->getTransform(), { box2 }, "weapon_left");
+			botBody->update();
 		}
 
 		//world->addRigidBody("cone", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {coneBoundingVolume});

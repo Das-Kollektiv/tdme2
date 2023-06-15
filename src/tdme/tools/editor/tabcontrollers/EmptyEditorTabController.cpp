@@ -150,7 +150,7 @@ void EmptyEditorTabController::onDrop(const string& payload, int mouseX, int mou
 
 void EmptyEditorTabController::onChange(GUIElementNode* node)
 {
-	if (basePropertiesSubController->onChange(node, view->getPrototype()) == true) return;
+	if (basePropertiesSubController->onChange(node, view->getPrototype(), view->getPrototype()) == true) return;
 	if (prototypeScriptSubController->onChange(node, view->getPrototype()) == true) return;
 }
 

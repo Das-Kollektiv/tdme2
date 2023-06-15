@@ -255,8 +255,8 @@ void Context::PathFindingThread::run() {
 				if ((worldActionStruct.collisionTypeId & context->bodyCollisionTypeIdCloneMask) != 0) {
 					world->addStaticRigidBody(
 						worldActionStruct.id,
-						worldActionStruct.enabled,
 						worldActionStruct.collisionTypeId,
+						worldActionStruct.enabled,
 						worldActionStruct.transform,
 						worldActionStruct.friction,
 						worldActionStruct.boundingVolumes
@@ -557,7 +557,7 @@ void Context::PathFinding::notifyCancel(const string& actorId) {
 Context::ContextWorldListener::ContextWorldListener(Context* context): context(context) {
 }
 
-void Context::ContextWorldListener::onAddedBody(const string& id, Body::BodyType type, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes) {
+void Context::ContextWorldListener::onAddedBody(const string& id, Body::BodyType type, uint16_t collisionTypeId, bool enabled, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes, bool hierarchy) {
 	if (type != Body::BODYTYPE_STATIC) return;
 	Context::PathFindingThread::WorldActionStruct worldAction;
 	worldAction.action = Context::PathFindingThread::WorldActionStruct::ACTION_ADDED;
@@ -571,6 +571,7 @@ void Context::ContextWorldListener::onAddedBody(const string& id, Body::BodyType
 	worldAction.mass = mass;
 	worldAction.inertiaTensor = inertiaTensor;
 	worldAction.boundingVolumes = boundingVolumes;
+	worldAction.hierarchy = hierarchy;
 	context->getPathFinding()->addWorldAction(worldAction);
 }
 
@@ -582,6 +583,14 @@ void Context::ContextWorldListener::onRemovedBody(const string& id, Body::BodyTy
 	worldAction.type = type;
 	worldAction.collisionTypeId = collisionTypeId;
 	context->getPathFinding()->addWorldAction(worldAction);
+}
+
+void Context::ContextWorldListener::onAddedSubBody(const string& id, Body::BodyType type, uint16_t collisionTypeId, const string& subBodyParentId, const string& subBodyId, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes) {
+	// TODO
+}
+
+void Context::ContextWorldListener::onRemovedSubBody(const string& id, Body::BodyType type, uint16_t collisionTypeId, const string& subBodyParentId, const string& subBodyId) {
+	// TODO
 }
 
 Context::Context(bool server): pathFinding(this), world(nullptr), server(server), initialized(false) {
@@ -628,16 +637,16 @@ void Context::shutdown() {
 }
 
 void Context::addLogic(Logic* logic) {
-	if (VERBOSE == true) Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::addLogic(): adding '" + logic->getId() + "'");
+	Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::addLogic(): adding '" + logic->getId() + "'");
 	// check if exists in current game logics
 	if (logicsById.find(logic->getId()) != logicsById.end()) {
-		if (VERBOSE == true) Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::addLogic(): NOT adding '" + logic->getId() + "', logic exists!");
+		Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::addLogic(): NOT adding '" + logic->getId() + "', logic exists!");
 		return;
 	}
 	// check if exists in new game logics
 	for (auto newLogic: newLogics) {
 		if (logic->getId() == newLogic->getId()) {
-			if (VERBOSE == true) Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::addLogic(): NOT adding '" + logic->getId() + "', logic exists!");
+			Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::addLogic(): NOT adding '" + logic->getId() + "', logic exists!");
 			return;
 		}
 	}

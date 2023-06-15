@@ -91,14 +91,15 @@ protected:
 	vector<BoundingVolume*> boundingVolumes;
 	vector<reactphysics3d::Collider*> colliders;
 	vector<CollisionListener*> collisionListener;
+	bool initiation;
 
 	/**
 	 * Protected constructor
 	 * @param world world
 	 * @param id id
 	 * @param type type
-	 * @param enabled enabled
 	 * @param collisionTypeId collision type id
+	 * @param enabled enabled
 	 * @param transform transform
 	 * @param restitution restitution
 	 * @param friction friction
@@ -106,7 +107,7 @@ protected:
 	 * @param inertiaTensor inertia tensor vector
 	 * @param boundingVolumes bounding volumes
 	 */
-	Body(World* world, const string& id, BodyType type, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes);
+	Body(World* world, const string& id, BodyType type, uint16_t collisionTypeId, bool enabled, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes);
 
 	/**
 	 * Destructor
@@ -380,7 +381,8 @@ public:
 		this->transform.setTransform(transform);
 
 		// reset colliders if bounding volumes do not match proxy shapes or if scaling has changed
-		if (colliders.size() != boundingVolumes.size() || transformScale.equals(transform.getScale()) == false) {
+		if (initiation == true || colliders.size() != boundingVolumes.size() || transformScale.equals(transform.getScale()) == false) {
+			initiation = false;
 			resetColliders();
 			transformScale.set(transform.getScale());
 		}

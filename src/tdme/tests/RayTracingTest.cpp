@@ -176,7 +176,7 @@ void RayTracingTest::display()
 		//rayStart = camLookFrom;
 		//rayEnd = traceEnd;
 		auto rayTracedRigidBody = world->doRayCasting(
-			SceneConnector::RIGIDBODY_TYPEID_STATIC | SceneConnector::RIGIDBODY_TYPEID_DYNAMIC,
+			SceneConnector::BODY_TYPEID_STATIC | SceneConnector::BODY_TYPEID_DYNAMIC,
 			camLookFrom,
 			traceEnd,
 			hitPoint,
@@ -253,7 +253,7 @@ void RayTracingTest::initialize()
 	entity->setReceivesShadows(true);
 	entity->update();
 	engine->addEntity(entity);
-	world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.5f, {ground});
+	world->addStaticRigidBody("ground", RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.5f, {ground});
 	auto interactionTable = prototypeDeleter.add(PrototypeReader::read("resources/tests/asw", "Mesh_Interaction_Table.tmodel"));
 	entityBoundingVolumeModel = modelDeleter.add(Primitives::createModel(interactionTable->getBoundingVolume(0)->getBoundingVolume(), "interactiontable.bv"));
 	int interactionTableIdx = 0;
@@ -277,7 +277,7 @@ void RayTracingTest::initialize()
 			interactionTable,
 			id,
 			entity->getTransform(),
-			SceneConnector::RIGIDBODY_TYPEID_STATIC
+			SceneConnector::BODY_TYPEID_STATIC
 		);
 
 		//
@@ -296,7 +296,7 @@ void RayTracingTest::initialize()
 	entity->addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
 	entity->update();
 	engine->addEntity(entity);
-	world->addRigidBody("player", true, SceneConnector::RIGIDBODY_TYPEID_DYNAMIC, entity->getTransform(), 0.0f, 1.0f, 80.0f, Body::getNoRotationInertiaTensor(), {capsuleBig});
+	world->addRigidBody("player", SceneConnector::BODY_TYPEID_DYNAMIC, true, entity->getTransform(), 0.0f, 1.0f, 80.0f, Body::getNoRotationInertiaTensor(), {capsuleBig});
 
 	//
 	engine->getGUI()->addScreen("crosshair", GUIParser::parse("resources/tests/screens", "crosshair.xml"));

@@ -38,6 +38,8 @@ const string Markdown::createGUIXML(const string& pathName, const string& fileNa
 	auto tocLevel4 = 0;
 	for (auto markdownLine: markdownLines) {
 		// TODO: we should not have here \r \n
+		markdownLine = StringTools::replace(markdownLine, "&nbsp;", " ");
+		//
 		markdownLine = StringTools::replace(markdownLine, "\r", "");
 		markdownLine = StringTools::replace(markdownLine, "\n", "");
 		//

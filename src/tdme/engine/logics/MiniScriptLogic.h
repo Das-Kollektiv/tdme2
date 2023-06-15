@@ -44,7 +44,9 @@ public:
 	 * @param handlingHIDInput handling hid input
 	 * @param miniScript logic mini script
 	 */
-	inline MiniScriptLogic(Context* context, const string& id, bool handlingHIDInput, LogicMiniScript* miniScript): Logic(context, id, handlingHIDInput), miniScript(miniScript) {
+	inline MiniScriptLogic(Context* context, const string& id, bool handlingHIDInput, LogicMiniScript* miniScript, const string& hierarchyId = string(), const string& hierarchyParentId = string()):
+		Logic(context, id, handlingHIDInput), miniScript(miniScript), hierarchyId(hierarchyId), hierarchyParentId(hierarchyParentId) {
+		//
 		miniScript->setContext(context);
 		miniScript->setLogic(this);
 		// execute initialize() function
@@ -63,6 +65,20 @@ public:
 		return miniScript;
 	}
 
+	/**
+	 * @return hierarchy id
+	 */
+	inline const string& getHierarchyId() {
+		return hierarchyId;
+	}
+
+	/**
+	 * @return hierarchy parent id
+	 */
+	inline const string& getHierarchyParentId() {
+		return hierarchyParentId;
+	}
+
 	// overridden methods
 	inline void handleHIDEvents(vector<GUIMouseEvent>& mouseEvents, vector<GUIKeyboardEvent>& keyEvents) {
 		miniScript->collectHIDEvents(mouseEvents, keyEvents);
@@ -74,8 +90,8 @@ public:
 			miniScript->prototypesToAddMutex.lock();
 			for (auto& prototypeToAdd: miniScript->enginePrototypesToAdd) {
 				EntityHierarchy* parentEntity = nullptr;
-				if (prototypeToAdd.entityHierarchyId.empty() == false) {
-					parentEntity = dynamic_cast<EntityHierarchy*>(context->getEngine()->getEntity(prototypeToAdd.entityHierarchyId));
+				if (prototypeToAdd.hierarchyId.empty() == false) {
+					parentEntity = dynamic_cast<EntityHierarchy*>(context->getEngine()->getEntity(prototypeToAdd.hierarchyId));
 				}
 				auto entity =
 					SceneConnector::createEntity(
@@ -88,7 +104,7 @@ public:
 				if (parentEntity == nullptr) {
 					context->getEngine()->addEntity(entity);
 				} else {
-					parentEntity->addEntity(entity, prototypeToAdd.entityHierarchyParentId);
+					parentEntity->addEntity(entity, prototypeToAdd.hierarchyParentId);
 					parentEntity->update();
 				}
 			}
@@ -109,14 +125,24 @@ public:
 		if (miniScript->physicsPrototypesToAdd.empty() == false) {
 			miniScript->prototypesToAddMutex.lock();
 			for (auto& prototypeToAdd: miniScript->physicsPrototypesToAdd) {
-				// TODO: hierarchies, I guess via fixed joints :DDD
-				SceneConnector::createBody(
-					context->getWorld(),
-					prototypeToAdd.prototype,
-					prototypeToAdd.id,
-					prototypeToAdd.transform,
-					Body::COLLISION_TYPEID_DYNAMIC
-				);
+				if (prototypeToAdd.hierarchyId.empty() == false) {
+					SceneConnector::createSubBody(
+						context->getWorld(),
+						prototypeToAdd.prototype,
+						prototypeToAdd.id,
+						prototypeToAdd.transform,
+						prototypeToAdd.hierarchyId,
+						prototypeToAdd.hierarchyParentId
+					);
+				} else {
+					SceneConnector::createBody(
+						context->getWorld(),
+						prototypeToAdd.prototype,
+						prototypeToAdd.id,
+						prototypeToAdd.transform,
+						Body::COLLISION_TYPEID_DYNAMIC
+					);
+				}
 				if (prototypeToAdd.prototype->hasScript() == true) {
 					auto prototype = prototypeToAdd.prototype;
 					auto logicMiniScript = new LogicMiniScript();
@@ -127,9 +153,11 @@ public:
 					miniScript->context->addLogic(
 						new MiniScriptLogic(
 							miniScript->context,
-							id,
+							prototypeToAdd.id,
 							prototype->isScriptHandlingHID(),
-							logicMiniScript
+							logicMiniScript,
+							prototypeToAdd.hierarchyId,
+							prototypeToAdd.hierarchyParentId
 						)
 					);
 				}
@@ -170,5 +198,6 @@ public:
 
 private:
 	LogicMiniScript* miniScript { nullptr };
-
+	string hierarchyId;
+	string hierarchyParentId;
 };

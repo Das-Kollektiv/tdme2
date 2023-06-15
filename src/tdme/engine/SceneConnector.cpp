@@ -17,7 +17,7 @@
 #include <tdme/engine/Color4.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/physics/Body.h>
-#include <tdme/engine/physics/HierarchyBody.h>
+#include <tdme/engine/physics/BodyHierarchy.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/ConvexMesh.h>
 #include <tdme/engine/primitives/HeightMap.h>
@@ -99,7 +99,7 @@ using tdme::engine::fileio::ProgressCallback;
 using tdme::engine::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::physics::Body;
-using tdme::engine::physics::HierarchyBody;
+using tdme::engine::physics::BodyHierarchy;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::HeightMap;
@@ -372,7 +372,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 		// with LOD
 		if (imposterLOD != nullptr) {
 			entity = new LODObjectImposter(
-				prototype->isEntityHierarchy() == true?"root":id,
+				id,
 				prototype->getModel(),
 				imposterLOD->getModels(),
 				imposterLOD->getMinDistance()
@@ -392,7 +392,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 		} else
 		if (lodLevel2 != nullptr) {
 			entity = new LODObject(
-				prototype->isEntityHierarchy() == true?"root":id,
+				id,
 				prototype->getModel(),
 				lodLevel2->getType(),
 				lodLevel2->getMinDistance(),
@@ -420,7 +420,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 		} else {
 			// single
 			entity = new Object(
-				prototype->isEntityHierarchy() == true?"root":id,
+				id,
 				prototype->getModel(),
 				instances
 			);
@@ -546,33 +546,6 @@ Entity* SceneConnector::createEntity(SceneEntity* sceneEntity, const Vector3& tr
 		transform.update();
 	}
 	return createEntity(sceneEntity->getPrototype(), sceneEntity->getId(), transform, instances, parentEntity);
-}
-
-bool SceneConnector::createEntityHierarchySubBodyCreationStruct(Engine* engine, const string& id, const string& childId, const Transform& localTransform, SubBodyCreationStruct& subBodyCreationStruct) {
-	auto entityHierarchy = dynamic_cast<EntityHierarchy*>(engine->getEntity(id));
-	if (entityHierarchy == nullptr) {
-		Console::println("SceneConnector::createEntityHierarchySubBodyStruct(): no entity hierarchy: " + id);
-		return false;
-	}
-	//
-	return createEntityHierarchySubBodyCreationStruct(entityHierarchy, childId, localTransform, subBodyCreationStruct);
-}
-
-bool SceneConnector::createEntityHierarchySubBodyCreationStruct(EntityHierarchy* entityHierarchy, const string& childId, const Transform& localTransform, SubBodyCreationStruct& subBodyCreationStruct) {
-	//
-	auto childEntity = entityHierarchy->getEntity(childId);
-	if (childEntity == nullptr) {
-		Console::println("SceneConnector::createEntityHierarchySubBodyStruct(): entity hierarchy: " + entityHierarchy->getId() + ": no child " + childId);
-		return false;
-	}
-	//
-	auto rootTransformInverse = entityHierarchy->getTransform().clone().invert();
-	//
-	subBodyCreationStruct.id = childId;
-	subBodyCreationStruct.hierarchyParentTransform = rootTransformInverse * childEntity->getParentTransform();
-	subBodyCreationStruct.localTransform = localTransform;
-	//
-	return true;
 }
 
 void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool useEditorDecals, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
@@ -874,11 +847,11 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 		if (boundingVolumes.size() == 0) return nullptr;
 		return world->addStaticCollisionBody(
 			id,
+			collisionTypeId == 0?BODY_TYPEID_TRIGGER:collisionTypeId,
 			true,
-			collisionTypeId == 0?RIGIDBODY_TYPEID_TRIGGER:collisionTypeId,
 			transform,
 			boundingVolumes,
-			hierarchy
+			hierarchy == true || prototype->isEntityHierarchy() == true
 		);
 	} else
 	// model as terrain mesh
@@ -889,36 +862,36 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 		if (physicsType == PrototypePhysics_BodyType::COLLISION_BODY) {
 			return world->addStaticCollisionBody(
 				id,
+				collisionTypeId == 0?BODY_TYPEID_COLLISION:collisionTypeId,
 				true,
-				collisionTypeId == 0?RIGIDBODY_TYPEID_COLLISION:collisionTypeId,
 				Transform(),
 				{terrainMesh},
-				hierarchy
+				hierarchy == true || prototype->isEntityHierarchy() == true
 			);
 		} else
 		if (physicsType == PrototypePhysics_BodyType::STATIC_RIGIDBODY) {
 			return world->addStaticRigidBody(
 				id,
+				collisionTypeId == 0?BODY_TYPEID_STATIC:collisionTypeId,
 				true,
-				collisionTypeId == 0?RIGIDBODY_TYPEID_STATIC:collisionTypeId,
 				Transform(),
 				prototype->getPhysics()->getFriction(),
 				{terrainMesh},
-				hierarchy
+				hierarchy == true || prototype->isEntityHierarchy() == true
 			);
 		} else
 		if (physicsType == PrototypePhysics_BodyType::DYNAMIC_RIGIDBODY) {
 			return world->addRigidBody(
 				id,
+				collisionTypeId == 0?BODY_TYPEID_DYNAMIC:collisionTypeId,
 				true,
-				collisionTypeId == 0?RIGIDBODY_TYPEID_DYNAMIC:collisionTypeId,
 				Transform(),
 				prototype->getPhysics()->getRestitution(),
 				prototype->getPhysics()->getFriction(),
 				prototype->getPhysics()->getMass(),
 				prototype->getPhysics()->getInertiaTensor(),
 				{terrainMesh},
-				hierarchy
+				hierarchy == true || prototype->isEntityHierarchy() == true
 			);
 		}
 	} else {
@@ -932,36 +905,36 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 		if (physicsType == PrototypePhysics_BodyType::COLLISION_BODY) {
 			return world->addStaticCollisionBody(
 				id,
+				collisionTypeId == 0?BODY_TYPEID_COLLISION:collisionTypeId,
 				true,
-				collisionTypeId == 0?RIGIDBODY_TYPEID_COLLISION:collisionTypeId,
 				transform,
 				boundingVolumes,
-				hierarchy
+				hierarchy == true || prototype->isEntityHierarchy() == true
 			);
 		} else
 		if (physicsType == PrototypePhysics_BodyType::STATIC_RIGIDBODY) {
 			return world->addStaticRigidBody(
 				id,
 				true,
-				collisionTypeId == 0?RIGIDBODY_TYPEID_STATIC:collisionTypeId,
+				collisionTypeId == 0?BODY_TYPEID_STATIC:collisionTypeId,
 				transform,
 				prototype->getPhysics()->getFriction(),
 				boundingVolumes,
-				hierarchy
+				hierarchy == true || prototype->isEntityHierarchy() == true
 			);
 		} else
 		if (physicsType == PrototypePhysics_BodyType::DYNAMIC_RIGIDBODY) {
 			return world->addRigidBody(
 				id,
+				collisionTypeId == 0?BODY_TYPEID_DYNAMIC:collisionTypeId,
 				true,
-				collisionTypeId == 0?RIGIDBODY_TYPEID_DYNAMIC:collisionTypeId,
 				transform,
 				prototype->getPhysics()->getRestitution(),
 				prototype->getPhysics()->getFriction(),
 				prototype->getPhysics()->getMass(),
 				prototype->getPhysics()->getInertiaTensor(),
 				boundingVolumes,
-				hierarchy
+				hierarchy == true || prototype->isEntityHierarchy() == true
 			);
 		}
 	}
@@ -978,16 +951,15 @@ Body* SceneConnector::createBody(World* world, SceneEntity* sceneEntity, const V
 	return createBody(world, sceneEntity->getPrototype(), sceneEntity->getId(), transform, collisionTypeId, hierarchy, index, overrideType);
 }
 
-void SceneConnector::createSubBody(World* world, const string& id, const SubBodyCreationStruct& subBodyCreationStruct, const vector<BoundingVolume*>& boundingVolumes) {
-	//
-	auto hierarchyBody = world->getHierarchyBody(id);
-	if (hierarchyBody == nullptr) {
-		Console::println("SceneConnector::createSubBody(): no hierarchy body found with id: " + id);
-		return;
+BodyHierarchy* SceneConnector::createSubBody(World* world, Prototype* prototype, const string& id, const Transform& transform, const string& bodyHierarchyId, const string& bodyHierarchyParentId) {
+	auto bodyHierarchy = world->getBodyHierarchy(bodyHierarchyId);
+	if (bodyHierarchy == nullptr) {
+		Console::println("SceneConnector::createSubBody(): body hierarchy not found: " + bodyHierarchyId);
+		return nullptr;
 	}
-
-	// create body in physics
-	hierarchyBody->addBody(subBodyCreationStruct.id, subBodyCreationStruct.hierarchyParentTransform, subBodyCreationStruct.localTransform, boundingVolumes);
+	bodyHierarchy->addBody(id, transform, prototype->getBoundingVolumePrimitives(), bodyHierarchyParentId);
+	bodyHierarchy->update();
+	return bodyHierarchy;
 }
 
 void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
@@ -1021,8 +993,8 @@ void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vec
 				transform.update();
 				auto rigidBody = world->addStaticRigidBody(
 					"tdme.terrain",
+					BODY_TYPEID_STATIC,
 					true,
-					RIGIDBODY_TYPEID_STATIC,
 					transform,
 					0.5f,
 					{

@@ -43,7 +43,7 @@
 		<overload return-value="Void" descr="Set Array Entry">
 			<parameter name="Array =$array" />
 			<parameter name="Integer $index" />
-			<parameter name="..." />
+			<parameter name="Mixed $value" />
 		</overload>
 	</keyword>
 	<keyword name="array.indexOf" func="yes">
@@ -51,7 +51,6 @@
 			<parameter name="Array $array" />
 			<parameter name="String $value" />
 			<parameter name="[Integer $beginIndex]" />
-			<parameter name="..." />
 		</overload>
 	</keyword>
 	<keyword name="array.length" func="yes">
@@ -606,6 +605,11 @@
 	</keyword>
 	<keyword name="string" func="yes">
 		<overload return-value="String" descr="Create String">
+			<parameter name="String $string" />
+		</overload>
+	</keyword>
+	<keyword name="string.isEmpty" func="yes">
+		<overload return-value="Boolean" descr="Test if String Value is Empty">
 			<parameter name="String $string" />
 		</overload>
 	</keyword>

@@ -38,12 +38,12 @@ private:
 
 public:
 	// right, left, bottom, top, far, near
-	static constexpr int32_t PLANE_RIGHT { 0 };
-	static constexpr int32_t PLANE_LEFT { 1 };
-	static constexpr int32_t PLANE_BOTTOM { 2 };
-	static constexpr int32_t PLANE_TOP { 3 };
-	static constexpr int32_t PLANE_FAR { 4 };
-	static constexpr int32_t PLANE_NEAR { 5 };
+	static constexpr int PLANE_RIGHT { 0 };
+	static constexpr int PLANE_LEFT { 1 };
+	static constexpr int PLANE_BOTTOM { 2 };
+	static constexpr int PLANE_TOP { 3 };
+	static constexpr int PLANE_FAR { 4 };
+	static constexpr int PLANE_NEAR { 5 };
 
 	/**
 	 * Public constructor
