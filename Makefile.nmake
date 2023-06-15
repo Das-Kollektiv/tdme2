@@ -222,7 +222,6 @@ SRCS = \
 	src/tdme/engine/subsystems/rendering/ModelUtilitiesInternal.cpp \
 	src/tdme/engine/subsystems/rendering/ObjectAnimation.cpp \
 	src/tdme/engine/subsystems/rendering/ObjectBase.cpp \
-	src/tdme/engine/subsystems/rendering/ObjectBase_TransformedFacesIterator.cpp \
 	src/tdme/engine/subsystems/rendering/ObjectNode.cpp \
 	src/tdme/engine/subsystems/rendering/ObjectNodeMesh.cpp \
 	src/tdme/engine/subsystems/rendering/ObjectNodeRenderer.cpp \

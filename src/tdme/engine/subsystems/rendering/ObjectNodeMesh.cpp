@@ -180,41 +180,37 @@ ObjectNodeMesh::ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::A
 		cNodeTransformMatrix = transformMatrices[0]->find(node->getId())->second;
 	}
 	// skinning
-	if ((skinning != nullptr &&
-		(animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING))) {
-		// skinning computation caches if computing skinning on CPU
-		if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
-			cSkinningMaxVertexWeights = 0;
-			cSkinningJointWeight.resize(nodeVertices.size());
-			cSkinningJointTransformMatrices.resize(instances);
-			for (auto i = 0; i < instances; i++) cSkinningJointTransformMatrices[i].resize(nodeVertices.size());
-			// compute joint weight caches
-			auto& joints = skinning->getJoints();
-			auto& weights = skinning->getWeights();
-			auto& jointsWeights = skinning->getVerticesJointsWeights();
-			for (auto vertexIndex = 0; vertexIndex < nodeVertices.size(); vertexIndex++) {
-				auto vertexJointWeights = jointsWeights[vertexIndex].size();
-				if (vertexJointWeights > cSkinningMaxVertexWeights) cSkinningMaxVertexWeights = vertexJointWeights;
-				cSkinningJointWeight[vertexIndex].resize(vertexJointWeights);
-				for (auto i = 0; i < instances; i++) cSkinningJointTransformMatrices[i][vertexIndex].resize(vertexJointWeights);
-				{
-					auto jointWeightIdx = 0;
-					for (auto& jointWeight : jointsWeights[vertexIndex]) {
-						auto& joint = joints[jointWeight.getJointIndex()];
-						cSkinningJointWeight[vertexIndex][jointWeightIdx] = weights[jointWeight.getWeightIndex()];
-						// next
-						jointWeightIdx++;
-					}
+	if (skinning != nullptr) {
+		cSkinningMaxVertexWeights = 0;
+		cSkinningJointWeight.resize(nodeVertices.size());
+		cSkinningJointTransformMatrices.resize(instances);
+		for (auto i = 0; i < instances; i++) cSkinningJointTransformMatrices[i].resize(nodeVertices.size());
+		// compute joint weight caches
+		auto& joints = skinning->getJoints();
+		auto& weights = skinning->getWeights();
+		auto& jointsWeights = skinning->getVerticesJointsWeights();
+		for (auto vertexIndex = 0; vertexIndex < nodeVertices.size(); vertexIndex++) {
+			auto vertexJointWeights = jointsWeights[vertexIndex].size();
+			if (vertexJointWeights > cSkinningMaxVertexWeights) cSkinningMaxVertexWeights = vertexJointWeights;
+			cSkinningJointWeight[vertexIndex].resize(vertexJointWeights);
+			for (auto i = 0; i < instances; i++) cSkinningJointTransformMatrices[i][vertexIndex].resize(vertexJointWeights);
+			{
+				auto jointWeightIdx = 0;
+				for (auto& jointWeight : jointsWeights[vertexIndex]) {
+					auto& joint = joints[jointWeight.getJointIndex()];
+					cSkinningJointWeight[vertexIndex][jointWeightIdx] = weights[jointWeight.getWeightIndex()];
+					// next
+					jointWeightIdx++;
 				}
-				for (auto i = 0; i < instances; i++) {
-					auto jointWeightIdx = 0;
-					for (auto& jointWeight : jointsWeights[vertexIndex]) {
-						auto& joint = joints[jointWeight.getJointIndex()];
-						auto skinningMatrixIt = skinningMatrices[i]->find(joint.getNodeId());
-						cSkinningJointTransformMatrices[i][vertexIndex][jointWeightIdx] = skinningMatrixIt != skinningMatrices[i]->end()?skinningMatrixIt->second:nullptr;
-						// next
-						jointWeightIdx++;
-					}
+			}
+			for (auto i = 0; i < instances; i++) {
+				auto jointWeightIdx = 0;
+				for (auto& jointWeight : jointsWeights[vertexIndex]) {
+					auto& joint = joints[jointWeight.getJointIndex()];
+					auto skinningMatrixIt = skinningMatrices[i]->find(joint.getNodeId());
+					cSkinningJointTransformMatrices[i][vertexIndex][jointWeightIdx] = skinningMatrixIt != skinningMatrices[i]->end()?skinningMatrixIt->second:nullptr;
+					// next
+					jointWeightIdx++;
 				}
 			}
 		}
@@ -248,7 +244,7 @@ void ObjectNodeMesh::computeSkinning(int contextIdx, ObjectBase* objectBase)
 			float totalWeights;
 			float weightNormalized;
 			auto j = 0;
-			Matrix4x4 transformMatrix; // TODO: try to avoid multiplying matrix with at each vertex
+			Matrix4x4 transformMatrix;
 			auto currentInstance = objectBase->getCurrentInstance();
 			for (auto i = 0; i < instances; i++) {
 				if (objectBase->instanceEnabled[i] == false) continue;
