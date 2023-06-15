@@ -95,7 +95,7 @@ public:
 		originalStartState.positionY = positionY;
 	}
 
-	// override methods
+	// overridden methods
 	void apply(GUIRenderer* guiRenderer) override;
 
 };
