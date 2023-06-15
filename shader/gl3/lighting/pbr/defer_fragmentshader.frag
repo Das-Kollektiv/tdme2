@@ -33,6 +33,9 @@ in vec3 v_Position;
 	in vec4 v_Color;
 #endif
 
+in vec4 v_EffectColorMul;
+in vec4 v_EffectColorAdd;
+
 // uniforms
 uniform float u_MetallicFactor;
 uniform float u_RoughnessFactor;
@@ -55,9 +58,10 @@ layout (location = 1) out vec3 outNormal;
 layout (location = 2) out vec4 outMaterialMetallicFactorRoughnessFactorExposureType;
 layout (location = 3) out vec4 outMaterialBaseColor;
 layout (location = 4) out vec4 outMaterialMetallicRoughness;
-layout (location = 5) out vec4 outMaterialBaseColorFactor;
-layout (location = 6) out vec4 outMaterialEmissiveColor;
-layout (location = 7) out vec4 outMaterialEmissiveFactor;
+layout (location = 5) out vec4 outMaterialEmissiveColor;
+layout (location = 6) out vec4 outMaterialEffectColorMul;
+layout (location = 7) out vec4 outMaterialEffectColorAdd;
+
 
 void main(void) {
 	// masked transparency
@@ -72,8 +76,8 @@ void main(void) {
 	outNormal = getNormal();
 	outMaterialMetallicFactorRoughnessFactorExposureType = vec4(u_MetallicFactor, u_RoughnessFactor, u_Exposure, 1.0);
 	outMaterialMetallicRoughness = u_MetallicRoughnessSamplerAvailable == 1?getMetallicRoughnessColor():vec4(0.0, 1.0, 1.0, 0.0);
-	outMaterialBaseColor = baseColor;
-	outMaterialBaseColorFactor = u_BaseColorFactor;
-	outMaterialEmissiveFactor = vec4(u_EmissiveFactor, 1.0);
-	outMaterialEmissiveColor = u_EmissiveSamplerAvailable == 1?getEmissiveColor():vec4(0.0, 0.0, 0.0, 1.0);
+	outMaterialBaseColor = baseColor * vec4(LINEARtoSRGB(u_BaseColorFactor.rgb), u_BaseColorFactor.a);
+	outMaterialEmissiveColor = (u_EmissiveSamplerAvailable == 1?getEmissiveColor():vec4(0.0, 0.0, 0.0, 1.0)) * vec4(LINEARtoSRGB(u_EmissiveFactor), 1.0);
+	outMaterialEffectColorMul = v_EffectColorMul;
+	outMaterialEffectColorAdd = v_EffectColorAdd;
 }

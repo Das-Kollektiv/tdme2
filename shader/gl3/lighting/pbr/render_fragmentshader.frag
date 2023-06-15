@@ -50,6 +50,9 @@ in vec3 v_Position;
 	in vec4 v_Color;
 #endif
 
+in vec4 v_EffectColorMul;
+in vec4 v_EffectColorAdd;
+
 //
 uniform float u_MetallicFactor;
 uniform float u_RoughnessFactor;
@@ -99,6 +102,8 @@ void main() {
 	#ifdef DEBUG_NORMAL
 		pbrMaterial.normalColor = getNormalColor().rgb;
 	#endif
+	pbrMaterial.effectColorMul = v_EffectColorMul;
+	pbrMaterial.effectColorAdd = v_EffectColorAdd;
 
 	//
 	outColor = computePBRLighting(v_Position, pbrMaterial);

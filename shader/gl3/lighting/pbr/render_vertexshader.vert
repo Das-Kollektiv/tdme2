@@ -14,7 +14,7 @@ layout (location = 5) in vec3 a_Bitangent;
 // instanced rendering
 layout (location = 6) in mat4 a_ModelMatrix;
 
-// TODO: effect colors
+// effect colors
 layout (location = 10) in vec4 a_EffectColorMul;
 layout (location = 11) in vec4 a_EffectColorAdd;
 
@@ -40,6 +40,9 @@ out vec3 v_Color;
 attribute vec4 a_Color;
 out vec4 v_Color;
 #endif
+
+out vec4 v_EffectColorMul;
+out vec4 v_EffectColorAdd;
 
 uniform mat4 u_ViewProjectionMatrix;
 
@@ -96,6 +99,9 @@ void main() {
 	#if defined(HAS_VERTEX_COLOR_VEC4)
 		v_Color = a_Color;
 	#endif
+
+	v_EffectColorMul = a_EffectColorMul;
+	v_EffectColorAdd = a_EffectColorAdd;
 
 	gl_Position = u_ViewProjectionMatrix * position;
 }
