@@ -185,7 +185,7 @@ void main(void) {
 		#ifdef DEBUG_NORMAL
 			pbrMaterial.normalColor = ...
 		#endif
-		pbrMaterial.effectColorMul = texture(colorBufferTextureUnit4, vsFragTextureUV);
+		pbrMaterial.effectColorMul = texture(colorBufferTextureUnit4, vsFragTextureUV) * 5.0;
 		pbrMaterial.effectColorAdd = texture(colorBufferTextureUnit5, vsFragTextureUV);
 
 		//

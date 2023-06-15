@@ -76,8 +76,8 @@ void main(void) {
 	outNormal = getNormal();
 	outMaterialMetallicFactorRoughnessFactorExposureType = vec4(u_MetallicFactor, u_RoughnessFactor, u_Exposure, 1.0);
 	outMaterialMetallicRoughness = u_MetallicRoughnessSamplerAvailable == 1?getMetallicRoughnessColor():vec4(0.0, 1.0, 1.0, 0.0);
-	outMaterialBaseColor = baseColor * vec4(LINEARtoSRGB(u_BaseColorFactor.rgb), u_BaseColorFactor.a);
-	outMaterialEmissiveColor = (u_EmissiveSamplerAvailable == 1?getEmissiveColor():vec4(0.0, 0.0, 0.0, 1.0)) * vec4(LINEARtoSRGB(u_EmissiveFactor), 1.0);
-	outMaterialEffectColorMul = v_EffectColorMul;
+	outMaterialBaseColor = baseColor * vec4(u_BaseColorFactor.rgb, u_BaseColorFactor.a);
+	outMaterialEmissiveColor = (u_EmissiveSamplerAvailable == 1?getEmissiveColor():vec4(0.0, 0.0, 0.0, 1.0)) * vec4(u_EmissiveFactor, 1.0);
+	outMaterialEffectColorMul = v_EffectColorMul / 5.0;
 	outMaterialEffectColorAdd = v_EffectColorAdd;
 }
