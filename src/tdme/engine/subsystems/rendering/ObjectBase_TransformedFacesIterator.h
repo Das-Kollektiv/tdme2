@@ -142,9 +142,9 @@ public:
 				// compute every influence on vertex and vertex normals
 				totalWeights = 0.0f;
 				for (auto vertexJointWeightIdx = 0; vertexJointWeightIdx < jointsWeights[vertexIndex].size(); vertexJointWeightIdx++) {
-					auto weight = objectNode->mesh->cSkinningJointWeight[vertexIndex][vertexJointWeightIdx];
+					auto weight = objectNode->mesh->skinningJointWeight[vertexIndex][vertexJointWeightIdx];
 					// skip on missing matrix
-					auto skinningJointTransformMatrix = objectNode->mesh->cSkinningJointTransformMatrices[instanceIdx][vertexIndex][vertexJointWeightIdx];
+					auto skinningJointTransformMatrix = objectNode->mesh->skinningJointTransformMatrices[instanceIdx][vertexIndex][vertexJointWeightIdx];
 					if (skinningJointTransformMatrix == nullptr) continue;
 					//
 					transformMatrix.set(*skinningJointTransformMatrix).multiply(objectBase->getTransformMatrix());
