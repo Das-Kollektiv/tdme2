@@ -111,6 +111,18 @@ public:
 			miniScript->enginePrototypesToAdd.clear();
 			miniScript->prototypesToAddMutex.unlock();
 		}
+		//
+		if (engineInitialized == false) {
+			// execute onLogicAdded() function
+			vector<MiniScript::ScriptVariable> argumentValues(0);
+			MiniScript::ScriptVariable returnValue;
+			span argumentValuesSpan(argumentValues);
+			if (miniScript->call("initializeEngine", argumentValuesSpan, returnValue) == false) {
+				Console::println("MiniScriptLogic::initializeEngine()(): Failed to call initializeEngine() function");
+			}
+			//
+			engineInitialized = true;
+		}
 		// execute updateEngine() function
 		vector<MiniScript::ScriptVariable> argumentValues(0);
 		MiniScript::ScriptVariable returnValue;
@@ -198,6 +210,7 @@ public:
 
 private:
 	LogicMiniScript* miniScript { nullptr };
+	bool engineInitialized { false };
 	string hierarchyId;
 	string hierarchyParentId;
 };

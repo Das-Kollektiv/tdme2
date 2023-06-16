@@ -6,6 +6,14 @@ function: initialize()
 	console.log()
 end
 
+# initialize engine
+function: initializeEngine()
+	console.log("-----------------------------")
+	console.log("initializeEngine(): " + logic.getId() + ", hierarchy id: " + logic.getHierarchyId() + ", hierarchy parent id: " + logic.getHierarchyParentId())
+	console.log("-----------------------------")
+	console.log()
+end
+
 # update engine
 function: updateEngine()
 	console.log("-----------------------------")

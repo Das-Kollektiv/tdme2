@@ -212,4 +212,35 @@ int main(int argc, char** argv)
 			Console::println("miniscript." + scriptMethod->getMethodName() + "=");
 		}
 	}
+
+	//
+	Console::println();
+	Console::println("Keywords: ");
+	set<string> allMethods;
+	{
+		//
+		auto scriptMethods = baseMiniScript->getMethods();
+		for (auto scriptMethod: scriptMethods) {
+			allMethods.insert(scriptMethod->getMethodName());
+		}
+	}
+	{
+		//
+		auto scriptMethods = logicMiniScript->getMethods();
+		for (auto scriptMethod: scriptMethods) {
+			allMethods.insert(scriptMethod->getMethodName());
+		}
+	}
+	{
+		//
+		auto scriptMethods = guiMiniScript->getMethods();
+		for (auto scriptMethod: scriptMethods) {
+			allMethods.insert(scriptMethod->getMethodName());
+		}
+	}
+	//
+	for (auto& method: allMethods) {
+		Console::print(method + " ");
+	}
+	Console::println();
 }

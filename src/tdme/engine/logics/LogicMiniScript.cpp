@@ -176,7 +176,7 @@ void LogicMiniScript::registerMethods() {
 					miniScript->getStringValue(argumentValues, 1, signal) == true) {
 					auto logic = static_cast<Logic*>(miniScript->context->getLogic(logicId));
 					if (logic == nullptr) {
-						Console::println("ScriptMethodLogicSignalSend::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no logic with given id: " + logicId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no logic with given id: " + logicId);
 						miniScript->startErrorScript();
 					} else {
 						vector<ScriptVariable> arguments(argumentValues.size() - 2);
@@ -184,7 +184,7 @@ void LogicMiniScript::registerMethods() {
 						logic->addSignal(signal, arguments);
 					}
 				} else {
-					Console::println("ScriptMethodLogicSignalSend::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, argument 1: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -193,6 +193,49 @@ void LogicMiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodLogicSignalSend(this));
+	}
+	{
+		//
+		class ScriptMethodLogicHas: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodLogicHas(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "function", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "logic.has";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string logicId;
+				string function;
+				if (MiniScript::getStringValue(argumentValues, 0, logicId) == false ||
+					MiniScript::getStringValue(argumentValues, 1, function) == false) {
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				} else {
+					auto logic = dynamic_cast<MiniScriptLogic*>(miniScript->context->getLogic(logicId));
+					if (logic == nullptr || logic->getMiniScript() == nullptr) {
+						returnValue.setValue(false);
+					} else {
+						auto logicMiniScript = logic->getMiniScript();
+						auto scriptIdx = logicMiniScript->getFunctionScriptIdx(function);
+						if (scriptIdx == SCRIPTIDX_NONE) {
+							returnValue.setValue(false);
+						} else {
+							returnValue.setValue(true);
+						}
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodLogicHas(this));
 	}
 	{
 		//
@@ -217,18 +260,18 @@ void LogicMiniScript::registerMethods() {
 				string function;
 				if (MiniScript::getStringValue(argumentValues, 0, logicId) == false ||
 					MiniScript::getStringValue(argumentValues, 1, function) == false) {
-					Console::println("ScriptMethodLogicCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto logic = dynamic_cast<MiniScriptLogic*>(miniScript->context->getLogic(logicId));
 					if (logic == nullptr || logic->getMiniScript() == nullptr) {
-						Console::println("ScriptMethodLogicCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no mini script logic with given id: " + logicId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no mini script logic with given id: " + logicId);
 						miniScript->startErrorScript();
 					} else {
 						auto logicMiniScript = logic->getMiniScript();
 						auto scriptIdx = logicMiniScript->getFunctionScriptIdx(function);
 						if (scriptIdx == SCRIPTIDX_NONE) {
-							Console::println("ScriptMethodLogicCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": function not found: " + function);
+							Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": function not found: " + function);
 							miniScript->startErrorScript();
 						} else {
 							#if defined (__APPLE__)
@@ -311,7 +354,7 @@ void LogicMiniScript::registerMethods() {
 				if (miniScript->getIntegerValue(argumentValues, 0, argumentIndex) == true) {
 					returnValue = miniScript->logic->getSignalArgument(argumentIndex);
 				} else {
-					Console::println("ScriptMethodLogicSignalGetArgument::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -809,7 +852,7 @@ void LogicMiniScript::registerMethods() {
 				if (miniScript->getIntegerValue(argumentValues, 0, keyCode) == true) {
 					returnValue = miniScript->keyboardKeys.find(keyCode) != miniScript->keyboardKeys.end();
 				} else {
-					Console::println("ScriptMethodInputKeyboardIsKeyDown::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -840,7 +883,7 @@ void LogicMiniScript::registerMethods() {
 					auto keyChar = u8It.hasNext() == true?u8It.next():-1;
 					returnValue = miniScript->keyboardChars.find(keyChar) != miniScript->keyboardChars.end();
 				} else {
-					Console::println("ScriptMethodInputKeyboardIsCharDown::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -1013,7 +1056,7 @@ void LogicMiniScript::registerMethods() {
 				if (miniScript->getIntegerValue(argumentValues, 0, button) == true) {
 					returnValue = button >= 0 && button <= 3?miniScript->mouseDown[button]:false;
 				} else {
-					Console::println("ScriptMethodInputMouseIsButtonDown::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -1041,7 +1084,7 @@ void LogicMiniScript::registerMethods() {
 				if (miniScript->getIntegerValue(argumentValues, 0, button) == true) {
 					returnValue = button >= 0 && button <= 3?miniScript->mouseUp[button]:false;
 				} else {
-					Console::println("ScriptMethodInputMouseIsButtonUp::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -1069,7 +1112,7 @@ void LogicMiniScript::registerMethods() {
 				if (miniScript->getIntegerValue(argumentValues, 0, button) == true) {
 					returnValue = button >= 0 && button <= 3?miniScript->mouseDragging[button]:false;
 				} else {
-					Console::println("ScriptMethodInputMouseIsDragging::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -1261,7 +1304,7 @@ void LogicMiniScript::registerMethods() {
 				if (miniScript->getVector3Value(argumentValues, 0, lookFrom) == true) {
 					miniScript->context->getEngine()->getCamera()->setLookFrom(lookFrom);
 				} else {
-					Console::println("ScriptMethodCameraSetLookFrom::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -1308,7 +1351,7 @@ void LogicMiniScript::registerMethods() {
 				if (miniScript->getVector3Value(argumentValues, 0, lookAt) == true) {
 					miniScript->context->getEngine()->getCamera()->setLookAt(lookAt);
 				} else {
-					Console::println("ScriptMethodCameraSetLookAt::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -1355,7 +1398,7 @@ void LogicMiniScript::registerMethods() {
 				if (miniScript->getVector3Value(argumentValues, 0, upVector) == true) {
 					miniScript->context->getEngine()->getCamera()->setUpVector(upVector);
 				} else {
-					Console::println("ScriptMethodCameraSetUpVector::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -1387,7 +1430,7 @@ void LogicMiniScript::registerMethods() {
 					miniScript->getVector3Value(argumentValues, 1, lookAt) == true) {
 					returnValue = Camera::computeUpVector(lookFrom, lookAt);
 				} else {
-					Console::println("ScriptMethodCameraComputeUpVector::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected, @ argument 1: vector3 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -1434,7 +1477,7 @@ void LogicMiniScript::registerMethods() {
 				if (miniScript->getFloatValue(argumentValues, 0, fovX) == true) {
 					miniScript->context->getEngine()->getCamera()->setFovX(fovX);
 				} else {
-					Console::println("ScriptMethodCameraSetFovX::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -1559,7 +1602,7 @@ void LogicMiniScript::registerMethods() {
 					auto entity = miniScript->context->getEngine()->getEntityByMousePosition(mouseX, mouseY);
 					returnValue = entity != nullptr?entity->getId():string();
 				} else {
-					Console::println("ScriptMethodEngineGetEntityIdByMousePosition::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected, @ argument 1: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -1591,7 +1634,7 @@ void LogicMiniScript::registerMethods() {
 					miniScript->getIntegerValue(argumentValues, 1, mouseY) == true) {
 					returnValue = miniScript->context->getEngine()->computeWorldCoordinateByMousePosition(mouseX, mouseY);
 				} else {
-					Console::println("ScriptMethodEngineGetEntityIdByMousePosition::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected, @ argument 1: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -1628,7 +1671,7 @@ void LogicMiniScript::registerMethods() {
 						returnValue = false;
 					}
 				} else {
-					Console::println("ScriptMethodEngineComputeScreenCoordinateByWorldCoordinate::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected, @ argument 1: vector2 for assign back expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -1662,10 +1705,10 @@ void LogicMiniScript::registerMethods() {
 					if (entity != nullptr) {
 						returnValue = entity->getTransform();
 					} else {
-						Console::println("ScriptMethodEngineGetEntityIdByMousePosition::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityGetTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @argument 1: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -1702,10 +1745,10 @@ void LogicMiniScript::registerMethods() {
 					if (entity != nullptr) {
 						entity->setTransform(transform);
 					} else {
-						Console::println("ScriptMethodEntitySetTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntitySetTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: transform expected, @argument 2: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -1739,10 +1782,10 @@ void LogicMiniScript::registerMethods() {
 					if (entity != nullptr) {
 						returnValue = entity->isEnabled();
 					} else {
-						Console::println("ScriptMethodEntityIsEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityIsEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @argument 1: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -1779,10 +1822,10 @@ void LogicMiniScript::registerMethods() {
 					if (entity != nullptr) {
 						entity->setEnabled(enabled);
 					} else {
-						Console::println("ScriptMethodEntitySetEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntitySetEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: boolean expected, @argument 2: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -1816,10 +1859,10 @@ void LogicMiniScript::registerMethods() {
 					if (entity != nullptr) {
 						returnValue = entity->isPickable();
 					} else {
-						Console::println("ScriptMethodEntityIsPickable::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityIsPickable::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @argument 1: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -1856,10 +1899,10 @@ void LogicMiniScript::registerMethods() {
 					if (entity != nullptr) {
 						entity->setPickable(pickable);
 					} else {
-						Console::println("ScriptMethodEntitySetPickable::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntitySetPickable::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: boolean expected, @argument 2: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -1894,10 +1937,10 @@ void LogicMiniScript::registerMethods() {
 						auto effectColorMul = entity->getEffectColorMul();
 						returnValue.setValue(Vector4(effectColorMul.getRed(), effectColorMul.getGreen(), effectColorMul.getBlue(), effectColorMul.getAlpha()));
 					} else {
-						Console::println("ScriptMethodEntityGetEffectColorMul::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityGetEffectColorMul::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @argument 1: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -1934,10 +1977,10 @@ void LogicMiniScript::registerMethods() {
 					if (entity != nullptr) {
 						entity->setEffectColorMul(Color4(effectColorMul.getX(), effectColorMul.getY(), effectColorMul.getZ(), effectColorMul.getW()));
 					} else {
-						Console::println("ScriptMethodEntitySetEffectColorMul::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntitySetEffectColorMul::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: vector4 expected, @argument 2: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -1972,10 +2015,10 @@ void LogicMiniScript::registerMethods() {
 						auto effectColorAdd = entity->getEffectColorAdd();
 						returnValue.setValue(Vector4(effectColorAdd.getRed(), effectColorAdd.getGreen(), effectColorAdd.getBlue(), effectColorAdd.getAlpha()));
 					} else {
-						Console::println("ScriptMethodEntityGetEffectColorAdd::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityGetEffectColorAdd::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @argument 1: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -2012,10 +2055,10 @@ void LogicMiniScript::registerMethods() {
 					if (entity != nullptr) {
 						entity->setEffectColorAdd(Color4(effectColorAdd.getX(), effectColorAdd.getY(), effectColorAdd.getZ(), effectColorAdd.getW()));
 					} else {
-						Console::println("ScriptMethodEntitySetEffectColorAdd::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntitySetEffectColorAdd::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: vector4 expected, @argument 2: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -2049,10 +2092,10 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						returnValue.setValue(object->getAnimation());
 					} else {
-						Console::println("ScriptMethodEntityGetAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityGetAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @argument 1: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -2092,10 +2135,10 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						object->setAnimation(animation, speed);
 					} else {
-						Console::println("ScriptMethodEntitySetAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntitySetAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: optional float expected, @argument 3: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -2132,10 +2175,10 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						object->setAnimationSpeed(speed);
 					} else {
-						Console::println("ScriptMethodEntitySetAnimationSpeed::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntitySetAnimationSpeed::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: float expected, @argument 2: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -2169,10 +2212,10 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						returnValue.setValue(object->getAnimationTime());
 					} else {
-						Console::println("ScriptMethodEntityGetAnimationTime::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityGetAnimationTime::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @argument 1: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -2209,10 +2252,10 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						returnValue = object->hasOverlayAnimation(animation);
 					} else {
-						Console::println("ScriptMethodEntityHasOverlayAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityHasOverlayAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @argument 2: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -2249,10 +2292,10 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						object->addOverlayAnimation(animation);
 					} else {
-						Console::println("ScriptMethodEntityAddOverlayAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityAddOverlayAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @argument 2: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -2289,10 +2332,10 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						object->removeOverlayAnimation(animation);
 					} else {
-						Console::println("ScriptMethodEntityRemoveOverlayAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityRemoveOverlayAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @argument 2: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -2326,10 +2369,10 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						object->removeFinishedOverlayAnimations();
 					} else {
-						Console::println("ScriptMethodEntityRemoveFinishedOverlayAnimations::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityRemoveFinishedOverlayAnimations::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @argument 1: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -2363,10 +2406,10 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						object->removeOverlayAnimations();
 					} else {
-						Console::println("ScriptMethodEntityRemoveOverlayAnimations::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityRemoveOverlayAnimations::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @argument 1: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -2403,10 +2446,10 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						returnValue.setValue(object->getOverlayAnimationTime(animation));
 					} else {
-						Console::println("ScriptMethodEntityGetOverlayAnimationTime::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityGetOverlayAnimationTime::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @argument 2: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -2443,10 +2486,10 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						returnValue.setValue(object->getNodeTransformMatrix(nodeId));
 					} else {
-						Console::println("ScriptMethodEntityGetNodeTransformMatrix::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityGetNodeTransformMatrix::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @argument 2: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -2485,10 +2528,10 @@ void LogicMiniScript::registerMethods() {
 						transform.fromMatrix(object->getNodeTransformMatrix(nodeId), RotationOrder::ZYX);
 						returnValue.setValue(transform);
 					} else {
-						Console::println("ScriptMethodEntityGetNodeTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityGetNodeTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @argument 2: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -2528,10 +2571,10 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						object->setNodeTransformMatrix(nodeId, matrix);
 					} else {
-						Console::println("ScriptMethodEntitySetNodeTransformMatrix::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntitySetNodeTransformMatrix::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: matrix4x4 expected, @argument 3: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -2571,10 +2614,10 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						object->setNodeTransformMatrix(nodeId, transform.getTransformMatrix());
 					} else {
-						Console::println("ScriptMethodEntitySetNodeTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntitySetNodeTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: transform expected, @argument 3: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -2611,10 +2654,10 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						object->unsetNodeTransformMatrix(nodeId);
 					} else {
-						Console::println("ScriptMethodEntityUnsetNodeTransformMatrix::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityUnsetNodeTransformMatrix::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @argument 2: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -2651,10 +2694,10 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						object->unsetNodeTransformMatrix(nodeId);
 					} else {
-						Console::println("ScriptMethodEntityUnsetNodeTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityUnsetNodeTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @argument 2: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -2688,10 +2731,10 @@ void LogicMiniScript::registerMethods() {
 					if (entity != nullptr) {
 						returnValue = static_cast<int64_t>(entity->emitParticles());
 					} else {
-						Console::println("ScriptMethodEntityEmitParticles::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": particle system entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": particle system entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityEmitParticles::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @argument 1: optional string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -3101,10 +3144,10 @@ void LogicMiniScript::registerMethods() {
 					if (body != nullptr) {
 						returnValue = body->isEnabled();
 					} else {
-						Console::println("ScriptMethodBodyIsEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
 				} else {
-					Console::println("ScriptMethodBodyIsEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -3138,10 +3181,10 @@ void LogicMiniScript::registerMethods() {
 					if (body != nullptr) {
 						body->setEnabled(enabled);
 					} else {
-						Console::println("ScriptMethodBodySetEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
 				} else {
-					Console::println("ScriptMethodBodySetEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: boolean expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -3172,10 +3215,10 @@ void LogicMiniScript::registerMethods() {
 					if (body != nullptr) {
 						returnValue = static_cast<int64_t>(body->getType());
 					} else {
-						Console::println("ScriptMethodBodyGetType::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
 				} else {
-					Console::println("ScriptMethodBodyGetType::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -3206,10 +3249,10 @@ void LogicMiniScript::registerMethods() {
 					if (body != nullptr) {
 						returnValue = static_cast<int64_t>(body->getCollisionTypeId());
 					} else {
-						Console::println("ScriptMethodBodyGetCollisionTypeId::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
 				} else {
-					Console::println("ScriptMethodBodyGetCollisionTypeId::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -3243,10 +3286,10 @@ void LogicMiniScript::registerMethods() {
 					if (body != nullptr) {
 						body->setCollisionTypeId(collisionTypeId);
 					} else {
-						Console::println("ScriptMethodBodySetCollisionTypeId::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
 				} else {
-					Console::println("ScriptMethodBodySetCollisionTypeId::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -3277,10 +3320,10 @@ void LogicMiniScript::registerMethods() {
 					if (body != nullptr) {
 						returnValue = static_cast<int64_t>(body->getCollisionTypeIds());
 					} else {
-						Console::println("ScriptMethodBodyGetCollisionTypeIds::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
 				} else {
-					Console::println("ScriptMethodBodyGetCollisionTypeIds::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -3314,10 +3357,10 @@ void LogicMiniScript::registerMethods() {
 					if (body != nullptr) {
 						body->setCollisionTypeIds(collisionTypeIds);
 					} else {
-						Console::println("ScriptMethodBodySetCollisionTypeIds::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
 				} else {
-					Console::println("ScriptMethodBodySetCollisionTypeIds::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -3348,10 +3391,10 @@ void LogicMiniScript::registerMethods() {
 					if (body != nullptr) {
 						returnValue = body->getLinearDamping();
 					} else {
-						Console::println("ScriptMethodBodyGetLinearDamping::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
 				} else {
-					Console::println("ScriptMethodBodyGetLinearDamping::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -3385,10 +3428,10 @@ void LogicMiniScript::registerMethods() {
 					if (body != nullptr) {
 						body->setLinearDamping(linearDamping);
 					} else {
-						Console::println("ScriptMethodBodySetLinearDamping::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
 				} else {
-					Console::println("ScriptMethodBodySetLinearDamping::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: float expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -3419,10 +3462,10 @@ void LogicMiniScript::registerMethods() {
 					if (body != nullptr) {
 						returnValue = body->getAngularDamping();
 					} else {
-						Console::println("ScriptMethodBodyGetAngularDamping::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
 				} else {
-					Console::println("ScriptMethodBodyGetAngularDamping::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -3456,10 +3499,10 @@ void LogicMiniScript::registerMethods() {
 					if (body != nullptr) {
 						body->setAngularDamping(angularDamping);
 					} else {
-						Console::println("ScriptMethodBodySetAngularDamping::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
 				} else {
-					Console::println("ScriptMethodBodySetAngularDamping::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: float expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -3490,10 +3533,10 @@ void LogicMiniScript::registerMethods() {
 					if (body != nullptr) {
 						returnValue = body->getLinearVelocity();
 					} else {
-						Console::println("ScriptMethodBodyGetLinearVelocity::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
 				} else {
-					Console::println("ScriptMethodBodyGetLinearVelocity::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -3527,10 +3570,10 @@ void LogicMiniScript::registerMethods() {
 					if (body != nullptr) {
 						body->setLinearVelocity(linearVelocity);
 					} else {
-						Console::println("ScriptMethodBodySetLinearVelocity::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
 				} else {
-					Console::println("ScriptMethodBodySetLinearVelocity::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: vector3 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -3561,10 +3604,10 @@ void LogicMiniScript::registerMethods() {
 					if (body != nullptr) {
 						returnValue = body->getAngularVelocity();
 					} else {
-						Console::println("ScriptMethodBodyGetAngularVelocity::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
 				} else {
-					Console::println("ScriptMethodBodyGetAngularVelocity::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -3598,10 +3641,10 @@ void LogicMiniScript::registerMethods() {
 					if (body != nullptr) {
 						body->setAngularVelocity(angularVelocity);
 					} else {
-						Console::println("ScriptMethodBodySetAngularVelocity::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
 				} else {
-					Console::println("ScriptMethodBodySetAngularVelocity::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: vector3 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -3642,14 +3685,14 @@ void LogicMiniScript::registerMethods() {
 						if (argumentValues.size() == 3) {
 							body->addForce(forceOrigin, force);
 						} else {
-							Console::println("ScriptMethodBodyAddForce::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: vector3 expected, @ argument 2: optional vector3 expected");
+							Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 							miniScript->startErrorScript();
 						}
 					} else {
-						Console::println("ScriptMethodBodyAddForce::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
 				} else {
-					Console::println("ScriptMethodBodyAddForce::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: vector3 expected, @ argument 2: optional vector3 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -3683,10 +3726,10 @@ void LogicMiniScript::registerMethods() {
 					if (body != nullptr) {
 						body->addTorque(torque);
 					} else {
-						Console::println("ScriptMethodBodyAddTorque::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
 				} else {
-					Console::println("ScriptMethodBodyAddTorque::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: vector3 expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -3729,10 +3772,10 @@ void LogicMiniScript::registerMethods() {
 						transform.update();
 						returnValue = transform;
 					} else {
-						Console::println("ScriptMethodBodyGetTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
 				} else {
-					Console::println("ScriptMethodBodyGetTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -3766,10 +3809,10 @@ void LogicMiniScript::registerMethods() {
 					if (body != nullptr) {
 						body->setTransform(transform);
 					} else {
-						Console::println("ScriptMethodBodySetTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
 				} else {
-					Console::println("ScriptMethodBodySetTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: transform expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -3821,7 +3864,7 @@ void LogicMiniScript::registerMethods() {
 						returnValue = false;
 					}
 				} else {
-					Console::println("ScriptMethodWorldDetermineHeight::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected, @ argument 1: float expected, @ argument 2: vector3 expected, @ argument 3: vector3 expected, @ argument 4: string expected, @ argument 5: float expected, @ argument 6: float expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -3869,7 +3912,7 @@ void LogicMiniScript::registerMethods() {
 						returnValue = false;
 					}
 				} else {
-					Console::println("ScriptMethodWorldDoRayCasting::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected, @ argument 1: vector3 expected, @ argument 2: vector3 expected, @ argument 3: vector3 expected, @ argument 4: string expected, @ argument 5: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -3902,15 +3945,15 @@ void LogicMiniScript::registerMethods() {
 					auto body1 = miniScript->context->getWorld()->getBody(bodyId1);
 					auto body2 = miniScript->context->getWorld()->getBody(bodyId2);
 					if (body1 == nullptr) {
-						Console::println("ScriptMethodWorldDoCollide::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body1 not found: " + bodyId1);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body1 not found: " + bodyId1);
 					} else
 					if (body2 == nullptr) {
-						Console::println("ScriptMethodWorldDoCollide::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body2 not found: " + bodyId2);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body2 not found: " + bodyId2);
 					} else {
 						returnValue = miniScript->context->getWorld()->doCollide(body1, body2);
 					}
 				} else {
-					Console::println("ScriptMethodWorldDoCollide::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -3942,7 +3985,7 @@ void LogicMiniScript::registerMethods() {
 					miniScript->getStringValue(argumentValues, 1, bodyId) == true) {
 					auto body = miniScript->context->getWorld()->getBody(bodyId);
 					if (body == nullptr) {
-						Console::println("ScriptMethodWorldDoesCollideWith::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					} else {
 						vector<Body*> collisionBodies;
 						miniScript->context->getWorld()->doesCollideWith(collisionTypeIds, body, collisionBodies);
@@ -3952,7 +3995,7 @@ void LogicMiniScript::registerMethods() {
 						}
 					}
 				} else {
-					Console::println("ScriptMethodWorldDoesCollideWith::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected, @ argument 1: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -4104,7 +4147,7 @@ void LogicMiniScript::registerMethods() {
 						argumentValues[3].pushArrayValue(position);
 					};
 				} else {
-					Console::println("ScriptMethodPathFindingFindPath::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: vector3 expected, @ argument 2: vector3 expected, @ argument 3: assign back array expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -4206,7 +4249,7 @@ void LogicMiniScript::registerMethods() {
 					}
 					miniScript->prototypesToAddMutex.unlock();
 				} else {
-					Console::println("ScriptMethodSceneConnectorAddPrototype::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: string expected, @ argument 3: transform expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
