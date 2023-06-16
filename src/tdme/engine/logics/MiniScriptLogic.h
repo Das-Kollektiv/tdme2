@@ -54,7 +54,7 @@ public:
 		MiniScript::ScriptVariable returnValue;
 		span argumentValuesSpan(argumentValues);
 		if (miniScript->call("initialize", argumentValuesSpan, returnValue) == false) {
-			Console::println("MiniScriptLogic::onLogicsProcessed()(): Failed to call initialize() function");
+			Console::println("MiniScriptLogic::onLogicsProcessed(): Failed to call initialize() function");
 		}
 	}
 
@@ -118,7 +118,7 @@ public:
 			MiniScript::ScriptVariable returnValue;
 			span argumentValuesSpan(argumentValues);
 			if (miniScript->call("initializeEngine", argumentValuesSpan, returnValue) == false) {
-				Console::println("MiniScriptLogic::initializeEngine()(): Failed to call initializeEngine() function");
+				Console::println("MiniScriptLogic::initializeEngine(): Failed to call initializeEngine() function");
 			}
 			//
 			engineInitialized = true;
@@ -128,7 +128,7 @@ public:
 		MiniScript::ScriptVariable returnValue;
 		span argumentValuesSpan(argumentValues);
 		if (miniScript->call("updateEngine", argumentValuesSpan, returnValue) == false) {
-			Console::println("MiniScriptLogic::updateEngine()(): Failed to call updateEngine() function");
+			Console::println("MiniScriptLogic::updateEngine(): Failed to call updateEngine() function");
 		}
 	}
 
@@ -184,7 +184,7 @@ public:
 		MiniScript::ScriptVariable returnValue;
 		span argumentValuesSpan(argumentValues);
 		if (miniScript->call("updateLogic", argumentValuesSpan, returnValue) == false) {
-			Console::println("MiniScriptLogic::updateLogic()(): Failed to call updateLogic() function");
+			Console::println("MiniScriptLogic::updateLogic(): Failed to call updateLogic() function");
 		}
 	}
 
@@ -194,7 +194,7 @@ public:
 		MiniScript::ScriptVariable returnValue;
 		span argumentValuesSpan(argumentValues);
 		if (miniScript->call("onLogicAdded", argumentValuesSpan, returnValue) == false) {
-			Console::println("MiniScriptLogic::onLogicAdded()(): Failed to call onLogicAdded() function");
+			Console::println("MiniScriptLogic::onLogicAdded(): Failed to call onLogicAdded() function");
 		}
 	}
 
@@ -204,7 +204,7 @@ public:
 		MiniScript::ScriptVariable returnValue;
 		span argumentValuesSpan(argumentValues);
 		if (miniScript->call("onLogicsProcessed", argumentValuesSpan, returnValue) == false) {
-			Console::println("MiniScriptLogic::onLogicsProcessed()(): Failed to call onLogicsProcessed() function");
+			Console::println("MiniScriptLogic::onLogicsProcessed(): Failed to call onLogicsProcessed() function");
 		}
 	}
 
