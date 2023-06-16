@@ -66,6 +66,7 @@ public:
 	static constexpr uint16_t COLLISION_TYPEID_14 { 8192 };
 	static constexpr uint16_t COLLISION_TYPEID_15 { 16384 };
 	static constexpr uint16_t COLLISION_TYPEID_16 { 32768 };
+	static constexpr uint16_t COLLISION_TYPEID_RESERVED { 32768 };
 	static constexpr uint16_t COLLISION_TYPEID_ALL { 65535 };
 
 	/**

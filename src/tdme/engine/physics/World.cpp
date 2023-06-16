@@ -140,8 +140,8 @@ Body* World::addStaticCollisionBody(const string& id, uint16_t collisionTypeId, 
 	//
 	auto body =
 		hierarchy == true?
-			new BodyHierarchy(this, id, Body::BODYTYPE_COLLISION_STATIC, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor()):
-			new Body(this, id, Body::BODYTYPE_COLLISION_STATIC, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
+			new BodyHierarchy(this, id, Body::BODYTYPE_COLLISION_STATIC, collisionTypeId, enabled, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor()):
+			new Body(this, id, Body::BODYTYPE_COLLISION_STATIC, collisionTypeId, enabled, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
 	//
 	if (hierarchy == true) {
 		static_cast<BodyHierarchy*>(body)->addBody(id, Transform(), boundingVolumes);
@@ -163,8 +163,8 @@ Body* World::addDynamicCollisionBody(const string& id, uint16_t collisionTypeId,
 	//
 	auto body =
 		hierarchy == true?
-			new BodyHierarchy(this, id, Body::BODYTYPE_COLLISION_DYNAMIC, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor()):
-			new Body(this, id, Body::BODYTYPE_COLLISION_DYNAMIC, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
+			new BodyHierarchy(this, id, Body::BODYTYPE_COLLISION_DYNAMIC, collisionTypeId, enabled, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor()):
+			new Body(this, id, Body::BODYTYPE_COLLISION_DYNAMIC, collisionTypeId, enabled, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
 	//
 	if (hierarchy == true) {
 		static_cast<BodyHierarchy*>(body)->addBody(id, Transform(), boundingVolumes);
@@ -187,8 +187,8 @@ Body* World::addStaticRigidBody(const string& id, uint16_t collisionTypeId, bool
 	//
 	auto body =
 		hierarchy == true?
-			new BodyHierarchy(this, id, Body::BODYTYPE_STATIC, enabled, collisionTypeId, transform, 0.0f, friction, 0.0f, Body::getNoRotationInertiaTensor()):
-			new Body(this, id, Body::BODYTYPE_STATIC, enabled, collisionTypeId, transform, 0.0f, friction, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
+			new BodyHierarchy(this, id, Body::BODYTYPE_STATIC, collisionTypeId, enabled, transform, 0.0f, friction, 0.0f, Body::getNoRotationInertiaTensor()):
+			new Body(this, id, Body::BODYTYPE_STATIC, collisionTypeId, enabled, transform, 0.0f, friction, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
 	//
 	if (hierarchy == true) {
 		static_cast<BodyHierarchy*>(body)->addBody(id, Transform(), boundingVolumes);
@@ -501,8 +501,8 @@ bool World::doesCollideWith(uint16_t collisionTypeIds, Body* body, vector<Body*>
 					auto overlappingPair = callbackData.getOverlappingPair(i);
 					auto body1 = static_cast<Body*>(overlappingPair.getBody1()->getUserData());
 					auto body2 = static_cast<Body*>(overlappingPair.getBody2()->getUserData());
-					if (body1 != body && (body1->getCollisionTypeId() & collisionTypeIds) != 0) collisionBodies.push_back(body1);
-					if (body2 != body && (body2->getCollisionTypeId() & collisionTypeIds) != 0) collisionBodies.push_back(body2);
+					if (body != body1 && ((body1->getCollisionTypeId() & collisionTypeIds) != 0)) collisionBodies.push_back(body1);
+					if (body != body2 && ((body2->getCollisionTypeId() & collisionTypeIds) != 0)) collisionBodies.push_back(body2);
 				}
 			}
 	    private:
