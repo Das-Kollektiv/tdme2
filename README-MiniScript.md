@@ -450,7 +450,7 @@ Reading all keys and values from map using map.get() and map.getKeys()
 
 ## 4.5. Sets
 
-A set is value storage using a underlying hash set. Keys can only exist once in a set.
+A set is key storage using a underlying hash set. Keys can only exist once in a set.
 
 Initializing sets using set() method:
 ```
@@ -644,7 +644,7 @@ Reading all keys as array from set:
 | Get Map Value by Key                                                                             |
 | <sub>map.get($map: Map, $key: String): Mixed</sub>                                               |
 | Set Map Entry                                                                                    |
-| <sub>map.set(=$map: Map, $key: String, ...): Void</sub>                                          |
+| <sub>map.set(=$map: Map, $key: String, $value: Mixed): Void</sub>                                |
 | Get Map Keys                                                                                     |
 | <sub>map.getKeys($map: Map): Array</sub>                                                         |
 | Get Map Values                                                                                   |

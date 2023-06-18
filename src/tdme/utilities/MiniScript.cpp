@@ -6019,16 +6019,14 @@ void MiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_MAP, .name = "map", .optional = false, .assignBack = true },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "map.set";
-			}
-			bool isVariadic() const override {
-				return true;
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				//
@@ -6970,7 +6968,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 								{
 									int64_t value;
 									argument.value.getIntegerValue(value);
-									argumentValuesCode.push_back("argumentValues[" + to_string(subArgumentIdx) + "].setValue(" + to_string(value) + "l);");
+									argumentValuesCode.push_back("argumentValues[" + to_string(subArgumentIdx) + "].setValue(" + to_string(value) + "ll);");
 								}
 								break;
 							case TYPE_FLOAT:

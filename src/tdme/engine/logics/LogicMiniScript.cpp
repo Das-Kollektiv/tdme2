@@ -1600,7 +1600,7 @@ void LogicMiniScript::registerMethods() {
 				if (miniScript->getIntegerValue(argumentValues, 0, mouseX) == true &&
 					miniScript->getIntegerValue(argumentValues, 1, mouseY) == true) {
 					auto entity = miniScript->context->getEngine()->getEntityByMousePosition(mouseX, mouseY);
-					returnValue = entity != nullptr?entity->getId():string();
+					if (entity != nullptr) returnValue = entity->getId();
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
