@@ -77,10 +77,10 @@ void BasePropertiesSubController::initialize(GUIScreenNode* screenNode)
 
 void BasePropertiesSubController::createBasePropertiesXML(BaseProperties* prototype, string& xml) {
 	if (prototype->getPropertyCount() > 0) {
-		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Properties") + "\" value=\"" + GUIParser::escapeQuotes("properties") + "\">\n";
+		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Properties") + "\" value=\"" + GUIParser::escape("properties") + "\">\n";
 		for (auto i = 0; i < prototype->getPropertyCount(); i++) {
 			auto property = prototype->getPropertyByIndex(i);
-			xml+= "	<selectbox-option image=\"resources/engine/images/script.png\" text=\"" + GUIParser::escapeQuotes(property->getName() + ": " + property->getValue()) + "\" id=\"" + GUIParser::escapeQuotes("properties." + property->getName()) + "\" value=\"" + GUIParser::escapeQuotes("properties." + property->getName()) + "\" />\n";
+			xml+= "	<selectbox-option image=\"resources/engine/images/script.png\" text=\"" + GUIParser::escape(property->getName() + ": " + property->getValue()) + "\" id=\"" + GUIParser::escape("properties." + property->getName()) + "\" value=\"" + GUIParser::escape("properties." + property->getName()) + "\" />\n";
 		}
 		xml+= "</selectbox-parent-option>\n";
 	}
@@ -203,7 +203,7 @@ void BasePropertiesSubController::startRenameProperty(BaseProperties* baseProper
 	if (selectBoxOptionParentNode == nullptr) return;
 	renamePropertyName = propertyName;
 	selectBoxOptionParentNode->replaceSubNodes(
-		"<template id=\"tdme.properties.rename_input\" hint=\"Property name\" text=\"" + GUIParser::escapeQuotes(property->getName()) + "\"src=\"resources/engine/gui/template_outliner_rename.xml\" />\n",
+		"<template id=\"tdme.properties.rename_input\" hint=\"Property name\" text=\"" + GUIParser::escape(property->getName()) + "\"src=\"resources/engine/gui/template_outliner_rename.xml\" />\n",
 		true
 	);
 	Engine::getInstance()->getGUI()->setFoccussedNode(dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("tdme.properties.rename_input")));

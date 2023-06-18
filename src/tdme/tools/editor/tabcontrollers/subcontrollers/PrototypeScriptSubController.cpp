@@ -77,7 +77,7 @@ void PrototypeScriptSubController::initialize(GUIScreenNode* screenNode)
 }
 
 void PrototypeScriptSubController::createScriptXML(Prototype* prototype, string& xml) {
-	xml+= "<selectbox-option image=\"resources/engine/images/script.png\" text=\"" + GUIParser::escapeQuotes("Script") + "\" value=\"" + GUIParser::escapeQuotes("script") + "\" />\n";
+	xml+= "<selectbox-option image=\"resources/engine/images/script.png\" text=\"" + GUIParser::escape("Script") + "\" value=\"" + GUIParser::escape("script") + "\" />\n";
 }
 
 void PrototypeScriptSubController::setScriptDetails(Prototype* prototype) {

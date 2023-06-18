@@ -225,18 +225,18 @@ public:
 	static const string getInnerXml(const string& xml);
 
 	/**
-	 * Unescape quotes
+	 * Unescape quotes and other special html characters
 	 * @param str string
 	 * @return string with unescaped quotes
 	 */
-	static const string unescapeQuotes(const string& str);
+	static const string unescape(const string& str);
 
 	/**
-	 * Escape quotes
+	 * Escape quotes and other special html characters
 	 * @param str string
 	 * @return string with escaped quotes
 	 */
-	static const string escapeQuotes(const string& str);
+	static const string escape(const string& str);
 
 	/**
 	 * Add GUI element

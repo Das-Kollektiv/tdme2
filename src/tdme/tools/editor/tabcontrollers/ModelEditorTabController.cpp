@@ -317,18 +317,18 @@ void ModelEditorTabController::createOutlinerModelNodesXML(const string& prefix,
 			image = "mesh.png";
 		}
 		if (node->getSubNodes().empty() == false) {
-			xml+= "<selectbox-parent-option image=\"resources/engine/images/" + image + "\" text=\"" + GUIParser::escapeQuotes(node->getId()) + "\" value=\"" + GUIParser::escapeQuotes(prefix + ".nodes." + node->getId()) + "\">\n";
+			xml+= "<selectbox-parent-option image=\"resources/engine/images/" + image + "\" text=\"" + GUIParser::escape(node->getId()) + "\" value=\"" + GUIParser::escape(prefix + ".nodes." + node->getId()) + "\">\n";
 			createOutlinerModelNodesXML(prefix, node->getSubNodes(), xml);
 			xml+= "</selectbox-parent-option>\n";
 		} else {
-			xml+= "	<selectbox-option image=\"resources/engine/images/" + image + "\" text=\"" + GUIParser::escapeQuotes(node->getId()) + "\" value=\"" + GUIParser::escapeQuotes(prefix + ".nodes." + node->getId()) + "\" />\n";
+			xml+= "	<selectbox-option image=\"resources/engine/images/" + image + "\" text=\"" + GUIParser::escape(node->getId()) + "\" value=\"" + GUIParser::escape(prefix + ".nodes." + node->getId()) + "\" />\n";
 		}
 	}
 }
 
 void ModelEditorTabController::setOutlinerContent() {
 	string xml;
-	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Prototype") + "\" value=\"" + GUIParser::escapeQuotes("prototype") + "\">\n";
+	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Prototype") + "\" value=\"" + GUIParser::escape("prototype") + "\">\n";
 	auto prototype = view->getPrototype();
 	if (prototype != nullptr) {
 		basePropertiesSubController->createBasePropertiesXML(prototype, xml);
@@ -358,30 +358,30 @@ void ModelEditorTabController::setOutlinerContent() {
 			auto modelPrefix = lodLevel == 1?"model":"lod" + to_string(lodLevel) + ".model";
 			// TODO: clean up "model != nullpt" stuff here
 			if (model != nullptr) {
-				xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes(lodLevel != 1?"LOD " + to_string(lodLevel) + " Model":"Model") + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix) + "\">\n";
+				xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape(lodLevel != 1?"LOD " + to_string(lodLevel) + " Model":"Model") + "\" value=\"" + GUIParser::escape(modelPrefix) + "\">\n";
 			} else {
-				xml+= "<selectbox-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes(lodLevel != 1?"LOD " + to_string(lodLevel) + " Model":"Model") + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix) + "\" />\n";
+				xml+= "<selectbox-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape(lodLevel != 1?"LOD " + to_string(lodLevel) + " Model":"Model") + "\" value=\"" + GUIParser::escape(modelPrefix) + "\" />\n";
 			}
 			if (model != nullptr) {
-				xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Materials") + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix + ".materials") + "\">\n";
+				xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Materials") + "\" value=\"" + GUIParser::escape(modelPrefix + ".materials") + "\">\n";
 				for (auto it: model->getMaterials()) {
 					auto materialId = it.second->getId();
-					xml+= "	<selectbox-option image=\"resources/engine/images/material.png\" text=\"" + GUIParser::escapeQuotes(materialId) + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix + ".materials." + materialId) + "\" />\n";
+					xml+= "	<selectbox-option image=\"resources/engine/images/material.png\" text=\"" + GUIParser::escape(materialId) + "\" value=\"" + GUIParser::escape(modelPrefix + ".materials." + materialId) + "\" />\n";
 				}
 				xml+= "</selectbox-parent-option>\n";
 			}
 			if (model != nullptr && model->getSubNodes().empty() == false) {
-				xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Nodes") + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix + ".nodes") + "\">\n";
+				xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Nodes") + "\" value=\"" + GUIParser::escape(modelPrefix + ".nodes") + "\">\n";
 				createOutlinerModelNodesXML(modelPrefix, model->getSubNodes(), xml);
 				xml+= "</selectbox-parent-option>\n";
 			}
 			if (model != nullptr &&
 				(model->getAnimationSetups().size() > 1 || model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT) == nullptr)) {
-				xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Animations") + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix + ".animations") + "\">\n";
+				xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Animations") + "\" value=\"" + GUIParser::escape(modelPrefix + ".animations") + "\">\n";
 				for (auto it: model->getAnimationSetups()) {
 					auto animationSetupId = it.second->getId();
 					if (animationSetupId == Model::ANIMATIONSETUP_DEFAULT) continue;
-					xml+= "	<selectbox-option image=\"resources/engine/images/animation.png\" text=\"" + GUIParser::escapeQuotes(animationSetupId) + "\" id=\"" + GUIParser::escapeQuotes(modelPrefix + ".animations." + animationSetupId) + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix + ".animations." + animationSetupId) + "\" />\n";
+					xml+= "	<selectbox-option image=\"resources/engine/images/animation.png\" text=\"" + GUIParser::escape(animationSetupId) + "\" id=\"" + GUIParser::escape(modelPrefix + ".animations." + animationSetupId) + "\" value=\"" + GUIParser::escape(modelPrefix + ".animations." + animationSetupId) + "\" />\n";
 				}
 				xml+= "</selectbox-parent-option>\n";
 			}
@@ -990,9 +990,9 @@ void ModelEditorTabController::setAnimationDetails() {
 			auto& nodeId = it.second->getId();
 			animationsXML+=
 				"<dropdown-option text=\"" +
-				GUIParser::escapeQuotes(nodeId) +
+				GUIParser::escape(nodeId) +
 				"\" value=\"" +
-				GUIParser::escapeQuotes(nodeId) +
+				GUIParser::escape(nodeId) +
 				"\" " +
 				(animationSetup->getOverlayFromNodeId() == nodeId?"selected=\"true\" ":"") +
 				" />\n";
@@ -1068,9 +1068,9 @@ void ModelEditorTabController::setAnimationPreviewDetails() {
 			if (animationSetup->isOverlayAnimationSetup() == true) continue;
 			animationsXML =
 				animationsXML + "<dropdown-option text=\"" +
-				GUIParser::escapeQuotes(animationSetup->getId()) +
+				GUIParser::escape(animationSetup->getId()) +
 				"\" value=\"" +
-				GUIParser::escapeQuotes(animationSetup->getId()) +
+				GUIParser::escape(animationSetup->getId()) +
 				"\" " +
 				" />\n";
 		}
@@ -1089,9 +1089,9 @@ void ModelEditorTabController::setAnimationPreviewDetails() {
 			if (animationSetup->isOverlayAnimationSetup() == false) continue;
 			overlayAnimationsXML =
 				overlayAnimationsXML + "<dropdown-option text=\"" +
-				GUIParser::escapeQuotes(animationSetup->getId()) +
+				GUIParser::escape(animationSetup->getId()) +
 				"\" value=\"" +
-				GUIParser::escapeQuotes(animationSetup->getId()) +
+				GUIParser::escape(animationSetup->getId()) +
 				"\" " +
 				" />\n";
 		}
@@ -1119,9 +1119,9 @@ void ModelEditorTabController::setAnimationPreviewDetails() {
 			auto node = it.second;
 			bonesXML =
 				bonesXML + "<dropdown-option text=\"" +
-				GUIParser::escapeQuotes(node->getId()) +
+				GUIParser::escape(node->getId()) +
 				"\" value=\"" +
-				GUIParser::escapeQuotes(node->getId()) +
+				GUIParser::escape(node->getId()) +
 				"\" " +
 				" />\n";
 		}
@@ -2044,7 +2044,7 @@ void ModelEditorTabController::startRenameAnimation(int lodLevel, const string& 
 	renameAnimationId = animationId;
 	renameAnimationLOD = lodLevel;
 	selectBoxOptionParentNode->replaceSubNodes(
-		"<template id=\"tdme.animations.rename_input\" hint=\"Animation name\" text=\"" + GUIParser::escapeQuotes(animationId) + "\"src=\"resources/engine/gui/template_outliner_rename.xml\" />\n",
+		"<template id=\"tdme.animations.rename_input\" hint=\"Animation name\" text=\"" + GUIParser::escape(animationId) + "\"src=\"resources/engine/gui/template_outliner_rename.xml\" />\n",
 		true
 	);
 	Engine::getInstance()->getGUI()->setFoccussedNode(dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById("tdme.animations.rename_input")));

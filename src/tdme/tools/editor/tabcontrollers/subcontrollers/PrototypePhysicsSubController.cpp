@@ -138,12 +138,12 @@ void PrototypePhysicsSubController::showInfoPopUp(const string& caption, const s
 
 void PrototypePhysicsSubController::createOutlinerPhysicsXML(Prototype* prototype, string& xml) {
 	if (prototype->getBoundingVolumeCount() == 0) {
-		xml+= "<selectbox-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Physics") + "\" value=\"" + GUIParser::escapeQuotes("physics") + "\" />\n";
+		xml+= "<selectbox-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Physics") + "\" value=\"" + GUIParser::escape("physics") + "\" />\n";
 	} else {
-		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Physics") + "\" value=\"" + GUIParser::escapeQuotes("physics") + "\">\n";
+		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Physics") + "\" value=\"" + GUIParser::escape("physics") + "\">\n";
 		for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
 			auto boundingVolumeId = to_string(i);
-			xml+= "	<selectbox-option image=\"resources/engine/images/bv.png\" text=\"" + GUIParser::escapeQuotes("Bounding Volume " + boundingVolumeId) + "\" value=\"" + GUIParser::escapeQuotes("physics.boundingvolumes." + boundingVolumeId) + "\" />\n";
+			xml+= "	<selectbox-option image=\"resources/engine/images/bv.png\" text=\"" + GUIParser::escape("Bounding Volume " + boundingVolumeId) + "\" value=\"" + GUIParser::escape("physics.boundingvolumes." + boundingVolumeId) + "\" />\n";
 		}
 		xml+= "</selectbox-parent-option>\n";
 	}

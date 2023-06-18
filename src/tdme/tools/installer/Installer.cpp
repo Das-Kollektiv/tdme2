@@ -189,7 +189,7 @@ void Installer::initializeScreens() {
 				string("		<space width=\"10\" />\n") +
 				string("		<checkbox id=\"checkbox_component" + to_string(componentIdx) + "\" name=\"checkbox_component" + to_string(componentIdx) + "\" value=\"1\" selected=\"" + (componentRequired == true || componentInstalled == true?"true":"false") + "\" disabled=\"" + (componentRequired == true?"true":"false") + "\" />\n") +
 				string("		<space width=\"10\" />\n") +
-				string("		<text width=\"*\" font=\"{$font.default}\" size=\"16\" text=\"" + GUIParser::escapeQuotes(componentName) + "\" color=\"{$color.font_normal}\" height=\"100%\" vertical-align=\"center\" />\n") +
+				string("		<text width=\"*\" font=\"{$font.default}\" size=\"16\" text=\"" + GUIParser::escape(componentName) + "\" color=\"{$color.font_normal}\" height=\"100%\" vertical-align=\"center\" />\n") +
 				string("	</layout>\n") +
 				string("</element>\n");
 		}

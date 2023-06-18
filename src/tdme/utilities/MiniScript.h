@@ -2019,7 +2019,7 @@ protected:
 	/**
 	 * Stop script execution
 	 */
-	inline void stopScriptExecutation() {
+	inline void stopScriptExecution() {
 		auto& scriptState = getScriptState();
 		//
 		scriptState.running = false;

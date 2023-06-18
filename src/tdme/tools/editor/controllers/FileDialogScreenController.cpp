@@ -149,7 +149,7 @@ bool FileDialogScreenController::setupFiles()
 	};
 
 	//
-	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsHeaderNode->getId()))->replaceSubNodes("<tab id=\"filedialog_caption\" image=\"resources/engine/images/attention.png\" text=\"" + GUIParser::escapeQuotes(captionText)+ "\" closeable=\"true\"/>", true);
+	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsHeaderNode->getId()))->replaceSubNodes("<tab id=\"filedialog_caption\" image=\"resources/engine/images/attention.png\" text=\"" + GUIParser::escape(captionText)+ "\" closeable=\"true\"/>", true);
 	pathNode->getController()->setValue(MutableString(cwd));
 
 	//
@@ -188,9 +188,9 @@ void FileDialogScreenController::setupFiles(const vector<string>& fileNameList, 
 		}
 		filesInnerNodeSubNodesXML+=
 			"<selectbox-option text=\"" +
-			GUIParser::escapeQuotes(fileName) +
+			GUIParser::escape(fileName) +
 			"\" value=\"" +
-			GUIParser::escapeQuotes(fileName) +
+			GUIParser::escape(fileName) +
 			"\"" +
 			(selectedFileName == fileName?" selected=\"true\"":"") + " " +
 			"image=\"{$icon.type_" + fileImageName + "}\" " +
@@ -214,9 +214,9 @@ void FileDialogScreenController::setupFavorites() {
 		auto fileImageName = "folder";
 		favoritesInnerNodeSubNodesXML+=
 			"<selectbox-option text=\"" +
-			GUIParser::escapeQuotes(FileSystem::getStandardFileSystem()->getFileName(StringTools::endsWith(favorite, "/") == true?StringTools::substring(favorite, 0, favorite.size() - 1):favorite)) +
+			GUIParser::escape(FileSystem::getStandardFileSystem()->getFileName(StringTools::endsWith(favorite, "/") == true?StringTools::substring(favorite, 0, favorite.size() - 1):favorite)) +
 			"\" value=\"" +
-			GUIParser::escapeQuotes(favorite) +
+			GUIParser::escape(favorite) +
 			"\" " +
 			"image=\"{$icon.type_folder}\" " +
 			"/>\n";
@@ -241,9 +241,9 @@ void FileDialogScreenController::setupRecents() {
 		auto fileImageName = "folder";
 		recentsInnerNodeSubNodesXML+=
 			"<selectbox-option text=\"" +
-			GUIParser::escapeQuotes(FileSystem::getStandardFileSystem()->getFileName(StringTools::endsWith(recent, "/") == true?StringTools::substring(recent, 0, recent.size() - 1):recent)) +
+			GUIParser::escape(FileSystem::getStandardFileSystem()->getFileName(StringTools::endsWith(recent, "/") == true?StringTools::substring(recent, 0, recent.size() - 1):recent)) +
 			"\" value=\"" +
-			GUIParser::escapeQuotes(recent) +
+			GUIParser::escape(recent) +
 			"\" " +
 			"image=\"{$icon.type_folder}\" " +
 			"/>\n";
@@ -280,9 +280,9 @@ void FileDialogScreenController::setupDrives() {
 	for (auto& drive: drives) {
 		drivesInnerNodeSubNodesXML+=
 			"<selectbox-option text=\"" +
-			GUIParser::escapeQuotes(drive) +
+			GUIParser::escape(drive) +
 			"\" value=\"" +
-			GUIParser::escapeQuotes(drive) +
+			GUIParser::escape(drive) +
 			"\" " +
 			"image=\"{$icon.type_drive}\" " +
 			"/>\n";

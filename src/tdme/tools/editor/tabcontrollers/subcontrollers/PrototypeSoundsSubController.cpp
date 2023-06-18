@@ -152,10 +152,10 @@ void PrototypeSoundsSubController::showInfoPopUp(const string& caption, const st
 
 void PrototypeSoundsSubController::createOutlinerSoundsXML(Prototype* prototype, string& xml) {
 	if (prototype->getSounds().empty() == false) {
-		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Sounds") + "\" value=\"" + GUIParser::escapeQuotes("sounds") + "\">\n";
+		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Sounds") + "\" value=\"" + GUIParser::escape("sounds") + "\">\n";
 		for (auto sound: prototype->getSounds()) {
 			auto soundId = sound->getId();
-			xml+= "	<selectbox-option image=\"resources/engine/images/sound.png\" text=\"" + GUIParser::escapeQuotes(soundId) + "\" id=\"" + GUIParser::escapeQuotes("sounds." + soundId) + "\" value=\"" + GUIParser::escapeQuotes("sounds." + soundId) + "\" />\n";
+			xml+= "	<selectbox-option image=\"resources/engine/images/sound.png\" text=\"" + GUIParser::escape(soundId) + "\" id=\"" + GUIParser::escape("sounds." + soundId) + "\" value=\"" + GUIParser::escape("sounds." + soundId) + "\" />\n";
 		}
 		xml+= "</selectbox-parent-option>\n";
 	}
@@ -178,9 +178,9 @@ void PrototypeSoundsSubController::updateDetails(Prototype* prototype, Model* mo
 		string animationsDropDownXML;
 		animationsDropDownXML =
 			animationsDropDownXML + "<dropdown-option text=\"" +
-			GUIParser::escapeQuotes("<None>") +
+			GUIParser::escape("<None>") +
 			"\" value=\"" +
-			GUIParser::escapeQuotes("") +
+			GUIParser::escape("") +
 			"\" " +
 			(idx == 0 ? "selected=\"true\" " : "") +
 			" />\n";
@@ -188,9 +188,9 @@ void PrototypeSoundsSubController::updateDetails(Prototype* prototype, Model* mo
 			auto animationSetupId = it.second->getId();
 			animationsDropDownXML =
 				animationsDropDownXML + "<dropdown-option text=\"" +
-				GUIParser::escapeQuotes(animationSetupId) +
+				GUIParser::escape(animationSetupId) +
 				"\" value=\"" +
-				GUIParser::escapeQuotes(animationSetupId) +
+				GUIParser::escape(animationSetupId) +
 				"\" " +
 				(idx == 0 ? "selected=\"true\" " : "") +
 				" />\n";
@@ -300,7 +300,7 @@ void PrototypeSoundsSubController::startRenameSound(Prototype* prototype, const 
 	if (selectBoxOptionParentNode == nullptr) return;
 	renameSoundName = soundName;
 	selectBoxOptionParentNode->replaceSubNodes(
-		"<template id=\"tdme.sounds.rename_input\" hint=\"Sound name\" text=\"" + GUIParser::escapeQuotes(sound->getId()) + "\"src=\"resources/engine/gui/template_outliner_rename.xml\" />\n",
+		"<template id=\"tdme.sounds.rename_input\" hint=\"Sound name\" text=\"" + GUIParser::escape(sound->getId()) + "\"src=\"resources/engine/gui/template_outliner_rename.xml\" />\n",
 		true
 	);
 	Engine::getInstance()->getGUI()->setFoccussedNode(dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("tdme.sounds.rename_input")));

@@ -202,7 +202,7 @@ void EnvMapEditorTabController::onAction(GUIActionListenerType type, GUIElementN
 
 void EnvMapEditorTabController::setOutlinerContent() {
 	string xml;
-	xml+= "<selectbox-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Prototype") + "\" value=\"" + GUIParser::escapeQuotes("prototype") + "\" />\n";
+	xml+= "<selectbox-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Prototype") + "\" value=\"" + GUIParser::escape("prototype") + "\" />\n";
 	view->getEditorView()->setOutlinerContent(xml);}
 
 void EnvMapEditorTabController::setOutlinerAddDropDownContent() {

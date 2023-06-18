@@ -432,10 +432,10 @@ void UIEditorTabController::onTooltipCloseRequest() {
 void UIEditorTabController::createOutlinerParentNodeNodesXML(TiXmlElement* xmlParentNode, string& xml, int screenIdx, int& nodeIdx) {
 	if (xmlParentNode->FirstChildElement() == nullptr) {
 		auto nodeId = string(AVOID_NULLPTR_STRING(xmlParentNode->Attribute("id")));
-		xml+= "<selectbox-option text=\"<" + GUIParser::escapeQuotes(xmlParentNode->Value()) + ">" + (nodeId.empty() == false?string(" (") + nodeId + ")":"") + "\" value=\"" + to_string(screenIdx) + "." + GUIParser::escapeQuotes(to_string(nodeIdx++)) + "\" />\n";
+		xml+= "<selectbox-option text=\"<" + GUIParser::escape(xmlParentNode->Value()) + ">" + (nodeId.empty() == false?string(" (") + nodeId + ")":"") + "\" value=\"" + to_string(screenIdx) + "." + GUIParser::escape(to_string(nodeIdx++)) + "\" />\n";
 	} else {
 		auto nodeId = string(AVOID_NULLPTR_STRING(xmlParentNode->Attribute("id")));
-		xml+= "<selectbox-parent-option text=\"<" + GUIParser::escapeQuotes(xmlParentNode->Value()) + ">" + (nodeId.empty() == false?string(" (") + nodeId + ")":"") + "\" value=\"" + to_string(screenIdx) + "." + GUIParser::escapeQuotes(to_string(nodeIdx++)) + "\" >\n";
+		xml+= "<selectbox-parent-option text=\"<" + GUIParser::escape(xmlParentNode->Value()) + ">" + (nodeId.empty() == false?string(" (") + nodeId + ")":"") + "\" value=\"" + to_string(screenIdx) + "." + GUIParser::escape(to_string(nodeIdx++)) + "\" >\n";
 		for (auto* childNode = xmlParentNode->FirstChildElement(); childNode != nullptr; childNode = childNode->NextSiblingElement()) {
 			createOutlinerParentNodeNodesXML(childNode, xml, screenIdx, nodeIdx);
 		}
@@ -547,9 +547,9 @@ void UIEditorTabController::updateScreensDetails() {
 				auto& nodeId = it.second->getId();
 				modelMeshNodesXML+=
 					"<dropdown-option text=\"" +
-					GUIParser::escapeQuotes(nodeId) +
+					GUIParser::escape(nodeId) +
 					"\" value=\"" +
-					GUIParser::escapeQuotes(nodeId) +
+					GUIParser::escape(nodeId) +
 					"\" " +
 					(modelMeshNodesXML == nodeId?"selected=\"true\" ":"") +
 					" />\n";
@@ -571,9 +571,9 @@ void UIEditorTabController::updateScreensDetails() {
 				if (animationSetup->isOverlayAnimationSetup() == true) continue;
 				animationsXML =
 					animationsXML + "<dropdown-option text=\"" +
-					GUIParser::escapeQuotes(animationSetup->getId()) +
+					GUIParser::escape(animationSetup->getId()) +
 					"\" value=\"" +
-					GUIParser::escapeQuotes(animationSetup->getId()) +
+					GUIParser::escape(animationSetup->getId()) +
 					"\" " +
 					" />\n";
 			}

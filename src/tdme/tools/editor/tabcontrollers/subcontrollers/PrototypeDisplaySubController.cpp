@@ -116,9 +116,9 @@ void PrototypeDisplaySubController::setDisplayDetails(Prototype* prototype) {
 			shaderXML =
 				shaderXML +
 				"<dropdown-option text=\"" +
-				GUIParser::escapeQuotes(shader) +
+				GUIParser::escape(shader) +
 				"\" value=\"" +
-				GUIParser::escapeQuotes(shader) +
+				GUIParser::escape(shader) +
 				"\" " +
 				(shader == "default"?"selected=\"true\" " : "") +
 				"/>\n";
@@ -173,30 +173,30 @@ void PrototypeDisplaySubController::createDisplayShaderDetailsXML(Prototype* pro
 			auto parameterType = "string";
 			switch (parameter.getType()) {
 			case ShaderParameter::TYPE_FLOAT:
-				xml+= "<template name=\"" + GUIParser::escapeQuotes(parameterName) + "\" id=\"" + GUIParser::escapeQuotes(shaderParameterPrefix + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_float.xml\" value=\"" + parameterValue + "\" />\n";
+				xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape(shaderParameterPrefix + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_float.xml\" value=\"" + parameterValue + "\" />\n";
 				break;
 			case ShaderParameter::TYPE_INTEGER:
-				xml+= "<template name=\"" + GUIParser::escapeQuotes(parameterName) + "\" id=\"" + GUIParser::escapeQuotes(shaderParameterPrefix + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_int.xml\" value=\"" + parameterValue + "\" />\n";
+				xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape(shaderParameterPrefix + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_int.xml\" value=\"" + parameterValue + "\" />\n";
 				break;
 			case ShaderParameter::TYPE_BOOLEAN:
-				xml+= "<template name=\"" + GUIParser::escapeQuotes(parameterName) + "\" id=\"" + GUIParser::escapeQuotes(shaderParameterPrefix + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_bool.xml\" value=\"" + parameterValue + "\" />\n";
+				xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape(shaderParameterPrefix + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_bool.xml\" value=\"" + parameterValue + "\" />\n";
 				break;
 			case ShaderParameter::TYPE_VECTOR2:
 				{
 					auto vec2 = parameter.getVector2Value();
-					xml+= "<template name=\"" + GUIParser::escapeQuotes(parameterName) + "\" id=\"" + GUIParser::escapeQuotes(shaderParameterPrefix + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_vector2.xml\" value_x=\"" + to_string(vec2.getX()) + "\" value_y=\"" + to_string(vec2.getY()) + "\" />\n";
+					xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape(shaderParameterPrefix + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_vector2.xml\" value_x=\"" + to_string(vec2.getX()) + "\" value_y=\"" + to_string(vec2.getY()) + "\" />\n";
 				}
 				break;
 			case ShaderParameter::TYPE_VECTOR3:
 				{
 					auto vec3 = parameter.getVector3Value();
-					xml+= "<template name=\"" + GUIParser::escapeQuotes(parameterName) + "\" id=\"" + GUIParser::escapeQuotes(shaderParameterPrefix + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_vector3.xml\" value_x=\"" + to_string(vec3.getX()) + "\" value_y=\"" + to_string(vec3.getY()) + "\" value_z=\"" + to_string(vec3.getZ()) + "\" />\n";
+					xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape(shaderParameterPrefix + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_vector3.xml\" value_x=\"" + to_string(vec3.getX()) + "\" value_y=\"" + to_string(vec3.getY()) + "\" value_z=\"" + to_string(vec3.getZ()) + "\" />\n";
 				}
 				break;
 			case ShaderParameter::TYPE_VECTOR4:
 				{
 					auto vec4 = parameter.getVector4Value();
-					xml+= "<template name=\"" + GUIParser::escapeQuotes(parameterName) + "\" id=\"" + GUIParser::escapeQuotes(shaderParameterPrefix + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_vector4.xml\" value_x=\"" + to_string(vec4.getX()) + "\" value_y=\"" + to_string(vec4.getY()) + "\" value_z=\"" + to_string(vec4.getZ()) + "\" value_w=\"" + to_string(vec4.getW()) + "\" />\n";
+					xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape(shaderParameterPrefix + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_vector4.xml\" value_x=\"" + to_string(vec4.getX()) + "\" value_y=\"" + to_string(vec4.getY()) + "\" value_z=\"" + to_string(vec4.getZ()) + "\" value_w=\"" + to_string(vec4.getW()) + "\" />\n";
 				}
 				break;
 			case ShaderParameter::TYPE_NONE:

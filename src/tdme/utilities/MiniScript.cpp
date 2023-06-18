@@ -2412,7 +2412,7 @@ void MiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				//
-				miniScript->stopScriptExecutation();
+				miniScript->stopScriptExecution();
 			}
 		};
 		registerMethod(new ScriptMethodScriptStop(this));
@@ -6559,7 +6559,7 @@ void MiniScript::registerMethods() {
 					xml+= "<" + name;
 					if (mapPtr != nullptr && mapPtr->empty() == false) {
 						for(auto& mapIt: *mapPtr) {
-							xml+= " " + mapIt.first + "=\"" + GUIParser::escapeQuotes(mapIt.second.getValueString()) + "\"";
+							xml+= " " + mapIt.first + "=\"" + GUIParser::escape(mapIt.second.getValueString()) + "\"";
 						}
 					}
 					if (innerXML.empty() == true) {

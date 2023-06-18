@@ -600,7 +600,7 @@ void TextEditorTabView::createMiniScriptNode(const string& methodName, int x, in
 	}
 	//
 	{
-		string xml = "<template src='resources/engine/gui/template_visualcode_node.xml' id='" + flattenedId + "' left='" + to_string(x) + "' top='" + to_string(y) + "' node-name='" + GUIParser::escapeQuotes(nodeName + "(" + flattenedId + ")") + "' node-type-color='{$" + GUIParser::escapeQuotes(nodeTypeColor) + "}' />";
+		string xml = "<template src='resources/engine/gui/template_visualcode_node.xml' id='" + flattenedId + "' left='" + to_string(x) + "' top='" + to_string(y) + "' node-name='" + GUIParser::escape(nodeName + "(" + flattenedId + ")") + "' node-type-color='{$" + GUIParser::escape(nodeTypeColor) + "}' />";
 		try {
 			GUIParser::parse(visualisationNode, xml);
 		} catch (Exception& exception) {
@@ -651,10 +651,10 @@ void TextEditorTabView::createMiniScriptNode(const string& methodName, int x, in
 					"	src='resources/engine/gui/template_visualcode_input.xml' " +
 					"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
 					"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
-					"	pin_color='{$" + GUIParser::escapeQuotes(getScriptVariableTypePinColor(argumentTypes[argumentIdx].type)) + "}' " +
-					"	text='" + GUIParser::escapeQuotes(argumentName) + "' ";
+					"	pin_color='{$" + GUIParser::escape(getScriptVariableTypePinColor(argumentTypes[argumentIdx].type)) + "}' " +
+					"	text='" + GUIParser::escape(argumentName) + "' ";
 				if (isLiteral == true) {
-					xml+= "	input_text='" + GUIParser::escapeQuotes(literal) + "' ";
+					xml+= "	input_text='" + GUIParser::escape(literal) + "' ";
 				}
 				xml+= "/>";
 				//
@@ -707,7 +707,7 @@ void TextEditorTabView::createMiniScriptNode(const string& methodName, int x, in
 			"	src='resources/engine/gui/template_visualcode_output.xml' " +
 			"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
 			"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
-			"	pin_color='{$" + GUIParser::escapeQuotes(getScriptVariableTypePinColor(method->getReturnValueType())) + "}' " +
+			"	pin_color='{$" + GUIParser::escape(getScriptVariableTypePinColor(method->getReturnValueType())) + "}' " +
 			"	text='Return' " +
 			"/>";
 
@@ -803,7 +803,7 @@ void TextEditorTabView::createMiniScriptScriptNode(unordered_map<string, string>
 		string nodeTypeColor = string("color.nodetype_condition");
 		//
 		{
-			string xml = "<template src='resources/engine/gui/template_visualcode_node.xml' id='" + flattenedId + "' left='" + to_string(x) + "' top='" + to_string(y) + "' node-name='" + GUIParser::escapeQuotes(nodeName + "(" + flattenedId + ")") + "' node-type-color='{$" + GUIParser::escapeQuotes(nodeTypeColor) + "}' />";
+			string xml = "<template src='resources/engine/gui/template_visualcode_node.xml' id='" + flattenedId + "' left='" + to_string(x) + "' top='" + to_string(y) + "' node-name='" + GUIParser::escape(nodeName + "(" + flattenedId + ")") + "' node-type-color='{$" + GUIParser::escape(nodeTypeColor) + "}' />";
 			try {
 				GUIParser::parse(visualisationNode, xml);
 			} catch (Exception& exception) {
@@ -825,10 +825,10 @@ void TextEditorTabView::createMiniScriptScriptNode(unordered_map<string, string>
 				"	src='resources/engine/gui/template_visualcode_input.xml' " +
 				"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
 				"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
-				"	pin_color='{$" + GUIParser::escapeQuotes(getScriptVariableTypePinColor(MiniScript::ScriptVariableType::TYPE_BOOLEAN)) + "}' " +
-				"	text='" + GUIParser::escapeQuotes("Cond") + "' ";
+				"	pin_color='{$" + GUIParser::escape(getScriptVariableTypePinColor(MiniScript::ScriptVariableType::TYPE_BOOLEAN)) + "}' " +
+				"	text='" + GUIParser::escape("Cond") + "' ";
 			if (isLiteral == true) {
-				xml+= "	input_text='" + GUIParser::escapeQuotes(literal) + "' ";
+				xml+= "	input_text='" + GUIParser::escape(literal) + "' ";
 			}
 			xml+= "/>";
 			//
@@ -967,7 +967,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 				}
 				//
 				{
-					string xml = "<template src='resources/engine/gui/template_visualcode_node.xml' id='" + flattenedId + "' left='" + to_string(x) + "' top='" + to_string(y) + "' node-name='" + GUIParser::escapeQuotes(nodeName + "(" + flattenedId + ")") + "' node-type-color='{$" + GUIParser::escapeQuotes(nodeTypeColor) + "}' />";
+					string xml = "<template src='resources/engine/gui/template_visualcode_node.xml' id='" + flattenedId + "' left='" + to_string(x) + "' top='" + to_string(y) + "' node-name='" + GUIParser::escape(nodeName + "(" + flattenedId + ")") + "' node-type-color='{$" + GUIParser::escape(nodeTypeColor) + "}' />";
 					try {
 						GUIParser::parse(visualisationNode, xml);
 					} catch (Exception& exception) {
@@ -1018,10 +1018,10 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 								"	src='resources/engine/gui/template_visualcode_input.xml' " +
 								"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
 								"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
-								"	pin_color='{$" + GUIParser::escapeQuotes(getScriptVariableTypePinColor(argumentTypes[argumentIdx].type)) + "}' " +
-								"	text='" + GUIParser::escapeQuotes(argumentName) + "' ";
+								"	pin_color='{$" + GUIParser::escape(getScriptVariableTypePinColor(argumentTypes[argumentIdx].type)) + "}' " +
+								"	text='" + GUIParser::escape(argumentName) + "' ";
 							if (isLiteral == true) {
-								xml+= "	input_text='" + GUIParser::escapeQuotes(literal) + "' ";
+								xml+= "	input_text='" + GUIParser::escape(literal) + "' ";
 							}
 							xml+= "/>";
 							//
@@ -1056,7 +1056,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 							"	pin_color='{$color.pintype_undefined}' " +
 							"	text='Arg " + to_string(argumentIdx) + "' ";
 						if (isLiteral == true) {
-							xml+= "	input_text='" + GUIParser::escapeQuotes(literal) + "' ";
+							xml+= "	input_text='" + GUIParser::escape(literal) + "' ";
 						}
 						xml+= "/>";
 						//
@@ -1107,7 +1107,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 						"	src='resources/engine/gui/template_visualcode_output.xml' " +
 						"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
 						"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
-						"	pin_color='{$" + GUIParser::escapeQuotes(getScriptVariableTypePinColor(syntaxTreeNode->method->getReturnValueType())) + "}' " +
+						"	pin_color='{$" + GUIParser::escape(getScriptVariableTypePinColor(syntaxTreeNode->method->getReturnValueType())) + "}' " +
 						"	text='Return' " +
 						"/>";
 
@@ -1296,7 +1296,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 		string nodeTypeColor = string("color.nodetype_flowcontrol");
 		//
 		{
-			string xml = "<template src='resources/engine/gui/template_visualcode_node.xml' id='" + flattenedId + "' left='" + to_string(x) + "' top='" + to_string(y) + "' node-name='" + GUIParser::escapeQuotes(nodeName + "(" + flattenedId + ")") + "' node-type-color='{$" + GUIParser::escapeQuotes(nodeTypeColor) + "}' />";
+			string xml = "<template src='resources/engine/gui/template_visualcode_node.xml' id='" + flattenedId + "' left='" + to_string(x) + "' top='" + to_string(y) + "' node-name='" + GUIParser::escape(nodeName + "(" + flattenedId + ")") + "' node-type-color='{$" + GUIParser::escape(nodeTypeColor) + "}' />";
 			try {
 				GUIParser::parse(visualisationNode, xml);
 			} catch (Exception& exception) {
@@ -1364,10 +1364,10 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 					"	src='resources/engine/gui/template_visualcode_input.xml' " +
 					"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
 					"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
-					"	pin_color='{$" + GUIParser::escapeQuotes(getScriptVariableTypePinColor(nodeName == "forTime"?MiniScript::ScriptVariableType::TYPE_INTEGER:MiniScript::ScriptVariableType::TYPE_BOOLEAN)) + "}' " +
-					"	text='" + GUIParser::escapeQuotes(nodeName == "forTime"?"time":"Cond " + to_string(branchIdx)) + "' ";
+					"	pin_color='{$" + GUIParser::escape(getScriptVariableTypePinColor(nodeName == "forTime"?MiniScript::ScriptVariableType::TYPE_INTEGER:MiniScript::ScriptVariableType::TYPE_BOOLEAN)) + "}' " +
+					"	text='" + GUIParser::escape(nodeName == "forTime"?"time":"Cond " + to_string(branchIdx)) + "' ";
 				if (isLiteral == true) {
-					xml+= "	input_text='" + GUIParser::escapeQuotes(literal) + "' ";
+					xml+= "	input_text='" + GUIParser::escape(literal) + "' ";
 				}
 				xml+= "/>";
 				//

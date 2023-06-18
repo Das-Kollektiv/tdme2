@@ -1214,7 +1214,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 
 void ParticleSystemEditorTabController::setOutlinerContent() {
 	string xml;
-	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Prototype") + "\" value=\"" + GUIParser::escapeQuotes("prototype") + "\">\n";
+	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Prototype") + "\" value=\"" + GUIParser::escape("prototype") + "\">\n";
 	auto prototype = view->getPrototype();
 	if (prototype != nullptr) {
 		basePropertiesSubController->createBasePropertiesXML(prototype, xml);
@@ -1223,12 +1223,12 @@ void ParticleSystemEditorTabController::setOutlinerContent() {
 		prototypeSoundsSubController->createOutlinerSoundsXML(prototype, xml);
 		//
 		if (prototype->getParticleSystemsCount() == 0) {
-			xml+= "<selectbox-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Particle Systems") + "\" value=\"" + GUIParser::escapeQuotes("particlesystems") + "\" />\n";
+			xml+= "<selectbox-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Particle Systems") + "\" value=\"" + GUIParser::escape("particlesystems") + "\" />\n";
 		} else {
-			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Particle Systems") + "\" value=\"" + GUIParser::escapeQuotes("particlesystems") + "\">\n";
+			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Particle Systems") + "\" value=\"" + GUIParser::escape("particlesystems") + "\">\n";
 			for (auto i = 0; i < prototype->getParticleSystemsCount(); i++) {
 				auto particleSystem = prototype->getParticleSystemAt(i);
-				xml+= "	<selectbox-option image=\"resources/engine/images/particle.png\" text=\"" + GUIParser::escapeQuotes("Particle System " + to_string(i)) + "\" id=\"" + GUIParser::escapeQuotes("particlesystems." + to_string(i)) + "\" value=\"" + GUIParser::escapeQuotes("particlesystems." + to_string(i)) + "\" />\n";
+				xml+= "	<selectbox-option image=\"resources/engine/images/particle.png\" text=\"" + GUIParser::escape("Particle System " + to_string(i)) + "\" id=\"" + GUIParser::escape("particlesystems." + to_string(i)) + "\" value=\"" + GUIParser::escape("particlesystems." + to_string(i)) + "\" />\n";
 			}
 			xml+= "</selectbox-parent-option>\n";
 		}
