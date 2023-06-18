@@ -6031,7 +6031,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				//
 				string key;
-				if (argumentValues.size() < 3 ||
+				if (argumentValues.size() != 3 ||
 					argumentValues[0].getType() != ScriptVariableType::TYPE_MAP ||
 					MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
