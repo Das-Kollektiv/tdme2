@@ -334,8 +334,7 @@ void World::update(float deltaTime)
 	*/
 
 	// update transform for rigid body
-	for (auto i = 0; i < rigidBodiesDynamic.size(); i++) {
-		auto body = rigidBodiesDynamic[i];
+	for (auto body: rigidBodiesDynamic) {
 		// skip if disabled
 		if (body->isEnabled() == false) {
 			continue;
@@ -346,9 +345,9 @@ void World::update(float deltaTime)
 		}
 
 		// rp3d transform
-		auto transform = body->rigidBody->getTransform();
-		auto transformPosition = transform.getPosition();
-		auto transformOrientation = transform.getOrientation();
+		auto& transform = body->rigidBody->getTransform();
+		auto& transformPosition = transform.getPosition();
+		auto& transformOrientation = transform.getOrientation();
 
 		// tdme2 transform
 		auto& physicsTransform = body->transform;

@@ -128,4 +128,6 @@ void BodyHierarchy::update() {
 	scaleTransform.update();
 	// update hierarchy
 	updateHierarchy(scaleTransform, &bodyRoot, 0);
+	//
+	setTransform(this->transform);
 }

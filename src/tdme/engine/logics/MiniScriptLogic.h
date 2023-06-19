@@ -136,25 +136,31 @@ public:
 		// add physics entities requested by MiniScript and scripts
 		if (miniScript->physicsPrototypesToAdd.empty() == false) {
 			miniScript->prototypesToAddMutex.lock();
+			//
 			for (auto& prototypeToAdd: miniScript->physicsPrototypesToAdd) {
-				if (prototypeToAdd.hierarchyId.empty() == false) {
-					SceneConnector::createSubBody(
-						context->getWorld(),
-						prototypeToAdd.prototype,
-						prototypeToAdd.id,
-						prototypeToAdd.transform,
-						prototypeToAdd.hierarchyId,
-						prototypeToAdd.hierarchyParentId
-					);
-				} else {
-					SceneConnector::createBody(
-						context->getWorld(),
-						prototypeToAdd.prototype,
-						prototypeToAdd.id,
-						prototypeToAdd.transform,
-						Body::COLLISION_TYPEID_DYNAMIC
-					);
+				// add to physics
+				if (prototypeToAdd.prototype->getBoundingVolumeCount() > 0) {
+					//
+					if (prototypeToAdd.hierarchyId.empty() == false) {
+						SceneConnector::createSubBody(
+							context->getWorld(),
+							prototypeToAdd.prototype,
+							prototypeToAdd.id,
+							prototypeToAdd.transform,
+							prototypeToAdd.hierarchyId,
+							prototypeToAdd.hierarchyParentId
+						);
+					} else {
+						SceneConnector::createBody(
+							context->getWorld(),
+							prototypeToAdd.prototype,
+							prototypeToAdd.id,
+							prototypeToAdd.transform,
+							Body::COLLISION_TYPEID_DYNAMIC
+						);
+					}
 				}
+				// add logic
 				if (prototypeToAdd.prototype->hasScript() == true) {
 					auto prototype = prototypeToAdd.prototype;
 					auto logicMiniScript = new LogicMiniScript();
@@ -174,7 +180,9 @@ public:
 					);
 				}
 			}
+			//
 			miniScript->physicsPrototypesToAdd.clear();
+			//
 			miniScript->prototypesToAddMutex.unlock();
 		}
 		// execute on: nothing and other event polling and execution

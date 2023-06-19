@@ -663,10 +663,14 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 									SceneEditorTabView* sceneEditorTabView = dynamic_cast<SceneEditorTabView*>(currentTab->getTabView());
 									if (sceneEditorTabView == nullptr) return;
 									try {
+										// load prototype
 										auto prototype = PrototypeReader::read(
 											Tools::getPathName(absoluteFileName),
 											Tools::getFileName(absoluteFileName)
 										);
+										// mark as non embedded
+										prototype->setEmbedded(false);
+										// add to library
 										sceneEditorTabView->addPrototype(prototype);
 									} catch (Exception& exception) {
 										Console::println("OnOpenAction::performAction(): An error occurred: " + string(exception.what()));

@@ -379,7 +379,7 @@ public:
 	 */
 	inline void setTransform(const Transform& transform) {
 		// store engine transform
-		this->transform.setTransform(transform);
+		this->transform = transform;
 
 		// reset colliders if bounding volumes do not match proxy shapes or if scaling has changed
 		if (initiation == true || colliders.size() != boundingVolumes.size() || transformScale.equals(transform.getScale()) == false) {

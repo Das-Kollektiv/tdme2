@@ -76,6 +76,7 @@ Body::Body(World* world, const string& id, BodyType type, uint16_t collisionType
 			rigidBody->setType(reactphysics3d::BodyType::DYNAMIC);
 			rigidBody->setMass(mass);
 			rigidBody->setIsAllowedToSleep(true);
+			if (type == BODYTYPE_DYNAMIC) rigidBody->enableGravity(true);
 			break;
 		case BODYTYPE_KINEMATIC:
 			rigidBody = this->world->world->createRigidBody(reactphysics3d::Transform());

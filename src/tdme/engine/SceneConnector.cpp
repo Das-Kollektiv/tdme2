@@ -942,8 +942,7 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 }
 
 Body* SceneConnector::createBody(World* world, SceneEntity* sceneEntity, const Vector3& translation, uint16_t collisionTypeId, bool hierarchy, int index, PrototypePhysics_BodyType* overrideType) {
-	Transform transform;
-	transform.setTransform(sceneEntity->getTransform());
+	auto transform = sceneEntity->getTransform();
 	if (translation.equals(Vector3()) == false) {
 		transform.setTranslation(transform.getTranslation().clone().add(translation));
 		transform.update();
