@@ -9,6 +9,8 @@
 #include <string>
 #include <string_view>
 
+using std::isinf;
+using std::isfinite;
 using std::isfinite;
 using std::isnan;
 using std::numeric_limits;
@@ -66,7 +68,16 @@ public:
 	}
 
 	/**
-	 * Check if float is finite
+	 * Check if float is infinite
+	 * @param value float value
+	 * @return if value is infinite
+	 */
+	inline static bool isInfinite(float value) {
+		return isinf(value);
+	}
+
+	/**
+	 * Check if float is infinite
 	 * @param value float value
 	 * @return if value is finite
 	 */

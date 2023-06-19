@@ -10,7 +10,6 @@
 using std::array;
 
 using tdme::math::Math;
-using tdme::math::Vector3;
 using tdme::utilities::Float;
 
 /**

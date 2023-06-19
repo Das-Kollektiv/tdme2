@@ -5,10 +5,12 @@
 #include <tdme/tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Math.h>
+#include <tdme/utilities/Float.h>
 
 using std::array;
 
 using tdme::math::Math;
+using tdme::utilities::Float;
 
 /**
  * 2D vector 2 class
