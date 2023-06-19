@@ -22,6 +22,14 @@ function: updateEngine()
 	console.log()
 end
 
+# initialize logic
+function: initializeLogic()
+	console.log("-----------------------------")
+	console.log("initializeLogic(): " + logic.getId() + ", hierarchy id: " + logic.getHierarchyId() + ", hierarchy parent id: " + logic.getHierarchyParentId())
+	console.log("-----------------------------")
+	console.log()
+end
+
 # update logic
 function: updateLogic()
 	console.log("-----------------------------")

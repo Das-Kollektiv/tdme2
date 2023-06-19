@@ -113,12 +113,12 @@ public:
 		}
 		//
 		if (engineInitialized == false) {
-			// execute onLogicAdded() function
+			// execute initializeEngine() function
 			vector<MiniScript::ScriptVariable> argumentValues(0);
 			MiniScript::ScriptVariable returnValue;
 			span argumentValuesSpan(argumentValues);
 			if (miniScript->call("initializeEngine", argumentValuesSpan, returnValue) == false) {
-				Console::println("MiniScriptLogic::initializeEngine(): Failed to call initializeEngine() function");
+				Console::println("MiniScriptLogic::updateEngine(): Failed to call initializeEngine() function");
 			}
 			//
 			engineInitialized = true;
@@ -185,6 +185,18 @@ public:
 			//
 			miniScript->prototypesToAddMutex.unlock();
 		}
+		//
+		if (logicInitialized == false) {
+			// execute initializeLogic() function
+			vector<MiniScript::ScriptVariable> argumentValues(0);
+			MiniScript::ScriptVariable returnValue;
+			span argumentValuesSpan(argumentValues);
+			if (miniScript->call("initializeLogic", argumentValuesSpan, returnValue) == false) {
+				Console::println("MiniScriptLogic::updateLogic(): Failed to call initializeLogic() function");
+			}
+			//
+			logicInitialized = true;
+		}
 		// execute on: nothing and other event polling and execution
 		miniScript->execute();
 		// execute updateLogic() function
@@ -219,6 +231,7 @@ public:
 private:
 	LogicMiniScript* miniScript { nullptr };
 	bool engineInitialized { false };
+	bool logicInitialized { false };
 	string hierarchyId;
 	string hierarchyParentId;
 };

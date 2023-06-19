@@ -3860,7 +3860,7 @@ void LogicMiniScript::registerMethods() {
 					auto body = miniScript->context->getWorld()->determineHeight(collisionTypeIds, stepUpMax, point, heightPoint, minHeight, maxHeight);
 					if (body != nullptr) {
 						argumentValues[3] = heightPoint;
-						argumentValues[4] = body->getId();
+						if (argumentValues.size() >= 5) argumentValues[4] = body->getId();
 						returnValue = true;
 					} else {
 						returnValue = false;

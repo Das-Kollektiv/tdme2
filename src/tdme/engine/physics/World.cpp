@@ -407,6 +407,7 @@ void World::synchronize(Engine* engine)
 
 Body* World::determineHeight(uint16_t collisionTypeIds, float stepUpMax, const Vector3& point, Vector3& heightPoint, float minHeight, float maxHeight)
 {
+	// TODO: we seem to have a bug here
 	//
 	class CustomCallbackClass : public reactphysics3d::RaycastCallback {
 	public:
