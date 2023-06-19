@@ -575,8 +575,7 @@ World* World::clone(const string& id, uint16_t collisionTypeIds)
 {
 	//
 	auto clonedWorld = new World(id);
-	for (auto i = 0; i < bodies.size(); i++) {
-		auto body = bodies[i];
+	for (auto body: bodies) {
 		// clone obv
 		Body* clonedBody = nullptr;
 		auto bodyType = body->getType();
