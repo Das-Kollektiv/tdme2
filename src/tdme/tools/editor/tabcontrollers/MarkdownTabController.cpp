@@ -143,9 +143,9 @@ void MarkdownTabController::setOutlinerContent() {
 			}
 			//
 			if (i == toc.size() - 1 || toc[i + 1].level.size() <= tocEntry.level.size()) {
-				xml+= "<selectbox-option text='" + GUIParser::escapeQuotes(tocEntry.title) + "' value='toc_" + GUIParser::escapeQuotes(tocEntry.id) + "' />\n";
+				xml+= "<selectbox-option text='" + GUIParser::escape(tocEntry.title) + "' value='toc_" + GUIParser::escape(tocEntry.id) + "' />\n";
 			} else {
-				xml+= "<selectbox-parent-option text='" + GUIParser::escapeQuotes(tocEntry.title) + "' value='toc_" + GUIParser::escapeQuotes(tocEntry.id) + "'>\n";
+				xml+= "<selectbox-parent-option text='" + GUIParser::escape(tocEntry.title) + "' value='toc_" + GUIParser::escape(tocEntry.id) + "'>\n";
 				levelCounter++;
 			}
 			lastLevel = tocEntry.level;

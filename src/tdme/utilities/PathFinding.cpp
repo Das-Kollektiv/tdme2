@@ -208,7 +208,8 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, float ste
 
 	// check if actor collides with world
 	vector<Body*> collidedRigidBodies;
-	return world->doesCollideWith(collisionTypeIds == 0?this->collisionTypeIds:collisionTypeIds, actorCollisionBody, collidedRigidBodies) == false;
+	auto collision = world->doesCollideWith(collisionTypeIds == 0?this->collisionTypeIds:collisionTypeIds, actorCollisionBody, collidedRigidBodies);
+	return collision == false;
 }
 
 void PathFinding::step(PathFindingNode* node, float stepSize, float scaleActorBoundingVolumes, const unordered_set<tuple<int, int, int>, PathFindingNodeId_Hash>* nodesToTestPtr, bool flowMapRequest) {
@@ -378,7 +379,7 @@ bool PathFinding::findPathCustom(
 	Transform actorTransform;
 	actorTransform.setTranslation(startPosition);
 	actorTransform.update();
-	world->addDynamicCollisionBody("tdme.pathfinding.actor", true, 32768, actorTransform, {actorBoundingVolume});
+	world->addDynamicCollisionBody("tdme.pathfinding.actor", Body::COLLISION_TYPEID_RESERVED, true, actorTransform, {actorBoundingVolume});
 
 	// init bounding volume for slope testcollision body
 	actorBoundingVolumeSlopeTest = new OrientedBoundingBox(
@@ -388,7 +389,7 @@ bool PathFinding::findPathCustom(
 		OrientedBoundingBox::AABB_AXIS_Z,
 		Vector3(stepSize * scaleActorBoundingVolumes * 2.5f, actorHeight / 2.0f, stepSize * scaleActorBoundingVolumes * 2.5f)
 	);
-	world->addDynamicCollisionBody("tdme.pathfinding.actor.slopetest", true, 32768, actorTransform, {actorBoundingVolumeSlopeTest});
+	world->addDynamicCollisionBody("tdme.pathfinding.actor.slopetest", Body::COLLISION_TYPEID_RESERVED, true, actorTransform, {actorBoundingVolumeSlopeTest});
 
 	//
 	bool success = false;
@@ -766,7 +767,7 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 	Transform actorTransform;
 	actorTransform.setTranslation(endPositions[0]);
 	actorTransform.update();
-	world->addDynamicCollisionBody("tdme.pathfinding.actor", true, 32768, actorTransform, {actorBoundingVolume});
+	world->addDynamicCollisionBody("tdme.pathfinding.actor", Body::COLLISION_TYPEID_RESERVED, true, actorTransform, {actorBoundingVolume});
 
 	// init bounding volume for slope testcollision body
 	actorBoundingVolumeSlopeTest =	new OrientedBoundingBox(
@@ -776,7 +777,7 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 		OrientedBoundingBox::AABB_AXIS_Z,
 		Vector3(flowMapStepSize * flowMapScaleActorBoundingVolumes * 2.5f, actorHeight / 2.0f, flowMapStepSize * flowMapScaleActorBoundingVolumes * 2.5f)
 	);
-	world->addDynamicCollisionBody("tdme.pathfinding.actor.slopetest", true, 32768, actorTransform, {actorBoundingVolumeSlopeTest});
+	world->addDynamicCollisionBody("tdme.pathfinding.actor.slopetest", Body::COLLISION_TYPEID_RESERVED, true, actorTransform, {actorBoundingVolumeSlopeTest});
 
 	//
 	auto zMin = static_cast<int>(Math::ceil(-depth / 2.0f / flowMapStepSize));

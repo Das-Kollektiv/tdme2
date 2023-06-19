@@ -349,10 +349,10 @@ void DecalEditorTabController::setDecalTexture(const string& fileName) {
 
 void DecalEditorTabController::setOutlinerContent() {
 	string xml;
-	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Prototype") + "\" value=\"" + GUIParser::escapeQuotes("prototype") + "\">\n";
+	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Prototype") + "\" value=\"" + GUIParser::escape("prototype") + "\">\n";
 	auto prototype = view->getPrototype();
 	if (prototype != nullptr) {
-		xml+= "<selectbox-option text=\"" + GUIParser::escapeQuotes("Decal") + "\" value=\"" + GUIParser::escapeQuotes("decal") + "\" />\n";
+		xml+= "<selectbox-option text=\"" + GUIParser::escape("Decal") + "\" value=\"" + GUIParser::escape("decal") + "\" />\n";
 		basePropertiesSubController->createBasePropertiesXML(prototype, xml);
 		prototypeScriptSubController->createScriptXML(prototype, xml);
 		prototypePhysicsSubController->createOutlinerPhysicsXML(prototype, xml);

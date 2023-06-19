@@ -74,6 +74,8 @@ struct PBRMaterial {
 	#ifdef DEBUG_NORMAL
 		vec3 normalColor;
 	#endif
+	vec4 effectColorMul;
+	vec4 effectColorAdd;
 };
 
 uniform vec3 u_Camera;
@@ -394,7 +396,7 @@ vec4 computePBRLighting(in vec3 position, in PBRMaterial pbrMaterial)
 #ifndef DEBUG_OUTPUT // no debug
 
    // regular shading
-    outColor = vec4(toneMap(color, pbrMaterial.exposure), baseColor.a);
+   outColor = clamp((vec4(toneMap(color, pbrMaterial.exposure), baseColor.a) * pbrMaterial.effectColorMul) + pbrMaterial.effectColorAdd, 0.0, 1.0);
 
 #else // debug output
 

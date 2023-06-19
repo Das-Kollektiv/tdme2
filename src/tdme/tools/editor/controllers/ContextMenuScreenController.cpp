@@ -153,7 +153,7 @@ void ContextMenuScreenController::onChange(GUIElementNode* node) {
 			}
 			if (StringTools::toLowerCase(methodName).find(searchValue) != string::npos) {
 				required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("context_menu_addnode_list"))->addSubNodes(
-					"<context-menu-item value=\"miniscript.method." + GUIParser::escapeQuotes(methodName) + "\" template=\"context-menu-item_template_addnode.xml\" category=\"" + GUIParser::escapeQuotes(methodName) + "\" name=\"" + GUIParser::escapeQuotes(methodDescription) + "\" />",
+					"<context-menu-item value=\"miniscript.method." + GUIParser::escape(methodName) + "\" template=\"context-menu-item_template_addnode.xml\" category=\"" + GUIParser::escape(methodName) + "\" name=\"" + GUIParser::escape(methodDescription) + "\" />",
 					true
 				);
 			}
@@ -198,7 +198,7 @@ void ContextMenuScreenController::setupVisualCodeAddNodeContextMenu() {
 			methodName = StringTools::substring(methodNameCandidate, string("miniscript.").size());
 		}
 		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("context_menu_addnode_list"))->addSubNodes(
-			"<context-menu-item value=\"miniscript.method." + GUIParser::escapeQuotes(methodName) + "\" template=\"context-menu-item_template_addnode.xml\" category=\"" + GUIParser::escapeQuotes(methodName) + "\" name=\"" + GUIParser::escapeQuotes(methodDescription) + "\" />",
+			"<context-menu-item value=\"miniscript.method." + GUIParser::escape(methodName) + "\" template=\"context-menu-item_template_addnode.xml\" category=\"" + GUIParser::escape(methodName) + "\" name=\"" + GUIParser::escape(methodDescription) + "\" />",
 			true
 		);
 	}
@@ -206,7 +206,7 @@ void ContextMenuScreenController::setupVisualCodeAddNodeContextMenu() {
 
 void ContextMenuScreenController::addMenuItem(const string& text, const string& id, Action* action) {
 	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(contextMenuNode->getId()))->addSubNodes(
-		"<context-menu-item text=\"" + GUIParser::escapeQuotes(text) + "\" id=\"" + GUIParser::escapeQuotes(id) + "\" />",
+		"<context-menu-item text=\"" + GUIParser::escape(text) + "\" id=\"" + GUIParser::escape(id) + "\" />",
 		true
 	);
 	auto actionIt = actions.find(id);

@@ -54,7 +54,7 @@ public:
 		MiniScript::ScriptVariable returnValue;
 		span argumentValuesSpan(argumentValues);
 		if (miniScript->call("initialize", argumentValuesSpan, returnValue) == false) {
-			Console::println("MiniScriptLogic::onLogicsProcessed()(): Failed to call initialize() function");
+			Console::println("MiniScriptLogic::onLogicsProcessed(): Failed to call initialize() function");
 		}
 	}
 
@@ -111,12 +111,24 @@ public:
 			miniScript->enginePrototypesToAdd.clear();
 			miniScript->prototypesToAddMutex.unlock();
 		}
+		//
+		if (engineInitialized == false) {
+			// execute initializeEngine() function
+			vector<MiniScript::ScriptVariable> argumentValues(0);
+			MiniScript::ScriptVariable returnValue;
+			span argumentValuesSpan(argumentValues);
+			if (miniScript->call("initializeEngine", argumentValuesSpan, returnValue) == false) {
+				Console::println("MiniScriptLogic::updateEngine(): Failed to call initializeEngine() function");
+			}
+			//
+			engineInitialized = true;
+		}
 		// execute updateEngine() function
 		vector<MiniScript::ScriptVariable> argumentValues(0);
 		MiniScript::ScriptVariable returnValue;
 		span argumentValuesSpan(argumentValues);
 		if (miniScript->call("updateEngine", argumentValuesSpan, returnValue) == false) {
-			Console::println("MiniScriptLogic::updateEngine()(): Failed to call updateEngine() function");
+			Console::println("MiniScriptLogic::updateEngine(): Failed to call updateEngine() function");
 		}
 	}
 
@@ -124,25 +136,31 @@ public:
 		// add physics entities requested by MiniScript and scripts
 		if (miniScript->physicsPrototypesToAdd.empty() == false) {
 			miniScript->prototypesToAddMutex.lock();
+			//
 			for (auto& prototypeToAdd: miniScript->physicsPrototypesToAdd) {
-				if (prototypeToAdd.hierarchyId.empty() == false) {
-					SceneConnector::createSubBody(
-						context->getWorld(),
-						prototypeToAdd.prototype,
-						prototypeToAdd.id,
-						prototypeToAdd.transform,
-						prototypeToAdd.hierarchyId,
-						prototypeToAdd.hierarchyParentId
-					);
-				} else {
-					SceneConnector::createBody(
-						context->getWorld(),
-						prototypeToAdd.prototype,
-						prototypeToAdd.id,
-						prototypeToAdd.transform,
-						Body::COLLISION_TYPEID_DYNAMIC
-					);
+				// add to physics
+				if (prototypeToAdd.prototype->getBoundingVolumeCount() > 0) {
+					//
+					if (prototypeToAdd.hierarchyId.empty() == false) {
+						SceneConnector::createSubBody(
+							context->getWorld(),
+							prototypeToAdd.prototype,
+							prototypeToAdd.id,
+							prototypeToAdd.transform,
+							prototypeToAdd.hierarchyId,
+							prototypeToAdd.hierarchyParentId
+						);
+					} else {
+						SceneConnector::createBody(
+							context->getWorld(),
+							prototypeToAdd.prototype,
+							prototypeToAdd.id,
+							prototypeToAdd.transform,
+							Body::COLLISION_TYPEID_DYNAMIC
+						);
+					}
 				}
+				// add logic
 				if (prototypeToAdd.prototype->hasScript() == true) {
 					auto prototype = prototypeToAdd.prototype;
 					auto logicMiniScript = new LogicMiniScript();
@@ -162,8 +180,22 @@ public:
 					);
 				}
 			}
+			//
 			miniScript->physicsPrototypesToAdd.clear();
+			//
 			miniScript->prototypesToAddMutex.unlock();
+		}
+		//
+		if (logicInitialized == false) {
+			// execute initializeLogic() function
+			vector<MiniScript::ScriptVariable> argumentValues(0);
+			MiniScript::ScriptVariable returnValue;
+			span argumentValuesSpan(argumentValues);
+			if (miniScript->call("initializeLogic", argumentValuesSpan, returnValue) == false) {
+				Console::println("MiniScriptLogic::updateLogic(): Failed to call initializeLogic() function");
+			}
+			//
+			logicInitialized = true;
 		}
 		// execute on: nothing and other event polling and execution
 		miniScript->execute();
@@ -172,7 +204,7 @@ public:
 		MiniScript::ScriptVariable returnValue;
 		span argumentValuesSpan(argumentValues);
 		if (miniScript->call("updateLogic", argumentValuesSpan, returnValue) == false) {
-			Console::println("MiniScriptLogic::updateLogic()(): Failed to call updateLogic() function");
+			Console::println("MiniScriptLogic::updateLogic(): Failed to call updateLogic() function");
 		}
 	}
 
@@ -182,7 +214,7 @@ public:
 		MiniScript::ScriptVariable returnValue;
 		span argumentValuesSpan(argumentValues);
 		if (miniScript->call("onLogicAdded", argumentValuesSpan, returnValue) == false) {
-			Console::println("MiniScriptLogic::onLogicAdded()(): Failed to call onLogicAdded() function");
+			Console::println("MiniScriptLogic::onLogicAdded(): Failed to call onLogicAdded() function");
 		}
 	}
 
@@ -192,12 +224,14 @@ public:
 		MiniScript::ScriptVariable returnValue;
 		span argumentValuesSpan(argumentValues);
 		if (miniScript->call("onLogicsProcessed", argumentValuesSpan, returnValue) == false) {
-			Console::println("MiniScriptLogic::onLogicsProcessed()(): Failed to call onLogicsProcessed() function");
+			Console::println("MiniScriptLogic::onLogicsProcessed(): Failed to call onLogicsProcessed() function");
 		}
 	}
 
 private:
 	LogicMiniScript* miniScript { nullptr };
+	bool engineInitialized { false };
+	bool logicInitialized { false };
 	string hierarchyId;
 	string hierarchyParentId;
 };

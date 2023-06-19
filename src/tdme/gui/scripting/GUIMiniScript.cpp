@@ -541,7 +541,7 @@ void GUIMiniScript::registerMethods() {
 				if (miniScript->getIntegerValue(argumentValues, 0, keyCode) == true) {
 					returnValue = miniScript->keyboardKeys.find(keyCode) != miniScript->keyboardKeys.end();
 				} else {
-					Console::println("ScriptMethodInputKeyboardIsKeyDown::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -572,7 +572,7 @@ void GUIMiniScript::registerMethods() {
 					auto keyChar = u8It.hasNext() == true?u8It.next():-1;
 					returnValue = miniScript->keyboardChars.find(keyChar) != miniScript->keyboardChars.end();
 				} else {
-					Console::println("ScriptMethodInputKeyboardIsCharDown::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -745,7 +745,7 @@ void GUIMiniScript::registerMethods() {
 				if (miniScript->getIntegerValue(argumentValues, 0, button) == true) {
 					returnValue = button >= 0 && button <= 3?miniScript->mouseDown[button]:false;
 				} else {
-					Console::println("ScriptMethodInputMouseIsButtonDown::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -773,7 +773,7 @@ void GUIMiniScript::registerMethods() {
 				if (miniScript->getIntegerValue(argumentValues, 0, button) == true) {
 					returnValue = button >= 0 && button <= 3?miniScript->mouseUp[button]:false;
 				} else {
-					Console::println("ScriptMethodInputMouseIsButtonUp::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -801,7 +801,7 @@ void GUIMiniScript::registerMethods() {
 				if (miniScript->getIntegerValue(argumentValues, 0, button) == true) {
 					returnValue = button >= 0 && button <= 3?miniScript->mouseDragging[button]:false;
 				} else {
-					Console::println("ScriptMethodInputMouseIsDragging::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
 			}
@@ -976,14 +976,14 @@ void GUIMiniScript::registerMethods() {
 				bool enabled;
 				if (miniScript->getStringValue(argumentValues, 0, screenId, false) == false ||
 					miniScript->getBooleanValue(argumentValues, 1, enabled, false) == false) {
-					Console::println("ScriptMethodGUIScreenSetEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: boolean expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto screen = miniScript->screenNode->getGUI()->getScreen(screenId);
 					if (screen != nullptr) {
 						screen->setEnabled(enabled);
 					} else {
-						Console::println("ScriptMethodGUIScreenSetEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no screen with given id: " + screenId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no screen with given id: " + screenId);
 						miniScript->startErrorScript();
 					}
 				}
@@ -1011,7 +1011,7 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string screenId;
 				if (miniScript->getStringValue(argumentValues, 0, screenId, false) == false) {
-					Console::println("ScriptMethodGUIScreenIsEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto screen = miniScript->screenNode->getGUI()->getScreen(screenId);
@@ -1048,7 +1048,7 @@ void GUIMiniScript::registerMethods() {
 				string fileName;
 				if (argumentValues.size() > 3 ||
 					MiniScript::getStringValue(argumentValues, 0, fileName, false) == false) {
-					Console::println("ScriptMethodGUIScreenGoto::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: optional map expected, @ argument 2: optional mixed expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					// delete next screen node if given
@@ -1080,7 +1080,7 @@ void GUIMiniScript::registerMethods() {
 							miniScript->screenNode->getContext()
 						);
 					} catch (Exception& exception) {
-						Console::println("ScriptMethodGUIScreenGoto::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": an error occurred with goto screen to '" + fileName + "': " + string(exception.what()));
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": an error occurred with goto screen to '" + fileName + "': " + string(exception.what()));
 						miniScript->startErrorScript();
 					}
 				}
@@ -1111,7 +1111,7 @@ void GUIMiniScript::registerMethods() {
 				string fileName;
 				if (argumentValues.size() > 3 ||
 					MiniScript::getStringValue(argumentValues, 0, fileName, false) == false) {
-					Console::println("ScriptMethodGUIScreenPush::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: optional map expected, @ argument 2: optional mixed expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					// variables
@@ -1140,7 +1140,7 @@ void GUIMiniScript::registerMethods() {
 						miniScript->screenNode->getGUI()->addScreen(screenNode->getId(), screenNode);
 						miniScript->screenNode->getGUI()->addRenderScreen(screenNode->getId());
 					} catch (Exception& exception) {
-						Console::println("ScriptMethodGUIScreenPush::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": an error occurred with pushing screen '" + fileName + "': " + string(exception.what()));
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": an error occurred with pushing screen '" + fileName + "': " + string(exception.what()));
 						miniScript->startErrorScript();
 					}
 				}
@@ -1193,22 +1193,22 @@ void GUIMiniScript::registerMethods() {
 				string function;
 				if (miniScript->getStringValue(argumentValues, 0, screenId) == false ||
 					miniScript->getStringValue(argumentValues, 1, function) == false) {
-					Console::println("ScriptMethodGUIScreenCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto screen = miniScript->screenNode->getGUI()->getScreen(screenId);
 					auto screenMiniScript = screen != nullptr?screen->getMiniScript():nullptr;
 					auto scriptIdx = screenMiniScript != nullptr?screenMiniScript->getFunctionScriptIdx(function):SCRIPTIDX_NONE;
 					if (screen == nullptr) {
-						Console::println("ScriptMethodGUIScreenCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": screen not found: " + screenId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": screen not found: " + screenId);
 						miniScript->startErrorScript();
 					} else
 					if (screenMiniScript == nullptr) {
-						Console::println("ScriptMethodGUIScreenCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": screen mini script not found for given screen: " + screenId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": screen mini script not found for given screen: " + screenId);
 						miniScript->startErrorScript();
 					} else
 					if (scriptIdx == SCRIPTIDX_NONE) {
-						Console::println("ScriptMethodGUIScreenCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": screen: " + screenId + ", function not found: " + function);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": screen: " + screenId + ", function not found: " + function);
 						miniScript->startErrorScript();
 					} else {
 						#if defined (__APPLE__)
@@ -1306,7 +1306,7 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string nodeId;
 				if (MiniScript::getStringValue(argumentValues, 0, nodeId, false) == false) {
-					Console::println("ScriptMethodGUINodeControllerSetValue::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto node = miniScript->screenNode->getNodeById(nodeId);
@@ -1314,7 +1314,7 @@ void GUIMiniScript::registerMethods() {
 					if (controller != nullptr) {
 						returnValue.setValue(controller->getValue().getString());
 					} else {
-						Console::println("ScriptMethodGUINodeControllerSetValue::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no node controller found for given node id '" + nodeId + "'");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no node controller found for given node id '" + nodeId + "'");
 						miniScript->startErrorScript();
 					}
 				}
@@ -1345,7 +1345,7 @@ void GUIMiniScript::registerMethods() {
 				string value;
 				if (MiniScript::getStringValue(argumentValues, 0, nodeId, false) == false ||
 					MiniScript::getStringValue(argumentValues, 1, value, false) == false) {
-					Console::println("ScriptMethodGUINodeControllerSetValue::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto node = miniScript->screenNode->getNodeById(nodeId);
@@ -1353,7 +1353,7 @@ void GUIMiniScript::registerMethods() {
 					if (controller != nullptr) {
 						controller->setValue(MutableString(value));
 					} else {
-						Console::println("ScriptMethodGUINodeControllerSetValue::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no node controller found for given node id '" + nodeId + "'");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no node controller found for given node id '" + nodeId + "'");
 						miniScript->startErrorScript();
 					}
 				}
@@ -1381,7 +1381,7 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string textNodeId;
 				if (MiniScript::getStringValue(argumentValues, 0, textNodeId, false) == false) {
-					Console::println("ScriptMethodGUITextNodeGetText::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto textNode = dynamic_cast<GUITextNode*>(miniScript->screenNode->getNodeById(textNodeId));
@@ -1392,7 +1392,7 @@ void GUIMiniScript::registerMethods() {
 					if (styledTextNode != nullptr) {
 						returnValue.setValue(styledTextNode->getText().getString());
 					} else {
-						Console::println("ScriptMethodGUITextNodeGetText::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no text or styled text node found for given node id '" + textNodeId + "'");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no text or styled text node found for given node id '" + textNodeId + "'");
 						miniScript->startErrorScript();
 					}
 				}
@@ -1423,7 +1423,7 @@ void GUIMiniScript::registerMethods() {
 				string text;
 				if (MiniScript::getStringValue(argumentValues, 0, textNodeId, false) == false ||
 					MiniScript::getStringValue(argumentValues, 1, text, false) == false) {
-					Console::println("ScriptMethodGUITextNodeGetText::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto textNode = dynamic_cast<GUITextNode*>(miniScript->screenNode->getNodeById(textNodeId));
@@ -1434,7 +1434,7 @@ void GUIMiniScript::registerMethods() {
 					if (styledTextNode != nullptr) {
 						styledTextNode->setText(MutableString(text));
 					} else {
-						Console::println("ScriptMethodGUITextNodeGetText::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no text or styled text node found for given node id '" + textNodeId + "'");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no text or styled text node found for given node id '" + textNodeId + "'");
 						miniScript->startErrorScript();
 					}
 				}
@@ -1465,14 +1465,14 @@ void GUIMiniScript::registerMethods() {
 				string condition;
 				if (MiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
 					MiniScript::getStringValue(argumentValues, 1, condition, false) == false) {
-					Console::println("ScriptMethodGUIElementNodeConditionsHas::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto elementNode = dynamic_cast<GUIElementNode*>(miniScript->screenNode->getNodeById(elementNodeId));
 					if (elementNode != nullptr) {
 						returnValue.setValue(elementNode->getActiveConditions().has(condition));
 					} else {
-						Console::println("ScriptMethodGUIElementNodeConditionsHas::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no element node found for given node id '" + elementNodeId + "'");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no element node found for given node id '" + elementNodeId + "'");
 						miniScript->startErrorScript();
 					}
 				}
@@ -1500,7 +1500,7 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string elementNodeId;
 				if (MiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false) {
-					Console::println("ScriptMethodGUIElementNodeConditionsGet::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto elementNode = dynamic_cast<GUIElementNode*>(miniScript->screenNode->getNodeById(elementNodeId));
@@ -1511,7 +1511,7 @@ void GUIMiniScript::registerMethods() {
 							returnValue.pushArrayValue(condition);
 						}
 					} else {
-						Console::println("ScriptMethodGUIElementNodeConditionsGet::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no element node found for given node id '" + elementNodeId + "'");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no element node found for given node id '" + elementNodeId + "'");
 						miniScript->startErrorScript();
 					}
 				}
@@ -1542,14 +1542,14 @@ void GUIMiniScript::registerMethods() {
 				string condition;
 				if (MiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
 					MiniScript::getStringValue(argumentValues, 1, condition, false) == false) {
-					Console::println("ScriptMethodGUIElementNodeConditionsSet::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto elementNode = dynamic_cast<GUIElementNode*>(miniScript->screenNode->getNodeById(elementNodeId));
 					if (elementNode != nullptr) {
 						elementNode->getActiveConditions().set(condition);
 					} else {
-						Console::println("ScriptMethodGUIElementNodeConditionsSet::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no element node found for given node id '" + elementNodeId + "'");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no element node found for given node id '" + elementNodeId + "'");
 						miniScript->startErrorScript();
 					}
 				}
@@ -1580,14 +1580,14 @@ void GUIMiniScript::registerMethods() {
 				string condition;
 				if (MiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
 					MiniScript::getStringValue(argumentValues, 1, condition, false) == false) {
-					Console::println("ScriptMethodGUIElementNodeConditionsAdd::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto elementNode = dynamic_cast<GUIElementNode*>(miniScript->screenNode->getNodeById(elementNodeId));
 					if (elementNode != nullptr) {
 						elementNode->getActiveConditions().add(condition);
 					} else {
-						Console::println("ScriptMethodGUIElementNodeConditionsAdd::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no element node found for given node id '" + elementNodeId + "'");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no element node found for given node id '" + elementNodeId + "'");
 						miniScript->startErrorScript();
 					}
 				}
@@ -1617,7 +1617,7 @@ void GUIMiniScript::registerMethods() {
 				string elementNodeId;
 				if (MiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
 					argumentValues.size() <= 1 || argumentValues[1].getType() != ScriptVariableType::TYPE_ARRAY) {
-					Console::println("ScriptMethodGUIElementNodeConditionsSetAll::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: array of string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto elementNode = dynamic_cast<GUIElementNode*>(miniScript->screenNode->getNodeById(elementNodeId));
@@ -1626,14 +1626,14 @@ void GUIMiniScript::registerMethods() {
 						for (auto i = 0; i < argumentValues[1].getArraySize(); i++) {
 							string condition;
 							if (argumentValues[1].getArrayValue(i).getStringValue(condition, false) == false) {
-								Console::println("ScriptMethodGUIElementNodeConditionsSet::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 1: array of strings expected");
+								Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 							} else {
 								conditions.push_back(condition);
 							}
 						}
 						elementNode->getActiveConditions().set(conditions);
 					} else {
-						Console::println("ScriptMethodGUIElementNodeConditionsSetAll::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no element node found for given node id '" + elementNodeId + "'");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no element node found for given node id '" + elementNodeId + "'");
 						miniScript->startErrorScript();
 					}
 				}
@@ -1664,14 +1664,14 @@ void GUIMiniScript::registerMethods() {
 				string condition;
 				if (MiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
 					MiniScript::getStringValue(argumentValues, 1, condition, false) == false) {
-					Console::println("ScriptMethodGUIElementNodeConditionsRemove::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto elementNode = dynamic_cast<GUIElementNode*>(miniScript->screenNode->getNodeById(elementNodeId));
 					if (elementNode != nullptr) {
 						elementNode->getActiveConditions().remove(condition);
 					} else {
-						Console::println("ScriptMethodGUIElementNodeConditionsRemove::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no element node found for given node id '" + elementNodeId + "'");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no element node found for given node id '" + elementNodeId + "'");
 						miniScript->startErrorScript();
 					}
 				}
@@ -1699,14 +1699,14 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string elementNodeId;
 				if (MiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false) {
-					Console::println("ScriptMethodGUIElementNodeConditionsRemoveAll::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto elementNode = dynamic_cast<GUIElementNode*>(miniScript->screenNode->getNodeById(elementNodeId));
 					if (elementNode != nullptr) {
 						elementNode->getActiveConditions().removeAll();
 					} else {
-						Console::println("ScriptMethodGUIElementNodeConditionsRemoveAll::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no element node found for given node id '" + elementNodeId + "'");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no element node found for given node id '" + elementNodeId + "'");
 						miniScript->startErrorScript();
 					}
 				}
@@ -1734,14 +1734,14 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string imageNodeId;
 				if (MiniScript::getStringValue(argumentValues, 0, imageNodeId, false) == false) {
-					Console::println("ScriptMethodGUIImageNodeGetSource::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto imageNode = dynamic_cast<GUIImageNode*>(miniScript->screenNode->getNodeById(imageNodeId));
 					if (imageNode != nullptr) {
 						returnValue.setValue(imageNode->getSource());
 					} else {
-						Console::println("ScriptMethodGUIImageNodeGetSource::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no image node found for given image node id '" + imageNodeId + "'");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no image node found for given image node id '" + imageNodeId + "'");
 						miniScript->startErrorScript();
 					}
 				}
@@ -1772,14 +1772,14 @@ void GUIMiniScript::registerMethods() {
 				string source;
 				if (MiniScript::getStringValue(argumentValues, 0, imageNodeId, false) == false ||
 					MiniScript::getStringValue(argumentValues, 1, source, false) == false) {
-					Console::println("ScriptMethodGUIImageNodeSetSource::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto imageNode = dynamic_cast<GUIImageNode*>(miniScript->screenNode->getNodeById(imageNodeId));
 					if (imageNode != nullptr) {
 						imageNode->setSource(source);
 					} else {
-						Console::println("ScriptMethodGUIImageNodeSetSource::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no image node found for given image node id '" + imageNodeId + "'");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no image node found for given image node id '" + imageNodeId + "'");
 						miniScript->startErrorScript();
 					}
 				}
@@ -1807,14 +1807,14 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string videoNodeId;
 				if (MiniScript::getStringValue(argumentValues, 0, videoNodeId, false) == false) {
-					Console::println("ScriptMethodGUIVideoNodeGetSource::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto videoNode = dynamic_cast<GUIVideoNode*>(miniScript->screenNode->getNodeById(videoNodeId));
 					if (videoNode != nullptr) {
 						returnValue.setValue(videoNode->getSource());
 					} else {
-						Console::println("ScriptMethodGUIVideoNodeGetSource::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no video node found for given video node id '" + videoNodeId + "'");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no video node found for given video node id '" + videoNodeId + "'");
 						miniScript->startErrorScript();
 					}
 				}
@@ -1845,14 +1845,14 @@ void GUIMiniScript::registerMethods() {
 				string source;
 				if (MiniScript::getStringValue(argumentValues, 0, videoNodeId, false) == false ||
 					MiniScript::getStringValue(argumentValues, 1, source, false) == false) {
-					Console::println("ScriptMethodGUIVideoNodeSetSource::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto videoNode = dynamic_cast<GUIVideoNode*>(miniScript->screenNode->getNodeById(videoNodeId));
 					if (videoNode != nullptr) {
 						videoNode->setSource(source);
 					} else {
-						Console::println("ScriptMethodGUIVideoNodeSetSource::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no video node found for given video node id '" + videoNodeId + "'");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no video node found for given video node id '" + videoNodeId + "'");
 						miniScript->startErrorScript();
 					}
 				}
@@ -1880,14 +1880,14 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string parentNodeId;
 				if (MiniScript::getStringValue(argumentValues, 0, parentNodeId, false) == false) {
-					Console::println("ScriptMethodGUIParentNodeClearSubNodes::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto parentNode = dynamic_cast<GUIParentNode*>(miniScript->screenNode->getNodeById(parentNodeId));
 					if (parentNode != nullptr) {
 						parentNode->clearSubNodes();
 					} else {
-						Console::println("ScriptMethodGUIParentNodeClearSubNodes::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no parent node found for given parent node id '" + parentNodeId + "'");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no parent node found for given parent node id '" + parentNodeId + "'");
 						miniScript->startErrorScript();
 					}
 				}
@@ -1921,14 +1921,14 @@ void GUIMiniScript::registerMethods() {
 				if (MiniScript::getStringValue(argumentValues, 0, parentNodeId, false) == false ||
 					MiniScript::getStringValue(argumentValues, 1, xml, false) == false ||
 					MiniScript::getBooleanValue(argumentValues, 2, resetScrollOffsets, true) == false) {
-					Console::println("ScriptMethodGUIParentNodeAddSubNodes::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto parentNode = dynamic_cast<GUIParentNode*>(miniScript->screenNode->getNodeById(parentNodeId));
 					if (parentNode != nullptr) {
 						parentNode->addSubNodes(xml, resetScrollOffsets);
 					} else {
-						Console::println("ScriptMethodGUIParentNodeAddSubNodes::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no parent node found for given parent node id '" + parentNodeId + "'");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no parent node found for given parent node id '" + parentNodeId + "'");
 						miniScript->startErrorScript();
 					}
 				}
@@ -1962,14 +1962,14 @@ void GUIMiniScript::registerMethods() {
 				if (MiniScript::getStringValue(argumentValues, 0, parentNodeId, false) == false ||
 					MiniScript::getStringValue(argumentValues, 1, xml, false) == false ||
 					MiniScript::getBooleanValue(argumentValues, 2, resetScrollOffsets, true) == false) {
-					Console::println("ScriptMethodGUIParentNodeReplaceSubNodes::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto parentNode = dynamic_cast<GUIParentNode*>(miniScript->screenNode->getNodeById(parentNodeId));
 					if (parentNode != nullptr) {
 						parentNode->replaceSubNodes(xml, resetScrollOffsets);
 					} else {
-						Console::println("ScriptMethodGUIParentNodeReplaceSubNodes::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no parent node found for given parent node id '" + parentNodeId + "'");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no parent node found for given parent node id '" + parentNodeId + "'");
 						miniScript->startErrorScript();
 					}
 				}
@@ -2002,7 +2002,7 @@ void GUIMiniScript::registerMethods() {
 						context->getLogicsMutex()->lock();
 						auto logic = static_cast<Logic*>(context->getLogic(logicId));
 						if (logic == nullptr) {
-							Console::println("ScriptMethodLogicSignalSend::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no logic with given id: " + logicId);
+							Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no logic with given id: " + logicId);
 							miniScript->startErrorScript();
 						} else {
 							vector<ScriptVariable> arguments(argumentValues.size() - 2);
@@ -2011,11 +2011,11 @@ void GUIMiniScript::registerMethods() {
 						}
 						context->getLogicsMutex()->unlock();
 					} else {
-						Console::println("ScriptMethodLogicSignalSend::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, argument 1: string expected");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 						miniScript->startErrorScript();
 					}
 				} else {
-					Console::println("ScriptMethodLogicSignalSend::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no application logic context available");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no application logic context available");
 					miniScript->startErrorScript();
 				}
 			}
@@ -2024,6 +2024,57 @@ void GUIMiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodLogicSignalSend(this));
+	}
+	{
+		//
+		class ScriptMethodLogicHas: public ScriptMethod {
+		private:
+			GUIMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodLogicHas(GUIMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "function", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "logic.has";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				auto context = miniScript->screenNode->getContext();
+				if (context != nullptr) {
+					string logicId;
+					string function;
+					if (MiniScript::getStringValue(argumentValues, 0, logicId) == false ||
+						MiniScript::getStringValue(argumentValues, 1, function) == false) {
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+						miniScript->startErrorScript();
+					} else {
+						context->getLogicsMutex()->lock();
+						auto logic = dynamic_cast<MiniScriptLogic*>(context->getLogic(logicId));
+						if (logic == nullptr || logic->getMiniScript() == nullptr) {
+							returnValue.setValue(false);
+						} else {
+							auto logicMiniScript = logic->getMiniScript();
+							auto scriptIdx = logicMiniScript->getFunctionScriptIdx(function);
+							if (scriptIdx == SCRIPTIDX_NONE) {
+								returnValue.setValue(false);
+							} else {
+								returnValue.setValue(true);
+							}
+						}
+						context->getLogicsMutex()->unlock();
+					}
+				} else {
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no application logic context available");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodLogicHas(this));
 	}
 	{
 		//
@@ -2050,19 +2101,19 @@ void GUIMiniScript::registerMethods() {
 					string function;
 					if (MiniScript::getStringValue(argumentValues, 0, logicId) == false ||
 						MiniScript::getStringValue(argumentValues, 1, function) == false) {
-						Console::println("ScriptMethodLogicCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 						miniScript->startErrorScript();
 					} else {
 						context->getLogicsMutex()->lock();
 						auto logic = dynamic_cast<MiniScriptLogic*>(context->getLogic(logicId));
 						if (logic == nullptr || logic->getMiniScript() == nullptr) {
-							Console::println("ScriptMethodLogicCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no mini script logic with given id: " + logicId);
+							Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no mini script logic with given id: " + logicId);
 							miniScript->startErrorScript();
 						} else {
 							auto logicMiniScript = logic->getMiniScript();
 							auto scriptIdx = logicMiniScript->getFunctionScriptIdx(function);
 							if (scriptIdx == SCRIPTIDX_NONE) {
-								Console::println("ScriptMethodLogicCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": function not found: " + function);
+								Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": function not found: " + function);
 								miniScript->startErrorScript();
 							} else {
 								#if defined (__APPLE__)
@@ -2082,7 +2133,7 @@ void GUIMiniScript::registerMethods() {
 						context->getLogicsMutex()->unlock();
 					}
 				} else {
-					Console::println("ScriptMethodLogicCall::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no application logic context available");
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no application logic context available");
 					miniScript->startErrorScript();
 				}
 			}

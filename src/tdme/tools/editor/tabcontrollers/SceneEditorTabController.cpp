@@ -215,17 +215,23 @@ void SceneEditorTabController::onDrop(const string& payload, int mouseX, int mou
 				} else {
 					//
 					try {
+						// load prototype and mark as non embedded
 						auto prototype = PrototypeReader::read(
 							Tools::getPathName(fileName),
 							Tools::getFileName(fileName)
 						);
+						prototype->setEmbedded(false);
+						// check if we have prototype already in library
 						auto libraryPrototype = view->getScene()->getLibrary()->getPrototypeByName(prototype->getName());
 						if (libraryPrototype != nullptr) {
+							// yep, delete prototype
 							delete prototype;
 							prototype = libraryPrototype;
 						} else {
+							// nope, add it
 							view->addPrototype(prototype);
 						}
+						// and place it
 						if (view->placeEntity(prototype, tabMouseX, tabMouseY) == false) {
 							showInfoPopUp("Warning", "Could not place prototype entity.");
 						}
@@ -613,7 +619,7 @@ void SceneEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 						selectedEntityId = StringTools::substring(outlinerSelection[0], string("scene.entities.").size());
 						auto sceneEntity = scene->getEntity(selectedEntityId);
 						if (sceneEntity == nullptr) return;
-						sceneEditorTabController->view->getEditorView()->getScreenController()->setOutlinerSelection("scene.prototypes." + GUIParser::escapeQuotes(to_string(sceneEntity->getPrototype()->getId())));
+						sceneEditorTabController->view->getEditorView()->getScreenController()->setOutlinerSelection("scene.prototypes." + GUIParser::escape(to_string(sceneEntity->getPrototype()->getId())));
 						sceneEditorTabController->updateDetails(sceneEditorTabController->view->getEditorView()->getScreenController()->getOutlinerSelection());
 					}
 					JumpToPrototypeAction(SceneEditorTabController* sceneEditorTabController): sceneEditorTabController(sceneEditorTabController) {
@@ -1180,9 +1186,9 @@ void SceneEditorTabController::updateReflectionEnvironmentMappingDetailsDropDown
 	for (auto& environmentMappingId: scene->getEnvironmentMappingIds()) {
 		reflectionEnvironmentMappingIdsXML+=
 			"<dropdown-option text=\"" +
-			GUIParser::escapeQuotes(environmentMappingId) +
+			GUIParser::escape(environmentMappingId) +
 			"\" value=\"" +
-			GUIParser::escapeQuotes(environmentMappingId) +
+			GUIParser::escape(environmentMappingId) +
 			"\" " +
 			(selectedReflectionEnvironmentMappingId == environmentMappingId?"selected=\"true\" ":"") +
 			" />\n";
@@ -1291,41 +1297,41 @@ void SceneEditorTabController::updateEntityDetails(const Vector3& translation, c
 void SceneEditorTabController::setOutlinerContent() {
 
 	string xml;
-	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Scene") + "\" value=\"" + GUIParser::escapeQuotes("scene") + "\">\n";
+	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Scene") + "\" value=\"" + GUIParser::escape("scene") + "\">\n";
 	auto scene = view->getScene();
 	if (scene != nullptr) {
 		basePropertiesSubController->createBasePropertiesXML(scene, xml);
-		xml+= "	<selectbox-option image=\"resources/engine/images/gui.png\" text=\"" + GUIParser::escapeQuotes("GUI") + "\" value=\"" + GUIParser::escapeQuotes("scene.gui") + "\" />\n";
+		xml+= "	<selectbox-option image=\"resources/engine/images/gui.png\" text=\"" + GUIParser::escape("GUI") + "\" value=\"" + GUIParser::escape("scene.gui") + "\" />\n";
 		xml+= "	<selectbox-option image=\"resources/engine/images/sky.png\" text=\"Sky\" value=\"scene.sky\" />\n";
 		{
-			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Lights") + "\" value=\"" + GUIParser::escapeQuotes("scene.lights") + "\">\n";
+			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Lights") + "\" value=\"" + GUIParser::escape("scene.lights") + "\">\n";
 			for (auto i = 0; i < scene->getLightCount(); i++) {
 				auto light = scene->getLightAt(i);
-				xml+= "	<selectbox-option image=\"resources/engine/images/light.png\" text=\"" + GUIParser::escapeQuotes("Light " + to_string(i)) + "\" id=\"" + GUIParser::escapeQuotes("scene.lights.light" + to_string(i)) + "\" value=\"" + GUIParser::escapeQuotes("scene.lights.light" + to_string(i)) + "\" />\n";
+				xml+= "	<selectbox-option image=\"resources/engine/images/light.png\" text=\"" + GUIParser::escape("Light " + to_string(i)) + "\" id=\"" + GUIParser::escape("scene.lights.light" + to_string(i)) + "\" value=\"" + GUIParser::escape("scene.lights.light" + to_string(i)) + "\" />\n";
 			}
 			xml+= "</selectbox-parent-option>\n";
 		}
 		{
 			auto sceneLibrary = scene->getLibrary();
-			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Prototypes") + "\" value=\"" + GUIParser::escapeQuotes("scene.prototypes") + "\">\n";
+			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Prototypes") + "\" value=\"" + GUIParser::escape("scene.prototypes") + "\">\n";
 			for (auto i = 0; i < sceneLibrary->getPrototypeCount(); i++) {
 				auto prototype = sceneLibrary->getPrototypeAt(i);
 				auto icon = getPrototypeIcon(prototype->getType());
 				auto prototypeId = prototype->getId();
 				auto prototypeName = prototype->getName();
-				xml+= "	<selectbox-option image=\"resources/engine/images/" + icon +"\" text=\"" + GUIParser::escapeQuotes(prototypeName) + "\" value=\"" + GUIParser::escapeQuotes("scene.prototypes." + to_string(prototypeId)) + "\" />\n";
+				xml+= "	<selectbox-option image=\"resources/engine/images/" + icon +"\" text=\"" + GUIParser::escape(prototypeName) + "\" value=\"" + GUIParser::escape("scene.prototypes." + to_string(prototypeId)) + "\" />\n";
 			}
 			xml+= "</selectbox-parent-option>\n";
 		}
 		{
-			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Entities") + "\" value=\"" + GUIParser::escapeQuotes("scene.entities") + "\">\n";
+			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Entities") + "\" value=\"" + GUIParser::escape("scene.entities") + "\">\n";
 			for (auto i = 0; i < scene->getEntityCount(); i++) {
 				auto entity = scene->getEntityAt(i);
 				auto entityName = entity->getName();
 				auto prototype = entity->getPrototype();
 				auto icon = getPrototypeIcon(prototype->getType());
 				if (prototype->isRenderGroups() == true) continue;
-				xml+= "	<selectbox-option image=\"resources/engine/images/" + icon + "\" text=\"" + GUIParser::escapeQuotes(entityName) + "\" id=\"" + GUIParser::escapeQuotes("scene.entities." + entityName) + "\" value=\"" + GUIParser::escapeQuotes("scene.entities." + entityName) + "\" />\n";
+				xml+= "	<selectbox-option image=\"resources/engine/images/" + icon + "\" text=\"" + GUIParser::escape(entityName) + "\" id=\"" + GUIParser::escape("scene.entities." + entityName) + "\" value=\"" + GUIParser::escape("scene.entities." + entityName) + "\" />\n";
 			}
 			xml+= "</selectbox-parent-option>\n";
 		}
@@ -1482,7 +1488,7 @@ void SceneEditorTabController::startRenameEntity(const string& entityName) {
 	if (selectBoxOptionParentNode == nullptr) return;
 	renameEntityName = entityName;
 	selectBoxOptionParentNode->replaceSubNodes(
-		"<template id=\"tdme.entities.rename_input\" hint=\"Property name\" text=\"" + GUIParser::escapeQuotes(sceneEntity->getName()) + "\"src=\"resources/engine/gui/template_outliner_rename.xml\" />\n",
+		"<template id=\"tdme.entities.rename_input\" hint=\"Property name\" text=\"" + GUIParser::escape(sceneEntity->getName()) + "\"src=\"resources/engine/gui/template_outliner_rename.xml\" />\n",
 		true
 	);
 	Engine::getInstance()->getGUI()->setFoccussedNode(dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById("tdme.entities.rename_input")));

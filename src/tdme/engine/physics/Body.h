@@ -66,6 +66,7 @@ public:
 	static constexpr uint16_t COLLISION_TYPEID_14 { 8192 };
 	static constexpr uint16_t COLLISION_TYPEID_15 { 16384 };
 	static constexpr uint16_t COLLISION_TYPEID_16 { 32768 };
+	static constexpr uint16_t COLLISION_TYPEID_RESERVED { 32768 };
 	static constexpr uint16_t COLLISION_TYPEID_ALL { 65535 };
 
 	/**
@@ -378,7 +379,7 @@ public:
 	 */
 	inline void setTransform(const Transform& transform) {
 		// store engine transform
-		this->transform.setTransform(transform);
+		this->transform = transform;
 
 		// reset colliders if bounding volumes do not match proxy shapes or if scaling has changed
 		if (initiation == true || colliders.size() != boundingVolumes.size() || transformScale.equals(transform.getScale()) == false) {

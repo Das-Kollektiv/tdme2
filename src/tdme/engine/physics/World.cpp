@@ -140,8 +140,8 @@ Body* World::addStaticCollisionBody(const string& id, uint16_t collisionTypeId, 
 	//
 	auto body =
 		hierarchy == true?
-			new BodyHierarchy(this, id, Body::BODYTYPE_COLLISION_STATIC, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor()):
-			new Body(this, id, Body::BODYTYPE_COLLISION_STATIC, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
+			new BodyHierarchy(this, id, Body::BODYTYPE_COLLISION_STATIC, collisionTypeId, enabled, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor()):
+			new Body(this, id, Body::BODYTYPE_COLLISION_STATIC, collisionTypeId, enabled, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
 	//
 	if (hierarchy == true) {
 		static_cast<BodyHierarchy*>(body)->addBody(id, Transform(), boundingVolumes);
@@ -163,8 +163,8 @@ Body* World::addDynamicCollisionBody(const string& id, uint16_t collisionTypeId,
 	//
 	auto body =
 		hierarchy == true?
-			new BodyHierarchy(this, id, Body::BODYTYPE_COLLISION_DYNAMIC, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor()):
-			new Body(this, id, Body::BODYTYPE_COLLISION_DYNAMIC, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
+			new BodyHierarchy(this, id, Body::BODYTYPE_COLLISION_DYNAMIC, collisionTypeId, enabled, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor()):
+			new Body(this, id, Body::BODYTYPE_COLLISION_DYNAMIC, collisionTypeId, enabled, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
 	//
 	if (hierarchy == true) {
 		static_cast<BodyHierarchy*>(body)->addBody(id, Transform(), boundingVolumes);
@@ -187,8 +187,8 @@ Body* World::addStaticRigidBody(const string& id, uint16_t collisionTypeId, bool
 	//
 	auto body =
 		hierarchy == true?
-			new BodyHierarchy(this, id, Body::BODYTYPE_STATIC, enabled, collisionTypeId, transform, 0.0f, friction, 0.0f, Body::getNoRotationInertiaTensor()):
-			new Body(this, id, Body::BODYTYPE_STATIC, enabled, collisionTypeId, transform, 0.0f, friction, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
+			new BodyHierarchy(this, id, Body::BODYTYPE_STATIC, collisionTypeId, enabled, transform, 0.0f, friction, 0.0f, Body::getNoRotationInertiaTensor()):
+			new Body(this, id, Body::BODYTYPE_STATIC, collisionTypeId, enabled, transform, 0.0f, friction, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
 	//
 	if (hierarchy == true) {
 		static_cast<BodyHierarchy*>(body)->addBody(id, Transform(), boundingVolumes);
@@ -334,8 +334,7 @@ void World::update(float deltaTime)
 	*/
 
 	// update transform for rigid body
-	for (auto i = 0; i < rigidBodiesDynamic.size(); i++) {
-		auto body = rigidBodiesDynamic[i];
+	for (auto body: rigidBodiesDynamic) {
 		// skip if disabled
 		if (body->isEnabled() == false) {
 			continue;
@@ -346,9 +345,9 @@ void World::update(float deltaTime)
 		}
 
 		// rp3d transform
-		auto transform = body->rigidBody->getTransform();
-		auto transformPosition = transform.getPosition();
-		auto transformOrientation = transform.getOrientation();
+		auto& transform = body->rigidBody->getTransform();
+		auto& transformPosition = transform.getPosition();
+		auto& transformOrientation = transform.getOrientation();
 
 		// tdme2 transform
 		auto& physicsTransform = body->transform;
@@ -408,6 +407,7 @@ void World::synchronize(Engine* engine)
 
 Body* World::determineHeight(uint16_t collisionTypeIds, float stepUpMax, const Vector3& point, Vector3& heightPoint, float minHeight, float maxHeight)
 {
+	// TODO: we seem to have a bug here
 	//
 	class CustomCallbackClass : public reactphysics3d::RaycastCallback {
 	public:
@@ -501,8 +501,8 @@ bool World::doesCollideWith(uint16_t collisionTypeIds, Body* body, vector<Body*>
 					auto overlappingPair = callbackData.getOverlappingPair(i);
 					auto body1 = static_cast<Body*>(overlappingPair.getBody1()->getUserData());
 					auto body2 = static_cast<Body*>(overlappingPair.getBody2()->getUserData());
-					if (body1 != body && (body1->getCollisionTypeId() & collisionTypeIds) != 0) collisionBodies.push_back(body1);
-					if (body2 != body && (body2->getCollisionTypeId() & collisionTypeIds) != 0) collisionBodies.push_back(body2);
+					if (body != body1 && ((body1->getCollisionTypeId() & collisionTypeIds) != 0)) collisionBodies.push_back(body1);
+					if (body != body2 && ((body2->getCollisionTypeId() & collisionTypeIds) != 0)) collisionBodies.push_back(body2);
 				}
 			}
 	    private:
@@ -575,8 +575,7 @@ World* World::clone(const string& id, uint16_t collisionTypeIds)
 {
 	//
 	auto clonedWorld = new World(id);
-	for (auto i = 0; i < bodies.size(); i++) {
-		auto body = bodies[i];
+	for (auto body: bodies) {
 		// clone obv
 		Body* clonedBody = nullptr;
 		auto bodyType = body->getType();

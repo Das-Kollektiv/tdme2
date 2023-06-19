@@ -792,48 +792,48 @@ void TerrainEditorTabController::setOutlinerContent() {
 	auto prototype = view->getPrototype();
 	auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
 	string xml;
-	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Terrain") + "\" value=\"" + GUIParser::escapeQuotes("terrain") + "\">\n";
+	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Terrain") + "\" value=\"" + GUIParser::escape("terrain") + "\">\n";
 	basePropertiesSubController->createBasePropertiesXML(view->getPrototype(), xml);
-	xml+= "<selectbox-option image=\"resources/engine/images/terrain.png\" text=\"" + GUIParser::escapeQuotes("Terrain Brush") + "\" value=\"" + GUIParser::escapeQuotes("terrain.brush") + "\" />\n";
+	xml+= "<selectbox-option image=\"resources/engine/images/terrain.png\" text=\"" + GUIParser::escape("Terrain Brush") + "\" value=\"" + GUIParser::escape("terrain.brush") + "\" />\n";
 	if (terrain != nullptr && terrain->getWaterPositionMapsIndices().empty() == false) {
-		xml+= "<selectbox-parent-option image=\"resources/engine/images/terrain_water.png\" text=\"" + GUIParser::escapeQuotes("Water") + "\" value=\"" + GUIParser::escapeQuotes("terrain.waters") + "\">\n";
+		xml+= "<selectbox-parent-option image=\"resources/engine/images/terrain_water.png\" text=\"" + GUIParser::escape("Water") + "\" value=\"" + GUIParser::escape("terrain.waters") + "\">\n";
 		auto i = 0;
 		for (auto waterIdx: terrain->getWaterPositionMapsIndices()) {
-			xml+= "<selectbox-option image=\"resources/engine/images/terrain_water.png\" text=\"" + GUIParser::escapeQuotes("Water " + to_string(i)) + "\" value=\"" + GUIParser::escapeQuotes("terrain.waters." + to_string(waterIdx)) + "\" />\n";
+			xml+= "<selectbox-option image=\"resources/engine/images/terrain_water.png\" text=\"" + GUIParser::escape("Water " + to_string(i)) + "\" value=\"" + GUIParser::escape("terrain.waters." + to_string(waterIdx)) + "\" />\n";
 			i++;
 		}
 		xml+= "</selectbox-parent-option>\n";
 	} else {
-		xml+= "<selectbox-option image=\"resources/engine/images/terrain_water.png\" text=\"" + GUIParser::escapeQuotes("Water") + "\" value=\"" + GUIParser::escapeQuotes("terrain.waters") + "\" />\n";
+		xml+= "<selectbox-option image=\"resources/engine/images/terrain_water.png\" text=\"" + GUIParser::escape("Water") + "\" value=\"" + GUIParser::escape("terrain.waters") + "\" />\n";
 	}
 	if (terrain != nullptr && terrain->getBrushes().empty() == false) {
-		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Foliage") + "\" value=\"" + GUIParser::escapeQuotes("terrain.foliage") + "\">\n";
+		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Foliage") + "\" value=\"" + GUIParser::escape("terrain.foliage") + "\">\n";
 		auto i = 0;
 		for (auto brush: terrain->getBrushes()) {
 			if (brush->getPrototypes().empty() == false) {
-				xml+= "<selectbox-parent-option image=\"resources/engine/images/foliage.png\" text=\"" + GUIParser::escapeQuotes("Foliage Brush " + to_string(i)) + "\" value=\"" + GUIParser::escapeQuotes("terrain.foliage." + to_string(i)) + "\" >\n";
+				xml+= "<selectbox-parent-option image=\"resources/engine/images/foliage.png\" text=\"" + GUIParser::escape("Foliage Brush " + to_string(i)) + "\" value=\"" + GUIParser::escape("terrain.foliage." + to_string(i)) + "\" >\n";
 				auto j = 0;
 				for (auto brushPrototype: brush->getPrototypes()) {
-					xml+= "<selectbox-option image=\"resources/engine/images/mesh.png\" text=\"" + GUIParser::escapeQuotes("Prototype " + to_string(j)) + "\" value=\"" + GUIParser::escapeQuotes("terrain.foliagebrushes." + to_string(i) + "." + to_string(j)) + "\" />\n";
+					xml+= "<selectbox-option image=\"resources/engine/images/mesh.png\" text=\"" + GUIParser::escape("Prototype " + to_string(j)) + "\" value=\"" + GUIParser::escape("terrain.foliagebrushes." + to_string(i) + "." + to_string(j)) + "\" />\n";
 					j++;
 				}
 				xml+= "</selectbox-parent-option>\n";
 			} else {
-				xml+= "<selectbox-option image=\"resources/engine/images/foliage.png\" text=\"" + GUIParser::escapeQuotes("Foliage Brush " + to_string(i)) + "\" value=\"" + GUIParser::escapeQuotes("terrain.foliage." + to_string(i)) + "\" />\n";
+				xml+= "<selectbox-option image=\"resources/engine/images/foliage.png\" text=\"" + GUIParser::escape("Foliage Brush " + to_string(i)) + "\" value=\"" + GUIParser::escape("terrain.foliage." + to_string(i)) + "\" />\n";
 			}
 			i++;
 		}
 		xml+= "</selectbox-parent-option>\n";
 	} else {
-		xml+= "<selectbox-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Foliage") + "\" value=\"" + GUIParser::escapeQuotes("terrain.foliage") + "\" />\n";
+		xml+= "<selectbox-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Foliage") + "\" value=\"" + GUIParser::escape("terrain.foliage") + "\" />\n";
 	}
 	auto foliagePrototypeIndices = terrain != nullptr?terrain->getFoliagePrototypeIndices():vector<int>();
 	if (foliagePrototypeIndices.empty() == false) {
-		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Prototypes") + "\" value=\"" + GUIParser::escapeQuotes("terrain.foliageprototypes") + "\">\n";
+		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Prototypes") + "\" value=\"" + GUIParser::escape("terrain.foliageprototypes") + "\">\n";
 		auto i = 0;
 		for (auto prototypeIdx: foliagePrototypeIndices) {
 			auto foliagePrototype = terrain->getFoliagePrototype(prototypeIdx);
-			xml+= "<selectbox-option image=\"resources/engine/images/mesh.png\" text=\"" + GUIParser::escapeQuotes(Tools::removeFileExtension(Tools::getFileName(foliagePrototype->getFileName()))) + "\" value=\"" + GUIParser::escapeQuotes("terrain.foliageprototypes." + to_string(prototypeIdx)) + "\" />\n";
+			xml+= "<selectbox-option image=\"resources/engine/images/mesh.png\" text=\"" + GUIParser::escape(Tools::removeFileExtension(Tools::getFileName(foliagePrototype->getFileName()))) + "\" value=\"" + GUIParser::escape("terrain.foliageprototypes." + to_string(prototypeIdx)) + "\" />\n";
 			i++;
 		}
 		xml+= "</selectbox-parent-option>\n";

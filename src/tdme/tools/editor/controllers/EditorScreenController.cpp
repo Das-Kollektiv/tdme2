@@ -663,10 +663,14 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 									SceneEditorTabView* sceneEditorTabView = dynamic_cast<SceneEditorTabView*>(currentTab->getTabView());
 									if (sceneEditorTabView == nullptr) return;
 									try {
+										// load prototype
 										auto prototype = PrototypeReader::read(
 											Tools::getPathName(absoluteFileName),
 											Tools::getFileName(absoluteFileName)
 										);
+										// mark as non embedded
+										prototype->setEmbedded(false);
+										// add to library
 										sceneEditorTabView->addPrototype(prototype);
 									} catch (Exception& exception) {
 										Console::println("OnOpenAction::performAction(): An error occurred: " + string(exception.what()));
@@ -818,13 +822,13 @@ void EditorScreenController::onOpenProject() {
 
 void EditorScreenController::scanProjectPaths() {
 	string xml;
-	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("resources") + "\" value=\"" + GUIParser::escapeQuotes("resources") + "\">\n";
+	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("resources") + "\" value=\"" + GUIParser::escape("resources") + "\">\n";
 	scanProjectPaths(projectPath + "/resources", xml);
 	xml+= "</selectbox-parent-option>\n";
-	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("shader") + "\" value=\"" + GUIParser::escapeQuotes("shader") + "\">\n";
+	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("shader") + "\" value=\"" + GUIParser::escape("shader") + "\">\n";
 	scanProjectPaths(projectPath + "/shader", xml);
 	xml+= "</selectbox-parent-option>\n";
-	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("src") + "\" value=\"" + GUIParser::escapeQuotes("src") + "\">\n";
+	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("src") + "\" value=\"" + GUIParser::escape("src") + "\">\n";
 	scanProjectPaths(projectPath + "/src", xml);
 	xml+= "</selectbox-parent-option>\n";
 	try {
@@ -871,11 +875,11 @@ void EditorScreenController::scanProjectPaths(const string& path, string& xml) {
 				string innerXml;
 				scanProjectPaths(path + "/" + fileName, innerXml);
 				if (innerXml.empty() == false) {
-					xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes(fileName) + "\" value=\"" + GUIParser::escapeQuotes(relativePath) + "\">\n";
+					xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape(fileName) + "\" value=\"" + GUIParser::escape(relativePath) + "\">\n";
 					xml+= innerXml;
 					xml+= "</selectbox-parent-option>\n";
 				} else {
-					xml+= "<selectbox-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes(fileName) + "\" value=\"" + GUIParser::escapeQuotes(relativePath) + "\" />\n";
+					xml+= "<selectbox-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape(fileName) + "\" value=\"" + GUIParser::escape(relativePath) + "\" />\n";
 				}
 			}
 		}
@@ -1149,17 +1153,17 @@ void EditorScreenController::ScanFilesThread::run() {
 
 			//
 			auto fileEntity = new FileEntity();
-			fileEntity->id = "projectpathfiles_file_" + GUIParser::escapeQuotes(StringTools::replace(Tools::getFileName(fileName), '.', '_'));
+			fileEntity->id = "projectpathfiles_file_" + GUIParser::escape(StringTools::replace(Tools::getFileName(fileName), '.', '_'));
 			fileEntity->buttonXML =
 				string() +
 				"<button " +
 				"id=\"" + fileEntity->id + "\" " +
-				"value=\"" + GUIParser::escapeQuotes(parentPathName) + "\" " +
+				"value=\"" + GUIParser::escape(parentPathName) + "\" " +
 				"template=\"" + templateSource + "\" " +
 				"size=\"75\" " +
-				"icon=\"" + GUIParser::escapeQuotes(icon) + "\" " +
-				"icon-big=\"" + GUIParser::escapeQuotes(iconBig) + "\" " +
-				"filename=\"" + GUIParser::escapeQuotes(fileName) + "\" " +
+				"icon=\"" + GUIParser::escape(icon) + "\" " +
+				"icon-big=\"" + GUIParser::escape(iconBig) + "\" " +
+				"filename=\"" + GUIParser::escape(fileName) + "\" " +
 				"/>\n";
 			editorScreenController->lockFileEntities();
 			editorScreenController->getFileEntities().push_back(fileEntity);
@@ -1179,7 +1183,7 @@ void EditorScreenController::ScanFilesThread::run() {
 
 			//
 			auto fileEntity = new FileEntity();
-			fileEntity->id = "projectpathfiles_file_" + GUIParser::escapeQuotes(StringTools::replace(Tools::getFileName(fileName), '.', '_'));
+			fileEntity->id = "projectpathfiles_file_" + GUIParser::escape(StringTools::replace(Tools::getFileName(fileName), '.', '_'));
 
 			//
 			string buttonOnInitialize;
@@ -1192,12 +1196,12 @@ void EditorScreenController::ScanFilesThread::run() {
 				string() +
 				"<button " +
 				"id=\"" + fileEntity->id + "\" " +
-				"value=\"" + GUIParser::escapeQuotes(absolutePath) + "\" " +
+				"value=\"" + GUIParser::escape(absolutePath) + "\" " +
 				"template=\"" + templateSource + "\" " +
 				"size=\"75\" " +
-				"icon=\"" + GUIParser::escapeQuotes(icon) + "\" " +
-				"icon-big=\"" + GUIParser::escapeQuotes(iconBig) + "\" " +
-				"filename=\"" + GUIParser::escapeQuotes(fileName) + "\" " +
+				"icon=\"" + GUIParser::escape(icon) + "\" " +
+				"icon-big=\"" + GUIParser::escape(iconBig) + "\" " +
+				"filename=\"" + GUIParser::escape(fileName) + "\" " +
 				buttonOnInitialize +
 				"/>\n";
 			editorScreenController->lockFileEntities();
@@ -1258,7 +1262,7 @@ void EditorScreenController::ScanFilesThread::run() {
 
 				//
 				auto fileEntity = new FileEntity();
-				fileEntity->id = "projectpathfiles_file_" + GUIParser::escapeQuotes(StringTools::replace(Tools::getFileName(fileName), '.', '_'));
+				fileEntity->id = "projectpathfiles_file_" + GUIParser::escape(StringTools::replace(Tools::getFileName(fileName), '.', '_'));
 
 				//
 				string buttonOnInitialize;
@@ -1271,13 +1275,13 @@ void EditorScreenController::ScanFilesThread::run() {
 					string() +
 					"<button " +
 					"id=\"" + fileEntity->id + "\" " +
-					"value=\"" + GUIParser::escapeQuotes(absolutePath) + "\" " +
+					"value=\"" + GUIParser::escape(absolutePath) + "\" " +
 					"template=\"" + templateSource + "\" " +
 					"size=\"75\" " +
-					"icon=\"" + GUIParser::escapeQuotes(icon) + "\" " +
-					"icon-big=\"" + GUIParser::escapeQuotes(iconBig) + "\" " +
-					"filename=\"" + GUIParser::escapeQuotes(fileName) + "\" " +
-					"type-color=\"" + GUIParser::escapeQuotes(typeColor) + "\" " +
+					"icon=\"" + GUIParser::escape(icon) + "\" " +
+					"icon-big=\"" + GUIParser::escape(iconBig) + "\" " +
+					"filename=\"" + GUIParser::escape(fileName) + "\" " +
+					"type-color=\"" + GUIParser::escape(typeColor) + "\" " +
 					buttonOnInitialize +
 					"/>\n";
 
@@ -1694,7 +1698,7 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 	//
 	auto tabId = "tab_" + StringTools::replace(absoluteFileName, ".", "_");
 	if (selectTab(tabId) == true) return;
-	tabId = GUIParser::escapeQuotes(tabId);
+	tabId = GUIParser::escape(tabId);
 
 	//
 	auto fileName = FileSystem::getInstance()->getFileName(absoluteFileName);
@@ -2132,7 +2136,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 		}
 		//
 		{
-			string tabsHeaderXML = "<tab id=\"" + tabId + "\" image=\"" + GUIParser::escapeQuotes(icon) + "\" type-color=\"" + GUIParser::escapeQuotes(colorType) + "\" value=\"" + GUIParser::escapeQuotes(absoluteFileName) + "\" text=\"" + GUIParser::escapeQuotes(fileName) + "\" closeable=\"true\" />\n";
+			string tabsHeaderXML = "<tab id=\"" + tabId + "\" image=\"" + GUIParser::escape(icon) + "\" type-color=\"" + GUIParser::escape(colorType) + "\" value=\"" + GUIParser::escape(absoluteFileName) + "\" text=\"" + GUIParser::escape(fileName) + "\" closeable=\"true\" />\n";
 			try {
 				required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsHeader->getId()))->addSubNodes(tabsHeaderXML, true);
 			} catch (Exception& exception) {
@@ -2240,7 +2244,7 @@ void EditorScreenController::updateTabsMenuEntries() {
 	string xml = "<menu-separator />\n";
 	for (auto tab: tabViewVector) {
 		auto imageSource = GUIParser::getEngineThemeProperties()->get("icon.type_" + FileDialogScreenController::getFileImageName(tab->getName()), "resources/engine/images/tdme.png");
-		xml+= "<menu-item image='" + imageSource + "' text='" + GUIParser::escapeQuotes(tab->getName()) + "' id='menu_view_tab_" + to_string(tabIdx) + "' shortcut='Ctrl+" + to_string(tabIdx + 1) + "' />\n";
+		xml+= "<menu-item image='" + imageSource + "' text='" + GUIParser::escape(tab->getName()) + "' id='menu_view_tab_" + to_string(tabIdx) + "' shortcut='Ctrl+" + to_string(tabIdx + 1) + "' />\n";
 		tabIdx++;
 	}
 	try {

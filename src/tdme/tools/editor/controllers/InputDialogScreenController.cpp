@@ -87,7 +87,7 @@ void InputDialogScreenController::dispose()
 
 void InputDialogScreenController::show(const string& captionText, const string& inputText, Action* applyAction, Action* cancelAction)
 {
-	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsHeaderNode->getId()))->replaceSubNodes("<tab id=\"inputdialog_caption\" image=\"resources/engine/images/attention.png\" text=\"" + GUIParser::escapeQuotes(captionText)+ "\" closeable=\"true\"/>", true);
+	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsHeaderNode->getId()))->replaceSubNodes("<tab id=\"inputdialog_caption\" image=\"resources/engine/images/attention.png\" text=\"" + GUIParser::escape(captionText)+ "\" closeable=\"true\"/>", true);
 	this->inputNode->getController()->setValue(inputText);
 	if (this->applyAction != nullptr) delete this->applyAction;
 	this->applyAction = applyAction;

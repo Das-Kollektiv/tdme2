@@ -84,7 +84,7 @@ const string Markdown::createGUIXML(const string& pathName, const string& fileNa
 			auto indent = bulletPointIdx / 2;
 			xml+= "<layout alignment='horizontal' width='100%' height='auto'>\n";
 			xml+= "\t<space width='" + to_string((bulletPointIdx + 1) * 10) + "'/>\n";
-			xml+= "\t<styled-text font='{$font.default}' size='" + textSize + "' color='{$color.font_normal}' width='*' height='auto'>• " + GUIParser::escapeQuotes(bulletPoint) + "</styled-text>\n";
+			xml+= "\t<styled-text font='{$font.default}' size='" + textSize + "' color='{$color.font_normal}' width='*' height='auto'>• " + GUIParser::escape(bulletPoint) + "</styled-text>\n";
 			xml+= "</layout>\n";
 		} else
 		// image
@@ -115,7 +115,7 @@ const string Markdown::createGUIXML(const string& pathName, const string& fileNa
 			}
 			//
 			if (source.empty() == false) {
-				xml+= "<image src='" + GUIParser::escapeQuotes(FileSystem::getInstance()->getCurrentWorkingPathName() + "/" + source) + "' tooltip='" + GUIParser::escapeQuotes(tooltip) + "' />\n";
+				xml+= "<image src='" + GUIParser::escape(FileSystem::getInstance()->getCurrentWorkingPathName() + "/" + source) + "' tooltip='" + GUIParser::escape(tooltip) + "' />\n";
 			}
 		} else
 		if (StringTools::startsWith(markdownLine, "|") == true) {
@@ -143,7 +143,7 @@ const string Markdown::createGUIXML(const string& pathName, const string& fileNa
 					string textSize = "{$fontsize.default}";
 					string backgroundColor = (inTableIdx % 2) == 0?"{$color.element_midground}":"{$color.element_background}";
 					xml+= "<table-cell padding='5' background-color='" + backgroundColor + "' border='1' border-color='{$color.element_frame}'>\n";
-					xml+= "\t<text font='{$font.default}' size='" + textSize + "' text='" + GUIParser::escapeQuotes(StringTools::trim(tableColumnString)) + "' color='{$color.font_normal}' width='auto' height='auto' />\n";
+					xml+= "\t<text font='{$font.default}' size='" + textSize + "' text='" + GUIParser::escape(StringTools::trim(tableColumnString)) + "' color='{$color.font_normal}' width='auto' height='auto' />\n";
 					xml+= "</table-cell>\n";
 				}
 				xml+= "</table-row>\n";
@@ -225,7 +225,7 @@ const string Markdown::createGUIXML(const string& pathName, const string& fileNa
 					}
 				);
 			}
-			xml+= "<styled-text " + (tocId.empty() == false?"id = '" + tocId + "' ":"") + "font='{$font.default}' size='" + textSize + "' color='{$color.font_normal}' width='*' height='auto'>" + GUIParser::escapeQuotes(markdownLine) + "</styled-text>\n";
+			xml+= "<styled-text " + (tocId.empty() == false?"id = '" + tocId + "' ":"") + "font='{$font.default}' size='" + textSize + "' color='{$color.font_normal}' width='*' height='auto'>" + GUIParser::escape(markdownLine) + "</styled-text>\n";
 		}
 	}
 	if (inCode == true) {

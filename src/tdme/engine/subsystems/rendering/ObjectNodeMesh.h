@@ -49,7 +49,7 @@ private:
 	int instances;
 	ObjectNodeRenderer* objectNodeRenderer { nullptr };
 	Node* node { nullptr };
-	int32_t faceCount;
+	int faceCount;
 	const vector<Vector3>* vertices { nullptr };
 	const vector<Vector3>* normals { nullptr };
 	const vector<Vector3>* tangents { nullptr };
@@ -65,15 +65,15 @@ private:
 	vector<vector<Matrix4x4*>> jointsSkinningMatrices;
 	Engine::AnimationProcessingTarget animationProcessingTarget;
 
-	int32_t cSkinningMaxVertexWeights;
-	vector<vector<float>> cSkinningJointWeight;
+	int skinningMaxVertexWeights;
+	vector<vector<float>> skinningJointWeight;
 
-	Matrix4x4* cNodeTransformMatrix { nullptr };
+	Matrix4x4* nodeTransformMatrix { nullptr };
 
-	vector<vector<vector<Matrix4x4*>>> cSkinningJointTransformMatrices;
+	vector<vector<vector<Matrix4x4*>>> skinningJointTransformMatrices;
 
 	bool skinning;
-	int32_t skinningJoints;
+	int skinningJoints;
 
 	bool recreatedBuffers;
 

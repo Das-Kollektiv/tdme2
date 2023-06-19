@@ -157,8 +157,8 @@ void main(void) {
 		PBRMaterial pbrMaterial;
 		pbrMaterial.metallicFactor = fragmentParameters[0];
 		pbrMaterial.roughnessFactor = fragmentParameters[1];
-		pbrMaterial.baseColorFactor = texture(colorBufferTextureUnit3, vsFragTextureUV);
-		pbrMaterial.emissiveFactor = texture(colorBufferTextureUnit5, vsFragTextureUV).rgb;
+		pbrMaterial.baseColorFactor = vec4(1.0, 1.0, 1.0, 1.0);
+		pbrMaterial.emissiveFactor = vec3(1.0, 1.0, 1.0);
 		pbrMaterial.exposure = fragmentParameters[2];
 		pbrMaterial.alphaCutoff = -1;
 		pbrMaterial.alphaCutoffEnabled = -1;
@@ -181,10 +181,12 @@ void main(void) {
 		pbrMaterial.vertexColor = vec4(1.0, 1.0, 1.0, 1.0);
 		pbrMaterial.metallicRoughnessColor = texture(colorBufferTextureUnit2, vsFragTextureUV);
 		pbrMaterial.baseColor = texture(colorBufferTextureUnit1, vsFragTextureUV);
-		pbrMaterial.emissiveColor = texture(colorBufferTextureUnit4, vsFragTextureUV);
+		pbrMaterial.emissiveColor = texture(colorBufferTextureUnit3, vsFragTextureUV);
 		#ifdef DEBUG_NORMAL
 			pbrMaterial.normalColor = ...
 		#endif
+		pbrMaterial.effectColorMul = texture(colorBufferTextureUnit4, vsFragTextureUV) * 5.0;
+		pbrMaterial.effectColorAdd = texture(colorBufferTextureUnit5, vsFragTextureUV);
 
 		//
 		vec3 position = texture(geometryBufferTextureId1, vsFragTextureUV).xyz;

@@ -177,44 +177,40 @@ ObjectNodeMesh::ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::A
 		animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING ||
 		animationProcessingTarget == Engine::AnimationProcessingTarget::GPU) {
 		// node transform matrix
-		cNodeTransformMatrix = transformMatrices[0]->find(node->getId())->second;
+		nodeTransformMatrix = transformMatrices[0]->find(node->getId())->second;
 	}
 	// skinning
-	if ((skinning != nullptr &&
-		(animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING))) {
-		// skinning computation caches if computing skinning on CPU
-		if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
-			cSkinningMaxVertexWeights = 0;
-			cSkinningJointWeight.resize(nodeVertices.size());
-			cSkinningJointTransformMatrices.resize(instances);
-			for (auto i = 0; i < instances; i++) cSkinningJointTransformMatrices[i].resize(nodeVertices.size());
-			// compute joint weight caches
-			auto& joints = skinning->getJoints();
-			auto& weights = skinning->getWeights();
-			auto& jointsWeights = skinning->getVerticesJointsWeights();
-			for (auto vertexIndex = 0; vertexIndex < nodeVertices.size(); vertexIndex++) {
-				auto vertexJointWeights = jointsWeights[vertexIndex].size();
-				if (vertexJointWeights > cSkinningMaxVertexWeights) cSkinningMaxVertexWeights = vertexJointWeights;
-				cSkinningJointWeight[vertexIndex].resize(vertexJointWeights);
-				for (auto i = 0; i < instances; i++) cSkinningJointTransformMatrices[i][vertexIndex].resize(vertexJointWeights);
-				{
-					auto jointWeightIdx = 0;
-					for (auto& jointWeight : jointsWeights[vertexIndex]) {
-						auto& joint = joints[jointWeight.getJointIndex()];
-						cSkinningJointWeight[vertexIndex][jointWeightIdx] = weights[jointWeight.getWeightIndex()];
-						// next
-						jointWeightIdx++;
-					}
+	if (skinning != nullptr) {
+		skinningMaxVertexWeights = 0;
+		skinningJointWeight.resize(nodeVertices.size());
+		skinningJointTransformMatrices.resize(instances);
+		for (auto i = 0; i < instances; i++) skinningJointTransformMatrices[i].resize(nodeVertices.size());
+		// compute joint weight caches
+		auto& joints = skinning->getJoints();
+		auto& weights = skinning->getWeights();
+		auto& jointsWeights = skinning->getVerticesJointsWeights();
+		for (auto vertexIndex = 0; vertexIndex < nodeVertices.size(); vertexIndex++) {
+			auto vertexJointWeights = jointsWeights[vertexIndex].size();
+			if (vertexJointWeights > skinningMaxVertexWeights) skinningMaxVertexWeights = vertexJointWeights;
+			skinningJointWeight[vertexIndex].resize(vertexJointWeights);
+			for (auto i = 0; i < instances; i++) skinningJointTransformMatrices[i][vertexIndex].resize(vertexJointWeights);
+			{
+				auto jointWeightIdx = 0;
+				for (auto& jointWeight : jointsWeights[vertexIndex]) {
+					auto& joint = joints[jointWeight.getJointIndex()];
+					skinningJointWeight[vertexIndex][jointWeightIdx] = weights[jointWeight.getWeightIndex()];
+					// next
+					jointWeightIdx++;
 				}
-				for (auto i = 0; i < instances; i++) {
-					auto jointWeightIdx = 0;
-					for (auto& jointWeight : jointsWeights[vertexIndex]) {
-						auto& joint = joints[jointWeight.getJointIndex()];
-						auto skinningMatrixIt = skinningMatrices[i]->find(joint.getNodeId());
-						cSkinningJointTransformMatrices[i][vertexIndex][jointWeightIdx] = skinningMatrixIt != skinningMatrices[i]->end()?skinningMatrixIt->second:nullptr;
-						// next
-						jointWeightIdx++;
-					}
+			}
+			for (auto i = 0; i < instances; i++) {
+				auto jointWeightIdx = 0;
+				for (auto& jointWeight : jointsWeights[vertexIndex]) {
+					auto& joint = joints[jointWeight.getJointIndex()];
+					auto skinningMatrixIt = skinningMatrices[i]->find(joint.getNodeId());
+					skinningJointTransformMatrices[i][vertexIndex][jointWeightIdx] = skinningMatrixIt != skinningMatrices[i]->end()?skinningMatrixIt->second:nullptr;
+					// next
+					jointWeightIdx++;
 				}
 			}
 		}
@@ -248,13 +244,13 @@ void ObjectNodeMesh::computeSkinning(int contextIdx, ObjectBase* objectBase)
 			float totalWeights;
 			float weightNormalized;
 			auto j = 0;
-			Matrix4x4 transformMatrix; // TODO: try to avoid multiplying matrix with at each vertex
+			Matrix4x4 transformMatrix;
 			auto currentInstance = objectBase->getCurrentInstance();
 			for (auto i = 0; i < instances; i++) {
 				if (objectBase->instanceEnabled[i] == false) continue;
 				objectBase->setCurrentInstance(i);
 				for (auto vertexIndex = 0; vertexIndex < nodeVertices.size(); vertexIndex++) {
-					// do vertices
+					// do vertices, normals, tangents and bitangents
 					vertex = &nodeVertices[vertexIndex];
 					transformedVertex = &transformedVertices[nodeVertices.size() * j + vertexIndex].set(0.0f, 0.0f, 0.0f);
 					normal = &nodeNormals[vertexIndex];
@@ -263,19 +259,14 @@ void ObjectNodeMesh::computeSkinning(int contextIdx, ObjectBase* objectBase)
 					transformedTangent = tangents != nullptr?&transformedTangents[nodeVertices.size() * j + vertexIndex].set(0.0f, 0.0f, 0.0f):nullptr;
 					bitangent = bitangents != nullptr?&nodeBitangent[vertexIndex]:nullptr;
 					transformedBitangent = bitangents != nullptr?&transformedBitangents[nodeVertices.size() * j + vertexIndex].set(0.0f, 0.0f, 0.0f):nullptr;
-					// compute every influence on vertex and vertex normals
+					// compute every influence on vertex and ...
 					totalWeights = 0.0f;
 					for (auto vertexJointWeightIdx = 0; vertexJointWeightIdx < jointsWeights[vertexIndex].size(); vertexJointWeightIdx++) {
-						auto weight = cSkinningJointWeight[vertexIndex][vertexJointWeightIdx];
-						/*
-						// skip on missing transform matrix
-						if (i >= cSkinningJointTransformMatrices.size() ||
-							vertexIndex >= cSkinningJointTransformMatrices[i].size() ||
-							vertexJointWeightIdx >= cSkinningJointTransformMatrices[i][vertexIndex].size()) continue;
-						*/
 						// skip on missing matrix
-						auto skinningJointTransformMatrix = cSkinningJointTransformMatrices[i][vertexIndex][vertexJointWeightIdx];
+						auto skinningJointTransformMatrix = skinningJointTransformMatrices[i][vertexIndex][vertexJointWeightIdx];
 						if (skinningJointTransformMatrix == nullptr) continue;
+						//
+						auto weight = skinningJointWeight[vertexIndex][vertexJointWeightIdx];
 						//
 						transformMatrix.set(*skinningJointTransformMatrix).multiply(objectBase->getTransformMatrix());
 						// vertex
@@ -325,11 +316,11 @@ void ObjectNodeMesh::computeSkinning(int contextIdx, ObjectBase* objectBase)
 		// transform for non skinned rendering
 		//	vertices
 		for (auto vertexIndex = 0; vertexIndex < nodeVertices.size(); vertexIndex++) {
-			transformedVertices[vertexIndex].set(cNodeTransformMatrix->multiply(nodeVertices[vertexIndex]));
+			transformedVertices[vertexIndex].set(nodeTransformMatrix->multiply(nodeVertices[vertexIndex]));
 		}
 		//	normals
 		for (auto normalIndex = 0; normalIndex < nodeNormals.size(); normalIndex++) {
-			transformedNormals[normalIndex].set(cNodeTransformMatrix->multiplyNoTranslation(nodeNormals[normalIndex]).normalize());
+			transformedNormals[normalIndex].set(nodeTransformMatrix->multiplyNoTranslation(nodeNormals[normalIndex]).normalize());
 		}
 		//	TODO: tangents, bitangents, but actually it is only in use for computing bounding volumes, so I am not in a hurry
 		// recreate buffers
