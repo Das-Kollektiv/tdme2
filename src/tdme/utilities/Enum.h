@@ -14,7 +14,7 @@ using std::string;
 class tdme::utilities::Enum {
 private:
 	string name;
-	int32_t ordinal;
+	int ordinal;
 
 public:
 	/**
@@ -22,7 +22,14 @@ public:
 	 * @param name name
 	 * @param ordinal ordinal or index
 	 */
-	Enum(const string& name, int32_t ordinal);
+	inline Enum(const string& name, int ordinal): name(name), ordinal(ordinal) {
+	}
+
+	/**
+	 * Public denstructor
+	 */
+	inline virtual ~Enum() {
+	}
 
 	/**
 	 * @return name

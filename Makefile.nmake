@@ -505,7 +505,6 @@ SRCS = \
 	src/tdme/utilities/Base64.cpp \
 	src/tdme/utilities/Console.cpp \
 	src/tdme/utilities/ExceptionBase.cpp \
-	src/tdme/utilities/Enum.cpp \
 	src/tdme/utilities/Float.cpp \
 	src/tdme/utilities/Hex.cpp \
 	src/tdme/utilities/Integer.cpp \
