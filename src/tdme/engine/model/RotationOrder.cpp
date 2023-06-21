@@ -8,7 +8,7 @@ using tdme::engine::model::RotationOrder;
 using tdme::math::Vector3;
 using tdme::utilities::Enum;
 
-RotationOrder::RotationOrder(const string& name, int ordinal, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, int32_t axis0VectorIndex, int32_t axis1VectorIndex, int32_t axis2VectorIndex, int32_t axisXIndex, int32_t axisYIndex, int32_t axisZIndex) : Enum(name, ordinal)
+RotationOrder::RotationOrder(const string& name, int ordinal, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, int axis0VectorIndex, int axis1VectorIndex, int axis2VectorIndex, int axisXIndex, int axisYIndex, int axisZIndex) : Enum(name, ordinal)
 {
 	this->axis0 = axis0;
 	this->axis1 = axis1;

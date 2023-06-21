@@ -30,12 +30,12 @@ private:
 	Vector3 axis0;
 	Vector3 axis1;
 	Vector3 axis2;
-	int32_t axis0VectorIndex;
-	int32_t axis1VectorIndex;
-	int32_t axis2VectorIndex;
-	int32_t axisXIndex;
-	int32_t axisYIndex;
-	int32_t axisZIndex;
+	int axis0VectorIndex;
+	int axis1VectorIndex;
+	int axis2VectorIndex;
+	int axisXIndex;
+	int axisYIndex;
+	int axisZIndex;
 
 public:
 	/**
@@ -52,7 +52,7 @@ public:
 	 * @param axisYIndex axis Y index
 	 * @param axisZIndex axis Z index
 	 */
-	RotationOrder(const string& name, int ordinal, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, int32_t axis0VectorIndex, int32_t axis1VectorIndex, int32_t axis2VectorIndex, int32_t axisXIndex, int32_t axisYIndex, int32_t axisZIndex);
+	RotationOrder(const string& name, int ordinal, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, int axis0VectorIndex, int axis1VectorIndex, int axis2VectorIndex, int axisXIndex, int axisYIndex, int axisZIndex);
 
 	/**
 	 * @return axis 0
@@ -78,42 +78,42 @@ public:
 	/**
 	 * @return axis 0 vector index
 	 */
-	inline int32_t getAxis0VectorIndex() const {
+	inline int getAxis0VectorIndex() const {
 		return axis0VectorIndex;
 	}
 
 	/**
 	 * @return axis 1 vector index
 	 */
-	inline int32_t getAxis1VectorIndex() const {
+	inline int getAxis1VectorIndex() const {
 		return axis1VectorIndex;
 	}
 
 	/**
 	 * @return axis 2 vector index
 	 */
-	inline int32_t getAxis2VectorIndex() const {
+	inline int getAxis2VectorIndex() const {
 		return axis2VectorIndex;
 	}
 
 	/**
 	 * @return axis x index
 	 */
-	inline int32_t getAxisXIndex() const {
+	inline int getAxisXIndex() const {
 		return axisXIndex;
 	}
 
 	/**
 	 * @return axis y index
 	 */
-	inline int32_t getAxisYIndex() const {
+	inline int getAxisYIndex() const {
 		return axisYIndex;
 	}
 
 	/**
 	 * @return axis z index
 	 */
-	inline int32_t getAxisZIndex() const {
+	inline int getAxisZIndex() const {
 		return axisZIndex;
 	}
 
