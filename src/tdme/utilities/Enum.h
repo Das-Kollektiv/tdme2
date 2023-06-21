@@ -41,7 +41,7 @@ public:
 	/**
 	 * @return ordinal or index
 	 */
-	inline int32_t getOrdinal() const {
+	inline int getOrdinal() const {
 		return ordinal;
 	}
 
