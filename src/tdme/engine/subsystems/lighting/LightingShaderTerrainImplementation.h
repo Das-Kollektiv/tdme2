@@ -3,11 +3,13 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/subsystems/lighting/fwd-tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
+
+using tdme::engine::Texture;
 using tdme::engine::subsystems::renderer::Renderer;
 
 /**
@@ -38,12 +40,22 @@ public:
 	virtual void updateMatrices(Renderer* renderer, int contextIdx) override;
 	virtual void updateShaderParameters(Renderer* renderer, int contextIdx) override;
 
+	/**
+	 * Load textures
+	 * @param pathName path name
+	 */
+	void loadTextures(const string& pathName);
+
 private:
 	int32_t uniformModelMatrix { -1 };
 	int32_t uniformGrasTextureUnit { -1 };
 	int32_t uniformDirtTextureUnit { -1 };
 	int32_t uniformSnowTextureUnit { -1 };
 	int32_t uniformStoneTextureUnit { -1 };
+	Texture* grasTexture { nullptr };
+	Texture* dirtTexture { nullptr };
+	Texture* snowTexture { nullptr };
+	Texture* stoneTexture { nullptr };
 	int32_t grasTextureId { 0 };
 	int32_t dirtTextureId { 0 };
 	int32_t snowTextureId { 0 };

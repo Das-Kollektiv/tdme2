@@ -209,3 +209,14 @@ void LightingShader::bindTexture(int contextIdx, int32_t textureId)
 	if (lightingShaderContext.implementation == nullptr) return;
 	lightingShaderContext.implementation->bindTexture(renderer, contextIdx, textureId);
 }
+
+void LightingShader::loadTextures(const string& pathName) {
+	{
+		auto shader = dynamic_cast<LightingShaderTerrainImplementation*>(getShader("terrain"));
+		if (shader != nullptr) shader->loadTextures(pathName);
+	}
+	{
+		auto shader = dynamic_cast<DeferredLightingShaderTerrainImplementation*>(getShader("defer_terrain"));
+		if (shader != nullptr) shader->loadTextures(pathName);
+	}
+}

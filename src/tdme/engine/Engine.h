@@ -437,13 +437,6 @@ private:
 	}
 
 	/**
-	 * @return lighting shader
-	 */
-	inline static LightingShader* getLightingShader() {
-		return lightingShader;
-	}
-
-	/**
 	 * @return particles shader
 	 */
 	inline static ParticlesShader* getParticlesShader() {
@@ -620,6 +613,13 @@ public:
 	 */
 	inline static VBOManager* getVBOManager() {
 		return vboManager;
+	}
+
+	/**
+	 * @return lighting shader
+	 */
+	inline static LightingShader* getLightingShader() {
+		return lightingShader;
 	}
 
 	/**

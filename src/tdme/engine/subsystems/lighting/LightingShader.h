@@ -126,4 +126,20 @@ public:
 		return shader.find(shaderId) != shader.end();
 	}
 
+	/**
+	 * Returns shader for given shader id
+	 * @param shaderId shader id
+	 * @return if shader exists
+	 */
+	LightingShaderImplementation* getShader(const string& shaderId) {
+		auto shaderIt = shader.find(shaderId);
+		if (shaderIt == shader.end()) return nullptr;
+		return shaderIt->second;
+	}
+
+	/**
+	 * Load textures
+	 * @param pathName path name
+	 */
+	void loadTextures(const string& pathName);
 };

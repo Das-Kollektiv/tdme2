@@ -21,6 +21,7 @@
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/scene/Scene.h>
+#include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/elements/GUISelectBoxController.h>
@@ -102,6 +103,7 @@ using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::scene::Scene;
+using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
@@ -766,8 +768,8 @@ void EditorScreenController::onDragRequest(GUIElementNode* node, int mouseX, int
 	}
 }
 
-void EditorScreenController::openProject(const string& path) {
-	projectPath = path;
+void EditorScreenController::openProject(const string& pathName) {
+	projectPath = pathName;
 	if (StringTools::endsWith(projectPath, "/") == true) {
 		projectPath = StringTools::substring(projectPath, 0, projectPath.size() - 1);
 	}
@@ -783,6 +785,8 @@ void EditorScreenController::openProject(const string& path) {
 	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dropdown_projectlibrary_add"))->getController()->setDisabled(false);
 	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dropdown_outliner_add"))->getController()->setDisabled(false);
 	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("outliner_search"))->getController()->setDisabled(false);
+	//
+	Engine::getInstance()->getLightingShader()->loadTextures(pathName);
 	//
 	GUIParser::loadProjectThemeProperties(projectPath);
 }
