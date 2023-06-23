@@ -1024,6 +1024,7 @@ void ModelEditorTabController::setAnimationDetails() {
 }
 
 void ModelEditorTabController::applyAnimationDetails() {
+	//
 	view->playAnimation(Model::ANIMATIONSETUP_DEFAULT);
 
 	auto model = getSelectedModel();
@@ -2373,6 +2374,7 @@ void ModelEditorTabController::onChange(GUIElementNode* node)
 		}
 		//
 		if (haveDetails == false) updateDetails(outlinerNode);
+	} else {
 		//
 		for (auto& applyAnimationNode: applyAnimationNodes) {
 			if (node->getId() == applyAnimationNode) {
@@ -2404,17 +2406,20 @@ void ModelEditorTabController::onChange(GUIElementNode* node)
 				break;
 			}
 		}
-		for (auto& applyLODNode: applyLODNodes) {
-			if (node->getId() == applyLODNode) {
-				auto lodLevel = -1;
-				if (outlinerNode == "lod2.model") {
-					lodLevel = 2;
-				} else
-				if (outlinerNode == "lod3.model") {
-					lodLevel = 3;
+		{
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			for (auto& applyLODNode: applyLODNodes) {
+				if (node->getId() == applyLODNode) {
+					auto lodLevel = -1;
+					if (outlinerNode == "lod2.model") {
+						lodLevel = 2;
+					} else
+					if (outlinerNode == "lod3.model") {
+						lodLevel = 3;
+					}
+					if (lodLevel != -1) applyLODDetails(lodLevel);
+					break;
 				}
-				if (lodLevel != -1) applyLODDetails(lodLevel);
-				break;
 			}
 		}
 	}
