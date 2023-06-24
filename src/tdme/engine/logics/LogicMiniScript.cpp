@@ -3886,7 +3886,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "start", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "end", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "hitPoint", .optional = false, .assignBack = true },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = true },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = true, .assignBack = true },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "actorId", .optional = true, .assignBack = false },
 					},
 					ScriptVariableType::TYPE_BOOLEAN
@@ -3908,10 +3908,10 @@ void LogicMiniScript::registerMethods() {
 					auto body = miniScript->context->getWorld()->doRayCasting(collisionTypeIds, start, end, hitPoint, actorId);
 					if (body != nullptr) {
 						argumentValues[3] = hitPoint;
-						argumentValues[4] = body->getId();
-						returnValue = true;
+						if (argumentValues.size() >= 5) argumentValues[4] = body->getId();
+						returnValue.setValue(true);
 					} else {
-						returnValue = false;
+						returnValue.setValue(false);
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -4233,6 +4233,7 @@ void LogicMiniScript::registerMethods() {
 						miniScript->enginePrototypesToAdd.emplace_back(
 							prototype,
 							id,
+							string(),
 							transform,
 							hierarchyId,
 							hierarchyParentId
@@ -4240,6 +4241,7 @@ void LogicMiniScript::registerMethods() {
 						miniScript->physicsPrototypesToAdd.emplace_back(
 							prototype,
 							id,
+							string(),
 							transform,
 							hierarchyId,
 							hierarchyParentId
@@ -4257,6 +4259,90 @@ void LogicMiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodSceneConnectorAddPrototype(this));
+	}
+	{
+		//
+		class ScriptMethodSceneConnectorAddPrototype2: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodSceneConnectorAddPrototype2(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "pathName", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "fileName", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "id", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "attachNodeId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "hierarchyId", .optional = true, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "hierarchyParentId", .optional = true, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_NULL
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "sceneconnector.addPrototype2";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string pathName;
+				string fileName;
+				string id;
+				string attachNodeId;
+				string hierarchyId;
+				string hierarchyParentId;
+				if (miniScript->getStringValue(argumentValues, 0, pathName) == true &&
+					miniScript->getStringValue(argumentValues, 1, fileName) == true &&
+					miniScript->getStringValue(argumentValues, 2, id) == true &&
+					miniScript->getStringValue(argumentValues, 3, attachNodeId) == true &&
+					miniScript->getStringValue(argumentValues, 4, hierarchyId, true) == true &&
+					miniScript->getStringValue(argumentValues, 5, hierarchyParentId, true) == true) {
+					miniScript->prototypesToAddMutex.lock();
+					try {
+						auto _pathName = pathName;
+						if (miniScript->context->getApplicationRootPathName().empty() == false) {
+							_pathName = FileSystem::getInstance()->getCanonicalPath(miniScript->context->getApplicationRootPathName(), pathName);
+						}
+						Prototype* prototype = nullptr;
+						auto canonicalPath = FileSystem::getInstance()->getCanonicalPath(_pathName, fileName);
+						auto prototypeIt = miniScript->prototypes.find(canonicalPath);
+						if (prototypeIt != miniScript->prototypes.end()) {
+							prototypeIt->second.counter++;
+							prototype = prototypeIt->second.prototype;
+						} else {
+							prototype = PrototypeReader::read(_pathName, fileName);
+							miniScript->prototypes[canonicalPath] = {
+								.counter = 1,
+								.prototype = prototype
+							};
+						}
+						miniScript->enginePrototypesToAdd.emplace_back(
+							prototype,
+							id,
+							attachNodeId,
+							Transform(),
+							hierarchyId,
+							hierarchyParentId
+						);
+						miniScript->physicsPrototypesToAdd.emplace_back(
+							prototype,
+							id,
+							attachNodeId,
+							Transform(),
+							hierarchyId,
+							hierarchyParentId
+						);
+					} catch (Exception& exception) {
+						miniScript->prototypesToAddMutex.unlock();
+						Console::println("ScriptMethodSceneConnectorAddPrototype2::executeMethod(): An error occurred: " + string(exception.what()));
+						miniScript->startErrorScript();
+					}
+					miniScript->prototypesToAddMutex.unlock();
+				} else {
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodSceneConnectorAddPrototype2(this));
 	}
 }
 

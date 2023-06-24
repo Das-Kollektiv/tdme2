@@ -1483,7 +1483,8 @@ void SceneEditorTabView::runScene() {
 					applicationContext,
 					entity->getId(),
 					entity->getPrototype()->isScriptHandlingHID(),
-					miniScript
+					miniScript,
+					entity->getPrototype()
 				)
 			);
 		}

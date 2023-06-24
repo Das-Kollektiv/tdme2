@@ -65,18 +65,21 @@ protected:
 		PrototypeToAdd(
 			Prototype* prototype,
 			const string& id,
+			const string& attachNodeId,
 			const Transform& transform,
 			const string& hierarchyId,
 			const string& hierarchyParentId
 		):
 			prototype(prototype),
 			id(id),
+			attachNodeId(attachNodeId),
 			transform(transform),
 			hierarchyId(hierarchyId),
 			hierarchyParentId(hierarchyParentId)
 		{}
 		Prototype* prototype { nullptr };
 		string id;
+		string attachNodeId;
 		Transform transform;
 		string hierarchyId;
 		string hierarchyParentId;

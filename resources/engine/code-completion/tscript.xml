@@ -225,7 +225,7 @@
 		<overload return-value="Void" descr="Set Map Entry">
 			<parameter name="Map =$map" />
 			<parameter name="String $key" />
-			<parameter name="..." />
+			<parameter name="Mixed $value" />
 		</overload>
 	</keyword>
 	<keyword name="map.getKeys" func="yes">
@@ -493,6 +493,11 @@
 			<parameter name="Integer =$variable" />
 		</overload>
 	</keyword>
+	<keyword name="quaternion.computeEulerAngles" func="yes">
+		<overload return-value="Vector3" descr="Compute Euler Angles from Quaternion">
+			<parameter name="Quaternion $quaternion" />
+		</overload>
+	</keyword>
 	<keyword name="quaternion.computeMatrix" func="yes">
 		<overload return-value="Matrix4x4" descr="Compute 4x4 Rotation Matrix from Quaternion">
 			<parameter name="Quaternion $quaternion" />
@@ -504,7 +509,7 @@
 	</keyword>
 	<keyword name="quaternion.invert" func="yes">
 		<overload return-value="Quaternion" descr="Create Quaternion Inverse">
-			<parameter name="Vector4 $quaternion" />
+			<parameter name="Quaternion $quaternion" />
 		</overload>
 	</keyword>
 	<keyword name="quaternion.multiply" func="yes">

@@ -1259,6 +1259,8 @@ Reading all keys as array from set:
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Add Prototype using SceneConnector                                                               |
 | <sub>sceneconnector.addPrototype($pathName: String, $fileName: String, $id: String, $transform: Transform[, $hierarchyId: String[, $hierarchyParentId: String]]): Void</sub>|
+| Add Prototype using SceneConnector                                                               |
+| <sub>sceneconnector.addPrototype2($pathName: String, $fileName: String, $id: String, $attachNodeId: String[, $hierarchyId: String[, $hierarchyParentId: String]]): Void</sub>|
 
 ## 7.12 Physics World Methods
 
@@ -1269,7 +1271,7 @@ Reading all keys as array from set:
 | Determine Collision of Two Specific Bodies in Physics World                                      |
 | <sub>world.doCollide($bodyId1: String, $bodyId2: String): Boolean</sub>                          |
 | Compute Ray Casting in Physics World                                                             |
-| <sub>world.doRayCasting($collisionTypeIds: Integer, $start: Vector3, $end: Vector3, =$hitPoint: Vector3, =$bodyId: String[, $actorId: String]): Boolean</sub>|
+| <sub>world.doRayCasting($collisionTypeIds: Integer, $start: Vector3, $end: Vector3, =$hitPoint: Vector3[, =$bodyId: String[, $actorId: String]]): Boolean</sub>|
 | Determine Collision of Specific Body in Physics World                                            |
 | <sub>world.doesCollideWith($collisionTypeIds: Integer, $bodyId: String): Array</sub>             |
 
