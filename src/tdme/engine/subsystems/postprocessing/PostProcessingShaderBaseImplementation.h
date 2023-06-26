@@ -1,10 +1,14 @@
 #pragma once
 
+#include <string>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/postprocessing/fwd-tdme.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderImplementation.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+
+using std::string;
 
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
@@ -48,5 +52,6 @@ public:
 	virtual void setBufferPixelWidth(int contextIdx, float pixelWidth) override;
 	virtual void setBufferPixelHeight(int contextIdx, float pixelHeight) override;
 	virtual void setShaderParameters(int contextIdx, Engine* engine) override = 0;
+	virtual void loadTextures(const string& pathName);
 
 };

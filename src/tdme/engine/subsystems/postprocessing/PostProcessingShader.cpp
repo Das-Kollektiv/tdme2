@@ -113,3 +113,9 @@ void PostProcessingShader::setShaderParameters(int contextIdx, Engine* engine) {
 	if (implementation == nullptr) return;
 	implementation->setShaderParameters(contextIdx, engine);
 }
+
+void PostProcessingShader::loadTextures(const string& pathName) {
+	for (auto shaderIt: shader) {
+		shaderIt.second->loadTextures(pathName);
+	}
+}

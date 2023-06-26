@@ -71,7 +71,6 @@ private:
 	RenderPass renderPass { RENDERPASS_STANDARD };
 	string shaderId { "default" };
 	array<int, 3> lodReduceBy;
-	bool enableEarlyZRejection { false };
 
 	EntityShaderParameters shaderParameters;
 
@@ -341,21 +340,6 @@ public:
 			static_cast<LODObject*>(combinedEntity)->setShader(id);
 			shaderParameters.setShader(static_cast<LODObject*>(combinedEntity)->getShader());
 		}
-	}
-
-	/**
-	 * @return If early z rejection is enabled
-	 */
-	bool isEnableEarlyZRejection() const {
-		return enableEarlyZRejection;
-	}
-
-	/**
-	 * Enable/disable early z rejection
-	 * @param enableEarlyZRejection enable early z rejection
-	 */
-	inline void setEnableEarlyZRejection(bool enableEarlyZRejection) {
-		this->enableEarlyZRejection = enableEarlyZRejection;
 	}
 
 	/**

@@ -175,7 +175,6 @@ float SceneConnector::renderGroupsLOD2MinDistance = 25.0;
 float SceneConnector::renderGroupsLOD3MinDistance = 50.0;
 int SceneConnector::renderGroupsLOD2ReduceBy = 4;
 int SceneConnector::renderGroupsLOD3ReduceBy = 16;
-bool SceneConnector::enableEarlyZRejection = false;
 
 void SceneConnector::setLights(Engine* engine, Scene* scene, const Vector3& translation)
 {
@@ -434,9 +433,6 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 				auto& parameterName = parameterIt.first;
 				auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 				object->setShaderParameter(parameterName, parameterValue);
-			}
-			if (enableEarlyZRejection == true && prototype->isTerrainMesh() == true) {
-				object->setEnableEarlyZRejection(true);
 			}
 		}
 		if (prototype->isEntityHierarchy() == true) {

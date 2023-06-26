@@ -22,6 +22,9 @@
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
+#include <tdme/engine/subsystems/postprocessing/PostProcessingShader.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShader.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShader.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/elements/GUISelectBoxController.h>
@@ -104,6 +107,9 @@ using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::scene::Scene;
 using tdme::engine::subsystems::lighting::LightingShader;
+using tdme::engine::subsystems::postprocessing::PostProcessingShader;
+using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShader;
+using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShader;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
@@ -787,6 +793,9 @@ void EditorScreenController::openProject(const string& pathName) {
 	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("outliner_search"))->getController()->setDisabled(false);
 	//
 	Engine::getInstance()->getLightingShader()->loadTextures(pathName);
+	Engine::getInstance()->getPostProcessingShader()->loadTextures(pathName);
+	if (Engine::getInstance()->getShadowMapCreationShader() != nullptr) Engine::getInstance()->getShadowMapCreationShader()->loadTextures(pathName);
+	if (Engine::getInstance()->getShadowMapRenderShader() != nullptr) Engine::getInstance()->getShadowMapRenderShader()->loadTextures(pathName);
 	//
 	GUIParser::loadProjectThemeProperties(projectPath);
 }

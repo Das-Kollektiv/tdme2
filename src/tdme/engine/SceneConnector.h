@@ -63,7 +63,6 @@ public:
 	STATIC_DLL_IMPEXT static float renderGroupsLOD3MinDistance;
 	STATIC_DLL_IMPEXT static int renderGroupsLOD2ReduceBy;
 	STATIC_DLL_IMPEXT static int renderGroupsLOD3ReduceBy;
-	STATIC_DLL_IMPEXT static bool enableEarlyZRejection;
 
 	/**
 	 * @return render groups partition size / width
@@ -198,21 +197,6 @@ public:
 	 */
 	inline static void setRenderGroupsLod3ReduceBy(int reduceBy) {
 		renderGroupsLOD3ReduceBy = reduceBy;
-	}
-
-	/**
-	 * @return If early z rejection is enabled, in scene loading case its used for render groups and terrain
-	 */
-	inline static bool isEnableEarlyZRejection() {
-		return enableEarlyZRejection;
-	}
-
-	/**
-	 * Enable/disable early z rejection, in scene loading case its used for render groups and terrain
-	 * @param enableEarlyZRejection enable early z rejection
-	 */
-	inline static void setEnableEarlyZRejection(bool enableEarlyZRejection) {
-		SceneConnector::enableEarlyZRejection = enableEarlyZRejection;
 	}
 
 	/**

@@ -132,3 +132,8 @@ void ShadowMapCreationShaderBaseImplementation::bindTexture(Renderer* renderer, 
 			break;
 	}
 }
+
+void ShadowMapCreationShaderBaseImplementation::loadTextures(const string& pathName) {
+
+}
+

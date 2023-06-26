@@ -1,9 +1,13 @@
 #pragma once
 
+#include <string>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/postprocessing/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+
+using std::string;
 
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
@@ -63,4 +67,9 @@ struct tdme::engine::subsystems::postprocessing::PostProcessingShaderImplementat
 	 */
 	virtual void setShaderParameters(int contextIdx, Engine* engine) = 0;
 
+	/**
+	 * Load textures
+	 * @param pathName path name
+	 */
+	virtual void loadTextures(const string& pathName) = 0;
 };

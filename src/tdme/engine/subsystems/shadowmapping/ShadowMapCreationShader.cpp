@@ -136,3 +136,9 @@ void ShadowMapCreationShader::setShader(int contextIdx, const string& id) {
 		shadowMappingShaderPreContext.implementation->useProgram(engine, contextIdx);
 	}
 }
+
+void ShadowMapCreationShader::loadTextures(const string& pathName) {
+	for (auto shaderIt: shader) {
+		shaderIt.second->loadTextures(pathName);
+	}
+}

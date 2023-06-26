@@ -92,4 +92,10 @@ public:
 	 */
 	void setShaderParameters(int contextIdx, Engine* engine);
 
+	/**
+	 * Load textures
+	 * @param pathName path name
+	 */
+	void loadTextures(const string& pathName);
+
 };

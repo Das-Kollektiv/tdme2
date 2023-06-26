@@ -159,3 +159,9 @@ void ShadowMapRenderShader::setShader(int contextIdx, const string& id) {
 	shadowMappingShaderRenderContext.implementation->setDepthBiasMVPMatrix(contextIdx, depthBiasMVPMatrix);
 	shadowMappingShaderRenderContext.implementation->setRenderLightId(lightId);
 }
+
+void ShadowMapRenderShader::loadTextures(const string& pathName) {
+	for (auto shaderIt: shader) {
+		shaderIt.second->loadTextures(pathName);
+	}
+}

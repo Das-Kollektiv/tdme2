@@ -1,10 +1,14 @@
 #pragma once
 
+#include <string>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/postprocessing/fwd-tdme.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/Engine.h>
+
+using std::string;
 
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;

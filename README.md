@@ -116,7 +116,6 @@
       - PBR lighting + foliage
       - PBR lighting + tree
     - shadow mapping
-    - early z rejection
     - post processing
       - depth blur
       - desaturation

@@ -14,7 +14,6 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
-#include <tdme/engine/subsystems/earlyzrejection/fwd-tdme.h>
 #include <tdme/engine/subsystems/environmentmapping/fwd-tdme.h>
 #include <tdme/engine/subsystems/framebuffer/fwd-tdme.h>
 #include <tdme/engine/subsystems/lighting/fwd-tdme.h>
@@ -59,7 +58,6 @@ using tdme::engine::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
-using tdme::engine::subsystems::earlyzrejection::EZRShader;
 using tdme::engine::subsystems::framebuffer::BRDFLUTShader;
 using tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader;
 using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
@@ -198,7 +196,6 @@ private:
 
 	STATIC_DLL_IMPEXT static AnimationProcessingTarget animationProcessingTarget;
 
-	STATIC_DLL_IMPEXT static EZRShader* ezrShader;
 	STATIC_DLL_IMPEXT static ShadowMapCreationShader* shadowMappingShaderPre;
 	STATIC_DLL_IMPEXT static ShadowMapRenderShader* shadowMappingShaderRender;
 	STATIC_DLL_IMPEXT static LightingShader* lightingShader;
@@ -248,7 +245,6 @@ private:
 		vector<ObjectRenderGroup*> objectRenderGroups;
 		vector<EntityHierarchy*> entityHierarchies;
 		vector<EnvironmentMapping*> environmentMappingEntities;
-		vector<Object*> ezrObjects;
 		vector<Object*> requirePreRenderEntities;
 		vector<Object*> requireComputeAnimationEntities;
 	};
@@ -423,20 +419,6 @@ private:
 	}
 
 	/**
-	 * @return shadow mapping shader
-	 */
-	inline static ShadowMapCreationShader* getShadowMapCreationShader() {
-		return shadowMappingShaderPre;
-	}
-
-	/**
-	 * @return shadow mapping shader
-	 */
-	inline static ShadowMapRenderShader* getShadowMapRenderShader() {
-		return shadowMappingShaderRender;
-	}
-
-	/**
 	 * @return particles shader
 	 */
 	inline static ParticlesShader* getParticlesShader() {
@@ -483,13 +465,6 @@ private:
 	 */
 	inline static DeferredLightingRenderShader* getDeferredLightingRenderShader() {
 		return deferredLightingRenderShader;
-	}
-
-	/**
-	 * @return post processing shader
-	 */
-	inline static PostProcessingShader* getPostProcessingShader() {
-		return postProcessingShader;
 	}
 
 	/**
@@ -620,6 +595,27 @@ public:
 	 */
 	inline static LightingShader* getLightingShader() {
 		return lightingShader;
+	}
+
+	/**
+	 * @return post processing shader
+	 */
+	inline static PostProcessingShader* getPostProcessingShader() {
+		return postProcessingShader;
+	}
+
+	/**
+	 * @return shadow mapping shader
+	 */
+	inline static ShadowMapCreationShader* getShadowMapCreationShader() {
+		return shadowMappingShaderPre;
+	}
+
+	/**
+	 * @return shadow mapping shader
+	 */
+	inline static ShadowMapRenderShader* getShadowMapRenderShader() {
+		return shadowMappingShaderRender;
 	}
 
 	/**
@@ -1356,14 +1352,13 @@ private:
 	 * @param effectPass effect pass
 	 * @param renderPassMask render pass mask
 	 * @param shaderPrefix shader prefix
-	 * @param useEZR if to use early Z rejection
 	 * @param applyShadowMapping if to apply shadow mapping
 	 * @param applyPostProcessing if to apply post processing
 	 * @param doRenderLightSource do render light source
 	 * @param doRenderParticleSystems if to render particle systems
 	 * @param renderTypes render types
 	 */
-	void render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeometryBuffer, Camera* rendererCamera, DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes);
+	void render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeometryBuffer, Camera* rendererCamera, DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes);
 
 	/**
 	 * Render light sources

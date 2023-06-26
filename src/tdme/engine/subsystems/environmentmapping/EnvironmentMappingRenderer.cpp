@@ -189,7 +189,6 @@ void EnvironmentMappingRenderer::render(const Vector3& position)
 				Engine::EFFECTPASS_NONE,
 				renderPassMask,
 				string(),
-				true,
 				false,
 				false,
 				true,

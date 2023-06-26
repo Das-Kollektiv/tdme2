@@ -81,5 +81,6 @@ public:
 	virtual void bindTexture(Renderer* renderer, int contextIdx, int32_t textureId) override;
 	virtual void setDepthBiasMVPMatrix(int contextIdx, const Matrix4x4& depthBiasMVPMatrix) override;
 	virtual void setRenderLightId(int32_t lightId) override;
+	virtual void loadTextures(const string& pathName) override;
 
 };

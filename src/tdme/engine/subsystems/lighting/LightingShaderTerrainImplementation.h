@@ -39,12 +39,7 @@ public:
 	virtual void unUseProgram(int contextIdx) override;
 	virtual void updateMatrices(Renderer* renderer, int contextIdx) override;
 	virtual void updateShaderParameters(Renderer* renderer, int contextIdx) override;
-
-	/**
-	 * Load textures
-	 * @param pathName path name
-	 */
-	void loadTextures(const string& pathName);
+	virtual void loadTextures(const string& pathName) override;
 
 private:
 	int32_t uniformModelMatrix { -1 };

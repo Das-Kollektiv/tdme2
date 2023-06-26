@@ -71,3 +71,6 @@ void PostProcessingShaderBaseImplementation::setBufferPixelHeight(int contextIdx
 		renderer->setProgramUniformFloat(contextIdx, uniformBufferTexturePixelHeight, pixelHeight);
 	}
 }
+
+void PostProcessingShaderBaseImplementation::loadTextures(const string& pathName) {
+}
