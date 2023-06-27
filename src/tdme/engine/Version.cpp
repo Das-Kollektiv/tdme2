@@ -9,7 +9,7 @@ using std::string;
 using tdme::engine::Version;
 
 string Version::getVersion() {
-	return "1.9.182";
+	return "1.9.183";
 }
 
 string Version::getCopyright() {

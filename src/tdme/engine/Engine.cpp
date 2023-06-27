@@ -14,7 +14,6 @@
 #include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/LineSegment.h>
-#include <tdme/engine/subsystems/earlyzrejection/EZRShader.h>
 #include <tdme/engine/subsystems/environmentmapping/EnvironmentMappingRenderer.h>
 #include <tdme/engine/subsystems/framebuffer/BRDFLUTShader.h>
 #include <tdme/engine/subsystems/framebuffer/DeferredLightingRenderShader.h>
@@ -97,7 +96,6 @@ using tdme::engine::model::Node;
 using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::LineSegment;
-using tdme::engine::subsystems::earlyzrejection::EZRShader;
 using tdme::engine::subsystems::environmentmapping::EnvironmentMappingRenderer;
 using tdme::engine::subsystems::framebuffer::BRDFLUTShader;
 using tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader;
@@ -177,7 +175,6 @@ PostProcessing* Engine::postProcessing = nullptr;
 PostProcessingShader* Engine::postProcessingShader = nullptr;
 Texture2DRenderShader* Engine::texture2DRenderShader = nullptr;
 Engine::AnimationProcessingTarget Engine::animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
-EZRShader* Engine::ezrShader = nullptr;
 ShadowMapCreationShader* Engine::shadowMappingShaderPre = nullptr;
 ShadowMapRenderShader* Engine::shadowMappingShaderRender = nullptr;
 LightingShader* Engine::lightingShader = nullptr;
@@ -309,7 +306,6 @@ Engine::~Engine() {
 		delete postProcessingShader;
 		delete texture2DRenderShader;
 		delete guiShader;
-		delete ezrShader;
 		delete shadowMappingShaderPre;
 		delete shadowMappingShaderRender;
 	}
@@ -422,8 +418,7 @@ void Engine::deregisterEntity(Entity* entity) {
 	DecomposedEntities decomposedEntities;
 	decomposeEntityType(entity, decomposedEntities, true);
 	// objects
-	array<vector<Object*>*, 6> objectsArray = {
-		&decomposedEntities.ezrObjects,
+	array<vector<Object*>*, 5> objectsArray = {
 		&decomposedEntities.objects,
 		&decomposedEntities.objectsForwardShading,
 		&decomposedEntities.objectsNoDepthTest,
@@ -490,8 +485,7 @@ void Engine::registerEntity(Entity* entity) {
 	DecomposedEntities decomposedEntities;
 	decomposeEntityType(entity, decomposedEntities, true);
 	// objects
-	array<vector<Object*>*, 6> objectsArray = {
-		&decomposedEntities.ezrObjects,
+	array<vector<Object*>*, 5> objectsArray = {
 		&decomposedEntities.objects,
 		&decomposedEntities.objectsForwardShading,
 		&decomposedEntities.objectsNoDepthTest,
@@ -663,14 +657,6 @@ inline void Engine::removeFromDecomposedEntities(DecomposedEntities& decomposedE
 			entity
 		),
 		decomposedEntities.entityHierarchies.end()
-	);
-	decomposedEntities.ezrObjects.erase(
-		remove(
-			decomposedEntities.ezrObjects.begin(),
-			decomposedEntities.ezrObjects.end(),
-			entity
-		),
-		decomposedEntities.ezrObjects.end()
 	);
 	decomposedEntities.noFrustumCullingEntities.erase(
 		remove(
@@ -904,10 +890,6 @@ void Engine::initialize()
 		Console::println("TDME2::BC7 texture compression is not available.");
 	}
 
-	// TODO: make this configurable
-	ezrShader = new EZRShader(renderer);
-	ezrShader->initialize();
-
 	// initialize shadow mapping
 	if (shadowMappingEnabled == true) {
 		Console::println("TDME2::Using shadow mapping");
@@ -931,7 +913,6 @@ void Engine::initialize()
 
 	#define CHECK_INITIALIZED(NAME, SHADER) if (SHADER != nullptr && SHADER->isInitialized() == false) Console::println(string("TDME: ") + NAME + ": Not initialized")
 
-	CHECK_INITIALIZED("EZRShader", ezrShader);
 	CHECK_INITIALIZED("ShadowMapCreationShader", shadowMappingShaderPre);
 	CHECK_INITIALIZED("ShadowMappingShader", shadowMappingShaderRender);
 	CHECK_INITIALIZED("LightingShader", lightingShader);
@@ -948,7 +929,6 @@ void Engine::initialize()
 
 	// check if initialized
 	// initialized &= objectsFrameBuffer->isInitialized();
-	initialized &= ezrShader == nullptr ? true : ezrShader->isInitialized();
 	initialized &= shadowMappingShaderPre == nullptr ? true : shadowMappingShaderPre->isInitialized();
 	initialized &= shadowMappingShaderRender == nullptr ? true : shadowMappingShaderRender->isInitialized();
 	initialized &= lightingShader->isInitialized();
@@ -1105,7 +1085,6 @@ void Engine::resetLists(DecomposedEntities& decomposedEntites) {
 	decomposedEntites.decalEntities.clear();
 	decomposedEntites.objectRenderGroups.clear();
 	decomposedEntites.entityHierarchies.clear();
-	decomposedEntites.ezrObjects.clear();
 	decomposedEntites.noFrustumCullingEntities.clear();
 	decomposedEntites.environmentMappingEntities.clear();
 	decomposedEntites.requirePreRenderEntities.clear();
@@ -1152,9 +1131,6 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 					decomposedEntities.objectsGizmo.push_back(object);
 				} else {
 					decomposedEntities.objects.push_back(object);
-				}
-				if (object->isEnableEarlyZRejection() == true) {
-					decomposedEntities.ezrObjects.push_back(object);
 				}
 			}
 			break;
@@ -1506,7 +1482,6 @@ void Engine::display()
 					false,
 					false,
 					false,
-					false,
 					EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
 					EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
 					EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY
@@ -1573,7 +1548,6 @@ void Engine::display()
 		EFFECTPASS_NONE,
 		Entity::RENDERPASS_ALL,
 		string(),
-		true,
 		true,
 		true,
 		true,
@@ -2362,35 +2336,10 @@ const map<string, ShaderParameter> Engine::getShaderParameterDefaults(const stri
 	return shaderIt->second.parameterDefaults;
 }
 
-void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeometryBuffer, Camera* rendererCamera, DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes) {
+void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeometryBuffer, Camera* rendererCamera, DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes) {
 	//
 	Engine::renderer->setEffectPass(effectPass);
 	Engine::renderer->setShaderPrefix(shaderPrefix);
-
-	// do depth buffer writing aka early z rejection
-	if (renderGeometryBuffer == nullptr && useEZR == true && ezrShader != nullptr && visibleDecomposedEntities.ezrObjects.size() > 0) {
-		// disable color rendering, we only want to write to the Z-Buffer
-		renderer->setColorMask(false, false, false, false);
-		// render
-		ezrShader->useProgram(this);
-		// only draw opaque face entities of objects marked as EZR objects
-		for (auto i = 0; i < Entity::RENDERPASS_MAX; i++) {
-			auto renderPass = static_cast<Entity::RenderPass>(Math::pow(2, i));
-			if ((renderPassMask & renderPass) == renderPass) {
-				entityRenderer->render(
-					renderPass,
-					visibleDecomposedEntities.ezrObjects,
-					false,
-					((renderTypes & EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY:0) |
-					((renderTypes & EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY:0)
-				);
-			}
-		}
-		// done
-		ezrShader->unUseProgram();
-		// restore disable color rendering
-		renderer->setColorMask(true, true, true, true);
-	}
 
 	// use lighting shader
 	if (visibleDecomposedEntities.objects.empty() == false || visibleDecomposedEntities.objectsForwardShading.empty() == false) {
@@ -2792,6 +2741,115 @@ void Engine::dumpShaders() {
 				}
 			}
 			Console::println();
+		}
+	}
+}
+
+void Engine::dumpEntityHierarchy(EntityHierarchy* entityHierarchy, int indent, const string& parentNodeId) {
+	for (auto subEntity: entityHierarchy->query(parentNodeId)) {
+		for (auto i = 0; i < indent; i++) Console::print("\t");
+		string entityType;
+		switch (subEntity->getEntityType()) {
+			case Entity::ENTITYTYPE_DECAL:
+				entityType = "Decal";
+				break;
+			case Entity::ENTITYTYPE_ENTITYHIERARCHY:
+				entityType = "Entity Hierarchy";
+				break;
+			case Entity::ENTITYTYPE_ENVIRONMENTMAPPING:
+				entityType = "Environment Mapping";
+				break;
+			case Entity::ENTITYTYPE_IMPOSTEROBJECT:
+				entityType = "Imposter Object";
+				break;
+			case Entity::ENTITYTYPE_LINES:
+				entityType = "Lines";
+				break;
+			case Entity::ENTITYTYPE_LODOBJECT:
+				entityType = "LOD Object";
+				break;
+			case Entity::ENTITYTYPE_LODOBJECTIMPOSTER:
+				entityType = "LOD Object Imposter";
+				break;
+			case Entity::ENTITYTYPE_OBJECT:
+				entityType = "Object";
+				break;
+			case Entity::ENTITYTYPE_OBJECTRENDERGROUP:
+				entityType = "Object Render Group";
+				break;
+			case Entity::ENTITYTYPE_FOGPARTICLESYSTEM:
+				entityType = "Fog Particle System";
+				break;
+			case Entity::ENTITYTYPE_OBJECTPARTICLESYSTEM:
+				entityType = "Object Particle System";
+				break;
+			case Entity::ENTITYTYPE_PARTICLESYSTEMGROUP:
+				entityType = "Particle System Group";
+				break;
+			case Entity::ENTITYTYPE_POINTSPARTICLESYSTEM:
+				entityType = "Points Particle System";
+				break;
+		}
+		Console::println("\t" + subEntity->getId() + " (" + entityType + ")");
+		if (subEntity->getEntityType() == Entity::ENTITYTYPE_ENTITYHIERARCHY) {
+			dumpEntityHierarchy(dynamic_cast<EntityHierarchy*>(subEntity), indent + 1, string());
+		}
+		//
+		dumpEntityHierarchy(entityHierarchy, indent + 1, subEntity->getId());
+	}
+}
+
+void Engine::dumpEntities() {
+	Console::println("Engine::dumpEntities()");
+	Console::println();
+	Console::println("Engine Entities:");
+	for (auto& entitiesByIdIt: entitiesById) {
+		auto entity = entitiesByIdIt.second;
+		string entityType;
+		switch (entity->getEntityType()) {
+			case Entity::ENTITYTYPE_DECAL:
+				entityType = "Decal";
+				break;
+			case Entity::ENTITYTYPE_ENTITYHIERARCHY:
+				entityType = "Entity Hierarchy";
+				break;
+			case Entity::ENTITYTYPE_ENVIRONMENTMAPPING:
+				entityType = "Environment Mapping";
+				break;
+			case Entity::ENTITYTYPE_IMPOSTEROBJECT:
+				entityType = "Imposter Object";
+				break;
+			case Entity::ENTITYTYPE_LINES:
+				entityType = "Lines";
+				break;
+			case Entity::ENTITYTYPE_LODOBJECT:
+				entityType = "LOD Object";
+				break;
+			case Entity::ENTITYTYPE_LODOBJECTIMPOSTER:
+				entityType = "LOD Object Imposter";
+				break;
+			case Entity::ENTITYTYPE_OBJECT:
+				entityType = "Object";
+				break;
+			case Entity::ENTITYTYPE_OBJECTRENDERGROUP:
+				entityType = "Object Render Group";
+				break;
+			case Entity::ENTITYTYPE_FOGPARTICLESYSTEM:
+				entityType = "Fog Particle System";
+				break;
+			case Entity::ENTITYTYPE_OBJECTPARTICLESYSTEM:
+				entityType = "Object Particle System";
+				break;
+			case Entity::ENTITYTYPE_PARTICLESYSTEMGROUP:
+				entityType = "Particle System Group";
+				break;
+			case Entity::ENTITYTYPE_POINTSPARTICLESYSTEM:
+				entityType = "Points Particle System";
+				break;
+		}
+		Console::println("\t" + entity->getId() + " (" + entityType + ")");
+		if (entity->getEntityType() == Entity::ENTITYTYPE_ENTITYHIERARCHY) {
+			dumpEntityHierarchy(dynamic_cast<EntityHierarchy*>(entity), 2, string());
 		}
 	}
 }

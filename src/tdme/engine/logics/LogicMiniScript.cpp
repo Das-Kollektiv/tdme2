@@ -1580,6 +1580,42 @@ void LogicMiniScript::registerMethods() {
 	}
 	{
 		//
+		class ScriptMethodEngineDumpEntities: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEngineDumpEntities(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_NULL),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.dumpEntities";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				miniScript->context->getEngine()->dumpEntities();
+			}
+		};
+		registerMethod(new ScriptMethodEngineDumpEntities(this));
+	}
+	{
+		//
+		class ScriptMethodEngineDumpShaders: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEngineDumpShaders(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_NULL),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.dumpShaders";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				miniScript->context->getEngine()->dumpShaders();
+			}
+		};
+		registerMethod(new ScriptMethodEngineDumpShaders(this));
+	}
+	{
+		//
 		class ScriptMethodEngineGetEntityIdByMousePosition: public ScriptMethod {
 		private:
 			LogicMiniScript* miniScript { nullptr };
@@ -1707,7 +1743,7 @@ void LogicMiniScript::registerMethods() {
 					if (entity != nullptr) {
 						returnValue = entity->getTransform();
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -1747,7 +1783,7 @@ void LogicMiniScript::registerMethods() {
 					if (entity != nullptr) {
 						entity->setTransform(transform);
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -1784,7 +1820,7 @@ void LogicMiniScript::registerMethods() {
 					if (entity != nullptr) {
 						returnValue = entity->isEnabled();
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -1824,7 +1860,7 @@ void LogicMiniScript::registerMethods() {
 					if (entity != nullptr) {
 						entity->setEnabled(enabled);
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -1861,7 +1897,7 @@ void LogicMiniScript::registerMethods() {
 					if (entity != nullptr) {
 						returnValue = entity->isPickable();
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -1901,7 +1937,7 @@ void LogicMiniScript::registerMethods() {
 					if (entity != nullptr) {
 						entity->setPickable(pickable);
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -1939,7 +1975,7 @@ void LogicMiniScript::registerMethods() {
 						auto effectColorMul = entity->getEffectColorMul();
 						returnValue.setValue(Vector4(effectColorMul.getRed(), effectColorMul.getGreen(), effectColorMul.getBlue(), effectColorMul.getAlpha()));
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -1979,7 +2015,7 @@ void LogicMiniScript::registerMethods() {
 					if (entity != nullptr) {
 						entity->setEffectColorMul(Color4(effectColorMul.getX(), effectColorMul.getY(), effectColorMul.getZ(), effectColorMul.getW()));
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -2017,7 +2053,7 @@ void LogicMiniScript::registerMethods() {
 						auto effectColorAdd = entity->getEffectColorAdd();
 						returnValue.setValue(Vector4(effectColorAdd.getRed(), effectColorAdd.getGreen(), effectColorAdd.getBlue(), effectColorAdd.getAlpha()));
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -2057,7 +2093,7 @@ void LogicMiniScript::registerMethods() {
 					if (entity != nullptr) {
 						entity->setEffectColorAdd(Color4(effectColorAdd.getX(), effectColorAdd.getY(), effectColorAdd.getZ(), effectColorAdd.getW()));
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -2094,7 +2130,7 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						returnValue.setValue(object->getAnimation());
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -2137,7 +2173,7 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						object->setAnimation(animation, speed);
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -2177,7 +2213,7 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						object->setAnimationSpeed(speed);
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -2214,7 +2250,7 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						returnValue.setValue(object->getAnimationTime());
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -2254,7 +2290,7 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						returnValue = object->hasOverlayAnimation(animation);
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -2294,7 +2330,7 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						object->addOverlayAnimation(animation);
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -2334,7 +2370,7 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						object->removeOverlayAnimation(animation);
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -2371,7 +2407,7 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						object->removeFinishedOverlayAnimations();
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -2408,7 +2444,7 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						object->removeOverlayAnimations();
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -2448,7 +2484,7 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						returnValue.setValue(object->getOverlayAnimationTime(animation));
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -2488,7 +2524,7 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						returnValue.setValue(object->getNodeTransformMatrix(nodeId));
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -2530,7 +2566,7 @@ void LogicMiniScript::registerMethods() {
 						transform.fromMatrix(object->getNodeTransformMatrix(nodeId), RotationOrder::ZYX);
 						returnValue.setValue(transform);
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -2573,7 +2609,7 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						object->setNodeTransformMatrix(nodeId, matrix);
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -2616,7 +2652,7 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						object->setNodeTransformMatrix(nodeId, transform.getTransformMatrix());
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -2656,7 +2692,7 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						object->unsetNodeTransformMatrix(nodeId);
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -2696,7 +2732,7 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						object->unsetNodeTransformMatrix(nodeId);
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -2733,7 +2769,7 @@ void LogicMiniScript::registerMethods() {
 					if (entity != nullptr) {
 						returnValue = static_cast<int64_t>(entity->emitParticles());
 					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": particle system entity not found: " + entityId);
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": particle system entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -3886,7 +3922,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "start", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "end", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "hitPoint", .optional = false, .assignBack = true },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = true },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = true, .assignBack = true },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "actorId", .optional = true, .assignBack = false },
 					},
 					ScriptVariableType::TYPE_BOOLEAN
@@ -3908,10 +3944,10 @@ void LogicMiniScript::registerMethods() {
 					auto body = miniScript->context->getWorld()->doRayCasting(collisionTypeIds, start, end, hitPoint, actorId);
 					if (body != nullptr) {
 						argumentValues[3] = hitPoint;
-						argumentValues[4] = body->getId();
-						returnValue = true;
+						if (argumentValues.size() >= 5) argumentValues[4] = body->getId();
+						returnValue.setValue(true);
 					} else {
-						returnValue = false;
+						returnValue.setValue(false);
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -4159,30 +4195,66 @@ void LogicMiniScript::registerMethods() {
 	// scene
 	{
 		//
-		class ScriptMethodSceneGetDimensions: public ScriptMethod {
+		class ScriptMethodSceneGetWidth: public ScriptMethod {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodSceneGetDimensions(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_VECTOR3),
+			ScriptMethodSceneGetWidth(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "scene.getDimensions";
+				return "scene.getWidth";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue = miniScript->context->getScene()->getBoundingBox()->getDimensions();
+				returnValue = miniScript->context->getScene()->getBoundingBox()->getDimensions().getX();
 			}
 		};
-		registerMethod(new ScriptMethodSceneGetDimensions(this));
+		registerMethod(new ScriptMethodSceneGetWidth(this));
+	}
+	{
+		//
+		class ScriptMethodSceneGetHeight: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodSceneGetHeight(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "scene.getHeight";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = miniScript->context->getScene()->getBoundingBox()->getDimensions().getY();
+			}
+		};
+		registerMethod(new ScriptMethodSceneGetHeight(this));
+	}
+	{
+		//
+		class ScriptMethodSceneGetDepth: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodSceneGetDepth(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "scene.getDepth";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = miniScript->context->getScene()->getBoundingBox()->getDimensions().getZ();
+			}
+		};
+		registerMethod(new ScriptMethodSceneGetDepth(this));
 	}
 	// sceneconnector
 	{
 		//
-		class ScriptMethodSceneConnectorAddPrototype: public ScriptMethod {
+		class ScriptMethodSceneConnectorSpawnPrototype: public ScriptMethod {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodSceneConnectorAddPrototype(LogicMiniScript* miniScript):
+			ScriptMethodSceneConnectorSpawnPrototype(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "pathName", .optional = false, .assignBack = false },
@@ -4196,7 +4268,7 @@ void LogicMiniScript::registerMethods() {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "sceneconnector.addPrototype";
+				return "sceneconnector.spawnPrototype";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string pathName;
@@ -4231,22 +4303,26 @@ void LogicMiniScript::registerMethods() {
 							};
 						}
 						miniScript->enginePrototypesToAdd.emplace_back(
+							PrototypeToAdd::TYPE_SPAWN,
 							prototype,
 							id,
+							string(),
 							transform,
 							hierarchyId,
 							hierarchyParentId
 						);
 						miniScript->physicsPrototypesToAdd.emplace_back(
+							PrototypeToAdd::TYPE_SPAWN,
 							prototype,
 							id,
+							string(),
 							transform,
 							hierarchyId,
 							hierarchyParentId
 						);
 					} catch (Exception& exception) {
 						miniScript->prototypesToAddMutex.unlock();
-						Console::println("ScriptMethodSceneConnectorAddPrototype::executeMethod(): An error occurred: " + string(exception.what()));
+						Console::println("ScriptMethodSceneConnectorSpawnPrototype::executeMethod(): An error occurred: " + string(exception.what()));
 						miniScript->startErrorScript();
 					}
 					miniScript->prototypesToAddMutex.unlock();
@@ -4256,7 +4332,93 @@ void LogicMiniScript::registerMethods() {
 				}
 			}
 		};
-		registerMethod(new ScriptMethodSceneConnectorAddPrototype(this));
+		registerMethod(new ScriptMethodSceneConnectorSpawnPrototype(this));
+	}
+	{
+		//
+		class ScriptMethodSceneConnectorAttachPrototype: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodSceneConnectorAttachPrototype(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "pathName", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "fileName", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "id", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "attachNodeId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "parentId", .optional = true, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_NULL
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "sceneconnector.attachPrototype";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string pathName;
+				string fileName;
+				string id;
+				string attachNodeId;
+				Transform transform;
+				string hierarchyParentId;
+				if (miniScript->getStringValue(argumentValues, 0, pathName) == true &&
+					miniScript->getStringValue(argumentValues, 1, fileName) == true &&
+					miniScript->getStringValue(argumentValues, 2, id) == true &&
+					miniScript->getStringValue(argumentValues, 3, attachNodeId) == true &&
+					miniScript->getTransformValue(argumentValues, 4, transform) == true &&
+					miniScript->getStringValue(argumentValues, 5, hierarchyParentId, true) == true) {
+					miniScript->prototypesToAddMutex.lock();
+					try {
+						auto _pathName = pathName;
+						if (miniScript->context->getApplicationRootPathName().empty() == false) {
+							_pathName = FileSystem::getInstance()->getCanonicalPath(miniScript->context->getApplicationRootPathName(), pathName);
+						}
+						Prototype* prototype = nullptr;
+						auto canonicalPath = FileSystem::getInstance()->getCanonicalPath(_pathName, fileName);
+						auto prototypeIt = miniScript->prototypes.find(canonicalPath);
+						if (prototypeIt != miniScript->prototypes.end()) {
+							prototypeIt->second.counter++;
+							prototype = prototypeIt->second.prototype;
+						} else {
+							prototype = PrototypeReader::read(_pathName, fileName);
+							miniScript->prototypes[canonicalPath] = {
+								.counter = 1,
+								.prototype = prototype
+							};
+						}
+						miniScript->enginePrototypesToAdd.emplace_back(
+							PrototypeToAdd::TYPE_ATTACH,
+							prototype,
+							id,
+							attachNodeId,
+							transform,
+							miniScript->logic->getId(),
+							hierarchyParentId
+						);
+						miniScript->physicsPrototypesToAdd.emplace_back(
+							PrototypeToAdd::TYPE_ATTACH,
+							prototype,
+							id,
+							attachNodeId,
+							transform,
+							miniScript->logic->getId(),
+							hierarchyParentId
+						);
+					} catch (Exception& exception) {
+						miniScript->prototypesToAddMutex.unlock();
+						Console::println("ScriptMethodSceneConnectorAttachPrototype::executeMethod(): An error occurred: " + string(exception.what()));
+						miniScript->startErrorScript();
+					}
+					miniScript->prototypesToAddMutex.unlock();
+				} else {
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodSceneConnectorAttachPrototype(this));
 	}
 }
 

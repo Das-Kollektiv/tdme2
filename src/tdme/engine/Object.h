@@ -79,7 +79,6 @@ private:
 	bool reflectionEnvironmentMappingPositionSet { false };
 	Vector3 reflectionEnvironmentMappingPosition;
 	Engine::EffectPass excludeFromEffectPass { Engine::EFFECTPASS_NONE };
-	bool enableEarlyZRejection { false };
 	bool disableDepthTest { false };
 	int64_t frameTransformLast { -1LL };
 	int64_t timeTransformLast { -1LL };
@@ -430,21 +429,6 @@ public:
 	 */
 	inline void setExcludeEffectPass(Engine::EffectPass effectPass) {
 		this->excludeFromEffectPass = effectPass;
-	}
-
-	/**
-	 * @return If early z rejection is enabled
-	 */
-	inline bool isEnableEarlyZRejection() const {
-		return enableEarlyZRejection;
-	}
-
-	/**
-	 * Enable/disable early z rejection
-	 * @param enableEarlyZRejection enable early z rejection
-	 */
-	inline void setEnableEarlyZRejection(bool enableEarlyZRejection) {
-		this->enableEarlyZRejection = enableEarlyZRejection;
 	}
 
 	/**

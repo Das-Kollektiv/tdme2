@@ -104,4 +104,11 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderImplementat
 	 * @param lightId light id to render
 	 */
 	virtual void setRenderLightId(int32_t lightId) = 0;
+
+	/**
+	 * Load textures
+	 * @param pathName path name
+	 */
+	virtual void loadTextures(const string& pathName) = 0;
+
 };

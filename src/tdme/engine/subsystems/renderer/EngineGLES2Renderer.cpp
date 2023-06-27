@@ -11,7 +11,6 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/subsystems/earlyzrejection/EZRShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lines/LinesShader.h>
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
@@ -24,7 +23,6 @@ using tdme::engine::subsystems::renderer::EngineGLES2Renderer;
 
 using std::string;
 
-using tdme::engine::subsystems::earlyzrejection::EZRShader;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
@@ -68,9 +66,6 @@ void EngineGLES2Renderer::onUpdateProjectionMatrix(int contextIdx)
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateMatrices(contextIdx);
-
-	if (Engine::ezrShader != nullptr)
-		Engine::ezrShader->updateMatrices(contextIdx);
 }
 
 void EngineGLES2Renderer::onUpdateCameraMatrix(int contextIdx)
@@ -86,9 +81,6 @@ void EngineGLES2Renderer::onUpdateCameraMatrix(int contextIdx)
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateMatrices(contextIdx);
-
-	if (Engine::ezrShader != nullptr)
-		Engine::ezrShader->updateMatrices(contextIdx);
 }
 
 void EngineGLES2Renderer::onUpdateModelViewMatrix(int contextIdx)
@@ -104,9 +96,6 @@ void EngineGLES2Renderer::onUpdateModelViewMatrix(int contextIdx)
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateMatrices(contextIdx);
-
-	if (Engine::ezrShader != nullptr)
-		Engine::ezrShader->updateMatrices(contextIdx);
 }
 
 void EngineGLES2Renderer::onBindTexture(int contextIdx, int32_t textureId)
@@ -119,9 +108,6 @@ void EngineGLES2Renderer::onBindTexture(int contextIdx, int32_t textureId)
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->bindTexture(contextIdx, textureId);
-
-	if (Engine::ezrShader != nullptr)
-		Engine::ezrShader->bindTexture(contextIdx, textureId);
 }
 
 void EngineGLES2Renderer::onUpdateTextureMatrix(int contextIdx)
@@ -134,9 +120,6 @@ void EngineGLES2Renderer::onUpdateTextureMatrix(int contextIdx)
 
 	if (Engine::guiShader != nullptr)
 		Engine::guiShader->updateTextureMatrix();
-
-	if (Engine::ezrShader != nullptr)
-		Engine::ezrShader->updateTextureMatrix(contextIdx);
 }
 
 void EngineGLES2Renderer::onUpdateEffect(int contextIdx)
@@ -171,9 +154,6 @@ void EngineGLES2Renderer::onUpdateMaterial(int contextIdx)
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateMaterial(contextIdx);
-
-	if (Engine::ezrShader != nullptr)
-		Engine::ezrShader->updateMaterial(contextIdx);
 }
 
 void EngineGLES2Renderer::onUpdateShader(int contextIdx) {
@@ -182,9 +162,6 @@ void EngineGLES2Renderer::onUpdateShader(int contextIdx) {
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->setShader(contextIdx, getShader(contextIdx));
-
-	if (Engine::ezrShader != nullptr)
-		Engine::ezrShader->setShader(contextIdx, getShader(contextIdx));
 }
 
 void EngineGLES2Renderer::onUpdateShaderParameters(int contextIdx) {
@@ -193,9 +170,6 @@ void EngineGLES2Renderer::onUpdateShaderParameters(int contextIdx) {
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateShaderParameters(contextIdx);
-
-	if (Engine::ezrShader != nullptr)
-		Engine::ezrShader->updateShaderParameters(contextIdx);
 }
 
 // end point for engine to create renderer

@@ -154,8 +154,3 @@ void ImposterObject::initialize()
 	// delegate to billboard objects
 	for (auto billboardObject: billboardObjects) billboardObject->initialize();
 }
-
-void ImposterObject::setEnableEarlyZRejection(bool enableEarlyZRejection) {
-	// delegate to billboard objects
-	for (auto billboardObject: billboardObjects) billboardObject->setEnableEarlyZRejection(enableEarlyZRejection);
-}

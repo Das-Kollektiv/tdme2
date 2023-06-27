@@ -9,6 +9,7 @@
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
@@ -22,6 +23,7 @@ using tdme::engine::subsystems::lighting::LightingShaderTerrainImplementation;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
+using tdme::engine::Texture;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
@@ -95,10 +97,7 @@ void LightingShaderTerrainImplementation::initialize()
 	if (uniformStoneTextureUnit == -1) return;
 
 	//
-	grasTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "terrain_gras.png"), renderer->CONTEXTINDEX_DEFAULT);
-	dirtTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "terrain_dirt.png"), renderer->CONTEXTINDEX_DEFAULT);
-	snowTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "terrain_snow.png"), renderer->CONTEXTINDEX_DEFAULT);
-	stoneTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "terrain_stone.png"), renderer->CONTEXTINDEX_DEFAULT);
+	loadTextures(".");
 
 	//
 	initialized = true;
@@ -158,4 +157,36 @@ void LightingShaderTerrainImplementation::updateMatrices(Renderer* renderer, int
 }
 
 void LightingShaderTerrainImplementation::updateShaderParameters(Renderer* renderer, int contextIdx) {
+}
+
+void LightingShaderTerrainImplementation::loadTextures(const string& pathName) {
+	if (grasTexture != nullptr) {
+		Engine::getInstance()->getTextureManager()->removeTexture(grasTexture->getId());
+		grasTexture->releaseReference();
+		grasTexture = nullptr;
+		grasTextureId = renderer->ID_NONE;
+	}
+	if (dirtTexture != nullptr) {
+		Engine::getInstance()->getTextureManager()->removeTexture(dirtTexture->getId());
+		dirtTexture->releaseReference();
+		dirtTexture = nullptr;
+		dirtTextureId = renderer->ID_NONE;
+	}
+	if (snowTexture != nullptr) {
+		Engine::getInstance()->getTextureManager()->removeTexture(snowTexture->getId());
+		snowTexture->releaseReference();
+		snowTexture = nullptr;
+		snowTextureId = renderer->ID_NONE;
+	}
+	if (stoneTexture != nullptr) {
+		Engine::getInstance()->getTextureManager()->removeTexture(stoneTexture->getId());
+		stoneTexture->releaseReference();
+		stoneTexture = nullptr;
+		stoneTextureId = renderer->ID_NONE;
+	}
+	//
+	grasTextureId = Engine::getInstance()->getTextureManager()->addTexture(grasTexture = TextureReader::read(pathName + "/resources/engine/textures", "terrain_gras.png"), renderer->CONTEXTINDEX_DEFAULT);
+	dirtTextureId = Engine::getInstance()->getTextureManager()->addTexture(dirtTexture = TextureReader::read(pathName + "/resources/engine/textures", "terrain_dirt.png"), renderer->CONTEXTINDEX_DEFAULT);
+	snowTextureId = Engine::getInstance()->getTextureManager()->addTexture(snowTexture = TextureReader::read(pathName + "/resources/engine/textures", "terrain_snow.png"), renderer->CONTEXTINDEX_DEFAULT);
+	stoneTextureId = Engine::getInstance()->getTextureManager()->addTexture(stoneTexture = TextureReader::read(pathName + "/resources/engine/textures", "terrain_stone.png"), renderer->CONTEXTINDEX_DEFAULT);
 }

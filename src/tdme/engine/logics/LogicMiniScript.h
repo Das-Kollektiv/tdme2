@@ -62,21 +62,31 @@ protected:
 	unordered_map<string, PrototypeCounter> prototypes;
 
 	struct PrototypeToAdd {
+		enum Type {
+			TYPE_SPAWN,
+			TYPE_ATTACH,
+		};
 		PrototypeToAdd(
+			Type type,
 			Prototype* prototype,
 			const string& id,
+			const string& attachNodeId,
 			const Transform& transform,
 			const string& hierarchyId,
 			const string& hierarchyParentId
 		):
+			type(type),
 			prototype(prototype),
 			id(id),
+			attachNodeId(attachNodeId),
 			transform(transform),
 			hierarchyId(hierarchyId),
 			hierarchyParentId(hierarchyParentId)
 		{}
+		Type type;
 		Prototype* prototype { nullptr };
 		string id;
+		string attachNodeId;
 		Transform transform;
 		string hierarchyId;
 		string hierarchyParentId;

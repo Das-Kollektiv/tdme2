@@ -67,7 +67,6 @@ private:
 	Color4 effectColorAdd;
 	RenderPass renderPass { RENDERPASS_STANDARD };
 	string shaderId { "default" };
-	bool enableEarlyZRejection { false };
 
 	EntityShaderParameters shaderParameters;
 
@@ -300,19 +299,6 @@ public:
 		shaderParameters.setShader(shaderId);
 		for (auto billboardObject: billboardObjects) billboardObject->setShader(shaderId);
 	}
-
-	/**
-	 * @return If early z rejection is enabled
-	 */
-	bool isEnableEarlyZRejection() const {
-		return enableEarlyZRejection;
-	}
-
-	/**
-	 * Enable/disable early z rejection
-	 * @param enableEarlyZRejection enable early z rejection
-	 */
-	void setEnableEarlyZRejection(bool enableEarlyZRejection);
 
 	/**
 	 * Returns shader parameter for given parameter name, if the value does not exist, the default will be returned

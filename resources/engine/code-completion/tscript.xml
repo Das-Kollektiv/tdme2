@@ -225,7 +225,7 @@
 		<overload return-value="Void" descr="Set Map Entry">
 			<parameter name="Map =$map" />
 			<parameter name="String $key" />
-			<parameter name="..." />
+			<parameter name="Mixed $value" />
 		</overload>
 	</keyword>
 	<keyword name="map.getKeys" func="yes">
@@ -493,6 +493,11 @@
 			<parameter name="Integer =$variable" />
 		</overload>
 	</keyword>
+	<keyword name="quaternion.computeEulerAngles" func="yes">
+		<overload return-value="Vector3" descr="Compute Euler Angles from Quaternion">
+			<parameter name="Quaternion $quaternion" />
+		</overload>
+	</keyword>
 	<keyword name="quaternion.computeMatrix" func="yes">
 		<overload return-value="Matrix4x4" descr="Compute 4x4 Rotation Matrix from Quaternion">
 			<parameter name="Quaternion $quaternion" />
@@ -504,7 +509,7 @@
 	</keyword>
 	<keyword name="quaternion.invert" func="yes">
 		<overload return-value="Quaternion" descr="Create Quaternion Inverse">
-			<parameter name="Vector4 $quaternion" />
+			<parameter name="Quaternion $quaternion" />
 		</overload>
 	</keyword>
 	<keyword name="quaternion.multiply" func="yes">
@@ -1013,6 +1018,952 @@
 			<parameter name="String $name" />
 			<parameter name="[Map $attributes]" />
 			<parameter name="[String $innerXML]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.getEntityIdByMousePosition" func="yes">
+		<overload return-value="String" descr="Get Engine Entity Id by Mouse Position">
+			<parameter name="Integer $mouseX" />
+			<parameter name="Integer $mouseY" />
+		</overload>
+	</keyword>
+	<keyword name="engine.getHeight" func="yes">
+		<overload return-value="Integer" descr="Get Engine Height">
+		</overload>
+	</keyword>
+	<keyword name="engine.computeScreenCoordinateByWorldCoordinate" func="yes">
+		<overload return-value="Boolean" descr="Compute Engine Screen Coordinate by World Coordinate">
+			<parameter name="Vector3 $worldCoodinate" />
+			<parameter name="Vector2 =$screenCoordinate" />
+		</overload>
+	</keyword>
+	<keyword name="engine.getWidth" func="yes">
+		<overload return-value="Integer" descr="Get Engine Width">
+		</overload>
+	</keyword>
+	<keyword name="engine.computeWorldCoordinateByMousePosition" func="yes">
+		<overload return-value="Vector3" descr="Compute Engine World Coordinate by Mouse Position">
+			<parameter name="Integer $mouseX" />
+			<parameter name="Integer $mouseY" />
+		</overload>
+	</keyword>
+	<keyword name="engine.camera.getFovX" func="yes">
+		<overload return-value="Float" descr="Get Camera horizontal Field Of View">
+		</overload>
+	</keyword>
+	<keyword name="engine.camera.setFovX" func="yes">
+		<overload return-value="Void" descr="Set Camera horizontal Field Of View">
+			<parameter name="Float $fovX" />
+		</overload>
+	</keyword>
+	<keyword name="engine.camera.getLookAt" func="yes">
+		<overload return-value="Vector3" descr="Get Camera Look At">
+		</overload>
+	</keyword>
+	<keyword name="engine.camera.setLookAt" func="yes">
+		<overload return-value="Void" descr="Set Camera Look At">
+			<parameter name="Vector3 $lookAt" />
+		</overload>
+	</keyword>
+	<keyword name="engine.camera.getLookFrom" func="yes">
+		<overload return-value="Vector3" descr="Get Camera Look From">
+		</overload>
+	</keyword>
+	<keyword name="engine.camera.setLookFrom" func="yes">
+		<overload return-value="Void" descr="Set Camera Look From">
+			<parameter name="Vector3 $lookFrom" />
+		</overload>
+	</keyword>
+	<keyword name="engine.camera.getUpVector" func="yes">
+		<overload return-value="Vector3" descr="Get Camera Up Vector">
+		</overload>
+	</keyword>
+	<keyword name="engine.camera.setUpVector" func="yes">
+		<overload return-value="Void" descr="Set Camera Up Vector">
+			<parameter name="Vector3 $upVector" />
+		</overload>
+	</keyword>
+	<keyword name="engine.camera.computeUpVector" func="yes">
+		<overload return-value="Vector3" descr="Compute Camera Up Vector">
+			<parameter name="Vector3 $lookFrom" />
+			<parameter name="Vector3 $lookAt" />
+		</overload>
+	</keyword>
+	<keyword name="engine.dumpEntities" func="yes">
+		<overload return-value="Void" descr="Dump Engine Entities">
+		</overload>
+	</keyword>
+	<keyword name="engine.dumpShaders" func="yes">
+		<overload return-value="Void" descr="Dump Engine Shaders">
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.getAnimation" func="yes">
+		<overload return-value="String" descr="Get Engine Entity Animation">
+			<parameter name="String $entityId" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.setAnimation" func="yes">
+		<overload return-value="Void" descr="Set Engine Entity Animation">
+			<parameter name="String $entityId" />
+			<parameter name="String $animation" />
+			<parameter name="[Float $speed]" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.setAnimationSpeed" func="yes">
+		<overload return-value="Void" descr="Get Engine Entity Animation Speed">
+			<parameter name="String $entityId" />
+			<parameter name="Float $speed" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.getAnimationTime" func="yes">
+		<overload return-value="Float" descr="Set Engine Entity Animation Speed">
+			<parameter name="String $entityId" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.getEffectColorAdd" func="yes">
+		<overload return-value="Vector4" descr="Get Engine Entity Additive Effect Color">
+			<parameter name="String $entityId" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.setEffectColorAdd" func="yes">
+		<overload return-value="Void" descr="Set Engine Entity Additive Effect Color">
+			<parameter name="String $entityId" />
+			<parameter name="Vector4 $effectColorAdd" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.getEffectColorMul" func="yes">
+		<overload return-value="Vector4" descr="Get Engine Entity Multiplicative Effect Color">
+			<parameter name="String $entityId" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.setEffectColorMul" func="yes">
+		<overload return-value="Void" descr="Set Engine Entity Multiplicative Effect Color">
+			<parameter name="String $entityId" />
+			<parameter name="Vector4 $effectColorMul" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.isEnabled" func="yes">
+		<overload return-value="Boolean" descr="Return if Engine Entity is enabled">
+			<parameter name="String $entityId" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.setEnabled" func="yes">
+		<overload return-value="Void" descr="Set Engine Entity enabled/disabled">
+			<parameter name="String $entityId" />
+			<parameter name="Boolean $enabled" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.getNodeTransform" func="yes">
+		<overload return-value="Transform" descr="Get Engine Entity Node Transform">
+			<parameter name="String $entityId" />
+			<parameter name="String $nodeId" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.setNodeTransform" func="yes">
+		<overload return-value="Void" descr="Set Engine Entity Node Transform">
+			<parameter name="String $entityId" />
+			<parameter name="String $nodeId" />
+			<parameter name="Transform $transform" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.unsetNodeTransform" func="yes">
+		<overload return-value="Void" descr="Unset Engine Entity Node Transform">
+			<parameter name="String $entityId" />
+			<parameter name="String $nodeId" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.getNodeTransformMatrix" func="yes">
+		<overload return-value="Matrix4x4" descr="Get Engine Entity Node Transform Matrix">
+			<parameter name="String $entityId" />
+			<parameter name="String $nodeId" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.setNodeTransformMatrix" func="yes">
+		<overload return-value="Void" descr="Set Engine Entity Node Transform Matrix">
+			<parameter name="String $entityId" />
+			<parameter name="String $nodeId" />
+			<parameter name="Matrix4x4 $matrix" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.unsetNodeTransformMatrix" func="yes">
+		<overload return-value="Void" descr="Unset Engine Entity Node Transform Matrix">
+			<parameter name="String $entityId" />
+			<parameter name="String $nodeId" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.hasOverlayAnimation" func="yes">
+		<overload return-value="Boolean" descr="Return if Engine Entity has specific Overlay Animation">
+			<parameter name="String $entityId" />
+			<parameter name="String $animation" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.getOverlayAnimationTime" func="yes">
+		<overload return-value="Float" descr="Return Engine Entity Overlay Animation Playback Time from 0.0 until 1.0">
+			<parameter name="String $entityId" />
+			<parameter name="String $animation" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.isPickable" func="yes">
+		<overload return-value="Boolean" descr="Return if Engine Entity is Pickable">
+			<parameter name="String $entityId" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.setPickable" func="yes">
+		<overload return-value="Void" descr="Set Engine Entity Pickable">
+			<parameter name="String $entityId" />
+			<parameter name="Boolean $pickable" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.getTransform" func="yes">
+		<overload return-value="Transform" descr="Get Engine Entity Transform">
+			<parameter name="String $entityId" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.setTransform" func="yes">
+		<overload return-value="Void" descr="Set Engine Entity Transform">
+			<parameter name="String $entityId" />
+			<parameter name="Transform $transform" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.addOverlayAnimation" func="yes">
+		<overload return-value="Void" descr="Add Engine Entity Overlay Animation">
+			<parameter name="String $entityId" />
+			<parameter name="String $animation" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.emitParticles" func="yes">
+		<overload return-value="Integer" descr="Emit Engine Entity Particles">
+			<parameter name="String $entityId" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.removeFinishedOverlayAnimations" func="yes">
+		<overload return-value="Void" descr="Remove finished Overlay Animations">
+			<parameter name="String $entityId" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.removeOverlayAnimation" func="yes">
+		<overload return-value="Void" descr="Remove specific Overlay Animation">
+			<parameter name="String $entityId" />
+			<parameter name="String $animation" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.entity.removeOverlayAnimations" func="yes">
+		<overload return-value="Void" descr="Remove Overlay Animations">
+			<parameter name="String $entityId" />
+			<parameter name="[String $childEntityId]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.timing.getAvarageFPS" func="yes">
+		<overload return-value="Float" descr="Get Engine Timing Avarage FPS">
+		</overload>
+	</keyword>
+	<keyword name="engine.timing.getDeltaTime" func="yes">
+		<overload return-value="Integer" descr="Get Engine Timing Frame Delta Time in Milliseconds">
+		</overload>
+	</keyword>
+	<keyword name="engine.timing.getDeltaTimeSeconds" func="yes">
+		<overload return-value="Float" descr="Get Engine Timing Frame Delta Time in Seconds">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.isAltDown" func="yes">
+		<overload return-value="Boolean" descr="Returns if ALT Key is currently pressed">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.isCharDown" func="yes">
+		<overload return-value="Boolean" descr="Returns if specific Character is currently pressed">
+			<parameter name="String $charAsString" />
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.isControlDown" func="yes">
+		<overload return-value="Boolean" descr="Returns if CONTROL Key is currently pressed">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.KEYCODE_BACKSPACE" func="yes">
+		<overload return-value="Integer" descr="Backspace Key Keycode">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.KEYCODE_DELETE" func="yes">
+		<overload return-value="Integer" descr="Delete Key Keycode">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.KEYCODE_DOWN" func="yes">
+		<overload return-value="Integer" descr="Down Key Keycode">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.KEYCODE_END" func="yes">
+		<overload return-value="Integer" descr="End Key Keycode">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.KEYCODE_ESCAPE" func="yes">
+		<overload return-value="Integer" descr="Escape Key Keycode">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.KEYCODE_F1" func="yes">
+		<overload return-value="Integer" descr="F1 Key Keycode">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.KEYCODE_F10" func="yes">
+		<overload return-value="Integer" descr="F10 Key Keycode">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.KEYCODE_F11" func="yes">
+		<overload return-value="Integer" descr="F11 Key Keycode">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.KEYCODE_F12" func="yes">
+		<overload return-value="Integer" descr="F12 Key Keycode">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.KEYCODE_F2" func="yes">
+		<overload return-value="Integer" descr="F2 Key Keycode">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.KEYCODE_F3" func="yes">
+		<overload return-value="Integer" descr="F3 Key Keycode">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.KEYCODE_F4" func="yes">
+		<overload return-value="Integer" descr="F4 Key Keycode">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.KEYCODE_F5" func="yes">
+		<overload return-value="Integer" descr="F5 Key Keycode">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.KEYCODE_F6" func="yes">
+		<overload return-value="Integer" descr="F6 Key Keycode">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.KEYCODE_F7" func="yes">
+		<overload return-value="Integer" descr="F7 Key Keycode">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.KEYCODE_F8" func="yes">
+		<overload return-value="Integer" descr="F8 Key Keycode">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.KEYCODE_F9" func="yes">
+		<overload return-value="Integer" descr="F9 Key Keycode">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.KEYCODE_LEFT" func="yes">
+		<overload return-value="Integer" descr="Left Key Keycode">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.KEYCODE_PAGEDOWN" func="yes">
+		<overload return-value="Integer" descr="Page Down Key Keycode">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.KEYCODE_PAGEUP" func="yes">
+		<overload return-value="Integer" descr="Page Up Key Keycode">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.KEYCODE_POS1" func="yes">
+		<overload return-value="Integer" descr="Home/Position 1 Key Keycode">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.KEYCODE_RETURN" func="yes">
+		<overload return-value="Integer" descr="Return Key Keycode">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.KEYCODE_RIGHT" func="yes">
+		<overload return-value="Integer" descr="Right Key Keycode">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.KEYCODE_SPACE" func="yes">
+		<overload return-value="Integer" descr="Space Key Keycode">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.KEYCODE_UP" func="yes">
+		<overload return-value="Integer" descr="Up Key Keycode">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.isKeyDown" func="yes">
+		<overload return-value="Boolean" descr="Returns if specific Key is currently pressed">
+			<parameter name="Integer $keyCode" />
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.isMetaDown" func="yes">
+		<overload return-value="Boolean" descr="Returns if Meta Key is currently pressed">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.isShiftDown" func="yes">
+		<overload return-value="Boolean" descr="Returns if Shift Key is currently pressed">
+		</overload>
+	</keyword>
+	<keyword name="input.keyboard.getTypedString" func="yes">
+		<overload return-value="String" descr="Returns last typed String">
+		</overload>
+	</keyword>
+	<keyword name="input.mouse.BUTTON_LEFT" func="yes">
+		<overload return-value="Integer" descr="Left Mouse Button Integer Code">
+		</overload>
+	</keyword>
+	<keyword name="input.mouse.BUTTON_MIDDLE" func="yes">
+		<overload return-value="Integer" descr="Middle Mouse Button Integer Code">
+		</overload>
+	</keyword>
+	<keyword name="input.mouse.BUTTON_RIGHT" func="yes">
+		<overload return-value="Integer" descr="Right Mouse Button Integer Code">
+		</overload>
+	</keyword>
+	<keyword name="input.mouse.isButtonDown" func="yes">
+		<overload return-value="Boolean" descr="Returns if specific Mouse Button is currently pressed">
+			<parameter name="Integer $button" />
+		</overload>
+	</keyword>
+	<keyword name="input.mouse.isButtonUp" func="yes">
+		<overload return-value="Boolean" descr="Returns if specific Mouse Button has been released">
+			<parameter name="Integer $button" />
+		</overload>
+	</keyword>
+	<keyword name="input.mouse.isDragging" func="yes">
+		<overload return-value="Boolean" descr="Returns if Mouse is dragging currently">
+			<parameter name="Integer $button" />
+		</overload>
+	</keyword>
+	<keyword name="input.mouse.hasMoved" func="yes">
+		<overload return-value="Boolean" descr="Returns if Mouse has been moved">
+		</overload>
+	</keyword>
+	<keyword name="input.mouse.getWheelX" func="yes">
+		<overload return-value="Float" descr="Returns current Value of X Axis Mouse Wheel">
+		</overload>
+	</keyword>
+	<keyword name="input.mouse.getWheelY" func="yes">
+		<overload return-value="Float" descr="Returns current Value of Y Axis Mouse Wheel">
+		</overload>
+	</keyword>
+	<keyword name="input.mouse.getWheelZ" func="yes">
+		<overload return-value="Float" descr="Returns current Value of Z Axis Mouse Wheel">
+		</overload>
+	</keyword>
+	<keyword name="input.mouse.getX" func="yes">
+		<overload return-value="Integer" descr="Get X Mouse Position">
+		</overload>
+	</keyword>
+	<keyword name="input.mouse.getXUnscaled" func="yes">
+		<overload return-value="Integer" descr="Get Unscaled X Mouse Position">
+		</overload>
+	</keyword>
+	<keyword name="input.mouse.getY" func="yes">
+		<overload return-value="Integer" descr="Get Y Mouse Position">
+		</overload>
+	</keyword>
+	<keyword name="input.mouse.getYUnscaled" func="yes">
+		<overload return-value="Integer" descr="Get Unscaled Y Mouse Position">
+		</overload>
+	</keyword>
+	<keyword name="logic.has" func="yes">
+		<overload return-value="Boolean" descr="Returns if Logic has Function">
+			<parameter name="String $logicId" />
+			<parameter name="String $function" />
+		</overload>
+	</keyword>
+	<keyword name="logic.getHierarchyId" func="yes">
+		<overload return-value="String" descr="Get Hierarchy Id">
+		</overload>
+	</keyword>
+	<keyword name="logic.getHierarchyParentId" func="yes">
+		<overload return-value="String" descr="Get Hierarchy Parent Id">
+		</overload>
+	</keyword>
+	<keyword name="logic.getId" func="yes">
+		<overload return-value="String" descr="Get Logic Id">
+		</overload>
+	</keyword>
+	<keyword name="logic.call" func="yes">
+		<overload return-value="Mixed" descr="Call specific Logic Function">
+			<parameter name="String $logicId" />
+			<parameter name="String $function" />
+			<parameter name="..." />
+		</overload>
+	</keyword>
+	<keyword name="logic.signal.has" func="yes">
+		<overload return-value="Boolean" descr="Returns if Signal has been sent">
+		</overload>
+	</keyword>
+	<keyword name="logic.signal.getArgument" func="yes">
+		<overload return-value="Mixed" descr="Get Signal Argument">
+			<parameter name="Integer $argumentIndex" />
+		</overload>
+	</keyword>
+	<keyword name="logic.signal.getName" func="yes">
+		<overload return-value="String" descr="Get Signal Name">
+		</overload>
+	</keyword>
+	<keyword name="logic.signal.next" func="yes">
+		<overload return-value="Void" descr="Advance to next Signal">
+		</overload>
+	</keyword>
+	<keyword name="logic.signal.send" func="yes">
+		<overload return-value="Void" descr="Send Signal">
+			<parameter name="String $logicId" />
+			<parameter name="String $signal" />
+			<parameter name="..." />
+		</overload>
+	</keyword>
+	<keyword name="pathfinding.STATE_IDLE" func="yes">
+		<overload return-value="Integer" descr="Pathfinding Idle State Integer Code">
+		</overload>
+	</keyword>
+	<keyword name="pathfinding.STATE_PATHFINDING" func="yes">
+		<overload return-value="Integer" descr="Pathfinding Computing State Integer Code">
+		</overload>
+	</keyword>
+	<keyword name="pathfinding.STATE_PATHFINDING_FAILED" func="yes">
+		<overload return-value="Integer" descr="Pathfinding Failed State Integer Code">
+		</overload>
+	</keyword>
+	<keyword name="pathfinding.STATE_PATHFINDING_OTHER" func="yes">
+		<overload return-value="Integer" descr="Pathfinding Computing Other Pathfinding Integer Code">
+		</overload>
+	</keyword>
+	<keyword name="pathfinding.STATE_PATHFINDING_SUCCESS" func="yes">
+		<overload return-value="Integer" descr="Pathfinding Success State Integer Code">
+		</overload>
+	</keyword>
+	<keyword name="pathfinding.STATE_TRYLOCK_FAILED" func="yes">
+		<overload return-value="Integer" descr="Pathfinding Try/Lock Failed Integer Code">
+		</overload>
+	</keyword>
+	<keyword name="pathfinding.findPath" func="yes">
+		<overload return-value="Integer" descr="Issue Pathfinding">
+			<parameter name="String $logicId" />
+			<parameter name="Vector3 $startPosition" />
+			<parameter name="Vector3 $endPosition" />
+			<parameter name="Array =$path" />
+		</overload>
+	</keyword>
+	<keyword name="scene.getDepth" func="yes">
+		<overload return-value="Float" descr="Get Scene Depth">
+		</overload>
+	</keyword>
+	<keyword name="scene.getHeight" func="yes">
+		<overload return-value="Float" descr="Get Scene Height">
+		</overload>
+	</keyword>
+	<keyword name="scene.getWidth" func="yes">
+		<overload return-value="Float" descr="Get Scene Width">
+		</overload>
+	</keyword>
+	<keyword name="sceneconnector.attachPrototype" func="yes">
+		<overload return-value="Void" descr="Attach Prototype to the Logic Hierarchy">
+			<parameter name="String $pathName" />
+			<parameter name="String $fileName" />
+			<parameter name="String $id" />
+			<parameter name="String $attachNodeId" />
+			<parameter name="Transform $transform" />
+			<parameter name="[String $parentId]" />
+		</overload>
+	</keyword>
+	<keyword name="sceneconnector.spawnPrototype" func="yes">
+		<overload return-value="Void" descr="Spawn Prototype in Scene">
+			<parameter name="String $pathName" />
+			<parameter name="String $fileName" />
+			<parameter name="String $id" />
+			<parameter name="Transform $transform" />
+			<parameter name="[String $hierarchyId]" />
+			<parameter name="[String $hierarchyParentId]" />
+		</overload>
+	</keyword>
+	<keyword name="world.body.getAngularDamping" func="yes">
+		<overload return-value="Float" descr="Get Physics World Entity Angular Damping">
+			<parameter name="String $bodyId" />
+		</overload>
+	</keyword>
+	<keyword name="world.body.setAngularDamping" func="yes">
+		<overload return-value="Void" descr="Set Physics World Entity Angular Damping">
+			<parameter name="String $bodyId" />
+			<parameter name="Float $angularDamping" />
+		</overload>
+	</keyword>
+	<keyword name="world.body.getAngularVelocity" func="yes">
+		<overload return-value="Vector3" descr="Get Physics World Entity Angular Velocity">
+			<parameter name="String $bodyId" />
+		</overload>
+	</keyword>
+	<keyword name="world.body.setAngularVelocity" func="yes">
+		<overload return-value="Void" descr="Set Physics World Entity Angular Velocity">
+			<parameter name="String $bodyId" />
+			<parameter name="Vector3 $angularVelocity" />
+		</overload>
+	</keyword>
+	<keyword name="world.body.COLLISION_TYPEID_10" func="yes">
+		<overload return-value="Integer" descr="Returns Physics World Collision Type Id 10">
+		</overload>
+	</keyword>
+	<keyword name="world.body.COLLISION_TYPEID_11" func="yes">
+		<overload return-value="Integer" descr="Returns Physics World Collision Type Id 11">
+		</overload>
+	</keyword>
+	<keyword name="world.body.COLLISION_TYPEID_12" func="yes">
+		<overload return-value="Integer" descr="Returns Physics World Collision Type Id 12">
+		</overload>
+	</keyword>
+	<keyword name="world.body.COLLISION_TYPEID_13" func="yes">
+		<overload return-value="Integer" descr="Returns Physics World Collision Type Id 13">
+		</overload>
+	</keyword>
+	<keyword name="world.body.COLLISION_TYPEID_14" func="yes">
+		<overload return-value="Integer" descr="Returns Physics World Collision Type Id 14">
+		</overload>
+	</keyword>
+	<keyword name="world.body.COLLISION_TYPEID_15" func="yes">
+		<overload return-value="Integer" descr="Returns Physics World Collision Type Id 15">
+		</overload>
+	</keyword>
+	<keyword name="world.body.COLLISION_TYPEID_16" func="yes">
+		<overload return-value="Integer" descr="Returns Physics World Collision Type Id 16">
+		</overload>
+	</keyword>
+	<keyword name="world.body.COLLISION_TYPEID_3" func="yes">
+		<overload return-value="Integer" descr="Returns Physics World Collision Type Id 3">
+		</overload>
+	</keyword>
+	<keyword name="world.body.COLLISION_TYPEID_4" func="yes">
+		<overload return-value="Integer" descr="Returns Physics World Collision Type Id 4">
+		</overload>
+	</keyword>
+	<keyword name="world.body.COLLISION_TYPEID_5" func="yes">
+		<overload return-value="Integer" descr="Returns Physics World Collision Type Id 5">
+		</overload>
+	</keyword>
+	<keyword name="world.body.COLLISION_TYPEID_6" func="yes">
+		<overload return-value="Integer" descr="Returns Physics World Collision Type Id 6">
+		</overload>
+	</keyword>
+	<keyword name="world.body.COLLISION_TYPEID_7" func="yes">
+		<overload return-value="Integer" descr="Returns Physics World Collision Type Id 7">
+		</overload>
+	</keyword>
+	<keyword name="world.body.COLLISION_TYPEID_8" func="yes">
+		<overload return-value="Integer" descr="Returns Physics World Collision Type Id 8">
+		</overload>
+	</keyword>
+	<keyword name="world.body.COLLISION_TYPEID_9" func="yes">
+		<overload return-value="Integer" descr="Returns Physics World Collision Type Id 9">
+		</overload>
+	</keyword>
+	<keyword name="world.body.COLLISION_TYPEID_ALL" func="yes">
+		<overload return-value="Integer" descr="Returns All Physics World Collision Type Ids">
+		</overload>
+	</keyword>
+	<keyword name="world.body.COLLISION_TYPEID_DYNAMIC" func="yes">
+		<overload return-value="Integer" descr="Returns Dynamic Physics World Collision Type Id">
+		</overload>
+	</keyword>
+	<keyword name="world.body.COLLISION_TYPEID_STATIC" func="yes">
+		<overload return-value="Integer" descr="Returns Static Physics World Collision Type Id">
+		</overload>
+	</keyword>
+	<keyword name="world.body.getCollisionTypeId" func="yes">
+		<overload return-value="Integer" descr="Get Physics World Entity own Collision Type Id">
+			<parameter name="String $bodyId" />
+		</overload>
+	</keyword>
+	<keyword name="world.body.setCollisionTypeId" func="yes">
+		<overload return-value="Void" descr="Set Physics World Entity own Collision Type Id">
+			<parameter name="String $bodyId" />
+			<parameter name="Integer $collisionTypeId" />
+		</overload>
+	</keyword>
+	<keyword name="world.body.getCollisionTypeIds" func="yes">
+		<overload return-value="Integer" descr="Get Physics World Entity enabled Collision Type Ids">
+			<parameter name="String $bodyId" />
+		</overload>
+	</keyword>
+	<keyword name="world.body.setCollisionTypeIds" func="yes">
+		<overload return-value="Void" descr="Set Physics World Entity enabled Collision Type Ids">
+			<parameter name="String $bodyId" />
+			<parameter name="Integer $collisionTypeIds" />
+		</overload>
+	</keyword>
+	<keyword name="world.body.isEnabled" func="yes">
+		<overload return-value="Boolean" descr="Returns if Physics World Entity is enabled">
+			<parameter name="String $bodyId" />
+		</overload>
+	</keyword>
+	<keyword name="world.body.setEnabled" func="yes">
+		<overload return-value="Void" descr="Set Physics World Entity enabled/disabled">
+			<parameter name="String $bodyId" />
+			<parameter name="Boolean $enabled" />
+		</overload>
+	</keyword>
+	<keyword name="world.body.getLinearDamping" func="yes">
+		<overload return-value="Float" descr="Get Physics World Entity Linear Damping">
+			<parameter name="String $bodyId" />
+		</overload>
+	</keyword>
+	<keyword name="world.body.setLinearDamping" func="yes">
+		<overload return-value="Void" descr="Set Physics World Entity Linear Damping">
+			<parameter name="String $bodyId" />
+			<parameter name="Float $linearDamping" />
+		</overload>
+	</keyword>
+	<keyword name="world.body.getLinearVelocity" func="yes">
+		<overload return-value="Vector3" descr="Get Physics World Entity Linear Velocity">
+			<parameter name="String $bodyId" />
+		</overload>
+	</keyword>
+	<keyword name="world.body.setLinearVelocity" func="yes">
+		<overload return-value="Void" descr="Set Physics World Entity Linear Velocity">
+			<parameter name="String $bodyId" />
+			<parameter name="Vector3 $linearVelocity" />
+		</overload>
+	</keyword>
+	<keyword name="world.body.TYPE_COLLISION_DYNAMIC" func="yes">
+		<overload return-value="Integer" descr="Returns Physics World Dynamic Collision Body Type Integer Code">
+		</overload>
+	</keyword>
+	<keyword name="world.body.TYPE_COLLISION_STATIC" func="yes">
+		<overload return-value="Integer" descr="Returns Physics World Static Collision Body Type Integer Code">
+		</overload>
+	</keyword>
+	<keyword name="world.body.TYPE_DYNAMIC" func="yes">
+		<overload return-value="Integer" descr="Returns Physics World Dynamic Rigid Body Type Integer Code">
+		</overload>
+	</keyword>
+	<keyword name="world.body.TYPE_STATIC" func="yes">
+		<overload return-value="Integer" descr="Returns Physics World Static Rigid Body Type Integer Code">
+		</overload>
+	</keyword>
+	<keyword name="world.body.getTransform" func="yes">
+		<overload return-value="Transform" descr="Get Physics World Entity Transform">
+			<parameter name="String $bodyId" />
+		</overload>
+	</keyword>
+	<keyword name="world.body.setTransform" func="yes">
+		<overload return-value="Void" descr="Set Physics World Entity Transform">
+			<parameter name="String $bodyId" />
+			<parameter name="Transform $transform" />
+		</overload>
+	</keyword>
+	<keyword name="world.body.getType" func="yes">
+		<overload return-value="Integer" descr="Get Physics World Entity Body Type Integer Code">
+			<parameter name="String $bodyId" />
+		</overload>
+	</keyword>
+	<keyword name="world.body.addForce" func="yes">
+		<overload return-value="Void" descr="Add Force to Physics World Entity">
+			<parameter name="String $bodyId" />
+			<parameter name="Vector3 $force" />
+			<parameter name="[Vector3 $origin]" />
+		</overload>
+	</keyword>
+	<keyword name="world.body.addTorque" func="yes">
+		<overload return-value="Void" descr="Add Torque to Physics World Entity">
+			<parameter name="String $bodyId" />
+			<parameter name="Vector3 $torque" />
+		</overload>
+	</keyword>
+	<keyword name="world.determineHeight" func="yes">
+		<overload return-value="Boolean" descr="Determine Height at specific Position in Physics World">
+			<parameter name="Integer $collisionTypeIds" />
+			<parameter name="Float $stepUpMax" />
+			<parameter name="Vector3 $point" />
+			<parameter name="Vector3 =$heightPoint" />
+			<parameter name="[String =$bodyId]" />
+			<parameter name="[Float $minHeight]" />
+			<parameter name="[Float $maxHeight]" />
+		</overload>
+	</keyword>
+	<keyword name="world.doCollide" func="yes">
+		<overload return-value="Boolean" descr="Determine Collision of Two Specific Bodies in Physics World">
+			<parameter name="String $bodyId1" />
+			<parameter name="String $bodyId2" />
+		</overload>
+	</keyword>
+	<keyword name="world.doRayCasting" func="yes">
+		<overload return-value="Boolean" descr="Compute Ray Casting in Physics World">
+			<parameter name="Integer $collisionTypeIds" />
+			<parameter name="Vector3 $start" />
+			<parameter name="Vector3 $end" />
+			<parameter name="Vector3 =$hitPoint" />
+			<parameter name="[String =$bodyId]" />
+			<parameter name="[String $actorId]" />
+		</overload>
+	</keyword>
+	<keyword name="world.doesCollideWith" func="yes">
+		<overload return-value="Array" descr="Determine Collision of Specific Body in Physics World">
+			<parameter name="Integer $collisionTypeIds" />
+			<parameter name="String $bodyId" />
+		</overload>
+	</keyword>
+	<keyword name="gui.elementnode.conditions.has" func="yes">
+		<overload return-value="Boolean" descr="Returns if GUI Element Node has a specific Condition enabled">
+			<parameter name="String $elementNodeId" />
+			<parameter name="String $condition" />
+		</overload>
+	</keyword>
+	<keyword name="gui.elementnode.conditions.get" func="yes">
+		<overload return-value="Array" descr="Get enabled GUI Element Node Conditions">
+			<parameter name="String $elementNodeId" />
+		</overload>
+	</keyword>
+	<keyword name="gui.elementnode.conditions.set" func="yes">
+		<overload return-value="Void" descr="Set enabled GUI Element Node Condition">
+			<parameter name="String $elementNodeId" />
+			<parameter name="String $condition" />
+		</overload>
+	</keyword>
+	<keyword name="gui.elementnode.conditions.setAll" func="yes">
+		<overload return-value="Void" descr="Set Array of enabled GUI Element Node Conditions">
+			<parameter name="String $elementNodeId" />
+			<parameter name="Array $conditions" />
+		</overload>
+	</keyword>
+	<keyword name="gui.elementnode.conditions.add" func="yes">
+		<overload return-value="Void" descr="Add enabled GUI Element Node Condition">
+			<parameter name="String $elementNodeId" />
+			<parameter name="String $condition" />
+		</overload>
+	</keyword>
+	<keyword name="gui.elementnode.conditions.remove" func="yes">
+		<overload return-value="Void" descr="Remove enabled GUI Element Node Condition">
+			<parameter name="String $elementNodeId" />
+			<parameter name="String $condition" />
+		</overload>
+	</keyword>
+	<keyword name="gui.elementnode.conditions.removeAll" func="yes">
+		<overload return-value="Void" descr="Remove All enabled GUI Element Node Conditions">
+			<parameter name="String $elementNodeId" />
+		</overload>
+	</keyword>
+	<keyword name="gui.event.ACTIONTYPE_PERFORMED" func="yes">
+		<overload return-value="Integer" descr="Returns GUI Event Performed Action Type Integer Code">
+		</overload>
+	</keyword>
+	<keyword name="gui.event.ACTIONTYPE_PERFORMING" func="yes">
+		<overload return-value="Integer" descr="Returns GUI Event Performing Action Type Integer Code">
+		</overload>
+	</keyword>
+	<keyword name="gui.imagenode.getSource" func="yes">
+		<overload return-value="String" descr="Get Image Source of GUI Image Node">
+			<parameter name="String $imageNodeId" />
+		</overload>
+	</keyword>
+	<keyword name="gui.imagenode.setSource" func="yes">
+		<overload return-value="Void" descr="Set Image Source of GUI Image Node">
+			<parameter name="String $imageNodeId" />
+			<parameter name="String $source" />
+		</overload>
+	</keyword>
+	<keyword name="gui.node.controller.getValue" func="yes">
+		<overload return-value="String" descr="Get GUI Node Controller Value">
+			<parameter name="String $nodeId" />
+		</overload>
+	</keyword>
+	<keyword name="gui.node.controller.setValue" func="yes">
+		<overload return-value="Void" descr="Set GUI Node Controller Value">
+			<parameter name="String $nodeId" />
+			<parameter name="String $value" />
+		</overload>
+	</keyword>
+	<keyword name="gui.parentnode.addSubNodes" func="yes">
+		<overload return-value="Void" descr="Add Sub Nodes using XML to GUI Parent Node">
+			<parameter name="String $parentNodeId" />
+			<parameter name="String $xml" />
+			<parameter name="[Boolean $resetScrollOffsets]" />
+		</overload>
+	</keyword>
+	<keyword name="gui.parentnode.clearSubNodes" func="yes">
+		<overload return-value="Void" descr="Clear Sub Nodes of GUI Parent Node">
+			<parameter name="String $parentNodeId" />
+		</overload>
+	</keyword>
+	<keyword name="gui.parentnode.replaceSubNodes" func="yes">
+		<overload return-value="Void" descr="Replace Sub Nodes using XML of GUI Parent Node">
+			<parameter name="String $parentNodeId" />
+			<parameter name="String $xml" />
+			<parameter name="[Boolean $resetScrollOffsets]" />
+		</overload>
+	</keyword>
+	<keyword name="gui.screen.isEnabled" func="yes">
+		<overload return-value="Boolean" descr="Return if GUI Screen is enabled">
+			<parameter name="String $screenId" />
+		</overload>
+	</keyword>
+	<keyword name="gui.screen.setEnabled" func="yes">
+		<overload return-value="Void" descr="Set GUI Screen enabled/disabled">
+			<parameter name="String $screenId" />
+			<parameter name="Boolean $enabled" />
+		</overload>
+	</keyword>
+	<keyword name="gui.screen.call" func="yes">
+		<overload return-value="Mixed" descr="Call specific Screen Logic Function">
+			<parameter name="String $screenId" />
+			<parameter name="String $function" />
+			<parameter name="..." />
+		</overload>
+	</keyword>
+	<keyword name="gui.screen.goto" func="yes">
+		<overload return-value="Void" descr="Goto current Screen to specific Screen">
+			<parameter name="String $fileName" />
+			<parameter name="[Map $variables]" />
+			<parameter name="[Mixed $arguments]" />
+		</overload>
+	</keyword>
+	<keyword name="gui.screen.pop" func="yes">
+		<overload return-value="Void" descr="Pop current Screen from Screen Stack">
+		</overload>
+	</keyword>
+	<keyword name="gui.screen.push" func="yes">
+		<overload return-value="Void" descr="Push Screen to current Screen Stack">
+			<parameter name="String $fileName" />
+			<parameter name="[Map $variables]" />
+			<parameter name="[Mixed $arguments]" />
+		</overload>
+	</keyword>
+	<keyword name="gui.screennode.getId" func="yes">
+		<overload return-value="String" descr="Get Current Screen Node Id">
+		</overload>
+	</keyword>
+	<keyword name="gui.textnode.getText" func="yes">
+		<overload return-value="String" descr="Get Text of GUI Text Node">
+			<parameter name="String $textNodeId" />
+		</overload>
+	</keyword>
+	<keyword name="gui.textnode.setText" func="yes">
+		<overload return-value="Void" descr="Set Text of GUI Text Node">
+			<parameter name="String $textNodeId" />
+			<parameter name="String $text" />
+		</overload>
+	</keyword>
+	<keyword name="gui.videonode.getSource" func="yes">
+		<overload return-value="String" descr="Get Video Source of GUI Video Node">
+			<parameter name="String $videoNodeId" />
+		</overload>
+	</keyword>
+	<keyword name="gui.videonode.setSource" func="yes">
+		<overload return-value="Void" descr="Set Video Source of GUI Video Node">
+			<parameter name="String $videoNodeId" />
+			<parameter name="String $source" />
 		</overload>
 	</keyword>
 </code-completion>

@@ -315,9 +315,6 @@ SRCS = \
 	src/tdme/engine/scene/SceneLight.cpp \
 	src/tdme/engine/scene/ScenePropertyPresets.cpp \
 	src/tdme/engine/subsystems/decals/DecalInternal.cpp \
-	src/tdme/engine/subsystems/earlyzrejection/EZRShader.cpp \
-	src/tdme/engine/subsystems/earlyzrejection/EZRShaderBaseImplementation.cpp \
-	src/tdme/engine/subsystems/earlyzrejection/EZRShaderDefaultImplementation.cpp \
 	src/tdme/engine/subsystems/environmentmapping/EnvironmentMappingRenderer.cpp \
 	src/tdme/engine/subsystems/framebuffer/BRDFLUTShader.cpp \
 	src/tdme/engine/subsystems/framebuffer/DeferredLightingRenderShader.cpp \
@@ -644,7 +641,6 @@ SRCS = \
 	src/tdme/utilities/Base64.cpp \
 	src/tdme/utilities/Console.cpp \
 	src/tdme/utilities/ExceptionBase.cpp \
-	src/tdme/utilities/Enum.cpp \
 	src/tdme/utilities/Float.cpp \
 	src/tdme/utilities/Hex.cpp \
 	src/tdme/utilities/Integer.cpp \

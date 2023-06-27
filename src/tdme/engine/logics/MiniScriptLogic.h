@@ -2,14 +2,17 @@
 
 #include <span>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 
-#include <tdme/engine/logics/fwd-tdme.h>
 #include <tdme/engine/logics/Logic.h>
 #include <tdme/engine/logics/LogicMiniScript.h>
+#include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/tools/editor/misc/Tools.h>
@@ -18,12 +21,16 @@
 
 using std::span;
 using std::string;
+using std::unordered_map;
 
 using tdme::engine::logics::LogicMiniScript;
 
 using tdme::engine::logics::Logic;
+using tdme::engine::model::Model;
+using tdme::engine::model::RotationOrder;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
+using tdme::engine::Transform;
 using tdme::engine::EntityHierarchy;
 using tdme::engine::SceneConnector;
 using tdme::tools::editor::misc::Tools;
@@ -43,9 +50,15 @@ public:
 	 * @param id id
 	 * @param handlingHIDInput handling hid input
 	 * @param miniScript logic mini script
+	 * @param prototype prototype
+	 * @param hierarchyId hierarchy id
+	 * @param hierarchyParentId hierarchy parent id
 	 */
-	inline MiniScriptLogic(Context* context, const string& id, bool handlingHIDInput, LogicMiniScript* miniScript, const string& hierarchyId = string(), const string& hierarchyParentId = string()):
+	inline MiniScriptLogic(Context* context, const string& id, bool handlingHIDInput, LogicMiniScript* miniScript, Prototype* prototype, const string& hierarchyId = string(), const string& hierarchyParentId = string()):
 		Logic(context, id, handlingHIDInput), miniScript(miniScript), hierarchyId(hierarchyId), hierarchyParentId(hierarchyParentId) {
+		//
+		enginePrototypes[id] = prototype;
+		logicPrototypes[id] = prototype;
 		//
 		miniScript->setContext(context);
 		miniScript->setLogic(this);
@@ -89,17 +102,52 @@ public:
 		if (miniScript->enginePrototypesToAdd.empty() == false) {
 			miniScript->prototypesToAddMutex.lock();
 			for (auto& prototypeToAdd: miniScript->enginePrototypesToAdd) {
+				//
+				Console::println("MiniScriptLogic::updateEngine(): adding prototype: id: " + prototypeToAdd.id + ", hierarchyId: " + prototypeToAdd.hierarchyId + ", hierarchy parent id: " + prototypeToAdd.hierarchyParentId);
+				//
 				EntityHierarchy* parentEntity = nullptr;
 				if (prototypeToAdd.hierarchyId.empty() == false) {
 					parentEntity = dynamic_cast<EntityHierarchy*>(context->getEngine()->getEntity(prototypeToAdd.hierarchyId));
 				}
+				auto transform = prototypeToAdd.transform;
+				if (prototypeToAdd.type == LogicMiniScript::PrototypeToAdd::TYPE_ATTACH &&
+					prototypeToAdd.attachNodeId.empty() == false) {
+					auto prototypeIt = enginePrototypes.find(prototypeToAdd.hierarchyParentId);
+					auto prototype = prototypeIt == enginePrototypes.end()?nullptr:prototypeIt->second;
+					Matrix4x4 attachNodeTransformMatrix;
+					if (prototype != nullptr &&
+						prototype->getModel() != nullptr &&
+						prototype->getModel()->computeTransformMatrix(
+							prototypeToAdd.attachNodeId,
+							prototype->getModel()->getImportTransformMatrix(),
+							attachNodeTransformMatrix
+						) == true) {
+						//
+						Transform attachNodeTransform;
+						attachNodeTransform.fromMatrix(attachNodeTransformMatrix, RotationOrder::ZYX);
+						transform = attachNodeTransform * transform;
+					} else {
+						Console::println("MiniScriptLogic::updateEngine(): " + getId() + ": " + prototypeToAdd.attachNodeId + "@" + getId() + " not found");
+					}
+					/*
+					// TODO: we need to create structure of attachNodeId ... ROOT
+					//	but our bots do not have a structure until now
+					auto node = prototype->getModel()->getNodeById(prototypeToAdd.attachNodeId);
+					while (node != nullptr) {
+						node = node->getParentNode();
+					}
+					*/
+				}
+				//
+				auto id = prototypeToAdd.attachNodeId.empty() == false?prototypeToAdd.attachNodeId + "." + prototypeToAdd.id:prototypeToAdd.id;
+				//
 				auto entity =
 					SceneConnector::createEntity(
 						prototypeToAdd.prototype,
-						prototypeToAdd.id,
-						prototypeToAdd.transform,
+						prototypeToAdd.attachNodeId.empty() == false?prototypeToAdd.attachNodeId + "." + prototypeToAdd.id:prototypeToAdd.id,
+						transform,
 						1,
-						parentEntity
+						parentEntity != nullptr
 					);
 				if (parentEntity == nullptr) {
 					context->getEngine()->addEntity(entity);
@@ -107,6 +155,8 @@ public:
 					parentEntity->addEntity(entity, prototypeToAdd.hierarchyParentId);
 					parentEntity->update();
 				}
+				//
+				if (prototypeToAdd.type == LogicMiniScript::PrototypeToAdd::TYPE_ATTACH) enginePrototypes[id] = prototypeToAdd.prototype;
 			}
 			miniScript->enginePrototypesToAdd.clear();
 			miniScript->prototypesToAddMutex.unlock();
@@ -138,28 +188,63 @@ public:
 			miniScript->prototypesToAddMutex.lock();
 			//
 			for (auto& prototypeToAdd: miniScript->physicsPrototypesToAdd) {
+				//
+				Console::println("MiniScriptLogic::updateLogic(): adding prototype: id: " + prototypeToAdd.id + ", hierarchyId: " + prototypeToAdd.hierarchyId + ", hierarchy parent id: " + prototypeToAdd.hierarchyParentId);
+				//
 				// add to physics
-				if (prototypeToAdd.prototype->getBoundingVolumeCount() > 0) {
-					//
-					if (prototypeToAdd.hierarchyId.empty() == false) {
-						SceneConnector::createSubBody(
-							context->getWorld(),
-							prototypeToAdd.prototype,
-							prototypeToAdd.id,
-							prototypeToAdd.transform,
-							prototypeToAdd.hierarchyId,
-							prototypeToAdd.hierarchyParentId
-						);
+				auto transform = prototypeToAdd.transform;
+				if (prototypeToAdd.type == LogicMiniScript::PrototypeToAdd::TYPE_ATTACH &&
+					prototypeToAdd.attachNodeId.empty() == false) {
+					auto prototypeIt = enginePrototypes.find(prototypeToAdd.hierarchyParentId);
+					auto prototype = prototypeIt == enginePrototypes.end()?nullptr:prototypeIt->second;
+					Matrix4x4 attachNodeTransformMatrix;
+					if (prototype != nullptr &&
+						prototype->getModel() != nullptr &&
+						prototype->getModel()->computeTransformMatrix(
+							prototypeToAdd.attachNodeId,
+							prototype->getModel()->getImportTransformMatrix(),
+							attachNodeTransformMatrix
+						) == true) {
+						//
+						Transform attachNodeTransform;
+						attachNodeTransform.fromMatrix(attachNodeTransformMatrix, RotationOrder::ZYX);
+						transform = attachNodeTransform * transform;
 					} else {
-						SceneConnector::createBody(
-							context->getWorld(),
-							prototypeToAdd.prototype,
-							prototypeToAdd.id,
-							prototypeToAdd.transform,
-							Body::COLLISION_TYPEID_DYNAMIC
-						);
+						Console::println("MiniScriptLogic::updateLogic(): " + getId() + ": " + prototypeToAdd.attachNodeId + "@" + getId() + " not found");
 					}
+					/*
+					// TODO: we need to create structure of attachNodeId ... ROOT
+					//	but our bots do not have a structure until now
+					auto node = prototype->getModel()->getNodeById(prototypeToAdd.attachNodeId);
+					while (node != nullptr) {
+						node = node->getParentNode();
+					}
+					*/
 				}
+				//
+				auto id = prototypeToAdd.attachNodeId.empty() == false?prototypeToAdd.attachNodeId + "." + prototypeToAdd.id:prototypeToAdd.id;
+				//
+				if (prototypeToAdd.hierarchyId.empty() == false) {
+					SceneConnector::createSubBody(
+						context->getWorld(),
+						prototypeToAdd.prototype,
+						id,
+						transform,
+						prototypeToAdd.hierarchyId,
+						prototypeToAdd.hierarchyParentId
+					);
+				} else {
+					SceneConnector::createBody(
+						context->getWorld(),
+						prototypeToAdd.prototype,
+						id,
+						transform,
+						Body::COLLISION_TYPEID_DYNAMIC
+					);
+				}
+				//
+				if (prototypeToAdd.type == LogicMiniScript::PrototypeToAdd::TYPE_ATTACH) logicPrototypes[id] = prototypeToAdd.prototype;
+
 				// add logic
 				if (prototypeToAdd.prototype->hasScript() == true) {
 					auto prototype = prototypeToAdd.prototype;
@@ -174,6 +259,7 @@ public:
 							prototypeToAdd.id,
 							prototype->isScriptHandlingHID(),
 							logicMiniScript,
+							prototypeToAdd.prototype,
 							prototypeToAdd.hierarchyId,
 							prototypeToAdd.hierarchyParentId
 						)
@@ -230,6 +316,8 @@ public:
 
 private:
 	LogicMiniScript* miniScript { nullptr };
+	unordered_map<string, Prototype*> enginePrototypes;
+	unordered_map<string, Prototype*> logicPrototypes;
 	bool engineInitialized { false };
 	bool logicInitialized { false };
 	string hierarchyId;

@@ -32,7 +32,6 @@ private:
 			int frameBufferWidthDivideFactor,
 			int frameBufferHeightDivideFactor,
 			const string& shaderPrefix,
-			bool useEZR,
 			bool applyShadowMapping,
 			bool applyPostProcessing,
 			int32_t renderTypes,
@@ -44,7 +43,6 @@ private:
 			frameBufferWidthDivideFactor(frameBufferWidthDivideFactor),
 			frameBufferHeightDivideFactor(frameBufferHeightDivideFactor),
 			shaderPrefix(shaderPrefix),
-			useEZR(useEZR),
 			applyShadowMapping(applyShadowMapping),
 			applyPostProcessing(applyPostProcessing),
 			renderTypes(renderTypes),
@@ -56,7 +54,6 @@ private:
 		int frameBufferWidthDivideFactor;
 		int frameBufferHeightDivideFactor;
 		string shaderPrefix;
-		bool useEZR;
 		bool applyShadowMapping;
 		bool applyPostProcessing;
 		int32_t renderTypes;
@@ -101,7 +98,6 @@ public:
 	 * @param frameBufferWidthDivideFactor frame buffer width divide factor
 	 * @param frameBufferHeightDivideFactor frame buffer height divide factor
 	 * @param shaderPrefix shader prefix
-	 * @param useEZR use early Z rejection
 	 * @param applyShadowMapping apply shadow mapping
 	 * @param applyPostProcessing apply post processing
 	 * @param renderTypes render types
@@ -114,7 +110,6 @@ public:
 		int frameBufferWidthDivideFactor,
 		int frameBufferHeightDivideFactor,
 		string shaderPrefix,
-		bool useEZR,
 		bool applyShadowMapping,
 		bool applyPostProcessing,
 		int32_t renderTypes,

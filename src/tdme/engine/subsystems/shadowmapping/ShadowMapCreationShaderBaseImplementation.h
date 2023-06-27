@@ -1,5 +1,6 @@
-
 #pragma once
+
+#include <string>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -7,6 +8,8 @@
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderImplementation.h>
 #include <tdme/math/fwd-tdme.h>
+
+using std::string;
 
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderImplementation;
@@ -61,5 +64,6 @@ public:
 	virtual void updateMaterial(Renderer* renderer, int contextIdx) override;
 	virtual void updateShaderParameters(Renderer* renderer, int contextIdx) override = 0;
 	virtual void bindTexture(Renderer* renderer, int contextIdx, int32_t textureId) override;
+	virtual void loadTextures(const string& pathName) override;
 
 };

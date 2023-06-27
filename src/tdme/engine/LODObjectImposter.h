@@ -74,7 +74,6 @@ private:
 	Color4 effectColorAddLOD2;
 	RenderPass renderPass { RENDERPASS_STANDARD };
 	string shaderId { "default" };
-	bool enableEarlyZRejection { false };
 
 	EntityShaderParameters shaderParameters;
 
@@ -362,19 +361,6 @@ public:
 		objectLOD1->setShader(shaderId);
 		objectLOD2->setShader(shaderId);
 	}
-
-	/**
-	 * @return If early z rejection is enabled
-	 */
-	bool isEnableEarlyZRejection() const {
-		return enableEarlyZRejection;
-	}
-
-	/**
-	 * Enable/disable early z rejection
-	 * @param enableEarlyZRejection enable early z rejection
-	 */
-	void setEnableEarlyZRejection(bool enableEarlyZRejection);
 
 	/**
 	 * Returns shader parameter for given parameter name, if the value does not exist, the default will be returned

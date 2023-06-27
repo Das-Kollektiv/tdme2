@@ -1417,19 +1417,19 @@ void SceneEditorTabView::addPrototype(Prototype* prototype) {
 	reloadOutliner("scene.prototypes." + to_string(prototype->getId()));
 }
 
-Entity* SceneEditorTabView::createEntity(Prototype* prototype, const string& id, const Transform& transform, int instances, Entity* parentEntity) {
+Entity* SceneEditorTabView::createEntity(Prototype* prototype, const string& id, const Transform& transform, int instances) {
 	if (prototype->getType() == Prototype_Type::DECAL) {
-		return SceneConnector::createEditorDecalEntity(prototype, id, transform, instances, parentEntity);
+		return SceneConnector::createEditorDecalEntity(prototype, id, transform, instances);
 	} else {
-		return SceneConnector::createEntity(prototype, id, transform, instances, parentEntity);
+		return SceneConnector::createEntity(prototype, id, transform, instances);
 	}
 }
 
-Entity* SceneEditorTabView::createEntity(SceneEntity* sceneEntity, const Vector3& translation, int instances, Entity* parentEntity) {
+Entity* SceneEditorTabView::createEntity(SceneEntity* sceneEntity, const Vector3& translation, int instances) {
 	if (sceneEntity->getPrototype()->getType() == Prototype_Type::DECAL) {
-		return SceneConnector::createEditorDecalEntity(sceneEntity, translation, instances, parentEntity);
+		return SceneConnector::createEditorDecalEntity(sceneEntity, translation, instances);
 	} else {
-		return SceneConnector::createEntity(sceneEntity, translation, instances, parentEntity);
+		return SceneConnector::createEntity(sceneEntity, translation, instances);
 	}
 }
 
@@ -1483,7 +1483,8 @@ void SceneEditorTabView::runScene() {
 					applicationContext,
 					entity->getId(),
 					entity->getPrototype()->isScriptHandlingHID(),
-					miniScript
+					miniScript,
+					entity->getPrototype()
 				)
 			);
 		}

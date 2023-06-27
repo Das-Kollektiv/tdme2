@@ -158,9 +158,3 @@ void LODObjectImposter::initialize()
 	objectLOD1->initialize();
 	objectLOD2->initialize();
 }
-
-void LODObjectImposter::setEnableEarlyZRejection(bool enableEarlyZRejection) {
-	// delegate to LOD objects
-	objectLOD1->setEnableEarlyZRejection(enableEarlyZRejection);
-	objectLOD2->setEnableEarlyZRejection(enableEarlyZRejection);
-}

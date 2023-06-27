@@ -35,5 +35,4 @@ public:
 	virtual void registerShader() override;
 	virtual void updateShaderParameters(Renderer* renderer, int contextIdx) override;
 
-
 };

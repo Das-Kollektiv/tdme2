@@ -27,7 +27,6 @@ public:
 public:
 	UpVector(const string& name, int ordinal);
 
-public:
 	static UpVector* valueOf(const string& a0);
 
 };

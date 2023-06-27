@@ -241,7 +241,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 									codeCompletionSymbolCandidates.push_back(
 										{
 											.type = CodeCompletionSymbol::TYPE_FUNCTION,
-											.display = symbol.name + "(" + parameters + ") = " + overload.returnValue,
+											.display = symbol.name + "(" + parameters + "): " + overload.returnValue,
 											.name = symbol.name,
 											.parameters = overload.parameters,
 											.returnValue = overload.returnValue

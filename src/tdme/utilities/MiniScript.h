@@ -2359,7 +2359,7 @@ private:
 			// TODO: as evaluate statement we also might need the expression that had not yet a preprocessor run for error messages and such
 			ScriptVariable statementReturnValue;
 			auto evaluateStatement = string(arrayIdxExpressionStringView);
-			if (evaluateInternal(evaluateStatement, evaluateStatement, statementReturnValue) == false || statementReturnValue.getIntegerValue(arrayIdx, false) == false) {
+			if (evaluateInternal(evaluateStatement, evaluateStatement, statementReturnValue, false) == false || statementReturnValue.getIntegerValue(arrayIdx, false) == false) {
 				if (statement != nullptr) {
 					Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': failed to evaluate expression: '" + string(arrayIdxExpressionStringView) + "'");
 				} else {
@@ -2574,9 +2574,10 @@ private:
 	 * @param statement script statement
 	 * @param executableStatement executable script statement
 	 * @param returnValue script return value
+	 * @param pushOwnScriptState push own script state
 	 * @return success
 	 */
-	inline bool evaluateInternal(const string& statement, const string& executableStatement, ScriptVariable& returnValue) {
+	inline bool evaluateInternal(const string& statement, const string& executableStatement, ScriptVariable& returnValue, bool pushOwnScriptState = true) {
 		ScriptStatement evaluateStatement(
 			LINEIDX_NONE,
 			0,
@@ -2598,8 +2599,10 @@ private:
 			return false;
 		} else {
 			//
-			pushScriptState();
-			resetScriptExecutationState(SCRIPTIDX_NONE, STATEMACHINESTATE_NEXT_STATEMENT);
+			if (pushOwnScriptState == true) {
+				pushScriptState();
+				resetScriptExecutationState(SCRIPTIDX_NONE, STATEMACHINESTATE_NEXT_STATEMENT);
+			}
 			getScriptState().running = true;
 			//
 			returnValue = executeScriptStatement(
@@ -2607,7 +2610,8 @@ private:
 				evaluateStatement
 			);
 			//
-			popScriptState();
+			if (pushOwnScriptState == true) popScriptState();
+			//
 			return true;
 		}
 	}

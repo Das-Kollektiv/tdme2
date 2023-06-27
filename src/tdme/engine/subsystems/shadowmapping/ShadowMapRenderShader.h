@@ -127,4 +127,10 @@ public:
 	 */
 	void setShader(int contextIdx, const string& id);
 
+	/**
+	 * Load textures
+	 * @param pathName path name
+	 */
+	void loadTextures(const string& pathName);
+
 };

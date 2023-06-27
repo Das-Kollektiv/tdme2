@@ -310,3 +310,6 @@ void LightingShaderBaseImplementation::bindTexture(Renderer* renderer, int conte
 			}
 	}
 }
+
+void LightingShaderBaseImplementation::loadTextures(const string& pathName) {
+}

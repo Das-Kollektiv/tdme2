@@ -63,7 +63,6 @@ public:
 	STATIC_DLL_IMPEXT static float renderGroupsLOD3MinDistance;
 	STATIC_DLL_IMPEXT static int renderGroupsLOD2ReduceBy;
 	STATIC_DLL_IMPEXT static int renderGroupsLOD3ReduceBy;
-	STATIC_DLL_IMPEXT static bool enableEarlyZRejection;
 
 	/**
 	 * @return render groups partition size / width
@@ -201,21 +200,6 @@ public:
 	}
 
 	/**
-	 * @return If early z rejection is enabled, in scene loading case its used for render groups and terrain
-	 */
-	inline static bool isEnableEarlyZRejection() {
-		return enableEarlyZRejection;
-	}
-
-	/**
-	 * Enable/disable early z rejection, in scene loading case its used for render groups and terrain
-	 * @param enableEarlyZRejection enable early z rejection
-	 */
-	inline static void setEnableEarlyZRejection(bool enableEarlyZRejection) {
-		SceneConnector::enableEarlyZRejection = enableEarlyZRejection;
-	}
-
-	/**
 	 * Set lights from scene
 	 * @param engine engine
 	 * @param scene scene
@@ -246,10 +230,9 @@ public:
 	 * @param id id
 	 * @param transform transform
 	 * @param instances instances which applies only for skinned objects
-	 * @param parentEntity parent entity
 	 * @return entity
 	 */
-	static Entity* createEditorDecalEntity(Prototype* prototype, const string& id, const Transform& transform, int instances = 1, Entity* parentEntity = nullptr);
+	static Entity* createEditorDecalEntity(Prototype* prototype, const string& id, const Transform& transform, int instances = 1);
 
 	/**
 	 * Create engine entity
@@ -257,30 +240,29 @@ public:
 	 * @param id id
 	 * @param transform transform
 	 * @param instances instances which applies only for skinned objects
-	 * @param parentEntity parent entity
+	 * @param noEntityHierarchy do not create a entity hierarchy
 	 * @return entity
 	 */
-	static Entity* createEntity(Prototype* prototype, const string& id, const Transform& transform, int instances = 1, Entity* parentEntity = nullptr);
+	static Entity* createEntity(Prototype* prototype, const string& id, const Transform& transform, int instances = 1, bool noEntityHierarchy = false);
 
 	/**
 	 * Create editor decal engine entity
 	 * @param sceneEntity scene object
 	 * @param translation translation
 	 * @param instances instances which applies only for skinned objects
-	 * @param parentEntity parent entity
 	 * @return entity
 	 */
-	static Entity* createEditorDecalEntity(SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), int instances = 1, Entity* parentEntity = nullptr);
+	static Entity* createEditorDecalEntity(SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), int instances = 1);
 
 	/**
 	 * Create engine entity
 	 * @param sceneEntity scene object
 	 * @param translation translation
 	 * @param instances instances which applies only for skinned objects
-	 * @param parentEntity parent entity
+	 * @param noEntityHierarchy do not create a entity hierarchy
 	 * @return entity
 	 */
-	static Entity* createEntity(SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), int instances = 1, Entity* parentEntity = nullptr);
+	static Entity* createEntity(SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), int instances = 1, bool noEntityHierarchy = false);
 
 	/**
 	 * Add scene to engine

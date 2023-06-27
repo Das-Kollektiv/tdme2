@@ -432,9 +432,9 @@ public:
 
 	/**
 	 * Open project
-	 * @param path path
+	 * @param pathName path name
 	 */
-	void openProject(const string& path);
+	void openProject(const string& pathName);
 
 	/**
 	 * On open project

@@ -87,4 +87,11 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderImplement
 	 * @param textureId texture id
 	 */
 	virtual void bindTexture(Renderer* renderer, int contextIdx, int32_t textureId) = 0;
+
+	/**
+	 * Load textures
+	 * @param pathName path name
+	 */
+	virtual void loadTextures(const string& pathName) = 0;
+
 };

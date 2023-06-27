@@ -3546,7 +3546,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodQuaternionInvert(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_VECTOR4, .name = "quaternion", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_QUATERNION, .name = "quaternion", .optional = false, .assignBack = false },
 					},
 					ScriptVariableType::TYPE_QUATERNION
 				),
@@ -3672,6 +3672,34 @@ void MiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodQuaternionMultiply(this));
+	}
+	{ 		//
+		class ScriptMethodQuaternionInvert: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodQuaternionInvert(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_QUATERNION, .name = "quaternion", .optional = false, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_VECTOR3
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "quaternion.computeEulerAngles";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Quaternion quaternion;
+				if (MiniScript::getQuaternionValue(argumentValues, 0, quaternion, false) == true) {
+					returnValue.setValue(quaternion.computeEulerAngles());
+				} else {
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodQuaternionInvert(this));
 	}
 	{
 		//
@@ -4590,7 +4618,7 @@ void MiniScript::registerMethods() {
 					transform.setRotationAngle(1, euler.getY());
 					transform.setRotationAngle(2, euler.getX());
 					transform.update();
-					returnValue = transform;
+					argumentValues[0].setValue(transform);
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
