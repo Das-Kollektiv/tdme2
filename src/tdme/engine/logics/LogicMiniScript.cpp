@@ -4250,11 +4250,11 @@ void LogicMiniScript::registerMethods() {
 	// sceneconnector
 	{
 		//
-		class ScriptMethodSceneConnectorAddPrototype: public ScriptMethod {
+		class ScriptMethodSceneConnectorSpawnPrototype: public ScriptMethod {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodSceneConnectorAddPrototype(LogicMiniScript* miniScript):
+			ScriptMethodSceneConnectorSpawnPrototype(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "pathName", .optional = false, .assignBack = false },
@@ -4268,7 +4268,7 @@ void LogicMiniScript::registerMethods() {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "sceneconnector.addPrototype";
+				return "sceneconnector.spawnPrototype";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string pathName;
@@ -4303,6 +4303,7 @@ void LogicMiniScript::registerMethods() {
 							};
 						}
 						miniScript->enginePrototypesToAdd.emplace_back(
+							PrototypeToAdd::TYPE_SPAWN,
 							prototype,
 							id,
 							string(),
@@ -4311,6 +4312,7 @@ void LogicMiniScript::registerMethods() {
 							hierarchyParentId
 						);
 						miniScript->physicsPrototypesToAdd.emplace_back(
+							PrototypeToAdd::TYPE_SPAWN,
 							prototype,
 							id,
 							string(),
@@ -4320,7 +4322,7 @@ void LogicMiniScript::registerMethods() {
 						);
 					} catch (Exception& exception) {
 						miniScript->prototypesToAddMutex.unlock();
-						Console::println("ScriptMethodSceneConnectorAddPrototype::executeMethod(): An error occurred: " + string(exception.what()));
+						Console::println("ScriptMethodSceneConnectorSpawnPrototype::executeMethod(): An error occurred: " + string(exception.what()));
 						miniScript->startErrorScript();
 					}
 					miniScript->prototypesToAddMutex.unlock();
@@ -4330,42 +4332,42 @@ void LogicMiniScript::registerMethods() {
 				}
 			}
 		};
-		registerMethod(new ScriptMethodSceneConnectorAddPrototype(this));
+		registerMethod(new ScriptMethodSceneConnectorSpawnPrototype(this));
 	}
 	{
 		//
-		class ScriptMethodSceneConnectorAddPrototype2: public ScriptMethod {
+		class ScriptMethodSceneConnectorAttachPrototype: public ScriptMethod {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodSceneConnectorAddPrototype2(LogicMiniScript* miniScript):
+			ScriptMethodSceneConnectorAttachPrototype(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "pathName", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "fileName", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "id", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "attachNodeId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "hierarchyId", .optional = true, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "hierarchyParentId", .optional = true, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "parentId", .optional = true, .assignBack = false },
 					},
 					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "sceneconnector.addPrototype2";
+				return "sceneconnector.attachPrototype";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string pathName;
 				string fileName;
 				string id;
 				string attachNodeId;
-				string hierarchyId;
+				Transform transform;
 				string hierarchyParentId;
 				if (miniScript->getStringValue(argumentValues, 0, pathName) == true &&
 					miniScript->getStringValue(argumentValues, 1, fileName) == true &&
 					miniScript->getStringValue(argumentValues, 2, id) == true &&
 					miniScript->getStringValue(argumentValues, 3, attachNodeId) == true &&
-					miniScript->getStringValue(argumentValues, 4, hierarchyId, true) == true &&
+					miniScript->getTransformValue(argumentValues, 4, transform) == true &&
 					miniScript->getStringValue(argumentValues, 5, hierarchyParentId, true) == true) {
 					miniScript->prototypesToAddMutex.lock();
 					try {
@@ -4387,24 +4389,26 @@ void LogicMiniScript::registerMethods() {
 							};
 						}
 						miniScript->enginePrototypesToAdd.emplace_back(
+							PrototypeToAdd::TYPE_ATTACH,
 							prototype,
 							id,
 							attachNodeId,
-							Transform(),
-							hierarchyId,
+							transform,
+							miniScript->logic->getId(),
 							hierarchyParentId
 						);
 						miniScript->physicsPrototypesToAdd.emplace_back(
+							PrototypeToAdd::TYPE_ATTACH,
 							prototype,
 							id,
 							attachNodeId,
-							Transform(),
-							hierarchyId,
+							transform,
+							miniScript->logic->getId(),
 							hierarchyParentId
 						);
 					} catch (Exception& exception) {
 						miniScript->prototypesToAddMutex.unlock();
-						Console::println("ScriptMethodSceneConnectorAddPrototype2::executeMethod(): An error occurred: " + string(exception.what()));
+						Console::println("ScriptMethodSceneConnectorAttachPrototype::executeMethod(): An error occurred: " + string(exception.what()));
 						miniScript->startErrorScript();
 					}
 					miniScript->prototypesToAddMutex.unlock();
@@ -4414,7 +4418,7 @@ void LogicMiniScript::registerMethods() {
 				}
 			}
 		};
-		registerMethod(new ScriptMethodSceneConnectorAddPrototype2(this));
+		registerMethod(new ScriptMethodSceneConnectorAttachPrototype(this));
 	}
 }
 

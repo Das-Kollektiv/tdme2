@@ -1572,22 +1572,22 @@
 		<overload return-value="Float" descr="Get Scene Width">
 		</overload>
 	</keyword>
-	<keyword name="sceneconnector.addPrototype" func="yes">
-		<overload return-value="Void" descr="Add Prototype using SceneConnector">
-			<parameter name="String $pathName" />
-			<parameter name="String $fileName" />
-			<parameter name="String $id" />
-			<parameter name="Transform $transform" />
-			<parameter name="[String $hierarchyId]" />
-			<parameter name="[String $hierarchyParentId]" />
-		</overload>
-	</keyword>
-	<keyword name="sceneconnector.addPrototype2" func="yes">
-		<overload return-value="Void" descr="Add Prototype using SceneConnector">
+	<keyword name="sceneconnector.attachPrototype" func="yes">
+		<overload return-value="Void" descr="Attach Prototype to the Logic Hierarchy">
 			<parameter name="String $pathName" />
 			<parameter name="String $fileName" />
 			<parameter name="String $id" />
 			<parameter name="String $attachNodeId" />
+			<parameter name="Transform $transform" />
+			<parameter name="[String $parentId]" />
+		</overload>
+	</keyword>
+	<keyword name="sceneconnector.spawnPrototype" func="yes">
+		<overload return-value="Void" descr="Spawn Prototype in Scene">
+			<parameter name="String $pathName" />
+			<parameter name="String $fileName" />
+			<parameter name="String $id" />
+			<parameter name="Transform $transform" />
 			<parameter name="[String $hierarchyId]" />
 			<parameter name="[String $hierarchyParentId]" />
 		</overload>
