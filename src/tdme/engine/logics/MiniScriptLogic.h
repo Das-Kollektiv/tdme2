@@ -117,8 +117,7 @@ public:
 						prototypeToAdd.prototype,
 						prototypeToAdd.id,
 						transform,
-						1,
-						parentEntity
+						1
 					);
 				if (parentEntity == nullptr) {
 					context->getEngine()->addEntity(entity);

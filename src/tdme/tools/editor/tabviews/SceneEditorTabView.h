@@ -441,20 +441,18 @@ public:
 	 * @param id id
 	 * @param transform transform
 	 * @param instances instances which applies only for skinned objects
-	 * @param parentEntity parent entity
 	 * @return entity
 	 */
-	static Entity* createEntity(Prototype* prototype, const string& id, const Transform& transform, int instances = 1, Entity* parentEntity = nullptr);
+	static Entity* createEntity(Prototype* prototype, const string& id, const Transform& transform, int instances = 1);
 
 	/**
 	 * Create engine entity
 	 * @param sceneEntity scene object
 	 * @param translation translation
 	 * @param instances instances which applies only for skinned objects
-	 * @param parentEntity parent entity
 	 * @return entity
 	 */
-	static Entity* createEntity(SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), int instances = 1, Entity* parentEntity = nullptr);
+	static Entity* createEntity(SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), int instances = 1);
 
 	/**
 	 * Run scene

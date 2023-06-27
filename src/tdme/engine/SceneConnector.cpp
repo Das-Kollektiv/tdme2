@@ -317,7 +317,7 @@ Entity* SceneConnector::createEmpty(const string& id, const Transform& transform
 	return entity;
 }
 
-Entity* SceneConnector::createEditorDecalEntity(Prototype* prototype, const string& id, const Transform& transform, int instances, Entity* parentEntity) {
+Entity* SceneConnector::createEditorDecalEntity(Prototype* prototype, const string& id, const Transform& transform, int instances) {
 	// decals only here :D
 	if (prototype->getType() != Prototype_Type::DECAL) return nullptr;
 
@@ -353,14 +353,13 @@ Entity* SceneConnector::createEditorDecalEntity(Prototype* prototype, const stri
 		delete entityHierarchy;
 	} else {
 		entity = entityHierarchy;
-		entity->setParentEntity(parentEntity);
 	}
 
 	// done
 	return entity;
 }
 
-Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, const Transform& transform, int instances, Entity* parentEntity) {
+Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, const Transform& transform, int instances) {
 	Entity* entity = nullptr;
 
 	// objects
@@ -376,7 +375,6 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 				imposterLOD->getModels(),
 				imposterLOD->getMinDistance()
 			);
-			entity->setParentEntity(parentEntity);
 			auto imposterLodObject = dynamic_cast<LODObjectImposter*>(entity);
 			imposterLodObject->setEffectColorAddLOD2(imposterLOD->getColorAdd());
 			imposterLodObject->setEffectColorMulLOD2(imposterLOD->getColorMul());
@@ -400,7 +398,6 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 				lodLevel3 != nullptr?lodLevel3->getMinDistance():0.0f,
 				lodLevel3 != nullptr?lodLevel3->getModel():nullptr
 			);
-			entity->setParentEntity(parentEntity);
 			auto lodObject = dynamic_cast<LODObject*>(entity);
 			lodObject->setEffectColorAddLOD2(lodLevel2->getColorAdd());
 			lodObject->setEffectColorMulLOD2(lodLevel2->getColorMul());
@@ -423,7 +420,6 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 				prototype->getModel(),
 				instances
 			);
-			entity->setParentEntity(parentEntity);
 			auto object = dynamic_cast<Object*>(entity);
 			object->setAnimationComputationLODEnabled(true);
 			if (prototype->getShader() == "water" || prototype->getShader() == "pbr-water") object->setRenderPass(Entity::RENDERPASS_WATER);
@@ -457,7 +453,6 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 		}
 		if (particleSystems.size() == 1) {
 			entity = dynamic_cast<Entity*>(particleSystems[0]);
-			entity->setParentEntity(parentEntity);
 		} else
 		if (particleSystems.size() > 1) {
 			entity = new ParticleSystemGroup(
@@ -467,7 +462,6 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 				true,
 				particleSystems
 			);
-			entity->setParentEntity(parentEntity);
 		}
 	} else
 	// decal
@@ -478,7 +472,6 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 				dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume()),
 				prototype->getDecal()->getTexture()
 			);
-		entity->setParentEntity(parentEntity);
 	} else
 	// trigger/environment mapping
 	if (prototype->getType() == Prototype_Type::TRIGGER ||
@@ -508,7 +501,6 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			delete entityHierarchy;
 		} else {
 			entity = entityHierarchy;
-			entity->setParentEntity(parentEntity);
 		}
 	}
 
@@ -524,24 +516,24 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 	return entity;
 }
 
-Entity* SceneConnector::createEditorDecalEntity(SceneEntity* sceneEntity, const Vector3& translation, int instances, Entity* parentEntity) {
+Entity* SceneConnector::createEditorDecalEntity(SceneEntity* sceneEntity, const Vector3& translation, int instances) {
 	Transform transform;
 	transform.setTransform(sceneEntity->getTransform());
 	if (translation.equals(Vector3()) == false) {
 		transform.setTranslation(transform.getTranslation().clone().add(translation));
 		transform.update();
 	}
-	return createEditorDecalEntity(sceneEntity->getPrototype(), sceneEntity->getId(), transform, instances, parentEntity);
+	return createEditorDecalEntity(sceneEntity->getPrototype(), sceneEntity->getId(), transform, instances);
 }
 
-Entity* SceneConnector::createEntity(SceneEntity* sceneEntity, const Vector3& translation, int instances, Entity* parentEntity) {
+Entity* SceneConnector::createEntity(SceneEntity* sceneEntity, const Vector3& translation, int instances) {
 	Transform transform;
 	transform.setTransform(sceneEntity->getTransform());
 	if (translation.equals(Vector3()) == false) {
 		transform.setTranslation(transform.getTranslation().clone().add(translation));
 		transform.update();
 	}
-	return createEntity(sceneEntity->getPrototype(), sceneEntity->getId(), transform, instances, parentEntity);
+	return createEntity(sceneEntity->getPrototype(), sceneEntity->getId(), transform, instances);
 }
 
 void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool useEditorDecals, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
