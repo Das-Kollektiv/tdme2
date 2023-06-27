@@ -2744,3 +2744,112 @@ void Engine::dumpShaders() {
 		}
 	}
 }
+
+void Engine::dumpEntityHierarchy(EntityHierarchy* entityHierarchy, int indent, const string& parentNodeId) {
+	for (auto subEntity: entityHierarchy->query(parentNodeId)) {
+		for (auto i = 0; i < indent; i++) Console::print("\t");
+		string entityType;
+		switch (subEntity->getEntityType()) {
+			case Entity::ENTITYTYPE_DECAL:
+				entityType = "Decal";
+				break;
+			case Entity::ENTITYTYPE_ENTITYHIERARCHY:
+				entityType = "Entity Hierarchy";
+				break;
+			case Entity::ENTITYTYPE_ENVIRONMENTMAPPING:
+				entityType = "Environment Mapping";
+				break;
+			case Entity::ENTITYTYPE_IMPOSTEROBJECT:
+				entityType = "Imposter Object";
+				break;
+			case Entity::ENTITYTYPE_LINES:
+				entityType = "Lines";
+				break;
+			case Entity::ENTITYTYPE_LODOBJECT:
+				entityType = "LOD Object";
+				break;
+			case Entity::ENTITYTYPE_LODOBJECTIMPOSTER:
+				entityType = "LOD Object Imposter";
+				break;
+			case Entity::ENTITYTYPE_OBJECT:
+				entityType = "Object";
+				break;
+			case Entity::ENTITYTYPE_OBJECTRENDERGROUP:
+				entityType = "Object Render Group";
+				break;
+			case Entity::ENTITYTYPE_FOGPARTICLESYSTEM:
+				entityType = "Fog Particle System";
+				break;
+			case Entity::ENTITYTYPE_OBJECTPARTICLESYSTEM:
+				entityType = "Object Particle System";
+				break;
+			case Entity::ENTITYTYPE_PARTICLESYSTEMGROUP:
+				entityType = "Particle System Group";
+				break;
+			case Entity::ENTITYTYPE_POINTSPARTICLESYSTEM:
+				entityType = "Points Particle System";
+				break;
+		}
+		Console::println("\t" + subEntity->getId() + " (" + entityType + ")");
+		if (subEntity->getEntityType() == Entity::ENTITYTYPE_ENTITYHIERARCHY) {
+			dumpEntityHierarchy(dynamic_cast<EntityHierarchy*>(subEntity), indent + 1, string());
+		}
+		//
+		dumpEntityHierarchy(entityHierarchy, indent + 1, subEntity->getId());
+	}
+}
+
+void Engine::dumpEntities() {
+	Console::println("Engine::dumpEntities()");
+	Console::println();
+	Console::println("Engine Entities:");
+	for (auto& entitiesByIdIt: entitiesById) {
+		auto entity = entitiesByIdIt.second;
+		string entityType;
+		switch (entity->getEntityType()) {
+			case Entity::ENTITYTYPE_DECAL:
+				entityType = "Decal";
+				break;
+			case Entity::ENTITYTYPE_ENTITYHIERARCHY:
+				entityType = "Entity Hierarchy";
+				break;
+			case Entity::ENTITYTYPE_ENVIRONMENTMAPPING:
+				entityType = "Environment Mapping";
+				break;
+			case Entity::ENTITYTYPE_IMPOSTEROBJECT:
+				entityType = "Imposter Object";
+				break;
+			case Entity::ENTITYTYPE_LINES:
+				entityType = "Lines";
+				break;
+			case Entity::ENTITYTYPE_LODOBJECT:
+				entityType = "LOD Object";
+				break;
+			case Entity::ENTITYTYPE_LODOBJECTIMPOSTER:
+				entityType = "LOD Object Imposter";
+				break;
+			case Entity::ENTITYTYPE_OBJECT:
+				entityType = "Object";
+				break;
+			case Entity::ENTITYTYPE_OBJECTRENDERGROUP:
+				entityType = "Object Render Group";
+				break;
+			case Entity::ENTITYTYPE_FOGPARTICLESYSTEM:
+				entityType = "Fog Particle System";
+				break;
+			case Entity::ENTITYTYPE_OBJECTPARTICLESYSTEM:
+				entityType = "Object Particle System";
+				break;
+			case Entity::ENTITYTYPE_PARTICLESYSTEMGROUP:
+				entityType = "Particle System Group";
+				break;
+			case Entity::ENTITYTYPE_POINTSPARTICLESYSTEM:
+				entityType = "Points Particle System";
+				break;
+		}
+		Console::println("\t" + entity->getId() + " (" + entityType + ")");
+		if (entity->getEntityType() == Entity::ENTITYTYPE_ENTITYHIERARCHY) {
+			dumpEntityHierarchy(dynamic_cast<EntityHierarchy*>(entity), 2, string());
+		}
+	}
+}

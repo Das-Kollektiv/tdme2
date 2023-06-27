@@ -115,9 +115,10 @@ public:
 				auto entity =
 					SceneConnector::createEntity(
 						prototypeToAdd.prototype,
-						prototypeToAdd.id,
+						prototypeToAdd.attachNodeId.empty() == false?prototypeToAdd.attachNodeId + "." + prototypeToAdd.id:prototypeToAdd.id,
 						transform,
-						1
+						1,
+						parentEntity != nullptr
 					);
 				if (parentEntity == nullptr) {
 					context->getEngine()->addEntity(entity);
@@ -174,7 +175,7 @@ public:
 						SceneConnector::createSubBody(
 							context->getWorld(),
 							prototypeToAdd.prototype,
-							prototypeToAdd.id,
+							prototypeToAdd.attachNodeId.empty() == false?prototypeToAdd.attachNodeId + "." + prototypeToAdd.id:prototypeToAdd.id,
 							transform,
 							prototypeToAdd.hierarchyId,
 							prototypeToAdd.hierarchyParentId

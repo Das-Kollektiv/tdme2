@@ -1246,6 +1246,11 @@ public:
 	void dumpShaders();
 
 	/**
+	 * Dump entities
+	 */
+	void dumpEntities();
+
+	/**
 	 * Add action to action queue to be executed before next engine update
 	 * @param action action
 	 */
@@ -1254,6 +1259,15 @@ public:
 	}
 
 private:
+
+	/**
+	 * Dump entity hierarchy
+	 * @param entityHierarchy entity hierarchy
+	 * @param indent indent
+	 * @param parentNodeId parent node id
+	 */
+	void dumpEntityHierarchy(EntityHierarchy* entityHierarchy, int indent, const string& parentNodeId);
+
 	/**
 	 * Compute world coordinate from mouse position and z value
 	 * @param mouseX mouse x

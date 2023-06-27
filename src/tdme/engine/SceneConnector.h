@@ -240,9 +240,10 @@ public:
 	 * @param id id
 	 * @param transform transform
 	 * @param instances instances which applies only for skinned objects
+	 * @param noEntityHierarchy do not create a entity hierarchy
 	 * @return entity
 	 */
-	static Entity* createEntity(Prototype* prototype, const string& id, const Transform& transform, int instances = 1);
+	static Entity* createEntity(Prototype* prototype, const string& id, const Transform& transform, int instances = 1, bool noEntityHierarchy = false);
 
 	/**
 	 * Create editor decal engine entity
@@ -258,9 +259,10 @@ public:
 	 * @param sceneEntity scene object
 	 * @param translation translation
 	 * @param instances instances which applies only for skinned objects
+	 * @param noEntityHierarchy do not create a entity hierarchy
 	 * @return entity
 	 */
-	static Entity* createEntity(SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), int instances = 1);
+	static Entity* createEntity(SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), int instances = 1, bool noEntityHierarchy = false);
 
 	/**
 	 * Add scene to engine

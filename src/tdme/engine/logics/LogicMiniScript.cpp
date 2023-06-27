@@ -1580,6 +1580,42 @@ void LogicMiniScript::registerMethods() {
 	}
 	{
 		//
+		class ScriptMethodEngineDumpEntities: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEngineDumpEntities(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_NULL),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.dumpEntities";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				miniScript->context->getEngine()->dumpEntities();
+			}
+		};
+		registerMethod(new ScriptMethodEngineDumpEntities(this));
+	}
+	{
+		//
+		class ScriptMethodEngineDumpShaders: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEngineDumpShaders(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_NULL),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.dumpShaders";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				miniScript->context->getEngine()->dumpShaders();
+			}
+		};
+		registerMethod(new ScriptMethodEngineDumpShaders(this));
+	}
+	{
+		//
 		class ScriptMethodEngineGetEntityIdByMousePosition: public ScriptMethod {
 		private:
 			LogicMiniScript* miniScript { nullptr };
@@ -4159,21 +4195,57 @@ void LogicMiniScript::registerMethods() {
 	// scene
 	{
 		//
-		class ScriptMethodSceneGetDimensions: public ScriptMethod {
+		class ScriptMethodSceneGetWidth: public ScriptMethod {
 		private:
 			LogicMiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodSceneGetDimensions(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_VECTOR3),
+			ScriptMethodSceneGetWidth(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "scene.getDimensions";
+				return "scene.getWidth";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue = miniScript->context->getScene()->getBoundingBox()->getDimensions();
+				returnValue = miniScript->context->getScene()->getBoundingBox()->getDimensions().getX();
 			}
 		};
-		registerMethod(new ScriptMethodSceneGetDimensions(this));
+		registerMethod(new ScriptMethodSceneGetWidth(this));
+	}
+	{
+		//
+		class ScriptMethodSceneGetHeight: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodSceneGetHeight(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "scene.getHeight";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = miniScript->context->getScene()->getBoundingBox()->getDimensions().getY();
+			}
+		};
+		registerMethod(new ScriptMethodSceneGetHeight(this));
+	}
+	{
+		//
+		class ScriptMethodSceneGetDepth: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodSceneGetDepth(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "scene.getDepth";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = miniScript->context->getScene()->getBoundingBox()->getDimensions().getZ();
+			}
+		};
+		registerMethod(new ScriptMethodSceneGetDepth(this));
 	}
 	// sceneconnector
 	{

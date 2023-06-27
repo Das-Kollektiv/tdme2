@@ -359,7 +359,7 @@ Entity* SceneConnector::createEditorDecalEntity(Prototype* prototype, const stri
 	return entity;
 }
 
-Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, const Transform& transform, int instances) {
+Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, const Transform& transform, int instances, bool noEntityHierarchy) {
 	Entity* entity = nullptr;
 
 	// objects
@@ -431,12 +431,6 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 				object->setShaderParameter(parameterName, parameterValue);
 			}
 		}
-		if (prototype->isEntityHierarchy() == true) {
-			auto entityHierarchy = new EntityHierarchy(id);
-			entityHierarchy->addEntity(entity);
-			// pass on entity hierarchy as entity
-			entity = entityHierarchy;
-		}
 	} else
 	// particle system
 	if (prototype->getType() == Prototype_Type::PARTICLESYSTEM) {
@@ -505,6 +499,14 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 	}
 
 	//
+	if (noEntityHierarchy == false && prototype->isEntityHierarchy() == true && dynamic_cast<EntityHierarchy*>(entity) == nullptr) {
+		auto entityHierarchy = new EntityHierarchy(id);
+		entityHierarchy->addEntity(entity);
+		// pass on entity hierarchy as entity
+		entity = entityHierarchy;
+	}
+
+	//
 	if (entity != nullptr) {
 		if (prototype->isTerrainMesh() == true) entity->setRenderPass(Entity::RENDERPASS_TERRAIN);
 		entity->setContributesShadows(prototype->isContributesShadows());
@@ -526,14 +528,14 @@ Entity* SceneConnector::createEditorDecalEntity(SceneEntity* sceneEntity, const 
 	return createEditorDecalEntity(sceneEntity->getPrototype(), sceneEntity->getId(), transform, instances);
 }
 
-Entity* SceneConnector::createEntity(SceneEntity* sceneEntity, const Vector3& translation, int instances) {
+Entity* SceneConnector::createEntity(SceneEntity* sceneEntity, const Vector3& translation, int instances, bool noEntityHierarchy) {
 	Transform transform;
 	transform.setTransform(sceneEntity->getTransform());
 	if (translation.equals(Vector3()) == false) {
 		transform.setTranslation(transform.getTranslation().clone().add(translation));
 		transform.update();
 	}
-	return createEntity(sceneEntity->getPrototype(), sceneEntity->getId(), transform, instances);
+	return createEntity(sceneEntity->getPrototype(), sceneEntity->getId(), transform, instances, noEntityHierarchy);
 }
 
 void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool useEditorDecals, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)

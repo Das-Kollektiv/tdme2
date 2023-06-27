@@ -1088,6 +1088,14 @@
 			<parameter name="Vector3 $lookAt" />
 		</overload>
 	</keyword>
+	<keyword name="engine.dumpEntities" func="yes">
+		<overload return-value="Void" descr="Dump Engine Entities">
+		</overload>
+	</keyword>
+	<keyword name="engine.dumpShaders" func="yes">
+		<overload return-value="Void" descr="Dump Engine Shaders">
+		</overload>
+	</keyword>
 	<keyword name="engine.entity.getAnimation" func="yes">
 		<overload return-value="String" descr="Get Engine Entity Animation">
 			<parameter name="String $entityId" />
@@ -1552,8 +1560,16 @@
 			<parameter name="Array =$path" />
 		</overload>
 	</keyword>
-	<keyword name="scene.getDimensions" func="yes">
-		<overload return-value="Vector3" descr="Get Scene Dimensions">
+	<keyword name="scene.getDepth" func="yes">
+		<overload return-value="Float" descr="Get Scene Depth">
+		</overload>
+	</keyword>
+	<keyword name="scene.getHeight" func="yes">
+		<overload return-value="Float" descr="Get Scene Height">
+		</overload>
+	</keyword>
+	<keyword name="scene.getWidth" func="yes">
+		<overload return-value="Float" descr="Get Scene Width">
 		</overload>
 	</keyword>
 	<keyword name="sceneconnector.addPrototype" func="yes">
