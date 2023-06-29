@@ -349,7 +349,7 @@ bool PrototypeSoundsSubController::onChange(GUIElementNode* node, Prototype* pro
 			auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
 				auto soundId = StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size());
-				updateDetails(prototype, model, soundId);
+				updateDetails(prototype, model, outlinerNode);
 				playableSoundView->playSound(soundId);
 				return true;
 			} else {

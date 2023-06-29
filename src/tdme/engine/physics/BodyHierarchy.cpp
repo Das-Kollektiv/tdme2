@@ -24,6 +24,7 @@ BodyHierarchy::BodyHierarchy(World* world, const string& id, BodyType type, uint
 }
 
 BodyHierarchy::~BodyHierarchy() {
+	// TODO: proper shutdown
 }
 
 

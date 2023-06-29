@@ -1239,7 +1239,8 @@ void ModelEditorTabController::updateDetails(const string& outlinerNode) {
 		basePropertiesSubController->updateDetails(view->getPrototype(), outlinerNode, view->getPrototype());
 		prototypeDisplaySubController->updateDetails(view->getPrototype(), outlinerNode);
 		prototypePhysicsSubController->updateDetails(view->getPrototype(), outlinerNode);
-		prototypeSoundsSubController->updateDetails(view->getPrototype(), model, outlinerNode);
+		// TODO: model is here always NULLPTR, you cant have selected a LOD and at the same time sounds currently
+		prototypeSoundsSubController->updateDetails(view->getPrototype(), view->getPrototype()->getModel(), outlinerNode);
 		prototypeScriptSubController->updateDetails(view->getPrototype(), outlinerNode);
 	}
 }
