@@ -45,19 +45,15 @@ static void generateMiniScriptDocumentation(const string& heading, int mainHeadi
 		string description;
 		description+= "| ";
 		description+= descriptions.get(descriptionPrefix + scriptMethod->getMethodName(), "Not documented");
-		while (description.size() < 179) description+= " ";
-		description+= "|";
-		if (scriptMethod->getContextFunctions().empty() == true) {
-			string contextFunctions;
-			description+= " All ";
-		} else {
+		if (scriptMethod->getContextFunctions().empty() == false) {
 			string contextFunctions;
 			for (auto& contextFunction: scriptMethod->getContextFunctions()) {
 				if (contextFunctions.empty() == false) contextFunctions+= ", ";
-				contextFunctions+= contextFunction;
+				contextFunctions+= contextFunction + "()";
 			}
-			description+= " " + contextFunctions + " ";
+			description+= ", available in " + contextFunctions;
 		}
+		while (description.size() < 99) description+= " ";
 		description+= "|";
 		result+= description + "\n";
 		string method;
@@ -68,9 +64,7 @@ static void generateMiniScriptDocumentation(const string& heading, int mainHeadi
 		method+= "): ";
 		method+= MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType());
 		method+= "</sub>";
-		while (method.size() < 179) method+= " ";
-		method+= "|";
-		method+= " ";
+		while (method.size() < 99) method+= " ";
 		method+= "|";
 		method+= "\n";
 		result+= method;
@@ -118,8 +112,8 @@ static void generateMiniScriptDocumentation(const string& heading, int mainHeadi
 		Console::println();
 		Console::println("## " + to_string(mainHeadingIdx) + "." + to_string(categoryIdx++) + " " + categoryName);
 		Console::println();
-		Console::println("| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Available in Functions |");
-		Console::println("|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----|");
+		Console::println("| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |");
+		Console::println("|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|");
 		auto& methodsMarkup = methodByCategoryIt.second;
 		for (auto& methodMarkup: methodsMarkup) Console::print(methodMarkup);
 	}
