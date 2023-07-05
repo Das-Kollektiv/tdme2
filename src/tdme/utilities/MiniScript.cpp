@@ -102,6 +102,17 @@ string MiniScript::METHOD_SCRIPTCALL = "script.call";
 string MiniScript::METHOD_ENABLENAMEDCONDITION = "script.enableNamedCondition";
 string MiniScript::METHOD_DISABLENAMEDCONDITION = "script.disableNamedCondition";
 
+vector<string> MiniScript::ScriptMethod::CONTEXTFUNCTIONS_ALL = {};
+vector<string> MiniScript::ScriptMethod::CONTEXTFUNCTIONS_ENGINE = { "initializeEngine", "updateEngine" };
+vector<string> MiniScript::ScriptMethod::CONTEXTFUNCTIONS_LOGIC = { "initializeLogic", "updateLogic", "onLogicAdded", "onLogicsProcessed" };
+vector<string> MiniScript::ScriptMethod::CONTEXTFUNCTIONS_ENGINELOGIC = {
+	// engine
+	"initializeEngine", "updateEngine",
+	// logic
+	"initializeLogic", "updateLogic", "onLogicAdded", "onLogicsProcessed"
+};
+vector<string> MiniScript::ScriptMethod::CONTEXTFUNCTION_GUI = {};
+
 
 MiniScript::MiniScript() {
 	setNative(false);

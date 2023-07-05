@@ -84,6 +84,9 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_LEFT);
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_LEFT(this));
 	}
@@ -101,6 +104,9 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_RIGHT);
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_RIGHT(this));
@@ -120,6 +126,9 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_UP);
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_UP(this));
 	}
@@ -137,6 +146,9 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_DOWN);
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_DOWN(this));
@@ -156,6 +168,9 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_POS1);
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_POS1(this));
 	}
@@ -173,6 +188,9 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_END);
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_END(this));
@@ -192,6 +210,9 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_PAGE_UP);
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_PAGEUP(this));
 	}
@@ -209,6 +230,9 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_PAGE_DOWN);
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_PAGEDOWN(this));
@@ -228,6 +252,9 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_BACKSPACE);
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_BACKSPACE(this));
 	}
@@ -245,6 +272,9 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_DELETE);
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_DELETE(this));
@@ -264,6 +294,9 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_SPACE);
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_SPACE(this));
 	}
@@ -281,6 +314,9 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_RETURN);
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_RETURN(this));
@@ -300,6 +336,9 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_ESCAPE);
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_ESCAPE(this));
 	}
@@ -317,6 +356,9 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F1);
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F1(this));
@@ -336,6 +378,9 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F2);
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F2(this));
 	}
@@ -353,6 +398,9 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F3);
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F3(this));
@@ -372,6 +420,9 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F4);
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F4(this));
 	}
@@ -389,6 +440,9 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F5);
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F5(this));
@@ -408,6 +462,9 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F6);
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F6(this));
 	}
@@ -425,6 +482,9 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F7);
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F7(this));
@@ -444,6 +504,9 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F8);
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F8(this));
 	}
@@ -461,6 +524,9 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F9);
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F9(this));
@@ -480,6 +546,9 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F10);
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F10(this));
 	}
@@ -498,6 +567,9 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F11);
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F11(this));
 	}
@@ -515,6 +587,9 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F12);
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardKEYCODE_F12(this));
@@ -544,6 +619,9 @@ void GUIMiniScript::registerMethods() {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardIsKeyDown(this));
@@ -576,6 +654,9 @@ void GUIMiniScript::registerMethods() {
 					miniScript->startErrorScript();
 				}
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardIsCharDown(this));
 	}
@@ -593,6 +674,9 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = miniScript->keyboardTypedChars;
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardGetTypedString(this));
@@ -612,6 +696,9 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = miniScript->keyboardControlDown == true;
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardIsControlDown(this));
 	}
@@ -629,6 +716,9 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = miniScript->keyboardControlDown == true;
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardIsMetaDown(this));
@@ -648,6 +738,9 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = miniScript->keyboardAltDown == true;
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardIsAltDown(this));
 	}
@@ -665,6 +758,9 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = miniScript->keyboardShiftDown == true;
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardIsShiftDown(this));
@@ -685,6 +781,9 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_LEFT - 1);
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodInputMouseBUTTON_LEFT(this));
 	}
@@ -703,6 +802,9 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_MIDDLE - 1);
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodInputMouseBUTTON_MIDDLE(this));
 	}
@@ -720,6 +822,9 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_RIGHT - 1);
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodInputMouseBUTTON_RIGHT(this));
@@ -749,6 +854,9 @@ void GUIMiniScript::registerMethods() {
 					miniScript->startErrorScript();
 				}
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodInputMouseIsButtonDown(this));
 	}
@@ -776,6 +884,9 @@ void GUIMiniScript::registerMethods() {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				}
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodInputMouseIsButtonUp(this));
@@ -805,6 +916,9 @@ void GUIMiniScript::registerMethods() {
 					miniScript->startErrorScript();
 				}
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodInputMouseIsDragging(this));
 	}
@@ -822,6 +936,9 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = miniScript->mouseMoved;
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodInputMouseHasMoved(this));
@@ -841,6 +958,9 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(miniScript->mouseX);
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodInputMouseGetX(this));
 	}
@@ -858,6 +978,9 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(miniScript->mouseXUnscaled);
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodInputMouseGetXUnscaled(this));
@@ -877,6 +1000,9 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(miniScript->mouseY);
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodInputMouseGetY(this));
 	}
@@ -894,6 +1020,9 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = static_cast<int64_t>(miniScript->mouseYUnscaled);
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodInputMouseGetYUnscaled(this));
@@ -913,6 +1042,9 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = miniScript->mouseWheelX;
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodInputMouseGetWheelX(this));
 	}
@@ -931,6 +1063,9 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = miniScript->mouseWheelY;
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodInputMouseGetWheelY(this));
 	}
@@ -948,6 +1083,9 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue = miniScript->mouseWheelZ;
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodInputMouseGetWheelZ(this));
@@ -988,6 +1126,9 @@ void GUIMiniScript::registerMethods() {
 					}
 				}
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodGUIScreenSetEnabled(this));
 	}
@@ -1021,6 +1162,9 @@ void GUIMiniScript::registerMethods() {
 						returnValue.setValue(false);
 					}
 				}
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodGUIScreenIsEnabled(this));
@@ -1085,6 +1229,9 @@ void GUIMiniScript::registerMethods() {
 					}
 				}
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodGUIScreenGoto(this));
 	}
@@ -1145,6 +1292,9 @@ void GUIMiniScript::registerMethods() {
 					}
 				}
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodGUIScreenPush(this));
 	}
@@ -1166,6 +1316,9 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				miniScript->popped = true;
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodGUIScreenPop(this));
@@ -1229,6 +1382,9 @@ void GUIMiniScript::registerMethods() {
 			bool isVariadic() const override {
 				return true;
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodGUIScreenCall(this));
 	}
@@ -1246,6 +1402,9 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue.setValue(miniScript->screenNode->getId());
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodScreenNodeGetId(this));
@@ -1265,6 +1424,9 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue.setValue(static_cast<int64_t>(GUIActionListenerType::PERFORMING));
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodGUIEventACTIONTYPE_PERFORMING(this));
 	}
@@ -1282,6 +1444,9 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue.setValue(static_cast<int64_t>(GUIActionListenerType::PERFORMED));
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodGUIEventACTIONTYPE_PERFORMED(this));
@@ -1318,6 +1483,9 @@ void GUIMiniScript::registerMethods() {
 						miniScript->startErrorScript();
 					}
 				}
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodGUINodeControllerGetValue(this));
@@ -1358,6 +1526,9 @@ void GUIMiniScript::registerMethods() {
 					}
 				}
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodGUINodeControllerSetValue(this));
 	}
@@ -1396,6 +1567,9 @@ void GUIMiniScript::registerMethods() {
 						miniScript->startErrorScript();
 					}
 				}
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodGUITextNodeGetText(this));
@@ -1439,6 +1613,9 @@ void GUIMiniScript::registerMethods() {
 					}
 				}
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodGUITextNodeSetText(this));
 	}
@@ -1476,6 +1653,9 @@ void GUIMiniScript::registerMethods() {
 						miniScript->startErrorScript();
 					}
 				}
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodGUIElementNodeConditionsHas(this));
@@ -1516,6 +1696,9 @@ void GUIMiniScript::registerMethods() {
 					}
 				}
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodGUIElementNodeConditionsGet(this));
 	}
@@ -1554,6 +1737,9 @@ void GUIMiniScript::registerMethods() {
 					}
 				}
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodGUIElementNodeConditionsSet(this));
 	}
@@ -1591,6 +1777,9 @@ void GUIMiniScript::registerMethods() {
 						miniScript->startErrorScript();
 					}
 				}
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodGUIElementNodeConditionsAdd(this));
@@ -1638,6 +1827,9 @@ void GUIMiniScript::registerMethods() {
 					}
 				}
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodGUIElementNodeConditionsSetAll(this));
 	}
@@ -1676,6 +1868,9 @@ void GUIMiniScript::registerMethods() {
 					}
 				}
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodGUIElementNodeConditionsRemove(this));
 	}
@@ -1711,6 +1906,9 @@ void GUIMiniScript::registerMethods() {
 					}
 				}
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodGUIElementNodeConditionsRemoveAll(this));
 	}
@@ -1745,6 +1943,9 @@ void GUIMiniScript::registerMethods() {
 						miniScript->startErrorScript();
 					}
 				}
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodGUIImageNodeGetSource(this));
@@ -1784,6 +1985,9 @@ void GUIMiniScript::registerMethods() {
 					}
 				}
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodGUIImageNodeSetSource(this));
 	}
@@ -1818,6 +2022,9 @@ void GUIMiniScript::registerMethods() {
 						miniScript->startErrorScript();
 					}
 				}
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodGUIVideoNodeGetSource(this));
@@ -1857,6 +2064,9 @@ void GUIMiniScript::registerMethods() {
 					}
 				}
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodGUIVideoNodeSetSource(this));
 	}
@@ -1891,6 +2101,9 @@ void GUIMiniScript::registerMethods() {
 						miniScript->startErrorScript();
 					}
 				}
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodGUIParentNodeClearSubNodes(this));
@@ -1933,6 +2146,9 @@ void GUIMiniScript::registerMethods() {
 					}
 				}
 			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
+			}
 		};
 		registerMethod(new ScriptMethodGUIParentNodeAddSubNodes(this));
 	}
@@ -1973,6 +2189,9 @@ void GUIMiniScript::registerMethods() {
 						miniScript->startErrorScript();
 					}
 				}
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodGUIParentNodeReplaceSubNodes(this));
@@ -2021,6 +2240,9 @@ void GUIMiniScript::registerMethods() {
 			}
 			bool isVariadic() const override {
 				return true;
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodLogicSignalSend(this));
@@ -2072,6 +2294,9 @@ void GUIMiniScript::registerMethods() {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no application logic context available");
 					miniScript->startErrorScript();
 				}
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodLogicHas(this));
@@ -2139,6 +2364,9 @@ void GUIMiniScript::registerMethods() {
 			}
 			bool isVariadic() const override {
 				return true;
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTION_GUI;
 			}
 		};
 		registerMethod(new ScriptMethodLogicCall(this));

@@ -62,13 +62,6 @@ public:
 		//
 		miniScript->setContext(context);
 		miniScript->setLogic(this);
-		// execute initialize() function
-		vector<MiniScript::ScriptVariable> argumentValues(0);
-		MiniScript::ScriptVariable returnValue;
-		span argumentValuesSpan(argumentValues);
-		if (miniScript->call("initialize", argumentValuesSpan, returnValue) == false) {
-			// Console::println("MiniScriptLogic::onLogicsProcessed(): Failed to call initialize() function");
-		}
 	}
 
 	/**

@@ -1799,6 +1799,20 @@ public:
 			return OPERATOR_NONE;
 		}
 
+		/**
+		 * @return context function
+		 */
+		virtual const vector<string>& getContextFunctions() {
+			return CONTEXTFUNCTIONS_ALL;
+		}
+
+	protected:
+		static vector<string> CONTEXTFUNCTIONS_ALL;
+		static vector<string> CONTEXTFUNCTIONS_ENGINE;
+		static vector<string> CONTEXTFUNCTIONS_LOGIC;
+		static vector<string> CONTEXTFUNCTIONS_ENGINELOGIC;
+		static vector<string> CONTEXTFUNCTION_GUI;
+
 	private:
 		vector<ArgumentType> argumentTypes;
 		ScriptVariableType returnValueType;
