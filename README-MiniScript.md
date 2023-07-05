@@ -526,464 +526,464 @@ Reading all keys as array from set:
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Get Variable                                                                                     |
-| <sub>getVariable($variable: String): Mixed</sub>                                                 |
+| <small>getVariable($variable: String): Mixed</small>                                                 |
 | Set Variable                                                                                     |
-| <sub>setVariable($variable: String, $value: Mixed): Mixed</sub>                                  |
+| <small>setVariable($variable: String, $value: Mixed): Mixed</small>                                  |
 | Unset Variable                                                                                   |
-| <sub>unsetVariable($variable: String): Void</sub>                                                |
+| <small>unsetVariable($variable: String): Void</small>                                                |
 | Add                                                                                              |
-| <sub>add($a: Mixed, $b: Mixed): Mixed</sub>                                                      |
+| <small>add($a: Mixed, $b: Mixed): Mixed</small>                                                      |
 | Logical And                                                                                      |
-| <sub>and($a: Boolean, $b: Boolean): Boolean</sub>                                                |
+| <small>and($a: Boolean, $b: Boolean): Boolean</small>                                                |
 | Bitwise And                                                                                      |
-| <sub>bitwiseAnd($a: Integer, $b: Integer): Integer</sub>                                         |
+| <small>bitwiseAnd($a: Integer, $b: Integer): Integer</small>                                         |
 | Bitwise Not                                                                                      |
-| <sub>bitwiseNot($value: Integer): Integer</sub>                                                  |
+| <small>bitwiseNot($value: Integer): Integer</small>                                                  |
 | Bitwise Or                                                                                       |
-| <sub>bitwiseOr($a: Integer, $b: Integer): Integer</sub>                                          |
+| <small>bitwiseOr($a: Integer, $b: Integer): Integer</small>                                          |
 | Bitwise Xor                                                                                      |
-| <sub>bitwiseXor($a: Integer, $b: Integer): Integer</sub>                                         |
+| <small>bitwiseXor($a: Integer, $b: Integer): Integer</small>                                         |
 | Create Bool                                                                                      |
-| <sub>bool($bool: Boolean): Boolean</sub>                                                         |
+| <small>bool($bool: Boolean): Boolean</small>                                                         |
 | Divide                                                                                           |
-| <sub>div($a: Mixed, $b: Mixed): Mixed</sub>                                                      |
+| <small>div($a: Mixed, $b: Mixed): Mixed</small>                                                      |
 | Else                                                                                             |
-| <sub>else(): Void</sub>                                                                          |
+| <small>else(): Void</small>                                                                          |
 | Else If                                                                                          |
-| <sub>elseif($condition: Boolean): Void</sub>                                                     |
+| <small>elseif($condition: Boolean): Void</small>                                                     |
 | End                                                                                              |
-| <sub>end(): Void</sub>                                                                           |
+| <small>end(): Void</small>                                                                           |
 | Equals                                                                                           |
-| <sub>equals($a: Mixed, $b: Mixed): Boolean</sub>                                                 |
+| <small>equals($a: Mixed, $b: Mixed): Boolean</small>                                                 |
 | Create Float                                                                                     |
-| <sub>float($float: Float): Float</sub>                                                           |
+| <small>float($float: Float): Float</small>                                                           |
 | For Condition                                                                                    |
-| <sub>forCondition($condition: Boolean): Void</sub>                                               |
+| <small>forCondition($condition: Boolean): Void</small>                                               |
 | For Time                                                                                         |
-| <sub>forTime($time: Integer): Void</sub>                                                         |
+| <small>forTime($time: Integer): Void</small>                                                         |
 | Greater                                                                                          |
-| <sub>greater($a: Mixed, $b: Mixed): Boolean</sub>                                                |
+| <small>greater($a: Mixed, $b: Mixed): Boolean</small>                                                |
 | Greater Equals                                                                                   |
-| <sub>greaterEquals($a: Mixed, $b: Mixed): Boolean</sub>                                          |
+| <small>greaterEquals($a: Mixed, $b: Mixed): Boolean</small>                                          |
 | If                                                                                               |
-| <sub>if($condition: Boolean): Void</sub>                                                         |
+| <small>if($condition: Boolean): Void</small>                                                         |
 | Create Integer                                                                                   |
-| <sub>int($int: Integer): Integer</sub>                                                           |
+| <small>int($int: Integer): Integer</small>                                                           |
 | Lesser                                                                                           |
-| <sub>lesser($a: Mixed, $b: Mixed): Boolean</sub>                                                 |
+| <small>lesser($a: Mixed, $b: Mixed): Boolean</small>                                                 |
 | Lesser Equals                                                                                    |
-| <sub>lesserEquals($a: Mixed, $b: Mixed): Boolean</sub>                                           |
+| <small>lesserEquals($a: Mixed, $b: Mixed): Boolean</small>                                           |
 | Compute Modulo                                                                                   |
-| <sub>mod($value: Number, $range: Number): Number</sub>                                           |
+| <small>mod($value: Number, $range: Number): Number</small>                                           |
 | Multiply                                                                                         |
-| <sub>mul($a: Mixed, $b: Mixed): Mixed</sub>                                                      |
+| <small>mul($a: Mixed, $b: Mixed): Mixed</small>                                                      |
 | Logical Not                                                                                      |
-| <sub>not($bool: Boolean): Boolean</sub>                                                          |
+| <small>not($bool: Boolean): Boolean</small>                                                          |
 | Logical Not Equal                                                                                |
-| <sub>notEqual($a: Mixed, $b: Mixed): Boolean</sub>                                               |
+| <small>notEqual($a: Mixed, $b: Mixed): Boolean</small>                                               |
 | Logical Or                                                                                       |
-| <sub>or($a: Boolean, $b: Boolean): Boolean</sub>                                                 |
+| <small>or($a: Boolean, $b: Boolean): Boolean</small>                                                 |
 | Prefix Decrement                                                                                 |
-| <sub>prefixDecrement(=$variable: Integer): Integer</sub>                                         |
+| <small>prefixDecrement(=$variable: Integer): Integer</small>                                         |
 | Prefix Increment                                                                                 |
-| <sub>prefixIncrement(=$variable: Integer): Integer</sub>                                         |
+| <small>prefixIncrement(=$variable: Integer): Integer</small>                                         |
 | Return from Function with optional Return Value                                                  |
-| <sub>return([$value: Mixed]): Void</sub>                                                         |
+| <small>return([$value: Mixed]): Void</small>                                                         |
 | Subtract                                                                                         |
-| <sub>sub($a: Mixed, $b: Mixed): Mixed</sub>                                                      |
+| <small>sub($a: Mixed, $b: Mixed): Mixed</small>                                                      |
 
 ## 6.2 Array Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create Array                                                                                     |
-| <sub>array(...): Array</sub>                                                                     |
+| <small>array(...): Array</small>                                                                     |
 | Get Array Entry                                                                                  |
-| <sub>array.get($array: Array, $index: Integer): Mixed</sub>                                      |
+| <small>array.get($array: Array, $index: Integer): Mixed</small>                                      |
 | Set Array Entry                                                                                  |
-| <sub>array.set(=$array: Array, $index: Integer, $value: Mixed): Void</sub>                       |
+| <small>array.set(=$array: Array, $index: Integer, $value: Mixed): Void</small>                       |
 | Get Array Index by Value                                                                         |
-| <sub>array.indexOf($array: Array, $value: String[, $beginIndex: Integer]): Integer</sub>         |
+| <small>array.indexOf($array: Array, $value: String[, $beginIndex: Integer]): Integer</small>         |
 | Get Array Length                                                                                 |
-| <sub>array.length($array: Array): Integer</sub>                                                  |
+| <small>array.length($array: Array): Integer</small>                                                  |
 | Add to Array                                                                                     |
-| <sub>array.push(=$array: Array, ...): Void</sub>                                                 |
+| <small>array.push(=$array: Array, ...): Void</small>                                                 |
 | Remove Array by Index                                                                            |
-| <sub>array.remove(=$array: Array, $index: Integer): Void</sub>                                   |
+| <small>array.remove(=$array: Array, $index: Integer): Void</small>                                   |
 | Remove Array Entry by Value                                                                      |
-| <sub>array.removeOf(=$array: Array, $value: String[, $beginIndex: Integer]): Void</sub>          |
+| <small>array.removeOf(=$array: Array, $value: String[, $beginIndex: Integer]): Void</small>          |
 | Reverse Array                                                                                    |
-| <sub>array.reverse(=$array: Array): Void</sub>                                                   |
+| <small>array.reverse(=$array: Array): Void</small>                                                   |
 | Sort Array                                                                                       |
-| <sub>array.sort(=$array: Array, $function: String): Void</sub>                                   |
+| <small>array.sort(=$array: Array, $function: String): Void</small>                                   |
 
 ## 6.3 Console Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Print to Console                                                                                 |
-| <sub>console.log(...): Void</sub>                                                                |
+| <small>console.log(...): Void</small>                                                                |
 
 ## 6.4 JSON Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Deserialize JSON                                                                                 |
-| <sub>json.deserialize($json: String): Mixed</sub>                                                |
+| <small>json.deserialize($json: String): Mixed</small>                                                |
 | Serialize JSON                                                                                   |
-| <sub>json.serialize($value: Mixed): String</sub>                                                 |
+| <small>json.serialize($value: Mixed): String</small>                                                 |
 
 ## 6.5 Map Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create Map                                                                                       |
-| <sub>map(): Map</sub>                                                                            |
+| <small>map(): Map</small>                                                                            |
 | Has Entry by Key                                                                                 |
-| <sub>map.has($map: Map, $key: String): Boolean</sub>                                             |
+| <small>map.has($map: Map, $key: String): Boolean</small>                                             |
 | Get Map Value by Key                                                                             |
-| <sub>map.get($map: Map, $key: String): Mixed</sub>                                               |
+| <small>map.get($map: Map, $key: String): Mixed</small>                                               |
 | Set Map Entry                                                                                    |
-| <sub>map.set(=$map: Map, $key: String, $value: Mixed): Void</sub>                                |
+| <small>map.set(=$map: Map, $key: String, $value: Mixed): Void</small>                                |
 | Get Map Keys                                                                                     |
-| <sub>map.getKeys($map: Map): Array</sub>                                                         |
+| <small>map.getKeys($map: Map): Array</small>                                                         |
 | Get Map Values                                                                                   |
-| <sub>map.getValues($map: Map): Array</sub>                                                       |
+| <small>map.getValues($map: Map): Array</small>                                                       |
 | Remove Map Entry                                                                                 |
-| <sub>map.remove(=$map: Map, $key: String): Void</sub>                                            |
+| <small>map.remove(=$map: Map, $key: String): Void</small>                                            |
 
 ## 6.6 Matrix3x3 Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create Identity 3x3 Matrix                                                                       |
-| <sub>mat3.identity(): Matrix3x3</sub>                                                            |
+| <small>mat3.identity(): Matrix3x3</small>                                                            |
 | Multiply 3x3 Matrix with 3x3 Matrix or Vector2                                                   |
-| <sub>mat3.multiply($mat3: Matrix3x3, ...): Mixed</sub>                                           |
+| <small>mat3.multiply($mat3: Matrix3x3, ...): Mixed</small>                                           |
 | Create Rotation 3x3 Matrix                                                                       |
-| <sub>mat3.rotate($angle: Float): Matrix3x3</sub>                                                 |
+| <small>mat3.rotate($angle: Float): Matrix3x3</small>                                                 |
 | Create 3x3 Matrix which rotates around Point                                                     |
-| <sub>mat3.rotateAroundPoint($point: Vector2, $angle: Float): Matrix3x3</sub>                     |
+| <small>mat3.rotateAroundPoint($point: Vector2, $angle: Float): Matrix3x3</small>                     |
 | Create 3x3 Matrix which rotates around Texture Center                                            |
-| <sub>mat3.rotateAroundTextureCenter($angle: Float): Matrix3x3</sub>                              |
+| <small>mat3.rotateAroundTextureCenter($angle: Float): Matrix3x3</small>                              |
 | Create Scale 3x3 Matrix                                                                          |
-| <sub>mat3.scale(...): Matrix3x3</sub>                                                            |
+| <small>mat3.scale(...): Matrix3x3</small>                                                            |
 | Create Translation 3x3 Matrix                                                                    |
-| <sub>mat3.translate($translation: Vector2): Matrix3x3</sub>                                      |
+| <small>mat3.translate($translation: Vector2): Matrix3x3</small>                                      |
 
 ## 6.7 Matrix4x4 Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Compute Euler Angles from 4x4 Matrix                                                             |
-| <sub>mat4.computeEulerAngles($mat4: Matrix4x4): Vector3</sub>                                    |
+| <small>mat4.computeEulerAngles($mat4: Matrix4x4): Vector3</small>                                    |
 | Create Identity 4x4 Matrix                                                                       |
-| <sub>mat4.identity(): Matrix4x4</sub>                                                            |
+| <small>mat4.identity(): Matrix4x4</small>                                                            |
 | Create 4x4 Matrix Inverse                                                                        |
-| <sub>mat4.invert($mat4: Matrix4x4): Matrix4x4</sub>                                              |
+| <small>mat4.invert($mat4: Matrix4x4): Matrix4x4</small>                                              |
 | Multiply 4x4 Matrix with 4x4 Matrix or Vector3 or Vector4                                        |
-| <sub>mat4.multiply($mat4: Matrix4x4, ...): Mixed</sub>                                           |
+| <small>mat4.multiply($mat4: Matrix4x4, ...): Mixed</small>                                           |
 | Create Rotation 4x4 Matrix                                                                       |
-| <sub>mat4.rotate($axis: Vector3, $angle: Float): Matrix4x4</sub>                                 |
+| <small>mat4.rotate($axis: Vector3, $angle: Float): Matrix4x4</small>                                 |
 | Create Scale 4x4 Matrix                                                                          |
-| <sub>mat4.scale(...): Matrix4x4</sub>                                                            |
+| <small>mat4.scale(...): Matrix4x4</small>                                                            |
 | Create Translation 4x4 Matrix                                                                    |
-| <sub>mat4.translate($translation: Vector3): Matrix4x4</sub>                                      |
+| <small>mat4.translate($translation: Vector3): Matrix4x4</small>                                      |
 
 ## 6.8 Math Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Degree to Radian Factor                                                                          |
-| <sub>math.DEG2RAD(): Float</sub>                                                                 |
+| <small>math.DEG2RAD(): Float</small>                                                                 |
 | Epsilon                                                                                          |
-| <sub>math.EPSILON(): Float</sub>                                                                 |
+| <small>math.EPSILON(): Float</small>                                                                 |
 | G                                                                                                |
-| <sub>math.G(): Float</sub>                                                                       |
+| <small>math.G(): Float</small>                                                                       |
 | PI                                                                                               |
-| <sub>math.PI(): Float</sub>                                                                      |
+| <small>math.PI(): Float</small>                                                                      |
 | Return Number as Positive Number                                                                 |
-| <sub>math.abs($value: Number): Number</sub>                                                      |
+| <small>math.abs($value: Number): Number</small>                                                      |
 | Return Number to be Positive within given Range                                                  |
-| <sub>math.absmod($value: Number, $range: Number): Number</sub>                                   |
+| <small>math.absmod($value: Number, $range: Number): Number</small>                                   |
 | Compute acos                                                                                     |
-| <sub>math.acos($value: Float): Float</sub>                                                       |
+| <small>math.acos($value: Float): Float</small>                                                       |
 | Compute asin                                                                                     |
-| <sub>math.asin($value: Float): Float</sub>                                                       |
+| <small>math.asin($value: Float): Float</small>                                                       |
 | Compute atan                                                                                     |
-| <sub>math.atan($value: Float): Float</sub>                                                       |
+| <small>math.atan($value: Float): Float</small>                                                       |
 | Compute atan2                                                                                    |
-| <sub>math.atan2($y: Float, $x: Float): Float</sub>                                               |
+| <small>math.atan2($y: Float, $x: Float): Float</small>                                               |
 | Round Float up to next higher Integer                                                            |
-| <sub>math.ceil($value: Float): Float</sub>                                                       |
+| <small>math.ceil($value: Float): Float</small>                                                       |
 | Return Number clamped to be in given Range                                                       |
-| <sub>math.clamp($value: Number, $min: Number, $max: Number): Number</sub>                        |
+| <small>math.clamp($value: Number, $min: Number, $max: Number): Number</small>                        |
 | Compute acos                                                                                     |
-| <sub>math.cos($value: Float): Float</sub>                                                        |
+| <small>math.cos($value: Float): Float</small>                                                        |
 | Compute exp                                                                                      |
-| <sub>math.exp($value: Float): Float</sub>                                                        |
+| <small>math.exp($value: Float): Float</small>                                                        |
 | Round Float down to next lower Integer                                                           |
-| <sub>math.floor($value: Float): Float</sub>                                                      |
+| <small>math.floor($value: Float): Float</small>                                                      |
 | Compute log                                                                                      |
-| <sub>math.log($value: Float): Float</sub>                                                        |
+| <small>math.log($value: Float): Float</small>                                                        |
 | Return maximum Number of given Values                                                            |
-| <sub>math.max($a: Number, $b: Number): Number</sub>                                              |
+| <small>math.max($a: Number, $b: Number): Number</small>                                              |
 | Return minimum Number of given Values                                                            |
-| <sub>math.min($a: Number, $b: Number): Number</sub>                                              |
+| <small>math.min($a: Number, $b: Number): Number</small>                                              |
 | Compute Modulo/Remainder                                                                         |
-| <sub>math.mod($value: Number, $range: Number): Number</sub>                                      |
+| <small>math.mod($value: Number, $range: Number): Number</small>                                      |
 | Compute pow                                                                                      |
-| <sub>math.pow($a: Number, $b: Number): Number</sub>                                              |
+| <small>math.pow($a: Number, $b: Number): Number</small>                                              |
 | Create a random Number between 0.0 and 1.0                                                       |
-| <sub>math.random(): Float</sub>                                                                  |
+| <small>math.random(): Float</small>                                                                  |
 | Round Float Up or Down to Integer                                                                |
-| <sub>math.round($value: Float): Float</sub>                                                      |
+| <small>math.round($value: Float): Float</small>                                                      |
 | Return Sign of given Number                                                                      |
-| <sub>math.sign($value: Number): Number</sub>                                                     |
+| <small>math.sign($value: Number): Number</small>                                                     |
 | Compute sin                                                                                      |
-| <sub>math.sin($value: Float): Float</sub>                                                        |
+| <small>math.sin($value: Float): Float</small>                                                        |
 | Compute Square Root                                                                              |
-| <sub>math.sqrt($value: Float): Float</sub>                                                       |
+| <small>math.sqrt($value: Float): Float</small>                                                       |
 | Compute Square Product                                                                           |
-| <sub>math.square($value: Number): Number</sub>                                                   |
+| <small>math.square($value: Number): Number</small>                                                   |
 | Compute tan                                                                                      |
-| <sub>math.tan($value: Float): Float</sub>                                                        |
+| <small>math.tan($value: Float): Float</small>                                                        |
 
 ## 6.9 Quaternion Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Compute Euler Angles from Quaternion                                                             |
-| <sub>quaternion.computeEulerAngles($quaternion: Quaternion): Vector3</sub>                       |
+| <small>quaternion.computeEulerAngles($quaternion: Quaternion): Vector3</small>                       |
 | Compute 4x4 Rotation Matrix from Quaternion                                                      |
-| <sub>quaternion.computeMatrix($quaternion: Quaternion): Matrix4x4</sub>                          |
+| <small>quaternion.computeMatrix($quaternion: Quaternion): Matrix4x4</small>                          |
 | Create Identity Quaternion                                                                       |
-| <sub>quaternion.identity(): Quaternion</sub>                                                     |
+| <small>quaternion.identity(): Quaternion</small>                                                     |
 | Create Quaternion Inverse                                                                        |
-| <sub>quaternion.invert($quaternion: Quaternion): Quaternion</sub>                                |
+| <small>quaternion.invert($quaternion: Quaternion): Quaternion</small>                                |
 | Multiply Quaternion with Quaternion or Vector3                                                   |
-| <sub>quaternion.multiply($quaternion: Quaternion, ...): Mixed</sub>                              |
+| <small>quaternion.multiply($quaternion: Quaternion, ...): Mixed</small>                              |
 | Normalize Quaternion                                                                             |
-| <sub>quaternion.normalize($quaternion: Quaternion): Quaternion</sub>                             |
+| <small>quaternion.normalize($quaternion: Quaternion): Quaternion</small>                             |
 | Create Rotation Quaternion                                                                       |
-| <sub>quaternion.rotate($axis: Vector3, $angle: Float): Quaternion</sub>                          |
+| <small>quaternion.rotate($axis: Vector3, $angle: Float): Quaternion</small>                          |
 
 ## 6.10 Script Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Get Named Conditions                                                                             |
-| <sub>script.getNamedConditions(): String</sub>                                                   |
+| <small>script.getNamedConditions(): String</small>                                                   |
 | Get Script Variables                                                                             |
-| <sub>script.getVariables(): Map</sub>                                                            |
+| <small>script.getVariables(): Map</small>                                                            |
 | Call Script Function                                                                             |
-| <sub>script.call($function: String, ...): Mixed</sub>                                            |
+| <small>script.call($function: String, ...): Mixed</small>                                            |
 | Disable a specific Named Condition                                                               |
-| <sub>script.disableNamedCondition($name: String): Void</sub>                                     |
+| <small>script.disableNamedCondition($name: String): Void</small>                                     |
 | Emit a Condition                                                                                 |
-| <sub>script.emit($condition: String): Void</sub>                                                 |
+| <small>script.emit($condition: String): Void</small>                                                 |
 | Enable a specific Named Condition                                                                |
-| <sub>script.enableNamedCondition($name: String): Void</sub>                                      |
+| <small>script.enableNamedCondition($name: String): Void</small>                                      |
 | Evaluate a Script Statement                                                                      |
-| <sub>script.evaluate($statement: String): Mixed</sub>                                            |
+| <small>script.evaluate($statement: String): Mixed</small>                                            |
 | Stop Script                                                                                      |
-| <sub>script.stop(): Void</sub>                                                                   |
+| <small>script.stop(): Void</small>                                                                   |
 | Wait for given Milliseconds                                                                      |
-| <sub>script.wait($time: Integer): Void</sub>                                                     |
+| <small>script.wait($time: Integer): Void</small>                                                     |
 | Wait for Condition to happen                                                                     |
-| <sub>script.waitForCondition(): Void</sub>                                                       |
+| <small>script.waitForCondition(): Void</small>                                                       |
 
 ## 6.11 Set Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create Set                                                                                       |
-| <sub>set(): Set</sub>                                                                            |
+| <small>set(): Set</small>                                                                            |
 | Has Key in Set                                                                                   |
-| <sub>set.has($set: Set, $key: String): Boolean</sub>                                             |
+| <small>set.has($set: Set, $key: String): Boolean</small>                                             |
 | Get Set Keys                                                                                     |
-| <sub>set.getKeys($set: Set): Array</sub>                                                         |
+| <small>set.getKeys($set: Set): Array</small>                                                         |
 | Insert Key into Set                                                                              |
-| <sub>set.insert(=$set: Set, $key: String): Void</sub>                                            |
+| <small>set.insert(=$set: Set, $key: String): Void</small>                                            |
 | Remove Key from Set                                                                              |
-| <sub>set.remove(=$set: Set, $key: String): Void</sub>                                            |
+| <small>set.remove(=$set: Set, $key: String): Void</small>                                            |
 
 ## 6.12 String Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create String                                                                                    |
-| <sub>string($string: String): String</sub>                                                       |
+| <small>string($string: String): String</small>                                                       |
 | Test if String Value is Empty                                                                    |
-| <sub>string.isEmpty($string: String): Boolean</sub>                                              |
+| <small>string.isEmpty($string: String): Boolean</small>                                              |
 | Test if String Value is a Float Number                                                           |
-| <sub>string.isFloat($string: String): Boolean</sub>                                              |
+| <small>string.isFloat($string: String): Boolean</small>                                              |
 | Test if String Value is a Integer Number                                                         |
-| <sub>string.isInteger($string: String): Boolean</sub>                                            |
+| <small>string.isInteger($string: String): Boolean</small>                                            |
 | Return Character of String at given Position                                                     |
-| <sub>string.charAt($string: String, $index: Integer): String</sub>                               |
+| <small>string.charAt($string: String, $index: Integer): String</small>                               |
 | Concatenate Strings                                                                              |
-| <sub>string.concatenate(...): String</sub>                                                       |
+| <small>string.concatenate(...): String</small>                                                       |
 | Test if String ends with specific String                                                         |
-| <sub>string.endsWith($string: String, $suffix: String): Boolean</sub>                            |
+| <small>string.endsWith($string: String, $suffix: String): Boolean</small>                            |
 | Test if 2 Strings matches ignoring Case Sensitivity                                              |
-| <sub>string.equalsIgnoreCase($string1: String, $string2: String): Boolean</sub>                  |
+| <small>string.equalsIgnoreCase($string1: String, $string2: String): Boolean</small>                  |
 | Return First Index of specific String in String                                                  |
-| <sub>string.firstIndexOf($string: String, $what: String[, $beginIndex: Integer]): Integer</sub>  |
+| <small>string.firstIndexOf($string: String, $what: String[, $beginIndex: Integer]): Integer</small>  |
 | Return Index of specific String in String                                                        |
-| <sub>string.indexOf($string: String, $what: String[, $beginIndex: Integer]): Integer</sub>       |
+| <small>string.indexOf($string: String, $what: String[, $beginIndex: Integer]): Integer</small>       |
 | Return Last Index of specific String in String                                                   |
-| <sub>string.lastIndexOf($string: String, $what: String[, $beginIndex: Integer]): Integer</sub>   |
+| <small>string.lastIndexOf($string: String, $what: String[, $beginIndex: Integer]): Integer</small>   |
 | Return String Length                                                                             |
-| <sub>string.length($string: String): Integer</sub>                                               |
+| <small>string.length($string: String): Integer</small>                                               |
 | Pad String Left                                                                                  |
-| <sub>string.padLeft($src: String, $by: String, $toSize: Integer): String</sub>                   |
+| <small>string.padLeft($src: String, $by: String, $toSize: Integer): String</small>                   |
 | Pad String Right                                                                                 |
-| <sub>string.padRight($src: String, $by: String, $toSize: Integer): String</sub>                  |
+| <small>string.padRight($src: String, $by: String, $toSize: Integer): String</small>                  |
 | RegEx Match                                                                                      |
-| <sub>string.regexMatch($string: String, $pattern: String): Boolean</sub>                         |
+| <small>string.regexMatch($string: String, $pattern: String): Boolean</small>                         |
 | RegEx Replace                                                                                    |
-| <sub>string.regexReplace($string: String, $pattern: String, $by: String): String</sub>           |
+| <small>string.regexReplace($string: String, $pattern: String, $by: String): String</small>           |
 | Replace specific String in String with given String                                              |
-| <sub>string.replace($string: String, $what: String, $by: String[, $beginIndex: Integer]): String</sub>|
+| <small>string.replace($string: String, $what: String, $by: String[, $beginIndex: Integer]): String</small>|
 | Create Spaces as String                                                                          |
-| <sub>string.space([$spaces: Integer]): String</sub>                                              |
+| <small>string.space([$spaces: Integer]): String</small>                                              |
 | Test if given String starts with specific String                                                 |
-| <sub>string.startsWith($string: String, $prefix: String): Boolean</sub>                          |
+| <small>string.startsWith($string: String, $prefix: String): Boolean</small>                          |
 | Return Substring of String                                                                       |
-| <sub>string.substring($string: String, $beginIndex: Integer[, $endIndex: Integer]): String</sub> |
+| <small>string.substring($string: String, $beginIndex: Integer[, $endIndex: Integer]): String</small> |
 | Compute Lower Case String of String                                                              |
-| <sub>string.toLowerCase($string: String): String</sub>                                           |
+| <small>string.toLowerCase($string: String): String</small>                                           |
 | Compute Upper Case String of String                                                              |
-| <sub>string.toUpperCase($string: String): String</sub>                                           |
+| <small>string.toUpperCase($string: String): String</small>                                           |
 | Tokenize String                                                                                  |
-| <sub>string.tokenize($string: String, $delimiters: String): Array</sub>                          |
+| <small>string.tokenize($string: String, $delimiters: String): Array</small>                          |
 | Trim String                                                                                      |
-| <sub>string.trim($string: String): String</sub>                                                  |
+| <small>string.trim($string: String): String</small>                                                  |
 
 ## 6.13 Time Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Get Time as String                                                                               |
-| <sub>time.getAsString([$format: String]): String</sub>                                           |
+| <small>time.getAsString([$format: String]): String</small>                                           |
 | Get Current Time in Milliseconds                                                                 |
-| <sub>time.getCurrentMillis(): Integer</sub>                                                      |
+| <small>time.getCurrentMillis(): Integer</small>                                                      |
 
 ## 6.14 Transform Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create Transform                                                                                 |
-| <sub>transform([$translation: Vector3[, $scale: Vector3[, $rotationZ: Float[, $rotationY: Float[, $rotationX: Float]]]]]): Transform</sub>|
+| <small>transform([$translation: Vector3[, $scale: Vector3[, $rotationZ: Float[, $rotationY: Float[, $rotationX: Float]]]]]): Transform</small>|
 | X Axis as Vector3                                                                                |
-| <sub>transform.AXIS_X(): Vector3</sub>                                                           |
+| <small>transform.AXIS_X(): Vector3</small>                                                           |
 | Y Axis as Vector3                                                                                |
-| <sub>transform.AXIS_Y(): Vector3</sub>                                                           |
+| <small>transform.AXIS_Y(): Vector3</small>                                                           |
 | Z Axis as Vector3                                                                                |
-| <sub>transform.AXIS_Z(): Vector3</sub>                                                           |
+| <small>transform.AXIS_Z(): Vector3</small>                                                           |
 | Get Rotation Angle of specific Rotation of Transform                                             |
-| <sub>transform.getRotationAngle($transform: Transform, $idx: Integer): Float</sub>               |
+| <small>transform.getRotationAngle($transform: Transform, $idx: Integer): Float</small>               |
 | Set Rotation Angle of specific Rotation of Transform                                             |
-| <sub>transform.setRotationAngle(=$transform: Transform, $idx: Integer, $angle: Float): Void</sub>|
+| <small>transform.setRotationAngle(=$transform: Transform, $idx: Integer, $angle: Float): Void</small>|
 | Set Rotation Axis of specific Rotation of Transform                                              |
-| <sub>transform.getRotationAxis($transform: Transform, $idx: Integer): Vector3</sub>              |
+| <small>transform.getRotationAxis($transform: Transform, $idx: Integer): Vector3</small>              |
 | Compute Transform Rotations Quaternion                                                           |
-| <sub>transform.getRotationsQuaternion($transform: Transform): Quaternion</sub>                   |
+| <small>transform.getRotationsQuaternion($transform: Transform): Quaternion</small>                   |
 | Get Transfrom Scale                                                                              |
-| <sub>transform.getScale($transform: Transform): Vector3</sub>                                    |
+| <small>transform.getScale($transform: Transform): Vector3</small>                                    |
 | Set Transfrom Scale                                                                              |
-| <sub>transform.setScale(=$transform: Transform, $scale: Vector3): Void</sub>                     |
+| <small>transform.setScale(=$transform: Transform, $scale: Vector3): Void</small>                     |
 | Get 4x4 Transform Matrix                                                                         |
-| <sub>transform.getTransformMatrix($transform: Transform): Matrix4x4</sub>                        |
+| <small>transform.getTransformMatrix($transform: Transform): Matrix4x4</small>                        |
 | Get Transform Translation                                                                        |
-| <sub>transform.getTranslation($transform: Transform): Vector3</sub>                              |
+| <small>transform.getTranslation($transform: Transform): Vector3</small>                              |
 | Set Transform Translation                                                                        |
-| <sub>transform.setTranslation(=$transform: Transform, $translation: Vector3): Void</sub>         |
+| <small>transform.setTranslation(=$transform: Transform, $translation: Vector3): Void</small>         |
 | Apply a Rotation to Transform                                                                    |
-| <sub>transform.applyRotation(=$transform: Transform, $axis: Vector3, $angle: Float): Void</sub>  |
+| <small>transform.applyRotation(=$transform: Transform, $axis: Vector3, $angle: Float): Void</small>  |
 | Create Transform from 4x4 Matrix                                                                 |
-| <sub>transform.fromMatrix($transformMatrix: Matrix4x4): Transform</sub>                          |
+| <small>transform.fromMatrix($transformMatrix: Matrix4x4): Transform</small>                          |
 | Interpolate Rotation                                                                             |
-| <sub>transform.interpolateRotation($currentAngle: Float, $targetAngle: Float, $timePassedSeconds: Float, $degreesPerSeconds: Float, =$interpolatedAngle: Float): Boolean</sub>|
+| <small>transform.interpolateRotation($currentAngle: Float, $targetAngle: Float, $timePassedSeconds: Float, $degreesPerSeconds: Float, =$interpolatedAngle: Float): Boolean</small>|
 | Multiply Transform with Vector3                                                                  |
-| <sub>transform.multiply($transform: Transform, $vec3: Vector3): Vector3</sub>                    |
+| <small>transform.multiply($transform: Transform, $vec3: Vector3): Vector3</small>                    |
 | Rotate Vector3 using Transform                                                                   |
-| <sub>transform.rotate($transform: Transform, $vec3: Vector3): Vector3</sub>                      |
+| <small>transform.rotate($transform: Transform, $vec3: Vector3): Vector3</small>                      |
 
 ## 6.15 Vector2 Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create Vector2                                                                                   |
-| <sub>vec2($x: Float, $y: Float): Vector2</sub>                                                   |
+| <small>vec2($x: Float, $y: Float): Vector2</small>                                                   |
 | Compute Vector2 Dot Product                                                                      |
-| <sub>vec2.computeDotProduct($a: Vector2, $b: Vector2): Float</sub>                               |
+| <small>vec2.computeDotProduct($a: Vector2, $b: Vector2): Float</small>                               |
 | Compute Vector2 Length                                                                           |
-| <sub>vec2.computeLength($vec2: Vector2): Float</sub>                                             |
+| <small>vec2.computeLength($vec2: Vector2): Float</small>                                             |
 | Compute Vector2 Squared Length                                                                   |
-| <sub>vec2.computeLengthSquared($vec2: Vector2): Float</sub>                                      |
+| <small>vec2.computeLengthSquared($vec2: Vector2): Float</small>                                      |
 | Return Vector2 X Component                                                                       |
-| <sub>vec2.getX($vec2: Vector2): Float</sub>                                                      |
+| <small>vec2.getX($vec2: Vector2): Float</small>                                                      |
 | Return Vector2 Y Component                                                                       |
-| <sub>vec2.getY($vec2: Vector2): Float</sub>                                                      |
+| <small>vec2.getY($vec2: Vector2): Float</small>                                                      |
 | Normalize Vector2                                                                                |
-| <sub>vec2.normalize($vec2: Vector2): Vector2</sub>                                               |
+| <small>vec2.normalize($vec2: Vector2): Vector2</small>                                               |
 
 ## 6.16 Vector3 Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create Vector3                                                                                   |
-| <sub>vec3($x: Float, $y: Float, $z: Float): Vector3</sub>                                        |
+| <small>vec3($x: Float, $y: Float, $z: Float): Vector3</small>                                        |
 | Compute Angle between two Vector3                                                                |
-| <sub>vec3.computeAngle($a: Vector3, $b: Vector3, $n: Vector3): Float</sub>                       |
+| <small>vec3.computeAngle($a: Vector3, $b: Vector3, $n: Vector3): Float</small>                       |
 | Compute Vector3 Cross Product                                                                    |
-| <sub>vec3.computeCrossProduct($a: Vector3, $b: Vector3): Vector3</sub>                           |
+| <small>vec3.computeCrossProduct($a: Vector3, $b: Vector3): Vector3</small>                           |
 | Compute Vector3 Dot Product                                                                      |
-| <sub>vec3.computeDotProduct($a: Vector3, $b: Vector3): Float</sub>                               |
+| <small>vec3.computeDotProduct($a: Vector3, $b: Vector3): Float</small>                               |
 | Compute Vector3 Length                                                                           |
-| <sub>vec3.computeLength($vec3: Vector3): Float</sub>                                             |
+| <small>vec3.computeLength($vec3: Vector3): Float</small>                                             |
 | Compute Vector3 Squared Length                                                                   |
-| <sub>vec3.computeLengthSquared($vec3: Vector3): Float</sub>                                      |
+| <small>vec3.computeLengthSquared($vec3: Vector3): Float</small>                                      |
 | Return Vector3 X Component                                                                       |
-| <sub>vec3.getX($vec3: Vector3): Float</sub>                                                      |
+| <small>vec3.getX($vec3: Vector3): Float</small>                                                      |
 | Return Vector3 Y Component                                                                       |
-| <sub>vec3.getY($vec3: Vector3): Float</sub>                                                      |
+| <small>vec3.getY($vec3: Vector3): Float</small>                                                      |
 | Return Vector3 Z Component                                                                       |
-| <sub>vec3.getZ($vec3: Vector3): Float</sub>                                                      |
+| <small>vec3.getZ($vec3: Vector3): Float</small>                                                      |
 | Normalize Vector3                                                                                |
-| <sub>vec3.normalize($vec3: Vector3): Vector3</sub>                                               |
+| <small>vec3.normalize($vec3: Vector3): Vector3</small>                                               |
 
 ## 6.17 Vector4 Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create Vector4                                                                                   |
-| <sub>vec4($x: Float, $y: Float, $z: Float, $w: Float): Vector4</sub>                             |
+| <small>vec4($x: Float, $y: Float, $z: Float, $w: Float): Vector4</small>                             |
 | Compute Vector4 Dot Product                                                                      |
-| <sub>vec4.computeDotProduct($a: Vector4, $b: Vector4): Float</sub>                               |
+| <small>vec4.computeDotProduct($a: Vector4, $b: Vector4): Float</small>                               |
 | Compute Vector4 Length                                                                           |
-| <sub>vec4.computeLength($vec4: Vector4): Float</sub>                                             |
+| <small>vec4.computeLength($vec4: Vector4): Float</small>                                             |
 | Compute Vector4 Squared Length                                                                   |
-| <sub>vec4.computeLengthSquared($vec4: Vector4): Float</sub>                                      |
+| <small>vec4.computeLengthSquared($vec4: Vector4): Float</small>                                      |
 | Return Vector4 W Component                                                                       |
-| <sub>vec4.getW($vec4: Vector4): Float</sub>                                                      |
+| <small>vec4.getW($vec4: Vector4): Float</small>                                                      |
 | Return Vector4 X Component                                                                       |
-| <sub>vec4.getX($vec4: Vector4): Float</sub>                                                      |
+| <small>vec4.getX($vec4: Vector4): Float</small>                                                      |
 | Return Vector4 Y Component                                                                       |
-| <sub>vec4.getY($vec4: Vector4): Float</sub>                                                      |
+| <small>vec4.getY($vec4: Vector4): Float</small>                                                      |
 | Return Vector4 Z Component                                                                       |
-| <sub>vec4.getZ($vec4: Vector4): Float</sub>                                                      |
+| <small>vec4.getZ($vec4: Vector4): Float</small>                                                      |
 | Normalize Vector4                                                                                |
-| <sub>vec4.normalize($vec4: Vector4): Vector4</sub>                                               |
+| <small>vec4.normalize($vec4: Vector4): Vector4</small>                                               |
 
 ## 6.18 XML Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create XML Tag                                                                                   |
-| <sub>xml.createTag($name: String[, $attributes: Map[, $innerXML: String]]): String</sub>         |
+| <small>xml.createTag($name: String[, $attributes: Map[, $innerXML: String]]): String</small>         |
 
 # 7. MiniScript Logic Methods
 
@@ -991,399 +991,399 @@ Reading all keys as array from set:
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Get Listener Orientation <sub>(available in initializeEngine(), updateEngine())</sub>            |
-| <sub>audio.getListenerOrientationAt(): Vector3</sub>                                             |
-| Set Listener Orientation <sub>(available in initializeEngine(), updateEngine())</sub>            |
-| <sub>audio.setListenerOrientationAt($position: Vector3): Void</sub>                              |
-| Get Listener Position <sub>(available in initializeEngine(), updateEngine())</sub>               |
-| <sub>audio.getListenerPosition(): Vector3</sub>                                                  |
-| Set Listener Position <sub>(available in initializeEngine(), updateEngine())</sub>               |
-| <sub>audio.setListenerPosition($position: Vector3): Void</sub>                                   |
-| Play Audio at Engine Entity Position <sub>(available in initializeEngine(), updateEngine())</sub>|
-| <sub>audio.play($id: String[, $delay: Integer[, $gain: Integer[, $pitch: Integer[, $ignoreIfPlaying: Integer]]]]): String</sub>|
-| Play Audio at Custom Position <sub>(available in initializeEngine(), updateEngine())</sub>       |
-| <sub>audio.playAtPosition($id: String, $position: Vector3[, $delay: Integer[, $gain: Integer[, $pitch: Integer[, $ignoreIfPlaying: Integer]]]]): String</sub>|
+| Get Listener Orientation <small>(available in initializeEngine(), updateEngine())</small>            |
+| <small>audio.getListenerOrientationAt(): Vector3</small>                                             |
+| Set Listener Orientation <small>(available in initializeEngine(), updateEngine())</small>            |
+| <small>audio.setListenerOrientationAt($position: Vector3): Void</small>                              |
+| Get Listener Position <small>(available in initializeEngine(), updateEngine())</small>               |
+| <small>audio.getListenerPosition(): Vector3</small>                                                  |
+| Set Listener Position <small>(available in initializeEngine(), updateEngine())</small>               |
+| <small>audio.setListenerPosition($position: Vector3): Void</small>                                   |
+| Play Audio at Engine Entity Position <small>(available in initializeEngine(), updateEngine())</small>|
+| <small>audio.play($id: String[, $delay: Integer[, $gain: Integer[, $pitch: Integer[, $ignoreIfPlaying: Integer]]]]): String</small>|
+| Play Audio at Custom Position <small>(available in initializeEngine(), updateEngine())</small>       |
+| <small>audio.playAtPosition($id: String, $position: Vector3[, $delay: Integer[, $gain: Integer[, $pitch: Integer[, $ignoreIfPlaying: Integer]]]]): String</small>|
 
 ## 7.2 Engine Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Get Engine Entity Id by Mouse Position <sub>(available in initializeEngine(), updateEngine())</sub>|
-| <sub>engine.getEntityIdByMousePosition($mouseX: Integer, $mouseY: Integer): String</sub>         |
-| Get Engine Height <sub>(available in initializeEngine(), updateEngine())</sub>                   |
-| <sub>engine.getHeight(): Integer</sub>                                                           |
-| Compute Engine Screen Coordinate by World Coordinate <sub>(available in initializeEngine(), updateEngine())</sub>|
-| <sub>engine.computeScreenCoordinateByWorldCoordinate($worldCoodinate: Vector3, =$screenCoordinate: Vector2): Boolean</sub>|
-| Get Engine Width <sub>(available in initializeEngine(), updateEngine())</sub>                    |
-| <sub>engine.getWidth(): Integer</sub>                                                            |
-| Compute Engine World Coordinate by Mouse Position <sub>(available in initializeEngine(), updateEngine())</sub>|
-| <sub>engine.computeWorldCoordinateByMousePosition($mouseX: Integer, $mouseY: Integer): Vector3</sub>|
-| Dump Engine Entities <sub>(available in initializeEngine(), updateEngine())</sub>                |
-| <sub>engine.dumpEntities(): Void</sub>                                                           |
-| Dump Engine Shaders <sub>(available in initializeEngine(), updateEngine())</sub>                 |
-| <sub>engine.dumpShaders(): Void</sub>                                                            |
+| Get Engine Entity Id by Mouse Position <small>(available in initializeEngine(), updateEngine())</small>|
+| <small>engine.getEntityIdByMousePosition($mouseX: Integer, $mouseY: Integer): String</small>         |
+| Get Engine Height <small>(available in initializeEngine(), updateEngine())</small>                   |
+| <small>engine.getHeight(): Integer</small>                                                           |
+| Compute Engine Screen Coordinate by World Coordinate <small>(available in initializeEngine(), updateEngine())</small>|
+| <small>engine.computeScreenCoordinateByWorldCoordinate($worldCoodinate: Vector3, =$screenCoordinate: Vector2): Boolean</small>|
+| Get Engine Width <small>(available in initializeEngine(), updateEngine())</small>                    |
+| <small>engine.getWidth(): Integer</small>                                                            |
+| Compute Engine World Coordinate by Mouse Position <small>(available in initializeEngine(), updateEngine())</small>|
+| <small>engine.computeWorldCoordinateByMousePosition($mouseX: Integer, $mouseY: Integer): Vector3</small>|
+| Dump Engine Entities <small>(available in initializeEngine(), updateEngine())</small>                |
+| <small>engine.dumpEntities(): Void</small>                                                           |
+| Dump Engine Shaders <small>(available in initializeEngine(), updateEngine())</small>                 |
+| <small>engine.dumpShaders(): Void</small>                                                            |
 
 ## 7.3 Engine Camera Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Get Camera horizontal Field Of View <sub>(available in initializeEngine(), updateEngine())</sub> |
-| <sub>engine.camera.getFovX(): Float</sub>                                                        |
-| Set Camera horizontal Field Of View <sub>(available in initializeEngine(), updateEngine())</sub> |
-| <sub>engine.camera.setFovX($fovX: Float): Void</sub>                                             |
-| Get Camera Look At <sub>(available in initializeEngine(), updateEngine())</sub>                  |
-| <sub>engine.camera.getLookAt(): Vector3</sub>                                                    |
-| Set Camera Look At <sub>(available in initializeEngine(), updateEngine())</sub>                  |
-| <sub>engine.camera.setLookAt($lookAt: Vector3): Void</sub>                                       |
-| Get Camera Look From <sub>(available in initializeEngine(), updateEngine())</sub>                |
-| <sub>engine.camera.getLookFrom(): Vector3</sub>                                                  |
-| Set Camera Look From <sub>(available in initializeEngine(), updateEngine())</sub>                |
-| <sub>engine.camera.setLookFrom($lookFrom: Vector3): Void</sub>                                   |
-| Get Camera Up Vector <sub>(available in initializeEngine(), updateEngine())</sub>                |
-| <sub>engine.camera.getUpVector(): Vector3</sub>                                                  |
-| Set Camera Up Vector <sub>(available in initializeEngine(), updateEngine())</sub>                |
-| <sub>engine.camera.setUpVector($upVector: Vector3): Void</sub>                                   |
-| Compute Camera Up Vector <sub>(available in initializeEngine(), updateEngine())</sub>            |
-| <sub>engine.camera.computeUpVector($lookFrom: Vector3, $lookAt: Vector3): Vector3</sub>          |
+| Get Camera horizontal Field Of View <small>(available in initializeEngine(), updateEngine())</small> |
+| <small>engine.camera.getFovX(): Float</small>                                                        |
+| Set Camera horizontal Field Of View <small>(available in initializeEngine(), updateEngine())</small> |
+| <small>engine.camera.setFovX($fovX: Float): Void</small>                                             |
+| Get Camera Look At <small>(available in initializeEngine(), updateEngine())</small>                  |
+| <small>engine.camera.getLookAt(): Vector3</small>                                                    |
+| Set Camera Look At <small>(available in initializeEngine(), updateEngine())</small>                  |
+| <small>engine.camera.setLookAt($lookAt: Vector3): Void</small>                                       |
+| Get Camera Look From <small>(available in initializeEngine(), updateEngine())</small>                |
+| <small>engine.camera.getLookFrom(): Vector3</small>                                                  |
+| Set Camera Look From <small>(available in initializeEngine(), updateEngine())</small>                |
+| <small>engine.camera.setLookFrom($lookFrom: Vector3): Void</small>                                   |
+| Get Camera Up Vector <small>(available in initializeEngine(), updateEngine())</small>                |
+| <small>engine.camera.getUpVector(): Vector3</small>                                                  |
+| Set Camera Up Vector <small>(available in initializeEngine(), updateEngine())</small>                |
+| <small>engine.camera.setUpVector($upVector: Vector3): Void</small>                                   |
+| Compute Camera Up Vector <small>(available in initializeEngine(), updateEngine())</small>            |
+| <small>engine.camera.computeUpVector($lookFrom: Vector3, $lookAt: Vector3): Vector3</small>          |
 
 ## 7.4 Engine Entity Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Get Engine Entity Animation <sub>(available in initializeEngine(), updateEngine())</sub>         |
-| <sub>engine.entity.getAnimation($entityId: String[, $childEntityId: String]): String</sub>       |
-| Set Engine Entity Animation <sub>(available in initializeEngine(), updateEngine())</sub>         |
-| <sub>engine.entity.setAnimation($entityId: String, $animation: String[, $speed: Float[, $childEntityId: String]]): Void</sub>|
-| Get Engine Entity Animation Speed <sub>(available in initializeEngine(), updateEngine())</sub>   |
-| <sub>engine.entity.setAnimationSpeed($entityId: String, $speed: Float[, $childEntityId: String]): Void</sub>|
-| Set Engine Entity Animation Speed <sub>(available in initializeEngine(), updateEngine())</sub>   |
-| <sub>engine.entity.getAnimationTime($entityId: String[, $childEntityId: String]): Float</sub>    |
-| Get Engine Entity Additive Effect Color <sub>(available in initializeEngine(), updateEngine())</sub>|
-| <sub>engine.entity.getEffectColorAdd($entityId: String[, $childEntityId: String]): Vector4</sub> |
-| Set Engine Entity Additive Effect Color <sub>(available in initializeEngine(), updateEngine())</sub>|
-| <sub>engine.entity.setEffectColorAdd($entityId: String, $effectColorAdd: Vector4[, $childEntityId: String]): Void</sub>|
-| Get Engine Entity Multiplicative Effect Color <sub>(available in initializeEngine(), updateEngine())</sub>|
-| <sub>engine.entity.getEffectColorMul($entityId: String[, $childEntityId: String]): Vector4</sub> |
-| Set Engine Entity Multiplicative Effect Color <sub>(available in initializeEngine(), updateEngine())</sub>|
-| <sub>engine.entity.setEffectColorMul($entityId: String, $effectColorMul: Vector4[, $childEntityId: String]): Void</sub>|
-| Return if Engine Entity is enabled <sub>(available in initializeEngine(), updateEngine())</sub>  |
-| <sub>engine.entity.isEnabled($entityId: String[, $childEntityId: String]): Boolean</sub>         |
-| Set Engine Entity enabled/disabled <sub>(available in initializeEngine(), updateEngine())</sub>  |
-| <sub>engine.entity.setEnabled($entityId: String, $enabled: Boolean[, $childEntityId: String]): Void</sub>|
-| Get Engine Entity Node Transform <sub>(available in initializeEngine(), updateEngine())</sub>    |
-| <sub>engine.entity.getNodeTransform($entityId: String, $nodeId: String[, $childEntityId: String]): Transform</sub>|
-| Set Engine Entity Node Transform <sub>(available in initializeEngine(), updateEngine())</sub>    |
-| <sub>engine.entity.setNodeTransform($entityId: String, $nodeId: String, $transform: Transform[, $childEntityId: String]): Void</sub>|
-| Unset Engine Entity Node Transform <sub>(available in initializeEngine(), updateEngine())</sub>  |
-| <sub>engine.entity.unsetNodeTransform($entityId: String, $nodeId: String[, $childEntityId: String]): Void</sub>|
-| Get Engine Entity Node Transform Matrix <sub>(available in initializeEngine(), updateEngine())</sub>|
-| <sub>engine.entity.getNodeTransformMatrix($entityId: String, $nodeId: String[, $childEntityId: String]): Matrix4x4</sub>|
-| Set Engine Entity Node Transform Matrix <sub>(available in initializeEngine(), updateEngine())</sub>|
-| <sub>engine.entity.setNodeTransformMatrix($entityId: String, $nodeId: String, $matrix: Matrix4x4[, $childEntityId: String]): Void</sub>|
-| Unset Engine Entity Node Transform Matrix <sub>(available in initializeEngine(), updateEngine())</sub>|
-| <sub>engine.entity.unsetNodeTransformMatrix($entityId: String, $nodeId: String[, $childEntityId: String]): Void</sub>|
-| Return if Engine Entity has specific Overlay Animation <sub>(available in initializeEngine(), updateEngine())</sub>|
-| <sub>engine.entity.hasOverlayAnimation($entityId: String, $animation: String[, $childEntityId: String]): Boolean</sub>|
-| Return Engine Entity Overlay Animation Playback Time from 0.0 until 1.0 <sub>(available in initializeEngine(), updateEngine())</sub>|
-| <sub>engine.entity.getOverlayAnimationTime($entityId: String, $animation: String[, $childEntityId: String]): Float</sub>|
-| Return if Engine Entity is Pickable <sub>(available in initializeEngine(), updateEngine())</sub> |
-| <sub>engine.entity.isPickable($entityId: String[, $childEntityId: String]): Boolean</sub>        |
-| Set Engine Entity Pickable <sub>(available in initializeEngine(), updateEngine())</sub>          |
-| <sub>engine.entity.setPickable($entityId: String, $pickable: Boolean[, $childEntityId: String]): Void</sub>|
-| Get Engine Entity Transform <sub>(available in initializeEngine(), updateEngine())</sub>         |
-| <sub>engine.entity.getTransform($entityId: String[, $childEntityId: String]): Transform</sub>    |
-| Set Engine Entity Transform <sub>(available in initializeEngine(), updateEngine())</sub>         |
-| <sub>engine.entity.setTransform($entityId: String, $transform: Transform[, $childEntityId: String]): Void</sub>|
-| Add Engine Entity Overlay Animation <sub>(available in initializeEngine(), updateEngine())</sub> |
-| <sub>engine.entity.addOverlayAnimation($entityId: String, $animation: String[, $childEntityId: String]): Void</sub>|
-| Emit Engine Entity Particles <sub>(available in initializeEngine(), updateEngine())</sub>        |
-| <sub>engine.entity.emitParticles($entityId: String[, $childEntityId: String]): Integer</sub>     |
-| Remove finished Overlay Animations <sub>(available in initializeEngine(), updateEngine())</sub>  |
-| <sub>engine.entity.removeFinishedOverlayAnimations($entityId: String[, $childEntityId: String]): Void</sub>|
-| Remove specific Overlay Animation <sub>(available in initializeEngine(), updateEngine())</sub>   |
-| <sub>engine.entity.removeOverlayAnimation($entityId: String, $animation: String[, $childEntityId: String]): Void</sub>|
-| Remove Overlay Animations <sub>(available in initializeEngine(), updateEngine())</sub>           |
-| <sub>engine.entity.removeOverlayAnimations($entityId: String[, $childEntityId: String]): Void</sub>|
+| Get Engine Entity Animation <small>(available in initializeEngine(), updateEngine())</small>         |
+| <small>engine.entity.getAnimation($entityId: String[, $childEntityId: String]): String</small>       |
+| Set Engine Entity Animation <small>(available in initializeEngine(), updateEngine())</small>         |
+| <small>engine.entity.setAnimation($entityId: String, $animation: String[, $speed: Float[, $childEntityId: String]]): Void</small>|
+| Get Engine Entity Animation Speed <small>(available in initializeEngine(), updateEngine())</small>   |
+| <small>engine.entity.setAnimationSpeed($entityId: String, $speed: Float[, $childEntityId: String]): Void</small>|
+| Set Engine Entity Animation Speed <small>(available in initializeEngine(), updateEngine())</small>   |
+| <small>engine.entity.getAnimationTime($entityId: String[, $childEntityId: String]): Float</small>    |
+| Get Engine Entity Additive Effect Color <small>(available in initializeEngine(), updateEngine())</small>|
+| <small>engine.entity.getEffectColorAdd($entityId: String[, $childEntityId: String]): Vector4</small> |
+| Set Engine Entity Additive Effect Color <small>(available in initializeEngine(), updateEngine())</small>|
+| <small>engine.entity.setEffectColorAdd($entityId: String, $effectColorAdd: Vector4[, $childEntityId: String]): Void</small>|
+| Get Engine Entity Multiplicative Effect Color <small>(available in initializeEngine(), updateEngine())</small>|
+| <small>engine.entity.getEffectColorMul($entityId: String[, $childEntityId: String]): Vector4</small> |
+| Set Engine Entity Multiplicative Effect Color <small>(available in initializeEngine(), updateEngine())</small>|
+| <small>engine.entity.setEffectColorMul($entityId: String, $effectColorMul: Vector4[, $childEntityId: String]): Void</small>|
+| Return if Engine Entity is enabled <small>(available in initializeEngine(), updateEngine())</small>  |
+| <small>engine.entity.isEnabled($entityId: String[, $childEntityId: String]): Boolean</small>         |
+| Set Engine Entity enabled/disabled <small>(available in initializeEngine(), updateEngine())</small>  |
+| <small>engine.entity.setEnabled($entityId: String, $enabled: Boolean[, $childEntityId: String]): Void</small>|
+| Get Engine Entity Node Transform <small>(available in initializeEngine(), updateEngine())</small>    |
+| <small>engine.entity.getNodeTransform($entityId: String, $nodeId: String[, $childEntityId: String]): Transform</small>|
+| Set Engine Entity Node Transform <small>(available in initializeEngine(), updateEngine())</small>    |
+| <small>engine.entity.setNodeTransform($entityId: String, $nodeId: String, $transform: Transform[, $childEntityId: String]): Void</small>|
+| Unset Engine Entity Node Transform <small>(available in initializeEngine(), updateEngine())</small>  |
+| <small>engine.entity.unsetNodeTransform($entityId: String, $nodeId: String[, $childEntityId: String]): Void</small>|
+| Get Engine Entity Node Transform Matrix <small>(available in initializeEngine(), updateEngine())</small>|
+| <small>engine.entity.getNodeTransformMatrix($entityId: String, $nodeId: String[, $childEntityId: String]): Matrix4x4</small>|
+| Set Engine Entity Node Transform Matrix <small>(available in initializeEngine(), updateEngine())</small>|
+| <small>engine.entity.setNodeTransformMatrix($entityId: String, $nodeId: String, $matrix: Matrix4x4[, $childEntityId: String]): Void</small>|
+| Unset Engine Entity Node Transform Matrix <small>(available in initializeEngine(), updateEngine())</small>|
+| <small>engine.entity.unsetNodeTransformMatrix($entityId: String, $nodeId: String[, $childEntityId: String]): Void</small>|
+| Return if Engine Entity has specific Overlay Animation <small>(available in initializeEngine(), updateEngine())</small>|
+| <small>engine.entity.hasOverlayAnimation($entityId: String, $animation: String[, $childEntityId: String]): Boolean</small>|
+| Return Engine Entity Overlay Animation Playback Time from 0.0 until 1.0 <small>(available in initializeEngine(), updateEngine())</small>|
+| <small>engine.entity.getOverlayAnimationTime($entityId: String, $animation: String[, $childEntityId: String]): Float</small>|
+| Return if Engine Entity is Pickable <small>(available in initializeEngine(), updateEngine())</small> |
+| <small>engine.entity.isPickable($entityId: String[, $childEntityId: String]): Boolean</small>        |
+| Set Engine Entity Pickable <small>(available in initializeEngine(), updateEngine())</small>          |
+| <small>engine.entity.setPickable($entityId: String, $pickable: Boolean[, $childEntityId: String]): Void</small>|
+| Get Engine Entity Transform <small>(available in initializeEngine(), updateEngine())</small>         |
+| <small>engine.entity.getTransform($entityId: String[, $childEntityId: String]): Transform</small>    |
+| Set Engine Entity Transform <small>(available in initializeEngine(), updateEngine())</small>         |
+| <small>engine.entity.setTransform($entityId: String, $transform: Transform[, $childEntityId: String]): Void</small>|
+| Add Engine Entity Overlay Animation <small>(available in initializeEngine(), updateEngine())</small> |
+| <small>engine.entity.addOverlayAnimation($entityId: String, $animation: String[, $childEntityId: String]): Void</small>|
+| Emit Engine Entity Particles <small>(available in initializeEngine(), updateEngine())</small>        |
+| <small>engine.entity.emitParticles($entityId: String[, $childEntityId: String]): Integer</small>     |
+| Remove finished Overlay Animations <small>(available in initializeEngine(), updateEngine())</small>  |
+| <small>engine.entity.removeFinishedOverlayAnimations($entityId: String[, $childEntityId: String]): Void</small>|
+| Remove specific Overlay Animation <small>(available in initializeEngine(), updateEngine())</small>   |
+| <small>engine.entity.removeOverlayAnimation($entityId: String, $animation: String[, $childEntityId: String]): Void</small>|
+| Remove Overlay Animations <small>(available in initializeEngine(), updateEngine())</small>           |
+| <small>engine.entity.removeOverlayAnimations($entityId: String[, $childEntityId: String]): Void</small>|
 
 ## 7.5 Engine Timing Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Get Engine Timing Avarage FPS <sub>(available in initializeEngine(), updateEngine())</sub>       |
-| <sub>engine.timing.getAvarageFPS(): Float</sub>                                                  |
-| Get Engine Timing Frame Delta Time in Milliseconds <sub>(available in initializeEngine(), updateEngine())</sub>|
-| <sub>engine.timing.getDeltaTime(): Integer</sub>                                                 |
-| Get Engine Timing Frame Delta Time in Seconds <sub>(available in initializeEngine(), updateEngine())</sub>|
-| <sub>engine.timing.getDeltaTimeSeconds(): Float</sub>                                            |
+| Get Engine Timing Avarage FPS <small>(available in initializeEngine(), updateEngine())</small>       |
+| <small>engine.timing.getAvarageFPS(): Float</small>                                                  |
+| Get Engine Timing Frame Delta Time in Milliseconds <small>(available in initializeEngine(), updateEngine())</small>|
+| <small>engine.timing.getDeltaTime(): Integer</small>                                                 |
+| Get Engine Timing Frame Delta Time in Seconds <small>(available in initializeEngine(), updateEngine())</small>|
+| <small>engine.timing.getDeltaTimeSeconds(): Float</small>                                            |
 
 ## 7.6 Keyboard Input Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Returns if ALT Key is currently pressed                                                          |
-| <sub>input.keyboard.isAltDown(): Boolean</sub>                                                   |
+| <small>input.keyboard.isAltDown(): Boolean</small>                                                   |
 | Returns if specific Character is currently pressed                                               |
-| <sub>input.keyboard.isCharDown($charAsString: String): Boolean</sub>                             |
+| <small>input.keyboard.isCharDown($charAsString: String): Boolean</small>                             |
 | Returns if CONTROL Key is currently pressed                                                      |
-| <sub>input.keyboard.isControlDown(): Boolean</sub>                                               |
+| <small>input.keyboard.isControlDown(): Boolean</small>                                               |
 | Backspace Key Keycode                                                                            |
-| <sub>input.keyboard.KEYCODE_BACKSPACE(): Integer</sub>                                           |
+| <small>input.keyboard.KEYCODE_BACKSPACE(): Integer</small>                                           |
 | Delete Key Keycode                                                                               |
-| <sub>input.keyboard.KEYCODE_DELETE(): Integer</sub>                                              |
+| <small>input.keyboard.KEYCODE_DELETE(): Integer</small>                                              |
 | Down Key Keycode                                                                                 |
-| <sub>input.keyboard.KEYCODE_DOWN(): Integer</sub>                                                |
+| <small>input.keyboard.KEYCODE_DOWN(): Integer</small>                                                |
 | End Key Keycode                                                                                  |
-| <sub>input.keyboard.KEYCODE_END(): Integer</sub>                                                 |
+| <small>input.keyboard.KEYCODE_END(): Integer</small>                                                 |
 | Escape Key Keycode                                                                               |
-| <sub>input.keyboard.KEYCODE_ESCAPE(): Integer</sub>                                              |
+| <small>input.keyboard.KEYCODE_ESCAPE(): Integer</small>                                              |
 | F1 Key Keycode                                                                                   |
-| <sub>input.keyboard.KEYCODE_F1(): Integer</sub>                                                  |
+| <small>input.keyboard.KEYCODE_F1(): Integer</small>                                                  |
 | F10 Key Keycode                                                                                  |
-| <sub>input.keyboard.KEYCODE_F10(): Integer</sub>                                                 |
+| <small>input.keyboard.KEYCODE_F10(): Integer</small>                                                 |
 | F11 Key Keycode                                                                                  |
-| <sub>input.keyboard.KEYCODE_F11(): Integer</sub>                                                 |
+| <small>input.keyboard.KEYCODE_F11(): Integer</small>                                                 |
 | F12 Key Keycode                                                                                  |
-| <sub>input.keyboard.KEYCODE_F12(): Integer</sub>                                                 |
+| <small>input.keyboard.KEYCODE_F12(): Integer</small>                                                 |
 | F2 Key Keycode                                                                                   |
-| <sub>input.keyboard.KEYCODE_F2(): Integer</sub>                                                  |
+| <small>input.keyboard.KEYCODE_F2(): Integer</small>                                                  |
 | F3 Key Keycode                                                                                   |
-| <sub>input.keyboard.KEYCODE_F3(): Integer</sub>                                                  |
+| <small>input.keyboard.KEYCODE_F3(): Integer</small>                                                  |
 | F4 Key Keycode                                                                                   |
-| <sub>input.keyboard.KEYCODE_F4(): Integer</sub>                                                  |
+| <small>input.keyboard.KEYCODE_F4(): Integer</small>                                                  |
 | F5 Key Keycode                                                                                   |
-| <sub>input.keyboard.KEYCODE_F5(): Integer</sub>                                                  |
+| <small>input.keyboard.KEYCODE_F5(): Integer</small>                                                  |
 | F6 Key Keycode                                                                                   |
-| <sub>input.keyboard.KEYCODE_F6(): Integer</sub>                                                  |
+| <small>input.keyboard.KEYCODE_F6(): Integer</small>                                                  |
 | F7 Key Keycode                                                                                   |
-| <sub>input.keyboard.KEYCODE_F7(): Integer</sub>                                                  |
+| <small>input.keyboard.KEYCODE_F7(): Integer</small>                                                  |
 | F8 Key Keycode                                                                                   |
-| <sub>input.keyboard.KEYCODE_F8(): Integer</sub>                                                  |
+| <small>input.keyboard.KEYCODE_F8(): Integer</small>                                                  |
 | F9 Key Keycode                                                                                   |
-| <sub>input.keyboard.KEYCODE_F9(): Integer</sub>                                                  |
+| <small>input.keyboard.KEYCODE_F9(): Integer</small>                                                  |
 | Left Key Keycode                                                                                 |
-| <sub>input.keyboard.KEYCODE_LEFT(): Integer</sub>                                                |
+| <small>input.keyboard.KEYCODE_LEFT(): Integer</small>                                                |
 | Page Down Key Keycode                                                                            |
-| <sub>input.keyboard.KEYCODE_PAGEDOWN(): Integer</sub>                                            |
+| <small>input.keyboard.KEYCODE_PAGEDOWN(): Integer</small>                                            |
 | Page Up Key Keycode                                                                              |
-| <sub>input.keyboard.KEYCODE_PAGEUP(): Integer</sub>                                              |
+| <small>input.keyboard.KEYCODE_PAGEUP(): Integer</small>                                              |
 | Home/Position 1 Key Keycode                                                                      |
-| <sub>input.keyboard.KEYCODE_POS1(): Integer</sub>                                                |
+| <small>input.keyboard.KEYCODE_POS1(): Integer</small>                                                |
 | Return Key Keycode                                                                               |
-| <sub>input.keyboard.KEYCODE_RETURN(): Integer</sub>                                              |
+| <small>input.keyboard.KEYCODE_RETURN(): Integer</small>                                              |
 | Right Key Keycode                                                                                |
-| <sub>input.keyboard.KEYCODE_RIGHT(): Integer</sub>                                               |
+| <small>input.keyboard.KEYCODE_RIGHT(): Integer</small>                                               |
 | Space Key Keycode                                                                                |
-| <sub>input.keyboard.KEYCODE_SPACE(): Integer</sub>                                               |
+| <small>input.keyboard.KEYCODE_SPACE(): Integer</small>                                               |
 | Up Key Keycode                                                                                   |
-| <sub>input.keyboard.KEYCODE_UP(): Integer</sub>                                                  |
+| <small>input.keyboard.KEYCODE_UP(): Integer</small>                                                  |
 | Returns if specific Key is currently pressed                                                     |
-| <sub>input.keyboard.isKeyDown($keyCode: Integer): Boolean</sub>                                  |
+| <small>input.keyboard.isKeyDown($keyCode: Integer): Boolean</small>                                  |
 | Returns if Meta Key is currently pressed                                                         |
-| <sub>input.keyboard.isMetaDown(): Boolean</sub>                                                  |
+| <small>input.keyboard.isMetaDown(): Boolean</small>                                                  |
 | Returns if Shift Key is currently pressed                                                        |
-| <sub>input.keyboard.isShiftDown(): Boolean</sub>                                                 |
+| <small>input.keyboard.isShiftDown(): Boolean</small>                                                 |
 | Returns last typed String                                                                        |
-| <sub>input.keyboard.getTypedString(): String</sub>                                               |
+| <small>input.keyboard.getTypedString(): String</small>                                               |
 
 ## 7.7 Mouse Input Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Left Mouse Button Integer Code                                                                   |
-| <sub>input.mouse.BUTTON_LEFT(): Integer</sub>                                                    |
+| <small>input.mouse.BUTTON_LEFT(): Integer</small>                                                    |
 | Middle Mouse Button Integer Code                                                                 |
-| <sub>input.mouse.BUTTON_MIDDLE(): Integer</sub>                                                  |
+| <small>input.mouse.BUTTON_MIDDLE(): Integer</small>                                                  |
 | Right Mouse Button Integer Code                                                                  |
-| <sub>input.mouse.BUTTON_RIGHT(): Integer</sub>                                                   |
+| <small>input.mouse.BUTTON_RIGHT(): Integer</small>                                                   |
 | Returns if specific Mouse Button is currently pressed                                            |
-| <sub>input.mouse.isButtonDown($button: Integer): Boolean</sub>                                   |
+| <small>input.mouse.isButtonDown($button: Integer): Boolean</small>                                   |
 | Returns if specific Mouse Button has been released                                               |
-| <sub>input.mouse.isButtonUp($button: Integer): Boolean</sub>                                     |
+| <small>input.mouse.isButtonUp($button: Integer): Boolean</small>                                     |
 | Returns if Mouse is dragging currently                                                           |
-| <sub>input.mouse.isDragging($button: Integer): Boolean</sub>                                     |
+| <small>input.mouse.isDragging($button: Integer): Boolean</small>                                     |
 | Returns if Mouse has been moved                                                                  |
-| <sub>input.mouse.hasMoved(): Boolean</sub>                                                       |
+| <small>input.mouse.hasMoved(): Boolean</small>                                                       |
 | Returns current Value of X Axis Mouse Wheel                                                      |
-| <sub>input.mouse.getWheelX(): Float</sub>                                                        |
+| <small>input.mouse.getWheelX(): Float</small>                                                        |
 | Returns current Value of Y Axis Mouse Wheel                                                      |
-| <sub>input.mouse.getWheelY(): Float</sub>                                                        |
+| <small>input.mouse.getWheelY(): Float</small>                                                        |
 | Returns current Value of Z Axis Mouse Wheel                                                      |
-| <sub>input.mouse.getWheelZ(): Float</sub>                                                        |
+| <small>input.mouse.getWheelZ(): Float</small>                                                        |
 | Get X Mouse Position                                                                             |
-| <sub>input.mouse.getX(): Integer</sub>                                                           |
+| <small>input.mouse.getX(): Integer</small>                                                           |
 | Get Unscaled X Mouse Position                                                                    |
-| <sub>input.mouse.getXUnscaled(): Integer</sub>                                                   |
+| <small>input.mouse.getXUnscaled(): Integer</small>                                                   |
 | Get Y Mouse Position                                                                             |
-| <sub>input.mouse.getY(): Integer</sub>                                                           |
+| <small>input.mouse.getY(): Integer</small>                                                           |
 | Get Unscaled Y Mouse Position                                                                    |
-| <sub>input.mouse.getYUnscaled(): Integer</sub>                                                   |
+| <small>input.mouse.getYUnscaled(): Integer</small>                                                   |
 
 ## 7.8 Logic Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Returns if Logic has Function <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>logic.has($logicId: String, $function: String): Boolean</sub>                               |
-| Get Hierarchy Id <sub>(available in initializeEngine(), updateEngine(), initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>logic.getHierarchyId(): String</sub>                                                        |
-| Get Hierarchy Parent Id <sub>(available in initializeEngine(), updateEngine(), initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>logic.getHierarchyParentId(): String</sub>                                                  |
-| Get Logic Id <sub>(available in initializeEngine(), updateEngine(), initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>logic.getId(): String</sub>                                                                 |
-| Call specific Logic Function <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>logic.call($logicId: String, $function: String, ...): Mixed</sub>                           |
+| Returns if Logic has Function <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>logic.has($logicId: String, $function: String): Boolean</small>                               |
+| Get Hierarchy Id <small>(available in initializeEngine(), updateEngine(), initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>logic.getHierarchyId(): String</small>                                                        |
+| Get Hierarchy Parent Id <small>(available in initializeEngine(), updateEngine(), initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>logic.getHierarchyParentId(): String</small>                                                  |
+| Get Logic Id <small>(available in initializeEngine(), updateEngine(), initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>logic.getId(): String</small>                                                                 |
+| Call specific Logic Function <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>logic.call($logicId: String, $function: String, ...): Mixed</small>                           |
 
 ## 7.9 Logic Signal Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Returns if Signal has been sent                                                                  |
-| <sub>logic.signal.has(): Boolean</sub>                                                           |
+| <small>logic.signal.has(): Boolean</small>                                                           |
 | Get Signal Argument                                                                              |
-| <sub>logic.signal.getArgument($argumentIndex: Integer): Mixed</sub>                              |
+| <small>logic.signal.getArgument($argumentIndex: Integer): Mixed</small>                              |
 | Get Signal Name                                                                                  |
-| <sub>logic.signal.getName(): String</sub>                                                        |
+| <small>logic.signal.getName(): String</small>                                                        |
 | Advance to next Signal                                                                           |
-| <sub>logic.signal.next(): Void</sub>                                                             |
-| Send Signal <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>logic.signal.send($logicId: String, $signal: String, ...): Void</sub>                       |
+| <small>logic.signal.next(): Void</small>                                                             |
+| Send Signal <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>logic.signal.send($logicId: String, $signal: String, ...): Void</small>                       |
 
 ## 7.10 PathFinding Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Pathfinding Idle State Integer Code <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>pathfinding.STATE_IDLE(): Integer</sub>                                                     |
-| Pathfinding Computing State Integer Code <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>pathfinding.STATE_PATHFINDING(): Integer</sub>                                              |
-| Pathfinding Failed State Integer Code <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>pathfinding.STATE_PATHFINDING_FAILED(): Integer</sub>                                       |
-| Pathfinding Computing Other Pathfinding Integer Code <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>pathfinding.STATE_PATHFINDING_OTHER(): Integer</sub>                                        |
-| Pathfinding Success State Integer Code <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>pathfinding.STATE_PATHFINDING_SUCCESS(): Integer</sub>                                      |
-| Pathfinding Try/Lock Failed Integer Code <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>pathfinding.STATE_TRYLOCK_FAILED(): Integer</sub>                                           |
-| Issue Pathfinding <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>pathfinding.findPath($logicId: String, $startPosition: Vector3, $endPosition: Vector3, =$path: Array): Integer</sub>|
+| Pathfinding Idle State Integer Code <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>pathfinding.STATE_IDLE(): Integer</small>                                                     |
+| Pathfinding Computing State Integer Code <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>pathfinding.STATE_PATHFINDING(): Integer</small>                                              |
+| Pathfinding Failed State Integer Code <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>pathfinding.STATE_PATHFINDING_FAILED(): Integer</small>                                       |
+| Pathfinding Computing Other Pathfinding Integer Code <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>pathfinding.STATE_PATHFINDING_OTHER(): Integer</small>                                        |
+| Pathfinding Success State Integer Code <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>pathfinding.STATE_PATHFINDING_SUCCESS(): Integer</small>                                      |
+| Pathfinding Try/Lock Failed Integer Code <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>pathfinding.STATE_TRYLOCK_FAILED(): Integer</small>                                           |
+| Issue Pathfinding <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>pathfinding.findPath($logicId: String, $startPosition: Vector3, $endPosition: Vector3, =$path: Array): Integer</small>|
 
 ## 7.11 Scene Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Get Scene Depth                                                                                  |
-| <sub>scene.getDepth(): Float</sub>                                                               |
+| <small>scene.getDepth(): Float</small>                                                               |
 | Get Scene Height                                                                                 |
-| <sub>scene.getHeight(): Float</sub>                                                              |
+| <small>scene.getHeight(): Float</small>                                                              |
 | Get Scene Width                                                                                  |
-| <sub>scene.getWidth(): Float</sub>                                                               |
+| <small>scene.getWidth(): Float</small>                                                               |
 
 ## 7.12 SceneConnector Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Attach Prototype to the Logic Hierarchy <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>sceneconnector.attachPrototype($pathName: String, $fileName: String, $id: String, $attachNodeId: String, $transform: Transform[, $parentId: String]): Void</sub>|
-| Spawn Prototype in Scene <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>sceneconnector.spawnPrototype($pathName: String, $fileName: String, $id: String, $transform: Transform[, $hierarchyId: String[, $hierarchyParentId: String]]): Void</sub>|
+| Attach Prototype to the Logic Hierarchy <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>sceneconnector.attachPrototype($pathName: String, $fileName: String, $id: String, $attachNodeId: String, $transform: Transform[, $parentId: String]): Void</small>|
+| Spawn Prototype in Scene <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>sceneconnector.spawnPrototype($pathName: String, $fileName: String, $id: String, $transform: Transform[, $hierarchyId: String[, $hierarchyParentId: String]]): Void</small>|
 
 ## 7.13 Physics World Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Determine Height at specific Position in Physics World <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.determineHeight($collisionTypeIds: Integer, $stepUpMax: Float, $point: Vector3, =$heightPoint: Vector3[, =$bodyId: String[, $minHeight: Float[, $maxHeight: Float]]]): Boolean</sub>|
-| Determine Collision of Two Specific Bodies in Physics World <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.doCollide($bodyId1: String, $bodyId2: String): Boolean</sub>                          |
-| Compute Ray Casting in Physics World <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.doRayCasting($collisionTypeIds: Integer, $start: Vector3, $end: Vector3, =$hitPoint: Vector3[, =$bodyId: String[, $actorId: String]]): Boolean</sub>|
-| Determine Collision of Specific Body in Physics World <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.doesCollideWith($collisionTypeIds: Integer, $bodyId: String): Array</sub>             |
+| Determine Height at specific Position in Physics World <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.determineHeight($collisionTypeIds: Integer, $stepUpMax: Float, $point: Vector3, =$heightPoint: Vector3[, =$bodyId: String[, $minHeight: Float[, $maxHeight: Float]]]): Boolean</small>|
+| Determine Collision of Two Specific Bodies in Physics World <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.doCollide($bodyId1: String, $bodyId2: String): Boolean</small>                          |
+| Compute Ray Casting in Physics World <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.doRayCasting($collisionTypeIds: Integer, $start: Vector3, $end: Vector3, =$hitPoint: Vector3[, =$bodyId: String[, $actorId: String]]): Boolean</small>|
+| Determine Collision of Specific Body in Physics World <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.doesCollideWith($collisionTypeIds: Integer, $bodyId: String): Array</small>             |
 
 ## 7.14 Physics World Body Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Get Physics World Entity Angular Damping <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.getAngularDamping($bodyId: String): Float</sub>                                  |
-| Set Physics World Entity Angular Damping <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.setAngularDamping($bodyId: String, $angularDamping: Float): Void</sub>           |
-| Get Physics World Entity Angular Velocity <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.getAngularVelocity($bodyId: String): Vector3</sub>                               |
-| Set Physics World Entity Angular Velocity <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.setAngularVelocity($bodyId: String, $angularVelocity: Vector3): Void</sub>       |
-| Returns Physics World Collision Type Id 10 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.COLLISION_TYPEID_10(): Integer</sub>                                             |
-| Returns Physics World Collision Type Id 11 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.COLLISION_TYPEID_11(): Integer</sub>                                             |
-| Returns Physics World Collision Type Id 12 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.COLLISION_TYPEID_12(): Integer</sub>                                             |
-| Returns Physics World Collision Type Id 13 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.COLLISION_TYPEID_13(): Integer</sub>                                             |
-| Returns Physics World Collision Type Id 14 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.COLLISION_TYPEID_14(): Integer</sub>                                             |
-| Returns Physics World Collision Type Id 15 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.COLLISION_TYPEID_15(): Integer</sub>                                             |
-| Returns Physics World Collision Type Id 16 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.COLLISION_TYPEID_16(): Integer</sub>                                             |
-| Returns Physics World Collision Type Id 3 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.COLLISION_TYPEID_3(): Integer</sub>                                              |
-| Returns Physics World Collision Type Id 4 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.COLLISION_TYPEID_4(): Integer</sub>                                              |
-| Returns Physics World Collision Type Id 5 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.COLLISION_TYPEID_5(): Integer</sub>                                              |
-| Returns Physics World Collision Type Id 6 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.COLLISION_TYPEID_6(): Integer</sub>                                              |
-| Returns Physics World Collision Type Id 7 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.COLLISION_TYPEID_7(): Integer</sub>                                              |
-| Returns Physics World Collision Type Id 8 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.COLLISION_TYPEID_8(): Integer</sub>                                              |
-| Returns Physics World Collision Type Id 9 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.COLLISION_TYPEID_9(): Integer</sub>                                              |
-| Returns All Physics World Collision Type Ids <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.COLLISION_TYPEID_ALL(): Integer</sub>                                            |
-| Returns Dynamic Physics World Collision Type Id <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.COLLISION_TYPEID_DYNAMIC(): Integer</sub>                                        |
-| Returns Static Physics World Collision Type Id <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.COLLISION_TYPEID_STATIC(): Integer</sub>                                         |
-| Get Physics World Entity own Collision Type Id <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.getCollisionTypeId($bodyId: String): Integer</sub>                               |
-| Set Physics World Entity own Collision Type Id <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.setCollisionTypeId($bodyId: String, $collisionTypeId: Integer): Void</sub>       |
-| Get Physics World Entity enabled Collision Type Ids <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.getCollisionTypeIds($bodyId: String): Integer</sub>                              |
-| Set Physics World Entity enabled Collision Type Ids <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.setCollisionTypeIds($bodyId: String, $collisionTypeIds: Integer): Void</sub>     |
-| Returns if Physics World Entity is enabled <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.isEnabled($bodyId: String): Boolean</sub>                                        |
-| Set Physics World Entity enabled/disabled <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.setEnabled($bodyId: String, $enabled: Boolean): Void</sub>                       |
-| Get Physics World Entity Linear Damping <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.getLinearDamping($bodyId: String): Float</sub>                                   |
-| Set Physics World Entity Linear Damping <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.setLinearDamping($bodyId: String, $linearDamping: Float): Void</sub>             |
-| Get Physics World Entity Linear Velocity <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.getLinearVelocity($bodyId: String): Vector3</sub>                                |
-| Set Physics World Entity Linear Velocity <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.setLinearVelocity($bodyId: String, $linearVelocity: Vector3): Void</sub>         |
-| Returns Physics World Dynamic Collision Body Type Integer Code <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.TYPE_COLLISION_DYNAMIC(): Integer</sub>                                          |
-| Returns Physics World Static Collision Body Type Integer Code <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.TYPE_COLLISION_STATIC(): Integer</sub>                                           |
-| Returns Physics World Dynamic Rigid Body Type Integer Code <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.TYPE_DYNAMIC(): Integer</sub>                                                    |
-| Returns Physics World Static Rigid Body Type Integer Code <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.TYPE_STATIC(): Integer</sub>                                                     |
-| Get Physics World Entity Transform <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.getTransform($bodyId: String): Transform</sub>                                   |
-| Set Physics World Entity Transform <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.setTransform($bodyId: String, $transform: Transform): Void</sub>                 |
-| Get Physics World Entity Body Type Integer Code <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.getType($bodyId: String): Integer</sub>                                          |
-| Add Force to Physics World Entity <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.addForce($bodyId: String, $force: Vector3[, $origin: Vector3]): Void</sub>       |
-| Add Torque to Physics World Entity <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
-| <sub>world.body.addTorque($bodyId: String, $torque: Vector3): Void</sub>                         |
+| Get Physics World Entity Angular Damping <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.getAngularDamping($bodyId: String): Float</small>                                  |
+| Set Physics World Entity Angular Damping <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.setAngularDamping($bodyId: String, $angularDamping: Float): Void</small>           |
+| Get Physics World Entity Angular Velocity <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.getAngularVelocity($bodyId: String): Vector3</small>                               |
+| Set Physics World Entity Angular Velocity <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.setAngularVelocity($bodyId: String, $angularVelocity: Vector3): Void</small>       |
+| Returns Physics World Collision Type Id 10 <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.COLLISION_TYPEID_10(): Integer</small>                                             |
+| Returns Physics World Collision Type Id 11 <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.COLLISION_TYPEID_11(): Integer</small>                                             |
+| Returns Physics World Collision Type Id 12 <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.COLLISION_TYPEID_12(): Integer</small>                                             |
+| Returns Physics World Collision Type Id 13 <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.COLLISION_TYPEID_13(): Integer</small>                                             |
+| Returns Physics World Collision Type Id 14 <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.COLLISION_TYPEID_14(): Integer</small>                                             |
+| Returns Physics World Collision Type Id 15 <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.COLLISION_TYPEID_15(): Integer</small>                                             |
+| Returns Physics World Collision Type Id 16 <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.COLLISION_TYPEID_16(): Integer</small>                                             |
+| Returns Physics World Collision Type Id 3 <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.COLLISION_TYPEID_3(): Integer</small>                                              |
+| Returns Physics World Collision Type Id 4 <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.COLLISION_TYPEID_4(): Integer</small>                                              |
+| Returns Physics World Collision Type Id 5 <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.COLLISION_TYPEID_5(): Integer</small>                                              |
+| Returns Physics World Collision Type Id 6 <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.COLLISION_TYPEID_6(): Integer</small>                                              |
+| Returns Physics World Collision Type Id 7 <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.COLLISION_TYPEID_7(): Integer</small>                                              |
+| Returns Physics World Collision Type Id 8 <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.COLLISION_TYPEID_8(): Integer</small>                                              |
+| Returns Physics World Collision Type Id 9 <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.COLLISION_TYPEID_9(): Integer</small>                                              |
+| Returns All Physics World Collision Type Ids <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.COLLISION_TYPEID_ALL(): Integer</small>                                            |
+| Returns Dynamic Physics World Collision Type Id <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.COLLISION_TYPEID_DYNAMIC(): Integer</small>                                        |
+| Returns Static Physics World Collision Type Id <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.COLLISION_TYPEID_STATIC(): Integer</small>                                         |
+| Get Physics World Entity own Collision Type Id <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.getCollisionTypeId($bodyId: String): Integer</small>                               |
+| Set Physics World Entity own Collision Type Id <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.setCollisionTypeId($bodyId: String, $collisionTypeId: Integer): Void</small>       |
+| Get Physics World Entity enabled Collision Type Ids <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.getCollisionTypeIds($bodyId: String): Integer</small>                              |
+| Set Physics World Entity enabled Collision Type Ids <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.setCollisionTypeIds($bodyId: String, $collisionTypeIds: Integer): Void</small>     |
+| Returns if Physics World Entity is enabled <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.isEnabled($bodyId: String): Boolean</small>                                        |
+| Set Physics World Entity enabled/disabled <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.setEnabled($bodyId: String, $enabled: Boolean): Void</small>                       |
+| Get Physics World Entity Linear Damping <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.getLinearDamping($bodyId: String): Float</small>                                   |
+| Set Physics World Entity Linear Damping <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.setLinearDamping($bodyId: String, $linearDamping: Float): Void</small>             |
+| Get Physics World Entity Linear Velocity <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.getLinearVelocity($bodyId: String): Vector3</small>                                |
+| Set Physics World Entity Linear Velocity <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.setLinearVelocity($bodyId: String, $linearVelocity: Vector3): Void</small>         |
+| Returns Physics World Dynamic Collision Body Type Integer Code <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.TYPE_COLLISION_DYNAMIC(): Integer</small>                                          |
+| Returns Physics World Static Collision Body Type Integer Code <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.TYPE_COLLISION_STATIC(): Integer</small>                                           |
+| Returns Physics World Dynamic Rigid Body Type Integer Code <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.TYPE_DYNAMIC(): Integer</small>                                                    |
+| Returns Physics World Static Rigid Body Type Integer Code <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.TYPE_STATIC(): Integer</small>                                                     |
+| Get Physics World Entity Transform <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.getTransform($bodyId: String): Transform</small>                                   |
+| Set Physics World Entity Transform <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.setTransform($bodyId: String, $transform: Transform): Void</small>                 |
+| Get Physics World Entity Body Type Integer Code <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.getType($bodyId: String): Integer</small>                                          |
+| Add Force to Physics World Entity <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.addForce($bodyId: String, $force: Vector3[, $origin: Vector3]): Void</small>       |
+| Add Torque to Physics World Entity <small>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</small>|
+| <small>world.body.addTorque($bodyId: String, $torque: Vector3): Void</small>                         |
 
 # 8. MiniScript GUI Methods
 
@@ -1392,217 +1392,217 @@ Reading all keys as array from set:
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Returns if GUI Element Node has a specific Condition enabled                                     |
-| <sub>gui.elementnode.conditions.has($elementNodeId: String, $condition: String): Boolean</sub>   |
+| <small>gui.elementnode.conditions.has($elementNodeId: String, $condition: String): Boolean</small>   |
 | Get enabled GUI Element Node Conditions                                                          |
-| <sub>gui.elementnode.conditions.get($elementNodeId: String): Array</sub>                         |
+| <small>gui.elementnode.conditions.get($elementNodeId: String): Array</small>                         |
 | Set enabled GUI Element Node Condition                                                           |
-| <sub>gui.elementnode.conditions.set($elementNodeId: String, $condition: String): Void</sub>      |
+| <small>gui.elementnode.conditions.set($elementNodeId: String, $condition: String): Void</small>      |
 | Set Array of enabled GUI Element Node Conditions                                                 |
-| <sub>gui.elementnode.conditions.setAll($elementNodeId: String, $conditions: Array): Void</sub>   |
+| <small>gui.elementnode.conditions.setAll($elementNodeId: String, $conditions: Array): Void</small>   |
 | Add enabled GUI Element Node Condition                                                           |
-| <sub>gui.elementnode.conditions.add($elementNodeId: String, $condition: String): Void</sub>      |
+| <small>gui.elementnode.conditions.add($elementNodeId: String, $condition: String): Void</small>      |
 | Remove enabled GUI Element Node Condition                                                        |
-| <sub>gui.elementnode.conditions.remove($elementNodeId: String, $condition: String): Void</sub>   |
+| <small>gui.elementnode.conditions.remove($elementNodeId: String, $condition: String): Void</small>   |
 | Remove All enabled GUI Element Node Conditions                                                   |
-| <sub>gui.elementnode.conditions.removeAll($elementNodeId: String): Void</sub>                    |
+| <small>gui.elementnode.conditions.removeAll($elementNodeId: String): Void</small>                    |
 
 ## 8.2 Event Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Returns GUI Event Performed Action Type Integer Code                                             |
-| <sub>gui.event.ACTIONTYPE_PERFORMED(): Integer</sub>                                             |
+| <small>gui.event.ACTIONTYPE_PERFORMED(): Integer</small>                                             |
 | Returns GUI Event Performing Action Type Integer Code                                            |
-| <sub>gui.event.ACTIONTYPE_PERFORMING(): Integer</sub>                                            |
+| <small>gui.event.ACTIONTYPE_PERFORMING(): Integer</small>                                            |
 
 ## 8.3 Image Node Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Get Image Source of GUI Image Node                                                               |
-| <sub>gui.imagenode.getSource($imageNodeId: String): String</sub>                                 |
+| <small>gui.imagenode.getSource($imageNodeId: String): String</small>                                 |
 | Set Image Source of GUI Image Node                                                               |
-| <sub>gui.imagenode.setSource($imageNodeId: String, $source: String): Void</sub>                  |
+| <small>gui.imagenode.setSource($imageNodeId: String, $source: String): Void</small>                  |
 
 ## 8.4 Node Controller Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Get GUI Node Controller Value                                                                    |
-| <sub>gui.node.controller.getValue($nodeId: String): String</sub>                                 |
+| <small>gui.node.controller.getValue($nodeId: String): String</small>                                 |
 | Set GUI Node Controller Value                                                                    |
-| <sub>gui.node.controller.setValue($nodeId: String, $value: String): Void</sub>                   |
+| <small>gui.node.controller.setValue($nodeId: String, $value: String): Void</small>                   |
 
 ## 8.5 Parent Node Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Add Sub Nodes using XML to GUI Parent Node                                                       |
-| <sub>gui.parentnode.addSubNodes($parentNodeId: String, $xml: String[, $resetScrollOffsets: Boolean]): Void</sub>|
+| <small>gui.parentnode.addSubNodes($parentNodeId: String, $xml: String[, $resetScrollOffsets: Boolean]): Void</small>|
 | Clear Sub Nodes of GUI Parent Node                                                               |
-| <sub>gui.parentnode.clearSubNodes($parentNodeId: String): Void</sub>                             |
+| <small>gui.parentnode.clearSubNodes($parentNodeId: String): Void</small>                             |
 | Replace Sub Nodes using XML of GUI Parent Node                                                   |
-| <sub>gui.parentnode.replaceSubNodes($parentNodeId: String, $xml: String[, $resetScrollOffsets: Boolean]): Void</sub>|
+| <small>gui.parentnode.replaceSubNodes($parentNodeId: String, $xml: String[, $resetScrollOffsets: Boolean]): Void</small>|
 
 ## 8.6 Screen Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Return if GUI Screen is enabled                                                                  |
-| <sub>gui.screen.isEnabled($screenId: String): Boolean</sub>                                      |
+| <small>gui.screen.isEnabled($screenId: String): Boolean</small>                                      |
 | Set GUI Screen enabled/disabled                                                                  |
-| <sub>gui.screen.setEnabled($screenId: String, $enabled: Boolean): Void</sub>                     |
+| <small>gui.screen.setEnabled($screenId: String, $enabled: Boolean): Void</small>                     |
 | Call specific Screen Logic Function                                                              |
-| <sub>gui.screen.call($screenId: String, $function: String, ...): Mixed</sub>                     |
+| <small>gui.screen.call($screenId: String, $function: String, ...): Mixed</small>                     |
 | Goto current Screen to specific Screen                                                           |
-| <sub>gui.screen.goto($fileName: String[, $variables: Map[, $arguments: Mixed]]): Void</sub>      |
+| <small>gui.screen.goto($fileName: String[, $variables: Map[, $arguments: Mixed]]): Void</small>      |
 | Pop current Screen from Screen Stack                                                             |
-| <sub>gui.screen.pop(): Void</sub>                                                                |
+| <small>gui.screen.pop(): Void</small>                                                                |
 | Push Screen to current Screen Stack                                                              |
-| <sub>gui.screen.push($fileName: String[, $variables: Map[, $arguments: Mixed]]): Void</sub>      |
+| <small>gui.screen.push($fileName: String[, $variables: Map[, $arguments: Mixed]]): Void</small>      |
 
 ## 8.7 Screen Node Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Get Current Screen Node Id                                                                       |
-| <sub>gui.screennode.getId(): String</sub>                                                        |
+| <small>gui.screennode.getId(): String</small>                                                        |
 
 ## 8.8 Text Node Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Get Text of GUI Text Node                                                                        |
-| <sub>gui.textnode.getText($textNodeId: String): String</sub>                                     |
+| <small>gui.textnode.getText($textNodeId: String): String</small>                                     |
 | Set Text of GUI Text Node                                                                        |
-| <sub>gui.textnode.setText($textNodeId: String, $text: String): Void</sub>                        |
+| <small>gui.textnode.setText($textNodeId: String, $text: String): Void</small>                        |
 
 ## 8.9 Video Node Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Get Video Source of GUI Video Node                                                               |
-| <sub>gui.videonode.getSource($videoNodeId: String): String</sub>                                 |
+| <small>gui.videonode.getSource($videoNodeId: String): String</small>                                 |
 | Set Video Source of GUI Video Node                                                               |
-| <sub>gui.videonode.setSource($videoNodeId: String, $source: String): Void</sub>                  |
+| <small>gui.videonode.setSource($videoNodeId: String, $source: String): Void</small>                  |
 
 ## 8.10 Keyboard Input Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Returns if ALT Key is currently pressed                                                          |
-| <sub>input.keyboard.isAltDown(): Boolean</sub>                                                   |
+| <small>input.keyboard.isAltDown(): Boolean</small>                                                   |
 | Returns if specific Character is currently pressed                                               |
-| <sub>input.keyboard.isCharDown($charAsString: String): Boolean</sub>                             |
+| <small>input.keyboard.isCharDown($charAsString: String): Boolean</small>                             |
 | Returns if CONTROL Key is currently pressed                                                      |
-| <sub>input.keyboard.isControlDown(): Boolean</sub>                                               |
+| <small>input.keyboard.isControlDown(): Boolean</small>                                               |
 | Backspace Key Keycode                                                                            |
-| <sub>input.keyboard.KEYCODE_BACKSPACE(): Integer</sub>                                           |
+| <small>input.keyboard.KEYCODE_BACKSPACE(): Integer</small>                                           |
 | Delete Key Keycode                                                                               |
-| <sub>input.keyboard.KEYCODE_DELETE(): Integer</sub>                                              |
+| <small>input.keyboard.KEYCODE_DELETE(): Integer</small>                                              |
 | Down Key Keycode                                                                                 |
-| <sub>input.keyboard.KEYCODE_DOWN(): Integer</sub>                                                |
+| <small>input.keyboard.KEYCODE_DOWN(): Integer</small>                                                |
 | End Key Keycode                                                                                  |
-| <sub>input.keyboard.KEYCODE_END(): Integer</sub>                                                 |
+| <small>input.keyboard.KEYCODE_END(): Integer</small>                                                 |
 | Escape Key Keycode                                                                               |
-| <sub>input.keyboard.KEYCODE_ESCAPE(): Integer</sub>                                              |
+| <small>input.keyboard.KEYCODE_ESCAPE(): Integer</small>                                              |
 | F1 Key Keycode                                                                                   |
-| <sub>input.keyboard.KEYCODE_F1(): Integer</sub>                                                  |
+| <small>input.keyboard.KEYCODE_F1(): Integer</small>                                                  |
 | F10 Key Keycode                                                                                  |
-| <sub>input.keyboard.KEYCODE_F10(): Integer</sub>                                                 |
+| <small>input.keyboard.KEYCODE_F10(): Integer</small>                                                 |
 | F11 Key Keycode                                                                                  |
-| <sub>input.keyboard.KEYCODE_F11(): Integer</sub>                                                 |
+| <small>input.keyboard.KEYCODE_F11(): Integer</small>                                                 |
 | F12 Key Keycode                                                                                  |
-| <sub>input.keyboard.KEYCODE_F12(): Integer</sub>                                                 |
+| <small>input.keyboard.KEYCODE_F12(): Integer</small>                                                 |
 | F2 Key Keycode                                                                                   |
-| <sub>input.keyboard.KEYCODE_F2(): Integer</sub>                                                  |
+| <small>input.keyboard.KEYCODE_F2(): Integer</small>                                                  |
 | F3 Key Keycode                                                                                   |
-| <sub>input.keyboard.KEYCODE_F3(): Integer</sub>                                                  |
+| <small>input.keyboard.KEYCODE_F3(): Integer</small>                                                  |
 | F4 Key Keycode                                                                                   |
-| <sub>input.keyboard.KEYCODE_F4(): Integer</sub>                                                  |
+| <small>input.keyboard.KEYCODE_F4(): Integer</small>                                                  |
 | F5 Key Keycode                                                                                   |
-| <sub>input.keyboard.KEYCODE_F5(): Integer</sub>                                                  |
+| <small>input.keyboard.KEYCODE_F5(): Integer</small>                                                  |
 | F6 Key Keycode                                                                                   |
-| <sub>input.keyboard.KEYCODE_F6(): Integer</sub>                                                  |
+| <small>input.keyboard.KEYCODE_F6(): Integer</small>                                                  |
 | F7 Key Keycode                                                                                   |
-| <sub>input.keyboard.KEYCODE_F7(): Integer</sub>                                                  |
+| <small>input.keyboard.KEYCODE_F7(): Integer</small>                                                  |
 | F8 Key Keycode                                                                                   |
-| <sub>input.keyboard.KEYCODE_F8(): Integer</sub>                                                  |
+| <small>input.keyboard.KEYCODE_F8(): Integer</small>                                                  |
 | F9 Key Keycode                                                                                   |
-| <sub>input.keyboard.KEYCODE_F9(): Integer</sub>                                                  |
+| <small>input.keyboard.KEYCODE_F9(): Integer</small>                                                  |
 | Left Key Keycode                                                                                 |
-| <sub>input.keyboard.KEYCODE_LEFT(): Integer</sub>                                                |
+| <small>input.keyboard.KEYCODE_LEFT(): Integer</small>                                                |
 | Page Down Key Keycode                                                                            |
-| <sub>input.keyboard.KEYCODE_PAGEDOWN(): Integer</sub>                                            |
+| <small>input.keyboard.KEYCODE_PAGEDOWN(): Integer</small>                                            |
 | Page Up Key Keycode                                                                              |
-| <sub>input.keyboard.KEYCODE_PAGEUP(): Integer</sub>                                              |
+| <small>input.keyboard.KEYCODE_PAGEUP(): Integer</small>                                              |
 | Home/Position 1 Key Keycode                                                                      |
-| <sub>input.keyboard.KEYCODE_POS1(): Integer</sub>                                                |
+| <small>input.keyboard.KEYCODE_POS1(): Integer</small>                                                |
 | Return Key Keycode                                                                               |
-| <sub>input.keyboard.KEYCODE_RETURN(): Integer</sub>                                              |
+| <small>input.keyboard.KEYCODE_RETURN(): Integer</small>                                              |
 | Right Key Keycode                                                                                |
-| <sub>input.keyboard.KEYCODE_RIGHT(): Integer</sub>                                               |
+| <small>input.keyboard.KEYCODE_RIGHT(): Integer</small>                                               |
 | Space Key Keycode                                                                                |
-| <sub>input.keyboard.KEYCODE_SPACE(): Integer</sub>                                               |
+| <small>input.keyboard.KEYCODE_SPACE(): Integer</small>                                               |
 | Up Key Keycode                                                                                   |
-| <sub>input.keyboard.KEYCODE_UP(): Integer</sub>                                                  |
+| <small>input.keyboard.KEYCODE_UP(): Integer</small>                                                  |
 | Returns if specific Key is currently pressed                                                     |
-| <sub>input.keyboard.isKeyDown($keyCode: Integer): Boolean</sub>                                  |
+| <small>input.keyboard.isKeyDown($keyCode: Integer): Boolean</small>                                  |
 | Returns if Meta Key is currently pressed                                                         |
-| <sub>input.keyboard.isMetaDown(): Boolean</sub>                                                  |
+| <small>input.keyboard.isMetaDown(): Boolean</small>                                                  |
 | Returns if Shift Key is currently pressed                                                        |
-| <sub>input.keyboard.isShiftDown(): Boolean</sub>                                                 |
+| <small>input.keyboard.isShiftDown(): Boolean</small>                                                 |
 | Returns last typed String                                                                        |
-| <sub>input.keyboard.getTypedString(): String</sub>                                               |
+| <small>input.keyboard.getTypedString(): String</small>                                               |
 
 ## 8.11 Mouse Input Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Left Mouse Button Integer Code                                                                   |
-| <sub>input.mouse.BUTTON_LEFT(): Integer</sub>                                                    |
+| <small>input.mouse.BUTTON_LEFT(): Integer</small>                                                    |
 | Middle Mouse Button Integer Code                                                                 |
-| <sub>input.mouse.BUTTON_MIDDLE(): Integer</sub>                                                  |
+| <small>input.mouse.BUTTON_MIDDLE(): Integer</small>                                                  |
 | Right Mouse Button Integer Code                                                                  |
-| <sub>input.mouse.BUTTON_RIGHT(): Integer</sub>                                                   |
+| <small>input.mouse.BUTTON_RIGHT(): Integer</small>                                                   |
 | Returns if specific Mouse Button is currently pressed                                            |
-| <sub>input.mouse.isButtonDown($button: Integer): Boolean</sub>                                   |
+| <small>input.mouse.isButtonDown($button: Integer): Boolean</small>                                   |
 | Returns if specific Mouse Button has been released                                               |
-| <sub>input.mouse.isButtonUp($button: Integer): Boolean</sub>                                     |
+| <small>input.mouse.isButtonUp($button: Integer): Boolean</small>                                     |
 | Returns if Mouse is dragging currently                                                           |
-| <sub>input.mouse.isDragging($button: Integer): Boolean</sub>                                     |
+| <small>input.mouse.isDragging($button: Integer): Boolean</small>                                     |
 | Returns if Mouse has been moved                                                                  |
-| <sub>input.mouse.hasMoved(): Boolean</sub>                                                       |
+| <small>input.mouse.hasMoved(): Boolean</small>                                                       |
 | Returns current Value of X Axis Mouse Wheel                                                      |
-| <sub>input.mouse.getWheelX(): Float</sub>                                                        |
+| <small>input.mouse.getWheelX(): Float</small>                                                        |
 | Returns current Value of Y Axis Mouse Wheel                                                      |
-| <sub>input.mouse.getWheelY(): Float</sub>                                                        |
+| <small>input.mouse.getWheelY(): Float</small>                                                        |
 | Returns current Value of Z Axis Mouse Wheel                                                      |
-| <sub>input.mouse.getWheelZ(): Float</sub>                                                        |
+| <small>input.mouse.getWheelZ(): Float</small>                                                        |
 | Get X Mouse Position                                                                             |
-| <sub>input.mouse.getX(): Integer</sub>                                                           |
+| <small>input.mouse.getX(): Integer</small>                                                           |
 | Get Unscaled X Mouse Position                                                                    |
-| <sub>input.mouse.getXUnscaled(): Integer</sub>                                                   |
+| <small>input.mouse.getXUnscaled(): Integer</small>                                                   |
 | Get Y Mouse Position                                                                             |
-| <sub>input.mouse.getY(): Integer</sub>                                                           |
+| <small>input.mouse.getY(): Integer</small>                                                           |
 | Get Unscaled Y Mouse Position                                                                    |
-| <sub>input.mouse.getYUnscaled(): Integer</sub>                                                   |
+| <small>input.mouse.getYUnscaled(): Integer</small>                                                   |
 
 ## 8.12 Logic Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Returns if Logic has Function                                                                    |
-| <sub>logic.has($logicId: String, $function: String): Boolean</sub>                               |
+| <small>logic.has($logicId: String, $function: String): Boolean</small>                               |
 | Call specific Logic Function                                                                     |
-| <sub>logic.call($logicId: String, $function: String, ...): Mixed</sub>                           |
+| <small>logic.call($logicId: String, $function: String, ...): Mixed</small>                           |
 
 ## 8.13 Logic Signal Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Send Signal                                                                                      |
-| <sub>logic.signal.send($logicId: String, $signal: String, ...): Void</sub>                       |
+| <small>logic.signal.send($logicId: String, $signal: String, ...): Void</small>                       |
 
 # 9. Operators
 
