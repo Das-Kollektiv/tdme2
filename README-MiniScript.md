@@ -1608,7 +1608,7 @@ Reading all keys as array from set:
 
 | Op | Method                                                                                      |
 |----|---------------------------------------------------------------------------------------------|
-| !  | not($bool: Boolean): Boolean                                                                |
+| !  | <i>not($bool: Boolean): Boolean</i>                                                                |
 | != | notEqual($a: Mixed, $b: Mixed): Boolean                                                     |
 | %  | mod($value: Number, $range: Number): Number                                                 |
 | &  | bitwiseAnd($a: Integer, $b: Integer): Integer                                               |
