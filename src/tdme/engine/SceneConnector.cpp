@@ -1299,7 +1299,7 @@ void SceneConnector::resetEngine(Engine* engine, Scene* scene) {
 	engine->reset();
 }
 
-void SceneConnector::addSounds(Audio* audio, Prototype* prototype, const string& id, const int poolSize) {
+void SceneConnector::addSounds(Audio* audio, Prototype* prototype, const string& id, int poolSize) {
 	for (auto soundDefinition: prototype->getSounds()) {
 		if (soundDefinition->getFileName().length() > 0) {
 			for (auto poolIdx = 0; poolIdx < poolSize; poolIdx++) {

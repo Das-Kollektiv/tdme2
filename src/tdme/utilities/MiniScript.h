@@ -3199,7 +3199,7 @@ public:
 		// lookup function
 		auto scriptFunctionsIt = scriptFunctions.find(function);
 		if (scriptFunctionsIt == scriptFunctions.end()) {
-			Console::println("MiniScript::call(): Script user function not found: " + function);
+			// Console::println("MiniScript::call(): Script user function not found: " + function);
 			return false;
 		}
 		//

@@ -5,6 +5,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/audio/Audio.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/logics/Context.h>
 #include <tdme/engine/logics/Logic.h>
@@ -43,6 +44,7 @@ using std::vector;
 
 using tdme::engine::logics::LogicMiniScript;
 
+using tdme::audio::Audio;
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::logics::Context;
 using tdme::engine::logics::Logic;
@@ -155,6 +157,191 @@ void LogicMiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodLogicGetHierarchyParentId(this));
+	}
+	{
+		//
+		class ScriptMethodAudioGetListenerPosition: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodAudioGetListenerPosition(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{},
+					ScriptVariableType::TYPE_VECTOR3
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "audio.getListenerPosition";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue.setValue(miniScript->logic->getContext()->getAudio()->getListenerPosition());
+			}
+		};
+		registerMethod(new ScriptMethodAudioGetListenerPosition(this));
+	}
+	{
+		//
+		class ScriptMethodAudioSetListenerPosition: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodAudioSetListenerPosition(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "position", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_NULL
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "audio.setListenerPosition";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Vector3 position;
+				if (miniScript->getVector3Value(argumentValues, 0, position) == true) {
+					miniScript->logic->getContext()->getAudio()->setListenerPosition(position);
+				} else {
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodAudioSetListenerPosition(this));
+	}
+	{
+		//
+		class ScriptMethodAudioGetListenerOrientationAt: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodAudioGetListenerOrientationAt(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{},
+					ScriptVariableType::TYPE_VECTOR3
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "audio.getListenerOrientationAt";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue.setValue(miniScript->logic->getContext()->getAudio()->getListenerOrientationAt());
+			}
+		};
+		registerMethod(new ScriptMethodAudioGetListenerOrientationAt(this));
+	}
+	{
+		//
+		class ScriptMethodAudioSetListenerOrientationAt: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodAudioSetListenerOrientationAt(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "position", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_NULL
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "audio.setListenerOrientationAt";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Vector3 orientation;
+				if (miniScript->getVector3Value(argumentValues, 0, orientation) == true) {
+					miniScript->logic->getContext()->getAudio()->setListenerOrientationAt(orientation);
+				} else {
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodAudioSetListenerOrientationAt(this));
+	}
+	{
+		//
+		class ScriptMethodAudioPlaySound: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodAudioPlaySound(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "id", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "delay", .optional = true, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "gain", .optional = true, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "pitch", .optional = true, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "ignoreIfPlaying", .optional = true, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_STRING
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "audio.play";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string id;
+				int64_t delay = 0;
+				auto gain = 1.0f;
+				auto pitch = 1.0f;
+				auto ignoreIfPlaying = false;
+				if (miniScript->getStringValue(argumentValues, 0, id) == true &&
+					miniScript->getIntegerValue(argumentValues, 1, delay, true) == true &&
+					miniScript->getFloatValue(argumentValues, 2, gain, true) == true &&
+					miniScript->getFloatValue(argumentValues, 3, pitch, true) == true &&
+					miniScript->getBooleanValue(argumentValues, 4, ignoreIfPlaying, true) == true) {
+					miniScript->logic->playSound(miniScript->logic->getId() + "." + id, delay, gain, pitch, ignoreIfPlaying);
+				} else {
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodAudioPlaySound(this));
+	}
+	{
+		//
+		class ScriptMethodAudioPlaySoundAtPosition: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodAudioPlaySoundAtPosition(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "id", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "position", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "delay", .optional = true, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "gain", .optional = true, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "pitch", .optional = true, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "ignoreIfPlaying", .optional = true, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_STRING
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "audio.playAtPosition";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string id;
+				Vector3 position;
+				int64_t delay = 0;
+				auto gain = 1.0f;
+				auto pitch = 1.0f;
+				auto ignoreIfPlaying = false;
+				if (miniScript->getStringValue(argumentValues, 0, id) == true &&
+					miniScript->getVector3Value(argumentValues, 1, position) == true &&
+					miniScript->getIntegerValue(argumentValues, 2, delay, true) == true &&
+					miniScript->getFloatValue(argumentValues, 3, gain, true) == true &&
+					miniScript->getFloatValue(argumentValues, 4, pitch, true) == true &&
+					miniScript->getBooleanValue(argumentValues, 5, ignoreIfPlaying, true) == true) {
+					miniScript->logic->playSound(miniScript->logic->getId() + "." + id, position, delay, gain, pitch, ignoreIfPlaying);
+				} else {
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodAudioPlaySoundAtPosition(this));
 	}
 	{
 		//

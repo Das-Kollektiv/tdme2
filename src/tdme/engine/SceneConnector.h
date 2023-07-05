@@ -372,7 +372,7 @@ public:
 	 * @param id audio entity id
 	 * @param poolSize pool size, which is optional if you want to use a pool for each sound
 	 */
-	static void addSounds(Audio* audio, Prototype* prototype, const string& id, const int poolSize = 1);
+	static void addSounds(Audio* audio, Prototype* prototype, const string& id, int poolSize = 1);
 
 private:
 	STATIC_DLL_IMPEXT static Model* emptyModel;

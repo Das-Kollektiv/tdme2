@@ -130,14 +130,14 @@ public:
 
 	/**
 	 * TODO: updated sounds that are already playing
-	 * Queue sound
+	 * Play sound
 	 * @param id sound id
 	 * @param delay delay
 	 * @param gain gain
 	 * @param pitch pitch
 	 * @param ignoreIfPlaying ignore if already playing
 	 */
-	inline void queueSound(const string& id, int delay = 0, float gain = 1.0, float pitch = 1.0, bool ignoreIfPlaying = false) {
+	inline void playSound(const string& id, int delay = 0, float gain = 1.0, float pitch = 1.0, bool ignoreIfPlaying = false) {
 		queuedSounds.emplace_back(
 			id,
 			true,
@@ -152,7 +152,7 @@ public:
 
 	/**
 	 * TODO: updated sounds that are already playing
-	 * Queue sound with position
+	 * Play sound with position
 	 * @param id sound id
 	 * @param position position
 	 * @param delay delay
@@ -160,7 +160,7 @@ public:
 	 * @param pitch pitch
 	 * @param ignoreIfPlaying ignore if already playing
 	 */
-	inline void queueSound(const string& id, const Vector3& position, int delay = 0, float gain = 1.0, float pitch = 1.0, bool ignoreIfPlaying = false) {
+	inline void playSound(const string& id, const Vector3& position, int delay = 0, float gain = 1.0, float pitch = 1.0, bool ignoreIfPlaying = false) {
 		queuedSounds.emplace_back(
 			id,
 			false,

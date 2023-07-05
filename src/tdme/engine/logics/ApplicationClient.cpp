@@ -423,8 +423,8 @@ void ApplicationClient::update() {
 				}
 			}
 		}
-		for (auto i = 0; i < Context::SOUNDPOOL_SIZE; i++) {
-			auto sound = audio->getEntity(queuedSound.id + "." + to_string(i));
+		for (auto i = 0; i < context->getSoundPoolSize(); i++) {
+			auto sound = audio->getEntity(queuedSound.id + (context->getSoundPoolSize() == 1?"":"." + to_string(i)));
 			if (sound == nullptr) {
 				Console::println("WS::display(): " + queuedSound.gameLogicId + ": " + queuedSound.id + ": sound not found");
 				continue;

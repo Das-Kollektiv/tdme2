@@ -1449,6 +1449,7 @@ void SceneEditorTabView::runScene() {
 	applicationContext->setEngine(engine);
 	applicationContext->setAudio(Audio::getInstance());
 	applicationContext->setWorld(world);
+	applicationContext->setSoundPoolSize(1);
 	applicationClient = new ApplicationClient(applicationContext);
 	applicationContext->initialize();
 
