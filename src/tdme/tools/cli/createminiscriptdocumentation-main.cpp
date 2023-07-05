@@ -51,7 +51,7 @@ static void generateMiniScriptDocumentation(const string& heading, int mainHeadi
 				if (contextFunctions.empty() == false) contextFunctions+= ", ";
 				contextFunctions+= contextFunction + "()";
 			}
-			description+= " <sub>(available in " + contextFunctions + ")</sub>";
+			description+= " - available in " + contextFunctions;
 		}
 		while (description.size() < 99) description+= " ";
 		description+= "|";

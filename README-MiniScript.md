@@ -526,464 +526,464 @@ Reading all keys as array from set:
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Get Variable                                                                                     |
-| <span style="color: lightgray">getVariable($variable: String): Mixed</span>                                                 |
+| <sub>getVariable($variable: String): Mixed</sub>                                                 |
 | Set Variable                                                                                     |
-| <span style="color: lightgray">setVariable($variable: String, $value: Mixed): Mixed</span>                                  |
+| <sub>setVariable($variable: String, $value: Mixed): Mixed</sub>                                  |
 | Unset Variable                                                                                   |
-| <span style="color: lightgray">unsetVariable($variable: String): Void</span>                                                |
+| <sub>unsetVariable($variable: String): Void</sub>                                                |
 | Add                                                                                              |
-| <span style="color: lightgray">add($a: Mixed, $b: Mixed): Mixed</span>                                                      |
+| <sub>add($a: Mixed, $b: Mixed): Mixed</sub>                                                      |
 | Logical And                                                                                      |
-| <span style="color: lightgray">and($a: Boolean, $b: Boolean): Boolean</span>                                                |
+| <sub>and($a: Boolean, $b: Boolean): Boolean</sub>                                                |
 | Bitwise And                                                                                      |
-| <span style="color: lightgray">bitwiseAnd($a: Integer, $b: Integer): Integer</span>                                         |
+| <sub>bitwiseAnd($a: Integer, $b: Integer): Integer</sub>                                         |
 | Bitwise Not                                                                                      |
-| <span style="color: lightgray">bitwiseNot($value: Integer): Integer</span>                                                  |
+| <sub>bitwiseNot($value: Integer): Integer</sub>                                                  |
 | Bitwise Or                                                                                       |
-| <span style="color: lightgray">bitwiseOr($a: Integer, $b: Integer): Integer</span>                                          |
+| <sub>bitwiseOr($a: Integer, $b: Integer): Integer</sub>                                          |
 | Bitwise Xor                                                                                      |
-| <span style="color: lightgray">bitwiseXor($a: Integer, $b: Integer): Integer</span>                                         |
+| <sub>bitwiseXor($a: Integer, $b: Integer): Integer</sub>                                         |
 | Create Bool                                                                                      |
-| <span style="color: lightgray">bool($bool: Boolean): Boolean</span>                                                         |
+| <sub>bool($bool: Boolean): Boolean</sub>                                                         |
 | Divide                                                                                           |
-| <span style="color: lightgray">div($a: Mixed, $b: Mixed): Mixed</span>                                                      |
+| <sub>div($a: Mixed, $b: Mixed): Mixed</sub>                                                      |
 | Else                                                                                             |
-| <span style="color: lightgray">else(): Void</span>                                                                          |
+| <sub>else(): Void</sub>                                                                          |
 | Else If                                                                                          |
-| <span style="color: lightgray">elseif($condition: Boolean): Void</span>                                                     |
+| <sub>elseif($condition: Boolean): Void</sub>                                                     |
 | End                                                                                              |
-| <span style="color: lightgray">end(): Void</span>                                                                           |
+| <sub>end(): Void</sub>                                                                           |
 | Equals                                                                                           |
-| <span style="color: lightgray">equals($a: Mixed, $b: Mixed): Boolean</span>                                                 |
+| <sub>equals($a: Mixed, $b: Mixed): Boolean</sub>                                                 |
 | Create Float                                                                                     |
-| <span style="color: lightgray">float($float: Float): Float</span>                                                           |
+| <sub>float($float: Float): Float</sub>                                                           |
 | For Condition                                                                                    |
-| <span style="color: lightgray">forCondition($condition: Boolean): Void</span>                                               |
+| <sub>forCondition($condition: Boolean): Void</sub>                                               |
 | For Time                                                                                         |
-| <span style="color: lightgray">forTime($time: Integer): Void</span>                                                         |
+| <sub>forTime($time: Integer): Void</sub>                                                         |
 | Greater                                                                                          |
-| <span style="color: lightgray">greater($a: Mixed, $b: Mixed): Boolean</span>                                                |
+| <sub>greater($a: Mixed, $b: Mixed): Boolean</sub>                                                |
 | Greater Equals                                                                                   |
-| <span style="color: lightgray">greaterEquals($a: Mixed, $b: Mixed): Boolean</span>                                          |
+| <sub>greaterEquals($a: Mixed, $b: Mixed): Boolean</sub>                                          |
 | If                                                                                               |
-| <span style="color: lightgray">if($condition: Boolean): Void</span>                                                         |
+| <sub>if($condition: Boolean): Void</sub>                                                         |
 | Create Integer                                                                                   |
-| <span style="color: lightgray">int($int: Integer): Integer</span>                                                           |
+| <sub>int($int: Integer): Integer</sub>                                                           |
 | Lesser                                                                                           |
-| <span style="color: lightgray">lesser($a: Mixed, $b: Mixed): Boolean</span>                                                 |
+| <sub>lesser($a: Mixed, $b: Mixed): Boolean</sub>                                                 |
 | Lesser Equals                                                                                    |
-| <span style="color: lightgray">lesserEquals($a: Mixed, $b: Mixed): Boolean</span>                                           |
+| <sub>lesserEquals($a: Mixed, $b: Mixed): Boolean</sub>                                           |
 | Compute Modulo                                                                                   |
-| <span style="color: lightgray">mod($value: Number, $range: Number): Number</span>                                           |
+| <sub>mod($value: Number, $range: Number): Number</sub>                                           |
 | Multiply                                                                                         |
-| <span style="color: lightgray">mul($a: Mixed, $b: Mixed): Mixed</span>                                                      |
+| <sub>mul($a: Mixed, $b: Mixed): Mixed</sub>                                                      |
 | Logical Not                                                                                      |
-| <span style="color: lightgray">not($bool: Boolean): Boolean</span>                                                          |
+| <sub>not($bool: Boolean): Boolean</sub>                                                          |
 | Logical Not Equal                                                                                |
-| <span style="color: lightgray">notEqual($a: Mixed, $b: Mixed): Boolean</span>                                               |
+| <sub>notEqual($a: Mixed, $b: Mixed): Boolean</sub>                                               |
 | Logical Or                                                                                       |
-| <span style="color: lightgray">or($a: Boolean, $b: Boolean): Boolean</span>                                                 |
+| <sub>or($a: Boolean, $b: Boolean): Boolean</sub>                                                 |
 | Prefix Decrement                                                                                 |
-| <span style="color: lightgray">prefixDecrement(=$variable: Integer): Integer</span>                                         |
+| <sub>prefixDecrement(=$variable: Integer): Integer</sub>                                         |
 | Prefix Increment                                                                                 |
-| <span style="color: lightgray">prefixIncrement(=$variable: Integer): Integer</span>                                         |
+| <sub>prefixIncrement(=$variable: Integer): Integer</sub>                                         |
 | Return from Function with optional Return Value                                                  |
-| <span style="color: lightgray">return([$value: Mixed]): Void</span>                                                         |
+| <sub>return([$value: Mixed]): Void</sub>                                                         |
 | Subtract                                                                                         |
-| <span style="color: lightgray">sub($a: Mixed, $b: Mixed): Mixed</span>                                                      |
+| <sub>sub($a: Mixed, $b: Mixed): Mixed</sub>                                                      |
 
 ## 6.2 Array Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create Array                                                                                     |
-| <span style="color: lightgray">array(...): Array</span>                                                                     |
+| <sub>array(...): Array</sub>                                                                     |
 | Get Array Entry                                                                                  |
-| <span style="color: lightgray">array.get($array: Array, $index: Integer): Mixed</span>                                      |
+| <sub>array.get($array: Array, $index: Integer): Mixed</sub>                                      |
 | Set Array Entry                                                                                  |
-| <span style="color: lightgray">array.set(=$array: Array, $index: Integer, $value: Mixed): Void</span>                       |
+| <sub>array.set(=$array: Array, $index: Integer, $value: Mixed): Void</sub>                       |
 | Get Array Index by Value                                                                         |
-| <span style="color: lightgray">array.indexOf($array: Array, $value: String[, $beginIndex: Integer]): Integer</span>         |
+| <sub>array.indexOf($array: Array, $value: String[, $beginIndex: Integer]): Integer</sub>         |
 | Get Array Length                                                                                 |
-| <span style="color: lightgray">array.length($array: Array): Integer</span>                                                  |
+| <sub>array.length($array: Array): Integer</sub>                                                  |
 | Add to Array                                                                                     |
-| <span style="color: lightgray">array.push(=$array: Array, ...): Void</span>                                                 |
+| <sub>array.push(=$array: Array, ...): Void</sub>                                                 |
 | Remove Array by Index                                                                            |
-| <span style="color: lightgray">array.remove(=$array: Array, $index: Integer): Void</span>                                   |
+| <sub>array.remove(=$array: Array, $index: Integer): Void</sub>                                   |
 | Remove Array Entry by Value                                                                      |
-| <span style="color: lightgray">array.removeOf(=$array: Array, $value: String[, $beginIndex: Integer]): Void</span>          |
+| <sub>array.removeOf(=$array: Array, $value: String[, $beginIndex: Integer]): Void</sub>          |
 | Reverse Array                                                                                    |
-| <span style="color: lightgray">array.reverse(=$array: Array): Void</span>                                                   |
+| <sub>array.reverse(=$array: Array): Void</sub>                                                   |
 | Sort Array                                                                                       |
-| <span style="color: lightgray">array.sort(=$array: Array, $function: String): Void</span>                                   |
+| <sub>array.sort(=$array: Array, $function: String): Void</sub>                                   |
 
 ## 6.3 Console Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Print to Console                                                                                 |
-| <span style="color: lightgray">console.log(...): Void</span>                                                                |
+| <sub>console.log(...): Void</sub>                                                                |
 
 ## 6.4 JSON Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Deserialize JSON                                                                                 |
-| <span style="color: lightgray">json.deserialize($json: String): Mixed</span>                                                |
+| <sub>json.deserialize($json: String): Mixed</sub>                                                |
 | Serialize JSON                                                                                   |
-| <span style="color: lightgray">json.serialize($value: Mixed): String</span>                                                 |
+| <sub>json.serialize($value: Mixed): String</sub>                                                 |
 
 ## 6.5 Map Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create Map                                                                                       |
-| <span style="color: lightgray">map(): Map</span>                                                                            |
+| <sub>map(): Map</sub>                                                                            |
 | Has Entry by Key                                                                                 |
-| <span style="color: lightgray">map.has($map: Map, $key: String): Boolean</span>                                             |
+| <sub>map.has($map: Map, $key: String): Boolean</sub>                                             |
 | Get Map Value by Key                                                                             |
-| <span style="color: lightgray">map.get($map: Map, $key: String): Mixed</span>                                               |
+| <sub>map.get($map: Map, $key: String): Mixed</sub>                                               |
 | Set Map Entry                                                                                    |
-| <span style="color: lightgray">map.set(=$map: Map, $key: String, $value: Mixed): Void</span>                                |
+| <sub>map.set(=$map: Map, $key: String, $value: Mixed): Void</sub>                                |
 | Get Map Keys                                                                                     |
-| <span style="color: lightgray">map.getKeys($map: Map): Array</span>                                                         |
+| <sub>map.getKeys($map: Map): Array</sub>                                                         |
 | Get Map Values                                                                                   |
-| <span style="color: lightgray">map.getValues($map: Map): Array</span>                                                       |
+| <sub>map.getValues($map: Map): Array</sub>                                                       |
 | Remove Map Entry                                                                                 |
-| <span style="color: lightgray">map.remove(=$map: Map, $key: String): Void</span>                                            |
+| <sub>map.remove(=$map: Map, $key: String): Void</sub>                                            |
 
 ## 6.6 Matrix3x3 Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create Identity 3x3 Matrix                                                                       |
-| <span style="color: lightgray">mat3.identity(): Matrix3x3</span>                                                            |
+| <sub>mat3.identity(): Matrix3x3</sub>                                                            |
 | Multiply 3x3 Matrix with 3x3 Matrix or Vector2                                                   |
-| <span style="color: lightgray">mat3.multiply($mat3: Matrix3x3, ...): Mixed</span>                                           |
+| <sub>mat3.multiply($mat3: Matrix3x3, ...): Mixed</sub>                                           |
 | Create Rotation 3x3 Matrix                                                                       |
-| <span style="color: lightgray">mat3.rotate($angle: Float): Matrix3x3</span>                                                 |
+| <sub>mat3.rotate($angle: Float): Matrix3x3</sub>                                                 |
 | Create 3x3 Matrix which rotates around Point                                                     |
-| <span style="color: lightgray">mat3.rotateAroundPoint($point: Vector2, $angle: Float): Matrix3x3</span>                     |
+| <sub>mat3.rotateAroundPoint($point: Vector2, $angle: Float): Matrix3x3</sub>                     |
 | Create 3x3 Matrix which rotates around Texture Center                                            |
-| <span style="color: lightgray">mat3.rotateAroundTextureCenter($angle: Float): Matrix3x3</span>                              |
+| <sub>mat3.rotateAroundTextureCenter($angle: Float): Matrix3x3</sub>                              |
 | Create Scale 3x3 Matrix                                                                          |
-| <span style="color: lightgray">mat3.scale(...): Matrix3x3</span>                                                            |
+| <sub>mat3.scale(...): Matrix3x3</sub>                                                            |
 | Create Translation 3x3 Matrix                                                                    |
-| <span style="color: lightgray">mat3.translate($translation: Vector2): Matrix3x3</span>                                      |
+| <sub>mat3.translate($translation: Vector2): Matrix3x3</sub>                                      |
 
 ## 6.7 Matrix4x4 Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Compute Euler Angles from 4x4 Matrix                                                             |
-| <span style="color: lightgray">mat4.computeEulerAngles($mat4: Matrix4x4): Vector3</span>                                    |
+| <sub>mat4.computeEulerAngles($mat4: Matrix4x4): Vector3</sub>                                    |
 | Create Identity 4x4 Matrix                                                                       |
-| <span style="color: lightgray">mat4.identity(): Matrix4x4</span>                                                            |
+| <sub>mat4.identity(): Matrix4x4</sub>                                                            |
 | Create 4x4 Matrix Inverse                                                                        |
-| <span style="color: lightgray">mat4.invert($mat4: Matrix4x4): Matrix4x4</span>                                              |
+| <sub>mat4.invert($mat4: Matrix4x4): Matrix4x4</sub>                                              |
 | Multiply 4x4 Matrix with 4x4 Matrix or Vector3 or Vector4                                        |
-| <span style="color: lightgray">mat4.multiply($mat4: Matrix4x4, ...): Mixed</span>                                           |
+| <sub>mat4.multiply($mat4: Matrix4x4, ...): Mixed</sub>                                           |
 | Create Rotation 4x4 Matrix                                                                       |
-| <span style="color: lightgray">mat4.rotate($axis: Vector3, $angle: Float): Matrix4x4</span>                                 |
+| <sub>mat4.rotate($axis: Vector3, $angle: Float): Matrix4x4</sub>                                 |
 | Create Scale 4x4 Matrix                                                                          |
-| <span style="color: lightgray">mat4.scale(...): Matrix4x4</span>                                                            |
+| <sub>mat4.scale(...): Matrix4x4</sub>                                                            |
 | Create Translation 4x4 Matrix                                                                    |
-| <span style="color: lightgray">mat4.translate($translation: Vector3): Matrix4x4</span>                                      |
+| <sub>mat4.translate($translation: Vector3): Matrix4x4</sub>                                      |
 
 ## 6.8 Math Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Degree to Radian Factor                                                                          |
-| <span style="color: lightgray">math.DEG2RAD(): Float</span>                                                                 |
+| <sub>math.DEG2RAD(): Float</sub>                                                                 |
 | Epsilon                                                                                          |
-| <span style="color: lightgray">math.EPSILON(): Float</span>                                                                 |
+| <sub>math.EPSILON(): Float</sub>                                                                 |
 | G                                                                                                |
-| <span style="color: lightgray">math.G(): Float</span>                                                                       |
+| <sub>math.G(): Float</sub>                                                                       |
 | PI                                                                                               |
-| <span style="color: lightgray">math.PI(): Float</span>                                                                      |
+| <sub>math.PI(): Float</sub>                                                                      |
 | Return Number as Positive Number                                                                 |
-| <span style="color: lightgray">math.abs($value: Number): Number</span>                                                      |
+| <sub>math.abs($value: Number): Number</sub>                                                      |
 | Return Number to be Positive within given Range                                                  |
-| <span style="color: lightgray">math.absmod($value: Number, $range: Number): Number</span>                                   |
+| <sub>math.absmod($value: Number, $range: Number): Number</sub>                                   |
 | Compute acos                                                                                     |
-| <span style="color: lightgray">math.acos($value: Float): Float</span>                                                       |
+| <sub>math.acos($value: Float): Float</sub>                                                       |
 | Compute asin                                                                                     |
-| <span style="color: lightgray">math.asin($value: Float): Float</span>                                                       |
+| <sub>math.asin($value: Float): Float</sub>                                                       |
 | Compute atan                                                                                     |
-| <span style="color: lightgray">math.atan($value: Float): Float</span>                                                       |
+| <sub>math.atan($value: Float): Float</sub>                                                       |
 | Compute atan2                                                                                    |
-| <span style="color: lightgray">math.atan2($y: Float, $x: Float): Float</span>                                               |
+| <sub>math.atan2($y: Float, $x: Float): Float</sub>                                               |
 | Round Float up to next higher Integer                                                            |
-| <span style="color: lightgray">math.ceil($value: Float): Float</span>                                                       |
+| <sub>math.ceil($value: Float): Float</sub>                                                       |
 | Return Number clamped to be in given Range                                                       |
-| <span style="color: lightgray">math.clamp($value: Number, $min: Number, $max: Number): Number</span>                        |
+| <sub>math.clamp($value: Number, $min: Number, $max: Number): Number</sub>                        |
 | Compute acos                                                                                     |
-| <span style="color: lightgray">math.cos($value: Float): Float</span>                                                        |
+| <sub>math.cos($value: Float): Float</sub>                                                        |
 | Compute exp                                                                                      |
-| <span style="color: lightgray">math.exp($value: Float): Float</span>                                                        |
+| <sub>math.exp($value: Float): Float</sub>                                                        |
 | Round Float down to next lower Integer                                                           |
-| <span style="color: lightgray">math.floor($value: Float): Float</span>                                                      |
+| <sub>math.floor($value: Float): Float</sub>                                                      |
 | Compute log                                                                                      |
-| <span style="color: lightgray">math.log($value: Float): Float</span>                                                        |
+| <sub>math.log($value: Float): Float</sub>                                                        |
 | Return maximum Number of given Values                                                            |
-| <span style="color: lightgray">math.max($a: Number, $b: Number): Number</span>                                              |
+| <sub>math.max($a: Number, $b: Number): Number</sub>                                              |
 | Return minimum Number of given Values                                                            |
-| <span style="color: lightgray">math.min($a: Number, $b: Number): Number</span>                                              |
+| <sub>math.min($a: Number, $b: Number): Number</sub>                                              |
 | Compute Modulo/Remainder                                                                         |
-| <span style="color: lightgray">math.mod($value: Number, $range: Number): Number</span>                                      |
+| <sub>math.mod($value: Number, $range: Number): Number</sub>                                      |
 | Compute pow                                                                                      |
-| <span style="color: lightgray">math.pow($a: Number, $b: Number): Number</span>                                              |
+| <sub>math.pow($a: Number, $b: Number): Number</sub>                                              |
 | Create a random Number between 0.0 and 1.0                                                       |
-| <span style="color: lightgray">math.random(): Float</span>                                                                  |
+| <sub>math.random(): Float</sub>                                                                  |
 | Round Float Up or Down to Integer                                                                |
-| <span style="color: lightgray">math.round($value: Float): Float</span>                                                      |
+| <sub>math.round($value: Float): Float</sub>                                                      |
 | Return Sign of given Number                                                                      |
-| <span style="color: lightgray">math.sign($value: Number): Number</span>                                                     |
+| <sub>math.sign($value: Number): Number</sub>                                                     |
 | Compute sin                                                                                      |
-| <span style="color: lightgray">math.sin($value: Float): Float</span>                                                        |
+| <sub>math.sin($value: Float): Float</sub>                                                        |
 | Compute Square Root                                                                              |
-| <span style="color: lightgray">math.sqrt($value: Float): Float</span>                                                       |
+| <sub>math.sqrt($value: Float): Float</sub>                                                       |
 | Compute Square Product                                                                           |
-| <span style="color: lightgray">math.square($value: Number): Number</span>                                                   |
+| <sub>math.square($value: Number): Number</sub>                                                   |
 | Compute tan                                                                                      |
-| <span style="color: lightgray">math.tan($value: Float): Float</span>                                                        |
+| <sub>math.tan($value: Float): Float</sub>                                                        |
 
 ## 6.9 Quaternion Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Compute Euler Angles from Quaternion                                                             |
-| <span style="color: lightgray">quaternion.computeEulerAngles($quaternion: Quaternion): Vector3</span>                       |
+| <sub>quaternion.computeEulerAngles($quaternion: Quaternion): Vector3</sub>                       |
 | Compute 4x4 Rotation Matrix from Quaternion                                                      |
-| <span style="color: lightgray">quaternion.computeMatrix($quaternion: Quaternion): Matrix4x4</span>                          |
+| <sub>quaternion.computeMatrix($quaternion: Quaternion): Matrix4x4</sub>                          |
 | Create Identity Quaternion                                                                       |
-| <span style="color: lightgray">quaternion.identity(): Quaternion</span>                                                     |
+| <sub>quaternion.identity(): Quaternion</sub>                                                     |
 | Create Quaternion Inverse                                                                        |
-| <span style="color: lightgray">quaternion.invert($quaternion: Quaternion): Quaternion</span>                                |
+| <sub>quaternion.invert($quaternion: Quaternion): Quaternion</sub>                                |
 | Multiply Quaternion with Quaternion or Vector3                                                   |
-| <span style="color: lightgray">quaternion.multiply($quaternion: Quaternion, ...): Mixed</span>                              |
+| <sub>quaternion.multiply($quaternion: Quaternion, ...): Mixed</sub>                              |
 | Normalize Quaternion                                                                             |
-| <span style="color: lightgray">quaternion.normalize($quaternion: Quaternion): Quaternion</span>                             |
+| <sub>quaternion.normalize($quaternion: Quaternion): Quaternion</sub>                             |
 | Create Rotation Quaternion                                                                       |
-| <span style="color: lightgray">quaternion.rotate($axis: Vector3, $angle: Float): Quaternion</span>                          |
+| <sub>quaternion.rotate($axis: Vector3, $angle: Float): Quaternion</sub>                          |
 
 ## 6.10 Script Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Get Named Conditions                                                                             |
-| <span style="color: lightgray">script.getNamedConditions(): String</span>                                                   |
+| <sub>script.getNamedConditions(): String</sub>                                                   |
 | Get Script Variables                                                                             |
-| <span style="color: lightgray">script.getVariables(): Map</span>                                                            |
+| <sub>script.getVariables(): Map</sub>                                                            |
 | Call Script Function                                                                             |
-| <span style="color: lightgray">script.call($function: String, ...): Mixed</span>                                            |
+| <sub>script.call($function: String, ...): Mixed</sub>                                            |
 | Disable a specific Named Condition                                                               |
-| <span style="color: lightgray">script.disableNamedCondition($name: String): Void</span>                                     |
+| <sub>script.disableNamedCondition($name: String): Void</sub>                                     |
 | Emit a Condition                                                                                 |
-| <span style="color: lightgray">script.emit($condition: String): Void</span>                                                 |
+| <sub>script.emit($condition: String): Void</sub>                                                 |
 | Enable a specific Named Condition                                                                |
-| <span style="color: lightgray">script.enableNamedCondition($name: String): Void</span>                                      |
+| <sub>script.enableNamedCondition($name: String): Void</sub>                                      |
 | Evaluate a Script Statement                                                                      |
-| <span style="color: lightgray">script.evaluate($statement: String): Mixed</span>                                            |
+| <sub>script.evaluate($statement: String): Mixed</sub>                                            |
 | Stop Script                                                                                      |
-| <span style="color: lightgray">script.stop(): Void</span>                                                                   |
+| <sub>script.stop(): Void</sub>                                                                   |
 | Wait for given Milliseconds                                                                      |
-| <span style="color: lightgray">script.wait($time: Integer): Void</span>                                                     |
+| <sub>script.wait($time: Integer): Void</sub>                                                     |
 | Wait for Condition to happen                                                                     |
-| <span style="color: lightgray">script.waitForCondition(): Void</span>                                                       |
+| <sub>script.waitForCondition(): Void</sub>                                                       |
 
 ## 6.11 Set Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create Set                                                                                       |
-| <span style="color: lightgray">set(): Set</span>                                                                            |
+| <sub>set(): Set</sub>                                                                            |
 | Has Key in Set                                                                                   |
-| <span style="color: lightgray">set.has($set: Set, $key: String): Boolean</span>                                             |
+| <sub>set.has($set: Set, $key: String): Boolean</sub>                                             |
 | Get Set Keys                                                                                     |
-| <span style="color: lightgray">set.getKeys($set: Set): Array</span>                                                         |
+| <sub>set.getKeys($set: Set): Array</sub>                                                         |
 | Insert Key into Set                                                                              |
-| <span style="color: lightgray">set.insert(=$set: Set, $key: String): Void</span>                                            |
+| <sub>set.insert(=$set: Set, $key: String): Void</sub>                                            |
 | Remove Key from Set                                                                              |
-| <span style="color: lightgray">set.remove(=$set: Set, $key: String): Void</span>                                            |
+| <sub>set.remove(=$set: Set, $key: String): Void</sub>                                            |
 
 ## 6.12 String Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create String                                                                                    |
-| <span style="color: lightgray">string($string: String): String</span>                                                       |
+| <sub>string($string: String): String</sub>                                                       |
 | Test if String Value is Empty                                                                    |
-| <span style="color: lightgray">string.isEmpty($string: String): Boolean</span>                                              |
+| <sub>string.isEmpty($string: String): Boolean</sub>                                              |
 | Test if String Value is a Float Number                                                           |
-| <span style="color: lightgray">string.isFloat($string: String): Boolean</span>                                              |
+| <sub>string.isFloat($string: String): Boolean</sub>                                              |
 | Test if String Value is a Integer Number                                                         |
-| <span style="color: lightgray">string.isInteger($string: String): Boolean</span>                                            |
+| <sub>string.isInteger($string: String): Boolean</sub>                                            |
 | Return Character of String at given Position                                                     |
-| <span style="color: lightgray">string.charAt($string: String, $index: Integer): String</span>                               |
+| <sub>string.charAt($string: String, $index: Integer): String</sub>                               |
 | Concatenate Strings                                                                              |
-| <span style="color: lightgray">string.concatenate(...): String</span>                                                       |
+| <sub>string.concatenate(...): String</sub>                                                       |
 | Test if String ends with specific String                                                         |
-| <span style="color: lightgray">string.endsWith($string: String, $suffix: String): Boolean</span>                            |
+| <sub>string.endsWith($string: String, $suffix: String): Boolean</sub>                            |
 | Test if 2 Strings matches ignoring Case Sensitivity                                              |
-| <span style="color: lightgray">string.equalsIgnoreCase($string1: String, $string2: String): Boolean</span>                  |
+| <sub>string.equalsIgnoreCase($string1: String, $string2: String): Boolean</sub>                  |
 | Return First Index of specific String in String                                                  |
-| <span style="color: lightgray">string.firstIndexOf($string: String, $what: String[, $beginIndex: Integer]): Integer</span>  |
+| <sub>string.firstIndexOf($string: String, $what: String[, $beginIndex: Integer]): Integer</sub>  |
 | Return Index of specific String in String                                                        |
-| <span style="color: lightgray">string.indexOf($string: String, $what: String[, $beginIndex: Integer]): Integer</span>       |
+| <sub>string.indexOf($string: String, $what: String[, $beginIndex: Integer]): Integer</sub>       |
 | Return Last Index of specific String in String                                                   |
-| <span style="color: lightgray">string.lastIndexOf($string: String, $what: String[, $beginIndex: Integer]): Integer</span>   |
+| <sub>string.lastIndexOf($string: String, $what: String[, $beginIndex: Integer]): Integer</sub>   |
 | Return String Length                                                                             |
-| <span style="color: lightgray">string.length($string: String): Integer</span>                                               |
+| <sub>string.length($string: String): Integer</sub>                                               |
 | Pad String Left                                                                                  |
-| <span style="color: lightgray">string.padLeft($src: String, $by: String, $toSize: Integer): String</span>                   |
+| <sub>string.padLeft($src: String, $by: String, $toSize: Integer): String</sub>                   |
 | Pad String Right                                                                                 |
-| <span style="color: lightgray">string.padRight($src: String, $by: String, $toSize: Integer): String</span>                  |
+| <sub>string.padRight($src: String, $by: String, $toSize: Integer): String</sub>                  |
 | RegEx Match                                                                                      |
-| <span style="color: lightgray">string.regexMatch($string: String, $pattern: String): Boolean</span>                         |
+| <sub>string.regexMatch($string: String, $pattern: String): Boolean</sub>                         |
 | RegEx Replace                                                                                    |
-| <span style="color: lightgray">string.regexReplace($string: String, $pattern: String, $by: String): String</span>           |
+| <sub>string.regexReplace($string: String, $pattern: String, $by: String): String</sub>           |
 | Replace specific String in String with given String                                              |
-| <span style="color: lightgray">string.replace($string: String, $what: String, $by: String[, $beginIndex: Integer]): String</span>|
+| <sub>string.replace($string: String, $what: String, $by: String[, $beginIndex: Integer]): String</sub>|
 | Create Spaces as String                                                                          |
-| <span style="color: lightgray">string.space([$spaces: Integer]): String</span>                                              |
+| <sub>string.space([$spaces: Integer]): String</sub>                                              |
 | Test if given String starts with specific String                                                 |
-| <span style="color: lightgray">string.startsWith($string: String, $prefix: String): Boolean</span>                          |
+| <sub>string.startsWith($string: String, $prefix: String): Boolean</sub>                          |
 | Return Substring of String                                                                       |
-| <span style="color: lightgray">string.substring($string: String, $beginIndex: Integer[, $endIndex: Integer]): String</span> |
+| <sub>string.substring($string: String, $beginIndex: Integer[, $endIndex: Integer]): String</sub> |
 | Compute Lower Case String of String                                                              |
-| <span style="color: lightgray">string.toLowerCase($string: String): String</span>                                           |
+| <sub>string.toLowerCase($string: String): String</sub>                                           |
 | Compute Upper Case String of String                                                              |
-| <span style="color: lightgray">string.toUpperCase($string: String): String</span>                                           |
+| <sub>string.toUpperCase($string: String): String</sub>                                           |
 | Tokenize String                                                                                  |
-| <span style="color: lightgray">string.tokenize($string: String, $delimiters: String): Array</span>                          |
+| <sub>string.tokenize($string: String, $delimiters: String): Array</sub>                          |
 | Trim String                                                                                      |
-| <span style="color: lightgray">string.trim($string: String): String</span>                                                  |
+| <sub>string.trim($string: String): String</sub>                                                  |
 
 ## 6.13 Time Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Get Time as String                                                                               |
-| <span style="color: lightgray">time.getAsString([$format: String]): String</span>                                           |
+| <sub>time.getAsString([$format: String]): String</sub>                                           |
 | Get Current Time in Milliseconds                                                                 |
-| <span style="color: lightgray">time.getCurrentMillis(): Integer</span>                                                      |
+| <sub>time.getCurrentMillis(): Integer</sub>                                                      |
 
 ## 6.14 Transform Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create Transform                                                                                 |
-| <span style="color: lightgray">transform([$translation: Vector3[, $scale: Vector3[, $rotationZ: Float[, $rotationY: Float[, $rotationX: Float]]]]]): Transform</span>|
+| <sub>transform([$translation: Vector3[, $scale: Vector3[, $rotationZ: Float[, $rotationY: Float[, $rotationX: Float]]]]]): Transform</sub>|
 | X Axis as Vector3                                                                                |
-| <span style="color: lightgray">transform.AXIS_X(): Vector3</span>                                                           |
+| <sub>transform.AXIS_X(): Vector3</sub>                                                           |
 | Y Axis as Vector3                                                                                |
-| <span style="color: lightgray">transform.AXIS_Y(): Vector3</span>                                                           |
+| <sub>transform.AXIS_Y(): Vector3</sub>                                                           |
 | Z Axis as Vector3                                                                                |
-| <span style="color: lightgray">transform.AXIS_Z(): Vector3</span>                                                           |
+| <sub>transform.AXIS_Z(): Vector3</sub>                                                           |
 | Get Rotation Angle of specific Rotation of Transform                                             |
-| <span style="color: lightgray">transform.getRotationAngle($transform: Transform, $idx: Integer): Float</span>               |
+| <sub>transform.getRotationAngle($transform: Transform, $idx: Integer): Float</sub>               |
 | Set Rotation Angle of specific Rotation of Transform                                             |
-| <span style="color: lightgray">transform.setRotationAngle(=$transform: Transform, $idx: Integer, $angle: Float): Void</span>|
+| <sub>transform.setRotationAngle(=$transform: Transform, $idx: Integer, $angle: Float): Void</sub>|
 | Set Rotation Axis of specific Rotation of Transform                                              |
-| <span style="color: lightgray">transform.getRotationAxis($transform: Transform, $idx: Integer): Vector3</span>              |
+| <sub>transform.getRotationAxis($transform: Transform, $idx: Integer): Vector3</sub>              |
 | Compute Transform Rotations Quaternion                                                           |
-| <span style="color: lightgray">transform.getRotationsQuaternion($transform: Transform): Quaternion</span>                   |
+| <sub>transform.getRotationsQuaternion($transform: Transform): Quaternion</sub>                   |
 | Get Transfrom Scale                                                                              |
-| <span style="color: lightgray">transform.getScale($transform: Transform): Vector3</span>                                    |
+| <sub>transform.getScale($transform: Transform): Vector3</sub>                                    |
 | Set Transfrom Scale                                                                              |
-| <span style="color: lightgray">transform.setScale(=$transform: Transform, $scale: Vector3): Void</span>                     |
+| <sub>transform.setScale(=$transform: Transform, $scale: Vector3): Void</sub>                     |
 | Get 4x4 Transform Matrix                                                                         |
-| <span style="color: lightgray">transform.getTransformMatrix($transform: Transform): Matrix4x4</span>                        |
+| <sub>transform.getTransformMatrix($transform: Transform): Matrix4x4</sub>                        |
 | Get Transform Translation                                                                        |
-| <span style="color: lightgray">transform.getTranslation($transform: Transform): Vector3</span>                              |
+| <sub>transform.getTranslation($transform: Transform): Vector3</sub>                              |
 | Set Transform Translation                                                                        |
-| <span style="color: lightgray">transform.setTranslation(=$transform: Transform, $translation: Vector3): Void</span>         |
+| <sub>transform.setTranslation(=$transform: Transform, $translation: Vector3): Void</sub>         |
 | Apply a Rotation to Transform                                                                    |
-| <span style="color: lightgray">transform.applyRotation(=$transform: Transform, $axis: Vector3, $angle: Float): Void</span>  |
+| <sub>transform.applyRotation(=$transform: Transform, $axis: Vector3, $angle: Float): Void</sub>  |
 | Create Transform from 4x4 Matrix                                                                 |
-| <span style="color: lightgray">transform.fromMatrix($transformMatrix: Matrix4x4): Transform</span>                          |
+| <sub>transform.fromMatrix($transformMatrix: Matrix4x4): Transform</sub>                          |
 | Interpolate Rotation                                                                             |
-| <span style="color: lightgray">transform.interpolateRotation($currentAngle: Float, $targetAngle: Float, $timePassedSeconds: Float, $degreesPerSeconds: Float, =$interpolatedAngle: Float): Boolean</span>|
+| <sub>transform.interpolateRotation($currentAngle: Float, $targetAngle: Float, $timePassedSeconds: Float, $degreesPerSeconds: Float, =$interpolatedAngle: Float): Boolean</sub>|
 | Multiply Transform with Vector3                                                                  |
-| <span style="color: lightgray">transform.multiply($transform: Transform, $vec3: Vector3): Vector3</span>                    |
+| <sub>transform.multiply($transform: Transform, $vec3: Vector3): Vector3</sub>                    |
 | Rotate Vector3 using Transform                                                                   |
-| <span style="color: lightgray">transform.rotate($transform: Transform, $vec3: Vector3): Vector3</span>                      |
+| <sub>transform.rotate($transform: Transform, $vec3: Vector3): Vector3</sub>                      |
 
 ## 6.15 Vector2 Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create Vector2                                                                                   |
-| <span style="color: lightgray">vec2($x: Float, $y: Float): Vector2</span>                                                   |
+| <sub>vec2($x: Float, $y: Float): Vector2</sub>                                                   |
 | Compute Vector2 Dot Product                                                                      |
-| <span style="color: lightgray">vec2.computeDotProduct($a: Vector2, $b: Vector2): Float</span>                               |
+| <sub>vec2.computeDotProduct($a: Vector2, $b: Vector2): Float</sub>                               |
 | Compute Vector2 Length                                                                           |
-| <span style="color: lightgray">vec2.computeLength($vec2: Vector2): Float</span>                                             |
+| <sub>vec2.computeLength($vec2: Vector2): Float</sub>                                             |
 | Compute Vector2 Squared Length                                                                   |
-| <span style="color: lightgray">vec2.computeLengthSquared($vec2: Vector2): Float</span>                                      |
+| <sub>vec2.computeLengthSquared($vec2: Vector2): Float</sub>                                      |
 | Return Vector2 X Component                                                                       |
-| <span style="color: lightgray">vec2.getX($vec2: Vector2): Float</span>                                                      |
+| <sub>vec2.getX($vec2: Vector2): Float</sub>                                                      |
 | Return Vector2 Y Component                                                                       |
-| <span style="color: lightgray">vec2.getY($vec2: Vector2): Float</span>                                                      |
+| <sub>vec2.getY($vec2: Vector2): Float</sub>                                                      |
 | Normalize Vector2                                                                                |
-| <span style="color: lightgray">vec2.normalize($vec2: Vector2): Vector2</span>                                               |
+| <sub>vec2.normalize($vec2: Vector2): Vector2</sub>                                               |
 
 ## 6.16 Vector3 Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create Vector3                                                                                   |
-| <span style="color: lightgray">vec3($x: Float, $y: Float, $z: Float): Vector3</span>                                        |
+| <sub>vec3($x: Float, $y: Float, $z: Float): Vector3</sub>                                        |
 | Compute Angle between two Vector3                                                                |
-| <span style="color: lightgray">vec3.computeAngle($a: Vector3, $b: Vector3, $n: Vector3): Float</span>                       |
+| <sub>vec3.computeAngle($a: Vector3, $b: Vector3, $n: Vector3): Float</sub>                       |
 | Compute Vector3 Cross Product                                                                    |
-| <span style="color: lightgray">vec3.computeCrossProduct($a: Vector3, $b: Vector3): Vector3</span>                           |
+| <sub>vec3.computeCrossProduct($a: Vector3, $b: Vector3): Vector3</sub>                           |
 | Compute Vector3 Dot Product                                                                      |
-| <span style="color: lightgray">vec3.computeDotProduct($a: Vector3, $b: Vector3): Float</span>                               |
+| <sub>vec3.computeDotProduct($a: Vector3, $b: Vector3): Float</sub>                               |
 | Compute Vector3 Length                                                                           |
-| <span style="color: lightgray">vec3.computeLength($vec3: Vector3): Float</span>                                             |
+| <sub>vec3.computeLength($vec3: Vector3): Float</sub>                                             |
 | Compute Vector3 Squared Length                                                                   |
-| <span style="color: lightgray">vec3.computeLengthSquared($vec3: Vector3): Float</span>                                      |
+| <sub>vec3.computeLengthSquared($vec3: Vector3): Float</sub>                                      |
 | Return Vector3 X Component                                                                       |
-| <span style="color: lightgray">vec3.getX($vec3: Vector3): Float</span>                                                      |
+| <sub>vec3.getX($vec3: Vector3): Float</sub>                                                      |
 | Return Vector3 Y Component                                                                       |
-| <span style="color: lightgray">vec3.getY($vec3: Vector3): Float</span>                                                      |
+| <sub>vec3.getY($vec3: Vector3): Float</sub>                                                      |
 | Return Vector3 Z Component                                                                       |
-| <span style="color: lightgray">vec3.getZ($vec3: Vector3): Float</span>                                                      |
+| <sub>vec3.getZ($vec3: Vector3): Float</sub>                                                      |
 | Normalize Vector3                                                                                |
-| <span style="color: lightgray">vec3.normalize($vec3: Vector3): Vector3</span>                                               |
+| <sub>vec3.normalize($vec3: Vector3): Vector3</sub>                                               |
 
 ## 6.17 Vector4 Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create Vector4                                                                                   |
-| <span style="color: lightgray">vec4($x: Float, $y: Float, $z: Float, $w: Float): Vector4</span>                             |
+| <sub>vec4($x: Float, $y: Float, $z: Float, $w: Float): Vector4</sub>                             |
 | Compute Vector4 Dot Product                                                                      |
-| <span style="color: lightgray">vec4.computeDotProduct($a: Vector4, $b: Vector4): Float</span>                               |
+| <sub>vec4.computeDotProduct($a: Vector4, $b: Vector4): Float</sub>                               |
 | Compute Vector4 Length                                                                           |
-| <span style="color: lightgray">vec4.computeLength($vec4: Vector4): Float</span>                                             |
+| <sub>vec4.computeLength($vec4: Vector4): Float</sub>                                             |
 | Compute Vector4 Squared Length                                                                   |
-| <span style="color: lightgray">vec4.computeLengthSquared($vec4: Vector4): Float</span>                                      |
+| <sub>vec4.computeLengthSquared($vec4: Vector4): Float</sub>                                      |
 | Return Vector4 W Component                                                                       |
-| <span style="color: lightgray">vec4.getW($vec4: Vector4): Float</span>                                                      |
+| <sub>vec4.getW($vec4: Vector4): Float</sub>                                                      |
 | Return Vector4 X Component                                                                       |
-| <span style="color: lightgray">vec4.getX($vec4: Vector4): Float</span>                                                      |
+| <sub>vec4.getX($vec4: Vector4): Float</sub>                                                      |
 | Return Vector4 Y Component                                                                       |
-| <span style="color: lightgray">vec4.getY($vec4: Vector4): Float</span>                                                      |
+| <sub>vec4.getY($vec4: Vector4): Float</sub>                                                      |
 | Return Vector4 Z Component                                                                       |
-| <span style="color: lightgray">vec4.getZ($vec4: Vector4): Float</span>                                                      |
+| <sub>vec4.getZ($vec4: Vector4): Float</sub>                                                      |
 | Normalize Vector4                                                                                |
-| <span style="color: lightgray">vec4.normalize($vec4: Vector4): Vector4</span>                                               |
+| <sub>vec4.normalize($vec4: Vector4): Vector4</sub>                                               |
 
 ## 6.18 XML Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create XML Tag                                                                                   |
-| <span style="color: lightgray">xml.createTag($name: String[, $attributes: Map[, $innerXML: String]]): String</span>         |
+| <sub>xml.createTag($name: String[, $attributes: Map[, $innerXML: String]]): String</sub>         |
 
 # 7. MiniScript Logic Methods
 
@@ -991,399 +991,399 @@ Reading all keys as array from set:
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Get Listener Orientation <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>            |
-| <span style="color: lightgray">audio.getListenerOrientationAt(): Vector3</span>                                             |
-| Set Listener Orientation <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>            |
-| <span style="color: lightgray">audio.setListenerOrientationAt($position: Vector3): Void</span>                              |
-| Get Listener Position <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>               |
-| <span style="color: lightgray">audio.getListenerPosition(): Vector3</span>                                                  |
-| Set Listener Position <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>               |
-| <span style="color: lightgray">audio.setListenerPosition($position: Vector3): Void</span>                                   |
-| Play Audio at Engine Entity Position <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>|
-| <span style="color: lightgray">audio.play($id: String[, $delay: Integer[, $gain: Integer[, $pitch: Integer[, $ignoreIfPlaying: Integer]]]]): String</span>|
-| Play Audio at Custom Position <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>       |
-| <span style="color: lightgray">audio.playAtPosition($id: String, $position: Vector3[, $delay: Integer[, $gain: Integer[, $pitch: Integer[, $ignoreIfPlaying: Integer]]]]): String</span>|
+| Get Listener Orientation - available in initializeEngine(), updateEngine()                       |
+| <sub>audio.getListenerOrientationAt(): Vector3</sub>                                             |
+| Set Listener Orientation - available in initializeEngine(), updateEngine()                       |
+| <sub>audio.setListenerOrientationAt($position: Vector3): Void</sub>                              |
+| Get Listener Position - available in initializeEngine(), updateEngine()                          |
+| <sub>audio.getListenerPosition(): Vector3</sub>                                                  |
+| Set Listener Position - available in initializeEngine(), updateEngine()                          |
+| <sub>audio.setListenerPosition($position: Vector3): Void</sub>                                   |
+| Play Audio at Engine Entity Position - available in initializeEngine(), updateEngine()           |
+| <sub>audio.play($id: String[, $delay: Integer[, $gain: Integer[, $pitch: Integer[, $ignoreIfPlaying: Integer]]]]): String</sub>|
+| Play Audio at Custom Position - available in initializeEngine(), updateEngine()                  |
+| <sub>audio.playAtPosition($id: String, $position: Vector3[, $delay: Integer[, $gain: Integer[, $pitch: Integer[, $ignoreIfPlaying: Integer]]]]): String</sub>|
 
 ## 7.2 Engine Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Get Engine Entity Id by Mouse Position <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>|
-| <span style="color: lightgray">engine.getEntityIdByMousePosition($mouseX: Integer, $mouseY: Integer): String</span>         |
-| Get Engine Height <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>                   |
-| <span style="color: lightgray">engine.getHeight(): Integer</span>                                                           |
-| Compute Engine Screen Coordinate by World Coordinate <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>|
-| <span style="color: lightgray">engine.computeScreenCoordinateByWorldCoordinate($worldCoodinate: Vector3, =$screenCoordinate: Vector2): Boolean</span>|
-| Get Engine Width <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>                    |
-| <span style="color: lightgray">engine.getWidth(): Integer</span>                                                            |
-| Compute Engine World Coordinate by Mouse Position <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>|
-| <span style="color: lightgray">engine.computeWorldCoordinateByMousePosition($mouseX: Integer, $mouseY: Integer): Vector3</span>|
-| Dump Engine Entities <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>                |
-| <span style="color: lightgray">engine.dumpEntities(): Void</span>                                                           |
-| Dump Engine Shaders <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>                 |
-| <span style="color: lightgray">engine.dumpShaders(): Void</span>                                                            |
+| Get Engine Entity Id by Mouse Position - available in initializeEngine(), updateEngine()         |
+| <sub>engine.getEntityIdByMousePosition($mouseX: Integer, $mouseY: Integer): String</sub>         |
+| Get Engine Height - available in initializeEngine(), updateEngine()                              |
+| <sub>engine.getHeight(): Integer</sub>                                                           |
+| Compute Engine Screen Coordinate by World Coordinate - available in initializeEngine(), updateEngine()|
+| <sub>engine.computeScreenCoordinateByWorldCoordinate($worldCoodinate: Vector3, =$screenCoordinate: Vector2): Boolean</sub>|
+| Get Engine Width - available in initializeEngine(), updateEngine()                               |
+| <sub>engine.getWidth(): Integer</sub>                                                            |
+| Compute Engine World Coordinate by Mouse Position - available in initializeEngine(), updateEngine()|
+| <sub>engine.computeWorldCoordinateByMousePosition($mouseX: Integer, $mouseY: Integer): Vector3</sub>|
+| Dump Engine Entities - available in initializeEngine(), updateEngine()                           |
+| <sub>engine.dumpEntities(): Void</sub>                                                           |
+| Dump Engine Shaders - available in initializeEngine(), updateEngine()                            |
+| <sub>engine.dumpShaders(): Void</sub>                                                            |
 
 ## 7.3 Engine Camera Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Get Camera horizontal Field Of View <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span> |
-| <span style="color: lightgray">engine.camera.getFovX(): Float</span>                                                        |
-| Set Camera horizontal Field Of View <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span> |
-| <span style="color: lightgray">engine.camera.setFovX($fovX: Float): Void</span>                                             |
-| Get Camera Look At <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>                  |
-| <span style="color: lightgray">engine.camera.getLookAt(): Vector3</span>                                                    |
-| Set Camera Look At <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>                  |
-| <span style="color: lightgray">engine.camera.setLookAt($lookAt: Vector3): Void</span>                                       |
-| Get Camera Look From <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>                |
-| <span style="color: lightgray">engine.camera.getLookFrom(): Vector3</span>                                                  |
-| Set Camera Look From <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>                |
-| <span style="color: lightgray">engine.camera.setLookFrom($lookFrom: Vector3): Void</span>                                   |
-| Get Camera Up Vector <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>                |
-| <span style="color: lightgray">engine.camera.getUpVector(): Vector3</span>                                                  |
-| Set Camera Up Vector <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>                |
-| <span style="color: lightgray">engine.camera.setUpVector($upVector: Vector3): Void</span>                                   |
-| Compute Camera Up Vector <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>            |
-| <span style="color: lightgray">engine.camera.computeUpVector($lookFrom: Vector3, $lookAt: Vector3): Vector3</span>          |
+| Get Camera horizontal Field Of View - available in initializeEngine(), updateEngine()            |
+| <sub>engine.camera.getFovX(): Float</sub>                                                        |
+| Set Camera horizontal Field Of View - available in initializeEngine(), updateEngine()            |
+| <sub>engine.camera.setFovX($fovX: Float): Void</sub>                                             |
+| Get Camera Look At - available in initializeEngine(), updateEngine()                             |
+| <sub>engine.camera.getLookAt(): Vector3</sub>                                                    |
+| Set Camera Look At - available in initializeEngine(), updateEngine()                             |
+| <sub>engine.camera.setLookAt($lookAt: Vector3): Void</sub>                                       |
+| Get Camera Look From - available in initializeEngine(), updateEngine()                           |
+| <sub>engine.camera.getLookFrom(): Vector3</sub>                                                  |
+| Set Camera Look From - available in initializeEngine(), updateEngine()                           |
+| <sub>engine.camera.setLookFrom($lookFrom: Vector3): Void</sub>                                   |
+| Get Camera Up Vector - available in initializeEngine(), updateEngine()                           |
+| <sub>engine.camera.getUpVector(): Vector3</sub>                                                  |
+| Set Camera Up Vector - available in initializeEngine(), updateEngine()                           |
+| <sub>engine.camera.setUpVector($upVector: Vector3): Void</sub>                                   |
+| Compute Camera Up Vector - available in initializeEngine(), updateEngine()                       |
+| <sub>engine.camera.computeUpVector($lookFrom: Vector3, $lookAt: Vector3): Vector3</sub>          |
 
 ## 7.4 Engine Entity Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Get Engine Entity Animation <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>         |
-| <span style="color: lightgray">engine.entity.getAnimation($entityId: String[, $childEntityId: String]): String</span>       |
-| Set Engine Entity Animation <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>         |
-| <span style="color: lightgray">engine.entity.setAnimation($entityId: String, $animation: String[, $speed: Float[, $childEntityId: String]]): Void</span>|
-| Get Engine Entity Animation Speed <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>   |
-| <span style="color: lightgray">engine.entity.setAnimationSpeed($entityId: String, $speed: Float[, $childEntityId: String]): Void</span>|
-| Set Engine Entity Animation Speed <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>   |
-| <span style="color: lightgray">engine.entity.getAnimationTime($entityId: String[, $childEntityId: String]): Float</span>    |
-| Get Engine Entity Additive Effect Color <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>|
-| <span style="color: lightgray">engine.entity.getEffectColorAdd($entityId: String[, $childEntityId: String]): Vector4</span> |
-| Set Engine Entity Additive Effect Color <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>|
-| <span style="color: lightgray">engine.entity.setEffectColorAdd($entityId: String, $effectColorAdd: Vector4[, $childEntityId: String]): Void</span>|
-| Get Engine Entity Multiplicative Effect Color <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>|
-| <span style="color: lightgray">engine.entity.getEffectColorMul($entityId: String[, $childEntityId: String]): Vector4</span> |
-| Set Engine Entity Multiplicative Effect Color <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>|
-| <span style="color: lightgray">engine.entity.setEffectColorMul($entityId: String, $effectColorMul: Vector4[, $childEntityId: String]): Void</span>|
-| Return if Engine Entity is enabled <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>  |
-| <span style="color: lightgray">engine.entity.isEnabled($entityId: String[, $childEntityId: String]): Boolean</span>         |
-| Set Engine Entity enabled/disabled <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>  |
-| <span style="color: lightgray">engine.entity.setEnabled($entityId: String, $enabled: Boolean[, $childEntityId: String]): Void</span>|
-| Get Engine Entity Node Transform <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>    |
-| <span style="color: lightgray">engine.entity.getNodeTransform($entityId: String, $nodeId: String[, $childEntityId: String]): Transform</span>|
-| Set Engine Entity Node Transform <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>    |
-| <span style="color: lightgray">engine.entity.setNodeTransform($entityId: String, $nodeId: String, $transform: Transform[, $childEntityId: String]): Void</span>|
-| Unset Engine Entity Node Transform <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>  |
-| <span style="color: lightgray">engine.entity.unsetNodeTransform($entityId: String, $nodeId: String[, $childEntityId: String]): Void</span>|
-| Get Engine Entity Node Transform Matrix <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>|
-| <span style="color: lightgray">engine.entity.getNodeTransformMatrix($entityId: String, $nodeId: String[, $childEntityId: String]): Matrix4x4</span>|
-| Set Engine Entity Node Transform Matrix <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>|
-| <span style="color: lightgray">engine.entity.setNodeTransformMatrix($entityId: String, $nodeId: String, $matrix: Matrix4x4[, $childEntityId: String]): Void</span>|
-| Unset Engine Entity Node Transform Matrix <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>|
-| <span style="color: lightgray">engine.entity.unsetNodeTransformMatrix($entityId: String, $nodeId: String[, $childEntityId: String]): Void</span>|
-| Return if Engine Entity has specific Overlay Animation <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>|
-| <span style="color: lightgray">engine.entity.hasOverlayAnimation($entityId: String, $animation: String[, $childEntityId: String]): Boolean</span>|
-| Return Engine Entity Overlay Animation Playback Time from 0.0 until 1.0 <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>|
-| <span style="color: lightgray">engine.entity.getOverlayAnimationTime($entityId: String, $animation: String[, $childEntityId: String]): Float</span>|
-| Return if Engine Entity is Pickable <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span> |
-| <span style="color: lightgray">engine.entity.isPickable($entityId: String[, $childEntityId: String]): Boolean</span>        |
-| Set Engine Entity Pickable <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>          |
-| <span style="color: lightgray">engine.entity.setPickable($entityId: String, $pickable: Boolean[, $childEntityId: String]): Void</span>|
-| Get Engine Entity Transform <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>         |
-| <span style="color: lightgray">engine.entity.getTransform($entityId: String[, $childEntityId: String]): Transform</span>    |
-| Set Engine Entity Transform <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>         |
-| <span style="color: lightgray">engine.entity.setTransform($entityId: String, $transform: Transform[, $childEntityId: String]): Void</span>|
-| Add Engine Entity Overlay Animation <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span> |
-| <span style="color: lightgray">engine.entity.addOverlayAnimation($entityId: String, $animation: String[, $childEntityId: String]): Void</span>|
-| Emit Engine Entity Particles <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>        |
-| <span style="color: lightgray">engine.entity.emitParticles($entityId: String[, $childEntityId: String]): Integer</span>     |
-| Remove finished Overlay Animations <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>  |
-| <span style="color: lightgray">engine.entity.removeFinishedOverlayAnimations($entityId: String[, $childEntityId: String]): Void</span>|
-| Remove specific Overlay Animation <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>   |
-| <span style="color: lightgray">engine.entity.removeOverlayAnimation($entityId: String, $animation: String[, $childEntityId: String]): Void</span>|
-| Remove Overlay Animations <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>           |
-| <span style="color: lightgray">engine.entity.removeOverlayAnimations($entityId: String[, $childEntityId: String]): Void</span>|
+| Get Engine Entity Animation - available in initializeEngine(), updateEngine()                    |
+| <sub>engine.entity.getAnimation($entityId: String[, $childEntityId: String]): String</sub>       |
+| Set Engine Entity Animation - available in initializeEngine(), updateEngine()                    |
+| <sub>engine.entity.setAnimation($entityId: String, $animation: String[, $speed: Float[, $childEntityId: String]]): Void</sub>|
+| Get Engine Entity Animation Speed - available in initializeEngine(), updateEngine()              |
+| <sub>engine.entity.setAnimationSpeed($entityId: String, $speed: Float[, $childEntityId: String]): Void</sub>|
+| Set Engine Entity Animation Speed - available in initializeEngine(), updateEngine()              |
+| <sub>engine.entity.getAnimationTime($entityId: String[, $childEntityId: String]): Float</sub>    |
+| Get Engine Entity Additive Effect Color - available in initializeEngine(), updateEngine()        |
+| <sub>engine.entity.getEffectColorAdd($entityId: String[, $childEntityId: String]): Vector4</sub> |
+| Set Engine Entity Additive Effect Color - available in initializeEngine(), updateEngine()        |
+| <sub>engine.entity.setEffectColorAdd($entityId: String, $effectColorAdd: Vector4[, $childEntityId: String]): Void</sub>|
+| Get Engine Entity Multiplicative Effect Color - available in initializeEngine(), updateEngine()  |
+| <sub>engine.entity.getEffectColorMul($entityId: String[, $childEntityId: String]): Vector4</sub> |
+| Set Engine Entity Multiplicative Effect Color - available in initializeEngine(), updateEngine()  |
+| <sub>engine.entity.setEffectColorMul($entityId: String, $effectColorMul: Vector4[, $childEntityId: String]): Void</sub>|
+| Return if Engine Entity is enabled - available in initializeEngine(), updateEngine()             |
+| <sub>engine.entity.isEnabled($entityId: String[, $childEntityId: String]): Boolean</sub>         |
+| Set Engine Entity enabled/disabled - available in initializeEngine(), updateEngine()             |
+| <sub>engine.entity.setEnabled($entityId: String, $enabled: Boolean[, $childEntityId: String]): Void</sub>|
+| Get Engine Entity Node Transform - available in initializeEngine(), updateEngine()               |
+| <sub>engine.entity.getNodeTransform($entityId: String, $nodeId: String[, $childEntityId: String]): Transform</sub>|
+| Set Engine Entity Node Transform - available in initializeEngine(), updateEngine()               |
+| <sub>engine.entity.setNodeTransform($entityId: String, $nodeId: String, $transform: Transform[, $childEntityId: String]): Void</sub>|
+| Unset Engine Entity Node Transform - available in initializeEngine(), updateEngine()             |
+| <sub>engine.entity.unsetNodeTransform($entityId: String, $nodeId: String[, $childEntityId: String]): Void</sub>|
+| Get Engine Entity Node Transform Matrix - available in initializeEngine(), updateEngine()        |
+| <sub>engine.entity.getNodeTransformMatrix($entityId: String, $nodeId: String[, $childEntityId: String]): Matrix4x4</sub>|
+| Set Engine Entity Node Transform Matrix - available in initializeEngine(), updateEngine()        |
+| <sub>engine.entity.setNodeTransformMatrix($entityId: String, $nodeId: String, $matrix: Matrix4x4[, $childEntityId: String]): Void</sub>|
+| Unset Engine Entity Node Transform Matrix - available in initializeEngine(), updateEngine()      |
+| <sub>engine.entity.unsetNodeTransformMatrix($entityId: String, $nodeId: String[, $childEntityId: String]): Void</sub>|
+| Return if Engine Entity has specific Overlay Animation - available in initializeEngine(), updateEngine()|
+| <sub>engine.entity.hasOverlayAnimation($entityId: String, $animation: String[, $childEntityId: String]): Boolean</sub>|
+| Return Engine Entity Overlay Animation Playback Time from 0.0 until 1.0 - available in initializeEngine(), updateEngine()|
+| <sub>engine.entity.getOverlayAnimationTime($entityId: String, $animation: String[, $childEntityId: String]): Float</sub>|
+| Return if Engine Entity is Pickable - available in initializeEngine(), updateEngine()            |
+| <sub>engine.entity.isPickable($entityId: String[, $childEntityId: String]): Boolean</sub>        |
+| Set Engine Entity Pickable - available in initializeEngine(), updateEngine()                     |
+| <sub>engine.entity.setPickable($entityId: String, $pickable: Boolean[, $childEntityId: String]): Void</sub>|
+| Get Engine Entity Transform - available in initializeEngine(), updateEngine()                    |
+| <sub>engine.entity.getTransform($entityId: String[, $childEntityId: String]): Transform</sub>    |
+| Set Engine Entity Transform - available in initializeEngine(), updateEngine()                    |
+| <sub>engine.entity.setTransform($entityId: String, $transform: Transform[, $childEntityId: String]): Void</sub>|
+| Add Engine Entity Overlay Animation - available in initializeEngine(), updateEngine()            |
+| <sub>engine.entity.addOverlayAnimation($entityId: String, $animation: String[, $childEntityId: String]): Void</sub>|
+| Emit Engine Entity Particles - available in initializeEngine(), updateEngine()                   |
+| <sub>engine.entity.emitParticles($entityId: String[, $childEntityId: String]): Integer</sub>     |
+| Remove finished Overlay Animations - available in initializeEngine(), updateEngine()             |
+| <sub>engine.entity.removeFinishedOverlayAnimations($entityId: String[, $childEntityId: String]): Void</sub>|
+| Remove specific Overlay Animation - available in initializeEngine(), updateEngine()              |
+| <sub>engine.entity.removeOverlayAnimation($entityId: String, $animation: String[, $childEntityId: String]): Void</sub>|
+| Remove Overlay Animations - available in initializeEngine(), updateEngine()                      |
+| <sub>engine.entity.removeOverlayAnimations($entityId: String[, $childEntityId: String]): Void</sub>|
 
 ## 7.5 Engine Timing Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Get Engine Timing Avarage FPS <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>       |
-| <span style="color: lightgray">engine.timing.getAvarageFPS(): Float</span>                                                  |
-| Get Engine Timing Frame Delta Time in Milliseconds <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>|
-| <span style="color: lightgray">engine.timing.getDeltaTime(): Integer</span>                                                 |
-| Get Engine Timing Frame Delta Time in Seconds <span style="color: lightgray">(available in initializeEngine(), updateEngine())</span>|
-| <span style="color: lightgray">engine.timing.getDeltaTimeSeconds(): Float</span>                                            |
+| Get Engine Timing Avarage FPS - available in initializeEngine(), updateEngine()                  |
+| <sub>engine.timing.getAvarageFPS(): Float</sub>                                                  |
+| Get Engine Timing Frame Delta Time in Milliseconds - available in initializeEngine(), updateEngine()|
+| <sub>engine.timing.getDeltaTime(): Integer</sub>                                                 |
+| Get Engine Timing Frame Delta Time in Seconds - available in initializeEngine(), updateEngine()  |
+| <sub>engine.timing.getDeltaTimeSeconds(): Float</sub>                                            |
 
 ## 7.6 Keyboard Input Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Returns if ALT Key is currently pressed                                                          |
-| <span style="color: lightgray">input.keyboard.isAltDown(): Boolean</span>                                                   |
+| <sub>input.keyboard.isAltDown(): Boolean</sub>                                                   |
 | Returns if specific Character is currently pressed                                               |
-| <span style="color: lightgray">input.keyboard.isCharDown($charAsString: String): Boolean</span>                             |
+| <sub>input.keyboard.isCharDown($charAsString: String): Boolean</sub>                             |
 | Returns if CONTROL Key is currently pressed                                                      |
-| <span style="color: lightgray">input.keyboard.isControlDown(): Boolean</span>                                               |
+| <sub>input.keyboard.isControlDown(): Boolean</sub>                                               |
 | Backspace Key Keycode                                                                            |
-| <span style="color: lightgray">input.keyboard.KEYCODE_BACKSPACE(): Integer</span>                                           |
+| <sub>input.keyboard.KEYCODE_BACKSPACE(): Integer</sub>                                           |
 | Delete Key Keycode                                                                               |
-| <span style="color: lightgray">input.keyboard.KEYCODE_DELETE(): Integer</span>                                              |
+| <sub>input.keyboard.KEYCODE_DELETE(): Integer</sub>                                              |
 | Down Key Keycode                                                                                 |
-| <span style="color: lightgray">input.keyboard.KEYCODE_DOWN(): Integer</span>                                                |
+| <sub>input.keyboard.KEYCODE_DOWN(): Integer</sub>                                                |
 | End Key Keycode                                                                                  |
-| <span style="color: lightgray">input.keyboard.KEYCODE_END(): Integer</span>                                                 |
+| <sub>input.keyboard.KEYCODE_END(): Integer</sub>                                                 |
 | Escape Key Keycode                                                                               |
-| <span style="color: lightgray">input.keyboard.KEYCODE_ESCAPE(): Integer</span>                                              |
+| <sub>input.keyboard.KEYCODE_ESCAPE(): Integer</sub>                                              |
 | F1 Key Keycode                                                                                   |
-| <span style="color: lightgray">input.keyboard.KEYCODE_F1(): Integer</span>                                                  |
+| <sub>input.keyboard.KEYCODE_F1(): Integer</sub>                                                  |
 | F10 Key Keycode                                                                                  |
-| <span style="color: lightgray">input.keyboard.KEYCODE_F10(): Integer</span>                                                 |
+| <sub>input.keyboard.KEYCODE_F10(): Integer</sub>                                                 |
 | F11 Key Keycode                                                                                  |
-| <span style="color: lightgray">input.keyboard.KEYCODE_F11(): Integer</span>                                                 |
+| <sub>input.keyboard.KEYCODE_F11(): Integer</sub>                                                 |
 | F12 Key Keycode                                                                                  |
-| <span style="color: lightgray">input.keyboard.KEYCODE_F12(): Integer</span>                                                 |
+| <sub>input.keyboard.KEYCODE_F12(): Integer</sub>                                                 |
 | F2 Key Keycode                                                                                   |
-| <span style="color: lightgray">input.keyboard.KEYCODE_F2(): Integer</span>                                                  |
+| <sub>input.keyboard.KEYCODE_F2(): Integer</sub>                                                  |
 | F3 Key Keycode                                                                                   |
-| <span style="color: lightgray">input.keyboard.KEYCODE_F3(): Integer</span>                                                  |
+| <sub>input.keyboard.KEYCODE_F3(): Integer</sub>                                                  |
 | F4 Key Keycode                                                                                   |
-| <span style="color: lightgray">input.keyboard.KEYCODE_F4(): Integer</span>                                                  |
+| <sub>input.keyboard.KEYCODE_F4(): Integer</sub>                                                  |
 | F5 Key Keycode                                                                                   |
-| <span style="color: lightgray">input.keyboard.KEYCODE_F5(): Integer</span>                                                  |
+| <sub>input.keyboard.KEYCODE_F5(): Integer</sub>                                                  |
 | F6 Key Keycode                                                                                   |
-| <span style="color: lightgray">input.keyboard.KEYCODE_F6(): Integer</span>                                                  |
+| <sub>input.keyboard.KEYCODE_F6(): Integer</sub>                                                  |
 | F7 Key Keycode                                                                                   |
-| <span style="color: lightgray">input.keyboard.KEYCODE_F7(): Integer</span>                                                  |
+| <sub>input.keyboard.KEYCODE_F7(): Integer</sub>                                                  |
 | F8 Key Keycode                                                                                   |
-| <span style="color: lightgray">input.keyboard.KEYCODE_F8(): Integer</span>                                                  |
+| <sub>input.keyboard.KEYCODE_F8(): Integer</sub>                                                  |
 | F9 Key Keycode                                                                                   |
-| <span style="color: lightgray">input.keyboard.KEYCODE_F9(): Integer</span>                                                  |
+| <sub>input.keyboard.KEYCODE_F9(): Integer</sub>                                                  |
 | Left Key Keycode                                                                                 |
-| <span style="color: lightgray">input.keyboard.KEYCODE_LEFT(): Integer</span>                                                |
+| <sub>input.keyboard.KEYCODE_LEFT(): Integer</sub>                                                |
 | Page Down Key Keycode                                                                            |
-| <span style="color: lightgray">input.keyboard.KEYCODE_PAGEDOWN(): Integer</span>                                            |
+| <sub>input.keyboard.KEYCODE_PAGEDOWN(): Integer</sub>                                            |
 | Page Up Key Keycode                                                                              |
-| <span style="color: lightgray">input.keyboard.KEYCODE_PAGEUP(): Integer</span>                                              |
+| <sub>input.keyboard.KEYCODE_PAGEUP(): Integer</sub>                                              |
 | Home/Position 1 Key Keycode                                                                      |
-| <span style="color: lightgray">input.keyboard.KEYCODE_POS1(): Integer</span>                                                |
+| <sub>input.keyboard.KEYCODE_POS1(): Integer</sub>                                                |
 | Return Key Keycode                                                                               |
-| <span style="color: lightgray">input.keyboard.KEYCODE_RETURN(): Integer</span>                                              |
+| <sub>input.keyboard.KEYCODE_RETURN(): Integer</sub>                                              |
 | Right Key Keycode                                                                                |
-| <span style="color: lightgray">input.keyboard.KEYCODE_RIGHT(): Integer</span>                                               |
+| <sub>input.keyboard.KEYCODE_RIGHT(): Integer</sub>                                               |
 | Space Key Keycode                                                                                |
-| <span style="color: lightgray">input.keyboard.KEYCODE_SPACE(): Integer</span>                                               |
+| <sub>input.keyboard.KEYCODE_SPACE(): Integer</sub>                                               |
 | Up Key Keycode                                                                                   |
-| <span style="color: lightgray">input.keyboard.KEYCODE_UP(): Integer</span>                                                  |
+| <sub>input.keyboard.KEYCODE_UP(): Integer</sub>                                                  |
 | Returns if specific Key is currently pressed                                                     |
-| <span style="color: lightgray">input.keyboard.isKeyDown($keyCode: Integer): Boolean</span>                                  |
+| <sub>input.keyboard.isKeyDown($keyCode: Integer): Boolean</sub>                                  |
 | Returns if Meta Key is currently pressed                                                         |
-| <span style="color: lightgray">input.keyboard.isMetaDown(): Boolean</span>                                                  |
+| <sub>input.keyboard.isMetaDown(): Boolean</sub>                                                  |
 | Returns if Shift Key is currently pressed                                                        |
-| <span style="color: lightgray">input.keyboard.isShiftDown(): Boolean</span>                                                 |
+| <sub>input.keyboard.isShiftDown(): Boolean</sub>                                                 |
 | Returns last typed String                                                                        |
-| <span style="color: lightgray">input.keyboard.getTypedString(): String</span>                                               |
+| <sub>input.keyboard.getTypedString(): String</sub>                                               |
 
 ## 7.7 Mouse Input Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Left Mouse Button Integer Code                                                                   |
-| <span style="color: lightgray">input.mouse.BUTTON_LEFT(): Integer</span>                                                    |
+| <sub>input.mouse.BUTTON_LEFT(): Integer</sub>                                                    |
 | Middle Mouse Button Integer Code                                                                 |
-| <span style="color: lightgray">input.mouse.BUTTON_MIDDLE(): Integer</span>                                                  |
+| <sub>input.mouse.BUTTON_MIDDLE(): Integer</sub>                                                  |
 | Right Mouse Button Integer Code                                                                  |
-| <span style="color: lightgray">input.mouse.BUTTON_RIGHT(): Integer</span>                                                   |
+| <sub>input.mouse.BUTTON_RIGHT(): Integer</sub>                                                   |
 | Returns if specific Mouse Button is currently pressed                                            |
-| <span style="color: lightgray">input.mouse.isButtonDown($button: Integer): Boolean</span>                                   |
+| <sub>input.mouse.isButtonDown($button: Integer): Boolean</sub>                                   |
 | Returns if specific Mouse Button has been released                                               |
-| <span style="color: lightgray">input.mouse.isButtonUp($button: Integer): Boolean</span>                                     |
+| <sub>input.mouse.isButtonUp($button: Integer): Boolean</sub>                                     |
 | Returns if Mouse is dragging currently                                                           |
-| <span style="color: lightgray">input.mouse.isDragging($button: Integer): Boolean</span>                                     |
+| <sub>input.mouse.isDragging($button: Integer): Boolean</sub>                                     |
 | Returns if Mouse has been moved                                                                  |
-| <span style="color: lightgray">input.mouse.hasMoved(): Boolean</span>                                                       |
+| <sub>input.mouse.hasMoved(): Boolean</sub>                                                       |
 | Returns current Value of X Axis Mouse Wheel                                                      |
-| <span style="color: lightgray">input.mouse.getWheelX(): Float</span>                                                        |
+| <sub>input.mouse.getWheelX(): Float</sub>                                                        |
 | Returns current Value of Y Axis Mouse Wheel                                                      |
-| <span style="color: lightgray">input.mouse.getWheelY(): Float</span>                                                        |
+| <sub>input.mouse.getWheelY(): Float</sub>                                                        |
 | Returns current Value of Z Axis Mouse Wheel                                                      |
-| <span style="color: lightgray">input.mouse.getWheelZ(): Float</span>                                                        |
+| <sub>input.mouse.getWheelZ(): Float</sub>                                                        |
 | Get X Mouse Position                                                                             |
-| <span style="color: lightgray">input.mouse.getX(): Integer</span>                                                           |
+| <sub>input.mouse.getX(): Integer</sub>                                                           |
 | Get Unscaled X Mouse Position                                                                    |
-| <span style="color: lightgray">input.mouse.getXUnscaled(): Integer</span>                                                   |
+| <sub>input.mouse.getXUnscaled(): Integer</sub>                                                   |
 | Get Y Mouse Position                                                                             |
-| <span style="color: lightgray">input.mouse.getY(): Integer</span>                                                           |
+| <sub>input.mouse.getY(): Integer</sub>                                                           |
 | Get Unscaled Y Mouse Position                                                                    |
-| <span style="color: lightgray">input.mouse.getYUnscaled(): Integer</span>                                                   |
+| <sub>input.mouse.getYUnscaled(): Integer</sub>                                                   |
 
 ## 7.8 Logic Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Returns if Logic has Function <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">logic.has($logicId: String, $function: String): Boolean</span>                               |
-| Get Hierarchy Id <span style="color: lightgray">(available in initializeEngine(), updateEngine(), initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">logic.getHierarchyId(): String</span>                                                        |
-| Get Hierarchy Parent Id <span style="color: lightgray">(available in initializeEngine(), updateEngine(), initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">logic.getHierarchyParentId(): String</span>                                                  |
-| Get Logic Id <span style="color: lightgray">(available in initializeEngine(), updateEngine(), initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">logic.getId(): String</span>                                                                 |
-| Call specific Logic Function <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">logic.call($logicId: String, $function: String, ...): Mixed</span>                           |
+| Returns if Logic has Function - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>logic.has($logicId: String, $function: String): Boolean</sub>                               |
+| Get Hierarchy Id - available in initializeEngine(), updateEngine(), initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>logic.getHierarchyId(): String</sub>                                                        |
+| Get Hierarchy Parent Id - available in initializeEngine(), updateEngine(), initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>logic.getHierarchyParentId(): String</sub>                                                  |
+| Get Logic Id - available in initializeEngine(), updateEngine(), initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>logic.getId(): String</sub>                                                                 |
+| Call specific Logic Function - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>logic.call($logicId: String, $function: String, ...): Mixed</sub>                           |
 
 ## 7.9 Logic Signal Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Returns if Signal has been sent                                                                  |
-| <span style="color: lightgray">logic.signal.has(): Boolean</span>                                                           |
+| <sub>logic.signal.has(): Boolean</sub>                                                           |
 | Get Signal Argument                                                                              |
-| <span style="color: lightgray">logic.signal.getArgument($argumentIndex: Integer): Mixed</span>                              |
+| <sub>logic.signal.getArgument($argumentIndex: Integer): Mixed</sub>                              |
 | Get Signal Name                                                                                  |
-| <span style="color: lightgray">logic.signal.getName(): String</span>                                                        |
+| <sub>logic.signal.getName(): String</sub>                                                        |
 | Advance to next Signal                                                                           |
-| <span style="color: lightgray">logic.signal.next(): Void</span>                                                             |
-| Send Signal <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">logic.signal.send($logicId: String, $signal: String, ...): Void</span>                       |
+| <sub>logic.signal.next(): Void</sub>                                                             |
+| Send Signal - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed() |
+| <sub>logic.signal.send($logicId: String, $signal: String, ...): Void</sub>                       |
 
 ## 7.10 PathFinding Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Pathfinding Idle State Integer Code <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">pathfinding.STATE_IDLE(): Integer</span>                                                     |
-| Pathfinding Computing State Integer Code <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">pathfinding.STATE_PATHFINDING(): Integer</span>                                              |
-| Pathfinding Failed State Integer Code <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">pathfinding.STATE_PATHFINDING_FAILED(): Integer</span>                                       |
-| Pathfinding Computing Other Pathfinding Integer Code <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">pathfinding.STATE_PATHFINDING_OTHER(): Integer</span>                                        |
-| Pathfinding Success State Integer Code <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">pathfinding.STATE_PATHFINDING_SUCCESS(): Integer</span>                                      |
-| Pathfinding Try/Lock Failed Integer Code <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">pathfinding.STATE_TRYLOCK_FAILED(): Integer</span>                                           |
-| Issue Pathfinding <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">pathfinding.findPath($logicId: String, $startPosition: Vector3, $endPosition: Vector3, =$path: Array): Integer</span>|
+| Pathfinding Idle State Integer Code - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>pathfinding.STATE_IDLE(): Integer</sub>                                                     |
+| Pathfinding Computing State Integer Code - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>pathfinding.STATE_PATHFINDING(): Integer</sub>                                              |
+| Pathfinding Failed State Integer Code - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>pathfinding.STATE_PATHFINDING_FAILED(): Integer</sub>                                       |
+| Pathfinding Computing Other Pathfinding Integer Code - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>pathfinding.STATE_PATHFINDING_OTHER(): Integer</sub>                                        |
+| Pathfinding Success State Integer Code - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>pathfinding.STATE_PATHFINDING_SUCCESS(): Integer</sub>                                      |
+| Pathfinding Try/Lock Failed Integer Code - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>pathfinding.STATE_TRYLOCK_FAILED(): Integer</sub>                                           |
+| Issue Pathfinding - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>pathfinding.findPath($logicId: String, $startPosition: Vector3, $endPosition: Vector3, =$path: Array): Integer</sub>|
 
 ## 7.11 Scene Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Get Scene Depth                                                                                  |
-| <span style="color: lightgray">scene.getDepth(): Float</span>                                                               |
+| <sub>scene.getDepth(): Float</sub>                                                               |
 | Get Scene Height                                                                                 |
-| <span style="color: lightgray">scene.getHeight(): Float</span>                                                              |
+| <sub>scene.getHeight(): Float</sub>                                                              |
 | Get Scene Width                                                                                  |
-| <span style="color: lightgray">scene.getWidth(): Float</span>                                                               |
+| <sub>scene.getWidth(): Float</sub>                                                               |
 
 ## 7.12 SceneConnector Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Attach Prototype to the Logic Hierarchy <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">sceneconnector.attachPrototype($pathName: String, $fileName: String, $id: String, $attachNodeId: String, $transform: Transform[, $parentId: String]): Void</span>|
-| Spawn Prototype in Scene <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">sceneconnector.spawnPrototype($pathName: String, $fileName: String, $id: String, $transform: Transform[, $hierarchyId: String[, $hierarchyParentId: String]]): Void</span>|
+| Attach Prototype to the Logic Hierarchy - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>sceneconnector.attachPrototype($pathName: String, $fileName: String, $id: String, $attachNodeId: String, $transform: Transform[, $parentId: String]): Void</sub>|
+| Spawn Prototype in Scene - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>sceneconnector.spawnPrototype($pathName: String, $fileName: String, $id: String, $transform: Transform[, $hierarchyId: String[, $hierarchyParentId: String]]): Void</sub>|
 
 ## 7.13 Physics World Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Determine Height at specific Position in Physics World <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.determineHeight($collisionTypeIds: Integer, $stepUpMax: Float, $point: Vector3, =$heightPoint: Vector3[, =$bodyId: String[, $minHeight: Float[, $maxHeight: Float]]]): Boolean</span>|
-| Determine Collision of Two Specific Bodies in Physics World <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.doCollide($bodyId1: String, $bodyId2: String): Boolean</span>                          |
-| Compute Ray Casting in Physics World <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.doRayCasting($collisionTypeIds: Integer, $start: Vector3, $end: Vector3, =$hitPoint: Vector3[, =$bodyId: String[, $actorId: String]]): Boolean</span>|
-| Determine Collision of Specific Body in Physics World <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.doesCollideWith($collisionTypeIds: Integer, $bodyId: String): Array</span>             |
+| Determine Height at specific Position in Physics World - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.determineHeight($collisionTypeIds: Integer, $stepUpMax: Float, $point: Vector3, =$heightPoint: Vector3[, =$bodyId: String[, $minHeight: Float[, $maxHeight: Float]]]): Boolean</sub>|
+| Determine Collision of Two Specific Bodies in Physics World - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.doCollide($bodyId1: String, $bodyId2: String): Boolean</sub>                          |
+| Compute Ray Casting in Physics World - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.doRayCasting($collisionTypeIds: Integer, $start: Vector3, $end: Vector3, =$hitPoint: Vector3[, =$bodyId: String[, $actorId: String]]): Boolean</sub>|
+| Determine Collision of Specific Body in Physics World - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.doesCollideWith($collisionTypeIds: Integer, $bodyId: String): Array</sub>             |
 
 ## 7.14 Physics World Body Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Get Physics World Entity Angular Damping <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.getAngularDamping($bodyId: String): Float</span>                                  |
-| Set Physics World Entity Angular Damping <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.setAngularDamping($bodyId: String, $angularDamping: Float): Void</span>           |
-| Get Physics World Entity Angular Velocity <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.getAngularVelocity($bodyId: String): Vector3</span>                               |
-| Set Physics World Entity Angular Velocity <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.setAngularVelocity($bodyId: String, $angularVelocity: Vector3): Void</span>       |
-| Returns Physics World Collision Type Id 10 <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.COLLISION_TYPEID_10(): Integer</span>                                             |
-| Returns Physics World Collision Type Id 11 <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.COLLISION_TYPEID_11(): Integer</span>                                             |
-| Returns Physics World Collision Type Id 12 <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.COLLISION_TYPEID_12(): Integer</span>                                             |
-| Returns Physics World Collision Type Id 13 <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.COLLISION_TYPEID_13(): Integer</span>                                             |
-| Returns Physics World Collision Type Id 14 <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.COLLISION_TYPEID_14(): Integer</span>                                             |
-| Returns Physics World Collision Type Id 15 <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.COLLISION_TYPEID_15(): Integer</span>                                             |
-| Returns Physics World Collision Type Id 16 <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.COLLISION_TYPEID_16(): Integer</span>                                             |
-| Returns Physics World Collision Type Id 3 <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.COLLISION_TYPEID_3(): Integer</span>                                              |
-| Returns Physics World Collision Type Id 4 <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.COLLISION_TYPEID_4(): Integer</span>                                              |
-| Returns Physics World Collision Type Id 5 <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.COLLISION_TYPEID_5(): Integer</span>                                              |
-| Returns Physics World Collision Type Id 6 <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.COLLISION_TYPEID_6(): Integer</span>                                              |
-| Returns Physics World Collision Type Id 7 <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.COLLISION_TYPEID_7(): Integer</span>                                              |
-| Returns Physics World Collision Type Id 8 <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.COLLISION_TYPEID_8(): Integer</span>                                              |
-| Returns Physics World Collision Type Id 9 <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.COLLISION_TYPEID_9(): Integer</span>                                              |
-| Returns All Physics World Collision Type Ids <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.COLLISION_TYPEID_ALL(): Integer</span>                                            |
-| Returns Dynamic Physics World Collision Type Id <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.COLLISION_TYPEID_DYNAMIC(): Integer</span>                                        |
-| Returns Static Physics World Collision Type Id <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.COLLISION_TYPEID_STATIC(): Integer</span>                                         |
-| Get Physics World Entity own Collision Type Id <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.getCollisionTypeId($bodyId: String): Integer</span>                               |
-| Set Physics World Entity own Collision Type Id <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.setCollisionTypeId($bodyId: String, $collisionTypeId: Integer): Void</span>       |
-| Get Physics World Entity enabled Collision Type Ids <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.getCollisionTypeIds($bodyId: String): Integer</span>                              |
-| Set Physics World Entity enabled Collision Type Ids <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.setCollisionTypeIds($bodyId: String, $collisionTypeIds: Integer): Void</span>     |
-| Returns if Physics World Entity is enabled <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.isEnabled($bodyId: String): Boolean</span>                                        |
-| Set Physics World Entity enabled/disabled <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.setEnabled($bodyId: String, $enabled: Boolean): Void</span>                       |
-| Get Physics World Entity Linear Damping <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.getLinearDamping($bodyId: String): Float</span>                                   |
-| Set Physics World Entity Linear Damping <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.setLinearDamping($bodyId: String, $linearDamping: Float): Void</span>             |
-| Get Physics World Entity Linear Velocity <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.getLinearVelocity($bodyId: String): Vector3</span>                                |
-| Set Physics World Entity Linear Velocity <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.setLinearVelocity($bodyId: String, $linearVelocity: Vector3): Void</span>         |
-| Returns Physics World Dynamic Collision Body Type Integer Code <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.TYPE_COLLISION_DYNAMIC(): Integer</span>                                          |
-| Returns Physics World Static Collision Body Type Integer Code <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.TYPE_COLLISION_STATIC(): Integer</span>                                           |
-| Returns Physics World Dynamic Rigid Body Type Integer Code <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.TYPE_DYNAMIC(): Integer</span>                                                    |
-| Returns Physics World Static Rigid Body Type Integer Code <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.TYPE_STATIC(): Integer</span>                                                     |
-| Get Physics World Entity Transform <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.getTransform($bodyId: String): Transform</span>                                   |
-| Set Physics World Entity Transform <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.setTransform($bodyId: String, $transform: Transform): Void</span>                 |
-| Get Physics World Entity Body Type Integer Code <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.getType($bodyId: String): Integer</span>                                          |
-| Add Force to Physics World Entity <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.addForce($bodyId: String, $force: Vector3[, $origin: Vector3]): Void</span>       |
-| Add Torque to Physics World Entity <span style="color: lightgray">(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</span>|
-| <span style="color: lightgray">world.body.addTorque($bodyId: String, $torque: Vector3): Void</span>                         |
+| Get Physics World Entity Angular Damping - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.getAngularDamping($bodyId: String): Float</sub>                                  |
+| Set Physics World Entity Angular Damping - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.setAngularDamping($bodyId: String, $angularDamping: Float): Void</sub>           |
+| Get Physics World Entity Angular Velocity - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.getAngularVelocity($bodyId: String): Vector3</sub>                               |
+| Set Physics World Entity Angular Velocity - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.setAngularVelocity($bodyId: String, $angularVelocity: Vector3): Void</sub>       |
+| Returns Physics World Collision Type Id 10 - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.COLLISION_TYPEID_10(): Integer</sub>                                             |
+| Returns Physics World Collision Type Id 11 - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.COLLISION_TYPEID_11(): Integer</sub>                                             |
+| Returns Physics World Collision Type Id 12 - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.COLLISION_TYPEID_12(): Integer</sub>                                             |
+| Returns Physics World Collision Type Id 13 - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.COLLISION_TYPEID_13(): Integer</sub>                                             |
+| Returns Physics World Collision Type Id 14 - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.COLLISION_TYPEID_14(): Integer</sub>                                             |
+| Returns Physics World Collision Type Id 15 - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.COLLISION_TYPEID_15(): Integer</sub>                                             |
+| Returns Physics World Collision Type Id 16 - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.COLLISION_TYPEID_16(): Integer</sub>                                             |
+| Returns Physics World Collision Type Id 3 - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.COLLISION_TYPEID_3(): Integer</sub>                                              |
+| Returns Physics World Collision Type Id 4 - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.COLLISION_TYPEID_4(): Integer</sub>                                              |
+| Returns Physics World Collision Type Id 5 - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.COLLISION_TYPEID_5(): Integer</sub>                                              |
+| Returns Physics World Collision Type Id 6 - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.COLLISION_TYPEID_6(): Integer</sub>                                              |
+| Returns Physics World Collision Type Id 7 - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.COLLISION_TYPEID_7(): Integer</sub>                                              |
+| Returns Physics World Collision Type Id 8 - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.COLLISION_TYPEID_8(): Integer</sub>                                              |
+| Returns Physics World Collision Type Id 9 - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.COLLISION_TYPEID_9(): Integer</sub>                                              |
+| Returns All Physics World Collision Type Ids - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.COLLISION_TYPEID_ALL(): Integer</sub>                                            |
+| Returns Dynamic Physics World Collision Type Id - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.COLLISION_TYPEID_DYNAMIC(): Integer</sub>                                        |
+| Returns Static Physics World Collision Type Id - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.COLLISION_TYPEID_STATIC(): Integer</sub>                                         |
+| Get Physics World Entity own Collision Type Id - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.getCollisionTypeId($bodyId: String): Integer</sub>                               |
+| Set Physics World Entity own Collision Type Id - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.setCollisionTypeId($bodyId: String, $collisionTypeId: Integer): Void</sub>       |
+| Get Physics World Entity enabled Collision Type Ids - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.getCollisionTypeIds($bodyId: String): Integer</sub>                              |
+| Set Physics World Entity enabled Collision Type Ids - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.setCollisionTypeIds($bodyId: String, $collisionTypeIds: Integer): Void</sub>     |
+| Returns if Physics World Entity is enabled - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.isEnabled($bodyId: String): Boolean</sub>                                        |
+| Set Physics World Entity enabled/disabled - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.setEnabled($bodyId: String, $enabled: Boolean): Void</sub>                       |
+| Get Physics World Entity Linear Damping - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.getLinearDamping($bodyId: String): Float</sub>                                   |
+| Set Physics World Entity Linear Damping - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.setLinearDamping($bodyId: String, $linearDamping: Float): Void</sub>             |
+| Get Physics World Entity Linear Velocity - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.getLinearVelocity($bodyId: String): Vector3</sub>                                |
+| Set Physics World Entity Linear Velocity - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.setLinearVelocity($bodyId: String, $linearVelocity: Vector3): Void</sub>         |
+| Returns Physics World Dynamic Collision Body Type Integer Code - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.TYPE_COLLISION_DYNAMIC(): Integer</sub>                                          |
+| Returns Physics World Static Collision Body Type Integer Code - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.TYPE_COLLISION_STATIC(): Integer</sub>                                           |
+| Returns Physics World Dynamic Rigid Body Type Integer Code - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.TYPE_DYNAMIC(): Integer</sub>                                                    |
+| Returns Physics World Static Rigid Body Type Integer Code - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.TYPE_STATIC(): Integer</sub>                                                     |
+| Get Physics World Entity Transform - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.getTransform($bodyId: String): Transform</sub>                                   |
+| Set Physics World Entity Transform - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.setTransform($bodyId: String, $transform: Transform): Void</sub>                 |
+| Get Physics World Entity Body Type Integer Code - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.getType($bodyId: String): Integer</sub>                                          |
+| Add Force to Physics World Entity - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.addForce($bodyId: String, $force: Vector3[, $origin: Vector3]): Void</sub>       |
+| Add Torque to Physics World Entity - available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| <sub>world.body.addTorque($bodyId: String, $torque: Vector3): Void</sub>                         |
 
 # 8. MiniScript GUI Methods
 
@@ -1392,217 +1392,217 @@ Reading all keys as array from set:
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Returns if GUI Element Node has a specific Condition enabled                                     |
-| <span style="color: lightgray">gui.elementnode.conditions.has($elementNodeId: String, $condition: String): Boolean</span>   |
+| <sub>gui.elementnode.conditions.has($elementNodeId: String, $condition: String): Boolean</sub>   |
 | Get enabled GUI Element Node Conditions                                                          |
-| <span style="color: lightgray">gui.elementnode.conditions.get($elementNodeId: String): Array</span>                         |
+| <sub>gui.elementnode.conditions.get($elementNodeId: String): Array</sub>                         |
 | Set enabled GUI Element Node Condition                                                           |
-| <span style="color: lightgray">gui.elementnode.conditions.set($elementNodeId: String, $condition: String): Void</span>      |
+| <sub>gui.elementnode.conditions.set($elementNodeId: String, $condition: String): Void</sub>      |
 | Set Array of enabled GUI Element Node Conditions                                                 |
-| <span style="color: lightgray">gui.elementnode.conditions.setAll($elementNodeId: String, $conditions: Array): Void</span>   |
+| <sub>gui.elementnode.conditions.setAll($elementNodeId: String, $conditions: Array): Void</sub>   |
 | Add enabled GUI Element Node Condition                                                           |
-| <span style="color: lightgray">gui.elementnode.conditions.add($elementNodeId: String, $condition: String): Void</span>      |
+| <sub>gui.elementnode.conditions.add($elementNodeId: String, $condition: String): Void</sub>      |
 | Remove enabled GUI Element Node Condition                                                        |
-| <span style="color: lightgray">gui.elementnode.conditions.remove($elementNodeId: String, $condition: String): Void</span>   |
+| <sub>gui.elementnode.conditions.remove($elementNodeId: String, $condition: String): Void</sub>   |
 | Remove All enabled GUI Element Node Conditions                                                   |
-| <span style="color: lightgray">gui.elementnode.conditions.removeAll($elementNodeId: String): Void</span>                    |
+| <sub>gui.elementnode.conditions.removeAll($elementNodeId: String): Void</sub>                    |
 
 ## 8.2 Event Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Returns GUI Event Performed Action Type Integer Code                                             |
-| <span style="color: lightgray">gui.event.ACTIONTYPE_PERFORMED(): Integer</span>                                             |
+| <sub>gui.event.ACTIONTYPE_PERFORMED(): Integer</sub>                                             |
 | Returns GUI Event Performing Action Type Integer Code                                            |
-| <span style="color: lightgray">gui.event.ACTIONTYPE_PERFORMING(): Integer</span>                                            |
+| <sub>gui.event.ACTIONTYPE_PERFORMING(): Integer</sub>                                            |
 
 ## 8.3 Image Node Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Get Image Source of GUI Image Node                                                               |
-| <span style="color: lightgray">gui.imagenode.getSource($imageNodeId: String): String</span>                                 |
+| <sub>gui.imagenode.getSource($imageNodeId: String): String</sub>                                 |
 | Set Image Source of GUI Image Node                                                               |
-| <span style="color: lightgray">gui.imagenode.setSource($imageNodeId: String, $source: String): Void</span>                  |
+| <sub>gui.imagenode.setSource($imageNodeId: String, $source: String): Void</sub>                  |
 
 ## 8.4 Node Controller Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Get GUI Node Controller Value                                                                    |
-| <span style="color: lightgray">gui.node.controller.getValue($nodeId: String): String</span>                                 |
+| <sub>gui.node.controller.getValue($nodeId: String): String</sub>                                 |
 | Set GUI Node Controller Value                                                                    |
-| <span style="color: lightgray">gui.node.controller.setValue($nodeId: String, $value: String): Void</span>                   |
+| <sub>gui.node.controller.setValue($nodeId: String, $value: String): Void</sub>                   |
 
 ## 8.5 Parent Node Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Add Sub Nodes using XML to GUI Parent Node                                                       |
-| <span style="color: lightgray">gui.parentnode.addSubNodes($parentNodeId: String, $xml: String[, $resetScrollOffsets: Boolean]): Void</span>|
+| <sub>gui.parentnode.addSubNodes($parentNodeId: String, $xml: String[, $resetScrollOffsets: Boolean]): Void</sub>|
 | Clear Sub Nodes of GUI Parent Node                                                               |
-| <span style="color: lightgray">gui.parentnode.clearSubNodes($parentNodeId: String): Void</span>                             |
+| <sub>gui.parentnode.clearSubNodes($parentNodeId: String): Void</sub>                             |
 | Replace Sub Nodes using XML of GUI Parent Node                                                   |
-| <span style="color: lightgray">gui.parentnode.replaceSubNodes($parentNodeId: String, $xml: String[, $resetScrollOffsets: Boolean]): Void</span>|
+| <sub>gui.parentnode.replaceSubNodes($parentNodeId: String, $xml: String[, $resetScrollOffsets: Boolean]): Void</sub>|
 
 ## 8.6 Screen Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Return if GUI Screen is enabled                                                                  |
-| <span style="color: lightgray">gui.screen.isEnabled($screenId: String): Boolean</span>                                      |
+| <sub>gui.screen.isEnabled($screenId: String): Boolean</sub>                                      |
 | Set GUI Screen enabled/disabled                                                                  |
-| <span style="color: lightgray">gui.screen.setEnabled($screenId: String, $enabled: Boolean): Void</span>                     |
+| <sub>gui.screen.setEnabled($screenId: String, $enabled: Boolean): Void</sub>                     |
 | Call specific Screen Logic Function                                                              |
-| <span style="color: lightgray">gui.screen.call($screenId: String, $function: String, ...): Mixed</span>                     |
+| <sub>gui.screen.call($screenId: String, $function: String, ...): Mixed</sub>                     |
 | Goto current Screen to specific Screen                                                           |
-| <span style="color: lightgray">gui.screen.goto($fileName: String[, $variables: Map[, $arguments: Mixed]]): Void</span>      |
+| <sub>gui.screen.goto($fileName: String[, $variables: Map[, $arguments: Mixed]]): Void</sub>      |
 | Pop current Screen from Screen Stack                                                             |
-| <span style="color: lightgray">gui.screen.pop(): Void</span>                                                                |
+| <sub>gui.screen.pop(): Void</sub>                                                                |
 | Push Screen to current Screen Stack                                                              |
-| <span style="color: lightgray">gui.screen.push($fileName: String[, $variables: Map[, $arguments: Mixed]]): Void</span>      |
+| <sub>gui.screen.push($fileName: String[, $variables: Map[, $arguments: Mixed]]): Void</sub>      |
 
 ## 8.7 Screen Node Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Get Current Screen Node Id                                                                       |
-| <span style="color: lightgray">gui.screennode.getId(): String</span>                                                        |
+| <sub>gui.screennode.getId(): String</sub>                                                        |
 
 ## 8.8 Text Node Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Get Text of GUI Text Node                                                                        |
-| <span style="color: lightgray">gui.textnode.getText($textNodeId: String): String</span>                                     |
+| <sub>gui.textnode.getText($textNodeId: String): String</sub>                                     |
 | Set Text of GUI Text Node                                                                        |
-| <span style="color: lightgray">gui.textnode.setText($textNodeId: String, $text: String): Void</span>                        |
+| <sub>gui.textnode.setText($textNodeId: String, $text: String): Void</sub>                        |
 
 ## 8.9 Video Node Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Get Video Source of GUI Video Node                                                               |
-| <span style="color: lightgray">gui.videonode.getSource($videoNodeId: String): String</span>                                 |
+| <sub>gui.videonode.getSource($videoNodeId: String): String</sub>                                 |
 | Set Video Source of GUI Video Node                                                               |
-| <span style="color: lightgray">gui.videonode.setSource($videoNodeId: String, $source: String): Void</span>                  |
+| <sub>gui.videonode.setSource($videoNodeId: String, $source: String): Void</sub>                  |
 
 ## 8.10 Keyboard Input Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Returns if ALT Key is currently pressed                                                          |
-| <span style="color: lightgray">input.keyboard.isAltDown(): Boolean</span>                                                   |
+| <sub>input.keyboard.isAltDown(): Boolean</sub>                                                   |
 | Returns if specific Character is currently pressed                                               |
-| <span style="color: lightgray">input.keyboard.isCharDown($charAsString: String): Boolean</span>                             |
+| <sub>input.keyboard.isCharDown($charAsString: String): Boolean</sub>                             |
 | Returns if CONTROL Key is currently pressed                                                      |
-| <span style="color: lightgray">input.keyboard.isControlDown(): Boolean</span>                                               |
+| <sub>input.keyboard.isControlDown(): Boolean</sub>                                               |
 | Backspace Key Keycode                                                                            |
-| <span style="color: lightgray">input.keyboard.KEYCODE_BACKSPACE(): Integer</span>                                           |
+| <sub>input.keyboard.KEYCODE_BACKSPACE(): Integer</sub>                                           |
 | Delete Key Keycode                                                                               |
-| <span style="color: lightgray">input.keyboard.KEYCODE_DELETE(): Integer</span>                                              |
+| <sub>input.keyboard.KEYCODE_DELETE(): Integer</sub>                                              |
 | Down Key Keycode                                                                                 |
-| <span style="color: lightgray">input.keyboard.KEYCODE_DOWN(): Integer</span>                                                |
+| <sub>input.keyboard.KEYCODE_DOWN(): Integer</sub>                                                |
 | End Key Keycode                                                                                  |
-| <span style="color: lightgray">input.keyboard.KEYCODE_END(): Integer</span>                                                 |
+| <sub>input.keyboard.KEYCODE_END(): Integer</sub>                                                 |
 | Escape Key Keycode                                                                               |
-| <span style="color: lightgray">input.keyboard.KEYCODE_ESCAPE(): Integer</span>                                              |
+| <sub>input.keyboard.KEYCODE_ESCAPE(): Integer</sub>                                              |
 | F1 Key Keycode                                                                                   |
-| <span style="color: lightgray">input.keyboard.KEYCODE_F1(): Integer</span>                                                  |
+| <sub>input.keyboard.KEYCODE_F1(): Integer</sub>                                                  |
 | F10 Key Keycode                                                                                  |
-| <span style="color: lightgray">input.keyboard.KEYCODE_F10(): Integer</span>                                                 |
+| <sub>input.keyboard.KEYCODE_F10(): Integer</sub>                                                 |
 | F11 Key Keycode                                                                                  |
-| <span style="color: lightgray">input.keyboard.KEYCODE_F11(): Integer</span>                                                 |
+| <sub>input.keyboard.KEYCODE_F11(): Integer</sub>                                                 |
 | F12 Key Keycode                                                                                  |
-| <span style="color: lightgray">input.keyboard.KEYCODE_F12(): Integer</span>                                                 |
+| <sub>input.keyboard.KEYCODE_F12(): Integer</sub>                                                 |
 | F2 Key Keycode                                                                                   |
-| <span style="color: lightgray">input.keyboard.KEYCODE_F2(): Integer</span>                                                  |
+| <sub>input.keyboard.KEYCODE_F2(): Integer</sub>                                                  |
 | F3 Key Keycode                                                                                   |
-| <span style="color: lightgray">input.keyboard.KEYCODE_F3(): Integer</span>                                                  |
+| <sub>input.keyboard.KEYCODE_F3(): Integer</sub>                                                  |
 | F4 Key Keycode                                                                                   |
-| <span style="color: lightgray">input.keyboard.KEYCODE_F4(): Integer</span>                                                  |
+| <sub>input.keyboard.KEYCODE_F4(): Integer</sub>                                                  |
 | F5 Key Keycode                                                                                   |
-| <span style="color: lightgray">input.keyboard.KEYCODE_F5(): Integer</span>                                                  |
+| <sub>input.keyboard.KEYCODE_F5(): Integer</sub>                                                  |
 | F6 Key Keycode                                                                                   |
-| <span style="color: lightgray">input.keyboard.KEYCODE_F6(): Integer</span>                                                  |
+| <sub>input.keyboard.KEYCODE_F6(): Integer</sub>                                                  |
 | F7 Key Keycode                                                                                   |
-| <span style="color: lightgray">input.keyboard.KEYCODE_F7(): Integer</span>                                                  |
+| <sub>input.keyboard.KEYCODE_F7(): Integer</sub>                                                  |
 | F8 Key Keycode                                                                                   |
-| <span style="color: lightgray">input.keyboard.KEYCODE_F8(): Integer</span>                                                  |
+| <sub>input.keyboard.KEYCODE_F8(): Integer</sub>                                                  |
 | F9 Key Keycode                                                                                   |
-| <span style="color: lightgray">input.keyboard.KEYCODE_F9(): Integer</span>                                                  |
+| <sub>input.keyboard.KEYCODE_F9(): Integer</sub>                                                  |
 | Left Key Keycode                                                                                 |
-| <span style="color: lightgray">input.keyboard.KEYCODE_LEFT(): Integer</span>                                                |
+| <sub>input.keyboard.KEYCODE_LEFT(): Integer</sub>                                                |
 | Page Down Key Keycode                                                                            |
-| <span style="color: lightgray">input.keyboard.KEYCODE_PAGEDOWN(): Integer</span>                                            |
+| <sub>input.keyboard.KEYCODE_PAGEDOWN(): Integer</sub>                                            |
 | Page Up Key Keycode                                                                              |
-| <span style="color: lightgray">input.keyboard.KEYCODE_PAGEUP(): Integer</span>                                              |
+| <sub>input.keyboard.KEYCODE_PAGEUP(): Integer</sub>                                              |
 | Home/Position 1 Key Keycode                                                                      |
-| <span style="color: lightgray">input.keyboard.KEYCODE_POS1(): Integer</span>                                                |
+| <sub>input.keyboard.KEYCODE_POS1(): Integer</sub>                                                |
 | Return Key Keycode                                                                               |
-| <span style="color: lightgray">input.keyboard.KEYCODE_RETURN(): Integer</span>                                              |
+| <sub>input.keyboard.KEYCODE_RETURN(): Integer</sub>                                              |
 | Right Key Keycode                                                                                |
-| <span style="color: lightgray">input.keyboard.KEYCODE_RIGHT(): Integer</span>                                               |
+| <sub>input.keyboard.KEYCODE_RIGHT(): Integer</sub>                                               |
 | Space Key Keycode                                                                                |
-| <span style="color: lightgray">input.keyboard.KEYCODE_SPACE(): Integer</span>                                               |
+| <sub>input.keyboard.KEYCODE_SPACE(): Integer</sub>                                               |
 | Up Key Keycode                                                                                   |
-| <span style="color: lightgray">input.keyboard.KEYCODE_UP(): Integer</span>                                                  |
+| <sub>input.keyboard.KEYCODE_UP(): Integer</sub>                                                  |
 | Returns if specific Key is currently pressed                                                     |
-| <span style="color: lightgray">input.keyboard.isKeyDown($keyCode: Integer): Boolean</span>                                  |
+| <sub>input.keyboard.isKeyDown($keyCode: Integer): Boolean</sub>                                  |
 | Returns if Meta Key is currently pressed                                                         |
-| <span style="color: lightgray">input.keyboard.isMetaDown(): Boolean</span>                                                  |
+| <sub>input.keyboard.isMetaDown(): Boolean</sub>                                                  |
 | Returns if Shift Key is currently pressed                                                        |
-| <span style="color: lightgray">input.keyboard.isShiftDown(): Boolean</span>                                                 |
+| <sub>input.keyboard.isShiftDown(): Boolean</sub>                                                 |
 | Returns last typed String                                                                        |
-| <span style="color: lightgray">input.keyboard.getTypedString(): String</span>                                               |
+| <sub>input.keyboard.getTypedString(): String</sub>                                               |
 
 ## 8.11 Mouse Input Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Left Mouse Button Integer Code                                                                   |
-| <span style="color: lightgray">input.mouse.BUTTON_LEFT(): Integer</span>                                                    |
+| <sub>input.mouse.BUTTON_LEFT(): Integer</sub>                                                    |
 | Middle Mouse Button Integer Code                                                                 |
-| <span style="color: lightgray">input.mouse.BUTTON_MIDDLE(): Integer</span>                                                  |
+| <sub>input.mouse.BUTTON_MIDDLE(): Integer</sub>                                                  |
 | Right Mouse Button Integer Code                                                                  |
-| <span style="color: lightgray">input.mouse.BUTTON_RIGHT(): Integer</span>                                                   |
+| <sub>input.mouse.BUTTON_RIGHT(): Integer</sub>                                                   |
 | Returns if specific Mouse Button is currently pressed                                            |
-| <span style="color: lightgray">input.mouse.isButtonDown($button: Integer): Boolean</span>                                   |
+| <sub>input.mouse.isButtonDown($button: Integer): Boolean</sub>                                   |
 | Returns if specific Mouse Button has been released                                               |
-| <span style="color: lightgray">input.mouse.isButtonUp($button: Integer): Boolean</span>                                     |
+| <sub>input.mouse.isButtonUp($button: Integer): Boolean</sub>                                     |
 | Returns if Mouse is dragging currently                                                           |
-| <span style="color: lightgray">input.mouse.isDragging($button: Integer): Boolean</span>                                     |
+| <sub>input.mouse.isDragging($button: Integer): Boolean</sub>                                     |
 | Returns if Mouse has been moved                                                                  |
-| <span style="color: lightgray">input.mouse.hasMoved(): Boolean</span>                                                       |
+| <sub>input.mouse.hasMoved(): Boolean</sub>                                                       |
 | Returns current Value of X Axis Mouse Wheel                                                      |
-| <span style="color: lightgray">input.mouse.getWheelX(): Float</span>                                                        |
+| <sub>input.mouse.getWheelX(): Float</sub>                                                        |
 | Returns current Value of Y Axis Mouse Wheel                                                      |
-| <span style="color: lightgray">input.mouse.getWheelY(): Float</span>                                                        |
+| <sub>input.mouse.getWheelY(): Float</sub>                                                        |
 | Returns current Value of Z Axis Mouse Wheel                                                      |
-| <span style="color: lightgray">input.mouse.getWheelZ(): Float</span>                                                        |
+| <sub>input.mouse.getWheelZ(): Float</sub>                                                        |
 | Get X Mouse Position                                                                             |
-| <span style="color: lightgray">input.mouse.getX(): Integer</span>                                                           |
+| <sub>input.mouse.getX(): Integer</sub>                                                           |
 | Get Unscaled X Mouse Position                                                                    |
-| <span style="color: lightgray">input.mouse.getXUnscaled(): Integer</span>                                                   |
+| <sub>input.mouse.getXUnscaled(): Integer</sub>                                                   |
 | Get Y Mouse Position                                                                             |
-| <span style="color: lightgray">input.mouse.getY(): Integer</span>                                                           |
+| <sub>input.mouse.getY(): Integer</sub>                                                           |
 | Get Unscaled Y Mouse Position                                                                    |
-| <span style="color: lightgray">input.mouse.getYUnscaled(): Integer</span>                                                   |
+| <sub>input.mouse.getYUnscaled(): Integer</sub>                                                   |
 
 ## 8.12 Logic Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Returns if Logic has Function                                                                    |
-| <span style="color: lightgray">logic.has($logicId: String, $function: String): Boolean</span>                               |
+| <sub>logic.has($logicId: String, $function: String): Boolean</sub>                               |
 | Call specific Logic Function                                                                     |
-| <span style="color: lightgray">logic.call($logicId: String, $function: String, ...): Mixed</span>                           |
+| <sub>logic.call($logicId: String, $function: String, ...): Mixed</sub>                           |
 
 ## 8.13 Logic Signal Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Send Signal                                                                                      |
-| <span style="color: lightgray">logic.signal.send($logicId: String, $signal: String, ...): Void</span>                       |
+| <sub>logic.signal.send($logicId: String, $signal: String, ...): Void</sub>                       |
 
 # 9. Operators
 
