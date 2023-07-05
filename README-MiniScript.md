@@ -991,129 +991,129 @@ Reading all keys as array from set:
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Get Listener Orientation, available in initializeEngine(), updateEngine()                        |
+| Get Listener Orientation <sub>(available in initializeEngine(), updateEngine())</sub>            |
 | <sub>audio.getListenerOrientationAt(): Vector3</sub>                                             |
-| Set Listener Orientation, available in initializeEngine(), updateEngine()                        |
+| Set Listener Orientation <sub>(available in initializeEngine(), updateEngine())</sub>            |
 | <sub>audio.setListenerOrientationAt($position: Vector3): Void</sub>                              |
-| Get Listener Position, available in initializeEngine(), updateEngine()                           |
+| Get Listener Position <sub>(available in initializeEngine(), updateEngine())</sub>               |
 | <sub>audio.getListenerPosition(): Vector3</sub>                                                  |
-| Set Listener Position, available in initializeEngine(), updateEngine()                           |
+| Set Listener Position <sub>(available in initializeEngine(), updateEngine())</sub>               |
 | <sub>audio.setListenerPosition($position: Vector3): Void</sub>                                   |
-| Play Audio at Engine Entity Position, available in initializeEngine(), updateEngine()            |
+| Play Audio at Engine Entity Position <sub>(available in initializeEngine(), updateEngine())</sub>|
 | <sub>audio.play($id: String[, $delay: Integer[, $gain: Integer[, $pitch: Integer[, $ignoreIfPlaying: Integer]]]]): String</sub>|
-| Play Audio at Custom Position, available in initializeEngine(), updateEngine()                   |
+| Play Audio at Custom Position <sub>(available in initializeEngine(), updateEngine())</sub>       |
 | <sub>audio.playAtPosition($id: String, $position: Vector3[, $delay: Integer[, $gain: Integer[, $pitch: Integer[, $ignoreIfPlaying: Integer]]]]): String</sub>|
 
 ## 7.2 Engine Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Get Engine Entity Id by Mouse Position, available in initializeEngine(), updateEngine()          |
+| Get Engine Entity Id by Mouse Position <sub>(available in initializeEngine(), updateEngine())</sub>|
 | <sub>engine.getEntityIdByMousePosition($mouseX: Integer, $mouseY: Integer): String</sub>         |
-| Get Engine Height, available in initializeEngine(), updateEngine()                               |
+| Get Engine Height <sub>(available in initializeEngine(), updateEngine())</sub>                   |
 | <sub>engine.getHeight(): Integer</sub>                                                           |
-| Compute Engine Screen Coordinate by World Coordinate, available in initializeEngine(), updateEngine()|
+| Compute Engine Screen Coordinate by World Coordinate <sub>(available in initializeEngine(), updateEngine())</sub>|
 | <sub>engine.computeScreenCoordinateByWorldCoordinate($worldCoodinate: Vector3, =$screenCoordinate: Vector2): Boolean</sub>|
-| Get Engine Width, available in initializeEngine(), updateEngine()                                |
+| Get Engine Width <sub>(available in initializeEngine(), updateEngine())</sub>                    |
 | <sub>engine.getWidth(): Integer</sub>                                                            |
-| Compute Engine World Coordinate by Mouse Position, available in initializeEngine(), updateEngine()|
+| Compute Engine World Coordinate by Mouse Position <sub>(available in initializeEngine(), updateEngine())</sub>|
 | <sub>engine.computeWorldCoordinateByMousePosition($mouseX: Integer, $mouseY: Integer): Vector3</sub>|
-| Dump Engine Entities, available in initializeEngine(), updateEngine()                            |
+| Dump Engine Entities <sub>(available in initializeEngine(), updateEngine())</sub>                |
 | <sub>engine.dumpEntities(): Void</sub>                                                           |
-| Dump Engine Shaders, available in initializeEngine(), updateEngine()                             |
+| Dump Engine Shaders <sub>(available in initializeEngine(), updateEngine())</sub>                 |
 | <sub>engine.dumpShaders(): Void</sub>                                                            |
 
 ## 7.3 Engine Camera Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Get Camera horizontal Field Of View, available in initializeEngine(), updateEngine()             |
+| Get Camera horizontal Field Of View <sub>(available in initializeEngine(), updateEngine())</sub> |
 | <sub>engine.camera.getFovX(): Float</sub>                                                        |
-| Set Camera horizontal Field Of View, available in initializeEngine(), updateEngine()             |
+| Set Camera horizontal Field Of View <sub>(available in initializeEngine(), updateEngine())</sub> |
 | <sub>engine.camera.setFovX($fovX: Float): Void</sub>                                             |
-| Get Camera Look At, available in initializeEngine(), updateEngine()                              |
+| Get Camera Look At <sub>(available in initializeEngine(), updateEngine())</sub>                  |
 | <sub>engine.camera.getLookAt(): Vector3</sub>                                                    |
-| Set Camera Look At, available in initializeEngine(), updateEngine()                              |
+| Set Camera Look At <sub>(available in initializeEngine(), updateEngine())</sub>                  |
 | <sub>engine.camera.setLookAt($lookAt: Vector3): Void</sub>                                       |
-| Get Camera Look From, available in initializeEngine(), updateEngine()                            |
+| Get Camera Look From <sub>(available in initializeEngine(), updateEngine())</sub>                |
 | <sub>engine.camera.getLookFrom(): Vector3</sub>                                                  |
-| Set Camera Look From, available in initializeEngine(), updateEngine()                            |
+| Set Camera Look From <sub>(available in initializeEngine(), updateEngine())</sub>                |
 | <sub>engine.camera.setLookFrom($lookFrom: Vector3): Void</sub>                                   |
-| Get Camera Up Vector, available in initializeEngine(), updateEngine()                            |
+| Get Camera Up Vector <sub>(available in initializeEngine(), updateEngine())</sub>                |
 | <sub>engine.camera.getUpVector(): Vector3</sub>                                                  |
-| Set Camera Up Vector, available in initializeEngine(), updateEngine()                            |
+| Set Camera Up Vector <sub>(available in initializeEngine(), updateEngine())</sub>                |
 | <sub>engine.camera.setUpVector($upVector: Vector3): Void</sub>                                   |
-| Compute Camera Up Vector, available in initializeEngine(), updateEngine()                        |
+| Compute Camera Up Vector <sub>(available in initializeEngine(), updateEngine())</sub>            |
 | <sub>engine.camera.computeUpVector($lookFrom: Vector3, $lookAt: Vector3): Vector3</sub>          |
 
 ## 7.4 Engine Entity Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Get Engine Entity Animation, available in initializeEngine(), updateEngine()                     |
+| Get Engine Entity Animation <sub>(available in initializeEngine(), updateEngine())</sub>         |
 | <sub>engine.entity.getAnimation($entityId: String[, $childEntityId: String]): String</sub>       |
-| Set Engine Entity Animation, available in initializeEngine(), updateEngine()                     |
+| Set Engine Entity Animation <sub>(available in initializeEngine(), updateEngine())</sub>         |
 | <sub>engine.entity.setAnimation($entityId: String, $animation: String[, $speed: Float[, $childEntityId: String]]): Void</sub>|
-| Get Engine Entity Animation Speed, available in initializeEngine(), updateEngine()               |
+| Get Engine Entity Animation Speed <sub>(available in initializeEngine(), updateEngine())</sub>   |
 | <sub>engine.entity.setAnimationSpeed($entityId: String, $speed: Float[, $childEntityId: String]): Void</sub>|
-| Set Engine Entity Animation Speed, available in initializeEngine(), updateEngine()               |
+| Set Engine Entity Animation Speed <sub>(available in initializeEngine(), updateEngine())</sub>   |
 | <sub>engine.entity.getAnimationTime($entityId: String[, $childEntityId: String]): Float</sub>    |
-| Get Engine Entity Additive Effect Color, available in initializeEngine(), updateEngine()         |
+| Get Engine Entity Additive Effect Color <sub>(available in initializeEngine(), updateEngine())</sub>|
 | <sub>engine.entity.getEffectColorAdd($entityId: String[, $childEntityId: String]): Vector4</sub> |
-| Set Engine Entity Additive Effect Color, available in initializeEngine(), updateEngine()         |
+| Set Engine Entity Additive Effect Color <sub>(available in initializeEngine(), updateEngine())</sub>|
 | <sub>engine.entity.setEffectColorAdd($entityId: String, $effectColorAdd: Vector4[, $childEntityId: String]): Void</sub>|
-| Get Engine Entity Multiplicative Effect Color, available in initializeEngine(), updateEngine()   |
+| Get Engine Entity Multiplicative Effect Color <sub>(available in initializeEngine(), updateEngine())</sub>|
 | <sub>engine.entity.getEffectColorMul($entityId: String[, $childEntityId: String]): Vector4</sub> |
-| Set Engine Entity Multiplicative Effect Color, available in initializeEngine(), updateEngine()   |
+| Set Engine Entity Multiplicative Effect Color <sub>(available in initializeEngine(), updateEngine())</sub>|
 | <sub>engine.entity.setEffectColorMul($entityId: String, $effectColorMul: Vector4[, $childEntityId: String]): Void</sub>|
-| Return if Engine Entity is enabled, available in initializeEngine(), updateEngine()              |
+| Return if Engine Entity is enabled <sub>(available in initializeEngine(), updateEngine())</sub>  |
 | <sub>engine.entity.isEnabled($entityId: String[, $childEntityId: String]): Boolean</sub>         |
-| Set Engine Entity enabled/disabled, available in initializeEngine(), updateEngine()              |
+| Set Engine Entity enabled/disabled <sub>(available in initializeEngine(), updateEngine())</sub>  |
 | <sub>engine.entity.setEnabled($entityId: String, $enabled: Boolean[, $childEntityId: String]): Void</sub>|
-| Get Engine Entity Node Transform, available in initializeEngine(), updateEngine()                |
+| Get Engine Entity Node Transform <sub>(available in initializeEngine(), updateEngine())</sub>    |
 | <sub>engine.entity.getNodeTransform($entityId: String, $nodeId: String[, $childEntityId: String]): Transform</sub>|
-| Set Engine Entity Node Transform, available in initializeEngine(), updateEngine()                |
+| Set Engine Entity Node Transform <sub>(available in initializeEngine(), updateEngine())</sub>    |
 | <sub>engine.entity.setNodeTransform($entityId: String, $nodeId: String, $transform: Transform[, $childEntityId: String]): Void</sub>|
-| Unset Engine Entity Node Transform, available in initializeEngine(), updateEngine()              |
+| Unset Engine Entity Node Transform <sub>(available in initializeEngine(), updateEngine())</sub>  |
 | <sub>engine.entity.unsetNodeTransform($entityId: String, $nodeId: String[, $childEntityId: String]): Void</sub>|
-| Get Engine Entity Node Transform Matrix, available in initializeEngine(), updateEngine()         |
+| Get Engine Entity Node Transform Matrix <sub>(available in initializeEngine(), updateEngine())</sub>|
 | <sub>engine.entity.getNodeTransformMatrix($entityId: String, $nodeId: String[, $childEntityId: String]): Matrix4x4</sub>|
-| Set Engine Entity Node Transform Matrix, available in initializeEngine(), updateEngine()         |
+| Set Engine Entity Node Transform Matrix <sub>(available in initializeEngine(), updateEngine())</sub>|
 | <sub>engine.entity.setNodeTransformMatrix($entityId: String, $nodeId: String, $matrix: Matrix4x4[, $childEntityId: String]): Void</sub>|
-| Unset Engine Entity Node Transform Matrix, available in initializeEngine(), updateEngine()       |
+| Unset Engine Entity Node Transform Matrix <sub>(available in initializeEngine(), updateEngine())</sub>|
 | <sub>engine.entity.unsetNodeTransformMatrix($entityId: String, $nodeId: String[, $childEntityId: String]): Void</sub>|
-| Return if Engine Entity has specific Overlay Animation, available in initializeEngine(), updateEngine()|
+| Return if Engine Entity has specific Overlay Animation <sub>(available in initializeEngine(), updateEngine())</sub>|
 | <sub>engine.entity.hasOverlayAnimation($entityId: String, $animation: String[, $childEntityId: String]): Boolean</sub>|
-| Return Engine Entity Overlay Animation Playback Time from 0.0 until 1.0, available in initializeEngine(), updateEngine()|
+| Return Engine Entity Overlay Animation Playback Time from 0.0 until 1.0 <sub>(available in initializeEngine(), updateEngine())</sub>|
 | <sub>engine.entity.getOverlayAnimationTime($entityId: String, $animation: String[, $childEntityId: String]): Float</sub>|
-| Return if Engine Entity is Pickable, available in initializeEngine(), updateEngine()             |
+| Return if Engine Entity is Pickable <sub>(available in initializeEngine(), updateEngine())</sub> |
 | <sub>engine.entity.isPickable($entityId: String[, $childEntityId: String]): Boolean</sub>        |
-| Set Engine Entity Pickable, available in initializeEngine(), updateEngine()                      |
+| Set Engine Entity Pickable <sub>(available in initializeEngine(), updateEngine())</sub>          |
 | <sub>engine.entity.setPickable($entityId: String, $pickable: Boolean[, $childEntityId: String]): Void</sub>|
-| Get Engine Entity Transform, available in initializeEngine(), updateEngine()                     |
+| Get Engine Entity Transform <sub>(available in initializeEngine(), updateEngine())</sub>         |
 | <sub>engine.entity.getTransform($entityId: String[, $childEntityId: String]): Transform</sub>    |
-| Set Engine Entity Transform, available in initializeEngine(), updateEngine()                     |
+| Set Engine Entity Transform <sub>(available in initializeEngine(), updateEngine())</sub>         |
 | <sub>engine.entity.setTransform($entityId: String, $transform: Transform[, $childEntityId: String]): Void</sub>|
-| Add Engine Entity Overlay Animation, available in initializeEngine(), updateEngine()             |
+| Add Engine Entity Overlay Animation <sub>(available in initializeEngine(), updateEngine())</sub> |
 | <sub>engine.entity.addOverlayAnimation($entityId: String, $animation: String[, $childEntityId: String]): Void</sub>|
-| Emit Engine Entity Particles, available in initializeEngine(), updateEngine()                    |
+| Emit Engine Entity Particles <sub>(available in initializeEngine(), updateEngine())</sub>        |
 | <sub>engine.entity.emitParticles($entityId: String[, $childEntityId: String]): Integer</sub>     |
-| Remove finished Overlay Animations, available in initializeEngine(), updateEngine()              |
+| Remove finished Overlay Animations <sub>(available in initializeEngine(), updateEngine())</sub>  |
 | <sub>engine.entity.removeFinishedOverlayAnimations($entityId: String[, $childEntityId: String]): Void</sub>|
-| Remove specific Overlay Animation, available in initializeEngine(), updateEngine()               |
+| Remove specific Overlay Animation <sub>(available in initializeEngine(), updateEngine())</sub>   |
 | <sub>engine.entity.removeOverlayAnimation($entityId: String, $animation: String[, $childEntityId: String]): Void</sub>|
-| Remove Overlay Animations, available in initializeEngine(), updateEngine()                       |
+| Remove Overlay Animations <sub>(available in initializeEngine(), updateEngine())</sub>           |
 | <sub>engine.entity.removeOverlayAnimations($entityId: String[, $childEntityId: String]): Void</sub>|
 
 ## 7.5 Engine Timing Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Get Engine Timing Avarage FPS, available in initializeEngine(), updateEngine()                   |
+| Get Engine Timing Avarage FPS <sub>(available in initializeEngine(), updateEngine())</sub>       |
 | <sub>engine.timing.getAvarageFPS(): Float</sub>                                                  |
-| Get Engine Timing Frame Delta Time in Milliseconds, available in initializeEngine(), updateEngine()|
+| Get Engine Timing Frame Delta Time in Milliseconds <sub>(available in initializeEngine(), updateEngine())</sub>|
 | <sub>engine.timing.getDeltaTime(): Integer</sub>                                                 |
-| Get Engine Timing Frame Delta Time in Seconds, available in initializeEngine(), updateEngine()   |
+| Get Engine Timing Frame Delta Time in Seconds <sub>(available in initializeEngine(), updateEngine())</sub>|
 | <sub>engine.timing.getDeltaTimeSeconds(): Float</sub>                                            |
 
 ## 7.6 Keyboard Input Methods
@@ -1222,15 +1222,15 @@ Reading all keys as array from set:
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Returns if Logic has Function, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Returns if Logic has Function <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>logic.has($logicId: String, $function: String): Boolean</sub>                               |
-| Get Hierarchy Id, available in initializeEngine(), updateEngine(), initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Get Hierarchy Id <sub>(available in initializeEngine(), updateEngine(), initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>logic.getHierarchyId(): String</sub>                                                        |
-| Get Hierarchy Parent Id, available in initializeEngine(), updateEngine(), initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Get Hierarchy Parent Id <sub>(available in initializeEngine(), updateEngine(), initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>logic.getHierarchyParentId(): String</sub>                                                  |
-| Get Logic Id, available in initializeEngine(), updateEngine(), initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Get Logic Id <sub>(available in initializeEngine(), updateEngine(), initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>logic.getId(): String</sub>                                                                 |
-| Call specific Logic Function, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Call specific Logic Function <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>logic.call($logicId: String, $function: String, ...): Mixed</sub>                           |
 
 ## 7.9 Logic Signal Methods
@@ -1245,26 +1245,26 @@ Reading all keys as array from set:
 | <sub>logic.signal.getName(): String</sub>                                                        |
 | Advance to next Signal                                                                           |
 | <sub>logic.signal.next(): Void</sub>                                                             |
-| Send Signal, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()  |
+| Send Signal <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>logic.signal.send($logicId: String, $signal: String, ...): Void</sub>                       |
 
 ## 7.10 PathFinding Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Pathfinding Idle State Integer Code, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Pathfinding Idle State Integer Code <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>pathfinding.STATE_IDLE(): Integer</sub>                                                     |
-| Pathfinding Computing State Integer Code, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Pathfinding Computing State Integer Code <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>pathfinding.STATE_PATHFINDING(): Integer</sub>                                              |
-| Pathfinding Failed State Integer Code, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Pathfinding Failed State Integer Code <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>pathfinding.STATE_PATHFINDING_FAILED(): Integer</sub>                                       |
-| Pathfinding Computing Other Pathfinding Integer Code, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Pathfinding Computing Other Pathfinding Integer Code <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>pathfinding.STATE_PATHFINDING_OTHER(): Integer</sub>                                        |
-| Pathfinding Success State Integer Code, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Pathfinding Success State Integer Code <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>pathfinding.STATE_PATHFINDING_SUCCESS(): Integer</sub>                                      |
-| Pathfinding Try/Lock Failed Integer Code, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Pathfinding Try/Lock Failed Integer Code <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>pathfinding.STATE_TRYLOCK_FAILED(): Integer</sub>                                           |
-| Issue Pathfinding, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Issue Pathfinding <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>pathfinding.findPath($logicId: String, $startPosition: Vector3, $endPosition: Vector3, =$path: Array): Integer</sub>|
 
 ## 7.11 Scene Methods
@@ -1282,107 +1282,107 @@ Reading all keys as array from set:
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Attach Prototype to the Logic Hierarchy, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Attach Prototype to the Logic Hierarchy <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>sceneconnector.attachPrototype($pathName: String, $fileName: String, $id: String, $attachNodeId: String, $transform: Transform[, $parentId: String]): Void</sub>|
-| Spawn Prototype in Scene, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Spawn Prototype in Scene <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>sceneconnector.spawnPrototype($pathName: String, $fileName: String, $id: String, $transform: Transform[, $hierarchyId: String[, $hierarchyParentId: String]]): Void</sub>|
 
 ## 7.13 Physics World Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Determine Height at specific Position in Physics World, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Determine Height at specific Position in Physics World <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.determineHeight($collisionTypeIds: Integer, $stepUpMax: Float, $point: Vector3, =$heightPoint: Vector3[, =$bodyId: String[, $minHeight: Float[, $maxHeight: Float]]]): Boolean</sub>|
-| Determine Collision of Two Specific Bodies in Physics World, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Determine Collision of Two Specific Bodies in Physics World <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.doCollide($bodyId1: String, $bodyId2: String): Boolean</sub>                          |
-| Compute Ray Casting in Physics World, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Compute Ray Casting in Physics World <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.doRayCasting($collisionTypeIds: Integer, $start: Vector3, $end: Vector3, =$hitPoint: Vector3[, =$bodyId: String[, $actorId: String]]): Boolean</sub>|
-| Determine Collision of Specific Body in Physics World, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Determine Collision of Specific Body in Physics World <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.doesCollideWith($collisionTypeIds: Integer, $bodyId: String): Array</sub>             |
 
 ## 7.14 Physics World Body Methods
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Get Physics World Entity Angular Damping, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Get Physics World Entity Angular Damping <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.getAngularDamping($bodyId: String): Float</sub>                                  |
-| Set Physics World Entity Angular Damping, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Set Physics World Entity Angular Damping <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.setAngularDamping($bodyId: String, $angularDamping: Float): Void</sub>           |
-| Get Physics World Entity Angular Velocity, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Get Physics World Entity Angular Velocity <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.getAngularVelocity($bodyId: String): Vector3</sub>                               |
-| Set Physics World Entity Angular Velocity, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Set Physics World Entity Angular Velocity <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.setAngularVelocity($bodyId: String, $angularVelocity: Vector3): Void</sub>       |
-| Returns Physics World Collision Type Id 10, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Returns Physics World Collision Type Id 10 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.COLLISION_TYPEID_10(): Integer</sub>                                             |
-| Returns Physics World Collision Type Id 11, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Returns Physics World Collision Type Id 11 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.COLLISION_TYPEID_11(): Integer</sub>                                             |
-| Returns Physics World Collision Type Id 12, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Returns Physics World Collision Type Id 12 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.COLLISION_TYPEID_12(): Integer</sub>                                             |
-| Returns Physics World Collision Type Id 13, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Returns Physics World Collision Type Id 13 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.COLLISION_TYPEID_13(): Integer</sub>                                             |
-| Returns Physics World Collision Type Id 14, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Returns Physics World Collision Type Id 14 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.COLLISION_TYPEID_14(): Integer</sub>                                             |
-| Returns Physics World Collision Type Id 15, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Returns Physics World Collision Type Id 15 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.COLLISION_TYPEID_15(): Integer</sub>                                             |
-| Returns Physics World Collision Type Id 16, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Returns Physics World Collision Type Id 16 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.COLLISION_TYPEID_16(): Integer</sub>                                             |
-| Returns Physics World Collision Type Id 3, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Returns Physics World Collision Type Id 3 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.COLLISION_TYPEID_3(): Integer</sub>                                              |
-| Returns Physics World Collision Type Id 4, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Returns Physics World Collision Type Id 4 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.COLLISION_TYPEID_4(): Integer</sub>                                              |
-| Returns Physics World Collision Type Id 5, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Returns Physics World Collision Type Id 5 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.COLLISION_TYPEID_5(): Integer</sub>                                              |
-| Returns Physics World Collision Type Id 6, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Returns Physics World Collision Type Id 6 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.COLLISION_TYPEID_6(): Integer</sub>                                              |
-| Returns Physics World Collision Type Id 7, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Returns Physics World Collision Type Id 7 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.COLLISION_TYPEID_7(): Integer</sub>                                              |
-| Returns Physics World Collision Type Id 8, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Returns Physics World Collision Type Id 8 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.COLLISION_TYPEID_8(): Integer</sub>                                              |
-| Returns Physics World Collision Type Id 9, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Returns Physics World Collision Type Id 9 <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.COLLISION_TYPEID_9(): Integer</sub>                                              |
-| Returns All Physics World Collision Type Ids, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Returns All Physics World Collision Type Ids <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.COLLISION_TYPEID_ALL(): Integer</sub>                                            |
-| Returns Dynamic Physics World Collision Type Id, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Returns Dynamic Physics World Collision Type Id <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.COLLISION_TYPEID_DYNAMIC(): Integer</sub>                                        |
-| Returns Static Physics World Collision Type Id, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Returns Static Physics World Collision Type Id <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.COLLISION_TYPEID_STATIC(): Integer</sub>                                         |
-| Get Physics World Entity own Collision Type Id, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Get Physics World Entity own Collision Type Id <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.getCollisionTypeId($bodyId: String): Integer</sub>                               |
-| Set Physics World Entity own Collision Type Id, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Set Physics World Entity own Collision Type Id <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.setCollisionTypeId($bodyId: String, $collisionTypeId: Integer): Void</sub>       |
-| Get Physics World Entity enabled Collision Type Ids, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Get Physics World Entity enabled Collision Type Ids <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.getCollisionTypeIds($bodyId: String): Integer</sub>                              |
-| Set Physics World Entity enabled Collision Type Ids, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Set Physics World Entity enabled Collision Type Ids <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.setCollisionTypeIds($bodyId: String, $collisionTypeIds: Integer): Void</sub>     |
-| Returns if Physics World Entity is enabled, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Returns if Physics World Entity is enabled <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.isEnabled($bodyId: String): Boolean</sub>                                        |
-| Set Physics World Entity enabled/disabled, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Set Physics World Entity enabled/disabled <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.setEnabled($bodyId: String, $enabled: Boolean): Void</sub>                       |
-| Get Physics World Entity Linear Damping, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Get Physics World Entity Linear Damping <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.getLinearDamping($bodyId: String): Float</sub>                                   |
-| Set Physics World Entity Linear Damping, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Set Physics World Entity Linear Damping <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.setLinearDamping($bodyId: String, $linearDamping: Float): Void</sub>             |
-| Get Physics World Entity Linear Velocity, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Get Physics World Entity Linear Velocity <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.getLinearVelocity($bodyId: String): Vector3</sub>                                |
-| Set Physics World Entity Linear Velocity, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Set Physics World Entity Linear Velocity <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.setLinearVelocity($bodyId: String, $linearVelocity: Vector3): Void</sub>         |
-| Returns Physics World Dynamic Collision Body Type Integer Code, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Returns Physics World Dynamic Collision Body Type Integer Code <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.TYPE_COLLISION_DYNAMIC(): Integer</sub>                                          |
-| Returns Physics World Static Collision Body Type Integer Code, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Returns Physics World Static Collision Body Type Integer Code <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.TYPE_COLLISION_STATIC(): Integer</sub>                                           |
-| Returns Physics World Dynamic Rigid Body Type Integer Code, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Returns Physics World Dynamic Rigid Body Type Integer Code <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.TYPE_DYNAMIC(): Integer</sub>                                                    |
-| Returns Physics World Static Rigid Body Type Integer Code, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Returns Physics World Static Rigid Body Type Integer Code <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.TYPE_STATIC(): Integer</sub>                                                     |
-| Get Physics World Entity Transform, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Get Physics World Entity Transform <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.getTransform($bodyId: String): Transform</sub>                                   |
-| Set Physics World Entity Transform, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Set Physics World Entity Transform <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.setTransform($bodyId: String, $transform: Transform): Void</sub>                 |
-| Get Physics World Entity Body Type Integer Code, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Get Physics World Entity Body Type Integer Code <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.getType($bodyId: String): Integer</sub>                                          |
-| Add Force to Physics World Entity, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Add Force to Physics World Entity <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.addForce($bodyId: String, $force: Vector3[, $origin: Vector3]): Void</sub>       |
-| Add Torque to Physics World Entity, available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()|
+| Add Torque to Physics World Entity <sub>(available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed())</sub>|
 | <sub>world.body.addTorque($bodyId: String, $torque: Vector3): Void</sub>                         |
 
 # 8. MiniScript GUI Methods
