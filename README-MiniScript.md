@@ -987,7 +987,7 @@ Reading all keys as array from set:
 
 # 7. MiniScript Logic Methods
 
-The Boilerplate Template Code for a MiniScript Logic looks like: [logic_script_template.tscript](./resources/engine/templates/tscript/logic_script_template.tscript)
+The Boilerplate Template Code for a MiniScript Logic looks like: [logic_script_template.tscript](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/engine/templates/tscript/logic_script_template.tscript)
 
 ## 7.1 Application Methods
 
@@ -1400,7 +1400,7 @@ The Boilerplate Template Code for a MiniScript Logic looks like: [logic_script_t
 
 # 8. MiniScript GUI Methods
 
-The Boilerplate Template Code for a MiniScript GUI Logic looks like: [gui_script_template.tscript](./resources/engine/templates/tscript/gui_script_template.tscript)
+The Boilerplate Template Code for a MiniScript GUI Logic looks like: [gui_script_template.tscript](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/engine/templates/tscript/gui_script_template.tscript)
 
 ## 8.1 Element Node Condition Methods
 
