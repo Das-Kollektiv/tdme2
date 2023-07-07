@@ -147,6 +147,12 @@ public:
 	void onDrop(const string& payload, int mouseX, int mouseY) override;
 
 	/**
+	 * Set run button mode
+	 * @param running running
+	 */
+	void setRunButtonMode(bool running);
+
+	/**
 	 * Set GUI details
 	 */
 	void setGUIDetails();

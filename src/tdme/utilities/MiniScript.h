@@ -3172,6 +3172,26 @@ public:
 	virtual void startScript();
 
 	/**
+	 * Check if condition with given name exists
+	 * @param condition condition
+	 * @return condition with given name exists
+	 */
+	inline bool hasCondition(const string& condition) {
+		// iterate scripts to find out if condition exists
+		for (auto& script: scripts) {
+			if (script.scriptType != Script::SCRIPTTYPE_ON) {
+				// no op
+			} else
+			if (script.emitCondition == true && script.condition == condition) {
+				// no op
+				return true;
+			}
+		}
+		//
+		return false;
+	}
+
+	/**
 	 * Emit
 	 * @param condition condition
 	 */

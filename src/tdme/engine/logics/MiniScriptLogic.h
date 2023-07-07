@@ -51,17 +51,25 @@ public:
 	 * @param handlingHIDInput handling hid input
 	 * @param miniScript logic mini script
 	 * @param prototype prototype
+	 * @param runsInEditor runs in editor
 	 * @param hierarchyId hierarchy id
 	 * @param hierarchyParentId hierarchy parent id
 	 */
-	inline MiniScriptLogic(Context* context, const string& id, bool handlingHIDInput, LogicMiniScript* miniScript, Prototype* prototype, const string& hierarchyId = string(), const string& hierarchyParentId = string()):
-		Logic(context, id, handlingHIDInput), miniScript(miniScript), hierarchyId(hierarchyId), hierarchyParentId(hierarchyParentId) {
+	inline MiniScriptLogic(Context* context, const string& id, bool handlingHIDInput, LogicMiniScript* miniScript, Prototype* prototype, bool runsInEditor, const string& hierarchyId = string(), const string& hierarchyParentId = string()):
+		Logic(context, id, handlingHIDInput), miniScript(miniScript), runsInEditor(runsInEditor), hierarchyId(hierarchyId), hierarchyParentId(hierarchyParentId) {
 		//
 		enginePrototypes[id] = prototype;
 		logicPrototypes[id] = prototype;
 		//
 		miniScript->setContext(context);
 		miniScript->setLogic(this);
+	}
+
+	/**
+	 * @return is running in editor
+	 */
+	inline bool isRunningInEditor() {
+		return runsInEditor;
 	}
 
 	/**
@@ -260,6 +268,7 @@ public:
 							prototype->isScriptHandlingHID(),
 							logicMiniScript,
 							prototypeToAdd.prototype,
+							runsInEditor,
 							prototypeToAdd.hierarchyId,
 							prototypeToAdd.hierarchyParentId
 						)
@@ -318,8 +327,9 @@ private:
 	LogicMiniScript* miniScript { nullptr };
 	unordered_map<string, Prototype*> enginePrototypes;
 	unordered_map<string, Prototype*> logicPrototypes;
-	bool engineInitialized { false };
-	bool logicInitialized { false };
+	bool runsInEditor;
 	string hierarchyId;
 	string hierarchyParentId;
+	bool engineInitialized { false };
+	bool logicInitialized { false };
 };

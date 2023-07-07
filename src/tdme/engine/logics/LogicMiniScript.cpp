@@ -31,6 +31,7 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/tools/editor/misc/Tools.h>
+#include <tdme/tools/editor/TDMEEditor.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -70,6 +71,7 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::threading::Mutex;
 using tdme::tools::editor::misc::Tools;
+using tdme::tools::editor::TDMEEditor;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -104,6 +106,48 @@ void LogicMiniScript::registerStateMachineStates() {
 
 void LogicMiniScript::registerMethods() {
 	MiniScript::registerMethods();
+	{
+		//
+		class ScriptMethodApplicationRunsInEditor: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodApplicationRunsInEditor(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "application.runsInEditor";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue.setValue(miniScript->logic->isRunningInEditor());
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTIONS_ALL;
+			}
+		};
+		registerMethod(new ScriptMethodApplicationRunsInEditor(this));
+	}
+	{
+		//
+		class ScriptMethodApplicationIsFullScreen: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodApplicationIsFullScreen(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "application.isFullScreen";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue.setValue(TDMEEditor::getInstance() != nullptr?TDMEEditor::getInstance()->isFullScreen():false);
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTIONS_ALL;
+			}
+		};
+		registerMethod(new ScriptMethodApplicationIsFullScreen(this));
+	}
 	{
 		//
 		class ScriptMethodLogicGetId: public ScriptMethod {

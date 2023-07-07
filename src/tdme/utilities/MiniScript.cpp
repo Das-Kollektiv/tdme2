@@ -1225,7 +1225,8 @@ void MiniScript::startScript() {
 	scriptState.variables.clear();
 	scriptState.running = true;
 	registerVariables();
-	emit("initialize");
+	//
+	if (hasCondition("initialze") == true) emit("initialize");
 }
 
 int MiniScript::determineScriptIdxToStart() {

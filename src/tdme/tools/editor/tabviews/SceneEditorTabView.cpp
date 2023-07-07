@@ -1509,7 +1509,8 @@ void SceneEditorTabView::runScene() {
 					entity->getId(),
 					entity->getPrototype()->isScriptHandlingHID(),
 					miniScript,
-					entity->getPrototype()
+					entity->getPrototype(),
+					true
 				)
 			);
 		}
@@ -1517,6 +1518,8 @@ void SceneEditorTabView::runScene() {
 
 	//
 	if (valid == false) {
+		sceneEditorTabController->setRunButtonMode(false);
+		//
 		sceneEditorTabController->showInfoPopUp("Error", "Not are scripts are valid to be run:\n\n" + invalidScripts);
 		//
 		delete applicationClient;
@@ -1542,11 +1545,17 @@ void SceneEditorTabView::runScene() {
 		return;
 	}
 
+	//
+	sceneEditorTabController->setRunButtonMode(true);
+
 	// and go
 	applicationClient->start();
 }
 
 void SceneEditorTabView::stopScene() {
+	//
+	sceneEditorTabController->setRunButtonMode(false);
+
 	// shutdown application client
 	if (applicationClient != nullptr) {
 		applicationClient->stop();
