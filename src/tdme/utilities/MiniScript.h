@@ -1947,6 +1947,8 @@ protected:
 	vector<string> enabledNamedConditions;
 	int64_t timeEnabledConditionsCheckLast { TIME_NONE };
 
+	vector<string> parseErrors;
+
 	/**
 	 * Initialize native mini script
 	 */
@@ -2689,6 +2691,13 @@ public:
 	 * Destructor
 	 */
 	virtual ~MiniScript();
+
+	/**
+	 * @return parse errors
+	 */
+	inline const vector<string>& getParseErrors() {
+		return parseErrors;
+	}
 
 	/**
 	 * @return if this script is valid to be executed

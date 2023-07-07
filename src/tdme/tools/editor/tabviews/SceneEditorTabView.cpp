@@ -1482,11 +1482,24 @@ void SceneEditorTabView::runScene() {
 				Tools::getFileName(entity->getPrototype()->getScript())
 			);
 			if (miniScript->isValid() == false) {
+				//
 				invalidScripts+=
 					Tools::getRelativeResourcesFileName(
 						editorView->getScreenController()->getProjectPath(), Tools::getPathName(entity->getPrototype()->getScript()) + "/" + Tools::getFileName(entity->getPrototype()->getScript())
-					) +
-					"\n";
+					);
+				//
+				if (miniScript->getParseErrors().empty() == true) {
+					invalidScripts+= "\n";
+				} else {
+					//
+					invalidScripts+= ":\n";
+					//
+					for (auto& parseError: miniScript->getParseErrors())
+						invalidScripts+= "\t" + parseError + "\n";
+					//
+					invalidScripts+= "\n";
+				}
+				//
 				valid = false;
 				continue;
 			}
@@ -1504,7 +1517,7 @@ void SceneEditorTabView::runScene() {
 
 	//
 	if (valid == false) {
-		sceneEditorTabController->showInfoPopUp("Error", "Not are scripts are valid to be run:\n\n" + invalidScripts + "\nPlease see the console log down below.");
+		sceneEditorTabController->showInfoPopUp("Error", "Not are scripts are valid to be run:\n\n" + invalidScripts);
 		//
 		delete applicationClient;
 		// shutdown application client context

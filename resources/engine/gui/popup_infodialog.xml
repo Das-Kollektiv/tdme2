@@ -11,7 +11,7 @@
 						<layout padding="10" alignment="vertical" horizontal-align="center" vertical-align="center" width="100%" height="100%">
 					
 							<scrollarea width="100%" height="100" padding="5" border="1" background-color="{$color.element_midground}">
-								<styled-text id="infodialog_message" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" width="100%" height="auto">
+								<styled-text id="infodialog_message" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" width="100%" height="auto" preformatted="true">
 									An message should be displayed here!
 								</styled-text>
 							</scrollarea>
