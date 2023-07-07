@@ -74,11 +74,8 @@ void Console::println(const string& str)
 	if (messages.size() == 100) messages.erase(messages.begin());
 	newline = true;
 	//
-	if (logger != nullptr) {
-		logger->println(str);
-	} else {
-		cout << str << endl;
-	}
+	if (logger != nullptr) logger->println(str);
+	cout << str << endl;
 	//
 	mutex->unlock();
 }
@@ -93,11 +90,8 @@ void Console::print(const string& str)
 	if (messages.size() == 100) messages.erase(messages.begin());
 	newline = false;
 	//
-	if (logger != nullptr) {
-		logger->print(str);
-	} else {
-		cout << str;
-	}
+	if (logger != nullptr) logger->print(str);
+	cout << str;
 	//
 	mutex->unlock();
 }
@@ -111,11 +105,8 @@ void Console::println()
 	if (messages.size() == 100) messages.erase(messages.begin());
 	newline = true;
 	//
-	if (logger != nullptr) {
-		logger->println();
-	} else {
-		cout << endl;
-	}
+	if (logger != nullptr) logger->println();
+	cout << endl;
 	//
 	mutex->unlock();
 }

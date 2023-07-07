@@ -1471,6 +1471,8 @@ void SceneEditorTabView::runScene() {
 	}
 
 	// add logics
+	auto valid = true;
+	string invalidScripts;
 	for (auto i = 0; i < scene->getEntityCount(); i++) {
 		auto entity = scene->getEntityAt(i);
 		if (entity->getPrototype()->hasScript() == true) {
@@ -1479,6 +1481,15 @@ void SceneEditorTabView::runScene() {
 				Tools::getPathName(entity->getPrototype()->getScript()),
 				Tools::getFileName(entity->getPrototype()->getScript())
 			);
+			if (miniScript->isValid() == false) {
+				invalidScripts+=
+					Tools::getRelativeResourcesFileName(
+						editorView->getScreenController()->getProjectPath(), Tools::getPathName(entity->getPrototype()->getScript()) + "/" + Tools::getFileName(entity->getPrototype()->getScript())
+					) +
+					"\n";
+				valid = false;
+				continue;
+			}
 			applicationContext->addLogic(
 				new MiniScriptLogic(
 					applicationContext,
@@ -1489,6 +1500,33 @@ void SceneEditorTabView::runScene() {
 				)
 			);
 		}
+	}
+
+	//
+	if (valid == false) {
+		sceneEditorTabController->showInfoPopUp("Error", "Not are scripts are valid to be run:\n\n" + invalidScripts + "\nPlease see the console log down below.");
+		//
+		delete applicationClient;
+		// shutdown application client context
+		if (applicationContext != nullptr) {
+			applicationContext->unsetScene();
+			applicationContext->shutdown();
+			delete applicationContext;
+		}
+		//
+		applicationClient = nullptr;
+		applicationContext = nullptr;
+		// reset scene
+		engine->getGUI()->reset();
+		SceneConnector::resetEngine(engine, scene);
+		SceneConnector::setLights(engine, scene, Vector3());
+		SceneConnector::addScene(engine, scene, true, true, true, true, true);
+		updateSky();
+		scene->update();
+		cameraInputHandler->setSceneCenter(scene->getCenter());
+		cameraInputHandler->reset();
+		//
+		return;
 	}
 
 	// and go
