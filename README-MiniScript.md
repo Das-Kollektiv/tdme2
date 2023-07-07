@@ -1239,6 +1239,8 @@ Reading all keys as array from set:
 | <sub>logic.getHierarchyParentId(): String</sub>                                                  |
 | Get Logic Id - <i>available in initializeEngine(), updateEngine(), initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()</i>|
 | <sub>logic.getId(): String</sub>                                                                 |
+| Get Logic Ids of all Logics withing Application Context - <i>available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()</i>|
+| <sub>logic.getLogicIds(): Array</sub>                                                            |
 | Call specific Logic Function - <i>available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()</i>|
 | <sub>logic.call($logicId: String, $function: String, ...): Mixed</sub>                           |
 

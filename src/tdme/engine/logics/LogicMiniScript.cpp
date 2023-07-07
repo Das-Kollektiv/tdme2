@@ -213,6 +213,31 @@ void LogicMiniScript::registerMethods() {
 	}
 	{
 		//
+		class ScriptMethodLogicGetLogicIds: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodLogicGetLogicIds(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_ARRAY),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "logic.getLogicIds";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				auto contextLogics = miniScript->logic->getContext()->getLogics();
+				returnValue.setType(MiniScript::TYPE_ARRAY);
+				for (auto contextLogic: contextLogics) {
+					returnValue.pushArrayValue(MiniScript::ScriptVariable(contextLogic->getId()));
+				}
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTIONS_LOGIC;
+			}
+		};
+		registerMethod(new ScriptMethodLogicGetLogicIds(this));
+	}
+	{
+		//
 		class ScriptMethodAudioGetListenerPosition: public ScriptMethod {
 		private:
 			LogicMiniScript* miniScript { nullptr };
