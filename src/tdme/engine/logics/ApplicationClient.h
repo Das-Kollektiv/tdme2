@@ -111,7 +111,6 @@ private:
 	vector<QueuedSound> queuedSounds;
 	unordered_map<string, ActiveSound> activeSounds;
 
-
 	// overridden methods
 	virtual void run() override;
 

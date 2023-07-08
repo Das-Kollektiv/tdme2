@@ -890,6 +890,11 @@ void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 	}
 }
 
+void SceneEditorTabController::setRunButtonMode(bool running) {
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_toolbar"))->getActiveConditions().remove("running");
+	if (running == true) required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_toolbar"))->getActiveConditions().add("running");
+}
+
 void SceneEditorTabController::setGUIDetails() {
 	auto scene = view->getScene();
 

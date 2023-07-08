@@ -1449,6 +1449,7 @@ void SceneEditorTabView::runScene() {
 	applicationContext->setEngine(engine);
 	applicationContext->setAudio(Audio::getInstance());
 	applicationContext->setWorld(world);
+	applicationContext->setSoundPoolSize(1);
 	applicationClient = new ApplicationClient(applicationContext);
 	applicationContext->initialize();
 
@@ -1470,6 +1471,8 @@ void SceneEditorTabView::runScene() {
 	}
 
 	// add logics
+	auto valid = true;
+	string invalidScripts;
 	for (auto i = 0; i < scene->getEntityCount(); i++) {
 		auto entity = scene->getEntityAt(i);
 		if (entity->getPrototype()->hasScript() == true) {
@@ -1478,23 +1481,81 @@ void SceneEditorTabView::runScene() {
 				Tools::getPathName(entity->getPrototype()->getScript()),
 				Tools::getFileName(entity->getPrototype()->getScript())
 			);
+			if (miniScript->isValid() == false) {
+				//
+				invalidScripts+=
+					Tools::getRelativeResourcesFileName(
+						editorView->getScreenController()->getProjectPath(), Tools::getPathName(entity->getPrototype()->getScript()) + "/" + Tools::getFileName(entity->getPrototype()->getScript())
+					);
+				//
+				if (miniScript->getParseErrors().empty() == true) {
+					invalidScripts+= "\n";
+				} else {
+					//
+					invalidScripts+= ":\n";
+					//
+					for (auto& parseError: miniScript->getParseErrors())
+						invalidScripts+= "\t" + parseError + "\n";
+					//
+					invalidScripts+= "\n";
+				}
+				//
+				valid = false;
+				continue;
+			}
 			applicationContext->addLogic(
 				new MiniScriptLogic(
 					applicationContext,
 					entity->getId(),
 					entity->getPrototype()->isScriptHandlingHID(),
 					miniScript,
-					entity->getPrototype()
+					entity->getPrototype(),
+					true
 				)
 			);
 		}
 	}
+
+	//
+	if (valid == false) {
+		sceneEditorTabController->setRunButtonMode(false);
+		//
+		sceneEditorTabController->showInfoPopUp("Error", "Not are scripts are valid to be run:\n\n" + invalidScripts);
+		//
+		delete applicationClient;
+		// shutdown application client context
+		if (applicationContext != nullptr) {
+			applicationContext->unsetScene();
+			applicationContext->shutdown();
+			delete applicationContext;
+		}
+		//
+		applicationClient = nullptr;
+		applicationContext = nullptr;
+		// reset scene
+		engine->getGUI()->reset();
+		SceneConnector::resetEngine(engine, scene);
+		SceneConnector::setLights(engine, scene, Vector3());
+		SceneConnector::addScene(engine, scene, true, true, true, true, true);
+		updateSky();
+		scene->update();
+		cameraInputHandler->setSceneCenter(scene->getCenter());
+		cameraInputHandler->reset();
+		//
+		return;
+	}
+
+	//
+	sceneEditorTabController->setRunButtonMode(true);
 
 	// and go
 	applicationClient->start();
 }
 
 void SceneEditorTabView::stopScene() {
+	//
+	sceneEditorTabController->setRunButtonMode(false);
+
 	// shutdown application client
 	if (applicationClient != nullptr) {
 		applicationClient->stop();

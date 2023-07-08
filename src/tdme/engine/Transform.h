@@ -222,6 +222,15 @@ public:
 		return *this;
 	}
 
+	/**
+	 * Operator *
+	 * @param v vec3 to multiply by
+	 * @return new vec3 (this * v)
+	 */
+	inline Vector3 operator *(const Vector3& v) const {
+		return transformMatrix * v;
+	}
+
 	/*
 	 * Operator *=
 	 * @param t transform to multiply by

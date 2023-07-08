@@ -14,6 +14,7 @@
 #include <tdme/engine/SimplePartition.h>
 #include <tdme/engine/Version.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/views/EditorView.h>
@@ -34,6 +35,7 @@ using tdme::engine::Engine;
 using tdme::engine::SimplePartition;
 using tdme::engine::Version;
 using tdme::gui::GUI;
+using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::views::EditorView;
@@ -69,6 +71,11 @@ void TDMEEditor::main(int argc, char** argv)
 
 	auto tdmeEditor = new TDMEEditor();
 	tdmeEditor->run(argc, argv, "TDMEEditor", nullptr, Application::WINDOW_HINT_MAXIMIZED);
+}
+
+bool TDMEEditor::isFullScreen() {
+	if (editorView == nullptr) return false;
+	return editorView->getScreenController()->isFullScreen();
 }
 
 void TDMEEditor::setView(View* view)

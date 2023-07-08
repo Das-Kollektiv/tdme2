@@ -57,7 +57,6 @@ using tdme::utilities::Time;
 class tdme::engine::logics::Context
 {
 public:
-	static constexpr int32_t SOUNDPOOL_SIZE { 10 };
 	static constexpr bool VERBOSE { false };
 
 public:
@@ -363,6 +362,7 @@ private:
 	vector<Logic*> logics;
 	vector<Logic*> newLogics;
 	unordered_map<string, PacketState> packetStates;
+	int soundPoolSize { 10 };
 
 protected:
 	Engine* engine { nullptr };
@@ -617,6 +617,21 @@ public:
 	 */
 	inline void setBodyCollisionTypeIdCloneMask(uint16_t bodyCollisionTypeIdCloneMask) {
 		this->bodyCollisionTypeIdCloneMask = bodyCollisionTypeIdCloneMask;
+	}
+
+	/**
+	 * @return sound pool size
+	 */
+	inline int getSoundPoolSize() {
+		return soundPoolSize;
+	}
+
+	/**
+	 * Set sound pool size
+	 * @param soundPoolSize sound pool size
+	 */
+	inline void setSoundPoolSize(int soundPoolSize) {
+		this->soundPoolSize = soundPoolSize;
 	}
 
 	/**

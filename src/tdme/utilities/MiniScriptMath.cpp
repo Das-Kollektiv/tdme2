@@ -948,6 +948,31 @@ void MiniScriptMath::mul(MiniScript* miniScript, const span<MiniScript::ScriptVa
 		miniScript->startErrorScript();
 		return;
 	}
+	// transform
+	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_TRANSFORM) == true) {
+		// transform * vec3
+		if (argumentValues[0].getType() == MiniScript::TYPE_TRANSFORM &&
+			argumentValues[1].getType() == MiniScript::TYPE_VECTOR3) {
+			Transform a;
+			Vector3 b;
+			MiniScript::getTransformValue(argumentValues, 0, a, false);
+			MiniScript::getVector3Value(argumentValues, 1, b, false);
+			returnValue.setValue(a * b);
+		} else
+		// vec3 * transform
+		if (argumentValues[0].getType() == MiniScript::TYPE_VECTOR3 &&
+			argumentValues[1].getType() == MiniScript::TYPE_TRANSFORM) {
+			Vector3 a;
+			Transform b;
+			MiniScript::getVector3Value(argumentValues, 0, a, false);
+			MiniScript::getTransformValue(argumentValues, 1, b, false);
+			returnValue.setValue(b * a);
+		} else {
+			Console::println("mul(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("mul"));
+			miniScript->startErrorScript();
+			return;
+		}
+	} else
 	// matrix4x4
 	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_MATRIX4x4) == true) {
 		// matrix4x4 * matrix

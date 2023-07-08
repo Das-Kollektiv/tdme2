@@ -51,24 +51,25 @@ public:
 	 * @param handlingHIDInput handling hid input
 	 * @param miniScript logic mini script
 	 * @param prototype prototype
+	 * @param runsInEditor runs in editor
 	 * @param hierarchyId hierarchy id
 	 * @param hierarchyParentId hierarchy parent id
 	 */
-	inline MiniScriptLogic(Context* context, const string& id, bool handlingHIDInput, LogicMiniScript* miniScript, Prototype* prototype, const string& hierarchyId = string(), const string& hierarchyParentId = string()):
-		Logic(context, id, handlingHIDInput), miniScript(miniScript), hierarchyId(hierarchyId), hierarchyParentId(hierarchyParentId) {
+	inline MiniScriptLogic(Context* context, const string& id, bool handlingHIDInput, LogicMiniScript* miniScript, Prototype* prototype, bool runsInEditor, const string& hierarchyId = string(), const string& hierarchyParentId = string()):
+		Logic(context, id, handlingHIDInput), miniScript(miniScript), runsInEditor(runsInEditor), hierarchyId(hierarchyId), hierarchyParentId(hierarchyParentId) {
 		//
 		enginePrototypes[id] = prototype;
 		logicPrototypes[id] = prototype;
 		//
 		miniScript->setContext(context);
 		miniScript->setLogic(this);
-		// execute initialize() function
-		vector<MiniScript::ScriptVariable> argumentValues(0);
-		MiniScript::ScriptVariable returnValue;
-		span argumentValuesSpan(argumentValues);
-		if (miniScript->call("initialize", argumentValuesSpan, returnValue) == false) {
-			Console::println("MiniScriptLogic::onLogicsProcessed(): Failed to call initialize() function");
-		}
+	}
+
+	/**
+	 * @return is running in editor
+	 */
+	inline bool isRunningInEditor() {
+		return runsInEditor;
 	}
 
 	/**
@@ -157,18 +158,25 @@ public:
 				}
 				//
 				if (prototypeToAdd.type == LogicMiniScript::PrototypeToAdd::TYPE_ATTACH) enginePrototypes[id] = prototypeToAdd.prototype;
+				//
+				SceneConnector::addSounds(context->getAudio(), prototypeToAdd.prototype, id);
 			}
 			miniScript->enginePrototypesToAdd.clear();
 			miniScript->prototypesToAddMutex.unlock();
 		}
 		//
 		if (engineInitialized == false) {
+			// load sounds
+			auto prototypeIt = enginePrototypes.find(id);
+			if (prototypeIt != enginePrototypes.end()) {
+				SceneConnector::addSounds(context->getAudio(), prototypeIt->second, id);
+			}
 			// execute initializeEngine() function
 			vector<MiniScript::ScriptVariable> argumentValues(0);
 			MiniScript::ScriptVariable returnValue;
 			span argumentValuesSpan(argumentValues);
 			if (miniScript->call("initializeEngine", argumentValuesSpan, returnValue) == false) {
-				Console::println("MiniScriptLogic::updateEngine(): Failed to call initializeEngine() function");
+				// Console::println("MiniScriptLogic::updateEngine(): Failed to call initializeEngine() function");
 			}
 			//
 			engineInitialized = true;
@@ -178,7 +186,7 @@ public:
 		MiniScript::ScriptVariable returnValue;
 		span argumentValuesSpan(argumentValues);
 		if (miniScript->call("updateEngine", argumentValuesSpan, returnValue) == false) {
-			Console::println("MiniScriptLogic::updateEngine(): Failed to call updateEngine() function");
+			// Console::println("MiniScriptLogic::updateEngine(): Failed to call updateEngine() function");
 		}
 	}
 
@@ -260,6 +268,7 @@ public:
 							prototype->isScriptHandlingHID(),
 							logicMiniScript,
 							prototypeToAdd.prototype,
+							runsInEditor,
 							prototypeToAdd.hierarchyId,
 							prototypeToAdd.hierarchyParentId
 						)
@@ -278,7 +287,7 @@ public:
 			MiniScript::ScriptVariable returnValue;
 			span argumentValuesSpan(argumentValues);
 			if (miniScript->call("initializeLogic", argumentValuesSpan, returnValue) == false) {
-				Console::println("MiniScriptLogic::updateLogic(): Failed to call initializeLogic() function");
+				// Console::println("MiniScriptLogic::updateLogic(): Failed to call initializeLogic() function");
 			}
 			//
 			logicInitialized = true;
@@ -290,7 +299,7 @@ public:
 		MiniScript::ScriptVariable returnValue;
 		span argumentValuesSpan(argumentValues);
 		if (miniScript->call("updateLogic", argumentValuesSpan, returnValue) == false) {
-			Console::println("MiniScriptLogic::updateLogic(): Failed to call updateLogic() function");
+			// Console::println("MiniScriptLogic::updateLogic(): Failed to call updateLogic() function");
 		}
 	}
 
@@ -300,7 +309,7 @@ public:
 		MiniScript::ScriptVariable returnValue;
 		span argumentValuesSpan(argumentValues);
 		if (miniScript->call("onLogicAdded", argumentValuesSpan, returnValue) == false) {
-			Console::println("MiniScriptLogic::onLogicAdded(): Failed to call onLogicAdded() function");
+			// Console::println("MiniScriptLogic::onLogicAdded(): Failed to call onLogicAdded() function");
 		}
 	}
 
@@ -310,7 +319,7 @@ public:
 		MiniScript::ScriptVariable returnValue;
 		span argumentValuesSpan(argumentValues);
 		if (miniScript->call("onLogicsProcessed", argumentValuesSpan, returnValue) == false) {
-			Console::println("MiniScriptLogic::onLogicsProcessed(): Failed to call onLogicsProcessed() function");
+			// Console::println("MiniScriptLogic::onLogicsProcessed(): Failed to call onLogicsProcessed() function");
 		}
 	}
 
@@ -318,8 +327,9 @@ private:
 	LogicMiniScript* miniScript { nullptr };
 	unordered_map<string, Prototype*> enginePrototypes;
 	unordered_map<string, Prototype*> logicPrototypes;
-	bool engineInitialized { false };
-	bool logicInitialized { false };
+	bool runsInEditor;
 	string hierarchyId;
 	string hierarchyParentId;
+	bool engineInitialized { false };
+	bool logicInitialized { false };
 };

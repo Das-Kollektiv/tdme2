@@ -66,6 +66,11 @@ public:
 	~TDMEEditor();
 
 	/**
+	 * @return if editor is running in full screen
+	 */
+	bool isFullScreen();
+
+	/**
 	 * Set up new view
 	 * @param view view
 	 */

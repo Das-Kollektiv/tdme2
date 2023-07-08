@@ -1,7 +1,7 @@
-# initialize
-function: initialize()
+# on logic added
+function: onLogicAdded()
 	console.log("-----------------------------")
-	console.log("initialize(): id: " + logic.getId() + ", hierarchy id: " + logic.getHierarchyId() + ", hierarchy parent id: " + logic.getHierarchyParentId())
+	console.log("onLogicAdded(): " + logic.getId() + ", hierarchy id: " + logic.getHierarchyId() + ", hierarchy parent id: " + logic.getHierarchyParentId())
 	console.log("-----------------------------")
 	console.log()
 end
@@ -34,14 +34,6 @@ end
 function: updateLogic()
 	console.log("-----------------------------")
 	console.log("updateLogic(): " + logic.getId() + ", hierarchy id: " + logic.getHierarchyId() + ", hierarchy parent id: " + logic.getHierarchyParentId())
-	console.log("-----------------------------")
-	console.log()
-end
-
-# on logic added
-function: onLogicAdded()
-	console.log("-----------------------------")
-	console.log("onLogicAdded(): " + logic.getId() + ", hierarchy id: " + logic.getHierarchyId() + ", hierarchy parent id: " + logic.getHierarchyParentId())
 	console.log("-----------------------------")
 	console.log()
 end

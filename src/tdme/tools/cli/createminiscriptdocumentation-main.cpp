@@ -45,6 +45,14 @@ static void generateMiniScriptDocumentation(const string& heading, int mainHeadi
 		string description;
 		description+= "| ";
 		description+= descriptions.get(descriptionPrefix + scriptMethod->getMethodName(), "Not documented");
+		if (scriptMethod->getContextFunctions().empty() == false) {
+			string contextFunctions;
+			for (auto& contextFunction: scriptMethod->getContextFunctions()) {
+				if (contextFunctions.empty() == false) contextFunctions+= ", ";
+				contextFunctions+= contextFunction + "()";
+			}
+			description+= " - <i>available in " + contextFunctions + "</i>";
+		}
 		while (description.size() < 99) description+= " ";
 		description+= "|";
 		result+= description + "\n";

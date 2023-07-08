@@ -1799,6 +1799,20 @@ public:
 			return OPERATOR_NONE;
 		}
 
+		/**
+		 * @return context function
+		 */
+		virtual const vector<string>& getContextFunctions() {
+			return CONTEXTFUNCTIONS_ALL;
+		}
+
+	protected:
+		static vector<string> CONTEXTFUNCTIONS_ALL;
+		static vector<string> CONTEXTFUNCTIONS_ENGINE;
+		static vector<string> CONTEXTFUNCTIONS_LOGIC;
+		static vector<string> CONTEXTFUNCTIONS_ENGINELOGIC;
+		static vector<string> CONTEXTFUNCTION_GUI;
+
 	private:
 		vector<ArgumentType> argumentTypes;
 		ScriptVariableType returnValueType;
@@ -1932,6 +1946,8 @@ protected:
 	// root context variables
 	vector<string> enabledNamedConditions;
 	int64_t timeEnabledConditionsCheckLast { TIME_NONE };
+
+	vector<string> parseErrors;
 
 	/**
 	 * Initialize native mini script
@@ -2677,6 +2693,13 @@ public:
 	virtual ~MiniScript();
 
 	/**
+	 * @return parse errors
+	 */
+	inline const vector<string>& getParseErrors() {
+		return parseErrors;
+	}
+
+	/**
 	 * @return if this script is valid to be executed
 	 */
 	inline bool isValid() {
@@ -3149,6 +3172,26 @@ public:
 	virtual void startScript();
 
 	/**
+	 * Check if condition with given name exists
+	 * @param condition condition
+	 * @return condition with given name exists
+	 */
+	inline bool hasCondition(const string& condition) {
+		// iterate scripts to find out if condition exists
+		for (auto& script: scripts) {
+			if (script.scriptType != Script::SCRIPTTYPE_ON) {
+				// no op
+			} else
+			if (script.emitCondition == true && script.condition == condition) {
+				// no op
+				return true;
+			}
+		}
+		//
+		return false;
+	}
+
+	/**
 	 * Emit
 	 * @param condition condition
 	 */
@@ -3199,7 +3242,7 @@ public:
 		// lookup function
 		auto scriptFunctionsIt = scriptFunctions.find(function);
 		if (scriptFunctionsIt == scriptFunctions.end()) {
-			Console::println("MiniScript::call(): Script user function not found: " + function);
+			// Console::println("MiniScript::call(): Script user function not found: " + function);
 			return false;
 		}
 		//

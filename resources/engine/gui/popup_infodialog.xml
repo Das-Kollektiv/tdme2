@@ -1,7 +1,7 @@
 <screen id="popup_infodialog" background-color="#00000080" popup="true" min-width="1024" min-height="768" max-width="3200" max-height="1800">
 	<layout alignment="none" horizontal-align="center" vertical-align="center" width="100%" height="100%">
 		<moveable width="auto" height="auto">
-			<tabs width="400" height="200">
+			<tabs width="500" height="200">
 				<tabs-header id="infodialog_tabs-header">
 					<tab id="infodialog_caption" image="resources/engine/images/attention.png" text="Information" closeable="true"/>
 				</tabs-header>
@@ -11,7 +11,7 @@
 						<layout padding="10" alignment="vertical" horizontal-align="center" vertical-align="center" width="100%" height="100%">
 					
 							<scrollarea width="100%" height="100" padding="5" border="1" background-color="{$color.element_midground}">
-								<styled-text id="infodialog_message" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" width="100%" height="auto">
+								<styled-text id="infodialog_message" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" width="100%" height="auto" preformatted="true">
 									An message should be displayed here!
 								</styled-text>
 							</scrollarea>
