@@ -224,7 +224,7 @@ void LogicMiniScript::registerMethods() {
 				return "logic.getLogicIds";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				auto contextLogics = miniScript->logic->getContext()->getLogics();
+				auto& contextLogics = miniScript->logic->getContext()->getLogics();
 				returnValue.setType(MiniScript::TYPE_ARRAY);
 				for (auto contextLogic: contextLogics) {
 					returnValue.pushArrayValue(MiniScript::ScriptVariable(contextLogic->getId()));
