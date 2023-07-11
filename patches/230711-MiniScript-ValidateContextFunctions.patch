@@ -1,0 +1,221 @@
+diff --git a/README-MiniScript.md b/README-MiniScript.md
+index 2339316fe..df695d8c2 100644
+--- a/README-MiniScript.md
++++ b/README-MiniScript.md
+@@ -1011,9 +1011,9 @@ The Boilerplate Template Code for a MiniScript Logic looks like: [logic_script_t
+ | Set Listener Position - <i>available in initializeEngine(), updateEngine()</i>                   |
+ | <sub>audio.setListenerPosition($position: Vector3): Void</sub>                                   |
+ | Play Audio at Engine Entity Position - <i>available in initializeEngine(), updateEngine()</i>    |
+-| <sub>audio.play($id: String[, $delay: Integer[, $gain: Integer[, $pitch: Integer[, $ignoreIfPlaying: Integer]]]]): String</sub>|
++| <sub>audio.play($id: String[, $delay: Integer[, $gain: Integer[, $pitch: Integer[, $ignoreIfPlaying: Integer]]]]): Null</sub>|
+ | Play Audio at Custom Position - <i>available in initializeEngine(), updateEngine()</i>           |
+-| <sub>audio.playAtPosition($id: String, $position: Vector3[, $delay: Integer[, $gain: Integer[, $pitch: Integer[, $ignoreIfPlaying: Integer]]]]): String</sub>|
++| <sub>audio.playAtPosition($id: String, $position: Vector3[, $delay: Integer[, $gain: Integer[, $pitch: Integer[, $ignoreIfPlaying: Integer]]]]): Null</sub>|
+ 
+ ## 7.3 Engine Methods
+ 
+diff --git a/src/tdme/engine/logics/LogicMiniScript.cpp b/src/tdme/engine/logics/LogicMiniScript.cpp
+index f58d5623b..db729ab59 100644
+--- a/src/tdme/engine/logics/LogicMiniScript.cpp
++++ b/src/tdme/engine/logics/LogicMiniScript.cpp
+@@ -363,7 +363,7 @@ void LogicMiniScript::registerMethods() {
+ 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "pitch", .optional = true, .assignBack = false },
+ 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "ignoreIfPlaying", .optional = true, .assignBack = false }
+ 					},
+-					ScriptVariableType::TYPE_STRING
++					ScriptVariableType::TYPE_NULL
+ 				),
+ 				miniScript(miniScript) {}
+ 			const string getMethodName() override {
+@@ -408,7 +408,7 @@ void LogicMiniScript::registerMethods() {
+ 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "pitch", .optional = true, .assignBack = false },
+ 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "ignoreIfPlaying", .optional = true, .assignBack = false }
+ 					},
+-					ScriptVariableType::TYPE_STRING
++					ScriptVariableType::TYPE_NULL
+ 				),
+ 				miniScript(miniScript) {}
+ 			const string getMethodName() override {
+diff --git a/src/tdme/utilities/MiniScript.cpp b/src/tdme/utilities/MiniScript.cpp
+index 11a117e3f..eb4d66155 100644
+--- a/src/tdme/utilities/MiniScript.cpp
++++ b/src/tdme/utilities/MiniScript.cpp
+@@ -297,7 +297,7 @@ bool MiniScript::parseScriptStatement(const string_view& statement, string_view&
+ 	if (bracketCount != 0) {
+ 		Console::println("MiniScript::parseScriptStatement(): '" + scriptFileName + "': '" + string(statement) + "': unbalanced bracket count: " + to_string(bracketCount) + " still open");
+ 		//
+-		parseErrors.push_back("Unbalanced bracket count: " + to_string(bracketCount) + " still open");
++		parseErrors.push_back(string(statement) + ": unbalanced bracket count: " + to_string(bracketCount) + " still open");
+ 		//
+ 		return false;
+ 	}
+@@ -599,7 +599,7 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& method, cons
+ 				} else {
+ 					Console::println("MiniScript::createScriptStatementSyntaxTree(): " + getStatementInformation(statement) + ": unknown method '" + methodName + "'");
+ 					//
+-					parseErrors.push_back("unknown method '" + methodName + "'");
++					parseErrors.push_back(getStatementInformation(statement) + ": unknown method '" + methodName + "'");
+ 					//
+ 					return false;
+ 				}
+@@ -696,6 +696,8 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& method, cons
+ 		} else {
+ 			Console::println("MiniScript::createScriptStatementSyntaxTree(): " + getStatementInformation(statement) + ": unknown function/method '" + string(methodString) + "'");
+ 			//
++			parseErrors.push_back(getStatementInformation(statement) + ": unknown function/method '" + string(methodString) + "'");
++			//
+ 			return false;
+ 		}
+ 	}
+@@ -1151,16 +1153,10 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
+ 			string_view method;
+ 			vector<string_view> arguments;
+ 			if (parseScriptStatement(script.executableCondition, method, arguments) == false) {
+-				Console::println("MiniScript::loadScript(): " + getStatementInformation(script.conditionStatement) + ": failed to parse condition statement");
+-				//
+-				parseErrors.push_back(getStatementInformation(script.conditionStatement) + ": failed to parse condition statement");
+ 				//
+ 				scriptValid = false;
+ 			} else
+ 			if (createScriptStatementSyntaxTree(method, arguments, script.conditionStatement, script.conditionSyntaxTree) == false) {
+-				Console::println("MiniScript::loadScript(): " + getStatementInformation(script.conditionStatement) + ": failed to create syntax tree for condition statement");
+-				//
+-				parseErrors.push_back(getStatementInformation(script.conditionStatement) + ": failed to create syntax tree for condition statement");
+ 				//
+ 				scriptValid = false;
+ 			}
+@@ -1169,24 +1165,38 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
+ 		for (auto statementIdx = 0; statementIdx < script.statements.size(); statementIdx++) {
+ 			auto& statement = script.statements[statementIdx];
+ 			script.syntaxTree.emplace_back();
+-			auto& sytaxTree = script.syntaxTree[script.syntaxTree.size() - 1];
++			auto& syntaxTree = script.syntaxTree[script.syntaxTree.size() - 1];
+ 			string_view method;
+ 			vector<string_view> arguments;
+ 			if (parseScriptStatement(statement.executableStatement, method, arguments) == false) {
+-				Console::println("MiniScript::loadScript(): " + getStatementInformation(script.conditionStatement) + ": failed to parse statement");
+-				//
+-				parseErrors.push_back(getStatementInformation(script.conditionStatement) + ": failed to parse statement");
+ 				//
+ 				scriptValid = false;
+ 			} else
+-			if (createScriptStatementSyntaxTree(method, arguments, statement, sytaxTree) == false) {
+-				Console::println("MiniScript::loadScript(): " + getStatementInformation(script.conditionStatement) + ": failed to create syntax tree for statement");
+-				//
+-				parseErrors.push_back(getStatementInformation(script.conditionStatement) + ": failed to create syntax tree for statement");
++			if (createScriptStatementSyntaxTree(method, arguments, statement, syntaxTree) == false) {
+ 				//
+ 				scriptValid = false;
+ 			}
+ 		}
++		// validate method call context functions
++		if (script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION) {
++			//
++			vector<string> functionStack;
++			// push function name as context function
++			functionStack.push_back(script.condition);
++			//
++			// iterate statements and validate context function
++			auto statementIdx = 0;
++			for (auto& syntaxTreeNode: script.syntaxTree) {
++				auto& statement = script.statements[statementIdx++];
++				//
++				if (validateContextFunctions(syntaxTreeNode, functionStack, statement) == false) {
++					//
++					scriptValid = false;
++					//
++					break;
++				}
++			}
++		}
+ 	}
+ 
+ 	// check for initialize and error condition
+@@ -8054,3 +8064,70 @@ const MiniScript::ScriptVariable MiniScript::deserializeJson(const string& json)
+ 		return ScriptVariable();
+ 	}
+ }
++
++bool MiniScript::validateContextFunctions(const ScriptSyntaxTreeNode& syntaxTreeNode, vector<string>& functionStack, const ScriptStatement& statement) {
++	//
++	switch (syntaxTreeNode.type) {
++		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
++			{
++				break;
++			}
++		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
++			{
++				auto& contextFunctions = syntaxTreeNode.method->getContextFunctions();
++				if (contextFunctions.empty() == false) {
++					//
++					string contextFunctionsString;
++					for (auto &contextFunction: contextFunctions) {
++						if (contextFunctionsString.empty() == false) contextFunctionsString+= ", ";
++						contextFunctionsString+= contextFunction + "()";
++					}
++					//
++					const auto& functionStackFunction = functionStack[0];
++					if (find(contextFunctions.begin(), contextFunctions.end(), functionStackFunction) == contextFunctions.end()) {
++						//
++						string contextFunctionsString;
++						for (auto &contextFunction: contextFunctions) {
++							if (contextFunctionsString.empty() == false) contextFunctionsString+= ", ";
++							contextFunctionsString+= contextFunction + "()";
++						}
++						//
++						Console::println(
++							"MiniScript::validateContextFunctions(): '" +
++							getStatementInformation(statement) +
++							": method " +
++							syntaxTreeNode.method->getMethodName() + "() can only be called within the following functions: " +
++							contextFunctionsString +
++							", but was called from " +
++							functionStackFunction + "()"
++						);
++						//
++						parseErrors.push_back(
++							getStatementInformation(statement) +
++							": method " +
++							syntaxTreeNode.method->getMethodName() + "() can only be called within the following functions: " +
++							contextFunctionsString +
++							", but was called from " +
++							functionStackFunction + "()"
++						);
++						//
++						return false;
++					}
++				}
++			}
++			break;
++		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
++			{
++				functionStack.push_back(syntaxTreeNode.value.getValueString());
++				for (auto& argument: syntaxTreeNode.arguments) {
++					if (validateContextFunctions(argument, functionStack, statement) == false) return false;
++				}
++				functionStack.erase(functionStack.begin() + functionStack.size() - 1);
++				break;
++			}
++		default:
++			break;
++	}
++	//
++	return true;
++}
+diff --git a/src/tdme/utilities/MiniScript.h b/src/tdme/utilities/MiniScript.h
+index 4fcb9dcd3..040ff87b7 100644
+--- a/src/tdme/utilities/MiniScript.h
++++ b/src/tdme/utilities/MiniScript.h
+@@ -3342,4 +3342,12 @@ public:
+ 	 */
+ 	static const ScriptVariable deserializeJson(const string& json);
+ 
++	/**
++	 * Validate context functions
++	 * @param syntaxTreeNode syntax tree node
++	 * @param functionStack function stack
++	 * @param statement statement
++	 */
++	bool validateContextFunctions(const ScriptSyntaxTreeNode& syntaxTreeNode, vector<string>& functionStack, const ScriptStatement& statement);
++
+ };
