@@ -1011,9 +1011,9 @@ The Boilerplate Template Code for a MiniScript Logic looks like: [logic_script_t
 | Set Listener Position - <i>available in initializeEngine(), updateEngine()</i>                   |
 | <sub>audio.setListenerPosition($position: Vector3): Void</sub>                                   |
 | Play Audio at Engine Entity Position - <i>available in initializeEngine(), updateEngine()</i>    |
-| <sub>audio.play($id: String[, $delay: Integer[, $gain: Integer[, $pitch: Integer[, $ignoreIfPlaying: Integer]]]]): String</sub>|
+| <sub>audio.play($id: String[, $delay: Integer[, $gain: Integer[, $pitch: Integer[, $ignoreIfPlaying: Integer]]]]): Null</sub>|
 | Play Audio at Custom Position - <i>available in initializeEngine(), updateEngine()</i>           |
-| <sub>audio.playAtPosition($id: String, $position: Vector3[, $delay: Integer[, $gain: Integer[, $pitch: Integer[, $ignoreIfPlaying: Integer]]]]): String</sub>|
+| <sub>audio.playAtPosition($id: String, $position: Vector3[, $delay: Integer[, $gain: Integer[, $pitch: Integer[, $ignoreIfPlaying: Integer]]]]): Null</sub>|
 
 ## 7.3 Engine Methods
 
