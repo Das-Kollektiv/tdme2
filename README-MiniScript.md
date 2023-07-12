@@ -622,7 +622,7 @@ Reading all keys as array from set:
 | <sub>prefixDecrement(=$variable: Integer): Integer</sub>                                         |
 | Prefix increment                                                                                 |
 | <sub>prefixIncrement(=$variable: Integer): Integer</sub>                                         |
-| Return from function with optional return Value                                                  |
+| Return from function with optional return value                                                  |
 | <sub>return([$value: Mixed]): Void</sub>                                                         |
 | Subtract                                                                                         |
 | <sub>sub($a: Mixed, $b: Mixed): Mixed</sub>                                                      |
@@ -807,7 +807,7 @@ Reading all keys as array from set:
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Get named Conditions                                                                             |
+| Get named conditions                                                                             |
 | <sub>script.getNamedConditions(): String</sub>                                                   |
 | Get script variables                                                                             |
 | <sub>script.getVariables(): Map</sub>                                                            |
@@ -1039,11 +1039,11 @@ The boilerplate template code for a MiniScript logic looks like: [logic_script_t
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Get listener orientation at - <i>available in initializeEngine(), updateEngine()</i>             |
 | <sub>audio.getListenerOrientationAt(): Vector3</sub>                                             |
-| Get listener orientation at - <i>available in initializeEngine(), updateEngine()</i>             |
+| Set listener orientation at - <i>available in initializeEngine(), updateEngine()</i>             |
 | <sub>audio.setListenerOrientationAt($orientation: Vector3): Void</sub>                           |
 | Get listener orientation up - <i>available in initializeEngine(), updateEngine()</i>             |
 | <sub>audio.getListenerOrientationUp(): Vector3</sub>                                             |
-| Get listener orientation up - <i>available in initializeEngine(), updateEngine()</i>             |
+| Set listener orientation up - <i>available in initializeEngine(), updateEngine()</i>             |
 | <sub>audio.setListenerOrientationUp($orientation: Vector3): Void</sub>                           |
 | Get listener position - <i>available in initializeEngine(), updateEngine()</i>                   |
 | <sub>audio.getListenerPosition(): Vector3</sub>                                                  |
@@ -1174,7 +1174,7 @@ The boilerplate template code for a MiniScript logic looks like: [logic_script_t
 | <sub>input.keyboard.isAltDown(): Boolean</sub>                                                   |
 | Returns if specific character is currently pressed                                               |
 | <sub>input.keyboard.isCharDown($charAsString: String): Boolean</sub>                             |
-| Returns if CONTROL Key is currently pressed                                                      |
+| Returns if CONTROL key is currently pressed                                                      |
 | <sub>input.keyboard.isControlDown(): Boolean</sub>                                               |
 | Backspace key keycode                                                                            |
 | <sub>input.keyboard.KEYCODE_BACKSPACE(): Integer</sub>                                           |
@@ -1216,7 +1216,7 @@ The boilerplate template code for a MiniScript logic looks like: [logic_script_t
 | <sub>input.keyboard.KEYCODE_PAGEDOWN(): Integer</sub>                                            |
 | Page up key keycode                                                                              |
 | <sub>input.keyboard.KEYCODE_PAGEUP(): Integer</sub>                                              |
-| Home/Position 1 key keycode                                                                      |
+| Home/position 1 key keycode                                                                      |
 | <sub>input.keyboard.KEYCODE_POS1(): Integer</sub>                                                |
 | Return key keycode                                                                               |
 | <sub>input.keyboard.KEYCODE_RETURN(): Integer</sub>                                              |
@@ -1272,7 +1272,7 @@ The boilerplate template code for a MiniScript logic looks like: [logic_script_t
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Returns if logic has callable Function                                                           |
+| Returns if logic has callable function                                                           |
 | <sub>logic.has($logicId: String, $callable: String): Boolean</sub>                               |
 | Get hierarchy id - <i>available in initializeEngine(), updateEngine(), initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()</i>|
 | <sub>logic.getHierarchyId(): String</sub>                                                        |
@@ -1588,9 +1588,9 @@ The boilerplate template code for a MiniScript GUI logic looks like: [gui_script
 | <sub>input.keyboard.KEYCODE_LEFT(): Integer</sub>                                                |
 | Page down key keycode                                                                            |
 | <sub>input.keyboard.KEYCODE_PAGEDOWN(): Integer</sub>                                            |
-| Page up key Keycode                                                                              |
+| Page up key keycode                                                                              |
 | <sub>input.keyboard.KEYCODE_PAGEUP(): Integer</sub>                                              |
-| Home/Position 1 key keycode                                                                      |
+| Home/position 1 key keycode                                                                      |
 | <sub>input.keyboard.KEYCODE_POS1(): Integer</sub>                                                |
 | Return key keycode                                                                               |
 | <sub>input.keyboard.KEYCODE_RETURN(): Integer</sub>                                              |
@@ -1627,11 +1627,11 @@ The boilerplate template code for a MiniScript GUI logic looks like: [gui_script
 | <sub>input.mouse.isDragging($button: Integer): Boolean</sub>                                     |
 | Returns if mouse has been moved                                                                  |
 | <sub>input.mouse.hasMoved(): Boolean</sub>                                                       |
-| Returns current value of x Axis mouse wheel                                                      |
+| Returns current value of x axis mouse wheel                                                      |
 | <sub>input.mouse.getWheelX(): Float</sub>                                                        |
-| Returns current value of y Axis mouse wheel                                                      |
+| Returns current value of y axis mouse wheel                                                      |
 | <sub>input.mouse.getWheelY(): Float</sub>                                                        |
-| Returns current value of z Axis mouse wheel                                                      |
+| Returns current value of z axis mouse wheel                                                      |
 | <sub>input.mouse.getWheelZ(): Float</sub>                                                        |
 | Get x mouse position                                                                             |
 | <sub>input.mouse.getX(): Integer</sub>                                                           |
