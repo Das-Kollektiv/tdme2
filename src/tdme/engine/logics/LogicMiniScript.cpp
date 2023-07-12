@@ -363,7 +363,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "pitch", .optional = true, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "ignoreIfPlaying", .optional = true, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_STRING
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -408,7 +408,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "pitch", .optional = true, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "ignoreIfPlaying", .optional = true, .assignBack = false }
 					},
-					ScriptVariableType::TYPE_STRING
+					ScriptVariableType::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {

@@ -3342,4 +3342,12 @@ public:
 	 */
 	static const ScriptVariable deserializeJson(const string& json);
 
+	/**
+	 * Validate context functions
+	 * @param syntaxTreeNode syntax tree node
+	 * @param functionStack function stack
+	 * @param statement statement
+	 */
+	bool validateContextFunctions(const ScriptSyntaxTreeNode& syntaxTreeNode, vector<string>& functionStack, const ScriptStatement& statement);
+
 };

@@ -297,7 +297,7 @@ bool MiniScript::parseScriptStatement(const string_view& statement, string_view&
 	if (bracketCount != 0) {
 		Console::println("MiniScript::parseScriptStatement(): '" + scriptFileName + "': '" + string(statement) + "': unbalanced bracket count: " + to_string(bracketCount) + " still open");
 		//
-		parseErrors.push_back("Unbalanced bracket count: " + to_string(bracketCount) + " still open");
+		parseErrors.push_back(string(statement) + ": unbalanced bracket count: " + to_string(bracketCount) + " still open");
 		//
 		return false;
 	}
@@ -599,7 +599,7 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& method, cons
 				} else {
 					Console::println("MiniScript::createScriptStatementSyntaxTree(): " + getStatementInformation(statement) + ": unknown method '" + methodName + "'");
 					//
-					parseErrors.push_back("unknown method '" + methodName + "'");
+					parseErrors.push_back(getStatementInformation(statement) + ": unknown method '" + methodName + "'");
 					//
 					return false;
 				}
@@ -695,6 +695,8 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& method, cons
 			return true;
 		} else {
 			Console::println("MiniScript::createScriptStatementSyntaxTree(): " + getStatementInformation(statement) + ": unknown function/method '" + string(methodString) + "'");
+			//
+			parseErrors.push_back(getStatementInformation(statement) + ": unknown function/method '" + string(methodString) + "'");
 			//
 			return false;
 		}
@@ -1151,16 +1153,10 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 			string_view method;
 			vector<string_view> arguments;
 			if (parseScriptStatement(script.executableCondition, method, arguments) == false) {
-				Console::println("MiniScript::loadScript(): " + getStatementInformation(script.conditionStatement) + ": failed to parse condition statement");
-				//
-				parseErrors.push_back(getStatementInformation(script.conditionStatement) + ": failed to parse condition statement");
 				//
 				scriptValid = false;
 			} else
 			if (createScriptStatementSyntaxTree(method, arguments, script.conditionStatement, script.conditionSyntaxTree) == false) {
-				Console::println("MiniScript::loadScript(): " + getStatementInformation(script.conditionStatement) + ": failed to create syntax tree for condition statement");
-				//
-				parseErrors.push_back(getStatementInformation(script.conditionStatement) + ": failed to create syntax tree for condition statement");
 				//
 				scriptValid = false;
 			}
@@ -1169,22 +1165,36 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 		for (auto statementIdx = 0; statementIdx < script.statements.size(); statementIdx++) {
 			auto& statement = script.statements[statementIdx];
 			script.syntaxTree.emplace_back();
-			auto& sytaxTree = script.syntaxTree[script.syntaxTree.size() - 1];
+			auto& syntaxTree = script.syntaxTree[script.syntaxTree.size() - 1];
 			string_view method;
 			vector<string_view> arguments;
 			if (parseScriptStatement(statement.executableStatement, method, arguments) == false) {
-				Console::println("MiniScript::loadScript(): " + getStatementInformation(script.conditionStatement) + ": failed to parse statement");
-				//
-				parseErrors.push_back(getStatementInformation(script.conditionStatement) + ": failed to parse statement");
 				//
 				scriptValid = false;
 			} else
-			if (createScriptStatementSyntaxTree(method, arguments, statement, sytaxTree) == false) {
-				Console::println("MiniScript::loadScript(): " + getStatementInformation(script.conditionStatement) + ": failed to create syntax tree for statement");
-				//
-				parseErrors.push_back(getStatementInformation(script.conditionStatement) + ": failed to create syntax tree for statement");
+			if (createScriptStatementSyntaxTree(method, arguments, statement, syntaxTree) == false) {
 				//
 				scriptValid = false;
+			}
+		}
+		// validate method call context functions
+		if (script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION) {
+			//
+			vector<string> functionStack;
+			// push function name as context function
+			functionStack.push_back(script.condition);
+			//
+			// iterate statements and validate context function
+			auto statementIdx = 0;
+			for (auto& syntaxTreeNode: script.syntaxTree) {
+				auto& statement = script.statements[statementIdx++];
+				//
+				if (validateContextFunctions(syntaxTreeNode, functionStack, statement) == false) {
+					//
+					scriptValid = false;
+					//
+					break;
+				}
 			}
 		}
 	}
@@ -8053,4 +8063,71 @@ const MiniScript::ScriptVariable MiniScript::deserializeJson(const string& json)
 		Console::println("MiniScript::deserializeJson(): unknown JSON root data type: root data type must be array or object");
 		return ScriptVariable();
 	}
+}
+
+bool MiniScript::validateContextFunctions(const ScriptSyntaxTreeNode& syntaxTreeNode, vector<string>& functionStack, const ScriptStatement& statement) {
+	//
+	switch (syntaxTreeNode.type) {
+		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
+			{
+				break;
+			}
+		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
+			{
+				auto& contextFunctions = syntaxTreeNode.method->getContextFunctions();
+				if (contextFunctions.empty() == false) {
+					//
+					string contextFunctionsString;
+					for (auto &contextFunction: contextFunctions) {
+						if (contextFunctionsString.empty() == false) contextFunctionsString+= ", ";
+						contextFunctionsString+= contextFunction + "()";
+					}
+					//
+					const auto& functionStackFunction = functionStack[0];
+					if (find(contextFunctions.begin(), contextFunctions.end(), functionStackFunction) == contextFunctions.end()) {
+						//
+						string contextFunctionsString;
+						for (auto &contextFunction: contextFunctions) {
+							if (contextFunctionsString.empty() == false) contextFunctionsString+= ", ";
+							contextFunctionsString+= contextFunction + "()";
+						}
+						//
+						Console::println(
+							"MiniScript::validateContextFunctions(): '" +
+							getStatementInformation(statement) +
+							": method " +
+							syntaxTreeNode.method->getMethodName() + "() can only be called within the following functions: " +
+							contextFunctionsString +
+							", but was called from " +
+							functionStackFunction + "()"
+						);
+						//
+						parseErrors.push_back(
+							getStatementInformation(statement) +
+							": method " +
+							syntaxTreeNode.method->getMethodName() + "() can only be called within the following functions: " +
+							contextFunctionsString +
+							", but was called from " +
+							functionStackFunction + "()"
+						);
+						//
+						return false;
+					}
+				}
+			}
+			break;
+		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
+			{
+				functionStack.push_back(syntaxTreeNode.value.getValueString());
+				for (auto& argument: syntaxTreeNode.arguments) {
+					if (validateContextFunctions(argument, functionStack, statement) == false) return false;
+				}
+				functionStack.erase(functionStack.begin() + functionStack.size() - 1);
+				break;
+			}
+		default:
+			break;
+	}
+	//
+	return true;
 }
