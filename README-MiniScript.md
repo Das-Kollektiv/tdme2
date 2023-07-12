@@ -92,7 +92,7 @@ forCondition takes a single boolean value as argument. The loop will be executed
 ...
 ```
 
-# 3. Functions
+# 3. Functions/Callables
 
 See this example that shows user script functions and recursion.
 
@@ -147,6 +147,41 @@ end
 	console.log("globalVariableTest(): pre: $globalTest = " + $globalTest)
 	globalVariableTest()
 	console.log("globalVariableTest(): post: $globalTest = " + $globalTest)
+...
+```
+
+A special case of functions are callables. Callables are functions that are used to interact between MiniScript logics.
+Despite the fact that a callable function of a logic can be called from another logic, 
+they have the limitation that they must only contain MiniScript C++ method calls that dont require a context function.
+
+Context functions are functions that are called from TDME2 to e.g. update audio, engine or physics, 
+like e.g. initializeEngine(), updateEngine() or initializeLogic(), updateLogic(), ...
+
+```
+...
+# call this callable to select this unit 
+callable: select()
+	$GLOBAL.selectMode = "select"
+end
+...
+# call this callable to unselect this unit 
+callable: unselect()
+	$GLOBAL.selectMode = "unselect"
+end
+...
+# update engine (context) function
+function: updateEngne()
+	...
+	# selection
+	if ($GLOBAL.selectMode == "select")
+		engine.entity.setEnabled(logic.getId(), true, "selection")
+		$GLOBAL.selectMode = "none"
+	elseif ($GLOBAL.selectMode == "unselect")
+		engine.entity.setEnabled(logic.getId(), false, "selection")
+		$GLOBAL.selectMode = "none"
+	end
+	...
+end
 ...
 ```
 
@@ -987,7 +1022,7 @@ Reading all keys as array from set:
 
 # 7. MiniScript logic methods
 
-The boilerplate template code for a miniScript logic looks like: [logic_script_template.tscript](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/engine/templates/tscript/logic_script_template.tscript)
+The boilerplate template code for a MiniScript logic looks like: [logic_script_template.tscript](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/engine/templates/tscript/logic_script_template.tscript)
 
 ## 7.1 Application methods
 
@@ -1404,7 +1439,7 @@ The boilerplate template code for a miniScript logic looks like: [logic_script_t
 
 # 8. MiniScript GUI methods
 
-The boilerplate template code for a miniscript GUI logic looks like: [gui_script_template.tscript](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/engine/templates/tscript/gui_script_template.tscript)
+The boilerplate template code for a MiniScript GUI logic looks like: [gui_script_template.tscript](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/engine/templates/tscript/gui_script_template.tscript)
 
 ## 8.1 Element node condition methods
 
