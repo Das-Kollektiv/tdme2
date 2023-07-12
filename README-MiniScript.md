@@ -1216,7 +1216,7 @@ The boilerplate template code for a MiniScript logic looks like: [logic_script_t
 | <sub>input.keyboard.KEYCODE_PAGEDOWN(): Integer</sub>                                            |
 | Page up key keycode                                                                              |
 | <sub>input.keyboard.KEYCODE_PAGEUP(): Integer</sub>                                              |
-| Home/position 1 key keycode                                                                      |
+| Home/position key keycode                                                                      |
 | <sub>input.keyboard.KEYCODE_POS1(): Integer</sub>                                                |
 | Return key keycode                                                                               |
 | <sub>input.keyboard.KEYCODE_RETURN(): Integer</sub>                                              |
@@ -1590,7 +1590,7 @@ The boilerplate template code for a MiniScript GUI logic looks like: [gui_script
 | <sub>input.keyboard.KEYCODE_PAGEDOWN(): Integer</sub>                                            |
 | Page up key keycode                                                                              |
 | <sub>input.keyboard.KEYCODE_PAGEUP(): Integer</sub>                                              |
-| Home/position 1 key keycode                                                                      |
+| Home/position key keycode                                                                      |
 | <sub>input.keyboard.KEYCODE_POS1(): Integer</sub>                                                |
 | Return key keycode                                                                               |
 | <sub>input.keyboard.KEYCODE_RETURN(): Integer</sub>                                              |
