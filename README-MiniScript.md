@@ -170,7 +170,7 @@ callable: unselect()
 end
 ...
 # update engine (context) function
-function: updateEngne()
+function: updateEngine()
 	...
 	# selection
 	if ($GLOBAL.selectMode == "select")
