@@ -1873,6 +1873,7 @@ public:
 			const vector<ScriptStatement>& statements,
 			const vector<ScriptSyntaxTreeNode>& syntaxTree,
 			// applies only for functions
+			bool callable,
 			const vector<ScriptArgument>& arguments
 		):
 			scriptType(scriptType),
@@ -1885,6 +1886,7 @@ public:
 			emitCondition(emitCondition),
 			statements(statements),
 			syntaxTree(syntaxTree),
+			callable(callable),
 			arguments(arguments)
 		{}
 		ScriptType scriptType;
@@ -1897,6 +1899,7 @@ public:
 		bool emitCondition;
 		vector<ScriptStatement> statements;
 		vector<ScriptSyntaxTreeNode> syntaxTree;
+		bool callable;
 		vector<ScriptArgument> arguments;
 	};
 
@@ -2207,6 +2210,34 @@ private:
 	 * @return success
 	 */
 	bool createScriptStatementSyntaxTree(const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, ScriptSyntaxTreeNode& syntaxTree);
+
+	/**
+	 * Validate callabe
+	 * @param function function
+	 */
+	bool validateCallable(const string& function);
+
+	/**
+	 * Validate callable
+	 * @param syntaxTreeNode syntax tree node
+	 * @param statement statement
+	 */
+	bool validateCallable(const ScriptSyntaxTreeNode& syntaxTreeNode, const ScriptStatement& statement);
+
+	/**
+	 * Validate context functions
+	 * @param function function
+	 * @param functionStack function stack
+	 */
+	bool validateContextFunctions(const string& function, vector<string>& functionStack);
+
+	/**
+	 * Validate context functions
+	 * @param syntaxTreeNode syntax tree node
+	 * @param functionStack function stack
+	 * @param statement statement
+	 */
+	bool validateContextFunctions(const ScriptSyntaxTreeNode& syntaxTreeNode, vector<string>& functionStack, const ScriptStatement& statement);
 
 	/**
 	 * Returns if char is operator char
@@ -3341,13 +3372,5 @@ public:
 	 * @return JSON representation
 	 */
 	static const ScriptVariable deserializeJson(const string& json);
-
-	/**
-	 * Validate context functions
-	 * @param syntaxTreeNode syntax tree node
-	 * @param functionStack function stack
-	 * @param statement statement
-	 */
-	bool validateContextFunctions(const ScriptSyntaxTreeNode& syntaxTreeNode, vector<string>& functionStack, const ScriptStatement& statement);
 
 };
