@@ -7271,7 +7271,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 								{
 									int64_t value;
 									argument.value.getIntegerValue(value);
-									argumentValuesCode.push_back("argumentValues[" + to_string(subArgumentIdx) + "].setValue(" + to_string(value) + "ll);");
+									argumentValuesCode.push_back("argumentValues[" + to_string(subArgumentIdx) + "].setValue(static_cast<int64_t>(" + to_string(value) + "ll));");
 								}
 								break;
 							case TYPE_FLOAT:

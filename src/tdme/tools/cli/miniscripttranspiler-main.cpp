@@ -349,6 +349,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 			}
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "}," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "{},\n";
+			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "" + (script.callable == true?"true":"false") + ",\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "{\n";
 			auto argumentIdx = 0;
 			for (auto& argument: script.arguments) {
