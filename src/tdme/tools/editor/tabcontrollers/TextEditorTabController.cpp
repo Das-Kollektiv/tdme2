@@ -469,15 +469,17 @@ void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx
 	};
 	for (const auto& scriptLine: scriptAsStringArray) {
 		for (const auto& functionName: logicMiniScriptFunctions) {
-			if (StringTools::regexMatch(scriptLine, "^[\\s]*function:[\\s]*" + functionName + "[\\s]*\\(.*\\).*$") == true)
-			logicMiniScript = true;
-			break;
+			if (StringTools::regexMatch(scriptLine, "^[\\s]*function:[\\s]*" + functionName + "[\\s]*\\(.*\\).*$") == true) {
+				logicMiniScript = true;
+				break;
+			}
 		}
 		if (logicMiniScript == true) break;
 		for (const auto& functionName: guiMiniScriptFunctions) {
-			if (StringTools::regexMatch(scriptLine, "^[\\s]*function:[\\s]*" + functionName + "[\\s]*\\(.*\\).*$") == true)
-			guiMiniScript = true;
-			break;
+			if (StringTools::regexMatch(scriptLine, "^[\\s]*function:[\\s]*" + functionName + "[\\s]*\\(.*\\).*$") == true) {
+				guiMiniScript = true;
+				break;
+			}
 		}
 		if (guiMiniScript == true) break;
 	}

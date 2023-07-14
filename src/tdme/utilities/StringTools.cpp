@@ -104,11 +104,11 @@ bool StringTools::regexMatch(const string& src, const string& pattern) {
 
 bool StringTools::regexSearch(const string& src, const string& pattern) {
 	// TODO: return found groups
-	return regex_search(src, regex(pattern));
+	return regex_search(src, regex(pattern, std::regex::ECMAScript));
 }
 
 const string StringTools::regexReplace(const string& src, const string& pattern, const string& by) {
-	return regex_replace(src, regex(pattern), by);
+	return regex_replace(src, regex(pattern, std::regex::ECMAScript), by);
 }
 
 const vector<string> StringTools::tokenize(const string& str, const string& delimiters) {

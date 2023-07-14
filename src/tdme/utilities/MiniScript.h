@@ -1903,6 +1903,8 @@ public:
 		vector<ScriptArgument> arguments;
 	};
 
+	static constexpr int SCRIPTIDX_NONE { -1 };
+
 protected:
 	static constexpr int SETACCESSBOOL_NONE { -1 };
 	static constexpr int SETACCESSBOOL_TRUE { 0 };
@@ -1911,7 +1913,6 @@ protected:
 	static constexpr int ARRAYIDX_ADD { -2 };
 	static constexpr int STATE_NONE { -1 };
 	static constexpr int STATEMENTIDX_NONE { -1 };
-	static constexpr int SCRIPTIDX_NONE { -1 };
 	static constexpr int ARGUMENTIDX_NONE { -1 };
 	static constexpr int OPERATORIDX_NONE { -1 };
 	static constexpr int LINEIDX_NONE { -1 };

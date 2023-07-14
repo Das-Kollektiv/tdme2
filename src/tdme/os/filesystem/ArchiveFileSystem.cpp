@@ -317,7 +317,7 @@ void ArchiveFileSystem::getContentAsStringArray(const string& pathName, const st
 	StringTokenizer t;
 	t.tokenize(contentAsString, "\n");
 	while (t.hasMoreTokens() == true) {
-		content.push_back(t.nextToken());
+		content.push_back(StringTools::replace(t.nextToken(), "\r", ""));
 	}
 }
 

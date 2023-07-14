@@ -1520,7 +1520,7 @@ void SceneEditorTabView::runScene() {
 	if (valid == false) {
 		sceneEditorTabController->setRunButtonMode(false);
 		//
-		sceneEditorTabController->showInfoPopUp("Error", "Not are scripts are valid to be run:\n\n" + invalidScripts);
+		sceneEditorTabController->showInfoPopUp("Error", "Not all scripts are valid to be run:\n\n" + invalidScripts);
 		//
 		delete applicationClient;
 		// shutdown application client context
