@@ -705,6 +705,168 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& method, cons
 	return false;
 }
 
+bool MiniScript::validateCallable(const string& function) {
+	auto functionScriptIdx = getFunctionScriptIdx(function);
+	if (functionScriptIdx == SCRIPTIDX_NONE) {
+		Console::println("MiniScript::validateCallable(): function not found: " + function);
+		return false;
+	}
+	//
+	auto& script = scripts[functionScriptIdx];
+	auto statementIdx = 0;
+	//
+	for (auto& syntaxTreeNode: script.syntaxTree) {
+		auto& statement = script.statements[statementIdx++];
+		//
+		if (validateCallable(syntaxTreeNode, statement) == false) {
+			//
+			return false;
+		}
+	}
+	//
+	return true;
+}
+
+bool MiniScript::validateCallable(const ScriptSyntaxTreeNode& syntaxTreeNode, const ScriptStatement& statement) {
+	//
+	switch (syntaxTreeNode.type) {
+		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
+			{
+				break;
+			}
+		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
+			{
+				auto& contextFunctions = syntaxTreeNode.method->getContextFunctions();
+				if (contextFunctions.empty() == false) {
+					//
+					Console::println(
+						"MiniScript::validateCallable(): '" +
+						getStatementInformation(statement) +
+						": method " +
+						syntaxTreeNode.method->getMethodName() + "() can not be called within a callable function"
+					);
+					//
+					parseErrors.push_back(
+						getStatementInformation(statement) +
+						": method " +
+						syntaxTreeNode.method->getMethodName() + "() can not be called within a callable function"
+					);
+					//
+					return false;
+				}
+			}
+			break;
+		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
+			{
+				for (auto& argument: syntaxTreeNode.arguments) {
+					if (validateCallable(argument, statement) == false) return false;
+				}
+				//
+				validateCallable(syntaxTreeNode.value.getValueString());
+				//
+				break;
+			}
+		default:
+			break;
+	}
+	//
+	return true;
+}
+
+bool MiniScript::validateContextFunctions(const string& function, vector<string>& functionStack) {
+	auto functionScriptIdx = getFunctionScriptIdx(function);
+	if (functionScriptIdx == SCRIPTIDX_NONE) {
+		Console::println("MiniScript::validateContextFunctions(): function not found: " + function);
+		return false;
+	}
+	//
+	auto& script = scripts[functionScriptIdx];
+	auto statementIdx = 0;
+	//
+	functionStack.push_back(script.condition);
+	//
+	for (auto& syntaxTreeNode: script.syntaxTree) {
+		auto& statement = script.statements[statementIdx++];
+		//
+		if (validateContextFunctions(syntaxTreeNode, functionStack, statement) == false) {
+			//
+			return false;
+		}
+	}
+	//
+	functionStack.erase(functionStack.begin() + functionStack.size() - 1);
+	//
+	return true;
+}
+
+bool MiniScript::validateContextFunctions(const ScriptSyntaxTreeNode& syntaxTreeNode, vector<string>& functionStack, const ScriptStatement& statement) {
+	//
+	switch (syntaxTreeNode.type) {
+		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
+			{
+				break;
+			}
+		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
+			{
+				auto& contextFunctions = syntaxTreeNode.method->getContextFunctions();
+				if (contextFunctions.empty() == false) {
+					//
+					string contextFunctionsString;
+					for (auto &contextFunction: contextFunctions) {
+						if (contextFunctionsString.empty() == false) contextFunctionsString+= ", ";
+						contextFunctionsString+= contextFunction + "()";
+					}
+					//
+					const auto& functionStackFunction = functionStack[0];
+					if (find(contextFunctions.begin(), contextFunctions.end(), functionStackFunction) == contextFunctions.end()) {
+						//
+						string contextFunctionsString;
+						for (auto &contextFunction: contextFunctions) {
+							if (contextFunctionsString.empty() == false) contextFunctionsString+= ", ";
+							contextFunctionsString+= contextFunction + "()";
+						}
+						//
+						Console::println(
+							"MiniScript::validateContextFunctions(): '" +
+							getStatementInformation(statement) +
+							": method " +
+							syntaxTreeNode.method->getMethodName() + "() can only be called within the following functions: " +
+							contextFunctionsString +
+							", but was called from " +
+							functionStackFunction + "()"
+						);
+						//
+						parseErrors.push_back(
+							getStatementInformation(statement) +
+							": method " +
+							syntaxTreeNode.method->getMethodName() + "() can only be called within the following functions: " +
+							contextFunctionsString +
+							", but was called from " +
+							functionStackFunction + "()"
+						);
+						//
+						return false;
+					}
+				}
+			}
+			break;
+		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
+			{
+				for (auto& argument: syntaxTreeNode.arguments) {
+					if (validateContextFunctions(argument, functionStack, statement) == false) return false;
+				}
+				//
+				validateContextFunctions(syntaxTreeNode.value.getValueString(), functionStack	);
+				//
+				break;
+			}
+		default:
+			break;
+	}
+	//
+	return true;
+}
+
 void MiniScript::emit(const string& condition) {
 	if (VERBOSE == true) Console::println("MiniScript::emit(): '" + scriptFileName + "': " + condition);
 	auto scriptIdxToStart = 0;
@@ -889,10 +1051,15 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 			continue;
 		}
 		// script type
+		auto callable = false;
 		auto scriptType = Script::SCRIPTTYPE_NONE;
 		if (StringTools::startsWith(scriptLine, "function:") == true) scriptType = Script::SCRIPTTYPE_FUNCTION; else
 		if (StringTools::startsWith(scriptLine, "on:") == true) scriptType = Script::SCRIPTTYPE_ON; else
-		if (StringTools::startsWith(scriptLine, "on-enabled:") == true) scriptType = Script::SCRIPTTYPE_ONENABLED;
+		if (StringTools::startsWith(scriptLine, "on-enabled:") == true) scriptType = Script::SCRIPTTYPE_ONENABLED; else
+		if (StringTools::startsWith(scriptLine, "callable:") == true) {
+			callable = true;
+			scriptType = Script::SCRIPTTYPE_FUNCTION;
+		}
 		// no script yet
 		if (haveScript == false) {
 			// no, but did we got a new script?
@@ -903,8 +1070,11 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 				vector<Script::ScriptArgument> arguments;
 				// determine statement
 				string statement;
-				if (scriptType == Script::SCRIPTTYPE_FUNCTION)
-					statement = StringTools::trim(StringTools::substring(scriptLine, string("function:").size())); else
+				if (scriptType == Script::SCRIPTTYPE_FUNCTION) {
+					statement = callable == true?
+						StringTools::trim(StringTools::substring(scriptLine, string("callable:").size())):
+						StringTools::trim(StringTools::substring(scriptLine, string("function:").size()));
+				} else
 				if (scriptType == Script::SCRIPTTYPE_ON)
 					statement = StringTools::trim(StringTools::substring(scriptLine, string("on:").size())); else
 				if (scriptType == Script::SCRIPTTYPE_ONENABLED)
@@ -982,6 +1152,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 					emitCondition,
 					initializer_list<ScriptStatement>{},
 					initializer_list<ScriptSyntaxTreeNode>{},
+					callable,
 					arguments
 				);
 			} else {
@@ -1177,19 +1348,26 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 				scriptValid = false;
 			}
 		}
-		// validate method call context functions
+	}
+
+	// validate method call context functions
+	for (auto& script: scripts) {
+		//
 		if (script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION) {
 			//
-			vector<string> functionStack;
-			// push function name as context function
-			functionStack.push_back(script.condition);
-			//
-			// iterate statements and validate context function
-			auto statementIdx = 0;
-			for (auto& syntaxTreeNode: script.syntaxTree) {
-				auto& statement = script.statements[statementIdx++];
+			if (script.callable == true) {
 				//
-				if (validateContextFunctions(syntaxTreeNode, functionStack, statement) == false) {
+				if (validateCallable(script.condition) == false) {
+					//
+					scriptValid = false;
+					//
+					break;
+				}
+			} else {
+				//
+				vector<string> functionStack;
+				//
+				if (validateContextFunctions(script.condition, functionStack) == false) {
 					//
 					scriptValid = false;
 					//
@@ -7093,7 +7271,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 								{
 									int64_t value;
 									argument.value.getIntegerValue(value);
-									argumentValuesCode.push_back("argumentValues[" + to_string(subArgumentIdx) + "].setValue(" + to_string(value) + "ll);");
+									argumentValuesCode.push_back("argumentValues[" + to_string(subArgumentIdx) + "].setValue(static_cast<int64_t>(" + to_string(value) + "ll));");
 								}
 								break;
 							case TYPE_FLOAT:
@@ -8065,69 +8243,3 @@ const MiniScript::ScriptVariable MiniScript::deserializeJson(const string& json)
 	}
 }
 
-bool MiniScript::validateContextFunctions(const ScriptSyntaxTreeNode& syntaxTreeNode, vector<string>& functionStack, const ScriptStatement& statement) {
-	//
-	switch (syntaxTreeNode.type) {
-		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
-			{
-				break;
-			}
-		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
-			{
-				auto& contextFunctions = syntaxTreeNode.method->getContextFunctions();
-				if (contextFunctions.empty() == false) {
-					//
-					string contextFunctionsString;
-					for (auto &contextFunction: contextFunctions) {
-						if (contextFunctionsString.empty() == false) contextFunctionsString+= ", ";
-						contextFunctionsString+= contextFunction + "()";
-					}
-					//
-					const auto& functionStackFunction = functionStack[0];
-					if (find(contextFunctions.begin(), contextFunctions.end(), functionStackFunction) == contextFunctions.end()) {
-						//
-						string contextFunctionsString;
-						for (auto &contextFunction: contextFunctions) {
-							if (contextFunctionsString.empty() == false) contextFunctionsString+= ", ";
-							contextFunctionsString+= contextFunction + "()";
-						}
-						//
-						Console::println(
-							"MiniScript::validateContextFunctions(): '" +
-							getStatementInformation(statement) +
-							": method " +
-							syntaxTreeNode.method->getMethodName() + "() can only be called within the following functions: " +
-							contextFunctionsString +
-							", but was called from " +
-							functionStackFunction + "()"
-						);
-						//
-						parseErrors.push_back(
-							getStatementInformation(statement) +
-							": method " +
-							syntaxTreeNode.method->getMethodName() + "() can only be called within the following functions: " +
-							contextFunctionsString +
-							", but was called from " +
-							functionStackFunction + "()"
-						);
-						//
-						return false;
-					}
-				}
-			}
-			break;
-		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
-			{
-				functionStack.push_back(syntaxTreeNode.value.getValueString());
-				for (auto& argument: syntaxTreeNode.arguments) {
-					if (validateContextFunctions(argument, functionStack, statement) == false) return false;
-				}
-				functionStack.erase(functionStack.begin() + functionStack.size() - 1);
-				break;
-			}
-		default:
-			break;
-	}
-	//
-	return true;
-}

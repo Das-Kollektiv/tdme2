@@ -294,6 +294,62 @@ void LogicMiniScript::registerMethods() {
 	}
 	{
 		//
+		class ScriptMethodAudioGetListenerOrientationUp: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodAudioGetListenerOrientationUp(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{},
+					ScriptVariableType::TYPE_VECTOR3
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "audio.getListenerOrientationUp";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue.setValue(miniScript->logic->getContext()->getAudio()->getListenerOrientationUp());
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTIONS_ENGINE;
+			}
+		};
+		registerMethod(new ScriptMethodAudioGetListenerOrientationUp(this));
+	}
+	{
+		//
+		class ScriptMethodAudioSetListenerOrientationUp: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodAudioSetListenerOrientationUp(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "orientation", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_NULL
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "audio.setListenerOrientationUp";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Vector3 orientation;
+				if (miniScript->getVector3Value(argumentValues, 0, orientation) == true) {
+					miniScript->logic->getContext()->getAudio()->setListenerOrientationUp(orientation);
+				} else {
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				}
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTIONS_ENGINE;
+			}
+		};
+		registerMethod(new ScriptMethodAudioSetListenerOrientationUp(this));
+	}
+	{
+		//
 		class ScriptMethodAudioGetListenerOrientationAt: public ScriptMethod {
 		private:
 			LogicMiniScript* miniScript { nullptr };
@@ -325,7 +381,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodAudioSetListenerOrientationAt(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "position", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "orientation", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -492,7 +548,7 @@ void LogicMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "function", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "callable", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -502,9 +558,9 @@ void LogicMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string logicId;
-				string function;
+				string callable;
 				if (MiniScript::getStringValue(argumentValues, 0, logicId) == false ||
-					MiniScript::getStringValue(argumentValues, 1, function) == false) {
+					MiniScript::getStringValue(argumentValues, 1, callable) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -513,17 +569,14 @@ void LogicMiniScript::registerMethods() {
 						returnValue.setValue(false);
 					} else {
 						auto logicMiniScript = logic->getMiniScript();
-						auto scriptIdx = logicMiniScript->getFunctionScriptIdx(function);
-						if (scriptIdx == SCRIPTIDX_NONE) {
+						auto scriptIdx = logicMiniScript->getFunctionScriptIdx(callable);
+						if (scriptIdx == SCRIPTIDX_NONE || logicMiniScript->getScripts()[scriptIdx].callable == false) {
 							returnValue.setValue(false);
 						} else {
 							returnValue.setValue(true);
 						}
 					}
 				}
-			}
-			const vector<string>& getContextFunctions() {
-				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
 		registerMethod(new ScriptMethodLogicHas(this));
@@ -538,7 +591,7 @@ void LogicMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "function", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "callable", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
@@ -548,9 +601,9 @@ void LogicMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string logicId;
-				string function;
+				string callable;
 				if (MiniScript::getStringValue(argumentValues, 0, logicId) == false ||
-					MiniScript::getStringValue(argumentValues, 1, function) == false) {
+					MiniScript::getStringValue(argumentValues, 1, callable) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -560,9 +613,9 @@ void LogicMiniScript::registerMethods() {
 						miniScript->startErrorScript();
 					} else {
 						auto logicMiniScript = logic->getMiniScript();
-						auto scriptIdx = logicMiniScript->getFunctionScriptIdx(function);
-						if (scriptIdx == SCRIPTIDX_NONE) {
-							Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": function not found: " + function);
+						auto scriptIdx = logicMiniScript->getFunctionScriptIdx(callable);
+						if (scriptIdx == SCRIPTIDX_NONE || logicMiniScript->getScripts()[scriptIdx].callable == false) {
+							Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": callable not found: " + callable);
 							miniScript->startErrorScript();
 						} else {
 							#if defined (__APPLE__)
@@ -583,9 +636,6 @@ void LogicMiniScript::registerMethods() {
 			}
 			bool isVariadic() const override {
 				return true;
-			}
-			const vector<string>& getContextFunctions() {
-				return CONTEXTFUNCTIONS_LOGIC;
 			}
 		};
 		registerMethod(new ScriptMethodLogicCall(this));

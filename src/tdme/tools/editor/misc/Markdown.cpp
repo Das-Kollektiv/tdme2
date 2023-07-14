@@ -37,17 +37,16 @@ const string Markdown::createGUIXML(const string& pathName, const string& fileNa
 	auto tocLevel3 = 0;
 	auto tocLevel4 = 0;
 	for (auto markdownLine: markdownLines) {
-		// TODO: we should not have here \r \n
 		markdownLine = StringTools::replace(markdownLine, "&nbsp;", " ");
-		//
-		markdownLine = StringTools::replace(markdownLine, "\r", "");
-		markdownLine = StringTools::replace(markdownLine, "\n", "");
 		//
 		markdownLine = StringTools::replace(markdownLine, "\\<", "<");
 		markdownLine = StringTools::replace(markdownLine, "\\>", ">");
 		// TODO: support <sub> and </sub>
 		markdownLine = StringTools::replace(markdownLine, "<sub>", "");
 		markdownLine = StringTools::replace(markdownLine, "</sub>", "");
+		// TODO: support <i> and </i>
+		markdownLine = StringTools::replace(markdownLine, "<i>", "");
+		markdownLine = StringTools::replace(markdownLine, "</i>", "");
 		//
 		auto markdownLineTrimmed = StringTools::trim(markdownLine);
 		//

@@ -2257,7 +2257,7 @@ void GUIMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "function", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "callable", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -2269,9 +2269,9 @@ void GUIMiniScript::registerMethods() {
 				auto context = miniScript->screenNode->getContext();
 				if (context != nullptr) {
 					string logicId;
-					string function;
+					string callable;
 					if (MiniScript::getStringValue(argumentValues, 0, logicId) == false ||
-						MiniScript::getStringValue(argumentValues, 1, function) == false) {
+						MiniScript::getStringValue(argumentValues, 1, callable) == false) {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 						miniScript->startErrorScript();
 					} else {
@@ -2281,8 +2281,8 @@ void GUIMiniScript::registerMethods() {
 							returnValue.setValue(false);
 						} else {
 							auto logicMiniScript = logic->getMiniScript();
-							auto scriptIdx = logicMiniScript->getFunctionScriptIdx(function);
-							if (scriptIdx == SCRIPTIDX_NONE) {
+							auto scriptIdx = logicMiniScript->getFunctionScriptIdx(callable);
+							if (scriptIdx == SCRIPTIDX_NONE || logicMiniScript->getScripts()[scriptIdx].callable == false) {
 								returnValue.setValue(false);
 							} else {
 								returnValue.setValue(true);
@@ -2311,7 +2311,7 @@ void GUIMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "function", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "callable", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
@@ -2323,9 +2323,9 @@ void GUIMiniScript::registerMethods() {
 				auto context = miniScript->screenNode->getContext();
 				if (context != nullptr) {
 					string logicId;
-					string function;
+					string callable;
 					if (MiniScript::getStringValue(argumentValues, 0, logicId) == false ||
-						MiniScript::getStringValue(argumentValues, 1, function) == false) {
+						MiniScript::getStringValue(argumentValues, 1, callable) == false) {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 						miniScript->startErrorScript();
 					} else {
@@ -2336,9 +2336,9 @@ void GUIMiniScript::registerMethods() {
 							miniScript->startErrorScript();
 						} else {
 							auto logicMiniScript = logic->getMiniScript();
-							auto scriptIdx = logicMiniScript->getFunctionScriptIdx(function);
-							if (scriptIdx == SCRIPTIDX_NONE) {
-								Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": function not found: " + function);
+							auto scriptIdx = logicMiniScript->getFunctionScriptIdx(callable);
+							if (scriptIdx == SCRIPTIDX_NONE || logicMiniScript->getScripts()[scriptIdx].callable == false) {
+								Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": callable not found: " + callable);
 								miniScript->startErrorScript();
 							} else {
 								#if defined (__APPLE__)

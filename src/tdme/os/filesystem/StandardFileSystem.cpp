@@ -203,7 +203,7 @@ void StandardFileSystem::getContentAsStringArray(const string& pathName, const s
 
 	string line;
 	while (getline(ifs, line)) {
-		content.push_back(line);
+		content.push_back(StringTools::replace(line, "\r", ""));
 	}
 
 	ifs.close();
