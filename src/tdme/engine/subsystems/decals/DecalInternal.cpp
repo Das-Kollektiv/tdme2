@@ -22,7 +22,7 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::subsystems::decals::DecalInternal;
 using tdme::engine::Transform;
 
-DecalInternal::DecalInternal(const string& id, OrientedBoundingBox* obb, Texture* texture)
+DecalInternal::DecalInternal(const string& id, OrientedBoundingBox* obb, Texture* texture, int32_t textureHorizontalSprites, int32_t textureVerticalSprites, float fps)
 {
 	this->id = id;
 	this->enabled = true;
@@ -44,6 +44,9 @@ DecalInternal::DecalInternal(const string& id, OrientedBoundingBox* obb, Texture
 	updateInternal();
 	if (texture != nullptr) texture->acquireReference();
 	this->texture = texture != nullptr?texture:TextureReader::read("resources/engine/textures", "point.png");
+	this->textureHorizontalSprites = textureHorizontalSprites;
+	this->textureVerticalSprites = textureVerticalSprites;
+	this->fps = fps;
 }
 
 DecalInternal::~DecalInternal() {

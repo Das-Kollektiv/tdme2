@@ -245,6 +245,9 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 				Console::println(string(exception.what()));
 			}
 		}
+		if (jPrototypeRoot.FindMember("dths") != jPrototypeRoot.MemberEnd()) prototype->getDecal()->setTextureHorizontalSprites(jPrototypeRoot["dths"].GetInt());
+		if (jPrototypeRoot.FindMember("dtvs") != jPrototypeRoot.MemberEnd()) prototype->getDecal()->setTextureVerticalSprites(jPrototypeRoot["dtvs"].GetInt());
+		if (jPrototypeRoot.FindMember("dfps") != jPrototypeRoot.MemberEnd()) prototype->getDecal()->setTextureSpritesFPS(jPrototypeRoot["dfps"].GetFloat());
 	}
 	//
 	for (auto i = 0; i < properties.getPropertyCount(); i++) {

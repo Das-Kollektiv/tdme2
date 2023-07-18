@@ -29,6 +29,8 @@ struct AtlasTexture {
 struct Decal {
 	mat4 worldToDecalSpace;
 	AtlasTexture texture;
+	vec2 spriteSheetDimension;
+	int spriteIndex;
 };
 
 {$DEFINITIONS}
@@ -85,6 +87,14 @@ vec4 getDecalColor(vec2 textureCoordinate, float depth) {
 
 		vec2 decalTextureCoordinate = decalSpacePosition.xy + 0.5;
 
+		// take sprite sheet into account
+		decalTextureCoordinate =
+			decalTextureCoordinate / decals[i].spriteSheetDimension +
+			vec2(
+				(1.0 / decals[i].spriteSheetDimension.x) * (decals[i].spriteIndex % int(decals[i].spriteSheetDimension.x)), 
+				1.0 - ((1.0 / decals[i].spriteSheetDimension.y) * (decals[i].spriteIndex / int(decals[i].spriteSheetDimension.y)))
+			);
+		
 		// compute texture coordinate within atlas and rotate if required
 		if (decals[i].texture.orientation == 2) {
 			float x = decalTextureCoordinate.x;

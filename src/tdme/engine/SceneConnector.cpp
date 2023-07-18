@@ -341,7 +341,10 @@ Entity* SceneConnector::createEditorDecalEntity(Prototype* prototype, const stri
 			new Decal(
 				"decal",
 				dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume()),
-				prototype->getDecal()->getTexture()
+				prototype->getDecal()->getTexture(),
+				prototype->getDecal()->getTextureHorizontalSprites(),
+				prototype->getDecal()->getTextureVerticalSprites(),
+				prototype->getDecal()->getTextureSpritesFPS()
 			)
 		);
 	}
@@ -464,7 +467,10 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			new Decal(
 				id,
 				dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume()),
-				prototype->getDecal()->getTexture()
+				prototype->getDecal()->getTexture(),
+				prototype->getDecal()->getTextureHorizontalSprites(),
+				prototype->getDecal()->getTextureVerticalSprites(),
+				prototype->getDecal()->getTextureSpritesFPS()
 			);
 	} else
 	// trigger/environment mapping
@@ -824,8 +830,11 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 }
 
 Body* SceneConnector::createBody(World* world, Prototype* prototype, const string& id, const Transform& transform, uint16_t collisionTypeId, bool hierarchy, int index, PrototypePhysics_BodyType* overrideType) {
+	//
 	if (prototype->getType() == Prototype_Type::EMPTY) return nullptr;
-
+	// no physics, no fun with bodies
+	if (prototype->getPhysics() == nullptr) return nullptr;
+	//
 	auto physicsType = overrideType != nullptr?overrideType:prototype->getPhysics()->getType();
 	// trigger
 	if (prototype->getType() == Prototype_Type::TRIGGER) {

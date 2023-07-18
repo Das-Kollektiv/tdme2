@@ -16,8 +16,8 @@ using tdme::engine::Engine;
 using tdme::engine::Partition;
 using tdme::engine::Transform;
 
-Decal::Decal(const string& id, OrientedBoundingBox* obb, Texture* texture):
-	DecalInternal(id, obb, texture)
+Decal::Decal(const string& id, OrientedBoundingBox* obb, Texture* texture, int32_t textureHorizontalSprites, int32_t textureVerticalSprites, float fps):
+	DecalInternal(id, obb, texture, textureHorizontalSprites, textureVerticalSprites, fps)
 {
 }
 
