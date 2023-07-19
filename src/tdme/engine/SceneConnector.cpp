@@ -350,6 +350,7 @@ Entity* SceneConnector::createEditorDecalEntity(Prototype* prototype, const stri
 	}
 
 	//
+	entityHierarchy->setTransform(transform);
 	entityHierarchy->update();
 	if (entityHierarchy->getEntities().size() == 0) {
 		entityHierarchy->dispose();
