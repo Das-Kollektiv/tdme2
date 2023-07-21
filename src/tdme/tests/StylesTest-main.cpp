@@ -21,7 +21,6 @@ struct TextStyle {
 vector<TextStyle> styles;
 
 void unsetStyle(int startIdx, int endIdx) {
-	Console::println("unsetStyle(): " + to_string(startIdx) + ", " + to_string(endIdx));
 	// find first style that is before new style or has collision
 	auto i = 0;
 	while (true == true) {
@@ -34,7 +33,6 @@ void unsetStyle(int startIdx, int endIdx) {
 		}
 		i++;
 	}
-	Console::println("unsetStyle(): initial i = " + to_string(i) + " / " + to_string(styles.size()));
 	//
 	for (; i < styles.size(); i++) {
 		auto &currentStyle = styles[i];
@@ -46,7 +44,6 @@ void unsetStyle(int startIdx, int endIdx) {
 		} else
 		// check if the current range overlaps with the range to be removed
 		if (currentStyle.startIdx < endIdx && currentStyle.endIdx > startIdx) {
-			Console::println("Collision: " + to_string(currentStyle.startIdx) + " ... " + to_string(currentStyle.endIdx) + " / " + to_string(startIdx) + " ... " + to_string(endIdx));
 			auto currentStyleStartIdx = currentStyle.startIdx;
 			auto currentStyleEndIdx = currentStyle.endIdx;
 			auto styleA = currentStyle;
@@ -62,6 +59,10 @@ void unsetStyle(int startIdx, int endIdx) {
 				styleB.startIdx = endIdx;
 				styles.insert(styles.begin() + i, styleB);
 			}
+		} else
+		// done?
+		if (currentStyle.startIdx > endIdx) {
+			break;
 		}
 	}
 }
@@ -332,6 +333,32 @@ int main(int argc, char **argv) {
 		// insert 8 before 9 (gap2)
 		insertStyle(25, 30, "8");
 		validateStyles("00000     AAAAABBBBBAAAAA8888899999               ");
+		//
+		showStyles();
+		//
+		auto filledStyles = styles;
+		// unset part one style at beginning
+		unsetStyle(2, 5);
+		validateStyles("00        AAAAABBBBBAAAAA8888899999               ");
+		// unset one style at beginning
+		unsetStyle(0, 2);
+		validateStyles("          AAAAABBBBBAAAAA8888899999               ");
+		// unset part of one style at end
+		unsetStyle(28, 30);
+		validateStyles("          AAAAABBBBBAAAAA888  99999               ");
+		// unset part of one style at beginning in the middle
+		unsetStyle(25, 29);
+		validateStyles("          AAAAABBBBBAAAAA     99999               ");
+		// unset multiple parts
+		unsetStyle(10, 25);
+		validateStyles("                              99999               ");
+		// unset multiple parts
+		unsetStyle(0, 50);
+		validateStyles("                                                  ");
+		//
+		showStyles();
+		//
+		styles = filledStyles;
 	}
 	Console::println("StylesTest: done");
 }
