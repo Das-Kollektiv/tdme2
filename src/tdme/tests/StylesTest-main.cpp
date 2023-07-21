@@ -110,7 +110,7 @@ void removeStyles(int startIdx, int endIdx) {
 			}
 		} else
 		if (endIdx <= currentStyle.startIdx) {
-			i--;
+			//i--;
 			break;
 		}
 	}
