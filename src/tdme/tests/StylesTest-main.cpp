@@ -68,6 +68,7 @@ void unsetStyle(int startIdx, int endIdx) {
 }
 
 void removeStyles(int startIdx, int endIdx) {
+	Console::println("remove style: " + to_string(startIdx) + " ... " + to_string(endIdx));
 	//
 	auto charsToRemove = endIdx - startIdx;
 	// find first style that is before new style or has collision
@@ -87,11 +88,13 @@ void removeStyles(int startIdx, int endIdx) {
 		auto &currentStyle = styles[i];
 		// check if remove range is in current style range
 		if (currentStyle.startIdx >= startIdx && currentStyle.endIdx <= endIdx) {
+			Console::println("delete style: " + to_string(i));
 			styles.erase(styles.begin() + i);
 			i--;
 		} else
 		// check if the current range overlaps with the range to be removed
 		if (currentStyle.startIdx < endIdx && currentStyle.endIdx > startIdx) {
+			Console::println("part style: " + to_string(i) + " / " + to_string(currentStyle.startIdx) + " ... " + to_string(currentStyle.endIdx));
 			auto currentStyleStartIdx = currentStyle.startIdx;
 			auto currentStyleEndIdx = currentStyle.endIdx;
 			auto styleA = currentStyle;
@@ -101,16 +104,19 @@ void removeStyles(int startIdx, int endIdx) {
 			// split the overlapping range into two non-overlapping ranges
 			styleA.endIdx = startIdx;
 			if (styleA.endIdx > styleA.startIdx) {
+				Console::println("\tpart style a: " + to_string(styleA.startIdx) + " ... " + to_string(styleA.endIdx));
 				styles.insert(styles.begin() + i++, styleA);
 			}
 			styleB.startIdx = endIdx - 1;
 			styleB.endIdx -= charsToRemove;
 			if (styleB.endIdx > styleB.startIdx) {
+				Console::println("\tpart style b: " + to_string(styleB.startIdx) + " ... " + to_string(styleB.endIdx));
 				styles.insert(styles.begin() + i++, styleB);
 			}
 		} else
-		if (endIdx <= currentStyle.startIdx) {
-			//i--;
+		if (currentStyle.startIdx >= endIdx) {
+			Console::println("end of: " + to_string(i));
+			i--;
 			break;
 		}
 	}
@@ -118,6 +124,7 @@ void removeStyles(int startIdx, int endIdx) {
 	if (i == -1) i = 0;
 	for (; i < styles.size(); i++) {
 		auto &currentStyle = styles[i];
+		Console::println("adjusting style: " + to_string(i) + " / " + to_string(charsToRemove) + ", " + to_string(currentStyle.startIdx) + " ... " + to_string(currentStyle.endIdx) + "(" + currentStyle.id + ")");
 		currentStyle.startIdx -= charsToRemove;
 		currentStyle.endIdx -= charsToRemove;
 	}
@@ -366,8 +373,10 @@ int main(int argc, char **argv) {
 		removeStyles(25, 27);
 		validateStyles("     AAAAABBBBBAAAAA88888                         ");
 		// remove multiple styles
+		showStyles();
 		removeStyles(6, 15);
 		validateStyles("     ABAAAAA88888                         ");
+		showStyles();
 	}
 	Console::println("StylesTest: done");
 }
