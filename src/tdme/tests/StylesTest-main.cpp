@@ -152,7 +152,6 @@ void removeStyles(int startIdx, int endIdx) {
 */
 
 void insertStyle(int startIdx, int endIdx, const string &id) {
-	Console::println("insertStyle(): " + to_string(startIdx) + ", " + to_string(endIdx) + " / " + id);
 	//
 	TextStyle newStyle;
 	newStyle.startIdx = startIdx;
@@ -160,8 +159,7 @@ void insertStyle(int startIdx, int endIdx, const string &id) {
 	newStyle.id = id;
 	//
 	auto charsToAdvance = endIdx - startIdx;
-	//
-	// can we put this style to the beginning
+	// can we put this style to the beginning?
 	if (styles.empty() == true || endIdx < styles[0].startIdx) {
 		// yup
 		styles.insert(styles.begin(), newStyle);
@@ -171,14 +169,14 @@ void insertStyle(int startIdx, int endIdx, const string &id) {
 			currentStyle.startIdx += charsToAdvance;
 			currentStyle.endIdx += charsToAdvance;
 		}
-		//
+		// done
 		return;
-	}
-	// can we put this style to the end
+	} else
+	// can we put this style to the end?
 	if (startIdx >= styles[styles.size() - 1].endIdx) {
 		// yup
 		styles.insert(styles.end(), newStyle);
-		//
+		// done
 		return;
 	}
 	// find first style that is before new style or has collision
@@ -193,69 +191,46 @@ void insertStyle(int startIdx, int endIdx, const string &id) {
 		}
 		i++;
 	}
+	//
+	auto &currentStyle = styles[i];
 	// are we advanced over new style end index
 	//	means we have a gap after a style to put our new style in
 	if (endIdx <= styles[i].startIdx) {
 		//
 		styles.insert(styles.begin() + i++, newStyle);
-		// advance next styles
-		for (; i < styles.size(); i++) {
-			auto &currentStyle = styles[i];
-			currentStyle.startIdx += charsToAdvance;
-			currentStyle.endIdx += charsToAdvance;
+		//
+	} else
+	// check if the new style overlaps with the current style
+	if (currentStyle.startIdx < endIdx && currentStyle.endIdx > startIdx) {
+		auto currentStyleStartIdx = currentStyle.startIdx;
+		auto currentStyleEndIdx = currentStyle.endIdx;
+		auto styleA = currentStyle;
+		auto styleB = currentStyle;
+		// remove the overlapping range
+		styles.erase(styles.begin() + i);
+		// split the overlapping range into two non-overlapping ranges
+		//	range from current style start index to new style start index
+		styleA.endIdx = newStyle.startIdx;
+		//	do we have a feasible range?
+		if (styleA.endIdx > styleA.startIdx) {
+			// yes
+			styles.insert(styles.begin() + i++, styleA);
 		}
-		return;
-	}
-	//
-	// adjust styles
-	for (; i < styles.size(); i++) {
-		auto &currentStyle = styles[i];
-		// check if the current range overlaps with the range to be removed
-		if (currentStyle.startIdx < endIdx && currentStyle.endIdx > startIdx) {
-			//
-			auto currentStyleLength = currentStyle.endIdx - currentStyle.startIdx;
-			auto currentStyleStartIdx = currentStyle.startIdx;
-			auto currentStyleEndIdx = currentStyle.endIdx;
-			auto styleA = currentStyle;
-			auto styleB = currentStyle;
-			// remove the overlapping range
-			styles.erase(styles.begin() + i);
-			// split the overlapping range into two non-overlapping ranges
-			//	range from current style start index to new style start index
-			styleA.endIdx = newStyle.startIdx;
-			//	do we have a feasible range?
-			if (styleA.endIdx > styleA.startIdx) {
-				// yes
-				styles.insert(styles.begin() + i++, styleA);
-				//
-				currentStyleLength-= styleA.endIdx - styleA.startIdx;
-			}
-			// insert new style
-			//
-			styles.insert(styles.begin() + i++, newStyle);
-			//	range from new style end index to current style end index
-			styleB.startIdx = endIdx + (currentStyleStartIdx - startIdx);
-			styleB.endIdx = styleB.startIdx + currentStyleLength;
-			if (styleB.endIdx > styleB.startIdx) {
-				styles.insert(styles.begin() + i++, styleB);
-				//
-				charsToAdvance = styleB.endIdx - currentStyleEndIdx;
-			}
-			//
-			break;
-		} else {
-			//
-			if (newStyle.startIdx >= currentStyle.endIdx) {
-				//
-				styles.insert(styles.begin() + i + 1, newStyle);
-				i++;
-				i++;
-				//
-				break;
-			}
+		// insert new style
+		styles.insert(styles.begin() + i++, newStyle);
+		//	range from new style end index to current style end index
+		styleB.startIdx = newStyle.endIdx;
+		styleB.endIdx = styleB.endIdx + (newStyle.endIdx - newStyle.startIdx);
+		if (styleB.endIdx > styleB.startIdx) {
+			styles.insert(styles.begin() + i++, styleB);
 		}
+	} else
+	// gap after current style
+	if (startIdx >= currentStyle.endIdx) {
+		styles.insert(styles.begin() + i + 1, newStyle);
+		i++;
+		i++;
 	}
-	Console::println("insertStyle(): advance i = " + to_string(i) + " / " + to_string(styles.size()) + " / advance: " + to_string(charsToAdvance));
 	// advance next styles
 	for (; i < styles.size(); i++) {
 		auto &currentStyle = styles[i];
@@ -268,39 +243,69 @@ void clearStyles() {
 	styles.clear();
 }
 
-void dumpStyles() {
-	Console::println();
-	Console::println("dumpStyles()");
-	Console::println();
-	for (auto &style : styles) {
-		Console::println(to_string(style.startIdx) + " ... " + to_string(style.endIdx) + "(" + style.id + "), chars = " + to_string(style.endIdx - style.startIdx));
-	}
-	for (auto i = 0; i < 30; i++) {
-		Console::print(string() + (char)((i % 10) + '0'));
-	}
-	Console::println();
+const string getStylesString() {
+	string stylesString;
 	auto multipleStyles = false;
-	for (auto i = 0; i < 30; i++) {
+	for (auto i = 0; i < 50; i++) {
 		auto styleCount = 0;
 		for (auto j = 0; j < styles.size(); j++) {
 			auto& currentStyle = styles[j];
 			if (i >= currentStyle.startIdx && i < currentStyle.endIdx) {
 				styleCount++;
 				if (styleCount == 1) {
-					Console::print(currentStyle.id);
+					stylesString+= currentStyle.id;
 				}
 			}
 		}
 		if (styleCount == 0) {
-			Console::print(" ");
+			stylesString+= " ";
 		} else
+		if (styleCount > 1) {
+			// invalid
+		}
+	}
+	return stylesString;
+}
+
+void validateStyles(const string& stylesString) {
+	auto multipleStyles = false;
+	for (auto i = 0; i < 50; i++) {
+		auto styleCount = 0;
+		for (auto j = 0; j < styles.size(); j++) {
+			auto& currentStyle = styles[j];
+			if (i >= currentStyle.startIdx && i < currentStyle.endIdx) {
+				styleCount++;
+			}
+		}
 		if (styleCount > 1) {
 			multipleStyles = true;
 		}
 	}
-	Console::println();
 	if (multipleStyles == true) {
 		Console::println("Multiple styles!");
+		Console::println();
+		for (auto &style : styles) {
+			Console::println(to_string(style.startIdx) + " ... " + to_string(style.endIdx) + "(" + style.id + "), chars = " + to_string(style.endIdx - style.startIdx));
+		}
+		for (auto i = 0; i < 50; i++) {
+			Console::print(string() + (char)((i % 10) + '0'));
+		}
+		Console::println();
+	}
+	auto computedStylesString = getStylesString();
+	Console::println(string() + "Styles " + (computedStylesString != stylesString?"mismatch!":"match!"));
+	Console::println("\texpected: '" + stylesString + "'");
+	Console::println("\tcomputed: '" + computedStylesString + "'");
+	Console::println();
+}
+
+void showStyles() {
+	Console::println("Styles:");
+	for (auto &style : styles) {
+		Console::println(to_string(style.startIdx) + " ... " + to_string(style.endIdx) + "(" + style.id + "), chars = " + to_string(style.endIdx - style.startIdx));
+	}
+	for (auto i = 0; i < 50; i++) {
+		Console::print(string() + (char)((i % 10) + '0'));
 	}
 	Console::println();
 }
@@ -309,62 +314,24 @@ int main(int argc, char **argv) {
 	Application::installExceptionHandler();
 	Console::println("StylesTest: init");
 	{
-		//
-		/*
 		Console::println("StylesTest: Insert Test");
 		clearStyles();
 		Console::println();
-		insertStyle(6, 9, "A");
-		insertStyle(16, 19, "B");
-		dumpStyles();
-		insertStyle(1, 2, "C");
-		dumpStyles();
-		Console::println();
-		insertStyle(5, 8, "D");
-		dumpStyles();
-		Console::println();
-		insertStyle(16, 20, "E");
-		dumpStyles();
-		Console::println();
-		insertStyle(0, 7, "F");
-		dumpStyles();
-		*/
-		Console::println("StylesTest: Insert Test");
-		clearStyles();
-		Console::println();
-		insertStyle(1, 10, "A");
-		insertStyle(5, 10, "B");
-		dumpStyles();
-		insertStyle(16, 20, "C");
-		dumpStyles();
-		/*
-		//
-		Console::println("StylesTest: Insert Test + Unset Test");
-		clearStyles();
-		insertStyle(0, 3, "A");
-		insertStyle(3, 6, "B");
-		insertStyle(6, 9, "C");
-		insertStyle(9, 12, "D");
-		dumpStyles();
-		unsetStyle(2, 4);
-		dumpStyles();
-		unsetStyle(1, 11);
-		dumpStyles();
-		*/
-		Console::println("StylesTest: Insert Test + Remove Test");
-		/*
-		clearStyles();
-		 	 01234567890123456789
-		 	 AAABBBCCCDDD
-		 	     XXXXX
-		insertStyle(0, 3, "A");
-		insertStyle(3, 6, "B");
-		insertStyle(6, 9, "C");
-		insertStyle(9, 12, "D");
-		dumpStyles();
-		removeStyles(0, 4);
-		dumpStyles();
-		*/
+		// insert A (begin)
+		insertStyle(5, 15, "A");
+		validateStyles("     AAAAAAAAAA                                   ");
+		// insert B in the middle of A (gap)
+		insertStyle(10, 15, "B");
+		validateStyles("     AAAAABBBBBAAAAA                              ");
+		// insert 0 before of A (gap)
+		insertStyle(0, 5, "0");
+		validateStyles("00000     AAAAABBBBBAAAAA                         ");
+		// insert 9 after A at the end (end)
+		insertStyle(25, 30, "9");
+		validateStyles("00000     AAAAABBBBBAAAAA99999                    ");
+		// insert 8 before 9 (gap2)
+		insertStyle(25, 30, "8");
+		validateStyles("00000     AAAAABBBBBAAAAA8888899999               ");
 	}
 	Console::println("StylesTest: done");
 }
