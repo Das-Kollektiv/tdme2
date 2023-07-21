@@ -14,6 +14,7 @@
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIImageNode.h>
 #include <tdme/gui/nodes/GUINode.h>
+#include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUI.h>
@@ -53,6 +54,7 @@ using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUINode;
+using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
@@ -201,6 +203,13 @@ void DecalEditorTabController::onChange(GUIElementNode* node)
 	if (prototypePhysicsSubController->onChange(node, view->getPrototype()) == true) return;
 	if (prototypeScriptSubController->onChange(node, view->getPrototype()) == true) return;
 	//
+	for (auto& applyDecalNode: applyDecalNodes) {
+		if (node->getId() == applyDecalNode) {
+			applyDecalDetails();
+			return;
+		}
+	}
+	//
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		updateDetails(outlinerNode);
@@ -343,8 +352,8 @@ void DecalEditorTabController::setDecalTexture(const string& fileName) {
 		Console::println("OnDecalTextureFileOpenAction::performAction(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
-	required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("decal_texture"))->setSource(decal->getTextureFileName());
-	required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("decal_texture"))->setTooltip(decal->getTextureFileName());
+	//
+	setDecalDetails();
 }
 
 void DecalEditorTabController::setOutlinerContent() {
@@ -383,6 +392,9 @@ void DecalEditorTabController::setDecalDetails() {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_decal"))->getActiveConditions().add("open");
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("decal_texture"))->setSource(decal->getTextureFileName());
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("decal_texture"))->setTooltip(decal->getTextureFileName());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("decal_texture_horizontal_sprites"))->getController()->setValue(MutableString(decal->getTextureHorizontalSprites()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("decal_texture_vertical_sprites"))->getController()->setValue(MutableString(decal->getTextureVerticalSprites()));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("decal_texture_fps"))->getController()->setValue(MutableString(decal->getTextureSpritesFPS()));
 	} catch (Exception& exception) {
 		Console::println("DecalEditorTabController::setDecalDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
@@ -400,6 +412,17 @@ void DecalEditorTabController::updateDetails(const string& outlinerNode) {
 		prototypePhysicsSubController->getView()->setDisplayBoundingVolume(true);
 		prototypeScriptSubController->updateDetails(view->getPrototype(), outlinerNode);
 	}
+}
+
+void DecalEditorTabController::applyDecalDetails() {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+	auto decal = prototype->getDecal();
+	if (decal == nullptr) return;
+	//
+	decal->setTextureHorizontalSprites(Math::max(1, Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("decal_texture_horizontal_sprites"))->getController()->getValue().getString())));
+	decal->setTextureVerticalSprites(Math::max(1, Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("decal_texture_vertical_sprites"))->getController()->getValue().getString())));
+	decal->setTextureSpritesFPS(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("decal_texture_fps"))->getController()->getValue().getString()));
 }
 
 void DecalEditorTabController::updateInfoText(const MutableString& text) {

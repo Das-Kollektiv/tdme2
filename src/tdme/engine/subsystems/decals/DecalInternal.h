@@ -12,7 +12,9 @@
 #include <tdme/engine/subsystems/decals/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/Transform.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/utilities/Time.h>
 
 using std::string;
 
@@ -23,7 +25,9 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 using tdme::engine::Transform;
+using tdme::math::Math;
 using tdme::math::Matrix4x4;
+using tdme::utilities::Time;
 
 /**
  * Decal entity internal
@@ -39,6 +43,11 @@ protected:
 	bool enabled;
 	OrientedBoundingBox* obb { nullptr };
 	Texture* texture { nullptr };
+	int32_t textureHorizontalSprites;
+	int32_t textureVerticalSprites;
+	float fps;
+	float textureSpriteIdx { 0.0f };
+	int64_t lastRenderedTime { -1ll };
 
 	BoundingBox boundingBox;
 	BoundingBox worldBoundingBox;
@@ -81,9 +90,12 @@ public:
 	 * Public constructor
 	 * @param id id
 	 * @param obb oriented bounding box
-	 * @param texture optional texture
+	 * @param texture texture
+	 * @param textureHorizonalSprites texture horizonal sprites
+	 * @param textureVerticalSprites texture vertical sprites
+	 * @param fps frames per seconds
 	 */
-	DecalInternal(const string& id, OrientedBoundingBox* obb, Texture* texture = nullptr);
+	DecalInternal(const string& id, OrientedBoundingBox* obb, Texture* texture = nullptr, int32_t textureHorizontalSprites = 1, int32_t textureVerticalSprites = 1, float fps = 10.0f);
 
 	/**
 	 * Destructor
@@ -250,6 +262,46 @@ public:
 	 */
 	inline const Matrix4x4& getWorldToDecalSpaceMatrix() {
 		return worldToDecalSpaceMatrix;
+	}
+
+	/**
+	 * @return texture horizontal sprites
+	 */
+	inline int32_t getTextureHorizontalSprites(){
+		return textureHorizontalSprites;
+	}
+
+	/**
+	 * @return texture vertical sprites
+	 */
+	inline int32_t getTextureVerticalSprites(){
+		return textureVerticalSprites;
+	}
+
+	/**
+	 * @return fps
+	 */
+	inline float getFPS(){
+		return fps;
+	}
+
+	/**
+	 * @return current texture sprite index
+	 */
+	inline int32_t computeTextureSpriteIdx() {
+		auto now = Time::getCurrentMillis();
+		// first rendering?
+		if (lastRenderedTime == -1ll) {
+			lastRenderedTime = now;
+			return textureSpriteIdx;
+		}
+		//
+		auto timeElapsed = now - lastRenderedTime;
+		textureSpriteIdx = Math::mod(textureSpriteIdx + (static_cast<float>(timeElapsed) / 1000.0f) * fps, static_cast<float>(textureHorizontalSprites * textureVerticalSprites));
+		//
+		lastRenderedTime = now;
+		//
+		return static_cast<int32_t>(textureSpriteIdx);
 	}
 
 };

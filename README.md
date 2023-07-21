@@ -74,7 +74,7 @@
         - particle systems which
           - are object based
           - or point based, including sprite sheet animation support
-          - or for fog purposes
+          - or for fog purposes, including sprite sheet animation support
           - and support
             - basic/point emitter
             - sphere emitter
@@ -86,7 +86,7 @@
         - entity hierarchy objects
         - environment mapping objects
           - which can be used as reflection sources of other objects
-        - decal objects
+        - decal objects, including sprite sheet animation support
     - object/entity transforms
         - scaling
         - rotations

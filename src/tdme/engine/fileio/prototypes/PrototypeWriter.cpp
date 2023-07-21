@@ -242,6 +242,9 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 	if (prototype->getType() == Prototype_Type::DECAL) {
 		jPrototypeRoot.AddMember("df", Value(prototype->getDecal()->getTextureFileName(), jAllocator), jAllocator);
 		jPrototypeRoot.AddMember("thumbnail", Value(prototype->getThumbnail(), jAllocator), jAllocator);
+		jPrototypeRoot.AddMember("dths", Value(prototype->getDecal()->getTextureHorizontalSprites()), jAllocator);
+		jPrototypeRoot.AddMember("dtvs", Value(prototype->getDecal()->getTextureVerticalSprites()), jAllocator);
+		jPrototypeRoot.AddMember("dfps", Value(prototype->getDecal()->getTextureSpritesFPS()), jAllocator);
 	} else
 	if (prototype->getType() == Prototype_Type::PARTICLESYSTEM) {
 		Value jParticleSystems;

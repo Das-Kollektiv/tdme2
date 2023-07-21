@@ -1,5 +1,7 @@
 #include <tdme/engine/subsystems/framebuffer/DeferredLightingRenderShader.h>
 
+#include <string>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
@@ -15,6 +17,9 @@
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/FloatBuffer.h>
 #include <tdme/utilities/SimpleTextureAtlas.h>
+
+using std::string;
+using std::to_string;
 
 using tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader;
 
@@ -240,6 +245,10 @@ void DeferredLightingRenderShader::initialize()
 		if (uniformDecalAtlasTexturePosition[i] == -1) return;
 		uniformDecalAtlasTextureDimension[i] = renderer->getProgramUniformLocation(programId, "decals[" + to_string(i) + "].texture.dimension");
 		if (uniformDecalAtlasTextureDimension[i] == -1) return;
+		uniformDecalSpriteSheetDimension[i] = renderer->getProgramUniformLocation(programId, "decals[" + to_string(i) + "].spriteSheetDimension");
+		if (uniformDecalSpriteSheetDimension[i] == -1) return;
+		uniformDecalSpriteIndex[i] = renderer->getProgramUniformLocation(programId, "decals[" + to_string(i) + "].spriteIndex");
+		if (uniformDecalSpriteIndex[i] == -1) return;
 	}
 
 	//
@@ -363,6 +372,15 @@ void DeferredLightingRenderShader::useProgram(Engine* engine, vector<Decal*>& de
 						static_cast<float>(atlasTexture->height) / static_cast<float>(decalsTextureAtlasTextureHeight)
 					}
 				);
+				renderer->setProgramUniformFloatVec2(
+					contextIdx,
+					uniformDecalSpriteSheetDimension[i],
+					{
+						static_cast<float>(decalObject->getTextureHorizontalSprites()),
+						static_cast<float>(decalObject->getTextureVerticalSprites())
+					}
+				);
+				renderer->setProgramUniformInteger(contextIdx, uniformDecalSpriteIndex[i], decalObject->computeTextureSpriteIdx());
 			}
 		}
 	} else {

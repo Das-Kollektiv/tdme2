@@ -52,9 +52,12 @@ public:
 	 * Public constructor
 	 * @param id id
 	 * @param obb oriented bounding box
-	 * @param texture optional texture
+	 * @param texture texture
+	 * @param textureHorizonalSprites texture horizonal sprites
+	 * @param textureVerticalSprites texture vertical sprites
+	 * @param fps frames per seconds
 	 */
-	Decal(const string& id, OrientedBoundingBox* obb, Texture* texture = nullptr);
+	Decal(const string& id, OrientedBoundingBox* obb, Texture* texture = nullptr, int32_t textureHorizontalSprites = 1, int32_t textureVerticalSprites = 1, float fps = 10.0f);
 
 	// overridden methods
 	inline EntityType getEntityType() override {

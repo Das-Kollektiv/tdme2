@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -16,6 +17,7 @@
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/utilities/MutableString.h>
 
+using std::array;
 using std::string;
 
 using tdme::gui::events::GUIActionListener;
@@ -54,6 +56,12 @@ private:
 	DecalEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
+
+	array<string, 3> applyDecalNodes {
+		"decal_texture_horizontal_sprites",
+		"decal_texture_vertical_sprites",
+		"decal_texture_fps",
+	};
 
 public:
 	/**
@@ -128,6 +136,11 @@ public:
 	 * @param outlinerNode outliner node
 	 */
 	void updateDetails(const string& outlinerNode);
+
+	/**
+	 * Apply decal details
+	 */
+	void applyDecalDetails();
 
 	/**
 	 * Update info text line

@@ -27,7 +27,7 @@ class tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader final
 {
 
 private:
-	static constexpr int DECAL_COUNT { 96 };
+	static constexpr int DECAL_COUNT { 80 };
 
 	Renderer* renderer { nullptr };
 	int32_t vertexShaderId { -1 };
@@ -85,6 +85,8 @@ private:
 	array<int32_t, DECAL_COUNT> uniformDecalAtlasTextureOrientation;
 	array<int32_t, DECAL_COUNT> uniformDecalAtlasTexturePosition;
 	array<int32_t, DECAL_COUNT> uniformDecalAtlasTextureDimension;
+	array<int32_t, DECAL_COUNT> uniformDecalSpriteSheetDimension;
+	array<int32_t, DECAL_COUNT> uniformDecalSpriteIndex;
 
 	int32_t decalsTextureAtlasTextureId { 0 };
 

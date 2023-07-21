@@ -20,6 +20,9 @@ private:
 	string textureFileName;
 	string transparencyTextureFileName;
 	Texture* texture { nullptr };
+	int textureHorizontalSprites{ 1 };
+	int textureVerticalSprites{ 1 };
+	float textureSpritesFPS { 10.0f };
 
 public:
 	/**
@@ -59,5 +62,50 @@ public:
 	 * @param transparencyTextureFileName transparency texture file name
 	 */
 	void setTextureFileName(const string& textureFileName, const string& transparencyTextureFileName = string());
+
+	/**
+	 * @return horizontal number of sprites in texture
+	 */
+	inline int getTextureHorizontalSprites() {
+		return textureHorizontalSprites;
+	}
+
+	/**
+	 * Set texture horizontal number of sprites
+	 * @param textureHorizontalSprites horizontal number of sprites
+	 */
+	inline void setTextureHorizontalSprites(int textureHorizontalSprites) {
+		this->textureHorizontalSprites = textureHorizontalSprites;
+	}
+
+	/**
+	 * @return vertical number of sprites in texture
+	 */
+	inline int getTextureVerticalSprites() {
+		return textureVerticalSprites;
+	}
+
+	/**
+	 * Set texture vertical number of sprites
+	 * @param textureVerticalSprites vertical number of sprites
+	 */
+	inline void setTextureVerticalSprites(int textureVerticalSprites) {
+		this->textureVerticalSprites = textureVerticalSprites;
+	}
+
+	/**
+	 * @return texture sprites frames per second
+	 */
+	inline float getTextureSpritesFPS() {
+		return textureSpritesFPS;
+	}
+
+	/**
+	 * Set texture sprites frames per second
+	 * @param textureSpritesFPS frames per second
+	 */
+	inline void setTextureSpritesFPS(float textureSpritesFPS) {
+		this->textureSpritesFPS = textureSpritesFPS;
+	}
 
 };
