@@ -67,7 +67,7 @@ void unsetStyle(int startIdx, int endIdx) {
 	}
 }
 
-void removeStyles(int startIdx, int endIdx) {
+void removeStyles(int startIdx, int endIdx, bool xxx = false) {
 	Console::println("remove style: " + to_string(startIdx) + " ... " + to_string(endIdx));
 	//
 	auto charsToRemove = endIdx - startIdx;
@@ -88,7 +88,7 @@ void removeStyles(int startIdx, int endIdx) {
 		auto &currentStyle = styles[i];
 		// check if remove range is in current style range
 		if (currentStyle.startIdx >= startIdx && currentStyle.endIdx <= endIdx) {
-			Console::println("delete style: " + to_string(i));
+			Console::println("delete style: " + to_string(i) + " / " + to_string(currentStyle.startIdx) + " ... " + to_string(currentStyle.endIdx));
 			styles.erase(styles.begin() + i);
 			i--;
 		} else
@@ -122,11 +122,18 @@ void removeStyles(int startIdx, int endIdx) {
 	}
 	// unadvance next style
 	if (i == -1) i = 0;
+	Console::println("adjusting style: " + to_string(i));
 	for (; i < styles.size(); i++) {
 		auto &currentStyle = styles[i];
 		Console::println("adjusting style: " + to_string(i) + " / " + to_string(charsToRemove) + ", " + to_string(currentStyle.startIdx) + " ... " + to_string(currentStyle.endIdx) + "(" + currentStyle.id + ")");
+		//
 		currentStyle.startIdx -= charsToRemove;
+		if (currentStyle.startIdx < startIdx) currentStyle.startIdx = startIdx;
 		currentStyle.endIdx -= charsToRemove;
+		if (currentStyle.startIdx == currentStyle.endIdx) {
+			currentStyle.endIdx++;
+			charsToRemove-= 1;
+		}
 	}
 }
 
@@ -373,9 +380,12 @@ int main(int argc, char **argv) {
 		removeStyles(25, 27);
 		validateStyles("     AAAAABBBBBAAAAA88888                         ");
 		// remove multiple styles
-		showStyles();
 		removeStyles(6, 15);
-		validateStyles("     ABAAAAA88888                         ");
+		validateStyles("     ABAAAAA88888                                 ");
+		// remove multiple styles
+		removeStyles(6, 8);
+		validateStyles("     AAAAA88888                                   ");
+		//
 		showStyles();
 	}
 	Console::println("StylesTest: done");
