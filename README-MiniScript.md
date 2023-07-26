@@ -640,9 +640,9 @@ Reading all keys as array from set:
 | <sub>array.indexOf($array: Array, $value: String[, $beginIndex: Integer]): Integer</sub>         |
 | Get array length                                                                                 |
 | <sub>array.length($array: Array): Integer</sub>                                                  |
-| Add to array                                                                                     |
+| Add entry to array                                                                                     |
 | <sub>array.push(=$array: Array, ...): Void</sub>                                                 |
-| Remove array by index                                                                            |
+| Remove array entry by index                                                                            |
 | <sub>array.remove(=$array: Array, $index: Integer): Void</sub>                                   |
 | Remove array entry by value                                                                      |
 | <sub>array.removeOf(=$array: Array, $value: String[, $beginIndex: Integer]): Void</sub>          |
