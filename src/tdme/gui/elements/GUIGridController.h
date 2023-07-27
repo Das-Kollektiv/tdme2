@@ -50,7 +50,7 @@ private:
 	int horizontalItems { 1 };
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIGridController)
+	FORBID_CLASS_COPY(GUIGridController)
 
 	/**
 	 * Private constructor

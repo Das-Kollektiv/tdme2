@@ -19,7 +19,7 @@ using tdme::utilities::MiniScript;
 class tdme::gui::scripting::GUIMiniScript: public MiniScript {
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIMiniScript)
+	FORBID_CLASS_COPY(GUIMiniScript)
 
 	/**
 	 * Public constructor

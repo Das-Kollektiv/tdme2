@@ -49,7 +49,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(SoundTabView)
+	FORBID_CLASS_COPY(SoundTabView)
 
 	/**
 	 * Public constructor

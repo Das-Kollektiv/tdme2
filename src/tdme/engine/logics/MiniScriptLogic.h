@@ -44,7 +44,7 @@ using tdme::utilities::MiniScript;
 class tdme::engine::logics::MiniScriptLogic: public Logic {
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(MiniScriptLogic)
+	FORBID_CLASS_COPY(MiniScriptLogic)
 
 	/**
 	 * Public constructor

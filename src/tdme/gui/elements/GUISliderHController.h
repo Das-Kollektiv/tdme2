@@ -30,7 +30,7 @@ private:
 	MutableString value { };
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUISliderHController)
+	FORBID_CLASS_COPY(GUISliderHController)
 
 	/**
 	 * Private constructor

@@ -30,7 +30,7 @@ protected:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(BaseProperties)
+	FORBID_CLASS_COPY(BaseProperties)
 
 	/**
 	 * Public constructor

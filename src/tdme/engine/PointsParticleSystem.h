@@ -52,7 +52,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(PointsParticleSystem)
+	FORBID_CLASS_COPY(PointsParticleSystem)
 
 	/**
 	 * Public constructor

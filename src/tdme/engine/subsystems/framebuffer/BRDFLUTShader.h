@@ -29,7 +29,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(BRDFLUTShader)
+	FORBID_CLASS_COPY(BRDFLUTShader)
 
 	/**
 	 * Public constructor

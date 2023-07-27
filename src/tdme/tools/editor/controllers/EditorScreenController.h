@@ -204,7 +204,7 @@ private:
 	class FileOpenThread: public Thread {
 	public:
 		// forbid class copy
-		CLASS_FORBID_COPY(FileOpenThread)
+		FORBID_CLASS_COPY(FileOpenThread)
 
 		/**
 		 * Constructor
@@ -307,7 +307,7 @@ private:
 	class ScanFilesThread: public Thread {
 	public:
 		// forbid class copy
-		CLASS_FORBID_COPY(ScanFilesThread)
+		FORBID_CLASS_COPY(ScanFilesThread)
 
 		/**
 		 * Constructor
@@ -398,7 +398,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(EditorScreenController)
+	FORBID_CLASS_COPY(EditorScreenController)
 
 	/**
 	 * Public constructor

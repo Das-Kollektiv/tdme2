@@ -54,7 +54,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(SoundTabController)
+	FORBID_CLASS_COPY(SoundTabController)
 
 	/**
 	 * Public constructor

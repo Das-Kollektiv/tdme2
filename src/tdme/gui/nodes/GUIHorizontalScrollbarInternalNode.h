@@ -45,7 +45,7 @@ protected:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIHorizontalScrollbarInternalNode)
+	FORBID_CLASS_COPY(GUIHorizontalScrollbarInternalNode)
 
 	/**
 	 * Constructor

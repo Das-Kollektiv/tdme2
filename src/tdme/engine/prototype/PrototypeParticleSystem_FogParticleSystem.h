@@ -28,7 +28,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(PrototypeParticleSystem_FogParticleSystem)
+	FORBID_CLASS_COPY(PrototypeParticleSystem_FogParticleSystem)
 
 	/**
 	 * Public constructor

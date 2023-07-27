@@ -1673,7 +1673,7 @@ public:
 	class ScriptStateMachineState {
 	public:
 		// forbid class copy
-		CLASS_FORBID_COPY(ScriptStateMachineState)
+		FORBID_CLASS_COPY(ScriptStateMachineState)
 
 		/**
 		 * Constructor
@@ -1714,7 +1714,7 @@ public:
 		};
 
 		// forbid class copy
-		CLASS_FORBID_COPY(ScriptMethod)
+		FORBID_CLASS_COPY(ScriptMethod)
 
 		/**
 		 * Constructor
@@ -2721,7 +2721,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(MiniScript)
+	FORBID_CLASS_COPY(MiniScript)
 
 	/**
 	 * Default constructor

@@ -31,7 +31,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIRadioButton)
+	FORBID_CLASS_COPY(GUIRadioButton)
 
 	/**
 	 * Public constructor

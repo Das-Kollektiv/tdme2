@@ -17,7 +17,7 @@ class tdme::engine::ObjectModel final
 {
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ObjectModel)
+	FORBID_CLASS_COPY(ObjectModel)
 
 	/**
 	 * Public constructor

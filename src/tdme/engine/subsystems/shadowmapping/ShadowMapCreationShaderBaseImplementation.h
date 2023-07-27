@@ -44,7 +44,7 @@ protected:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ShadowMapCreationShaderBaseImplementation)
+	FORBID_CLASS_COPY(ShadowMapCreationShaderBaseImplementation)
 
 	/**
 	 * Constructor

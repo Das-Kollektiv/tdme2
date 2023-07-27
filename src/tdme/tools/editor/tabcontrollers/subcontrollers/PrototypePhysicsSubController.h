@@ -113,7 +113,7 @@ public:
 	};
 
 	// forbid class copy
-	CLASS_FORBID_COPY(PrototypePhysicsSubController)
+	FORBID_CLASS_COPY(PrototypePhysicsSubController)
 
 	/**
 	 * Public constructor

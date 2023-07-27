@@ -29,7 +29,7 @@ class tdme::engine::subsystems::renderer::EngineGL2Renderer: public GL2Renderer,
 {
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(EngineGL2Renderer)
+	FORBID_CLASS_COPY(EngineGL2Renderer)
 
 	/**
 	 * Public constructor

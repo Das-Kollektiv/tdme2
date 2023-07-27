@@ -60,7 +60,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(PrototypeDisplaySubController)
+	FORBID_CLASS_COPY(PrototypeDisplaySubController)
 
 	/**
 	 * Public constructor

@@ -40,7 +40,7 @@ class tdme::gui::nodes::GUIPanelNode final
 
 protected:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIPanelNode)
+	FORBID_CLASS_COPY(GUIPanelNode)
 
 	/**
 	 * Constructor

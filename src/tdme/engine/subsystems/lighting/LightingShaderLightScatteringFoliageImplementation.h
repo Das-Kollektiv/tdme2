@@ -23,7 +23,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(LightingShaderLightScatteringFoliageImplementation)
+	FORBID_CLASS_COPY(LightingShaderLightScatteringFoliageImplementation)
 
 	/**
 	 * Public constructor

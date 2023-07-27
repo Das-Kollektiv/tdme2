@@ -31,7 +31,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(Texture2DRenderShader)
+	FORBID_CLASS_COPY(Texture2DRenderShader)
 
 	/**
 	 * Public constructor

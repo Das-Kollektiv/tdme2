@@ -33,7 +33,7 @@ public:
 	typedef unordered_set<string> GroupKeySet;
 
 	// forbid class copy
-	CLASS_FORBID_COPY(Server)
+	FORBID_CLASS_COPY(Server)
 
 	/**
 	 * @brief Public constructor

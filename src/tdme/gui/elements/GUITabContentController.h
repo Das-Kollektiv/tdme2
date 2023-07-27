@@ -36,7 +36,7 @@ private:
 	GUIElementNode* parentElementNode { nullptr };
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUITabContentController)
+	FORBID_CLASS_COPY(GUITabContentController)
 
 	/**
 	 * Private constructor

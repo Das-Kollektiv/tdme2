@@ -34,7 +34,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(VBOManager_VBOManaged)
+	FORBID_CLASS_COPY(VBOManager_VBOManaged)
 
 	/**
 	 * @return vbo id

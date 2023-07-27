@@ -93,7 +93,7 @@ protected:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(PointsParticleSystemInternal)
+	FORBID_CLASS_COPY(PointsParticleSystemInternal)
 
 	/**
 	 * Public constructor

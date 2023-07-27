@@ -32,7 +32,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIGrid)
+	FORBID_CLASS_COPY(GUIGrid)
 
 	/**
 	 * Public constructor

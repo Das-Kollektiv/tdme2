@@ -39,7 +39,7 @@ public:
 	};
 
 	// forbid class copy
-	CLASS_FORBID_COPY(TextureAtlas)
+	FORBID_CLASS_COPY(TextureAtlas)
 
 	/**
 	 * Public constructor

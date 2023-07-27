@@ -43,7 +43,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(CircleParticleEmitter)
+	FORBID_CLASS_COPY(CircleParticleEmitter)
 
 	/**
 	 * Public constructor

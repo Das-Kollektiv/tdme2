@@ -489,7 +489,7 @@ private:
 	}
 
 	// forbid class copy
-	CLASS_FORBID_COPY(Engine)
+	FORBID_CLASS_COPY(Engine)
 
 	/**
 	 * Private constructor

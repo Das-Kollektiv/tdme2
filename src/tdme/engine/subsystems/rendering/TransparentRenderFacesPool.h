@@ -50,7 +50,7 @@ private:
 	TransparentRenderFacesPool_TransparentRenderFacesPool transparentRenderFacesPool;
 
 	// forbid class copy
-	CLASS_FORBID_COPY(TransparentRenderFacesPool)
+	FORBID_CLASS_COPY(TransparentRenderFacesPool)
 
 	/**
 	 * Public constructor

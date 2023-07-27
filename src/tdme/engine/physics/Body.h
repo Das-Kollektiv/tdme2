@@ -95,7 +95,7 @@ protected:
 	bool initiation;
 
 	// forbid class copy
-	CLASS_FORBID_COPY(Body)
+	FORBID_CLASS_COPY(Body)
 
 	/**
 	 * Protected constructor

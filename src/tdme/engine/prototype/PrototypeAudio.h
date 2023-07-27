@@ -27,7 +27,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(PrototypeAudio)
+	FORBID_CLASS_COPY(PrototypeAudio)
 
 	/**
 	 * Public constructor

@@ -37,7 +37,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(SceneLibrary)
+	FORBID_CLASS_COPY(SceneLibrary)
 
 	/**
 	 * Public constructor

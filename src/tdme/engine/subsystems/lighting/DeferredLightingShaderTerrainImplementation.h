@@ -20,7 +20,7 @@ class tdme::engine::subsystems::lighting::DeferredLightingShaderTerrainImplement
 {
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(DeferredLightingShaderTerrainImplementation)
+	FORBID_CLASS_COPY(DeferredLightingShaderTerrainImplementation)
 
 	/**
 	 * Public constructor

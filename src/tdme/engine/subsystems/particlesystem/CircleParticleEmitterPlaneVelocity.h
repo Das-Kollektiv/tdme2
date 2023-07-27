@@ -44,7 +44,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(CircleParticleEmitterPlaneVelocity)
+	FORBID_CLASS_COPY(CircleParticleEmitterPlaneVelocity)
 
 	/**
 	 * Public constructor

@@ -28,7 +28,7 @@ public:
 	static bool isSupported(Renderer* renderer);
 
 	// forbid class copy
-	CLASS_FORBID_COPY(PostProcessingShaderVignetteImplementation)
+	FORBID_CLASS_COPY(PostProcessingShaderVignetteImplementation)
 
 	/**
 	 * Public constructor

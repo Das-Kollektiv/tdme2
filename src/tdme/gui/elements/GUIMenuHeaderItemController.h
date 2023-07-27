@@ -48,7 +48,7 @@ private:
 
 private:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIMenuHeaderItemController)
+	FORBID_CLASS_COPY(GUIMenuHeaderItemController)
 
 	/**
 	 * Private constructor

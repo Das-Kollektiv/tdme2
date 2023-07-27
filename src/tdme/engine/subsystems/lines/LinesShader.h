@@ -33,7 +33,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(LinesShader)
+	FORBID_CLASS_COPY(LinesShader)
 
 	/**
 	 * Public constructor

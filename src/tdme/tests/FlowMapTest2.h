@@ -91,7 +91,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(FlowMapTest2)
+	FORBID_CLASS_COPY(FlowMapTest2)
 
 	/**
 	 * Public constructor

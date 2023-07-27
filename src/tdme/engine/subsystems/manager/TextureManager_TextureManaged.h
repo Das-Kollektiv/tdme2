@@ -25,7 +25,7 @@ private:
 
 private:
 	// forbid class copy
-	CLASS_FORBID_COPY(TextureManager_TextureManaged)
+	FORBID_CLASS_COPY(TextureManager_TextureManaged)
 
 	/**
 	 * Protected constructor

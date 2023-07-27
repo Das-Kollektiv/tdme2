@@ -58,7 +58,7 @@ public:
 	static void main(int argc, char** argv);
 
 	// forbid class copy
-	CLASS_FORBID_COPY(PhysicsTest5)
+	FORBID_CLASS_COPY(PhysicsTest5)
 
 	/**
 	 * Public constructor

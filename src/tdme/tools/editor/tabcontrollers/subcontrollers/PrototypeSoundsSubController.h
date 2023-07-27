@@ -56,7 +56,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(PrototypeSoundsSubController)
+	FORBID_CLASS_COPY(PrototypeSoundsSubController)
 
 	/**
 	 * Public constructor

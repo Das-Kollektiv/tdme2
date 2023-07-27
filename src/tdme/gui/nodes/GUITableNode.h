@@ -27,7 +27,7 @@ class tdme::gui::nodes::GUITableNode: public GUIParentNode
 
 protected:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUITableNode)
+	FORBID_CLASS_COPY(GUITableNode)
 
 	/**
 	 * Constructor

@@ -50,7 +50,7 @@ private:
 	bool normalsUpdated;
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(Node)
+	FORBID_CLASS_COPY(Node)
 
 	/**
 	 * Public constructor

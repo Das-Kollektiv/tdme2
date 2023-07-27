@@ -26,7 +26,7 @@ class tdme::engine::logics::ApplicationServer: public UDPServer {
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ApplicationServer)
+	FORBID_CLASS_COPY(ApplicationServer)
 
 	/**
 	 * Public constructor

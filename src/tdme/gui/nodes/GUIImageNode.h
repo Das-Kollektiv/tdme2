@@ -54,7 +54,7 @@ private:
 
 protected:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIImageNode)
+	FORBID_CLASS_COPY(GUIImageNode)
 
 	/**
 	 * Constructor

@@ -89,7 +89,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(TerrainEditorTabView)
+	FORBID_CLASS_COPY(TerrainEditorTabView)
 
 	/**
 	 * Public constructor

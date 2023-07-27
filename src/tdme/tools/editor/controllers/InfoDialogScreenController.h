@@ -46,7 +46,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(InfoDialogScreenController)
+	FORBID_CLASS_COPY(InfoDialogScreenController)
 
 	/**
 	 * Public constructor

@@ -36,7 +36,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(PrototypeBoundingVolume)
+	FORBID_CLASS_COPY(PrototypeBoundingVolume)
 
 	/**
 	 * Public constructor

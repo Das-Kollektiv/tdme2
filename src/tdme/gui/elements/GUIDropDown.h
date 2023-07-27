@@ -31,7 +31,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIDropDown)
+	FORBID_CLASS_COPY(GUIDropDown)
 
 	/**
 	 * Public constructor

@@ -20,7 +20,7 @@ public:
 	static constexpr int WAVES_MAX { 4 };
 
 	// forbid class copy
-	CLASS_FORBID_COPY(LightingShaderWaterImplementation)
+	FORBID_CLASS_COPY(LightingShaderWaterImplementation)
 
 	/**
 	 * Public constructor

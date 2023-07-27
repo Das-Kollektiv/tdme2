@@ -31,7 +31,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIInput)
+	FORBID_CLASS_COPY(GUIInput)
 
 	/**
 	 * Public constructor

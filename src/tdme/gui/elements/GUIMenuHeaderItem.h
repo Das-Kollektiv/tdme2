@@ -31,7 +31,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIMenuHeaderItem)
+	FORBID_CLASS_COPY(GUIMenuHeaderItem)
 
 	/**
 	 * Public constructor

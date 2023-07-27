@@ -25,7 +25,7 @@ private:
 	int32_t referenceCounter { 0 };
 
 	// forbid class copy
-	CLASS_FORBID_COPY(AudioBufferManager_AudioBufferManaged)
+	FORBID_CLASS_COPY(AudioBufferManager_AudioBufferManaged)
 
 	/**
 	 * Protected constructor

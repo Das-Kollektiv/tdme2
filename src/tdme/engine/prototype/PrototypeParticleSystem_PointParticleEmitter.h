@@ -30,7 +30,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(PrototypeParticleSystem_PointParticleEmitter)
+	FORBID_CLASS_COPY(PrototypeParticleSystem_PointParticleEmitter)
 
 	/**
 	 * Public constructor

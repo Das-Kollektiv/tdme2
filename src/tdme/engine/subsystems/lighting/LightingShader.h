@@ -35,7 +35,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(LightingShader)
+	FORBID_CLASS_COPY(LightingShader)
 
 	/**
 	 * Public constructor

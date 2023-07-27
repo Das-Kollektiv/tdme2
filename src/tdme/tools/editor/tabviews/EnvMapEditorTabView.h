@@ -52,7 +52,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(EnvMapEditorTabView)
+	FORBID_CLASS_COPY(EnvMapEditorTabView)
 
 	/**
 	 * Public constructor

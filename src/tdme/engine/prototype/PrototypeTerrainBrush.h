@@ -26,7 +26,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(PrototypeTerrainBrush)
+	FORBID_CLASS_COPY(PrototypeTerrainBrush)
 
 	/**
 	 * Public constructor

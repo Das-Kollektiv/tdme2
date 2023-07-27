@@ -29,7 +29,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(PacketAudioStream)
+	FORBID_CLASS_COPY(PacketAudioStream)
 
 	/**
 	 * Protected constructor

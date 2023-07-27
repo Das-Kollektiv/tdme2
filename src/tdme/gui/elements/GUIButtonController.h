@@ -20,7 +20,7 @@ class tdme::gui::elements::GUIButtonController final
 
 private:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIButtonController)
+	FORBID_CLASS_COPY(GUIButtonController)
 
 	/**
 	 * Constructor

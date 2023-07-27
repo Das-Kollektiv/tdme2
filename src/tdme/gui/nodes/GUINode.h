@@ -170,7 +170,7 @@ protected:
 	string tooltip;
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUINode)
+	FORBID_CLASS_COPY(GUINode)
 
 	/**
 	 * Public constructor

@@ -46,7 +46,7 @@ private:
 
 private:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUISelectorHController)
+	FORBID_CLASS_COPY(GUISelectorHController)
 
 	/**
 	 * Private constructor

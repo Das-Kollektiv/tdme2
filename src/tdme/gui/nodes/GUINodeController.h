@@ -20,7 +20,7 @@ protected:
 	GUINode* node { nullptr };
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUINodeController)
+	FORBID_CLASS_COPY(GUINodeController)
 
 	/**
 	 * Private constructor

@@ -55,7 +55,7 @@ private:
 	FloatBuffer fbSpriteSheetDimension;
 
 	// forbid class copy
-	CLASS_FORBID_COPY(BatchRendererPoints)
+	FORBID_CLASS_COPY(BatchRendererPoints)
 
 	/**
 	 * Public constructor

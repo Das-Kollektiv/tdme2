@@ -69,7 +69,7 @@ protected:
 	int textureHeight { 0 };
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUITextureBaseNode)
+	FORBID_CLASS_COPY(GUITextureBaseNode)
 
 	/**
 	 * Constructor

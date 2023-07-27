@@ -58,7 +58,7 @@ protected:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ShadowMapRenderShaderBaseImplementation)
+	FORBID_CLASS_COPY(ShadowMapRenderShaderBaseImplementation)
 
 	/**
 	 * Public constructor

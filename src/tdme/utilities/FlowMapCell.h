@@ -14,7 +14,7 @@ class tdme::utilities::FlowMapCell final {
 	friend class FlowMap;
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(FlowMapCell)
+	FORBID_CLASS_COPY(FlowMapCell)
 
 	/**
 	 * Default constructor

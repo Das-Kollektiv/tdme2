@@ -29,7 +29,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(Sound)
+	FORBID_CLASS_COPY(Sound)
 
 	/**
 	 * Protected constructor

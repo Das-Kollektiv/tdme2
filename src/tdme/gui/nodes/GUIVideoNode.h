@@ -53,7 +53,7 @@ private:
 
 protected:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIVideoNode)
+	FORBID_CLASS_COPY(GUIVideoNode)
 
 	/**
 	 * Constructor

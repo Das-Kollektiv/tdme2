@@ -53,7 +53,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(EmptyEditorTabController)
+	FORBID_CLASS_COPY(EmptyEditorTabController)
 
 	/**
 	 * Public constructor

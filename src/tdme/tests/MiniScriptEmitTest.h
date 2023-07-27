@@ -11,7 +11,7 @@ using tdme::utilities::MiniScript;
 class MiniScriptEmitTest: public MiniScript {
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(MiniScriptEmitTest)
+	FORBID_CLASS_COPY(MiniScriptEmitTest)
 
 	/**
 	 * Public constructor

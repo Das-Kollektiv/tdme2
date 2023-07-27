@@ -39,7 +39,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(BoundingBoxParticleEmitter)
+	FORBID_CLASS_COPY(BoundingBoxParticleEmitter)
 
 	/**
 	 * Public constructor

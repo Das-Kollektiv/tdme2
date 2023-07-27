@@ -58,7 +58,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(FindReplaceDialogScreenController)
+	FORBID_CLASS_COPY(FindReplaceDialogScreenController)
 
 	/**
 	 * Public constructor

@@ -68,7 +68,7 @@ public:
 	vector<SignalStruct> signals;
 
 	// forbid class copy
-	CLASS_FORBID_COPY(Logic)
+	FORBID_CLASS_COPY(Logic)
 
 	/**
 	 * Public constructor

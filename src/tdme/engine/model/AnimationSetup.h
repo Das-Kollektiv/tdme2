@@ -29,7 +29,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(AnimationSetup)
+	FORBID_CLASS_COPY(AnimationSetup)
 
 	/**
 	 * Public constructor

@@ -29,7 +29,7 @@ class tdme::engine::subsystems::renderer::EngineVKRenderer: public VKRenderer, p
 {
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(EngineVKRenderer)
+	FORBID_CLASS_COPY(EngineVKRenderer)
 
 	/**
 	 * Public constructor

@@ -26,7 +26,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(Sphere)
+	FORBID_CLASS_COPY(Sphere)
 
 	/**
 	 * Public constructor

@@ -27,7 +27,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(FrameBufferRenderShader)
+	FORBID_CLASS_COPY(FrameBufferRenderShader)
 
 	/**
 	 * Public constructor

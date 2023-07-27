@@ -44,7 +44,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(FontTabView)
+	FORBID_CLASS_COPY(FontTabView)
 
 	/**
 	 * Public constructor

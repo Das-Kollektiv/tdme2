@@ -22,7 +22,7 @@ using tdme::utilities::Console;
 class tdme::utilities::UTF8CharacterIterator {
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(UTF8CharacterIterator)
+	FORBID_CLASS_COPY(UTF8CharacterIterator)
 
 	/**
 	 * UTF8 cache entry

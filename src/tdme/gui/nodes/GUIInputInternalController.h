@@ -64,7 +64,7 @@ private:
 	bool doubleClick { false };
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIInputInternalController)
+	FORBID_CLASS_COPY(GUIInputInternalController)
 
 	/**
 	 * Private constructor

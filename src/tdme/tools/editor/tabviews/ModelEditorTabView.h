@@ -108,7 +108,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ModelEditorTabView)
+	FORBID_CLASS_COPY(ModelEditorTabView)
 
 	/**
 	 * Public constructor

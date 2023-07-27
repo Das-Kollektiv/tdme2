@@ -37,7 +37,7 @@ private:
 	MutableString value;
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUICheckboxController)
+	FORBID_CLASS_COPY(GUICheckboxController)
 
 	/**
 	 * Private constructor

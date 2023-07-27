@@ -24,7 +24,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(Capsule)
+	FORBID_CLASS_COPY(Capsule)
 
 	/**
 	 * Public constructor

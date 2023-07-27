@@ -91,7 +91,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(BatchRendererTriangles)
+	FORBID_CLASS_COPY(BatchRendererTriangles)
 
 	/**
 	 * Public constructor

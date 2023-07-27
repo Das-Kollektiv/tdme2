@@ -34,7 +34,7 @@ private:
 	GUIActionListener* arrowNodeActionListener { nullptr };
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUISelectBoxParentOptionController)
+	FORBID_CLASS_COPY(GUISelectBoxParentOptionController)
 
 	/**
 	 * Private constructor

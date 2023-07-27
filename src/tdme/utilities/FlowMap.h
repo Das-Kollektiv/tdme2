@@ -152,7 +152,7 @@ public:
 	}
 
 	// forbid class copy
-	CLASS_FORBID_COPY(FlowMap)
+	FORBID_CLASS_COPY(FlowMap)
 
 	/**
 	 * Constructor

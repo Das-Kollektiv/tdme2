@@ -156,7 +156,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ModelEditorTabController)
+	FORBID_CLASS_COPY(ModelEditorTabController)
 
 	/**
 	 * Public constructor

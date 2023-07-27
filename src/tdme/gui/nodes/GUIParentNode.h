@@ -67,7 +67,7 @@ protected:
 	GUIParentNode_Overflow* overflowY;
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIParentNode)
+	FORBID_CLASS_COPY(GUIParentNode)
 
 	/**
 	 * Constructor

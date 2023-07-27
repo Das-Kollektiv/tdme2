@@ -40,7 +40,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(Material)
+	FORBID_CLASS_COPY(Material)
 
 	/**
 	 * Public constructor

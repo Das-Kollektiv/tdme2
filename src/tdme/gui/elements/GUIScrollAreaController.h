@@ -28,7 +28,7 @@ private:
 	bool scrollToBottomIssued { false };
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIScrollAreaController)
+	FORBID_CLASS_COPY(GUIScrollAreaController)
 
 	/**
 	 * Private constructor

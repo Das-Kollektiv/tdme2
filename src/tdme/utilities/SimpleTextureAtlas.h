@@ -25,7 +25,7 @@ public:
 	static constexpr int ATLAS_TEXTURE_BORDER { 32 };
 
 	// forbid class copy
-	CLASS_FORBID_COPY(SimpleTextureAtlas)
+	FORBID_CLASS_COPY(SimpleTextureAtlas)
 
 	/**
 	 * Public constructor

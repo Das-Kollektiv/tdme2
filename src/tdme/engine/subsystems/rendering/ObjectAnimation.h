@@ -116,7 +116,7 @@ protected:
 	vector<vector<FlattenedNode>> nodeLists;
 
 	// forbid class copy
-	CLASS_FORBID_COPY(ObjectAnimation)
+	FORBID_CLASS_COPY(ObjectAnimation)
 
 	/**
 	 * Public constructor

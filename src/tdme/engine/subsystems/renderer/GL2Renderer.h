@@ -37,7 +37,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(GL2Renderer)
+	FORBID_CLASS_COPY(GL2Renderer)
 
 	/**
 	 * Public constructor

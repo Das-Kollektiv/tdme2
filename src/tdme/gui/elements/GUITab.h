@@ -31,7 +31,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUITab)
+	FORBID_CLASS_COPY(GUITab)
 
 	/**
 	 * Public constructor

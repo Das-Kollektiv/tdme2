@@ -24,7 +24,7 @@ public:
 	static bool isSupported(Renderer* renderer);
 
 	// forbid class copy
-	CLASS_FORBID_COPY(PostProcessingShaderBlurImplementation)
+	FORBID_CLASS_COPY(PostProcessingShaderBlurImplementation)
 
 	/**
 	 * Public constructor

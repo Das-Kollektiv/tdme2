@@ -58,7 +58,7 @@ public:
 	static void main(int argc, char** argv);
 
 	// forbid class copy
-	CLASS_FORBID_COPY(WaterTest)
+	FORBID_CLASS_COPY(WaterTest)
 
 	/**
 	 * Public constructor

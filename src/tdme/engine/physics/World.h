@@ -69,7 +69,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(World)
+	FORBID_CLASS_COPY(World)
 
 	/**
 	 * Public constructor

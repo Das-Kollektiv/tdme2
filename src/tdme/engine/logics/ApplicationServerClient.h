@@ -31,7 +31,7 @@ class tdme::engine::logics::ApplicationServerClient: public UDPServerClient {
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ApplicationServerClient)
+	FORBID_CLASS_COPY(ApplicationServerClient)
 
 	/**
 	 * Public constructor

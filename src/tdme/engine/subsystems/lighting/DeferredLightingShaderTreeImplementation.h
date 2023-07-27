@@ -21,7 +21,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(DeferredLightingShaderTreeImplementation)
+	FORBID_CLASS_COPY(DeferredLightingShaderTreeImplementation)
 
 	/**
 	 * Public constructor

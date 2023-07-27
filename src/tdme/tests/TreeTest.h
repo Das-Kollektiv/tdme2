@@ -46,7 +46,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(TreeTest)
+	FORBID_CLASS_COPY(TreeTest)
 
 	/**
 	 * Public constructor

@@ -29,7 +29,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(PrototypeImposterLOD)
+	FORBID_CLASS_COPY(PrototypeImposterLOD)
 
 	/**
 	 * Public constructor

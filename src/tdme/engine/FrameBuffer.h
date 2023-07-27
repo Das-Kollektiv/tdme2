@@ -57,7 +57,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(FrameBuffer)
+	FORBID_CLASS_COPY(FrameBuffer)
 
 	/**
 	 * Public constructor

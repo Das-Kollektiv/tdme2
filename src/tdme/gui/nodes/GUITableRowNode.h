@@ -30,7 +30,7 @@ private:
 
 protected:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUITableRowNode)
+	FORBID_CLASS_COPY(GUITableRowNode)
 
 	/**
 	 * Constructor

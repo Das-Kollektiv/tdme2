@@ -30,7 +30,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(PrototypeLODLevel)
+	FORBID_CLASS_COPY(PrototypeLODLevel)
 
 	/**
 	 * Public constructor

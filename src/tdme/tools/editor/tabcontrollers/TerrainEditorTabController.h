@@ -118,7 +118,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(TerrainEditorTabController)
+	FORBID_CLASS_COPY(TerrainEditorTabController)
 
 	/**
 	 * Public constructor

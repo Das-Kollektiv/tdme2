@@ -54,7 +54,7 @@ public:
 	}
 
 	// forbid class copy
-	CLASS_FORBID_COPY(TDMEEditor)
+	FORBID_CLASS_COPY(TDMEEditor)
 
 	/**
 	 * Public constructor

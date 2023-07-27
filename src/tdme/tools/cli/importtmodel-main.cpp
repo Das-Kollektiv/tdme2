@@ -59,7 +59,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ImportTModelApplication)
+	FORBID_CLASS_COPY(ImportTModelApplication)
 
 	/**
 	 * Public constructor

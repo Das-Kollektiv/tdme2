@@ -32,7 +32,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(Skinning)
+	FORBID_CLASS_COPY(Skinning)
 
 	/**
 	 * Public constructor

@@ -75,7 +75,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(EnvironmentMapping)
+	FORBID_CLASS_COPY(EnvironmentMapping)
 
 	/**
 	 * Public constructor

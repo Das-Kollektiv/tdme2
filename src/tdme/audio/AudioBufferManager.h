@@ -25,7 +25,7 @@ private:
 	unordered_map<string, AudioBufferManager_AudioBufferManaged*> audioBuffers;
 
 	// forbid class copy
-	CLASS_FORBID_COPY(AudioBufferManager)
+	FORBID_CLASS_COPY(AudioBufferManager)
 
 	/**
 	 * Private constructor

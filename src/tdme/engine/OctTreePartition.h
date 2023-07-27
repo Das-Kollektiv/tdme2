@@ -272,7 +272,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(OctTreePartition)
+	FORBID_CLASS_COPY(OctTreePartition)
 
 	/**
 	 * Public constructor

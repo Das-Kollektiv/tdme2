@@ -35,7 +35,7 @@ private:
 	int menuHeaderItemControllerIdx { -1 };
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIMenuHeaderController)
+	FORBID_CLASS_COPY(GUIMenuHeaderController)
 
 	/**
 	 * Private constructor

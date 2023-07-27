@@ -36,7 +36,7 @@ public:
 	GUINodeController* createController(GUINode* node) override;
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUISelectBoxOption)
+	FORBID_CLASS_COPY(GUISelectBoxOption)
 
 	/**
 	 * Public constructor

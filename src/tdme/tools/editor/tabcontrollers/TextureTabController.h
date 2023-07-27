@@ -48,7 +48,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(TextureTabController)
+	FORBID_CLASS_COPY(TextureTabController)
 
 	/**
 	 * Public constructor

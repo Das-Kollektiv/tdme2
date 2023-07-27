@@ -32,7 +32,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUISelectBoxParentOption)
+	FORBID_CLASS_COPY(GUISelectBoxParentOption)
 
 	/**
 	 * Public constructor

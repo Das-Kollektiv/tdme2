@@ -44,7 +44,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(TextureTabView)
+	FORBID_CLASS_COPY(TextureTabView)
 
 	/**
 	 * Public constructor

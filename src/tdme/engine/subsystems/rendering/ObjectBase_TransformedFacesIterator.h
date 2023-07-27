@@ -87,7 +87,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ObjectBase_TransformedFacesIterator)
+	FORBID_CLASS_COPY(ObjectBase_TransformedFacesIterator)
 
 	/**
 	 * Public constructor

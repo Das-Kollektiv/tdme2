@@ -32,7 +32,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUITabsContent)
+	FORBID_CLASS_COPY(GUITabsContent)
 
 	/**
 	 * Public constructor

@@ -41,7 +41,7 @@ class tdme::application::Application
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(Application)
+	FORBID_CLASS_COPY(Application)
 
 	static constexpr int WINDOW_HINT_NONE { 0 };
 	static constexpr int WINDOW_HINT_NOTRESIZEABLE { 1 };

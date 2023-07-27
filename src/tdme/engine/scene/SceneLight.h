@@ -35,7 +35,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(SceneLight)
+	FORBID_CLASS_COPY(SceneLight)
 
 	/**
 	 * Public default constructor

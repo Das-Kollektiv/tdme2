@@ -28,7 +28,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(SceneEntity)
+	FORBID_CLASS_COPY(SceneEntity)
 
 	/**
 	 * Public constructor

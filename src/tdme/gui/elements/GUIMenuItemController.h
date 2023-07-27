@@ -37,7 +37,7 @@ private:
 	GUIParentNode* menuHeaderItemNode { nullptr };
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIMenuItemController)
+	FORBID_CLASS_COPY(GUIMenuItemController)
 
 	/**
 	 * Private constructor

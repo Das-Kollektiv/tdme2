@@ -160,7 +160,7 @@ private:
 
 protected:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIStyledTextNodeController)
+	FORBID_CLASS_COPY(GUIStyledTextNodeController)
 
 	/**
 	 * Constructor

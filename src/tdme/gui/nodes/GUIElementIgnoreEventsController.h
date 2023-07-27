@@ -32,7 +32,7 @@ private:
 	MutableString value;
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIElementIgnoreEventsController)
+	FORBID_CLASS_COPY(GUIElementIgnoreEventsController)
 
 	/**
 	 * Private constructor

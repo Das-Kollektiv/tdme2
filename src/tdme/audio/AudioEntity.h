@@ -31,7 +31,7 @@ protected:
 
 protected:
 	// forbid class copy
-	CLASS_FORBID_COPY(AudioEntity)
+	FORBID_CLASS_COPY(AudioEntity)
 
 	/**
 	 * Constructor

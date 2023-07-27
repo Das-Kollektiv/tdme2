@@ -63,7 +63,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ContextMenuScreenController)
+	FORBID_CLASS_COPY(ContextMenuScreenController)
 
 	/**
 	 * Public constructor

@@ -51,7 +51,7 @@ private:
 
 protected:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIHorizontalScrollbarInternalController)
+	FORBID_CLASS_COPY(GUIHorizontalScrollbarInternalController)
 
 	/**
 	 * Constructor

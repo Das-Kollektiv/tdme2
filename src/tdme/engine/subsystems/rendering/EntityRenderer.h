@@ -284,7 +284,7 @@ public:
 	static constexpr int32_t RENDERTYPE_ALL { 2047 };
 
 	// forbid class copy
-	CLASS_FORBID_COPY(EntityRenderer)
+	FORBID_CLASS_COPY(EntityRenderer)
 
 	/**
 	 * Public constructor
