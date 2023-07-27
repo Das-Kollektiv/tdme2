@@ -124,6 +124,9 @@ private:
 	void updateHierarchy(const Transform& parentTransform, EntityHierarchyLevel* entityHierarchyLevel, int depth, bool& firstEntity);
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(EntityHierarchy)
+
 	/**
 	 * Public constructor
 	 * @param id id

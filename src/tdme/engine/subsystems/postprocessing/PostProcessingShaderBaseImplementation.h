@@ -38,6 +38,9 @@ protected:
 	Renderer* renderer { nullptr };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(PostProcessingShaderBaseImplementation)
+
 	/**
 	 * Public constructor
 	 * @param renderer renderer

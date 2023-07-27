@@ -52,6 +52,9 @@ private:
 	PopUps* popUps { nullptr };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(EmptyEditorTabController)
+
 	/**
 	 * Public constructor
 	 * @param view view

@@ -47,7 +47,11 @@ private:
 	Texture* lightSourceTexture { nullptr };
 	int32_t lightSourceTextureId;
 	Renderer* renderer { nullptr };
+
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(Light)
+
 	/**
 	 * Public default constructor
 	 */

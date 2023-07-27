@@ -31,6 +31,9 @@ private:
 	bool disabled;
 	MutableString value;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIElementIgnoreEventsController)
+
 	/**
 	 * Private constructor
 	 * @param node node

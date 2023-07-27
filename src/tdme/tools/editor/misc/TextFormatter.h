@@ -206,6 +206,9 @@ public:
 		return instance;
 	}
 
+	// forbid class copy
+	CLASS_FORBID_COPY(TextFormatter)
+
 	/**
 	 * Public constructor
 	 */

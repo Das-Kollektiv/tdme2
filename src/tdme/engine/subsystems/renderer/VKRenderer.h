@@ -577,6 +577,9 @@ private:
 	void invalidatePipelines();
 
 protected:
+	// forbid class copy
+	CLASS_FORBID_COPY(VKRenderer)
+
 	/**
 	 * Protected constructor
 	 */

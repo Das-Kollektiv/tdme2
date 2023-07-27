@@ -35,6 +35,12 @@ class ServerGroup : public ServerGroupBase {
 public:
 	typedef unordered_set<string> ClientKeySet;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(ServerGroup)
+
+	/**
+	 * Public constructor
+	 */
 	ServerGroup(const uint32_t groupId) :
 		server(nullptr),
 		groupId(groupId),

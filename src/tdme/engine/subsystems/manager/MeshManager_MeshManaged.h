@@ -23,7 +23,10 @@ private:
 	string id;
 	ObjectNodeMesh* mesh { nullptr };
 	int32_t referenceCounter { 0 };
+
 private:
+	// forbid class copy
+	CLASS_FORBID_COPY(MeshManager_MeshManaged)
 
 	/**
 	 * Protected constructor

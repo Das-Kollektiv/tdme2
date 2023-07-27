@@ -40,6 +40,9 @@ private:
 	GUIScreenNode* screenNode { nullptr };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(AboutDialogScreenController)
+
 	/**
 	 * Public constructor
 	 * @param popUps pop ups

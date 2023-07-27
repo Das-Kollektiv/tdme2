@@ -20,6 +20,9 @@ private:
 	vector<Matrix4x4> transformMatrices;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(Animation)
+
 	/**
 	 * Public constructor
 	 * @param frames frames

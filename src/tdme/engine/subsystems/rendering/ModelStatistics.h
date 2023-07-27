@@ -10,7 +10,8 @@ using tdme::engine::subsystems::rendering::ModelUtilitiesInternal;
  * @author Andreas Drewke
  */
 struct tdme::engine::subsystems::rendering::ModelStatistics
-{	int32_t opaqueFaceCount { 0 };
+{
+	int32_t opaqueFaceCount { 0 };
 	int32_t transparentFaceCount { 0 };
 	int32_t materialCount { 0 };
 };

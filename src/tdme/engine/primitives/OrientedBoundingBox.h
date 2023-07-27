@@ -46,6 +46,9 @@ public:
 	STATIC_DLL_IMPEXT static const Vector3 AABB_AXIS_Y;
 	STATIC_DLL_IMPEXT static const Vector3 AABB_AXIS_Z;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(OrientedBoundingBox)
+
 	/**
 	 * Public constructor
 	 * @param center center

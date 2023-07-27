@@ -356,6 +356,9 @@ private:
 	};
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(TextEditorTabView)
+
 	/**
 	 * Public constructor
 	 * @param editorView editor view

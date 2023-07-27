@@ -40,6 +40,9 @@ private:
 	STATIC_DLL_IMPEXT static ScenePropertyPresets* instance;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(ScenePropertyPresets)
+
 	/**
 	 * Constructor
 	 * @param pathName path name

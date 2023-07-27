@@ -49,6 +49,9 @@ private:
 	bool verticesUpdated;
 	bool normalsUpdated;
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(Node)
+
 	/**
 	 * Public constructor
 	 * @param model model

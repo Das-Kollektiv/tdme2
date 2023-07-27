@@ -40,7 +40,11 @@ private:
 	Vector3 velocityRnd;
 	Color4 colorStart;
 	Color4 colorEnd;
+
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(CircleParticleEmitter)
+
 	/**
 	 * Public constructor
 	 * @param count particles to emit in one second

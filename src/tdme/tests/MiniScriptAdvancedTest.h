@@ -10,6 +10,9 @@ using tdme::utilities::MiniScript;
  */
 class MiniScriptAdvancedTest: public MiniScript {
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(MiniScriptAdvancedTest)
+
 	/**
 	 * Public constructor
 	 */

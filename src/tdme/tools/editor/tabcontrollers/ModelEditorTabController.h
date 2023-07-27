@@ -155,6 +155,9 @@ private:
 	void createOutlinerModelNodesXML(const string& prefix, const map<string, Node*>& subNodes, string& xml);
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(ModelEditorTabController)
+
 	/**
 	 * Public constructor
 	 * @param view view

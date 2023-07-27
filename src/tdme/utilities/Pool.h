@@ -30,6 +30,9 @@ protected:
 	virtual T instantiate() = 0;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(Pool)
+
 	/**
 	 * Public constructor
 	 */

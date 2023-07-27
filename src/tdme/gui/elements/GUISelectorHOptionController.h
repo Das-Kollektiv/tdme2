@@ -37,6 +37,9 @@ private:
 	bool hidden;
 	MutableString value;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUISelectorHOptionController)
+
 	/**
 	 * Private constructor
 	 * @param node node

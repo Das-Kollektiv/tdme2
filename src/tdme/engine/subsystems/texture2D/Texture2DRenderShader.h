@@ -30,6 +30,9 @@ private:
 	bool isRunning;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(Texture2DRenderShader)
+
 	/**
 	 * Public constructor
 	 * @param renderer renderer

@@ -44,6 +44,9 @@ private:
 	bool focussed;
 	MutableString value;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUISelectBoxOptionController)
+
 	/**
 	 * Private constructor
 	 * @param node node

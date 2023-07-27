@@ -284,6 +284,9 @@ public:
 	}
 
 protected:
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIScreenNode)
+
 	/**
 	 * Constructor
 	 * @oaram fileName file name or complete file path

@@ -30,13 +30,18 @@ private:
 	STATIC_DLL_IMPEXT static string NAME;
 
 public:
-	const string& getName() override;
-	const string getTemplate(const string& applicationPathName, const string& applicationSubPathName, const string& fileName = string()) override;
-	unordered_map<string, string> getAttributes(GUIScreenNode* screenNode) override;
-	GUINodeController* createController(GUINode* node) override;
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIGridItem)
 
 	/**
 	 * Public constructor
 	 */
 	GUIGridItem();
+
+	// overridden methods
+	const string& getName() override;
+	const string getTemplate(const string& applicationPathName, const string& applicationSubPathName, const string& fileName = string()) override;
+	unordered_map<string, string> getAttributes(GUIScreenNode* screenNode) override;
+	GUINodeController* createController(GUINode* node) override;
+
 };

@@ -28,6 +28,9 @@ using tdme::engine::Engine;
 class tdme::engine::subsystems::renderer::EngineGLES2Renderer: public GLES2Renderer, public RendererPlugin
 {
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(EngineGLES2Renderer)
+
 	/**
 	 * Public constructor
 	 */

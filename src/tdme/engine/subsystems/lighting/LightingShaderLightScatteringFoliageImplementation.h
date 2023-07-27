@@ -22,6 +22,9 @@ private:
 	int32_t uniformAmplitudeMax { -1 };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(LightingShaderLightScatteringFoliageImplementation)
+
 	/**
 	 * Public constructor
 	 * @param renderer renderer

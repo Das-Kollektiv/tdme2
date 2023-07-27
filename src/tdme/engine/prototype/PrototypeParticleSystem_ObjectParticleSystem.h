@@ -36,6 +36,9 @@ private:
 	string modelFileName;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(PrototypeParticleSystem_ObjectParticleSystem)
+
 	/**
 	 * Public constructor
 	 */

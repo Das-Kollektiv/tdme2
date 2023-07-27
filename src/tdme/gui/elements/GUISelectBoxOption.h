@@ -35,6 +35,9 @@ public:
 	unordered_map<string, string> getAttributes(GUIScreenNode* screenNode) override;
 	GUINodeController* createController(GUINode* node) override;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUISelectBoxOption)
+
 	/**
 	 * Public constructor
 	 */

@@ -60,6 +60,9 @@ protected:
 	Transform parentTransform;
 	mutable Matrix4x4 currentTransformMatrix;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(ObjectBase)
+
 	/**
 	 * Set parent transform
 	 * @param parentTransform parent transform

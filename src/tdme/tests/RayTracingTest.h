@@ -46,6 +46,7 @@ private:
 	ObjectDeleter<Prototype> prototypeDeleter;
 	ObjectDeleter<Model> modelDeleter;
 	ObjectDeleter<BoundingVolume> bvDeleter;
+
 public:
 
 	/**
@@ -54,6 +55,9 @@ public:
 	 * @param argv argument values
 	 */
 	static void main(int argc, char** argv);
+
+	// forbid class copy
+	CLASS_FORBID_COPY(RayTracingTest)
 
 	/**
 	 * Public constructor

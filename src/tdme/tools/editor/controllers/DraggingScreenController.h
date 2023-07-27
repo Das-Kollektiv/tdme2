@@ -36,7 +36,11 @@ private:
 	int dragReleaseMouseY { -1 };
 
 	Action* onReleaseAction { nullptr };
+
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(DraggingScreenController)
+
 	/**
 	 * Public constructor
 	 */

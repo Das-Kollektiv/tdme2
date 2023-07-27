@@ -23,6 +23,10 @@ using tdme::utilities::Exception;
 
 class CRHShutdown final: public ServerClientRequestHandler<UDPServerClient,string> {
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(CRHShutdown)
+
+	//
 	CRHShutdown();
 
 	virtual ~CRHShutdown();
@@ -32,6 +36,10 @@ public:
 
 class CRHDefault final: public ServerClientRequestHandler<UDPServerClient,string> {
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(CRHDefault)
+
+	//
 	CRHDefault();
 
 	virtual ~CRHDefault();
@@ -42,6 +50,10 @@ public:
 class EchoUDPServer final: public UDPServer {
 	friend class EchoUDPServerClient;
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(EchoUDPServer)
+
+	//
 	EchoUDPServer(const string& host, const unsigned int port, const unsigned int maxCCU);
 
 	virtual ~EchoUDPServer();

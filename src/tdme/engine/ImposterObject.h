@@ -84,6 +84,9 @@ private:
 	}
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(ImposterObject)
+
 	/**
 	 * Public constructor
 	 * @param id id

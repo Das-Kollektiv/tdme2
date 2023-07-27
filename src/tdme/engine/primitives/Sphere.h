@@ -25,6 +25,9 @@ private:
 	void createCollisionShape(World* world) override;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(Sphere)
+
 	/**
 	 * Public constructor
 	 */

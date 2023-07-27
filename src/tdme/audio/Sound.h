@@ -28,6 +28,9 @@ private:
 	uint32_t alSourceId { 0 };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(Sound)
+
 	/**
 	 * Protected constructor
 	 * @param id id

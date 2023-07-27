@@ -59,7 +59,15 @@ private:
 	 * @return wall model
 	 */
 	Model* createWallModel();
+
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(VideoTest)
+
+	/**
+	 * Public constructor
+	 */
+	VideoTest();
 
 	/**
 	 * Main
@@ -81,8 +89,4 @@ public:
 	void onMouseButton(int button, int state, int x, int y) override;
 	void onMouseWheel(int button, int direction, int x, int y) override;
 
-	/**
-	 * Public constructor
-	 */
-	VideoTest();
 };

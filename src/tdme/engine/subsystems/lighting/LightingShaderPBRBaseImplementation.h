@@ -68,7 +68,11 @@ protected:
 
 	bool initialized { false };
 	Renderer* renderer { nullptr };
+
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(LightingShaderPBRBaseImplementation)
+
 	/**
 	 * Public constructor
 	 * @param renderer renderer

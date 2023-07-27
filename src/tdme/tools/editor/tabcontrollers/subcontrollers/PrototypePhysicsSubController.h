@@ -112,6 +112,9 @@ public:
 		BOUNDINGVOLUMETYPE_ALL = 1 + 2 + 4 +8 + 16 + 32
 	};
 
+	// forbid class copy
+	CLASS_FORBID_COPY(PrototypePhysicsSubController)
+
 	/**
 	 * Public constructor
 	 * @param editorView editor view

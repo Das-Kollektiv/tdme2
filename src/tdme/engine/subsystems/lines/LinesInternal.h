@@ -88,6 +88,9 @@ protected:
 	}
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(LinesInternal)
+
 	/**
 	 * Public constructor
 	 * @param id id

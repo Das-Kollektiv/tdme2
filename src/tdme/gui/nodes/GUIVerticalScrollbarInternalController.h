@@ -32,6 +32,9 @@ private:
 	int mouseYOffset;
 	MutableString value;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIVerticalScrollbarInternalController)
+
 	/**
 	 * Private constructor
 	 * @param node node

@@ -88,6 +88,9 @@ private:
 	array<float,2> rampHeight;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(TerrainEditorTabView)
+
 	/**
 	 * Public constructor
 	 * @param editorView editor view

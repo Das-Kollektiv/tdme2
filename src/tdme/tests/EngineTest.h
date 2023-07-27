@@ -51,8 +51,6 @@ private:
 	bool keyD { false };
 	ObjectDeleter<Model> modelDeleter;
 
-private:
-
 	/**
 	 * Create wall model
 	 * @return
@@ -75,6 +73,9 @@ public:
 	 * @param argv argument values
 	 */
 	static void main(int argc, char** argv);
+
+	// forbid class copy
+	CLASS_FORBID_COPY(EngineTest)
 
 	/**
 	 * Engine test constructor

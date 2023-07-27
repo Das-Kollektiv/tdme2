@@ -56,6 +56,9 @@ private:
 	void renderToScreen(Engine* engine, int32_t depthBufferTextureId, int32_t colorBufferTextureId);
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(FrameBuffer)
+
 	/**
 	 * Public constructor
 	 * @param width width

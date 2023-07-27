@@ -17,8 +17,10 @@ using tdme::engine::subsystems::renderer::Renderer;
 class tdme::engine::subsystems::lighting::LightingShaderWaterImplementation: public LightingShaderBaseImplementation
 {
 public:
-
 	static constexpr int WAVES_MAX { 4 };
+
+	// forbid class copy
+	CLASS_FORBID_COPY(LightingShaderWaterImplementation)
 
 	/**
 	 * Public constructor

@@ -77,7 +77,11 @@ protected:
 	array<float, 4> defaultSceneColor {{ 0.0f, 0.0f, 0.0f, 0.0f }};
 	bool initialized { false };
 	Renderer* renderer { nullptr };
+
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(LightingShaderBaseImplementation)
+
 	/**
 	 * Public constructor
 	 * @param renderer renderer

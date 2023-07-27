@@ -29,6 +29,9 @@ private:
 	void createCollisionShape(World* world) override;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(HeightMap)
+
 	/**
 	 * Public constructor
 	 * @param colums columns

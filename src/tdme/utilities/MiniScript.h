@@ -1672,6 +1672,9 @@ public:
 	 */
 	class ScriptStateMachineState {
 	public:
+		// forbid class copy
+		CLASS_FORBID_COPY(ScriptStateMachineState)
+
 		/**
 		 * Constructor
 		 */
@@ -1709,6 +1712,9 @@ public:
 			bool optional;
 			bool assignBack;
 		};
+
+		// forbid class copy
+		CLASS_FORBID_COPY(ScriptMethod)
 
 		/**
 		 * Constructor
@@ -2714,6 +2720,9 @@ private:
 	static const ScriptVariable deserializeArrayJson(Value& jArrayValue);
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(MiniScript)
+
 	/**
 	 * Default constructor
 	 */

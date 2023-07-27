@@ -262,7 +262,7 @@ private:
 
 	Partition* partition { nullptr };
 
-	array<Light, LIGHTS_MAX> lights;
+	array<Light*, LIGHTS_MAX> lights;
 	Color4 sceneColor;
 	GeometryBuffer* geometryBuffer { nullptr };
 	FrameBuffer* frameBuffer { nullptr };
@@ -487,6 +487,9 @@ private:
 	inline TextureAtlas& getDecalsTextureAtlas() {
 		return decalsTextureAtlas;
 	}
+
+	// forbid class copy
+	CLASS_FORBID_COPY(Engine)
 
 	/**
 	 * Private constructor
@@ -1000,7 +1003,7 @@ public:
 	 * @return Light
 	 */
 	inline Light* getLightAt(int32_t idx) {
-		return &lights[idx];
+		return lights[idx];
 	}
 
 	/**

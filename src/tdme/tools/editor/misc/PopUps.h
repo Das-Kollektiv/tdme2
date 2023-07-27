@@ -38,6 +38,9 @@ private:
 	DraggingScreenController* draggingScreenController { nullptr };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(PopUps)
+
 	/**
 	 * Public constructor
 	 */

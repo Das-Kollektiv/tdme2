@@ -31,6 +31,8 @@ private:
 	float slopeMax { 30.0f };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(PrototypeTerrainBrushPrototype)
 
 	/**
 	 * Public constructor

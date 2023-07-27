@@ -1,8 +1,8 @@
 #pragma once
 
 #include <array>
-#include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -13,8 +13,8 @@
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::array;
-using std::map;
 using std::string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::Texture;
@@ -36,6 +36,9 @@ private:
 	int activeTextureUnit;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(GLES2Renderer)
+
 	/**
 	 * Public constructor
 	 */

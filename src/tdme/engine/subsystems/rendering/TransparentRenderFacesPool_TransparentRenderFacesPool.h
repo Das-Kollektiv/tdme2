@@ -17,10 +17,13 @@ class tdme::engine::subsystems::rendering::TransparentRenderFacesPool_Transparen
 	: public Pool<TransparentRenderFace*>
 {
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(TransparentRenderFacesPool_TransparentRenderFacesPool)
+
 	/**
 	 * Public constructor
 	 */
-	TransparentRenderFacesPool_TransparentRenderFacesPool();
+	inline TransparentRenderFacesPool_TransparentRenderFacesPool() {}
 
 protected:
 	/**

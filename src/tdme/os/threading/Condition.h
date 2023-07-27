@@ -22,6 +22,9 @@ using tdme::os::threading::Mutex;
 */
 class tdme::os::threading::Condition {
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(Condition)
+
 	/**
 	 * @brief Public constructor, creates condition variable
 	 * @param name string

@@ -28,6 +28,9 @@ private:
 	bool running { false };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(PostProcessingShader)
+
 	/**
 	 * Public constructor
 	 * @param renderer renderer

@@ -27,8 +27,10 @@ class tdme::gui::nodes::GUIInputInternalController final
 {
 	friend class GUIInputInternalNode;
 	friend class GUIInputInternalController_CursorMode;
+
 public:
 	enum CursorMode { CURSORMODE_HIDE, CURSORMODE_SHOW};
+
 private:
 	static constexpr int64_t TIME_DOUBLECLICK { 250LL };
 	static constexpr int64_t CURSOR_MODE_DURATION { 500LL };
@@ -60,6 +62,9 @@ private:
 
 	int64_t timeLastClick { -1LL };
 	bool doubleClick { false };
+
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIInputInternalController)
 
 	/**
 	 * Private constructor

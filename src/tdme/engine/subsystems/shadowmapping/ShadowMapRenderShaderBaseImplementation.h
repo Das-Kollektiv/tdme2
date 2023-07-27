@@ -57,6 +57,9 @@ protected:
 	int lightId { -1 };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(ShadowMapRenderShaderBaseImplementation)
+
 	/**
 	 * Public constructor
 	 * @param renderer renderer

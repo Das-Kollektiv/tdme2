@@ -54,6 +54,9 @@ private:
 	ByteBuffer* fbSpriteSheetDimensionByteBuffer { nullptr };
 	FloatBuffer fbSpriteSheetDimension;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(BatchRendererPoints)
+
 	/**
 	 * Public constructor
 	 */

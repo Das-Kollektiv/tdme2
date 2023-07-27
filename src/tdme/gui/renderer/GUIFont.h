@@ -52,6 +52,9 @@ private:
 	float lineHeight { 0.0f };
 	float baseLine { 0.0f };
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIFont)
+
 	/**
 	 * Public constructor
 	 * @param pathName font path name

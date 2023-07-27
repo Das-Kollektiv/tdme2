@@ -35,6 +35,9 @@ private:
 	bool focus;
 	MutableString value;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUITabsHeaderController)
+
 	/**
 	 * Private constructor
 	 * @param node node

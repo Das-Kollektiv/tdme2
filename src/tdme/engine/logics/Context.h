@@ -372,6 +372,8 @@ protected:
 	bool server;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(Context)
 
 	/**
 	 * Public constructor

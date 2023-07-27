@@ -28,6 +28,8 @@ private:
 	float speed;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(AnimationSetup)
 
 	/**
 	 * Public constructor

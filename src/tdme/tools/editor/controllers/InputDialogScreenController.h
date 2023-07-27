@@ -48,6 +48,9 @@ private:
 	Action* cancelAction { nullptr };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(InputDialogScreenController)
+
 	/**
 	 * Public constructor
 	 * @param popUps pop ups

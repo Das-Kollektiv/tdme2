@@ -38,6 +38,9 @@ protected:
 	uint16_t videoWidth { VIDEO_WIDTH_NONE };
 	uint16_t videoHeight { VIDEO_WIDTH_NONE };
 
+	// forbid class copy
+	CLASS_FORBID_COPY(VideoDecoder)
+
 	/**
 	 * Constructor
 	 */

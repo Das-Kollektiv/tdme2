@@ -21,6 +21,10 @@ class EchoUDPServerClient final: public UDPServerClient {
 	friend class EchoUDPServer;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(EchoUDPServerClient)
+
+	//
 	EchoUDPServerClient(const uint32_t clientId, const std::string& ip, const uint16_t port);
 
 protected:

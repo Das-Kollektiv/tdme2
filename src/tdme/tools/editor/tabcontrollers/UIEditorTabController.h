@@ -59,6 +59,9 @@ private:
 	int searchIndex { -1 };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(UIEditorTabController)
+
 	/**
 	 * Public constructor
 	 * @param view view

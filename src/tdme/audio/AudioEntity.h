@@ -30,6 +30,9 @@ protected:
 	Vector3 sourceVelocity;
 
 protected:
+	// forbid class copy
+	CLASS_FORBID_COPY(AudioEntity)
+
 	/**
 	 * Constructor
 	 */

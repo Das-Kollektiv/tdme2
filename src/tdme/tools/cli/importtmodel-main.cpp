@@ -58,6 +58,9 @@ private:
 	bool useBC7TextureCompression;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(ImportTModelApplication)
+
 	/**
 	 * Public constructor
 	 */

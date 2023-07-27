@@ -47,6 +47,9 @@ private:
 	int selectedMenuItemControllerIdx { -1 };
 
 private:
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIMenuHeaderItemController)
+
 	/**
 	 * Private constructor
 	 * @param node node

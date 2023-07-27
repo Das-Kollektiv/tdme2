@@ -68,6 +68,9 @@ protected:
 	int textureWidth { 0 };
 	int textureHeight { 0 };
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUITextureBaseNode)
+
 	/**
 	 * Constructor
 	 * @param screenNode screen node

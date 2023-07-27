@@ -36,6 +36,9 @@ private:
 	MutableString value;
 	GUIParentNode* contextMenuNode { nullptr };
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIContextMenuItemController)
+
 	/**
 	 * Private constructor
 	 * @param node node

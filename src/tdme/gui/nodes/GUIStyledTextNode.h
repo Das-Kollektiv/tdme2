@@ -268,6 +268,9 @@ private:
 	void computeContentAlignmentInternal();
 
 protected:
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIStyledTextNode)
+
 	/**
 	 * Constructor
 	 * @param screenNode screen node

@@ -26,6 +26,9 @@ private:
 	bool isRunning;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(FrameBufferRenderShader)
+
 	/**
 	 * Public constructor
 	 * @param renderer renderer

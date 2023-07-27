@@ -52,6 +52,9 @@ public:
 		uint32_t errors { 0 };
 	};
 
+	// forbid class copy
+	CLASS_FORBID_COPY(UDPServer)
+
 	/**
 	 * @brief Public constructor
 	 * @param name server name

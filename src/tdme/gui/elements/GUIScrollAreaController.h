@@ -27,6 +27,9 @@ private:
 	GUIActionListener* actionListener { nullptr };
 	bool scrollToBottomIssued { false };
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIScrollAreaController)
+
 	/**
 	 * Private constructor
 	 * @param node node

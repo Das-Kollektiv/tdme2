@@ -37,6 +37,9 @@ private:
 	float textureSpritesFPS { 10.0f };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(PrototypeParticleSystem_PointParticleSystem)
+
 	/**
 	 * Public constructor
 	 */

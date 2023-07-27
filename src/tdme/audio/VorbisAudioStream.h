@@ -28,6 +28,9 @@ private:
 	bool initiated { false };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(VorbisAudioStream)
+
 	/**
 	 * Protected constructor
 	 * @param id id

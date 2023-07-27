@@ -51,6 +51,14 @@ public:
 	 */
 	static void main(int argc, char** argv);
 
+	// forbid class copy
+	CLASS_FORBID_COPY(SkinningTest)
+
+	/**
+	 * Public constructor
+	 */
+	SkinningTest();
+
 	// overridden methods
 	void display() override;
 	void dispose() override;
@@ -64,8 +72,4 @@ public:
 	void onMouseButton(int button, int state, int x, int y) override;
 	void onMouseWheel(int button, int direction, int x, int y) override;
 
-	/**
-	 * Public constructor
-	 */
-	SkinningTest();
 };

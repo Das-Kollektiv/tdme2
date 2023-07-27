@@ -36,6 +36,9 @@ private:
 	vector<ShadowMapCreationShaderContext> contexts;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(ShadowMapCreationShader)
+
 	/**
 	 * Constructor
 	 * @param renderer renderer

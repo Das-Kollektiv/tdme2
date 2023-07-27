@@ -34,6 +34,9 @@ class tdme::gui::nodes::GUISpaceNode final
 	friend class tdme::gui::GUIParser;
 
 protected:
+	// forbid class copy
+	CLASS_FORBID_COPY(GUISpaceNode)
+
 	/**
 	 * Constructor
 	 * @param screenNode screen node

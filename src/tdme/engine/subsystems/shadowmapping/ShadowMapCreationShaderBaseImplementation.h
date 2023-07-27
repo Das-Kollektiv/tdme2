@@ -43,6 +43,9 @@ protected:
 	bool initialized { false };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(ShadowMapCreationShaderBaseImplementation)
+
 	/**
 	 * Constructor
 	 * @param renderer renderer

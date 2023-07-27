@@ -27,7 +27,7 @@ class ServerRequest;
  * @author Andreas Drewke
  */
 class tdme::network::udpserver::ServerClient : public Reference {
-friend class ServerWorkerThread;
+	friend class ServerWorkerThread;
 
 public:
 	STATIC_DLL_IMPEXT static const char* KEY_PREFIX_UNNAMED;

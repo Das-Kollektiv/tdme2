@@ -25,6 +25,9 @@ private:
 	float textureSpritesFPS { 10.0f };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(PrototypeDecal)
+
 	/**
 	 * Public constructor
 	 */

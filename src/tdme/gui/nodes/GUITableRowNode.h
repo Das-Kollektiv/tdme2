@@ -29,6 +29,9 @@ private:
 	int tableRowNodeIdx { -1 };
 
 protected:
+	// forbid class copy
+	CLASS_FORBID_COPY(GUITableRowNode)
+
 	/**
 	 * Constructor
 	 * @param screenNode screen node

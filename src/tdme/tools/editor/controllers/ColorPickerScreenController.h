@@ -64,6 +64,9 @@ private:
 	void updateColorHex();
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(ColorPickerScreenController)
+
 	/**
 	 * Public constructor
 	 * @param popUps pop ups

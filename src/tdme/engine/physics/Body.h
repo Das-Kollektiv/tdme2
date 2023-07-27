@@ -94,6 +94,9 @@ protected:
 	vector<CollisionListener*> collisionListener;
 	bool initiation;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(Body)
+
 	/**
 	 * Protected constructor
 	 * @param world world

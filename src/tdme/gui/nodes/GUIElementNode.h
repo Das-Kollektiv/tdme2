@@ -63,11 +63,8 @@ private:
 	vector<string> options;
 
 protected:
-	/**
-	 * @return node type
-	 */
-	const string getNodeType() override;
-	bool isContentNode() override;
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIElementNode)
 
 	/**
 	 * Constructor
@@ -138,6 +135,10 @@ protected:
 		const string& parentElementId,
 		const string& options
 	);
+
+	// overriden methods
+	const string getNodeType() override;
+	bool isContentNode() override;
 
 public:
 	/**

@@ -37,6 +37,9 @@ public:
 	static const uint8_t MESSAGE_RETRIES_NONE = 0;
 	static const string EVENT_CUSTOM_NONE;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(ServerRequest)
+
 	/**
 	 * @brief Public constructor
 	 * @param requestType request type

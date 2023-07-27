@@ -16,6 +16,9 @@ class tdme::engine::ObjectModel final
 	: public ObjectModelInternal
 {
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(ObjectModel)
+
 	/**
 	 * Public constructor
 	 * @param model model

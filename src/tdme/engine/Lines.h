@@ -50,6 +50,9 @@ private:
 	}
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(Lines)
+
 	/**
 	 * Public constructor
 	 * @param id id

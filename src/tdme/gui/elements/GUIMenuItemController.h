@@ -36,6 +36,9 @@ private:
 	MutableString value;
 	GUIParentNode* menuHeaderItemNode { nullptr };
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIMenuItemController)
+
 	/**
 	 * Private constructor
 	 * @param node node

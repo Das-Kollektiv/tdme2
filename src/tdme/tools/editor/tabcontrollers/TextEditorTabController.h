@@ -77,6 +77,9 @@ private:
 	MiniScript* scriptInstance { nullptr };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(TextEditorTabController)
+
 	/**
 	 * Public constructor
 	 * @param view view

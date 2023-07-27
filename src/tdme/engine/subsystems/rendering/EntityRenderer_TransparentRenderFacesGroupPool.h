@@ -16,15 +16,20 @@ using tdme::utilities::Pool;
 class tdme::engine::subsystems::rendering::EntityRenderer_TransparentRenderFacesGroupPool: public Pool<TransparentRenderFacesGroup*>
 {
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(EntityRenderer_TransparentRenderFacesGroupPool)
+
 	/**
 	 * Public constructor
 	 */
-	EntityRenderer_TransparentRenderFacesGroupPool();
+	inline EntityRenderer_TransparentRenderFacesGroupPool() {}
 
 protected:
 	/**
 	 * Instantiate
 	 */
-	TransparentRenderFacesGroup* instantiate() override;
+	inline TransparentRenderFacesGroup* instantiate() override {
+		return new TransparentRenderFacesGroup();
+	}
 
 };

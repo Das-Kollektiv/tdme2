@@ -47,6 +47,8 @@ private:
 	ByteBuffer* verticesByteBuffer { nullptr };
 	ByteBuffer* indicesByteBuffer { nullptr };
 
+	// forbid class copy
+	CLASS_FORBID_COPY(ConvexMesh)
 
 	/**
 	 * Public constructor

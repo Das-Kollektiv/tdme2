@@ -44,6 +44,9 @@ private:
 		void* cookie;
 	};
 
+	// forbid class copy
+	CLASS_FORBID_COPY(KernelEventMechanismPSD)
+
 	/**
 	 * @brief Public constructor
 	 */

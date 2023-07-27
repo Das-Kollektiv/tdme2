@@ -25,6 +25,9 @@ using tdme::video::decoder::VideoDecoder;
 class tdme::video::decoder::MPEG1Decoder: public VideoDecoder
 {
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(MPEG1Decoder)
+
 	/**
 	 * Constructor
 	 */

@@ -40,6 +40,8 @@ class tdme::application::Application
 	friend class tdme::engine::subsystems::renderer::VKRenderer;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(Application)
 
 	static constexpr int WINDOW_HINT_NONE { 0 };
 	static constexpr int WINDOW_HINT_NOTRESIZEABLE { 1 };

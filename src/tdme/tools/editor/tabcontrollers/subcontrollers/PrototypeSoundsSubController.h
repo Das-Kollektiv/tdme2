@@ -55,6 +55,9 @@ private:
 	string renameSoundName;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(PrototypeSoundsSubController)
+
 	/**
 	 * Public constructor
 	 * @param editorView editor view

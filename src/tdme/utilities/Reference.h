@@ -12,6 +12,9 @@ using tdme::os::threading::AtomicOperations;
  */
 class tdme::utilities::Reference {
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(Reference)
+
 	/**
 	 * @brief Public constructor
 	 */

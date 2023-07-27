@@ -91,6 +91,9 @@ protected:
 	}
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(ObjectParticleSystemInternal)
+
 	/**
 	 * Public constructor
 	 * @param id id

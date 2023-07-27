@@ -22,26 +22,35 @@ public:
 	/**
 	 * Public constructor
 	 */
-	TextureCoordinate();
+	inline TextureCoordinate() {
+		data.fill(0.0f);
+	}
 
 	/**
 	 * Public constructor
 	 * @param textureCoordinate texture coordinate
 	 */
-	TextureCoordinate(const TextureCoordinate& textureCoordinate);
+	inline TextureCoordinate(const TextureCoordinate& textureCoordinate) {
+		data = textureCoordinate.data;
+	}
 
 	/**
 	 * Public constructor
 	 * @param uv texture coordinate
 	 */
-	TextureCoordinate(const array<float, 2>& uv);
+	inline TextureCoordinate(const array<float, 2>& uv) {
+		data = uv;
+	}
 
 	/**
 	 * Public constructor
 	 * @param u u
 	 * @param v v
 	 */
-	TextureCoordinate(float u, float v);
+	inline TextureCoordinate(float u, float v) {
+		data[0] = u;
+		data[1] = 1.0f - v;
+	}
 
 	/**
 	 * @return U
@@ -61,20 +70,30 @@ public:
 	 * Set texture coordinate
 	 * @param textureCoordinate texture coordinate
 	 */
-	TextureCoordinate& set(const TextureCoordinate& textureCoordinate);
+	inline TextureCoordinate& set(const TextureCoordinate& textureCoordinate) {
+		data = textureCoordinate.data;
+		return *this;
+	}
 
 	/**
 	 * Set texture coordinate
 	 * @param uv texture coordinate
 	 */
-	TextureCoordinate& set(const array<float, 2>& uv);
+	inline TextureCoordinate& set(const array<float, 2>& uv) {
+		data = uv;
+		return *this;
+	}
 
 	/**
 	 * Set texture coordinate
 	 * @param u u
 	 * @param v v
 	 */
-	TextureCoordinate& set(float u, float v);
+	inline TextureCoordinate& set(float u, float v) {
+		data[0] = u;
+		data[1] = 1.0f - v;
+		return *this;
+	}
 
 	/**
 	 * @return texture data as array
@@ -87,7 +106,9 @@ public:
 	 * Clones the texture coordinate
 	 * @return new texture coordinate
 	 */
-	TextureCoordinate clone();
+	inline TextureCoordinate clone() {
+		return TextureCoordinate(data[0], 1.0f - data[1]);
+	}
 
 	/**
 	 * Compares this texture coordinate with given texture coordinate

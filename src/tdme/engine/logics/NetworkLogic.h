@@ -19,6 +19,8 @@ using tdme::engine::logics::LogicNetworkPacket;
  */
 class tdme::engine::logics::NetworkLogic: public Logic {
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(NetworkLogic)
 
 	/**
 	 * Public constructor

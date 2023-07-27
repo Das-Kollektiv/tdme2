@@ -283,6 +283,9 @@ public:
 	static constexpr int32_t RENDERTYPE_RENDERGROUP_OBJECTORIGIN { 1024 };
 	static constexpr int32_t RENDERTYPE_ALL { 2047 };
 
+	// forbid class copy
+	CLASS_FORBID_COPY(EntityRenderer)
+
 	/**
 	 * Public constructor
 	 * @param engine engine

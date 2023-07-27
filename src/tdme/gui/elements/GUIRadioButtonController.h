@@ -41,6 +41,9 @@ private:
 	STATIC_DLL_IMPEXT static map<string, vector<GUIElementNode*>>* radioButtonGroupNodesByName;
 	MutableString value;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIRadioButtonController)
+
 	/**
 	 * Private constructor
 	 * @param node node

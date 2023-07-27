@@ -17,6 +17,9 @@ using tdme::engine::subsystems::renderer::Renderer;
 class tdme::engine::subsystems::lighting::LightingShaderLightScatteringDefaultImplementation: public LightingShaderBaseImplementation
 {
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(LightingShaderLightScatteringDefaultImplementation)
+
 	/**
 	 * Public constructor
 	 * @param renderer renderer

@@ -40,6 +40,9 @@ private:
 	bool hidden;
 	MutableString value;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIDropDownOptionController)
+
 	/**
 	 * Private constructor
 	 * @param node node

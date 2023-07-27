@@ -20,6 +20,7 @@ class tdme::engine::model::Joint final
 private:
 	string nodeId;
 	Matrix4x4 bindMatrix;
+
 public:
 	/**
 	 * Public constructor

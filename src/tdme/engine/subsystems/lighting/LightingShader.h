@@ -34,6 +34,9 @@ private:
 	vector<LightingShaderContext> contexts;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(LightingShader)
+
 	/**
 	 * Public constructor
 	 * @param renderer renderer

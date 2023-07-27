@@ -42,6 +42,9 @@ private:
 	bool isRunning;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIShader)
+
 	/**
 	 * Public constructor
 	 * @param renderer renderer

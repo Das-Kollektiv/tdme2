@@ -53,6 +53,9 @@ private:
 	}
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(ObjectParticleSystem)
+
 	/**
 	 * Public constructor
 	 * @param id id

@@ -44,6 +44,9 @@ protected:
 	GUIEffectState endState;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIEffect)
+
 	/**
 	 * Public constructor
 	 * @param type type

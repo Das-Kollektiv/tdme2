@@ -467,17 +467,18 @@ void FlowMapTest2::initialize()
 		auto entity = scene->getEntityAt(i);
 		auto properties = entity->getTotalProperties();
 		{
-			auto spawnPointProperty = properties.getProperty("spawnpoint");
+			auto spawnPointProperty = properties->getProperty("spawnpoint");
 			if (spawnPointProperty != nullptr && spawnPointProperty->getValue() == "true") {
 				auto playerGroupIdx = -1;
 				{
-					auto spawnPointPlayerGroupIdxProperty = properties.getProperty("spawnpoint.playergroup");
+					auto spawnPointPlayerGroupIdxProperty = properties->getProperty("spawnpoint.playergroup");
 					if (spawnPointPlayerGroupIdxProperty != nullptr) playerGroupIdx = Integer::parse(spawnPointPlayerGroupIdxProperty->getValue());
 				}
 				startPosition = entity->getTransform().getTranslation();
 				endPosition = startPosition;
 			}
 		}
+		delete properties;
 	}
 	// first line
 	{

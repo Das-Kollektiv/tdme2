@@ -30,6 +30,9 @@ class tdme::engine::logics::ApplicationServerClient: public UDPServerClient {
 	friend class WSServer;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(ApplicationServerClient)
+
 	/**
 	 * Public constructor
 	 * @param clientId client id

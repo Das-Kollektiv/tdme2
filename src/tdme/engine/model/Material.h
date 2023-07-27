@@ -39,6 +39,9 @@ private:
 	Matrix2D3x3 textureMatrix;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(Material)
+
 	/**
 	 * Public constructor
 	 * @param id id

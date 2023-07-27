@@ -71,8 +71,6 @@ private:
 	string settingsPathName;
 	string settingsFileName;
 
-private:
-
 	/**
 	 * Set up files
 	 * @return success
@@ -112,6 +110,9 @@ private:
 	}
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(FileDialogScreenController)
+
 	/**
 	 * Public constructor
 	 * @param popUps pop ups

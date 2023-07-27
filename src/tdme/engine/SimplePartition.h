@@ -33,6 +33,9 @@ private:
 	void removeEntity(Entity* entity) override;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(SimplePartition)
+
 	/**
 	 * Public constructor
 	 */

@@ -49,10 +49,13 @@ private:
 	vector<TransparentRenderFace*> transparentRenderFaces;
 	TransparentRenderFacesPool_TransparentRenderFacesPool transparentRenderFacesPool;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(TransparentRenderFacesPool)
+
 	/**
 	 * Public constructor
 	 */
-	TransparentRenderFacesPool();
+	inline TransparentRenderFacesPool() {}
 
 	/**
 	 * Creates an array of transparent render faces from
@@ -112,17 +115,25 @@ private:
 	/**
 	 * Reset
 	 */
-	void reset();
+	inline void reset() {
+		transparentRenderFacesPool.reset();
+		transparentRenderFaces.clear();
+	}
 
 	/**
 	 * @return transparent render faces vector
 	 */
-	vector<TransparentRenderFace*>& getTransparentRenderFaces();
+	inline vector<TransparentRenderFace*>& getTransparentRenderFaces() {
+		return transparentRenderFaces;
+	}
 
 public:
 
 	/**
 	 * @return allocated faces
 	 */
-	int32_t size();
+	inline int32_t size() {
+		return transparentRenderFacesPool.size();
+	}
+
 };

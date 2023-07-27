@@ -38,6 +38,9 @@ private:
 	int32_t lightId { -1 };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(ShadowMapRenderShader)
+
 	/**
 	 * Public constructor
 	 * @param renderer renderer

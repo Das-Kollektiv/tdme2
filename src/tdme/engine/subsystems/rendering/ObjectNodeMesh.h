@@ -77,6 +77,9 @@ private:
 
 	bool recreatedBuffers;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(ObjectNodeMesh)
+
 	/**
 	 * Creates a object node mesh from node
 	 * @param objectNodeRenderer object node renderer

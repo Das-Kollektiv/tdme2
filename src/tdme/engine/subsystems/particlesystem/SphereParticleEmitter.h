@@ -38,6 +38,9 @@ private:
 	Color4 colorEnd;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(SphereParticleEmitter)
+
 	/**
 	 * @param count number of particles to emit in one second
 	 * @param lifeTime life time in milli seconds

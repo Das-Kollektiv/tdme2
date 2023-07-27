@@ -124,6 +124,9 @@ public:
 		ByteBuffer textureData;
 	};
 
+	// forbid class copy
+	CLASS_FORBID_COPY(Texture)
+
 	/**
 	 * Public constructor
 	 * @param id id

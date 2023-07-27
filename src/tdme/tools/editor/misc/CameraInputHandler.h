@@ -58,6 +58,9 @@ private:
 	bool resetRequested { false };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(CameraInputHandler)
+
 	/**
 	 * Public constructor
 	 * @param engine engine

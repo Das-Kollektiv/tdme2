@@ -25,6 +25,8 @@ private:
 	vector<PrototypeTerrainBrushPrototype*> prototypes;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(PrototypeTerrainBrush)
 
 	/**
 	 * Public constructor

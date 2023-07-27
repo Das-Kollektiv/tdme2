@@ -44,6 +44,9 @@ private:
 
 	bool keyControl;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUISelectBoxController)
+
 	/**
 	 * Private constructor
 	 * @param node node

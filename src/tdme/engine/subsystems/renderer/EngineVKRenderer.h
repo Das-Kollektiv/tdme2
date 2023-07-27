@@ -28,6 +28,9 @@ using tdme::engine::Engine;
 class tdme::engine::subsystems::renderer::EngineVKRenderer: public VKRenderer, public RendererPlugin
 {
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(EngineVKRenderer)
+
 	/**
 	 * Public constructor
 	 */

@@ -9,7 +9,6 @@
  */
 struct tdme::gui::nodes::GUINode_Padding
 {
-
 	int left { 0 };
 	int top { 0 };
 	int right { 0 };

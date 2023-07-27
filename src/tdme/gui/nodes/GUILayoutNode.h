@@ -29,6 +29,9 @@ private:
 	GUILayoutNode_Alignment* alignment { nullptr };
 
 protected:
+	// forbid class copy
+	CLASS_FORBID_COPY(GUILayoutNode)
+
 	/**
 	 * Constructor
 	 * @param screenNode screen node

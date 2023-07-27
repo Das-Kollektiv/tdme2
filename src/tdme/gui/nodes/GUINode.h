@@ -169,6 +169,9 @@ protected:
 	GUIEffectState* effectState { nullptr };
 	string tooltip;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUINode)
+
 	/**
 	 * Public constructor
 	 * @param screenNode screen node

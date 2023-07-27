@@ -110,6 +110,9 @@ private:
 	void onCameraScale() override;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(UIEditorTabView)
+
 	/**
 	 * Public constructor
 	 * @param editorView editor view

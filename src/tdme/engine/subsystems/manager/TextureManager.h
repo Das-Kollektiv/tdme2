@@ -31,6 +31,8 @@ private:
 	Mutex mutex;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(TextureManager)
 
 	/**
 	 * Adds a texture to manager

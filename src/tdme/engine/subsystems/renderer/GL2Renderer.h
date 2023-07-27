@@ -1,8 +1,8 @@
 #pragma once
 
 #include <array>
-#include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -13,8 +13,8 @@
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::array;
-using std::map;
 using std::string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::Texture;
@@ -32,10 +32,13 @@ using tdme::utilities::ShortBuffer;
 class tdme::engine::subsystems::renderer::GL2Renderer: public Renderer
 {
 private:
-	map<uint32_t, int32_t> vbosUsage;
+	unordered_map<uint32_t, int32_t> vbosUsage;
 	int activeTextureUnit;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(GL2Renderer)
+
 	/**
 	 * Public constructor
 	 */

@@ -22,7 +22,10 @@ private:
 	int32_t rendererId;
 	int32_t referenceCounter { 0 };
 	volatile bool uploaded { false };
+
 private:
+	// forbid class copy
+	CLASS_FORBID_COPY(TextureManager_TextureManaged)
 
 	/**
 	 * Protected constructor

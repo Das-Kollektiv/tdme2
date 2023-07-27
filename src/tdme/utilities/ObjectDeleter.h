@@ -23,6 +23,9 @@ private:
 	vector<T*> objects;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(ObjectDeleter)
+
 	/**
 	 * Public constructor
 	 */

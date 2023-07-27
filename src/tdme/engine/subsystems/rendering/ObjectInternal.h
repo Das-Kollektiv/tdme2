@@ -61,6 +61,9 @@ protected:
 	}
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(ObjectInternal)
+
 	/**
 	 * Public constructor
 	 * @param id id

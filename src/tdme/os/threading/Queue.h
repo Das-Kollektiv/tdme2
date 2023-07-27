@@ -25,6 +25,9 @@ namespace threading {
 template <typename T>
 class Queue {
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(Queue)
+
 	/**
 	 * @brief Public constructor
 	 */

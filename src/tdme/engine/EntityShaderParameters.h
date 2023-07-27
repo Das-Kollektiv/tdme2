@@ -1,14 +1,14 @@
 #pragma once
 
-#include <map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/ShaderParameter.h>
 
-using std::map;
 using std::string;
 using std::to_string;
+using std::unordered_map;
 
 using tdme::engine::ShaderParameter;
 
@@ -19,7 +19,7 @@ using tdme::engine::ShaderParameter;
 class tdme::engine::EntityShaderParameters
 {
 private:
-	map<string, ShaderParameter> parameters;
+	unordered_map<string, ShaderParameter> parameters;
 	string shaderId;
 
 	mutable string hash;

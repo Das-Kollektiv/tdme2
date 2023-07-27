@@ -33,6 +33,9 @@ private:
 	GUIInputInternalNode* inputNode { nullptr };
 	bool disabled;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIInputController)
+
 	/**
 	 * Private constructor
 	 * @param node node

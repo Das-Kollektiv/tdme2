@@ -27,6 +27,9 @@ private:
 	string reflectionEnvironmentMappingId;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(SceneEntity)
+
 	/**
 	 * Public constructor
 	 * @param id id
@@ -110,6 +113,6 @@ public:
 	/**
 	 * @return merged properties from entity and object
 	 */
-	const BaseProperties getTotalProperties();
+	const BaseProperties* getTotalProperties();
 
 };

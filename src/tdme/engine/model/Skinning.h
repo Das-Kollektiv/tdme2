@@ -29,7 +29,11 @@ private:
 	vector<Joint> joints;
 	vector<vector<JointWeight>> verticesJointsWeights;
 	map<string, Joint*> jointsByName;
+
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(Skinning)
+
 	/**
 	 * Public constructor
 	 */

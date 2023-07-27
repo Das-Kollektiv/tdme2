@@ -28,6 +28,9 @@ private:
 	Color4 colorAdd;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(PrototypeImposterLOD)
+
 	/**
 	 * Public constructor
 	 * @param fileNames file names

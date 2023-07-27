@@ -149,6 +149,9 @@ private:
 	Context* applicationContext { nullptr };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(SceneEditorTabView)
+
 	/**
 	 * Public constructor
 	 * @param editorView editor view

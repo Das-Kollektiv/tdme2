@@ -159,6 +159,9 @@ public:
 		GUI::disableTabFocusControl = disableTabFocusControl;
 	}
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUI)
+
 	/**
 	 * Public constructor
 	 * @param engine engine

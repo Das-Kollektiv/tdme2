@@ -39,6 +39,9 @@ class tdme::gui::nodes::GUITableCellNode final
 	friend class tdme::gui::GUIParser;
 
 protected:
+	// forbid class copy
+	CLASS_FORBID_COPY(GUITableCellNode)
+
 	/**
 	 * Constructor
 	 * @param screenNode screen node
