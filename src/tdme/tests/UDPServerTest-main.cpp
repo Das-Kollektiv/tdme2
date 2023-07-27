@@ -21,7 +21,7 @@ using tdme::utilities::Console;
 class ServerBroadcaster : public Thread {
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ServerBroadcaster)
+	FORBID_CLASS_COPY(ServerBroadcaster)
 
 	//
 	ServerBroadcaster(EchoUDPServer *server) : Thread("broadcaster"), server(server), time(0) {}

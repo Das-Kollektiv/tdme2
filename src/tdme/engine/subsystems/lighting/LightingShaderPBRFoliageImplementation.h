@@ -24,7 +24,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(LightingShaderPBRFoliageImplementation)
+	FORBID_CLASS_COPY(LightingShaderPBRFoliageImplementation)
 
 	/**
 	 * Public constructor

@@ -31,7 +31,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIScrollArea)
+	FORBID_CLASS_COPY(GUIScrollArea)
 
 	/**
 	 * Public constructor

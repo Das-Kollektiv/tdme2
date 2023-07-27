@@ -25,7 +25,7 @@ template <class CLIENT, class REQUEST>
 class ServerClientRequestHandlerHub final {
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ServerClientRequestHandlerHub)
+	FORBID_CLASS_COPY(ServerClientRequestHandlerHub)
 
 	/**
 	 * @brief Public constructor

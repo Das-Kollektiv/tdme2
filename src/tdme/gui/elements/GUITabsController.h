@@ -40,7 +40,7 @@ private:
 	bool tabSelected { false };
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUITabsController)
+	FORBID_CLASS_COPY(GUITabsController)
 
 	/**
 	 * Private constructor

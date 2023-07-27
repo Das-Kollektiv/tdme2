@@ -35,7 +35,7 @@ class tdme::gui::nodes::GUISpaceNode final
 
 protected:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUISpaceNode)
+	FORBID_CLASS_COPY(GUISpaceNode)
 
 	/**
 	 * Constructor

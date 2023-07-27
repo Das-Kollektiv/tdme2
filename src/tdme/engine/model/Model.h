@@ -86,7 +86,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(Model)
+	FORBID_CLASS_COPY(Model)
 
 	/**
 	 * Public constructor

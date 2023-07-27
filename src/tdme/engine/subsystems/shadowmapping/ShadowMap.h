@@ -86,7 +86,7 @@ public:
 	static constexpr int32_t TEXTUREUNIT { 9 };
 
 	// forbid class copy
-	CLASS_FORBID_COPY(ShadowMap)
+	FORBID_CLASS_COPY(ShadowMap)
 
 	/**
 	 * Public constructor

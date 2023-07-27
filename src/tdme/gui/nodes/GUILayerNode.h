@@ -40,7 +40,7 @@ class tdme::gui::nodes::GUILayerNode: public GUIParentNode
 
 protected:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUILayerNode)
+	FORBID_CLASS_COPY(GUILayerNode)
 
 	/**
 	 * Constructor

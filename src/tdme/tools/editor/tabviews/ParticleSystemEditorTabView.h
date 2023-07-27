@@ -86,7 +86,7 @@ protected:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ParticleSystemEditorTabView)
+	FORBID_CLASS_COPY(ParticleSystemEditorTabView)
 
 	/**
 	 * Public constructor

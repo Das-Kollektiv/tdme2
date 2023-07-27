@@ -120,7 +120,7 @@ protected:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(LogicMiniScript)
+	FORBID_CLASS_COPY(LogicMiniScript)
 
 	/**
 	 * Public constructor

@@ -111,7 +111,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(UIEditorTabView)
+	FORBID_CLASS_COPY(UIEditorTabView)
 
 	/**
 	 * Public constructor

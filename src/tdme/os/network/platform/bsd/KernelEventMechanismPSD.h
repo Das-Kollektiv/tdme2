@@ -25,7 +25,7 @@ class tdme::os::network::platform::bsd::KernelEventMechanismPSD {
 
 private:
 	// forbid class copy
-	CLASS_FORBID_COPY(KernelEventMechanismPSD)
+	FORBID_CLASS_COPY(KernelEventMechanismPSD)
 
 	/**
 	 * @brief Public constructor

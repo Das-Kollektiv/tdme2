@@ -50,7 +50,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ArchiveFileSystem)
+	FORBID_CLASS_COPY(ArchiveFileSystem)
 
 	/**
 	 * Public constructor

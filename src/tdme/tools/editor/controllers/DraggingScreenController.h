@@ -39,7 +39,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(DraggingScreenController)
+	FORBID_CLASS_COPY(DraggingScreenController)
 
 	/**
 	 * Public constructor

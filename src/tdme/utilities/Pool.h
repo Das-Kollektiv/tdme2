@@ -31,7 +31,7 @@ protected:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(Pool)
+	FORBID_CLASS_COPY(Pool)
 
 	/**
 	 * Public constructor

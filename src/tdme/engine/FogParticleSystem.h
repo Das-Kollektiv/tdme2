@@ -53,7 +53,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(FogParticleSystem)
+	FORBID_CLASS_COPY(FogParticleSystem)
 
 	/**
 	 * Public constructor

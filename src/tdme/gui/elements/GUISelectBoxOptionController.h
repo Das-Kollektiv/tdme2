@@ -45,7 +45,7 @@ private:
 	MutableString value;
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUISelectBoxOptionController)
+	FORBID_CLASS_COPY(GUISelectBoxOptionController)
 
 	/**
 	 * Private constructor

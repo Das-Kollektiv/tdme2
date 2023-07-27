@@ -30,7 +30,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(HeightMap)
+	FORBID_CLASS_COPY(HeightMap)
 
 	/**
 	 * Public constructor

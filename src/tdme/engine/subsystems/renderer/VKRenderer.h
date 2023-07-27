@@ -578,7 +578,7 @@ private:
 
 protected:
 	// forbid class copy
-	CLASS_FORBID_COPY(VKRenderer)
+	FORBID_CLASS_COPY(VKRenderer)
 
 	/**
 	 * Protected constructor

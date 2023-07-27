@@ -17,7 +17,7 @@ using std::string;
 class tdme::os::threading::ReadWriteLock {
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ReadWriteLock)
+	FORBID_CLASS_COPY(ReadWriteLock)
 
 	/**
 	 * @brief Public constructor

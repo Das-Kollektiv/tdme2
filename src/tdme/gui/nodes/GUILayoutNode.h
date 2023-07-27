@@ -30,7 +30,7 @@ private:
 
 protected:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUILayoutNode)
+	FORBID_CLASS_COPY(GUILayoutNode)
 
 	/**
 	 * Constructor

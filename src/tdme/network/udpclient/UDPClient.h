@@ -57,7 +57,7 @@ public:
 	}
 
 	// forbid class copy
-	CLASS_FORBID_COPY(UDPClient)
+	FORBID_CLASS_COPY(UDPClient)
 
 	/**
 	 * Public constructor

@@ -98,7 +98,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(Gizmo)
+	FORBID_CLASS_COPY(Gizmo)
 
 	/**
 	 * Public constructor

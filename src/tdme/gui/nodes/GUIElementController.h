@@ -42,7 +42,7 @@ protected:
 	STATIC_DLL_IMPEXT static string CONDITION_ENABLED;
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIElementController)
+	FORBID_CLASS_COPY(GUIElementController)
 
 	/**
 	 * Constructor

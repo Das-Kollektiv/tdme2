@@ -207,7 +207,7 @@ public:
 	}
 
 	// forbid class copy
-	CLASS_FORBID_COPY(TextFormatter)
+	FORBID_CLASS_COPY(TextFormatter)
 
 	/**
 	 * Public constructor

@@ -48,7 +48,7 @@ private:
 	Vector3 listenerOrientationUp;
 
 	// forbid class copy
-	CLASS_FORBID_COPY(Audio)
+	FORBID_CLASS_COPY(Audio)
 
 	/**
 	 * Private constructor

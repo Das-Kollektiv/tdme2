@@ -32,7 +32,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIProgressBar)
+	FORBID_CLASS_COPY(GUIProgressBar)
 
 	/**
 	 * Public constructor

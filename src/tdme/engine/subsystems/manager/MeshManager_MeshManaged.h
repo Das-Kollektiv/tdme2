@@ -26,7 +26,7 @@ private:
 
 private:
 	// forbid class copy
-	CLASS_FORBID_COPY(MeshManager_MeshManaged)
+	FORBID_CLASS_COPY(MeshManager_MeshManaged)
 
 	/**
 	 * Protected constructor

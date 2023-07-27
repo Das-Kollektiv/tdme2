@@ -115,7 +115,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(SceneEditorTabController)
+	FORBID_CLASS_COPY(SceneEditorTabController)
 
 	/**
 	 * Public constructor

@@ -32,7 +32,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIMoveable)
+	FORBID_CLASS_COPY(GUIMoveable)
 
 	/**
 	 * Public constructor

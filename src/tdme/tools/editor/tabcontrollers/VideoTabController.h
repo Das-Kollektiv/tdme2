@@ -48,7 +48,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(VideoTabController)
+	FORBID_CLASS_COPY(VideoTabController)
 
 	/**
 	 * Public constructor

@@ -62,7 +62,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(VideoTest)
+	FORBID_CLASS_COPY(VideoTest)
 
 	/**
 	 * Public constructor

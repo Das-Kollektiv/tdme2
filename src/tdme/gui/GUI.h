@@ -160,7 +160,7 @@ public:
 	}
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUI)
+	FORBID_CLASS_COPY(GUI)
 
 	/**
 	 * Public constructor

@@ -44,7 +44,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(VideoTabView)
+	FORBID_CLASS_COPY(VideoTabView)
 
 	/**
 	 * Public constructor

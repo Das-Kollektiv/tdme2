@@ -46,7 +46,7 @@ private:
 	MutableString value;
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUITabController)
+	FORBID_CLASS_COPY(GUITabController)
 
 	/**
 	 * Private constructor

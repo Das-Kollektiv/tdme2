@@ -33,7 +33,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUISliderH)
+	FORBID_CLASS_COPY(GUISliderH)
 
 	/**
 	 * Public constructor

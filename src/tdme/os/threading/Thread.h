@@ -18,7 +18,7 @@ using std::thread;
 class tdme::os::threading::Thread {
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(Thread)
+	FORBID_CLASS_COPY(Thread)
 
 	/**
 	 * @brief Public constructor

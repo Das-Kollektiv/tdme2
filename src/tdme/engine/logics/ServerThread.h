@@ -25,7 +25,7 @@ using tdme::os::threading::Thread;
 class tdme::engine::logics::ServerThread: public Thread {
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ServerThread)
+	FORBID_CLASS_COPY(ServerThread)
 
 	/**
 	 * Public constructor

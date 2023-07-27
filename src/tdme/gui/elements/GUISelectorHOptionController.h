@@ -38,7 +38,7 @@ private:
 	MutableString value;
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUISelectorHOptionController)
+	FORBID_CLASS_COPY(GUISelectorHOptionController)
 
 	/**
 	 * Private constructor

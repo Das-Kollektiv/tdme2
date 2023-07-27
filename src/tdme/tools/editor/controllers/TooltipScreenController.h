@@ -28,7 +28,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(TooltipScreenController)
+	FORBID_CLASS_COPY(TooltipScreenController)
 
 	/**
 	 * Public constructor

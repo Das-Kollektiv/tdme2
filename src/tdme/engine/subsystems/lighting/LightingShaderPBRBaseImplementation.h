@@ -71,7 +71,7 @@ protected:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(LightingShaderPBRBaseImplementation)
+	FORBID_CLASS_COPY(LightingShaderPBRBaseImplementation)
 
 	/**
 	 * Public constructor

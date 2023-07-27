@@ -62,7 +62,7 @@ protected:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ObjectInternal)
+	FORBID_CLASS_COPY(ObjectInternal)
 
 	/**
 	 * Public constructor

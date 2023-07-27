@@ -18,7 +18,7 @@ class tdme::engine::subsystems::lighting::LightingShaderLightScatteringTreeImple
 {
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(LightingShaderLightScatteringTreeImplementation)
+	FORBID_CLASS_COPY(LightingShaderLightScatteringTreeImplementation)
 
 	/**
 	 * Public constructor

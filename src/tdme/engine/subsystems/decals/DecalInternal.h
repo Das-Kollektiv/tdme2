@@ -87,7 +87,7 @@ protected:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(DecalInternal)
+	FORBID_CLASS_COPY(DecalInternal)
 
 	/**
 	 * Public constructor

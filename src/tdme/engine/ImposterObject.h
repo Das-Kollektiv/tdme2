@@ -85,7 +85,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ImposterObject)
+	FORBID_CLASS_COPY(ImposterObject)
 
 	/**
 	 * Public constructor

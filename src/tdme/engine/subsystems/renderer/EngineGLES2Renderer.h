@@ -29,7 +29,7 @@ class tdme::engine::subsystems::renderer::EngineGLES2Renderer: public GLES2Rende
 {
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(EngineGLES2Renderer)
+	FORBID_CLASS_COPY(EngineGLES2Renderer)
 
 	/**
 	 * Public constructor

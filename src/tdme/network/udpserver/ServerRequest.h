@@ -38,7 +38,7 @@ public:
 	static const string EVENT_CUSTOM_NONE;
 
 	// forbid class copy
-	CLASS_FORBID_COPY(ServerRequest)
+	FORBID_CLASS_COPY(ServerRequest)
 
 	/**
 	 * @brief Public constructor

@@ -78,7 +78,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(TextEditorTabController)
+	FORBID_CLASS_COPY(TextEditorTabController)
 
 	/**
 	 * Public constructor

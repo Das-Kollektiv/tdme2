@@ -33,7 +33,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIImageButton)
+	FORBID_CLASS_COPY(GUIImageButton)
 
 	/**
 	 * Public constructor

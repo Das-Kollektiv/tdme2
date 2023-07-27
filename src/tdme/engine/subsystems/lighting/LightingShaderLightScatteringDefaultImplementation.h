@@ -18,7 +18,7 @@ class tdme::engine::subsystems::lighting::LightingShaderLightScatteringDefaultIm
 {
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(LightingShaderLightScatteringDefaultImplementation)
+	FORBID_CLASS_COPY(LightingShaderLightScatteringDefaultImplementation)
 
 	/**
 	 * Public constructor

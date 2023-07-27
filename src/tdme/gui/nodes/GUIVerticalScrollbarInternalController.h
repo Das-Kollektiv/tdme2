@@ -33,7 +33,7 @@ private:
 	MutableString value;
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIVerticalScrollbarInternalController)
+	FORBID_CLASS_COPY(GUIVerticalScrollbarInternalController)
 
 	/**
 	 * Private constructor

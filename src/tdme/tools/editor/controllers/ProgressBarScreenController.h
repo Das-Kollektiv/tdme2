@@ -41,7 +41,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ProgressBarScreenController)
+	FORBID_CLASS_COPY(ProgressBarScreenController)
 
 	/**
 	 * Public constructor

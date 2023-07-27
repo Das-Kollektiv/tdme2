@@ -45,7 +45,7 @@ protected:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIEffect)
+	FORBID_CLASS_COPY(GUIEffect)
 
 	/**
 	 * Public constructor

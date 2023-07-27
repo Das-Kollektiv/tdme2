@@ -373,7 +373,7 @@ protected:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(Context)
+	FORBID_CLASS_COPY(Context)
 
 	/**
 	 * Public constructor

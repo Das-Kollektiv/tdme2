@@ -31,7 +31,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIGridItem)
+	FORBID_CLASS_COPY(GUIGridItem)
 
 	/**
 	 * Public constructor

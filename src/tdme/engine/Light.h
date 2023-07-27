@@ -50,7 +50,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(Light)
+	FORBID_CLASS_COPY(Light)
 
 	/**
 	 * Public default constructor

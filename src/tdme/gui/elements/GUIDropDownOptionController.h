@@ -41,7 +41,7 @@ private:
 	MutableString value;
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIDropDownOptionController)
+	FORBID_CLASS_COPY(GUIDropDownOptionController)
 
 	/**
 	 * Private constructor

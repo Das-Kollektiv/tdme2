@@ -45,7 +45,7 @@ private:
 	MutableString value;
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIGridItemController)
+	FORBID_CLASS_COPY(GUIGridItemController)
 
 	/**
 	 * Private constructor

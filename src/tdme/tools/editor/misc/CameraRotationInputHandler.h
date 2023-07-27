@@ -43,7 +43,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(CameraRotationInputHandler)
+	FORBID_CLASS_COPY(CameraRotationInputHandler)
 
 	/**
 	 * Public constructor

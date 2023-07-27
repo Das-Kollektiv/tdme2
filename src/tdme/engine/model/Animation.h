@@ -21,7 +21,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(Animation)
+	FORBID_CLASS_COPY(Animation)
 
 	/**
 	 * Public constructor

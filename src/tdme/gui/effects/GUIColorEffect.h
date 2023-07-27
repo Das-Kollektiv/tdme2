@@ -31,7 +31,7 @@ public:
 	}
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIColorEffect)
+	FORBID_CLASS_COPY(GUIColorEffect)
 
 	/**
 	 * Public constructor

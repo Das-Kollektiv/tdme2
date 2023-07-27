@@ -27,7 +27,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(PrototypePhysics)
+	FORBID_CLASS_COPY(PrototypePhysics)
 
 	/**
 	 * Public constructor

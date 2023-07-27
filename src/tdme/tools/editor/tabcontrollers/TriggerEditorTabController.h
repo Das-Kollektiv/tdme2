@@ -57,7 +57,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(TriggerEditorTabController)
+	FORBID_CLASS_COPY(TriggerEditorTabController)
 
 	/**
 	 * Public constructor

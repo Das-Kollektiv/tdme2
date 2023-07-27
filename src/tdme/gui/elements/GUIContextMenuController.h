@@ -43,7 +43,7 @@ private:
 
 private:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIContextMenuController)
+	FORBID_CLASS_COPY(GUIContextMenuController)
 
 	/**
 	 * Private constructor

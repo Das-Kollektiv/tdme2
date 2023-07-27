@@ -42,7 +42,7 @@ private:
 	MutableString value;
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIRadioButtonController)
+	FORBID_CLASS_COPY(GUIRadioButtonController)
 
 	/**
 	 * Private constructor

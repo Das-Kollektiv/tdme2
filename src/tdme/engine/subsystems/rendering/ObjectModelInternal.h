@@ -19,7 +19,7 @@ class tdme::engine::subsystems::rendering::ObjectModelInternal
 {
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ObjectModelInternal)
+	FORBID_CLASS_COPY(ObjectModelInternal)
 
 	/**
 	 * Public constructor

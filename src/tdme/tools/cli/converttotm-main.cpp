@@ -53,7 +53,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ConvertToTMApplication)
+	FORBID_CLASS_COPY(ConvertToTMApplication)
 
 	/**
 	 * Public constructor

@@ -10,7 +10,7 @@ using tdme::os::threading::Thread;
 class SharedData {
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(SharedData)
+	FORBID_CLASS_COPY(SharedData)
 
 	//
 	SharedData() : m("shareddata"), counter(0) { };

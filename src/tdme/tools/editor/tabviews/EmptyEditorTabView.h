@@ -48,7 +48,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(EmptyEditorTabView)
+	FORBID_CLASS_COPY(EmptyEditorTabView)
 
 	/**
 	 * Public constructor

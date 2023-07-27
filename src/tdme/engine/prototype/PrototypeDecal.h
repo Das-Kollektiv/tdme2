@@ -26,7 +26,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(PrototypeDecal)
+	FORBID_CLASS_COPY(PrototypeDecal)
 
 	/**
 	 * Public constructor

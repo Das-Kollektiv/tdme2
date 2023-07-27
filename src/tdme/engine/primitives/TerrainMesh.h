@@ -39,7 +39,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(TerrainMesh)
+	FORBID_CLASS_COPY(TerrainMesh)
 
 	/**
 	 * Public constructor

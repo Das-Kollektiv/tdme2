@@ -33,7 +33,7 @@ public:
 	static bool isSupported(Renderer* renderer);
 
 	// forbid class copy
-	CLASS_FORBID_COPY(PostProcessingShaderLightScatteringImplementation)
+	FORBID_CLASS_COPY(PostProcessingShaderLightScatteringImplementation)
 
 	/**
 	 * Public constructor

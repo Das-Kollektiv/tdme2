@@ -31,7 +31,7 @@ public:
 	static bool isSupported(Renderer* renderer);
 
 	// forbid class copy
-	CLASS_FORBID_COPY(PostProcessingShaderDesaturationImplementation)
+	FORBID_CLASS_COPY(PostProcessingShaderDesaturationImplementation)
 
 	/**
 	 * Public constructor

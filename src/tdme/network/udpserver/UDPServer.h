@@ -53,7 +53,7 @@ public:
 	};
 
 	// forbid class copy
-	CLASS_FORBID_COPY(UDPServer)
+	FORBID_CLASS_COPY(UDPServer)
 
 	/**
 	 * @brief Public constructor

@@ -34,7 +34,7 @@ private:
 	bool disabled;
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIInputController)
+	FORBID_CLASS_COPY(GUIInputController)
 
 	/**
 	 * Private constructor

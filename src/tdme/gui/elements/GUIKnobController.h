@@ -29,7 +29,7 @@ private:
 	int mouseLastX { -1 };
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIKnobController)
+	FORBID_CLASS_COPY(GUIKnobController)
 
 	/**
 	 * Private constructor

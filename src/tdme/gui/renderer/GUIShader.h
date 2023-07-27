@@ -43,7 +43,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIShader)
+	FORBID_CLASS_COPY(GUIShader)
 
 	/**
 	 * Public constructor

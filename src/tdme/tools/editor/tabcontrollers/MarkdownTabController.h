@@ -48,7 +48,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(MarkdownTabController)
+	FORBID_CLASS_COPY(MarkdownTabController)
 
 	/**
 	 * Public constructor

@@ -36,7 +36,7 @@ public:
 	typedef unordered_set<string> ClientKeySet;
 
 	// forbid class copy
-	CLASS_FORBID_COPY(ServerGroup)
+	FORBID_CLASS_COPY(ServerGroup)
 
 	/**
 	 * Public constructor

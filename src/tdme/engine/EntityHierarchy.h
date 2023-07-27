@@ -125,7 +125,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(EntityHierarchy)
+	FORBID_CLASS_COPY(EntityHierarchy)
 
 	/**
 	 * Public constructor

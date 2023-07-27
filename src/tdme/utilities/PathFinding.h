@@ -53,7 +53,7 @@ public:
 	static constexpr bool VERBOSE { true };
 
 	// forbid class copy
-	CLASS_FORBID_COPY(PathFinding)
+	FORBID_CLASS_COPY(PathFinding)
 
 	/**
 	 * Public constructor

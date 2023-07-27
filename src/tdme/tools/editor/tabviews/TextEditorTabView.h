@@ -357,7 +357,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(TextEditorTabView)
+	FORBID_CLASS_COPY(TextEditorTabView)
 
 	/**
 	 * Public constructor

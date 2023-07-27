@@ -95,7 +95,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(DeferredLightingRenderShader)
+	FORBID_CLASS_COPY(DeferredLightingRenderShader)
 
 	/**
 	 * Public constructor

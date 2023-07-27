@@ -75,7 +75,7 @@ public:
 	static void main(int argc, char** argv);
 
 	// forbid class copy
-	CLASS_FORBID_COPY(EngineTest)
+	FORBID_CLASS_COPY(EngineTest)
 
 	/**
 	 * Engine test constructor

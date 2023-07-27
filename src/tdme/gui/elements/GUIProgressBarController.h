@@ -30,7 +30,7 @@ private:
 	MutableString value { };
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIProgressBarController)
+	FORBID_CLASS_COPY(GUIProgressBarController)
 
 	/**
 	 * Private constructor

@@ -18,7 +18,7 @@ class tdme::engine::subsystems::lighting::LightingShaderSolidImplementation: pub
 {
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(LightingShaderSolidImplementation)
+	FORBID_CLASS_COPY(LightingShaderSolidImplementation)
 
 	/**
 	 * Public constructor

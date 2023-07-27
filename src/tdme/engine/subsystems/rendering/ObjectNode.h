@@ -115,7 +115,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ObjectNode)
+	FORBID_CLASS_COPY(ObjectNode)
 
 	/**
 	 * Public constructor

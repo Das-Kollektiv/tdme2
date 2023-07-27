@@ -70,7 +70,7 @@ private:
 
 protected:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIGradientNode)
+	FORBID_CLASS_COPY(GUIGradientNode)
 
 	/**
 	 * Constructor

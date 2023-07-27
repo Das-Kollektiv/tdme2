@@ -193,7 +193,7 @@ protected:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(Renderer)
+	FORBID_CLASS_COPY(Renderer)
 
 	/**
 	 * Public constructor

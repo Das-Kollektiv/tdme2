@@ -125,7 +125,7 @@ public:
 	};
 
 	// forbid class copy
-	CLASS_FORBID_COPY(Texture)
+	FORBID_CLASS_COPY(Texture)
 
 	/**
 	 * Public constructor

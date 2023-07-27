@@ -32,7 +32,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ColorPickerImageController)
+	FORBID_CLASS_COPY(ColorPickerImageController)
 
 	/**
 	 * Constructor

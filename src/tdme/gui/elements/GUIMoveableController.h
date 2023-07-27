@@ -28,7 +28,7 @@ private:
 	bool dragging { false };
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIMoveableController)
+	FORBID_CLASS_COPY(GUIMoveableController)
 
 	/**
 	 * Private constructor

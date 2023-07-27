@@ -43,7 +43,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ParticlesShader)
+	FORBID_CLASS_COPY(ParticlesShader)
 
 	/**
 	 * Public constructor

@@ -18,7 +18,7 @@ class tdme::engine::subsystems::rendering::TransparentRenderFacesPool_Transparen
 {
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(TransparentRenderFacesPool_TransparentRenderFacesPool)
+	FORBID_CLASS_COPY(TransparentRenderFacesPool_TransparentRenderFacesPool)
 
 	/**
 	 * Public constructor

@@ -17,7 +17,7 @@ public:
 	static void main();
 
 	// forbid class copy
-	CLASS_FORBID_COPY(MathOperatorTest)
+	FORBID_CLASS_COPY(MathOperatorTest)
 
 	//
 	MathOperatorTest();

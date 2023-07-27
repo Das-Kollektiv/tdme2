@@ -30,7 +30,7 @@ using tdme::os::threading::Thread;
 class tdme::engine::logics::ApplicationClient: public Thread {
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ApplicationClient)
+	FORBID_CLASS_COPY(ApplicationClient)
 
 	/**
 	 * Public constructor

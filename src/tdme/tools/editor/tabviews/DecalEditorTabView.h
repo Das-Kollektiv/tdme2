@@ -67,7 +67,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(DecalEditorTabView)
+	FORBID_CLASS_COPY(DecalEditorTabView)
 
 	/**
 	 * Public constructor

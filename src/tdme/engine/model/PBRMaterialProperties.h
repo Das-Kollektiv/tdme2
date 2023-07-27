@@ -50,7 +50,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(PBRMaterialProperties)
+	FORBID_CLASS_COPY(PBRMaterialProperties)
 
 	/**
 	 * Public constructor

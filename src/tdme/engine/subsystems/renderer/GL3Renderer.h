@@ -77,7 +77,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(GL3Renderer)
+	FORBID_CLASS_COPY(GL3Renderer)
 
 	/**
 	 * Public constructor

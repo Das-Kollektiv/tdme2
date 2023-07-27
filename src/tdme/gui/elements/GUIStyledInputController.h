@@ -29,7 +29,7 @@ class tdme::gui::elements::GUIStyledInputController final
 
 private:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIStyledInputController)
+	FORBID_CLASS_COPY(GUIStyledInputController)
 
 	/**
 	 * Private constructor

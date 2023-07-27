@@ -23,7 +23,7 @@ class tdme::os::filesystem::StandardFileSystem final: public FileSystemInterface
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(StandardFileSystem)
+	FORBID_CLASS_COPY(StandardFileSystem)
 
 	/**
 	 * Public constructor

@@ -35,7 +35,7 @@ public:
 	static void main(int argc, char** argv);
 
 	// forbid class copy
-	CLASS_FORBID_COPY(EntityHierarchyTest)
+	FORBID_CLASS_COPY(EntityHierarchyTest)
 
 	/**
 	 * Public constructor

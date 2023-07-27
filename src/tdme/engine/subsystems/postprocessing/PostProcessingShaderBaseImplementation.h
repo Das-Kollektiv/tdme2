@@ -39,7 +39,7 @@ protected:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(PostProcessingShaderBaseImplementation)
+	FORBID_CLASS_COPY(PostProcessingShaderBaseImplementation)
 
 	/**
 	 * Public constructor

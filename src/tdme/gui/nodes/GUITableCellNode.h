@@ -40,7 +40,7 @@ class tdme::gui::nodes::GUITableCellNode final
 
 protected:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUITableCellNode)
+	FORBID_CLASS_COPY(GUITableCellNode)
 
 	/**
 	 * Constructor

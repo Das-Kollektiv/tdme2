@@ -45,7 +45,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(PrototypeScriptSubController)
+	FORBID_CLASS_COPY(PrototypeScriptSubController)
 
 	/**
 	 * Public constructor

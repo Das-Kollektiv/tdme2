@@ -24,7 +24,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ObjectDeleter)
+	FORBID_CLASS_COPY(ObjectDeleter)
 
 	/**
 	 * Public constructor

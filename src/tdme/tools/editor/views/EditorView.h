@@ -43,7 +43,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(EditorView)
+	FORBID_CLASS_COPY(EditorView)
 
 	/**
 	 * Public constructor

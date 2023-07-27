@@ -31,7 +31,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIContextMenuItem)
+	FORBID_CLASS_COPY(GUIContextMenuItem)
 
 	/**
 	 * Public constructor

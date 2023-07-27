@@ -21,7 +21,7 @@ class tdme::os::threading::Mutex {
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(Mutex)
+	FORBID_CLASS_COPY(Mutex)
 
 	/**
 	 * @brief Public constructor

@@ -50,7 +50,7 @@ private:
 
 private:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIDropDownController)
+	FORBID_CLASS_COPY(GUIDropDownController)
 
 	/**
 	 * Private constructor

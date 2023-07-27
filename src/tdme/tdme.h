@@ -3,7 +3,7 @@
 #include <climits>
 #include <cstdint>
 
-#define CLASS_FORBID_COPY(CLASS) \
+#define FORBID_CLASS_COPY(CLASS) \
 	CLASS(const CLASS&) = delete; \
 	CLASS& operator=(const CLASS&) = delete;
 

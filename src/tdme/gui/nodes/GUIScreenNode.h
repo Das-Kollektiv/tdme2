@@ -285,7 +285,7 @@ public:
 
 protected:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIScreenNode)
+	FORBID_CLASS_COPY(GUIScreenNode)
 
 	/**
 	 * Constructor

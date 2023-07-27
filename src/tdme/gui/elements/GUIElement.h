@@ -24,7 +24,7 @@ class tdme::gui::elements::GUIElement
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIElement)
+	FORBID_CLASS_COPY(GUIElement)
 
 	/**
 	 * Public constructor

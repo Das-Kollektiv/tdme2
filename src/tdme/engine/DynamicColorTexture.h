@@ -18,7 +18,7 @@ class tdme::engine::DynamicColorTexture final: public ColorTexture
 {
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(DynamicColorTexture)
+	FORBID_CLASS_COPY(DynamicColorTexture)
 
 	/**
 	 * Public constructor

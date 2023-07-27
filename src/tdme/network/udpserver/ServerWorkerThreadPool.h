@@ -28,7 +28,7 @@ class ServerWorkerThreadPool final: public Queue<ServerRequest> {
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(ServerWorkerThreadPool)
+	FORBID_CLASS_COPY(ServerWorkerThreadPool)
 
 	/**
 	 * @brief Public constructor

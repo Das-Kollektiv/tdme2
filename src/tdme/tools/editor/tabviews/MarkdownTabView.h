@@ -50,7 +50,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(MarkdownTabView)
+	FORBID_CLASS_COPY(MarkdownTabView)
 
 	/**
 	 * Public constructor

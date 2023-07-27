@@ -32,7 +32,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIKnob)
+	FORBID_CLASS_COPY(GUIKnob)
 
 	/**
 	 * Public constructor

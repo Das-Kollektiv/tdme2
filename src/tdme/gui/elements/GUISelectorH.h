@@ -31,7 +31,7 @@ private:
 
 public:
 	// forbid class copy
-	CLASS_FORBID_COPY(GUISelectorH)
+	FORBID_CLASS_COPY(GUISelectorH)
 
 	/**
 	 * Public constructor

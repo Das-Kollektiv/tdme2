@@ -53,7 +53,7 @@ private:
 	float baseLine { 0.0f };
 
 	// forbid class copy
-	CLASS_FORBID_COPY(GUIFont)
+	FORBID_CLASS_COPY(GUIFont)
 
 	/**
 	 * Public constructor
