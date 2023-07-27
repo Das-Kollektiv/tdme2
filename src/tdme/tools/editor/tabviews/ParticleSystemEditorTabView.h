@@ -85,6 +85,9 @@ protected:
 	void onCameraScale() override;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(ParticleSystemEditorTabView)
+
 	/**
 	 * Public constructor
 	 * @param editorView editor view

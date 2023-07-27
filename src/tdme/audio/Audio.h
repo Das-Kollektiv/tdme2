@@ -47,12 +47,16 @@ private:
 	Vector3 listenerOrientationAt;
 	Vector3 listenerOrientationUp;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(Audio)
+
 	/**
 	 * Private constructor
 	 */
 	Audio();
 
 public:
+
 	/**
 	 * @return audio singleton instance
 	 */

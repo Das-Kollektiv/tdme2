@@ -47,6 +47,9 @@ private:
 	vector<Object*> visibleObjectsReceivingShadows;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(ShadowMapping)
+
 	/**
 	 * Constructor
 	 * @param engine engine

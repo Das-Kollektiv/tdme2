@@ -38,6 +38,9 @@ private:
 	Color4 colorEnd;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(PointParticleEmitter)
+
 	/**
 	 * Public constructor
 	 * @param count number of particles to emit in one second

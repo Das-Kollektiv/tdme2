@@ -29,6 +29,7 @@ private:
 	vector<Vector3> hitPoints;
 
 public:
+
 	/**
 	 * Public constructor
 	 */

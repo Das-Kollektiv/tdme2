@@ -49,6 +49,9 @@ private:
 	vector<Markdown::TOCEntry> toc;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(MarkdownTabView)
+
 	/**
 	 * Public constructor
 	 * @param editorView editor view

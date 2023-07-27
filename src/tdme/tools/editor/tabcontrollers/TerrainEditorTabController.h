@@ -117,6 +117,9 @@ private:
 	};
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(TerrainEditorTabController)
+
 	/**
 	 * Public constructor
 	 * @param view view

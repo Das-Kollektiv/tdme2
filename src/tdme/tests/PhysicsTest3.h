@@ -56,7 +56,8 @@ public:
 	 */
 	static void main(int argc, char** argv);
 
-public:
+	// forbid class copy
+	CLASS_FORBID_COPY(PhysicsTest3)
 
 	/**
 	 * Public constructor

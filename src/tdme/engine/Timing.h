@@ -34,6 +34,9 @@ private:
 	 */
 	void updateTiming();
 
+	// forbid class copy
+	CLASS_FORBID_COPY(Timing)
+
 	/**
 	 * Public constructor
 	 */

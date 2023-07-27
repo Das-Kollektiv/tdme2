@@ -41,7 +41,11 @@ private:
 	vector<int32_t>* vboOrigins { nullptr };
 	vector<int32_t>* vboLods { nullptr };
 	bool haveVBOs { false };
+
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(ObjectNodeRenderer)
+
 	/**
 	 * Constructor
 	 * @param objectNode object node

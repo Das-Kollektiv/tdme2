@@ -27,6 +27,9 @@ private:
 	float valueFloat { 0.0f };
 	MutableString value { };
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUISliderVController)
+
 	/**
 	 * Public constructor
 	 * @param node node

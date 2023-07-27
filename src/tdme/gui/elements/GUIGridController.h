@@ -49,6 +49,9 @@ private:
 	bool onSubTreeChangeRun { false };
 	int horizontalItems { 1 };
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIGridController)
+
 	/**
 	 * Private constructor
 	 * @param node node

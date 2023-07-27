@@ -33,6 +33,15 @@ void BaseProperties::clearProperties()
 	propertiesByName.clear();
 }
 
+const BaseProperty* BaseProperties::getProperty(const string& name) const
+{
+	auto propertyByNameIt = propertiesByName.find(name);
+	if (propertyByNameIt != propertiesByName.end()) {
+		return propertyByNameIt->second;
+	}
+	return nullptr;
+}
+
 BaseProperty* BaseProperties::getProperty(const string& name)
 {
 	auto propertyByNameIt = propertiesByName.find(name);
@@ -40,6 +49,16 @@ BaseProperty* BaseProperties::getProperty(const string& name)
 		return propertyByNameIt->second;
 	}
 	return nullptr;
+}
+
+const int BaseProperties::getPropertyIndex(const string& name) const
+{
+	for (auto i = 0; i < properties.size(); i++) {
+		if (properties[i]->getName() == name) {
+			return i;
+		}
+	}
+	return -1;
 }
 
 int BaseProperties::getPropertyIndex(const string& name)

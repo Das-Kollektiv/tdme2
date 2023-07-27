@@ -42,6 +42,9 @@ private:
 	int selectedMenuItemControllerIdx { -1 };
 
 private:
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIContextMenuController)
+
 	/**
 	 * Private constructor
 	 * @param node node

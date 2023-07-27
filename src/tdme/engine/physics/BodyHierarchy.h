@@ -29,6 +29,9 @@ class tdme::engine::physics::BodyHierarchy final: public Body
 
 protected:
 
+	// forbid class copy
+	CLASS_FORBID_COPY(BodyHierarchy)
+
 	/**
 	 * Protected constructor
 	 * @param world world

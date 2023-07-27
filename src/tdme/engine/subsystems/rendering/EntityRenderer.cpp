@@ -519,7 +519,7 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object*>& 
 					renderer->setShader(contextIdx, object->getShader());
 					renderer->onUpdateShader(contextIdx);
 					// update lights
-					for (auto j = 0; j < engine->lights.size(); j++) engine->lights[j].update(contextIdx);
+					for (auto j = 0; j < engine->lights.size(); j++) engine->lights[j]->update(contextIdx);
 					materialUpdateOnly = false;
 				}
 				// set up material on first object
@@ -854,7 +854,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 						if (object->getShader() != renderer->getShader(contextIdx)) {
 							renderer->setShader(contextIdx, object->getShader());
 							renderer->onUpdateShader(contextIdx);
-							for (auto j = 0; j < engine->lights.size(); j++) engine->lights[j].update(contextIdx);
+							for (auto j = 0; j < engine->lights.size(); j++) engine->lights[j]->update(contextIdx);
 							// issue upload matrices
 							renderer->onUpdateCameraMatrix(contextIdx);
 							renderer->onUpdateProjectionMatrix(contextIdx);

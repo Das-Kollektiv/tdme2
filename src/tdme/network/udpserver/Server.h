@@ -32,6 +32,9 @@ public:
 	typedef unordered_set<string> ClientKeySet;
 	typedef unordered_set<string> GroupKeySet;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(Server)
+
 	/**
 	 * @brief Public constructor
 	 * @param name server name

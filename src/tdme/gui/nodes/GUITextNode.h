@@ -47,6 +47,9 @@ private:
 	MutableString text;
 
 protected:
+	// forbid class copy
+	CLASS_FORBID_COPY(GUITextNode)
+
 	/**
 	 * Constructor
 	 * @param screenNode screen node

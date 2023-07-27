@@ -52,6 +52,9 @@ private:
 	bool useBC7TextureCompression { true };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(ConvertToTMApplication)
+
 	/**
 	 * Public constructor
 	 * @param modelFileNames model file names

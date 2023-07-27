@@ -19,21 +19,26 @@ class tdme::gui::nodes::GUINodeController
 protected:
 	GUINode* node { nullptr };
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUINodeController)
+
 	/**
 	 * Private constructor
 	 */
-	GUINodeController(GUINode* node);
+	inline GUINodeController(GUINode* node): node(node) {}
 
 public:
 	/**
 	 * Destructor
 	 */
-	virtual ~GUINodeController();
+	inline virtual ~GUINodeController() {}
 
 	/**
 	 * @return node
 	 */
-	virtual GUINode* getNode();
+	inline GUINode* getNode() {
+		return node;
+	}
 
 	/**
 	 * Initialize controller after element has been created

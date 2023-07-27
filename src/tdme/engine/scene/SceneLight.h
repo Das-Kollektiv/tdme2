@@ -34,6 +34,9 @@ private:
 	float quadraticAttenuation;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(SceneLight)
+
 	/**
 	 * Public default constructor
 	 * @param id id

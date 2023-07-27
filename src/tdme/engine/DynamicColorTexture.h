@@ -17,6 +17,9 @@ using tdme::utilities::ByteBuffer;
 class tdme::engine::DynamicColorTexture final: public ColorTexture
 {
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(DynamicColorTexture)
+
 	/**
 	 * Public constructor
 	 * @param width width

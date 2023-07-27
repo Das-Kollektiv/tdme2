@@ -43,6 +43,9 @@ private:
 	void unsetEmitter();
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(PrototypeParticleSystem)
+
 	/**
 	 * Public constructor
 	 */

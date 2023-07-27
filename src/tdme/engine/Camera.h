@@ -46,6 +46,9 @@ private:
 	Frustum* frustum { nullptr };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(Camera)
+
 	/**
 	 * Public constructor
 	 * @param renderer renderer

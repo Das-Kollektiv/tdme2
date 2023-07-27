@@ -203,6 +203,9 @@ private:
 	//
 	class FileOpenThread: public Thread {
 	public:
+		// forbid class copy
+		CLASS_FORBID_COPY(FileOpenThread)
+
 		/**
 		 * Constructor
 		 * @param tabId tab id
@@ -303,6 +306,9 @@ private:
 	//
 	class ScanFilesThread: public Thread {
 	public:
+		// forbid class copy
+		CLASS_FORBID_COPY(ScanFilesThread)
+
 		/**
 		 * Constructor
 		 * @param pathName path name
@@ -348,6 +354,7 @@ private:
 		 * Run
 		 */
 		virtual void run();
+
 	private:
 		EditorScreenController* editorScreenController { nullptr };
 		string pathName;
@@ -390,6 +397,8 @@ private:
 	vector<FileEntity*> pendingFileEntities;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(EditorScreenController)
 
 	/**
 	 * Public constructor

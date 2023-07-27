@@ -49,6 +49,9 @@ private:
 	int lastSelectedDropDownOptionControllerIdx { -1 };
 
 private:
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIDropDownController)
+
 	/**
 	 * Private constructor
 	 * @param node node

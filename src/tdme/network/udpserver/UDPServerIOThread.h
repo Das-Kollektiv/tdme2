@@ -53,6 +53,9 @@ private:
 	typedef queue<Message*> MessageQueue;
 	typedef unordered_map<uint32_t, Message*> MessageMapAck;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(UDPServerIOThread)
+
 	/**
 	 * @brief public constructor should be called in TCPServer
 	 * @param id id

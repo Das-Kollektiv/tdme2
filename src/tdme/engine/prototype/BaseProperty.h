@@ -33,7 +33,7 @@ public:
 	/**
 	 * @return name
 	 */
-	inline const string& getName() {
+	inline const string& getName() const {
 		return name;
 	}
 
@@ -48,7 +48,7 @@ public:
 	/**
 	 * @return value
 	 */
-	inline const string& getValue() {
+	inline const string& getValue() const {
 		return value;
 	}
 

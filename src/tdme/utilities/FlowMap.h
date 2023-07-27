@@ -151,6 +151,9 @@ public:
 		return tuple<int, int> { x, z };
 	}
 
+	// forbid class copy
+	CLASS_FORBID_COPY(FlowMap)
+
 	/**
 	 * Constructor
 	 * @param path path

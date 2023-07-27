@@ -32,6 +32,9 @@ private:
 	Vector3 axis1;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity)
+
 	/**
 	 * Public constructor
 	 */

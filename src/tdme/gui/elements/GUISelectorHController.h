@@ -45,6 +45,9 @@ private:
 	GUIParentNode* innerNode { nullptr };
 
 private:
+	// forbid class copy
+	CLASS_FORBID_COPY(GUISelectorHController)
+
 	/**
 	 * Private constructor
 	 * @param node node

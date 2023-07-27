@@ -57,7 +57,6 @@ private:
 	void parseHTTPResponseHeaders(stringstream& rawResponse, int16_t& httpStatusCode, vector<string>& httpHeader);
 
 public:
-
 	static const constexpr int16_t HTTP_STATUSCODE_OK { 200 };
 
 	static const string HTTP_METHOD_GET;

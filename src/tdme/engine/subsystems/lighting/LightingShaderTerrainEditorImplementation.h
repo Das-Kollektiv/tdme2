@@ -19,6 +19,9 @@ using tdme::engine::subsystems::renderer::Renderer;
 class tdme::engine::subsystems::lighting::LightingShaderTerrainEditorImplementation: public LightingShaderTerrainImplementation
 {
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(LightingShaderTerrainEditorImplementation)
+
 	/**
 	 * Public constructor
 	 * @param renderer renderer

@@ -28,7 +28,7 @@ public:
 	/**
 	 * Public constructor
 	 */
-	Properties();
+	Properties() {}
 
 	/**
 	 * Clear

@@ -21,6 +21,9 @@ private:
 	int32_t uniformSpeed { -1 };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(DeferredLightingShaderPBRTreeImplementation)
+
 	/**
 	 * Public constructor
 	 * @param renderer renderer

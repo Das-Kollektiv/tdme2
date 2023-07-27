@@ -29,7 +29,11 @@ private:
 	int32_t colorBufferTextureId3;
 	int32_t colorBufferTextureId4;
 	int32_t colorBufferTextureId5;
+
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(GeometryBuffer)
+
 	/**
 	 * Public constructor
 	 * @param width width

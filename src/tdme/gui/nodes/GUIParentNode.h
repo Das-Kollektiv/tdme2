@@ -66,6 +66,9 @@ protected:
 	GUIParentNode_Overflow* overflowX;
 	GUIParentNode_Overflow* overflowY;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIParentNode)
+
 	/**
 	 * Constructor
 	 * @param screenNode screen node

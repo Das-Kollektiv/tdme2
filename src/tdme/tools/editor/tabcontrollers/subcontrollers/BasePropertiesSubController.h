@@ -58,6 +58,9 @@ private:
 	string renamePropertyName;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(BasePropertiesSubController)
+
 	/**
 	 * Public constructor
 	 * @param editorView editor view

@@ -52,6 +52,9 @@ private:
 	int64_t timeLast { -1LL };
 
 protected:
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIVideoNode)
+
 	/**
 	 * Constructor
 	 * @param screenNode screen node

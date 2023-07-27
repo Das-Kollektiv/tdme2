@@ -12,6 +12,7 @@ class tdme::engine::model::JointWeight final
 private:
 	int32_t jointIndex;
 	int32_t weightIndex;
+
 public:
 	/**
 	 * Public constructor

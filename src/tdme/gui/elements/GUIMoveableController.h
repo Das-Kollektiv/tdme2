@@ -27,6 +27,9 @@ private:
 	int mouseLastY { -1 };
 	bool dragging { false };
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIMoveableController)
+
 	/**
 	 * Private constructor
 	 * @param node node

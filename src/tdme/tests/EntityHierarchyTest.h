@@ -27,18 +27,20 @@ private:
 	ObjectDeleter<BoundingVolume> bvDeleter;
 
 public:
-
-	/**
-	 * Public constructor
-	 */
-	EntityHierarchyTest();
-
 	/**
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values
 	 */
 	static void main(int argc, char** argv);
+
+	// forbid class copy
+	CLASS_FORBID_COPY(EntityHierarchyTest)
+
+	/**
+	 * Public constructor
+	 */
+	EntityHierarchyTest();
 
 	// overridden methods
 	void display();

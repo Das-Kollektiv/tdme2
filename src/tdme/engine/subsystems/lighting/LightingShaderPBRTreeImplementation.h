@@ -21,6 +21,9 @@ private:
 	int32_t uniformTime { -1 };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(LightingShaderPBRTreeImplementation)
+
 	/**
 	 * Public constructor
 	 * @param renderer renderer

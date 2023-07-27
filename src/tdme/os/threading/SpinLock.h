@@ -16,6 +16,9 @@ using std::string;
  */
 class tdme::os::threading::SpinLock {
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(SpinLock)
+
 	/**
 	 * @brief Public constructor
 	 * @param name name

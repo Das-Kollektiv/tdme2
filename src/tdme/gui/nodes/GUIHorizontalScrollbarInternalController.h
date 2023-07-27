@@ -50,6 +50,9 @@ private:
 	virtual void setDraggedX(float draggedX);
 
 protected:
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIHorizontalScrollbarInternalController)
+
 	/**
 	 * Constructor
 	 * @param node node

@@ -26,6 +26,8 @@ private:
 	bool fixed { false };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(PrototypeAudio)
 
 	/**
 	 * Public constructor

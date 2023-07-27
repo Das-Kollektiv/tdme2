@@ -43,6 +43,9 @@ private:
 	Vector3 worldAxis1;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(CircleParticleEmitterPlaneVelocity)
+
 	/**
 	 * Public constructor
 	 * @param count particles to emit in one second

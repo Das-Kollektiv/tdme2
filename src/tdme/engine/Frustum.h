@@ -45,6 +45,9 @@ public:
 	static constexpr int PLANE_FAR { 4 };
 	static constexpr int PLANE_NEAR { 5 };
 
+	// forbid class copy
+	CLASS_FORBID_COPY(Frustum)
+
 	/**
 	 * Public constructor
 	 */

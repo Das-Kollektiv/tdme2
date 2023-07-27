@@ -31,6 +31,9 @@ private:
 	int32_t poolIdx;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(TransparentRenderPointsPool)
+
 	/**
 	 * Public constructor
 	 * @param pointsMax points max
@@ -68,7 +71,9 @@ public:
 	/**
 	 * Reset
 	 */
-	void reset();
+	inline void reset() {
+		poolIdx = 0;
+	}
 
 	/**
 	 * @return transparent render points count

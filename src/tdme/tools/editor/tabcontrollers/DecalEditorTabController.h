@@ -64,6 +64,9 @@ private:
 	};
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(DecalEditorTabController)
+
 	/**
 	 * Public constructor
 	 * @param view view

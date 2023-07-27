@@ -18,6 +18,9 @@ using tdme::engine::subsystems::postprocessing::PostProcessingProgram;
 class tdme::engine::subsystems::postprocessing::PostProcessing final
 {
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(PostProcessing)
+
 	/**
 	 * Constructor
 	 */

@@ -20,6 +20,9 @@ class tdme::os::threading::Mutex {
 	friend class Condition;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(Mutex)
+
 	/**
 	 * @brief Public constructor
 	 * @param name name

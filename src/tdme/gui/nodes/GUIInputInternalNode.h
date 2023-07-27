@@ -56,6 +56,9 @@ private:
 	int maxLength;
 
 protected:
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIInputInternalNode)
+
 	/**
 	 * Constructor
 	 * @param screenNode screen node

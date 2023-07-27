@@ -52,6 +52,9 @@ class tdme::utilities::PathFinding final
 public:
 	static constexpr bool VERBOSE { true };
 
+	// forbid class copy
+	CLASS_FORBID_COPY(PathFinding)
+
 	/**
 	 * Public constructor
 	 * @param world world

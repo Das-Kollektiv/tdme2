@@ -46,14 +46,15 @@ public:
 	 */
 	static void main(int argc, char** argv);
 
-public:
-
 	/**
 	 * @return particle system instance
 	 */
 	inline static TDMEEditor* getInstance() {
 		return instance;
 	}
+
+	// forbid class copy
+	CLASS_FORBID_COPY(TDMEEditor)
 
 	/**
 	 * Public constructor

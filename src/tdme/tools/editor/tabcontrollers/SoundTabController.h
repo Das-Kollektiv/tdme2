@@ -53,6 +53,9 @@ private:
 	PopUps* popUps { nullptr };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(SoundTabController)
+
 	/**
 	 * Public constructor
 	 * @param view view

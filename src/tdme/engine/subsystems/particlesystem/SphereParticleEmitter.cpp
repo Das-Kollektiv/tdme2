@@ -74,5 +74,6 @@ void SphereParticleEmitter::setTransform(const Transform& transform)
 	// world sphere
 	Vector3 worldScale;
 	transformMatrix.getScale(worldScale);
-	*worldSphere = Sphere(worldCenter, sphere->getRadius() * Math::max(worldScale.getX(), Math::max(worldScale.getY(), worldScale.getZ())));
+	delete worldSphere;
+	worldSphere = new Sphere(worldCenter, sphere->getRadius() * Math::max(worldScale.getX(), Math::max(worldScale.getY(), worldScale.getZ())));
 }

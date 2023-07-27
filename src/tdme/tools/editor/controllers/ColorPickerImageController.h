@@ -31,6 +31,9 @@ private:
 	ColorPickerScreenController* colorPickerScreenController { nullptr };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(ColorPickerImageController)
+
 	/**
 	 * Constructor
 	 * @param node node

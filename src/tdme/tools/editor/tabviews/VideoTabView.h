@@ -43,6 +43,9 @@ private:
 	TabView::OutlinerState outlinerState;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(VideoTabView)
+
 	/**
 	 * Public constructor
 	 * @param editorView editor view

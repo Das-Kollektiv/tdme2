@@ -34,6 +34,9 @@ private:
 	MutableString value;
 	int menuHeaderItemControllerIdx { -1 };
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIMenuHeaderController)
+
 	/**
 	 * Private constructor
 	 * @param node node

@@ -30,6 +30,9 @@ private:
 	int32_t poolIdx;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(RenderTransparentRenderPointsPool)
+
 	/**
 	 * Public constructor
 	 * @param pointsMax points max

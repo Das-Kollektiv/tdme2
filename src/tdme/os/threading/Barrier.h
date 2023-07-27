@@ -20,6 +20,9 @@ using tdme::os::threading::Mutex;
  */
 class tdme::os::threading::Barrier {
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(Barrier)
+
 	/**
 	 * @brief Public constructor
 	 * @param name name

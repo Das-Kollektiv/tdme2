@@ -98,5 +98,6 @@ void BoundingBoxParticleEmitter::setTransform(const Transform& transform)
 	// apply scale to half extension
 	worldHalfExtension.set(obb->getHalfExtension());
 	worldHalfExtension.scale(worldScale);
-	*worldObb = OrientedBoundingBox(worldCenter, worldAxes[0], worldAxes[1], worldAxes[2], worldHalfExtension);
+	delete worldObb;
+	worldObb = new OrientedBoundingBox(worldCenter, worldAxes[0], worldAxes[1], worldAxes[2], worldHalfExtension);
 }

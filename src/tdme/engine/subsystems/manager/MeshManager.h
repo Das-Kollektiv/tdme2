@@ -24,6 +24,9 @@ private:
 	unordered_map<string, MeshManager_MeshManaged*> meshes;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(MeshManager)
+
 	/**
 	 * Public constructor
 	 */

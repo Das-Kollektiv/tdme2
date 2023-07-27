@@ -39,10 +39,14 @@ private:
 	GUIColor barColorDragging;
 
 protected:
+	// overridden methods
 	const string getNodeType() override;
 	bool isContentNode() override;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIHorizontalScrollbarInternalNode)
+
 	/**
 	 * Constructor
 	 * @param screenNode screen node

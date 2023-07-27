@@ -66,6 +66,7 @@ private:
 	 * Do path finding
 	 */
 	void doPathFinding();
+
 public:
 
 	/**
@@ -74,6 +75,9 @@ public:
 	 * @param argv argument values
 	 */
 	static void main(int argc, char** argv);
+
+	// forbid class copy
+	CLASS_FORBID_COPY(PathFindingTest)
 
 	/**
 	 * Public constructor

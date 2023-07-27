@@ -32,11 +32,6 @@ TransparentRenderPointsPool::~TransparentRenderPointsPool() {
 	for (auto i = 0; i < transparentRenderPoints.size(); i++) delete transparentRenderPoints[i];
 }
 
-void TransparentRenderPointsPool::reset()
-{
-	poolIdx = 0;
-}
-
 void TransparentRenderPointsPool::sort()
 {
 	std::sort(transparentRenderPoints.begin(), transparentRenderPoints.begin() + poolIdx, TransparentRenderPoint::compare);

@@ -9,6 +9,10 @@ using tdme::os::threading::Thread;
 
 class SharedData {
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(SharedData)
+
+	//
 	SharedData() : m("shareddata"), counter(0) { };
 	inline void incrementCounter() { m.lock(); int i = counter; counter = i + 1; m.unlock(); };
 	inline int getCounter() { return counter; };

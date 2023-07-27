@@ -49,6 +49,9 @@ private:
 	void decompress(vector<uint8_t>& inContent, vector<uint8_t>& outContent);
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(ArchiveFileSystem)
+
 	/**
 	 * Public constructor
 	 * @param fileName archive file name

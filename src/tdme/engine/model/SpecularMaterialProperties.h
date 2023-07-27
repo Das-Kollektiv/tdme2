@@ -51,6 +51,9 @@ private:
 	void checkDiffuseTextureTransparency();
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(SpecularMaterialProperties)
+
 	/**
 	 * Public constructor
 	 */

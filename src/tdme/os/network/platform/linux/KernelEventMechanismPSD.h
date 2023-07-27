@@ -18,6 +18,9 @@ class tdme::os::network::platform::_linux::KernelEventMechanismPSD {
 	friend class tdme::os::network::KernelEventMechanism;
 
 private:
+	// forbid class copy
+	CLASS_FORBID_COPY(KernelEventMechanismPSD)
+
 	/**
 	 * @brief Public constructor
 	 */

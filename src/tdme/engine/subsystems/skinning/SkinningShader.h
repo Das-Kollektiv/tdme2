@@ -51,6 +51,9 @@ private:
 	Mutex mutex;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(SkinningShader)
+
 	/**
 	 * Public constructor
 	 * @param renderer renderer

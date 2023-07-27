@@ -39,6 +39,9 @@ private:
 	MutableString value;
 	bool tabSelected { false };
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUITabsController)
+
 	/**
 	 * Private constructor
 	 * @param node node

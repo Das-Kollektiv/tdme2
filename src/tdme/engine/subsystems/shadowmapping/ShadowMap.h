@@ -85,6 +85,9 @@ private:
 public:
 	static constexpr int32_t TEXTUREUNIT { 9 };
 
+	// forbid class copy
+	CLASS_FORBID_COPY(ShadowMap)
+
 	/**
 	 * Public constructor
 	 * @param shadowMapping shadow mapping

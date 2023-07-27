@@ -43,7 +43,6 @@ class tdme::engine::subsystems::particlesystem::FogParticleSystemInternal
 	: public Transform
 	, public virtual ParticleSystemInternal
 {
-
 protected:
 	string id;
 	Engine* engine { nullptr };
@@ -86,6 +85,9 @@ protected:
 	}
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(FogParticleSystemInternal)
+
 	/**
 	 * Public constructor
 	 * @param id id

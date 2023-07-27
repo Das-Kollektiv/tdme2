@@ -59,6 +59,9 @@ private:
 	};
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(PrototypeDisplaySubController)
+
 	/**
 	 * Public constructor
 	 * @param editorView editor view

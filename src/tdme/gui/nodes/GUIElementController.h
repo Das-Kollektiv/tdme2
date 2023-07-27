@@ -41,6 +41,9 @@ protected:
 	STATIC_DLL_IMPEXT static string CONDITION_DISABLED;
 	STATIC_DLL_IMPEXT static string CONDITION_ENABLED;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIElementController)
+
 	/**
 	 * Constructor
 	 * @param node node

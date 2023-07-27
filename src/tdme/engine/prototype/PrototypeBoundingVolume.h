@@ -35,6 +35,9 @@ private:
 	vector<uint8_t> convexMeshData;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(PrototypeBoundingVolume)
+
 	/**
 	 * Public constructor
 	 * @param id id

@@ -34,6 +34,9 @@ private:
 	bool playing { false };
 
 protected:
+	// forbid class copy
+	CLASS_FORBID_COPY(AudioStream)
+
 	/**
 	 * Protected constructor
 	 * @param id id

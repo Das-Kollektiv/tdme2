@@ -51,6 +51,9 @@ private:
 	Prototype* prototype { nullptr };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(EnvMapEditorTabView)
+
 	/**
 	 * Public constructor
 	 * @param editorView editor view

@@ -28,6 +28,9 @@ class tdme::network::udpserver::UDPServerClient : public ServerClient {
 	friend class UDPServerIOThread;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(UDPServerClient)
+
 	/**
 	 * @brief public constructor should be called in any subclass of UDPNetworkServer
 	 * @param clientId client id

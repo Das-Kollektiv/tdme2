@@ -42,6 +42,9 @@ protected:
 	bool isContentNode() override;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIVerticalScrollbarInternalNode)
+
 	/**
 	 * Constructor
 	 * @param screenNode screen node

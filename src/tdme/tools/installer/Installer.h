@@ -78,6 +78,9 @@ private:
 	 */
 	static void createPathRecursively(const string& pathName);
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(Installer)
+
 	/**
 	 * Public constructor
 	 */

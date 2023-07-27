@@ -67,7 +67,11 @@ private:
 	string mask;
 
 	Gradient gradient;
+
 protected:
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIGradientNode)
+
 	/**
 	 * Constructor
 	 * @param screenNode screen node
@@ -119,9 +123,7 @@ protected:
 		const Gradient& gradient
 	);
 
-	/**
-	 * @return node type
-	 */
+	// overridden methods
 	const string getNodeType() override;
 	bool isContentNode() override;
 

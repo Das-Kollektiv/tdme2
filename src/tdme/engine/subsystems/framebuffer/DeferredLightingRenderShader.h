@@ -94,6 +94,9 @@ private:
 	bool isRunning;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(DeferredLightingRenderShader)
+
 	/**
 	 * Public constructor
 	 * @param renderer renderer

@@ -85,6 +85,9 @@ private:
 	bool computeTransformMatrix(const map<string, Node*>& nodes, const Matrix4x4& parentTransformMatrix, int32_t frame, const string& nodeId, Matrix4x4& transformMatrix);
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(Model)
+
 	/**
 	 * Public constructor
 	 * @param id id

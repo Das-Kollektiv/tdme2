@@ -31,6 +31,9 @@ public:
 	 */
 	static bool isSupported(Renderer* renderer);
 
+	// forbid class copy
+	CLASS_FORBID_COPY(ShadowMapRenderShaderFoliageImplementation)
+
 	/**
 	 * Public constructor
 	 * @param renderer renderer

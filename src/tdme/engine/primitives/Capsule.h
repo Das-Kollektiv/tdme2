@@ -23,6 +23,9 @@ private:
 	void createCollisionShape(World* world) override;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(Capsule)
+
 	/**
 	 * Public constructor
 	 * @param a a

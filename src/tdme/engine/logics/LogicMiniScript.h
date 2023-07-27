@@ -119,6 +119,8 @@ protected:
 	Entity* getEntity(const string& entityId, const string& childEntityId);
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(LogicMiniScript)
 
 	/**
 	 * Public constructor

@@ -88,7 +88,11 @@ private:
 	 * @param endPosition endPosition
 	 */
 	void doPathFinding(const Vector3& endPosition);
+
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(FlowMapTest2)
+
 	/**
 	 * Public constructor
 	 */

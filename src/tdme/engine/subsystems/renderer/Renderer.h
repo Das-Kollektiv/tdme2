@@ -176,6 +176,7 @@ public:
 	int32_t UNIFORM_CL_SKINNING_VERTEX_COUNT;
 	int32_t UNIFORM_CL_SKINNING_MATRIX_COUNT;
 	int32_t UNIFORM_CL_SKINNING_INSTANCE_COUNT;
+
 protected:
 	int32_t viewPortWidth;
 	int32_t viewPortHeight;
@@ -189,7 +190,11 @@ protected:
 	string shaderPrefix;
 
 	vector<Renderer_Context> rendererContexts;
+
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(Renderer)
+
 	/**
 	 * Public constructor
 	 */

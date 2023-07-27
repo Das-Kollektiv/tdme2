@@ -28,6 +28,9 @@ private:
 	int64_t position { 0LL };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(PacketAudioStream)
+
 	/**
 	 * Protected constructor
 	 * @param id id

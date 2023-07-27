@@ -115,6 +115,9 @@ protected:
 	map<string, AnimationState*> overlayAnimationsByJointId;
 	vector<vector<FlattenedNode>> nodeLists;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(ObjectAnimation)
+
 	/**
 	 * Public constructor
 	 * @param model model

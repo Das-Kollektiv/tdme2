@@ -42,13 +42,15 @@ private:
 	ObjectDeleter<BoundingVolume> bvDeleter;
 
 public:
-
 	/**
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values
 	 */
 	static void main(int argc, char** argv);
+
+	// forbid class copy
+	CLASS_FORBID_COPY(LODTest)
 
 	/**
 	 * Public constructor

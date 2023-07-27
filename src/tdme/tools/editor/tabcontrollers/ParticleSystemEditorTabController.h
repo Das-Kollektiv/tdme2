@@ -191,6 +191,9 @@ private:
 	};
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(ParticleSystemEditorTabController)
+
 	/**
 	 * Public constructor
 	 * @param view view

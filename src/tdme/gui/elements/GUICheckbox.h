@@ -30,6 +30,9 @@ private:
 	static string NAME;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(GUICheckbox)
+
 	/**
 	 * Public constructor
 	 */

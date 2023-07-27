@@ -75,30 +75,6 @@ void SceneLibrary::addPrototype(Prototype* prototype)
 
 }
 
-Prototype* SceneLibrary::getPrototype(int id)
-{
-	auto prototypeByIdIt = prototypesById.find(id);
-	if (prototypeByIdIt != prototypesById.end()) {
-		return prototypeByIdIt->second;
-	}
-	return nullptr;
-}
-
-Prototype* SceneLibrary::getPrototypeByName(const string& name) {
-	for (auto prototype: prototypes) {
-		if (prototype->getName() == name) return prototype;
-	}
-	return nullptr;
-}
-
-Prototype* SceneLibrary::getTerrainPrototype()
-{
-	for (auto prototype: prototypes) {
-		if (prototype->getType() == Prototype_Type::TERRAIN) return prototype;
-	}
-	return nullptr;
-}
-
 void SceneLibrary::removePrototype(int id)
 {
 	auto prototypeByIdIt = prototypesById.find(id);

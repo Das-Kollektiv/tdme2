@@ -86,6 +86,9 @@ private:
 	vector<PostProcessingProgramStep> steps;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(PostProcessingProgram)
+
 	/**
 	 * Constructor
 	 * @param renderPass render pass

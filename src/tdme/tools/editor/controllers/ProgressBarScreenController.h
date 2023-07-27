@@ -40,6 +40,9 @@ private:
 	GUITextNode* progressMessageNode { nullptr };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(ProgressBarScreenController)
+
 	/**
 	 * Public constructor
 	 * @param popUps pop ups

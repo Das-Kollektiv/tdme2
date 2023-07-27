@@ -30,6 +30,9 @@ public:
 		effectState->colorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIColorEffect)
+
 	/**
 	 * Public constructor
 	 * @param guiNode GUI node

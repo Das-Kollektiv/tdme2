@@ -1,21 +1,23 @@
 #pragma once
 
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/scenes/fwd-tdme.h>
-#include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
-using std::map;
+using std::unordered_map;
 using std::string;
 using std::vector;
 
 using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::Prototype_Type;
 using tdme::math::Vector3;
 
 /**
@@ -29,11 +31,14 @@ public:
 
 private:
 	Scene* scene { nullptr };
-	map<int, Prototype*> prototypesById;
+	unordered_map<int, Prototype*> prototypesById;
 	vector<Prototype*> prototypes;
 	int prototypeIdx;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(SceneLibrary)
+
 	/**
 	 * Public constructor
 	 * @param scene scene
@@ -78,20 +83,36 @@ public:
 	 * @param id id
 	 * @return prototype
 	 */
-	Prototype* getPrototype(int id);
+	inline Prototype* getPrototype(int id) {
+		auto prototypeByIdIt = prototypesById.find(id);
+		if (prototypeByIdIt != prototypesById.end()) {
+			return prototypeByIdIt->second;
+		}
+		return nullptr;
+	}
 
 	/**
 	 * Get a prototype by given name
 	 * @param name name
 	 * @return prototype
 	 */
-	Prototype* getPrototypeByName(const string& name);
+	inline Prototype* getPrototypeByName(const string& name) {
+		for (auto prototype: prototypes) {
+			if (prototype->getName() == name) return prototype;
+		}
+		return nullptr;
+	}
 
 	/**
 	 * Get a terrain prototype
 	 * @return terrain prototype
 	 */
-	Prototype* getTerrainPrototype();
+	inline Prototype* getTerrainPrototype() {
+		for (auto prototype: prototypes) {
+			if (prototype->getType() == Prototype_Type::TERRAIN) return prototype;
+		}
+		return nullptr;
+	}
 
 	/**
 	 * Remove a prototype

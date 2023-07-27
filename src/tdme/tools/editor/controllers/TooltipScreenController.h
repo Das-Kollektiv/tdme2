@@ -27,6 +27,9 @@ private:
 	GUITextNode* tooltipNode { nullptr };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(TooltipScreenController)
+
 	/**
 	 * Public constructor
 	 */

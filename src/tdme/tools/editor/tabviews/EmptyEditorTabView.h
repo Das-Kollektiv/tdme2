@@ -47,6 +47,9 @@ private:
 	CameraRotationInputHandler* cameraRotationInputHandler { nullptr };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(EmptyEditorTabView)
+
 	/**
 	 * Public constructor
 	 * @param editorView editor view

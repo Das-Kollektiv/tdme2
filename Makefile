@@ -273,7 +273,6 @@ SRCS = \
 	src/tdme/engine/model/Skinning.cpp \
 	src/tdme/engine/model/ShaderModel.cpp \
 	src/tdme/engine/model/SpecularMaterialProperties.cpp \
-	src/tdme/engine/model/TextureCoordinate.cpp \
 	src/tdme/engine/physics/Body.cpp \
 	src/tdme/engine/physics/BodyHierarchy.cpp \
 	src/tdme/engine/physics/World.cpp \
@@ -364,12 +363,9 @@ SRCS = \
 	src/tdme/engine/subsystems/rendering/ObjectInternal.cpp \
 	src/tdme/engine/subsystems/rendering/ObjectModelInternal.cpp \
 	src/tdme/engine/subsystems/rendering/EntityRenderer.cpp \
-	src/tdme/engine/subsystems/rendering/EntityRenderer_TransparentRenderFacesGroupPool.cpp \
 	src/tdme/engine/subsystems/rendering/ObjectBuffer.cpp \
 	src/tdme/engine/subsystems/rendering/RenderTransparentRenderPointsPool.cpp \
 	src/tdme/engine/subsystems/rendering/TransparentRenderFacesGroup.cpp \
-	src/tdme/engine/subsystems/rendering/TransparentRenderFacesPool.cpp \
-	src/tdme/engine/subsystems/rendering/TransparentRenderFacesPool_TransparentRenderFacesPool.cpp \
 	src/tdme/engine/subsystems/rendering/TransparentRenderPointsPool.cpp \
 	src/tdme/engine/subsystems/particlesystem/BoundingBoxParticleEmitter.cpp \
 	src/tdme/engine/subsystems/particlesystem/CircleParticleEmitter.cpp \
@@ -424,7 +420,6 @@ SRCS = \
 	src/tdme/gui/elements/GUIDropDownController.cpp \
 	src/tdme/gui/elements/GUIDropDownOption.cpp \
 	src/tdme/gui/elements/GUIDropDownOptionController.cpp \
-	src/tdme/gui/elements/GUIElement.cpp \
 	src/tdme/gui/elements/GUIGrid.cpp \
 	src/tdme/gui/elements/GUIGridController.cpp \
 	src/tdme/gui/elements/GUIGridItem.cpp \
@@ -489,7 +484,6 @@ SRCS = \
 	src/tdme/gui/nodes/GUILayoutNode_Alignment.cpp \
 	src/tdme/gui/nodes/GUINode.cpp \
 	src/tdme/gui/nodes/GUINodeConditions.cpp \
-	src/tdme/gui/nodes/GUINodeController.cpp \
 	src/tdme/gui/nodes/GUINode_AlignmentHorizontal.cpp \
 	src/tdme/gui/nodes/GUINode_AlignmentVertical.cpp \
 	src/tdme/gui/nodes/GUINode_Flow.cpp \

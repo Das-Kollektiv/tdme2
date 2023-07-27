@@ -23,15 +23,18 @@ class tdme::gui::elements::GUIElement
 {
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIElement)
+
 	/**
 	 * Public constructor
 	 */
-	GUIElement();
+	inline GUIElement() {}
 
 	/**
 	 * Destructor
 	 */
-	virtual ~GUIElement();
+	virtual ~GUIElement() {}
 
 	/**
 	 * @return name

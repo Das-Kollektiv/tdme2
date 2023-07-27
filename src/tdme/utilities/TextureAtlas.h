@@ -38,6 +38,9 @@ public:
 		int line { -1 };
 	};
 
+	// forbid class copy
+	CLASS_FORBID_COPY(TextureAtlas)
+
 	/**
 	 * Public constructor
 	 * @param id texture id

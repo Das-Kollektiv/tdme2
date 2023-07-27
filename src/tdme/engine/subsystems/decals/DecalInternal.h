@@ -86,6 +86,9 @@ protected:
 	}
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(DecalInternal)
+
 	/**
 	 * Public constructor
 	 * @param id id

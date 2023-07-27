@@ -30,6 +30,9 @@ private:
 	STATIC_DLL_IMPEXT static string NAME;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIScrollArea)
+
 	/**
 	 * Public constructor
 	 */

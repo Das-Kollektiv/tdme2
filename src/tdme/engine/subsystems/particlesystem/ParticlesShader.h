@@ -42,6 +42,9 @@ private:
 	Renderer* renderer { nullptr };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(ParticlesShader)
+
 	/**
 	 * Public constructor
 	 * @param engine engine

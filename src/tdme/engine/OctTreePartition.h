@@ -271,6 +271,9 @@ private:
 	void findEntity(PartitionTreeNode* node, Entity* entity);
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(OctTreePartition)
+
 	/**
 	 * Public constructor
 	 */

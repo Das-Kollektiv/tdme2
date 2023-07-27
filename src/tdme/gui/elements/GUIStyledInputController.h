@@ -28,6 +28,9 @@ class tdme::gui::elements::GUIStyledInputController final
 	friend class GUIStyledInput;
 
 private:
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIStyledInputController)
+
 	/**
 	 * Private constructor
 	 * @param node node

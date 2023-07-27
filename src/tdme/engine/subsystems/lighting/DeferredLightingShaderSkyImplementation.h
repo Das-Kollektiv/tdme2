@@ -17,6 +17,9 @@ using tdme::engine::subsystems::renderer::Renderer;
 class tdme::engine::subsystems::lighting::DeferredLightingShaderSkyImplementation: public LightingShaderBaseImplementation
 {
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(DeferredLightingShaderSkyImplementation)
+
 	/**
 	 * Public constructor
 	 * @param renderer renderer

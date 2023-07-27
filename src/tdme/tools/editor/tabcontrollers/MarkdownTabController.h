@@ -47,6 +47,9 @@ private:
 	PopUps* popUps { nullptr };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(MarkdownTabController)
+
 	/**
 	 * Public constructor
 	 * @param view view

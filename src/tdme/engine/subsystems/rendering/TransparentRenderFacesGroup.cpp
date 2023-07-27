@@ -60,7 +60,7 @@ void TransparentRenderFacesGroup::render(Engine* engine, Renderer* renderer, int
 		renderer->onUpdateShader(contextIdx);
 		// update lights
 		for (auto j = 0; j < engine->lights.size(); j++) {
-			engine->lights[j].update(contextIdx);
+			engine->lights[j]->update(contextIdx);
 		}
 		// have identity texture matrix
 		renderer->getTextureMatrix(contextIdx).identity();

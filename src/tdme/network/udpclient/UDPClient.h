@@ -56,6 +56,9 @@ public:
 		return UDPClient::MESSAGEACK_RESENDTIMES[retries - 1];
 	}
 
+	// forbid class copy
+	CLASS_FORBID_COPY(UDPClient)
+
 	/**
 	 * Public constructor
 	 * @param ip server ip

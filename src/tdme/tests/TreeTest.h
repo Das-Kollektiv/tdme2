@@ -43,7 +43,15 @@ private:
 
 	ObjectDeleter<Model> modelDeleter;
 	ObjectDeleter<BoundingVolume> bvDeleter;
+
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(TreeTest)
+
+	/**
+	 * Public constructor
+	 */
+	TreeTest();
 
 	/**
 	 * Main
@@ -65,8 +73,4 @@ public:
 	void onMouseButton(int button, int state, int x, int y) override;
 	void onMouseWheel(int button, int direction, int x, int y) override;
 
-	/**
-	 * Public constructor
-	 */
-	TreeTest();
 };

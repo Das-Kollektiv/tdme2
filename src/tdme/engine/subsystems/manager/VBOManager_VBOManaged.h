@@ -33,6 +33,8 @@ private:
 	VBOManager_VBOManaged(const string& id, vector<int32_t>& vboIds);
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(VBOManager_VBOManaged)
 
 	/**
 	 * @return vbo id

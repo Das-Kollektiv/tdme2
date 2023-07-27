@@ -26,6 +26,8 @@ private:
 	Vector3 inertiaTensor;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(PrototypePhysics)
 
 	/**
 	 * Public constructor

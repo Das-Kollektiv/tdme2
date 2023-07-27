@@ -16,6 +16,10 @@ class tdme::tests::MathOperatorTest final
 public:
 	static void main();
 
+	// forbid class copy
+	CLASS_FORBID_COPY(MathOperatorTest)
+
+	//
 	MathOperatorTest();
 
 	void testVector2Operators();

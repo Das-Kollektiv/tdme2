@@ -68,6 +68,9 @@ private:
 	void synchronize(Body* clonedBody, Body* body);
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(World)
+
 	/**
 	 * Public constructor
 	 * @param id id

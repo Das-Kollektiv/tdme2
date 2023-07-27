@@ -42,6 +42,9 @@ private:
 	CameraRotationInputHandlerEventHandler* eventHandler { nullptr };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(CameraRotationInputHandler)
+
 	/**
 	 * Public constructor
 	 * @param engine engine

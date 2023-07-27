@@ -53,6 +53,9 @@ private:
 	void disposeTexture();
 
 protected:
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIImageNode)
+
 	/**
 	 * Constructor
 	 * @param screenNode screen node

@@ -60,6 +60,9 @@ private:
 
 	string shader;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(TransparentRenderFacesGroup)
+
 	/**
 	 * Public constructor
 	 */

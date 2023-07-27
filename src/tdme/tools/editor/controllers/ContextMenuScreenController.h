@@ -62,6 +62,9 @@ private:
 	MiniScriptMethodSelectionListener* miniScriptMethodSelectionListener { nullptr };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(ContextMenuScreenController)
+
 	/**
 	 * Public constructor
 	 * @param popUps pop ups

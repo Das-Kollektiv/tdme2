@@ -24,6 +24,9 @@ class tdme::audio::AudioBufferManager final
 private:
 	unordered_map<string, AudioBufferManager_AudioBufferManaged*> audioBuffers;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(AudioBufferManager)
+
 	/**
 	 * Private constructor
 	 */

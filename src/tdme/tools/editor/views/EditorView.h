@@ -42,6 +42,9 @@ private:
 	array<bool, 8> mouseButtonsDown = { false, false, false, false, false, false, false, false };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(EditorView)
+
 	/**
 	 * Public constructor
 	 * @param popUps pop ups view

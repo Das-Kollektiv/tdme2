@@ -55,7 +55,11 @@ private:
 	 * Do path finding
 	 */
 	void doPathFinding();
+
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(FlowMapTest)
+
 	/**
 	 * Public constructor
 	 */

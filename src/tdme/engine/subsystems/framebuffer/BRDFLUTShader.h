@@ -28,6 +28,9 @@ private:
 	bool initialized { false };
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(BRDFLUTShader)
+
 	/**
 	 * Public constructor
 	 * @param renderer renderer

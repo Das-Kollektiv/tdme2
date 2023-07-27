@@ -22,6 +22,9 @@ using tdme::utilities::ByteBuffer;
 class tdme::engine::ColorTextureCanvas final
 {
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(ColorTextureCanvas)
+
 	/**
 	 * Public constructor
 	 * @param texture texture

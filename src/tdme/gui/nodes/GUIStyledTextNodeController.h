@@ -159,6 +159,9 @@ private:
 	void forwardCodeCompletion(int idx);
 
 protected:
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIStyledTextNodeController)
+
 	/**
 	 * Constructor
 	 * @param node node

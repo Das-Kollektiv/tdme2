@@ -39,25 +39,8 @@ class tdme::gui::nodes::GUILayerNode: public GUIParentNode
 	friend class GUIScreenNode;
 
 protected:
-	/**
-	 * @return node type
-	 */
-	const string getNodeType() override;
-	bool isContentNode() override;
-
-	/**
-	 * Set computed top
-	 * @param top top
-	 */
-	void setTop(int top) override;
-
-	/**
-	 * Set computed left
-	 * @param left left
-	 */
-	void setLeft(int left) override;
-	void layoutSubNodes() override;
-	void layout() override;
+	// forbid class copy
+	CLASS_FORBID_COPY(GUILayerNode)
 
 	/**
 	 * Constructor
@@ -100,6 +83,14 @@ protected:
 		const GUINodeConditions& hideOn,
 		const string& tooltip
 	);
+
+	// overridden methods
+	const string getNodeType() override;
+	bool isContentNode() override;
+	void setTop(int top) override;
+	void setLeft(int left) override;
+	void layoutSubNodes() override;
+	void layout() override;
 
 public:
 	int getContentWidth() override;

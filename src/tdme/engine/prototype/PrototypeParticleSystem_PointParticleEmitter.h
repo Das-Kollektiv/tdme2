@@ -29,6 +29,9 @@ private:
 	Color4 colorEnd;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(PrototypeParticleSystem_PointParticleEmitter)
+
 	/**
 	 * Public constructor
 	 */

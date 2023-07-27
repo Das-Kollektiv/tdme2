@@ -74,6 +74,9 @@ private:
 	void render(const Vector3& position);
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(EnvironmentMappingRenderer)
+
 	/**
 	 * Public constructor
 	 * @param engine engine

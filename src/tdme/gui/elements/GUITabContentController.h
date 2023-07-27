@@ -35,6 +35,9 @@ private:
 	MutableString value;
 	GUIElementNode* parentElementNode { nullptr };
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUITabContentController)
+
 	/**
 	 * Private constructor
 	 * @param node node

@@ -24,6 +24,9 @@ public:
 	static constexpr int ATLAS_TEXTURE_SIZE { 512 };
 	static constexpr int ATLAS_TEXTURE_BORDER { 32 };
 
+	// forbid class copy
+	CLASS_FORBID_COPY(SimpleTextureAtlas)
+
 	/**
 	 * Public constructor
 	 * @param id texture id

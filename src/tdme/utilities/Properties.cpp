@@ -19,10 +19,6 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::StringTools;
 
-Properties::Properties()
-{
-}
-
 void Properties::load(const string& pathName, const string& fileName, FileSystemInterface* fileSystem)
 {
 	properties.clear();

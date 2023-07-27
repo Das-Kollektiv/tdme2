@@ -36,6 +36,9 @@ private:
 	bool disabled;
 	MutableString value;
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUICheckboxController)
+
 	/**
 	 * Private constructor
 	 * @param node node

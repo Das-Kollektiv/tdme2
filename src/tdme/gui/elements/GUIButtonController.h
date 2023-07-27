@@ -19,6 +19,9 @@ class tdme::gui::elements::GUIButtonController final
 	friend class GUIImageButton;
 
 private:
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIButtonController)
+
 	/**
 	 * Constructor
 	 */

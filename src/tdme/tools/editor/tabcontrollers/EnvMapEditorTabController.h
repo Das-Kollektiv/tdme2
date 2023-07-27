@@ -65,6 +65,9 @@ private:
 	};
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(EnvMapEditorTabController)
+
 	/**
 	 * Public constructor
 	 * @param view view

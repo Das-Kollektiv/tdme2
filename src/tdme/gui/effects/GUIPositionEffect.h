@@ -29,6 +29,9 @@ public:
 		effectState->positionY = 0.0f;
 	}
 
+	// forbid class copy
+	CLASS_FORBID_COPY(GUIPositionEffect)
+
 	/**
 	 *  Public constructor
 	 *  @param guiNode GUI node

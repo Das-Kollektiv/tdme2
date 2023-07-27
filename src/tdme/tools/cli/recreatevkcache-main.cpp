@@ -33,6 +33,9 @@ class RecreateVKCacheApplication final
 	: public virtual Application
 {
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(RecreateVKCacheApplication)
+
 	/**
 	 * Public constructor
 	 */

@@ -29,6 +29,9 @@ protected:
 	string description;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(BaseProperties)
+
 	/**
 	 * Public constructor
 	 * @param name name
@@ -81,6 +84,13 @@ public:
 	 * @param name name
 	 * @return property or null
 	 */
+	const BaseProperty* getProperty(const string& name) const;
+
+	/**
+	 * Retrieve property by name
+	 * @param name name
+	 * @return property or null
+	 */
 	BaseProperty* getProperty(const string& name);
 
 	/**
@@ -95,7 +105,23 @@ public:
 	 * @param name name
 	 * @return index or -1 if not found
 	 */
+	const int getPropertyIndex(const string& name) const;
+
+	/**
+	 * Get property index
+	 * @param name name
+	 * @return index or -1 if not found
+	 */
 	int getPropertyIndex(const string& name);
+
+	/**
+	 * Get property by index
+	 * @param idx idx
+	 * @return property or null
+	 */
+	inline const BaseProperty* getPropertyByIndex(int idx) const {
+		return idx >= 0 && idx < properties.size()?properties[idx]:nullptr;
+	}
 
 	/**
 	 * Get property by index

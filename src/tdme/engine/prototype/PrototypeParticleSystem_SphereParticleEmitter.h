@@ -30,6 +30,9 @@ private:
 	float radius;
 
 public:
+	// forbid class copy
+	CLASS_FORBID_COPY(PrototypeParticleSystem_SphereParticleEmitter)
+
 	/**
 	 * Public constructor
 	 */
