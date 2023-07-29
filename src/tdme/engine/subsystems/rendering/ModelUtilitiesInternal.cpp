@@ -122,8 +122,8 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBoxNoMesh(ObjectModelInternal
 		auto parentTransformMatrix = objectModelInternal->getModel()->getImportTransformMatrix();
 		parentTransformMatrix.multiply(objectModelInternal->getTransformMatrix());
 		objectModelInternal->instanceAnimations[0]->computeNodesTransformMatrices(objectModelInternal->instanceAnimations[0]->nodeLists[0], parentTransformMatrix, &animationState);
-		for (auto nodeIt: model->getNodes()) {
-			auto& transformedNodeMatrix = objectModelInternal->getNodeTransformMatrix(nodeIt.second->getId());
+		for (const auto& [nodeId, node]: model->getNodes()) {
+			auto& transformedNodeMatrix = objectModelInternal->getNodeTransformMatrix(node->getId());
 			vertex = transformedNodeMatrix.multiply(vertex.set(0.0f, 0.0f, 0.0f));
 			if (firstVertex == true) {
 				minX = vertex[0];
@@ -158,8 +158,7 @@ void ModelUtilitiesInternal::invertNormals(Model* model)
 
 void ModelUtilitiesInternal::invertNormals(const map<string, Node*>& nodes)
 {
-	for (auto it: nodes) {
-		Node* node = it.second;
+	for (const auto& [nodeId, node]: nodes) {
 		auto normals = node->getNormals();
 		for (auto& normal : normals) {
 			// invert

@@ -63,7 +63,7 @@ ContextMenuScreenController::ContextMenuScreenController(PopUps* popUps): popUps
 
 ContextMenuScreenController::~ContextMenuScreenController()
 {
-	for (auto& actionIt: actions) delete actionIt.second;
+	for (const auto& [actionId, action]: actions) delete action;
 	actions.clear();
 	screenNode = nullptr;
 }
@@ -138,9 +138,7 @@ void ContextMenuScreenController::onChange(GUIElementNode* node) {
 		//
 		auto searchValue = StringTools::toLowerCase(node->getController()->getValue().getString());
 		auto& properties = tscriptMethods.getProperties();
-		for (const auto& propertyIt: properties) {
-			auto methodNameCandidate = propertyIt.first;
-			auto methodDescription = propertyIt.second;
+		for (const auto& [methodNameCandidate, methodDescription]: properties) {
 			auto methodName = string("unknown");
 			if (StringTools::startsWith(methodNameCandidate, "miniscript.basemethod.") == true) {
 				methodName = StringTools::substring(methodNameCandidate, string("miniscript.basemethod.").size());
@@ -171,7 +169,7 @@ void ContextMenuScreenController::onUnfocus(GUIElementNode* node) {
 void ContextMenuScreenController::clear() {
 	miniScriptMethodSelectionListener = nullptr;
 	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(contextMenuNode->getId()))->clearSubNodes();
-	for (auto& actionIt: actions) delete actionIt.second;
+	for (const auto& [actionId, action]: actions) delete action;
 	actions.clear();
 }
 
@@ -184,9 +182,7 @@ void ContextMenuScreenController::setupVisualCodeAddNodeContextMenu() {
 	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("context_menu_addnode_list"))->clearSubNodes();
 	//
 	auto& properties = tscriptMethods.getProperties();
-	for (const auto& propertyIt: properties) {
-		auto methodNameCandidate = propertyIt.first;
-		auto methodDescription = propertyIt.second;
+	for (const auto& [methodNameCandidate, methodDescription]: properties) {
 		auto methodName = string("unknown");
 		if (StringTools::startsWith(methodNameCandidate, "miniscript.basemethod.") == true) {
 			methodName = StringTools::substring(methodNameCandidate, string("miniscript.basemethod.").size());

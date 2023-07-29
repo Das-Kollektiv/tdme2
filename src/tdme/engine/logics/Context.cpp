@@ -359,8 +359,7 @@ void Context::PathFindingThread::run() {
 				}
 				break;
 			default:
-				for (auto& flowMapRequestIt: flowMapRequests) {
-					auto& flowMapRequest = flowMapRequestIt.second;
+				for (auto& [flowMapRequestId, flowMapRequest]: flowMapRequests) {
 					if (flowMapRequest.flowMap != nullptr) continue;
 					auto pathIdx = flowMapRequest.pathIdx - 2;
 					auto partialPathLength = Math::min(flowMapRequest.path.size() - pathIdx, 22);
@@ -662,12 +661,12 @@ bool Context::doProcessPacket(NetworkLogic* logic, LogicNetworkPacket& packet, c
 
 	// clean up packet states
 	vector<string> packetsToRemove;
-	for (auto& packetStateIt: packetStates) {
-		if (packetStateIt.second.timeCreated > now - 120000L) {
-			packetsToRemove.push_back(packetStateIt.first);
+	for (const auto& [packetStateId, packetState]: packetStates) {
+		if (packetState.timeCreated > now - 120000L) {
+			packetsToRemove.push_back(packetStateId);
 		}
 	}
-	for (auto& packetToRemove: packetsToRemove) {
+	for (const auto& packetToRemove: packetsToRemove) {
 		// Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::doProcessPacket(): " + packetToRemove + ": removing");
 		packetStates.erase(packetToRemove);
 	}

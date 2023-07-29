@@ -543,8 +543,7 @@ void UIEditorTabController::updateScreensDetails() {
 			modelMeshNodesXML +
 			"<dropdown-option text=\"<None>\" value=\"\" " + (modelMeshNodesXML.empty() == true?"selected=\"true\" ":"") + " />\n";
 		if (model != nullptr) {
-			for (auto& it: model->getNodes()) {
-				auto& nodeId = it.second->getId();
+			for (const auto& [nodeId, node]: model->getNodes()) {
 				modelMeshNodesXML+=
 					"<dropdown-option text=\"" +
 					GUIParser::escape(nodeId) +
@@ -566,8 +565,7 @@ void UIEditorTabController::updateScreensDetails() {
 		string animationsXML;
 		animationsXML = animationsXML + "<dropdown-option text=\"<No animation>\" value=\"\" selected=\"true\" />";
 		if (model != nullptr) {
-			for (auto it: model->getAnimationSetups()) {
-				auto animationSetup = it.second;
+			for (const auto& [animationSetupId, animationSetup]: model->getAnimationSetups()) {
 				if (animationSetup->isOverlayAnimationSetup() == true) continue;
 				animationsXML =
 					animationsXML + "<dropdown-option text=\"" +

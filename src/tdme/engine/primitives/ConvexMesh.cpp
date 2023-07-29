@@ -172,9 +172,7 @@ ConvexMesh::ConvexMesh(ObjectModel* model, const Vector3& scale)
 	}
 
 	// iterate triangles that are coplanar and build a polygon
-	for (auto& trianglesCoplanarIt: trianglesCoplanar) {
-		auto& trianglesCoplanarVector = trianglesCoplanarIt.second;
-
+	for (const auto& [trianglesCoplanarIdx, trianglesCoplanarVector]: trianglesCoplanar) {
 		// collect polygon vertices
 		vector<Vector3> polygonVertices;
 

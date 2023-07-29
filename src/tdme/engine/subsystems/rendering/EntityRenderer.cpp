@@ -400,15 +400,15 @@ void EntityRenderer::prepareTransparentFaces(const vector<TransparentRenderFace*
 }
 
 void EntityRenderer::renderTransparentFacesGroups(int contextIdx) {
-	for (auto& it: transparentRenderFacesGroups) {
-		it.second->render(engine, renderer, contextIdx);
+	for (const auto& [id, transparentRenderFacesGroup]: transparentRenderFacesGroups) {
+		transparentRenderFacesGroup->render(engine, renderer, contextIdx);
 	}
 }
 
 void EntityRenderer::releaseTransparentFacesGroups()
 {
-	for (auto& it: transparentRenderFacesGroups) {
-		transparentRenderFacesGroupPool->release(it.second);
+	for (const auto& [id, transparentRenderFacesGroup]: transparentRenderFacesGroups) {
+		transparentRenderFacesGroupPool->release(transparentRenderFacesGroup);
 	}
 	transparentRenderFacesGroups.clear();
 }

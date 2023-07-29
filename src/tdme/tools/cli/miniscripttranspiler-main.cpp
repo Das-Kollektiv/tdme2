@@ -275,7 +275,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	generatedDeclarations+= headerIndent + "\t" + "\t" + "return;" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "}" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "auto& scriptState = getScriptState();" + "\n";
-	generatedDeclarations+= headerIndent + "\t" + "for (auto& scriptVariableIt: scriptState.variables) delete scriptVariableIt.second;" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "for (const auto& [scriptVariableName, scriptVariable]: scriptState.variables) delete scriptVariable;" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "scriptState.variables.clear();" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "getScriptState().running = true;" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "registerVariables();" + "\n";
@@ -369,10 +369,10 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	initializeNativeDefinition+= methodCodeIndent + "setNativeScriptFunctions(" + "\n";
 	initializeNativeDefinition+= methodCodeIndent + "\t" + "{" + "\n";
 	auto scriptFunctionIdx = 0;
-	for (auto& scriptFunctionIt: scriptInstance->scriptFunctions) {
+	for (const auto& [functionName, functionIdx]: scriptInstance->scriptFunctions) {
 		initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "{" + "\n";
-		initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\"" + scriptFunctionIt.first + "\"," + "\n";
-		initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + to_string(scriptFunctionIt.second) + "\n";
+		initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\"" + functionName + "\"," + "\n";
+		initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + to_string(functionIdx) + "\n";
 		initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "}" + (scriptFunctionIdx != scriptInstance->scriptFunctions.size() - 1?",":"") + "\n";
 		scriptFunctionIdx++;
 	}

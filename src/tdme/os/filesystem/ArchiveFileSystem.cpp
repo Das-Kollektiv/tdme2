@@ -88,8 +88,8 @@ void ArchiveFileSystem::list(const string& pathName, vector<string>& files, File
 	// TODO: this currently lists all files beginning from given path, also files in sub folders
 	auto _pathName = pathName;
 	if (_pathName.empty() == false && StringTools::endsWith(pathName, "/") == false) _pathName+= "/";
-	for (auto& fileInformationIt: fileInformations) {
-		auto& fileName = fileInformationIt.second.name;
+	for (const auto& [mapfileName, fileInformation]: fileInformations) {
+		const auto& fileName = fileInformation.name;
 		if (StringTools::startsWith(fileName, _pathName) == true) {
 			try {
 				if (filter != nullptr && filter->accept(

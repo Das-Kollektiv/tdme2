@@ -387,8 +387,8 @@ void SceneReader::determineMeshNodes(Scene* scene, Node* node, const string& par
 	// check if no mesh?
 	if (node->getVertices().size() == 0 && node->getSubNodes().size() > 0) {
 		// ok, check sub meshes
-		for (auto subNodeIt: node->getSubNodes()) {
-			determineMeshNodes(scene, subNodeIt.second, nodeId, transformMatrix.clone(), meshNodes);
+		for (const auto& [subNodeId, subNode]: node->getSubNodes()) {
+			determineMeshNodes(scene, subNode, nodeId, transformMatrix.clone(), meshNodes);
 		}
 	} else {
 		// add to node meshes, even if empty as its a empty :D
@@ -431,10 +431,10 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 	sceneModelImportRotationMatrix.scale(Vector3(1.0f / sceneModelScale.getX(), 1.0f / sceneModelScale.getY(), 1.0f / sceneModelScale.getZ()));
 	auto progressTotal = sceneModel->getSubNodes().size();
 	auto progressIdx = 0;
-	for (auto nodeIt: sceneModel->getSubNodes()) {
+	for (const auto& [subNodeId, subNode]: sceneModel->getSubNodes()) {
 		if (progressCallback != nullptr) progressCallback->progress(0.1f + static_cast<float>(progressIdx) / static_cast<float>(progressTotal) * 0.8f);
 		vector<PrototypeMeshNode> meshNodes;
-		determineMeshNodes(scene, nodeIt.second, "", (Matrix4x4()).identity(), meshNodes);
+		determineMeshNodes(scene, subNode, "", (Matrix4x4()).identity(), meshNodes);
 		for (auto& meshNode: meshNodes) {
 			auto model = new Model(
 				meshNode.name + ".tm",

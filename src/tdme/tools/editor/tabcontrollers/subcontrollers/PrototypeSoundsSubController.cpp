@@ -184,8 +184,7 @@ void PrototypeSoundsSubController::updateDetails(Prototype* prototype, Model* mo
 			"\" " +
 			(idx == 0 ? "selected=\"true\" " : "") +
 			" />\n";
-		for (auto it: model->getAnimationSetups()) {
-			auto animationSetupId = it.second->getId();
+		for (const auto& [animationSetupId, animationSetup]: model->getAnimationSetups()) {
 			animationsDropDownXML =
 				animationsDropDownXML + "<dropdown-option text=\"" +
 				GUIParser::escape(animationSetupId) +

@@ -32,36 +32,36 @@ using tdme::engine::Engine;
 
 PostProcessingShader::PostProcessingShader(Renderer* renderer)
 {
-	if (PostProcessingShaderBlurImplementation::isSupported(renderer) == true) shader["depth_blur"] = new PostProcessingShaderBlurImplementation(renderer);
-	if (PostProcessingShaderDefaultImplementation::isSupported(renderer) == true) shader["default"] = new PostProcessingShaderDefaultImplementation(renderer);
-	if (PostProcessingShaderDesaturationImplementation::isSupported(renderer) == true) shader["desaturation"] = new PostProcessingShaderDesaturationImplementation(renderer);
-	if (PostProcessingShaderLightScatteringImplementation::isSupported(renderer) == true) shader["light_scattering"] = new PostProcessingShaderLightScatteringImplementation(renderer);
-	if (PostProcessingShaderSSAOMapImplementation::isSupported(renderer) == true) shader["ssao_map"] = new PostProcessingShaderSSAOMapImplementation(renderer);
-	if (PostProcessingShaderSSAOImplementation::isSupported(renderer) == true) shader["ssao"] = new PostProcessingShaderSSAOImplementation(renderer);
-	if (PostProcessingShaderVignetteImplementation::isSupported(renderer) == true) shader["vignette"] = new PostProcessingShaderVignetteImplementation(renderer);
+	if (PostProcessingShaderBlurImplementation::isSupported(renderer) == true) shaders["depth_blur"] = new PostProcessingShaderBlurImplementation(renderer);
+	if (PostProcessingShaderDefaultImplementation::isSupported(renderer) == true) shaders["default"] = new PostProcessingShaderDefaultImplementation(renderer);
+	if (PostProcessingShaderDesaturationImplementation::isSupported(renderer) == true) shaders["desaturation"] = new PostProcessingShaderDesaturationImplementation(renderer);
+	if (PostProcessingShaderLightScatteringImplementation::isSupported(renderer) == true) shaders["light_scattering"] = new PostProcessingShaderLightScatteringImplementation(renderer);
+	if (PostProcessingShaderSSAOMapImplementation::isSupported(renderer) == true) shaders["ssao_map"] = new PostProcessingShaderSSAOMapImplementation(renderer);
+	if (PostProcessingShaderSSAOImplementation::isSupported(renderer) == true) shaders["ssao"] = new PostProcessingShaderSSAOImplementation(renderer);
+	if (PostProcessingShaderVignetteImplementation::isSupported(renderer) == true) shaders["vignette"] = new PostProcessingShaderVignetteImplementation(renderer);
 	implementation = nullptr;
 }
 
 PostProcessingShader::~PostProcessingShader()
 {
-	for (auto shaderIt: shader) {
-		delete shaderIt.second;
+	for (const auto& [shaderId, shader]: shaders) {
+		delete shader;
 	}
 }
 
 bool PostProcessingShader::isInitialized()
 {
 	auto initialized = true;
-	for (auto shaderIt: shader) {
-		initialized&= shaderIt.second->isInitialized();
+	for (const auto& [shaderId, shader]: shaders) {
+		initialized&= shader->isInitialized();
 	}
 	return initialized;
 }
 
 void PostProcessingShader::initialize()
 {
-	for (auto shaderIt: shader) {
-		shaderIt.second->initialize();
+	for (const auto& [shaderId, shader]: shaders) {
+		shader->initialize();
 	}
 }
 
@@ -80,16 +80,16 @@ void PostProcessingShader::unUseProgram()
 }
 
 bool PostProcessingShader::hasShader(const string& id) {
-	return shader.find(id) != shader.end();
+	return shaders.find(id) != shaders.end();
 }
 
 void PostProcessingShader::setShader(int contextIdx, const string& id) {
 	if (running == false) return;
 
 	auto currentImplementation = implementation;
-	auto shaderIt = shader.find(id);
-	if (shaderIt == shader.end()) {
-		shaderIt = shader.find("default");
+	auto shaderIt = shaders.find(id);
+	if (shaderIt == shaders.end()) {
+		shaderIt = shaders.find("default");
 	}
 	implementation = shaderIt->second;
 
@@ -115,7 +115,7 @@ void PostProcessingShader::setShaderParameters(int contextIdx, Engine* engine) {
 }
 
 void PostProcessingShader::loadTextures(const string& pathName) {
-	for (auto shaderIt: shader) {
-		shaderIt.second->loadTextures(pathName);
+	for (const auto& [shaderId, shader]: shaders) {
+		shader->loadTextures(pathName);
 	}
 }

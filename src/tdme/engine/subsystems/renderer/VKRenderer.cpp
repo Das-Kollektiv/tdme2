@@ -3498,10 +3498,8 @@ int32_t VKRenderer::getProgramUniformLocation(int32_t programId, const string& n
 		return -1;
 	}
 	auto program = programVector[programId];
-	for (auto& uniformIt: program->uniforms) {
-		if (uniformIt.second == name) {
-			return uniformIt.first;
-		}
+	for (const auto& [uniformLocation, uniformName]: program->uniformLocations) {
+		if (uniformName == name) return uniformLocation;
 	}
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): uniform not found: '" + name + "'");
 	return -1;
@@ -3529,7 +3527,7 @@ inline void VKRenderer::setProgramUniformInternal(int contextIdx, int32_t unifor
 				to_string(currentContext.idx) + ": " +
 				to_string(currentContext.program->id) + ": " +
 				to_string(uniformId) + " / " +
-				currentContext.program->uniforms[uniformId]
+				currentContext.program->uniformLocations[uniformId]
 			);
 			continue;
 		}

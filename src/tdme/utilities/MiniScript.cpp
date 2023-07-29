@@ -120,8 +120,8 @@ MiniScript::MiniScript() {
 }
 
 MiniScript::~MiniScript() {
-	for (auto& scriptMethodIt: scriptMethods) delete scriptMethodIt.second;
-	for (auto& scriptStateMachineStateIt: scriptStateMachineStates) delete scriptStateMachineStateIt.second;
+	for (const auto& [scriptMethodId, scriptMethod]: scriptMethods) delete scriptMethod;
+	for (const auto& [scriptStateMachineStateId, scriptStateMachineState]: scriptStateMachineStates) delete scriptStateMachineState;
 	while (scriptStateStack.empty() == false) popScriptState();
 }
 
@@ -983,8 +983,8 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 	scriptFileName = fileName;
 
 	//
-	for (auto& scriptMethodIt: scriptMethods) delete scriptMethodIt.second;
-	for (auto& scriptStateMachineStateIt: scriptStateMachineStates) delete scriptStateMachineStateIt.second;
+	for (const auto& [scriptMethodId, scriptMethod]: scriptMethods) delete scriptMethod;
+	for (const auto& [scriptStateMachineStateId, scriptStateMachineState]: scriptStateMachineStates) delete scriptStateMachineState;
 	scriptMethods.clear();
 	scriptStateMachineStates.clear();
 	while (scriptStateStack.empty() == false) popScriptState();
@@ -1409,7 +1409,7 @@ void MiniScript::startScript() {
 		return;
 	}
 	auto& scriptState = getScriptState();
-	for (auto& scriptVariableIt: scriptState.variables) delete scriptVariableIt.second;
+	for (const auto& [scriptVariableName, scriptVariable]: scriptState.variables) delete scriptVariable;
 	scriptState.variables.clear();
 	scriptState.running = true;
 	registerVariables();
@@ -1802,10 +1802,9 @@ bool MiniScript::call(int scriptIdx, span<ScriptVariable>& argumentValues, Scrip
 
 const vector<MiniScript::ScriptMethod*> MiniScript::getMethods() {
 	vector<ScriptMethod*> methods;
-	for (auto& scriptMethodIt: scriptMethods) {
-		auto scriptMethod = scriptMethodIt.second;
+	for (const auto& [scriptMethodName, scriptMethod]: scriptMethods) {
 		if (scriptMethod->isPrivate() == true) continue;
-		methods.push_back(scriptMethodIt.second);
+		methods.push_back(scriptMethod);
 	}
 	struct {
 		bool operator()(ScriptMethod* a, ScriptMethod* b) const {
@@ -1858,8 +1857,8 @@ const vector<MiniScript::ScriptMethod*> MiniScript::getMethods() {
 
 const vector<MiniScript::ScriptMethod*> MiniScript::getOperatorMethods() {
 	vector<ScriptMethod*> methods;
-	for (auto& scriptOperatorIt: scriptOperators) {
-		methods.push_back(scriptOperatorIt.second);
+	for (const auto& [scriptOperatorId, scriptMethod]: scriptOperators) {
+		methods.push_back(scriptMethod);
 	}
 	return methods;
 }
@@ -1915,9 +1914,9 @@ const string MiniScript::getInformation() {
 	result+="State Machine States:\n";
 	{
 		vector<string> states;
-		for (auto& scriptStateMachineStateIt: scriptStateMachineStates) {
+		for (const auto& [scriptStateMachineStateId, scriptStateMachineState]: scriptStateMachineStates) {
 			string state;
-			state = scriptStateMachineStateIt.second->getName() + "(" + to_string(scriptStateMachineStateIt.second->getId()) + ")";
+			state = scriptStateMachineState->getName() + "(" + to_string(scriptStateMachineState->getId()) + ")";
 			states.push_back(state);
 		}
 		sort(states.begin(), states.end());
@@ -1931,8 +1930,7 @@ const string MiniScript::getInformation() {
 		result+= "Methods:\n";
 		{
 			vector<string> methods;
-			for (auto& scriptMethodIt: scriptMethods) {
-				auto scriptMethod = scriptMethodIt.second;
+			for (const auto& [scriptMethodName, scriptMethod]: scriptMethods) {
 				if (scriptMethod->isPrivate() == true) continue;
 				string method;
 				method+= scriptMethod->getMethodName();
@@ -1951,8 +1949,7 @@ const string MiniScript::getInformation() {
 		result+= "Operators:\n";
 		{
 			vector<string> operators;
-			for (auto& scriptOperatorIt: scriptOperators) {
-				auto scriptMethod = scriptOperatorIt.second;
+			for (const auto& [scriptOperatorId, scriptMethod]: scriptOperators) {
 				string operatorString;
 				operatorString+= getOperatorAsString(scriptMethod->getOperator());
 				operatorString+= " --> ";
@@ -1977,10 +1974,9 @@ const string MiniScript::getInformation() {
 	{
 		auto& scriptState = getScriptState();
 		vector<string> variables;
-		for (auto& scriptVariableIt: scriptState.variables) {
+		for (const auto& [scriptVariableName, scriptVariableValue]: scriptState.variables) {
 			string variable;
-			auto& scriptVariable = *scriptVariableIt.second;
-			variable+= scriptVariableIt.first + " = " + scriptVariable.getAsString();
+			variable+= scriptVariableName + " = " + scriptVariableValue->getAsString();
 			variables.push_back(variable);
 		}
 		sort(variables.begin(), variables.end());
@@ -2235,8 +2231,8 @@ void MiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue.setType(TYPE_MAP);
-				for (auto& it: miniScript->getScriptState().variables) {
-					returnValue.setMapValue(it.first, *it.second);
+				for (const auto& [variableName, variableValue]: miniScript->getScriptState().variables) {
+					returnValue.setMapValue(variableName, *variableValue);
 				}
 			}
 		};
@@ -6842,8 +6838,8 @@ void MiniScript::registerMethods() {
 					string xml;
 					xml+= "<" + name;
 					if (mapPtr != nullptr && mapPtr->empty() == false) {
-						for(auto& mapIt: *mapPtr) {
-							xml+= " " + mapIt.first + "=\"" + GUIParser::escape(mapIt.second.getValueString()) + "\"";
+						for(const auto& [mapEntryName, mapEntryValue]: *mapPtr) {
+							xml+= " " + mapEntryName + "=\"" + GUIParser::escape(mapEntryValue.getValueString()) + "\"";
 						}
 					}
 					if (innerXML.empty() == true) {
@@ -7124,8 +7120,7 @@ void MiniScript::registerMethods() {
 	MiniScriptMath::registerMethods(this);
 
 	// determine operators
-	for (auto& methodIt: scriptMethods) {
-		auto method = methodIt.second;
+	for (const auto& [methodName, method]: scriptMethods) {
 		auto methodOperator = method->getOperator();
 		if (methodOperator != OPERATOR_NONE) {
 			auto methodOperatorString = getOperatorAsString(methodOperator);
@@ -7812,9 +7807,7 @@ const string MiniScript::createSourceCode() {
 
 void MiniScript::serializeMapAsJson(Document& jParent, const ScriptVariable& variable) {
 	auto& value = variable.getMapValueReference();
-	for (auto& mapIt: value) {
-		auto& subName = mapIt.first;
-		auto& subVariable = mapIt.second;
+	for (const auto& [subName, subVariable]: value) {
 		//
 		switch(subVariable.getType()) {
 			case TYPE_NULL:

@@ -91,8 +91,8 @@ private:
 	 */
 	inline BodyHierarchyLevel* getBodyHierarchyLevel(BodyHierarchyLevel* bodyHierarchyLevel, const string& id) {
 		if (id == bodyHierarchyLevel->id) return bodyHierarchyLevel;
-		for (auto& it: bodyHierarchyLevel->children) {
-			auto childBodyHierarchyLevel = getBodyHierarchyLevel(it.second, id);
+		for (const auto& [childId, child]: bodyHierarchyLevel->children) {
+			auto childBodyHierarchyLevel = getBodyHierarchyLevel(child, id);
 			if (childBodyHierarchyLevel != nullptr) return childBodyHierarchyLevel;
 		}
 		return nullptr;

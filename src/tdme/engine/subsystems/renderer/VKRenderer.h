@@ -235,7 +235,7 @@ private:
 		// TODO: clear on viewport dimension change
 		vector<int32_t> shaderIds;
 		vector<shader_type*> shaders;
-		unordered_map<int32_t, string> uniforms;
+		unordered_map<int32_t, string> uniformLocations;
 		uint32_t layoutBindings { 0 };
 		VkPipelineLayout pipelineLayout { VK_NULL_HANDLE };
 		VkDescriptorSetLayout uboDescriptorSetLayout { VK_NULL_HANDLE };

@@ -106,8 +106,7 @@ public:
 						FileSystem::getInstance()->getFileName(inputFileName),
 						useBC7TextureCompression
 					);
-					for (auto& materialIt: model->getMaterials()) {
-						auto material = materialIt.second;
+					for (const auto& [materialId, material]: model->getMaterials()) {
 						auto specularMaterialProperties = material->getSpecularMaterialProperties();
 						// specular material
 						if (specularMaterialProperties != nullptr) {

@@ -352,8 +352,7 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 					auto object = dynamic_cast<ImposterObject*>(modelEntity);
 					object->setShader(prototype->getShader());
 					auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
-					for (auto& parameterIt: shaderParametersDefault) {
-						auto& parameterName = parameterIt.first;
+					for (const auto& [parameterName, defaultParameterValue]: shaderParametersDefault) {
 						auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 						object->setShaderParameter(parameterName, parameterValue);
 					}
@@ -371,8 +370,7 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 			auto object = dynamic_cast<Object*>(modelEntity);
 			object->setShader(prototype->getShader());
 			auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
-			for (auto& parameterIt: shaderParametersDefault) {
-				auto& parameterName = parameterIt.first;
+			for (const auto& [parameterName, defaultParameterValue]: shaderParametersDefault) {
 				auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 				object->setShaderParameter(parameterName, parameterValue);
 			}

@@ -86,7 +86,7 @@ GUIFont::GUIFont(const string& pathName, const string& fileName, int size): text
 
 GUIFont::~GUIFont()
 {
-	for (auto& charIt: chars) delete charIt.second;
+	for (const auto& [charId, character]: chars) delete character;
 	FT_Done_Face(ftFace);
 }
 

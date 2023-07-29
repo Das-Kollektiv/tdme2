@@ -1210,9 +1210,8 @@ bool Terrain::computeWaterPositionMap(BoundingBox& terrainBoundingBox, const vec
 		auto zMax = waterPositionMap.begin()->first;
 		do {
 			waterPositionMapCopy = waterPositionMap;
-			for (auto& waterPositionMapIt: waterPositionMap) {
-				auto z = waterPositionMapIt.first;
-				for (auto x: waterPositionMapIt.second) {
+			for (const auto& [z, xValues]: waterPositionMap) {
+				for (auto x: xValues) {
 					if (hasWaterPosition(waterPositionMap, x, z - 1) == false &&
 						determineWater(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, x, z - 1, waterHeight) == true) {
 						computeWaterPositionMap(
@@ -1259,11 +1258,10 @@ Vector3 Terrain::computeWaterReflectionEnvironmentMappingPosition(const unordere
 	auto zMax = Integer::MIN_VALUE;
 	auto xMin = Integer::MAX_VALUE;
 	auto xMax = Integer::MIN_VALUE;
-	for (auto& mIt: waterPositionMap) {
-		auto z = mIt.first;
+	for (const auto& [z, xValues]: waterPositionMap) {
 		if (z < zMin) zMin = z;
 		if (z > zMax) zMax = z;
-		for (auto x: mIt.second) {
+		for (auto x: xValues) {
 			if (x < xMin) xMin = x;
 			if (x > xMax) xMax = x;
 		}
@@ -1605,11 +1603,10 @@ void Terrain::applyFoliageBrush(
 			//
 			switch(brushOperation) {
 				case BRUSHOPERATION_ADD:
-					for (auto& brushMapCountMapEntityIt: brushMapCountMapEntity) {
-						auto prototypeId = brushMapCountMapEntityIt.first;
+					for (const auto& [prototypeId, prototypeCount]: brushMapCountMapEntity) {
 						if (prototypeId == -1) continue;
-						auto prototypeCount = brushMapCountMapEntityIt.second;
 
+						//
 						auto prototypeIdx = -1;
 						for (auto i = 0; i < foliageBrushPrototypes.size(); i++) {
 							if (foliageBrushPrototypes[i].prototypeId == prototypeId) prototypeIdx = i;
@@ -1825,10 +1822,9 @@ void Terrain::applyFoliageDeleteBrush(
 						getTerrainVertex(terrainHeightVectorX - 1, terrainHeightVectorZ, leftVertex);
 						getTerrainVertex(terrainHeightVectorX, terrainHeightVectorZ, vertex);
 
-						for (auto& foliageMapPartitionIt: foliageMaps[partitionIdx]) {
-							auto& foliageMapPartitionPrototypeTransform = foliageMapPartitionIt.second;
-							for (auto i = 0; i < foliageMapPartitionPrototypeTransform.size(); i++) {
-								auto& translation = foliageMapPartitionPrototypeTransform[i].getTranslation();
+						for (auto& [prototypeId, foliageMapPartitionPrototypeTransformVector]: foliageMaps[partitionIdx]) {
+							for (auto i = 0; i < foliageMapPartitionPrototypeTransformVector.size(); i++) {
+								auto& translation = foliageMapPartitionPrototypeTransformVector[i].getTranslation();
 								if (appliedDensity > 0.0f &&
 									translation.getX() >= leftVertex.getX() - 0.01f &&
 									translation.getX() <= vertex.getX() + 0.01f &&
@@ -1838,7 +1834,7 @@ void Terrain::applyFoliageDeleteBrush(
 									(translation.getY() >= heightMin &&
 									translation.getY() <= heightMax))) {
 									//
-									foliageMapPartitionPrototypeTransform.erase(foliageMapPartitionPrototypeTransform.begin() + i);
+									foliageMapPartitionPrototypeTransformVector.erase(foliageMapPartitionPrototypeTransformVector.begin() + i);
 									recreateFoliagePartitions.insert(partitionIdx);
 									i--;
 								}
@@ -1949,13 +1945,9 @@ void Terrain::updateFoliageTerrainBrush(
 			getTerrainVertex(terrainHeightVectorX, terrainHeightVectorZ, vertex);
 
 			//
-			for (auto& foliageMapPartitionIt: foliageMaps[partitionIdx]) {
-				auto prototypeId = foliageMapPartitionIt.first;
+			for (auto& [prototypeId, foliageMapPartitionPrototypeTransformVector]: foliageMaps[partitionIdx]) {
 				if (prototypeId == -1) continue;
-				auto& foliageMapPartitionPrototypeTransform = foliageMapPartitionIt.second;
-
-				//
-				for (auto& transform: foliageMapPartitionPrototypeTransform) {
+				for (auto& transform: foliageMapPartitionPrototypeTransformVector) {
 					auto& translation = transform.getTranslation();
 					if (brushTextureDensity > 0.0f &&
 						translation.getX() >= leftVertex.getX() &&
@@ -2120,13 +2112,9 @@ void Terrain::updateFoliageTerrainRampBrush(
 			getTerrainVertex(terrainHeightVectorX, terrainHeightVectorZ, vertex);
 
 			//
-			for (auto& foliageMapPartitionIt: foliageMaps[partitionIdx]) {
-				auto prototypeId = foliageMapPartitionIt.first;
+			for (auto& [prototypeId, foliageMapPartitionPrototypeTransformVector]: foliageMaps[partitionIdx]) {
 				if (prototypeId == -1) continue;
-				auto& foliageMapPartitionPrototypeTransform = foliageMapPartitionIt.second;
-
-				//
-				for (auto& transform: foliageMapPartitionPrototypeTransform) {
+				for (auto& transform: foliageMapPartitionPrototypeTransformVector) {
 					auto& translation = transform.getTranslation();
 					if (translation.getX() >= leftVertex.getX() &&
 						translation.getX() <= vertex.getX() &&
@@ -2215,19 +2203,16 @@ void Terrain::mirrorXAxis(
 	unordered_map<int, unordered_map<int, unordered_set<int>>> waterPositionMapsMirrored;
 	unordered_map<int, float> waterPositionMapsHeightMirrored;
 	auto idxMax = 0;
-	for (auto& waterPositionMapsIt: waterPositionMaps) {
-		auto idx = waterPositionMapsIt.first;
+	for (const auto& [idx, waterPositionMap]: waterPositionMaps) {
 		if (idx > idxMax) idxMax = idx;
 	}
 	idxMax++;
-	for (auto& waterPositionMapsIt: waterPositionMaps) {
-		auto idx = waterPositionMapsIt.first;
+	for (const auto& [idx, waterPositionMap]: waterPositionMaps) {
 		waterPositionMapsHeightMirrored[idx] = waterPositionMapsHeight[idx];
 		waterPositionMapsHeightMirrored[idxMax + idx] = waterPositionMapsHeight[idx];
-		for (auto& zIt: waterPositionMapsIt.second) {
-			auto z = zIt.first;
+		for (const auto& [z, xValues]: waterPositionMap) {
 			auto _z = flipZ == true?terreinHeightVectorVerticesPerZ - z - 1:z;
-			for (auto& x: zIt.second) {
+			for (const auto x: xValues) {
 				waterPositionMapsMirrored[idx][z].insert(x);
 				waterPositionMapsMirrored[idxMax + idx][_z].insert(terrainHeightVectorVerticesPerX * 2 - x - 1);
 			}
@@ -2242,9 +2227,8 @@ void Terrain::mirrorXAxis(
 	vector<unordered_map<int, vector<Transform>>> foliageMapsMirrored;
 	createFoliageMaps(width * 2.0f, depth, foliageMapsMirrored);
 	for (auto& foliageMapPartition: foliageMaps) {
-		for (auto& foliageMapPartitionIt: foliageMapPartition) {
-			auto foliagePrototypeId = foliageMapPartitionIt.first;
-			for (auto& transform: foliageMapPartitionIt.second) {
+		for (const auto& [foliagePrototypeId, foliagePrototypeTransformVector]: foliageMapPartition) {
+			for (const auto& transform: foliagePrototypeTransformVector) {
 				{
 					//
 					auto partitionX = static_cast<int>((transform.getTranslation().getX()) / PARTITION_SIZE);
@@ -2311,18 +2295,15 @@ void Terrain::mirrorZAxis(
 	unordered_map<int, unordered_map<int, unordered_set<int>>> waterPositionMapsMirrored;
 	unordered_map<int, float> waterPositionMapsHeightMirrored;
 	auto idxMax = 0;
-	for (auto& waterPositionMapsIt: waterPositionMaps) {
-		auto idx = waterPositionMapsIt.first;
+	for (const auto& [idx, waterPositionMap]: waterPositionMaps) {
 		if (idx > idxMax) idxMax = idx;
 	}
 	idxMax++;
-	for (auto& waterPositionMapsIt: waterPositionMaps) {
-		auto idx = waterPositionMapsIt.first;
+	for (const auto& [idx, waterPositionMap]: waterPositionMaps) {
 		waterPositionMapsHeightMirrored[idx] = waterPositionMapsHeight[idx];
 		waterPositionMapsHeightMirrored[idxMax + idx] = waterPositionMapsHeight[idx];
-		for (auto& zIt: waterPositionMapsIt.second) {
-			auto z = zIt.first;
-			for (auto& x: zIt.second) {
+		for (const auto& [z, xValues]: waterPositionMap) {
+			for (const auto x: xValues) {
 				auto _x = flipX == true?terrainHeightVectorVerticesPerX - x - 1:x;
 				waterPositionMapsMirrored[idx][z].insert(x);
 				waterPositionMapsMirrored[idxMax + idx][terreinHeightVectorVerticesPerZ * 2 - z - 1].insert(_x);
@@ -2337,10 +2318,9 @@ void Terrain::mirrorZAxis(
 	auto partitionsZ = static_cast<int>(Math::ceil(depth * 2.0f / PARTITION_SIZE));
 	vector<unordered_map<int, vector<Transform>>> foliageMapsMirrored;
 	createFoliageMaps(width, depth * 2.0f, foliageMapsMirrored);
-	for (auto& foliageMapPartition: foliageMaps) {
-		for (auto& foliageMapPartitionIt: foliageMapPartition) {
-			auto foliagePrototypeId = foliageMapPartitionIt.first;
-			for (auto& transform: foliageMapPartitionIt.second) {
+	for (const auto& foliageMapPartition: foliageMaps) {
+		for (const auto& [foliagePrototypeId, foliageMapPartitionTransformVector]: foliageMapPartition) {
+			for (const auto& transform: foliageMapPartitionTransformVector) {
 				{
 					//
 					auto partitionX = static_cast<int>((transform.getTranslation().getX()) / PARTITION_SIZE);

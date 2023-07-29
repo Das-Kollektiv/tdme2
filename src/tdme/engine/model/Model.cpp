@@ -132,8 +132,7 @@ bool Model::computeTransformMatrix(const map<string, Node*>& nodes, const Matrix
 {
 	// TODO: this should be computed from sub nodes to root node, not the other way around, also it looks broken to me right now, but works for our cases so far
 	// iterate through nodes
-	for (auto it: nodes) {
-		auto node = it.second;
+	for (const auto& [nodeId, node]: nodes) {
 		// compute animation matrix if animation setups exist
 		auto animation = node->getAnimation();
 		if (animation != nullptr && frame != -1) {

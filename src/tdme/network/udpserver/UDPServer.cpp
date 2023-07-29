@@ -426,8 +426,7 @@ void UDPServer::cleanUpClients() {
 	clientIdMapReadWriteLock.readLock();
 
 	auto now = Time::getCurrentMillis();
-	for (auto& it: clientIdMap) {
-		auto client = it.second;
+	for (const auto& [clientId, client]: clientIdMap) {
 		if (client->client->shutdownRequested == true ||
 			client->time < now - CLIENT_CLEANUP_IDLETIME) {
 

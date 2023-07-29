@@ -448,11 +448,10 @@ void ApplicationClient::update() {
 		}
 	}
 	vector<string> inactiveSounds;
-	for (auto& activeSoundIt: activeSounds) {
-		auto& activeSound = activeSoundIt.second;
+	for (const auto& [activeSoundKey, activeSound]: activeSounds) {
 		auto sound = audio->getEntity(activeSound.id);
 		if (sound->isPlaying() == false) {
-			inactiveSounds.push_back(activeSoundIt.first);
+			inactiveSounds.push_back(activeSoundKey);
 			continue;
 		}
 		if (activeSound.attachedToLogic == true) {

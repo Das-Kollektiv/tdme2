@@ -738,9 +738,8 @@ void Engine::removeEntityFromLists(Entity* entity)
 void Engine::reset()
 {
 	vector<string> entitiesToRemove;
-	for (auto it: entitiesById) {
-		auto entityKey = it.first;
-		entitiesToRemove.push_back(entityKey);
+	for (const auto& [entityId, entity]: entitiesById) {
+		entitiesToRemove.push_back(entityId);
 	}
 	for (auto entityKey: entitiesToRemove) {
 		removeEntity(entityKey);
@@ -2098,9 +2097,8 @@ void Engine::dispose()
 
 	// remove entities
 	vector<string> entitiesToRemove;
-	for (auto it: entitiesById) {
-		auto entityKey = it.first;
-		entitiesToRemove.push_back(entityKey);
+	for (const auto& [entityId, entity]: entitiesById) {
+		entitiesToRemove.push_back(entityId);
 	}
 	for (auto entityKey: entitiesToRemove) {
 		removeEntity(entityKey);
@@ -2307,8 +2305,7 @@ void Engine::doPostProcessing(PostProcessingProgram::RenderPass renderPass, arra
 
 const vector<string> Engine::getRegisteredShader(ShaderType type) {
 	vector<string> result;
-	for (auto shadersIt: shaders) {
-		auto& shader = shadersIt.second;
+	for (const auto& [shaderId, shader]: shaders) {
 		if (shader.type == type) {
 			result.push_back(shader.id);
 		}
@@ -2681,10 +2678,9 @@ void Engine::dumpShaders() {
 		auto& defaultShaderParameters = getShaderParameterDefaults(shaderId);
 		if (defaultShaderParameters.size() > 0) {
 			Console::print("\t");
-			for (auto it: defaultShaderParameters) {
-				auto& parameterName = it.first;
+			for (const auto& [parameterName, parameterValue]: defaultShaderParameters) {
 				Console::print(parameterName);
-				switch(it.second.getType()) {
+				switch(parameterValue.getType()) {
 					case ShaderParameter::TYPE_NONE:
 						Console::print("=none; ");
 						break;
@@ -2804,8 +2800,7 @@ void Engine::dumpEntities() {
 	Console::println("Engine::dumpEntities()");
 	Console::println();
 	Console::println("Engine Entities:");
-	for (auto& entitiesByIdIt: entitiesById) {
-		auto entity = entitiesByIdIt.second;
+	for (const auto& [entityId, entity]: entitiesById) {
 		string entityType;
 		switch (entity->getEntityType()) {
 			case Entity::ENTITYTYPE_DECAL:

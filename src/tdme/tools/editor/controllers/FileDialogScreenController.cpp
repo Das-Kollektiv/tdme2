@@ -566,8 +566,8 @@ void FileDialogScreenController::saveSettings() {
 		}
 		{
 			auto i = 0;
-			for (auto& defaultCwdByExtensionsIt: defaultCwdByExtensions) {
-				settings.put("default_cwd_" + to_string(i++), defaultCwdByExtensionsIt.first + ":" + defaultCwdByExtensionsIt.second);
+			for (const auto& [extension, defaultCwd]: defaultCwdByExtensions) {
+				settings.put("default_cwd_" + to_string(i++), extension + ":" + defaultCwd);
 			}
 		}
 		settings.store(settingsPathName.empty() == false?settingsPathName:defaultCwd, settingsFileName, FileSystem::getStandardFileSystem());

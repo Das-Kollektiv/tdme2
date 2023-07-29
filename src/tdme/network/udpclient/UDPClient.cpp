@@ -68,7 +68,7 @@ UDPClient::~UDPClient() {
 	messageQueueMutex.unlock();
 	//
 	messageMapAckMutex.lock();
-	for (auto& it: messageMapAck) delete it.second;
+	for (const auto& [messageId, message]: messageMapAck) delete message;
 	messageMapAck.clear();
 	messageMapAckMutex.unlock();
 	//
@@ -80,7 +80,7 @@ UDPClient::~UDPClient() {
 	recvMessageQueueMutex.unlock();
 	//
 	messageMapSafeMutex.lock();
-	for (auto& it: messageMapSafe) delete it.second;
+	for (const auto& [messageId, message]: messageMapSafe) delete message;
 	messageMapSafe.clear();
 	messageMapSafeMutex.unlock();
 }

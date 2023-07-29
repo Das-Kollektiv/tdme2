@@ -29,7 +29,7 @@ private:
 	struct ShadowMapRenderShaderContext {
 		ShadowMapRenderShaderImplementation* implementation { nullptr };
 	};
-	unordered_map<string, ShadowMapRenderShaderImplementation*> shader;
+	unordered_map<string, ShadowMapRenderShaderImplementation*> shaders;
 	bool running { false };
 	Matrix4x4 depthBiasMVPMatrix;
 	Engine* engine { nullptr };

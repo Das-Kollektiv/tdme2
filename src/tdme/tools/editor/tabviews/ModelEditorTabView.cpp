@@ -257,8 +257,7 @@ void ModelEditorTabView::reimportModel(const string& pathName, const string& fil
 	};
 	// store old animation setups
 	map<string, AnimationSetupStruct> originalAnimationSetups;
-	for (auto animationSetupIt: prototype->getModel()->getAnimationSetups()) {
-		auto animationSetup = animationSetupIt.second;
+	for (const auto& [animationSetupId, animationSetup]: prototype->getModel()->getAnimationSetups()) {
 		originalAnimationSetups[animationSetup->getId()] = {
 			.loop = animationSetup->isLoop(),
 			.overlayFromNodeId = animationSetup->getOverlayFromNodeId(),
@@ -275,9 +274,7 @@ void ModelEditorTabView::reimportModel(const string& pathName, const string& fil
 			fileName
 		);
 		// restore animation setup properties
-		for (auto originalAnimationSetupIt: originalAnimationSetups) {
-			auto originalAnimationSetupId = originalAnimationSetupIt.first;
-			auto originalAnimationSetup = originalAnimationSetupIt.second;
+		for (const auto& [originalAnimationSetupId, originalAnimationSetup]: originalAnimationSetups) {
 			auto animationSetup = model->getAnimationSetup(originalAnimationSetupId);
 			if (animationSetup == nullptr) {
 				Console::println("ModelEditorTabView::reimportModel(): missing animation setup: " + originalAnimationSetupId);
@@ -566,8 +563,7 @@ void ModelEditorTabView::updateShaderParemeters() {
 	auto object = dynamic_cast<Object*>(engine->getEntity("model"));
 	if (object == nullptr || prototype == nullptr) return;
 	auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
-	for (auto& parameterIt: shaderParametersDefault) {
-		auto& parameterName = parameterIt.first;
+	for (const auto& [parameterName, defaultParameterValue]: shaderParametersDefault) {
 		auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 		object->setShaderParameter(parameterName, parameterValue);
 	}

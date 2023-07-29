@@ -144,9 +144,9 @@ int main(int argc, char** argv)
 	}
 
 	//
-	for (auto& elementAttributeMapIt: elementAttributeMap) {
-		Console::println(elementAttributeMapIt.first);
-		for (auto& attribute: elementAttributeMapIt.second) {
+	for (const auto& [elementName, elementAttributeVector]: elementAttributeMap) {
+		Console::println(elementName);
+		for (auto& attribute: elementAttributeVector) {
 			Console::println("\t" + attribute);
 		}
 		Console::println();

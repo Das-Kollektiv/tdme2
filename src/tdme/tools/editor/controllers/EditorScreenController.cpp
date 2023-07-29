@@ -925,8 +925,7 @@ void EditorScreenController::closeTab(const string& tabId) {
 }
 
 void EditorScreenController::closeTabs() {
-	for (auto& tabsIt: tabViews) {
-		auto& tab = tabsIt.second;
+	for (auto& [tabId, tab]: tabViews) {
 		screenNode->removeNodeById(tab.getId(), false);
 		screenNode->removeNodeById(tab.getId() + "-content", false);
 		tab.getTabView()->dispose();

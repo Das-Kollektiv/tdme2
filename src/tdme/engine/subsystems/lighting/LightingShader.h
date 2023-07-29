@@ -27,7 +27,7 @@ private:
 	struct LightingShaderContext {
 		LightingShaderImplementation* implementation { nullptr };
 	};
-	unordered_map<string, LightingShaderImplementation*> shader;
+	unordered_map<string, LightingShaderImplementation*> shaders;
 	Renderer* renderer { nullptr };
 	Engine* engine { nullptr };
 	bool running { false };
@@ -126,7 +126,7 @@ public:
 	 * @return if shader exists
 	 */
 	bool hasShader(const string& shaderId) {
-		return shader.find(shaderId) != shader.end();
+		return shaders.find(shaderId) != shaders.end();
 	}
 
 	/**
@@ -135,8 +135,8 @@ public:
 	 * @return if shader exists
 	 */
 	LightingShaderImplementation* getShader(const string& shaderId) {
-		auto shaderIt = shader.find(shaderId);
-		if (shaderIt == shader.end()) return nullptr;
+		auto shaderIt = shaders.find(shaderId);
+		if (shaderIt == shaders.end()) return nullptr;
 		return shaderIt->second;
 	}
 

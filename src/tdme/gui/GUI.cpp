@@ -85,8 +85,7 @@ void GUI::reshape(int width, int height)
 {
 	this->width = width;
 	this->height = height;
-	for (auto screenIt: screens) {
-		auto screen = screenIt.second;
+	for (const auto& [screenId, screen]: screens) {
 		reshapeScreen(screen);
 	}
 }
@@ -125,8 +124,8 @@ void GUI::removeScreen(const string& id)
 void GUI::reset()
 {
 	vector<string> entitiesToRemove;
-	for (auto screenKeysIt: screens) {
-		entitiesToRemove.push_back(screenKeysIt.first);
+	for (const auto& [screenId, screen]: screens) {
+		entitiesToRemove.push_back(screenId);
 	}
 	for (auto i = 0; i < entitiesToRemove.size(); i++) {
 		removeScreen(entitiesToRemove[i]);
@@ -410,8 +409,8 @@ void GUI::handleMouseEvent(GUINode* node, GUIMouseEvent* event, const unordered_
 		sortedMouseEventNodeIds[to_string(eventNode->isEventBelongingToNode(event) != true) + "_" + eventNode->getHierarchicalId()] = eventNodeId;
 	}
 	vector<string> sortedMouseEventNodeIdsVector;
-	for (auto& eventNodeIdIt: sortedMouseEventNodeIds) {
-		sortedMouseEventNodeIdsVector.push_back(eventNodeIdIt.second);
+	for (const auto& [sortedMouseEventNodeId, sortedMouseEventNode]: sortedMouseEventNodeIds) {
+		sortedMouseEventNodeIdsVector.push_back(sortedMouseEventNode);
 	}
 	reverse(sortedMouseEventNodeIdsVector.begin(), sortedMouseEventNodeIdsVector.end());
 
@@ -584,8 +583,8 @@ void GUI::handleEvents(bool clearEvents)
 			//
 			if (tooltipFloatingNodes.empty() == false) {
 				vector<GUINode*> tooltipFloatingNodesVector;
-				for (auto& tooltipFloatingNodeIt: tooltipFloatingNodes) {
-					tooltipFloatingNodesVector.push_back(tooltipFloatingNodeIt.second);
+				for (const auto& [tooltipFloatingNodeId, tooltipFloatingNode]: tooltipFloatingNodes) {
+					tooltipFloatingNodesVector.push_back(tooltipFloatingNode);
 				}
 				reverse(tooltipFloatingNodesVector.begin(), tooltipFloatingNodesVector.end());
 				//
@@ -594,8 +593,8 @@ void GUI::handleEvents(bool clearEvents)
 			} else
 			if (tooltipNodes.empty() == false) {
 				vector<GUINode*> tooltipNodesVector;
-				for (auto& tooltipNodeIt: tooltipNodes) {
-					tooltipNodesVector.push_back(tooltipNodeIt.second);
+				for (const auto& [tooltipNodeId, tooltipNode]: tooltipNodes) {
+					tooltipNodesVector.push_back(tooltipNode);
 				}
 				reverse(tooltipNodesVector.begin(), tooltipNodesVector.end());
 

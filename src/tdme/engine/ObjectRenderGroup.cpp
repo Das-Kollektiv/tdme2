@@ -256,8 +256,8 @@ void ObjectRenderGroup::combineNode(Node* sourceNode, const vector<Vector3>& ori
 	}
 
 	// do child nodes
-	for (auto nodeIt: sourceNode->getSubNodes()) {
-		combineNode(nodeIt.second, origins, objectParentTransformMatrices, combinedModel);
+	for (const auto& [subNodeId, subNode]: sourceNode->getSubNodes()) {
+		combineNode(subNode, origins, objectParentTransformMatrices, combinedModel);
 	}
 }
 
@@ -271,8 +271,8 @@ void ObjectRenderGroup::combineObjects(Model* model, const vector<Transform>& ob
 		objectTransformMatrices.push_back(transformMatrix);
 		origins.push_back(objectTransform.getTranslation());
 	}
-	for (auto nodeIt: model->getSubNodes()) {
-		combineNode(nodeIt.second, origins, objectTransformMatrices, combinedModel);
+	for (const auto& [subNodeId, subNode]: model->getSubNodes()) {
+		combineNode(subNode, origins, objectTransformMatrices, combinedModel);
 	}
 }
 
@@ -298,9 +298,7 @@ void ObjectRenderGroup::updateRenderGroup() {
 	}
 
 	//
-	for (auto& transformByModelIt: transformByModel) {
-		auto model = transformByModelIt.first;
-		auto& objectsTransform = transformByModelIt.second;
+	for (const auto& [model, objectsTransform]: transformByModel) {
 		auto lodLevel = 0;
 		for (auto combinedModel: combinedModels) {
 			auto reduceByFactor = lodReduceBy[lodLevel];

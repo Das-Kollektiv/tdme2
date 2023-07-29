@@ -156,8 +156,7 @@ private:
 	inline const string getStartNodeId() {
 		// we only look for flow node ids
 		vector<string> flowNodeIds;
-		for (auto& nodeIt: nodes) {
-			auto& node = nodeIt.second;
+		for (const auto& [nodeId, node]: nodes) {
 			if (node.type != Node::NODETYPE_FLOW) continue;
 			flowNodeIds.push_back(node.id);
 		}

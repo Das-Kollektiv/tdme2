@@ -24,8 +24,8 @@ TextureAtlas::TextureAtlas(const string& id): atlasTextureId(id) {
 }
 
 TextureAtlas::~TextureAtlas() {
-	for (auto& it: atlasTextureIdxToAtlasTextureMapping) {
-		it.second.texture->releaseReference();
+	for (const auto& [textureIdx, texture]: atlasTextureIdxToAtlasTextureMapping) {
+		texture.texture->releaseReference();
 	}
 	if (atlasTexture != nullptr) {
 		atlasTexture->releaseReference();
@@ -115,8 +115,7 @@ void TextureAtlas::update() {
 	vector<AtlasTexture> atlasTextures;
 	auto totalWidth = 0;
 	auto totalHeight = 0;
-	for (auto atlasTextureIdxToTextureMappingIt: atlasTextureIdxToAtlasTextureMapping) {
-		auto& atlasTexture = atlasTextureIdxToTextureMappingIt.second;
+	for (auto& [atlasTextureIdx, atlasTexture]: atlasTextureIdxToAtlasTextureMapping) {
 		atlasTexture.left = -1;
 		atlasTexture.height = -1;
 		atlasTexture.line = -1;
@@ -131,7 +130,7 @@ void TextureAtlas::update() {
 		}
 		totalWidth+= atlasTexture.texture->getTextureWidth();
 		totalHeight+= atlasTexture.texture->getTextureHeight();
-		atlasTextures.push_back(atlasTextureIdxToTextureMappingIt.second);
+		atlasTextures.push_back(atlasTexture);
 	}
 
 	// sort by height
@@ -252,8 +251,7 @@ void TextureAtlas::update() {
 	//
 	if (VERBOSE == true) {
 		Console::println("TextureAtlas::update(): dump textures: ");
-		for (auto atlasTextureIdxToTextureMappingIt: atlasTextureIdxToAtlasTextureMapping) {
-			auto& atlasTexture = atlasTextureIdxToTextureMappingIt.second;
+		for (const auto& [atlasTextureIdx, atlasTexture]: atlasTextureIdxToAtlasTextureMapping) {
 			Console::println(
 				"TextureAtlas::update(): have texture: " + atlasTexture.texture->getId() + ", " +
 				"left: " + to_string(atlasTexture.left) + ", " +

@@ -1254,8 +1254,8 @@ public:
 			// TODO: be verbose about misuse
 			if (type != TYPE_MAP) return keys;
 			auto& mapValue = getMapValueReference();
-			for (auto& it: mapValue) {
-				keys.push_back(it.first);
+			for (const auto& [mapEntryName, mapEntryValue]: mapValue) {
+				keys.push_back(mapEntryName);
 			}
 			return keys;
 		}
@@ -1269,8 +1269,8 @@ public:
 			// TODO: be verbose about misuse
 			if (type != TYPE_MAP) return values;
 			auto& mapValue = getMapValueReference();
-			for (auto& it: mapValue) {
-				values.push_back(it.second);
+			for (const auto& [mapEntryKey, mapEntryValue]: mapValue) {
+				values.push_back(mapEntryValue);
 			}
 			return values;
 		}
@@ -1634,9 +1634,9 @@ public:
 						auto& mapValue = getMapValueReference();
 						result+="{";
 						string valuesString;
-						for (auto& it: mapValue) {
+						for (const auto& [mapEntryName, mapEntryValue]: mapValue) {
 							if (valuesString.empty() == false) valuesString+= ", ";
-							valuesString+= it.first +  " = " + it.second.getValueString();
+							valuesString+= mapEntryName +  " = " + mapEntryValue.getValueString();
 						}
 						result+= valuesString;
 						result+="}";
@@ -2049,7 +2049,7 @@ protected:
 		auto& scriptState = getScriptState();
 		//
 		scriptState.running = false;
-		for (auto& scriptVariableIt: scriptState.variables) delete scriptVariableIt.second;
+		for (const auto& [scriptVariableName, scriptVariable]: scriptState.variables) delete scriptVariable;
 		scriptState.variables.clear();
 		if (isFunctionRunning() == false) timeEnabledConditionsCheckLast = TIME_NONE;
 		resetScriptExecutationState(SCRIPTIDX_NONE, STATEMACHINESTATE_NONE);
@@ -2085,7 +2085,7 @@ protected:
 	 */
 	inline void popScriptState() {
 		auto& scriptState = getScriptState();
-		for (auto& scriptVariableIt: scriptState.variables) delete scriptVariableIt.second;
+		for (const auto& [scriptVariableName, scriptVariable]: scriptState.variables) delete scriptVariable;
 		scriptStateStack.erase(scriptStateStack.begin() + scriptStateStack.size() - 1);
 	}
 

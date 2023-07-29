@@ -522,8 +522,7 @@ void TextEditorTabView::setCodeEditor() {
 	// dump nodes for now
 	{
 		auto i = 0;
-		for (auto& nodeIt: nodes) {
-			auto& node = nodeIt.second;
+		for (const auto& [nodeId, node]: nodes) {
 			string nodeType;
 			switch (node.type) {
 				case Node::NODETYPE_NONE: nodeType = "None"; break;

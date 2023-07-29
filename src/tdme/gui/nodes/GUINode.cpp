@@ -138,10 +138,10 @@ GUINode::~GUINode() {
 	if (controller != nullptr) delete controller;
 	// remove effects
 	vector<string> effectsToRemove;
-	for (auto effectIt: effects) {
-		effectsToRemove.push_back(effectIt.first);
+	for (const auto& [effectId, effect]: effects) {
+		effectsToRemove.push_back(effectId);
 	}
-	for (auto effectToRemoveId: effectsToRemove) {
+	for (const auto& effectToRemoveId: effectsToRemove) {
 		removeEffect(effectToRemoveId);
 	}
 	if (effectState != nullptr) delete effectState;
@@ -481,8 +481,7 @@ void GUINode::applyEffects(GUIRenderer* guiRenderer) {
 	if (hasEffects() == false) return;
 	vector<Action*> actions;
 	vector<GUIEffect*> activeEffects;
-	for (auto& effectIt: effects) {
-		auto effect = effectIt.second;
+	for (const auto& [effectId, effect]: effects) {
 		if (effect->isActive() == true) {
 			if (effect->update(guiRenderer) == true && effect->getAction() != nullptr) {
 				actions.push_back(effect->getAction());
@@ -1371,9 +1370,8 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
 	}
 	if (haveInEffect == true) {
 		if (defaultEffect != nullptr) defaultEffect->stop();
-		for (auto& effectIt: effects) {
-			auto effect = effectIt.second;
-			if (StringTools::startsWith(effectIt.first, "tdme.xmleffect.out.") == true && effect->isActive() == true) {
+		for (const auto& [effectId, effect]: effects) {
+			if (StringTools::startsWith(effectId, "tdme.xmleffect.out.") == true && effect->isActive() == true) {
 				effect->stop();
 			}
 		}
@@ -1399,9 +1397,8 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
 		}
 		if (issuedOutEffect == true) {
 			if (defaultEffect != nullptr && defaultEffect->isActive() == true) defaultEffect->stop();
-			for (auto& effectIt: effects) {
-				auto effect = effectIt.second;
-				if (StringTools::startsWith(effectIt.first, "tdme.xmleffect.in.") == true && effect->isActive() == true) {
+			for (const auto& [effectId, effect]: effects) {
+				if (StringTools::startsWith(effectId, "tdme.xmleffect.in.") == true && effect->isActive() == true) {
 					effect->stop();
 				}
 			}
@@ -1412,8 +1409,7 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
 	// check if we need to start default effect
 	auto haveColorEffect = false;
 	auto havePositionEffect = false;
-	for (auto& effectIt: effects) {
-		auto effect = effectIt.second;
+	for (const auto& [effectId, effect]: effects) {
 		if (effect->isActive() == true) {
 			switch (effect->getType()) {
 				case GUIEffect::EFFECTTYPE_COLOR:
@@ -1459,8 +1455,8 @@ bool GUINode::haveActiveOutEffect() {
 	if (haveOutEffect == false) return false;
 	// do not change condition met if we have a active effect
 	haveOutEffect = false;
-	for (auto effectIt: effects) {
-		if (effectIt.second->isActive() == true) {
+	for (const auto& [effectId, effect]: effects) {
+		if (effect->isActive() == true) {
 			haveOutEffect = true;
 			break;
 		}

@@ -166,8 +166,8 @@ Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const
 	if (model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT) == nullptr) {
 		model->addAnimationSetup(Model::ANIMATIONSETUP_DEFAULT, 0, 0, true);
 	}
-	for (auto it: embeddedTextures) {
-		it.second->releaseReference();
+	for (const auto& [textureId, texture]: embeddedTextures) {
+		texture->releaseReference();
 	}
 	return model;
 }

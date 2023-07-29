@@ -103,14 +103,12 @@ void TMWriter::write(Model* model, vector<uint8_t>& data, bool useBC7TextureComp
 	os.writeFloatArray(model->getImportTransformMatrix().getArray());
 	writeEmbeddedTextures(&os, model, useBC7TextureCompression);
 	os.writeInt(model->getMaterials().size());
-	for (auto it: model->getMaterials()) {
-		Material* material = it.second;
+	for (const auto& [materialId, material]: model->getMaterials()) {
 		writeMaterial(&os, material);
 	}
 	writeSubNodes(&os, model->getSubNodes());
 	os.writeInt(model->getAnimationSetups().size());
-	for (auto it: model->getAnimationSetups()) {
-		AnimationSetup* animationSetup = it.second;
+	for (const auto& [animationSetupId, animationSetup]: model->getAnimationSetups()) {
 		writeAnimationSetup(&os, animationSetup);
 	}
 	if (Application::hasApplication() == true && os.getData()->size() < 10 * 1024 * 1024) writeThumbnail(&os, model);
@@ -118,8 +116,7 @@ void TMWriter::write(Model* model, vector<uint8_t>& data, bool useBC7TextureComp
 
 void TMWriter::writeEmbeddedTextures(TMWriterOutputStream* os, Model* m, bool useBC7TextureCompression) {
 	map<string, Texture*> embeddedTextures;
-	for (auto it: m->getMaterials()) {
-		Material* material = it.second;
+	for (const auto& [materialId, material]: m->getMaterials()) {
 		auto smp = material->getSpecularMaterialProperties();
 		if (smp != nullptr && m->hasEmbeddedSpecularTextures() == true) {
 			if (smp->getDiffuseTexture() != nullptr) embeddedTextures[smp->getDiffuseTexture()->getId()] = smp->getDiffuseTexture();
@@ -135,8 +132,7 @@ void TMWriter::writeEmbeddedTextures(TMWriterOutputStream* os, Model* m, bool us
 		}
 	}
 	os->writeInt(embeddedTextures.size());
-	for (auto it: embeddedTextures) {
-		auto texture = it.second;
+	for (const auto& [textureId, texture]: embeddedTextures) {
 		os->writeString(texture->getId());
 		// optional PNG
 		if (useBC7TextureCompression == true) {
@@ -342,8 +338,7 @@ void TMWriter::writeSkinning(TMWriterOutputStream* os, Skinning* skinning)
 void TMWriter::writeSubNodes(TMWriterOutputStream* os, const map<string, Node*>& subNodes)
 {
 	os->writeInt(subNodes.size());
-	for (auto it: subNodes) {
-		Node* subNode = it.second;
+	for (const auto& [subNodeId, subNode]: subNodes) {
 		writeNode(os, subNode);
 	}
 }

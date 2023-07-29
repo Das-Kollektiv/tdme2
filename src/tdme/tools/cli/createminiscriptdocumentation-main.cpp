@@ -71,33 +71,25 @@ static void generateMiniScriptDocumentation(const string& heading, int mainHeadi
 		methodByCategory[category].push_back(make_pair(scriptMethod->getMethodName(), result));
 	}
 	// collect categories
-	for (auto& methodByCategoryIt: methodByCategory) {
-		auto& category = methodByCategoryIt.first;
+	for (const auto& [category, methodMarkup]: methodByCategory) {
 		categories.insert(category);
 	}
 	//
 	map<string, vector<string>> methodByCategory2;
-	for (auto& methodByCategoryIt: methodByCategory) {
-		auto& category = methodByCategoryIt.first;
+	for (const auto& [category, methods]: methodByCategory) {
 		if (category.empty() == true) continue;
-		auto& methods = methodByCategoryIt.second;
-		for (auto& method: methods) {
-			auto& methodName = method.first;
-			auto& methodMarkup = method.second;
+		for (const auto& [methodName, methodMarkup]: methods) {
 			methodByCategory2[category].push_back(methodMarkup);
 		}
 	}
 	{
 		auto emptyCategoryMethodsIt = methodByCategory.find(string());
 		if (emptyCategoryMethodsIt != methodByCategory.end()) {
-			auto& methods = emptyCategoryMethodsIt->second;
-			for (auto& method: methods) {
-				auto& methodName = method.first;
+			const auto& methods = emptyCategoryMethodsIt->second;
+			for (const auto& [methodName, methodMarkup]: methods) {
 				if (categories.contains(methodName) == true) {
-					auto& methodMarkup = method.second;
 					methodByCategory2[methodName].insert(methodByCategory2[methodName].begin(), methodMarkup);
 				} else {
-					auto& methodMarkup = method.second;
 					methodByCategory2[string()].push_back(methodMarkup);
 				}
 			}
@@ -106,15 +98,13 @@ static void generateMiniScriptDocumentation(const string& heading, int mainHeadi
 	Console::println();
 	Console::println("# " + to_string(mainHeadingIdx) + ". " + heading);
 	auto categoryIdx = 1;
-	for (auto& methodByCategoryIt: methodByCategory2) {
-		auto& category = methodByCategoryIt.first;
+	for (const auto& [category, methodsMarkup]: methodByCategory2) {
 		auto categoryName = descriptions.get(descriptionPrefix + "group." + (category.empty() == true?"uncategorized":category), "Not documented");
 		Console::println();
 		Console::println("## " + to_string(mainHeadingIdx) + "." + to_string(categoryIdx++) + " " + categoryName);
 		Console::println();
 		Console::println("| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |");
 		Console::println("|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|");
-		auto& methodsMarkup = methodByCategoryIt.second;
 		for (auto& methodMarkup: methodsMarkup) Console::print(methodMarkup);
 	}
 }

@@ -235,19 +235,13 @@ Model* GLTFReader::read(const string& pathName, const string& fileName, bool use
 		}
 
 		// extend all animation matrices to max frames
-		for (auto& it: animationScaleMatrices) {
-			auto& nodeId = it.first;
-			auto& animationMatrices = it.second;
+		for (auto& [nodeId, animationMatrices]: animationScaleMatrices) {
 			while (animationMatrices.size() < maxFrames) animationMatrices.emplace_back(getNodeScaleMatrix(gltfModel, nodeId));
 		}
-		for (auto& it: animationRotationMatrices) {
-			auto& nodeId = it.first;
-			auto& animationMatrices = it.second;
+		for (auto& [nodeId, animationMatrices]: animationScaleMatrices) {
 			while (animationMatrices.size() < maxFrames) animationMatrices.emplace_back(getNodeRotationMatrix(gltfModel, nodeId));
 		}
-		for (auto& it: animationTranslationMatrices) {
-			auto& nodeId = it.first;
-			auto& animationMatrices = it.second;
+		for (auto& [nodeId, animationMatrices]: animationScaleMatrices) {
 			while (animationMatrices.size() < maxFrames) animationMatrices.emplace_back(getNodeTranslationMatrix(gltfModel, nodeId));
 		}
 
@@ -282,8 +276,7 @@ Model* GLTFReader::read(const string& pathName, const string& fileName, bool use
 	// check if to compute normals
 	{
 		auto computeNormals = false;
-		for (auto& nodeIt: model->getNodes()) {
-			auto node = nodeIt.second;
+		for (const auto& [nodeId, node]: model->getNodes()) {
 			if (node->getVertices().size() != node->getNormals().size()) {
 				computeNormals = true;
 			}
@@ -295,8 +288,8 @@ Model* GLTFReader::read(const string& pathName, const string& fileName, bool use
 	}
 
 	// compute tangents and bitangents
-	for (auto& nodeIt: model->getSubNodes()) {
-		computeTangentsAndBitangents(nodeIt.second);
+	for (const auto& [nodeId, node]: model->getSubNodes()) {
+		computeTangentsAndBitangents(node);
 	}
 
 	// lets prepare for indexed rendering, or disable it later, as it makes not much sense with tangents and bitangents
@@ -697,9 +690,8 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 		bool haveVertices = false;
 		bool haveNormals = false;
 		bool haveTextureCoordinates = false;
-		for (auto& gltfAttributeIt: gltfPrimitive.attributes) {
-			auto gltfBufferType = gltfAttributeIt.first;
-			auto& attributeAccessor = gltfModel.accessors[gltfAttributeIt.second];
+		for (const auto& [gltfBufferType, gltfAttributeValue]: gltfPrimitive.attributes) {
+			auto& attributeAccessor = gltfModel.accessors[gltfAttributeValue];
 			auto& attributeBufferView = gltfModel.bufferViews[attributeAccessor.bufferView];
 			auto& attributeBuffer = gltfModel.buffers[attributeBufferView.buffer];
 			if (gltfBufferType == "POSITION") {
@@ -982,8 +974,8 @@ string GLTFReader::determineTextureFileName(const string& imageName) {
 
 void GLTFReader::computeTangentsAndBitangents(Node* node) {
 	ModelTools::computeTangentsAndBitangents(node);
-	for (auto& nodeIt: node->getSubNodes()) {
-		computeTangentsAndBitangents(nodeIt.second);
+	for (const auto& [nodeId, node]: node->getSubNodes()) {
+		computeTangentsAndBitangents(node);
 	}
 }
 

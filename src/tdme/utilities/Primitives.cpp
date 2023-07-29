@@ -515,8 +515,7 @@ void Primitives::setupConvexMeshModel(Model* model)
 
 void Primitives::setupConvexMeshMaterial(const map<string, Node*>& nodes, Material* material)
 {
-	for (auto it: nodes) {
-		Node* node = it.second;
+	for (const auto& [nodeId, node]: nodes) {
 		auto facesEntities = node->getFacesEntities();
 		for (auto& faceEntity : facesEntities) {
 			faceEntity.setMaterial(material);

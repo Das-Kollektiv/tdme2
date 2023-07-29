@@ -42,8 +42,7 @@ int main(int argc, char** argv)
 			FileSystem::getInstance()->getFileName(fileName)
 		);
 		Console::println("Animation setups:");
-		for (auto& animationSetupIt: model->getAnimationSetups()) {
-			auto srcAnimationSetup = animationSetupIt.second;
+		for (const auto& [srcAnimationSetupId, srcAnimationSetup]: model->getAnimationSetups()) {
 			if (srcAnimationSetup->getOverlayFromNodeId().length() == 0) {
 				Console::println(
 					"Base animation: id = '" + srcAnimationSetup->getId() + "', " +

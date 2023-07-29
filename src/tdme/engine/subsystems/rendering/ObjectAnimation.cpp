@@ -94,17 +94,17 @@ ObjectAnimation::ObjectAnimation(Model* model, Engine::AnimationProcessingTarget
 
 ObjectAnimation::~ObjectAnimation() {
 	for (auto baseAnimationTransformMatrices: transformMatrices) {
-		for (auto it: baseAnimationTransformMatrices) {
-			delete it.second;
+		for (const auto& [id, matrix]: baseAnimationTransformMatrices) {
+			delete matrix;
 		}
 	}
-	for (auto skinningNodeMatricies: skinningNodesMatrices) {
-		for (auto it: skinningNodeMatricies) {
-			delete it.second;
+	for (auto skinningNodeMatricesEntity: skinningNodesMatrices) {
+		for (const auto& [id, matrix]: skinningNodeMatricesEntity) {
+			delete matrix;
 		}
 	}
-	for (auto overriddenTransformMatrixIt: overriddenTransformMatrices) {
-		delete overriddenTransformMatrixIt.second;
+	for (const auto& [id, matrix]: overriddenTransformMatrices) {
+		delete matrix;
 	}
 }
 
@@ -214,13 +214,9 @@ void ObjectAnimation::removeFinishedOverlayAnimations()
 {
 	// determine finished overlay animations
 	vector<string> overlayAnimationsToRemove;
-	for (auto it: overlayAnimationsById) {
-		const string& id = it.first;
-		AnimationState* animationState = it.second;
-		{
-			if (animationState->finished == true) {
-				overlayAnimationsToRemove.push_back(id);
-			}
+	for (const auto& [animationId, animationState]: overlayAnimationsById) {
+		if (animationState->finished == true) {
+			overlayAnimationsToRemove.push_back(animationId);
 		}
 	}
 	// remove them
@@ -233,8 +229,8 @@ void ObjectAnimation::removeOverlayAnimations()
 {
 	// remove them
 	vector<string> overlayAnimationsToRemove;
-	for (auto it: overlayAnimationsById) {
-		overlayAnimationsToRemove.push_back(it.first);
+	for (const auto& [animationId, animationState]: overlayAnimationsById) {
+		overlayAnimationsToRemove.push_back(animationId);
 	}
 	for (auto animationState: overlayAnimationsToRemove) {
 		removeOverlayAnimation(animationState);
@@ -307,11 +303,10 @@ void ObjectAnimation::unsetNodeTransformMatrix(const string& id)
 void ObjectAnimation::createNodesTransformMatrices(map<string, Matrix4x4*>& matrices, vector<FlattenedNode>& nodeList, const map<string, Node*>& nodes, Matrix4x4* parentTransformMatrix, AnimationState* animationState)
 {
 	// iterate through nodes
-	for (auto it: nodes) {
+	for (const auto& [nodeIt, node]: nodes) {
 		//
 		auto nodeAnimationState = animationState;
 		// put and associate transform matrices with node
-		auto node = it.second;
 		auto matrix = new Matrix4x4();
 		matrix->identity();
 		matrices[node->getId()] = matrix;
@@ -343,11 +338,10 @@ void ObjectAnimation::createNodesTransformMatrices(map<string, Matrix4x4*>& matr
 
 void ObjectAnimation::updateNodeList(vector<FlattenedNode>& nodeList, int& nodeIdx, const map<string, Node*>& nodes, AnimationState* animationState) {
 	// iterate through nodes
-	for (auto it: nodes) {
+	for (const auto& [nodeId, node]: nodes) {
 		//
 		auto nodeAnimationState = animationState;
 		// put and associate transform matrices with node
-		auto node = it.second;
 		// overridden matrix
 		Matrix4x4* overriddenTransformMatrix = nullptr;
 		auto overriddenTransformMatrixIt = overriddenTransformMatrices.find(node->getId());
@@ -447,8 +441,7 @@ void ObjectAnimation::computeAnimation(vector<FlattenedNode>& nodeList, const Ma
 			baseAnimation.currentAtTime+= currentFrameAtTime - lastFrameAtTime;
 		}
 		// do progress of overlay animations
-		for (auto it: overlayAnimationsById) {
-			AnimationState* overlayAnimationState = it.second;
+		for (const auto& [id, overlayAnimationState]: overlayAnimationsById) {
 			if (lastFrameAtTime != Timing::UNDEFINED && overlayAnimationState->lastAtTime != -1LL) {
 				overlayAnimationState->currentAtTime+= currentFrameAtTime - lastFrameAtTime;
 			}
@@ -529,8 +522,7 @@ int32_t ObjectAnimation::determineSkinnedNodeCount(const map<string, Node*>& nod
 int32_t ObjectAnimation::determineSkinnedNodeCount(const map<string, Node*>& nodes, int32_t count)
 {
 	// iterate through nodes
-	for (auto it: nodes) {
-		Node* node = it.second;
+	for (const auto& [nodeId, node]: nodes) {
 		//
 		if (node->getSkinning() != nullptr)
 			count++;
@@ -546,8 +538,7 @@ int32_t ObjectAnimation::determineSkinnedNodeCount(const map<string, Node*>& nod
 int32_t ObjectAnimation::determineSkinnedNodes(const map<string, Node*>& nodes, vector<Node*>& skinningNodes, int32_t idx)
 {
 	// iterate through nodes
-	for (auto it: nodes) {
-		Node* node = it.second;
+	for (const auto& [nodeId, node]: nodes) {
 		// fetch skinning nodes
 		if (node->getSkinning() != nullptr) {
 			skinningNodes[idx++] = node;

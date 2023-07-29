@@ -200,12 +200,12 @@ GUIScreenNode::~GUIScreenNode() {
 	GUINode::dispose();
 
 	// delete chaches
-	for (auto& fontCacheIt: fontCache) {
-		delete fontCacheIt.second;
+	for (const auto& [fontId, font]: fontCache) {
+		delete font;
 	}
 	fontCache.clear();
-	for (auto& imageCacheIt: imageCache) {
-		imageCacheIt.second->releaseReference();
+	for (const auto& [imageId, image]: imageCache) {
+		image->releaseReference();
 	}
 	imageCache.clear();
 
@@ -365,10 +365,9 @@ void GUIScreenNode::invalidateLayouts() {
 	//
 	invalidateLayoutNodeIds.clear();
 	// force layouts
-	for (auto& nodesToForceLayoutIt: nodesToForceLayout) {
+	for (const auto& [nodeHierarchicalId, node]: nodesToForceLayout) {
 		// check if parent node was layouted in this layout sequence already
 		auto parentNodeLayouted = false;
-		auto node = nodesToForceLayoutIt.second;
 		auto _node = node->parentNode;
 		// check if node's parent nodes were layouted
 		while (_node != nullptr) {
@@ -471,17 +470,13 @@ void GUIScreenNode::removeNodeById(const string& nodeId, bool resetScrollOffsets
 
 bool GUIScreenNode::removeNode(GUINode* node)
 {
-	{
-		auto elementNodeToNodeMappingIt = elementNodeToNodeMapping.find(node->getId());
-		if (elementNodeToNodeMappingIt != elementNodeToNodeMapping.end()) {
-			elementNodeToNodeMapping.erase(elementNodeToNodeMappingIt);
-		}
+	//
+	elementNodeToNodeMapping.erase(node->getId());
+	//
+	for (auto& [elementNodeId, nodeIds]: elementNodeToNodeMapping) {
+		nodeIds.erase(node->getId());
 	}
-	{
-		for (auto& elementNodeToNodeMappingIt: elementNodeToNodeMapping) {
-			elementNodeToNodeMappingIt.second.erase(node->getId());
-		}
-	}
+	//
 	if (dynamic_cast<GUIParentNode*>(node) != nullptr) {
 		auto parentNode = required_dynamic_cast<GUIParentNode*>(node);
 		for (auto i = 0; i < parentNode->subNodes.size(); i++) {
@@ -773,18 +768,17 @@ void GUIScreenNode::forwardDragRequest(GUIElementNode* node, int mouseX, int mou
 void GUIScreenNode::tick() {
 	auto now = Time::getCurrentMillis();
 	vector<int64_t> timedExpressionsToRemove;
-	for (auto& timedExpressionIt: timedExpressions) {
-		if (now >= timedExpressionIt.first) {
-			timedExpressionsToRemove.push_back(timedExpressionIt.first);
-			GUIElementNode::executeExpression(this, timedExpressionIt.second);
+	for (const auto& [timedExpressionsTime, timedExpressionsExpression]: timedExpressions) {
+		if (now >= timedExpressionsTime) {
+			timedExpressionsToRemove.push_back(timedExpressionsTime);
+			GUIElementNode::executeExpression(this, timedExpressionsExpression);
 		}
 	}
 	for (auto& timedExpressionToRemove: timedExpressionsToRemove) {
 		timedExpressions.erase(timedExpressionToRemove);
 	}
 	auto _tickNodesById = tickNodesById;
-	for (auto tickNodesByIdIt: _tickNodesById) {
-		auto node = tickNodesByIdIt.second;
+	for (const auto& [nodeId, node]: _tickNodesById) {
 		if (node->controller != nullptr) node->controller->tick();
 	}
 	//

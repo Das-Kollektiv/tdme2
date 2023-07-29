@@ -93,8 +93,7 @@ void ModelTools::prepareForIndexedRendering(Model* model)
 void ModelTools::prepareForIndexedRendering(const map<string, Node*>& nodes)
 {
 	// we need to prepare the node for indexed rendering
-	for (auto it: nodes) {
-		Node* node = it.second;
+	for (const auto& [nodeId, node]: nodes) {
 		auto& nodeVertices = node->getVertices();
 		auto& nodeNormals = node->getNormals();
 		auto& nodeTextureCoordinates = node->getTextureCoordinates();
@@ -198,8 +197,7 @@ void ModelTools::setupJoints(Model* model)
 {
 	// determine joints and mark them as joints
 	auto nodes = model->getNodes();
-	for (auto it: model->getSubNodes()) {
-		Node* node = it.second;
+	for (const auto& [nodeId, node]: nodes) {
 		auto skinning = node->getSkinning();
 		// do we have a skinning
 		if (skinning != nullptr) {
@@ -217,8 +215,7 @@ void ModelTools::setupJoints(Model* model)
 void ModelTools::setJoint(Node* root)
 {
 	root->setJoint(true);
-	for (auto it: root->getSubNodes()) {
-		Node* node = it.second;
+	for (const auto& [nodeId, node]: root->getSubNodes()) {
 		setJoint(node);
 	}
 }
@@ -228,8 +225,7 @@ void ModelTools::fixAnimationLength(Model* model)
 	// fix animation length
 	auto defaultAnimation = model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT);
 	if (defaultAnimation != nullptr) {
-		for (auto it: model->getSubNodes()) {
-			Node* node = it.second;
+		for (const auto& [nodeId, node]: model->getSubNodes()) {
 			fixAnimationLength(node, defaultAnimation->getFrames());
 		}
 	}
@@ -253,8 +249,7 @@ void ModelTools::fixAnimationLength(Node* root, int32_t frames)
 		animation->setTransformMatrices(newTransformMatrices);
 		root->setAnimation(animation);
 	}
-	for (auto it: root->getSubNodes()) {
-		Node* node = it.second;
+	for (const auto& [nodeId, node]: root->getSubNodes()) {
 		fixAnimationLength(node, frames);
 	}
 }
@@ -355,9 +350,8 @@ void ModelTools::cloneNode(Node* sourceNode, Model* targetModel, Node* targetPar
 	} else {
 		targetParentNode->getSubNodes()[clonedNode->getId()] = clonedNode;
 	}
-	for (auto sourceSubNodeIt: sourceNode->getSubNodes()) {
-		auto subNode = sourceSubNodeIt.second;
-		cloneNode(subNode, targetModel, clonedNode, cloneMesh);
+	for (const auto& [srcNodeId, srcNode]: sourceNode->getSubNodes()) {
+		cloneNode(srcNode, targetModel, clonedNode, cloneMesh);
 	}
 }
 
@@ -577,8 +571,7 @@ void ModelTools::partitionNode(Node* sourceNode, map<string, Model*>& modelsByPa
 	}
 
 	// set vertices and such
-	for (auto it: modelsByPartition) {
-		auto partitionModelKey = it.first;
+	for (const auto& [partitionModelKey, model]: modelsByPartition) {
 		if (partitionModelNodes[partitionModelKey] == nullptr) continue;
 		partitionModelNodes[partitionModelKey]->setVertices(partitionModelNodesVertices[partitionModelKey]);
 		partitionModelNodes[partitionModelKey]->setNormals(partitionModelNodesNormals[partitionModelKey]);
@@ -588,8 +581,9 @@ void ModelTools::partitionNode(Node* sourceNode, map<string, Model*>& modelsByPa
 		partitionModelNodes[partitionModelKey]->setFacesEntities(partitionModelNodesFacesEntities[partitionModelKey]);
 	}
 
-	for (auto nodeIt: sourceNode->getSubNodes()) {
-		partitionNode(nodeIt.second, modelsByPartition, modelsPosition, transformMatrix);
+	// partition sub nodes
+	for (const auto& [nodeId, node]: sourceNode->getSubNodes()) {
+		partitionNode(node, modelsByPartition, modelsPosition, transformMatrix);
 	}
 }
 
@@ -597,12 +591,10 @@ void ModelTools::partition(Model* model, const Transform& transform, map<string,
 	Matrix4x4 transformMatrix;
 	transformMatrix.set(model->getImportTransformMatrix());
 	transformMatrix.multiply(transform.getTransformMatrix());
-	for (auto nodeIt: model->getSubNodes()) {
-		partitionNode(nodeIt.second, modelsByPartition, modelsPosition, transformMatrix);
+	for (const auto& [nodeId, node]: model->getSubNodes()) {
+		partitionNode(node, modelsByPartition, modelsPosition, transformMatrix);
 	}
-	for (auto modelsByPartitionIt: modelsByPartition) {
-		auto partitionKey = modelsByPartitionIt.first;
-		auto partitionModel = modelsByPartitionIt.second;
+	for (const auto& [partitionKey, partitionModel]: modelsByPartition) {
 		partitionModel->setImportTransformMatrix(model->getImportTransformMatrix());
 		ModelTools::createDefaultAnimation(partitionModel, 0);
 		ModelTools::setupJoints(partitionModel);
@@ -626,15 +618,15 @@ void ModelTools::shrinkToFit(Node* node) {
 	node->getBitangents().shrink_to_fit();
 
 	// do child nodes
-	for (auto nodeIt: node->getSubNodes()) {
-		shrinkToFit(nodeIt.second);
+	for (const auto& [nodeId, node]: node->getSubNodes()) {
+		shrinkToFit(node);
 	}
 	*/
 }
 
 void ModelTools::shrinkToFit(Model* model) {
-	for (auto nodeIt: model->getSubNodes()) {
-		shrinkToFit(nodeIt.second);
+	for (const auto& [nodeId, node]: model->getSubNodes()) {
+		shrinkToFit(node);
 	}
 }
 
@@ -681,19 +673,19 @@ float ModelTools::computeNormals(Node* node, ProgressCallback* progressCallback,
 		}
 	}
 	node->setNormals(normals);
-	for (auto subNodeIt: node->getSubNodes()) {
-		progress = computeNormals(subNodeIt.second, progressCallback, incrementPerFace, progress);
+	for (const auto& [subNodeId, subNode]: node->getSubNodes()) {
+		progress = computeNormals(subNode, progressCallback, incrementPerFace, progress);
 	}
 	return progress;
 }
 
 void ModelTools::computeNormals(Model* model, ProgressCallback* progressCallback) {
 	auto faceCount = 0;
-	for (auto nodeIt: model->getSubNodes()) {
-		faceCount+= determineFaceCount(nodeIt.second);
+	for (const auto& [subNodeId, subNode]: model->getSubNodes()) {
+		faceCount+= determineFaceCount(subNode);
 	}
-	for (auto nodeIt: model->getSubNodes()) {
-		computeNormals(nodeIt.second, progressCallback, 1.0f / static_cast<float>(faceCount), 0.0f);
+	for (const auto& [subNodeId, subNode]: model->getSubNodes()) {
+		computeNormals(subNode, progressCallback, 1.0f / static_cast<float>(faceCount), 0.0f);
 	}
 	prepareForIndexedRendering(model);
 	if (progressCallback != nullptr) {
@@ -705,8 +697,8 @@ void ModelTools::computeNormals(Model* model, ProgressCallback* progressCallback
 int ModelTools::determineFaceCount(Node* node) {
 	auto faceCount = 0;
 	faceCount+= node->getFaceCount();
-	for (auto subNodeIt: node->getSubNodes()) {
-		faceCount+= determineFaceCount(subNodeIt.second);
+	for (const auto& [subNodeId, subNode]: node->getSubNodes()) {
+		faceCount+= determineFaceCount(subNode);
 	}
 	return faceCount;
 }
@@ -714,7 +706,7 @@ int ModelTools::determineFaceCount(Node* node) {
 void ModelTools::prepareForShader(Model* model, const string& shader) {
 	if (shader == "foliage" || shader == "pbr-foliage" || shader == "tree" || shader == "pbr-tree") {
 		model->getAnimationSetups().clear();
-		for (auto nodeIt: model->getSubNodes()) prepareForFoliageTreeShader(nodeIt.second, model->getImportTransformMatrix(), shader);
+		for (const auto& [nodeId, node]: model->getSubNodes()) prepareForFoliageTreeShader(node, model->getImportTransformMatrix(), shader);
 		model->setImportTransformMatrix(Matrix4x4().identity());
 		model->setUpVector(UpVector::Y_UP);
 		createDefaultAnimation(model, 0);
@@ -727,8 +719,8 @@ void ModelTools::prepareForDefaultShader(Node* node, const Matrix4x4& parentTran
 	if (node->isEmpty() == true || node->isJoint() == true) {
 		node->setTransformMatrix(transformMatrix);
 		//
-		for (auto nodeIt: node->getSubNodes()) {
-			prepareForDefaultShader(nodeIt.second, transformMatrix);
+		for (const auto& [nodeId, node]: node->getSubNodes()) {
+			prepareForDefaultShader(node, transformMatrix);
 		}
 		//
 		return;
@@ -771,8 +763,8 @@ void ModelTools::prepareForDefaultShader(Node* node, const Matrix4x4& parentTran
 	Matrix4x4Negative matrix4x4Negative;
 	if (matrix4x4Negative.isNegative(transformMatrix) == true) changeFrontFace(node, false);
 	//
-	for (auto nodeIt: node->getSubNodes()) {
-		prepareForDefaultShader(nodeIt.second, transformMatrix);
+	for (const auto& [nodeId, node]: node->getSubNodes()) {
+		prepareForDefaultShader(node, transformMatrix);
 	}
 }
 
@@ -785,8 +777,8 @@ void ModelTools::prepareForFoliageTreeShader(Node* node, const Matrix4x4& parent
 	if (node->isEmpty() == true || node->isJoint() == true) {
 		node->setTransformMatrix(transformMatrix);
 		//
-		for (auto nodeIt: node->getSubNodes()) {
-			prepareForFoliageTreeShader(nodeIt.second, transformMatrix, shader);
+		for (const auto& [nodeId, node]: node->getSubNodes()) {
+			prepareForFoliageTreeShader(node, transformMatrix, shader);
 		}
 		//
 		return;
@@ -834,8 +826,8 @@ void ModelTools::prepareForFoliageTreeShader(Node* node, const Matrix4x4& parent
 	Matrix4x4Negative matrix4x4Negative;
 	if (matrix4x4Negative.isNegative(transformMatrix) == true) changeFrontFace(node, false);
 	//
-	for (auto nodeIt: node->getSubNodes()) {
-		prepareForFoliageTreeShader(nodeIt.second, transformMatrix, shader);
+	for (const auto& [nodeId, node]: node->getSubNodes()) {
+		prepareForFoliageTreeShader(node, transformMatrix, shader);
 	}
 }
 
@@ -863,8 +855,8 @@ void ModelTools::checkForOptimization(Node* node, map<string, int>& materialUseC
 	if (node->getSkinning() != nullptr) return;
 
 	//
-	for (auto nodeIt: node->getSubNodes()) {
-		checkForOptimization(nodeIt.second, materialUseCount, excludeDiffuseTextureFileNamePatterns);
+	for (const auto& [nodeId, node]: node->getSubNodes()) {
+		checkForOptimization(node, materialUseCount, excludeDiffuseTextureFileNamePatterns);
 	}
 }
 
@@ -913,8 +905,8 @@ void ModelTools::prepareForOptimization(Node* node, const Matrix4x4& parentTrans
 	// node->setTransformMatrix(Matrix4x4().identity());
 
 	//
-	for (auto nodeIt: node->getSubNodes()) {
-		prepareForOptimization(nodeIt.second, transformMatrix);
+	for (const auto& [nodeId, node]: node->getSubNodes()) {
+		prepareForOptimization(node, transformMatrix);
 	}
 }
 
@@ -1103,8 +1095,8 @@ void ModelTools::optimizeNode(Node* sourceNode, Model* targetModel, int diffuseT
 		}
 		targetNode->setFacesEntities(targetFacesEntities);
 	}
-	for (auto& subNodeIt: sourceNode->getSubNodes()) {
-		optimizeNode(subNodeIt.second, targetModel, diffuseTextureAtlasSize, diffuseTextureAtlasIndices, excludeDiffuseTextureFileNamePatterns);
+	for (const auto& [subNodeId, subNode]: sourceNode->getSubNodes()) {
+		optimizeNode(subNode, targetModel, diffuseTextureAtlasSize, diffuseTextureAtlasIndices, excludeDiffuseTextureFileNamePatterns);
 	}
 }
 
@@ -1119,9 +1111,9 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 	// TODO: 2 mats could have the same texture
 	// prepare for optimizations
 	map<string, int> materialUseCount;
-	for (auto& nodeIt: model->getSubNodes()) {
+	for (const auto& [nodeId, node]: model->getSubNodes()) {
 		checkForOptimization(
-			nodeIt.second,
+			node,
 			materialUseCount,
 			excludeDiffuseTextureFileNamePatterns
 		);
@@ -1134,8 +1126,8 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 	auto diffuseTextureCount = 0;
 	map<string, int> diffuseTextureAtlasIndices;
 	map<string, Material*> atlasMaterials;
-	for (auto& materialUseCountIt: materialUseCount) {
-		auto material = model->getMaterials().find(materialUseCountIt.first)->second;
+	for (const auto& [materialName, materialCount]: materialUseCount) {
+		auto material = model->getMaterials().find(materialName)->second;
 		auto diffuseTexture = material->getSpecularMaterialProperties()->getDiffuseTexture();
 		if (diffuseTexture != nullptr) {
 			diffuseTextureAtlasIndices[material->getId()] = diffuseAtlas.addTexture(diffuseTexture);
@@ -1148,9 +1140,9 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 	if (diffuseTextureCount < 2) return model;
 
 	// prepare for optimizations
-	for (auto& nodeIt: model->getSubNodes()) {
+	for (const auto& [nodeId, node]: model->getSubNodes()) {
 		prepareForOptimization(
-			nodeIt.second,
+			node,
 			Matrix4x4().identity()
 		);
 	}
@@ -1168,8 +1160,7 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 	optimizedModel->getSubNodes()["tdme.node.optimized"] = optimizedNode;
 
 	// clone materials with diffuse textures that we like to keep
-	for (auto& materialIt: model->getMaterials()) {
-		auto material = materialIt.second;
+	for (const auto& [materialId, material]: model->getMaterials()) {
 		bool keepDiffuseTexture = false;
 		for (auto& excludeDiffuseTextureFileNamePattern: excludeDiffuseTextureFileNamePatterns) {
 			if (StringTools::startsWith(material->getSpecularMaterialProperties()->getDiffuseTextureFileName(), excludeDiffuseTextureFileNamePattern) == true) {
@@ -1193,8 +1184,7 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 		Vector4 optimizedMaterialDiffuse(0.0f, 0.0f, 0.0f, 0.0f);
 		Vector4 optimizedMaterialSpecular(0.0f, 0.0f, 0.0f, 0.0f);
 		float optimizedMaterialShininess = 0.0f;
-		for (auto& atlasMaterialsIt: atlasMaterials) {
-			auto material = atlasMaterialsIt.second;
+		for (const auto& [atlasMaterialsId, material]: atlasMaterials) {
 			optimizedMaterialEmission+= Vector4(material->getSpecularMaterialProperties()->getEmissionColor().getArray());
 			optimizedMaterialAmbient+= Vector4(material->getSpecularMaterialProperties()->getAmbientColor().getArray());
 			optimizedMaterialDiffuse+= Vector4(material->getSpecularMaterialProperties()->getDiffuseColor().getArray());
@@ -1223,8 +1213,7 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 	optimizedMaterialTransparency->getSpecularMaterialProperties()->setDiffuseTextureTransparency(true);
 
 	// now optimize into our optimized model
-	for (auto& subNodeIt: model->getSubNodes()) {
-		auto node = subNodeIt.second;
+	for (const auto& [nodeId, node]: model->getSubNodes()) {
 		if ((model->hasSkinning() == true && node->getSkinning() != nullptr) ||
 			(model->hasSkinning() == false && node->isJoint() == false)) {
 			optimizeNode(node, optimizedModel, diffuseAtlas.getAtlasTexture()->getAtlasSize(), diffuseTextureAtlasIndices, excludeDiffuseTextureFileNamePatterns);
@@ -1270,8 +1259,7 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 	}
 
 	// copy animation set up
-	for (auto animationSetupIt: model->getAnimationSetups()) {
-		auto animationSetup = animationSetupIt.second;
+	for (const auto& [animationSetupId, animationSetup]: model->getAnimationSetups()) {
 		if (animationSetup->getOverlayFromNodeId().empty() == false) {
 			optimizedModel->addOverlayAnimationSetup(
 				animationSetup->getId(),
@@ -1401,14 +1389,14 @@ void ModelTools::changeFrontFace(Node* node, bool applyToSubNodes) {
 	}
 	node->setFacesEntities(facesEntities);
 	if (applyToSubNodes == true) {
-		for (auto& subNodeIt: node->getSubNodes()) {
-			changeFrontFace(subNodeIt.second, true);
+		for (const auto& [subNodeId, subNode]: node->getSubNodes()) {
+			changeFrontFace(subNode, true);
 		}
 	}
 }
 
 void ModelTools::changeFrontFace(Model* model) {
-	for (auto& subNodeIt: model->getSubNodes()) {
-		changeFrontFace(subNodeIt.second, true);
+	for (const auto& [subNodeId, subNode]: model->getSubNodes()) {
+		changeFrontFace(subNode, true);
 	}
 }

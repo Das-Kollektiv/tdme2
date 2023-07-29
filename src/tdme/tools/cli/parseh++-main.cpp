@@ -289,12 +289,11 @@ static void parseHpp(const string& hppFileName) {
 	Console::println("Summary: ");
 	Console::println();
 	Console::println("Usings: ");
-	for (auto& usingIt: usings) {
-		Console::println("\t" + usingIt.first + " --> " + usingIt.second);
+	for (const auto& [usingShortClassName, usingFullClassName]: usings) {
+		Console::println("\t" + usingShortClassName + " --> " + usingFullClassName);
 	}
 	Console::println("Classes: ");
-	for (auto& classIt: classes) {
-		auto& classDeclaration = classIt.second;
+	for (const auto& [className, classDeclaration]: classes) {
 		Console::println("\t" + classDeclaration.name + "(" + classDeclaration.namespaceName + ")");
 		Console::println("\t\tDescription:");
 		auto descriptionLines = StringTools::tokenize(classDeclaration.description, "\n");
