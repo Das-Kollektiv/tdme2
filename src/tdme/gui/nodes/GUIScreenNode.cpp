@@ -471,11 +471,13 @@ void GUIScreenNode::removeNodeById(const string& nodeId, bool resetScrollOffsets
 bool GUIScreenNode::removeNode(GUINode* node)
 {
 	//
-	elementNodeToNodeMapping.erase(node->getId());
+	const auto& nodeId = node->getId();
 	//
 	for (auto& [elementNodeId, nodeIds]: elementNodeToNodeMapping) {
-		nodeIds.erase(node->getId());
+		nodeIds.erase(nodeId);
 	}
+	//
+	elementNodeToNodeMapping.erase(nodeId);
 	//
 	if (dynamic_cast<GUIParentNode*>(node) != nullptr) {
 		auto parentNode = required_dynamic_cast<GUIParentNode*>(node);
@@ -484,11 +486,12 @@ bool GUIScreenNode::removeNode(GUINode* node)
 		}
 		parentNode->subNodes.clear();
 	}
-	nodesById.erase(node->id);
-	tickNodesById.erase(node->getId());
+	nodesById.erase(nodeId);
+	tickNodesById.erase(nodeId);
 	floatingNodes.erase(remove(floatingNodes.begin(), floatingNodes.end(), node), floatingNodes.end());
 	node->dispose();
 	delete node;
+	//
 	return true;
 }
 

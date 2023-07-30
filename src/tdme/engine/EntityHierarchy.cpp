@@ -91,7 +91,7 @@ void EntityHierarchy::removeEntity(const string& id) {
 
 	//
 	vector<string> children;
-	for (const auto& [entityHierarchyLevelId, entityHierarchyLevelChildren]: entityHierarchyLevel->children) children.push_back(entityHierarchyLevelId);
+	for (const auto& [childEntityId, childEntity]: entityHierarchyLevel->children) children.push_back(childEntityId);
 	for (auto child: children) removeEntity(child);
 
 	//
@@ -119,8 +119,8 @@ const vector<Entity*> EntityHierarchy::query(const string& parentId) {
 	if (parentEntityHierarchyLevel == nullptr) {
 		return entities;
 	}
-	for (const auto& [entityId, entity]: parentEntityHierarchyLevel->children) {
-		entities.push_back(entity->entity);
+	for (const auto& [childEntityId, childEntity]: parentEntityHierarchyLevel->children) {
+		entities.push_back(childEntity->entity);
 	}
 	return entities;
 }
@@ -140,8 +140,8 @@ void EntityHierarchy::updateHierarchy(const Transform& parentTransform, EntityHi
 			boundingBox.extend(&entityBoundingBox);
 		}
 	}
-	for (const auto& [childId, child]: entityHierarchyLevel->children) {
-		updateHierarchy(levelParentTransform, child, depth + 1, firstEntity);
+	for (const auto& [childEntityId, childEntity]: entityHierarchyLevel->children) {
+		updateHierarchy(levelParentTransform, childEntity, depth + 1, firstEntity);
 	}
 	if (depth == 0) {
 		// bounding boxes

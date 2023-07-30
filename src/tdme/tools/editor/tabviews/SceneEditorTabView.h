@@ -466,4 +466,10 @@ public:
 	 * Stop scene
 	 */
 	void stopScene();
+
+	/**
+	 * Stop/Shutdown scene, to be used when closing tab
+	 */
+	void shutdownScene();
+
 };

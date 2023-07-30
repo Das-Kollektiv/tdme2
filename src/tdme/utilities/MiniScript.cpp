@@ -137,13 +137,13 @@ void MiniScript::registerStateMachineState(ScriptStateMachineState* state) {
 void MiniScript::initializeNative() {
 }
 
-void MiniScript::registerMethod(ScriptMethod* method) {
-	auto scriptMethodsIt = scriptMethods.find(method->getMethodName());
+void MiniScript::registerMethod(ScriptMethod* scriptMethod) {
+	auto scriptMethodsIt = scriptMethods.find(scriptMethod->getMethodName());
 	if (scriptMethodsIt != scriptMethods.end()) {
-		Console::println("MiniScript::registerMethod(): '" + scriptFileName + "': method with name '" + method->getMethodName() + "' already registered.");
+		Console::println("MiniScript::registerMethod(): '" + scriptFileName + "': method with name '" + scriptMethod->getMethodName() + "' already registered.");
 		return;
 	}
-	scriptMethods[method->getMethodName()] = method;
+	scriptMethods[scriptMethod->getMethodName()] = scriptMethod;
 }
 
 void MiniScript::executeScriptLine() {
@@ -166,7 +166,7 @@ void MiniScript::executeScriptLine() {
 	auto returnValue = executeScriptStatement(syntaxTree, statement);
 }
 
-bool MiniScript::parseScriptStatement(const string_view& statement, string_view& method, vector<string_view>& arguments) {
+bool MiniScript::parseScriptStatement(const string_view& statement, string_view& methodName, vector<string_view>& arguments) {
 	if (VERBOSE == true) Console::println("MiniScript::parseScriptStatement(): '" + scriptFileName + "': '" + string(statement) + "'");
 	auto bracketCount = 0;
 	auto quote = false;
@@ -282,10 +282,10 @@ bool MiniScript::parseScriptStatement(const string_view& statement, string_view&
 		}
 	}
 	if (methodStart != string::npos && methodEnd != string::npos) {
-		method = StringTools::viewTrim(string_view(&statement[methodStart], methodEnd - methodStart + 1));
+		methodName = StringTools::viewTrim(string_view(&statement[methodStart], methodEnd - methodStart + 1));
 	}
 	if (VERBOSE == true) {
-		Console::print("MiniScript::parseScriptStatement(): '" + scriptFileName + "': method: '" + string(method) + "', arguments: ");
+		Console::print("MiniScript::parseScriptStatement(): '" + scriptFileName + "': method: '" + string(methodName) + "', arguments: ");
 		int variableIdx = 0;
 		for (auto& argument: arguments) {
 			if (variableIdx > 0) Console::print(", ");
@@ -579,8 +579,8 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 	return returnValue;
 }
 
-bool MiniScript::createScriptStatementSyntaxTree(const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, ScriptSyntaxTreeNode& syntaxTree) {
-	if (VERBOSE == true) Console::println("MiniScript::createScriptStatementSyntaxTree(): " + getStatementInformation(statement) + ": " + string(method) + "(" + getArgumentsAsString(arguments) + ")");
+bool MiniScript::createScriptStatementSyntaxTree(const string_view& methodName, const vector<string_view>& arguments, const ScriptStatement& statement, ScriptSyntaxTreeNode& syntaxTree) {
+	if (VERBOSE == true) Console::println("MiniScript::createScriptStatementSyntaxTree(): " + getStatementInformation(statement) + ": " + string(methodName) + "(" + getArgumentsAsString(arguments) + ")");
 	// arguments
 	for (auto& argument: arguments) {
 		// variable
@@ -628,11 +628,11 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& method, cons
 			argument.find('(') != string::npos &&
 			argument.find(')') != string::npos) {
 			// method call
-			string_view subMethod;
+			string_view subMethodName;
 			vector<string_view> subArguments;
-			if (parseScriptStatement(argument, subMethod, subArguments) == true) {
+			if (parseScriptStatement(argument, subMethodName, subArguments) == true) {
 				ScriptSyntaxTreeNode subSyntaxTree;
-				if (createScriptStatementSyntaxTree(subMethod, subArguments, statement, subSyntaxTree) == false) {
+				if (createScriptStatementSyntaxTree(subMethodName, subArguments, statement, subSyntaxTree) == false) {
 					Console::println("MiniScript::createScriptStatementSyntaxTree(): " + getStatementInformation(statement) + ": '" + string(argument) + "': failed to create syntax tree for statement");
 					//
 					return false;
@@ -674,7 +674,7 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& method, cons
 	}
 	// try first user functions
 	{
-		auto functionString = string(method);
+		auto functionString = string(methodName);
 		auto scriptFunctionsIt = scriptFunctions.find(functionString);
 		if (scriptFunctionsIt != scriptFunctions.end()) {
 			syntaxTree.type = ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION;
@@ -685,7 +685,7 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& method, cons
 	}
 	// try methods next
 	{
-		string methodString = string(method);
+		string methodString = string(methodName);
 		auto scriptMethodsIt = scriptMethods.find(methodString);
 		if (scriptMethodsIt != scriptMethods.end()) {
 			syntaxTree.type = ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD;
@@ -1337,13 +1337,13 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 			auto& statement = script.statements[statementIdx];
 			script.syntaxTree.emplace_back();
 			auto& syntaxTree = script.syntaxTree[script.syntaxTree.size() - 1];
-			string_view method;
+			string_view methodName;
 			vector<string_view> arguments;
-			if (parseScriptStatement(statement.executableStatement, method, arguments) == false) {
+			if (parseScriptStatement(statement.executableStatement, methodName, arguments) == false) {
 				//
 				scriptValid = false;
 			} else
-			if (createScriptStatementSyntaxTree(method, arguments, statement, syntaxTree) == false) {
+			if (createScriptStatementSyntaxTree(methodName, arguments, statement, syntaxTree) == false) {
 				//
 				scriptValid = false;
 			}
@@ -7120,16 +7120,16 @@ void MiniScript::registerMethods() {
 	MiniScriptMath::registerMethods(this);
 
 	// determine operators
-	for (const auto& [methodName, method]: scriptMethods) {
-		auto methodOperator = method->getOperator();
+	for (const auto& [scriptMethodName, scriptMethod]: scriptMethods) {
+		auto methodOperator = scriptMethod->getOperator();
 		if (methodOperator != OPERATOR_NONE) {
 			auto methodOperatorString = getOperatorAsString(methodOperator);
 			auto scriptOperatorIt = scriptOperators.find(static_cast<uint8_t>(methodOperator));
 			if (scriptOperatorIt != scriptOperators.end()) {
-				Console::println("MiniScript::registerMethods(): operator '" + methodOperatorString + "' already registered for method '" + method->getMethodName() + "'");
+				Console::println("MiniScript::registerMethods(): operator '" + methodOperatorString + "' already registered for method '" + scriptMethod->getMethodName() + "'");
 				continue;
 			}
-			scriptOperators[static_cast<uint8_t>(methodOperator)] = method;
+			scriptOperators[static_cast<uint8_t>(methodOperator)] = scriptMethod;
 		}
 	}
 }

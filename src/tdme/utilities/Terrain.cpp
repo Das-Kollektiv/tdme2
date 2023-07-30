@@ -1822,9 +1822,9 @@ void Terrain::applyFoliageDeleteBrush(
 						getTerrainVertex(terrainHeightVectorX - 1, terrainHeightVectorZ, leftVertex);
 						getTerrainVertex(terrainHeightVectorX, terrainHeightVectorZ, vertex);
 
-						for (auto& [prototypeId, foliageMapPartitionPrototypeTransformVector]: foliageMaps[partitionIdx]) {
-							for (auto i = 0; i < foliageMapPartitionPrototypeTransformVector.size(); i++) {
-								auto& translation = foliageMapPartitionPrototypeTransformVector[i].getTranslation();
+						for (auto& [prototypeId, transformVector]: foliageMaps[partitionIdx]) {
+							for (auto i = 0; i < transformVector.size(); i++) {
+								auto& translation = transformVector[i].getTranslation();
 								if (appliedDensity > 0.0f &&
 									translation.getX() >= leftVertex.getX() - 0.01f &&
 									translation.getX() <= vertex.getX() + 0.01f &&
@@ -1834,7 +1834,7 @@ void Terrain::applyFoliageDeleteBrush(
 									(translation.getY() >= heightMin &&
 									translation.getY() <= heightMax))) {
 									//
-									foliageMapPartitionPrototypeTransformVector.erase(foliageMapPartitionPrototypeTransformVector.begin() + i);
+									transformVector.erase(transformVector.begin() + i);
 									recreateFoliagePartitions.insert(partitionIdx);
 									i--;
 								}
@@ -1945,9 +1945,9 @@ void Terrain::updateFoliageTerrainBrush(
 			getTerrainVertex(terrainHeightVectorX, terrainHeightVectorZ, vertex);
 
 			//
-			for (auto& [prototypeId, foliageMapPartitionPrototypeTransformVector]: foliageMaps[partitionIdx]) {
+			for (auto& [prototypeId, transformVector]: foliageMaps[partitionIdx]) {
 				if (prototypeId == -1) continue;
-				for (auto& transform: foliageMapPartitionPrototypeTransformVector) {
+				for (auto& transform: transformVector) {
 					auto& translation = transform.getTranslation();
 					if (brushTextureDensity > 0.0f &&
 						translation.getX() >= leftVertex.getX() &&
@@ -2112,9 +2112,9 @@ void Terrain::updateFoliageTerrainRampBrush(
 			getTerrainVertex(terrainHeightVectorX, terrainHeightVectorZ, vertex);
 
 			//
-			for (auto& [prototypeId, foliageMapPartitionPrototypeTransformVector]: foliageMaps[partitionIdx]) {
+			for (auto& [prototypeId, transformVector]: foliageMaps[partitionIdx]) {
 				if (prototypeId == -1) continue;
-				for (auto& transform: foliageMapPartitionPrototypeTransformVector) {
+				for (auto& transform: transformVector) {
 					auto& translation = transform.getTranslation();
 					if (translation.getX() >= leftVertex.getX() &&
 						translation.getX() <= vertex.getX() &&

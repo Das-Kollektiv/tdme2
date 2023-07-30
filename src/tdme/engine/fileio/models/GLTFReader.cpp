@@ -238,10 +238,10 @@ Model* GLTFReader::read(const string& pathName, const string& fileName, bool use
 		for (auto& [nodeId, animationMatrices]: animationScaleMatrices) {
 			while (animationMatrices.size() < maxFrames) animationMatrices.emplace_back(getNodeScaleMatrix(gltfModel, nodeId));
 		}
-		for (auto& [nodeId, animationMatrices]: animationScaleMatrices) {
+		for (auto& [nodeId, animationMatrices]: animationRotationMatrices) {
 			while (animationMatrices.size() < maxFrames) animationMatrices.emplace_back(getNodeRotationMatrix(gltfModel, nodeId));
 		}
-		for (auto& [nodeId, animationMatrices]: animationScaleMatrices) {
+		for (auto& [nodeId, animationMatrices]: animationTranslationMatrices) {
 			while (animationMatrices.size() < maxFrames) animationMatrices.emplace_back(getNodeTranslationMatrix(gltfModel, nodeId));
 		}
 

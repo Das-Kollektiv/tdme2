@@ -64,7 +64,7 @@ private:
 	/**
 	 * Add shader uniform buffer object
 	 * @param shader shader
-	 * @param definitionValues preprocessor definition values
+	 * @param preprocessorDefinitions preprocessor definitions
 	 * @param structs parsed structs
 	 * @param uniforms parsed uniforms
 	 * @param prefix prefix
@@ -73,7 +73,7 @@ private:
 	 */
 	static bool addToShaderUniformBufferObject(
 		VKRenderer::shader_type& shader,
-		const unordered_map<string, string>& definitionValues,
+		const unordered_map<string, string>& preprocessorDefinitions,
 		const unordered_map<string, vector<string>>& structs,
 		const vector<string>& uniforms,
 		const string& prefix,

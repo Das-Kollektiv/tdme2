@@ -94,7 +94,7 @@ void BodyHierarchy::removeBody(const string& id) {
 
 	//
 	vector<string> children;
-	for (const auto& [bodyHierarchyLevelId, bodyHierarchyLevel]: bodyHierarchyLevel->children) children.push_back(bodyHierarchyLevelId);
+	for (const auto& [childId, child]: bodyHierarchyLevel->children) children.push_back(childId);
 	for (auto child: children) removeBody(child);
 
 	//

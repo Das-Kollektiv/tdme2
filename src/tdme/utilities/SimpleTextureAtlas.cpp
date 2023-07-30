@@ -27,8 +27,8 @@ SimpleTextureAtlas::SimpleTextureAtlas(const string& id): atlasTextureId(id) {
 }
 
 SimpleTextureAtlas::~SimpleTextureAtlas() {
-	for (const auto& [atlasTextureIdx, atlasTexture]: atlasTextureIdxToTextureMapping) {
-		atlasTexture->releaseReference();
+	for (const auto& [atlasTextureEntityIdx, atlasTextureEntity]: atlasTextureIdxToTextureMapping) {
+		atlasTextureEntity->releaseReference();
 	}
 	if (atlasTexture != nullptr) {
 		atlasTexture->releaseReference();
@@ -111,9 +111,9 @@ void SimpleTextureAtlas::update() {
 	auto atlasTextureByteBuffer = ByteBuffer(atlasTextureWidth * atlasTextureHeight * 4);
 	array<Texture*, 256> atlasTextureIdxToTextureMappingVector { nullptr };
 	array<ByteBuffer, 256> atlasTextureIdxToTextureTextureDataVector;
-	for (const auto& [textureIdx, texture]: atlasTextureIdxToTextureMapping) {
-		atlasTextureIdxToTextureMappingVector[textureIdx] = texture;
-		atlasTextureIdxToTextureTextureDataVector[textureIdx] = texture->getRGBTextureData();
+	for (const auto& [atlasTextureIdx, atlasTextureEntity]: atlasTextureIdxToTextureMapping) {
+		atlasTextureIdxToTextureMappingVector[atlasTextureIdx] = atlasTextureEntity;
+		atlasTextureIdxToTextureTextureDataVector[atlasTextureIdx] = atlasTextureEntity->getRGBTextureData();
 	}
 	vector<ByteBuffer> atlasTextureByteBufferMapping;
 	for (auto y = 0; y < atlasTextureHeight; y++)

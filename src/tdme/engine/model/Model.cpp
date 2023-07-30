@@ -132,25 +132,25 @@ bool Model::computeTransformMatrix(const map<string, Node*>& nodes, const Matrix
 {
 	// TODO: this should be computed from sub nodes to root node, not the other way around, also it looks broken to me right now, but works for our cases so far
 	// iterate through nodes
-	for (const auto& [nodeId, node]: nodes) {
+	for (const auto& [subNodeId, subNode]: nodes) {
 		// compute animation matrix if animation setups exist
-		auto animation = node->getAnimation();
+		auto animation = subNode->getAnimation();
 		if (animation != nullptr && frame != -1) {
 			auto& animationMatrices = animation->getTransformMatrices();
 			transformMatrix.set(animationMatrices[frame % animationMatrices.size()]);
 		} else {
 			// no animation matrix, set up local transform matrix up as node matrix
-			transformMatrix.set(node->getTransformMatrix());
+			transformMatrix.set(subNode->getTransformMatrix());
 		}
 
 		// apply parent transform matrix
 		transformMatrix.multiply(parentTransformMatrix);
 
 		// return matrix if node matches
-		if (node->getId() == nodeId) return true;
+		if (subNode->getId() == nodeId) return true;
 
 		// calculate sub nodes
-		auto& subNodes = node->getSubNodes();
+		auto& subNodes = subNode->getSubNodes();
 		if (subNodes.size() > 0) {
 			auto haveTransformMatrix = computeTransformMatrix(subNodes, transformMatrix.clone(), frame, nodeId, transformMatrix);
 			if (haveTransformMatrix == true) return true;

@@ -132,26 +132,26 @@ void TMWriter::writeEmbeddedTextures(TMWriterOutputStream* os, Model* m, bool us
 		}
 	}
 	os->writeInt(embeddedTextures.size());
-	for (const auto& [textureId, texture]: embeddedTextures) {
-		os->writeString(texture->getId());
+	for (const auto& [embeddedTextureId, embeddedTexture]: embeddedTextures) {
+		os->writeString(embeddedTexture->getId());
 		// optional PNG
 		if (useBC7TextureCompression == true) {
 			os->writeByte(3); // BC7 with mip maps
 			vector<uint8_t> bc7Data;
-			os->writeInt(texture->getWidth());
-			os->writeInt(texture->getHeight());
-			os->writeInt(texture->getTextureWidth());
-			os->writeInt(texture->getTextureHeight());
-			os->writeByte(texture->getRGBDepthBitsPerPixel());
-			os->writeByte(texture->getMinFilter());
-			os->writeByte(texture->getMagFilter());
-			BC7TextureWriter::write(texture->getTextureWidth(), texture->getTextureHeight(), texture->getRGBDepthBitsPerPixel() / 8, texture->getRGBTextureData(), bc7Data);
+			os->writeInt(embeddedTexture->getWidth());
+			os->writeInt(embeddedTexture->getHeight());
+			os->writeInt(embeddedTexture->getTextureWidth());
+			os->writeInt(embeddedTexture->getTextureHeight());
+			os->writeByte(embeddedTexture->getRGBDepthBitsPerPixel());
+			os->writeByte(embeddedTexture->getMinFilter());
+			os->writeByte(embeddedTexture->getMagFilter());
+			BC7TextureWriter::write(embeddedTexture->getTextureWidth(), embeddedTexture->getTextureHeight(), embeddedTexture->getRGBDepthBitsPerPixel() / 8, embeddedTexture->getRGBTextureData(), bc7Data);
 			os->writeInt(bc7Data.size());
 			os->writeUInt8tArray(bc7Data);
-			if (texture->isUseMipMap() == false) {
+			if (embeddedTexture->isUseMipMap() == false) {
 				os->writeByte(0);
 			} else {
-				auto mipMapTextures = texture->getMipMapTextures(true);
+				auto mipMapTextures = embeddedTexture->getMipMapTextures(true);
 				os->writeByte(mipMapTextures.size());
 				for (auto& mipMapTexture: mipMapTextures) {
 					os->writeByte(mipMapTexture.format);
@@ -163,10 +163,10 @@ void TMWriter::writeEmbeddedTextures(TMWriterOutputStream* os, Model* m, bool us
 			}
 		} else {
 			vector<uint8_t> pngData;
-			PNGTextureWriter::write(texture, pngData, false, false);
+			PNGTextureWriter::write(embeddedTexture, pngData, false, false);
 			os->writeByte(1); // PNG
-			os->writeByte(texture->getMinFilter());
-			os->writeByte(texture->getMagFilter());
+			os->writeByte(embeddedTexture->getMinFilter());
+			os->writeByte(embeddedTexture->getMagFilter());
 			os->writeInt(pngData.size());
 			os->writeUInt8tArray(pngData);
 		}

@@ -237,7 +237,7 @@ int VKGL3CoreShaderProgram::determineAlignment(const unordered_map<string, vecto
 	return alignmentMax;
 }
 
-bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRenderer::shader_type& shader, const unordered_map<string, string>& definitionValues, const unordered_map<string, vector<string>>& structs, const vector<string>& uniforms, const string& prefix, unordered_set<string>& uniformStructsArrays, string& uniformsBlock) {
+bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRenderer::shader_type& shader, const unordered_map<string, string>& preprocessorDefinitions, const unordered_map<string, vector<string>>& structs, const vector<string>& uniforms, const string& prefix, unordered_set<string>& uniformStructsArrays, string& uniformsBlock) {
 	StringTokenizer t;
 	for (auto uniform: uniforms) {
 		t.tokenize(uniform, "\t ;");
@@ -250,7 +250,7 @@ bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRender
 		if (uniformName.find('[') != -1 && uniformName.find(']') != string::npos) {
 			isArray = true;
 			auto arraySizeString = StringTools::substring(uniformName, uniformName.find('[') + 1, uniformName.find(']'));
-			for (const auto& [definitionValueName, definitionValueValue]: definitionValues) arraySizeString = StringTools::replace(arraySizeString, definitionValueName, definitionValueValue);
+			for (const auto& [definitionName, definitionValue]: preprocessorDefinitions) arraySizeString = StringTools::replace(arraySizeString, definitionName, definitionValue);
 			if (Integer::is(arraySizeString) == false) {
 				Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Unknown array size: " + uniform);
 			}
@@ -422,7 +422,7 @@ bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRender
 					string uniformsBlockIgnore;
 					auto alignment = Math::max(16, determineAlignment(structs, structs.find(uniformType)->second));
 					shader.uboSize = align(alignment, shader.uboSize);
-					auto success = addToShaderUniformBufferObject(shader, definitionValues, structs, structs.find(uniformType)->second, structPrefix, uniformStructsArrays, uniformsBlockIgnore);
+					auto success = addToShaderUniformBufferObject(shader, preprocessorDefinitions, structs, structs.find(uniformType)->second, structPrefix, uniformStructsArrays, uniformsBlockIgnore);
 					shader.uboSize = align(alignment, shader.uboSize);
 					if (success == false) return false;
 					if (isArray == false) uniformStructsArrays.insert(uniformName);
@@ -484,7 +484,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 		t.tokenize(shaderSource, "\n");
 		StringTokenizer t2;
 		vector<string> definitions;
-		unordered_map<string, string> definitionValues;
+		unordered_map<string, string> preprocessorDefinitions;
 		unordered_map<string, vector<string>> structs;
 		string currentStruct;
 		stack<string> testedDefinitions;
@@ -559,12 +559,12 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 				auto definition = StringTools::trim(StringTools::substring(line, string("#define ").size()));
 				if (definition.find(' ') != string::npos) {
 					t2.tokenize(definition, " ");
-					definition = t2.nextToken();
-					string value;
-					while (t2.hasMoreTokens() == true) value+= t2.nextToken();
-					definitionValues[definition] = value;
+					auto definitionName = t2.nextToken();
+					string definitionValue;
+					while (t2.hasMoreTokens() == true) definitionValue+= t2.nextToken();
+					preprocessorDefinitions[definitionName] = definitionValue;
 					newShaderSourceLines.push_back((matchedAllDefinitions == true?"":"// ") + line);
-					if (VERBOSE == true) Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have define with value: " + definition + " --> " + value);
+					if (VERBOSE == true) Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have define : " + definition + " --> " + definitionValue);
 				} else {
 					definitions.push_back(definition);
 					newShaderSourceLines.push_back((matchedAllDefinitions == true?"":"// ") + line);
@@ -615,7 +615,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 						if (uniformName.find('[') != string::npos && uniformName.find(']') != string::npos) {
 							isArray = true;
 							auto arraySizeString = StringTools::substring(uniformName, uniformName.find('[') + 1, uniformName.find(']'));
-							for (const auto& [definitionValueName, definitionValueValue]: definitionValues) arraySizeString = StringTools::replace(arraySizeString, definitionValueName, definitionValueValue);
+							for (const auto& [definitionName, definitionValue]: preprocessorDefinitions) arraySizeString = StringTools::replace(arraySizeString, definitionName, definitionValue);
 							arraySize = Integer::parse(arraySizeString);
 							uniformName = StringTools::substring(uniformName, 0, uniformName.find('['));
 						}
@@ -637,7 +637,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 						if (uniformName.find('[') != string::npos && uniformName.find(']') != string::npos) {
 							isArray = true;
 							auto arraySizeString = StringTools::substring(uniformName, uniformName.find('[') + 1, uniformName.find(']'));
-							for (const auto& [definitionValueName, definitionValueValue]: definitionValues) arraySizeString = StringTools::replace(arraySizeString, definitionValueName, definitionValueValue);
+							for (const auto& [definitionName, definitionValue]: preprocessorDefinitions) arraySizeString = StringTools::replace(arraySizeString, definitionName, definitionValue);
 							arraySize = Integer::parse(arraySizeString);
 							uniformName = StringTools::substring(uniformName, 0, uniformName.find('['));
 						}
@@ -743,7 +743,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 				uniformsBlock+= "{\n";
 			}
 			string uniformsBlockIgnore;
-			addToShaderUniformBufferObject(shader, definitionValues, structs, uniforms, "", uniformStructsArrays, uboUniformCount > 0?uniformsBlock:uniformsBlockIgnore);
+			addToShaderUniformBufferObject(shader, preprocessorDefinitions, structs, uniforms, "", uniformStructsArrays, uboUniformCount > 0?uniformsBlock:uniformsBlockIgnore);
 			if (uboUniformCount > 0) uniformsBlock+= "} ubo_generated;\n";
 			if (VERBOSE == true) Console::println("Shader UBO size: " + to_string(shader.uboSize));
 		}

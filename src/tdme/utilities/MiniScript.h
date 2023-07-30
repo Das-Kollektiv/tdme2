@@ -2194,11 +2194,11 @@ private:
 	/**
 	 * Parse a script statement
 	 * @param statement statement 
-	 * @param method method
+	 * @param methodName method name
 	 * @param arguments arguments
 	 * @return success
 	 */
-	bool parseScriptStatement(const string_view& statement, string_view& method, vector<string_view>& arguments);
+	bool parseScriptStatement(const string_view& statement, string_view& methodName, vector<string_view>& arguments);
 
 	/**
 	 * Execute a script statement
@@ -2210,13 +2210,13 @@ private:
 
 	/**
 	 * Create script statement syntax tree
-	 * @param method method
+	 * @param methodName method name
 	 * @param arguments arguments
 	 * @param statement statement
 	 * @param syntaxTree syntax tree
 	 * @return success
 	 */
-	bool createScriptStatementSyntaxTree(const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, ScriptSyntaxTreeNode& syntaxTree);
+	bool createScriptStatementSyntaxTree(const string_view& methodName, const vector<string_view>& arguments, const ScriptStatement& statement, ScriptSyntaxTreeNode& syntaxTree);
 
 	/**
 	 * Validate callabe
@@ -2641,14 +2641,14 @@ private:
 		);
 		auto scriptEvaluateStatement = "internal.script.evaluate(" + executableStatement + ")";
 		//
-		string_view method;
+		string_view methodName;
 		vector<string_view> arguments;
 		ScriptSyntaxTreeNode evaluateSyntaxTree;
-		if (parseScriptStatement(scriptEvaluateStatement, method, arguments) == false) {
+		if (parseScriptStatement(scriptEvaluateStatement, methodName, arguments) == false) {
 			Console::println("MiniScript::evaluate(): '" + scriptFileName + "': " + evaluateStatement.statement + "@" + to_string(evaluateStatement.line) + ": failed to parse evaluation statement");
 			return false;
 		} else
-		if (createScriptStatementSyntaxTree(method, arguments, evaluateStatement, evaluateSyntaxTree) == false) {
+		if (createScriptStatementSyntaxTree(methodName, arguments, evaluateStatement, evaluateSyntaxTree) == false) {
 			Console::println("MiniScript::evaluate(): '" + scriptFileName + "': " + evaluateStatement.statement + "@" + to_string(evaluateStatement.line) + ": failed to create syntax tree for evaluation statement");
 			return false;
 		} else {
@@ -2807,7 +2807,7 @@ public:
 
 	/**
 	 * Returns if function with given name does exist
-	 * @param functionName method name
+	 * @param functionName function name
 	 * @return function exists
 	 */
 	inline bool hasFunction(const string& functionName) {
@@ -2840,13 +2840,13 @@ public:
 
 	/**
 	 * Get script argument information
-	 * @param method method
+	 * @param methodName method name
 	 * @return script argument information
 	 */
-	inline const string getArgumentInformation(const string& method) {
-		auto scriptMethod = getMethod(method);
+	inline const string getArgumentInformation(const string& methodName) {
+		auto scriptMethod = getMethod(methodName);
 		if (scriptMethod == nullptr) {
-			Console::println("MiniScript::getArgumentInformation(): method not found: " + method);
+			Console::println("MiniScript::getArgumentInformation(): method not found: " + methodName);
 			return "No information available";
 		}
 		return scriptMethod->getArgumentsInformation();
@@ -3059,9 +3059,9 @@ public:
 
 	/**
 	 * Register script method
-	 * @param method method
+	 * @param scriptMethod script method
 	 */
-	void registerMethod(ScriptMethod* method);
+	void registerMethod(ScriptMethod* scriptMethod);
 
 	/**
 	 * Returns variable with given name

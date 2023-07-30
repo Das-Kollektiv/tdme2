@@ -24,8 +24,8 @@ TextureAtlas::TextureAtlas(const string& id): atlasTextureId(id) {
 }
 
 TextureAtlas::~TextureAtlas() {
-	for (const auto& [textureIdx, texture]: atlasTextureIdxToAtlasTextureMapping) {
-		texture.texture->releaseReference();
+	for (const auto& [atlasTextureEntityIdx, atlasTextureEntity]: atlasTextureIdxToAtlasTextureMapping) {
+		atlasTextureEntity.texture->releaseReference();
 	}
 	if (atlasTexture != nullptr) {
 		atlasTexture->releaseReference();
@@ -115,22 +115,22 @@ void TextureAtlas::update() {
 	vector<AtlasTexture> atlasTextures;
 	auto totalWidth = 0;
 	auto totalHeight = 0;
-	for (auto& [atlasTextureIdx, atlasTexture]: atlasTextureIdxToAtlasTextureMapping) {
-		atlasTexture.left = -1;
-		atlasTexture.height = -1;
-		atlasTexture.line = -1;
-		if (atlasTexture.texture->getTextureWidth() > atlasTexture.texture->getTextureHeight()) {
-			atlasTexture.orientation = AtlasTexture::ORIENTATION_ROTATED;
-			atlasTexture.width = atlasTexture.texture->getTextureHeight();
-			atlasTexture.height = atlasTexture.texture->getTextureWidth();
+	for (auto& [atlasTextureEntityIdx, atlasTextureEntity]: atlasTextureIdxToAtlasTextureMapping) {
+		atlasTextureEntity.left = -1;
+		atlasTextureEntity.height = -1;
+		atlasTextureEntity.line = -1;
+		if (atlasTextureEntity.texture->getTextureWidth() > atlasTextureEntity.texture->getTextureHeight()) {
+			atlasTextureEntity.orientation = AtlasTexture::ORIENTATION_ROTATED;
+			atlasTextureEntity.width = atlasTextureEntity.texture->getTextureHeight();
+			atlasTextureEntity.height = atlasTextureEntity.texture->getTextureWidth();
 		} else {
-			atlasTexture.orientation = AtlasTexture::ORIENTATION_NORMAL;
-			atlasTexture.width = atlasTexture.texture->getTextureWidth();
-			atlasTexture.height = atlasTexture.texture->getTextureHeight();
+			atlasTextureEntity.orientation = AtlasTexture::ORIENTATION_NORMAL;
+			atlasTextureEntity.width = atlasTextureEntity.texture->getTextureWidth();
+			atlasTextureEntity.height = atlasTextureEntity.texture->getTextureHeight();
 		}
-		totalWidth+= atlasTexture.texture->getTextureWidth();
-		totalHeight+= atlasTexture.texture->getTextureHeight();
-		atlasTextures.push_back(atlasTexture);
+		totalWidth+= atlasTextureEntity.texture->getTextureWidth();
+		totalHeight+= atlasTextureEntity.texture->getTextureHeight();
+		atlasTextures.push_back(atlasTextureEntity);
 	}
 
 	// sort by height
@@ -145,12 +145,12 @@ void TextureAtlas::update() {
 		auto left = 0;
 		auto top = 0;
 		auto heigthColumnMax = 0;
-		for (auto& atlasTexture: atlasTextures) {
-			atlasTexture.left = left;
-			atlasTexture.top = top;
-			atlasTexture.line = line;
-			left+= atlasTexture.width;
-			heigthColumnMax = Math::max(heigthColumnMax, atlasTexture.height);
+		for (auto& atlasTextureEntity: atlasTextures) {
+			atlasTextureEntity.left = left;
+			atlasTextureEntity.top = top;
+			atlasTextureEntity.line = line;
+			left+= atlasTextureEntity.width;
+			heigthColumnMax = Math::max(heigthColumnMax, atlasTextureEntity.height);
 			if (left >= atlasTextureWidth) {
 				left = 0;
 				top+= heigthColumnMax;
@@ -169,24 +169,24 @@ void TextureAtlas::update() {
 	// push upwards
 	for (auto i = 0; i < atlasTextures.size(); i++) {
 		auto pushedAtlasTextureTop = -1;
-		auto& atlasTexture = atlasTextures[i];
+		auto& atlasTextureEntity = atlasTextures[i];
 		// compare with previous texture height if x in range of previous texture left ... left + width
 		for (auto j = 0; j < i; j++) {
-			auto& atlasTextureCompare = atlasTextures[j];
-			if (atlasTextureCompare.line != atlasTexture.line - 1) continue;
+			auto& atlasTextureEntityCompare = atlasTextures[j];
+			if (atlasTextureEntityCompare.line != atlasTextureEntity.line - 1) continue;
 			//
-			if (atlasTextureCompare.left >= atlasTexture.left + atlasTexture.width) continue;
-			if (atlasTexture.left >= atlasTextureCompare.left + atlasTextureCompare.width) continue;
+			if (atlasTextureEntityCompare.left >= atlasTextureEntity.left + atlasTextureEntity.width) continue;
+			if (atlasTextureEntity.left >= atlasTextureEntityCompare.left + atlasTextureEntityCompare.width) continue;
 			//
-			pushedAtlasTextureTop = Math::max(pushedAtlasTextureTop, atlasTextureCompare.top + atlasTextureCompare.height);
+			pushedAtlasTextureTop = Math::max(pushedAtlasTextureTop, atlasTextureEntityCompare.top + atlasTextureEntityCompare.height);
 		}
-		if (pushedAtlasTextureTop != -1) atlasTexture.top = pushedAtlasTextureTop;
+		if (pushedAtlasTextureTop != -1) atlasTextureEntity.top = pushedAtlasTextureTop;
 	}
 
 	// determine new height
 	auto atlasTextureHeight = 0;
-	for (auto& atlasTexture: atlasTextures) {
-		atlasTextureHeight = Math::max(atlasTextureHeight, atlasTexture.top + atlasTexture.height);
+	for (auto& atlasTextureEntity: atlasTextures) {
+		atlasTextureHeight = Math::max(atlasTextureHeight, atlasTextureEntity.top + atlasTextureEntity.height);
 	}
 
 	// height power of 2
@@ -201,10 +201,10 @@ void TextureAtlas::update() {
 	auto atlasTextureBuffer = atlasTextureByteBuffer.getBuffer();
 
 	// generate atlas
-	for (auto& atlasTexture: atlasTextures) {
-		auto atlasLeft = atlasTexture.left;
-		auto atlasTop = atlasTexture.top;
-		auto texture = atlasTexture.texture;
+	for (auto& atlasTextureEntity: atlasTextures) {
+		auto atlasLeft = atlasTextureEntity.left;
+		auto atlasTop = atlasTextureEntity.top;
+		auto texture = atlasTextureEntity.texture;
 		auto textureData = texture->getRGBTextureData();
 		auto textureBytesPerPixel = texture->getRGBDepthBitsPerPixel() / 8;
 		auto textureWidth = texture->getTextureWidth();
@@ -215,13 +215,13 @@ void TextureAtlas::update() {
 				auto g = textureData.get(y * textureWidth * textureBytesPerPixel + x * textureBytesPerPixel + 1);
 				auto b = textureData.get(y * textureWidth * textureBytesPerPixel + x * textureBytesPerPixel + 2);
 				auto a = textureBytesPerPixel == 4?textureData.get(y * textureWidth * textureBytesPerPixel + x * textureBytesPerPixel + 3):0xff;
-				if (atlasTexture.orientation == AtlasTexture::ORIENTATION_NORMAL) {
+				if (atlasTextureEntity.orientation == AtlasTexture::ORIENTATION_NORMAL) {
 					atlasTextureBuffer[(atlasTop + textureHeight - 1 - y) * atlasTextureWidth * 4 + (atlasLeft + x) * 4 + 0] = r;
 					atlasTextureBuffer[(atlasTop + textureHeight - 1 - y) * atlasTextureWidth * 4 + (atlasLeft + x) * 4 + 1] = g;
 					atlasTextureBuffer[(atlasTop + textureHeight - 1 - y) * atlasTextureWidth * 4 + (atlasLeft + x) * 4 + 2] = b;
 					atlasTextureBuffer[(atlasTop + textureHeight - 1 - y) * atlasTextureWidth * 4 + (atlasLeft + x) * 4 + 3] = a;
 				} else
-				if (atlasTexture.orientation == AtlasTexture::ORIENTATION_ROTATED) {
+				if (atlasTextureEntity.orientation == AtlasTexture::ORIENTATION_ROTATED) {
 					atlasTextureBuffer[(atlasTop + x) * atlasTextureWidth * 4 + (atlasLeft + textureHeight - 1 - y) * 4 + 0] = r;
 					atlasTextureBuffer[(atlasTop + x) * atlasTextureWidth * 4 + (atlasLeft + textureHeight - 1 - y) * 4 + 1] = g;
 					atlasTextureBuffer[(atlasTop + x) * atlasTextureWidth * 4 + (atlasLeft + textureHeight - 1 - y) * 4 + 2] = b;
@@ -246,19 +246,19 @@ void TextureAtlas::update() {
 	atlasTexture->acquireReference();
 
 	// write atlas textures back to our hash map
-	for (auto& atlasTexture: atlasTextures) atlasTextureIdxToAtlasTextureMapping[atlasTexture.textureIdx] = atlasTexture;
+	for (auto& atlasTextureEntity: atlasTextures) atlasTextureIdxToAtlasTextureMapping[atlasTextureEntity.textureIdx] = atlasTextureEntity;
 
 	//
 	if (VERBOSE == true) {
 		Console::println("TextureAtlas::update(): dump textures: ");
-		for (const auto& [atlasTextureIdx, atlasTexture]: atlasTextureIdxToAtlasTextureMapping) {
+		for (const auto& [atlasTextureEntityIdx, atlasTextureEntity]: atlasTextureIdxToAtlasTextureMapping) {
 			Console::println(
-				"TextureAtlas::update(): have texture: " + atlasTexture.texture->getId() + ", " +
-				"left: " + to_string(atlasTexture.left) + ", " +
-				"top: " + to_string(atlasTexture.top) + ", " +
-				"width: " + to_string(atlasTexture.width) + ", " +
-				"height: " + to_string(atlasTexture.height) + ", " +
-				"orientation: " + to_string(atlasTexture.orientation)
+				"TextureAtlas::update(): have texture: " + atlasTextureEntity.texture->getId() + ", " +
+				"left: " + to_string(atlasTextureEntity.left) + ", " +
+				"top: " + to_string(atlasTextureEntity.top) + ", " +
+				"width: " + to_string(atlasTextureEntity.width) + ", " +
+				"height: " + to_string(atlasTextureEntity.height) + ", " +
+				"orientation: " + to_string(atlasTextureEntity.orientation)
 			);
 		}
 	}

@@ -596,7 +596,7 @@ void SceneEditorTabView::initialize()
 
 void SceneEditorTabView::dispose()
 {
-	stopScene();
+	shutdownScene();
 	engine->dispose();
 }
 
@@ -1556,6 +1556,21 @@ void SceneEditorTabView::stopScene() {
 	//
 	sceneEditorTabController->setRunButtonMode(false);
 
+	//
+	shutdownScene();
+
+	// reset scene
+	engine->getGUI()->reset();
+	SceneConnector::resetEngine(engine, scene);
+	SceneConnector::setLights(engine, scene, Vector3());
+	SceneConnector::addScene(engine, scene, true, true, true, true, true);
+	updateSky();
+	scene->update();
+	cameraInputHandler->setSceneCenter(scene->getCenter());
+	cameraInputHandler->reset();
+}
+
+void SceneEditorTabView::shutdownScene() {
 	// shutdown application client
 	if (applicationClient != nullptr) {
 		applicationClient->stop();
@@ -1576,14 +1591,4 @@ void SceneEditorTabView::stopScene() {
 	//
 	applicationClient = nullptr;
 	applicationContext = nullptr;
-
-	// reset scene
-	engine->getGUI()->reset();
-	SceneConnector::resetEngine(engine, scene);
-	SceneConnector::setLights(engine, scene, Vector3());
-	SceneConnector::addScene(engine, scene, true, true, true, true, true);
-	updateSky();
-	scene->update();
-	cameraInputHandler->setSceneCenter(scene->getCenter());
-	cameraInputHandler->reset();
 }
