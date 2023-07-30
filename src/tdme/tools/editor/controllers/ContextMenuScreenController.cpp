@@ -228,7 +228,7 @@ void ContextMenuScreenController::onTooltipCloseRequest() {
 void ContextMenuScreenController::handleInputEvents() {
 	auto& mouseEvents = Engine::getInstance()->getGUI()->getMouseEvents();
 	auto& keyboardEvents = Engine::getInstance()->getGUI()->getKeyboardEvents();
-	for (auto& event: mouseEvents) {
+	for (const auto& event: mouseEvents) {
 		if (event.isProcessed() == true) continue;
 		if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED &&
 			(event.getButton() == MOUSE_BUTTON_LEFT ||
@@ -238,7 +238,7 @@ void ContextMenuScreenController::handleInputEvents() {
 			return;
 		}
 	}
-	for (auto& event: keyboardEvents) {
+	for (const auto& event: keyboardEvents) {
 		if (event.isProcessed() == true) continue;
 		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_ESCAPE) {
 			close();

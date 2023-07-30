@@ -47,7 +47,7 @@ void scanDir(const string& folder, vector<string>& sourceFiles, vector<string>& 
 
 	FileSystem::getInstance()->list(folder, files, &sourceFilesFilter);
 
-	for (auto fileName: files) {
+	for (const auto& fileName: files) {
 		if (StringTools::endsWith(fileName, "-main.cpp") == true) {
 			mainSourceFiles.push_back(folder + "/" + fileName);
 		} else
@@ -79,11 +79,11 @@ int main(int argc, char** argv)
 		scanDir(pathToSource, sourceFiles, mainSourceFiles);
 
 		string sourceFilesVariable = "\\\n";
-		for (auto& file: sourceFiles) sourceFilesVariable+= "\t" + file + "\\\n";
+		for (const auto& file: sourceFiles) sourceFilesVariable+= "\t" + file + "\\\n";
 		sourceFilesVariable+= "\n";
 
 		string mainSourceFilesVariable = "\\\n";
-		for (auto& file: mainSourceFiles) mainSourceFilesVariable+= "\t" + file + "\\\n";
+		for (const auto& file: mainSourceFiles) mainSourceFilesVariable+= "\t" + file + "\\\n";
 		mainSourceFilesVariable+= "\n";
 
 		Console::println("Generating Makefile");

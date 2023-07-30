@@ -495,7 +495,7 @@ void GUISelectBoxController::setValue(const MutableString& value)
 	node->getScreenNode()->invalidateLayout(node);
 	//
 	this->value.reset();
-	for (auto& valueSetValue: valueSet) {
+	for (const auto& valueSetValue: valueSet) {
 		this->value.append(VALUE_DELIMITER);
 		this->value.append(valueSetValue);
 	}
@@ -519,7 +519,7 @@ void GUISelectBoxController::determineExpandedParentOptionValues(vector<string>&
 
 void GUISelectBoxController::expandParentOptionsByValues(const vector<string>& expandedParentOptionValues) {
 	determineParentOptions();
-	for (auto& expandedParentOptionValue: expandedParentOptionValues) {
+	for (const auto& expandedParentOptionValue: expandedParentOptionValues) {
 		for (auto selectBoxParentOptionController: selectBoxOptionControllers) {
 			if (expandedParentOptionValue == required_dynamic_cast<GUIElementNode*>(selectBoxParentOptionController->getNode())->getValue()) {
 				auto parentOptionNodeController = required_dynamic_cast<GUISelectBoxParentOptionController*>(selectBoxParentOptionController);

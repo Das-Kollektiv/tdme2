@@ -210,8 +210,7 @@ void SceneEditorTabView::handleInputEvents()
 	auto keyControlC = false;
 	auto keyControlV = false;
 	auto keyDelete = false;
-	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
-		auto& event = engine->getGUI()->getKeyboardEvents()[i];
+	for (auto& event: engine->getGUI()->getKeyboardEvents()) {
 		if (event.isProcessed() == true) continue;
 		if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) continue;
 		auto isKeyDown = event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
@@ -275,9 +274,7 @@ void SceneEditorTabView::handleInputEvents()
 			event.setProcessed(true);
 		}
 	}
-	for (auto i = 0; i < engine->getGUI()->getMouseEvents().size(); i++) {
-		auto& event = engine->getGUI()->getMouseEvents()[i];
-
+	for (auto& event: engine->getGUI()->getMouseEvents()) {
 		if ((event.getType() == GUIMouseEvent::MOUSEEVENT_MOVED ||
 			event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) &&
 			event.getXUnscaled() >= 0 &&
@@ -314,7 +311,7 @@ void SceneEditorTabView::handleInputEvents()
 					if (keyShift == false) unsetPlaceEntityMode(false);
 				} else
 				if (getGizmoMode() != GIZMOMODE_NONE) {
-					for (auto selectedEntityId: selectedEntityIds) {
+					for (const auto& selectedEntityId: selectedEntityIds) {
 						auto _selectedEntity = engine->getEntity(selectedEntityId);
 						if (_selectedEntity == nullptr) continue;
 						auto sceneEntity = scene->getEntity(_selectedEntity->getId());
@@ -343,7 +340,7 @@ void SceneEditorTabView::handleInputEvents()
 					if (determineGizmoDeltaTransformations(event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, absoluteScale) == true) {
 						auto gizmoEntity = getGizmoObject();
 						if (gizmoEntity != nullptr) {
-							for (auto selectedEntityId: selectedEntityIds) {
+							for (const auto& selectedEntityId: selectedEntityIds) {
 								auto _selectedEntity = engine->getEntity(selectedEntityId);
 								if (_selectedEntity != nullptr && StringTools::startsWith(_selectedEntity->getId(), "tdme.sceneeditor.") == false) {
 									auto sceneEntity = scene->getEntity(_selectedEntity->getId());
@@ -397,7 +394,7 @@ void SceneEditorTabView::handleInputEvents()
 					if (selectedEntity != nullptr && scene->getEntity(selectedEntity->getId()) == nullptr) selectedEntity = nullptr;
 					if (keyControl == false) {
 						vector<Entity*> entitiesToRemove;
-						for (auto selectedEntityId: selectedEntityIds) {
+						for (const auto& selectedEntityId: selectedEntityIds) {
 							auto selectedEntity = engine->getEntity(selectedEntityId);
 							if (mouseDragging == true && mouseDraggingLastEntity == selectedEntity) {
 								// no op
@@ -405,7 +402,7 @@ void SceneEditorTabView::handleInputEvents()
 								if (selectedEntity != nullptr) entitiesToRemove.push_back(selectedEntity);
 							}
 						}
-						for (auto entityToRemove: entitiesToRemove) {
+						for (const auto& entityToRemove: entitiesToRemove) {
 							selectedEntityIds.erase(remove(selectedEntityIds.begin(), selectedEntityIds.end(), entityToRemove->getId()), selectedEntityIds.end());
 							auto selectedEntitiyIdByIdIt = selectedEntityIdsById.find(entityToRemove->getId());
 							if (selectedEntitiyIdByIdIt != selectedEntityIdsById.end()) {
@@ -760,13 +757,13 @@ void SceneEditorTabView::resetEntity(Entity* entity) {
 void SceneEditorTabView::selectEntities(const vector<string>& entityIds)
 {
 	removeGizmo();
-	for (auto entityIdToRemove: selectedEntityIds) {
+	for (const auto& entityIdToRemove: selectedEntityIds) {
 		auto entityToRemove = engine->getEntity(entityIdToRemove);
 		if (entityToRemove != nullptr) unselectEntityInternal(entityToRemove);
 	}
 	selectedEntityIds.clear();
 	selectedEntityIdsById.clear();
-	for (auto entityId: entityIds) {
+	for (const auto& entityId: entityIds) {
 		auto selectedEntity = engine->getEntity(entityId);
 		if (selectedEntity == nullptr) continue;
 		selectEntityInternal(selectedEntity);
@@ -792,7 +789,7 @@ void SceneEditorTabView::selectEntities(const vector<string>& entityIds)
 void SceneEditorTabView::unselectEntities()
 {
 	removeGizmo();
-	for (auto entityIdToUnselect: selectedEntityIds) {
+	for (const auto& entityIdToUnselect: selectedEntityIds) {
 		auto entityToUnselect = engine->getEntity(entityIdToUnselect);
 		if (entityToUnselect == nullptr) continue;
 		resetEntity(entityToUnselect);
@@ -804,7 +801,7 @@ void SceneEditorTabView::unselectEntities()
 void SceneEditorTabView::copyEntities()
 {
 	copiedEntities.clear();
-	for (auto selectedEntityId: selectedEntityIds) {
+	for (const auto& selectedEntityId: selectedEntityIds) {
 		auto selectedEntity = engine->getEntity(selectedEntityId);
 		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.") == false) {
 			auto sceneEntity = scene->getEntity(selectedEntity->getId());
@@ -831,7 +828,7 @@ void SceneEditorTabView::unsetPlaceEntityMode(bool cancelled) {
 		reloadOutliner();
 		// select selected entities
 		sceneEditorTabController->unselectEntities();
-		for (auto& entityId: selectedEntityIds) {
+		for (const auto& entityId: selectedEntityIds) {
 			sceneEditorTabController->selectEntity(entityId);
 		}
 		selectEntities(selectedEntityIds);
@@ -888,7 +885,7 @@ void SceneEditorTabView::removeEntities()
 {
 	removeGizmo();
 	vector<Entity*> entitiesToRemove;
-	for (auto selectedEntityId: selectedEntityIds) {
+	for (const auto& selectedEntityId: selectedEntityIds) {
 		Entity* selectedEntity = engine->getEntity(selectedEntityId);
 		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.") == false) {
 			scene->removeEntity(selectedEntity->getId());
@@ -896,7 +893,7 @@ void SceneEditorTabView::removeEntities()
 			entitiesToRemove.push_back(selectedEntity);
 		}
 	}
-	for (auto entityToRemove: entitiesToRemove) {
+	for (const auto& entityToRemove: entitiesToRemove) {
 		selectedEntityIds.erase(remove(selectedEntityIds.begin(), selectedEntityIds.end(), entityToRemove->getId()), selectedEntityIds.end());
 		auto selectedEntityIdsByIdIt = selectedEntityIdsById.find(entityToRemove->getId());
 		if (selectedEntityIdsByIdIt != selectedEntityIdsById.end()) {
@@ -919,7 +916,7 @@ void SceneEditorTabView::setPasteMode() {
 
 void SceneEditorTabView::unsetPasteMode() {
 	auto pasteEntityIdx = 0;
-	for (auto pasteEntity: copiedEntities) {
+	for (const auto& pasteEntity: copiedEntities) {
 		auto pastePrototype = pasteEntity->getPrototype();
 		auto entityId = "tdme.sceneeditor.paste." + pastePrototype->getName() + "." + to_string(pasteEntityIdx);
 		engine->removeEntity(entityId);
@@ -937,7 +934,7 @@ void SceneEditorTabView::pasteEntities(bool displayOnly)
 	auto pasteEntitiesMaxX = Float::MIN_VALUE;
 	auto pasteEntitiesMaxZ = Float::MIN_VALUE;
 	auto pasteEntitiesMaxY = Float::MIN_VALUE;
-	for (auto copiedEntity: copiedEntities) {
+	for (const auto& copiedEntity: copiedEntities) {
 		auto entity = engine->getEntity(copiedEntity->getId());
 		if (entity == nullptr) continue;
 		BoundingBox cbv;
@@ -955,7 +952,7 @@ void SceneEditorTabView::pasteEntities(bool displayOnly)
 	auto centerZ = (pasteEntitiesMaxZ - pasteEntitiesMinZ) / 2.0f;
 	auto pasteEntitiesIdx = 0;
 	vector<string> entitiesToSelect;
-	for (auto copiedEntity: copiedEntities) {
+	for (const auto& copiedEntity: copiedEntities) {
 		auto pastePrototype = copiedEntity->getPrototype();
 		Transform sceneEntityTransform;
 		sceneEntityTransform.setTransform(copiedEntity->getTransform());
@@ -1022,7 +1019,7 @@ void SceneEditorTabView::pasteEntities(bool displayOnly)
 		reloadOutliner();
 		// select selected entities
 		sceneEditorTabController->unselectEntities();
-		for (auto& entityId: entitiesToSelect) {
+		for (const auto& entityId: entitiesToSelect) {
 			sceneEditorTabController->selectEntity(entityId);
 		}
 		selectEntities(entitiesToSelect);
@@ -1032,7 +1029,7 @@ void SceneEditorTabView::pasteEntities(bool displayOnly)
 const Vector3 SceneEditorTabView::computeMultipleSelectionPivot() {
 	Vector3 pivot;
 	auto entityCount = 0;
-	for (auto selectedEntityId: selectedEntityIds) {
+	for (const auto& selectedEntityId: selectedEntityIds) {
 		auto selectedEntity = engine->getEntity(selectedEntityId);
 		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.") == false) {
 			auto sceneEntity = scene->getEntity(selectedEntity->getId());
@@ -1047,7 +1044,7 @@ const Vector3 SceneEditorTabView::computeMultipleSelectionPivot() {
 
 const string SceneEditorTabView::getSelectedReflectionEnvironmentMappingId() {
 	string selectedEnvironmentMappingId;
-	for (auto selectedEntityId: selectedEntityIds) {
+	for (const auto& selectedEntityId: selectedEntityIds) {
 		auto selectedEntity = engine->getEntity(selectedEntityId);
 		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.") == false) {
 			auto sceneEntity = scene->getEntity(selectedEntity->getId());
@@ -1070,7 +1067,7 @@ void SceneEditorTabView::centerEntities()
 		return;
 	}
 	Vector3 center;
-	for (auto selectedEntityId: selectedEntityIds) {
+	for (const auto& selectedEntityId: selectedEntityIds) {
 		auto selectedEntity = engine->getEntity(selectedEntityId);
 		if (selectedEntity == nullptr) continue;
 		center.add(selectedEntity->getWorldBoundingBox()->getMin().clone().add(selectedEntity->getWorldBoundingBox()->getMax()).scale(0.5f));
@@ -1125,7 +1122,7 @@ void SceneEditorTabView::updateGizmo() {
 	//
 	Vector3 gizmoCenter;
 	auto entityCount = 0;
-	for (auto selectedEntityId: selectedEntityIds) {
+	for (const auto& selectedEntityId: selectedEntityIds) {
 		auto selectedEntity = engine->getEntity(selectedEntityId);
 		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.") == false) {
 			auto sceneEntity = scene->getEntity(selectedEntity->getId());
@@ -1205,7 +1202,7 @@ void SceneEditorTabView::applyTranslation(const Vector3& translation) {
 		selectedEntity->setTransform(sceneEntity->getTransform());
 	} else
 	if (selectedEntityIds.size() > 1) {
-		for (auto selectedEntityId: selectedEntityIds) {
+		for (const auto& selectedEntityId: selectedEntityIds) {
 			auto selectedEntity = engine->getEntity(selectedEntityId);
 			if (selectedEntity == nullptr) continue;
 			auto sceneEntity = scene->getEntity(selectedEntity->getId());
@@ -1240,7 +1237,7 @@ void SceneEditorTabView::applyRotation(const Vector3& rotation) {
 		selectedEntity->setTransform(sceneEntity->getTransform());
 	} else
 	if (selectedEntityIds.size() > 1) {
-		for (auto selectedEntityId: selectedEntityIds) {
+		for (const auto& selectedEntityId: selectedEntityIds) {
 			auto selectedEntity = engine->getEntity(selectedEntityId);
 			if (selectedEntity == nullptr) continue;
 			auto sceneEntity = scene->getEntity(selectedEntity->getId());
@@ -1275,7 +1272,7 @@ void SceneEditorTabView::applyScale(const Vector3& scale) {
 		selectedEntity->setTransform(sceneEntity->getTransform());
 	} else
 	if (selectedEntityIds.size() > 1) {
-		for (auto selectedEntityId: selectedEntityIds) {
+		for (const auto& selectedEntityId: selectedEntityIds) {
 			auto selectedEntity = engine->getEntity(selectedEntityId);
 			if (selectedEntity == nullptr) continue;
 			auto sceneEntity = scene->getEntity(selectedEntity->getId());
@@ -1296,7 +1293,7 @@ void SceneEditorTabView::applyReflectionEnvironmentMappingId(const string& refle
 	if (selectedEntityIds.size() == 0)
 		return;
 
-	for (auto selectedEntityId: selectedEntityIds) {
+	for (const auto& selectedEntityId: selectedEntityIds) {
 		auto selectedEntity = engine->getEntity(selectedEntityId);
 		if (selectedEntity == nullptr) continue;
 		auto sceneEntity = scene->getEntity(selectedEntity->getId());
@@ -1494,7 +1491,7 @@ void SceneEditorTabView::runScene() {
 					//
 					invalidScripts+= ":\n";
 					//
-					for (auto& parseError: miniScript->getParseErrors())
+					for (const auto& parseError: miniScript->getParseErrors())
 						invalidScripts+= "\t" + parseError + "\n";
 					//
 					invalidScripts+= "\n";

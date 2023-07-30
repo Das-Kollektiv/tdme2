@@ -879,7 +879,7 @@ void EditorScreenController::scanProjectPaths(const string& path, string& xml) {
 		}
 	} else {
 		FileSystem::getInstance()->list(path, files, &listFilter);
-		for (auto fileName: files) {
+		for (const auto& fileName: files) {
 			auto relativePath = path + "/" + fileName;
 			if (StringTools::startsWith(relativePath, projectPath)) relativePath = StringTools::substring(relativePath, projectPath.size() + 1, relativePath.size());
 			if (FileSystem::getInstance()->isPath(path + "/" + fileName) == false) {
@@ -1182,7 +1182,7 @@ void EditorScreenController::ScanFilesThread::run() {
 			editorScreenController->unlockFileEntities();
 			Thread::sleep(1LL);
 		}
-		for (auto fileName: files) {
+		for (const auto& fileName: files) {
 			if (isStopRequested() == true) break;
 
 			//
@@ -1221,7 +1221,7 @@ void EditorScreenController::ScanFilesThread::run() {
 			editorScreenController->unlockFileEntities();
 			Thread::sleep(1LL);
 		}
-		for (auto fileName: files) {
+		for (const auto& fileName: files) {
 			if (isStopRequested() == true) break;
 
 			auto absolutePath = pathName + "/" + fileName;
@@ -1774,13 +1774,13 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 		(fileName.rfind(".") == string::npos || (fileName.rfind("/") != string::npos && fileName.rfind(".") < fileName.rfind("/")))) {
 		fileType = FILETYPE_TEXT;
 	} else {
-		for (auto& extension: ModelReader::getModelExtensions()) {
+		for (const auto& extension: ModelReader::getModelExtensions()) {
 			if (StringTools::endsWith(fileNameLowerCase, "." + extension) == true) {
 				fileType = FILETYPE_MODEL;
 				break;
 			}
 		}
-		for (auto& extension: TextureReader::getTextureExtensions()) {
+		for (const auto& extension: TextureReader::getTextureExtensions()) {
 			if (StringTools::endsWith(fileNameLowerCase, "." + extension) == true) {
 				fileType = FILETYPE_TEXTURE;
 				break;
@@ -2381,7 +2381,7 @@ void EditorScreenController::tick() {
 		logUpdateRequired = false;
 		//
 		MutableString log;
-		for (auto& logMessage: logMessages) {
+		for (const auto& logMessage: logMessages) {
 			log.append(StringTools::replace(StringTools::replace(logMessage, "[", "\\["), "]", "\\]"));
 			log.append("\n");
 		}

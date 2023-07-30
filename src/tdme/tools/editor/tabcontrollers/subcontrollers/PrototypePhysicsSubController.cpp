@@ -567,7 +567,7 @@ bool PrototypePhysicsSubController::onChange(GUIElementNode* node, Prototype* pr
 			return true;
 		}
 	} else {
-		for (auto& applyPhysicsNode: applyPhysicsNodes) {
+		for (const auto& applyPhysicsNode: applyPhysicsNodes) {
 			if (node->getId() == applyPhysicsNode) {
 				applyPhysicsDetails(prototype);
 				return true;
@@ -585,19 +585,19 @@ bool PrototypePhysicsSubController::onChange(GUIElementNode* node, Prototype* pr
 					view->applyBoundingVolumeNone(prototype, boundingVolumeIdx);
 				return true;
 			} else {
-				for (auto& applyBoundingVolumeSphereNode: applyBoundingVolumSphereNodes) {
+				for (const auto& applyBoundingVolumeSphereNode: applyBoundingVolumSphereNodes) {
 					if (node->getId() == applyBoundingVolumeSphereNode) {
 						applyBoundingVolumeSphereDetails(prototype, boundingVolumeIdx);
 						return true;
 					}
 				}
-				for (auto& applyBoundingVolumeCapsuleNode: applyBoundingVolumCapsuleNodes) {
+				for (const auto& applyBoundingVolumeCapsuleNode: applyBoundingVolumCapsuleNodes) {
 					if (node->getId() == applyBoundingVolumeCapsuleNode) {
 						applyBoundingVolumeCapsuleDetails(prototype, boundingVolumeIdx);
 						return true;
 					}
 				}
-				for (auto& applyBoundingVolumeOBBNode: applyBoundingVolumOBBNodes) {
+				for (const auto& applyBoundingVolumeOBBNode: applyBoundingVolumOBBNodes) {
 					if (node->getId() == applyBoundingVolumeOBBNode) {
 						applyBoundingVolumeObbDetails(prototype, boundingVolumeIdx);
 						return true;

@@ -658,7 +658,7 @@ Tools::ToolsShutdown::~ToolsShutdown() {
 
 bool Tools::hasFileExtension(const string& fileName, const vector<string>& extensions) {
 	auto fileNameLowerCase = StringTools::toLowerCase(fileName);
-	for (auto& extension: extensions) {
+	for (const auto& extension: extensions) {
 		if (StringTools::endsWith(fileNameLowerCase, "." + extension) == true) return true;
 	}
 	return false;

@@ -748,7 +748,7 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_type*
 	);
 }
 
-inline void VKRenderer::prepareMipMapTextureImage(int contextIdx, struct texture_type* textureObject, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags requiredFlags, Texture* texture, Texture::MipMapTexture& mipMapTexture, const array<ThsvsAccessType,2>& nextAccesses, ThsvsImageLayout imageLayout) {
+inline void VKRenderer::prepareMipMapTextureImage(int contextIdx, struct texture_type* textureObject, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags requiredFlags, Texture* texture, const Texture::MipMapTexture& mipMapTexture, const array<ThsvsAccessType,2>& nextAccesses, ThsvsImageLayout imageLayout) {
 	auto& currentContext = contexts[contextIdx];
 
 	VkResult err;
@@ -2044,14 +2044,14 @@ void VKRenderer::finishFrame()
 
 		// remove marked vulkan resources
 		//	buffers
-		for (auto& deleteBuffer: deleteBuffers) {
+		for (const auto& deleteBuffer: deleteBuffers) {
 			vmaUnmapMemory(vmaAllocator, deleteBuffer.allocation);
 			vmaDestroyBuffer(vmaAllocator, deleteBuffer.buffer, deleteBuffer.allocation);
 		}
 		AtomicOperations::increment(statistics.disposedBuffers, deleteBuffers.size());
 		deleteBuffers.clear();
 		//	textures
-		for (auto& deleteImage: deleteImages) {
+		for (const auto& deleteImage: deleteImages) {
 			if (deleteImage.imageView != VK_NULL_HANDLE) vkDestroyImageView(device, deleteImage.imageView, nullptr);
 			if (deleteImage.sampler != VK_NULL_HANDLE) vkDestroySampler(device, deleteImage.sampler, nullptr);
 			if (deleteImage.image != VK_NULL_HANDLE) vmaDestroyImage(vmaAllocator, deleteImage.image, deleteImage.allocation);
@@ -4794,7 +4794,7 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 			// mip levels
 			auto textureMipMaps = texture->getMipMapTextures(true);
 			auto level = 1;
-			for (auto& textureMipMap: textureMipMaps) {
+			for (const auto& textureMipMap: textureMipMaps) {
 				//
 				auto& bc7TextureData = textureMipMap.textureData;
 				VkBuffer buffer { VK_NULL_HANDLE };
@@ -4949,7 +4949,7 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 			// mip levels
 			auto textureMipMaps = texture->getMipMapTextures(false);
 			auto level = 1;
-			for (auto& textureMipMap: textureMipMaps) {
+			for (const auto& textureMipMap: textureMipMaps) {
 				//
 				struct texture_type mipMapStagingTexture {};
 				mipMapStagingTexture.width = textureMipMap.width;
@@ -6345,7 +6345,7 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 		if (buffer->bufferCount > 1 && frame >= buffer->frameCleanedLast + 10) {
 			int i = 0;
 			vector<int32_t> buffersToRemove;
-			for (auto& reusableBufferCandidate: buffer->buffers) {
+			for (const auto& reusableBufferCandidate: buffer->buffers) {
 				if (frame >= reusableBufferCandidate.frameUsedLast + 10) {
 					if (reusableBufferCandidate.memoryMappable == true) vmaUnmapMemory(vmaAllocator, reusableBufferCandidate.allocation);
 					vmaDestroyBuffer(vmaAllocator, reusableBufferCandidate.buffer, reusableBufferCandidate.allocation);

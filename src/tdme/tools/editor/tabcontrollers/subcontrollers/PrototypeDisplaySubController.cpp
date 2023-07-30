@@ -112,7 +112,7 @@ void PrototypeDisplaySubController::setDisplayDetails(Prototype* prototype) {
 
 	string shaderXML;
 	{
-		for (auto& shader: Engine::getRegisteredShader(Engine::ShaderType::SHADERTYPE_OBJECT)) {
+		for (const auto& shader: Engine::getRegisteredShader(Engine::ShaderType::SHADERTYPE_OBJECT)) {
 			shaderXML =
 				shaderXML +
 				"<dropdown-option text=\"" +
@@ -297,7 +297,7 @@ void PrototypeDisplaySubController::applyDisplayShaderDetails(Prototype* prototy
 }
 
 bool PrototypeDisplaySubController::onChange(GUIElementNode* node, Prototype* prototype) {
-	for (auto& applyDisplayNode: applyDisplayNodes) {
+	for (const auto& applyDisplayNode: applyDisplayNodes) {
 		if (node->getId() == applyDisplayNode) {
 			applyDisplayDetails(prototype);
 			tabView->updateRendering();

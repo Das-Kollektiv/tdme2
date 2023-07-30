@@ -71,7 +71,7 @@ public:
 	 * @return visibility
 	 */
 	inline bool isVisible(const Vector3& vertex) {
-		for (auto& p: planes) {
+		for (const auto& p: planes) {
 			if (Vector3::computeDotProduct(p.getNormal(), vertex) + p.getDistance() < 0.0f) {
 				return false;
 			}
@@ -87,7 +87,7 @@ public:
 	inline bool isVisible(Sphere* s) {
 		auto& center = s->getCenter();
 		auto radius = s->getRadius();
-		for (auto& p: planes) {
+		for (const auto& p: planes) {
 			if (Vector3::computeDotProduct(p.getNormal(), center) + p.getDistance() < -radius) {
 				return false;
 			}
@@ -108,7 +108,7 @@ public:
 		auto maxY = b->getMax()[1];
 		auto maxZ = b->getMax()[2];
 		Vector3 point;
-		for (auto& p :planes) {
+		for (const auto& p :planes) {
 			auto& normal = p.getNormal();
 			auto distance = p.getDistance();
 			if (Vector3::computeDotProduct(normal, point.set(minX, minY, minZ)) + distance > 0.0f) continue;

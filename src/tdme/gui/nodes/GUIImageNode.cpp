@@ -215,7 +215,7 @@ void GUIImageNode::setSource(const string& source) {
 			}
 		} else {
 			// other model without thumbnail
-			for (auto& extension: ModelReader::getModelExtensions()) {
+			for (const auto& extension: ModelReader::getModelExtensions()) {
 				if (StringTools::endsWith(StringTools::toLowerCase(source), "." + extension) == true) {
 					this->texture = screenNode->getImage("resources/engine/images/mesh_big.png");
 					this->releaseTextureReference = false;

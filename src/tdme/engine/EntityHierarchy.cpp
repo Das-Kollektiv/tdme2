@@ -92,7 +92,7 @@ void EntityHierarchy::removeEntity(const string& id) {
 	//
 	vector<string> children;
 	for (const auto& [childEntityId, childEntity]: entityHierarchyLevel->children) children.push_back(childEntityId);
-	for (auto child: children) removeEntity(child);
+	for (const auto& child: children) removeEntity(child);
 
 	//
 	auto entity = entityHierarchyLevel->entity;

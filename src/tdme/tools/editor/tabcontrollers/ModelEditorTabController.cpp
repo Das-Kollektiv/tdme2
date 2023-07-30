@@ -2370,31 +2370,31 @@ void ModelEditorTabController::onChange(GUIElementNode* node)
 		if (haveDetails == false) updateDetails(outlinerNode);
 	} else {
 		//
-		for (auto& applyAnimationNode: applyAnimationNodes) {
+		for (const auto& applyAnimationNode: applyAnimationNodes) {
 			if (node->getId() == applyAnimationNode) {
 				applyAnimationDetails();
 				break;
 			}
 		}
-		for (auto& applyMaterialBaseNode: applyMaterialBaseNodes) {
+		for (const auto& applyMaterialBaseNode: applyMaterialBaseNodes) {
 			if (node->getId() == applyMaterialBaseNode) {
 				applyMaterialBaseDetails();
 				break;
 			}
 		}
-		for (auto& applySpecularMaterialNode: applySpecularMaterialNodes) {
+		for (const auto& applySpecularMaterialNode: applySpecularMaterialNodes) {
 			if (node->getId() == applySpecularMaterialNode) {
 				applySpecularMaterialDetails();
 				break;
 			}
 		}
-		for (auto& applyPBRMaterialNode: applyPBRMaterialNodes) {
+		for (const auto& applyPBRMaterialNode: applyPBRMaterialNodes) {
 			if (node->getId() == applyPBRMaterialNode) {
 				applyPBRMaterialDetails();
 				break;
 			}
 		}
-		for (auto& applyAnimationPreviewNode: applyAnimationPreviewNodes) {
+		for (const auto& applyAnimationPreviewNode: applyAnimationPreviewNodes) {
 			if (node->getId() == applyAnimationPreviewNode) {
 				applyAnimationPreviewDetails();
 				break;
@@ -2402,7 +2402,7 @@ void ModelEditorTabController::onChange(GUIElementNode* node)
 		}
 		{
 			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
-			for (auto& applyLODNode: applyLODNodes) {
+			for (const auto& applyLODNode: applyLODNodes) {
 				if (node->getId() == applyLODNode) {
 					auto lodLevel = -1;
 					if (outlinerNode == "lod2.model") {

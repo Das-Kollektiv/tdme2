@@ -105,8 +105,8 @@ vector<string> PrototypeReader::extensions = {"tmodel", "tdecal", "tempty", "ten
 const vector<string> PrototypeReader::getPrototypeExtensions() {
 	auto& modelReaderExtensions = ModelReader::getModelExtensions();
 	vector<string> extensions;
-	for (auto& extension: PrototypeReader::extensions) extensions.push_back(extension);
-	for (auto& extension: modelReaderExtensions) extensions.push_back(extension);
+	for (const auto& extension: PrototypeReader::extensions) extensions.push_back(extension);
+	for (const auto& extension: modelReaderExtensions) extensions.push_back(extension);
 	return extensions;
 }
 
@@ -114,7 +114,7 @@ const vector<string> PrototypeReader::getModelExtensions() {
 	auto& modelReaderExtensions = ModelReader::getModelExtensions();
 	vector<string> extensions;
 	extensions.push_back(PrototypeReader::extensions[0]);
-	for (auto& extension: modelReaderExtensions) extensions.push_back(extension);
+	for (const auto& extension: modelReaderExtensions) extensions.push_back(extension);
 	return extensions;
 }
 
@@ -287,7 +287,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 		);
 	}
 	if (jPrototypeRoot.FindMember("sd") != jPrototypeRoot.MemberEnd()) {
-		for (auto& jSound: jPrototypeRoot["sd"].GetArray()) {
+		for (const auto& jSound: jPrototypeRoot["sd"].GetArray()) {
 			auto id = jSound["i"].GetString();
 			auto sound = prototype->addSound(id);
 			if (sound == nullptr) continue;

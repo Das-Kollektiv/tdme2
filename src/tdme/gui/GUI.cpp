@@ -141,7 +141,7 @@ void GUI::resetRenderScreens()
 	focussedNodeNodeId.clear();
 
 	//
-	applyRenderScreensChange();
+	unsetMouseStates();
 
 	// unset GUI
 	for (auto i = 0; i < renderScreens.size(); i++) {
@@ -158,7 +158,7 @@ void GUI::addRenderScreen(const string& screenId, int screenIdx)
 	if (screenIt == screens.end()) return;
 
 	//
-	applyRenderScreensChange();
+	unsetMouseStates();
 
 	//
 	auto screen = screenIt->second;
@@ -188,7 +188,7 @@ void GUI::removeRenderScreen(const string& screenId)
 	screenIt->second->setGUI(nullptr);
 
 	//
-	applyRenderScreensChange();
+	unsetMouseStates();
 
 	//
 	renderScreens.erase(remove(renderScreens.begin(), renderScreens.end(), screenIt->second), renderScreens.end());
@@ -389,19 +389,19 @@ void GUI::handleMouseEvent(GUINode* node, GUIMouseEvent* event, const unordered_
 	}
 
 	// inject former mouse out candidates
-	for (auto eventNodeId: mouseOutCandidateEventNodeIds) {
+	for (const auto& eventNodeId: mouseOutCandidateEventNodeIds) {
 		mouseEventNodeIds.insert(eventNodeId);
 	}
 
 	// inject former mouse out click candidates
-	for (auto eventNodeId: mouseOutClickCandidateEventNodeIds) {
+	for (const auto& eventNodeId: mouseOutClickCandidateEventNodeIds) {
 		mouseEventNodeIds.insert(eventNodeId);
 	}
 
 	// sort this list by hierarichal ids and execute processing reversed
 	//	means nodes deeper in the hierarchy are processed first
 	map<string, string> sortedMouseEventNodeIds;
-	for (auto eventNodeId: mouseEventNodeIds) {
+	for (const auto& eventNodeId: mouseEventNodeIds) {
 		// node event occurred on
 		auto eventNode = node->getScreenNode()->getNodeById(eventNodeId);
 		if (eventNode == nullptr) continue;
@@ -415,7 +415,7 @@ void GUI::handleMouseEvent(GUINode* node, GUIMouseEvent* event, const unordered_
 	reverse(sortedMouseEventNodeIdsVector.begin(), sortedMouseEventNodeIdsVector.end());
 
 	// handle mouse event for each node we collected
-	for (auto& eventNodeId: sortedMouseEventNodeIdsVector) {
+	for (const auto& eventNodeId: sortedMouseEventNodeIdsVector) {
 		// node event occurred on
 		auto eventNode = node->getScreenNode()->getNodeById(eventNodeId);
 		if (eventNode == nullptr) continue;
@@ -442,7 +442,7 @@ void GUI::handleMouseEvent(GUINode* node, GUIMouseEvent* event, const unordered_
 
 	// compile list of gui node ids that received mouse PRESSED events
 	if (event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
-		for (auto eventNodeId: mouseEventNodeIds) {
+		for (const auto& eventNodeId: mouseEventNodeIds) {
 			mousePressedEventNodeIds.insert(eventNodeId);
 		}
 	}
@@ -540,11 +540,11 @@ void GUI::handleEvents(bool clearEvents)
 					floatingNode->determineMouseEventNodes(&lastMouseEvent, floatingNode->flow == GUINode_Flow::FLOATING, eventNodeIds, eventFloatingNodeIds, GUINode::DETERMINEMOUSEEVENTNODES_FLAG_TOOLTIP);
 
 					// collect as hierarchical ids -> node
-					for (auto& eventFloatingNodeId: eventFloatingNodeIds) {
+					for (const auto& eventFloatingNodeId: eventFloatingNodeIds) {
 						auto node = screen->getNodeById(eventFloatingNodeId);
 						tooltipFloatingNodes[node->getHierarchicalId()] = node;
 					}
-					for (auto& eventNodeId: eventNodeIds) {
+					for (const auto& eventNodeId: eventNodeIds) {
 						auto node = screen->getNodeById(eventNodeId);
 						tooltipFloatingNodes[node->getHierarchicalId()] = node;
 					}
@@ -567,11 +567,11 @@ void GUI::handleEvents(bool clearEvents)
 				screen->determineMouseEventNodes(&lastMouseEvent, screen->flow == GUINode_Flow::FLOATING, eventNodeIds, eventFloatingNodeIds, GUINode::DETERMINEMOUSEEVENTNODES_FLAG_TOOLTIP);
 
 				// collect as hierarchical ids -> node
-				for (auto& eventFloatingNodeId: eventFloatingNodeIds) {
+				for (const auto& eventFloatingNodeId: eventFloatingNodeIds) {
 					auto node = screen->getNodeById(eventFloatingNodeId);
 					tooltipNodes[node->getHierarchicalId()] = node;
 				}
-				for (auto& eventNodeId: eventNodeIds) {
+				for (const auto& eventNodeId: eventNodeIds) {
 					auto node = screen->getNodeById(eventNodeId);
 					tooltipNodes[node->getHierarchicalId()] = node;
 				}
@@ -767,7 +767,7 @@ void GUI::handleEvents(bool clearEvents)
 }
 
 void GUI::onChar(int key, int x, int y) {
-	fakeMouseMovedEvent();
+	unsetMouseStates();
 	GUIKeyboardEvent guiKeyboardEvent;
 	guiKeyboardEvent.setTime(Time::getCurrentMillis());
 	guiKeyboardEvent.setType(GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED);
@@ -783,7 +783,7 @@ void GUI::onChar(int key, int x, int y) {
 }
 
 void GUI::onKeyDown (int key, int keyCode, int x, int y, bool repeat, int modifiers) {
-	fakeMouseMovedEvent();
+	unsetMouseStates();
 	GUIKeyboardEvent guiKeyboardEvent;
 	guiKeyboardEvent.setTime(Time::getCurrentMillis());
 	guiKeyboardEvent.setType(GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED);
@@ -799,7 +799,7 @@ void GUI::onKeyDown (int key, int keyCode, int x, int y, bool repeat, int modifi
 }
 
 void GUI::onKeyUp(int key, int keyCode, int x, int y) {
-	fakeMouseMovedEvent();
+	unsetMouseStates();
 	GUIKeyboardEvent guiKeyboardEvent;
 	guiKeyboardEvent.setTime(Time::getCurrentMillis());
 	guiKeyboardEvent.setType(GUIKeyboardEvent::KEYBOARDEVENT_KEY_RELEASED);
@@ -815,8 +815,7 @@ void GUI::onKeyUp(int key, int keyCode, int x, int y) {
 }
 
 void GUI::onMouseDragged(int x, int y) {
-	fakeKeyboardModifierEvent();
-
+	unsetMouseStates();
 	GUIMouseEvent guiMouseEvent;
 	guiMouseEvent.setTime(Time::getCurrentMillis());
 	guiMouseEvent.setType(GUIMouseEvent::MOUSEEVENT_DRAGGED);
@@ -836,8 +835,7 @@ void GUI::onMouseDragged(int x, int y) {
 }
 
 void GUI::onMouseMoved(int x, int y) {
-	fakeKeyboardModifierEvent();
-
+	unsetMouseStates();
 	GUIMouseEvent guiMouseEvent;
 	guiMouseEvent.setTime(Time::getCurrentMillis());
 	guiMouseEvent.setType(GUIMouseEvent::MOUSEEVENT_MOVED);
@@ -896,23 +894,6 @@ void GUI::onMouseWheel(int button, int direction, int x, int y) {
 	guiMouseEvent.setControlDown(controlDown);
 	guiMouseEvent.setAltDown(altDown);
 	guiMouseEvent.setShiftDown(shiftDown);
-	guiMouseEvent.setProcessed(false);
-	mouseEvents.push_back(guiMouseEvent);
-}
-
-void GUI::fakeMouseMovedEvent()
-{
-	GUIMouseEvent guiMouseEvent;
-	guiMouseEvent.setTime(Time::getCurrentMillis());
-	guiMouseEvent.setType(GUIMouseEvent::MOUSEEVENT_MOVED);
-	guiMouseEvent.setXUnscaled(-10000);
-	guiMouseEvent.setYUnscaled(-10000);
-	guiMouseEvent.setX(-10000);
-	guiMouseEvent.setY(-10000);
-	guiMouseEvent.setButton(0);
-	guiMouseEvent.setWheelX(0.0f);
-	guiMouseEvent.setWheelY(0.0f);
-	guiMouseEvent.setWheelZ(0.0f);
 	guiMouseEvent.setProcessed(false);
 	mouseEvents.push_back(guiMouseEvent);
 }
@@ -992,6 +973,6 @@ void GUI::reshapeScreen(GUIScreenNode* screenNode) {
 	screenNode->setScreenSize(screenNodeWidthConstrained, screenNodeHeightConstrained);
 }
 
-void GUI::applyRenderScreensChange() {
+void GUI::unsetMouseStates() {
 	for (auto screen: renderScreens) screen->unsetMouseStates();
 }

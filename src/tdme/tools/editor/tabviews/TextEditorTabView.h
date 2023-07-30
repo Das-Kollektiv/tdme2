@@ -167,7 +167,7 @@ private:
 		for (const auto& nodeId: flowNodeIds) {
 			auto flowNodeId = nodeId + "_fi";
 			auto foundFlowInput = false;
-			for (auto& connection: connections) {
+			for (const auto& connection: connections) {
 				if (connection.type != Connection::CONNECTIONTYPE_FLOW) continue;
 				if (connection.dstNodeId == flowNodeId) {
 					foundFlowInput = true;
@@ -185,7 +185,7 @@ private:
 	 */
 	inline const string getNextNodeId(const string& nodeId) {
 		auto flowNodeId = nodeId + "_fo";
-		for (auto& connection: connections) {
+		for (const auto& connection: connections) {
 			if (connection.type != Connection::CONNECTIONTYPE_FLOW) continue;
 			if (connection.srcNodeId == flowNodeId) {
 				//
@@ -214,7 +214,7 @@ private:
 	 */
 	inline const string getConnectedArgumentNodeId(const string& nodeId, int argumentIdx) {
 		auto argumentNodeId = getArgumentNodeId(nodeId, argumentIdx);
-		for (auto& connection: connections) {
+		for (const auto& connection: connections) {
 			if (connection.type != Connection::CONNECTIONTYPE_ARGUMENT) continue;
 			if (connection.srcNodeId == argumentNodeId) {
 				//
@@ -243,7 +243,7 @@ private:
 	 */
 	inline const string getConnectedConditionNodeId(const string& nodeId, int conditionIdx) {
 		auto conditionNodeId = getConditionNodeId(nodeId, conditionIdx);
-		for (auto& connection: connections) {
+		for (const auto& connection: connections) {
 			if (connection.type != Connection::CONNECTIONTYPE_ARGUMENT) continue;
 			if (connection.srcNodeId == conditionNodeId) {
 				//
@@ -272,7 +272,7 @@ private:
 	 */
 	inline const string getConnectedBranchNodeId(const string& nodeId, int branchIdx) {
 		auto branchNodeId = getBranchNodeId(nodeId, branchIdx);
-		for (auto& connection: connections) {
+		for (const auto& connection: connections) {
 			if (connection.type != Connection::CONNECTIONTYPE_FLOW) continue;
 			if (connection.srcNodeId == branchNodeId) {
 				//

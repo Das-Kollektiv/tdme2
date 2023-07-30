@@ -250,7 +250,7 @@ void Context::PathFindingThread::run() {
 		if (worldActionsCopy.size() > 0) {
 			pathFinding->reset();
 		}
-		for (auto& worldActionStruct: worldActionsCopy) {
+		for (const auto& worldActionStruct: worldActionsCopy) {
 			if (worldActionStruct.action == WorldActionStruct::ACTION_ADDED) {
 				if ((worldActionStruct.collisionTypeId & context->bodyCollisionTypeIdCloneMask) != 0) {
 					world->addStaticRigidBody(
@@ -277,7 +277,7 @@ void Context::PathFindingThread::run() {
 		// do cancelling
 		pathFindingMutex.lock();
 		pathFindingCancelMutex.lock();
-		for (auto actorId: cancelActorIds) {
+		for (const auto& actorId: cancelActorIds) {
 			switch(state) {
 				case STATE_IDLE:
 					{

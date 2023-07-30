@@ -244,7 +244,7 @@ void GUIScreenNode::setEnabled(bool enabled)
 		gui->invalidateFocussedNode();
 	}
 	//
-	if (gui != nullptr) gui->applyRenderScreensChange();
+	if (gui != nullptr) gui->unsetMouseStates();
 }
 
 void GUIScreenNode::setPopUp(bool popUp)
@@ -355,7 +355,7 @@ void GUIScreenNode::invalidateLayouts() {
 	// invalidate layouts and mark nodes that are required to start layouting with
 	// in a map with hierarchical id which gets sorted from root -> child node
 	map<string, GUINode*> nodesToForceLayout;
-	for (auto& nodeId: invalidateLayoutNodeIds) {
+	for (const auto& nodeId: invalidateLayoutNodeIds) {
 		auto node = getNodeById(nodeId);
 		if (node == nullptr) continue;
 		auto layoutNode = forceInvalidateLayout(node);
@@ -408,13 +408,13 @@ void GUIScreenNode::forceLayout(GUINode* node)
 }
 
 void GUIScreenNode::scrollToNodes() {
-	for (auto& scrollToNodeX: scrollToNodesX) {
+	for (const auto& scrollToNodeX: scrollToNodesX) {
 		auto node = getNodeById(scrollToNodeX.node);
 		auto toNode = scrollToNodeX.toNode.empty() == true?nullptr:dynamic_cast<GUIParentNode*>(getNodeById(scrollToNodeX.toNode));
 		if (node != nullptr) node->_scrollToNodeX(toNode);
 	}
 	scrollToNodesX.clear();
-	for (auto& scrollToNodeY: scrollToNodesY) {
+	for (const auto& scrollToNodeY: scrollToNodesY) {
 		auto node = getNodeById(scrollToNodeY.node);
 		auto toNode = scrollToNodeY.toNode.empty() == true?nullptr:dynamic_cast<GUIParentNode*>(getNodeById(scrollToNodeY.toNode));
 		if (node != nullptr) node->_scrollToNodeY(toNode);
@@ -777,7 +777,7 @@ void GUIScreenNode::tick() {
 			GUIElementNode::executeExpression(this, timedExpressionsExpression);
 		}
 	}
-	for (auto& timedExpressionToRemove: timedExpressionsToRemove) {
+	for (const auto& timedExpressionToRemove: timedExpressionsToRemove) {
 		timedExpressions.erase(timedExpressionToRemove);
 	}
 	auto _tickNodesById = tickNodesById;
@@ -905,7 +905,7 @@ void GUIScreenNode::forwardEvents() {
 	while (forwardEventList.empty() == false && forwardEventCount++ < 10) {
 		auto forwardEventListCopy = forwardEventList;
 		forwardEventList.clear();
-		for (auto& event: forwardEventListCopy) {
+		for (const auto& event: forwardEventListCopy) {
 			switch(event.eventType) {
 				case ForwardEvent::EVENTTYPE_ACTION:
 					{

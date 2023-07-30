@@ -93,12 +93,12 @@ ObjectAnimation::ObjectAnimation(Model* model, Engine::AnimationProcessingTarget
 }
 
 ObjectAnimation::~ObjectAnimation() {
-	for (auto baseAnimationTransformMatrices: transformMatrices) {
+	for (const auto& baseAnimationTransformMatrices: transformMatrices) {
 		for (const auto& [id, matrix]: baseAnimationTransformMatrices) {
 			delete matrix;
 		}
 	}
-	for (auto skinningNodeMatricesEntity: skinningNodesMatrices) {
+	for (const auto& skinningNodeMatricesEntity: skinningNodesMatrices) {
 		for (const auto& [id, matrix]: skinningNodeMatricesEntity) {
 			delete matrix;
 		}
@@ -220,7 +220,7 @@ void ObjectAnimation::removeFinishedOverlayAnimations()
 		}
 	}
 	// remove them
-	for (auto animationState: overlayAnimationsToRemove) {
+	for (const auto& animationState: overlayAnimationsToRemove) {
 		removeOverlayAnimation(animationState);
 	}
 }
@@ -232,7 +232,7 @@ void ObjectAnimation::removeOverlayAnimations()
 	for (const auto& [animationId, animationState]: overlayAnimationsById) {
 		overlayAnimationsToRemove.push_back(animationId);
 	}
-	for (auto animationState: overlayAnimationsToRemove) {
+	for (const auto& animationState: overlayAnimationsToRemove) {
 		removeOverlayAnimation(animationState);
 	}
 }

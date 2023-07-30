@@ -61,11 +61,11 @@ int main(int argc, char** argv)
 
 	//
 	array<MiniScript*, 3> miniScriptFlavours = { baseMiniScript, logicMiniScript, guiMiniScript };
-	for (auto miniScriptFlavour: miniScriptFlavours) {
+	for (const auto& miniScriptFlavour: miniScriptFlavours) {
 		// methods
 		auto scriptMethods = miniScriptFlavour->getMethods();
 		vector<string> methods;
-		for (auto scriptMethod: scriptMethods) {
+		for (const auto& scriptMethod: scriptMethods) {
 			//
 			if ((miniScriptFlavour != baseMiniScript && baseMiniScript->hasMethod(scriptMethod->getMethodName()) == true) ||
 				(miniScriptFlavour == guiMiniScript && logicMiniScript->hasMethod(scriptMethod->getMethodName()) == true)
@@ -79,7 +79,7 @@ int main(int argc, char** argv)
 			Console::println("Adding method: " + scriptMethod->getMethodName());
 			lines.push_back("	<keyword name=\"" + scriptMethod->getMethodName() + "\" func=\"yes\">");
 			lines.push_back("		<overload return-value=\"" + MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType()) + "\" descr=\"" + GUIParser::escape(description) + "\">");
-			for (auto& argumentType: scriptMethod->getArgumentTypes()) {
+			for (const auto& argumentType: scriptMethod->getArgumentTypes()) {
 				string argumentValueString;
 				if (argumentType.optional == true) argumentValueString+= "[";
 				argumentValueString+= MiniScript::ScriptVariable::getTypeAsString(argumentType.type) + " ";
@@ -97,17 +97,17 @@ int main(int argc, char** argv)
 
 	//
 	lines.push_back("</code-completion>");
-	for (auto& line: lines) Console::println(line);
+	for (const auto& line: lines) Console::println(line);
 	Console::println();
 
 	// syntax highlighting
 	Console::println("Syntax highlighting: ");
 	Console::print("Syntax highlighting: keywords1: ");
-	for (auto& keyword1: keywords1) Console::print(keyword1 + " ");
+	for (const auto& keyword1: keywords1) Console::print(keyword1 + " ");
 	Console::println();
 
 	Console::print("Syntax highlighting: keywords2: ");
-	for (auto& keyword2: keywords2) Console::print(keyword2 + " ");
+	for (const auto& keyword2: keywords2) Console::print(keyword2 + " ");
 	Console::println();
 	Console::println();
 

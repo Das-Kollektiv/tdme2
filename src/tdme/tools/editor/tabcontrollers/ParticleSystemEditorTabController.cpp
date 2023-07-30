@@ -318,55 +318,55 @@ void ParticleSystemEditorTabController::onChange(GUIElementNode* node)
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
 			auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
-			for (auto& applyOPSNode: applyOPSNodes) {
+			for (const auto& applyOPSNode: applyOPSNodes) {
 				if (node->getId() == applyOPSNode) {
 					applyParticleSystemDetails(particleSystemIdx);
 					break;
 				}
 			}
-			for (auto& applyPPSNode: applyPPSNodes) {
+			for (const auto& applyPPSNode: applyPPSNodes) {
 				if (node->getId() == applyPPSNode) {
 					applyParticleSystemDetails(particleSystemIdx);
 					break;
 				}
 			}
-			for (auto& applyFPSNode: applyFPSNodes) {
+			for (const auto& applyFPSNode: applyFPSNodes) {
 				if (node->getId() == applyFPSNode) {
 					applyParticleSystemDetails(particleSystemIdx);
 					break;
 				}
 			}
-			for (auto& applyBaseNode: applyBaseNodes) {
+			for (const auto& applyBaseNode: applyBaseNodes) {
 				if (node->getId() == applyBaseNode) {
 					applyParticleSystemDetails(particleSystemIdx);
 					break;
 				}
 			}
-			for (auto& applyBBPENode: applyBBPENodes) {
+			for (const auto& applyBBPENode: applyBBPENodes) {
 				if (node->getId() == applyBBPENode) {
 					applyParticleSystemDetails(particleSystemIdx);
 					break;
 				}
 			}
-			for (auto& applyPPENode: applyPPENodes) {
+			for (const auto& applyPPENode: applyPPENodes) {
 				if (node->getId() == applyPPENode) {
 					applyParticleSystemDetails(particleSystemIdx);
 					break;
 				}
 			}
-			for (auto& applySPENode: applySPENodes) {
+			for (const auto& applySPENode: applySPENodes) {
 				if (node->getId() == applySPENode) {
 					applyParticleSystemDetails(particleSystemIdx);
 					break;
 				}
 			}
-			for (auto& applyCPENode: applyCPENodes) {
+			for (const auto& applyCPENode: applyCPENodes) {
 				if (node->getId() == applyCPENode) {
 					applyParticleSystemDetails(particleSystemIdx);
 					break;
 				}
 			}
-			for (auto& applyRPENode: applyRPENodes) {
+			for (const auto& applyRPENode: applyRPENodes) {
 				if (node->getId() == applyRPENode) {
 					applyParticleSystemDetails(particleSystemIdx);
 					break;

@@ -435,7 +435,7 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 		if (progressCallback != nullptr) progressCallback->progress(0.1f + static_cast<float>(progressIdx) / static_cast<float>(progressTotal) * 0.8f);
 		vector<PrototypeMeshNode> meshNodes;
 		determineMeshNodes(scene, subNode, "", (Matrix4x4()).identity(), meshNodes);
-		for (auto& meshNode: meshNodes) {
+		for (const auto& meshNode: meshNodes) {
 			auto model = new Model(
 				meshNode.name + ".tm",
 				fileName + "-" + meshNode.name,

@@ -127,11 +127,6 @@ private:
 	void reshapeScreen(GUIScreenNode* screenNode);
 
 	/**
-	 * Fake mouse moved event
-	 */
-	void fakeMouseMovedEvent();
-
-	/**
 	 * Fake a keyboard modifier event
 	 */
 	void fakeKeyboardModifierEvent();
@@ -139,7 +134,7 @@ private:
 	/**
 	 * Render screens change
 	 */
-	void applyRenderScreensChange();
+	void unsetMouseStates();
 
 public:
 	static constexpr int64_t TOOLTIP_TIME { 250LL };

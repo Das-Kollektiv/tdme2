@@ -335,7 +335,7 @@ bool PrototypeSoundsSubController::onChange(GUIElementNode* node, Prototype* pro
 			return true;
 		}
 	} else {
-		for (auto& audioChangeNode: applyAudioNodes) {
+		for (const auto& audioChangeNode: applyAudioNodes) {
 			if (node->getId() == audioChangeNode) {
 				auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 				if (StringTools::startsWith(outlinerNode, "sounds.") == true) {

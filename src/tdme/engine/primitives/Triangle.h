@@ -33,7 +33,8 @@ public:
 	/**
 	 * @return triangle vertices
 	 */
-	inline vector<Vector3>& getVertices() {
+	inline const
+	vector<Vector3>& getVertices() const {
 		return vertices;
 	}
 

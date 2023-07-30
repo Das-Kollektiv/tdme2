@@ -33,7 +33,7 @@ void Skinning::setJoints(const vector<Joint>& joints)
 {
 	this->joints.resize(joints.size());
 	auto i = 0;
-	for (auto& joint: joints) {
+	for (const auto& joint: joints) {
 		this->joints[i++] = joint;
 	}
 	setupJointsByName();
@@ -52,8 +52,7 @@ void Skinning::setVerticesJointsWeights(const vector<vector<JointWeight>>& verti
 
 void Skinning::setupJointsByName()
 {
-	for (auto i = 0; i < joints.size(); i++) {
-		auto& joint = joints[i];
+	for (auto& joint: joints) {
 		jointsByName[joint.getNodeId()] = &joint;
 	}
 }

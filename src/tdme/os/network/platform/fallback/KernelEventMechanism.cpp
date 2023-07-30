@@ -129,19 +129,19 @@ int KernelEventMechanism::doKernelEventMechanism() {
 	// compile list of events
 	psd->fdsMutex.lock();
 	psd->events.clear();
-	for (auto fdIt = psd->fds.begin(); fdIt != psd->fds.end(); ++fdIt) {
-		if (FD_ISSET(fdIt->first, &rfds) != 0) {
+	for (const auto& [fd, cookie]: psd->fds) {
+		if (FD_ISSET(fd, &rfds) != 0) {
 			psd->events.emplace_back(
-				fdIt->first,
+				fd,
 				NIO_INTEREST_READ,
-				fdIt->second
+				cookie
 			);
 		}
-		if (FD_ISSET(fdIt->first, &wfds) != 0) {
+		if (FD_ISSET(fd, &wfds) != 0) {
 			psd->events.emplace_back(
-				fdIt->first,
+				fd,
 				NIO_INTEREST_WRITE,
-				fdIt->second
+				cookie
 			);
 		}
 	}

@@ -162,13 +162,13 @@ void EnvMapEditorTabController::showInfoPopUp(const string& caption, const strin
 
 void EnvMapEditorTabController::onChange(GUIElementNode* node)
 {
-	for (auto& applyNode: applyNodesRenderPasses) {
+	for (const auto& applyNode: applyNodesRenderPasses) {
 		if (node->getId() == applyNode) {
 			applyRenderPasses();
 			break;
 		}
 	}
-	for (auto& applyNode: applyNodesLocation) {
+	for (const auto& applyNode: applyNodesLocation) {
 		if (node->getId() == applyNode) {
 			applyLocation();
 			break;

@@ -107,8 +107,7 @@ TerrainEditorTabView::~TerrainEditorTabView() {
 void TerrainEditorTabView::handleInputEvents()
 {
 	brushMoved = false;
-	for (auto i = 0; i < engine->getGUI()->getMouseEvents().size(); i++) {
-		auto& event = engine->getGUI()->getMouseEvents()[i];
+	for (auto& event:engine->getGUI()->getMouseEvents()) {
 		if (event.isProcessed() == true) continue;
 
 		if (event.getType() == GUIMouseEvent::MOUSEEVENT_WHEEL_MOVED) {
@@ -239,8 +238,7 @@ void TerrainEditorTabView::handleInputEvents()
 			}
 		}
 	}
-	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
-		auto& event = engine->getGUI()->getKeyboardEvents()[i];
+	for (auto& event: engine->getGUI()->getKeyboardEvents()) {
 		if (event.isProcessed() == true) continue;
 		if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) continue;
 		auto isKeyDown = event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
@@ -619,8 +617,8 @@ void TerrainEditorTabView::updateTemporaryFoliage(const unordered_set<int>& part
 			if (foliagePartitionEntityHierarchy == nullptr) foliagePartitionEntityHierarchy = dynamic_cast<EntityHierarchy*>(engine->getEntity("foliage.entityhierarchy." + to_string(partitionIdx)));
 			auto foliageIdx = 0;
 			for (const auto& [prototypeIdx, transformVector]: foliageMapPartition) {
-				for (auto i = 0; i < transformVector.size(); i++) {
-					foliagePartitionEntityHierarchy->getEntities()[foliageIdx]->setTransform(transformVector[i]);
+				for (const auto& transform: transformVector) {
+					foliagePartitionEntityHierarchy->getEntities()[foliageIdx]->setTransform(transform);
 					foliageIdx++;
 				}
 			}

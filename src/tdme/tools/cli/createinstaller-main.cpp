@@ -137,7 +137,7 @@ static void scanPathResources(const string& path, vector<string>& totalFiles) {
 		}
 	} else {
 		FileSystem::getInstance()->list(path, files, &listFilter);
-		for (auto fileName: files) {
+		for (const auto& fileName: files) {
 			if (FileSystem::getInstance()->isPath(path + "/" + fileName) == false) {
 				totalFiles.push_back(path + "/" + fileName);
 			} else {
@@ -194,7 +194,7 @@ static void scanPathLibraries(const string& path, vector<string>& totalFiles) {
 		}
 	} else {
 		FileSystem::getInstance()->list(path, files, &listFilter);
-		for (auto fileName: files) {
+		for (const auto& fileName: files) {
 			if (FileSystem::getInstance()->isPath(path + "/" + fileName) == false) {
 				totalFiles.push_back(path + "/" + fileName);
 			} else {
@@ -234,7 +234,7 @@ static void scanPathHeaders(const string& path, vector<string>& totalFiles) {
 		}
 	} else {
 		FileSystem::getInstance()->list(path, files, &listFilter);
-		for (auto fileName: files) {
+		for (const auto& fileName: files) {
 			if (FileSystem::getInstance()->isPath(path + "/" + fileName) == false) {
 				totalFiles.push_back(path + "/" + fileName);
 			} else {
@@ -304,7 +304,7 @@ static void scanPathExecutables(const string& path, vector<string>& totalFiles) 
 		}
 	} else {
 		FileSystem::getInstance()->list(path, files, &listFilter);
-		for (auto fileName: files) {
+		for (const auto& fileName: files) {
 			if (FileSystem::getInstance()->isPath(path + "/" + fileName) == false) {
 				totalFiles.push_back(path + "/" + fileName);
 			} else {
@@ -577,12 +577,12 @@ int main(int argc, char** argv)
 		}
 
 		// add files to archive
-		for (auto fileName: filesData) {
+		for (const auto& fileName: filesData) {
 			processFile(fileName, fileInformations, "installer/" + componentFileName, false, tdmePath);
 		}
 
 		// add files to archive
-		for (auto fileName: filesBin) {
+		for (const auto& fileName: filesBin) {
 			#if defined(__APPLE__)
 				auto _fileName = StringTools::substring(fileName, fileName.rfind('/') + 1, fileName.size());
 				auto _filePath = StringTools::substring(fileName, 0, fileName.rfind('/'));
@@ -634,7 +634,7 @@ int main(int argc, char** argv)
 			ofs.seekp(0, ofstream::end);
 			uint32_t fileInformationOffsetEnd = 0LL;
 			uint64_t fileInformationOffset = ofs.tellp();
-			for (auto& fileInformation: fileInformations) {
+			for (const auto& fileInformation: fileInformations) {
 				uint32_t nameSize = fileInformation.name.size();
 				ofs.write((char*)&nameSize, sizeof(nameSize));
 				for (auto i = 0; i < nameSize; i++) ofs.write(&fileInformation.name[i], 1);

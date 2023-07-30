@@ -518,7 +518,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 				if (VERBOSE == true) Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have preprocessor test begin: " + definition);
 				testedDefinitions.push(definition);
 				bool matched = false;
-				for (auto availableDefinition: definitions) {
+				for (const auto& availableDefinition: definitions) {
 					if (definition == availableDefinition) {
 						matched = true;
 						break;
@@ -544,7 +544,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 				if (VERBOSE == true) Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have preprocessor test else if: " + definition);
 				testedDefinitions.push(definition);
 				bool matched = false;
-				for (auto availableDefinition: definitions) {
+				for (const auto& availableDefinition: definitions) {
 					if (definition == availableDefinition) {
 						matched = true;
 						break;
@@ -793,7 +793,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 			} else
 			if (inStruct == false) {
 				// rename arrays and structs to ubo uniforms
-				for (auto& uniformStructArrayName: uniformStructsArrays) {
+				for (const auto& uniformStructArrayName: uniformStructsArrays) {
 					// is struct/array a first level uniform
 					auto isUniform = uboUniformNames.find(uniformStructArrayName) != uboUniformNames.end();
 					if (isUniform == false) continue;
@@ -1020,7 +1020,7 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 
 			// set up ingoing attributes layout indices
 			if (shaderLast != nullptr) {
-				for (auto& attributeLayout: shaderLast->attributeLayouts) {
+				for (const auto& attributeLayout: shaderLast->attributeLayouts) {
 					shader->source = StringTools::replace(shader->source, "{$IN_ATTRIBUTE_LOCATION_" + attributeLayout.name + "_IDX}", to_string(attributeLayout.location));
 				}
 			}
@@ -1147,7 +1147,7 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 			vkProgramCache.put("program.id", to_string(program.id));
 			vkProgramCache.put("program.layout_bindings", to_string(program.layoutBindings));
 			auto i = 0;
-			for (auto& shader: program.shaders) {
+			for (auto shader: program.shaders) {
 				vkProgramCache.put("program.shader_" + to_string(i) + "_cacheid", shader->cacheId);
 				i++;
 			}
@@ -1167,7 +1167,7 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 			// attribute layouts
 			{
 				auto i = 0;
-				for (auto& attribute: shader->attributeLayouts) {
+				for (const auto& attribute: shader->attributeLayouts) {
 					vkShaderCache.put("shader.attributelayout_name_" + to_string(i), attribute.name);
 					vkShaderCache.put("shader.attributelayout_type_" + to_string(i), attribute.type);
 					vkShaderCache.put("shader.attributelayout_location_" + to_string(i), to_string(attribute.location));

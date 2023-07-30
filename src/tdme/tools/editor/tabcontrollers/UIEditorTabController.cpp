@@ -447,7 +447,7 @@ void UIEditorTabController::setOutlinerContent() {
 	string xml;
 	xml+= "<selectbox-parent-option text=\"Screens\" value=\"screens\">\n";
 	auto screenIdx = 0;
-	for (auto& uiScreenNode: view->getUIScreenNodes()) {
+	for (const auto& uiScreenNode: view->getUIScreenNodes()) {
 		auto screenNode = uiScreenNode.screenNode;
 		if (screenNode == nullptr) {
 			xml+= "<selectbox-option text=\"<screen>\" value=\"" + to_string(screenIdx) + ".0\" />\n";

@@ -153,7 +153,7 @@ void TMWriter::writeEmbeddedTextures(TMWriterOutputStream* os, Model* m, bool us
 			} else {
 				auto mipMapTextures = embeddedTexture->getMipMapTextures(true);
 				os->writeByte(mipMapTextures.size());
-				for (auto& mipMapTexture: mipMapTextures) {
+				for (const auto& mipMapTexture: mipMapTextures) {
 					os->writeByte(mipMapTexture.format);
 					os->writeInt(mipMapTexture.width);
 					os->writeInt(mipMapTexture.height);

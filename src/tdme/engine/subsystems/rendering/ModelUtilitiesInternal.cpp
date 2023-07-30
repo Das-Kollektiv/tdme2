@@ -73,23 +73,22 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBox(ObjectModelInternal* obje
 		ObjectNode::computeAnimation(0, objectModelInternal->objectNodes);
 		// parse through object nodes to determine min, max
 		for (auto objectNode : objectModelInternal->objectNodes) {
-			for (auto& vertex : *objectNode->mesh->vertices) {
-				auto& vertexXYZ = vertex.getArray();
+			for (const auto& vertex : *objectNode->mesh->vertices) {
 				if (firstVertex == true) {
-					minX = vertexXYZ[0];
-					minY = vertexXYZ[1];
-					minZ = vertexXYZ[2];
-					maxX = vertexXYZ[0];
-					maxY = vertexXYZ[1];
-					maxZ = vertexXYZ[2];
+					minX = vertex[0];
+					minY = vertex[1];
+					minZ = vertex[2];
+					maxX = vertex[0];
+					maxY = vertex[1];
+					maxZ = vertex[2];
 					firstVertex = false;
 				} else {
-					if (vertexXYZ[0] < minX) minX = vertexXYZ[0];
-					if (vertexXYZ[1] < minY) minY = vertexXYZ[1];
-					if (vertexXYZ[2] < minZ) minZ = vertexXYZ[2];
-					if (vertexXYZ[0] > maxX) maxX = vertexXYZ[0];
-					if (vertexXYZ[1] > maxY) maxY = vertexXYZ[1];
-					if (vertexXYZ[2] > maxZ) maxZ = vertexXYZ[2];
+					if (vertex[0] < minX) minX = vertex[0];
+					if (vertex[1] < minY) minY = vertex[1];
+					if (vertex[2] < minZ) minZ = vertex[2];
+					if (vertex[0] > maxX) maxX = vertex[0];
+					if (vertex[1] > maxY) maxY = vertex[1];
+					if (vertex[2] > maxZ) maxZ = vertex[2];
 				}
 			}
 		}

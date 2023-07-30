@@ -55,7 +55,7 @@ void scanDir(const string& folder, vector<string>& totalFiles) {
 
 	FileSystem::getInstance()->list(folder, files, &listFilter);
 
-	for (auto fileName: files) {
+	for (const auto& fileName: files) {
 		if (StringTools::endsWith(fileName, ".xml") == true) {
 			totalFiles.push_back(folder + "/" + fileName);
 		} else {
@@ -139,14 +139,14 @@ int main(int argc, char** argv)
 
 	Console::println("Processing files");
 	map<string, set<string>> elementAttributeMap;
-	for (auto fileName: files) {
+	for (const auto& fileName: files) {
 		processFile(fileName, elementAttributeMap);
 	}
 
 	//
 	for (const auto& [elementName, elementAttributeVector]: elementAttributeMap) {
 		Console::println(elementName);
-		for (auto& attribute: elementAttributeVector) {
+		for (const auto& attribute: elementAttributeVector) {
 			Console::println("\t" + attribute);
 		}
 		Console::println();

@@ -209,7 +209,7 @@ private:
 					);
 					/*
 					Console::println("UTF8CharacterIterator::addCacheEntry(): binary cache: binary: " + to_string(binaryPosition) + " / character: " + to_string(characterPosition));
-					for (auto& cacheEntry: _cache) {
+					for (const auto& cacheEntry: _cache) {
 						Console::println("\tbinary cache: binary: " + to_string(cacheEntry.binaryPosition) + " / character: " + to_string(cacheEntry.characterPosition));
 					}
 					*/
@@ -225,7 +225,7 @@ private:
 						characterPosition
 					);
 					/*
-					for (auto& cacheEntry: _cache) {
+					for (const auto& cacheEntry: _cache) {
 						Console::println("\tcharacter cache: binary: " + to_string(cacheEntry.binaryPosition) + " / character: " + to_string(cacheEntry.characterPosition));
 					}
 					*/

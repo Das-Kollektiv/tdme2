@@ -126,26 +126,26 @@ void ObjectRenderGroup::combineNode(Node* sourceNode, const vector<Vector3>& ori
 		// add vertices and such from source node to new node
 		{
 			auto i = 0;
-			for (auto& objectParentTransformMatrix: objectParentTransformMatrices) {
+			for (const auto& objectParentTransformMatrix: objectParentTransformMatrices) {
 				Matrix4x4 transformMatrix;
 				transformMatrix.set(sourceNode->getTransformMatrix());
 				transformMatrix.multiply(objectParentTransformMatrix);
 
 				//
-				for (auto& vertex: sourceNode->getVertices()) {
+				for (const auto& vertex: sourceNode->getVertices()) {
 					combinedModelNodeOrigins.push_back(origins[i]);
 					combinedModelNodeVertices.push_back(transformMatrix.multiply(vertex));
 				}
-				for (auto& normal: sourceNode->getNormals()) {
+				for (const auto& normal: sourceNode->getNormals()) {
 					combinedModelNodeNormals.push_back(transformMatrix.multiplyNoTranslation(normal));
 				}
-				for (auto& textureCoordinate: sourceNode->getTextureCoordinates()) {
+				for (const auto& textureCoordinate: sourceNode->getTextureCoordinates()) {
 					combinedModelNodeTextureCoordinates.push_back(textureCoordinate);
 				}
-				for (auto& tangent: sourceNode->getTangents()) {
+				for (const auto& tangent: sourceNode->getTangents()) {
 					combinedModelNodeTangents.push_back(transformMatrix.multiplyNoTranslation(tangent));
 				}
-				for (auto& bitangent: sourceNode->getBitangents()) {
+				for (const auto& bitangent: sourceNode->getBitangents()) {
 					combinedModelNodeBitangents.push_back(transformMatrix.multiplyNoTranslation(bitangent));
 				}
 
@@ -155,7 +155,7 @@ void ObjectRenderGroup::combineNode(Node* sourceNode, const vector<Vector3>& ori
 		}
 
 		// add source node faces to new new faces entity
-		for (auto& facesEntity: sourceNode->getFacesEntities()) {
+		for (const auto& facesEntity: sourceNode->getFacesEntities()) {
 			bool haveTextureCoordinates = facesEntity.isTextureCoordinatesAvailable();
 			bool haveTangentsBitangents = facesEntity.isTangentBitangentAvailable();
 
@@ -192,9 +192,9 @@ void ObjectRenderGroup::combineNode(Node* sourceNode, const vector<Vector3>& ori
 			auto combinedModelNodeTextureCoordinatesIdx = combinedModelNodeTextureCoordinatesIdxStart;
 			auto combinedModelNodeTangentsIdx = combinedModelNodeTangentsIdxStart;
 			auto combinedModelNodeBitangentsIdx = combinedModelNodeBitangentsIdxStart;
-			for (auto& objectParentTransformMatrix: objectParentTransformMatrices) {
+			for (const auto& objectParentTransformMatrix: objectParentTransformMatrices) {
 				// add faces
-				for (auto& face: facesEntity.getFaces()) {
+				for (const auto& face: facesEntity.getFaces()) {
 					// get face vertices and such
 					auto& faceVertexIndices = face.getVertexIndices();
 					auto& faceNormalIndices = face.getNormalIndices();
@@ -264,7 +264,7 @@ void ObjectRenderGroup::combineNode(Node* sourceNode, const vector<Vector3>& ori
 void ObjectRenderGroup::combineObjects(Model* model, const vector<Transform>& objectsTransform, Model* combinedModel) {
 	vector<Matrix4x4> objectTransformMatrices;
 	vector<Vector3> origins;
-	for (auto& objectTransform: objectsTransform) {
+	for (const auto& objectTransform: objectsTransform) {
 		Matrix4x4 transformMatrix;
 		transformMatrix.set(model->getImportTransformMatrix());
 		transformMatrix.multiply(objectTransform.getTransformMatrix());
@@ -305,7 +305,7 @@ void ObjectRenderGroup::updateRenderGroup() {
 			lodLevel++;
 			auto objectCount = 0;
 			vector<Transform> reducedObjectsTransform;
-			for (auto& objectTransform: objectsTransform) {
+			for (const auto& objectTransform: objectsTransform) {
 				if (objectCount % reduceByFactor != 0) {
 					objectCount++;
 					continue;

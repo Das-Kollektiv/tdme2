@@ -47,7 +47,7 @@ static void generateMiniScriptDocumentation(const string& heading, int mainHeadi
 		description+= descriptions.get(descriptionPrefix + scriptMethod->getMethodName(), "Not documented");
 		if (scriptMethod->getContextFunctions().empty() == false) {
 			string contextFunctions;
-			for (auto& contextFunction: scriptMethod->getContextFunctions()) {
+			for (const auto& contextFunction: scriptMethod->getContextFunctions()) {
 				if (contextFunctions.empty() == false) contextFunctions+= ", ";
 				contextFunctions+= contextFunction + "()";
 			}
@@ -105,7 +105,7 @@ static void generateMiniScriptDocumentation(const string& heading, int mainHeadi
 		Console::println();
 		Console::println("| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |");
 		Console::println("|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|");
-		for (auto& methodMarkup: methodsMarkup) Console::print(methodMarkup);
+		for (const auto& methodMarkup: methodsMarkup) Console::print(methodMarkup);
 	}
 }
 
@@ -166,7 +166,7 @@ int main(int argc, char** argv)
 	Console::println();
 	Console::println("| Op | Method                                                                                      |");
 	Console::println("|----|---------------------------------------------------------------------------------------------|");
-	for (auto& method: operators) Console::println(method);
+	for (const auto& method: operators) Console::println(method);
 
 	//
 	Console::println();
@@ -175,7 +175,7 @@ int main(int argc, char** argv)
 	{
 		Console::println("# base methods");
 		//
-		for (auto& baseMethodCategory: baseMethodCategories) {
+		for (const auto& baseMethodCategory: baseMethodCategories) {
 			Console::println("miniscript.basemethod.group." + (baseMethodCategory.empty() == true?"uncategorized":baseMethodCategory) + "=");
 		}
 		//
@@ -187,7 +187,7 @@ int main(int argc, char** argv)
 	{
 		Console::println("# miniscript logic methods");
 		//
-		for (auto& logicMethodCategory: logicMethodCategories) {
+		for (const auto& logicMethodCategory: logicMethodCategories) {
 			Console::println("miniscript.logicmethod.group." + (logicMethodCategory.empty() == true?"uncategorized":logicMethodCategory) + "=");
 		}
 		//
@@ -200,7 +200,7 @@ int main(int argc, char** argv)
 	{
 		Console::println("# miniscript gui methods");
 		//
-		for (auto& guiMethodCategory: guiMethodCategories) {
+		for (const auto& guiMethodCategory: guiMethodCategories) {
 			Console::println("miniscript.group." + (guiMethodCategory.empty() == true?"uncategorized":guiMethodCategory) + "=");
 		}
 		//
@@ -237,7 +237,7 @@ int main(int argc, char** argv)
 		}
 	}
 	//
-	for (auto& method: allMethods) {
+	for (const auto& method: allMethods) {
 		Console::print(method + " ");
 	}
 	Console::println();

@@ -131,7 +131,7 @@ GUINode::GUINode(
 	// register this id with related element nodes
 	vector<string> elementNodeDependencies;
 	cfDetermineElementNodeDependencies(elementNodeDependencies);
-	for (auto& elementNodeId: elementNodeDependencies) screenNode->addNodeElementNodeDependency(elementNodeId, id);
+	for (const auto& elementNodeId: elementNodeDependencies) screenNode->addNodeElementNodeDependency(elementNodeId, id);
 }
 
 GUINode::~GUINode() {
@@ -1257,7 +1257,7 @@ void GUINode::cfCallDetermineElementNodeDependencies(const string& function, con
 
 bool GUINode::cfHasCondition(GUIElementNode* elementNode, const vector<string>& arguments) {
 	StringTokenizer t;
-	for (auto& argument: arguments) {
+	for (const auto& argument: arguments) {
 		string elementNodeId;
 		auto condition = argument;
 		if (condition.find('.') != -1) {
@@ -1277,7 +1277,7 @@ bool GUINode::cfHasCondition(GUIElementNode* elementNode, const vector<string>& 
 
 void GUINode::cfHasConditionDetermineElementNodeDependencies(const vector<string>& arguments, vector<string>& elementNodeDependencies) {
 	StringTokenizer t;
-	for (auto& argument: arguments) {
+	for (const auto& argument: arguments) {
 		string elementNodeId;
 		auto condition = argument;
 		if (condition.find('.') != string::npos) {
@@ -1292,7 +1292,7 @@ void GUINode::cfHasConditionDetermineElementNodeDependencies(const vector<string
 }
 
 bool GUINode::cfEmpty(const vector<string>& arguments) {
-	for (auto& argument: arguments) {
+	for (const auto& argument: arguments) {
 		if (argument == "false" ||
 			argument == "0" ||
 			argument == "0.0" ||
@@ -1352,7 +1352,7 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
 	auto issuedOutEffect = false;
 
 	//
-	for (auto& condition: conditions) {
+	for (const auto& condition: conditions) {
 		{
 			auto effect = getEffect("tdme.xmleffect.in.color.on." + condition);
 			if (effect != nullptr && effect->isActive() == false) {
@@ -1376,7 +1376,7 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
 			}
 		}
 	} else {
-		for (auto& condition: lastConditions) {
+		for (const auto& condition: lastConditions) {
 			if (find(conditions.begin(), conditions.end(), condition) != conditions.end()) continue;
 			{
 				auto effect = getEffect("tdme.xmleffect.out.color.on." + condition);

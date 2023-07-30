@@ -267,7 +267,7 @@ void GUIStyledTextNode::scrollToIndex(int cursorIndex) {
 		determineNextLineConstraints(u8It, text.size(), textStyleIdx);
 
 		//
-		for (auto& lineConstraintsEntity: lineConstraints) {
+		for (const auto& lineConstraintsEntity: lineConstraints) {
 			y+= lineConstraintsEntity.height;
 		}
 
@@ -367,7 +367,7 @@ int GUIStyledTextNode::doPageUp() {
 		}
 
 		// if reached cursor index try to find index of a page down height
-		for (auto& lineConstraintsEntity: lineConstraints) {
+		for (const auto& lineConstraintsEntity: lineConstraints) {
 			lines.emplace_back(
 				lineCharIdxs[0],
 				y
@@ -440,7 +440,7 @@ int GUIStyledTextNode::doPageDown() {
 
 		// if reached cursor index try to find index of a page down height
 		if (reachedCursorIndex == true) {
-			for (auto& lineConstraintsEntity: lineConstraints) {
+			for (const auto& lineConstraintsEntity: lineConstraints) {
 				y+= lineConstraintsEntity.height;
 				if (y >= visibleHeight) {
 					cursorIndex = lineCharIdxs[0];
@@ -522,7 +522,7 @@ void GUIStyledTextNode::computeContentAlignmentInternal() {
 		determineNextLineConstraints(u8It, text.size(), textStyleIdx);
 
 		//
-		for (auto& lineConstraintsEntity: lineConstraints) {
+		for (const auto& lineConstraintsEntity: lineConstraints) {
 			if (lineConstraintsEntity.width > autoWidth) autoWidth = lineConstraintsEntity.width;
 			autoHeight+= lineConstraintsEntity.height;
 		}
@@ -626,7 +626,7 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 						if (command == "image") {
 							parseImage = true;
 							auto imageOptions = StringTools::tokenize(styleTokenized[1], ",");
-							for (auto& imageOption: imageOptions) {
+							for (const auto& imageOption: imageOptions) {
 								auto nameValuePair = StringTools::tokenize(imageOption, ":");
 								if (nameValuePair.size() != 2) {
 									Console::println("GUIStyledTextNode::setText(): unknown image style command option: " + imageOption);
@@ -1621,7 +1621,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 }
 
 void GUIStyledTextNode::unsetStyles() {
-	for (auto& style: styles) {
+	for (const auto& style: styles) {
 		if (style.font != nullptr) font->dispose();
 		if (style.image != nullptr) Engine::getInstance()->getTextureManager()->removeTexture(style.image->getId());
 	}
@@ -1633,7 +1633,7 @@ void GUIStyledTextNode::unsetTextStyle(int startIdx, int endIdx) {
 	// Console::print("GUIStyledTextNode::unsetTextStyle(): " + to_string(startIdx) + " ... " + to_string(endIdx) + ": '");
 	// for (auto i = startIdx; i <= endIdx; i++) Console::print(string() + text.charAt(i));
 	// Console::println("'");
-	// for (auto& style: styles) Console::println("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	// for (const auto& style: styles) Console::println("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 	for (auto i = 0; i < styles.size(); i++) {
 		auto& style = styles[i];
 		if (startIdx >= style.startIdx && endIdx <= style.endIdx) {
@@ -1657,7 +1657,7 @@ void GUIStyledTextNode::unsetTextStyle(int startIdx, int endIdx) {
 			i--;
 		}
 	}
-	// for (auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	// for (const auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 }
 
 void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& color, const string& font, int size, const string& url) {
@@ -1682,7 +1682,7 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& c
 	}
 	// Console::println("insert@" + to_string(j));
 	if (j == -1) j = 0;
-	// for (auto& style: styles) Console::println("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	// for (const auto& style: styles) Console::println("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 	// insert
 	styles.insert(
 		styles.begin() + j,
@@ -1702,7 +1702,7 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& c
 	);
 	//
 	startTextStyleIdx = -1;
-	// for (auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	// for (const auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 }
 
 void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const string& font, int size, const string& url) {
@@ -1724,7 +1724,7 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const string& fon
 			j = i + 1;
 		}
 	}
-	// for (auto& style: styles) Console::println("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	// for (const auto& style: styles) Console::println("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 	// Console::println("insert@" + to_string(j));
 	if (j == -1) j = 0;
 	// insert
@@ -1746,7 +1746,7 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const string& fon
 	);
 	//
 	startTextStyleIdx = -1;
-	// for (auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	// for (const auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 }
 
 void GUIStyledTextNode::setImage(int idx, const string& image, const string& url, int width, int height, float horizontalScale, float verticalScale, const GUIColor& effectColorMul, const GUIColor& effectColorAdd) {
@@ -1762,7 +1762,7 @@ void GUIStyledTextNode::setImage(int idx, const string& image, const string& url
 			j = i + 1;
 		}
 	}
-	// for (auto& style: styles) Console::println("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	// for (const auto& style: styles) Console::println("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 	// Console::println("insert@" + to_string(j));
 	if (j == -1) j = 0;
 	// insert
@@ -1784,5 +1784,5 @@ void GUIStyledTextNode::setImage(int idx, const string& image, const string& url
 	);
 	//
 	startTextStyleIdx = -1;
-	// for (auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	// for (const auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 }

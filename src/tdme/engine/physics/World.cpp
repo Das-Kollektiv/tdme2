@@ -98,7 +98,7 @@ void World::reset()
 	{
 		vector<string> jointIds;
 		for (const auto& [jointId, joint]: jointsById) jointIds.push_back(jointId);
-		for (auto& jointId: jointIds) removeJoint(jointId);
+		for (const auto& jointId: jointIds) removeJoint(jointId);
 	}
 	// bodies
 	{

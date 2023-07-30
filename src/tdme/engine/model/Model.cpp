@@ -61,21 +61,17 @@ Model::Model(const string& id, const string& name, UpVector* upVector, RotationO
 
 Model::~Model() {
 	deleteSubNodes(subNodes);
-	for (auto it = materials.begin(); it != materials.end(); ++it) {
-		delete it->second;
-	}
-	for (auto it = animationSetups.begin(); it != animationSetups.end(); ++it) {
-		delete it->second;
-	}
+	for (const auto& [materialId, material]: materials) delete material;
+	for (const auto& [animationSetupId, animationSetup]: animationSetups) delete animationSetup;
 	if (boundingBox != nullptr) delete boundingBox;
 }
 
 void Model::deleteSubNodes(const map<string, Node*>& subNodes) {
-	for (auto it = subNodes.begin(); it != subNodes.end(); ++it) {
-		deleteSubNodes(it->second->getSubNodes());
-		delete it->second;
+	for (const auto& [subNodeId, subNode]: subNodes) {
+		deleteSubNodes(subNode->getSubNodes());
+		delete subNode;
 	}
-}
+	}
 
 AnimationSetup* Model::addAnimationSetup(const string& id, int32_t startFrame, int32_t endFrame, bool loop, float speed)
 {

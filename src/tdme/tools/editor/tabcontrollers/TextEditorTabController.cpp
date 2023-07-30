@@ -417,7 +417,7 @@ void TextEditorTabController::setOutlinerContent() {
 	string xml;
 	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"MiniScript\" value=\"miniscript.script." + to_string(-1) + "\">\n";
 	auto scriptIdx = 0;
-	for (auto& miniScriptSyntaxTree: miniScriptSyntaxTrees) {
+	for (const auto& miniScriptSyntaxTree: miniScriptSyntaxTrees) {
 		xml+= "<selectbox-option text=\"" + GUIParser::escape(miniScriptSyntaxTree.name) + "\" value=\"miniscript.script." + to_string(scriptIdx) + "\" />\n";
 		scriptIdx++;
 	}
@@ -528,7 +528,7 @@ void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx
 		string argumentsString;
 		switch(script.scriptType) {
 			case MiniScript::Script::SCRIPTTYPE_FUNCTION: {
-				for (auto& argument: script.arguments) {
+				for (const auto& argument: script.arguments) {
 					if (argumentsString.empty() == false) argumentsString+= ", ";
 					if (argument.assignBack == true) argumentsString+= "=";
 					argumentsString+= argument.name;

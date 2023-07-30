@@ -59,7 +59,7 @@ private:
 		//
 		faceCount = 0;
 		for (auto objectNode: objectBase->objectNodes) {
-			for (auto& facesEntity: objectNode->node->getFacesEntities()) {
+			for (const auto& facesEntity: objectNode->node->getFacesEntities()) {
 				faceCount += facesEntity.getFaces().size();
 			}
 		}

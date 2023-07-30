@@ -33,11 +33,11 @@ void ColorTextureCanvas::drawBezier(const vector<Vector2>& controlPoints, uint8_
 	//
 	Bezier bezier;
 	bezier.set_steps(static_cast<int>(Math::sqrt(static_cast<float>(textureWidth) * static_cast<float>(textureHeight)) / 2.0f));
-	for (auto& controlPoint: controlPoints) {
+	for (const auto& controlPoint: controlPoints) {
 		bezier.add_way_point(Vector(controlPoint.getX(), controlPoint.getY(), 0.0));
 	}
 	while (bezier.node_count() < 4) {
-		auto& controlPoint = controlPoints[controlPoints.size() - 1];
+		const auto& controlPoint = controlPoints[controlPoints.size() - 1];
 		bezier.add_way_point(Vector(controlPoint.getX(), controlPoint.getY(), 0.0));
 	}
 

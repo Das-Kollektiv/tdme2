@@ -244,7 +244,7 @@ void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 		}
 	} else {
 		auto foundLanguage = false;
-		for (auto& language: languages) {
+		for (const auto& language: languages) {
 			if (std::find(language.extensions.begin(), language.extensions.end(), extension) != language.extensions.end()) {
 				// Console::println("void TextFormatter::format(): " + to_string(charStartIdx) + " ... " + to_string(charEndIdx));
 				foundLanguage = true;
@@ -322,7 +322,7 @@ void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 								auto word = StringTools::trim(StringTools::substring(code, startIdx, endIdx));
 								if (word.empty() == true) continue;
 								auto literalWord = word;
-								for (auto& datatypeLiteralSuffix: datatypeLiteralSuffixes) {
+								for (const auto& datatypeLiteralSuffix: datatypeLiteralSuffixes) {
 									if (StringTools::endsWith(word, datatypeLiteralSuffix) == true) {
 										auto dotCount = 0;
 										auto valid = true;
@@ -349,19 +349,19 @@ void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 									textNode->setTextStyle(startIdx, endIdx - 1, literalColor);
 								} else {
 									// Console::println("Word: '" + word + "'; " + to_string(startIdx) + " ... " + to_string(endIdx));
-									for (auto& keyword: keywords1) {
+									for (const auto& keyword: keywords1) {
 										if (word == keyword) {
 											textNode->setTextStyle(startIdx, endIdx - 1, keyword1Color);
 											break;
 										}
 									}
-									for (auto& keyword: keywords2) {
+									for (const auto& keyword: keywords2) {
 										if (word == keyword) {
 											textNode->setTextStyle(startIdx, endIdx - 1, keyword2Color);
 											break;
 										}
 									}
-									for (auto& keyword: preprocessorLineKeywords) {
+									for (const auto& keyword: preprocessorLineKeywords) {
 										if (word == keyword) {
 											if (c == '\n' || i == charEndIdx) {
 												textNode->setTextStyle(startIdx, endIdx - 1, preprocessorColor);
@@ -446,7 +446,7 @@ const vector<TiXmlElement*> TextFormatter::getChildren(TiXmlElement* parent)
 }
 
 const TextFormatter::CodeCompletion* TextFormatter::loadCodeCompletion(const string& extension) {
-	for (auto& language: languages) {
+	for (const auto& language: languages) {
 		if (std::find(language.extensions.begin(), language.extensions.end(), extension) != language.extensions.end()) {
 			try {
 				// load dae xml document

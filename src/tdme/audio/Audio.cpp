@@ -89,13 +89,13 @@ void Audio::removeEntity(const string& id)
 void Audio::reset()
 {
 	// determine keys to remove
-	vector<string> keys;
-	for (auto it = audioEntities.begin(); it != audioEntities.end(); ++it) {
-		keys.push_back(it->first);
+	vector<string> audioEntitiesToRemove;
+	for (const auto& [audioEntityId, audioEntity]: audioEntities) {
+		audioEntitiesToRemove.push_back(audioEntityId);
 	}
 
 	// remove entities
-	for (auto& key: keys) {
+	for (const auto& key: audioEntitiesToRemove) {
 		removeEntity(key);
 	}
 }
@@ -109,8 +109,8 @@ void Audio::shutdown()
 void Audio::update()
 {
 	// update audio entities
-	for (auto it = audioEntities.begin(); it != audioEntities.end(); ++it) {
-		it->second->update();
+	for (const auto& [audioEntityId, audioEntity]: audioEntities) {
+		audioEntity->update();
 	}
 
 	// update listener position

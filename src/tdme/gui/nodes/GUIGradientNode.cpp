@@ -43,7 +43,7 @@ GUIGradientNode::Gradient GUIGradientNode::createGradient(const string& colors, 
 	Gradient gradient;
 	gradient.rotationAngle = Integer::parse(rotation);
 	auto colorsArray = StringTools::tokenize(colors, ",");
-	for (auto& color: colorsArray) {
+	for (const auto& color: colorsArray) {
 		auto colorComponents = StringTools::tokenize(color, "=");
 		if (colorComponents.size() != 2) {
 			Console::println("GUIGradientNode::createGradient():color invalid: " + color);

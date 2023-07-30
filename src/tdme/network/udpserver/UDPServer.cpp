@@ -99,8 +99,8 @@ void UDPServer::run() {
 		//	iterate over clients and clean up safe messages
 		if (now >= lastCleanUpClientsSafeMessagesTime + 100L) {
 			auto _clientKeySet = getClientKeySet();
-			for (auto& it: _clientKeySet) {
-				auto client = getClientByKey(it);
+			for (const auto& clientKey: _clientKeySet) {
+				auto client = getClientByKey(clientKey);
 
 				// skip on clients that have been gone
 				if (client == nullptr) continue;
@@ -125,8 +125,8 @@ void UDPServer::run() {
 
 	// we stopped accept, now iterate over clients and close them
 	auto _clientKeySet = getClientKeySet();
-	for (auto& it: _clientKeySet) {
-		auto client = getClientByKey(it);
+	for (const auto& clientKey: _clientKeySet) {
+		auto client = getClientByKey(clientKey);
 		// continue if gone already
 		if (client == nullptr) continue;
 		// client close logic
@@ -442,8 +442,7 @@ void UDPServer::cleanUpClients() {
 	clientIdMapReadWriteLock.unlock();
 
 	// erase clients
-	for (auto& it: clientCloseList) {
-		auto client = it;
+	for (auto client: clientCloseList) {
 		// client close logic
 		client->close();
 		// remove from udp client list
