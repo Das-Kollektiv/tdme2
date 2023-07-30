@@ -1341,7 +1341,7 @@ public:
 			// TODO: be verbose about misuse
 			if (type != TYPE_SET) return keys;
 			auto& setValue = getSetValueReference();
-			for (auto& key: setValue) {
+			for (const auto& key: setValue) {
 				keys.push_back(key);
 			}
 			return keys;
@@ -1621,7 +1621,7 @@ public:
 						auto& arrayValue = getArrayValueReference();
 						result+="[";
 						string valuesString;
-						for (auto& value: arrayValue) {
+						for (const auto& value: arrayValue) {
 							if (valuesString.empty() == false) valuesString+= ", ";
 							valuesString+= value.getValueString();
 						}
@@ -1647,7 +1647,7 @@ public:
 						auto& setValue = getSetValueReference();
 						result+="{";
 						string valuesString;
-						for (auto& key: setValue) {
+						for (const auto& key: setValue) {
 							if (valuesString.empty() == false) valuesString+= ", ";
 							valuesString+= key;
 						}
@@ -1756,7 +1756,7 @@ public:
 			string result;
 			auto optionalArgumentCount = 0;
 			auto argumentIdx = 0;
-			for (auto& argumentType: argumentTypes) {
+			for (const auto& argumentType: argumentTypes) {
 				if (argumentType.optional == true) {
 					result+= "[";
 					optionalArgumentCount++;
@@ -2136,7 +2136,7 @@ private:
 	 */
 	inline const string getArgumentsAsString(const vector<string_view>& arguments) {
 		string argumentsString;
-		for (auto& argument: arguments) argumentsString+= (argumentsString.empty() == false?", ":"") + string("'") + string(argument) + string("'");
+		for (const auto& argument: arguments) argumentsString+= (argumentsString.empty() == false?", ":"") + string("'") + string(argument) + string("'");
 		return argumentsString;
 	}
 
@@ -2147,7 +2147,7 @@ private:
 	 */
 	inline const string getArgumentsAsString(const vector<ScriptSyntaxTreeNode>& arguments) {
 		string argumentsString;
-		for (auto& argument: arguments) {
+		for (const auto& argument: arguments) {
 			switch (argument.type) {
 				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
 					switch(argument.value.getType()) {
@@ -2893,7 +2893,7 @@ public:
 	 * @return has type
 	 */
 	inline static bool hasType(const span<ScriptVariable>& arguments, ScriptVariableType type) {
-		for (auto& argument: arguments) if (argument.getType() == type) return true;
+		for (const auto& argument: arguments) if (argument.getType() == type) return true;
 		return false;
 	}
 
@@ -3219,7 +3219,7 @@ public:
 	 */
 	inline bool hasCondition(const string& condition) {
 		// iterate scripts to find out if condition exists
-		for (auto& script: scripts) {
+		for (const auto& script: scripts) {
 			if (script.scriptType != Script::SCRIPTTYPE_ON) {
 				// no op
 			} else

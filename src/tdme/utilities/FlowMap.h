@@ -299,7 +299,7 @@ public:
 		complete = flowMap->complete;
 		// add path
 		auto pathSize = path.size();
-		for (auto& pathNode: flowMap->path) {
+		for (const auto& pathNode: flowMap->path) {
 			path.push_back(pathNode);
 		}
 		// add cells

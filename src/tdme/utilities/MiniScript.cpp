@@ -287,7 +287,7 @@ bool MiniScript::parseScriptStatement(const string_view& statement, string_view&
 	if (VERBOSE == true) {
 		Console::print("MiniScript::parseScriptStatement(): '" + scriptFileName + "': method: '" + string(methodName) + "', arguments: ");
 		int variableIdx = 0;
-		for (auto& argument: arguments) {
+		for (const auto& argument: arguments) {
 			if (variableIdx > 0) Console::print(", ");
 			Console::print("'" + string(argument) + "'");
 			variableIdx++;
@@ -314,7 +314,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 	vector<ScriptVariable> argumentValues;
 	ScriptVariable returnValue;
 	// construct argument values
-	for (auto& argument: syntaxTree.arguments) {
+	for (const auto& argument: syntaxTree.arguments) {
 		switch (argument.type) {
 			case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
 				{
@@ -350,7 +350,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 			call(scriptIdx, argumentValuesSpan, returnValue);
 			// assign back arguments
 			auto argumentIdx = 0;
-			for (auto& argument: scripts[scriptIdx].arguments) {
+			for (const auto& argument: scripts[scriptIdx].arguments) {
 				//
 				if (argumentIdx == argumentValues.size()) {
 					break;
@@ -399,7 +399,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 		// validate arguments
 		{
 			auto argumentIdx = 0;
-			for (auto& argumentType: scriptMethod->getArgumentTypes()) {
+			for (const auto& argumentType: scriptMethod->getArgumentTypes()) {
 				auto argumentOk = true;
 				switch(argumentType.type) {
 					case TYPE_NULL:
@@ -528,7 +528,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 		// assign back arguments
 		{
 			auto argumentIdx = 0;
-			for (auto& argumentType: scriptMethod->getArgumentTypes()) {
+			for (const auto& argumentType: scriptMethod->getArgumentTypes()) {
 				//
 				if (argumentIdx == argumentValues.size()) {
 					break;
@@ -582,7 +582,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 bool MiniScript::createScriptStatementSyntaxTree(const string_view& methodName, const vector<string_view>& arguments, const ScriptStatement& statement, ScriptSyntaxTreeNode& syntaxTree) {
 	if (VERBOSE == true) Console::println("MiniScript::createScriptStatementSyntaxTree(): " + getStatementInformation(statement) + ": " + string(methodName) + "(" + getArgumentsAsString(arguments) + ")");
 	// arguments
-	for (auto& argument: arguments) {
+	for (const auto& argument: arguments) {
 		// variable
 		if (StringTools::viewStartsWith(argument, "$") == true) {
 			//
@@ -715,7 +715,7 @@ bool MiniScript::validateCallable(const string& function) {
 	auto& script = scripts[functionScriptIdx];
 	auto statementIdx = 0;
 	//
-	for (auto& syntaxTreeNode: script.syntaxTree) {
+	for (const auto& syntaxTreeNode: script.syntaxTree) {
 		auto& statement = script.statements[statementIdx++];
 		//
 		if (validateCallable(syntaxTreeNode, statement) == false) {
@@ -758,7 +758,7 @@ bool MiniScript::validateCallable(const ScriptSyntaxTreeNode& syntaxTreeNode, co
 			break;
 		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
 			{
-				for (auto& argument: syntaxTreeNode.arguments) {
+				for (const auto& argument: syntaxTreeNode.arguments) {
 					if (validateCallable(argument, statement) == false) return false;
 				}
 				//
@@ -785,8 +785,8 @@ bool MiniScript::validateContextFunctions(const string& function, vector<string>
 	//
 	functionStack.push_back(script.condition);
 	//
-	for (auto& syntaxTreeNode: script.syntaxTree) {
-		auto& statement = script.statements[statementIdx++];
+	for (const auto& syntaxTreeNode: script.syntaxTree) {
+		const auto& statement = script.statements[statementIdx++];
 		//
 		if (validateContextFunctions(syntaxTreeNode, functionStack, statement) == false) {
 			//
@@ -812,7 +812,7 @@ bool MiniScript::validateContextFunctions(const ScriptSyntaxTreeNode& syntaxTree
 				if (contextFunctions.empty() == false) {
 					//
 					string contextFunctionsString;
-					for (auto &contextFunction: contextFunctions) {
+					for (const auto &contextFunction: contextFunctions) {
 						if (contextFunctionsString.empty() == false) contextFunctionsString+= ", ";
 						contextFunctionsString+= contextFunction + "()";
 					}
@@ -821,7 +821,7 @@ bool MiniScript::validateContextFunctions(const ScriptSyntaxTreeNode& syntaxTree
 					if (find(contextFunctions.begin(), contextFunctions.end(), functionStackFunction) == contextFunctions.end()) {
 						//
 						string contextFunctionsString;
-						for (auto &contextFunction: contextFunctions) {
+						for (const auto &contextFunction: contextFunctions) {
 							if (contextFunctionsString.empty() == false) contextFunctionsString+= ", ";
 							contextFunctionsString+= contextFunction + "()";
 						}
@@ -852,7 +852,7 @@ bool MiniScript::validateContextFunctions(const ScriptSyntaxTreeNode& syntaxTree
 			break;
 		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
 			{
-				for (auto& argument: syntaxTreeNode.arguments) {
+				for (const auto& argument: syntaxTreeNode.arguments) {
 					if (validateContextFunctions(argument, functionStack, statement) == false) return false;
 				}
 				//
@@ -870,7 +870,7 @@ bool MiniScript::validateContextFunctions(const ScriptSyntaxTreeNode& syntaxTree
 void MiniScript::emit(const string& condition) {
 	if (VERBOSE == true) Console::println("MiniScript::emit(): '" + scriptFileName + "': " + condition);
 	auto scriptIdxToStart = 0;
-	for (auto& script: scripts) {
+	for (const auto& script: scripts) {
 		auto conditionMet = true;
 		if (script.name.empty() == false && script.name == condition) {
 			break;
@@ -1013,7 +1013,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 	//
 	{
 		string scriptAsString;
-		for (auto& scriptLine: scriptLines) scriptAsString+= scriptLine + "\n";
+		for (const auto& scriptLine: scriptLines) scriptAsString+= scriptLine + "\n";
 		auto scriptHash = SHA256::encode(scriptAsString);
 		if (native == true) {
 			if (scriptHash == nativeHash) {
@@ -1107,7 +1107,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 							auto argumentNamesString = StringTools::trim(StringTools::substring(statement, leftBracketIdx + 1, rightBracketIdx));
 							auto argumentNamesTokenized = StringTools::tokenize(argumentNamesString, ",");
 							statement = StringTools::substring(statement, 0, leftBracketIdx);
-							for (auto& argumentName: argumentNamesTokenized) {
+							for (const auto& argumentName: argumentNamesTokenized) {
 								auto argumentNameTrimmed = StringTools::trim(argumentName);
 								auto assignBack = false;
 								if (StringTools::startsWith(argumentNameTrimmed, "=") == true) {
@@ -1351,7 +1351,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 	}
 
 	// validate method call context functions
-	for (auto& script: scripts) {
+	for (const auto& script: scripts) {
 		//
 		if (script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION) {
 			//
@@ -1379,7 +1379,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 
 	// check for initialize and error condition
 	auto haveErrorScript = false;
-	for (auto& script: scripts) {
+	for (const auto& script: scripts) {
 		if (script.scriptType == Script::SCRIPTTYPE_ONENABLED) {
 			// no op
 		} else
@@ -1421,7 +1421,7 @@ int MiniScript::determineScriptIdxToStart() {
 	if (VERBOSE == true) Console::println("MiniScript::determineScriptIdxToStart()");
 	auto nothingScriptIdx = SCRIPTIDX_NONE;
 	auto scriptIdx = 0;
-	for (auto& script: scripts) {
+	for (const auto& script: scripts) {
 		if (script.scriptType != Script::SCRIPTTYPE_ON) {
 			// no op
 		} else
@@ -1466,9 +1466,9 @@ int MiniScript::determineNamedScriptIdxToStart() {
 	if (VERBOSE == true) Console::println("MiniScript::determineNamedScriptIdxToStart()");
 	// TODO: we could have a hash map here to speed up enabledConditionName -> script lookup
 	auto& scriptState = getScriptState();
-	for (auto& enabledConditionName: enabledNamedConditions) {
+	for (const auto& enabledConditionName: enabledNamedConditions) {
 		auto scriptIdx = 0;
-		for (auto& script: scripts) {
+		for (const auto& script: scripts) {
 			if (script.scriptType != Script::SCRIPTTYPE_ONENABLED ||
 				script.name != enabledConditionName) {
 				// no op
@@ -1747,14 +1747,14 @@ bool MiniScript::call(int scriptIdx, span<ScriptVariable>& argumentValues, Scrip
 		auto functionArguments = new ScriptVariable();
 		functionArguments->setType(MiniScript::TYPE_ARRAY);
 		// push arguments in function context
-		for (auto& argumentValue: argumentValues) {
+		for (const auto& argumentValue: argumentValues) {
 			functionArguments->pushArrayValue(argumentValue);
 		}
 		// have $arguments
 		scriptState.variables["$arguments"] = functionArguments;
 		// also put named arguments into state context variables
 		auto argumentIdx = 0;
-		for (auto& argument: scripts[scriptIdx].arguments) {
+		for (const auto& argument: scripts[scriptIdx].arguments) {
 			if (argumentIdx == argumentValues.size()) {
 				break;
 			}
@@ -1778,7 +1778,7 @@ bool MiniScript::call(int scriptIdx, span<ScriptVariable>& argumentValues, Scrip
 	// also put named arguments from state context variables back into argumentValues
 	{
 		auto argumentIdx = 0;
-		for (auto& argument: scripts[scriptIdx].arguments) {
+		for (const auto& argument: scripts[scriptIdx].arguments) {
 			if (argumentIdx == argumentValues.size()) {
 				break;
 			}
@@ -1829,7 +1829,7 @@ const vector<MiniScript::ScriptMethod*> MiniScript::getMethods() {
 				"5"
 			};
 			int aPrefixIdx = 0;
-			for (auto& prefix: prefixes) {
+			for (const auto& prefix: prefixes) {
 				if ((aName != prefix || aPrefix.empty() == false) && StringTools::startsWith(aName, prefix) == true) {
 					aName = StringTools::substring(aName, prefix.size());
 					break;
@@ -1837,7 +1837,7 @@ const vector<MiniScript::ScriptMethod*> MiniScript::getMethods() {
 				aPrefixIdx++;
 			}
 			int bPrefixIdx = 0;
-			for (auto& prefix: prefixes) {
+			for (const auto& prefix: prefixes) {
 				if ((bName != prefix || bPrefix.empty() == false) && StringTools::startsWith(bName, prefix) == true) {
 					bName = StringTools::substring(bName, prefix.size());
 					break;
@@ -1873,7 +1873,7 @@ const string MiniScript::getScriptInformation(int scriptIdx, bool includeStateme
 	string argumentsString;
 	switch(script.scriptType) {
 		case Script::SCRIPTTYPE_FUNCTION: {
-			for (auto& argument: script.arguments) {
+			for (const auto& argument: script.arguments) {
 				if (argumentsString.empty() == false) argumentsString+= ", ";
 				if (argument.assignBack == true) argumentsString+= "=";
 				argumentsString+= argument.name;
@@ -1892,7 +1892,7 @@ const string MiniScript::getScriptInformation(int scriptIdx, bool includeStateme
 		result+= "\n";
 	}
 	if (includeStatements == true) {
-		for (auto& scriptStatement: script.statements) {
+		for (const auto& scriptStatement: script.statements) {
 			result+= "\t" + to_string(scriptStatement.statementIdx) + ": " + scriptStatement.statement + (scriptStatement.gotoStatementIdx != STATEMENTIDX_NONE?" (gotoStatement " + to_string(scriptStatement.gotoStatementIdx) + ")":"") + "\n";
 		}
 		result+= "\n";
@@ -1905,7 +1905,7 @@ const string MiniScript::getInformation() {
 	string result;
 	result+= "Script: " + scriptPathName + "/" + scriptFileName + " (runs " + (native == true?"natively":"interpreted") + ")" + "\n\n";
 	auto scriptIdx = 0;
-	for (auto& script: scripts) {
+	for (const auto& script: scripts) {
 		result+= getScriptInformation(scriptIdx);
 		scriptIdx++;
 	}
@@ -1920,7 +1920,7 @@ const string MiniScript::getInformation() {
 			states.push_back(state);
 		}
 		sort(states.begin(), states.end());
-		for (auto& state: states) result+= state+ "\n";
+		for (const auto& state: states) result+= state+ "\n";
 	}
 	result+= "\n";
 
@@ -1941,7 +1941,7 @@ const string MiniScript::getInformation() {
 				methods.push_back(method);
 			}
 			sort(methods.begin(), methods.end());
-			for (auto& method: methods) result+= method + "\n";
+			for (const auto& method: methods) result+= method + "\n";
 		}
 		result+= "\n";
 
@@ -1961,7 +1961,7 @@ const string MiniScript::getInformation() {
 				operators.push_back(operatorString);
 			}
 			sort(operators.begin(), operators.end());
-			for (auto& method: operators) result+= method + "\n";
+			for (const auto& method: operators) result+= method + "\n";
 		}
 		result+= "\n";
 	} else {
@@ -1980,7 +1980,7 @@ const string MiniScript::getInformation() {
 			variables.push_back(variable);
 		}
 		sort(variables.begin(), variables.end());
-		for (auto& variable: variables) result+= variable + "\n";
+		for (const auto& variable: variables) result+= variable + "\n";
 	}
 
 	//
@@ -2616,7 +2616,7 @@ void MiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string result;
-				for (auto& namedCondition: miniScript->enabledNamedConditions) {
+				for (const auto& namedCondition: miniScript->enabledNamedConditions) {
 					result+= result.empty() == false?",":namedCondition;
 				}
 				returnValue.setValue(result);
@@ -2635,7 +2635,7 @@ void MiniScript::registerMethods() {
 				return "console.log";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				for (auto& argumentValue: argumentValues) {
+				for (const auto& argumentValue: argumentValues) {
 					Console::print(argumentValue.getValueString());
 				}
 				Console::println();
@@ -5644,7 +5644,7 @@ void MiniScript::registerMethods() {
 					auto tokenizedStringVector = StringTools::tokenize(stringValue, delimiters);
 					//
 					returnValue.setType(MiniScript::TYPE_ARRAY);
-					for (auto& tokenizedString: tokenizedStringVector) {
+					for (const auto& tokenizedString: tokenizedStringVector) {
 						returnValue.pushArrayValue(tokenizedString);
 					}
 				}
@@ -5695,7 +5695,7 @@ void MiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string result;
-				for (auto& argumentValue: argumentValues) {
+				for (const auto& argumentValue: argumentValues) {
 					result+= argumentValue.getValueString();
 				}
 				returnValue.setValue(result);
@@ -5942,7 +5942,7 @@ void MiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue.setType(MiniScript::TYPE_ARRAY);
-				for (auto& argumentValue: argumentValues) {
+				for (const auto& argumentValue: argumentValues) {
 					returnValue.pushArrayValue(argumentValue);
 				}
 			}
@@ -6457,7 +6457,7 @@ void MiniScript::registerMethods() {
 				} else {
 					auto keys = argumentValues[0].getMapKeys();
 					returnValue.setType(TYPE_ARRAY);
-					for (auto& key: keys) {
+					for (const auto& key: keys) {
 						returnValue.pushArrayValue(key);
 					}
 				}
@@ -6491,7 +6491,7 @@ void MiniScript::registerMethods() {
 				} else {
 					auto values = argumentValues[0].getMapValues();
 					returnValue.setType(TYPE_ARRAY);
-					for (auto& value: values) {
+					for (const auto& value: values) {
 						returnValue.pushArrayValue(value);
 					}
 				}
@@ -6646,7 +6646,7 @@ void MiniScript::registerMethods() {
 				} else {
 					auto keys = argumentValues[0].getSetKeys();
 					returnValue.setType(TYPE_ARRAY);
-					for (auto& key: keys) {
+					for (const auto& key: keys) {
 						returnValue.pushArrayValue(key);
 					}
 				}
@@ -7160,7 +7160,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 					// add argumnet for name of function
 					callSyntaxTreeNode.arguments.push_back(callArgumentSyntaxTreeNode);
 					// add original parameter to call syntaxTree
-					for (auto& argument: syntaxTree.arguments) {
+					for (const auto& argument: syntaxTree.arguments) {
 						callSyntaxTreeNode.arguments.push_back(argument);
 					}
 					// asign script.call method
@@ -7240,7 +7240,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 	}
 	generatedCode+= minIndentString + depthIndentString + "\t" + "// required method code arguments" + "\n";
 	// argument/return values
-	for (auto& codeLine: argumentValuesCode) {
+	for (const auto& codeLine: argumentValuesCode) {
 		generatedCode+= minIndentString + depthIndentString + "\t" + codeLine + "\n";
 	}
 	argumentValuesCode.clear();
@@ -7248,7 +7248,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 	// construct argument values
 	{
 		auto subArgumentIdx = 0;
-		for (auto& argument: syntaxTree.arguments) {
+		for (const auto& argument: syntaxTree.arguments) {
 			switch (argument.type) {
 				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
 					{
@@ -7310,7 +7310,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 	}
 
 	// argument values header
-	for (auto& codeLine: argumentValuesCode) {
+	for (const auto& codeLine: argumentValuesCode) {
 		generatedCode+= minIndentString + depthIndentString + "\t" + codeLine + "\n";
 	}
 	argumentValuesCode.clear();
@@ -7351,7 +7351,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 	// transpile method/function call argument
 	{
 		auto subArgumentIdx = 0;
-		for (auto& argument: syntaxTree.arguments) {
+		for (const auto& argument: syntaxTree.arguments) {
 			switch (argument.type) {
 				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
 				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
@@ -7376,7 +7376,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 			auto scriptIdx = scriptFunctionsIt->second;
 			// assign back arguments starting from argument index 1 as 0 is function name
 			auto argumentIdx = 1;
-			for (auto& argument: scripts[scriptIdx].arguments) {
+			for (const auto& argument: scripts[scriptIdx].arguments) {
 				//
 				if (argumentIdx == syntaxTree.arguments.size()) {
 					break;
@@ -7421,7 +7421,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 	} else {
 		// for methods
 		auto argumentIdx = 0;
-		for (auto& argumentType: scriptMethod->getArgumentTypes()) {
+		for (const auto& argumentType: scriptMethod->getArgumentTypes()) {
 			//
 			if (argumentIdx == syntaxTree.arguments.size()) {
 				break;
@@ -7495,7 +7495,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 		} else
 		if (StringTools::regexMatch(codeLine, "[\\ \\t]*miniScript[\\ \\t]*->startErrorScript[\\ \\t]*\\([\\ \\t]*\\)[\\ \\t]*;[\\ \\t]*") == true ||
 			StringTools::regexMatch(codeLine, "[\\ \\t]*miniScript[\\ \\t]*->emit[\\ \\t]*\\([\\ \\t]*[a-zA-Z0-9]*[\\ \\t]*\\)[\\ \\t]*;[\\ \\t]*") == true) {
-			for (auto& assignBackCodeLine: assignBackCodeLines) {
+			for (const auto& assignBackCodeLine: assignBackCodeLines) {
 				generatedCode+= minIndentString + depthIndentString + "\t";
 				for (auto i = 0; i < codeLine.size(); i++) {
 					if (codeLine[i] == ' ' || codeLine[i] == '\t') {
@@ -7527,7 +7527,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 	}
 
 	// assign back code
-	for (auto& assignBackCodeLine: assignBackCodeLines) {
+	for (const auto& assignBackCodeLine: assignBackCodeLines) {
 		generatedCode+= minIndentString + depthIndentString + "\t" + assignBackCodeLine + "\n";
 	}
 	//
@@ -7587,7 +7587,7 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 
 	//
 	unordered_set<int> gotoStatementIdxSet;
-	for (auto scriptStatement: script.statements) gotoStatementIdxSet.insert(scriptStatement.gotoStatementIdx);
+	for (const auto& scriptStatement: script.statements) gotoStatementIdxSet.insert(scriptStatement.gotoStatementIdx);
 
 	//
 	auto statementIdx = 0;
@@ -7712,7 +7712,7 @@ const string MiniScript::createSourceCode(const ScriptSyntaxTreeNode& syntaxTree
 				result+= syntaxTreeNode.value.getValueString();
 				if (endElse == false) result+= string("(");
 				auto argumentIdx = 0;
-				for (auto& argument: syntaxTreeNode.arguments) {
+				for (const auto& argument: syntaxTreeNode.arguments) {
 					if (argumentIdx > 0) result+= ", ";
 					result+= createSourceCode(argument);
 					argumentIdx++;
@@ -7738,7 +7738,7 @@ const string MiniScript::createSourceCode(Script::ScriptType scriptType, const s
 			}
 			auto argumentIdx = 0;
 			result+= "(";
-			for (auto& argument: arguments) {
+			for (const auto& argument: arguments) {
 				if (argumentIdx > 0) result+= ", ";
 				if (argument.assignBack == true) result+= "=";
 				result+= argument.name;
@@ -7772,7 +7772,7 @@ const string MiniScript::createSourceCode(Script::ScriptType scriptType, const s
 	}
 	//
 	auto indent = 1;
-	for (auto& syntaxTreeNode: syntaxTree) {
+	for (const auto& syntaxTreeNode: syntaxTree) {
 		if (syntaxTreeNode.type == ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD) {
 			if (syntaxTreeNode.value.getValueString() == "if") indent+= 0; else
 			if (syntaxTreeNode.value.getValueString() == "elseif") indent-= 1; else
@@ -7798,7 +7798,7 @@ const string MiniScript::createSourceCode(Script::ScriptType scriptType, const s
 const string MiniScript::createSourceCode() {
 	string result;
 	// create source code
-	for (auto& script: scripts) {
+	for (const auto& script: scripts) {
 		result+= createSourceCode(script.scriptType, script.emitCondition == true?script.condition:string(), script.arguments, script.name, script.conditionSyntaxTree, script.syntaxTree);
 	}
 	//
@@ -7948,7 +7948,7 @@ void MiniScript::serializeMapAsJson(Document& jParent, const ScriptVariable& var
 
 void MiniScript::serializeArrayAsJson(Document& jDocument, Value& jParent, const ScriptVariable& variable) {
 	auto& value = variable.getArrayValueReference();
-	for (auto& subVariable: value) {
+	for (const auto& subVariable: value) {
 		//
 		switch(subVariable.getType()) {
 			case TYPE_NULL:

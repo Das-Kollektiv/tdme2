@@ -805,7 +805,7 @@ void Terrain::applyBrushToTerrainModels(
 	// set terrain model vertices
 	{
 		auto partitionIdx = 0;
-		for (auto& terrainVertices: partitionTerrainVertices) {
+		for (const auto& terrainVertices: partitionTerrainVertices) {
 			if (terrainVertices.empty() == false) {
 				auto terrainNode = terrainModels[partitionIdx]->getNodeById("terrain");
 				if (terrainNode != nullptr) {
@@ -819,7 +819,7 @@ void Terrain::applyBrushToTerrainModels(
 	// set terrain model normals
 	{
 		auto partitionIdx = 0;
-		for (auto& terrainNormals: partitionTerrainNormals) {
+		for (const auto& terrainNormals: partitionTerrainNormals) {
 			if (terrainNormals.empty() == false) {
 				auto terrainNode = terrainModels[partitionIdx]->getNodeById("terrain");
 				if (terrainNode != nullptr) {
@@ -1124,7 +1124,7 @@ void Terrain::applyRampBrushToTerrainModels(
 	// set terrain model vertices
 	{
 		auto partitionIdx = 0;
-		for (auto& terrainVertices: partitionTerrainVertices) {
+		for (const auto& terrainVertices: partitionTerrainVertices) {
 			if (terrainVertices.empty() == false) {
 				auto terrainNode = terrainModels[partitionIdx]->getNodeById("terrain");
 				if (terrainNode != nullptr) {
@@ -1138,7 +1138,7 @@ void Terrain::applyRampBrushToTerrainModels(
 	// set terrain model normals
 	{
 		auto partitionIdx = 0;
-		for (auto& terrainNormals: partitionTerrainNormals) {
+		for (const auto& terrainNormals: partitionTerrainNormals) {
 			if (terrainNormals.empty() == false) {
 				auto terrainNode = terrainModels[partitionIdx]->getNodeById("terrain");
 				if (terrainNode != nullptr) {
@@ -1400,7 +1400,7 @@ void Terrain::createWaterModels(
 		nodeFacesEntityWater.setMaterial(waterMaterial);
 		vector<FacesEntity> nodeFacesEntities;
 		vector<Face> nodeFaces;
-		for (auto faceIndices: partitionWaterFaces[partitionIdx]) {
+		for (auto& faceIndices: partitionWaterFaces[partitionIdx]) {
 			nodeFaces.emplace_back(
 				waterNode,
 				faceIndices[0],
@@ -1543,13 +1543,13 @@ void Terrain::applyFoliageBrush(
 
 	// randomize
 	unordered_map<int, unordered_map<int, vector<int>>> brushMapIdxPerDensityPerPrototype;
-	for (auto& foliageBrushPrototype: foliageBrushPrototypes) {
+	for (const auto& foliageBrushPrototype: foliageBrushPrototypes) {
 		for (auto i = 0; i < brushMapCountMapTemplate.size(); i++) {
 			auto brushMapPrototypeCount = brushMapCountMapTemplate[i][foliageBrushPrototype.prototypeId];
 			brushMapIdxPerDensityPerPrototype[foliageBrushPrototype.prototypeId][static_cast<int>(brushMapPrototypeCount * 1000.0f)].push_back(i);
 		}
 	}
-	for (auto& foliageBrushPrototype: foliageBrushPrototypes) {
+	for (const auto& foliageBrushPrototype: foliageBrushPrototypes) {
 		for (auto i = 0; i < brushMapCountMap.size(); i++) {
 			auto brushMapPrototypeCountMapEntityITemplate = brushMapCountMapTemplate[i][foliageBrushPrototype.prototypeId];
 			auto brushMapPrototypeCountMapEntityI = brushMapCountMap[i][foliageBrushPrototype.prototypeId];
@@ -1751,7 +1751,7 @@ void Terrain::applyFoliageDeleteBrush(
 	auto heightMin = Float::MAX_VALUE;
 	auto heightMax = Float::MIN_VALUE;
 	auto prototypeCount = 0;
-	for (auto& foliageBrushPrototype: foliageBrushPrototypes) {
+	for (const auto& foliageBrushPrototype: foliageBrushPrototypes) {
 		if (foliageBrushPrototype.prototypeId == -1) continue;
 		heightMin = Math::min(heightMin, foliageBrushPrototype.heightMin);
 		heightMax = Math::max(heightMax, foliageBrushPrototype.heightMax);
@@ -2226,7 +2226,7 @@ void Terrain::mirrorXAxis(
 	auto partitionsZ = static_cast<int>(Math::ceil(depth / PARTITION_SIZE));
 	vector<unordered_map<int, vector<Transform>>> foliageMapsMirrored;
 	createFoliageMaps(width * 2.0f, depth, foliageMapsMirrored);
-	for (auto& foliageMapPartition: foliageMaps) {
+	for (const auto& foliageMapPartition: foliageMaps) {
 		for (const auto& [foliagePrototypeId, foliagePrototypeTransformVector]: foliageMapPartition) {
 			for (const auto& transform: foliagePrototypeTransformVector) {
 				{

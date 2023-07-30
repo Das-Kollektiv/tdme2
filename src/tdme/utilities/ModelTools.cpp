@@ -202,7 +202,7 @@ void ModelTools::setupJoints(Model* model)
 		// do we have a skinning
 		if (skinning != nullptr) {
 			// yep
-			for (auto& joint : skinning->getJoints()) {
+			for (const auto& joint : skinning->getJoints()) {
 				auto jointNodeIt = nodes.find(joint.getNodeId());
 				if (jointNodeIt != nodes.end()) {
 					setJoint(jointNodeIt->second);
@@ -322,7 +322,7 @@ void ModelTools::cloneNode(Node* sourceNode, Model* targetModel, Node* targetPar
 		clonedNode->setBitangents(sourceNode->getBitangents());
 		clonedNode->setOrigins(sourceNode->getOrigins());
 		auto facesEntities = clonedNode->getFacesEntities();
-		for (auto& facesEntity: sourceNode->getFacesEntities()) {
+		for (const auto& facesEntity: sourceNode->getFacesEntities()) {
 			if (facesEntity.getMaterial() == nullptr) continue;
 			Material* material = nullptr;
 			auto materialIt = targetModel->getMaterials().find(facesEntity.getMaterial()->getId());
@@ -405,10 +405,10 @@ void ModelTools::partitionNode(Node* sourceNode, map<string, Model*>& modelsByPa
 	map<string, vector<Vector3>> partitionModelNodesBitangents;
 	map<string, vector<FacesEntity>> partitionModelNodesFacesEntities;
 
-	for (auto& facesEntity: sourceNode->getFacesEntities()) {
+	for (const auto& facesEntity: sourceNode->getFacesEntities()) {
 		bool haveTextureCoordinates = facesEntity.isTextureCoordinatesAvailable();
 		bool haveTangentsBitangents = facesEntity.isTangentBitangentAvailable();
-		for (auto& face: facesEntity.getFaces()) {
+		for (const auto& face: facesEntity.getFaces()) {
 			// get face vertices and such
 			auto& vertexIndices = face.getVertexIndices();
 			auto& normalIndices = face.getNormalIndices();
@@ -658,8 +658,8 @@ float ModelTools::computeNormals(Node* node, ProgressCallback* progressCallback,
 	}
 	node->setFacesEntities(facesEntities);
 	facesEntityProcessed = 0;
-	for (auto& facesEntity: node->getFacesEntities()) {
-		for (auto& face: facesEntity.getFaces()) {
+	for (const auto& facesEntity: node->getFacesEntities()) {
+		for (const auto& face: facesEntity.getFaces()) {
 			for (auto i = 0; i < vertices.size(); i++) {
 				if (interpolateNormal(node, node->getVertices()[face.getVertexIndices()[i]], normals, normal) == true) {
 					normals[face.getNormalIndices()[i]].set(normal);
@@ -836,10 +836,10 @@ void ModelTools::checkForOptimization(Node* node, map<string, int>& materialUseC
 	if (node->isJoint() == true) return;
 
 	// track material usage
-	for (auto& facesEntity: node->getFacesEntities()) {
+	for (const auto& facesEntity: node->getFacesEntities()) {
 		if (facesEntity.getMaterial() == nullptr) continue;
 		bool excludeDiffuseTexture = false;
-		for (auto& excludeDiffuseTextureFileNamePattern: excludeDiffuseTextureFileNamePatterns) {
+		for (const auto& excludeDiffuseTextureFileNamePattern: excludeDiffuseTextureFileNamePatterns) {
 			if (StringTools::startsWith(facesEntity.getMaterial()->getSpecularMaterialProperties()->getDiffuseTextureFileName(), excludeDiffuseTextureFileNamePattern) == true) {
 				excludeDiffuseTexture = true;
 				break;
@@ -927,12 +927,12 @@ void ModelTools::optimizeNode(Node* sourceNode, Model* targetModel, int diffuseT
 		auto targetTextureCoordinates = targetNode->getTextureCoordinates();
 		auto targetOrigins = targetNode->getOrigins();
 		auto targetOffset = targetVertices.size();
-		for (auto& v: sourceVertices) targetVertices.push_back(v);
-		for (auto& v: sourceNormals) targetNormals.push_back(v);
-		for (auto& v: sourceTangents) targetTangents.push_back(v);
-		for (auto& v: sourceBitangents) targetBitangents.push_back(v);
-		for (auto& v: sourceTextureCoordinates) targetTextureCoordinates.push_back(v);
-		for (auto& v: sourceOrigins) targetOrigins.push_back(v);
+		for (const auto& v: sourceVertices) targetVertices.push_back(v);
+		for (const auto& v: sourceNormals) targetNormals.push_back(v);
+		for (const auto& v: sourceTangents) targetTangents.push_back(v);
+		for (const auto& v: sourceBitangents) targetBitangents.push_back(v);
+		for (const auto& v: sourceTextureCoordinates) targetTextureCoordinates.push_back(v);
+		for (const auto& v: sourceOrigins) targetOrigins.push_back(v);
 		targetNode->setVertices(targetVertices);
 		targetNode->setNormals(targetNormals);
 		targetNode->setTangents(targetTangents);
@@ -947,12 +947,12 @@ void ModelTools::optimizeNode(Node* sourceNode, Model* targetModel, int diffuseT
 		auto targetFaces = (tmpFacesEntity = targetNode->getFacesEntity("tdme.facesentity.optimized")) != nullptr?tmpFacesEntity->getFaces():vector<Face>();
 		auto targetFacesMaskedTransparency = (tmpFacesEntity = targetNode->getFacesEntity("tdme.facesentity.optimized.maskedtransparency")) != nullptr?tmpFacesEntity->getFaces():vector<Face>();
 		auto targetFacesTransparency = (tmpFacesEntity = targetNode->getFacesEntity("tdme.facesentity.optimized.transparency")) != nullptr?tmpFacesEntity->getFaces():vector<Face>();
-		for (auto& sourceFacesEntity: sourceNode->getFacesEntities()) {
+		for (const auto& sourceFacesEntity: sourceNode->getFacesEntities()) {
 			auto material = sourceFacesEntity.getMaterial();
 
 			//
 			string keptMaterialId;
-			for (auto& excludeDiffuseTextureFileNamePattern: excludeDiffuseTextureFileNamePatterns) {
+			for (const auto& excludeDiffuseTextureFileNamePattern: excludeDiffuseTextureFileNamePatterns) {
 				if (StringTools::startsWith(sourceFacesEntity.getMaterial()->getSpecularMaterialProperties()->getDiffuseTextureFileName(), excludeDiffuseTextureFileNamePattern) == true) {
 					keptMaterialId = sourceFacesEntity.getMaterial()->getId();
 					break;
@@ -975,7 +975,7 @@ void ModelTools::optimizeNode(Node* sourceNode, Model* targetModel, int diffuseT
 				textureXScale = diffuseTextureAtlasSize == 0?1.0f:1.0f;
 				textureYScale = diffuseTextureAtlasSize == 0?1.0f:1.0f;
 			}
-			for (auto& face: sourceFacesEntity.getFaces()) {
+			for (const auto& face: sourceFacesEntity.getFaces()) {
 				auto sourceVertexIndices = face.getVertexIndices();
 				auto sourceNormalIndices = face.getNormalIndices();
 				auto sourceTangentIndices = face.getTangentIndices();
@@ -1090,7 +1090,7 @@ void ModelTools::optimizeNode(Node* sourceNode, Model* targetModel, int diffuseT
 			targetFacesEntities.push_back(FacesEntity(targetNode, "tdme.facesentity.optimized.transparency"));
 			targetFacesEntities[targetFacesEntities.size() - 1].setFaces(targetFacesTransparency);
 		}
-		for (auto& targetFacesEntityKeptMaterial: targetFacesEntitiesKeptMaterials) {
+		for (const auto& targetFacesEntityKeptMaterial: targetFacesEntitiesKeptMaterials) {
 			targetFacesEntities.push_back(targetFacesEntityKeptMaterial);
 		}
 		targetNode->setFacesEntities(targetFacesEntities);
@@ -1162,7 +1162,7 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 	// clone materials with diffuse textures that we like to keep
 	for (const auto& [materialId, material]: model->getMaterials()) {
 		bool keepDiffuseTexture = false;
-		for (auto& excludeDiffuseTextureFileNamePattern: excludeDiffuseTextureFileNamePatterns) {
+		for (const auto& excludeDiffuseTextureFileNamePattern: excludeDiffuseTextureFileNamePatterns) {
 			if (StringTools::startsWith(material->getSpecularMaterialProperties()->getDiffuseTextureFileName(), excludeDiffuseTextureFileNamePattern) == true) {
 				keepDiffuseTexture = true;
 				break;

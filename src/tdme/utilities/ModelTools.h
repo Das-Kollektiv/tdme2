@@ -205,8 +205,8 @@ private:
 		array<Vector3, 3> vertices;
 		auto normalCount = 0;
 		normal.set(0.0f, 0.0f, 0.0f);
-		for (auto& facesEntity: node->getFacesEntities()) {
-			for (auto& face: facesEntity.getFaces()) {
+		for (const auto& facesEntity: node->getFacesEntities()) {
+			for (const auto& face: facesEntity.getFaces()) {
 				for (auto i = 0; i < vertices.size(); i++) {
 					if (vertex.equals(node->getVertices()[face.getVertexIndices()[i]]) == true) {
 						normal.add(normals[face.getNormalIndices()[0]]);

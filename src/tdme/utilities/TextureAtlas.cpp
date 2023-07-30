@@ -185,7 +185,7 @@ void TextureAtlas::update() {
 
 	// determine new height
 	auto atlasTextureHeight = 0;
-	for (auto& atlasTextureEntity: atlasTextures) {
+	for (const auto& atlasTextureEntity: atlasTextures) {
 		atlasTextureHeight = Math::max(atlasTextureHeight, atlasTextureEntity.top + atlasTextureEntity.height);
 	}
 
@@ -201,7 +201,7 @@ void TextureAtlas::update() {
 	auto atlasTextureBuffer = atlasTextureByteBuffer.getBuffer();
 
 	// generate atlas
-	for (auto& atlasTextureEntity: atlasTextures) {
+	for (const auto& atlasTextureEntity: atlasTextures) {
 		auto atlasLeft = atlasTextureEntity.left;
 		auto atlasTop = atlasTextureEntity.top;
 		auto texture = atlasTextureEntity.texture;
@@ -246,7 +246,7 @@ void TextureAtlas::update() {
 	atlasTexture->acquireReference();
 
 	// write atlas textures back to our hash map
-	for (auto& atlasTextureEntity: atlasTextures) atlasTextureIdxToAtlasTextureMapping[atlasTextureEntity.textureIdx] = atlasTextureEntity;
+	for (const auto& atlasTextureEntity: atlasTextures) atlasTextureIdxToAtlasTextureMapping[atlasTextureEntity.textureIdx] = atlasTextureEntity;
 
 	//
 	if (VERBOSE == true) {
