@@ -815,7 +815,6 @@ void GUI::onKeyUp(int key, int keyCode, int x, int y) {
 }
 
 void GUI::onMouseDragged(int x, int y) {
-	unsetMouseStates();
 	GUIMouseEvent guiMouseEvent;
 	guiMouseEvent.setTime(Time::getCurrentMillis());
 	guiMouseEvent.setType(GUIMouseEvent::MOUSEEVENT_DRAGGED);
@@ -835,7 +834,6 @@ void GUI::onMouseDragged(int x, int y) {
 }
 
 void GUI::onMouseMoved(int x, int y) {
-	unsetMouseStates();
 	GUIMouseEvent guiMouseEvent;
 	guiMouseEvent.setTime(Time::getCurrentMillis());
 	guiMouseEvent.setType(GUIMouseEvent::MOUSEEVENT_MOVED);
