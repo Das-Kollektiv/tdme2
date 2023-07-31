@@ -66,7 +66,7 @@ static void parseDeclaration(const string& description, const string& token) {
 	Console::println("parseDeclaration():");
 	auto descriptionLines = StringTools::tokenize(description, "\n");
 	Console::println("\tDescription");
-	for (auto& descriptionLine: descriptionLines) Console::println("\t\t" + descriptionLine);
+	for (const auto& descriptionLine: descriptionLines) Console::println("\t\t" + descriptionLine);
 	Console::println("\tDeclaration");
 	Console::println(token);
 }
@@ -289,17 +289,16 @@ static void parseHpp(const string& hppFileName) {
 	Console::println("Summary: ");
 	Console::println();
 	Console::println("Usings: ");
-	for (auto& usingIt: usings) {
-		Console::println("\t" + usingIt.first + " --> " + usingIt.second);
+	for (const auto& [usingShortClassName, usingFullClassName]: usings) {
+		Console::println("\t" + usingShortClassName + " --> " + usingFullClassName);
 	}
 	Console::println("Classes: ");
-	for (auto& classIt: classes) {
-		auto& classDeclaration = classIt.second;
+	for (const auto& [className, classDeclaration]: classes) {
 		Console::println("\t" + classDeclaration.name + "(" + classDeclaration.namespaceName + ")");
 		Console::println("\t\tDescription:");
 		auto descriptionLines = StringTools::tokenize(classDeclaration.description, "\n");
-		for (auto& descriptionLine: descriptionLines) Console::println("\t\t\t" + descriptionLine);
-		for (auto& friendClass: classDeclaration.friendClasses) {
+		for (const auto& descriptionLine: descriptionLines) Console::println("\t\t\t" + descriptionLine);
+		for (const auto& friendClass: classDeclaration.friendClasses) {
 			Console::println("\t\tFriend Class: " + friendClass);
 		}
 	}

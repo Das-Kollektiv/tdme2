@@ -51,7 +51,7 @@ void Node::setVertices(const vector<Vector3>& vertices)
 {
 	this->vertices.resize(vertices.size());
 	auto i = 0;
-	for (auto& vertex: vertices) {
+	for (const auto& vertex: vertices) {
 		this->vertices[i++] = vertex;
 	}
 	this->verticesUpdated = true;
@@ -61,7 +61,7 @@ void Node::setNormals(const vector<Vector3>& normals)
 {
 	this->normals.resize(normals.size());
 	auto i = 0;
-	for (auto& normal: normals) {
+	for (const auto& normal: normals) {
 		this->normals[i++] = normal;
 	}
 	this->normalsUpdated = true;
@@ -71,7 +71,7 @@ void Node::setTextureCoordinates(const vector<TextureCoordinate>& textureCoordin
 {
 	this->textureCoordinates.resize(textureCoordinates.size());
 	auto i = 0;
-	for (auto& textureCoordinate: textureCoordinates) {
+	for (const auto& textureCoordinate: textureCoordinates) {
 		this->textureCoordinates[i++] = textureCoordinate;
 	}
 }
@@ -80,7 +80,7 @@ void Node::setTangents(const vector<Vector3>& tangents)
 {
 	this->tangents.resize(tangents.size());
 	auto i = 0;
-	for (auto& tangent: tangents) {
+	for (const auto& tangent: tangents) {
 		this->tangents[i++] = tangent;
 	}
 }
@@ -89,7 +89,7 @@ void Node::setBitangents(const vector<Vector3>& bitangents)
 {
 	this->bitangents.resize(bitangents.size());
 	auto i = 0;
-	for (auto& bitangent: bitangents) {
+	for (const auto& bitangent: bitangents) {
 		this->bitangents[i++] = bitangent;
 	}
 }
@@ -109,7 +109,7 @@ void Node::setSkinning(Skinning* skinning)
 int32_t Node::getFaceCount() const
 {
 	auto faceCount = 0;
-	for (auto& facesEntity : facesEntities) {
+	for (const auto& facesEntity : facesEntities) {
 		faceCount += facesEntity.getFaces().size();
 	}
 	return faceCount;
@@ -126,7 +126,7 @@ void Node::setFacesEntities(const vector<FacesEntity>& facesEntities)
 {
 	this->facesEntities.resize(facesEntities.size());
 	auto i = 0;
-	for (auto& facesEntity: facesEntities) {
+	for (const auto& facesEntity: facesEntities) {
 		this->facesEntities[i++] = facesEntity;
 	}
 }
@@ -134,16 +134,7 @@ void Node::setFacesEntities(const vector<FacesEntity>& facesEntities)
 void Node::setOrigins(const vector<Vector3>& origins) {
 	this->origins.resize(origins.size());
 	auto i = 0;
-	for (auto& origin: origins) {
+	for (const auto& origin: origins) {
 		this->origins[i++] = origin;
 	}
-}
-
-Node* Node::getSubNodeById(const string& nodeId)
-{
-	auto nodeIt = subNodes.find(nodeId);
-	if (nodeIt != subNodes.end()) {
-		return nodeIt->second;
-	}
-	return nullptr;
 }

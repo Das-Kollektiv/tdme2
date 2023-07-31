@@ -35,7 +35,7 @@ public:
 			if (++time == 5) {
 				// get client key list
 				auto clientKeySet = server->getClientKeySet();
-				for (auto& clientKey: clientKeySet) {
+				for (const auto& clientKey: clientKeySet) {
 					auto client = static_cast<EchoUDPServerClient*>(server->getClientByKey(clientKey));
 					if (client != NULL) {
 						auto packet = client->createPacket();

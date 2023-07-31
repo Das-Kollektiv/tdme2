@@ -127,8 +127,8 @@ Model* GLTFReader::read(const string& pathName, const string& fileName, bool use
 
 	// parse nodes aka scene
 	int anonymousNodeIdx = 1;
-	for (auto& gltfScene: gltfModel.scenes) {
-		for (auto gltfNodeIdx: gltfScene.nodes) {
+	for (const auto& gltfScene: gltfModel.scenes) {
+		for (const auto gltfNodeIdx: gltfScene.nodes) {
 			auto& glTfNode = gltfModel.nodes[gltfNodeIdx];
 			auto node = parseNode(pathName, gltfModel, gltfNodeIdx, model, nullptr, anonymousNodeIdx, useBC7TextureCompression);
 			model->getNodes()[node->getId()] = node;
@@ -147,9 +147,9 @@ Model* GLTFReader::read(const string& pathName, const string& fileName, bool use
 		map<string, vector<Matrix4x4>> animationScaleMatrices;
 		map<string, vector<Matrix4x4>> animationRotationMatrices;
 		map<string, vector<Matrix4x4>> animationTranslationMatrices;
-		for (auto& gltfAnimation: gltfModel.animations) {
+		for (const auto& gltfAnimation: gltfModel.animations) {
 			auto frames = 0;
-			for (auto& gltfChannel: gltfAnimation.channels) {
+			for (const auto& gltfChannel: gltfAnimation.channels) {
 				auto gltfNodeName = gltfModel.nodes[gltfChannel.target_node].name;
 				auto node = model->getNodeById(gltfNodeName);
 				if (node == nullptr) {
@@ -235,24 +235,18 @@ Model* GLTFReader::read(const string& pathName, const string& fileName, bool use
 		}
 
 		// extend all animation matrices to max frames
-		for (auto& it: animationScaleMatrices) {
-			auto& nodeId = it.first;
-			auto& animationMatrices = it.second;
+		for (auto& [nodeId, animationMatrices]: animationScaleMatrices) {
 			while (animationMatrices.size() < maxFrames) animationMatrices.emplace_back(getNodeScaleMatrix(gltfModel, nodeId));
 		}
-		for (auto& it: animationRotationMatrices) {
-			auto& nodeId = it.first;
-			auto& animationMatrices = it.second;
+		for (auto& [nodeId, animationMatrices]: animationRotationMatrices) {
 			while (animationMatrices.size() < maxFrames) animationMatrices.emplace_back(getNodeRotationMatrix(gltfModel, nodeId));
 		}
-		for (auto& it: animationTranslationMatrices) {
-			auto& nodeId = it.first;
-			auto& animationMatrices = it.second;
+		for (auto& [nodeId, animationMatrices]: animationTranslationMatrices) {
 			while (animationMatrices.size() < maxFrames) animationMatrices.emplace_back(getNodeTranslationMatrix(gltfModel, nodeId));
 		}
 
 		// set up nodes animations if we have frames
-		for (auto& animationNode: animationNodes) {
+		for (const auto& animationNode: animationNodes) {
 			auto node = model->getNodeById(animationNode);
 			if (node == nullptr) {
 				Console::println("GLTFReader::GLTFReader(): animation: node not found:" + animationNode);
@@ -282,8 +276,7 @@ Model* GLTFReader::read(const string& pathName, const string& fileName, bool use
 	// check if to compute normals
 	{
 		auto computeNormals = false;
-		for (auto& nodeIt: model->getNodes()) {
-			auto node = nodeIt.second;
+		for (const auto& [nodeId, node]: model->getNodes()) {
 			if (node->getVertices().size() != node->getNormals().size()) {
 				computeNormals = true;
 			}
@@ -295,8 +288,8 @@ Model* GLTFReader::read(const string& pathName, const string& fileName, bool use
 	}
 
 	// compute tangents and bitangents
-	for (auto& nodeIt: model->getSubNodes()) {
-		computeTangentsAndBitangents(nodeIt.second);
+	for (const auto& [nodeId, node]: model->getSubNodes()) {
+		computeTangentsAndBitangents(node);
 	}
 
 	// lets prepare for indexed rendering, or disable it later, as it makes not much sense with tangents and bitangents
@@ -399,7 +392,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 	vector<FacesEntity> facesEntities;
 	auto& mesh = gltfModel.meshes[gltfNode.mesh];
 	int facesEntityIdx = 0;
-	for (auto& gltfPrimitive: mesh.primitives) {
+	for (const auto& gltfPrimitive: mesh.primitives) {
 		Material* material = nullptr;
 		if (gltfPrimitive.material != -1) {
 			auto& gltfMaterial = gltfModel.materials[gltfPrimitive.material];
@@ -697,9 +690,8 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 		bool haveVertices = false;
 		bool haveNormals = false;
 		bool haveTextureCoordinates = false;
-		for (auto& gltfAttributeIt: gltfPrimitive.attributes) {
-			auto gltfBufferType = gltfAttributeIt.first;
-			auto& attributeAccessor = gltfModel.accessors[gltfAttributeIt.second];
+		for (const auto& [gltfBufferType, gltfAttributeValue]: gltfPrimitive.attributes) {
+			auto& attributeAccessor = gltfModel.accessors[gltfAttributeValue];
 			auto& attributeBufferView = gltfModel.bufferViews[attributeAccessor.bufferView];
 			auto& attributeBuffer = gltfModel.buffers[attributeBufferView.buffer];
 			if (gltfBufferType == "POSITION") {
@@ -890,7 +882,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 			{
 				auto i = 0;
 				vector<Joint> skinningJoints(gltfSkin.joints.size());
-				for (auto gltfJointNodeIdx: gltfSkin.joints) {
+				for (const auto gltfJointNodeIdx: gltfSkin.joints) {
 					Joint joint(gltfModel.nodes[gltfJointNodeIdx].name);
 					joint.setBindMatrix(
 						Matrix4x4(
@@ -946,7 +938,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 }
 
 void GLTFReader::parseNodeChildren(const string& pathName, tinygltf::Model& gltfModel, const vector<int>& gltfNodeChildrenIdx, Node* parentNode, int& anonymousNodeIdx, bool useBC7TextureCompression) {
-	for (auto gltfNodeIdx: gltfNodeChildrenIdx) {
+	for (const auto gltfNodeIdx: gltfNodeChildrenIdx) {
 		auto& gltfNode = gltfModel.nodes[gltfNodeIdx];
 		auto node = parseNode(pathName, gltfModel, gltfNodeIdx, parentNode->getModel(), parentNode, anonymousNodeIdx, useBC7TextureCompression);
 		parentNode->getModel()->getNodes()[node->getId()] = node;
@@ -982,8 +974,8 @@ string GLTFReader::determineTextureFileName(const string& imageName) {
 
 void GLTFReader::computeTangentsAndBitangents(Node* node) {
 	ModelTools::computeTangentsAndBitangents(node);
-	for (auto& nodeIt: node->getSubNodes()) {
-		computeTangentsAndBitangents(nodeIt.second);
+	for (const auto& [nodeId, node]: node->getSubNodes()) {
+		computeTangentsAndBitangents(node);
 	}
 }
 
@@ -991,7 +983,7 @@ const Matrix4x4 GLTFReader::getNodeScaleMatrix(const tinygltf::Model& gltfModel,
 	Matrix4x4 scaleMatrix;
 	scaleMatrix.identity();
 	auto foundNode = false;
-	for (auto& gltfNode: gltfModel.nodes) {
+	for (const auto& gltfNode: gltfModel.nodes) {
 		if (gltfNode.name == nodeId) {
 			foundNode = true;
 			//
@@ -1013,7 +1005,7 @@ const Matrix4x4 GLTFReader::getNodeRotationMatrix(const tinygltf::Model& gltfMod
 	Matrix4x4 rotationMatrix;
 	rotationMatrix.identity();
 	auto foundNode = false;
-	for (auto& gltfNode: gltfModel.nodes) {
+	for (const auto& gltfNode: gltfModel.nodes) {
 		if (gltfNode.name == nodeId) {
 			foundNode = true;
 			//
@@ -1036,7 +1028,7 @@ const Matrix4x4 GLTFReader::getNodeTranslationMatrix(const tinygltf::Model& gltf
 	Matrix4x4 translationMatrix;
 	translationMatrix.identity();
 	auto foundNode = false;
-	for (auto& gltfNode: gltfModel.nodes) {
+	for (const auto& gltfNode: gltfModel.nodes) {
 		if (gltfNode.name == nodeId) {
 			foundNode = true;
 			//

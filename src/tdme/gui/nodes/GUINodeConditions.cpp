@@ -45,7 +45,7 @@ void GUINodeConditions::updateElementNode(const vector<string>& conditions) cons
 	// also update nodes that belong to this conditions but are not with in sub tree of related element node
 	auto elementNodeToNodeMappingIt = screenNode->elementNodeToNodeMapping.find(elementNode->getId());
 	if (elementNodeToNodeMappingIt != screenNode->elementNodeToNodeMapping.end()) {
-		for (auto& nodeId: elementNodeToNodeMappingIt->second) {
+		for (const auto& nodeId: elementNodeToNodeMappingIt->second) {
 			auto node = screenNode->getNodeById(nodeId);
 			if (node == nullptr) continue;
 			updateNode(node, conditions);

@@ -103,14 +103,12 @@ void TMWriter::write(Model* model, vector<uint8_t>& data, bool useBC7TextureComp
 	os.writeFloatArray(model->getImportTransformMatrix().getArray());
 	writeEmbeddedTextures(&os, model, useBC7TextureCompression);
 	os.writeInt(model->getMaterials().size());
-	for (auto it: model->getMaterials()) {
-		Material* material = it.second;
+	for (const auto& [materialId, material]: model->getMaterials()) {
 		writeMaterial(&os, material);
 	}
 	writeSubNodes(&os, model->getSubNodes());
 	os.writeInt(model->getAnimationSetups().size());
-	for (auto it: model->getAnimationSetups()) {
-		AnimationSetup* animationSetup = it.second;
+	for (const auto& [animationSetupId, animationSetup]: model->getAnimationSetups()) {
 		writeAnimationSetup(&os, animationSetup);
 	}
 	if (Application::hasApplication() == true && os.getData()->size() < 10 * 1024 * 1024) writeThumbnail(&os, model);
@@ -118,8 +116,7 @@ void TMWriter::write(Model* model, vector<uint8_t>& data, bool useBC7TextureComp
 
 void TMWriter::writeEmbeddedTextures(TMWriterOutputStream* os, Model* m, bool useBC7TextureCompression) {
 	map<string, Texture*> embeddedTextures;
-	for (auto it: m->getMaterials()) {
-		Material* material = it.second;
+	for (const auto& [materialId, material]: m->getMaterials()) {
 		auto smp = material->getSpecularMaterialProperties();
 		if (smp != nullptr && m->hasEmbeddedSpecularTextures() == true) {
 			if (smp->getDiffuseTexture() != nullptr) embeddedTextures[smp->getDiffuseTexture()->getId()] = smp->getDiffuseTexture();
@@ -135,29 +132,28 @@ void TMWriter::writeEmbeddedTextures(TMWriterOutputStream* os, Model* m, bool us
 		}
 	}
 	os->writeInt(embeddedTextures.size());
-	for (auto it: embeddedTextures) {
-		auto texture = it.second;
-		os->writeString(texture->getId());
+	for (const auto& [embeddedTextureId, embeddedTexture]: embeddedTextures) {
+		os->writeString(embeddedTexture->getId());
 		// optional PNG
 		if (useBC7TextureCompression == true) {
 			os->writeByte(3); // BC7 with mip maps
 			vector<uint8_t> bc7Data;
-			os->writeInt(texture->getWidth());
-			os->writeInt(texture->getHeight());
-			os->writeInt(texture->getTextureWidth());
-			os->writeInt(texture->getTextureHeight());
-			os->writeByte(texture->getRGBDepthBitsPerPixel());
-			os->writeByte(texture->getMinFilter());
-			os->writeByte(texture->getMagFilter());
-			BC7TextureWriter::write(texture->getTextureWidth(), texture->getTextureHeight(), texture->getRGBDepthBitsPerPixel() / 8, texture->getRGBTextureData(), bc7Data);
+			os->writeInt(embeddedTexture->getWidth());
+			os->writeInt(embeddedTexture->getHeight());
+			os->writeInt(embeddedTexture->getTextureWidth());
+			os->writeInt(embeddedTexture->getTextureHeight());
+			os->writeByte(embeddedTexture->getRGBDepthBitsPerPixel());
+			os->writeByte(embeddedTexture->getMinFilter());
+			os->writeByte(embeddedTexture->getMagFilter());
+			BC7TextureWriter::write(embeddedTexture->getTextureWidth(), embeddedTexture->getTextureHeight(), embeddedTexture->getRGBDepthBitsPerPixel() / 8, embeddedTexture->getRGBTextureData(), bc7Data);
 			os->writeInt(bc7Data.size());
 			os->writeUInt8tArray(bc7Data);
-			if (texture->isUseMipMap() == false) {
+			if (embeddedTexture->isUseMipMap() == false) {
 				os->writeByte(0);
 			} else {
-				auto mipMapTextures = texture->getMipMapTextures(true);
+				auto mipMapTextures = embeddedTexture->getMipMapTextures(true);
 				os->writeByte(mipMapTextures.size());
-				for (auto& mipMapTexture: mipMapTextures) {
+				for (const auto& mipMapTexture: mipMapTextures) {
 					os->writeByte(mipMapTexture.format);
 					os->writeInt(mipMapTexture.width);
 					os->writeInt(mipMapTexture.height);
@@ -167,10 +163,10 @@ void TMWriter::writeEmbeddedTextures(TMWriterOutputStream* os, Model* m, bool us
 			}
 		} else {
 			vector<uint8_t> pngData;
-			PNGTextureWriter::write(texture, pngData, false, false);
+			PNGTextureWriter::write(embeddedTexture, pngData, false, false);
 			os->writeByte(1); // PNG
-			os->writeByte(texture->getMinFilter());
-			os->writeByte(texture->getMagFilter());
+			os->writeByte(embeddedTexture->getMinFilter());
+			os->writeByte(embeddedTexture->getMagFilter());
 			os->writeInt(pngData.size());
 			os->writeUInt8tArray(pngData);
 		}
@@ -342,8 +338,7 @@ void TMWriter::writeSkinning(TMWriterOutputStream* os, Skinning* skinning)
 void TMWriter::writeSubNodes(TMWriterOutputStream* os, const map<string, Node*>& subNodes)
 {
 	os->writeInt(subNodes.size());
-	for (auto it: subNodes) {
-		Node* subNode = it.second;
+	for (const auto& [subNodeId, subNode]: subNodes) {
 		writeNode(os, subNode);
 	}
 }

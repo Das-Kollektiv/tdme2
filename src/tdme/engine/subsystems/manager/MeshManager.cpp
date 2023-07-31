@@ -21,9 +21,7 @@ MeshManager::MeshManager()
 }
 
 MeshManager::~MeshManager() {
-	for (auto it = meshes.begin(); it != meshes.end(); ++it) {
-		delete it->second;
-	}
+	for (const auto& [meshManagedId, meshManaged]: meshes) delete meshManaged;
 }
 
 ObjectNodeMesh* MeshManager::getMesh(const string& meshId)

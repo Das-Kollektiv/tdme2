@@ -32,33 +32,33 @@ using tdme::utilities::StringTools;
 
 ShadowMapRenderShader::ShadowMapRenderShader(Renderer* renderer): renderer(renderer)
 {
-	if (ShadowMapRenderShaderDefaultImplementation::isSupported(renderer) == true) shader["default"] = new ShadowMapRenderShaderDefaultImplementation(renderer);
-	if (ShadowMapRenderShaderFoliageImplementation::isSupported(renderer) == true) shader["foliage"] = new ShadowMapRenderShaderFoliageImplementation(renderer);
-	if (ShadowMapRenderShaderTreeImplementation::isSupported(renderer) == true) shader["tree"] = new ShadowMapRenderShaderTreeImplementation(renderer);
+	if (ShadowMapRenderShaderDefaultImplementation::isSupported(renderer) == true) shaders["default"] = new ShadowMapRenderShaderDefaultImplementation(renderer);
+	if (ShadowMapRenderShaderFoliageImplementation::isSupported(renderer) == true) shaders["foliage"] = new ShadowMapRenderShaderFoliageImplementation(renderer);
+	if (ShadowMapRenderShaderTreeImplementation::isSupported(renderer) == true) shaders["tree"] = new ShadowMapRenderShaderTreeImplementation(renderer);
 	auto threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
 	contexts.resize(threadCount);
 }
 
 ShadowMapRenderShader::~ShadowMapRenderShader()
 {
-	for (auto shaderIt: shader) {
-		delete shaderIt.second;
+	for (const auto& [shaderId, shader]: shaders) {
+		delete shader;
 	}
 }
 
 bool ShadowMapRenderShader::isInitialized()
 {
 	bool initialized = true;
-	for (auto shaderIt: shader) {
-		initialized&= shaderIt.second->isInitialized();
+	for (const auto& [shaderId, shader]: shaders) {
+		initialized&= shader->isInitialized();
 	}
 	return initialized;
 }
 
 void ShadowMapRenderShader::initialize()
 {
-	for (auto shaderIt: shader) {
-		shaderIt.second->initialize();
+	for (const auto& [shaderId, shader]: shaders) {
+		shader->initialize();
 	}
 }
 
@@ -145,9 +145,9 @@ void ShadowMapRenderShader::setShader(int contextIdx, const string& id) {
 	//
 	auto& shadowMappingShaderRenderContext = contexts[contextIdx];
 	auto currentImplementation = shadowMappingShaderRenderContext.implementation;
-	auto shaderIt = shader.find(shaderId);
-	if (shaderIt == shader.end()) {
-		shaderIt = shader.find("default");
+	auto shaderIt = shaders.find(shaderId);
+	if (shaderIt == shaders.end()) {
+		shaderIt = shaders.find("default");
 	}
 	auto nextImplementation = shaderIt->second;
 	if (currentImplementation != nextImplementation) {
@@ -161,7 +161,7 @@ void ShadowMapRenderShader::setShader(int contextIdx, const string& id) {
 }
 
 void ShadowMapRenderShader::loadTextures(const string& pathName) {
-	for (auto shaderIt: shader) {
-		shaderIt.second->loadTextures(pathName);
+	for (const auto& [shaderId, shader]: shaders) {
+		shader->loadTextures(pathName);
 	}
 }

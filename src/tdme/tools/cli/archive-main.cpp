@@ -110,7 +110,7 @@ void scanPath(const string& path, vector<string>& totalFiles) {
 
 	FileSystem::getInstance()->list(path, files, &listFilter);
 
-	for (auto fileName: files) {
+	for (const auto& fileName: files) {
 		if (FileSystem::getInstance()->isPath(path + "/" + fileName) == false) {
 			totalFiles.push_back(path + "/" + fileName);
 		} else {
@@ -241,7 +241,7 @@ int main(int argc, char** argv)
 
 	// add files to archive
 	vector<FileInformation> fileInformations;
-	for (auto fileName: files) {
+	for (const auto& fileName: files) {
 		processFile(fileName, fileInformations);
 	}
 
@@ -251,7 +251,7 @@ int main(int argc, char** argv)
 		ofs.seekp(0, ofstream::end);
 		uint32_t fileInformationOffsetEnd = 0LL;
 		uint64_t fileInformationOffset = ofs.tellp();
-		for (auto& fileInformation: fileInformations) {
+		for (const auto& fileInformation: fileInformations) {
 			uint32_t nameSize = fileInformation.name.size();
 			ofs.write((char*)&nameSize, sizeof(nameSize));
 			for (auto i = 0; i < nameSize; i++) ofs.write(&fileInformation.name[i], 1);

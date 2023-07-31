@@ -197,12 +197,12 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 
 	// replace with variables
 	auto newXML = xml;
-	for (auto& variableIt: variables) {
-		newXML = StringTools::replace(newXML, "{$" + variableIt.first + "}", escape(variableIt.second));
+	for (const auto& [variableName, variableValue]: variables) {
+		newXML = StringTools::replace(newXML, "{$" + variableName + "}", escape(variableValue));
 	}
 	// replace with theme properties
-	for (auto& themePropertyIt: themeProperties->getProperties()) {
-		newXML = StringTools::replace(newXML, "{$" + themePropertyIt.first + "}", escape(themePropertyIt.second));
+	for (const auto& [themePropertyName, themePropertyValue]: themeProperties->getProperties()) {
+		newXML = StringTools::replace(newXML, "{$" + themePropertyName + "}", escape(themePropertyValue));
 	}
 
 	//
@@ -312,8 +312,8 @@ void GUIParser::parse(GUIParentNode* parentNode, const string& xml)
 	//
 	auto newXML = xml;
 	// replace with theme properties
-	for (auto& themePropertyIt: themeProperties->getProperties()) {
-		newXML = StringTools::replace(newXML, "{$" + themePropertyIt.first + "}", escape(themePropertyIt.second));
+	for (const auto& [themePropertyName, themePropertyValue]: themeProperties->getProperties()) {
+		newXML = StringTools::replace(newXML, "{$" + themePropertyName + "}", escape(themePropertyValue));
 	}
 
 	TiXmlDocument xmlDocument;
@@ -1602,8 +1602,8 @@ void GUIParser::parseTemplate(GUIParentNode* parentNode, const string& parentEle
 	auto themeProperties = parentNode->getScreenNode()->getApplicationSubPathName() == "project"?projectThemeProperties:engineThemeProperties;
 
 	// replace with theme properties
-	for (auto& themePropertyIt: themeProperties->getProperties()) {
-		newTemplateXML = StringTools::replace(newTemplateXML, "{$" + themePropertyIt.first + "}", escape(themePropertyIt.second));
+	for (const auto& [themePropertyName, themePropertyValue]: themeProperties->getProperties()) {
+		newTemplateXML = StringTools::replace(newTemplateXML, "{$" + themePropertyName + "}", escape(themePropertyValue));
 	}
 
 	// replace attributes given
@@ -1614,9 +1614,8 @@ void GUIParser::parseTemplate(GUIParentNode* parentNode, const string& parentEle
 	}
 
 	// replace attributes from element
-	for (auto newGuiElementAttributesIt : templateAttributes) {
-		auto guiElementAttributeValue = escape(newGuiElementAttributesIt.second);
-		newTemplateXML = StringTools::replace(newTemplateXML, "{$" + newGuiElementAttributesIt.first + "}", guiElementAttributeValue);
+	for (const auto& [attributeName, attributeValue] : templateAttributes) {
+		newTemplateXML = StringTools::replace(newTemplateXML, "{$" + attributeName + "}", escape(attributeValue));
 	}
 
 	// replace remaining unset variables with empty spaces
@@ -1644,8 +1643,8 @@ void GUIParser::parseInnerXML(GUIParentNode* parentNode, const string& parentEle
 	auto themeProperties = parentNode->getScreenNode()->getApplicationSubPathName() == "project"?projectThemeProperties:engineThemeProperties;
 
 	// replace with theme properties
-	for (auto& themePropertyIt: themeProperties->getProperties()) {
-		newInnerXML = StringTools::replace(newInnerXML, "{$" + themePropertyIt.first + "}", escape(themePropertyIt.second));
+	for (const auto& [themePropertyName, themePropertyValue]: themeProperties->getProperties()) {
+		newInnerXML = StringTools::replace(newInnerXML, "{$" + themePropertyName + "}", escape(themePropertyValue));
 	}
 
 	// replace attributes given
@@ -1658,9 +1657,8 @@ void GUIParser::parseInnerXML(GUIParentNode* parentNode, const string& parentEle
 	}
 
 	// replace attributes from element
-	for (auto newGuiElementAttributesIt: attributes) {
-		auto guiElementAttributeValue = escape(newGuiElementAttributesIt.second);
-		newInnerXML = StringTools::replace(newInnerXML, "{$" + newGuiElementAttributesIt.first + "}", guiElementAttributeValue);
+	for (const auto& [attributeName, attributeValue]: attributes) {
+		newInnerXML = StringTools::replace(newInnerXML, "{$" + attributeName + "}", escape(attributeValue));
 	}
 
 	// replace remaining unset variables with empty spaces
@@ -2066,8 +2064,8 @@ void GUIParser::initialize()
 }
 
 void GUIParser::dispose() {
-	for (auto& elementIt: *elements) {
-		delete elementIt.second;
+	for (const auto& [elementId, element]: *elements) {
+		delete element;
 	}
 	elements->clear();
 	delete elements;

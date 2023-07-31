@@ -146,7 +146,7 @@ static void gatherMethodCode(const vector<string>& miniScriptExtensionsCode, con
 
 	// find min indent from method code and depth indent
 	int minIndent = Integer::MAX_VALUE;
-	for (auto& codeLine: executeMethodCode) {
+	for (const auto& codeLine: executeMethodCode) {
 		auto indent = 0;
 		for (auto i = 0; i < codeLine.size(); i++) {
 			auto c = codeLine[i];
@@ -188,8 +188,8 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	vector<string> _miniScriptExtensionFileNames;
 	_miniScriptExtensionFileNames.push_back("src/tdme/utilities/MiniScript.cpp");
 	_miniScriptExtensionFileNames.push_back("src/tdme/utilities/MiniScriptMath.cpp");
-	for (auto& miniScriptExtensionFileName: miniScriptExtensionFileNames) _miniScriptExtensionFileNames.push_back(miniScriptExtensionFileName);
-	for (auto& miniScriptExtensionFileName: _miniScriptExtensionFileNames) {
+	for (const auto& miniScriptExtensionFileName: miniScriptExtensionFileNames) _miniScriptExtensionFileNames.push_back(miniScriptExtensionFileName);
+	for (const auto& miniScriptExtensionFileName: _miniScriptExtensionFileNames) {
 		vector<string> miniScriptExtensionsCode;
 		FileSystem::getInstance()->getContentAsStringArray(Tools::getPathName(miniScriptExtensionFileName), Tools::getFileName(miniScriptExtensionFileName), miniScriptExtensionsCode);
 		for (auto i = 0; i < miniScriptExtensionsCode.size(); i++) {
@@ -223,11 +223,11 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	//
 	string headerIndent = "\t";
 	string methodCodeIndent = "\t";
-	auto scripts = scriptInstance->getScripts();
+	auto& scripts = scriptInstance->getScripts();
 	string generatedExecuteCode;
 	{
 		auto scriptIdx = 0;
-		for (auto& script: scripts) {
+		for (const auto& script: scripts) {
 			// method name
 			string methodName =
 				(script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION?
@@ -252,7 +252,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	auto nothingScriptIdx = -1;
 	{
 		auto scriptIdx = 0;
-		for (auto& script: scripts) {
+		for (const auto& script: scripts) {
 			//
 			if (StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true) {
 				if (script.condition == "nothing") nothingScriptIdx = scriptIdx;
@@ -275,7 +275,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	generatedDeclarations+= headerIndent + "\t" + "\t" + "return;" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "}" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "auto& scriptState = getScriptState();" + "\n";
-	generatedDeclarations+= headerIndent + "\t" + "for (auto& scriptVariableIt: scriptState.variables) delete scriptVariableIt.second;" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "for (const auto& [scriptVariableName, scriptVariable]: scriptState.variables) delete scriptVariable;" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "scriptState.variables.clear();" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "getScriptState().running = true;" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "registerVariables();" + "\n";
@@ -319,7 +319,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	initializeNativeDefinition+= methodCodeIndent + "\t" + "{" + "\n";
 	{
 		auto scriptIdx = 0;
-		for (auto& script: scripts) {
+		for (const auto& script: scripts) {
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "Script(" + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + (script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION?"Script::SCRIPTTYPE_FUNCTION":(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"Script::SCRIPTTYPE_ON":"Script::SCRIPTTYPE_ONENABLED")) + "," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + to_string(script.line) + "," + "\n";
@@ -337,7 +337,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + (script.emitCondition == true?"true":"false") + "," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "{" + "\n";
 			auto statementIdx = 0;
-			for (auto& statement: script.statements) {
+			for (const auto& statement: script.statements) {
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "ScriptStatement(" + "\n";
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + to_string(statement.line) + "," + "\n";
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + to_string(statement.statementIdx) + "," + "\n";
@@ -352,7 +352,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + (script.callable == true?"true":"false") + ",\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "{\n";
 			auto argumentIdx = 0;
-			for (auto& argument: script.arguments) {
+			for (const auto& argument: script.arguments) {
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "Script::ScriptArgument(" + "\n";
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + "\"" + argument.name + "\"," + "\n";
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + (argument.assignBack == true?"true":"false") + "\n";
@@ -369,10 +369,10 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	initializeNativeDefinition+= methodCodeIndent + "setNativeScriptFunctions(" + "\n";
 	initializeNativeDefinition+= methodCodeIndent + "\t" + "{" + "\n";
 	auto scriptFunctionIdx = 0;
-	for (auto& scriptFunctionIt: scriptInstance->scriptFunctions) {
+	for (const auto& [functionName, functionIdx]: scriptInstance->scriptFunctions) {
 		initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "{" + "\n";
-		initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\"" + scriptFunctionIt.first + "\"," + "\n";
-		initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + to_string(scriptFunctionIt.second) + "\n";
+		initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\"" + functionName + "\"," + "\n";
+		initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + to_string(functionIdx) + "\n";
 		initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "}" + (scriptFunctionIdx != scriptInstance->scriptFunctions.size() - 1?",":"") + "\n";
 		scriptFunctionIdx++;
 	}
@@ -389,10 +389,10 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	generatedDetermineNamedScriptIdxToStartDefinition+= "int " + miniScriptClassName + "::determineNamedScriptIdxToStart() {" + "\n";
 	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "if (native == false) return MiniScript::determineNamedScriptIdxToStart();" + "\n";
 	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "auto miniScript = this;" + "\n";
-	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "for (auto& enabledNamedCondition: enabledNamedConditions) {" + "\n";
+	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "for (const auto& enabledNamedCondition: enabledNamedConditions) {" + "\n";
 	{
 		auto scriptIdx = 0;
-		for (auto& script: scripts) {
+		for (const auto& script: scripts) {
 			// method name
 			string methodName =
 				(script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION?

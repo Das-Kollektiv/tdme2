@@ -77,9 +77,9 @@ string HTTPClient::urlEncode(const string &value) {
 
 string HTTPClient::createHTTPRequestHeaders(const string& hostName, const string& method, const string& relativeUrl, const unordered_map<string, string>& getParameters, const unordered_map<string, string>& postParameters, const string& body) {
 	string query;
-	for (auto getParameterIt: getParameters) {
+	for (const auto& [parameterName, parameterValue]: getParameters) {
 		if (query.size() == 0) query+= "?"; else query+="&";
-		query+= urlEncode(getParameterIt.first) + "=" + urlEncode(getParameterIt.second);
+		query+= urlEncode(parameterName) + "=" + urlEncode(parameterValue);
 	}
 	auto request =
 		string(method + " " + relativeUrl + query + " HTTP/1.1\r\n") +
@@ -98,9 +98,9 @@ string HTTPClient::createHTTPRequestHeaders(const string& hostName, const string
 	if (method == HTTP_METHOD_POST || method == HTTP_METHOD_PUT) {
 		string _body;
 		if (postParameters.size() > 0) {
-			for (auto postParameterIt: postParameters) {
+			for (const auto& [parameterName, parameterValue]: postParameters) {
 				if (_body.size() >= 0) _body+="&";
-				_body+= urlEncode(postParameterIt.first) + "=" + urlEncode(postParameterIt.second);
+				_body+= urlEncode(parameterName) + "=" + urlEncode(parameterValue);
 			}
 		} else {
 			_body = body;

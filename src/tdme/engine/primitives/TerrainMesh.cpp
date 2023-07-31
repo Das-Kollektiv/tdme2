@@ -34,7 +34,7 @@ TerrainMesh::TerrainMesh(ObjectModel* model, const Transform& transform)
 	vector<Vector3> indexedVertices;
 	model->getTriangles(triangles);
 	Vector3 vertexTransformed;
-	for (auto& triangle: triangles) {
+	for (const auto& triangle: triangles) {
 		for (const auto& vertex: triangle.getVertices()) {
 			vertexTransformed = transform.getTransformMatrix().multiply(vertex);
 			auto i = 0;

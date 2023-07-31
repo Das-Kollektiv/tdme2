@@ -107,8 +107,8 @@ private:
 	 */
 	inline EntityHierarchyLevel* getEntityHierarchyLevel(EntityHierarchyLevel* entityHierarchyLevel, const string& id) {
 		if (id == entityHierarchyLevel->id) return entityHierarchyLevel;
-		for (auto& it: entityHierarchyLevel->children) {
-			auto childEntityHierarchyLevel = getEntityHierarchyLevel(it.second, id);
+		for (const auto& [childEntityId, childEntity]: entityHierarchyLevel->children) {
+			auto childEntityHierarchyLevel = getEntityHierarchyLevel(childEntity, id);
 			if (childEntityHierarchyLevel != nullptr) return childEntityHierarchyLevel;
 		}
 		return nullptr;

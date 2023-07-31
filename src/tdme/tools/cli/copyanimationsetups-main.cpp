@@ -48,8 +48,7 @@ int main(int argc, char** argv)
 		);
 		Console::println("Clearing target animation setups");
 		targetModel->getAnimationSetups().clear();
-		for (auto& animationSetupIt: srcModel->getAnimationSetups()) {
-			auto srcAnimationSetup = animationSetupIt.second;
+		for (const auto& [srcAnimationSetupId, srcAnimationSetup]: srcModel->getAnimationSetups()) {
 			Console::println("Adding target animation setup: " + srcAnimationSetup->getId());
 			if (srcAnimationSetup->getOverlayFromNodeId().length() == 0) {
 				targetModel->addAnimationSetup(

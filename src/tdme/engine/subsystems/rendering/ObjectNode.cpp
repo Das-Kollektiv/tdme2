@@ -83,8 +83,7 @@ void ObjectNode::createNodes(ObjectBase* object, bool useManagers, Engine::Anima
 
 void ObjectNode::createNodes(ObjectBase* object, const map<string, Node*>& nodes, bool animated, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget, vector<ObjectNode*>& objectNodes)
 {
-	for (auto it: nodes) {
-		Node* node = it.second;
+	for (const auto& [nodeId, node]: nodes) {
 		// skip on joints
 		if (node->isJoint() == true) {
 			continue;

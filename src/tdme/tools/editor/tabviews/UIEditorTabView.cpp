@@ -135,7 +135,7 @@ void UIEditorTabView::handleInputEvents()
 			auto& engineMouseEvents = engine->getGUI()->getMouseEvents();
 			auto& guiEngineMouseEvents = guiEngine->getGUI()->getMouseEvents();
 			auto mouseEventIdx = 0;
-			for (auto& event: engineMouseEvents) {
+			for (const auto& event: engineMouseEvents) {
 				if (event.isProcessed() == true) {
 					mouseEventIdx++;
 					continue;
@@ -273,7 +273,7 @@ void UIEditorTabView::initialize()
 				string search = StringTools::substring(uiEditorTabView->textNode->getText().getString(), previousDelimiterPos == 0?0:previousDelimiterPos + 1, idx);
 				vector<CodeCompletionSymbol> codeCompletionSymbolCandidates;
 				#define MAX_ENTRIES	40
-				for (auto& symbol: codeCompletion->symbols) {
+				for (const auto& symbol: codeCompletion->symbols) {
 					if (StringTools::startsWith(symbol.name, search) == true) {
 						if (symbol.overloadList.empty() == true) {
 							if (codeCompletionSymbolCandidates.size() == MAX_ENTRIES) {
@@ -299,7 +299,7 @@ void UIEditorTabView::initialize()
 								);
 							}
 						} else {
-							for (auto& overload: symbol.overloadList) {
+							for (const auto& overload: symbol.overloadList) {
 								if (codeCompletionSymbolCandidates.size() == MAX_ENTRIES) {
 									codeCompletionSymbolCandidates.push_back(
 										{
@@ -313,7 +313,7 @@ void UIEditorTabView::initialize()
 									break;
 								} else {
 									string parameters;
-									for (auto& parameter: overload.parameters) {
+									for (const auto& parameter: overload.parameters) {
 										if (parameters.empty() == false) parameters+= ", ";
 										parameters+= parameter;
 									}
@@ -340,7 +340,7 @@ void UIEditorTabView::initialize()
 				//
 				{
 					auto i = 0;
-					for (auto& codeCompletionSymbolCandidate: codeCompletionSymbolCandidates) {
+					for (const auto& codeCompletionSymbolCandidate: codeCompletionSymbolCandidates) {
 						// add light
 						class OnCodeCompletionAction: public virtual Action
 						{
@@ -360,7 +360,7 @@ void UIEditorTabView::initialize()
 								auto idxToDelimiterString = StringTools::trim(StringTools::substring(uiEditorTabView->textNode->getText().getString(), idx + 1 < uiEditorTabView->textNode->getTextLength()?idx + 1:idx, nextDelimiterPos2));
 								string parameterString;
 								if (symbol.type == CodeCompletionSymbol::TYPE_FUNCTION && uiEditorTabView->textNode->getText().getCharAt(nextDelimiterPos2) != '(') {
-									for (auto parameter: symbol.parameters) {
+									for (const auto& parameter: symbol.parameters) {
 										auto parameterTokenized = StringTools::tokenize(parameter, " \t\n");
 										if (parameterString.empty() == false) parameterString+= ", ";
 										parameterString+= parameterTokenized[parameterTokenized.size() - 1];
@@ -715,9 +715,9 @@ void UIEditorTabView::setModelMeshNode(const string& modelMeshNode) {
 	//
 	auto& modelMeshNodeFacesEntities = model->getNodeById(modelMeshNode)->getFacesEntities();
 	unordered_set<string> materialIds;
-	for (auto& facesEntity: modelMeshNodeFacesEntities) {
+	for (const auto& facesEntity: modelMeshNodeFacesEntities) {
 		if (facesEntity.getMaterial() != nullptr) materialIds.insert(facesEntity.getMaterial()->getId());
-		for (auto& face: facesEntity.getFaces()) {
+		for (const auto& face: facesEntity.getFaces()) {
 			for (auto i = 0; i < 3; i++) {
 				projectedUiMinZ = Math::min(projectedUiMinZ, face.getNode()->getVertices()[face.getVertexIndices()[i]].getZ());
 				projectedUiMinX = Math::min(projectedUiMinX, face.getNode()->getVertices()[face.getVertexIndices()[i]].getX());
@@ -728,7 +728,7 @@ void UIEditorTabView::setModelMeshNode(const string& modelMeshNode) {
 	}
 
 	//
-	for (auto& materialId: materialIds) {
+	for (const auto& materialId: materialIds) {
 		auto materialIt = model->getMaterials().find(materialId);
 		auto material = materialIt != model->getMaterials().end()?materialIt->second:nullptr;
 		if (material == nullptr) continue;

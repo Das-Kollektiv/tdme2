@@ -340,7 +340,7 @@ bool GUIElementNode::hasOption(const string& option) {
 
 const string GUIElementNode::getOptionValue(const string& option) {
 	StringTokenizer t;
-	for (auto& v: options) {
+	for (const auto& v: options) {
 		t.tokenize(v, "=");
 		if (t.hasMoreTokens() == false) continue;
 		auto optionName = StringTools::trim(t.nextToken());

@@ -174,7 +174,7 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 				ObjectModel meshObjectModel(meshModel);
 				vector<Triangle> meshFaceTriangles;
 				meshObjectModel.getTriangles(meshFaceTriangles);
-				for (auto& triangle: meshFaceTriangles) {
+				for (const auto& triangle: meshFaceTriangles) {
 					meshTriangles.push_back(meshPoints.size() / 3 + 0);
 					meshTriangles.push_back(meshPoints.size() / 3 + 1);
 					meshTriangles.push_back(meshPoints.size() / 3 + 2);
@@ -277,7 +277,7 @@ Model* GenerateConvexMeshes::createModel(const string& id, const vector<VHACD::V
 	vector<Vector3> normals;
 	vector<Face> faces;
 	int normalIndex = -1;
-	for (auto& vertex: points) {
+	for (const auto& vertex: points) {
 		vertices.push_back(
 			Vector3(
 				static_cast<float>(vertex.mX),
@@ -286,7 +286,7 @@ Model* GenerateConvexMeshes::createModel(const string& id, const vector<VHACD::V
 			)
 		);
 	}
-	for (auto& triangle: triangles) {
+	for (const auto& triangle: triangles) {
 		normalIndex = normals.size();
 		{
 			array<Vector3, 3> faceVertices = {
@@ -294,7 +294,7 @@ Model* GenerateConvexMeshes::createModel(const string& id, const vector<VHACD::V
 				vertices[triangle.mI1],
 				vertices[triangle.mI2]
 			};
-			for (auto& normal: ModelTools::computeNormals(faceVertices)) {
+			for (const auto& normal: ModelTools::computeNormals(faceVertices)) {
 				normals.push_back(normal);
 			}
 		}
@@ -337,8 +337,8 @@ Model* GenerateConvexMeshes::createModel(const string& id, vector<Triangle>& tri
 	vector<Vector3> normals;
 	vector<Face> faces;
 	auto index = 0;
-	for (auto& triangle: triangles) {
-		for (auto& vertex: triangle.getVertices()) {
+	for (const auto& triangle: triangles) {
+		for (const auto& vertex: triangle.getVertices()) {
 			vertices.push_back(vertex);
 		}
 		{
@@ -347,7 +347,7 @@ Model* GenerateConvexMeshes::createModel(const string& id, vector<Triangle>& tri
 				triangle.getVertices()[1],
 				triangle.getVertices()[2],
 			};
-			for (auto& normal: ModelTools::computeNormals(faceVertices)) {
+			for (const auto& normal: ModelTools::computeNormals(faceVertices)) {
 				normals.push_back(normal);
 			}
 		}

@@ -1254,8 +1254,8 @@ public:
 			// TODO: be verbose about misuse
 			if (type != TYPE_MAP) return keys;
 			auto& mapValue = getMapValueReference();
-			for (auto& it: mapValue) {
-				keys.push_back(it.first);
+			for (const auto& [mapEntryName, mapEntryValue]: mapValue) {
+				keys.push_back(mapEntryName);
 			}
 			return keys;
 		}
@@ -1269,8 +1269,8 @@ public:
 			// TODO: be verbose about misuse
 			if (type != TYPE_MAP) return values;
 			auto& mapValue = getMapValueReference();
-			for (auto& it: mapValue) {
-				values.push_back(it.second);
+			for (const auto& [mapEntryKey, mapEntryValue]: mapValue) {
+				values.push_back(mapEntryValue);
 			}
 			return values;
 		}
@@ -1341,7 +1341,7 @@ public:
 			// TODO: be verbose about misuse
 			if (type != TYPE_SET) return keys;
 			auto& setValue = getSetValueReference();
-			for (auto& key: setValue) {
+			for (const auto& key: setValue) {
 				keys.push_back(key);
 			}
 			return keys;
@@ -1621,7 +1621,7 @@ public:
 						auto& arrayValue = getArrayValueReference();
 						result+="[";
 						string valuesString;
-						for (auto& value: arrayValue) {
+						for (const auto& value: arrayValue) {
 							if (valuesString.empty() == false) valuesString+= ", ";
 							valuesString+= value.getValueString();
 						}
@@ -1634,9 +1634,9 @@ public:
 						auto& mapValue = getMapValueReference();
 						result+="{";
 						string valuesString;
-						for (auto& it: mapValue) {
+						for (const auto& [mapEntryName, mapEntryValue]: mapValue) {
 							if (valuesString.empty() == false) valuesString+= ", ";
-							valuesString+= it.first +  " = " + it.second.getValueString();
+							valuesString+= mapEntryName +  " = " + mapEntryValue.getValueString();
 						}
 						result+= valuesString;
 						result+="}";
@@ -1647,7 +1647,7 @@ public:
 						auto& setValue = getSetValueReference();
 						result+="{";
 						string valuesString;
-						for (auto& key: setValue) {
+						for (const auto& key: setValue) {
 							if (valuesString.empty() == false) valuesString+= ", ";
 							valuesString+= key;
 						}
@@ -1756,7 +1756,7 @@ public:
 			string result;
 			auto optionalArgumentCount = 0;
 			auto argumentIdx = 0;
-			for (auto& argumentType: argumentTypes) {
+			for (const auto& argumentType: argumentTypes) {
 				if (argumentType.optional == true) {
 					result+= "[";
 					optionalArgumentCount++;
@@ -2049,7 +2049,7 @@ protected:
 		auto& scriptState = getScriptState();
 		//
 		scriptState.running = false;
-		for (auto& scriptVariableIt: scriptState.variables) delete scriptVariableIt.second;
+		for (const auto& [scriptVariableName, scriptVariable]: scriptState.variables) delete scriptVariable;
 		scriptState.variables.clear();
 		if (isFunctionRunning() == false) timeEnabledConditionsCheckLast = TIME_NONE;
 		resetScriptExecutationState(SCRIPTIDX_NONE, STATEMACHINESTATE_NONE);
@@ -2085,7 +2085,7 @@ protected:
 	 */
 	inline void popScriptState() {
 		auto& scriptState = getScriptState();
-		for (auto& scriptVariableIt: scriptState.variables) delete scriptVariableIt.second;
+		for (const auto& [scriptVariableName, scriptVariable]: scriptState.variables) delete scriptVariable;
 		scriptStateStack.erase(scriptStateStack.begin() + scriptStateStack.size() - 1);
 	}
 
@@ -2136,7 +2136,7 @@ private:
 	 */
 	inline const string getArgumentsAsString(const vector<string_view>& arguments) {
 		string argumentsString;
-		for (auto& argument: arguments) argumentsString+= (argumentsString.empty() == false?", ":"") + string("'") + string(argument) + string("'");
+		for (const auto& argument: arguments) argumentsString+= (argumentsString.empty() == false?", ":"") + string("'") + string(argument) + string("'");
 		return argumentsString;
 	}
 
@@ -2147,7 +2147,7 @@ private:
 	 */
 	inline const string getArgumentsAsString(const vector<ScriptSyntaxTreeNode>& arguments) {
 		string argumentsString;
-		for (auto& argument: arguments) {
+		for (const auto& argument: arguments) {
 			switch (argument.type) {
 				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
 					switch(argument.value.getType()) {
@@ -2194,11 +2194,11 @@ private:
 	/**
 	 * Parse a script statement
 	 * @param statement statement 
-	 * @param method method
+	 * @param methodName method name
 	 * @param arguments arguments
 	 * @return success
 	 */
-	bool parseScriptStatement(const string_view& statement, string_view& method, vector<string_view>& arguments);
+	bool parseScriptStatement(const string_view& statement, string_view& methodName, vector<string_view>& arguments);
 
 	/**
 	 * Execute a script statement
@@ -2210,13 +2210,13 @@ private:
 
 	/**
 	 * Create script statement syntax tree
-	 * @param method method
+	 * @param methodName method name
 	 * @param arguments arguments
 	 * @param statement statement
 	 * @param syntaxTree syntax tree
 	 * @return success
 	 */
-	bool createScriptStatementSyntaxTree(const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, ScriptSyntaxTreeNode& syntaxTree);
+	bool createScriptStatementSyntaxTree(const string_view& methodName, const vector<string_view>& arguments, const ScriptStatement& statement, ScriptSyntaxTreeNode& syntaxTree);
 
 	/**
 	 * Validate callabe
@@ -2641,14 +2641,14 @@ private:
 		);
 		auto scriptEvaluateStatement = "internal.script.evaluate(" + executableStatement + ")";
 		//
-		string_view method;
+		string_view methodName;
 		vector<string_view> arguments;
 		ScriptSyntaxTreeNode evaluateSyntaxTree;
-		if (parseScriptStatement(scriptEvaluateStatement, method, arguments) == false) {
+		if (parseScriptStatement(scriptEvaluateStatement, methodName, arguments) == false) {
 			Console::println("MiniScript::evaluate(): '" + scriptFileName + "': " + evaluateStatement.statement + "@" + to_string(evaluateStatement.line) + ": failed to parse evaluation statement");
 			return false;
 		} else
-		if (createScriptStatementSyntaxTree(method, arguments, evaluateStatement, evaluateSyntaxTree) == false) {
+		if (createScriptStatementSyntaxTree(methodName, arguments, evaluateStatement, evaluateSyntaxTree) == false) {
 			Console::println("MiniScript::evaluate(): '" + scriptFileName + "': " + evaluateStatement.statement + "@" + to_string(evaluateStatement.line) + ": failed to create syntax tree for evaluation statement");
 			return false;
 		} else {
@@ -2807,7 +2807,7 @@ public:
 
 	/**
 	 * Returns if function with given name does exist
-	 * @param functionName method name
+	 * @param functionName function name
 	 * @return function exists
 	 */
 	inline bool hasFunction(const string& functionName) {
@@ -2840,13 +2840,13 @@ public:
 
 	/**
 	 * Get script argument information
-	 * @param method method
+	 * @param methodName method name
 	 * @return script argument information
 	 */
-	inline const string getArgumentInformation(const string& method) {
-		auto scriptMethod = getMethod(method);
+	inline const string getArgumentInformation(const string& methodName) {
+		auto scriptMethod = getMethod(methodName);
 		if (scriptMethod == nullptr) {
-			Console::println("MiniScript::getArgumentInformation(): method not found: " + method);
+			Console::println("MiniScript::getArgumentInformation(): method not found: " + methodName);
 			return "No information available";
 		}
 		return scriptMethod->getArgumentsInformation();
@@ -2893,7 +2893,7 @@ public:
 	 * @return has type
 	 */
 	inline static bool hasType(const span<ScriptVariable>& arguments, ScriptVariableType type) {
-		for (auto& argument: arguments) if (argument.getType() == type) return true;
+		for (const auto& argument: arguments) if (argument.getType() == type) return true;
 		return false;
 	}
 
@@ -3059,9 +3059,9 @@ public:
 
 	/**
 	 * Register script method
-	 * @param method method
+	 * @param scriptMethod script method
 	 */
-	void registerMethod(ScriptMethod* method);
+	void registerMethod(ScriptMethod* scriptMethod);
 
 	/**
 	 * Returns variable with given name
@@ -3219,7 +3219,7 @@ public:
 	 */
 	inline bool hasCondition(const string& condition) {
 		// iterate scripts to find out if condition exists
-		for (auto& script: scripts) {
+		for (const auto& script: scripts) {
 			if (script.scriptType != Script::SCRIPTTYPE_ON) {
 				// no op
 			} else

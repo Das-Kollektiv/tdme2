@@ -63,37 +63,12 @@ ConvexMesh::ConvexMesh()
 {
 }
 
-inline bool ConvexMesh::isVertexOnTrianglePlane(Triangle& triangle, const Vector3& vertex) {
-	for (auto& triangleVertex: triangle.getVertices()) {
-		if (triangleVertex.equals(vertex, VERTEX_COMPARE_EPSILON) == true) return true;
-	}
-	// see: http://www.ambrsoft.com/TrigoCalc/Plan3D/PointsCoplanar.htm
-	Vector3 v1;
-	Vector3 v2;
-	Vector3 v3;
-	v1.set(triangle.getVertices()[1]).sub(triangle.getVertices()[0]).normalize();
-	v2.set(triangle.getVertices()[2]).sub(triangle.getVertices()[0]).normalize();
-	v3.set(vertex).sub(triangle.getVertices()[0]);
-	auto v1Dotv2v3Cross = Vector3::computeDotProduct(v1, Vector3::computeCrossProduct(v2, v3).normalize());
-	return Math::abs(v1Dotv2v3Cross) < 0.001;
-}
-
-inline bool ConvexMesh::areTrianglesAdjacent(Triangle& triangle1, Triangle& triangle2) {
-	auto equalVertices = 0;
-	for (auto& triangle1Vertex: triangle1.getVertices()) {
-		for (auto& triangle2Vertex: triangle2.getVertices()) {
-			if (triangle1Vertex.equals(triangle2Vertex, VERTEX_COMPARE_EPSILON)) equalVertices++;
-		}
-	}
-	return equalVertices > 0;
-}
-
 void ConvexMesh::createConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, const Vector3& scale) {
 	// check if local translation is given
 	// 	determine center/position transformed
 	collisionShapeLocalTranslation.set(0.0f, 0.0f, 0.0f);
 	for (auto vertexIdx: indices) {
-		auto& vertex = vertices[vertexIdx];
+		const auto& vertex = vertices[vertexIdx];
 		collisionShapeLocalTranslation.add(vertex);
 	}
 	collisionShapeLocalTranslation.scale(1.0f / indices.size());
@@ -117,12 +92,12 @@ ConvexMesh::ConvexMesh(ObjectModel* model, const Vector3& scale)
 	model->getTriangles(triangles);
 
 	// determine coplanar faces of model
-	unordered_map<int, vector<Triangle*>> trianglesCoplanar;
+	unordered_map<int, vector<const Triangle*>> trianglesCoplanar;
 	{
 		auto triangle1Idx = 0;
 		unordered_set<int> trianglesProcessed;
 		//
-		for (auto& triangle1: triangles) {
+		for (const auto& triangle1: triangles) {
 			if (trianglesProcessed.find(triangle1Idx) != trianglesProcessed.end()) {
 				triangle1Idx++;
 				continue;
@@ -135,7 +110,7 @@ ConvexMesh::ConvexMesh(ObjectModel* model, const Vector3& scale)
 			do {
 				auto triangle2Idx = 0;
 				triangle2Added = 0;
-				for (auto& triangle2: triangles) {
+				for (const auto& triangle2: triangles) {
 					// if alreaedy processed skip triangle2
 					if (trianglesProcessed.find(triangle2Idx) != trianglesProcessed.end()) {
 						triangle2Idx++;
@@ -172,17 +147,15 @@ ConvexMesh::ConvexMesh(ObjectModel* model, const Vector3& scale)
 	}
 
 	// iterate triangles that are coplanar and build a polygon
-	for (auto& trianglesCoplanarIt: trianglesCoplanar) {
-		auto& trianglesCoplanarVector = trianglesCoplanarIt.second;
-
+	for (const auto& [trianglesCoplanarIdx, trianglesCoplanarVector]: trianglesCoplanar) {
 		// collect polygon vertices
 		vector<Vector3> polygonVertices;
 
 		// determine polygon vertices
-		for (auto& triangle: trianglesCoplanarVector) {
-			for (auto& triangleVertex: triangle->getVertices()) {
+		for (auto triangle: trianglesCoplanarVector) {
+			for (const auto& triangleVertex: triangle->getVertices()) {
 				bool foundVertex = false;
-				for (auto& polygonVertex: polygonVertices) {
+				for (const auto& polygonVertex: polygonVertices) {
 					if (polygonVertex.equals(triangleVertex, VERTEX_COMPARE_EPSILON) == true) {
 						foundVertex = true;
 						break;
@@ -232,7 +205,7 @@ ConvexMesh::ConvexMesh(ObjectModel* model, const Vector3& scale)
 				unordered_set<int> foundIndices;
 				for (auto i = 0; i < faceVertexCount; i++) {
 					auto foundVertex = false;
-					for (auto& polygonVertex: polygonVertices) {
+					for (const auto& polygonVertex: polygonVertices) {
 						if (polygonVertex.equals(vertices[indices[idx]], VERTEX_COMPARE_EPSILON) == true) {
 							foundIndices.insert(indices[idx]);
 							break;
@@ -255,7 +228,7 @@ ConvexMesh::ConvexMesh(ObjectModel* model, const Vector3& scale)
 
 		// determine polygon center, a point outside of mesh viewing the polygon
 		Vector3 polygonCenter;
-		for (auto& polygonVertex: polygonVertices) {
+		for (const auto& polygonVertex: polygonVertices) {
 			polygonCenter.add(polygonVertex);
 		}
 		polygonCenter.scale(1.0f / polygonVertices.size());
@@ -326,7 +299,7 @@ ConvexMesh::ConvexMesh(ObjectModel* model, const Vector3& scale)
 
 			// check if to insert vertex
 			int vertexIdx = 0;
-			for (auto& vertexExisting: vertices) {
+			for (const auto& vertexExisting: vertices) {
 				if (vertexExisting.equals(polygonVertex, VERTEX_COMPARE_EPSILON) == true) {
 					break;
 				}
@@ -345,7 +318,7 @@ ConvexMesh::ConvexMesh(ObjectModel* model, const Vector3& scale)
 	static int wfObjIdx = 0;
 
 	WFObjWriter wfObjWriter;
-	for (auto& vertex: vertices) wfObjWriter.addVertex(vertex);
+	for (const auto& vertex: vertices) wfObjWriter.addVertex(vertex);
 	auto faceVertexIdx = 0;
 	for (auto& faceVertexCount: facesVerticesCount) {
 		vector<int> faceVertexIndices;
@@ -384,13 +357,13 @@ void ConvexMesh::setScale(const Vector3& scale) {
 	auto verticesBuffer = verticesByteBuffer->asFloatBuffer();
 	auto indicesBuffer = indicesByteBuffer->asIntBuffer();
 	Vector3 vertexTransformed;
-	for (auto& vertex: vertices) {
+	for (const auto& vertex: vertices) {
 		vertexTransformed.set(vertex);
 		vertexTransformed.sub(center);
 		vertexTransformed.scale(scale);
 		verticesBuffer.put(vertexTransformed.getArray());
 	}
-	for (auto& index: indices) {
+	for (auto index: indices) {
 		indicesBuffer.put(index);
 	}
 	faces.clear();

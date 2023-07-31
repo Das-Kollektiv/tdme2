@@ -97,7 +97,7 @@ public:
 			//
 			auto scaleTo = 1024.0f;
 			//
-			for (auto inputFileName: modelFileNames) {
+			for (const auto& inputFileName: modelFileNames) {
 				auto outputFileName = StringTools::substring(inputFileName, 0, inputFileName.rfind('.')) + ".tm";
 				try {
 					Console::println("Loading model: " + inputFileName);
@@ -106,8 +106,7 @@ public:
 						FileSystem::getInstance()->getFileName(inputFileName),
 						useBC7TextureCompression
 					);
-					for (auto& materialIt: model->getMaterials()) {
-						auto material = materialIt.second;
+					for (const auto& [materialId, material]: model->getMaterials()) {
 						auto specularMaterialProperties = material->getSpecularMaterialProperties();
 						// specular material
 						if (specularMaterialProperties != nullptr) {

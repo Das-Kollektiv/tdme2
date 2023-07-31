@@ -264,8 +264,8 @@ void SkinningShader::unUseProgram()
 }
 
 void SkinningShader::reset() {
-	for (auto& modelSkinningCacheIt: cache) {
-		Engine::getVBOManager()->removeVBO("skinning_compute_shader." + modelSkinningCacheIt.second.id + ".vbos");
+	for (const auto& [cacheId, cacheEntry]: cache) {
+		Engine::getVBOManager()->removeVBO("skinning_compute_shader." + cacheEntry.id + ".vbos");
 	}
 	// TODO: Remove vaos
 	cache.clear();

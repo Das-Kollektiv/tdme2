@@ -40,13 +40,12 @@ void BodyHierarchy::updateHierarchy(const Transform& parentTransform, BodyHierar
 	BoundingBox entityBoundingBox;
 	auto levelParentTransform = parentTransform.clone();
 	levelParentTransform*= bodyHierarchyLevel->transform;
-	for (auto& childBodyIt: bodyHierarchyLevel->children) {
-		auto child = childBodyIt.second;
+	for (const auto& [childId, child]: bodyHierarchyLevel->children) {
 		//
 		Body::resetColliders(child->colliders, child->boundingVolumes, levelParentTransform * child->transform);
 	}
-	for (auto& childBodyIt: bodyHierarchyLevel->children) {
-		updateHierarchy(levelParentTransform, childBodyIt.second, depth + 1);
+	for (const auto& [childId, child]: bodyHierarchyLevel->children) {
+		updateHierarchy(levelParentTransform, child, depth + 1);
 	}
 }
 
@@ -95,7 +94,7 @@ void BodyHierarchy::removeBody(const string& id) {
 
 	//
 	vector<string> children;
-	for (auto& childIt: bodyHierarchyLevel->children) children.push_back(childIt.first);
+	for (const auto& [childId, child]: bodyHierarchyLevel->children) children.push_back(childId);
 	for (auto child: children) removeBody(child);
 
 	//
@@ -111,15 +110,15 @@ void BodyHierarchy::removeBody(const string& id) {
 }
 
 const vector<BodyHierarchy::SubBody*> BodyHierarchy::query(const string& parentId) {
-	vector<SubBody*> entities;
+	vector<SubBody*> subBodies;
 	auto parentBodyHierarchyLevel = getBodyHierarchyLevel(parentId);
 	if (parentBodyHierarchyLevel == nullptr) {
-		return entities;
+		return subBodies;
 	}
-	for (auto& entityIt: parentBodyHierarchyLevel->children) {
-		entities.push_back(entityIt.second);
+	for (const auto& [childId, child]: parentBodyHierarchyLevel->children) {
+		subBodies.push_back(child);
 	}
-	return entities;
+	return subBodies;
 }
 
 void BodyHierarchy::update() {

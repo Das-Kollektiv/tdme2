@@ -1069,7 +1069,7 @@ void GL2Renderer::unbindBufferObjects(int contextIdx)
 
 void GL2Renderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 {
-	for (auto& bufferObjectId: bufferObjectIds) vbosUsage.erase(bufferObjectId);
+	for (auto bufferObjectId: bufferObjectIds) vbosUsage.erase(bufferObjectId);
 	glDeleteBuffers(bufferObjectIds.size(), (const uint32_t*)bufferObjectIds.data());
 	statistics.disposedBuffers+= bufferObjectIds.size();
 }

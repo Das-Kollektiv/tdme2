@@ -86,9 +86,8 @@ public:
 		if (changed == true) {
 			// TODO: md5 or something
 			hash = shaderId + ";";
-			for (auto& it: parameters) {
-				auto& parameterValue = it.second;
-				switch(parameterValue.getType()) {
+			for (const auto& [parameterName, parameterValue]: parameters) {
+				switch (parameterValue.getType()) {
 					case ShaderParameter::TYPE_NONE:
 						break;
 					case ShaderParameter::TYPE_BOOLEAN:

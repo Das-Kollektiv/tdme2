@@ -47,7 +47,7 @@ void scanDir(const string& folder, vector<string>& sourceFiles, vector<string>& 
 
 	FileSystem::getInstance()->list(folder, files, &sourceFilesFilter);
 
-	for (auto fileName: files) {
+	for (const auto& fileName: files) {
 		if (StringTools::endsWith(fileName, "-main.cpp") == true) {
 			mainSourceFiles.push_back(folder + "/" + fileName);
 		} else
@@ -80,12 +80,12 @@ int main(int argc, char** argv)
 
 		//
 		string sourceFilesVariable = "\\\n";
-		for (auto& file: sourceFiles) sourceFilesVariable+= "\t" + file + "\\\n";
+		for (const auto& file: sourceFiles) sourceFilesVariable+= "\t" + file + "\\\n";
 		sourceFilesVariable+= "\n";
 
 		//
 		string mainTargets;
-		for (auto& file: mainSourceFiles) {
+		for (const auto& file: mainSourceFiles) {
 			if (mainTargets.empty() == false) mainTargets+= " ";
 			mainTargets+= StringTools::substring(file, file.rfind('/') + 1, file.find("-main.cpp"));
 		}
@@ -104,7 +104,7 @@ int main(int argc, char** argv)
 		makefileSource+= "\n";
 
 		//
-		for (auto& file: mainSourceFiles) {
+		for (const auto& file: mainSourceFiles) {
 			auto makefileMainSource = makefileMainSourceTemplate;
 			auto mainTarget = StringTools::substring(file, file.rfind('/') + 1, file.find("-main.cpp"));
 			auto mainTargetSource = file;

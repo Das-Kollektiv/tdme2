@@ -203,7 +203,7 @@ void DecalEditorTabController::onChange(GUIElementNode* node)
 	if (prototypePhysicsSubController->onChange(node, view->getPrototype()) == true) return;
 	if (prototypeScriptSubController->onChange(node, view->getPrototype()) == true) return;
 	//
-	for (auto& applyDecalNode: applyDecalNodes) {
+	for (const auto& applyDecalNode: applyDecalNodes) {
 		if (node->getId() == applyDecalNode) {
 			applyDecalDetails();
 			return;

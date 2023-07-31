@@ -194,7 +194,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 				string search = StringTools::substring(textEditorTabView->textNode->getText().getString(), previousDelimiterPos == 0?0:previousDelimiterPos + 1, idx);
 				vector<CodeCompletionSymbol> codeCompletionSymbolCandidates;
 				#define MAX_ENTRIES	40
-				for (auto& symbol: codeCompletion->symbols) {
+				for (const auto& symbol: codeCompletion->symbols) {
 					if (StringTools::startsWith(symbol.name, search) == true) {
 						if (symbol.overloadList.empty() == true) {
 							if (codeCompletionSymbolCandidates.size() == MAX_ENTRIES) {
@@ -220,7 +220,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 								);
 							}
 						} else {
-							for (auto& overload: symbol.overloadList) {
+							for (const auto& overload: symbol.overloadList) {
 								if (codeCompletionSymbolCandidates.size() == MAX_ENTRIES) {
 									codeCompletionSymbolCandidates.push_back(
 										{
@@ -234,7 +234,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 									break;
 								} else {
 									string parameters;
-									for (auto& parameter: overload.parameters) {
+									for (const auto& parameter: overload.parameters) {
 										if (parameters.empty() == false) parameters+= ", ";
 										parameters+= parameter;
 									}
@@ -261,7 +261,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 				//
 				{
 					auto i = 0;
-					for (auto& codeCompletionSymbolCandidate: codeCompletionSymbolCandidates) {
+					for (const auto& codeCompletionSymbolCandidate: codeCompletionSymbolCandidates) {
 						// add light
 						class OnCodeCompletionAction: public virtual Action
 						{
@@ -281,7 +281,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 								auto idxToDelimiterString = StringTools::trim(StringTools::substring(textEditorTabView->textNode->getText().getString(), idx + 1 < textEditorTabView->textNode->getTextLength()?idx + 1:idx, nextDelimiterPos2));
 								string parameterString;
 								if (symbol.type == CodeCompletionSymbol::TYPE_FUNCTION && textEditorTabView->textNode->getText().getCharAt(nextDelimiterPos2) != '(') {
-									for (auto parameter: symbol.parameters) {
+									for (const auto& parameter: symbol.parameters) {
 										auto parameterTokenized = StringTools::tokenize(parameter, " \t\n");
 										if (parameterString.empty() == false) parameterString+= ", ";
 										parameterString+= parameterTokenized[parameterTokenized.size() - 1];
@@ -427,7 +427,7 @@ void TextEditorTabView::display()
 				}
 			}
 			// connections
-			for (auto& connection: connections) {
+			for (const auto& connection: connections) {
 				auto x1 = connection.x1 - visualizationScrollX;
 				auto y1 = connection.y1 - visualizationScrollY;
 				auto x2 = connection.x2 - visualizationScrollX;
@@ -522,8 +522,7 @@ void TextEditorTabView::setCodeEditor() {
 	// dump nodes for now
 	{
 		auto i = 0;
-		for (auto& nodeIt: nodes) {
-			auto& node = nodeIt.second;
+		for (const auto& [nodeId, node]: nodes) {
 			string nodeType;
 			switch (node.type) {
 				case Node::NODETYPE_NONE: nodeType = "None"; break;
@@ -536,7 +535,7 @@ void TextEditorTabView::setCodeEditor() {
 	// dump connections for now
 	{
 		auto i = 0;
-		for (auto& connection: connections) {
+		for (const auto& connection: connections) {
 			Console::println("Connection[" + to_string(i++) + "]");
 			string connectionType;
 			switch (connection.type) {
@@ -585,13 +584,13 @@ void TextEditorTabView::createMiniScriptNode(const string& methodName, int x, in
 	if (method == nullptr) {
 		nodeTypeColor = "color.nodetype_function";
 	} else {
-		for (auto& flowControlNode: flowControlNodes) {
+		for (const auto& flowControlNode: flowControlNodes) {
 			if (nodeName == flowControlNode) {
 				nodeTypeColor = "color.nodetype_flowcontrol";
 				break;
 			}
 		}
-		for (auto& mathNode: mathNodes) {
+		for (const auto& mathNode: mathNodes) {
 			if (nodeName == mathNode || StringTools::startsWith(nodeName, mathNode + ".")) {
 				nodeTypeColor = "color.nodetype_math";
 				break;
@@ -919,7 +918,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 	width+= childMaxWidth;
 
 	//
-	for (auto& nodeId: leftNodeIds) createdNodeIds.push_back(nodeId);
+	for (const auto& nodeId: leftNodeIds) createdNodeIds.push_back(nodeId);
 
 	//
 	auto flattenedId = getMiniScriptNodeFlattenedId(idMapping, id);
@@ -952,13 +951,13 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 				if (syntaxTreeNode->method == nullptr) {
 					nodeTypeColor = "color.nodetype_function";
 				} else {
-					for (auto& flowControlNode: flowControlNodes) {
+					for (const auto& flowControlNode: flowControlNodes) {
 						if (nodeName == flowControlNode) {
 							nodeTypeColor = "color.nodetype_flowcontrol";
 							break;
 						}
 					}
-					for (auto& mathNode: mathNodes) {
+					for (const auto& mathNode: mathNodes) {
 						if (nodeName == mathNode || StringTools::startsWith(nodeName, mathNode + ".")) {
 							nodeTypeColor = "color.nodetype_math";
 							break;
@@ -1274,7 +1273,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 	y = yInitial;
 
 	//
-	for (auto& nodeId: leftNodeIds) createdNodeIds.push_back(nodeId);
+	for (const auto& nodeId: leftNodeIds) createdNodeIds.push_back(nodeId);
 	//
 	auto flattenedId = getMiniScriptNodeFlattenedId(idMapping, id);
 
@@ -1600,12 +1599,12 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 	width+= branchWidthMax;
 	height = Math::max(height, y - yInitial);
 	//
-	for (auto& nodeId: rightNodeIds) createdNodeIds.push_back(nodeId);
+	for (const auto& nodeId: rightNodeIds) createdNodeIds.push_back(nodeId);
 
 	// determine bounding box left and right
 	auto leftTop = Integer::MAX_VALUE;
 	auto leftBottom = Integer::MIN_VALUE;
-	for (auto& leftNodeId: leftNodeIds) {
+	for (const auto& leftNodeId: leftNodeIds) {
 		auto node = required_dynamic_cast<GUINode*>(screenNode->getNodeById(leftNodeId));
 		auto nodeTop = node->getRequestsConstraints().top;
 		auto nodeBottom = node->getRequestsConstraints().top + 200;
@@ -1616,7 +1615,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 	//
 	auto rightTop = Integer::MAX_VALUE;
 	auto rightBottom = Integer::MIN_VALUE;
-	for (auto& rightNodeId: rightNodeIds) {
+	for (const auto& rightNodeId: rightNodeIds) {
 		auto node = required_dynamic_cast<GUINode*>(screenNode->getNodeById(rightNodeId));
 		auto nodeTop = node->getRequestsConstraints().top;
 		auto nodeBottom = node->getRequestsConstraints().top + 200;
@@ -1633,7 +1632,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 		} else
 		if (leftHeight > rightHeight) {
 			auto deltaY = (leftHeight - rightHeight) / 2;
-			for (auto& rightNodeId: rightNodeIds) {
+			for (const auto& rightNodeId: rightNodeIds) {
 				auto node = required_dynamic_cast<GUINode*>(screenNode->getNodeById(rightNodeId));
 				node->getRequestsConstraints().top+= deltaY;
 			}
@@ -1643,7 +1642,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 			}
 		} else {
 			auto deltaY = (rightHeight - leftHeight) / 2;
-			for (auto& leftNodeId: leftNodeIds) {
+			for (const auto& leftNodeId: leftNodeIds) {
 				auto node = required_dynamic_cast<GUINode*>(screenNode->getNodeById(leftNodeId));
 				node->getRequestsConstraints().top+= deltaY;
 			}
@@ -2235,7 +2234,7 @@ void TextEditorTabView::finishCreateConnection(int mouseX, int mouseY) {
 	//
 	unordered_set<string> nodeIds;
 	screenNode->determineNodesByCoordinate(Vector2(mouseX, mouseY), nodeIds);
-	for (auto& nodeId: nodeIds) {
+	for (const auto& nodeId: nodeIds) {
 		// return value as argument
 		if (nodeId.find("_r_") != string::npos) {
 			if (createConnectionMode != CREATECONNECTIONMODE_ARGUMENT_IN) {

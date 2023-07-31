@@ -36,7 +36,7 @@ UDPServerClient::UDPServerClient(const uint32_t clientId, const string& ip, cons
 }
 
 UDPServerClient::~UDPServerClient() {
-	for (auto& it: messageMapSafe) delete it.second;
+	for (const auto& [messageId, message]: messageMapSafe) delete message;
 }
 
 const bool UDPServerClient::setKey(const string &key) {

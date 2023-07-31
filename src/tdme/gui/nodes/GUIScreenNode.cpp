@@ -200,12 +200,12 @@ GUIScreenNode::~GUIScreenNode() {
 	GUINode::dispose();
 
 	// delete chaches
-	for (auto& fontCacheIt: fontCache) {
-		delete fontCacheIt.second;
+	for (const auto& [fontId, font]: fontCache) {
+		delete font;
 	}
 	fontCache.clear();
-	for (auto& imageCacheIt: imageCache) {
-		imageCacheIt.second->releaseReference();
+	for (const auto& [imageId, image]: imageCache) {
+		image->releaseReference();
 	}
 	imageCache.clear();
 
@@ -244,7 +244,7 @@ void GUIScreenNode::setEnabled(bool enabled)
 		gui->invalidateFocussedNode();
 	}
 	//
-	if (gui != nullptr) gui->applyRenderScreensChange();
+	if (gui != nullptr) gui->unsetMouseStates();
 }
 
 void GUIScreenNode::setPopUp(bool popUp)
@@ -355,7 +355,7 @@ void GUIScreenNode::invalidateLayouts() {
 	// invalidate layouts and mark nodes that are required to start layouting with
 	// in a map with hierarchical id which gets sorted from root -> child node
 	map<string, GUINode*> nodesToForceLayout;
-	for (auto& nodeId: invalidateLayoutNodeIds) {
+	for (const auto& nodeId: invalidateLayoutNodeIds) {
 		auto node = getNodeById(nodeId);
 		if (node == nullptr) continue;
 		auto layoutNode = forceInvalidateLayout(node);
@@ -365,10 +365,9 @@ void GUIScreenNode::invalidateLayouts() {
 	//
 	invalidateLayoutNodeIds.clear();
 	// force layouts
-	for (auto& nodesToForceLayoutIt: nodesToForceLayout) {
+	for (const auto& [nodeHierarchicalId, node]: nodesToForceLayout) {
 		// check if parent node was layouted in this layout sequence already
 		auto parentNodeLayouted = false;
-		auto node = nodesToForceLayoutIt.second;
 		auto _node = node->parentNode;
 		// check if node's parent nodes were layouted
 		while (_node != nullptr) {
@@ -409,13 +408,13 @@ void GUIScreenNode::forceLayout(GUINode* node)
 }
 
 void GUIScreenNode::scrollToNodes() {
-	for (auto& scrollToNodeX: scrollToNodesX) {
+	for (const auto& scrollToNodeX: scrollToNodesX) {
 		auto node = getNodeById(scrollToNodeX.node);
 		auto toNode = scrollToNodeX.toNode.empty() == true?nullptr:dynamic_cast<GUIParentNode*>(getNodeById(scrollToNodeX.toNode));
 		if (node != nullptr) node->_scrollToNodeX(toNode);
 	}
 	scrollToNodesX.clear();
-	for (auto& scrollToNodeY: scrollToNodesY) {
+	for (const auto& scrollToNodeY: scrollToNodesY) {
 		auto node = getNodeById(scrollToNodeY.node);
 		auto toNode = scrollToNodeY.toNode.empty() == true?nullptr:dynamic_cast<GUIParentNode*>(getNodeById(scrollToNodeY.toNode));
 		if (node != nullptr) node->_scrollToNodeY(toNode);
@@ -471,17 +470,15 @@ void GUIScreenNode::removeNodeById(const string& nodeId, bool resetScrollOffsets
 
 bool GUIScreenNode::removeNode(GUINode* node)
 {
-	{
-		auto elementNodeToNodeMappingIt = elementNodeToNodeMapping.find(node->getId());
-		if (elementNodeToNodeMappingIt != elementNodeToNodeMapping.end()) {
-			elementNodeToNodeMapping.erase(elementNodeToNodeMappingIt);
-		}
+	//
+	const auto& nodeId = node->getId();
+	//
+	for (auto& [elementNodeId, nodeIds]: elementNodeToNodeMapping) {
+		nodeIds.erase(nodeId);
 	}
-	{
-		for (auto& elementNodeToNodeMappingIt: elementNodeToNodeMapping) {
-			elementNodeToNodeMappingIt.second.erase(node->getId());
-		}
-	}
+	//
+	elementNodeToNodeMapping.erase(nodeId);
+	//
 	if (dynamic_cast<GUIParentNode*>(node) != nullptr) {
 		auto parentNode = required_dynamic_cast<GUIParentNode*>(node);
 		for (auto i = 0; i < parentNode->subNodes.size(); i++) {
@@ -489,11 +486,12 @@ bool GUIScreenNode::removeNode(GUINode* node)
 		}
 		parentNode->subNodes.clear();
 	}
-	nodesById.erase(node->id);
-	tickNodesById.erase(node->getId());
+	nodesById.erase(nodeId);
+	tickNodesById.erase(nodeId);
 	floatingNodes.erase(remove(floatingNodes.begin(), floatingNodes.end(), node), floatingNodes.end());
 	node->dispose();
 	delete node;
+	//
 	return true;
 }
 
@@ -773,18 +771,17 @@ void GUIScreenNode::forwardDragRequest(GUIElementNode* node, int mouseX, int mou
 void GUIScreenNode::tick() {
 	auto now = Time::getCurrentMillis();
 	vector<int64_t> timedExpressionsToRemove;
-	for (auto& timedExpressionIt: timedExpressions) {
-		if (now >= timedExpressionIt.first) {
-			timedExpressionsToRemove.push_back(timedExpressionIt.first);
-			GUIElementNode::executeExpression(this, timedExpressionIt.second);
+	for (const auto& [timedExpressionsTime, timedExpressionsExpression]: timedExpressions) {
+		if (now >= timedExpressionsTime) {
+			timedExpressionsToRemove.push_back(timedExpressionsTime);
+			GUIElementNode::executeExpression(this, timedExpressionsExpression);
 		}
 	}
-	for (auto& timedExpressionToRemove: timedExpressionsToRemove) {
+	for (const auto& timedExpressionToRemove: timedExpressionsToRemove) {
 		timedExpressions.erase(timedExpressionToRemove);
 	}
 	auto _tickNodesById = tickNodesById;
-	for (auto tickNodesByIdIt: _tickNodesById) {
-		auto node = tickNodesByIdIt.second;
+	for (const auto& [nodeId, node]: _tickNodesById) {
 		if (node->controller != nullptr) node->controller->tick();
 	}
 	//
@@ -908,7 +905,7 @@ void GUIScreenNode::forwardEvents() {
 	while (forwardEventList.empty() == false && forwardEventCount++ < 10) {
 		auto forwardEventListCopy = forwardEventList;
 		forwardEventList.clear();
-		for (auto& event: forwardEventListCopy) {
+		for (const auto& event: forwardEventListCopy) {
 			switch(event.eventType) {
 				case ForwardEvent::EVENTTYPE_ACTION:
 					{

@@ -51,7 +51,7 @@ private:
 	 * Private destructor
 	 */
 	inline ~FlowMap() {
-		for (auto& cellIt: cells) delete cellIt.second;
+		for (const auto& [cellId, cell]: cells) delete cell;
 	}
 
 	/**
@@ -299,19 +299,19 @@ public:
 		complete = flowMap->complete;
 		// add path
 		auto pathSize = path.size();
-		for (auto& pathNode: flowMap->path) {
+		for (const auto& pathNode: flowMap->path) {
 			path.push_back(pathNode);
 		}
 		// add cells
 		// TODO: check again cell misssing neighbour cells
-		for (auto& cellIt: flowMap->cells) {
-			auto clonedCell = cellIt.second->clone();
+		for (const auto& [cellId, cell]: flowMap->cells) {
+			auto clonedCell = cell->clone();
 			clonedCell->pathNodeIdx+= pathSize;
-			cells[cellIt.first] = clonedCell;
+			cells[cellId] = clonedCell;
 		}
 		// check if we have missing neighbour cells
-		for (auto& cellIt: flowMap->cells) {
-			auto cell = getCell(cellIt.first);
+		for (const auto& [cellId, flowMapCell]: flowMap->cells) {
+			auto cell = getCell(cellId);
 			cell->setMissingNeighborCell(false);
 			auto cellX = getIntegerPositionComponent(cell->position.getX());
 			auto cellZ = getIntegerPositionComponent(cell->position.getZ());

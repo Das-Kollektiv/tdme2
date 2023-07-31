@@ -38,8 +38,7 @@ public:
 	 */
 	virtual ~ServerClientRequestHandlerHub() {
 		// delete handler
-		for (auto& it: requestHandlerMap) {
-			ServerClientRequestHandler<CLIENT,REQUEST>* handler = it.second;
+		for (const auto& [handlerId, handler]: requestHandlerMap) {
 			// delete reference
 			delete handler;
 		}

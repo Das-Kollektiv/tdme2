@@ -70,8 +70,7 @@ void CameraRotationInputHandler::handleInputEvents()
 {
 	auto scaling = false;
 	auto rotation = false;
-	for (auto i = 0; i < engine->getGUI()->getMouseEvents().size(); i++) {
-		auto& event = engine->getGUI()->getMouseEvents()[i];
+	for (const auto& event: engine->getGUI()->getMouseEvents()) {
 		if (event.isProcessed() == true) continue;
 		if (mouseDragging == true) {
 			if (event.getButton() == MOUSE_BUTTON_MIDDLE) {
@@ -104,8 +103,7 @@ void CameraRotationInputHandler::handleInputEvents()
 			scaling = true;
 		}
 	}
-	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
-		auto& event = engine->getGUI()->getKeyboardEvents()[i];
+	for (const auto& event: engine->getGUI()->getKeyboardEvents()) {
 		if (event.isProcessed() == true) continue;
 		if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) continue;
 		auto isKeyDown = event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;

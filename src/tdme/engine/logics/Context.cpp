@@ -250,7 +250,7 @@ void Context::PathFindingThread::run() {
 		if (worldActionsCopy.size() > 0) {
 			pathFinding->reset();
 		}
-		for (auto& worldActionStruct: worldActionsCopy) {
+		for (const auto& worldActionStruct: worldActionsCopy) {
 			if (worldActionStruct.action == WorldActionStruct::ACTION_ADDED) {
 				if ((worldActionStruct.collisionTypeId & context->bodyCollisionTypeIdCloneMask) != 0) {
 					world->addStaticRigidBody(
@@ -277,7 +277,7 @@ void Context::PathFindingThread::run() {
 		// do cancelling
 		pathFindingMutex.lock();
 		pathFindingCancelMutex.lock();
-		for (auto actorId: cancelActorIds) {
+		for (const auto& actorId: cancelActorIds) {
 			switch(state) {
 				case STATE_IDLE:
 					{
@@ -359,8 +359,7 @@ void Context::PathFindingThread::run() {
 				}
 				break;
 			default:
-				for (auto& flowMapRequestIt: flowMapRequests) {
-					auto& flowMapRequest = flowMapRequestIt.second;
+				for (auto& [flowMapRequestId, flowMapRequest]: flowMapRequests) {
 					if (flowMapRequest.flowMap != nullptr) continue;
 					auto pathIdx = flowMapRequest.pathIdx - 2;
 					auto partialPathLength = Math::min(flowMapRequest.path.size() - pathIdx, 22);
@@ -662,12 +661,12 @@ bool Context::doProcessPacket(NetworkLogic* logic, LogicNetworkPacket& packet, c
 
 	// clean up packet states
 	vector<string> packetsToRemove;
-	for (auto& packetStateIt: packetStates) {
-		if (packetStateIt.second.timeCreated > now - 120000L) {
-			packetsToRemove.push_back(packetStateIt.first);
+	for (const auto& [packetStateId, packetState]: packetStates) {
+		if (packetState.timeCreated > now - 120000L) {
+			packetsToRemove.push_back(packetStateId);
 		}
 	}
-	for (auto& packetToRemove: packetsToRemove) {
+	for (const auto& packetToRemove: packetsToRemove) {
 		// Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::doProcessPacket(): " + packetToRemove + ": removing");
 		packetStates.erase(packetToRemove);
 	}

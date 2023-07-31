@@ -25,9 +25,7 @@ TextureManager::TextureManager(Renderer* renderer): mutex("texturemanager-mutex"
 }
 
 TextureManager::~TextureManager() {
-	for (auto it = textures.begin(); it != textures.end(); ++it) {
-		delete it->second;
-	}
+	for (const auto& [textureManagedId, textureManaged]: textures) delete textureManaged;
 }
 
 TextureManager_TextureManaged* TextureManager::addTexture(const string& id, bool& created)

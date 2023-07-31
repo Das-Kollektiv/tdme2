@@ -91,8 +91,8 @@ void EntityHierarchy::removeEntity(const string& id) {
 
 	//
 	vector<string> children;
-	for (auto& childIt: entityHierarchyLevel->children) children.push_back(childIt.first);
-	for (auto child: children) removeEntity(child);
+	for (const auto& [childEntityId, childEntity]: entityHierarchyLevel->children) children.push_back(childEntityId);
+	for (const auto& child: children) removeEntity(child);
 
 	//
 	auto entity = entityHierarchyLevel->entity;
@@ -119,8 +119,8 @@ const vector<Entity*> EntityHierarchy::query(const string& parentId) {
 	if (parentEntityHierarchyLevel == nullptr) {
 		return entities;
 	}
-	for (auto& entityIt: parentEntityHierarchyLevel->children) {
-		entities.push_back(entityIt.second->entity);
+	for (const auto& [childEntityId, childEntity]: parentEntityHierarchyLevel->children) {
+		entities.push_back(childEntity->entity);
 	}
 	return entities;
 }
@@ -129,8 +129,8 @@ void EntityHierarchy::updateHierarchy(const Transform& parentTransform, EntityHi
 	BoundingBox entityBoundingBox;
 	auto levelParentTransform = parentTransform;
 	if (entityHierarchyLevel->entity != nullptr) levelParentTransform*= entityHierarchyLevel->entity->getTransform();
-	for (auto& entityIt: entityHierarchyLevel->children) {
-		auto entity = entityIt.second->entity;
+	for (const auto& [childEntityId, childEntity]: entityHierarchyLevel->children) {
+		auto entity = childEntity->entity;
 		entity->setParentTransform(levelParentTransform);
 		entityBoundingBox.fromBoundingVolumeWithTransformMatrix(entity->getWorldBoundingBox(), entityTransformMatrixInverted);
 		if (firstEntity == true) {
@@ -140,8 +140,8 @@ void EntityHierarchy::updateHierarchy(const Transform& parentTransform, EntityHi
 			boundingBox.extend(&entityBoundingBox);
 		}
 	}
-	for (auto& childIt: entityHierarchyLevel->children) {
-		updateHierarchy(levelParentTransform, childIt.second, depth + 1, firstEntity);
+	for (const auto& [childEntityId, childEntity]: entityHierarchyLevel->children) {
+		updateHierarchy(levelParentTransform, childEntity, depth + 1, firstEntity);
 	}
 	if (depth == 0) {
 		// bounding boxes

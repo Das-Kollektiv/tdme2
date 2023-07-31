@@ -60,7 +60,7 @@ public:
 	/**
 	 * @return time in milliseconds
 	 */
-	inline int64_t getTime() {
+	inline int64_t getTime() const {
 		return time;
 	}
 
@@ -75,7 +75,7 @@ public:
 	/**
 	 * @return type
 	 */
-	inline GUIMouseEventType getType() {
+	inline GUIMouseEventType getType() const {
 		return type;
 	}
 
@@ -90,7 +90,7 @@ public:
 	/**
 	 * @return x unscaled
 	 */
-	inline int getXUnscaled() {
+	inline int getXUnscaled() const {
 		return xUnscaled;
 	}
 
@@ -105,7 +105,7 @@ public:
 	/**
 	 * @return y unscaled
 	 */
-	inline int getYUnscaled() {
+	inline int getYUnscaled() const {
 		return yUnscaled;
 	}
 
@@ -120,7 +120,7 @@ public:
 	/**
 	 * @return x
 	 */
-	inline int getX() {
+	inline int getX() const {
 		return x;
 	}
 
@@ -135,7 +135,7 @@ public:
 	/**
 	 * @return y
 	 */
-	inline int getY() {
+	inline int getY() const {
 		return y;
 	}
 
@@ -150,7 +150,7 @@ public:
 	/**
 	 * @return button
 	 */
-	inline int getButton() {
+	inline int getButton() const {
 		return button;
 	}
 
@@ -165,7 +165,7 @@ public:
 	/**
 	 * @return wheel x
 	 */
-	inline float getWheelX() {
+	inline float getWheelX() const {
 		return wheelX;
 	}
 
@@ -180,7 +180,7 @@ public:
 	/**
 	 * @return wheel y
 	 */
-	inline float getWheelY() {
+	inline float getWheelY() const {
 		return wheelY;
 	}
 
@@ -195,7 +195,7 @@ public:
 	/**
 	 * @return wheel z
 	 */
-	inline float getWheelZ() {
+	inline float getWheelZ() const {
 		return wheelZ;
 	}
 
@@ -210,7 +210,7 @@ public:
 	/**
 	 * @return is meta down
 	 */
-	inline bool isMetaDown() {
+	inline bool isMetaDown() const {
 		return metaDown;
 	}
 
@@ -225,7 +225,7 @@ public:
 	/**
 	 * @return control down
 	 */
-	inline bool isControlDown() {
+	inline bool isControlDown() const {
 		return controlDown;
 	}
 
@@ -240,7 +240,7 @@ public:
 	/**
 	 * @return is alt down
 	 */
-	inline bool isAltDown() {
+	inline bool isAltDown() const {
 		return altDown;
 	}
 
@@ -255,7 +255,7 @@ public:
 	/**
 	 * @return is shift down
 	 */
-	inline bool isShiftDown() {
+	inline bool isShiftDown() const {
 		return shiftDown;
 	}
 
@@ -270,7 +270,7 @@ public:
 	/**
 	 * @return processed
 	 */
-	inline bool isProcessed() {
+	inline bool isProcessed() const {
 		return processed;
 	}
 

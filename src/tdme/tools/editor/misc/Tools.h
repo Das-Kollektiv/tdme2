@@ -223,7 +223,7 @@ public:
 	 */
 	inline static const string enumerateFileExtensions(const vector<string>& extensions) {
 		string result;
-		for (auto& extension: extensions) {
+		for (const auto& extension: extensions) {
 			if (result.empty() == false) result+= ", ";
 			result+= "*." + extension;
 		}

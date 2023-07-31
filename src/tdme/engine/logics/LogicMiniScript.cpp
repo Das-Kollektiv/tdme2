@@ -4961,7 +4961,7 @@ void LogicMiniScript::registerMethods() {
 					vector<Vector3> path;
 					auto pathFindingState = miniScript->context->getPathFinding()->findPath(logicId, logicId, startPosition, endPosition, path);
 					returnValue = static_cast<int64_t>(pathFindingState);
-					for (auto& position: path) {
+					for (const auto& position: path) {
 						argumentValues[3].pushArrayValue(position);
 					};
 				} else {
@@ -5230,7 +5230,7 @@ void LogicMiniScript::collectHIDEvents(vector<GUIMouseEvent>& mouseEvents, vecto
 	keyboardMetaDown = false;
 	keyboardAltDown = false;
 	keyboardShiftDown = false;
-	for (auto& event: keyEvents) {
+	for (const auto& event: keyEvents) {
 		// processed already?
 		if (event.isProcessed() == true) continue;
 		// key pressed
@@ -5262,7 +5262,7 @@ void LogicMiniScript::collectHIDEvents(vector<GUIMouseEvent>& mouseEvents, vecto
 	mouseWheelX = 0.0f;
 	mouseWheelY = 0.0f;
 	mouseWheelZ = 0.0f;
-	for (auto& event: mouseEvents) {
+	for (const auto& event: mouseEvents) {
 		// mouse move
 		if (event.isProcessed() == false && event.getType() == GUIMouseEvent::MOUSEEVENT_MOVED) {
 			mouseMoved = true;

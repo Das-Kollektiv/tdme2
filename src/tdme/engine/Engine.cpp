@@ -738,11 +738,10 @@ void Engine::removeEntityFromLists(Entity* entity)
 void Engine::reset()
 {
 	vector<string> entitiesToRemove;
-	for (auto it: entitiesById) {
-		auto entityKey = it.first;
-		entitiesToRemove.push_back(entityKey);
+	for (const auto& [entityId, entity]: entitiesById) {
+		entitiesToRemove.push_back(entityId);
 	}
-	for (auto entityKey: entitiesToRemove) {
+	for (const auto& entityKey: entitiesToRemove) {
 		removeEntity(entityKey);
 	}
 	partition->reset();
@@ -1436,7 +1435,7 @@ void Engine::display()
 	for (auto programId: postProcessingPrograms) {
 		auto program = postProcessing->getPostProcessingProgram(programId);
 		if (program == nullptr) continue;
-		for (auto& effectPass: program->getEffectPasses()) {
+		for (const auto& effectPass: program->getEffectPasses()) {
 			auto effectPassIdx = effectPass.effectPassIdx;
 			auto frameBufferIdx = effectPass.effectPassIdx - 1;
 			auto frameBufferWidth = _width / effectPass.frameBufferWidthDivideFactor;
@@ -2098,11 +2097,10 @@ void Engine::dispose()
 
 	// remove entities
 	vector<string> entitiesToRemove;
-	for (auto it: entitiesById) {
-		auto entityKey = it.first;
-		entitiesToRemove.push_back(entityKey);
+	for (const auto& [entityId, entity]: entitiesById) {
+		entitiesToRemove.push_back(entityId);
 	}
-	for (auto entityKey: entitiesToRemove) {
+	for (const auto& entityKey: entitiesToRemove) {
 		removeEntity(entityKey);
 	}
 
@@ -2248,11 +2246,11 @@ void Engine::doPostProcessing(PostProcessingProgram::RenderPass renderPass, arra
 		if (program == nullptr) continue;
 		if (program->getRenderPass() != renderPass) continue;
 		auto effectPassSkipDetected = false;
-		for (auto& effectPass: program->getEffectPasses()) {
+		for (const auto& effectPass: program->getEffectPasses()) {
 			if (effectPassSkip[effectPass.effectPassIdx - 1] == true) effectPassSkipDetected = true;
 		}
 		if (effectPassSkipDetected == true) continue;
-		for (auto& step: program->getPostProcessingSteps()) {
+		for (const auto& step: program->getPostProcessingSteps()) {
 			auto shaderId = step.shaderId;
 			FrameBuffer* blendToSource = nullptr;
 			FrameBuffer* source = nullptr;
@@ -2307,8 +2305,7 @@ void Engine::doPostProcessing(PostProcessingProgram::RenderPass renderPass, arra
 
 const vector<string> Engine::getRegisteredShader(ShaderType type) {
 	vector<string> result;
-	for (auto shadersIt: shaders) {
-		auto& shader = shadersIt.second;
+	for (const auto& [shaderId, shader]: shaders) {
 		if (shader.type == type) {
 			result.push_back(shader.id);
 		}
@@ -2650,7 +2647,7 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 
 bool Engine::renderLightSources(int width, int height) {
 	auto lightSourceVisible = false;
-	for (auto& light: lights) {
+	for (auto light: lights) {
 		if (light->isEnabled() == false || light->isRenderSource() == false) continue;
 		auto lightSourceSize = light->getSourceSize();
 		auto lightSourcePixelSize = width < height?static_cast<float>(lightSourceSize) * static_cast<float>(width):static_cast<float>(lightSourceSize) * static_cast<float>(height);;
@@ -2670,7 +2667,7 @@ bool Engine::renderLightSources(int width, int height) {
 
 void Engine::dumpShaders() {
 	for (auto shaderType = 0; shaderType < SHADERTYPE_MAX; shaderType++)
-	for (auto& shaderId: getRegisteredShader(static_cast<ShaderType>(shaderType))) {
+	for (const auto& shaderId: getRegisteredShader(static_cast<ShaderType>(shaderType))) {
 		string shaderTypeString = "unknowm";
 		switch (shaderType) {
 			case SHADERTYPE_OBJECT: shaderTypeString = "object"; break;
@@ -2681,10 +2678,9 @@ void Engine::dumpShaders() {
 		auto& defaultShaderParameters = getShaderParameterDefaults(shaderId);
 		if (defaultShaderParameters.size() > 0) {
 			Console::print("\t");
-			for (auto it: defaultShaderParameters) {
-				auto& parameterName = it.first;
+			for (const auto& [parameterName, parameterValue]: defaultShaderParameters) {
 				Console::print(parameterName);
-				switch(it.second.getType()) {
+				switch(parameterValue.getType()) {
 					case ShaderParameter::TYPE_NONE:
 						Console::print("=none; ");
 						break;
@@ -2804,8 +2800,7 @@ void Engine::dumpEntities() {
 	Console::println("Engine::dumpEntities()");
 	Console::println();
 	Console::println("Engine Entities:");
-	for (auto& entitiesByIdIt: entitiesById) {
-		auto entity = entitiesByIdIt.second;
+	for (const auto& [entityId, entity]: entitiesById) {
 		string entityType;
 		switch (entity->getEntityType()) {
 			case Entity::ENTITYTYPE_DECAL:

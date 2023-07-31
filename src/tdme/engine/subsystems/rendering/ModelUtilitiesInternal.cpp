@@ -73,23 +73,22 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBox(ObjectModelInternal* obje
 		ObjectNode::computeAnimation(0, objectModelInternal->objectNodes);
 		// parse through object nodes to determine min, max
 		for (auto objectNode : objectModelInternal->objectNodes) {
-			for (auto& vertex : *objectNode->mesh->vertices) {
-				auto& vertexXYZ = vertex.getArray();
+			for (const auto& vertex : *objectNode->mesh->vertices) {
 				if (firstVertex == true) {
-					minX = vertexXYZ[0];
-					minY = vertexXYZ[1];
-					minZ = vertexXYZ[2];
-					maxX = vertexXYZ[0];
-					maxY = vertexXYZ[1];
-					maxZ = vertexXYZ[2];
+					minX = vertex[0];
+					minY = vertex[1];
+					minZ = vertex[2];
+					maxX = vertex[0];
+					maxY = vertex[1];
+					maxZ = vertex[2];
 					firstVertex = false;
 				} else {
-					if (vertexXYZ[0] < minX) minX = vertexXYZ[0];
-					if (vertexXYZ[1] < minY) minY = vertexXYZ[1];
-					if (vertexXYZ[2] < minZ) minZ = vertexXYZ[2];
-					if (vertexXYZ[0] > maxX) maxX = vertexXYZ[0];
-					if (vertexXYZ[1] > maxY) maxY = vertexXYZ[1];
-					if (vertexXYZ[2] > maxZ) maxZ = vertexXYZ[2];
+					if (vertex[0] < minX) minX = vertex[0];
+					if (vertex[1] < minY) minY = vertex[1];
+					if (vertex[2] < minZ) minZ = vertex[2];
+					if (vertex[0] > maxX) maxX = vertex[0];
+					if (vertex[1] > maxY) maxY = vertex[1];
+					if (vertex[2] > maxZ) maxZ = vertex[2];
 				}
 			}
 		}
@@ -122,8 +121,8 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBoxNoMesh(ObjectModelInternal
 		auto parentTransformMatrix = objectModelInternal->getModel()->getImportTransformMatrix();
 		parentTransformMatrix.multiply(objectModelInternal->getTransformMatrix());
 		objectModelInternal->instanceAnimations[0]->computeNodesTransformMatrices(objectModelInternal->instanceAnimations[0]->nodeLists[0], parentTransformMatrix, &animationState);
-		for (auto nodeIt: model->getNodes()) {
-			auto& transformedNodeMatrix = objectModelInternal->getNodeTransformMatrix(nodeIt.second->getId());
+		for (const auto& [nodeId, node]: model->getNodes()) {
+			auto& transformedNodeMatrix = objectModelInternal->getNodeTransformMatrix(node->getId());
 			vertex = transformedNodeMatrix.multiply(vertex.set(0.0f, 0.0f, 0.0f));
 			if (firstVertex == true) {
 				minX = vertex[0];
@@ -158,8 +157,7 @@ void ModelUtilitiesInternal::invertNormals(Model* model)
 
 void ModelUtilitiesInternal::invertNormals(const map<string, Node*>& nodes)
 {
-	for (auto it: nodes) {
-		Node* node = it.second;
+	for (const auto& [nodeId, node]: nodes) {
 		auto normals = node->getNormals();
 		for (auto& normal : normals) {
 			// invert

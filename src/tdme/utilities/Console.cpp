@@ -51,7 +51,7 @@ void Console::LogWriterThread::run() {
 void Console::LogWriterThread::flush() {
 	cout << "Console::LogWriterThread::flush()\n";
 	ofstream ofs("console.log", ofstream::app);
-	for (auto message: *Console::messages) {
+	for (const auto& message: *Console::messages) {
 		ofs << message;
 		ofs << "\n";
 	}
@@ -115,7 +115,7 @@ void Console::shutdown() {
 	mutex->lock();
 	cout << "Console::shutdown()\n";
 	ofstream ofs("console.log", ofstream::app);
-	for (auto message: *Console::messages) {
+	for (const auto& message: *Console::messages) {
 		ofs << message;
 		ofs << "\n";
 	}
