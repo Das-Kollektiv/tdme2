@@ -35,7 +35,7 @@ LDFLAG_EXT_LIB := $(EXT_NAME)
 SRCS_PLATFORM =
 
 #
-CPPVERSION = -std=c++2a
+CPPVERSION = -std=c++20
 OFLAGS =
 EXTRAFLAGS = -DRAPIDJSON_HAS_STDSTRING
 INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src
@@ -107,7 +107,7 @@ else ifeq ($(OS), OpenBSD)
 else ifeq ($(OS), Haiku)
 	# Haiku
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
-		src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
+		src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 		src/tdme/engine/fileio/models/ModelReader.cpp
 	INCLUDES := $(INCLUDES) -I/boot/system/develop/headers -I/boot/system/develop/headers/freetype2
 	OPENGL_RENDERER_LDFLAGS := -lGLEW -lGL -lglfw

@@ -3,7 +3,13 @@
 	#include <sys/types.h>
 #endif
 
-#include <sys/event.h>
+#if defined(__HAIKU__)
+	#define _DEFAULT_SOURCE
+	#include <bsd/sys/event.h>
+#else
+	#include <sys/event.h>
+#endif
+
 #include <sys/time.h>
 
 #include <errno.h>
@@ -54,7 +60,7 @@ void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const 
 		auto& ke = psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
 		ke.ident = socket.descriptor;
 		ke.filter = EVFILT_READ;
-		ke.flags = EV_ADD | EV_ENABLE;
+		ke.flags = EV_ADD;
 		ke.fflags = 0;
 		ke.data = 0;
 		ke.udata = (void*)cookie;
@@ -62,7 +68,7 @@ void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const 
 		auto& ke = psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
 		ke.ident = socket.descriptor;
 		ke.filter = EVFILT_READ;
-		ke.flags = EV_ADD | EV_DISABLE;
+		ke.flags = EV_DELETE;
 		ke.fflags = 0;
 		ke.data = 0;
 		ke.udata = (void*)cookie;
@@ -72,7 +78,7 @@ void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const 
 		auto& ke = psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
 		ke.ident = socket.descriptor;
 		ke.filter = EVFILT_WRITE;
-		ke.flags = EV_ADD | EV_ENABLE;
+		ke.flags = EV_ADD;
 		ke.fflags = 0;
 		ke.data = 0;
 		ke.udata = (void*)cookie;
@@ -80,7 +86,7 @@ void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const 
 		auto& ke = psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
 		ke.ident = socket.descriptor;
 		ke.filter = EVFILT_WRITE;
-		ke.flags = EV_ADD | EV_DISABLE;
+		ke.flags = EV_DELETE;
 		ke.fflags = 0;
 		ke.data = 0;
 		ke.udata = (void*)cookie;
