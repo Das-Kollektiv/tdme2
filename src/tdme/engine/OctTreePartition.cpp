@@ -18,7 +18,6 @@
 #include <tdme/utilities/VectorIteratorMultiple.h>
 
 using std::bitset;
-using std::find;
 using std::list;
 using std::remove;
 using std::string;
