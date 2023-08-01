@@ -394,7 +394,7 @@ public:
 			guiEffectOffsetY = 0.0f;
 		} else {
 			auto effectsIndex = stackedEffects.size() - 1;
-			auto& effectStackEntity = stackedEffects[effectsIndex];
+			const auto& effectStackEntity = stackedEffects[effectsIndex];
 			guiEffectColorMul = effectStackEntity.guiEffectColorMul;
 			guiEffectColorAdd = effectStackEntity.guiEffectColorAdd;
 			guiEffectOffsetX = effectStackEntity.guiEffectOffsetX;

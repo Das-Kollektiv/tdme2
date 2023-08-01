@@ -293,7 +293,7 @@ void EditorView::handleInputEvents()
 			//
 			for (auto i = 0; i < Engine::getInstance()->getGUI()->getKeyboardEvents().size(); i++) {
 				auto& srcEvent = Engine::getInstance()->getGUI()->getKeyboardEvents()[i];
-				auto& dstEvent = tabView->getTabView()->getEngine()->getGUI()->getKeyboardEvents()[i];
+				const auto& dstEvent = tabView->getTabView()->getEngine()->getGUI()->getKeyboardEvents()[i];
 				if (dstEvent.isProcessed() == true) srcEvent.setProcessed(true);
 			}
 			// clear

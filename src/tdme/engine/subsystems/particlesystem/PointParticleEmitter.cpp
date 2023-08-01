@@ -57,7 +57,7 @@ void PointParticleEmitter::emit(Particle* particle)
 void PointParticleEmitter::setTransform(const Transform& transform)
 {
 	//
-	auto& transformMatrix = transform.getTransformMatrix();
+	const auto& transformMatrix = transform.getTransformMatrix();
 	// world position
 	worldPosition = transformMatrix.multiply(position);
 }

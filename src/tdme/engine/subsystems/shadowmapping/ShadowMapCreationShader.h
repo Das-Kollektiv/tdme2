@@ -29,7 +29,7 @@ private:
 	struct ShadowMapCreationShaderContext {
 		ShadowMapCreationShaderImplementation* implementation { nullptr };
 	};
-	unordered_map<string, ShadowMapCreationShaderImplementation*> shader;
+	unordered_map<string, ShadowMapCreationShaderImplementation*> shaders;
 	bool running { false };
 	Engine* engine { nullptr };
 	Renderer* renderer { nullptr };

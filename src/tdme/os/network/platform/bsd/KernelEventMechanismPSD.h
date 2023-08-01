@@ -1,6 +1,11 @@
 #pragma once
 
-#include <sys/event.h>
+#if defined(__HAIKU__)
+	#define _DEFAULT_SOURCE
+	#include <bsd/sys/event.h>
+#else
+	#include <sys/event.h>
+#endif
 
 #include <array>
 #include <vector>

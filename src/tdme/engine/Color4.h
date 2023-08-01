@@ -215,8 +215,8 @@ public:
 	/**
 	 * @return rgba as float array
 	 */
-	inline array<float, 4>& getArray() const {
-		return (array<float, 4>&)data;
+	inline const array<float, 4>& getArray() const {
+		return data;
 	}
 
 	/**

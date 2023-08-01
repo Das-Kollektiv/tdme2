@@ -57,11 +57,11 @@ ObjectNodeMesh::ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::A
 	this->objectNodeRenderer = objectNodeRenderer;
 	this->node = node;
 	// node data
-	auto& nodeVertices = node->getVertices();
-	auto& nodeNormals = node->getNormals();
-	auto& nodeTextureCoordinates = node->getTextureCoordinates();
-	auto& nodeTangents = node->getTangents();
-	auto& nodeBitangents = node->getBitangents();
+	const auto& nodeVertices = node->getVertices();
+	const auto& nodeNormals = node->getNormals();
+	const auto& nodeTextureCoordinates = node->getTextureCoordinates();
+	const auto& nodeTangents = node->getTangents();
+	const auto& nodeBitangents = node->getBitangents();
 	// determine face count
 	faceCount = node->getFaceCount();
 	// animation processing target
@@ -73,7 +73,7 @@ ObjectNodeMesh::ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::A
 	if (skinning != nullptr) {
 		jointsSkinningMatrices.resize(instances);
 		for (auto i = 0; i < instances; i++) {
-			for (auto& joint: skinning->getJoints()) {
+			for (const auto& joint: skinning->getJoints()) {
 				jointsSkinningMatrices[i].push_back(skinningMatrices[i]->find(joint.getNodeId())->second);
 			}
 		}
@@ -154,16 +154,16 @@ ObjectNodeMesh::ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::A
 
 	// indices
 	auto indicesCount = 0;
-	for (auto& facesEntity : node->getFacesEntities()) {
+	for (const auto& facesEntity: node->getFacesEntities()) {
 		indicesCount += 3 * facesEntity.getFaces().size();
 	}
 	indices.resize(instances * indicesCount);
 	{
 		auto j = 0;
-		for (auto& facesEntity : node->getFacesEntities()) {
+		for (const auto& facesEntity: node->getFacesEntities()) {
 			for (auto i = 0; i < instances; i++) {
-				for (auto& face : facesEntity.getFaces())
-				for (auto& vertexIndex : face.getVertexIndices()) {
+				for (const auto& face: facesEntity.getFaces())
+				for (auto vertexIndex: face.getVertexIndices()) {
 					indices[j++] = nodeVertices.size() * i + vertexIndex;
 				}
 			}
@@ -186,9 +186,9 @@ ObjectNodeMesh::ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::A
 		skinningJointTransformMatrices.resize(instances);
 		for (auto i = 0; i < instances; i++) skinningJointTransformMatrices[i].resize(nodeVertices.size());
 		// compute joint weight caches
-		auto& joints = skinning->getJoints();
-		auto& weights = skinning->getWeights();
-		auto& jointsWeights = skinning->getVerticesJointsWeights();
+		const auto& joints = skinning->getJoints();
+		const auto& weights = skinning->getWeights();
+		const auto& jointsWeights = skinning->getVerticesJointsWeights();
 		for (auto vertexIndex = 0; vertexIndex < nodeVertices.size(); vertexIndex++) {
 			auto vertexJointWeights = jointsWeights[vertexIndex].size();
 			if (vertexJointWeights > skinningMaxVertexWeights) skinningMaxVertexWeights = vertexJointWeights;
@@ -196,8 +196,8 @@ ObjectNodeMesh::ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::A
 			for (auto i = 0; i < instances; i++) skinningJointTransformMatrices[i][vertexIndex].resize(vertexJointWeights);
 			{
 				auto jointWeightIdx = 0;
-				for (auto& jointWeight : jointsWeights[vertexIndex]) {
-					auto& joint = joints[jointWeight.getJointIndex()];
+				for (const auto& jointWeight : jointsWeights[vertexIndex]) {
+					const auto& joint = joints[jointWeight.getJointIndex()];
 					skinningJointWeight[vertexIndex][jointWeightIdx] = weights[jointWeight.getWeightIndex()];
 					// next
 					jointWeightIdx++;
@@ -205,7 +205,7 @@ ObjectNodeMesh::ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::A
 			}
 			for (auto i = 0; i < instances; i++) {
 				auto jointWeightIdx = 0;
-				for (auto& jointWeight : jointsWeights[vertexIndex]) {
+				for (const auto& jointWeight : jointsWeights[vertexIndex]) {
 					auto& joint = joints[jointWeight.getJointIndex()];
 					auto skinningMatrixIt = skinningMatrices[i]->find(joint.getNodeId());
 					skinningJointTransformMatrices[i][vertexIndex][jointWeightIdx] = skinningMatrixIt != skinningMatrices[i]->end()?skinningMatrixIt->second:nullptr;
@@ -228,11 +228,11 @@ void ObjectNodeMesh::computeSkinning(int contextIdx, ObjectBase* objectBase)
 			Engine::getSkinningShader()->computeSkinning(contextIdx, objectBase, this);
 		} else
 		if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
-			auto& nodeVertices = node->getVertices();
-			auto& nodeNormals = node->getNormals();
-			auto& nodeTangent = node->getTangents();
-			auto& nodeBitangent = node->getBitangents();
-			auto& jointsWeights = skinning->getVerticesJointsWeights();
+			const auto& nodeVertices = node->getVertices();
+			const auto& nodeNormals = node->getNormals();
+			const auto& nodeTangent = node->getTangents();
+			const auto& nodeBitangent = node->getBitangents();
+			const auto& jointsWeights = skinning->getVerticesJointsWeights();
 			const Vector3* vertex;
 			Vector3* transformedVertex;
 			const Vector3* normal;
@@ -311,8 +311,8 @@ void ObjectNodeMesh::computeSkinning(int contextIdx, ObjectBase* objectBase)
 		}
 	} else
 	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
-		auto& nodeVertices = node->getVertices();
-		auto& nodeNormals = node->getNormals();
+		const auto& nodeVertices = node->getVertices();
+		const auto& nodeNormals = node->getNormals();
 		// transform for non skinned rendering
 		//	vertices
 		for (auto vertexIndex = 0; vertexIndex < nodeVertices.size(); vertexIndex++) {
@@ -382,7 +382,7 @@ void ObjectNodeMesh::setupTextureCoordinatesBuffer(Renderer* renderer, int conte
 	// create texture coordinates buffer, will never be changed in engine
 	auto fbTextureCoordinates = ObjectBuffer::getByteBuffer(contextIdx, textureCoordinates->size() * 2 * sizeof(float))->asFloatBuffer();
 	// construct texture coordinates byte buffer as this will not change usually
-	for (auto& textureCoordinate: *textureCoordinates) {
+	for (const auto& textureCoordinate: *textureCoordinates) {
 		fbTextureCoordinates.put(textureCoordinate.getArray());
 	}
 	// done, upload
@@ -393,7 +393,7 @@ void ObjectNodeMesh::setupVerticesBuffer(Renderer* renderer, int contextIdx, int
 {
 	auto fbVertices = ObjectBuffer::getByteBuffer(contextIdx, vertices->size() * 3 * sizeof(float))->asFloatBuffer();
 	// create vertices buffers
-	for (auto& vertex: *vertices) {
+	for (const auto& vertex: *vertices) {
 		fbVertices.put(vertex.getArray());
 	}
 	// done, upload
@@ -404,7 +404,7 @@ void ObjectNodeMesh::setupNormalsBuffer(Renderer* renderer, int contextIdx, int3
 {
 	auto fbNormals = ObjectBuffer::getByteBuffer(contextIdx, normals->size() * 3 * sizeof(float))->asFloatBuffer();
 	// create normals buffers
-	for (auto& normal: *normals) {
+	for (const auto& normal: *normals) {
 		fbNormals.put(normal.getArray());
 	}
 	// done, upload
@@ -417,7 +417,7 @@ void ObjectNodeMesh::setupTangentsBuffer(Renderer* renderer, int contextIdx, int
 	if (tangents == nullptr) return;
 	auto fbTangents = ObjectBuffer::getByteBuffer(contextIdx, tangents->size() * 3 * sizeof(float))->asFloatBuffer();
 	// create tangents buffers
-	for (auto& tangent: *tangents) {
+	for (const auto& tangent: *tangents) {
 		fbTangents.put(tangent.getArray());
 	}
 	// done, upload
@@ -430,7 +430,7 @@ void ObjectNodeMesh::setupBitangentsBuffer(Renderer* renderer, int contextIdx, i
 	if (bitangents == nullptr) return;
 	auto fbBitangents = ObjectBuffer::getByteBuffer(contextIdx, bitangents->size() * 3 * sizeof(float))->asFloatBuffer();
 	// create bitangents buffers
-	for (auto& bitangent: *bitangents) {
+	for (const auto& bitangent: *bitangents) {
 		fbBitangents.put(bitangent.getArray());
 	}
 	// done, upload
@@ -439,12 +439,12 @@ void ObjectNodeMesh::setupBitangentsBuffer(Renderer* renderer, int contextIdx, i
 
 void ObjectNodeMesh::setupOriginsBuffer(Renderer* renderer, int contextIdx, int32_t vboId) {
 	// check if we have origins
-	auto& origins = node->getOrigins();
+	const auto& origins = node->getOrigins();
 	if (origins.size() == 0) return;
 	// create origins buffer, will never be changed in engine
 	auto fbOrigins = ObjectBuffer::getByteBuffer(contextIdx, origins.size() * 3 * sizeof(float))->asFloatBuffer();
 	// construct origins buffer
-	for (auto& origin: origins) {
+	for (const auto& origin: origins) {
 		fbOrigins.put(origin.getArray());
 	}
 	// done, upload
@@ -489,7 +489,7 @@ void ObjectNodeMesh::setupLodBuffer(Renderer* renderer, int contextIdx, int32_t 
 		// create indices buffer, will never be changed in engine
 		auto sbIndices = ObjectBuffer::getByteBuffer(contextIdx, indices->size() * sizeof(uint16_t))->asShortBuffer();
 		// construct indices buffer
-		for (auto index: *indices) {
+		for (const auto index: *indices) {
 			sbIndices.put(index);
 		}
 		renderer->uploadIndicesBufferObject(contextIdx, vboId, sbIndices.getPosition() * sizeof(uint16_t), &sbIndices);
@@ -497,7 +497,7 @@ void ObjectNodeMesh::setupLodBuffer(Renderer* renderer, int contextIdx, int32_t 
 		// create indices buffer, will never be changed in engine
 		auto ibIndices = ObjectBuffer::getByteBuffer(contextIdx, indices->size() * sizeof(uint32_t))->asIntBuffer();
 		// construct indices buffer
-		for (auto index: *indices) {
+		for (const auto index: *indices) {
 			ibIndices.put(index);
 		}
 		renderer->uploadIndicesBufferObject(contextIdx, vboId, ibIndices.getPosition() * sizeof(uint32_t), &ibIndices);

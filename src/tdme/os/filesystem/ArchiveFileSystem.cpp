@@ -88,8 +88,8 @@ void ArchiveFileSystem::list(const string& pathName, vector<string>& files, File
 	// TODO: this currently lists all files beginning from given path, also files in sub folders
 	auto _pathName = pathName;
 	if (_pathName.empty() == false && StringTools::endsWith(pathName, "/") == false) _pathName+= "/";
-	for (auto& fileInformationIt: fileInformations) {
-		auto& fileName = fileInformationIt.second.name;
+	for (const auto& [mapfileName, fileInformation]: fileInformations) {
+		const auto& fileName = fileInformation.name;
 		if (StringTools::startsWith(fileName, _pathName) == true) {
 			try {
 				if (filter != nullptr && filter->accept(
@@ -133,7 +133,7 @@ bool ArchiveFileSystem::isExecutable(const string& pathName, const string& fileN
 	if (fileInformationIt == fileInformations.end()) {
 		throw FileSystemException("Unable to open file for reading: " + relativeFileName + ": " + pathName + "/" + fileName);
 	}
-	auto& fileInformation = fileInformationIt->second;
+	const auto& fileInformation = fileInformationIt->second;
 	//
 	return fileInformation.executable;
 }
@@ -152,7 +152,7 @@ uint64_t ArchiveFileSystem::getFileSize(const string& pathName, const string& fi
 	if (fileInformationIt == fileInformations.end()) {
 		throw FileSystemException("Unable to open file for reading: " + relativeFileName + ": " + pathName + "/" + fileName);
 	}
-	auto& fileInformation = fileInformationIt->second;
+	const auto& fileInformation = fileInformationIt->second;
 	//
 	return fileInformation.bytes;
 }
@@ -237,7 +237,7 @@ const string ArchiveFileSystem::getContentAsString(const string& pathName, const
 	if (fileInformationIt == fileInformations.end()) {
 		throw FileSystemException("Unable to open file for reading: " + relativeFileName + ": " + pathName + "/" + fileName);
 	}
-	auto& fileInformation = fileInformationIt->second;
+	const auto& fileInformation = fileInformationIt->second;
 
 	//
 	ifsMutex.lock();
@@ -283,7 +283,7 @@ void ArchiveFileSystem::getContent(const string& pathName, const string& fileNam
 	if (fileInformationIt == fileInformations.end()) {
 		throw FileSystemException("Unable to open file for reading: " + relativeFileName + ": " + pathName + "/" + fileName);
 	}
-	auto& fileInformation = fileInformationIt->second;
+	const auto& fileInformation = fileInformationIt->second;
 
 	//
 	ifsMutex.lock();

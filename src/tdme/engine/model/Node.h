@@ -292,10 +292,4 @@ public:
 		return subNodes;
 	}
 
-	/**
-	 * Returns a sub node by id
-	 * @param nodeId nodeId
-	 * @return sub node or null
-	 */
-	Node* getSubNodeById(const string& nodeId);
 };

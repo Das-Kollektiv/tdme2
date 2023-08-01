@@ -214,7 +214,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 				Value jImposterLOD;
 				Value jImposterLODFiles;
 				jImposterLODFiles.SetArray();
-				for (auto& fileName: imposterLOD->getFileNames()) {
+				for (const auto& fileName: imposterLOD->getFileNames()) {
 					jImposterLODFiles.PushBack(Value(fileName, jAllocator), jAllocator);
 				}
 				jImposterLOD.SetObject();
@@ -620,8 +620,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 	{
 		Value jShaderParameters;
 		jShaderParameters.SetObject();
-		for (auto& shaderParameterIt: Engine::getShaderParameterDefaults(prototype->getShader())) {
-			auto& shaderParameterName = shaderParameterIt.first;
+		for (const auto& [shaderParameterName, shaderParameterValue]: Engine::getShaderParameterDefaults(prototype->getShader())) {
 			jShaderParameters.AddMember(Value(shaderParameterName, jAllocator), Value(prototype->getShaderParameters().getShaderParameter(shaderParameterName).toString(), jAllocator), jAllocator);
 		}
 		jPrototypeRoot.AddMember("sps", jShaderParameters, jAllocator);
@@ -629,7 +628,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 	if (prototype->getSounds().size() > 0) {
 		Value jSounds;
 		jSounds.SetArray();
-		for (auto sound: prototype->getSounds()) {
+		for (const auto sound: prototype->getSounds()) {
 			if (sound->getFileName().length() == 0) continue;
 			Value jSound;
 			jSound.SetObject();
@@ -658,25 +657,24 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 			jTerrain.AddMember("d", Value(terrain->getDepth()), jAllocator);
 			Value jTerrainValues;
 			jTerrainValues.SetArray();
-			for (auto& v: terrain->getHeightVector()) jTerrainValues.PushBack(Value(v), jAllocator);
+			for (const auto v: terrain->getHeightVector()) jTerrainValues.PushBack(Value(v), jAllocator);
 			jTerrain.AddMember("t", jTerrainValues, jAllocator);
 		}
 		{
 			Value jWaterPositionMaps;
 			jWaterPositionMaps.SetArray();
 			auto waterPositionMapsIndices = terrain->getWaterPositionMapsIndices();
-			for (auto i: waterPositionMapsIndices) {
+			for (const auto i: waterPositionMapsIndices) {
 				const auto& waterPositionMap = terrain->getWaterPositionMap(i);
 				Value jWaterPositionMap;
 				jWaterPositionMap.SetObject();
 				jWaterPositionMap.AddMember("h", Value(terrain->getWaterPositionMapHeight(i)), jAllocator);
 				Value jWaterPositionMapWater;
 				jWaterPositionMapWater.SetObject();
-				for (auto& waterPositionMapIt: waterPositionMap) {
-					auto z = waterPositionMapIt.first;
+				for (const auto& [z, xValues]: waterPositionMap) {
 					Value jWaterPositionMapWaterXArray;
 					jWaterPositionMapWaterXArray.SetArray();
-					for (auto x: waterPositionMapIt.second) {
+					for (const auto x: xValues) {
 						jWaterPositionMapWaterXArray.PushBack(Value(x), jAllocator);
 					}
 					jWaterPositionMapWater.AddMember(Value(to_string(z).c_str(), jAllocator), jWaterPositionMapWaterXArray, jAllocator);
@@ -690,8 +688,8 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 			Value jFoliage;
 			jFoliage.SetObject();
 			auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
-			auto foliagePrototypeIndices = terrain->getFoliagePrototypeIndices();
-			for (auto foliagePrototypeIdx: foliagePrototypeIndices) {
+			const auto foliagePrototypeIndices = terrain->getFoliagePrototypeIndices();
+			for (const auto foliagePrototypeIdx: foliagePrototypeIndices) {
 				auto foliagePrototype = terrain->getFoliagePrototype(foliagePrototypeIdx);
 				if (foliagePrototype == nullptr) continue;
 				Value jFoliagePrototype;
@@ -704,10 +702,10 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 
 				//
 				for (auto& foliagePrototypeMapPartition: foliageMaps) {
-					auto& foliagePrototypePartitionTransformVector = foliagePrototypeMapPartition[foliagePrototypeIdx];
+					const auto& foliagePrototypePartitionTransformVector = foliagePrototypeMapPartition[foliagePrototypeIdx];
 					Value jFoliagePrototypePartitionTransform;
 					jFoliagePrototypePartitionTransform.SetArray();
-					for (auto& transform: foliagePrototypePartitionTransformVector) {
+					for (const auto& transform: foliagePrototypePartitionTransformVector) {
 						Value jFoliagePrototypeTransform;
 						jFoliagePrototypeTransform.SetObject();
 						jFoliagePrototypeTransform.AddMember("tx", Value(transform.getTranslation().getX()), jAllocator);
@@ -735,7 +733,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 			Value jFoliageBrushes;
 			jFoliageBrushes.SetArray();
 			//
-			for (auto brush: terrain->getBrushes()) {
+			for (const auto brush: terrain->getBrushes()) {
 				Value jFoliageBrush;
 				jFoliageBrush.SetObject();
 
@@ -745,7 +743,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 
 				Value jFoliageBrushPrototypes;
 				jFoliageBrushPrototypes.SetArray();
-				for (auto brushPrototype: brush->getPrototypes()) {
+				for (const auto brushPrototype: brush->getPrototypes()) {
 					Value jFoliageBrushPrototype;
 					jFoliageBrushPrototype.SetObject();
 

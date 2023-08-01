@@ -447,7 +447,7 @@ void UIEditorTabController::setOutlinerContent() {
 	string xml;
 	xml+= "<selectbox-parent-option text=\"Screens\" value=\"screens\">\n";
 	auto screenIdx = 0;
-	for (auto& uiScreenNode: view->getUIScreenNodes()) {
+	for (const auto& uiScreenNode: view->getUIScreenNodes()) {
 		auto screenNode = uiScreenNode.screenNode;
 		if (screenNode == nullptr) {
 			xml+= "<selectbox-option text=\"<screen>\" value=\"" + to_string(screenIdx) + ".0\" />\n";
@@ -543,8 +543,7 @@ void UIEditorTabController::updateScreensDetails() {
 			modelMeshNodesXML +
 			"<dropdown-option text=\"<None>\" value=\"\" " + (modelMeshNodesXML.empty() == true?"selected=\"true\" ":"") + " />\n";
 		if (model != nullptr) {
-			for (auto& it: model->getNodes()) {
-				auto& nodeId = it.second->getId();
+			for (const auto& [nodeId, node]: model->getNodes()) {
 				modelMeshNodesXML+=
 					"<dropdown-option text=\"" +
 					GUIParser::escape(nodeId) +
@@ -566,8 +565,7 @@ void UIEditorTabController::updateScreensDetails() {
 		string animationsXML;
 		animationsXML = animationsXML + "<dropdown-option text=\"<No animation>\" value=\"\" selected=\"true\" />";
 		if (model != nullptr) {
-			for (auto it: model->getAnimationSetups()) {
-				auto animationSetup = it.second;
+			for (const auto& [animationSetupId, animationSetup]: model->getAnimationSetups()) {
 				if (animationSetup->isOverlayAnimationSetup() == true) continue;
 				animationsXML =
 					animationsXML + "<dropdown-option text=\"" +
@@ -843,7 +841,7 @@ void UIEditorTabController::save() {
 	};
 
 	// save files with file name
-	auto& uiScreenNodes = view->getUIScreenNodes();
+	const auto& uiScreenNodes = view->getUIScreenNodes();
 	auto emptyFileNameIdx = -1;
 	for (auto screenIdx = 0; screenIdx < uiScreenNodes.size(); screenIdx++) {
 		// skip on empty xml
@@ -855,7 +853,7 @@ void UIEditorTabController::save() {
 		}
 
 		//
-		auto& uiScreenNode = uiScreenNodes[screenIdx];
+		const auto& uiScreenNode = uiScreenNodes[screenIdx];
 		try {
 			FileSystem::getInstance()->setContentFromString(
 				Tools::getPathName(uiScreenNode.fileName),
@@ -870,7 +868,7 @@ void UIEditorTabController::save() {
 
 	//
 	if (emptyFileNameIdx != -1) {
-		auto& uiScreenNode = uiScreenNodes[emptyFileNameIdx];
+		const auto& uiScreenNode = uiScreenNodes[emptyFileNameIdx];
 		//
 		auto fileName = Tools::getPathName(view->getFileName()) + "/Untitled.xml";
 		popUps->getFileDialogScreenController()->show(
@@ -958,7 +956,7 @@ void UIEditorTabController::saveAs() {
 	};
 
 	// find first screen to be saved
-	auto& uiScreenNodes = view->getUIScreenNodes();
+	const auto& uiScreenNodes = view->getUIScreenNodes();
 	for (auto screenIdx = 0; screenIdx < uiScreenNodes.size(); screenIdx++) {
 		//
 		if (uiScreenNodes[screenIdx].xml.empty() == true) continue;

@@ -22,7 +22,7 @@ using tdme::engine::FrameBuffer;
 class tdme::engine::subsystems::postprocessing::PostProcessingShader final
 {
 private:
-	unordered_map<string, PostProcessingShaderImplementation*> shader;
+	unordered_map<string, PostProcessingShaderImplementation*> shaders;
 	PostProcessingShaderImplementation* implementation { nullptr };
 
 	bool running { false };

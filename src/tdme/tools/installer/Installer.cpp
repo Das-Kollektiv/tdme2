@@ -176,7 +176,7 @@ void Installer::initializeScreens() {
 			auto componentName = installerProperties.get("component" + to_string(componentIdx), "");
 			auto componentRequired = StringTools::trim(StringTools::toLowerCase(installerProperties.get("component" + to_string(componentIdx) + "_required", "false"))) == "true";
 			auto componentInstalled = false;
-			for (auto installedComponentName: installedComponents) {
+			for (const auto& installedComponentName: installedComponents) {
 				if (installedComponentName == componentName) {
 					componentInstalled = true;
 					break;
@@ -307,7 +307,7 @@ void Installer::performScreenAction() {
 							if (installer->timestamp.empty() == true || installer->installerMode == INSTALLERMODE_REPAIR) {
 								vector<string> files;
 								FileSystem::getStandardFileSystem()->list("installer", files);
-								for (auto file: files) {
+								for (const auto& file: files) {
 									if (StringTools::startsWith(file, completionFileName) == true) {
 										Console::println("CheckForUpdateThread: Have upload completion file: " + file);
 										installer->timestamp = StringTools::substring(file, completionFileName.size());
@@ -623,13 +623,13 @@ void Installer::performScreenAction() {
 										Installer::scanArchive(archiveFileSystem, files);
 										uint64_t totalSize = 0LL;
 										uint64_t doneSize = 0LL;
-										for (auto file: files) {
+										for (const auto& file: files) {
 											totalSize+= archiveFileSystem->getFileSize(
 												archiveFileSystem->getPathName(file),
 												archiveFileSystem->getFileName(file)
 											);
 										}
-										for (auto file: files) {
+										for (const auto& file: files) {
 											vector<uint8_t> content;
 											Console::println("InstallThread::run(): Component: " + to_string(componentIdx) + ": " + file);
 											archiveFileSystem->getContent(
@@ -816,7 +816,7 @@ void Installer::performScreenAction() {
 									updateFinishBatch+= "ECHO FINISHING UPDATE. PLEASE DO NOT CLOSE.\r\n";
 									updateFinishBatch+= "setlocal EnableDelayedExpansion\r\n";
 									auto loopIdx = 0;
-									for (auto file: windowsUpdateRenameFiles) {
+									for (const auto& file: windowsUpdateRenameFiles) {
 										auto updateFile = file + ".update";
 										updateFinishBatch+=
 											":loop" + to_string(loopIdx) + "\r\n" +
@@ -989,7 +989,7 @@ void Installer::performScreenAction() {
 							reverse(folders.begin(), folders.end());
 							auto newEnd = unique(folders.begin(), folders.end());
 							folders.resize(distance(folders.begin(), newEnd));
-							for (auto folder: folders) {
+							for (const auto& folder: folders) {
 								try {
 									FileSystem::getStandardFileSystem()->removePath(
 										folder,
@@ -1012,7 +1012,7 @@ void Installer::performScreenAction() {
 								} catch (Exception& exception) {
 									Console::println(string("UninstallThread::run(): An error occurred: ") + exception.what());
 								}
-								for (auto installerFile: installerFiles) {
+								for (const auto& installerFile: installerFiles) {
 									if (StringTools::endsWith(installerFile, ".ta") == true ||
 										StringTools::endsWith(installerFile, ".ta.sha256") == true) {
 										try {
@@ -1171,7 +1171,7 @@ void Installer::onAction(GUIActionListenerType type, GUIElementNode* node) {
 		if (node->getId() == "button_cancel") {
 			FileSystem::unsetFileSystem();
 			// delete downloaded files
-			for (auto downloadedFile: downloadedFiles) {
+			for (const auto& downloadedFile: downloadedFiles) {
 				try {
 					FileSystem::getStandardFileSystem()->removeFile(".", downloadedFile);
 				} catch (Exception& exception) {
@@ -1323,7 +1323,7 @@ void Installer::mountInstallerFileSystem(const string& timestamp, bool remountIn
 		// determine newest component file name
 		vector<string> files;
 		FileSystem::getStandardFileSystem()->list("installer", files);
-		for (auto file: files) {
+		for (const auto& file: files) {
 			if (StringTools::startsWith(file, installerArchiveFileNameStart) == true &&
 				StringTools::endsWith(file, ".ta") == true) {
 				Console::println("Installer::main(): Have installer tdme archive file: " + file);
@@ -1395,7 +1395,7 @@ void Installer::main(int argc, char** argv)
 void Installer::scanArchive(ArchiveFileSystem* archiveFileSystem, vector<string>& totalFiles, const string& pathName) {
 	vector<string> files;
 	archiveFileSystem->list(pathName, files);
-	for (auto fileName: files) {
+	for (const auto& fileName: files) {
 		if (archiveFileSystem->isPath(pathName + "/" + fileName) == false) {
 			totalFiles.push_back((pathName.empty() == true?"":pathName + "/") + fileName);
 		} else {

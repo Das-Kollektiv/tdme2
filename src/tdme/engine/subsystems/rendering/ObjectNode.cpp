@@ -83,8 +83,7 @@ void ObjectNode::createNodes(ObjectBase* object, bool useManagers, Engine::Anima
 
 void ObjectNode::createNodes(ObjectBase* object, const map<string, Node*>& nodes, bool animated, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget, vector<ObjectNode*>& objectNodes)
 {
-	for (auto it: nodes) {
-		Node* node = it.second;
+	for (const auto& [nodeId, node]: nodes) {
 		// skip on joints
 		if (node->isJoint() == true) {
 			continue;
@@ -190,7 +189,7 @@ void ObjectNode::computeAnimation(int contextIdx, vector<ObjectNode*>& objectNod
 
 void ObjectNode::setupTextures(Renderer* renderer, int contextIdx, ObjectNode* objectNode, int32_t facesEntityIdx)
 {
-	auto& facesEntities = objectNode->node->getFacesEntities();
+	const auto& facesEntities = objectNode->node->getFacesEntities();
 	auto material = facesEntities[facesEntityIdx].getMaterial();
 	// get material or use default
 	if (material == nullptr) material = Material::getDefaultMaterial();
@@ -263,7 +262,7 @@ void ObjectNode::dispose()
 {
 	auto engine = Engine::getInstance();
 	auto textureManager = engine->getTextureManager();
-	auto& facesEntities = node->getFacesEntities();
+	const auto& facesEntities = node->getFacesEntities();
 	// dispose textures
 	for (auto j = 0; j < facesEntities.size(); j++) {
 		// get entity's material

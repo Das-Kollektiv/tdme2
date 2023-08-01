@@ -394,7 +394,7 @@ void ApplicationClient::update() {
 	// audio
 	auto engine = context->getEngine();
 	auto audio = context->getAudio();
-	auto& cameraPosition = engine->getCamera()->getLookFrom();
+	const auto& cameraPosition = engine->getCamera()->getLookFrom();
 	for (auto& queuedSound: queuedSounds) {
 		if (queuedSound.attachedToLogic == true) {
 			auto entity = engine->getEntity(queuedSound.gameLogicId);
@@ -448,11 +448,10 @@ void ApplicationClient::update() {
 		}
 	}
 	vector<string> inactiveSounds;
-	for (auto& activeSoundIt: activeSounds) {
-		auto& activeSound = activeSoundIt.second;
+	for (const auto& [activeSoundKey, activeSound]: activeSounds) {
 		auto sound = audio->getEntity(activeSound.id);
 		if (sound->isPlaying() == false) {
-			inactiveSounds.push_back(activeSoundIt.first);
+			inactiveSounds.push_back(activeSoundKey);
 			continue;
 		}
 		if (activeSound.attachedToLogic == true) {

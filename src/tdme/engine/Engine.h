@@ -821,13 +821,13 @@ public:
 			Console::println("Engine::getDefaultShaderParameter(): no shader registered with id: " + shaderId);
 			return ShaderParameter();
 		}
-		auto& shader = shaderIt->second;
+		const auto& shader = shaderIt->second;
 		auto shaderParameterIt = shader.parameterDefaults.find(parameterName);
 		if (shaderParameterIt == shader.parameterDefaults.end()) {
 			Console::println("Engine::getDefaultShaderParameter(): no default for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
 			return ShaderParameter();
 		}
-		auto& shaderParameter = shaderParameterIt->second;
+		const auto& shaderParameter = shaderParameterIt->second;
 		return shaderParameter;
 	}
 
@@ -842,12 +842,12 @@ public:
 		if (shaderParameterIt == shaderParameters.end()) {
 			return getDefaultShaderParameter(shaderId, parameterName);
 		}
-		auto& shaderParameterMap = shaderParameterIt->second;
+		const auto& shaderParameterMap = shaderParameterIt->second;
 		auto shaderParameterParameterIt = shaderParameterMap.find(parameterName);
 		if (shaderParameterParameterIt == shaderParameterMap.end()) {
 			return getDefaultShaderParameter(shaderId, parameterName);
 		}
-		auto& shaderParameter = shaderParameterParameterIt->second;
+		const auto& shaderParameter = shaderParameterParameterIt->second;
 		return shaderParameter;
 	}
 

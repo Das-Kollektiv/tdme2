@@ -119,8 +119,7 @@ ParticleSystemEditorTabView::~ParticleSystemEditorTabView() {
 void ParticleSystemEditorTabView::handleInputEvents()
 {
 	if (prototypePhysicsView->isEditingBoundingVolume(prototype) == false) {
-		for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
-			auto& event = engine->getGUI()->getKeyboardEvents()[i];
+		for (auto& event: engine->getGUI()->getKeyboardEvents()) {
 			if (event.isProcessed() == true) continue;
 			auto isKeyDown = event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
 			if (Character::toLowerCase(event.getKeyChar()) == '1') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_ALL); updateGizmo(); event.setProcessed(true); }
@@ -128,9 +127,7 @@ void ParticleSystemEditorTabView::handleInputEvents()
 			if (Character::toLowerCase(event.getKeyChar()) == '3') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_ROTATE); updateGizmo(); event.setProcessed(true); }
 			if (Character::toLowerCase(event.getKeyChar()) == '4') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_SCALE); updateGizmo(); event.setProcessed(true); }
 		}
-		for (auto i = 0; i < engine->getGUI()->getMouseEvents().size(); i++) {
-			auto& event = engine->getGUI()->getMouseEvents()[i];
-
+		for (auto& event: engine->getGUI()->getMouseEvents()) {
 			if (event.isProcessed() == true) continue;
 
 			if (event.getButton() == MOUSE_BUTTON_LEFT) {

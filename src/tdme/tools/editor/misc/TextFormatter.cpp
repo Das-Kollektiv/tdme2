@@ -62,8 +62,8 @@ TextFormatter::TextFormatter() {
 void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode, int charStartIdx, int charEndIdx) {
 	if (std::find(xmlLanguage.extensions.begin(), xmlLanguage.extensions.end(), extension) != xmlLanguage.extensions.end()) {
 		textNode->unsetStyles();
-		auto& language = xmlLanguage;
-		auto& code = textNode->getText().getString();
+		const auto& language = xmlLanguage;
+		const auto& code = textNode->getText().getString();
 		auto startIdx = 0;
 		auto endIdx = -1;
 		auto lc = '\0';
@@ -167,8 +167,8 @@ void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 		}
 	} else
 	if (std::find(propertiesLanguage.extensions.begin(), propertiesLanguage.extensions.end(), extension) != propertiesLanguage.extensions.end()) {
-		auto& language = propertiesLanguage;
-		auto& code = textNode->getText().getString();
+		const auto& language = propertiesLanguage;
+		const auto& code = textNode->getText().getString();
 		auto commentCount = 0;
 		auto delimiterCount = 0;
 		auto nonWhitespaceCount = 0;
@@ -244,15 +244,15 @@ void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 		}
 	} else {
 		auto foundLanguage = false;
-		for (auto& language: languages) {
+		for (const auto& language: languages) {
 			if (std::find(language.extensions.begin(), language.extensions.end(), extension) != language.extensions.end()) {
 				// Console::println("void TextFormatter::format(): " + to_string(charStartIdx) + " ... " + to_string(charEndIdx));
 				foundLanguage = true;
-				auto& code = textNode->getText().getString();
-				auto& preprocessorLineKeywords = language.preprocessorLineKeywordsTokenized;
-				auto& keywords1 = language.keywords1Tokenized;
-				auto& keywords2 = language.keywords2Tokenized;
-				auto& datatypeLiteralSuffixes = language.datatypeLiteralSuffixesTokenized;
+				const auto& code = textNode->getText().getString();
+				const auto& preprocessorLineKeywords = language.preprocessorLineKeywordsTokenized;
+				const auto& keywords1 = language.keywords1Tokenized;
+				const auto& keywords2 = language.keywords2Tokenized;
+				const auto& datatypeLiteralSuffixes = language.datatypeLiteralSuffixesTokenized;
 				auto startIdx = 0;
 				auto endIdx = -1;
 				auto lc = '\0';
@@ -322,7 +322,7 @@ void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 								auto word = StringTools::trim(StringTools::substring(code, startIdx, endIdx));
 								if (word.empty() == true) continue;
 								auto literalWord = word;
-								for (auto& datatypeLiteralSuffix: datatypeLiteralSuffixes) {
+								for (const auto& datatypeLiteralSuffix: datatypeLiteralSuffixes) {
 									if (StringTools::endsWith(word, datatypeLiteralSuffix) == true) {
 										auto dotCount = 0;
 										auto valid = true;
@@ -349,19 +349,19 @@ void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 									textNode->setTextStyle(startIdx, endIdx - 1, literalColor);
 								} else {
 									// Console::println("Word: '" + word + "'; " + to_string(startIdx) + " ... " + to_string(endIdx));
-									for (auto& keyword: keywords1) {
+									for (const auto& keyword: keywords1) {
 										if (word == keyword) {
 											textNode->setTextStyle(startIdx, endIdx - 1, keyword1Color);
 											break;
 										}
 									}
-									for (auto& keyword: keywords2) {
+									for (const auto& keyword: keywords2) {
 										if (word == keyword) {
 											textNode->setTextStyle(startIdx, endIdx - 1, keyword2Color);
 											break;
 										}
 									}
-									for (auto& keyword: preprocessorLineKeywords) {
+									for (const auto& keyword: preprocessorLineKeywords) {
 										if (word == keyword) {
 											if (c == '\n' || i == charEndIdx) {
 												textNode->setTextStyle(startIdx, endIdx - 1, preprocessorColor);
@@ -446,7 +446,7 @@ const vector<TiXmlElement*> TextFormatter::getChildren(TiXmlElement* parent)
 }
 
 const TextFormatter::CodeCompletion* TextFormatter::loadCodeCompletion(const string& extension) {
-	for (auto& language: languages) {
+	for (const auto& language: languages) {
 		if (std::find(language.extensions.begin(), language.extensions.end(), extension) != language.extensions.end()) {
 			try {
 				// load dae xml document

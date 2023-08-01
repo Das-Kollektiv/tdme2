@@ -278,13 +278,13 @@ bool BasePropertiesSubController::onUnfocus(GUIElementNode* node, BaseProperties
 		renameProperty(baseProperties);
 		return true;
 	} else {
-		for (auto& applyPropertyNode: applyPropertyNodes) {
+		for (const auto& applyPropertyNode: applyPropertyNodes) {
 			if (node->getId() == applyPropertyNode) {
 				applyPropertyValue(baseProperties);
 				return true;
 			}
 		}
-		for (auto& applyBaseNode: applyBaseNodes) {
+		for (const auto& applyBaseNode: applyBaseNodes) {
 			if (node->getId() == applyBaseNode) {
 				applyPropertyDetails(baseProperties);
 				return true;

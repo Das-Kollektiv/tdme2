@@ -59,7 +59,7 @@ private:
 		//
 		faceCount = 0;
 		for (auto objectNode: objectBase->objectNodes) {
-			for (auto& facesEntity: objectNode->node->getFacesEntities()) {
+			for (const auto& facesEntity: objectNode->node->getFacesEntities()) {
 				faceCount += facesEntity.getFaces().size();
 			}
 		}
@@ -118,17 +118,17 @@ public:
 	 */
 	inline const array<Vector3, 3>& next() {
 		auto objectNode = objectBase->objectNodes[objectNodeIdx];
-		auto& facesEntities = objectNode->node->getFacesEntities();
-		auto& facesEntity = facesEntities[facesEntityIdx];
-		auto& faces = facesEntity.getFaces();
-		auto& face = faces[faceIdx];
+		const auto& facesEntities = objectNode->node->getFacesEntities();
+		const auto& facesEntity = facesEntities[facesEntityIdx];
+		const auto& faces = facesEntity.getFaces();
+		const auto& face = faces[faceIdx];
 		// compute vertices
-		auto& faceVertexIndices = face.getVertexIndices();
+		const auto& faceVertexIndices = face.getVertexIndices();
 		// skinning
 		if (objectNode->mesh->skinning == true) {
 			//
-			auto& nodeVertices = node->getVertices();
-			auto& jointsWeights = node->getSkinning()->getVerticesJointsWeights();
+			const auto& nodeVertices = node->getVertices();
+			const auto& jointsWeights = node->getSkinning()->getVerticesJointsWeights();
 
 			//
 			const Vector3* vertex;

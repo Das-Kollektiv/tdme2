@@ -104,7 +104,7 @@ private:
 	 */
 	inline const string getExtensionHash() {
 		string extensionHash = "|";
-		for (auto& extension: extensions) extensionHash+= extension + "|";
+		for (const auto& extension: extensions) extensionHash+= extension + "|";
 		if (extensions.empty() == true) extensionHash+= "|";
 		return extensionHash;
 	}

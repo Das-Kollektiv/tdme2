@@ -62,10 +62,9 @@ void Capsule::setScale(const Vector3& scale) {
 	// determine local rotation around Y axis
 	Vector3 yAxis(0.0f, -1.0f, 0.0f);
 	Vector3 abNormalized = aScaled.clone().sub(bScaled).normalize();
-	auto& abNormalizedVectorXYZ = abNormalized.getArray();
 	Vector3 rotationAxis;
-	if (Math::abs(abNormalizedVectorXYZ[0]) < Math::EPSILON && Math::abs(abNormalizedVectorXYZ[2]) < Math::EPSILON) {
-		rotationAxis.set(abNormalizedVectorXYZ[1], 0.0f, 0.0f);
+	if (Math::abs(abNormalized[0]) < Math::EPSILON && Math::abs(abNormalized[2]) < Math::EPSILON) {
+		rotationAxis.set(abNormalized[1], 0.0f, 0.0f);
 	} else {
 		rotationAxis = Vector3::computeCrossProduct(yAxis, abNormalized).normalize();
 	}

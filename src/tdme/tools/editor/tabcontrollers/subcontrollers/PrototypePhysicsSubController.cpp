@@ -334,31 +334,31 @@ void PrototypePhysicsSubController::setBoundingVolumeDetails(Prototype* prototyp
 		Vector3 a;
 		Vector3 b;
 		auto radius = 0.0f;
-		auto& halfExtensionXYZ = obb.getHalfExtension().getArray();
-		if (halfExtensionXYZ[0] > halfExtensionXYZ[1] && halfExtensionXYZ[0] > halfExtensionXYZ[2]) {
-			radius = Math::sqrt(halfExtensionXYZ[1] * halfExtensionXYZ[1] + halfExtensionXYZ[2] * halfExtensionXYZ[2]);
+		const auto& halfExtension = obb.getHalfExtension();
+		if (halfExtension[0] > halfExtension[1] && halfExtension[0] > halfExtension[2]) {
+			radius = Math::sqrt(halfExtension[1] * halfExtension[1] + halfExtension[2] * halfExtension[2]);
 			a.set(obb.getAxes()[0]);
-			a.scale(-(halfExtensionXYZ[0] - radius));
+			a.scale(-(halfExtension[0] - radius));
 			a.add(obb.getCenter());
 			b.set(obb.getAxes()[0]);
-			b.scale(+(halfExtensionXYZ[0] - radius));
+			b.scale(+(halfExtension[0] - radius));
 			b.add(obb.getCenter());
 		} else
-		if (halfExtensionXYZ[1] > halfExtensionXYZ[0] && halfExtensionXYZ[1] > halfExtensionXYZ[2]) {
-			radius = Math::sqrt(halfExtensionXYZ[0] * halfExtensionXYZ[0] + halfExtensionXYZ[2] * halfExtensionXYZ[2]);
+		if (halfExtension[1] > halfExtension[0] && halfExtension[1] > halfExtension[2]) {
+			radius = Math::sqrt(halfExtension[0] * halfExtension[0] + halfExtension[2] * halfExtension[2]);
 			a.set(obb.getAxes()[1]);
-			a.scale(-(halfExtensionXYZ[1] - radius));
+			a.scale(-(halfExtension[1] - radius));
 			a.add(obb.getCenter());
 			b.set(obb.getAxes()[1]);
-			b.scale(+(halfExtensionXYZ[1] - radius));
+			b.scale(+(halfExtension[1] - radius));
 			b.add(obb.getCenter());
 		} else {
-			radius = Math::sqrt(halfExtensionXYZ[0] * halfExtensionXYZ[0] + halfExtensionXYZ[1] * halfExtensionXYZ[1]);
+			radius = Math::sqrt(halfExtension[0] * halfExtension[0] + halfExtension[1] * halfExtension[1]);
 			a.set(obb.getAxes()[2]);
-			a.scale(-(halfExtensionXYZ[2] - radius));
+			a.scale(-(halfExtension[2] - radius));
 			a.add(obb.getCenter());
 			b.set(obb.getAxes()[2]);
-			b.scale(+(halfExtensionXYZ[2] - radius));
+			b.scale(+(halfExtension[2] - radius));
 			b.add(obb.getCenter());
 		}
 		setBoundingVolumeCapsuleDetails(a, b, radius);
@@ -567,7 +567,7 @@ bool PrototypePhysicsSubController::onChange(GUIElementNode* node, Prototype* pr
 			return true;
 		}
 	} else {
-		for (auto& applyPhysicsNode: applyPhysicsNodes) {
+		for (const auto& applyPhysicsNode: applyPhysicsNodes) {
 			if (node->getId() == applyPhysicsNode) {
 				applyPhysicsDetails(prototype);
 				return true;
@@ -585,19 +585,19 @@ bool PrototypePhysicsSubController::onChange(GUIElementNode* node, Prototype* pr
 					view->applyBoundingVolumeNone(prototype, boundingVolumeIdx);
 				return true;
 			} else {
-				for (auto& applyBoundingVolumeSphereNode: applyBoundingVolumSphereNodes) {
+				for (const auto& applyBoundingVolumeSphereNode: applyBoundingVolumSphereNodes) {
 					if (node->getId() == applyBoundingVolumeSphereNode) {
 						applyBoundingVolumeSphereDetails(prototype, boundingVolumeIdx);
 						return true;
 					}
 				}
-				for (auto& applyBoundingVolumeCapsuleNode: applyBoundingVolumCapsuleNodes) {
+				for (const auto& applyBoundingVolumeCapsuleNode: applyBoundingVolumCapsuleNodes) {
 					if (node->getId() == applyBoundingVolumeCapsuleNode) {
 						applyBoundingVolumeCapsuleDetails(prototype, boundingVolumeIdx);
 						return true;
 					}
 				}
-				for (auto& applyBoundingVolumeOBBNode: applyBoundingVolumOBBNodes) {
+				for (const auto& applyBoundingVolumeOBBNode: applyBoundingVolumOBBNodes) {
 					if (node->getId() == applyBoundingVolumeOBBNode) {
 						applyBoundingVolumeObbDetails(prototype, boundingVolumeIdx);
 						return true;

@@ -97,10 +97,8 @@ void World::reset()
 	// joints
 	{
 		vector<string> jointIds;
-		for (auto jointIt: jointsById) {
-			jointIds.push_back(jointIt.first);
-		}
-		for (auto& jointId: jointIds) removeJoint(jointId);
+		for (const auto& [jointId, joint]: jointsById) jointIds.push_back(jointId);
+		for (const auto& jointId: jointIds) removeJoint(jointId);
 	}
 	// bodies
 	{
@@ -284,8 +282,8 @@ void World::update(float deltaTime)
 					entity->setNormal(Vector3(normal.x, normal.y, normal.z));
 					auto shape1 = manifold->getShape1();
 					auto shape2 = manifold->getShape2();
-					auto& shapeLocalToWorldTransform1 = shape1->getLocalToWorldTransform();
-					auto& shapeLocalToWorldTransform2 = shape2->getLocalToWorldTransform();
+					auto shapeLocalToWorldTransform1 = shape1->getLocalToWorldTransform();
+					auto shapeLocalToWorldTransform2 = shape2->getLocalToWorldTransform();
 					auto& localPoint1 = contactPoint->getLocalPointOnShape1();
 					auto& localPoint2 = contactPoint->getLocalPointOnShape2();
 					auto worldPoint1 = shapeLocalToWorldTransform1 * localPoint1;
@@ -345,9 +343,9 @@ void World::update(float deltaTime)
 		}
 
 		// rp3d transform
-		auto& transform = body->rigidBody->getTransform();
-		auto& transformPosition = transform.getPosition();
-		auto& transformOrientation = transform.getOrientation();
+		const auto& transform = body->rigidBody->getTransform();
+		const auto& transformPosition = transform.getPosition();
+		const auto& transformOrientation = transform.getOrientation();
 
 		// tdme2 transform
 		auto& physicsTransform = body->transform;
@@ -550,10 +548,10 @@ bool World::getCollisionResponse(Body* body1, Body* body2, CollisionResponse& co
 						auto entity = collision.addResponse(-contactPoint.getPenetrationDepth());
 						auto normal = contactPoint.getWorldNormal();
 						entity->setNormal(Vector3(normal.x, normal.y, normal.z));
-						auto& collider1LocalToWorldTransform1 = collider1->getLocalToWorldTransform();
-						auto& collider2LocalToWorldTransform2 = collider2->getLocalToWorldTransform();
-						auto& localPoint1 = contactPoint.getLocalPointOnCollider1();
-						auto& localPoint2 = contactPoint.getLocalPointOnCollider2();
+						auto collider1LocalToWorldTransform1 = collider1->getLocalToWorldTransform();
+						auto collider2LocalToWorldTransform2 = collider2->getLocalToWorldTransform();
+						const auto& localPoint1 = contactPoint.getLocalPointOnCollider1();
+						const auto& localPoint2 = contactPoint.getLocalPointOnCollider2();
 						auto worldPoint1 = collider1LocalToWorldTransform1 * localPoint1;
 						auto worldPoint2 = collider2LocalToWorldTransform2 * localPoint2;
 						entity->addHitPoint(Vector3(worldPoint1.x, worldPoint1.y, worldPoint1.z));

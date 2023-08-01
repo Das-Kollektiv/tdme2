@@ -180,7 +180,7 @@ void HTTPDownloadClient::start() {
 									downloadClient->httpHeader.clear();
 									if ((downloadClient->headerSize = downloadClient->parseHTTPResponseHeaders(ifs, downloadClient->httpStatusCode, downloadClient->httpHeader)) > 0) {
 										downloadClient->haveHeaders = true;
-										for (auto header: downloadClient->httpHeader) {
+										for (const auto& header: downloadClient->httpHeader) {
 											if (StringTools::startsWith(header, "Content-Length: ") == true) {
 												downloadClient->haveContentSize = true;
 												downloadClient->contentSize = Integer::parse(StringTools::substring(header, string("Content-Length: ").size()));

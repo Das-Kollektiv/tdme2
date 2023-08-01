@@ -101,7 +101,7 @@ private:
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return prototype
 	 */
-	static Prototype* read(int id, const string& pathName, Value& jPrototypeRoot, PrototypeTransformFilter* transformFilter = nullptr, bool useBC7TextureCompression = true);
+	static Prototype* read(int id, const string& pathName, const Value& jPrototypeRoot, PrototypeTransformFilter* transformFilter = nullptr, bool useBC7TextureCompression = true);
 
 	/**
 	 * Parse bounding volume
@@ -113,7 +113,7 @@ private:
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return prototype bounding volume
 	 */
-	static PrototypeBoundingVolume* parseBoundingVolume(int idx, Prototype* prototype, const string& pathName, Value& jBv);
+	static PrototypeBoundingVolume* parseBoundingVolume(int idx, Prototype* prototype, const string& pathName, const Value& jBv);
 
 	/**
 	 * Parse LOD level
@@ -122,7 +122,7 @@ private:
 	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @return prototype lod level
 	 */
-	static PrototypeLODLevel* parseLODLevel(const string& pathName, Value& jLodLevel, bool useBC7TextureCompression);
+	static PrototypeLODLevel* parseLODLevel(const string& pathName, const Value& jLodLevel, bool useBC7TextureCompression);
 
 	/**
 	 * Parse LOD level
@@ -131,7 +131,7 @@ private:
 	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @return prototype imposter LOD
 	 */
-	static PrototypeImposterLOD* parseImposterLODLevel(const string& pathName, Value& jImposterLOD, bool useBC7TextureCompression);
+	static PrototypeImposterLOD* parseImposterLODLevel(const string& pathName, const Value& jImposterLOD, bool useBC7TextureCompression);
 
 	/**
 	 * Parse particle system
@@ -140,6 +140,6 @@ private:
 	 * @param jParticleSystem JSON particle system object
 	 * @param useBC7TextureCompression use BC7 texture compression
 	 */
-	static void parseParticleSystem(PrototypeParticleSystem* particleSystem, const string& pathName, Value& jParticleSystem, bool useBC7TextureCompression);
+	static void parseParticleSystem(PrototypeParticleSystem* particleSystem, const string& pathName, const Value& jParticleSystem, bool useBC7TextureCompression);
 
 };

@@ -119,7 +119,7 @@ void SkinningShader::computeSkinning(int contextIdx, ObjectBase* objectBase, Obj
 	//
 	ModelSkinningCache* modelSkinningCacheCached = nullptr;
 	auto node = objectNodeMesh->node;
-	auto& vertices = node->getVertices();
+	const auto& vertices = node->getVertices();
 	auto id = node->getModel()->getId() + "." + node->getId();
 	mutex.lock();
 	auto cacheIt = cache.find(id);
@@ -128,8 +128,8 @@ void SkinningShader::computeSkinning(int contextIdx, ObjectBase* objectBase, Obj
 
 		auto created = false;
 		auto skinning = node->getSkinning();
-		auto& verticesJointsWeights = skinning->getVerticesJointsWeights();
-		auto& weights = skinning->getWeights();
+		const auto& verticesJointsWeights = skinning->getVerticesJointsWeights();
+		const auto& weights = skinning->getWeights();
 
 		// vbos
 		{
@@ -173,7 +173,7 @@ void SkinningShader::computeSkinning(int contextIdx, ObjectBase* objectBase, Obj
 			// vertices joints indices
 			auto ibVerticesVertexJointsIdxs = ObjectBuffer::getByteBuffer(contextIdx, vertices.size() * 4 * sizeof(float))->asIntBuffer();
 			for (auto nodeVertexIndex = 0; nodeVertexIndex < vertices.size(); nodeVertexIndex++) {
-				auto& vertexJointsWeight = verticesJointsWeights[nodeVertexIndex];
+				const auto& vertexJointsWeight = verticesJointsWeights[nodeVertexIndex];
 				// vertex joint idx 1..4
 				for (auto i = 0; i < 4; i++) {
 					auto jointIndex = i < vertexJointsWeight.size()?vertexJointsWeight[i].getJointIndex():-1;
@@ -187,7 +187,7 @@ void SkinningShader::computeSkinning(int contextIdx, ObjectBase* objectBase, Obj
 			// vertices joints weights
 			auto fbVerticesVertexJointsWeights = ObjectBuffer::getByteBuffer(contextIdx, vertices.size() * 4 * sizeof(float))->asFloatBuffer();
 			for (auto nodeVertexIndex = 0; nodeVertexIndex < vertices.size(); nodeVertexIndex++) {
-				auto& vertexJointsWeight = verticesJointsWeights[nodeVertexIndex];
+				const auto& vertexJointsWeight = verticesJointsWeights[nodeVertexIndex];
 				// vertex joint weight 1..4
 				for (auto i = 0; i < 4; i++) {
 					fbVerticesVertexJointsWeights.put(static_cast<float>(i < vertexJointsWeight.size()?weights[vertexJointsWeight[i].getWeightIndex()]:0.0f));
@@ -220,7 +220,7 @@ void SkinningShader::computeSkinning(int contextIdx, ObjectBase* objectBase, Obj
 		Matrix4x4 skinningMatrix;
 		auto currentInstance = objectBase->getCurrentInstance();
 		auto skinning = node->getSkinning();
-		auto& skinningJoints = skinning->getJoints();
+		const auto& skinningJoints = skinning->getJoints();
 		auto fbMatrices = ObjectBuffer::getByteBuffer(contextIdx, objectBase->instances * skinningJoints.size() * 16 * sizeof(float))->asFloatBuffer();
 		for (auto i = 0; i < objectBase->instances; i++) {
 			if (objectBase->instanceEnabled[i] == false) continue;
@@ -264,8 +264,8 @@ void SkinningShader::unUseProgram()
 }
 
 void SkinningShader::reset() {
-	for (auto& modelSkinningCacheIt: cache) {
-		Engine::getVBOManager()->removeVBO("skinning_compute_shader." + modelSkinningCacheIt.second.id + ".vbos");
+	for (const auto& [cacheId, cacheEntry]: cache) {
+		Engine::getVBOManager()->removeVBO("skinning_compute_shader." + cacheEntry.id + ".vbos");
 	}
 	// TODO: Remove vaos
 	cache.clear();

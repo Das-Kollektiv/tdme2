@@ -100,7 +100,7 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 	// auto version = Float::parseFloat((jRoot["version"].GetString()));
 	scene->setRotationOrder(jRoot.FindMember("ro") != jRoot.MemberEnd()?RotationOrder::valueOf(jRoot["ro"].GetString()):RotationOrder::XYZ);
 	for (auto i = 0; i < jRoot["properties"].GetArray().Size(); i++) {
-		auto& jSceneProperty = jRoot["properties"].GetArray()[i];
+		const auto& jSceneProperty = jRoot["properties"].GetArray()[i];
 		scene->addProperty(
 			jSceneProperty["name"].GetString(),
 			jSceneProperty["value"].GetString()
@@ -110,7 +110,7 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 		auto lightIdx = 0;
 		auto jLights = jRoot["lights"].GetArray();
 		for (auto i = 0; i < jLights.Size(); i++) {
-			auto& jLight = jLights[i];
+			const auto& jLight = jLights[i];
 			if (jLight["e"].GetBool() == false) continue;
 			auto light = lightIdx < scene->getLightCount()?(scene->getLightAt(jLight.FindMember("id") != jLight.MemberEnd()?jLight["id"].GetInt():lightIdx)):scene->addLight();
 			light->setAmbient(
@@ -165,7 +165,7 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 	auto progressStepCurrent = 0;
 	auto jPrototypes = jRoot["models"].GetArray();
 	for (auto i = 0; i < jPrototypes.Size(); i++) {
-		auto& jPrototype = jPrototypes[i];
+		const auto& jPrototype = jPrototypes[i];
 		Prototype* prototype = nullptr;
 		try {
 			auto embedded = jPrototype.FindMember("e") != jPrototype.MemberEnd()?jPrototype["e"].GetBool():true;
@@ -211,7 +211,7 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 		scene->getLibrary()->addPrototype(prototype);
 		if (jPrototype.FindMember("properties") != jPrototype.MemberEnd()) {
 			for (auto j = 0; j < jPrototype["properties"].GetArray().Size(); j++) {
-				auto& jPrototypeProperty = jPrototype["properties"].GetArray()[j];
+				const auto& jPrototypeProperty = jPrototype["properties"].GetArray()[j];
 				prototype->addProperty(
 					jPrototypeProperty["name"].GetString(),
 					jPrototypeProperty["value"].GetString()
@@ -225,7 +225,7 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 
 	auto jEntities = jRoot["objects"].GetArray();
 	for (auto i = 0; i < jEntities.Size(); i++) {
-		auto& jSceneEntity = jEntities[i];
+		const auto& jSceneEntity = jEntities[i];
 		auto prototype = scene->getLibrary()->getPrototype(jSceneEntity["mid"].GetInt());
 		if (prototype == nullptr) {
 			Console::println("SceneReader::read(): No prototype found with id = " + to_string(jSceneEntity["mid"].GetInt()));
@@ -270,7 +270,7 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 		);
 		if (jSceneEntity.FindMember("properties") != jSceneEntity.MemberEnd()) {
 			for (auto j = 0; j < jSceneEntity["properties"].GetArray().Size(); j++) {
-				auto& jSceneEntityProperty = jSceneEntity["properties"].GetArray()[j];
+				const auto& jSceneEntityProperty = jSceneEntity["properties"].GetArray()[j];
 				sceneEntity->addProperty(
 					jSceneEntityProperty["name"].GetString(),
 					jSceneEntityProperty["value"].GetString()
@@ -289,7 +289,7 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 
 	//
 	if (jRoot.FindMember("sky") != jRoot.MemberEnd()) {
-		auto& jSky = jRoot["sky"];
+		const auto& jSky = jRoot["sky"];
 		scene->setSkyModelFileName(jSky["file"].GetString());
 		scene->setSkyModelScale(
 			Vector3(
@@ -374,7 +374,7 @@ void SceneReader::determineMeshNodes(Scene* scene, Node* node, const string& par
 	// compute animation matrix if animation setups exist
 	auto animation = node->getAnimation();
 	if (animation != nullptr) {
-		auto& animationMatrices = animation->getTransformMatrices();
+		const auto& animationMatrices = animation->getTransformMatrices();
 		transformMatrix.set(animationMatrices[0 % animationMatrices.size()]);
 	} else {
 		// no animation matrix, set up local transform matrix up as node matrix
@@ -387,8 +387,8 @@ void SceneReader::determineMeshNodes(Scene* scene, Node* node, const string& par
 	// check if no mesh?
 	if (node->getVertices().size() == 0 && node->getSubNodes().size() > 0) {
 		// ok, check sub meshes
-		for (auto subNodeIt: node->getSubNodes()) {
-			determineMeshNodes(scene, subNodeIt.second, nodeId, transformMatrix.clone(), meshNodes);
+		for (const auto& [subNodeId, subNode]: node->getSubNodes()) {
+			determineMeshNodes(scene, subNode, nodeId, transformMatrix.clone(), meshNodes);
 		}
 	} else {
 		// add to node meshes, even if empty as its a empty :D
@@ -431,11 +431,11 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 	sceneModelImportRotationMatrix.scale(Vector3(1.0f / sceneModelScale.getX(), 1.0f / sceneModelScale.getY(), 1.0f / sceneModelScale.getZ()));
 	auto progressTotal = sceneModel->getSubNodes().size();
 	auto progressIdx = 0;
-	for (auto nodeIt: sceneModel->getSubNodes()) {
+	for (const auto& [subNodeId, subNode]: sceneModel->getSubNodes()) {
 		if (progressCallback != nullptr) progressCallback->progress(0.1f + static_cast<float>(progressIdx) / static_cast<float>(progressTotal) * 0.8f);
 		vector<PrototypeMeshNode> meshNodes;
-		determineMeshNodes(scene, nodeIt.second, "", (Matrix4x4()).identity(), meshNodes);
-		for (auto& meshNode: meshNodes) {
+		determineMeshNodes(scene, subNode, "", (Matrix4x4()).identity(), meshNodes);
+		for (const auto& meshNode: meshNodes) {
 			auto model = new Model(
 				meshNode.name + ".tm",
 				fileName + "-" + meshNode.name,

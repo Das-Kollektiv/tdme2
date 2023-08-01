@@ -104,7 +104,7 @@ public:
 		// add engine entities requested by MiniScript
 		if (miniScript->enginePrototypesToAdd.empty() == false) {
 			miniScript->prototypesToAddMutex.lock();
-			for (auto& prototypeToAdd: miniScript->enginePrototypesToAdd) {
+			for (const auto& prototypeToAdd: miniScript->enginePrototypesToAdd) {
 				//
 				Console::println("MiniScriptLogic::updateEngine(): adding prototype: id: " + prototypeToAdd.id + ", hierarchyId: " + prototypeToAdd.hierarchyId + ", hierarchy parent id: " + prototypeToAdd.hierarchyParentId);
 				//
@@ -197,7 +197,7 @@ public:
 		if (miniScript->physicsPrototypesToAdd.empty() == false) {
 			miniScript->prototypesToAddMutex.lock();
 			//
-			for (auto& prototypeToAdd: miniScript->physicsPrototypesToAdd) {
+			for (const auto& prototypeToAdd: miniScript->physicsPrototypesToAdd) {
 				//
 				Console::println("MiniScriptLogic::updateLogic(): adding prototype: id: " + prototypeToAdd.id + ", hierarchyId: " + prototypeToAdd.hierarchyId + ", hierarchy parent id: " + prototypeToAdd.hierarchyParentId);
 				//

@@ -49,8 +49,7 @@ void CameraInputHandler::reset() {
 }
 
 void CameraInputHandler::handleInputEvents() {
-	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
-		auto& event = engine->getGUI()->getKeyboardEvents()[i];
+	for (auto& event: engine->getGUI()->getKeyboardEvents()) {
 		if (event.isProcessed() == true) continue;
 		if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) continue;
 		auto isKeyDown = event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
@@ -104,11 +103,8 @@ void CameraInputHandler::handleInputEvents() {
 
 	auto mousePanningSide = MOUSE_PANNING_NONE;
 	auto mousePanningForward = MOUSE_PANNING_NONE;
-	for (auto i = 0; i < engine->getGUI()->getMouseEvents().size(); i++) {
-		auto& event = engine->getGUI()->getMouseEvents()[i];
-
+	for (auto& event: engine->getGUI()->getMouseEvents()) {
 		if (event.isProcessed() == true) continue;
-
 		if (event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
 			if (mouseDragging == false) {
 				mouseDragging = true;

@@ -521,7 +521,7 @@ bool PathFinding::findPathCustom(
 		}
 
 		Vector3 startPositionComputed = startPosition;
-		for (auto& startPositionCandidate: startPositionCandidates) {
+		for (const auto& startPositionCandidate: startPositionCandidates) {
 			float startYHeight = startPositionCandidate.getY();
 			if (isWalkableInternal(
 				startPositionCandidate.getX(),
@@ -550,7 +550,7 @@ bool PathFinding::findPathCustom(
 			}
 		}
 
-		for (auto& endPositionCandidate: endPositionCandidates) {
+		for (const auto& endPositionCandidate: endPositionCandidates) {
 			Vector3 endPositionComputed = endPositionCandidate;
 			float endYHeight = endPositionComputed.getY();
 			if (alternativeEndSteps > 0 &&
@@ -645,9 +645,9 @@ bool PathFinding::findPathCustom(
 				// choose node from open nodes thats least expensive to check its successors
 				PathFindingNode* endNode = nullptr;
 				PathFindingNode* endNodeCandidate = nullptr;
-				for (auto nodeIt = openNodes.begin(); nodeIt != openNodes.end(); ++nodeIt) {
-					if (equalsLastNode(nodeIt->second, &end) == true && (endNode == nullptr || nodeIt->second->costsAll < endNode->costsAll)) endNode = nodeIt->second;
-					if (endNodeCandidate == nullptr || nodeIt->second->costsAll < endNodeCandidate->costsAll) endNodeCandidate = nodeIt->second;
+				for (const auto& [openNodeId, openNode]: openNodes) {
+					if (equalsLastNode(openNode, &end) == true && (endNode == nullptr || openNode->costsAll < endNode->costsAll)) endNode = openNode;
+					if (endNodeCandidate == nullptr || openNode->costsAll < endNodeCandidate->costsAll) endNodeCandidate = openNode;
 				}
 
 				//
@@ -808,7 +808,7 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 	);
 
 	// add end position to open nodes/start nodes
-	for (auto& endPosition: endPositions) {
+	for (const auto& endPosition: endPositions) {
 		auto nodePosition = Vector3(
 			FlowMap::alignPositionComponent(endPosition.getX(), flowMapStepSize),
 			endPosition.getY(),
@@ -833,7 +833,7 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 
 	// nodes to test
 	unordered_set<tuple<int, int, int>, PathFindingNodeId_Hash> nodesToTest;
-	for (auto& _centerPathNode: pathToUse) {
+	for (const auto& _centerPathNode: pathToUse) {
 		auto centerPathNode = Vector3(
 			FlowMap::alignPositionComponent(_centerPathNode.getX(), flowMapStepSize),
 			_centerPathNode.getY(),
@@ -857,8 +857,8 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 	while (openNodes.size() > 0) {
 		// choose node from open nodes thats least expensive to check its successors
 		PathFindingNode* openNode = nullptr;
-		for (auto nodeIt = openNodes.begin(); nodeIt != openNodes.end(); ++nodeIt) {
-			if (openNode == nullptr || nodeIt->second->costsAll < openNode->costsAll) openNode = nodeIt->second;
+		for (const auto& [openNodeCandidateId, openNodeCandidate]: openNodes) {
+			if (openNode == nullptr || openNodeCandidate->costsAll < openNode->costsAll) openNode = openNodeCandidate;
 		}
 		if (openNode == nullptr) break;
 
@@ -873,7 +873,7 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 	//	see: https://howtorts.github.io/2014/01/04/basic-flow-fields.html
 	auto flowMap = new FlowMap(pathToUse, endPositions, flowMapStepSize, complete);
 	flowMap->acquireReference();
-	for (auto& _centerPathNode: pathToUse) {
+	for (const auto& _centerPathNode: pathToUse) {
 		auto centerPathNode = Vector3(
 			FlowMap::alignPositionComponent(_centerPathNode.getX(), flowMapStepSize),
 			_centerPathNode.getY(),
@@ -931,7 +931,7 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 						continue;
 					} else {
 						// yes && walkable
-						auto& neighbourNode = neighbourNodeIt->second;
+						const auto& neighbourNode = neighbourNodeIt->second;
 						if (minCostsNode == nullptr || neighbourNode->costsReachPoint < minCosts) {
 							minCostsNode = neighbourNode;
 							minCosts = neighbourNode->costsReachPoint;
@@ -972,7 +972,7 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 	pathFindingNodesPool.reset();
 
 	// do some post adjustments
-	for (auto& _centerPathNode: pathToUse) {
+	for (const auto& _centerPathNode: pathToUse) {
 		auto centerPathNode = Vector3(
 			FlowMap::alignPositionComponent(_centerPathNode.getX(), flowMapStepSize),
 			_centerPathNode.getY(),
@@ -1058,7 +1058,7 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 					auto i = 0;
 					auto pathNodeIdx = -1;
 					auto pathNodeNodeDistanceSquared = Float::MAX_VALUE;
-					for (auto& pathNode: pathToUse) {
+					for (const auto& pathNode: pathToUse) {
 						auto pathNodeCellAxis = pathNode - cell->getPosition();
 						auto pathNodeCandidateDistanceSquared = pathNodeCellAxis.computeLengthSquared();
 						if (pathNodeIdx == -1 || pathNodeCandidateDistanceSquared < pathNodeNodeDistanceSquared) {

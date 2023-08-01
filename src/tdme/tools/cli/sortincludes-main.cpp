@@ -53,7 +53,7 @@ void scanDir(const string& folder, vector<string>& totalFiles) {
 
 	FileSystem::getInstance()->list(folder, files, &listFilter);
 
-	for (auto fileName: files) {
+	for (const auto& fileName: files) {
 		if (StringTools::endsWith(fileName, ".h") == true ||
 			StringTools::endsWith(fileName, ".cpp") == true) {
 			totalFiles.push_back(folder + "/" + fileName);
@@ -104,7 +104,7 @@ void parseHpp(const string& fileName) {
 		auto startLineIdx = -1;
 		auto endLineIdx = -1;
 		auto lineIdx = 0;
-		for (auto line: fileContent) {
+		for (const auto& line: fileContent) {
 			newFileContent.push_back(line);
 			if (StringTools::startsWith(line, "#include ") == true) {
 				if (startLineIdx == -1) {
@@ -139,7 +139,7 @@ void parseHpp(const string& fileName) {
 		auto startLineIdx = -1;
 		auto endLineIdx = -1;
 		auto lineIdx = 0;
-		for (auto line: fileContent) {
+		for (const auto& line: fileContent) {
 			newFileContent.push_back(line);
 			if (StringTools::startsWith(line, "using ") == true) {
 				if (startLineIdx == -1) {
@@ -161,7 +161,7 @@ void parseHpp(const string& fileName) {
 	newFileContent.clear();
 	{
 		string lastLine;
-		for (auto line: fileContent) {
+		for (const auto& line: fileContent) {
 			if ((StringTools::startsWith(line, "using ") == true || StringTools::startsWith(line, "#include ")) && line == lastLine) {
 				lastLine = line;
 				continue;
@@ -191,7 +191,7 @@ int main(int argc, char** argv)
 	scanDir(pathToSource, files);
 
 	Console::println("Processing files");
-	for (auto fileName: files) {
+	for (const auto& fileName: files) {
 		parseHpp(fileName);
 	}
 }

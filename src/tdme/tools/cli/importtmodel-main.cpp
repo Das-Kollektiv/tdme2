@@ -142,7 +142,7 @@ public:
 						FileSystem::getInstance()->getPathName(bvsModelFileName),
 						FileSystem::getInstance()->getFileName(bvsModelFileName),
 					convexMeshTMsData) == true) {
-					for (auto& convexMeshTMData: convexMeshTMsData) {
+					for (const auto& convexMeshTMData: convexMeshTMsData) {
 						//
 						try {
 							auto prototypeBoundingVolume = new PrototypeBoundingVolume(prototype->getBoundingVolumeCount(), prototype);

@@ -103,18 +103,18 @@ using rapidjson::Value;
 vector<string> PrototypeReader::extensions = {"tmodel", "tdecal", "tempty", "tenvmap", "tparticle", "tterrain", "ttrigger"};
 
 const vector<string> PrototypeReader::getPrototypeExtensions() {
-	auto& modelReaderExtensions = ModelReader::getModelExtensions();
+	const auto& modelReaderExtensions = ModelReader::getModelExtensions();
 	vector<string> extensions;
-	for (auto& extension: PrototypeReader::extensions) extensions.push_back(extension);
-	for (auto& extension: modelReaderExtensions) extensions.push_back(extension);
+	for (const auto& extension: PrototypeReader::extensions) extensions.push_back(extension);
+	for (const auto& extension: modelReaderExtensions) extensions.push_back(extension);
 	return extensions;
 }
 
 const vector<string> PrototypeReader::getModelExtensions() {
-	auto& modelReaderExtensions = ModelReader::getModelExtensions();
+	const auto& modelReaderExtensions = ModelReader::getModelExtensions();
 	vector<string> extensions;
 	extensions.push_back(PrototypeReader::extensions[0]);
-	for (auto& extension: modelReaderExtensions) extensions.push_back(extension);
+	for (const auto& extension: modelReaderExtensions) extensions.push_back(extension);
 	return extensions;
 }
 
@@ -169,7 +169,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const string& f
 	return prototype;
 }
 
-Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototypeRoot, PrototypeTransformFilter* transformFilter, bool useBC7TextureCompression)
+Prototype* PrototypeReader::read(int id, const string& pathName, const Value& jPrototypeRoot, PrototypeTransformFilter* transformFilter, bool useBC7TextureCompression)
 {
 	//
 	Prototype* prototype = nullptr;
@@ -185,7 +185,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 	BaseProperties properties(name, description);
 	auto jProperties = jPrototypeRoot["properties"].GetArray();
 	for (auto i = 0; i < jProperties.Size(); i++) {
-		auto& jProperty = jProperties[i];
+		const auto& jProperty = jProperties[i];
 		properties.addProperty(
 			(jProperty["name"].GetString()),
 			(jProperty["value"].GetString())
@@ -273,7 +273,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 	}
 	if (jPrototypeRoot.FindMember("p") != jPrototypeRoot.MemberEnd() && prototype->getPhysics() != nullptr) {
 		auto physics = prototype->getPhysics();
-		auto& jPhysics = jPrototypeRoot["p"];
+		const auto& jPhysics = jPrototypeRoot["p"];
 		physics->setType(PrototypePhysics_BodyType::valueOf(jPhysics["type"].GetString()));
 		physics->setMass(static_cast<float>(jPhysics["mass"].GetFloat()));
 		physics->setRestitution(static_cast<float>(jPhysics["restitution"].GetFloat()));
@@ -287,7 +287,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 		);
 	}
 	if (jPrototypeRoot.FindMember("sd") != jPrototypeRoot.MemberEnd()) {
-		for (auto& jSound: jPrototypeRoot["sd"].GetArray()) {
+		for (const auto& jSound: jPrototypeRoot["sd"].GetArray()) {
 			auto id = jSound["i"].GetString();
 			auto sound = prototype->addSound(id);
 			if (sound == nullptr) continue;
@@ -333,7 +333,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 	prototype->setRenderGroups(jPrototypeRoot.FindMember("rg") != jPrototypeRoot.MemberEnd()?jPrototypeRoot["rg"].GetBool():false);
 	prototype->setShader(jPrototypeRoot.FindMember("s") != jPrototypeRoot.MemberEnd()?jPrototypeRoot["s"].GetString():"default");
 	if (jPrototypeRoot.FindMember("sps") != jPrototypeRoot.MemberEnd()) {
-		Value& jShaderParameters = jPrototypeRoot["sps"];
+		const Value& jShaderParameters = jPrototypeRoot["sps"];
 		EntityShaderParameters shaderParameters;
 		shaderParameters.setShader(prototype->getShader());
 		for (auto jShaderParameterIt = jShaderParameters.MemberBegin(); jShaderParameterIt != jShaderParameters.MemberEnd(); ++jShaderParameterIt) {
@@ -351,7 +351,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 	//
 	if (prototype->getType() == Prototype_Type::TERRAIN) {
 		auto terrain = prototype->getTerrain();
-		Value& jTerrain = jPrototypeRoot["t"];
+		const Value& jTerrain = jPrototypeRoot["t"];
 		{
 			terrain->setWidth(jTerrain["w"].GetFloat());
 			terrain->setDepth(jTerrain["d"].GetFloat());
@@ -362,8 +362,8 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 			auto jWaterPositionMapsArray = jTerrain["W"].GetArray();
 			for (auto i = 0; i < jWaterPositionMapsArray.Size(); i++) {
 				auto waterPositionMapIdx = terrain->allocateWaterPositionMapIdx();
-				auto& jWaterPositionMap = jWaterPositionMapsArray[i];
-				auto& jWaterPositionMapData = jWaterPositionMap["w"];
+				const auto& jWaterPositionMap = jWaterPositionMapsArray[i];
+				const auto& jWaterPositionMapData = jWaterPositionMap["w"];
 				terrain->setWaterPositionMapHeight(waterPositionMapIdx, jWaterPositionMap["h"].GetFloat());
 				for (auto jWaterPositionMapDataIt = jWaterPositionMapData.MemberBegin(); jWaterPositionMapDataIt != jWaterPositionMapData.MemberEnd(); ++jWaterPositionMapDataIt) {
 					auto z = Integer::parse(jWaterPositionMapDataIt->name.GetString());
@@ -383,9 +383,9 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 			//
 			auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
 			Terrain::createFoliageMaps(terrain->getWidth(), terrain->getDepth(), foliageMaps);
-			auto& jFoliage = jTerrain["f"];
+			const auto& jFoliage = jTerrain["f"];
 			for (auto jFoliagePrototypeIt = jFoliage.MemberBegin(); jFoliagePrototypeIt != jFoliage.MemberEnd(); ++jFoliagePrototypeIt) {
-				auto& jFoliagePrototype = jFoliage[jFoliagePrototypeIt->name.GetString()];
+				const auto& jFoliagePrototype = jFoliage[jFoliagePrototypeIt->name.GetString()];
 				auto jFoliagePrototypePartitions = jFoliagePrototype["t"].GetArray();
 
 
@@ -415,7 +415,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 					auto jFoliagePrototypePartitionTransform = jFoliagePrototypePartitions[foliagePrototypePartitionIdx].GetArray();
 					auto& foliagePrototypePartitionTransform = foliageMaps[foliagePrototypePartitionIdx][foliagePrototypeIndex];
 					for (auto jFoliagePrototypePartitionTransformIdx = 0; jFoliagePrototypePartitionTransformIdx < jFoliagePrototypePartitionTransform.Size(); jFoliagePrototypePartitionTransformIdx++) {
-						Value& jFoliagePrototypeTransform = jFoliagePrototypePartitionTransform[jFoliagePrototypePartitionTransformIdx];
+						const Value& jFoliagePrototypeTransform = jFoliagePrototypePartitionTransform[jFoliagePrototypePartitionTransformIdx];
 						Transform foliagePrototypeTransform;
 						foliagePrototypeTransform.setTranslation(
 							Vector3(
@@ -459,14 +459,14 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 		{
 			auto jBrushesArray = jTerrain["b"].GetArray();
 			for (auto i = 0; i < jBrushesArray.Size(); i++) {
-				auto& jBrush = jBrushesArray[i];
+				const auto& jBrush = jBrushesArray[i];
 				auto brush = terrain->addBrush();
 				brush->setFileName(jBrush["f"].GetString());
 				brush->setSize(jBrush["s"].GetFloat());
 				brush->setDensity(jBrush["d"].GetFloat());
 				auto jPrototypeArray = jBrush["p"].GetArray();
 				for (auto i = 0; i < jPrototypeArray.Size(); i++) {
-					auto& jPrototype = jPrototypeArray[i];
+					const auto& jPrototype = jPrototypeArray[i];
 					auto prototype = brush->addPrototype();
 					prototype->setFileName(jPrototype["f"].GetString());
 					prototype->setCount(jPrototype["c"].GetFloat());
@@ -505,7 +505,7 @@ const string PrototypeReader::getResourcePathName(const string& pathName, const 
 	return resourcePathName;
 }
 
-PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(int idx, Prototype* prototype, const string& pathName, Value& jBv)
+PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(int idx, Prototype* prototype, const string& pathName, const Value& jBv)
 {
 	auto prototypeBoundingVolume = new PrototypeBoundingVolume(idx, prototype);
 	BoundingVolume* bv;
@@ -604,7 +604,7 @@ PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(int idx, Prototype
 	return prototypeBoundingVolume;
 }
 
-PrototypeLODLevel* PrototypeReader::parseLODLevel(const string& pathName, Value& jLodLevel, bool useBC7TextureCompression) {
+PrototypeLODLevel* PrototypeReader::parseLODLevel(const string& pathName, const Value& jLodLevel, bool useBC7TextureCompression) {
 	auto lodType = static_cast<LODObject::LODLevelType>(jLodLevel["t"].GetInt());
 	auto lodLevel = new PrototypeLODLevel(
 		lodType,
@@ -643,7 +643,7 @@ PrototypeLODLevel* PrototypeReader::parseLODLevel(const string& pathName, Value&
 	return lodLevel;
 }
 
-PrototypeImposterLOD* PrototypeReader::parseImposterLODLevel(const string& pathName, Value& jImposterLOD, bool useBC7TextureCompression) {
+PrototypeImposterLOD* PrototypeReader::parseImposterLODLevel(const string& pathName, const Value& jImposterLOD, bool useBC7TextureCompression) {
 	auto imposterLOD = new PrototypeImposterLOD(
 		{},
 		{},
@@ -692,15 +692,15 @@ PrototypeImposterLOD* PrototypeReader::parseImposterLODLevel(const string& pathN
 	return imposterLOD;
 }
 
-void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSystem, const string& pathName, Value& jParticleSystem, bool useBC7TextureCompression) {
+void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSystem, const string& pathName, const Value& jParticleSystem, bool useBC7TextureCompression) {
 	particleSystem->setType(PrototypeParticleSystem_Type::valueOf((jParticleSystem["t"].GetString())));
 	{
-		auto v = particleSystem->getType();
-		if (v == PrototypeParticleSystem_Type::NONE) {
+		auto particleSystemType = particleSystem->getType();
+		if (particleSystemType == PrototypeParticleSystem_Type::NONE) {
 			// no op
 		} else
-		if (v == PrototypeParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) {
-			auto& jObjectParticleSystem = jParticleSystem["ops"];
+		if (particleSystemType == PrototypeParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) {
+			const auto& jObjectParticleSystem = jParticleSystem["ops"];
 			auto objectParticleSystem = particleSystem->getObjectParticleSystem();
 			objectParticleSystem->setMaxCount(jObjectParticleSystem["mc"].GetInt());
 			objectParticleSystem->setScale(
@@ -723,9 +723,9 @@ void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSyste
 				Console::println(string(exception.what()));
 			}
 		} else
-		if (v == PrototypeParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
+		if (particleSystemType == PrototypeParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
 			auto pointParticleSystem = particleSystem->getPointParticleSystem();
-			auto& jPointParticleSystem = jParticleSystem["pps"];
+			const auto& jPointParticleSystem = jParticleSystem["pps"];
 			pointParticleSystem->setMaxPoints(jPointParticleSystem["mp"].GetInt());
 			if (jPointParticleSystem.FindMember("ps") != jPointParticleSystem.MemberEnd()) pointParticleSystem->setPointSize(static_cast<float>(jPointParticleSystem["ps"].GetFloat()));
 			if (jPointParticleSystem.FindMember("t") != jPointParticleSystem.MemberEnd()) {
@@ -748,9 +748,9 @@ void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSyste
 			}
 			pointParticleSystem->setAutoEmit(jPointParticleSystem["ae"].GetBool());
 		} else
-		if (v == PrototypeParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
+		if (particleSystemType == PrototypeParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
 			auto fogParticleSystem = particleSystem->getFogParticleSystem();
-			auto& jFogParticleSystem = jParticleSystem["fps"];
+			const auto& jFogParticleSystem = jParticleSystem["fps"];
 			fogParticleSystem->setMaxPoints(jFogParticleSystem["mp"].GetInt());
 			if (jFogParticleSystem.FindMember("ps") != jFogParticleSystem.MemberEnd()) fogParticleSystem->setPointSize(static_cast<float>(jFogParticleSystem["ps"].GetFloat()));
 			if (jFogParticleSystem.FindMember("t") != jFogParticleSystem.MemberEnd()) {
@@ -784,12 +784,12 @@ void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSyste
 
 	particleSystem->setEmitter(PrototypeParticleSystem_Emitter::valueOf((jParticleSystem["e"].GetString())));
 	{
-		auto v = particleSystem->getEmitter();
-		if (v == PrototypeParticleSystem_Emitter::NONE) {
+		auto emitterType = particleSystem->getEmitter();
+		if (emitterType == PrototypeParticleSystem_Emitter::NONE) {
 			// no op
 		} else
-		if (v == PrototypeParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
-			auto& jPointParticleEmitter = jParticleSystem["ppe"];
+		if (emitterType == PrototypeParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
+			const auto& jPointParticleEmitter = jParticleSystem["ppe"];
 			auto emitter = particleSystem->getPointParticleEmitter();
 			emitter->setCount(jPointParticleEmitter["c"].GetInt());
 			emitter->setLifeTime(jPointParticleEmitter["lt"].GetInt());
@@ -834,8 +834,8 @@ void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSyste
 				)
 			);
 		} else
-		if (v == PrototypeParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
-			auto& jBoundingBoxParticleEmitter = jParticleSystem["bbpe"];
+		if (emitterType == PrototypeParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
+			const auto& jBoundingBoxParticleEmitter = jParticleSystem["bbpe"];
 			auto emitter = particleSystem->getBoundingBoxParticleEmitters();
 			emitter->setCount(jBoundingBoxParticleEmitter["c"].GetInt());
 			emitter->setLifeTime(jBoundingBoxParticleEmitter["lt"].GetInt());
@@ -908,8 +908,8 @@ void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSyste
 				)
 			);
 		} else
-		if (v == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
-			auto& jCircleParticleEmitter = jParticleSystem["cpe"];
+		if (emitterType == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
+			const auto& jCircleParticleEmitter = jParticleSystem["cpe"];
 			auto emitter = particleSystem->getCircleParticleEmitter();
 			emitter->setCount(jCircleParticleEmitter["c"].GetInt());
 			emitter->setLifeTime(jCircleParticleEmitter["lt"].GetInt());
@@ -969,8 +969,8 @@ void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSyste
 				)
 			);
 		} else
-		if (v == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
-			auto& jCircleParticleEmitterPlaneVelocity = jParticleSystem["cpeev"];
+		if (emitterType == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
+			const auto& jCircleParticleEmitterPlaneVelocity = jParticleSystem["cpeev"];
 			auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
 			emitter->setCount(jCircleParticleEmitterPlaneVelocity["c"].GetInt());
 			emitter->setLifeTime(jCircleParticleEmitterPlaneVelocity["lt"].GetInt());
@@ -1018,8 +1018,8 @@ void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSyste
 				)
 			);
 		} else
-		if (v == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
-			auto& jSphereParticleEmitter = jParticleSystem["spe"];
+		if (emitterType == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
+			const auto& jSphereParticleEmitter = jParticleSystem["spe"];
 			auto emitter = particleSystem->getSphereParticleEmitter();
 			emitter->setCount(jSphereParticleEmitter["c"].GetInt());
 			emitter->setLifeTime(jSphereParticleEmitter["lt"].GetInt());

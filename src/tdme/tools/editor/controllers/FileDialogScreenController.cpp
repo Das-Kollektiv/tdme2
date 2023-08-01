@@ -129,7 +129,7 @@ bool FileDialogScreenController::setupFiles()
 			if (extension.empty() == false) {
 				if (StringTools::endsWith(StringTools::toLowerCase(fileName), "." + extension) == true) return true;
 			} else {
-				for (auto& extension : fileDialogScreenController->extensions) {
+				for (const auto& extension : fileDialogScreenController->extensions) {
 					if (StringTools::endsWith(StringTools::toLowerCase(fileName), "." + extension) == true) return true;
 				}
 			}
@@ -179,7 +179,7 @@ void FileDialogScreenController::setupFiles(const vector<string>& fileNameList, 
 	string filesInnerNodeSubNodesXML;
 	filesInnerNodeSubNodesXML+=
 		"<scrollarea width=\"100%\" height=\"100%\" background-color=\"{$color.element_midground}\">\n";
-	for (auto& fileName : fileNameList) {
+	for (const auto& fileName : fileNameList) {
 		auto fileImageName = getFileImageName(fileName);
 		try {
 			if (FileSystem::getStandardFileSystem()->isPath(cwd + "/" + fileName) == true) fileImageName = "folder";
@@ -210,7 +210,7 @@ void FileDialogScreenController::setupFavorites() {
 	string favoritesInnerNodeSubNodesXML;
 	favoritesInnerNodeSubNodesXML+=
 		"<scrollarea width=\"100%\" height=\"100%\" background-color=\"{$color.element_midground}\">\n";
-	for (auto& favorite: favorites) {
+	for (const auto& favorite: favorites) {
 		auto fileImageName = "folder";
 		favoritesInnerNodeSubNodesXML+=
 			"<selectbox-option text=\"" +
@@ -237,7 +237,7 @@ void FileDialogScreenController::setupRecents() {
 		"<scrollarea width=\"100%\" height=\"100%\" background-color=\"{$color.element_midground}\">\n";
 	auto recentsReversed = recents;
 	reverse(recentsReversed.begin(), recentsReversed.end());
-	for (auto& recent: recentsReversed) {
+	for (const auto& recent: recentsReversed) {
 		auto fileImageName = "folder";
 		recentsInnerNodeSubNodesXML+=
 			"<selectbox-option text=\"" +
@@ -277,7 +277,7 @@ void FileDialogScreenController::setupDrives() {
 	string drivesInnerNodeSubNodesXML;
 	drivesInnerNodeSubNodesXML+=
 		"<scrollarea width=\"100%\" height=\"100%\" background-color=\"{$color.element_midground}\">\n";
-	for (auto& drive: drives) {
+	for (const auto& drive: drives) {
 		drivesInnerNodeSubNodesXML+=
 			"<selectbox-option text=\"" +
 			GUIParser::escape(drive) +
@@ -329,7 +329,7 @@ void FileDialogScreenController::show(const string& cwd, const string& captionTe
 	this->cancelAction = cancelAction;
 	{
 		string extensionsDropDownOptionsXML = "<dropdown-option text=\"All supported extensions\" value=\"\" selected=\"true\"/>\n";
-		for (auto& extension: extensions) {
+		for (const auto& extension: extensions) {
 			extensionsDropDownOptionsXML+= "<dropdown-option text=\"" + StringTools::toUpperCase(extension) + " Files\" value=\"" + StringTools::toLowerCase(extension) + "\" selected=\"false\" />\n";
 		}
 		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(typeDropDownNode->getId()))->replaceSubNodes(extensionsDropDownOptionsXML, true);
@@ -402,7 +402,7 @@ void FileDialogScreenController::onChange(GUIElementNode* node)
 					setupFiles(fileList);
 				} else {
 					vector<string> fileListFiltered;
-					for (auto file: fileList) {
+					for (const auto& file: fileList) {
 						if (filterString.empty() == true || StringTools::toLowerCase(file).find(filterString) != -1) fileListFiltered.push_back(file);
 					}
 					setupFiles(fileListFiltered);
@@ -554,20 +554,20 @@ void FileDialogScreenController::saveSettings() {
 		Properties settings;
 		{
 			auto i = 0;
-			for (auto& favorite: favorites) {
+			for (const auto& favorite: favorites) {
 				settings.put("favorite_" + to_string(i++), favorite);
 			}
 		}
 		{
 			auto i = 0;
-			for (auto& recent: recents) {
+			for (const auto& recent: recents) {
 				settings.put("recent_" + to_string(i++), recent);
 			}
 		}
 		{
 			auto i = 0;
-			for (auto& defaultCwdByExtensionsIt: defaultCwdByExtensions) {
-				settings.put("default_cwd_" + to_string(i++), defaultCwdByExtensionsIt.first + ":" + defaultCwdByExtensionsIt.second);
+			for (const auto& [extension, defaultCwd]: defaultCwdByExtensions) {
+				settings.put("default_cwd_" + to_string(i++), extension + ":" + defaultCwd);
 			}
 		}
 		settings.store(settingsPathName.empty() == false?settingsPathName:defaultCwd, settingsFileName, FileSystem::getStandardFileSystem());

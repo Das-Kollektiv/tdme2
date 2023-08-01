@@ -1205,8 +1205,8 @@ void GUIMiniScript::registerMethods() {
 					if (argumentValues.size() >= 2) {
 						auto mapPtr = argumentValues[1].getMapPointer();
 						if (mapPtr != nullptr) {
-							for (auto& mapIt: *mapPtr) {
-								variables[mapIt.first] = mapIt.second.getValueString();
+							for (const auto& [mapEntryKey, mapEntryValue]: *mapPtr) {
+								variables[mapEntryKey] = mapEntryValue.getValueString();
 							}
 						}
 					}
@@ -1266,8 +1266,8 @@ void GUIMiniScript::registerMethods() {
 					if (argumentValues.size() >= 2) {
 						auto mapPtr = argumentValues[1].getMapPointer();
 						if (mapPtr != nullptr) {
-							for (auto& mapIt: *mapPtr) {
-								variables[mapIt.first] = mapIt.second.getValueString();
+							for (const auto& [mapEntryKey, mapEntryValue]: *mapPtr) {
+								variables[mapEntryKey] = mapEntryValue.getValueString();
 							}
 						}
 					}
@@ -1687,7 +1687,7 @@ void GUIMiniScript::registerMethods() {
 					if (elementNode != nullptr) {
 						auto conditions = elementNode->getActiveConditions().getConditions();
 						returnValue.setType(TYPE_ARRAY);
-						for (auto& condition: conditions) {
+						for (const auto& condition: conditions) {
 							returnValue.pushArrayValue(condition);
 						}
 					} else {
@@ -2383,7 +2383,7 @@ void GUIMiniScript::collectHIDEvents(vector<GUIMouseEvent>& mouseEvents, vector<
 	keyboardMetaDown = false;
 	keyboardAltDown = false;
 	keyboardShiftDown = false;
-	for (auto& event: keyEvents) {
+	for (const auto& event: keyEvents) {
 		// processed already?
 		if (event.isProcessed() == true) continue;
 		// key pressed
@@ -2415,7 +2415,7 @@ void GUIMiniScript::collectHIDEvents(vector<GUIMouseEvent>& mouseEvents, vector<
 	mouseWheelX = 0.0f;
 	mouseWheelY = 0.0f;
 	mouseWheelZ = 0.0f;
-	for (auto& event: mouseEvents) {
+	for (const auto& event: mouseEvents) {
 		// mouse move
 		if (event.isProcessed() == false && event.getType() == GUIMouseEvent::MOUSEEVENT_MOVED) {
 			mouseMoved = true;

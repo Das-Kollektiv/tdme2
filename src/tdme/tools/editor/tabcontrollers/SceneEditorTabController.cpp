@@ -286,7 +286,7 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 		updateDetails(view->getEditorView()->getScreenController()->getOutlinerSelection());
 		vector<string> selectedEntityIds;
 		auto outlinerSelection = StringTools::tokenize(view->getEditorView()->getScreenController()->getOutlinerSelection(), "|");
-		for (auto& selectedEntityId: outlinerSelection) {
+		for (const auto& selectedEntityId: outlinerSelection) {
 			if (StringTools::startsWith(selectedEntityId, "scene.entities.") == false) continue;
 			selectedEntityIds.push_back(StringTools::substring(selectedEntityId, string("scene.entities.").size()));
 		}
@@ -320,7 +320,7 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 			Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_snapping_z"))->getController()->getValue().getString())
 		);
 	} else {
-		for (auto& applyTranslationNode: applyTranslationNodes) {
+		for (const auto& applyTranslationNode: applyTranslationNodes) {
 			if (node->getId() == applyTranslationNode) {
 				//
 				try {
@@ -339,7 +339,7 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 				break;
 			}
 		}
-		for (auto& applyRotationNode: applyRotationNodes) {
+		for (const auto& applyRotationNode: applyRotationNodes) {
 			if (node->getId() == applyRotationNode) {
 				//
 				try {
@@ -358,7 +358,7 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 				break;
 			}
 		}
-		for (auto& applyScaleNode: applyScaleNodes) {
+		for (const auto& applyScaleNode: applyScaleNodes) {
 			if (node->getId() == applyScaleNode) {
 				//
 				try {
@@ -377,7 +377,7 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 				break;
 			}
 		}
-		for (auto& applySkyNode: applySkyNodes) {
+		for (const auto& applySkyNode: applySkyNodes) {
 			if (node->getId() == applySkyNode) {
 				//
 				try {
@@ -398,7 +398,7 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 				break;
 			}
 		}
-		for (auto& applyReflectionEnvironmentMappingNode: applyReflectionEnvironmentMappingNodes) {
+		for (const auto& applyReflectionEnvironmentMappingNode: applyReflectionEnvironmentMappingNodes) {
 			if (node->getId() == applyReflectionEnvironmentMappingNode) {
 				//
 				try {
@@ -414,7 +414,7 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "scene.lights.") == true) {
 			auto lightIdx = Integer::parse(StringTools::substring(outlinerNode, string("scene.lights.light").size()));
-			for (auto& applyLightNode: applyLightNodes) {
+			for (const auto& applyLightNode: applyLightNodes) {
 				if (node->getId() == applyLightNode) {
 					applyLightDetails(lightIdx);
 					//
@@ -436,7 +436,7 @@ void SceneEditorTabController::onUnfocus(GUIElementNode* node) {
 	if (node->getId() == "tdme.entities.rename_input") {
 		renameEntity();
 	} else {
-		for (auto& applyBaseNode: applyBaseNodes) {
+		for (const auto& applyBaseNode: applyBaseNodes) {
 			if (node->getId() == applyBaseNode) {
 				//
 				try {
@@ -1385,7 +1385,7 @@ void SceneEditorTabController::unselectEntity(const string& entityId) {
 	auto outlinerSelection = StringTools::tokenize(view->getEditorView()->getScreenController()->getOutlinerSelection(), "|");
 	vector<string> selectedEntityIds;
 	auto entityIdToRemove = "scene.entities." + entityId;
-	for (auto& selectedEntityId: outlinerSelection) {
+	for (const auto& selectedEntityId: outlinerSelection) {
 		if (StringTools::startsWith(selectedEntityId, "scene.entities.") == false) continue;
 		if (selectedEntityId == entityIdToRemove) continue;
 		selectedEntityIds.push_back(selectedEntityId);
@@ -1397,7 +1397,7 @@ void SceneEditorTabController::selectEntity(const string& entityId) {
 	auto outlinerSelection = StringTools::tokenize(view->getEditorView()->getScreenController()->getOutlinerSelection(), "|");
 	vector<string> selectedEntityIds;
 	auto entityIdToAdd = "scene.entities." + entityId;
-	for (auto& selectedEntityId: outlinerSelection) {
+	for (const auto& selectedEntityId: outlinerSelection) {
 		if (StringTools::startsWith(selectedEntityId, "scene.entities.") == false) continue;
 		if (selectedEntityId == entityIdToAdd) continue;
 		selectedEntityIds.push_back(selectedEntityId);
@@ -1418,7 +1418,7 @@ void SceneEditorTabController::selectEntities(const vector<string>& selectedOutl
 		updateDetails(StringTools::substring(newOutlinerSelection, string("scene.entities.").size()));
 	} else {
 		auto newOutlinerSelection = string("|");
-		for (auto& entityId: selectedOutlinerEntityIds) {
+		for (const auto& entityId: selectedOutlinerEntityIds) {
 			newOutlinerSelection+= entityId + "|";
 		}
 		view->getEditorView()->getScreenController()->setOutlinerSelection(newOutlinerSelection);

@@ -235,7 +235,7 @@ private:
 		// TODO: clear on viewport dimension change
 		vector<int32_t> shaderIds;
 		vector<shader_type*> shaders;
-		unordered_map<int32_t, string> uniforms;
+		unordered_map<int32_t, string> uniformLocations;
 		uint32_t layoutBindings { 0 };
 		VkPipelineLayout pipelineLayout { VK_NULL_HANDLE };
 		VkDescriptorSetLayout uboDescriptorSetLayout { VK_NULL_HANDLE };
@@ -523,7 +523,7 @@ private:
 	void setImageLayout2(int contextIdx, texture_type* textureObject, const array<ThsvsAccessType,2>& accessTypes, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout layout, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount, bool updateTextureObject);
 	void setImageLayout3(int contextIdx, VkImage image, VkImageAspectFlags aspectMask, const array<ThsvsAccessType,2>& accessTypes, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout layout, ThsvsImageLayout nextLayout);
 	void prepareTextureImage(int contextIdx, struct texture_type* textureObject, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags requiredFlags, Texture* texture, const array<ThsvsAccessType,2>& nextAccesses, ThsvsImageLayout imageLayout, bool disableMipMaps = true, uint32_t baseLevel = 0, uint32_t levelCount = 1);
-	void prepareMipMapTextureImage(int contextIdx, struct texture_type* textureObject, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags requiredFlags, Texture* texture, Texture::MipMapTexture& mipMapTexture, const array<ThsvsAccessType,2>& nextAccesses, ThsvsImageLayout imageLayout);
+	void prepareMipMapTextureImage(int contextIdx, struct texture_type* textureObject, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags requiredFlags, Texture* texture, const Texture::MipMapTexture& mipMapTexture, const array<ThsvsAccessType,2>& nextAccesses, ThsvsImageLayout imageLayout);
 	VkBuffer getBindBufferObjectInternal(int32_t bufferObjectId, uint32_t& size);
 	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VmaAllocation& allocation, VmaAllocationInfo& allocationInfo);
 	buffer_object_type* getBufferObjectInternal(int32_t bufferObjectId);

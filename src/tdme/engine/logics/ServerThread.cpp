@@ -232,7 +232,7 @@ void ServerThread::run() {
 		{
 			//	new clients
 			vector<string> newClientKeysToRemove;
-			for (auto clientKey: newClientKeys) {
+			for (const auto& clientKey: newClientKeys) {
 				auto client = static_cast<ApplicationServerClient*>(server->getClientByKey(clientKey));
 				if (client == nullptr) {
 					newClientKeysToRemove.push_back(clientKey);
@@ -245,7 +245,7 @@ void ServerThread::run() {
 					client->shutdown();
 				}
 			}
-			for (auto clientKey: newClientKeysToRemove) {
+			for (const auto& clientKey: newClientKeysToRemove) {
 				newClientKeys.erase(remove(newClientKeys.begin(), newClientKeys.end(), clientKey), newClientKeys.end());
 			}
 		}
@@ -384,7 +384,7 @@ void ServerThread::run() {
 					}
 				} else {
 					// multicast
-					for (auto recipient: logicNetworkPacket.getRecipients()) {
+					for (const auto& recipient: logicNetworkPacket.getRecipients()) {
 						if (logicNetworkPacket.getSafe() == true) {
 							mcUpdateSafeLogicNetworkPackets[recipient].push_back(logicNetworkPacket);
 						} else {

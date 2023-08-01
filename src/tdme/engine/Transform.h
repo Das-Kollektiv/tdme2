@@ -97,6 +97,15 @@ public:
 	}
 
 	/**
+	 * Get rotation at given index
+	 * @param idx rotation index
+	 * @return rotation
+	 */
+	inline const Rotation& getRotation(const int idx) const {
+		return rotations[idx];
+	}
+
+	/**
 	 * Add rotation
 	 * @param axis axis
 	 * @param angle angle

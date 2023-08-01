@@ -66,7 +66,7 @@ void SphereParticleEmitter::emit(Particle* particle)
 
 void SphereParticleEmitter::setTransform(const Transform& transform)
 {
-	auto& transformMatrix = transform.getTransformMatrix();
+	const auto& transformMatrix = transform.getTransformMatrix();
 	// apply translations
 	Vector3 worldCenter;
 	// 	translate center

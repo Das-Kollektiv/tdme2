@@ -75,7 +75,7 @@ void FogParticleSystemInternal::initialize() {
 
 	//
 	Vector3 center;
-	auto& localTransformMatrix = localTransform.getTransformMatrix();
+	const auto& localTransformMatrix = localTransform.getTransformMatrix();
 	localTransformMatrix.getTranslation(center);
 	center.add(emitter->getCenter());
 
@@ -107,8 +107,8 @@ void FogParticleSystemInternal::initialize() {
 
 		// color
 		int64_t timeRnd = (int64_t)(Math::random() * (float)particle.lifeTimeMax);
-		auto& color = particle.color.getArray();
-		auto& colorAdd = particle.colorAdd.getArray();
+		auto& color = particle.color;
+		const auto& colorAdd = particle.colorAdd;
 		color[0] += colorAdd[0] * static_cast<float>(timeRnd);
 		color[1] += colorAdd[1] * static_cast<float>(timeRnd);
 		color[2] += colorAdd[2] * static_cast<float>(timeRnd);
@@ -168,7 +168,7 @@ void FogParticleSystemInternal::updateParticles()
 
 	//
 	Vector3 center;
-	auto& localTransformMatrix = localTransform.getTransformMatrix();
+	const auto& localTransformMatrix = localTransform.getTransformMatrix();
 	localTransformMatrix.getTranslation(center);
 	center.add(emitter->getCenter());
 	//

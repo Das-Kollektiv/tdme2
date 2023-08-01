@@ -322,20 +322,20 @@ void TerrainEditorTabController::onChange(GUIElementNode* node)
 		setFoliageBrush();
 		updateFoliageBrush();
 	} else {
-		for (auto& textureBrushApplyNode: textureBrushApplyNodes) {
+		for (const auto& textureBrushApplyNode: textureBrushApplyNodes) {
 			if (node->getId() == textureBrushApplyNode) {
 				applyTerrainBrushDetails();
 				break;
 			}
 		}
-		for (auto& foliageBrushApplyNode: foliageBrushApplyNodes) {
+		for (const auto& foliageBrushApplyNode: foliageBrushApplyNodes) {
 			if (node->getId() == foliageBrushApplyNode) {
 				applyFoliageBrushDetails();
 				updateFoliageBrush();
 				break;
 			}
 		}
-		for (auto& foliageBrushPrototypeApplyNode: foliageBrushPrototypeApplyNodes) {
+		for (const auto& foliageBrushPrototypeApplyNode: foliageBrushPrototypeApplyNodes) {
 			if (node->getId() == foliageBrushPrototypeApplyNode) {
 				applyFoliageBrushPrototypeDetails();
 				updateFoliageBrush();

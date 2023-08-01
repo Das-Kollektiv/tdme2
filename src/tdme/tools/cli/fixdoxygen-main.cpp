@@ -45,7 +45,7 @@ void scanDir(const string& folder, vector<string>& totalFiles) {
 
 	FileSystem::getInstance()->list(folder, files, &listFilter);
 
-	for (auto fileName: files) {
+	for (const auto& fileName: files) {
 		if (StringTools::endsWith(fileName, ".h") == true) {
 			totalFiles.push_back(folder + "/" + fileName);
 		} else {
@@ -67,7 +67,7 @@ void parseHpp(const string& fileName) {
 	vector<string> doc;
 	vector<string> newFileContent;
 	string method = "";
-	for (auto line: fileContent) {
+	for (const auto& line: fileContent) {
 		newFileContent.push_back(line);
 		if (haveMethod == false) {
 			if (line.find("/**") != string::npos) {
@@ -152,7 +152,7 @@ void parseHpp(const string& fileName) {
 					auto i = 0;
 					StringTokenizer t;
 					vector<string> paramsFinal;
-					for (auto param: params) {
+					for (auto& param: params) {
 						t.tokenize(param, " ");
 						while (t.hasMoreTokens() == true) param = t.nextToken();
 						if (param.length() == 0) continue;
@@ -160,7 +160,7 @@ void parseHpp(const string& fileName) {
 					}
 					auto paramIdx = 0;
 					vector<string> newDoc;
-					for (auto docLine: doc) {
+					for (auto& docLine: doc) {
 						size_t docLineParamIdx = docLine.find("@param ");
 						if (docLineParamIdx != string::npos) {
 							if (paramIdx < paramsFinal.size()) {
@@ -208,7 +208,7 @@ int main(int argc, char** argv)
 	scanDir(pathToHeaders, files);
 
 	Console::println("Processing files");
-	for (auto fileName: files) {
+	for (const auto& fileName: files) {
 		parseHpp(fileName);
 	}
 }

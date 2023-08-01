@@ -45,12 +45,12 @@ void BoundingBoxParticleEmitter::emit(Particle* particle)
 	particle->active = true;
 	particle->spriteIndex = 0.0f;
 	auto obbAxes = worldObb->getAxes();
-	auto& obbHalfExtensionXYZ = worldObb->getHalfExtension().getArray();
+	const auto& obbHalfExtension = worldObb->getHalfExtension();
 	// emit particle in oriented bounding box
 	particle->position.set(0.0f, 0.0f, 0.0f);
-	particle->position.add(tmpAxis.set(obbAxes[0]).scale((static_cast<float>(Math::random()) * obbHalfExtensionXYZ[0] * 2.0f) - obbHalfExtensionXYZ[0]));
-	particle->position.add(tmpAxis.set(obbAxes[1]).scale((static_cast<float>(Math::random()) * obbHalfExtensionXYZ[1] * 2.0f) - obbHalfExtensionXYZ[1]));
-	particle->position.add(tmpAxis.set(obbAxes[2]).scale((static_cast<float>(Math::random()) * obbHalfExtensionXYZ[2] * 2.0f) - obbHalfExtensionXYZ[2]));
+	particle->position.add(tmpAxis.set(obbAxes[0]).scale((static_cast<float>(Math::random()) * obbHalfExtension[0] * 2.0f) - obbHalfExtension[0]));
+	particle->position.add(tmpAxis.set(obbAxes[1]).scale((static_cast<float>(Math::random()) * obbHalfExtension[1] * 2.0f) - obbHalfExtension[1]));
+	particle->position.add(tmpAxis.set(obbAxes[2]).scale((static_cast<float>(Math::random()) * obbHalfExtension[2] * 2.0f) - obbHalfExtension[2]));
 	// compute velocity
 	particle->velocity.set(
 		velocity[0] + (Math::random() * velocityRnd[0] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
@@ -78,7 +78,7 @@ void BoundingBoxParticleEmitter::setTransform(const Transform& transform)
 	array<Vector3, 3> worldAxes;
 	array<Vector3, 3> worldAxesUnnormalized;
 	Vector3 worldHalfExtension;
-	auto& transformMatrix = transform.getTransformMatrix();
+	const auto& transformMatrix = transform.getTransformMatrix();
 	// apply rotation, scale, translation
 	worldCenter = transformMatrix.multiply(obb->getCenter());
 	// apply transform rotation to axis

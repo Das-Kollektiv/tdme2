@@ -251,8 +251,7 @@ void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype) {
 		return;
 	}
 
-	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
-		auto& event = engine->getGUI()->getKeyboardEvents()[i];
+	for (auto& event: engine->getGUI()->getKeyboardEvents()) {
 		if (event.isProcessed() == true) continue;
 		auto isKeyDown = event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
 		if (Character::toLowerCase(event.getKeyChar()) == '1') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_ALL); updateGizmo(prototype); event.setProcessed(true); }
@@ -262,9 +261,7 @@ void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype) {
 	}
 
 	//
-	for (auto i = 0; i < engine->getGUI()->getMouseEvents().size(); i++) {
-		auto& event = engine->getGUI()->getMouseEvents()[i];
-
+	for (auto& event: engine->getGUI()->getMouseEvents()) {
 		if (event.isProcessed() == true) continue;
 
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {

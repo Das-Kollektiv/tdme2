@@ -184,8 +184,7 @@ void PrototypeSoundsSubController::updateDetails(Prototype* prototype, Model* mo
 			"\" " +
 			(idx == 0 ? "selected=\"true\" " : "") +
 			" />\n";
-		for (auto it: model->getAnimationSetups()) {
-			auto animationSetupId = it.second->getId();
+		for (const auto& [animationSetupId, animationSetup]: model->getAnimationSetups()) {
 			animationsDropDownXML =
 				animationsDropDownXML + "<dropdown-option text=\"" +
 				GUIParser::escape(animationSetupId) +
@@ -336,7 +335,7 @@ bool PrototypeSoundsSubController::onChange(GUIElementNode* node, Prototype* pro
 			return true;
 		}
 	} else {
-		for (auto& audioChangeNode: applyAudioNodes) {
+		for (const auto& audioChangeNode: applyAudioNodes) {
 			if (node->getId() == audioChangeNode) {
 				auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 				if (StringTools::startsWith(outlinerNode, "sounds.") == true) {

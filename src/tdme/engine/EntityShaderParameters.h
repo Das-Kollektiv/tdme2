@@ -86,9 +86,8 @@ public:
 		if (changed == true) {
 			// TODO: md5 or something
 			hash = shaderId + ";";
-			for (auto& it: parameters) {
-				auto& parameterValue = it.second;
-				switch(parameterValue.getType()) {
+			for (const auto& [parameterName, parameterValue]: parameters) {
+				switch (parameterValue.getType()) {
 					case ShaderParameter::TYPE_NONE:
 						break;
 					case ShaderParameter::TYPE_BOOLEAN:
@@ -102,7 +101,7 @@ public:
 						break;
 					case ShaderParameter::TYPE_VECTOR2:
 						{
-							auto& shaderParameterArray = parameterValue.getVector2Value().getArray();
+							const auto& shaderParameterArray = parameterValue.getVector2Value().getArray();
 							for (auto i = 0; i < shaderParameterArray.size(); i++) {
 								if (i != 0) hash+= ",";
 								hash+= to_string(static_cast<int>(shaderParameterArray[i] * 100.0f));
@@ -111,7 +110,7 @@ public:
 						break;
 					case ShaderParameter::TYPE_VECTOR3:
 						{
-							auto& shaderParameterArray = parameterValue.getVector3Value().getArray();
+							const auto& shaderParameterArray = parameterValue.getVector3Value().getArray();
 							for (auto i = 0; i < shaderParameterArray.size(); i++) {
 								if (i != 0) hash+= ",";
 								hash+= to_string(static_cast<int>(shaderParameterArray[i] * 100.0f));
@@ -120,7 +119,7 @@ public:
 						break;
 					case ShaderParameter::TYPE_VECTOR4:
 						{
-							auto& shaderParameterArray = parameterValue.getVector4Value().getArray();
+							const auto& shaderParameterArray = parameterValue.getVector4Value().getArray();
 							for (auto i = 0; i < shaderParameterArray.size(); i++) {
 								if (i != 0) hash+= ",";
 								hash+= to_string(static_cast<int>(shaderParameterArray[i] * 100.0f));

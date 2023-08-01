@@ -93,7 +93,7 @@ Model* Primitives::createBoundingBoxModel(BoundingBox* boundingBox, const string
 	auto fvi = BoundingBox::getFacesVerticesIndexes();
 	// vertices
 	vector<Vector3> vertices;
-	for (auto& vertex : boundingBox->getVertices()) {
+	for (const auto& vertex : boundingBox->getVertices()) {
 		vertices.push_back(vertex);
 	}
 	// normals
@@ -176,7 +176,7 @@ Model* Primitives::createOrientedBoundingBoxModel(OrientedBoundingBox* orientedB
 	auto fvi = OrientedBoundingBox::getFacesVerticesIndexes();
 	// vertices
 	vector<Vector3> vertices;
-	for (auto& vertex : orientedBoundingBox->getVertices()) {
+	for (const auto& vertex : orientedBoundingBox->getVertices()) {
 		vertices.push_back(transformVector3(orientedBoundingBox, toRP3DVector3(vertex)));
 	}
 	// normals
@@ -288,7 +288,7 @@ Model* Primitives::createSphereModel(Sphere* sphere, const string& id, int32_t s
 					vertices.at(vi1),
 					vertices.at(vi2)
 				};
-				for (auto& normal: ModelTools::computeNormals(faceVertices)) {
+				for (const auto& normal: ModelTools::computeNormals(faceVertices)) {
 					normals.push_back(normal);
 				}
 			}
@@ -303,7 +303,7 @@ Model* Primitives::createSphereModel(Sphere* sphere, const string& id, int32_t s
 					vertices.at(vi1),
 					vertices.at(vi2)
 				};
-				for (auto& normal: ModelTools::computeNormals(faceVertices)) {
+				for (const auto& normal: ModelTools::computeNormals(faceVertices)) {
 					normals.push_back(normal);
 				}
 			}
@@ -335,19 +335,18 @@ Model* Primitives::createCapsuleModel(Capsule* capsule, const string& id, int32_
 {
 	// capsule properties
 	auto radius = capsule->getRadius();
-	auto& a = capsule->getA();
-	auto& b = capsule->getB();
-	auto& center = capsule->getCenter();
+	const auto& a = capsule->getA();
+	const auto& b = capsule->getB();
+	const auto& center = capsule->getCenter();
 	// rotation quaternion
 	Quaternion rotationQuaternion;
 	rotationQuaternion.identity();
 	// angle between a and b
 	Vector3 yAxis(0.0f, -1.0f, 0.0f);
 	Vector3 abNormalized = a.clone().sub(b).normalize();
-	auto& abNormalizedVectorXYZ = abNormalized.getArray();
 	Vector3 rotationAxis;
-	if (Math::abs(abNormalizedVectorXYZ[0]) < Math::EPSILON && Math::abs(abNormalizedVectorXYZ[2]) < Math::EPSILON) {
-		rotationAxis.set(abNormalizedVectorXYZ[1], 0.0f, 0.0f);
+	if (Math::abs(abNormalized[0]) < Math::EPSILON && Math::abs(abNormalized[2]) < Math::EPSILON) {
+		rotationAxis.set(abNormalized[1], 0.0f, 0.0f);
 	} else {
 		rotationAxis = Vector3::computeCrossProduct(yAxis, abNormalized).normalize();
 	}
@@ -437,7 +436,7 @@ Model* Primitives::createCapsuleModel(Capsule* capsule, const string& id, int32_
 					vertices.at(vi1),
 					vertices.at(vi2)
 				};
-				for (auto& normal: ModelTools::computeNormals(faceVertices)) {
+				for (const auto& normal: ModelTools::computeNormals(faceVertices)) {
 					normals.push_back(normal);
 				}
 			}
@@ -451,7 +450,7 @@ Model* Primitives::createCapsuleModel(Capsule* capsule, const string& id, int32_
 					vertices.at(vi1),
 					vertices.at(vi2)
 				};
-				for (auto& normal: ModelTools::computeNormals(faceVertices)) {
+				for (const auto& normal: ModelTools::computeNormals(faceVertices)) {
 					normals.push_back(normal);
 				}
 			}
@@ -515,8 +514,7 @@ void Primitives::setupConvexMeshModel(Model* model)
 
 void Primitives::setupConvexMeshMaterial(const map<string, Node*>& nodes, Material* material)
 {
-	for (auto it: nodes) {
-		Node* node = it.second;
+	for (const auto& [nodeId, node]: nodes) {
 		auto facesEntities = node->getFacesEntities();
 		for (auto& faceEntity : facesEntities) {
 			faceEntity.setMaterial(material);

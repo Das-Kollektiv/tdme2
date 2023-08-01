@@ -45,7 +45,7 @@ void scanDir(const string& folder, vector<string>& totalFiles) {
 
 	FileSystem::getInstance()->list(folder, files, &listFilter);
 
-	for (auto fileName: files) {
+	for (const auto& fileName: files) {
 		if (fileName == "LICENSE") {
 			totalFiles.push_back(folder + "/" + fileName);
 		} else {
@@ -63,7 +63,7 @@ void processFile(const string& indent, const string& fileName) {
 	for (auto i = 0; i < _fileName.size() + 2; i++) Console::print("-");
 	Console::println();
 	Console::println();
-	for (auto& line: lines) {
+	for (const auto& line: lines) {
 		if (StringTools::trim(line).size() == 0) {
 			Console::println();
 		} else {
@@ -97,7 +97,7 @@ int main(int argc, char** argv)
 	Console::println("Processing files");
 	Console::println("------------------");
 	Console::println();
-	for (auto fileName: files) {
+	for (const auto& fileName: files) {
 		if (fileName == "./LICENSE") continue; // ignore own project license
 		processFile(indent, fileName);
 	}

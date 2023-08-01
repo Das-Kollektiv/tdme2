@@ -311,9 +311,9 @@ void DeferredLightingRenderShader::useProgram(Engine* engine, vector<Decal*>& de
 		auto light = engine->getLightAt(lightId);
 		if (uniformPBRLightEnabled[lightId] != -1) renderer->setProgramUniformInteger(contextIdx, uniformPBRLightEnabled[lightId], light->isEnabled() == true?1:0);
 		if (light->isEnabled() == false) continue;
-		auto& ambient = light->getAmbient().getArray();
-		auto& diffuse = light->getDiffuse().getArray();
-		auto& position = light->getPosition().getArray();
+		const auto& ambient = light->getAmbient();
+		const auto& diffuse = light->getDiffuse();
+		const auto& position = light->getPosition();
 		// renderer->setProgramUniformFloatVec3(context, uniformLightAmbient[lightId], {{ ambient[0], ambient[1], ambient[2] }});
 		renderer->setProgramUniformFloatVec3(contextIdx, uniformPBRLightDirection[lightId], light->getSpotDirection().getArray());
 		renderer->setProgramUniformFloat(contextIdx, uniformPBRLightRange[lightId], 0.0f);

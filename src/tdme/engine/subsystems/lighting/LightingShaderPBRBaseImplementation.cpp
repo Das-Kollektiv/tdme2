@@ -192,7 +192,7 @@ void LightingShaderPBRBaseImplementation::updateMaterial(Renderer* renderer, int
 
 void LightingShaderPBRBaseImplementation::updateLight(Renderer* renderer, int contextIdx, int32_t lightId)
 {
-	auto& light = renderer->getLight(contextIdx, lightId);
+	const auto& light = renderer->getLight(contextIdx, lightId);
 	if (uniformLightEnabled[lightId] != -1) renderer->setProgramUniformInteger(contextIdx, uniformLightEnabled[lightId], light.enabled);
 	if (light.enabled == 0) return;
 	if (uniformLightAmbient[lightId] != -1)

@@ -28,8 +28,8 @@ void GUIColorEffect::apply(GUIRenderer* guiRenderer)
 		startState.colorMul.getBlue() + ((endState.colorMul.getBlue() - startState.colorMul.getBlue()) * t),
 		startState.colorMul.getAlpha() + ((endState.colorMul.getAlpha() - startState.colorMul.getAlpha()) * t)
 	);
-	auto& effectColorMul = guiRenderer->getGUIEffectColorMul();
-	auto& effectColorAdd = guiRenderer->getGUIEffectColorAdd();
+	const auto& effectColorMul = guiRenderer->getGUIEffectColorMul();
+	const auto& effectColorAdd = guiRenderer->getGUIEffectColorAdd();
 	guiRenderer->setGUIEffectColorMul(
 		GUIColor(
 			effectColorMul.getRed() * effectState->colorMul.getRed(),

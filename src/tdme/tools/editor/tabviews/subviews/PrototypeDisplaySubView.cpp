@@ -38,8 +38,7 @@ void PrototypeDisplaySubView::updateShaderParameters(Prototype* prototype) {
 	auto object = dynamic_cast<Object*>(engine->getEntity("model"));
 	if (object == nullptr || prototype == nullptr) return;
 	auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
-	for (auto& parameterIt: shaderParametersDefault) {
-		auto& parameterName = parameterIt.first;
+	for (const auto& [parameterName, defaultParameterValue]: shaderParametersDefault) {
 		auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 		object->setShaderParameter(parameterName, parameterValue);
 	}

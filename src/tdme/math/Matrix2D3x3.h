@@ -344,8 +344,8 @@ public:
 	 * Returns array data
 	 * @return array data
 	 */
-	inline array<float, 9>& getArray() const {
-		return (array<float, 9>&)data;
+	inline const array<float, 9>& getArray() const {
+		return data;
 	}
 
 	/**

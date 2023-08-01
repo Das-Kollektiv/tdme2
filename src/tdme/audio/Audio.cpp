@@ -89,13 +89,13 @@ void Audio::removeEntity(const string& id)
 void Audio::reset()
 {
 	// determine keys to remove
-	vector<string> keys;
-	for (auto it = audioEntities.begin(); it != audioEntities.end(); ++it) {
-		keys.push_back(it->first);
+	vector<string> audioEntitiesToRemove;
+	for (const auto& [audioEntityId, audioEntity]: audioEntities) {
+		audioEntitiesToRemove.push_back(audioEntityId);
 	}
 
 	// remove entities
-	for (auto& key: keys) {
+	for (const auto& key: audioEntitiesToRemove) {
 		removeEntity(key);
 	}
 }
@@ -109,22 +109,20 @@ void Audio::shutdown()
 void Audio::update()
 {
 	// update audio entities
-	for (auto it = audioEntities.begin(); it != audioEntities.end(); ++it) {
-		it->second->update();
+	for (const auto& [audioEntityId, audioEntity]: audioEntities) {
+		audioEntity->update();
 	}
 
 	// update listener position
 	alListenerfv(AL_POSITION, listenerPosition.getArray().data());
 	alListenerfv(AL_VELOCITY, listenerVelocity.getArray().data());
-	auto& listenerOrientationAtArray = listenerOrientationAt.getArray();
-	auto& listenerOrientationUpArray = listenerOrientationUp.getArray();
 	array<float, 6> listenerOrientation = {
-		listenerOrientationAtArray[0],
-		listenerOrientationAtArray[1],
-		listenerOrientationAtArray[2],
-		listenerOrientationUpArray[0],
-		listenerOrientationUpArray[1],
-		listenerOrientationUpArray[2]
+		listenerOrientationAt[0],
+		listenerOrientationAt[1],
+		listenerOrientationAt[2],
+		listenerOrientationUp[0],
+		listenerOrientationUp[1],
+		listenerOrientationUp[2]
 	};
 	alListenerfv(AL_ORIENTATION, listenerOrientation.data());
 }

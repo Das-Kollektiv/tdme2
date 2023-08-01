@@ -53,7 +53,7 @@ void parseHpp(const string& fileName) {
 	}
 	vector<string> newFileContent;
 	newFileContent.push_back("EXPORTS");
-	for (auto& symbol: symbols) newFileContent.push_back("\t" + symbol);
+	for (const auto& symbol: symbols) newFileContent.push_back("\t" + symbol);
 	FileSystem::getInstance()->setContentFromStringArray(".", fileName + ".def", newFileContent);
 }
 

@@ -131,11 +131,11 @@ void MarkdownTabController::setOutlinerContent() {
 	string xml;
 	xml+= "<selectbox-parent-option text='Table of Contents' value='toc' >\n";
 	auto levelCounter = 1;
-	auto& toc = view->getTableOfContent();
+	const auto& toc = view->getTableOfContent();
 	if (toc.empty() == false) {
 		string lastLevel = toc[0].level;
 		for (auto i = 0; i < toc.size(); i++) {
-			auto& tocEntry = toc[i];
+			const auto& tocEntry = toc[i];
 			//
 			if (i > 0 && tocEntry.level.size() < lastLevel.size()) {
 				xml+= "</selectbox-parent-option>\n";

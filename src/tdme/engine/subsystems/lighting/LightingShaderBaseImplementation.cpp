@@ -230,7 +230,7 @@ void LightingShaderBaseImplementation::updateMaterial(Renderer* renderer, int co
 void LightingShaderBaseImplementation::updateLight(Renderer* renderer, int contextIdx, int32_t lightId)
 {
 	// lights
-	auto& light = renderer->getLight(contextIdx, lightId);
+	const auto& light = renderer->getLight(contextIdx, lightId);
 	if (uniformLightEnabled[lightId] != -1) renderer->setProgramUniformInteger(contextIdx, uniformLightEnabled[lightId], light.enabled);
 	if (light.enabled == 0) return;
 	if (uniformLightAmbient[lightId] != -1) renderer->setProgramUniformFloatVec4(contextIdx, uniformLightAmbient[lightId], light.ambient);

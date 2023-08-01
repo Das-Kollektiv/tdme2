@@ -132,16 +132,17 @@ void OctTreePartition::removeEntity(Entity* entity)
 	while (objectPartitionsVector->size() > 0) {
 		auto lastIdx = objectPartitionsVector->size() - 1;
 		auto partitionTreeNode = (*objectPartitionsVector)[lastIdx];
-		auto& partitionObjects = partitionTreeNode->partitionEntities;
-		partitionObjects.erase(remove(partitionObjects.begin(), partitionObjects.end(), entity), partitionObjects.end());
+		auto& partitionEntities = partitionTreeNode->partitionEntities;
+		partitionEntities.erase(remove(partitionEntities.begin(), partitionEntities.end(), entity), partitionEntities.end());
 		objectPartitionsVector->erase(objectPartitionsVector->begin() + lastIdx);
-		if (partitionObjects.empty() == true) {
+		if (partitionEntities.empty() == true) {
 			auto rootPartitionTreeNode = partitionTreeNode;
 			while (rootPartitionTreeNode->parent != nullptr) rootPartitionTreeNode = rootPartitionTreeNode->parent;
 			// check if whole top level partition is empty
 			if (isPartitionNodeEmpty(rootPartitionTreeNode) == true) {
 				// yep, remove it
 				removePartitionNode(rootPartitionTreeNode);
+				//
 				for (auto treeRootSubNodeIt = treeRoot.subNodes.begin(); treeRootSubNodeIt != treeRoot.subNodes.end(); ++treeRootSubNodeIt) {
 					if ((void*)&treeRootSubNodeIt == (void*)rootPartitionTreeNode) {
 						treeRoot.subNodes.erase(treeRootSubNodeIt);
@@ -178,14 +179,14 @@ void OctTreePartition::dumpNode(PartitionTreeNode* node, int indent) {
 		for (auto i = 0; i < indent + 1; i++) Console::print("\t");
 		Console::println(entity->getId());
 	}
-	for (auto subNode: node->subNodes) dumpNode(&subNode, indent + 1);
+	for (auto& subNode: node->subNodes) dumpNode(&subNode, indent + 1);
 }
 
 void OctTreePartition::findEntity(PartitionTreeNode* node, Entity* entity) {
 	for (auto nodeEntity: node->partitionEntities) {
 		if (nodeEntity == entity) Console::println("OctTreePartition::findEntity(): found entity: " + entity->getId());
 	}
-	for (auto subNode: node->subNodes) findEntity(&subNode, entity);
+	for (auto& subNode: node->subNodes) findEntity(&subNode, entity);
 }
 
 void OctTreePartition::dump() {

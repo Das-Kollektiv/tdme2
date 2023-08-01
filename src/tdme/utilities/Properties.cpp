@@ -39,9 +39,7 @@ void Properties::load(const string& pathName, const string& fileName, FileSystem
 void Properties::store(const string& pathName, const string& fileName, FileSystemInterface* fileSystem) const {
 	vector<string> result;
 	int32_t idx = 0;
-	for (auto it = properties.begin(); it != properties.end(); ++it) {
-		string key = it->first;
-		string value = it->second;
+	for (const auto& [key, value]: properties) {
 		result.push_back(key + "=" + value);
 	}
 	if (fileSystem == nullptr) fileSystem = FileSystem::getInstance();

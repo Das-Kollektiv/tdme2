@@ -57,7 +57,7 @@ LinesInternal::LinesInternal(const string& id, float lineWidth, const vector<Vec
 	if (points.size() > 1) {
 		boundingBox.getMin().set(points[0]);
 		boundingBox.getMax().set(points[0]);
-		for (auto& point: points) {
+		for (const auto& point: points) {
 			boundingBox.extend(point);
 		}
 		boundingBox.update();
@@ -104,7 +104,7 @@ void LinesInternal::initialize() {
 	{
 		// upload points
 		auto fbPoints = ObjectBuffer::getByteBuffer(contextIdx, points.size() * 3 * sizeof(float))->asFloatBuffer();
-		for (auto& point: points) fbPoints.put(point.getArray());
+		for (const auto& point: points) fbPoints.put(point.getArray());
 		renderer->uploadBufferObject(contextIdx, (*vboIds)[0], fbPoints.getPosition() * sizeof(float), &fbPoints);
 	}
 
@@ -112,9 +112,9 @@ void LinesInternal::initialize() {
 		// upload colors
 		auto fbColors = ObjectBuffer::getByteBuffer(contextIdx, points.size() * 4 * sizeof(float))->asFloatBuffer();
 		if (colors.size() == points.size()) {
-			for (auto& color: colors) fbColors.put(color.getArray());
+			for (const auto& color: colors) fbColors.put(color.getArray());
 		} else {
-			for (auto& point: points) fbColors.put(color.getArray());
+			for (const auto& point: points) fbColors.put(color.getArray());
 		}
 		renderer->uploadBufferObject(contextIdx, (*vboIds)[1], fbColors.getPosition() * sizeof(float), &fbColors);
 	}

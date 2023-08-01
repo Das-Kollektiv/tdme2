@@ -738,11 +738,10 @@ void Engine::removeEntityFromLists(Entity* entity)
 void Engine::reset()
 {
 	vector<string> entitiesToRemove;
-	for (auto it: entitiesById) {
-		auto entityKey = it.first;
-		entitiesToRemove.push_back(entityKey);
+	for (const auto& [entityId, entity]: entitiesById) {
+		entitiesToRemove.push_back(entityId);
 	}
-	for (auto entityKey: entitiesToRemove) {
+	for (const auto& entityKey: entitiesToRemove) {
 		removeEntity(entityKey);
 	}
 	partition->reset();
@@ -1436,7 +1435,7 @@ void Engine::display()
 	for (auto programId: postProcessingPrograms) {
 		auto program = postProcessing->getPostProcessingProgram(programId);
 		if (program == nullptr) continue;
-		for (auto& effectPass: program->getEffectPasses()) {
+		for (const auto& effectPass: program->getEffectPasses()) {
 			auto effectPassIdx = effectPass.effectPassIdx;
 			auto frameBufferIdx = effectPass.effectPassIdx - 1;
 			auto frameBufferWidth = _width / effectPass.frameBufferWidthDivideFactor;
@@ -1661,7 +1660,7 @@ Entity* Engine::getEntityByMousePosition(
 			if (filter != nullptr && filter->filterEntity(entity) == false) continue;
 			// do the collision test
 			for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
-				auto& vertices = it->next();
+				const auto& vertices = it->next();
 				if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], nearPlaneWorldCoordinate, farPlaneWorldCoordinate, lineTriangleContact) == true) {
 					auto entityDistance = lineTriangleContact.sub(nearPlaneWorldCoordinate).computeLengthSquared();
 					// check if match or better match
@@ -1726,7 +1725,7 @@ Entity* Engine::getEntityByMousePosition(
 		// do the collision test
 		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getWorldBoundingBox(), nearPlaneWorldCoordinate, farPlaneWorldCoordinate, boundingBoxLineContactMin, boundingBoxLineContactMax) == true) {
 			for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
-				auto& vertices = it->next();
+				const auto& vertices = it->next();
 				if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], nearPlaneWorldCoordinate, farPlaneWorldCoordinate, lineTriangleContact) == true) {
 					auto entityDistance = lineTriangleContact.sub(nearPlaneWorldCoordinate).computeLengthSquared();
 					// check if match or better match
@@ -1844,7 +1843,7 @@ Entity* Engine::getEntityByMousePosition(
 			// do the collision test
 			if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getWorldBoundingBox(), nearPlaneWorldCoordinate, farPlaneWorldCoordinate, boundingBoxLineContactMin, boundingBoxLineContactMax) == true) {
 				for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
-					auto& vertices = it->next();
+					const auto& vertices = it->next();
 					if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], nearPlaneWorldCoordinate, farPlaneWorldCoordinate, lineTriangleContact) == true) {
 						auto entityDistance = lineTriangleContact.sub(nearPlaneWorldCoordinate).computeLengthSquared();
 						// check if match or better match
@@ -1870,7 +1869,7 @@ Entity* Engine::getEntityByMousePosition(
 			auto object = entity->getLODObject();
 			if (object != nullptr) {
 				for (auto it = object->getTransformedFacesIterator()->iterator(); it->hasNext();) {
-					auto& vertices = it->next();
+					const auto& vertices = it->next();
 					if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], nearPlaneWorldCoordinate, farPlaneWorldCoordinate, lineTriangleContact) == true) {
 						auto entityDistance = lineTriangleContact.sub(nearPlaneWorldCoordinate).computeLengthSquared();
 						// check if match or better match
@@ -1973,7 +1972,7 @@ Entity* Engine::doRayCasting(
 		// do the collision test
 		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getWorldBoundingBox(), startPoint, endPoint, boundingBoxLineContactMin, boundingBoxLineContactMax) == true) {
 			for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
-				auto& vertices = it->next();
+				const auto& vertices = it->next();
 				if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], startPoint, endPoint, lineTriangleContact) == true) {
 					auto entityDistance = lineTriangleContact.clone().sub(startPoint).computeLengthSquared();
 					// check if match or better match
@@ -2001,7 +2000,7 @@ Entity* Engine::doRayCasting(
 			// do the collision test
 			if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getWorldBoundingBox(), startPoint, endPoint, boundingBoxLineContactMin, boundingBoxLineContactMax) == true) {
 				for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
-					auto& vertices = it->next();
+					const auto& vertices = it->next();
 					if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], startPoint, endPoint, lineTriangleContact) == true) {
 						auto entityDistance = lineTriangleContact.clone().sub(startPoint).computeLengthSquared();
 						// check if match or better match
@@ -2026,7 +2025,7 @@ Entity* Engine::doRayCasting(
 			auto object = entity->getLODObject();
 			if (object != nullptr) {
 				for (auto it = object->getTransformedFacesIterator()->iterator(); it->hasNext();) {
-					auto& vertices = it->next();
+					const auto& vertices = it->next();
 					if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], startPoint, endPoint, lineTriangleContact) == true) {
 						auto entityDistance = lineTriangleContact.sub(startPoint).computeLengthSquared();
 						// check if match or better match
@@ -2098,11 +2097,10 @@ void Engine::dispose()
 
 	// remove entities
 	vector<string> entitiesToRemove;
-	for (auto it: entitiesById) {
-		auto entityKey = it.first;
-		entitiesToRemove.push_back(entityKey);
+	for (const auto& [entityId, entity]: entitiesById) {
+		entitiesToRemove.push_back(entityId);
 	}
-	for (auto entityKey: entitiesToRemove) {
+	for (const auto& entityKey: entitiesToRemove) {
 		removeEntity(entityKey);
 	}
 
@@ -2248,11 +2246,11 @@ void Engine::doPostProcessing(PostProcessingProgram::RenderPass renderPass, arra
 		if (program == nullptr) continue;
 		if (program->getRenderPass() != renderPass) continue;
 		auto effectPassSkipDetected = false;
-		for (auto& effectPass: program->getEffectPasses()) {
+		for (const auto& effectPass: program->getEffectPasses()) {
 			if (effectPassSkip[effectPass.effectPassIdx - 1] == true) effectPassSkipDetected = true;
 		}
 		if (effectPassSkipDetected == true) continue;
-		for (auto& step: program->getPostProcessingSteps()) {
+		for (const auto& step: program->getPostProcessingSteps()) {
 			auto shaderId = step.shaderId;
 			FrameBuffer* blendToSource = nullptr;
 			FrameBuffer* source = nullptr;
@@ -2307,8 +2305,7 @@ void Engine::doPostProcessing(PostProcessingProgram::RenderPass renderPass, arra
 
 const vector<string> Engine::getRegisteredShader(ShaderType type) {
 	vector<string> result;
-	for (auto shadersIt: shaders) {
-		auto& shader = shadersIt.second;
+	for (const auto& [shaderId, shader]: shaders) {
 		if (shader.type == type) {
 			result.push_back(shader.id);
 		}
@@ -2650,7 +2647,7 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 
 bool Engine::renderLightSources(int width, int height) {
 	auto lightSourceVisible = false;
-	for (auto& light: lights) {
+	for (auto light: lights) {
 		if (light->isEnabled() == false || light->isRenderSource() == false) continue;
 		auto lightSourceSize = light->getSourceSize();
 		auto lightSourcePixelSize = width < height?static_cast<float>(lightSourceSize) * static_cast<float>(width):static_cast<float>(lightSourceSize) * static_cast<float>(height);;
@@ -2670,7 +2667,7 @@ bool Engine::renderLightSources(int width, int height) {
 
 void Engine::dumpShaders() {
 	for (auto shaderType = 0; shaderType < SHADERTYPE_MAX; shaderType++)
-	for (auto& shaderId: getRegisteredShader(static_cast<ShaderType>(shaderType))) {
+	for (const auto& shaderId: getRegisteredShader(static_cast<ShaderType>(shaderType))) {
 		string shaderTypeString = "unknowm";
 		switch (shaderType) {
 			case SHADERTYPE_OBJECT: shaderTypeString = "object"; break;
@@ -2678,13 +2675,12 @@ void Engine::dumpShaders() {
 			default: break;
 		}
 		Console::println(string("TDME2::registered " + shaderTypeString + " shader: ") + shaderId);
-		auto& defaultShaderParameters = getShaderParameterDefaults(shaderId);
+		const auto& defaultShaderParameters = getShaderParameterDefaults(shaderId);
 		if (defaultShaderParameters.size() > 0) {
 			Console::print("\t");
-			for (auto it: defaultShaderParameters) {
-				auto& parameterName = it.first;
+			for (const auto& [parameterName, parameterValue]: defaultShaderParameters) {
 				Console::print(parameterName);
-				switch(it.second.getType()) {
+				switch(parameterValue.getType()) {
 					case ShaderParameter::TYPE_NONE:
 						Console::print("=none; ");
 						break;
@@ -2706,7 +2702,7 @@ void Engine::dumpShaders() {
 					case ShaderParameter::TYPE_VECTOR2:
 						{
 							Console::print("=Vector2(");
-							auto& shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector2Value().getArray();
+							const auto& shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector2Value().getArray();
 							for (auto i = 0; i < shaderParameterArray.size(); i++) {
 								if (i != 0) Console::print(",");
 								Console::print(to_string(shaderParameterArray[i]));
@@ -2717,7 +2713,7 @@ void Engine::dumpShaders() {
 					case ShaderParameter::TYPE_VECTOR3:
 						{
 							Console::print("=Vector3(");
-							auto& shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector3Value().getArray();
+							const auto& shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector3Value().getArray();
 							for (auto i = 0; i < shaderParameterArray.size(); i++) {
 								if (i != 0) Console::print(",");
 								Console::print(to_string(shaderParameterArray[i]));
@@ -2728,7 +2724,7 @@ void Engine::dumpShaders() {
 					case ShaderParameter::TYPE_VECTOR4:
 						{
 							Console::print("=Vector4(");
-							auto& shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector4Value().getArray();
+							const auto& shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector4Value().getArray();
 							for (auto i = 0; i < shaderParameterArray.size(); i++) {
 								if (i != 0) Console::print(",");
 								Console::print(to_string(shaderParameterArray[i]));
@@ -2804,8 +2800,7 @@ void Engine::dumpEntities() {
 	Console::println("Engine::dumpEntities()");
 	Console::println();
 	Console::println("Engine Entities:");
-	for (auto& entitiesByIdIt: entitiesById) {
-		auto entity = entitiesByIdIt.second;
+	for (const auto& [entityId, entity]: entitiesById) {
 		string entityType;
 		switch (entity->getEntityType()) {
 			case Entity::ENTITYTYPE_DECAL:

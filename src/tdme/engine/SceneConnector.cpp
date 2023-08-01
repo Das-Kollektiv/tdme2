@@ -4,8 +4,8 @@
 	#pragma warning(disable:4503)
 #endif
 
-#include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -84,9 +84,9 @@
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Terrain.h>
 
-using std::map;
 using std::string;
 using std::to_string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::SceneConnector;
@@ -208,27 +208,27 @@ Entity* SceneConnector::createParticleSystem(PrototypeParticleSystem* particleSy
 {
 	ParticleEmitter* engineEmitter = nullptr;
 	{
-		auto v = particleSystem->getEmitter();
-		if (v == PrototypeParticleSystem_Emitter::NONE) {
+		auto emitterType = particleSystem->getEmitter();
+		if (emitterType == PrototypeParticleSystem_Emitter::NONE) {
 			return nullptr;
 		} else
-		if (v == PrototypeParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
+		if (emitterType == PrototypeParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
 			auto emitter = particleSystem->getPointParticleEmitter();
 			engineEmitter = new PointParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), emitter->getPosition(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
 		} else
-		if (v == PrototypeParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
+		if (emitterType == PrototypeParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
 			auto emitter = particleSystem->getBoundingBoxParticleEmitters();
 			engineEmitter = new BoundingBoxParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), new OrientedBoundingBox(emitter->getObbCenter(), emitter->getObbAxis0(), emitter->getObbAxis1(), emitter->getObbAxis2(), emitter->getObbHalfextension()), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
 		} else
-		if (v == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
+		if (emitterType == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
 			auto emitter = particleSystem->getCircleParticleEmitter();
 			engineEmitter = new CircleParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getAxis0(), emitter->getAxis1(), emitter->getCenter(), emitter->getRadius(), emitter->getMass(), emitter->getMassRnd(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
 		} else
-		if (v == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
+		if (emitterType == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
 			auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
 			engineEmitter = new CircleParticleEmitterPlaneVelocity(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getAxis0(), emitter->getAxis1(), emitter->getCenter(), emitter->getRadius(), emitter->getMass(), emitter->getMassRnd(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
 		} else
-		if (v == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
+		if (emitterType == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
 			auto emitter = particleSystem->getSphereParticleEmitter();
 			engineEmitter = new SphereParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), new Sphere(emitter->getCenter(), emitter->getRadius()), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
 		} else {
@@ -244,65 +244,62 @@ Entity* SceneConnector::createParticleSystem(PrototypeParticleSystem* particleSy
 	}
 
 	{
-		{
-			auto v = particleSystem->getType();
-			if (v == PrototypeParticleSystem_Type::NONE) {
-				return nullptr;
-			} else
-			if (v == PrototypeParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) {
-				auto objectParticleSystem = particleSystem->getObjectParticleSystem();
-				if (objectParticleSystem->getModel() == nullptr) return nullptr;
+		auto particleSystemType = particleSystem->getType();
+		if (particleSystemType == PrototypeParticleSystem_Type::NONE) {
+			return nullptr;
+		} else
+		if (particleSystemType == PrototypeParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) {
+			auto objectParticleSystem = particleSystem->getObjectParticleSystem();
+			if (objectParticleSystem->getModel() == nullptr) return nullptr;
 
-				return new ObjectParticleSystem(
-					id,
-					objectParticleSystem->getModel(),
-					objectParticleSystem->getScale(),
-					objectParticleSystem->isAutoEmit(),
-					enableDynamicShadows,
-					enableDynamicShadows,
-					objectParticleSystem->getMaxCount(),
-					engineEmitter
-				);
-			} else
-			if (v == PrototypeParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
-				auto pointParticleSystem = particleSystem->getPointParticleSystem();
-				return new PointsParticleSystem(
-					id,
-					engineEmitter,
-					pointParticleSystem->getMaxPoints(),
-					pointParticleSystem->getPointSize(),
-					pointParticleSystem->isAutoEmit(),
-					pointParticleSystem->getTexture(),
-					pointParticleSystem->getTextureHorizontalSprites(),
-					pointParticleSystem->getTextureVerticalSprites(),
-					pointParticleSystem->getTextureSpritesFPS()
-				);
-			} else
-			if (v == PrototypeParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
-				auto fogParticleSystem = particleSystem->getFogParticleSystem();
-				return new FogParticleSystem(
-					id,
-					engineEmitter,
-					fogParticleSystem->getMaxPoints(),
-					fogParticleSystem->getPointSize(),
-					fogParticleSystem->getTexture(),
-					fogParticleSystem->getTextureHorizontalSprites(),
-					fogParticleSystem->getTextureVerticalSprites(),
-					fogParticleSystem->getTextureSpritesFPS()
-				);
-			} else {
-				Console::println(
-					string(
-						"SceneConnector::createParticleSystem(): unknown particle system type '" +
-						particleSystem->getType()->getName() +
-						"'"
-					)
-				);
-				return nullptr;
-			}
+			return new ObjectParticleSystem(
+				id,
+				objectParticleSystem->getModel(),
+				objectParticleSystem->getScale(),
+				objectParticleSystem->isAutoEmit(),
+				enableDynamicShadows,
+				enableDynamicShadows,
+				objectParticleSystem->getMaxCount(),
+				engineEmitter
+			);
+		} else
+		if (particleSystemType == PrototypeParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
+			auto pointParticleSystem = particleSystem->getPointParticleSystem();
+			return new PointsParticleSystem(
+				id,
+				engineEmitter,
+				pointParticleSystem->getMaxPoints(),
+				pointParticleSystem->getPointSize(),
+				pointParticleSystem->isAutoEmit(),
+				pointParticleSystem->getTexture(),
+				pointParticleSystem->getTextureHorizontalSprites(),
+				pointParticleSystem->getTextureVerticalSprites(),
+				pointParticleSystem->getTextureSpritesFPS()
+			);
+		} else
+		if (particleSystemType == PrototypeParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
+			auto fogParticleSystem = particleSystem->getFogParticleSystem();
+			return new FogParticleSystem(
+				id,
+				engineEmitter,
+				fogParticleSystem->getMaxPoints(),
+				fogParticleSystem->getPointSize(),
+				fogParticleSystem->getTexture(),
+				fogParticleSystem->getTextureHorizontalSprites(),
+				fogParticleSystem->getTextureVerticalSprites(),
+				fogParticleSystem->getTextureSpritesFPS()
+			);
+		} else {
+			Console::println(
+				string(
+					"SceneConnector::createParticleSystem(): unknown particle system type '" +
+					particleSystem->getType()->getName() +
+					"'"
+				)
+			);
+			return nullptr;
 		}
 	}
-
 }
 
 Entity* SceneConnector::createEmpty(const string& id, const Transform& transform) {
@@ -385,8 +382,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			if (prototype->getShader() == "water" || prototype->getShader() == "pbr-water") imposterLodObject->setRenderPass(Entity::RENDERPASS_WATER);
 			imposterLodObject->setShader(prototype->getShader());
 			auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
-			for (auto& parameterIt: shaderParametersDefault) {
-				auto& parameterName = parameterIt.first;
+			for (const auto& [parameterName, defaultParameterValue]: shaderParametersDefault) {
 				auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 				imposterLodObject->setShaderParameter(parameterName, parameterValue);
 			}
@@ -412,8 +408,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			if (prototype->getShader() == "water" || prototype->getShader() == "pbr-water") lodObject->setRenderPass(Entity::RENDERPASS_WATER);
 			lodObject->setShader(prototype->getShader());
 			auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
-			for (auto& parameterIt: shaderParametersDefault) {
-				auto& parameterName = parameterIt.first;
+			for (const auto& [parameterName, defaultParameterValue]: shaderParametersDefault) {
 				auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 				lodObject->setShaderParameter(parameterName, parameterValue);
 			}
@@ -429,8 +424,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			if (prototype->getShader() == "water" || prototype->getShader() == "pbr-water") object->setRenderPass(Entity::RENDERPASS_WATER);
 			object->setShader(prototype->getShader());
 			auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
-			for (auto& parameterIt: shaderParametersDefault) {
-				auto& parameterName = parameterIt.first;
+			for (const auto& [parameterName, defaultParameterValue]: shaderParametersDefault) {
 				auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 				object->setShaderParameter(parameterName, parameterValue);
 			}
@@ -618,22 +612,20 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 			// foliage
 			{
 				//
-				auto& foliageMaps = terrain->getFoliageMaps();
+				const auto& foliageMaps = terrain->getFoliageMaps();
 
 				//
 				auto foliageRenderGroupIdx = 0;
 				auto partitionIdx = 0;
-				map<int, int> prototypeEntityIdx;
+				unordered_map<int, int> prototypeEntityIdx;
 				for (auto& foliageMapPartition: foliageMaps) {
 					auto partitionPrototypeInstanceCount = 0;
-					for (auto& foliageMapPartitionIt: foliageMapPartition) {
-						partitionPrototypeInstanceCount+= foliageMapPartitionIt.second.size();
+					for (const auto& [prototypeIdx, transformVector]: foliageMapPartition) {
+						partitionPrototypeInstanceCount+= transformVector.size();
 					}
 					if (partitionPrototypeInstanceCount > 0) {
 						unordered_map<string, ObjectRenderGroup*> objectRenderGroupByShaderParameters;
-						for (auto& foliageMapPartitionIt: foliageMapPartition) {
-							auto prototypeIdx = foliageMapPartitionIt.first;
-							auto& transformVector = foliageMapPartitionIt.second;
+						for (const auto& [prototypeIdx, transformVector]: foliageMapPartition) {
 							if (transformVector.empty() == true) continue;
 							auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
 							if (foliagePrototype->isRenderGroups() == false) {
@@ -669,8 +661,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 									foliagePartitionObjectRenderGroup->setReceivesShadows(receivesShadows);
 									foliagePartitionObjectRenderGroup->setShader(foliagePrototype->getShader());
 									auto shaderParametersDefault = Engine::getShaderParameterDefaults(foliagePrototype->getShader());
-									for (auto& parameterIt: shaderParametersDefault) {
-										auto& parameterName = parameterIt.first;
+									for (const auto& [parameterName, defaultParameterValue]: shaderParametersDefault) {
 										auto parameterValue = foliagePrototype->getShaderParameters().getShaderParameter(parameterName);
 										foliagePartitionObjectRenderGroup->setShaderParameter(parameterName, parameterValue);
 									}
@@ -688,8 +679,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 								}
 							}
 						}
-						for (auto& objectRenderGroupByShaderParametersIt: objectRenderGroupByShaderParameters) {
-							auto foliagePartitionObjectRenderGroup = objectRenderGroupByShaderParametersIt.second;
+						for (const auto& [shaderHashId, foliagePartitionObjectRenderGroup]: objectRenderGroupByShaderParameters) {
 							foliagePartitionObjectRenderGroup->updateRenderGroup();
 							foliagePartitionObjectRenderGroup->setTranslation(translation);
 							foliagePartitionObjectRenderGroup->update();
@@ -703,8 +693,8 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 	}
 
 	// scene entities
-	map<string, map<string, map<Model*, vector<Transform*>>>> renderGroupEntitiesByShaderPartitionModel;
-	map<Model*, Prototype*> renderGroupSceneEditorEntities;
+	unordered_map<string, unordered_map<string, unordered_map<Model*, vector<Transform*>>>> renderGroupEntitiesByShaderPartitionModel;
+	unordered_map<Model*, Prototype*> renderGroupSceneEditorEntities;
 	auto progressStepCurrent = 0;
 	for (auto i = 0; i < scene->getEntityCount(); i++) {
 		auto sceneEntity = scene->getEntityAt(i);
@@ -764,24 +754,23 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 		progressStepCurrent = 0;
 		auto progressStepMax = 0;
 		if (progressCallback != nullptr) {
-			for (auto& itShader: renderGroupEntitiesByShaderPartitionModel) {
-				for (auto& itPartition: itShader.second) {
-					for (auto& itModel: itPartition.second) {
+			for (const auto& [shaderId, shaderPartitionModelTranformsMap]: renderGroupEntitiesByShaderPartitionModel) {
+				for (const auto& [partitionId, modelTranformsMap]: shaderPartitionModelTranformsMap) {
+					for (const auto& [model, transformVector]: modelTranformsMap) {
 						progressStepMax++;
 					}
 				}
 			}
 		}
-		for (auto& itShader: renderGroupEntitiesByShaderPartitionModel) {
-			Console::println("SceneConnector::addLevel(): adding render group: " + itShader.first);
-			for (auto& itPartition: itShader.second) {
-				map<string, ObjectRenderGroup*> objectRenderGroupsByShaderParameters;
-				for (auto& itModel: itPartition.second) {
+		for (const auto& [shaderId, shaderPartitionModelTranformsMap]: renderGroupEntitiesByShaderPartitionModel) {
+			for (const auto& [partitionId, modelTranformsMap]: shaderPartitionModelTranformsMap) {
+				unordered_map<string, ObjectRenderGroup*> objectRenderGroupsByShaderParameters;
+				for (const auto& [model, transformVector]: modelTranformsMap) {
 					if (progressCallback != nullptr) {
 						progressCallback->progress(0.5f + static_cast<float>(progressStepCurrent) / static_cast<float>(progressStepMax) * 0.5f);
 					}
 					progressStepCurrent++;
-					auto prototype = renderGroupSceneEditorEntities[itModel.first];
+					auto prototype = renderGroupSceneEditorEntities[model];
 					auto contributesShadows = prototype->isContributesShadows();
 					auto receivesShadows = prototype->isReceivesShadows();
 					auto hash = prototype->getShaderParameters().getShaderParametersHash() + "|" + to_string(contributesShadows) + "|" + to_string(receivesShadows);
@@ -799,8 +788,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 						objectRenderNode->setReceivesShadows(receivesShadows);
 						objectRenderNode->setShader(prototype->getShader());
 						auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
-						for (auto& parameterIt: shaderParametersDefault) {
-							auto& parameterName = parameterIt.first;
+						for (const auto& [parameterName, defaultParameterValue]: shaderParametersDefault) {
 							auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 							objectRenderNode->setShaderParameter(parameterName, parameterValue);
 						}
@@ -808,14 +796,13 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 					}
 					auto objectRenderNode = objectRenderGroupsByShaderParameters[hash];
 					auto objectIdx = -1;
-					for (auto transform: itModel.second) {
+					for (const auto& transform: transformVector) {
 						objectIdx++;
 						if (objectIdx % renderGroupsReduceBy != 0) continue;
 						objectRenderNode->addObject(prototype->getModel(), *transform);
 					}
 				}
-				for (auto& objectRenderGroupsByShaderParametersIt: objectRenderGroupsByShaderParameters) {
-					auto objectRenderNode = objectRenderGroupsByShaderParametersIt.second;
+				for (const auto& [hash, objectRenderNode]: objectRenderGroupsByShaderParameters) {
 					objectRenderNode->updateRenderGroup();
 					engine->addEntity(objectRenderNode);
 				}
@@ -1011,18 +998,16 @@ void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vec
 			// single foliage
 			{
 				//
-				auto& foliageMaps = terrain->getFoliageMaps();
+				const auto& foliageMaps = terrain->getFoliageMaps();
 
 				//
-				map<int, int> prototypeBodyIdx;
-				for (auto& foliageMapPartition: foliageMaps) {
-					for (auto& foliageMapPartitionIt: foliageMapPartition) {
-						auto prototypeIdx = foliageMapPartitionIt.first;
-						auto& transformVector = foliageMapPartitionIt.second;
+				unordered_map<int, int> prototypeBodyIdx;
+				for (const auto& foliageMapPartition: foliageMaps) {
+					for (const auto& [prototypeIdx, transformVector]: foliageMapPartition) {
 						if (transformVector.empty() == true) continue;
 						auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
 						if (foliagePrototype->isRenderGroups() == true) continue;
-						for (auto& foliageTransform: transformVector) {
+						for (const auto& foliageTransform: transformVector) {
 							auto body = createBody(world, foliagePrototype, "tdme.foliage." + to_string(prototypeIdx) + "." + to_string(prototypeBodyIdx[prototypeIdx]++), foliageTransform);
 							if (body == nullptr) continue;
 							if (translation.equals(Vector3()) == false) {

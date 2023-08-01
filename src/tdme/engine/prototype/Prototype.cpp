@@ -59,7 +59,7 @@ Prototype::~Prototype() {
 	if (lodLevel3 != nullptr) delete lodLevel3;
 	if (physics != nullptr) delete physics;
 	for (auto particleSystem: particleSystems) delete particleSystem;
-	for (auto i = 0; i < boundingVolumes.size(); i++) delete boundingVolumes[i];
+	for (auto boundingVolume: boundingVolumes) delete boundingVolume;
 	for (auto sound: sounds) delete sound;
 	if (terrain != nullptr) delete terrain;
 	if (decal != nullptr) delete decal;

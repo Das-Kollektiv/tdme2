@@ -60,7 +60,7 @@ UDPServerIOThread::~UDPServerIOThread() {
 	messageQueueMutex.unlock();
 	//
 	messageMapAckMutex.lock();
-	for (auto& it: messageMapAck) delete it.second;
+	for (const auto& [messageId, message]: messageMapAck) delete message;
 	messageMapAck.clear();
 	messageMapAckMutex.unlock();
 }

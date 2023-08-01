@@ -77,7 +77,7 @@ public:
 		// seeking in cache first
 		if (position >= UTF8PositionCache::CACHE_ENTRY_SIZE && cache != nullptr && cache->binaryCache.empty() == false) {
 			auto cacheIdx = Math::min((position / UTF8PositionCache::CACHE_ENTRY_SIZE) - 1, cache->binaryCache.size() - 1);
-			auto& cacheEntry = cache->binaryCache[cacheIdx];
+			const auto& cacheEntry = cache->binaryCache[cacheIdx];
 			binaryPosition = cacheEntry.binaryPosition;
 			characterPosition = cacheEntry.characterPosition;
 		}
@@ -103,7 +103,7 @@ public:
 		// seeking in cache first
 		if (position >= UTF8PositionCache::CACHE_ENTRY_SIZE && cache != nullptr && cache->characterCache.empty() == false) {
 			auto cacheIdx = Math::min((position / UTF8PositionCache::CACHE_ENTRY_SIZE) - 1, cache->characterCache.size() - 1);
-			auto& cacheEntry = cache->characterCache[cacheIdx];
+			const auto& cacheEntry = cache->characterCache[cacheIdx];
 			binaryPosition = cacheEntry.binaryPosition;
 			characterPosition = cacheEntry.characterPosition;
 		}
@@ -209,7 +209,7 @@ private:
 					);
 					/*
 					Console::println("UTF8CharacterIterator::addCacheEntry(): binary cache: binary: " + to_string(binaryPosition) + " / character: " + to_string(characterPosition));
-					for (auto& cacheEntry: _cache) {
+					for (const auto& cacheEntry: _cache) {
 						Console::println("\tbinary cache: binary: " + to_string(cacheEntry.binaryPosition) + " / character: " + to_string(cacheEntry.characterPosition));
 					}
 					*/
@@ -225,7 +225,7 @@ private:
 						characterPosition
 					);
 					/*
-					for (auto& cacheEntry: _cache) {
+					for (const auto& cacheEntry: _cache) {
 						Console::println("\tcharacter cache: binary: " + to_string(cacheEntry.binaryPosition) + " / character: " + to_string(cacheEntry.characterPosition));
 					}
 					*/

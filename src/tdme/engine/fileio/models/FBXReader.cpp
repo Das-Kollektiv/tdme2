@@ -102,8 +102,10 @@ Model* FBXReader::read(const string& pathName, const string& fileName, bool useB
 		throw ModelFileIOException("FBXReader::read(): Error: Unable to import FBX scene from '" + pathName + "/" + fileName + " into scene");
 	}
 
+	//
 	Console::println("FBXReader::read(): Authoring program: " + string(fbxScene->GetDocumentInfo()->Original_ApplicationName.Get().Buffer()));
 
+	//
 	Console::println("FBXReader::read(): triangulating FBX");
 	// triangulate
 	FbxGeometryConverter fbxGeometryConverter(fbxManager);
@@ -181,7 +183,7 @@ Model* FBXReader::read(const string& pathName, const string& fileName, bool useB
 		int endFrame = (int)Math::ceil(fbxEndTime.GetMilliSeconds() / (1000.0f * 1.0f / 30.0f)) - 1;
 		auto animationName = string(fbxAnimStackNameArray[i]->Buffer());
 		if (possibleArmatureNodeIds.size() == 1) {
-			for (auto& possibleArmatureNodeId: possibleArmatureNodeIds) {
+			for (const auto& possibleArmatureNodeId: possibleArmatureNodeIds) {
 				if (StringTools::startsWith(animationName, possibleArmatureNodeId + "|") == true) {
 					animationName = StringTools::substring(animationName, possibleArmatureNodeId.size() + 1, animationName.size());
 					break;
@@ -938,7 +940,7 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 			verticesJointsWeights.emplace_back();
 			auto jointWeightsByVerticesIt = jointWeightsByVertices.find(vertexIndex);
 			if (jointWeightsByVerticesIt != jointWeightsByVertices.end()) {
-				for (auto& jointWeight: jointWeightsByVerticesIt->second) {
+				for (const auto& jointWeight: jointWeightsByVerticesIt->second) {
 					verticesJointsWeights[verticesJointsWeights.size() - 1].push_back(jointWeight);
 				}
 			}

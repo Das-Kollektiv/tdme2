@@ -237,7 +237,7 @@ int VKGL3CoreShaderProgram::determineAlignment(const unordered_map<string, vecto
 	return alignmentMax;
 }
 
-bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRenderer::shader_type& shader, const unordered_map<string, string>& definitionValues, const unordered_map<string, vector<string>>& structs, const vector<string>& uniforms, const string& prefix, unordered_set<string>& uniformStructsArrays, string& uniformsBlock) {
+bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRenderer::shader_type& shader, const unordered_map<string, string>& preprocessorDefinitions, const unordered_map<string, vector<string>>& structs, const vector<string>& uniforms, const string& prefix, unordered_set<string>& uniformStructsArrays, string& uniformsBlock) {
 	StringTokenizer t;
 	for (auto uniform: uniforms) {
 		t.tokenize(uniform, "\t ;");
@@ -250,7 +250,7 @@ bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRender
 		if (uniformName.find('[') != -1 && uniformName.find(']') != string::npos) {
 			isArray = true;
 			auto arraySizeString = StringTools::substring(uniformName, uniformName.find('[') + 1, uniformName.find(']'));
-			for (auto definitionValueIt: definitionValues) arraySizeString = StringTools::replace(arraySizeString, definitionValueIt.first, definitionValueIt.second);
+			for (const auto& [definitionName, definitionValue]: preprocessorDefinitions) arraySizeString = StringTools::replace(arraySizeString, definitionName, definitionValue);
 			if (Integer::is(arraySizeString) == false) {
 				Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Unknown array size: " + uniform);
 			}
@@ -422,7 +422,7 @@ bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRender
 					string uniformsBlockIgnore;
 					auto alignment = Math::max(16, determineAlignment(structs, structs.find(uniformType)->second));
 					shader.uboSize = align(alignment, shader.uboSize);
-					auto success = addToShaderUniformBufferObject(shader, definitionValues, structs, structs.find(uniformType)->second, structPrefix, uniformStructsArrays, uniformsBlockIgnore);
+					auto success = addToShaderUniformBufferObject(shader, preprocessorDefinitions, structs, structs.find(uniformType)->second, structPrefix, uniformStructsArrays, uniformsBlockIgnore);
 					shader.uboSize = align(alignment, shader.uboSize);
 					if (success == false) return false;
 					if (isArray == false) uniformStructsArrays.insert(uniformName);
@@ -484,7 +484,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 		t.tokenize(shaderSource, "\n");
 		StringTokenizer t2;
 		vector<string> definitions;
-		unordered_map<string, string> definitionValues;
+		unordered_map<string, string> preprocessorDefinitions;
 		unordered_map<string, vector<string>> structs;
 		string currentStruct;
 		stack<string> testedDefinitions;
@@ -518,7 +518,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 				if (VERBOSE == true) Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have preprocessor test begin: " + definition);
 				testedDefinitions.push(definition);
 				bool matched = false;
-				for (auto availableDefinition: definitions) {
+				for (const auto& availableDefinition: definitions) {
 					if (definition == availableDefinition) {
 						matched = true;
 						break;
@@ -544,7 +544,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 				if (VERBOSE == true) Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have preprocessor test else if: " + definition);
 				testedDefinitions.push(definition);
 				bool matched = false;
-				for (auto availableDefinition: definitions) {
+				for (const auto& availableDefinition: definitions) {
 					if (definition == availableDefinition) {
 						matched = true;
 						break;
@@ -559,12 +559,12 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 				auto definition = StringTools::trim(StringTools::substring(line, string("#define ").size()));
 				if (definition.find(' ') != string::npos) {
 					t2.tokenize(definition, " ");
-					definition = t2.nextToken();
-					string value;
-					while (t2.hasMoreTokens() == true) value+= t2.nextToken();
-					definitionValues[definition] = value;
+					auto definitionName = t2.nextToken();
+					string definitionValue;
+					while (t2.hasMoreTokens() == true) definitionValue+= t2.nextToken();
+					preprocessorDefinitions[definitionName] = definitionValue;
 					newShaderSourceLines.push_back((matchedAllDefinitions == true?"":"// ") + line);
-					if (VERBOSE == true) Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have define with value: " + definition + " --> " + value);
+					if (VERBOSE == true) Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Have define : " + definition + " --> " + definitionValue);
 				} else {
 					definitions.push_back(definition);
 					newShaderSourceLines.push_back((matchedAllDefinitions == true?"":"// ") + line);
@@ -615,7 +615,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 						if (uniformName.find('[') != string::npos && uniformName.find(']') != string::npos) {
 							isArray = true;
 							auto arraySizeString = StringTools::substring(uniformName, uniformName.find('[') + 1, uniformName.find(']'));
-							for (auto definitionValueIt: definitionValues) arraySizeString = StringTools::replace(arraySizeString, definitionValueIt.first, definitionValueIt.second);
+							for (const auto& [definitionName, definitionValue]: preprocessorDefinitions) arraySizeString = StringTools::replace(arraySizeString, definitionName, definitionValue);
 							arraySize = Integer::parse(arraySizeString);
 							uniformName = StringTools::substring(uniformName, 0, uniformName.find('['));
 						}
@@ -637,7 +637,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 						if (uniformName.find('[') != string::npos && uniformName.find(']') != string::npos) {
 							isArray = true;
 							auto arraySizeString = StringTools::substring(uniformName, uniformName.find('[') + 1, uniformName.find(']'));
-							for (auto definitionValueIt: definitionValues) arraySizeString = StringTools::replace(arraySizeString, definitionValueIt.first, definitionValueIt.second);
+							for (const auto& [definitionName, definitionValue]: preprocessorDefinitions) arraySizeString = StringTools::replace(arraySizeString, definitionName, definitionValue);
 							arraySize = Integer::parse(arraySizeString);
 							uniformName = StringTools::substring(uniformName, 0, uniformName.find('['));
 						}
@@ -743,27 +743,27 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 				uniformsBlock+= "{\n";
 			}
 			string uniformsBlockIgnore;
-			addToShaderUniformBufferObject(shader, definitionValues, structs, uniforms, "", uniformStructsArrays, uboUniformCount > 0?uniformsBlock:uniformsBlockIgnore);
+			addToShaderUniformBufferObject(shader, preprocessorDefinitions, structs, uniforms, "", uniformStructsArrays, uboUniformCount > 0?uniformsBlock:uniformsBlockIgnore);
 			if (uboUniformCount > 0) uniformsBlock+= "} ubo_generated;\n";
 			if (VERBOSE == true) Console::println("Shader UBO size: " + to_string(shader.uboSize));
 		}
 
 		// root ubo uniform names
 		unordered_set<string> uboUniformNames;
-		for (auto& uniform: shader.uniforms) {
-			auto uniformName = uniform.second->name;
-			auto uniformDotIdx = uniformName.find('.');
-			auto uniformOpenBracketIdx = uniformName.find('[');
+		for (const auto& [uniformName, uniform]: shader.uniforms) {
+			auto rootUniformName = uniform->name;
+			auto uniformDotIdx = rootUniformName.find('.');
+			auto uniformOpenBracketIdx = rootUniformName.find('[');
 			if (uniformDotIdx != string::npos && uniformOpenBracketIdx == string::npos) {
-				uniformName = StringTools::substring(uniformName, 0, uniformDotIdx);
+				rootUniformName = StringTools::substring(rootUniformName, 0, uniformDotIdx);
 			} else
 			if (uniformDotIdx == string::npos && uniformOpenBracketIdx != string::npos) {
-				uniformName = StringTools::substring(uniformName, 0, uniformOpenBracketIdx);
+				rootUniformName = StringTools::substring(rootUniformName, 0, uniformOpenBracketIdx);
 			} else
 			if (uniformDotIdx != string::npos && uniformOpenBracketIdx != string::npos) {
-				uniformName = StringTools::substring(uniformName, 0, Math::min(static_cast<int>(uniformDotIdx), static_cast<int>(uniformOpenBracketIdx)));
+				rootUniformName = StringTools::substring(rootUniformName, 0, Math::min(static_cast<int>(uniformDotIdx), static_cast<int>(uniformOpenBracketIdx)));
 			}
-			uboUniformNames.insert(uniformName);
+			uboUniformNames.insert(rootUniformName);
 		}
 
 		// construct new shader from vector and flip y, also inject uniforms
@@ -793,7 +793,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 			} else
 			if (inStruct == false) {
 				// rename arrays and structs to ubo uniforms
-				for (auto& uniformStructArrayName: uniformStructsArrays) {
+				for (const auto& uniformStructArrayName: uniformStructsArrays) {
 					// is struct/array a first level uniform
 					auto isUniform = uboUniformNames.find(uniformStructArrayName) != uboUniformNames.end();
 					if (isUniform == false) continue;
@@ -819,26 +819,26 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 				shaderSource = line + shaderSource;
 				// rename uniforms to ubo uniforms
 			} else {
-				for (auto& uniformIt: shader.uniforms) {
-					if (uniformIt.second->type == VKRenderer::shader_type::uniform_type::TYPE_SAMPLER2D) {
-						if (uniformIt.second->name != uniformIt.second->newName) {
+				for (const auto& [uniformName, uniform]: shader.uniforms) {
+					if (uniform->type == VKRenderer::shader_type::uniform_type::TYPE_SAMPLER2D) {
+						if (uniform->name != uniform->newName) {
 							line = StringTools::replace(
 								line,
-								uniformIt.second->name,
-								uniformIt.second->newName
+								uniform->name,
+								uniform->newName
 							);
 						}
 					} else
-					if (uniformIt.second->type == VKRenderer::shader_type::uniform_type::TYPE_SAMPLERCUBE) {
-						if (uniformIt.second->name != uniformIt.second->newName) {
+					if (uniform->type == VKRenderer::shader_type::uniform_type::TYPE_SAMPLERCUBE) {
+						if (uniform->name != uniform->newName) {
 							line = StringTools::replace(
 								line,
-								uniformIt.second->name,
-								uniformIt.second->newName
+								uniform->name,
+								uniform->newName
 							);
 						}
 					} else {
-						auto uniformName = uniformIt.second->name;
+						auto uniformName = uniform->name;
 						line = StringTools::regexReplace(
 							line,
 							"(\\b)" + uniformName + "(\\b)",
@@ -865,8 +865,8 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 		}
 
 		// debug uniforms
-		for (auto& uniformIt: shader.uniforms) {
-			if (VERBOSE == true) Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Uniform: " + uniformIt.second->name + ": " + to_string(uniformIt.second->position) + " / " + to_string(uniformIt.second->size));
+		for (const auto& [uniformName, uniform]: shader.uniforms) {
+			if (VERBOSE == true) Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Uniform: " + uniform->name + ": " + to_string(uniform->position) + " / " + to_string(uniform->size));
 		}
 	}
 
@@ -875,7 +875,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 }
 
 bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
-	map<string, int32_t> uniformsByName;
+	map<string, int32_t> uniformLocationsByName;
 	auto useCache = false;
 
 	// check if shaders are valid
@@ -976,9 +976,8 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 		// uniforms by name
 		auto uniformIdx = 1;
 		for (auto shader: program.shaders) {
-			for (auto& uniformIt: shader->uniforms) {
-				auto& uniform = *uniformIt.second;
-				uniformsByName[uniform.name] = uniformIdx++;
+			for (const auto& [uniformName, uniform]: shader->uniforms) {
+				uniformLocationsByName[uniform->name] = uniformIdx++;
 			}
 			// binding idx
 		}
@@ -1006,23 +1005,22 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 		VKRenderer::shader_type* shaderLast = nullptr;
 		for (auto shader: program.shaders) {
 			// set up sampler2D and samplerCube binding indices
-			for (auto& uniformIt: shader->uniforms) {
-				auto& uniform = *uniformIt.second;
+			for (const auto& [uniformName, uniform]: shader->uniforms) {
 				//
-				if (uniform.type == VKRenderer::shader_type::uniform_type::TYPE_SAMPLER2D) {
-					shader->source = StringTools::replace(shader->source, "{$SAMPLER2D_BINDING_" + uniform.newName + "_IDX}", to_string(bindingIdx));
-					uniform.position = bindingIdx++;
+				if (uniform->type == VKRenderer::shader_type::uniform_type::TYPE_SAMPLER2D) {
+					shader->source = StringTools::replace(shader->source, "{$SAMPLER2D_BINDING_" + uniform->newName + "_IDX}", to_string(bindingIdx));
+					uniform->position = bindingIdx++;
 				} else
-				if (uniform.type == VKRenderer::shader_type::uniform_type::TYPE_SAMPLERCUBE) {
-					shader->source = StringTools::replace(shader->source, "{$SAMPLERCUBE_BINDING_" + uniform.newName + "_IDX}", to_string(bindingIdx));
-					uniform.position = bindingIdx++;
+				if (uniform->type == VKRenderer::shader_type::uniform_type::TYPE_SAMPLERCUBE) {
+					shader->source = StringTools::replace(shader->source, "{$SAMPLERCUBE_BINDING_" + uniform->newName + "_IDX}", to_string(bindingIdx));
+					uniform->position = bindingIdx++;
 				}
-				uniformsByName[uniform.name] = uniformIdx++;
+				uniformLocationsByName[uniform->name] = uniformIdx++;
 			}
 
 			// set up ingoing attributes layout indices
 			if (shaderLast != nullptr) {
-				for (auto& attributeLayout: shaderLast->attributeLayouts) {
+				for (const auto& attributeLayout: shaderLast->attributeLayouts) {
 					shader->source = StringTools::replace(shader->source, "{$IN_ATTRIBUTE_LOCATION_" + attributeLayout.name + "_IDX}", to_string(attributeLayout.location));
 				}
 			}
@@ -1092,21 +1090,16 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 
 	//
 	auto uniformMaxId = 0;
-	for (auto& uniformIt: uniformsByName) {
-		auto uniformName = uniformIt.first;
-		auto uniformId = uniformIt.second;
-		program.uniforms[uniformId] = uniformName;
-		if (uniformId > uniformMaxId) uniformMaxId = uniformId;
+	for (const auto& [uniformName, uniformLocation]: uniformLocationsByName) {
+		program.uniformLocations[uniformLocation] = uniformName;
+		if (uniformLocation > uniformMaxId) uniformMaxId = uniformLocation;
 	}
 
 	// prepare indexed uniform lists per shader
 	for (auto shader: program.shaders) {
 		shader->uniformList.resize(uniformMaxId + 1);
 	}
-	for (auto& it: program.uniforms) {
-		auto uniformId = it.first;
-		auto uniformName = it.second;
-
+	for (const auto& [uniformLocation, uniformName]: program.uniformLocations) {
 		//
 		for (auto shader: program.shaders) {
 			auto shaderUniformIt = shader->uniforms.find(uniformName);
@@ -1114,7 +1107,7 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 				continue;
 			}
 			auto uniform = shaderUniformIt->second;
-			shader->uniformList[uniformId] = uniform;
+			shader->uniformList[uniformLocation] = uniform;
 			if (uniform->type == VKRenderer::shader_type::uniform_type::TYPE_SAMPLER2D ||
 				uniform->type == VKRenderer::shader_type::uniform_type::TYPE_SAMPLERCUBE) shader->samplerUniformList.push_back(uniform);
 		}
@@ -1154,7 +1147,7 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 			vkProgramCache.put("program.id", to_string(program.id));
 			vkProgramCache.put("program.layout_bindings", to_string(program.layoutBindings));
 			auto i = 0;
-			for (auto& shader: program.shaders) {
+			for (auto shader: program.shaders) {
 				vkProgramCache.put("program.shader_" + to_string(i) + "_cacheid", shader->cacheId);
 				i++;
 			}
@@ -1174,7 +1167,7 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 			// attribute layouts
 			{
 				auto i = 0;
-				for (auto& attribute: shader->attributeLayouts) {
+				for (const auto& attribute: shader->attributeLayouts) {
 					vkShaderCache.put("shader.attributelayout_name_" + to_string(i), attribute.name);
 					vkShaderCache.put("shader.attributelayout_type_" + to_string(i), attribute.type);
 					vkShaderCache.put("shader.attributelayout_location_" + to_string(i), to_string(attribute.location));
@@ -1184,8 +1177,7 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 			// uniforms
 			{
 				auto i = 0;
-				for (auto& uniformIt: shader->uniforms) {
-					auto uniform = uniformIt.second;
+				for (const auto& [uniformName, uniform]: shader->uniforms) {
 					vkShaderCache.put("shader.uniform_name_" + to_string(i), uniform->name);
 					vkShaderCache.put("shader.uniform_newname_" + to_string(i), uniform->newName);
 					vkShaderCache.put("shader.uniform_type_" + to_string(i), to_string(uniform->type));

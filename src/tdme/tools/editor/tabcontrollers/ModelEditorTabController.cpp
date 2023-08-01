@@ -305,8 +305,7 @@ void ModelEditorTabController::onDrop(const string& payload, int mouseX, int mou
 }
 
 void ModelEditorTabController::createOutlinerModelNodesXML(const string& prefix, const map<string, Node*>& subNodes, string& xml) {
-	for (auto nodeIt: subNodes) {
-		auto node = nodeIt.second;
+	for (const auto& [nodeId, node]: subNodes) {
 		string image;
 		if (node->isJoint() == true) {
 			image = "bone.png";
@@ -364,8 +363,7 @@ void ModelEditorTabController::setOutlinerContent() {
 			}
 			if (model != nullptr) {
 				xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Materials") + "\" value=\"" + GUIParser::escape(modelPrefix + ".materials") + "\">\n";
-				for (auto it: model->getMaterials()) {
-					auto materialId = it.second->getId();
+				for (const auto& [materialId, material]: model->getMaterials()) {
 					xml+= "	<selectbox-option image=\"resources/engine/images/material.png\" text=\"" + GUIParser::escape(materialId) + "\" value=\"" + GUIParser::escape(modelPrefix + ".materials." + materialId) + "\" />\n";
 				}
 				xml+= "</selectbox-parent-option>\n";
@@ -378,8 +376,7 @@ void ModelEditorTabController::setOutlinerContent() {
 			if (model != nullptr &&
 				(model->getAnimationSetups().size() > 1 || model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT) == nullptr)) {
 				xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Animations") + "\" value=\"" + GUIParser::escape(modelPrefix + ".animations") + "\">\n";
-				for (auto it: model->getAnimationSetups()) {
-					auto animationSetupId = it.second->getId();
+				for (const auto& [animationSetupId, animationSetup]: model->getAnimationSetups()) {
 					if (animationSetupId == Model::ANIMATIONSETUP_DEFAULT) continue;
 					xml+= "	<selectbox-option image=\"resources/engine/images/animation.png\" text=\"" + GUIParser::escape(animationSetupId) + "\" id=\"" + GUIParser::escape(modelPrefix + ".animations." + animationSetupId) + "\" value=\"" + GUIParser::escape(modelPrefix + ".animations." + animationSetupId) + "\" />\n";
 				}
@@ -986,8 +983,7 @@ void ModelEditorTabController::setAnimationDetails() {
 		animationsXML =
 			animationsXML +
 			"<dropdown-option text=\"<None>\" value=\"\" " + (animationSetup->getOverlayFromNodeId().empty() == true?"selected=\"true\" ":"") + " />\n";
-		for (auto& it: model->getNodes()) {
-			auto& nodeId = it.second->getId();
+		for (const auto& [nodeId, node]: model->getNodes()) {
 			animationsXML+=
 				"<dropdown-option text=\"" +
 				GUIParser::escape(nodeId) +
@@ -1064,8 +1060,7 @@ void ModelEditorTabController::setAnimationPreviewDetails() {
 	{
 		string animationsXML;
 		animationsXML = animationsXML + "<dropdown-option text=\"<No animation>\" value=\"\" selected=\"true\" />";
-		for (auto it: model->getAnimationSetups()) {
-			auto animationSetup = it.second;
+		for (const auto& [animationSetupId, animationSetup]: model->getAnimationSetups()) {
 			if (animationSetup->isOverlayAnimationSetup() == true) continue;
 			animationsXML =
 				animationsXML + "<dropdown-option text=\"" +
@@ -1085,8 +1080,7 @@ void ModelEditorTabController::setAnimationPreviewDetails() {
 	{
 		string overlayAnimationsXML;
 		overlayAnimationsXML = overlayAnimationsXML + "<dropdown-option text=\"<No animation>\" value=\"\" selected=\"true\" />";
-		for (auto it: model->getAnimationSetups()) {
-			auto animationSetup = it.second;
+		for (const auto& [animationSetupId, animationSetup]: model->getAnimationSetups()) {
 			if (animationSetup->isOverlayAnimationSetup() == false) continue;
 			overlayAnimationsXML =
 				overlayAnimationsXML + "<dropdown-option text=\"" +
@@ -1116,8 +1110,7 @@ void ModelEditorTabController::setAnimationPreviewDetails() {
 	{
 		string bonesXML;
 		bonesXML = bonesXML + "<dropdown-option text=\"<No bone>\" value=\"\" selected=\"true\" />";
-		for (auto it: model->getNodes()) {
-			auto node = it.second;
+		for (const auto& [nodeId, node]: model->getNodes()) {
 			bonesXML =
 				bonesXML + "<dropdown-option text=\"" +
 				GUIParser::escape(node->getId()) +
@@ -2377,31 +2370,31 @@ void ModelEditorTabController::onChange(GUIElementNode* node)
 		if (haveDetails == false) updateDetails(outlinerNode);
 	} else {
 		//
-		for (auto& applyAnimationNode: applyAnimationNodes) {
+		for (const auto& applyAnimationNode: applyAnimationNodes) {
 			if (node->getId() == applyAnimationNode) {
 				applyAnimationDetails();
 				break;
 			}
 		}
-		for (auto& applyMaterialBaseNode: applyMaterialBaseNodes) {
+		for (const auto& applyMaterialBaseNode: applyMaterialBaseNodes) {
 			if (node->getId() == applyMaterialBaseNode) {
 				applyMaterialBaseDetails();
 				break;
 			}
 		}
-		for (auto& applySpecularMaterialNode: applySpecularMaterialNodes) {
+		for (const auto& applySpecularMaterialNode: applySpecularMaterialNodes) {
 			if (node->getId() == applySpecularMaterialNode) {
 				applySpecularMaterialDetails();
 				break;
 			}
 		}
-		for (auto& applyPBRMaterialNode: applyPBRMaterialNodes) {
+		for (const auto& applyPBRMaterialNode: applyPBRMaterialNodes) {
 			if (node->getId() == applyPBRMaterialNode) {
 				applyPBRMaterialDetails();
 				break;
 			}
 		}
-		for (auto& applyAnimationPreviewNode: applyAnimationPreviewNodes) {
+		for (const auto& applyAnimationPreviewNode: applyAnimationPreviewNodes) {
 			if (node->getId() == applyAnimationPreviewNode) {
 				applyAnimationPreviewDetails();
 				break;
@@ -2409,7 +2402,7 @@ void ModelEditorTabController::onChange(GUIElementNode* node)
 		}
 		{
 			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
-			for (auto& applyLODNode: applyLODNodes) {
+			for (const auto& applyLODNode: applyLODNodes) {
 				if (node->getId() == applyLODNode) {
 					auto lodLevel = -1;
 					if (outlinerNode == "lod2.model") {

@@ -100,9 +100,9 @@ void ObjectBase::getTriangles(vector<Triangle>& triangles, int nodeIdx)
 	if (nodeIdx == -1) {
 		for (auto objectNode : objectNodes) {
 			auto nodeVerticesTransformed = &objectNode->mesh->transformedVertices;
-			for (auto& facesEntity : objectNode->node->getFacesEntities())
-			for (auto& face : facesEntity.getFaces()) {
-				auto faceVertexIndices = face.getVertexIndices();
+			for (const auto& facesEntity: objectNode->node->getFacesEntities())
+			for (const auto& face: facesEntity.getFaces()) {
+				const auto& faceVertexIndices = face.getVertexIndices();
 				triangles.emplace_back(
 					(*nodeVerticesTransformed)[faceVertexIndices[0]],
 					(*nodeVerticesTransformed)[faceVertexIndices[1]],
@@ -113,9 +113,9 @@ void ObjectBase::getTriangles(vector<Triangle>& triangles, int nodeIdx)
 	} else {
 		auto objectNode = objectNodes[nodeIdx];
 		auto nodeVerticesTransformed = &objectNode->mesh->transformedVertices;
-		for (auto& facesEntity : objectNode->node->getFacesEntities())
-		for (auto& face : facesEntity.getFaces()) {
-			auto faceVertexIndices = face.getVertexIndices();
+		for (const auto& facesEntity: objectNode->node->getFacesEntities())
+		for (const auto& face: facesEntity.getFaces()) {
+			const auto& faceVertexIndices = face.getVertexIndices();
 			triangles.emplace_back(
 				(*nodeVerticesTransformed)[faceVertexIndices[0]],
 				(*nodeVerticesTransformed)[faceVertexIndices[1]],
@@ -136,7 +136,7 @@ ObjectBase_TransformedFacesIterator* ObjectBase::getTransformedFacesIterator()
 ObjectNodeMesh* ObjectBase::getMesh(const string& nodeId)
 {
 	// TODO: maybe rather use a hash map than an array to have a faster access
-	for (auto objectNode : objectNodes) {
+	for (auto objectNode :objectNodes) {
 		if (objectNode->node->getId() == nodeId) {
 			return objectNode->mesh;
 		}

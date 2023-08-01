@@ -51,8 +51,8 @@ public:
 	 * Destructor
 	 */
 	~PrototypeTerrain() {
-		for (auto& foliageFoliagePrototypeMapIt: foliageFoliagePrototypeMap) {
-			delete foliageFoliagePrototypeMapIt.second;
+		for (auto& [foliageFoliagePrototypeIdx, foliageFoliagePrototype]: foliageFoliagePrototypeMap) {
+			delete foliageFoliagePrototype;
 		}
 		for (auto brush: brushes) delete brush;
 	}
@@ -114,9 +114,7 @@ public:
 	 */
 	inline vector<int> getWaterPositionMapsIndices() {
 		vector<int> waterPositionMapsIndices;
-		for (auto waterPositionMapsIt: waterPositionMaps) {
-			waterPositionMapsIndices.push_back(waterPositionMapsIt.first);
-		}
+		for (const auto& [waterPositionMapId, waterPositionMap]: waterPositionMaps) waterPositionMapsIndices.push_back(waterPositionMapId);
 		return waterPositionMapsIndices;
 	}
 
@@ -169,14 +167,14 @@ public:
 	 * @return prototype index
 	 */
 	inline int getFoliagePrototypeIndex(Prototype* prototype) {
-		auto foliagePrototypeMapIdx = 0;
-		for (auto& foliageFoliagePrototypeMapIt: foliageFoliagePrototypeMap) {
-			if (foliageFoliagePrototypeMapIt.first > foliagePrototypeMapIdx) foliagePrototypeMapIdx = foliageFoliagePrototypeMapIt.first;
-			if (prototype->getFileName() == foliageFoliagePrototypeMapIt.second->getFileName()) return foliageFoliagePrototypeMapIt.first;
+		auto maxFoliagePrototypeMapIdx = 0;
+		for (const auto& [foliageFoliagePrototypeIdx, foliageFoliagePrototype]: foliageFoliagePrototypeMap) {
+			if (foliageFoliagePrototypeIdx > maxFoliagePrototypeMapIdx) maxFoliagePrototypeMapIdx = foliageFoliagePrototypeIdx;
+			if (prototype->getFileName() == foliageFoliagePrototype->getFileName()) return foliageFoliagePrototypeIdx;
 		}
-		foliagePrototypeMapIdx++;
-		foliageFoliagePrototypeMap[foliagePrototypeMapIdx] = prototype;
-		return foliagePrototypeMapIdx;
+		maxFoliagePrototypeMapIdx++;
+		foliageFoliagePrototypeMap[maxFoliagePrototypeMapIdx] = prototype;
+		return maxFoliagePrototypeMapIdx;
 	}
 
 	/**
@@ -185,8 +183,8 @@ public:
 	 */
 	inline vector<int> getFoliagePrototypeIndices() {
 		vector<int> foliagePrototypeIndices;
-		for (auto& foliageFoliagePrototypeMapIt: foliageFoliagePrototypeMap) {
-			foliagePrototypeIndices.push_back(foliageFoliagePrototypeMapIt.first);
+		for (const auto& [foliageFoliagePrototypeMapIdx, foliageFoliagePrototypeMap]: foliageFoliagePrototypeMap) {
+			foliagePrototypeIndices.push_back(foliageFoliagePrototypeMapIdx);
 		}
 		return foliagePrototypeIndices;
 	}
@@ -221,7 +219,7 @@ public:
 		auto prototypeEntityIdx = 0;
 		for (auto& foliageMapPartition: foliageMaps) {
 			for (auto& foliageMapPartitionIt: foliageMapPartition) {
-				auto& transformVector = foliageMapPartition[prototypeIdx];
+				const auto& transformVector = foliageMapPartition[prototypeIdx];
 				if (transformVector.empty() == true) continue;
 				auto foliagePrototype = getFoliagePrototype(prototypeIdx);
 				if (foliagePrototype->isRenderGroups() == false) {
@@ -243,7 +241,7 @@ public:
 		map<string, Transform> foliagePrototypeEntityTransform;
 		auto prototypeEntityIdx = 0;
 		for (auto& foliageMapPartition: foliageMaps) {
-			auto& transformVector = foliageMapPartition[prototypeIdx];
+			const auto& transformVector = foliageMapPartition[prototypeIdx];
 			if (transformVector.empty() == true) continue;
 			auto foliagePrototype = getFoliagePrototype(prototypeIdx);
 			if (foliagePrototype->isRenderGroups() == false) {

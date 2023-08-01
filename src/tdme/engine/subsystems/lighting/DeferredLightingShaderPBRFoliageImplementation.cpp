@@ -125,7 +125,7 @@ void DeferredLightingShaderPBRFoliageImplementation::useProgram(Engine* engine, 
 }
 
 void DeferredLightingShaderPBRFoliageImplementation::updateShaderParameters(Renderer* renderer, int contextIdx) {
-	auto& shaderParameters = renderer->getShaderParameters(contextIdx);
+	const auto& shaderParameters = renderer->getShaderParameters(contextIdx);
 	if (uniformSpeed != -1) renderer->setProgramUniformFloat(contextIdx, uniformSpeed, shaderParameters.getShaderParameter("speed").getFloatValue());
 	if (uniformAmplitudeDefault != -1) renderer->setProgramUniformFloat(contextIdx, uniformAmplitudeDefault, shaderParameters.getShaderParameter("amplitudeDefault").getFloatValue());
 	if (uniformAmplitudeMax != -1) renderer->setProgramUniformFloat(contextIdx, uniformAmplitudeMax, shaderParameters.getShaderParameter("amplitudeMax").getFloatValue());
