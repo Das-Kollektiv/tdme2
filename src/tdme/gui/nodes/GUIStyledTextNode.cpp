@@ -394,7 +394,7 @@ int GUIStyledTextNode::doPageUp() {
 
 	// determine cursor index
 	for (int i = lines.size() - 1; i >= 0; i--) {
-		auto& line = lines[i];
+		const auto& line = lines[i];
 		if (y - line.y >= visibleHeight) {
 			return line.charIdx;
 		}
@@ -1284,23 +1284,22 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 							float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - textStyle->height) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
 							float width = 2;
 							float height = textStyle->height;
-							auto& colorData = color.getArray();
 							guiRenderer->addQuad(
 								((left) / (screenWidth / 2.0f)) - 1.0f,
 								((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
-								colorData[0], colorData[1], colorData[2], colorData[3],
+								color[0], color[1], color[2], color[3],
 								0.0f, 1.0f,
 								((left + width) / (screenWidth / 2.0f)) - 1.0f,
 								((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
-								colorData[0], colorData[1], colorData[2], colorData[3],
+								color[0], color[1], color[2], color[3],
 								1.0f, 1.0f,
 								((left + width) / (screenWidth / 2.0f)) - 1.0f,
 								((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
-								colorData[0], colorData[1], colorData[2], colorData[3],
+								color[0], color[1], color[2], color[3],
 								1.0f, 0.0f,
 								((left) / (screenWidth / 2.0f)) - 1.0f,
 								((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
-								colorData[0], colorData[1], colorData[2], colorData[3],
+								color[0], color[1], color[2], color[3],
 								0.0f, 0.0f,
 								true
 							);
@@ -1428,23 +1427,22 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 								float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - currentFont->getBaseLine()) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
 								float width = 2;
 								float height = lineConstraints[lineIdx].lineHeight;
-								auto& colorData = color.getArray();
 								guiRenderer->addQuad(
 									((left) / (screenWidth / 2.0f)) - 1.0f,
 									((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
-									colorData[0], colorData[1], colorData[2], colorData[3],
+									color[0], color[1], color[2], color[3],
 									0.0f, 1.0f,
 									((left + width) / (screenWidth / 2.0f)) - 1.0f,
 									((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
-									colorData[0], colorData[1], colorData[2], colorData[3],
+									color[0], color[1], color[2], color[3],
 									1.0f, 1.0f,
 									((left + width) / (screenWidth / 2.0f)) - 1.0f,
 									((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
-									colorData[0], colorData[1], colorData[2], colorData[3],
+									color[0], color[1], color[2], color[3],
 									1.0f, 0.0f,
 									((left) / (screenWidth / 2.0f)) - 1.0f,
 									((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
-									colorData[0], colorData[1], colorData[2], colorData[3],
+									color[0], color[1], color[2], color[3],
 									0.0f, 0.0f,
 									true
 								);
@@ -1515,23 +1513,22 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 									float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - currentFont->getBaseLine()) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
 									float width = 2;
 									float height = lineConstraints[lineIdx].lineHeight;
-									auto& colorData = color.getArray();
 									guiRenderer->addQuad(
 										((left) / (screenWidth / 2.0f)) - 1.0f,
 										((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
-										colorData[0], colorData[1], colorData[2], colorData[3],
+										color[0], color[1], color[2], color[3],
 										0.0f, 1.0f,
 										((left + width) / (screenWidth / 2.0f)) - 1.0f,
 										((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
-										colorData[0], colorData[1], colorData[2], colorData[3],
+										color[0], color[1], color[2], color[3],
 										1.0f, 1.0f,
 										((left + width) / (screenWidth / 2.0f)) - 1.0f,
 										((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
-										colorData[0], colorData[1], colorData[2], colorData[3],
+										color[0], color[1], color[2], color[3],
 										1.0f, 0.0f,
 										((left) / (screenWidth / 2.0f)) - 1.0f,
 										((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
-										colorData[0], colorData[1], colorData[2], colorData[3],
+										color[0], color[1], color[2], color[3],
 										0.0f, 0.0f,
 										true
 									);
@@ -1675,7 +1672,7 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& c
 	// find position to insert
 	auto j = -1;
 	for (auto i = 0; i < styles.size(); i++) {
-		auto& style = styles[i];
+		const auto& style = styles[i];
 		if (startIdx > style.endIdx) {
 			j = i + 1;
 		}
@@ -1719,7 +1716,7 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const string& fon
 	// find position to insert
 	auto j = -1;
 	for (auto i = 0; i < styles.size(); i++) {
-		auto& style = styles[i];
+		const auto& style = styles[i];
 		if (startIdx > style.endIdx) {
 			j = i + 1;
 		}
@@ -1757,7 +1754,7 @@ void GUIStyledTextNode::setImage(int idx, const string& image, const string& url
 	// find position to insert
 	auto j = -1;
 	for (auto i = 0; i < styles.size(); i++) {
-		auto& style = styles[i];
+		const auto& style = styles[i];
 		if (idx > style.endIdx) {
 			j = i + 1;
 		}

@@ -219,7 +219,7 @@ public:
 		auto prototypeEntityIdx = 0;
 		for (auto& foliageMapPartition: foliageMaps) {
 			for (auto& foliageMapPartitionIt: foliageMapPartition) {
-				auto& transformVector = foliageMapPartition[prototypeIdx];
+				const auto& transformVector = foliageMapPartition[prototypeIdx];
 				if (transformVector.empty() == true) continue;
 				auto foliagePrototype = getFoliagePrototype(prototypeIdx);
 				if (foliagePrototype->isRenderGroups() == false) {
@@ -241,7 +241,7 @@ public:
 		map<string, Transform> foliagePrototypeEntityTransform;
 		auto prototypeEntityIdx = 0;
 		for (auto& foliageMapPartition: foliageMaps) {
-			auto& transformVector = foliageMapPartition[prototypeIdx];
+			const auto& transformVector = foliageMapPartition[prototypeIdx];
 			if (transformVector.empty() == true) continue;
 			auto foliagePrototype = getFoliagePrototype(prototypeIdx);
 			if (foliagePrototype->isRenderGroups() == false) {

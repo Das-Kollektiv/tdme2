@@ -132,7 +132,7 @@ bool Model::computeTransformMatrix(const map<string, Node*>& nodes, const Matrix
 		// compute animation matrix if animation setups exist
 		auto animation = subNode->getAnimation();
 		if (animation != nullptr && frame != -1) {
-			auto& animationMatrices = animation->getTransformMatrices();
+			const auto& animationMatrices = animation->getTransformMatrices();
 			transformMatrix.set(animationMatrices[frame % animationMatrices.size()]);
 		} else {
 			// no animation matrix, set up local transform matrix up as node matrix
@@ -146,7 +146,7 @@ bool Model::computeTransformMatrix(const map<string, Node*>& nodes, const Matrix
 		if (subNode->getId() == nodeId) return true;
 
 		// calculate sub nodes
-		auto& subNodes = subNode->getSubNodes();
+		const auto& subNodes = subNode->getSubNodes();
 		if (subNodes.size() > 0) {
 			auto haveTransformMatrix = computeTransformMatrix(subNodes, transformMatrix.clone(), frame, nodeId, transformMatrix);
 			if (haveTransformMatrix == true) return true;

@@ -352,11 +352,11 @@ void EntityRenderer::prepareTransparentFaces(const vector<TransparentRenderFace*
 	}
 	//
 	auto model = objectNode->object->getModel();
-	auto& facesEntities = objectNode->node->getFacesEntities();
+	const auto& facesEntities = objectNode->node->getFacesEntities();
 	const FacesEntity* facesEntity = nullptr;
 	// attributes we collect for a transparent render face node
-	auto& effectColorAdd = object->getEffectColorAdd();
-	auto& effectColorMul = object->getEffectColorMul();
+	const auto& effectColorAdd = object->getEffectColorAdd();
+	const auto& effectColorMul = object->getEffectColorMul();
 	const Material* material = nullptr;
 	auto textureCoordinates = false;
 	// render transparent faces
@@ -383,7 +383,7 @@ void EntityRenderer::prepareTransparentFaces(const vector<TransparentRenderFace*
 			trfNode->set(this, model, objectNode, facesEntityIdx, effectColorAdd, effectColorMul, material, textureCoordinates, object->getShader());
 			transparentRenderFacesGroups[transparentRenderFacesNodeKey] = trfNode;
 		}
-		auto& textureCoordinates = transparentRenderFace->objectNode->mesh->node->getTextureCoordinates();
+		const auto& textureCoordinates = transparentRenderFace->objectNode->mesh->node->getTextureCoordinates();
 		for (auto vertexIdx = 0; vertexIdx < 3; vertexIdx++) {
 			auto arrayIdx = transparentRenderFace->objectNode->mesh->indices[transparentRenderFace->faceIdx * 3 + vertexIdx];
 			trfNode->addVertex(
@@ -440,7 +440,7 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object*>& 
 	for (auto objectNodeIdx = 0; objectNodeIdx < firstObject->objectNodes.size(); objectNodeIdx++) {
 		auto objectNode = firstObject->objectNodes[objectNodeIdx];
 		// render each faces entity
-		auto& facesEntities = objectNode->node->getFacesEntities();
+		const auto& facesEntities = objectNode->node->getFacesEntities();
 		auto faceIdx = 0;
 		auto facesEntityIdxCount = facesEntities.size();
 		for (auto faceEntityIdx = 0; faceEntityIdx < facesEntityIdxCount; faceEntityIdx++) {
@@ -720,7 +720,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 	for (auto objectNodeIdx = 0; objectNodeIdx < firstObject->objectNodes.size(); objectNodeIdx++) {
 		auto objectNode = firstObject->objectNodes[objectNodeIdx];
 		// render each faces entity
-		auto& facesEntities = objectNode->node->getFacesEntities();
+		const auto& facesEntities = objectNode->node->getFacesEntities();
 		auto faceIdx = 0;
 		auto facesEntityIdxCount = facesEntities.size();
 		for (auto faceEntityIdx = 0; faceEntityIdx < facesEntityIdxCount; faceEntityIdx++) {
@@ -1128,7 +1128,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 
 void EntityRenderer::setupMaterial(int contextIdx, ObjectNode* objectNode, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey, const string& currentMaterialKey)
 {
-	auto& facesEntities = objectNode->node->getFacesEntities();
+	const auto& facesEntities = objectNode->node->getFacesEntities();
 	auto material = facesEntities[facesEntityIdx].getMaterial();
 	// get material or use default
 	if (material == nullptr) material = Material::getDefaultMaterial();
@@ -1334,7 +1334,7 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Entity*>
 	renderer->setTextureUnit(contextIdx, 0);
 
 	// merge pses, transform them into camera space and sort them
-	auto& cameraMatrix = renderer->getCameraMatrix();
+	const auto& cameraMatrix = renderer->getCameraMatrix();
 	for (auto entity: pses) {
 		if (entity->getRenderPass() != renderPass) continue;
 		auto ppse = dynamic_cast<PointsParticleSystem*>(entity);

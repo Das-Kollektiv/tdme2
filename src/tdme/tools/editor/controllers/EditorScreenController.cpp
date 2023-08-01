@@ -2310,8 +2310,8 @@ void EditorScreenController::disableSceneMenuEntry() {
 }
 
 void EditorScreenController::getViewPort(GUINode* viewPortNode, int& left, int& top, int& width, int& height) {
-	auto& constraints = viewPortNode->getComputedConstraints();
-	auto& padding = viewPortNode->getPadding();
+	const auto& constraints = viewPortNode->getComputedConstraints();
+	const auto& padding = viewPortNode->getPadding();
 	left = constraints.left + constraints.alignmentLeft + constraints.contentAlignmentLeft;
 	top = constraints.top + constraints.alignmentTop + constraints.contentAlignmentTop;
 	width = constraints.width - (padding.left + padding.right);

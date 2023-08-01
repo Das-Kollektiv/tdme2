@@ -67,9 +67,9 @@ void ObjectInternal::bindDiffuseTexture(int32_t textureId, const string& nodeId,
 		if (nodeId != "" && nodeId != objectNode->node->getId())
 			continue;
 
-		auto& facesEntities = objectNode->node->getFacesEntities();
+		const auto& facesEntities = objectNode->node->getFacesEntities();
 		for (auto facesEntityIdx = 0; facesEntityIdx < facesEntities.size(); facesEntityIdx++) {
-			auto& facesEntity = facesEntities[facesEntityIdx];
+			const auto& facesEntity = facesEntities[facesEntityIdx];
 			// skip if a faces entity is desired but not matching
 			if (facesEntityId != "" && facesEntityId != facesEntity.getId())
 				continue;
@@ -86,9 +86,9 @@ void ObjectInternal::setTextureMatrix(const Matrix2D3x3& textureMatrix, const st
 		if (nodeId != "" && nodeId != objectNode->node->getId())
 			continue;
 
-		auto& facesEntities = objectNode->node->getFacesEntities();
+		const auto& facesEntities = objectNode->node->getFacesEntities();
 		for (auto facesEntityIdx = 0; facesEntityIdx < facesEntities.size(); facesEntityIdx++) {
-			auto& facesEntity = facesEntities[facesEntityIdx];
+			const auto& facesEntity = facesEntities[facesEntityIdx];
 			// skip if a faces entity is desired but not matching
 			if (facesEntityId != "" && facesEntityId != facesEntity.getId())
 				continue;

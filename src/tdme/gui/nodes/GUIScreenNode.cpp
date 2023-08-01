@@ -805,8 +805,8 @@ void GUIScreenNode::getValues(unordered_map<string, MutableString>& values)
 		auto guiElementNode = required_dynamic_cast<GUIElementNode*>(childControllerNode);
 		auto guiElementNodeController = guiElementNode->getController();
 		if (guiElementNodeController->hasValue()) {
-			auto& name = guiElementNode->getName();
-			auto& value = guiElementNodeController->getValue();
+			const auto& name = guiElementNode->getName();
+			const auto& value = guiElementNodeController->getValue();
 			auto currentValueIt = values.find(name);
 			if (currentValueIt == values.end() || currentValueIt->second.size() == 0) {
 				values[name] = value;

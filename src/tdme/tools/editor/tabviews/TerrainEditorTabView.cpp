@@ -484,7 +484,7 @@ void TerrainEditorTabView::addFoliage() {
 	if (prototype == nullptr) return;
 
 	//
-	auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
+	const auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
 
 	//
 	auto partitionIdx = 0;
@@ -544,7 +544,7 @@ void TerrainEditorTabView::addTemporaryFoliage(const vector<unordered_map<int, v
 	if (prototype == nullptr) return;
 
 	//
-	auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
+	const auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
 
 	//
 	auto partitionIdx = 0;
@@ -574,7 +574,7 @@ void TerrainEditorTabView::addTemporaryFoliage(const vector<unordered_map<int, v
 			for (const auto& [prototypeIdx, transformVector]: foliageMapPartition) {
 				if (transformVector.empty() == false) {
 					auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
-					auto& foliageIdx = partitionFoliageIdx[partitionIdx];
+					auto foliageIdx = partitionFoliageIdx[partitionIdx];
 					for (const auto& transform: transformVector) {
 						auto foliageEntity = SceneConnector::createEntity(foliagePrototype, foliagePartitionEntityHierarchy->getId() + "." + to_string(prototypeIdx) + "." + to_string(foliageIdx), transform);
 						foliagePartitionEntityHierarchy->addEntity(foliageEntity);
@@ -592,12 +592,12 @@ void TerrainEditorTabView::updateTemporaryFoliage(const unordered_set<int>& part
 	if (prototype == nullptr) return;
 
 	//
-	auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
+	const auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
 
 	//
 	auto partitionIdx = 0;
 	for (auto partitionIdx: partitionIdxSet) {
-		auto& foliageMapPartition = foliageMaps[partitionIdx];
+		const auto& foliageMapPartition = foliageMaps[partitionIdx];
 		auto partitionPrototypeInstanceCount = 0;
 		for (const auto& [prototypeIdx, transformVector]: foliageMapPartition) {
 			partitionPrototypeInstanceCount+= transformVector.size();
@@ -635,10 +635,10 @@ void TerrainEditorTabView::recreateTemporaryFoliage(int partitionIdx) {
 	temporaryPartitionIdxs.insert(partitionIdx);
 
 	//
-	auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
+	const auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
 
 	//
-	auto& foliageMapPartition = foliageMaps[partitionIdx];
+	const auto& foliageMapPartition = foliageMaps[partitionIdx];
 	engine->removeEntity("foliage.entityhierarchy." + to_string(partitionIdx));
 	auto shaderParameterIdx = 0;
 	while (engine->removeEntity("foliage.objectrendergroup." + to_string(partitionIdx) + "." + to_string(shaderParameterIdx)) == true) shaderParameterIdx++;
@@ -653,7 +653,7 @@ void TerrainEditorTabView::recreateTemporaryFoliage(int partitionIdx) {
 		engine->addEntity(foliagePartitionEntityHierarchy);
 		for (const auto& [prototypeIdx, transformVector]: foliageMapPartition) {
 			auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
-			auto& foliageIdx = partitionFoliageIdx[partitionIdx];
+			auto foliageIdx = partitionFoliageIdx[partitionIdx];
 			for (const auto& transform: transformVector) {
 				auto foliageEntity = SceneConnector::createEntity(foliagePrototype, foliagePartitionEntityHierarchy->getId() + "." + to_string(prototypeIdx) + "." + to_string(foliageIdx), transform);
 				foliagePartitionEntityHierarchy->addEntity(foliageEntity);
@@ -672,7 +672,7 @@ void TerrainEditorTabView::recreateFoliage(const unordered_set<int>& partitionId
 
 	//
 	for (auto partitionIdx: partitionIdxSet) {
-		auto& foliageMapPartition = foliageMaps[partitionIdx];
+		const auto& foliageMapPartition = foliageMaps[partitionIdx];
 		engine->removeEntity("foliage.entityhierarchy." + to_string(partitionIdx));
 		auto shaderParameterIdx = 0;
 		while (engine->removeEntity("foliage.objectrendergroup." + to_string(partitionIdx) + "." + to_string(shaderParameterIdx)) == true) shaderParameterIdx++;
@@ -724,7 +724,7 @@ void TerrainEditorTabView::recreateFoliage(const unordered_set<int>& partitionId
 }
 
 void TerrainEditorTabView::removeWater(int waterIdx) {
-	auto& water = waters[waterIdx];
+	const auto& water = waters[waterIdx];
 	for (auto waterModel: water.waterModels) {
 		engine->removeEntity(waterModel->getId());
 		delete waterModel;

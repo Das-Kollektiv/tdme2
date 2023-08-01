@@ -329,7 +329,7 @@ void ObjectAnimation::createNodesTransformMatrices(map<string, Matrix4x4*>& matr
 			matrix
 		);
 		// do sub nodes
-		auto& subNodes = node->getSubNodes();
+		const auto& subNodes = node->getSubNodes();
 		if (subNodes.size() > 0) {
 			createNodesTransformMatrices(matrices, nodeList, subNodes, matrix, nodeAnimationState);
 		}
@@ -356,7 +356,7 @@ void ObjectAnimation::updateNodeList(vector<FlattenedNode>& nodeList, int& nodeI
 		nodeList[nodeIdx].nodeAnimationState = nodeAnimationState;
 		nodeIdx++;
 		// do sub nodes
-		auto& subNodes = node->getSubNodes();
+		const auto& subNodes = node->getSubNodes();
 		if (subNodes.size() > 0) {
 			updateNodeList(nodeList, nodeIdx, subNodes, nodeAnimationState);
 		}
@@ -373,7 +373,7 @@ void ObjectAnimation::computeNodesTransformMatrices(vector<FlattenedNode>& nodeL
 		auto animation = flattenedNode.nodeAnimation;
 		// TODO: check if its better to not compute animation matrix if finished
 		if (animation != nullptr && nodeAnimationState != nullptr && nodeAnimationState->setup != nullptr) {
-			auto& animationMatrices = animation->getTransformMatrices();
+			const auto& animationMatrices = animation->getTransformMatrices();
 			auto frames = nodeAnimationState->setup->getFrames();
 			auto fps = model->getFPS();
 			// determine current and last matrix
@@ -527,7 +527,7 @@ int32_t ObjectAnimation::determineSkinnedNodeCount(const map<string, Node*>& nod
 		if (node->getSkinning() != nullptr)
 			count++;
 		// calculate sub nodes
-		auto& subNodes = node->getSubNodes();
+		const auto& subNodes = node->getSubNodes();
 		if (subNodes.size() > 0) {
 			count = determineSkinnedNodeCount(subNodes, count);
 		}
@@ -544,7 +544,7 @@ int32_t ObjectAnimation::determineSkinnedNodes(const map<string, Node*>& nodes, 
 			skinningNodes[idx++] = node;
 		}
 		// calculate sub nodes
-		auto& subNodes = node->getSubNodes();
+		const auto& subNodes = node->getSubNodes();
 		if (subNodes.size() > 0) {
 			idx = determineSkinnedNodes(subNodes, skinningNodes, idx);
 		}

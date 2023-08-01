@@ -66,10 +66,10 @@ private:
 	 */
 	inline void createTransparentRenderFaces(Matrix4x4& modelViewMatrix, ObjectNode* objectNode, int32_t facesEntityIdx, int32_t faceIdx) {
 		// retrieve objects we need
-		auto& facesEntities = objectNode->node->getFacesEntities();
-		auto& facesEntity = facesEntities[facesEntityIdx];
-		auto& faces = facesEntity.getFaces();
-		auto nodeTransformedVertices = objectNode->mesh->vertices;
+		const auto& facesEntities = objectNode->node->getFacesEntities();
+		const auto& facesEntity = facesEntities[facesEntityIdx];
+		const auto& faces = facesEntity.getFaces();
+		const auto& nodeTransformedVertices = objectNode->mesh->vertices;
 		// objects we will use for calculations
 		float distanceFromCamera;
 		Vector3 faceCenter;

@@ -282,7 +282,7 @@ void TMWriter::writeFacesEntities(TMWriterOutputStream* os, const vector<FacesEn
 {
 	os->writeInt(facesEntities.size());
 	for (auto i = 0; i < facesEntities.size(); i++) {
-		auto& fe = facesEntities[i];
+		const auto& fe = facesEntities[i];
 		os->writeString(fe.getId());
 		if (fe.getMaterial() == nullptr) {
 			os->writeBoolean(false);
@@ -292,7 +292,7 @@ void TMWriter::writeFacesEntities(TMWriterOutputStream* os, const vector<FacesEn
 		}
 		os->writeInt(fe.getFaces().size());
 		for (auto j = 0; j < fe.getFaces().size(); j++) {
-			auto& f = fe.getFaces()[j];
+			const auto& f = fe.getFaces()[j];
 			writeIndices(os, f.getVertexIndices());
 			writeIndices(os, f.getNormalIndices());
 			writeIndices(os, f.getTextureCoordinateIndices());

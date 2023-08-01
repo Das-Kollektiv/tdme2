@@ -116,15 +116,13 @@ void Audio::update()
 	// update listener position
 	alListenerfv(AL_POSITION, listenerPosition.getArray().data());
 	alListenerfv(AL_VELOCITY, listenerVelocity.getArray().data());
-	auto& listenerOrientationAtArray = listenerOrientationAt.getArray();
-	auto& listenerOrientationUpArray = listenerOrientationUp.getArray();
 	array<float, 6> listenerOrientation = {
-		listenerOrientationAtArray[0],
-		listenerOrientationAtArray[1],
-		listenerOrientationAtArray[2],
-		listenerOrientationUpArray[0],
-		listenerOrientationUpArray[1],
-		listenerOrientationUpArray[2]
+		listenerOrientationAt[0],
+		listenerOrientationAt[1],
+		listenerOrientationAt[2],
+		listenerOrientationUp[0],
+		listenerOrientationUp[1],
+		listenerOrientationUp[2]
 	};
 	alListenerfv(AL_ORIENTATION, listenerOrientation.data());
 }

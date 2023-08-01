@@ -32,7 +32,7 @@ const ShaderParameter EntityShaderParameters::getShaderParameter(const string& p
 	if (shaderParameterIt == parameters.end()) {
 		return Engine::getDefaultShaderParameter(shaderId, parameterName);
 	}
-	auto& shaderParameter = shaderParameterIt->second;
+	const auto& shaderParameter = shaderParameterIt->second;
 	return shaderParameter;
 }
 

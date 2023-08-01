@@ -132,10 +132,10 @@ void OctTreePartition::removeEntity(Entity* entity)
 	while (objectPartitionsVector->size() > 0) {
 		auto lastIdx = objectPartitionsVector->size() - 1;
 		auto partitionTreeNode = (*objectPartitionsVector)[lastIdx];
-		auto& partitionObjects = partitionTreeNode->partitionEntities;
-		partitionObjects.erase(remove(partitionObjects.begin(), partitionObjects.end(), entity), partitionObjects.end());
+		auto& partitionEntities = partitionTreeNode->partitionEntities;
+		partitionEntities.erase(remove(partitionEntities.begin(), partitionEntities.end(), entity), partitionEntities.end());
 		objectPartitionsVector->erase(objectPartitionsVector->begin() + lastIdx);
-		if (partitionObjects.empty() == true) {
+		if (partitionEntities.empty() == true) {
 			auto rootPartitionTreeNode = partitionTreeNode;
 			while (rootPartitionTreeNode->parent != nullptr) rootPartitionTreeNode = rootPartitionTreeNode->parent;
 			// check if whole top level partition is empty

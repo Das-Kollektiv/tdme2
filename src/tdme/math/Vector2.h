@@ -356,8 +356,8 @@ public:
 	/**
 	 * @return vector as array
 	 */
-	inline array<float, 2>& getArray() const {
-		return (array<float, 2>&)data;
+	inline const array<float, 2>& getArray() const {
+		return data;
 	}
 
 	/**

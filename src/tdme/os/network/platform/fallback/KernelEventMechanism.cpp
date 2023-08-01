@@ -159,7 +159,7 @@ void KernelEventMechanism::decodeKernelEvent(const unsigned int index, NIOIntere
 	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
 	// read interest and cookie from event
-	auto& event = psd->events[index];
+	const auto& event = psd->events[index];
 	interest = event.interest;
 	cookie = event.cookie;
 }

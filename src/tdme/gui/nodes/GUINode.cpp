@@ -425,8 +425,8 @@ GUINodeConditions GUINode::createConditions(const string& conditions)
 
 bool GUINode::checkConditions()
 {
-	auto& showOn = this->showOn.conditions;
-	auto& hideOn = this->hideOn.conditions;
+	const auto& showOn = this->showOn.conditions;
+	const auto& hideOn = this->hideOn.conditions;
 
 	if (showOn.empty() == true && hideOn.empty() == true) return true;
 
@@ -918,32 +918,32 @@ void GUINode::render(GUIRenderer* guiRenderer)
 			float top = computedConstraints.top + computedConstraints.alignmentTop;
 			float width = computedConstraints.width;
 			float height = border.top;
-			auto& borderColorData = border.topColor.getArray();
-			guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 0.0f, 0.0f);
+			const auto& borderColor = border.topColor;
+			guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, borderColor[0], borderColor[1], borderColor[2], borderColor[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, borderColor[0], borderColor[1], borderColor[2], borderColor[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, borderColor[0], borderColor[1], borderColor[2], borderColor[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, borderColor[0], borderColor[1], borderColor[2], borderColor[3], 0.0f, 0.0f);
 		}
 		if (border.bottom > 0) {
 			float left = computedConstraints.left + computedConstraints.alignmentLeft;
 			float top = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.height - border.bottom;
 			float width = computedConstraints.width;
 			float height = border.bottom;
-			auto& borderColorData = border.bottomColor.getArray();
-			guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 0.0f, 0.0f);
+			const auto& borderColor = border.bottomColor;
+			guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, borderColor[0], borderColor[1], borderColor[2], borderColor[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, borderColor[0], borderColor[1], borderColor[2], borderColor[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, borderColor[0], borderColor[1], borderColor[2], borderColor[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, borderColor[0], borderColor[1], borderColor[2], borderColor[3], 0.0f, 0.0f);
 		}
 		if (border.left > 0) {
 			float left = computedConstraints.left + computedConstraints.alignmentLeft;
 			float top = computedConstraints.top + computedConstraints.alignmentTop;
 			float width = border.left;
 			float height = computedConstraints.height;
-			auto& borderColorData = border.leftColor.getArray();
-			guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 0.0f, 0.0f);
+			const auto& borderColor = border.leftColor;
+			guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, borderColor[0], borderColor[1], borderColor[2], borderColor[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, borderColor[0], borderColor[1], borderColor[2], borderColor[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, borderColor[0], borderColor[1], borderColor[2], borderColor[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, borderColor[0], borderColor[1], borderColor[2], borderColor[3], 0.0f, 0.0f);
 		}
 		if (border.right > 0) {
 			float left = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.width - border.right;
 			float top = computedConstraints.top + computedConstraints.alignmentTop;
 			float width = border.right;
 			float height = computedConstraints.height;
-			auto& borderColorData = border.rightColor.getArray();
-			guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, borderColorData[0], borderColorData[1], borderColorData[2], borderColorData[3], 0.0f, 0.0f);
+			const auto& borderColor = border.rightColor;
+			guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, borderColor[0], borderColor[1], borderColor[2], borderColor[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, borderColor[0], borderColor[1], borderColor[2], borderColor[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, borderColor[0], borderColor[1], borderColor[2], borderColor[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, borderColor[0], borderColor[1], borderColor[2], borderColor[3], 0.0f, 0.0f);
 		}
 		guiRenderer->render();
 	}
@@ -1163,8 +1163,8 @@ void GUINode::dumpParentNodes(GUINode* node, int indent) {
 }
 
 void GUINode::cfDetermineElementNodeDependencies(vector<string>& elementNodeDependencies) {
-	auto& showOn = this->showOn.conditions;
-	auto& hideOn = this->hideOn.conditions;
+	const auto& showOn = this->showOn.conditions;
+	const auto& hideOn = this->hideOn.conditions;
 
 	StringTokenizer t;
 	string function;

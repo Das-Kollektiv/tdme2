@@ -129,7 +129,7 @@ Model* GLTFReader::read(const string& pathName, const string& fileName, bool use
 	int anonymousNodeIdx = 1;
 	for (const auto& gltfScene: gltfModel.scenes) {
 		for (const auto gltfNodeIdx: gltfScene.nodes) {
-			auto& glTfNode = gltfModel.nodes[gltfNodeIdx];
+			const auto& glTfNode = gltfModel.nodes[gltfNodeIdx];
 			auto node = parseNode(pathName, gltfModel, gltfNodeIdx, model, nullptr, anonymousNodeIdx, useBC7TextureCompression);
 			model->getNodes()[node->getId()] = node;
 			if (model->getSubNodes().find(node->getId()) != model->getSubNodes().end()) {
@@ -157,22 +157,22 @@ Model* GLTFReader::read(const string& pathName, const string& fileName, bool use
 					continue;
 				}
 				animationNodes.insert(node->getId());
-				auto& gltfSample = gltfAnimation.samplers[gltfChannel.sampler];
+				const auto& gltfSample = gltfAnimation.samplers[gltfChannel.sampler];
 				// animation input: key frame time stamps
-				auto& animationInputAccessor = gltfModel.accessors[gltfSample.input];
-				auto& animationInputBufferView = gltfModel.bufferViews[animationInputAccessor.bufferView];
-				auto& animationInputBuffer = gltfModel.buffers[animationInputBufferView.buffer];
-				auto animationInputBufferData = (const float*)(animationInputBuffer.data.data() + animationInputAccessor.byteOffset + animationInputBufferView.byteOffset);
+				const auto& animationInputAccessor = gltfModel.accessors[gltfSample.input];
+				const auto& animationInputBufferView = gltfModel.bufferViews[animationInputAccessor.bufferView];
+				const auto& animationInputBuffer = gltfModel.buffers[animationInputBufferView.buffer];
+				const auto animationInputBufferData = (const float*)(animationInputBuffer.data.data() + animationInputAccessor.byteOffset + animationInputBufferView.byteOffset);
 				if (animationInputAccessor.componentType != TINYGLTF_COMPONENT_TYPE_FLOAT) {
 					Console::println("GLTFReader::read(): " + node->getId() + ": animation: " + gltfAnimation.name + ": Invalid input attributes component: " + getComponentTypeString(animationInputAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(animationInputAccessor.componentType)));
 					continue;
 				}
 				auto channelFrames = Math::max(1, static_cast<int32_t>(Math::ceil(animationInputBufferData[animationInputAccessor.count - 1] * 30.0f)));
 				// animation output: translation, rotation, scale
-				auto& animationOutputAccessor = gltfModel.accessors[gltfSample.output];
-				auto& animationOutputBufferView = gltfModel.bufferViews[animationOutputAccessor.bufferView];
-				auto& animationOutputBuffer = gltfModel.buffers[animationOutputBufferView.buffer];
-				auto animationOutputBufferData = (const float*)(animationOutputBuffer.data.data() + animationOutputAccessor.byteOffset + animationOutputBufferView.byteOffset);
+				const auto& animationOutputAccessor = gltfModel.accessors[gltfSample.output];
+				const auto& animationOutputBufferView = gltfModel.bufferViews[animationOutputAccessor.bufferView];
+				const auto& animationOutputBuffer = gltfModel.buffers[animationOutputBufferView.buffer];
+				const auto animationOutputBufferData = (const float*)(animationOutputBuffer.data.data() + animationOutputAccessor.byteOffset + animationOutputBufferView.byteOffset);
 				if (animationOutputAccessor.componentType != TINYGLTF_COMPONENT_TYPE_FLOAT) {
 					Console::println("GLTFReader::read(): " + node->getId() + ": animation: " + gltfAnimation.name + ": Invalid output attributes component: " + getComponentTypeString(animationOutputAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(animationOutputAccessor.componentType)));
 					continue;
@@ -253,9 +253,9 @@ Model* GLTFReader::read(const string& pathName, const string& fileName, bool use
 				continue;
 			}
 			//
-			auto& nodeAnimationScaleMatrices = animationScaleMatrices[node->getId()];
-			auto& nodeAnimationRotationMatrices = animationRotationMatrices[node->getId()];
-			auto& nodeAnimationTranslationMatrices = animationTranslationMatrices[node->getId()];
+			const auto& nodeAnimationScaleMatrices = animationScaleMatrices[node->getId()];
+			const auto& nodeAnimationRotationMatrices = animationRotationMatrices[node->getId()];
+			const auto& nodeAnimationTranslationMatrices = animationTranslationMatrices[node->getId()];
 
 			//
 			vector<Matrix4x4> animationFinalMatrices(maxFrames);
@@ -390,13 +390,13 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 	vector<Vector3> normals;
 	vector<TextureCoordinate> textureCoordinates;
 	vector<FacesEntity> facesEntities;
-	auto& mesh = gltfModel.meshes[gltfNode.mesh];
+	const auto& mesh = gltfModel.meshes[gltfNode.mesh];
 	int facesEntityIdx = 0;
 	for (const auto& gltfPrimitive: mesh.primitives) {
 		Material* material = nullptr;
 		if (gltfPrimitive.material != -1) {
-			auto& gltfMaterial = gltfModel.materials[gltfPrimitive.material];
-			auto& gltfMaterialName = gltfMaterial.name;
+			const auto& gltfMaterial = gltfModel.materials[gltfPrimitive.material];
+			const auto& gltfMaterialName = gltfMaterial.name;
 			auto materialIt = model->getMaterials().find(gltfMaterialName);
 			if (materialIt != model->getMaterials().end()) {
 				material = materialIt->second;
@@ -409,7 +409,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 				specularMaterialProperties->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
 				specularMaterialProperties->setDiffuseColor(Color4(0.2f, 0.2f, 0.2f, 1.0f));
 				if (gltfMaterial.values.find("baseColorFactor") != gltfMaterial.values.end()) {
-					auto& gltfMaterialBaseColorFactor = gltfMaterial.values.find("baseColorFactor")->second;
+					const auto& gltfMaterialBaseColorFactor = gltfMaterial.values.find("baseColorFactor")->second;
 					Console::println(
 						"GLTFReader::parseNode(): " +
 						node->getId() + ": " +
@@ -445,7 +445,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 					);
 				}
 				if (gltfMaterial.values.find("metallicFactor") != gltfMaterial.values.end()) {
-					auto& gltfMaterialMatallicFactor = gltfMaterial.values.find("metallicFactor")->second;
+					const auto& gltfMaterialMatallicFactor = gltfMaterial.values.find("metallicFactor")->second;
 					Console::println(
 						"GLTFReader::parseNode(): " +
 						node->getId() + ": " +
@@ -455,7 +455,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 					pbrMaterialProperties->setMetallicFactor(gltfMaterialMatallicFactor.number_value);
 				}
 				if (gltfMaterial.values.find("roughnessFactor") != gltfMaterial.values.end()) {
-					auto& gltfMaterialRoughnessFactor = gltfMaterial.values.find("roughnessFactor")->second;
+					const auto& gltfMaterialRoughnessFactor = gltfMaterial.values.find("roughnessFactor")->second;
 					Console::println(
 						"GLTFReader::parseNode(): " +
 						node->getId() + ": " +
@@ -467,9 +467,9 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 				// we ignore for now Factor, ColorFactor, TextureScale, TextureStrength, TextureTexCoord as I do not see them feasible in Blender exported GLTF files
 				if (gltfMaterial.values.find("baseColorTexture") != gltfMaterial.values.end() &&
 					gltfMaterial.values.find("baseColorTexture")->second.TextureIndex() != -1) {
-					auto& gltfMaterialBaseColorTexture = gltfMaterial.values.find("baseColorTexture")->second;
-					auto& gltfTexture = gltfModel.textures[gltfMaterialBaseColorTexture.TextureIndex()];
-					auto& image = gltfModel.images[gltfTexture.source];
+					const auto& gltfMaterialBaseColorTexture = gltfMaterial.values.find("baseColorTexture")->second;
+					const auto& gltfTexture = gltfModel.textures[gltfMaterialBaseColorTexture.TextureIndex()];
+					const auto& image = gltfModel.images[gltfTexture.source];
 					try {
 						if (image.component != 3 && image.component != 4) throw ExceptionBase("We only support RGB or RGBA textures for now");
 						if (image.bits != 8) throw ExceptionBase("We only support 8 bit channels for now");
@@ -498,7 +498,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 						if (specularMaterialProperties->hasDiffuseTextureTransparency() == true) specularMaterialProperties->setDiffuseTextureMaskedTransparency(true);
 						//
 						if (gltfTexture.sampler != -1) {
-							auto& sampler = gltfModel.samplers[gltfTexture.sampler];
+							const auto& sampler = gltfModel.samplers[gltfTexture.sampler];
 							switch (sampler.minFilter) {
 								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMinFilter(Texture::TEXTUREFILTER_NEAREST); texture->setUseMipMap(false); break;
 								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMinFilter(Texture::TEXTUREFILTER_LINEAR); texture->setUseMipMap(false); break;
@@ -522,9 +522,9 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 				}
 				if (gltfMaterial.values.find("metallicRoughnessTexture") != gltfMaterial.values.end() &&
 					gltfMaterial.values.find("metallicRoughnessTexture")->second.TextureIndex() != -1) {
-					auto& gltfMetallicRoughnessTexture = gltfMaterial.values.find("metallicRoughnessTexture")->second;
-					auto& gltfTexture = gltfModel.textures[gltfMetallicRoughnessTexture.TextureIndex()];
-					auto& image = gltfModel.images[gltfTexture.source];
+					const auto& gltfMetallicRoughnessTexture = gltfMaterial.values.find("metallicRoughnessTexture")->second;
+					const auto& gltfTexture = gltfModel.textures[gltfMetallicRoughnessTexture.TextureIndex()];
+					const auto& image = gltfModel.images[gltfTexture.source];
 					try {
 						if (image.component != 3 && image.component != 4) throw ExceptionBase("We only support RGB or RGBA textures for now");
 						if (image.bits != 8) throw ExceptionBase("We only support 8 bit channels for now");
@@ -550,7 +550,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 						pbrMaterialProperties->setMetallicRoughnessTexture(texture);
 						//
 						if (gltfTexture.sampler != -1) {
-							auto& sampler = gltfModel.samplers[gltfTexture.sampler];
+							const auto& sampler = gltfModel.samplers[gltfTexture.sampler];
 							switch (sampler.minFilter) {
 								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMinFilter(Texture::TEXTUREFILTER_NEAREST); texture->setUseMipMap(false); break;
 								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMinFilter(Texture::TEXTUREFILTER_LINEAR); texture->setUseMipMap(false); break;
@@ -574,9 +574,9 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 				}
 				if (gltfMaterial.additionalValues.find("normalTexture") != gltfMaterial.additionalValues.end() &&
 					gltfMaterial.additionalValues.find("normalTexture")->second.TextureIndex() != -1) {
-					auto& gltfNormalTexture = gltfMaterial.additionalValues.find("normalTexture")->second;
-					auto& gltfTexture = gltfModel.textures[gltfNormalTexture.TextureIndex()];
-					auto& image = gltfModel.images[gltfTexture.source];
+					const auto& gltfNormalTexture = gltfMaterial.additionalValues.find("normalTexture")->second;
+					const auto& gltfTexture = gltfModel.textures[gltfNormalTexture.TextureIndex()];
+					const auto& image = gltfModel.images[gltfTexture.source];
 					try {
 						if (image.component != 3 && image.component != 4) throw ExceptionBase("We only support RGB or RGBA textures for now");
 						if (image.bits != 8) throw ExceptionBase("We only support 8 bit channels for now");
@@ -602,7 +602,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 						pbrMaterialProperties->setNormalTexture(texture);
 						//
 						if (gltfTexture.sampler != -1) {
-							auto& sampler = gltfModel.samplers[gltfTexture.sampler];
+							const auto& sampler = gltfModel.samplers[gltfTexture.sampler];
 							switch (sampler.minFilter) {
 								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMinFilter(Texture::TEXTUREFILTER_NEAREST); texture->setUseMipMap(false); break;
 								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMinFilter(Texture::TEXTUREFILTER_LINEAR); texture->setUseMipMap(false); break;
@@ -625,8 +625,8 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 					}
 				}
 				if (gltfMaterial.emissiveTexture.index != -1) {
-					auto& gltfTexture = gltfModel.textures[gltfMaterial.emissiveTexture.index];
-					auto& image = gltfModel.images[gltfTexture.source];
+					const auto& gltfTexture = gltfModel.textures[gltfMaterial.emissiveTexture.index];
+					const auto& image = gltfModel.images[gltfTexture.source];
 					try {
 						if (image.component != 3 && image.component != 4) throw ExceptionBase("We only support RGB or RGBA textures for now");
 						if (image.bits != 8) throw ExceptionBase("We only support 8 bit channels for now");
@@ -653,7 +653,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 						pbrMaterialProperties->setEmissiveTexture(texture);
 						//
 						if (gltfTexture.sampler != -1) {
-							auto& sampler = gltfModel.samplers[gltfTexture.sampler];
+							const auto& sampler = gltfModel.samplers[gltfTexture.sampler];
 							switch (sampler.minFilter) {
 								case TINYGLTF_TEXTURE_FILTER_NEAREST: texture->setMinFilter(Texture::TEXTUREFILTER_NEAREST); texture->setUseMipMap(false); break;
 								case TINYGLTF_TEXTURE_FILTER_LINEAR: texture->setMinFilter(Texture::TEXTUREFILTER_LINEAR); texture->setUseMipMap(false); break;
@@ -691,9 +691,9 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 		bool haveNormals = false;
 		bool haveTextureCoordinates = false;
 		for (const auto& [gltfBufferType, gltfAttributeValue]: gltfPrimitive.attributes) {
-			auto& attributeAccessor = gltfModel.accessors[gltfAttributeValue];
-			auto& attributeBufferView = gltfModel.bufferViews[attributeAccessor.bufferView];
-			auto& attributeBuffer = gltfModel.buffers[attributeBufferView.buffer];
+			const auto& attributeAccessor = gltfModel.accessors[gltfAttributeValue];
+			const auto& attributeBufferView = gltfModel.bufferViews[attributeAccessor.bufferView];
+			const auto& attributeBuffer = gltfModel.buffers[attributeBufferView.buffer];
 			if (gltfBufferType == "POSITION") {
 				if (attributeAccessor.componentType != TINYGLTF_COMPONENT_TYPE_FLOAT) {
 					Console::println("GLTFReader::parseNode(): " + node->getId() + ": POSITION: Invalid attributes component: " + to_string(attributeAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
@@ -800,9 +800,9 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 				indices.resize(vertices.size());
 				for (auto i = 0; i < vertices.size(); i++) indices[i] = i;
 			} else {
-				auto& indicesAccessor = gltfModel.accessors[gltfPrimitive.indices];
-				auto& indicesBufferView = gltfModel.bufferViews[indicesAccessor.bufferView];
-				auto& indicesBuffer = gltfModel.buffers[indicesBufferView.buffer];
+				const auto& indicesAccessor = gltfModel.accessors[gltfPrimitive.indices];
+				const auto& indicesBufferView = gltfModel.bufferViews[indicesAccessor.bufferView];
+				const auto& indicesBuffer = gltfModel.buffers[indicesBufferView.buffer];
 				switch (indicesAccessor.componentType) {
 					case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
 						{
@@ -866,10 +866,10 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 
 	// skinning
 	if (gltfNode.skin != -1) {
-		auto& gltfSkin = gltfModel.skins[gltfNode.skin];
-		auto& inverseBindMatricesAccessor = gltfModel.accessors[gltfSkin.inverseBindMatrices];
-		auto& inverseBindMatricesBufferView = gltfModel.bufferViews[inverseBindMatricesAccessor.bufferView];
-		auto& inverseBindMatricesBuffer = gltfModel.buffers[inverseBindMatricesBufferView.buffer];
+		const auto& gltfSkin = gltfModel.skins[gltfNode.skin];
+		const auto& inverseBindMatricesAccessor = gltfModel.accessors[gltfSkin.inverseBindMatrices];
+		const auto& inverseBindMatricesBufferView = gltfModel.bufferViews[inverseBindMatricesAccessor.bufferView];
+		const auto& inverseBindMatricesBuffer = gltfModel.buffers[inverseBindMatricesBufferView.buffer];
 		const float* inverseBindMatricesBufferData = nullptr;
 		auto stride = inverseBindMatricesBufferView.byteStride == 0?16 * sizeof(float) / sizeof(float):inverseBindMatricesBufferView.byteStride / sizeof(float);
 		if (inverseBindMatricesAccessor.componentType != TINYGLTF_COMPONENT_TYPE_FLOAT) {
@@ -939,7 +939,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 
 void GLTFReader::parseNodeChildren(const string& pathName, tinygltf::Model& gltfModel, const vector<int>& gltfNodeChildrenIdx, Node* parentNode, int& anonymousNodeIdx, bool useBC7TextureCompression) {
 	for (const auto gltfNodeIdx: gltfNodeChildrenIdx) {
-		auto& gltfNode = gltfModel.nodes[gltfNodeIdx];
+		const auto& gltfNode = gltfModel.nodes[gltfNodeIdx];
 		auto node = parseNode(pathName, gltfModel, gltfNodeIdx, parentNode->getModel(), parentNode, anonymousNodeIdx, useBC7TextureCompression);
 		parentNode->getModel()->getNodes()[node->getId()] = node;
 		if (parentNode->getSubNodes().find(node->getId()) != parentNode->getSubNodes().end()) {

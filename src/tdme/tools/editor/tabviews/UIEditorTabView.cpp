@@ -132,10 +132,10 @@ void UIEditorTabView::handleInputEvents()
 			auto modelEntityModelImportMatrixInverted = modelEntity->getModel()->getImportTransformMatrix().clone().invert();
 			auto modelEntityWorldMatrixInverted = modelEntityWorldMatrix.clone().multiply(modelEntity->getTransformMatrix()).multiply(modelEntityModelImportMatrixInverted).invert();
 			// handle mouse events
-			auto& engineMouseEvents = engine->getGUI()->getMouseEvents();
+			const auto& engineMouseEvents = engine->getGUI()->getMouseEvents();
 			auto& guiEngineMouseEvents = guiEngine->getGUI()->getMouseEvents();
 			auto mouseEventIdx = 0;
-			for (const auto& event: engineMouseEvents) {
+			for (const auto& event: engine->getGUI()->getMouseEvents()) {
 				if (event.isProcessed() == true) {
 					mouseEventIdx++;
 					continue;
@@ -162,14 +162,14 @@ void UIEditorTabView::handleInputEvents()
 			}
 		} else {
 			// just add all events into unused mouse event indices
-			auto& engineMouseEvents = engine->getGUI()->getMouseEvents();
+			const auto& engineMouseEvents = engine->getGUI()->getMouseEvents();
 			for (auto i = 0; i < engineMouseEvents.size(); i++) unusedEngineMouseEventIndices.push_back(i);
 		}
 		// handle GUI engine events
 		guiEngine->getGUI()->handleEvents(false);
 		// clear mouse events of main engine
 		auto engineMouseEvents = engine->getGUI()->getMouseEvents();
-		auto& guiEngineMouseEvents = guiEngine->getGUI()->getMouseEvents();
+		const auto& guiEngineMouseEvents = guiEngine->getGUI()->getMouseEvents();
 		engine->getGUI()->getMouseEvents().clear();
 		// TODO: we might want to sort the events by creation time or id
 		// restore mouse events of main engine from GUI engine events
@@ -713,7 +713,7 @@ void UIEditorTabView::setModelMeshNode(const string& modelMeshNode) {
 	if (model == nullptr || model->getNodeById(modelMeshNode) == nullptr) return;
 
 	//
-	auto& modelMeshNodeFacesEntities = model->getNodeById(modelMeshNode)->getFacesEntities();
+	const auto& modelMeshNodeFacesEntities = model->getNodeById(modelMeshNode)->getFacesEntities();
 	unordered_set<string> materialIds;
 	for (const auto& facesEntity: modelMeshNodeFacesEntities) {
 		if (facesEntity.getMaterial() != nullptr) materialIds.insert(facesEntity.getMaterial()->getId());

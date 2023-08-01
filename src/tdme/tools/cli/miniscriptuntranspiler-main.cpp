@@ -39,7 +39,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 		auto reject = false;
 		auto injectedGeneratedCode = false;
 		for (auto i = 0; i < miniScriptClass.size(); i++) {
-			auto& line = miniScriptClass[i];
+			const auto& line = miniScriptClass[i];
 			auto trimmedLine = StringTools::trim(line);
 			if (StringTools::startsWith(trimmedLine, "//") == true) {
 				if (reject == false) miniScriptClassNew.push_back(line);
@@ -83,7 +83,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 		auto reject = false;
 		auto injectedGeneratedCode = false;
 		for (auto i = 0; i < miniScriptClassHeader.size(); i++) {
-			auto& line = miniScriptClassHeader[i];
+			const auto& line = miniScriptClassHeader[i];
 			auto trimmedLine = StringTools::trim(line);
 			if (StringTools::startsWith(trimmedLine, "//") == true) {
 				if (reject == false) miniScriptClassHeaderNew.push_back(line);

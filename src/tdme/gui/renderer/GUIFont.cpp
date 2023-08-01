@@ -288,23 +288,22 @@ void GUIFont::drawCharacter(GUIRenderer* guiRenderer, GUICharacter* character, i
 	float textureCharTop = character->getY();
 	float textureCharWidth = character->rotated == true?character->getHeight():character->getWidth();
 	float textureCharHeight = character->rotated == true?character->getWidth():character->getHeight();
-	auto& fontColor = color.getArray();
 	guiRenderer->addQuad(
 		((left) / (screenWidth / 2.0f)) - 1.0f,
 		((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
-		fontColor[0], fontColor[1], fontColor[2], fontColor[3],
+		color[0], color[1], color[2], color[3],
 		textureCharLeft / textureWidth, textureCharTop / textureHeight,
 		((left + width) / (screenWidth / 2.0f)) - 1.0f,
 		((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
-		fontColor[0], fontColor[1], fontColor[2], fontColor[3],
+		color[0], color[1], color[2], color[3],
 		(textureCharLeft + textureCharWidth) / textureWidth, textureCharTop / textureHeight,
 		((left + width) / (screenWidth / 2.0f)) - 1.0f,
 		((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
-		fontColor[0], fontColor[1], fontColor[2], fontColor[3],
+		color[0], color[1], color[2], color[3],
 		(textureCharLeft + textureCharWidth) / textureWidth,
 		(textureCharTop + textureCharHeight) / textureHeight,
 		((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
-		fontColor[0], fontColor[1], fontColor[2], fontColor[3],
+		color[0], color[1], color[2], color[3],
 		(textureCharLeft) / textureWidth,
 		(textureCharTop + textureCharHeight) / textureHeight,
 		false,
@@ -322,22 +321,21 @@ void GUIFont::drawCharacterBackground(GUIRenderer* guiRenderer, GUICharacter* ch
 	float top = y;
 	float width = character->getXAdvance();
 	float height = lineHeight;
-	auto& backgroundColor = color.getArray();
 	guiRenderer->addQuad(
 		((left) / (screenWidth / 2.0f)) - 1.0f,
 		((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
-		backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3],
+		color[0], color[1], color[2], color[3],
 		0.0f, 1.0f,
 		((left + width) / (screenWidth / 2.0f)) - 1.0f,
 		((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
-		backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3],
+		color[0], color[1], color[2], color[3],
 		1.0f, 1.0f,
 		((left + width) / (screenWidth / 2.0f)) - 1.0f,
 		((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
-		backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3],
+		color[0], color[1], color[2], color[3],
 		1.0f, 0.0f,
 		((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
-		backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3],
+		color[0], color[1], color[2], color[3],
 		0.0f, 0.0f,
 		true
 	);

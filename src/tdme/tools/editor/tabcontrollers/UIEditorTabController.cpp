@@ -841,7 +841,7 @@ void UIEditorTabController::save() {
 	};
 
 	// save files with file name
-	auto& uiScreenNodes = view->getUIScreenNodes();
+	const auto& uiScreenNodes = view->getUIScreenNodes();
 	auto emptyFileNameIdx = -1;
 	for (auto screenIdx = 0; screenIdx < uiScreenNodes.size(); screenIdx++) {
 		// skip on empty xml
@@ -853,7 +853,7 @@ void UIEditorTabController::save() {
 		}
 
 		//
-		auto& uiScreenNode = uiScreenNodes[screenIdx];
+		const auto& uiScreenNode = uiScreenNodes[screenIdx];
 		try {
 			FileSystem::getInstance()->setContentFromString(
 				Tools::getPathName(uiScreenNode.fileName),
@@ -868,7 +868,7 @@ void UIEditorTabController::save() {
 
 	//
 	if (emptyFileNameIdx != -1) {
-		auto& uiScreenNode = uiScreenNodes[emptyFileNameIdx];
+		const auto& uiScreenNode = uiScreenNodes[emptyFileNameIdx];
 		//
 		auto fileName = Tools::getPathName(view->getFileName()) + "/Untitled.xml";
 		popUps->getFileDialogScreenController()->show(
@@ -956,7 +956,7 @@ void UIEditorTabController::saveAs() {
 	};
 
 	// find first screen to be saved
-	auto& uiScreenNodes = view->getUIScreenNodes();
+	const auto& uiScreenNodes = view->getUIScreenNodes();
 	for (auto screenIdx = 0; screenIdx < uiScreenNodes.size(); screenIdx++) {
 		//
 		if (uiScreenNodes[screenIdx].xml.empty() == true) continue;

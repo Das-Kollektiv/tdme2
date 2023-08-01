@@ -612,7 +612,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 			// foliage
 			{
 				//
-				auto& foliageMaps = terrain->getFoliageMaps();
+				const auto& foliageMaps = terrain->getFoliageMaps();
 
 				//
 				auto foliageRenderGroupIdx = 0;
@@ -998,7 +998,7 @@ void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vec
 			// single foliage
 			{
 				//
-				auto& foliageMaps = terrain->getFoliageMaps();
+				const auto& foliageMaps = terrain->getFoliageMaps();
 
 				//
 				unordered_map<int, int> prototypeBodyIdx;

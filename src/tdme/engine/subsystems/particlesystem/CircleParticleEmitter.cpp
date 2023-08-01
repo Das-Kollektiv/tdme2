@@ -74,7 +74,7 @@ void CircleParticleEmitter::emit(Particle* particle)
 
 void CircleParticleEmitter::setTransform(const Transform& transform)
 {
-	auto& transformMatrix = transform.getTransformMatrix();
+	const auto& transformMatrix = transform.getTransformMatrix();
 	// apply rotation, scale, translation
 	worldCenter = transformMatrix.multiply(center);
 	// apply transform rotation + scale to axis

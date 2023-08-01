@@ -33,7 +33,7 @@ public:
 	 */
 	inline bool isNegative(Matrix4x4& matrix) {
 		// check if negative scale and rotation
-		auto& transformMatrixData = matrix.getArray();
+		const auto& transformMatrixData = matrix.getArray();
 		// copy into x,y,z axes
 		xAxis.set(transformMatrixData[0], transformMatrixData[1], transformMatrixData[2]);
 		yAxis.set(transformMatrixData[4], transformMatrixData[5], transformMatrixData[6]);

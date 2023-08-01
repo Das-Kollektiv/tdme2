@@ -62,8 +62,8 @@ TextFormatter::TextFormatter() {
 void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode, int charStartIdx, int charEndIdx) {
 	if (std::find(xmlLanguage.extensions.begin(), xmlLanguage.extensions.end(), extension) != xmlLanguage.extensions.end()) {
 		textNode->unsetStyles();
-		auto& language = xmlLanguage;
-		auto& code = textNode->getText().getString();
+		const auto& language = xmlLanguage;
+		const auto& code = textNode->getText().getString();
 		auto startIdx = 0;
 		auto endIdx = -1;
 		auto lc = '\0';
@@ -167,8 +167,8 @@ void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 		}
 	} else
 	if (std::find(propertiesLanguage.extensions.begin(), propertiesLanguage.extensions.end(), extension) != propertiesLanguage.extensions.end()) {
-		auto& language = propertiesLanguage;
-		auto& code = textNode->getText().getString();
+		const auto& language = propertiesLanguage;
+		const auto& code = textNode->getText().getString();
 		auto commentCount = 0;
 		auto delimiterCount = 0;
 		auto nonWhitespaceCount = 0;
@@ -248,11 +248,11 @@ void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 			if (std::find(language.extensions.begin(), language.extensions.end(), extension) != language.extensions.end()) {
 				// Console::println("void TextFormatter::format(): " + to_string(charStartIdx) + " ... " + to_string(charEndIdx));
 				foundLanguage = true;
-				auto& code = textNode->getText().getString();
-				auto& preprocessorLineKeywords = language.preprocessorLineKeywordsTokenized;
-				auto& keywords1 = language.keywords1Tokenized;
-				auto& keywords2 = language.keywords2Tokenized;
-				auto& datatypeLiteralSuffixes = language.datatypeLiteralSuffixesTokenized;
+				const auto& code = textNode->getText().getString();
+				const auto& preprocessorLineKeywords = language.preprocessorLineKeywordsTokenized;
+				const auto& keywords1 = language.keywords1Tokenized;
+				const auto& keywords2 = language.keywords2Tokenized;
+				const auto& datatypeLiteralSuffixes = language.datatypeLiteralSuffixesTokenized;
 				auto startIdx = 0;
 				auto endIdx = -1;
 				auto lc = '\0';

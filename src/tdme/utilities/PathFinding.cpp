@@ -931,7 +931,7 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 						continue;
 					} else {
 						// yes && walkable
-						auto& neighbourNode = neighbourNodeIt->second;
+						const auto& neighbourNode = neighbourNodeIt->second;
 						if (minCostsNode == nullptr || neighbourNode->costsReachPoint < minCosts) {
 							minCostsNode = neighbourNode;
 							minCosts = neighbourNode->costsReachPoint;

@@ -41,7 +41,7 @@ static void gatherMethodCode(const vector<string>& miniScriptExtensionsCode, con
 	auto classDefinitionLine = -1;
 	// get class definition start line
 	for (auto i = registerLine; i >= 0; i--) {
-		auto& line = miniScriptExtensionsCode[i];
+		const auto& line = miniScriptExtensionsCode[i];
 		auto trimmedLine = StringTools::trim(line);
 		if (StringTools::regexMatch(trimmedLine, "class[\\ \\t]+" + className + "[\\ \\t]*:.*") == true) {
 			classDefinitionLine = i;
@@ -63,7 +63,7 @@ static void gatherMethodCode(const vector<string>& miniScriptExtensionsCode, con
 	vector<string> executeMethodCode;
 	string getMethodNameCode;
 	for (auto i = classDefinitionLine; finished == false && i < miniScriptExtensionsCode.size(); i++) {
-		auto& line = miniScriptExtensionsCode[i];
+		const auto& line = miniScriptExtensionsCode[i];
 		auto trimmedLine = StringTools::trim(line);
 		// have getMethodName declaration, with following body
 		if (StringTools::regexMatch(trimmedLine, "const[\\ \\t]+string[\\ \\t]+getMethodName()[\\ \\t]*\\(.*") == true) {
@@ -193,7 +193,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 		vector<string> miniScriptExtensionsCode;
 		FileSystem::getInstance()->getContentAsStringArray(Tools::getPathName(miniScriptExtensionFileName), Tools::getFileName(miniScriptExtensionFileName), miniScriptExtensionsCode);
 		for (auto i = 0; i < miniScriptExtensionsCode.size(); i++) {
-			auto& line = miniScriptExtensionsCode[i];
+			const auto& line = miniScriptExtensionsCode[i];
 			auto trimmedLine = StringTools::trim(line);
 			if (StringTools::startsWith(trimmedLine, "registerMethod") == true ||
 				StringTools::startsWith(trimmedLine, "miniScript->registerMethod") == true) {
@@ -223,7 +223,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	//
 	string headerIndent = "\t";
 	string methodCodeIndent = "\t";
-	auto& scripts = scriptInstance->getScripts();
+	const auto& scripts = scriptInstance->getScripts();
 	string generatedExecuteCode;
 	{
 		auto scriptIdx = 0;
@@ -497,7 +497,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 		auto reject = false;
 		auto injectedGeneratedCode = false;
 		for (auto i = 0; i < miniScriptClass.size(); i++) {
-			auto& line = miniScriptClass[i];
+			const auto& line = miniScriptClass[i];
 			auto trimmedLine = StringTools::trim(line);
 			if (StringTools::startsWith(trimmedLine, "//") == true) {
 				if (reject == false) miniScriptClassNew.push_back(line);
@@ -542,7 +542,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 		auto reject = false;
 		auto injectedGeneratedCode = false;
 		for (auto i = 0; i < miniScriptClassHeader.size(); i++) {
-			auto& line = miniScriptClassHeader[i];
+			const auto& line = miniScriptClassHeader[i];
 			auto trimmedLine = StringTools::trim(line);
 			if (StringTools::startsWith(trimmedLine, "//") == true) {
 				if (reject == false) miniScriptClassHeaderNew.push_back(line);

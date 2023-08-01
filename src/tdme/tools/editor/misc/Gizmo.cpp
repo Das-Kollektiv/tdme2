@@ -459,8 +459,8 @@ bool Gizmo::determineGizmoDeltaTransformations(int mouseX, int mouseY, Vector3& 
 			}
 		case GIZMOMODE_ROTATE_X:
 			{
-				auto& planeVertices = planeYZ;
-				auto& planeNormal = planeYZNormal;
+				const auto& planeVertices = planeYZ;
+				const auto& planeNormal = planeYZNormal;
 				float gizmoDeltaRotation = 0.0f;
 				auto vertices = planeVertices;
 				for (auto& vertex: vertices) {
@@ -475,8 +475,8 @@ bool Gizmo::determineGizmoDeltaTransformations(int mouseX, int mouseY, Vector3& 
 			break;
 		case GIZMOMODE_ROTATE_Y:
 			{
-				auto& planeVertices = planeXZ;
-				auto& planeNormal = planeXZNormal;
+				const auto& planeVertices = planeXZ;
+				const auto& planeNormal = planeXZNormal;
 				float gizmoDeltaRotation = 0.0f;
 				auto vertices = planeVertices;
 				for (auto& vertex: vertices) {
@@ -491,8 +491,8 @@ bool Gizmo::determineGizmoDeltaTransformations(int mouseX, int mouseY, Vector3& 
 			break;
 		case GIZMOMODE_ROTATE_Z:
 			{
-				auto& planeVertices = planeXY;
-				auto& planeNormal = planeXYNormal;
+				const auto& planeVertices = planeXY;
+				const auto& planeNormal = planeXYNormal;
 				float gizmoDeltaRotation = 0.0f;
 				auto vertices = planeVertices;
 				for (auto& vertex: vertices) {

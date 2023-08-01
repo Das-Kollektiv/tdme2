@@ -740,7 +740,7 @@ public:
 					return true;
 				case TYPE_STRING:
 					{
-						auto& stringValue = getStringValueReference();
+						const auto& stringValue = getStringValueReference();
 						auto lowerCaseString = StringTools::toLowerCase(stringValue);
 						if (lowerCaseString != "false" && lowerCaseString != "true" && lowerCaseString != "1" && lowerCaseString != "0") return optional;
 						value = lowerCaseString == "true" || lowerCaseString == "1";
@@ -773,7 +773,7 @@ public:
 					return true;
 				case TYPE_STRING:
 					{
-						auto& stringValue = getStringValueReference();
+						const auto& stringValue = getStringValueReference();
 						if (Integer::is(stringValue) == true) {
 							value = Integer::parse(stringValue);
 							return true;
@@ -812,7 +812,7 @@ public:
 					return true;
 				case TYPE_STRING:
 					{
-						auto& stringValue = getStringValueReference();
+						const auto& stringValue = getStringValueReference();
 						if (Float::is(stringValue) == false) return optional;
 						value = Float::parse(stringValue);
 					}
@@ -1133,7 +1133,7 @@ public:
 		inline const ScriptVariable getArrayValue(int idx) const {
 			// TODO: be verbose about misuse
 			if (type != TYPE_ARRAY) return ScriptVariable();
-			auto& arrayValue = getArrayValueReference();
+			const auto& arrayValue = getArrayValueReference();
 			if (idx >= 0 && idx < arrayValue.size()) return arrayValue[idx];
 			return ScriptVariable();
 		}
@@ -1200,7 +1200,7 @@ public:
 		inline bool hasMapValue(const string& key) const {
 			// TODO: be verbose about misuse
 			if (type != TYPE_MAP) return false;
-			auto& mapValue = getMapValueReference();
+			const auto& mapValue = getMapValueReference();
 			auto it = mapValue.find(key);
 			if (it != mapValue.end()) return true;
 			return false;
@@ -1214,7 +1214,7 @@ public:
 		inline const ScriptVariable getMapValue(const string& key) const {
 			// TODO: be verbose about misuse
 			if (type != TYPE_MAP) return ScriptVariable();
-			auto& mapValue = getMapValueReference();
+			const auto& mapValue = getMapValueReference();
 			auto it = mapValue.find(key);
 			if (it != mapValue.end()) return it->second;
 			return ScriptVariable();
@@ -1253,7 +1253,7 @@ public:
 			vector<string> keys;
 			// TODO: be verbose about misuse
 			if (type != TYPE_MAP) return keys;
-			auto& mapValue = getMapValueReference();
+			const auto& mapValue = getMapValueReference();
 			for (const auto& [mapEntryName, mapEntryValue]: mapValue) {
 				keys.push_back(mapEntryName);
 			}
@@ -1268,7 +1268,7 @@ public:
 			vector<ScriptVariable> values;
 			// TODO: be verbose about misuse
 			if (type != TYPE_MAP) return values;
-			auto& mapValue = getMapValueReference();
+			const auto& mapValue = getMapValueReference();
 			for (const auto& [mapEntryKey, mapEntryValue]: mapValue) {
 				values.push_back(mapEntryValue);
 			}
@@ -1302,7 +1302,7 @@ public:
 		inline bool hasSetKey(const string& key) const {
 			// TODO: be verbose about misuse
 			if (type != TYPE_SET) return false;
-			auto& setValue = getSetValueReference();
+			const auto& setValue = getSetValueReference();
 			auto it = setValue.find(key);
 			if (it != setValue.end()) return true;
 			return false;
@@ -1340,7 +1340,7 @@ public:
 			vector<string> keys;
 			// TODO: be verbose about misuse
 			if (type != TYPE_SET) return keys;
-			auto& setValue = getSetValueReference();
+			const auto& setValue = getSetValueReference();
 			for (const auto& key: setValue) {
 				keys.push_back(key);
 			}
@@ -1516,7 +1516,7 @@ public:
 					break;
 				case TYPE_VECTOR2:
 					{
-						auto& vector2Value = getVector2ValueReference();
+						const auto& vector2Value = getVector2ValueReference();
 						result+=
 							"Vector2(" +
 							to_string(vector2Value.getX()) + ", " +
@@ -1525,7 +1525,7 @@ public:
 					break;
 				case TYPE_VECTOR3:
 					{
-						auto& vector3Value = getVector3ValueReference();
+						const auto& vector3Value = getVector3ValueReference();
 						result+=
 							"Vector3(" +
 							to_string(vector3Value.getX()) + ", " +
@@ -1535,7 +1535,7 @@ public:
 					break;
 				case TYPE_VECTOR4:
 					{
-						auto& vector4Value = getVector4ValueReference();
+						const auto& vector4Value = getVector4ValueReference();
 						result+=
 							"Vector4(" +
 							to_string(vector4Value.getX()) + ", " +
@@ -1546,7 +1546,7 @@ public:
 					break;
 				case TYPE_QUATERNION:
 					{
-						auto& quaternionValue = getQuaternionValueReference();
+						const auto& quaternionValue = getQuaternionValueReference();
 						result+=
 							"Quaternion(" +
 							to_string(quaternionValue.getX()) + ", " +
@@ -1557,7 +1557,7 @@ public:
 					break;
 				case TYPE_MATRIX3x3:
 					{
-						auto& matrix3x3Value = getMatrix3x3ValueReference();
+						const auto& matrix3x3Value = getMatrix3x3ValueReference();
 						result+=
 							"Matrix3x3(" +
 							to_string(matrix3x3Value[0]) + ", " +
@@ -1573,7 +1573,7 @@ public:
 					break;
 				case TYPE_MATRIX4x4:
 					{
-						auto& matrix4x4Value = getMatrix4x4ValueReference();
+						const auto& matrix4x4Value = getMatrix4x4ValueReference();
 						result+=
 							"Matrix4x4(" +
 							to_string(matrix4x4Value[0]) + ", " +
@@ -1596,7 +1596,7 @@ public:
 					break;
 				case TYPE_TRANSFORM:
 					{
-						auto& transformValue = getTransformValueReference();
+						const auto& transformValue = getTransformValueReference();
 						result+=
 							"Transform(translation = Vector3(" +
 							to_string(transformValue.getTranslation().getX()) + ", " +
@@ -1618,7 +1618,7 @@ public:
 					break;
 				case TYPE_ARRAY:
 					{
-						auto& arrayValue = getArrayValueReference();
+						const auto& arrayValue = getArrayValueReference();
 						result+="[";
 						string valuesString;
 						for (const auto& value: arrayValue) {
@@ -1631,7 +1631,7 @@ public:
 					}
 				case TYPE_MAP:
 					{
-						auto& mapValue = getMapValueReference();
+						const auto& mapValue = getMapValueReference();
 						result+="{";
 						string valuesString;
 						for (const auto& [mapEntryName, mapEntryValue]: mapValue) {
@@ -1644,7 +1644,7 @@ public:
 					}
 				case TYPE_SET:
 					{
-						auto& setValue = getSetValueReference();
+						const auto& setValue = getSetValueReference();
 						result+="{";
 						string valuesString;
 						for (const auto& key: setValue) {
@@ -2084,7 +2084,7 @@ protected:
 	 * Pop script state
 	 */
 	inline void popScriptState() {
-		auto& scriptState = getScriptState();
+		const auto& scriptState = getScriptState();
 		for (const auto& [scriptVariableName, scriptVariable]: scriptState.variables) delete scriptVariable;
 		scriptStateStack.erase(scriptStateStack.begin() + scriptStateStack.size() - 1);
 	}
@@ -2471,7 +2471,7 @@ private:
 		// retrieve variable from function script state
 		ScriptVariable* variablePtr = nullptr;
 		if (global == false) {
-			auto& scriptState = getScriptState();
+			const auto& scriptState = getScriptState();
 			auto scriptVariableIt = scriptState.variables.find(extractedVariableName.empty() == false?extractedVariableName:name);
 			if (scriptVariableIt == scriptState.variables.end()) {
 				if (isFunctionRunning() == false) {
@@ -2490,7 +2490,7 @@ private:
 		}
 		// if no success try to retrieve variable from root script state, but only when expecting variable aka reading variable
 		if (global == true || (expectVariable == true && variablePtr == nullptr)) {
-			auto& scriptState = getRootScriptState();
+			const auto& scriptState = getRootScriptState();
 			auto scriptVariableIt = scriptState.variables.find(extractedVariableName.empty() == false?extractedVariableName:name);
 			if (scriptVariableIt == scriptState.variables.end()) {
 				if (expectVariable == true) {
@@ -2710,14 +2710,14 @@ private:
 	 * @param jObjectValue JSON object value
 	 * @return script variable
 	 */
-	static const ScriptVariable deserializeMapJson(Value& jObjectValue);
+	static const ScriptVariable deserializeMapJson(const Value& jObjectValue);
 
 	/**
 	 * Deserialize array from JSON value
 	 * @param jArrayValue JSON array value
 	 * @return script variable
 	 */
-	static const ScriptVariable deserializeArrayJson(Value& jArrayValue);
+	static const ScriptVariable deserializeArrayJson(const Value& jArrayValue);
 
 public:
 	// forbid class copy
@@ -2907,7 +2907,7 @@ public:
 	 */
 	inline static bool getBooleanValue(const span<ScriptVariable>& arguments, int idx, bool& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
+		const auto& argument = arguments[idx];
 		return argument.getBooleanValue(value, optional);
 	}
 
@@ -2921,7 +2921,7 @@ public:
 	 */
 	inline static bool getIntegerValue(const span<ScriptVariable>& arguments, int idx, int64_t& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
+		const auto& argument = arguments[idx];
 		return argument.getIntegerValue(value, optional);
 	}
 
@@ -2935,7 +2935,7 @@ public:
 	 */
 	inline static bool getFloatValue(const span<ScriptVariable>& arguments, int idx, float& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
+		const auto& argument = arguments[idx];
 		return argument.getFloatValue(value, optional);
 	}
 
@@ -2949,7 +2949,7 @@ public:
 	 */
 	inline static bool getStringValue(const span<ScriptVariable>& arguments, int idx, string& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
+		const auto& argument = arguments[idx];
 		return argument.getStringValue(value, optional);
 	}
 
@@ -2963,7 +2963,7 @@ public:
 	 */
 	inline static bool getVector2Value(const span<ScriptVariable>& arguments, int idx, Vector2& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
+		const auto& argument = arguments[idx];
 		return argument.getVector2Value(value, optional);
 	}
 
@@ -2977,7 +2977,7 @@ public:
 	 */
 	inline static bool getVector3Value(const span<ScriptVariable>& arguments, int idx, Vector3& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
+		const auto& argument = arguments[idx];
 		return argument.getVector3Value(value, optional);
 	}
 
@@ -2991,7 +2991,7 @@ public:
 	 */
 	inline static bool getVector4Value(const span<ScriptVariable>& arguments, int idx, Vector4& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
+		const auto& argument = arguments[idx];
 		return argument.getVector4Value(value, optional);
 	}
 
@@ -3005,7 +3005,7 @@ public:
 	 */
 	inline static bool getQuaternionValue(const span<ScriptVariable>& arguments, int idx, Quaternion& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
+		const auto& argument = arguments[idx];
 		return argument.getQuaternionValue(value, optional);
 	}
 
@@ -3019,7 +3019,7 @@ public:
 	 */
 	inline static bool getMatrix3x3Value(const span<ScriptVariable>& arguments, int idx, Matrix2D3x3& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
+		const auto& argument = arguments[idx];
 		return argument.getMatrix3x3Value(value, optional);
 	}
 
@@ -3033,7 +3033,7 @@ public:
 	 */
 	inline static bool getMatrix4x4Value(const span<ScriptVariable>& arguments, int idx, Matrix4x4& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
+		const auto& argument = arguments[idx];
 		return argument.getMatrix4x4Value(value, optional);
 	}
 
@@ -3047,7 +3047,7 @@ public:
 	 */
 	inline static bool getTransformValue(const span<ScriptVariable>& arguments, int idx, Transform& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
+		const auto& argument = arguments[idx];
 		return argument.getTransformValue(value, optional);
 	}
 

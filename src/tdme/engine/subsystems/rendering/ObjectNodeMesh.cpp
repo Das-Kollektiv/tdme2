@@ -57,11 +57,11 @@ ObjectNodeMesh::ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::A
 	this->objectNodeRenderer = objectNodeRenderer;
 	this->node = node;
 	// node data
-	auto& nodeVertices = node->getVertices();
-	auto& nodeNormals = node->getNormals();
-	auto& nodeTextureCoordinates = node->getTextureCoordinates();
-	auto& nodeTangents = node->getTangents();
-	auto& nodeBitangents = node->getBitangents();
+	const auto& nodeVertices = node->getVertices();
+	const auto& nodeNormals = node->getNormals();
+	const auto& nodeTextureCoordinates = node->getTextureCoordinates();
+	const auto& nodeTangents = node->getTangents();
+	const auto& nodeBitangents = node->getBitangents();
 	// determine face count
 	faceCount = node->getFaceCount();
 	// animation processing target
@@ -186,9 +186,9 @@ ObjectNodeMesh::ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::A
 		skinningJointTransformMatrices.resize(instances);
 		for (auto i = 0; i < instances; i++) skinningJointTransformMatrices[i].resize(nodeVertices.size());
 		// compute joint weight caches
-		auto& joints = skinning->getJoints();
-		auto& weights = skinning->getWeights();
-		auto& jointsWeights = skinning->getVerticesJointsWeights();
+		const auto& joints = skinning->getJoints();
+		const auto& weights = skinning->getWeights();
+		const auto& jointsWeights = skinning->getVerticesJointsWeights();
 		for (auto vertexIndex = 0; vertexIndex < nodeVertices.size(); vertexIndex++) {
 			auto vertexJointWeights = jointsWeights[vertexIndex].size();
 			if (vertexJointWeights > skinningMaxVertexWeights) skinningMaxVertexWeights = vertexJointWeights;
@@ -197,7 +197,7 @@ ObjectNodeMesh::ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::A
 			{
 				auto jointWeightIdx = 0;
 				for (const auto& jointWeight : jointsWeights[vertexIndex]) {
-					auto& joint = joints[jointWeight.getJointIndex()];
+					const auto& joint = joints[jointWeight.getJointIndex()];
 					skinningJointWeight[vertexIndex][jointWeightIdx] = weights[jointWeight.getWeightIndex()];
 					// next
 					jointWeightIdx++;
@@ -228,11 +228,11 @@ void ObjectNodeMesh::computeSkinning(int contextIdx, ObjectBase* objectBase)
 			Engine::getSkinningShader()->computeSkinning(contextIdx, objectBase, this);
 		} else
 		if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
-			auto& nodeVertices = node->getVertices();
-			auto& nodeNormals = node->getNormals();
-			auto& nodeTangent = node->getTangents();
-			auto& nodeBitangent = node->getBitangents();
-			auto& jointsWeights = skinning->getVerticesJointsWeights();
+			const auto& nodeVertices = node->getVertices();
+			const auto& nodeNormals = node->getNormals();
+			const auto& nodeTangent = node->getTangents();
+			const auto& nodeBitangent = node->getBitangents();
+			const auto& jointsWeights = skinning->getVerticesJointsWeights();
 			const Vector3* vertex;
 			Vector3* transformedVertex;
 			const Vector3* normal;
@@ -311,8 +311,8 @@ void ObjectNodeMesh::computeSkinning(int contextIdx, ObjectBase* objectBase)
 		}
 	} else
 	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
-		auto& nodeVertices = node->getVertices();
-		auto& nodeNormals = node->getNormals();
+		const auto& nodeVertices = node->getVertices();
+		const auto& nodeNormals = node->getNormals();
 		// transform for non skinned rendering
 		//	vertices
 		for (auto vertexIndex = 0; vertexIndex < nodeVertices.size(); vertexIndex++) {
@@ -439,7 +439,7 @@ void ObjectNodeMesh::setupBitangentsBuffer(Renderer* renderer, int contextIdx, i
 
 void ObjectNodeMesh::setupOriginsBuffer(Renderer* renderer, int contextIdx, int32_t vboId) {
 	// check if we have origins
-	auto& origins = node->getOrigins();
+	const auto& origins = node->getOrigins();
 	if (origins.size() == 0) return;
 	// create origins buffer, will never be changed in engine
 	auto fbOrigins = ObjectBuffer::getByteBuffer(contextIdx, origins.size() * 3 * sizeof(float))->asFloatBuffer();

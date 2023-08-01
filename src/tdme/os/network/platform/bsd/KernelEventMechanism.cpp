@@ -191,7 +191,7 @@ void KernelEventMechanism::decodeKernelEvent(const unsigned int index, NIOIntere
 	// platform specific data
 	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
-	auto& ke = psd->kqEventList[index];
+	const auto& ke = psd->kqEventList[index];
 	cookie = (void*)ke.udata;
 	switch (ke.filter) {
 		case(EVFILT_READ):

@@ -49,7 +49,7 @@ bool EngineGL3Renderer::prepareWindowSystemRendererContext(int tryIdx) {
 	#if defined(__APPLE__)
 		glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
 	#endif
-	auto& glVersion = glVersions[tryIdx];
+	const auto& glVersion = glVersions[tryIdx];
 	#if !defined(__HAIKU__)
 		// does not work for now with Haiku OS
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, glVersion[0] == 1?GLFW_TRUE:GLFW_FALSE);

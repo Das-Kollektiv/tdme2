@@ -394,7 +394,7 @@ void ApplicationClient::update() {
 	// audio
 	auto engine = context->getEngine();
 	auto audio = context->getAudio();
-	auto& cameraPosition = engine->getCamera()->getLookFrom();
+	const auto& cameraPosition = engine->getCamera()->getLookFrom();
 	for (auto& queuedSound: queuedSounds) {
 		if (queuedSound.attachedToLogic == true) {
 			auto entity = engine->getEntity(queuedSound.gameLogicId);

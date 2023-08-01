@@ -84,18 +84,16 @@ void BoundingBox::fromBoundingVolumeWithTransformMatrix(BoundingBox* boundingBox
 		vertices[i] = transformMatrix.multiply(_vertices[i]);
 	}
 	// determine axis aligned bounding box constraints based on local vertices
-	auto& vertexXYZ = vertices[0].getArray();
-	float minX = vertexXYZ[0], minY = vertexXYZ[1], minZ = vertexXYZ[2];
-	float maxX = vertexXYZ[0], maxY = vertexXYZ[1], maxZ = vertexXYZ[2];
+	float minX = vertices[0][0], minY = vertices[0][1], minZ = vertices[0][2];
+	float maxX = vertices[0][0], maxY = vertices[0][1], maxZ = vertices[0][2];
 	for (auto vertexIndex = 1; vertexIndex < vertices.size(); vertexIndex++) {
-		auto& vertex = vertices[vertexIndex];
-		vertexXYZ = vertex.getArray();
-		if (vertexXYZ[0] < minX) minX = vertexXYZ[0];
-		if (vertexXYZ[1] < minY) minY = vertexXYZ[1];
-		if (vertexXYZ[2] < minZ) minZ = vertexXYZ[2];
-		if (vertexXYZ[0] > maxX) maxX = vertexXYZ[0];
-		if (vertexXYZ[1] > maxY) maxY = vertexXYZ[1];
-		if (vertexXYZ[2] > maxZ) maxZ = vertexXYZ[2];
+		const auto& vertex = vertices[vertexIndex];
+		if (vertex[0] < minX) minX = vertex[0];
+		if (vertex[1] < minY) minY = vertex[1];
+		if (vertex[2] < minZ) minZ = vertex[2];
+		if (vertex[0] > maxX) maxX = vertex[0];
+		if (vertex[1] > maxY) maxY = vertex[1];
+		if (vertex[2] > maxZ) maxZ = vertex[2];
 	}
 	// set up new aabb
 	min.set(minX, minY, minZ);
@@ -105,24 +103,22 @@ void BoundingBox::fromBoundingVolumeWithTransformMatrix(BoundingBox* boundingBox
 }
 
 void BoundingBox::update() {
-	auto& minXYZ = min.getArray();
-	auto& maxXYZ = max.getArray();
 	// near, left, top
-	vertices[0].set(minXYZ[0], minXYZ[1], minXYZ[2]);
+	vertices[0].set(min[0], min[1], min[2]);
 	// near, right, top
-	vertices[1].set(maxXYZ[0], minXYZ[1], minXYZ[2]);
+	vertices[1].set(max[0], min[1], min[2]);
 	// near, right, bottom
-	vertices[2].set(maxXYZ[0], maxXYZ[1], minXYZ[2]);
+	vertices[2].set(max[0], max[1], min[2]);
 	// near, left, bottom
-	vertices[3].set(minXYZ[0], maxXYZ[1], minXYZ[2]);
+	vertices[3].set(min[0], max[1], min[2]);
 	// far, left, top
-	vertices[4].set(minXYZ[0], minXYZ[1], maxXYZ[2]);
+	vertices[4].set(min[0], min[1], max[2]);
 	// far, right, top
-	vertices[5].set(maxXYZ[0], minXYZ[1], maxXYZ[2]);
+	vertices[5].set(max[0], min[1], max[2]);
 	// far, right, bottom
-	vertices[6].set(maxXYZ[0], maxXYZ[1], maxXYZ[2]);
+	vertices[6].set(max[0], max[1], max[2]);
 	// far, left, bottom
-	vertices[7].set(minXYZ[0], maxXYZ[1], maxXYZ[2]);
+	vertices[7].set(min[0], max[1], max[2]);
 	center.set(min).add(max).scale(0.5f);
 	dimensions.set(max).sub(min);
 }

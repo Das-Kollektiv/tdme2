@@ -528,7 +528,7 @@ void GUI::handleEvents(bool clearEvents)
 				if (screen->isEnabled() == false) continue;
 
 				//
-				auto& floatingNodes = screen->getFloatingNodes();
+				const auto& floatingNodes = screen->getFloatingNodes();
 				for (auto j = 0; j < floatingNodes.size(); j++) {
 					//
 					unordered_set<string> eventNodeIds;
@@ -655,7 +655,7 @@ void GUI::handleEvents(bool clearEvents)
 
 			//
 			auto processed = false;
-			auto& floatingNodes = screen->getFloatingNodes();
+			const auto& floatingNodes = screen->getFloatingNodes();
 			for (auto j = 0; j < floatingNodes.size(); j++) {
 				auto floatingNode = floatingNodes[j];
 

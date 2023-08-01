@@ -29,10 +29,10 @@ public:
 	inline static bool doCollideAABBvsAABBFast(BoundingBox* b1, BoundingBox* b2) {
 		// see
 		//      http://www.gamedev.net/topic/567310-platform-game-collision-detection/
-		auto& b1Min = b1->getMin();
-		auto& b1Max = b1->getMax();
-		auto& b2Min = b2->getMin();
-		auto& b2Max = b2->getMax();
+		const auto& b1Min = b1->getMin();
+		const auto& b1Max = b1->getMax();
+		const auto& b2Min = b2->getMin();
+		const auto& b2Max = b2->getMax();
 
 		// face distances
 		if (b2Max[0] - b1Min[0] < 0.0f) return false; // b2 collides into b1 on x
@@ -41,6 +41,8 @@ public:
 		if (b1Max[0] - b2Min[0] < 0.0f) return false; // b1 collides into b2 on x
 		if (b1Max[1] - b2Min[1] < 0.0f) return false; // b1 collides into b2 on y
 		if (b1Max[2] - b2Min[2] < 0.0f) return false; // b1 collides into b2 on z
+
+		// yarrr
 		return true;
 	}
 

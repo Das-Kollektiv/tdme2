@@ -69,7 +69,7 @@ void CircleParticleEmitterPlaneVelocity::emit(Particle* particle)
 
 void CircleParticleEmitterPlaneVelocity::setTransform(const Transform& transform)
 {
-	auto& transformMatrix = transform.getTransformMatrix();
+	const auto& transformMatrix = transform.getTransformMatrix();
 	// apply rotation, scale, translation
 	worldCenter = transformMatrix.multiply(center);
 	// apply transform rotation + scale to axis

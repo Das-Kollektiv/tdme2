@@ -702,7 +702,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 
 				//
 				for (auto& foliagePrototypeMapPartition: foliageMaps) {
-					auto& foliagePrototypePartitionTransformVector = foliagePrototypeMapPartition[foliagePrototypeIdx];
+					const auto& foliagePrototypePartitionTransformVector = foliagePrototypeMapPartition[foliagePrototypeIdx];
 					Value jFoliagePrototypePartitionTransform;
 					jFoliagePrototypePartitionTransform.SetArray();
 					for (const auto& transform: foliagePrototypePartitionTransformVector) {

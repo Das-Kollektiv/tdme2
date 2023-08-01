@@ -73,10 +73,9 @@ ModelTools::VertexOrder ModelTools::determineVertexOrder(const vector<Vector3>& 
 {
 	auto edgeSum = 0;
 	for (auto i = 0; i < vertices.size(); i++) {
-		auto& currentVertexXYZ = vertices[i].getArray();
-		auto& nextVertexXYZ = vertices[(i + 1) % vertices.size()].getArray();
-		edgeSum +=
-			(nextVertexXYZ[0] - currentVertexXYZ[0]) * (nextVertexXYZ[1] - currentVertexXYZ[1]) * (nextVertexXYZ[2] - currentVertexXYZ[2]);
+		const auto& currentVertex = vertices[i];
+		const auto& nextVertex = vertices[(i + 1) % vertices.size()];
+		edgeSum += (nextVertex[0] - currentVertex[0]) * (nextVertex[1] - currentVertex[1]) * (nextVertex[2] - currentVertex[2]);
 	}
 	if (edgeSum >= 0) {
 		return VERTEXORDER_CLOCKWISE;
@@ -94,12 +93,12 @@ void ModelTools::prepareForIndexedRendering(const map<string, Node*>& nodes)
 {
 	// we need to prepare the node for indexed rendering
 	for (const auto& [nodeId, node]: nodes) {
-		auto& nodeVertices = node->getVertices();
-		auto& nodeNormals = node->getNormals();
-		auto& nodeTextureCoordinates = node->getTextureCoordinates();
-		auto& nodeTangents = node->getTangents();
-		auto& nodeBitangents = node->getBitangents();
-		auto& nodeOrigins = node->getOrigins();
+		const auto& nodeVertices = node->getVertices();
+		const auto& nodeNormals = node->getNormals();
+		const auto& nodeTextureCoordinates = node->getTextureCoordinates();
+		const auto& nodeTangents = node->getTangents();
+		const auto& nodeBitangents = node->getBitangents();
+		const auto& nodeOrigins = node->getOrigins();
 		vector<int32_t> vertexMapping;
 		vector<Vector3> indexedVertices;
 		vector<Vector3> indexedNormals;
@@ -180,7 +179,7 @@ void ModelTools::prepareForIndexedRendering(const map<string, Node*>& nodes)
 
 void ModelTools::prepareForIndexedRendering(Skinning* skinning, const vector<int32_t>& vertexMapping, int32_t vertices)
 {
-	auto& originalVerticesJointsWeights = skinning->getVerticesJointsWeights();
+	const auto& originalVerticesJointsWeights = skinning->getVerticesJointsWeights();
 	vector<vector<JointWeight>> verticesJointsWeights;
 	verticesJointsWeights.resize(vertices);
 	for (auto i = 0; i < vertices; i++) {
@@ -410,11 +409,11 @@ void ModelTools::partitionNode(Node* sourceNode, map<string, Model*>& modelsByPa
 		bool haveTangentsBitangents = facesEntity.isTangentBitangentAvailable();
 		for (const auto& face: facesEntity.getFaces()) {
 			// get face vertices and such
-			auto& vertexIndices = face.getVertexIndices();
-			auto& normalIndices = face.getNormalIndices();
-			auto& textureCoordinatesIndices = face.getTextureCoordinateIndices();
-			auto& tangentIndices = face.getTangentIndices();
-			auto& bitangentIndices = face.getBitangentIndices();
+			const auto& vertexIndices = face.getVertexIndices();
+			const auto& normalIndices = face.getNormalIndices();
+			const auto& textureCoordinatesIndices = face.getTextureCoordinateIndices();
+			const auto& tangentIndices = face.getTangentIndices();
+			const auto& bitangentIndices = face.getBitangentIndices();
 			vertex0.set(sourceNode->getVertices()[vertexIndices[0]]);
 			vertex1.set(sourceNode->getVertices()[vertexIndices[1]]);
 			vertex2.set(sourceNode->getVertices()[vertexIndices[2]]);
@@ -913,12 +912,12 @@ void ModelTools::prepareForOptimization(Node* node, const Matrix4x4& parentTrans
 void ModelTools::optimizeNode(Node* sourceNode, Model* targetModel, int diffuseTextureAtlasSize, const map<string, int>& diffuseTextureAtlasIndices, const vector<string>& excludeDiffuseTextureFileNamePatterns) {
 	if (sourceNode->getFacesEntities().size() > 0) {
 		unordered_set<int> processedTextureCoordinates;
-		auto& sourceVertices = sourceNode->getVertices();
-		auto& sourceNormals = sourceNode->getNormals();
-		auto& sourceTangents = sourceNode->getTangents();
-		auto& sourceBitangents = sourceNode->getBitangents();
-		auto& sourceTextureCoordinates = sourceNode->getTextureCoordinates();
-		auto& sourceOrigins = sourceNode->getOrigins();
+		const auto& sourceVertices = sourceNode->getVertices();
+		const auto& sourceNormals = sourceNode->getNormals();
+		const auto& sourceTangents = sourceNode->getTangents();
+		const auto& sourceBitangents = sourceNode->getBitangents();
+		const auto& sourceTextureCoordinates = sourceNode->getTextureCoordinates();
+		const auto& sourceOrigins = sourceNode->getOrigins();
 		auto targetNode = targetModel->getNodes()["tdme.node.optimized"];
 		auto targetVertices = targetNode->getVertices();
 		auto targetNormals = targetNode->getNormals();
@@ -1308,8 +1307,8 @@ void ModelTools::computeTangentsAndBitangents(Node* node)
 	Vector2 deltaUV2;
 	// create it
 	auto facesEntities = node->getFacesEntities();
-	auto& vertices = node->getVertices();
-	auto& normals = node->getNormals();
+	const auto& vertices = node->getVertices();
+	const auto& normals = node->getNormals();
 	auto textureCoordinates = node->getTextureCoordinates();
 	for (auto& faceEntity: facesEntities) {
 		auto faces = faceEntity.getFaces();

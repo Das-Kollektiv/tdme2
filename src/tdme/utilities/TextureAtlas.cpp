@@ -172,7 +172,7 @@ void TextureAtlas::update() {
 		auto& atlasTextureEntity = atlasTextures[i];
 		// compare with previous texture height if x in range of previous texture left ... left + width
 		for (auto j = 0; j < i; j++) {
-			auto& atlasTextureEntityCompare = atlasTextures[j];
+			const auto& atlasTextureEntityCompare = atlasTextures[j];
 			if (atlasTextureEntityCompare.line != atlasTextureEntity.line - 1) continue;
 			//
 			if (atlasTextureEntityCompare.left >= atlasTextureEntity.left + atlasTextureEntity.width) continue;

@@ -149,10 +149,10 @@ void MiniScript::registerMethod(ScriptMethod* scriptMethod) {
 void MiniScript::executeScriptLine() {
 	auto& scriptState = getScriptState();
 	if (scriptState.scriptIdx == SCRIPTIDX_NONE || scriptState.statementIdx == STATEMENTIDX_NONE || scriptState.running == false) return;
-	auto& script = scripts[scriptState.scriptIdx];
+	const auto& script = scripts[scriptState.scriptIdx];
 	if (script.statements.empty() == true) return;
-	auto& statement = script.statements[scriptState.statementIdx];
-	auto& syntaxTree = script.syntaxTree[scriptState.statementIdx];
+	const auto& statement = script.statements[scriptState.statementIdx];
+	const auto& syntaxTree = script.syntaxTree[scriptState.statementIdx];
 	if (VERBOSE == true) Console::println("MiniScript::executeScriptLine(): " + getStatementInformation(statement));
 
 	scriptState.statementIdx++;
@@ -357,7 +357,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 				}
 				//
 				if (argument.assignBack == true) {
-					auto& assignBackArgument = syntaxTree.arguments[argumentIdx];
+					const auto& assignBackArgument = syntaxTree.arguments[argumentIdx];
 					if (assignBackArgument.type == ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
 						assignBackArgument.value.getValueString() == "getVariable" &&
 						assignBackArgument.arguments.empty() == false) {
@@ -535,7 +535,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 				}
 				//
 				if (argumentType.assignBack == true) {
-					auto& assignBackArgument = syntaxTree.arguments[argumentIdx];
+					const auto& assignBackArgument = syntaxTree.arguments[argumentIdx];
 					if (assignBackArgument.type == ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
 						assignBackArgument.value.getValueString() == "getVariable" &&
 						assignBackArgument.arguments.empty() == false) {
@@ -712,11 +712,11 @@ bool MiniScript::validateCallable(const string& function) {
 		return false;
 	}
 	//
-	auto& script = scripts[functionScriptIdx];
+	const auto& script = scripts[functionScriptIdx];
 	auto statementIdx = 0;
 	//
 	for (const auto& syntaxTreeNode: script.syntaxTree) {
-		auto& statement = script.statements[statementIdx++];
+		const auto& statement = script.statements[statementIdx++];
 		//
 		if (validateCallable(syntaxTreeNode, statement) == false) {
 			//
@@ -736,7 +736,7 @@ bool MiniScript::validateCallable(const ScriptSyntaxTreeNode& syntaxTreeNode, co
 			}
 		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
 			{
-				auto& contextFunctions = syntaxTreeNode.method->getContextFunctions();
+				const auto& contextFunctions = syntaxTreeNode.method->getContextFunctions();
 				if (contextFunctions.empty() == false) {
 					//
 					Console::println(
@@ -780,7 +780,7 @@ bool MiniScript::validateContextFunctions(const string& function, vector<string>
 		return false;
 	}
 	//
-	auto& script = scripts[functionScriptIdx];
+	const auto& script = scripts[functionScriptIdx];
 	auto statementIdx = 0;
 	//
 	functionStack.push_back(script.condition);
@@ -808,7 +808,7 @@ bool MiniScript::validateContextFunctions(const ScriptSyntaxTreeNode& syntaxTree
 			}
 		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
 			{
-				auto& contextFunctions = syntaxTreeNode.method->getContextFunctions();
+				const auto& contextFunctions = syntaxTreeNode.method->getContextFunctions();
 				if (contextFunctions.empty() == false) {
 					//
 					string contextFunctionsString;
@@ -931,7 +931,7 @@ void MiniScript::executeStateMachine() {
 		// native
 		//	also do not run enabled conditions when beeing in (user script) function
 		if (native == true && isFunctionRunning() == false) {
-			auto& scriptState = getScriptState();
+			const auto& scriptState = getScriptState();
 			// check named conditions
 			auto now = Time::getCurrentMillis();
 			if (enabledNamedConditions.empty() == false &&
@@ -947,14 +947,14 @@ void MiniScript::executeStateMachine() {
 			break;
 		} else {
 			// break if no next statement but other state machine state or not running
-			auto& scriptState = getScriptState();
+			const auto& scriptState = getScriptState();
 			if (scriptState.state != STATEMACHINESTATE_NEXT_STATEMENT || scriptState.running == false) break;
 		}
 	}
 }
 
 void MiniScript::execute() {
-	auto& scriptState = getScriptState();
+	const auto& scriptState = getScriptState();
 
 	//
 	if (scriptState.running == false || scriptState.state == STATEMACHINESTATE_NONE) return;
@@ -1334,7 +1334,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 		}
 		// create script syntax tree
 		for (auto statementIdx = 0; statementIdx < script.statements.size(); statementIdx++) {
-			auto& statement = script.statements[statementIdx];
+			const auto& statement = script.statements[statementIdx];
 			script.syntaxTree.emplace_back();
 			auto& syntaxTree = script.syntaxTree[script.syntaxTree.size() - 1];
 			string_view methodName;
@@ -1465,7 +1465,7 @@ int MiniScript::determineScriptIdxToStart() {
 int MiniScript::determineNamedScriptIdxToStart() {
 	if (VERBOSE == true) Console::println("MiniScript::determineNamedScriptIdxToStart()");
 	// TODO: we could have a hash map here to speed up enabledConditionName -> script lookup
-	auto& scriptState = getScriptState();
+	const auto& scriptState = getScriptState();
 	for (const auto& enabledConditionName: enabledNamedConditions) {
 		auto scriptIdx = 0;
 		for (const auto& script: scripts) {
@@ -1790,7 +1790,7 @@ bool MiniScript::call(int scriptIdx, span<ScriptVariable>& argumentValues, Scrip
 	}
 	// get return value
 	{
-		auto& scriptState = getScriptState();
+		const auto& scriptState = getScriptState();
 		// run this function dude
 		returnValue = scriptState.returnValue;
 	}
@@ -1868,7 +1868,7 @@ const string MiniScript::getScriptInformation(int scriptIdx, bool includeStateme
 		Console::println("MiniScript::getScriptInformation(): invalid script index: " + to_string(scriptIdx));
 		return string();
 	}
-	auto& script = scripts[scriptIdx];
+	const auto& script = scripts[scriptIdx];
 	string result;
 	string argumentsString;
 	switch(script.scriptType) {
@@ -1972,7 +1972,7 @@ const string MiniScript::getInformation() {
 	//
 	result+= "Variables:\n";
 	{
-		auto& scriptState = getScriptState();
+		const auto& scriptState = getScriptState();
 		vector<string> variables;
 		for (const auto& [scriptVariableName, scriptVariableValue]: scriptState.variables) {
 			string variable;
@@ -6176,7 +6176,7 @@ void MiniScript::registerMethods() {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					auto& array = argumentValues[0];
+					const auto& array = argumentValues[0];
 					returnValue.setValue(static_cast<int64_t>(-1));
 					for (auto i = beginIndex; i < array.getArraySize(); i++) {
 						auto arrayValue = array.getArrayValue(i);
@@ -7195,7 +7195,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 		Console::println("MiniScript::transpileScriptStatement(): method code not found: '" + method + "'");
 		return false;
 	}
-	auto& methodCode = methodCodeMapIt->second;
+	const auto& methodCode = methodCodeMapIt->second;
 
 	// script method
 	auto scriptMethodIt = scriptMethods.find(string(method));
@@ -7383,7 +7383,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 				}
 				//
 				if (argument.assignBack == true) {
-					auto& assignBackArgument = syntaxTree.arguments[argumentIdx];
+					const auto& assignBackArgument = syntaxTree.arguments[argumentIdx];
 					if (assignBackArgument.type == ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
 						assignBackArgument.value.getValueString() == "getVariable" &&
 						assignBackArgument.arguments.empty() == false) {
@@ -7428,7 +7428,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 			}
 			//
 			if (argumentType.assignBack == true) {
-				auto& assignBackArgument = syntaxTree.arguments[argumentIdx];
+				const auto& assignBackArgument = syntaxTree.arguments[argumentIdx];
 				if (assignBackArgument.type == ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
 					assignBackArgument.value.getValueString() == "getVariable" &&
 					assignBackArgument.arguments.empty() == false) {
@@ -7544,7 +7544,7 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 	}
 
 	//
-	auto& script = scripts[scriptIdx];
+	const auto& script = scripts[scriptIdx];
 
 	//
 	string scriptType =
@@ -7594,8 +7594,8 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 	vector<string> enabledNamedConditions;
 	auto scriptStateChanged = false;
 	for (auto scriptStatementIdx = 0; scriptStatementIdx < script.statements.size(); scriptStatementIdx++) {
-		auto& statement = script.statements[scriptStatementIdx];
-		auto& syntaxTree = script.syntaxTree[scriptStatementIdx];
+		const auto& statement = script.statements[scriptStatementIdx];
+		const auto& syntaxTree = script.syntaxTree[scriptStatementIdx];
 		//
 		if (scriptStateChanged == true) {
 			generatedCodeHeader+= methodIndent + "if (miniScriptGotoStatementIdx == " + to_string(statement.statementIdx)  + ") goto miniscript_statement_" + to_string(statement.statementIdx) + "; else" + "\n";
@@ -7654,7 +7654,7 @@ bool MiniScript::transpileScriptCondition(string& generatedCode, int scriptIdx, 
 	}
 
 	//
-	auto& script = scripts[scriptIdx];
+	const auto& script = scripts[scriptIdx];
 
 	//
 	Console::println("MiniScript::transpile(): transpiling code condition for condition = '" + scripts[scriptIdx].condition + "', with name '" + scripts[scriptIdx].name + "'");
@@ -7806,7 +7806,7 @@ const string MiniScript::createSourceCode() {
 }
 
 void MiniScript::serializeMapAsJson(Document& jParent, const ScriptVariable& variable) {
-	auto& value = variable.getMapValueReference();
+	const auto& value = variable.getMapValueReference();
 	for (const auto& [subName, subVariable]: value) {
 		//
 		switch(subVariable.getType()) {
@@ -7815,31 +7815,31 @@ void MiniScript::serializeMapAsJson(Document& jParent, const ScriptVariable& var
 				break;
 			case TYPE_BOOLEAN:
 				{
-					auto& value = subVariable.getBooleanValueReference();
+					const auto& value = subVariable.getBooleanValueReference();
 					jParent.AddMember(Value(subName, jParent.GetAllocator()), Value(value), jParent.GetAllocator());
 				}
 				break;
 			case TYPE_INTEGER:
 				{
-					auto& value = subVariable.getIntegerValueReference();
+					const auto& value = subVariable.getIntegerValueReference();
 					jParent.AddMember(Value(subName, jParent.GetAllocator()), Value(value), jParent.GetAllocator());
 				}
 				break;
 			case TYPE_FLOAT:
 				{
-					auto& value = subVariable.getFloatValueReference();
+					const auto& value = subVariable.getFloatValueReference();
 					jParent.AddMember(Value(subName, jParent.GetAllocator()), Value(value), jParent.GetAllocator());
 				}
 				break;
 			case TYPE_STRING:
 				{
-					auto& value = subVariable.getStringValueReference();
+					const auto& value = subVariable.getStringValueReference();
 					jParent.AddMember(Value(subName, jParent.GetAllocator()), Value(value, jParent.GetAllocator()), jParent.GetAllocator());
 				}
 				break;
 			case TYPE_VECTOR2:
 				{
-					auto& value = subVariable.getVector2ValueReference();
+					const auto& value = subVariable.getVector2ValueReference();
 					Value jSubArray;
 					jSubArray.SetArray();
 					for (auto v: value.getArray()) {
@@ -7850,7 +7850,7 @@ void MiniScript::serializeMapAsJson(Document& jParent, const ScriptVariable& var
 				break;
 			case TYPE_VECTOR3:
 				{
-					auto& value = subVariable.getVector3ValueReference();
+					const auto& value = subVariable.getVector3ValueReference();
 					Value jSubArray;
 					jSubArray.SetArray();
 					for (auto v: value.getArray()) {
@@ -7861,7 +7861,7 @@ void MiniScript::serializeMapAsJson(Document& jParent, const ScriptVariable& var
 				break;
 			case TYPE_VECTOR4:
 				{
-					auto& value = subVariable.getVector4ValueReference();
+					const auto& value = subVariable.getVector4ValueReference();
 					Value jSubArray;
 					jSubArray.SetArray();
 					for (auto v: value.getArray()) {
@@ -7872,7 +7872,7 @@ void MiniScript::serializeMapAsJson(Document& jParent, const ScriptVariable& var
 				break;
 			case TYPE_QUATERNION:
 				{
-					auto& value = subVariable.getQuaternionValueReference();
+					const auto& value = subVariable.getQuaternionValueReference();
 					Value jSubArray;
 					jSubArray.SetArray();
 					for (auto v: value.getArray()) {
@@ -7883,7 +7883,7 @@ void MiniScript::serializeMapAsJson(Document& jParent, const ScriptVariable& var
 				break;
 			case TYPE_MATRIX3x3:
 				{
-					auto& value = subVariable.getMatrix3x3ValueReference();
+					const auto& value = subVariable.getMatrix3x3ValueReference();
 					Value jSubArray;
 					jSubArray.SetArray();
 					for (auto v: value.getArray()) {
@@ -7894,7 +7894,7 @@ void MiniScript::serializeMapAsJson(Document& jParent, const ScriptVariable& var
 				break;
 			case TYPE_MATRIX4x4:
 				{
-					auto& value = subVariable.getMatrix4x4ValueReference();
+					const auto& value = subVariable.getMatrix4x4ValueReference();
 					Value jSubArray;
 					jSubArray.SetArray();
 					for (auto v: value.getArray()) {
@@ -7905,8 +7905,8 @@ void MiniScript::serializeMapAsJson(Document& jParent, const ScriptVariable& var
 				break;
 			case TYPE_TRANSFORM:
 				{
-					auto& value = subVariable.getTransformValueReference();
-					auto transformMatrix = value.getTransformMatrix();
+					const auto& value = subVariable.getTransformValueReference();
+					const auto& transformMatrix = value.getTransformMatrix();
 					Value jSubArray;
 					jSubArray.SetArray();
 					for (auto v: transformMatrix.getArray()) {
@@ -7933,7 +7933,7 @@ void MiniScript::serializeMapAsJson(Document& jParent, const ScriptVariable& var
 				break;
 			case TYPE_SET:
 				{
-					auto& value = subVariable.getSetValueReference();
+					const auto& value = subVariable.getSetValueReference();
 					Value jSubArray;
 					jSubArray.SetArray();
 					for (auto v: value) {
@@ -7947,7 +7947,7 @@ void MiniScript::serializeMapAsJson(Document& jParent, const ScriptVariable& var
 }
 
 void MiniScript::serializeArrayAsJson(Document& jDocument, Value& jParent, const ScriptVariable& variable) {
-	auto& value = variable.getArrayValueReference();
+	const auto& value = variable.getArrayValueReference();
 	for (const auto& subVariable: value) {
 		//
 		switch(subVariable.getType()) {
@@ -7956,31 +7956,31 @@ void MiniScript::serializeArrayAsJson(Document& jDocument, Value& jParent, const
 				break;
 			case TYPE_BOOLEAN:
 				{
-					auto& value = subVariable.getBooleanValueReference();
+					const auto& value = subVariable.getBooleanValueReference();
 					jParent.PushBack(Value(value), jDocument.GetAllocator());
 				}
 				break;
 			case TYPE_INTEGER:
 				{
-					auto& value = subVariable.getIntegerValueReference();
+					const auto& value = subVariable.getIntegerValueReference();
 					jParent.PushBack(Value(value), jDocument.GetAllocator());
 				}
 				break;
 			case TYPE_FLOAT:
 				{
-					auto& value = subVariable.getFloatValueReference();
+					const auto& value = subVariable.getFloatValueReference();
 					jParent.PushBack(Value(value), jDocument.GetAllocator());
 				}
 				break;
 			case TYPE_STRING:
 				{
-					auto& value = subVariable.getStringValueReference();
+					const auto& value = subVariable.getStringValueReference();
 					jParent.PushBack(Value(value, jDocument.GetAllocator()), jDocument.GetAllocator());
 				}
 				break;
 			case TYPE_VECTOR2:
 				{
-					auto& value = subVariable.getVector2ValueReference();
+					const auto& value = subVariable.getVector2ValueReference();
 					Value jSubArray;
 					jSubArray.SetArray();
 					for (auto v: value.getArray()) {
@@ -7991,7 +7991,7 @@ void MiniScript::serializeArrayAsJson(Document& jDocument, Value& jParent, const
 				break;
 			case TYPE_VECTOR3:
 				{
-					auto& value = subVariable.getVector3ValueReference();
+					const auto& value = subVariable.getVector3ValueReference();
 					Value jSubArray;
 					jSubArray.SetArray();
 					for (auto v: value.getArray()) {
@@ -8002,7 +8002,7 @@ void MiniScript::serializeArrayAsJson(Document& jDocument, Value& jParent, const
 				break;
 			case TYPE_VECTOR4:
 				{
-					auto& value = subVariable.getVector4ValueReference();
+					const auto& value = subVariable.getVector4ValueReference();
 					Value jSubArray;
 					jSubArray.SetArray();
 					for (auto v: value.getArray()) {
@@ -8013,7 +8013,7 @@ void MiniScript::serializeArrayAsJson(Document& jDocument, Value& jParent, const
 				break;
 			case TYPE_QUATERNION:
 				{
-					auto& value = subVariable.getQuaternionValueReference();
+					const auto& value = subVariable.getQuaternionValueReference();
 					Value jSubArray;
 					jSubArray.SetArray();
 					for (auto v: value.getArray()) {
@@ -8024,7 +8024,7 @@ void MiniScript::serializeArrayAsJson(Document& jDocument, Value& jParent, const
 				break;
 			case TYPE_MATRIX3x3:
 				{
-					auto& value = subVariable.getMatrix3x3ValueReference();
+					const auto& value = subVariable.getMatrix3x3ValueReference();
 					Value jSubArray;
 					jSubArray.SetArray();
 					for (auto v: value.getArray()) {
@@ -8035,7 +8035,7 @@ void MiniScript::serializeArrayAsJson(Document& jDocument, Value& jParent, const
 				break;
 			case TYPE_MATRIX4x4:
 				{
-					auto& value = subVariable.getMatrix4x4ValueReference();
+					const auto& value = subVariable.getMatrix4x4ValueReference();
 					Value jSubArray;
 					jSubArray.SetArray();
 					for (auto v: value.getArray()) {
@@ -8046,7 +8046,7 @@ void MiniScript::serializeArrayAsJson(Document& jDocument, Value& jParent, const
 				break;
 			case TYPE_TRANSFORM:
 				{
-					auto& value = subVariable.getTransformValueReference();
+					const auto& value = subVariable.getTransformValueReference();
 					auto transformMatrix = value.getTransformMatrix();
 					Value jSubArray;
 					jSubArray.SetArray();
@@ -8074,7 +8074,7 @@ void MiniScript::serializeArrayAsJson(Document& jDocument, Value& jParent, const
 				break;
 			case TYPE_SET:
 				{
-					auto& value = subVariable.getSetValueReference();
+					const auto& value = subVariable.getSetValueReference();
 					Value jSubArray;
 					jSubArray.SetArray();
 					for (auto v: value) {
@@ -8108,7 +8108,7 @@ const string MiniScript::serializeAsJson(const ScriptVariable& variable) {
 			{
 				Document jRoot;
 				jRoot.SetArray();
-				auto& value = variable.getSetValueReference();
+				const auto& value = variable.getSetValueReference();
 				for (auto v: value) {
 					jRoot.PushBack(Value(v, jRoot.GetAllocator()), jRoot.GetAllocator());
 				}
@@ -8145,7 +8145,7 @@ const string MiniScript::serializeAsJson(const ScriptVariable& variable) {
 	return string();
 }
 
-const MiniScript::ScriptVariable MiniScript::deserializeMapJson(Value& jObjectValue) {
+const MiniScript::ScriptVariable MiniScript::deserializeMapJson(const Value& jObjectValue) {
 	//
 	ScriptVariable result;
 	result.setType(MiniScript::TYPE_MAP);
@@ -8154,7 +8154,7 @@ const MiniScript::ScriptVariable MiniScript::deserializeMapJson(Value& jObjectVa
 	//
 	for (auto& jObjectIt: jObject) {
 		auto name = string(jObjectIt.name.GetString());
-		auto& value = jObjectIt.value;
+		const auto& value = jObjectIt.value;
 		//
 		if (value.IsNull() == true) {
 			result.setMapValue(name, ScriptVariable());
@@ -8184,14 +8184,14 @@ const MiniScript::ScriptVariable MiniScript::deserializeMapJson(Value& jObjectVa
 	return result;
 }
 
-const MiniScript::ScriptVariable MiniScript::deserializeArrayJson(Value& jArrayValue) {
+const MiniScript::ScriptVariable MiniScript::deserializeArrayJson(const Value& jArrayValue) {
 	//
 	ScriptVariable result;
 	result.setType(MiniScript::TYPE_ARRAY);
 	//
 	auto jArray = jArrayValue.GetArray();
 	for (auto i = 0; i < jArray.Size(); i++) {
-		auto& value = jArray[i];
+		const auto& value = jArray[i];
 		//
 		if (value.IsNull() == true) {
 			result.pushArrayValue(ScriptVariable());

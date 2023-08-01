@@ -704,14 +704,14 @@ void SceneEditorTabView::selectEntityInternal(Entity* entity)
 		auto decalObbEntity = decalEntityHierarchy != nullptr?decalEntityHierarchy->getEntity("tdme.prototype.bv.0"):nullptr;
 		if (decalObbEntity != nullptr) decalObbEntity->setEnabled(true);
 	}
-	auto& red = entityColors["red"];
+	const auto& red = entityColors["red"];
 	entity->setEffectColorAdd(Color4(red.colorAddR, red.colorAddG, red.colorAddB, 0.0f));
 	entity->setEffectColorMul(Color4(red.colorMulR, red.colorMulG, red.colorMulB, 1.0f));
 }
 
 void SceneEditorTabView::unselectEntityInternal(Entity* entity)
 {
-	auto& color = entityColors["none"];
+	const auto& color = entityColors["none"];
 	entity->setEffectColorAdd(Color4(color.colorAddR, color.colorAddG, color.colorAddB, 0.0f));
 	entity->setEffectColorMul(Color4(color.colorMulR, color.colorMulG, color.colorMulB, 1.0f));
 	auto sceneEntity = scene->getEntity(entity->getId());
@@ -721,7 +721,7 @@ void SceneEditorTabView::unselectEntityInternal(Entity* entity)
 	if (colorProperty != nullptr) {
 		auto entityColorIt = entityColors.find(colorProperty->getValue());
 		if (entityColorIt != entityColors.end()) {
-			auto& entityColor = entityColorIt->second;
+			const auto& entityColor = entityColorIt->second;
 			entity->setEffectColorAdd(Color4(entity->getEffectColorAdd().getRed() + entityColor.colorAddR, entity->getEffectColorAdd().getGreen() + entityColor.colorAddG, entity->getEffectColorAdd().getBlue() + entityColor.colorAddB, 0.0f));
 			entity->setEffectColorMul(Color4(entity->getEffectColorMul().getRed() * entityColor.colorMulR, entity->getEffectColorMul().getGreen() * entityColor.colorMulG, entity->getEffectColorMul().getBlue() * entityColor.colorMulB, 1.0f));
 		}
@@ -939,14 +939,14 @@ void SceneEditorTabView::pasteEntities(bool displayOnly)
 		if (entity == nullptr) continue;
 		BoundingBox cbv;
 		cbv.fromBoundingVolumeWithTransform(entity->getBoundingBox(), copiedEntity->getTransform());
-		auto& entityBBMinXYZ = cbv.getMin().getArray();
-		if (entityBBMinXYZ[0] < pasteEntitiesMinX) pasteEntitiesMinX = entityBBMinXYZ[0];
-		if (entityBBMinXYZ[1] < pasteEntitiesMinY) pasteEntitiesMinY = entityBBMinXYZ[1];
-		if (entityBBMinXYZ[2] < pasteEntitiesMinZ) pasteEntitiesMinZ = entityBBMinXYZ[2];
-		auto& entityBBMaxXYZ = cbv.getMax().getArray();
-		if (entityBBMaxXYZ[0] > pasteEntitiesMaxX) pasteEntitiesMaxX = entityBBMaxXYZ[0];
-		if (entityBBMaxXYZ[1] > pasteEntitiesMaxY) pasteEntitiesMaxY = entityBBMaxXYZ[1];
-		if (entityBBMaxXYZ[2] > pasteEntitiesMaxZ) pasteEntitiesMaxZ = entityBBMaxXYZ[2];
+		const auto& entityBBMin = cbv.getMin();
+		if (entityBBMin[0] < pasteEntitiesMinX) pasteEntitiesMinX = entityBBMin[0];
+		if (entityBBMin[1] < pasteEntitiesMinY) pasteEntitiesMinY = entityBBMin[1];
+		if (entityBBMin[2] < pasteEntitiesMinZ) pasteEntitiesMinZ = entityBBMin[2];
+		const auto& entityBBMax = cbv.getMax();
+		if (entityBBMax[0] > pasteEntitiesMaxX) pasteEntitiesMaxX = entityBBMax[0];
+		if (entityBBMax[1] > pasteEntitiesMaxY) pasteEntitiesMaxY = entityBBMax[1];
+		if (entityBBMax[2] > pasteEntitiesMaxZ) pasteEntitiesMaxZ = entityBBMax[2];
 	}
 	auto centerX = (pasteEntitiesMaxX - pasteEntitiesMinX) / 2.0f;
 	auto centerZ = (pasteEntitiesMaxZ - pasteEntitiesMinZ) / 2.0f;

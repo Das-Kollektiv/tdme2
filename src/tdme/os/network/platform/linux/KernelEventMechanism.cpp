@@ -120,7 +120,7 @@ void KernelEventMechanism::decodeKernelEvent(const unsigned int index, NIOIntere
 	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
 	//
-	auto& event = psd->epEventList[index];
+	const auto& event = psd->epEventList[index];
 
 	// we only support user data
 	cookie = (void*)event.data.ptr;

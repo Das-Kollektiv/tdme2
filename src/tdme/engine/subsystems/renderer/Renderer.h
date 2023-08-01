@@ -1367,7 +1367,7 @@ public:
 	 * @param contextIdx context index
 	 * @param position position
 	 */
-	inline void setEnvironmentMappingCubeMapPosition(int contextIdx, array<float, 3>& position) {
+	inline void setEnvironmentMappingCubeMapPosition(int contextIdx, const array<float, 3>& position) {
 		auto& rendererContext = rendererContexts[contextIdx];
 		rendererContext.environmentMappingCubeMapPosition = position;
 	}

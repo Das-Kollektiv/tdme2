@@ -153,9 +153,42 @@ void GUIInputInternalNode::render(GUIRenderer* guiRenderer)
 		float top = computedConstraints.top + computedConstraints.alignmentTop + border.top + padding.top;
 		float width = 2;
 		float height = computedConstraints.height - border.top - border.bottom- padding.top - padding.bottom;
-		auto& colorData = (disable == false?color:colorDisabled).getArray();
+		const auto& cursorColor = disable == false?color:colorDisabled;
 		guiRenderer->bindTexture(0);
-		guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, colorData[0], colorData[1], colorData[2], colorData[3], 0.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, colorData[0], colorData[1], colorData[2], colorData[3], 1.0f, 1.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, colorData[0], colorData[1], colorData[2], colorData[3], 1.0f, 0.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, colorData[0], colorData[1], colorData[2], colorData[3], 0.0f, 0.0f);
+		guiRenderer->addQuad(
+			((left) / (screenWidth / 2.0f)) - 1.0f,
+			((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+			cursorColor[0],
+			cursorColor[1],
+			cursorColor[2],
+			cursorColor[3],
+			0.0f,
+			1.0f,
+			((left + width) / (screenWidth / 2.0f)) - 1.0f,
+			((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+			cursorColor[0],
+			cursorColor[1],
+			cursorColor[2],
+			cursorColor[3],
+			1.0f,
+			1.0f,
+			((left + width) / (screenWidth / 2.0f)) - 1.0f,
+			((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+			cursorColor[0],
+			cursorColor[1],
+			cursorColor[2],
+			cursorColor[3],
+			1.0f,
+			0.0f,
+			((left) / (screenWidth / 2.0f)) - 1.0f,
+			((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+			cursorColor[0],
+			cursorColor[1],
+			cursorColor[2],
+			cursorColor[3],
+			0.0f,
+			0.0f
+		);
 		guiRenderer->render();
 	}
 }

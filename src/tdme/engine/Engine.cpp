@@ -1660,7 +1660,7 @@ Entity* Engine::getEntityByMousePosition(
 			if (filter != nullptr && filter->filterEntity(entity) == false) continue;
 			// do the collision test
 			for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
-				auto& vertices = it->next();
+				const auto& vertices = it->next();
 				if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], nearPlaneWorldCoordinate, farPlaneWorldCoordinate, lineTriangleContact) == true) {
 					auto entityDistance = lineTriangleContact.sub(nearPlaneWorldCoordinate).computeLengthSquared();
 					// check if match or better match
@@ -1725,7 +1725,7 @@ Entity* Engine::getEntityByMousePosition(
 		// do the collision test
 		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getWorldBoundingBox(), nearPlaneWorldCoordinate, farPlaneWorldCoordinate, boundingBoxLineContactMin, boundingBoxLineContactMax) == true) {
 			for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
-				auto& vertices = it->next();
+				const auto& vertices = it->next();
 				if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], nearPlaneWorldCoordinate, farPlaneWorldCoordinate, lineTriangleContact) == true) {
 					auto entityDistance = lineTriangleContact.sub(nearPlaneWorldCoordinate).computeLengthSquared();
 					// check if match or better match
@@ -1843,7 +1843,7 @@ Entity* Engine::getEntityByMousePosition(
 			// do the collision test
 			if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getWorldBoundingBox(), nearPlaneWorldCoordinate, farPlaneWorldCoordinate, boundingBoxLineContactMin, boundingBoxLineContactMax) == true) {
 				for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
-					auto& vertices = it->next();
+					const auto& vertices = it->next();
 					if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], nearPlaneWorldCoordinate, farPlaneWorldCoordinate, lineTriangleContact) == true) {
 						auto entityDistance = lineTriangleContact.sub(nearPlaneWorldCoordinate).computeLengthSquared();
 						// check if match or better match
@@ -1869,7 +1869,7 @@ Entity* Engine::getEntityByMousePosition(
 			auto object = entity->getLODObject();
 			if (object != nullptr) {
 				for (auto it = object->getTransformedFacesIterator()->iterator(); it->hasNext();) {
-					auto& vertices = it->next();
+					const auto& vertices = it->next();
 					if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], nearPlaneWorldCoordinate, farPlaneWorldCoordinate, lineTriangleContact) == true) {
 						auto entityDistance = lineTriangleContact.sub(nearPlaneWorldCoordinate).computeLengthSquared();
 						// check if match or better match
@@ -1972,7 +1972,7 @@ Entity* Engine::doRayCasting(
 		// do the collision test
 		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getWorldBoundingBox(), startPoint, endPoint, boundingBoxLineContactMin, boundingBoxLineContactMax) == true) {
 			for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
-				auto& vertices = it->next();
+				const auto& vertices = it->next();
 				if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], startPoint, endPoint, lineTriangleContact) == true) {
 					auto entityDistance = lineTriangleContact.clone().sub(startPoint).computeLengthSquared();
 					// check if match or better match
@@ -2000,7 +2000,7 @@ Entity* Engine::doRayCasting(
 			// do the collision test
 			if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getWorldBoundingBox(), startPoint, endPoint, boundingBoxLineContactMin, boundingBoxLineContactMax) == true) {
 				for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
-					auto& vertices = it->next();
+					const auto& vertices = it->next();
 					if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], startPoint, endPoint, lineTriangleContact) == true) {
 						auto entityDistance = lineTriangleContact.clone().sub(startPoint).computeLengthSquared();
 						// check if match or better match
@@ -2025,7 +2025,7 @@ Entity* Engine::doRayCasting(
 			auto object = entity->getLODObject();
 			if (object != nullptr) {
 				for (auto it = object->getTransformedFacesIterator()->iterator(); it->hasNext();) {
-					auto& vertices = it->next();
+					const auto& vertices = it->next();
 					if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], startPoint, endPoint, lineTriangleContact) == true) {
 						auto entityDistance = lineTriangleContact.sub(startPoint).computeLengthSquared();
 						// check if match or better match
@@ -2675,7 +2675,7 @@ void Engine::dumpShaders() {
 			default: break;
 		}
 		Console::println(string("TDME2::registered " + shaderTypeString + " shader: ") + shaderId);
-		auto& defaultShaderParameters = getShaderParameterDefaults(shaderId);
+		const auto& defaultShaderParameters = getShaderParameterDefaults(shaderId);
 		if (defaultShaderParameters.size() > 0) {
 			Console::print("\t");
 			for (const auto& [parameterName, parameterValue]: defaultShaderParameters) {
@@ -2702,7 +2702,7 @@ void Engine::dumpShaders() {
 					case ShaderParameter::TYPE_VECTOR2:
 						{
 							Console::print("=Vector2(");
-							auto& shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector2Value().getArray();
+							const auto& shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector2Value().getArray();
 							for (auto i = 0; i < shaderParameterArray.size(); i++) {
 								if (i != 0) Console::print(",");
 								Console::print(to_string(shaderParameterArray[i]));
@@ -2713,7 +2713,7 @@ void Engine::dumpShaders() {
 					case ShaderParameter::TYPE_VECTOR3:
 						{
 							Console::print("=Vector3(");
-							auto& shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector3Value().getArray();
+							const auto& shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector3Value().getArray();
 							for (auto i = 0; i < shaderParameterArray.size(); i++) {
 								if (i != 0) Console::print(",");
 								Console::print(to_string(shaderParameterArray[i]));
@@ -2724,7 +2724,7 @@ void Engine::dumpShaders() {
 					case ShaderParameter::TYPE_VECTOR4:
 						{
 							Console::print("=Vector4(");
-							auto& shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector4Value().getArray();
+							const auto& shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector4Value().getArray();
 							for (auto i = 0; i < shaderParameterArray.size(); i++) {
 								if (i != 0) Console::print(",");
 								Console::print(to_string(shaderParameterArray[i]));

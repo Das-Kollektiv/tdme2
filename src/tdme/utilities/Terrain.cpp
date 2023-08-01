@@ -295,7 +295,7 @@ void Terrain::createTerrainModels(float width, float depth, float y, vector<floa
 			// lod1
 			{
 				vector<int32_t> lod1Indices;
-				auto& facesIndices = partitionTerrainFaces[partitionIdx];
+				const auto& facesIndices = partitionTerrainFaces[partitionIdx];
 				auto finishedZ = false;
 				for (auto z = 0; finishedZ == false && z < trianglesPerZ; z+= 4) {
 					if (z > trianglesPerZ - 4) {
@@ -323,7 +323,7 @@ void Terrain::createTerrainModels(float width, float depth, float y, vector<floa
 			// lod2
 			{
 				vector<int32_t> lod2Indices;
-				auto& facesIndices = partitionTerrainFaces[partitionIdx];
+				const auto& facesIndices = partitionTerrainFaces[partitionIdx];
 				auto finishedZ = false;
 				for (auto z = 0; finishedZ == false && z < trianglesPerZ; z+= 8) {
 					if (z > trianglesPerZ - 8) {
@@ -351,7 +351,7 @@ void Terrain::createTerrainModels(float width, float depth, float y, vector<floa
 			// lod3
 			{
 				vector<int32_t> lod3Indices;
-				auto& facesIndices = partitionTerrainFaces[partitionIdx];
+				const auto& facesIndices = partitionTerrainFaces[partitionIdx];
 				auto finishedZ = false;
 				for (auto z = 0; finishedZ == false && z < trianglesPerZ; z+= 16) {
 					if (z > trianglesPerZ - 16) {
@@ -1553,7 +1553,7 @@ void Terrain::applyFoliageBrush(
 		for (auto i = 0; i < brushMapCountMap.size(); i++) {
 			auto brushMapPrototypeCountMapEntityITemplate = brushMapCountMapTemplate[i][foliageBrushPrototype.prototypeId];
 			auto brushMapPrototypeCountMapEntityI = brushMapCountMap[i][foliageBrushPrototype.prototypeId];
-			auto& brushMapIdxPerDensityPerPrototypeVector = brushMapIdxPerDensityPerPrototype[foliageBrushPrototype.prototypeId][static_cast<int>(brushMapPrototypeCountMapEntityITemplate * 1000.0f)];
+			const auto& brushMapIdxPerDensityPerPrototypeVector = brushMapIdxPerDensityPerPrototype[foliageBrushPrototype.prototypeId][static_cast<int>(brushMapPrototypeCountMapEntityITemplate * 1000.0f)];
 			auto j = brushMapIdxPerDensityPerPrototypeVector[static_cast<int>(brushMapIdxPerDensityPerPrototypeVector.size() - 1) * Math::random()];
 			auto brushMapPrototypeCountMapEntityJ = brushMapCountMap[j][foliageBrushPrototype.prototypeId];
 			brushMapCountMap[j][foliageBrushPrototype.prototypeId] = brushMapPrototypeCountMapEntityI;
@@ -1824,7 +1824,7 @@ void Terrain::applyFoliageDeleteBrush(
 
 						for (auto& [prototypeId, transformVector]: foliageMaps[partitionIdx]) {
 							for (auto i = 0; i < transformVector.size(); i++) {
-								auto& translation = transformVector[i].getTranslation();
+								const auto& translation = transformVector[i].getTranslation();
 								if (appliedDensity > 0.0f &&
 									translation.getX() >= leftVertex.getX() - 0.01f &&
 									translation.getX() <= vertex.getX() + 0.01f &&
@@ -1948,7 +1948,7 @@ void Terrain::updateFoliageTerrainBrush(
 			for (auto& [prototypeId, transformVector]: foliageMaps[partitionIdx]) {
 				if (prototypeId == -1) continue;
 				for (auto& transform: transformVector) {
-					auto& translation = transform.getTranslation();
+					const auto& translation = transform.getTranslation();
 					if (brushTextureDensity > 0.0f &&
 						translation.getX() >= leftVertex.getX() &&
 						translation.getX() <= vertex.getX() &&
@@ -2115,7 +2115,7 @@ void Terrain::updateFoliageTerrainRampBrush(
 			for (auto& [prototypeId, transformVector]: foliageMaps[partitionIdx]) {
 				if (prototypeId == -1) continue;
 				for (auto& transform: transformVector) {
-					auto& translation = transform.getTranslation();
+					const auto& translation = transform.getTranslation();
 					if (translation.getX() >= leftVertex.getX() &&
 						translation.getX() <= vertex.getX() &&
 						translation.getZ() >= topVertex.getZ() &&

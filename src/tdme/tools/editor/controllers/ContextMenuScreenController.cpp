@@ -137,7 +137,7 @@ void ContextMenuScreenController::onChange(GUIElementNode* node) {
 		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("context_menu_addnode_list"))->clearSubNodes();
 		//
 		auto searchValue = StringTools::toLowerCase(node->getController()->getValue().getString());
-		auto& properties = tscriptMethods.getProperties();
+		const auto& properties = tscriptMethods.getProperties();
 		for (const auto& [methodNameCandidate, methodDescription]: properties) {
 			auto methodName = string("unknown");
 			if (StringTools::startsWith(methodNameCandidate, "miniscript.basemethod.") == true) {
@@ -181,7 +181,7 @@ void ContextMenuScreenController::setupVisualCodeAddNodeContextMenu() {
 	//
 	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("context_menu_addnode_list"))->clearSubNodes();
 	//
-	auto& properties = tscriptMethods.getProperties();
+	const auto& properties = tscriptMethods.getProperties();
 	for (const auto& [methodNameCandidate, methodDescription]: properties) {
 		auto methodName = string("unknown");
 		if (StringTools::startsWith(methodNameCandidate, "miniscript.basemethod.") == true) {
@@ -226,8 +226,8 @@ void ContextMenuScreenController::onTooltipCloseRequest() {
 }
 
 void ContextMenuScreenController::handleInputEvents() {
-	auto& mouseEvents = Engine::getInstance()->getGUI()->getMouseEvents();
-	auto& keyboardEvents = Engine::getInstance()->getGUI()->getKeyboardEvents();
+	const auto& mouseEvents = Engine::getInstance()->getGUI()->getMouseEvents();
+	const auto& keyboardEvents = Engine::getInstance()->getGUI()->getKeyboardEvents();
 	for (const auto& event: mouseEvents) {
 		if (event.isProcessed() == true) continue;
 		if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED &&

@@ -95,13 +95,13 @@ void GUIStyledTextNodeController::postLayout()
 	// extend styledTextNode auto width to parent width if this is larger
 	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
 	if (styledTextNode->getRequestsConstraints().widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
-		auto& styledTextNodeBorder = styledTextNode->getBorder();
-		auto& styledTextNodePadding = styledTextNode->getPadding();
+		const auto& styledTextNodeBorder = styledTextNode->getBorder();
+		const auto& styledTextNodePadding = styledTextNode->getPadding();
 		auto styledTextNodeAutoWidth = styledTextNode->getContentWidth();
 		auto parentNode = styledTextNode->getParentNode();
 		auto parentNodeWidth = parentNode->getComputedConstraints().width;
-		auto& parentNodeBorder = parentNode->getBorder();
-		auto& parentNodePadding = parentNode->getPadding();
+		const auto& parentNodeBorder = parentNode->getBorder();
+		const auto& parentNodePadding = parentNode->getPadding();
 		if (parentNodeWidth > styledTextNodeAutoWidth) {
 			styledTextNode->getComputedConstraints().width =
 				parentNodeWidth
@@ -110,13 +110,13 @@ void GUIStyledTextNodeController::postLayout()
 		}
 	}
 	if (styledTextNode->getRequestsConstraints().heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
-		auto& styledTextNodeBorder = styledTextNode->getBorder();
-		auto& styledTextNodePadding = styledTextNode->getPadding();
+		const auto& styledTextNodeBorder = styledTextNode->getBorder();
+		const auto& styledTextNodePadding = styledTextNode->getPadding();
 		auto styledTextNodeAutoHeight = styledTextNode->getContentHeight();
 		auto parentNode = styledTextNode->getParentNode();
 		auto parentNodeHeight = parentNode->getComputedConstraints().height;
-		auto& parentNodeBorder = parentNode->getBorder();
-		auto& parentNodePadding = parentNode->getPadding();
+		const auto& parentNodeBorder = parentNode->getBorder();
+		const auto& parentNodePadding = parentNode->getPadding();
 		if (parentNodeHeight > styledTextNodeAutoHeight) {
 			styledTextNode->getComputedConstraints().height =
 				parentNodeHeight
@@ -165,7 +165,7 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 				case GUIMouseEvent::MOUSEEVENT_MOVED:
 					{
 						// find URL area that had a hit and setup corresponding cursor
-						auto& urlAreas = styledTextNode->getURLAreas();
+						const auto& urlAreas = styledTextNode->getURLAreas();
 						const GUIStyledTextNode::URLArea* urlAreaHit = nullptr;
 						for (auto& urlArea: urlAreas) {
 							if (nodeMouseCoordinate.getX() < urlArea.left ||
@@ -201,7 +201,7 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 						//
 						if (doubleClick == true) {
 							//
-							auto& text = styledTextNode->getText();
+							const auto& text = styledTextNode->getText();
 							auto textLength = text.length();
 							if (textLength > 0) {
 								auto wordLeftIdx = 0;
@@ -256,7 +256,7 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 						if (input == true) unsetTypingHistoryEntryIdx();
 
 						// find URL area that had a hit and setup corresponding cursor
-						auto& urlAreas = styledTextNode->getURLAreas();
+						const auto& urlAreas = styledTextNode->getURLAreas();
 						const GUIStyledTextNode::URLArea* urlAreaHit = nullptr;
 						for (auto& urlArea: urlAreas) {
 							if (nodeMouseCoordinate.getX() < urlArea.left ||
@@ -455,7 +455,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						if (lineStartIdx != 0) lineStartIdx++;
 						if (event->isControlDown() == true) {
 							string delimiter = "^´!\"§$%&/()=?`+#<,.-*'>;:_";
-							auto& text = styledTextNode->getText();
+							const auto& text = styledTextNode->getText();
 							auto textLength = text.length();
 							if (textLength > 0) {
 								wordLeftIdx = lineStartIdx;
@@ -506,7 +506,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						auto wordRightIdx = -1;
 						if (event->isControlDown() == true) {
 							string delimiter = "^´!\"§$%&/()=?`+#<,.-*'>;:_";
-							auto& text = styledTextNode->getText();
+							const auto& text = styledTextNode->getText();
 							auto lineEndIdx = styledTextNode->getNextNewLineUtf8(index);
 							if (lineEndIdx > 0) {
 								wordRightIdx = lineEndIdx;
@@ -564,7 +564,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							if (selectionIndex == -1) selectionIndex = index;
 						}
 						//
-						auto& text = styledTextNode->getText();
+						const auto& text = styledTextNode->getText();
 						// find index of current line newline and store difference
 						auto lineNewLineIndex = styledTextNode->getPreviousNewLineUtf8(index);
 						if (lineNewLineIndex == index) lineNewLineIndex = styledTextNode->getPreviousNewLineUtf8(index - 1);
@@ -612,7 +612,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							if (selectionIndex == -1) selectionIndex = index;
 						}
 						//
-						auto& text = styledTextNode->getText();
+						const auto& text = styledTextNode->getText();
 						// find index of current line newline and store difference
 						auto lineNewLineIndex = styledTextNode->getPreviousNewLineUtf8(index);
 						if (lineNewLineIndex == index) lineNewLineIndex = styledTextNode->getPreviousNewLineUtf8(index - 1);
@@ -730,7 +730,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							// find out current line indenting
 							string newLinePrefix;
 							{
-								auto& text = styledTextNode->getText();
+								const auto& text = styledTextNode->getText();
 								auto lineNewLineIndex = styledTextNode->getPreviousNewLineUtf8(index);
 								if (lineNewLineIndex == index) lineNewLineIndex = styledTextNode->getPreviousNewLineUtf8(index - 1);
 								lineNewLineIndex++;
@@ -958,7 +958,7 @@ void GUIStyledTextNodeController::removeCodeCompletionListener(CodeCompletionLis
 void GUIStyledTextNodeController::forwardRemoveText(int idx, int count) {
 	// determine binary start and end positions
 	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
-	auto& text = styledTextNode->getText();
+	const auto& text = styledTextNode->getText();
 	auto u8It = text.getUTF8CharacterIterator();
 	u8It.seekCharacterPosition(idx);
 	auto binaryStartIdx = u8It.getBinaryPosition();
@@ -973,7 +973,7 @@ void GUIStyledTextNodeController::forwardRemoveText(int idx, int count) {
 void GUIStyledTextNodeController::forwardInsertText(int idx, int count) {
 	// determine binary start and end positions
 	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
-	auto& text = styledTextNode->getText();
+	const auto& text = styledTextNode->getText();
 	auto u8It = text.getUTF8CharacterIterator();
 	u8It.seekCharacterPosition(idx);
 	auto binaryStartIdx = u8It.getBinaryPosition();
@@ -988,7 +988,7 @@ void GUIStyledTextNodeController::forwardInsertText(int idx, int count) {
 
 void GUIStyledTextNodeController::forwardCodeCompletion(int idx) {
 	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
-	auto& text = styledTextNode->getText();
+	const auto& text = styledTextNode->getText();
 	auto binaryIdx = text.getUtf8BinaryIndex(idx);
 	for (auto i = 0; i < changeListeners.size(); i++) {
 		codeCompletionListeners[i]->onCodeCompletion(binaryIdx);
@@ -1029,7 +1029,7 @@ void GUIStyledTextNodeController::storeTypingHistoryEntry() {
 
 	//
 	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
-	auto& text = styledTextNode->getText();
+	const auto& text = styledTextNode->getText();
 	auto u8It = text.getUTF8CharacterIterator();
 	u8It.seekCharacterPosition(historyEntryIdx);
 	string data;
@@ -1048,7 +1048,7 @@ void GUIStyledTextNodeController::storeTypingHistoryEntry() {
 
 	//
 	for (auto i = history.size() - 1; i < history.size(); i++) {
-		auto& historyEntry = history[i];
+		const auto& historyEntry = history[i];
 		string historyEntryTypeString;
 		switch (historyEntry.type) {
 			case HistoryEntry::TYPE_NONE:
@@ -1090,7 +1090,7 @@ void GUIStyledTextNodeController::storeTypingHistoryEntry2(int index, const stri
 
 	//
 	for (auto i = history.size() - 1; i < history.size(); i++) {
-		auto& historyEntry = history[i];
+		const auto& historyEntry = history[i];
 		string historyEntryTypeString;
 		switch (historyEntry.type) {
 			case HistoryEntry::TYPE_NONE:
@@ -1112,7 +1112,7 @@ void GUIStyledTextNodeController::storeDeletionHistoryInternal(int index, int co
 	Console::println("GUIStyledTextNodeController::storeDeletionHistoryInternal(): " + to_string(index) + " / " + to_string(count));
 	//
 	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
-	auto& text = styledTextNode->getText();
+	const auto& text = styledTextNode->getText();
 	auto u8It = text.getUTF8CharacterIterator();
 	u8It.seekCharacterPosition(index);
 	string data;
@@ -1128,7 +1128,7 @@ void GUIStyledTextNodeController::storeDeletionHistoryInternal(int index, int co
 
 	//
 	for (auto i = history.size() - 1; i < history.size(); i++) {
-		auto& historyEntry = history[i];
+		const auto& historyEntry = history[i];
 		string historyEntryTypeString;
 		switch (historyEntry.type) {
 			case HistoryEntry::TYPE_NONE:
@@ -1164,7 +1164,7 @@ void GUIStyledTextNodeController::redo() {
 	if (historyIdx >= history.size()) return;
 
 	//
-	auto& historyEntry = history[historyIdx];
+	const auto& historyEntry = history[historyIdx];
 
 	//
 	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
@@ -1215,7 +1215,7 @@ void GUIStyledTextNodeController::undo() {
 	historyIdx--;
 
 	//
-	auto& historyEntry = history[historyIdx];
+	const auto& historyEntry = history[historyIdx];
 
 	//
 	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
@@ -1250,7 +1250,7 @@ void GUIStyledTextNodeController::undo() {
 
 void GUIStyledTextNodeController::selectAll() {
 	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
-	auto& text = styledTextNode->getText();
+	const auto& text = styledTextNode->getText();
 	index = 0;
 	selectionIndex = text.length() - 1;
 }
@@ -1261,7 +1261,7 @@ void GUIStyledTextNodeController::cut() {
 	//
 	if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
 		auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
-		auto& text = styledTextNode->getText();
+		const auto& text = styledTextNode->getText();
 		Application::getApplication()->setClipboardContent(StringTools::substring(text.getString(), Math::min(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex)), Math::max(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex))));
 		storeDeletionHistoryEntryStoreTypingEntry(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 		styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
@@ -1277,7 +1277,7 @@ void GUIStyledTextNodeController::cut() {
 void GUIStyledTextNodeController::copy() {
 	if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
 		auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
-		auto& text = styledTextNode->getText();
+		const auto& text = styledTextNode->getText();
 		Application::getApplication()->setClipboardContent(StringTools::substring(text.getString(), Math::min(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex)), Math::max(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex))));
 	}
 }

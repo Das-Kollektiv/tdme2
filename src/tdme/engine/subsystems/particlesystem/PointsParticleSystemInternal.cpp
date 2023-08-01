@@ -107,7 +107,7 @@ void PointsParticleSystemInternal::updateParticles()
 
 	//
 	Vector3 center;
-	auto& localTransformMatrix = localTransform.getTransformMatrix();
+	const auto& localTransformMatrix = localTransform.getTransformMatrix();
 	localTransformMatrix.getTranslation(center);
 	center.add(emitter->getCenter());
 	//
@@ -144,8 +144,8 @@ void PointsParticleSystemInternal::updateParticles()
 		// translation
 		particle.position.add(velocityForTime.set(particle.velocity).scale(static_cast<float>(timeDelta) / 1000.0f));
 		// color
-		auto& color = particle.color.getArray();
-		auto& colorAdd = particle.colorAdd.getArray();
+		auto& color = particle.color;
+		const auto& colorAdd = particle.colorAdd;
 		color[0] += colorAdd[0] * static_cast<float>(timeDelta);
 		color[1] += colorAdd[1] * static_cast<float>(timeDelta);
 		color[2] += colorAdd[2] * static_cast<float>(timeDelta);

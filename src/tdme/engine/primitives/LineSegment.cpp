@@ -100,16 +100,14 @@ bool LineSegment::doesBoundingBoxCollideWithLineSegment(BoundingBox* boundingBox
 	auto minXYZ = boundingBox->getMin().getArray();
 	auto maxXYZ = boundingBox->getMax().getArray();
 	d.set(q).sub(p);
-	auto& directionXYZ = d.getArray();
-	auto& pointXYZ = p.getArray();
 	for (auto i = 0; i < 3; i++) {
-		if (Math::abs(directionXYZ[i]) < Math::EPSILON &&
-			(pointXYZ[i] <= minXYZ[i] || pointXYZ[i] >= maxXYZ[i])) {
+		if (Math::abs(d[i]) < Math::EPSILON &&
+			(p[i] <= minXYZ[i] || p[i] >= maxXYZ[i])) {
 			return false;
 		} else {
-			auto odd = 1.0f / directionXYZ[i];
-			auto t1 = (minXYZ[i] - pointXYZ[i]) * odd;
-			auto t2 = (maxXYZ[i] - pointXYZ[i]) * odd;
+			auto odd = 1.0f / d[i];
+			auto t1 = (minXYZ[i] - p[i]) * odd;
+			auto t2 = (maxXYZ[i] - p[i]) * odd;
 			if (t1 > t2) {
 				auto tmp = t1;
 				t1 = t2;
@@ -137,14 +135,13 @@ bool LineSegment::doesOrientedBoundingBoxCollideWithLineSegment(OrientedBounding
 	Vector3 d2;
 	auto tmin = 0.0f;
 	auto tmax = 1.0f;
-	auto obbAxes = orientedBoundingBox->getAxes();
-	auto obbCenter = orientedBoundingBox->getCenter();
-	auto obbHalfExtension = orientedBoundingBox->getHalfExtension();
-	auto& obbHalfExtensionXYZ = obbHalfExtension.getArray();
+	const auto& obbAxes = orientedBoundingBox->getAxes();
+	const auto& obbCenter = orientedBoundingBox->getCenter();
+	const auto& obbHalfExtension = orientedBoundingBox->getHalfExtension();
 	d.set(q).sub(p);
 	for (auto i = 0; i < 3; i++) {
 		auto directionLengthOnAxis = Vector3::computeDotProduct(d, obbAxes[i]);
-		auto obbExtensionLengthOnAxis = obbHalfExtensionXYZ[i];
+		auto obbExtensionLengthOnAxis = obbHalfExtension[i];
 		auto obbCenterLengthOnAxis = Vector3::computeDotProduct(obbCenter, obbAxes[i]);
 		auto pointLengthOnAxis = Vector3::computeDotProduct(p, obbAxes[i]);
 		if (Math::abs(directionLengthOnAxis) < Math::EPSILON &&

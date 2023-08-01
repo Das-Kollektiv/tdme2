@@ -60,10 +60,10 @@ void FacesEntity::determineFeatures()
 	textureCoordinatesAvailable = false;
 	tangentBitangentAvailable = false;
 	for (auto& face: faces) {
-		auto& textureCoordinateIndices = face.getTextureCoordinateIndices();
+		const auto& textureCoordinateIndices = face.getTextureCoordinateIndices();
 		if (textureCoordinateIndices[0] != -1 && textureCoordinateIndices[1] != -1 && textureCoordinateIndices[2] != -1) textureCoordinatesAvailable = true;
-		auto& tangentIndices = face.getTangentIndices();
-		auto& biTangentIndices = face.getBitangentIndices();
+		const auto& tangentIndices = face.getTangentIndices();
+		const auto& biTangentIndices = face.getBitangentIndices();
 		if (tangentIndices[0] != -1 && tangentIndices[1] != -1 && tangentIndices[2] != -1 &&
 			biTangentIndices[0] != -1 && biTangentIndices[1] != -1 && biTangentIndices[2] != -1) tangentBitangentAvailable = true;
 	}

@@ -115,7 +115,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 			}
 			void onMove(GUINode* node) {
 				auto visualisationNode = textEditorTabView->visualisationNode;
-				auto& nodeComputedConstraints = node->getComputedConstraints();
+				const auto& nodeComputedConstraints = node->getComputedConstraints();
 				auto xMax = nodeComputedConstraints.left + nodeComputedConstraints.width;
 				auto yMax = nodeComputedConstraints.top + nodeComputedConstraints.height;
 				visualisationNode->getComputedConstraints().width = Math::max(visualisationNode->getComputedConstraints().width, xMax);
@@ -345,8 +345,7 @@ void TextEditorTabView::handleInputEvents()
 		auto visualizationNode = required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("visualization"));
 		auto scrollX = visualizationNode->getChildrenRenderOffsetX();
 		auto scrollY = visualizationNode->getChildrenRenderOffsetY();
-		auto& mouseEvents = engine->getGUI()->getMouseEvents();
-		for (auto& event: mouseEvents) {
+		for (auto& event: engine->getGUI()->getMouseEvents()) {
 			if (event.getButton() != GUIMouseEvent::MOUSEEVENT_BUTTON_LEFT) continue;
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 				//
@@ -635,7 +634,7 @@ void TextEditorTabView::createMiniScriptNode(const string& methodName, int x, in
 		//
 		auto argumentIdx = 0;
 		if (method != nullptr) {
-			auto& argumentTypes = method->getArgumentTypes();
+			const auto& argumentTypes = method->getArgumentTypes();
 			for (argumentIdx = 0; argumentIdx < argumentTypes.size(); argumentIdx++) {
 				//
 				auto isLiteral = true;
@@ -866,8 +865,8 @@ void TextEditorTabView::createMiniScriptScriptNode(unordered_map<string, string>
 			GUIColor color(GUIParser::getEngineThemeProperties()->get(pinColor, "#ffffff"));
 
 			//
-			auto& argumentInputNodeComputedConstraints = argumentInputNode->getComputedConstraints();
-			auto& argumentOutputNodeComputedConstraints = argumentOutputNode->getComputedConstraints();
+			const auto& argumentInputNodeComputedConstraints = argumentInputNode->getComputedConstraints();
+			const auto& argumentOutputNodeComputedConstraints = argumentOutputNode->getComputedConstraints();
 			connections.push_back(
 				{
 					.type = Connection::CONNECTIONTYPE_ARGUMENT,
@@ -1002,7 +1001,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 					//
 					auto argumentIdx = 0;
 					if (syntaxTreeNode->method != nullptr) {
-						auto& argumentTypes = syntaxTreeNode->method->getArgumentTypes();
+						const auto& argumentTypes = syntaxTreeNode->method->getArgumentTypes();
 						for (argumentIdx = 0; argumentIdx < argumentTypes.size(); argumentIdx++) {
 							//
 							auto isLiteral = argumentIdx < syntaxTreeNode->arguments.size()?syntaxTreeNode->arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:false;
@@ -1204,7 +1203,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 		//
 		auto pinColor = string("color.pintype_undefined");
 		if (syntaxTreeNode->method != nullptr) {
-			auto& argumentTypes = syntaxTreeNode->method->getArgumentTypes();
+			const auto& argumentTypes = syntaxTreeNode->method->getArgumentTypes();
 			// first guess from argument type
 			if (argumentIdx < argumentTypes.size()) {
 				pinColor = getScriptVariableTypePinColor(argumentTypes[argumentIdx].type);
@@ -1222,8 +1221,8 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 		GUIColor color(GUIParser::getEngineThemeProperties()->get(pinColor, "#ffffff"));
 
 		//
-		auto& argumentInputNodeComputedConstraints = argumentInputNode->getComputedConstraints();
-		auto& argumentOutputNodeComputedConstraints = argumentOutputNode->getComputedConstraints();
+		const auto& argumentInputNodeComputedConstraints = argumentInputNode->getComputedConstraints();
+		const auto& argumentOutputNodeComputedConstraints = argumentOutputNode->getComputedConstraints();
 		connections.push_back(
 			{
 				.type = Connection::CONNECTIONTYPE_ARGUMENT,
@@ -1467,8 +1466,8 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 		GUIColor color(GUIParser::getEngineThemeProperties()->get(pinColor, "#ffffff"));
 
 		//
-		auto& conditionInputNodeComputedConstraints = conditionInputNode->getComputedConstraints();
-		auto& conditionOutputNodeComputedConstraints = conditionOutputNode->getComputedConstraints();
+		const auto& conditionInputNodeComputedConstraints = conditionInputNode->getComputedConstraints();
+		const auto& conditionOutputNodeComputedConstraints = conditionOutputNode->getComputedConstraints();
 		connections.push_back(
 			{
 				.type = Connection::CONNECTIONTYPE_ARGUMENT,
@@ -1520,8 +1519,8 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 				auto nodeFlowIn = dynamic_cast<GUINode*>(screenNode->getNodeById(nodeFlowInId));
 				auto nodeFlowOut = dynamic_cast<GUINode*>(screenNode->getNodeById(nodeFlowOutId));
 				if (previousNodeFlowNode != nullptr && nodeFlowIn != nullptr) {
-					auto& previousNodeComputedConstraints = previousNodeFlowNode->getComputedConstraints();
-					auto& nodeComputedConstraints = nodeFlowIn->getComputedConstraints();
+					const auto& previousNodeComputedConstraints = previousNodeFlowNode->getComputedConstraints();
+					const auto& nodeComputedConstraints = nodeFlowIn->getComputedConstraints();
 					connections.push_back(
 						{
 							.type = Connection::CONNECTIONTYPE_FLOW,
@@ -1569,8 +1568,8 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 			auto nodeFlowIn = dynamic_cast<GUINode*>(screenNode->getNodeById(nodeFlowInId));
 			auto nodeFlowOut = dynamic_cast<GUINode*>(screenNode->getNodeById(nodeFlowOutId));
 			if (previousNodeFlowNode != nullptr && nodeFlowIn != nullptr) {
-				auto& previousNodeComputedConstraints = previousNodeFlowNode->getComputedConstraints();
-				auto& nodeComputedConstraints = nodeFlowIn->getComputedConstraints();
+				const auto& previousNodeComputedConstraints = previousNodeFlowNode->getComputedConstraints();
+				const auto& nodeComputedConstraints = nodeFlowIn->getComputedConstraints();
 				connections.push_back(
 					{
 						.type = Connection::CONNECTIONTYPE_FLOW,
@@ -1799,8 +1798,8 @@ void TextEditorTabView::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
 				auto nodeFlowIn = dynamic_cast<GUINode*>(screenNode->getNodeById(nodeFlowInId));
 				auto nodeFlowOut = dynamic_cast<GUINode*>(screenNode->getNodeById(nodeFlowOutId));
 				if (previousNodeFlowNode != nullptr && nodeFlowIn != nullptr) {
-					auto& previousNodeComputedConstraints = previousNodeFlowNode->getComputedConstraints();
-					auto& nodeComputedConstraints = nodeFlowIn->getComputedConstraints();
+					const auto& previousNodeComputedConstraints = previousNodeFlowNode->getComputedConstraints();
+					const auto& nodeComputedConstraints = nodeFlowIn->getComputedConstraints();
 					connections.push_back(
 						{
 							.type = Connection::CONNECTIONTYPE_FLOW,
@@ -1846,8 +1845,8 @@ void TextEditorTabView::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
 			auto nodeFlowIn = dynamic_cast<GUINode*>(screenNode->getNodeById(nodeFlowInId));
 			auto nodeFlowOut = dynamic_cast<GUINode*>(screenNode->getNodeById(nodeFlowOutId));
 			if (previousNodeFlowNode != nullptr && nodeFlowIn != nullptr) {
-				auto& previousNodeComputedConstraints = previousNodeFlowNode->getComputedConstraints();
-				auto& nodeComputedConstraints = nodeFlowIn->getComputedConstraints();
+				const auto& previousNodeComputedConstraints = previousNodeFlowNode->getComputedConstraints();
+				const auto& nodeComputedConstraints = nodeFlowIn->getComputedConstraints();
 				connections.push_back(
 					{
 						.type = Connection::CONNECTIONTYPE_FLOW,
@@ -1895,8 +1894,8 @@ void TextEditorTabView::createMiniScriptConnections() {
 		if (dstNode == nullptr) {
 			continue;
 		}
-		auto& srcNodeComputedConstraints = srcNode->getComputedConstraints();
-		auto& dstNodeComputedConstraints = dstNode->getComputedConstraints();
+		const auto& srcNodeComputedConstraints = srcNode->getComputedConstraints();
+		const auto& dstNodeComputedConstraints = dstNode->getComputedConstraints();
 		switch (connection.type) {
 			case Connection::CONNECTIONTYPE_FLOW:
 				connection.x1 = srcNodeComputedConstraints.left + srcNodeComputedConstraints.width;
@@ -2083,7 +2082,7 @@ void TextEditorTabView::createSourceCodeFromNode(string& sourceCode, const Node*
 
 void TextEditorTabView::deleteConnection(const string& nodeId) {
 	for (auto i = 0; i < connections.size(); i++) {
-		auto& connection = connections[i];
+		const auto& connection = connections[i];
 		auto srcNodeMatch = connection.srcNodeId == nodeId || StringTools::startsWith(connection.srcNodeId, nodeId + "_") == true;
 		auto dstNodeMatch = connection.dstNodeId == nodeId || StringTools::startsWith(connection.dstNodeId, nodeId + "_") == true;
 		if (srcNodeMatch == true || dstNodeMatch == true) {
@@ -2116,7 +2115,7 @@ void TextEditorTabView::createConnection(const string& guiNodeId) {
 		auto argumentOutputNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connectionNodeId));
 		if (argumentOutputNode != nullptr) {
 			deleteConnection(connectionNodeId);
-			auto& argumentOutputNodeComputedConstraints = argumentOutputNode->getComputedConstraints();
+			const auto& argumentOutputNodeComputedConstraints = argumentOutputNode->getComputedConstraints();
 			auto pinColor = string("color.pintype_undefined");
 			GUIColor color(GUIParser::getEngineThemeProperties()->get(pinColor, "#ffffff"));
 			connections.push_back(
@@ -2145,7 +2144,7 @@ void TextEditorTabView::createConnection(const string& guiNodeId) {
 		auto flowOutputFlowNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connectionNodeId));
 		if (flowOutputFlowNode != nullptr) {
 			deleteConnection(connectionNodeId);
-			auto& flowOutputNodeComputedConstraints = flowOutputFlowNode->getComputedConstraints();
+			const auto& flowOutputNodeComputedConstraints = flowOutputFlowNode->getComputedConstraints();
 			auto pinColor = string("color.pintype_undefined");
 			GUIColor color(GUIParser::getEngineThemeProperties()->get(pinColor, "#ffffff"));
 			connections.push_back(
@@ -2174,7 +2173,7 @@ void TextEditorTabView::createConnection(const string& guiNodeId) {
 		auto flowInputNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connectionNodeId));
 		if (flowInputNode != nullptr) {
 			deleteConnection(connectionNodeId);
-			auto& flowInputNodeComputedConstraints = flowInputNode->getComputedConstraints();
+			const auto& flowInputNodeComputedConstraints = flowInputNode->getComputedConstraints();
 			auto pinColor = string("color.pintype_undefined");
 			GUIColor color(GUIParser::getEngineThemeProperties()->get(pinColor, "#ffffff"));
 			connections.push_back(
@@ -2203,7 +2202,7 @@ void TextEditorTabView::createConnection(const string& guiNodeId) {
 		auto argumentInputNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connectionNodeId));
 		if (argumentInputNode != nullptr) {
 			deleteConnection(connectionNodeId);
-			auto& argumentInputNodeComputedConstraints = argumentInputNode->getComputedConstraints();
+			const auto& argumentInputNodeComputedConstraints = argumentInputNode->getComputedConstraints();
 			auto pinColor = string("color.pintype_undefined");
 			GUIColor color(GUIParser::getEngineThemeProperties()->get(pinColor, "#ffffff"));
 			connections.push_back(
@@ -2248,7 +2247,7 @@ void TextEditorTabView::finishCreateConnection(int mouseX, int mouseY) {
 					connections.erase(connections.begin() + createConnectionIdx);
 					createConnectionIdx = -1;
 					deleteConnection(connectionNodeId);
-					auto& argumentNodeComputedConstraints = argumentNode->getComputedConstraints();
+					const auto& argumentNodeComputedConstraints = argumentNode->getComputedConstraints();
 					connection.dstNodeId = connectionNodeId;
 					connection.x2 = argumentNodeComputedConstraints.left + argumentNodeComputedConstraints.width;
 					connection.y2 = argumentNodeComputedConstraints.top + argumentNodeComputedConstraints.height / 2;
@@ -2271,7 +2270,7 @@ void TextEditorTabView::finishCreateConnection(int mouseX, int mouseY) {
 					connections.erase(connections.begin() + createConnectionIdx);
 					createConnectionIdx = -1;
 					deleteConnection(connectionNodeId);
-					auto& flowNodeComputedConstraints = flowNode->getComputedConstraints();
+					const auto& flowNodeComputedConstraints = flowNode->getComputedConstraints();
 					connection.srcNodeId = connectionNodeId;
 					connection.x1 = flowNodeComputedConstraints.left;
 					connection.y1 = flowNodeComputedConstraints.top + flowNodeComputedConstraints.height / 2;
@@ -2294,7 +2293,7 @@ void TextEditorTabView::finishCreateConnection(int mouseX, int mouseY) {
 					connections.erase(connections.begin() + createConnectionIdx);
 					createConnectionIdx = -1;
 					deleteConnection(connectionNodeId);
-					auto& flowNodeComputedConstraints = flowNode->getComputedConstraints();
+					const auto& flowNodeComputedConstraints = flowNode->getComputedConstraints();
 					connection.dstNodeId = connectionNodeId;
 					connection.x2 = flowNodeComputedConstraints.left + flowNodeComputedConstraints.width;
 					connection.y2 = flowNodeComputedConstraints.top + flowNodeComputedConstraints.height / 2;
@@ -2317,7 +2316,7 @@ void TextEditorTabView::finishCreateConnection(int mouseX, int mouseY) {
 					connections.erase(connections.begin() + createConnectionIdx);
 					createConnectionIdx = -1;
 					deleteConnection(connectionNodeId);
-					auto& argumentNodeComputedConstraints = argumentNode->getComputedConstraints();
+					const auto& argumentNodeComputedConstraints = argumentNode->getComputedConstraints();
 					connection.srcNodeId = connectionNodeId;
 					connection.x1 = argumentNodeComputedConstraints.left;
 					connection.y1 = argumentNodeComputedConstraints.top + argumentNodeComputedConstraints.height / 2;

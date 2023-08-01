@@ -471,22 +471,21 @@ public:
 	 */
 	inline Matrix4x4& rotate(const Vector3& axis, float angle) {
 		// see: http://www.songho.ca/opengl/gl_matrix.html
-		auto& vXYZ = axis.getArray();
 		float c = Math::cos(angle * Math::DEG2RAD);    // cosine
 		float s = Math::sin(angle * Math::DEG2RAD);    // sine
 		float c1 = 1.0f - c;                // 1 - c
 		float m0 = data[0],  m4 = data[4],  m8 = data[8],  m12= data[12],
 			  m1 = data[1],  m5 = data[5],  m9 = data[9],  m13= data[13],
 			  m2 = data[2],  m6 = data[6],  m10= data[10], m14= data[14];
-		float r0 = vXYZ[0] * vXYZ[0] * c1 + c;
-		float r1 = vXYZ[0] * vXYZ[1] * c1 + vXYZ[2] * s;
-		float r2 = vXYZ[0] * vXYZ[2] * c1 - vXYZ[1] * s;
-		float r4 = vXYZ[0] * vXYZ[1] * c1 - vXYZ[2] * s;
-		float r5 = vXYZ[1] * vXYZ[1] * c1 + c;
-		float r6 = vXYZ[1] * vXYZ[2] * c1 + vXYZ[0] * s;
-		float r8 = vXYZ[0] * vXYZ[2] * c1 + vXYZ[1] * s;
-		float r9 = vXYZ[1] * vXYZ[2] * c1 - vXYZ[0] * s;
-		float r10= vXYZ[2] * vXYZ[2] * c1 + c;
+		float r0 = axis[0] * axis[0] * c1 + c;
+		float r1 = axis[0] * axis[1] * c1 + axis[2] * s;
+		float r2 = axis[0] * axis[2] * c1 - axis[1] * s;
+		float r4 = axis[0] * axis[1] * c1 - axis[2] * s;
+		float r5 = axis[1] * axis[1] * c1 + c;
+		float r6 = axis[1] * axis[2] * c1 + axis[0] * s;
+		float r8 = axis[0] * axis[2] * c1 + axis[1] * s;
+		float r9 = axis[1] * axis[2] * c1 - axis[0] * s;
+		float r10= axis[2] * axis[2] * c1 + c;
 		data[0] = r0 * m0 + r4 * m1 + r8 * m2;
 		data[1] = r1 * m0 + r5 * m1 + r9 * m2;
 		data[2] = r2 * m0 + r6 * m1 + r10* m2;
@@ -612,8 +611,8 @@ public:
 	 * Returns array data
 	 * @return array data
 	 */
-	inline array<float, 16>& getArray() const {
-		return (array<float, 16>&)data;
+	inline const array<float, 16>& getArray() const {
+		return data;
 	}
 
 	/**

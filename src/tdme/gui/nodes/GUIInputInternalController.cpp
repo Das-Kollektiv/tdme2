@@ -136,7 +136,7 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 		if (doubleClick == true) {
 			//
 			auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
-			auto& text = textInputNode->getText();
+			const auto& text = textInputNode->getText();
 			auto textLength = text.length();
 			if (textLength > 0) {
 				auto wordLeftIdx = 0;
@@ -405,7 +405,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 		} else
 		if (keyControlX == true && disabled == false) {
 			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
-				auto& text = textInputNode->getText();
+				const auto& text = textInputNode->getText();
 				Application::getApplication()->setClipboardContent(StringTools::substring(text.getString(), Math::min(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex)), Math::max(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex))));
 				textInputNode->getText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 				index = Math::min(index, selectionIndex);
@@ -415,7 +415,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 		} else
 		if (keyControlC == true || keyControlX == true) {
 			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
-				auto& text = textInputNode->getText();
+				const auto& text = textInputNode->getText();
 				Application::getApplication()->setClipboardContent(StringTools::substring(text.getString(), Math::min(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex)), Math::max(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex))));
 			}
 		} else
@@ -446,7 +446,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						if (event->isControlDown() == true) {
 							string delimiter = "^´!\"§$%&/()=?`+#<,.-*'>;:_";
 							auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
-							auto& text = textInputNode->getText();
+							const auto& text = textInputNode->getText();
 							auto textLength = text.length();
 							if (textLength > 0) {
 								wordLeftIdx = 0;
@@ -493,7 +493,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						if (event->isControlDown() == true) {
 							string delimiter = "^´!\"§$%&/()=?`+#<,.-*'>;:_";
 							auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
-							auto& text = textInputNode->getText();
+							const auto& text = textInputNode->getText();
 							auto textLength = text.length();
 							if (textLength > 0) {
 								wordRightIdx = textLength;

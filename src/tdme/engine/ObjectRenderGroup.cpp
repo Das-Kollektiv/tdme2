@@ -196,11 +196,11 @@ void ObjectRenderGroup::combineNode(Node* sourceNode, const vector<Vector3>& ori
 				// add faces
 				for (const auto& face: facesEntity.getFaces()) {
 					// get face vertices and such
-					auto& faceVertexIndices = face.getVertexIndices();
-					auto& faceNormalIndices = face.getNormalIndices();
-					auto& faceTextureCoordinatesIndices = face.getTextureCoordinateIndices();
-					auto& faceTangentIndices = face.getTangentIndices();
-					auto& faceBitangentIndices = face.getBitangentIndices();
+					const auto& faceVertexIndices = face.getVertexIndices();
+					const auto& faceNormalIndices = face.getNormalIndices();
+					const auto& faceTextureCoordinatesIndices = face.getTextureCoordinateIndices();
+					const auto& faceTangentIndices = face.getTangentIndices();
+					const auto& faceBitangentIndices = face.getBitangentIndices();
 
 					//
 					auto combinedModelNodeFace =

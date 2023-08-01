@@ -578,7 +578,6 @@ Node* DAEReader::readVisualSceneInstanceController(const string& pathName, Model
 	for (auto xmlSkinSource: getChildrenByTagName(xmlSkin, "source")) {
 		if (string(AVOID_NULLPTR_STRING(xmlSkinSource->Attribute("id"))) == xmlJointsInverseBindMatricesSource) {
 			t.tokenize(string(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlSkinSource, "float_array").at(0)->GetText())), " \n\r");
-			auto& _joints = skinning->getJoints();
 			for (auto i = 0; i < joints.size(); i++) {
 				// The vertices are defined in model space
 				// The transform to the local space of the joint is called the inverse bind matrix

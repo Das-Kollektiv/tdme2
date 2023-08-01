@@ -147,12 +147,12 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene* s
 			auto sceneEntity = scene->getEntityAt(i);
 			Value jEntity;
 			jEntity.SetObject();
-			auto& transform = sceneEntity->getTransform();
-			auto& translation = transform.getTranslation();
-			auto& scale = transform.getScale();
-			auto& rotationAroundXAxis = transform.getRotation(scene->getRotationOrder()->getAxisXIndex());
-			auto& rotationAroundYAxis = transform.getRotation(scene->getRotationOrder()->getAxisYIndex());
-			auto& rotationAroundZAxis = transform.getRotation(scene->getRotationOrder()->getAxisZIndex());
+			const auto& transform = sceneEntity->getTransform();
+			const auto& translation = transform.getTranslation();
+			const auto& scale = transform.getScale();
+			const auto& rotationAroundXAxis = transform.getRotation(scene->getRotationOrder()->getAxisXIndex());
+			const auto& rotationAroundYAxis = transform.getRotation(scene->getRotationOrder()->getAxisYIndex());
+			const auto& rotationAroundZAxis = transform.getRotation(scene->getRotationOrder()->getAxisZIndex());
 			jEntity.AddMember("id", Value(sceneEntity->getId(), jAllocator), jAllocator);
 			jEntity.AddMember("descr", Value(sceneEntity->getDescription(), jAllocator), jAllocator);;
 			jEntity.AddMember("mid", Value(sceneEntity->getPrototype()->getId()), jAllocator);

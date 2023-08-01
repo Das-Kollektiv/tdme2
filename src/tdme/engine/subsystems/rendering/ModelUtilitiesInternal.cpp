@@ -122,7 +122,7 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBoxNoMesh(ObjectModelInternal
 		parentTransformMatrix.multiply(objectModelInternal->getTransformMatrix());
 		objectModelInternal->instanceAnimations[0]->computeNodesTransformMatrices(objectModelInternal->instanceAnimations[0]->nodeLists[0], parentTransformMatrix, &animationState);
 		for (const auto& [nodeId, node]: model->getNodes()) {
-			auto& transformedNodeMatrix = objectModelInternal->getNodeTransformMatrix(node->getId());
+			const auto& transformedNodeMatrix = objectModelInternal->getNodeTransformMatrix(node->getId());
 			vertex = transformedNodeMatrix.multiply(vertex.set(0.0f, 0.0f, 0.0f));
 			if (firstVertex == true) {
 				minX = vertex[0];
@@ -182,10 +182,10 @@ void ModelUtilitiesInternal::computeModelStatistics(ObjectModelInternal* objectM
 	auto transparentFaceCount = 0;
 	for (auto objectNode : objectModelInternal->objectNodes) {
 		// check each faces entity
-		auto& facesEntities = objectNode->node->getFacesEntities();
+		const auto& facesEntities = objectNode->node->getFacesEntities();
 		auto facesEntityIdxCount = facesEntities.size();
 		for (auto faceEntityIdx = 0; faceEntityIdx < facesEntityIdxCount; faceEntityIdx++) {
-			auto& facesEntity = facesEntities[faceEntityIdx];
+			const auto& facesEntity = facesEntities[faceEntityIdx];
 			auto faces = facesEntity.getFaces().size();
 			// material
 			auto material = facesEntity.getMaterial();
@@ -237,8 +237,8 @@ bool ModelUtilitiesInternal::equals(ObjectModelInternal* objectModel1Internal, O
 		auto objectNodeModel2 = objectModel2Internal->objectNodes[i];
 		auto node1 = objectModel1Internal->objectNodes[i]->node;
 		auto node2 = objectModel2Internal->objectNodes[i]->node;
-		auto& facesEntitiesModel1 = objectNodeModel1->node->getFacesEntities();
-		auto& facesEntitiesModel2 = objectNodeModel2->node->getFacesEntities();
+		const auto& facesEntitiesModel1 = objectNodeModel1->node->getFacesEntities();
+		const auto& facesEntitiesModel2 = objectNodeModel2->node->getFacesEntities();
 		// check transform matrix
 		if (objectNodeModel1->node->getTransformMatrix().equals(objectNodeModel2->node->getTransformMatrix()) == false)
 			return false;
@@ -278,8 +278,8 @@ bool ModelUtilitiesInternal::equals(ObjectModelInternal* objectModel1Internal, O
 				return false;
 			}
 			// check faces
-			auto& facesModel1 = facesEntityModel1.getFaces();
-			auto& facesModel2 = facesEntityModel2.getFaces();
+			const auto& facesModel1 = facesEntityModel1.getFaces();
+			const auto& facesModel2 = facesEntityModel2.getFaces();
 			// number of faces in faces entity
 			if (facesModel1.size() != facesModel2.size())
 				return false;
