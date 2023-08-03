@@ -1,19 +1,24 @@
-#include <map>
+#include <memory>
 #include <string>
 #include <string_view>
 #include <vector>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/Time.h>
 
-using std::map;
+using std::make_unique;
 using std::string;
 using std::to_string;
 using std::vector;
+using std::unique_ptr;
+using std::unordered_map;
 
 using tdme::utilities::Console;
 using tdme::utilities::StringTools;
+using tdme::utilities::Time;
 
 int main(int argc, char** argv)
 {
@@ -36,13 +41,73 @@ int main(int argc, char** argv)
 	}
 	// map tests
 	{
-		map<string, string> map {
+		unordered_map<string, string> map {
 			{"0", "a"},
 			{"1", "b"},
 			{"2", "c"}
 		};
 		for (auto& [key, value]: map) {
 			Console::println(key + " -> " + value);
+		}
+		struct PtrTest {
+			int v { -1 };
+			int a { 1 };
+			int b { 2 };
+			int c { 3 };
+			PtrTest(int v): v(v) {
+				// Console::println("PtrTest(): " + to_string(v));
+			}
+			~PtrTest() {
+				// Console::println("~PtrTest(): " + to_string(v));
+			}
+		};
+		// testing performance of map with string key and raw pointer
+		unordered_map<string, PtrTest*> map2;
+		{
+			Console::println("map2: inserting entries: init");
+			auto startTime = Time::getCurrentMillis();
+			for (auto i = 0; i < 10000000; i++) {
+				map2[to_string(i)] = new PtrTest(i);
+			}
+			auto endTime = Time::getCurrentMillis();
+			Console::println("map2: inserting entries: done in " + to_string(endTime - startTime) + " ms");
+		}
+		{
+			Console::println("map2: getting entries: init");
+			auto startTime = Time::getCurrentMillis();
+			auto x = 0ll;
+			for (auto i = 0; i < 10000000; i++) {
+				auto it = map2.find(to_string(i));
+				if (it == map2.end()) continue;
+				x+= it->second->v;
+			}
+			auto endTime = Time::getCurrentMillis();
+			Console::println("map2: getting entries: done in " + to_string(endTime - startTime) + " ms");
+			Console::println(to_string(x));
+		}
+		// testing performance of map with string key and smart pointer
+		unordered_map<string, unique_ptr<PtrTest>> map3;
+		{
+			Console::println("map3: inserting entries: init");
+			auto startTime = Time::getCurrentMillis();
+			for (auto i = 0; i < 10000000; i++) {
+				map3[to_string(i)] = make_unique<PtrTest>(i);
+			}
+			auto endTime = Time::getCurrentMillis();
+			Console::println("map3: inserting entries: done in " + to_string(endTime - startTime) + " ms");
+		}
+		{
+			Console::println("map3: getting entries: init");
+			auto startTime = Time::getCurrentMillis();
+			auto x = 0ll;
+			for (auto i = 0; i < 10000000; i++) {
+				auto it = map3.find(to_string(i));
+				if (it == map3.end()) continue;
+				x+= it->second->v;
+			}
+			auto endTime = Time::getCurrentMillis();
+			Console::println("map3: getting entries: done in " + to_string(endTime - startTime) + " ms");
+			Console::println(to_string(x));
 		}
 	}
 	//
