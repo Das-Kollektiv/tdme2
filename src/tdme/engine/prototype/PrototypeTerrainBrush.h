@@ -1,7 +1,11 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
+
+using std::unique_ptr;
+using std::make_unique;
 
 #include <tdme/tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
@@ -22,7 +26,7 @@ private:
 	float size { 1.0f };
 	float density { 1.0f };
 	string fileName { "resources/engine/textures/terrain_brush.png" };
-	vector<PrototypeTerrainBrushPrototype*> prototypes;
+	vector<unique_ptr<PrototypeTerrainBrushPrototype>> prototypes;
 
 public:
 	// forbid class copy
@@ -38,7 +42,6 @@ public:
 	 * Destructor
 	 */
 	~PrototypeTerrainBrush() {
-		for (auto prototype: prototypes) delete prototype;
 	}
 
 	/**
@@ -89,8 +92,10 @@ public:
 	/**
 	 * @return prototypes
 	 */
-	inline const vector<PrototypeTerrainBrushPrototype*>& getPrototypes() const {
-		return prototypes;
+	inline const vector<PrototypeTerrainBrushPrototype*> getPrototypes() const {
+		vector<PrototypeTerrainBrushPrototype*> result;
+		for (auto& prototype: prototypes) result.push_back(prototype.get());
+		return result;
 	}
 
 	/**
@@ -100,7 +105,7 @@ public:
 	 */
 	inline PrototypeTerrainBrushPrototype* getPrototype(int idx) {
 		if (idx < 0 || idx >= prototypes.size()) return nullptr;
-		return prototypes[idx];
+		return prototypes[idx].get();
 	}
 
 	/**
@@ -108,9 +113,8 @@ public:
 	 * @param idx index
 	 */
 	PrototypeTerrainBrushPrototype* addPrototype() {
-		auto prototype = new PrototypeTerrainBrushPrototype();
-		prototypes.push_back(prototype);
-		return prototype;
+		prototypes.push_back(make_unique<PrototypeTerrainBrushPrototype>());
+		return prototypes[prototypes.size() - 1].get();
 	}
 
 	/**
@@ -119,9 +123,7 @@ public:
 	 */
 	bool removePrototype(int idx) {
 		if (idx < 0 || idx >= prototypes.size()) return false;
-		auto prototype = prototypes[idx];
 		prototypes.erase(prototypes.begin() + idx);
-		delete prototype;
 		return true;
 	}
 

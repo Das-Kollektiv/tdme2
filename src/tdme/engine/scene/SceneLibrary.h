@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <unordered_map>
 #include <string>
 #include <vector>
@@ -12,8 +13,10 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
+using std::make_unique;
 using std::unordered_map;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::prototype::Prototype;
@@ -32,7 +35,7 @@ public:
 private:
 	Scene* scene { nullptr };
 	unordered_map<int, Prototype*> prototypesById;
-	vector<Prototype*> prototypes;
+	vector<unique_ptr<Prototype>> prototypes;
 	int prototypeIdx;
 
 public:
@@ -75,7 +78,7 @@ public:
 	 * @return prototype
 	 */
 	inline Prototype* getPrototypeAt(int idx) {
-		return prototypes[idx];
+		return prototypes[idx].get();
 	}
 
 	/**
@@ -97,8 +100,8 @@ public:
 	 * @return prototype
 	 */
 	inline Prototype* getPrototypeByName(const string& name) {
-		for (auto prototype: prototypes) {
-			if (prototype->getName() == name) return prototype;
+		for (const auto& prototype: prototypes) {
+			if (prototype->getName() == name) return prototype.get();
 		}
 		return nullptr;
 	}
@@ -108,8 +111,8 @@ public:
 	 * @return terrain prototype
 	 */
 	inline Prototype* getTerrainPrototype() {
-		for (auto prototype: prototypes) {
-			if (prototype->getType() == Prototype_Type::TERRAIN) return prototype;
+		for (const auto& prototype: prototypes) {
+			if (prototype->getType() == Prototype_Type::TERRAIN) return prototype.get();
 		}
 		return nullptr;
 	}

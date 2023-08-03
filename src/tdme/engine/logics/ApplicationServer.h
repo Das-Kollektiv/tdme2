@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -10,6 +11,7 @@
 #include <tdme/utilities/Exception.h>
 
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::logics::Context;
@@ -46,7 +48,7 @@ public:
 	// overridden methods
 	virtual void start() override;
 protected:
-	Context* context { nullptr };
+	unique_ptr<Context> context;
 
 	/**
 	 * Create context
@@ -68,7 +70,7 @@ protected:
 	virtual void setupLogics() = 0;
 
 private:
-	ServerThread* logicsThread { nullptr };
+	unique_ptr<ServerThread> logicsThread;
 	int pathFindingThreadCount;
 
 };

@@ -1,5 +1,6 @@
-
 #pragma once
+
+#include <memory>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -9,6 +10,8 @@
 #include <tdme/engine/subsystems/particlesystem/ParticleEmitter.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
+
+using std::unique_ptr;
 
 using tdme::engine::Color4;
 using tdme::engine::primitives::Sphere;
@@ -30,8 +33,8 @@ private:
 	int64_t lifeTimeRnd;
 	float mass;
 	float massRnd;
-	Sphere* sphere { nullptr };
-	Sphere* worldSphere { nullptr };
+	unique_ptr<Sphere> sphere;
+	unique_ptr<Sphere> worldSphere;
 	Vector3 velocity;
 	Vector3 velocityRnd;
 	Color4 colorStart;

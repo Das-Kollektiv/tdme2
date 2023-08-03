@@ -1,6 +1,7 @@
 #include <tdme/engine/scene/SceneLibrary.h>
 
 #include <algorithm>
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -19,9 +20,11 @@
 #include <tdme/utilities/Primitives.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::make_unique;
 using std::remove;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::engine::scene::SceneLibrary;
 
@@ -46,16 +49,10 @@ SceneLibrary::SceneLibrary(Scene* scene)
 }
 
 SceneLibrary::~SceneLibrary() {
-	for (auto prototype: prototypes) {
-		delete prototype;
-	}
 }
 
 void SceneLibrary::clear()
 {
-	for (auto prototype: prototypes) {
-		delete prototype;
-	}
 	this->prototypesById.clear();
 	this->prototypes.clear();
 	this->prototypeIdx = 0;
@@ -68,7 +65,7 @@ void SceneLibrary::addPrototype(Prototype* prototype)
 	if (prototypeByIdIt != prototypesById.end()) {
 		throw ExceptionBase("Prototype id already in use");
 	}
-	prototypes.push_back(prototype);
+	prototypes.push_back(unique_ptr<Prototype>(prototype));
 	prototypesById[prototype->getId()] = prototype;
 	if (prototype->getId() >= prototypeIdx)
 		prototypeIdx = prototype->getId() + 1;
@@ -79,8 +76,13 @@ void SceneLibrary::removePrototype(int id)
 {
 	auto prototypeByIdIt = prototypesById.find(id);
 	if (prototypeByIdIt != prototypesById.end()) {
-		prototypes.erase(remove(prototypes.begin(), prototypes.end(), prototypeByIdIt->second), prototypes.end());
-		delete prototypeByIdIt->second;
+		auto prototype = prototypeByIdIt->second;
+		for (auto i = 0; i < prototypes.size(); i++) {
+			if (prototypes[i].get() == prototype) {
+				prototypes.erase(prototypes.begin() + i);
+				break;
+			}
+		}
 		prototypesById.erase(prototypeByIdIt);
 	}
 }

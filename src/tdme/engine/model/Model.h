@@ -1,16 +1,18 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/AnimationSetup.h>
-#include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/fwd-tdme.h>
 
+using std::unique_ptr;
 using std::map;
 using std::string;
 
@@ -53,7 +55,7 @@ private:
 	float fps;
 	map<string, AnimationSetup*> animationSetups;
 	Matrix4x4 importTransformMatrix;
-	BoundingBox* boundingBox;
+	unique_ptr<BoundingBox> boundingBox;
 	bool boundingBoxUpdated;
 
 	bool embedSpecularTextures;

@@ -2,6 +2,7 @@
 
 #include <tdme/tdme.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -12,6 +13,7 @@
 #include <tdme/math/fwd-tdme.h>
 
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::model::Model;
@@ -29,8 +31,8 @@ private:
 	int id;
 	Prototype* prototype { nullptr };
 	string convexMeshFile;
-	Model* model { nullptr };
-	BoundingVolume* boundingVolume { nullptr };
+	unique_ptr<Model> model;
+	unique_ptr<BoundingVolume> boundingVolume;
 	bool generated;
 	vector<uint8_t> convexMeshData;
 
@@ -68,14 +70,14 @@ public:
 	 * @return model
 	 */
 	inline Model* getModel() {
-		return model;
+		return model.get();
 	}
 
 	/**
 	 * @return bounding volume
 	 */
 	inline BoundingVolume* getBoundingVolume() {
-		return boundingVolume;
+		return boundingVolume.get();
 	}
 
 	/**

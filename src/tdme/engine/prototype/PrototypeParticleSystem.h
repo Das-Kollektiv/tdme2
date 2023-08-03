@@ -1,7 +1,20 @@
 #pragma once
 
+#include <memory>
+
 #include <tdme/tdme.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_BoundingBoxParticleEmitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_Emitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_FogParticleSystem.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_ObjectParticleSystem.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_PointParticleEmitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_PointParticleSystem.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_SphereParticleEmitter.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
+
+using std::unique_ptr;
 
 using tdme::engine::prototype::PrototypeParticleSystem_BoundingBoxParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_CircleParticleEmitter;
@@ -22,15 +35,15 @@ class tdme::engine::prototype::PrototypeParticleSystem final
 {
 private:
 	PrototypeParticleSystem_Type* type { nullptr };
-	PrototypeParticleSystem_ObjectParticleSystem* ops { nullptr };
-	PrototypeParticleSystem_PointParticleSystem* pps { nullptr };
-	PrototypeParticleSystem_FogParticleSystem* fps { nullptr };
+	unique_ptr<PrototypeParticleSystem_ObjectParticleSystem> ops;
+	unique_ptr<PrototypeParticleSystem_PointParticleSystem> pps;
+	unique_ptr<PrototypeParticleSystem_FogParticleSystem> fps;
 	PrototypeParticleSystem_Emitter* emitter { nullptr };
-	PrototypeParticleSystem_PointParticleEmitter* ppe { nullptr };
-	PrototypeParticleSystem_BoundingBoxParticleEmitter* bbpe { nullptr };
-	PrototypeParticleSystem_CircleParticleEmitter* cpe { nullptr };
-	PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity* cpepv { nullptr };
-	PrototypeParticleSystem_SphereParticleEmitter* spe { nullptr };
+	unique_ptr<PrototypeParticleSystem_PointParticleEmitter> ppe;
+	unique_ptr<PrototypeParticleSystem_BoundingBoxParticleEmitter> bbpe;
+	unique_ptr<PrototypeParticleSystem_CircleParticleEmitter> cpe;
+	unique_ptr<PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity> cpepv;
+	unique_ptr<PrototypeParticleSystem_SphereParticleEmitter> spe;
 
 	/**
 	 * Unset particle system type
@@ -73,21 +86,21 @@ public:
 	 * @return object particle system
 	 */
 	inline PrototypeParticleSystem_ObjectParticleSystem* getObjectParticleSystem() {
-		return ops;
+		return ops.get();
 	}
 
 	/**
 	 * @return point particle system
 	 */
 	inline PrototypeParticleSystem_PointParticleSystem* getPointParticleSystem() {
-		return pps;
+		return pps.get();
 	}
 
 	/**
 	 * @return fog particle system
 	 */
 	inline PrototypeParticleSystem_FogParticleSystem* getFogParticleSystem() {
-		return fps;
+		return fps.get();
 	}
 
 	/**
@@ -107,35 +120,35 @@ public:
 	 * @return point particle emitter
 	 */
 	inline PrototypeParticleSystem_PointParticleEmitter* getPointParticleEmitter() {
-		return ppe;
+		return ppe.get();
 	}
 
 	/**
 	 * @return bounding box particle emitter
 	 */
 	inline PrototypeParticleSystem_BoundingBoxParticleEmitter* getBoundingBoxParticleEmitters() {
-		return bbpe;
+		return bbpe.get();
 	}
 
 	/**
 	 * @return circle particle emitter
 	 */
 	inline PrototypeParticleSystem_CircleParticleEmitter* getCircleParticleEmitter() {
-		return cpe;
+		return cpe.get();
 	}
 
 	/**
 	 * @return circle particle emitter plane velocity
 	 */
 	inline PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity* getCircleParticleEmitterPlaneVelocity() {
-		return cpepv;
+		return cpepv.get();
 	}
 
 	/**
 	 * @return sphere particle emitter
 	 */
 	inline PrototypeParticleSystem_SphereParticleEmitter* getSphereParticleEmitter() {
-		return spe;
+		return spe.get();
 	}
 
 };

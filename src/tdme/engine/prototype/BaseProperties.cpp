@@ -1,6 +1,7 @@
 #include <tdme/engine/prototype/BaseProperties.h>
 
 #include <algorithm>
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -8,6 +9,7 @@
 
 using std::remove;
 using std::string;
+using std::unique_ptr;
 
 using tdme::engine::prototype::BaseProperties;
 using tdme::engine::prototype::BaseProperty;
@@ -19,16 +21,10 @@ BaseProperties::BaseProperties(const string& name, const string& description)
 }
 
 BaseProperties::~BaseProperties() {
-	for (auto property: properties) {
-		delete property;
-	}
 }
 
 void BaseProperties::clearProperties()
 {
-	for (auto property: properties) {
-		delete property;
-	}
 	properties.clear();
 	propertiesByName.clear();
 }
@@ -78,7 +74,7 @@ bool BaseProperties::addProperty(const string& name, const string& value)
 
 	auto property = new BaseProperty(name, value);
 	propertiesByName[name] = property;
-	properties.push_back(property);
+	properties.push_back(unique_ptr<BaseProperty>(property));
 	return true;
 }
 
@@ -125,8 +121,13 @@ bool BaseProperties::removeProperty(const string& name)
 	auto propertyByNameIt = propertiesByName.find(name);
 	if (propertyByNameIt != propertiesByName.end()) {
 		auto property = propertyByNameIt->second;
+		for (auto i = 0; i < properties.size(); i++) {
+			if (properties[i].get() == property) {
+				properties.erase(properties.begin() + i);
+				break;
+			}
+		}
 		propertiesByName.erase(propertyByNameIt);
-		properties.erase(remove(properties.begin(), properties.end(), property), properties.end());
 		return true;
 	}
 

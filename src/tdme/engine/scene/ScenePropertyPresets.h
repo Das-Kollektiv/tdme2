@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -14,8 +15,10 @@
 #include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/engine/scene/SceneLight.h>
 
+using std::make_unique;
 using std::map;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tinyxml::TiXmlElement;
@@ -34,9 +37,11 @@ class tdme::engine::scene::ScenePropertyPresets final
 {
 
 private:
+	vector<unique_ptr<BaseProperty>> properties;
 	vector<BaseProperty*> scenePropertiesPreset;
-	map<string, vector<BaseProperty*>> entityPropertiesPresets;
-	map<string, SceneLight*> lightPresets;
+	map<string, vector<BaseProperty*>> entityPropertiesPresetsMap;
+	vector<unique_ptr<SceneLight>> lightPresets;
+	map<string, SceneLight*> lightPresetsMap;
 	STATIC_DLL_IMPEXT static ScenePropertyPresets* instance;
 
 public:
@@ -77,14 +82,14 @@ public:
 	 * @return entity property presets
 	 */
 	inline const map<string, vector<BaseProperty*>>& getEntityPropertiesPresets() const {
-		return entityPropertiesPresets;
+		return entityPropertiesPresetsMap;
 	}
 
 	/**
 	 * @return light presets
 	 */
 	inline const map<string, SceneLight*>& getLightPresets() const {
-		return lightPresets;
+		return lightPresetsMap;
 	}
 
 private:

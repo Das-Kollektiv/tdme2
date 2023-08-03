@@ -1,5 +1,6 @@
 #include <tdme/engine/subsystems/particlesystem/PointsParticleSystemInternal.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -22,7 +23,9 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::Texture;
@@ -50,7 +53,7 @@ PointsParticleSystemInternal::PointsParticleSystemInternal(const string& id, Par
 	this->enabled = true;
 	// will be activated on emit and auto unactivated if no more active particles
 	this->active = false;
-	this->emitter = emitter;
+	this->emitter = unique_ptr<ParticleEmitter>(emitter);
 	particles.resize(maxPoints);
 	this->maxPoints = maxPoints;
 	this->effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
@@ -65,15 +68,13 @@ PointsParticleSystemInternal::PointsParticleSystemInternal(const string& id, Par
 	this->textureHorizontalSprites = textureHorizontalSprites;
 	this->textureVerticalSprites = textureVerticalSprites;
 	this->fps = fps;
-	this->pointsRenderPool = new TransparentRenderPointsPool(maxPoints);
+	this->pointsRenderPool = make_unique<TransparentRenderPointsPool>(maxPoints);
 	if (texture != nullptr) texture->acquireReference();
 	this->texture = texture != nullptr?texture:TextureReader::read("resources/engine/textures", "point.png");
 	this->entityTransformMatrix.identity();
 }
 
 PointsParticleSystemInternal::~PointsParticleSystemInternal() {
-	delete emitter;
-	if (pointsRenderPool != nullptr) delete pointsRenderPool;
 	if (texture != nullptr) texture->releaseReference();
 }
 
@@ -231,9 +232,4 @@ int32_t PointsParticleSystemInternal::emitParticles()
 
 	}
 	return particlesSpawned;
-}
-
-TransparentRenderPointsPool* PointsParticleSystemInternal::getRenderPointsPool()
-{
-	return pointsRenderPool;
 }

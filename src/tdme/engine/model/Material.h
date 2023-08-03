@@ -1,12 +1,15 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/PBRMaterialProperties.h>
+#include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/math/Matrix2D3x3.h>
 
 using std::string;
+using std::unique_ptr;
 
 using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::SpecularMaterialProperties;
@@ -33,8 +36,8 @@ public:
 
 private:
 	string id;
-	SpecularMaterialProperties* specularMaterialProperties { nullptr };
-	PBRMaterialProperties* pbrMaterialProperties { nullptr };
+	unique_ptr<SpecularMaterialProperties> specularMaterialProperties;
+	unique_ptr<PBRMaterialProperties> pbrMaterialProperties;
 	bool doubleSided { false };
 	Matrix2D3x3 textureMatrix;
 
@@ -49,11 +52,6 @@ public:
 	Material(const string& id);
 
 	/**
-	 * Destructor
-	 */
-	~Material();
-
-	/**
 	 * @return material id
 	 */
 	inline const string& getId() const {
@@ -64,28 +62,28 @@ public:
 	 * @return specular material properties
 	 */
 	inline const SpecularMaterialProperties* getSpecularMaterialProperties() const {
-		return specularMaterialProperties;
+		return specularMaterialProperties.get();
 	}
 
 	/**
 	 * @return specular material properties
 	 */
 	inline SpecularMaterialProperties* getSpecularMaterialProperties() {
-		return specularMaterialProperties;
+		return specularMaterialProperties.get();
 	}
 
 	/**
 	 * @return PBR material properties
 	 */
 	inline const PBRMaterialProperties* getPBRMaterialProperties() const {
-		return pbrMaterialProperties;
+		return pbrMaterialProperties.get();
 	}
 
 	/**
 	 * @return PBR material properties
 	 */
 	inline PBRMaterialProperties* getPBRMaterialProperties() {
-		return pbrMaterialProperties;
+		return pbrMaterialProperties.get();
 	}
 
 	/**

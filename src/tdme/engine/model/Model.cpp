@@ -1,6 +1,7 @@
 #include <tdme/engine/model/Model.h>
 
 #include <map>
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -20,6 +21,7 @@
 
 using std::map;
 using std::string;
+using std::unique_ptr;
 
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
@@ -52,7 +54,7 @@ Model::Model(const string& id, const string& name, UpVector* upVector, RotationO
 	skinning = false;
 	fps = FPS_DEFAULT;
 	importTransformMatrix.identity();
-	this->boundingBox = boundingBox;
+	this->boundingBox = unique_ptr<BoundingBox>(boundingBox);
 	this->authoringTool = authoringTool;
 	this->boundingBoxUpdated = false;
 	this->embedSpecularTextures = false;
@@ -63,7 +65,6 @@ Model::~Model() {
 	deleteSubNodes(subNodes);
 	for (const auto& [materialId, material]: materials) delete material;
 	for (const auto& [animationSetupId, animationSetup]: animationSetups) delete animationSetup;
-	if (boundingBox != nullptr) delete boundingBox;
 }
 
 void Model::deleteSubNodes(const map<string, Node*>& subNodes) {
@@ -71,7 +72,7 @@ void Model::deleteSubNodes(const map<string, Node*>& subNodes) {
 		deleteSubNodes(subNode->getSubNodes());
 		delete subNode;
 	}
-	}
+}
 
 AnimationSetup* Model::addAnimationSetup(const string& id, int32_t startFrame, int32_t endFrame, bool loop, float speed)
 {
@@ -119,9 +120,9 @@ BoundingBox* Model::getBoundingBox()
 {
 	// TODO: return const bb
 	if (boundingBox == nullptr) {
-		boundingBox = ModelUtilities::createBoundingBox(this);
+		boundingBox = unique_ptr<BoundingBox>(ModelUtilities::createBoundingBox(this));
 	}
-	return boundingBox;
+	return boundingBox.get();
 }
 
 bool Model::computeTransformMatrix(const map<string, Node*>& nodes, const Matrix4x4& parentTransformMatrix, int32_t frame, const string& nodeId, Matrix4x4& transformMatrix)
@@ -158,9 +159,6 @@ bool Model::computeTransformMatrix(const map<string, Node*>& nodes, const Matrix
 }
 
 void Model::invalidateBoundingBox() {
-	if (boundingBox != nullptr) {
-		delete boundingBox;
-		boundingBox = nullptr;
-		boundingBoxUpdated = true;
-	}
+	boundingBox = nullptr;
+	boundingBoxUpdated = true;
 }

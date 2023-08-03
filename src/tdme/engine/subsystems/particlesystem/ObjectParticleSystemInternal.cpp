@@ -1,6 +1,7 @@
 #include <tdme/engine/subsystems/particlesystem/ObjectParticleSystemInternal.h>
 
 #include <algorithm>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -21,9 +22,11 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
+using std::make_unique;
 using std::remove;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::Color4;
@@ -70,7 +73,7 @@ ObjectParticleSystemInternal::ObjectParticleSystemInternal(const string& id, Mod
 	}
 	this->boundingBox = new BoundingBox();
 	this->worldBoundingBox = new BoundingBox();
-	this->emitter = emitter;
+	this->emitter = unique_ptr<ParticleEmitter>(emitter);
 	this->effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 	this->pickable = false;
@@ -78,7 +81,6 @@ ObjectParticleSystemInternal::ObjectParticleSystemInternal(const string& id, Mod
 }
 
 ObjectParticleSystemInternal::~ObjectParticleSystemInternal() {
-	delete emitter;
 	for (auto i = 0; i < objects.size(); i++) delete objects[i];
 }
 

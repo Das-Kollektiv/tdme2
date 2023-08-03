@@ -109,6 +109,23 @@ int main(int argc, char** argv)
 			Console::println("map3: getting entries: done in " + to_string(endTime - startTime) + " ms");
 			Console::println(to_string(x));
 		}
+		//
+		{
+			unique_ptr<PtrTest> nullPtr;
+			if (nullPtr == nullptr) {
+				Console::println("Yarrrr: nullPtr == nullptr");
+			} else {
+				Console::println("Damn: nullPtr != nullptr");
+			}
+		}
+		{
+			unique_ptr<PtrTest> onePtr = make_unique<PtrTest>(1);
+			if (onePtr == nullptr) {
+				Console::println("Damn: onePtr == nullptr");
+			} else {
+				Console::println("Yarrrr: onePtr != nullptr");
+			}
+		}
 	}
 	//
     return 0;

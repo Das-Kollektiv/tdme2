@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -10,6 +11,7 @@
 
 using std::map;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::prototype::BaseProperty;
@@ -22,7 +24,7 @@ class tdme::engine::prototype::BaseProperties
 {
 private:
 	map<string, BaseProperty*> propertiesByName;
-	vector<BaseProperty*> properties;
+	vector<unique_ptr<BaseProperty>> properties;
 
 protected:
 	string name;
@@ -120,7 +122,7 @@ public:
 	 * @return property or null
 	 */
 	inline const BaseProperty* getPropertyByIndex(int idx) const {
-		return idx >= 0 && idx < properties.size()?properties[idx]:nullptr;
+		return idx >= 0 && idx < properties.size()?properties[idx].get():nullptr;
 	}
 
 	/**
@@ -129,7 +131,7 @@ public:
 	 * @return property or null
 	 */
 	inline BaseProperty* getPropertyByIndex(int idx) {
-		return idx >= 0 && idx < properties.size()?properties[idx]:nullptr;
+		return idx >= 0 && idx < properties.size()?properties[idx].get():nullptr;
 	}
 
 	/**

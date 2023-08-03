@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -28,6 +29,7 @@
 
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::audio::Audio;
@@ -124,8 +126,8 @@ public:
 		float flowMapDepth;
 		FlowMap* flowMap;
 		unordered_map<string, FlowMapRequest> flowMapRequests;
-		World* world { nullptr };
-		PathFinding* pathFinding { nullptr };
+		unique_ptr<World> world;
+		unique_ptr<PathFinding> pathFinding;
 		Mutex pathFindingMutex;
 		Mutex pathFindingCancelMutex;
 		vector<WorldActionStruct> worldActions;

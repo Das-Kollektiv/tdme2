@@ -1,5 +1,6 @@
 #include <tdme/engine/primitives/TerrainMesh.h>
 
+#include <memory>
 #include <vector>
 
 #include <reactphysics3d/collision/shapes/ConcaveMeshShape.h>
@@ -13,7 +14,9 @@
 #include <tdme/engine/ObjectModel.h>
 #include <tdme/utilities/Console.h>
 
+using std::make_unique;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::physics::World;
@@ -76,7 +79,7 @@ void TerrainMesh::destroyCollisionShape() {
 	if (collisionShape == nullptr) return;
 	this->world->physicsCommon.destroyConcaveMeshShape(static_cast<reactphysics3d::ConcaveMeshShape*>(collisionShape));
 	this->world->physicsCommon.destroyTriangleMesh(triangleMesh);
-	delete triangleVertexArray;
+	triangleVertexArray = nullptr;
 	collisionShape = nullptr;
 	triangleMesh = nullptr;
 	triangleVertexArray = nullptr;
@@ -89,7 +92,7 @@ void TerrainMesh::createCollisionShape(World* world) {
 	this->world = world;
 
 	// RP3D triangle vertex array
-	triangleVertexArray = new reactphysics3d::TriangleVertexArray(
+	triangleVertexArray = make_unique<reactphysics3d::TriangleVertexArray>(
 		vertices.size() / 3,
 		vertices.data(),
 		3 * sizeof(float),
@@ -102,7 +105,7 @@ void TerrainMesh::createCollisionShape(World* world) {
 
 	// add the triangle vertex array to the triangle mesh
 	triangleMesh = world->physicsCommon.createTriangleMesh();
-	triangleMesh->addSubpart(triangleVertexArray);
+	triangleMesh->addSubpart(triangleVertexArray.get());
 
 	// create the concave mesh shape
 	collisionShape = world->physicsCommon.createConcaveMeshShape(triangleMesh);

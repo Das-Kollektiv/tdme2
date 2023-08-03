@@ -1,5 +1,7 @@
 #include <tdme/engine/subsystems/particlesystem/BoundingBoxParticleEmitter.h>
 
+#include <memory>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/Color4.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
@@ -8,6 +10,9 @@
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
+
+using std::make_unique;
+using std::unique_ptr;
 
 using tdme::engine::Color4;
 using tdme::engine::primitives::BoundingVolume;
@@ -25,17 +30,15 @@ BoundingBoxParticleEmitter::BoundingBoxParticleEmitter(int32_t count, int64_t li
 	this->lifeTimeRnd = lifeTimeRnd;
 	this->mass = mass;
 	this->massRnd = massRnd;
-	this->obb = obb;
+	this->obb = unique_ptr<OrientedBoundingBox>(obb);
 	this->velocity.set(velocity);
 	this->velocityRnd.set(velocityRnd);
 	this->colorStart.set(colorStart);
 	this->colorEnd.set(colorEnd);
-	this->worldObb = static_cast<OrientedBoundingBox*>(obb->clone());
+	this->worldObb = unique_ptr<OrientedBoundingBox>(static_cast<OrientedBoundingBox*>(obb->clone()));
 }
 
 BoundingBoxParticleEmitter::~BoundingBoxParticleEmitter() {
-	delete obb;
-	delete worldObb;
 }
 
 void BoundingBoxParticleEmitter::emit(Particle* particle)
@@ -98,6 +101,5 @@ void BoundingBoxParticleEmitter::setTransform(const Transform& transform)
 	// apply scale to half extension
 	worldHalfExtension.set(obb->getHalfExtension());
 	worldHalfExtension.scale(worldScale);
-	delete worldObb;
-	worldObb = new OrientedBoundingBox(worldCenter, worldAxes[0], worldAxes[1], worldAxes[2], worldHalfExtension);
+	worldObb = make_unique<OrientedBoundingBox>(worldCenter, worldAxes[0], worldAxes[1], worldAxes[2], worldHalfExtension);
 }

@@ -1,5 +1,6 @@
 #include <tdme/engine/subsystems/particlesystem/FogParticleSystemInternal.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -21,7 +22,9 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::Texture;
@@ -48,7 +51,7 @@ FogParticleSystemInternal::FogParticleSystemInternal(const string& id, ParticleE
 	this->enabled = true;
 	// will be activated on emit and auto unactivated if no more active particles
 	this->active = false;
-	this->emitter = emitter;
+	this->emitter = unique_ptr<ParticleEmitter>(emitter);
 	particles.resize(maxPoints);
 	this->maxPoints = maxPoints;
 	this->effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
@@ -66,12 +69,11 @@ FogParticleSystemInternal::FogParticleSystemInternal(const string& id, ParticleE
 }
 
 FogParticleSystemInternal::~FogParticleSystemInternal() {
-	delete emitter;
 	if (texture != nullptr) texture->releaseReference();
 }
 
 void FogParticleSystemInternal::initialize() {
-	this->pointsRenderPool = new TransparentRenderPointsPool(maxPoints);
+	this->pointsRenderPool = make_unique<TransparentRenderPointsPool>(maxPoints);
 
 	//
 	Vector3 center;
@@ -218,7 +220,6 @@ void FogParticleSystemInternal::updateParticles()
 
 void FogParticleSystemInternal::dispose()
 {
-	if (pointsRenderPool != nullptr) delete pointsRenderPool;
 	pointsRenderPool = nullptr;
 	engine->getTextureManager()->removeTexture(texture->getId());
 }

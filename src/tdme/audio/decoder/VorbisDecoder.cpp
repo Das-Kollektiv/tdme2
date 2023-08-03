@@ -18,6 +18,7 @@
 #include <vorbis/vorbisfile.h>
 
 #include <string>
+#include <memory>
 
 #include <tdme/tdme.h>
 #include <tdme/audio/decoder/fwd-tdme.h>
@@ -28,7 +29,9 @@
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/ByteBuffer.h>
 
+using std::make_unique;
 using std::string;
+using std::vector;
 
 using tdme::audio::decoder::AudioDecoderException;
 using tdme::audio::decoder::VorbisDecoder;
@@ -74,7 +77,7 @@ long VorbisDecoder::oggfiledata_tell(VorbisDecoder::OGGFileData* oggFileData) {
 
 void VorbisDecoder::openFile(const string& pathName, const string& fileName) {
 	// read from file system
-	oggFileData = new OGGFileData();
+	oggFileData = make_unique<OGGFileData>();
 	FileSystem::getInstance()->getContent(pathName, fileName, oggFileData->data);
 	if (oggFileData->data.size() == 0) {
 		throw AudioDecoderException("No input");
@@ -91,7 +94,7 @@ void VorbisDecoder::openFile(const string& pathName, const string& fileName) {
 	//
 	this->pathName = pathName;
 	this->fileName = fileName;
-	if (ov_open_callbacks(oggFileData, &vf, NULL, 0, oggFileCallbacks) < 0) {
+	if (ov_open_callbacks(oggFileData.get(), &vf, NULL, 0, oggFileCallbacks) < 0) {
 		throw AudioDecoderException("Input does not appear to be an OGG bitstream");
 	}
 
@@ -151,6 +154,5 @@ int64_t VorbisDecoder::readFromStream(ByteBuffer* data) {
 void VorbisDecoder::close() {
 	if (oggFileData == nullptr) return;
 	if (oggFileData->data.size() > 0) ov_clear(&vf);
-	delete oggFileData;
 	oggFileData = nullptr;
 }

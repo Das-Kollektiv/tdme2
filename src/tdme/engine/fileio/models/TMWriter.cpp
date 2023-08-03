@@ -1,6 +1,7 @@
 #include <tdme/engine/fileio/models/TMWriter.h>
 
 #include <array>
+#include <memory>
 #include <map>
 #include <string>
 #include <vector>
@@ -39,9 +40,11 @@
 #include <tdme/utilities/Exception.h>
 
 using std::array;
+using std::make_unique;
 using std::map;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::application::Application;
@@ -362,7 +365,7 @@ void TMWriter::writeNode(TMWriterOutputStream* os, Node* g)
 
 void TMWriter::writeThumbnail(TMWriterOutputStream* os, Model* model) {
 	// generate thumbnail
-	auto prototype = new Prototype(
+	auto prototype = make_unique<Prototype>(
 		Prototype::ID_NONE,
 		Prototype_Type::MODEL,
 		model->getId(),
@@ -374,9 +377,8 @@ void TMWriter::writeThumbnail(TMWriterOutputStream* os, Model* model) {
 	);
 	vector<uint8_t> pngData;
 	string base64PNGData;
-	Tools::oseThumbnail(prototype, pngData);
+	Tools::oseThumbnail(prototype.get(), pngData);
 	prototype->unsetModel();
-	delete prototype;
 
 	// write as attachment
 	os->writeUInt8tArray(pngData);

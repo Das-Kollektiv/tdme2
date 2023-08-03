@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
@@ -17,9 +18,11 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
 
+using std::make_unique;
 using std::map;
 using std::set;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::model::Model;
@@ -42,17 +45,17 @@ private:
 	string applicationRootPathName;
 	string fileName;
 	RotationOrder* rotationOrder { nullptr };
-	vector<SceneLight*> lights;
-	SceneLibrary* library { nullptr };
+	vector<unique_ptr<SceneLight>> lights;
+	unique_ptr<SceneLibrary> library;
 	map<string, SceneEntity*> entitiesById;
-	vector<SceneEntity*> entities;
+	vector<unique_ptr<SceneEntity>> entities;
 	set<string> environmentMappingIds;
 	int entityIdx;
 	BoundingBox boundingBox;
 	Vector3 dimension;
 	Vector3 center;
 	string skyModelFileName;
-	Model* skyModel { nullptr };
+	unique_ptr<Model> skyModel;
 	Vector3 skyModelScale;
 	string guiFileName;
 
@@ -139,7 +142,7 @@ public:
 	 */
 	inline SceneLight* getLightAt(int i) {
 		if (i < 0 || i >= lights.size()) return nullptr;
-		return lights[i];
+		return lights[i].get();
 	}
 
 	/**
@@ -147,8 +150,8 @@ public:
 	 * @return light
 	 */
 	inline SceneLight* addLight() {
-		lights.push_back(new SceneLight(lights.size()));
-		return lights[lights.size() - 1];
+		lights.push_back(make_unique<SceneLight>(lights.size()));
+		return lights[lights.size() - 1].get();
 	}
 
 	/**
@@ -166,7 +169,7 @@ public:
 	 * @return scene prototype library
 	 */
 	inline SceneLibrary* getLibrary() {
-		return library;
+		return library.get();
 	}
 
 	/**
@@ -285,7 +288,8 @@ public:
 	 * @return scene entity
 	 */
 	inline SceneEntity* getEntityAt(int idx) {
-		return entities[idx];
+		if (idx < 0 || idx >= entities.size()) return nullptr;
+		return entities[idx].get();
 	}
 
 	/**
@@ -307,7 +311,7 @@ public:
 	 * @return sky model
 	 */
 	inline Model* getSkyModel() {
-		return skyModel;
+		return skyModel.get();
 	}
 
 	/**

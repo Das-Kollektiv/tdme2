@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -22,6 +23,7 @@
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::Color4;
@@ -64,7 +66,7 @@ protected:
 	BoundingBox boundingBox;
 	BoundingBox worldBoundingBox;
 	Matrix4x4 inverseTransformMatrix;
-	ParticleEmitter* emitter { nullptr };
+	unique_ptr<ParticleEmitter> emitter;
 	bool pickable;
 	Color4 effectColorMul;
 	Color4 effectColorAdd;
@@ -114,7 +116,7 @@ public:
 
 	// overridden methods
 	inline ParticleEmitter* getEmitter() override {
-		return emitter;
+		return emitter.get();
 	}
 
 	const string& getId() override;

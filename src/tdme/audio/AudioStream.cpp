@@ -8,6 +8,7 @@
 #endif
 
 #include <array>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -23,6 +24,7 @@ using tdme::audio::AudioStream;
 using std::array;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::audio::Audio;
@@ -33,8 +35,7 @@ using tdme::utilities::Console;
 void AudioStream::setParameters(uint32_t sampleRate, uint8_t channels, const int64_t bufferSize) {
 	this->sampleRate = sampleRate;
 	this->channels = channels;
-	if (this->data != nullptr) delete data;
-	this->data = ByteBuffer::allocate(bufferSize);
+	this->data = unique_ptr<ByteBuffer>(ByteBuffer::allocate(bufferSize));
 }
 
 bool AudioStream::isPlayingBuffers() {
@@ -65,7 +66,7 @@ void AudioStream::play()
 	ALsizei buffersToPlay = 0;
 	for (auto i = 0; i < alBufferIds.size(); i++) {
 		data->clear();
-		fillBuffer(data);
+		fillBuffer(data.get());
 		// skip if no more data is available
 		if (data->getPosition() == 0) break;
 		// otherwise upload
@@ -180,7 +181,7 @@ void AudioStream::update()
 			}
 			// fill processed buffer again
 			data->clear();
-			fillBuffer(data);
+			fillBuffer(data.get());
 			// stop buffer if not filled
 			if (data->getPosition() == 0) {
 				playing = false;
@@ -229,25 +230,20 @@ void AudioStream::dispose()
 {
 	if (initiated == false)
 		return;
-
-	if (alSourceId != Audio::ALSOURCEID_NONE) {
-		alDeleteSources(1, &alSourceId);
-		if (alGetError() != AL_NO_ERROR) {
-			Console::println(string("AudioStream::dispose(): '" + id + "': Could not delete source"));
-		}
-		alSourceId = Audio::ALSOURCEID_NONE;
+	//
+	alDeleteSources(1, &alSourceId);
+	if (alGetError() != AL_NO_ERROR) {
+		Console::println(string("AudioStream::dispose(): '" + id + "': Could not delete source"));
 	}
-	// if (alBufferIds != nullptr) {
-		alDeleteBuffers(alBufferIds.size(), alBufferIds.data());
-		if (alGetError() != AL_NO_ERROR) {
-			Console::println(string("AudioStream::dispose(): '" + id + "': Could not delete buffers"));
-		}
-	//	alBufferIds = nullptr;
-	// }
-
-	if (data != nullptr) {
-		delete data;
-		data = nullptr;
+	alSourceId = Audio::ALSOURCEID_NONE;
+	//
+	alDeleteBuffers(alBufferIds.size(), alBufferIds.data());
+	if (alGetError() != AL_NO_ERROR) {
+		Console::println(string("AudioStream::dispose(): '" + id + "': Could not delete buffers"));
 	}
+	alBufferIds.fill(Audio::ALBUFFERID_NONE);
+	//
+	data = nullptr;
+	//
 	initiated = false;
 }

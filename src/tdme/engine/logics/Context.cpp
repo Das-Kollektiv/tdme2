@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <deque>
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <unordered_set>
@@ -38,10 +39,12 @@
 
 using std::copy;
 using std::deque;
+using std::make_unique;
 using std::map;
 using std::set;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::unordered_set;
 using std::vector;
 
@@ -86,13 +89,11 @@ Context::PathFindingThread::PathFindingThread(Context* context, int idx):
 	worldActionsMutex("pathfindingthread-world-actions-mutex")
 {
 	reset();
-	world = context->getWorld()->clone("pathfinding" +  to_string(idx) + "-world-" + (context->isServer() == true?"server":"client"), context->bodyCollisionTypeIdCloneMask);
-	pathFinding = new tdme::utilities::PathFinding(world, true, 1000, 1.8f, 0.4f, 0.81f, 0.4f, context->skipOnBodyCollisionTypeIdMask, 5, 0.5f, 2.0f);
+	world = unique_ptr<World>(context->getWorld()->clone("pathfinding" +  to_string(idx) + "-world-" + (context->isServer() == true?"server":"client"), context->bodyCollisionTypeIdCloneMask));
+	pathFinding = make_unique<tdme::utilities::PathFinding>(world.get(), true, 1000, 1.8f, 0.4f, 0.81f, 0.4f, context->skipOnBodyCollisionTypeIdMask, 5, 0.5f, 2.0f);
 }
 
 Context::PathFindingThread::~PathFindingThread() {
-	delete pathFinding;
-	delete world;
 }
 
 void Context::PathFindingThread::PathFindingThread::reset() {

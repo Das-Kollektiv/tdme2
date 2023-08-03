@@ -1,5 +1,6 @@
 #include <tdme/engine/fileio/scenes/SceneReader.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -38,8 +39,10 @@
 
 #include <ext/rapidjson/document.h>
 
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::models::TMWriter;
@@ -87,15 +90,19 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 
+	//
 	auto jsonContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 	if (progressCallback != nullptr) progressCallback->progress(0.165f);
 
+	//
 	Document jRoot;
 	jRoot.Parse(jsonContent.c_str());
 	if (progressCallback != nullptr) progressCallback->progress(0.33f);
 
 	//
-	auto scene = new Scene(fileName, "");
+	auto progressCallbackUniquePtr = unique_ptr<ProgressCallback>(progressCallback);
+	auto scene = make_unique<Scene>(fileName, "");
+	//
 	scene->setApplicationRootPathName(Tools::getApplicationRootPathName(pathName));
 	// auto version = Float::parseFloat((jRoot["version"].GetString()));
 	scene->setRotationOrder(jRoot.FindMember("ro") != jRoot.MemberEnd()?RotationOrder::valueOf(jRoot["ro"].GetString()):RotationOrder::XYZ);
@@ -310,7 +317,6 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 					)
 				);
 			} catch (Exception& exception) {
-				delete scene;
 				throw exception;
 			}
 		}
@@ -327,11 +333,10 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 	//
 	if (progressCallback != nullptr) {
 		progressCallback->progress(1.0f);
-		delete progressCallback;
 	}
 
 	//
-	return scene;
+	return scene.release();
 }
 
 void SceneReader::determineMeshNodes(Scene* scene, Node* node, const string& parentName, const Matrix4x4& parentTransformMatrix, vector<PrototypeMeshNode>& meshNodes) {
@@ -410,7 +415,7 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 	}
 	FileSystem::getInstance()->createPath(modelPathName);
 
-	auto sceneModel = ModelReader::read(pathName, fileName);
+	unique_ptr<Model> sceneModel(ModelReader::read(pathName, fileName));
 
 	if (progressCallback != nullptr) progressCallback->progress(0.1f);
 
@@ -418,7 +423,7 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 	RotationOrder* rotationOrder = sceneModel->getRotationOrder();
 
 	//
-	auto scene = new Scene(fileName, "");
+	auto scene = make_unique<Scene>(fileName, "");
 	scene->setRotationOrder(rotationOrder);
 
 	auto sceneLibrary = scene->getLibrary();
@@ -434,9 +439,9 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 	for (const auto& [subNodeId, subNode]: sceneModel->getSubNodes()) {
 		if (progressCallback != nullptr) progressCallback->progress(0.1f + static_cast<float>(progressIdx) / static_cast<float>(progressTotal) * 0.8f);
 		vector<PrototypeMeshNode> meshNodes;
-		determineMeshNodes(scene, subNode, "", (Matrix4x4()).identity(), meshNodes);
+		determineMeshNodes(scene.get(), subNode, "", (Matrix4x4()).identity(), meshNodes);
 		for (const auto& meshNode: meshNodes) {
-			auto model = new Model(
+			auto model = make_unique<Model>(
 				meshNode.name + ".tm",
 				fileName + "-" + meshNode.name,
 				upVector,
@@ -469,12 +474,12 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 			rotation = sceneModelImportRotationMatrix.multiply(rotation);
 			translation = model->getImportTransformMatrix().multiply(translation);
 
-			ModelTools::cloneNode(meshNode.node, model);
+			ModelTools::cloneNode(meshNode.node, model.get());
 			if (model->getSubNodes().begin() != model->getSubNodes().end()) {
 				model->getSubNodes().begin()->second->setTransformMatrix(Matrix4x4().identity());
 			}
 			model->addAnimationSetup(Model::ANIMATIONSETUP_DEFAULT, 0, 0, true);
-			ModelTools::prepareForIndexedRendering(model);
+			ModelTools::prepareForIndexedRendering(model.get());
 			// scale up model if dimension too less, this occurres with importing FBX that was exported by UE
 			// TODO: maybe make this conditional
 			{
@@ -501,7 +506,6 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 			auto prototypeType = Prototype_Type::MODEL;
 			if (meshNode.node->getVertices().size() == 0) {
 				prototypeType = Prototype_Type::EMPTY;
-				delete model;
 				model = nullptr;
 			}
 			Prototype* prototype = nullptr;
@@ -511,9 +515,8 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 					if (prototypeCompare->getType() != Prototype_Type::MODEL)
 						continue;
 
-					if (ModelUtilities::equals(model, prototypeCompare->getModel()) == true) {
+					if (ModelUtilities::equals(model.get(), prototypeCompare->getModel()) == true) {
 						prototype = prototypeCompare;
-						delete model;
 						model = nullptr;
 						break;
 					}
@@ -522,14 +525,11 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 					auto modelFileName = meshNode.name + ".tm";
 					try {
 						TMWriter::write(
-							model,
+							model.get(),
 							modelPathName,
 							modelFileName
 						);
 					} catch (Exception& exception) {
-						delete model;
-						delete scene;
-						delete sceneModel;
 						throw exception;
 					}
 					prototype = new Prototype(
@@ -540,7 +540,7 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 						modelPathName + "/" + modelFileName,
 						"resources/engine/models/empty.tm",
 						string(),
-						model
+						model.release()
 					);
 					sceneLibrary->addPrototype(prototype);
 				}
@@ -562,8 +562,6 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 				prototype = emptyPrototype;
 			} else {
 				Console::println(string("DAEReader::readLevel(): unknown entity type. Skipping"));
-				delete model;
-				model = nullptr;
 				continue;
 			}
 			Transform sceneEntityTransform;
@@ -592,20 +590,15 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 		SceneWriter::write(
 			pathName,
 			Tools::removeFileExtension(fileName) + ".tscene",
-			scene
+			scene.get()
 		);
 	} catch (Exception& exception) {
-		delete scene;
-		delete sceneModel;
 		throw exception;
 	}
-
-	//
-	delete sceneModel;
 
 	//
 	if (progressCallback != nullptr) progressCallback->progress(1.0f);
 
 	//
-	return scene;
+	return scene.release();
 }

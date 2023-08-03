@@ -1,6 +1,7 @@
 #include <tdme/engine/scene/Scene.h>
 
 #include <algorithm>
+#include <memory>
 #include <map>
 #include <string>
 #include <vector>
@@ -22,9 +23,11 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/utilities/Console.h>
 
+using std::make_unique;
 using std::map;
 using std::remove;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::Color4;
@@ -49,8 +52,8 @@ Scene::Scene(const string& name, const string& description): BaseProperties(name
 	applicationRootPathName = "";
 	fileName = "untitled.tscene";
 	rotationOrder = RotationOrder::XYZ;
-	lights.push_back(new SceneLight(0));
-	auto light = lights[0];
+	lights.push_back(make_unique<SceneLight>(0));
+	auto light = getLightAt(0);
 	light->setAmbient(Color4(0.7f, 0.7f, 0.7f, 1.0f));
 	light->setDiffuse(Color4(0.3f, 0.3f, 0.3f, 1.0f));
 	light->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -62,19 +65,12 @@ Scene::Scene(const string& name, const string& description): BaseProperties(name
 	light->setSpotExponent(0.0f);
 	light->setSpotCutOff(180.0f);
 	light->setEnabled(true);
-	library = new SceneLibrary(this);
+	library = make_unique<SceneLibrary>(this);
 	entityIdx = 0;
 	skyModelScale = Vector3(1.0f, 1.0f, 1.0f);
 }
 
 Scene::~Scene() {
-	for (auto light: lights) {
-		delete light;
-	}
-	for (auto entity: entities) {
-		delete entity;
-	}
-	delete library;
 }
 
 void Scene::computeBoundingBox()
@@ -93,7 +89,7 @@ void Scene::computeBoundingBox()
 	Vector3 bbDimension;
 	Vector3 bbMin;
 	Vector3 bbMax;
-	for (auto sceneEntity: entities) {
+	for (const auto& sceneEntity: entities) {
 		BoundingBox cbv;
 		// TODO: Implement me 100%
 		if (sceneEntity->getPrototype()->getType() == Prototype_Type::MODEL) {
@@ -179,7 +175,7 @@ void Scene::clearEntities()
 }
 
 void Scene::getEntitiesByPrototypeId(int prototypeId, vector<string>& entitiesByPrototypeId) {
-	for (auto entity: entities) {
+	for (const auto& entity: entities) {
 		if (entity->getPrototype()->getId() == prototypeId) {
 			entitiesByPrototypeId.push_back(entity->getId());
 		}
@@ -190,7 +186,7 @@ void Scene::removeEntitiesByPrototypeId(int prototypeId)
 {
 	vector<string> entitiesToRemove;
 	getEntitiesByPrototypeId(prototypeId, entitiesToRemove);
-	for (auto entityId: entitiesToRemove) {
+	for (const auto& entityId: entitiesToRemove) {
 		removeEntity(entityId);
 	}
 }
@@ -201,7 +197,7 @@ void Scene::replacePrototypeByIds(int searchPrototypeId, int newEntityId)
 	if (replaceEntity == nullptr)
 		return;
 
-	for (auto entity: entities) {
+	for (const auto& entity: entities) {
 		if (entity->getPrototype()->getId() == searchPrototypeId) {
 			entity->setPrototype(replaceEntity);
 		}
@@ -220,7 +216,7 @@ void Scene::addEntity(SceneEntity* entity)
 		);
 	}
 	entitiesById[entity->getId()] = entity;
-	entities.push_back(entity);
+	entities.push_back(unique_ptr<SceneEntity>(entity));
 	if (entity->getPrototype()->getType() == Prototype_Type::ENVIRONMENTMAPPING) environmentMappingIds.insert(entity->getId());
 }
 
@@ -229,10 +225,14 @@ bool Scene::removeEntity(const string& id)
 	auto entityByIdIt = entitiesById.find(id);
 	if (entityByIdIt != entitiesById.end()) {
 		auto entity = entityByIdIt->second;
+		for (auto i = 0; i < entities.size(); i++) {
+			if (entities[i].get() == entity) {
+				entities.erase(entities.begin() + i);
+				break;
+			}
+		}
 		entitiesById.erase(entityByIdIt);
-		entities.erase(remove(entities.begin(), entities.end(), entity), entities.end());
 		if (entity->getPrototype()->getType() == Prototype_Type::ENVIRONMENTMAPPING) environmentMappingIds.erase(entity->getId());
-		delete entity;
 		return true;
 	} else {
 		return false;
@@ -266,9 +266,7 @@ SceneEntity* Scene::getEntity(const string& id)
 }
 
 void Scene::setSkyModel(Model* model) {
-	if (this->skyModel== model) return;
-	delete this->skyModel;
-	this->skyModel = model;
+	this->skyModel = unique_ptr<Model>(model);
 }
 
 void Scene::update() {

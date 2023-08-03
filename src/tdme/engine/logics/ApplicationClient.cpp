@@ -1,3 +1,4 @@
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -21,8 +22,10 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Time.h>
 
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::audio::Audio;
@@ -93,18 +96,19 @@ void ApplicationClient::run() {
 		// get in packets
 		mutex.lock();
 		if (udpClient != nullptr) {
-			UDPClientMessage* message = nullptr;
-			while ((message = udpClient->receiveMessage()) != nullptr) {
+			while (true == true) {
+				//
+				unique_ptr<UDPClientMessage> message(udpClient->receiveMessage());
+				//
+				if (message == nullptr) break;
 				// get if safe message
 				auto packet = message->getPacket();
 				if (packet == nullptr) {
-					delete message;
 					continue;
 				}
 				// safe
 				auto safe = packet->getBool();
-				if (safe == true && udpClient->processSafeMessage(message) == false) {
-					delete message;
+				if (safe == true && udpClient->processSafeMessage(message.get()) == false) {
 					continue;
 				}
 				// Console::println("got packet safe: " + to_string(safe == 1));
@@ -127,7 +131,6 @@ void ApplicationClient::run() {
 						size
 					);
 				}
-				delete message;
 			}
 		}
 
@@ -223,7 +226,7 @@ void ApplicationClient::run() {
 
 			// send safe messages
 			{
-				auto udpClientPacket = new UDPPacket();
+				auto udpClientPacket = make_unique<UDPPacket>();
 				// safe
 				udpClientPacket->putBool(true);
 				//
@@ -238,8 +241,8 @@ void ApplicationClient::run() {
 							// no more network packets, size = 0
 							udpClientPacket->putByte(0);
 						}
-						udpClient->sendMessage(udpClient->createMessage(udpClientPacket), true);
-						udpClientPacket = new UDPPacket();
+						udpClient->sendMessage(udpClient->createMessage(udpClientPacket.release()), true);
+						udpClientPacket = make_unique<UDPPacket>();
 						// safe
 						udpClientPacket->putBool(true);
 					}
@@ -257,16 +260,14 @@ void ApplicationClient::run() {
 						// no more network packets, size = 0
 						udpClientPacket->putByte(0);
 					}
-					udpClient->sendMessage(udpClient->createMessage(udpClientPacket), true);
-				} else {
-					delete udpClientPacket;
+					udpClient->sendMessage(udpClient->createMessage(udpClientPacket.release()), true);
 				}
 				//
 				safeLogicNetworkPackets.clear();
 			}
 			// send fast messages
 			{
-				auto udpClientPacket = new UDPPacket();
+				auto udpClientPacket = make_unique<UDPPacket>();
 				// safe
 				udpClientPacket->putBool(false);
 				//
@@ -280,8 +281,8 @@ void ApplicationClient::run() {
 							// no more network packets, size = 0
 							udpClientPacket->putByte(0);
 						}
-						udpClient->sendMessage(udpClient->createMessage(udpClientPacket), true);
-						udpClientPacket = new UDPPacket();
+						udpClient->sendMessage(udpClient->createMessage(udpClientPacket.release()), true);
+						udpClientPacket = make_unique<UDPPacket>();
 						// safe
 						udpClientPacket->putBool(false);
 					}
@@ -299,9 +300,7 @@ void ApplicationClient::run() {
 						// no more network packets, size = 0
 						udpClientPacket->putByte(0);
 					}
-					udpClient->sendMessage(udpClient->createMessage(udpClientPacket), true);
-				} else {
-					delete udpClientPacket;
+					udpClient->sendMessage(udpClient->createMessage(udpClientPacket.release()), true);
 				}
 				//
 				fastLogicNetworkPackets.clear();

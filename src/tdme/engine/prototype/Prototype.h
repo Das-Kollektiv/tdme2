@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -21,9 +22,11 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
 
+using std::make_unique;
 using std::map;
 using std::remove;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::model::Model;
@@ -62,16 +65,16 @@ private:
 	string fileName;
 	string modelFileName;
 	string thumbnail;
-	Model* model { nullptr };
+	unique_ptr<Model> model;
 	bool entityHierachy { false };
 	bool scriptHandlingHID { false };
 	string script;
-	PrototypeLODLevel* lodLevel2 { nullptr };
-	PrototypeLODLevel* lodLevel3 { nullptr };
-	PrototypeImposterLOD* imposterLOD { nullptr };
-	vector<PrototypeBoundingVolume*> boundingVolumes;
-	PrototypePhysics* physics { nullptr };
-	vector<PrototypeParticleSystem*> particleSystems;
+	unique_ptr<PrototypeLODLevel> lodLevel2;
+	unique_ptr<PrototypeLODLevel> lodLevel3;
+	unique_ptr<PrototypeImposterLOD> imposterLOD;
+	vector<unique_ptr<PrototypeBoundingVolume>> boundingVolumes;
+	unique_ptr<PrototypePhysics> physics;
+	vector<unique_ptr<PrototypeParticleSystem>> particleSystems;
 	bool terrainMesh { false };
 	bool renderGroups { false };
 	string shaderId { "default"};
@@ -79,11 +82,11 @@ private:
 	bool receivesShadows { true };
 	EntityShaderParameters shaderParameters;
 	map<string, PrototypeAudio*> soundsById;
-	vector<PrototypeAudio*> sounds;
+	vector<unique_ptr<PrototypeAudio>> sounds;
 	int32_t environmentMapRenderPassMask { Entity::RENDERPASS_ALL - Entity::RENDERPASS_WATER };
 	int64_t environmentMapTimeRenderUpdateFrequency { 0LL };
-	PrototypeTerrain* terrain { nullptr };
-	PrototypeDecal* decal { nullptr };
+	unique_ptr<PrototypeTerrain> terrain;
+	unique_ptr<PrototypeDecal> decal;
 
 	/**
 	 * Set Id
@@ -193,7 +196,7 @@ public:
 	 * @return model
 	 */
 	inline Model* getModel() {
-		return model;
+		return model.get();
 	}
 
 	/**
@@ -207,9 +210,7 @@ public:
 	 * @return model
 	 */
 	inline Model* unsetModel() {
-		auto currentModel = model;
-		model = nullptr;
-		return currentModel;
+		return model.release();
 	}
 
 	/**
@@ -277,7 +278,7 @@ public:
 	 * @return prototype bounding volume
 	 */
 	inline PrototypeBoundingVolume* getBoundingVolume(int idx) {
-		return idx >= 0 && idx < boundingVolumes.size()?boundingVolumes[idx]:nullptr;
+		return idx >= 0 && idx < boundingVolumes.size()?boundingVolumes[idx].get():nullptr;
 	}
 
 	/**
@@ -300,7 +301,7 @@ public:
 	 */
 	inline const vector<BoundingVolume*> getBoundingVolumePrimitives() {
 		vector<BoundingVolume*> boundingVolumePrimitives;
-		for (auto boundingVolume: boundingVolumes) {
+		for (auto& boundingVolume: boundingVolumes) {
 			if (boundingVolume->getBoundingVolume() != nullptr) {
 				boundingVolumePrimitives.push_back(boundingVolume->getBoundingVolume());
 			}
@@ -312,14 +313,14 @@ public:
 	 * @return physics
 	 */
 	inline PrototypePhysics* getPhysics() {
-		return physics;
+		return physics.get();
 	}
 
 	/**
 	 * @return LOD level 2
 	 */
 	inline PrototypeLODLevel* getLODLevel2() {
-		return lodLevel2;
+		return lodLevel2.get();
 	}
 
 	/**
@@ -332,7 +333,7 @@ public:
 	 * @return LOD level 3
 	 */
 	inline PrototypeLODLevel* getLODLevel3() {
-		return lodLevel3;
+		return lodLevel3.get();
 	}
 
 	/**
@@ -351,7 +352,7 @@ public:
 	 * @return imposter LOD
 	 */
 	inline PrototypeImposterLOD* getImposterLOD() {
-		return imposterLOD;
+		return imposterLOD.get();
 	}
 
 	/**
@@ -371,9 +372,8 @@ public:
 	 * Add particle system
 	 */
 	inline PrototypeParticleSystem* addParticleSystem() {
-		auto particleSystem = new PrototypeParticleSystem();
-		particleSystems.push_back(particleSystem);
-		return particleSystem;
+		particleSystems.push_back(make_unique<PrototypeParticleSystem>());
+		return particleSystems[particleSystems.size() - 1].get();
 	}
 
 	/**
@@ -383,9 +383,8 @@ public:
 	 */
 	inline bool removeParticleSystemAt(int idx) {
 		if (idx < 0 || idx >= particleSystems.size()) return false;
-		auto particleSystem = particleSystems[idx];
+		const auto& particleSystem = particleSystems[idx];
 		particleSystems.erase(remove(particleSystems.begin(), particleSystems.end(), particleSystem), particleSystems.end());
-		delete particleSystem;
 		return true;
 	}
 
@@ -396,7 +395,7 @@ public:
 	 */
 	inline PrototypeParticleSystem* getParticleSystemAt(int idx) {
 		if (idx < 0 || idx >= particleSystems.size()) return nullptr;
-		return particleSystems[idx];
+		return particleSystems[idx].get();
 	}
 
 	/**
@@ -497,14 +496,21 @@ public:
 	/**
 	 * @return sounds list
 	 */
-	inline const vector<PrototypeAudio*>& getSounds() {
-		return sounds;
+	inline const vector<PrototypeAudio*> getSounds() {
+		vector<PrototypeAudio*> result;
+		for (const auto& sound: sounds) {
+			result.push_back(sound.get());
+		}
+		return result;
 	}
 
 	/**
 	 * Returns sound of given sound id
 	 * @param id id
 	 * @return sound
+	 *
+	 * TODO: make getSoundCount(), getSoundAt(), removeSoundAt(), ...
+	 *
 	 */
 	inline PrototypeAudio* getSound(const string& id) {
 		auto soundIt = soundsById.find(id);
@@ -519,7 +525,13 @@ public:
 	inline void removeSound(const string& id) {
 		auto soundIt = soundsById.find(id);
 		if (soundIt == soundsById.end()) return;
-		sounds.erase(remove(sounds.begin(), sounds.end(), soundIt->second), sounds.end());
+		auto sound = soundIt->second;
+		for (auto i = 0; i < sounds.size(); i++) {
+			if (sounds[i].get() == sound) {
+				sounds.erase(sounds.begin() + i);
+				break;
+			}
+		}
 		soundsById.erase(soundIt);
 	}
 
@@ -580,14 +592,14 @@ public:
 	 * @return terrain definitions
 	 */
 	inline PrototypeTerrain* getTerrain() {
-		return terrain;
+		return terrain.get();
 	}
 
 	/**
 	 * @return decal definitions
 	 */
 	inline PrototypeDecal* getDecal() {
-		return decal;
+		return decal.get();
 	}
 
 };

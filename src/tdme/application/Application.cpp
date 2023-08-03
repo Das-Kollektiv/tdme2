@@ -720,7 +720,7 @@ void Application::setIcon() {
 		auto textureWidth = texture->getTextureWidth();
 		auto textureHeight = texture->getTextureHeight();
 		auto textureBytePerPixel = texture->getRGBDepthBitsPerPixel() == 32?4:3;
-		auto glfwPixels = new uint8_t[textureWidth * textureHeight * 4];
+		vector<uint8_t> glfwPixels(textureWidth * textureHeight * 4);
 		for (auto y = 0; y < textureHeight; y++)
 		for (auto x = 0; x < textureWidth; x++) {
 			glfwPixels[y * textureWidth * 4 + x * 4 + 0] = textureData.get(y * textureWidth * textureBytePerPixel + x * textureBytePerPixel + 0);
@@ -731,10 +731,9 @@ void Application::setIcon() {
 		GLFWimage glfwIcon;
 		glfwIcon.width = texture->getTextureWidth();
 		glfwIcon.height = texture->getTextureHeight();
-		glfwIcon.pixels = glfwPixels;
+		glfwIcon.pixels = glfwPixels.data();
 		glfwSetWindowIcon(glfwWindow, 1, &glfwIcon);
 		texture->releaseReference();
-		delete [] glfwPixels;
 	}
 }
 

@@ -2,6 +2,7 @@
 
 #include <vorbis/vorbisfile.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -15,6 +16,7 @@
 
 using std::string;
 using std::vector;
+using std::unique_ptr;
 
 using tdme::audio::decoder::AudioDecoder;
 using tdme::audio::decoder::AudioDecoderException;
@@ -84,7 +86,7 @@ private:
 	static long oggfiledata_tell(VorbisDecoder::OGGFileData* oggFileData);
 
 	//
-	OGGFileData* oggFileData { nullptr };
+	unique_ptr<OGGFileData> oggFileData;
 	string pathName;
 	string fileName;
 	OggVorbis_File vf;

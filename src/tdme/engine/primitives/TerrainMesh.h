@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 
 #include <reactphysics3d/collision/TriangleMesh.h>
@@ -12,6 +13,7 @@
 #include <tdme/engine/primitives/Triangle.h>
 #include <tdme/engine/Transform.h>
 
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::physics::World;
@@ -30,7 +32,7 @@ class tdme::engine::primitives::TerrainMesh final
 private:
 	vector<float> vertices;
 	vector<int32_t> indices;
-	reactphysics3d::TriangleVertexArray* triangleVertexArray { nullptr };
+	unique_ptr<reactphysics3d::TriangleVertexArray> triangleVertexArray;
 	reactphysics3d::TriangleMesh* triangleMesh { nullptr };
 
 	// overriden methods

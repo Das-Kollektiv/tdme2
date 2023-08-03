@@ -1,5 +1,7 @@
 #include <tdme/engine/subsystems/particlesystem/SphereParticleEmitter.h>
 
+#include <memory>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/Sphere.h>
@@ -7,6 +9,9 @@
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
+
+using std::make_unique;
+using std::unique_ptr;
 
 using tdme::engine::Color4;
 using tdme::engine::primitives::BoundingVolume;
@@ -24,8 +29,8 @@ SphereParticleEmitter::SphereParticleEmitter(int32_t count, int64_t lifeTime, in
 	this->lifeTimeRnd = lifeTimeRnd;
 	this->mass = mass;
 	this->massRnd = massRnd;
-	this->sphere = sphere;
-	this->worldSphere = static_cast<Sphere*>(sphere->clone());
+	this->sphere = unique_ptr<Sphere>(sphere);
+	this->worldSphere = unique_ptr<Sphere>(static_cast<Sphere*>(sphere->clone()));
 	this->velocity.set(velocity);
 	this->velocityRnd.set(velocityRnd);
 	this->colorStart.set(colorStart);
@@ -33,8 +38,6 @@ SphereParticleEmitter::SphereParticleEmitter(int32_t count, int64_t lifeTime, in
 }
 
 SphereParticleEmitter::~SphereParticleEmitter() {
-	delete sphere;
-	delete worldSphere;
 }
 
 void SphereParticleEmitter::emit(Particle* particle)
@@ -74,6 +77,5 @@ void SphereParticleEmitter::setTransform(const Transform& transform)
 	// world sphere
 	Vector3 worldScale;
 	transformMatrix.getScale(worldScale);
-	delete worldSphere;
-	worldSphere = new Sphere(worldCenter, sphere->getRadius() * Math::max(worldScale.getX(), Math::max(worldScale.getY(), worldScale.getZ())));
+	worldSphere = make_unique<Sphere>(worldCenter, sphere->getRadius() * Math::max(worldScale.getX(), Math::max(worldScale.getY(), worldScale.getZ())));
 }
