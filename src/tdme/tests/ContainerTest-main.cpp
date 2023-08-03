@@ -109,6 +109,8 @@ int main(int argc, char** argv)
 			Console::println("map3: getting entries: done in " + to_string(endTime - startTime) + " ms");
 			Console::println(to_string(x));
 		}
+		// ok: conclusion: on Windows with MSC/MINGW smart pointers here come with a 10%-25% performance penalty
+		//	so we might not want to have this at performance critical code
 	}
 	//
     return 0;
