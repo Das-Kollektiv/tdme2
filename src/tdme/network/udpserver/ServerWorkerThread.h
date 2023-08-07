@@ -4,8 +4,10 @@
 
 #include <tdme/tdme.h>
 #include <tdme/network/udpserver/ServerWorkerThreadPool.h>
+#include <tdme/os/threading/Barrier.h>
 #include <tdme/os/threading/Thread.h>
 
+using tdme::os::threading::Barrier;
 using tdme::os::threading::Thread;
 
 namespace tdme {
@@ -27,8 +29,9 @@ public:
 	 * @brief Public constructor
 	 * @param id id
 	 * @param threadPool thread pool
+	 * @param startUpBarrier start up barrier
 	 */
-	ServerWorkerThread(const unsigned int id, ServerWorkerThreadPool* threadPool);
+	ServerWorkerThread(const unsigned int id, ServerWorkerThreadPool* threadPool, Barrier* startUpBarrier);
 
 	/**
 	 * @brief Public destructor
@@ -38,6 +41,7 @@ public:
 private:
 	unsigned int id;
 	ServerWorkerThreadPool *threadPool;
+	Barrier* startUpBarrier;
 
 	/**
 	 * @brief Thread run method

@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include <memory>
 #include <queue>
 #include <string>
 #include <typeinfo>
@@ -20,7 +21,9 @@
 #include <tdme/utilities/RTTI.h>
 #include <tdme/utilities/Time.h>
 
+using std::make_unique;
 using std::queue;
+using std::unique_ptr;
 using std::unordered_map;
 using std::string;
 
@@ -153,7 +156,7 @@ void UDPClient::run() {
 						//
 						statistics.received++;
 						//
-						UDPClientMessage* clientMessage = UDPClientMessage::parse(message, bytesReceived);
+						auto clientMessage = unique_ptr<UDPClientMessage>(UDPClientMessage::parse(message, bytesReceived));
 						try {
 							if (clientMessage == nullptr) {
 								throw NetworkClientException("invalid message");
@@ -162,7 +165,7 @@ void UDPClient::run() {
 								case UDPClientMessage::MESSAGETYPE_ACKNOWLEDGEMENT:
 									{
 										processAckReceived(clientMessage->getMessageId());
-										delete clientMessage;
+										//
 										break;
 									}
 								case UDPClientMessage::MESSAGETYPE_CONNECT:
@@ -181,9 +184,9 @@ void UDPClient::run() {
 										// read client key
 										auto packet = clientMessage->getPacket();
 										clientKey = packet->getString();
-										delete clientMessage;
 										// we are connected
 										connected = true;
+										//
 										break;
 									}
 								case UDPClientMessage::MESSAGETYPE_MESSAGE:
@@ -194,7 +197,7 @@ void UDPClient::run() {
 											recvMessageQueueMutex.unlock();
 											throw NetworkClientException("recv message queue overflow");
 										}
-										recvMessageQueue.push(clientMessage);
+										recvMessageQueue.push(clientMessage.release());
 										recvMessageQueueMutex.unlock();
 										break;
 									}
@@ -204,8 +207,6 @@ void UDPClient::run() {
 									}
 							}
 						} catch (Exception &exception) {
-							if (clientMessage != nullptr) delete clientMessage;
-
 							// log
 							Console::println(
 								"UDPClient::run(): " +
@@ -307,13 +308,13 @@ void UDPClient::run() {
 
 void UDPClient::sendMessage(UDPClientMessage* clientMessage, bool safe) {
 	// create message
-	auto message = new Message();
-	message->time = clientMessage->getTime();
-	message->messageType = clientMessage->getMessageType();
-	message->messageId = clientMessage->getMessageId();
+	auto clientMessagePtr = unique_ptr<UDPClientMessage>(clientMessage);
+	auto message = make_unique<Message>();
+	message->time = clientMessagePtr->getTime();
+	message->messageType = clientMessagePtr->getMessageType();
+	message->messageId = clientMessagePtr->getMessageId();
 	message->retries = 0;
-	clientMessage->generate(message->message, message->bytes);
-	delete clientMessage;
+	clientMessagePtr->generate(message->message, message->bytes);
 
 	// requires ack and retransmission ?
 	if (safe == true) {
@@ -323,13 +324,11 @@ void UDPClient::sendMessage(UDPClientMessage* clientMessage, bool safe) {
 		if (it != messageMapAck.end()) {
  			// its on ack queue already, so unlock
 			messageMapAckMutex.unlock();
-			delete message;
 			throw NetworkClientException("message already on message queue ack");
 		}
 		//	check if message queue is full
 		if (messageMapAck.size() > 1000) {
 			messageMapAckMutex.unlock();
-			delete message;
 			throw NetworkClientException("message queue ack overflow");
 		}
 		// 	push to message queue ack
@@ -346,10 +345,9 @@ void UDPClient::sendMessage(UDPClientMessage* clientMessage, bool safe) {
 	//	check if message queue is full
 	if (messageQueue.size() > 1000) {
 		messageQueueMutex.unlock();
-		delete message;
 		throw NetworkClientException("message queue overflow");
 	}
-	messageQueue.push(message);
+	messageQueue.push(message.release());
 
 	// set nio interest
 	if (messageQueue.size() == 1) {
@@ -416,16 +414,13 @@ void UDPClient::processAckMessages() {
 			*message = *messageAck;
 
 			// parse client message from message raw data
-			UDPClientMessage* clientMessage = UDPClientMessage::parse(message->message, message->bytes);
+			auto clientMessage = unique_ptr<UDPClientMessage>(UDPClientMessage::parse(message->message, message->bytes));
 
 			// increase/set retry
 			clientMessage->retry();
 
 			// recreate message
 			clientMessage->generate(message->message, message->bytes);
-
-			// delete client message
-			delete clientMessage;
 
 			// and push to be resent
 			messageQueueResend.push(message);

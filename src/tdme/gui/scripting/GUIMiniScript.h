@@ -1,11 +1,15 @@
 #pragma once
 
+#include <memory>
+
 #include <tdme/tdme.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/scripting/fwd-tdme.h>
 #include <tdme/utilities/MiniScript.h>
+
+using std::unique_ptr;
 
 using tdme::gui::GUI;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -38,10 +42,10 @@ public:
 	void registerVariables() override;
 
 	/**
-	 * @return next screen node
+	 * @return release next screen node
 	 */
-	inline GUIScreenNode* getNextScreenNode() {
-		return nextScreenNode;
+	inline GUIScreenNode* releaseNextScreenNode() {
+		return nextScreenNode.release();
 	}
 
 	/**
@@ -60,7 +64,7 @@ public:
 
 private:
 	GUIScreenNode* screenNode { nullptr };
-	GUIScreenNode* nextScreenNode { nullptr };
+	unique_ptr<GUIScreenNode> nextScreenNode;
 	bool popped { false };
 
 	// keys

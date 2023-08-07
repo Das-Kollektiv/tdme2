@@ -1,5 +1,6 @@
 #include <tdme/network/httpclient/HTTPDownloadClient.h>
 
+#include <memory>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -22,11 +23,13 @@
 #include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::make_unique;
 using std::ifstream;
 using std::ios;
 using std::ofstream;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::math::Math;
@@ -261,7 +264,7 @@ void HTTPDownloadClient::start() {
 	};
 	downloadThreadMutex.lock();
 	finished = false;
-	this->downloadThread = new DownloadThread(this);
+	this->downloadThread = make_unique<DownloadThread>(this);
 	this->downloadThread->start();
 	downloadThreadMutex.unlock();
 }
@@ -276,7 +279,6 @@ void HTTPDownloadClient::join() {
 	downloadThreadMutex.lock();
 	if (downloadThread != nullptr) {
 		downloadThread->join();
-		delete this->downloadThread;
 		this->downloadThread = nullptr;
 	}
 	downloadThreadMutex.unlock();

@@ -1,4 +1,7 @@
+#include <tdme/network/udpserver/UDPServer.h>
+
 #include <exception>
+#include <memory>
 #include <string>
 #include <string_view>
 #include <typeinfo>
@@ -6,7 +9,6 @@
 #include <tdme/tdme.h>
 #include <tdme/math/Math.h>
 #include <tdme/network/udp/UDPPacket.h>
-#include <tdme/network/udpserver/UDPServer.h>
 #include <tdme/network/udpserver/UDPServerIOThread.h>
 #include <tdme/os/threading/AtomicOperations.h>
 #include <tdme/os/threading/Barrier.h>
@@ -18,9 +20,11 @@
 #include <tdme/utilities/Time.h>
 
 using std::ios_base;
+using std::make_unique;
 using std::string;
 using std::string_view;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::math::Math;
 using tdme::network::udp::UDPPacket;
@@ -52,32 +56,32 @@ UDPServer::~UDPServer() {
 void UDPServer::run() {
 	Console::println("UDPServer::run(): start");
 
-	// create start up barrier for io threads
-	startUpBarrier = new Barrier("nioudpserver_startup_workers", workerThreadPoolCount + 1);
+	{
+		// create start up barrier for io threads
+		auto startUpBarrier = make_unique<Barrier>("nioudpserver_startup_workers", workerThreadPoolCount + 1);
 
-	// setup worker thread pool
-	workerThreadPool = new ServerWorkerThreadPool(startUpBarrier, workerThreadPoolCount, workerThreadPoolMaxElements);
-	workerThreadPool->start();
+		// setup worker thread pool
+		workerThreadPool = make_unique<ServerWorkerThreadPool>(workerThreadPoolCount, workerThreadPoolMaxElements, startUpBarrier.get());
+		workerThreadPool->start();
 
-	// wait on startup barrier and delete it
-	startUpBarrier->wait();
-	delete startUpBarrier;
-	startUpBarrier = nullptr;
-
-	// create start up barrier for IO threads
-	startUpBarrier = new Barrier("nioudpserver_startup_iothreads", ioThreadCount + 1);
-
-	// create and start IO threads
-	ioThreads.resize(ioThreadCount);
-	for(auto i = 0; i < ioThreadCount; i++) {
-		ioThreads[i] = new UDPServerIOThread(i, this, (int)Math::ceil((float)maxCCU / (float)ioThreadCount));
-		ioThreads[i] ->start();
+		// wait on startup barrier and delete it
+		startUpBarrier->wait();
 	}
 
-	// wait on startup barrier and delete it
-	startUpBarrier->wait();
-	delete startUpBarrier;
-	startUpBarrier = nullptr;
+	{
+		// create start up barrier for IO threads
+		auto startUpBarrier = make_unique<Barrier>("nioudpserver_startup_iothreads", ioThreadCount + 1);
+
+		// create and start IO threads
+		ioThreads.resize(ioThreadCount);
+		for(auto i = 0; i < ioThreadCount; i++) {
+			ioThreads[i] = make_unique<UDPServerIOThread>(i, this, (int)Math::ceil((float)maxCCU / (float)ioThreadCount), startUpBarrier.get());
+			ioThreads[i] ->start();
+		}
+
+		// wait on startup barrier and delete it
+		startUpBarrier->wait();
+	}
 
 	// init worker thread pool
 	//
@@ -136,16 +140,14 @@ void UDPServer::run() {
 	}
 
 	// now stop io threads
-	for(auto ioThread: ioThreads) {
+	for(const auto& ioThread: ioThreads) {
 		ioThread->stop();
 		ioThread->join();
-		delete ioThread;
 	}
 	ioThreads.clear();
 
 	// stop thread pool
 	workerThreadPool->stop();
-	delete workerThreadPool;
 	workerThreadPool = nullptr;
 
 	//
@@ -451,7 +453,6 @@ void UDPServer::cleanUpClients() {
 }
 
 void UDPServer::sendMessage(const UDPServerClient* client, UDPPacket* packet, const bool safe, const bool deleteFrame, const MessageType messageType, const uint32_t messageId) {
-
 	// determine message id by message type
 	uint32_t _messageId;
 	switch(messageType) {

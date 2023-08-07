@@ -57,10 +57,8 @@ ArchiveFileSystem::ArchiveFileSystem(const string& fileName): fileName(fileName)
 		if (nameSize == 0) break;
 
 		FileInformation fileInformation;
-		auto buffer = new char[nameSize];
-		ifs.read(buffer, nameSize);
-		fileInformation.name.append(buffer, nameSize);
-		delete [] buffer;
+		fileInformation.name.resize(nameSize);
+		ifs.read(fileInformation.name.data(), nameSize);
 		ifs.read((char*)&fileInformation.bytes, sizeof(fileInformation.bytes));
 		ifs.read((char*)&fileInformation.compressed, sizeof(fileInformation.compressed));
 		ifs.read((char*)&fileInformation.bytesCompressed, sizeof(fileInformation.bytesCompressed));

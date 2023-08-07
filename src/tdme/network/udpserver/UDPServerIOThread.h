@@ -8,6 +8,7 @@
 #include <tdme/tdme.h>
 #include <tdme/os/network/KernelEventMechanism.h>
 #include <tdme/os/network/UDPSocket.h>
+#include <tdme/os/threading/Barrier.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/Thread.h>
 
@@ -23,6 +24,7 @@ using tdme::network::udpserver::UDPServer;
 using tdme::network::udpserver::UDPServerClient;
 using tdme::os::network::KernelEventMechanism;
 using tdme::os::network::UDPSocket;
+using tdme::os::threading::Barrier;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
 
@@ -52,7 +54,9 @@ private:
 	};
 	typedef queue<Message*> MessageQueue;
 	typedef unordered_map<uint32_t, Message*> MessageMapAck;
+	Barrier* startUpBarrier;
 
+public:
 	// forbid class copy
 	FORBID_CLASS_COPY(UDPServerIOThread)
 
@@ -61,8 +65,9 @@ private:
 	 * @param id id
 	 * @param *server server
 	 * @param maxCCU max ccu
+	 * @param startUpBarrier start up barrier
 	 */
-	UDPServerIOThread(const unsigned int id, UDPServer *server, const unsigned int maxCCU);
+	UDPServerIOThread(const unsigned int id, UDPServer *server, const unsigned int maxCCU, Barrier* startUpBarrier);
 
 	/**
 	 * @brief Destructor
@@ -81,10 +86,10 @@ private:
 	 * @param messageId message id
 	 * @param packet packet to be send
 	 * @param safe safe, requires ack and retransmission
-	 * @param deleteFrame delete frame
+	 * @param deletePacket delete packet
 	 * @throws tdme::network::udpserver::NetworkServerException
 	 */
-	void sendMessage(const UDPServerClient* client, const uint8_t messageType, const uint32_t messageId, const UDPPacket* packet, const bool safe, const bool deleteFrame);
+	void sendMessage(const UDPServerClient* client, const uint8_t messageType, const uint32_t messageId, const UDPPacket* packet, const bool safe, const bool deletePacket);
 
 	/**
 	 * @brief Processes an acknowlegdement reception

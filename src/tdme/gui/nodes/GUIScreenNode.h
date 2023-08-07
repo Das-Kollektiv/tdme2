@@ -286,6 +286,50 @@ public:
 	}
 
 protected:
+
+	// overridden methods
+	bool isContentNode() override;
+	const string getNodeType() override;
+
+private:
+
+	/**
+	 * Initialize mini script
+	 */
+	void initializeMiniScript();
+
+	/**
+	 * Add node
+	 * @param node node
+	 * @return success
+	 */
+	bool addNode(GUINode* node);
+
+	/**
+	 * Add node
+	 * @param node node
+	 * @return success
+	 */
+	bool removeNode(GUINode* node);
+
+	/**
+	 * Calls registered tick nodes controller tick method
+	 */
+	void tick();
+
+	/**
+	 * Forward events
+	 */
+	void forwardEvents();
+
+	/**
+	 * Clear events
+	 */
+	inline void clearEvents() {
+		forwardEventList.clear();
+	}
+
+public:
 	// forbid class copy
 	FORBID_CLASS_COPY(GUIScreenNode)
 
@@ -350,49 +394,6 @@ protected:
 	 */
 	~GUIScreenNode();
 
-	// overridden methods
-	bool isContentNode() override;
-	const string getNodeType() override;
-
-private:
-
-	/**
-	 * Initialize mini script
-	 */
-	void initializeMiniScript();
-
-	/**
-	 * Add node
-	 * @param node node
-	 * @return success
-	 */
-	bool addNode(GUINode* node);
-
-	/**
-	 * Add node
-	 * @param node node
-	 * @return success
-	 */
-	bool removeNode(GUINode* node);
-
-	/**
-	 * Calls registered tick nodes controller tick method
-	 */
-	void tick();
-
-	/**
-	 * Forward events
-	 */
-	void forwardEvents();
-
-	/**
-	 * Clear events
-	 */
-	inline void clearEvents() {
-		forwardEventList.clear();
-	}
-
-public:
 	/**
 	 * @return content width
 	 */
