@@ -52,7 +52,11 @@ GUIVerticalScrollbarInternalNode::GUIVerticalScrollbarInternalNode(
 ):
 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn, tooltip)
 {
-	this->controller = new GUIVerticalScrollbarInternalController(this);
+	//
+	auto controller = new GUIVerticalScrollbarInternalController(this);
+	controller->initialize();
+	setController(controller);
+	//
 	this->barColorNone = barColorNone;
 	this->barColorMouseOver = barColorMouseOver;
 	this->barColorDragging = barColorDragging;
@@ -85,7 +89,7 @@ void GUIVerticalScrollbarInternalNode::render(GUIRenderer* guiRenderer)
 	GUINode::render(guiRenderer);
 	auto screenWidth = screenNode->getScreenWidth();
 	auto screenHeight = screenNode->getScreenHeight();
-	auto controller = required_dynamic_cast<GUIVerticalScrollbarInternalController*>(this->controller);
+	auto controller = required_dynamic_cast<GUIVerticalScrollbarInternalController*>(this->getController());
 	auto barHeight = controller->getBarHeight();
 	auto barTop = controller->getBarTop();
 	float left = computedConstraints.left + computedConstraints.alignmentLeft + border.left;

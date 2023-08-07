@@ -49,6 +49,7 @@ private:
 	vector<TransparentRenderFace*> transparentRenderFaces;
 	TransparentRenderFacesPool_TransparentRenderFacesPool transparentRenderFacesPool;
 
+public:
 	// forbid class copy
 	FORBID_CLASS_COPY(TransparentRenderFacesPool)
 
@@ -126,8 +127,6 @@ private:
 	inline vector<TransparentRenderFace*>& getTransparentRenderFaces() {
 		return transparentRenderFaces;
 	}
-
-public:
 
 	/**
 	 * @return allocated faces

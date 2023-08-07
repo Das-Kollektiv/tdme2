@@ -1,5 +1,7 @@
 #include <tdme/gui/elements/GUIScrollAreaController.h>
 
+#include <memory>
+
 #include <tdme/tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -7,6 +9,9 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
+
+using std::make_unique;
+using std::unique_ptr;
 
 using tdme::gui::elements::GUIScrollAreaController;
 using tdme::gui::events::GUIActionListener;
@@ -153,14 +158,13 @@ void GUIScrollAreaController::initialize()
 	auto const downArrowNode = dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(node->getId() + "_scrollbar_vertical_layout_down"));
 	auto const leftArrowNode = dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(node->getId() + "_scrollbar_horizontal_layout_left"));
 	auto const rightArrowNode = dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(node->getId() + "_scrollbar_horizontal_layout_right"));
-	node->getScreenNode()->addActionListener(actionListener = new GUIScrollAreaControllerActionListener(this, contentNode, upArrowNode, downArrowNode, leftArrowNode, rightArrowNode));
+	node->getScreenNode()->addActionListener((actionListener = make_unique<GUIScrollAreaControllerActionListener>(this, contentNode, upArrowNode, downArrowNode, leftArrowNode, rightArrowNode)).get());
 }
 
 void GUIScrollAreaController::dispose()
 {
 	if (actionListener != nullptr) {
-		node->getScreenNode()->removeActionListener(actionListener);
-		delete actionListener;
+		node->getScreenNode()->removeActionListener(actionListener.get());
 		actionListener = nullptr;
 	}
 }

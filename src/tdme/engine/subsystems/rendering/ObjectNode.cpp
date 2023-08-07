@@ -1,6 +1,7 @@
 #include <tdme/engine/subsystems/rendering/ObjectNode.h>
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -25,9 +26,11 @@
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
 
+using std::make_unique;
 using std::map;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::Texture;
@@ -59,7 +62,6 @@ ObjectNode::ObjectNode()
 
 ObjectNode::~ObjectNode()
 {
-	delete renderer;
 }
 
 void ObjectNode::updateNodeTransformationsMatrix() {
@@ -114,7 +116,7 @@ void ObjectNode::createNodes(ObjectBase* object, const map<string, Node*>& nodes
 			objectNode->object = object;
 			objectNode->node = node;
 			objectNode->animated = animated;
-			objectNode->renderer = new ObjectNodeRenderer(objectNode);
+			objectNode->renderer = make_unique<ObjectNodeRenderer>(objectNode);
 			vector<map<string, Matrix4x4*>*> instancesTransformMatrices;
 			vector<map<string, Matrix4x4*>*> instancesSkinningNodesMatrices;
 			for (auto animation: object->instanceAnimations) {
@@ -126,7 +128,7 @@ void ObjectNode::createNodes(ObjectBase* object, const map<string, Node*>& nodes
 				objectNode->mesh = meshManager->getMesh(objectNode->id);
 				if (objectNode->mesh == nullptr) {
 					objectNode->mesh = new ObjectNodeMesh(
-						objectNode->renderer,
+						objectNode->renderer.get(),
 						animationProcessingTarget,
 						node,
 						instancesTransformMatrices,
@@ -137,7 +139,7 @@ void ObjectNode::createNodes(ObjectBase* object, const map<string, Node*>& nodes
 				}
 			} else {
 				objectNode->mesh = new ObjectNodeMesh(
-					objectNode->renderer,
+					objectNode->renderer.get(),
 					animationProcessingTarget,
 					node,
 					instancesTransformMatrices,

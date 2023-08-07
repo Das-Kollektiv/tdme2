@@ -100,7 +100,7 @@ void BRDFLUTShader::generate() {
 	renderer->enableDepthBufferWriting();
 
 	//
-	renderer->bindFrameBuffer(Engine::renderer->FRAMEBUFFER_DEFAULT);
+	renderer->bindFrameBuffer(Engine::getRenderer()->FRAMEBUFFER_DEFAULT);
 	renderer->setViewPort(Engine::instance->width, Engine::instance->height);
 	renderer->updateViewPort();
 }

@@ -52,7 +52,10 @@ GUIHorizontalScrollbarInternalNode::GUIHorizontalScrollbarInternalNode(
 	):
 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn, tooltip)
 {
-	this->controller = new GUIHorizontalScrollbarInternalController(this);
+	auto controller = new GUIHorizontalScrollbarInternalController(this);
+	controller->initialize();
+	this->setController(controller);
+	//
 	this->barColorNone = barColorNone;
 	this->barColorMouseOver = barColorMouseOver;
 	this->barColorDragging = barColorDragging;
@@ -85,7 +88,7 @@ void GUIHorizontalScrollbarInternalNode::render(GUIRenderer* guiRenderer)
 	GUINode::render(guiRenderer);
 	auto screenWidth = screenNode->getScreenWidth();
 	auto screenHeight = screenNode->getScreenHeight();
-	auto controller = required_dynamic_cast<GUIHorizontalScrollbarInternalController*>(this->controller);
+	auto controller = required_dynamic_cast<GUIHorizontalScrollbarInternalController*>(this->getController());
 	auto barWidth = controller->getBarWidth();
 	auto barLeft = controller->getBarLeft();
 	auto left = barLeft;

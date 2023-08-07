@@ -18,7 +18,7 @@ uint32_t DynamicColorTexture::counter = 0;
 
 void DynamicColorTexture::initialize()
 {
-	colorBufferTextureId = Engine::renderer->createColorBufferTexture(width, height, Engine::renderer->ID_NONE, Engine::renderer->ID_NONE);
+	colorBufferTextureId = Engine::getRenderer()->createColorBufferTexture(width, height, Engine::getRenderer()->ID_NONE, Engine::getRenderer()->ID_NONE);
 	texture = new Texture(
 		"dynamic-color-texture:" + to_string(DynamicColorTexture::counter++),
 		Texture::TEXTUREDEPTH_RGBA,
@@ -50,20 +50,20 @@ void DynamicColorTexture::reshape(int32_t width, int32_t height)
 	texture->setUseCompression(false);
 	texture->setUseMipMap(false);
 	texture->setRepeat(false);
-	Engine::renderer->resizeColorBufferTexture(colorBufferTextureId, width, height);
+	Engine::getRenderer()->resizeColorBufferTexture(colorBufferTextureId, width, height);
 	this->width = width;
 	this->height = height;
 }
 
 void DynamicColorTexture::dispose()
 {
-	Engine::renderer->disposeTexture(colorBufferTextureId);
+	Engine::getRenderer()->disposeTexture(colorBufferTextureId);
 	texture->releaseReference();
 }
 
 void DynamicColorTexture::update()
 {
-	Engine::renderer->bindTexture(Engine::renderer->CONTEXTINDEX_DEFAULT, colorBufferTextureId);
-	Engine::renderer->uploadTexture(Engine::renderer->CONTEXTINDEX_DEFAULT, texture);
-	Engine::renderer->bindTexture(Engine::renderer->CONTEXTINDEX_DEFAULT, Engine::renderer->ID_NONE);
+	Engine::getRenderer()->bindTexture(Engine::getRenderer()->CONTEXTINDEX_DEFAULT, colorBufferTextureId);
+	Engine::getRenderer()->uploadTexture(Engine::getRenderer()->CONTEXTINDEX_DEFAULT, texture);
+	Engine::getRenderer()->bindTexture(Engine::getRenderer()->CONTEXTINDEX_DEFAULT, Engine::getRenderer()->ID_NONE);
 }

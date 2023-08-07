@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -15,8 +16,10 @@
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/utilities/fwd-tdme.h>
 
+using std::make_unique;
 using std::map;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::model::Node;
@@ -67,7 +70,7 @@ private:
 	vector<int32_t> pbrMaterialMetallicRoughnessTextureIdsByEntities;
 	vector<int32_t> pbrMaterialNormalTextureIdsByEntities;
 	vector<int32_t> pbrMaterialEmissiveTextureIdsByEntities;
-	ObjectNodeRenderer* renderer { nullptr };
+	unique_ptr<ObjectNodeRenderer> renderer;
 	ObjectNodeMesh* mesh { nullptr };
 	Matrix4x4* nodeTransformMatrix { nullptr };
 

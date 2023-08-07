@@ -1,5 +1,6 @@
 #include <tdme/engine/subsystems/rendering/ObjectInternal.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -17,6 +18,7 @@
 #include <tdme/math/Vector3.h>
 
 using std::string;
+using std::unique_ptr;
 
 using tdme::engine::Color4;
 using tdme::engine::model::Face;
@@ -105,9 +107,8 @@ void ObjectInternal::setNodeTransformMatrix(const string& id, const Matrix4x4& m
 	for (const auto& [overriddenTransformMatrixId, overriddenTransformMatrix]: instanceAnimations[currentInstance]->overriddenTransformMatrices) {
 		_overriddenTransformMatrices[overriddenTransformMatrixId] = new Matrix4x4(*overriddenTransformMatrix);
 	}
-	auto newBoundingBox = ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overriddenTransformMatrices);
-	boundingBox.fromBoundingVolume(newBoundingBox);
-	delete newBoundingBox;
+	auto newBoundingBox = unique_ptr<BoundingBox>(ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overriddenTransformMatrices));
+	boundingBox.fromBoundingVolume(newBoundingBox.get());
 }
 
 void ObjectInternal::unsetNodeTransformMatrix(const string& id) {
@@ -117,9 +118,8 @@ void ObjectInternal::unsetNodeTransformMatrix(const string& id) {
 	for (const auto& [overriddenTransformMatrixId, overriddenTransformMatrix]: instanceAnimations[currentInstance]->overriddenTransformMatrices) {
 		_overriddenTransformMatrices[overriddenTransformMatrixId] = new Matrix4x4(*overriddenTransformMatrix);
 	}
-	auto newBoundingBox = ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overriddenTransformMatrices);
-	boundingBox.fromBoundingVolume(newBoundingBox);
-	delete newBoundingBox;
+	auto newBoundingBox = unique_ptr<BoundingBox>(ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overriddenTransformMatrices));
+	boundingBox.fromBoundingVolume(newBoundingBox.get());
 }
 
 void ObjectInternal::setTransform(const Transform& transform)

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <tuple>
 #include <unordered_map>
@@ -30,6 +31,7 @@ using std::get;
 using std::string;
 using std::to_string;
 using std::tuple;
+using std::unique_ptr;
 using std::unordered_map;
 using std::vector;
 
@@ -70,10 +72,10 @@ private:
 	static constexpr int32_t INSTANCEDRENDERING_OBJECTS_MAX { 16384 };
 
 	struct ObjectRenderContext {
-		vector<int32_t>* vboInstancedRenderingIds { nullptr };
-		ByteBuffer* bbEffectColorMuls { nullptr };
-		ByteBuffer* bbEffectColorAdds { nullptr };
-		ByteBuffer* bbMvMatrices { nullptr };
+		vector<int32_t>* vboInstancedRenderingIds;
+		unique_ptr<ByteBuffer> bbEffectColorMuls;
+		unique_ptr<ByteBuffer> bbEffectColorAdds;
+		unique_ptr<ByteBuffer> bbMvMatrices;
 		Matrix4x4Negative matrix4x4Negative;
 		vector<Object*> objectsToRender;
 		vector<Object*> objectsNotRendered;
@@ -84,11 +86,11 @@ private:
 	Engine* engine { nullptr };
 	Renderer* renderer { nullptr };
 
-	vector<BatchRendererTriangles*> trianglesBatchRenderers;
+	vector<unique_ptr<BatchRendererTriangles>> trianglesBatchRenderers;
 	array<vector<Object*>, Engine::UNIQUEMODELID_MAX> objectsByModels;
 	vector<TransparentRenderFace*> nodeTransparentRenderFaces;
-	EntityRenderer_TransparentRenderFacesGroupPool* transparentRenderFacesGroupPool { nullptr };
-	TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
+	unique_ptr<EntityRenderer_TransparentRenderFacesGroupPool> transparentRenderFacesGroupPool;
+	unique_ptr<TransparentRenderFacesPool> transparentRenderFacesPool;
 
 	struct TransparentRenderFacesGroup_Hash {
 		std::size_t operator()(const tuple<Model*, ObjectNode*, int32_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, int32_t, const Material*, bool, uint8_t>& k) const {
@@ -113,8 +115,8 @@ private:
 	};
 	unordered_map<tuple<Model*, ObjectNode*, int32_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, int32_t, const Material*, bool, uint8_t>, TransparentRenderFacesGroup*, TransparentRenderFacesGroup_Hash> transparentRenderFacesGroups;
 
-	RenderTransparentRenderPointsPool* renderTransparentRenderPointsPool { nullptr };
-	BatchRendererPoints* psePointBatchRenderer { nullptr };
+	unique_ptr<RenderTransparentRenderPointsPool> renderTransparentRenderPointsPool;
+	unique_ptr<BatchRendererPoints> psePointBatchRenderer;
 	int threadCount;
 	vector<ObjectRenderContext> contexts;
 

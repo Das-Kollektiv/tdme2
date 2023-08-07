@@ -185,9 +185,9 @@ int32_t GLES2Renderer::getTextureUnits()
 int32_t GLES2Renderer::loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions, const string& functions)
 {
 	// create shader
-	int32_t handle = glCreateShader(type);
+	int32_t shaderId = glCreateShader(type);
 	// exit if no handle returned
-	if (handle == 0) return 0;
+	if (shaderId == 0) return 0;
 	// shader source
 	auto shaderSource = StringTools::replace(
 		StringTools::replace(
@@ -198,43 +198,43 @@ int32_t GLES2Renderer::loadShader(int32_t type, const string& pathName, const st
 		"{$FUNCTIONS}",
 		functions + "\n\n"
 	);
-	string sourceString = (shaderSource);
-	char *sourceHeap = new char[sourceString.length() + 1];
-	strcpy(sourceHeap, sourceString.c_str());
+	auto shaderSourceNullTerminated = shaderSource + "\0";
 	// load source
-	glShaderSource(handle, 1, &sourceHeap, nullptr);
+	array<const char*, 1> shaderSourceNullTerminatedArray = { shaderSourceNullTerminated.data() };
+	glShaderSource(shaderId, 1, shaderSourceNullTerminatedArray.data(), nullptr);
 	// compile
-	glCompileShader(handle);
+	glCompileShader(shaderId);
 	// check state
 	int32_t compileStatus;
-	glGetShaderiv(handle, GL_COMPILE_STATUS, &compileStatus);
+	glGetShaderiv(shaderId, GL_COMPILE_STATUS, &compileStatus);
 	if (compileStatus == 0) {
 		// get error
-		int32_t infoLogLengthBuffer;
-		glGetShaderiv(handle, GL_INFO_LOG_LENGTH, &infoLogLengthBuffer);
-		char infoLogBuffer[infoLogLengthBuffer];
-		glGetShaderInfoLog(handle, infoLogLengthBuffer, &infoLogLengthBuffer, infoLogBuffer);
-		auto infoLogString = (string(infoLogBuffer, infoLogLengthBuffer));
+		int32_t infoLogLength;
+		glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &infoLogLength);
+		string infoLog(infoLogLength, static_cast<char>(0));
+		glGetShaderInfoLog(shaderId, infoLogLength, &infoLogLength, infoLog.data());
 		// be verbose
 		Console::println(
 			string(
 				string("GLES2Renderer::loadShader") +
 				string("[") +
-				to_string(handle) +
+				to_string(shaderId) +
 				string("]") +
 				pathName +
 				string("/") +
 				fileName +
 				string(": failed: ") +
-				infoLogString
+				infoLog
 			 )
-		);
+		 );
+		Console::println(shaderSource);
 		// remove shader
-		glDeleteShader(handle);
+		glDeleteShader(shaderId);
+		//
 		return 0;
 	}
-
-	return handle;
+	//
+	return shaderId;
 }
 
 void GLES2Renderer::useProgram(int contextIdx, int32_t programId)
@@ -244,8 +244,7 @@ void GLES2Renderer::useProgram(int contextIdx, int32_t programId)
 
 int32_t GLES2Renderer::createProgram(int type)
 {
-	auto program = glCreateProgram();
-	return program;
+	return glCreateProgram();
 }
 
 void GLES2Renderer::attachShaderToProgram(int32_t programId, int32_t shaderId)
@@ -261,22 +260,24 @@ bool GLES2Renderer::linkProgram(int32_t programId)
 	glGetProgramiv(programId, GL_LINK_STATUS, &linkStatus);
 	if (linkStatus == 0) {
 		// get error
-		int32_t infoLogLength = 0;
+		int32_t infoLogLength;
 		glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &infoLogLength);
-		char infoLog[infoLogLength];
-		glGetProgramInfoLog(programId, infoLogLength, &infoLogLength, infoLog);
-		auto infoLogString = (string(infoLog, infoLogLength));
+		string infoLog(infoLogLength, static_cast<char>(0));
+		glGetProgramInfoLog(programId, infoLogLength, &infoLogLength, infoLog.data());
 		// be verbose
 		Console::println(
 			string(
+				string("GLES2Renderer::linkProgram") +
 				"[" +
 				to_string(programId) +
 				"]: failed: " +
-				infoLogString
+				infoLog
 			 )
 		);
+		//
 		return false;
 	}
+	//
 	return true;
 }
 

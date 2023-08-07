@@ -312,7 +312,7 @@ void GUIStyledTextNode::scrollToIndex() {
 	if (font == nullptr) return;
 
 	//
-	auto styledTextController = required_dynamic_cast<GUIStyledTextNodeController*>(controller);
+	auto styledTextController = required_dynamic_cast<GUIStyledTextNodeController*>(getController());
 	scrollToIndex(styledTextController->getIndex());
 }
 
@@ -321,7 +321,7 @@ void GUIStyledTextNode::scrollToSelectionIndex() {
 	if (font == nullptr) return;
 
 	//
-	auto styledTextController = required_dynamic_cast<GUIStyledTextNodeController*>(controller);
+	auto styledTextController = required_dynamic_cast<GUIStyledTextNodeController*>(getController());
 	scrollToIndex(styledTextController->getSelectionIndex());
 }
 
@@ -333,7 +333,7 @@ int GUIStyledTextNode::doPageUp() {
 	if (font == nullptr) return -1;
 
 	//
-	auto styledTextController = required_dynamic_cast<GUIStyledTextNodeController*>(controller);
+	auto styledTextController = required_dynamic_cast<GUIStyledTextNodeController*>(getController());
 	auto cursorIndex = styledTextController->getIndex();
 	auto visibleHeight = parentNode->getComputedConstraints().height;
 	auto y = 0.0f;
@@ -412,7 +412,7 @@ int GUIStyledTextNode::doPageDown() {
 	if (font == nullptr) return -1;
 
 	//
-	auto styledTextController = required_dynamic_cast<GUIStyledTextNodeController*>(controller);
+	auto styledTextController = required_dynamic_cast<GUIStyledTextNodeController*>(getController());
 	auto cursorIndex = styledTextController->getIndex();
 	auto visibleHeight = parentNode->getComputedConstraints().height;
 	auto y = 0.0f;
@@ -1062,7 +1062,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 	// Console::println("char start idx: " + to_string(charStartIdx) + ", char end idx: " + to_string(charEndIdx) + ", chars: " + to_string(text.size()) + ", start text style idx: " + to_string(startTextStyleIdx) + ", start render y: " + to_string(startRenderY) + ", auto width: " + to_string(autoWidth) + ", auto height = " + to_string(autoHeight))
 
 	//
-	auto styledTextController = required_dynamic_cast<GUIStyledTextNodeController*>(controller);
+	auto styledTextController = required_dynamic_cast<GUIStyledTextNodeController*>(getController());
 	auto cursorMode = GUIStyledTextNodeController::CURSORMODE_HIDE;
 	auto cursorIndex = styledTextController->getIndex();
 	auto cursorSelectionIndex = styledTextController->getSelectionIndex();

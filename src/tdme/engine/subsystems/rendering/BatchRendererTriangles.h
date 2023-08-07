@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <memory>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -18,6 +19,7 @@
 #include <tdme/utilities/FloatBuffer.h>
 
 using std::array;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::Color4;
@@ -45,17 +47,17 @@ private:
 	int32_t id;
 	bool acquired;
 	int32_t vertices;
-	ByteBuffer* fbModelMatricesByteBuffer{ nullptr };
+	unique_ptr<ByteBuffer> fbModelMatricesByteBuffer;
 	FloatBuffer fbModelMatrices;
-	ByteBuffer* fbEffectColorMulsByteBuffer{ nullptr };
+	unique_ptr<ByteBuffer> fbEffectColorMulsByteBuffer;
 	FloatBuffer fbEffectColorMuls;
-	ByteBuffer* fbEffectColorAddsByteBuffer{ nullptr };
+	unique_ptr<ByteBuffer> fbEffectColorAddsByteBuffer;
 	FloatBuffer fbEffectColorAdds;
-	ByteBuffer* fbVerticesByteBuffer{ nullptr };
+	unique_ptr<ByteBuffer> fbVerticesByteBuffer;
 	FloatBuffer fbVertices;
-	ByteBuffer* fbNormalsByteBuffer { nullptr };
+	unique_ptr<ByteBuffer> fbNormalsByteBuffer;
 	FloatBuffer fbNormals;
-	ByteBuffer* fbTextureCoordinatesByteBuffer { nullptr };
+	unique_ptr<ByteBuffer> fbTextureCoordinatesByteBuffer;
 	FloatBuffer fbTextureCoordinates;
 
 	/**

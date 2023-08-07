@@ -36,34 +36,22 @@ BatchRendererPoints::BatchRendererPoints(Renderer* renderer, int32_t id)
 	this->id = id;
 	this->renderer = renderer;
 	this->acquired = false;
-	fbVertices = (fbVerticesByteBuffer = ByteBuffer::allocate(POINT_COUNT * 3 * sizeof(float)))->asFloatBuffer();
-	fbColors = (fbColorsByteBuffer = ByteBuffer::allocate(POINT_COUNT * 4 * sizeof(float)))->asFloatBuffer();
-	fbPointSizes = (fbPointSizesByteBuffer = ByteBuffer::allocate(POINT_COUNT * sizeof(float)))->asFloatBuffer();
-	fbEffectColorMul = (fbEffectColorMulByteBuffer = ByteBuffer::allocate(POINT_COUNT * 4 * sizeof(float)))->asFloatBuffer();
-	fbEffectColorAdd = (fbEffectColorAddByteBuffer = ByteBuffer::allocate(POINT_COUNT * 4 * sizeof(float)))->asFloatBuffer();
+	fbVertices = (fbVerticesByteBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(POINT_COUNT * 3 * sizeof(float))))->asFloatBuffer();
+	fbColors = (fbColorsByteBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(POINT_COUNT * 4 * sizeof(float))))->asFloatBuffer();
+	fbPointSizes = (fbPointSizesByteBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(POINT_COUNT * sizeof(float))))->asFloatBuffer();
+	fbEffectColorMul = (fbEffectColorMulByteBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(POINT_COUNT * 4 * sizeof(float))))->asFloatBuffer();
+	fbEffectColorAdd = (fbEffectColorAddByteBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(POINT_COUNT * 4 * sizeof(float))))->asFloatBuffer();
 	if (renderer->isSupportingIntegerProgramAttributes() == true) {
-		sbTextureSpriteIndices = (sbTextureSpriteIndicesByteBuffer = ByteBuffer::allocate(POINT_COUNT * 2 * sizeof(uint16_t)))->asShortBuffer();
-		sbSpriteSheetDimension = (sbSpriteSheetDimensionByteBuffer = ByteBuffer::allocate(POINT_COUNT * 2 * sizeof(uint16_t)))->asShortBuffer();
+		sbTextureSpriteIndices = (sbTextureSpriteIndicesByteBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(POINT_COUNT * 2 * sizeof(uint16_t))))->asShortBuffer();
+		sbSpriteSheetDimension = (sbSpriteSheetDimensionByteBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(POINT_COUNT * 2 * sizeof(uint16_t))))->asShortBuffer();
 	} else {
-		fbTextureSpriteIndices = (fbTextureSpriteIndicesByteBuffer = ByteBuffer::allocate(POINT_COUNT * 2 * sizeof(float)))->asFloatBuffer();
-		fbSpriteSheetDimension = (fbSpriteSheetDimensionByteBuffer = ByteBuffer::allocate(POINT_COUNT * 2 * sizeof(float)))->asFloatBuffer();
+		fbTextureSpriteIndices = (fbTextureSpriteIndicesByteBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(POINT_COUNT * 2 * sizeof(float))))->asFloatBuffer();
+		fbSpriteSheetDimension = (fbSpriteSheetDimensionByteBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(POINT_COUNT * 2 * sizeof(float))))->asFloatBuffer();
 	}
 }
 
 BatchRendererPoints::~BatchRendererPoints()
 {
-	delete fbVerticesByteBuffer;
-	delete fbColorsByteBuffer;
-	delete fbPointSizesByteBuffer;
-	delete fbEffectColorMulByteBuffer;
-	delete fbEffectColorAddByteBuffer;
-	if (renderer->isSupportingIntegerProgramAttributes() == true) {
-		delete sbTextureSpriteIndicesByteBuffer;
-		delete sbSpriteSheetDimensionByteBuffer;
-	} else {
-		delete fbTextureSpriteIndicesByteBuffer;
-		delete fbSpriteSheetDimensionByteBuffer;
-	}
 }
 
 void BatchRendererPoints::initialize()

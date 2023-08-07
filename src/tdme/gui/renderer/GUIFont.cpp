@@ -173,7 +173,7 @@ GUICharacter* GUIFont::addToTextureAtlas(uint32_t charId) {
 
 void GUIFont::updateFontInternal() {
 	textureAtlas.update();
-	auto renderer = Engine::getInstance()->renderer;
+	auto renderer = Engine::getInstance()->getRenderer();
 	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
 	if (textureAtlas.getAtlasTexture() != nullptr) {
 		if (textureId == renderer->ID_NONE) textureId = renderer->createTexture();

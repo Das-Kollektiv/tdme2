@@ -4,6 +4,7 @@
 	#pragma warning(disable:4503)
 #endif
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -84,8 +85,10 @@
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Terrain.h>
 
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::unordered_map;
 using std::vector;
 
@@ -322,7 +325,7 @@ Entity* SceneConnector::createEditorDecalEntity(Prototype* prototype, const stri
 	Entity* entity = nullptr;
 
 	// add decal OBB
-	auto entityHierarchy = new EntityHierarchy(id);
+	auto entityHierarchy = make_unique<EntityHierarchy>(id);
 	for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
 		auto entityBoundingVolume = prototype->getBoundingVolume(i);
 		if (entityBoundingVolume->getModel() != nullptr) {
@@ -351,9 +354,8 @@ Entity* SceneConnector::createEditorDecalEntity(Prototype* prototype, const stri
 	entityHierarchy->update();
 	if (entityHierarchy->getEntities().size() == 0) {
 		entityHierarchy->dispose();
-		delete entityHierarchy;
 	} else {
-		entity = entityHierarchy;
+		entity = entityHierarchy.release();
 	}
 
 	// done
@@ -472,7 +474,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 	if (prototype->getType() == Prototype_Type::TRIGGER ||
 		prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING) {
 		// bounding volumes
-		auto entityHierarchy = new EntityHierarchy(id);
+		auto entityHierarchy = make_unique<EntityHierarchy>(id);
 		for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
 			auto entityBoundingVolume = prototype->getBoundingVolume(i);
 			if (entityBoundingVolume->getModel() != nullptr) {
@@ -493,9 +495,8 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 		entityHierarchy->update();
 		if (entityHierarchy->getEntities().size() == 0) {
 			entityHierarchy->dispose();
-			delete entityHierarchy;
 		} else {
-			entity = entityHierarchy;
+			entity = entityHierarchy.release();
 		}
 	}
 
@@ -541,7 +542,8 @@ Entity* SceneConnector::createEntity(SceneEntity* sceneEntity, const Vector3& tr
 
 void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool useEditorDecals, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
 {
-	if (progressCallback != nullptr) progressCallback->progress(0.0f);
+	auto progressCallbackPtr = unique_ptr<ProgressCallback>(progressCallback);
+	if (progressCallbackPtr != nullptr) progressCallbackPtr->progress(0.0f);
 	// TODO: progress callbacks for terrain
 
 	// scene library
@@ -699,7 +701,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 	for (auto i = 0; i < scene->getEntityCount(); i++) {
 		auto sceneEntity = scene->getEntityAt(i);
 
-		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene->getEntityCount()) * 0.5f);
+		if (progressCallbackPtr != nullptr && progressStepCurrent % 1000 == 0) progressCallbackPtr->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene->getEntityCount()) * 0.5f);
 		progressStepCurrent++;
 
 		if (addEmpties == false && sceneEntity->getPrototype()->getType() == Prototype_Type::EMPTY) continue;
@@ -753,7 +755,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 		auto idx = 0;
 		progressStepCurrent = 0;
 		auto progressStepMax = 0;
-		if (progressCallback != nullptr) {
+		if (progressCallbackPtr != nullptr) {
 			for (const auto& [shaderId, shaderPartitionModelTranformsMap]: renderGroupEntitiesByShaderPartitionModel) {
 				for (const auto& [partitionId, modelTranformsMap]: shaderPartitionModelTranformsMap) {
 					for (const auto& [model, transformVector]: modelTranformsMap) {
@@ -766,8 +768,8 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 			for (const auto& [partitionId, modelTranformsMap]: shaderPartitionModelTranformsMap) {
 				unordered_map<string, ObjectRenderGroup*> objectRenderGroupsByShaderParameters;
 				for (const auto& [model, transformVector]: modelTranformsMap) {
-					if (progressCallback != nullptr) {
-						progressCallback->progress(0.5f + static_cast<float>(progressStepCurrent) / static_cast<float>(progressStepMax) * 0.5f);
+					if (progressCallbackPtr != nullptr) {
+						progressCallbackPtr->progress(0.5f + static_cast<float>(progressStepCurrent) / static_cast<float>(progressStepMax) * 0.5f);
 					}
 					progressStepCurrent++;
 					auto prototype = renderGroupSceneEditorEntities[model];
@@ -811,9 +813,8 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 	}
 
 	//
-	if (progressCallback != nullptr) {
-		progressCallback->progress(1.0f);
-		delete progressCallback;
+	if (progressCallbackPtr != nullptr) {
+		progressCallbackPtr->progress(1.0f);
 	}
 }
 
@@ -950,7 +951,8 @@ BodyHierarchy* SceneConnector::createSubBody(World* world, Prototype* prototype,
 
 void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
 {
-	if (progressCallback != nullptr) progressCallback->progress(0.0f);
+	auto progressCallbackPtr = unique_ptr<ProgressCallback>(progressCallback);
+	if (progressCallbackPtr != nullptr) progressCallbackPtr->progress(0.0f);
 	auto progressStepCurrent = 0;
 
 	// scene library
@@ -1029,7 +1031,7 @@ void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vec
 		auto sceneEntity = scene->getEntityAt(i);
 
 		//
-		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene->getEntityCount()) * 1.0f);
+		if (progressCallbackPtr != nullptr && progressStepCurrent % 1000 == 0) progressCallbackPtr->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene->getEntityCount()) * 1.0f);
 		progressStepCurrent++;
 
 		//
@@ -1045,9 +1047,8 @@ void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vec
 	}
 
 	//
-	if (progressCallback != nullptr) {
-		progressCallback->progress(1.0f);
-		delete progressCallback;
+	if (progressCallbackPtr != nullptr) {
+		progressCallbackPtr->progress(1.0f);
 	}
 }
 

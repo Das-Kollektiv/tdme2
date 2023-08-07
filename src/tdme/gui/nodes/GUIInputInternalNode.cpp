@@ -74,8 +74,10 @@ GUIInputInternalNode::GUIInputInternalNode(
 	this->text = text;
 	this->maxLength = maxLength;
 	if (this->font != nullptr) this->font->initialize();
-	this->controller = new GUIInputInternalController(this);
-	this->controller->initialize();
+	//
+	auto controller = new GUIInputInternalController(this);
+	controller->initialize();
+	this->setController(controller);
 }
 
 int GUIInputInternalNode::createMaxLength(const string& s)
@@ -114,7 +116,7 @@ void GUIInputInternalNode::dispose()
 {
 	if (font != nullptr) font->dispose();
 	GUINode::dispose();
-	this->controller->dispose();
+	this->getController()->dispose();
 }
 
 void GUIInputInternalNode::render(GUIRenderer* guiRenderer)
@@ -122,7 +124,7 @@ void GUIInputInternalNode::render(GUIRenderer* guiRenderer)
 	if (shouldRender() == false) return;
 
 	GUINode::render(guiRenderer);
-	auto inputInternalController = required_dynamic_cast<GUIInputInternalController*>(this->controller);
+	auto inputInternalController = required_dynamic_cast<GUIInputInternalController*>(this->getController());
 	auto inputNode = this->getParentControllerNode();
 	auto inputNodeController = required_dynamic_cast<GUIInputController*>(inputNode->getController());
 	auto disable = inputNodeController->isDisabled();

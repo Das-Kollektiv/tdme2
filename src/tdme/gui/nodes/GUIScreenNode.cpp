@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <map>
+#include <memory>
 #include <span>
 #include <string>
 #include <unordered_map>
@@ -44,12 +45,14 @@
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/Properties.h>
 
+using std::make_unique;
 using std::map;
 using std::remove;
 using std::reverse;
 using std::span;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::unordered_map;
 using std::unordered_set;
 
@@ -134,7 +137,7 @@ GUIScreenNode::GUIScreenNode(
 	this->popUp = popUp;
 	this->foccussedBorderColor = GUIColor(applicationSubPathName == "project"?GUIParser::getProjectThemeProperties()->get("color.focus", "#ff0000"):GUIParser::getEngineThemeProperties()->get("color.focus", "#ff0000"));
 	if (scriptFileName.empty() == false) {
-		this->script = new GUIMiniScript(this);
+		this->script = make_unique<GUIMiniScript>(this);
 		// compute project script path and file name
 		string projectScriptPathName;
 		string projectScriptFileName;
@@ -148,7 +151,6 @@ GUIScreenNode::GUIScreenNode(
 		if (this->script->isValid() == false) {
 			// nope
 			Console::println("GUIScreenNode::GUIScreenNode(): " + projectScriptFileName + ": script not valid. Not using it.");
-			delete this->script;
 			this->script = nullptr;
 		} else {
 			// yup
@@ -208,9 +210,6 @@ GUIScreenNode::~GUIScreenNode() {
 		image->releaseReference();
 	}
 	imageCache.clear();
-
-	// delete miniscript
-	if (script != nullptr) delete script;
 }
 
 void GUIScreenNode::initializeMiniScript() {

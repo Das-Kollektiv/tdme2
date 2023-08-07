@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -21,6 +22,7 @@
 using std::array;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::subsystems::renderer::Renderer;
@@ -73,14 +75,14 @@ private:
 	Renderer* renderer { nullptr };
 	vector<int32_t>* vboIds { nullptr };
 	int quadCount { 0 };
-	ByteBuffer* sbIndicesByteBuffer { nullptr };
-	ByteBuffer* fbVerticesByteBuffer { nullptr };
+	unique_ptr<ByteBuffer> sbIndicesByteBuffer;
+	unique_ptr<ByteBuffer> fbVerticesByteBuffer;
 	FloatBuffer fbVertices;
-	ByteBuffer* fbColorsByteBuffer { nullptr };
+	unique_ptr<ByteBuffer> fbColorsByteBuffer;
 	FloatBuffer fbColors;
-	ByteBuffer* fbSolidColorsByteBuffer;
+	unique_ptr<ByteBuffer> fbSolidColorsByteBuffer;
 	FloatBuffer fbSolidColors;
-	ByteBuffer* fbTextureCoordinatesByteBuffer;
+	unique_ptr<ByteBuffer> fbTextureCoordinatesByteBuffer;
 	FloatBuffer fbTextureCoordinates;
 	float renderAreaLeft;
 	float renderAreaTop;

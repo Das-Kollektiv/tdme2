@@ -1,6 +1,9 @@
 #include <tdme/engine/subsystems/rendering/BatchRendererTriangles.h>
 
+#include <array>
+#include <memory>
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/TextureCoordinate.h>
@@ -13,8 +16,11 @@
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/FloatBuffer.h>
 
+using std::array;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
+using std::vector;
 
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::manager::VBOManager;
@@ -35,25 +41,19 @@ BatchRendererTriangles::BatchRendererTriangles(Renderer* renderer, int32_t id)
 	this->renderer = renderer;
 	this->acquired = false;
 	this->vertices = 0;
-	this->fbVertices = (fbVerticesByteBuffer = ByteBuffer::allocate(VERTEX_COUNT * 3 * sizeof(float)))->asFloatBuffer();
-	this->fbNormals = (fbNormalsByteBuffer = ByteBuffer::allocate(VERTEX_COUNT * 3 * sizeof(float)))->asFloatBuffer();
-	this->fbTextureCoordinates = (fbTextureCoordinatesByteBuffer = ByteBuffer::allocate(VERTEX_COUNT * 2 * sizeof(float)))->asFloatBuffer();
-	this->fbModelMatrices = (fbModelMatricesByteBuffer = ByteBuffer::allocate(1 * 16 * sizeof(float)))->asFloatBuffer();
+	this->fbVertices = (fbVerticesByteBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(VERTEX_COUNT * 3 * sizeof(float))))->asFloatBuffer();
+	this->fbNormals = (fbNormalsByteBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(VERTEX_COUNT * 3 * sizeof(float))))->asFloatBuffer();
+	this->fbTextureCoordinates = (fbTextureCoordinatesByteBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(VERTEX_COUNT * 2 * sizeof(float))))->asFloatBuffer();
+	this->fbModelMatrices = (fbModelMatricesByteBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(1 * 16 * sizeof(float))))->asFloatBuffer();
 	this->fbModelMatrices.put(Matrix4x4().identity().getArray());
-	this->fbEffectColorMuls = (fbEffectColorMulsByteBuffer = ByteBuffer::allocate(1 * 4 * sizeof(float)))->asFloatBuffer();
+	this->fbEffectColorMuls = (fbEffectColorMulsByteBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(1 * 4 * sizeof(float))))->asFloatBuffer();
 	this->fbEffectColorMuls.put(Color4(1.0f, 1.0f, 1.0f, 1.0f).getArray());
-	this->fbEffectColorAdds = (fbEffectColorAddsByteBuffer = ByteBuffer::allocate(1 * 4 * sizeof(float)))->asFloatBuffer();
+	this->fbEffectColorAdds = (fbEffectColorAddsByteBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(1 * 4 * sizeof(float))))->asFloatBuffer();
 	this->fbEffectColorAdds.put(Color4(0.0f, 0.0f, 0.0f, 0.0f).getArray());
 }
 
 BatchRendererTriangles::~BatchRendererTriangles()
 {
-	delete fbVerticesByteBuffer;
-	delete fbNormalsByteBuffer;
-	delete fbTextureCoordinatesByteBuffer;
-	delete fbModelMatricesByteBuffer;
-	delete fbEffectColorMulsByteBuffer;
-	delete fbEffectColorAddsByteBuffer;
 }
 
 bool BatchRendererTriangles::isAcquired()

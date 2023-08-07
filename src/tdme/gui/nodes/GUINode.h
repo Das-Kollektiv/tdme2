@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -28,6 +29,7 @@
 
 using std::array;
 using std::string;
+using std::unique_ptr;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
@@ -158,7 +160,7 @@ protected:
 	GUINode_Border border;
 	GUINodeConditions showOn;
 	GUINodeConditions hideOn;
-	GUINodeController* controller { nullptr };
+	unique_ptr<GUINodeController> controller;
 	unordered_map<string, GUIEffect*> effects;
 	int guiEffectOffsetX;
 	int guiEffectOffsetY;
@@ -166,7 +168,7 @@ protected:
 	bool layouted;
 	bool haveOutEffect;
 	vector<string> lastConditions;
-	GUIEffectState* effectState { nullptr };
+	unique_ptr<GUIEffectState> effectState;
 	string tooltip;
 
 	// forbid class copy
@@ -657,7 +659,7 @@ public:
 	 * @return controller
 	 */
 	inline GUINodeController* getController() {
-		return controller;
+		return controller.get();
 	}
 
 	/**
@@ -718,7 +720,7 @@ public:
 	 * @return effect state
 	 */
 	inline GUIEffectState* getEffectState() {
-		return effectState;
+		return effectState.get();
 	}
 
 	/**

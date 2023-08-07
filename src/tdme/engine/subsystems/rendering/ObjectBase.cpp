@@ -1,6 +1,7 @@
 #include <tdme/engine/subsystems/rendering/ObjectBase.h>
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -29,6 +30,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
 
+using std::make_unique;
 using std::map;
 using std::string;
 using std::to_string;
@@ -88,7 +90,6 @@ ObjectBase::~ObjectBase() {
 	for (auto i = 0; i < objectNodes.size(); i++) {
 		delete objectNodes[i];
 	}
-	if (transformedFacesIterator != nullptr) delete transformedFacesIterator;
 }
 
 int ObjectBase::getNodeCount() const {
@@ -128,9 +129,9 @@ void ObjectBase::getTriangles(vector<Triangle>& triangles, int nodeIdx)
 ObjectBase_TransformedFacesIterator* ObjectBase::getTransformedFacesIterator()
 {
 	if (transformedFacesIterator == nullptr) {
-		transformedFacesIterator = new ObjectBase_TransformedFacesIterator(this);
+		transformedFacesIterator = make_unique<ObjectBase_TransformedFacesIterator>(this);
 	}
-	return transformedFacesIterator;
+	return transformedFacesIterator.get();
 }
 
 ObjectNodeMesh* ObjectBase::getMesh(const string& nodeId)
@@ -163,7 +164,7 @@ void ObjectBase::initialize()
 				objectNode->mesh = meshManager->getMesh(objectNode->id);
 				if (objectNode->mesh == nullptr) {
 					objectNode->mesh = new ObjectNodeMesh(
-						objectNode->renderer,
+						objectNode->renderer.get(),
 						animationProcessingTarget,
 						objectNode->node,
 						instancesTransformMatrices,
@@ -173,7 +174,7 @@ void ObjectBase::initialize()
 				}
 			} else {
 				objectNode->mesh = new ObjectNodeMesh(
-					objectNode->renderer,
+					objectNode->renderer.get(),
 					animationProcessingTarget,
 					objectNode->node,
 					instancesTransformMatrices,

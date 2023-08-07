@@ -344,8 +344,8 @@ Application::~Application() {
 }
 
 void Application::setVSyncEnabled(bool vSync) {
-	Engine::renderer->setVSync(vSync);
-	if (Engine::renderer->getRendererType() != Renderer::RENDERERTYPE_VULKAN) {
+	Engine::getRenderer()->setVSync(vSync);
+	if (Engine::getRenderer()->getRendererType() != Renderer::RENDERERTYPE_VULKAN) {
 		glfwSwapInterval(vSync == true?1:0);
 	}
 }
@@ -521,7 +521,7 @@ void Application::setMousePosition(int x, int y) {
 }
 
 void Application::swapBuffers() {
-	if (Engine::renderer->getRendererType() != Renderer::RENDERERTYPE_VULKAN) glfwSwapBuffers(glfwWindow);
+	if (Engine::getRenderer()->getRendererType() != Renderer::RENDERERTYPE_VULKAN) glfwSwapBuffers(glfwWindow);
 }
 
 string Application::getClipboardContent() {
@@ -698,7 +698,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 	#endif
 	while (glfwWindowShouldClose(glfwWindow) == false) {
 		displayInternal();
-		if (Engine::renderer->getRendererType() != Renderer::RENDERERTYPE_VULKAN) glfwSwapBuffers(glfwWindow);
+		if (Engine::getRenderer()->getRendererType() != Renderer::RENDERERTYPE_VULKAN) glfwSwapBuffers(glfwWindow);
 		glfwPollEvents();
 	}
 	glfwTerminate();

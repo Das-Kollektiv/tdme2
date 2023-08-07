@@ -31,6 +31,7 @@
 #include <cstring>
 #include <iterator>
 #include <map>
+#include <memory>
 #include <stack>
 #include <string>
 #include <unordered_map>
@@ -67,6 +68,7 @@
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
 
+using std::unique_ptr;
 using std::floor;
 using std::log2;
 using std::max;
@@ -1845,9 +1847,10 @@ inline void VKRenderer::invalidatePipelines() {
 	//
 	disposeMutex.lock();
 	for (auto i = 0; i < framebuffersPipelines.size(); i++) {
-		auto& framebufferPipelines = framebuffersPipelines[i];
 		// skip on compute
-		if (framebufferPipelines->id == ID_NONE) continue;
+		if (framebuffersPipelines[i]->id == ID_NONE) continue;
+		//
+		auto framebufferPipelines = unique_ptr<framebuffer_pipelines_type>(framebuffersPipelines[i]);
 		//
 		for (auto pipeline: framebufferPipelines->pipelines) {
 			if (pipeline != VK_NULL_HANDLE) {
@@ -1855,7 +1858,6 @@ inline void VKRenderer::invalidatePipelines() {
 				clearedPipelines++;
 			}
 		}
-		delete framebufferPipelines;
 		framebuffersPipelines.erase(framebuffersPipelines.begin() + i);
 		i--;
 		clearedPipelinesParents++;
@@ -1976,7 +1978,7 @@ void VKRenderer::finishFrame()
 		// disposing textures
 		texturesMutex.lock();
 		for (auto textureId: disposeTextures) {
-			auto texture = getTextureInternal(textureId);
+			auto texture = unique_ptr<texture_type>(getTextureInternal(textureId));
 			if (texture == nullptr) {
 				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): disposing texture: texture not found: " + to_string(textureId));
 				continue;
@@ -2006,7 +2008,6 @@ void VKRenderer::finishFrame()
 			 }
 			//
 			textures[textureId] = nullptr;
-			delete texture;
 			invalidateTextureDescriptorCaches(textureId);
 			freeTextureIds.push_back(textureId);
 		}
@@ -2015,7 +2016,7 @@ void VKRenderer::finishFrame()
 		// disposing buffer objects
 		buffersMutex.lock();
 		for (auto bufferObjectId: disposeBuffers) {
-			auto buffer = getBufferObjectInternal(bufferObjectId);
+			auto buffer = unique_ptr<buffer_object_type>(getBufferObjectInternal(bufferObjectId));
 			if (buffer == nullptr) {
 				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): disposing buffer object: buffer with id " + to_string(bufferObjectId) + " does not exist");
 				continue;
@@ -2030,7 +2031,6 @@ void VKRenderer::finishFrame()
 				);
 			}
 			buffers[bufferObjectId] = nullptr;
-			delete buffer;
 			freeBufferIds.push_back(bufferObjectId);
 		}
 		buffersMutex.unlock();
@@ -6204,14 +6204,13 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 void VKRenderer::disposeFrameBufferObject(int32_t frameBufferId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId));
-	auto frameBuffer = frameBufferId < 1 || frameBufferId >= framebuffers.size()?nullptr:framebuffers[frameBufferId];
+	auto frameBuffer = unique_ptr<framebuffer_object_type>(frameBufferId < 1 || frameBufferId >= framebuffers.size()?nullptr:framebuffers[frameBufferId]);
 	if (frameBuffer == nullptr) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(frameBufferId));
 		return;
 	}
 	vkDestroyRenderPass(device, frameBuffer->renderPass, nullptr);
 	vkDestroyFramebuffer(device, frameBuffer->frameBuffer, nullptr);
-	delete frameBuffer;
 	framebuffers[frameBufferId] = nullptr;
 	//
 	invalidatePipelines();

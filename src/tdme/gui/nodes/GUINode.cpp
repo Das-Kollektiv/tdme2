@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <array>
+#include <memory>
 #include <string>
 #include <unordered_set>
 #include <vector>
@@ -42,8 +43,10 @@
 
 using std::array;
 using std::find;
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::unordered_set;
 using std::vector;
 
@@ -122,7 +125,6 @@ GUINode::GUINode(
 	this->showOn = showOn;
 	this->hideOn = hideOn;
 	this->tooltip = tooltip;
-	this->controller = nullptr;
 	this->guiEffectOffsetX = 0;
 	this->guiEffectOffsetY = 0;
 	this->conditionsMet = false;
@@ -135,7 +137,7 @@ GUINode::GUINode(
 }
 
 GUINode::~GUINode() {
-	if (controller != nullptr) delete controller;
+	setController(nullptr);
 	// remove effects
 	vector<string> effectsToRemove;
 	for (const auto& [effectId, effect]: effects) {
@@ -144,7 +146,6 @@ GUINode::~GUINode() {
 	for (const auto& effectToRemoveId: effectsToRemove) {
 		removeEffect(effectToRemoveId);
 	}
-	if (effectState != nullptr) delete effectState;
 }
 
 const string GUINode::getHierarchicalId() {
@@ -1045,12 +1046,11 @@ void GUINode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, 
 
 void GUINode::setController(GUINodeController* controller)
 {
-	if (this->controller != nullptr) {
+	if (this->getController() != nullptr) {
 		screenNode->removeTickNode(this);
-		this->controller->dispose();
-		delete this->controller;
+		this->getController()->dispose();
 	}
-	this->controller = controller;
+	this->controller = unique_ptr<GUINodeController>(controller);
 }
 
 void GUINode::_scrollToNodeX(GUIParentNode* toNode)
@@ -1317,7 +1317,7 @@ void GUINode::setBackgroundImage(const string& backgroundImage) {
 void GUINode::addEffect(const string& id, GUIEffect* effect)
 {
 	removeEffect(id);
-	if (effectState == nullptr && effects.empty() == true) effectState = new GUIEffectState();
+	if (effectState == nullptr && effects.empty() == true) effectState = make_unique<GUIEffectState>();
 	effects[id] = effect;
 }
 
@@ -1335,7 +1335,6 @@ void GUINode::removeEffect(const string& id)
 	delete effectIt->second;
 	effects.erase(effectIt);
 	if (effectState != nullptr && effects.empty() == true) {
-		delete effectState;
 		effectState = nullptr;
 	}
 }
@@ -1438,11 +1437,11 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
 		}
 		// also reset color effect if not applied
 		if (haveColorEffect == false) {
-			GUIColorEffect::resetEffectState(effectState);
+			GUIColorEffect::resetEffectState(effectState.get());
 		} else
 		// also position effect if not applied
 		if (havePositionEffect == false) {
-			GUIPositionEffect::resetEffectState(effectState);
+			GUIPositionEffect::resetEffectState(effectState.get());
 		}
 		// finally start default effect if we have none
 		if (defaultEffect != nullptr && haveColorEffect == false && havePositionEffect == false) {

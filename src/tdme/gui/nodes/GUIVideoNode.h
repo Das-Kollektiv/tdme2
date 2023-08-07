@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -16,6 +17,7 @@
 #include <tdme/video/decoder/MPEG1Decoder.h>
 
 using std::string;
+using std::unique_ptr;
 
 using tdme::audio::PacketAudioStream;
 using tdme::engine::DynamicColorTexture;
@@ -46,8 +48,8 @@ class tdme::gui::nodes::GUIVideoNode final
 private:
 	string source;
 	MPEG1Decoder videoDecoder;
-	DynamicColorTexture* videoTexture { nullptr };
-	ByteBuffer* videoAudioBuffer { nullptr };
+	unique_ptr<DynamicColorTexture> videoTexture;
+	unique_ptr<ByteBuffer> videoAudioBuffer;
 	PacketAudioStream* videoAudioStream { nullptr };
 	int64_t timeLast { -1LL };
 

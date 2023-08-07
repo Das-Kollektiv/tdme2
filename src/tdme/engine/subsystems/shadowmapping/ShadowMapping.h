@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -12,6 +13,7 @@
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::vector;
+using std::unique_ptr;
 
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::EntityRenderer;
@@ -41,7 +43,7 @@ private:
 
 	Engine* engine { nullptr };
 
-	vector<ShadowMap*> shadowMaps;
+	vector<unique_ptr<ShadowMap>> shadowMaps;
 	ShadowMapping_RunState runState { NONE };
 
 	vector<Object*> visibleObjectsReceivingShadows;
@@ -66,7 +68,9 @@ public:
 	/**
 	 * @return engine
 	 */
-	Engine* getEngine();
+	inline Engine* getEngine() {
+		return engine;
+	}
 
 	/**
 	 * Reshape shadow maps
@@ -80,7 +84,9 @@ public:
 	 * @param idx index
 	 * @return shadow map
 	 */
-	ShadowMap* getShadowMap(int idx);
+	inline ShadowMap* getShadowMap(int idx) {
+		return shadowMaps[idx].get();
+	}
 
 	/**
 	 * Create shadow maps

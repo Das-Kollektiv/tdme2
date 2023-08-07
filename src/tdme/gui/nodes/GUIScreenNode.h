@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -22,6 +23,7 @@
 
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
@@ -163,7 +165,7 @@ private:
 
 	GUIColor foccussedBorderColor;
 
-	GUIMiniScript* script { nullptr };
+	unique_ptr<GUIMiniScript> script;
 	bool scriptOnActionAvailable { false };
 	bool scriptOnChangeAvailable { false };
 	bool scriptOnMouseOverAvailable { false };
@@ -790,7 +792,7 @@ public:
 	 * @return mini script script attached to this screen
 	 */
 	inline GUIMiniScript* getMiniScript() {
-		return script;
+		return script.get();
 	}
 
 	/**

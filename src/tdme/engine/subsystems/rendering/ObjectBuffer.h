@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -12,6 +13,7 @@
 
 using tdme::utilities::ByteBuffer;
 
+using std::unique_ptr;
 using std::vector;
 
 /**
@@ -31,7 +33,7 @@ class tdme::engine::subsystems::rendering::ObjectBuffer final
 	friend class tdme::engine::subsystems::skinning::SkinningShader;
 
 private:
-	STATIC_DLL_IMPEXT static vector<ByteBuffer*> byteBuffers;
+	STATIC_DLL_IMPEXT static vector<unique_ptr<ByteBuffer>> byteBuffers;
 
 	/**
 	 * Initialize object buffer per thread

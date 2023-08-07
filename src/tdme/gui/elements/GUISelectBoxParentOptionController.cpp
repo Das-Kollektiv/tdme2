@@ -1,5 +1,7 @@
 #include <tdme/gui/elements/GUISelectBoxParentOptionController.h>
 
+#include <memory>
+
 #include <tdme/tdme.h>
 #include <tdme/gui/elements/GUISelectBoxController.h>
 #include <tdme/gui/events/GUIActionListener.h>
@@ -10,6 +12,9 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
+
+using std::make_unique;
+using std::unique_ptr;
 
 using tdme::gui::elements::GUISelectBoxParentOptionController;
 using tdme::gui::events::GUIActionListener;
@@ -55,15 +60,14 @@ void GUISelectBoxParentOptionController::initialize()
 	};
 	arrowNode = required_dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(node->getId() + "_arrow"));
 	arrowNode->getActiveConditions().add(expanded == true?CONDITION_EXPANDED:CONDITION_COLLAPSED);
-	arrowNode->getScreenNode()->addActionListener(arrowNodeActionListener = new ArrowNodeActionListener(this));
+	arrowNode->getScreenNode()->addActionListener((arrowNodeActionListener = make_unique<ArrowNodeActionListener>(this)).get());
 	//
 	GUISelectBoxOptionController::initialize();
 }
 
 void GUISelectBoxParentOptionController::dispose() {
 	if (arrowNodeActionListener != nullptr) {
-		node->getScreenNode()->removeActionListener(arrowNodeActionListener);
-		delete arrowNodeActionListener;
+		node->getScreenNode()->removeActionListener(arrowNodeActionListener.get());
 		arrowNodeActionListener = nullptr;
 	}
 }

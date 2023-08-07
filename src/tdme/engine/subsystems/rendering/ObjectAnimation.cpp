@@ -1,6 +1,7 @@
 #include <tdme/engine/subsystems/rendering/ObjectAnimation.h>
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -22,6 +23,7 @@
 using std::map;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::model::Animation;
@@ -197,15 +199,10 @@ void ObjectAnimation::removeOverlayAnimation(const string& id)
 {
 	auto animationStateIt = overlayAnimationsById.find(id);
 	if (animationStateIt == overlayAnimationsById.end()) return;
-	auto animationState = animationStateIt->second;
+	//
+	auto animationState = unique_ptr<AnimationState>(animationStateIt->second);
 	overlayAnimationsById.erase(animationStateIt);
-	auto overlayAnimationsByJointIdIt = overlayAnimationsByJointId.find(animationState->setup->getOverlayFromNodeId());
-	if (overlayAnimationsByJointIdIt == overlayAnimationsByJointId.end() || overlayAnimationsByJointIdIt->second->setup != animationState->setup) {
-		delete animationState;
-		return;
-	}
-	overlayAnimationsByJointId.erase(overlayAnimationsByJointIdIt);
-	delete animationState;
+	overlayAnimationsByJointId.erase(animationState->setup->getOverlayFromNodeId());
 	//
 	updateNodeLists();
 }

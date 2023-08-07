@@ -1,5 +1,7 @@
 #include <tdme/engine/Camera.h>
 
+#include <memory>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Frustum.h>
@@ -7,6 +9,9 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
+
+using std::make_unique;
+using std::unique_ptr;
 
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Camera;
@@ -32,11 +37,10 @@ Camera::Camera(Renderer* renderer)
 	sideVector.set(1.0f, 0.0f, 0.0f);
 	lookFrom.set(0.0f, 50.0f, 400.0f);
 	lookAt.set(0.0f, 50.0f, 0.0f);
-	frustum = new Frustum(renderer);
+	frustum = make_unique<Frustum>(renderer);
 }
 
 Camera::~Camera() {
-	delete frustum;
 }
 
 Vector3 Camera::defaultUp(0.0f, 1.0f, 0.0f);

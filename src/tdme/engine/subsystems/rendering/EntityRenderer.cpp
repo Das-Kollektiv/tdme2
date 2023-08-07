@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <unordered_map>
@@ -67,11 +68,13 @@
 #include <tdme/utilities/Pool.h>
 
 using std::find;
+using std::make_unique;
 using std::map;
 using std::set;
 using std::sort;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
@@ -138,36 +141,22 @@ constexpr int32_t EntityRenderer::INSTANCEDRENDERING_OBJECTS_MAX;
 EntityRenderer::EntityRenderer(Engine* engine, Renderer* renderer) {
 	this->engine = engine;
 	this->renderer = renderer;
-	transparentRenderFacesGroupPool = new EntityRenderer_TransparentRenderFacesGroupPool();
-	transparentRenderFacesPool = new TransparentRenderFacesPool();
-	renderTransparentRenderPointsPool = new RenderTransparentRenderPointsPool(65535);
-	psePointBatchRenderer = new BatchRendererPoints(renderer, 0);
+	transparentRenderFacesGroupPool = make_unique<EntityRenderer_TransparentRenderFacesGroupPool>();
+	transparentRenderFacesPool = make_unique<TransparentRenderFacesPool>();
+	renderTransparentRenderPointsPool = make_unique<RenderTransparentRenderPointsPool>(65535);
+	psePointBatchRenderer = make_unique<BatchRendererPoints>(renderer, 0);
 	threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
 	contexts.resize(threadCount);
 	if (this->renderer->isInstancedRenderingAvailable() == true) {
 		for (auto& contextIdx: contexts) {
-			contextIdx.bbEffectColorMuls = ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
-			contextIdx.bbEffectColorAdds = ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
-			contextIdx.bbMvMatrices = ByteBuffer::allocate(16 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
+			contextIdx.bbEffectColorMuls = unique_ptr<ByteBuffer>(ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX));
+			contextIdx.bbEffectColorAdds = unique_ptr<ByteBuffer>(ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX));
+			contextIdx.bbMvMatrices = unique_ptr<ByteBuffer>(ByteBuffer::allocate(16 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX));
 		}
 	}
 }
 
 EntityRenderer::~EntityRenderer() {
-	if (this->renderer->isInstancedRenderingAvailable() == true) {
-		for (auto& contextIdx: contexts) {
-			delete contextIdx.bbEffectColorMuls;
-			delete contextIdx.bbEffectColorAdds;
-			delete contextIdx.bbMvMatrices;
-		}
-	}
-	for (auto batchRenderer: trianglesBatchRenderers) {
-		delete batchRenderer;
-	}
-	delete transparentRenderFacesGroupPool;
-	delete transparentRenderFacesPool;
-	delete renderTransparentRenderPointsPool;
-	delete psePointBatchRenderer;
 }
 
 void EntityRenderer::initialize()
@@ -187,7 +176,7 @@ void EntityRenderer::dispose()
 		Engine::getInstance()->getVBOManager()->removeVBO("tdme.objectrenderer.instancedrendering." + to_string(i));
 	}
 	// dispose batch vbo renderer
-	for (auto batchRenderer: trianglesBatchRenderers) {
+	for (const auto& batchRenderer: trianglesBatchRenderers) {
 		batchRenderer->dispose();
 		batchRenderer->release();
 	}
@@ -198,16 +187,16 @@ BatchRendererTriangles* EntityRenderer::acquireTrianglesBatchRenderer()
 {
 	// check for free batch vbo renderer
 	auto i = 0;
-	for (auto batchRenderer: trianglesBatchRenderers) {
-		if (batchRenderer->acquire()) return batchRenderer;
+	for (const auto& batchRenderer: trianglesBatchRenderers) {
+		if (batchRenderer->acquire()) return batchRenderer.get();
 		i++;
 	}
 	// try to add one
 	if (i < BATCHRENDERER_MAX) {
-		auto batchRenderer = new BatchRendererTriangles(renderer, i);
+		trianglesBatchRenderers.push_back(make_unique<BatchRendererTriangles>(renderer, i));
+		const auto& batchRenderer = trianglesBatchRenderers[trianglesBatchRenderers.size() - 1];
 		batchRenderer->initialize();
-		trianglesBatchRenderers.push_back(batchRenderer);
-		if (batchRenderer->acquire()) return batchRenderer;
+		if (batchRenderer->acquire()) return batchRenderer.get();
 
 	}
 	Console::println(string("EntityRenderer::acquireTrianglesBatchRenderer()::failed"));
@@ -222,7 +211,7 @@ void EntityRenderer::reset()
 void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object*>& objects, bool renderTransparentFaces, int32_t renderTypes)
 {
 	if (renderer->isSupportingMultithreadedRendering() == false) {
-		renderFunction(0, renderPass, objects, objectsByModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
+		renderFunction(0, renderPass, objects, objectsByModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool.get());
 	} else {
 		auto elementsIssued = 0;
 		auto queueElement = Engine::engineThreadQueueElementPool.allocate();
@@ -709,7 +698,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 	Matrix4x4 modelViewMatrix;
 
 	//
-	auto camera = engine->camera;
+	auto camera = engine->camera.get();
 	auto frontFace = -1;
 	auto cullingMode = 1;
 
