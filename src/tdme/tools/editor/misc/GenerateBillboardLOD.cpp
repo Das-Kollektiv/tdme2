@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/misc/GenerateBillboardLOD.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -30,6 +31,7 @@
 using tdme::tools::editor::misc::GenerateBillboardLOD;
 
 using std::string;
+using std::unique_ptr;
 
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::fileio::textures::PNGTextureWriter;
@@ -60,40 +62,42 @@ Model* GenerateBillboardLOD::generate(
 	const string& pathName,
 	const string& fileName
 ) {
-	auto osEngine = Engine::createOffScreenInstance(4096, 4096, true, true, false);
-	osEngine->setPartition(new SimplePartition());
-	osEngine->setSceneColor(Color4(0.0f, 0.0f, 0.0f, 0.0f));
-	//
-	auto light = osEngine->getLightAt(0);
-	light->setAmbient(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	light->setDiffuse(Color4(0.5f, 0.5f, 0.5f, 1.0f));
-	light->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	light->setPosition(Vector4(0.0f, 20000.0f, 0.0f, 0.0f));
-	light->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light->getPosition().getX(), light->getPosition().getY(), light->getPosition().getZ())));
-	light->setConstantAttenuation(0.5f);
-	light->setLinearAttenuation(0.0f);
-	light->setQuadraticAttenuation(0.0f);
-	light->setSpotExponent(0.0f);
-	light->setSpotCutOff(180.0f);
-	light->setEnabled(true);
-	// do a feasible scale
-	auto boundingBox = model->getBoundingBox();
-	float maxAxisDimension = Tools::computeMaxAxisDimension(boundingBox);
-	if (maxAxisDimension < Math::EPSILON) maxAxisDimension = 1.0f;
-	//
-	auto camera = osEngine->getCamera();
-	camera->setLookAt(boundingBox->getCenter());
-	camera->setLookFrom(boundingBox->getCenter().clone().add(Vector3(0.0f, 0.0f, boundingBox->getCenter().getZ() + maxAxisDimension * 1.25f)));
-	//
-	osEngine->addEntity(new Object("model", model));
-	//
-	osEngine->display();
-	//
 	auto textureFileName = Tools::removeFileExtension(fileName) + ".png";
-	osEngine->makeScreenshot(pathName, textureFileName, false);
+	auto boundingBox = model->getBoundingBox();
 	//
-	osEngine->dispose();
-	delete osEngine;
+	{
+		auto osEngine = unique_ptr<Engine>(Engine::createOffScreenInstance(4096, 4096, true, true, false));
+		osEngine->setPartition(new SimplePartition());
+		osEngine->setSceneColor(Color4(0.0f, 0.0f, 0.0f, 0.0f));
+		//
+		auto light = osEngine->getLightAt(0);
+		light->setAmbient(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+		light->setDiffuse(Color4(0.5f, 0.5f, 0.5f, 1.0f));
+		light->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+		light->setPosition(Vector4(0.0f, 20000.0f, 0.0f, 0.0f));
+		light->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light->getPosition().getX(), light->getPosition().getY(), light->getPosition().getZ())));
+		light->setConstantAttenuation(0.5f);
+		light->setLinearAttenuation(0.0f);
+		light->setQuadraticAttenuation(0.0f);
+		light->setSpotExponent(0.0f);
+		light->setSpotCutOff(180.0f);
+		light->setEnabled(true);
+		// do a feasible scale
+		float maxAxisDimension = Tools::computeMaxAxisDimension(boundingBox);
+		if (maxAxisDimension < Math::EPSILON) maxAxisDimension = 1.0f;
+		//
+		auto camera = osEngine->getCamera();
+		camera->setLookAt(boundingBox->getCenter());
+		camera->setLookFrom(boundingBox->getCenter().clone().add(Vector3(0.0f, 0.0f, boundingBox->getCenter().getZ() + maxAxisDimension * 1.25f)));
+		//
+		osEngine->addEntity(new Object("model", model));
+		//
+		osEngine->display();
+		//
+		osEngine->makeScreenshot(pathName, textureFileName, false);
+		//
+		osEngine->dispose();
+	}
 
 	//
 	auto minX = 10000;

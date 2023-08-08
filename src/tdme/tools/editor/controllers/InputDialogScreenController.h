@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -14,6 +15,7 @@
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
+using std::unique_ptr;
 
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
@@ -44,8 +46,8 @@ private:
 	GUIScreenNode* screenNode { nullptr };
 	GUIElementNode* tabsHeaderNode { nullptr };
 	GUIElementNode* inputNode { nullptr };
-	Action* applyAction { nullptr };
-	Action* cancelAction { nullptr };
+	unique_ptr<Action> applyAction;
+	unique_ptr<Action> cancelAction;
 
 public:
 	// forbid class copy

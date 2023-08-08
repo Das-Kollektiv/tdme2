@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/misc/GenerateImposterLOD.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -31,6 +32,7 @@
 using tdme::tools::editor::misc::GenerateImposterLOD;
 
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::fileio::models::TMWriter;
@@ -65,7 +67,7 @@ void GenerateImposterLOD::generate(
 	vector<string>& imposterModelFileNames,
 	vector<Model*>& imposterModels
 ) {
-	auto osEngine = Engine::createOffScreenInstance(4096, 4096, true, true, false);
+	auto osEngine = unique_ptr<Engine>(Engine::createOffScreenInstance(4096, 4096, true, true, false));
 	osEngine->setPartition(new SimplePartition());
 	osEngine->setSceneColor(Color4(0.0f, 0.0f, 0.0f, 0.0f));
 	//
@@ -230,5 +232,4 @@ void GenerateImposterLOD::generate(
 
 	//
 	osEngine->dispose();
-	delete osEngine;
 }

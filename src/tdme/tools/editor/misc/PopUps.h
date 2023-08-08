@@ -1,8 +1,12 @@
 #pragma once
 
+#include <memory>
+
 #include <tdme/tdme.h>
 #include <tdme/tools/editor/controllers/fwd-tdme.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
+
+using std::unique_ptr;
 
 using tdme::tools::editor::controllers::AboutDialogScreenController;
 using tdme::tools::editor::controllers::ColorPickerScreenController;
@@ -24,18 +28,18 @@ using tdme::tools::editor::controllers::TooltipScreenController;
 class tdme::tools::editor::misc::PopUps final
 {
 private:
-	InfoDialogScreenController* infoDialogScreenController { nullptr };
-	InputDialogScreenController* inputDialogScreenController { nullptr };
-	FileDialogScreenController* fileDialogScreenController { nullptr };
-	ProgressBarScreenController* progressBarScreenController { nullptr };
-	ColorPickerScreenController* colorPickerScreenController { nullptr };
-	ContextMenuScreenController* contextMenuScreenController { nullptr };
-	AboutDialogScreenController* aboutDialogScreenController { nullptr };
-	FindReplaceDialogScreenController* findReplaceDialogScreenController { nullptr };
-	ImportDialogScreenController* importDialogScreenController { nullptr };
-	SelectorDialogScreenController* selectorDialogScreenController { nullptr };
-	TooltipScreenController* tooltipScreenController { nullptr };
-	DraggingScreenController* draggingScreenController { nullptr };
+	unique_ptr<InfoDialogScreenController> infoDialogScreenController;
+	unique_ptr<InputDialogScreenController> inputDialogScreenController;
+	unique_ptr<FileDialogScreenController> fileDialogScreenController;
+	unique_ptr<ProgressBarScreenController> progressBarScreenController;
+	unique_ptr<ColorPickerScreenController> colorPickerScreenController;
+	unique_ptr<ContextMenuScreenController> contextMenuScreenController;
+	unique_ptr<AboutDialogScreenController> aboutDialogScreenController;
+	unique_ptr<FindReplaceDialogScreenController> findReplaceDialogScreenController;
+	unique_ptr<ImportDialogScreenController> importDialogScreenController;
+	unique_ptr<SelectorDialogScreenController> selectorDialogScreenController;
+	unique_ptr<TooltipScreenController> tooltipScreenController;
+	unique_ptr<DraggingScreenController> draggingScreenController;
 
 public:
 	// forbid class copy
@@ -55,84 +59,84 @@ public:
 	 * @return file dialog screen controller
 	 */
 	inline FileDialogScreenController* getFileDialogScreenController() {
-		return fileDialogScreenController;
+		return fileDialogScreenController.get();
 	}
 
 	/**
 	 * @return input dialog screen controller
 	 */
 	inline InputDialogScreenController* getInputDialogScreenController() {
-		return inputDialogScreenController;
+		return inputDialogScreenController.get();
 	}
 
 	/**
 	 * @return info dialog screen controller
 	 */
 	inline InfoDialogScreenController* getInfoDialogScreenController() {
-		return infoDialogScreenController;
+		return infoDialogScreenController.get();
 	}
 
 	/**
 	 * @return progress bar screen controller
 	 */
 	inline ProgressBarScreenController* getProgressBarScreenController() {
-		return progressBarScreenController;
+		return progressBarScreenController.get();
 	}
 
 	/**
 	 * @return color picker screen controller
 	 */
 	inline ColorPickerScreenController* getColorPickerScreenController() {
-		return colorPickerScreenController;
+		return colorPickerScreenController.get();
 	}
 
 	/**
  	 * @return context menu screen controller
 	 */
 	inline ContextMenuScreenController* getContextMenuScreenController() {
-		return contextMenuScreenController;
+		return contextMenuScreenController.get();
 	}
 
 	/**
  	 * @return about dialog screen controller
 	 */
 	inline AboutDialogScreenController* getAboutDialogScreenController() {
-		return aboutDialogScreenController;
+		return aboutDialogScreenController.get();
 	}
 
 	/**
 	 * @return find replace dialog screen controller
 	 */
 	inline FindReplaceDialogScreenController* getFindReplaceDialogScreenController() {
-		return findReplaceDialogScreenController;
+		return findReplaceDialogScreenController.get();
 	}
 
 	/**
 	 * @return import dialog screen controller
 	 */
 	inline ImportDialogScreenController* getImportDialogScreenController() {
-		return importDialogScreenController;
+		return importDialogScreenController.get();
 	}
 
 	/**
 	 * @return selector dialog screen controller
 	 */
 	inline SelectorDialogScreenController* getSelectorDialogScreenController() {
-		return selectorDialogScreenController;
+		return selectorDialogScreenController.get();
 	}
 
 	/**
 	 * @return tooltip screen controller
 	 */
 	inline TooltipScreenController* getTooltipScreenController() {
-		return tooltipScreenController;
+		return tooltipScreenController.get();
 	}
 
 	/**
 	 * @return dragging screen controller
 	 */
 	inline DraggingScreenController* getDraggingScreenController() {
-		return draggingScreenController;
+		return draggingScreenController.get();
 	}
 
 	/**

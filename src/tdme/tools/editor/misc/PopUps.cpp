@@ -1,5 +1,7 @@
 #include <tdme/tools/editor/misc/PopUps.h>
 
+#include <memory>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -16,6 +18,9 @@
 #include <tdme/tools/editor/controllers/ProgressBarScreenController.h>
 #include <tdme/tools/editor/controllers/SelectorDialogScreenController.h>
 #include <tdme/tools/editor/controllers/TooltipScreenController.h>
+
+using std::make_unique;
+using std::unique_ptr;
 
 using tdme::engine::Engine;
 using tdme::gui::nodes::GUIScreenNode;
@@ -36,33 +41,21 @@ using tdme::tools::editor::misc::PopUps;
 
 PopUps::PopUps()
 {
-	fileDialogScreenController = new FileDialogScreenController(this);
-	findReplaceDialogScreenController = new FindReplaceDialogScreenController(this);
-	inputDialogScreenController = new InputDialogScreenController(this);
-	infoDialogScreenController = new InfoDialogScreenController(this);
-	aboutDialogScreenController = new AboutDialogScreenController(this);
-	progressBarScreenController = new ProgressBarScreenController(this);
-	colorPickerScreenController = new ColorPickerScreenController(this);
-	importDialogScreenController = new ImportDialogScreenController(this);
-	selectorDialogScreenController = new SelectorDialogScreenController(this);
-	contextMenuScreenController = new ContextMenuScreenController(this);
-	tooltipScreenController = new TooltipScreenController();
-	draggingScreenController = new DraggingScreenController();
+	fileDialogScreenController = make_unique<FileDialogScreenController>(this);
+	findReplaceDialogScreenController = make_unique<FindReplaceDialogScreenController>(this);
+	inputDialogScreenController = make_unique<InputDialogScreenController>(this);
+	infoDialogScreenController = make_unique<InfoDialogScreenController>(this);
+	aboutDialogScreenController = make_unique<AboutDialogScreenController>(this);
+	progressBarScreenController = make_unique<ProgressBarScreenController>(this);
+	colorPickerScreenController = make_unique<ColorPickerScreenController>(this);
+	importDialogScreenController = make_unique<ImportDialogScreenController>(this);
+	selectorDialogScreenController = make_unique<SelectorDialogScreenController>(this);
+	contextMenuScreenController = make_unique<ContextMenuScreenController>(this);
+	tooltipScreenController = make_unique<TooltipScreenController>();
+	draggingScreenController = make_unique<DraggingScreenController>();
 }
 
 PopUps::~PopUps() {
-	delete fileDialogScreenController;
-	delete findReplaceDialogScreenController;
-	delete inputDialogScreenController;
-	delete infoDialogScreenController;
-	delete aboutDialogScreenController;
-	delete progressBarScreenController;
-	delete colorPickerScreenController;
-	delete importDialogScreenController;
-	delete selectorDialogScreenController;
-	delete contextMenuScreenController;
-	delete tooltipScreenController;
-	delete draggingScreenController;
 }
 
 void PopUps::initialize()

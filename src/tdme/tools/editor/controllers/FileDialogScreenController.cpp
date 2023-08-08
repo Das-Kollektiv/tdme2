@@ -1,6 +1,7 @@
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 
 #include <algorithm>
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -33,6 +34,7 @@
 using std::remove;
 using std::reverse;
 using std::string;
+using std::unique_ptr;
 using std::unordered_map;
 using std::vector;
 
@@ -69,8 +71,6 @@ FileDialogScreenController::FileDialogScreenController(PopUps* popUps)
 }
 
 FileDialogScreenController::~FileDialogScreenController() {
-	if (applyAction != nullptr) delete applyAction;
-	if (cancelAction != nullptr) delete cancelAction;
 }
 
 GUIScreenNode* FileDialogScreenController::getScreenNode()
@@ -323,10 +323,8 @@ void FileDialogScreenController::show(const string& cwd, const string& captionTe
 		this->cwd = FileSystem::getStandardFileSystem()->getCurrentWorkingPathName();
 	}
 	setupFiles();
-	if (this->applyAction != nullptr) delete this->applyAction;
-	this->applyAction = applyAction;
-	if (this->cancelAction != nullptr) delete this->cancelAction;
-	this->cancelAction = cancelAction;
+	this->applyAction = unique_ptr<Action>(applyAction);
+	this->cancelAction = unique_ptr<Action>(cancelAction);
 	{
 		string extensionsDropDownOptionsXML = "<dropdown-option text=\"All supported extensions\" value=\"\" selected=\"true\"/>\n";
 		for (const auto& extension: extensions) {
@@ -345,8 +343,6 @@ void FileDialogScreenController::show(const string& cwd, const string& captionTe
 void FileDialogScreenController::close()
 {
 	screenNode->setEnabled(false);
-	if (applyAction != nullptr) delete applyAction;
-	if (cancelAction != nullptr) delete cancelAction;
 	applyAction = nullptr;
 	cancelAction = nullptr;
 }
@@ -442,7 +438,6 @@ void FileDialogScreenController::onAction(GUIActionListenerType type, GUIElement
 			saveSettings();
 			if (applyAction != nullptr) {
 				applyAction->performAction();
-				delete applyAction;
 				applyAction = nullptr;
 			}
 		} else
@@ -454,7 +449,6 @@ void FileDialogScreenController::onAction(GUIActionListenerType type, GUIElement
 			}
 			if (cancelAction != nullptr) {
 				cancelAction->performAction();
-				delete cancelAction;
 				cancelAction = nullptr;
 			}
 			close();

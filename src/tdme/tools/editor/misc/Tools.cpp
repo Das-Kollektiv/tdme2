@@ -1,6 +1,7 @@
 #include <tdme/tools/editor/misc/Tools.h>
 
 #include <array>
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -55,8 +56,10 @@
 #include <tdme/utilities/StringTools.h>
 
 using std::array;
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::tools::editor::misc::Tools;
 
@@ -279,7 +282,7 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 	if (prototype == nullptr) return;
 
 	// create engine entity
-	BoundingBox* entityBoundingBoxFallback = new BoundingBox(Vector3(-2.5f, 0.0f, -2.5f), Vector3(2.5f, 2.0f, 2.5f));
+	auto entityBoundingBoxFallback = make_unique<BoundingBox>(Vector3(-2.5f, 0.0f, -2.5f), Vector3(2.5f, 2.0f, 2.5f));
 	BoundingBox* entityBoundingBox = nullptr;
 	Entity* modelEntity = nullptr;
 	objectScale.set(1.0f, 1.0f, 1.0f);
@@ -379,7 +382,7 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 	}
 
 	//
-	auto entityBoundingBoxToUse = entityBoundingBox != nullptr?entityBoundingBox:entityBoundingBoxFallback;
+	auto entityBoundingBoxToUse = entityBoundingBox != nullptr?entityBoundingBox:entityBoundingBoxFallback.get();
 
 	// do a feasible scale
 	float maxAxisDimension = Tools::computeMaxAxisDimension(entityBoundingBoxToUse);
@@ -455,9 +458,6 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 			cameraRotationInputHandler->setDefaultScale(maxAxisDimension * scale);
 		}
 	}
-
-	//
-	delete entityBoundingBoxFallback;
 }
 
 const string Tools::getRelativeResourcesFileName(const string& applicationRoot, const string& fileName)

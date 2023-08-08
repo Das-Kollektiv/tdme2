@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -16,6 +17,7 @@
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
+using std::unique_ptr;
 using std::unordered_map;
 using std::vector;
 
@@ -59,8 +61,8 @@ private:
 	GUIElementNode* favoritesNode { nullptr };
 	GUIElementNode* drivesNode { nullptr };
 	GUIElementNode* typeDropDownNode { nullptr };
-	Action* applyAction { nullptr };
-	Action* cancelAction { nullptr };
+	unique_ptr<Action> applyAction;
+	unique_ptr<Action> cancelAction;
 	vector<string> fileList;
 	bool enableFilter { false };
 	bool filtered { false };

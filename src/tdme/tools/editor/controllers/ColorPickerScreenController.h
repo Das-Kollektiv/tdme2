@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -15,6 +16,7 @@
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
+using std::unique_ptr;
 
 using tdme::engine::Color4;
 using tdme::gui::events::GUIActionListener;
@@ -51,7 +53,7 @@ private:
 	GUIElementNode* hexInput { nullptr };
 	GUIElementNode* brightnessSlider { nullptr };
 	Color4 color;
-	Action* onColorChangeAction { nullptr };
+	unique_ptr<Action> onColorChangeAction;
 
 	/**
 	 * Update color

@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/controllers/ColorPickerScreenController.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -29,6 +30,7 @@
 #include <tdme/utilities/StringTools.h>
 
 using std::string;
+using std::unique_ptr;
 
 using tdme::tools::editor::controllers::ColorPickerScreenController;
 
@@ -64,7 +66,6 @@ ColorPickerScreenController::ColorPickerScreenController(PopUps* popUps): popUps
 
 ColorPickerScreenController::~ColorPickerScreenController()
 {
-	if (onColorChangeAction != nullptr) delete onColorChangeAction;
 }
 
 GUIScreenNode* ColorPickerScreenController::getScreenNode()
@@ -102,7 +103,7 @@ void ColorPickerScreenController::dispose()
 void ColorPickerScreenController::show(const Color4& color, Action* onColorChangeAction)
 {
 	this->color = color;
-	this->onColorChangeAction = onColorChangeAction;
+	this->onColorChangeAction = unique_ptr<Action>(onColorChangeAction);
 	updateColor();
 	updateColorHex();
 	//
@@ -112,10 +113,7 @@ void ColorPickerScreenController::show(const Color4& color, Action* onColorChang
 
 void ColorPickerScreenController::close()
 {
-	if (onColorChangeAction != nullptr) {
-		delete onColorChangeAction;
-		onColorChangeAction = nullptr;
-	}
+	onColorChangeAction = nullptr;
 	screenNode->setEnabled(false);
 }
 

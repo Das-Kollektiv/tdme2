@@ -1,6 +1,7 @@
 #include <tdme/tools/editor/misc/GenerateConvexMeshes.h>
 
 #include <string>
+#include <memory>
 #include <unordered_map>
 #include <vector>
 
@@ -45,6 +46,7 @@ using tdme::tools::editor::misc::GenerateConvexMeshes;
 using std::string;
 using std::to_string;
 using std::unordered_map;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::fileio::models::ModelReader;
@@ -166,26 +168,31 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 			*/
 			vector<float> meshPoints;
 			vector<int> meshTriangles;
-			auto meshModel = ModelReader::read(
-				pathName,
-				fileName
-			);
+			//
 			{
-				ObjectModel meshObjectModel(meshModel);
-				vector<Triangle> meshFaceTriangles;
-				meshObjectModel.getTriangles(meshFaceTriangles);
-				for (const auto& triangle: meshFaceTriangles) {
-					meshTriangles.push_back(meshPoints.size() / 3 + 0);
-					meshTriangles.push_back(meshPoints.size() / 3 + 1);
-					meshTriangles.push_back(meshPoints.size() / 3 + 2);
-					for (auto i = 0; i < triangle.getVertices().size(); i++) {
-						meshPoints.push_back(triangle.getVertices()[i].getX());
-						meshPoints.push_back(triangle.getVertices()[i].getY());
-						meshPoints.push_back(triangle.getVertices()[i].getZ());
+				auto meshModel = unique_ptr<Model>(
+					ModelReader::read(
+						pathName,
+						fileName
+					)
+				);
+				{
+					ObjectModel meshObjectModel(meshModel.get());
+					vector<Triangle> meshFaceTriangles;
+					meshObjectModel.getTriangles(meshFaceTriangles);
+					for (const auto& triangle: meshFaceTriangles) {
+						meshTriangles.push_back(meshPoints.size() / 3 + 0);
+						meshTriangles.push_back(meshPoints.size() / 3 + 1);
+						meshTriangles.push_back(meshPoints.size() / 3 + 2);
+						for (auto i = 0; i < triangle.getVertices().size(); i++) {
+							meshPoints.push_back(triangle.getVertices()[i].getX());
+							meshPoints.push_back(triangle.getVertices()[i].getY());
+							meshPoints.push_back(triangle.getVertices()[i].getZ());
+						}
 					}
 				}
 			}
-			delete meshModel;
+			//
 			bool vhacdResult =
 				vhacd->Compute(
 					&meshPoints[0],
@@ -199,14 +206,15 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 				VHACD::IVHACD::ConvexHull convexHull;
 				for (auto i = 0; i < convexHulls; i++) {
 					vhacd->GetConvexHull(i, convexHull);
-					auto convexHullModel = createModel(
-						fileName + ".cm." + to_string(i) + ".tm",
-						convexHull.m_points,
-						convexHull.m_triangles
+					auto convexHullModel = unique_ptr<Model>(
+						createModel(
+							fileName + ".cm." + to_string(i) + ".tm",
+							convexHull.m_points,
+							convexHull.m_triangles
+						)
 					);
 					convexMeshTMsData.push_back(vector<uint8_t>());
-					TMWriter::write(convexHullModel, convexMeshTMsData[convexMeshTMsData.size() - 1]);
-					delete convexHullModel;
+					TMWriter::write(convexHullModel.get(), convexMeshTMsData[convexMeshTMsData.size() - 1]);
 				}
 			}
 		} catch (Exception &exception) {
@@ -228,25 +236,29 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 	} else
 	if (mode == MODE_IMPORT) {
 		try {
-			auto meshModel = ModelReader::read(
-				pathName,
-				fileName
+			//
+			auto meshModel = unique_ptr<Model>(
+				ModelReader::read(
+					pathName,
+					fileName
+				)
 			);
+			//
 			{
-				ObjectModel meshObjectModel(meshModel);
+				ObjectModel meshObjectModel(meshModel.get());
 				for (auto i = 0; i < meshObjectModel.getNodeCount(); i++) {
 					vector<Triangle> nodeTriangles;
 					meshObjectModel.getTriangles(nodeTriangles, i);
-					auto convexHullModel = createModel(
-						fileName + ".cm." + to_string(i) + ".tm",
-						nodeTriangles
+					auto convexHullModel = unique_ptr<Model>(
+						createModel(
+							fileName + ".cm." + to_string(i) + ".tm",
+							nodeTriangles
+						)
 					);
 					convexMeshTMsData.push_back(vector<uint8_t>());
-					TMWriter::write(convexHullModel, convexMeshTMsData[convexMeshTMsData.size() - 1]);
-					delete convexHullModel;
+					TMWriter::write(convexHullModel.get(), convexMeshTMsData[convexMeshTMsData.size() - 1]);
 				}
 			}
-			delete meshModel;
 		} catch (Exception &exception) {
 			/*
 			if (popUps != nullptr) {
