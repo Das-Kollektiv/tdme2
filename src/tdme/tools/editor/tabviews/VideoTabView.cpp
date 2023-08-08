@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabviews/VideoTabView.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -13,7 +14,9 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 
 using tdme::tools::editor::tabviews::VideoTabView;
 
@@ -32,15 +35,13 @@ VideoTabView::VideoTabView(EditorView* editorView, const string& tabId, GUIScree
 	this->tabId = tabId;
 	this->screenNode = screenNode;
 	this->popUps = editorView->getPopUps();
-	engine = Engine::createOffScreenInstance(512, 512, false, false, false);
+	engine = unique_ptr<Engine>(Engine::createOffScreenInstance(512, 512, false, false, false));
 	engine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
 	engine->getGUI()->addScreen(screenNode->getId(), screenNode);
 	engine->getGUI()->addRenderScreen(screenNode->getId());
 }
 
 VideoTabView::~VideoTabView() {
-	delete videoTabController;
-	delete engine;
 }
 
 void VideoTabView::handleInputEvents()
@@ -57,9 +58,9 @@ void VideoTabView::display()
 void VideoTabView::initialize()
 {
 	try {
-		videoTabController = new VideoTabController(this);
+		videoTabController = make_unique<VideoTabController>(this);
 		videoTabController->initialize(editorView->getScreenController()->getScreenNode());
-		screenNode->addTooltipRequestListener(videoTabController);
+		screenNode->addTooltipRequestListener(videoTabController.get());
 	} catch (Exception& exception) {
 		Console::println("VideoTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
@@ -75,7 +76,7 @@ void VideoTabView::updateRendering() {
 }
 
 Engine* VideoTabView::getEngine() {
-	return engine;
+	return engine.get();
 }
 
 void VideoTabView::activate() {

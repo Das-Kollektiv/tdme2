@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabviews/MarkdownTabView.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -14,7 +15,9 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::tools::editor::tabviews::MarkdownTabView;
@@ -35,15 +38,13 @@ MarkdownTabView::MarkdownTabView(EditorView* editorView, const string& tabId, GU
 	this->screenNode = screenNode;
 	this->popUps = editorView->getPopUps();
 	this->toc = toc;
-	engine = Engine::createOffScreenInstance(512, 512, false, false, false);
+	engine = unique_ptr<Engine>(Engine::createOffScreenInstance(512, 512, false, false, false));
 	engine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
 	engine->getGUI()->addScreen(screenNode->getId(), screenNode);
 	engine->getGUI()->addRenderScreen(screenNode->getId());
 }
 
 MarkdownTabView::~MarkdownTabView() {
-	delete markdownTabController;
-	delete engine;
 }
 
 void MarkdownTabView::handleInputEvents()
@@ -60,9 +61,9 @@ void MarkdownTabView::display()
 void MarkdownTabView::initialize()
 {
 	try {
-		markdownTabController = new MarkdownTabController(this);
+		markdownTabController = make_unique<MarkdownTabController>(this);
 		markdownTabController->initialize(editorView->getScreenController()->getScreenNode());
-		screenNode->addTooltipRequestListener(markdownTabController);
+		screenNode->addTooltipRequestListener(markdownTabController.get());
 	} catch (Exception& exception) {
 		Console::println("MarkdownTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
@@ -78,7 +79,7 @@ void MarkdownTabView::updateRendering() {
 }
 
 Engine* MarkdownTabView::getEngine() {
-	return engine;
+	return engine.get();
 }
 
 void MarkdownTabView::activate() {

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -15,6 +16,7 @@
 #include <tdme/tools/editor/views/fwd-tdme.h>
 
 using std::string;
+using std::unique_ptr;
 
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
@@ -35,20 +37,20 @@ class tdme::tools::editor::tabviews::EnvMapEditorTabView final
 	: public TabView
 {
 protected:
-	Engine* engine { nullptr };
+	unique_ptr<Engine> engine;
 
 private:
 	EditorView* editorView { nullptr };
 	string tabId;
 	PopUps* popUps { nullptr };
-	EnvMapEditorTabController* envMapEditorTabController { nullptr };
+	unique_ptr<EnvMapEditorTabController> envMapEditorTabController;
 	TabView::OutlinerState outlinerState;
-	Scene* scene { nullptr };
+	unique_ptr<Scene> scene;
 	float skyDomeTranslation { 0.0f };
-	Prototype* skySpherePrototype { nullptr };
-	Prototype* skyDomePrototype { nullptr };
-	Prototype* skyPanoramaPrototype { nullptr };
-	Prototype* prototype { nullptr };
+	unique_ptr<Prototype> skySpherePrototype;
+	unique_ptr<Prototype> skyDomePrototype;
+	unique_ptr<Prototype> skyPanoramaPrototype;
+	unique_ptr<Prototype> prototype;
 
 public:
 	// forbid class copy
@@ -72,7 +74,7 @@ public:
 	 * @return prototype
 	 */
 	inline Prototype* getPrototype() {
-		return prototype;
+		return prototype.get();
 	}
 
 	/**
@@ -86,7 +88,7 @@ public:
 	 * @return associated tab controller
 	 */
 	inline TabController* getTabController() override {
-		return envMapEditorTabController;
+		return envMapEditorTabController.get();
 	}
 
 	/**

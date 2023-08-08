@@ -1,6 +1,7 @@
 #include <tdme/tools/editor/TDMEEditor.h>
 
 #include <cstdlib>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -21,7 +22,9 @@
 #include <tdme/tools/editor/views/View.h>
 #include <tdme/utilities/Console.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::tools::editor::TDMEEditor;
@@ -53,14 +56,12 @@ TDMEEditor::TDMEEditor()
 	view = nullptr;
 	viewInitialized = false;
 	viewNew = nullptr;
-	popUps = new PopUps();
+	popUps = make_unique<PopUps>();
 	editorView = nullptr;
 	quitRequested = false;
 }
 
 TDMEEditor::~TDMEEditor() {
-	delete popUps;
-	delete editorView;
 }
 
 void TDMEEditor::main(int argc, char** argv)
@@ -147,7 +148,7 @@ void TDMEEditor::initialize()
 	setInputEventHandler(engine->getGUI());
 	Tools::oseInit();
 	popUps->initialize();
-	setView(editorView = new EditorView(popUps));
+	setView((editorView = make_unique<EditorView>(popUps.get())).get());
 }
 
 void TDMEEditor::reshape(int width, int height)

@@ -209,23 +209,22 @@ void SceneEditorTabController::onDrop(const string& payload, int mouseX, int mou
 					//
 					try {
 						// load prototype and mark as non embedded
-						auto prototype = PrototypeReader::read(
-							Tools::getPathName(fileName),
-							Tools::getFileName(fileName)
+						auto prototype = unique_ptr<Prototype>(
+							PrototypeReader::read(
+								Tools::getPathName(fileName),
+								Tools::getFileName(fileName)
+							)
 						);
 						prototype->setEmbedded(false);
 						// check if we have prototype already in library
 						auto libraryPrototype = view->getScene()->getLibrary()->getPrototypeByName(prototype->getName());
-						if (libraryPrototype != nullptr) {
+						if (libraryPrototype == nullptr) {
 							// yep, delete prototype
-							delete prototype;
-							prototype = libraryPrototype;
-						} else {
-							// nope, add it
-							view->addPrototype(prototype);
+							libraryPrototype = prototype.release();
+							view->addPrototype(libraryPrototype);
 						}
 						// and place it
-						if (view->placeEntity(prototype, tabMouseX, tabMouseY) == false) {
+						if (view->placeEntity(libraryPrototype, tabMouseX, tabMouseY) == false) {
 							showInfoPopUp("Warning", "Could not place prototype entity.");
 						}
 					} catch (Exception& exception) {

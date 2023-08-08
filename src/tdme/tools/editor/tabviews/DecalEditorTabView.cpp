@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabviews/DecalEditorTabView.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -22,7 +23,9 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 
 using tdme::tools::editor::tabviews::DecalEditorTabView;
 
@@ -48,26 +51,21 @@ DecalEditorTabView::DecalEditorTabView(EditorView* editorView, const string& tab
 	this->editorView = editorView;
 	this->tabId = tabId;
 	this->popUps = editorView->getPopUps();
-	this->prototype = prototype;
-	engine = Engine::createOffScreenInstance(512, 512, true, true, false);
+	this->prototype = unique_ptr<Prototype>(prototype);
+	engine = unique_ptr<Engine>(Engine::createOffScreenInstance(512, 512, true, true, false));
 	engine->setShadowMapLightEyeDistanceScale(0.1f);
 	engine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
-	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
-	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), 1, objectScale, cameraRotationInputHandler);
+	cameraRotationInputHandler = make_unique<CameraRotationInputHandler>(engine.get());
+	Tools::setupPrototype(prototype, engine.get(), cameraRotationInputHandler->getLookFromRotations(), 1, objectScale, cameraRotationInputHandler.get());
 	outlinerState.expandedOutlinerParentOptionValues.push_back("prototype");
 }
 
 DecalEditorTabView::~DecalEditorTabView() {
-	delete prototype;
-	delete decalEditorTabController;
-	delete cameraRotationInputHandler;
-	delete engine;
-
 }
 
 void DecalEditorTabView::handleInputEvents()
 {
-	prototypePhysicsView->handleInputEvents(prototype);
+	prototypePhysicsView->handleInputEvents(prototype.get());
 	cameraRotationInputHandler->handleInputEvents();
 }
 
@@ -77,15 +75,15 @@ void DecalEditorTabView::display()
 	decalEditorTabController->updateInfoText(MutableString(engine->getTiming()->getAvarageFPS()).append(" FPS"));
 
 	//
-	prototypeDisplayView->display(prototype);
-	prototypePhysicsView->display(prototype);
+	prototypeDisplayView->display(prototype.get());
+	prototypePhysicsView->display(prototype.get());
 	engine->display();
 }
 
 void DecalEditorTabView::initialize()
 {
 	try {
-		decalEditorTabController = new DecalEditorTabController(this);
+		decalEditorTabController = make_unique<DecalEditorTabController>(this);
 		decalEditorTabController->initialize(editorView->getScreenController()->getScreenNode());
 		prototypeDisplayView = decalEditorTabController->getPrototypeDisplaySubController()->getView();
 		prototypePhysicsView = decalEditorTabController->getPrototypePhysicsSubController()->getView();
@@ -105,7 +103,7 @@ void DecalEditorTabView::updateRendering() {
 }
 
 Engine* DecalEditorTabView::getEngine() {
-	return engine;
+	return engine.get();
 }
 
 void DecalEditorTabView::activate() {
@@ -125,13 +123,13 @@ void DecalEditorTabView::reloadOutliner() {
 }
 
 void DecalEditorTabView::saveFile(const string& pathName, const string& fileName) {
-	PrototypeWriter::write(pathName, fileName, prototype);
+	PrototypeWriter::write(pathName, fileName, prototype.get());
 }
 
 void DecalEditorTabView::onCameraRotation() {
-	prototypePhysicsView->updateGizmo(prototype);
+	prototypePhysicsView->updateGizmo(prototype.get());
 }
 
 void DecalEditorTabView::onCameraScale() {
-	prototypePhysicsView->updateGizmo(prototype);
+	prototypePhysicsView->updateGizmo(prototype.get());
 }

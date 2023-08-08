@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -14,6 +15,7 @@
 #include <tdme/tools/editor/views/fwd-tdme.h>
 
 using std::string;
+using std::unique_ptr;
 
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
@@ -32,14 +34,14 @@ class tdme::tools::editor::tabviews::TextureTabView final
 	: public TabView
 {
 protected:
-	Engine* engine { nullptr };
+	unique_ptr<Engine> engine;
 
 private:
 	EditorView* editorView { nullptr };
 	string tabId;
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
-	TextureTabController* textureTabController { nullptr };
+	unique_ptr<TextureTabController> textureTabController;
 	TabView::OutlinerState outlinerState;
 
 public:
@@ -70,7 +72,7 @@ public:
 	 * @return associated tab controller
 	 */
 	inline TabController* getTabController() override {
-		return textureTabController;
+		return textureTabController.get();
 	}
 
 	/**

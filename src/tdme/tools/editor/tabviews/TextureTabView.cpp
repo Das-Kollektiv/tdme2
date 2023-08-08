@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabviews/TextureTabView.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -13,7 +14,9 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 
 using tdme::tools::editor::tabviews::TextureTabView;
 
@@ -32,15 +35,13 @@ TextureTabView::TextureTabView(EditorView* editorView, const string& tabId, GUIS
 	this->tabId = tabId;
 	this->screenNode = screenNode;
 	this->popUps = editorView->getPopUps();
-	engine = Engine::createOffScreenInstance(512, 512, false, false, false);
+	engine = unique_ptr<Engine>(Engine::createOffScreenInstance(512, 512, false, false, false));
 	engine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
 	engine->getGUI()->addScreen(screenNode->getId(), screenNode);
 	engine->getGUI()->addRenderScreen(screenNode->getId());
 }
 
 TextureTabView::~TextureTabView() {
-	delete textureTabController;
-	delete engine;
 }
 
 void TextureTabView::handleInputEvents()
@@ -57,9 +58,9 @@ void TextureTabView::display()
 void TextureTabView::initialize()
 {
 	try {
-		textureTabController = new TextureTabController(this);
+		textureTabController = make_unique<TextureTabController>(this);
 		textureTabController->initialize(editorView->getScreenController()->getScreenNode());
-		screenNode->addTooltipRequestListener(textureTabController);
+		screenNode->addTooltipRequestListener(textureTabController.get());
 	} catch (Exception& exception) {
 		Console::println("TextureTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
@@ -75,7 +76,7 @@ void TextureTabView::updateRendering() {
 }
 
 Engine* TextureTabView::getEngine() {
-	return engine;
+	return engine.get();
 }
 
 void TextureTabView::activate() {

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -12,6 +13,7 @@
 #include <tdme/tools/editor/views/EditorView.h>
 
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::application::Application;
@@ -34,8 +36,8 @@ private:
 	bool viewInitialized;
 	View* viewNew { nullptr };
 	bool quitRequested;
-	PopUps* popUps { nullptr };
-	EditorView* editorView { nullptr };
+	unique_ptr<PopUps> popUps;
+	unique_ptr<EditorView> editorView;
 
 public:
 

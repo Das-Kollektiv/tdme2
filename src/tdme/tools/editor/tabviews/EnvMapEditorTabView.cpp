@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabviews/EnvMapEditorTabView.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -23,7 +24,9 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 
 using tdme::tools::editor::tabviews::EnvMapEditorTabView;
 
@@ -51,14 +54,13 @@ EnvMapEditorTabView::EnvMapEditorTabView(EditorView* editorView, const string& t
 	this->editorView = editorView;
 	this->tabId = tabId;
 	this->popUps = editorView->getPopUps();
-	this->scene = scene;
-	this->prototype = prototype;
-	engine = Engine::createOffScreenInstance(512, 512, true, true, true);
+	this->scene = unique_ptr<Scene>(scene);
+	this->prototype = unique_ptr<Prototype>(prototype);
+	engine = unique_ptr<Engine>(Engine::createOffScreenInstance(512, 512, true, true, true));
 	engine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
 }
 
 EnvMapEditorTabView::~EnvMapEditorTabView() {
-	delete scene;
 }
 
 void EnvMapEditorTabView::handleInputEvents()
@@ -75,11 +77,11 @@ void EnvMapEditorTabView::display()
 void EnvMapEditorTabView::initialize()
 {
 	try {
-		envMapEditorTabController = new EnvMapEditorTabController(this);
+		envMapEditorTabController = make_unique<EnvMapEditorTabController>(this);
 		envMapEditorTabController->initialize(editorView->getScreenController()->getScreenNode());
-		skySpherePrototype = PrototypeReader::read("resources/engine/models", "sky_sphere.tmodel");
-		skyDomePrototype = PrototypeReader::read("resources/engine/models", "sky_dome.tmodel");
-		skyPanoramaPrototype = PrototypeReader::read("resources/engine/models", "sky_panorama.tmodel");
+		skySpherePrototype = unique_ptr<Prototype>(PrototypeReader::read("resources/engine/models", "sky_sphere.tmodel"));
+		skyDomePrototype = unique_ptr<Prototype>(PrototypeReader::read("resources/engine/models", "sky_dome.tmodel"));
+		skyPanoramaPrototype = unique_ptr<Prototype>(PrototypeReader::read("resources/engine/models", "sky_panorama.tmodel"));
 	} catch (Exception& exception) {
 		Console::println("EnvMapEditorTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
@@ -103,22 +105,21 @@ void EnvMapEditorTabView::initialize()
 	cam->setZFar(150.0f);
 	cam->setLookFrom(Vector3(81.296799f, 15.020234f, 101.091347f));
 	cam->setLookAt(Vector3(57.434414f, 0.695241f, 67.012329f));
-	SceneConnector::setLights(engine, scene, Vector3());
-	SceneConnector::addScene(engine, scene, false, false, false, false, false);
+	SceneConnector::setLights(engine.get(), scene.get(), Vector3());
+	SceneConnector::addScene(engine.get(), scene.get(), false, false, false, false, false);
 	initSky();
 }
 
 void EnvMapEditorTabView::dispose()
 {
 	engine->reset();
-	delete envMapEditorTabController;
 }
 
 void EnvMapEditorTabView::updateRendering() {
 }
 
 Engine* EnvMapEditorTabView::getEngine() {
-	return engine;
+	return engine.get();
 }
 
 void EnvMapEditorTabView::activate() {
@@ -240,5 +241,5 @@ void EnvMapEditorTabView::setEnvironmentMapFrequency(int64_t frequency) {
 }
 
 void EnvMapEditorTabView::saveFile(const string& pathName, const string& fileName) {
-	PrototypeWriter::write(pathName, fileName, prototype);
+	PrototypeWriter::write(pathName, fileName, prototype.get());
 }

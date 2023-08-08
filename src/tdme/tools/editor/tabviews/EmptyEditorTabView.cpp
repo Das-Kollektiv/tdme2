@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabviews/EmptyEditorTabView.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -18,7 +19,9 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 
 using tdme::tools::editor::tabviews::EmptyEditorTabView;
 
@@ -40,22 +43,17 @@ EmptyEditorTabView::EmptyEditorTabView(EditorView* editorView, const string& tab
 	this->editorView = editorView;
 	this->tabId = tabId;
 	this->popUps = editorView->getPopUps();
-	this->prototype = prototype;
-	engine = Engine::createOffScreenInstance(512, 512, true, true, false);
+	this->prototype = unique_ptr<Prototype>(prototype);
+	engine = unique_ptr<Engine>(Engine::createOffScreenInstance(512, 512, true, true, false));
 	engine->setShadowMapLightEyeDistanceScale(0.1f);
 	engine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
 	Vector3 objectScale;
-	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
-	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), 1, objectScale, cameraRotationInputHandler);
+	cameraRotationInputHandler = make_unique<CameraRotationInputHandler>(engine.get());
+	Tools::setupPrototype(prototype, engine.get(), cameraRotationInputHandler->getLookFromRotations(), 1, objectScale, cameraRotationInputHandler.get());
 	outlinerState.expandedOutlinerParentOptionValues.push_back("prototype");
 }
 
 EmptyEditorTabView::~EmptyEditorTabView() {
-	delete prototype;
-	delete emptyEditorTabController;
-	delete cameraRotationInputHandler;
-	delete engine;
-
 }
 
 void EmptyEditorTabView::handleInputEvents()
@@ -71,7 +69,7 @@ void EmptyEditorTabView::display()
 void EmptyEditorTabView::initialize()
 {
 	try {
-		emptyEditorTabController = new EmptyEditorTabController(this);
+		emptyEditorTabController = make_unique<EmptyEditorTabController>(this);
 		emptyEditorTabController->initialize(editorView->getScreenController()->getScreenNode());
 	} catch (Exception& exception) {
 		Console::println("EmptyEditorTabView::initialize(): An error occurred: " + string(exception.what()));
@@ -88,7 +86,7 @@ void EmptyEditorTabView::updateRendering() {
 }
 
 Engine* EmptyEditorTabView::getEngine() {
-	return engine;
+	return engine.get();
 }
 
 void EmptyEditorTabView::activate() {
@@ -108,5 +106,5 @@ void EmptyEditorTabView::reloadOutliner() {
 }
 
 void EmptyEditorTabView::saveFile(const string& pathName, const string& fileName) {
-	PrototypeWriter::write(pathName, fileName, prototype);
+	PrototypeWriter::write(pathName, fileName, prototype.get());
 }
