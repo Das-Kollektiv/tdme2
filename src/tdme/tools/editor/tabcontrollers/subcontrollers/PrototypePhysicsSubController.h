@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -20,7 +21,9 @@
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::array;
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::prototype::Prototype;
@@ -52,7 +55,7 @@ private:
 	GUIScreenNode* screenNode { nullptr };
 	EditorView* editorView { nullptr };
 	TabView* tabView { nullptr };
-	PrototypePhysicsSubView* view { nullptr };
+	unique_ptr<PrototypePhysicsSubView> view;
 	PopUps* popUps { nullptr };
 	bool isModelBoundingVolumes;
 	int maxBoundingVolumeCount;
@@ -133,12 +136,16 @@ public:
 	/**
 	 * @return view
 	 */
-	PrototypePhysicsSubView* getView();
+	inline PrototypePhysicsSubView* getView() {
+		return view.get();
+	}
 
 	/**
 	 * @return screen node
 	 */
-	GUIScreenNode* getScreenNode();
+	inline GUIScreenNode* getScreenNode() {
+		return screenNode;
+	}
 
 	/**
 	 * Init

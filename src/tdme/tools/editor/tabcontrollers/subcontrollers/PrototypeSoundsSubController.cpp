@@ -1,6 +1,7 @@
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.h>
 
 #include <array>
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -35,8 +36,10 @@
 #include <tdme/utilities/StringTools.h>
 
 using std::array;
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubController;
 
@@ -72,21 +75,11 @@ PrototypeSoundsSubController::PrototypeSoundsSubController(EditorView* editorVie
 {
 	this->editorView = editorView;
 	this->playableSoundView = playableSoundView;
-	this->view = new PrototypeSoundsSubView(this, editorView->getPopUps());
+	this->view = make_unique<PrototypeSoundsSubView>(this, editorView->getPopUps());
 	this->popUps = editorView->getPopUps();
 }
 
 PrototypeSoundsSubController::~PrototypeSoundsSubController() {
-	delete view;
-}
-
-PrototypeSoundsSubView* PrototypeSoundsSubController::getView()
-{
-	return view;
-}
-
-GUIScreenNode* PrototypeSoundsSubController::getScreenNode() {
-	return screenNode;
 }
 
 void PrototypeSoundsSubController::initialize(GUIScreenNode* screenNode)

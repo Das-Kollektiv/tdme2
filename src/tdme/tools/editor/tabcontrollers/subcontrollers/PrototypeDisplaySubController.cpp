@@ -1,6 +1,7 @@
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.h>
 
 #include <array>
+#include <memory>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -34,6 +35,8 @@
 #include <tdme/utilities/StringTools.h>
 
 using std::array;
+using std::make_unique;
+using std::unique_ptr;
 
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
@@ -67,38 +70,17 @@ PrototypeDisplaySubController::PrototypeDisplaySubController(EditorView* editorV
 {
 	this->editorView = editorView;
 	this->tabView = tabView;
-	view = new PrototypeDisplaySubView(tabView->getEngine(), this);
+	view = make_unique<PrototypeDisplaySubView>(tabView->getEngine(), this);
 	this->physicsView = physicsView;
 	this->popUps = editorView->getPopUps();
 }
 
 PrototypeDisplaySubController::~PrototypeDisplaySubController() {
-	delete view;
-}
-
-PrototypeDisplaySubView* PrototypeDisplaySubController::getView()
-{
-	return view;
 }
 
 void PrototypeDisplaySubController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;
-}
-
-bool PrototypeDisplaySubController::getDisplayShadowing()
-{
-	return displayShadowing;
-}
-
-bool PrototypeDisplaySubController::getDisplayGround()
-{
-	return displayGround;
-}
-
-bool PrototypeDisplaySubController::getDisplayBoundingVolume()
-{
-	return displayBoundingVolumes;
 }
 
 void PrototypeDisplaySubController::createDisplayPropertiesXML(Prototype* prototype, string& xml) {

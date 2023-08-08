@@ -63,12 +63,11 @@ using tdme::utilities::StringTools;
 PrototypeScriptSubController::PrototypeScriptSubController(EditorView* editorView)
 {
 	this->editorView = editorView;
-	this->view = new PrototypeScriptSubView(this);
+	this->view = make_unique<PrototypeScriptSubView>(this);
 	this->popUps = editorView->getPopUps();
 }
 
 PrototypeScriptSubController::~PrototypeScriptSubController() {
-	delete view;
 }
 
 void PrototypeScriptSubController::initialize(GUIScreenNode* screenNode)

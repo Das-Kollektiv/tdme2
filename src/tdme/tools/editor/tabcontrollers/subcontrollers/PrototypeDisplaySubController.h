@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <memory>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -18,6 +19,7 @@
 #include <tdme/utilities/MutableString.h>
 
 using std::array;
+using std::unique_ptr;
 
 using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
@@ -42,7 +44,7 @@ private:
 	GUIScreenNode* screenNode { nullptr };
 	EditorView* editorView { nullptr };
 	TabView* tabView { nullptr };
-	PrototypeDisplaySubView* view { nullptr };
+	unique_ptr<PrototypeDisplaySubView> view;
 	PrototypePhysicsSubView* physicsView { nullptr };
 	PopUps* popUps { nullptr };
 
@@ -78,7 +80,9 @@ public:
 	/**
 	 * @return view
 	 */
-	PrototypeDisplaySubView* getView();
+	inline PrototypeDisplaySubView* getView() {
+		return view.get();
+	}
 
 	/**
 	 * Init
@@ -89,17 +93,23 @@ public:
 	/**
 	 * @return display shadowing checked
 	 */
-	bool getDisplayShadowing();
+	inline bool getDisplayShadowing() {
+		return displayShadowing;
+	}
 
 	/**
 	 * @return display ground checked
 	 */
-	bool getDisplayGround();
+	inline bool getDisplayGround() {
+		return displayGround;
+	}
 
 	/**
 	 * @return display bounding volume checked
 	 */
-	bool getDisplayBoundingVolume();
+	inline bool getDisplayBoundingVolume() {
+		return displayBoundingVolumes;
+	}
 
 	/**
 	 * Create display properties XML

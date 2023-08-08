@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -18,6 +19,7 @@
 
 using std::array;
 using std::string;
+using std::unique_ptr;
 
 using tdme::engine::model::Model;
 using tdme::engine::prototype::Prototype;
@@ -40,7 +42,7 @@ class tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubCon
 private:
 	GUIScreenNode* screenNode { nullptr };
 	EditorView* editorView { nullptr };
-	PrototypeSoundsSubView* view { nullptr };
+	unique_ptr<PrototypeSoundsSubView> view;
 	PopUps* popUps { nullptr };
 	PlayableSoundView* playableSoundView { nullptr };
 	array<string, 7> applyAudioNodes = {
@@ -73,12 +75,16 @@ public:
 	/**
 	 * @return view
 	 */
-	PrototypeSoundsSubView* getView();
+	inline PrototypeSoundsSubView* getView() {
+		return view.get();
+	}
 
 	/**
 	 * @return screen node
 	 */
-	GUIScreenNode* getScreenNode();
+	inline GUIScreenNode* getScreenNode() {
+		return screenNode;
+	}
 
 	/**
 	 * Init

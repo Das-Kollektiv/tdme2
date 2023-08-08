@@ -1,6 +1,7 @@
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -29,9 +30,10 @@
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
-
+using std::make_unique;
 using std::map;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::prototype::BaseProperties;
@@ -61,13 +63,12 @@ using tdme::utilities::StringTools;
 BasePropertiesSubController::BasePropertiesSubController(EditorView* editorView, const string& rootNode)
 {
 	this->editorView = editorView;
-	this->view = new BasePropertiesSubView(this);
+	this->view = make_unique<BasePropertiesSubView>(this);
 	this->popUps = editorView->getPopUps();
 	this->rootNodeId = rootNode;
 }
 
 BasePropertiesSubController::~BasePropertiesSubController() {
-	delete view;
 }
 
 void BasePropertiesSubController::initialize(GUIScreenNode* screenNode)

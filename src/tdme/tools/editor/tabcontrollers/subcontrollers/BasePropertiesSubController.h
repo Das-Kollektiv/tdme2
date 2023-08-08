@@ -2,6 +2,7 @@
 
 #include <array>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -19,6 +20,7 @@
 using std::array;
 using std::map;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::prototype::BaseProperties;
@@ -41,7 +43,7 @@ class tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubCont
 {
 private:
 	EditorView* editorView { nullptr };
-	BasePropertiesSubView* view { nullptr };
+	unique_ptr<BasePropertiesSubView> view;
 	PopUps* popUps { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	string rootNodeId;

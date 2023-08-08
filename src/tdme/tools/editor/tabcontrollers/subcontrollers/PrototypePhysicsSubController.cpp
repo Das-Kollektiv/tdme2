@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.h>
 
+#include <memory>
 #include <string>
 
 #include <VHACD.h>
@@ -50,8 +51,10 @@
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;
 
@@ -104,7 +107,7 @@ PrototypePhysicsSubController::PrototypePhysicsSubController(EditorView* editorV
 {
 	this->editorView = editorView;
 	this->tabView = tabView;
-	this->view = new PrototypePhysicsSubView(tabView->getEngine(), this, editorView->getPopUps(), maxBoundingVolumeCount, boundingVolumeTypeMask);
+	this->view = make_unique<PrototypePhysicsSubView>(tabView->getEngine(), this, editorView->getPopUps(), maxBoundingVolumeCount, boundingVolumeTypeMask);
 	this->popUps = editorView->getPopUps();
 	this->maxBoundingVolumeCount = maxBoundingVolumeCount;
 	this->isModelBoundingVolumes = isModelBoundingVolumes;
@@ -114,16 +117,6 @@ PrototypePhysicsSubController::PrototypePhysicsSubController(EditorView* editorV
 }
 
 PrototypePhysicsSubController::~PrototypePhysicsSubController() {
-	delete view;
-}
-
-PrototypePhysicsSubView* PrototypePhysicsSubController::getView()
-{
-	return view;
-}
-
-GUIScreenNode* PrototypePhysicsSubController::getScreenNode() {
-	return screenNode;
 }
 
 void PrototypePhysicsSubController::initialize(GUIScreenNode* screenNode)

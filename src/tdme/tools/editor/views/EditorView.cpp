@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/views/EditorView.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -38,8 +39,10 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::make_unique;
 using std::string;
 using std::vector;
+using std::unique_ptr;
 
 using tdme::audio::Audio;
 using tdme::engine::Engine;
@@ -80,12 +83,10 @@ using tdme::utilities::StringTools;
 EditorView::EditorView(PopUps* popUps)
 {
 	this->popUps = popUps;
-	editorScreenController = nullptr;
 	engine = Engine::getInstance();
 }
 
 EditorView::~EditorView() {
-	delete editorScreenController;
 }
 
 PopUps* EditorView::getPopUps()
@@ -346,7 +347,7 @@ void EditorView::updateGUIElements()
 void EditorView::initialize()
 {
 	try {
-		editorScreenController = new EditorScreenController(this);
+		editorScreenController = make_unique<EditorScreenController>(this);
 		editorScreenController->initialize();
 		engine->getGUI()->addScreen(editorScreenController->getScreenNode()->getId(), editorScreenController->getScreenNode());
 		editorScreenController->getScreenNode()->setInputEventHandler(this);
