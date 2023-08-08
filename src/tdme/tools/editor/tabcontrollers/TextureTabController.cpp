@@ -57,15 +57,6 @@ TextureTabController::TextureTabController(TextureTabView* view)
 TextureTabController::~TextureTabController() {
 }
 
-TextureTabView* TextureTabController::getView() {
-	return view;
-}
-
-GUIScreenNode* TextureTabController::getScreenNode()
-{
-	return screenNode;
-}
-
 void TextureTabController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;

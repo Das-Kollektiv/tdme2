@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabcontrollers/ModelEditorTabController.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -58,7 +59,9 @@
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::tools::editor::tabcontrollers::ModelEditorTabController;
@@ -119,28 +122,14 @@ ModelEditorTabController::ModelEditorTabController(ModelEditorTabView* view)
 {
 	this->view = view;
 	this->popUps = view->getPopUps();
-	this->basePropertiesSubController = new BasePropertiesSubController(view->getEditorView(), "prototype");
-	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view, true);
-	this->prototypeSoundsSubController = new PrototypeSoundsSubController(view->getEditorView(), view);
-	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEditorView(), view, this->prototypePhysicsSubController->getView());
-	this->prototypeScriptSubController = new PrototypeScriptSubController(view->getEditorView());
+	this->basePropertiesSubController = make_unique<BasePropertiesSubController>(view->getEditorView(), "prototype");
+	this->prototypePhysicsSubController = make_unique<PrototypePhysicsSubController>(view->getEditorView(), view, true);
+	this->prototypeSoundsSubController = make_unique<PrototypeSoundsSubController>(view->getEditorView(), view);
+	this->prototypeDisplaySubController = make_unique<PrototypeDisplaySubController>(view->getEditorView(), view, this->prototypePhysicsSubController->getView());
+	this->prototypeScriptSubController = make_unique<PrototypeScriptSubController>(view->getEditorView());
 }
 
 ModelEditorTabController::~ModelEditorTabController() {
-	delete basePropertiesSubController;
-	delete prototypeDisplaySubController;
-	delete prototypePhysicsSubController;
-	delete prototypeSoundsSubController;
-	delete prototypeScriptSubController;
-}
-
-ModelEditorTabView* ModelEditorTabController::getView() {
-	return view;
-}
-
-GUIScreenNode* ModelEditorTabController::getScreenNode()
-{
-	return screenNode;
 }
 
 void ModelEditorTabController::initialize(GUIScreenNode* screenNode)

@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabcontrollers/SceneEditorTabController.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -46,7 +47,9 @@
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 
 using tdme::tools::editor::tabcontrollers::SceneEditorTabController;
 
@@ -96,20 +99,10 @@ SceneEditorTabController::SceneEditorTabController(SceneEditorTabView* view)
 {
 	this->view = view;
 	this->popUps = view->getPopUps();
-	this->basePropertiesSubController = new BasePropertiesSubController(view->getEditorView(), "scene");
+	this->basePropertiesSubController = make_unique<BasePropertiesSubController>(view->getEditorView(), "scene");
 }
 
 SceneEditorTabController::~SceneEditorTabController() {
-	delete basePropertiesSubController;
-}
-
-SceneEditorTabView* SceneEditorTabController::getView() {
-	return view;
-}
-
-GUIScreenNode* SceneEditorTabController::getScreenNode()
-{
-	return screenNode;
 }
 
 void SceneEditorTabController::initialize(GUIScreenNode* screenNode)

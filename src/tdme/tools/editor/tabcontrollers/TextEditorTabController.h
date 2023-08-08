@@ -93,11 +93,16 @@ public:
 
 	/**
 	 * Get view
+	 * @return view
 	 */
-	TextEditorTabView* getView();
+	inline TextEditorTabView* getView() {
+		return view;
+	}
 
 	// overridden method
-	GUIScreenNode* getScreenNode() override;
+	inline GUIScreenNode* getScreenNode() override {
+		return screenNode;
+	}
 
 	/**
 	 * @return MiniScript

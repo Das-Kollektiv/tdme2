@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabcontrollers/DecalEditorTabController.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -41,7 +42,9 @@
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 
 using tdme::tools::editor::tabcontrollers::DecalEditorTabController;
 
@@ -83,26 +86,13 @@ DecalEditorTabController::DecalEditorTabController(DecalEditorTabView* view)
 {
 	this->view = view;
 	this->popUps = view->getPopUps();
-	this->basePropertiesSubController = new BasePropertiesSubController(view->getEditorView(), "prototype");
-	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view, false);
-	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEditorView(), view, this->prototypePhysicsSubController->getView());
-	this->prototypeScriptSubController = new PrototypeScriptSubController(view->getEditorView());
+	this->basePropertiesSubController = make_unique<BasePropertiesSubController>(view->getEditorView(), "prototype");
+	this->prototypePhysicsSubController = make_unique<PrototypePhysicsSubController>(view->getEditorView(), view, false);
+	this->prototypeDisplaySubController = make_unique<PrototypeDisplaySubController>(view->getEditorView(), view, this->prototypePhysicsSubController->getView());
+	this->prototypeScriptSubController = make_unique<PrototypeScriptSubController>(view->getEditorView());
 }
 
 DecalEditorTabController::~DecalEditorTabController() {
-	delete prototypeScriptSubController;
-	delete prototypeDisplaySubController;
-	delete prototypePhysicsSubController;
-	delete basePropertiesSubController;
-}
-
-DecalEditorTabView* DecalEditorTabController::getView() {
-	return view;
-}
-
-GUIScreenNode* DecalEditorTabController::getScreenNode()
-{
-	return screenNode;
 }
 
 void DecalEditorTabController::initialize(GUIScreenNode* screenNode)

@@ -70,10 +70,14 @@ public:
 	/**
 	 * Get view
 	 */
-	SoundTabView* getView();
+	inline SoundTabView* getView() {
+		return view;
+	}
 
 	// overridden method
-	GUIScreenNode* getScreenNode() override;
+	inline GUIScreenNode* getScreenNode() override {
+		return screenNode;
+	}
 
 	// overridden methods
 	void initialize(GUIScreenNode* screenNode) override;

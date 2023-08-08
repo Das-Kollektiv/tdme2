@@ -98,15 +98,6 @@ TextEditorTabController::TextEditorTabController(TextEditorTabView* view)
 TextEditorTabController::~TextEditorTabController() {
 }
 
-TextEditorTabView* TextEditorTabController::getView() {
-	return view;
-}
-
-GUIScreenNode* TextEditorTabController::getScreenNode()
-{
-	return screenNode;
-}
-
 void TextEditorTabController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;

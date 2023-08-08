@@ -67,15 +67,6 @@ SoundTabController::SoundTabController(SoundTabView* view)
 SoundTabController::~SoundTabController() {
 }
 
-SoundTabView* SoundTabController::getView() {
-	return view;
-}
-
-GUIScreenNode* SoundTabController::getScreenNode()
-{
-	return screenNode;
-}
-
 void SoundTabController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;

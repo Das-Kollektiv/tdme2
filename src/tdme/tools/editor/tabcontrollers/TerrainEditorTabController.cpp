@@ -1,6 +1,7 @@
 #include <tdme/tools/editor/tabcontrollers/TerrainEditorTabController.h>
 
 #include <array>
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -51,7 +52,9 @@
 using tdme::tools::editor::tabcontrollers::TerrainEditorTabController;
 
 using std::array;
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 using std::unordered_map;
 using std::vector;
 
@@ -103,7 +106,7 @@ using tinyxml::TiXmlElement;
 TerrainEditorTabController::TerrainEditorTabController(TerrainEditorTabView* view)
 {
 	this->view = view;
-	this->basePropertiesSubController = new BasePropertiesSubController(view->getEditorView(), "terrain");
+	this->basePropertiesSubController = make_unique<BasePropertiesSubController>(view->getEditorView(), "terrain");
 	this->popUps = view->getPopUps();
 	this->currentTerrainBrushTextureFileName = "resources/engine/textures/terrain_brush_soft.png";
 	this->currentTerrainBrushTexture = TextureReader::read(Tools::getPathName(currentTerrainBrushTextureFileName), Tools::getFileName(currentTerrainBrushTextureFileName), false, false);
@@ -111,16 +114,6 @@ TerrainEditorTabController::TerrainEditorTabController(TerrainEditorTabView* vie
 }
 
 TerrainEditorTabController::~TerrainEditorTabController() {
-	delete basePropertiesSubController;
-}
-
-TerrainEditorTabView* TerrainEditorTabController::getView() {
-	return view;
-}
-
-GUIScreenNode* TerrainEditorTabController::getScreenNode()
-{
-	return screenNode;
 }
 
 void TerrainEditorTabController::initialize(GUIScreenNode* screenNode)

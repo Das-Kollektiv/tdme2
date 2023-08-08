@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabcontrollers/ParticleSystemEditorTabController.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -60,7 +61,9 @@
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 
 using tdme::tools::editor::tabcontrollers::ParticleSystemEditorTabController;
 
@@ -122,28 +125,14 @@ ParticleSystemEditorTabController::ParticleSystemEditorTabController(ParticleSys
 {
 	this->view = view;
 	this->popUps = view->getPopUps();
-	this->basePropertiesSubController = new BasePropertiesSubController(view->getEditorView(), "prototype");
-	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view, false);
-	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEditorView(), view, prototypePhysicsSubController->getView());
-	this->prototypeSoundsSubController = new PrototypeSoundsSubController(view->getEditorView(), view);
-	this->prototypeScriptSubController = new PrototypeScriptSubController(view->getEditorView());
+	this->basePropertiesSubController = make_unique<BasePropertiesSubController>(view->getEditorView(), "prototype");
+	this->prototypePhysicsSubController = make_unique<PrototypePhysicsSubController>(view->getEditorView(), view, false);
+	this->prototypeDisplaySubController = make_unique<PrototypeDisplaySubController>(view->getEditorView(), view, prototypePhysicsSubController->getView());
+	this->prototypeSoundsSubController = make_unique<PrototypeSoundsSubController>(view->getEditorView(), view);
+	this->prototypeScriptSubController = make_unique<PrototypeScriptSubController>(view->getEditorView());
 }
 
 ParticleSystemEditorTabController::~ParticleSystemEditorTabController() {
-	delete basePropertiesSubController;
-	delete prototypePhysicsSubController;
-	delete prototypeDisplaySubController;
-	delete prototypeSoundsSubController;
-	delete prototypeScriptSubController;
-}
-
-ParticleSystemEditorTabView* ParticleSystemEditorTabController::getView() {
-	return view;
-}
-
-GUIScreenNode* ParticleSystemEditorTabController::getScreenNode()
-{
-	return screenNode;
 }
 
 void ParticleSystemEditorTabController::initialize(GUIScreenNode* screenNode)

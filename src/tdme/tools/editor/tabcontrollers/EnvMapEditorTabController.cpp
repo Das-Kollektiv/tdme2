@@ -74,15 +74,6 @@ EnvMapEditorTabController::EnvMapEditorTabController(EnvMapEditorTabView* view)
 EnvMapEditorTabController::~EnvMapEditorTabController() {
 }
 
-EnvMapEditorTabView* EnvMapEditorTabController::getView() {
-	return view;
-}
-
-GUIScreenNode* EnvMapEditorTabController::getScreenNode()
-{
-	return screenNode;
-}
-
 void EnvMapEditorTabController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -19,6 +20,7 @@
 
 using std::array;
 using std::string;
+using std::unique_ptr;
 
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
@@ -49,10 +51,10 @@ class tdme::tools::editor::tabcontrollers::DecalEditorTabController final
 {
 
 private:
-	BasePropertiesSubController* basePropertiesSubController { nullptr };
-	PrototypePhysicsSubController* prototypePhysicsSubController { nullptr };
-	PrototypeDisplaySubController* prototypeDisplaySubController { nullptr };
-	PrototypeScriptSubController* prototypeScriptSubController { nullptr };
+	unique_ptr<BasePropertiesSubController> basePropertiesSubController;
+	unique_ptr<PrototypePhysicsSubController> prototypePhysicsSubController;
+	unique_ptr<PrototypeDisplaySubController> prototypeDisplaySubController;
+	unique_ptr<PrototypeScriptSubController> prototypeScriptSubController;
 	DecalEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
@@ -80,24 +82,29 @@ public:
 
 	/**
 	 * Get view
+	 * @return view
 	 */
-	DecalEditorTabView* getView();
+	inline DecalEditorTabView* getView() {
+		return view;
+	}
 
 	// overridden method
-	GUIScreenNode* getScreenNode() override;
+	inline GUIScreenNode* getScreenNode() override {
+		return screenNode;
+	}
 
 	/**
 	 * @return prototype display sub screen controller
 	 */
 	inline PrototypeDisplaySubController* getPrototypeDisplaySubController() {
-		return prototypeDisplaySubController;
+		return prototypeDisplaySubController.get();
 	}
 
 	/**
 	 * @return prototype physics sub screen controller
 	 */
 	inline PrototypePhysicsSubController* getPrototypePhysicsSubController() {
-		return prototypePhysicsSubController;
+		return prototypePhysicsSubController.get();
 	}
 
 	// overridden methods

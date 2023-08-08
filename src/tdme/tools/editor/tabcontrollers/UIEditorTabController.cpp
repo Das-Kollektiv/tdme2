@@ -94,15 +94,6 @@ UIEditorTabController::UIEditorTabController(UIEditorTabView* view)
 UIEditorTabController::~UIEditorTabController() {
 }
 
-UIEditorTabView* UIEditorTabController::getView() {
-	return view;
-}
-
-GUIScreenNode* UIEditorTabController::getScreenNode()
-{
-	return screenNode;
-}
-
 void UIEditorTabController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;

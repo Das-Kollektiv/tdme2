@@ -2,6 +2,7 @@
 
 #include <array>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -26,6 +27,7 @@
 using std::array;
 using std::map;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::model::AnimationSetup;
@@ -66,11 +68,11 @@ class tdme::tools::editor::tabcontrollers::ModelEditorTabController final
 {
 
 private:
-	BasePropertiesSubController* basePropertiesSubController { nullptr };
-	PrototypeDisplaySubController* prototypeDisplaySubController { nullptr };
-	PrototypePhysicsSubController* prototypePhysicsSubController { nullptr };
-	PrototypeSoundsSubController* prototypeSoundsSubController { nullptr };
-	PrototypeScriptSubController* prototypeScriptSubController { nullptr };
+	unique_ptr<BasePropertiesSubController> basePropertiesSubController;
+	unique_ptr<PrototypeDisplaySubController> prototypeDisplaySubController;
+	unique_ptr<PrototypePhysicsSubController> prototypePhysicsSubController;
+	unique_ptr<PrototypeSoundsSubController> prototypeSoundsSubController;
+	unique_ptr<PrototypeScriptSubController> prototypeScriptSubController;
 	ModelEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
@@ -171,32 +173,37 @@ public:
 
 	/**
 	 * Get view
+	 * @return view
 	 */
-	ModelEditorTabView* getView();
+	inline ModelEditorTabView* getView() {
+		return view;
+	}
 
 	/**
 	 * @return prototype display sub screen controller
 	 */
 	inline PrototypeDisplaySubController* getPrototypeDisplaySubController() {
-		return prototypeDisplaySubController;
+		return prototypeDisplaySubController.get();
 	}
 
 	/**
 	 * @return prototype bounding volume sub screen controller
 	 */
 	inline PrototypePhysicsSubController* getPrototypePhysicsSubController() {
-		return prototypePhysicsSubController;
+		return prototypePhysicsSubController.get();
 	}
 
 	/**
 	 * @return prototype sounds sub screen controller
 	 */
 	inline PrototypeSoundsSubController* getPrototypeSoundsSubController() {
-		return prototypeSoundsSubController;
+		return prototypeSoundsSubController.get();
 	}
 
 	// overridden method
-	GUIScreenNode* getScreenNode() override;
+	inline GUIScreenNode* getScreenNode() override {
+		return screenNode;
+	}
 
 	// overridden methods
 	void initialize(GUIScreenNode* screenNode) override;
