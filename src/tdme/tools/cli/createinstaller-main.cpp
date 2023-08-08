@@ -1,5 +1,6 @@
 #include <cassert>
 #include <fstream>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -19,9 +20,11 @@
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
 
+using std::make_unique;
 using std::ofstream;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::application::Application;
@@ -343,7 +346,6 @@ void processFile(const string& fileName, vector<FileInformation>& fileInformatio
 	// always use compression for now
 	if (compressed == 1) {
 		// see: https://www.zlib.net/zpipe.c
-
 		#define CHUNK 	16384
 
 		int ret;
@@ -394,7 +396,7 @@ void processFile(const string& fileName, vector<FileInformation>& fileInformatio
 		assert(ret == Z_STREAM_END); // stream will be complete
 
 		// clean up and return
-		(void) deflateEnd(&strm);
+		(void)deflateEnd(&strm);
 	} else {
 		ofs.write((char*)content.data(), content.size());
 	}
@@ -650,9 +652,8 @@ int main(int argc, char** argv)
 		}
 
 		// sha256 hash
-		auto archiveFileSystem = new ArchiveFileSystem("installer/" + componentFileName);
+		auto archiveFileSystem = make_unique<ArchiveFileSystem>("installer/" + componentFileName);
 		auto archiveHash = archiveFileSystem->computeSHA256Hash();
-		delete archiveFileSystem;
 		FileSystem::getStandardFileSystem()->setContentFromString("installer", componentFileName + ".sha256", archiveHash);
 		Console::println("Component: " + to_string(componentIdx) + ": component file name: " + componentFileName + ": hash: " + archiveHash);
 	}

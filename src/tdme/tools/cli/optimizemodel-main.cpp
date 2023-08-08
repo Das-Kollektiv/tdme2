@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -13,6 +14,9 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ModelTools.h>
 #include <tdme/utilities/StringTools.h>
+
+using std::make_unique;
+using std::unique_ptr;
 
 using tdme::application::Application;
 using tdme::engine::fileio::models::ModelReader;
@@ -43,28 +47,35 @@ int main(int argc, char** argv)
 	for (auto i = 2; i < argc; i++) excludeDiffuseTextureFileNamePatterns.push_back(argv[i]);
 	try {
 		Console::println("Loading model: " + fileName);
-		auto model = ModelReader::read(
-			FileSystem::getInstance()->getPathName(fileName),
-			FileSystem::getInstance()->getFileName(fileName)
+		auto model = unique_ptr<Model>(
+			ModelReader::read(
+				FileSystem::getInstance()->getPathName(fileName),
+				FileSystem::getInstance()->getFileName(fileName)
+			)
 		);
-		auto optimizedModel = model;
-		if (ModelTools::isOptimizedModel(model) == true) {
+		if (ModelTools::isOptimizedModel(model.get()) == true) {
 			Console::println("Already optimized. Skipping.");
 		} else {
 			Console::println("Optimizing model: " + fileName);
-			optimizedModel = ModelTools::optimizeModel(model, FileSystem::getInstance()->getPathName(fileName), excludeDiffuseTextureFileNamePatterns);
-			if (optimizedModel == model) {
+			auto originalModel = model.get();
+			auto optimizedModel = unique_ptr<Model>(
+				ModelTools::optimizeModel(
+					model.release(),
+					FileSystem::getInstance()->getPathName(fileName),
+					excludeDiffuseTextureFileNamePatterns
+				)
+			);
+			if (originalModel == optimizedModel.get()) {
 				Console::println("No optimization was required. Skipping.");
 			} else {
 				Console::println("Exporting model: " + fileName);
 				TMWriter::write(
-					optimizedModel,
+					optimizedModel.get(),
 					FileSystem::getInstance()->getPathName(fileName),
 					FileSystem::getInstance()->getFileName(fileName)
 				);
 			}
 		}
-		delete optimizedModel;
 	} catch (Exception& exception) {
 		Console::println("An error occurred: " + string(exception.what()));
 	}
