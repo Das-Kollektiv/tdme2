@@ -2,6 +2,7 @@
 
 #include <array>
 #include <map>
+#include <memory>
 #include <string>
 #include <unordered_set>
 #include <vector>
@@ -35,9 +36,11 @@
 #include <tdme/utilities/StringTools.h>
 
 using std::array;
+using std::make_unique;
 using std::map;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::unordered_set;
 using std::vector;
 
@@ -679,17 +682,17 @@ float ModelTools::computeNormals(Node* node, ProgressCallback* progressCallback,
 }
 
 void ModelTools::computeNormals(Model* model, ProgressCallback* progressCallback) {
+	auto progessCallbackPtr = unique_ptr<ProgressCallback>(progressCallback);
 	auto faceCount = 0;
 	for (const auto& [subNodeId, subNode]: model->getSubNodes()) {
 		faceCount+= determineFaceCount(subNode);
 	}
 	for (const auto& [subNodeId, subNode]: model->getSubNodes()) {
-		computeNormals(subNode, progressCallback, 1.0f / static_cast<float>(faceCount), 0.0f);
+		computeNormals(subNode, progessCallbackPtr.get(), 1.0f / static_cast<float>(faceCount), 0.0f);
 	}
 	prepareForIndexedRendering(model);
-	if (progressCallback != nullptr) {
-		progressCallback->progress(1.0f);
-		delete progressCallback;
+	if (progessCallbackPtr != nullptr) {
+		progessCallbackPtr->progress(1.0f);
 	}
 }
 
@@ -1104,13 +1107,14 @@ bool ModelTools::isOptimizedModel(Model* model) {
 }
 
 Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, const vector<string>& excludeDiffuseTextureFileNamePatterns) {
-	// exit early if model has been optimized already
-	if (isOptimizedModel(model) == true) return model;
+	auto modelPtr = unique_ptr<Model>(model);
+	// exit early if modelPtr has been optimized already
+	if (isOptimizedModel(modelPtr.get()) == true) return modelPtr.release();
 
 	// TODO: 2 mats could have the same texture
 	// prepare for optimizations
 	map<string, int> materialUseCount;
-	for (const auto& [subNodeId, subNode]: model->getSubNodes()) {
+	for (const auto& [subNodeId, subNode]: modelPtr->getSubNodes()) {
 		checkForOptimization(
 			subNode,
 			materialUseCount,
@@ -1119,14 +1123,14 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 	}
 
 	// create diffuse atlas texture
-	SimpleTextureAtlas diffuseAtlas(model->getName() + ".diffuse.atlas");
+	SimpleTextureAtlas diffuseAtlas(modelPtr->getName() + ".diffuse.atlas");
 
 	// check materials and diffuse textures
 	auto diffuseTextureCount = 0;
 	map<string, int> diffuseTextureAtlasIndices;
 	map<string, Material*> atlasMaterials;
 	for (const auto& [materialName, materialCount]: materialUseCount) {
-		auto material = model->getMaterials().find(materialName)->second;
+		auto material = modelPtr->getMaterials().find(materialName)->second;
 		auto diffuseTexture = material->getSpecularMaterialProperties()->getDiffuseTexture();
 		if (diffuseTexture != nullptr) {
 			diffuseTextureAtlasIndices[material->getId()] = diffuseAtlas.addTexture(diffuseTexture);
@@ -1136,10 +1140,10 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 	}
 
 	// do we need to optimize?
-	if (diffuseTextureCount < 2) return model;
+	if (diffuseTextureCount < 2) return modelPtr.release();
 
 	// prepare for optimizations
-	for (const auto& [subNodeId, subNode]: model->getSubNodes()) {
+	for (const auto& [subNodeId, subNode]: modelPtr->getSubNodes()) {
 		prepareForOptimization(
 			subNode,
 			Matrix4x4().identity()
@@ -1149,17 +1153,17 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 	// update diffuse atlas texture
 	diffuseAtlas.update();
 
-	// create model with optimizations applied
-	auto optimizedModel = new Model(model->getId() + ".optimized", model->getName() + ".optimized", model->getUpVector(), model->getRotationOrder(), new BoundingBox(model->getBoundingBox()), model->getAuthoringTool());
-	optimizedModel->setImportTransformMatrix(model->getImportTransformMatrix());
-	optimizedModel->setEmbedSpecularTextures(true);
-	optimizedModel->setEmbedPBRTextures(true);
-	auto optimizedNode = new Node(optimizedModel, nullptr, "tdme.node.optimized", "tdme.node.optimized");
-	optimizedModel->getNodes()["tdme.node.optimized"] = optimizedNode;
-	optimizedModel->getSubNodes()["tdme.node.optimized"] = optimizedNode;
+	// create modelPtr with optimizations applied
+	auto optimizedModelPtr = make_unique<Model>(modelPtr->getId() + ".optimized", modelPtr->getName() + ".optimized", modelPtr->getUpVector(), modelPtr->getRotationOrder(), new BoundingBox(modelPtr->getBoundingBox()), modelPtr->getAuthoringTool());
+	optimizedModelPtr->setImportTransformMatrix(modelPtr->getImportTransformMatrix());
+	optimizedModelPtr->setEmbedSpecularTextures(true);
+	optimizedModelPtr->setEmbedPBRTextures(true);
+	auto optimizedNode = new Node(optimizedModelPtr.get(), nullptr, "tdme.node.optimized", "tdme.node.optimized");
+	optimizedModelPtr->getNodes()["tdme.node.optimized"] = optimizedNode;
+	optimizedModelPtr->getSubNodes()["tdme.node.optimized"] = optimizedNode;
 
 	// clone materials with diffuse textures that we like to keep
-	for (const auto& [materialId, material]: model->getMaterials()) {
+	for (const auto& [materialId, material]: modelPtr->getMaterials()) {
 		bool keepDiffuseTexture = false;
 		for (const auto& excludeDiffuseTextureFileNamePattern: excludeDiffuseTextureFileNamePatterns) {
 			if (StringTools::startsWith(material->getSpecularMaterialProperties()->getDiffuseTextureFileName(), excludeDiffuseTextureFileNamePattern) == true) {
@@ -1168,11 +1172,11 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 			}
 		}
 		if (keepDiffuseTexture == false) continue;
-		optimizedModel->getMaterials()[material->getId()] = cloneMaterial(material);
+		optimizedModelPtr->getMaterials()[material->getId()] = cloneMaterial(material);
 	}
 
 	// create optimized material
-	auto optimizedMaterial = new Material("tdme.material.optimized");
+	auto optimizedMaterial = make_unique<Material>("tdme.material.optimized");
 	{
 		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTexture(diffuseAtlas.getAtlasTexture());
 		optimizedMaterial->getSpecularMaterialProperties()->setTextureAtlasSize(diffuseAtlas.getAtlasTexture()->getAtlasSize());
@@ -1203,64 +1207,58 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 	}
 
 	// also have a material with masked transparency
-	auto optimizedMaterialMaskedTransparency = cloneMaterial(optimizedMaterial, "tdme.material.optimized.maskedtransparency");
+	auto optimizedMaterialMaskedTransparency = unique_ptr<Material>(cloneMaterial(optimizedMaterial.get(), "tdme.material.optimized.maskedtransparency"));
 	optimizedMaterialMaskedTransparency->getSpecularMaterialProperties()->setDiffuseTextureTransparency(true);
 	optimizedMaterialMaskedTransparency->getSpecularMaterialProperties()->setDiffuseTextureMaskedTransparency(true);
 
 	// also have a material with transparency
-	auto optimizedMaterialTransparency = cloneMaterial(optimizedMaterial, "tdme.material.optimized.transparency");
+	auto optimizedMaterialTransparency = unique_ptr<Material>(cloneMaterial(optimizedMaterial.get(), "tdme.material.optimized.transparency"));
 	optimizedMaterialTransparency->getSpecularMaterialProperties()->setDiffuseTextureTransparency(true);
 
-	// now optimize into our optimized model
-	for (const auto& [subNodeId, subNode]: model->getSubNodes()) {
-		if ((model->hasSkinning() == true && subNode->getSkinning() != nullptr) ||
-			(model->hasSkinning() == false && subNode->isJoint() == false)) {
-			optimizeNode(subNode, optimizedModel, diffuseAtlas.getAtlasTexture()->getAtlasSize(), diffuseTextureAtlasIndices, excludeDiffuseTextureFileNamePatterns);
-			if (model->hasSkinning() == true) {
+	// now optimize into our optimized modelPtr
+	for (const auto& [subNodeId, subNode]: modelPtr->getSubNodes()) {
+		if ((modelPtr->hasSkinning() == true && subNode->getSkinning() != nullptr) ||
+			(modelPtr->hasSkinning() == false && subNode->isJoint() == false)) {
+			optimizeNode(subNode, optimizedModelPtr.get(), diffuseAtlas.getAtlasTexture()->getAtlasSize(), diffuseTextureAtlasIndices, excludeDiffuseTextureFileNamePatterns);
+			if (modelPtr->hasSkinning() == true) {
 				auto skinning = subNode->getSkinning();
 				auto optimizedSkinning = new Skinning();
 				optimizedSkinning->setWeights(skinning->getWeights());
 				optimizedSkinning->setJoints(skinning->getJoints());
 				optimizedSkinning->setVerticesJointsWeights(skinning->getVerticesJointsWeights());
-				optimizedModel->getNodes()["tdme.node.optimized"]->setSkinning(optimizedSkinning);
+				optimizedModelPtr->getNodes()["tdme.node.optimized"]->setSkinning(optimizedSkinning);
 			}
 		}
-		cloneNode(subNode, optimizedModel, nullptr, false);
+		cloneNode(subNode, optimizedModelPtr.get(), nullptr, false);
 	}
 
 	// set up materials
 	{
-		auto optimizedFacesEntity = optimizedModel->getNodes()["tdme.node.optimized"]->getFacesEntity("tdme.facesentity.optimized");
+		auto optimizedFacesEntity = optimizedModelPtr->getNodes()["tdme.node.optimized"]->getFacesEntity("tdme.facesentity.optimized");
 		if (optimizedFacesEntity != nullptr) {
-			optimizedModel->getMaterials()[optimizedMaterial->getId()] = optimizedMaterial;
-			optimizedFacesEntity->setMaterial(optimizedMaterial);
-		} else {
-			delete optimizedMaterial;
+			optimizedModelPtr->getMaterials()[optimizedMaterial->getId()] = optimizedMaterial.get();
+			optimizedFacesEntity->setMaterial(optimizedMaterial.release());
 		}
 	}
 	{
-		auto optimizedFacesEntityMaskedTransparency = optimizedModel->getNodes()["tdme.node.optimized"]->getFacesEntity("tdme.facesentity.optimized.maskedtransparency");
+		auto optimizedFacesEntityMaskedTransparency = optimizedModelPtr->getNodes()["tdme.node.optimized"]->getFacesEntity("tdme.facesentity.optimized.maskedtransparency");
 		if (optimizedFacesEntityMaskedTransparency != nullptr) {
-			optimizedModel->getMaterials()[optimizedMaterialMaskedTransparency->getId()] = optimizedMaterialMaskedTransparency;
-			optimizedFacesEntityMaskedTransparency->setMaterial(optimizedMaterialMaskedTransparency);
-		} else {
-			delete optimizedMaterialMaskedTransparency;
+			optimizedModelPtr->getMaterials()[optimizedMaterialMaskedTransparency->getId()] = optimizedMaterialMaskedTransparency.get();
+			optimizedFacesEntityMaskedTransparency->setMaterial(optimizedMaterialMaskedTransparency.release());
 		}
 	}
 	{
-		auto optimizedFacesEntityTransparency = optimizedModel->getNodes()["tdme.node.optimized"]->getFacesEntity("tdme.facesentity.optimized.transparency");
+		auto optimizedFacesEntityTransparency = optimizedModelPtr->getNodes()["tdme.node.optimized"]->getFacesEntity("tdme.facesentity.optimized.transparency");
 		if (optimizedFacesEntityTransparency != nullptr) {
-			optimizedModel->getMaterials()[optimizedMaterialTransparency->getId()] = optimizedMaterialTransparency;
-			optimizedFacesEntityTransparency->setMaterial(optimizedMaterialTransparency);
-		} else {
-			delete optimizedMaterialTransparency;
+			optimizedModelPtr->getMaterials()[optimizedMaterialTransparency->getId()] = optimizedMaterialTransparency.get();
+			optimizedFacesEntityTransparency->setMaterial(optimizedMaterialTransparency.release());
 		}
 	}
 
 	// copy animation set up
-	for (const auto& [animationSetupId, animationSetup]: model->getAnimationSetups()) {
+	for (const auto& [animationSetupId, animationSetup]: modelPtr->getAnimationSetups()) {
 		if (animationSetup->getOverlayFromNodeId().empty() == false) {
-			optimizedModel->addOverlayAnimationSetup(
+			optimizedModelPtr->addOverlayAnimationSetup(
 				animationSetup->getId(),
 				animationSetup->getOverlayFromNodeId(),
 				animationSetup->getStartFrame(),
@@ -1269,7 +1267,7 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 				animationSetup->getSpeed()
 			);
 		} else {
-			optimizedModel->addAnimationSetup(
+			optimizedModelPtr->addAnimationSetup(
 				animationSetup->getId(),
 				animationSetup->getStartFrame(),
 				animationSetup->getEndFrame(),
@@ -1279,11 +1277,8 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 		}
 	}
 
-	//
-	delete model;
-
 	// done
-	return optimizedModel;
+	return optimizedModelPtr.release();
 }
 
 void ModelTools::computeTangentsAndBitangents(Node* node)
