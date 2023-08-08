@@ -1,5 +1,6 @@
 #include <tdme/tests/PhysicsTest3.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -32,8 +33,10 @@
 #include <tdme/utilities/Primitives.h>
 #include <tdme/utilities/Time.h>
 
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::tests::PhysicsTest3;
 
@@ -71,12 +74,11 @@ PhysicsTest3::PhysicsTest3()
 {
 	Application::setLimitFPS(true);
 	engine = Engine::getInstance();
-	world = new World("world");
+	world = make_unique<World>("world");
 }
 
 PhysicsTest3::~PhysicsTest3()
 {
-	delete world;
 }
 
 void PhysicsTest3::main(int argc, char** argv)

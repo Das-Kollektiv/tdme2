@@ -1,5 +1,6 @@
 #include <signal.h>
 
+#include <memory>
 #include <string>
 
 #include "UDPServerTest_UDPServer.h"
@@ -11,7 +12,9 @@
 #include <tdme/os/threading/Thread.h>
 #include <tdme/utilities/Console.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 
 using tdme::os::network::Network;
 using tdme::os::threading::Queue;
@@ -53,8 +56,8 @@ private:
 	unsigned int time;
 };
 
-EchoUDPServer* server = nullptr;
-ServerBroadcaster* bc = nullptr;
+unique_ptr<EchoUDPServer> server;
+unique_ptr<ServerBroadcaster> bc;
 
 void sigHandlerINT(int signal) {
 	Console::println("Interrupt signal catched");
@@ -74,8 +77,8 @@ int main(int argc, char *argv[]) {
 	Network::initialize();
 
 	// start echo server
-	server = new EchoUDPServer("127.0.0.1", 10000, 100);
-	bc = new ServerBroadcaster(server);
+	server = make_unique<EchoUDPServer>("127.0.0.1", 10000, 100);
+	bc = make_unique<ServerBroadcaster>(server.get());
 	bc->start();
 	server->start();
 
@@ -86,9 +89,6 @@ int main(int argc, char *argv[]) {
 	bc->stop();
 	bc->join();
 
-	// delete server and broadcaster
-	delete server;
-	delete bc;
-
+	//
 	return 0;
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -8,6 +10,8 @@
 #include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
 #include <tdme/utilities/ObjectDeleter.h>
+
+using std::unique_ptr;
 
 using tdme::application::Application;
 using tdme::engine::model::Model;
@@ -26,12 +30,12 @@ class tdme::tests::WaterTest final
 private:
 	Engine* engine { nullptr };
 
-	Prototype* skySpherePrototype { nullptr };
-	Prototype* skyDomePrototype { nullptr };
-	Prototype* skyPanoramaPrototype { nullptr };
-	Prototype* spherePrototype { nullptr };
+	unique_ptr<Prototype> skySpherePrototype;
+	unique_ptr<Prototype> skyDomePrototype;
+	unique_ptr<Prototype> skyPanoramaPrototype;
+	unique_ptr<Prototype> spherePrototype;
 
-	Scene* scene { nullptr };
+	unique_ptr<Scene> scene;
 
 	float skyDomeTranslation { 0.0f };
 

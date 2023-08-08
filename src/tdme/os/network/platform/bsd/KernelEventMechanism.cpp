@@ -35,7 +35,7 @@ using tdme::os::network::platform::bsd::KernelEventMechanismPSD;
 using tdme::os::network::KernelEventMechanism;
 using tdme::os::network::NIOInterest;
 
-KernelEventMechanism::KernelEventMechanism() : initialized(false),_psd(NULL) {
+KernelEventMechanism::KernelEventMechanism() : initialized(false),_psd(nullptr) {
 	// allocate platform specific data
 	_psd = static_cast<void*>(new KernelEventMechanismPSD());
 }

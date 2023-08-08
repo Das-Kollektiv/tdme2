@@ -1,5 +1,6 @@
 #include <tdme/tests/VideoTest.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -37,6 +38,9 @@
 #include <tdme/utilities/Primitives.h>
 #include <tdme/utilities/Time.h>
 #include <tdme/video/decoder/MPEG1Decoder.h>
+
+using std::make_unique;
+using std::unique_ptr;
 
 using std::string;
 using std::to_string;
@@ -165,8 +169,8 @@ void VideoTest::display()
 		videoTexture->update();
 	}
 	videoAudioBuffer->clear();
-	if (videoDecoder.readAudioFromStream(videoAudioBuffer) > 0) {
-		videoAudioStream->addPacket(videoAudioBuffer);
+	if (videoDecoder.readAudioFromStream(videoAudioBuffer.get()) > 0) {
+		videoAudioStream->addPacket(videoAudioBuffer.get());
 	}
 
 	// audio
@@ -199,7 +203,6 @@ void VideoTest::dispose()
 {
 	engine->dispose();
 	videoTexture->dispose();
-	delete videoAudioBuffer;
 }
 
 void VideoTest::initialize()
@@ -240,11 +243,11 @@ void VideoTest::initialize()
 	engine->addEntity(farPlane);
 	// video
 	videoDecoder.openFile("resources/tests/video", "video.mpg");
-	videoTexture = new DynamicColorTexture(videoDecoder.getVideoWidth(), videoDecoder.getVideoHeight());
+	videoTexture = make_unique<DynamicColorTexture>(videoDecoder.getVideoWidth(), videoDecoder.getVideoHeight());
 	videoTexture->initialize();
-	farPlane->bindDiffuseTexture(videoTexture, "wall", "wall");
+	farPlane->bindDiffuseTexture(videoTexture.get(), "wall", "wall");
 	// audio
-	videoAudioBuffer = ByteBuffer::allocate(32768);
+	videoAudioBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(32768));
 	videoAudioStream = new PacketAudioStream("video");
 	videoAudioStream->setParameters(videoDecoder.getAudioSampleRate(), videoDecoder.getAudioChannels(), 32768);
 	audio->addEntity(videoAudioStream);

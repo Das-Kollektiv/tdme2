@@ -1,5 +1,6 @@
-
 #pragma once
+
+#include <memory>
 
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
@@ -10,6 +11,8 @@
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
 #include <tdme/utilities/ObjectDeleter.h>
+
+using std::unique_ptr;
 
 using tdme::application::Application;
 using tdme::application::InputEventHandler;
@@ -35,7 +38,7 @@ private:
 	static constexpr int32_t CAPSULE_COUNT { 10 };
 	static constexpr int32_t SPHERE_COUNT { 10 };
 	Engine* engine { nullptr };
-	World* world { nullptr };
+	unique_ptr<World> world;
 	bool keyLeft { false };
 	bool keyRight { false };
 	bool keyUp { false };

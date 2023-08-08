@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -14,6 +15,7 @@
 #include <tdme/utilities/PathFinding.h>
 
 using std::vector;
+using std::unique_ptr;
 
 using tdme::application::Application;
 using tdme::engine::physics::World;
@@ -32,12 +34,12 @@ class tdme::tests::PathFindingTest final
 	: public virtual Application
 {
 private:
-	World* world { nullptr };
+	unique_ptr<World> world;
 	Engine* engine { nullptr };
-	Scene* scene { nullptr };
-	Prototype* playerModelPrototype { nullptr };
+	unique_ptr<Scene> scene;
+	unique_ptr<Prototype> playerModelPrototype;
 	Object* playerObject { nullptr };
-	PathFinding* pathFinding { nullptr };
+	unique_ptr<PathFinding> pathFinding;
 	vector<Vector3> pathPositions;
 	vector<Vector3> path;
 	int64_t timeLastUpdate;

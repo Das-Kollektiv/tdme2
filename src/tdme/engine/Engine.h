@@ -385,7 +385,7 @@ private:
 
 	};
 
-	class EngineThreadQueueElementPool: public Pool<EngineThreadQueueElement*> {
+	class EngineThreadQueueElementPool: public Pool<EngineThreadQueueElement> {
 	public:
 		/**
 		 * Public constructor

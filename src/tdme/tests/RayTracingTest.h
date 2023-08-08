@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/application/InputEventHandler.h>
@@ -10,6 +12,8 @@
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
 #include <tdme/utilities/ObjectDeleter.h>
+
+using std::unique_ptr;
 
 using tdme::application::Application;
 using tdme::engine::model::Model;
@@ -30,7 +34,7 @@ private:
 	static constexpr int32_t RIGID_TYPEID_STANDARD { 1 };
 	static constexpr int32_t BOX_COUNT { 4 };
 	Engine* engine { nullptr };
-	World* world { nullptr };
+	unique_ptr<World> world;
 
 	bool keyLeft { false };
 	bool keyRight { false };

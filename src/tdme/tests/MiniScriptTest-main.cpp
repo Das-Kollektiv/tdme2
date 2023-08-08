@@ -1,7 +1,11 @@
+#include <memory>
+
 #include "MiniScriptAdvancedTest.h"
 #include "MiniScriptBaseTest.h"
 #include "MiniScriptEmitTest.h"
 #include "MiniScriptFunctionsTest.h"
+
+using std::make_unique;
 
 #include <tdme/tdme.h>
 #include <tdme/utilities/Console.h>
@@ -12,7 +16,7 @@ int main(int argc, char *argv[]) {
 	Console::println("MiniScriptTest");
 	// base test
 	{
-		auto script = new MiniScriptBaseTest();
+		auto script = make_unique<MiniScriptBaseTest>();
 		script->loadScript("resources/tests/scripts", "base-test.tscript");
 		Console::println("---------------------------------------------------------");
 		Console::println("Loaded test script: " + script->getScriptFileName() + ": runs " + (script->isNative() == true?"natively":"interpreted"));
@@ -25,7 +29,6 @@ int main(int argc, char *argv[]) {
 		while (script->isRunning() == true) {
 			script->execute();
 		}
-		delete script;
 		//
 		Console::println();
 		Console::println();
@@ -33,7 +36,7 @@ int main(int argc, char *argv[]) {
 	}
 	// advanced test
 	{
-		auto script = new MiniScriptAdvancedTest();
+		auto script = make_unique<MiniScriptAdvancedTest>();
 		script->loadScript("resources/tests/scripts", "advanced-test.tscript");
 		Console::println("---------------------------------------------------------");
 		Console::println("Loaded test script: " + script->getScriptFileName() + ": runs " + (script->isNative() == true?"natively":"interpreted"));
@@ -46,7 +49,6 @@ int main(int argc, char *argv[]) {
 		while (script->isRunning() == true) {
 			script->execute();
 		}
-		delete script;
 		//
 		Console::println();
 		Console::println();
@@ -54,7 +56,7 @@ int main(int argc, char *argv[]) {
 	}
 	// emit test
 	{
-		auto script = new MiniScriptEmitTest();
+		auto script = make_unique<MiniScriptEmitTest>();
 		script->loadScript("resources/tests/scripts", "emit-test.tscript");
 		Console::println("---------------------------------------------------------");
 		Console::println("Loaded test script: " + script->getScriptFileName() + ": runs " + (script->isNative() == true?"natively":"interpreted"));
@@ -67,7 +69,6 @@ int main(int argc, char *argv[]) {
 		while (script->isRunning() == true) {
 			script->execute();
 		}
-		delete script;
 		//
 		Console::println();
 		Console::println();
@@ -75,7 +76,7 @@ int main(int argc, char *argv[]) {
 	}
 	// emit test
 	{
-		auto script = new MiniScriptFunctionsTest();
+		auto script = make_unique<MiniScriptFunctionsTest>();
 		script->loadScript("resources/tests/scripts", "functions-test.tscript");
 		Console::println("---------------------------------------------------------");
 		Console::println("Loaded test script: " + script->getScriptFileName() + ": runs " + (script->isNative() == true?"natively":"interpreted"));
@@ -88,7 +89,6 @@ int main(int argc, char *argv[]) {
 		while (script->isRunning() == true) {
 			script->execute();
 		}
-		delete script;
 		//
 		Console::println();
 		Console::println();

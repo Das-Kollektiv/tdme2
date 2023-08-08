@@ -1,5 +1,6 @@
 #include <tdme/tests/WaterTest.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -26,8 +27,10 @@
 #include <tdme/utilities/ObjectDeleter.h>
 #include <tdme/utilities/Time.h>
 
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::tests::WaterTest;
 
@@ -142,22 +145,22 @@ void WaterTest::display()
 void WaterTest::dispose()
 {
 	engine->dispose();
-	delete scene;
 }
 
 void WaterTest::initialize()
 {
 	engine->initialize();
 
-	scene = SceneReader::read("resources/tests/levels/water", "Level_WaterShader.tscene");
-	SceneConnector::setLights(engine, scene);
-	SceneConnector::addScene(engine, scene, false, false, false, false, false);
+	//
+	scene = unique_ptr<Scene>(SceneReader::read("resources/tests/levels/water", "Level_WaterShader.tscene"));
+	SceneConnector::setLights(engine, scene.get());
+	SceneConnector::addScene(engine, scene.get(), false, false, false, false, false);
 
 	// load sky
-	skySpherePrototype = PrototypeReader::read("resources/engine/models", "sky_sphere.tmodel");
-	skyDomePrototype = PrototypeReader::read("resources/engine/models", "sky_dome.tmodel");
-	skyPanoramaPrototype = PrototypeReader::read("resources/engine/models", "sky_panorama.tmodel");
-	spherePrototype = PrototypeReader::read("resources/tests/levels/water/", "sphere.tmodel");
+	skySpherePrototype = unique_ptr<Prototype>(PrototypeReader::read("resources/engine/models", "sky_sphere.tmodel"));
+	skyDomePrototype = unique_ptr<Prototype>(PrototypeReader::read("resources/engine/models", "sky_dome.tmodel"));
+	skyPanoramaPrototype = unique_ptr<Prototype>(PrototypeReader::read("resources/engine/models", "sky_panorama.tmodel"));
+	spherePrototype = unique_ptr<Prototype>(PrototypeReader::read("resources/tests/levels/water/", "sphere.tmodel"));
 
 	// add sky
 	{

@@ -1,5 +1,6 @@
 #include "ThreadingTest_ConsumerThread.h"
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -9,6 +10,7 @@
 
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::os::threading::Queue;
 using tdme::os::threading::Thread;
@@ -20,12 +22,11 @@ ConsumerThread::ConsumerThread(int id, Queue<int>* queue) : Thread("consumer"), 
 void ConsumerThread::run() {
 	Console::println("ConsumerThread[" + to_string(id) + "]::init()");
 	while(isStopRequested() == false) {
-		int* element = queue->getElement();
-		if (element == NULL) {
+		auto element = unique_ptr<int>(queue->getElement());
+		if (element == nullptr) {
 			break;
 		}
 		Console::println("ConsumerThread[" + to_string(id) + "]: got " + to_string(*element) + " from queue");
-		delete element;
 		Thread::sleep(100);
 	}
 	Console::println("ConsumerThread[" + to_string(id) + "]::done()");

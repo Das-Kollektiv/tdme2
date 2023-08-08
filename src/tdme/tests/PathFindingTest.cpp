@@ -1,5 +1,6 @@
 #include <tdme/tests/PathFindingTest.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -31,8 +32,10 @@
 #include <tdme/utilities/PathFinding.h>
 #include <tdme/utilities/Primitives.h>
 
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::tests::PathFindingTest;
 
@@ -67,21 +70,15 @@ PathFindingTest::PathFindingTest()
 {
 	Application::setLimitFPS(true);
 	engine = Engine::getInstance();
-	world = new World("world");
-	pathFinding = nullptr;
+	world = make_unique<World>("world");
 	timeLastUpdate = -1;
 	pathIdx = 0;
 	playerXDirection = 0.0f;
 	playerZDirection = 0.0f;
-	playerObject = nullptr;
-	playerModelPrototype = nullptr;
 }
 
 PathFindingTest::~PathFindingTest()
 {
-	delete world;
-	delete pathFinding;
-	delete playerModelPrototype;
 }
 
 void PathFindingTest::main(int argc, char** argv)
@@ -164,23 +161,22 @@ void PathFindingTest::display()
 void PathFindingTest::dispose()
 {
 	engine->dispose();
-	delete scene;
 }
 
 void PathFindingTest::initialize()
 {
 	engine->initialize();
-	scene = SceneReader::read("resources/tests/levels/pathfinding", "test.tscene");
-	SceneConnector::setLights(engine, scene);
-	SceneConnector::addScene(engine, scene, false, false, false, false, false);
-	SceneConnector::addScene(world, scene);
+	scene = unique_ptr<Scene>(SceneReader::read("resources/tests/levels/pathfinding", "test.tscene"));
+	SceneConnector::setLights(engine, scene.get());
+	SceneConnector::addScene(engine, scene.get(), false, false, false, false, false);
+	SceneConnector::addScene(world.get(), scene.get());
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(15.0f);
 	cam->setLookFrom(Vector3(0.0f, 10.0f, -6.0f));
 	cam->setLookAt(scene->getCenter());
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
-	playerModelPrototype = PrototypeReader::read("resources/tests/models/mementoman", "mementoman.tmodel");
+	playerModelPrototype = unique_ptr<Prototype>(PrototypeReader::read("resources/tests/models/mementoman", "mementoman.tmodel"));
 	playerModelPrototype->getModel()->addAnimationSetup("walk", 0, 23, true);
 	playerModelPrototype->getModel()->addAnimationSetup("still", 24, 99, true);
 	playerModelPrototype->getModel()->addAnimationSetup("death", 109, 169, false);
@@ -197,7 +193,7 @@ void PathFindingTest::initialize()
 	pathPositions.push_back(Vector3(-2.5f, 0.25f, 0.5f));
 	pathPositions.push_back(Vector3(2.5f, 0.25f, 0.5f));
 	pathPositions.push_back(Vector3(2.5f, 0.25f, -4.5f));
-	pathFinding = new PathFinding(world);
+	pathFinding = make_unique<PathFinding>(world.get());
 	doPathFinding();
 	determinePlayerMovementDirection();
 }

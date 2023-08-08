@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <memory>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -18,6 +19,7 @@
 #include <tdme/utilities/PathFinding.h>
 
 using std::array;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::application::Application;
@@ -59,13 +61,13 @@ private:
 		Body* rigidBody { nullptr };
 		bool finished { false };
 	};
-	World* world { nullptr };
+	unique_ptr<World> world;
 	Engine* engine { nullptr };
-	Scene* scene { nullptr };
-	Prototype* playerModelPrototype { nullptr };
-	Model* emptyModel { nullptr };
-	Model* formationLinePrototype { nullptr };
-	PathFinding* pathFinding { nullptr };
+	unique_ptr<Scene> scene;
+	unique_ptr<Prototype> playerModelPrototype;
+	unique_ptr<Model> emptyModel;
+	unique_ptr<Model> formationLinePrototype;
+	unique_ptr<PathFinding> pathFinding;
 	int64_t timeLastUpdate;
 	FlowMap* flowMap { nullptr };
 	bool pause { false };

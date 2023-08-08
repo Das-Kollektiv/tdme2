@@ -1,5 +1,6 @@
 #include <tdme/tests/PhysicsTest2.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -23,8 +24,10 @@
 #include <tdme/utilities/ObjectDeleter.h>
 #include <tdme/utilities/Primitives.h>
 
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::tests::PhysicsTest2;
 
@@ -51,12 +54,11 @@ PhysicsTest2::PhysicsTest2()
 {
 	Application::setLimitFPS(true);
 	engine = Engine::getInstance();
-	world = new World("world");
+	world = make_unique<World>("world");
 }
 
 PhysicsTest2::~PhysicsTest2()
 {
-	delete world;
 }
 
 void PhysicsTest2::main(int argc, char** argv)

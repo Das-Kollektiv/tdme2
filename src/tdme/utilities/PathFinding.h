@@ -331,7 +331,7 @@ private:
 	/**
 	 * Path finding node pool
 	 */
-	class PathFindingNodesPool: public Pool<PathFindingNode*> {
+	class PathFindingNodesPool: public Pool<PathFindingNode> {
 	public:
 		/**
 		 * Public constructor

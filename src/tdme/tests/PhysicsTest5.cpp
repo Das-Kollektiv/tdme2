@@ -1,5 +1,6 @@
 #include <tdme/tests/PhysicsTest5.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -37,8 +38,10 @@
 #include <tdme/utilities/ObjectDeleter.h>
 #include <tdme/utilities/Primitives.h>
 
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::tests::PhysicsTest5;
 
@@ -87,12 +90,11 @@ PhysicsTest5::PhysicsTest5()
 	keyS = false;
 	keyD = false;
 	engine = Engine::getInstance();
-	world = new World("world");
+	world = make_unique<World>("world");
 }
 
 PhysicsTest5::~PhysicsTest5()
 {
-	delete world;
 }
 
 void PhysicsTest5::main(int argc, char** argv)
@@ -158,7 +160,7 @@ void PhysicsTest5::initialize()
 {
 	engine->initialize();
 	engine->addPostProcessingProgram("ssao");
-	Object* entity;
+	Object* entity = nullptr;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(15.0f);
@@ -234,7 +236,7 @@ void PhysicsTest5::initialize()
 		world->addRigidBody("sphere" + to_string(i), RIGID_TYPEID_STANDARD, true, entity->getTransform(), 0.75f, 0.4f, 10.0f, Vector3(1.0f, 1.0f, 1.0f), {sphere});
 	}
 	try {
-		auto botPrototype = PrototypeReader::read("resources/botrts", "unit_bot.tmodel");
+		auto botPrototype = prototypeDeleter.add(PrototypeReader::read("resources/botrts", "unit_bot.tmodel"));
 		// create bot body in engine
 		Transform botTransform;
 		botTransform.addRotation(Vector3(0.0f, 1.0f, 0.0f), 180.0f);
@@ -247,7 +249,7 @@ void PhysicsTest5::initialize()
 		engine->addEntity(botEntityHierarchy);
 
 		// create bot body in physics
-		auto botBody = dynamic_cast<BodyHierarchy*>(SceneConnector::createBody(world, botPrototype, "bot", botTransform, SceneConnector::BODY_TYPEID_STANDARD, true));
+		auto botBody = dynamic_cast<BodyHierarchy*>(SceneConnector::createBody(world.get(), botPrototype, "bot", botTransform, SceneConnector::BODY_TYPEID_STANDARD, true));
 
 		// we only need scale for now as parent transform for attaching weapon to bot
 		Transform botTransformScale;
@@ -261,12 +263,12 @@ void PhysicsTest5::initialize()
 		weaponAttachmentLocalTransform.update();
 
 		// create weapon in engine
-		auto weaponPrototype = PrototypeReader::read("resources/botrts", "weapon_flamethrower.tmodel");
+		auto weaponPrototype = prototypeDeleter.add(PrototypeReader::read("resources/botrts", "weapon_flamethrower.tmodel"));
 		botEntityHierarchy->addEntity(SceneConnector::createEntity(weaponPrototype, "weapon_left", weaponAttachmentLocalTransform));
 		botEntityHierarchy->update();
 
 		// create weapon in physics
-		SceneConnector::createSubBody(world, weaponPrototype, "weapon_left", weaponAttachmentLocalTransform, "bot", "bot");
+		SceneConnector::createSubBody(world.get(), weaponPrototype, "weapon_left", weaponAttachmentLocalTransform, "bot", "bot");
 
 		//
 		{

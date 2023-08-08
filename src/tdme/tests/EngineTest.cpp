@@ -1,6 +1,7 @@
 #include <tdme/tests/EngineTest.h>
 
-#include <cctype>
+#include <array>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -46,7 +47,9 @@
 #include <tdme/utilities/ModelTools.h>
 #include <tdme/utilities/ObjectDeleter.h>
 
+using std::array;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::application::Application;
@@ -99,7 +102,6 @@ EngineTest::EngineTest()
 
 EngineTest::~EngineTest()
 {
-	delete osEngine;
 }
 void EngineTest::main(int argc, char** argv)
 {
@@ -223,7 +225,7 @@ void EngineTest::initialize()
 	engine->initialize();
 	engine->addPostProcessingProgram("ssao");
 	if (osEngine == nullptr) {
-		osEngine = Engine::createOffScreenInstance(512, 512, false, true, false);
+		osEngine = unique_ptr<Engine>(Engine::createOffScreenInstance(512, 512, false, true, false));
 		auto osLight0 = osEngine->getLightAt(0);
 		osLight0->setAmbient(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 		osLight0->setDiffuse(Color4(1.0f, 1.0f, 1.0f, 1.0f));

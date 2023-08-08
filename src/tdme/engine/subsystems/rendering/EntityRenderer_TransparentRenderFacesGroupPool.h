@@ -13,7 +13,7 @@ using tdme::utilities::Pool;
  * Entity renderer transparent render faces node pool
  * @author Andreas Drewke
  */
-class tdme::engine::subsystems::rendering::EntityRenderer_TransparentRenderFacesGroupPool: public Pool<TransparentRenderFacesGroup*>
+class tdme::engine::subsystems::rendering::EntityRenderer_TransparentRenderFacesGroupPool: public Pool<TransparentRenderFacesGroup>
 {
 public:
 	// forbid class copy
