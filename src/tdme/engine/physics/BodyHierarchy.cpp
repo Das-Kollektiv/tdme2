@@ -65,12 +65,18 @@ void BodyHierarchy::addBody(const string& id, const Transform& transform, const 
 		Console::println("BodyHierarchy::addBody(): parent '" + parentId + "': not found");
 		return;
 	}
-	auto bodyHierarchyLevel = new BodyHierarchyLevel(id, parentBodyHierarchyLevel, transform, boundingVolumes);
-	parentBodyHierarchyLevel->children[id] = bodyHierarchyLevel;
+	// clone bounding volumes
+	vector<BoundingVolume*> clonedBoundingVolumes;
+	for (auto boundingVolume: boundingVolumes) {
+		clonedBoundingVolumes.push_back(boundingVolume->clone());
+	}
 	// finally create collision shapes
-	for (auto boundingVolume: bodyHierarchyLevel->boundingVolumes) {
+	for (auto boundingVolume: clonedBoundingVolumes) {
 		boundingVolume->createCollisionShape(world);
 	}
+	//
+	auto bodyHierarchyLevel = new BodyHierarchyLevel(id, parentBodyHierarchyLevel, transform, clonedBoundingVolumes);
+	parentBodyHierarchyLevel->children[id] = bodyHierarchyLevel;
 
 	// and bodies
 	bodies.push_back(bodyHierarchyLevel);

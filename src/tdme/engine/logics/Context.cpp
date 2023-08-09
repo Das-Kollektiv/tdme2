@@ -600,8 +600,6 @@ Context::Context(bool server): pathFinding(this), world(nullptr), server(server)
 
 Context::~Context() {
 	Console::println("Context::~Context()");
-	if (world != nullptr) delete world;
-	if (scene != nullptr) delete scene;
 }
 
 void Context::initialize() {

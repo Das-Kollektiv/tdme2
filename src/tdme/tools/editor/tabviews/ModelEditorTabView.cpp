@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabviews/ModelEditorTabView.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -50,7 +51,9 @@
 #include <tdme/utilities/Properties.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 
 using tdme::audio::Audio;
 using tdme::audio::Sound;
@@ -103,12 +106,11 @@ ModelEditorTabView::ModelEditorTabView(EditorView* editorView, const string& tab
 	this->editorView = editorView;
 	this->tabId = tabId;
 	this->popUps = editorView->getPopUps();
-	engine = Engine::createOffScreenInstance(512, 512, true, true, true);
+	engine = unique_ptr<Engine>(Engine::createOffScreenInstance(512, 512, true, true, true));
 	engine->setPartition(new SimplePartition());
 	engine->setShadowMapLightEyeDistanceScale(0.1f);
 	engine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
 	audio = Audio::getInstance();
-	modelEditorTabController = nullptr;
 	prototypeDisplayView = nullptr;
 	prototypePhysicsView = nullptr;
 	prototypeSoundsView = nullptr;
@@ -116,41 +118,22 @@ ModelEditorTabView::ModelEditorTabView(EditorView* editorView, const string& tab
 	lodLevel = 1;
 	audioStarted = -1LL;
 	audioOffset = -1LL;
-	cameraRotationInputHandler = new CameraRotationInputHandler(engine, this);
+	cameraRotationInputHandler = make_unique<CameraRotationInputHandler>(engine.get(), this);
 	setPrototype(prototype);
 	outlinerState.expandedOutlinerParentOptionValues.push_back("prototype");
 }
 
 ModelEditorTabView::~ModelEditorTabView() {
-	delete prototype;
-	delete modelEditorTabController;
-	delete cameraRotationInputHandler;
-	delete engine;
-}
-
-EditorView* ModelEditorTabView::getEditorView() {
-	return editorView;
 }
 
 TabController* ModelEditorTabView::getTabController() {
-	return dynamic_cast<TabController*>(modelEditorTabController);
-}
-
-PopUps* ModelEditorTabView::getPopUps()
-{
-	return popUps;
-}
-
-Prototype* ModelEditorTabView::getPrototype()
-{
-	return prototype;
+	return modelEditorTabController.get();
 }
 
 void ModelEditorTabView::setPrototype(Prototype* prototype)
 {
 	engine->reset();
-	if (this->prototype != nullptr) delete this->prototype;
-	this->prototype = prototype;
+	this->prototype = unique_ptr<Prototype>(prototype);
 	lodLevel = 1;
 	//
 	initModel(false);
@@ -184,12 +167,10 @@ void ModelEditorTabView::initModel(bool resetup)
 	if (prototype == nullptr) return;
 	engine->removeEntity("model");
 	engine->removeEntity("attachment1");
-	if (attachment1Model != nullptr) {
-		delete attachment1Model;
-		attachment1Model = nullptr;
-	}
+	attachment1Model = nullptr;
+	attachment1Bone.clear();
 	prototypeFileName = prototype->getFileName().length() > 0 ? prototype->getFileName() : prototype->getModelFileName();
-	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), lodLevel, objectScale, cameraRotationInputHandler, 1.5f, resetup);
+	Tools::setupPrototype(prototype.get(), engine.get(), cameraRotationInputHandler->getLookFromRotations(), lodLevel, objectScale, cameraRotationInputHandler.get(), 1.5f, resetup);
 	if (prototypePhysicsView != nullptr) prototypePhysicsView->setObjectScale(objectScale);
 	auto currentModelObject = dynamic_cast<Object*>(engine->getEntity("model"));
 	if (currentModelObject != nullptr) {
@@ -246,10 +227,8 @@ void ModelEditorTabView::reimportModel(const string& pathName, const string& fil
 	if (prototype == nullptr) return;
 	engine->removeEntity("model");
 	engine->removeEntity("attachment1");
-	if (attachment1Model != nullptr) {
-		delete attachment1Model;
-		attachment1Model = nullptr;
-	}
+	attachment1Model = nullptr;
+	attachment1Bone.clear();
 	struct AnimationSetupStruct {
 		bool loop;
 		string overlayFromNodeId;
@@ -269,9 +248,11 @@ void ModelEditorTabView::reimportModel(const string& pathName, const string& fil
 	string log;
 	try {
 		// load model
-		auto model = ModelReader::read(
-			pathName,
-			fileName
+		auto model = unique_ptr<Model>(
+			ModelReader::read(
+				pathName,
+				fileName
+			)
 		);
 		// restore animation setup properties
 		for (const auto& [originalAnimationSetupId, originalAnimationSetup]: originalAnimationSetups) {
@@ -287,7 +268,7 @@ void ModelEditorTabView::reimportModel(const string& pathName, const string& fil
 			animationSetup->setSpeed(originalAnimationSetup.speed);
 		}
 		// set model in entity
-		prototype->setModel(model);
+		prototype->setModel(model.release());
 	} catch (Exception& exception) {
 		modelEditorTabController->showInfoPopUp("Warning", string(exception.what()));
 	}
@@ -299,7 +280,7 @@ void ModelEditorTabView::reimportModel(const string& pathName, const string& fil
 
 void ModelEditorTabView::saveFile(const string& pathName, const string& fileName)
 {
-	PrototypeWriter::write(pathName, fileName, prototype);
+	PrototypeWriter::write(pathName, fileName, prototype.get());
 }
 
 void ModelEditorTabView::reloadFile()
@@ -338,7 +319,7 @@ void ModelEditorTabView::optimizeModel() {
 
 void ModelEditorTabView::handleInputEvents()
 {
-	prototypePhysicsView->handleInputEvents(prototype);
+	prototypePhysicsView->handleInputEvents(prototype.get());
 	cameraRotationInputHandler->handleInputEvents();
 }
 
@@ -379,8 +360,8 @@ void ModelEditorTabView::display()
 	modelEditorTabController->updateInfoText(MutableString(engine->getTiming()->getAvarageFPS()).append(" FPS"));
 
 	// rendering
-	prototypeDisplayView->display(prototype);
-	prototypePhysicsView->display(prototype);
+	prototypeDisplayView->display(prototype.get());
+	prototypePhysicsView->display(prototype.get());
 	engine->display();
 }
 
@@ -401,7 +382,7 @@ void ModelEditorTabView::loadSettings()
 void ModelEditorTabView::initialize()
 {
 	try {
-		modelEditorTabController = new ModelEditorTabController(this);
+		modelEditorTabController = make_unique<ModelEditorTabController>(this);
 		modelEditorTabController->initialize(editorView->getScreenController()->getScreenNode());
 		prototypePhysicsView = modelEditorTabController->getPrototypePhysicsSubController()->getView();
 		prototypeDisplayView = modelEditorTabController->getPrototypeDisplaySubController()->getView();
@@ -409,6 +390,7 @@ void ModelEditorTabView::initialize()
 	} catch (Exception& exception) {
 		Console::println("ModelEditorTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
+	//
 	loadSettings();
 	//
 	if (prototypePhysicsView != nullptr) prototypePhysicsView->setObjectScale(objectScale);
@@ -448,63 +430,54 @@ void ModelEditorTabView::loadModel()
 			)
 		);
 	} catch (Exception& exception) {
-		popUps->getInfoDialogScreenController()->show("Warning", (exception.what()));
+		popUps->getInfoDialogScreenController()->show("Warning", exception.what());
 	}
 }
 
 Prototype* ModelEditorTabView::loadModelPrototype(const string& name, const string& description, const string& pathName, const string& fileName)
 {
-	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmodel") == true) {
-		auto prototype = PrototypeReader::read(
-			pathName,
-			fileName
+	try {
+		auto prototype = unique_ptr<Prototype>(
+			PrototypeReader::read(
+				pathName,
+				fileName
+			)
 		);
-		return prototype;
-	} else {
-		auto model = ModelReader::read(
-			pathName,
-			fileName
-		);
-		auto prototype = new Prototype(
-			Prototype::ID_NONE,
-			Prototype_Type::MODEL,
-			name,
-			description,
-			"",
-			pathName + "/" + fileName,
-			StringTools::replace(StringTools::replace(StringTools::replace(model->getId(), "\\", "_"), "/", "_"), ":", "_") + ".png",
-			model
-		);
-		return prototype;
-
+		return prototype.release();
+	} catch (Exception& exception) {
+		popUps->getInfoDialogScreenController()->show("Warning", exception.what());
 	}
+	//
 	return nullptr;
 }
 
 void ModelEditorTabView::playAnimation(const string& baseAnimationId, const string& overlay1AnimationId, const string& overlay2AnimationId, const string& overlay3AnimationId) {
 	auto object = dynamic_cast<Object*>(engine->getEntity("model"));
-	if (object != nullptr) {
-		audio->removeEntity("sound");
-		object->removeOverlayAnimations();
-		object->setAnimation(baseAnimationId);
-		if (overlay1AnimationId.empty() == false) object->addOverlayAnimation(overlay1AnimationId);
-		if (overlay2AnimationId.empty() == false) object->addOverlayAnimation(overlay2AnimationId);
-		if (overlay3AnimationId.empty() == false) object->addOverlayAnimation(overlay3AnimationId);
-	}
+	if (object == nullptr) return;
+	audio->removeEntity("sound");
+	object->removeOverlayAnimations();
+	object->setAnimation(baseAnimationId);
+	if (overlay1AnimationId.empty() == false) object->addOverlayAnimation(overlay1AnimationId);
+	if (overlay2AnimationId.empty() == false) object->addOverlayAnimation(overlay2AnimationId);
+	if (overlay3AnimationId.empty() == false) object->addOverlayAnimation(overlay3AnimationId);
 }
 
 void ModelEditorTabView::addAttachment1(const string& nodeId, const string& attachmentModelFile) {
 	engine->removeEntity("attachment1");
 	try {
-		if (attachment1Model != nullptr) delete attachment1Model;
-		attachment1Model = attachmentModelFile.empty() == true?nullptr:ModelReader::read(Tools::getPathName(attachmentModelFile), Tools::getFileName(attachmentModelFile));
+		attachment1Model =
+			unique_ptr<Model>(
+				attachmentModelFile.empty() == true?
+					nullptr:
+					ModelReader::read(Tools::getPathName(attachmentModelFile), Tools::getFileName(attachmentModelFile))
+			);
 	} catch (Exception& exception) {
 		Console::println("ModelEditorTabView::addAttachment1(): An error occurred: " + string(exception.what()));
 		popUps->getInfoDialogScreenController()->show("Warning", (exception.what()));
 	}
 	if (attachment1Model != nullptr) {
 		Entity* attachment = nullptr;
-		engine->addEntity(attachment = new Object("attachment1", attachment1Model));
+		engine->addEntity(attachment = new Object("attachment1", attachment1Model.get()));
 		attachment->addRotation(Vector3(0.0f, 0.0f, 1.0f), 0.0f);
 		attachment->addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
 		attachment->addRotation(Vector3(1.0f, 0.0f, 0.0f), 0.0f);
@@ -520,30 +493,30 @@ void ModelEditorTabView::playSound(const string& soundId) {
 	audio->removeEntity("sound");
 	auto object = dynamic_cast<Object*>(engine->getEntity("model"));
 	auto soundDefinition = prototype->getSound(soundId);
-	if (soundDefinition != nullptr && soundDefinition->getFileName().length() > 0) {
-		if (object != nullptr && soundDefinition->getAnimation().size() > 0) object->setAnimation(soundDefinition->getAnimation());
-		auto pathName = PrototypeReader::getResourcePathName(
-			Tools::getPathName(prototype->getFileName()),
-			soundDefinition->getFileName()
-		);
-		auto fileName = Tools::getFileName(soundDefinition->getFileName());
-		auto sound = new Sound(
-			"sound",
-			pathName,
-			fileName
-		);
-		sound->setGain(soundDefinition->getGain());
-		sound->setPitch(soundDefinition->getPitch());
-		sound->setLooping(soundDefinition->isLooping());
-		sound->setFixed(true);
-		audio->addEntity(sound);
-		audioStarted = Time::getCurrentMillis();
-		audioOffset = -1LL;
-		if (soundDefinition->getOffset() <= 0) {
-			sound->play();
-		} else {
-			audioOffset = soundDefinition->getOffset();
-		}
+	if (soundDefinition == nullptr || soundDefinition->getFileName().empty() == true) return;
+	///
+	if (object != nullptr && soundDefinition->getAnimation().empty() == false) object->setAnimation(soundDefinition->getAnimation());
+	auto pathName = PrototypeReader::getResourcePathName(
+		Tools::getPathName(prototype->getFileName()),
+		soundDefinition->getFileName()
+	);
+	auto fileName = Tools::getFileName(soundDefinition->getFileName());
+	auto sound = new Sound(
+		"sound",
+		pathName,
+		fileName
+	);
+	sound->setGain(soundDefinition->getGain());
+	sound->setPitch(soundDefinition->getPitch());
+	sound->setLooping(soundDefinition->isLooping());
+	sound->setFixed(true);
+	audio->addEntity(sound);
+	audioStarted = Time::getCurrentMillis();
+	audioOffset = -1LL;
+	if (soundDefinition->getOffset() <= 0) {
+		sound->play();
+	} else {
+		audioOffset = soundDefinition->getOffset();
 	}
 }
 
@@ -570,15 +543,15 @@ void ModelEditorTabView::updateShaderParemeters() {
 }
 
 void ModelEditorTabView::onCameraRotation() {
-	prototypePhysicsView->updateGizmo(prototype);
+	prototypePhysicsView->updateGizmo(prototype.get());
 }
 
 void ModelEditorTabView::onCameraScale() {
-	prototypePhysicsView->updateGizmo(prototype);
+	prototypePhysicsView->updateGizmo(prototype.get());
 }
 
 Engine* ModelEditorTabView::getEngine() {
-	return engine;
+	return engine.get();
 }
 
 void ModelEditorTabView::activate() {

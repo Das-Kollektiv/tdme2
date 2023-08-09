@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 
@@ -18,10 +19,12 @@
 
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::unordered_map;
 
 using tdme::engine::DynamicColorTexture;
 using tdme::engine::Engine;
+using tdme::gui::events::GUIMoveListener;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUIStyledTextNodeController;
@@ -43,7 +46,7 @@ class tdme::tools::editor::tabviews::TextEditorTabView final
 	, public ContextMenuScreenController::MiniScriptMethodSelectionListener
 {
 protected:
-	Engine* engine { nullptr };
+	unique_ptr<Engine> engine;
 
 private:
 	static constexpr int MINISCRIPT_SCRIPTIDX_STRUCTURE { -1 };
@@ -51,15 +54,16 @@ private:
 	EditorView* editorView { nullptr };
 	string tabId;
 	PopUps* popUps { nullptr };
-	TextEditorTabController* textEditorTabController { nullptr };
+	unique_ptr<TextEditorTabController> textEditorTabController;
 	TabView::OutlinerState outlinerState;
 	GUIScreenNode* screenNode { nullptr };
 	string fileName;
 	string extension;
 	GUIStyledTextNode* textNode { nullptr };
-	GUIStyledTextNodeController::ChangeListener* textNodeChangeListener { nullptr };
-	GUIStyledTextNodeController::CodeCompletionListener* textNodeCodeCompletionListener { nullptr };
-	const TextFormatter::CodeCompletion* codeCompletion { nullptr };
+	unique_ptr<GUIMoveListener> guiMoveListener;
+	unique_ptr<GUIStyledTextNodeController::ChangeListener> textNodeChangeListener;
+	unique_ptr<GUIStyledTextNodeController::CodeCompletionListener> textNodeCodeCompletionListener;
+	unique_ptr<const TextFormatter::CodeCompletion> codeCompletion;
 
 	struct CodeCompletionSymbol {
 		enum Type { TYPE_NONE, TYPE_SYMBOL, TYPE_FUNCTION };
@@ -83,7 +87,7 @@ private:
 		return lhs.display < rhs.display;
 	}
 
-	DynamicColorTexture* linesTexture { nullptr };
+	unique_ptr<DynamicColorTexture> linesTexture;
 	int createConnectionsPasses { -1 };
 
 	struct Node {
@@ -398,7 +402,7 @@ public:
 	 * TODO: maybe move me into controller
 	 */
 	const TextFormatter::CodeCompletion* getCodeCompletion() {
-		return codeCompletion;
+		return codeCompletion.get();
 	}
 
 	/**
@@ -419,7 +423,7 @@ public:
 	 * @return associated tab controller
 	 */
 	inline TabController* getTabController() override {
-		return textEditorTabController;
+		return textEditorTabController.get();
 	}
 
 	/**

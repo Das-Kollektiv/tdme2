@@ -104,6 +104,7 @@ void ColorPickerScreenController::show(const Color4& color, Action* onColorChang
 {
 	this->color = color;
 	this->onColorChangeAction = unique_ptr<Action>(onColorChangeAction);
+	//
 	updateColor();
 	updateColorHex();
 	//

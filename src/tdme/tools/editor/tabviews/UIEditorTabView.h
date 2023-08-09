@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -23,6 +24,7 @@
 
 using std::array;
 using std::string;
+using std::unique_ptr;
 
 using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
@@ -45,22 +47,23 @@ using tdme::utilities::Float;
  * UI editor tab view
  * @author Andreas Drewke
  */
-class tdme::tools::editor::tabviews::UIEditorTabView final: public TabView, protected CameraRotationInputHandlerEventHandler
+class tdme::tools::editor::tabviews::UIEditorTabView final: public TabView, public CameraRotationInputHandlerEventHandler
 {
 public:
 	struct UIScreenNode {
 		string fileName;
 		string xml;
+		// TODO: remove that here, rather store a flag if UI had been parsed and added to GUI or not
 		GUIScreenNode* screenNode { nullptr };
 		int width { -1 };
 		int height { -1 };
 	};
 
 protected:
-	Engine* guiEngine { nullptr };
-	Engine* engine { nullptr };
+	unique_ptr<Engine> guiEngine;
+	unique_ptr<Engine> engine;
 	bool projectedUi { false };
-	Prototype* prototype { nullptr };
+	unique_ptr<Prototype> prototype;
 	string modelMeshNode;
 	float projectedUiMinX { Float::MAX_VALUE };
 	float projectedUiMinZ { Float::MAX_VALUE };
@@ -72,18 +75,18 @@ private:
 	string tabId;
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
-	UIEditorTabController* uiTabController { nullptr };
+	unique_ptr<UIEditorTabController> uiTabController;
 	TabView::OutlinerState outlinerState;
 	string screenFileName;
 	vector<UIScreenNode> uiScreenNodes;
-	CameraRotationInputHandler* cameraRotationInputHandler { nullptr };
+	unique_ptr<CameraRotationInputHandler> cameraRotationInputHandler;
 
 	int screenIdx { 0 };
 	bool visualEditor { false };
 
 	GUIStyledTextNode* textNode { nullptr };
-	GUIStyledTextNodeController::ChangeListener* textNodeChangeListener { nullptr };
-	GUIStyledTextNodeController::CodeCompletionListener* textNodeCodeCompletionListener { nullptr };
+	unique_ptr<GUIStyledTextNodeController::ChangeListener> textNodeChangeListener;
+	unique_ptr<GUIStyledTextNodeController::CodeCompletionListener> textNodeCodeCompletionListener;
 	const TextFormatter::CodeCompletion* codeCompletion { nullptr };
 
 	struct CodeCompletionSymbol {
@@ -145,7 +148,7 @@ public:
 	 * @return associated tab controller
 	 */
 	inline TabController* getTabController() override {
-		return uiTabController;
+		return uiTabController.get();
 	}
 
 	/**

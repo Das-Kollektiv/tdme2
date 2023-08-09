@@ -89,11 +89,11 @@ Body::Body(World* world, const string& id, BodyType type, uint16_t collisionType
 			break;
 	}
 	rigidBody->setUserData(this);
-	//
+	// clone bounding volumes
 	for (auto boundingVolume: boundingVolumes) {
 		this->boundingVolumes.push_back(boundingVolume->clone());
 	}
-	// create collision shapes
+	// finally create collision shapes
 	for (auto boundingVolume: this->boundingVolumes) {
 		boundingVolume->createCollisionShape(world);
 	}

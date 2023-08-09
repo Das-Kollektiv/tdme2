@@ -164,11 +164,4 @@ public:
 		return convexMeshData;
 	}
 
-private:
-
-	/**
-	 * Update prototype
-	 */
-	void updatePrototype();
-
 };

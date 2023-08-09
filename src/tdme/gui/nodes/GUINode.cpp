@@ -137,7 +137,6 @@ GUINode::GUINode(
 }
 
 GUINode::~GUINode() {
-	setController(nullptr);
 	// remove effects
 	vector<string> effectsToRemove;
 	for (const auto& [effectId, effect]: effects) {

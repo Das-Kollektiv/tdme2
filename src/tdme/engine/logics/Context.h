@@ -359,7 +359,7 @@ private:
 	volatile bool initialized;
 	Mutex* logicsMutex { nullptr };
 	ContextWorldListener* worldListener { nullptr };
-	Scene* scene { nullptr };
+	unique_ptr<Scene> scene;
 	unordered_map<string, Logic*> logicsById;
 	vector<Logic*> logics;
 	vector<Logic*> newLogics;
@@ -367,10 +367,10 @@ private:
 	int soundPoolSize { 10 };
 
 protected:
-	Engine* engine { nullptr };
-	Engine* guiEngine { nullptr };
+	unique_ptr<Engine> guiEngine;
+	unique_ptr<Engine> engine;
+	unique_ptr<World> world;
 	Audio* audio { nullptr };
-	World* world { nullptr };
 	bool server;
 
 public:
@@ -442,7 +442,7 @@ public:
 	 * @return engine
 	 */
 	inline Engine* getEngine() {
-		return engine;
+		return engine.get();
 	}
 
 	/**
@@ -450,14 +450,22 @@ public:
 	 * @param engine engine
 	 */
 	inline void setEngine(Engine* engine) {
-		this->engine = engine;
+		this->engine = unique_ptr<Engine>(engine);
+	}
+
+	/**
+	 * Unset engine
+	 * @return engine
+	 */
+	inline Engine* unsetEngine() {
+		return this->engine.release();
 	}
 
 	/**
 	 * @return GUI engine
 	 */
 	inline Engine* getGUIEngine() {
-		return guiEngine;
+		return guiEngine.get();
 	}
 
 	/**
@@ -465,7 +473,15 @@ public:
 	 * @param guiEngine engine
 	 */
 	inline void setGUIEngine(Engine* guiEngine) {
-		this->guiEngine = guiEngine;
+		this->guiEngine = unique_ptr<Engine>(guiEngine);
+	}
+
+	/**
+	 * Unset GUI engine
+	 * @return GUI engine
+	 */
+	inline Engine* unsetGUIEngine() {
+		return this->guiEngine.release();
 	}
 
 	/**
@@ -487,7 +503,7 @@ public:
 	 * @return physics world
 	 */
 	inline World* getWorld() {
-		return world;
+		return world.get();
 	}
 
 	/**
@@ -495,14 +511,14 @@ public:
 	 * @param world physics world
 	 */
 	inline void setWorld(World* world) {
-		this->world = world;
+		this->world = unique_ptr<World>(world);
 	}
 
 	/**
 	 * @return scene
 	 */
 	inline Scene* getScene() {
-		return scene;
+		return scene.get();
 	}
 
 	/**
@@ -510,16 +526,15 @@ public:
 	 * @param scene scene
 	 */
 	inline void setScene(Scene* scene) {
-		if (this->scene == scene) return;
-		if (this->scene != nullptr) delete this->scene;
-		this->scene = scene;
+		this->scene = unique_ptr<Scene>(scene);
 	}
 
 	/**
 	 * Unset scene
+	 * @return scene
 	 */
-	inline void unsetScene() {
-		this->scene = nullptr;
+	inline Scene* unsetScene() {
+		return this->scene.release();
 	}
 
 	/**

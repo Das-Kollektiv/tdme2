@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <memory>
 #include <string>
 #include <unordered_map>
 
@@ -38,8 +39,10 @@
 #include <tdme/utilities/Properties.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::make_unique;
 using std::sort;
 using std::string;
+using std::unique_ptr;
 using std::unordered_map;
 
 using tdme::tools::editor::tabviews::TextEditorTabView;
@@ -86,7 +89,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 	this->extension =
 		fileNameLowerCase == "makefile" || StringTools::endsWith(fileNameLowerCase, "/makefile")?"makefile":
 		StringTools::substring(fileNameLowerCase, fileNameLowerCase.rfind('.') + 1, fileNameLowerCase.size());
-	engine = Engine::createOffScreenInstance(512, 512, false, false, false);
+	engine = unique_ptr<Engine>(Engine::createOffScreenInstance(512, 512, false, false, false));
 	engine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
 	engine->getGUI()->addScreen(screenNode->getId(), screenNode);
 	engine->getGUI()->addRenderScreen(screenNode->getId());
@@ -97,9 +100,9 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 		//
 		visualisationNode = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("visualization_canvas"));
 		//
-		linesTexture = new DynamicColorTexture(engine->getWidth(), engine->getHeight());
+		linesTexture = make_unique<DynamicColorTexture>(engine->getWidth(), engine->getHeight());
 		linesTexture->initialize();
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("visualization_texture"))->setTexture(linesTexture);
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("visualization_texture"))->setTexture(linesTexture.get());
 		// add node move listener
 		class NodeMoveListener: public GUIMoveListener {
 		public:
@@ -130,7 +133,8 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 		private:
 			TextEditorTabView* textEditorTabView;
 		};
-		screenNode->addMoveListener(new NodeMoveListener(this));
+		//
+		screenNode->addMoveListener((guiMoveListener = make_unique<NodeMoveListener>(this)).get());
 		// enable code mode
 		setCodeEditor();
 	}
@@ -138,7 +142,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 	// initial text format
 	TextFormatter::getInstance()->format(extension, textNode);
 	// load code completion
-	codeCompletion = TextFormatter::getInstance()->loadCodeCompletion(extension);
+	codeCompletion = unique_ptr<const TextFormatter::CodeCompletion>(TextFormatter::getInstance()->loadCodeCompletion(extension));
 
 	//
 	{
@@ -170,7 +174,8 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 		private:
 			TextEditorTabView* textEditorTabView;
 		};
-		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->addChangeListener(textNodeChangeListener = new TextChangeListener(this));
+		//
+		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->addChangeListener((textNodeChangeListener = make_unique<TextChangeListener>(this)).get());
 	}
 
 	//
@@ -185,7 +190,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 			}
 
 			virtual void onCodeCompletion(int idx) override {
-				auto codeCompletion = textEditorTabView->codeCompletion;
+				auto codeCompletion = textEditorTabView->codeCompletion.get();
 				if (codeCompletion == nullptr) return;
 				if (codeCompletion->delimiters.find(textEditorTabView->textNode->getText().getCharAt(idx)) != string::npos) {
 					if (idx > 0) idx--;
@@ -269,7 +274,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 							OnCodeCompletionAction(TextEditorTabView* textEditorTabView, int idx, const CodeCompletionSymbol& symbol): textEditorTabView(textEditorTabView), idx(idx), symbol(symbol) {}
 							void performAction() override {
 								if (symbol.name.empty() == true) return;
-								auto codeCompletion = textEditorTabView->codeCompletion;
+								auto codeCompletion = textEditorTabView->codeCompletion.get();
 								if (codeCompletion == nullptr) return;
 								auto previousDelimiterPos = textEditorTabView->textNode->getPreviousDelimiter(idx, codeCompletion->delimiters);
 								auto nextDelimiterPos = textEditorTabView->textNode->getNextDelimiter(idx, codeCompletion->delimiters);
@@ -318,16 +323,12 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 		private:
 			TextEditorTabView* textEditorTabView;
 		};
-		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->addCodeCompletionListener(textNodeCodeCompletionListener = new TextCodeCompletionListener(this));
+		//
+		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->addCodeCompletionListener((textNodeCodeCompletionListener = make_unique<TextCodeCompletionListener>(this)).get());
 	}
 }
 
 TextEditorTabView::~TextEditorTabView() {
-	delete textEditorTabController;
-	delete engine;
-	delete textNodeChangeListener;
-	delete textNodeCodeCompletionListener;
-	if (codeCompletion != nullptr) delete codeCompletion;
 }
 
 void TextEditorTabView::saveFile(const string& pathName, const string& fileName) {
@@ -405,7 +406,7 @@ void TextEditorTabView::display()
 			linesTexture->getHeight() != engine->getHeight()) {
 			linesTexture->reshape(engine->getWidth(), engine->getHeight());
 			auto visualizationTextureNode = dynamic_cast<GUIImageNode*>(screenNode->getNodeById("visualization_texture"));
-			if (visualizationTextureNode != nullptr) visualizationTextureNode->setTexture(linesTexture);
+			if (visualizationTextureNode != nullptr) visualizationTextureNode->setTexture(linesTexture.get());
 			createConnectionsPasses = 3;
 		}
 		// we have a layouting issue here, we cant get dimensions of nodes right after adding them, so defer this for now
@@ -462,10 +463,10 @@ void TextEditorTabView::display()
 void TextEditorTabView::initialize()
 {
 	try {
-		textEditorTabController = new TextEditorTabController(this);
+		textEditorTabController = make_unique<TextEditorTabController>(this);
 		textEditorTabController->initialize(editorView->getScreenController()->getScreenNode());
-		screenNode->addContextMenuRequestListener(textEditorTabController);
-		screenNode->addTooltipRequestListener(textEditorTabController);
+		screenNode->addContextMenuRequestListener(textEditorTabController.get());
+		screenNode->addTooltipRequestListener(textEditorTabController.get());
 	} catch (Exception& exception) {
 		Console::println("TextEditorTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
@@ -474,7 +475,6 @@ void TextEditorTabView::initialize()
 
 void TextEditorTabView::dispose()
 {
-	required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->removeChangeListener(textNodeChangeListener);
 	textEditorTabController->closeFindReplaceWindow();
 	engine->dispose();
 }
@@ -490,7 +490,7 @@ void TextEditorTabView::onMethodSelection(const string& methodName) {
 }
 
 Engine* TextEditorTabView::getEngine() {
-	return engine;
+	return engine.get();
 }
 
 void TextEditorTabView::activate() {

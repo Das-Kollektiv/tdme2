@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -18,6 +19,7 @@
 #include <tdme/tools/editor/views/PlayableSoundView.h>
 
 using std::string;
+using std::unique_ptr;
 
 using tdme::audio::Audio;
 using tdme::engine::model::Model;
@@ -45,29 +47,29 @@ using tdme::tools::editor::views::PlayableSoundView;
 class tdme::tools::editor::tabviews::ModelEditorTabView final
 	: public TabView
 	, public PlayableSoundView
-	, protected CameraRotationInputHandlerEventHandler
+	, public CameraRotationInputHandlerEventHandler
 {
 protected:
-	Engine* engine { nullptr };
+	unique_ptr<Engine> engine { nullptr };
 	Audio* audio { nullptr };
 
 private:
 	EditorView* editorView { nullptr };
 	string tabId;
 	PopUps* popUps { nullptr };
-	ModelEditorTabController* modelEditorTabController { nullptr };
+	unique_ptr<ModelEditorTabController> modelEditorTabController;
 	PrototypeDisplaySubView* prototypeDisplayView { nullptr };
 	PrototypePhysicsSubView* prototypePhysicsView { nullptr };
 	PrototypeSoundsSubView* prototypeSoundsView { nullptr };
-	Prototype* prototype { nullptr };
+	unique_ptr<Prototype> prototype { nullptr };
 	string prototypeFileName;
 	int lodLevel;
-	CameraRotationInputHandler* cameraRotationInputHandler { nullptr };
+	unique_ptr<CameraRotationInputHandler> cameraRotationInputHandler;
 	int64_t audioStarted;
 	int64_t audioOffset;
 	Vector3 objectScale;
 	string attachment1Bone;
-	Model* attachment1Model { nullptr };
+	unique_ptr<Model> attachment1Model;
 	TabView::OutlinerState outlinerState;
 
 	/**
@@ -126,17 +128,23 @@ public:
 	/**
 	 * @return editor view
 	 */
-	EditorView* getEditorView();
+	inline EditorView* getEditorView() {
+		return editorView;
+	}
 
 	/**
 	 * @return pop up views
 	 */
-	PopUps* getPopUps();
+	inline PopUps* getPopUps() {
+		return popUps;
+	}
 
 	/**
 	 * @return prototype
 	 */
-	Prototype* getPrototype();
+	inline Prototype* getPrototype() {
+		return prototype.get();
+	}
 
 	/**
 	 * Set prototype

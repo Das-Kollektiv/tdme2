@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabviews/UIEditorTabView.h>
 
+#include <memory>
 #include <string>
 #include <unordered_set>
 #include <vector>
@@ -45,7 +46,9 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 using std::unordered_set;
 using std::vector;
 
@@ -96,18 +99,12 @@ UIEditorTabView::UIEditorTabView(EditorView* editorView, const string& tabId, GU
 	this->screenNode = screenNode;
 	this->popUps = editorView->getPopUps();
 	this->screenFileName = fileName;
-	guiEngine = Engine::createOffScreenInstance(1920, 1080, false, false, false);
+	guiEngine = unique_ptr<Engine>(Engine::createOffScreenInstance(1920, 1080, false, false, false));
 	guiEngine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
 	outlinerState.expandedOutlinerParentOptionValues.push_back("0.0");
 }
 
 UIEditorTabView::~UIEditorTabView() {
-	delete uiTabController;
-	delete guiEngine;
-	if (projectedUi == true) {
-		delete cameraRotationInputHandler;
-		delete engine;
-	}
 }
 
 void UIEditorTabView::onCameraRotation() {
@@ -204,7 +201,7 @@ void UIEditorTabView::display()
 void UIEditorTabView::initialize()
 {
 	try {
-		uiTabController = new UIEditorTabController(this);
+		uiTabController = make_unique<UIEditorTabController>(this);
 		uiTabController->initialize(editorView->getScreenController()->getScreenNode());
 	} catch (Exception& exception) {
 		Console::println("UIEditorTabView::initialize(): An error occurred: " + string(exception.what()));
@@ -249,7 +246,8 @@ void UIEditorTabView::initialize()
 		private:
 			UIEditorTabView* uiEditorTabView;
 		};
-		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->addChangeListener(textNodeChangeListener = new TextChangeListener(this));
+		//
+		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->addChangeListener((textNodeChangeListener = make_unique<TextChangeListener>(this)).get());
 	}
 
 	//
@@ -397,7 +395,8 @@ void UIEditorTabView::initialize()
 		private:
 			UIEditorTabView* uiEditorTabView;
 		};
-		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->addCodeCompletionListener(textNodeCodeCompletionListener = new TextCodeCompletionListener(this));
+		//
+		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->addCodeCompletionListener((textNodeCodeCompletionListener = make_unique<TextCodeCompletionListener>(this)).get());
 	}
 	//
 	addScreen();
@@ -412,9 +411,7 @@ void UIEditorTabView::dispose()
 {
 	uiTabController->closeFindReplaceWindow();
 	guiEngine->dispose();
-	if (projectedUi == true) {
-		engine->dispose();
-	}
+	if (engine != nullptr) engine->dispose();
 }
 
 void UIEditorTabView::updateRendering() {
@@ -426,7 +423,7 @@ inline bool UIEditorTabView::hasFixedSize() {
 
 Engine* UIEditorTabView::getEngine() {
 	if (visualEditor == false) return nullptr;
-	return projectedUi == true?engine:guiEngine;
+	return projectedUi == true?engine.get():guiEngine.get();
 }
 
 void UIEditorTabView::activate() {
@@ -489,7 +486,7 @@ void UIEditorTabView::setScreen(int screenIdx, const string& fileName) {
 void UIEditorTabView::unsetScreen(int screenIdx) {
 	if (screenIdx < 0 || screenIdx >= uiScreenNodes.size()) return;
 	if (uiScreenNodes[screenIdx].screenNode != nullptr) {
-		uiScreenNodes[screenIdx].screenNode->removeTooltipRequestListener(uiTabController);
+		uiScreenNodes[screenIdx].screenNode->removeTooltipRequestListener(uiTabController.get());
 		guiEngine->getGUI()->removeScreen(uiScreenNodes[screenIdx].screenNode->getId());
 	}
 	uiScreenNodes[screenIdx].fileName.clear();
@@ -502,7 +499,7 @@ void UIEditorTabView::unsetScreen(int screenIdx) {
 void UIEditorTabView::removeScreen(int screenIdx) {
 	if (screenIdx < 0 || screenIdx >= uiScreenNodes.size()) return;
 	if (uiScreenNodes[screenIdx].screenNode != nullptr) {
-		uiScreenNodes[screenIdx].screenNode->removeTooltipRequestListener(uiTabController);
+		uiScreenNodes[screenIdx].screenNode->removeTooltipRequestListener(uiTabController.get());
 	}
 	guiEngine->getGUI()->removeScreen(uiScreenNodes[screenIdx].screenNode->getId());
 	uiScreenNodes.erase(uiScreenNodes.begin() + screenIdx);
@@ -629,7 +626,7 @@ void UIEditorTabView::reAddScreens() {
 		screenNode->getSizeConstraints().maxHeight = -1;
 
 		//
-		screenNode->addTooltipRequestListener(uiTabController);
+		screenNode->addTooltipRequestListener(uiTabController.get());
 		guiEngine->getGUI()->addScreen(screenNode->getId(), screenNode);
 		guiEngine->getGUI()->addRenderScreen(screenNode->getId());
 	}
@@ -641,18 +638,17 @@ void UIEditorTabView::reAddScreens() {
 }
 
 Prototype* UIEditorTabView::getPrototype() {
-	return prototype;
+	return prototype.get();
 }
 
 Prototype* UIEditorTabView::loadPrototype(const string& pathName, const string& fileName, const string& modelMeshNode, const string& modelMeshAnimation) {
 	//
 	if (projectedUi == true) engine->reset();
-	if (prototype != nullptr) delete prototype;
 	prototype = nullptr;
 
 	//
 	try {
-		prototype = PrototypeReader::read(pathName, fileName);
+		prototype = unique_ptr<Prototype>(PrototypeReader::read(pathName, fileName));
 	} catch (Exception& exception) {
 		Console::println("UIEditorTabView::loadPrototype(): An error occurred: " + string(exception.what()));
 		//
@@ -662,16 +658,16 @@ Prototype* UIEditorTabView::loadPrototype(const string& pathName, const string& 
 	//
 	auto projectedUiLast = projectedUi;
 	if (projectedUi == false) {
-		engine = Engine::createOffScreenInstance(512, 512, true, true, false);
+		engine = unique_ptr<Engine>(Engine::createOffScreenInstance(512, 512, true, true, false));
 		engine->setPartition(new SimplePartition());
 		engine->setShadowMapLightEyeDistanceScale(0.1f);
 		engine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
 		guiEngine->setSceneColor(Color4(0.0f, 0.0f, 0.0f, 0.0f));
-		cameraRotationInputHandler = new CameraRotationInputHandler(engine, this);
+		cameraRotationInputHandler = make_unique<CameraRotationInputHandler>(engine.get(), this);
 		projectedUi = true;
 	}
 	Vector3 objectScale;
-	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), 1, objectScale, cameraRotationInputHandler, 1.5f, projectedUiLast == true);
+	Tools::setupPrototype(prototype.get(), engine.get(), cameraRotationInputHandler->getLookFromRotations(), 1, objectScale, cameraRotationInputHandler.get(), 1.5f, projectedUiLast == true);
 
 	// scale model, ground * 2
 	auto modelEntity = engine->getEntity("model");
@@ -691,7 +687,7 @@ Prototype* UIEditorTabView::loadPrototype(const string& pathName, const string& 
 	setModelMeshNode(modelMeshNode);
 
 	//
-	return prototype;
+	return prototype.get();
 }
 
 void UIEditorTabView::setModelMeshNode(const string& modelMeshNode) {
@@ -750,13 +746,10 @@ void UIEditorTabView::removePrototype() {
 	//
 	if (projectedUi == true) {
 		engine->dispose();
-		delete engine;
-		delete cameraRotationInputHandler;
 		engine = nullptr;
 		cameraRotationInputHandler = nullptr;
 		projectedUi = false;
 	}
-	if (prototype != nullptr) delete prototype;
 	prototype = nullptr;
 
 	//

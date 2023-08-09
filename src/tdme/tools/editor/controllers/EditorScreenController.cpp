@@ -1,6 +1,7 @@
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 
 #include <algorithm>
+#include <memory>
 #include <string>
 #include <unordered_set>
 #include <vector>
@@ -89,6 +90,7 @@
 
 using std::remove;
 using std::string;
+using std::unique_ptr;
 using std::unordered_set;
 using std::vector;
 
@@ -991,17 +993,17 @@ void EditorScreenController::addPendingFileEntities() {
 	}
 	//
 	for (auto pendingFileEntity: pendingFileEntities) {
-		if (pendingFileEntity->thumbnailTexture == nullptr) continue;
-		if (screenNode->getNodeById(pendingFileEntity->id + "_texture_normal") == nullptr) continue;
+		auto pendingFileEntityPtr = unique_ptr<FileEntity>(pendingFileEntity);
+		if (pendingFileEntityPtr->thumbnailTexture == nullptr) continue;
+		if (screenNode->getNodeById(pendingFileEntityPtr->id + "_texture_normal") == nullptr) continue;
 		try {
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(pendingFileEntity->id + "_texture_normal"))->setTexture(pendingFileEntity->thumbnailTexture);
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(pendingFileEntity->id + "_texture_mouseover"))->setTexture(pendingFileEntity->thumbnailTexture);
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(pendingFileEntity->id + "_texture_clicked"))->setTexture(pendingFileEntity->thumbnailTexture);
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(pendingFileEntityPtr->id + "_texture_normal"))->setTexture(pendingFileEntityPtr->thumbnailTexture);
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(pendingFileEntityPtr->id + "_texture_mouseover"))->setTexture(pendingFileEntityPtr->thumbnailTexture);
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(pendingFileEntityPtr->id + "_texture_clicked"))->setTexture(pendingFileEntityPtr->thumbnailTexture);
 		} catch (Exception& exception) {
 			Console::println("EditorScreenController::addPendingFileEntities(): An error occurred: " + string(exception.what()));
 		}
-		if (pendingFileEntity->thumbnailTexture != nullptr) pendingFileEntity->thumbnailTexture->releaseReference();
-		delete pendingFileEntity;
+		if (pendingFileEntityPtr->thumbnailTexture != nullptr) pendingFileEntityPtr->thumbnailTexture->releaseReference();
 	}
 	pendingFileEntities.clear();
 }
@@ -1017,8 +1019,8 @@ void EditorScreenController::stopScanFiles() {
 		scanFilesThread->join();
 		lockFileEntities();
 		for (auto fileEntity: getFileEntities()) {
+			auto fileEntityPtr = unique_ptr<FileEntity>(fileEntity);
 			if (fileEntity->thumbnailTexture != nullptr) fileEntity->thumbnailTexture->releaseReference();
-			delete fileEntity;
 		}
 		getFileEntities().clear();
 		unlockFileEntities();

@@ -1,3 +1,5 @@
+#include <tdme/engine/logics/ApplicationClient.h>
+
 #include <memory>
 #include <string>
 #include <vector>
@@ -5,7 +7,6 @@
 #include <tdme/tdme.h>
 #include <tdme/audio/Audio.h>
 #include <tdme/audio/AudioEntity.h>
-#include <tdme/engine/logics/ApplicationClient.h>
 #include <tdme/engine/logics/Context.h>
 #include <tdme/engine/logics/Logic.h>
 #include <tdme/engine/logics/LogicNetworkPacket.h>
@@ -48,13 +49,19 @@ using tdme::utilities::Console;
 using tdme::utilities::Time;
 
 ApplicationClient::ApplicationClient(Context* context, UDPClient* udpClient) : Thread("applicationserverclientthread", 4 * 1024 * 1024), mutex("applicationserverclientthread-mutex") {
-	this->context = context;
-	this->udpClient = udpClient;
+	this->context = unique_ptr<Context>(context);
+	this->udpClient = unique_ptr<UDPClient>(udpClient);
 	this->context->setLogicsMutex(getMutex());
 }
 
-Mutex* ApplicationClient::getMutex() {
-	return &mutex;
+ApplicationClient::~ApplicationClient() {
+	if (udpClient != nullptr) {
+		// stop udp client
+		udpClient->stop();
+		udpClient->join();
+	}
+	//
+	context->shutdown();
 }
 
 void ApplicationClient::run() {

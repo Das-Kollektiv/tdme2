@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -21,6 +22,7 @@
 #include <tdme/tools/editor/views/fwd-tdme.h>
 
 using std::string;
+using std::unique_ptr;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
@@ -46,24 +48,24 @@ class tdme::tools::editor::tabviews::TerrainEditorTabView final
 	: public TabView
 {
 protected:
-	Engine* engine { nullptr };
+	unique_ptr<Engine> engine;
 
 private:
 	EditorView* editorView { nullptr };
 	string tabId;
 	PopUps* popUps { nullptr };
-	TerrainEditorTabController* terrainEditorTabController { nullptr };
+	unique_ptr<TerrainEditorTabController> terrainEditorTabController;
 	TabView::OutlinerState outlinerState;
 
-	CameraInputHandler* cameraInputHandler { nullptr };
+	unique_ptr<CameraInputHandler> cameraInputHandler;
 
-	Prototype* prototype { nullptr };
+	unique_ptr<Prototype> prototype;
 
 	float skyDomeTranslation { 0.0f };
 
-	Prototype* skySpherePrototype { nullptr };
-	Prototype* skyDomePrototype { nullptr };
-	Prototype* skyPanoramaPrototype { nullptr };
+	unique_ptr<Prototype> skySpherePrototype;
+	unique_ptr<Prototype> skyDomePrototype;
+	unique_ptr<Prototype> skyPanoramaPrototype;
 
 	BoundingBox terrainBoundingBox;
 	vector<Model*> terrainModels;
@@ -84,8 +86,8 @@ private:
 	float brushScale { 1.0f };
 	float brushDensityStrength { 1.0f };
 	int rampMode { -1 };
-	array<Vector3,2> rampVertices;
-	array<float,2> rampHeight;
+	array<Vector3, 2> rampVertices;
+	array<float, 2> rampHeight;
 
 public:
 	// forbid class copy
@@ -115,7 +117,7 @@ public:
 	 * @return associated tab controller
 	 */
 	inline TabController* getTabController() override {
-		return terrainEditorTabController;
+		return terrainEditorTabController.get();
 	}
 
 	/**
@@ -129,7 +131,7 @@ public:
 	 * @return prototype
 	 */
 	inline Prototype* getPrototype() {
-		return prototype;
+		return prototype.get();
 	}
 
 	// overridden methods

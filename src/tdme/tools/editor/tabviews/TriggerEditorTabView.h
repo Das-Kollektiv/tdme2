@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -16,6 +17,7 @@
 #include <tdme/tools/editor/views/fwd-tdme.h>
 
 using std::string;
+using std::unique_ptr;
 
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
@@ -37,20 +39,20 @@ using tdme::tools::editor::views::EditorView;
  */
 class tdme::tools::editor::tabviews::TriggerEditorTabView final
 	: public TabView
-	, protected CameraRotationInputHandlerEventHandler
+	, public CameraRotationInputHandlerEventHandler
 {
 protected:
-	Engine* engine { nullptr };
+	unique_ptr<Engine> engine;
 
 private:
 	EditorView* editorView { nullptr };
 	string tabId;
 	PopUps* popUps { nullptr };
-	TriggerEditorTabController* triggerEditorTabController { nullptr };
+	unique_ptr<TriggerEditorTabController> triggerEditorTabController;
 	TabView::OutlinerState outlinerState;
 
-	Prototype* prototype { nullptr };
-	CameraRotationInputHandler* cameraRotationInputHandler { nullptr };
+	unique_ptr<Prototype> prototype;
+	unique_ptr<CameraRotationInputHandler> cameraRotationInputHandler;
 	PrototypeDisplaySubView* prototypeDisplayView { nullptr };
 	PrototypePhysicsSubView* prototypePhysicsView { nullptr };
 	Vector3 objectScale;
@@ -93,7 +95,7 @@ public:
 	 * @return associated tab controller
 	 */
 	inline TabController* getTabController() override {
-		return triggerEditorTabController;
+		return triggerEditorTabController.get();
 	}
 
 	/**
@@ -107,7 +109,7 @@ public:
 	 * @return prototype
 	 */
 	inline Prototype* getPrototype() {
-		return prototype;
+		return prototype.get();
 	}
 
 	// overridden methods

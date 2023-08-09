@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -13,6 +14,7 @@
 #include <tdme/os/threading/Thread.h>
 
 using std::vector;
+using std::unique_ptr;
 
 using tdme::engine::logics::Context;
 using tdme::engine::logics::Logic;
@@ -40,9 +42,16 @@ public:
 	ApplicationClient(Context* context, UDPClient* udpClient = nullptr);
 
 	/**
+	 * Public constructor
+	 */
+	virtual ~ApplicationClient();
+
+	/**
 	 * @return mutex
 	 */
-	Mutex* getMutex();
+	inline Mutex* getMutex() {
+		return &mutex;
+	}
 
 	/**
 	 * @return audio gain
@@ -57,6 +66,13 @@ public:
 	 */
 	void setAudioGain(float gain) {
 		this->audioGain = gain;
+	}
+
+	/**
+	 * @return context
+	 */
+	inline Context* getContext() {
+		return context.get();
 	}
 
 	/**
@@ -125,8 +141,8 @@ private:
 	void handleInNetworkPackets(const vector<Logic*>& logics, vector<LogicNetworkPacket>& inLogicNetworkPackets);
 
 private:
-	Context* context { nullptr };
+	unique_ptr<Context> context;
 	Mutex mutex;
-	UDPClient* udpClient { nullptr };
+	unique_ptr<UDPClient> udpClient;
 	float audioGain { 1.0f };
 };

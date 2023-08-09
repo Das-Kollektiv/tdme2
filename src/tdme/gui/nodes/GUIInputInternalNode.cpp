@@ -116,7 +116,6 @@ void GUIInputInternalNode::dispose()
 {
 	if (font != nullptr) font->dispose();
 	GUINode::dispose();
-	this->getController()->dispose();
 }
 
 void GUIInputInternalNode::render(GUIRenderer* guiRenderer)
