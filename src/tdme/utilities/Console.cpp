@@ -60,6 +60,7 @@ void Console::LogWriterThread::flush() {
 }
 
 void Console::setLogger(Console::Logger* logger) {
+	if (Console::logger == logger) return;
 	if (Console::logger != nullptr) delete Console::logger;
 	Console::logger = logger;
 }

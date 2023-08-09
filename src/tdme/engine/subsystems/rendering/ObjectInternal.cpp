@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Color4.h>
@@ -19,6 +20,7 @@
 
 using std::string;
 using std::unique_ptr;
+using std::unordered_map;
 
 using tdme::engine::Color4;
 using tdme::engine::model::Face;
@@ -103,7 +105,7 @@ void ObjectInternal::setTextureMatrix(const Matrix2D3x3& textureMatrix, const st
 void ObjectInternal::setNodeTransformMatrix(const string& id, const Matrix4x4& matrix) {
 	nodeTransformMatrixUpdate = true;
 	ObjectBase::setNodeTransformMatrix(id, matrix);
-	map<string, Matrix4x4*> _overriddenTransformMatrices;
+	unordered_map<string, Matrix4x4*> _overriddenTransformMatrices;
 	for (const auto& [overriddenTransformMatrixId, overriddenTransformMatrix]: instanceAnimations[currentInstance]->overriddenTransformMatrices) {
 		_overriddenTransformMatrices[overriddenTransformMatrixId] = new Matrix4x4(*overriddenTransformMatrix);
 	}
@@ -114,7 +116,7 @@ void ObjectInternal::setNodeTransformMatrix(const string& id, const Matrix4x4& m
 void ObjectInternal::unsetNodeTransformMatrix(const string& id) {
 	nodeTransformMatrixUpdate = true;
 	ObjectBase::unsetNodeTransformMatrix(id);
-	map<string, Matrix4x4*> _overriddenTransformMatrices;
+	unordered_map<string, Matrix4x4*> _overriddenTransformMatrices;
 	for (const auto& [overriddenTransformMatrixId, overriddenTransformMatrix]: instanceAnimations[currentInstance]->overriddenTransformMatrices) {
 		_overriddenTransformMatrices[overriddenTransformMatrixId] = new Matrix4x4(*overriddenTransformMatrix);
 	}

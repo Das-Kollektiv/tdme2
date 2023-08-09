@@ -3,6 +3,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -24,6 +25,7 @@ using std::map;
 using std::string;
 using std::to_string;
 using std::unique_ptr;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::model::Animation;
@@ -297,7 +299,7 @@ void ObjectAnimation::unsetNodeTransformMatrix(const string& id)
 	updateNodeLists();
 }
 
-void ObjectAnimation::createNodesTransformMatrices(map<string, Matrix4x4*>& matrices, vector<FlattenedNode>& nodeList, const map<string, Node*>& nodes, Matrix4x4* parentTransformMatrix, AnimationState* animationState)
+void ObjectAnimation::createNodesTransformMatrices(unordered_map<string, Matrix4x4*>& matrices, vector<FlattenedNode>& nodeList, const map<string, Node*>& nodes, Matrix4x4* parentTransformMatrix, AnimationState* animationState)
 {
 	// iterate through nodes
 	for (const auto& [nodeIt, node]: nodes) {
@@ -549,7 +551,7 @@ int32_t ObjectAnimation::determineSkinnedNodes(const map<string, Node*>& nodes, 
 	return idx;
 }
 
-map<string, Matrix4x4*>* ObjectAnimation::getSkinningNodesTransformMatrices(Node* node)
+unordered_map<string, Matrix4x4*>* ObjectAnimation::getSkinningNodesTransformMatrices(Node* node)
 {
 	if (hasSkinning == false) return nullptr;
 	for (auto i = 0; i < skinningNodes.size(); i++) {

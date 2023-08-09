@@ -32,6 +32,7 @@ SOFTWARE.
 #include <tdme/video/decoder/MPEG1Decoder.h>
 #include <tdme/video/decoder/VideoDecoderException.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -41,8 +42,10 @@ SOFTWARE.
 
 using tdme::video::decoder::MPEG1Decoder;
 
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::math::Math;
 using tdme::utilities::ByteBuffer;
@@ -70,8 +73,8 @@ void MPEG1Decoder::openFile(const string& pathName, const string& fileName) {
 	videoDuration = plm_get_duration(plm);
 	videoWidth = plm_get_width(plm);
 	videoHeight = plm_get_height(plm);
-	videoBuffer = ByteBuffer::allocate(static_cast<int>(videoWidth) * static_cast<int>(videoHeight) * 4);
-	audioBuffer = ByteBuffer::allocate(32768);
+	videoBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(static_cast<int>(videoWidth) * static_cast<int>(videoHeight) * 4));
+	audioBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(32768));
 
 	// request looping, enable audio, use stream 0
 	plm_set_loop(plm, TRUE);
@@ -119,9 +122,7 @@ void MPEG1Decoder::close() {
 	if (plm == nullptr) return;
 	plm_destroy(plm);
 	plm = nullptr;
-	if (videoBuffer != nullptr) delete videoBuffer;
 	videoBuffer = nullptr;
-	if (audioBuffer != nullptr) delete audioBuffer;
 	audioBuffer = nullptr;
 }
 

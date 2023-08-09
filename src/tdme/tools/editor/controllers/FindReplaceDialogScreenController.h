@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -13,6 +14,7 @@
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
+using std::unique_ptr;
 
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
@@ -50,11 +52,11 @@ private:
 	GUIElementNode* replaceButton { nullptr };
 	GUIElementNode* replaceAllButton { nullptr };
 
-	Action* findAction { nullptr };
-	Action* countAction { nullptr };
-	Action* replaceAction { nullptr };
-	Action* replaceAllAction { nullptr };
-	Action* completeAction { nullptr };
+	unique_ptr<Action> findAction;
+	unique_ptr<Action> countAction;
+	unique_ptr<Action> replaceAction;
+	unique_ptr<Action> replaceAllAction;
+	unique_ptr<Action> completeAction;
 
 public:
 	// forbid class copy

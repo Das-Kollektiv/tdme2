@@ -2172,7 +2172,6 @@ bool Engine::makeScreenshot(vector<uint8_t>& pngData)
 		Texture::TEXTUREFORMAT_RGBA,
 		*pixels
 	);
-
 	texture->acquireReference();
 	PNGTextureWriter::write(texture, pngData);
 	texture->releaseReference();

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -12,6 +13,7 @@
 
 using std::map;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::model::Animation;
@@ -40,8 +42,8 @@ private:
 	vector<TextureCoordinate> textureCoordinates;
 	vector<Vector3> tangents;
 	vector<Vector3> bitangents;
-	Animation* animation;
-	Skinning* skinning;
+	unique_ptr<Animation> animation;
+	unique_ptr<Skinning> skinning;
 	vector<FacesEntity> facesEntities;
 	vector<Vector3> origins;
 	map<string, Node*> subNodes;
@@ -225,7 +227,7 @@ public:
 	 * @return animation
 	 */
 	inline Animation* getAnimation() {
-		return animation;
+		return animation.get();
 	}
 
 	/**
@@ -238,7 +240,7 @@ public:
 	 * @return skinning or null
 	 */
 	inline Skinning* getSkinning() {
-		return skinning;
+		return skinning.get();
 	}
 
 	/**

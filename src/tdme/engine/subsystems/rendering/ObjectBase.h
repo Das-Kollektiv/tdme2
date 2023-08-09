@@ -1,6 +1,5 @@
 #pragma once
 
-#include <map>
 #include <memory>
 #include <string>
 #include <vector>
@@ -17,7 +16,6 @@
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Matrix4x4.h>
 
-using std::map;
 using std::string;
 using std::unique_ptr;
 using std::vector;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <string>
 #include <vector>
 
@@ -8,6 +9,7 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 
+using std::find;
 using std::string;
 using std::vector;
 
@@ -75,12 +77,13 @@ public:
 	 * @param model model
 	 */
 	inline void setModels(const vector<Model*>& models) {
-		this->models.resize(models.size());
-		for (auto i = 0; i < models.size(); i++) {
-			if (i < this->models.size() && this->models[i] == models[i]) continue;
-			if (i < this->models.size() && this->models[i] != nullptr) delete this->models[i];
-			this->models[i] = models[i];
+		// iterate old models
+		for (auto model: this->models) {
+			// find old model in new models, if not found, delete model
+			if (find(models.begin(), models.end(), model) == models.end()) delete model;
 		}
+		//
+		this->models = models;
 	}
 
 	/**

@@ -1275,20 +1275,16 @@ void SceneConnector::resetEngine(Engine* engine, Scene* scene) {
 		auto idx = 0;
 		Entity* entity = nullptr;
 		while ((entity = engine->getEntity("tdme.terrain." + to_string(idx++))) != nullptr) {
-			Model* model = nullptr;
-			if (entity->getEntityType() == Entity::ENTITYTYPE_OBJECT) model = static_cast<Object*>(entity)->getModel();
+			auto model = unique_ptr<Model>(entity->getEntityType() == Entity::ENTITYTYPE_OBJECT?static_cast<Object*>(entity)->getModel():nullptr);
 			engine->removeEntity(entity->getId());
-			if (model != nullptr) delete model;
 		}
 	}
 	{
 		auto idx = 0;
 		Entity* entity = nullptr;
 		while ((entity = engine->getEntity("tdme.water." + to_string(idx++))) != nullptr) {
-			Model* model = nullptr;
-			if (entity->getEntityType() == Entity::ENTITYTYPE_OBJECT) model = static_cast<Object*>(entity)->getModel();
+			auto model = unique_ptr<Model>(entity->getEntityType() == Entity::ENTITYTYPE_OBJECT?static_cast<Object*>(entity)->getModel():nullptr);
 			engine->removeEntity(entity->getId());
-			if (model != nullptr) delete model;
 		}
 	}
 	//

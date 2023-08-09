@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -8,6 +9,7 @@
 #include <tdme/utilities/Time.h>
 
 using std::string;
+using std::unique_ptr;
 
 using tdme::network::udp::UDPPacket;
 using tdme::utilities::Time;
@@ -31,7 +33,6 @@ public:
 	 * Public destructor
 	 */
 	inline ~UDPClientMessage() {
-		if (packet != nullptr) delete packet;
 	}
 
 	/**
@@ -78,7 +79,7 @@ public:
 	 * @return udp client packet
 	 */
 	inline const UDPPacket* getPacket() {
-		return packet;
+		return packet.get();
 	}
 
 private:
@@ -102,7 +103,7 @@ private:
 		clientId(clientId),
 		messageId(messageId),
 		retries(retries),
-		packet(packet),
+		packet(unique_ptr<const UDPPacket>(packet)),
 		time(Time::getCurrentMillis())
 	{
 		// no op
@@ -128,5 +129,5 @@ private:
 	MessageType messageType;
 	uint32_t clientId;
 	uint32_t messageId;
-	const UDPPacket* packet;
+	unique_ptr<const UDPPacket> packet;
 };

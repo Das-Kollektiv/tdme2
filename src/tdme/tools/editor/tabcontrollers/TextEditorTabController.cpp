@@ -1,6 +1,7 @@
 #include <tdme/tools/editor/tabcontrollers/TextEditorTabController.h>
 
 #include <array>
+#include <memory>
 #include <string>
 #include <unordered_map>
 
@@ -44,7 +45,9 @@
 using tdme::tools::editor::tabcontrollers::TextEditorTabController;
 
 using std::array;
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 using std::unordered_map;
 
 using tdme::engine::Texture;
@@ -476,25 +479,25 @@ void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx
 	}
 
 	// load specific MiniScript
-	if (scriptInstance != nullptr) delete scriptInstance;
 	scriptInstance = nullptr;
 	if (logicMiniScript == true) {
 		Console::println("TextEditorTabController::updateMiniScriptSyntaxTree(): " + scriptFileName + ": Detected Logic MiniScript");
-		scriptInstance = new LogicMiniScript();
+		scriptInstance = make_unique<LogicMiniScript>();
 		scriptInstance->loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName));
 	} else
 	if (guiMiniScript == true) {
 		Console::println("TextEditorTabController::updateMiniScriptSyntaxTree(): " + scriptFileName + ": Detected GUI MiniScript");
-		scriptInstance = new GUIMiniScript(nullptr);
+		scriptInstance = make_unique<GUIMiniScript>(nullptr);
 		scriptInstance->loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName));
 	} else {
 		Console::println("TextEditorTabController::updateMiniScriptSyntaxTree(): " + scriptFileName + ": Detected no specific Miniscript, using default MiniScript");
-		scriptInstance = new MiniScript();
+		scriptInstance = make_unique<MiniScript>();
 		scriptInstance->loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName));
 	}
 
 	//
 	if (scriptInstance->isValid() == false)  {
+		scriptInstance = nullptr;
 		miniScriptSyntaxTrees.clear();
 		view->setMiniScriptMethodOperatorMap({});
 		view->updateMiniScriptSyntaxTree(miniScriptScriptIdx);

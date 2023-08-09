@@ -1,12 +1,16 @@
 #pragma once
 
+#include <memory>
+
 #include <tdme/tdme.h>
 #include <tdme/gui/effects/fwd-tdme.h>
 #include <tdme/gui/effects/GUIEffectState.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/Action.h>
+
+using std::unique_ptr;
 
 using tdme::gui::effects::GUIEffectState;
 using tdme::gui::nodes::GUIColor;
@@ -36,7 +40,7 @@ protected:
 	bool yoyo { false };
 	int yoyoLeft { 0 };
 	bool persistant { false };
-	Action* action { nullptr };
+	unique_ptr<Action> action;
 	GUINode* node { nullptr };
 	GUIEffectState originalStartState;
 	GUIEffectState originalEndState;
@@ -137,7 +141,7 @@ public:
 	 * @return action to be performed on effect end
 	 */
 	inline Action* getAction() const {
-		return action;
+		return action.get();
 	}
 
 	/**
@@ -145,7 +149,7 @@ public:
 	 * @param action action
 	 */
 	inline void setAction(Action* action) {
-		this->action = action;
+		this->action = unique_ptr<Action>(action);
 	}
 
 	/**

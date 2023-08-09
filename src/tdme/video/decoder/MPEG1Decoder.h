@@ -4,15 +4,17 @@
 	#include <ext/pl_mpeg/pl_mpeg.h>
 #endif
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/ByteBuffer.h>
 #include <tdme/video/decoder/fwd-tdme.h>
 #include <tdme/video/decoder/VideoDecoder.h>
 
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::utilities::ByteBuffer;
@@ -51,8 +53,8 @@ public:
 
 private:
 	plm_t* plm { nullptr };
-	ByteBuffer* videoBuffer { nullptr };
-	ByteBuffer* audioBuffer { nullptr };
+	unique_ptr<ByteBuffer> videoBuffer;
+	unique_ptr<ByteBuffer> audioBuffer;
 
 	/**
 	 * PLM on video

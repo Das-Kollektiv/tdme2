@@ -43,8 +43,6 @@ Node::Node(Model* model, Node* parentNode, const string& id, const string& name)
 }
 
 Node::~Node() {
-	if (animation != nullptr) delete animation;
-	if (skinning != nullptr) delete skinning;
 }
 
 void Node::setVertices(const vector<Vector3>& vertices)
@@ -95,15 +93,13 @@ void Node::setBitangents(const vector<Vector3>& bitangents)
 }
 
 void Node::setAnimation(Animation* animation) {
-	if (this->animation != nullptr && this->animation != animation) delete this->animation;
-	this->animation = animation;
+	this->animation = unique_ptr<Animation>(animation);
 }
 
 void Node::setSkinning(Skinning* skinning)
 {
-	if (this->skinning != nullptr && this->skinning != skinning) delete this->skinning;
+	this->skinning = unique_ptr<Skinning>(skinning);
 	if (skinning != nullptr) model->setHasSkinning(true);
-	this->skinning = skinning;
 }
 
 int32_t Node::getFaceCount() const

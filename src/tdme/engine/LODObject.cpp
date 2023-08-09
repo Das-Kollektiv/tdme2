@@ -1,15 +1,20 @@
 #include <tdme/engine/LODObject.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Object.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/Transform.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 
+using tdme::engine::model::Model;
 using tdme::engine::Engine;
 using tdme::engine::LODObject;
 using tdme::engine::Object;
@@ -50,15 +55,15 @@ LODObject::LODObject(
 	this->entityTransformMatrix.identity();
 
 	if (modelLOD1 != nullptr) {
-		objectLOD1 = new Object(id + ".lod1", modelLOD1);
+		objectLOD1 = make_unique<Object>(id + ".lod1", modelLOD1);
 		objectLOD1->setParentEntity(this);
 	}
 	if (modelLOD2 != nullptr) {
-		objectLOD2 = new Object(id + ".lod2", modelLOD2);
+		objectLOD2 = make_unique<Object>(id + ".lod2", modelLOD2);
 		objectLOD2->setParentEntity(this);
 	}
 	if (modelLOD3 != nullptr) {
-		objectLOD3 = new Object(id + ".lod3", modelLOD3);
+		objectLOD3 = make_unique<Object>(id + ".lod3", modelLOD3);
 		objectLOD3->setParentEntity(this);
 	}
 
@@ -74,10 +79,6 @@ LODObject::LODObject(
 }
 
 LODObject::~LODObject() {
-	// delegate to LOD objects
-	if (objectLOD1 != nullptr) delete objectLOD1;
-	if (objectLOD2 != nullptr) delete objectLOD2;
-	if (objectLOD3 != nullptr) delete objectLOD3;
 }
 
 void LODObject::setEngine(Engine* engine)

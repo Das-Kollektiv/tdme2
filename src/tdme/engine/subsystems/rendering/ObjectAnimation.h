@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -15,6 +16,7 @@
 
 using std::map;
 using std::string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::model::Animation;
@@ -102,17 +104,17 @@ protected:
 
 	Model* model;
 	Engine::AnimationProcessingTarget animationProcessingTarget;
-	map<string, Matrix4x4*> overriddenTransformMatrices;
-	vector<map<string, Matrix4x4*>> transformMatrices;
+	unordered_map<string, Matrix4x4*> overriddenTransformMatrices;
+	vector<unordered_map<string, Matrix4x4*>> transformMatrices;
 	bool hasSkinning;
 	bool hasAnimations;
-	vector<map<string, Matrix4x4*>> skinningNodesMatrices;
+	vector<unordered_map<string, Matrix4x4*>> skinningNodesMatrices;
 	vector<Node*> skinningNodes;
 	vector<vector<NodeSkinningJoint>> skinningNodesNodeSkinningJoints;
 	vector<AnimationState> baseAnimations;
 	int baseAnimationIdx;
-	map<string, AnimationState*> overlayAnimationsById;
-	map<string, AnimationState*> overlayAnimationsByJointId;
+	unordered_map<string, AnimationState*> overlayAnimationsById;
+	unordered_map<string, AnimationState*> overlayAnimationsByJointId;
 	vector<vector<FlattenedNode>> nodeLists;
 
 	// forbid class copy
@@ -138,7 +140,7 @@ protected:
 	 * @param parentTransformMatrix parent transform matrix
 	 * @param animationState animation state
 	 */
-	void createNodesTransformMatrices(map<string, Matrix4x4*>& matrices, vector<FlattenedNode>& nodeList, const map<string, Node*>& nodes, Matrix4x4* parentTransformMatrix = nullptr, AnimationState* animationState = nullptr);
+	void createNodesTransformMatrices(unordered_map<string, Matrix4x4*>& matrices, vector<FlattenedNode>& nodeList, const map<string, Node*>& nodes, Matrix4x4* parentTransformMatrix = nullptr, AnimationState* animationState = nullptr);
 
 	/**
 	 * Update node list
@@ -194,7 +196,7 @@ protected:
 	 * @param node node
 	 * @return matrices
 	 */
-	map<string, Matrix4x4*>* getSkinningNodesTransformMatrices(Node* node);
+	unordered_map<string, Matrix4x4*>* getSkinningNodesTransformMatrices(Node* node);
 
 public:
 

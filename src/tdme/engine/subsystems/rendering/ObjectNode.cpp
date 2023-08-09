@@ -117,8 +117,8 @@ void ObjectNode::createNodes(ObjectBase* object, const map<string, Node*>& nodes
 			objectNode->node = node;
 			objectNode->animated = animated;
 			objectNode->renderer = make_unique<ObjectNodeRenderer>(objectNode);
-			vector<map<string, Matrix4x4*>*> instancesTransformMatrices;
-			vector<map<string, Matrix4x4*>*> instancesSkinningNodesMatrices;
+			vector<unordered_map<string, Matrix4x4*>*> instancesTransformMatrices;
+			vector<unordered_map<string, Matrix4x4*>*> instancesSkinningNodesMatrices;
 			for (auto animation: object->instanceAnimations) {
 				instancesTransformMatrices.push_back(&animation->transformMatrices[0]);
 				instancesSkinningNodesMatrices.push_back(animation->getSkinningNodesTransformMatrices(objectNode->node));

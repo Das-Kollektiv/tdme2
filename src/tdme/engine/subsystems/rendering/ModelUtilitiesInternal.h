@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -13,6 +14,7 @@
 
 using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
@@ -34,7 +36,7 @@ public:
 	 * @param overriddenNodeTransformMatrices overridden node transform matrices
 	 * @return axis aligned bounding box
 	 */
-	static BoundingBox* createBoundingBox(Model* model, const map<string, Matrix4x4*> overriddenNodeTransformMatrices = map<string, Matrix4x4*>());
+	static BoundingBox* createBoundingBox(Model* model, const unordered_map<string, Matrix4x4*> overriddenNodeTransformMatrices = unordered_map<string, Matrix4x4*>());
 
 	/**
 	 * Invert normals of a model

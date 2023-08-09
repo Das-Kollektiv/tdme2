@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/AnimationSetup.h>
@@ -23,6 +24,7 @@
 
 using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Face;
@@ -42,7 +44,7 @@ using tdme::engine::Timing;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-BoundingBox* ModelUtilitiesInternal::createBoundingBox(Model* model, const map<string, Matrix4x4*> overriddenNodeTransformMatrices)
+BoundingBox* ModelUtilitiesInternal::createBoundingBox(Model* model, const unordered_map<string, Matrix4x4*> overriddenNodeTransformMatrices)
 {
 	ObjectModelInternal objectModel(model);
 	objectModel.instanceAnimations[0]->overriddenTransformMatrices = overriddenNodeTransformMatrices;

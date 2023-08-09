@@ -17,7 +17,6 @@ GUIEffect::GUIEffect(EffectType type, GUINode* guiNode): type(type), node(guiNod
 }
 
 GUIEffect::~GUIEffect() {
-	if (action != nullptr) delete action;
 }
 
 void GUIEffect::start()

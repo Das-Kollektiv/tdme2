@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/Face.h>
@@ -28,6 +29,7 @@
 
 using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
@@ -50,7 +52,7 @@ using tdme::utilities::Console;
 using tdme::utilities::FloatBuffer;
 using tdme::utilities::ShortBuffer;
 
-ObjectNodeMesh::ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Node* node, const vector<map<string, Matrix4x4*>*>& transformMatrices, const vector<map<string, Matrix4x4*>*>& skinningMatrices, int instances)
+ObjectNodeMesh::ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Node* node, const vector<unordered_map<string, Matrix4x4*>*>& transformMatrices, const vector<unordered_map<string, Matrix4x4*>*>& skinningMatrices, int instances)
 {
 	//
 	this->instances = instances;

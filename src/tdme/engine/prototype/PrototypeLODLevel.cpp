@@ -1,5 +1,6 @@
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -10,6 +11,7 @@
 using tdme::engine::prototype::PrototypeLODLevel;
 
 using std::string;
+using std::unique_ptr;
 
 using tdme::engine::Color4;
 using tdme::engine::model::Model;
@@ -23,12 +25,11 @@ PrototypeLODLevel::PrototypeLODLevel(
 ) :
 	type(type),
 	fileName(fileName),
-	model(model),
+	model(unique_ptr<Model>(model)),
 	minDistance(minDistance) {
 	colorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
 	colorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 PrototypeLODLevel::~PrototypeLODLevel() {
-	if (model != nullptr) delete model;
 }

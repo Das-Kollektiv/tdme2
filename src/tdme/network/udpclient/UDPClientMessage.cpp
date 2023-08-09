@@ -87,7 +87,7 @@ void UDPClientMessage::generate(char message[512], uint16_t& bytes) {
 	generatedPacket.putBytes((const uint8_t*)clientIdEncoded.data(), clientIdEncoded.size());
 	generatedPacket.putBytes((const uint8_t*)messageIdEncoded.data(), messageIdEncoded.size());
 	generatedPacket.putByte(retriesEncoded[retriesEncoded.size() - 1]);
-	if (packet != nullptr) generatedPacket.putPacket(packet);
+	if (packet != nullptr) generatedPacket.putPacket(packet.get());
 	bytes = generatedPacket.getPosition();
 	memcpy(message, generatedPacket.getData().data(), bytes);
 }

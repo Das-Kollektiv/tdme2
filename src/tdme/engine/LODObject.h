@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -21,6 +22,7 @@
 
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::engine::Color4;
 using tdme::engine::model::Model;
@@ -64,9 +66,9 @@ private:
 	LODLevelType levelTypeLOD3;
 
 	string id;
-	Object* objectLOD1 { nullptr };
-	Object* objectLOD2 { nullptr };
-	Object* objectLOD3 { nullptr };
+	unique_ptr<Object> objectLOD1;
+	unique_ptr<Object> objectLOD2;
+	unique_ptr<Object> objectLOD3;
 	Object* objectLOD { nullptr };
 	int levelLOD;
 	bool enabled;
@@ -141,21 +143,21 @@ public:
 	 * @return LOD object 1
 	 */
 	inline Object* getLOD1Object() {
-		return objectLOD1;
+		return objectLOD1.get();
 	}
 
 	/**
 	 * @return LOD object 2
 	 */
 	inline Object* getLOD2Object() {
-		return objectLOD2;
+		return objectLOD2.get();
 	}
 
 	/**
 	 * @return LOD object 3
 	 */
 	inline Object* getLOD3Object() {
-		return objectLOD3;
+		return objectLOD3.get();
 	}
 
 	/**
@@ -205,15 +207,15 @@ public:
 		} else
 		if (levelTypeLOD3 != LODLEVELTYPE_NONE &&
 			objectCamFromLengthSquared >= Math::square(modelLOD3MinDistance)) {
-			objectLOD = objectLOD3;
+			objectLOD = objectLOD3.get();
 			levelLOD = 3;
 		} else
 		if (levelTypeLOD2 != LODLEVELTYPE_NONE &&
 			objectCamFromLengthSquared >= Math::square(modelLOD2MinDistance)) {
-			objectLOD = objectLOD2;
+			objectLOD = objectLOD2.get();
 			levelLOD = 2;
 		} else {
-			objectLOD = objectLOD1;
+			objectLOD = objectLOD1.get();
 			levelLOD = 1;
 		}
 

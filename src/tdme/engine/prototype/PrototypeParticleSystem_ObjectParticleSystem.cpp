@@ -1,5 +1,6 @@
 #include <tdme/engine/prototype/PrototypeParticleSystem_ObjectParticleSystem.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -11,6 +12,7 @@
 #include <tdme/utilities/StringTools.h>
 
 using std::string;
+using std::unique_ptr;
 
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Model;
@@ -22,18 +24,16 @@ using tdme::utilities::StringTools;
 
 void PrototypeParticleSystem_ObjectParticleSystem::setModelFile(const string& modelFileName, bool useBC7TextureCompression)
 {
-	if (this->model != nullptr) delete model;
-	this->model = nullptr;
-	this->modelFileName = modelFileName;
 	if (modelFileName.empty() == false) {
-		model = ModelReader::read(
-			Tools::getPathName(modelFileName),
-			Tools::getFileName(modelFileName),
-			useBC7TextureCompression
+		model = unique_ptr<Model>(
+			ModelReader::read(
+				Tools::getPathName(modelFileName),
+				Tools::getFileName(modelFileName),
+				useBC7TextureCompression
+			)
 		);
 	}
 }
 
 PrototypeParticleSystem_ObjectParticleSystem::~PrototypeParticleSystem_ObjectParticleSystem() {
-	if (model != nullptr) delete model;
 }

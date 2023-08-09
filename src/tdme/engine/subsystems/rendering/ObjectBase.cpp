@@ -1,8 +1,8 @@
 #include <tdme/engine/subsystems/rendering/ObjectBase.h>
 
-#include <map>
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -154,8 +154,8 @@ void ObjectBase::initialize()
 		auto objectNode = objectNodes[i];
 		// initiate mesh if not yet done, happens usually after disposing from engine and readding to engine
 		if (objectNode->mesh == nullptr) {
-			vector<map<string, Matrix4x4*>*> instancesTransformMatrices;
-			vector<map<string, Matrix4x4*>*> instancesSkinningNodesMatrices;
+			vector<unordered_map<string, Matrix4x4*>*> instancesTransformMatrices;
+			vector<unordered_map<string, Matrix4x4*>*> instancesSkinningNodesMatrices;
 			for (auto animation: objectNode->object->instanceAnimations) {
 				instancesTransformMatrices.push_back(&animation->transformMatrices[0]);
 				instancesSkinningNodesMatrices.push_back(animation->getSkinningNodesTransformMatrices(objectNode->node));

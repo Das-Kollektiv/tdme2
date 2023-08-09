@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -18,6 +19,7 @@
 
 using std::map;
 using std::string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::model::Node;
@@ -61,7 +63,7 @@ private:
 	vector<Vector3> transformedTangents;
 	vector<Vector3> transformedBitangents;
 	vector<TextureCoordinate> transformedTextureCoordinates;
-	vector<map<string, Matrix4x4*>*> skinningMatrices;
+	vector<unordered_map<string, Matrix4x4*>*> skinningMatrices;
 	vector<vector<Matrix4x4*>> jointsSkinningMatrices;
 	Engine::AnimationProcessingTarget animationProcessingTarget;
 
@@ -89,7 +91,7 @@ private:
 	 * @param skinningMatrices instances skinning matrices
 	 * @param instances instances
 	 */
-	ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Node* node, const vector<map<string, Matrix4x4*>*>& transformMatrices, const vector<map<string, Matrix4x4*>*>& skinningMatrices, int instances);
+	ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Node* node, const vector<unordered_map<string, Matrix4x4*>*>& transformMatrices, const vector<unordered_map<string, Matrix4x4*>*>& skinningMatrices, int instances);
 
 	/**
 	 * Computes skinning
