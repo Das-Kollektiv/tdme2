@@ -128,6 +128,7 @@ int main(int argc, char** argv)
 		}
 		// ok: conclusion: on Windows with MSC/MINGW smart pointers here come with a 10%-25% performance penalty
 		//	so we might not want to have this at performance critical code
+		// TODO: benchmark vector with unique_ptr va raw pointer
 	}
 	//
     return 0;
