@@ -326,12 +326,15 @@ Entity* SceneConnector::createEditorDecalEntity(Prototype* prototype, const stri
 
 	// add decal OBB
 	auto entityHierarchy = make_unique<EntityHierarchy>(id);
-	for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
-		auto entityBoundingVolume = prototype->getBoundingVolume(i);
-		if (entityBoundingVolume->getModel() != nullptr) {
-			auto bvObject = new Object("tdme.prototype.bv." + to_string(i), entityBoundingVolume->getModel());
-			bvObject->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
-			entityHierarchy->addEntity(bvObject);
+	{
+		auto i = 0;
+		for (auto prototypeBoundingVolume: prototype->getBoundingVolumes()) {
+			if (prototypeBoundingVolume->getModel() != nullptr) {
+				auto bvObject = new Object("tdme.prototype.bv." + to_string(i), prototypeBoundingVolume->getModel());
+				bvObject->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
+				entityHierarchy->addEntity(bvObject);
+			}
+			i++;
 		}
 	}
 	// add decal itself
@@ -435,15 +438,15 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 	// particle system
 	if (prototype->getType() == Prototype_Type::PARTICLESYSTEM) {
 		vector<ParticleSystem*> particleSystems;
-		for (auto i = 0; i < prototype->getParticleSystemsCount(); i++) {
+		auto i = 0;
+		for (auto prototypeParticleSystem: prototype->getParticleSystems()) {
 			auto particleSystem = createParticleSystem(
-				prototype->getParticleSystemAt(i),
+				prototypeParticleSystem,
 				id + (i == 0?"":"." + to_string(i)),
 				true
 			);
-			if (particleSystem != nullptr) {
-				particleSystems.push_back(dynamic_cast<ParticleSystem*>(particleSystem));
-			}
+			if (particleSystem != nullptr) particleSystems.push_back(dynamic_cast<ParticleSystem*>(particleSystem));
+			i++;
 		}
 		if (particleSystems.size() == 1) {
 			entity = dynamic_cast<Entity*>(particleSystems[0]);
@@ -475,12 +478,15 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 		prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING) {
 		// bounding volumes
 		auto entityHierarchy = make_unique<EntityHierarchy>(id);
-		for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
-			auto entityBoundingVolume = prototype->getBoundingVolume(i);
-			if (entityBoundingVolume->getModel() != nullptr) {
-				auto bvObject = new Object("tdme.prototype.bv." + to_string(i), entityBoundingVolume->getModel());
-				bvObject->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
-				entityHierarchy->addEntity(bvObject);
+		{
+			auto i = 0;
+			for (auto prototypeBoundingVolume: prototype->getBoundingVolumes()) {
+				if (prototypeBoundingVolume->getModel() != nullptr) {
+					auto bvObject = new Object("tdme.prototype.bv." + to_string(i), prototypeBoundingVolume->getModel());
+					bvObject->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
+					entityHierarchy->addEntity(bvObject);
+				}
+				i++;
 			}
 		}
 		if (prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING &&
@@ -828,9 +834,10 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 	// trigger
 	if (prototype->getType() == Prototype_Type::TRIGGER) {
 		vector<BoundingVolume*> boundingVolumes;
-		for (auto j = 0; j < prototype->getBoundingVolumeCount(); j++) {
-			auto entityBv = prototype->getBoundingVolume(j);
-			if (index == -1 || index == j) boundingVolumes.push_back(entityBv->getBoundingVolume());
+		auto j = 0;
+		for (auto prototypeBoundingVolume: prototype->getBoundingVolumes()) {
+			if (index == -1 || index == j) boundingVolumes.push_back(prototypeBoundingVolume->getBoundingVolume());
+			j++;
 		}
 		if (boundingVolumes.size() == 0) return nullptr;
 		return world->addStaticCollisionBody(
@@ -944,7 +951,7 @@ BodyHierarchy* SceneConnector::createSubBody(World* world, Prototype* prototype,
 		Console::println("SceneConnector::createSubBody(): body hierarchy not found: " + bodyHierarchyId);
 		return nullptr;
 	}
-	bodyHierarchy->addBody(id, transform, prototype->getBoundingVolumePrimitives(), bodyHierarchyParentId);
+	bodyHierarchy->addBody(id, transform, prototype->getBoundingVolumesPrimitives(), bodyHierarchyParentId);
 	bodyHierarchy->update();
 	return bodyHierarchy;
 }

@@ -291,12 +291,15 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 
 	// bounding volumes
 	auto entityBoundingVolumesHierarchy = new EntityHierarchy("tdme.prototype.bvs");
-	for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
-		auto entityBoundingVolume = prototype->getBoundingVolume(i);
-		if (entityBoundingVolume->getModel() != nullptr) {
-			auto bvObject = new Object("tdme.prototype.bv." + to_string(i), entityBoundingVolume->getModel());
-			bvObject->setEnabled(false);
-			entityBoundingVolumesHierarchy->addEntity(bvObject);
+	{
+		auto i = 0;
+		for (auto prototypeBoundingVolume: prototype->getBoundingVolumes()) {
+			if (prototypeBoundingVolume->getModel() != nullptr) {
+				auto bvObject = new Object("tdme.prototype.bv." + to_string(i), prototypeBoundingVolume->getModel());
+				bvObject->setEnabled(false);
+				entityBoundingVolumesHierarchy->addEntity(bvObject);
+			}
+			i++;
 		}
 	}
 	entityBoundingVolumesHierarchy->update();

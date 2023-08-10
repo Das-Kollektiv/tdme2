@@ -130,7 +130,7 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene* s
 		Value jSceneProperties;
 		jSceneProperties.SetArray();
 		for (auto i = 0; i < scene->getPropertyCount(); i++) {
-			auto sceneProperty = scene->getPropertyByIndex(i);
+			auto sceneProperty = scene->getPropertyAt(i);
 			Value jSceneProperty;
 			jSceneProperty.SetObject();
 			jSceneProperty.AddMember("name", Value(sceneProperty->getName(), jAllocator), jAllocator);
@@ -169,7 +169,7 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene* s
 			Value jEntityProperties;
 			jEntityProperties.SetArray();
 			for (auto i = 0; i < sceneEntity->getPropertyCount(); i++) {
-				auto sceneEntityProperty = sceneEntity->getPropertyByIndex(i);
+				auto sceneEntityProperty = sceneEntity->getPropertyAt(i);
 				Value jSceneEntityProperty;
 				jSceneEntityProperty.SetObject();
 				jSceneEntityProperty.AddMember("name", Value(sceneEntityProperty->getName(), jAllocator), jAllocator);

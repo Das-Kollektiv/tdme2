@@ -250,8 +250,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const Value& jP
 		if (jPrototypeRoot.FindMember("dfps") != jPrototypeRoot.MemberEnd()) prototype->getDecal()->setTextureSpritesFPS(jPrototypeRoot["dfps"].GetFloat());
 	}
 	//
-	for (auto i = 0; i < properties.getPropertyCount(); i++) {
-		auto property = properties.getPropertyByIndex(i);
+	for (auto property: properties.getProperties()) {
 		prototype->addProperty(property->getName(), property->getValue());
 	}
 	if (jPrototypeRoot.FindMember("bv") != jPrototypeRoot.MemberEnd()) {

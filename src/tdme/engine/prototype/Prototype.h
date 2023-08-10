@@ -20,7 +20,7 @@
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/UniquePtrSequenceIterator.h>
 
 using std::make_unique;
 using std::map;
@@ -44,6 +44,7 @@ using tdme::engine::scene::SceneLibrary;
 using tdme::engine::Entity;
 using tdme::engine::EntityShaderParameters;
 using tdme::math::Vector3;
+using tdme::utilities::UniquePtrSequenceIterator;
 
 /**
  * Prototype definition
@@ -266,6 +267,13 @@ public:
 	}
 
 	/**
+	 * @return bounding volumes iterator
+	 */
+	inline UniquePtrSequenceIterator<PrototypeBoundingVolume> getBoundingVolumes() {
+		return UniquePtrSequenceIterator<PrototypeBoundingVolume>(&boundingVolumes[0], &boundingVolumes[boundingVolumes.size()]);
+	}
+
+	/**
 	 * @return bounding volume count
 	 */
 	inline int getBoundingVolumeCount() {
@@ -299,9 +307,9 @@ public:
 	 * Get bounding volumes primitibves to be added to physics engine
 	 * @return bounding volume primitives
 	 */
-	inline const vector<BoundingVolume*> getBoundingVolumePrimitives() {
+	inline const vector<BoundingVolume*> getBoundingVolumesPrimitives() {
 		vector<BoundingVolume*> boundingVolumePrimitives;
-		for (auto& boundingVolume: boundingVolumes) {
+		for (const auto& boundingVolume: boundingVolumes) {
 			if (boundingVolume->getBoundingVolume() != nullptr) {
 				boundingVolumePrimitives.push_back(boundingVolume->getBoundingVolume());
 			}
@@ -362,10 +370,27 @@ public:
 	void setImposterLOD(PrototypeImposterLOD* imposterLOD);
 
 	/**
+	 * @return particle systems iterator
+	 */
+	inline UniquePtrSequenceIterator<PrototypeParticleSystem> getParticleSystems() {
+		return UniquePtrSequenceIterator<PrototypeParticleSystem>(&particleSystems[0], &particleSystems[particleSystems.size()]);
+	}
+
+	/**
 	 * @return particle systems count
 	 */
 	inline int getParticleSystemsCount() {
 		return particleSystems.size();
+	}
+
+	/**
+	 * Get particle system at given index
+	 * @param idx particle system index
+	 * @return prototype particle system
+	 */
+	inline PrototypeParticleSystem* getParticleSystemAt(int idx) {
+		if (idx < 0 || idx >= particleSystems.size()) return nullptr;
+		return particleSystems[idx].get();
 	}
 
 	/**
@@ -386,16 +411,6 @@ public:
 		const auto& particleSystem = particleSystems[idx];
 		particleSystems.erase(remove(particleSystems.begin(), particleSystems.end(), particleSystem), particleSystems.end());
 		return true;
-	}
-
-	/**
-	 * Get particle system at given index
-	 * @param idx particle system index
-	 * @return prototype particle system
-	 */
-	inline PrototypeParticleSystem* getParticleSystemAt(int idx) {
-		if (idx < 0 || idx >= particleSystems.size()) return nullptr;
-		return particleSystems[idx].get();
 	}
 
 	/**
@@ -494,29 +509,43 @@ public:
 	}
 
 	/**
-	 * @return sounds list
+	 * @return sounds iterator
 	 */
-	inline const vector<PrototypeAudio*> getSounds() {
-		vector<PrototypeAudio*> result;
-		for (const auto& sound: sounds) {
-			result.push_back(sound.get());
-		}
-		return result;
+	inline UniquePtrSequenceIterator<PrototypeAudio> getSounds() {
+		return UniquePtrSequenceIterator<PrototypeAudio>(&sounds[0], &sounds[sounds.size()]);
+	}
+
+	/**
+	 * @return sound count
+	 */
+	inline int getSoundCount() {
+		return sounds.size();
+	}
+
+	/**
+	 * Get sound at given index
+	 * @param idx index
+	 * @return prototype sound
+	 */
+	inline PrototypeAudio* getSoundAt(int idx) {
+		return idx >= 0 && idx < sounds.size()?sounds[idx].get():nullptr;
 	}
 
 	/**
 	 * Returns sound of given sound id
-	 * @param id id
-	 * @return sound
-	 *
-	 * TODO: make getSoundCount(), getSoundAt(), removeSoundAt(), ...
-	 *
 	 */
 	inline PrototypeAudio* getSound(const string& id) {
 		auto soundIt = soundsById.find(id);
 		if (soundIt == soundsById.end()) return nullptr;
 		return soundIt->second;
 	}
+
+	/**
+	 * Add sound with given id
+	 * @param id id
+	 * @return prototype audio
+	 */
+	PrototypeAudio* addSound(const string& id);
 
 	/**
 	 * Remove sound of given sound id
@@ -550,13 +579,6 @@ public:
 		soundsById[newId] = sound;
 		return true;
 	}
-
-	/**
-	 * Add sound with given id
-	 * @param id id
-	 * @return prototype audio
-	 */
-	PrototypeAudio* addSound(const string& id);
 
 	/**
 	 * @return environment map render pass mask

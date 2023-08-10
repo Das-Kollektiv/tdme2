@@ -1215,9 +1215,10 @@ void ParticleSystemEditorTabController::setOutlinerContent() {
 			xml+= "<selectbox-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Particle Systems") + "\" value=\"" + GUIParser::escape("particlesystems") + "\" />\n";
 		} else {
 			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Particle Systems") + "\" value=\"" + GUIParser::escape("particlesystems") + "\">\n";
-			for (auto i = 0; i < prototype->getParticleSystemsCount(); i++) {
-				auto particleSystem = prototype->getParticleSystemAt(i);
+			auto i = 0;
+			for (auto particleSystem: prototype->getParticleSystems()) {
 				xml+= "	<selectbox-option image=\"resources/engine/images/particle.png\" text=\"" + GUIParser::escape("Particle System " + to_string(i)) + "\" id=\"" + GUIParser::escape("particlesystems." + to_string(i)) + "\" value=\"" + GUIParser::escape("particlesystems." + to_string(i)) + "\" />\n";
+				i++;
 			}
 			xml+= "</selectbox-parent-option>\n";
 		}

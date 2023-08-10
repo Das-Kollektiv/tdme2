@@ -144,10 +144,10 @@ void PrototypeSoundsSubController::showInfoPopUp(const string& caption, const st
 }
 
 void PrototypeSoundsSubController::createOutlinerSoundsXML(Prototype* prototype, string& xml) {
-	if (prototype->getSounds().empty() == false) {
+	if (prototype->getSoundCount() > 0) {
 		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Sounds") + "\" value=\"" + GUIParser::escape("sounds") + "\">\n";
 		for (auto sound: prototype->getSounds()) {
-			auto soundId = sound->getId();
+			const auto& soundId = sound->getId();
 			xml+= "	<selectbox-option image=\"resources/engine/images/sound.png\" text=\"" + GUIParser::escape(soundId) + "\" id=\"" + GUIParser::escape("sounds." + soundId) + "\" value=\"" + GUIParser::escape("sounds." + soundId) + "\" />\n";
 		}
 		xml+= "</selectbox-parent-option>\n";

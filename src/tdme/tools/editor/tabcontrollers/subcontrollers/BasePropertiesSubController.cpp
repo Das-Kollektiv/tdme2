@@ -79,8 +79,7 @@ void BasePropertiesSubController::initialize(GUIScreenNode* screenNode)
 void BasePropertiesSubController::createBasePropertiesXML(BaseProperties* prototype, string& xml) {
 	if (prototype->getPropertyCount() > 0) {
 		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Properties") + "\" value=\"" + GUIParser::escape("properties") + "\">\n";
-		for (auto i = 0; i < prototype->getPropertyCount(); i++) {
-			auto property = prototype->getPropertyByIndex(i);
+		for (auto property: prototype->getProperties()) {
 			xml+= "	<selectbox-option image=\"resources/engine/images/script.png\" text=\"" + GUIParser::escape(property->getName() + ": " + property->getValue()) + "\" id=\"" + GUIParser::escape("properties." + property->getName()) + "\" value=\"" + GUIParser::escape("properties." + property->getName()) + "\" />\n";
 		}
 		xml+= "</selectbox-parent-option>\n";

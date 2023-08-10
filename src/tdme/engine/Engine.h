@@ -45,6 +45,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Pool.h>
 #include <tdme/utilities/TextureAtlas.h>
+#include <tdme/utilities/UniquePtrSequenceIterator.h>
 
 using std::array;
 using std::make_unique;
@@ -118,6 +119,7 @@ using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Pool;
 using tdme::utilities::TextureAtlas;
+using tdme::utilities::UniquePtrSequenceIterator;
 
 /**
  * Engine main class
@@ -1001,6 +1003,13 @@ public:
 	}
 
 	/**
+	 * @return lights iterator
+	 */
+	inline UniquePtrSequenceIterator<Light> getLights() {
+		return UniquePtrSequenceIterator<Light>(&lights[0], &lights[lights.size()]);
+	}
+
+	/**
 	 * @return count of lights
 	 */
 	inline int32_t getLightCount() {
@@ -1013,6 +1022,7 @@ public:
 	 * @return Light
 	 */
 	inline Light* getLightAt(int32_t idx) {
+		if (idx < 0 || idx >= lights.size()) return nullptr;
 		return lights[idx].get();
 	}
 

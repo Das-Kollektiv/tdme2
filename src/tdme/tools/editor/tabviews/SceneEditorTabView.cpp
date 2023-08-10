@@ -987,8 +987,7 @@ void SceneEditorTabView::pasteEntities(bool displayOnly)
 				pastePrototype
 			 );
 			BaseProperties* properties = copiedEntity;
-			for (int i = 0; i < properties->getPropertyCount(); i++) {
-				auto property = properties->getPropertyByIndex(i);
+			for (auto property: properties->getProperties()) {
 				sceneEntity->addProperty(property->getName(), property->getValue());
 			}
 			scene->addEntity(sceneEntity);

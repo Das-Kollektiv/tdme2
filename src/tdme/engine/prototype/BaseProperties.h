@@ -7,7 +7,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/UniquePtrSequenceIterator.h>
 
 using std::map;
 using std::string;
@@ -15,6 +15,9 @@ using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::prototype::BaseProperty;
+
+using tdme::utilities::ConstUniquePtrSequenceIterator;
+using tdme::utilities::UniquePtrSequenceIterator;
 
 /**
  * Base properties
@@ -96,13 +99,6 @@ public:
 	BaseProperty* getProperty(const string& name);
 
 	/**
-	 * @return property count
-	 */
-	inline int getPropertyCount() {
-		return properties.size();
-	}
-
-	/**
 	 * Get property index
 	 * @param name name
 	 * @return index or -1 if not found
@@ -117,11 +113,32 @@ public:
 	int getPropertyIndex(const string& name);
 
 	/**
+	 * @return Const properties iterator
+	 */
+	inline ConstUniquePtrSequenceIterator<BaseProperty> getProperties() const {
+		return ConstUniquePtrSequenceIterator<BaseProperty>(&properties[0], &properties[properties.size()]);
+	}
+
+	/**
+	 * @return Properties iterator
+	 */
+	inline UniquePtrSequenceIterator<BaseProperty> getProperties() {
+		return UniquePtrSequenceIterator<BaseProperty>(&properties[0], &properties[properties.size()]);
+	}
+
+	/**
+	 * @return property count
+	 */
+	inline int getPropertyCount() {
+		return properties.size();
+	}
+
+	/**
 	 * Get property by index
 	 * @param idx idx
 	 * @return property or null
 	 */
-	inline const BaseProperty* getPropertyByIndex(int idx) const {
+	inline const BaseProperty* getPropertyAt(int idx) const {
 		return idx >= 0 && idx < properties.size()?properties[idx].get():nullptr;
 	}
 
@@ -130,7 +147,7 @@ public:
 	 * @param idx idx
 	 * @return property or null
 	 */
-	inline BaseProperty* getPropertyByIndex(int idx) {
+	inline BaseProperty* getPropertyAt(int idx) {
 		return idx >= 0 && idx < properties.size()?properties[idx].get():nullptr;
 	}
 
