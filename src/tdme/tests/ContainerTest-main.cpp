@@ -46,14 +46,16 @@ int main(int argc, char** argv)
 			make_unique<PtrTest>(2),
 			make_unique<PtrTest>(3)
 		};
+		Console::println("array: iterating entries 1, 2, 3 via SequenceContainerIterator");
 		for (auto v: SequenceContainerIterator<PtrTest>(&array[0], &array[array.size()])) {
 			Console::println(to_string(v->v));
 		}
 		// vector
 		vector<unique_ptr<PtrTest>> vector;
-		vector.push_back(make_unique<PtrTest>(1));
-		vector.push_back(make_unique<PtrTest>(2));
-		vector.push_back(make_unique<PtrTest>(3));
+		vector.push_back(make_unique<PtrTest>(4));
+		vector.push_back(make_unique<PtrTest>(5));
+		vector.push_back(make_unique<PtrTest>(6));
+		Console::println("vector: iterating entries 4, 5, 6 via SequenceContainerIterator");
 		for (auto v: SequenceContainerIterator<PtrTest>(&vector[0], &vector[vector.size()])) {
 			Console::println(to_string(v->v));
 		}

@@ -35,7 +35,7 @@ LDFLAG_EXT_LIB := $(EXT_NAME)
 SRCS_PLATFORM =
 
 #
-CPPVERSION = -std=c++20
+CPPVERSION = -std=c++2a
 OFLAGS =
 EXTRAFLAGS = -DRAPIDJSON_HAS_STDSTRING
 INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src
