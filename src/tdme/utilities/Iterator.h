@@ -24,7 +24,7 @@ namespace utilities {
 template<typename T, typename V>
 struct Iterator
 {
-	// see_ https://www.internalpointers.com/post/writing-custom-iterators-modern-cpp
+	// see: https://www.internalpointers.com/post/writing-custom-iterators-modern-cpp
 	using iterator_category = forward_iterator_tag;
 	using difference_type = ptrdiff_t;
 	using value_type = V*;

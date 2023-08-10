@@ -52,6 +52,7 @@
   - https://google.github.io/filament/Filament.md.html#materialsystem/specularbrdf/geometricshadowing(specularg)
   - https://howtorts.github.io/2014/01/04/basic-flow-fields.html
   - https://hub.jmonkeyengine.org/t/depth-only-ssao/37749
+  - https://www.internalpointers.com/post/writing-custom-iterators-modern-cpp
   - https://jayconrod.com/posts/34/water-simulation-in-glsl
   - https://jogamp.org/joal-demos/www/
   - https://jogamp.org/wiki/index.php/Jogl_Tutorial
