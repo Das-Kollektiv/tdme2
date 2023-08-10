@@ -39,8 +39,11 @@ int main(int argc, char** argv)
 		vector.resize(3);
 		Console::println("vector.resize(3), capacity = " + to_string(vector.capacity()));
 	}
+	// unique_ptr
+	Console::println("unique_ptr: sizeof: " + to_string(sizeof(unique_ptr<void*>)));
 	// map tests
 	{
+		//
 		unordered_map<string, string> map {
 			{"0", "a"},
 			{"1", "b"},
@@ -49,6 +52,9 @@ int main(int argc, char** argv)
 		for (auto& [key, value]: map) {
 			Console::println(key + " -> " + value);
 		}
+	}
+	// testing performance of unique_ptr with vector and map containers
+	{
 		struct PtrTest {
 			int v { -1 };
 			int a { 1 };
@@ -62,12 +68,36 @@ int main(int argc, char** argv)
 			}
 		};
 		// testing performance of map with string key and raw pointer
-		unordered_map<string, PtrTest*> map2;
+		unordered_map<string, PtrTest*> map1;
+		{
+			Console::println("map1: inserting entries: init");
+			auto startTime = Time::getCurrentMillis();
+			for (auto i = 0; i < 10000000; i++) {
+				map1[to_string(i)] = new PtrTest(i);
+			}
+			auto endTime = Time::getCurrentMillis();
+			Console::println("map1: inserting entries: done in " + to_string(endTime - startTime) + " ms");
+		}
+		{
+			Console::println("map1: getting entries: init");
+			auto startTime = Time::getCurrentMillis();
+			auto x = 0ll;
+			for (auto i = 0; i < 10000000; i++) {
+				auto it = map1.find(to_string(i));
+				if (it == map1.end()) continue;
+				x+= it->second->v;
+			}
+			auto endTime = Time::getCurrentMillis();
+			Console::println("map1: getting entries: done in " + to_string(endTime - startTime) + " ms");
+			Console::println(to_string(x));
+		}
+		// testing performance of map with string key and smart pointer
+		unordered_map<string, unique_ptr<PtrTest>> map2;
 		{
 			Console::println("map2: inserting entries: init");
 			auto startTime = Time::getCurrentMillis();
 			for (auto i = 0; i < 10000000; i++) {
-				map2[to_string(i)] = new PtrTest(i);
+				map2[to_string(i)] = make_unique<PtrTest>(i);
 			}
 			auto endTime = Time::getCurrentMillis();
 			Console::println("map2: inserting entries: done in " + to_string(endTime - startTime) + " ms");
@@ -83,30 +113,6 @@ int main(int argc, char** argv)
 			}
 			auto endTime = Time::getCurrentMillis();
 			Console::println("map2: getting entries: done in " + to_string(endTime - startTime) + " ms");
-			Console::println(to_string(x));
-		}
-		// testing performance of map with string key and smart pointer
-		unordered_map<string, unique_ptr<PtrTest>> map3;
-		{
-			Console::println("map3: inserting entries: init");
-			auto startTime = Time::getCurrentMillis();
-			for (auto i = 0; i < 10000000; i++) {
-				map3[to_string(i)] = make_unique<PtrTest>(i);
-			}
-			auto endTime = Time::getCurrentMillis();
-			Console::println("map3: inserting entries: done in " + to_string(endTime - startTime) + " ms");
-		}
-		{
-			Console::println("map3: getting entries: init");
-			auto startTime = Time::getCurrentMillis();
-			auto x = 0ll;
-			for (auto i = 0; i < 10000000; i++) {
-				auto it = map3.find(to_string(i));
-				if (it == map3.end()) continue;
-				x+= it->second->v;
-			}
-			auto endTime = Time::getCurrentMillis();
-			Console::println("map3: getting entries: done in " + to_string(endTime - startTime) + " ms");
 			Console::println(to_string(x));
 		}
 		//
@@ -128,7 +134,74 @@ int main(int argc, char** argv)
 		}
 		// ok: conclusion: on Windows with MSC/MINGW smart pointers here come with a 10%-25% performance penalty
 		//	so we might not want to have this at performance critical code
-		// TODO: benchmark vector with unique_ptr va raw pointer
+		// testing performance of vector with raw pointer vs. smart pointer
+		vector<PtrTest*> vector1;
+		{
+			Console::println("vector1: inserting entries: init");
+			auto startTime = Time::getCurrentMillis();
+			vector1.resize(10000000);
+			for (auto i = 0; i < 10000000; i++) {
+				vector1[i] = new PtrTest(i);
+			}
+			auto endTime = Time::getCurrentMillis();
+			Console::println("vector1: inserting entries: done in " + to_string(endTime - startTime) + " ms");
+		}
+		{
+			Console::println("vector1: getting entries: init");
+			auto startTime = Time::getCurrentMillis();
+			auto x = 0ll;
+			for (auto i = 0; i < 10000000; i++) {
+				x+= vector1[i]->v;
+			}
+			auto endTime = Time::getCurrentMillis();
+			Console::println("vector1: getting entries: done in " + to_string(endTime - startTime) + " ms");
+			Console::println(to_string(x));
+		}
+		{
+			Console::println("vector1: iterator: getting entries: init");
+			auto startTime = Time::getCurrentMillis();
+			auto x = 0ll;
+			for (auto v: vector1) {
+				x+= v->v;
+			}
+			auto endTime = Time::getCurrentMillis();
+			Console::println("vector1: iterator: getting entries: done in " + to_string(endTime - startTime) + " ms");
+			Console::println(to_string(x));
+		}
+		//
+		vector<unique_ptr<PtrTest>> vector2;
+		{
+			Console::println("vector2: inserting entries: init");
+			auto startTime = Time::getCurrentMillis();
+			vector2.resize(10000000);
+			for (auto i = 0; i < 10000000; i++) {
+				vector2[i] = make_unique<PtrTest>(i);
+			}
+			auto endTime = Time::getCurrentMillis();
+			Console::println("vector2: inserting entries: done in " + to_string(endTime - startTime) + " ms");
+		}
+		{
+			Console::println("vector2: getting entries: init");
+			auto startTime = Time::getCurrentMillis();
+			auto x = 0ll;
+			for (auto i = 0; i < 10000000; i++) {
+				x+= vector2[i]->v;
+			}
+			auto endTime = Time::getCurrentMillis();
+			Console::println("vector2: getting entries: done in " + to_string(endTime - startTime) + " ms");
+			Console::println(to_string(x));
+		}
+		{
+			Console::println("vector2: iterator: getting entries: init");
+			auto startTime = Time::getCurrentMillis();
+			auto x = 0ll;
+			for (const auto& v: vector2) {
+				x+= v->v;
+			}
+			auto endTime = Time::getCurrentMillis();
+			Console::println("vector2: iterator: getting entries: done in " + to_string(endTime - startTime) + " ms");
+			Console::println(to_string(x));
+		}
 	}
 	//
     return 0;
