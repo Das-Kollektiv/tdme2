@@ -7,7 +7,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/Iterator.h>
+#include <tdme/utilities/UniquePtrSequenceIterator.h>
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
 
@@ -20,7 +20,7 @@ using std::unique_ptr;
 using std::unordered_map;
 
 using tdme::utilities::Console;
-using tdme::utilities::SequenceContainerIterator;
+using tdme::utilities::UniquePtrSequenceIterator;
 using tdme::utilities::StringTools;
 using tdme::utilities::Time;
 
@@ -47,7 +47,7 @@ int main(int argc, char** argv)
 			make_unique<PtrTest>(3)
 		};
 		Console::println("array: iterating entries 1, 2, 3 via SequenceContainerIterator");
-		for (auto v: SequenceContainerIterator<PtrTest>(&array[0], &array[array.size()])) {
+		for (auto v: UniquePtrSequenceIterator<PtrTest>(&array[0], &array[array.size()])) {
 			Console::println(to_string(v->v));
 		}
 		// vector
@@ -56,7 +56,7 @@ int main(int argc, char** argv)
 		vector.push_back(make_unique<PtrTest>(5));
 		vector.push_back(make_unique<PtrTest>(6));
 		Console::println("vector: iterating entries 4, 5, 6 via SequenceContainerIterator");
-		for (auto v: SequenceContainerIterator<PtrTest>(&vector[0], &vector[vector.size()])) {
+		for (auto v: UniquePtrSequenceIterator<PtrTest>(&vector[0], &vector[vector.size()])) {
 			Console::println(to_string(v->v));
 		}
 	}
