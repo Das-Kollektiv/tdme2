@@ -1,3 +1,4 @@
+#include <array>
 #include <memory>
 #include <string>
 #include <string_view>
@@ -6,9 +7,11 @@
 
 #include <tdme/tdme.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/Iterator.h>
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
 
+using std::array;
 using std::make_unique;
 using std::string;
 using std::to_string;
@@ -17,11 +20,44 @@ using std::unique_ptr;
 using std::unordered_map;
 
 using tdme::utilities::Console;
+using tdme::utilities::SequenceContainerIterator;
 using tdme::utilities::StringTools;
 using tdme::utilities::Time;
 
 int main(int argc, char** argv)
 {
+	// custom iterator test
+	{
+		struct PtrTest {
+			int v { -1 };
+			int a { 1 };
+			int b { 2 };
+			int c { 3 };
+			PtrTest(int v): v(v) {
+				// Console::println("PtrTest(): " + to_string(v));
+			}
+			~PtrTest() {
+				// Console::println("~PtrTest(): " + to_string(v));
+			}
+		};
+		// array
+		array<unique_ptr<PtrTest>, 3> array {
+			make_unique<PtrTest>(1),
+			make_unique<PtrTest>(2),
+			make_unique<PtrTest>(3)
+		};
+		for (auto v: SequenceContainerIterator<PtrTest>(&array[0], &array[array.size()])) {
+			Console::println(to_string(v->v));
+		}
+		// vector
+		vector<unique_ptr<PtrTest>> vector;
+		vector.push_back(make_unique<PtrTest>(1));
+		vector.push_back(make_unique<PtrTest>(2));
+		vector.push_back(make_unique<PtrTest>(3));
+		for (auto v: SequenceContainerIterator<PtrTest>(&vector[0], &vector[vector.size()])) {
+			Console::println(to_string(v->v));
+		}
+	}
 	// vector tests
 	{
 		vector<int> vector = { 1, 2, 3, 4, 5 };
