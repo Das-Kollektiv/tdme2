@@ -302,7 +302,7 @@ void ObjectAnimation::unsetNodeTransformMatrix(const string& id)
 void ObjectAnimation::createNodesTransformMatrices(unordered_map<string, Matrix4x4*>& matrices, vector<FlattenedNode>& nodeList, const map<string, Node*>& nodes, Matrix4x4* parentTransformMatrix, AnimationState* animationState)
 {
 	// iterate through nodes
-	for (const auto& [nodeIt, node]: nodes) {
+	for (const auto& [nodeId, node]: nodes) {
 		//
 		auto nodeAnimationState = animationState;
 		// put and associate transform matrices with node
