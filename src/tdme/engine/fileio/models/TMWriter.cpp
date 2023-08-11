@@ -246,7 +246,7 @@ void TMWriter::writeVertices(TMWriterOutputStream* os, const vector<Vector3>& v)
 	}
 }
 
-void TMWriter::writeTextureCoordinates(TMWriterOutputStream* os, const vector<Vector2>& tc) // TODO: change std::vector* argument to std::vector& ?
+void TMWriter::writeTextureCoordinates(TMWriterOutputStream* os, const vector<Vector2>& tc)
 {
 	if (tc.size() == 0) {
 		os->writeBoolean(false);
