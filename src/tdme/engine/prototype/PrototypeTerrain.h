@@ -10,6 +10,7 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeTerrainBrush.h>
 #include <tdme/engine/Transform.h>
+#include <tdme/utilities/UniquePtrSequenceIterator.h>
 
 using std::make_unique;
 using std::unique_ptr;
@@ -19,6 +20,7 @@ using std::vector;
 
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeTerrainBrush;
+using tdme::utilities::UniquePtrSequenceIterator;
 
 using tdme::engine::Transform;
 
@@ -260,10 +262,16 @@ public:
 	/**
 	 * @return prototype terrain brushes
 	 */
-	inline const vector<PrototypeTerrainBrush*> getBrushes() const {
-		vector<PrototypeTerrainBrush*> result;
-		for (const auto& brush: brushes) result.push_back(brush.get());
-		return result;
+	inline UniquePtrSequenceIterator<PrototypeTerrainBrush> getBrushes() {
+		return UniquePtrSequenceIterator<PrototypeTerrainBrush>(&brushes[0], &brushes[brushes.size()]);
+	}
+
+	/**
+	 * Get prototype terrain brush count
+	 * @return prototype terrain brush count
+	 */
+	inline int getBrushCount() {
+		return brushes.size();
 	}
 
 	/**

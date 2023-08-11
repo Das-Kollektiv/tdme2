@@ -704,9 +704,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 	unordered_map<string, unordered_map<string, unordered_map<Model*, vector<Transform*>>>> renderGroupEntitiesByShaderPartitionModel;
 	unordered_map<Model*, Prototype*> renderGroupSceneEditorEntities;
 	auto progressStepCurrent = 0;
-	for (auto i = 0; i < scene->getEntityCount(); i++) {
-		auto sceneEntity = scene->getEntityAt(i);
-
+	for (auto sceneEntity: scene->getEntities()) {
 		if (progressCallbackPtr != nullptr && progressStepCurrent % 1000 == 0) progressCallbackPtr->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene->getEntityCount()) * 0.5f);
 		progressStepCurrent++;
 
@@ -1034,9 +1032,7 @@ void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vec
 	}
 
 	//
-	for (auto i = 0; i < scene->getEntityCount(); i++) {
-		auto sceneEntity = scene->getEntityAt(i);
-
+	for (auto sceneEntity: scene->getEntities()) {
 		//
 		if (progressCallbackPtr != nullptr && progressStepCurrent % 1000 == 0) progressCallbackPtr->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene->getEntityCount()) * 1.0f);
 		progressStepCurrent++;
@@ -1113,8 +1109,7 @@ void SceneConnector::disableScene(Engine* engine, Scene* scene)
 	}
 
 	// scene entities
-	for (auto i = 0; i < scene->getEntityCount(); i++) {
-		auto sceneEntity = scene->getEntityAt(i);
+	for (auto sceneEntity: scene->getEntities()) {
 		auto entity = engine->getEntity(sceneEntity->getId());
 		if (entity == nullptr)
 			continue;
@@ -1153,8 +1148,7 @@ void SceneConnector::disableScene(World* world, Scene* scene)
 	}
 
 	// scene entities
-	for (auto i = 0; i < scene->getEntityCount(); i++) {
-		auto sceneEntity = scene->getEntityAt(i);
+	for (auto sceneEntity: scene->getEntities()) {
 		auto body = world->getBody(sceneEntity->getId());
 		if (body == nullptr) continue;
 		body->setEnabled(false);
@@ -1215,8 +1209,7 @@ void SceneConnector::enableScene(Engine* engine, Scene* scene, const Vector3& tr
 	}
 
 	// scene entities
-	for (auto i = 0; i < scene->getEntityCount(); i++) {
-		auto sceneEntity = scene->getEntityAt(i);
+	for (auto sceneEntity: scene->getEntities()) {
 		auto entity = engine->getEntity(sceneEntity->getId());
 		if (entity == nullptr)
 			continue;
@@ -1265,8 +1258,7 @@ void SceneConnector::enableScene(World* world, Scene* scene, const Vector3& tran
 
 	// scene entities
 	Transform transform;
-	for (auto i = 0; i < scene->getEntityCount(); i++) {
-		auto sceneEntity = scene->getEntityAt(i);
+	for (auto sceneEntity: scene->getEntities()) {
 		auto rigidBody = world->getBody(sceneEntity->getId());
 		if (rigidBody == nullptr) continue;
 		transform.setTransform(sceneEntity->getTransform());

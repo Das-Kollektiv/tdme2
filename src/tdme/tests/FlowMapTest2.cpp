@@ -461,8 +461,7 @@ void FlowMapTest2::initialize()
 	//
 	startPosition = Vector3(0.0f, 0.25f, 4.5f);
 	endPosition = Vector3(0.0f, 0.25f, 4.5f);
-	for (auto i = 0; i < scene->getEntityCount(); i++) {
-		auto entity = scene->getEntityAt(i);
+	for (auto entity: scene->getEntities()) {
 		auto properties = unique_ptr<const BaseProperties>(entity->getTotalProperties());
 		{
 			auto spawnPointProperty = properties->getProperty("spawnpoint");

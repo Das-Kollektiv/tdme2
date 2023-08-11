@@ -352,8 +352,7 @@ void SceneReader::determineMeshNodes(Scene* scene, Node* node, const string& par
 			haveName = true;
 			auto modelNameTry = modelName;
 			if (i > 0) modelNameTry+= to_string(i);
-			for (auto entityIdx = 0; entityIdx < sceneLibrary->getPrototypeCount(); entityIdx++) {
-				auto entity = sceneLibrary->getPrototypeAt(entityIdx);
+			for (auto entity: sceneLibrary->getPrototypes()) {
 				if (entity->getName() == modelNameTry) {
 					haveName = false;
 					break;
@@ -510,8 +509,7 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 			}
 			Prototype* prototype = nullptr;
 			if (prototypeType == Prototype_Type::MODEL && model != nullptr) {
-				for (auto i = 0; i < scene->getLibrary()->getPrototypeCount(); i++) {
-					auto prototypeCompare = scene->getLibrary()->getPrototypeAt(i);
+				for (auto prototypeCompare: scene->getLibrary()->getPrototypes()) {
 					if (prototypeCompare->getType() != Prototype_Type::MODEL)
 						continue;
 

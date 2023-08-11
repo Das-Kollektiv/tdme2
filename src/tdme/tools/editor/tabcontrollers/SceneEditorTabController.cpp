@@ -1302,17 +1302,17 @@ void SceneEditorTabController::setOutlinerContent() {
 		xml+= "	<selectbox-option image=\"resources/engine/images/sky.png\" text=\"Sky\" value=\"scene.sky\" />\n";
 		{
 			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Lights") + "\" value=\"" + GUIParser::escape("scene.lights") + "\">\n";
-			for (auto i = 0; i < scene->getLightCount(); i++) {
-				auto light = scene->getLightAt(i);
+			auto i = 0;
+			for (auto light: scene->getLights()) {
 				xml+= "	<selectbox-option image=\"resources/engine/images/light.png\" text=\"" + GUIParser::escape("Light " + to_string(i)) + "\" id=\"" + GUIParser::escape("scene.lights.light" + to_string(i)) + "\" value=\"" + GUIParser::escape("scene.lights.light" + to_string(i)) + "\" />\n";
+				i++;
 			}
 			xml+= "</selectbox-parent-option>\n";
 		}
 		{
 			auto sceneLibrary = scene->getLibrary();
 			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Prototypes") + "\" value=\"" + GUIParser::escape("scene.prototypes") + "\">\n";
-			for (auto i = 0; i < sceneLibrary->getPrototypeCount(); i++) {
-				auto prototype = sceneLibrary->getPrototypeAt(i);
+			for (auto prototype: sceneLibrary->getPrototypes()) {
 				auto icon = getPrototypeIcon(prototype->getType());
 				auto prototypeId = prototype->getId();
 				auto prototypeName = prototype->getName();
@@ -1322,8 +1322,7 @@ void SceneEditorTabController::setOutlinerContent() {
 		}
 		{
 			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Entities") + "\" value=\"" + GUIParser::escape("scene.entities") + "\">\n";
-			for (auto i = 0; i < scene->getEntityCount(); i++) {
-				auto entity = scene->getEntityAt(i);
+			for (auto entity: scene->getEntities()) {
 				auto entityName = entity->getName();
 				auto prototype = entity->getPrototype();
 				auto icon = getPrototypeIcon(prototype->getType());

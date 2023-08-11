@@ -11,7 +11,7 @@
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/UniquePtrSequenceIterator.h>
 
 using std::make_unique;
 using std::unordered_map;
@@ -22,6 +22,7 @@ using std::vector;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::math::Vector3;
+using tdme::utilities::UniquePtrSequenceIterator;
 
 /**
  * Scene prototype library definition
@@ -67,10 +68,18 @@ public:
 	void clear();
 
 	/**
-	 * Add a prototype
-	 * @param prototype prototype
+	 * @return prototypes iterator
 	 */
-	void addPrototype(Prototype* prototype);
+	inline UniquePtrSequenceIterator<Prototype> getPrototypes() {
+		return UniquePtrSequenceIterator<Prototype>(&prototypes[0], &prototypes[prototypes.size()]);
+	}
+
+	/**
+	 * @return prototype count
+	 */
+	inline int getPrototypeCount() {
+		return prototypes.size();
+	}
 
 	/**
 	 * Get prototype at given index
@@ -118,16 +127,15 @@ public:
 	}
 
 	/**
+	 * Add a prototype
+	 * @param prototype prototype
+	 */
+	void addPrototype(Prototype* prototype);
+
+	/**
 	 * Remove a prototype
 	 * @param id id
 	 */
 	void removePrototype(int id);
-
-	/**
-	 * @return prototype count
-	 */
-	inline int getPrototypeCount() {
-		return prototypes.size();
-	}
 
 };

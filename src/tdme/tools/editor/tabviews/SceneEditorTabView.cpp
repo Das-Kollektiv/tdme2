@@ -970,14 +970,6 @@ void SceneEditorTabView::pasteEntities(bool displayOnly)
 		);
 		sceneEntityTransform.update();
 		if (displayOnly == false) {
-			for (auto i = 0; i < scene->getEntityCount(); i++) {
-				auto sceneEntity = scene->getEntityAt(i);
-				if (sceneEntity->getPrototype() == pastePrototype && sceneEntity->getTransform().getTranslation().equals(sceneEntityTransform.getTranslation())) {
-					continue;
-				}
-			}
-		}
-		if (displayOnly == false) {
 			//
 			auto sceneEntityId = pastePrototype->getName() + "_" + to_string(scene->allocateEntityId());
 			auto sceneEntity = new SceneEntity(
@@ -1086,8 +1078,7 @@ void SceneEditorTabView::selectSameEntities()
 	auto sceneEntity = scene->getEntity(selectedEntityIds[0]);
 	auto prototype = sceneEntity != nullptr?sceneEntity->getPrototype():nullptr;
 	vector<string> entitiesToSelect;
-	for (auto i = 0; i < scene->getEntityCount(); i++) {
-		auto _sceneEntity = scene->getEntityAt(i);
+	for (auto _sceneEntity: scene->getEntities()) {
 		if (_sceneEntity->getPrototype() != prototype) continue;
 		sceneEditorTabController->selectEntity(_sceneEntity->getId());
 		entitiesToSelect.push_back(_sceneEntity->getId());
@@ -1389,8 +1380,7 @@ void SceneEditorTabView::addPrototype(Prototype* prototype) {
 		auto sceneLibrary = scene->getLibrary();
 		if (prototype->getType() == Prototype_Type::TERRAIN) {
 			while (sceneLibrary->getTerrainPrototype() != nullptr) {
-				for (auto i = 0; i < sceneLibrary->getPrototypeCount(); i++) {
-					auto prototype = sceneLibrary->getPrototypeAt(i);
+				for (auto prototype: sceneLibrary->getPrototypes()) {
 					if (prototype->getType() == Prototype_Type::TERRAIN) {
 						sceneLibrary->removePrototype(prototype->getId());
 						break;
@@ -1473,8 +1463,7 @@ void SceneEditorTabView::runScene() {
 	// add logics
 	auto valid = true;
 	string invalidScripts;
-	for (auto i = 0; i < scene->getEntityCount(); i++) {
-		auto entity = scene->getEntityAt(i);
+	for (auto entity: scene->getEntities()) {
 		if (entity->getPrototype()->hasScript() == true) {
 			auto miniScript = make_unique<LogicMiniScript>();
 			miniScript->loadScript(

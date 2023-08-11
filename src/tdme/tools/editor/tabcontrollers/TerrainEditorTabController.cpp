@@ -386,7 +386,7 @@ void TerrainEditorTabController::onContextMenuRequest(GUIElementNode* node, int 
 					if (terrain == nullptr) return;
 					auto brush = terrain->addBrush();
 					//
-					terrainEditorTabController->view->getEditorView()->reloadTabOutliner("terrain.foliage." + to_string(terrain->getBrushes().size() - 1));
+					terrainEditorTabController->view->getEditorView()->reloadTabOutliner("terrain.foliage." + to_string(terrain->getBrushCount() - 1));
 				}
 				OnTerrainFoliageAddBrush(TerrainEditorTabController* terrainEditorTabController): terrainEditorTabController(terrainEditorTabController) {
 				}
@@ -449,7 +449,7 @@ void TerrainEditorTabController::onContextMenuRequest(GUIElementNode* node, int 
 					auto brush = terrain->getBrush(foliageBrushIdx);
 					if (brush == nullptr) return;
 					auto brushPrototype = brush->addPrototype();
-					auto newOutlinerNode = "terrain.foliagebrushes." + to_string(foliageBrushIdx) + "." + to_string(brush->getPrototypes().size() - 1);
+					auto newOutlinerNode = "terrain.foliagebrushes." + to_string(foliageBrushIdx) + "." + to_string(brush->getPrototypeCount() - 1);
 					//
 					terrainEditorTabController->view->getEditorView()->reloadTabOutliner(newOutlinerNode);
 				}
@@ -799,11 +799,11 @@ void TerrainEditorTabController::setOutlinerContent() {
 	} else {
 		xml+= "<selectbox-option image=\"resources/engine/images/terrain_water.png\" text=\"" + GUIParser::escape("Water") + "\" value=\"" + GUIParser::escape("terrain.waters") + "\" />\n";
 	}
-	if (terrain != nullptr && terrain->getBrushes().empty() == false) {
+	if (terrain != nullptr && terrain->getBrushCount() > 0) {
 		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Foliage") + "\" value=\"" + GUIParser::escape("terrain.foliage") + "\">\n";
 		auto i = 0;
 		for (auto brush: terrain->getBrushes()) {
-			if (brush->getPrototypes().empty() == false) {
+			if (brush->getPrototypeCount() > 0) {
 				xml+= "<selectbox-parent-option image=\"resources/engine/images/foliage.png\" text=\"" + GUIParser::escape("Foliage Brush " + to_string(i)) + "\" value=\"" + GUIParser::escape("terrain.foliage." + to_string(i)) + "\" >\n";
 				auto j = 0;
 				for (auto brushPrototype: brush->getPrototypes()) {

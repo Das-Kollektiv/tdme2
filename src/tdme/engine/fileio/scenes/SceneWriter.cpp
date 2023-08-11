@@ -65,8 +65,8 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene* s
 	{
 		Value jLights;
 		jLights.SetArray();
-		for (auto i = 0; i < scene->getLightCount(); i++) {
-			auto light = scene->getLightAt(i);
+		auto i = 0;
+		for (auto light: scene->getLights()) {
 			Value jLight;
 			jLight.SetObject();
 			jLight.AddMember("id", Value(i), jAllocator);
@@ -96,6 +96,7 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene* s
 			jLight.AddMember("qa", Value(light->getQuadraticAttenuation()), jAllocator);
 			jLight.AddMember("e", Value(light->isEnabled()), jAllocator);
 			jLights.PushBack(jLight, jAllocator);
+			i++;
 		}
 		jDocument.AddMember("lights", jLights, jAllocator);
 	}
@@ -103,8 +104,7 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene* s
 	{
 		Value jSceneLibrary;
 		jSceneLibrary.SetArray();
-		for (auto i = 0; i < sceneLibrary->getPrototypeCount(); i++) {
-			auto prototype = sceneLibrary->getPrototypeAt(i);
+		for (auto prototype: sceneLibrary->getPrototypes()) {
 			Value jPrototype;
 			jPrototype.SetObject();
 			if (prototype->isEmbedded() == true) {
@@ -143,8 +143,7 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene* s
 	{
 		Value jEntities;
 		jEntities.SetArray();
-		for (auto i = 0; i < scene->getEntityCount(); i++) {
-			auto sceneEntity = scene->getEntityAt(i);
+		for (auto sceneEntity: scene->getEntities()) {
 			Value jEntity;
 			jEntity.SetObject();
 			const auto& transform = sceneEntity->getTransform();
@@ -168,8 +167,7 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene* s
 			jEntity.AddMember("r", Value(sceneEntity->getReflectionEnvironmentMappingId(), jAllocator), jAllocator);
 			Value jEntityProperties;
 			jEntityProperties.SetArray();
-			for (auto i = 0; i < sceneEntity->getPropertyCount(); i++) {
-				auto sceneEntityProperty = sceneEntity->getPropertyAt(i);
+			for (auto sceneEntityProperty: sceneEntity->getProperties()) {
 				Value jSceneEntityProperty;
 				jSceneEntityProperty.SetObject();
 				jSceneEntityProperty.AddMember("name", Value(sceneEntityProperty->getName(), jAllocator), jAllocator);

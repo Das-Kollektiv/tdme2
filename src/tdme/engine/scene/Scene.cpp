@@ -132,8 +132,7 @@ void Scene::computeBoundingBox()
 			if (entityBottom < levelBottom) levelBottom = entityBottom;
 		}
 	}
-	for (auto i = 0; i < library->getPrototypeCount(); i++) {
-		auto prototype = library->getPrototypeAt(i);
+	for (auto prototype: library->getPrototypes()) {
 		if (prototype->getType() != Prototype_Type::TERRAIN) continue;
 		auto terrain = prototype->getTerrain();
 		auto entityLeft = 0.0f;

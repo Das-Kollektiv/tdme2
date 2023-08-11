@@ -16,7 +16,7 @@
 #include <tdme/engine/scene/SceneLight.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/UniquePtrSequenceIterator.h>
 
 using std::make_unique;
 using std::map;
@@ -33,6 +33,7 @@ using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::scene::SceneLight;
 using tdme::math::Vector3;
+using tdme::utilities::UniquePtrSequenceIterator;
 
 /**
  * Scene definition
@@ -126,6 +127,13 @@ public:
 	 */
 	inline void setRotationOrder(RotationOrder* rotationOrder) {
 		this->rotationOrder = rotationOrder;
+	}
+
+	/**
+	 * @return Lights iterator
+	 */
+	inline UniquePtrSequenceIterator<SceneLight> getLights() {
+		return UniquePtrSequenceIterator<SceneLight>(&lights[0], &lights[lights.size()]);
 	}
 
 	/**
@@ -248,6 +256,37 @@ public:
 	}
 
 	/**
+	 * @return Entities iterator
+	 */
+	inline UniquePtrSequenceIterator<SceneEntity> getEntities() {
+		return UniquePtrSequenceIterator<SceneEntity>(&entities[0], &entities[entities.size()]);
+	}
+
+	/**
+	 * @return number of entities
+	 */
+	inline int getEntityCount() {
+		return entities.size();
+	}
+
+	/**
+	 * Returns entity at given index
+	 * @param idx index
+	 * @return scene entity
+	 */
+	inline SceneEntity* getEntityAt(int idx) {
+		if (idx < 0 || idx >= entities.size()) return nullptr;
+		return entities[idx].get();
+	}
+
+	/**
+	 * Returns scene entity by id
+	 * @param id id
+	 * @return scene entity
+	 */
+	SceneEntity* getEntity(const string& id);
+
+	/**
 	 * Adds an entity to scene
 	 * @param object object
 	 */
@@ -267,30 +306,6 @@ public:
 	 * @return success
 	 */
 	bool renameEntity(const string& id, const string& newId);
-
-	/**
-	 * Returns scene entity by id
-	 * @param id id
-	 * @return scene entity
-	 */
-	SceneEntity* getEntity(const string& id);
-
-	/**
-	 * @return number of entities
-	 */
-	inline int getEntityCount() {
-		return entities.size();
-	}
-
-	/**
-	 * Returns entity at given index
-	 * @param idx index
-	 * @return scene entity
-	 */
-	inline SceneEntity* getEntityAt(int idx) {
-		if (idx < 0 || idx >= entities.size()) return nullptr;
-		return entities[idx].get();
-	}
 
 	/**
 	 * @return sky model file name
