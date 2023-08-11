@@ -47,7 +47,6 @@ using tdme::math::Vector3;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
 using tdme::utilities::Console;
-using tdme::utilities::PathFinding;
 using tdme::utilities::PathFindingCustomTest;
 using tdme::utilities::StringTools;
 using tdme::utilities::Time;
@@ -127,7 +126,7 @@ public:
 		FlowMap* flowMap;
 		unordered_map<string, FlowMapRequest> flowMapRequests;
 		unique_ptr<World> world;
-		unique_ptr<PathFinding> pathFinding;
+		unique_ptr<tdme::utilities::PathFinding> pathFinding;
 		Mutex pathFindingMutex;
 		Mutex pathFindingCancelMutex;
 		vector<WorldActionStruct> worldActions;
