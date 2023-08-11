@@ -19,7 +19,6 @@
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/PBRMaterialProperties.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
-#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
@@ -88,7 +87,6 @@ using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::SpecularMaterialProperties;
-using tdme::engine::model::TextureCoordinate;
 using tdme::engine::physics::CollisionDetection;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
@@ -128,6 +126,7 @@ using tdme::engine::PointsParticleSystem;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Matrix4x4Negative;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::os::threading::Thread;
 using tdme::utilities::ByteBuffer;

@@ -54,6 +54,7 @@ using tdme::math::Math;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 using tdme::math::Matrix4x4Negative;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Pool;

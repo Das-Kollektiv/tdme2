@@ -8,12 +8,12 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/skinning/fwd-tdme.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
 
@@ -23,11 +23,11 @@ using std::unordered_map;
 using std::vector;
 
 using tdme::engine::model::Node;
-using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::rendering::ObjectBase;
 using tdme::engine::subsystems::rendering::ObjectNodeRenderer;
 using tdme::engine::Engine;
 using tdme::math::Matrix4x4;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::utilities::FloatBuffer;
 using tdme::utilities::ShortBuffer;
@@ -56,13 +56,13 @@ private:
 	const vector<Vector3>* normals { nullptr };
 	const vector<Vector3>* tangents { nullptr };
 	const vector<Vector3>* bitangents { nullptr };
-	const vector<TextureCoordinate>* textureCoordinates { nullptr };
+	const vector<Vector2>* textureCoordinates { nullptr };
 	vector<int32_t> indices;
 	vector<Vector3> transformedVertices;
 	vector<Vector3> transformedNormals;
 	vector<Vector3> transformedTangents;
 	vector<Vector3> transformedBitangents;
-	vector<TextureCoordinate> transformedTextureCoordinates;
+	vector<Vector2> transformedTextureCoordinates;
 	vector<unordered_map<string, Matrix4x4*>*> skinningMatrices;
 	vector<vector<Matrix4x4*>> jointsSkinningMatrices;
 	Engine::AnimationProcessingTarget animationProcessingTarget;

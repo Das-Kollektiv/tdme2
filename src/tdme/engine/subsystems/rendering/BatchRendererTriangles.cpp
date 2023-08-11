@@ -6,12 +6,12 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/FloatBuffer.h>
@@ -22,13 +22,13 @@ using std::to_string;
 using std::unique_ptr;
 using std::vector;
 
-using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::BatchRendererTriangles;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::Engine;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::FloatBuffer;

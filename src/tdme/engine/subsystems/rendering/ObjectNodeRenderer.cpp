@@ -2,7 +2,6 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/Node.h>
-#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
@@ -10,12 +9,10 @@
 #include <tdme/engine/subsystems/rendering/ObjectNode.h>
 #include <tdme/engine/subsystems/rendering/ObjectNodeMesh.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/math/Vector3.h>
 #include <tdme/utilities/FloatBuffer.h>
 #include <tdme/utilities/ShortBuffer.h>
 
 using tdme::engine::model::Node;
-using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::renderer::Renderer;
@@ -24,7 +21,6 @@ using tdme::engine::subsystems::rendering::ObjectNode;
 using tdme::engine::subsystems::rendering::ObjectNodeMesh;
 using tdme::engine::subsystems::rendering::ObjectNodeRenderer;
 using tdme::engine::Engine;
-using tdme::math::Vector3;
 using tdme::utilities::FloatBuffer;
 using tdme::utilities::ShortBuffer;
 

@@ -33,7 +33,7 @@ using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::model::Skinning;
-using tdme::engine::model::TextureCoordinate;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystemException;
 
@@ -282,7 +282,7 @@ private:
 	 * @param tc texture coordinates
 	 * @throws model file IO exception
 	 */
-	static void writeTextureCoordinates(TMWriterOutputStream* os, const vector<TextureCoordinate>& tc);
+	static void writeTextureCoordinates(TMWriterOutputStream* os, const vector<Vector2>& tc);
 
 	/**
 	 * Write indices to output stream

@@ -10,8 +10,8 @@
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/Skinning.h>
-#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 
 using std::map;
@@ -24,8 +24,8 @@ using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::model::Skinning;
-using tdme::engine::model::TextureCoordinate;
 using tdme::math::Matrix4x4;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 
 Node::Node(Model* model, Node* parentNode, const string& id, const string& name)
@@ -65,7 +65,7 @@ void Node::setNormals(const vector<Vector3>& normals)
 	this->normalsUpdated = true;
 }
 
-void Node::setTextureCoordinates(const vector<TextureCoordinate>& textureCoordinates)
+void Node::setTextureCoordinates(const vector<Vector2>& textureCoordinates)
 {
 	this->textureCoordinates.resize(textureCoordinates.size());
 	auto i = 0;

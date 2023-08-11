@@ -12,7 +12,6 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Skinning.h>
-#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/rendering/ObjectBase.h>
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
@@ -21,6 +20,7 @@
 #include <tdme/engine/subsystems/skinning/SkinningShader.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
@@ -37,7 +37,6 @@ using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Node;
 using tdme::engine::model::Skinning;
-using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::ObjectBase;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
@@ -46,6 +45,7 @@ using tdme::engine::subsystems::rendering::ObjectNodeRenderer;
 using tdme::engine::subsystems::skinning::SkinningShader;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;

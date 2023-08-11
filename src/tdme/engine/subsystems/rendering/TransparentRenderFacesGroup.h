@@ -25,7 +25,6 @@ using std::vector;
 using tdme::engine::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::BatchRendererTriangles;
 using tdme::engine::subsystems::rendering::EntityRenderer;

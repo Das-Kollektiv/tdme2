@@ -32,7 +32,7 @@ using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
-using tdme::engine::model::TextureCoordinate;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystemException;
 
@@ -320,7 +320,7 @@ private:
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return texture coordinates array
 	 */
-	static const vector<TextureCoordinate> readTextureCoordinates(TMReaderInputStream* is);
+	static const vector<Vector2> readTextureCoordinates(TMReaderInputStream* is);
 
 	/**
 	 * Read indices from input stream

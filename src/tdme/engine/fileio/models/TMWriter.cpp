@@ -26,12 +26,12 @@
 #include <tdme/engine/model/ShaderModel.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
-#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -68,12 +68,12 @@ using tdme::engine::model::RotationOrder;
 using tdme::engine::model::ShaderModel;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
-using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::math::Matrix4x4;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
@@ -246,7 +246,7 @@ void TMWriter::writeVertices(TMWriterOutputStream* os, const vector<Vector3>& v)
 	}
 }
 
-void TMWriter::writeTextureCoordinates(TMWriterOutputStream* os, const vector<TextureCoordinate>& tc) // TODO: change std::vector* argument to std::vector& ?
+void TMWriter::writeTextureCoordinates(TMWriterOutputStream* os, const vector<Vector2>& tc) // TODO: change std::vector* argument to std::vector& ?
 {
 	if (tc.size() == 0) {
 		os->writeBoolean(false);

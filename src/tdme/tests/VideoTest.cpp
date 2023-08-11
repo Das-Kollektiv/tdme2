@@ -29,6 +29,7 @@
 #include <tdme/engine/Rotation.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Quaternion.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/utilities/Character.h>
@@ -69,6 +70,7 @@ using tdme::engine::Light;
 using tdme::engine::Object;
 using tdme::engine::Rotation;
 using tdme::math::Math;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::utilities::Character;
@@ -102,11 +104,11 @@ Model* VideoTest::createWallModel()
 	vertices.push_back(Vector3(+4.0f, 0.0f, +4.0f));
 	vector<Vector3> normals;
 	normals.push_back(Vector3(0.0f, 0.0f, -1.0f));
-	vector<TextureCoordinate> textureCoordinates;
-	textureCoordinates.push_back(TextureCoordinate(0.0f, 0.0f));
-	textureCoordinates.push_back(TextureCoordinate(0.0f, 1.0f));
-	textureCoordinates.push_back(TextureCoordinate(1.0f, 1.0f));
-	textureCoordinates.push_back(TextureCoordinate(1.0f, 0.0f));
+	vector<Vector2> textureCoordinates;
+	textureCoordinates.push_back(Vector2(0.0f, 0.0f));
+	textureCoordinates.push_back(Vector2(0.0f, 1.0f));
+	textureCoordinates.push_back(Vector2(1.0f, 1.0f));
+	textureCoordinates.push_back(Vector2(1.0f, 0.0f));
 	vector<Face> facesFarPlane;
 	facesFarPlane.push_back(Face(wallNode, 0, 1, 2, 0, 0, 0, 0, 1, 2));
 	facesFarPlane.push_back(Face(wallNode, 2, 3, 0, 0, 0, 0, 2, 3, 0));

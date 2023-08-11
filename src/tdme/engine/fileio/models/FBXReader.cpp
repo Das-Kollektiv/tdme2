@@ -21,7 +21,6 @@
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
-#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/math/Math.h>
@@ -51,7 +50,6 @@ using tdme::engine::model::Node;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
-using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
 using tdme::engine::Texture;
 using tdme::math::Math;
@@ -357,7 +355,7 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 	auto node = new Node(model, parentNode, fbxNodeName, fbxNodeName);
 	vector<Vector3> vertices;
 	vector<Vector3> normals;
-	vector<TextureCoordinate> textureCoordinates;
+	vector<Vector2> textureCoordinates;
 	vector<Vector3> tangents;
 	vector<Vector3> bitangents;
 	vector<FacesEntity> facesEntities;
@@ -382,7 +380,7 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 			auto fbxUVArray = fbxUV->GetDirectArray().GetAt(i);
 			textureCoordinates.emplace_back(
 				static_cast<float>(fbxUVArray[0]),
-				static_cast<float>(fbxUVArray[1])
+				static_cast<float>(1.0f - fbxUVArray[1])
 			);
 		}
 	}

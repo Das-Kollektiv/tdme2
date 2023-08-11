@@ -22,6 +22,8 @@
 #include <tdme/engine/Object.h>
 #include <tdme/engine/SimplePartition.h>
 #include <tdme/math/Math.h>
+#include <tdme/math/Vector2.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -51,6 +53,8 @@ using tdme::engine::LODObject;
 using tdme::engine::Object;
 using tdme::engine::SimplePartition;
 using tdme::math::Math;
+using tdme::math::Vector2;
+using tdme::math::Vector3;
 using tdme::tools::editor::misc::Tools;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -179,11 +183,11 @@ Model* GenerateBillboardLOD::generate(
 	billboardVertices.push_back(Vector3(right, top, depth));
 	vector<Vector3> billboardNormals;
 	billboardNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
-	vector<TextureCoordinate> billboardTextureCoordinates;
-	billboardTextureCoordinates.push_back(TextureCoordinate(0.0f, 0.0f));
-	billboardTextureCoordinates.push_back(TextureCoordinate(0.0f, 1.0f));
-	billboardTextureCoordinates.push_back(TextureCoordinate(1.0f, 1.0f));
-	billboardTextureCoordinates.push_back(TextureCoordinate(1.0f, 0.0f));
+	vector<Vector2> billboardTextureCoordinates;
+	billboardTextureCoordinates.push_back(Vector2(0.0f, 0.0f));
+	billboardTextureCoordinates.push_back(Vector2(0.0f, 1.0f));
+	billboardTextureCoordinates.push_back(Vector2(1.0f, 1.0f));
+	billboardTextureCoordinates.push_back(Vector2(1.0f, 0.0f));
 	vector<Face> billboardFacesGround;
 	billboardFacesGround.push_back(Face(billboardNode, 0, 1, 2, 0, 0, 0, 0, 1, 2));
 	billboardFacesGround.push_back(Face(billboardNode, 2, 3, 0, 0, 0, 0, 2, 3, 0));

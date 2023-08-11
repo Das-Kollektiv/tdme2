@@ -21,7 +21,6 @@
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
-#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/scene/SceneEntity.h>
@@ -57,7 +56,6 @@ using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
-using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::scene::SceneEntity;
@@ -105,7 +103,7 @@ void ModelTools::prepareForIndexedRendering(const map<string, Node*>& nodes)
 		vector<int32_t> vertexMapping;
 		vector<Vector3> indexedVertices;
 		vector<Vector3> indexedNormals;
-		vector<TextureCoordinate> indexedTextureCoordinates;
+		vector<Vector2> indexedTextureCoordinates;
 		vector<Vector3> indexedTangents;
 		vector<Vector3> indexedBitangents;
 		vector<Vector3> indexedOrigins;
@@ -129,7 +127,7 @@ void ModelTools::prepareForIndexedRendering(const map<string, Node*>& nodes)
 					auto nodeBitangentIndex = faceBitangentIndices[idx];
 					auto vertex = &nodeVertices[nodeVertexIndex];
 					auto normal = &nodeNormals[nodeNormalIndex];
-					auto textureCoordinate = nodeTextureCoordinates.size() > 0?&nodeTextureCoordinates[nodeTextureCoordinateIndex]:static_cast<TextureCoordinate*>(nullptr);
+					auto textureCoordinate = nodeTextureCoordinates.size() > 0?&nodeTextureCoordinates[nodeTextureCoordinateIndex]:static_cast<Vector2*>(nullptr);
 					auto tangent = nodeTangents.size() > 0 ? &nodeTangents[nodeTangentIndex] : static_cast<Vector3*>(nullptr);
 					auto bitangent = nodeBitangents.size() > 0 ? &nodeBitangents[nodeBitangentIndex] : static_cast<Vector3*>(nullptr);
 					auto origin = nodeOrigins.size() > 0 ? &nodeOrigins[nodeVertexIndex] : static_cast<Vector3*>(nullptr);
@@ -371,9 +369,9 @@ void ModelTools::partitionNode(Node* sourceNode, map<string, Model*>& modelsByPa
 	Vector3 normal0;
 	Vector3 normal1;
 	Vector3 normal2;
-	TextureCoordinate textureCoordinate0;
-	TextureCoordinate textureCoordinate1;
-	TextureCoordinate textureCoordinate2;
+	Vector2 textureCoordinate0;
+	Vector2 textureCoordinate1;
+	Vector2 textureCoordinate2;
 	Vector3 tangent0;
 	Vector3 tangent1;
 	Vector3 tangent2;
@@ -402,7 +400,7 @@ void ModelTools::partitionNode(Node* sourceNode, map<string, Model*>& modelsByPa
 	// partition model node vertices and such
 	map<string, vector<Vector3>> partitionModelNodesVertices;
 	map<string, vector<Vector3>> partitionModelNodesNormals;
-	map<string, vector<TextureCoordinate>> partitionModelNodesTextureCoordinates;
+	map<string, vector<Vector2>> partitionModelNodesTextureCoordinates;
 	map<string, vector<Vector3>> partitionModelNodesTangents;
 	map<string, vector<Vector3>> partitionModelNodesBitangents;
 	map<string, vector<FacesEntity>> partitionModelNodesFacesEntities;
@@ -993,7 +991,7 @@ void ModelTools::optimizeNode(Node* sourceNode, Model* targetModel, int diffuseT
 						textureCoordinateArray[0]+= textureXOffset;
 						textureCoordinateArray[1]*= textureYScale;
 						textureCoordinateArray[1]+= textureYOffset;
-						targetTextureCoordinates[sourceTextureCoordinateIndices[i] + targetOffset] = TextureCoordinate(textureCoordinateArray);
+						targetTextureCoordinates[sourceTextureCoordinateIndices[i] + targetOffset] = Vector2(textureCoordinateArray);
 						processedTextureCoordinates.insert(sourceTextureCoordinateIndices[i]);
 					}
 				}

@@ -16,7 +16,6 @@
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
-#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/subsystems/particlesystem/BoundingBoxParticleEmitter.h>
@@ -62,7 +61,6 @@ using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::SpecularMaterialProperties;
-using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::subsystems::particlesystem::BoundingBoxParticleEmitter;
@@ -126,11 +124,11 @@ Model* EngineTest::createWallModel()
 	vertices.push_back(Vector3(+4.0f, 0.0f, +4.0f));
 	vector<Vector3> normals;
 	normals.push_back(Vector3(0.0f, 0.0f, -1.0f));
-	vector<TextureCoordinate> textureCoordinates;
-	textureCoordinates.push_back(TextureCoordinate(0.0f, 0.0f));
-	textureCoordinates.push_back(TextureCoordinate(0.0f, 1.0f));
-	textureCoordinates.push_back(TextureCoordinate(1.0f, 1.0f));
-	textureCoordinates.push_back(TextureCoordinate(1.0f, 0.0f));
+	vector<Vector2> textureCoordinates;
+	textureCoordinates.push_back(Vector2(0.0f, 0.0f));
+	textureCoordinates.push_back(Vector2(0.0f, 1.0f));
+	textureCoordinates.push_back(Vector2(1.0f, 1.0f));
+	textureCoordinates.push_back(Vector2(1.0f, 0.0f));
 	vector<Face> facesFarPlane;
 	facesFarPlane.push_back(Face(wallNode, 0, 1, 2, 0, 0, 0, 0, 1, 2));
 	facesFarPlane.push_back(Face(wallNode, 2, 3, 0, 0, 0, 0, 2, 3, 0));

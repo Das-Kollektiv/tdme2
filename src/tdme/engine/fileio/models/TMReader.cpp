@@ -23,7 +23,6 @@
 #include <tdme/engine/model/ShaderModel.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
-#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/Matrix2D3x3.h>
@@ -58,7 +57,6 @@ using tdme::engine::model::RotationOrder;
 using tdme::engine::model::ShaderModel;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
-using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
 using tdme::math::Matrix4x4;
@@ -590,15 +588,15 @@ const vector<Vector3> TMReader::readVertices(TMReaderInputStream* is)
 	return v;
 }
 
-const vector<TextureCoordinate> TMReader::readTextureCoordinates(TMReaderInputStream* is)
+const vector<Vector2> TMReader::readTextureCoordinates(TMReaderInputStream* is)
 {
 	array<float, 2> tcUV;
-	vector<TextureCoordinate> tc;
+	vector<Vector2> tc;
 	if (is->readBoolean() == true) {
 		tc.resize(is->readInt());
 		for (auto i = 0; i < tc.size(); i++) {
 			is->readFloatArray(tcUV);
-			tc[i] = TextureCoordinate(tcUV);
+			tc[i] = Vector2(tcUV);
 		}
 	}
 	return tc;
@@ -754,7 +752,7 @@ Node* TMReader::readNode(TMReaderInputStream* is, Model* model, Node* parentNode
 	node->setVertices(vertices);
 	vector<Vector3> normals = readVertices(is);
 	node->setNormals(normals);
-	vector<TextureCoordinate> textureCoordinates = readTextureCoordinates(is);
+	vector<Vector2> textureCoordinates = readTextureCoordinates(is);
 	node->setTextureCoordinates(textureCoordinates);
 	vector<Vector3> tangents = readVertices(is);
 	node->setTangents(tangents);

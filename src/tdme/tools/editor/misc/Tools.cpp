@@ -18,7 +18,6 @@
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/ShaderModel.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
-#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
@@ -40,6 +39,7 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -76,7 +76,6 @@ using tdme::engine::model::Node;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::ShaderModel;
 using tdme::engine::model::SpecularMaterialProperties;
-using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::OrientedBoundingBox;
@@ -98,6 +97,7 @@ using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
@@ -207,11 +207,11 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	groundVertices.push_back(Vector3(+width/2, y, -depth/2));
 	vector<Vector3> groundNormals;
 	groundNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
-	vector<TextureCoordinate> groundTextureCoordinates;
-	groundTextureCoordinates.push_back(TextureCoordinate(0.0f, depth));
-	groundTextureCoordinates.push_back(TextureCoordinate(0.0f, 0.0f));
-	groundTextureCoordinates.push_back(TextureCoordinate(width, 0.0f));
-	groundTextureCoordinates.push_back(TextureCoordinate(width, depth));
+	vector<Vector2> groundTextureCoordinates;
+	groundTextureCoordinates.push_back(Vector2(0.0f, depth));
+	groundTextureCoordinates.push_back(Vector2(0.0f, 0.0f));
+	groundTextureCoordinates.push_back(Vector2(width, 0.0f));
+	groundTextureCoordinates.push_back(Vector2(width, depth));
 	vector<Face> groundFacesGround;
 	groundFacesGround.push_back(Face(groundNode, 0, 1, 2, 0, 0, 0, 0, 1, 2));
 	groundFacesGround.push_back(Face(groundNode, 2, 3, 0, 0, 0, 0, 2, 3, 0));
@@ -254,11 +254,11 @@ Model* Tools::createGridModel()
 	groundVertices.push_back(Vector3(10000.0f, 0.0f, 0.0f));
 	vector<Vector3> groundNormals;
 	groundNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
-	vector<TextureCoordinate> groundTextureCoordinates;
-	groundTextureCoordinates.push_back(TextureCoordinate(0.0f, 10000.0f));
-	groundTextureCoordinates.push_back(TextureCoordinate(0.0f, 0.0f));
-	groundTextureCoordinates.push_back(TextureCoordinate(10000.0f, 0.0f));
-	groundTextureCoordinates.push_back(TextureCoordinate(10000.0f, 10000.0f));
+	vector<Vector2> groundTextureCoordinates;
+	groundTextureCoordinates.push_back(Vector2(0.0f, 10000.0f));
+	groundTextureCoordinates.push_back(Vector2(0.0f, 0.0f));
+	groundTextureCoordinates.push_back(Vector2(10000.0f, 0.0f));
+	groundTextureCoordinates.push_back(Vector2(10000.0f, 10000.0f));
 	vector<Face> groundFacesGround;
 	groundFacesGround.push_back(Face(groundNode, 0, 1, 2, 0, 0, 0, 0, 1, 2));
 	groundFacesGround.push_back(Face(groundNode, 2, 3, 0, 0, 0, 0, 2, 3, 0));

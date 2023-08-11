@@ -7,7 +7,6 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/Color4.h>
-#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
@@ -23,7 +22,6 @@ using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::Color4;
-using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;

@@ -21,7 +21,6 @@
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
-#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/subsystems/rendering/ModelStatistics.h>
 #include <tdme/engine/ModelUtilities.h>
@@ -67,7 +66,6 @@ using tdme::engine::model::Node;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
-using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
 using tdme::engine::subsystems::rendering::ModelStatistics;
 using tdme::engine::ModelUtilities;
@@ -840,7 +838,7 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Node* node, T
 							while (t.hasMoreTokens()) {
 								float u = Float::parse(t.nextToken());
 								float v = Float::parse(t.nextToken());
-								textureCoordinates.emplace_back(u, v);
+								textureCoordinates.emplace_back(u, 1.0f - v);
 							}
 						}
 					}

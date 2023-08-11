@@ -11,7 +11,6 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/RotationOrder.h>
-#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/Engine.h>
@@ -21,6 +20,7 @@
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/ModelTools.h>
 
@@ -36,7 +36,6 @@ using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::model::RotationOrder;
-using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::Engine;
@@ -47,6 +46,7 @@ using tdme::engine::Partition;
 using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::utilities::ModelTools;
 

@@ -28,7 +28,6 @@
 #include <tdme/engine/model/ShaderModel.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
-#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
@@ -66,7 +65,6 @@ using tdme::engine::model::RotationOrder;
 using tdme::engine::model::ShaderModel;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
-using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
@@ -388,7 +386,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 	vector<float> weights;
 	vector<Vector3> vertices;
 	vector<Vector3> normals;
-	vector<TextureCoordinate> textureCoordinates;
+	vector<Vector2> textureCoordinates;
 	vector<FacesEntity> facesEntities;
 	const auto& mesh = gltfModel.meshes[gltfNode.mesh];
 	int facesEntityIdx = 0;
@@ -733,7 +731,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 				if (start + attributeAccessor.count > textureCoordinates.size()) textureCoordinates.resize(start + attributeAccessor.count);
 				auto bufferData = (const float*)(attributeBuffer.data.data() + attributeAccessor.byteOffset + attributeBufferView.byteOffset);
 				for (auto i = 0; i < attributeAccessor.count; i++) {
-					textureCoordinates[start + i] = TextureCoordinate( bufferData[i * stride + 0], bufferData[i * stride + 1]);
+					textureCoordinates[start + i] = Vector2(bufferData[i * stride + 0], 1.0f - bufferData[i * stride + 1]);
 				}
 			} else
 			if (gltfBufferType == "COLOR_0") {
