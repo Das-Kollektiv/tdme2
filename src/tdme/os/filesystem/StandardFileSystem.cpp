@@ -54,7 +54,9 @@ void StandardFileSystem::list(const string& pathName, vector<string>& files, Fil
 
 	try {
 		for (const auto& entry: std::filesystem::directory_iterator(std::filesystem::u8path(_pathName))) {
-			auto fileName = entry.path().filename().generic_string();
+			auto u8FileName = entry.path().filename().u8string();
+			string fileName(u8FileName.size(), 0);
+			for (auto i = 0; i < u8FileName.size(); i++) fileName[i] = u8FileName[i];
 			if (fileName == ".") continue;
 			try {
 				if (filter != nullptr && filter->accept(pathName, fileName) == false) continue;
@@ -281,7 +283,10 @@ const string StandardFileSystem::getCanonicalPath(const string& pathName, const 
 
 const string StandardFileSystem::getCurrentWorkingPathName() {
 	try {
-		return std::filesystem::current_path().generic_string();
+		auto u8Cwd = std::filesystem::current_path().u8string();
+		string cwd(u8Cwd.size(), 0);
+		for (auto i = 0; i < u8Cwd.size(); i++) cwd[i] = u8Cwd[i];
+		return cwd;
 	} catch (Exception& exception) {
 		throw FileSystemException("Unable to get current path: " + string(exception.what()));
 	}
