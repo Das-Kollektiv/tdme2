@@ -421,11 +421,11 @@ void ArchiveFileSystem::rename(const string& fileNameFrom, const string& fileNam
 }
 
 bool ArchiveFileSystem::getThumbnailAttachment(const string& pathName, const string& fileName, vector<uint8_t>& thumbnailAttachmentContent) {
-	throw FileSystemException("ArchiveFileSystem::removeFile(): This operation is not supported in archive file system");
+	throw FileSystemException("ArchiveFileSystem::getThumbnailAttachment(): This operation is not supported in archive file system");
 }
 
 bool ArchiveFileSystem::getThumbnailAttachment(const vector<uint8_t>& content, vector<uint8_t>& thumbnailAttachmentContent) {
-	throw FileSystemException("ArchiveFileSystem::removeFile(): This operation is not supported in archive file system");
+	throw FileSystemException("ArchiveFileSystem::getThumbnailAttachment(): This operation is not supported in archive file system");
 }
 
 const string ArchiveFileSystem::computeSHA256Hash() {
