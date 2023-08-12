@@ -77,6 +77,7 @@
   - https://twvideo01.ubm-us.net/o1/vault/gdc2018/presentations/Sobek_Martin_Real-time_Reflections_in_MafiaIII.pdf
   - https://vkguide.dev/docs/chapter-4/storage_buffers/
   - https://vulkan-tutorial.com
+  - https://www.youtube.com/channel/UCxHAlbZQNFU2LgEtiqd2Maw
   - https://www-ui.is.s.u-tokyo.ac.jp/~takeo/papers/i3dg2001.pdf
   - https://www.cs.virginia.edu/~jdl/bib/appearance/analytic%20models/schlick94b.pdf
   - https://www.gamedev.net/forums/topic/478943-stackwalk64-and-x86/
