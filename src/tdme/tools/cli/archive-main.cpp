@@ -1,4 +1,5 @@
 #include <cassert>
+#include <filesystem>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -131,7 +132,7 @@ void processFile(const string& fileName, vector<FileInformation>& fileInformatio
 	);
 
 	// append to archive
-	ofstream ofs("archive.ta", ofstream::binary | ofstream::app);
+	ofstream ofs(std::filesystem::u8path("archive.ta"), ofstream::binary | ofstream::app);
 	ofs.seekp(0, ofstream::end);
 	uint64_t fileOffset = ofs.tellp();
 
@@ -235,7 +236,7 @@ int main(int argc, char** argv)
 
 	// reset archive
 	{
-		ofstream ofs("archive.ta", ofstream::binary | ofstream::trunc);
+		ofstream ofs(std::filesystem::u8path("archive.ta"), ofstream::binary | ofstream::trunc);
 		ofs.close();
 	}
 
@@ -247,7 +248,7 @@ int main(int argc, char** argv)
 
 	// add file informations
 	{
-		ofstream ofs("archive.ta", ofstream::binary | ofstream::app);
+		ofstream ofs(std::filesystem::u8path("archive.ta"), ofstream::binary | ofstream::app);
 		ofs.seekp(0, ofstream::end);
 		uint32_t fileInformationOffsetEnd = 0LL;
 		uint64_t fileInformationOffset = ofs.tellp();

@@ -1,3 +1,4 @@
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -24,7 +25,7 @@ Console::Logger* Console::logger = nullptr;
 Console::LogWriterThread::LogWriterThread(): Thread("console-logwriter-thread") {
 	Console::mutex = new Mutex("console");
 	Console::messages = new vector<string>();
-	ofstream ofs("console.log", ofstream::trunc);
+	ofstream ofs(std::filesystem::u8path("console.log"), ofstream::trunc);
 	ofs.close();
 	start();
 }
@@ -50,7 +51,7 @@ void Console::LogWriterThread::run() {
 
 void Console::LogWriterThread::flush() {
 	cout << "Console::LogWriterThread::flush()\n";
-	ofstream ofs("console.log", ofstream::app);
+	ofstream ofs(std::filesystem::u8path("console.log"), ofstream::app);
 	for (const auto& message: *Console::messages) {
 		ofs << message;
 		ofs << "\n";
@@ -115,7 +116,7 @@ void Console::println()
 void Console::shutdown() {
 	mutex->lock();
 	cout << "Console::shutdown()\n";
-	ofstream ofs("console.log", ofstream::app);
+	ofstream ofs(std::filesystem::u8path("console.log"), ofstream::app);
 	for (const auto& message: *Console::messages) {
 		ofs << message;
 		ofs << "\n";

@@ -353,7 +353,7 @@ void StandardFileSystem::rename(const string& fileNameFrom, const string& fileNa
 }
 
 bool StandardFileSystem::getThumbnailAttachment(const string& pathName, const string& fileName, vector<uint8_t>& thumbnailAttachmentContent) {
-	ifstream ifs(getFileName(pathName, fileName).c_str(), ifstream::binary);
+	ifstream ifs(std::filesystem::u8path(getFileName(pathName, fileName)), ifstream::binary);
 	if (ifs.is_open() == false) {
 		throw FileSystemException("Unable to open file for reading(" + to_string(errno) + "): " + pathName + "/" + fileName);
 	}

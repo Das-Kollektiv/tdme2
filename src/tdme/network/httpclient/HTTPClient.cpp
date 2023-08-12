@@ -84,6 +84,7 @@ string HTTPClient::createHTTPRequestHeaders(const string& hostName, const string
 	auto request =
 		string(method + " " + relativeUrl + query + " HTTP/1.1\r\n") +
 		string("User-Agent: tdme2-httpclient\r\n") +
+		string("Accept-Charset: UTF-8\r\n") +
 		string("Host: " + hostName + "\r\n") +
 		string("Connection: close\r\n");
 	if (username.empty() == false || password.empty() == false) {
