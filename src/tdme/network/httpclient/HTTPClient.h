@@ -39,14 +39,14 @@ private:
 
 	/**
 	 * Create HTTP request headers
-	 * @param hostName host name
+	 * @param hostname hostname
 	 * @param method method
 	 * @param relativeUrl url relative to server root
 	 * @param getParameters get parameters
 	 * @param postParameter post parameters
 	 * @param body body
 	 */
-	string createHTTPRequestHeaders(const string& hostName, const string& method, const string& relativeUrl, const unordered_map<string, string>& getParameters, const unordered_map<string, string>& postParameters, const string& body);
+	string createHTTPRequestHeaders(const string& hostname, const string& method, const string& relativeUrl, const unordered_map<string, string>& getParameters, const unordered_map<string, string>& postParameters, const string& body);
 
 	/**
 	 * Parse HTTP response headers
@@ -59,11 +59,11 @@ private:
 public:
 	static const constexpr int16_t HTTP_STATUSCODE_OK { 200 };
 
-	static const string HTTP_METHOD_GET;
-	static const string HTTP_METHOD_HEAD;
-	static const string HTTP_METHOD_POST;
-	static const string HTTP_METHOD_PUT;
-	static const string HTTP_METHOD_DELETE;
+	STATIC_DLL_IMPEXT static const string HTTP_METHOD_GET;
+	STATIC_DLL_IMPEXT static const string HTTP_METHOD_HEAD;
+	STATIC_DLL_IMPEXT static const string HTTP_METHOD_POST;
+	STATIC_DLL_IMPEXT static const string HTTP_METHOD_PUT;
+	STATIC_DLL_IMPEXT static const string HTTP_METHOD_DELETE;
 
 	/**
 	 * Get URL

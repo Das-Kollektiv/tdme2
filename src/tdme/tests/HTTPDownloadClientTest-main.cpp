@@ -18,8 +18,8 @@ int main(int argc, char *argv[]) {
 
 	try {
 		HTTPDownloadClient httpDownloadClient;
-		httpDownloadClient.setFile("tdme2-freebsd-x64_2018-07-07-03-29.tgz");
-		httpDownloadClient.setURL("http://drewke.net/tdme2/tdme2-freebsd-x64_2018-07-07-03-29.tgz");
+		httpDownloadClient.setFile("haiku-r1beta4-x86_64-anyboot.iso");
+		httpDownloadClient.setURL("http://mirror.rit.edu/haiku/r1beta4/haiku-r1beta4-x86_64-anyboot.iso");
 		httpDownloadClient.start();
 		Console::println("Download started");
 		while (httpDownloadClient.isFinished() == false) {

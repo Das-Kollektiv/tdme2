@@ -82,10 +82,9 @@ uint64_t HTTPDownloadClient::parseHTTPResponseHeaders(ifstream& rawResponse, int
 		rawResponse.get(currentChar);
 		headerSize++;
 		if (lastChar == '\r' && currentChar == '\n') {
-			if (line.size() != 0) {
+			if (line.empty() == false) {
 				httpHeader.push_back(line);
-			}
-			if (line.size() == 0) {
+			} else {
 				returnHeaderSize = headerSize;
 				break;
 			}
@@ -135,26 +134,26 @@ void HTTPDownloadClient::start() {
 				try {
 					if (StringTools::startsWith(downloadClient->url, "http://") == false) throw HTTPClientException("Invalid protocol");
 					auto relativeUrl = StringTools::substring(downloadClient->url, string("http://").size());
-					if (relativeUrl.size() == 0) throw HTTPClientException("No URL given");
+					if (relativeUrl.empty() == true) throw HTTPClientException("No URL given");
 					auto slashIdx = relativeUrl.find('/');
-					auto hostName = relativeUrl;
-					if (slashIdx != -1) hostName = StringTools::substring(relativeUrl, 0, slashIdx);
-					relativeUrl = StringTools::substring(relativeUrl, hostName.size());
+					auto hostname = relativeUrl;
+					if (slashIdx != -1) hostname = StringTools::substring(relativeUrl, 0, slashIdx);
+					relativeUrl = StringTools::substring(relativeUrl, hostname.size());
 
-					Console::println("HTTPDownloadClient::execute(): Hostname: " + hostName);
-					Console::println("HTTPDownloadClient::execute(): RelativeUrl: " + relativeUrl);
-					Console::print("HTTPDownloadClient::execute(): Resolving name to IP: " + hostName + ": ");
-					auto ip = Network::getIpByHostName(hostName);
-					if (ip.size() == 0) {
-						Console::println("HTTPDownloadClient::execute(): Failed");
-						throw HTTPClientException("Could not resolve host IP by host name");
+					Console::println("HTTPDownloadClient::execute(): hostname: " + hostname);
+					Console::println("HTTPDownloadClient::execute(): relative url: " + relativeUrl);
+					Console::print("HTTPDownloadClient::execute(): resolving hostname to IP: " + hostname + ": ");
+					auto ip = Network::getIpByHostname(hostname);
+					if (ip.empty() == true) {
+						Console::println("HTTPDownloadClient::execute(): failed");
+						throw HTTPClientException("Could not resolve host IP by hostname");
 					}
 					Console::println(ip);
 
 					// socket
 					TCPSocket::create(socket, TCPSocket::determineIpVersion(ip));
 					socket.connect(ip, 80);
-					auto request = downloadClient->createHTTPRequestHeaders(hostName, relativeUrl);
+					auto request = downloadClient->createHTTPRequestHeaders(hostname, relativeUrl);
 					socket.write((void*)request.data(), request.length());
 
 					{

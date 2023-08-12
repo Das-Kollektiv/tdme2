@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
 		httpClient.setURL("http://www.drewke.net/tdme2/");
 		httpClient.execute();
 		Console::println("HTTP status code: " + to_string(httpClient.getStatusCode()));
-		for (auto header: httpClient.getResponseHeaders()) {
+		for (const auto& header: httpClient.getResponseHeaders()) {
 			Console::println("Header: " + header);
 		}
 		Console::println("Response: ");
