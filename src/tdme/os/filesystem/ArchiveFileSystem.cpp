@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <filesystem>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -39,7 +40,7 @@ using tdme::utilities::StringTools;
 ArchiveFileSystem::ArchiveFileSystem(const string& fileName): fileName(fileName), ifsMutex("afs-ifs-mutex")
 {
 	// open
-	ifs.open(fileName.c_str(), ifstream::binary);
+	ifs.open(std::filesystem::u8path(fileName), ifstream::binary);
 	if (ifs.is_open() == false) {
 		throw FileSystemException("Unable to open file for reading(" + to_string(errno) + "): " + fileName);
 	}
