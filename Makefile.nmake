@@ -17,7 +17,6 @@ INCLUDES = \
 	/I "ext\glfw3\include" \
 	/I "ext\windows-msc\openal-soft\includes" \
 	/I "ext\windows-msc\glew\include" \
-	/I "ext\windows-msc\dirent\include" \
 	/I "ext\windows-msc\vulkan-sdk\include" \
 	/I "ext\freetype\include" \
 	/I "ext\rapidjson\include" \

@@ -823,7 +823,7 @@ void EditorScreenController::onOpenProject() {
 	};
 
 	view->getPopUps()->getFileDialogScreenController()->show(
-		string(),
+		".",
 		"Open project from folder: ",
 		{},
 		string(),

@@ -342,14 +342,14 @@ const string ArchiveFileSystem::getCanonicalPath(const string& pathName, const s
 	for (auto i = 0; i < pathComponents.size(); i++) {
 		auto pathComponent = pathComponents[i];
 		if (pathComponent == ".") {
-			pathComponents[i] = "";
+			pathComponents[i].clear();
 		} else
 		if (pathComponent == "..") {
-			pathComponents[i]= "";
+			pathComponents[i].clear();
 			int j = i - 1;
 			for (int pathComponentReplaced = 0; pathComponentReplaced < 1 && j >= 0; ) {
-				if (pathComponents[j] != "") {
-					pathComponents[j] = "";
+				if (pathComponents[j].empty() == false) {
+					pathComponents[j].clear();
 					pathComponentReplaced++;
 				}
 				j--;
@@ -362,7 +362,7 @@ const string ArchiveFileSystem::getCanonicalPath(const string& pathName, const s
 	bool slash = StringTools::startsWith(pathString, "/");
 	for (auto i = 0; i < pathComponents.size(); i++) {
 		auto pathComponent = pathComponents[i];
-		if (pathComponent == "") {
+		if (pathComponent.empty() == true) {
 			// no op
 		} else {
 			canonicalPath = canonicalPath + (slash == true?"/":"") + pathComponent;
