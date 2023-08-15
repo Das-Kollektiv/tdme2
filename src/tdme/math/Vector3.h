@@ -146,18 +146,6 @@ public:
 	}
 
 	/**
-	 * Normalizes this vector
-	 * @return this vector
-	 */
-	inline Vector3& normalize() {
-		auto length = computeLength();
-		data[0] /= length;
-		data[1] /= length;
-		data[2] /= length;
-		return *this;
-	}
-
-	/**
 	 * Adds a scalar
 	 * @param scalar scalar
 	 * @return this vector
@@ -230,6 +218,33 @@ public:
 	}
 
 	/**
+	 * Compares this vector with given vector
+	 * @param vector vector
+	 * @param tolerance tolerance per vector component
+	 * @return equality
+	 */
+	inline bool equals(const Vector3& vector, float tolerance = Math::EPSILON) const {
+		return (this == &vector) ||
+			(
+				Math::abs(data[0] - vector.data[0]) < tolerance &&
+				Math::abs(data[1] - vector.data[1]) < tolerance &&
+				Math::abs(data[2] - vector.data[2]) < tolerance
+			);
+	}
+
+	/**
+	 * Normalizes this vector
+	 * @return this vector
+	 */
+	inline Vector3& normalize() {
+		auto length = computeLength();
+		data[0] /= length;
+		data[1] /= length;
+		data[2] /= length;
+		return *this;
+	}
+
+	/**
 	 * Computes the dot product of vector a and b
 	 * @param a vector a
 	 * @param b vector b
@@ -265,6 +280,31 @@ public:
 	 */
 	inline float computeLengthSquared() const {
 		return (data[0] * data[0]) + (data[1] * data[1]) + (data[2] * data[2]);
+	}
+
+	/**
+	 * Computes angle between a and b from 0.0 <= angle < 180.0
+	 * @param a vector a, vector to test, must be normalized
+	 * @param b vector b, vector to test against, must be normalized
+	 * @return angle
+	 */
+	inline static float computeAngle(const Vector3& a, const Vector3& b) {
+		auto result = 180.0 / Math::PI * Math::acos(Math::clamp(Vector3::computeDotProduct(a, b), -1.0f, 1.0f));
+		return result;
+	}
+
+	/**
+	 * Computes angle between a and b from, where 0.0 <= angle < 360.0
+	 * @param a vector a, vector to test, must be normalized
+	 * @param b vector b, vector to test against, must be normalized
+	 * @param n plane normal n where a and b live in, must be normalized
+	 * @return angle
+	 */
+	inline static float computeAngle(const Vector3& a, const Vector3& b, const Vector3& n) {
+		auto angle = Vector3::computeAngle(a, b);
+		auto sign = Math::sign(Vector3::computeDotProduct(n, Vector3::computeCrossProduct(a, b)));
+		if (Float::isNaN(sign) == true) sign = 1.0f;
+		return Math::mod(((angle * sign) + 360.0f), 360.0f);
 	}
 
 	/**
@@ -306,43 +346,25 @@ public:
 	}
 
 	/**
-	 * Computes angle between a and b from 0.0 <= angle < 180.0
-	 * @param a vector a, vector to test, must be normalized
-	 * @param b vector b, vector to test against, must be normalized
-	 * @return angle
+	 * Interpolates between vector a and b by 0f<=t<=1f linearly
+	 * @param a vector b
+	 * @param b vector b
+	 * @param t t
+	 * @return resulting vector
 	 */
-	inline static float computeAngle(const Vector3& a, const Vector3& b) {
-		auto result = 180.0 / Math::PI * Math::acos(Math::clamp(Vector3::computeDotProduct(a, b), -1.0f, 1.0f));
-		return result;
+	inline static Vector3 interpolateLinear(const Vector3& a, const Vector3& b, float t) {
+		return Vector3(
+			(b.data[0] * t) + ((1.0f - t) * a.data[0]),
+			(b.data[1] * t) + ((1.0f - t) * a.data[1]),
+			(b.data[2] * t) + ((1.0f - t) * a.data[2])
+		);
 	}
 
 	/**
-	 * Computes angle between a and b from, where 0.0 <= angle < 360.0
-	 * @param a vector a, vector to test, must be normalized
-	 * @param b vector b, vector to test against, must be normalized
-	 * @param n plane normal n where a and b live in, must be normalized
-	 * @return angle
+	 * @return vector as array
 	 */
-	inline static float computeAngle(const Vector3& a, const Vector3& b, const Vector3& n) {
-		auto angle = Vector3::computeAngle(a, b);
-		auto sign = Math::sign(Vector3::computeDotProduct(n, Vector3::computeCrossProduct(a, b)));
-		if (Float::isNaN(sign) == true) sign = 1.0f;
-		return Math::mod(((angle * sign) + 360.0f), 360.0f);
-	}
-
-	/**
-	 * Compares this vector with given vector
-	 * @param vector vector
-	 * @param tolerance tolerance per vector component
-	 * @return equality
-	 */
-	inline bool equals(const Vector3& vector, float tolerance = Math::EPSILON) const {
-		return (this == &vector) ||
-			(
-				Math::abs(data[0] - vector.data[0]) < tolerance &&
-				Math::abs(data[1] - vector.data[1]) < tolerance &&
-				Math::abs(data[2] - vector.data[2]) < tolerance
-			);
+	inline const array<float,3>& getArray() const {
+		return (array<float,3>&)data;
 	}
 
 	/**
@@ -351,13 +373,6 @@ public:
 	 */
 	inline Vector3 clone() const {
 		return Vector3(data);
-	}
-
-	/**
-	 * @return vector as array
-	 */
-	inline const array<float,3>& getArray() const {
-		return (array<float,3>&)data;
 	}
 
 	/**
@@ -548,21 +563,6 @@ public:
 	 */
 	inline bool operator !=(const Vector3& vector) const {
 		return this->equals(vector) == false;
-	}
-
-	/**
-	 * Interpolates between vector a and b by 0f<=t<=1f linearly
-	 * @param a vector b
-	 * @param b vector b
-	 * @param t t
-	 * @return resulting vector
-	 */
-	inline static Vector3 interpolateLinear(const Vector3& a, const Vector3& b, float t) {
-		return Vector3(
-			(b.data[0] * t) + ((1.0f - t) * a.data[0]),
-			(b.data[1] * t) + ((1.0f - t) * a.data[1]),
-			(b.data[2] * t) + ((1.0f - t) * a.data[2])
-		);
 	}
 
 };
