@@ -23,7 +23,7 @@ class tdme::math::Vector3 final
 	friend class Vector4;
 
 private:
-	array<float, 3> data { 0.0f, 0.0, 0.0f };
+	array<float, 3> data { 0.0f, 0.0f, 0.0f };
 
 public:
 	/**
