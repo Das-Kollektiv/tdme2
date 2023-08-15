@@ -57,7 +57,7 @@ public:
 	}
 
 	/**
-	 * Sets up this vector2 by it components
+	 * Sets this vector2 by it components
 	 * @param x x
 	 * @param y y
 	 * @return this vector2
@@ -69,7 +69,7 @@ public:
 	}
 
 	/**
-	 * Sets up this vector2 by array
+	 * Sets this vector2 by array
 	 * @param vector2 vector2 as array
 	 * @return this vector2
 	 */
@@ -79,7 +79,7 @@ public:
 	}
 
 	/**
-	 * Sets up this vector2 by given vector2
+	 * Sets this vector2 by given vector2
 	 * @param vector2 vector2
 	 * @return this vector2
 	 */
