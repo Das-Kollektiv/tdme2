@@ -238,7 +238,7 @@ public:
 	}
 
 	/**
-	 * Interpolates between vector v1 and v2 by 0f<=t<=1f linearly
+	 * Interpolates between vector a and b by 0f<=t<=1f linearly
 	 * @param a vector a
 	 * @param b vector b
 	 * @param t t
