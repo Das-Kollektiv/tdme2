@@ -552,16 +552,16 @@ public:
 
 	/**
 	 * Interpolates between vector v1 and v2 by 0f<=t<=1f linearly
-	 * @param v1 vector v1
-	 * @param v2 vector v2
+	 * @param a vector b
+	 * @param b vector b
 	 * @param t t
 	 * @return resulting vector
 	 */
-	inline static Vector3 interpolateLinear(const Vector3& v1, const Vector3& v2, float t) {
+	inline static Vector3 interpolateLinear(const Vector3& a, const Vector3& b, float t) {
 		return Vector3(
-			(v2.data[0] * t) + ((1.0f - t) * v1.data[0]),
-			(v2.data[1] * t) + ((1.0f - t) * v1.data[1]),
-			(v2.data[2] * t) + ((1.0f - t) * v1.data[2])
+			(b.data[0] * t) + ((1.0f - t) * a.data[0]),
+			(b.data[1] * t) + ((1.0f - t) * a.data[1]),
+			(b.data[2] * t) + ((1.0f - t) * a.data[2])
 		);
 	}
 
