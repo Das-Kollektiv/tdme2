@@ -379,7 +379,7 @@ public:
 	}
 
 	/**
-	 * Operator +
+	 * Operator + scalar
 	 * @param scalar scalar
 	 * @return new vector (this + scalar)
 	 */
@@ -389,7 +389,7 @@ public:
 	}
 
 	/**
-	 * Operator +
+	 * Operator + vector
 	 * @param vector vector
 	 * @return new vector (this + vector)
 	 */
@@ -399,7 +399,7 @@ public:
 	}
 
 	/**
-	 * Operator -
+	 * Operator - scalar
 	 * @param scalar scalar
 	 * @return new vector (this - scalar)
 	 */
@@ -409,7 +409,7 @@ public:
 	}
 
 	/**
-	 * Operator -
+	 * Operator - vector
 	 * @param vector vector
 	 * @return new vector (this - vector)
 	 */
