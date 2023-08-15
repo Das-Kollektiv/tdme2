@@ -258,7 +258,7 @@ public:
 	 * Computes the cross product of vector a and b
 	 * @param a vector a
 	 * @param b vector b
-	 * @return resulting cross product vector
+	 * @return cross product
 	 */
 	inline static Vector3 computeCrossProduct(const Vector3& a, const Vector3& b) {
 		return Vector3(
