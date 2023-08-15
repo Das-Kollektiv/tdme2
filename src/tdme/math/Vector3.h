@@ -104,6 +104,7 @@ public:
 	/**
 	 * Sets x
 	 * @param x x
+	 * @return this vector
 	 */
 	inline Vector3& setX(float x) {
 		data[0] = x;
