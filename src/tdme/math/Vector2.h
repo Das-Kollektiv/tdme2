@@ -13,7 +13,7 @@ using tdme::math::Math;
 using tdme::utilities::Float;
 
 /**
- * 2D vector 2 class
+ * 2D vector class
  * @author Andreas Drewke
  */
 class tdme::math::Vector2 final
@@ -21,14 +21,13 @@ class tdme::math::Vector2 final
 	friend class Matrix2D3x3;
 
 private:
-	array<float, 2> data;
+	array<float, 2> data { 0.0f, 0.0f };
 
 public:
 	/**
 	 * Public constructor
 	 */
 	inline Vector2() {
-		data.fill(0.0f);
 	}
 
 	/**
@@ -43,22 +42,22 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param v float values
+	 * @param vector vector as array
 	 */
-	inline Vector2(const array<float, 2>& v) {
-		data = v;
+	inline Vector2(const array<float, 2>& vector) {
+		data = vector;
 	}
 
 	/**
 	 * Public constructor
-	 * @param v v
+	 * @param vector vector
 	 */
-	inline Vector2(const Vector2& v) {
-		data = v.data;
+	inline Vector2(const Vector2& vector) {
+		data = vector.data;
 	}
 
 	/**
-	 * Set up vector
+	 * Sets up this vector by it components
 	 * @param x x
 	 * @param y y
 	 * @return this vector
@@ -70,22 +69,22 @@ public:
 	}
 
 	/**
-	 * Set up vector
-	 * @param v float array containing x,y values
+	 * Sets up this vector by array
+	 * @param vector vector as array
 	 * @return this vector
 	 */
-	inline Vector2& set(const array<float, 2>& v) {
-		data = v;
+	inline Vector2& set(const array<float, 2>& vector) {
+		data = vector;
 		return *this;
 	}
 
 	/**
-	 * Set up vector
-	 * @param v v
+	 * Sets up this vector by given vector
+	 * @param vector vector
 	 * @return this vector
 	 */
-	inline Vector2& set(const Vector2& v) {
-		data = v.data;
+	inline Vector2& set(const Vector2& vector) {
+		data = vector.data;
 		return *this;
 	}
 
@@ -97,7 +96,7 @@ public:
 	}
 
 	/**
-	 * set X
+	 * Sets x
 	 * @param x x
 	 * @return this vector
 	 */
@@ -114,8 +113,9 @@ public:
 	}
 
 	/**
-	 * set Y
+	 * Sets y
 	 * @param y y
+	 * @return this vector
 	 */
 	inline Vector2& setY(float y) {
 		data[1] = y;
@@ -123,7 +123,87 @@ public:
 	}
 
 	/**
-	 * Normalize the vector
+	 * Adds a scalar
+	 * @param scalar scalar
+	 * @return this vector
+	 */
+	inline Vector2& add(float scalar) {
+		data[0] += scalar;
+		data[1] += scalar;
+		return *this;
+	}
+
+	/**
+	 * Adds a vector
+	 * @param vector vector
+	 * @return this vector
+	 */
+	inline Vector2& add(const Vector2& vector) {
+		data[0] += vector.data[0];
+		data[1] += vector.data[1];
+		return *this;
+	}
+
+	/**
+	 * Subtracts a scalar
+	 * @param scalar scalar
+	 * @return this vector
+	 */
+	inline Vector2& sub(float scalar) {
+		data[0] -= scalar;
+		data[1] -= scalar;
+		return *this;
+	}
+
+	/**
+	 * Subtracts a vector
+	 * @param vector vector
+	 * @return this vector
+	 */
+	inline Vector2& sub(const Vector2& vector) {
+		data[0] -= vector.data[0];
+		data[1] -= vector.data[1];
+		return *this;
+	}
+
+	/**
+	 * Scales by scalar
+	 * @param scalar scalar
+	 * @return this vector
+	 */
+	inline Vector2& scale(const float scalar) {
+		data[0] *= scalar;
+		data[1] *= scalar;
+		return *this;
+	}
+
+	/**
+	 * Scales by vector
+	 * @param scale scale vector
+	 * @return this vector
+	 */
+	inline Vector2& scale(const Vector2& scale) {
+		data[0] *= scale.data[0];
+		data[1] *= scale.data[1];
+		return *this;
+	}
+
+	/**
+	 * Compares this vector with given vector
+	 * @param vector vector
+	 * @param tolerance tolerance per vector component
+	 * @return equality
+	 */
+	inline bool equals(const Vector2& vector, float tolerance = Math::EPSILON) const {
+		return (this == &vector) ||
+			(
+				Math::abs(data[0] - vector.data[0]) < tolerance &&
+				Math::abs(data[1] - vector.data[1]) < tolerance
+			);
+	}
+
+	/**
+	 * Normalizes this vector
 	 * @return this vector
 	 */
 	inline Vector2& normalize() {
@@ -134,57 +214,13 @@ public:
 	}
 
 	/**
-	 * Adds a vector
-	 * @param v v
-	 * @return this vector
+	 * Computes the dot product of vector a and b
+	 * @param a vector a
+	 * @param b vector b
+	 * @return dot product
 	 */
-	inline Vector2& add(const Vector2& v) {
-		data[0] += v.data[0];
-		data[1] += v.data[1];
-		return *this;
-	}
-
-	/**
-	 * Subtracts a vector
-	 * @param v v
-	 * @return this vector
-	 */
-	inline Vector2& sub(const Vector2& v) {
-		data[0] -= v.data[0];
-		data[1] -= v.data[1];
-		return *this;
-	}
-
-	/**
-	 * Scale this vector
-	 * @param scale scale
-	 * @return this vector
-	 */
-	inline Vector2& scale(const float scale) {
-		data[0] *= scale;
-		data[1] *= scale;
-		return *this;
-	}
-
-	/**
-	 * Scale this vector
-	 * @param scale scale
-	 * @return this vector
-	 */
-	inline Vector2& scale(const Vector2& scale) {
-		data[0] *= scale.data[0];
-		data[1] *= scale.data[1];
-		return *this;
-	}
-
-	/**
-	 * Compute the dot product of vector v1 and v2
-	 * @param v1 v1
-	 * @param v2 v2
-	 * @return Vector3
-	 */
-	inline static float computeDotProduct(const Vector2& v1, const Vector2& v2) {
-		return (v1.data[0] * v2.data[0]) + (v1.data[1] * v2.data[1]);
+	inline static float computeDotProduct(const Vector2& a, const Vector2& b) {
+		return (a.data[0] * b.data[0]) + (a.data[1] * b.data[1]);
 	}
 
 	/**
@@ -202,155 +238,17 @@ public:
 	}
 
 	/**
-	 * Array access operator
-	 * @param i index
-	 * @return vector3 component
+	 * Interpolates between vector v1 and v2 by 0f<=t<=1f linearly
+	 * @param a vector a
+	 * @param b vector b
+	 * @param t t
+	 * @return interpolated vector
 	 */
-	inline float& operator[](int i) {
-		return data[i];
-	}
-
-	/**
-	 * Const array access operator
-	 * @param i index
-	 * @return vector3 component
-	 */
-	inline const float& operator[](int i) const {
-		return data[i];
-	}
-
-	/**
-	 * Operator +
-	 * @param v vector to add
-	 * @return new vector (this + v)
-	 */
-	inline Vector2 operator +(const Vector2& v) const {
-		auto r = this->clone().add(v);
-		return r;
-	}
-
-	/**
-	 * Operator -
-	 * @param v vector to subtract
-	 * @return new vector (this - v)
-	 */
-	inline Vector2 operator -(const Vector2& v) const {
-		auto r = this->clone().sub(v);
-		return r;
-	}
-
-	/**
-	 * Operator * (float)
-	 * @param f value to multiply by
-	 * @return new vector (this * f)
-	 */
-	inline Vector2 operator *(const float f) const {
-		auto r = this->clone().scale(f);
-		return r;
-	}
-
-	/**
-	 * Operator * (Vector2&)
-	 * @param v vector to multiply by
-	 * @return new vector (this * v)
-	 */
-	inline Vector2 operator *(const Vector2& v) const {
-		auto r = this->clone().scale(v);
-		return r;
-	}
-
-	/**
-	 * Operator / (f)
-	 * @param v value to divide by
-	 * @return new vector (this / f)
-	 */
-	inline Vector2 operator /(const float f) const {
-		auto r = this->clone().scale(1.0f / f);
-		return r;
-	}
-
-	/**
-	 * Operator / (Vector2&)
-	 * @param v vector to divide by
-	 * @return new vector (this / v)
-	 */
-	inline Vector2 operator /(const Vector2& v) const {
-		auto vInverted = Vector2(1.0f / v[0], 1.0f / v[1]);
-		auto r = this->clone().scale(vInverted);
-		return r;
-	}
-
-	/**
-	 * Operator +=
-	 * @param v vector to add
-	 * @return this vector added by v
-	 */
-	inline Vector2& operator +=(const Vector2& v) {
-		return this->add(v);
-	}
-
-	/**
-	 * Operator -=
-	 * @param v vector to substract
-	 * @return this vector substracted by v
-	 */
-	inline Vector2& operator -=(const Vector2& v) {
-		return this->sub(v);
-	}
-
-	/**
-	 * Operator *=
-	 * @param v vector to multiply by
-	 * @return this vector multiplied by v
-	 */
-	inline Vector2& operator *=(const Vector2& v) {
-		return this->scale(v);
-	}
-
-	/**
-	 * Operator /=
-	 * @param v vector to devide by
-	 * @return this vector devided by v
-	 */
-	inline Vector2& operator /=(const Vector2& v) {
-		auto vInverted = Vector2(1.0f / v[0], 1.0f / v[1]);
-		return this->scale(vInverted);
-	}
-
-	/**
-	 * Operator *=
-	 * @param f float to multiply by
-	 * @return this vector multiplied by f
-	 */
-	inline Vector2& operator *=(const float f) {
-		return this->scale(f);
-	}
-
-	/**
-	 * Operator /=
-	 * @param f float to divide by
-	 * @return this vector divided by f
-	 */
-	inline Vector2& operator /=(const float f) {
-		return this->scale(1.0f / f);
-	}
-
-	/**
-	 * Equality comparison operator
-	 * @param v vector to compare to
-	 * @return equality
-	 */
-	inline bool operator ==(const Vector2& v) const {
-		return this->equals(v);
-	}
-
-	/**
-	 * Non equality comparison operator
-	 * @param v vector to compare to
-	 * @return non equality
-	 */
-	inline bool operator !=(const Vector2& v) const {
-		return this->equals(v) == false;
+	inline static Vector2 interpolateLinear(const Vector2& a, const Vector2& b, float t) {
+		return Vector2(
+			(b.data[0] * t) + ((1.0f - t) * a.data[0]),
+			(b.data[1] * t) + ((1.0f - t) * a.data[1])
+		);
 	}
 
 	/**
@@ -361,34 +259,202 @@ public:
 	}
 
 	/**
-	 * Clones the vector
-	 * @return new cloned vector
+	 * Clones this vector
+	 * @return cloned vector
 	 */
 	inline Vector2 clone() const {
-		return Vector2(data);
+		return Vector2(*this);
 	}
 
 	/**
-	 * Compares this vector with given vector
-	 * @param v vector v
-	 * @return equality
+	 * Array access operator
+	 * @param i index
+	 * @return vector component
 	 */
-	inline bool equals(const Vector2& v) const {
-		return equals(v, Math::EPSILON);
+	inline float& operator[](int i) {
+		return data[i];
 	}
 
 	/**
-	 * Compares this vector with given vector
-	 * @param v vector v
-	 * @param tolerance tolerance per component(x, y, z)
+	 * Const array access operator
+	 * @param i index
+	 * @return vector component
+	 */
+	inline const float& operator[](int i) const {
+		return data[i];
+	}
+
+	/**
+	 * Operator + scalar
+	 * @param scalar scalar
+	 * @return new vector (this + scalar)
+	 */
+	inline Vector2 operator +(const float scalar) const {
+		auto r = this->clone().add(scalar);
+		return r;
+	}
+
+	/**
+	 * Operator + vector
+	 * @param vector vector
+	 * @return new vector (this + vector)
+	 */
+	inline Vector2 operator +(const Vector2& vector) const {
+		auto r = this->clone().add(vector);
+		return r;
+	}
+
+	/**
+	 * Operator - scalar
+	 * @param scalar scalar
+	 * @return new vector (this - scalar)
+	 */
+	inline Vector2 operator -(const float scalar) const {
+		auto r = this->clone().sub(scalar);
+		return r;
+	}
+
+	/**
+	 * Operator - vector
+	 * @param vector vector
+	 * @return new vector (this - vector)
+	 */
+	inline Vector2 operator -(const Vector2& vector) const {
+		auto r = this->clone().sub(vector);
+		return r;
+	}
+
+	/**
+	 * Operator * scalar
+	 * @param scalar scalar
+	 * @return new vector (this * scalar)
+	 */
+	inline Vector2 operator *(const float scalar) const {
+		auto r = this->clone().scale(scalar);
+		return r;
+	}
+
+	/**
+	 * Operator * vector
+	 * @param vector vector
+	 * @return new vector (this * vector)
+	 */
+	inline Vector2 operator *(const Vector2& vector) const {
+		auto r = this->clone().scale(vector);
+		return r;
+	}
+
+	/**
+	 * Operator / scalar
+	 * @param scalar scalar
+	 * @return new vector (this / scalar)
+	 */
+	inline Vector2 operator /(const float scalar) const {
+		auto r = this->clone().scale(1.0f / scalar);
+		return r;
+	}
+
+	/**
+	 * Operator / vector
+	 * @param vector vector
+	 * @return new vector (this / vector)
+	 */
+	inline Vector2 operator /(const Vector2& vector) const {
+		auto vInverted = Vector2(1.0f / vector[0], 1.0f / vector[1]);
+		auto r = this->clone().scale(vInverted);
+		return r;
+	}
+
+	/**
+	 * Operator += scalar
+	 * @param scalar scalar
+	 * @return this vector
+	 */
+	inline Vector2& operator +=(const float scalar) {
+		return this->add(scalar);
+	}
+
+	/**
+	 * Operator += vector
+	 * @param vector vector
+	 * @return this vector
+	 */
+	inline Vector2& operator +=(const Vector2& vector) {
+		return this->add(vector);
+	}
+
+	/**
+	 * Operator -= scalar
+	 * @param scalar scalar
+	 * @return this vector
+	 */
+	inline Vector2& operator -=(const float scalar) {
+		return this->sub(scalar);
+	}
+
+	/**
+	 * Operator -= vector
+	 * @param vector vector
+	 * @return this vector
+	 */
+	inline Vector2& operator -=(const Vector2& vector) {
+		return this->sub(vector);
+	}
+
+	/**
+	 * Operator *= scalar
+	 * @param scalar scalar
+	 * @return this vector
+	 */
+	inline Vector2& operator *=(const float scalar) {
+		return this->scale(scalar);
+	}
+
+	/**
+	 * Operator *= vector
+	 * @param vector vector
+	 * @return this vector
+	 */
+	inline Vector2& operator *=(const Vector2& vector) {
+		return this->scale(vector);
+	}
+
+	/**
+	 * Operator /= scalar
+	 * @param scalar scalar
+	 * @return this vector
+	 */
+	inline Vector2& operator /=(const float scalar) {
+		auto vInverted = Vector2(1.0f / scalar, 1.0f / scalar);
+		return this->scale(vInverted);
+	}
+
+	/**
+	 * Operator /= vector
+	 * @param vector vector
+	 * @return this vector
+	 */
+	inline Vector2& operator /=(const Vector2& vector) {
+		auto vInverted = Vector2(1.0f / vector[0], 1.0f / vector[1]);
+		return this->scale(vInverted);
+	}
+
+	/**
+	 * Equality comparison operator
+	 * @param vector vector
 	 * @return equality
 	 */
-	inline bool equals(const Vector2& v, float tolerance) const {
-		return (this == &v) ||
-			(
-				Math::abs(data[0] - v.data[0]) < tolerance &&
-				Math::abs(data[1] - v.data[1]) < tolerance
-			);
+	inline bool operator ==(const Vector2& vector) const {
+		return this->equals(vector);
+	}
+
+	/**
+	 * Non equality comparison operator
+	 * @param vector vector
+	 * @return non equality
+	 */
+	inline bool operator !=(const Vector2& vector) const {
+		return this->equals(vector) == false;
 	}
 
 };

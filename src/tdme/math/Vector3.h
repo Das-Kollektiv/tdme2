@@ -350,7 +350,7 @@ public:
 	 * @param a vector b
 	 * @param b vector b
 	 * @param t t
-	 * @return resulting vector
+	 * @return interpolated vector
 	 */
 	inline static Vector3 interpolateLinear(const Vector3& a, const Vector3& b, float t) {
 		return Vector3(
