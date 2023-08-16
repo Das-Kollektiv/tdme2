@@ -34,9 +34,9 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param x x
-	 * @param y y
-	 * @param z z
+	 * @param x x component
+	 * @param y y component
+	 * @param z z component
 	 */
 	inline Vector3(float x, float y, float z) {
 		data[0] = x;
@@ -61,10 +61,10 @@ public:
 	}
 
 	/**
-	 * Sets this vector3 by it components
-	 * @param x x
-	 * @param y y
-	 * @param z z
+	 * Sets this vector3 by its components
+	 * @param x x component
+	 * @param y y component
+	 * @param z z component
 	 * @return this vector3
 	 */
 	inline Vector3& set(float x, float y, float z) {
@@ -95,15 +95,15 @@ public:
 	}
 
 	/**
-	 * @return x
+	 * @return x component
 	 */
 	inline float getX() const {
 		return data[0];
 	}
 
 	/**
-	 * Sets x
-	 * @param x x
+	 * Sets x component
+	 * @param x x component
 	 * @return this vector3
 	 */
 	inline Vector3& setX(float x) {
@@ -112,15 +112,15 @@ public:
 	}
 
 	/**
-	 * @return y
+	 * @return y component
 	 */
 	inline float getY() const {
 		return data[1];
 	}
 
 	/**
-	 * Sets y
-	 * @param y y
+	 * Sets y component
+	 * @param y y component
 	 * @return this vector3
 	 */
 	inline Vector3& setY(float y) {
@@ -129,15 +129,15 @@ public:
 	}
 
 	/**
-	 * @return z
+	 * @return z component
 	 */
 	inline float getZ() const {
 		return data[2];
 	}
 
 	/**
-	 * Sets z
-	 * @param z z
+	 * Sets z component
+	 * @param z z component
 	 * @return this vector3
 	 */
 	inline Vector3& setZ(float z) {

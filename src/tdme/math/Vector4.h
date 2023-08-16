@@ -32,10 +32,10 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param x x
-	 * @param y y
-	 * @param z z
-	 * @param w w
+	 * @param x x component
+	 * @param y y component
+	 * @param z z component
+	 * @param w w component
 	 */
 	inline Vector4(float x, float y, float z, float w) {
 		data[0] = x;
@@ -63,7 +63,7 @@ public:
 	/**
 	 * Public constructor
 	 * @param vector3 vector3
-	 * @param w w
+	 * @param w w component
 	 */
 	inline Vector4(const Vector3& vector3, float w) {
 		data[0] = vector3.data[0];
@@ -75,7 +75,7 @@ public:
 	/**
 	 * Public constructor
 	 * @param vector3 vector3 as array
-	 * @param w w
+	 * @param w w component
 	 */
 	inline Vector4(const array<float, 3>& vector3, float w) {
 		data[0] = vector3[0];
@@ -86,10 +86,10 @@ public:
 
 	/**
 	 * Sets this vector4 by its components
-	 * @param x x
-	 * @param y y
-	 * @param z z
-	 * @param w w
+	 * @param x x component
+	 * @param y y component
+	 * @param z z component
+	 * @param w w component
 	 * @return this vector4
 	 */
 	inline Vector4& set(float x, float y, float z, float w) {
@@ -123,7 +123,7 @@ public:
 	/**
 	 * Sets this vector4 by given vector3 and w
 	 * @param vector3 vector3
-	 * @param w w
+	 * @param w w component
 	 * @return this vector4
 	 */
 	inline Vector4& set(const Vector3& vector3, float w) {
@@ -135,15 +135,15 @@ public:
 	}
 
 	/**
-	 * @return x
+	 * @return x component
 	 */
 	inline float getX() const {
 		return data[0];
 	}
 
 	/**
-	 * Sets x
-	 * @param x x
+	 * Sets x component
+	 * @param x x component
 	 * @return this vector4
 	 */
 	inline Vector4& setX(float x) {
@@ -152,15 +152,15 @@ public:
 	}
 
 	/**
-	 * @return y
+	 * @return y component
 	 */
 	inline float getY() const {
 		return data[1];
 	}
 
 	/**
-	 * Sets y
-	 * @param y y
+	 * Sets y component
+	 * @param y y component
 	 * @return this vector4
 	 */
 	inline Vector4& setY(float y) {
@@ -169,15 +169,15 @@ public:
 	}
 
 	/**
-	 * @return z
+	 * @return z component
 	 */
 	inline float getZ() const {
 		return data[2];
 	}
 
 	/**
-	 * Sets z
-	 * @param z z
+	 * Sets z component
+	 * @param z z component
 	 * @return this vector4
 	 */
 	inline Vector4& setZ(float z) {
@@ -186,15 +186,15 @@ public:
 	}
 
 	/**
-	 * @return w
+	 * @return w component
 	 */
 	inline float getW() const {
 		return data[3];
 	}
 
 	/**
-	 * Sets w
-	 * @param w w
+	 * Sets w component
+	 * @param w w component
 	 * @return this vector4
 	 */
 	inline Vector4& setW(float w) {
@@ -543,7 +543,6 @@ public:
 	 * @param vector4 vector4
 	 * @return equality
 	 */
-
 	inline bool operator ==(const Vector4& vector4) const {
 		return this->equals(vector4);
 	}
@@ -553,7 +552,6 @@ public:
 	 * @param vector4 vector4
 	 * @return non equality
 	 */
-
 	inline bool operator !=(const Vector4& vector4) const {
 		return this->equals(vector4) == false;
 	}

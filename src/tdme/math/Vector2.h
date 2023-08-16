@@ -32,8 +32,8 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param x x
-	 * @param y y
+	 * @param x x component
+	 * @param y y component
 	 */
 	inline Vector2(float x, float y) {
 		data[0] = x;
@@ -57,9 +57,9 @@ public:
 	}
 
 	/**
-	 * Sets this vector2 by it components
-	 * @param x x
-	 * @param y y
+	 * Sets this vector2 by its components
+	 * @param x x component
+	 * @param y y component
 	 * @return this vector2
 	 */
 	inline Vector2& set(float x, float y) {
@@ -89,15 +89,15 @@ public:
 	}
 
 	/**
-	 * @return x
+	 * @return x component
 	 */
 	inline float getX() const {
 		return data[0];
 	}
 
 	/**
-	 * Sets x
-	 * @param x x
+	 * Sets x component
+	 * @param x x component
 	 * @return this vector2
 	 */
 	inline Vector2& setX(float x) {
@@ -106,15 +106,15 @@ public:
 	}
 
 	/**
-	 * @return y
+	 * @return y component
 	 */
 	inline float getY() const {
 		return data[1];
 	}
 
 	/**
-	 * Sets y
-	 * @param y y
+	 * Sets y component
+	 * @param y y component
 	 * @return this vector2
 	 */
 	inline Vector2& setY(float y) {
