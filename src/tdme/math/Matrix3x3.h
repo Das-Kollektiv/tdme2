@@ -395,7 +395,7 @@ public:
 	/**
 	 * Operator *= matrix
 	 * @param matrix matrix
-	 * @return new matrix (this * matrix)
+	 * @return this matrix
 	 */
 	inline Matrix3x3& operator *=(const Matrix3x3& matrix) {
 		return this->multiply(matrix);
@@ -406,7 +406,6 @@ public:
 	 * @param matrix matrix to compare to
 	 * @return equality
 	 */
-
 	inline bool operator ==(const Matrix3x3& matrix) const {
 		return this->equals(matrix);
 	}
@@ -416,7 +415,6 @@ public:
 	 * @param matrix matrix to compare to
 	 * @return non equality
 	 */
-
 	inline bool operator !=(const Matrix3x3& matrix) const {
 		return this->equals(matrix) == false;
 	}
