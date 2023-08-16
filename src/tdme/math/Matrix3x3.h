@@ -13,10 +13,10 @@ using tdme::math::Math;
 using tdme::math::Vector2;
 
 /**
- * Matrix2D3x3 class representing matrix3x3 mathematical structure and operations for 2d space
+ * Matrix3x3 class representing matrix3x3 mathematical structure and operations for 2d space
  * @author Andreas Drewke
  */
-class tdme::math::Matrix2D3x3 final
+class tdme::math::Matrix3x3 final
 {
 	// see: http://learnwebgl.brown37.net/10_surface_properties/texture_mapping_transforms.html
 private:
@@ -30,22 +30,22 @@ public:
 	/**
 	 * Public constructor
 	 */
-	inline Matrix2D3x3() {
+	inline Matrix3x3() {
 	}
 
 	/**
 	 * Public constructor
-	 * @param r0c0 row 0, culumn 0
-	 * @param r0c1 row 0, culumn 1
-	 * @param r0c2 row 0, culumn 2
-	 * @param r1c0 row 1, culumn 0
-	 * @param r1c1 row 1, culumn 1
-	 * @param r1c2 row 1, culumn 2
-	 * @param r2c0 row 2, culumn 0
-	 * @param r2c1 row 2, culumn 1
-	 * @param r2c2 row 2, culumn 2
+	 * @param r0c0 row 0, column 0
+	 * @param r0c1 row 0, column 1
+	 * @param r0c2 row 0, column 2
+	 * @param r1c0 row 1, column 0
+	 * @param r1c1 row 1, column 1
+	 * @param r1c2 row 1, column 2
+	 * @param r2c0 row 2, column 0
+	 * @param r2c1 row 2, column 1
+	 * @param r2c2 row 2, column 2
 	 */
-	inline Matrix2D3x3(
+	inline Matrix3x3(
 		float r0c0, float r0c1, float r0c2,
 		float r1c0, float r1c1, float r1c2,
 		float r2c0, float r2c1, float r2c2) {
@@ -60,7 +60,7 @@ public:
 	 * Public constructor
 	 * @param matrix matrix as array
 	 */
-	inline Matrix2D3x3(const array<float, 9>& matrix) {
+	inline Matrix3x3(const array<float, 9>& matrix) {
 		data = matrix;
 	}
 
@@ -68,24 +68,24 @@ public:
 	 * Public constructor
 	 * @param matrix matrix
 	 */
-	inline Matrix2D3x3(const Matrix2D3x3& matrix) {
+	inline Matrix3x3(const Matrix3x3& matrix) {
 		data = matrix.data;
 	}
 
 	/**
 	 * Sets this matrix by its components
-	 * @param r0c0 row 0, culumn 0
-	 * @param r0c1 row 0, culumn 1
-	 * @param r0c2 row 0, culumn 2
-	 * @param r1c0 row 1, culumn 0
-	 * @param r1c1 row 1, culumn 1
-	 * @param r1c2 row 1, culumn 2
-	 * @param r2c0 row 2, culumn 0
-	 * @param r2c1 row 2, culumn 1
-	 * @param r2c2 row 2, culumn 2
+	 * @param r0c0 row 0, column 0
+	 * @param r0c1 row 0, column 1
+	 * @param r0c2 row 0, column 2
+	 * @param r1c0 row 1, column 0
+	 * @param r1c1 row 1, column 1
+	 * @param r1c2 row 1, column 2
+	 * @param r2c0 row 2, column 0
+	 * @param r2c1 row 2, column 1
+	 * @param r2c2 row 2, column 2
 	 * @return this matrix
 	 */
-	inline Matrix2D3x3& set(
+	inline Matrix3x3& set(
 		float r0c0, float r0c1, float r0c2,
 		float r1c0, float r1c1, float r1c2,
 		float r2c0, float r2c1, float r2c2) {
@@ -106,7 +106,7 @@ public:
 	 * @param matrix matrix as array
 	 * @return this matrix
 	 */
-	inline Matrix2D3x3& set(const array<float, 9>& matrix) {
+	inline Matrix3x3& set(const array<float, 9>& matrix) {
 		data = matrix;
 		return *this;
 	}
@@ -116,7 +116,7 @@ public:
 	 * @param matrix matrix
 	 * @return this matrix
 	 */
-	inline Matrix2D3x3& set(const Matrix2D3x3& matrix) {
+	inline Matrix3x3& set(const Matrix3x3& matrix) {
 		data = matrix.data;
 		return *this;
 	}
@@ -125,7 +125,7 @@ public:
 	 * Creates identity matrix
 	 * @return this matrix
 	 */
-	inline Matrix2D3x3& identity() {
+	inline Matrix3x3& identity() {
 		data[0] = 1.0f;
 		data[1] = 0.0f;
 		data[2] = 0.0f;
@@ -143,7 +143,7 @@ public:
 	 * @param scalar scalar
 	 * @returns this matrix
 	 */
-	inline Matrix2D3x3& scale(float scalar) {
+	inline Matrix3x3& scale(float scalar) {
 		data[0] *= scalar;
 		data[1] *= scalar;
 		data[2] *= scalar;
@@ -158,7 +158,7 @@ public:
 	 * @param vector2 vector2
 	 * @return this matrix
 	 */
-	inline Matrix2D3x3& scale(const Vector2& vector2) {
+	inline Matrix3x3& scale(const Vector2& vector2) {
 		data[0] *= vector2.data[0];
 		data[1] *= vector2.data[0];
 		data[2] *= vector2.data[0];
@@ -169,11 +169,11 @@ public:
 	}
 
 	/**
-	 * Multiplies this matrix
+	 * Multiplies this matrix with given matrix
 	 * @param matrix matrix
 	 * @return this matrix
 	 */
-	inline Matrix2D3x3& multiply(const Matrix2D3x3& matrix) {
+	inline Matrix3x3& multiply(const Matrix3x3& matrix) {
 		array<float, 9> _data;
 		_data[0] = data[0] * matrix.data[0]  + data[3] * matrix.data[1]  + data[6] * matrix.data[2];
 		_data[1] = data[1] * matrix.data[0]  + data[4] * matrix.data[1]  + data[7] * matrix.data[2];
@@ -190,7 +190,7 @@ public:
 
 	/**
 	 * Multiplies this matrix with vector2
-	 * @param vector2 vector 2
+	 * @param vector2 vector2
 	 * @return vector2
 	 */
 	inline Vector2 multiply(const Vector2& vector2) const {
@@ -201,67 +201,11 @@ public:
 	}
 
 	/**
-	 * Sets translation in matrix
-	 * @param vector2 vector2
-	 * @return this matrix
-	 */
-	inline Matrix2D3x3& translate(const Vector2& vector2) {
-		data[6] = vector2.data[0];
-		data[7] = vector2.data[1];
-		return *this;
-	}
-
-	/**
-	 * Creates rotation matrix
-	 * @param angle angle
-	 * @return this matrix
-	 */
-	inline Matrix2D3x3& rotate(float angle) {
-		auto r = angle * 3.1415927f / 180.0f;
-		float c = Math::cos(r);
-		float s = Math::sin(r);
-		data[0] = c;
-		data[1] = s;
-		data[2] = 0.0f;
-		data[3] = -s;
-		data[4] = c;
-		data[5] = 0.0f;
-		data[6] = 0.0f;
-		data[7] = 0.0f;
-		data[8] = 1.0f;
-		return *this;
-	}
-
-	/**
-	 * Creates rotation matrix that rotates around texture center by given angle
-	 * @param angle angle
-	 * @return new rotation matrix
-	 */
-	static inline Matrix2D3x3 rotateAroundTextureCenter(float angle) {
-		return rotateAroundPoint(Vector2(0.5f, 0.5f), angle);
-	}
-
-	/**
-	 * Creates rotation matrix that rotates around given point by given angle
-	 * @param point point
-	 * @param angle angle
-	 * @return new rotation matrix
-	 */
-	static inline Matrix2D3x3 rotateAroundPoint(const Vector2& point, float angle) {
-		Matrix2D3x3 matrix;
-		matrix.identity();
-		matrix.translate(point);
-		matrix.multiply((Matrix2D3x3()).identity().rotate(-angle));
-		matrix.multiply((Matrix2D3x3()).identity().translate(point.clone().scale(-1.0f)));
-		return matrix;
-	}
-
-	/**
-	 * Returns if this matrix equals matrix
+	 * Compares this matrix with given matrix
 	 * @param matrix matrix
-	 * @return equals
+	 * @return equality
 	 */
-	inline bool equals(const Matrix2D3x3& matrix) const {
+	inline bool equals(const Matrix3x3& matrix) const {
 		return
 			(this == &matrix) ||
 			(
@@ -278,87 +222,90 @@ public:
 	}
 
 	/**
-	 * Array access operator
-	 * @param i index
-	 * @return vector3 component
+	 * Get coordinate system axes
+	 * @param xAxis x axis
+	 * @param yAxis y axis
 	 */
-	inline float& operator[](int i) {
-		return data[i];
+	inline void getAxes(Vector2& xAxis, Vector2& yAxis) const {
+		xAxis.set(data[0], data[1]);
+		yAxis.set(data[3], data[4]);
 	}
 
 	/**
-	 * Const array access operator
-	 * @param i index
-	 * @return vector3 component
+	 * Set coordinate system axes
+	 * @param xAxis x axis
+	 * @param yAxis y axis
+	 * @return this matrix
 	 */
-	inline const float& operator[](int i) const {
-		return data[i];
+	inline Matrix3x3& setAxes(const Vector2& xAxis, const Vector2& yAxis) {
+		data[0] = xAxis.data[0];
+		data[1] = xAxis.data[1];
+		data[2] = 0.0f;
+		data[3] = yAxis.data[0];
+		data[4] = yAxis.data[1];
+		data[5] = 0.0f;
+		return *this;
 	}
 
 	/**
-	 * Operator * (float)
-	 * @param f value to multiply by
-	 * @return new matrix (this * f)
+	 * Set coordinate system axis by rotation
+	 * @param angle angle
+	 * @return this matrix
 	 */
-	inline Matrix2D3x3 operator *(const float f) const {
-		auto r = this->clone().scale(f);
-		return r;
+	inline Matrix3x3& setAxes(float angle) {
+		auto r = angle * 3.1415927f / 180.0f;
+		float c = Math::cos(r);
+		float s = Math::sin(r);
+		data[0] = c;
+		data[1] = s;
+		data[2] = 0.0f;
+		data[3] = -s;
+		data[4] = c;
+		data[5] = 0.0f;
+		return *this;
 	}
 
 	/**
-	 * Operator * (Matrix2D3x3&)
-	 * @param matrix matrix to multiply by
-	 * @return new matrix (this * matrix)
+	 * Get translation
+	 * @param vector2 vector2
 	 */
-	inline Matrix2D3x3 operator *(const Matrix2D3x3& matrix) const {
-		auto r = this->clone().multiply(matrix);
-		return r;
-	}
-
-	/*
-	 * Operator * (Vector2&)
-	 * @param vector2 vector to multiply by
-	 * @return new vector (this * vector2)
-	 */
-	inline Vector2 operator *(const Vector2& vector2) const {
-		return this->multiply(vector2);
+	inline void getTranslation(Vector2& vector2) const {
+		vector2.set(data[6], data[7]);
 	}
 
 	/**
-	 * Operator *=
-	 * @param matrix matrix to multiply by
-	 * @return this matrix multiplied by matrix
+	 * Sets translation in matrix
+	 * @param vector2 vector2
+	 * @return this matrix
 	 */
-	inline Matrix2D3x3& operator *=(const Matrix2D3x3& matrix) {
-		return this->multiply(matrix);
+	inline Matrix3x3& setTranslation(const Vector2& vector2) {
+		data[6] = vector2.data[0];
+		data[7] = vector2.data[1];
+		return *this;
 	}
 
 	/**
-	 * Equality comparison operator
-	 * @param matrix matrix to compare to
-	 * @return equality
+	 * Creates rotation matrix that rotates around texture center by given angle
+	 * @param angle angle
+	 * @return new rotation matrix
 	 */
-
-	inline bool operator ==(const Matrix2D3x3& matrix) const {
-		return this->equals(matrix);
+	static inline Matrix3x3 rotateAroundTextureCenter(float angle) {
+		return rotateAroundPoint(Vector2(0.5f, 0.5f), angle);
 	}
 
 	/**
-	 * Non equality comparison operator
-	 * @param matrix matrix to compare to
-	 * @return non equality
+	 * Creates rotation matrix that rotates around given point by given angle
+	 * @param point point
+	 * @param angle angle
+	 * @return new rotation matrix
 	 */
-
-	inline bool operator !=(const Matrix2D3x3& matrix) const {
-		return this->equals(matrix) == false;
-	}
-
-	/**
-	 * Returns array data
-	 * @return array data
-	 */
-	inline const array<float, 9>& getArray() const {
-		return data;
+	static inline Matrix3x3 rotateAroundPoint(const Vector2& point, float angle) {
+		Matrix3x3 matrix;
+		matrix.identity();
+		matrix.setTranslation(point);
+		matrix.multiply((Matrix3x3()).identity().setAxes(-angle));
+		matrix.multiply((Matrix3x3()).identity().setTranslation(point.clone().scale(-1.0f)));
+		return matrix;
 	}
 
 	/**
@@ -368,8 +315,8 @@ public:
 	 * @param t t
 	 * @return interpolated matrix
 	 */
-	inline static Matrix2D3x3 interpolateLinear(const Matrix2D3x3& a, const Matrix2D3x3& b, float t) {
-		return Matrix2D3x3(
+	inline static Matrix3x3 interpolateLinear(const Matrix3x3& a, const Matrix3x3& b, float t) {
+		return Matrix3x3(
 			(b.data[0] * t) + ((1.0f - t) * a.data[0]),
 			(b.data[1] * t) + ((1.0f - t) * a.data[1]),
 			(b.data[2] * t) + ((1.0f - t) * a.data[2]),
@@ -383,11 +330,95 @@ public:
 	}
 
 	/**
-	 * Clones this matrix
-	 * @return new cloned matrix
+	 * @return matrix as array
 	 */
-	inline Matrix2D3x3 clone() const {
-		return Matrix2D3x3(data);
+	inline const array<float, 9>& getArray() const {
+		return data;
+	}
+
+	/**
+	 * Clones this matrix
+	 * @return cloned matrix
+	 */
+	inline Matrix3x3 clone() const {
+		Matrix3x3 clonedMatrix(*this);
+		return clonedMatrix;
+	}
+
+	/**
+	 * Array access operator
+	 * @param i index
+	 * @return matrix3x3 component
+	 */
+	inline float& operator[](int i) {
+		return data[i];
+	}
+
+	/**
+	 * Const array access operator
+	 * @param i index
+	 * @return matrix3x3 component
+	 */
+	inline const float& operator[](int i) const {
+		return data[i];
+	}
+
+	/**
+	 * Operator * scalar
+	 * @param scalar scalar
+	 * @return new matrix (this * scalar)
+	 */
+	inline Matrix3x3 operator *(const float scalar) const {
+		auto r = this->clone().scale(scalar);
+		return r;
+	}
+
+	/**
+	 * Operator * matrix
+	 * @param matrix matrix
+	 * @return new matrix (this * matrix)
+	 */
+	inline Matrix3x3 operator *(const Matrix3x3& matrix) const {
+		auto r = this->clone().multiply(matrix);
+		return r;
+	}
+
+	/*
+	 * Operator * vector2
+	 * @param vector2 vector2
+	 * @return new vector (this * vector2)
+	 */
+	inline Vector2 operator *(const Vector2& vector2) const {
+		return this->multiply(vector2);
+	}
+
+	/**
+	 * Operator *= matrix
+	 * @param matrix matrix
+	 * @return new matrix (this * matrix)
+	 */
+	inline Matrix3x3& operator *=(const Matrix3x3& matrix) {
+		return this->multiply(matrix);
+	}
+
+	/**
+	 * Equality comparison operator
+	 * @param matrix matrix to compare to
+	 * @return equality
+	 */
+
+	inline bool operator ==(const Matrix3x3& matrix) const {
+		return this->equals(matrix);
+	}
+
+	/**
+	 * Non equality comparison operator
+	 * @param matrix matrix to compare to
+	 * @return non equality
+	 */
+
+	inline bool operator !=(const Matrix3x3& matrix) const {
+		return this->equals(matrix) == false;
 	}
 
 };

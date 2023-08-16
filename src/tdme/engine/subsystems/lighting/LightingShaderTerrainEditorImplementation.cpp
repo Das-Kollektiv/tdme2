@@ -7,7 +7,7 @@
 #include <tdme/engine/subsystems/lighting/LightingShaderTerrainImplementation.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/math/Vector2.h>
 
 using std::string;
@@ -18,7 +18,7 @@ using tdme::engine::subsystems::lighting::LightingShaderTerrainEditorImplementat
 using tdme::engine::subsystems::lighting::LightingShaderTerrainImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::math::Vector2;
 
 LightingShaderTerrainEditorImplementation::LightingShaderTerrainEditorImplementation(Renderer* renderer): LightingShaderTerrainImplementation(renderer)
@@ -83,16 +83,16 @@ void LightingShaderTerrainEditorImplementation::useProgram(Engine* engine, int c
 	renderer->setTextureUnit(contextIdx, currentTextureUnit);
 
 	//
-	Matrix2D3x3 brushTextureMatrix;
+	Matrix3x3 brushTextureMatrix;
 	brushTextureMatrix.identity();
-	brushTextureMatrix.multiply((Matrix2D3x3()).identity().translate(Vector2(0.5f, 0.5f)));
-	brushTextureMatrix.multiply((Matrix2D3x3()).identity().scale(
+	brushTextureMatrix.multiply((Matrix3x3()).identity().setTranslation(Vector2(0.5f, 0.5f)));
+	brushTextureMatrix.multiply((Matrix3x3()).identity().scale(
 		Vector2(
 			1.0f / engine->getShaderParameter(getId(), "brushScale").getVector2Value().getX(),
 			1.0f / engine->getShaderParameter(getId(), "brushScale").getVector2Value().getY()
 		)
 	));
-	brushTextureMatrix.multiply((Matrix2D3x3()).identity().rotate(engine->getShaderParameter(getId(), "brushRotation").getFloatValue()));
+	brushTextureMatrix.multiply((Matrix3x3()).identity().setAxes(engine->getShaderParameter(getId(), "brushRotation").getFloatValue()));
 
 	//
 	renderer->setProgramUniformInteger(contextIdx, uniformBrushEnabled, engine->getShaderParameter(getId(), "brushEnabled").getBooleanValue() == true?1:0);

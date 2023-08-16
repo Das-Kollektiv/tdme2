@@ -13,7 +13,7 @@
 #include <tdme/engine/subsystems/skinning/fwd-tdme.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::make_unique;
@@ -30,7 +30,7 @@ using tdme::engine::subsystems::rendering::ObjectNodeMesh;
 using tdme::engine::subsystems::rendering::ObjectNodeRenderer;
 using tdme::engine::Engine;
 using tdme::engine::Object;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::math::Matrix4x4;
 
 /**
@@ -61,7 +61,7 @@ private:
 	ObjectBase* object { nullptr };
 	Node* node { nullptr };
 	bool animated { false };
-	vector<Matrix2D3x3> textureMatricesByEntities;
+	vector<Matrix3x3> textureMatricesByEntities;
 	vector<int32_t> specularMaterialDiffuseTextureIdsByEntities;
 	vector<int32_t> specularMaterialDynamicDiffuseTextureIdsByEntities;
 	vector<int32_t> specularMaterialSpecularTextureIdsByEntities;

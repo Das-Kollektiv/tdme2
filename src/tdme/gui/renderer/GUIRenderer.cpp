@@ -13,7 +13,7 @@
 #include <tdme/gui/renderer/GUIShader.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/math/Math.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/FloatBuffer.h>
@@ -34,7 +34,7 @@ using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::renderer::GUIShader;
 using tdme::gui::GUI;
 using tdme::math::Math;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
 using tdme::utilities::FloatBuffer;
@@ -147,7 +147,7 @@ void GUIRenderer::setGUIEffectOffsetY(float guiEffectOffsetY)
 	screenNode->setGUIEffectOffsetY(static_cast<int>((guiEffectOffsetY * screenNode->getScreenHeight() / 2.0f)));
 }
 
-void GUIRenderer::setTexureMatrix(const Matrix2D3x3& textureMatrix) {
+void GUIRenderer::setTexureMatrix(const Matrix3x3& textureMatrix) {
 	renderer->getTextureMatrix(renderer->CONTEXTINDEX_DEFAULT).set(textureMatrix);
 }
 

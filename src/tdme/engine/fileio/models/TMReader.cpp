@@ -25,7 +25,7 @@
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -428,7 +428,7 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 		(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 		array<float, 9> textureMatrix;
 		is->readFloatArray(textureMatrix);
-		smp->setTextureMatrix(Matrix2D3x3(textureMatrix));
+		smp->setTextureMatrix(Matrix3x3(textureMatrix));
 	}
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 17) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 18) ||

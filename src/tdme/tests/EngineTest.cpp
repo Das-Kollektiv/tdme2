@@ -35,7 +35,7 @@
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/Transform.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
@@ -80,7 +80,7 @@ using tdme::engine::PointsParticleSystem;
 using tdme::engine::Rotation;
 using tdme::engine::Timing;
 using tdme::engine::Transform;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::math::Quaternion;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
@@ -277,7 +277,7 @@ void EngineTest::initialize()
 		auto _farPlane = modelDeleter.add(createWallModel());
 		auto farPlane = new Object("wall", _farPlane);
 		farPlane->setTextureMatrix(
-			(Matrix2D3x3()).identity().scale(Vector2(1.0f, -1.0f)),
+			(Matrix3x3()).identity().scale(Vector2(1.0f, -1.0f)),
 			"wall",
 			"wall"
 		);

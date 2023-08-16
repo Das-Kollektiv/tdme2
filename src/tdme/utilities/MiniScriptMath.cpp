@@ -1048,8 +1048,8 @@ void MiniScriptMath::mul(MiniScript* miniScript, const span<MiniScript::ScriptVa
 		// matrix3x3 * matrix
 		if (argumentValues[0].getType() == MiniScript::TYPE_MATRIX3x3 &&
 			argumentValues[1].getType() == MiniScript::TYPE_MATRIX3x3) {
-			Matrix2D3x3 a;
-			Matrix2D3x3 b;
+			Matrix3x3 a;
+			Matrix3x3 b;
 			MiniScript::getMatrix3x3Value(argumentValues, 0, a, false);
 			MiniScript::getMatrix3x3Value(argumentValues, 1, b, false);
 			returnValue.setValue(a * b);
@@ -1057,7 +1057,7 @@ void MiniScriptMath::mul(MiniScript* miniScript, const span<MiniScript::ScriptVa
 		// matrix3x3 * vec2
 		if (argumentValues[0].getType() == MiniScript::TYPE_MATRIX3x3 &&
 			argumentValues[1].getType() == MiniScript::TYPE_VECTOR2) {
-			Matrix2D3x3 a;
+			Matrix3x3 a;
 			Vector2 b;
 			MiniScript::getMatrix3x3Value(argumentValues, 0, a, false);
 			MiniScript::getVector2Value(argumentValues, 1, b, false);
@@ -1067,7 +1067,7 @@ void MiniScriptMath::mul(MiniScript* miniScript, const span<MiniScript::ScriptVa
 		if (argumentValues[0].getType() == MiniScript::TYPE_VECTOR2 &&
 			argumentValues[1].getType() == MiniScript::TYPE_MATRIX3x3) {
 			Vector2 a;
-			Matrix2D3x3 b;
+			Matrix3x3 b;
 			MiniScript::getVector2Value(argumentValues, 0, a, false);
 			MiniScript::getMatrix3x3Value(argumentValues, 1, b, false);
 			returnValue.setValue(b * a);
@@ -1075,7 +1075,7 @@ void MiniScriptMath::mul(MiniScript* miniScript, const span<MiniScript::ScriptVa
 		// matrix3x3 * float
 		if (argumentValues[0].getType() == MiniScript::TYPE_MATRIX3x3 &&
 			MiniScript::ScriptVariable::isExpectedType(argumentValues[1].getType(), MiniScript::TYPE_PSEUDO_NUMBER) == true) {
-			Matrix2D3x3 a;
+			Matrix3x3 a;
 			float b;
 			MiniScript::getMatrix3x3Value(argumentValues, 0, a, false);
 			MiniScript::getFloatValue(argumentValues, 1, b, false);
@@ -1085,7 +1085,7 @@ void MiniScriptMath::mul(MiniScript* miniScript, const span<MiniScript::ScriptVa
 		if (MiniScript::ScriptVariable::isExpectedType(argumentValues[0].getType(), MiniScript::TYPE_PSEUDO_NUMBER) == true &&
 			argumentValues[1].getType() == MiniScript::TYPE_MATRIX3x3) {
 			float a;
-			Matrix2D3x3 b;
+			Matrix3x3 b;
 			MiniScript::getFloatValue(argumentValues, 0, a, false);
 			MiniScript::getMatrix3x3Value(argumentValues, 1, b, false);
 			returnValue.setValue(b * a);

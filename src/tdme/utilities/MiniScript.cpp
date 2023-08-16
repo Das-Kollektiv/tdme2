@@ -23,7 +23,7 @@
 #include <tdme/engine/Transform.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/math/Math.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector2.h>
@@ -72,7 +72,7 @@ using tdme::engine::Rotation;
 using tdme::engine::Transform;
 using tdme::gui::GUIParser;
 using tdme::math::Math;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector2;
@@ -3990,7 +3990,7 @@ void MiniScript::registerMethods() {
 				return "mat3.identity";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue.setValue(Matrix2D3x3().identity());
+				returnValue.setValue(Matrix3x3().identity());
 			}
 		};
 		registerMethod(new ScriptMethodMatrix3x3Identity(this));
@@ -4015,7 +4015,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				Vector2 translation;
 				if (MiniScript::getVector2Value(argumentValues, 0, translation, false) == true) {
-					returnValue.setValue(Matrix2D3x3().identity().translate(translation));
+					returnValue.setValue(Matrix3x3().identity().setTranslation(translation));
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -4044,7 +4044,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				float angle;
 				if (MiniScript::getFloatValue(argumentValues, 0, angle, false) == true) {
-					returnValue.setValue(Matrix2D3x3().identity().rotate(angle));
+					returnValue.setValue(Matrix3x3().identity().setAxes(angle));
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -4073,7 +4073,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				float angle;
 				if (MiniScript::getFloatValue(argumentValues, 0, angle, false) == true) {
-					returnValue.setValue(Matrix2D3x3::rotateAroundTextureCenter(angle));
+					returnValue.setValue(Matrix3x3::rotateAroundTextureCenter(angle));
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -4105,7 +4105,7 @@ void MiniScript::registerMethods() {
 				float angle;
 				if (MiniScript::getVector2Value(argumentValues, 0, point, false) == true &&
 					MiniScript::getFloatValue(argumentValues, 1, angle, false) == true) {
-					returnValue.setValue(Matrix2D3x3().rotateAroundPoint(point, angle));
+					returnValue.setValue(Matrix3x3().rotateAroundPoint(point, angle));
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -4130,10 +4130,10 @@ void MiniScript::registerMethods() {
 				Vector2 vec2Value;
 				float floatValue;
 				if (MiniScript::getVector2Value(argumentValues, 0, vec2Value, false) == true) {
-					returnValue.setValue(Matrix2D3x3().identity().scale(vec2Value));
+					returnValue.setValue(Matrix3x3().identity().scale(vec2Value));
 				} else
 				if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
-					returnValue.setValue(Matrix2D3x3().identity().scale(floatValue));
+					returnValue.setValue(Matrix3x3().identity().scale(floatValue));
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -4164,8 +4164,8 @@ void MiniScript::registerMethods() {
 				return "mat3.multiply";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				Matrix2D3x3 mat3;
-				Matrix2D3x3 mat3Value;
+				Matrix3x3 mat3;
+				Matrix3x3 mat3Value;
 				Vector2 vec2Value;
 				if (argumentValues.size() != 2) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));

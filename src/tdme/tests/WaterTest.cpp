@@ -75,7 +75,7 @@ void WaterTest::display()
 	// animate sky dome
 	{
 		auto skyDome = static_cast<Object*>(engine->getEntity("sky_dome"));
-		skyDome->setTextureMatrix((Matrix2D3x3()).identity().translate(Vector2(0.0f, skyDomeTranslation * 0.01f)));
+		skyDome->setTextureMatrix((Matrix3x3()).identity().setTranslation(Vector2(0.0f, skyDomeTranslation * 0.01f)));
 
 		auto skyPanorama = engine->getEntity("sky_panorama");
 		skyPanorama->setRotationAngle(0, skyDomeTranslation * 1.0f * 0.1f);

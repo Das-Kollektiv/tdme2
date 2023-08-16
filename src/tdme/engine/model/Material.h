@@ -6,14 +6,14 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/model/PBRMaterialProperties.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 
 using std::string;
 using std::unique_ptr;
 
 using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::SpecularMaterialProperties;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 
 /**
  * Represents a material
@@ -39,7 +39,7 @@ private:
 	unique_ptr<SpecularMaterialProperties> specularMaterialProperties;
 	unique_ptr<PBRMaterialProperties> pbrMaterialProperties;
 	bool doubleSided { false };
-	Matrix2D3x3 textureMatrix;
+	Matrix3x3 textureMatrix;
 
 public:
 	// forbid class copy
@@ -116,7 +116,7 @@ public:
 	/**
 	 * @return texture matrix
 	 */
-	inline const Matrix2D3x3& getTextureMatrix() const {
+	inline const Matrix3x3& getTextureMatrix() const {
 		return textureMatrix;
 	}
 
@@ -124,7 +124,7 @@ public:
 	 * Set texture matrix
 	 * @param textureMatrix texture matrix
 	 */
-	inline void setTextureMatrix(const Matrix2D3x3& textureMatrix) {
+	inline void setTextureMatrix(const Matrix3x3& textureMatrix) {
 		this->textureMatrix = textureMatrix;
 	}
 

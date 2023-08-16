@@ -26,7 +26,7 @@ public:
 	void testVector3Operators();
 	void testVector4Operators();
 	void testQuaternionOperators();
-	void testMatrix2D3x3Operators();
+	void testMatrix3x3Operators();
 	void testMatrix4x4Operators();
 
 private:

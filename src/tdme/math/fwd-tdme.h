@@ -4,7 +4,7 @@
 
 namespace tdme {
 namespace math {
-		class Matrix2D3x3;
+		class Matrix3x3;
 		class Matrix4x4;
 		class Matrix4x4Negative;
 		class Math;

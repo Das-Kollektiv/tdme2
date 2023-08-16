@@ -18,7 +18,7 @@ using tdme::utilities::Float;
  */
 class tdme::math::Vector2 final
 {
-	friend class Matrix2D3x3;
+	friend class Matrix3x3;
 
 private:
 	array<float, 2> data { 0.0f, 0.0f };

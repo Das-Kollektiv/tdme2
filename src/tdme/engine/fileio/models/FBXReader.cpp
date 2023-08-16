@@ -24,7 +24,7 @@
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/math/Math.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -53,7 +53,7 @@ using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::UpVector;
 using tdme::engine::Texture;
 using tdme::math::Math;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
@@ -567,23 +567,23 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 					if (fbxProperty.GetSrcObjectCount<FbxLayeredTexture>() > 0) {
 						auto texture = FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxLayeredTexture>(0));
 						diffuseTextureFileName = texture->GetFileName();
-						Matrix2D3x3 textureMatrix;
+						Matrix3x3 textureMatrix;
 						textureMatrix.identity();
-						textureMatrix.multiply(Matrix2D3x3().identity().scale(Vector2(texture->GetScaleU(), texture->GetScaleV())));
+						textureMatrix.multiply(Matrix3x3().identity().scale(Vector2(texture->GetScaleU(), texture->GetScaleV())));
 						// TODO: not sure about texture rotation with 2D textures here and I have no test model for now
-						textureMatrix.multiply(Matrix2D3x3::rotateAroundTextureCenter(texture->GetRotationU()));
-						textureMatrix.multiply(Matrix2D3x3().identity().translate(Vector2(texture->GetTranslationU(), texture->GetTranslationV())));
+						textureMatrix.multiply(Matrix3x3::rotateAroundTextureCenter(texture->GetRotationU()));
+						textureMatrix.multiply(Matrix3x3().identity().setTranslation(Vector2(texture->GetTranslationU(), texture->GetTranslationV())));
 						material->setTextureMatrix(textureMatrix);
 					} else
 					if (fbxProperty.GetSrcObjectCount<FbxTexture>() > 0) {
 						auto texture = FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxTexture>(0));
 						diffuseTextureFileName = texture->GetFileName();
-						Matrix2D3x3 textureMatrix;
+						Matrix3x3 textureMatrix;
 						textureMatrix.identity();
-						textureMatrix.multiply(Matrix2D3x3().identity().scale(Vector2(texture->GetScaleU(), texture->GetScaleV())));
+						textureMatrix.multiply(Matrix3x3().identity().scale(Vector2(texture->GetScaleU(), texture->GetScaleV())));
 						// TODO: not sure about texture rotation with 2D textures here and I have no test model for now
-						textureMatrix.multiply(Matrix2D3x3::rotateAroundTextureCenter(texture->GetRotationU()));
-						textureMatrix.multiply(Matrix2D3x3().identity().translate(Vector2(texture->GetTranslationU(), texture->GetTranslationV())));
+						textureMatrix.multiply(Matrix3x3::rotateAroundTextureCenter(texture->GetRotationU()));
+						textureMatrix.multiply(Matrix3x3().identity().setTranslation(Vector2(texture->GetTranslationU(), texture->GetTranslationV())));
 						material->setTextureMatrix(textureMatrix);
 					}
 				}

@@ -11,7 +11,7 @@
 
 #include <tdme/engine/fileio/textures/PNGTextureReader.h>
 #include <tdme/engine/Texture.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -29,7 +29,7 @@ using tdme::engine::fileio::textures::TextureReader;
 
 using tdme::engine::fileio::textures::PNGTextureReader;
 using tdme::engine::Texture;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::math::Vector2;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
@@ -220,7 +220,7 @@ Texture* TextureReader::rotate(Texture* texture, float rotation, const string& i
 	auto textureWidthRotated = -1;
 	auto textureHeightRotated = -1;
 	{
-		auto rotationsMatrix = Matrix2D3x3::rotateAroundPoint(Vector2(textureWidth / 2.0f, textureHeight / 2.0f), rotation);
+		auto rotationsMatrix = Matrix3x3::rotateAroundPoint(Vector2(textureWidth / 2.0f, textureHeight / 2.0f), rotation);
 		Vector2 leftTop(0.0f, 0.0f);
 		Vector2 rightTop(textureWidth, 0.0f);
 		Vector2 leftBottom(0.0f, textureHeight);
@@ -252,7 +252,7 @@ Texture* TextureReader::rotate(Texture* texture, float rotation, const string& i
 	}
 	auto textureTextureData = texture->getRGBTextureData();
 	auto rotatedTextureByteBuffer = ByteBuffer(textureWidthRotated * textureHeightRotated * textureBytesPerPixel);
-	auto rotationsMatrix = Matrix2D3x3::rotateAroundPoint(Vector2(textureWidth / 2.0f, textureHeight / 2.0f), rotation);
+	auto rotationsMatrix = Matrix3x3::rotateAroundPoint(Vector2(textureWidth / 2.0f, textureHeight / 2.0f), rotation);
 	for (auto y = 0; y < textureHeightRotated; y++) {
 		for (auto x = 0; x < textureWidthRotated; x++) {
 			auto originalTexturePoint = rotationsMatrix.multiply(

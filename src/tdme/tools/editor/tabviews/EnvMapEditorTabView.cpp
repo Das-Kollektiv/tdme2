@@ -198,7 +198,7 @@ void EnvMapEditorTabView::updateSky() {
 
 	auto skyDome = static_cast<Object*>(engine->getEntity("sky_dome"));
 	skyDome->setTranslation(engine->getCamera()->getLookFrom().clone().sub(Vector3(0.0f, 20.0f, 0.0f)));
-	skyDome->setTextureMatrix((Matrix2D3x3()).identity().translate(Vector2(0.0f, skyDomeTranslation * 0.01f)));
+	skyDome->setTextureMatrix((Matrix3x3()).identity().setTranslation(Vector2(0.0f, skyDomeTranslation * 0.01f)));
 	skyDome->update();
 
 	auto skyPanorama = engine->getEntity("sky_panorama");

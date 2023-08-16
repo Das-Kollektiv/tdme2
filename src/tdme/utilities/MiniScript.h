@@ -12,7 +12,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Transform.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector2.h>
@@ -39,7 +39,7 @@ using std::unordered_set;
 using std::vector;
 
 using tdme::engine::Transform;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector2;
@@ -285,15 +285,15 @@ public:
 		/**
 		 * @return matrix3x3 value reference
 		 */
-		inline Matrix2D3x3& getMatrix3x3ValueReference() {
-			return *static_cast<Matrix2D3x3*>((void*)valuePtr);
+		inline Matrix3x3& getMatrix3x3ValueReference() {
+			return *static_cast<Matrix3x3*>((void*)valuePtr);
 		}
 
 		/**
 		 * @return const matrix3x3 value reference
 		 */
-		inline const Matrix2D3x3& getMatrix3x3ValueReference() const {
-			return *static_cast<Matrix2D3x3*>((void*)valuePtr);
+		inline const Matrix3x3& getMatrix3x3ValueReference() const {
+			return *static_cast<Matrix3x3*>((void*)valuePtr);
 		}
 
 		/**
@@ -581,7 +581,7 @@ public:
 		 * Constructor
 		 * @param value value
 		 */
-		inline ScriptVariable(const Matrix2D3x3& value) {
+		inline ScriptVariable(const Matrix3x3& value) {
 			setValue(value);
 		}
 
@@ -655,7 +655,7 @@ public:
 					delete static_cast<Quaternion*>((void*)valuePtr);
 					break;
 				case TYPE_MATRIX3x3:
-					delete static_cast<Matrix2D3x3*>((void*)valuePtr);
+					delete static_cast<Matrix3x3*>((void*)valuePtr);
 					break;
 				case TYPE_MATRIX4x4:
 					delete static_cast<Matrix4x4*>((void*)valuePtr);
@@ -700,7 +700,7 @@ public:
 					valuePtr = (uint64_t)(new Quaternion());
 					break;
 				case TYPE_MATRIX3x3:
-					valuePtr = (uint64_t)(new Matrix2D3x3());
+					valuePtr = (uint64_t)(new Matrix3x3());
 					break;
 				case TYPE_MATRIX4x4:
 					valuePtr = (uint64_t)(new Matrix4x4());
@@ -923,7 +923,7 @@ public:
 		 * @param optional optional
 		 * @return success
 		 */
-		inline bool getMatrix3x3Value(Matrix2D3x3& value, bool optional = false) const {
+		inline bool getMatrix3x3Value(Matrix3x3& value, bool optional = false) const {
 			switch(type) {
 				case TYPE_MATRIX3x3:
 					value = getMatrix3x3ValueReference();
@@ -1052,7 +1052,7 @@ public:
 		 * Set matrix3x3 value from given value into variable
 		 * @param value value
 		 */
-		inline void setValue(const Matrix2D3x3& value) {
+		inline void setValue(const Matrix3x3& value) {
 			setType(TYPE_MATRIX3x3);
 			getMatrix3x3ValueReference() = value;
 		}
@@ -3017,7 +3017,7 @@ public:
 	 * @param optional optional
 	 * @return success
 	 */
-	inline static bool getMatrix3x3Value(const span<ScriptVariable>& arguments, int idx, Matrix2D3x3& value, bool optional = false) {
+	inline static bool getMatrix3x3Value(const span<ScriptVariable>& arguments, int idx, Matrix3x3& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		const auto& argument = arguments[idx];
 		return argument.getMatrix3x3Value(value, optional);

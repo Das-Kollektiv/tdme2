@@ -7,7 +7,7 @@
 
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/math/Math.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/utilities/Console.h>
 
 using tdme::gui::renderer::GUIShader;
@@ -17,7 +17,7 @@ using std::array;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::gui::nodes::GUIColor;
 using tdme::math::Math;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::utilities::Console;
 
 GUIShader::GUIShader(Renderer* renderer)
@@ -171,7 +171,7 @@ void GUIShader::setGradient(int count, array<GUIColor, 10>& colors, array<float,
 	for (auto i = 0; i < count; i++) renderer->setProgramUniformFloatVec4(contextIdx, uniformGradientColors[i], colors[i].getArray());
 	renderer->setProgramUniformInteger(contextIdx, uniformGradientColorCount, count);
 	for (auto i = 0; i < count; i++) renderer->setProgramUniformFloat(contextIdx, uniformGradientColorStarts[i], colorStarts[i]);
-	renderer->setProgramUniformFloatMatrix3x3(contextIdx, uniformInverseGradientTextureMatrix, Matrix2D3x3::rotateAroundTextureCenter(-rotationAngle).getArray());
+	renderer->setProgramUniformFloatMatrix3x3(contextIdx, uniformInverseGradientTextureMatrix, Matrix3x3::rotateAroundTextureCenter(-rotationAngle).getArray());
 }
 
 void GUIShader::unsetGradient() {

@@ -37,7 +37,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/threading/Queue.h>
 #include <tdme/os/threading/Thread.h>
@@ -109,7 +109,7 @@ using tdme::engine::Timing;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::renderer::GUIShader;
 using tdme::gui::GUI;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;

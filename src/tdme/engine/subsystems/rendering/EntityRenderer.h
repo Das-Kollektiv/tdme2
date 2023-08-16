@@ -20,7 +20,7 @@
 #include <tdme/engine/Object.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Math.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Matrix4x4Negative.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -51,7 +51,7 @@ using tdme::engine::Lines;
 using tdme::engine::Object;
 using tdme::engine::PointsParticleSystem;
 using tdme::math::Math;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::math::Matrix4x4;
 using tdme::math::Matrix4x4Negative;
 using tdme::math::Vector2;

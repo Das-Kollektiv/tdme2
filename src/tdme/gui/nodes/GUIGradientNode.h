@@ -11,7 +11,7 @@
 #include <tdme/gui/nodes/GUINode_Clipping.h>
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 
 using std::string;
 
@@ -29,7 +29,7 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 
 /**
  * GUI gradient node
@@ -63,7 +63,7 @@ private:
 	float maskMaxValue;
 	int32_t maskTextureId { 0 };
 
-	Matrix2D3x3 textureMatrix;
+	Matrix3x3 textureMatrix;
 	string mask;
 
 	Gradient gradient;
@@ -138,7 +138,7 @@ public:
 	 * Set texture matrix
 	 * @param textureMatrix texture matrix
 	 */
-	void setTextureMatrix(const Matrix2D3x3& textureMatrix);
+	void setTextureMatrix(const Matrix3x3& textureMatrix);
 
 	/**
 	 * @return effect color mul

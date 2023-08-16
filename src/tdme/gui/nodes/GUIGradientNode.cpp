@@ -13,7 +13,7 @@
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
@@ -33,7 +33,7 @@ using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::utilities::Console;
 using tdme::utilities::Float;
 using tdme::utilities::Integer;
@@ -206,10 +206,10 @@ void GUIGradientNode::render(GUIRenderer* guiRenderer)
 		guiRenderer->setMaskMaxValue(1.0f);
 		guiRenderer->bindMask(0);
 	}
-	guiRenderer->setTexureMatrix((Matrix2D3x3()).identity());
+	guiRenderer->setTexureMatrix((Matrix3x3()).identity());
 }
 
-void GUIGradientNode::setTextureMatrix(const Matrix2D3x3& textureMatrix) {
+void GUIGradientNode::setTextureMatrix(const Matrix3x3& textureMatrix) {
 	this->textureMatrix.set(textureMatrix);
 }
 

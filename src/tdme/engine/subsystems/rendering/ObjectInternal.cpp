@@ -83,7 +83,7 @@ void ObjectInternal::bindDiffuseTexture(int32_t textureId, const string& nodeId,
 	}
 }
 
-void ObjectInternal::setTextureMatrix(const Matrix2D3x3& textureMatrix, const string& nodeId, const string& facesEntityId) {
+void ObjectInternal::setTextureMatrix(const Matrix3x3& textureMatrix, const string& nodeId, const string& facesEntityId) {
 	for (auto i = 0; i < objectNodes.size(); i++) {
 		auto objectNode = objectNodes[i];
 		// skip if a node is desired but not matching

@@ -19,7 +19,7 @@
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/fwd-tdme.h>
 
@@ -30,7 +30,7 @@ using std::vector;
 
 using tdme::engine::Texture;
 using tdme::engine::EntityShaderParameters;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::math::Matrix4x4;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::FloatBuffer;
@@ -105,7 +105,7 @@ public:
 		Renderer_SpecularMaterial specularMaterial {};
 		Renderer_PBRMaterial pbrMaterial {};
 		array<Renderer_Light, 8> lights {}; // TODO: we need this dynamically
-		Matrix2D3x3 textureMatrix {};
+		Matrix3x3 textureMatrix {};
 		float maskMaxValue { 1.0f };
 		int32_t lighting { 0 };
 		array<float, 3> environmentMappingCubeMapPosition;
@@ -576,7 +576,7 @@ public:
 	 * @param contextIdx context index
 	 * @return texture matrix
 	 */
-	inline Matrix2D3x3& getTextureMatrix(int contextIdx) {
+	inline Matrix3x3& getTextureMatrix(int contextIdx) {
 		auto& rendererContext = rendererContexts[contextIdx];
 		return rendererContext.textureMatrix;
 	}

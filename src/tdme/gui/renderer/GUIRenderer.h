@@ -13,7 +13,7 @@
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/math/Math.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/FloatBuffer.h>
@@ -32,7 +32,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
 using tdme::math::Math;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
 using tdme::utilities::FloatBuffer;
@@ -630,7 +630,7 @@ public:
 	 * Set texture matrix
 	 * @param textureMatrix texture matrix
 	 */
-	void setTexureMatrix(const Matrix2D3x3& textureMatrix);
+	void setTexureMatrix(const Matrix3x3& textureMatrix);
 
 	/**
 	 * Bind texture

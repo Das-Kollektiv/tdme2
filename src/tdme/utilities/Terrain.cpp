@@ -25,7 +25,7 @@
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
@@ -61,7 +61,7 @@ using tdme::engine::primitives::LineSegment;
 using tdme::engine::Rotation;
 using tdme::engine::Transform;
 using tdme::math::Math;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::math::Vector2;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -864,11 +864,11 @@ void Terrain::applyRampBrushToTerrainModels(
 	auto textureBytePerPixel = brushTexture->getRGBDepthBitsPerPixel() == 32?4:3;
 
 	// brush texture matrix
-	Matrix2D3x3 brushTextureMatrix;
+	Matrix3x3 brushTextureMatrix;
 	brushTextureMatrix.identity();
-	brushTextureMatrix.translate(Vector2(static_cast<float>(textureWidth) / 2.0f, static_cast<float>(textureHeight) / 2.0f));
-	brushTextureMatrix.multiply((Matrix2D3x3()).identity().scale(Vector2(1.0f / brushScale.getX(), 1.0f / brushScale.getY())));
-	brushTextureMatrix.multiply((Matrix2D3x3()).identity().rotate(brushRotation));
+	brushTextureMatrix.setTranslation(Vector2(static_cast<float>(textureWidth) / 2.0f, static_cast<float>(textureHeight) / 2.0f));
+	brushTextureMatrix.multiply((Matrix3x3()).identity().scale(Vector2(1.0f / brushScale.getX(), 1.0f / brushScale.getY())));
+	brushTextureMatrix.multiply((Matrix3x3()).identity().setAxes(brushRotation));
 	auto brushScaleMax = Math::max(brushScale.getX(), brushScale.getY());
 
 	//
@@ -2035,11 +2035,11 @@ void Terrain::updateFoliageTerrainRampBrush(
 	auto textureBytePerPixel = brushTexture->getRGBDepthBitsPerPixel() == 32?4:3;
 
 	// brush texture matrix
-	Matrix2D3x3 brushTextureMatrix;
+	Matrix3x3 brushTextureMatrix;
 	brushTextureMatrix.identity();
-	brushTextureMatrix.translate(Vector2(static_cast<float>(textureWidth) / 2.0f, static_cast<float>(textureHeight) / 2.0f));
-	brushTextureMatrix.multiply((Matrix2D3x3()).identity().scale(Vector2(1.0f / brushScale.getX(), 1.0f / brushScale.getY())));
-	brushTextureMatrix.multiply((Matrix2D3x3()).identity().rotate(brushRotation));
+	brushTextureMatrix.setTranslation(Vector2(static_cast<float>(textureWidth) / 2.0f, static_cast<float>(textureHeight) / 2.0f));
+	brushTextureMatrix.multiply((Matrix3x3()).identity().scale(Vector2(1.0f / brushScale.getX(), 1.0f / brushScale.getY())));
+	brushTextureMatrix.multiply((Matrix3x3()).identity().setAxes(brushRotation));
 	auto brushScaleMax = Math::max(brushScale.getX(), brushScale.getY());
 
 	//
