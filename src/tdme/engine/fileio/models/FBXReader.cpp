@@ -268,7 +268,7 @@ void FBXReader::setupModelImportRotationMatrix(Model* model) {
 		// no op
 	} else
 	if (model->getUpVector() == UpVector::Z_UP) {
-		model->setImportTransformMatrix(model->getImportTransformMatrix().clone().rotate(Vector3(1.0f, 0.0f, 0.0f), -90.0));
+		model->setImportTransformMatrix(model->getImportTransformMatrix().clone().setAxes(Vector3(1.0f, 0.0f, 0.0f), -90.0));
 	}
 }
 

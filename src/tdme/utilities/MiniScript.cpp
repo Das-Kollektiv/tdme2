@@ -4231,7 +4231,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				Vector3 translation;
 				if (MiniScript::getVector3Value(argumentValues, 0, translation, false) == true) {
-					returnValue.setValue(Matrix4x4().identity().translate(translation));
+					returnValue.setValue(Matrix4x4().identity().setTranslation(translation));
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -4263,7 +4263,7 @@ void MiniScript::registerMethods() {
 				float angle;
 				if (MiniScript::getVector3Value(argumentValues, 0, axis, false) == true &&
 					MiniScript::getFloatValue(argumentValues, 1, angle, false) == true) {
-					returnValue.setValue(Matrix4x4().identity().rotate(axis, angle));
+					returnValue.setValue(Matrix4x4().identity().setAxes(axis, angle));
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();

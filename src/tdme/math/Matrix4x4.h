@@ -16,28 +16,65 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 
 /**
- * 4x4 3D Matrix class
+ * Matrix4x4 class representing matrix4x4 mathematical structure and operations for 3d space
  * @author Andreas Drewke, Song Ho Ahn <song.ahn@gmail.com>
  */
 class tdme::math::Matrix4x4 final
 {
 private:
-	array<float, 16> data;
+	array<float, 16> data {
+		0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f
+	};
 
 public:
 	/**
 	 * Public constructor
 	 */
 	inline Matrix4x4() {
-		data.fill(0.0f);
 	}
 
 	/**
 	 * Public constructor
-	 * @param m matrix as float values
+	 * @param r0c0 row 0, column 0
+	 * @param r0c1 row 0, column 1
+	 * @param r0c2 row 0, column 2
+	 * @param r0c3 row 0, column 3
+	 * @param r1c0 row 1, column 0
+	 * @param r1c1 row 1, column 1
+	 * @param r1c2 row 1, column 2
+	 * @param r1c3 row 1, column 3
+	 * @param r2c0 row 2, column 0
+	 * @param r2c1 row 2, column 1
+	 * @param r2c2 row 2, column 2
+	 * @param r2c3 row 2, column 3
+	 * @param r3c0 row 3, column 0
+	 * @param r3c1 row 3, column 1
+	 * @param r3c2 row 3, column 2
+	 * @param r3c3 row 3, column 3
 	 */
-	inline Matrix4x4(const array<float, 16>& m) {
-		data = m;
+	inline Matrix4x4(
+		float r0c0, float r0c1, float r0c2, float r0c3,
+		float r1c0, float r1c1, float r1c2, float r1c3,
+		float r2c0, float r2c1, float r2c2, float r2c3,
+		float r3c0, float r3c1, float r3c2, float r3c3
+	) {
+		set(
+			r0c0, r0c1, r0c2, r0c3,
+			r1c0, r1c1, r1c2, r1c3,
+			r2c0, r2c1, r2c2, r2c3,
+			r3c0, r3c1, r3c2, r3c3
+		);
+	}
+
+	/**
+	 * Public constructor
+	 * @param matrix matrix as array
+	 */
+	inline Matrix4x4(const array<float, 16>& matrix) {
+		data = matrix;
 	}
 
 	/**
@@ -49,171 +86,230 @@ public:
 	}
 
 	/**
-	 * Public constructor
-	 * @param r0c0 r0c0
-	 * @param r1c0 r1c0
-	 * @param r2c0 r2c0
-	 * @param r3c0 r3c0
-	 * @param r0c1 r0c1
-	 * @param r1c1 r1c1
-	 * @param r2c1 r2c1
-	 * @param r3c1 r3c1
-	 * @param r0c2 r0c2
-	 * @param r1c2 r1c2
-	 * @param r2c2 r2c2
-	 * @param r3c2 r3c2
-	 * @param r0c3 r0c3
-	 * @param r1c3 r1c3
-	 * @param r2c3 r2c3
-	 * @param r3c3 r3c3
-	 */
-	inline Matrix4x4(float r0c0, float r1c0, float r2c0, float r3c0, float r0c1, float r1c1, float r2c1, float r3c1, float r0c2, float r1c2, float r2c2, float r3c2, float r0c3, float r1c3, float r2c3, float r3c3) {
-		set(r0c0, r1c0, r2c0, r3c0, r0c1, r1c1, r2c1, r3c1, r0c2, r1c2, r2c2, r3c2, r0c3, r1c3, r2c3, r3c3);
-	}
-
-	/**
-	 * Set up matrix by values
+	 * Sets this matrix by its components
 	 * @param r0c0 row 0, column 0
-	 * @param r1c0 row 1, column 0
-	 * @param r2c0 row 2, column 0
-	 * @param r3c0 row 3, column 0
 	 * @param r0c1 row 0, column 1
-	 * @param r1c1 row 1, column 1
-	 * @param r2c1 row 2, column 1
-	 * @param r3c1 row 3, column 1
 	 * @param r0c2 row 0, column 2
-	 * @param r1c2 row 1, column 2
-	 * @param r2c2 row 2, column 2
-	 * @param r3c2 row 3, column 2
 	 * @param r0c3 row 0, column 3
+	 * @param r1c0 row 1, column 0
+	 * @param r1c1 row 1, column 1
+	 * @param r1c2 row 1, column 2
 	 * @param r1c3 row 1, column 3
+	 * @param r2c0 row 2, column 0
+	 * @param r2c1 row 2, column 1
+	 * @param r2c2 row 2, column 2
 	 * @param r2c3 row 2, column 3
+	 * @param r3c0 row 3, column 0
+	 * @param r3c1 row 3, column 1
+	 * @param r3c2 row 3, column 2
 	 * @param r3c3 row 3, column 3
 	 * @return this matrix
 	 */
-	inline Matrix4x4& set(float r0c0, float r1c0, float r2c0, float r3c0, float r0c1, float r1c1, float r2c1, float r3c1, float r0c2, float r1c2, float r2c2, float r3c2, float r0c3, float r1c3, float r2c3, float r3c3) {
+	inline Matrix4x4& set(
+		float r0c0, float r0c1, float r0c2, float r0c3,
+		float r1c0, float r1c1, float r1c2, float r1c3,
+		float r2c0, float r2c1, float r2c2, float r2c3,
+		float r3c0, float r3c1, float r3c2, float r3c3
+		) {
+		//
 		data[0] = r0c0;
-		data[1] = r1c0;
-		data[2] = r2c0;
-		data[3] = r3c0;
-		data[4] = r0c1;
+		data[1] = r0c1;
+		data[2] = r0c2;
+		data[3] = r0c3;
+		data[4] = r1c0;
 		data[5] = r1c1;
-		data[6] = r2c1;
-		data[7] = r3c1;
-		data[8] = r0c2;
-		data[9] = r1c2;
+		data[6] = r1c2;
+		data[7] = r1c3;
+		data[8] = r2c0;
+		data[9] = r2c1;
 		data[10] = r2c2;
-		data[11] = r3c2;
-		data[12] = r0c3;
-		data[13] = r1c3;
-		data[14] = r2c3;
+		data[11] = r2c3;
+		data[12] = r3c0;
+		data[13] = r3c1;
+		data[14] = r3c2;
 		data[15] = r3c3;
 		return *this;
 	}
 
 	/**
-	 * Sets up this matrix by matrix m
-	 * @param m m
+	 * Sets this matrix by array
+	 * @param matrix matrix as array
 	 * @return this matrix
 	 */
-	inline Matrix4x4& set(const array<float, 16>& m) {
-		data = m;
+	inline Matrix4x4& set(const array<float, 16>& matrix) {
+		data = matrix;
 		return *this;
 	}
 
 	/**
-	 * Sets up this matrix by matrix m
-	 * @param m m
+	 * Sets this matrix by given matrix
+	 * @param matrix matrix
 	 * @return
 	 */
-	inline Matrix4x4& set(const Matrix4x4& m) {
-		data = m.data;
+	inline Matrix4x4& set(const Matrix4x4& matrix) {
+		data = matrix.data;
 		return *this;
 	}
 
 	/**
-	 * Array access operator
-	 * @param i index
-	 * @return vector3 component
+	 * Creates identity matrix
+	 * @return this matrix
 	 */
-	inline float& operator[](int i) {
-		return data[i];
+	inline Matrix4x4& identity() {
+		data[0] = 1.0f;
+		data[1] = 0.0f;
+		data[2] = 0.0f;
+		data[3] = 0.0f;
+		data[4] = 0.0f;
+		data[5] = 1.0f;
+		data[6] = 0.0f;
+		data[7] = 0.0f;
+		data[8] = 0.0f;
+		data[9] = 0.0f;
+		data[10] = 1.0f;
+		data[11] = 0.0f;
+		data[12] = 0.0f;
+		data[13] = 0.0f;
+		data[14] = 0.0f;
+		data[15] = 1.0f;
+		return *this;
 	}
 
 	/**
-	 * Const array access operator
-	 * @param i index
-	 * @return vector3 component
+	 * Scales by scalar
+	 * @param scalar scalar
+	 * @returns this matrix
 	 */
-	inline const float& operator[](int i) const {
-		return data[i];
+	inline Matrix4x4& scale(float scalar) {
+		data[0] *= scalar;
+		data[1] *= scalar;
+		data[2] *= scalar;
+		data[3] *= scalar;
+		data[4] *= scalar;
+		data[5] *= scalar;
+		data[6] *= scalar;
+		data[7] *= scalar;
+		data[8] *= scalar;
+		data[9] *= scalar;
+		data[10] *= scalar;
+		data[11] *= scalar;
+		return *this;
 	}
 
 	/**
-	 * Operator * (float)
-	 * @param f value to multiply by
-	 * @return new matrix (this * f)
+	 * Scales by vector3
+	 * @param vector3 vector3
+	 * @return this matrix
 	 */
-	inline Matrix4x4 operator *(const float f) const {
-		auto r = this->clone().scale(f);
-		return r;
+	inline Matrix4x4& scale(const Vector3& vector3) {
+		data[0] *= vector3.data[0];
+		data[1] *= vector3.data[0];
+		data[2] *= vector3.data[0];
+		data[3] *= vector3.data[0];
+		data[4] *= vector3.data[1];
+		data[5] *= vector3.data[1];
+		data[6] *= vector3.data[1];
+		data[7] *= vector3.data[1];
+		data[8] *= vector3.data[2];
+		data[9] *= vector3.data[2];
+		data[10] *= vector3.data[2];
+		data[11] *= vector3.data[2];
+		return *this;
 	}
 
 	/**
-	 * Operator * (Matrix4x4&)
-	 * @param m matrix to multiply by
-	 * @return new matrix (this * m)
+	 * Multiplies this matrix with vector3
+	 * @param vector3 vector3
+	 * @return vector3
 	 */
-	inline Matrix4x4 operator *(const Matrix4x4& m) const {
-		auto r = this->clone().multiply(m);
-		return r;
+	inline Vector3 multiply(const Vector3& vector3) const {
+		return Vector3(
+			vector3.data[0] * data[0] + vector3.data[1] * data[4] + vector3.data[2] * data[8] + data[12],
+			vector3.data[0] * data[1] + vector3.data[1] * data[5] + vector3.data[2] * data[9] + data[13],
+			vector3.data[0] * data[2] + vector3.data[1] * data[6] + vector3.data[2] * data[10] + data[14]
+		);
 	}
 
 	/**
-	 * Operator * (Vector3&)
-	 * @param v vector to multiply by
-	 * @return new vector (this * v)
+	 * Multiplies this matrix with vector3 while ignoring translation
+	 * @param vector3 Vector3
+	 * @return vector3
 	 */
-	inline Vector3 operator *(const Vector3& v) const {
-		return this->multiply(v);
+	inline Vector3 multiplyNoTranslation(const Vector3& vector3) const {
+		return Vector3(
+			vector3.data[0] * data[0] + vector3.data[1] * data[4] + vector3.data[2] * data[8],
+			vector3.data[0] * data[1] + vector3.data[1] * data[5] + vector3.data[2] * data[9],
+			vector3.data[0] * data[2] + vector3.data[1] * data[6] + vector3.data[2] * data[10]
+		);
 	}
 
 	/**
-	 * Operator * (Vector4&)
-	 * @param v vector to multiply by
-	 * @return new vector (this * v)
+	 * Multiplies this matrix with vector4
+	 * @param vector4 vector4
+	 * @return vector4
 	 */
-	inline Vector4 operator *(const Vector4& v) const {
-		return this->multiply(v);
-	}
-
-	/*
-	 * Operator *=
-	 * @param m matrix to multiply by
-	 * @return this matrix multiplied by m
-	 */
-	inline Matrix4x4& operator *=(const Matrix4x4 m) {
-		return this->multiply(m);
+	inline Vector4 multiply(const Vector4& vector4) const {
+		return Vector4(
+			vector4.data[0] * data[0] + vector4.data[1] * data[4] + vector4.data[2] * data[8] + vector4.data[3] * data[12],
+			vector4.data[0] * data[1] + vector4.data[1] * data[5] + vector4.data[2] * data[9] + vector4.data[3] * data[13],
+			vector4.data[0] * data[2] + vector4.data[1] * data[6] + vector4.data[2] * data[10] + vector4.data[3] * data[14],
+			vector4.data[0] * data[3] + vector4.data[1] * data[7] + vector4.data[2] * data[11] + vector4.data[3] * data[15]
+		);
 	}
 
 	/**
-	 * Equality comparison operator
-	 * @param m matrix to compare to
+	 * Multiplies this matrix with given matrix
+	 * @param matrix matrix
+	 * @return this matrix
+	 */
+	inline Matrix4x4& multiply(const Matrix4x4& matrix) {
+		array<float, 16> _data;
+		_data[0] = data[0] * matrix.data[0] + data[1] * matrix.data[4] + data[2] * matrix.data[8] + data[3] * matrix.data[12];
+		_data[1] = data[0] * matrix.data[1] + data[1] * matrix.data[5] + data[2] * matrix.data[9] + data[3] * matrix.data[13];
+		_data[2] = data[0] * matrix.data[2] + data[1] * matrix.data[6] + data[2] * matrix.data[10] + data[3] * matrix.data[14];
+		_data[3] = data[0] * matrix.data[3] + data[1] * matrix.data[7] + data[2] * matrix.data[11] + data[3] * matrix.data[15];
+		_data[4] = data[4] * matrix.data[0] + data[5] * matrix.data[4] + data[6] * matrix.data[8] + data[7] * matrix.data[12];
+		_data[5] = data[4] * matrix.data[1] + data[5] * matrix.data[5] + data[6] * matrix.data[9] + data[7] * matrix.data[13];
+		_data[6] = data[4] * matrix.data[2] + data[5] * matrix.data[6] + data[6] * matrix.data[10] + data[7] * matrix.data[14];
+		_data[7] = data[4] * matrix.data[3] + data[5] * matrix.data[7] + data[6] * matrix.data[11] + data[7] * matrix.data[15];
+		_data[8] = data[8] * matrix.data[0] + data[9] * matrix.data[4] + data[10] * matrix.data[8] + data[11] * matrix.data[12];
+		_data[9] = data[8] * matrix.data[1] + data[9] * matrix.data[5] + data[10] * matrix.data[9] + data[11] * matrix.data[13];
+		_data[10] = data[8] * matrix.data[2] + data[9] * matrix.data[6] + data[10] * matrix.data[10] + data[11] * matrix.data[14];
+		_data[11] = data[8] * matrix.data[3] + data[9] * matrix.data[7] + data[10] * matrix.data[11] + data[11] * matrix.data[15];
+		_data[12] = data[12] * matrix.data[0] + data[13] * matrix.data[4] + data[14] * matrix.data[8] + data[15] * matrix.data[12];
+		_data[13] = data[12] * matrix.data[1] + data[13] * matrix.data[5] + data[14] * matrix.data[9] + data[15] * matrix.data[13];
+		_data[14] = data[12] * matrix.data[2] + data[13] * matrix.data[6] + data[14] * matrix.data[10] + data[15] * matrix.data[14];
+		_data[15] = data[12] * matrix.data[3] + data[13] * matrix.data[7] + data[14] * matrix.data[11] + data[15] * matrix.data[15];
+		data = _data;
+		return *this;
+	}
+
+	/**
+	 * Compares this matrix with given matrix
+	 * @param matrix matrix
 	 * @return equality
 	 */
-
-	inline bool operator ==(const Matrix4x4& m) const {
-		return this->equals(m);
-	}
-
-	/**
-	 * Non equality comparison operator
-	 * @param m matrix to compare to
-	 * @return non equality
-	 */
-
-	inline bool operator !=(const Matrix4x4& m) const {
-		return this->equals(m) == false;
+	inline bool equals(const Matrix4x4& matrix) const {
+		return
+			(this == &matrix) ||
+			(
+				Math::abs(data[0] - matrix.data[0]) < Math::EPSILON &&
+				Math::abs(data[1] - matrix.data[1]) < Math::EPSILON &&
+				Math::abs(data[2] - matrix.data[2]) < Math::EPSILON &&
+				Math::abs(data[3] - matrix.data[3]) < Math::EPSILON &&
+				Math::abs(data[4] - matrix.data[4]) < Math::EPSILON &&
+				Math::abs(data[5] - matrix.data[5]) < Math::EPSILON &&
+				Math::abs(data[6] - matrix.data[6]) < Math::EPSILON &&
+				Math::abs(data[7] - matrix.data[7]) < Math::EPSILON &&
+				Math::abs(data[8] - matrix.data[8]) < Math::EPSILON &&
+				Math::abs(data[9] - matrix.data[9]) < Math::EPSILON &&
+				Math::abs(data[10] - matrix.data[10]) < Math::EPSILON &&
+				Math::abs(data[11] - matrix.data[11]) < Math::EPSILON &&
+				Math::abs(data[12] - matrix.data[12]) < Math::EPSILON &&
+				Math::abs(data[13] - matrix.data[13]) < Math::EPSILON &&
+				Math::abs(data[14] - matrix.data[14]) < Math::EPSILON &&
+				Math::abs(data[15] - matrix.data[15]) < Math::EPSILON
+			);
 	}
 
 	/**
@@ -221,7 +317,6 @@ public:
 	 * @param xAxis x axis
 	 * @param yAxis y axis
 	 * @param zAxis z axis
-	 * @return this matrix
 	 */
 	inline void getAxes(Vector3& xAxis, Vector3& yAxis, Vector3& zAxis) const {
 		xAxis.set(data[0], data[1], data[2]);
@@ -253,30 +348,42 @@ public:
 	}
 
 	/**
-	 * Get translation
-	 * @param translation translation
+	 * Set coordinate system axes by rotation around axis by angle
+	 * @param axis axis
+	 * @param angle angle
 	 * @return this matrix
 	 */
-	inline void getTranslation(Vector3& translation) const {
-		translation.set(data[12], data[13], data[14]);
-	}
-
-	/**
-	 * Set translation
-	 * @param translation translation
-	 * @return this matrix
-	 */
-	inline Matrix4x4& setTranslation(const Vector3& translation) {
-		data[12] = translation.data[0];
-		data[13] = translation.data[1];
-		data[14] = translation.data[2];
+	inline Matrix4x4& setAxes(const Vector3& axis, float angle) {
+		// see: http://www.songho.ca/opengl/gl_matrix.html
+		// see: https://en.wikipedia.org/wiki/Rotation_matrix
+		auto c = Math::cos(angle * Math::DEG2RAD); // cosine
+		auto scalar = Math::sin(angle * Math::DEG2RAD); // sine
+		auto c1 = 1.0f - c;
+		auto uX = axis[0];
+		auto uY = axis[1];
+		auto uZ = axis[2];
+		auto uX2 = Math::square(axis[0]);
+		auto uY2 = Math::square(axis[1]);
+		auto uZ2 = Math::square(axis[2]);
+		//
+		data[0] = c + uX2 * c1;
+		data[1] = uX * uY * c1 + uZ * scalar;
+		data[2] = uX * uZ * c1 - uY * scalar;
+		//
+		data[4] = uY * uX * c1 - uZ * scalar;
+		data[5] = c + uY2 * c1;
+		data[6] = uY * uZ * c1 + uX * scalar;
+		//
+		data[8] = uZ * uX * c1 + uY * scalar;
+		data[9] = uZ * uY * c1 - uX * scalar;
+		data[10] = c + uZ2 * c1;
+		//
 		return *this;
 	}
 
 	/**
 	 * Get scale
 	 * @param scale scale
-	 * @return this matrix
 	 */
 	inline void getScale(Vector3& scale) const {
 		// x axis
@@ -288,7 +395,7 @@ public:
 	}
 
 	/**
-	 * Get scale
+	 * Set scale
 	 * @param scale scale
 	 * @return this matrix
 	 */
@@ -315,189 +422,27 @@ public:
 		data[8] = axisVector.data[0];
 		data[9] = axisVector.data[1];
 		data[10] = axisVector.data[2];
+		//
 		return *this;
 	}
 
 	/**
-	 * Setup identity matrix
+	 * Get translation
+	 * @param translation translation
+	 */
+	inline void getTranslation(Vector3& translation) const {
+		translation.set(data[12], data[13], data[14]);
+	}
+
+	/**
+	 * Set translation
+	 * @param translation translation
 	 * @return this matrix
 	 */
-	inline Matrix4x4& identity() {
-		data[0] = 1.0f;
-		data[1] = 0.0f;
-		data[2] = 0.0f;
-		data[3] = 0.0f;
-		data[4] = 0.0f;
-		data[5] = 1.0f;
-		data[6] = 0.0f;
-		data[7] = 0.0f;
-		data[8] = 0.0f;
-		data[9] = 0.0f;
-		data[10] = 1.0f;
-		data[11] = 0.0f;
-		data[12] = 0.0f;
-		data[13] = 0.0f;
-		data[14] = 0.0f;
-		data[15] = 1.0f;
-		return *this;
-	}
-
-	/**
-	 * Multiplies a vector3 with this matrix into destination vector
-	 * @param v vector 3
-	 * @return resulting vector 3
-	 */
-	inline Vector3 multiply(const Vector3& v) const {
-		return Vector3(
-			v.data[0] * data[0] + v.data[1] * data[4] + v.data[2] * data[8] + data[12],
-			v.data[0] * data[1] + v.data[1] * data[5] + v.data[2] * data[9] + data[13],
-			v.data[0] * data[2] + v.data[1] * data[6] + v.data[2] * data[10] + data[14]
-		);
-	}
-
-	/**
-	 * Multiplies a vector3 with this matrix ignoring translation
-	 * @param v vector 3
-	 * @return resulting vector 3
-	 */
-	inline Vector3 multiplyNoTranslation(const Vector3& v) const {
-		return Vector3(
-			v.data[0] * data[0] + v.data[1] * data[4] + v.data[2] * data[8],
-			v.data[0] * data[1] + v.data[1] * data[5] + v.data[2] * data[9],
-			v.data[0] * data[2] + v.data[1] * data[6] + v.data[2] * data[10]
-		);
-	}
-
-	/**
-	 * Multiplies a vector4 with this matrix into destination vector
-	 * @param v vector 4
-	 * @return resulting vector 4
-	 */
-	inline Vector4 multiply(const Vector4& v) const {
-		return Vector4(
-			v.data[0] * data[0] + v.data[1] * data[4] + v.data[2] * data[8] + v.data[3] * data[12],
-			v.data[0] * data[1] + v.data[1] * data[5] + v.data[2] * data[9] + v.data[3] * data[13],
-			v.data[0] * data[2] + v.data[1] * data[6] + v.data[2] * data[10] + v.data[3] * data[14],
-			v.data[0] * data[3] + v.data[1] * data[7] + v.data[2] * data[11] + v.data[3] * data[15]
-		);
-	}
-
-	/**
-	 * Multiplies this matrix with another matrix
-	 * @param m m
-	 * @return this matrix
-	 */
-	inline Matrix4x4& multiply(const Matrix4x4& m) {
-		array<float, 16> _data;
-		_data[0] = data[0] * m.data[0] + data[1] * m.data[4] + data[2] * m.data[8] + data[3] * m.data[12];
-		_data[1] = data[0] * m.data[1] + data[1] * m.data[5] + data[2] * m.data[9] + data[3] * m.data[13];
-		_data[2] = data[0] * m.data[2] + data[1] * m.data[6] + data[2] * m.data[10] + data[3] * m.data[14];
-		_data[3] = data[0] * m.data[3] + data[1] * m.data[7] + data[2] * m.data[11] + data[3] * m.data[15];
-		_data[4] = data[4] * m.data[0] + data[5] * m.data[4] + data[6] * m.data[8] + data[7] * m.data[12];
-		_data[5] = data[4] * m.data[1] + data[5] * m.data[5] + data[6] * m.data[9] + data[7] * m.data[13];
-		_data[6] = data[4] * m.data[2] + data[5] * m.data[6] + data[6] * m.data[10] + data[7] * m.data[14];
-		_data[7] = data[4] * m.data[3] + data[5] * m.data[7] + data[6] * m.data[11] + data[7] * m.data[15];
-		_data[8] = data[8] * m.data[0] + data[9] * m.data[4] + data[10] * m.data[8] + data[11] * m.data[12];
-		_data[9] = data[8] * m.data[1] + data[9] * m.data[5] + data[10] * m.data[9] + data[11] * m.data[13];
-		_data[10] = data[8] * m.data[2] + data[9] * m.data[6] + data[10] * m.data[10] + data[11] * m.data[14];
-		_data[11] = data[8] * m.data[3] + data[9] * m.data[7] + data[10] * m.data[11] + data[11] * m.data[15];
-		_data[12] = data[12] * m.data[0] + data[13] * m.data[4] + data[14] * m.data[8] + data[15] * m.data[12];
-		_data[13] = data[12] * m.data[1] + data[13] * m.data[5] + data[14] * m.data[9] + data[15] * m.data[13];
-		_data[14] = data[12] * m.data[2] + data[13] * m.data[6] + data[14] * m.data[10] + data[15] * m.data[14];
-		_data[15] = data[12] * m.data[3] + data[13] * m.data[7] + data[14] * m.data[11] + data[15] * m.data[15];
-		data = _data;
-		return *this;
-	}
-
-	/**
-	 * Scales this matrix
-	 * @param s s
-	 * @returns this matrix
-	 */
-	inline Matrix4x4& scale(float s) {
-		data[0] *= s;
-		data[1] *= s;
-		data[2] *= s;
-		data[3] *= s;
-		data[4] *= s;
-		data[5] *= s;
-		data[6] *= s;
-		data[7] *= s;
-		data[8] *= s;
-		data[9] *= s;
-		data[10] *= s;
-		data[11] *= s;
-		return *this;
-	}
-
-	/**
-	 * Scales this matrix by given vector
-	 * @param v v
-	 * @return this matrix
-	 */
-	inline Matrix4x4& scale(const Vector3& v) {
-		data[0] *= v.data[0];
-		data[1] *= v.data[0];
-		data[2] *= v.data[0];
-		data[3] *= v.data[0];
-		data[4] *= v.data[1];
-		data[5] *= v.data[1];
-		data[6] *= v.data[1];
-		data[7] *= v.data[1];
-		data[8] *= v.data[2];
-		data[9] *= v.data[2];
-		data[10] *= v.data[2];
-		data[11] *= v.data[2];
-		return *this;
-	}
-
-	/**
-	 * Sets up a translation matrix
-	 * @param v v
-	 * @return this matrix
-	 */
-	inline Matrix4x4& translate(const Vector3& v) {
-		data[12] += v.data[0] * data[0] + v.data[1] * data[4] + v.data[2] * data[8];
-		data[13] += v.data[0] * data[1] + v.data[1] * data[5] + v.data[2] * data[9];
-		data[14] += v.data[0] * data[2] + v.data[1] * data[6] + v.data[2] * data[10];
-		return *this;
-	}
-
-	/**
-	 * Creates a rotation matrix
-	 * @param axis axis
-	 * @param angle angle
-	 * @return this matrix
-	 */
-	inline Matrix4x4& rotate(const Vector3& axis, float angle) {
-		// see: http://www.songho.ca/opengl/gl_matrix.html
-		float c = Math::cos(angle * Math::DEG2RAD);    // cosine
-		float s = Math::sin(angle * Math::DEG2RAD);    // sine
-		float c1 = 1.0f - c;                // 1 - c
-		float m0 = data[0],  m4 = data[4],  m8 = data[8],  m12= data[12],
-			  m1 = data[1],  m5 = data[5],  m9 = data[9],  m13= data[13],
-			  m2 = data[2],  m6 = data[6],  m10= data[10], m14= data[14];
-		float r0 = axis[0] * axis[0] * c1 + c;
-		float r1 = axis[0] * axis[1] * c1 + axis[2] * s;
-		float r2 = axis[0] * axis[2] * c1 - axis[1] * s;
-		float r4 = axis[0] * axis[1] * c1 - axis[2] * s;
-		float r5 = axis[1] * axis[1] * c1 + c;
-		float r6 = axis[1] * axis[2] * c1 + axis[0] * s;
-		float r8 = axis[0] * axis[2] * c1 + axis[1] * s;
-		float r9 = axis[1] * axis[2] * c1 - axis[0] * s;
-		float r10= axis[2] * axis[2] * c1 + c;
-		data[0] = r0 * m0 + r4 * m1 + r8 * m2;
-		data[1] = r1 * m0 + r5 * m1 + r9 * m2;
-		data[2] = r2 * m0 + r6 * m1 + r10* m2;
-		data[4] = r0 * m4 + r4 * m5 + r8 * m6;
-		data[5] = r1 * m4 + r5 * m5 + r9 * m6;
-		data[6] = r2 * m4 + r6 * m5 + r10* m6;
-		data[8] = r0 * m8 + r4 * m9 + r8 * m10;
-		data[9] = r1 * m8 + r5 * m9 + r9 * m10;
-		data[10]= r2 * m8 + r6 * m9 + r10* m10;
-		data[12]= r0 * m12+ r4 * m13+ r8 * m14;
-		data[13]= r1 * m12+ r5 * m13+ r9 * m14;
-		data[14]= r2 * m12+ r6 * m13+ r10* m14;
+	inline Matrix4x4& setTranslation(const Vector3& translation) {
+		data[12] = translation.data[0];
+		data[13] = translation.data[1];
+		data[14] = translation.data[2];
 		return *this;
 	}
 
@@ -528,7 +473,7 @@ public:
 	}
 
 	/**
-	 * Inverts the matrix
+	 * Inverts this matrix
 	 * @return this matrix
 	 */
 	inline Matrix4x4& invert() {
@@ -580,81 +525,8 @@ public:
 	}
 
 	/**
-	 * Returns if this matrix equals m
-	 * @param m m
-	 * @return equals
-	 */
-	inline bool equals(const Matrix4x4& m) const {
-		return
-			(this == &m) ||
-			(
-				Math::abs(data[0] - m.data[0]) < Math::EPSILON &&
-				Math::abs(data[1] - m.data[1]) < Math::EPSILON &&
-				Math::abs(data[2] - m.data[2]) < Math::EPSILON &&
-				Math::abs(data[3] - m.data[3]) < Math::EPSILON &&
-				Math::abs(data[4] - m.data[4]) < Math::EPSILON &&
-				Math::abs(data[5] - m.data[5]) < Math::EPSILON &&
-				Math::abs(data[6] - m.data[6]) < Math::EPSILON &&
-				Math::abs(data[7] - m.data[7]) < Math::EPSILON &&
-				Math::abs(data[8] - m.data[8]) < Math::EPSILON &&
-				Math::abs(data[9] - m.data[9]) < Math::EPSILON &&
-				Math::abs(data[10] - m.data[10]) < Math::EPSILON &&
-				Math::abs(data[11] - m.data[11]) < Math::EPSILON &&
-				Math::abs(data[12] - m.data[12]) < Math::EPSILON &&
-				Math::abs(data[13] - m.data[13]) < Math::EPSILON &&
-				Math::abs(data[14] - m.data[14]) < Math::EPSILON &&
-				Math::abs(data[15] - m.data[15]) < Math::EPSILON
-			);
-	}
-
-	/**
-	 * Returns array data
-	 * @return array data
-	 */
-	inline const array<float, 16>& getArray() const {
-		return data;
-	}
-
-	/**
-	 * Clones this matrix
-	 * @return new cloned matrix
-	 */
-	inline Matrix4x4 clone() {
-		Matrix4x4 clonedMatrix(*this);
-		return clonedMatrix;
-	}
-
-	/**
-	 * Interpolates between matrix 1 and matrix 2 by 0f<=t<=1f linearly
-	 * @param m1 matrix 1
-	 * @param m2 matrix 2
-	 * @param t t
-	 * @return interpolated matrix
-	 */
-	inline static Matrix4x4 interpolateLinear(const Matrix4x4& m1, const Matrix4x4& m2, float t) {
-		return Matrix4x4(
-			(m2.data[0] * t) + ((1.0f - t) * m1.data[0]),
-			(m2.data[1] * t) + ((1.0f - t) * m1.data[1]),
-			(m2.data[2] * t) + ((1.0f - t) * m1.data[2]),
-			(m2.data[3] * t) + ((1.0f - t) * m1.data[3]),
-			(m2.data[4] * t) + ((1.0f - t) * m1.data[4]),
-			(m2.data[5] * t) + ((1.0f - t) * m1.data[5]),
-			(m2.data[6] * t) + ((1.0f - t) * m1.data[6]),
-			(m2.data[7] * t) + ((1.0f - t) * m1.data[7]),
-			(m2.data[8] * t) + ((1.0f - t) * m1.data[8]),
-			(m2.data[9] * t) + ((1.0f - t) * m1.data[9]),
-			(m2.data[10] * t) + ((1.0f - t) * m1.data[10]),
-			(m2.data[11] * t) + ((1.0f - t) * m1.data[11]),
-			(m2.data[12] * t) + ((1.0f - t) * m1.data[12]),
-			(m2.data[13] * t) + ((1.0f - t) * m1.data[13]),
-			(m2.data[14] * t) + ((1.0f - t) * m1.data[14]),
-			(m2.data[15] * t) + ((1.0f - t) * m1.data[15])
-		);
-	}
-
-	/**
 	 * Compute Euler angles (rotation around x, y, z axes)
-	 * @return vector 3 containing euler angles
+	 * @return Vector3 containing euler angles
 	 */
 	inline Vector3 computeEulerAngles() const {
 		/*
@@ -671,9 +543,9 @@ public:
 			Basically, don't be a jerk, and remember that anything free comes with no guarantee.
 		*/
 		// TODO: the next step might be a candidate for some optimizations
-		// copy matrix data
+		// copy Matrix4x4 data
 		auto _data = data;
-		// normalize all 3 axes in matrix coordinate system
+		// normalize all 3 axes in Matrix4x4 coordinate system
 		auto axisALength = Math::sqrt((_data[0] * _data[0]) + (_data[1] * _data[1]) + (_data[2] * _data[2]));
 		_data[0]*= axisALength;
 		_data[1]*= axisALength;
@@ -706,11 +578,130 @@ public:
 	}
 
 	/**
+	 * Interpolates between a and b by 0f<=t<=1f linearly
+	 * @param a matrix a
+	 * @param a matrix b
+	 * @param t t
+	 * @return interpolated matrix
+	 */
+	inline static Matrix4x4 interpolateLinear(const Matrix4x4& a, const Matrix4x4& b, float t) {
+		return Matrix4x4(
+			(b.data[0] * t) + ((1.0f - t) * a.data[0]),
+			(b.data[1] * t) + ((1.0f - t) * a.data[1]),
+			(b.data[2] * t) + ((1.0f - t) * a.data[2]),
+			(b.data[3] * t) + ((1.0f - t) * a.data[3]),
+			(b.data[4] * t) + ((1.0f - t) * a.data[4]),
+			(b.data[5] * t) + ((1.0f - t) * a.data[5]),
+			(b.data[6] * t) + ((1.0f - t) * a.data[6]),
+			(b.data[7] * t) + ((1.0f - t) * a.data[7]),
+			(b.data[8] * t) + ((1.0f - t) * a.data[8]),
+			(b.data[9] * t) + ((1.0f - t) * a.data[9]),
+			(b.data[10] * t) + ((1.0f - t) * a.data[10]),
+			(b.data[11] * t) + ((1.0f - t) * a.data[11]),
+			(b.data[12] * t) + ((1.0f - t) * a.data[12]),
+			(b.data[13] * t) + ((1.0f - t) * a.data[13]),
+			(b.data[14] * t) + ((1.0f - t) * a.data[14]),
+			(b.data[15] * t) + ((1.0f - t) * a.data[15])
+		);
+	}
+
+	/**
+	 * @return matrix as array
+	 */
+	inline const array<float, 16>& getArray() const {
+		return data;
+	}
+
+	/**
 	 * Clones this matrix
-	 * @return new cloned matrix
+	 * @return cloned matrix
 	 */
 	inline Matrix4x4 clone() const {
-		return Matrix4x4(data);
+		Matrix4x4 clonedMatrix(*this);
+		return clonedMatrix;
+	}
+
+	/**
+	 * Array access operator
+	 * @param i index
+	 * @return matrix component
+	 */
+	inline float& operator[](int i) {
+		return data[i];
+	}
+
+	/**
+	 * Const array access operator
+	 * @param i index
+	 * @return matrix component
+	 */
+	inline const float& operator[](int i) const {
+		return data[i];
+	}
+
+	/**
+	 * Operator * scalar
+	 * @param scalar scalar
+	 * @return new matrix (this * scalar)
+	 */
+	inline Matrix4x4 operator *(const float scalar) const {
+		auto r = this->clone().scale(scalar);
+		return r;
+	}
+
+	/**
+	 * Operator * matrix
+	 * @param matrix matrix
+	 * @return new matrix (this * matrix)
+	 */
+	inline Matrix4x4 operator *(const Matrix4x4& matrix) const {
+		auto r = this->clone().multiply(matrix);
+		return r;
+	}
+
+	/**
+	 * Operator * vector3
+	 * @param vector3 vector3
+	 * @return new vector3 (this * vector3)
+	 */
+	inline Vector3 operator *(const Vector3& vector3) const {
+		return this->multiply(vector3);
+	}
+
+	/**
+	 * Operator * vector4
+	 * @param vector4 vector4
+	 * @return new vector4 (this * vector4)
+	 */
+	inline Vector4 operator *(const Vector4& vector4) const {
+		return this->multiply(vector4);
+	}
+
+	/*
+	 * Operator *= matrix
+	 * @param matrix matrix
+	 * @return this matrix
+	 */
+	inline Matrix4x4& operator *=(const Matrix4x4 matrix) {
+		return this->multiply(matrix);
+	}
+
+	/**
+	 * Equality comparison operator
+	 * @param matrix Matrix4x4 to compare to
+	 * @return equality
+	 */
+	inline bool operator ==(const Matrix4x4& matrix) const {
+		return this->equals(matrix);
+	}
+
+	/**
+	 * Non equality comparison operator
+	 * @param matrix Matrix4x4 to compare to
+	 * @return non equality
+	 */
+	inline bool operator !=(const Matrix4x4& matrix) const {
+		return this->equals(matrix) == false;
 	}
 
 };

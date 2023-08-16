@@ -35,7 +35,7 @@ DecalInternal::DecalInternal(const string& id, OrientedBoundingBox* obb, Texture
 	this->entityTransformMatrix.identity();
 	boundingBox = BoundingBox(obb);
 	obbMatrix.identity();
-	obbMatrix.translate(obb->getCenter());
+	obbMatrix.setTranslation(obb->getCenter());
 	obbMatrix.setAxes(
 		obb->getAxes()[0] * obb->getHalfExtension()[0] * 2.0f,
 		obb->getAxes()[1] * obb->getHalfExtension()[1] * 2.0f,

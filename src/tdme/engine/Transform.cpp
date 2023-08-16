@@ -39,7 +39,7 @@ void Transform::update()
 	// transform matrix identity
 	transformMatrix.identity();
 	// set up translation matrix
-	translationMatrix.identity().translate(translation);
+	translationMatrix.identity().setTranslation(translation);
 	// set up scale matrix
 	scaleMatrix.identity().scale(scale);
 	// create and multiply rotations

@@ -195,7 +195,7 @@ Model* GLTFReader::read(const string& pathName, const string& fileName, bool use
 					vector<Matrix4x4> keyFrameMatrices(animationOutputAccessor.count);
 					for (auto i = 0; i < animationOutputAccessor.count; i++) {
 						keyFrameMatrices[i].identity();
-						keyFrameMatrices[i].translate(Vector3(animationOutputBufferData[i * 3 + 0], animationOutputBufferData[i * 3 + 1], animationOutputBufferData[i * 3 + 2]));
+						keyFrameMatrices[i].setTranslation(Vector3(animationOutputBufferData[i * 3 + 0], animationOutputBufferData[i * 3 + 1], animationOutputBufferData[i * 3 + 2]));
 					}
 					interpolateKeyFrames(animationInputAccessor.count, animationInputBufferData, keyFrameMatrices, channelFrames, translationMatrices, maxFrames);
 				} else
@@ -373,7 +373,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 			nodeRotationMatrix = rotationQuaternion.computeMatrix();
 		}
 		if (gltfNode.translation.size() == 3) {
-			nodeTranslationMatrix.translate(Vector3(gltfNode.translation[0], gltfNode.translation[1], gltfNode.translation[2]));
+			nodeTranslationMatrix.setTranslation(Vector3(gltfNode.translation[0], gltfNode.translation[1], gltfNode.translation[2]));
 		}
 		Matrix4x4 nodeTransformMatrix;
 		nodeTransformMatrix.set(nodeScaleMatrix);
@@ -1031,7 +1031,7 @@ const Matrix4x4 GLTFReader::getNodeTranslationMatrix(const tinygltf::Model& gltf
 			foundNode = true;
 			//
 			if (gltfNode.translation.size() == 3) {
-				translationMatrix.translate(Vector3(gltfNode.translation[0], gltfNode.translation[1], gltfNode.translation[2]));
+				translationMatrix.setTranslation(Vector3(gltfNode.translation[0], gltfNode.translation[1], gltfNode.translation[2]));
 			}
 			//
 			break;

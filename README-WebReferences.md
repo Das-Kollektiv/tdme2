@@ -29,6 +29,7 @@
   - https://en.cppreference.com/w/cpp/language/operator_precedence
   - https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
   - https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
+  - https://en.wikipedia.org/wiki/Rotation_matrix
   - https://forum.unity.com/threads/how-do-i-find-the-closest-point-on-a-line.340058/
   - https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
   - https://gist.github.com/Youka/4153f12cf2e17a77314c

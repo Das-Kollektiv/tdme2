@@ -129,7 +129,7 @@ Matrix4x4& Camera::computeModelViewMatrix()
 	}
 	cameraMatrix.
 		identity().
-		translate(
+		setTranslation(
 			lookFrom.clone().scale(-1.0f)
 		).
 		multiply(

@@ -57,7 +57,7 @@ int main(int argc, char** argv)
 		);
 		Console::println("Fixing scene models up axis from Z-Up to Y-Up");
 		Matrix4x4 z2yUpMatrix;
-		z2yUpMatrix.identity().rotate(Vector3(1.0f, 0.0f, 0.0f), -90.0f);
+		z2yUpMatrix.identity().setAxes(Vector3(1.0f, 0.0f, 0.0f), -90.0f);
 		// scene prototype library
 		auto sceneLibray = scene->getLibrary();
 		for (auto i = 0; i < sceneLibray->getPrototypeCount(); i++) {

@@ -228,10 +228,10 @@ void DAEReader::setupModelImportRotationMatrix(TiXmlElement* xmlRoot, Model* mod
 			if (StringTools::equalsIgnoreCase(upAxis, "Y_UP") == true) {
 			} else
 			if (StringTools::equalsIgnoreCase(upAxis, "Z_UP") == true) {
-				model->setImportTransformMatrix(model->getImportTransformMatrix().clone().rotate(Vector3(1.0f, 0.0f, 0.0f), -90.0f));
+				model->setImportTransformMatrix(model->getImportTransformMatrix().clone().setAxes(Vector3(1.0f, 0.0f, 0.0f), -90.0f));
 			} else
 			if (StringTools::equalsIgnoreCase(upAxis, "X_UP") == true) {
-				model->setImportTransformMatrix(model->getImportTransformMatrix().clone().rotate(Vector3(0.0f, 1.0f, 0.0f), -90.0f));
+				model->setImportTransformMatrix(model->getImportTransformMatrix().clone().setAxes(Vector3(0.0f, 1.0f, 0.0f), -90.0f));
 			} else {
 				Console::println(string("Warning: Unknown up axis: " + upAxis));
 			}
