@@ -348,7 +348,7 @@ public:
 	/**
 	 * Array access operator
 	 * @param i index
-	 * @return matrix3x3 component
+	 * @return matrix component
 	 */
 	inline float& operator[](int i) {
 		return data[i];
@@ -357,7 +357,7 @@ public:
 	/**
 	 * Const array access operator
 	 * @param i index
-	 * @return matrix3x3 component
+	 * @return matrix component
 	 */
 	inline const float& operator[](int i) const {
 		return data[i];
