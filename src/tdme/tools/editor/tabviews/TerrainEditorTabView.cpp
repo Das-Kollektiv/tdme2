@@ -117,11 +117,11 @@ void TerrainEditorTabView::handleInputEvents()
 
 		if (event.getType() == GUIMouseEvent::MOUSEEVENT_WHEEL_MOVED) {
 			if (event.isShiftDown() == true) {
-				setBrushScale(Math::clamp(brushScale + 0.1 * event.getWheelY(), 0.1f, 100.0f));
+				setBrushScale(Math::clamp(brushScale + 0.1f * event.getWheelY(), 0.1f, 100.0f));
 				event.setProcessed(true);
 			}
 			if (event.isControlDown() == true) {
-				setBrushDensityStrength(Math::clamp(brushDensityStrength + 0.1 * event.getWheelY(), 0.1f, 100.0f));
+				setBrushDensityStrength(Math::clamp(brushDensityStrength + 0.1f * event.getWheelY(), 0.1f, 100.0f));
 				event.setProcessed(true);
 			}
 		} else

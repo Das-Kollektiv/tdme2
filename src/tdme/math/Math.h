@@ -25,39 +25,13 @@ public:
 	static constexpr float G { 9.80665f };
 
 	/**
-	 * Clamps a int value to min or max value
+	 * Clamps a value to min or max value
 	 * @param value value
 	 * @param min min value
 	 * @param max max value
 	 * @return clamped value
 	 */
-	inline static int clamp(int value, int min, int max) {
-		if (value < min) return min;
-		if (value > max) return max;
-		return value;
-	}
-
-	/**
-	 * Clamps a 64 bit int value to min or max value
-	 * @param value value
-	 * @param min min value
-	 * @param max max value
-	 * @return clamped value
-	 */
-	inline static int64_t clamp(int64_t value, int64_t min, int64_t max) {
-		if (value < min) return min;
-		if (value > max) return max;
-		return value;
-	}
-
-	/**
-	 * Clamps a float value to min or max value
-	 * @param value value
-	 * @param min min value
-	 * @param max max value
-	 * @return clamped value
-	 */
-	inline static float clamp(float value, float min, float max) {
+	inline static auto clamp(auto value, auto min, auto max) {
 		if (value < min) return min;
 		if (value > max) return max;
 		return value;
@@ -68,28 +42,8 @@ public:
 	 * @param value value
 	 * @return -1 if value is negative or +1 if positive
 	 */
-	inline static int sign(int value) {
-		if (abs(value) < EPSILON) return 1.0f;
-		return value / Math::abs(value);
-	}
-
-	/**
-	 * Returns sign of value
-	 * @param value value
-	 * @return -1 if value is negative or +1 if positive
-	 */
-	inline static int64_t sign(int64_t value) {
-		if (abs(value) < EPSILON) return 1.0f;
-		return value / Math::abs(value);
-	}
-
-	/**
-	 * Returns sign of value
-	 * @param value value
-	 * @return -1 if value is negative or +1 if positive
-	 */
-	inline static float sign(float value) {
-		if (abs(value) < EPSILON) return 1.0f;
+	inline static auto sign(auto value) {
+		if (abs(value) < EPSILON) return value + 1;
 		return value / Math::abs(value);
 	}
 
@@ -98,25 +52,7 @@ public:
 	 * @param value value
 	 * @return square product
 	 */
-	inline static int square(int value) {
-		return value * value;
-	}
-
-	/**
-	 * Do the square product
-	 * @param value value
-	 * @return square product
-	 */
-	inline static int64_t square(int64_t value) {
-		return value * value;
-	}
-
-	/**
-	 * Do the square product
-	 * @param value value
-	 * @return square product
-	 */
-	inline static float square(float value) {
+	inline static auto square(auto value) {
 		return value * value;
 	}
 
@@ -125,61 +61,42 @@ public:
 	 * @param value value
 	 * @return absolute value
 	 */
-	inline static int32_t abs(int32_t value) {
+	inline static auto abs(auto value) {
 		return std::abs(value);
-	}
-
-	/**
-	 * Returns absolute value
-	 * @param value value
-	 * @return absolute value
-	 */
-	inline static int64_t abs(int64_t value) {
-		return std::abs(value);
-	}
-
-	/**
-	 * Returns absolute value
-	 * @param value value
-	 * @return absolute value
-	 */
-	inline static float abs(float value) {
-		return std::fabs(value);
 	}
 
 	/**
 	 * Returns the arc cosine of a value
-	 * @param value value
-	 * @return arc cosine
+	 * @param x x
+	 * @return arc cosine of x
 	 */
-	inline static float acos(float value) {
-		return std::acos(value);
+	inline static float acos(float x) {
+		return std::acos(x);
 	}
 
 	/**
 	 * Returns the arc sine of a value
-	 * @param value value
-	 * @return arc sine
+	 * @param x x
+	 * @return arc sine of x
 	 */
-	inline static float asin(float value) {
-		return std::asin(value);
+	inline static float asin(float x) {
+		return std::asin(x);
 	}
 
 	/**
 	 * Returns the arc tangent of a value
-	 * @param value value
-	 * @return arc tangent
+	 * @param x x
+	 * @return arc tangent of x
 	 */
-	inline static float atan(float value) {
-		return std::atan(value);
+	inline static float atan(float x) {
+		return std::atan(x);
 	}
 
 	/**
 	 * Returns the angle from the conversion of rectangular coordinates to polar coordinates.
 	 * @param y y
 	 * @param x x
-	 * @return angle
-	 *
+	 * @return arc tangent of y/x
 	 */
 	inline static float atan2(float y, float x) {
 		return std::atan2(y, x);
@@ -196,11 +113,11 @@ public:
 
 	/**
 	 * Returns the cosine of an angle
-	 * @param value value
-	 * @return cosine
+	 * @param x x
+	 * @return cosine of x
 	 */
-	inline static float cos(float value) {
-		return std::cos(value);
+	inline static float cos(float x) {
+		return std::cos(x);
 	}
 
 	/**
@@ -218,27 +135,7 @@ public:
 	 * @param value2 value 2
 	 * @return higher value
 	 */
-	inline static int32_t max(int32_t value1, int32_t value2) {
-		return value1 > value2?value1:value2;
-	}
-
-	/**
-	 * Returns the higher value of given values
-	 * @param value1 value 1
-	 * @param value2 value 2
-	 * @return higher value
-	 */
-	inline static int64_t max(int64_t value1, int64_t value2) {
-		return value1 > value2?value1:value2;
-	}
-
-	/**
-	 * Returns the higher value of given values
-	 * @param value1 value 1
-	 * @param value2 value 2
-	 * @return higher value
-	 */
-	inline static float max(float value1, float value2) {
+	inline static auto max(auto value1, auto value2) {
 		return value1 > value2?value1:value2;
 	}
 
@@ -248,27 +145,7 @@ public:
 	 * @param value2 value 2
 	 * @return lesser value
 	 */
-	inline static int32_t min(int32_t value1, int32_t value2) {
-		return value1 < value2?value1:value2;
-	}
-
-	/**
-	 * Returns the lesser value of given values
-	 * @param value1 value 1
-	 * @param value2 value 2
-	 * @return lesser value
-	 */
-	inline static int64_t min(int64_t value1, int64_t value2) {
-		return value1 < value2?value1:value2;
-	}
-
-	/**
-	 * Returns the lesser value of given values
-	 * @param value1 value 1
-	 * @param value2 value 2
-	 * @return lesser value
-	 */
-	inline static float min(float value1, float value2) {
+	inline static auto min(auto value1, auto value2) {
 		return value1 < value2?value1:value2;
 	}
 
@@ -282,33 +159,13 @@ public:
 	}
 
 	/**
-	 * Returns the value of the value 1 raised to the power of value2
-	 * @param value1 value 1
-	 * @param value2 value 2
-	 * @return pow
+	 * Returns the value of base raised to the power
+	 * @param base base
+	 * @param power power
+	 * @return base raised to the power
 	 */
-	inline static int32_t pow(int32_t value1, int32_t value2) {
-		return std::pow(value1, value2);
-	}
-
-	/**
-	 * Returns the value of the value 1 raised to the power of value2
-	 * @param value1 value 1
-	 * @param value2 value 2
-	 * @return pow
-	 */
-	inline static int64_t pow(int64_t value1, int64_t value2) {
-		return std::pow(value1, value2);
-	}
-
-	/**
-	 * Returns the value of the value 1 raised to the power of value2
-	 * @param value1 value 1
-	 * @param value2 value 2
-	 * @return pow
-	 */
-	inline static float pow(float value1, float value2) {
-		return std::pow(value1, value2);
+	inline static auto pow(auto base, auto power) {
+		return std::pow(base, power);
 	}
 
 	/**
@@ -321,17 +178,17 @@ public:
 
 	/**
 	 * Returns the sine of an angle
-	 * @param value value
-	 * @return sine
+	 * @param x x
+	 * @return sin of x
 	 */
-	inline static float sin(float value) {
-		return std::sin(value);
+	inline static float sin(float x) {
+		return std::sin(x);
 	}
 
 	/**
-	 * Returns the square of given value
+	 * Returns the square root of given value
 	 * @param value value
-	 * @return squaere
+	 * @return square root
 	 */
 	inline static float sqrt(float value) {
 		return std::sqrt(value);
@@ -339,26 +196,26 @@ public:
 
 	/**
 	 * Returns the tangent of an angle
-	 * @param value value
-	 * @return tangent
+	 * @param x x
+	 * @return tangent of x
 	 */
-	inline static float tan(float value) {
-		return std::tan(value);
+	inline static float tan(float x) {
+		return std::tan(x);
 	}
 
 	/**
 	 * Returns e raised to the given power
-	 * @param value value
-	 * @return e
+	 * @param power power
+	 * @return e raised to the given power
 	 */
-	inline static float exp(float value) {
-		return std::exp(value);
+	inline static float exp(float power) {
+		return std::exp(power);
 	}
 
 	/**
 	 * Returns the natural (base e) logarithm of value
 	 * @param value value
-	 * @return log
+	 * @return natural (base e) logarithm of value
 	 */
 	inline static float log(float value) {
 		return std::log(value);
@@ -370,17 +227,7 @@ public:
 	 * @param range range
 	 * @return modulo of value
 	 */
-	inline static int32_t mod(int32_t value, int32_t range) {
-		return value % range;
-	}
-
-	/**
-	 * Returns modulo of value, so that return value is -range < value < range
-	 * @param value value
-	 * @param range range
-	 * @return modulo of value
-	 */
-	inline static int64_t mod(int64_t value, int64_t range) {
+	inline static auto mod(auto value, auto range) {
 		return value % range;
 	}
 
@@ -400,18 +247,7 @@ public:
 	 * @param range range
 	 * @return modulo of value
 	 */
-	inline static int32_t absmod(int32_t value, int32_t range) {
-		while (value < 0.0f) value+= range;
-		return value % range;
-	}
-
-	/**
-	 * Returns absolute modulo of value, so that return value is 0 <= value < range
-	 * @param value value
-	 * @param range range
-	 * @return modulo of value
-	 */
-	inline static int64_t absmod(int64_t value, int64_t range) {
+	inline static auto absmod(auto value, auto range) {
 		while (value < 0.0f) value+= range;
 		return value % range;
 	}

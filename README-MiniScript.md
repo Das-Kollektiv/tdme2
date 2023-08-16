@@ -741,11 +741,11 @@ Reading all keys as array from set:
 | Return number to be positive within given range                                                  |
 | <sub>math.absmod($value: Number, $range: Number): Number</sub>                                   |
 | Compute acos                                                                                     |
-| <sub>math.acos($value: Float): Float</sub>                                                       |
+| <sub>math.acos($x: Float): Float</sub>                                                           |
 | Compute asin                                                                                     |
-| <sub>math.asin($value: Float): Float</sub>                                                       |
+| <sub>math.asin($x: Float): Float</sub>                                                           |
 | Compute atan                                                                                     |
-| <sub>math.atan($value: Float): Float</sub>                                                       |
+| <sub>math.atan($x: Float): Float</sub>                                                           |
 | Compute atan2                                                                                    |
 | <sub>math.atan2($y: Float, $x: Float): Float</sub>                                               |
 | Round float up to next higher integer                                                            |
@@ -753,21 +753,21 @@ Reading all keys as array from set:
 | Return number clamped to be in given range                                                       |
 | <sub>math.clamp($value: Number, $min: Number, $max: Number): Number</sub>                        |
 | Compute acos                                                                                     |
-| <sub>math.cos($value: Float): Float</sub>                                                        |
+| <sub>math.cos($x: Float): Float</sub>                                                            |
 | Compute exp                                                                                      |
-| <sub>math.exp($value: Float): Float</sub>                                                        |
+| <sub>math.exp($power: Float): Float</sub>                                                        |
 | Round float down to next lower integer                                                           |
 | <sub>math.floor($value: Float): Float</sub>                                                      |
 | Compute log                                                                                      |
 | <sub>math.log($value: Float): Float</sub>                                                        |
 | Return maximum number of given values                                                            |
-| <sub>math.max($a: Number, $b: Number): Number</sub>                                              |
+| <sub>math.max($value1: Number, $value2: Number): Number</sub>                                    |
 | Return minimum number of given values                                                            |
-| <sub>math.min($a: Number, $b: Number): Number</sub>                                              |
+| <sub>math.min($value1: Number, $value2: Number): Number</sub>                                    |
 | Compute modulo/remainder                                                                         |
 | <sub>math.mod($value: Number, $range: Number): Number</sub>                                      |
 | Compute pow                                                                                      |
-| <sub>math.pow($a: Number, $b: Number): Number</sub>                                              |
+| <sub>math.pow($base: Number, $power: Number): Number</sub>                                       |
 | Create a random number between 0.0 and 1.0                                                       |
 | <sub>math.random(): Float</sub>                                                                  |
 | Round float up or down to integer                                                                |
@@ -775,13 +775,13 @@ Reading all keys as array from set:
 | Return sign of given number                                                                      |
 | <sub>math.sign($value: Number): Number</sub>                                                     |
 | Compute sin                                                                                      |
-| <sub>math.sin($value: Float): Float</sub>                                                        |
+| <sub>math.sin($x: Float): Float</sub>                                                            |
 | Compute square root                                                                              |
 | <sub>math.sqrt($value: Float): Float</sub>                                                       |
 | Compute square product                                                                           |
 | <sub>math.square($value: Number): Number</sub>                                                   |
 | Compute tan                                                                                      |
-| <sub>math.tan($value: Float): Float</sub>                                                        |
+| <sub>math.tan($x: Float): Float</sub>                                                            |
 
 ## 6.9 Quaternion methods
 

@@ -1675,7 +1675,7 @@ void Terrain::applyFoliageBrush(
 							}
 
 							// slope
-							auto slope = Math::abs(180.0f / 3.14f * Math::acos(Math::clamp(Vector3::computeDotProduct(normal, Vector3(0.0, 1.0, 0.0)), -1.0, 1.0)));
+							auto slope = Math::abs(180.0f / 3.14f * Math::acos(Math::clamp(Vector3::computeDotProduct(normal, Vector3(0.0f, 1.0f, 0.0f)), -1.0f, 1.0f)));
 							if (slope < foliageBrushPrototypes[prototypeIdx].slopeMin || slope > foliageBrushPrototypes[prototypeIdx].slopeMax) continue;
 
 							//
