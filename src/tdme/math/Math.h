@@ -66,7 +66,7 @@ public:
 	}
 
 	/**
-	 * Returns the arc cosine of a value
+	 * Returns the arc cosine of x
 	 * @param x x
 	 * @return arc cosine of x
 	 */
@@ -75,7 +75,7 @@ public:
 	}
 
 	/**
-	 * Returns the arc sine of a value
+	 * Returns the arc sine of x
 	 * @param x x
 	 * @return arc sine of x
 	 */
@@ -84,7 +84,7 @@ public:
 	}
 
 	/**
-	 * Returns the arc tangent of a value
+	 * Returns the arc tangent of x
 	 * @param x x
 	 * @return arc tangent of x
 	 */
@@ -112,7 +112,7 @@ public:
 	}
 
 	/**
-	 * Returns the cosine of an angle
+	 * Returns the cosine of x
 	 * @param x x
 	 * @return cosine of x
 	 */
@@ -177,7 +177,7 @@ public:
 	}
 
 	/**
-	 * Returns the sine of an angle
+	 * Returns the sine of x
 	 * @param x x
 	 * @return sin of x
 	 */
@@ -188,14 +188,14 @@ public:
 	/**
 	 * Returns the square root of given value
 	 * @param value value
-	 * @return square root
+	 * @return square root of value
 	 */
 	inline static float sqrt(float value) {
 		return std::sqrt(value);
 	}
 
 	/**
-	 * Returns the tangent of an angle
+	 * Returns the tangent of x
 	 * @param x x
 	 * @return tangent of x
 	 */
