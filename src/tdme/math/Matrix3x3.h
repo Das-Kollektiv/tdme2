@@ -266,6 +266,40 @@ public:
 	}
 
 	/**
+	 * Get scale
+	 * @param scale scale
+	 */
+	inline void getScale(Vector2& scale) const {
+		// x axis
+		scale.data[0] = Vector2(data[0], data[1]).computeLength();
+		// y axis
+		scale.data[1] = Vector2(data[3], data[4]).computeLength();
+	}
+
+	/**
+	 * Set scale
+	 * @param scale scale
+	 * @return this matrix
+	 */
+	inline Matrix3x3& setScale(const Vector2& scale) {
+		Vector2 axisVector;
+		// x axis
+		axisVector.set(data[0], data[1]);
+		axisVector.normalize();
+		axisVector.scale(scale.data[0]);
+		data[0] = axisVector.data[0];
+		data[1] = axisVector.data[1];
+		// y axis
+		axisVector.set(data[3], data[4]);
+		axisVector.normalize();
+		axisVector.scale(scale.data[1]);
+		data[4] = axisVector.data[0];
+		data[5] = axisVector.data[1];
+		//
+		return *this;
+	}
+
+	/**
 	 * Get translation
 	 * @param vector2 vector2
 	 */
