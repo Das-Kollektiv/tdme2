@@ -13,7 +13,7 @@ using tdme::math::Math;
 using tdme::utilities::Float;
 
 /**
- * 3D Vector4 4 class
+ * Vector4 class representing vector4 mathematical structure and operations with x, y, z, w components
  * @author Andreas Drewke
  */
 class tdme::math::Vector4 final

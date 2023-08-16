@@ -17,37 +17,28 @@ using tdme::math::Vector3;
 using tdme::utilities::Float;
 
 /**
- * Quaternion class
+ * Quaternion class representing quaternion mathematical structure and operations with x, y, z, w components
  * @author Andreas Drewke
  */
 class tdme::math::Quaternion final
 {
-// see http://db-in.com/blog/2011/04/cameras-on-opengl-es-2-x/
+	// see http://db-in.com/blog/2011/04/cameras-on-opengl-es-2-x/
 private:
-	array<float, 4> data;
+	array<float, 4> data { 0.0f, 0.0f, 0.0f, 0.0f };
 
 public:
 	/**
 	 * Public constructor
 	 */
 	inline Quaternion() {
-		data.fill(0.0f);
 	}
 
 	/**
 	 * Public constructor
-	 * @param q quaternion
-	 */
-	inline Quaternion(const Quaternion& q) {
-		data = q.data;
-	}
-
-	/**
-	 * Public constructor
-	 * @param x x
-	 * @param y y
-	 * @param z z
-	 * @param w w
+	 * @param x x component
+	 * @param y y component
+	 * @param z z component
+	 * @param w w component
 	 */
 	inline Quaternion(float x, float y, float z, float w) {
 		data[0] = x;
@@ -58,21 +49,51 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param v vector
-	 * @param w w
+	 * @param vector3 vector3 as array
+	 * @param w w component
 	 */
-	inline Quaternion(const Vector3& v, float w) {
-		data[0] = v.data[0];
-		data[1] = v.data[1];
-		data[2] = v.data[2];
+	inline Quaternion(const array<float, 3>& vector3, float w) {
+		data[0] = vector3[0];
+		data[1] = vector3[1];
+		data[2] = vector3[2];
 		data[3] = w;
 	}
+
 	/**
-	 * Set up this quaternion by components
-	 * @param x x
-	 * @param y y
-	 * @param z z
-	 * @param w w
+	 * Public constructor
+	 * @param vector3 vector3
+	 * @param w w component
+	 */
+	inline Quaternion(const Vector3& vector3, float w) {
+		data[0] = vector3.data[0];
+		data[1] = vector3.data[1];
+		data[2] = vector3.data[2];
+		data[3] = w;
+	}
+
+	/**
+	 * Public constructor
+	 * @param quaternion quaternion as array
+	 */
+	inline Quaternion(const array<float, 4>& quaternion) {
+		data = quaternion;
+	}
+
+	/**
+	 * Public constructor
+	 * @param quaternion Quaternion
+	 */
+	inline Quaternion(const Quaternion& quaternion) {
+		data = quaternion.data;
+	}
+
+	/**
+	 * Sets this quaternion by its components
+	 * @param x x component
+	 * @param y y component
+	 * @param z z component
+	 * @param w w component
+	 * @return this quaternion
 	 */
 	inline Quaternion& set(float x, float y, float z, float w) {
 		data[0] = x;
@@ -83,38 +104,63 @@ public:
 	}
 
 	/**
-	 * Sets up this quaternion by quaternion q
-	 * @param q q
-	 * @return
+	 * Sets this quaternion by vector3 by array and w component
+	 * @param vector3 vector3 as array
+	 * @param w w component
+	 * @return this quaternion
 	 */
-	inline Quaternion& set(const Quaternion& q) {
-		data = q.data;
-		return *this;
-	}
-
-	/**
-	 * Set quaternion
-	 * @param v vector
-	 * @param w w
-	 */
-	inline Quaternion& set(const Vector3& v, float w) {
-		data[0] = v.data[0];
-		data[1] = v.data[1];
-		data[2] = v.data[2];
+	inline Quaternion& set(const array<float, 3>& vector3, float w) {
+		data[0] = vector3[0];
+		data[1] = vector3[1];
+		data[2] = vector3[2];
 		data[3] = w;
 		return *this;
 	}
 
 	/**
-	 * @return x
+	 * Sets this quaternion by vector3 and w component
+	 * @param vector3 vector3
+	 * @param w w component
+	 * @return this quaternion
+	 */
+	inline Quaternion& set(const Vector3& vector3, float w) {
+		data[0] = vector3.data[0];
+		data[1] = vector3.data[1];
+		data[2] = vector3.data[2];
+		data[3] = w;
+		return *this;
+	}
+
+	/**
+	 * Sets this quaternion by array
+	 * @param quaternion quaternion as array
+	 * @return this quaternion
+	 */
+	inline Quaternion& set(const array<float, 4>& quaternion) {
+		data = quaternion;
+		return *this;
+	}
+
+	/**
+	 * Sets this quaternion by given quaternion
+	 * @param quaternion quaternion
+	 * @return this quaternion
+	 */
+	inline Quaternion& set(const Quaternion& quaternion) {
+		data = quaternion.data;
+		return *this;
+	}
+
+	/**
+	 * @return x component
 	 */
 	inline float getX() const {
 		return data[0];
 	}
 
 	/**
-	 * Set X
-	 * @param x x
+	 * Sets x component
+	 * @param x x component
 	 * @return this quaternion
 	 */
 	inline Quaternion& setX(float x) {
@@ -123,15 +169,15 @@ public:
 	}
 
 	/**
-	 * @return y
+	 * @return y component
 	 */
 	inline float getY() const {
 		return data[1];
 	}
 
 	/**
-	 * Set Y
-	 * @param y y
+	 * Sets y component
+	 * @param y y component
 	 * @return this quaternion
 	 */
 	inline Quaternion& setY(float y) {
@@ -140,15 +186,15 @@ public:
 	}
 
 	/**
-	 * @return z
+	 * @return z component
 	 */
 	inline float getZ() const {
 		return data[2];
 	}
 
 	/**
-	 * Set Z
-	 * @param z z
+	 * Sets z component
+	 * @param z z component
 	 * @return this quaternion
 	 */
 	inline Quaternion& setZ(float z) {
@@ -157,15 +203,15 @@ public:
 	}
 
 	/**
-	 * @return w
+	 * @return w component
 	 */
 	inline float getW() const {
 		return data[3];
 	}
 
 	/**
-	 * Set W
-	 * @param w w
+	 * Sets w component
+	 * @param w w component
 	 * @return this quaternion
 	 */
 	inline Quaternion& setW(float w) {
@@ -174,7 +220,7 @@ public:
 	}
 
 	/**
-	 * Set up quaternion identity
+	 * Creates identity quaternion
 	 * @return this quaternion
 	 */
 	inline Quaternion& identity() {
@@ -183,6 +229,104 @@ public:
 		data[2] = 0.0f;
 		data[3] = 1.0f;
 		return *this;
+	}
+
+	/**
+	 * Adds quaternion
+	 * @param quaternion quaternion
+	 * @return this quaternion
+	 */
+	inline Quaternion& add(const Quaternion& quaternion) {
+		data[0] += quaternion.data[0];
+		data[1] += quaternion.data[1];
+		data[2] += quaternion.data[2];
+		data[3] += quaternion.data[3];
+		return *this;
+	}
+
+	/**
+	 * Subtracts quaternion
+	 * @param quaternion quaternion
+	 * @return this quaternion
+	 */
+	inline Quaternion& sub(const Quaternion& quaternion) {
+		data[0] -= quaternion.data[0];
+		data[1] -= quaternion.data[1];
+		data[2] -= quaternion.data[2];
+		data[3] -= quaternion.data[3];
+		return *this;
+	}
+
+	/**
+	 * Scales by scalar
+	 * @param scalar scalar
+	 * @return this quaternion
+	 */
+	inline Quaternion& scale(float scalar) {
+		data[0] *= scalar;
+		data[1] *= scalar;
+		data[2] *= scalar;
+		data[3] *= scalar;
+		return *this;
+	}
+
+	/**
+	 * Multiplies this quaternion with given quaternion
+	 * @param quaternion quaternion
+	 * @return this quaternion
+	 */
+	inline Quaternion& multiply(const Quaternion quaternion) {
+		array<float, 4> _data;
+		_data[0] = data[3] * quaternion.data[0] + data[0] * quaternion.data[3] + data[1] * quaternion.data[2] - data[2] * quaternion.data[1];
+		_data[1] = data[3] * quaternion.data[1] - data[0] * quaternion.data[2] + data[1] * quaternion.data[3] + data[2] * quaternion.data[0];
+		_data[2] = data[3] * quaternion.data[2] + data[0] * quaternion.data[1] - data[1] * quaternion.data[0] + data[2] * quaternion.data[3];
+		_data[3] = data[3] * quaternion.data[3] - data[0] * quaternion.data[0] - data[1] * quaternion.data[1] - data[2] * quaternion.data[2];
+		data = _data;
+		return *this;
+	}
+
+	/**
+	 * Multiplies this quaternion with vector3
+	 * @param vector3 vector3
+	 * @return vector3
+	 */
+	inline Vector3 multiply(const Vector3& vector3) const {
+		// t = 2 * cross(quaternion.xyz, vector3)
+		Vector3 quaternion(data[0], data[1], data[2]);
+		auto t = Vector3::computeCrossProduct(quaternion, vector3).scale(2.0f);
+		// vector3' = vector3 + quaternion.w * t + cross(quaternion.xyz, t)
+		auto qxt = Vector3::computeCrossProduct(quaternion, t);
+		//
+		Vector3 result;
+		result.set(vector3);
+		result.add(qxt);
+		result.add(t.scale(data[3]));
+		return result;
+	}
+
+	/**
+	 * Compares this quaternion with given quaternion
+	 * @param quaternion quaternion
+	 * @return equality
+	 */
+	inline bool equals(const Quaternion& quaternion) const {
+		return equals(quaternion, Math::EPSILON);
+	}
+
+	/**
+	 * Compares this quaternion with given quaternion
+	 * @param quaternion quaternion
+	 * @param tolerance tolerance per component(x, y, z, w)
+	 * @return equality
+	 */
+	inline bool equals(const Quaternion& quaternion, float tolerance) const {
+		return (this == &quaternion) ||
+			(
+				Math::abs(data[0] - quaternion.data[0]) < tolerance &&
+				Math::abs(data[1] - quaternion.data[1]) < tolerance &&
+				Math::abs(data[2] - quaternion.data[2]) < tolerance &&
+				Math::abs(data[3] - quaternion.data[3]) < tolerance
+			);
 	}
 
 	/**
@@ -197,27 +341,7 @@ public:
 	}
 
 	/**
-	 * Creates a rotation quaternion
-	 * @param axis axis
-	 * @param angle angle
-	 * @return this quaternion
-	 */
-	inline Quaternion& rotate(const Vector3& axis, float angle) {
-		// converts the angle in degrees to radians
-		auto radians = angle * 3.1415927f / 180.0f;
-		// finds the sin and cosin for the half angle
-		auto sin = Math::sin(radians * 0.5);
-		auto cos = Math::cos(radians * 0.5);
-		// formula to construct a new quaternion based on direction and angle
-		data[0] = axis.data[0] * sin;
-		data[1] = axis.data[1] * sin;
-		data[2] = axis.data[2] * sin;
-		data[3] = cos;
-		return *this;
-	}
-
-	/**
-	 * Normalize quaternion
+	 * Normalizes this quaternion
 	 */
 	inline Quaternion& normalize() {
 		auto magnitude = Math::sqrt(data[0] * data[0] + data[1] * data[1] + data[2] * data[2] + data[3] * data[3]);
@@ -229,81 +353,28 @@ public:
 	}
 
 	/**
-	 * Multiplies this quaternion with quaternion q
-	 * @param q quaterion q
+	 * Creates rotation quaternion
+	 * @param axis axis
+	 * @param angle angle
 	 * @return this quaternion
 	 */
-	inline Quaternion& multiply(const Quaternion q) {
-		array<float, 4> _data;
-		_data[0] = data[3] * q.data[0] + data[0] * q.data[3] + data[1] * q.data[2] - data[2] * q.data[1];
-		_data[1] = data[3] * q.data[1] - data[0] * q.data[2] + data[1] * q.data[3] + data[2] * q.data[0];
-		_data[2] = data[3] * q.data[2] + data[0] * q.data[1] - data[1] * q.data[0] + data[2] * q.data[3];
-		_data[3] = data[3] * q.data[3] - data[0] * q.data[0] - data[1] * q.data[1] - data[2] * q.data[2];
-		data = _data;
+	inline Quaternion& rotate(const Vector3& axis, float angle) {
+		// converts the angle in degrees to radians
+		auto radians = angle * Math::PI / 180.0f;
+		// finds the sin and cosin for the half angle
+		auto sin = Math::sin(radians * 0.5);
+		auto cos = Math::cos(radians * 0.5);
+		// formula to construct a new Quaternion based on direction and angle
+		data[0] = axis.data[0] * sin;
+		data[1] = axis.data[1] * sin;
+		data[2] = axis.data[2] * sin;
+		data[3] = cos;
 		return *this;
 	}
 
 	/**
-	 * Adds given quaternion q to this quaternion
-	 * @param q quaterion q
-	 * @return this quaternion
-	 */
-	inline Quaternion& add(const Quaternion& q) {
-		data[0] += q.data[0];
-		data[1] += q.data[1];
-		data[2] += q.data[2];
-		data[3] += q.data[3];
-		return *this;
-	}
-
-	/**
-	 * Subtracts given quaternion q from this quaternion
-	 * @param q quaterion q
-	 * @return this quaternion
-	 */
-	inline Quaternion& sub(const Quaternion& q) {
-		data[0] -= q.data[0];
-		data[1] -= q.data[1];
-		data[2] -= q.data[2];
-		data[3] -= q.data[3];
-		return *this;
-	}
-
-	/**
-	 * Scales this quaternion with given value
-	 * @param value value
-	 * @return this quaternion
-	 */
-	inline Quaternion& scale(float value) {
-		data[0] *= value;
-		data[1] *= value;
-		data[2] *= value;
-		data[3] *= value;
-		return *this;
-	}
-
-	/**
-	 * Multiplies a quaternion with given vector v
-	 * @param v vector v
-	 * @return resulting vector 3
-	 */
-	inline Vector3 multiply(const Vector3& v) const {
-		// t = 2 * cross(q.xyz, v)
-		Vector3 q(data[0], data[1], data[2]);
-		auto t = Vector3::computeCrossProduct(q, v).scale(2.0f);
-		// v' = v + q.w * t + cross(q.xyz, t)
-		auto qxt = Vector3::computeCrossProduct(q, t);
-		//
-		Vector3 result;
-		result.set(v);
-		result.add(qxt);
-		result.add(t.scale(data[3]));
-		return result;
-	}
-
-	/**
-	 * Computes a matrix from given
-	 * @return resulting matrix
+	 * Computes a rotation matrix4x4 from this quaternion
+	 * @return rotation matrix
 	 */
 	inline Matrix4x4 computeMatrix() const {
 		return Matrix4x4(
@@ -327,8 +398,38 @@ public:
 	}
 
 	/**
-	 * Returns array data
-	 * @return array data
+	 * Compute Euler angles
+	 * @return Euler angles
+	 */
+	inline Vector3 computeEulerAngles() const {
+		// https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+		// https://math.stackexchange.com/questions/2975109/how-to-convert-euler-angles-to-quaternions-and-get-the-same-euler-angles-back-fr
+		Vector3 euler;
+		// roll (x-axis rotation)
+		auto t0 = 2.0f * (data[3] * data[0] + data[1] * data[2]);
+		auto t1 = 1.0f - 2.0f * (data[0] * data[0] + data[1] * data[1]);
+		euler[0] = Math::atan2(t0, t1) / Math::DEG2RAD;
+		// pitch (y-axis rotation)
+		auto t2 = Math::clamp(2.0f * (data[3] * data[1] - data[2] * data[0]), -1.0f, 1.0f);
+		euler[1] = Math::asin(t2) / Math::DEG2RAD;
+		// yaw (z-axis rotation)
+		auto t3 = 2.0f * (data[3] * data[2] + data[0] * data[1]);
+		auto t4 = 1.0f - 2.0f * (data[1] * data[1] + data[2] * data[2]);
+		euler[2] = Math::atan2(t3, t4) / Math::DEG2RAD;
+		//
+		return euler;
+	}
+
+	/**
+	 * Clones this quaternion
+	 * @return new cloned quaternion
+	 */
+	inline Quaternion clone() const {
+		return Quaternion(*this);
+	}
+
+	/**
+	 * @return quaternion as array
 	 */
 	inline const array<float, 4>& getArray() const {
 		return data;
@@ -353,186 +454,128 @@ public:
 	}
 
 	/**
-	 * Operator +
-	 * @param q quaternion to add
-	 * @return new quaternion (this + q)
+	 * Operator + quaternion
+	 * @param quaternion quaternion
+	 * @return new quaternion (this + quaternion)
 	 */
-	inline Quaternion operator +(const Quaternion& q) const {
-		auto r = this->clone().add(q);
+	inline Quaternion operator +(const Quaternion& quaternion) const {
+		auto r = this->clone().add(quaternion);
 		return r;
 	}
 
 	/**
-	 * Operator -
-	 * @param q quaternion to subtrct
-	 * @return new quaternion (this - q)
+	 * Operator - quaternion
+	 * @param quaternion quaternion
+	 * @return new quaternion (this - quaternion)
 	 */
-	inline Quaternion operator -(const Quaternion& q) const {
-		auto r = this->clone().sub(q);
+	inline Quaternion operator -(const Quaternion& quaternion) const {
+		auto r = this->clone().sub(quaternion);
 		return r;
 	}
 
 	/**
-	 * Operator * (float)
-	 * @param f value to multiply by
-	 * @return new quaternion (this * f)
+	 * Operator * scalar
+	 * @param scalar scalar
+	 * @return new quaternion (this * scalar)
 	 */
-	inline Quaternion operator *(const float f) const {
-		auto r = this->clone().scale(f);
+	inline Quaternion operator *(const float scalar) const {
+		auto r = this->clone().scale(scalar);
 		return r;
 	}
 
 	/**
-	 * Operator * (Quaternion&)
-	 * @param q quaternion to multiply by
-	 * @return new quaternion (this * q)
+	 * Operator * quaternion
+	 * @param scalar scalar
+	 * @return new quaternion (this * quaternion)
 	 */
-	inline Quaternion operator *(const Quaternion& q) const {
-		auto r = this->clone().multiply(q);
+	inline Quaternion operator *(const Quaternion& quaternion) const {
+		auto r = this->clone().multiply(quaternion);
 		return r;
 	}
 
 	/**
-	 * Operattor * (Vector&)
-	 * @param v vector to multiply by
-	 * @return new Vector ()thic * v
+	 * Operator * vector3
+	 * @param vector3 vector3
+	 * @return new vector3 (this * vector3)
 	 */
-	inline Vector3 operator *(const Vector3& v) const {
-		return this->multiply(v);
+	inline Vector3 operator *(const Vector3& vector3) const {
+		return this->multiply(vector3);
 	}
 
 	/**
-	 * Operator / (f)
-	 * @param q value to divide by
-	 * @return new quaternion (this / f)
+	 * Operator / scalar
+	 * @param scalar scalar
+	 * @return new quaternion (this / scalar)
 	 */
-	inline Quaternion operator /(const float f) const {
-		auto r = this->clone().scale(1.0f / f);
+	inline Quaternion operator /(const float scalar) const {
+		auto r = this->clone().scale(1.0f / scalar);
 		return r;
 	}
 
 	/**
-	 * Operator / (Quaternion&)
-	 * @param q quaternion to divide by
-	 * @return new quaternion (this / q)
+	 * Operator / quaternion
+	 * @param quaternion quaternion
+	 * @return new quaternion (this / quaternion)
 	 */
-	inline Quaternion operator /(const Quaternion& q) const {
-		auto qInverted = Quaternion(1.0f / q[0], 1.0f / q[1], 1.0f / q[2], 1.0f / q[3]);
+	inline Quaternion operator /(const Quaternion& quaternion) const {
+		auto qInverted = Quaternion(1.0f / quaternion[0], 1.0f / quaternion[1], 1.0f / quaternion[2], 1.0f / quaternion[3]);
 		auto r = this->clone().multiply(qInverted);
 		return r;
 	}
 
 	/**
-	 * Operator +=
-	 * @param q quaternion to add
-	 * @return this quaternion added by q
+	 * Operator += quaternion
+	 * @param quaternion quaternion
+	 * @return this quaternion
 	 */
-	inline Quaternion& operator +=(const Quaternion& q) {
-		return this->add(q);
+	inline Quaternion& operator +=(const Quaternion& quaternion) {
+		return this->add(quaternion);
 	}
 
 	/**
-	 * Operator -=
-	 * @param q quaternion to substract
-	 * @return this quaternion substracted by q
+	 * Operator -= quaternion
+	 * @param quaternion quaternion
+	 * @return this quaternion
 	 */
-	inline Quaternion& operator -=(const Quaternion& q) {
-		return this->sub(q);
+	inline Quaternion& operator -=(const Quaternion& quaternion) {
+		return this->sub(quaternion);
 	}
 
 	/**
-	 * Operator *=
-	 * @param q quaternion to multiply by
-	 * @return this quaternion multiplied by q
+	 * Operator *= quaternion
+	 * @param quaternion quaternion
+	 * @return this quaternion
 	 */
-	inline Quaternion& operator *=(const Quaternion& q) {
-		return this->multiply(q);
+	inline Quaternion& operator *=(const Quaternion& quaternion) {
+		return this->multiply(quaternion);
 	}
 
 	/**
-	 * Operator /=
-	 * @param q quaternion to devide by
-	 * @return this quaternion devided by q
+	 * Operator /= quaternion
+	 * @param quaternion quaternion
+	 * @return this quaternion
 	 */
-	inline Quaternion& operator /=(const Quaternion& q) {
-		auto qInverted = Quaternion(1.0f / q[0], 1.0f / q[1], 1.0f / q[2], 1.0f / q[3]);
+	inline Quaternion& operator /=(const Quaternion& quaternion) {
+		auto qInverted = Quaternion(1.0f / quaternion[0], 1.0f / quaternion[1], 1.0f / quaternion[2], 1.0f / quaternion[3]);
 		return this->multiply(qInverted);
 	}
 
 	/**
 	 * Equality comparison operator
-	 * @param q quaternion to compare to
+	 * @param quaternion quaternion
 	 * @return equality
 	 */
-
-	inline bool operator ==(const Quaternion& q) const {
-		return this->equals(q);
+	inline bool operator ==(const Quaternion& quaternion) const {
+		return this->equals(quaternion);
 	}
 
 	/**
 	 * Non equality comparison operator
-	 * @param q quaternion to compare to
+	 * @param quaternion quaternion
 	 * @return non equality
 	 */
-
-	inline bool operator !=(const Quaternion& q) const {
-		return this->equals(q) == false;
-	}
-
-	/**
-	 * Clones the quaternion
-	 * @return new cloned vector
-	 */
-	inline Quaternion clone() const {
-		return Quaternion(*this);
-	}
-
-	/**
-	 * Compares this quaternion with given quaternion
-	 * @param q quaternion q
-	 * @return equality
-	 */
-	inline bool equals(const Quaternion& q) const {
-		return equals(q, Math::EPSILON);
-	}
-
-	/**
-	 * Compares this quaternion with given quaternion
-	 * @param q quaternion q
-	 * @param tolerance tolerance per component(x, y, z)
-	 * @return equality
-	 */
-	inline bool equals(const Quaternion& q, float tolerance) const {
-		return (this == &q) ||
-			(
-				Math::abs(data[0] - q.data[0]) < tolerance &&
-				Math::abs(data[1] - q.data[1]) < tolerance &&
-				Math::abs(data[2] - q.data[2]) < tolerance &&
-				Math::abs(data[3] - q.data[3]) < tolerance
-			);
-	}
-
-	/**
-	 * Compute Euler angles (rotation around x, y, z axes)
-	 * @return vector 3 containing euler angles
-	 */
-	inline Vector3 computeEulerAngles() const {
-		// https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
-		// https://math.stackexchange.com/questions/2975109/how-to-convert-euler-angles-to-quaternions-and-get-the-same-euler-angles-back-fr
-		Vector3 euler;
-		// roll (x-axis rotation)
-		auto t0 = 2.0f * (data[3] * data[0] + data[1] * data[2]);
-		auto t1 = 1.0f - 2.0f * (data[0] * data[0] + data[1] * data[1]);
-		euler[0] = Math::atan2(t0, t1) / Math::DEG2RAD;
-		// pitch (y-axis rotation)
-		auto t2 = Math::clamp(2.0f * (data[3] * data[1] - data[2] * data[0]), -1.0f, 1.0f);
-		euler[1] = Math::asin(t2) / Math::DEG2RAD;
-		// yaw (z-axis rotation)
-		auto t3 = 2.0f * (data[3] * data[2] + data[0] * data[1]);
-		auto t4 = 1.0f - 2.0f * (data[1] * data[1] + data[2] * data[2]);
-		euler[2] = Math::atan2(t3, t4) / Math::DEG2RAD;
-		//
-		return euler;
+	inline bool operator !=(const Quaternion& quaternion) const {
+		return this->equals(quaternion) == false;
 	}
 
 };

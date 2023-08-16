@@ -13,7 +13,7 @@ using tdme::math::Math;
 using tdme::utilities::Float;
 
 /**
- * 3D vector3 class
+ * Vector3 class representing vector3 mathematical structure and operations with x, y, z components
  * @author andreas.drewke
  */
 class tdme::math::Vector3 final

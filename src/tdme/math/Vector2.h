@@ -13,7 +13,7 @@ using tdme::math::Math;
 using tdme::utilities::Float;
 
 /**
- * 2D vector2 class
+ * Vector2 class representing vector2 mathematical structure and operations with x, y components
  * @author Andreas Drewke
  */
 class tdme::math::Vector2 final
