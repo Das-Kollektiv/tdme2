@@ -138,7 +138,7 @@ void KernelEventMechanism::initKernelEventMechanism(const unsigned int maxSocket
 	if (initialized == true) return;
 
 	// platform specific data
-	KernelEventMechanismPSD* psd = static_cast<KernelEventMechanismPSD*>(_psd);
+	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
 	// kqueue change list, maxCCU * (read + write change)
 	// can still be too less as you could change the filter a lot in a single request
@@ -180,7 +180,7 @@ int KernelEventMechanism::doKernelEventMechanism()  {
 	if (initialized == false) return -1;
 
 	// platform specific data
-	KernelEventMechanismPSD* psd = (KernelEventMechanismPSD*)_psd;
+	auto psd = (KernelEventMechanismPSD*)_psd;
 
 	// have a timeout of 1ms
 	// as we only can delegate interest changes to the kernel by
