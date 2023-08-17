@@ -5,6 +5,7 @@
 #undef isnan
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -37,6 +38,7 @@
 using std::map;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::fileio::models::FBXReader;
@@ -87,7 +89,7 @@ Model* FBXReader::read(const string& pathName, const string& fileName, bool useB
 	}
 
 	// create import and import scene
-	auto fbxImporter = unique_ptr<FbxImporter, decltype([](FbxImporter* fbxImporter){ fbxImporter	->Destroy(); })>(FbxImporter::Create(fbxManager.get(), ""));
+	auto fbxImporter = unique_ptr<FbxImporter, decltype([](FbxImporter* fbxImporter){ fbxImporter->Destroy(); })>(FbxImporter::Create(fbxManager.get(), ""));
 	// TODO: use FbxStream
 	//	see: http://docs.autodesk.com/FBX/2014/ENU/FBX-SDK-Documentation/index.html?url=cpp_ref/class_fbx_stream.html,topicNumber=cpp_ref_class_fbx_stream_html2b5775d9-5d58-4231-a2a1-de97aada1fe6
 	auto fbxImportStatus = fbxImporter->Initialize((pathName + "/" + fileName).c_str(), -1, fbxManager->GetIOSettings());
