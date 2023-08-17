@@ -351,7 +351,7 @@ private:
 		array<vector<Object*>, Engine::UNIQUEMODELID_MAX> objectsByModels;
 		volatile int elementsProcessed { 0 };
 
-	private:
+	public:
 		/**
 		 * Constructor
 		 * @param idx thread index
@@ -405,8 +405,8 @@ private:
 
 	};
 
-	STATIC_DLL_IMPEXT static vector<EngineThread*> engineThreads;
-	STATIC_DLL_IMPEXT static Queue<EngineThreadQueueElement>* engineThreadsQueue;
+	STATIC_DLL_IMPEXT static vector<unique_ptr<EngineThread>> engineThreads;
+	STATIC_DLL_IMPEXT static unique_ptr<Queue<EngineThreadQueueElement>> engineThreadsQueue;
 	STATIC_DLL_IMPEXT static EngineThreadQueueElementPool engineThreadQueueElementPool;
 
 	/**

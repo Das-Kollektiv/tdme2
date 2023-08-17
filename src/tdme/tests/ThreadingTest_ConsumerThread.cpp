@@ -23,9 +23,7 @@ void ConsumerThread::run() {
 	Console::println("ConsumerThread[" + to_string(id) + "]::init()");
 	while(isStopRequested() == false) {
 		auto element = unique_ptr<int>(queue->getElement());
-		if (element == nullptr) {
-			break;
-		}
+		if (element == nullptr) break;
 		Console::println("ConsumerThread[" + to_string(id) + "]: got " + to_string(*element) + " from queue");
 		Thread::sleep(100);
 	}

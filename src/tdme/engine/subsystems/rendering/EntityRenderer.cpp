@@ -239,9 +239,9 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object*>
 		// wait until all elements have been processed
 		while (true == true) {
 			auto elementsProcessed = 0;
-			for (auto engineThread: Engine::engineThreads) elementsProcessed+= engineThread->getProcessedElements();
+			for (const auto& engineThread: Engine::engineThreads) elementsProcessed+= engineThread->getProcessedElements();
 			if (elementsProcessed == elementsIssued) {
-				for (auto engineThread: Engine::engineThreads) engineThread->resetProcessedElements();
+				for (const auto& engineThread: Engine::engineThreads) engineThread->resetProcessedElements();
 				break;
 			}
 		}
@@ -250,7 +250,7 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object*>
 		Engine::engineThreadQueueElementPool.reset();
 
 		//
-		for (auto engineThread: Engine::engineThreads) {
+		for (const auto& engineThread: Engine::engineThreads) {
 			transparentRenderFacesPool->merge(engineThread->transparentRenderFacesPool);
 			engineThread->transparentRenderFacesPool->reset();
 		}

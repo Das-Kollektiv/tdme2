@@ -201,8 +201,8 @@ float Engine::animationComputationReduction2Distance = 50.0f;
 map<string, Engine::Shader> Engine::shaders;
 unordered_map<string, uint8_t> Engine::uniqueShaderIds;
 
-vector<Engine::EngineThread*> Engine::engineThreads;
-Queue<Engine::EngineThreadQueueElement>* Engine::engineThreadsQueue = nullptr;
+vector<unique_ptr<Engine::EngineThread>> Engine::engineThreads;
+unique_ptr<Queue<Engine::EngineThreadQueueElement>> Engine::engineThreadsQueue;
 Engine::EngineThreadQueueElementPool Engine::engineThreadQueueElementPool;
 
 Engine::EngineThread::EngineThread(int idx, Queue<EngineThreadQueueElement>* queue):
@@ -217,7 +217,7 @@ void Engine::EngineThread::run() {
 	Console::println("EngineThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: INIT");
 	while (isStopRequested() == false) {
 		auto element = queue->getElement();
-		if (element == nullptr) continue;
+		if (element == nullptr) break;
 		switch(element->type) {
 			case EngineThreadQueueElement::TYPE_NONE:
 				break;
@@ -932,12 +932,12 @@ void Engine::initialize()
 
 	//
 	if (renderer->isSupportingMultithreadedRendering() == true) {
-		engineThreadsQueue = new Queue<Engine::EngineThreadQueueElement>(0);
+		engineThreadsQueue = make_unique<Queue<Engine::EngineThreadQueueElement>>(0);
 		engineThreads.resize(threadCount - 1);
 		for (auto i = 0; i < threadCount - 1; i++) {
-			engineThreads[i] = new EngineThread(
+			engineThreads[i] = make_unique<EngineThread>(
 				i + 1,
-				engineThreadsQueue
+				engineThreadsQueue.get()
 			);
 			engineThreads[i]->start();
 		}
@@ -1323,9 +1323,9 @@ void Engine::preRender(Camera* camera, DecomposedEntities& decomposedEntities, b
 		// wait until all elements have been processed
 		while (true == true) {
 			auto elementsProcessed = 0;
-			for (auto engineThread: Engine::engineThreads) elementsProcessed+= engineThread->getProcessedElements();
+			for (const auto& engineThread: Engine::engineThreads) elementsProcessed+= engineThread->getProcessedElements();
 			if (elementsProcessed == elementsIssued) {
-				for (auto engineThread: Engine::engineThreads) engineThread->resetProcessedElements();
+				for (const auto& engineThread: Engine::engineThreads) engineThread->resetProcessedElements();
 				break;
 			}
 		}
@@ -2085,6 +2085,11 @@ void Engine::dispose()
 
 	// dispose object buffer if main engine
 	if (this == Engine::instance) {
+		if (renderer->isSupportingMultithreadedRendering() == true) {
+			engineThreadsQueue->stop();
+			for (const auto& engineThread: engineThreads) engineThread->stop();
+			for (const auto& engineThread: engineThreads) engineThread->join();
+		}
 		ObjectBuffer::dispose();
 	}
 

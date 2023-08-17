@@ -55,7 +55,7 @@ public:
 	 */
 	void stop() {
 		stopRequested = true;
-		c.signal();
+		c.broadcast();
 	}
 
 	/**
