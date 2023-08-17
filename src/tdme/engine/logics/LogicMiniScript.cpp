@@ -2083,7 +2083,7 @@ void LogicMiniScript::registerMethods() {
 				return "engine.getAnimationComputationReduction1Distance";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue = static_cast<int64_t>(Engine::getAnimationComputationReduction1Distance());
+				returnValue.setValue(Engine::getAnimationComputationReduction1Distance());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
@@ -2137,7 +2137,7 @@ void LogicMiniScript::registerMethods() {
 				return "engine.getAnimationComputationReduction2Distance";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue = static_cast<int64_t>(Engine::getAnimationComputationReduction2Distance());
+				returnValue.setValue(Engine::getAnimationComputationReduction2Distance());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
