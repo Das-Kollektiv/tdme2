@@ -46,6 +46,9 @@ KernelEventMechanism::~KernelEventMechanism() {
 }
 
 void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie) {
+	// exit if not initialized
+	if (initialized == false) return;
+
 	// platform specific data
 	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
@@ -95,19 +98,59 @@ void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const 
 	psd->kqMutex.unlock();
 }
 
-void KernelEventMechanism::initKernelEventMechanism(const unsigned int maxCCU)  {
+void KernelEventMechanism::removeSocket(const NetworkSocket &socket) {
+	// exit if not initialized
+	if (initialized == false) return;
+
+	// platform specific data
+	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
+
+	psd->kqMutex.lock();
+	// check for change list overrun
+	if (psd->kqChangeListCurrent + 2 >= psd->kqChangeListMax) {
+		psd->kqChangeList[0].resize(psd->kqChangeListMax << 1);
+		psd->kqChangeList[1].resize(psd->kqChangeListMax << 1);
+	}
+	// remove read interest
+	{
+		auto& ke = psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
+		ke.ident = socket.descriptor;
+		ke.filter = EVFILT_READ;
+		ke.flags = EV_DELETE;
+		ke.fflags = 0;
+		ke.data = 0;
+		ke.udata = (void*)cookie;
+	}
+	// remove write interest
+	{
+		auto& ke = psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
+		ke.ident = socket.descriptor;
+		ke.filter = EVFILT_WRITE;
+		ke.flags = EV_DELETE;
+		ke.fflags = 0;
+		ke.data = 0;
+		ke.udata = (void*)cookie;
+	}
+	//
+	psd->kqMutex.unlock();
+}
+
+void KernelEventMechanism::initKernelEventMechanism(const unsigned int maxSockets)  {
+	// exit if initialized
+	if (initialized == true) return;
+
 	// platform specific data
 	KernelEventMechanismPSD* psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
 	// kqueue change list, maxCCU * (read + write change)
 	// can still be too less as you could change the filter a lot in a single request
-	psd->kqChangeListMax = maxCCU * 2;
+	psd->kqChangeListMax = maxSockets * 2;
 	psd->kqChangeListCurrent = 0;
 	psd->kqChangeList[0].resize(psd->kqChangeListMax);
 	psd->kqChangeList[1].resize(psd->kqChangeListMax);
 
 	// kqueue event list, maxCCU * (read + write change)
-	psd->kqEventListMax = maxCCU * 2;
+	psd->kqEventListMax = maxSockets * 2;
 	psd->kqEventList.resize(psd->kqEventListMax);
 
 	// start kqueue and get the descriptor
@@ -124,7 +167,7 @@ void KernelEventMechanism::initKernelEventMechanism(const unsigned int maxCCU)  
 }
 
 void KernelEventMechanism::shutdownKernelEventMechanism() {
-	// skip if not initialized
+	// exit if not initialized
 	if (initialized == false) return;
 
 	// platform specific data
@@ -135,6 +178,9 @@ void KernelEventMechanism::shutdownKernelEventMechanism() {
 }
 
 int KernelEventMechanism::doKernelEventMechanism()  {
+	// exit if not initialized
+	if (initialized == false) return -1;
+
 	// platform specific data
 	KernelEventMechanismPSD* psd = (KernelEventMechanismPSD*)_psd;
 
@@ -188,6 +234,9 @@ int KernelEventMechanism::doKernelEventMechanism()  {
 }
 
 void KernelEventMechanism::decodeKernelEvent(const unsigned int index, NIOInterest &interest, void*& cookie)  {
+	// exit if not initialized
+	if (initialized == false) return;
+
 	// platform specific data
 	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 

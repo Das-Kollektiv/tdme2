@@ -30,6 +30,9 @@ KernelEventMechanism::~KernelEventMechanism() {
 }
 
 void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie) {
+	// exit if not initialized
+	if (initialized == false) return;
+
 	// platform specific data
 	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
@@ -60,12 +63,35 @@ void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const 
 	}
 }
 
-void KernelEventMechanism::initKernelEventMechanism(const unsigned int maxCCU)  {
+void KernelEventMechanism::removeSocket(const NetworkSocket &socket) {
+	// exit if not initialized
+	if (initialized == false) return;
+
+	// platform specific data
+	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
+
+	//
+	if (epoll_ctl(
+		psd->ep,
+		EPOLL_CTL_DEL,
+		socket.descriptor,
+		nullptr) == -1) {
+		//
+		std::string msg = "Could not remove socket: ";
+		msg+= strerror(errno);
+		throw NetworkKEMException(msg);
+	}
+}
+
+void KernelEventMechanism::initKernelEventMechanism(const unsigned int maxSockets)  {
+	// exit if initialized
+	if (initialized == true) return;
+
 	// platform specific data
 	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
 	// epoll event list, maxCCU
-	psd->epEventListMax = maxCCU;
+	psd->epEventListMax = maxSockets;
 	psd->epEventList.resize(psd->epEventListMax);
 
 	// start epoll and get the descriptor
@@ -81,7 +107,7 @@ void KernelEventMechanism::initKernelEventMechanism(const unsigned int maxCCU)  
 }
 
 void KernelEventMechanism::shutdownKernelEventMechanism() {
-	// skip if not initialized
+	// exit if not initialized
 	if (initialized == false) return;
 
 	// platform specific data
@@ -92,6 +118,9 @@ void KernelEventMechanism::shutdownKernelEventMechanism() {
 }
 
 int KernelEventMechanism::doKernelEventMechanism()  {
+	// exit if not initialized
+	if (initialized == false) return -1;
+
 	// platform specific data
 	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
@@ -116,6 +145,9 @@ int KernelEventMechanism::doKernelEventMechanism()  {
 }
 
 void KernelEventMechanism::decodeKernelEvent(const unsigned int index, NIOInterest &interest, void*& cookie)  {
+	// exit if not initialized
+	if (initialized == false) return;
+
 	// platform specific data
 	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
