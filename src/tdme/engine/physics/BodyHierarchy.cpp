@@ -24,7 +24,10 @@ BodyHierarchy::BodyHierarchy(World* world, const string& id, BodyType type, uint
 }
 
 BodyHierarchy::~BodyHierarchy() {
-	// TODO: proper shutdown
+	//
+	for (auto subBody: bodies) {
+		Body::removeColliders(subBody->colliders, subBody->boundingVolumes);
+	}
 }
 
 
