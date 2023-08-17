@@ -2072,6 +2072,114 @@ void LogicMiniScript::registerMethods() {
 	// engine
 	{
 		//
+		class ScriptMethodEngineGetAnimationComputationReduction1Distance: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEngineGetAnimationComputationReduction1Distance(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.getAnimationComputationReduction1Distance";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Engine::getAnimationComputationReduction1Distance());
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTIONS_ENGINE;
+			}
+		};
+		registerMethod(new ScriptMethodEngineGetAnimationComputationReduction1Distance(this));
+	}
+	{
+		//
+		class ScriptMethodEngineSetAnimationComputationReduction1Distance: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEngineSetAnimationComputationReduction1Distance(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "animationComputationReduction1Distance", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_NULL
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.setAnimationComputationReduction1Distance";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				float animationComputationReduction1Distance;
+				if (miniScript->getFloatValue(argumentValues, 0, animationComputationReduction1Distance) == true) {
+					Engine::setAnimationComputationReduction1Distance(animationComputationReduction1Distance);
+				} else {
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				}
+
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTIONS_ENGINE;
+			}
+		};
+		registerMethod(new ScriptMethodEngineSetAnimationComputationReduction1Distance(this));
+	}
+	{
+		//
+		class ScriptMethodEngineGetAnimationComputationReduction2Distance: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEngineGetAnimationComputationReduction2Distance(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.getAnimationComputationReduction2Distance";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Engine::getAnimationComputationReduction2Distance());
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTIONS_ENGINE;
+			}
+		};
+		registerMethod(new ScriptMethodEngineGetAnimationComputationReduction2Distance(this));
+	}
+	{
+		//
+		class ScriptMethodEngineSetAnimationComputationReduction2Distance: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEngineSetAnimationComputationReduction2Distance(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "animationComputationReduction2Distance", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_NULL
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.setAnimationComputationReduction2Distance";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				float animationComputationReduction2Distance;
+				if (miniScript->getFloatValue(argumentValues, 0, animationComputationReduction2Distance) == true) {
+					Engine::setAnimationComputationReduction2Distance(animationComputationReduction2Distance);
+				} else {
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				}
+
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTIONS_ENGINE;
+			}
+		};
+		registerMethod(new ScriptMethodEngineSetAnimationComputationReduction2Distance(this));
+	}
+	{
+		//
 		class ScriptMethodEngineGetWidth: public ScriptMethod {
 		private:
 			LogicMiniScript* miniScript { nullptr };

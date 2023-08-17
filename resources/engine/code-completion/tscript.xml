@@ -1074,6 +1074,24 @@
 			<parameter name="[Integer $ignoreIfPlaying]" />
 		</overload>
 	</keyword>
+	<keyword name="engine.getAnimationComputationReduction1Distance" func="yes">
+		<overload return-value="Float" descr="Get animation computation reduction 1 distance">
+		</overload>
+	</keyword>
+	<keyword name="engine.setAnimationComputationReduction1Distance" func="yes">
+		<overload return-value="Void" descr="Set animation computation reduction 1 distance">
+			<parameter name="Float $animationComputationReduction1Distance" />
+		</overload>
+	</keyword>
+	<keyword name="engine.getAnimationComputationReduction2Distance" func="yes">
+		<overload return-value="Float" descr="Get animation computation reduction 2 distance">
+		</overload>
+	</keyword>
+	<keyword name="engine.setAnimationComputationReduction2Distance" func="yes">
+		<overload return-value="Void" descr="Set animation computation reduction 2 distance">
+			<parameter name="Float $animationComputationReduction2Distance" />
+		</overload>
+	</keyword>
 	<keyword name="engine.getEntityIdByMousePosition" func="yes">
 		<overload return-value="String" descr="Get engine entity id by mouse position">
 			<parameter name="Integer $mouseX" />
