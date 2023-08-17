@@ -119,7 +119,7 @@ void KernelEventMechanism::removeSocket(const NetworkSocket &socket) {
 		ke.flags = EV_DELETE;
 		ke.fflags = 0;
 		ke.data = 0;
-		ke.udata = (void*)cookie;
+		ke.udata = nullptr;
 	}
 	// remove write interest
 	{
@@ -129,7 +129,7 @@ void KernelEventMechanism::removeSocket(const NetworkSocket &socket) {
 		ke.flags = EV_DELETE;
 		ke.fflags = 0;
 		ke.data = 0;
-		ke.udata = (void*)cookie;
+		ke.udata = nullptr;
 	}
 	//
 	psd->kqMutex.unlock();
