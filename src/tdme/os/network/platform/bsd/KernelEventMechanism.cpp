@@ -5,11 +5,9 @@
 
 #if defined(__HAIKU__)
 	#define _DEFAULT_SOURCE
-	#include <bsd/sys/event.h>
-#else
-	#include <sys/event.h>
 #endif
 
+#include <sys/event.h>
 #include <sys/time.h>
 
 #include <errno.h>
