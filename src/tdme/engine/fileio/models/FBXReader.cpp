@@ -67,9 +67,7 @@ const Color4 FBXReader::BLENDER_AMBIENT_NONE(0.0f, 0.0f, 0.0f, 1.0f);
 
 Model* FBXReader::read(const string& pathName, const string& fileName, bool useBC7TextureCompression) {
 	// init fbx sdk
-	FbxManager* fbxManager = NULL;
-	FbxScene* fbxScene = NULL;
-	fbxManager = FbxManager::Create();
+	auto fbxManager = unique_ptr<FbxManager, decltype([](FbxManager* fbxManager){ fbxManager->Destroy(); })>(FbxManager::Create());
 	if (fbxManager == nullptr) {
 		Console::println("FBXReader::read(): Unable to create FBX manager.");
 		return nullptr;
@@ -79,23 +77,25 @@ Model* FBXReader::read(const string& pathName, const string& fileName, bool useB
 
 	Console::println("FBXReader::read(): reading FBX scene");
 
-	FbxIOSettings* ios = FbxIOSettings::Create(fbxManager, IOSROOT);
-	fbxManager->SetIOSettings(ios);
-	FbxString lPath = FbxGetApplicationDirectory();
+	auto ios = unique_ptr<FbxIOSettings, decltype([](FbxIOSettings* fbxIOSettings){ fbxIOSettings->Destroy(); })>(FbxIOSettings::Create(fbxManager.get(), IOSROOT));
+	fbxManager->SetIOSettings(ios.get());
+	auto lPath = FbxGetApplicationDirectory();
 	fbxManager->LoadPluginsDirectory(lPath.Buffer());
-	fbxScene = FbxScene::Create(fbxManager, "My Scene");
+	auto fbxScene = unique_ptr<FbxScene, decltype([](FbxScene* fbxScene){ fbxScene->Destroy(); })>(FbxScene::Create(fbxManager.get(), "My Scene"));
 	if (fbxScene == nullptr) {
 		throw ModelFileIOException("FBXReader::read(): Error: Unable to create FBX scene");
 	}
 
 	// create import and import scene
-	FbxImporter* fbxImporter = FbxImporter::Create(fbxManager, "");
-	bool fbxImportStatus = fbxImporter->Initialize((pathName + "/" + fileName).c_str(), -1, fbxManager->GetIOSettings());
+	auto fbxImporter = unique_ptr<FbxImporter, decltype([](FbxImporter* fbxImporter){ fbxImporter	->Destroy(); })>(FbxImporter::Create(fbxManager.get(), ""));
+	// TODO: use FbxStream
+	//	see: http://docs.autodesk.com/FBX/2014/ENU/FBX-SDK-Documentation/index.html?url=cpp_ref/class_fbx_stream.html,topicNumber=cpp_ref_class_fbx_stream_html2b5775d9-5d58-4231-a2a1-de97aada1fe6
+	auto fbxImportStatus = fbxImporter->Initialize((pathName + "/" + fileName).c_str(), -1, fbxManager->GetIOSettings());
 	if (fbxImportStatus == false) {
 		throw ModelFileIOException("FBXReader::read(): Error: Unable to import FBX scene from '" + pathName + "/" + fileName);
 	}
 	// import the scene
-	fbxImportStatus = fbxImporter->Import(fbxScene);
+	fbxImportStatus = fbxImporter->Import(fbxScene.get());
 	if (fbxImportStatus == false) {
 		throw ModelFileIOException("FBXReader::read(): Error: Unable to import FBX scene from '" + pathName + "/" + fileName + " into scene");
 	}
@@ -106,8 +106,8 @@ Model* FBXReader::read(const string& pathName, const string& fileName, bool useB
 	//
 	Console::println("FBXReader::read(): triangulating FBX");
 	// triangulate
-	FbxGeometryConverter fbxGeometryConverter(fbxManager);
-	fbxGeometryConverter.Triangulate(fbxScene, true);
+	FbxGeometryConverter fbxGeometryConverter(fbxManager.get());
+	fbxGeometryConverter.Triangulate(fbxScene.get(), true);
 
 	Console::println("FBXReader::read(): importing FBX");
 
@@ -115,8 +115,8 @@ Model* FBXReader::read(const string& pathName, const string& fileName, bool useB
 	auto model = new Model(
 		fileName,
 		fileName,
-		getSceneUpVector(fbxScene),
-		getSceneRotationOrder(fbxScene),
+		getSceneUpVector(fbxScene.get()),
+		getSceneRotationOrder(fbxScene.get()),
 		nullptr,
 		string(fbxScene->GetDocumentInfo()->Original_ApplicationName.Get().Buffer()).find("Blender") != -1?
 			Model::AUTHORINGTOOL_BLENDER:
@@ -125,13 +125,13 @@ Model* FBXReader::read(const string& pathName, const string& fileName, bool useB
 
 	// set up model import matrix
 	setupModelImportRotationMatrix(model);
-	setupModelScaleRotationMatrix(fbxScene, model);
+	setupModelScaleRotationMatrix(fbxScene.get(), model);
 
 	// store possible armuature node ids (Blender only)
 	vector<string> possibleArmatureNodeIds;
 
 	// process nodes
-	processScene(fbxScene, model, pathName, possibleArmatureNodeIds, useBC7TextureCompression);
+	processScene(fbxScene.get(), model, pathName, possibleArmatureNodeIds, useBC7TextureCompression);
 
 	//
 	Console::println("FBXReader::read(): setting up animations");
@@ -206,13 +206,6 @@ Model* FBXReader::read(const string& pathName, const string& fileName, bool useB
 
 	//
 	Console::println("FBXReader::read(): destroying FBX SDK");
-
-	// destroy the importer
-	if (fbxImporter != nullptr) fbxImporter->Destroy();
-
-	// destroy fbx manager
-	if (fbxManager != nullptr) fbxManager->Destroy();
-
 	Console::println("FBXReader::read(): prepare for indexed rendering");
 
 	//
@@ -362,8 +355,8 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 	vector<Face> faces;
 	FacesEntity* facesEntity = nullptr;
 
-	int fbxVertexId = 0;
-	int fbxPolygonCount = fbxMesh->GetPolygonCount();
+	auto fbxVertexId = 0;
+	auto fbxPolygonCount = fbxMesh->GetPolygonCount();
 
 	FbxVector4* fbxControlPoints = fbxMesh->GetControlPoints();
 	for (auto i = 0; i < fbxMesh->GetControlPointsCount(); i++) {
@@ -677,7 +670,7 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 			}
 		}
 		auto foundFacesEntity = false;
-		string facesEntityName = "facesentity-" + material->getId();
+		auto facesEntityName = "facesentity-" + material->getId();
 		for (auto& facesEntityLookUp: facesEntities) {
 			if (facesEntityLookUp.getId() == facesEntityName) {
 				if (&facesEntityLookUp != facesEntity) {
@@ -702,7 +695,7 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 		}
 		auto fbxPolygonSize = fbxMesh->GetPolygonSize(i);
 		if (fbxPolygonSize != 3) throw ModelFileIOException("we only support triangles in '" + node->getName() + "'");
-		int controlPointIndicesIdx = 0;
+		auto controlPointIndicesIdx = 0;
 		array<int, 3> controlPointIndices;
 		int textureCoordinateIndicesIdx = 0;
 		array<int, 3> textureCoordinateIndices;
@@ -861,7 +854,7 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 	} else
 	if (fbxSkinCount == 1) {
 		FbxSkin* fbxSkinDeformer = (FbxSkin*)fbxNode->GetMesh()->GetDeformer(0, FbxDeformer::eSkin);
-		int fbxClusterCount = fbxSkinDeformer->GetClusterCount();
+		auto fbxClusterCount = fbxSkinDeformer->GetClusterCount();
 		auto skinning = new Skinning();
 		vector<Joint> joints;
 		vector<float> weights;
@@ -922,7 +915,7 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 			auto fbxClusterControlPointIndexCount = fbxCluster->GetControlPointIndicesCount();
 			auto fbxClusterControlPointIndices = fbxCluster->GetControlPointIndices();
 			for (auto fbxClusterControlPointIndex = 0; fbxClusterControlPointIndex < fbxClusterControlPointIndexCount; fbxClusterControlPointIndex++) {
-				int fbxControlPointIndex = fbxClusterControlPointIndices[fbxClusterControlPointIndex];
+				auto fbxControlPointIndex = fbxClusterControlPointIndices[fbxClusterControlPointIndex];
 				auto weightIndex = weights.size();
 				weights.push_back(fbxCluster->GetControlPointWeights()[fbxClusterControlPointIndex]);
 				jointWeightsByVertices[fbxControlPointIndex].emplace_back(
@@ -971,7 +964,7 @@ void FBXReader::processAnimation(FbxNode* fbxNode, const FbxTime& fbxStartFrame,
 	fbxFrameTime.SetMilliSeconds(1000.0f * 1.0f / 30.0f);
 	for(auto i = fbxStartFrame; i < fbxEndFrame; i+= fbxFrameTime) {
 		FbxAMatrix& fbxTransformMatrix = fbxNode->EvaluateLocalTransform(i);
-		int frameIdx = frameOffset + (int)Math::ceil((i.GetMilliSeconds() - fbxStartFrame.GetMilliSeconds()) / (1000.0f * 1.0f / 30.0f));
+		auto frameIdx = frameOffset + (int)Math::ceil((i.GetMilliSeconds() - fbxStartFrame.GetMilliSeconds()) / (1000.0f * 1.0f / 30.0f));
 		transformMatrices[frameIdx].set(
 			fbxTransformMatrix.Get(0,0),
 			fbxTransformMatrix.Get(0,1),
