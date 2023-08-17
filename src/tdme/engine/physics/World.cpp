@@ -41,7 +41,6 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
-#include <tdme/utilities/VectorIteratorMultiple.h>
 
 using std::find;
 using std::map;
@@ -71,7 +70,6 @@ using tdme::math::Vector3;
 using tdme::utilities::Console;
 using tdme::utilities::StringTools;
 using tdme::utilities::Time;
-using tdme::utilities::VectorIteratorMultiple;
 
 World::World(const string& id)
 {

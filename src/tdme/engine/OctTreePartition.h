@@ -18,7 +18,6 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/VectorIteratorMultiple.h>
 
 using std::bitset;
 using std::get;
@@ -35,7 +34,6 @@ using tdme::engine::Entity;
 using tdme::engine::Frustum;
 using tdme::engine::Partition;
 using tdme::utilities::Console;
-using tdme::utilities::VectorIteratorMultiple;
 
 /**
  * Oct tree partition implementation
@@ -80,7 +78,6 @@ private:
 	static constexpr float PARTITION_SIZE_MIN { 64.0f };
 	static constexpr float PARTITION_SIZE_MAX { 512.0f };
 
-	VectorIteratorMultiple<Entity*> entityIterator;
 	unordered_map<Entity*, vector<PartitionTreeNode*>> entityPartitionNodes;
 	vector<Entity*> visibleEntities;
 	PartitionTreeNode treeRoot;

@@ -15,7 +15,6 @@
 #include <tdme/engine/Frustum.h>
 #include <tdme/math/Math.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/VectorIteratorMultiple.h>
 
 using std::bitset;
 using std::list;
@@ -33,7 +32,6 @@ using tdme::engine::Frustum;
 using tdme::engine::OctTreePartition;
 using tdme::math::Math;
 using tdme::utilities::Console;
-using tdme::utilities::VectorIteratorMultiple;
 
 OctTreePartition::OctTreePartition()
 {
