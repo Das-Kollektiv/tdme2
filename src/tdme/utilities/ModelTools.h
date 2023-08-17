@@ -16,6 +16,7 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::array;
@@ -31,6 +32,7 @@ using tdme::engine::model::Skinning;
 using tdme::engine::Transform;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
+using tdme::math::Matrix4x4;
 
 /**
  * Model tools functions class
@@ -38,6 +40,39 @@ using tdme::math::Vector3;
  */
 class tdme::utilities::ModelTools final
 {
+private:
+	/**
+	 * Simple class to determine if a transform matrix is right handed
+	 * @author Andreas Drewke
+	 */
+	class RightHandedMatrix4x4
+	{
+	private:
+		Vector3 xAxis;
+		Vector3 yAxis;
+		Vector3 zAxis;
+
+	public:
+		/**
+		 * Public constructor
+		 */
+		inline RightHandedMatrix4x4() {
+		}
+
+		/**
+		 * Check if matrix is negative
+		 * @param matrix matrix
+		 * @return negative
+		 */
+		inline bool isRightHanded(Matrix4x4& matrix) {
+			// copy into x,y,z axes
+			xAxis.set(matrix[0], matrix[1], matrix[2]);
+			yAxis.set(matrix[4], matrix[5], matrix[6]);
+			zAxis.set(matrix[8], matrix[9], matrix[10]);
+			// check if right handed
+			return Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, yAxis), zAxis) < 0.0f;
+		}
+	};
 
 public:
 	enum VertexOrder { VERTEXORDER_CLOCKWISE, VERTEXORDER_COUNTERCLOCKWISE };

@@ -22,7 +22,8 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix3x3.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/math/Matrix4x4Negative.h>
+#include <tdme/math/Vector2.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Pool.h>
@@ -53,7 +54,6 @@ using tdme::engine::PointsParticleSystem;
 using tdme::math::Math;
 using tdme::math::Matrix3x3;
 using tdme::math::Matrix4x4;
-using tdme::math::Matrix4x4Negative;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::utilities::ByteBuffer;
@@ -72,12 +72,45 @@ private:
 	static constexpr int32_t BATCHRENDERER_MAX { 256 };
 	static constexpr int32_t INSTANCEDRENDERING_OBJECTS_MAX { 16384 };
 
+	/**
+	 * Simple class to determine if a transform matrix is right handed
+	 * @author Andreas Drewke
+	 */
+	class RightHandedMatrix4x4
+	{
+	private:
+		Vector3 xAxis;
+		Vector3 yAxis;
+		Vector3 zAxis;
+
+	public:
+		/**
+		 * Public constructor
+		 */
+		inline RightHandedMatrix4x4() {
+		}
+
+		/**
+		 * Check if matrix is right handed
+		 * @param matrix matrix
+		 * @return right handed
+		 */
+		inline bool isRightHanded(Matrix4x4& matrix) {
+			// copy into x,y,z axes
+			xAxis.set(matrix[0], matrix[1], matrix[2]);
+			yAxis.set(matrix[4], matrix[5], matrix[6]);
+			zAxis.set(matrix[8], matrix[9], matrix[10]);
+			// check if right handed
+			return Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, yAxis), zAxis) < 0.0f;
+		}
+	};
+
 	struct ObjectRenderContext {
 		vector<int32_t>* vboInstancedRenderingIds;
 		unique_ptr<ByteBuffer> bbEffectColorMuls;
 		unique_ptr<ByteBuffer> bbEffectColorAdds;
 		unique_ptr<ByteBuffer> bbMvMatrices;
-		Matrix4x4Negative matrix4x4Negative;
+		RightHandedMatrix4x4 rightHandedMatrix;
 		vector<Object*> objectsToRender;
 		vector<Object*> objectsNotRendered;
 		vector<Object*> objectsByModelToRender;

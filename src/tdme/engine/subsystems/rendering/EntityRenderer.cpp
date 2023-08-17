@@ -57,7 +57,6 @@
 #include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/math/Matrix4x4Negative.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/threading/Thread.h>
@@ -125,7 +124,6 @@ using tdme::engine::Object;
 using tdme::engine::PointsParticleSystem;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
-using tdme::math::Matrix4x4Negative;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::os::threading::Thread;
@@ -598,7 +596,7 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object*>& 
 				);
 				renderer->onUpdateModelViewMatrix(contextIdx);
 				// set up front face
-				auto objectFrontFace = objectRenderContext.matrix4x4Negative.isNegative(renderer->getModelViewMatrix()) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
+				auto objectFrontFace = objectRenderContext.rightHandedMatrix.isRightHanded(renderer->getModelViewMatrix()) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
 				if (objectFrontFace != currentFrontFace) {
 					renderer->setFrontFace(contextIdx, objectFrontFace);
 					currentFrontFace = objectFrontFace;
@@ -691,6 +689,9 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 	auto contextIdx = threadIdx;
 
 	//
+	RightHandedMatrix4x4 rightHandedMatrix;
+
+	//
 	auto cameraMatrix = renderer->getCameraMatrix();
 	Vector3 objectCamFromAxis;
 	Matrix4x4 modelViewMatrixTemp;
@@ -777,7 +778,6 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 			do {
 				auto hadFrontFaceSetup = false;
 				auto hadShaderSetup = false;
-				Matrix4x4Negative matrix4x4Negative;
 
 				Vector3 objectCamFromAxis;
 				Matrix4x4 modelViewMatrixTemp;
@@ -989,7 +989,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 					);
 
 					// set up front face
-					auto objectFrontFace = matrix4x4Negative.isNegative(modelViewMatrix) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
+					auto objectFrontFace = rightHandedMatrix.isRightHanded(modelViewMatrix) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
 					// if front face changed just render in next step, this all makes only sense if culling is enabled
 					if (cullingMode == 1) {
 						if (hadFrontFaceSetup == false) {

@@ -26,7 +26,6 @@
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/math/Matrix4x4Negative.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/ByteBuffer.h>
@@ -61,7 +60,6 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::Transform;
 using tdme::math::Matrix4x4;
-using tdme::math::Matrix4x4Negative;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::utilities::ByteBuffer;
@@ -760,8 +758,8 @@ void ModelTools::prepareForDefaultShader(Node* node, const Matrix4x4& parentTran
 	}
 	node->setTransformMatrix(Matrix4x4().identity());
 	// check if we need to change front face
-	Matrix4x4Negative matrix4x4Negative;
-	if (matrix4x4Negative.isNegative(transformMatrix) == true) changeFrontFace(node, false);
+	RightHandedMatrix4x4 rightHandedMatrix;
+	if (rightHandedMatrix.isRightHanded(transformMatrix) == true) changeFrontFace(node, false);
 	//
 	for (const auto& [subNodeId, subNode]: node->getSubNodes()) {
 		prepareForDefaultShader(subNode, transformMatrix);
@@ -823,8 +821,8 @@ void ModelTools::prepareForFoliageTreeShader(Node* node, const Matrix4x4& parent
 	node->setTransformMatrix(Matrix4x4().identity());
 	node->setOrigins(objectOrigins);
 	// check if we need to change front face
-	Matrix4x4Negative matrix4x4Negative;
-	if (matrix4x4Negative.isNegative(transformMatrix) == true) changeFrontFace(node, false);
+	RightHandedMatrix4x4 rightHandedMatrix;
+	if (rightHandedMatrix.isRightHanded(transformMatrix) == true) changeFrontFace(node, false);
 	//
 	for (const auto& [subNodeId, subNode]: node->getSubNodes()) {
 		prepareForFoliageTreeShader(subNode, transformMatrix, shader);
