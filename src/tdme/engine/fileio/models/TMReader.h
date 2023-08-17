@@ -5,6 +5,7 @@
 #include <array>
 #include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -22,6 +23,7 @@
 using std::array;
 using std::map;
 using std::string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::fileio::models::ModelFileIOException;
@@ -267,7 +269,7 @@ private:
 	 * @param fileName file name
 	 * @return material or nullptr
 	 */
-	inline static Texture* getEmbeddedTexture(const map<string, Texture*>& embeddedTextures, const string& fileName) {
+	inline static Texture* getEmbeddedTexture(const unordered_map<string, Texture*>& embeddedTextures, const string& fileName) {
 		auto embeddedTextureIt = embeddedTextures.find(fileName);
 		if (embeddedTextureIt == embeddedTextures.end()) return nullptr;
 		return embeddedTextureIt->second;
@@ -283,7 +285,7 @@ private:
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return material
 	 */
-	static void readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture*>& embeddedTextures, const array<uint8_t, 3>& version);
+	static void readEmbeddedTextures(TMReaderInputStream* is, unordered_map<string, Texture*>& embeddedTextures, const array<uint8_t, 3>& version);
 
 	/**
 	 * Read material
@@ -295,7 +297,7 @@ private:
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return material
 	 */
-	static Material* readMaterial(const string& pathName, TMReaderInputStream* is, Model* model, const map<string, Texture*>& embeddedTextures, bool useBC7TextureCompression, const array<uint8_t, 3>& version);
+	static Material* readMaterial(const string& pathName, TMReaderInputStream* is, Model* model, const unordered_map<string, Texture*>& embeddedTextures, bool useBC7TextureCompression, const array<uint8_t, 3>& version);
 
 	/**
 	 * Read animation setup

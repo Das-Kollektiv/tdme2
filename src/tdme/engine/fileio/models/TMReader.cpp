@@ -2,7 +2,9 @@
 
 #include <array>
 #include <map>
+#include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -33,9 +35,11 @@
 #include <tdme/utilities/ModelTools.h>
 
 using std::array;
+using std::make_unique;
 using std::map;
 using std::string;
 using std::to_string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::fileio::models::ModelFileIOException;
@@ -73,6 +77,20 @@ Model* TMReader::read(const string& pathName, const string& fileName, bool useBC
 }
 
 Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const string& fileName, bool useBC7TextureCompression) {
+	//
+	class EmbeddedTexturesRAII {
+	public:
+		EmbeddedTexturesRAII(const unordered_map<string, Texture*>& embeddedTextures): embeddedTextures(embeddedTextures) {}
+		~EmbeddedTexturesRAII() {
+			for (const auto& [embeddedTextureId, embeddedTexture]: embeddedTextures) embeddedTexture->releaseReference();
+		}
+	private:
+		const unordered_map<string, Texture*>& embeddedTextures;
+	};
+	//
+	unordered_map<string, Texture*> embeddedTextures;
+	EmbeddedTexturesRAII embeddedTexturesRAII(embeddedTextures);
+	//
 	TMReaderInputStream is(&data);
 	auto fileId = is.readString();
 	if (fileId.length() == 0 || fileId != "TDME Model") {
@@ -130,7 +148,7 @@ Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const
 	array<float, 3> boundingBoxMaxXYZ;
 	is.readFloatArray(boundingBoxMaxXYZ);
 	auto boundingBox = new BoundingBox(Vector3(boundingBoxMinXYZ), Vector3(boundingBoxMaxXYZ));
-	auto model = new Model(
+	auto model = make_unique<Model>(
 		fileName,
 		fileName.empty() == true?name:fileName,
 		upVector,
@@ -144,7 +162,6 @@ Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const
 	array<float, 16> importTransformMatrixArray;
 	is.readFloatArray(importTransformMatrixArray);
 	model->setImportTransformMatrix(importTransformMatrixArray);
-	map<string, Texture*> embeddedTextures;
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 17) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 18) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 19) ||
@@ -153,21 +170,19 @@ Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const
 	}
 	auto materialCount = is.readInt();
 	for (auto i = 0; i < materialCount; i++) {
-		auto material = readMaterial(pathName, &is, model, embeddedTextures, useBC7TextureCompression, version);
+		auto material = readMaterial(pathName, &is, model.get(), embeddedTextures, useBC7TextureCompression, version);
 		model->getMaterials()[material->getId()] = material;
 	}
-	readSubNodes(&is, model, nullptr, model->getSubNodes());
+	readSubNodes(&is, model.get(), nullptr, model->getSubNodes());
 	auto animationSetupCount = is.readInt();
 	for (auto i = 0; i < animationSetupCount; i++) {
-		readAnimationSetup(&is, model, version);
+		readAnimationSetup(&is, model.get(), version);
 	}
 	if (model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT) == nullptr) {
 		model->addAnimationSetup(Model::ANIMATIONSETUP_DEFAULT, 0, 0, true);
 	}
-	for (const auto& [embeddedTextureId, embeddedTexture]: embeddedTextures) {
-		embeddedTexture->releaseReference();
-	}
-	return model;
+	//
+	return model.release();
 }
 
 const string TMReader::getTexturePath(const string& modelPathName, const string& texturePathName, const string& textureFileName) {
@@ -184,7 +199,7 @@ const string TMReader::getTexturePath(const string& modelPathName, const string&
 	}
 }
 
-void TMReader::readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture*>& embeddedTextures, const array<uint8_t, 3>& version) {
+void TMReader::readEmbeddedTextures(TMReaderInputStream* is, unordered_map<string, Texture*>& embeddedTextures, const array<uint8_t, 3>& version) {
 	auto embeddedTextureCount = is->readInt();
 	for (auto i = 0; i < embeddedTextureCount; i++) {
 		auto embeddedTextureId = is->readString();
@@ -320,7 +335,7 @@ void TMReader::readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture
 	}
 }
 
-Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is, Model* model, const map<string, Texture*>& embeddedTextures, bool useBC7TextureCompression, const array<uint8_t, 3>& version)
+Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is, Model* model, const unordered_map<string, Texture*>& embeddedTextures, bool useBC7TextureCompression, const array<uint8_t, 3>& version)
 {
 	// TODO: minFilter, magFilter for non embedded textures
 	auto id = is->readString();
