@@ -43,7 +43,7 @@ public:
 	 * @return -1 if value is negative or +1 if positive
 	 */
 	inline static auto sign(auto value) {
-		if (abs(value) < EPSILON) return value + 1;
+		if (abs(value) < EPSILON) return static_cast<decltype(value)>(1);
 		return value / Math::abs(value);
 	}
 
@@ -248,8 +248,9 @@ public:
 	 * @return modulo of value
 	 */
 	inline static auto absmod(auto value, auto range) {
-		while (value < 0.0f) value+= range;
-		return value % range;
+		auto result = value % range;
+		if (result < 0.0f) result+= range;
+		return result;
 	}
 
 	/**
@@ -259,8 +260,9 @@ public:
 	 * @return modulo of value
 	 */
 	inline static float absmod(float value, float range) {
-		while (value < 0.0f) value+= range;
-		return std::fmod(value, range);
+		auto result = std::fmod(value, range);
+		if (result < 0.0f) result+= range;
+		return result;
 	}
 
 };
