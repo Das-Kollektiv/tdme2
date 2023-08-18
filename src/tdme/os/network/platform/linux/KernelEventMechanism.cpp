@@ -90,7 +90,7 @@ void KernelEventMechanism::initKernelEventMechanism(const unsigned int maxSocket
 	// platform specific data
 	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
-	// epoll event list, maxCCU
+	// epoll event list, max sockets
 	psd->epEventListMax = maxSockets;
 	psd->epEventList.resize(psd->epEventListMax);
 

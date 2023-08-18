@@ -140,14 +140,14 @@ void KernelEventMechanism::initKernelEventMechanism(const unsigned int maxSocket
 	// platform specific data
 	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
-	// kqueue change list, maxCCU * (read + write change)
+	// kqueue change list, max sockets * (read + write change)
 	// can still be too less as you could change the filter a lot in a single request
 	psd->kqChangeListMax = maxSockets * 2;
 	psd->kqChangeListCurrent = 0;
 	psd->kqChangeList[0].resize(psd->kqChangeListMax);
 	psd->kqChangeList[1].resize(psd->kqChangeListMax);
 
-	// kqueue event list, maxCCU * (read + write change)
+	// kqueue event list, max sockets * (read + write change)
 	psd->kqEventListMax = maxSockets * 2;
 	psd->kqEventList.resize(psd->kqEventListMax);
 
