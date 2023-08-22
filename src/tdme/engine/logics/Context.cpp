@@ -408,24 +408,23 @@ void Context::PathFinding::setThreadCount(int threadCount) {
 void Context::PathFinding::start() {
 	threads.resize(threadCount);
 	for (auto i = 0; i < threads.size(); i++) {
-		threads[i] = new PathFindingThread(context, i);
+		threads[i] = make_unique<PathFindingThread>(context, i);
 	}
-	for (auto thread: threads) thread->start();
+	for (const auto& thread: threads) thread->start();
 }
 
 void Context::PathFinding::shutdown() {
-	for (auto thread: threads) thread->stop();
-	for (auto thread: threads) thread->join();
-	for (auto thread: threads) delete thread;
+	for (const auto& thread: threads) thread->stop();
+	for (const auto& thread: threads) thread->join();
 	threads.clear();
 }
 
 void Context::PathFinding::addWorldAction(const Context::PathFindingThread::WorldActionStruct& action) {
-	for (auto thread: threads) thread->addWorldAction(action);
+	for (const auto& thread: threads) thread->addWorldAction(action);
 }
 
 void Context::PathFinding::reset() {
-	for (auto thread: threads) thread->reset();
+	for (const auto& thread: threads) thread->reset();
 }
 
 Context::PathFindingThread::State Context::PathFinding::findPath(
@@ -488,7 +487,7 @@ Context::PathFindingThread::State Context::PathFinding::findPath(
 				return Context::PathFindingThread::STATE_PATHFINDING_SUCCESS;
 		}
 	}
-	for (auto thread: threads) {
+	for (const auto& thread: threads) {
 		auto threadPathFindingState = thread->findPath(
 			logicId,
 			actorId,
@@ -532,7 +531,7 @@ Context::PathFindingThread::State Context::PathFinding::findPath(
 
 bool Context::PathFinding::getFlowMapExtension(const string& actorId, FlowMap** flowMap) {
 	*flowMap = nullptr;
-	for (auto thread: threads) {
+	for (const auto& thread: threads) {
 		auto lastExtensionState = thread->getFlowMapExtension(actorId, flowMap);
 		switch(lastExtensionState) {
 			case Context::PathFindingThread::FLOWMAPEXTENSIONSTATE_TRYLOCK_FAILED: break;
@@ -545,7 +544,7 @@ bool Context::PathFinding::getFlowMapExtension(const string& actorId, FlowMap** 
 }
 
 void Context::PathFinding::cancel(const string& actorId) {
-	for (auto thread: threads) thread->cancel(actorId);
+	for (const auto& thread: threads) thread->cancel(actorId);
 }
 
 void Context::PathFinding::notifyCancel(const string& actorId) {

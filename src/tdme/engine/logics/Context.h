@@ -226,7 +226,7 @@ public:
 	private:
 		Context* context { nullptr };
 		int threadCount;
-		vector<PathFindingThread*> threads;
+		vector<unique_ptr<PathFindingThread>> threads;
 		unordered_map<string, int> actorThreadMap;
 		int scheduleThreadIdx { 0 };
 		Mutex actorThreadMapMutex;

@@ -23,7 +23,7 @@ class tdme::engine::model::Material final
 {
 private:
 	STATIC_DLL_IMPEXT static string defaultMaterialId;
-	STATIC_DLL_IMPEXT static Material* defaultMaterial;
+	STATIC_DLL_IMPEXT static unique_ptr<Material> defaultMaterial;
 
 public:
 
@@ -31,7 +31,7 @@ public:
 	 * @return default material
 	 */
 	inline static Material* getDefaultMaterial() {
-		return defaultMaterial;
+		return defaultMaterial.get();
 	}
 
 private:
