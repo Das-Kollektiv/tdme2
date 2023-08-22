@@ -107,7 +107,7 @@ Installer::Installer(): installThreadMutex("install-thread-mutex")
 	Application::setLimitFPS(true);
 	Tools::loadSettings(this);
 	this->engine = Engine::getInstance();
-	this->popUps = new PopUps();
+	this->popUps = make_unique<PopUps>();
 	installerMode = INSTALLERMODE_NONE;
 	screen = SCREEN_WELCOME;
 	installed = false;
@@ -1353,7 +1353,7 @@ void Installer::mountInstallerFileSystem(const string& timestamp, bool remountIn
 			Application::exit(1);
 		}
 		// file system
-		auto installerFileSystem = new ArchiveFileSystem("installer/" + installerArchiveFileName);
+		auto installerFileSystem = make_unique<ArchiveFileSystem>("installer/" + installerArchiveFileName);
 		if (installerFileSystem->computeSHA256Hash() != FileSystem::getStandardFileSystem()->getContentAsString("installer", installerArchiveFileName + ".sha256")) {
 			throw ExceptionBase("Installer::main(): Failed to verify: " + installerArchiveFileName + ", get new installer and try again");
 		}
@@ -1379,7 +1379,7 @@ void Installer::mountInstallerFileSystem(const string& timestamp, bool remountIn
 			}
 		}
 		Console::println("Installer::mountInstallerFileSystem(): mounting: " + installerArchiveFileName);
-		FileSystem::setupFileSystem(installerFileSystem);
+		FileSystem::setupFileSystem(installerFileSystem.release());
 	} catch (Exception& exception) {
 		Console::println(string("Installer::mountInstallerFileSystem(): ") + exception.what());
 		Application::exit(1);

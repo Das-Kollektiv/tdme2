@@ -40,6 +40,12 @@ public:
 	inline PacketAudioStream(const string& id): AudioStream(id) {
 	}
 
+	/**
+	 * Destructor
+	 */
+	inline ~PacketAudioStream() {
+	}
+
 	// overridden methods
 	void rewind() override;
 
@@ -52,12 +58,6 @@ protected:
 	// overridden methods
 	bool initialize() override;
 	void dispose() override;
-
-	/**
-	 * Protected destructor
-	 */
-	inline virtual ~PacketAudioStream() {
-	}
 
 	// overridden methods
 	void fillBuffer(ByteBuffer* data) override;

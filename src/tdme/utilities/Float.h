@@ -86,14 +86,14 @@ public:
 	}
 
 	/**
-	 * Interpolates between float 1 and float 2 by 0f<=t<=1f linearly
-	 * @param f1 float 1
-	 * @param f2 float 2
+	 * Interpolates between a and b by 0f<=t<=1f linearly
+	 * @param a float a
+	 * @param b float b
 	 * @param t t
 	 * @return interpolated float value
 	 */
-	inline static float interpolateLinear(float f1, float f2, float t) {
-		return (f2 * t) + ((1.0f - t) * f1);
+	inline static float interpolateLinear(float a, float b, float t) {
+		return (b * t) + ((1.0f - t) * a);
 	}
 
 	/**

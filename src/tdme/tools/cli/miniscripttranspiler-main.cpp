@@ -1,3 +1,4 @@
+#include <memory>
 #include <set>
 #include <string>
 #include <unordered_map>
@@ -17,6 +18,7 @@
 
 using std::set;
 using std::string;
+using std::unique_ptr;
 using std::unordered_map;
 using std::vector;
 
@@ -185,15 +187,21 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	unordered_map<string, vector<string>> methodCodeMap;
 
 	//
-	vector<string> _miniScriptExtensionFileNames;
-	_miniScriptExtensionFileNames.push_back("src/tdme/utilities/MiniScript.cpp");
-	_miniScriptExtensionFileNames.push_back("src/tdme/utilities/MiniScriptMath.cpp");
-	for (const auto& miniScriptExtensionFileName: miniScriptExtensionFileNames) _miniScriptExtensionFileNames.push_back(miniScriptExtensionFileName);
-	for (const auto& miniScriptExtensionFileName: _miniScriptExtensionFileNames) {
-		vector<string> miniScriptExtensionsCode;
-		FileSystem::getInstance()->getContentAsStringArray(Tools::getPathName(miniScriptExtensionFileName), Tools::getFileName(miniScriptExtensionFileName), miniScriptExtensionsCode);
-		for (auto i = 0; i < miniScriptExtensionsCode.size(); i++) {
-			const auto& line = miniScriptExtensionsCode[i];
+	auto scriptInstance = unique_ptr<MiniScript>(MiniScript::loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName)));
+	if (scriptInstance == nullptr) {
+		Console::println("No script instance: " + scriptFileName);
+		return;
+	}
+
+	//
+	vector<string> transpilationUnits;
+	for (const auto& transpilationUnit: scriptInstance->getTranspilationUnits()) transpilationUnits.push_back(transpilationUnit);
+	for (const auto& transpilationUnit: miniScriptExtensionFileNames) transpilationUnits.push_back(transpilationUnit);
+	for (const auto& transpilationUnit: transpilationUnits) {
+		vector<string> transpilationUnitCode;
+		FileSystem::getInstance()->getContentAsStringArray(Tools::getPathName(transpilationUnit), Tools::getFileName(transpilationUnit), transpilationUnitCode);
+		for (auto i = 0; i < transpilationUnitCode.size(); i++) {
+			const auto& line = transpilationUnitCode[i];
 			auto trimmedLine = StringTools::trim(line);
 			if (StringTools::startsWith(trimmedLine, "registerMethod") == true ||
 				StringTools::startsWith(trimmedLine, "miniScript->registerMethod") == true) {
@@ -209,15 +217,12 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 						if (c == ' ') continue;
 						className+= c;
 					}
-					gatherMethodCode(miniScriptExtensionsCode, className, i, methodCodeMap);
+					gatherMethodCode(transpilationUnitCode, className, i, methodCodeMap);
 				}
 			}
 		}
 	}
 
-	//
-	MiniScript* scriptInstance = new MiniScript();
-	scriptInstance->loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName));
 	Console::println(scriptInstance->getInformation());
 
 	//

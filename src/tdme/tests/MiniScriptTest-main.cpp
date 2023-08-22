@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
 	// base test
 	{
 		auto script = make_unique<MiniScriptBaseTest>();
-		script->loadScript("resources/tests/scripts", "base-test.tscript");
+		script->parseScript("resources/tests/scripts", "base-test.tscript");
 		Console::println("---------------------------------------------------------");
 		Console::println("Loaded test script: " + script->getScriptFileName() + ": runs " + (script->isNative() == true?"natively":"interpreted"));
 		Console::println("---------------------------------------------------------");
@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
 	// advanced test
 	{
 		auto script = make_unique<MiniScriptAdvancedTest>();
-		script->loadScript("resources/tests/scripts", "advanced-test.tscript");
+		script->parseScript("resources/tests/scripts", "advanced-test.tscript");
 		Console::println("---------------------------------------------------------");
 		Console::println("Loaded test script: " + script->getScriptFileName() + ": runs " + (script->isNative() == true?"natively":"interpreted"));
 		Console::println("---------------------------------------------------------");
@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
 	// emit test
 	{
 		auto script = make_unique<MiniScriptEmitTest>();
-		script->loadScript("resources/tests/scripts", "emit-test.tscript");
+		script->parseScript("resources/tests/scripts", "emit-test.tscript");
 		Console::println("---------------------------------------------------------");
 		Console::println("Loaded test script: " + script->getScriptFileName() + ": runs " + (script->isNative() == true?"natively":"interpreted"));
 		Console::println("---------------------------------------------------------");
@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
 	// emit test
 	{
 		auto script = make_unique<MiniScriptFunctionsTest>();
-		script->loadScript("resources/tests/scripts", "functions-test.tscript");
+		script->parseScript("resources/tests/scripts", "functions-test.tscript");
 		Console::println("---------------------------------------------------------");
 		Console::println("Loaded test script: " + script->getScriptFileName() + ": runs " + (script->isNative() == true?"natively":"interpreted"));
 		Console::println("---------------------------------------------------------");

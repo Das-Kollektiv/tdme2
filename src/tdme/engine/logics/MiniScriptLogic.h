@@ -259,7 +259,7 @@ public:
 				if (prototypeToAdd.prototype->hasScript() == true) {
 					auto prototype = prototypeToAdd.prototype;
 					auto logicMiniScript = new LogicMiniScript();
-					logicMiniScript->loadScript(
+					logicMiniScript->parseScript(
 						Tools::getPathName(prototype->getScript()),
 						Tools::getFileName(prototype->getScript())
 					);

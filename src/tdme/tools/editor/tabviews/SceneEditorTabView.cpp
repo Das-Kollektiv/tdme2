@@ -1466,7 +1466,7 @@ void SceneEditorTabView::runScene() {
 	for (auto entity: scene->getEntities()) {
 		if (entity->getPrototype()->hasScript() == true) {
 			auto miniScript = make_unique<LogicMiniScript>();
-			miniScript->loadScript(
+			miniScript->parseScript(
 				Tools::getPathName(entity->getPrototype()->getScript()),
 				Tools::getFileName(entity->getPrototype()->getScript())
 			);

@@ -546,8 +546,7 @@ void PrototypePhysicsSubController::applyBoundingVolumeConvexMeshDetails(Prototy
 
 void PrototypePhysicsSubController::createBoundingVolume(Prototype* prototype) {
 	auto boundingVolumeIdx = prototype->getBoundingVolumeCount();
-	auto boundingVolume = new PrototypeBoundingVolume(boundingVolumeIdx, prototype);
-	prototype->addBoundingVolume(boundingVolumeIdx, boundingVolume);
+	prototype->addBoundingVolume(new PrototypeBoundingVolume(prototype));
 	setBoundingVolumeDetails(prototype, boundingVolumeIdx);
 	editorView->reloadTabOutliner(string() + "physics.boundingvolumes." + to_string(boundingVolumeIdx));
 }
@@ -931,9 +930,9 @@ void PrototypePhysicsSubController::importBoundingVolumeConvexMeshFile(const str
 			for (auto& convexMeshTMData: convexMeshTMsData) {
 				//
 				try {
-					auto prototypeBoundingVolume = new PrototypeBoundingVolume(prototype->getBoundingVolumeCount(), prototype);
+					auto prototypeBoundingVolume = new PrototypeBoundingVolume(prototype);
 					prototypeBoundingVolume->setupConvexMesh(convexMeshTMData);
-					prototype->addBoundingVolume(prototypeBoundingVolume->getId(), prototypeBoundingVolume);
+					prototype->addBoundingVolume(prototypeBoundingVolume);
 				} catch (Exception& exception) {
 					Console::println("PrototypePhysicsSubController::importBoundingVolumeConvexMeshFile(): An error occurred: " + string(exception.what()));
 				}
@@ -978,9 +977,9 @@ void PrototypePhysicsSubController::generateBoundingVolumeConvexMeshFiles(const 
 			for (auto& convexMeshTMData: convexMeshTMsData) {
 				//
 				try {
-					auto prototypeBoundingVolume = new PrototypeBoundingVolume(prototype->getBoundingVolumeCount(), prototype);
+					auto prototypeBoundingVolume = new PrototypeBoundingVolume(prototype);
 					prototypeBoundingVolume->setupConvexMesh(convexMeshTMData);
-					prototype->addBoundingVolume(prototypeBoundingVolume->getId(), prototypeBoundingVolume);
+					prototype->addBoundingVolume(prototypeBoundingVolume);
 				} catch (Exception& exception) {
 					Console::println("PrototypePhysicsSubController::generateBoundingVolumeConvexMeshFiles(): An error occurred: " + string(exception.what()));
 				}

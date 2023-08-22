@@ -11,6 +11,7 @@
 
 #include <array>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -22,12 +23,15 @@
 using std::array;
 using std::map;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::audio::Audio;
 using tdme::audio::AudioEntity;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
+
+Audio* Audio::instance = nullptr;
 
 Audio::Audio()
 {
@@ -44,15 +48,6 @@ Audio::Audio()
 
 	// init listener position
 	update();
-}
-
-Audio* Audio::instance = nullptr;
-
-AudioEntity* Audio::getEntity(const string& id)
-{
-	auto audioEntityIt = audioEntities.find(id);
-	if (audioEntityIt == audioEntities.end()) return nullptr;
-	return audioEntityIt->second;
 }
 
 void Audio::addEntity(AudioEntity* entity)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -8,8 +9,8 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/prototype/fwd-tdme.h>
-#include <tdme/engine/scene/fwd-tdme.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/scene/Scene.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
@@ -31,6 +32,7 @@
 
 using std::map;
 using std::string;
+using std::unique_ptr;
 using std::unordered_map;
 using std::vector;
 
@@ -252,14 +254,14 @@ private:
 		/**
 		 * @return prototype
 		 */
-		inline Prototype* getPrototype() {
+		inline unique_ptr<Prototype>& getPrototype() {
 			return prototype;
 		}
 
 		/**
 		 * @return scene
 		 */
-		inline Scene* getScene() {
+		inline unique_ptr<Scene>& getScene() {
 			return scene;
 		}
 
@@ -288,13 +290,13 @@ private:
 		string errorMessage;
 		float progress { 0.0f };
 
-		Prototype* prototype { nullptr };
-		Scene* scene { nullptr };
+		unique_ptr<Prototype> prototype;
+		unique_ptr<Scene> scene;
 		bool error { false };
 		volatile bool finished { false };
 	};
 
-	FileOpenThread* fileOpenThread { nullptr };
+	unique_ptr<FileOpenThread> fileOpenThread;
 
 	struct FileEntity {
 		string id;
@@ -367,7 +369,7 @@ private:
 	};
 
 	Mutex fileEntitiesMutex;
-	vector<FileEntity*> fileEntities;
+	vector<unique_ptr<FileEntity>> fileEntities;
 
 	string fullScreenTabId;
 	GUINode_Padding fullScreenTabPadding;
@@ -389,12 +391,12 @@ private:
 	/**
 	 * @return file entities
 	 */
-	inline vector<FileEntity*>& getFileEntities() {
+	inline vector<unique_ptr<FileEntity>>& getFileEntities() {
 		return fileEntities;
 	}
 
-	ScanFilesThread* scanFilesThread { nullptr };
-	vector<FileEntity*> pendingFileEntities;
+	unique_ptr<ScanFilesThread> scanFilesThread;
+	vector<unique_ptr<FileEntity>> pendingFileEntities;
 
 public:
 	// forbid class copy
@@ -561,7 +563,7 @@ public:
 	 * @param prototype prototype
 	 * @param scene scene
 	 */
-	void onOpenFileFinish(const string& tabId, FileType fileType, const string& absoluteFileName, Prototype* prototype, Scene* scene);
+	void onOpenFileFinish(const string& tabId, FileType fileType, const string& absoluteFileName, unique_ptr<Prototype> prototype, unique_ptr<Scene> scene);
 
 	/**
 	 * Store outliner state

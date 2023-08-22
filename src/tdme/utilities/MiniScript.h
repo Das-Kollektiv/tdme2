@@ -2724,6 +2724,13 @@ public:
 	FORBID_CLASS_COPY(MiniScript)
 
 	/**
+	 * Load script
+	 * @param pathName path name
+	 * @param fileName file name
+	 */
+	static MiniScript* loadScript(const string& pathName, const string& fileName);
+
+	/**
 	 * Default constructor
 	 */
 	MiniScript();
@@ -2732,6 +2739,16 @@ public:
 	 * Destructor
 	 */
 	virtual ~MiniScript();
+
+	/**
+	 * @return base class
+	 */
+	virtual const string getBaseClass();
+
+	/**
+	 * @return transpilation units
+	 */
+	virtual const vector<string> getTranspilationUnits();
 
 	/**
 	 * @return parse errors
@@ -3201,11 +3218,11 @@ public:
 	}
 
 	/**
-	 * Load script
+	 * Parse script into MiniScript instance
 	 * @param pathName path name
 	 * @param fileName file name
 	 */
-	void loadScript(const string& pathName, const string& fileName);
+	void parseScript(const string& pathName, const string& fileName);
 
 	/**
 	 * Start script

@@ -440,60 +440,8 @@ void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx
 		return;
 	}
 
-	// detect MiniScript variant
-	auto logicMiniScript = false;
-	auto guiMiniScript = false;
-	array<string, 2> logicMiniScriptFunctions {
-		"updateEngine",
-		"updateLogic"
-	};
-	array<string, 12> guiMiniScriptFunctions {
-		"onAction",
-		"onChange",
-		"onMouseOver",
-		"onContextMenuRequest",
-		"onFocus",
-		"onUnfocus",
-		"onMove",
-		"onMoveRelease",
-		"onTooltipShowRequest",
-		"onTooltipCloseRequest",
-		"onDragRequest",
-		"onTick"
-	};
-	for (const auto& scriptLine: scriptAsStringArray) {
-		for (const auto& functionName: logicMiniScriptFunctions) {
-			if (StringTools::regexMatch(scriptLine, "^[\\s]*function:[\\s]*" + functionName + "[\\s]*\\(.*\\).*$") == true) {
-				logicMiniScript = true;
-				break;
-			}
-		}
-		if (logicMiniScript == true) break;
-		for (const auto& functionName: guiMiniScriptFunctions) {
-			if (StringTools::regexMatch(scriptLine, "^[\\s]*function:[\\s]*" + functionName + "[\\s]*\\(.*\\).*$") == true) {
-				guiMiniScript = true;
-				break;
-			}
-		}
-		if (guiMiniScript == true) break;
-	}
-
 	// load specific MiniScript
-	scriptInstance = nullptr;
-	if (logicMiniScript == true) {
-		Console::println("TextEditorTabController::updateMiniScriptSyntaxTree(): " + scriptFileName + ": Detected Logic MiniScript");
-		scriptInstance = make_unique<LogicMiniScript>();
-		scriptInstance->loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName));
-	} else
-	if (guiMiniScript == true) {
-		Console::println("TextEditorTabController::updateMiniScriptSyntaxTree(): " + scriptFileName + ": Detected GUI MiniScript");
-		scriptInstance = make_unique<GUIMiniScript>(nullptr);
-		scriptInstance->loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName));
-	} else {
-		Console::println("TextEditorTabController::updateMiniScriptSyntaxTree(): " + scriptFileName + ": Detected no specific Miniscript, using default MiniScript");
-		scriptInstance = make_unique<MiniScript>();
-		scriptInstance->loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName));
-	}
+	scriptInstance = unique_ptr<MiniScript>(MiniScript::loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName)));
 
 	//
 	if (scriptInstance->isValid() == false)  {

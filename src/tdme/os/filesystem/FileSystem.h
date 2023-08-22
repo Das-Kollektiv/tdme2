@@ -1,5 +1,9 @@
 #pragma once
 
+#include <memory>
+
+using std::unique_ptr;
+
 #include <tdme/tdme.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 
@@ -12,8 +16,8 @@ using tdme::os::filesystem::FileSystemInterface;
 class tdme::os::filesystem::FileSystem
 {
 private:
-	STATIC_DLL_IMPEXT static FileSystemInterface* standardFileSystem;
-	STATIC_DLL_IMPEXT static FileSystemInterface* fileSystem;
+	STATIC_DLL_IMPEXT static unique_ptr<FileSystemInterface> standardFileSystem;
+	STATIC_DLL_IMPEXT static unique_ptr<FileSystemInterface> fileSystem;
 
 public:
 

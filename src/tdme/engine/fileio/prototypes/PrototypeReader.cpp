@@ -255,19 +255,17 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const Value& jP
 	}
 	if (jPrototypeRoot.FindMember("bv") != jPrototypeRoot.MemberEnd()) {
 		auto boundingVolume = parseBoundingVolume(
-			0,
 			prototype,
 			pathName,
 			jPrototypeRoot["bv"]
 		);
-		if (boundingVolume->getBoundingVolume() != nullptr) prototype->addBoundingVolume(0, boundingVolume);
+		if (boundingVolume->getBoundingVolume() != nullptr) prototype->addBoundingVolume(boundingVolume);
 	} else
 	if (jPrototypeRoot.FindMember("bvs") != jPrototypeRoot.MemberEnd()) {
 		auto jBoundingVolumes = jPrototypeRoot["bvs"].GetArray();
-		auto bvIdx = 0;
 		for (auto i = 0; i < jBoundingVolumes.Size(); i++) {
-			auto boundingVolume = parseBoundingVolume(bvIdx, prototype, pathName, jBoundingVolumes[i]);
-			if (boundingVolume->getBoundingVolume() != nullptr) prototype->addBoundingVolume(bvIdx++, boundingVolume);
+			auto boundingVolume = parseBoundingVolume(prototype, pathName, jBoundingVolumes[i]);
+			if (boundingVolume->getBoundingVolume() != nullptr) prototype->addBoundingVolume(boundingVolume);
 		}
 	}
 	if (jPrototypeRoot.FindMember("p") != jPrototypeRoot.MemberEnd() && prototype->getPhysics() != nullptr) {
@@ -504,9 +502,9 @@ const string PrototypeReader::getResourcePathName(const string& pathName, const 
 	return resourcePathName;
 }
 
-PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(int idx, Prototype* prototype, const string& pathName, const Value& jBv)
+PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(Prototype* prototype, const string& pathName, const Value& jBv)
 {
-	auto prototypeBoundingVolume = new PrototypeBoundingVolume(idx, prototype);
+	auto prototypeBoundingVolume = new PrototypeBoundingVolume(prototype);
 	BoundingVolume* bv;
 	auto bvTypeString = (jBv["type"].GetString());
 	if (StringTools::equalsIgnoreCase(bvTypeString, "none") == true) {

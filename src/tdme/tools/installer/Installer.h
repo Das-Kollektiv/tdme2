@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -15,6 +16,7 @@
 #include <tdme/utilities/Properties.h>
 
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::application::Application;
@@ -36,7 +38,7 @@ class tdme::tools::installer::Installer final
 {
 private:
 	Engine* engine { nullptr };
-	PopUps* popUps { nullptr };
+	unique_ptr<PopUps> popUps;
 	enum Screen { SCREEN_WELCOME, SCREEN_LICENSE, SCREEN_CHECKFORUPDATE, SCREEN_COMPONENTS, SCREEN_PATH, SCREEN_INSTALLING, SCREEN_FINISHED, SCREEN_MAX, SCREEN_WELCOME2, SCREEN_UNINSTALLING  };
 	enum InstallerMode { INSTALLERMODE_NONE, INSTALLERMODE_INSTALL, INSTALLERMODE_UNINSTALL, INSTALLERMODE_UPDATE, INSTALLERMODE_REPAIR };
 	InstallerMode installerMode;

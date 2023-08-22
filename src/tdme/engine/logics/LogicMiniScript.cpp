@@ -84,6 +84,16 @@ LogicMiniScript::LogicMiniScript(): MiniScript(), prototypesToAddMutex("prototyp
 LogicMiniScript::~LogicMiniScript() {
 }
 
+const string LogicMiniScript::getBaseClass() {
+	return "tdme::engine::logics::LogicMiniScript";
+}
+
+const vector<string> LogicMiniScript::getTranspilationUnits() {
+	auto transpilationUnits = MiniScript::getTranspilationUnits();
+	transpilationUnits.push_back("src/tdme/engine/logics/LogicMiniScript.cpp");
+	return transpilationUnits;
+}
+
 inline Entity* LogicMiniScript::getEntity(const string& entityId, const string& childEntityId) {
 	auto entity = context->getEngine()->getEntity(entityId);
 	if (entity == nullptr) return entity;

@@ -105,7 +105,6 @@ private:
 
 	/**
 	 * Parse bounding volume
-	 * @param idx idx
 	 * @param prototype prototype
 	 * @param pathName path name
 	 * @param jBv JSON bounding volume node
@@ -113,7 +112,7 @@ private:
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return prototype bounding volume
 	 */
-	static PrototypeBoundingVolume* parseBoundingVolume(int idx, Prototype* prototype, const string& pathName, const Value& jBv);
+	static PrototypeBoundingVolume* parseBoundingVolume(Prototype* prototype, const string& pathName, const Value& jBv);
 
 	/**
 	 * Parse LOD level

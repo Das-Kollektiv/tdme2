@@ -74,18 +74,9 @@ void Prototype::setModel(Model* model) {
 	this->model = unique_ptr<Model>(model);
 }
 
-bool Prototype::addBoundingVolume(int idx, PrototypeBoundingVolume* prototypeBoundingVolume)
+void Prototype::addBoundingVolume(PrototypeBoundingVolume* prototypeBoundingVolume)
 {
-	if (idx < 0)
-		return false;
-
-	if (idx > boundingVolumes.size())
-		return false;
-
-	if (idx == boundingVolumes.size()) {
-		boundingVolumes.push_back(unique_ptr<PrototypeBoundingVolume>(prototypeBoundingVolume));
-	}
-	return false;
+	boundingVolumes.push_back(unique_ptr<PrototypeBoundingVolume>(prototypeBoundingVolume));
 }
 
 void Prototype::removeBoundingVolume(int idx)

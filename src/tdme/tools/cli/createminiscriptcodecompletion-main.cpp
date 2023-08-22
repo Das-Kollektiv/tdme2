@@ -1,4 +1,5 @@
 #include <array>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -14,6 +15,7 @@
 #include <tdme/utilities/Properties.h>
 
 using std::array;
+using std::make_unique;
 using std::string;
 using std::vector;
 
@@ -50,25 +52,25 @@ int main(int argc, char** argv)
 	lines.push_back("<code-completion>");
 
 	//
-	auto baseMiniScript = new MiniScript();
+	auto baseMiniScript = make_unique<MiniScript>();
 	baseMiniScript->registerMethods();
 
-	auto logicMiniScript = new LogicMiniScript();
+	auto logicMiniScript = make_unique<LogicMiniScript>();
 	logicMiniScript->registerMethods();
 
-	auto guiMiniScript = new GUIMiniScript(nullptr);
+	auto guiMiniScript = make_unique<GUIMiniScript>(nullptr);
 	guiMiniScript->registerMethods();
 
 	//
-	array<MiniScript*, 3> miniScriptFlavours = { baseMiniScript, logicMiniScript, guiMiniScript };
+	array<MiniScript*, 3> miniScriptFlavours = { baseMiniScript.get(), logicMiniScript.get(), guiMiniScript.get() };
 	for (const auto& miniScriptFlavour: miniScriptFlavours) {
 		// methods
 		auto scriptMethods = miniScriptFlavour->getMethods();
 		vector<string> methods;
 		for (const auto& scriptMethod: scriptMethods) {
 			//
-			if ((miniScriptFlavour != baseMiniScript && baseMiniScript->hasMethod(scriptMethod->getMethodName()) == true) ||
-				(miniScriptFlavour == guiMiniScript && logicMiniScript->hasMethod(scriptMethod->getMethodName()) == true)
+			if ((miniScriptFlavour != baseMiniScript.get() && baseMiniScript->hasMethod(scriptMethod->getMethodName()) == true) ||
+				(miniScriptFlavour == guiMiniScript.get() && logicMiniScript->hasMethod(scriptMethod->getMethodName()) == true)
 				) continue;
 			//
 			keywords1.push_back(scriptMethod->getMethodName());

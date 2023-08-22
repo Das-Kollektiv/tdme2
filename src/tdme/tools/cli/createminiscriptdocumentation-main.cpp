@@ -1,3 +1,4 @@
+#include <memory>
 #include <map>
 #include <set>
 #include <string>
@@ -17,6 +18,7 @@
 #include <tdme/utilities/StringTools.h>
 
 using std::make_pair;
+using std::make_unique;
 using std::map;
 using std::pair;
 using std::set;
@@ -119,15 +121,15 @@ int main(int argc, char** argv)
 	descriptions.load("resources/engine/code-completion", "tscript-methods.properties");
 
 	//
-	auto baseMiniScript = new MiniScript();
+	auto baseMiniScript = make_unique<MiniScript>();
 	baseMiniScript->registerMethods();
 
 	//
-	auto logicMiniScript = new LogicMiniScript();
+	auto logicMiniScript = make_unique<LogicMiniScript>();
 	logicMiniScript->registerMethods();
 
 	//
-	auto guiMiniScript = new GUIMiniScript(nullptr);
+	auto guiMiniScript = make_unique<GUIMiniScript>(nullptr);
 	guiMiniScript->registerMethods();
 
 	//
@@ -136,11 +138,11 @@ int main(int argc, char** argv)
 	unordered_set<string> guiMethodCategories;
 
 	// base methods
-	generateMiniScriptDocumentation("MiniScript Base Methods", 6, baseMiniScript, descriptions, "miniscript.basemethod.", baseMethodCategories);
+	generateMiniScriptDocumentation("MiniScript Base Methods", 6, baseMiniScript.get(), descriptions, "miniscript.basemethod.", baseMethodCategories);
 	// logic methods
-	generateMiniScriptDocumentation("MiniScript Logic Methods", 7, logicMiniScript, descriptions, "miniscript.logicmethod.", logicMethodCategories, baseMiniScript);
+	generateMiniScriptDocumentation("MiniScript Logic Methods", 7, logicMiniScript.get(), descriptions, "miniscript.logicmethod.", logicMethodCategories, baseMiniScript.get());
 	// gui methods
-	generateMiniScriptDocumentation("MiniScript GUI Methods", 8, guiMiniScript, descriptions, "miniscript.", guiMethodCategories, baseMiniScript);
+	generateMiniScriptDocumentation("MiniScript GUI Methods", 8, guiMiniScript.get(), descriptions, "miniscript.", guiMethodCategories, baseMiniScript.get());
 
 	// operators
 	auto scriptOperatorMethods = baseMiniScript->getOperatorMethods();

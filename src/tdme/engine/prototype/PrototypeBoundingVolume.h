@@ -10,6 +10,7 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/os/threading/AtomicOperations.h>
 #include <tdme/math/fwd-tdme.h>
 
 using std::string;
@@ -20,6 +21,8 @@ using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::prototype::Prototype;
 using tdme::math::Vector3;
+using tdme::os::threading::AtomicOperations;
+
 
 /**
  * Prototype bounding volume definition
@@ -28,7 +31,6 @@ using tdme::math::Vector3;
 class tdme::engine::prototype::PrototypeBoundingVolume final
 {
 private:
-	int id;
 	Prototype* prototype { nullptr };
 	string convexMeshFile;
 	unique_ptr<Model> model;
@@ -36,28 +38,30 @@ private:
 	bool generated;
 	vector<uint8_t> convexMeshData;
 
+	STATIC_DLL_IMPEXT static uint32_t boundingVolumeIdx;
+
+	/**
+	 * Allocate bounding volume index
+	 * @return bounding volume index
+	 */
+	uint32_t allocateBoundingVolumeIdx() {
+		return AtomicOperations::increment(boundingVolumeIdx);
+	}
+
 public:
 	// forbid class copy
 	FORBID_CLASS_COPY(PrototypeBoundingVolume)
 
 	/**
 	 * Public constructor
-	 * @param id id
 	 * @param prototype prototype
 	 */
-	PrototypeBoundingVolume(int id, Prototype* prototype);
+	PrototypeBoundingVolume(Prototype* prototype);
 
 	/**
 	 * Destructor
 	 */
 	~PrototypeBoundingVolume();
-
-	/**
-	 * @return id
-	 */
-	inline int getId() {
-		return id;
-	}
 
 	/**
 	 * @return convex mesh file

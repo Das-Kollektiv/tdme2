@@ -65,6 +65,16 @@ GUIMiniScript::GUIMiniScript(GUIScreenNode* screenNode): MiniScript(), screenNod
 GUIMiniScript::~GUIMiniScript() {
 }
 
+const string GUIMiniScript::getBaseClass() {
+	return "tdme::gui::scripting::GUIMiniScript";
+}
+
+const vector<string> GUIMiniScript::getTranspilationUnits() {
+	auto transpilationUnits = MiniScript::getTranspilationUnits();
+	transpilationUnits.push_back("src/tdme/gui/scripting/GUIMiniScript.cpp");
+	return transpilationUnits;
+}
+
 void GUIMiniScript::registerStateMachineStates() {
 	MiniScript::registerStateMachineStates();
 }

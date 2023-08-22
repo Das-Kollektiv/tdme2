@@ -135,7 +135,7 @@ bool Sound::initialize()
 					Console::println(string("Audio sound: '" + id + "': Unsupported number of channels"));
 			}
 			data = unique_ptr<ByteBuffer>(ByteBuffer::allocate(2 * 2 * decoder.getSamples()));
-			if (decoder.readFromStream(data.get()) == 0) throw new AudioDecoderException("no audio data was decoded");
+			if (decoder.readFromStream(data.get()) == 0) throw AudioDecoderException("no audio data was decoded");
 			Console::println(
 				string(
 					"Audio sound: '" +

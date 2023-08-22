@@ -143,7 +143,7 @@ GUIScreenNode::GUIScreenNode(
 		string projectScriptFileName;
 		getProjectFilePathNameAndFileName(scriptFileName, projectScriptPathName, projectScriptFileName);
 		//
-		this->script->loadScript(
+		this->script->parseScript(
 			projectScriptPathName,
 			projectScriptFileName
 		);

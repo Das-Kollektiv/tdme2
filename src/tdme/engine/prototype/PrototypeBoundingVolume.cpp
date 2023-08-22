@@ -53,9 +53,10 @@ using tdme::utilities::Exception;
 using tdme::utilities::Primitives;
 using tdme::utilities::StringTools;
 
-PrototypeBoundingVolume::PrototypeBoundingVolume(int id, Prototype* prototype)
+uint32_t PrototypeBoundingVolume::boundingVolumeIdx = 0;
+
+PrototypeBoundingVolume::PrototypeBoundingVolume(Prototype* prototype)
 {
-	this->id = id;
 	this->prototype = prototype;
 	convexMeshFile.clear();
 	generated = false;
@@ -83,7 +84,7 @@ void PrototypeBoundingVolume::setupSphere(const Vector3& center, float radius)
 				string(",") +
 				to_string(prototype->getId()) +
 				string("_model_bv.") +
-				to_string(id)
+				to_string(allocateBoundingVolumeIdx())
 		)
 	);
 	convexMeshFile.clear();
@@ -101,7 +102,7 @@ void PrototypeBoundingVolume::setupCapsule(const Vector3& a, const Vector3& b, f
 				string(",") +
 				to_string(prototype->getId()) +
 				string("_model_bv.") +
-				to_string(id) +
+				to_string(allocateBoundingVolumeIdx()) +
 				string(".")
 		)
 	);
@@ -120,7 +121,7 @@ void PrototypeBoundingVolume::setupObb(const Vector3& center, const Vector3& axi
 				string(",") +
 				to_string(prototype->getId()) +
 				string("_model_bv.") +
-				to_string(id)
+				to_string(allocateBoundingVolumeIdx())
 		)
 	);
 	convexMeshFile.clear();
@@ -139,7 +140,7 @@ void PrototypeBoundingVolume::setupAabb(const Vector3& min, const Vector3& max)
 				string(",") +
 				to_string(prototype->getId()) +
 				string("_model_bv.") +
-				to_string(id)
+				to_string(allocateBoundingVolumeIdx())
 		)
 	);
 	convexMeshFile.clear();
@@ -192,7 +193,7 @@ void PrototypeBoundingVolume::setupConvexMesh(const vector<uint8_t>& data) {
 			TMReader::read(
 				convexMeshData,
 				FileSystem::getInstance()->getPathName(prototype->getFileName()),
-				FileSystem::getInstance()->getFileName(prototype->getFileName()) + "." + to_string(id)
+				FileSystem::getInstance()->getFileName(prototype->getFileName()) + "." + to_string(allocateBoundingVolumeIdx())
 			)
 		);
 		auto convexMeshObjectModel = make_unique<ObjectModel>(convexMeshModel.get());
