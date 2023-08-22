@@ -71,8 +71,8 @@ ObjectParticleSystemInternal::ObjectParticleSystemInternal(const string& id, Mod
 		objects[i]->setReceivesShadows(receivesShadows);
 		objects[i]->setPickable(false);
 	}
-	this->boundingBox = new BoundingBox();
-	this->worldBoundingBox = new BoundingBox();
+	this->boundingBox = BoundingBox();
+	this->worldBoundingBox = BoundingBox();
 	this->emitter = unique_ptr<ParticleEmitter>(emitter);
 	this->effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
