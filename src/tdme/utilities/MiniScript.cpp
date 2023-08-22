@@ -8232,7 +8232,7 @@ const MiniScript::ScriptVariable MiniScript::deserializeMapJson(const Value& jOb
 	auto jObject = jObjectValue.GetObject();
 	//
 	for (auto& jObjectIt: jObject) {
-		auto name = string(jObjectIt.name.GetString());
+		const auto name = string(jObjectIt.name.GetString());
 		const auto& value = jObjectIt.value;
 		//
 		if (value.IsNull() == true) {
