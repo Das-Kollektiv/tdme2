@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -17,6 +18,7 @@
 
 using std::array;
 using std::string;
+using std::unique_ptr;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
@@ -65,7 +67,7 @@ protected:
 
 	struct PrototypeCounter {
 		int counter;
-		Prototype* prototype { nullptr };
+		unique_ptr<Prototype> prototype;
 	};
 	unordered_map<string, PrototypeCounter> prototypes;
 
