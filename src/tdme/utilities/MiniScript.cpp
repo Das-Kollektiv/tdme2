@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <initializer_list>
 #include <map>
+#include <memory>
 #include <span>
 #include <stack>
 #include <string>
@@ -14,12 +15,6 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/logics/LogicMiniScript.h>
 #include <tdme/engine/model/RotationOrder.h>
-#include <tdme/engine/physics/Body.h>
-#include <tdme/engine/physics/World.h>
-#include <tdme/engine/primitives/BoundingVolume.h>
-#include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/prototype/PrototypeBoundingVolume.h>
-#include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/gui/GUIParser.h>
@@ -50,6 +45,7 @@
 
 using std::find;
 using std::initializer_list;
+using std::make_unique;
 using std::map;
 using std::remove;
 using std::reverse;
@@ -59,18 +55,13 @@ using std::stack;
 using std::string;
 using std::string_view;
 using std::to_string;
+using std::unique_ptr;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
 using tdme::engine::logics::LogicMiniScript;
 using tdme::engine::model::RotationOrder;
-using tdme::engine::physics::Body;
-using tdme::engine::physics::World;
-using tdme::engine::primitives::BoundingVolume;
-using tdme::engine::prototype::Prototype;
-using tdme::engine::prototype::PrototypeBoundingVolume;
-using tdme::engine::scene::SceneEntity;
 using tdme::engine::Rotation;
 using tdme::engine::Transform;
 using tdme::gui::GUIParser;

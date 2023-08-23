@@ -1,5 +1,6 @@
 #include <tdme/engine/logics/LogicMiniScript.h>
 
+#include <memory>
 #include <span>
 #include <string>
 #include <vector>
@@ -41,6 +42,7 @@
 using std::span;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::logics::LogicMiniScript;
@@ -5204,12 +5206,12 @@ void LogicMiniScript::registerMethods() {
 						auto prototypeIt = miniScript->prototypes.find(canonicalPath);
 						if (prototypeIt != miniScript->prototypes.end()) {
 							prototypeIt->second.counter++;
-							prototype = prototypeIt->second.prototype;
+							prototype = prototypeIt->second.prototype.get();
 						} else {
 							prototype = PrototypeReader::read(_pathName, fileName);
 							miniScript->prototypes[canonicalPath] = {
 								.counter = 1,
-								.prototype = prototype
+								.prototype = unique_ptr<Prototype>(prototype)
 							};
 						}
 						miniScript->enginePrototypesToAdd.emplace_back(
@@ -5293,12 +5295,12 @@ void LogicMiniScript::registerMethods() {
 						auto prototypeIt = miniScript->prototypes.find(canonicalPath);
 						if (prototypeIt != miniScript->prototypes.end()) {
 							prototypeIt->second.counter++;
-							prototype = prototypeIt->second.prototype;
+							prototype = prototypeIt->second.prototype.get();
 						} else {
 							prototype = PrototypeReader::read(_pathName, fileName);
 							miniScript->prototypes[canonicalPath] = {
 								.counter = 1,
-								.prototype = prototype
+								.prototype = unique_ptr<Prototype>(prototype)
 							};
 						}
 						miniScript->enginePrototypesToAdd.emplace_back(
