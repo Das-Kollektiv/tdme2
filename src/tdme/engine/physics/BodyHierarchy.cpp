@@ -8,6 +8,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
 
+using std::make_unique;
 using std::string;
 using std::to_string;
 using std::vector;
@@ -27,6 +28,7 @@ BodyHierarchy::~BodyHierarchy() {
 	//
 	for (auto subBody: bodies) {
 		Body::removeColliders(subBody->colliders, subBody->boundingVolumes);
+		delete subBody;
 	}
 }
 
@@ -77,12 +79,16 @@ void BodyHierarchy::addBody(const string& id, const Transform& transform, const 
 	for (auto boundingVolume: clonedBoundingVolumes) {
 		boundingVolume->createCollisionShape(world);
 	}
+
 	//
-	auto bodyHierarchyLevel = new BodyHierarchyLevel(id, parentBodyHierarchyLevel, transform, clonedBoundingVolumes);
-	parentBodyHierarchyLevel->children[id] = bodyHierarchyLevel;
+	auto bodyHierarchyLevel = make_unique<BodyHierarchyLevel>(id, parentBodyHierarchyLevel, transform, clonedBoundingVolumes);
+	parentBodyHierarchyLevel->children[id] = bodyHierarchyLevel.get();
 
 	// and bodies
-	bodies.push_back(bodyHierarchyLevel);
+	bodies.push_back(bodyHierarchyLevel.get());
+
+	//
+	bodyHierarchyLevel.release();
 }
 
 void BodyHierarchy::updateBody(const string& id, const Transform& transform) {

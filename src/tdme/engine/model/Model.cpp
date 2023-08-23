@@ -19,6 +19,7 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/threading/AtomicOperations.h>
 
+using std::make_unique;
 using std::map;
 using std::string;
 using std::unique_ptr;
@@ -81,9 +82,9 @@ AnimationSetup* Model::addAnimationSetup(const string& id, int32_t startFrame, i
 		delete animationSetupIt->second;
 		animationSetups.erase(animationSetupIt);
 	}
-	auto animationSetup = new AnimationSetup(this, id, startFrame, endFrame, loop, string(), speed);
-	animationSetups[id] = animationSetup;
-	return animationSetup;
+	auto animationSetup = make_unique<AnimationSetup>(this, id, startFrame, endFrame, loop, string(), speed);
+	animationSetups[id] = animationSetup.get();
+	return animationSetup.release();
 }
 
 AnimationSetup* Model::addOverlayAnimationSetup(const string& id, const string& overlayFromNodeId, int32_t startFrame, int32_t endFrame, bool loop, float speed)
@@ -93,9 +94,9 @@ AnimationSetup* Model::addOverlayAnimationSetup(const string& id, const string& 
 		delete animationSetupIt->second;
 		animationSetups.erase(animationSetupIt);
 	}
-	auto animationSetup = new AnimationSetup(this, id, startFrame, endFrame, loop, overlayFromNodeId, speed);
-	animationSetups[id] = animationSetup;
-	return animationSetup;
+	auto animationSetup = make_unique<AnimationSetup>(this, id, startFrame, endFrame, loop, overlayFromNodeId, speed);
+	animationSetups[id] = animationSetup.get();
+	return animationSetup.release();
 }
 
 bool Model::renameAnimationSetup(const string& id, const string& newId) {

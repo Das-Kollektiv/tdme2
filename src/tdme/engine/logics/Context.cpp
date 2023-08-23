@@ -602,18 +602,13 @@ Context::~Context() {
 }
 
 void Context::initialize() {
-	// TODO: optionally pathfinding should be set enabled in client and/or server
-	// path finding is only required for server
-	// if (server == true) {
-
+	// TODO: pathfinding could be optional
 	// world listener
-	worldListener = new ContextWorldListener(this);
-	world->addWorldListener(worldListener);
+	worldListener = make_unique<ContextWorldListener>(this);
+	world->addWorldListener(worldListener.get());
 
 	// path finding thread
 	pathFinding.start();
-
-	// }
 
 	//
 	timeStarted = Time::getCurrentMillis();
@@ -624,9 +619,9 @@ void Context::initialize() {
 
 void Context::shutdown() {
 	Console::println("Context::shutdown()");
-	// TODO: optionally pathfinding should be set enabled in client and/or server
+	//
+	world->removeWorldListener(worldListener.get());
 	pathFinding.shutdown();
-	world->removeWorldListener(worldListener);
 	//
 	for (auto logic: logics) delete logic;
 	logics.clear();

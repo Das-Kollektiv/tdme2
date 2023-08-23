@@ -357,7 +357,7 @@ private:
 	// context main data
 	volatile bool initialized;
 	Mutex* logicsMutex { nullptr };
-	ContextWorldListener* worldListener { nullptr };
+	unique_ptr<ContextWorldListener> worldListener;
 	unique_ptr<Scene> scene;
 	unordered_map<string, Logic*> logicsById;
 	vector<Logic*> logics;

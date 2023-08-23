@@ -84,7 +84,6 @@ World::World(const string& id)
 World::~World()
 {
 	//
-	for (auto worldListener: worldListeners) delete worldListener;
 	worldListeners.clear();
 	reset();
 	physicsCommon.destroyPhysicsWorld(world);
@@ -640,5 +639,4 @@ void World::addWorldListener(WorldListener* listener)
 void World::removeWorldListener(WorldListener* listener)
 {
 	worldListeners.erase(remove(worldListeners.begin(), worldListeners.end(), listener), worldListeners.end());
-	delete listener;
 }
