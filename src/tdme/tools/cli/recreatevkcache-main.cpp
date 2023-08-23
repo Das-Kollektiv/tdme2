@@ -1,4 +1,3 @@
-#include <cstdlib>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -70,7 +69,7 @@ public:
 	void initialize() override {
 		Engine::getInstance()->initialize();
 		if (Engine::getInstance()->getGraphicsRendererType() != Renderer::RENDERERTYPE_VULKAN) {
-			Console::println("Engine has not been compiled with -DVULKAN, Vulkan shader cache can not get created. Exiting.");
+			Console::println("Note: recreatevkcache does not run with --vulkan, Vulkan shader cache can not get created. Exiting.");
 			Application::exit(0);
 		}
 	}

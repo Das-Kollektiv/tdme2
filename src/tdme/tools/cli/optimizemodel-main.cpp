@@ -1,4 +1,3 @@
-#include <cstdlib>
 #include <memory>
 #include <string>
 
@@ -16,6 +15,7 @@
 #include <tdme/utilities/StringTools.h>
 
 using std::make_unique;
+using std::string;
 using std::unique_ptr;
 
 using tdme::application::Application;

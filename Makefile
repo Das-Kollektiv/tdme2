@@ -955,6 +955,7 @@ MAIN_SRCS = \
 	src/tdme/tools/cli/fixdoxygen-main.cpp \
 	src/tdme/tools/cli/generatelicenses-main.cpp \
 	src/tdme/tools/cli/importtmodel-main.cpp \
+	src/tdme/tools/cli/importtscene-main.cpp \
 	src/tdme/tools/cli/makefilegenerator-main.cpp \
 	src/tdme/tools/cli/miniscripttranspiler-main.cpp \
 	src/tdme/tools/cli/miniscriptuntranspiler-main.cpp \

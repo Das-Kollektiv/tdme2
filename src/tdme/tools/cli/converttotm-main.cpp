@@ -1,4 +1,4 @@
-#include <cstdlib>
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -18,6 +18,9 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/StringTools.h>
+
+using std::string;
+using std::unique_ptr;
 
 using tdme::application::Application;
 using tdme::engine::fileio::models::ModelReader;
@@ -101,10 +104,12 @@ public:
 				auto outputFileName = StringTools::substring(inputFileName, 0, inputFileName.rfind('.')) + ".tm";
 				try {
 					Console::println("Loading model: " + inputFileName);
-					auto model = ModelReader::read(
-						FileSystem::getInstance()->getPathName(inputFileName),
-						FileSystem::getInstance()->getFileName(inputFileName),
-						useBC7TextureCompression
+					auto model = unique_ptr<Model>(
+						ModelReader::read(
+							FileSystem::getInstance()->getPathName(inputFileName),
+							FileSystem::getInstance()->getFileName(inputFileName),
+							useBC7TextureCompression
+						)
 					);
 					for (const auto& [materialId, material]: model->getMaterials()) {
 						auto specularMaterialProperties = material->getSpecularMaterialProperties();
@@ -204,7 +209,7 @@ public:
 					//
 					Console::println("Exporting model: " + outputFileName);
 					TMWriter::write(
-						model,
+						model.get(),
 						FileSystem::getInstance()->getPathName(outputFileName),
 						FileSystem::getInstance()->getFileName(outputFileName),
 						useBC7TextureCompression

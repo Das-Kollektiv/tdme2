@@ -1,4 +1,4 @@
-#include <cstdlib>
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -19,6 +19,9 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+
+using std::string;
+using std::unique_ptr;
 
 using tdme::application::Application;
 using tdme::engine::fileio::scenes::SceneReader;
@@ -45,15 +48,17 @@ int main(int argc, char** argv)
 	Console::println();
 
 	if (argc != 2) {
-		Console::println("Usage: scenefixmodelszup2yup scene->tscene");
+		Console::println("Usage: scenefixmodelszup2yup scene");
 		Application::exit(1);
 	}
 	string sceneFileName = string(argv[1]);
 	try {
 		Console::println("Loading scene: " + sceneFileName);
-		auto scene = SceneReader::read(
-			FileSystem::getInstance()->getPathName(sceneFileName),
-			FileSystem::getInstance()->getFileName(sceneFileName)
+		auto scene = unique_ptr<Scene>(
+			SceneReader::read(
+				FileSystem::getInstance()->getPathName(sceneFileName),
+				FileSystem::getInstance()->getFileName(sceneFileName)
+			)
 		);
 		Console::println("Fixing scene models up axis from Z-Up to Y-Up");
 		Matrix4x4 z2yUpMatrix;
@@ -83,7 +88,7 @@ int main(int argc, char** argv)
 		SceneWriter::write(
 			FileSystem::getInstance()->getPathName(sceneFileName),
 			FileSystem::getInstance()->getFileName(sceneFileName),
-			scene
+			scene.get()
 		);
 	} catch (Exception& exception) {
 		Console::println("An error occurred: " + string(exception.what()));

@@ -1,5 +1,8 @@
-#include <cstdlib>
+#include <memory>
 #include <string>
+
+using std::string;
+using std::unique_ptr;
 
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
@@ -37,17 +40,21 @@ int main(int argc, char** argv)
 	string targetFileName = string(argv[2]);
 	try {
 		Console::println("Loading source model: " + sourceFileName);
-		auto srcModel = ModelReader::read(
-			FileSystem::getInstance()->getPathName(sourceFileName),
-			FileSystem::getInstance()->getFileName(sourceFileName)
+		auto srcModel = unique_ptr<Model>(
+			ModelReader::read(
+				FileSystem::getInstance()->getPathName(sourceFileName),
+				FileSystem::getInstance()->getFileName(sourceFileName)
+			)
 		);
 		Console::println("Loading target model: " + targetFileName);
-		auto targetModel = ModelReader::read(
-			FileSystem::getInstance()->getPathName(targetFileName),
-			FileSystem::getInstance()->getFileName(targetFileName)
+		auto targetModel = unique_ptr<Model>(
+			ModelReader::read(
+				FileSystem::getInstance()->getPathName(targetFileName),
+				FileSystem::getInstance()->getFileName(targetFileName)
+			)
 		);
 		Console::println("Clearing target animation setups");
-		targetModel->getAnimationSetups().clear();
+		targetModel->clearAnimationSetups();
 		for (const auto& [srcAnimationSetupId, srcAnimationSetup]: srcModel->getAnimationSetups()) {
 			Console::println("Adding target animation setup: " + srcAnimationSetup->getId());
 			if (srcAnimationSetup->getOverlayFromNodeId().length() == 0) {
@@ -71,7 +78,7 @@ int main(int argc, char** argv)
 		}
 		Console::println("Saving target model: " + targetFileName);
 		TMWriter::write(
-			targetModel,
+			targetModel.get(),
 			FileSystem::getInstance()->getPathName(targetFileName),
 			FileSystem::getInstance()->getFileName(targetFileName)
 		);

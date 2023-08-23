@@ -112,14 +112,11 @@ Model* DAEReader::read(const string& pathName, const string& fileName, bool useB
 	// up vector and rotation order
 	auto upVector = getUpVector(xmlRoot);
 	RotationOrder* rotationOrder = nullptr;
-	{
-		auto v = upVector;
-		if (v == UpVector::Y_UP) {
-			rotationOrder = RotationOrder::ZYX;
-		} else
-		if (v == UpVector::Z_UP) {
-			rotationOrder = RotationOrder::YZX;
-		}
+	if (upVector == UpVector::Y_UP) {
+		rotationOrder = RotationOrder::ZYX;
+	} else
+	if (upVector == UpVector::Z_UP) {
+		rotationOrder = RotationOrder::XYZ;
 	}
 
 	// 	create model

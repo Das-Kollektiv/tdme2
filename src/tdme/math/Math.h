@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cmath>
-#include <cstdlib>
 
 #include <tdme/tdme.h>
 #include <tdme/math/fwd-tdme.h>

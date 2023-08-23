@@ -244,6 +244,24 @@ public:
 	}
 
 	/**
+	 * @return animation setups
+	 */
+	inline const map<string, AnimationSetup*>& getAnimationSetups() {
+		return animationSetups;
+	}
+
+	/**
+	 * @return animation setup for given id or nullptr
+	 */
+	inline AnimationSetup* getAnimationSetup(const string& id) {
+		auto animationSetupIt = animationSetups.find(id);
+		if (animationSetupIt != animationSetups.end()) {
+			return animationSetupIt->second;
+		}
+		return nullptr;
+	}
+
+	/**
 	 * Adds an base animation setup
 	 * @param id id
 	 * @param startFrame start frame
@@ -267,15 +285,12 @@ public:
 	AnimationSetup* addOverlayAnimationSetup(const string& id, const string& overlayFromNodeId, int32_t startFrame, int32_t endFrame, bool loop, float speed = 1.0f);
 
 	/**
-	 * @return animation setup for given id or null
+	 * Rename animation set up
+	 * @param id id
+	 * @param newId new id
+	 * @return success
 	 */
-	inline AnimationSetup* getAnimationSetup(const string& id) {
-		auto animationSetupIt = animationSetups.find(id);
-		if (animationSetupIt != animationSetups.end()) {
-			return animationSetupIt->second;
-		}
-		return nullptr;
-	}
+	bool renameAnimationSetup(const string& id, const string& newId);
 
 	/**
 	 * Remove animation setup
@@ -285,20 +300,9 @@ public:
 	bool removeAnimationSetup(const string& id);
 
 	/**
-	 * Rename animation set up
-	 * @param id id
-	 * @param newId new id
-	 * @return success
+	 * Clear animation setups
 	 */
-	bool renameAnimationSetup(const string& id, const string& newId);
-
-	/**
-	 * TODO: return const map
-	 * @return animation setup for given id or null
-	 */
-	inline map<string, AnimationSetup*>& getAnimationSetups() {
-		return animationSetups;
-	}
+	void clearAnimationSetups();
 
 	/**
 	 * @return if model has animations

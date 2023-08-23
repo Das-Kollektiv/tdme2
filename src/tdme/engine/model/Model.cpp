@@ -98,14 +98,6 @@ AnimationSetup* Model::addOverlayAnimationSetup(const string& id, const string& 
 	return animationSetup;
 }
 
-bool Model::removeAnimationSetup(const string& id) {
-	auto animationSetupIt = animationSetups.find(id);
-	if (animationSetupIt == animationSetups.end()) return false;
-	delete animationSetupIt->second;
-	animationSetups.erase(animationSetupIt);
-	return true;
-}
-
 bool Model::renameAnimationSetup(const string& id, const string& newId) {
 	auto animationSetupIt = animationSetups.find(id);
 	if (animationSetupIt == animationSetups.end()) return false;
@@ -114,6 +106,21 @@ bool Model::renameAnimationSetup(const string& id, const string& newId) {
 	animationSetup->setId(newId);
 	animationSetups[newId] = animationSetup;
 	return true;
+}
+
+bool Model::removeAnimationSetup(const string& id) {
+	auto animationSetupIt = animationSetups.find(id);
+	if (animationSetupIt == animationSetups.end()) return false;
+	delete animationSetupIt->second;
+	animationSetups.erase(animationSetupIt);
+	return true;
+}
+
+void Model::clearAnimationSetups() {
+	for (const auto& [animationSetupId, animationSetup]: animationSetups) {
+		delete animationSetup;
+	}
+	animationSetups.clear();
 }
 
 BoundingBox* Model::getBoundingBox()
