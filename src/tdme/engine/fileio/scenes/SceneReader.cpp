@@ -426,9 +426,6 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 	auto upVector = sceneModel->getUpVector();
 	RotationOrder* rotationOrder = sceneModel->getRotationOrder();
 
-	Console::println(upVector->getName());
-	Console::println(rotationOrder->getName());
-
 	//
 	auto scene = make_unique<Scene>(fileName, "");
 	scene->setRotationOrder(rotationOrder);
