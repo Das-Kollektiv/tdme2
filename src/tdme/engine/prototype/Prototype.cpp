@@ -118,16 +118,8 @@ void Prototype::setImposterLOD(PrototypeImposterLOD* imposterLOD) {
 	this->imposterLOD = unique_ptr<PrototypeImposterLOD>(imposterLOD);
 }
 
-PrototypeAudio* Prototype::addSound(const string& id) {
-	{
-		auto sound = getSound(id);
-		if (sound != nullptr) return nullptr;
-	}
-	{
-		sounds.push_back(make_unique<PrototypeAudio>(id));
-		auto sound = sounds[sounds.size() - 1].get();
-		soundsById[id] = sound;
-		return sound;
-	}
+void Prototype::addSound(PrototypeAudio* sound) {
+	removeSound(sound->getId());
+	sounds.push_back(unique_ptr<PrototypeAudio>(sound));
+	soundsById[sound->getId()] = sound;
 }
-

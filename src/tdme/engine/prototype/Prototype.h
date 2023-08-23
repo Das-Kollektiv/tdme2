@@ -393,10 +393,10 @@ public:
 
 	/**
 	 * Add particle system
+	 * @param particleSystem particle system
 	 */
-	inline PrototypeParticleSystem* addParticleSystem() {
-		particleSystems.push_back(make_unique<PrototypeParticleSystem>());
-		return particleSystems[particleSystems.size() - 1].get();
+	inline void addParticleSystem(PrototypeParticleSystem* particleSystem) {
+		particleSystems.push_back(unique_ptr<PrototypeParticleSystem>(particleSystem));
 	}
 
 	/**
@@ -539,11 +539,10 @@ public:
 	}
 
 	/**
-	 * Add sound with given id
-	 * @param id id
-	 * @return prototype audio
+	 * Add sound
+	 * @param sound sound
 	 */
-	PrototypeAudio* addSound(const string& id);
+	void addSound(PrototypeAudio* sound);
 
 	/**
 	 * Remove sound of given sound id

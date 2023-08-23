@@ -276,7 +276,7 @@ void PrototypeSoundsSubController::createSound(Prototype* prototype) {
 	}
 
 	if (soundCreate == true) {
-		prototype->addSound(soundName);
+		prototype->addSound(new PrototypeAudio(soundName));
 		editorView->reloadTabOutliner(string() + "sounds." + soundName);
 		startRenameSound(
 			prototype,

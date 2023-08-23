@@ -1,6 +1,8 @@
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 
+#include <memory>
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
@@ -50,7 +52,9 @@
 
 #include <ext/rapidjson/document.h>
 
+using std::make_unique;
 using std::string;
+using std::vector;
 
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::fileio::models::ModelReader;
@@ -146,7 +150,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const string& f
 	//
 	if (Tools::hasFileExtension(fileName, {{"tmodel"}}) == false &&
 		Tools::hasFileExtension(fileName, ModelReader::getModelExtensions()) == true) {
-		return new Prototype(
+		return make_unique<Prototype>(
 			Prototype::ID_NONE,
 			Prototype_Type::MODEL,
 			Tools::removeFileExtension(fileName),
@@ -155,7 +159,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const string& f
 			pathName + "/" + fileName,
 			string(),
 			ModelReader::read(pathName, fileName, useBC7TextureCompression)
-		);
+		).release();
 	}
 
 	//
@@ -172,7 +176,6 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const string& f
 Prototype* PrototypeReader::read(int id, const string& pathName, const Value& jPrototypeRoot, PrototypeTransformFilter* transformFilter, bool useBC7TextureCompression)
 {
 	//
-	Prototype* prototype = nullptr;
 	auto prototypeType = Prototype_Type::valueOf(jPrototypeRoot["type"].GetString());
 	auto thumbnail = jPrototypeRoot.FindMember("thumbnail") != jPrototypeRoot.MemberEnd()?jPrototypeRoot["thumbnail"].GetString():"";
 	auto name = (jPrototypeRoot["name"].GetString());
@@ -206,7 +209,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const Value& jP
 			useBC7TextureCompression
 		);
 	}
-	prototype = new Prototype(
+	auto prototype = make_unique<Prototype>(
 		id,
 		prototypeType,
 		name,
@@ -254,18 +257,20 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const Value& jP
 		prototype->addProperty(property->getName(), property->getValue());
 	}
 	if (jPrototypeRoot.FindMember("bv") != jPrototypeRoot.MemberEnd()) {
-		auto boundingVolume = parseBoundingVolume(
-			prototype,
-			pathName,
-			jPrototypeRoot["bv"]
+		auto boundingVolume = unique_ptr<PrototypeBoundingVolume>(
+			parseBoundingVolume(
+				prototype.get(),
+				pathName,
+				jPrototypeRoot["bv"]
+			)
 		);
-		if (boundingVolume->getBoundingVolume() != nullptr) prototype->addBoundingVolume(boundingVolume);
+		if (boundingVolume->getBoundingVolume() != nullptr) prototype->addBoundingVolume(boundingVolume.release());
 	} else
 	if (jPrototypeRoot.FindMember("bvs") != jPrototypeRoot.MemberEnd()) {
 		auto jBoundingVolumes = jPrototypeRoot["bvs"].GetArray();
 		for (auto i = 0; i < jBoundingVolumes.Size(); i++) {
-			auto boundingVolume = parseBoundingVolume(prototype, pathName, jBoundingVolumes[i]);
-			if (boundingVolume->getBoundingVolume() != nullptr) prototype->addBoundingVolume(boundingVolume);
+			auto boundingVolume = unique_ptr<PrototypeBoundingVolume>(parseBoundingVolume(prototype.get(), pathName, jBoundingVolumes[i]));
+			if (boundingVolume->getBoundingVolume() != nullptr) prototype->addBoundingVolume(boundingVolume.release());
 		}
 	}
 	if (jPrototypeRoot.FindMember("p") != jPrototypeRoot.MemberEnd() && prototype->getPhysics() != nullptr) {
@@ -286,10 +291,9 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const Value& jP
 	if (jPrototypeRoot.FindMember("sd") != jPrototypeRoot.MemberEnd()) {
 		for (const auto& jSound: jPrototypeRoot["sd"].GetArray()) {
 			auto id = jSound["i"].GetString();
-			auto sound = prototype->addSound(id);
-			if (sound == nullptr) continue;
 			auto soundFileName = jSound["file"].GetString();
 			auto soundPathName = getResourcePathName(pathName, soundFileName);
+			auto sound = make_unique<PrototypeAudio>(id);
 			sound->setFileName(getResourcePathName(pathName, soundFileName) + "/" + FileSystem::getInstance()->getFileName(soundFileName));
 			sound->setAnimation(jSound["a"].GetString());
 			sound->setGain(static_cast<float>(jSound["g"].GetFloat()));
@@ -297,6 +301,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const Value& jP
 			sound->setOffset(static_cast<float>(jSound["o"].GetInt()));
 			sound->setLooping(jSound["l"].GetBool());
 			sound->setFixed(jSound["f"].GetBool());
+			prototype->addSound(sound.release());
 		}
 	}
 	if (prototypeType == Prototype_Type::MODEL) {
@@ -308,14 +313,12 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const Value& jP
 	} else
 	if (prototypeType == Prototype_Type::PARTICLESYSTEM) {
 		if (jPrototypeRoot.FindMember("ps") != jPrototypeRoot.MemberEnd()) {
-			prototype->addParticleSystem();
-			parseParticleSystem(prototype->getParticleSystemAt(0), pathName, jPrototypeRoot["ps"], useBC7TextureCompression);
+			prototype->addParticleSystem(parseParticleSystem(pathName, jPrototypeRoot["ps"], useBC7TextureCompression));
 		} else
 		if (jPrototypeRoot.FindMember("pss") != jPrototypeRoot.MemberEnd()) {
 			auto jParticleSystems = jPrototypeRoot["pss"].GetArray();
 			for (auto i = 0; i < jParticleSystems.Size(); i++) {
-				prototype->addParticleSystem();
-				parseParticleSystem(prototype->getParticleSystemAt(prototype->getParticleSystemsCount() - 1), pathName, jParticleSystems[i], useBC7TextureCompression);
+				prototype->addParticleSystem(parseParticleSystem(pathName, jParticleSystems[i], useBC7TextureCompression));
 			}
 		}
 	}
@@ -486,7 +489,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const Value& jP
 	}
 
 	//
-	return prototype;
+	return prototype.release();
 }
 
 const string PrototypeReader::getResourcePathName(const string& pathName, const string& fileName) {
@@ -504,7 +507,7 @@ const string PrototypeReader::getResourcePathName(const string& pathName, const 
 
 PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(Prototype* prototype, const string& pathName, const Value& jBv)
 {
-	auto prototypeBoundingVolume = new PrototypeBoundingVolume(prototype);
+	auto prototypeBoundingVolume = make_unique<PrototypeBoundingVolume>(prototype);
 	BoundingVolume* bv;
 	auto bvTypeString = (jBv["type"].GetString());
 	if (StringTools::equalsIgnoreCase(bvTypeString, "none") == true) {
@@ -598,12 +601,13 @@ PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(Prototype* prototy
 		}
 	}
 	if (jBv.FindMember("g") != jBv.MemberEnd()) prototypeBoundingVolume->setGenerated(jBv["g"].GetBool());
-	return prototypeBoundingVolume;
+	//
+	return prototypeBoundingVolume.release();
 }
 
 PrototypeLODLevel* PrototypeReader::parseLODLevel(const string& pathName, const Value& jLodLevel, bool useBC7TextureCompression) {
 	auto lodType = static_cast<LODObject::LODLevelType>(jLodLevel["t"].GetInt());
-	auto lodLevel = new PrototypeLODLevel(
+	auto lodLevel = make_unique<PrototypeLODLevel>(
 		lodType,
 		lodType == LODObject::LODLEVELTYPE_MODEL?jLodLevel["f"].GetString():"",
 		nullptr,
@@ -637,13 +641,13 @@ PrototypeLODLevel* PrototypeReader::parseLODLevel(const string& pathName, const 
 			static_cast<float>(jLodLevel["cma"].GetFloat())
 		)
 	);
-	return lodLevel;
+	return lodLevel.release();
 }
 
 PrototypeImposterLOD* PrototypeReader::parseImposterLODLevel(const string& pathName, const Value& jImposterLOD, bool useBC7TextureCompression) {
-	auto imposterLOD = new PrototypeImposterLOD(
-		{},
-		{},
+	auto imposterLOD = make_unique<PrototypeImposterLOD>(
+		vector<string>(),
+		vector<Model*>(),
 		static_cast<float>(jImposterLOD["d"].GetFloat())
 	);
 
@@ -686,10 +690,12 @@ PrototypeImposterLOD* PrototypeReader::parseImposterLODLevel(const string& pathN
 			static_cast<float>(jImposterLOD["cma"].GetFloat())
 		)
 	);
-	return imposterLOD;
+	//
+	return imposterLOD.release();
 }
 
-void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSystem, const string& pathName, const Value& jParticleSystem, bool useBC7TextureCompression) {
+PrototypeParticleSystem* PrototypeReader::parseParticleSystem(const string& pathName, const Value& jParticleSystem, bool useBC7TextureCompression) {
+	auto particleSystem = make_unique<PrototypeParticleSystem>();
 	particleSystem->setType(PrototypeParticleSystem_Type::valueOf((jParticleSystem["t"].GetString())));
 	{
 		auto particleSystemType = particleSystem->getType();
@@ -716,7 +722,7 @@ void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSyste
 					useBC7TextureCompression
 				);
 			} catch (Exception& exception) {
-				Console::print(string("PrototypeReader::doImport(): An error occurred: "));
+				Console::print(string("PrototypeReader::parseParticleSystem(): An error occurred: "));
 				Console::println(string(exception.what()));
 			}
 		} else
@@ -739,7 +745,7 @@ void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSyste
 					if (jPointParticleSystem.FindMember("tvs") != jPointParticleSystem.MemberEnd()) pointParticleSystem->setTextureVerticalSprites(jPointParticleSystem["tvs"].GetInt());
 					if (jPointParticleSystem.FindMember("fps") != jPointParticleSystem.MemberEnd()) pointParticleSystem->setTextureSpritesFPS(jPointParticleSystem["fps"].GetFloat());
 				} catch (Exception& exception) {
-					Console::print(string("PrototypeReader::doImport(): An error occurred: "));
+					Console::print(string("PrototypeReader::parseParticleSystem(): An error occurred: "));
 					Console::println(string(exception.what()));
 				}
 			}
@@ -764,7 +770,7 @@ void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSyste
 					if (jFogParticleSystem.FindMember("tvs") != jFogParticleSystem.MemberEnd()) fogParticleSystem->setTextureVerticalSprites(jFogParticleSystem["tvs"].GetInt());
 					if (jFogParticleSystem.FindMember("fps") != jFogParticleSystem.MemberEnd()) fogParticleSystem->setTextureSpritesFPS(jFogParticleSystem["fps"].GetFloat());
 				} catch (Exception& exception) {
-					Console::print(string("PrototypeReader::doImport(): An error occurred: "));
+					Console::print(string("PrototypeReader::parseParticleSystem(): An error occurred: "));
 					Console::println(string(exception.what()));
 				}
 			}
@@ -1069,4 +1075,6 @@ void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSyste
 			 );
 		}
 	}
+	//
+	return particleSystem.release();
 }

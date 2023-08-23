@@ -134,11 +134,11 @@ private:
 
 	/**
 	 * Parse particle system
-	 * @param particleSystem particle system to be parsed into
 	 * @param pathName path name
 	 * @param jParticleSystem JSON particle system object
 	 * @param useBC7TextureCompression use BC7 texture compression
+	 * @return particle system
 	 */
-	static void parseParticleSystem(PrototypeParticleSystem* particleSystem, const string& pathName, const Value& jParticleSystem, bool useBC7TextureCompression);
+	static PrototypeParticleSystem* parseParticleSystem(const string& pathName, const Value& jParticleSystem, bool useBC7TextureCompression);
 
 };

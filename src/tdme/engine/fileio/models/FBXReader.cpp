@@ -556,7 +556,7 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 						);
 					}
 				} else {
-					Console::println("FBXReader::processMeshNode(): unsupported newMaterial shading class: " + fbxMaterialName);
+					Console::println("FBXReader::processMeshNode(): unsupported material shading class: " + fbxMaterialName);
 				}
 				FbxProperty fbxProperty;
 				fbxProperty = fbxMaterial->FindProperty(FbxSurfaceMaterial::sDiffuse);

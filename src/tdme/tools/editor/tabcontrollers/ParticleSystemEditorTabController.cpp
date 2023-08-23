@@ -285,12 +285,14 @@ void ParticleSystemEditorTabController::onChange(GUIElementNode* node)
 		if (node->getController()->getValue().getString() == "particlesystem") {
 			// TODO: move me into a method as I am using it also in context menu, too lazy right now :D
 			auto prototype = view->getPrototype();
-			auto particleSystem = prototype == nullptr?nullptr:prototype->addParticleSystem();
-			auto particleSystemIdx = particleSystem == nullptr?-1:prototype->getParticleSystemsCount() - 1;
-			if (particleSystemIdx != -1) {
-				view->uninitParticleSystem();
-				view->getEditorView()->reloadTabOutliner("particlesystems." + to_string(particleSystemIdx));
-				view->initParticleSystem();
+			if (prototype != nullptr) {
+				prototype->addParticleSystem(new PrototypeParticleSystem());
+				auto particleSystemIdx = prototype->getParticleSystemsCount() - 1;
+				if (particleSystemIdx != -1) {
+					view->uninitParticleSystem();
+					view->getEditorView()->reloadTabOutliner("particlesystems." + to_string(particleSystemIdx));
+					view->initParticleSystem();
+				}
 			}
 		}
 	} else
@@ -393,8 +395,7 @@ void ParticleSystemEditorTabController::onContextMenuRequest(GUIElementNode* nod
 				void performAction() override {
 					auto prototype = particleSystemEditorTabController->view->getPrototype();
 					if (prototype == nullptr) return;
-					auto particleSystem = prototype->addParticleSystem();
-					if (particleSystem == nullptr) return;
+					prototype->addParticleSystem(new PrototypeParticleSystem());
 					auto particleSystemIdx = prototype->getParticleSystemsCount() - 1;
 					//
 					auto view = particleSystemEditorTabController->view;
