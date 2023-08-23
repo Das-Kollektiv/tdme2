@@ -156,8 +156,7 @@ void GL3Renderer::initialize()
 		// shader source
 		auto skinningKernelProgramSource = FileSystem::getInstance()->getContentAsString("shader/gl3/skinning", "skinning.cl");
 		auto skinningKernelProgramSourceSize = skinningKernelProgramSource.size();
-		char* skinningKernelProgramSourceHeap = new char[skinningKernelProgramSourceSize + 1];
-		strcpy(skinningKernelProgramSourceHeap, skinningKernelProgramSource.c_str());
+		array<const char*, 1> skinningKernelProgramSourceArray = { skinningKernelProgramSource.data() };
 
 		// context, device
 		cl_int clError = 0;
@@ -184,7 +183,7 @@ void GL3Renderer::initialize()
 		};
 		clContext = clCreateContext(properties, 1, &clDeviceId, clErrorCallback, nullptr, &clError);
 		clCommandQueue = clCreateCommandQueue(clContext, clDeviceId, 0, &clError);
-		clSkinningKernelProgram = clCreateProgramWithSource(clContext, 1, (const char**)&skinningKernelProgramSourceHeap, &skinningKernelProgramSourceSize, &clError);
+		clSkinningKernelProgram = clCreateProgramWithSource(clContext, 1, skinningKernelProgramSourceArray.data(), &skinningKernelProgramSourceSize, &clError);
 		clError = clBuildProgram(clSkinningKernelProgram, 1, &clDeviceId, nullptr, nullptr, nullptr);
 		auto clBuildInfo = clGetProgramBuildInfo(clSkinningKernelProgram, clDeviceId, CL_PROGRAM_BUILD_STATUS, 0, nullptr, &clSize);
 		clSkinningKernel = clCreateKernel(clSkinningKernelProgram, "computeSkinning", &clError);

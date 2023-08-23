@@ -7,6 +7,8 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/prototype/BaseProperty.h>
 
+using std::make_unique;
+using std::move;
 using std::remove;
 using std::string;
 using std::unique_ptr;
@@ -72,9 +74,9 @@ bool BaseProperties::addProperty(const string& name, const string& value)
 	if (getProperty(name) != nullptr)
 		return false;
 
-	auto property = new BaseProperty(name, value);
-	propertiesByName[name] = property;
-	properties.push_back(unique_ptr<BaseProperty>(property));
+	auto property = make_unique<BaseProperty>(name, value);
+	propertiesByName[name] = property.get();
+	properties.push_back(move(property));
 	return true;
 }
 

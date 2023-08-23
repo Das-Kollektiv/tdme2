@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <string>
 #include <unordered_set>
 
@@ -43,6 +44,7 @@
 #include <tdme/utilities/Time.h>
 
 using std::find;
+using std::make_unique;
 using std::map;
 using std::remove;
 using std::string;
