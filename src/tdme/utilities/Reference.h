@@ -36,7 +36,7 @@ public:
 	 * @brief releases a reference, thus decrementing the counter and delete it if reference counter is zero
 	 */
 	inline void releaseReference() {
-		if (AtomicOperations::decrement(referenceCounter) == 0) {
+		if (AtomicOperations::decrement(referenceCounter) <= 0) {
 			onDelete();
 			delete this;
 		}

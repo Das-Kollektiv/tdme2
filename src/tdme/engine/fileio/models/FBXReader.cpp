@@ -35,6 +35,7 @@
 #include <tdme/utilities/ModelTools.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::make_unique;
 using std::map;
 using std::string;
 using std::to_string;
@@ -114,7 +115,7 @@ Model* FBXReader::read(const string& pathName, const string& fileName, bool useB
 	Console::println("FBXReader::read(): importing FBX");
 
 	// create model
-	auto model = new Model(
+	auto model = make_unique<Model>(
 		fileName,
 		fileName,
 		getSceneUpVector(fbxScene.get()),
@@ -126,14 +127,14 @@ Model* FBXReader::read(const string& pathName, const string& fileName, bool useB
 	);
 
 	// set up model import matrix
-	setupModelImportRotationMatrix(model);
-	setupModelScaleRotationMatrix(fbxScene.get(), model);
+	setupModelImportRotationMatrix(model.get());
+	setupModelScaleRotationMatrix(fbxScene.get(), model.get());
 
 	// store possible armuature node ids (Blender only)
 	vector<string> possibleArmatureNodeIds;
 
 	// process nodes
-	processScene(fbxScene.get(), model, pathName, possibleArmatureNodeIds, useBC7TextureCompression);
+	processScene(fbxScene.get(), model.get(), pathName, possibleArmatureNodeIds, useBC7TextureCompression);
 
 	//
 	Console::println("FBXReader::read(): setting up animations");
@@ -200,7 +201,7 @@ Model* FBXReader::read(const string& pathName, const string& fileName, bool useB
 		FbxNode* fbxNode = fbxScene->GetRootNode();
 		if (fbxNode == nullptr) continue;
 		for(auto i = 0; i < fbxNode->GetChildCount(); i++) {
-			processAnimation(fbxNode->GetChild(i), fbxStartTime, fbxEndTime, model, frameOffset);
+			processAnimation(fbxNode->GetChild(i), fbxStartTime, fbxEndTime, model.get(), frameOffset);
 		}
         frameOffset+= endFrame - startFrame + 1;
 	}
@@ -211,14 +212,14 @@ Model* FBXReader::read(const string& pathName, const string& fileName, bool useB
 	Console::println("FBXReader::read(): prepare for indexed rendering");
 
 	//
-	ModelTools::setupJoints(model);
-	ModelTools::fixAnimationLength(model);
-	ModelTools::prepareForIndexedRendering(model);
+	ModelTools::setupJoints(model.get());
+	ModelTools::fixAnimationLength(model.get());
+	ModelTools::prepareForIndexedRendering(model.get());
 
 	Console::println("FBXReader::read(): done");
 
 	//
-	return model;
+	return model.release();
 }
 
 RotationOrder* FBXReader::getSceneRotationOrder(FbxScene* fbxScene) {
@@ -281,7 +282,7 @@ void FBXReader::processScene(FbxScene* fbxScene, Model* model, const string& pat
 }
 
 void FBXReader::processNode(FbxNode* fbxNode, Model* model, Node* parentNode, const string& pathName, vector<string>& possibleArmatureNodeIds, bool useBC7TextureCompression) {
-	Node* node = nullptr;
+	unique_ptr<Node> node;
 	if (fbxNode->GetNodeAttribute() != nullptr) {
 		auto fbxAttributeType = fbxNode->GetNodeAttribute()->GetAttributeType();
 		switch (fbxAttributeType) {
@@ -292,12 +293,12 @@ void FBXReader::processNode(FbxNode* fbxNode, Model* model, Node* parentNode, co
 				}
 			case FbxNodeAttribute::eMesh:
 				{
-					node = processMeshNode(fbxNode, model, parentNode, pathName, useBC7TextureCompression);
+					node = unique_ptr<Node>(processMeshNode(fbxNode, model, parentNode, pathName, useBC7TextureCompression));
 					break;
 				}
 			case FbxNodeAttribute::eSkeleton:
 				{
-					node = processSkeletonNode(fbxNode, model, parentNode, pathName);
+					node = unique_ptr<Node>(processSkeletonNode(fbxNode, model, parentNode, pathName));
 					break;
 				}
 			default:
@@ -308,7 +309,7 @@ void FBXReader::processNode(FbxNode* fbxNode, Model* model, Node* parentNode, co
 	}
 	if (node == nullptr) {
 		auto fbxNodeName = fbxNode->GetName();
-		node = new Node(model, parentNode, fbxNodeName, fbxNodeName);
+		node = make_unique<Node>(model, parentNode, fbxNodeName, fbxNodeName);
 	}
 	FbxAMatrix& fbxNodeLocalTransform = fbxNode->EvaluateLocalTransform();
 	node->setTransformMatrix(
@@ -332,12 +333,13 @@ void FBXReader::processNode(FbxNode* fbxNode, Model* model, Node* parentNode, co
 		)
 	);
 	if (parentNode == nullptr) {
-		model->getSubNodes()[node->getId()] = node;
+		model->getSubNodes()[node->getId()] = node.get();
 	} else {
-		parentNode->getSubNodes()[node->getId()] = node;
+		parentNode->getSubNodes()[node->getId()] = node.get();
 	}
-	model->getNodes()[node->getId()] = node;
-	parentNode = node;
+	model->getNodes()[node->getId()] = node.get();
+	//
+	parentNode = node.release();
 	for(auto i = 0; i < fbxNode->GetChildCount(); i++) {
 		processNode(fbxNode->GetChild(i), model, parentNode, pathName, possibleArmatureNodeIds, useBC7TextureCompression);
 	}
@@ -347,7 +349,7 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 	string fbxNodeName = fbxNode->GetName();
 	FbxMesh* fbxMesh = (FbxMesh*)fbxNode->GetNodeAttribute();
 
-	auto node = new Node(model, parentNode, fbxNodeName, fbxNodeName);
+	auto node = make_unique<Node>(model, parentNode, fbxNodeName, fbxNodeName);
 	vector<Vector3> vertices;
 	vector<Vector3> normals;
 	vector<Vector2> textureCoordinates;
@@ -425,17 +427,18 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 		}
 		Material* material = nullptr;
 		if (fbxMaterial == nullptr) {
-			material = model->getMaterials()["tdme.nomaterial"];
+			material = model->getMaterials()["fbx.nomaterial"];
 			if (material == nullptr) {
-				material = new Material("tdme.nomaterial");
-				model->getMaterials()[material->getId()] = material;
+				auto newMaterial = make_unique<Material>("fbx.nomaterial");
+				model->getMaterials()[material->getId()] = newMaterial.get();
+				material = newMaterial.release();
 			}
 		} else {
 			string fbxMaterialName = fbxMaterial->GetName();
 			material = model->getMaterials()[fbxMaterialName];
 			if (material == nullptr) {
-				material = new Material(fbxMaterialName);
-				auto specularMaterialProperties = new SpecularMaterialProperties();
+				auto newMaterial = make_unique<Material>(fbxMaterialName);
+				auto specularMaterialProperties = make_unique<SpecularMaterialProperties>();
 				if (fbxMaterial->GetClassId().Is(FbxSurfacePhong::ClassId)) {
 					FbxPropertyT<FbxDouble3> fbxColor3;
 					FbxPropertyT<FbxDouble> fbxTransparency;
@@ -553,7 +556,7 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 						);
 					}
 				} else {
-					Console::println("FBXReader::processMeshNode(): unsupported material shading class: " + fbxMaterialName);
+					Console::println("FBXReader::processMeshNode(): unsupported newMaterial shading class: " + fbxMaterialName);
 				}
 				FbxProperty fbxProperty;
 				fbxProperty = fbxMaterial->FindProperty(FbxSurfaceMaterial::sDiffuse);
@@ -568,7 +571,7 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 						// TODO: not sure about texture rotation with 2D textures here and I have no test model for now
 						textureMatrix.multiply(Matrix3x3::rotateAroundTextureCenter(texture->GetRotationU()));
 						textureMatrix.multiply(Matrix3x3().identity().setTranslation(Vector2(texture->GetTranslationU(), texture->GetTranslationV())));
-						material->setTextureMatrix(textureMatrix);
+						newMaterial->setTextureMatrix(textureMatrix);
 					} else
 					if (fbxProperty.GetSrcObjectCount<FbxTexture>() > 0) {
 						auto texture = FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxTexture>(0));
@@ -579,7 +582,7 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 						// TODO: not sure about texture rotation with 2D textures here and I have no test model for now
 						textureMatrix.multiply(Matrix3x3::rotateAroundTextureCenter(texture->GetRotationU()));
 						textureMatrix.multiply(Matrix3x3().identity().setTranslation(Vector2(texture->GetTranslationU(), texture->GetTranslationV())));
-						material->setTextureMatrix(textureMatrix);
+						newMaterial->setTextureMatrix(textureMatrix);
 					}
 				}
 				fbxProperty = fbxMaterial->FindProperty(FbxSurfaceMaterial::sTransparentColor);
@@ -667,8 +670,10 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 						)
 					);
 				}
-				material->setSpecularMaterialProperties(specularMaterialProperties);
-				model->getMaterials()[material->getId()] = material;
+				newMaterial->setSpecularMaterialProperties(specularMaterialProperties.release());
+				model->getMaterials()[newMaterial->getId()] = newMaterial.get();
+				//
+				material = newMaterial.release();
 			}
 		}
 		auto foundFacesEntity = false;
@@ -691,7 +696,7 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 				facesEntity->setFaces(faces);
 				faces.clear();
 			}
-			facesEntities.emplace_back(node, facesEntityName);
+			facesEntities.emplace_back(node.get(), facesEntityName);
 			facesEntity = &facesEntities[facesEntities.size() - 1];
 			facesEntity->setMaterial(material);
 		}
@@ -808,7 +813,7 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 			fbxVertexId++;
 		}
 		Face f(
-			node,
+			node.get(),
 			controlPointIndices[0],
 			controlPointIndices[1],
 			controlPointIndices[2],
@@ -857,7 +862,7 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 	if (fbxSkinCount == 1) {
 		FbxSkin* fbxSkinDeformer = (FbxSkin*)fbxNode->GetMesh()->GetDeformer(0, FbxDeformer::eSkin);
 		auto fbxClusterCount = fbxSkinDeformer->GetClusterCount();
-		auto skinning = new Skinning();
+		auto skinning = make_unique<Skinning>();
 		vector<Joint> joints;
 		vector<float> weights;
 		map<int, vector<JointWeight>> jointWeightsByVertices;
@@ -939,27 +944,23 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 			}
 		}
 		skinning->setVerticesJointsWeights(verticesJointsWeights);
-		node->setSkinning(skinning);
+		node->setSkinning(skinning.release());
 	} else {
 		Console::println("FBXReader::processMeshNode(): " + to_string(fbxSkinCount) + " skins per mesh: Not supported");
 	}
-
-	return node;
+	//
+	return node.release();
 }
 
 Node* FBXReader::processSkeletonNode(FbxNode* fbxNode, Model* model, Node* parentNode, const string& pathName) {
-	string fbxNodeName = fbxNode->GetName();
-	return new Node(model, parentNode, fbxNodeName, fbxNodeName);
+	return make_unique<Node>(model, parentNode, fbxNode->GetName(), fbxNode->GetName()).release();
 }
 
 void FBXReader::processAnimation(FbxNode* fbxNode, const FbxTime& fbxStartFrame, const FbxTime& fbxEndFrame, Model* model, int frameOffset) {
 	auto fbxNodeName = fbxNode->GetName();
 	auto node = model->getNodeById(fbxNodeName);
 	auto animation = node->getAnimation();
-	if (node->getAnimation() == nullptr) {
-		animation = new Animation();
-		node->setAnimation(animation);
-	}
+	if (node->getAnimation() == nullptr) node->setAnimation(new Animation());
 	auto transformMatrices = node->getAnimation()->getTransformMatrices();
 	transformMatrices.resize(model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT)->getFrames());
 	FbxTime fbxFrameTime;

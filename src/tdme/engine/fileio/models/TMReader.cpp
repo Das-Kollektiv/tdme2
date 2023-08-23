@@ -40,6 +40,7 @@ using std::map;
 using std::string;
 using std::to_string;
 using std::unordered_map;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::fileio::models::ModelFileIOException;
@@ -147,13 +148,13 @@ Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const
 	is.readFloatArray(boundingBoxMinXYZ);
 	array<float, 3> boundingBoxMaxXYZ;
 	is.readFloatArray(boundingBoxMaxXYZ);
-	auto boundingBox = new BoundingBox(Vector3(boundingBoxMinXYZ), Vector3(boundingBoxMaxXYZ));
+	auto boundingBox = make_unique<BoundingBox>(Vector3(boundingBoxMinXYZ), Vector3(boundingBoxMaxXYZ));
 	auto model = make_unique<Model>(
 		fileName,
 		fileName.empty() == true?name:fileName,
 		upVector,
 		rotationOrder,
-		boundingBox
+		boundingBox.release()
 	);
 	model->setShaderModel(shaderModel);
 	model->setEmbedSpecularTextures(embedSpecularTextures);
@@ -217,16 +218,23 @@ void TMReader::readEmbeddedTextures(TMReaderInputStream* is, unordered_map<strin
 			vector<uint8_t> pngData;
 			pngData.resize(textureSize);
 			for (auto j = 0; j < textureSize; j++) pngData[j] = is->readByte();
-			auto embeddedTexture = PNGTextureReader::read(embeddedTextureId, pngData, true);
+			auto embeddedTexture =
+				unique_ptr<
+					Texture,
+					decltype([](Texture* texture){ texture->releaseReference(); })
+				>(
+					PNGTextureReader::read(embeddedTextureId, pngData, true)
+				);
 			if (embeddedTexture != nullptr) {
+				embeddedTexture->acquireReference();
 				if ((version[0] == 1 && version[1] == 9 && version[2] == 19) ||
 					(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 					embeddedTexture->setMinFilter(minFilter);
 					embeddedTexture->setMagFilter(magFilter);
 				}
 				embeddedTexture->setUseCompression(false);
+				embeddedTextures[embeddedTextureId] = embeddedTexture.get();
 				embeddedTexture->acquireReference();
-				embeddedTextures[embeddedTextureId] = embeddedTexture;
 			}
 		} else
 		// bc7
@@ -247,27 +255,33 @@ void TMReader::readEmbeddedTextures(TMReaderInputStream* is, unordered_map<strin
 			ByteBuffer bc7Data(textureSize);
 			for (auto j = 0; j < textureSize; j++) bc7Data.put(is->readByte());
 			auto embeddedTexture =
-				new Texture(
-					embeddedTextureId,
-					Texture::getRGBDepthByPixelBitsPerPixel(bitsPerPixel),
-					Texture::getBC7FormatByPixelBitsPerPixel(bitsPerPixel),
-					width,
-					height,
-					textureWidth,
-					textureHeight,
-					Texture::getBC7FormatByPixelBitsPerPixel(bitsPerPixel),
-					bc7Data
+				unique_ptr<
+					Texture,
+					decltype([](Texture* texture){ texture->releaseReference(); })
+				>(
+					new Texture(
+						embeddedTextureId,
+						Texture::getRGBDepthByPixelBitsPerPixel(bitsPerPixel),
+						Texture::getBC7FormatByPixelBitsPerPixel(bitsPerPixel),
+						width,
+						height,
+						textureWidth,
+						textureHeight,
+						Texture::getBC7FormatByPixelBitsPerPixel(bitsPerPixel),
+						bc7Data
+					)
 				);
-			if (embeddedTexture != nullptr) {
-				if ((version[0] == 1 && version[1] == 9 && version[2] == 19) ||
-					(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
-					embeddedTexture->setMinFilter(minFilter);
-					embeddedTexture->setMagFilter(magFilter);
-				}
-				embeddedTexture->setUseCompression(true);
-				embeddedTexture->acquireReference();
-				embeddedTextures[embeddedTextureId] = embeddedTexture;
+			embeddedTexture->acquireReference();
+			//
+			if ((version[0] == 1 && version[1] == 9 && version[2] == 19) ||
+				(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
+				embeddedTexture->setMinFilter(minFilter);
+				embeddedTexture->setMagFilter(magFilter);
 			}
+			//
+			embeddedTexture->setUseCompression(true);
+			embeddedTextures[embeddedTextureId] = embeddedTexture.get();
+			embeddedTexture->acquireReference();
 		} else
 		// bc7 with mip maps
 		if (embeddedTextureType == 3) {
@@ -288,17 +302,24 @@ void TMReader::readEmbeddedTextures(TMReaderInputStream* is, unordered_map<strin
 			ByteBuffer bc7Data(textureSize);
 			for (auto j = 0; j < textureSize; j++) bc7Data.put(is->readByte());
 			auto embeddedTexture =
-				new Texture(
-					embeddedTextureId,
-					Texture::getRGBDepthByPixelBitsPerPixel(bitsPerPixel),
-					Texture::getBC7FormatByPixelBitsPerPixel(bitsPerPixel),
-					width,
-					height,
-					textureWidth,
-					textureHeight,
-					Texture::getBC7FormatByPixelBitsPerPixel(bitsPerPixel),
-					bc7Data
+				unique_ptr<
+					Texture,
+					decltype([](Texture* texture){ texture->releaseReference(); })
+				>(
+					new Texture(
+						embeddedTextureId,
+						Texture::getRGBDepthByPixelBitsPerPixel(bitsPerPixel),
+						Texture::getBC7FormatByPixelBitsPerPixel(bitsPerPixel),
+						width,
+						height,
+						textureWidth,
+						textureHeight,
+						Texture::getBC7FormatByPixelBitsPerPixel(bitsPerPixel),
+						bc7Data
+					)
 				);
+			embeddedTexture->acquireReference();
+			//
 			if ((version[0] == 1 && version[1] == 9 && version[2] == 19) ||
 				(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 				embeddedTexture->setMinFilter(minFilter);
@@ -326,11 +347,9 @@ void TMReader::readEmbeddedTextures(TMReaderInputStream* is, unordered_map<strin
 			}
 			embeddedTexture->setMipMapTextures(mipMapTextures);
 			//
-			if (embeddedTexture != nullptr) {
-				embeddedTexture->acquireReference();
-				embeddedTexture->setUseCompression(true);
-				embeddedTextures[embeddedTextureId] = embeddedTexture;
-			}
+			embeddedTexture->setUseCompression(true);
+			embeddedTextures[embeddedTextureId] = embeddedTexture.get();
+			embeddedTexture->acquireReference();
 		}
 	}
 }
@@ -339,8 +358,8 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 {
 	// TODO: minFilter, magFilter for non embedded textures
 	auto id = is->readString();
-	auto m = new Material(id);
-	auto smp = new SpecularMaterialProperties();
+	auto m = make_unique<Material>(id);
+	auto smp = make_unique<SpecularMaterialProperties>();
 	auto smpEmbbededTextures = model->hasEmbeddedSpecularTextures();
 	if (version[0] == 1 && version[1] == 9 && version[2] == 17) {
 		smpEmbbededTextures = is->readBoolean();
@@ -471,7 +490,7 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 			}
 		}
 	}
-	m->setSpecularMaterialProperties(smp);
+	m->setSpecularMaterialProperties(smp.release());
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 13) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 14) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 15) ||
@@ -481,7 +500,7 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 		(version[0] == 1 && version[1] == 9 && version[2] == 19) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 		if (is->readBoolean() == true) {
-			auto pmp = new PBRMaterialProperties();
+			auto pmp = make_unique<PBRMaterialProperties>();
 			auto pmpEmbeddedTextures = model->hasEmbeddedPBRTextures();
 			if (version[0] == 1 && version[1] == 9 && version[2] == 17) {
 				pmpEmbeddedTextures = is->readBoolean();
@@ -557,10 +576,11 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 					}
 				}
 			}
-			m->setPBRMaterialProperties(pmp);
+			m->setPBRMaterialProperties(pmp.release());
 		}
 	}
-	return m;
+	//
+	return m.release();
 }
 
 void TMReader::readAnimationSetup(TMReaderInputStream* is, Model* model, const array<uint8_t, 3>& version) {
@@ -640,7 +660,7 @@ Animation* TMReader::readAnimation(TMReaderInputStream* is, Node* g)
 	} else {
 		array<float, 16> matrixArray;
 		auto frames = is->readInt();
-		auto animation = new Animation();
+		auto animation = make_unique<Animation>();
 		vector<Matrix4x4> transformMatrices;
 		transformMatrices.resize(frames);
 		for (auto i = 0; i < transformMatrices.size(); i++) {
@@ -648,7 +668,7 @@ Animation* TMReader::readAnimation(TMReaderInputStream* is, Node* g)
 			transformMatrices[i].set(matrixArray);
 		}
 		animation->setTransformMatrices(transformMatrices);
-		g->setAnimation(animation);
+		g->setAnimation(animation.release());
 		return g->getAnimation();
 	}
 }
@@ -722,7 +742,7 @@ JointWeight TMReader::readSkinningJointWeight(TMReaderInputStream* is)
 void TMReader::readSkinning(TMReaderInputStream* is, Node* g)
 {
 	if (is->readBoolean() == true) {
-		auto skinning = new Skinning();
+		auto skinning = make_unique<Skinning>();
 		skinning->setWeights(is->readFloatVector());
 		vector<Joint> joints;
 		joints.resize(is->readInt());
@@ -739,7 +759,7 @@ void TMReader::readSkinning(TMReaderInputStream* is, Node* g)
 			}
 		}
 		skinning->setVerticesJointsWeights(verticesJointsWeight);
-		g->setSkinning(skinning);
+		g->setSkinning(skinning.release());
 	}
 }
 
@@ -758,7 +778,7 @@ Node* TMReader::readNode(TMReaderInputStream* is, Model* model, Node* parentNode
 
 	auto nodeId = is->readString();
 	auto nodeName = is->readString();
-	auto node = new Node(model, parentNode, nodeId, nodeName);
+	auto node = make_unique<Node>(model, parentNode, nodeId, nodeName);
 	node->setJoint(is->readBoolean());
 	array<float, 16> matrixArray;
 	is->readFloatArray(matrixArray);
@@ -773,9 +793,9 @@ Node* TMReader::readNode(TMReaderInputStream* is, Model* model, Node* parentNode
 	node->setTangents(tangents);
 	vector<Vector3> bitangents = readVertices(is);
 	node->setBitangents(bitangents);
-	readAnimation(is, node);
-	readSkinning(is, node);
-	readFacesEntities(is, node);
+	readAnimation(is, node.get());
+	readSkinning(is, node.get());
+	readFacesEntities(is, node.get());
 	readSubNodes(is, model, parentNode, node->getSubNodes());
-	return node;
+	return node.release();
 }
