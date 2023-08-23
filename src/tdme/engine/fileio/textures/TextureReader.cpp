@@ -1,9 +1,7 @@
 #include <tdme/engine/fileio/textures/TextureReader.h>
 
-#include <stdlib.h>
-
-#include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -20,9 +18,9 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/StringTools.h>
 
-using std::map;
 using std::string;
 using std::to_string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::fileio::textures::TextureReader;
@@ -41,7 +39,7 @@ using tdme::utilities::StringTools;
 
 vector<string> TextureReader::extensions = {"png"};
 Mutex* TextureReader::textureCacheMutex = new Mutex("texturecache-mutex");
-map<string, Texture*>* TextureReader::textureCache = new map<string, Texture*>();
+unordered_map<string, Texture*>* TextureReader::textureCache = new unordered_map<string, Texture*>();
 
 const vector<string>& TextureReader::getTextureExtensions() {
 	return extensions;

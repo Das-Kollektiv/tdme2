@@ -197,16 +197,18 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const Value& jP
 	if (transformFilter != nullptr && transformFilter->filterEmptyTransform(properties) == true) {
 		prototypeType = Prototype_Type::EMPTY;
 	}
-	Model* model = nullptr;
+	unique_ptr<Model> model;
 	if (prototypeType == Prototype_Type::EMPTY) {
-		model = ModelReader::read("resources/engine/models", "empty.tm", useBC7TextureCompression);
+		model = unique_ptr<Model>(ModelReader::read("resources/engine/models", "empty.tm", useBC7TextureCompression));
 	} else
 	if (modelFileName.length() > 0) {
 		modelPathName = getResourcePathName(pathName, modelFileName);
-		model = ModelReader::read(
-			modelPathName,
-			FileSystem::getInstance()->getFileName(modelFileName),
-			useBC7TextureCompression
+		model = unique_ptr<Model>(
+			ModelReader::read(
+				modelPathName,
+				FileSystem::getInstance()->getFileName(modelFileName),
+				useBC7TextureCompression
+			)
 		);
 	}
 	auto prototype = make_unique<Prototype>(
@@ -217,7 +219,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const Value& jP
 		string(),
 		modelFileName.length() > 0?modelPathName + "/" + FileSystem::getInstance()->getFileName(modelFileName):"",
 		thumbnail,
-		model
+		model.release()
 	);
 	if (jPrototypeRoot.FindMember("sc") != jPrototypeRoot.MemberEnd()) {
 		string scriptFileName = jPrototypeRoot["sc"].GetString();
@@ -388,14 +390,15 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const Value& jP
 				const auto& jFoliagePrototype = jFoliage[jFoliagePrototypeIt->name.GetString()];
 				auto jFoliagePrototypePartitions = jFoliagePrototype["t"].GetArray();
 
-
 				//
-				Prototype* foliagePrototype = nullptr;
+				unique_ptr<Prototype> foliagePrototype;
 				try {
 					auto foliagePrototypeFileName = jFoliagePrototype["f"].GetString();
-					foliagePrototype = PrototypeReader::read(
-						getResourcePathName(pathName, foliagePrototypeFileName),
-						FileSystem::getInstance()->getFileName(foliagePrototypeFileName)
+					foliagePrototype = unique_ptr<Prototype>(
+						PrototypeReader::read(
+							getResourcePathName(pathName, foliagePrototypeFileName),
+							FileSystem::getInstance()->getFileName(foliagePrototypeFileName)
+						)
 					);
 				} catch (Exception& exception) {
 					Console::println(string("PrototypeReader::read(): An error occurred: ") + exception.what());
@@ -403,7 +406,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const Value& jP
 				}
 
 				//
-				auto foliagePrototypeIndex = prototype->getTerrain()->getFoliagePrototypeIndex(foliagePrototype);
+				auto foliagePrototypeIndex = prototype->getTerrain()->getFoliagePrototypeIndex(foliagePrototype.release());
 
 				//
 				for (auto foliagePrototypePartitionIdx = 0; foliagePrototypePartitionIdx < jFoliagePrototypePartitions.Size(); foliagePrototypePartitionIdx++) {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <vector>
 
@@ -12,8 +12,8 @@
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/utilities/ByteBuffer.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::Texture;
@@ -111,6 +111,6 @@ private:
 	STATIC_DLL_IMPEXT static vector<string> extensions;
 
 	// maybe have a read write lock here for texture cache, but currently I have no multithreaded access to it
-	STATIC_DLL_IMPEXT static map<string, Texture*>* textureCache;
+	STATIC_DLL_IMPEXT static unordered_map<string, Texture*>* textureCache;
 	STATIC_DLL_IMPEXT static Mutex* textureCacheMutex;
 };
