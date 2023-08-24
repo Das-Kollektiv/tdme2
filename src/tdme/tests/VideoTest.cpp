@@ -41,10 +41,9 @@
 #include <tdme/video/decoder/MPEG1Decoder.h>
 
 using std::make_unique;
-using std::unique_ptr;
-
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::tests::VideoTest;
@@ -89,13 +88,14 @@ VideoTest::VideoTest() {
 
 Model* VideoTest::createWallModel()
 {
-	auto wall = new Model("wall", "wall", UpVector::Y_UP, RotationOrder::XYZ, nullptr);
-	auto wallMaterial = new Material("wall");
-	wallMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
+	auto wallModel = make_unique<Model>("wall", "wall", UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	auto wallMaterial = make_unique<Material>("wall");
+	wallMaterial->setSpecularMaterialProperties(make_unique<SpecularMaterialProperties>().release());
 	wallMaterial->getSpecularMaterialProperties()->setAmbientColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	wallMaterial->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	wall->getMaterials()["wall"] = wallMaterial;
-	auto wallNode = new Node(wall, nullptr, "wall", "wall");
+	wallModel->getMaterials()["wall"] = wallMaterial.get();
+	auto wallMaterialPtr = wallMaterial.release();
+	auto wallNode = make_unique<Node>(wallModel.get(), nullptr, "wall", "wall");
 	vector<FacesEntity> nodeFacesEntities;
 	vector<Vector3> vertices;
 	vertices.push_back(Vector3(-4.0f, 0.0f, +4.0f));
@@ -110,20 +110,21 @@ Model* VideoTest::createWallModel()
 	textureCoordinates.push_back(Vector2(1.0f, 0.0f));
 	textureCoordinates.push_back(Vector2(1.0f, 1.0f));
 	vector<Face> facesFarPlane;
-	facesFarPlane.push_back(Face(wallNode, 0, 1, 2, 0, 0, 0, 0, 1, 2));
-	facesFarPlane.push_back(Face(wallNode, 2, 3, 0, 0, 0, 0, 2, 3, 0));
-	FacesEntity nodeFacesEntityFarPlane(wallNode, "wall");
-	nodeFacesEntityFarPlane.setMaterial(wallMaterial);
+	facesFarPlane.push_back(Face(wallNode.get(), 0, 1, 2, 0, 0, 0, 0, 1, 2));
+	facesFarPlane.push_back(Face(wallNode.get(), 2, 3, 0, 0, 0, 0, 2, 3, 0));
+	FacesEntity nodeFacesEntityFarPlane(wallNode.get(), "wall");
+	nodeFacesEntityFarPlane.setMaterial(wallMaterialPtr);
 	nodeFacesEntityFarPlane.setFaces(facesFarPlane);
 	nodeFacesEntities.push_back(nodeFacesEntityFarPlane);
 	wallNode->setVertices(vertices);
 	wallNode->setNormals(normals);
 	wallNode->setTextureCoordinates(textureCoordinates);
 	wallNode->setFacesEntities(nodeFacesEntities);
-	wall->getNodes()["wall"] = wallNode;
-	wall->getSubNodes()["wall"] = wallNode;
-	ModelTools::prepareForIndexedRendering(wall);
-	return wall;
+	wallModel->getNodes()["wall"] = wallNode.get();
+	wallModel->getSubNodes()["wall"] = wallNode.get();
+	wallNode.release();
+	ModelTools::prepareForIndexedRendering(wallModel.get());
+	return wallModel.release();
 }
 
 void VideoTest::main(int argc, char** argv)

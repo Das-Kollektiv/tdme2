@@ -1,3 +1,4 @@
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -12,8 +13,10 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Time.h>
 
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::application::Application;
 using tdme::engine::ColorTextureCanvas;
@@ -38,21 +41,27 @@ int main(int argc, char** argv) {
 	auto imageHeight = 1024;
 	auto imageScale = 1024.0f / 7.0f;
 	auto textureByteBuffer = ByteBuffer(imageWidth * imageHeight * 4);
-	auto texture = new Texture(
-		"bezier-test",
-		Texture::TEXTUREDEPTH_RGBA,
-		Texture::TEXTUREFORMAT_RGBA,
-		imageWidth,
-		imageHeight,
-		imageWidth,
-		imageHeight,
-		Texture::TEXTUREFORMAT_RGBA,
-		textureByteBuffer
-	);
+	auto texture =
+		unique_ptr<
+			Texture,
+			decltype([](Texture* texture){ texture->releaseReference(); })
+		>(
+			new Texture(
+				"bezier-test",
+				Texture::TEXTUREDEPTH_RGBA,
+				Texture::TEXTUREFORMAT_RGBA,
+				imageWidth,
+				imageHeight,
+				imageWidth,
+				imageHeight,
+				Texture::TEXTUREFORMAT_RGBA,
+				textureByteBuffer
+			)
+		);
 	texture->acquireReference();
 
 	//
-	ColorTextureCanvas canvas(texture);
+	ColorTextureCanvas canvas(texture.get());
 	canvas.drawBezier(
 		{
 			Vector2(0.0f, 0.0f),
@@ -73,10 +82,6 @@ int main(int argc, char** argv) {
 	Console::println("Time to generate spline+texture: " + to_string(endTime - beginTime) + "ms");
 
 	//
-	auto smoothedTexture = TextureReader::smooth(texture, ":smoothed", 0.5f);
-	PNGTextureWriter::write(smoothedTexture, ".", "bezier-test.png", true, false);
-
-	//
-	texture->releaseReference();
-	smoothedTexture->releaseReference();
+	auto smoothedTexture = unique_ptr<Texture, decltype([](Texture* texture){ texture->releaseReference(); })>(TextureReader::smooth(texture.get(), ":smoothed", 0.5f));
+	PNGTextureWriter::write(smoothedTexture.get(), ".", "bezier-test.png", true, false);
 }
