@@ -1,5 +1,6 @@
 #include <tdme/engine/model/Model.h>
 
+#include <algorithm>
 #include <map>
 #include <memory>
 #include <string>
@@ -21,6 +22,7 @@
 
 using std::make_unique;
 using std::map;
+using std::sort;
 using std::string;
 using std::unique_ptr;
 
@@ -68,11 +70,32 @@ Model::~Model() {
 	for (const auto& [animationSetupId, animationSetup]: animationSetups) delete animationSetup;
 }
 
-void Model::deleteSubNodes(const map<string, Node*>& subNodes) {
+void Model::deleteSubNodes(const unordered_map<string, Node*>& subNodes) {
 	for (const auto& [subNodeId, subNode]: subNodes) {
 		deleteSubNodes(subNode->getSubNodes());
 		delete subNode;
 	}
+}
+
+const vector<string> Model::getMaterialIds() {
+	vector<string> result;
+	for (const auto& [materialId, material]: materials) result.push_back(material->getId());
+	sort(result.begin(), result.end());
+	return result;
+}
+
+const vector<string> Model::getNodeIds() {
+	vector<string> result;
+	for (const auto& [nodeId, node]: nodes) result.push_back(node->getId());
+	sort(result.begin(), result.end());
+	return result;
+}
+
+const vector<string> Model::getAnimationSetupIds() {
+	vector<string> result;
+	for (const auto& [animationSetupId, animationSetup]: animationSetups) result.push_back(animationSetup->getId());
+	sort(result.begin(), result.end());
+	return result;
 }
 
 AnimationSetup* Model::addAnimationSetup(const string& id, int32_t startFrame, int32_t endFrame, bool loop, float speed)
@@ -133,7 +156,7 @@ BoundingBox* Model::getBoundingBox()
 	return boundingBox.get();
 }
 
-bool Model::computeTransformMatrix(const map<string, Node*>& nodes, const Matrix4x4& parentTransformMatrix, int32_t frame, const string& nodeId, Matrix4x4& transformMatrix)
+bool Model::computeTransformMatrix(const unordered_map<string, Node*>& nodes, const Matrix4x4& parentTransformMatrix, int32_t frame, const string& nodeId, Matrix4x4& transformMatrix)
 {
 	// TODO: this should be computed from sub nodes to root node, not the other way around, also it looks broken to me right now, but works for our cases so far
 	// iterate through nodes

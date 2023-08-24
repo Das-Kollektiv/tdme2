@@ -1,6 +1,5 @@
 #include <tdme/engine/subsystems/rendering/ModelUtilitiesInternal.h>
 
-#include <map>
 #include <string>
 #include <unordered_map>
 
@@ -22,7 +21,6 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
-using std::map;
 using std::string;
 using std::unordered_map;
 
@@ -157,7 +155,7 @@ void ModelUtilitiesInternal::invertNormals(Model* model)
 	invertNormals(model->getSubNodes());
 }
 
-void ModelUtilitiesInternal::invertNormals(const map<string, Node*>& nodes)
+void ModelUtilitiesInternal::invertNormals(const unordered_map<string, Node*>& nodes)
 {
 	for (const auto& [nodeId, node]: nodes) {
 		auto normals = node->getNormals();
@@ -179,7 +177,7 @@ void ModelUtilitiesInternal::computeModelStatistics(Model* model, ModelStatistic
 
 void ModelUtilitiesInternal::computeModelStatistics(ObjectModelInternal* objectModelInternal, ModelStatistics* modelStatistics)
 {
-	map<string, int32_t> materialCountById;
+	unordered_map<string, int32_t> materialCountById;
 	auto opaqueFaceCount = 0;
 	auto transparentFaceCount = 0;
 	for (auto objectNode : objectModelInternal->objectNodes) {

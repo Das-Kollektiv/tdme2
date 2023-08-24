@@ -1,9 +1,9 @@
 #include <tdme/utilities/ModelTools.h>
 
 #include <array>
-#include <map>
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
@@ -35,10 +35,10 @@
 
 using std::array;
 using std::make_unique;
-using std::map;
 using std::string;
 using std::to_string;
 using std::unique_ptr;
+using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
@@ -88,7 +88,7 @@ void ModelTools::prepareForIndexedRendering(Model* model)
 	prepareForIndexedRendering(model->getSubNodes());
 }
 
-void ModelTools::prepareForIndexedRendering(const map<string, Node*>& nodes)
+void ModelTools::prepareForIndexedRendering(const unordered_map<string, Node*>& nodes)
 {
 	// we need to prepare the node for indexed rendering
 	for (const auto& [nodeId, node]: nodes) {
@@ -353,7 +353,7 @@ void ModelTools::cloneNode(Node* sourceNode, Model* targetModel, Node* targetPar
 	}
 }
 
-void ModelTools::partitionNode(Node* sourceNode, map<string, Model*>& modelsByPartition, map<string, Vector3>& modelsPosition, const Matrix4x4& parentTransformMatrix) {
+void ModelTools::partitionNode(Node* sourceNode, unordered_map<string, Model*>& modelsByPartition, unordered_map<string, Vector3>& modelsPosition, const Matrix4x4& parentTransformMatrix) {
 	// TODO: performance: faces handling is very suboptimal currently, however this is only executed in SceneEditor if doing partitioning
 	Vector3 faceCenter;
 
@@ -393,15 +393,15 @@ void ModelTools::partitionNode(Node* sourceNode, map<string, Model*>& modelsByPa
 	}
 
 	//
-	map<string, Node*> partitionModelNodes;
+	unordered_map<string, Node*> partitionModelNodes;
 
 	// partition model node vertices and such
-	map<string, vector<Vector3>> partitionModelNodesVertices;
-	map<string, vector<Vector3>> partitionModelNodesNormals;
-	map<string, vector<Vector2>> partitionModelNodesTextureCoordinates;
-	map<string, vector<Vector3>> partitionModelNodesTangents;
-	map<string, vector<Vector3>> partitionModelNodesBitangents;
-	map<string, vector<FacesEntity>> partitionModelNodesFacesEntities;
+	unordered_map<string, vector<Vector3>> partitionModelNodesVertices;
+	unordered_map<string, vector<Vector3>> partitionModelNodesNormals;
+	unordered_map<string, vector<Vector2>> partitionModelNodesTextureCoordinates;
+	unordered_map<string, vector<Vector3>> partitionModelNodesTangents;
+	unordered_map<string, vector<Vector3>> partitionModelNodesBitangents;
+	unordered_map<string, vector<FacesEntity>> partitionModelNodesFacesEntities;
 
 	for (const auto& facesEntity: sourceNode->getFacesEntities()) {
 		bool haveTextureCoordinates = facesEntity.isTextureCoordinatesAvailable();
@@ -585,7 +585,7 @@ void ModelTools::partitionNode(Node* sourceNode, map<string, Model*>& modelsByPa
 	}
 }
 
-void ModelTools::partition(Model* model, const Transform& transform, map<string, Model*>& modelsByPartition, map<string, Vector3>& modelsPosition) {
+void ModelTools::partition(Model* model, const Transform& transform, unordered_map<string, Model*>& modelsByPartition, unordered_map<string, Vector3>& modelsPosition) {
 	Matrix4x4 transformMatrix;
 	transformMatrix.set(model->getImportTransformMatrix());
 	transformMatrix.multiply(transform.getTransformMatrix());
@@ -829,7 +829,7 @@ void ModelTools::prepareForFoliageTreeShader(Node* node, const Matrix4x4& parent
 	}
 }
 
-void ModelTools::checkForOptimization(Node* node, map<string, int>& materialUseCount, const vector<string>& excludeDiffuseTextureFileNamePatterns) {
+void ModelTools::checkForOptimization(Node* node, unordered_map<string, int>& materialUseCount, const vector<string>& excludeDiffuseTextureFileNamePatterns) {
 	// skip on joints as they do not have textures to display and no vertex data
 	if (node->isJoint() == true) return;
 
@@ -908,7 +908,7 @@ void ModelTools::prepareForOptimization(Node* node, const Matrix4x4& parentTrans
 	}
 }
 
-void ModelTools::optimizeNode(Node* sourceNode, Model* targetModel, int diffuseTextureAtlasSize, const map<string, int>& diffuseTextureAtlasIndices, const vector<string>& excludeDiffuseTextureFileNamePatterns) {
+void ModelTools::optimizeNode(Node* sourceNode, Model* targetModel, int diffuseTextureAtlasSize, const unordered_map<string, int>& diffuseTextureAtlasIndices, const vector<string>& excludeDiffuseTextureFileNamePatterns) {
 	if (sourceNode->getFacesEntities().size() > 0) {
 		unordered_set<int> processedTextureCoordinates;
 		const auto& sourceVertices = sourceNode->getVertices();
@@ -1109,7 +1109,7 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 
 	// TODO: 2 mats could have the same texture
 	// prepare for optimizations
-	map<string, int> materialUseCount;
+	unordered_map<string, int> materialUseCount;
 	for (const auto& [subNodeId, subNode]: modelPtr->getSubNodes()) {
 		checkForOptimization(
 			subNode,
@@ -1123,8 +1123,8 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 
 	// check materials and diffuse textures
 	auto diffuseTextureCount = 0;
-	map<string, int> diffuseTextureAtlasIndices;
-	map<string, Material*> atlasMaterials;
+	unordered_map<string, int> diffuseTextureAtlasIndices;
+	unordered_map<string, Material*> atlasMaterials;
 	for (const auto& [materialName, materialCount]: materialUseCount) {
 		auto material = modelPtr->getMaterials().find(materialName)->second;
 		auto diffuseTexture = material->getSpecularMaterialProperties()->getDiffuseTexture();

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <map>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -14,7 +13,6 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/math/fwd-tdme.h>
 
-using std::map;
 using std::string;
 using std::unordered_map;
 using std::vector;
@@ -43,14 +41,14 @@ private:
 	 * Determine skinned node count
 	 * @param nodes nodes
 	 */
-	int32_t determineSkinnedNodeCount(const map<string, Node*>& nodes);
+	int32_t determineSkinnedNodeCount(const unordered_map<string, Node*>& nodes);
 
 	/**
 	 * Determine skinned node count
 	 * @param nodes nodes
 	 * @param count current count
 	 */
-	int32_t determineSkinnedNodeCount(const map<string, Node*>& nodes, int32_t count);
+	int32_t determineSkinnedNodeCount(const unordered_map<string, Node*>& nodes, int32_t count);
 
 	/**
 	 * Determine skinned nodes
@@ -58,7 +56,7 @@ private:
 	 * @param skinningNodes skinning nodes
 	 * @param idx idx
 	 */
-	int32_t determineSkinnedNodes(const map<string, Node*>& nodes, vector<Node*>& skinningNodes, int32_t idx);
+	int32_t determineSkinnedNodes(const unordered_map<string, Node*>& nodes, vector<Node*>& skinningNodes, int32_t idx);
 
 protected:
 	struct FlattenedNode {
@@ -140,7 +138,7 @@ protected:
 	 * @param parentTransformMatrix parent transform matrix
 	 * @param animationState animation state
 	 */
-	void createNodesTransformMatrices(unordered_map<string, Matrix4x4*>& matrices, vector<FlattenedNode>& nodeList, const map<string, Node*>& nodes, Matrix4x4* parentTransformMatrix = nullptr, AnimationState* animationState = nullptr);
+	void createNodesTransformMatrices(unordered_map<string, Matrix4x4*>& matrices, vector<FlattenedNode>& nodeList, const unordered_map<string, Node*>& nodes, Matrix4x4* parentTransformMatrix = nullptr, AnimationState* animationState = nullptr);
 
 	/**
 	 * Update node list
@@ -149,7 +147,7 @@ protected:
 	 * @param nodes nodes
 	 * @param animationState animation state
 	 */
-	void updateNodeList(vector<FlattenedNode>& nodeList, int& nodeIdx, const map<string, Node*>& nodes, AnimationState* animationState = nullptr);
+	void updateNodeList(vector<FlattenedNode>& nodeList, int& nodeIdx, const unordered_map<string, Node*>& nodes, AnimationState* animationState = nullptr);
 
 	/**
 	 * Update node list

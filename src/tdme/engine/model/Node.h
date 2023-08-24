@@ -1,8 +1,8 @@
 #pragma once
 
-#include <map>
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -11,9 +11,9 @@
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 
-using std::map;
 using std::string;
 using std::unique_ptr;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::model::Animation;
@@ -46,7 +46,7 @@ private:
 	unique_ptr<Skinning> skinning;
 	vector<FacesEntity> facesEntities;
 	vector<Vector3> origins;
-	map<string, Node*> subNodes;
+	unordered_map<string, Node*> subNodes;
 
 	bool verticesUpdated;
 	bool normalsUpdated;
@@ -290,7 +290,7 @@ public:
 	/**
 	 * @return sub sub nodes of this node
 	 */
-	inline map<string, Node*>& getSubNodes() {
+	inline unordered_map<string, Node*>& getSubNodes() {
 		return subNodes;
 	}
 

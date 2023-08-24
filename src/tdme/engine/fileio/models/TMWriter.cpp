@@ -2,7 +2,6 @@
 
 #include <array>
 #include <memory>
-#include <map>
 #include <string>
 #include <vector>
 
@@ -41,7 +40,6 @@
 
 using std::array;
 using std::make_unique;
-using std::map;
 using std::string;
 using std::to_string;
 using std::unique_ptr;
@@ -118,7 +116,7 @@ void TMWriter::write(Model* model, vector<uint8_t>& data, bool useBC7TextureComp
 }
 
 void TMWriter::writeEmbeddedTextures(TMWriterOutputStream* os, Model* m, bool useBC7TextureCompression) {
-	map<string, Texture*> embeddedTextures;
+	unordered_map<string, Texture*> embeddedTextures;
 	for (const auto& [materialId, material]: m->getMaterials()) {
 		auto smp = material->getSpecularMaterialProperties();
 		if (smp != nullptr && m->hasEmbeddedSpecularTextures() == true) {
@@ -338,7 +336,7 @@ void TMWriter::writeSkinning(TMWriterOutputStream* os, Skinning* skinning)
 	}
 }
 
-void TMWriter::writeSubNodes(TMWriterOutputStream* os, const map<string, Node*>& subNodes)
+void TMWriter::writeSubNodes(TMWriterOutputStream* os, const unordered_map<string, Node*>& subNodes)
 {
 	os->writeInt(subNodes.size());
 	for (const auto& [subNodeId, subNode]: subNodes) {

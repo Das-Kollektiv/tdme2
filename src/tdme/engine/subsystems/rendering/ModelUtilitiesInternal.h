@@ -1,6 +1,5 @@
 #pragma once
 
-#include <map>
 #include <string>
 #include <unordered_map>
 
@@ -12,7 +11,6 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/fwd-tdme.h>
 
-using std::map;
 using std::string;
 using std::unordered_map;
 
@@ -93,6 +91,6 @@ private:
 	 * Invert normals recursive
 	 * @param nodes nodes
 	 */
-	static void invertNormals(const map<string, Node*>& nodes);
+	static void invertNormals(const unordered_map<string, Node*>& nodes);
 
 };

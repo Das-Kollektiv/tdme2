@@ -1,8 +1,8 @@
 #pragma once
 
 #include <array>
-#include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -18,8 +18,8 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 
 using std::array;
-using std::map;
 using std::string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::fileio::models::ModelFileIOException;
@@ -338,7 +338,7 @@ private:
 	 * @param subNodes sub nodes
 	 * @throws model file IO exception
 	 */
-	static void writeSubNodes(TMWriterOutputStream* os, const map<string, Node*>& subNodes);
+	static void writeSubNodes(TMWriterOutputStream* os, const unordered_map<string, Node*>& subNodes);
 
 	/**
 	 * Write node to output stream

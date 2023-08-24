@@ -3,7 +3,6 @@
 #include <tdme/tdme.h>
 
 #include <array>
-#include <map>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -21,7 +20,6 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 
 using std::array;
-using std::map;
 using std::string;
 using std::unordered_map;
 using std::vector;
@@ -384,7 +382,7 @@ private:
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return node
 	 */
-	static void readSubNodes(TMReaderInputStream* is, Model* model, Node* parentNode, map<string, Node*>& subNodes);
+	static void readSubNodes(TMReaderInputStream* is, Model* model, Node* parentNode, unordered_map<string, Node*>& subNodes);
 
 	/**
 	 * Write node to output stream

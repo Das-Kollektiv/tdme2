@@ -2,6 +2,7 @@
 
 #include <array>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -29,6 +30,7 @@
 using std::array;
 using std::string;
 using std::to_string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::Color4;
@@ -512,7 +514,7 @@ void Primitives::setupConvexMeshModel(Model* model)
 	setupConvexMeshMaterial(model->getSubNodes(), material);
 }
 
-void Primitives::setupConvexMeshMaterial(const map<string, Node*>& nodes, Material* material)
+void Primitives::setupConvexMeshMaterial(const unordered_map<string, Node*>& nodes, Material* material)
 {
 	for (const auto& [nodeId, node]: nodes) {
 		auto facesEntities = node->getFacesEntities();

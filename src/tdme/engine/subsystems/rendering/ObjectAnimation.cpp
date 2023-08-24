@@ -1,6 +1,5 @@
 #include <tdme/engine/subsystems/rendering/ObjectAnimation.h>
 
-#include <map>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -21,7 +20,6 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
 
-using std::map;
 using std::string;
 using std::to_string;
 using std::unique_ptr;
@@ -299,7 +297,7 @@ void ObjectAnimation::unsetNodeTransformMatrix(const string& id)
 	updateNodeLists();
 }
 
-void ObjectAnimation::createNodesTransformMatrices(unordered_map<string, Matrix4x4*>& matrices, vector<FlattenedNode>& nodeList, const map<string, Node*>& nodes, Matrix4x4* parentTransformMatrix, AnimationState* animationState)
+void ObjectAnimation::createNodesTransformMatrices(unordered_map<string, Matrix4x4*>& matrices, vector<FlattenedNode>& nodeList, const unordered_map<string, Node*>& nodes, Matrix4x4* parentTransformMatrix, AnimationState* animationState)
 {
 	// iterate through nodes
 	for (const auto& [nodeId, node]: nodes) {
@@ -335,7 +333,7 @@ void ObjectAnimation::createNodesTransformMatrices(unordered_map<string, Matrix4
 	}
 }
 
-void ObjectAnimation::updateNodeList(vector<FlattenedNode>& nodeList, int& nodeIdx, const map<string, Node*>& nodes, AnimationState* animationState) {
+void ObjectAnimation::updateNodeList(vector<FlattenedNode>& nodeList, int& nodeIdx, const unordered_map<string, Node*>& nodes, AnimationState* animationState) {
 	// iterate through nodes
 	for (const auto& [nodeId, node]: nodes) {
 		//
@@ -513,12 +511,12 @@ void ObjectAnimation::computeAnimation(int contextIdx, const Matrix4x4& instance
 	if (hasSkinning == true) updateSkinningJoints();
 }
 
-int32_t ObjectAnimation::determineSkinnedNodeCount(const map<string, Node*>& nodes)
+int32_t ObjectAnimation::determineSkinnedNodeCount(const unordered_map<string, Node*>& nodes)
 {
 	return determineSkinnedNodeCount(nodes, 0);
 }
 
-int32_t ObjectAnimation::determineSkinnedNodeCount(const map<string, Node*>& nodes, int32_t count)
+int32_t ObjectAnimation::determineSkinnedNodeCount(const unordered_map<string, Node*>& nodes, int32_t count)
 {
 	// iterate through nodes
 	for (const auto& [nodeId, node]: nodes) {
@@ -534,7 +532,7 @@ int32_t ObjectAnimation::determineSkinnedNodeCount(const map<string, Node*>& nod
 	return count;
 }
 
-int32_t ObjectAnimation::determineSkinnedNodes(const map<string, Node*>& nodes, vector<Node*>& skinningNodes, int32_t idx)
+int32_t ObjectAnimation::determineSkinnedNodes(const unordered_map<string, Node*>& nodes, vector<Node*>& skinningNodes, int32_t idx)
 {
 	// iterate through nodes
 	for (const auto& [nodeId, node]: nodes) {

@@ -1,8 +1,8 @@
 #pragma once
 
 #include <array>
-#include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -20,8 +20,8 @@
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::array;
-using std::map;
 using std::string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::Texture;
@@ -138,7 +138,7 @@ private:
 	 * Prepares this node for indexed rendering
 	 * @param nodes nodes
 	 */
-	static void prepareForIndexedRendering(const map<string, Node*>& nodes);
+	static void prepareForIndexedRendering(const unordered_map<string, Node*>& nodes);
 
 	/**
 	 * Maps original vertices to new vertice mapping
@@ -223,7 +223,7 @@ private:
 	 * @param modelsPosition models position
 	 * @param parentTransformMatrix parent transform matrix
 	 */
-	static void partitionNode(Node* sourceNode, map<string, Model*>& modelsByPartition, map<string, Vector3>& modelsPosition, const Matrix4x4& parentTransformMatrix);
+	static void partitionNode(Node* sourceNode, unordered_map<string, Model*>& modelsByPartition, unordered_map<string, Vector3>& modelsPosition, const Matrix4x4& parentTransformMatrix);
 
 	/**
 	 * Shrink to fit node
@@ -283,7 +283,7 @@ public:
 	 * @param modelsByPartition models by partition
 	 * @param modelsPosition models position
 	 */
-	static void partition(Model* model, const Transform& transform, map<string, Model*>& modelsByPartition, map<string, Vector3>& modelsPosition);
+	static void partition(Model* model, const Transform& transform, unordered_map<string, Model*>& modelsByPartition, unordered_map<string, Vector3>& modelsPosition);
 
 	/**
 	 * Shrink to fit
@@ -366,7 +366,7 @@ private:
 	 * @param materialUseCount material use count
 	 * @param excludeDiffuseTextureFileNamePatterns exclude diffuse texture file name patterns
 	 */
-	static void checkForOptimization(Node* node, map<string, int>& materialUseCount, const vector<string>& excludeDiffuseTextureFileNamePatterns);
+	static void checkForOptimization(Node* node, unordered_map<string, int>& materialUseCount, const vector<string>& excludeDiffuseTextureFileNamePatterns);
 
 	/**
 	 * Prepare for optimization
@@ -384,6 +384,6 @@ private:
 	 * @param diffuseTextureAtlasIndices diffuse texture atlas indices
 	 * @param excludeDiffuseTextureFileNamePatterns exclude diffuse texture file name patterns
 	 */
-	static void optimizeNode(Node* sourceNode, Model* targetModel, int diffuseTextureAtlasSize, const map<string, int>& diffuseTextureAtlasIndices, const vector<string>& excludeDiffuseTextureFileNamePatterns);
+	static void optimizeNode(Node* sourceNode, Model* targetModel, int diffuseTextureAtlasSize, const unordered_map<string, int>& diffuseTextureAtlasIndices, const vector<string>& excludeDiffuseTextureFileNamePatterns);
 
 };

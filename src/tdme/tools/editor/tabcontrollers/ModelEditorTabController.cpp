@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -62,6 +63,7 @@
 using std::make_unique;
 using std::string;
 using std::unique_ptr;
+using std::unordered_map;
 using std::vector;
 
 using tdme::tools::editor::tabcontrollers::ModelEditorTabController;
@@ -293,7 +295,7 @@ void ModelEditorTabController::onDrop(const string& payload, int mouseX, int mou
 	}
 }
 
-void ModelEditorTabController::createOutlinerModelNodesXML(const string& prefix, const map<string, Node*>& subNodes, string& xml) {
+void ModelEditorTabController::createOutlinerModelNodesXML(const string& prefix, const unordered_map<string, Node*>& subNodes, string& xml) {
 	for (const auto& [nodeId, node]: subNodes) {
 		string image;
 		if (node->isJoint() == true) {
@@ -352,7 +354,7 @@ void ModelEditorTabController::setOutlinerContent() {
 			}
 			if (model != nullptr) {
 				xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Materials") + "\" value=\"" + GUIParser::escape(modelPrefix + ".materials") + "\">\n";
-				for (const auto& [materialId, material]: model->getMaterials()) {
+				for (const auto& materialId: model->getMaterialIds()) {
 					xml+= "	<selectbox-option image=\"resources/engine/images/material.png\" text=\"" + GUIParser::escape(materialId) + "\" value=\"" + GUIParser::escape(modelPrefix + ".materials." + materialId) + "\" />\n";
 				}
 				xml+= "</selectbox-parent-option>\n";
@@ -365,7 +367,7 @@ void ModelEditorTabController::setOutlinerContent() {
 			if (model != nullptr &&
 				(model->getAnimationSetups().size() > 1 || model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT) == nullptr)) {
 				xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Animations") + "\" value=\"" + GUIParser::escape(modelPrefix + ".animations") + "\">\n";
-				for (const auto& [animationSetupId, animationSetup]: model->getAnimationSetups()) {
+				for (const auto& animationSetupId: model->getAnimationSetupIds()) {
 					if (animationSetupId == Model::ANIMATIONSETUP_DEFAULT) continue;
 					xml+= "	<selectbox-option image=\"resources/engine/images/animation.png\" text=\"" + GUIParser::escape(animationSetupId) + "\" id=\"" + GUIParser::escape(modelPrefix + ".animations." + animationSetupId) + "\" value=\"" + GUIParser::escape(modelPrefix + ".animations." + animationSetupId) + "\" />\n";
 				}
@@ -972,7 +974,7 @@ void ModelEditorTabController::setAnimationDetails() {
 		animationsXML =
 			animationsXML +
 			"<dropdown-option text=\"<None>\" value=\"\" " + (animationSetup->getOverlayFromNodeId().empty() == true?"selected=\"true\" ":"") + " />\n";
-		for (const auto& [nodeId, node]: model->getNodes()) {
+		for (const auto& nodeId: model->getNodeIds()) {
 			animationsXML+=
 				"<dropdown-option text=\"" +
 				GUIParser::escape(nodeId) +
@@ -1049,8 +1051,9 @@ void ModelEditorTabController::setAnimationPreviewDetails() {
 	{
 		string animationsXML;
 		animationsXML = animationsXML + "<dropdown-option text=\"<No animation>\" value=\"\" selected=\"true\" />";
-		for (const auto& [animationSetupId, animationSetup]: model->getAnimationSetups()) {
-			if (animationSetup->isOverlayAnimationSetup() == true) continue;
+		for (const auto& animationSetupId: model->getAnimationSetupIds()) {
+			auto animationSetup = model->getAnimationSetup(animationSetupId);
+			if (animationSetup == nullptr || animationSetup->isOverlayAnimationSetup() == true) continue;
 			animationsXML =
 				animationsXML + "<dropdown-option text=\"" +
 				GUIParser::escape(animationSetup->getId()) +
@@ -1069,8 +1072,9 @@ void ModelEditorTabController::setAnimationPreviewDetails() {
 	{
 		string overlayAnimationsXML;
 		overlayAnimationsXML = overlayAnimationsXML + "<dropdown-option text=\"<No animation>\" value=\"\" selected=\"true\" />";
-		for (const auto& [animationSetupId, animationSetup]: model->getAnimationSetups()) {
-			if (animationSetup->isOverlayAnimationSetup() == false) continue;
+		for (const auto& animationSetupId: model->getAnimationSetupIds()) {
+			auto animationSetup = model->getAnimationSetup(animationSetupId);
+			if (animationSetup == nullptr || animationSetup->isOverlayAnimationSetup() == false) continue;
 			overlayAnimationsXML =
 				overlayAnimationsXML + "<dropdown-option text=\"" +
 				GUIParser::escape(animationSetup->getId()) +
@@ -1099,12 +1103,12 @@ void ModelEditorTabController::setAnimationPreviewDetails() {
 	{
 		string bonesXML;
 		bonesXML = bonesXML + "<dropdown-option text=\"<No bone>\" value=\"\" selected=\"true\" />";
-		for (const auto& [nodeId, node]: model->getNodes()) {
+		for (const auto& nodeId: model->getNodeIds()) {
 			bonesXML =
 				bonesXML + "<dropdown-option text=\"" +
-				GUIParser::escape(node->getId()) +
+				GUIParser::escape(nodeId) +
 				"\" value=\"" +
-				GUIParser::escape(node->getId()) +
+				GUIParser::escape(nodeId) +
 				"\" " +
 				" />\n";
 		}

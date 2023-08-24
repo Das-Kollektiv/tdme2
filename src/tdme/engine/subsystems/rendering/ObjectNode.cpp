@@ -1,8 +1,8 @@
 #include <tdme/engine/subsystems/rendering/ObjectNode.h>
 
-#include <map>
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -27,10 +27,10 @@
 #include <tdme/math/Matrix4x4.h>
 
 using std::make_unique;
-using std::map;
 using std::string;
 using std::to_string;
 using std::unique_ptr;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::Texture;
@@ -83,7 +83,7 @@ void ObjectNode::createNodes(ObjectBase* object, bool useManagers, Engine::Anima
 	createNodes(object, model->getSubNodes(), model->hasAnimations(), useManagers, animationProcessingTarget, objectNodes);
 }
 
-void ObjectNode::createNodes(ObjectBase* object, const map<string, Node*>& nodes, bool animated, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget, vector<ObjectNode*>& objectNodes)
+void ObjectNode::createNodes(ObjectBase* object, const unordered_map<string, Node*>& nodes, bool animated, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget, vector<ObjectNode*>& objectNodes)
 {
 	for (const auto& [nodeId, node]: nodes) {
 		// skip on joints

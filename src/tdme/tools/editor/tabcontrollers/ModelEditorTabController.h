@@ -1,9 +1,9 @@
 #pragma once
 
 #include <array>
-#include <map>
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -25,9 +25,9 @@
 #include <tdme/utilities/MutableString.h>
 
 using std::array;
-using std::map;
 using std::string;
 using std::unique_ptr;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::model::AnimationSetup;
@@ -154,7 +154,7 @@ private:
 	 * @param subNodes sub nodes
 	 * @param xml xml
 	 */
-	void createOutlinerModelNodesXML(const string& prefix, const map<string, Node*>& subNodes, string& xml);
+	void createOutlinerModelNodesXML(const string& prefix, const unordered_map<string, Node*>& subNodes, string& xml);
 
 public:
 	// forbid class copy

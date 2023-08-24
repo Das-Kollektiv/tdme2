@@ -1,7 +1,6 @@
 #include <tdme/engine/fileio/models/TMReader.h>
 
 #include <array>
-#include <map>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -36,7 +35,6 @@
 
 using std::array;
 using std::make_unique;
-using std::map;
 using std::string;
 using std::to_string;
 using std::unordered_map;
@@ -763,7 +761,7 @@ void TMReader::readSkinning(TMReaderInputStream* is, Node* g)
 	}
 }
 
-void TMReader::readSubNodes(TMReaderInputStream* is, Model* model, Node* parentNode, map<string, Node*>& subNodes)
+void TMReader::readSubNodes(TMReaderInputStream* is, Model* model, Node* parentNode, unordered_map<string, Node*>& subNodes)
 {
 	auto subNodeCount = is->readInt();
 	for (auto i = 0; i < subNodeCount; i++) {
