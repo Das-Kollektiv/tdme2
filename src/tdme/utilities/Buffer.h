@@ -20,7 +20,7 @@ using tdme::math::Math;
 class tdme::utilities::Buffer
 {
 protected:
-	bool createdBuffer;
+	bool ownsBuffer;
 	mutable int64_t position { 0 };
 	vector<uint8_t>* buffer { nullptr };
 
@@ -31,9 +31,9 @@ public:
 	 * @return this buffer
 	 */
 	inline Buffer& operator=(const Buffer& buffer) {
-		this->createdBuffer = buffer.createdBuffer;
+		this->ownsBuffer = buffer.ownsBuffer;
 		this->position = buffer.position;
-		if (createdBuffer == true) {
+		if (ownsBuffer == true) {
 			if (buffer.buffer != nullptr) {
 				this->buffer = new vector<uint8_t>(0);
 				*this->buffer = *buffer.buffer;
@@ -49,9 +49,9 @@ public:
 	 * @param buffer buffer
 	 */
 	inline Buffer(const Buffer& buffer) {
-		this->createdBuffer = buffer.createdBuffer;
+		this->ownsBuffer = buffer.ownsBuffer;
 		this->position = buffer.position;
-		if (createdBuffer == true) {
+		if (ownsBuffer == true) {
 			if (buffer.buffer != nullptr) {
 				this->buffer = new vector<uint8_t>(0);
 				*this->buffer = *buffer.buffer;
@@ -66,7 +66,7 @@ public:
 	 * @param capacity capacity
 	 */
 	inline Buffer(int64_t capacity) {
-		this->createdBuffer = true;
+		this->ownsBuffer = true;
 		this->position = 0;
 		this->buffer = new vector<uint8_t>(capacity);
 	}
@@ -76,7 +76,7 @@ public:
 	 * @param buffer buffer
 	 */
 	inline Buffer(Buffer* buffer) {
-		this->createdBuffer = false;
+		this->ownsBuffer = false;
 		this->position = 0;
 		this->buffer = buffer == nullptr?nullptr:buffer->buffer;
 	}
@@ -86,7 +86,7 @@ public:
 	 * @param data data
 	 */
 	inline Buffer(vector<uint8_t>* data) {
-		this->createdBuffer = false;
+		this->ownsBuffer = false;
 		this->position = 0;
 		this->buffer = data;
 	}
@@ -96,7 +96,7 @@ public:
 	 * @param data data
 	 */
 	inline Buffer(const vector<uint8_t>& data) {
-		this->createdBuffer = true;
+		this->ownsBuffer = true;
 		this->position = 0;
 		this->buffer = new vector<uint8_t>(0);
 		*this->buffer = data;
@@ -106,7 +106,7 @@ public:
 	 * Destructor
 	 */
 	inline virtual ~Buffer() {
-		if (createdBuffer == true && buffer != nullptr) {
+		if (ownsBuffer == true && buffer != nullptr) {
 			delete buffer;
 		}
 	}

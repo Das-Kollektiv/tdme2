@@ -1,5 +1,6 @@
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
 
+#include <new>
 #include <string>
 #include <vector>
 
@@ -12,6 +13,7 @@
 
 #include <ext/libpng/png.h>
 
+using std::nothrow;
 using std::string;
 using std::to_string;
 using std::vector;
@@ -61,13 +63,13 @@ bool PNGTextureWriter::write(Texture* texture, vector<uint8_t>& pngData, bool re
 
 bool PNGTextureWriter::write(int width, int height, int bytesPerPixel, const ByteBuffer& textureByteBuffer, vector<uint8_t>& pngData, bool removeAlphaChannel, bool flipY) {
 	// see: https://gist.github.com/niw/5963798
-	png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-	if (!png) {
+	auto png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+	if (png == nullptr) {
 		return false;
 	}
 
-	png_infop info = png_create_info_struct(png);
-	if (!info) {
+	auto info = png_create_info_struct(png);
+	if (info == nullptr) {
 		return false;
 	}
 
@@ -100,25 +102,31 @@ bool PNGTextureWriter::write(int width, int height, int bytesPerPixel, const Byt
 		png_set_filler(png, 0, PNG_FILLER_AFTER);
 	}
 
-	//
-	auto pixelBuffer = (uint8_t*)textureByteBuffer.getBuffer();
-	png_bytep* row_pointers = new png_bytep[height];
-	if (flipY == true) {
-		for (auto y = 0; y < height; y++) row_pointers[y] = pixelBuffer + width * bytesPerPixel * (height - 1 - y);
-	} else {
-		for (auto y = 0; y < height; y++) row_pointers[y] = pixelBuffer + width * bytesPerPixel * y;
+	// write png
+	auto success = false;
+	auto rowPtrs = new(nothrow)png_bytep[height];
+	if (rowPtrs != nullptr) {
+		//
+		success = true;
+		// create pointers to each line beginning in texture byte buffer
+		auto pixelBuffer = (uint8_t*)textureByteBuffer.getBuffer();
+		//
+		if (flipY == true) {
+			for (auto y = 0; y < height; y++) rowPtrs[y] = pixelBuffer + width * bytesPerPixel * (height - 1 - y);
+		} else {
+			for (auto y = 0; y < height; y++) rowPtrs[y] = pixelBuffer + width * bytesPerPixel * y;
+		}
+		//
+		png_write_image(png, rowPtrs);
+		png_write_end(png, NULL);
+
+		//
+		delete [] rowPtrs;
 	}
-
-	//
-	png_write_image(png, row_pointers);
-	png_write_end(png, NULL);
-
-	//
-	delete [] row_pointers;
 
 	//
 	png_destroy_write_struct(&png, &info);
 
 	//
-	return true;
+	return success;
 }
