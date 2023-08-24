@@ -56,12 +56,3 @@ void Skinning::setupJointsByName()
 		jointsByName[joint.getNodeId()] = &joint;
 	}
 }
-
-Joint* Skinning::getJointByName(const string& name)
-{
-	auto jointIt = jointsByName.find(name);
-	if (jointIt != jointsByName.end()) {
-		return jointIt->second;
-	}
-	return nullptr;
-}

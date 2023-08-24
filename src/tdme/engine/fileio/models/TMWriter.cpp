@@ -3,6 +3,7 @@
 #include <array>
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -43,6 +44,7 @@ using std::make_unique;
 using std::string;
 using std::to_string;
 using std::unique_ptr;
+using std::unordered_map;
 using std::vector;
 
 using tdme::application::Application;
