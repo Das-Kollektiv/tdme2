@@ -48,7 +48,7 @@ using tdme::os::threading::Thread;
 using tdme::utilities::Console;
 using tdme::utilities::Time;
 
-ApplicationClient::ApplicationClient(Context* context, UDPClient* udpClient) : Thread("applicationserverclientthread", 4 * 1024 * 1024), mutex("applicationserverclientthread-mutex") {
+ApplicationClient::ApplicationClient(Context* context, UDPClient* udpClient) : Thread("applicationserverclientthread"), mutex("applicationserverclientthread-mutex") {
 	this->context = unique_ptr<Context>(context);
 	this->udpClient = unique_ptr<UDPClient>(udpClient);
 	this->context->setLogicsMutex(getMutex());

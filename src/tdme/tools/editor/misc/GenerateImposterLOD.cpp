@@ -202,10 +202,10 @@ void GenerateImposterLOD::generate(
 		vector<Vector3> billboardNormals;
 		billboardNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
 		vector<Vector2> billboardTextureCoordinates;
-		billboardTextureCoordinates.push_back(Vector2(0.0f, 0.0f));
 		billboardTextureCoordinates.push_back(Vector2(0.0f, 1.0f));
-		billboardTextureCoordinates.push_back(Vector2(1.0f, 1.0f));
+		billboardTextureCoordinates.push_back(Vector2(0.0f, 0.0f));
 		billboardTextureCoordinates.push_back(Vector2(1.0f, 0.0f));
+		billboardTextureCoordinates.push_back(Vector2(1.0f, 1.0f));
 		vector<Face> billboardFacesGround;
 		billboardFacesGround.push_back(Face(billboardNode, 0, 1, 2, 0, 0, 0, 0, 1, 2));
 		billboardFacesGround.push_back(Face(billboardNode, 2, 3, 0, 0, 0, 0, 2, 3, 0));

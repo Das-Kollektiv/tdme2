@@ -24,14 +24,14 @@ MathOperatorTest::MathOperatorTest()
 
 void MathOperatorTest::main()
 {
-	auto mt = new MathOperatorTest();
+	MathOperatorTest mt;
 	Console::println(string("Math operator tests:"));
-	mt->testVector2Operators();
-	mt->testVector3Operators();
-	mt->testVector4Operators();
-	mt->testQuaternionOperators();
-	mt->testMatrix3x3Operators();
-	mt->testMatrix4x4Operators();
+	mt.testVector2Operators();
+	mt.testVector3Operators();
+	mt.testVector4Operators();
+	mt.testQuaternionOperators();
+	mt.testMatrix3x3Operators();
+	mt.testMatrix4x4Operators();
 }
 
 void MathOperatorTest::testVector2Operators()

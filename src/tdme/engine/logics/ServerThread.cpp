@@ -43,7 +43,7 @@ using tdme::os::threading::Thread;
 using tdme::utilities::Console;
 using tdme::utilities::Time;
 
-ServerThread::ServerThread(Context* context, ApplicationServer* server) : Thread("applicationserverthread", 4 * 1024 * 1024), mutex("applicationserverthread-mutex") {
+ServerThread::ServerThread(Context* context, ApplicationServer* server) : Thread("applicationserverthread"), mutex("applicationserverthread-mutex") {
 	this->context = context;
 	this->server = server;
 }

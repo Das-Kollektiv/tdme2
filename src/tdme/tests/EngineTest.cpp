@@ -125,10 +125,10 @@ Model* EngineTest::createWallModel()
 	vector<Vector3> normals;
 	normals.push_back(Vector3(0.0f, 0.0f, -1.0f));
 	vector<Vector2> textureCoordinates;
-	textureCoordinates.push_back(Vector2(0.0f, 0.0f));
 	textureCoordinates.push_back(Vector2(0.0f, 1.0f));
-	textureCoordinates.push_back(Vector2(1.0f, 1.0f));
+	textureCoordinates.push_back(Vector2(0.0f, 0.0f));
 	textureCoordinates.push_back(Vector2(1.0f, 0.0f));
+	textureCoordinates.push_back(Vector2(1.0f, 1.0f));
 	vector<Face> facesFarPlane;
 	facesFarPlane.push_back(Face(wallNode, 0, 1, 2, 0, 0, 0, 0, 1, 2));
 	facesFarPlane.push_back(Face(wallNode, 2, 3, 0, 0, 0, 0, 2, 3, 0));

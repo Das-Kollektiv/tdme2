@@ -77,7 +77,7 @@ using tdme::utilities::Time;
 using tdme::engine::logics::Context;
 
 Context::PathFindingThread::PathFindingThread(Context* context, int idx):
-	Thread("wscontext-pathfindingthread", 4 * 1024 * 1024),
+	Thread("wscontext-pathfindingthread"),
 	context(context),
 	idx(idx),
 	timeStateStarted(-1LL),

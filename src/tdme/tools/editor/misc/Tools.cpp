@@ -208,10 +208,10 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	vector<Vector3> groundNormals;
 	groundNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
 	vector<Vector2> groundTextureCoordinates;
-	groundTextureCoordinates.push_back(Vector2(0.0f, depth));
 	groundTextureCoordinates.push_back(Vector2(0.0f, 0.0f));
-	groundTextureCoordinates.push_back(Vector2(width, 0.0f));
+	groundTextureCoordinates.push_back(Vector2(0.0f, depth));
 	groundTextureCoordinates.push_back(Vector2(width, depth));
+	groundTextureCoordinates.push_back(Vector2(width, 0.0f));
 	vector<Face> groundFacesGround;
 	groundFacesGround.push_back(Face(groundNode, 0, 1, 2, 0, 0, 0, 0, 1, 2));
 	groundFacesGround.push_back(Face(groundNode, 2, 3, 0, 0, 0, 0, 2, 3, 0));
@@ -255,10 +255,10 @@ Model* Tools::createGridModel()
 	vector<Vector3> groundNormals;
 	groundNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
 	vector<Vector2> groundTextureCoordinates;
-	groundTextureCoordinates.push_back(Vector2(0.0f, 10000.0f));
 	groundTextureCoordinates.push_back(Vector2(0.0f, 0.0f));
-	groundTextureCoordinates.push_back(Vector2(10000.0f, 0.0f));
+	groundTextureCoordinates.push_back(Vector2(0.0f, 10000.0f));
 	groundTextureCoordinates.push_back(Vector2(10000.0f, 10000.0f));
+	groundTextureCoordinates.push_back(Vector2(10000.0f, 0.0f));
 	vector<Face> groundFacesGround;
 	groundFacesGround.push_back(Face(groundNode, 0, 1, 2, 0, 0, 0, 0, 1, 2));
 	groundFacesGround.push_back(Face(groundNode, 2, 3, 0, 0, 0, 0, 2, 3, 0));

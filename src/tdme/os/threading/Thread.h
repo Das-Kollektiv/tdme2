@@ -5,11 +5,13 @@
 #include <tdme/tdme.h>
 
 #include <chrono>
+#include <memory>
 #include <thread>
 #include <string>
 
 using std::string;
 using std::thread;
+using std::unique_ptr;
 
 /**
  * Base class for threads.
@@ -23,9 +25,8 @@ public:
 	/**
 	 * @brief Public constructor
 	 * @param name name
-	 * @param stackSize stack size, defaults to 2MB
 	 */
-	inline Thread(const string& name, size_t stackSize = 2 * 1024 * 1024): name(name), stlThread(nullptr), stopRequested(false), stackSize(stackSize) {}
+	inline Thread(const string& name): name(name), stopRequested(false) {}
 
 	/**
 	 * @brief Public destructor
@@ -58,7 +59,7 @@ public:
 	 * @brief Starts this objects thread
 	 */
 	inline virtual void start() {
-		stlThread = new std::thread(threadRun, (void*)this);
+		stlThread = make_unique<thread>(thread(threadRun, (void*)this));
 	}
 
 	/**
@@ -88,7 +89,6 @@ private:
 	}
 
 	string name;
-	thread* stlThread;
+	unique_ptr<thread> stlThread;
 	volatile bool stopRequested;
-	size_t stackSize;
 };
