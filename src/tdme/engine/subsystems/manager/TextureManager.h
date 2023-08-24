@@ -35,6 +35,17 @@ public:
 	FORBID_CLASS_COPY(TextureManager)
 
 	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 */
+	TextureManager(Renderer* renderer);
+
+	/**
+	 * Destructor
+	 */
+	~TextureManager();
+
+	/**
 	 * Adds a texture to manager
 	 * @param id id
 	 * @param created if managed texture has just been created
@@ -70,14 +81,4 @@ public:
 	 */
 	void removeTexture(const string& textureId);
 
-	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 */
-	TextureManager(Renderer* renderer);
-
-	/**
-	 * Destructor
-	 */
-	~TextureManager();
 };

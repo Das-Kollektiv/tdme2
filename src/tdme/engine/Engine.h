@@ -347,7 +347,7 @@ private:
 	private:
 		int idx;
 		Queue<EngineThreadQueueElement>* queue { nullptr };
-		TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
+		unique_ptr<TransparentRenderFacesPool> transparentRenderFacesPool;
 		array<vector<Object*>, Engine::UNIQUEMODELID_MAX> objectsByModels;
 		volatile int elementsProcessed { 0 };
 
@@ -368,7 +368,7 @@ private:
 		 * @return transparent render faces pool
 		 */
 		inline TransparentRenderFacesPool* getTransparentRenderFacesPool() {
-			return transparentRenderFacesPool;
+			return transparentRenderFacesPool.get();
 		}
 
 		/**

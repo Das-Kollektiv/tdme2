@@ -4,6 +4,7 @@
 #include <unordered_map>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/subsystems/manager/MeshManager_MeshManaged.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -42,7 +43,17 @@ public:
 	 * @param meshId mesh id
 	 * @return object node mesh or null
 	 */
-	ObjectNodeMesh* getMesh(const string& meshId);
+	inline ObjectNodeMesh* getMesh(const string& meshId) {
+		// check if we already manage this mesh
+		auto meshManagedIt = meshes.find(meshId);
+		if (meshManagedIt != meshes.end()) {
+			auto meshManaged = meshManagedIt->second;
+			meshManaged->incrementReferenceCounter();
+			return meshManaged->getMesh();
+		}
+		// otherwise no mesh
+		return nullptr;
+	}
 
 	/**
 	 * Adds a mesh to manager

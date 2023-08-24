@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -15,7 +16,9 @@
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 
 using tdme::engine::Color4;
 using tdme::engine::model::Model;
@@ -42,7 +45,7 @@ private:
 	Engine* engine { nullptr };
 	bool frustumCulling { true };
 	RenderPass renderPass { RENDERPASS_NONE };
-	EnvironmentMappingRenderer* environmentMappingRenderer { nullptr };
+	unique_ptr<EnvironmentMappingRenderer> environmentMappingRenderer;
 	bool enabled { true };
 	BoundingBox boundingBox;
 	BoundingBox worldBoundingBox;

@@ -1,5 +1,6 @@
 #include <tdme/engine/EnvironmentMapping.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -14,6 +15,7 @@
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 
+using std::make_unique;
 using std::string;
 
 using tdme::engine::primitives::BoundingBox;
@@ -42,7 +44,7 @@ void EnvironmentMapping::setEngine(Engine* engine) {
 }
 
 void EnvironmentMapping::initialize() {
-	environmentMappingRenderer = new EnvironmentMappingRenderer(engine, width, height);
+	environmentMappingRenderer = make_unique<EnvironmentMappingRenderer>(engine, width, height);
 	environmentMappingRenderer->setRenderPassMask(renderPassMask);
 	environmentMappingRenderer->setTimeRenderUpdateFrequency(timeRenderUpdateFrequency);
 	environmentMappingRenderer->initialize();

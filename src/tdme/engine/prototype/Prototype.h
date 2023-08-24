@@ -564,7 +564,7 @@ public:
 	/**
 	 * Renames sound of given sound id with new id
 	 * @param id existing id
-	 * @param id new id
+	 * @param newId new id
 	 * @return success
 	 */
 	inline bool renameSound(const string& id, const string& newId) {

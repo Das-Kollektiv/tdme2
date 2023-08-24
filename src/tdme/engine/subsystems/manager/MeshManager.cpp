@@ -24,19 +24,6 @@ MeshManager::~MeshManager() {
 	for (const auto& [meshManagedId, meshManaged]: meshes) delete meshManaged;
 }
 
-ObjectNodeMesh* MeshManager::getMesh(const string& meshId)
-{
-	// check if we already manage this mesh
-	auto meshManagedIt = meshes.find(meshId);
-	if (meshManagedIt != meshes.end()) {
-		auto meshManaged = meshManagedIt->second;
-		meshManaged->incrementReferenceCounter();
-		return meshManaged->getMesh();
-	}
-	// otherwise no mesh
-	return nullptr;
-}
-
 void MeshManager::addMesh(const string& meshId, ObjectNodeMesh* mesh)
 {
 	// create managed texture

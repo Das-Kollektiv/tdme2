@@ -209,7 +209,7 @@ void SceneConnector::setLights(Engine* engine, Scene* scene, const Vector3& tran
 
 Entity* SceneConnector::createParticleSystem(PrototypeParticleSystem* particleSystem, const string& id, bool enableDynamicShadows)
 {
-	ParticleEmitter* engineEmitter = nullptr;
+	unique_ptr<ParticleEmitter> engineEmitter;
 	{
 		auto emitterType = particleSystem->getEmitter();
 		if (emitterType == PrototypeParticleSystem_Emitter::NONE) {
@@ -217,23 +217,23 @@ Entity* SceneConnector::createParticleSystem(PrototypeParticleSystem* particleSy
 		} else
 		if (emitterType == PrototypeParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
 			auto emitter = particleSystem->getPointParticleEmitter();
-			engineEmitter = new PointParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), emitter->getPosition(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
+			engineEmitter = make_unique<PointParticleEmitter>(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), emitter->getPosition(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
 		} else
 		if (emitterType == PrototypeParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
 			auto emitter = particleSystem->getBoundingBoxParticleEmitters();
-			engineEmitter = new BoundingBoxParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), new OrientedBoundingBox(emitter->getObbCenter(), emitter->getObbAxis0(), emitter->getObbAxis1(), emitter->getObbAxis2(), emitter->getObbHalfextension()), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
+			engineEmitter = make_unique<BoundingBoxParticleEmitter>(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), new OrientedBoundingBox(emitter->getObbCenter(), emitter->getObbAxis0(), emitter->getObbAxis1(), emitter->getObbAxis2(), emitter->getObbHalfextension()), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
 		} else
 		if (emitterType == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
 			auto emitter = particleSystem->getCircleParticleEmitter();
-			engineEmitter = new CircleParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getAxis0(), emitter->getAxis1(), emitter->getCenter(), emitter->getRadius(), emitter->getMass(), emitter->getMassRnd(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
+			engineEmitter = make_unique<CircleParticleEmitter>(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getAxis0(), emitter->getAxis1(), emitter->getCenter(), emitter->getRadius(), emitter->getMass(), emitter->getMassRnd(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
 		} else
 		if (emitterType == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
 			auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
-			engineEmitter = new CircleParticleEmitterPlaneVelocity(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getAxis0(), emitter->getAxis1(), emitter->getCenter(), emitter->getRadius(), emitter->getMass(), emitter->getMassRnd(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
+			engineEmitter = make_unique<CircleParticleEmitterPlaneVelocity>(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getAxis0(), emitter->getAxis1(), emitter->getCenter(), emitter->getRadius(), emitter->getMass(), emitter->getMassRnd(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
 		} else
 		if (emitterType == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
 			auto emitter = particleSystem->getSphereParticleEmitter();
-			engineEmitter = new SphereParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), new Sphere(emitter->getCenter(), emitter->getRadius()), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
+			engineEmitter = make_unique<SphereParticleEmitter>(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), new Sphere(emitter->getCenter(), emitter->getRadius()), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
 		} else {
 			Console::println(
 				string(
@@ -254,44 +254,46 @@ Entity* SceneConnector::createParticleSystem(PrototypeParticleSystem* particleSy
 		if (particleSystemType == PrototypeParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) {
 			auto objectParticleSystem = particleSystem->getObjectParticleSystem();
 			if (objectParticleSystem->getModel() == nullptr) return nullptr;
-
-			return new ObjectParticleSystem(
-				id,
-				objectParticleSystem->getModel(),
-				objectParticleSystem->getScale(),
-				objectParticleSystem->isAutoEmit(),
-				enableDynamicShadows,
-				enableDynamicShadows,
-				objectParticleSystem->getMaxCount(),
-				engineEmitter
-			);
+			return
+				make_unique<ObjectParticleSystem>(
+					id,
+					objectParticleSystem->getModel(),
+					objectParticleSystem->getScale(),
+					objectParticleSystem->isAutoEmit(),
+					enableDynamicShadows,
+					enableDynamicShadows,
+					objectParticleSystem->getMaxCount(),
+					engineEmitter.release()
+				).release();
 		} else
 		if (particleSystemType == PrototypeParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
 			auto pointParticleSystem = particleSystem->getPointParticleSystem();
-			return new PointsParticleSystem(
-				id,
-				engineEmitter,
-				pointParticleSystem->getMaxPoints(),
-				pointParticleSystem->getPointSize(),
-				pointParticleSystem->isAutoEmit(),
-				pointParticleSystem->getTexture(),
-				pointParticleSystem->getTextureHorizontalSprites(),
-				pointParticleSystem->getTextureVerticalSprites(),
-				pointParticleSystem->getTextureSpritesFPS()
-			);
+			return
+				make_unique<PointsParticleSystem>(
+					id,
+					engineEmitter.release(),
+					pointParticleSystem->getMaxPoints(),
+					pointParticleSystem->getPointSize(),
+					pointParticleSystem->isAutoEmit(),
+					pointParticleSystem->getTexture(),
+					pointParticleSystem->getTextureHorizontalSprites(),
+					pointParticleSystem->getTextureVerticalSprites(),
+					pointParticleSystem->getTextureSpritesFPS()
+				).release();
 		} else
 		if (particleSystemType == PrototypeParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
 			auto fogParticleSystem = particleSystem->getFogParticleSystem();
-			return new FogParticleSystem(
-				id,
-				engineEmitter,
-				fogParticleSystem->getMaxPoints(),
-				fogParticleSystem->getPointSize(),
-				fogParticleSystem->getTexture(),
-				fogParticleSystem->getTextureHorizontalSprites(),
-				fogParticleSystem->getTextureVerticalSprites(),
-				fogParticleSystem->getTextureSpritesFPS()
-			);
+			return
+				make_unique<FogParticleSystem>(
+					id,
+					engineEmitter.release(),
+					fogParticleSystem->getMaxPoints(),
+					fogParticleSystem->getPointSize(),
+					fogParticleSystem->getTexture(),
+					fogParticleSystem->getTextureHorizontalSprites(),
+					fogParticleSystem->getTextureVerticalSprites(),
+					fogParticleSystem->getTextureSpritesFPS()
+				).release();
 		} else {
 			Console::println(
 				string(

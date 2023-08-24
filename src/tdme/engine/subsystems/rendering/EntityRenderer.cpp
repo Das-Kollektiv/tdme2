@@ -251,7 +251,7 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object*>
 
 		//
 		for (const auto& engineThread: Engine::engineThreads) {
-			transparentRenderFacesPool->merge(engineThread->transparentRenderFacesPool);
+			transparentRenderFacesPool->merge(engineThread->transparentRenderFacesPool.get());
 			engineThread->transparentRenderFacesPool->reset();
 		}
 	}

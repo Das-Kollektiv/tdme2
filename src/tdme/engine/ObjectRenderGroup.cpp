@@ -85,18 +85,20 @@ void ObjectRenderGroup::combineNode(Node* sourceNode, const vector<Vector3>& ori
 	// create node in combined model
 	auto combinedModelNode = combinedModel->getNodeById(sourceNode->getId());
 	if (combinedModelNode == nullptr) {
-		combinedModelNode = new Node(
+		auto newCombinedModelNode = make_unique<Node>(
 			combinedModel,
 			sourceNode->getParentNode() == nullptr?nullptr:combinedModel->getNodeById(sourceNode->getParentNode()->getId()),
 			sourceNode->getId(),
 			sourceNode->getName()
 		);
 		if (sourceNode->getParentNode() == nullptr) {
-			combinedModel->getSubNodes()[combinedModelNode->getId()] = combinedModelNode;
+			combinedModel->getSubNodes()[newCombinedModelNode->getId()] = newCombinedModelNode.get();
 		} else {
-			combinedModelNode->getParentNode()->getSubNodes()[combinedModelNode->getId()] = combinedModelNode;
+			combinedModelNode->getParentNode()->getSubNodes()[newCombinedModelNode->getId()] = newCombinedModelNode.get();
 		}
-		combinedModel->getNodes()[combinedModelNode->getId()] = combinedModelNode;
+		combinedModel->getNodes()[newCombinedModelNode->getId()] = newCombinedModelNode.get();
+		//
+		combinedModelNode = newCombinedModelNode.release();
 	}
 
 	{

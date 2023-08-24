@@ -210,7 +210,7 @@ Engine::EngineThread::EngineThread(int idx, Queue<EngineThreadQueueElement>* que
 	idx(idx),
 	queue(queue) {
 	//
-	transparentRenderFacesPool = new TransparentRenderFacesPool();
+	transparentRenderFacesPool = make_unique<TransparentRenderFacesPool>();
 }
 
 void Engine::EngineThread::run() {
@@ -245,7 +245,7 @@ void Engine::EngineThread::run() {
 					objectsByModels,
 					element->rendering.collectTransparentFaces,
 					element->rendering.renderTypes,
-					transparentRenderFacesPool
+					transparentRenderFacesPool.get()
 				);
 				element->objects.clear();
 				elementsProcessed++;
@@ -2131,20 +2131,25 @@ bool Engine::makeScreenshot(const string& pathName, const string& fileName, bool
 	}
 
 	// create texture, write and delete
-	auto texture = new Texture(
-		"tdme.engine.makescreenshot",
-		Texture::TEXTUREDEPTH_RGBA,
-		Texture::TEXTUREFORMAT_RGBA,
-		width,
-		height,
-		width,
-		height,
-		Texture::TEXTUREFORMAT_RGBA,
-		*pixels
-	);
+	auto texture =
+		unique_ptr<
+			Texture,
+			decltype([](Texture* texture){ texture->releaseReference(); })
+		>(
+			new Texture(
+				"tdme.engine.makescreenshot",
+				Texture::TEXTUREDEPTH_RGBA,
+				Texture::TEXTUREFORMAT_RGBA,
+				width,
+				height,
+				width,
+				height,
+				Texture::TEXTUREFORMAT_RGBA,
+				*pixels
+			)
+		);
 	texture->acquireReference();
-	PNGTextureWriter::write(texture, pathName, fileName, removeAlphaChannel);
-	texture->releaseReference();
+	PNGTextureWriter::write(texture.get(), pathName, fileName, removeAlphaChannel);
 
 	// unuse framebuffer if we have one
 	if (frameBuffer != nullptr) FrameBuffer::disableFrameBuffer();
@@ -2166,20 +2171,25 @@ bool Engine::makeScreenshot(vector<uint8_t>& pngData)
 	}
 
 	// create texture, write and delete
-	auto texture = new Texture(
-		"tdme.engine.makescreenshot",
-		Texture::TEXTUREDEPTH_RGBA,
-		Texture::TEXTUREFORMAT_RGBA,
-		width,
-		height,
-		width,
-		height,
-		Texture::TEXTUREFORMAT_RGBA,
-		*pixels
-	);
+	auto texture =
+		unique_ptr<
+			Texture,
+			decltype([](Texture* texture){ texture->releaseReference(); })
+		>(
+			new Texture(
+				"tdme.engine.makescreenshot",
+				Texture::TEXTUREDEPTH_RGBA,
+				Texture::TEXTUREFORMAT_RGBA,
+				width,
+				height,
+				width,
+				height,
+				Texture::TEXTUREFORMAT_RGBA,
+				*pixels
+			)
+		);
 	texture->acquireReference();
-	PNGTextureWriter::write(texture, pngData);
-	texture->releaseReference();
+	PNGTextureWriter::write(texture.get(), pngData);
 
 	// unuse framebuffer if we have one
 	if (frameBuffer != nullptr) FrameBuffer::disableFrameBuffer();
