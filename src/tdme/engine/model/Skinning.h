@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <string>
@@ -28,7 +27,7 @@ private:
 	vector<float> weights;
 	vector<Joint> joints;
 	vector<vector<JointWeight>> verticesJointsWeights;
-	unordered_map<string, Joint*> jointsByName;
+	unordered_map<string, Joint*> jointsByNodeIds;
 
 public:
 	// forbid class copy
@@ -79,22 +78,20 @@ public:
 	void setVerticesJointsWeights(const vector<vector<JointWeight>>& verticesJointsWeights);
 
 	/**
-	 * Get joint by name
-	 * @param name name
-	 * @return joint
+	 * Get joint by node id
+	 * @param nodeId node id
+	 * @return joint or nullptr if not found
 	 */
-	inline Joint* getJointByName(const string& name) {
-		auto jointIt = jointsByName.find(name);
-		if (jointIt != jointsByName.end()) {
-			return jointIt->second;
-		}
+	inline Joint* getJointByNodeId(const string& nodeId) {
+		auto jointIt = jointsByNodeIds.find(nodeId);
+		if (jointIt != jointsByNodeIds.end()) return jointIt->second;
 		return nullptr;
 	}
 
 private:
 
 	/**
-	 * Set up joints by name
+	 * Set up joints by node ids hash map
 	 */
-	void setupJointsByName();
+	void setupJointsByNodeIds();
 };
