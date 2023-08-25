@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <span>
 #include <string>
 #include <unordered_map>
@@ -19,6 +20,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/MiniScript.h>
 
+using std::make_unique;
 using std::span;
 using std::string;
 using std::unordered_map;
@@ -258,22 +260,22 @@ public:
 				// add logic
 				if (prototypeToAdd.prototype->hasScript() == true) {
 					auto prototype = prototypeToAdd.prototype;
-					auto logicMiniScript = new LogicMiniScript();
+					auto logicMiniScript = make_unique<LogicMiniScript>();
 					logicMiniScript->parseScript(
 						Tools::getPathName(prototype->getScript()),
 						Tools::getFileName(prototype->getScript())
 					);
 					miniScript->context->addLogic(
-						new MiniScriptLogic(
+						make_unique<MiniScriptLogic>(
 							miniScript->context,
 							prototypeToAdd.id,
 							prototype->isScriptHandlingHID(),
-							logicMiniScript,
+							logicMiniScript.release(),
 							prototypeToAdd.prototype,
 							runsInEditor,
 							prototypeToAdd.hierarchyId,
 							prototypeToAdd.hierarchyParentId
-						)
+						).release()
 					);
 				}
 			}
