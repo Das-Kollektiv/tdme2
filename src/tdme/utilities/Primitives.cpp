@@ -1,6 +1,7 @@
 #include <tdme/utilities/Primitives.h>
 
 #include <array>
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -28,6 +29,7 @@
 #include <tdme/utilities/ModelTools.h>
 
 using std::array;
+using std::make_unique;
 using std::string;
 using std::to_string;
 using std::unordered_map;
@@ -55,21 +57,13 @@ using tdme::utilities::Console;
 using tdme::utilities::ModelTools;
 using tdme::utilities::Primitives;
 
-constexpr int32_t Primitives::SPHERE_SEGMENTS_X;
-
-constexpr int32_t Primitives::SPHERE_SEGMENTS_Y;
-
-constexpr int32_t Primitives::CAPSULE_SEGMENTS_X;
-
-constexpr int32_t Primitives::CAPSULE_SEGMENTS_Y;
-
 Model* Primitives::createBoundingBoxModel(BoundingBox* boundingBox, const string& id)
 {
 	// model
-	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	auto model = make_unique<Model>(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	// material
-	auto material = new Material("primitive");
-	auto specularMaterialProperties = new SpecularMaterialProperties();
+	auto material = make_unique<Material>("primitive");
+	auto specularMaterialProperties = make_unique<SpecularMaterialProperties>();
 	specularMaterialProperties->setAmbientColor(
 		Color4(
 			245.0f / 255.0f * 0.5f,
@@ -87,10 +81,9 @@ Model* Primitives::createBoundingBoxModel(BoundingBox* boundingBox, const string
 		)
 	);
 	specularMaterialProperties->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	material->setSpecularMaterialProperties(specularMaterialProperties);
-	model->getMaterials()[material->getId()] = material;
+	material->setSpecularMaterialProperties(specularMaterialProperties.release());
 	// node
-	auto node = new Node(model, nullptr, "primitive", "primitive");
+	auto node = make_unique<Node>(model.get(), nullptr, "primitive", "primitive");
 	// triangle vertices indexes
 	auto fvi = BoundingBox::getFacesVerticesIndexes();
 	// vertices
@@ -100,35 +93,35 @@ Model* Primitives::createBoundingBoxModel(BoundingBox* boundingBox, const string
 	}
 	// normals
 	vector<Vector3> normals;
-	normals.push_back(Vector3(-1.0f, 0.0f, 0.0f));
-	normals.push_back(Vector3(+1.0f, 0.0f, 0.0f));
-	normals.push_back(Vector3(0.0f, -1.0f, 0.0f));
-	normals.push_back(Vector3(0.0f, +1.0f, 0.0f));
-	normals.push_back(Vector3(0.0f, 0.0f, -1.0f));
-	normals.push_back(Vector3(0.0f, 0.0f, +1.0f));
+	normals.emplace_back(-1.0f, 0.0f, 0.0f);
+	normals.emplace_back(+1.0f, 0.0f, 0.0f);
+	normals.emplace_back(0.0f, -1.0f, 0.0f);
+	normals.emplace_back(0.0f, +1.0f, 0.0f);
+	normals.emplace_back(0.0f, 0.0f, -1.0f);
+	normals.emplace_back(0.0f, 0.0f, +1.0f);
 	// faces
 	vector<Face> faces;
 	//	left
-	faces.push_back(Face(node, (*fvi)[0][0], (*fvi)[0][1], (*fvi)[0][2], 0, 0, 0));
-	faces.push_back(Face(node, (*fvi)[1][0], (*fvi)[1][1], (*fvi)[1][2], 0, 0, 0));
+	faces.emplace_back(node.get(), (*fvi)[0][0], (*fvi)[0][1], (*fvi)[0][2], 0, 0, 0);
+	faces.emplace_back(node.get(), (*fvi)[1][0], (*fvi)[1][1], (*fvi)[1][2], 0, 0, 0);
 	//	right
-	faces.push_back(Face(node, (*fvi)[2][0], (*fvi)[2][1], (*fvi)[2][2], 1, 1, 1));
-	faces.push_back(Face(node, (*fvi)[3][0], (*fvi)[3][1], (*fvi)[3][2], 1, 1, 1));
+	faces.emplace_back(node.get(), (*fvi)[2][0], (*fvi)[2][1], (*fvi)[2][2], 1, 1, 1);
+	faces.emplace_back(node.get(), (*fvi)[3][0], (*fvi)[3][1], (*fvi)[3][2], 1, 1, 1);
 	//	top
-	faces.push_back(Face(node, (*fvi)[4][0], (*fvi)[4][1], (*fvi)[4][2], 2, 2, 2));
-	faces.push_back(Face(node, (*fvi)[5][0], (*fvi)[5][1], (*fvi)[5][2], 2, 2, 2));
+	faces.emplace_back(node.get(), (*fvi)[4][0], (*fvi)[4][1], (*fvi)[4][2], 2, 2, 2);
+	faces.emplace_back(node.get(), (*fvi)[5][0], (*fvi)[5][1], (*fvi)[5][2], 2, 2, 2);
 	//	bottom
-	faces.push_back(Face(node, (*fvi)[6][0], (*fvi)[6][1], (*fvi)[6][2], 3, 3, 3));
-	faces.push_back(Face(node, (*fvi)[7][0], (*fvi)[7][1], (*fvi)[7][2], 3, 3, 3));
+	faces.emplace_back(node.get(), (*fvi)[6][0], (*fvi)[6][1], (*fvi)[6][2], 3, 3, 3);
+	faces.emplace_back(node.get(), (*fvi)[7][0], (*fvi)[7][1], (*fvi)[7][2], 3, 3, 3);
 	//	near
-	faces.push_back(Face(node, (*fvi)[8][0], (*fvi)[8][1], (*fvi)[8][2], 4, 4, 4));
-	faces.push_back(Face(node, (*fvi)[9][0], (*fvi)[9][1], (*fvi)[9][2], 4, 4, 4));
+	faces.emplace_back(node.get(), (*fvi)[8][0], (*fvi)[8][1], (*fvi)[8][2], 4, 4, 4);
+	faces.emplace_back(node.get(), (*fvi)[9][0], (*fvi)[9][1], (*fvi)[9][2], 4, 4, 4);
 	//	far
-	faces.push_back(Face(node, (*fvi)[10][0], (*fvi)[10][1], (*fvi)[10][2], 5, 5, 5));
-	faces.push_back(Face(node, (*fvi)[11][0], (*fvi)[11][1], (*fvi)[11][2], 5, 5, 5));
+	faces.emplace_back(node.get(), (*fvi)[10][0], (*fvi)[10][1], (*fvi)[10][2], 5, 5, 5);
+	faces.emplace_back(node.get(), (*fvi)[11][0], (*fvi)[11][1], (*fvi)[11][2], 5, 5, 5);
 	// faces entity
-	FacesEntity nodeFacesEntity(node, "primitive.facesentity");
-	nodeFacesEntity.setMaterial(material);
+	FacesEntity nodeFacesEntity(node.get(), "primitive.facesentity");
+	nodeFacesEntity.setMaterial(material.get());
 	nodeFacesEntity.setFaces(faces);
 	// set up faces entity
 	vector<FacesEntity> nodeFacesEntities;
@@ -138,21 +131,25 @@ Model* Primitives::createBoundingBoxModel(BoundingBox* boundingBox, const string
 	node->setNormals(normals);
 	node->setFacesEntities(nodeFacesEntities);
 	// register node
-	model->getNodes()["node"] = node;
-	model->getSubNodes()["node"] = node;
-	// prepare for indexed rendering
-	ModelTools::prepareForIndexedRendering(model);
+	model->getNodes()["node"] = node.get();
+	model->getSubNodes()["node"] = node.get();
+	node.release();
 	//
-	return model;
+	model->getMaterials()[material->getId()] = material.get();
+	material.release();
+	// prepare for indexed rendering
+	ModelTools::prepareForIndexedRendering(model.get());
+	//
+	return model.release();
 }
 
 Model* Primitives::createOrientedBoundingBoxModel(OrientedBoundingBox* orientedBoundingBox, const string& id)
 {
 	// model
-	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	auto model = make_unique<Model>(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	// material
-	auto material = new Material("primitive");
-	auto specularMaterialProperties = new SpecularMaterialProperties();
+	auto material = make_unique<Material>("primitive");
+	auto specularMaterialProperties = make_unique<SpecularMaterialProperties>();
 	specularMaterialProperties->setAmbientColor(
 		Color4(
 			245.0f / 255.0f * 0.5f,
@@ -170,10 +167,9 @@ Model* Primitives::createOrientedBoundingBoxModel(OrientedBoundingBox* orientedB
 		)
 	);
 	specularMaterialProperties->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	material->setSpecularMaterialProperties(specularMaterialProperties);
-	model->getMaterials()[material->getId()] = material;
+	material->setSpecularMaterialProperties(specularMaterialProperties.release());
 	// node
-	auto node = new Node(model, nullptr, "primitive", "primitive");
+	auto node = make_unique<Node>(model.get(), nullptr, "primitive", "primitive");
 	// triangle vertices indexes
 	auto fvi = OrientedBoundingBox::getFacesVerticesIndexes();
 	// vertices
@@ -193,26 +189,26 @@ Model* Primitives::createOrientedBoundingBoxModel(OrientedBoundingBox* orientedB
 	// faces
 	vector<Face> faces;
 	//	left
-	faces.push_back(Face(node, fvi[0][0], fvi[0][1], fvi[0][2], 0, 0, 0));
-	faces.push_back(Face(node, fvi[1][0], fvi[1][1], fvi[1][2], 0, 0, 0));
+	faces.emplace_back(node.get(), fvi[0][0], fvi[0][1], fvi[0][2], 0, 0, 0);
+	faces.emplace_back(node.get(), fvi[1][0], fvi[1][1], fvi[1][2], 0, 0, 0);
 	//	right
-	faces.push_back(Face(node, fvi[2][0], fvi[2][1], fvi[2][2], 1, 1, 1));
-	faces.push_back(Face(node, fvi[3][0], fvi[3][1], fvi[3][2], 1, 1, 1));
+	faces.emplace_back(node.get(), fvi[2][0], fvi[2][1], fvi[2][2], 1, 1, 1);
+	faces.emplace_back(node.get(), fvi[3][0], fvi[3][1], fvi[3][2], 1, 1, 1);
 	//	top
-	faces.push_back(Face(node, fvi[4][0], fvi[4][1], fvi[4][2], 2, 2, 2));
-	faces.push_back(Face(node, fvi[5][0], fvi[5][1], fvi[5][2], 2, 2, 2));
+	faces.emplace_back(node.get(), fvi[4][0], fvi[4][1], fvi[4][2], 2, 2, 2);
+	faces.emplace_back(node.get(), fvi[5][0], fvi[5][1], fvi[5][2], 2, 2, 2);
 	//	bottom
-	faces.push_back(Face(node, fvi[6][0], fvi[6][1], fvi[6][2], 3, 3, 3));
-	faces.push_back(Face(node, fvi[7][0], fvi[7][1], fvi[7][2], 3, 3, 3));
+	faces.emplace_back(node.get(), fvi[6][0], fvi[6][1], fvi[6][2], 3, 3, 3);
+	faces.emplace_back(node.get(), fvi[7][0], fvi[7][1], fvi[7][2], 3, 3, 3);
 	//	near
-	faces.push_back(Face(node, fvi[8][0], fvi[8][1], fvi[8][2], 4, 4, 4));
-	faces.push_back(Face(node, fvi[9][0], fvi[9][1], fvi[9][2], 4, 4, 4));
+	faces.emplace_back(node.get(), fvi[8][0], fvi[8][1], fvi[8][2], 4, 4, 4);
+	faces.emplace_back(node.get(), fvi[9][0], fvi[9][1], fvi[9][2], 4, 4, 4);
 	//	far
-	faces.push_back(Face(node, fvi[10][0], fvi[10][1], fvi[10][2], 5, 5, 5));
-	faces.push_back(Face(node, fvi[11][0], fvi[11][1], fvi[11][2], 5, 5, 5));
+	faces.emplace_back(node.get(), fvi[10][0], fvi[10][1], fvi[10][2], 5, 5, 5);
+	faces.emplace_back(node.get(), fvi[11][0], fvi[11][1], fvi[11][2], 5, 5, 5);
 	// faces entity
-	FacesEntity nodeFacesEntity(node, "primitive.facesentity");
-	nodeFacesEntity.setMaterial(material);
+	FacesEntity nodeFacesEntity(node.get(), "primitive.facesentity");
+	nodeFacesEntity.setMaterial(material.get());
 	nodeFacesEntity.setFaces(faces);
 	// set up faces entity
 	vector<FacesEntity> nodeFacesEntities;
@@ -222,12 +218,17 @@ Model* Primitives::createOrientedBoundingBoxModel(OrientedBoundingBox* orientedB
 	node->setNormals(normals);
 	node->setFacesEntities(nodeFacesEntities);
 	// register node
-	model->getNodes()["node"] = node;
-	model->getSubNodes()["node"] = node;
-	// prepare for indexed rendering
-	ModelTools::prepareForIndexedRendering(model);
+	model->getNodes()["node"] = node.get();
+	model->getSubNodes()["node"] = node.get();
+	node.release();
 	//
-	return model;
+	model->getMaterials()[material->getId()] = material.get();
+	material.release();
+	//
+	// prepare for indexed rendering
+	ModelTools::prepareForIndexedRendering(model.get());
+	//
+	return model.release();
 }
 
 Model* Primitives::createSphereModel(Sphere* sphere, const string& id, int32_t segmentsX, int32_t segmentsY)
@@ -235,10 +236,10 @@ Model* Primitives::createSphereModel(Sphere* sphere, const string& id, int32_t s
 	// sphere properties
 	auto radius = sphere->getRadius();
 	// model
-	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	auto model = make_unique<Model>(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	// material
-	auto material = new Material("primitive");
-	auto specularMaterialProperties = new SpecularMaterialProperties();
+	auto material = make_unique<Material>("primitive");
+	auto specularMaterialProperties = make_unique<SpecularMaterialProperties>();
 	specularMaterialProperties->setAmbientColor(
 		Color4(
 			245.0f / 255.0f * 0.5f,
@@ -256,10 +257,9 @@ Model* Primitives::createSphereModel(Sphere* sphere, const string& id, int32_t s
 		)
 	);
 	specularMaterialProperties->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	material->setSpecularMaterialProperties(specularMaterialProperties);
-	model->getMaterials()[material->getId()] = material;
+	material->setSpecularMaterialProperties(specularMaterialProperties.release());
 	// node
-	auto node = new Node(model, nullptr, "primitive", "primitive");
+	auto node = make_unique<Node>(model.get(), nullptr, "primitive", "primitive");
 	// vertices
 	vector<Vector3> vertices;
 	for (auto ySegment = 0; ySegment < segmentsY + 1; ySegment++)
@@ -286,35 +286,35 @@ Model* Primitives::createSphereModel(Sphere* sphere, const string& id, int32_t s
 			ni = normals.size();
 			{
 				array<Vector3, 3> faceVertices = {
-					vertices.at(vi0),
-					vertices.at(vi1),
-					vertices.at(vi2)
+					vertices[vi0],
+					vertices[vi1],
+					vertices[vi2]
 				};
 				for (const auto& normal: ModelTools::computeNormals(faceVertices)) {
 					normals.push_back(normal);
 				}
 			}
-			faces.push_back(Face(node, vi0, vi1, vi2, ni + 0, ni + 1, ni + 2));
+			faces.emplace_back(node.get(), vi0, vi1, vi2, ni + 0, ni + 1, ni + 2);
 			vi0 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 0) % (segmentsX));
 			vi1 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
 			vi2 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
 			ni = normals.size();
 			{
 				array<Vector3, 3> faceVertices = {
-					vertices.at(vi0),
-					vertices.at(vi1),
-					vertices.at(vi2)
+					vertices[vi0],
+					vertices[vi1],
+					vertices[vi2]
 				};
 				for (const auto& normal: ModelTools::computeNormals(faceVertices)) {
 					normals.push_back(normal);
 				}
 			}
-			faces.push_back(Face(node, vi0, vi1, vi2, ni + 0, ni + 1, ni + 2));
+			faces.emplace_back(node.get(), vi0, vi1, vi2, ni + 0, ni + 1, ni + 2);
 		}
 	}
 	// set up faces entity
-	FacesEntity nodeFacesEntity(node, "primitive.facesentity");
-	nodeFacesEntity.setMaterial(material);
+	FacesEntity nodeFacesEntity(node.get(), "primitive.facesentity");
+	nodeFacesEntity.setMaterial(material.get());
 	nodeFacesEntity.setFaces(faces);
 	// node faces entities
 	vector<FacesEntity> nodeFacesEntities;
@@ -324,19 +324,23 @@ Model* Primitives::createSphereModel(Sphere* sphere, const string& id, int32_t s
 	node->setNormals(normals);
 	node->setFacesEntities(nodeFacesEntities);
 	// register node
-	model->getNodes()["node"] = node;
-	model->getSubNodes()["node"] = node;
-	// prepare for indexed rendering
-	ModelTools::computeNormals(model);
-	ModelTools::prepareForIndexedRendering(model);
+	model->getNodes()["node"] = node.get();
+	model->getSubNodes()["node"] = node.get();
+	node.release();
 	//
-	return model;
+	model->getMaterials()[material->getId()] = material.get();
+	material.release();
+	// prepare for indexed rendering
+	ModelTools::computeNormals(model.get());
+	ModelTools::prepareForIndexedRendering(model.get());
+	//
+	return model.release();
 }
 
 Model* Primitives::createCapsuleModel(Capsule* capsule, const string& id, int32_t segmentsX, int32_t segmentsY)
 {
 	// capsule properties
-	auto radius = capsule->getRadius();
+	const auto radius = capsule->getRadius();
 	const auto& a = capsule->getA();
 	const auto& b = capsule->getB();
 	const auto& center = capsule->getCenter();
@@ -361,10 +365,10 @@ Model* Primitives::createCapsuleModel(Capsule* capsule, const string& id, int32_
 	aInverted = rotationQuaternionMatrixInverted.multiply(aInverted);
 	bInverted = rotationQuaternionMatrixInverted.multiply(bInverted);
 	// model
-	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	auto model = make_unique<Model>(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	// material
-	auto material = new Material("primitive");
-	auto specularMaterialProperties = new SpecularMaterialProperties();
+	auto material = make_unique<Material>("primitive");
+	auto specularMaterialProperties = make_unique<SpecularMaterialProperties>();
 	specularMaterialProperties->setAmbientColor(
 		Color4(
 			245.0f / 255.0f * 0.5f,
@@ -382,10 +386,9 @@ Model* Primitives::createCapsuleModel(Capsule* capsule, const string& id, int32_
 		)
 	);
 	specularMaterialProperties->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	material->setSpecularMaterialProperties(specularMaterialProperties);
-	model->getMaterials()[material->getId()] = material;
+	material->setSpecularMaterialProperties(specularMaterialProperties.release());
 	// node
-	auto node = new Node(model, nullptr, "primitive", "primitive");
+	auto node = make_unique<Node>(model.get(), nullptr, "primitive", "primitive");
 	// vertices
 	vector<Vector3> vertices;
 	//	bottom half sphere
@@ -434,15 +437,15 @@ Model* Primitives::createCapsuleModel(Capsule* capsule, const string& id, int32_
 			ni = normals.size();
 			{
 				array<Vector3, 3> faceVertices = {
-					vertices.at(vi0),
-					vertices.at(vi1),
-					vertices.at(vi2)
+					vertices[vi0],
+					vertices[vi1],
+					vertices[vi2]
 				};
 				for (const auto& normal: ModelTools::computeNormals(faceVertices)) {
 					normals.push_back(normal);
 				}
 			}
-			faces.push_back(Face(node, vi0, vi1, vi2, ni + 0, ni + 1, ni + 2));
+			faces.emplace_back(node.get(), vi0, vi1, vi2, ni + 0, ni + 1, ni + 2);
 			vi0 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 0) % (segmentsX));
 			vi1 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
 			vi2 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
@@ -456,12 +459,12 @@ Model* Primitives::createCapsuleModel(Capsule* capsule, const string& id, int32_
 					normals.push_back(normal);
 				}
 			}
-			faces.push_back(Face(node, vi0, vi1, vi2, ni + 0, ni + 1, ni + 2));
+			faces.emplace_back(node.get(), vi0, vi1, vi2, ni + 0, ni + 1, ni + 2);
 		}
 	}
 	// node faces entities
-	FacesEntity nodeFacesEntity(node, "primitive.facesentity");
-	nodeFacesEntity.setMaterial(material);
+	FacesEntity nodeFacesEntity(node.get(), "primitive.facesentity");
+	nodeFacesEntity.setMaterial(material.get());
 	nodeFacesEntity.setFaces(faces);
 	// set up faces entity
 	vector<FacesEntity> nodeFacesEntities;
@@ -471,13 +474,17 @@ Model* Primitives::createCapsuleModel(Capsule* capsule, const string& id, int32_
 	node->setNormals(normals);
 	node->setFacesEntities(nodeFacesEntities);
 	// register node
-	model->getNodes()["node"] = node;
-	model->getSubNodes()["node"] = node;
-	// prepare for indexed rendering
-	ModelTools::computeNormals(model);
-	ModelTools::prepareForIndexedRendering(model);
+	model->getNodes()["node"] = node.get();
+	model->getSubNodes()["node"] = node.get();
+	node.release();
 	//
-	return model;
+	model->getMaterials()[material->getId()] = material.get();
+	material.release();
+	// prepare for indexed rendering
+	ModelTools::computeNormals(model.get());
+	ModelTools::prepareForIndexedRendering(model.get());
+	//
+	return model.release();
 }
 
 Model* Primitives::createConvexMeshModel(ConvexMesh* mesh, const string& id) {
@@ -490,8 +497,8 @@ void Primitives::setupConvexMeshModel(Model* model)
 	// TODO: take bounding volume scale into account
 	//	Note: there is no hurry as LE and ME do not do scaling of bounding volumes
 	model->setImportTransformMatrix(model->getImportTransformMatrix().clone().scale(1.01f));
-	auto material = new Material("primitive");
-	auto specularMaterialProperties = new SpecularMaterialProperties();
+	auto material = make_unique<Material>("primitive");
+	auto specularMaterialProperties = make_unique<SpecularMaterialProperties>();
 	specularMaterialProperties->setAmbientColor(
 		Color4(
 			245.0f / 255.0f * 0.5f,
@@ -509,9 +516,9 @@ void Primitives::setupConvexMeshModel(Model* model)
 		)
 	);
 	specularMaterialProperties->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	material->setSpecularMaterialProperties(specularMaterialProperties);
-	model->getMaterials()[material->getId()] = material;
-	setupConvexMeshMaterial(model->getSubNodes(), material);
+	material->setSpecularMaterialProperties(specularMaterialProperties.release());
+	model->getMaterials()[material->getId()] = material.get();
+	setupConvexMeshMaterial(model->getSubNodes(), material.release());
 }
 
 void Primitives::setupConvexMeshMaterial(const unordered_map<string, Node*>& nodes, Material* material)

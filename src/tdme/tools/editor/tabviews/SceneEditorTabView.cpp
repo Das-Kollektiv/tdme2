@@ -1461,6 +1461,7 @@ void SceneEditorTabView::runScene() {
 	}
 
 	// add logics
+	// TODO: exception handling
 	auto valid = true;
 	string invalidScripts;
 	for (auto entity: scene->getEntities()) {
@@ -1494,14 +1495,14 @@ void SceneEditorTabView::runScene() {
 				continue;
 			}
 			applicationClient->getContext()->addLogic(
-				new MiniScriptLogic(
+				make_unique<MiniScriptLogic>(
 					applicationClient->getContext(),
 					entity->getId(),
 					entity->getPrototype()->isScriptHandlingHID(),
 					miniScript.release(),
 					entity->getPrototype(),
 					true
-				)
+				).release()
 			);
 		}
 	}

@@ -255,6 +255,13 @@ void Engine::EngineThread::run() {
 	Console::println("EngineThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: DONE");
 }
 
+void Engine::shutdown() {
+	if (instance == nullptr) return;
+	instance->dispose();
+	delete instance;
+	instance = nullptr;
+}
+
 Engine::Engine() {
 	timing = make_unique<Timing>();
 	sceneColor.set(0.0f, 0.0f, 0.0f, 1.0f);
@@ -291,7 +298,6 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 	// create entity renderer
 	offScreenEngine->entityRenderer = make_unique<EntityRenderer>(offScreenEngine, renderer.get());
 	offScreenEngine->entityRenderer->initialize();
-	// TODO: geometry buffer
 	// create framebuffers
 	offScreenEngine->frameBuffer = make_unique<FrameBuffer>(width, height, (enableDepthBuffer == true?FrameBuffer::FRAMEBUFFER_DEPTHBUFFER:0) | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
 	offScreenEngine->frameBuffer->initialize();

@@ -930,9 +930,9 @@ void PrototypePhysicsSubController::importBoundingVolumeConvexMeshFile(const str
 			for (auto& convexMeshTMData: convexMeshTMsData) {
 				//
 				try {
-					auto prototypeBoundingVolume = new PrototypeBoundingVolume(prototype);
+					auto prototypeBoundingVolume = make_unique<PrototypeBoundingVolume>(prototype);
 					prototypeBoundingVolume->setupConvexMesh(convexMeshTMData);
-					prototype->addBoundingVolume(prototypeBoundingVolume);
+					prototype->addBoundingVolume(prototypeBoundingVolume.release());
 				} catch (Exception& exception) {
 					Console::println("PrototypePhysicsSubController::importBoundingVolumeConvexMeshFile(): An error occurred: " + string(exception.what()));
 				}
@@ -977,9 +977,9 @@ void PrototypePhysicsSubController::generateBoundingVolumeConvexMeshFiles(const 
 			for (auto& convexMeshTMData: convexMeshTMsData) {
 				//
 				try {
-					auto prototypeBoundingVolume = new PrototypeBoundingVolume(prototype);
+					auto prototypeBoundingVolume = make_unique<PrototypeBoundingVolume>(prototype);
 					prototypeBoundingVolume->setupConvexMesh(convexMeshTMData);
-					prototype->addBoundingVolume(prototypeBoundingVolume);
+					prototype->addBoundingVolume(prototypeBoundingVolume.release());
 				} catch (Exception& exception) {
 					Console::println("PrototypePhysicsSubController::generateBoundingVolumeConvexMeshFiles(): An error occurred: " + string(exception.what()));
 				}

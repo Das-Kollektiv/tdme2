@@ -305,7 +305,7 @@ void ModelEditorTabView::computeNormals() {
 		}
 	};
 	popUps->getProgressBarScreenController()->show("Computing smooth normals ...");
-	ModelTools::computeNormals(prototype->getModel(), new ComputeNormalsProgressCallback(popUps->getProgressBarScreenController()));
+	ModelTools::computeNormals(prototype->getModel(), make_unique<ComputeNormalsProgressCallback>(popUps->getProgressBarScreenController()).release());
 	popUps->getProgressBarScreenController()->close();
 	resetPrototype();
 }

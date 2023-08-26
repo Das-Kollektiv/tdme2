@@ -129,8 +129,8 @@ public:
 	 */
 	inline Object* determineBillboardObject(Camera* camera) {
 		Vector3 cameraForwardVector = getWorldBoundingBox()->getCenter().clone().sub(camera->getLookFrom()).setY(0.0f).normalize();
-		auto angle = Vector3::computeAngle(Vector3(0.0, 0.0f, -1.0f), cameraForwardVector, Rotation::Y_AXIS);
-		auto imposterIdx = static_cast<int>(angle / 360.0f * billboardModels.size()) % billboardModels.size();
+		auto angle = Vector3::computeAngle(cameraForwardVector, Vector3(0.0, 0.0f, 1.0f), Rotation::Y_AXIS);
+		auto imposterIdx = static_cast<int>(angle / 360.0f * billboardModels.size() + billboardModels.size() / 2) % billboardModels.size();
 		billboardObject = billboardObjects[imposterIdx];
 		// done
 		return billboardObject;

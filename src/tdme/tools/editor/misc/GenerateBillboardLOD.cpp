@@ -32,6 +32,7 @@
 
 using tdme::tools::editor::misc::GenerateBillboardLOD;
 
+using std::make_unique;
 using std::string;
 using std::unique_ptr;
 
@@ -142,24 +143,29 @@ Model* GenerateBillboardLOD::generate(
 	texture->releaseReference();
 
 	//
-	auto croppedTexture = new Texture(
-		"tdme.engine.croppedtexture",
-		Texture::TEXTUREDEPTH_RGBA,
-		Texture::TEXTUREFORMAT_RGBA,
-		croppedTextureWidth,
-		croppedTextureHeight,
-		croppedTextureWidth,
-		croppedTextureHeight,
-		Texture::TEXTUREFORMAT_RGBA,
-		croppedTextureByteBuffer
-	);
-	croppedTexture->acquireReference();
-	auto scaledTexture = TextureReader::scale(croppedTexture, 1024, 1024);
-	croppedTexture->releaseReference();
-
-	// save
-	PNGTextureWriter::write(scaledTexture, pathName, textureFileName, false, false);
-	scaledTexture->releaseReference();
+	{
+		auto croppedTexture =
+			unique_ptr<
+				Texture,
+				decltype([](Texture* texture){ texture->releaseReference(); })
+			>(
+				new Texture(
+					"tdme.engine.croppedtexture",
+					Texture::TEXTUREDEPTH_RGBA,
+					Texture::TEXTUREFORMAT_RGBA,
+					croppedTextureWidth,
+					croppedTextureHeight,
+					croppedTextureWidth,
+					croppedTextureHeight,
+					Texture::TEXTUREFORMAT_RGBA,
+					croppedTextureByteBuffer
+				)
+			);
+		croppedTexture->acquireReference();
+		auto scaledTexture = unique_ptr<Texture, decltype([](Texture* texture){ texture->releaseReference(); })>(TextureReader::scale(croppedTexture.get(), 1024, 1024));
+		// save
+		PNGTextureWriter::write(scaledTexture.get(), pathName, textureFileName, false, false);
+	}
 
 	// create model
 	auto left = boundingBox->getMin().getX();
@@ -168,31 +174,32 @@ Model* GenerateBillboardLOD::generate(
 	auto bottom = boundingBox->getMax().getY();
 	auto depth = boundingBox->getCenter().getZ();
 	auto modelId = Tools::removeFileExtension(textureFileName) + ".tm";
-	auto billboard = new Model(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
-	auto billboardMaterial = new Material("billboard");
-	billboardMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
+	auto billboard = make_unique<Model>(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
+	//
+	auto billboardMaterial = make_unique<Material>("billboard");
+	billboardMaterial->setSpecularMaterialProperties(make_unique<SpecularMaterialProperties>().release());
 	billboardMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	billboardMaterial->getSpecularMaterialProperties()->setDiffuseTexture(pathName, textureFileName);
 	billboardMaterial->getSpecularMaterialProperties()->setDiffuseTextureMaskedTransparency(true);
-	billboard->getMaterials()[billboardMaterial->getId()] = billboardMaterial;
-	auto billboardNode = new Node(billboard, nullptr, "billboard", "billboard");
+	//
+	auto billboardNode = make_unique<Node>(billboard.get(), nullptr, "billboard", "billboard");
 	vector<Vector3> billboardVertices;
-	billboardVertices.push_back(Vector3(left, top, depth));
-	billboardVertices.push_back(Vector3(left, bottom, depth));
-	billboardVertices.push_back(Vector3(right, bottom, depth));
-	billboardVertices.push_back(Vector3(right, top, depth));
+	billboardVertices.emplace_back(left, top, depth);
+	billboardVertices.emplace_back(left, bottom, depth);
+	billboardVertices.emplace_back(right, bottom, depth);
+	billboardVertices.emplace_back(right, top, depth);
 	vector<Vector3> billboardNormals;
-	billboardNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
+	billboardNormals.emplace_back(0.0f, 1.0f, 0.0f);
 	vector<Vector2> billboardTextureCoordinates;
-	billboardTextureCoordinates.push_back(Vector2(0.0f, 1.0f));
-	billboardTextureCoordinates.push_back(Vector2(0.0f, 0.0f));
-	billboardTextureCoordinates.push_back(Vector2(1.0f, 0.0f));
-	billboardTextureCoordinates.push_back(Vector2(1.0f, 1.0f));
+	billboardTextureCoordinates.emplace_back(0.0f, 1.0f);
+	billboardTextureCoordinates.emplace_back(0.0f, 0.0f);
+	billboardTextureCoordinates.emplace_back(1.0f, 0.0f);
+	billboardTextureCoordinates.emplace_back(1.0f, 1.0f);
 	vector<Face> billboardFacesGround;
-	billboardFacesGround.push_back(Face(billboardNode, 0, 1, 2, 0, 0, 0, 0, 1, 2));
-	billboardFacesGround.push_back(Face(billboardNode, 2, 3, 0, 0, 0, 0, 2, 3, 0));
-	FacesEntity billboardNodeFacesEntity(billboardNode, "billboard.facesentity");
-	billboardNodeFacesEntity.setMaterial(billboardMaterial);
+	billboardFacesGround.emplace_back(billboardNode.get(), 0, 1, 2, 0, 0, 0, 0, 1, 2);
+	billboardFacesGround.emplace_back(billboardNode.get(), 2, 3, 0, 0, 0, 0, 2, 3, 0);
+	FacesEntity billboardNodeFacesEntity(billboardNode.get(), "billboard.facesentity");
+	billboardNodeFacesEntity.setMaterial(billboardMaterial.get());
 	vector<FacesEntity> billboardNodeFacesEntities;
 	billboardNodeFacesEntity.setFaces(billboardFacesGround);
 	billboardNodeFacesEntities.push_back(billboardNodeFacesEntity);
@@ -200,18 +207,24 @@ Model* GenerateBillboardLOD::generate(
 	billboardNode->setNormals(billboardNormals);
 	billboardNode->setTextureCoordinates(billboardTextureCoordinates);
 	billboardNode->setFacesEntities(billboardNodeFacesEntities);
-	billboard->getNodes()["billboard"] = billboardNode;
-	billboard->getSubNodes()["billboard"] = billboardNode;
-	ModelTools::prepareForIndexedRendering(billboard);
+	//
+	billboard->getNodes()["billboard"] = billboardNode.get();
+	billboard->getSubNodes()["billboard"] = billboardNode.get();
+	billboardNode.release();
+	//
+	billboard->getMaterials()[billboardMaterial->getId()] = billboardMaterial.get();
+	billboardMaterial.release();
+	//
+	ModelTools::prepareForIndexedRendering(billboard.get());
 
 	//
 	TMWriter::write(
-		billboard,
+		billboard.get(),
 		pathName,
 		fileName
 	);
 
 	//
-	return billboard;
+	return billboard.release();
 }
 

@@ -161,7 +161,7 @@ using tinyxml::TiXmlElement;
 
 #define AVOID_NULLPTR_STRING(arg) (arg == nullptr?"":arg)
 
-map<string, GUIElement*>* GUIParser::elements = new map<string, GUIElement*>();
+unordered_map<string, GUIElement*>* GUIParser::elements = new unordered_map<string, GUIElement*>();
 Properties* GUIParser::engineThemeProperties = new Properties();
 Properties* GUIParser::projectThemeProperties = new Properties();
 

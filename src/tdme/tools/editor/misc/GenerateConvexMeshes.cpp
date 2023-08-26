@@ -1,7 +1,7 @@
 #include <tdme/tools/editor/misc/GenerateConvexMeshes.h>
 
-#include <string>
 #include <memory>
+#include <string>
 #include <unordered_map>
 #include <vector>
 
@@ -43,6 +43,7 @@
 
 using tdme::tools::editor::misc::GenerateConvexMeshes;
 
+using std::make_unique;
 using std::string;
 using std::to_string;
 using std::unordered_map;
@@ -277,25 +278,25 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 }
 
 Model* GenerateConvexMeshes::createModel(const string& id, const vector<VHACD::Vertex>& points, const vector<VHACD::Triangle>& triangles) {
-	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
-	auto material = new Material("primitive");
-	material->setSpecularMaterialProperties(new SpecularMaterialProperties());
+	//
+	auto model = make_unique<Model>(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	//
+	auto material = make_unique<Material>("primitive");
+	material->setSpecularMaterialProperties(make_unique<SpecularMaterialProperties>().release());
 	material->getSpecularMaterialProperties()->setAmbientColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
 	material->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.5f, 0.5f, 0.5f));
 	material->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	model->getMaterials()[material->getId()] = material;
-	auto node = new Node(model, nullptr, "node", "node");
+	//
+	auto node = make_unique<Node>(model.get(), nullptr, "node", "node");
 	vector<Vector3> vertices;
 	vector<Vector3> normals;
 	vector<Face> faces;
 	int normalIndex = -1;
 	for (const auto& vertex: points) {
-		vertices.push_back(
-			Vector3(
-				static_cast<float>(vertex.mX),
-				static_cast<float>(vertex.mY),
-				static_cast<float>(vertex.mZ)
-			)
+		vertices.emplace_back(
+			static_cast<float>(vertex.mX),
+			static_cast<float>(vertex.mY),
+			static_cast<float>(vertex.mZ)
 		);
 	}
 	for (const auto& triangle: triangles) {
@@ -310,41 +311,46 @@ Model* GenerateConvexMeshes::createModel(const string& id, const vector<VHACD::V
 				normals.push_back(normal);
 			}
 		}
-		faces.push_back(
-			Face(
-				node,
-				triangle.mI0,
-				triangle.mI1,
-				triangle.mI2,
-				normalIndex + 0,
-				normalIndex + 1,
-				normalIndex + 2
-			)
+		faces.emplace_back(
+			node.get(),
+			triangle.mI0,
+			triangle.mI1,
+			triangle.mI2,
+			normalIndex + 0,
+			normalIndex + 1,
+			normalIndex + 2
 		);
 	}
-	FacesEntity nodeFacesEntity(node, "faces entity");
-	nodeFacesEntity.setMaterial(material);
+	FacesEntity nodeFacesEntity(node.get(), "faces entity");
+	nodeFacesEntity.setMaterial(material.get());
 	nodeFacesEntity.setFaces(faces);
 	vector<FacesEntity> nodeFacesEntities;
 	nodeFacesEntities.push_back(nodeFacesEntity);
 	node->setVertices(vertices);
 	node->setNormals(normals);
 	node->setFacesEntities(nodeFacesEntities);
-	model->getNodes()["node"] = node;
-	model->getSubNodes()["node"] = node;
-	ModelTools::prepareForIndexedRendering(model);
-	return model;
+	model->getNodes()["node"] = node.get();
+	model->getSubNodes()["node"] = node.get();
+	node.release();
+	//
+	model->getMaterials()[material->getId()] = material.get();
+	material.release();
+	//
+	ModelTools::prepareForIndexedRendering(model.get());
+	//
+	return model.release();
 }
 
 Model* GenerateConvexMeshes::createModel(const string& id, vector<Triangle>& triangles) {
-	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
-	auto material = new Material("primitive");
-	material->setSpecularMaterialProperties(new SpecularMaterialProperties());
+	auto model = make_unique<Model>(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	//
+	auto material = make_unique<Material>("primitive");
+	material->setSpecularMaterialProperties(make_unique<SpecularMaterialProperties>().release());
 	material->getSpecularMaterialProperties()->setAmbientColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
 	material->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.5f, 0.5f, 0.5f));
 	material->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	model->getMaterials()[material->getId()] = material;
-	auto node = new Node(model, nullptr, "node", "node");
+	//
+	auto node = make_unique<Node>(model.get(), nullptr, "node", "node");
 	vector<Vector3> vertices;
 	vector<Vector3> normals;
 	vector<Face> faces;
@@ -363,29 +369,34 @@ Model* GenerateConvexMeshes::createModel(const string& id, vector<Triangle>& tri
 				normals.push_back(normal);
 			}
 		}
-		faces.push_back(
-			Face(
-				node,
-				index + 0,
-				index + 1,
-				index + 2,
-				index + 0,
-				index + 1,
-				index + 2
-			)
+		faces.emplace_back(
+			node.get(),
+			index + 0,
+			index + 1,
+			index + 2,
+			index + 0,
+			index + 1,
+			index + 2
 		);
 		index+= 3;
 	}
-	FacesEntity nodeFacesEntity(node, "faces entity");
-	nodeFacesEntity.setMaterial(material);
+	FacesEntity nodeFacesEntity(node.get(), "faces entity");
+	nodeFacesEntity.setMaterial(material.get());
 	nodeFacesEntity.setFaces(faces);
 	vector<FacesEntity> nodeFacesEntities;
 	nodeFacesEntities.push_back(nodeFacesEntity);
 	node->setVertices(vertices);
 	node->setNormals(normals);
 	node->setFacesEntities(nodeFacesEntities);
-	model->getNodes()["node"] = node;
-	model->getSubNodes()["node"] = node;
-	ModelTools::prepareForIndexedRendering(model);
-	return model;
+	//
+	model->getNodes()["node"] = node.get();
+	model->getSubNodes()["node"] = node.get();
+	node.release();
+	//
+	model->getMaterials()[material->getId()] = material.get();
+	material.release();
+	//
+	ModelTools::prepareForIndexedRendering(model.get());
+	//
+	return model.release();
 }

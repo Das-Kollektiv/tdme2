@@ -705,6 +705,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 	if (Application::application != nullptr) {
 		Console::println("Application::run(): Shutting down application");
 		Application::application->dispose();
+		Engine::shutdown();
 		delete Application::application;
 		Application::application = nullptr;
 	}

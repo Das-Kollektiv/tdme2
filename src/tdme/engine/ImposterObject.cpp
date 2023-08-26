@@ -70,14 +70,15 @@ void ImposterObject::setTransform(const Transform& transform)
 	entityTransformMatrix = entityTransform.getTransformMatrix();
 	// delegate to billboard objects
 	auto imposterObjectTransform = entityTransform;
-	imposterObjectTransform.addRotation(Vector3(0.0f, 1.0f, 0.0f), -(360.0f / billboardModels.size()) * 0.5f);
+	imposterObjectTransform.addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
+	imposterObjectTransform.update();
 	for (auto billboardObject: billboardObjects) {
+		billboardObject->setTransform(imposterObjectTransform);
 		imposterObjectTransform.setRotationAngle(
 			imposterObjectTransform.getRotationCount() - 1,
-			imposterObjectTransform.getRotationAngle(imposterObjectTransform.getRotationCount() - 1) + 360.0f / billboardModels.size()
+			imposterObjectTransform.getRotationAngle(imposterObjectTransform.getRotationCount() - 1) -(360.0f / static_cast<float>(billboardModels.size()))
 		);
 		imposterObjectTransform.update();
-		billboardObject->setTransform(imposterObjectTransform);
 	}
 	// update entity
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
@@ -91,16 +92,17 @@ void ImposterObject::update()
 	entityTransformMatrix = entityTransform.getTransformMatrix();
 	// delegate to billboard objects
 	auto imposterObjectTransform = entityTransform;
-	imposterObjectTransform.addRotation(Vector3(0.0f, 1.0f, 0.0f), -(360.0f / billboardModels.size()) * 0.5f);
+	imposterObjectTransform.addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
+	imposterObjectTransform.update();
 	for (auto billboardObject: billboardObjects) {
+		billboardObject->setTransform(imposterObjectTransform);
 		imposterObjectTransform.setRotationAngle(
 			imposterObjectTransform.getRotationCount() - 1,
-			imposterObjectTransform.getRotationAngle(imposterObjectTransform.getRotationCount() - 1) + 360.0f / billboardModels.size()
+			imposterObjectTransform.getRotationAngle(imposterObjectTransform.getRotationCount() - 1) -(360.0f / static_cast<float>(billboardModels.size()))
 		);
 		imposterObjectTransform.update();
-		billboardObject->setTransform(imposterObjectTransform);
 	}
-	// update entity
+	//
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 

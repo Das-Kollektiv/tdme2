@@ -591,6 +591,11 @@ public:
 	}
 
 	/**
+	 * Shuts down main engine
+	 */
+	static void shutdown();
+
+	/**
 	 * @return texture manager
 	 */
 	inline static TextureManager* getTextureManager() {

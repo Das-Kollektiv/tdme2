@@ -235,7 +235,7 @@ void ModelTools::fixAnimationLength(Node* root, int32_t frames)
 	if (animation != nullptr) {
 		vector<Matrix4x4> newTransformMatrices;
 		auto oldTransformMatrices = root->getAnimation()->getTransformMatrices();
-		auto animation = new Animation();
+		auto animation = make_unique<Animation>();
 		newTransformMatrices.resize(frames);
 		for (auto i = 0; i < frames; i++) {
 			if (i < oldTransformMatrices.size()) {
@@ -245,7 +245,7 @@ void ModelTools::fixAnimationLength(Node* root, int32_t frames)
 			}
 		}
 		animation->setTransformMatrices(newTransformMatrices);
-		root->setAnimation(animation);
+		root->setAnimation(animation.release());
 	}
 	for (const auto& [subNodeId, subNode]: root->getSubNodes()) {
 		fixAnimationLength(subNode, frames);
@@ -275,10 +275,10 @@ void ModelTools::createDefaultAnimation(Model* model, int32_t frames)
 }
 
 Material* ModelTools::cloneMaterial(const Material* material, const string& id) {
-	auto clonedMaterial = new Material(id.empty()?material->getId():id);
+	auto clonedMaterial = make_unique<Material>(id.empty()?material->getId():id);
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties != nullptr) {
-		auto clonedSpecularMaterialProperties = new SpecularMaterialProperties();
+		auto clonedSpecularMaterialProperties = make_unique<SpecularMaterialProperties>();
 		clonedSpecularMaterialProperties->setAmbientColor(specularMaterialProperties->getAmbientColor());
 		clonedSpecularMaterialProperties->setDiffuseColor(specularMaterialProperties->getDiffuseColor());
 		clonedSpecularMaterialProperties->setEmissionColor(specularMaterialProperties->getEmissionColor());
@@ -303,13 +303,13 @@ Material* ModelTools::cloneMaterial(const Material* material, const string& id) 
 			clonedSpecularMaterialProperties->setNormalTexturePathName(specularMaterialProperties->getNormalTexturePathName());
 			clonedSpecularMaterialProperties->setNormalTextureFileName(specularMaterialProperties->getNormalTextureFileName());
 		}
-		clonedMaterial->setSpecularMaterialProperties(clonedSpecularMaterialProperties);
+		clonedMaterial->setSpecularMaterialProperties(clonedSpecularMaterialProperties.release());
 	}
-	return clonedMaterial;
+	return clonedMaterial.release();
 }
 
 void ModelTools::cloneNode(Node* sourceNode, Model* targetModel, Node* targetParentNode, bool cloneMesh) {
-	auto clonedNode = new Node(targetModel, targetParentNode, sourceNode->getId(), sourceNode->getName());
+	auto clonedNode = make_unique<Node>(targetModel, targetParentNode, sourceNode->getId(), sourceNode->getName());
 	clonedNode->setTransformMatrix(sourceNode->getTransformMatrix());
 	clonedNode->setJoint(sourceNode->isJoint());
 	if (cloneMesh == true) {
@@ -325,12 +325,13 @@ void ModelTools::cloneNode(Node* sourceNode, Model* targetModel, Node* targetPar
 			Material* material = nullptr;
 			auto materialIt = targetModel->getMaterials().find(facesEntity.getMaterial()->getId());
 			if (materialIt == targetModel->getMaterials().end()) {
-				material = cloneMaterial(facesEntity.getMaterial());
-				targetModel->getMaterials()[material->getId()] = material;
+				auto newMaterial = unique_ptr<Material>(cloneMaterial(facesEntity.getMaterial()));
+				targetModel->getMaterials()[material->getId()] = newMaterial.get();
+				material = newMaterial.release();
 			} else {
 				material = materialIt->second;
 			}
-			auto clonedFacesEntity = FacesEntity(clonedNode, facesEntity.getId());
+			auto clonedFacesEntity = FacesEntity(clonedNode.get(), facesEntity.getId());
 			clonedFacesEntity.setMaterial(material);
 			clonedFacesEntity.setFaces(facesEntity.getFaces());
 			facesEntities.push_back(clonedFacesEntity);
@@ -338,18 +339,19 @@ void ModelTools::cloneNode(Node* sourceNode, Model* targetModel, Node* targetPar
 		clonedNode->setFacesEntities(facesEntities);
 	}
 	if (sourceNode->getAnimation() != nullptr) {
-		auto clonedAnimation = new Animation();
+		auto clonedAnimation = make_unique<Animation>();
 		clonedAnimation->setTransformMatrices(sourceNode->getAnimation()->getTransformMatrices());
-		clonedNode->setAnimation(clonedAnimation);
+		clonedNode->setAnimation(clonedAnimation.release());
 	}
-	targetModel->getNodes()[clonedNode->getId()] = clonedNode;
+	targetModel->getNodes()[clonedNode->getId()] = clonedNode.get();
 	if (targetParentNode == nullptr) {
-		targetModel->getSubNodes()[clonedNode->getId()] = clonedNode;
+		targetModel->getSubNodes()[clonedNode->getId()] = clonedNode.get();
 	} else {
-		targetParentNode->getSubNodes()[clonedNode->getId()] = clonedNode;
+		targetParentNode->getSubNodes()[clonedNode->getId()] = clonedNode.get();
 	}
+	auto newTargetParentNode = clonedNode.release();
 	for (const auto& [sourceSubNodeId, sourceSubNode]: sourceNode->getSubNodes()) {
-		cloneNode(sourceSubNode, targetModel, clonedNode, cloneMesh);
+		cloneNode(sourceSubNode, targetModel, newTargetParentNode, cloneMesh);
 	}
 }
 
@@ -457,36 +459,37 @@ void ModelTools::partitionNode(Node* sourceNode, unordered_map<string, Model*>& 
 			// get model
 			auto partitionModel = modelsByPartition[partitionModelKey];
 			if (partitionModel == nullptr) {
-				partitionModel = new Model(
+				auto newPartitionModel = make_unique<Model>(
 					sourceNodeId + "." + partitionModelKey,
 					sourceNodeName + "." + partitionModelKey,
 					sourceNode->getModel()->getUpVector(),
 					sourceNode->getModel()->getRotationOrder(),
 					nullptr
 				);
-				modelsByPartition[partitionModelKey] = partitionModel;
+				modelsByPartition[partitionModelKey] = newPartitionModel.get();
 				modelsPosition[partitionModelKey].set(partitionX * 64.0f, partitionY * 64.0f, partitionZ * 64.0f);
+				partitionModel = newPartitionModel.release();
 			}
 
 			// get node
 			auto partitionModelNode = partitionModelNodes[partitionModelKey];
 			partitionModelNode = partitionModel->getNodeById(sourceNode->getId());
 			if (partitionModelNode == nullptr) {
-				// TODO: create sub nodes if they do not yet exist
-				partitionModelNode = new Node(
+				auto newPartitionModelNode = make_unique<Node>(
 					partitionModel,
 					sourceNode->getParentNode() == nullptr?nullptr:partitionModel->getNodeById(sourceNode->getParentNode()->getId()),
 					sourceNode->getId(),
 					sourceNode->getName()
 				);
-				partitionModelNode->setTransformMatrix(sourceNode->getTransformMatrix());
+				newPartitionModelNode->setTransformMatrix(sourceNode->getTransformMatrix());
 				if (sourceNode->getParentNode() == nullptr) {
-					partitionModel->getSubNodes()[partitionModelNode->getId()] = partitionModelNode;
+					partitionModel->getSubNodes()[newPartitionModelNode->getId()] = newPartitionModelNode.get();
 				} else {
-					partitionModelNode->getParentNode()->getSubNodes()[partitionModelNode->getId()] = partitionModelNode;
+					newPartitionModelNode->getParentNode()->getSubNodes()[newPartitionModelNode->getId()] = newPartitionModelNode.get();
 				}
-				partitionModel->getNodes()[partitionModelNode->getId()] = partitionModelNode;
-				partitionModelNodes[partitionModelKey] = partitionModelNode;
+				partitionModel->getNodes()[newPartitionModelNode->getId()] = newPartitionModelNode.get();
+				partitionModelNodes[partitionModelKey] = newPartitionModelNode.get();
+				partitionModelNode = newPartitionModelNode.release();
 			}
 
 			// get faces entity
@@ -1150,13 +1153,14 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 	diffuseAtlas.update();
 
 	// create modelPtr with optimizations applied
-	auto optimizedModelPtr = make_unique<Model>(modelPtr->getId() + ".optimized", modelPtr->getName() + ".optimized", modelPtr->getUpVector(), modelPtr->getRotationOrder(), new BoundingBox(modelPtr->getBoundingBox()), modelPtr->getAuthoringTool());
+	auto optimizedModelPtr = make_unique<Model>(modelPtr->getId() + ".optimized", modelPtr->getName() + ".optimized", modelPtr->getUpVector(), modelPtr->getRotationOrder(), make_unique<BoundingBox>(modelPtr->getBoundingBox()).release(), modelPtr->getAuthoringTool());
 	optimizedModelPtr->setImportTransformMatrix(modelPtr->getImportTransformMatrix());
 	optimizedModelPtr->setEmbedSpecularTextures(true);
 	optimizedModelPtr->setEmbedPBRTextures(true);
-	auto optimizedNode = new Node(optimizedModelPtr.get(), nullptr, "tdme.node.optimized", "tdme.node.optimized");
-	optimizedModelPtr->getNodes()["tdme.node.optimized"] = optimizedNode;
-	optimizedModelPtr->getSubNodes()["tdme.node.optimized"] = optimizedNode;
+	auto optimizedNode = make_unique<Node>(optimizedModelPtr.get(), nullptr, "tdme.node.optimized", "tdme.node.optimized");
+	optimizedModelPtr->getNodes()["tdme.node.optimized"] = optimizedNode.get();
+	optimizedModelPtr->getSubNodes()["tdme.node.optimized"] = optimizedNode.get();
+	optimizedNode.release();
 
 	// clone materials with diffuse textures that we like to keep
 	for (const auto& [materialId, material]: modelPtr->getMaterials()) {
@@ -1218,11 +1222,11 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 			optimizeNode(subNode, optimizedModelPtr.get(), diffuseAtlas.getAtlasTexture()->getAtlasSize(), diffuseTextureAtlasIndices, excludeDiffuseTextureFileNamePatterns);
 			if (modelPtr->hasSkinning() == true) {
 				auto skinning = subNode->getSkinning();
-				auto optimizedSkinning = new Skinning();
+				auto optimizedSkinning = make_unique<Skinning>();
 				optimizedSkinning->setWeights(skinning->getWeights());
 				optimizedSkinning->setJoints(skinning->getJoints());
 				optimizedSkinning->setVerticesJointsWeights(skinning->getVerticesJointsWeights());
-				optimizedModelPtr->getNodes()["tdme.node.optimized"]->setSkinning(optimizedSkinning);
+				optimizedModelPtr->getNodes()["tdme.node.optimized"]->setSkinning(optimizedSkinning.release());
 			}
 		}
 		cloneNode(subNode, optimizedModelPtr.get(), nullptr, false);

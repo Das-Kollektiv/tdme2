@@ -291,7 +291,7 @@ void UDPServer::addClient(UDPServerClient* client) {
 	}
 
 	// prepare client struct for map
-	ClientId* _clientId = new ClientId();
+	auto _clientId = new ClientId();
 	_clientId->clientId = clientId;
 	_clientId->client = client;
 	_clientId->time = Time::getCurrentMillis();

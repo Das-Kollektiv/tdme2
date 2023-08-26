@@ -1,6 +1,5 @@
 #pragma once
 
-#include <map>
 #include <unordered_map>
 #include <vector>
 
@@ -17,7 +16,6 @@
 
 #include <ext/tinyxml/tinyxml.h>
 
-using std::map;
 using std::unordered_map;
 using std::vector;
 
@@ -42,7 +40,7 @@ class tdme::gui::GUIParser final
 {
 
 private:
-	STATIC_DLL_IMPEXT static map<string, GUIElement*>* elements;
+	STATIC_DLL_IMPEXT static unordered_map<string, GUIElement*>* elements;
 	STATIC_DLL_IMPEXT static Properties* engineThemeProperties;
 	STATIC_DLL_IMPEXT static Properties* projectThemeProperties;
 

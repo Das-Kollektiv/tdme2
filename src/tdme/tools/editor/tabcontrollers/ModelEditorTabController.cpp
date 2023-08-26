@@ -403,13 +403,14 @@ PrototypeLODLevel* ModelEditorTabController::getLODLevel(int level) {
 			{
 				auto prototypeLodLevel = prototype->getLODLevel2();
 				if (prototypeLodLevel == nullptr) {
-					prototypeLodLevel = new PrototypeLODLevel(
+					auto newPrototypeLodLevel = make_unique<PrototypeLODLevel>(
 						LODObject::LODLEVELTYPE_NONE,
 						"",
 						nullptr,
 						75.0f
 					);
-					prototype->setLODLevel2(prototypeLodLevel);
+					prototype->setLODLevel2(newPrototypeLodLevel.get());
+					prototypeLodLevel = newPrototypeLodLevel.release();
 				}
 				return prototypeLodLevel;
 			}
@@ -417,13 +418,14 @@ PrototypeLODLevel* ModelEditorTabController::getLODLevel(int level) {
 			{
 				auto prototypeLodLevel = prototype->getLODLevel3();
 				if (prototypeLodLevel == nullptr) {
-					prototypeLodLevel = new PrototypeLODLevel(
+					auto newPrototypeLodLevel = make_unique<PrototypeLODLevel>(
 						LODObject::LODLEVELTYPE_NONE,
 						"",
 						nullptr,
 						150.0f
 					);
-					prototype->setLODLevel3(prototypeLodLevel);
+					prototype->setLODLevel3(newPrototypeLodLevel.get());
+					prototypeLodLevel = newPrototypeLodLevel.release();
 				}
 				return prototypeLodLevel;
 			}
@@ -930,7 +932,7 @@ void ModelEditorTabController::applyPBRMaterialDetails() {
 			string outlinerNodeModel;
 			Model* model = nullptr;
 			getOutlinerNodeLOD(view->getEditorView()->getScreenController()->getOutlinerSelection(), outlinerNodeModel, &model);
-			material->setPBRMaterialProperties(new PBRMaterialProperties());
+			material->setPBRMaterialProperties(make_unique<PBRMaterialProperties>().release());
 			updateMaterialDetails();
 		}
 	} catch (Exception& exception) {
@@ -1236,8 +1238,7 @@ void ModelEditorTabController::setMaterialDiffuseTexture(const string& fileName)
 	if (material == nullptr) return;
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr) {
-		specularMaterialProperties = new SpecularMaterialProperties();
-		material->setSpecularMaterialProperties(specularMaterialProperties);
+		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 	}
 	view->reloadPrototype();
 	specularMaterialProperties->setDiffuseTexture(
@@ -1254,7 +1255,7 @@ void ModelEditorTabController::onMaterialLoadDiffuseTexture() {
 	if (material == nullptr) return;
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr) {
-		specularMaterialProperties = new SpecularMaterialProperties();
+		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 		material->setSpecularMaterialProperties(specularMaterialProperties);
 	}
 
@@ -1300,8 +1301,7 @@ void ModelEditorTabController::onMaterialClearDiffuseTexture() {
 	if (material == nullptr) return;
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr) {
-		specularMaterialProperties = new SpecularMaterialProperties();
-		material->setSpecularMaterialProperties(specularMaterialProperties);
+		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 	}
 	view->reloadPrototype();
 	specularMaterialProperties->setDiffuseTexture(
@@ -1341,8 +1341,7 @@ void ModelEditorTabController::setMaterialDiffuseTransparencyTexture(const strin
 	if (material == nullptr) return;
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr) {
-		specularMaterialProperties = new SpecularMaterialProperties();
-		material->setSpecularMaterialProperties(specularMaterialProperties);
+		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 	}
 	view->reloadPrototype();
 	specularMaterialProperties->setDiffuseTexture(
@@ -1359,8 +1358,7 @@ void ModelEditorTabController::onMaterialLoadDiffuseTransparencyTexture() {
 	if (material == nullptr) return;
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr) {
-		specularMaterialProperties = new SpecularMaterialProperties();
-		material->setSpecularMaterialProperties(specularMaterialProperties);
+		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 	}
 
 	class OnLoadTexture: public virtual Action
@@ -1405,7 +1403,7 @@ void ModelEditorTabController::onMaterialClearDiffuseTransparencyTexture() {
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr) {
 		specularMaterialProperties = new SpecularMaterialProperties();
-		material->setSpecularMaterialProperties(specularMaterialProperties);
+		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 	}
 	view->reloadPrototype();
 	specularMaterialProperties->setDiffuseTexture(
@@ -1453,7 +1451,7 @@ void ModelEditorTabController::setMaterialNormalTexture(const string& fileName) 
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr) {
 		specularMaterialProperties = new SpecularMaterialProperties();
-		material->setSpecularMaterialProperties(specularMaterialProperties);
+		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 	}
 	view->reloadPrototype();
 	specularMaterialProperties->setNormalTexture(
@@ -1468,8 +1466,7 @@ void ModelEditorTabController::onMaterialLoadNormalTexture() {
 	if (material == nullptr) return;
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr) {
-		specularMaterialProperties = new SpecularMaterialProperties();
-		material->setSpecularMaterialProperties(specularMaterialProperties);
+		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 	}
 
 	class OnLoadTexture: public virtual Action
@@ -1514,8 +1511,7 @@ void ModelEditorTabController::onMaterialClearNormalTexture() {
 	if (material == nullptr) return;
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr) {
-		specularMaterialProperties = new SpecularMaterialProperties();
-		material->setSpecularMaterialProperties(specularMaterialProperties);
+		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 	}
 	view->reloadPrototype();
 	specularMaterialProperties->setNormalTexture(
@@ -1553,8 +1549,7 @@ void ModelEditorTabController::setMaterialSpecularTexture(const string& fileName
 	if (material == nullptr) return;
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr) {
-		specularMaterialProperties = new SpecularMaterialProperties();
-		material->setSpecularMaterialProperties(specularMaterialProperties);
+		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 	}
 	//
 	view->reloadPrototype();
@@ -1570,8 +1565,7 @@ void ModelEditorTabController::onMaterialLoadSpecularTexture() {
 	if (material == nullptr) return;
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr) {
-		specularMaterialProperties = new SpecularMaterialProperties();
-		material->setSpecularMaterialProperties(specularMaterialProperties);
+		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 	}
 
 	class OnLoadTexture: public virtual Action
@@ -1616,8 +1610,7 @@ void ModelEditorTabController::onMaterialClearSpecularTexture() {
 	if (material == nullptr) return;
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr) {
-		specularMaterialProperties = new SpecularMaterialProperties();
-		material->setSpecularMaterialProperties(specularMaterialProperties);
+		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 	}
 	view->reloadPrototype();
 	specularMaterialProperties->setSpecularTexture(
@@ -2503,22 +2496,22 @@ void ModelEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 							);
 							if (prototype->getLODLevel2() == nullptr) {
 								prototype->setLODLevel2(
-									new PrototypeLODLevel(
+									make_unique<PrototypeLODLevel>(
 										LODObject::LODLEVELTYPE_MODEL,
 										billboardModelPathName + "/" + billboardModelFileName,
 										billboardLODModel,
 										75.0f
-									)
+									).release()
 								);
 							} else
 							if (prototype->getLODLevel2() == nullptr) {
 								prototype->setLODLevel3(
-									new PrototypeLODLevel(
+									make_unique<PrototypeLODLevel>(
 										LODObject::LODLEVELTYPE_MODEL,
 										billboardModelPathName + "/" + billboardModelFileName,
 										billboardLODModel,
 										150.0f
-									)
+									).release()
 								);
 							}
 							modelEditorTabController->getView()->reloadPrototype();
@@ -2557,11 +2550,11 @@ void ModelEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 								imposterLODModels
 							);
 							prototype->setImposterLOD(
-								new PrototypeImposterLOD(
+								make_unique<PrototypeImposterLOD>(
 									imposterLODFileNames,
 									imposterLODModels,
 									75.0f
-								)
+								).release()
 							);
 							modelEditorTabController->getView()->reloadPrototype();
 						} catch (Exception& exception) {
