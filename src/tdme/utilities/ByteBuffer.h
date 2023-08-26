@@ -51,12 +51,79 @@ public:
 		return ShortBuffer(this);
 	}
 
-public:
+	/**
+	 * Move operator
+	 * @param fromBuffer from buffer
+	 * @return this buffer
+	 */
+	inline ByteBuffer& operator=(ByteBuffer&& fromBuffer) {
+		// delete old buffer
+		if (this->ownsBuffer == true && this->buffer != nullptr && this->buffer != fromBuffer.buffer) delete this->buffer;
+		// do the move
+		this->ownsBuffer = fromBuffer.ownsBuffer;
+		this->buffer = fromBuffer.buffer;
+		this->position = 0;
+		fromBuffer.ownsBuffer = false;
+		fromBuffer.buffer = nullptr;
+		return *this;
+	}
+
+	/**
+	 * Assign operator
+	 * @param fromBuffer from buffer
+	 * @return this buffer
+	 */
+	inline void operator=(const ByteBuffer& fromBuffer) {
+		// delete old buffer
+		if (this->ownsBuffer == true && this->buffer != nullptr && this->buffer != fromBuffer.buffer) delete this->buffer;
+		// do the assign
+		this->ownsBuffer = fromBuffer.ownsBuffer;
+		this->buffer = nullptr;
+		this->position = 0;
+		if (this->ownsBuffer == true) {
+			if (fromBuffer.buffer != nullptr) {
+				this->buffer = new vector<uint8_t>(0);
+				*this->buffer = *fromBuffer.buffer;
+			}
+		} else {
+			this->buffer = fromBuffer.buffer;
+		}
+	}
+
+	/**
+	 * Move constructor
+	 * @param fromBuffer from buffer
+	 */
+	inline ByteBuffer(ByteBuffer&& fromBuffer) {
+		ownsBuffer = fromBuffer.ownsBuffer;
+		buffer = fromBuffer.buffer;
+		position = 0;
+		fromBuffer.ownsBuffer = false;
+		fromBuffer.buffer = nullptr;
+	}
+
+	/**
+	 * Assign constructor
+	 * @param fromBuffer from buffer
+	 */
+	inline ByteBuffer(const ByteBuffer& fromBuffer) {
+		this->ownsBuffer = fromBuffer.ownsBuffer;
+		this->buffer = nullptr;
+		this->position = 0;
+		if (this->ownsBuffer == true) {
+			if (fromBuffer.buffer != nullptr) {
+				this->buffer = new vector<uint8_t>(0);
+				*this->buffer = *fromBuffer.buffer;
+			}
+		} else {
+			this->buffer = fromBuffer.buffer;
+		}
+	}
 
 	/**
 	 * Public constructor
 	 */
-	inline ByteBuffer() : Buffer(static_cast<Buffer*>(nullptr)) {
+	inline ByteBuffer() : Buffer() {
 	}
 
 	/**
@@ -64,13 +131,6 @@ public:
 	 * @param capacity capacity
 	 */
 	inline ByteBuffer(int64_t capacity) : Buffer(capacity) {
-	}
-
-	/**
-	 * Public constructor
-	 * @param data data
-	 */
-	inline ByteBuffer(vector<uint8_t>* data) : Buffer(data) {
 	}
 
 	/**

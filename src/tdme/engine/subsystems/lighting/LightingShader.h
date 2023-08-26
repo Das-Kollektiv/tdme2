@@ -141,6 +141,12 @@ public:
 	}
 
 	/**
+	 * Unload textures
+	 * @param pathName path name
+	 */
+	void unloadTextures();
+
+	/**
 	 * Load textures
 	 * @param pathName path name
 	 */

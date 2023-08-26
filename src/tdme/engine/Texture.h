@@ -392,8 +392,9 @@ public:
 	/**
 	 * Get mip map textures
 	 * @param bc7Encoded bc7 encoded if true or RGB/A if false
+	 * @return mip map textures
 	 */
-	vector<MipMapTexture> getMipMapTextures(bool bc7Encoded);
+	const vector<MipMapTexture>& getMipMapTextures(bool bc7Encoded);
 
 	// overridden methods
 	virtual void onDelete() override;

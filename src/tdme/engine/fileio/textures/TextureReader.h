@@ -111,6 +111,6 @@ private:
 	STATIC_DLL_IMPEXT static vector<string> extensions;
 
 	// maybe have a read write lock here for texture cache, but currently I have no multithreaded access to it
-	STATIC_DLL_IMPEXT static unordered_map<string, Texture*>* textureCache;
-	STATIC_DLL_IMPEXT static Mutex* textureCacheMutex;
+	STATIC_DLL_IMPEXT static unordered_map<string, Texture*> textureCache;
+	STATIC_DLL_IMPEXT static Mutex textureCacheMutex;
 };

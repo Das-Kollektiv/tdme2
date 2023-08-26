@@ -19,6 +19,11 @@ using tdme::math::Math;
  */
 class tdme::utilities::Buffer
 {
+	friend class ByteBuffer;
+	friend class FloatBuffer;
+	friend class IntBuffer;
+	friend class ShortBuffer;
+
 protected:
 	bool ownsBuffer;
 	mutable int64_t position { 0 };
@@ -26,39 +31,13 @@ protected:
 
 public:
 	/**
-	 * Assignment operator
-	 * @param buffer buffer
-	 * @return this buffer
+	 * Public constructor
+	 * @param capacity capacity
 	 */
-	inline Buffer& operator=(const Buffer& buffer) {
-		this->ownsBuffer = buffer.ownsBuffer;
-		this->position = buffer.position;
-		if (ownsBuffer == true) {
-			if (buffer.buffer != nullptr) {
-				this->buffer = new vector<uint8_t>(0);
-				*this->buffer = *buffer.buffer;
-			}
-		} else {
-			this->buffer = buffer.buffer;
-		}
-		return *this;
-	}
-
-	/**
-	 * Copy constructor
-	 * @param buffer buffer
-	 */
-	inline Buffer(const Buffer& buffer) {
-		this->ownsBuffer = buffer.ownsBuffer;
-		this->position = buffer.position;
-		if (ownsBuffer == true) {
-			if (buffer.buffer != nullptr) {
-				this->buffer = new vector<uint8_t>(0);
-				*this->buffer = *buffer.buffer;
-			}
-		} else {
-			this->buffer = buffer.buffer;
-		}
+	inline Buffer() {
+		this->ownsBuffer = false;
+		this->position = 0;
+		this->buffer = nullptr;
 	}
 
 	/**
@@ -69,26 +48,6 @@ public:
 		this->ownsBuffer = true;
 		this->position = 0;
 		this->buffer = new vector<uint8_t>(capacity);
-	}
-
-	/**
-	 * Public constructor
-	 * @param buffer buffer
-	 */
-	inline Buffer(Buffer* buffer) {
-		this->ownsBuffer = false;
-		this->position = 0;
-		this->buffer = buffer == nullptr?nullptr:buffer->buffer;
-	}
-
-	/**
-	 * Public constructor
-	 * @param data data
-	 */
-	inline Buffer(vector<uint8_t>* data) {
-		this->ownsBuffer = false;
-		this->position = 0;
-		this->buffer = data;
 	}
 
 	/**
@@ -106,9 +65,7 @@ public:
 	 * Destructor
 	 */
 	inline virtual ~Buffer() {
-		if (ownsBuffer == true && buffer != nullptr) {
-			delete buffer;
-		}
+		if (ownsBuffer == true && buffer != nullptr) delete buffer;
 	}
 
 	/**

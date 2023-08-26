@@ -10,20 +10,22 @@ using tdme::utilities::Buffer;
  * Short buffer class
  * @author Andreas Drewke
  */
-class tdme::utilities::ShortBuffer: public Buffer
+class tdme::utilities::ShortBuffer final: public Buffer
 {
 public:
 	/**
 	 * Default constructor
 	 */
-	ShortBuffer() : Buffer(static_cast<Buffer*>(nullptr)) {
+	ShortBuffer() : Buffer() {
 	}
 
 	/**
 	 * Public constructor
 	 * @param buffer buffer
 	 */
-	ShortBuffer(Buffer* buffer) : Buffer(buffer) {
+	ShortBuffer(Buffer* buffer) : Buffer() {
+		this->ownsBuffer = false;
+		this->buffer = buffer->buffer;
 	}
 
 	/**

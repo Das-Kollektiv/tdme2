@@ -113,6 +113,11 @@ struct tdme::engine::subsystems::lighting::LightingShaderImplementation
 	virtual void bindTexture(Renderer* renderer, int contextIdx, int32_t textureId) = 0;
 
 	/**
+	 * Unload textures
+	 */
+	virtual void unloadTextures() = 0;
+
+	/**
 	 * Load textures
 	 * @param pathName path name
 	 */

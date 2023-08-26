@@ -161,9 +161,9 @@ using tinyxml::TiXmlElement;
 
 #define AVOID_NULLPTR_STRING(arg) (arg == nullptr?"":arg)
 
-unordered_map<string, GUIElement*>* GUIParser::elements = new unordered_map<string, GUIElement*>();
-Properties* GUIParser::engineThemeProperties = new Properties();
-Properties* GUIParser::projectThemeProperties = new Properties();
+unordered_map<string, GUIElement*> GUIParser::elements = unordered_map<string, GUIElement*>();
+Properties GUIParser::engineThemeProperties;
+Properties GUIParser::projectThemeProperties;
 
 const string GUIParser::getRootNode(const string& pathName, const string& fileName) {
 	return getRootNode(FileSystem::getInstance()->getContentAsString(pathName, fileName));
@@ -201,7 +201,7 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 		newXML = StringTools::replace(newXML, "{$" + variableName + "}", escape(variableValue));
 	}
 	// replace with theme properties
-	for (const auto& [themePropertyName, themePropertyValue]: themeProperties->getProperties()) {
+	for (const auto& [themePropertyName, themePropertyValue]: themeProperties.getProperties()) {
 		newXML = StringTools::replace(newXML, "{$" + themePropertyName + "}", escape(themePropertyValue));
 	}
 
@@ -312,7 +312,7 @@ void GUIParser::parse(GUIParentNode* parentNode, const string& xml)
 	//
 	auto newXML = xml;
 	// replace with theme properties
-	for (const auto& [themePropertyName, themePropertyValue]: themeProperties->getProperties()) {
+	for (const auto& [themePropertyName, themePropertyValue]: themeProperties.getProperties()) {
 		newXML = StringTools::replace(newXML, "{$" + themePropertyName + "}", escape(themePropertyValue));
 	}
 
@@ -433,7 +433,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 						string(AVOID_NULLPTR_STRING(node->Attribute("height"))),
 						parseFactor(guiParentNode, StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("factor")))))
 					),
-					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor(themeProperties->get("color.panel", "#F0F0F0"))),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor(themeProperties.get("color.panel", "#F0F0F0"))),
 					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
 					GUINode::createScale9Grid(
 						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
@@ -1531,8 +1531,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 				);
 			} else {
 				auto nodeTagNameString = nodeTagName;
-				const auto guiElementIt = elements->find(nodeTagNameString);
-				if (guiElementIt == elements->end()) {
+				const auto guiElementIt = elements.find(nodeTagNameString);
+				if (guiElementIt == elements.end()) {
 					throw GUIParserException(
 						"Unknown element '" +
 						(nodeTagNameString) +
@@ -1602,7 +1602,7 @@ void GUIParser::parseTemplate(GUIParentNode* parentNode, const string& parentEle
 	auto themeProperties = parentNode->getScreenNode()->getApplicationSubPathName() == "project"?projectThemeProperties:engineThemeProperties;
 
 	// replace with theme properties
-	for (const auto& [themePropertyName, themePropertyValue]: themeProperties->getProperties()) {
+	for (const auto& [themePropertyName, themePropertyValue]: themeProperties.getProperties()) {
 		newTemplateXML = StringTools::replace(newTemplateXML, "{$" + themePropertyName + "}", escape(themePropertyValue));
 	}
 
@@ -1643,7 +1643,7 @@ void GUIParser::parseInnerXML(GUIParentNode* parentNode, const string& parentEle
 	auto themeProperties = parentNode->getScreenNode()->getApplicationSubPathName() == "project"?projectThemeProperties:engineThemeProperties;
 
 	// replace with theme properties
-	for (const auto& [themePropertyName, themePropertyValue]: themeProperties->getProperties()) {
+	for (const auto& [themePropertyName, themePropertyValue]: themeProperties.getProperties()) {
 		newInnerXML = StringTools::replace(newInnerXML, "{$" + themePropertyName + "}", escape(themePropertyValue));
 	}
 
@@ -1813,26 +1813,26 @@ const string GUIParser::escape(const string& str)
 
 void GUIParser::addElement(GUIElement* guiElement)
 {
-	if (elements->find(guiElement->getName()) != elements->end()) {
+	if (elements.find(guiElement->getName()) != elements.end()) {
 		throw GUIParserException(
 			"Element with given name '" +
 			(guiElement->getName()) +
 			"' already exists"
 		);
 	}
-	elements->emplace(guiElement->getName(), guiElement);
+	elements.emplace(guiElement->getName(), guiElement);
 }
 
 void GUIParser::initialize()
 {
 	try {
-		engineThemeProperties->load("./resources/engine/gui/themes", "theme_default.properties");
+		engineThemeProperties.load("./resources/engine/gui/themes", "theme_default.properties");
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		projectThemeProperties->load("./resources/project/gui/themes", "theme_default.properties");
+		projectThemeProperties.load("./resources/project/gui/themes", "theme_default.properties");
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -2064,16 +2064,13 @@ void GUIParser::initialize()
 }
 
 void GUIParser::dispose() {
-	for (const auto& [elementId, element]: *elements) {
-		delete element;
-	}
-	elements->clear();
-	delete elements;
+	for (const auto& [elementId, element]: elements) delete element;
+	elements.clear();
 }
 
 void GUIParser::loadProjectThemeProperties(const string& pathName) {
 	try {
-		projectThemeProperties->load(pathName + "/resources/project/gui/themes", "theme_default.properties");
+		projectThemeProperties.load(pathName + "/resources/project/gui/themes", "theme_default.properties");
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::loadProjectThemeProperties(): An error occurred: "));
 		Console::println(string(exception.what()));

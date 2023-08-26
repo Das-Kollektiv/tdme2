@@ -14,9 +14,24 @@ using tdme::utilities::Buffer;
  * Float buffer class
  * @author Andreas Drewke
  */
-class tdme::utilities::FloatBuffer: public Buffer
+class tdme::utilities::FloatBuffer final: public Buffer
 {
 public:
+	/**
+	 * Default constructor
+	 */
+	FloatBuffer() : Buffer() {
+	}
+
+	/**
+	 * Public constructor
+	 * @param buffer buffer
+	 */
+	FloatBuffer(Buffer* buffer) : Buffer() {
+		this->ownsBuffer = false;
+		this->buffer = buffer->buffer;
+	}
+
 	/**
 	 * @return capacity
 	 */
@@ -88,20 +103,6 @@ public:
 	inline FloatBuffer* put(const array<float, 16>& values) {
 		Buffer::put((const uint8_t*)values.data(), 16 * sizeof(float));
 		return this;
-	}
-
-public:
-	/**
-	 * Default constructor
-	 */
-	FloatBuffer() : Buffer(static_cast<Buffer*>(nullptr)) {
-	}
-
-	/**
-	 * Public constructor
-	 * @param buffer buffer
-	 */
-	FloatBuffer(Buffer* buffer) : Buffer(buffer) {
 	}
 
 };

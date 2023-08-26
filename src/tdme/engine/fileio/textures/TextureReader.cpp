@@ -38,8 +38,8 @@ using tdme::utilities::Exception;
 using tdme::utilities::StringTools;
 
 vector<string> TextureReader::extensions = {"png"};
-Mutex* TextureReader::textureCacheMutex = new Mutex("texturecache-mutex");
-unordered_map<string, Texture*>* TextureReader::textureCache = new unordered_map<string, Texture*>();
+Mutex TextureReader::textureCacheMutex ("texturecache-mutex");
+unordered_map<string, Texture*> TextureReader::textureCache;
 
 const vector<string>& TextureReader::getTextureExtensions() {
 	return extensions;
@@ -56,9 +56,9 @@ Texture* TextureReader::read(const string& pathName, const string& fileName, boo
 
 	// do cache look up
 	if (useCache == true) {
-		textureCacheMutex->lock();
-		auto textureCacheIt = textureCache->find(idPrefix + canonicalFilePath);
-		if (textureCacheIt != textureCache->end()) {
+		textureCacheMutex.lock();
+		auto textureCacheIt = textureCache.find(idPrefix + canonicalFilePath);
+		if (textureCacheIt != textureCache.end()) {
 			texture = textureCacheIt->second;
 		}
 	}
@@ -75,7 +75,7 @@ Texture* TextureReader::read(const string& pathName, const string& fileName, boo
 
 				texture = PNGTextureReader::read(canonicalFilePath, data, powerOfTwo, idPrefix);
 				if (texture != nullptr && useCache == true) {
-					(*textureCache)[texture->getId()] = texture;
+					textureCache[texture->getId()] = texture;
 				}
 			}
 		} catch (Exception& exception) {
@@ -87,7 +87,7 @@ Texture* TextureReader::read(const string& pathName, const string& fileName, boo
 	if (texture != nullptr) texture->acquireReference();
 
 	//
-	if (useCache == true) textureCacheMutex->unlock();
+	if (useCache == true) textureCacheMutex.unlock();
 
 	// done
 	return texture;
@@ -102,12 +102,12 @@ Texture* TextureReader::read2(const string& texturePathName, const string& textu
 
 	// do cache look up
 	if (useCache == true) {
-		textureCacheMutex->lock();
-		auto textureCacheIt = textureCache->find(cacheId);
-		if (textureCacheIt != textureCache->end()) {
+		textureCacheMutex.lock();
+		auto textureCacheIt = textureCache.find(cacheId);
+		if (textureCacheIt != textureCache.end()) {
 			auto texture = textureCacheIt->second;
 			texture->acquireReference();
-			textureCacheMutex->unlock();
+			textureCacheMutex.unlock();
 			return texture;
 		}
 	}
@@ -115,7 +115,7 @@ Texture* TextureReader::read2(const string& texturePathName, const string& textu
 	// load diffuse texture
 	auto texture = unique_ptr<Texture, decltype([](Texture* texture){ texture->releaseReference(); })>(TextureReader::read(texturePathName, textureFileName, false, powerOfTwo, idPrefix));
 	if (texture == nullptr) {
-		if (useCache == true) textureCacheMutex->unlock();
+		if (useCache == true) textureCacheMutex.unlock();
 		return nullptr;
 	}
 	// additional transparency texture
@@ -124,8 +124,8 @@ Texture* TextureReader::read2(const string& texturePathName, const string& textu
 	if (transparencyTexture == nullptr) {
 		Console::println("TextureReader::read2(): transparency texture: failed: " + texturePathName + "/" + textureFileName + ";" + transparencyTexturePathName + "/" + transparencyTextureFileName);
 		if (useCache == true) {
-			(*textureCache)[cacheId] = texture.get();
-			textureCacheMutex->unlock();
+			textureCache[cacheId] = texture.get();
+			textureCacheMutex.unlock();
 		}
 		return texture.release();
 	}
@@ -133,8 +133,8 @@ Texture* TextureReader::read2(const string& texturePathName, const string& textu
 	if (texture->getTextureWidth() != transparencyTexture->getTextureWidth() || texture->getTextureHeight() != transparencyTexture->getTextureHeight()) {
 		Console::println("TextureReader::read2(): texture does not match transparency texture dimension: " + texturePathName + "/" + textureFileName + ";" + transparencyTexturePathName + "/" + transparencyTextureFileName);
 		if (useCache == true) {
-			(*textureCache)[cacheId] = texture.get();
-			textureCacheMutex->unlock();
+			textureCache[cacheId] = texture.get();
+			textureCacheMutex.unlock();
 		}
 		return texture.release();
 	}
@@ -177,8 +177,8 @@ Texture* TextureReader::read2(const string& texturePathName, const string& textu
 		);
 	textureWithTransparency->acquireReference();
 	if (useCache == true) {
-		(*textureCache)[cacheId] = textureWithTransparency.get();
-		textureCacheMutex->unlock();
+		textureCache[cacheId] = textureWithTransparency.get();
+		textureCacheMutex.unlock();
 	}
 	return textureWithTransparency.release();
 }
@@ -209,10 +209,10 @@ void TextureReader::scaleTextureLine(const ByteBuffer& pixelByteBuffer, ByteBuff
 }
 
 void TextureReader::removeFromCache(Texture* texture) {
-	textureCacheMutex->lock();
-	auto textureCacheIt = textureCache->find(texture->getId());
-	if (textureCacheIt != textureCache->end()) textureCache->erase(textureCacheIt);
-	textureCacheMutex->unlock();
+	textureCacheMutex.lock();
+	auto textureCacheIt = textureCache.find(texture->getId());
+	if (textureCacheIt != textureCache.end()) textureCache.erase(textureCacheIt);
+	textureCacheMutex.unlock();
 }
 
 Texture* TextureReader::rotate(Texture* texture, float rotation, const string& idSuffix) {

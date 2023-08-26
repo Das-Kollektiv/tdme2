@@ -100,6 +100,7 @@ public:
 	virtual void updateTextureMatrix(Renderer* renderer, int contextIdx) override;
 	virtual void bindTexture(Renderer* renderer, int contextIdx, int32_t textureId) override;
 	virtual void updateShaderParameters(Renderer* renderer, int contextIdx) override = 0;
+	virtual void unloadTextures() override;
 	virtual void loadTextures(const string& pathName) override;
 
 };

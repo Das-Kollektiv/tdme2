@@ -154,7 +154,7 @@ void DeferredLightingShaderTerrainImplementation::updateMatrices(Renderer* rende
 void DeferredLightingShaderTerrainImplementation::updateShaderParameters(Renderer* renderer, int contextIdx) {
 }
 
-void DeferredLightingShaderTerrainImplementation::loadTextures(const string& pathName) {
+void DeferredLightingShaderTerrainImplementation::unloadTextures() {
 	if (grasTexture != nullptr) {
 		Engine::getInstance()->getTextureManager()->removeTexture(grasTexture->getId());
 		grasTexture->releaseReference();
@@ -179,6 +179,9 @@ void DeferredLightingShaderTerrainImplementation::loadTextures(const string& pat
 		stoneTexture = nullptr;
 		stoneTextureId = renderer->ID_NONE;
 	}
+}
+
+void DeferredLightingShaderTerrainImplementation::loadTextures(const string& pathName) {
 	//
 	grasTextureId = Engine::getInstance()->getTextureManager()->addTexture(grasTexture = TextureReader::read(pathName + "/resources/engine/textures", "terrain_gras.png"), renderer->CONTEXTINDEX_DEFAULT);
 	dirtTextureId = Engine::getInstance()->getTextureManager()->addTexture(dirtTexture = TextureReader::read(pathName + "/resources/engine/textures", "terrain_dirt.png"), renderer->CONTEXTINDEX_DEFAULT);

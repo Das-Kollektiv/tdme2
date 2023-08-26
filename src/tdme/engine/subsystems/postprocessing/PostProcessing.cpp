@@ -89,9 +89,10 @@ PostProcessing::PostProcessing() {
 	}
 }
 
-PostProcessingProgram* PostProcessing::getPostProcessingProgram(const string& programId) {
-	auto programIt = programs.find(programId);
-	return programIt == programs.end()?nullptr:programIt->second;
+PostProcessing::~PostProcessing() {
+	for (const auto& [programId, program]: programs) {
+		delete program;
+	}
 }
 
 

@@ -99,6 +99,7 @@ LightingShader::LightingShader(Renderer* renderer): renderer(renderer)
 
 LightingShader::~LightingShader() {
 	for (const auto& [shaderId, shader]: shaders) {
+		shader->unloadTextures();
 		delete shader;
 	}
 }
@@ -213,6 +214,7 @@ void LightingShader::bindTexture(int contextIdx, int32_t textureId)
 
 void LightingShader::loadTextures(const string& pathName) {
 	for (const auto& [shaderId, shader]: shaders) {
+		shader->unloadTextures();
 		shader->loadTextures(pathName);
 	}
 }

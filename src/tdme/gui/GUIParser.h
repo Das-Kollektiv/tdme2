@@ -40,9 +40,9 @@ class tdme::gui::GUIParser final
 {
 
 private:
-	STATIC_DLL_IMPEXT static unordered_map<string, GUIElement*>* elements;
-	STATIC_DLL_IMPEXT static Properties* engineThemeProperties;
-	STATIC_DLL_IMPEXT static Properties* projectThemeProperties;
+	STATIC_DLL_IMPEXT static unordered_map<string, GUIElement*> elements;
+	STATIC_DLL_IMPEXT static Properties engineThemeProperties;
+	STATIC_DLL_IMPEXT static Properties projectThemeProperties;
 
 	static constexpr int FONTSIZE_FALLBACK { 14 };
 
@@ -52,14 +52,14 @@ public:
 	 * @return engine theme properties
 	 */
 	inline static const Properties* getEngineThemeProperties() {
-		return engineThemeProperties;
+		return &engineThemeProperties;
 	}
 
 	/**
 	 * @return project theme properties
 	 */
 	inline static const Properties* getProjectThemeProperties() {
-		return projectThemeProperties;
+		return &projectThemeProperties;
 	}
 
 	/**

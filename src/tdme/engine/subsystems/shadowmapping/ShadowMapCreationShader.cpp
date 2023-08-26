@@ -40,6 +40,7 @@ ShadowMapCreationShader::ShadowMapCreationShader(Renderer* renderer): renderer(r
 
 ShadowMapCreationShader::~ShadowMapCreationShader() {
 	for (const auto& [shaderId, shader]: shaders) {
+		shader->unloadTextures();
 		delete shader;
 	}
 }
@@ -139,6 +140,7 @@ void ShadowMapCreationShader::setShader(int contextIdx, const string& id) {
 
 void ShadowMapCreationShader::loadTextures(const string& pathName) {
 	for (const auto& [shaderId, shader]: shaders) {
+		shader->unloadTextures();
 		shader->loadTextures(pathName);
 	}
 }

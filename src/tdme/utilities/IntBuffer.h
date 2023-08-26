@@ -10,19 +10,21 @@ using tdme::utilities::Buffer;
  * Integer buffer class
  * @author Andreas Drewke
  */
-class tdme::utilities::IntBuffer: public Buffer
+class tdme::utilities::IntBuffer final: public Buffer
 {
 public:
 	/**
 	 * Default constructor
 	 */
-	IntBuffer() : Buffer(static_cast<Buffer*>(nullptr)) {
+	IntBuffer() : Buffer() {
 	}
 
 	/**
 	 * Public constructor
 	 */
-	inline IntBuffer(Buffer* buffer) : Buffer(buffer) {
+	inline IntBuffer(Buffer* buffer) : Buffer() {
+		this->ownsBuffer = false;
+		this->buffer = buffer->buffer;
 	}
 
 	/**

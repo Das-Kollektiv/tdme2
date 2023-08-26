@@ -106,6 +106,11 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderImplementat
 	virtual void setRenderLightId(int32_t lightId) = 0;
 
 	/**
+	 * Unload textures
+	 */
+	virtual void unloadTextures() = 0;
+
+	/**
 	 * Load textures
 	 * @param pathName path name
 	 */

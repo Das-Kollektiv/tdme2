@@ -258,5 +258,8 @@ void LightingShaderPBRBaseImplementation::bindTexture(Renderer* renderer, int co
 	}
 }
 
+void LightingShaderPBRBaseImplementation::unloadTextures() {
+}
+
 void LightingShaderPBRBaseImplementation::loadTextures(const string& pathName) {
 }
