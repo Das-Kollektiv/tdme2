@@ -500,8 +500,10 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 						texture->setUseCompression(useBC7TextureCompression);
 						//
 						pbrMaterialProperties->setBaseColorTexture(texture.get());
+						texture->acquireReference();
 						if (pbrMaterialProperties->hasBaseColorTextureTransparency() == true) pbrMaterialProperties->setBaseColorTextureMaskedTransparency(true);
 						specularMaterialProperties->setDiffuseTexture(texture.get());
+						texture->acquireReference();
 						if (specularMaterialProperties->hasDiffuseTextureTransparency() == true) specularMaterialProperties->setDiffuseTextureMaskedTransparency(true);
 						//
 						if (gltfTexture.sampler != -1) {
@@ -561,6 +563,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 						texture->setUseCompression(useBC7TextureCompression);
 						//
 						pbrMaterialProperties->setMetallicRoughnessTexture(texture.get());
+						texture->acquireReference();
 						//
 						if (gltfTexture.sampler != -1) {
 							const auto& sampler = gltfModel.samplers[gltfTexture.sampler];
@@ -619,6 +622,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 						texture->setUseCompression(useBC7TextureCompression);
 						//
 						pbrMaterialProperties->setNormalTexture(texture.get());
+						texture->acquireReference();
 						//
 						if (gltfTexture.sampler != -1) {
 							const auto& sampler = gltfModel.samplers[gltfTexture.sampler];
@@ -676,6 +680,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 						//
 						pbrMaterialProperties->setEmissiveFactor(Color4(gltfMaterial.emissiveFactor[0], gltfMaterial.emissiveFactor[1], gltfMaterial.emissiveFactor[2], 1.0f));
 						pbrMaterialProperties->setEmissiveTexture(texture.get());
+						texture->acquireReference();
 						//
 						if (gltfTexture.sampler != -1) {
 							const auto& sampler = gltfModel.samplers[gltfTexture.sampler];
