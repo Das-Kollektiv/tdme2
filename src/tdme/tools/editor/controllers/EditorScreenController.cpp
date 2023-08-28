@@ -1264,7 +1264,6 @@ void EditorScreenController::ScanFilesThread::run() {
 					if (textureWidth != scaledTextureWidth || textureHeight != scaledTextureHeight) {
 						auto thumbnailTextureScaled = TextureReader::scale(thumbnailTexture, scaledTextureWidth, scaledTextureHeight);
 						thumbnailTexture->releaseReference();
-						thumbnailTextureScaled->acquireReference();
 						thumbnailTexture = thumbnailTextureScaled;
 					}
 					iconBig.clear();

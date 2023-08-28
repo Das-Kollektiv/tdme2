@@ -439,6 +439,7 @@ void PrototypePhysicsSubController::setBoundingVolumeDetails(Prototype* prototyp
 				}
 				required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("boundingvolume_convexmesh_file"))->setTexture(thumbnailTexture);
 				required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("boundingvolume_convexmesh_file"))->setTooltip(thumbnailTooltip);
+				if (thumbnailTexture != nullptr) thumbnailTexture->releaseReference();
 			} else {
 				Console::println("PrototypePhysicsSubController::setBoundingVolumeDetails(): invalid bounding volume@" + to_string(boundingVolumeIdx));
 			}
