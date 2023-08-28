@@ -7,7 +7,6 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/math/Math.h>
 #include <tdme/utilities/ByteBuffer.h>
-#include <tdme/utilities/Console.h>
 #include <tdme/utilities/Reference.h>
 
 using std::string;
@@ -15,7 +14,6 @@ using std::vector;
 
 using tdme::math::Math;
 using tdme::utilities::ByteBuffer;
-using tdme::utilities::Console;
 using tdme::utilities::Reference;
 
 /**

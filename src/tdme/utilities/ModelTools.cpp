@@ -285,21 +285,27 @@ Material* ModelTools::cloneMaterial(const Material* material, const string& id) 
 		clonedSpecularMaterialProperties->setSpecularColor(specularMaterialProperties->getSpecularColor());
 		clonedSpecularMaterialProperties->setShininess(specularMaterialProperties->getShininess());
 		clonedSpecularMaterialProperties->setTextureAtlasSize(specularMaterialProperties->getTextureAtlasSize());
-		if (specularMaterialProperties->getDiffuseTexture() != nullptr) {
-			clonedSpecularMaterialProperties->setDiffuseTexture(specularMaterialProperties->getDiffuseTexture());
+		auto clonedSpecularMaterialPropertiesDiffuseTexture = specularMaterialProperties->getDiffuseTexture();
+		if (clonedSpecularMaterialPropertiesDiffuseTexture != nullptr) {
+			clonedSpecularMaterialPropertiesDiffuseTexture->acquireReference();
+			clonedSpecularMaterialProperties->setDiffuseTexture(clonedSpecularMaterialPropertiesDiffuseTexture);
 			clonedSpecularMaterialProperties->setDiffuseTexturePathName(specularMaterialProperties->getDiffuseTexturePathName());
 			clonedSpecularMaterialProperties->setDiffuseTextureFileName(specularMaterialProperties->getDiffuseTextureFileName());
 		}
 		clonedSpecularMaterialProperties->setDiffuseTextureTransparency(specularMaterialProperties->hasDiffuseTextureTransparency());
 		clonedSpecularMaterialProperties->setDiffuseTextureMaskedTransparency(specularMaterialProperties->hasDiffuseTextureMaskedTransparency());
 		clonedSpecularMaterialProperties->setDiffuseTextureMaskedTransparencyThreshold(specularMaterialProperties->getDiffuseTextureMaskedTransparencyThreshold());
-		if (specularMaterialProperties->getSpecularTexture() != nullptr) {
-			clonedSpecularMaterialProperties->setSpecularTexture(specularMaterialProperties->getSpecularTexture());
+		auto clonedSpecularMaterialPropertiesSpecularTexture = specularMaterialProperties->getSpecularTexture();
+		if (clonedSpecularMaterialPropertiesSpecularTexture != nullptr) {
+			clonedSpecularMaterialPropertiesSpecularTexture->acquireReference();
+			clonedSpecularMaterialProperties->setSpecularTexture(clonedSpecularMaterialPropertiesSpecularTexture);
 			clonedSpecularMaterialProperties->setSpecularTexturePathName(specularMaterialProperties->getSpecularTexturePathName());
 			clonedSpecularMaterialProperties->setSpecularTextureFileName(specularMaterialProperties->getSpecularTextureFileName());
 		}
-		if (specularMaterialProperties->getNormalTexture() != nullptr) {
-			clonedSpecularMaterialProperties->setNormalTexture(specularMaterialProperties->getNormalTexture());
+		auto clonedSpecularMaterialPropertiesNormalTexture = specularMaterialProperties->getNormalTexture();
+		if (clonedSpecularMaterialPropertiesNormalTexture != nullptr) {
+			clonedSpecularMaterialPropertiesNormalTexture->acquireReference();
+			clonedSpecularMaterialProperties->setNormalTexture(clonedSpecularMaterialPropertiesNormalTexture);
 			clonedSpecularMaterialProperties->setNormalTexturePathName(specularMaterialProperties->getNormalTexturePathName());
 			clonedSpecularMaterialProperties->setNormalTextureFileName(specularMaterialProperties->getNormalTextureFileName());
 		}
