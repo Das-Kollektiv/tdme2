@@ -81,10 +81,9 @@ Texture* TextureReader::read(const string& pathName, const string& fileName, boo
 		} catch (Exception& exception) {
 			Console::println("TextureReader::read(): Could not load texture: " + canonicalPathName + "/" + canonicalFileName + ": " + (exception.what()));
 		}
+	} else {
+		texture->acquireReference();
 	}
-
-	// done
-	if (texture != nullptr) texture->acquireReference();
 
 	//
 	if (useCache == true) textureCacheMutex.unlock();

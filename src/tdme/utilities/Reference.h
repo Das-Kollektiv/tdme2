@@ -21,21 +21,21 @@ public:
 	inline Reference(): referenceCounter(0) {}
 
 	/**
-	 * @brief destructor
+	 * @brief Destructor
 	 */
 	inline virtual ~Reference() {}
 
 	/**
-	 * @brief acquires a reference, incrementing the counter
+	 * @brief Acquires a reference, incrementing the counter
 	 */
-	inline void acquireReference() {
+	virtual inline void acquireReference() {
 		AtomicOperations::increment(referenceCounter);
 	}
 
 	/**
-	 * @brief releases a reference, thus decrementing the counter and delete it if reference counter is zero
+	 * @brief Releases a reference, thus decrementing the counter and delete it if reference counter is zero
 	 */
-	inline void releaseReference() {
+	virtual inline void releaseReference() {
 		if (AtomicOperations::decrement(referenceCounter) <= 0) {
 			onDelete();
 			delete this;

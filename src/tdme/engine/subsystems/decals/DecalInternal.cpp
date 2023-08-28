@@ -42,7 +42,6 @@ DecalInternal::DecalInternal(const string& id, OrientedBoundingBox* obb, Texture
 		obb->getAxes()[2] * obb->getHalfExtension()[2] * 2.0f
 	);
 	updateInternal();
-	if (texture != nullptr) texture->acquireReference();
 	this->texture = texture != nullptr?texture:TextureReader::read("resources/engine/textures", "point.png");
 	this->textureHorizontalSprites = textureHorizontalSprites;
 	this->textureVerticalSprites = textureVerticalSprites;

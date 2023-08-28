@@ -167,7 +167,7 @@ using tdme::utilities::Float;
 using tdme::utilities::TextureAtlas;
 
 Engine* Engine::instance = nullptr;
-unique_ptr<Renderer> Engine::renderer;
+Renderer* Engine::renderer = nullptr;
 unique_ptr<TextureManager> Engine::textureManager;
 unique_ptr<VBOManager> Engine::vboManager;
 unique_ptr<MeshManager> Engine::meshManager;
@@ -257,7 +257,6 @@ void Engine::EngineThread::run() {
 
 void Engine::shutdown() {
 	if (instance == nullptr) return;
-	instance->dispose();
 	delete instance;
 	instance = nullptr;
 }
@@ -296,14 +295,14 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 	// create GUI
 	offScreenEngine->gui = make_unique<GUI>(offScreenEngine, guiRenderer.get());
 	// create entity renderer
-	offScreenEngine->entityRenderer = make_unique<EntityRenderer>(offScreenEngine, renderer.get());
+	offScreenEngine->entityRenderer = make_unique<EntityRenderer>(offScreenEngine, renderer);
 	offScreenEngine->entityRenderer->initialize();
 	// create framebuffers
 	offScreenEngine->frameBuffer = make_unique<FrameBuffer>(width, height, (enableDepthBuffer == true?FrameBuffer::FRAMEBUFFER_DEPTHBUFFER:0) | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
 	offScreenEngine->frameBuffer->initialize();
 	// create camera, frustum partition
-	offScreenEngine->camera = make_unique<Camera>(renderer.get());
-	offScreenEngine->gizmoCamera = make_unique<Camera>(renderer.get());
+	offScreenEngine->camera = make_unique<Camera>(renderer);
+	offScreenEngine->gizmoCamera = make_unique<Camera>(renderer);
 	offScreenEngine->gizmoCamera->setFrustumMode(Camera::FRUSTUMMODE_ORTHOGRAPHIC);
 	offScreenEngine->gizmoCamera->setCameraMode(Camera::CAMERAMODE_NONE);
 	offScreenEngine->gizmoCamera->setForwardVector(Vector3(0.0f, 0.0f, -1.0f));
@@ -314,12 +313,12 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 	offScreenEngine->partition = make_unique<OctTreePartition>();
 	// create lights
 	for (auto i = 0; i < offScreenEngine->lights.size(); i++) {
-		offScreenEngine->lights[i] = make_unique<Light>(renderer.get(), i);
+		offScreenEngine->lights[i] = make_unique<Light>(renderer, i);
 		offScreenEngine->lights[i]->setSourceTexture(TextureReader::read("resources/engine/textures", "sun.png"));
 	}
 	// create shadow mapping
 	if (instance->shadowMappingEnabled == true && enableShadowMapping == true) {
-		offScreenEngine->shadowMapping = make_unique<ShadowMapping>(offScreenEngine, renderer.get(), offScreenEngine->entityRenderer.get());
+		offScreenEngine->shadowMapping = make_unique<ShadowMapping>(offScreenEngine, renderer, offScreenEngine->entityRenderer.get());
 	}
 	// geometry buffer
 	if (renderer->isDeferredShadingAvailable() == true && enableGeometryBuffer == true) {
@@ -361,7 +360,7 @@ void Engine::addEntity(Entity* entity)
 
 	// init entity
 	entity->setEngine(this);
-	entity->setRenderer(renderer.get());
+	entity->setRenderer(renderer);
 	entity->initialize();
 	entitiesById[entity->getId()] = entity;
 
@@ -730,7 +729,7 @@ void Engine::initialize()
 		return;
 
 	//
-	renderer = unique_ptr<Renderer>(Application::getRenderer());
+	renderer = Application::getRenderer();
 	if (renderer == nullptr) {
 		initialized = false;
 		Console::println("No renderer: Exiting!");
@@ -763,8 +762,8 @@ void Engine::initialize()
 	ObjectBuffer::initialize();
 
 	// create manager
-	textureManager = make_unique<TextureManager>(renderer.get());
-	vboManager = make_unique<VBOManager>(renderer.get());
+	textureManager = make_unique<TextureManager>(renderer);
+	vboManager = make_unique<VBOManager>(renderer);
 	meshManager = make_unique<MeshManager>();
 
 	// init
@@ -777,19 +776,19 @@ void Engine::initialize()
 	Console::println(string("TDME2::Renderer::Graphics Renderer: ") + renderer->getRenderer());
 
 	// create entity renderer
-	entityRenderer = make_unique<EntityRenderer>(this, renderer.get());
+	entityRenderer = make_unique<EntityRenderer>(this, renderer);
 	entityRenderer->initialize();
 	GUIParser::initialize();
 
 	// create GUI
-	guiRenderer = make_unique<GUIRenderer>(renderer.get());
+	guiRenderer = make_unique<GUIRenderer>(renderer);
 	guiRenderer->initialize();
 	gui = make_unique<GUI>(this, guiRenderer.get());
 	gui->initialize();
 
 	// create camera
-	camera = make_unique<Camera>(renderer.get());
-	gizmoCamera = make_unique<Camera>(renderer.get());
+	camera = make_unique<Camera>(renderer);
+	gizmoCamera = make_unique<Camera>(renderer);
 	gizmoCamera->setFrustumMode(Camera::FRUSTUMMODE_ORTHOGRAPHIC);
 	gizmoCamera->setCameraMode(Camera::CAMERAMODE_NONE);
 	gizmoCamera->setForwardVector(Vector3(0.0f, 0.0f, -1.0f));
@@ -800,7 +799,7 @@ void Engine::initialize()
 
 	// create lights
 	for (auto i = 0; i < lights.size(); i++) {
-		lights[i] = make_unique<Light>(renderer.get(), i);
+		lights[i] = make_unique<Light>(renderer, i);
 		lights[i]->setSourceTexture(TextureReader::read("resources/engine/textures", "sun.png"));
 	}
 
@@ -808,47 +807,47 @@ void Engine::initialize()
 	partition = make_unique<OctTreePartition>();
 
 	// create frame buffer render shader
-	frameBufferRenderShader = make_unique<FrameBufferRenderShader>(renderer.get());
+	frameBufferRenderShader = make_unique<FrameBufferRenderShader>(renderer);
 	frameBufferRenderShader->initialize();
 
 	// pbr brdf lut
 	if (renderer->isPBRAvailable() == true) {
 		// brdf lut render shader
-		brdfLUTShader = make_unique<BRDFLUTShader>(renderer.get());
+		brdfLUTShader = make_unique<BRDFLUTShader>(renderer);
 		brdfLUTShader->initialize();
 	}
 
 	// deferred lighting render shader
 	if (renderer->isDeferredShadingAvailable() == true) {
-		deferredLightingRenderShader = make_unique<DeferredLightingRenderShader>(renderer.get());
+		deferredLightingRenderShader = make_unique<DeferredLightingRenderShader>(renderer);
 		deferredLightingRenderShader->initialize();
 	}
 
 	// create lighting shader
-	lightingShader = make_unique<LightingShader>(renderer.get());
+	lightingShader = make_unique<LightingShader>(renderer);
 	lightingShader->initialize();
 
 	// create particles shader
-	particlesShader = make_unique<ParticlesShader>(this, renderer.get());
+	particlesShader = make_unique<ParticlesShader>(this, renderer);
 	particlesShader->initialize();
 
 	// create particles shader
-	linesShader = make_unique<LinesShader>(this, renderer.get());
+	linesShader = make_unique<LinesShader>(this, renderer);
 	linesShader->initialize();
 
 	// create gui shader
-	guiShader = make_unique<GUIShader>(renderer.get());
+	guiShader = make_unique<GUIShader>(renderer);
 	guiShader->initialize();
 
 	// create post processing shader
-	postProcessingShader = make_unique<PostProcessingShader>(renderer.get());
+	postProcessingShader = make_unique<PostProcessingShader>(renderer);
 	postProcessingShader->initialize();
 
 	// create post processing
 	postProcessing = make_unique<PostProcessing>();
 
 	// create post processing shader
-	texture2DRenderShader = make_unique<Texture2DRenderShader>(renderer.get());
+	texture2DRenderShader = make_unique<Texture2DRenderShader>(renderer);
 	texture2DRenderShader->initialize();
 
 	// check if texture compression is available
@@ -861,11 +860,11 @@ void Engine::initialize()
 	// initialize shadow mapping
 	if (shadowMappingEnabled == true) {
 		Console::println("TDME2::Using shadow mapping");
-		shadowMappingShaderPre = make_unique<ShadowMapCreationShader>(renderer.get());
+		shadowMappingShaderPre = make_unique<ShadowMapCreationShader>(renderer);
 		shadowMappingShaderPre->initialize();
-		shadowMappingShaderRender = make_unique<ShadowMapRenderShader>(renderer.get());
+		shadowMappingShaderRender = make_unique<ShadowMapRenderShader>(renderer);
 		shadowMappingShaderRender->initialize();
-		shadowMapping = make_unique<ShadowMapping>(this, renderer.get(), entityRenderer.get());
+		shadowMapping = make_unique<ShadowMapping>(this, renderer, entityRenderer.get());
 	} else {
 		Console::println("TDME2::Not using shadow mapping");
 	}
@@ -873,7 +872,7 @@ void Engine::initialize()
 	// initialize skinning shader
 	if (skinningShaderEnabled == true) {
 		Console::println("TDME2::Using skinning compute shader");
-		skinningShader = make_unique<SkinningShader>(renderer.get());
+		skinningShader = make_unique<SkinningShader>(renderer);
 		skinningShader->initialize();
 	} else {
 		Console::println("TDME2::Not using skinning compute shader");
@@ -2074,10 +2073,16 @@ void Engine::dispose()
 	if (shadowMapping != nullptr) shadowMapping->dispose();
 
 	// dispose frame buffers
+	if (geometryBuffer != nullptr) geometryBuffer->dispose();
 	if (frameBuffer != nullptr) frameBuffer->dispose();
+	if (gizmoFrameBuffer != nullptr) gizmoFrameBuffer->dispose();
 	if (postProcessingFrameBuffer1 != nullptr) postProcessingFrameBuffer1->dispose();
 	if (postProcessingFrameBuffer2 != nullptr) postProcessingFrameBuffer2->dispose();
 	if (postProcessingTemporaryFrameBuffer != nullptr) postProcessingTemporaryFrameBuffer->dispose();
+	for (const auto& effectPassFrameBuffer: effectPassFrameBuffers) if (effectPassFrameBuffer != nullptr) effectPassFrameBuffer->dispose();
+
+	// dispose lights
+	for (const auto& light: lights) light->dispose();
 
 	// dispose GUI
 	gui->dispose();
@@ -2096,6 +2101,11 @@ void Engine::dispose()
 			for (const auto& engineThread: engineThreads) engineThread->stop();
 			for (const auto& engineThread: engineThreads) engineThread->join();
 		}
+		if (Engine::deferredLightingRenderShader != nullptr) Engine::deferredLightingRenderShader->dispose();
+		frameBufferRenderShader->dispose();
+		texture2DRenderShader->dispose();
+		lightingShader->dispose();
+		postProcessingShader->dispose();
 		ObjectBuffer::dispose();
 	}
 

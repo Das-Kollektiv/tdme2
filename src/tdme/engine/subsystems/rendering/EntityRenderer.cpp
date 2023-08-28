@@ -1434,26 +1434,26 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Lines*>&
 	renderer->enableBlending();
 
 	//
-	for (auto object: linesEntities) {
-		if (object->getRenderPass() != renderPass) continue;
+	for (auto entity: linesEntities) {
+		if (entity->getRenderPass() != renderPass) continue;
 
 		// 	model view matrix
-		renderer->getModelViewMatrix().set(object->getTransformMatrix()).multiply(renderer->getCameraMatrix());
+		renderer->getModelViewMatrix().set(entity->getTransformMatrix()).multiply(renderer->getCameraMatrix());
 		renderer->onUpdateModelViewMatrix(contextIdx);
 
 		// render
 		// issue rendering
-		renderer->getEffectColorAdd(contextIdx) = object->getEffectColorAdd().getArray();
-		renderer->getEffectColorMul(contextIdx) = object->getEffectColorMul().getArray();
+		renderer->getEffectColorAdd(contextIdx) = entity->getEffectColorAdd().getArray();
+		renderer->getEffectColorMul(contextIdx) = entity->getEffectColorMul().getArray();
 		renderer->onUpdateEffect(contextIdx);
 
 		// TODO: maybe use onBindTexture() or onUpdatePointSize()
-		engine->getLinesShader()->setParameters(contextIdx, object->getTextureId(), object->getLineWidth());
+		engine->getLinesShader()->setParameters(contextIdx, entity->getTextureId(), entity->getLineWidth());
 
 		//
-		renderer->bindVerticesBufferObject(contextIdx, (*object->vboIds)[0]);
-		renderer->bindColorsBufferObject(contextIdx, (*object->vboIds)[1]);
-		renderer->drawLinesFromBufferObjects(contextIdx, object->points.size(), 0);
+		renderer->bindVerticesBufferObject(contextIdx, (*entity->vboIds)[0]);
+		renderer->bindColorsBufferObject(contextIdx, (*entity->vboIds)[1]);
+		renderer->drawLinesFromBufferObjects(contextIdx, entity->points.size(), 0);
 	}
 
 	// unbind texture

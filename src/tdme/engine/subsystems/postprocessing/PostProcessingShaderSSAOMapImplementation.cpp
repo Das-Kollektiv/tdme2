@@ -75,9 +75,9 @@ void PostProcessingShaderSSAOMapImplementation::initialize()
 		initialized = false;
 		return;
 	}
-	auto randomTexture = TextureReader::read("resources/engine/textures", "random.png");
-	randomTexture->setUseMipMap(false);
-	randomTextureId = Engine::getInstance()->getTextureManager()->addTexture(randomTexture, renderer->CONTEXTINDEX_DEFAULT);
+
+	//
+	loadTextures(".");
 
 	// register shader
 	Engine::registerShader(Engine::ShaderType::SHADERTYPE_POSTPROCESSING, "ssaomap");
@@ -107,4 +107,17 @@ void PostProcessingShaderSSAOMapImplementation::useProgram(int contextIdx) {
 }
 
 void PostProcessingShaderSSAOMapImplementation::setShaderParameters(int contextIdx, Engine* engine) {
+}
+
+void PostProcessingShaderSSAOMapImplementation::unloadTextures() {
+	Engine::getInstance()->getTextureManager()->removeTexture(randomTexture);
+	randomTextureId = renderer->ID_NONE;
+	randomTexture->releaseReference();
+	randomTexture = nullptr;
+}
+
+void PostProcessingShaderSSAOMapImplementation::loadTextures(const string& pathName) {
+	randomTexture = TextureReader::read(pathName + "/resources/engine/textures", "random.png");
+	randomTexture->setUseMipMap(false);
+	randomTextureId = Engine::getInstance()->getTextureManager()->addTexture(randomTexture, renderer->CONTEXTINDEX_DEFAULT);
 }

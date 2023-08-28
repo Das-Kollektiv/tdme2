@@ -69,7 +69,6 @@ PointsParticleSystemInternal::PointsParticleSystemInternal(const string& id, Par
 	this->textureVerticalSprites = textureVerticalSprites;
 	this->fps = fps;
 	this->pointsRenderPool = make_unique<TransparentRenderPointsPool>(maxPoints);
-	if (texture != nullptr) texture->acquireReference();
 	this->texture = texture != nullptr?texture:TextureReader::read("resources/engine/textures", "point.png");
 	this->entityTransformMatrix.identity();
 }
@@ -184,6 +183,7 @@ void PointsParticleSystemInternal::updateParticles()
 
 void PointsParticleSystemInternal::dispose()
 {
+	pointsRenderPool = nullptr;
 }
 
 int32_t PointsParticleSystemInternal::emitParticles()

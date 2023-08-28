@@ -765,7 +765,10 @@ void TerrainEditorTabView::setTerrain(BoundingBox& terrainBoundingBox, vector<Mo
 
 void TerrainEditorTabView::setBrush(Texture* texture, float scale, float densityStrength) {
 	unsetBrush();
-	if (texture != nullptr) texture->acquireReference();
+	if (brushTexture != nullptr) {
+		engine->getTextureManager()->removeTexture(brushTexture);
+		brushTexture->releaseReference();
+	}
 	brushTexture = texture;
 	//
 	brushScale = scale;

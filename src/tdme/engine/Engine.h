@@ -192,7 +192,7 @@ protected:
 
 private:
 	STATIC_DLL_IMPEXT static Engine* instance;
-	STATIC_DLL_IMPEXT static unique_ptr<Renderer> renderer;
+	STATIC_DLL_IMPEXT static Renderer* renderer;
 
 	STATIC_DLL_IMPEXT static unique_ptr<TextureManager> textureManager;
 	STATIC_DLL_IMPEXT static unique_ptr<VBOManager> vboManager;
@@ -413,7 +413,7 @@ private:
 	 * @return engine
 	 */
 	inline static Renderer* getRenderer() {
-		return renderer.get();
+		return renderer;
 	}
 
 	/**

@@ -435,9 +435,6 @@ void PrototypePhysicsSubController::setBoundingVolumeDetails(Prototype* prototyp
 						FileSystem::getInstance()->getThumbnailAttachment(boundingVolume->getConvexMeshData(), thumbnailPNGData) == true)
 						) {
 						thumbnailTexture = PNGTextureReader::read("tdme.editor.physics.convexmeshes." + to_string(thumbnailTextureIdx++), thumbnailPNGData, true);
-						if (thumbnailTexture != nullptr) {
-							thumbnailTexture->acquireReference();
-						}
 					}
 				}
 				required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("boundingvolume_convexmesh_file"))->setTexture(thumbnailTexture);

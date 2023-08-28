@@ -11,7 +11,7 @@
 #include <tdme/engine/fileio/models/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -270,7 +270,9 @@ private:
 	inline static Texture* getEmbeddedTexture(const unordered_map<string, Texture*>& embeddedTextures, const string& fileName) {
 		auto embeddedTextureIt = embeddedTextures.find(fileName);
 		if (embeddedTextureIt == embeddedTextures.end()) return nullptr;
-		return embeddedTextureIt->second;
+		auto embeddedTexture = embeddedTextureIt->second;
+		embeddedTexture->acquireReference();
+		return embeddedTexture;
 	}
 
 	/**

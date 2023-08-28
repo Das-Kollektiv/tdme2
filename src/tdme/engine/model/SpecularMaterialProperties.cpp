@@ -48,7 +48,6 @@ void SpecularMaterialProperties::setDiffuseTexture(Texture* diffuseTexture) {
 	diffuseTextureFileName = diffuseTexture->getId();
 	diffuseTransparencyTexturePathName.clear();
 	diffuseTransparencyTextureFileName.clear();
-	diffuseTexture->acquireReference();
 	this->diffuseTexture = diffuseTexture;
 	checkDiffuseTextureTransparency();
 }
@@ -104,7 +103,6 @@ void SpecularMaterialProperties::setSpecularTexture(Texture* specularTexture) {
 	if (this->specularTexture != nullptr) this->specularTexture->releaseReference();
 	specularTexturePathName.clear();
 	specularTextureFileName = specularTexture->getId();
-	specularTexture->acquireReference();
 	this->specularTexture = specularTexture;
 }
 
@@ -122,7 +120,6 @@ void SpecularMaterialProperties::setNormalTexture(Texture* normalTexture) {
 	if (this->normalTexture != nullptr) this->normalTexture->releaseReference();
 	normalTexturePathName.clear();
 	normalTextureFileName = normalTexture->getId();
-	normalTexture->acquireReference();
 	this->normalTexture = normalTexture;
 }
 

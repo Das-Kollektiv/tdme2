@@ -54,9 +54,14 @@ public:
 	bool isInitialized();
 
 	/**
-	 * Initialize renderer
+	 * Initialize
 	 */
 	void initialize();
+
+	/**
+	 * Dispose
+	 */
+	void dispose();
 
 	/**
 	 * Use lighting program

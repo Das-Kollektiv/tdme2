@@ -63,7 +63,6 @@ FogParticleSystemInternal::FogParticleSystemInternal(const string& id, ParticleE
 	this->textureHorizontalSprites = textureHorizontalSprites;
 	this->textureVerticalSprites = textureVerticalSprites;
 	this->fps = fps;
-	if (texture != nullptr) texture->acquireReference();
 	this->texture = texture != nullptr?texture:TextureReader::read("resources/engine/textures", "point.png");
 	this->entityTransformMatrix.identity();
 }
@@ -221,6 +220,5 @@ void FogParticleSystemInternal::updateParticles()
 void FogParticleSystemInternal::dispose()
 {
 	pointsRenderPool = nullptr;
-	engine->getTextureManager()->removeTexture(texture->getId());
 }
 

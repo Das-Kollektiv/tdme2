@@ -9,6 +9,7 @@
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
@@ -25,6 +26,7 @@ using tdme::engine::subsystems::lighting::LightingShaderPBRBaseImplementation;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
+using tdme::engine::Texture;
 using tdme::engine::Timing;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -104,31 +106,10 @@ void LightingShaderPBRBaseImplementation::initialize()
 	uniformDiffuseEnvSampler = renderer->getProgramUniformLocation(programId, "u_DiffuseEnvSampler");
 	uniformSpecularEnvSampler = renderer->getProgramUniformLocation(programId, "u_SpecularEnvSampler");
 	uniformbrdfLUT = renderer->getProgramUniformLocation(programId, "u_brdfLUT");
-
-	string environmentType = "studio_grey";
-	textureDiffuseEnvSampler =
-		Engine::getInstance()->getTextureManager()->addCubeMapTexture(
-			"pbr-environment-diffuse",
-			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_left.png"),
-			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_right.png"),
-			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_top.png"),
-			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_bottom.png"),
-			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_front.png"),
-			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_back.png"),
-			renderer->CONTEXTINDEX_DEFAULT
-		);
-	textureSpecularEnvSampler =
-		Engine::getInstance()->getTextureManager()->addCubeMapTexture(
-			"pbr-environment-specular",
-			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_left.png"),
-			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_right.png"),
-			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_top.png"),
-			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_bottom.png"),
-			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_front.png"),
-			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_back.png"),
-			renderer->CONTEXTINDEX_DEFAULT
-		);
 	texturebrdfLUT = Engine::getBRDFLUTShader()->getColorTextureId();
+
+	//
+	loadTextures(".");
 
 	//
 	initialized = true;
@@ -259,7 +240,44 @@ void LightingShaderPBRBaseImplementation::bindTexture(Renderer* renderer, int co
 }
 
 void LightingShaderPBRBaseImplementation::unloadTextures() {
+	//
+	for (auto i = 0; i < envDiffuseTextures.size(); i++) {
+		if (envDiffuseTextures[i] == nullptr) continue;
+		envDiffuseTextures[i]->releaseReference();
+		envDiffuseTextures[i] = nullptr;
+	}
+	for (auto i = 0; i < envSpecularTextures.size(); i++) {
+		if (envSpecularTextures[i] == nullptr) continue;
+		envSpecularTextures[i]->releaseReference();
+		envSpecularTextures[i] = nullptr;
+	}
+	//
+	Engine::getInstance()->getTextureManager()->removeTexture("pbr-environment-diffuse");
+	Engine::getInstance()->getTextureManager()->removeTexture("pbr-specular-diffuse");
 }
 
 void LightingShaderPBRBaseImplementation::loadTextures(const string& pathName) {
+	string environmentType = "studio_grey";
+	textureDiffuseEnvSampler =
+		Engine::getInstance()->getTextureManager()->addCubeMapTexture(
+			"pbr-environment-diffuse",
+			envDiffuseTextures[0] = TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_left.png"),
+			envDiffuseTextures[1] = TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_right.png"),
+			envDiffuseTextures[2] = TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_top.png"),
+			envDiffuseTextures[3] = TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_bottom.png"),
+			envDiffuseTextures[4] = TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_front.png"),
+			envDiffuseTextures[5] = TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_back.png"),
+			renderer->CONTEXTINDEX_DEFAULT
+		);
+	textureSpecularEnvSampler =
+		Engine::getInstance()->getTextureManager()->addCubeMapTexture(
+			"pbr-environment-specular",
+			envSpecularTextures[0] = TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_left.png"),
+			envSpecularTextures[1] = TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_right.png"),
+			envSpecularTextures[2] = TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_top.png"),
+			envSpecularTextures[3] = TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_bottom.png"),
+			envSpecularTextures[4] = TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_front.png"),
+			envSpecularTextures[5] = TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_back.png"),
+			renderer->CONTEXTINDEX_DEFAULT
+		);
 }

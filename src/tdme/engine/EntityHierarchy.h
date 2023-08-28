@@ -123,6 +123,13 @@ private:
 	 */
 	void updateHierarchy(const Transform& parentTransform, EntityHierarchyLevel* entityHierarchyLevel, int depth, bool& firstEntity);
 
+	/**
+	 * Delete hierarchy from given entity hierarchy level ongoing
+	 * @param entityHierarchyLevel entity hierarchy level
+	 * @param depth depth
+	 */
+	void deleteHierarchy(EntityHierarchyLevel* entityHierarchyLevel, int depth);
+
 public:
 	// forbid class copy
 	FORBID_CLASS_COPY(EntityHierarchy)

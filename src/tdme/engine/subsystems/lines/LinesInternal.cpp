@@ -67,6 +67,7 @@ LinesInternal::LinesInternal(const string& id, float lineWidth, const vector<Vec
 }
 
 LinesInternal::~LinesInternal() {
+	if (this->texture != nullptr) texture->releaseReference();
 }
 
 void LinesInternal::update()
@@ -91,7 +92,10 @@ void LinesInternal::setTransform(const Transform& transform)
 
 void LinesInternal::initialize() {
 	// texture
-	this->textureId = this->texture == nullptr?engine->getTextureManager()->addTexture(this->texture = TextureReader::read("resources/engine/textures", "point.png"), renderer->CONTEXTINDEX_DEFAULT):engine->getTextureManager()->addTexture(this->texture, renderer->CONTEXTINDEX_DEFAULT);
+	this->textureId =
+		this->texture == nullptr?
+			engine->getTextureManager()->addTexture(this->texture = TextureReader::read("resources/engine/textures", "point.png"), renderer->CONTEXTINDEX_DEFAULT):
+			engine->getTextureManager()->addTexture(this->texture, renderer->CONTEXTINDEX_DEFAULT);
 
 	// initialize if not yet done
 	auto created = false;

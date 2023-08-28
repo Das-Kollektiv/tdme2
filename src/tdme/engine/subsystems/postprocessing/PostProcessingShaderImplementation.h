@@ -68,6 +68,11 @@ struct tdme::engine::subsystems::postprocessing::PostProcessingShaderImplementat
 	virtual void setShaderParameters(int contextIdx, Engine* engine) = 0;
 
 	/**
+	 * Unload textures
+	 */
+	virtual void unloadTextures() = 0;
+
+	/**
 	 * Load textures
 	 * @param pathName path name
 	 */

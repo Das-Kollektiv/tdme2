@@ -51,6 +51,11 @@ public:
 	void initialize();
 
 	/**
+	 * Dispose
+	 */
+	void dispose();
+
+	/**
 	 * Use render program
 	 */
 	void useProgram();

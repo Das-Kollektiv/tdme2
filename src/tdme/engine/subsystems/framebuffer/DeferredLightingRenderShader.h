@@ -9,6 +9,7 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Decal.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/fwd-tdme.h>
 
 using std::array;
 using std::vector;
@@ -18,6 +19,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Camera;
 using tdme::engine::Decal;
 using tdme::engine::Engine;
+using tdme::engine::Texture;
 
 /**
  * Deferred lighint render shader
@@ -79,6 +81,9 @@ private:
 	array<int32_t, Engine::LIGHTS_MAX> uniformPBRLightOuterConeCos;
 	array<int32_t, Engine::LIGHTS_MAX> uniformPBRLightType;
 
+	array<Texture*, 6> envDiffuseTextures;
+	array<Texture*, 6> envSpecularTextures;
+
 	int32_t uniformDecalCount { -1 };
 	int32_t uniformDecalsTextureUnit { -1 };
 	array<int32_t, DECAL_COUNT> uniformDecalWorldToDecalSpace;
@@ -117,6 +122,11 @@ public:
 	 * Initialize
 	 */
 	void initialize();
+
+	/**
+	 * Dispose
+	 */
+	void dispose();
 
 	/**
 	 * Use render program

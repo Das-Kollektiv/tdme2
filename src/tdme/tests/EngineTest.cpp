@@ -217,8 +217,8 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 
 void EngineTest::dispose()
 {
-	engine->dispose();
 	osEngine->dispose();
+	engine->dispose();
 }
 
 void EngineTest::initialize()
@@ -294,7 +294,7 @@ void EngineTest::initialize()
 		grass->setReceivesShadows(true);
 		grass->update();
 		engine->addEntity(grass);
-		auto _player = ModelReader::read("resources/tests/models/mementoman/", "mementoman.dae");
+		auto _player = modelDeleter.add(ModelReader::read("resources/tests/models/mementoman/", "mementoman.dae"));
 		_player->addAnimationSetup("walk", 0, 24, true);
 		_player->addAnimationSetup("still", 25, 99, true);
 		auto player1 = new Object("player1", _player);

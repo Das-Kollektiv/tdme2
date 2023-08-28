@@ -28,7 +28,6 @@ Texture2DRenderShader::Texture2DRenderShader(Renderer* renderer)
 
 Texture2DRenderShader::~Texture2DRenderShader()
 {
-	Engine::getInstance()->getVBOManager()->removeVBO("texture2d_render_shader.vbo");
 }
 
 bool Texture2DRenderShader::isInitialized()
@@ -74,6 +73,11 @@ void Texture2DRenderShader::initialize()
 
 	//
 	initialized = true;
+}
+
+void Texture2DRenderShader::dispose()
+{
+	Engine::getInstance()->getVBOManager()->removeVBO("texture2d_render_shader.vbo");
 }
 
 void Texture2DRenderShader::useProgram()

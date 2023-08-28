@@ -72,5 +72,8 @@ void PostProcessingShaderBaseImplementation::setBufferPixelHeight(int contextIdx
 	}
 }
 
+void PostProcessingShaderBaseImplementation::unloadTextures() {
+}
+
 void PostProcessingShaderBaseImplementation::loadTextures(const string& pathName) {
 }

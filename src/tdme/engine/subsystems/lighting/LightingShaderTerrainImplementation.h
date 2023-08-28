@@ -42,6 +42,7 @@ public:
 	virtual void unUseProgram(int contextIdx) override;
 	virtual void updateMatrices(Renderer* renderer, int contextIdx) override;
 	virtual void updateShaderParameters(Renderer* renderer, int contextIdx) override;
+	virtual void unloadTextures() override;
 	virtual void loadTextures(const string& pathName) override;
 
 private:
