@@ -38,7 +38,7 @@ SRCS_PLATFORM =
 CPPVERSION = -std=c++2a
 OFLAGS =
 EXTRAFLAGS = -DRAPIDJSON_HAS_STDSTRING
-INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src
+INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib
 
 #
 CXX := $(CXX) -fPIC
