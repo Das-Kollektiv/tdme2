@@ -31,7 +31,6 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utilities/ModelTools.h>
 
 using std::array;
 using std::make_unique;
@@ -66,7 +65,6 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utilities::ModelTools;
 
 Model* TMReader::read(const string& pathName, const string& fileName, bool useBC7TextureCompression)
 {

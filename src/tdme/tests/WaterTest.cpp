@@ -64,10 +64,10 @@ WaterTest::WaterTest()
 }
 
 
-void WaterTest::main(int argc, char** argv)
+int WaterTest::main(int argc, char** argv)
 {
 	auto waterTest = new WaterTest();
-	waterTest->run(argc, argv, "WaterTest", waterTest);
+	return waterTest->run(argc, argv, "WaterTest", waterTest);
 }
 
 void WaterTest::display()

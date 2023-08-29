@@ -37,5 +37,7 @@ int main(int argc, char *argv[]) {
 	} catch (Exception& exception) {
 		Console::println(string("Fail: ") + exception.what());
 	}
+	//
+	return 0;
 }
 

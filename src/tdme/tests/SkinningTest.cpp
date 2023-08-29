@@ -64,10 +64,10 @@ SkinningTest::SkinningTest()
 }
 
 
-void SkinningTest::main(int argc, char** argv)
+int SkinningTest::main(int argc, char** argv)
 {
 	auto skinningTest = new SkinningTest();
-	skinningTest->run(argc, argv, "SkinningTest", skinningTest);
+	return skinningTest->run(argc, argv, "SkinningTest", skinningTest);
 }
 
 void SkinningTest::display()

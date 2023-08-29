@@ -203,6 +203,7 @@ GUIScreenNode::~GUIScreenNode() {
 
 	// delete chaches
 	for (const auto& [fontId, font]: fontCache) {
+		font->dispose();
 		delete font;
 	}
 	fontCache.clear();
@@ -852,20 +853,17 @@ GUIFont* GUIScreenNode::getFont(const string& fileName, int size)
 	getProjectFilePathNameAndFileName(fileName, fontPathName, fontFileName);
 
 	// use cache or load font
-	GUIFont* font = nullptr;
 	auto cacheId = fontPathName + "/" + fontFileName + ":" + to_string(size);
 	auto fontCacheIt = fontCache.find(cacheId);
-	if (fontCacheIt == fontCache.end()) {
+	auto font = fontCacheIt != fontCache.end()?fontCacheIt->second:nullptr;
+	if (font == nullptr) {
 		try {
 			font = GUIFont::parse(fontPathName, fontFileName, size);
 		} catch (Exception& exception) {
-			Console::print(string("GUIScreenNode::getFont(): An error occurred: "));
-			Console::println(string(exception.what()));
+			Console::print("GUIScreenNode::getFont(): An error occurred: " + id + ": " + cacheId + ": " + string(exception.what()));
 			return nullptr;
 		}
 		fontCache[cacheId] = font;
-	} else {
-		font = fontCacheIt->second;
 	}
 	//
 	return font;
@@ -879,8 +877,9 @@ Texture* GUIScreenNode::getImage(const string& fileName)
 	getProjectFilePathNameAndFileName(fileName, imagePathName, imageFileName);
 
 	//
-	auto imageIt = imageCache.find("tdme.gui." + screenNode->getId() + "." + imagePathName + "/" + imageFileName);
-	auto image = imageIt != imageCache.end()?imageIt->second:nullptr;
+	auto cacheId = imagePathName + "/" + imageFileName;
+	auto imageCacheIt = imageCache.find(cacheId);
+	auto image = imageCacheIt != imageCache.end()?imageCacheIt->second:nullptr;
 	if (image == nullptr) {
 		try {
 			image = TextureReader::read(imagePathName, imageFileName, false, false, "tdme.gui." + screenNode->getId() + ".");
@@ -891,10 +890,10 @@ Texture* GUIScreenNode::getImage(const string& fileName)
 				image->setClampMode(Texture::CLAMPMODE_TRANSPARENTPIXEL);
 			}
 		} catch (Exception& exception) {
-			Console::print("GUIScreenNode::getImage(): An error occurred: " + string(exception.what()));
-			throw;
+			Console::print("GUIScreenNode::getImage(): An error occurred: " + id + ": " + cacheId + ": " + string(exception.what()));
+			return nullptr;
 		}
-		if (image != nullptr) imageCache[imagePathName + "/" + imageFileName] = image;
+		if (image != nullptr) imageCache[cacheId] = image;
 	}
 	return image;
 }

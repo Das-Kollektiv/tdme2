@@ -104,10 +104,10 @@ FlowMapTest2::~FlowMapTest2() {
 	if (flowMap != nullptr) flowMap->releaseReference();
 }
 
-void FlowMapTest2::main(int argc, char** argv)
+int FlowMapTest2::main(int argc, char** argv)
 {
 	auto flowMapTest2 = new FlowMapTest2();
-	flowMapTest2->run(argc, argv, "FlowMapTest2", flowMapTest2);
+	return flowMapTest2->run(argc, argv, "FlowMapTest2", flowMapTest2);
 }
 
 void FlowMapTest2::display()

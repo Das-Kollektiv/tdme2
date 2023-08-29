@@ -33,6 +33,14 @@ using tdme::utilities::Console;
 
 Audio* Audio::instance = nullptr;
 
+
+void Audio::shutdown()
+{
+	if (Audio::instance == nullptr) return;
+	delete Audio::instance;
+	Audio::instance = nullptr;
+}
+
 Audio::Audio()
 {
 	// TODO: error handling
@@ -48,6 +56,12 @@ Audio::Audio()
 
 	// init listener position
 	update();
+}
+
+Audio::~Audio()
+{
+	reset();
+	alcCloseDevice(device);
 }
 
 void Audio::addEntity(AudioEntity* entity)
@@ -94,13 +108,6 @@ void Audio::reset()
 		removeEntity(key);
 	}
 }
-
-void Audio::shutdown()
-{
-	reset();
-	alcCloseDevice(device);
-}
-
 void Audio::update()
 {
 	// update audio entities

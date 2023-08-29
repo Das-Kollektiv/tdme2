@@ -64,14 +64,14 @@ TDMEEditor::TDMEEditor()
 TDMEEditor::~TDMEEditor() {
 }
 
-void TDMEEditor::main(int argc, char** argv)
+int TDMEEditor::main(int argc, char** argv)
 {
 	Console::println(string("TDMEEditor ") + Version::getVersion());
 	Console::println(Version::getCopyright());
 	Console::println();
 
 	auto tdmeEditor = new TDMEEditor();
-	tdmeEditor->run(argc, argv, "TDMEEditor", nullptr, Application::WINDOW_HINT_MAXIMIZED);
+	return tdmeEditor->run(argc, argv, "TDMEEditor", nullptr, Application::WINDOW_HINT_MAXIMIZED);
 }
 
 bool TDMEEditor::isFullScreen() {

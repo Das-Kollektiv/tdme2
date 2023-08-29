@@ -66,10 +66,10 @@ TreeTest::TreeTest()
 }
 
 
-void TreeTest::main(int argc, char** argv)
+int TreeTest::main(int argc, char** argv)
 {
 	auto treeTest = new TreeTest();
-	treeTest->run(argc, argv, "TreeTest", treeTest);
+	return treeTest->run(argc, argv, "TreeTest", treeTest);
 }
 
 void TreeTest::display()

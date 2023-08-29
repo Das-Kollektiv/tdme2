@@ -3,6 +3,5 @@
 
 int main(int argc, char** argv)
 {
-    ::tdme::tests::TreeTest::main(argc, argv);
-    return 0;
+	return ::tdme::tests::TreeTest::main(argc, argv);
 }

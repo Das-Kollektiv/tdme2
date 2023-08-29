@@ -81,10 +81,10 @@ PhysicsTest3::~PhysicsTest3()
 {
 }
 
-void PhysicsTest3::main(int argc, char** argv)
+int PhysicsTest3::main(int argc, char** argv)
 {
 	auto physicsTest3 = new PhysicsTest3();
-	physicsTest3->run(argc, argv, "PhysicsTest3", physicsTest3);
+	return physicsTest3->run(argc, argv, "PhysicsTest3", physicsTest3);
 }
 
 void PhysicsTest3::display()

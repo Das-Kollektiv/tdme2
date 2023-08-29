@@ -102,10 +102,10 @@ EngineTest::EngineTest()
 EngineTest::~EngineTest()
 {
 }
-void EngineTest::main(int argc, char** argv)
+int EngineTest::main(int argc, char** argv)
 {
 	auto engineTest = new EngineTest();
-	engineTest->run(argc, argv, "EngineTest", engineTest);
+	return engineTest->run(argc, argv, "EngineTest", engineTest);
 }
 
 Model* EngineTest::createWallModel()

@@ -14,7 +14,7 @@ using std::string;
 class tdme::tests::MathOperatorTest final
 {
 public:
-	static void main();
+	static int main();
 
 	// forbid class copy
 	FORBID_CLASS_COPY(MathOperatorTest)

@@ -269,6 +269,7 @@ void EditorScreenController::initialize()
 void EditorScreenController::dispose()
 {
 	stopScanFiles();
+	closeProject();
 }
 
 void EditorScreenController::setScreenCaption(const string& text)
@@ -2200,7 +2201,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 		// TODO: move me into GUIFrameBufferNode
 		if (Engine::getInstance()->getGraphicsRendererType() != Renderer::RENDERERTYPE_VULKAN) {
 			auto tabFrameBuffer = dynamic_cast<GUIImageNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"));
-			if (tabFrameBuffer != nullptr) tabFrameBuffer->setTextureMatrix((new Matrix3x3())->identity().scale(Vector2(1.0f, -1.0f)));
+			if (tabFrameBuffer != nullptr) tabFrameBuffer->setTextureMatrix(Matrix3x3().identity().scale(Vector2(1.0f, -1.0f)));
 		}
 		tabViews[tabId] = EditorTabView(tabId, Tools::getFileName(absoluteFileName), tabType, tabView.release(), required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
 		tabViewVector.push_back(&tabViews[tabId]);

@@ -38,6 +38,7 @@
 
 #include <tdme/application/Application.h>
 #include <tdme/application/InputEventHandler.h>
+#include <tdme/audio/Audio.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
@@ -61,6 +62,7 @@ using std::to_string;
 
 using tdme::application::Application;
 using tdme::application::InputEventHandler;
+using tdme::audio::Audio;
 using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::renderer::Renderer;
@@ -536,7 +538,7 @@ static void glfwErrorCallback(int error, const char* description) {
 	Console::println(string("glfwErrorCallback(): ") + description);
 }
 
-void Application::run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler, int windowHints) {
+int Application::run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler, int windowHints) {
 	string rendererLibrary = "libopengl3corerenderer";
 	for (auto i = 1; i < argc; i++) {
 		auto argValue = string(argv[i]);
@@ -563,7 +565,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 	glfwSetErrorCallback(glfwErrorCallback);
 	if (glfwInit() == false) {
 		Console::println("glflInit(): failed!");
-		return;
+		return EXITCODE_FAILURE;
 	}
 
 	// TODO: dispose
@@ -595,7 +597,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		if (rendererLibraryHandle == nullptr) {
 			Console::println("Application::run(): Could not open renderer library");
 			glfwTerminate();
-			return;
+			return EXITCODE_FAILURE;
 		}
 		//
 		Renderer* (*rendererCreateInstance)() = (Renderer*(*)())GetProcAddress(rendererLibraryHandle, "createInstance");
@@ -603,14 +605,14 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		if (rendererCreateInstance == nullptr) {
 			Console::println("Application::run(): Could not find renderer library createInstance() entry point");
 			glfwTerminate();
-			return;
+			return EXITCODE_FAILURE;
 		}
 		//
 		renderer = (Renderer*)rendererCreateInstance();
 		if (renderer == nullptr) {
 			Console::println("Application::run(): Could not create renderer");
 			glfwTerminate();
-			return;
+			return EXITCODE_FAILURE;
 		}
 	#else
 		//
@@ -622,7 +624,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		if (rendererLibraryHandle == nullptr) {
 			Console::println("Application::run(): Could not open renderer library");
 			glfwTerminate();
-			return;
+			return EXITCODE_FAILURE;
 		}
 		//
 		Renderer* (*rendererCreateInstance)() = (Renderer*(*)())dlsym(rendererLibraryHandle, "createInstance");
@@ -630,14 +632,14 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		if (rendererCreateInstance == nullptr) {
 			Console::println("Application::run(): Could not find renderer library createInstance() entry point");
 			glfwTerminate();
-			return;
+			return EXITCODE_FAILURE;
 		}
 		//
 		renderer = (Renderer*)rendererCreateInstance();
 		if (renderer == nullptr) {
 			Console::println("Application::run(): Could not create renderer");
 			glfwTerminate();
-			return;
+			return EXITCODE_FAILURE;
 		}
 	#endif
 
@@ -657,14 +659,14 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 	if (glfwWindow == nullptr) {
 		Console::println("glfwCreateWindow(): Could not create window");
 		glfwTerminate();
-		return;
+		return EXITCODE_FAILURE;
 	}
 
 	//
 	if (renderer->initializeWindowSystemRendererContext(glfwWindow) == false) {
 		Console::println("glfwCreateWindow(): Could not initialize window system renderer context");
 		glfwTerminate();
-		return;
+		return EXITCODE_FAILURE;
 	}
 
 	//
@@ -702,16 +704,22 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		glfwPollEvents();
 	}
 	glfwTerminate();
+	//
+	auto localExitCode = exitCode;
 	if (Application::application != nullptr) {
 		Console::println("Application::run(): Shutting down application");
 		Application::application->dispose();
 		Engine::shutdown();
+		Audio::shutdown();
 		delete Application::renderer;
-		delete Application::application;
 		Application::renderer = nullptr;
+		Console::shutdown();
+		//
+		delete Application::application;
 		Application::application = nullptr;
 	}
-	if (exitCode != 0) ::exit(exitCode);
+	//
+	return localExitCode;
 }
 
 void Application::setIcon() {

@@ -100,10 +100,10 @@ RayTracingTest::~RayTracingTest()
 {
 }
 
-void RayTracingTest::main(int argc, char** argv)
+int RayTracingTest::main(int argc, char** argv)
 {
 	auto rayTracingTest = new RayTracingTest();
-	rayTracingTest->run(argc, argv, "RayTracingTest", rayTracingTest);
+	return rayTracingTest->run(argc, argv, "RayTracingTest", rayTracingTest);
 }
 
 void RayTracingTest::display()

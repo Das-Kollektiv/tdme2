@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -10,6 +11,7 @@
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::os::threading::Mutex;
@@ -73,15 +75,10 @@ private:
 		void run();
 	};
 
-	/**
-	 * Initialize log writer thread
-	 */
-	static void initLogWriterThread();
-
 	//
 	STATIC_DLL_IMPEXT static Mutex mutex;
 	STATIC_DLL_IMPEXT static bool newline;
 	STATIC_DLL_IMPEXT static vector<string> messages;
-	STATIC_DLL_IMPEXT static LogWriterThread logWriterThread;
 	STATIC_DLL_IMPEXT static Logger* logger;
+	STATIC_DLL_IMPEXT static unique_ptr<LogWriterThread> logWriterThread;
 };

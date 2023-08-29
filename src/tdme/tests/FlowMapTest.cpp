@@ -81,10 +81,10 @@ FlowMapTest::~FlowMapTest() {
 	if (flowMap != nullptr) flowMap->releaseReference();
 }
 
-void FlowMapTest::main(int argc, char** argv)
+int FlowMapTest::main(int argc, char** argv)
 {
 	auto flowMapTest = new FlowMapTest();
-	flowMapTest->run(argc, argv, "FlowMapTest");
+	return flowMapTest->run(argc, argv, "FlowMapTest");
 }
 
 void FlowMapTest::display()

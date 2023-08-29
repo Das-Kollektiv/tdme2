@@ -81,10 +81,10 @@ PathFindingTest::~PathFindingTest()
 {
 }
 
-void PathFindingTest::main(int argc, char** argv)
+int PathFindingTest::main(int argc, char** argv)
 {
 	auto pathFindingTest = new PathFindingTest();
-	pathFindingTest->run(argc, argv, "PathFindingTest");
+	return pathFindingTest->run(argc, argv, "PathFindingTest");
 }
 
 void PathFindingTest::determinePlayerMovementDirection() {

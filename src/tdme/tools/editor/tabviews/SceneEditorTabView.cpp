@@ -596,6 +596,7 @@ void SceneEditorTabView::initialize()
 void SceneEditorTabView::dispose()
 {
 	shutdownScene();
+	SceneConnector::resetEngine(engine.get(), scene.get());
 	engine->dispose();
 }
 

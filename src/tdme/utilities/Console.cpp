@@ -1,3 +1,4 @@
+#include <memory>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -19,8 +20,8 @@ using tdme::utilities::Time;
 Mutex Console::mutex("console");
 bool Console::newline = false;
 vector<string> Console::messages;
-Console::LogWriterThread Console::logWriterThread;
 Console::Logger* Console::logger = nullptr;
+unique_ptr<Console::LogWriterThread> Console::logWriterThread = make_unique<Console::LogWriterThread>();
 
 Console::LogWriterThread::LogWriterThread(): Thread("console-logwriter-thread") {
 	ofstream ofs(std::filesystem::u8path("console.log"), ofstream::trunc);
@@ -29,8 +30,6 @@ Console::LogWriterThread::LogWriterThread(): Thread("console-logwriter-thread") 
 }
 
 Console::LogWriterThread::~LogWriterThread() {
-	Console::logWriterThread.stop();
-	Console::logWriterThread.join();
 }
 
 void Console::LogWriterThread::run() {
@@ -48,11 +47,9 @@ void Console::LogWriterThread::run() {
 }
 
 void Console::LogWriterThread::flush() {
-	cout << "Console::LogWriterThread::flush()\n";
 	ofstream ofs(std::filesystem::u8path("console.log"), ofstream::app);
 	for (const auto& message: Console::messages) {
-		ofs << message;
-		ofs << "\n";
+		ofs << message << endl;
 	}
 	ofs.close();
 	Console::messages.clear();
@@ -109,14 +106,8 @@ void Console::println()
 }
 
 void Console::shutdown() {
-	mutex.lock();
-	cout << "Console::shutdown()\n";
-	ofstream ofs(std::filesystem::u8path("console.log"), ofstream::app);
-	for (const auto& message: messages) {
-		ofs << message;
-		ofs << "\n";
-	}
-	ofs.close();
-	messages.clear();
-	mutex.unlock();
+	// shut down logwriter thread
+	Console::logWriterThread->stop();
+	Console::logWriterThread->join();
+	Console::logWriterThread = nullptr;
 }

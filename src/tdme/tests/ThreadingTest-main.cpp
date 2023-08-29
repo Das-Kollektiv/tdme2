@@ -90,4 +90,6 @@ int main(int argc, char *argv[]) {
 	testthread_test();
 	pc_test();
 	atomic_test();
+	//
+	return 0;
 }

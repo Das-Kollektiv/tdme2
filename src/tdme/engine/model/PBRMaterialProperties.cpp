@@ -35,6 +35,7 @@ PBRMaterialProperties::~PBRMaterialProperties() {
 	if (baseColorTexture != nullptr) baseColorTexture->releaseReference();
 	if (metallicRoughnessTexture != nullptr) metallicRoughnessTexture->releaseReference();
 	if (normalTexture != nullptr) normalTexture->releaseReference();
+	if (emissiveTexture != nullptr) emissiveTexture->releaseReference();
 }
 
 void PBRMaterialProperties::setBaseColorTexture(Texture* baseColorTexture) {

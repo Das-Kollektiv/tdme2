@@ -77,8 +77,9 @@ public:
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values
+	 * @return exit code
 	 */
-	inline static void main(int argc, char** argv) {
+	inline static int main(int argc, char** argv) {
 		auto useBC7TextureCompression = true;
 		vector<string> modelFileNames;
 		for (auto i = 1; i < argc; i++) {
@@ -90,7 +91,7 @@ public:
 			modelFileNames.push_back(argumentValue);
 		}
 		auto convertToTMApplication = new ConvertToTMApplication(useBC7TextureCompression, modelFileNames);
-		convertToTMApplication->run(argc, argv, "Convert to tm Application", nullptr, Application::WINDOW_HINT_INVISIBLE);
+		return convertToTMApplication->run(argc, argv, "Convert to tm Application", nullptr, Application::WINDOW_HINT_INVISIBLE);
 	}
 
 	// overridden methods
@@ -250,5 +251,5 @@ int main(int argc, char** argv)
 		Console::println("Usage: converttotm [-no-texture-compression] inputfile1 [inputfileN]");
 		Application::exit(1);
 	}
-	tdme::tools::cli::ConvertToTMApplication::main(argc, argv);
+	return tdme::tools::cli::ConvertToTMApplication::main(argc, argv);
 }

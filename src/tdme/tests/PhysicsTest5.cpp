@@ -97,10 +97,10 @@ PhysicsTest5::~PhysicsTest5()
 {
 }
 
-void PhysicsTest5::main(int argc, char** argv)
+int PhysicsTest5::main(int argc, char** argv)
 {
 	auto physicsTest5 = new PhysicsTest5();
-	physicsTest5->run(argc, argv, "PhysicsTest5", physicsTest5);
+	return physicsTest5->run(argc, argv, "PhysicsTest5", physicsTest5);
 }
 
 void PhysicsTest5::display()

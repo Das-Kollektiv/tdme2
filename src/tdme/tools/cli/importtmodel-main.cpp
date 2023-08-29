@@ -85,15 +85,16 @@ public:
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values
+	 * @return exit code
 	 */
-	inline static void main(int argc, char** argv) {
+	inline static int main(int argc, char** argv) {
 		auto useBC7TextureCompression = true;
 		if (string(argv[1]) == "-no-texture-compression") useBC7TextureCompression = false;
 		string tModelFileName = argv[1 + (useBC7TextureCompression == false?1:0)];
 		string modelFileName = argv[2 + (useBC7TextureCompression == false?1:0)];
 		string bvsModelFileName = argc >= 4 + (useBC7TextureCompression == false?1:0)?argv[3 + (useBC7TextureCompression == false?1:0)]:"";
 		auto importTModelApplication = new ImportTModelApplication(tModelFileName, modelFileName, bvsModelFileName, useBC7TextureCompression);
-		importTModelApplication->run(argc, argv, "Import TModel Application", nullptr, Application::WINDOW_HINT_INVISIBLE);
+		return importTModelApplication->run(argc, argv, "Import TModel Application", nullptr, Application::WINDOW_HINT_INVISIBLE);
 	}
 
 	// overridden methods
@@ -202,5 +203,5 @@ int main(int argc, char** argv)
 		Console::println("Usage: importtmodel [-no-texture-compression] model.tmodel modelfile.ext [bvs-model.ext]");
 		Application::exit(1);
 	}
-	tdme::tools::cli::ImportTModelApplication::main(argc, argv);
+	return tdme::tools::cli::ImportTModelApplication::main(argc, argv);
 }

@@ -22,7 +22,7 @@ MathOperatorTest::MathOperatorTest()
 {
 }
 
-void MathOperatorTest::main()
+int MathOperatorTest::main()
 {
 	MathOperatorTest mt;
 	Console::println(string("Math operator tests:"));
@@ -32,6 +32,7 @@ void MathOperatorTest::main()
 	mt.testQuaternionOperators();
 	mt.testMatrix3x3Operators();
 	mt.testMatrix4x4Operators();
+	return 0;
 }
 
 void MathOperatorTest::testVector2Operators()

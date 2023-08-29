@@ -72,8 +72,9 @@ public:
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values
+	 * @return exit code
 	 */
-	static void main(int argc, char** argv);
+	static int main(int argc, char** argv);
 
 	// forbid class copy
 	FORBID_CLASS_COPY(EngineTest)

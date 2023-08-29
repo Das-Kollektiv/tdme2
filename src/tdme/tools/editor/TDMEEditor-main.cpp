@@ -3,7 +3,5 @@
 
 int main(int argc, char** argv)
 {
-    ::tdme::tools::editor::TDMEEditor::main(argc, argv);
-
-    return 0;
+    return ::tdme::tools::editor::TDMEEditor::main(argc, argv);
 }

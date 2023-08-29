@@ -1386,7 +1386,7 @@ void Installer::mountInstallerFileSystem(const string& timestamp, bool remountIn
 	}
 }
 
-void Installer::main(int argc, char** argv)
+int Installer::main(int argc, char** argv)
 {
 	Console::println(string("Installer ") + Version::getVersion());
 	Console::println(Version::getCopyright());
@@ -1407,7 +1407,7 @@ void Installer::main(int argc, char** argv)
 	#endif
 	mountInstallerFileSystem();
 	auto installer = new Installer();
-	installer->run(argc, argv, "Installer", nullptr, Application::WINDOW_HINT_NOTRESIZEABLE);
+	return installer->run(argc, argv, "Installer", nullptr, Application::WINDOW_HINT_NOTRESIZEABLE);
 }
 
 void Installer::scanArchive(ArchiveFileSystem* archiveFileSystem, vector<string>& totalFiles, const string& pathName) {

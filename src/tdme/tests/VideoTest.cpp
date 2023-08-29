@@ -127,10 +127,10 @@ Model* VideoTest::createWallModel()
 	return wallModel.release();
 }
 
-void VideoTest::main(int argc, char** argv)
+int VideoTest::main(int argc, char** argv)
 {
 	auto videoTest = new VideoTest();
-	videoTest->run(argc, argv, "VideoTest", videoTest);
+	return videoTest->run(argc, argv, "VideoTest", videoTest);
 }
 
 void VideoTest::display()

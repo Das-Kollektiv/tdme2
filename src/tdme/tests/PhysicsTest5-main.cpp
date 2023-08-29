@@ -3,6 +3,5 @@
 
 int main(int argc, char** argv)
 {
-    ::tdme::tests::PhysicsTest5::main(argc, argv);
-    return 0;
+	return ::tdme::tests::PhysicsTest5::main(argc, argv);
 }

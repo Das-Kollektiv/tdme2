@@ -55,6 +55,11 @@ private:
 	 */
 	Audio();
 
+	/**
+	 * Private destructor
+	 */
+	~Audio();
+
 public:
 
 	/**
@@ -66,6 +71,11 @@ public:
 		}
 		return Audio::instance;
 	}
+
+	/**
+	 * Shuts the audio down
+	 */
+	static void shutdown();
 
 	/**
 	 * @return listener position
@@ -154,11 +164,6 @@ public:
 	 * Clears all audio entities
 	 */
 	void reset();
-
-	/**
-	 * Shuts the audio down
-	 */
-	void shutdown();
 
 	/**
 	 * Update and transfer audio entity states to open AL

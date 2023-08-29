@@ -52,9 +52,9 @@ public:
 	 * @param argc argument count
 	 * @param argv argument values
 	 */
-	inline static void main(int argc, char** argv) {
+	inline static int main(int argc, char** argv) {
 		auto recreateVKCacheApplication = new RecreateVKCacheApplication();
-		recreateVKCacheApplication->run(argc, argv, "Recreate VK cache Application", nullptr, Application::WINDOW_HINT_INVISIBLE);
+		return recreateVKCacheApplication->run(argc, argv, "Recreate VK cache Application", nullptr, Application::WINDOW_HINT_INVISIBLE);
 	}
 
 	// overridden methods

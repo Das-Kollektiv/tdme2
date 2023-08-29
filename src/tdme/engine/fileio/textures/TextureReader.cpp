@@ -165,12 +165,18 @@ Texture* TextureReader::read2(const string& texturePathName, const string& textu
 			new Texture(
 				idPrefix + texture->getId() + "/transparency",
 				Texture::TEXTUREDEPTH_RGBA,
-				Texture::TEXTUREFORMAT_RGBA_PNG,
+				texture->isPNGTextureFormat() == true?
+					Texture::getPNGFormatByPixelBitsPerPixel(32):
+					(
+						texture->isBC7TextureFormat() == true?
+							Texture::getBC7FormatByPixelBitsPerPixel(32):
+							Texture::getRGBFormatByPixelBitsPerPixel(32)
+					),
 				texture->getWidth(),
 				texture->getHeight(),
 				texture->getTextureWidth(),
 				texture->getTextureHeight(),
-				Texture::TEXTUREFORMAT_RGBA,
+				Texture::getRGBFormatByPixelBitsPerPixel(32),
 				textureByteBuffer
 			)
 		);
@@ -289,12 +295,18 @@ Texture* TextureReader::rotate(Texture* texture, float rotation, const string& i
 			new Texture(
 				texture->getId() + idSuffix + ":tmp",
 				textureBytesPerPixel == 4?Texture::TEXTUREDEPTH_RGBA:Texture::TEXTUREDEPTH_RGB,
-				textureBytesPerPixel == 4?Texture::TEXTUREFORMAT_RGBA_PNG:Texture::TEXTUREFORMAT_RGB_PNG,
+				texture->isPNGTextureFormat() == true?
+					Texture::getPNGFormatByPixelBitsPerPixel(texture->getRGBDepthBitsPerPixel()):
+					(
+						texture->isBC7TextureFormat() == true?
+							Texture::getBC7FormatByPixelBitsPerPixel(texture->getRGBDepthBitsPerPixel()):
+							Texture::getRGBFormatByPixelBitsPerPixel(texture->getRGBDepthBitsPerPixel())
+					),
 				textureWidthRotated,
 				textureHeightRotated,
 				textureWidthRotated,
 				textureHeightRotated,
-				textureBytesPerPixel == 4?Texture::TEXTUREFORMAT_RGBA:Texture::TEXTUREFORMAT_RGB,
+				Texture::getRGBFormatByPixelBitsPerPixel(texture->getRGBDepthBitsPerPixel()),
 				rotatedTextureByteBuffer
 			)
 		);
@@ -343,12 +355,18 @@ Texture* TextureReader::scale(Texture* texture, int width, int height, const str
 			new Texture(
 				texture->getId() + idSuffix,
 				textureBytesPerPixel == 4?Texture::TEXTUREDEPTH_RGBA:Texture::TEXTUREDEPTH_RGB,
-				textureBytesPerPixel == 4?Texture::TEXTUREFORMAT_RGBA_PNG:Texture::TEXTUREFORMAT_RGB_PNG,
+				texture->isPNGTextureFormat() == true?
+					Texture::getPNGFormatByPixelBitsPerPixel(texture->getRGBDepthBitsPerPixel()):
+					(
+						texture->isBC7TextureFormat() == true?
+							Texture::getBC7FormatByPixelBitsPerPixel(texture->getRGBDepthBitsPerPixel()):
+							Texture::getRGBFormatByPixelBitsPerPixel(texture->getRGBDepthBitsPerPixel())
+					),
 				textureWidthScaled,
 				textureHeightScaled,
 				textureWidthScaled,
 				textureHeightScaled,
-				textureBytesPerPixel == 4?Texture::TEXTUREFORMAT_RGBA:Texture::TEXTUREFORMAT_RGB,
+				Texture::getRGBFormatByPixelBitsPerPixel(texture->getRGBDepthBitsPerPixel()),
 				scaledTextureByteBuffer
 			)
 		);
@@ -414,12 +432,18 @@ Texture* TextureReader::smooth(Texture* texture, const string& idSuffix, float a
 			new Texture(
 				texture->getId() + idSuffix,
 				textureBytesPerPixel == 4?Texture::TEXTUREDEPTH_RGBA:Texture::TEXTUREDEPTH_RGB,
-				textureBytesPerPixel == 4?Texture::TEXTUREFORMAT_RGBA_PNG:Texture::TEXTUREFORMAT_RGB_PNG,
+				texture->isPNGTextureFormat() == true?
+					Texture::getPNGFormatByPixelBitsPerPixel(texture->getRGBDepthBitsPerPixel()):
+					(
+						texture->isBC7TextureFormat() == true?
+							Texture::getBC7FormatByPixelBitsPerPixel(texture->getRGBDepthBitsPerPixel()):
+							Texture::getRGBFormatByPixelBitsPerPixel(texture->getRGBDepthBitsPerPixel())
+					),
+				textureWidth, // TODO: calculate new width
+				textureHeight, // TODO: calculate new height
 				textureWidth,
 				textureHeight,
-				textureWidth,
-				textureHeight,
-				textureBytesPerPixel == 4?Texture::TEXTUREFORMAT_RGBA:Texture::TEXTUREFORMAT_RGB,
+				Texture::getRGBFormatByPixelBitsPerPixel(texture->getRGBDepthBitsPerPixel()),
 				filteredTextureByteBuffer
 			)
 		);
