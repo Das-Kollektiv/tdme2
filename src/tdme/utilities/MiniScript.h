@@ -375,6 +375,7 @@ public:
 		inline ScriptVariable(const ScriptVariable& scriptVariable) {
 			switch(scriptVariable.type) {
 				case TYPE_NULL:
+					setNullValue();
 					break;
 				case TYPE_BOOLEAN:
 					setValue(scriptVariable.getBooleanValueReference());
@@ -440,6 +441,7 @@ public:
 		inline ScriptVariable& operator=(const ScriptVariable& scriptVariable) {
 			switch(scriptVariable.type) {
 				case TYPE_NULL:
+					setNullValue();
 					break;
 				case TYPE_BOOLEAN:
 					setValue(scriptVariable.getBooleanValueReference());

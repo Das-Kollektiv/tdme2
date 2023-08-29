@@ -644,8 +644,10 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 				": method '" + string(syntaxTree.value.getValueString()) + "'" +
 				": return value: expected " + ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType()) + ", but got: " + ScriptVariable::getReturnTypeAsString(returnValue.getType()));
 		}
+		//
 		return returnValue;
 	}
+	//
 	return returnValue;
 }
 
@@ -1814,14 +1816,14 @@ bool MiniScript::call(int scriptIdx, span<ScriptVariable>& argumentValues, Scrip
 	// script state vector could get modified, so
 	{
 		auto& scriptState = getScriptState();
-		auto functionArguments = new ScriptVariable();
-		functionArguments->setType(MiniScript::TYPE_ARRAY);
+		ScriptVariable functionArguments;
+		functionArguments.setType(MiniScript::TYPE_ARRAY);
 		// push arguments in function context
 		for (const auto& argumentValue: argumentValues) {
-			functionArguments->pushArrayValue(argumentValue);
+			functionArguments.pushArrayValue(argumentValue);
 		}
 		// have $arguments
-		scriptState.variables["$arguments"] = functionArguments;
+		setVariable("$arguments", functionArguments);
 		// also put named arguments into state context variables
 		auto argumentIdx = 0;
 		for (const auto& argument: scripts[scriptIdx].arguments) {
@@ -1840,6 +1842,7 @@ bool MiniScript::call(int scriptIdx, span<ScriptVariable>& argumentValues, Scrip
 		// run this function dude
 		scriptState.running = true;
 	}
+	// execute
 	for (;true;) {
 		execute();
 		// run this function dude
