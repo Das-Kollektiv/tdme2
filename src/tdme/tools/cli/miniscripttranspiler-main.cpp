@@ -605,4 +605,8 @@ int main(int argc, char** argv)
 
 	//
 	tdme::tools::cli::MiniscriptTranspiler::processFile(argv[1], argv[2], miniScriptExtensionFileNames);
+
+	//
+	Console::shutdown();
+	return 0;
 }

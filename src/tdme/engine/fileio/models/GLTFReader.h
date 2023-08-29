@@ -166,7 +166,9 @@ private:
 	 * @param imageName image name
 	 * @return file name
 	 */
-	static string determineTextureFileName(const string& pathName, const string& fileName, const string& imageName);
+	inline static const string determineTextureFileName(const string& pathName, const string& fileName, const string& imageName) {
+		return pathName + "/" + fileName + "-" + imageName + ".png";
+	}
 
 	/**
 	 * Compute tangents and bitangents

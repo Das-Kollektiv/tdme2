@@ -86,4 +86,8 @@ int main(int argc, char *argv[]) {
 			Console::println("Received message: " + message->getPacket()->getString());
 		}
 	}
+
+	//
+	Console::shutdown();
+	return 0;
 }

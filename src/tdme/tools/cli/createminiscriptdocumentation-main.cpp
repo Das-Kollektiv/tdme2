@@ -243,4 +243,8 @@ int main(int argc, char** argv)
 		Console::print(method + " ");
 	}
 	Console::println();
+
+	//
+	Console::shutdown();
+	return 0;
 }

@@ -91,5 +91,6 @@ int main(int argc, char *argv[]) {
 	pc_test();
 	atomic_test();
 	//
+	Console::shutdown();
 	return 0;
 }

@@ -211,4 +211,8 @@ int main(int argc, char** argv)
 	for (const auto& fileName: files) {
 		parseHpp(fileName);
 	}
+
+	//
+	Console::shutdown();
+	return 0;
 }

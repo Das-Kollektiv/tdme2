@@ -151,4 +151,8 @@ int main(int argc, char** argv)
 		}
 		Console::println();
 	}
+
+	//
+	Console::shutdown();
+	return 0;
 }

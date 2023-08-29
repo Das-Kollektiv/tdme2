@@ -90,5 +90,6 @@ int main(int argc, char *argv[]) {
 	bc->join();
 
 	//
+	Console::shutdown();
 	return 0;
 }

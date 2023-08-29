@@ -17,7 +17,7 @@ using tdme::utilities::Exception;
 
 int main(int argc, char *argv[]) {
 	Network::initialize();
-
+	//
 	try {
 		HTTPClient httpClient;
 		httpClient.setMethod(HTTPClient::HTTP_METHOD_GET);
@@ -38,6 +38,7 @@ int main(int argc, char *argv[]) {
 		Console::println(string("Fail: ") + exception.what());
 	}
 	//
+	Console::shutdown();
 	return 0;
 }
 

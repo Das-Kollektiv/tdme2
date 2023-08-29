@@ -101,4 +101,8 @@ int main(int argc, char** argv)
 		if (fileName == "./LICENSE") continue; // ignore own project license
 		processFile(indent, fileName);
 	}
+
+	//
+	Console::shutdown();
+	return 0;
 }

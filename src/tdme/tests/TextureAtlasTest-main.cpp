@@ -171,5 +171,6 @@ int main(int argc, char** argv)
 	PNGTextureWriter::write(atlas.getAtlasTexture(), ".", "textureatlastest.png", false, false);
 
 	//
+	Console::shutdown();
 	return 0;
 }

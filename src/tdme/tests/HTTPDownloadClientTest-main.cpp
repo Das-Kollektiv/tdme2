@@ -15,7 +15,7 @@ using tdme::utilities::Exception;
 
 int main(int argc, char *argv[]) {
 	Network::initialize();
-
+	//
 	try {
 		HTTPDownloadClient httpDownloadClient;
 		httpDownloadClient.setFile("haiku-r1beta4-x86_64-anyboot.iso");
@@ -31,5 +31,8 @@ int main(int argc, char *argv[]) {
 	} catch (Exception& exception) {
 		Console::println(string("Fail: ") + exception.what());
 	}
+	//
+	Console::shutdown();
+	return 0;
 }
 

@@ -676,4 +676,8 @@ int main(int argc, char** argv)
 		FileSystem::getInstance()->createPath("installer-package");
 		createMacApplication(installerProperties, "bin/tdme/tools/installer/Installer", "installer-package");
 	#endif
+
+	//
+	Console::shutdown();
+	return 0;
 }

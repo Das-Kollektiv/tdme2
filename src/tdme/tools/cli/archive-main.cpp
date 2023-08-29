@@ -266,4 +266,8 @@ int main(int argc, char** argv)
 		ofs.write((char*)&fileInformationOffset, sizeof(fileInformationOffset));
 		ofs.close();
 	}
+
+	//
+	Console::shutdown();
+	return 0;
 }

@@ -982,11 +982,6 @@ void GLTFReader::parseNodeChildren(const string& pathName, const string& fileNam
 	}
 }
 
-
-string GLTFReader::determineTextureFileName(const string& pathName, const string& fileName, const string& imageName) {
-	return pathName + "/" + fileName + "-" + imageName + ".png";
-}
-
 void GLTFReader::computeTangentsAndBitangents(Node* node) {
 	ModelTools::computeTangentsAndBitangents(node);
 	for (const auto& [nodeId, node]: node->getSubNodes()) {

@@ -116,4 +116,8 @@ int main(int argc, char** argv)
 	// store
 	Console::println("Saving to: resources/engine/code-completion/tscript.xml");
 	FileSystem::getInstance()->setContentFromStringArray("resources/engine/code-completion", "tscript.xml", lines);
+
+	//
+	Console::shutdown();
+	return 0;
 }

@@ -94,7 +94,8 @@ int main(int argc, char *argv[]) {
 		Console::println();
 		Console::println();
 	}
-	// done
+	//
+	Console::shutdown();
 	return 0;
 }
 

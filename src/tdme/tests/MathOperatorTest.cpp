@@ -32,6 +32,8 @@ int MathOperatorTest::main()
 	mt.testQuaternionOperators();
 	mt.testMatrix3x3Operators();
 	mt.testMatrix4x4Operators();
+	//
+	Console::shutdown();
 	return 0;
 }
 

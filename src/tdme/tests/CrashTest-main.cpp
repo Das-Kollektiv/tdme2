@@ -22,4 +22,7 @@ int main(int argc, char** argv) {
 	Console::println("CrashTest: init");
 	crashTestFunction();
 	Console::println("CrashTest: done");
+	//
+	Console::shutdown();
+	return 0;
 }

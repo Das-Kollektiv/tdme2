@@ -38,6 +38,7 @@ int main(int argc, char** argv)
 	}
 	string sourceFileName = string(argv[1]);
 	string targetFileName = string(argv[2]);
+	//
 	try {
 		Console::println("Loading source model: " + sourceFileName);
 		auto srcModel = unique_ptr<Model>(
@@ -85,4 +86,8 @@ int main(int argc, char** argv)
 	} catch (Exception& exception) {
 		Console::println("An error occurred: " + string(exception.what()));
 	}
+
+	//
+	Console::shutdown();
+	return 0;
 }

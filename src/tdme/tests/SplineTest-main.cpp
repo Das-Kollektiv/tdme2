@@ -84,4 +84,8 @@ int main(int argc, char** argv) {
 	//
 	auto smoothedTexture = unique_ptr<Texture, decltype([](Texture* texture){ texture->releaseReference(); })>(TextureReader::smooth(texture.get(), ":smoothed", 0.5f));
 	PNGTextureWriter::write(smoothedTexture.get(), ".", "bezier-test.png", true, false);
+
+	//
+	Console::shutdown();
+	return 0;
 }
