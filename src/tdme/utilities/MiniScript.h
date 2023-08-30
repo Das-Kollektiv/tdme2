@@ -1921,13 +1921,14 @@ protected:
 	static constexpr int ARRAYIDX_ADD { -2 };
 	static constexpr int STATE_NONE { -1 };
 	static constexpr int STATEMENTIDX_NONE { -1 };
+	static constexpr int STATEMENTIDX_FIRST { 0 };
 	static constexpr int ARGUMENTIDX_NONE { -1 };
 	static constexpr int OPERATORIDX_NONE { -1 };
 	static constexpr int LINEIDX_NONE { -1 };
 	static constexpr int64_t TIME_NONE { -1LL };
 
 	struct ScriptState {
-		enum EndType { ENDTYPE_FOR, ENDTYPE_IF };
+		enum EndType { ENDTYPE_BLOCK, ENDTYPE_FOR, ENDTYPE_IF };
 		enum ConditionType {
 			SCRIPT,
 			CONDITIONTYPE_FORTIME
@@ -1938,6 +1939,7 @@ protected:
 		bool running { false };
 		int scriptIdx { SCRIPTIDX_NONE };
 		int statementIdx { STATEMENTIDX_NONE };
+		int gotoStatementIdx { STATEMENTIDX_NONE };
 		int64_t timeWaitStarted { TIME_NONE };
 		int64_t timeWaitTime { TIME_NONE };
 		string id;
@@ -1983,11 +1985,11 @@ protected:
 	}
 
 	/**
-	 * Goto statement from given statements goto statement
+	 * Go to statement goto from given statement
 	 * @param statement statement
 	 */
 	void gotoStatementGoto(const ScriptStatement& statement) {
-		getScriptState().statementIdx = statement.gotoStatementIdx;
+		getScriptState().gotoStatementIdx = statement.gotoStatementIdx;
 	}
 
 	/**
@@ -2029,9 +2031,11 @@ protected:
 		scriptState.forTimeStarted.clear();
 		while (scriptState.conditionStack.empty() == false) scriptState.conditionStack.pop();
 		while (scriptState.endTypeStack.empty() == false) scriptState.endTypeStack.pop();
+		if (scriptIdx != SCRIPTIDX_NONE) scriptState.endTypeStack.push(ScriptState::ENDTYPE_BLOCK);
 		scriptState.id.clear();
 		scriptState.scriptIdx = scriptIdx;
-		scriptState.statementIdx = 0;
+		scriptState.statementIdx = STATEMENTIDX_FIRST;
+		scriptState.gotoStatementIdx = STATEMENTIDX_NONE;
 		scriptState.timeWaitStarted = Time::getCurrentMillis();
 		scriptState.timeWaitTime = 0LL;
 		setScriptStateState(stateMachineState);
@@ -2048,11 +2052,12 @@ protected:
 	 * Stop script execution
 	 */
 	inline void stopScriptExecution() {
+		while (scriptStateStack.size() > 1) popScriptState();
+		//
 		auto& scriptState = getScriptState();
 		//
 		scriptState.running = false;
-		for (const auto& [scriptVariableName, scriptVariable]: scriptState.variables) delete scriptVariable;
-		scriptState.variables.clear();
+		//
 		if (isFunctionRunning() == false) timeEnabledConditionsCheckLast = TIME_NONE;
 		resetScriptExecutationState(SCRIPTIDX_NONE, STATEMACHINESTATE_NONE);
 	}
@@ -3204,9 +3209,7 @@ public:
 			*scriptVariableIt->second = variable;
 			return;
 		} else {
-			auto scriptVariable = new ScriptVariable();
-			*scriptVariable = variable;
-			scriptState.variables[globalVariableName.empty() == true?name:globalVariableName] = scriptVariable;
+			scriptState.variables[globalVariableName.empty() == true?name:globalVariableName] = new ScriptVariable(variable);
 		}
 	}
 

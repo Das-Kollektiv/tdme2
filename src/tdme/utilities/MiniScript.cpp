@@ -219,21 +219,29 @@ void MiniScript::registerMethod(ScriptMethod* scriptMethod) {
 void MiniScript::executeScriptLine() {
 	auto& scriptState = getScriptState();
 	if (scriptState.scriptIdx == SCRIPTIDX_NONE || scriptState.statementIdx == STATEMENTIDX_NONE || scriptState.running == false) return;
+	//
 	const auto& script = scripts[scriptState.scriptIdx];
 	if (script.statements.empty() == true) return;
+	// take goto statement index into account
+	if (scriptState.gotoStatementIdx != STATEMENTIDX_NONE) {
+		scriptState.statementIdx = scriptState.gotoStatementIdx;
+		scriptState.gotoStatementIdx = STATEMENTIDX_NONE;
+	}
+	//
 	const auto& statement = script.statements[scriptState.statementIdx];
 	const auto& syntaxTree = script.syntaxTree[scriptState.statementIdx];
 	if (VERBOSE == true) Console::println("MiniScript::executeScriptLine(): " + getStatementInformation(statement));
 
+	//
+	auto returnValue = executeScriptStatement(syntaxTree, statement);
+
+	//
 	scriptState.statementIdx++;
 	if (scriptState.statementIdx >= script.statements.size()) {
 		scriptState.scriptIdx = SCRIPTIDX_NONE;
 		scriptState.statementIdx = STATEMENTIDX_NONE;
 		setScriptStateState(STATEMACHINESTATE_WAIT_FOR_CONDITION);
 	}
-
-	//
-	auto returnValue = executeScriptStatement(syntaxTree, statement);
 }
 
 bool MiniScript::parseScriptStatement(const string_view& statement, string_view& methodName, vector<string_view>& arguments) {
@@ -995,7 +1003,7 @@ void MiniScript::executeStateMachine() {
 					scriptState.lastStateMachineState->execute();
 				}
 			} else {
-				Console::println("MiniScript::execute(): '" + scriptFileName + "': unknown state with id: " + to_string(getScriptState().state));
+				// we can ignore this here and break as our state machine is unset
 				break;
 			}
 		}
@@ -1109,7 +1117,7 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 	//
 	auto haveScript = false;
 	auto line = 1;
-	auto statementIdx = 1;
+	auto statementIdx = 0;
 	enum GotoStatementType { GOTOSTATEMENTTYPE_FOR, GOTOSTATEMENTTYPE_IF, GOTOSTATEMENTTYPE_ELSE, GOTOSTATEMENTTYPE_ELSEIF };
 	struct GotoStatementStruct {
 		GotoStatementType type;
@@ -1816,6 +1824,7 @@ bool MiniScript::call(int scriptIdx, span<ScriptVariable>& argumentValues, Scrip
 	// script state vector could get modified, so
 	{
 		auto& scriptState = getScriptState();
+		// function arguments
 		ScriptVariable functionArguments;
 		functionArguments.setType(MiniScript::TYPE_ARRAY);
 		// push arguments in function context
@@ -2323,17 +2332,17 @@ void MiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				if (miniScript->getScriptState().endTypeStack.empty() == true) {
-					if (miniScript->getScriptState().statementIdx < miniScript->scripts[miniScript->getScriptState().scriptIdx].statements.size() - 1) {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": end without forXXX/if");
-						miniScript->startErrorScript();
-					} else
-					if (miniScript->isFunctionRunning() == true && miniScript->scriptStateStack.size() == 2) {
-						miniScript->stopRunning();
-					}
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": end without block/forXXX/if");
+					miniScript->startErrorScript();
 				} else {
 					auto endType = miniScript->getScriptState().endTypeStack.top();
 					miniScript->getScriptState().endTypeStack.pop();
 					switch(endType) {
+						case ScriptState::ENDTYPE_BLOCK:
+							if (miniScript->isFunctionRunning() == true && miniScript->scriptStateStack.size() == 2) {
+								miniScript->stopRunning();
+							}
+							break;
 						case ScriptState::ENDTYPE_FOR:
 							// no op
 							break;
@@ -2341,7 +2350,7 @@ void MiniScript::registerMethods() {
 							miniScript->getScriptState().conditionStack.pop();
 							break;
 					}
-					if (statement.gotoStatementIdx != STATEMACHINESTATE_NONE) {
+					if (statement.gotoStatementIdx != STATEMENTIDX_NONE) {
 						miniScript->setScriptStateState(STATEMACHINESTATE_NEXT_STATEMENT);
 						miniScript->gotoStatementGoto(statement);
 					}
@@ -2732,6 +2741,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				//
 				miniScript->stopScriptExecution();
+				miniScript->stopRunning();
 			}
 		};
 		registerMethod(new ScriptMethodScriptStop(this));
@@ -7638,7 +7648,7 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 
 	// TODO: move me into a method
 	generatedCodeHeader+= methodIndent + "// -1 means complete method call" + "\n";
-	generatedCodeHeader+= methodIndent + "if (miniScriptGotoStatementIdx == STATEMENTIDX_NONE) {" + "\n";
+	generatedCodeHeader+= methodIndent + "if (miniScriptGotoStatementIdx == STATEMENTIDX_FIRST) {" + "\n";
 	generatedCodeHeader+= methodIndent + "\t" + "resetScriptExecutationState(" + to_string(scriptIdx) + ", STATEMACHINESTATE_NEXT_STATEMENT);" + "\n";
 	generatedCodeHeader+= methodIndent + "}" + "\n";
 	// TODO: end
@@ -7714,7 +7724,7 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 	generatedCode+= methodIndent + "setScriptStateState(STATEMACHINESTATE_WAIT_FOR_CONDITION);" + "\n";
 
 	//
-	generatedCodeHeader+= methodIndent + "if (miniScriptGotoStatementIdx != STATEMENTIDX_NONE && miniScriptGotoStatementIdx != 0) Console::println(\"MiniScript::" + methodName + "(): Can not go to statement \" + to_string(miniScriptGotoStatementIdx));" + "\n";
+	generatedCodeHeader+= methodIndent + "if (miniScriptGotoStatementIdx != STATEMENTIDX_NONE && miniScriptGotoStatementIdx != STATEMENTIDX_FIRST) Console::println(\"MiniScript::" + methodName + "(): Can not go to statement \" + to_string(miniScriptGotoStatementIdx));" + "\n";
 	//
 	generatedCode = generatedCodeHeader + generatedCode;
 	return true;

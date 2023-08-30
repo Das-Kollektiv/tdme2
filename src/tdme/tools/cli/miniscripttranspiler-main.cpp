@@ -423,7 +423,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 			if (script.scriptType == MiniScript::Script::SCRIPTTYPE_ON && StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true) {
 				string emitDefinitionIndent = "\t";
 				emitDefinition+= emitDefinitionIndent + "if (condition == \"" + emitName + "\") {" + "\n";
-				emitDefinition+= emitDefinitionIndent + "\t" + methodName + "(-1);" + "\n";
+				emitDefinition+= emitDefinitionIndent + "\t" + methodName + "(STATEMENTIDX_FIRST);" + "\n";
 				emitDefinition+= emitDefinitionIndent + "} else" + "\n";
 			}
 
@@ -473,7 +473,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	generatedDetermineNamedScriptIdxToStartDefinition+= methodCodeIndent + "}" + "\n";
 	generatedDetermineNamedScriptIdxToStartDefinition+= "\n";
 	generatedDetermineNamedScriptIdxToStartDefinition+= methodCodeIndent + "//" + "\n";
-	generatedDetermineNamedScriptIdxToStartDefinition+= methodCodeIndent + "return -1;" + "\n";
+	generatedDetermineNamedScriptIdxToStartDefinition+= methodCodeIndent + "return SCRIPTIDX_NONE;" + "\n";
 	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "}" + "\n";
 
 	//
