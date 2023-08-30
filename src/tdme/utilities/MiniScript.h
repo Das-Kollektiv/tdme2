@@ -1925,6 +1925,7 @@ protected:
 	static constexpr int ARGUMENTIDX_NONE { -1 };
 	static constexpr int OPERATORIDX_NONE { -1 };
 	static constexpr int LINEIDX_NONE { -1 };
+	static constexpr int LINEIDX_FIRST { 1 };
 	static constexpr int64_t TIME_NONE { -1LL };
 
 	struct ScriptState {

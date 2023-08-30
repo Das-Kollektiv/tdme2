@@ -793,7 +793,7 @@ bool MiniScript::validateCallable(const string& function) {
 	}
 	//
 	const auto& script = scripts[functionScriptIdx];
-	auto statementIdx = 0;
+	auto statementIdx = STATEMENTIDX_FIRST;
 	//
 	for (const auto& syntaxTreeNode: script.syntaxTree) {
 		const auto& statement = script.statements[statementIdx++];
@@ -861,7 +861,7 @@ bool MiniScript::validateContextFunctions(const string& function, vector<string>
 	}
 	//
 	const auto& script = scripts[functionScriptIdx];
-	auto statementIdx = 0;
+	auto statementIdx = STATEMENTIDX_FIRST;
 	//
 	functionStack.push_back(script.condition);
 	//
@@ -1116,8 +1116,8 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 
 	//
 	auto haveScript = false;
-	auto line = 1;
-	auto statementIdx = 0;
+	auto line = LINEIDX_FIRST;
+	auto statementIdx = STATEMENTIDX_FIRST;
 	enum GotoStatementType { GOTOSTATEMENTTYPE_FOR, GOTOSTATEMENTTYPE_IF, GOTOSTATEMENTTYPE_ELSE, GOTOSTATEMENTTYPE_ELSEIF };
 	struct GotoStatementStruct {
 		GotoStatementType type;
@@ -1214,7 +1214,7 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 				auto conditionOrNameExecutable = doStatementPreProcessing(StringTools::trim(statement));
 				auto conditionOrName = StringTools::trim(statement);
 				auto emitCondition = StringTools::regexMatch(conditionOrName, "[a-zA-Z0-9]+");
-				statementIdx = 0;
+				statementIdx = STATEMENTIDX_FIRST;
 				// add to user functions
 				if (scriptType == Script::SCRIPTTYPE_FUNCTION) {
 					scriptFunctions[conditionOrName] = scripts.size();
@@ -1413,7 +1413,7 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 			}
 		}
 		// create script syntax tree
-		for (auto statementIdx = 0; statementIdx < script.statements.size(); statementIdx++) {
+		for (auto statementIdx = STATEMENTIDX_FIRST; statementIdx < script.statements.size(); statementIdx++) {
 			const auto& statement = script.statements[statementIdx];
 			script.syntaxTree.emplace_back();
 			auto& syntaxTree = script.syntaxTree[script.syntaxTree.size() - 1];
@@ -7673,10 +7673,10 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 	for (const auto& scriptStatement: script.statements) gotoStatementIdxSet.insert(scriptStatement.gotoStatementIdx);
 
 	//
-	auto statementIdx = 0;
+	auto statementIdx = STATEMENTIDX_FIRST;
 	vector<string> enabledNamedConditions;
 	auto scriptStateChanged = false;
-	for (auto scriptStatementIdx = 0; scriptStatementIdx < script.statements.size(); scriptStatementIdx++) {
+	for (auto scriptStatementIdx = STATEMENTIDX_FIRST; scriptStatementIdx < script.statements.size(); scriptStatementIdx++) {
 		const auto& statement = script.statements[scriptStatementIdx];
 		const auto& syntaxTree = script.syntaxTree[scriptStatementIdx];
 		//
@@ -7743,7 +7743,7 @@ bool MiniScript::transpileScriptCondition(string& generatedCode, int scriptIdx, 
 	Console::println("MiniScript::transpile(): transpiling code condition for condition = '" + scripts[scriptIdx].condition + "', with name '" + scripts[scriptIdx].name + "'");
 
 	//
-	auto statementIdx = 0;
+	auto statementIdx = STATEMENTIDX_FIRST;
 	auto scriptStateChanged = false;
 	auto scriptStopped = false;
 	vector<string >enabledNamedConditions;
