@@ -1978,7 +1978,7 @@ const string MiniScript::getScriptInformation(int scriptIdx, bool includeStateme
 	}
 	if (includeStatements == true) {
 		for (const auto& scriptStatement: script.statements) {
-			result+= "\t" + to_string(scriptStatement.statementIdx) + ": " + scriptStatement.statement + (scriptStatement.gotoStatementIdx != STATEMENTIDX_NONE?" (gotoStatement " + to_string(scriptStatement.gotoStatementIdx) + ")":"") + "\n";
+			result+= "\t" + to_string(scriptStatement.statementIdx) + ": " + scriptStatement.executableStatement + (scriptStatement.gotoStatementIdx != STATEMENTIDX_NONE?" (gotoStatement " + to_string(scriptStatement.gotoStatementIdx) + ")":"") + "\n";
 		}
 		result+= "\n";
 	}
@@ -7398,7 +7398,9 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 		generatedCode+= minIndentString + depthIndentString + "\t" + "// statement setup" + "\n";
 		if (scriptConditionIdx != SCRIPTIDX_NONE) {
 			generatedCode+= minIndentString + depthIndentString + "\t" + "const ScriptStatement& statement = scripts[" + to_string(scriptConditionIdx) + "].conditionStatement;" + "\n";
-		} else {
+		} else
+		// TODO: fix me for array access statements
+		if (scriptIdx != SCRIPTIDX_NONE) {
 			generatedCode+= minIndentString + depthIndentString + "\t" + "const ScriptStatement& statement = scripts[" + to_string(scriptIdx) + "].statements[" + to_string(statement.statementIdx) + "];" + "\n";
 		}
 		generatedCode+= minIndentString + depthIndentString + "\t" + "getScriptState().statementIdx = statement.statementIdx;" + "\n";

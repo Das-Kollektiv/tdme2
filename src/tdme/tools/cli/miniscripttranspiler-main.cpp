@@ -1,6 +1,7 @@
 #include <memory>
 #include <set>
 #include <string>
+#include <string_view>
 #include <unordered_map>
 #include <vector>
 
@@ -18,6 +19,7 @@
 
 using std::set;
 using std::string;
+using std::string_view;
 using std::unique_ptr;
 using std::unordered_map;
 using std::vector;
@@ -178,6 +180,152 @@ static void gatherMethodCode(const vector<string>& miniScriptExtensionsCode, con
 
 	//
 	methodCodeMap[methodName] = executeMethodCode;
+}
+
+static void createArrayAccessMethods(const string& miniScriptClassName, MiniScript* scriptInstance, const string& methodName, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, const MiniScript::ScriptStatement& statement, const unordered_map<string, vector<string>>& methodCodeMap) {
+	//
+	switch (syntaxTreeNode.type) {
+		case MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
+			{
+				break;
+			}
+		case MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
+			{
+				if (syntaxTreeNode.value.getValueString() == "getVariable" ||
+					syntaxTreeNode.value.getValueString() == "setVariable") {
+					//
+					Console::println("aaa: " + syntaxTreeNode.value.getValueString());
+					//
+					auto maxArgumentCount = 0;
+					if (syntaxTreeNode.value.getValueString() == "getVariable") maxArgumentCount = 1; else
+					if (syntaxTreeNode.value.getValueString() == "setVariable") maxArgumentCount = 2;
+					//
+					for (auto argumentIdx = 0; argumentIdx < syntaxTreeNode.arguments.size(); argumentIdx++) {
+						auto& argumentString = syntaxTreeNode.arguments[argumentIdx].value.getValueString();
+						Console::println("rrr: \t" + argumentString + "@" + to_string(argumentIdx));
+					}
+					//
+					for (auto argumentIdx = 0; argumentIdx < maxArgumentCount && argumentIdx < syntaxTreeNode.arguments.size(); argumentIdx++) {
+						auto& argumentString = syntaxTreeNode.arguments[argumentIdx].value.getValueString();
+						Console::println("aaa: \t" + argumentString + "@" + to_string(argumentIdx));
+						auto arrayAccessStatementIdx = 0;
+						auto arrayAccessStatementLeftIdx = -1;
+						auto arrayAccessStatementRightIdx = -1;
+						auto quote = '\0';
+						auto bracketCount = 0;
+						for (auto i = 0; i < argumentString.size(); i++) {
+							auto c = argumentString[i];
+							// handle quotes
+							if (quote != '\0') {
+								// unset quote if closed
+								// also we can ignore content of quote blocks
+								if (c == quote) {
+									quote = '\0';
+								}
+							} else
+							if (c == '"' || c == '\'') {
+								quote = c;
+							} else
+							if (c == '[') {
+								if (bracketCount == 0) arrayAccessStatementLeftIdx = i;
+								bracketCount++;
+							} else
+							if (c == ']') {
+								bracketCount--;
+								if (bracketCount == 0) {
+									arrayAccessStatementRightIdx = i;
+									//
+									auto arrayAccessStatementString = StringTools::substring(argumentString, arrayAccessStatementLeftIdx + 1, arrayAccessStatementRightIdx);
+									// array append operator []
+									if (arrayAccessStatementString.empty() == true) {
+										//
+										arrayAccessStatementIdx++;
+										//
+										continue;
+									}
+									// check if literal
+									MiniScript::ScriptVariable arrayAccessStatementAsScriptVariable;
+									arrayAccessStatementAsScriptVariable.setImplicitTypedValue(arrayAccessStatementString);
+									switch (arrayAccessStatementAsScriptVariable.getType()) {
+										case MiniScript::TYPE_NULL:
+										case MiniScript::TYPE_BOOLEAN:
+										case MiniScript::TYPE_INTEGER:
+										case MiniScript::TYPE_FLOAT:
+											// literals
+											arrayAccessStatementIdx++;
+											//
+											continue;
+											//
+										default:
+											break;
+									}
+									// variable?
+									if (StringTools::startsWith(arrayAccessStatementString, "$") == true) arrayAccessStatementString = "getVariable(\"" + arrayAccessStatementString + "\")";
+									// parse array access statment at current index
+									string_view arrayAccessMethodName;
+									vector<string_view> arrayAccessArguments;
+									// parse script statement
+									if (scriptInstance->parseScriptStatement(string_view(arrayAccessStatementString), arrayAccessMethodName, arrayAccessArguments) == false) {
+										Console::println("MiniScript::createScriptStatementSyntaxTree(): " + scriptInstance->getStatementInformation(statement) + ": failed to parse statement");
+										//
+										break;
+									}
+									// create a pseudo statement (information)
+									MiniScript::ScriptStatement arrayAccessStatement(
+										statement.line,
+										statement.statementIdx,
+										arrayAccessStatementString,
+										arrayAccessStatementString,
+										MiniScript::STATEMENTIDX_NONE
+									);
+									// create syntax tree for this array access
+									MiniScript::ScriptSyntaxTreeNode arrayAccessSyntaxTree;
+									if (scriptInstance->createScriptStatementSyntaxTree(arrayAccessMethodName, arrayAccessArguments, arrayAccessStatement, arrayAccessSyntaxTree) == false) {
+										Console::println("MiniScript::createScriptStatementSyntaxTree(): " + scriptInstance->getStatementInformation(statement) + ": failed to create syntax tree");
+										//
+										break;
+									}
+
+									//
+									string transpiledCode;
+									auto statementIdx = MiniScript::STATEMENTIDX_FIRST;
+									auto scriptStateChanged = false;
+									auto scriptStopped = false;
+									vector<string >enabledNamedConditions;
+									scriptInstance->transpileScriptStatement(transpiledCode, arrayAccessSyntaxTree, arrayAccessStatement, MiniScript::SCRIPTIDX_NONE, MiniScript::SCRIPTIDX_NONE, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, 0, MiniScript::ARGUMENTIDX_NONE, MiniScript::ARGUMENTIDX_NONE, "ScriptVariable()", "return returnValue;");
+									string generatedDefinition;
+									generatedDefinition+= "MiniScript::ScriptVariable " + miniScriptClassName + "::" + methodName + "_array_access_statement_" + to_string(statement.statementIdx) + "_" + to_string(argumentIdx) + "_" + to_string(arrayAccessStatementIdx) + "() {" + "\n";
+									generatedDefinition+= transpiledCode;
+									generatedDefinition+= string() + "}" + "\n\n";
+									Console::println("zzz: " + generatedDefinition);
+
+									//
+									arrayAccessStatementIdx++;
+								}
+							}
+						}
+						//
+						if (arrayAccessStatementIdx > 0) {
+							Console::println("xxx: " + methodName + "(): " + scriptInstance->getStatementInformation(statement));
+						}
+					}
+				}
+				for (const auto& argument: syntaxTreeNode.arguments) {
+					createArrayAccessMethods(miniScriptClassName, scriptInstance, methodName, argument, statement, methodCodeMap);
+				}
+			}
+			break;
+		case MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
+			{
+				for (const auto& argument: syntaxTreeNode.arguments) {
+					createArrayAccessMethods(miniScriptClassName, scriptInstance, methodName, argument, statement, methodCodeMap);
+				}
+				//
+				break;
+			}
+		default:
+			break;
+	}
 }
 
 static void processFile(const string& scriptFileName, const string& miniscriptTranspilationFileName, const vector<string>& miniScriptExtensionFileNames) {
@@ -483,6 +631,27 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 		emitDefinition+= emitDefinitionIndent + "\t" + "Console::println(\"" + miniScriptClassName + "::emit(): no condition with name: '\" + condition + \"'\");" + "\n";
 		emitDefinition+= emitDefinitionIndent + "}" + "\n";
 		emitDefinition+= string() + "}" + "\n";
+	}
+
+	auto scriptIdx = 0;
+	for (const auto& script: scripts) {
+		// method name
+		string methodName =
+			(script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION?
+				"":
+				(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_")
+			) +
+			(script.name.empty() == false?script.name:(
+				StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true?
+					script.condition:
+					to_string(scriptIdx)
+				)
+			);
+		createArrayAccessMethods(miniScriptClassName, scriptInstance.get(), methodName, script.conditionSyntaxTree, script.conditionStatement, methodCodeMap);
+		for (auto statementIdx = 0; statementIdx < script.statements.size(); statementIdx++) {
+			createArrayAccessMethods(miniScriptClassName, scriptInstance.get(), methodName, script.syntaxTree[statementIdx], script.statements[statementIdx], methodCodeMap);
+		}
+		scriptIdx++;
 	}
 
 	// add emit code
