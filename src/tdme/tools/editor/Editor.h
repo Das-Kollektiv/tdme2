@@ -30,7 +30,7 @@ class tdme::tools::editor::Editor final
 	: public virtual Application
 {
 private:
-	static Editor* instance;
+	STATIC_DLL_IMPEXT static Editor* instance;
 	Engine* engine { nullptr };
 	View* view { nullptr };
 	bool viewInitialized;
