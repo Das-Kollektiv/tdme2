@@ -1,5 +1,6 @@
 #include <tdme/engine/logics/ApplicationClient.h>
 
+#include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>
@@ -24,6 +25,7 @@
 #include <tdme/utilities/Time.h>
 
 using std::make_unique;
+using std::sort;
 using std::string;
 using std::to_string;
 using std::unique_ptr;

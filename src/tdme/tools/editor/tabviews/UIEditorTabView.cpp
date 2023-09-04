@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabviews/UIEditorTabView.h>
 
+#include <algorithm>
 #include <memory>
 #include <string>
 #include <unordered_set>
@@ -47,6 +48,7 @@
 #include <tdme/utilities/StringTools.h>
 
 using std::make_unique;
+using std::sort;
 using std::string;
 using std::unique_ptr;
 using std::unordered_set;
