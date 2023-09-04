@@ -413,7 +413,13 @@ void ApplicationClient::update() {
 		}
 		queuedSound.distanceFromCamera = queuedSound.position.clone().sub(cameraPosition).computeLengthSquared();
 	}
-	sort(queuedSounds.begin(), queuedSounds.end(), QueuedSound::compare);
+	sort(
+		queuedSounds.begin(),
+		queuedSounds.end(),
+		[](const QueuedSound& queuedSound1, const QueuedSound& queuedSound2) {
+			return queuedSound1.distanceFromCamera < queuedSound2.distanceFromCamera;
+		}
+	);
 	for (auto& queuedSound: queuedSounds) {
 		if (queuedSound.distanceFromCamera >= 100.0f * 100.0f) continue;
 		if (queuedSound.ignoreIfPlaying == true) {

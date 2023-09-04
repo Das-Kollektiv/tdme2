@@ -79,14 +79,6 @@ private:
 	float scrollX { 0.0f };
 	float scrollY { 0.0f };
 
-	/**
-	 * Compare CodeCompletionSymbol structs
-	 * @return lhs < rhs
-	 */
-	static bool compareCodeCompletionStruct(const CodeCompletionSymbol& lhs, const CodeCompletionSymbol& rhs) {
-		return lhs.display < rhs.display;
-	}
-
 	unique_ptr<DynamicColorTexture> linesTexture;
 	int createConnectionsPasses { -1 };
 

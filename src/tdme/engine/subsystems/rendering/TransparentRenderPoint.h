@@ -21,14 +21,4 @@ struct tdme::engine::subsystems::rendering::TransparentRenderPoint final
 	Color4 color;
 	int particleSystemType;
 	void* particleSystem;
-
-	/**
-	 * Compare
-	 * @param point1 point 1
-	 * @param point2 point 2
-	 */
-	inline static bool compare(TransparentRenderPoint* point1, TransparentRenderPoint* point2) {
-		return -point1->point.getZ() > -point2->point.getZ();
-	}
-
 };

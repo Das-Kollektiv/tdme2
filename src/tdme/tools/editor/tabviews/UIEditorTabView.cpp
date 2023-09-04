@@ -334,7 +334,13 @@ void UIEditorTabView::initialize()
 				// clear
 				popUps->getContextMenuScreenController()->clear();
 				//
-				sort(codeCompletionSymbolCandidates.begin(), codeCompletionSymbolCandidates.begin() + (Math::min(codeCompletionSymbolCandidates.size(), MAX_ENTRIES)), compareCodeCompletionStruct);
+				sort(
+					codeCompletionSymbolCandidates.begin(),
+					codeCompletionSymbolCandidates.begin() + (Math::min(codeCompletionSymbolCandidates.size(), MAX_ENTRIES)),
+					[](const CodeCompletionSymbol& lhs, const CodeCompletionSymbol& rhs) {
+						return lhs.display < rhs.display;
+					}
+				);
 				//
 				{
 					auto i = 0;

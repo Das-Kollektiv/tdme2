@@ -264,7 +264,13 @@ void EntityRenderer::renderTransparentFaces() {
 	auto& transparentRenderFaces = transparentRenderFacesPool->getTransparentRenderFaces();
 	if (transparentRenderFaces.size() > 0) {
 		// sort transparent render faces from far to near
-		sort(transparentRenderFaces.begin(), transparentRenderFaces.end(), TransparentRenderFace::compare);
+		sort(
+			transparentRenderFaces.begin(),
+			transparentRenderFaces.end(),
+			[](const TransparentRenderFace* face1, const TransparentRenderFace* face2) {
+				return face1->distanceFromCamera > face2->distanceFromCamera;
+			}
+		);
 		// second render pass, draw color buffer for transparent objects
 		// 	set up blending, but no culling and no depth buffer
 		//	TODO: enabling depth buffer let shadow disappear

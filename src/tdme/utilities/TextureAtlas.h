@@ -118,14 +118,4 @@ private:
 	unordered_map<Texture*, int> textureToAtlasTextureIdxMapping;
 	unordered_map<int, AtlasTexture> atlasTextureIdxToAtlasTextureMapping;
 	vector<int> freeTextureIds;
-
-	/**
-	 * Sort atlas textures by height
-	 * @param atlasTexture1 atlas texture 1
-	 * @param atlasTexture2 atlas texture 2
-	 */
-	inline static bool sortAtlasTexturesByHeight(const AtlasTexture& atlasTexture1, const AtlasTexture& atlasTexture2) {
-		return atlasTexture1.height > atlasTexture2.height;
-	}
-
 };

@@ -1888,6 +1888,7 @@ const vector<MiniScript::ScriptMethod*> MiniScript::getMethods() {
 		if (scriptMethod->isPrivate() == true) continue;
 		methods.push_back(scriptMethod);
 	}
+	//
 	struct {
 		bool operator()(ScriptMethod* a, ScriptMethod* b) const {
 			auto aPrefix = StringTools::substring(a->getMethodName(), 0, StringTools::lastIndexOf(a->getMethodName(), ".") + 1);
@@ -1933,7 +1934,9 @@ const vector<MiniScript::ScriptMethod*> MiniScript::getMethods() {
 			}
 		}
 	} sortFunction;
-	std::sort(methods.begin(), methods.end(), sortFunction);
+	//
+	sort(methods.begin(), methods.end(), sortFunction);
+	//
 	return methods;
 }
 
@@ -6299,26 +6302,26 @@ void MiniScript::registerMethods() {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					class SortClass {
-						private:
-							MiniScript* miniScript;
-							const string& function;
-						public:
-							SortClass(MiniScript* miniScript, const string& function): miniScript(miniScript), function(function) {
-							}
-							bool operator()(const MiniScript::ScriptVariable& a, const MiniScript::ScriptVariable& b) const {
-								vector<MiniScript::ScriptVariable> sortArgumentValues { a, b };
-								span sortArgumentValuesSpan(sortArgumentValues);
-								MiniScript::ScriptVariable sortReturnValue;
-								miniScript->call(function, sortArgumentValuesSpan, sortReturnValue);
-								bool result = false;
-								sortReturnValue.getBooleanValue(result, false);
-								return result;
-							}
-					};
 					//
 					auto arrayPtr = argumentValues[0].getArrayPointer();
 					if (arrayPtr != nullptr) {
+						class SortClass {
+							private:
+								MiniScript* miniScript;
+								const string& function;
+							public:
+								SortClass(MiniScript* miniScript, const string& function): miniScript(miniScript), function(function) {
+								}
+								bool operator()(const MiniScript::ScriptVariable& a, const MiniScript::ScriptVariable& b) const {
+									vector<MiniScript::ScriptVariable> sortArgumentValues { a, b };
+									span sortArgumentValuesSpan(sortArgumentValues);
+									MiniScript::ScriptVariable sortReturnValue;
+									miniScript->call(function, sortArgumentValuesSpan, sortReturnValue);
+									bool result = false;
+									sortReturnValue.getBooleanValue(result, false);
+									return result;
+								}
+						};
 						sort(arrayPtr->begin(), arrayPtr->end(), SortClass(miniScript, function));
 					}
 				}

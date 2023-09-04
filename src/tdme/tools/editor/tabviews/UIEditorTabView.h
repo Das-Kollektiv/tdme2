@@ -100,14 +100,6 @@ private:
 
 	bool countEnabled { false };
 
-	/**
-	 * Compare CodeCompletionSymbol structs
-	 * @return lhs < rhs
-	 */
-	static bool compareCodeCompletionStruct(const CodeCompletionSymbol& lhs, const CodeCompletionSymbol& rhs) {
-		return lhs.display < rhs.display;
-	}
-
 	// overridden methods
 	void onCameraRotation() override;
 	void onCameraScale() override;

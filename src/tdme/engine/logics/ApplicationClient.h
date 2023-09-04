@@ -116,9 +116,6 @@ private:
 		bool attachedToLogic;
 		Vector3 position;
 		float distanceFromCamera;
-		inline static bool compare(QueuedSound& queuedSound1, QueuedSound& queuedSound2) {
-			return queuedSound1.distanceFromCamera < queuedSound2.distanceFromCamera;
-		}
 	};
 
 	struct ActiveSound {

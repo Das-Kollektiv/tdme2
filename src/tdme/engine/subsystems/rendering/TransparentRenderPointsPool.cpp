@@ -34,5 +34,11 @@ TransparentRenderPointsPool::~TransparentRenderPointsPool() {
 
 void TransparentRenderPointsPool::sort()
 {
-	std::sort(transparentRenderPoints.begin(), transparentRenderPoints.begin() + poolIdx, TransparentRenderPoint::compare);
+	std::sort(
+		transparentRenderPoints.begin(),
+		transparentRenderPoints.begin() + poolIdx,
+		[](const TransparentRenderPoint* point1, const TransparentRenderPoint* point2) {
+			return -point1->point.getZ() > -point2->point.getZ();
+		}
+	);
 }
