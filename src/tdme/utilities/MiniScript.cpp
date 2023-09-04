@@ -7299,104 +7299,108 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 	generatedCode+= syntaxTree.value.getValueString() + "(" + getArgumentsAsString(syntaxTree.arguments) + ")";
 	generatedCode+= "\n";
 
-	// construct argument values, which applies to script.call only
-	vector<string> argumentValuesCode;
-	if (depth > 0) {
-		argumentValuesCode.push_back("ScriptVariable& returnValue = argumentValuesD" + to_string(depth - 1) + (parentArgumentIdx != ARGUMENTIDX_NONE?"AIDX" + to_string(parentArgumentIdx):"") + "[" + to_string(argumentIdx) + "];");
-	} else {
-		argumentValuesCode.push_back("ScriptVariable returnValue;");
-	}
-	argumentValuesCode.push_back("array<ScriptVariable, " + to_string(syntaxTree.arguments.size()) + "> argumentValues;");
-	argumentValuesCode.push_back("array<ScriptVariable, " + to_string(syntaxTree.arguments.size()) + ">& argumentValuesD" + to_string(depth) + (argumentIdx != ARGUMENTIDX_NONE?"AIDX" + to_string(argumentIdx):"") + " = argumentValues;");
-
 	// argument values header
 	generatedCode+= minIndentString + depthIndentString + "{" + "\n";
+
+	// construct argument values
+	{
+		vector<string> argumentValuesCode;
+		if (depth > 0) {
+			argumentValuesCode.push_back("ScriptVariable& returnValue = argumentValuesD" + to_string(depth - 1) + (parentArgumentIdx != ARGUMENTIDX_NONE?"AIDX" + to_string(parentArgumentIdx):"") + "[" + to_string(argumentIdx) + "];");
+		} else {
+			argumentValuesCode.push_back("ScriptVariable returnValue;");
+		}
+		argumentValuesCode.push_back("array<ScriptVariable, " + to_string(syntaxTree.arguments.size()) + "> argumentValues {");
+
+		// construct argument values
+		if (syntaxTree.arguments.empty() == false) {
+			generatedCode+= minIndentString + depthIndentString + "\t" + "// required method code arguments" + "\n";
+			auto subArgumentIdx = 0;
+			for (const auto& argument: syntaxTree.arguments) {
+				auto lastArgument = subArgumentIdx == syntaxTree.arguments.size() - 1;
+				switch (argument.type) {
+					case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
+						{
+							switch (argument.value.getType())  {
+								case TYPE_NULL:
+									break;
+								case TYPE_BOOLEAN:
+									{
+										bool value;
+										argument.value.getBooleanValue(value);
+										argumentValuesCode.push_back(string() + "\t" + "ScriptVariable(" + (value == true?"true":"false") + ")" + (lastArgument == false?",":""));
+									}
+									break;
+								case TYPE_INTEGER:
+									{
+										int64_t value;
+										argument.value.getIntegerValue(value);
+										argumentValuesCode.push_back(string() + "\t" +  + "ScriptVariable(static_cast<int64_t>(" + to_string(value) + "ll))" + (lastArgument == false?",":""));
+									}
+									break;
+								case TYPE_FLOAT:
+									{
+										float value;
+										argument.value.getFloatValue(value);
+										argumentValuesCode.push_back(string() + "\t" +  + "ScriptVariable(" + to_string(value) + "f)" + (lastArgument == false?",":""));
+									}
+									break;
+								case TYPE_STRING:
+									{
+										string value;
+										argument.value.getStringValue(value);
+										value = StringTools::replace(value, "\\", "\\\\");
+										value = StringTools::replace(value, "\"", "\\\"");
+										argumentValuesCode.push_back(string() + "\t" +  + "ScriptVariable(string(\"" + value + "\"))" + (lastArgument == false?",":""));
+									}
+									break;
+								default:
+									{
+										Console::println("MiniScript::transpileScriptStatement(): " + getStatementInformation(statement) + ": '" + argument.value.getAsString() + "': unknown argument type: " + argument.value.getTypeAsString());
+										break;
+									}
+							}
+							break;
+						}
+					case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
+						{
+							argumentValuesCode.push_back(string() + "\t" + "ScriptVariable()" + (lastArgument == false?",":"") + " // argumentValues[" + to_string(subArgumentIdx) + "] --> returnValue of " + argument.value.getValueString() + "(" + getArgumentsAsString(argument.arguments) + ")");
+							break;
+						}
+					case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
+						{
+							argumentValuesCode.push_back(string() + "\t" + "ScriptVariable()" + (lastArgument == false?",":"") + " // argumentValues[" + to_string(subArgumentIdx) + "] --> returnValue of " + argument.value.getValueString() + "(" + getArgumentsAsString(argument.arguments) + ")");
+							break;
+						}
+					default:
+						break;
+				}
+				//
+				subArgumentIdx++;
+			}
+		}
+		// end of arguments initialization
+		argumentValuesCode.push_back("};");
+
+		//
+		argumentValuesCode.push_back("array<ScriptVariable, " + to_string(syntaxTree.arguments.size()) + ">& argumentValuesD" + to_string(depth) + (argumentIdx != ARGUMENTIDX_NONE?"AIDX" + to_string(argumentIdx):"") + " = argumentValues;");
+
+		// argument values header
+		for (const auto& codeLine: argumentValuesCode) {
+			generatedCode+= minIndentString + depthIndentString + "\t" + codeLine + "\n";
+		}
+	}
+
 	// statement
 	if (depth == 0) {
+		generatedCode+= minIndentString + depthIndentString + "\t" + "// statement setup" + "\n";
 		if (scriptConditionIdx != SCRIPTIDX_NONE) {
 			generatedCode+= minIndentString + depthIndentString + "\t" + "const ScriptStatement& statement = scripts[" + to_string(scriptConditionIdx) + "].conditionStatement;" + "\n";
 		} else {
 			generatedCode+= minIndentString + depthIndentString + "\t" + "const ScriptStatement& statement = scripts[" + to_string(scriptIdx) + "].statements[" + to_string(statement.statementIdx) + "];" + "\n";
 		}
-		// TODO: this next one
 		generatedCode+= minIndentString + depthIndentString + "\t" + "getScriptState().statementIdx = statement.statementIdx;" + "\n";
 	}
-	generatedCode+= minIndentString + depthIndentString + "\t" + "// required method code arguments" + "\n";
-	// argument/return values
-	for (const auto& codeLine: argumentValuesCode) {
-		generatedCode+= minIndentString + depthIndentString + "\t" + codeLine + "\n";
-	}
-	argumentValuesCode.clear();
-
-	// construct argument values
-	{
-		auto subArgumentIdx = 0;
-		for (const auto& argument: syntaxTree.arguments) {
-			switch (argument.type) {
-				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
-					{
-						switch (argument.value.getType())  {
-							case TYPE_NULL:
-								break;
-							case TYPE_BOOLEAN:
-								{
-									bool value;
-									argument.value.getBooleanValue(value);
-									argumentValuesCode.push_back(string() + "argumentValues[" + to_string(subArgumentIdx) + "].setValue(" + (value == true?"true":"false") + ");");
-								}
-								break;
-							case TYPE_INTEGER:
-								{
-									int64_t value;
-									argument.value.getIntegerValue(value);
-									argumentValuesCode.push_back("argumentValues[" + to_string(subArgumentIdx) + "].setValue(static_cast<int64_t>(" + to_string(value) + "ll));");
-								}
-								break;
-							case TYPE_FLOAT:
-								{
-									float value;
-									argument.value.getFloatValue(value);
-									argumentValuesCode.push_back("argumentValues[" + to_string(subArgumentIdx) + "].setValue(" + to_string(value) + "f);");
-								}
-								break;
-							case TYPE_STRING:
-								{
-									string value;
-									argument.value.getStringValue(value);
-									argumentValuesCode.push_back("argumentValues[" + to_string(subArgumentIdx) + "].setValue(string(\"" + value + "\"));");
-								}
-								break;
-							default:
-								{
-									Console::println("MiniScript::transpileScriptStatement(): " + getStatementInformation(statement) + ": '" + argument.value.getAsString() + "': unknown argument type: " + argument.value.getTypeAsString());
-									break;
-								}
-						}
-						break;
-					}
-				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
-					{
-						argumentValuesCode.push_back("// argumentValues[" + to_string(subArgumentIdx) + "] --> returnValue of " + argument.value.getValueString() + "(" + getArgumentsAsString(argument.arguments) + ")");
-						break;
-					}
-				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
-					{
-						argumentValuesCode.push_back("// argumentValues[" + to_string(subArgumentIdx) + "] --> returnValue of " + argument.value.getValueString() + "(" + getArgumentsAsString(argument.arguments) + ")");
-						break;
-					}
-				default:
-					break;
-			}
-			//
-			subArgumentIdx++;
-		}
-	}
-
-	// argument values header
-	for (const auto& codeLine: argumentValuesCode) {
-		generatedCode+= minIndentString + depthIndentString + "\t" + codeLine + "\n";
-	}
-	argumentValuesCode.clear();
 
 	// enabled named conditions
 	if (method == METHOD_ENABLENAMEDCONDITION && syntaxTree.arguments.empty() == false) {
@@ -7647,11 +7651,12 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 	string generatedCodeHeader;
 
 	// TODO: move me into a method
-	generatedCodeHeader+= methodIndent + "// -1 means complete method call" + "\n";
+	generatedCodeHeader+= methodIndent + "// STATEMENTIDX_FIRST means complete method call" + "\n";
 	generatedCodeHeader+= methodIndent + "if (miniScriptGotoStatementIdx == STATEMENTIDX_FIRST) {" + "\n";
 	generatedCodeHeader+= methodIndent + "\t" + "resetScriptExecutationState(" + to_string(scriptIdx) + ", STATEMACHINESTATE_NEXT_STATEMENT);" + "\n";
 	generatedCodeHeader+= methodIndent + "}" + "\n";
 	// TODO: end
+	generatedCodeHeader+= methodIndent + "// script setup" + "\n";
 	generatedCodeHeader+= methodIndent + "auto miniScript = this;" + "\n";
 	generatedCodeHeader+= methodIndent + "getScriptState().scriptIdx = " + to_string(scriptIdx) + ";" + "\n";
 
@@ -7699,8 +7704,7 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 		}
 
 		// statement_xyz goto label
-		generatedCode+= "\n";
-		generatedCode+= methodIndent + "// Statement: " + to_string(statement.statementIdx) + "\n";
+		generatedCode+= methodIndent + "// statement: " + to_string(statement.statementIdx) + "\n";
 		if (scriptStateChanged == true || gotoStatementIdxSet.find(statement.statementIdx) != gotoStatementIdxSet.end()) {
 			generatedCode+= methodIndent + "miniscript_statement_" + to_string(statement.statementIdx) + ":" + "\n";
 		}
