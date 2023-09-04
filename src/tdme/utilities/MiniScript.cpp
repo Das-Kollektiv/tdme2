@@ -7349,8 +7349,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 									{
 										string value;
 										argument.value.getStringValue(value);
-										value = StringTools::replace(value, "\\", "\\\\");
-										value = StringTools::replace(value, "\"", "\\\"");
+										value = StringTools::replace(StringTools::replace(value, "\\", "\\\\"), "\"", "\\\"");
 										argumentValuesCode.push_back(string() + "\t" +  + "ScriptVariable(string(\"" + value + "\"))" + (lastArgument == false?",":""));
 									}
 									break;
