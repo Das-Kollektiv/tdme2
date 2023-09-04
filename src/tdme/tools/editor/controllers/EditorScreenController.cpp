@@ -79,7 +79,7 @@
 #include <tdme/tools/editor/tabviews/UIEditorTabView.h>
 #include <tdme/tools/editor/tabviews/VideoTabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
-#include <tdme/tools/editor/TDMEEditor.h>
+#include <tdme/tools/editor/Editor.h>
 #include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -167,7 +167,7 @@ using tdme::tools::editor::tabviews::TriggerEditorTabView;
 using tdme::tools::editor::tabviews::UIEditorTabView;
 using tdme::tools::editor::tabviews::VideoTabView;
 using tdme::tools::editor::views::EditorView;
-using tdme::tools::editor::TDMEEditor;
+using tdme::tools::editor::Editor;
 using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -278,7 +278,7 @@ void EditorScreenController::setScreenCaption(const string& text)
 
 void EditorScreenController::onQuit()
 {
-	TDMEEditor::getInstance()->quit();
+	Editor::getInstance()->quit();
 }
 
 void EditorScreenController::showInfoPopUp(const string& caption, const string& message)
@@ -386,7 +386,7 @@ void EditorScreenController::onAction(GUIActionListenerType type, GUIElementNode
 			if (tabIdToClose.empty() == false) closeTab(tabIdToClose);
 		} else
 		if (node->getId() == "menu_file_quit") {
-			TDMEEditor::getInstance()->quit();
+			Editor::getInstance()->quit();
 		}
 	}
 	// forward onAction to active tab tab controller

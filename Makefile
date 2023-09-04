@@ -563,7 +563,7 @@ SRCS = \
 	src/tdme/tests/TreeTest.cpp \
 	src/tdme/tests/VideoTest.cpp \
 	src/tdme/tests/WaterTest.cpp \
-	src/tdme/tools/editor/TDMEEditor.cpp \
+	src/tdme/tools/editor/Editor.cpp \
 	src/tdme/tools/editor/controllers/AboutDialogScreenController.cpp \
 	src/tdme/tools/editor/controllers/ColorPickerImageController.cpp \
 	src/tdme/tools/editor/controllers/ColorPickerScreenController.cpp \
@@ -939,7 +939,7 @@ MAIN_SRCS = \
 	src/tdme/tests/UDPServerTest-main.cpp \
 	src/tdme/tests/VideoTest-main.cpp \
 	src/tdme/tests/WaterTest-main.cpp \
-	src/tdme/tools/editor/TDMEEditor-main.cpp \
+	src/tdme/tools/editor/Editor-main.cpp \
 	src/tdme/tools/installer/Installer-main.cpp \
 	src/tdme/tools/cli/archive-main.cpp \
 	src/tdme/tools/cli/collectguitags-main.cpp \

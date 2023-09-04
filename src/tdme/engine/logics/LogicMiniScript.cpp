@@ -32,7 +32,7 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/tools/editor/misc/Tools.h>
-#include <tdme/tools/editor/TDMEEditor.h>
+#include <tdme/tools/editor/Editor.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -73,7 +73,7 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::threading::Mutex;
 using tdme::tools::editor::misc::Tools;
-using tdme::tools::editor::TDMEEditor;
+using tdme::tools::editor::Editor;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -152,7 +152,7 @@ void LogicMiniScript::registerMethods() {
 				return "application.isFullScreen";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue.setValue(TDMEEditor::getInstance() != nullptr?TDMEEditor::getInstance()->isFullScreen():false);
+				returnValue.setValue(Editor::getInstance() != nullptr?Editor::getInstance()->isFullScreen():false);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
