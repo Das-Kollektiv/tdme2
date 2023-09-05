@@ -88,7 +88,7 @@ public:
 	 * @param data data
 	 * @param size size
 	 */
-	virtual int Write(const void *data, int size) {
+	virtual int Write(const void* data, int size) {
 		return 0;
 	}
 
@@ -97,7 +97,7 @@ public:
 	 * @param data data
 	 * @param size size
 	 */
-	virtual int Read(void *data, int size) const {
+	virtual int Read(void* data, int size) const {
 		auto i = 0;
 		for (; i < size; i++) {
 			static_cast<uint8_t*>(data)[i] = (*this->data)[position++];
@@ -124,17 +124,17 @@ public:
 	 * @param offset offset
 	 * @param seekPos seek pos
 	 */
-	void Seek(const FbxInt64 &offset, const FbxFile::ESeekPos &seekPos) {
+	void Seek(const FbxInt64& offset, const FbxFile::ESeekPos& seekPos) {
 		switch (seekPos) {
-		case FbxFile::eBegin:
-			position = offset;
-			break;
-		case FbxFile::eCurrent:
-			position += offset;
-			break;
-		case FbxFile::eEnd:
-			position = data->size() - offset;
-			break;
+			case FbxFile::eBegin:
+				position = offset;
+				break;
+			case FbxFile::eCurrent:
+				position += offset;
+				break;
+			case FbxFile::eEnd:
+				position = data->size() - offset;
+				break;
 		}
 	}
 
@@ -165,6 +165,7 @@ public:
 	 */
 	virtual void ClearError() {
 	}
+
 private:
 	FbxManager *fbxManager { nullptr };
 	bool opened { false };
