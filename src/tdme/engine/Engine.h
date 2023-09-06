@@ -581,7 +581,7 @@ public:
 
 	/**
 	 * Returns engine instance
-	 * @return
+	 * @return engine instance
 	 */
 	inline static Engine* getInstance() {
 		if (instance == nullptr) {

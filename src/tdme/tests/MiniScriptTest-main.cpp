@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
 			Console::println("Script not valid. Exiting");
 			return 1;
 		}
-		// Console::println(script->getInformation());
+		Console::println(script->getInformation());
 		while (script->isRunning() == true) {
 			script->execute();
 		}

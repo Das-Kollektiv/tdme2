@@ -1978,7 +1978,7 @@ const string MiniScript::getScriptInformation(int scriptIdx, bool includeStateme
 	}
 	if (includeStatements == true) {
 		for (const auto& scriptStatement: script.statements) {
-			result+= "\t" + to_string(scriptStatement.statementIdx) + ": " + scriptStatement.statement + (scriptStatement.gotoStatementIdx != STATEMENTIDX_NONE?" (gotoStatement " + to_string(scriptStatement.gotoStatementIdx) + ")":"") + "\n";
+			result+= "\t" + to_string(scriptStatement.statementIdx) + ": " + scriptStatement.executableStatement + (scriptStatement.gotoStatementIdx != STATEMENTIDX_NONE?" (gotoStatement " + to_string(scriptStatement.gotoStatementIdx) + ")":"") + "\n";
 		}
 		result+= "\n";
 	}
@@ -7228,6 +7228,36 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 	statementIdx++;
 	auto currentStatementIdx = statementIdx;
 
+	// indenting
+	string minIndentString = "\t";
+	string depthIndentString;
+	for (auto i = 0; i < depth + additionalIndent; i++) depthIndentString+= "\t";
+
+	//
+	struct ArrayAccessStatement {
+		ArrayAccessStatement(
+			int argumentIdx,
+			int statementIdx,
+			int leftIdx,
+			int rightIdx,
+			string statementMethod
+		):
+			argumentIdx(argumentIdx),
+			statementIdx(statementIdx),
+			leftIdx(leftIdx),
+			rightIdx(rightIdx),
+			statementMethod(statementMethod)
+		{}
+		int argumentIdx;
+		int statementIdx;
+		int leftIdx;
+		int rightIdx;
+		string statementMethod;
+	};
+
+	//
+	vector<ArrayAccessStatement> arrayAccessStatements;
+
 	//
 	switch (syntaxTree.type) {
 		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
@@ -7265,6 +7295,83 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 				break;
 			}
 		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
+			//
+			if ((scriptConditionIdx != SCRIPTIDX_NONE ||
+				scriptIdx != SCRIPTIDX_NONE) &&
+				(syntaxTree.value.getValueString() == "getVariable" ||
+				syntaxTree.value.getValueString() == "setVariable")) {
+				//
+				Script script = scripts[scriptConditionIdx != SCRIPTIDX_NONE?scriptConditionIdx:scriptIdx];
+				// method name
+				string methodName =
+					(script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION?
+						"":
+						(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_")
+					) +
+					(script.name.empty() == false?script.name:(
+						StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true?
+							script.condition:
+							to_string(scriptIdx)
+						)
+					);
+				//
+				for (auto subArgumentIdx = 0; subArgumentIdx < syntaxTree.arguments.size(); subArgumentIdx++) {
+					auto argumentString = StringTools::replace(StringTools::replace(syntaxTree.arguments[subArgumentIdx].value.getValueString(), "\\", "\\\\"), "\"", "\\\"");
+					auto arrayAccessStatementIdx = 0;
+					auto arrayAccessStatementLeftIdx = -1;
+					auto arrayAccessStatementRightIdx = -1;
+					auto quote = '\0';
+					auto bracketCount = 0;
+					for (auto i = 0; i < argumentString.size(); i++) {
+						auto c = argumentString[i];
+						// handle quotes
+						if (quote != '\0') {
+							// unset quote if closed
+							// also we can ignore content of quote blocks
+							if (c == quote) {
+								quote = '\0';
+							}
+						} else
+						if (c == '"' || c == '\'') {
+							quote = c;
+						} else
+						if (c == '[') {
+							if (bracketCount == 0) arrayAccessStatementLeftIdx = i;
+							bracketCount++;
+						} else
+						if (c == ']') {
+							bracketCount--;
+							if (bracketCount == 0) {
+								arrayAccessStatementRightIdx = i;
+								//
+								auto arrayAccessStatementString = StringTools::substring(argumentString, arrayAccessStatementLeftIdx + 1, arrayAccessStatementRightIdx);
+								// array append operator []
+								if (arrayAccessStatementString.empty() == true) {
+									//
+									arrayAccessStatementIdx++;
+									//
+									continue;
+								}
+								//
+								auto arrayAccessStatementMethod = methodName + "_array_access_statement_" + (scriptConditionIdx != SCRIPTIDX_NONE?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + to_string(subArgumentIdx) + "_" + to_string(arrayAccessStatementIdx) + "_" + to_string(depth);
+								//
+								generatedCode+= minIndentString + depthIndentString + "// we will use " + arrayAccessStatementMethod + "() to determine array access index"+ "\n";
+								//
+								arrayAccessStatements.emplace_back(
+									subArgumentIdx,
+									arrayAccessStatementIdx,
+									arrayAccessStatementLeftIdx,
+									arrayAccessStatementRightIdx,
+									arrayAccessStatementMethod
+								);
+								//
+								arrayAccessStatementIdx++;
+							}
+						}
+					}
+				}
+			}
+			//
 			break;
 		default:
 			Console::println("MiniScript::transpileScriptStatement(): " + getStatementInformation(statement) + ": function or method call expected, but got literal or 'none' syntaxTree");
@@ -7291,11 +7398,6 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 	}
 	auto scriptMethod = scriptMethodIt->second;
 
-	// indenting
-	string minIndentString = "\t";
-	string depthIndentString;
-	for (auto i = 0; i < depth + additionalIndent; i++) depthIndentString+= "\t";
-
 	// comment about current statement
 	generatedCode+= minIndentString + depthIndentString;
 	generatedCode+= "// " + (depth > 0?"depth = " + to_string(depth):"") + (depth > 0 && argumentIdx != ARGUMENTIDX_NONE?" / ":"") + (argumentIdx != ARGUMENTIDX_NONE?"argument index = " + to_string(argumentIdx):"") + (depth > 0 || argumentIdx != ARGUMENTIDX_NONE?": ":"");
@@ -7304,6 +7406,18 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 
 	// argument values header
 	generatedCode+= minIndentString + depthIndentString + "{" + "\n";
+
+	// statement
+	if (depth == 0) {
+		generatedCode+= minIndentString + depthIndentString + "\t" + "// statement setup" + "\n";
+		if (scriptConditionIdx != SCRIPTIDX_NONE) {
+			generatedCode+= minIndentString + depthIndentString + "\t" + "const ScriptStatement& statement = scripts[" + to_string(scriptConditionIdx) + "].conditionStatement;" + "\n";
+		} else
+		if (scriptIdx != SCRIPTIDX_NONE) {
+			generatedCode+= minIndentString + depthIndentString + "\t" + "const ScriptStatement& statement = scripts[" + to_string(scriptIdx) + "].statements[" + to_string(statement.statementIdx) + "];" + "\n";
+		}
+		generatedCode+= minIndentString + depthIndentString + "\t" + "getScriptState().statementIdx = statement.statementIdx;" + "\n";
+	}
 
 	// construct argument values
 	{
@@ -7353,6 +7467,18 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 										string value;
 										argument.value.getStringValue(value);
 										value = StringTools::replace(StringTools::replace(value, "\\", "\\\\"), "\"", "\\\"");
+										// take array access statements into account
+										auto arrayAccessStatementOffset = 0;
+										for (auto& arrayAccessStatement: arrayAccessStatements) {
+											if (arrayAccessStatement.argumentIdx != subArgumentIdx) continue;
+											string arrayAccessStatementMethodCall = "\" + " + arrayAccessStatement.statementMethod + "(statement).getValueString() + \"";
+											value =
+												StringTools::substring(value, 0, arrayAccessStatement.leftIdx + 1 + arrayAccessStatementOffset) +
+												arrayAccessStatementMethodCall +
+												StringTools::substring(value, arrayAccessStatement.rightIdx + arrayAccessStatementOffset, value.size());
+											arrayAccessStatementOffset-= (arrayAccessStatement.rightIdx - (arrayAccessStatement.leftIdx + 1)) - arrayAccessStatementMethodCall.size();
+										}
+										//
 										argumentValuesCode.push_back(string() + "\t" +  + "ScriptVariable(string(\"" + value + "\"))" + (lastArgument == false?",":""));
 									}
 									break;
@@ -7391,17 +7517,6 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 		for (const auto& codeLine: argumentValuesCode) {
 			generatedCode+= minIndentString + depthIndentString + "\t" + codeLine + "\n";
 		}
-	}
-
-	// statement
-	if (depth == 0) {
-		generatedCode+= minIndentString + depthIndentString + "\t" + "// statement setup" + "\n";
-		if (scriptConditionIdx != SCRIPTIDX_NONE) {
-			generatedCode+= minIndentString + depthIndentString + "\t" + "const ScriptStatement& statement = scripts[" + to_string(scriptConditionIdx) + "].conditionStatement;" + "\n";
-		} else {
-			generatedCode+= minIndentString + depthIndentString + "\t" + "const ScriptStatement& statement = scripts[" + to_string(scriptIdx) + "].statements[" + to_string(statement.statementIdx) + "];" + "\n";
-		}
-		generatedCode+= minIndentString + depthIndentString + "\t" + "getScriptState().statementIdx = statement.statementIdx;" + "\n";
 	}
 
 	// enabled named conditions
@@ -7444,11 +7559,14 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 			switch (argument.type) {
 				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
 				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
+					//
 					if (transpileScriptStatement(generatedCode, argument, statement, scriptConditionIdx, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, depth + 1, subArgumentIdx, argumentIdx, returnValue) == false) {
  						Console::println("MiniScript::transpileScriptStatement(): transpileScriptStatement(): " + getStatementInformation(statement) + ": '" + syntaxTree.value.getValueString() + "(" + getArgumentsAsString(syntaxTree.arguments) + ")" + "': transpile error");
 					}
+					//
 					break;
 				default:
+					//
 					break;
 			}
 			subArgumentIdx++;
