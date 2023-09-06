@@ -182,25 +182,22 @@ static void gatherMethodCode(const vector<string>& miniScriptExtensionsCode, con
 	methodCodeMap[methodName] = executeMethodCode;
 }
 
-static void createArrayAccessMethods(string& generatedDeclarations, string& generatedDefinitions, const string& miniScriptClassName, MiniScript* scriptInstance, const string& methodName, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, const MiniScript::ScriptStatement& statement, const unordered_map<string, vector<string>>& methodCodeMap, bool condition, int depth = 0) {
+static void createArrayAccessMethods(string& generatedDeclarations, string& generatedDefinitions, const string& miniScriptClassName, MiniScript* scriptInstance, const string& methodName, const MiniScript::ScriptSyntaxTreeNode& syntaxTree, const MiniScript::ScriptStatement& statement, const unordered_map<string, vector<string>>& methodCodeMap, bool condition, int depth = 0) {
 	string headerIndent = "\t";
+
 	//
-	switch (syntaxTreeNode.type) {
+	switch (syntaxTree.type) {
 		case MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
 			{
 				break;
 			}
 		case MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
 			{
-				if (syntaxTreeNode.value.getValueString() == "getVariable" ||
-					syntaxTreeNode.value.getValueString() == "setVariable") {
+				if (syntaxTree.value.getValueString() == "getVariable" ||
+					syntaxTree.value.getValueString() == "setVariable") {
 					//
-					auto maxArgumentCount = 0;
-					if (syntaxTreeNode.value.getValueString() == "getVariable") maxArgumentCount = 1; else
-					if (syntaxTreeNode.value.getValueString() == "setVariable") maxArgumentCount = 2;
-					//
-					for (auto argumentIdx = 0; argumentIdx < maxArgumentCount && argumentIdx < syntaxTreeNode.arguments.size(); argumentIdx++) {
-						auto& argumentString = syntaxTreeNode.arguments[argumentIdx].value.getValueString();
+					for (auto argumentIdx = 0; argumentIdx < syntaxTree.arguments.size(); argumentIdx++) {
+						auto argumentString = StringTools::replace(StringTools::replace(syntaxTree.arguments[argumentIdx].value.getValueString(), "\\", "\\\\"), "\"", "\\\"");
 						auto arrayAccessStatementIdx = 0;
 						auto arrayAccessStatementLeftIdx = -1;
 						auto arrayAccessStatementRightIdx = -1;
@@ -240,29 +237,16 @@ static void createArrayAccessMethods(string& generatedDeclarations, string& gene
 									MiniScript::ScriptVariable arrayAccessStatementAsScriptVariable;
 									arrayAccessStatementAsScriptVariable.setImplicitTypedValue(arrayAccessStatementString);
 									switch (arrayAccessStatementAsScriptVariable.getType()) {
-										case MiniScript::TYPE_NULL:
-											{
-												generatedDeclarations+= headerIndent + "/**\n";
-												generatedDeclarations+= headerIndent + " * Miniscript transpilation for a " + (condition == true?"condition":"statement") + " array access statement for method '" + methodName + "', statement index " + to_string(statement.statementIdx) + ", argument index " + to_string(argumentIdx) + ", array access statement index " + to_string(arrayAccessStatementIdx) + " and depth " + to_string(depth) + "\n";
-												generatedDeclarations+= headerIndent + " * @return array index" + "\n";
-												generatedDeclarations+= headerIndent + " */" + "\n";
-												generatedDeclarations+= headerIndent + "inline ScriptVariable " + methodName + "_array_access_statement_" + (condition == true?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + to_string(argumentIdx) + "_" + to_string(arrayAccessStatementIdx) + "_" + to_string(depth) + "() {" + "\n";
-												generatedDeclarations+= headerIndent + "	return ScriptVariable();" + "\n";
-												generatedDeclarations+= headerIndent + "}" + "\n\n";
-												// literals
-												arrayAccessStatementIdx++;
-												//
-												continue;
-											}
 										case MiniScript::TYPE_BOOLEAN:
 											{
 												bool booleanValue;
 												if (arrayAccessStatementAsScriptVariable.getBooleanValue(booleanValue) == true) {
 													generatedDeclarations+= headerIndent + "/**\n";
 													generatedDeclarations+= headerIndent + " * Miniscript transpilation for a " + (condition == true?"condition":"statement") + " array access statement for method '" + methodName + "', statement index " + to_string(statement.statementIdx) + ", argument index " + to_string(argumentIdx) + ", array access statement index " + to_string(arrayAccessStatementIdx) + " and depth " + to_string(depth) + "\n";
+													generatedDeclarations+= headerIndent + " * @param statement statement" + "\n";
 													generatedDeclarations+= headerIndent + " * @return array index" + "\n";
 													generatedDeclarations+= headerIndent + " */" + "\n";
-													generatedDeclarations+= headerIndent + "inline ScriptVariable " + methodName + "_array_access_statement_" + (condition == true?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + to_string(argumentIdx) + "_" + to_string(arrayAccessStatementIdx) + "_" + to_string(depth) + "() {" + "\n";
+													generatedDeclarations+= headerIndent + "inline ScriptVariable " + methodName + "_array_access_statement_" + (condition == true?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + to_string(argumentIdx) + "_" + to_string(arrayAccessStatementIdx) + "_" + to_string(depth) + "(const ScriptStatement& statement) {" + "\n";
 													generatedDeclarations+= headerIndent + "	return ScriptVariable(" + (booleanValue == true?"true":"false") + ");" + "\n";
 													generatedDeclarations+= headerIndent + "}" + "\n\n";
 												}
@@ -277,9 +261,10 @@ static void createArrayAccessMethods(string& generatedDeclarations, string& gene
 												if (arrayAccessStatementAsScriptVariable.getIntegerValue(integerValue) == true) {
 													generatedDeclarations+= headerIndent + "/**\n";
 													generatedDeclarations+= headerIndent + " * Miniscript transpilation for a " + (condition == true?"condition":"statement") + " array access statement for method '" + methodName + "', statement index " + to_string(statement.statementIdx) + ", argument index " + to_string(argumentIdx) + ", array access statement index " + to_string(arrayAccessStatementIdx) + " and depth " + to_string(depth) + "\n";
+													generatedDeclarations+= headerIndent + " * @param statement statement" + "\n";
 													generatedDeclarations+= headerIndent + " * @return array index" + "\n";
 													generatedDeclarations+= headerIndent + " */" + "\n";
-													generatedDeclarations+= headerIndent + "inline ScriptVariable " + methodName + "_array_access_statement_" + (condition == true?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + to_string(argumentIdx) + "_" + to_string(arrayAccessStatementIdx) + "_" + to_string(depth) + "() {" + "\n";
+													generatedDeclarations+= headerIndent + "inline ScriptVariable " + methodName + "_array_access_statement_" + (condition == true?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + to_string(argumentIdx) + "_" + to_string(arrayAccessStatementIdx) + "_" + to_string(depth) + "(const ScriptStatement& statement) {" + "\n";
 													generatedDeclarations+= headerIndent + "	return ScriptVariable(static_cast<int64_t>(" + to_string(integerValue) + "ll));" + "\n";
 													generatedDeclarations+= headerIndent + "}" + "\n\n";
 												}
@@ -294,9 +279,10 @@ static void createArrayAccessMethods(string& generatedDeclarations, string& gene
 												if (arrayAccessStatementAsScriptVariable.getFloatValue(floatValue) == true) {
 													generatedDeclarations+= headerIndent + "/**\n";
 													generatedDeclarations+= headerIndent + " * Miniscript transpilation for a " + (condition == true?"condition":"statement") + " array access statement for method '" + methodName + "', statement index " + to_string(statement.statementIdx) + ", argument index " + to_string(argumentIdx) + ", array access statement index " + to_string(arrayAccessStatementIdx) + " and depth " + to_string(depth) + "\n";
+													generatedDeclarations+= headerIndent + " * @param statement statement" + "\n";
 													generatedDeclarations+= headerIndent + " * @return array index" + "\n";
 													generatedDeclarations+= headerIndent + " */" + "\n";
-													generatedDeclarations+= headerIndent + "inline ScriptVariable " + methodName + "_array_access_statement_" + (condition == true?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + to_string(argumentIdx) + "_" + to_string(arrayAccessStatementIdx) + "_" + to_string(depth) + "() {" + "\n";
+													generatedDeclarations+= headerIndent + "inline ScriptVariable " + methodName + "_array_access_statement_" + (condition == true?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + to_string(argumentIdx) + "_" + to_string(arrayAccessStatementIdx) + "_" + to_string(depth) + "(const ScriptStatement& statement) {" + "\n";
 													generatedDeclarations+= headerIndent + "	return ScriptVariable(" + to_string(floatValue) + "f);" + "\n";
 													generatedDeclarations+= headerIndent + "}" + "\n\n";
 												}
@@ -344,20 +330,14 @@ static void createArrayAccessMethods(string& generatedDeclarations, string& gene
 									scriptInstance->transpileScriptStatement(transpiledCode, arrayAccessSyntaxTree, arrayAccessStatement, MiniScript::SCRIPTIDX_NONE, MiniScript::SCRIPTIDX_NONE, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, 0, MiniScript::ARGUMENTIDX_NONE, MiniScript::ARGUMENTIDX_NONE, "ScriptVariable()", "return returnValue;");
 									generatedDeclarations+= headerIndent + "/**\n";
 									generatedDeclarations+= headerIndent + " * Miniscript transpilation for a " + (condition == true?"condition":"statement") + " array access statement for method '" + methodName + "', statement index " + to_string(statement.statementIdx) + ", argument index " + to_string(argumentIdx) + ", array access statement index " + to_string(arrayAccessStatementIdx) + " and depth " + to_string(depth) + "\n";
+									generatedDeclarations+= headerIndent + " * @param statement statement" + "\n";
 									generatedDeclarations+= headerIndent + " * @return array index" + "\n";
 									generatedDeclarations+= headerIndent + " */" + "\n";
-									generatedDeclarations+= headerIndent + "ScriptVariable " + methodName + "_array_access_statement_" + (condition == true?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + to_string(argumentIdx) + "_" + to_string(arrayAccessStatementIdx) + "_" + to_string(depth) + "();" + "\n\n";
-									generatedDefinitions+= string() + "MiniScript::ScriptVariable " + miniScriptClassName + "::" + methodName + "_array_access_statement_" + (condition == true?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + to_string(argumentIdx) + "_" + to_string(arrayAccessStatementIdx) + "_" + to_string(depth) + "() {" + "\n";
+									generatedDeclarations+= headerIndent + "ScriptVariable " + methodName + "_array_access_statement_" + (condition == true?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + to_string(argumentIdx) + "_" + to_string(arrayAccessStatementIdx) + "_" + to_string(depth) + "(const ScriptStatement& statement);" + "\n\n";
+									generatedDefinitions+= string() + "inline MiniScript::ScriptVariable " + miniScriptClassName + "::" + methodName + "_array_access_statement_" + (condition == true?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + to_string(argumentIdx) + "_" + to_string(arrayAccessStatementIdx) + "_" + to_string(depth) + "(const ScriptStatement& statement) {" + "\n";
 									generatedDefinitions+= string() + "	// Miniscript setup" + "\n";
 									generatedDefinitions+= string() + "	auto miniScript = this;" + "\n";
-									generatedDefinitions+= string() + "	// statement setup" + "\n";
-									generatedDefinitions+= string() + "	ScriptStatement statement(" + "\n";
-									generatedDefinitions+= string() + "		" + to_string(statement.line) + "," + "\n";
-									generatedDefinitions+= string() + "		" + to_string(statement.statementIdx) + "," + "\n";
-									generatedDefinitions+= string() + "		\"" + StringTools::replace(StringTools::replace(arrayAccessStatementString, "\\", "\\\\"), "\"", "\\\"") + "\"," + "\n";
-									generatedDefinitions+= string() + "		\"" + StringTools::replace(StringTools::replace(arrayAccessStatementString, "\\", "\\\\"), "\"", "\\\"") + "\"," + "\n";
-									generatedDefinitions+= string() + "		STATEMENTIDX_NONE" + "\n";
-									generatedDefinitions+= string() + "	);" + "\n";;
+									generatedDefinitions+= string() + "	//" + "\n";;
 									generatedDefinitions+= transpiledCode;
 									generatedDefinitions+= string() + "}" + "\n\n";
 									//
@@ -367,14 +347,14 @@ static void createArrayAccessMethods(string& generatedDeclarations, string& gene
 						}
 					}
 				}
-				for (const auto& argument: syntaxTreeNode.arguments) {
+				for (const auto& argument: syntaxTree.arguments) {
 					createArrayAccessMethods(generatedDeclarations, generatedDefinitions, miniScriptClassName, scriptInstance, methodName, argument, statement, methodCodeMap, condition, depth + 1);
 				}
 			}
 			break;
 		case MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
 			{
-				for (const auto& argument: syntaxTreeNode.arguments) {
+				for (const auto& argument: syntaxTree.arguments) {
 					createArrayAccessMethods(generatedDeclarations, generatedDefinitions, miniScriptClassName, scriptInstance, methodName, argument, statement, methodCodeMap, condition, depth + 1);
 				}
 				//
