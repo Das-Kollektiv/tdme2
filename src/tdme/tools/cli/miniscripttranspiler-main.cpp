@@ -716,10 +716,10 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 		}
 	}
 
-	// inject array access method declarations
+	// inject array access method declarations into declarations
 	generatedDeclarations+= arrayAccessMethodsDeclarations;
 
-	// add emit code and array access definitions
+	// sum up definitions
 	generatedDefinitions =
 		string("\n#define __MINISCRIPT_TRANSPILATION__\n\n") +
 		initializeNativeDefinition +
