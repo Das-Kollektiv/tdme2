@@ -42,6 +42,12 @@ public:
 		this->fileName = fileName;
 	}
 
+	/**
+	 * Protected destructor
+	 */
+	inline ~VorbisAudioStream() {
+	}
+
 	// overridden methods
 	void rewind() override;
 
@@ -49,12 +55,6 @@ protected:
 	// overridden methods
 	bool initialize() override;
 	void dispose() override;
-
-	/**
-	 * Protected destructor
-	 */
-	inline virtual ~VorbisAudioStream() {
-	}
 
 	// overridden methods
 	void fillBuffer(ByteBuffer* data) override;

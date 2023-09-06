@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -9,6 +10,8 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 
 using std::string;
+
+using std::unique_ptr;
 
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::nodes::GUIElementNode;
@@ -31,7 +34,7 @@ private:
 
 	GUIElementNode* arrowNode { nullptr };
 	bool expanded;
-	GUIActionListener* arrowNodeActionListener { nullptr };
+	unique_ptr<GUIActionListener> arrowNodeActionListener;
 
 	// forbid class copy
 	FORBID_CLASS_COPY(GUISelectBoxParentOptionController)

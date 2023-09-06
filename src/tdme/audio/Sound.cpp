@@ -6,6 +6,7 @@
 	#include <AL/al.h>
 #endif
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -25,6 +26,7 @@ using tdme::audio::Sound;
 
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::audio::decoder::AudioDecoderException;
 using tdme::audio::decoder::VorbisDecoder;
@@ -108,7 +110,7 @@ bool Sound::initialize()
 
 		// decode audio sound
 		VorbisDecoder decoder;
-		ByteBuffer* data = nullptr;
+		unique_ptr<ByteBuffer> data;
 		try {
 			// decode ogg vorbis
 			decoder.openFile(pathName, fileName);
@@ -132,8 +134,8 @@ bool Sound::initialize()
 				default:
 					Console::println(string("Audio sound: '" + id + "': Unsupported number of channels"));
 			}
-			data = ByteBuffer::allocate(2 * 2 * decoder.getSamples());
-			if (decoder.readFromStream(data) == 0) throw new AudioDecoderException("no audio data was decoded");
+			data = unique_ptr<ByteBuffer>(ByteBuffer::allocate(2 * 2 * decoder.getSamples()));
+			if (decoder.readFromStream(data.get()) == 0) throw AudioDecoderException("no audio data was decoded");
 			Console::println(
 				string(
 					"Audio sound: '" +
@@ -171,7 +173,6 @@ bool Sound::initialize()
 			dispose();
 			return false;
 		}
-		delete data;
 	} else {
 		alBufferId = audioBufferManaged->alId;
 	}

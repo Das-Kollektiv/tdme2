@@ -94,15 +94,6 @@ UIEditorTabController::UIEditorTabController(UIEditorTabView* view)
 UIEditorTabController::~UIEditorTabController() {
 }
 
-UIEditorTabView* UIEditorTabController::getView() {
-	return view;
-}
-
-GUIScreenNode* UIEditorTabController::getScreenNode()
-{
-	return screenNode;
-}
-
 void UIEditorTabController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;
@@ -543,7 +534,7 @@ void UIEditorTabController::updateScreensDetails() {
 			modelMeshNodesXML +
 			"<dropdown-option text=\"<None>\" value=\"\" " + (modelMeshNodesXML.empty() == true?"selected=\"true\" ":"") + " />\n";
 		if (model != nullptr) {
-			for (const auto& [nodeId, node]: model->getNodes()) {
+			for (const auto& nodeId: model->getNodeIds()) {
 				modelMeshNodesXML+=
 					"<dropdown-option text=\"" +
 					GUIParser::escape(nodeId) +
@@ -565,8 +556,9 @@ void UIEditorTabController::updateScreensDetails() {
 		string animationsXML;
 		animationsXML = animationsXML + "<dropdown-option text=\"<No animation>\" value=\"\" selected=\"true\" />";
 		if (model != nullptr) {
-			for (const auto& [animationSetupId, animationSetup]: model->getAnimationSetups()) {
-				if (animationSetup->isOverlayAnimationSetup() == true) continue;
+			for (const auto& animationSetupId: model->getAnimationSetupIds()) {
+				auto animationSetup = model->getAnimationSetup(animationSetupId);
+				if (animationSetup == nullptr || animationSetup->isOverlayAnimationSetup() == true) continue;
 				animationsXML =
 					animationsXML + "<dropdown-option text=\"" +
 					GUIParser::escape(animationSetup->getId()) +

@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -19,11 +20,13 @@
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/UniquePtrSequenceIterator.h>
 
+using std::make_unique;
 using std::map;
 using std::remove;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::model::Model;
@@ -41,6 +44,7 @@ using tdme::engine::scene::SceneLibrary;
 using tdme::engine::Entity;
 using tdme::engine::EntityShaderParameters;
 using tdme::math::Vector3;
+using tdme::utilities::UniquePtrSequenceIterator;
 
 /**
  * Prototype definition
@@ -62,16 +66,16 @@ private:
 	string fileName;
 	string modelFileName;
 	string thumbnail;
-	Model* model { nullptr };
+	unique_ptr<Model> model;
 	bool entityHierachy { false };
 	bool scriptHandlingHID { false };
 	string script;
-	PrototypeLODLevel* lodLevel2 { nullptr };
-	PrototypeLODLevel* lodLevel3 { nullptr };
-	PrototypeImposterLOD* imposterLOD { nullptr };
-	vector<PrototypeBoundingVolume*> boundingVolumes;
-	PrototypePhysics* physics { nullptr };
-	vector<PrototypeParticleSystem*> particleSystems;
+	unique_ptr<PrototypeLODLevel> lodLevel2;
+	unique_ptr<PrototypeLODLevel> lodLevel3;
+	unique_ptr<PrototypeImposterLOD> imposterLOD;
+	vector<unique_ptr<PrototypeBoundingVolume>> boundingVolumes;
+	unique_ptr<PrototypePhysics> physics;
+	vector<unique_ptr<PrototypeParticleSystem>> particleSystems;
 	bool terrainMesh { false };
 	bool renderGroups { false };
 	string shaderId { "default"};
@@ -79,11 +83,11 @@ private:
 	bool receivesShadows { true };
 	EntityShaderParameters shaderParameters;
 	map<string, PrototypeAudio*> soundsById;
-	vector<PrototypeAudio*> sounds;
+	vector<unique_ptr<PrototypeAudio>> sounds;
 	int32_t environmentMapRenderPassMask { Entity::RENDERPASS_ALL - Entity::RENDERPASS_WATER };
 	int64_t environmentMapTimeRenderUpdateFrequency { 0LL };
-	PrototypeTerrain* terrain { nullptr };
-	PrototypeDecal* decal { nullptr };
+	unique_ptr<PrototypeTerrain> terrain;
+	unique_ptr<PrototypeDecal> decal;
 
 	/**
 	 * Set Id
@@ -193,7 +197,7 @@ public:
 	 * @return model
 	 */
 	inline Model* getModel() {
-		return model;
+		return model.get();
 	}
 
 	/**
@@ -207,9 +211,7 @@ public:
 	 * @return model
 	 */
 	inline Model* unsetModel() {
-		auto currentModel = model;
-		model = nullptr;
-		return currentModel;
+		return model.release();
 	}
 
 	/**
@@ -265,6 +267,13 @@ public:
 	}
 
 	/**
+	 * @return bounding volumes iterator
+	 */
+	inline UniquePtrSequenceIterator<PrototypeBoundingVolume> getBoundingVolumes() {
+		return UniquePtrSequenceIterator<PrototypeBoundingVolume>(&boundingVolumes[0], &boundingVolumes[boundingVolumes.size()]);
+	}
+
+	/**
 	 * @return bounding volume count
 	 */
 	inline int getBoundingVolumeCount() {
@@ -277,16 +286,14 @@ public:
 	 * @return prototype bounding volume
 	 */
 	inline PrototypeBoundingVolume* getBoundingVolume(int idx) {
-		return idx >= 0 && idx < boundingVolumes.size()?boundingVolumes[idx]:nullptr;
+		return idx >= 0 && idx < boundingVolumes.size()?boundingVolumes[idx].get():nullptr;
 	}
 
 	/**
-	 * Add bounding volume at given index
-	 * @param idx index
+	 * Add bounding volume
 	 * @param prototypeBoundingVolume prototype bounding volume
-	 * @return scene editor bounding volume
 	 */
-	bool addBoundingVolume(int idx, PrototypeBoundingVolume* prototypeBoundingVolume);
+	void addBoundingVolume(PrototypeBoundingVolume* prototypeBoundingVolume);
 
 	/**
 	 * Remove bounding volume at given index
@@ -298,9 +305,9 @@ public:
 	 * Get bounding volumes primitibves to be added to physics engine
 	 * @return bounding volume primitives
 	 */
-	inline const vector<BoundingVolume*> getBoundingVolumePrimitives() {
+	inline const vector<BoundingVolume*> getBoundingVolumesPrimitives() {
 		vector<BoundingVolume*> boundingVolumePrimitives;
-		for (auto boundingVolume: boundingVolumes) {
+		for (const auto& boundingVolume: boundingVolumes) {
 			if (boundingVolume->getBoundingVolume() != nullptr) {
 				boundingVolumePrimitives.push_back(boundingVolume->getBoundingVolume());
 			}
@@ -312,14 +319,14 @@ public:
 	 * @return physics
 	 */
 	inline PrototypePhysics* getPhysics() {
-		return physics;
+		return physics.get();
 	}
 
 	/**
 	 * @return LOD level 2
 	 */
 	inline PrototypeLODLevel* getLODLevel2() {
-		return lodLevel2;
+		return lodLevel2.get();
 	}
 
 	/**
@@ -332,7 +339,7 @@ public:
 	 * @return LOD level 3
 	 */
 	inline PrototypeLODLevel* getLODLevel3() {
-		return lodLevel3;
+		return lodLevel3.get();
 	}
 
 	/**
@@ -351,7 +358,7 @@ public:
 	 * @return imposter LOD
 	 */
 	inline PrototypeImposterLOD* getImposterLOD() {
-		return imposterLOD;
+		return imposterLOD.get();
 	}
 
 	/**
@@ -361,32 +368,17 @@ public:
 	void setImposterLOD(PrototypeImposterLOD* imposterLOD);
 
 	/**
+	 * @return particle systems iterator
+	 */
+	inline UniquePtrSequenceIterator<PrototypeParticleSystem> getParticleSystems() {
+		return UniquePtrSequenceIterator<PrototypeParticleSystem>(&particleSystems[0], &particleSystems[particleSystems.size()]);
+	}
+
+	/**
 	 * @return particle systems count
 	 */
 	inline int getParticleSystemsCount() {
 		return particleSystems.size();
-	}
-
-	/**
-	 * Add particle system
-	 */
-	inline PrototypeParticleSystem* addParticleSystem() {
-		auto particleSystem = new PrototypeParticleSystem();
-		particleSystems.push_back(particleSystem);
-		return particleSystem;
-	}
-
-	/**
-	 * Remove particle system at given index
-	 * @param idx particle system index
-	 * @return success
-	 */
-	inline bool removeParticleSystemAt(int idx) {
-		if (idx < 0 || idx >= particleSystems.size()) return false;
-		auto particleSystem = particleSystems[idx];
-		particleSystems.erase(remove(particleSystems.begin(), particleSystems.end(), particleSystem), particleSystems.end());
-		delete particleSystem;
-		return true;
 	}
 
 	/**
@@ -396,7 +388,27 @@ public:
 	 */
 	inline PrototypeParticleSystem* getParticleSystemAt(int idx) {
 		if (idx < 0 || idx >= particleSystems.size()) return nullptr;
-		return particleSystems[idx];
+		return particleSystems[idx].get();
+	}
+
+	/**
+	 * Add particle system
+	 * @param particleSystem particle system
+	 */
+	inline void addParticleSystem(PrototypeParticleSystem* particleSystem) {
+		particleSystems.push_back(unique_ptr<PrototypeParticleSystem>(particleSystem));
+	}
+
+	/**
+	 * Remove particle system at given index
+	 * @param idx particle system index
+	 * @return success
+	 */
+	inline bool removeParticleSystemAt(int idx) {
+		if (idx < 0 || idx >= particleSystems.size()) return false;
+		const auto& particleSystem = particleSystems[idx];
+		particleSystems.erase(remove(particleSystems.begin(), particleSystems.end(), particleSystem), particleSystems.end());
+		return true;
 	}
 
 	/**
@@ -495,16 +507,30 @@ public:
 	}
 
 	/**
-	 * @return sounds list
+	 * @return sounds iterator
 	 */
-	inline const vector<PrototypeAudio*>& getSounds() {
-		return sounds;
+	inline UniquePtrSequenceIterator<PrototypeAudio> getSounds() {
+		return UniquePtrSequenceIterator<PrototypeAudio>(&sounds[0], &sounds[sounds.size()]);
+	}
+
+	/**
+	 * @return sound count
+	 */
+	inline int getSoundCount() {
+		return sounds.size();
+	}
+
+	/**
+	 * Get sound at given index
+	 * @param idx index
+	 * @return prototype sound
+	 */
+	inline PrototypeAudio* getSoundAt(int idx) {
+		return idx >= 0 && idx < sounds.size()?sounds[idx].get():nullptr;
 	}
 
 	/**
 	 * Returns sound of given sound id
-	 * @param id id
-	 * @return sound
 	 */
 	inline PrototypeAudio* getSound(const string& id) {
 		auto soundIt = soundsById.find(id);
@@ -513,20 +539,32 @@ public:
 	}
 
 	/**
+	 * Add sound
+	 * @param sound sound
+	 */
+	void addSound(PrototypeAudio* sound);
+
+	/**
 	 * Remove sound of given sound id
 	 * @param id id
 	 */
 	inline void removeSound(const string& id) {
 		auto soundIt = soundsById.find(id);
 		if (soundIt == soundsById.end()) return;
-		sounds.erase(remove(sounds.begin(), sounds.end(), soundIt->second), sounds.end());
+		auto sound = soundIt->second;
+		for (auto i = 0; i < sounds.size(); i++) {
+			if (sounds[i].get() == sound) {
+				sounds.erase(sounds.begin() + i);
+				break;
+			}
+		}
 		soundsById.erase(soundIt);
 	}
 
 	/**
 	 * Renames sound of given sound id with new id
 	 * @param id existing id
-	 * @param id new id
+	 * @param newId new id
 	 * @return success
 	 */
 	inline bool renameSound(const string& id, const string& newId) {
@@ -538,13 +576,6 @@ public:
 		soundsById[newId] = sound;
 		return true;
 	}
-
-	/**
-	 * Add sound with given id
-	 * @param id id
-	 * @return prototype audio
-	 */
-	PrototypeAudio* addSound(const string& id);
 
 	/**
 	 * @return environment map render pass mask
@@ -580,14 +611,14 @@ public:
 	 * @return terrain definitions
 	 */
 	inline PrototypeTerrain* getTerrain() {
-		return terrain;
+		return terrain.get();
 	}
 
 	/**
 	 * @return decal definitions
 	 */
 	inline PrototypeDecal* getDecal() {
-		return decal;
+		return decal.get();
 	}
 
 };

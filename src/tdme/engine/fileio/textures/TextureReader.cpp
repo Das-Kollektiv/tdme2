@@ -1,9 +1,7 @@
 #include <tdme/engine/fileio/textures/TextureReader.h>
 
-#include <stdlib.h>
-
-#include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -11,7 +9,7 @@
 
 #include <tdme/engine/fileio/textures/PNGTextureReader.h>
 #include <tdme/engine/Texture.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -20,16 +18,16 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/StringTools.h>
 
-using std::map;
 using std::string;
 using std::to_string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::fileio::textures::TextureReader;
 
 using tdme::engine::fileio::textures::PNGTextureReader;
 using tdme::engine::Texture;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::math::Vector2;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
@@ -40,8 +38,8 @@ using tdme::utilities::Exception;
 using tdme::utilities::StringTools;
 
 vector<string> TextureReader::extensions = {"png"};
-Mutex* TextureReader::textureCacheMutex = new Mutex("texturecache-mutex");
-map<string, Texture*>* TextureReader::textureCache = new map<string, Texture*>();
+Mutex TextureReader::textureCacheMutex ("texturecache-mutex");
+unordered_map<string, Texture*> TextureReader::textureCache;
 
 const vector<string>& TextureReader::getTextureExtensions() {
 	return extensions;
@@ -58,9 +56,9 @@ Texture* TextureReader::read(const string& pathName, const string& fileName, boo
 
 	// do cache look up
 	if (useCache == true) {
-		textureCacheMutex->lock();
-		auto textureCacheIt = textureCache->find(idPrefix + canonicalFilePath);
-		if (textureCacheIt != textureCache->end()) {
+		textureCacheMutex.lock();
+		auto textureCacheIt = textureCache.find(idPrefix + canonicalFilePath);
+		if (textureCacheIt != textureCache.end()) {
 			texture = textureCacheIt->second;
 		}
 	}
@@ -77,19 +75,18 @@ Texture* TextureReader::read(const string& pathName, const string& fileName, boo
 
 				texture = PNGTextureReader::read(canonicalFilePath, data, powerOfTwo, idPrefix);
 				if (texture != nullptr && useCache == true) {
-					(*textureCache)[texture->getId()] = texture;
+					textureCache[texture->getId()] = texture;
 				}
 			}
 		} catch (Exception& exception) {
 			Console::println("TextureReader::read(): Could not load texture: " + canonicalPathName + "/" + canonicalFileName + ": " + (exception.what()));
 		}
+	} else {
+		texture->acquireReference();
 	}
 
-	// done
-	if (texture != nullptr) texture->acquireReference();
-
 	//
-	if (useCache == true) textureCacheMutex->unlock();
+	if (useCache == true) textureCacheMutex.unlock();
 
 	// done
 	return texture;
@@ -104,41 +101,41 @@ Texture* TextureReader::read2(const string& texturePathName, const string& textu
 
 	// do cache look up
 	if (useCache == true) {
-		textureCacheMutex->lock();
-		auto textureCacheIt = textureCache->find(cacheId);
-		if (textureCacheIt != textureCache->end()) {
+		textureCacheMutex.lock();
+		auto textureCacheIt = textureCache.find(cacheId);
+		if (textureCacheIt != textureCache.end()) {
 			auto texture = textureCacheIt->second;
 			texture->acquireReference();
-			textureCacheMutex->unlock();
+			textureCacheMutex.unlock();
 			return texture;
 		}
 	}
 
 	// load diffuse texture
-	auto texture = TextureReader::read(texturePathName, textureFileName, false, powerOfTwo, idPrefix);
+	auto texture = unique_ptr<Texture, decltype([](Texture* texture){ texture->releaseReference(); })>(TextureReader::read(texturePathName, textureFileName, false, powerOfTwo, idPrefix));
 	if (texture == nullptr) {
-		if (useCache == true) textureCacheMutex->unlock();
+		if (useCache == true) textureCacheMutex.unlock();
 		return nullptr;
 	}
 	// additional transparency texture
-	auto transparencyTexture = TextureReader::read(transparencyTexturePathName, transparencyTextureFileName, false, powerOfTwo, idPrefix);
+	auto transparencyTexture = unique_ptr<Texture, decltype([](Texture* texture){ texture->releaseReference(); })>(TextureReader::read(transparencyTexturePathName, transparencyTextureFileName, false, powerOfTwo, idPrefix));
 	// do we have one?
 	if (transparencyTexture == nullptr) {
 		Console::println("TextureReader::read2(): transparency texture: failed: " + texturePathName + "/" + textureFileName + ";" + transparencyTexturePathName + "/" + transparencyTextureFileName);
 		if (useCache == true) {
-			(*textureCache)[cacheId] = texture;
-			textureCacheMutex->unlock();
+			textureCache[cacheId] = texture.get();
+			textureCacheMutex.unlock();
 		}
-		return texture;
+		return texture.release();
 	}
 	// same dimensions and supported pixel depth?
 	if (texture->getTextureWidth() != transparencyTexture->getTextureWidth() || texture->getTextureHeight() != transparencyTexture->getTextureHeight()) {
 		Console::println("TextureReader::read2(): texture does not match transparency texture dimension: " + texturePathName + "/" + textureFileName + ";" + transparencyTexturePathName + "/" + transparencyTextureFileName);
 		if (useCache == true) {
-			(*textureCache)[cacheId] = texture;
-			textureCacheMutex->unlock();
+			textureCache[cacheId] = texture.get();
+			textureCacheMutex.unlock();
 		}
-		return texture;
+		return texture.release();
 	}
 	// yep, combine diffuse map + diffuse transparency map
 	auto textureWidth = texture->getTextureWidth();
@@ -160,25 +157,35 @@ Texture* TextureReader::read2(const string& texturePathName, const string& textu
 		}
 	}
 	//
-	auto textureWithTransparency = new Texture(
-		idPrefix + texture->getId() + "/transparency",
-		Texture::TEXTUREDEPTH_RGBA,
-		Texture::TEXTUREFORMAT_RGBA_PNG,
-		texture->getWidth(),
-		texture->getHeight(),
-		texture->getTextureWidth(),
-		texture->getTextureHeight(),
-		Texture::TEXTUREFORMAT_RGBA,
-		textureByteBuffer
-	);
+	auto textureWithTransparency =
+		unique_ptr<
+			Texture,
+			decltype([](Texture* texture){ texture->releaseReference(); })
+		>(
+			new Texture(
+				idPrefix + texture->getId() + "/transparency",
+				Texture::TEXTUREDEPTH_RGBA,
+				texture->isPNGTextureFormat() == true?
+					Texture::getPNGFormatByPixelBitsPerPixel(32):
+					(
+						texture->isBC7TextureFormat() == true?
+							Texture::getBC7FormatByPixelBitsPerPixel(32):
+							Texture::getRGBFormatByPixelBitsPerPixel(32)
+					),
+				texture->getWidth(),
+				texture->getHeight(),
+				texture->getTextureWidth(),
+				texture->getTextureHeight(),
+				Texture::getRGBFormatByPixelBitsPerPixel(32),
+				textureByteBuffer
+			)
+		);
 	textureWithTransparency->acquireReference();
 	if (useCache == true) {
-		(*textureCache)[cacheId] = textureWithTransparency;
-		textureCacheMutex->unlock();
+		textureCache[cacheId] = textureWithTransparency.get();
+		textureCacheMutex.unlock();
 	}
-	texture->releaseReference();
-	transparencyTexture->releaseReference();
-	return textureWithTransparency;
+	return textureWithTransparency.release();
 }
 
 void TextureReader::scaleTextureLine(const ByteBuffer& pixelByteBuffer, ByteBuffer& pixelByteBufferScaled, int width, int textureWidth, int bytesPerPixel, int y) {
@@ -207,10 +214,10 @@ void TextureReader::scaleTextureLine(const ByteBuffer& pixelByteBuffer, ByteBuff
 }
 
 void TextureReader::removeFromCache(Texture* texture) {
-	textureCacheMutex->lock();
-	auto textureCacheIt = textureCache->find(texture->getId());
-	if (textureCacheIt != textureCache->end()) textureCache->erase(textureCacheIt);
-	textureCacheMutex->unlock();
+	textureCacheMutex.lock();
+	auto textureCacheIt = textureCache.find(texture->getId());
+	if (textureCacheIt != textureCache.end()) textureCache.erase(textureCacheIt);
+	textureCacheMutex.unlock();
 }
 
 Texture* TextureReader::rotate(Texture* texture, float rotation, const string& idSuffix) {
@@ -220,7 +227,7 @@ Texture* TextureReader::rotate(Texture* texture, float rotation, const string& i
 	auto textureWidthRotated = -1;
 	auto textureHeightRotated = -1;
 	{
-		auto rotationsMatrix = Matrix2D3x3::rotateAroundPoint(Vector2(textureWidth / 2.0f, textureHeight / 2.0f), rotation);
+		auto rotationsMatrix = Matrix3x3::rotateAroundPoint(Vector2(textureWidth / 2.0f, textureHeight / 2.0f), rotation);
 		Vector2 leftTop(0.0f, 0.0f);
 		Vector2 rightTop(textureWidth, 0.0f);
 		Vector2 leftBottom(0.0f, textureHeight);
@@ -252,7 +259,7 @@ Texture* TextureReader::rotate(Texture* texture, float rotation, const string& i
 	}
 	auto textureTextureData = texture->getRGBTextureData();
 	auto rotatedTextureByteBuffer = ByteBuffer(textureWidthRotated * textureHeightRotated * textureBytesPerPixel);
-	auto rotationsMatrix = Matrix2D3x3::rotateAroundPoint(Vector2(textureWidth / 2.0f, textureHeight / 2.0f), rotation);
+	auto rotationsMatrix = Matrix3x3::rotateAroundPoint(Vector2(textureWidth / 2.0f, textureHeight / 2.0f), rotation);
 	for (auto y = 0; y < textureHeightRotated; y++) {
 		for (auto x = 0; x < textureWidthRotated; x++) {
 			auto originalTexturePoint = rotationsMatrix.multiply(
@@ -280,22 +287,32 @@ Texture* TextureReader::rotate(Texture* texture, float rotation, const string& i
 		}
 	}
 	//
-	auto rotatedTexture = new Texture(
-		texture->getId() + idSuffix + ":tmp",
-		textureBytesPerPixel == 4?Texture::TEXTUREDEPTH_RGBA:Texture::TEXTUREDEPTH_RGB,
-		textureBytesPerPixel == 4?Texture::TEXTUREFORMAT_RGBA_PNG:Texture::TEXTUREFORMAT_RGB_PNG,
-		textureWidthRotated,
-		textureHeightRotated,
-		textureWidthRotated,
-		textureHeightRotated,
-		textureBytesPerPixel == 4?Texture::TEXTUREFORMAT_RGBA:Texture::TEXTUREFORMAT_RGB,
-		rotatedTextureByteBuffer
-	);
+	auto rotatedTexture =
+		unique_ptr<
+			Texture,
+			decltype([](Texture* texture){ texture->releaseReference(); })
+		>(
+			new Texture(
+				texture->getId() + idSuffix + ":tmp",
+				textureBytesPerPixel == 4?Texture::TEXTUREDEPTH_RGBA:Texture::TEXTUREDEPTH_RGB,
+				texture->isPNGTextureFormat() == true?
+					Texture::getPNGFormatByPixelBitsPerPixel(texture->getRGBDepthBitsPerPixel()):
+					(
+						texture->isBC7TextureFormat() == true?
+							Texture::getBC7FormatByPixelBitsPerPixel(texture->getRGBDepthBitsPerPixel()):
+							Texture::getRGBFormatByPixelBitsPerPixel(texture->getRGBDepthBitsPerPixel())
+					),
+				textureWidthRotated,
+				textureHeightRotated,
+				textureWidthRotated,
+				textureHeightRotated,
+				Texture::getRGBFormatByPixelBitsPerPixel(texture->getRGBDepthBitsPerPixel()),
+				rotatedTextureByteBuffer
+			)
+		);
 	rotatedTexture->acquireReference();
 	// do smooooth
-	auto filteredTexture = smooth(rotatedTexture, idSuffix);
-	rotatedTexture->releaseReference();
-	return filteredTexture;
+	return smooth(rotatedTexture.get(), idSuffix);
 }
 
 Texture* TextureReader::scale(Texture* texture, int width, int height, const string& idSuffix) {
@@ -330,24 +347,34 @@ Texture* TextureReader::scale(Texture* texture, int width, int height, const str
 		}
 	}
 	//
-	auto scaledTexture = new Texture(
-		texture->getId() + idSuffix,
-		textureBytesPerPixel == 4?Texture::TEXTUREDEPTH_RGBA:Texture::TEXTUREDEPTH_RGB,
-		textureBytesPerPixel == 4?Texture::TEXTUREFORMAT_RGBA_PNG:Texture::TEXTUREFORMAT_RGB_PNG,
-		textureWidthScaled,
-		textureHeightScaled,
-		textureWidthScaled,
-		textureHeightScaled,
-		textureBytesPerPixel == 4?Texture::TEXTUREFORMAT_RGBA:Texture::TEXTUREFORMAT_RGB,
-		scaledTextureByteBuffer
-	);
+	auto scaledTexture =
+		unique_ptr<
+			Texture,
+			decltype([](Texture* texture){ texture->releaseReference(); })
+		>(
+			new Texture(
+				texture->getId() + idSuffix,
+				textureBytesPerPixel == 4?Texture::TEXTUREDEPTH_RGBA:Texture::TEXTUREDEPTH_RGB,
+				texture->isPNGTextureFormat() == true?
+					Texture::getPNGFormatByPixelBitsPerPixel(texture->getRGBDepthBitsPerPixel()):
+					(
+						texture->isBC7TextureFormat() == true?
+							Texture::getBC7FormatByPixelBitsPerPixel(texture->getRGBDepthBitsPerPixel()):
+							Texture::getRGBFormatByPixelBitsPerPixel(texture->getRGBDepthBitsPerPixel())
+					),
+				textureWidthScaled,
+				textureHeightScaled,
+				textureWidthScaled,
+				textureHeightScaled,
+				Texture::getRGBFormatByPixelBitsPerPixel(texture->getRGBDepthBitsPerPixel()),
+				scaledTextureByteBuffer
+			)
+		);
 	scaledTexture->acquireReference();
 	// no smoothing if texture got smaller
-	if (textureWidthScaled < textureWidth) return scaledTexture;
+	if (textureWidthScaled < textureWidth) return scaledTexture.release();
 	// otherwise do smoothing
-	auto filteredTexture = smooth(scaledTexture, idSuffix);
-	scaledTexture->releaseReference();
-	return filteredTexture;
+	return smooth(scaledTexture.get(), idSuffix);
 }
 
 Texture* TextureReader::smooth(Texture* texture, const string& idSuffix, float adjacentSampleWeight) {
@@ -397,17 +424,29 @@ Texture* TextureReader::smooth(Texture* texture, const string& idSuffix, float a
 	}
 
 	//
-	auto filteredTexture = new Texture(
-		texture->getId() + idSuffix,
-		textureBytesPerPixel == 4?Texture::TEXTUREDEPTH_RGBA:Texture::TEXTUREDEPTH_RGB,
-		textureBytesPerPixel == 4?Texture::TEXTUREFORMAT_RGBA_PNG:Texture::TEXTUREFORMAT_RGB_PNG,
-		textureWidth,
-		textureHeight,
-		textureWidth,
-		textureHeight,
-		textureBytesPerPixel == 4?Texture::TEXTUREFORMAT_RGBA:Texture::TEXTUREFORMAT_RGB,
-		filteredTextureByteBuffer
-	);
+	auto filteredTexture =
+		unique_ptr<
+			Texture,
+			decltype([](Texture* texture){ texture->releaseReference(); })
+		>(
+			new Texture(
+				texture->getId() + idSuffix,
+				textureBytesPerPixel == 4?Texture::TEXTUREDEPTH_RGBA:Texture::TEXTUREDEPTH_RGB,
+				texture->isPNGTextureFormat() == true?
+					Texture::getPNGFormatByPixelBitsPerPixel(texture->getRGBDepthBitsPerPixel()):
+					(
+						texture->isBC7TextureFormat() == true?
+							Texture::getBC7FormatByPixelBitsPerPixel(texture->getRGBDepthBitsPerPixel()):
+							Texture::getRGBFormatByPixelBitsPerPixel(texture->getRGBDepthBitsPerPixel())
+					),
+				textureWidth, // TODO: calculate new width
+				textureHeight, // TODO: calculate new height
+				textureWidth,
+				textureHeight,
+				Texture::getRGBFormatByPixelBitsPerPixel(texture->getRGBDepthBitsPerPixel()),
+				filteredTextureByteBuffer
+			)
+		);
 	filteredTexture->acquireReference();
-	return filteredTexture;
+	return filteredTexture.release();
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -22,6 +23,7 @@
 
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
@@ -163,7 +165,7 @@ private:
 
 	GUIColor foccussedBorderColor;
 
-	GUIMiniScript* script { nullptr };
+	unique_ptr<GUIMiniScript> script;
 	bool scriptOnActionAvailable { false };
 	bool scriptOnChangeAvailable { false };
 	bool scriptOnMouseOverAvailable { false };
@@ -284,6 +286,50 @@ public:
 	}
 
 protected:
+
+	// overridden methods
+	bool isContentNode() override;
+	const string getNodeType() override;
+
+private:
+
+	/**
+	 * Initialize mini script
+	 */
+	void initializeMiniScript();
+
+	/**
+	 * Add node
+	 * @param node node
+	 * @return success
+	 */
+	bool addNode(GUINode* node);
+
+	/**
+	 * Add node
+	 * @param node node
+	 * @return success
+	 */
+	bool removeNode(GUINode* node);
+
+	/**
+	 * Calls registered tick nodes controller tick method
+	 */
+	void tick();
+
+	/**
+	 * Forward events
+	 */
+	void forwardEvents();
+
+	/**
+	 * Clear events
+	 */
+	inline void clearEvents() {
+		forwardEventList.clear();
+	}
+
+public:
 	// forbid class copy
 	FORBID_CLASS_COPY(GUIScreenNode)
 
@@ -348,49 +394,6 @@ protected:
 	 */
 	~GUIScreenNode();
 
-	// overridden methods
-	bool isContentNode() override;
-	const string getNodeType() override;
-
-private:
-
-	/**
-	 * Initialize mini script
-	 */
-	void initializeMiniScript();
-
-	/**
-	 * Add node
-	 * @param node node
-	 * @return success
-	 */
-	bool addNode(GUINode* node);
-
-	/**
-	 * Add node
-	 * @param node node
-	 * @return success
-	 */
-	bool removeNode(GUINode* node);
-
-	/**
-	 * Calls registered tick nodes controller tick method
-	 */
-	void tick();
-
-	/**
-	 * Forward events
-	 */
-	void forwardEvents();
-
-	/**
-	 * Clear events
-	 */
-	inline void clearEvents() {
-		forwardEventList.clear();
-	}
-
-public:
 	/**
 	 * @return content width
 	 */
@@ -790,7 +793,7 @@ public:
 	 * @return mini script script attached to this screen
 	 */
 	inline GUIMiniScript* getMiniScript() {
-		return script;
+		return script.get();
 	}
 
 	/**

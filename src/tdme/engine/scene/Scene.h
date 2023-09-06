@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
@@ -15,11 +16,13 @@
 #include <tdme/engine/scene/SceneLight.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/UniquePtrSequenceIterator.h>
 
+using std::make_unique;
 using std::map;
 using std::set;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::model::Model;
@@ -30,6 +33,7 @@ using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::scene::SceneLight;
 using tdme::math::Vector3;
+using tdme::utilities::UniquePtrSequenceIterator;
 
 /**
  * Scene definition
@@ -42,17 +46,17 @@ private:
 	string applicationRootPathName;
 	string fileName;
 	RotationOrder* rotationOrder { nullptr };
-	vector<SceneLight*> lights;
-	SceneLibrary* library { nullptr };
+	vector<unique_ptr<SceneLight>> lights;
+	unique_ptr<SceneLibrary> library;
 	map<string, SceneEntity*> entitiesById;
-	vector<SceneEntity*> entities;
+	vector<unique_ptr<SceneEntity>> entities;
 	set<string> environmentMappingIds;
 	int entityIdx;
 	BoundingBox boundingBox;
 	Vector3 dimension;
 	Vector3 center;
 	string skyModelFileName;
-	Model* skyModel { nullptr };
+	unique_ptr<Model> skyModel;
 	Vector3 skyModelScale;
 	string guiFileName;
 
@@ -126,6 +130,13 @@ public:
 	}
 
 	/**
+	 * @return Lights iterator
+	 */
+	inline UniquePtrSequenceIterator<SceneLight> getLights() {
+		return UniquePtrSequenceIterator<SceneLight>(&lights[0], &lights[lights.size()]);
+	}
+
+	/**
 	 * @return number of lights
 	 */
 	inline int getLightCount() {
@@ -139,7 +150,7 @@ public:
 	 */
 	inline SceneLight* getLightAt(int i) {
 		if (i < 0 || i >= lights.size()) return nullptr;
-		return lights[i];
+		return lights[i].get();
 	}
 
 	/**
@@ -147,8 +158,8 @@ public:
 	 * @return light
 	 */
 	inline SceneLight* addLight() {
-		lights.push_back(new SceneLight(lights.size()));
-		return lights[lights.size() - 1];
+		lights.push_back(make_unique<SceneLight>(lights.size()));
+		return lights[lights.size() - 1].get();
 	}
 
 	/**
@@ -166,7 +177,7 @@ public:
 	 * @return scene prototype library
 	 */
 	inline SceneLibrary* getLibrary() {
-		return library;
+		return library.get();
 	}
 
 	/**
@@ -245,6 +256,37 @@ public:
 	}
 
 	/**
+	 * @return Entities iterator
+	 */
+	inline UniquePtrSequenceIterator<SceneEntity> getEntities() {
+		return UniquePtrSequenceIterator<SceneEntity>(&entities[0], &entities[entities.size()]);
+	}
+
+	/**
+	 * @return number of entities
+	 */
+	inline int getEntityCount() {
+		return entities.size();
+	}
+
+	/**
+	 * Returns entity at given index
+	 * @param idx index
+	 * @return scene entity
+	 */
+	inline SceneEntity* getEntityAt(int idx) {
+		if (idx < 0 || idx >= entities.size()) return nullptr;
+		return entities[idx].get();
+	}
+
+	/**
+	 * Returns scene entity by id
+	 * @param id id
+	 * @return scene entity
+	 */
+	SceneEntity* getEntity(const string& id);
+
+	/**
 	 * Adds an entity to scene
 	 * @param object object
 	 */
@@ -266,29 +308,6 @@ public:
 	bool renameEntity(const string& id, const string& newId);
 
 	/**
-	 * Returns scene entity by id
-	 * @param id id
-	 * @return scene entity
-	 */
-	SceneEntity* getEntity(const string& id);
-
-	/**
-	 * @return number of entities
-	 */
-	inline int getEntityCount() {
-		return entities.size();
-	}
-
-	/**
-	 * Returns entity at given index
-	 * @param idx index
-	 * @return scene entity
-	 */
-	inline SceneEntity* getEntityAt(int idx) {
-		return entities[idx];
-	}
-
-	/**
 	 * @return sky model file name
 	 */
 	inline const string& getSkyModelFileName() {
@@ -307,7 +326,7 @@ public:
 	 * @return sky model
 	 */
 	inline Model* getSkyModel() {
-		return skyModel;
+		return skyModel.get();
 	}
 
 	/**

@@ -1,5 +1,6 @@
 #include <tdme/tests/PhysicsTest3.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -32,8 +33,10 @@
 #include <tdme/utilities/Primitives.h>
 #include <tdme/utilities/Time.h>
 
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::tests::PhysicsTest3;
 
@@ -71,18 +74,17 @@ PhysicsTest3::PhysicsTest3()
 {
 	Application::setLimitFPS(true);
 	engine = Engine::getInstance();
-	world = new World("world");
+	world = make_unique<World>("world");
 }
 
 PhysicsTest3::~PhysicsTest3()
 {
-	delete world;
 }
 
-void PhysicsTest3::main(int argc, char** argv)
+int PhysicsTest3::main(int argc, char** argv)
 {
 	auto physicsTest3 = new PhysicsTest3();
-	physicsTest3->run(argc, argv, "PhysicsTest3", physicsTest3);
+	return physicsTest3->run(argc, argv, "PhysicsTest3", physicsTest3);
 }
 
 void PhysicsTest3::display()
@@ -268,8 +270,8 @@ void PhysicsTest3::initialize()
 		entity->setShader("terrain");
 		engine->addEntity(entity);
 		ObjectModel terrainModel(_terrainModel);
-		auto terrainMesh = new TerrainMesh(&terrainModel, entity->getTransform());
-		world->addStaticRigidBody("ground", RIGID_TYPEID_STANDARD, true, Transform(), 0.5f, {terrainMesh});
+		auto terrainMesh = TerrainMesh(&terrainModel, entity->getTransform());
+		world->addStaticRigidBody("ground", RIGID_TYPEID_STANDARD, true, Transform(), 0.5f, {&terrainMesh});
 		auto _barrel = modelDeleter.add(ModelReader::read("resources/tests/models/barrel", "barrel.dae"));
 		auto barrelBoundingVolume = bvDeleter.add(new ConvexMesh(objectModelDeleter.add(new ObjectModel(_barrel))));
 		entity = new Object("barrel1", _barrel);

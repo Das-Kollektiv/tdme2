@@ -48,7 +48,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 using tdme::engine::EntityShaderParameters;
 using tdme::engine::FrameBuffer;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::math::Matrix4x4;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::ReadWriteLock;

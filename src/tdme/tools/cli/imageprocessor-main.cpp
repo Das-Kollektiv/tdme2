@@ -96,7 +96,14 @@ int main(int argc, char** argv)
 			false,
 			false
 		);
+
+		//
+		image->releaseReference();
 	} catch (Exception& exception) {
 		Console::println("An error occurred: " + string(exception.what()));
 	}
+
+	//
+	Console::shutdown();
+	return 0;
 }

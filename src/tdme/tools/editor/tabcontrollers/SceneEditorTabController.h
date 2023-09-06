@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -19,6 +20,7 @@
 #include <tdme/utilities/MutableString.h>
 
 using std::string;
+using std::unique_ptr;
 
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::Transform;
@@ -48,7 +50,7 @@ class tdme::tools::editor::tabcontrollers::SceneEditorTabController final
 {
 
 private:
-	BasePropertiesSubController* basePropertiesSubController { nullptr };
+	unique_ptr<BasePropertiesSubController> basePropertiesSubController;
 	SceneEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
@@ -131,10 +133,14 @@ public:
 	/**
 	 * Get view
 	 */
-	SceneEditorTabView* getView();
+	inline SceneEditorTabView* getView() {
+		return view;
+	}
 
 	// overridden method
-	GUIScreenNode* getScreenNode() override;
+	inline GUIScreenNode* getScreenNode() override {
+		return screenNode;
+	}
 
 	// overridden methods
 	void initialize(GUIScreenNode* screenNode) override;

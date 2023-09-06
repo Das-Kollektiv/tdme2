@@ -33,6 +33,12 @@ EntityHierarchy::EntityHierarchy(const string& id): id(id)
 EntityHierarchy::~EntityHierarchy()
 {
 	for (auto entity: entities) delete entity;
+	for (const auto& [childEntityId, childEntity]: entityRoot.children) deleteHierarchy(childEntity, 0);
+}
+
+void EntityHierarchy::deleteHierarchy(EntityHierarchyLevel* entityHierarchyLevel, int depth) {
+	for (const auto& [childEntityId, childEntity]: entityHierarchyLevel->children) deleteHierarchy(childEntity, depth + 1);
+	delete entityHierarchyLevel;
 }
 
 void EntityHierarchy::setEngine(Engine* engine)

@@ -1,6 +1,8 @@
 #include <tdme/engine/subsystems/rendering/ObjectInternal.h>
 
+#include <memory>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Color4.h>
@@ -17,6 +19,8 @@
 #include <tdme/math/Vector3.h>
 
 using std::string;
+using std::unique_ptr;
+using std::unordered_map;
 
 using tdme::engine::Color4;
 using tdme::engine::model::Face;
@@ -79,7 +83,7 @@ void ObjectInternal::bindDiffuseTexture(int32_t textureId, const string& nodeId,
 	}
 }
 
-void ObjectInternal::setTextureMatrix(const Matrix2D3x3& textureMatrix, const string& nodeId, const string& facesEntityId) {
+void ObjectInternal::setTextureMatrix(const Matrix3x3& textureMatrix, const string& nodeId, const string& facesEntityId) {
 	for (auto i = 0; i < objectNodes.size(); i++) {
 		auto objectNode = objectNodes[i];
 		// skip if a node is desired but not matching
@@ -101,25 +105,23 @@ void ObjectInternal::setTextureMatrix(const Matrix2D3x3& textureMatrix, const st
 void ObjectInternal::setNodeTransformMatrix(const string& id, const Matrix4x4& matrix) {
 	nodeTransformMatrixUpdate = true;
 	ObjectBase::setNodeTransformMatrix(id, matrix);
-	map<string, Matrix4x4*> _overriddenTransformMatrices;
+	unordered_map<string, Matrix4x4*> _overriddenTransformMatrices;
 	for (const auto& [overriddenTransformMatrixId, overriddenTransformMatrix]: instanceAnimations[currentInstance]->overriddenTransformMatrices) {
 		_overriddenTransformMatrices[overriddenTransformMatrixId] = new Matrix4x4(*overriddenTransformMatrix);
 	}
-	auto newBoundingBox = ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overriddenTransformMatrices);
-	boundingBox.fromBoundingVolume(newBoundingBox);
-	delete newBoundingBox;
+	auto newBoundingBox = unique_ptr<BoundingBox>(ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overriddenTransformMatrices));
+	boundingBox.fromBoundingVolume(newBoundingBox.get());
 }
 
 void ObjectInternal::unsetNodeTransformMatrix(const string& id) {
 	nodeTransformMatrixUpdate = true;
 	ObjectBase::unsetNodeTransformMatrix(id);
-	map<string, Matrix4x4*> _overriddenTransformMatrices;
+	unordered_map<string, Matrix4x4*> _overriddenTransformMatrices;
 	for (const auto& [overriddenTransformMatrixId, overriddenTransformMatrix]: instanceAnimations[currentInstance]->overriddenTransformMatrices) {
 		_overriddenTransformMatrices[overriddenTransformMatrixId] = new Matrix4x4(*overriddenTransformMatrix);
 	}
-	auto newBoundingBox = ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overriddenTransformMatrices);
-	boundingBox.fromBoundingVolume(newBoundingBox);
-	delete newBoundingBox;
+	auto newBoundingBox = unique_ptr<BoundingBox>(ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overriddenTransformMatrices));
+	boundingBox.fromBoundingVolume(newBoundingBox.get());
 }
 
 void ObjectInternal::setTransform(const Transform& transform)

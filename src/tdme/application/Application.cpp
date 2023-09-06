@@ -38,6 +38,7 @@
 
 #include <tdme/application/Application.h>
 #include <tdme/application/InputEventHandler.h>
+#include <tdme/audio/Audio.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
@@ -61,6 +62,7 @@ using std::to_string;
 
 using tdme::application::Application;
 using tdme::application::InputEventHandler;
+using tdme::audio::Audio;
 using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::renderer::Renderer;
@@ -344,8 +346,8 @@ Application::~Application() {
 }
 
 void Application::setVSyncEnabled(bool vSync) {
-	Engine::renderer->setVSync(vSync);
-	if (Engine::renderer->getRendererType() != Renderer::RENDERERTYPE_VULKAN) {
+	Engine::getRenderer()->setVSync(vSync);
+	if (Engine::getRenderer()->getRendererType() != Renderer::RENDERERTYPE_VULKAN) {
 		glfwSwapInterval(vSync == true?1:0);
 	}
 }
@@ -521,7 +523,7 @@ void Application::setMousePosition(int x, int y) {
 }
 
 void Application::swapBuffers() {
-	if (Engine::renderer->getRendererType() != Renderer::RENDERERTYPE_VULKAN) glfwSwapBuffers(glfwWindow);
+	if (Engine::getRenderer()->getRendererType() != Renderer::RENDERERTYPE_VULKAN) glfwSwapBuffers(glfwWindow);
 }
 
 string Application::getClipboardContent() {
@@ -536,7 +538,7 @@ static void glfwErrorCallback(int error, const char* description) {
 	Console::println(string("glfwErrorCallback(): ") + description);
 }
 
-void Application::run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler, int windowHints) {
+int Application::run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler, int windowHints) {
 	string rendererLibrary = "libopengl3corerenderer";
 	for (auto i = 1; i < argc; i++) {
 		auto argValue = string(argv[i]);
@@ -563,7 +565,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 	glfwSetErrorCallback(glfwErrorCallback);
 	if (glfwInit() == false) {
 		Console::println("glflInit(): failed!");
-		return;
+		return EXITCODE_FAILURE;
 	}
 
 	// TODO: dispose
@@ -595,7 +597,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		if (rendererLibraryHandle == nullptr) {
 			Console::println("Application::run(): Could not open renderer library");
 			glfwTerminate();
-			return;
+			return EXITCODE_FAILURE;
 		}
 		//
 		Renderer* (*rendererCreateInstance)() = (Renderer*(*)())GetProcAddress(rendererLibraryHandle, "createInstance");
@@ -603,14 +605,14 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		if (rendererCreateInstance == nullptr) {
 			Console::println("Application::run(): Could not find renderer library createInstance() entry point");
 			glfwTerminate();
-			return;
+			return EXITCODE_FAILURE;
 		}
 		//
 		renderer = (Renderer*)rendererCreateInstance();
 		if (renderer == nullptr) {
 			Console::println("Application::run(): Could not create renderer");
 			glfwTerminate();
-			return;
+			return EXITCODE_FAILURE;
 		}
 	#else
 		//
@@ -622,7 +624,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		if (rendererLibraryHandle == nullptr) {
 			Console::println("Application::run(): Could not open renderer library");
 			glfwTerminate();
-			return;
+			return EXITCODE_FAILURE;
 		}
 		//
 		Renderer* (*rendererCreateInstance)() = (Renderer*(*)())dlsym(rendererLibraryHandle, "createInstance");
@@ -630,14 +632,14 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		if (rendererCreateInstance == nullptr) {
 			Console::println("Application::run(): Could not find renderer library createInstance() entry point");
 			glfwTerminate();
-			return;
+			return EXITCODE_FAILURE;
 		}
 		//
 		renderer = (Renderer*)rendererCreateInstance();
 		if (renderer == nullptr) {
 			Console::println("Application::run(): Could not create renderer");
 			glfwTerminate();
-			return;
+			return EXITCODE_FAILURE;
 		}
 	#endif
 
@@ -657,14 +659,14 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 	if (glfwWindow == nullptr) {
 		Console::println("glfwCreateWindow(): Could not create window");
 		glfwTerminate();
-		return;
+		return EXITCODE_FAILURE;
 	}
 
 	//
 	if (renderer->initializeWindowSystemRendererContext(glfwWindow) == false) {
 		Console::println("glfwCreateWindow(): Could not initialize window system renderer context");
 		glfwTerminate();
-		return;
+		return EXITCODE_FAILURE;
 	}
 
 	//
@@ -698,17 +700,26 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 	#endif
 	while (glfwWindowShouldClose(glfwWindow) == false) {
 		displayInternal();
-		if (Engine::renderer->getRendererType() != Renderer::RENDERERTYPE_VULKAN) glfwSwapBuffers(glfwWindow);
+		if (Engine::getRenderer()->getRendererType() != Renderer::RENDERERTYPE_VULKAN) glfwSwapBuffers(glfwWindow);
 		glfwPollEvents();
 	}
 	glfwTerminate();
+	//
+	auto localExitCode = exitCode;
 	if (Application::application != nullptr) {
 		Console::println("Application::run(): Shutting down application");
 		Application::application->dispose();
+		Engine::shutdown();
+		Audio::shutdown();
+		delete Application::renderer;
+		Application::renderer = nullptr;
+		Console::shutdown();
+		//
 		delete Application::application;
 		Application::application = nullptr;
 	}
-	if (exitCode != 0) ::exit(exitCode);
+	//
+	return localExitCode;
 }
 
 void Application::setIcon() {
@@ -720,7 +731,7 @@ void Application::setIcon() {
 		auto textureWidth = texture->getTextureWidth();
 		auto textureHeight = texture->getTextureHeight();
 		auto textureBytePerPixel = texture->getRGBDepthBitsPerPixel() == 32?4:3;
-		auto glfwPixels = new uint8_t[textureWidth * textureHeight * 4];
+		vector<uint8_t> glfwPixels(textureWidth * textureHeight * 4);
 		for (auto y = 0; y < textureHeight; y++)
 		for (auto x = 0; x < textureWidth; x++) {
 			glfwPixels[y * textureWidth * 4 + x * 4 + 0] = textureData.get(y * textureWidth * textureBytePerPixel + x * textureBytePerPixel + 0);
@@ -731,10 +742,9 @@ void Application::setIcon() {
 		GLFWimage glfwIcon;
 		glfwIcon.width = texture->getTextureWidth();
 		glfwIcon.height = texture->getTextureHeight();
-		glfwIcon.pixels = glfwPixels;
+		glfwIcon.pixels = glfwPixels.data();
 		glfwSetWindowIcon(glfwWindow, 1, &glfwIcon);
 		texture->releaseReference();
-		delete [] glfwPixels;
 	}
 }
 

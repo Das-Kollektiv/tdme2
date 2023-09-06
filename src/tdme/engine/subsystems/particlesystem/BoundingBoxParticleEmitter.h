@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -9,6 +11,8 @@
 #include <tdme/engine/subsystems/particlesystem/ParticleEmitter.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
+
+using std::unique_ptr;
 
 using tdme::engine::Color4;
 using tdme::engine::primitives::OrientedBoundingBox;
@@ -30,8 +34,8 @@ private:
 	int64_t lifeTimeRnd;
 	float mass;
 	float massRnd;
-	OrientedBoundingBox* obb { nullptr };
-	OrientedBoundingBox* worldObb { nullptr };
+	unique_ptr<OrientedBoundingBox> obb;
+	unique_ptr<OrientedBoundingBox> worldObb;
 	Vector3 velocity;
 	Vector3 velocityRnd;
 	Color4 colorStart;

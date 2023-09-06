@@ -6,16 +6,16 @@
 	#include <AL/alc.h>
 #endif
 
-#include <map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 #include <tdme/audio/fwd-tdme.h>
 #include <tdme/audio/AudioBufferManager.h>
 #include <tdme/math/Vector3.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::audio::AudioBufferManager;
 using tdme::audio::AudioEntity;
@@ -39,7 +39,7 @@ private:
 	ALCdevice* device { nullptr };
 	ALCcontext* context { nullptr };
 
-	map<string, AudioEntity*> audioEntities;
+	unordered_map<string, AudioEntity*> audioEntities;
 
 	AudioBufferManager audioBufferManager;
 	Vector3 listenerPosition;
@@ -55,6 +55,11 @@ private:
 	 */
 	Audio();
 
+	/**
+	 * Private destructor
+	 */
+	~Audio();
+
 public:
 
 	/**
@@ -66,6 +71,11 @@ public:
 		}
 		return Audio::instance;
 	}
+
+	/**
+	 * Shuts the audio down
+	 */
+	static void shutdown();
 
 	/**
 	 * @return listener position
@@ -132,7 +142,11 @@ public:
 	 * @param id id
 	 * @return audio entity
 	 */
-	AudioEntity* getEntity(const string& id);
+	inline AudioEntity* getEntity(const string& id) {
+		auto audioEntityIt = audioEntities.find(id);
+		if (audioEntityIt == audioEntities.end()) return nullptr;
+		return audioEntityIt->second;
+	}
 
 	/**
 	 * Adds a audio entity
@@ -150,11 +164,6 @@ public:
 	 * Clears all audio entities
 	 */
 	void reset();
-
-	/**
-	 * Shuts the audio down
-	 */
-	void shutdown();
 
 	/**
 	 * Update and transfer audio entity states to open AL

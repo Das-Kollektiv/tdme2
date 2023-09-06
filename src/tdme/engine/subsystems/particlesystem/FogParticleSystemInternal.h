@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -20,6 +21,7 @@
 #include <tdme/math/Vector3.h>
 
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::Texture;
@@ -49,7 +51,7 @@ protected:
 	Renderer* renderer { nullptr };
 	bool enabled;
 	bool active;
-	ParticleEmitter* emitter { nullptr };
+	unique_ptr<ParticleEmitter> emitter;
 	vector<Particle> particles;
 	int32_t maxPoints;
 	float pointSize;
@@ -58,7 +60,7 @@ protected:
 	int32_t textureHorizontalSprites;
 	int32_t textureVerticalSprites;
 	float fps;
-	TransparentRenderPointsPool* pointsRenderPool { nullptr };
+	unique_ptr<TransparentRenderPointsPool> pointsRenderPool;
 
 	BoundingBox boundingBox;
 	BoundingBox worldBoundingBox;
@@ -112,7 +114,7 @@ public:
 	void initialize();
 
 	inline ParticleEmitter* getEmitter() override {
-		return emitter;
+		return emitter.get();
 	}
 
 	inline const string& getId() override {
@@ -267,7 +269,7 @@ public:
 	 * @return render points pool
 	 */
 	inline TransparentRenderPointsPool* getRenderPointsPool() {
-		return pointsRenderPool;
+		return pointsRenderPool.get();
 	}
 
 };

@@ -1,5 +1,6 @@
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 
+#include <memory>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -10,6 +11,7 @@
 
 using tdme::engine::subsystems::rendering::ObjectBuffer;
 
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::subsystems::renderer::Renderer;
@@ -17,30 +19,24 @@ using tdme::engine::Engine;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
 
-vector<ByteBuffer*> ObjectBuffer::byteBuffers;
+vector<unique_ptr<ByteBuffer>> ObjectBuffer::byteBuffers;
 
 void ObjectBuffer::initialize() {
-	auto renderer = Engine::renderer;
+	auto renderer = Engine::getRenderer();
 	byteBuffers.resize(renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1);
 }
 
 void ObjectBuffer::dispose() {
-	for (auto byteBuffer: byteBuffers) {
-		delete byteBuffer;
-	}
 	byteBuffers.clear();
 }
 
 ByteBuffer* ObjectBuffer::getByteBuffer(int contextIdx, int32_t bytes)
 {
-	auto renderer = Engine::renderer;
+	auto renderer = Engine::getRenderer();
 	if (byteBuffers[contextIdx] == nullptr || bytes > byteBuffers[contextIdx]->getCapacity()) {
-		if (byteBuffers[contextIdx] != nullptr) {
-			delete byteBuffers[contextIdx];
-		}
-		byteBuffers[contextIdx] = ByteBuffer::allocate(bytes);
+		byteBuffers[contextIdx] = unique_ptr<ByteBuffer>(ByteBuffer::allocate(bytes));
 	} else {
 		byteBuffers[contextIdx]->clear();
 	}
-	return byteBuffers[contextIdx];
+	return byteBuffers[contextIdx].get();
 }

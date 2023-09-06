@@ -20,7 +20,6 @@ namespace model {
 	class RotationOrder;
 	class Skinning;
 	class SpecularMaterialProperties;
-	class TextureCoordinate;
 }  // namespace model
 }  // namespace engine
 }  // namespace tdme

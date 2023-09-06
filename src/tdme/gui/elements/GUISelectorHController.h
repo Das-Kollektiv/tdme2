@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -10,7 +11,9 @@
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/utilities/MutableString.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::gui::events::GUIActionListener;
@@ -41,7 +44,7 @@ private:
 	MutableString value;
 	string search;
 	int selectedHOptionControllerIdx { -1 };
-	GUIActionListener* actionListener { nullptr };
+	unique_ptr<GUIActionListener> actionListener;
 	GUIParentNode* innerNode { nullptr };
 
 private:

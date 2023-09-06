@@ -71,4 +71,8 @@ int main(int argc, char** argv)
 	} catch (Exception& exception) {
 		Console::println(string() + "An error occurred: " + exception.what());
 	}
+
+	//
+	Console::shutdown();
+	return 0;
 }

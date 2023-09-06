@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -10,6 +11,7 @@
 #include <tdme/os/threading/ReadWriteLock.h>
 
 using std::string;
+using std::unique_ptr;
 using std::unordered_map;
 using std::unordered_set;
 
@@ -47,7 +49,6 @@ s			 * @param maxCCU max ccu
 		host(host),
 		port(port),
 		maxCCU(maxCCU),
-		startUpBarrier(nullptr),
 		clientKeyListsReadWriteLock("nioserver_clientlist"),
 		groupKeyListsReadWriteLock("nioserver_grouplist"),
 		ioThreadCount(1),
@@ -241,8 +242,6 @@ protected:
 	string host;
 	uint16_t port;
 	int maxCCU;
-
-	Barrier* startUpBarrier;
 
 	ClientKeyMap clientKeyMap;
 	ClientKeySet clientKeySet;

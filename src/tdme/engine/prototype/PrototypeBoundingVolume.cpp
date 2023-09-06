@@ -1,6 +1,8 @@
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 
+#include <memory>
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
@@ -23,8 +25,12 @@
 #include <tdme/utilities/Primitives.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::make_unique;
+using std::move;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
+using std::vector;
 
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::models::TMReader;
@@ -47,19 +53,16 @@ using tdme::utilities::Exception;
 using tdme::utilities::Primitives;
 using tdme::utilities::StringTools;
 
-PrototypeBoundingVolume::PrototypeBoundingVolume(int id, Prototype* prototype)
+uint32_t PrototypeBoundingVolume::boundingVolumeIdx = 0;
+
+PrototypeBoundingVolume::PrototypeBoundingVolume(Prototype* prototype)
 {
-	this->id = id;
 	this->prototype = prototype;
 	convexMeshFile.clear();
-	model = nullptr;
-	boundingVolume = nullptr;
 	generated = false;
 }
 
 PrototypeBoundingVolume::~PrototypeBoundingVolume() {
-	if (model != nullptr) delete model;
-	if (boundingVolume != nullptr) delete boundingVolume;
 }
 
 void PrototypeBoundingVolume::setupNone()
@@ -73,16 +76,16 @@ void PrototypeBoundingVolume::setupNone()
 
 void PrototypeBoundingVolume::setupSphere(const Vector3& center, float radius)
 {
-	if (boundingVolume != nullptr) delete boundingVolume;
-	boundingVolume = new Sphere(center, radius);
-	if (model != nullptr) delete model;
-	model = Primitives::createModel(
-		boundingVolume,
-		string(prototype->getModel() != nullptr ? prototype->getModel()->getId() : "none") +
-			string(",") +
-			to_string(prototype->getId()) +
-			string("_model_bv.") +
-			to_string(id)
+	boundingVolume = make_unique<Sphere>(center, radius);
+	model = unique_ptr<Model>(
+		Primitives::createModel(
+			boundingVolume.get(),
+			string(prototype->getModel() != nullptr ? prototype->getModel()->getId() : "none") +
+				string(",") +
+				to_string(prototype->getId()) +
+				string("_model_bv.") +
+				to_string(allocateBoundingVolumeIdx())
+		)
 	);
 	convexMeshFile.clear();
 	convexMeshData.clear();
@@ -91,17 +94,17 @@ void PrototypeBoundingVolume::setupSphere(const Vector3& center, float radius)
 
 void PrototypeBoundingVolume::setupCapsule(const Vector3& a, const Vector3& b, float radius)
 {
-	if (boundingVolume != nullptr) delete boundingVolume;
-	boundingVolume = new Capsule(a, b, radius);
-	if (model != nullptr) delete model;
-	model = Primitives::createModel(
-		boundingVolume,
-		string(prototype->getModel() != nullptr ? prototype->getModel()->getId() : "none") +
-			string(",") +
-			to_string(prototype->getId()) +
-			string("_model_bv.") +
-			to_string(id) +
-			string(".")
+	boundingVolume = make_unique<Capsule>(a, b, radius);
+	model = unique_ptr<Model>(
+		Primitives::createModel(
+			boundingVolume.get(),
+			string(prototype->getModel() != nullptr ? prototype->getModel()->getId() : "none") +
+				string(",") +
+				to_string(prototype->getId()) +
+				string("_model_bv.") +
+				to_string(allocateBoundingVolumeIdx()) +
+				string(".")
+		)
 	);
 	convexMeshFile.clear();
 	convexMeshData.clear();
@@ -110,16 +113,16 @@ void PrototypeBoundingVolume::setupCapsule(const Vector3& a, const Vector3& b, f
 
 void PrototypeBoundingVolume::setupObb(const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension)
 {
-	if (boundingVolume != nullptr) delete boundingVolume;
-	boundingVolume = new OrientedBoundingBox(center, axis0, axis1, axis2, halfExtension);
-	if (model != nullptr) delete model;
-	model = Primitives::createModel(
-		boundingVolume,
-		string(prototype->getModel() != nullptr ? prototype->getModel()->getId() : "none") +
-			string(",") +
-			to_string(prototype->getId()) +
-			string("_model_bv.") +
-			to_string(id)
+	boundingVolume = make_unique<OrientedBoundingBox>(center, axis0, axis1, axis2, halfExtension);
+	model = unique_ptr<Model>(
+		Primitives::createModel(
+			boundingVolume.get(),
+			string(prototype->getModel() != nullptr ? prototype->getModel()->getId() : "none") +
+				string(",") +
+				to_string(prototype->getId()) +
+				string("_model_bv.") +
+				to_string(allocateBoundingVolumeIdx())
+		)
 	);
 	convexMeshFile.clear();
 	convexMeshData.clear();
@@ -128,17 +131,17 @@ void PrototypeBoundingVolume::setupObb(const Vector3& center, const Vector3& axi
 
 void PrototypeBoundingVolume::setupAabb(const Vector3& min, const Vector3& max)
 {
-	if (boundingVolume != nullptr) delete boundingVolume;
 	BoundingBox aabb(min, max);
-	boundingVolume = new OrientedBoundingBox(&aabb);
-	if (model != nullptr) delete model;
-	model = Primitives::createModel(
-		boundingVolume,
-		string(prototype->getModel() != nullptr ? prototype->getModel()->getId() : "none") +
-			string(",") +
-			to_string(prototype->getId()) +
-			string("_model_bv.") +
-			to_string(id)
+	boundingVolume = make_unique<OrientedBoundingBox>(&aabb);
+	model = unique_ptr<Model>(
+		Primitives::createModel(
+			boundingVolume.get(),
+			string(prototype->getModel() != nullptr ? prototype->getModel()->getId() : "none") +
+				string(",") +
+				to_string(prototype->getId()) +
+				string("_model_bv.") +
+				to_string(allocateBoundingVolumeIdx())
+		)
 	);
 	convexMeshFile.clear();
 	convexMeshData.clear();
@@ -147,8 +150,6 @@ void PrototypeBoundingVolume::setupAabb(const Vector3& min, const Vector3& max)
 
 void PrototypeBoundingVolume::clearConvexMesh()
 {
-	if (boundingVolume != nullptr) delete boundingVolume;
-	if (model != nullptr) delete model;
 	boundingVolume = nullptr;
 	model = nullptr;
 	convexMeshFile.clear();
@@ -158,23 +159,22 @@ void PrototypeBoundingVolume::clearConvexMesh()
 
 void PrototypeBoundingVolume::setupConvexMesh(const string& pathName, const string& fileName)
 {
-	if (boundingVolume != nullptr) delete boundingVolume;
-	if (model != nullptr) delete model;
 	boundingVolume = nullptr;
 	model = nullptr;
 	convexMeshFile = pathName + "/" + fileName;
 	convexMeshData.clear();
 	generated = false;
 	try {
-		auto convexMeshModel = ModelReader::read(
-			pathName,
-			fileName
+		auto convexMeshModel = unique_ptr<Model>(
+			ModelReader::read(
+				pathName,
+				fileName
+			)
 		);
-		auto convexMeshObjectModel = new ObjectModel(convexMeshModel);
-		boundingVolume = new ConvexMesh(convexMeshObjectModel);
-		delete convexMeshObjectModel;
-		Primitives::setupConvexMeshModel(convexMeshModel);
-		model = convexMeshModel;
+		auto convexMeshObjectModel = make_unique<ObjectModel>(convexMeshModel.get());
+		boundingVolume = make_unique<ConvexMesh>(convexMeshObjectModel.get());
+		Primitives::setupConvexMeshModel(convexMeshModel.get());
+		model = move(convexMeshModel);
 	} catch (Exception& exception) {
 		Console::print(string("PrototypeBoundingVolume::setupConvexMesh(): An error occurred: " + convexMeshFile + ": "));
 		Console::println(string(exception.what()));
@@ -184,23 +184,22 @@ void PrototypeBoundingVolume::setupConvexMesh(const string& pathName, const stri
 
 void PrototypeBoundingVolume::setupConvexMesh(const vector<uint8_t>& data) {
 	convexMeshData = data;
-	if (boundingVolume != nullptr) delete boundingVolume;
-	if (model != nullptr) delete model;
 	boundingVolume = nullptr;
 	model = nullptr;
 	convexMeshFile = string();
 	generated = true;
 	try {
-		auto convexMeshModel = TMReader::read(
-			convexMeshData,
-			FileSystem::getInstance()->getPathName(prototype->getFileName()),
-			FileSystem::getInstance()->getFileName(prototype->getFileName()) + "." + to_string(id)
+		auto convexMeshModel = unique_ptr<Model>(
+			TMReader::read(
+				convexMeshData,
+				FileSystem::getInstance()->getPathName(prototype->getFileName()),
+				FileSystem::getInstance()->getFileName(prototype->getFileName()) + "." + to_string(allocateBoundingVolumeIdx())
+			)
 		);
-		auto convexMeshObjectModel = new ObjectModel(convexMeshModel);
-		boundingVolume = new ConvexMesh(convexMeshObjectModel);
-		delete convexMeshObjectModel;
-		Primitives::setupConvexMeshModel(convexMeshModel);
-		model = convexMeshModel;
+		auto convexMeshObjectModel = make_unique<ObjectModel>(convexMeshModel.get());
+		boundingVolume = make_unique<ConvexMesh>(convexMeshObjectModel.get());
+		Primitives::setupConvexMeshModel(convexMeshModel.get());
+		model = move(convexMeshModel);
 	} catch (Exception& exception) {
 		Console::print(string("PrototypeBoundingVolume::setupConvexMesh(): An error occurred: "));
 		Console::println(string(exception.what()));

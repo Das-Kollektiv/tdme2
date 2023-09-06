@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -19,6 +20,7 @@
 #include <tdme/os/threading/Thread.h>
 
 using std::string;
+using std::unique_ptr;
 using std::unordered_map;
 using std::unordered_set;
 
@@ -207,8 +209,8 @@ private:
 	ClientIpMap clientIpMap;
 	ReadWriteLock clientIpMapReadWriteLock;
 
-	vector<UDPServerIOThread*> ioThreads;
-	ServerWorkerThreadPool* workerThreadPool;
+	vector<unique_ptr<UDPServerIOThread>> ioThreads;
+	unique_ptr<ServerWorkerThreadPool> workerThreadPool;
 
 	uint32_t clientCount;
 	uint32_t messageCount;

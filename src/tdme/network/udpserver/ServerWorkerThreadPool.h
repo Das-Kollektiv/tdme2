@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -9,6 +10,7 @@
 #include <tdme/os/threading/Queue.h>
 
 using std::vector;
+using std::unique_ptr;
 
 using tdme::os::threading::Barrier;
 using tdme::os::threading::Queue;
@@ -32,11 +34,11 @@ public:
 
 	/**
 	 * @brief Public constructor
-	 * @param startUpBarrier start up barrier
 	 * @param workerCount worker count
 	 * @param maxElements max elements
+	 * @param startUpBarrier start up barrier
 	 */
-	ServerWorkerThreadPool(Barrier* startUpBarrier, const unsigned int workerCount, const unsigned int maxElements);
+	ServerWorkerThreadPool(const unsigned int workerCount, const unsigned int maxElements, Barrier* startUpBarrier);
 
 	/**
 	 * @brief Public destructor
@@ -55,7 +57,7 @@ public:
 private:
 	Barrier* startUpBarrier;
 	unsigned int workerCount;
-	vector<ServerWorkerThread*> worker;
+	vector<unique_ptr<ServerWorkerThread>> worker;
 };
 
 };

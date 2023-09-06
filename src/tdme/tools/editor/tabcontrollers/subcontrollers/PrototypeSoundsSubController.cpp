@@ -1,6 +1,7 @@
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.h>
 
 #include <array>
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -35,8 +36,10 @@
 #include <tdme/utilities/StringTools.h>
 
 using std::array;
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubController;
 
@@ -72,21 +75,11 @@ PrototypeSoundsSubController::PrototypeSoundsSubController(EditorView* editorVie
 {
 	this->editorView = editorView;
 	this->playableSoundView = playableSoundView;
-	this->view = new PrototypeSoundsSubView(this, editorView->getPopUps());
+	this->view = make_unique<PrototypeSoundsSubView>(this, editorView->getPopUps());
 	this->popUps = editorView->getPopUps();
 }
 
 PrototypeSoundsSubController::~PrototypeSoundsSubController() {
-	delete view;
-}
-
-PrototypeSoundsSubView* PrototypeSoundsSubController::getView()
-{
-	return view;
-}
-
-GUIScreenNode* PrototypeSoundsSubController::getScreenNode() {
-	return screenNode;
 }
 
 void PrototypeSoundsSubController::initialize(GUIScreenNode* screenNode)
@@ -151,10 +144,10 @@ void PrototypeSoundsSubController::showInfoPopUp(const string& caption, const st
 }
 
 void PrototypeSoundsSubController::createOutlinerSoundsXML(Prototype* prototype, string& xml) {
-	if (prototype->getSounds().empty() == false) {
+	if (prototype->getSoundCount() > 0) {
 		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Sounds") + "\" value=\"" + GUIParser::escape("sounds") + "\">\n";
 		for (auto sound: prototype->getSounds()) {
-			auto soundId = sound->getId();
+			const auto& soundId = sound->getId();
 			xml+= "	<selectbox-option image=\"resources/engine/images/sound.png\" text=\"" + GUIParser::escape(soundId) + "\" id=\"" + GUIParser::escape("sounds." + soundId) + "\" value=\"" + GUIParser::escape("sounds." + soundId) + "\" />\n";
 		}
 		xml+= "</selectbox-parent-option>\n";
@@ -184,7 +177,7 @@ void PrototypeSoundsSubController::updateDetails(Prototype* prototype, Model* mo
 			"\" " +
 			(idx == 0 ? "selected=\"true\" " : "") +
 			" />\n";
-		for (const auto& [animationSetupId, animationSetup]: model->getAnimationSetups()) {
+		for (const auto& animationSetupId: model->getAnimationSetupIds()) {
 			animationsDropDownXML =
 				animationsDropDownXML + "<dropdown-option text=\"" +
 				GUIParser::escape(animationSetupId) +
@@ -283,7 +276,7 @@ void PrototypeSoundsSubController::createSound(Prototype* prototype) {
 	}
 
 	if (soundCreate == true) {
-		prototype->addSound(soundName);
+		prototype->addSound(new PrototypeAudio(soundName));
 		editorView->reloadTabOutliner(string() + "sounds." + soundName);
 		startRenameSound(
 			prototype,

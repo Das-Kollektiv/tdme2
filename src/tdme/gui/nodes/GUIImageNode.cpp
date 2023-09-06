@@ -163,7 +163,6 @@ void GUIImageNode::setSource(const string& source) {
 					//
 					auto thumbnailTexture = PNGTextureReader::read("tdme.gui.guiimagenode." + to_string(thumbnailTextureIdx++), thumbnailPNGData, true);
 					if (thumbnailTexture != nullptr) {
-						thumbnailTexture->acquireReference();
 						this->texture = thumbnailTexture;
 						this->releaseTextureReference = true;
 					} else {
@@ -190,7 +189,6 @@ void GUIImageNode::setSource(const string& source) {
 					//
 					auto thumbnailTexture = PNGTextureReader::read("tdme.gui.guiimagenode." + to_string(thumbnailTextureIdx++), thumbnailPNGData, true);
 					if (thumbnailTexture != nullptr) {
-						thumbnailTexture->acquireReference();
 						this->texture = thumbnailTexture;
 						this->releaseTextureReference = true;
 					} else {

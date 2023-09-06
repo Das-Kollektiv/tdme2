@@ -1,6 +1,8 @@
 #include <tdme/engine/model/Model.h>
 
+#include <algorithm>
 #include <map>
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -18,8 +20,11 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/threading/AtomicOperations.h>
 
+using std::make_unique;
 using std::map;
+using std::sort;
 using std::string;
+using std::unique_ptr;
 
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
@@ -52,7 +57,7 @@ Model::Model(const string& id, const string& name, UpVector* upVector, RotationO
 	skinning = false;
 	fps = FPS_DEFAULT;
 	importTransformMatrix.identity();
-	this->boundingBox = boundingBox;
+	this->boundingBox = unique_ptr<BoundingBox>(boundingBox);
 	this->authoringTool = authoringTool;
 	this->boundingBoxUpdated = false;
 	this->embedSpecularTextures = false;
@@ -63,15 +68,35 @@ Model::~Model() {
 	deleteSubNodes(subNodes);
 	for (const auto& [materialId, material]: materials) delete material;
 	for (const auto& [animationSetupId, animationSetup]: animationSetups) delete animationSetup;
-	if (boundingBox != nullptr) delete boundingBox;
 }
 
-void Model::deleteSubNodes(const map<string, Node*>& subNodes) {
+void Model::deleteSubNodes(const unordered_map<string, Node*>& subNodes) {
 	for (const auto& [subNodeId, subNode]: subNodes) {
 		deleteSubNodes(subNode->getSubNodes());
 		delete subNode;
 	}
-	}
+}
+
+const vector<string> Model::getMaterialIds() {
+	vector<string> result;
+	for (const auto& [materialId, material]: materials) result.push_back(material->getId());
+	sort(result.begin(), result.end());
+	return result;
+}
+
+const vector<string> Model::getNodeIds() {
+	vector<string> result;
+	for (const auto& [nodeId, node]: nodes) result.push_back(node->getId());
+	sort(result.begin(), result.end());
+	return result;
+}
+
+const vector<string> Model::getAnimationSetupIds() {
+	vector<string> result;
+	for (const auto& [animationSetupId, animationSetup]: animationSetups) result.push_back(animationSetup->getId());
+	sort(result.begin(), result.end());
+	return result;
+}
 
 AnimationSetup* Model::addAnimationSetup(const string& id, int32_t startFrame, int32_t endFrame, bool loop, float speed)
 {
@@ -80,9 +105,9 @@ AnimationSetup* Model::addAnimationSetup(const string& id, int32_t startFrame, i
 		delete animationSetupIt->second;
 		animationSetups.erase(animationSetupIt);
 	}
-	auto animationSetup = new AnimationSetup(this, id, startFrame, endFrame, loop, string(), speed);
-	animationSetups[id] = animationSetup;
-	return animationSetup;
+	auto animationSetup = make_unique<AnimationSetup>(this, id, startFrame, endFrame, loop, string(), speed);
+	animationSetups[id] = animationSetup.get();
+	return animationSetup.release();
 }
 
 AnimationSetup* Model::addOverlayAnimationSetup(const string& id, const string& overlayFromNodeId, int32_t startFrame, int32_t endFrame, bool loop, float speed)
@@ -92,17 +117,9 @@ AnimationSetup* Model::addOverlayAnimationSetup(const string& id, const string& 
 		delete animationSetupIt->second;
 		animationSetups.erase(animationSetupIt);
 	}
-	auto animationSetup = new AnimationSetup(this, id, startFrame, endFrame, loop, overlayFromNodeId, speed);
-	animationSetups[id] = animationSetup;
-	return animationSetup;
-}
-
-bool Model::removeAnimationSetup(const string& id) {
-	auto animationSetupIt = animationSetups.find(id);
-	if (animationSetupIt == animationSetups.end()) return false;
-	delete animationSetupIt->second;
-	animationSetups.erase(animationSetupIt);
-	return true;
+	auto animationSetup = make_unique<AnimationSetup>(this, id, startFrame, endFrame, loop, overlayFromNodeId, speed);
+	animationSetups[id] = animationSetup.get();
+	return animationSetup.release();
 }
 
 bool Model::renameAnimationSetup(const string& id, const string& newId) {
@@ -115,16 +132,31 @@ bool Model::renameAnimationSetup(const string& id, const string& newId) {
 	return true;
 }
 
+bool Model::removeAnimationSetup(const string& id) {
+	auto animationSetupIt = animationSetups.find(id);
+	if (animationSetupIt == animationSetups.end()) return false;
+	delete animationSetupIt->second;
+	animationSetups.erase(animationSetupIt);
+	return true;
+}
+
+void Model::clearAnimationSetups() {
+	for (const auto& [animationSetupId, animationSetup]: animationSetups) {
+		delete animationSetup;
+	}
+	animationSetups.clear();
+}
+
 BoundingBox* Model::getBoundingBox()
 {
 	// TODO: return const bb
 	if (boundingBox == nullptr) {
-		boundingBox = ModelUtilities::createBoundingBox(this);
+		boundingBox = unique_ptr<BoundingBox>(ModelUtilities::createBoundingBox(this));
 	}
-	return boundingBox;
+	return boundingBox.get();
 }
 
-bool Model::computeTransformMatrix(const map<string, Node*>& nodes, const Matrix4x4& parentTransformMatrix, int32_t frame, const string& nodeId, Matrix4x4& transformMatrix)
+bool Model::computeTransformMatrix(const unordered_map<string, Node*>& nodes, const Matrix4x4& parentTransformMatrix, int32_t frame, const string& nodeId, Matrix4x4& transformMatrix)
 {
 	// TODO: this should be computed from sub nodes to root node, not the other way around, also it looks broken to me right now, but works for our cases so far
 	// iterate through nodes
@@ -158,9 +190,6 @@ bool Model::computeTransformMatrix(const map<string, Node*>& nodes, const Matrix
 }
 
 void Model::invalidateBoundingBox() {
-	if (boundingBox != nullptr) {
-		delete boundingBox;
-		boundingBox = nullptr;
-		boundingBoxUpdated = true;
-	}
+	boundingBox = nullptr;
+	boundingBoxUpdated = true;
 }

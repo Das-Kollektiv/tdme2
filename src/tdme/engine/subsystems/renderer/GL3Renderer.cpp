@@ -156,8 +156,7 @@ void GL3Renderer::initialize()
 		// shader source
 		auto skinningKernelProgramSource = FileSystem::getInstance()->getContentAsString("shader/gl3/skinning", "skinning.cl");
 		auto skinningKernelProgramSourceSize = skinningKernelProgramSource.size();
-		char* skinningKernelProgramSourceHeap = new char[skinningKernelProgramSourceSize + 1];
-		strcpy(skinningKernelProgramSourceHeap, skinningKernelProgramSource.c_str());
+		array<const char*, 1> skinningKernelProgramSourceArray = { skinningKernelProgramSource.data() };
 
 		// context, device
 		cl_int clError = 0;
@@ -184,7 +183,7 @@ void GL3Renderer::initialize()
 		};
 		clContext = clCreateContext(properties, 1, &clDeviceId, clErrorCallback, nullptr, &clError);
 		clCommandQueue = clCreateCommandQueue(clContext, clDeviceId, 0, &clError);
-		clSkinningKernelProgram = clCreateProgramWithSource(clContext, 1, (const char**)&skinningKernelProgramSourceHeap, &skinningKernelProgramSourceSize, &clError);
+		clSkinningKernelProgram = clCreateProgramWithSource(clContext, 1, skinningKernelProgramSourceArray.data(), &skinningKernelProgramSourceSize, &clError);
 		clError = clBuildProgram(clSkinningKernelProgram, 1, &clDeviceId, nullptr, nullptr, nullptr);
 		auto clBuildInfo = clGetProgramBuildInfo(clSkinningKernelProgram, clDeviceId, CL_PROGRAM_BUILD_STATUS, 0, nullptr, &clSize);
 		clSkinningKernel = clCreateKernel(clSkinningKernelProgram, "computeSkinning", &clError);
@@ -296,9 +295,9 @@ int32_t GL3Renderer::getTextureUnits()
 int32_t GL3Renderer::loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions, const string& functions)
 {
 	// create shader
-	int32_t handle = glCreateShader(type);
+	int32_t shaderId = glCreateShader(type);
 	// exit if no handle returned
-	if (handle == 0) return 0;
+	if (shaderId == 0) return 0;
 
 	// shader source
 	auto shaderSource = StringTools::replace(
@@ -310,48 +309,43 @@ int32_t GL3Renderer::loadShader(int32_t type, const string& pathName, const stri
 		"{$FUNCTIONS}",
 		functions + "\n\n"
 	);
-	string sourceString = (shaderSource);
-	char* sourceHeap = new char[sourceString.length() + 1];
-	strcpy(sourceHeap, sourceString.c_str());
+	auto shaderSourceNullTerminated = shaderSource + "\0";
 	// load source
-	glShaderSource(handle, 1, &sourceHeap, nullptr);
+	array<const char*, 1> shaderSourceNullTerminatedArray = { shaderSourceNullTerminated.data() };
+	glShaderSource(shaderId, 1, shaderSourceNullTerminatedArray.data(), nullptr);
 	// compile
-	glCompileShader(handle);
-	//
-	delete [] sourceHeap;
+	glCompileShader(shaderId);
 	// check state
 	int32_t compileStatus;
-	glGetShaderiv(handle, GL_COMPILE_STATUS, &compileStatus);
+	glGetShaderiv(shaderId, GL_COMPILE_STATUS, &compileStatus);
 	if (compileStatus == 0) {
 		// get error
-		int32_t infoLogLengthBuffer;
-		glGetShaderiv(handle, GL_INFO_LOG_LENGTH, &infoLogLengthBuffer);
-		char* infoLogBuffer = new char[infoLogLengthBuffer];
-		glGetShaderInfoLog(handle, infoLogLengthBuffer, &infoLogLengthBuffer, infoLogBuffer);
-		auto infoLogString = (string(infoLogBuffer, infoLogLengthBuffer));
+		int32_t infoLogLength;
+		glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &infoLogLength);
+		string infoLog(infoLogLength, static_cast<char>(0));
+		glGetShaderInfoLog(shaderId, infoLogLength, &infoLogLength, infoLog.data());
 		// be verbose
 		Console::println(
 			string(
 				string("GL3Renderer::loadShader") +
 				string("[") +
-				to_string(handle) +
+				to_string(shaderId) +
 				string("]") +
 				pathName +
 				string("/") +
 				fileName +
 				string(": failed: ") +
-				infoLogString
+				infoLog
 			 )
 		 );
 		Console::println(shaderSource);
-		//
-		delete [] infoLogBuffer;
 		// remove shader
-		glDeleteShader(handle);
+		glDeleteShader(shaderId);
+		//
 		return 0;
 	}
-
-	return handle;
+	//
+	return shaderId;
 }
 
 void GL3Renderer::useProgram(int contextIdx, int32_t programId)
@@ -361,8 +355,7 @@ void GL3Renderer::useProgram(int contextIdx, int32_t programId)
 
 int32_t GL3Renderer::createProgram(int type)
 {
-	auto glProgram = glCreateProgram();
-	return glProgram;
+	return glCreateProgram();
 }
 
 void GL3Renderer::attachShaderToProgram(int32_t programId, int32_t shaderId)
@@ -378,32 +371,30 @@ bool GL3Renderer::linkProgram(int32_t programId)
 	glGetProgramiv(programId, GL_LINK_STATUS, &linkStatus);
 	if (linkStatus == 0) {
 		// get error
-		int32_t infoLogLength = 0;
+		int32_t infoLogLength;
 		glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &infoLogLength);
-		char* infoLog = new char[infoLogLength];
-		glGetProgramInfoLog(programId, infoLogLength, &infoLogLength, infoLog);
-		auto infoLogString = (string(infoLog, infoLogLength));
+		string infoLog(infoLogLength, static_cast<char>(0));
+		glGetProgramInfoLog(programId, infoLogLength, &infoLogLength, infoLog.data());
 		// be verbose
 		Console::println(
 			string(
+				string("GL3Renderer::linkProgram") +
 				"[" +
 				to_string(programId) +
 				"]: failed: " +
-				infoLogString
+				infoLog
 			 )
 		);
 		//
-		delete [] infoLog;
-		//
 		return false;
 	}
+	//
 	return true;
 }
 
 int32_t GL3Renderer::getProgramUniformLocation(int32_t programId, const string& name)
 {
-	auto uniformLocation = glGetUniformLocation(programId, (name).c_str());
-	return uniformLocation;
+	return glGetUniformLocation(programId, name.c_str());
 }
 
 void GL3Renderer::setProgramUniformInteger(int contextIdx, int32_t uniformId, int32_t value)

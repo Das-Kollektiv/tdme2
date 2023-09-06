@@ -4,7 +4,7 @@
 #include <unordered_map>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/os/threading/Mutex.h>
@@ -33,6 +33,17 @@ private:
 public:
 	// forbid class copy
 	FORBID_CLASS_COPY(TextureManager)
+
+	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 */
+	TextureManager(Renderer* renderer);
+
+	/**
+	 * Destructor
+	 */
+	~TextureManager();
 
 	/**
 	 * Adds a texture to manager
@@ -65,19 +76,17 @@ public:
 	int32_t addCubeMapTexture(const string& id, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack, int contextIdx = 0);
 
 	/**
-	 * Removes a texture from manager / open gl stack
+	 * Removes a texture from manager
+	 * @param texture texture
+	 */
+	inline void removeTexture(Texture* texture) {
+		removeTexture(texture->getId());
+	}
+
+	/**
+	 * Removes a texture from manager
 	 * @param textureId texture id
 	 */
 	void removeTexture(const string& textureId);
 
-	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 */
-	TextureManager(Renderer* renderer);
-
-	/**
-	 * Destructor
-	 */
-	~TextureManager();
 };

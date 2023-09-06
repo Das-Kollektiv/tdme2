@@ -120,4 +120,8 @@ int main(int argc, char** argv)
 	} catch (Exception& exception) {
 		Console::println("An error occurred: " + string(exception.what()));
 	}
+
+	//
+	Console::shutdown();
+	return 0;
 }

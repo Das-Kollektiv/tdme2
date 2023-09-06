@@ -10,8 +10,8 @@
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/Skinning.h>
-#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 
 using std::map;
@@ -24,8 +24,8 @@ using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::model::Skinning;
-using tdme::engine::model::TextureCoordinate;
 using tdme::math::Matrix4x4;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 
 Node::Node(Model* model, Node* parentNode, const string& id, const string& name)
@@ -43,8 +43,6 @@ Node::Node(Model* model, Node* parentNode, const string& id, const string& name)
 }
 
 Node::~Node() {
-	if (animation != nullptr) delete animation;
-	if (skinning != nullptr) delete skinning;
 }
 
 void Node::setVertices(const vector<Vector3>& vertices)
@@ -67,7 +65,7 @@ void Node::setNormals(const vector<Vector3>& normals)
 	this->normalsUpdated = true;
 }
 
-void Node::setTextureCoordinates(const vector<TextureCoordinate>& textureCoordinates)
+void Node::setTextureCoordinates(const vector<Vector2>& textureCoordinates)
 {
 	this->textureCoordinates.resize(textureCoordinates.size());
 	auto i = 0;
@@ -95,15 +93,13 @@ void Node::setBitangents(const vector<Vector3>& bitangents)
 }
 
 void Node::setAnimation(Animation* animation) {
-	if (this->animation != nullptr && this->animation != animation) delete this->animation;
-	this->animation = animation;
+	this->animation = unique_ptr<Animation>(animation);
 }
 
 void Node::setSkinning(Skinning* skinning)
 {
-	if (this->skinning != nullptr && this->skinning != skinning) delete this->skinning;
+	this->skinning = unique_ptr<Skinning>(skinning);
 	if (skinning != nullptr) model->setHasSkinning(true);
-	this->skinning = skinning;
 }
 
 int32_t Node::getFaceCount() const

@@ -60,11 +60,4 @@ public:
 		this->value = value;
 	}
 
-	/**
-	 * Clones this property model entity
-	 */
-	inline BaseProperty* clone() {
-		return new BaseProperty(name, value);
-	}
-
 };

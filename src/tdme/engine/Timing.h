@@ -37,12 +37,12 @@ private:
 	// forbid class copy
 	FORBID_CLASS_COPY(Timing)
 
+public:
 	/**
 	 * Public constructor
 	 */
 	Timing();
 
-public:
 	/**
 	 * @return frames that have been rendered
 	 */

@@ -14,6 +14,7 @@ using std::string;
 
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
+using tdme::engine::Texture;
 
 /**
  * Post processing shader SSAO map generation implementation
@@ -42,9 +43,12 @@ public:
 	virtual void initialize() override;
 	virtual void useProgram(int contextIdx) override;
 	virtual void setShaderParameters(int contextIdx, Engine* engine) override;
+	virtual void unloadTextures() override;
+	virtual void loadTextures(const string& pathName) override;
 
 private:
 	array<int32_t, 16> uniformSphere;
 	int32_t uniformRandomTextureUnit { -1 };
+	Texture* randomTexture { nullptr };
 	int32_t randomTextureId { -1 };
 };

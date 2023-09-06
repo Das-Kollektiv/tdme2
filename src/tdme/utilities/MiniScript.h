@@ -12,7 +12,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Transform.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector2.h>
@@ -39,7 +39,7 @@ using std::unordered_set;
 using std::vector;
 
 using tdme::engine::Transform;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector2;
@@ -285,15 +285,15 @@ public:
 		/**
 		 * @return matrix3x3 value reference
 		 */
-		inline Matrix2D3x3& getMatrix3x3ValueReference() {
-			return *static_cast<Matrix2D3x3*>((void*)valuePtr);
+		inline Matrix3x3& getMatrix3x3ValueReference() {
+			return *static_cast<Matrix3x3*>((void*)valuePtr);
 		}
 
 		/**
 		 * @return const matrix3x3 value reference
 		 */
-		inline const Matrix2D3x3& getMatrix3x3ValueReference() const {
-			return *static_cast<Matrix2D3x3*>((void*)valuePtr);
+		inline const Matrix3x3& getMatrix3x3ValueReference() const {
+			return *static_cast<Matrix3x3*>((void*)valuePtr);
 		}
 
 		/**
@@ -375,6 +375,7 @@ public:
 		inline ScriptVariable(const ScriptVariable& scriptVariable) {
 			switch(scriptVariable.type) {
 				case TYPE_NULL:
+					setNullValue();
 					break;
 				case TYPE_BOOLEAN:
 					setValue(scriptVariable.getBooleanValueReference());
@@ -440,6 +441,7 @@ public:
 		inline ScriptVariable& operator=(const ScriptVariable& scriptVariable) {
 			switch(scriptVariable.type) {
 				case TYPE_NULL:
+					setNullValue();
 					break;
 				case TYPE_BOOLEAN:
 					setValue(scriptVariable.getBooleanValueReference());
@@ -581,7 +583,7 @@ public:
 		 * Constructor
 		 * @param value value
 		 */
-		inline ScriptVariable(const Matrix2D3x3& value) {
+		inline ScriptVariable(const Matrix3x3& value) {
 			setValue(value);
 		}
 
@@ -655,7 +657,7 @@ public:
 					delete static_cast<Quaternion*>((void*)valuePtr);
 					break;
 				case TYPE_MATRIX3x3:
-					delete static_cast<Matrix2D3x3*>((void*)valuePtr);
+					delete static_cast<Matrix3x3*>((void*)valuePtr);
 					break;
 				case TYPE_MATRIX4x4:
 					delete static_cast<Matrix4x4*>((void*)valuePtr);
@@ -700,7 +702,7 @@ public:
 					valuePtr = (uint64_t)(new Quaternion());
 					break;
 				case TYPE_MATRIX3x3:
-					valuePtr = (uint64_t)(new Matrix2D3x3());
+					valuePtr = (uint64_t)(new Matrix3x3());
 					break;
 				case TYPE_MATRIX4x4:
 					valuePtr = (uint64_t)(new Matrix4x4());
@@ -923,7 +925,7 @@ public:
 		 * @param optional optional
 		 * @return success
 		 */
-		inline bool getMatrix3x3Value(Matrix2D3x3& value, bool optional = false) const {
+		inline bool getMatrix3x3Value(Matrix3x3& value, bool optional = false) const {
 			switch(type) {
 				case TYPE_MATRIX3x3:
 					value = getMatrix3x3ValueReference();
@@ -1052,7 +1054,7 @@ public:
 		 * Set matrix3x3 value from given value into variable
 		 * @param value value
 		 */
-		inline void setValue(const Matrix2D3x3& value) {
+		inline void setValue(const Matrix3x3& value) {
 			setType(TYPE_MATRIX3x3);
 			getMatrix3x3ValueReference() = value;
 		}
@@ -1919,13 +1921,15 @@ protected:
 	static constexpr int ARRAYIDX_ADD { -2 };
 	static constexpr int STATE_NONE { -1 };
 	static constexpr int STATEMENTIDX_NONE { -1 };
+	static constexpr int STATEMENTIDX_FIRST { 0 };
 	static constexpr int ARGUMENTIDX_NONE { -1 };
 	static constexpr int OPERATORIDX_NONE { -1 };
 	static constexpr int LINEIDX_NONE { -1 };
+	static constexpr int LINEIDX_FIRST { 1 };
 	static constexpr int64_t TIME_NONE { -1LL };
 
 	struct ScriptState {
-		enum EndType { ENDTYPE_FOR, ENDTYPE_IF };
+		enum EndType { ENDTYPE_BLOCK, ENDTYPE_FOR, ENDTYPE_IF };
 		enum ConditionType {
 			SCRIPT,
 			CONDITIONTYPE_FORTIME
@@ -1936,6 +1940,7 @@ protected:
 		bool running { false };
 		int scriptIdx { SCRIPTIDX_NONE };
 		int statementIdx { STATEMENTIDX_NONE };
+		int gotoStatementIdx { STATEMENTIDX_NONE };
 		int64_t timeWaitStarted { TIME_NONE };
 		int64_t timeWaitTime { TIME_NONE };
 		string id;
@@ -1981,11 +1986,11 @@ protected:
 	}
 
 	/**
-	 * Goto statement from given statements goto statement
+	 * Go to statement goto from given statement
 	 * @param statement statement
 	 */
 	void gotoStatementGoto(const ScriptStatement& statement) {
-		getScriptState().statementIdx = statement.gotoStatementIdx;
+		getScriptState().gotoStatementIdx = statement.gotoStatementIdx;
 	}
 
 	/**
@@ -2027,9 +2032,11 @@ protected:
 		scriptState.forTimeStarted.clear();
 		while (scriptState.conditionStack.empty() == false) scriptState.conditionStack.pop();
 		while (scriptState.endTypeStack.empty() == false) scriptState.endTypeStack.pop();
+		if (scriptIdx != SCRIPTIDX_NONE) scriptState.endTypeStack.push(ScriptState::ENDTYPE_BLOCK);
 		scriptState.id.clear();
 		scriptState.scriptIdx = scriptIdx;
-		scriptState.statementIdx = 0;
+		scriptState.statementIdx = STATEMENTIDX_FIRST;
+		scriptState.gotoStatementIdx = STATEMENTIDX_NONE;
 		scriptState.timeWaitStarted = Time::getCurrentMillis();
 		scriptState.timeWaitTime = 0LL;
 		setScriptStateState(stateMachineState);
@@ -2046,11 +2053,12 @@ protected:
 	 * Stop script execution
 	 */
 	inline void stopScriptExecution() {
+		while (scriptStateStack.size() > 1) popScriptState();
+		//
 		auto& scriptState = getScriptState();
 		//
 		scriptState.running = false;
-		for (const auto& [scriptVariableName, scriptVariable]: scriptState.variables) delete scriptVariable;
-		scriptState.variables.clear();
+		//
 		if (isFunctionRunning() == false) timeEnabledConditionsCheckLast = TIME_NONE;
 		resetScriptExecutationState(SCRIPTIDX_NONE, STATEMACHINESTATE_NONE);
 	}
@@ -2724,6 +2732,13 @@ public:
 	FORBID_CLASS_COPY(MiniScript)
 
 	/**
+	 * Load script
+	 * @param pathName path name
+	 * @param fileName file name
+	 */
+	static MiniScript* loadScript(const string& pathName, const string& fileName);
+
+	/**
 	 * Default constructor
 	 */
 	MiniScript();
@@ -2732,6 +2747,16 @@ public:
 	 * Destructor
 	 */
 	virtual ~MiniScript();
+
+	/**
+	 * @return base class
+	 */
+	virtual const string getBaseClass();
+
+	/**
+	 * @return transpilation units
+	 */
+	virtual const vector<string> getTranspilationUnits();
 
 	/**
 	 * @return parse errors
@@ -3017,7 +3042,7 @@ public:
 	 * @param optional optional
 	 * @return success
 	 */
-	inline static bool getMatrix3x3Value(const span<ScriptVariable>& arguments, int idx, Matrix2D3x3& value, bool optional = false) {
+	inline static bool getMatrix3x3Value(const span<ScriptVariable>& arguments, int idx, Matrix3x3& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		const auto& argument = arguments[idx];
 		return argument.getMatrix3x3Value(value, optional);
@@ -3185,9 +3210,7 @@ public:
 			*scriptVariableIt->second = variable;
 			return;
 		} else {
-			auto scriptVariable = new ScriptVariable();
-			*scriptVariable = variable;
-			scriptState.variables[globalVariableName.empty() == true?name:globalVariableName] = scriptVariable;
+			scriptState.variables[globalVariableName.empty() == true?name:globalVariableName] = new ScriptVariable(variable);
 		}
 	}
 
@@ -3201,11 +3224,11 @@ public:
 	}
 
 	/**
-	 * Load script
+	 * Parse script into MiniScript instance
 	 * @param pathName path name
 	 * @param fileName file name
 	 */
-	void loadScript(const string& pathName, const string& fileName);
+	void parseScript(const string& pathName, const string& fileName);
 
 	/**
 	 * Start script

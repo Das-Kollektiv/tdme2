@@ -1,42 +1,34 @@
 #include <tdme/engine/model/Material.h>
 
+#include <memory>
+#include <string>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/model/PBRMaterialProperties.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 
-#include <string>
-
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 
 using tdme::engine::model::Material;
 using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::SpecularMaterialProperties;
 
+string Material::defaultMaterialId = "tdme.default_material";
+unique_ptr<Material> Material::defaultMaterial = make_unique<Material>(Material::defaultMaterialId);
+
 Material::Material(const string& id)
 {
 	this->id = id;
 	this->textureMatrix.identity();
-	this->specularMaterialProperties = new SpecularMaterialProperties();
+	this->specularMaterialProperties = make_unique<SpecularMaterialProperties>();
 }
 
 void Material::setSpecularMaterialProperties(SpecularMaterialProperties* specularMaterialProperties) {
-	if (this->specularMaterialProperties != nullptr && this->specularMaterialProperties != specularMaterialProperties) {
-		delete this->specularMaterialProperties;
-	}
-	this->specularMaterialProperties = specularMaterialProperties;
+	this->specularMaterialProperties = unique_ptr<SpecularMaterialProperties>(specularMaterialProperties);
 }
 
 void Material::setPBRMaterialProperties(PBRMaterialProperties* pbrMaterialProperties) {
-	if (this->pbrMaterialProperties != nullptr && this->pbrMaterialProperties != pbrMaterialProperties) {
-		delete this->pbrMaterialProperties;
-	}
-	this->pbrMaterialProperties = pbrMaterialProperties;
+	this->pbrMaterialProperties = unique_ptr<PBRMaterialProperties>(pbrMaterialProperties);
 }
-
-Material::~Material() {
-	if (this->specularMaterialProperties != nullptr) delete this->specularMaterialProperties;
-	if (this->pbrMaterialProperties != nullptr) delete this->pbrMaterialProperties;
-}
-
-string Material::defaultMaterialId = "tdme.default_material";
-Material* Material::defaultMaterial = new Material(Material::defaultMaterialId);

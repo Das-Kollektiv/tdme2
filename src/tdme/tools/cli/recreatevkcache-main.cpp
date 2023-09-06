@@ -1,4 +1,3 @@
-#include <cstdlib>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -52,10 +51,11 @@ public:
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values
+	 * @return exit code
 	 */
-	inline static void main(int argc, char** argv) {
+	inline static int main(int argc, char** argv) {
 		auto recreateVKCacheApplication = new RecreateVKCacheApplication();
-		recreateVKCacheApplication->run(argc, argv, "Recreate VK cache Application", nullptr, Application::WINDOW_HINT_INVISIBLE);
+		return recreateVKCacheApplication->run(argc, argv, "Recreate VK cache Application", nullptr, Application::WINDOW_HINT_INVISIBLE);
 	}
 
 	// overridden methods
@@ -70,7 +70,7 @@ public:
 	void initialize() override {
 		Engine::getInstance()->initialize();
 		if (Engine::getInstance()->getGraphicsRendererType() != Renderer::RENDERERTYPE_VULKAN) {
-			Console::println("Engine has not been compiled with -DVULKAN, Vulkan shader cache can not get created. Exiting.");
+			Console::println("Note: recreatevkcache does not run with --vulkan, Vulkan shader cache can not get created. Exiting.");
 			Application::exit(0);
 		}
 	}

@@ -1,23 +1,33 @@
 #pragma once
 
+#include <array>
+#include <memory>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/logics/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/utilities/MiniScript.h>
 
+using std::array;
 using std::string;
+using std::unique_ptr;
 using std::unordered_map;
+using std::unordered_set;
+using std::vector;
 
 using tdme::engine::logics::Context;
 using tdme::engine::logics::MiniScriptLogic;
 using tdme::engine::physics::Body;
 using tdme::engine::prototype::Prototype;
+using tdme::engine::Transform;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::os::threading::Mutex;
@@ -57,7 +67,7 @@ protected:
 
 	struct PrototypeCounter {
 		int counter;
-		Prototype* prototype { nullptr };
+		unique_ptr<Prototype> prototype;
 	};
 	unordered_map<string, PrototypeCounter> prototypes;
 
@@ -133,6 +143,8 @@ public:
 	virtual ~LogicMiniScript();
 
 	// overridden methods
+	const string getBaseClass();
+	const vector<string> getTranspilationUnits();
 	void registerStateMachineStates() override;
 	void registerMethods() override;
 	void registerVariables() override;

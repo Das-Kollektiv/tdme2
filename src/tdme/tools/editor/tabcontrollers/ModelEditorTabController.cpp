@@ -1,6 +1,8 @@
 #include <tdme/tools/editor/tabcontrollers/ModelEditorTabController.h>
 
+#include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -58,7 +60,10 @@
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
+using std::unordered_map;
 using std::vector;
 
 using tdme::tools::editor::tabcontrollers::ModelEditorTabController;
@@ -119,28 +124,14 @@ ModelEditorTabController::ModelEditorTabController(ModelEditorTabView* view)
 {
 	this->view = view;
 	this->popUps = view->getPopUps();
-	this->basePropertiesSubController = new BasePropertiesSubController(view->getEditorView(), "prototype");
-	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view, true);
-	this->prototypeSoundsSubController = new PrototypeSoundsSubController(view->getEditorView(), view);
-	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEditorView(), view, this->prototypePhysicsSubController->getView());
-	this->prototypeScriptSubController = new PrototypeScriptSubController(view->getEditorView());
+	this->basePropertiesSubController = make_unique<BasePropertiesSubController>(view->getEditorView(), "prototype");
+	this->prototypePhysicsSubController = make_unique<PrototypePhysicsSubController>(view->getEditorView(), view, true);
+	this->prototypeSoundsSubController = make_unique<PrototypeSoundsSubController>(view->getEditorView(), view);
+	this->prototypeDisplaySubController = make_unique<PrototypeDisplaySubController>(view->getEditorView(), view, this->prototypePhysicsSubController->getView());
+	this->prototypeScriptSubController = make_unique<PrototypeScriptSubController>(view->getEditorView());
 }
 
 ModelEditorTabController::~ModelEditorTabController() {
-	delete basePropertiesSubController;
-	delete prototypeDisplaySubController;
-	delete prototypePhysicsSubController;
-	delete prototypeSoundsSubController;
-	delete prototypeScriptSubController;
-}
-
-ModelEditorTabView* ModelEditorTabController::getView() {
-	return view;
-}
-
-GUIScreenNode* ModelEditorTabController::getScreenNode()
-{
-	return screenNode;
 }
 
 void ModelEditorTabController::initialize(GUIScreenNode* screenNode)
@@ -304,7 +295,7 @@ void ModelEditorTabController::onDrop(const string& payload, int mouseX, int mou
 	}
 }
 
-void ModelEditorTabController::createOutlinerModelNodesXML(const string& prefix, const map<string, Node*>& subNodes, string& xml) {
+void ModelEditorTabController::createOutlinerModelNodesXML(const string& prefix, const unordered_map<string, Node*>& subNodes, string& xml) {
 	for (const auto& [nodeId, node]: subNodes) {
 		string image;
 		if (node->isJoint() == true) {
@@ -363,7 +354,7 @@ void ModelEditorTabController::setOutlinerContent() {
 			}
 			if (model != nullptr) {
 				xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Materials") + "\" value=\"" + GUIParser::escape(modelPrefix + ".materials") + "\">\n";
-				for (const auto& [materialId, material]: model->getMaterials()) {
+				for (const auto& materialId: model->getMaterialIds()) {
 					xml+= "	<selectbox-option image=\"resources/engine/images/material.png\" text=\"" + GUIParser::escape(materialId) + "\" value=\"" + GUIParser::escape(modelPrefix + ".materials." + materialId) + "\" />\n";
 				}
 				xml+= "</selectbox-parent-option>\n";
@@ -376,7 +367,7 @@ void ModelEditorTabController::setOutlinerContent() {
 			if (model != nullptr &&
 				(model->getAnimationSetups().size() > 1 || model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT) == nullptr)) {
 				xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Animations") + "\" value=\"" + GUIParser::escape(modelPrefix + ".animations") + "\">\n";
-				for (const auto& [animationSetupId, animationSetup]: model->getAnimationSetups()) {
+				for (const auto& animationSetupId: model->getAnimationSetupIds()) {
 					if (animationSetupId == Model::ANIMATIONSETUP_DEFAULT) continue;
 					xml+= "	<selectbox-option image=\"resources/engine/images/animation.png\" text=\"" + GUIParser::escape(animationSetupId) + "\" id=\"" + GUIParser::escape(modelPrefix + ".animations." + animationSetupId) + "\" value=\"" + GUIParser::escape(modelPrefix + ".animations." + animationSetupId) + "\" />\n";
 				}
@@ -412,13 +403,14 @@ PrototypeLODLevel* ModelEditorTabController::getLODLevel(int level) {
 			{
 				auto prototypeLodLevel = prototype->getLODLevel2();
 				if (prototypeLodLevel == nullptr) {
-					prototypeLodLevel = new PrototypeLODLevel(
+					auto newPrototypeLodLevel = make_unique<PrototypeLODLevel>(
 						LODObject::LODLEVELTYPE_NONE,
 						"",
 						nullptr,
 						75.0f
 					);
-					prototype->setLODLevel2(prototypeLodLevel);
+					prototype->setLODLevel2(newPrototypeLodLevel.get());
+					prototypeLodLevel = newPrototypeLodLevel.release();
 				}
 				return prototypeLodLevel;
 			}
@@ -426,13 +418,14 @@ PrototypeLODLevel* ModelEditorTabController::getLODLevel(int level) {
 			{
 				auto prototypeLodLevel = prototype->getLODLevel3();
 				if (prototypeLodLevel == nullptr) {
-					prototypeLodLevel = new PrototypeLODLevel(
+					auto newPrototypeLodLevel = make_unique<PrototypeLODLevel>(
 						LODObject::LODLEVELTYPE_NONE,
 						"",
 						nullptr,
 						150.0f
 					);
-					prototype->setLODLevel3(prototypeLodLevel);
+					prototype->setLODLevel3(newPrototypeLodLevel.get());
+					prototypeLodLevel = newPrototypeLodLevel.release();
 				}
 				return prototypeLodLevel;
 			}
@@ -939,7 +932,7 @@ void ModelEditorTabController::applyPBRMaterialDetails() {
 			string outlinerNodeModel;
 			Model* model = nullptr;
 			getOutlinerNodeLOD(view->getEditorView()->getScreenController()->getOutlinerSelection(), outlinerNodeModel, &model);
-			material->setPBRMaterialProperties(new PBRMaterialProperties());
+			material->setPBRMaterialProperties(make_unique<PBRMaterialProperties>().release());
 			updateMaterialDetails();
 		}
 	} catch (Exception& exception) {
@@ -983,7 +976,7 @@ void ModelEditorTabController::setAnimationDetails() {
 		animationsXML =
 			animationsXML +
 			"<dropdown-option text=\"<None>\" value=\"\" " + (animationSetup->getOverlayFromNodeId().empty() == true?"selected=\"true\" ":"") + " />\n";
-		for (const auto& [nodeId, node]: model->getNodes()) {
+		for (const auto& nodeId: model->getNodeIds()) {
 			animationsXML+=
 				"<dropdown-option text=\"" +
 				GUIParser::escape(nodeId) +
@@ -1060,8 +1053,9 @@ void ModelEditorTabController::setAnimationPreviewDetails() {
 	{
 		string animationsXML;
 		animationsXML = animationsXML + "<dropdown-option text=\"<No animation>\" value=\"\" selected=\"true\" />";
-		for (const auto& [animationSetupId, animationSetup]: model->getAnimationSetups()) {
-			if (animationSetup->isOverlayAnimationSetup() == true) continue;
+		for (const auto& animationSetupId: model->getAnimationSetupIds()) {
+			auto animationSetup = model->getAnimationSetup(animationSetupId);
+			if (animationSetup == nullptr || animationSetup->isOverlayAnimationSetup() == true) continue;
 			animationsXML =
 				animationsXML + "<dropdown-option text=\"" +
 				GUIParser::escape(animationSetup->getId()) +
@@ -1080,8 +1074,9 @@ void ModelEditorTabController::setAnimationPreviewDetails() {
 	{
 		string overlayAnimationsXML;
 		overlayAnimationsXML = overlayAnimationsXML + "<dropdown-option text=\"<No animation>\" value=\"\" selected=\"true\" />";
-		for (const auto& [animationSetupId, animationSetup]: model->getAnimationSetups()) {
-			if (animationSetup->isOverlayAnimationSetup() == false) continue;
+		for (const auto& animationSetupId: model->getAnimationSetupIds()) {
+			auto animationSetup = model->getAnimationSetup(animationSetupId);
+			if (animationSetup == nullptr || animationSetup->isOverlayAnimationSetup() == false) continue;
 			overlayAnimationsXML =
 				overlayAnimationsXML + "<dropdown-option text=\"" +
 				GUIParser::escape(animationSetup->getId()) +
@@ -1110,12 +1105,12 @@ void ModelEditorTabController::setAnimationPreviewDetails() {
 	{
 		string bonesXML;
 		bonesXML = bonesXML + "<dropdown-option text=\"<No bone>\" value=\"\" selected=\"true\" />";
-		for (const auto& [nodeId, node]: model->getNodes()) {
+		for (const auto& nodeId: model->getNodeIds()) {
 			bonesXML =
 				bonesXML + "<dropdown-option text=\"" +
-				GUIParser::escape(node->getId()) +
+				GUIParser::escape(nodeId) +
 				"\" value=\"" +
-				GUIParser::escape(node->getId()) +
+				GUIParser::escape(nodeId) +
 				"\" " +
 				" />\n";
 		}
@@ -1243,8 +1238,7 @@ void ModelEditorTabController::setMaterialDiffuseTexture(const string& fileName)
 	if (material == nullptr) return;
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr) {
-		specularMaterialProperties = new SpecularMaterialProperties();
-		material->setSpecularMaterialProperties(specularMaterialProperties);
+		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 	}
 	view->reloadPrototype();
 	specularMaterialProperties->setDiffuseTexture(
@@ -1261,7 +1255,7 @@ void ModelEditorTabController::onMaterialLoadDiffuseTexture() {
 	if (material == nullptr) return;
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr) {
-		specularMaterialProperties = new SpecularMaterialProperties();
+		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 		material->setSpecularMaterialProperties(specularMaterialProperties);
 	}
 
@@ -1307,8 +1301,7 @@ void ModelEditorTabController::onMaterialClearDiffuseTexture() {
 	if (material == nullptr) return;
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr) {
-		specularMaterialProperties = new SpecularMaterialProperties();
-		material->setSpecularMaterialProperties(specularMaterialProperties);
+		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 	}
 	view->reloadPrototype();
 	specularMaterialProperties->setDiffuseTexture(
@@ -1348,8 +1341,7 @@ void ModelEditorTabController::setMaterialDiffuseTransparencyTexture(const strin
 	if (material == nullptr) return;
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr) {
-		specularMaterialProperties = new SpecularMaterialProperties();
-		material->setSpecularMaterialProperties(specularMaterialProperties);
+		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 	}
 	view->reloadPrototype();
 	specularMaterialProperties->setDiffuseTexture(
@@ -1366,8 +1358,7 @@ void ModelEditorTabController::onMaterialLoadDiffuseTransparencyTexture() {
 	if (material == nullptr) return;
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr) {
-		specularMaterialProperties = new SpecularMaterialProperties();
-		material->setSpecularMaterialProperties(specularMaterialProperties);
+		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 	}
 
 	class OnLoadTexture: public virtual Action
@@ -1412,7 +1403,7 @@ void ModelEditorTabController::onMaterialClearDiffuseTransparencyTexture() {
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr) {
 		specularMaterialProperties = new SpecularMaterialProperties();
-		material->setSpecularMaterialProperties(specularMaterialProperties);
+		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 	}
 	view->reloadPrototype();
 	specularMaterialProperties->setDiffuseTexture(
@@ -1460,7 +1451,7 @@ void ModelEditorTabController::setMaterialNormalTexture(const string& fileName) 
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr) {
 		specularMaterialProperties = new SpecularMaterialProperties();
-		material->setSpecularMaterialProperties(specularMaterialProperties);
+		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 	}
 	view->reloadPrototype();
 	specularMaterialProperties->setNormalTexture(
@@ -1475,8 +1466,7 @@ void ModelEditorTabController::onMaterialLoadNormalTexture() {
 	if (material == nullptr) return;
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr) {
-		specularMaterialProperties = new SpecularMaterialProperties();
-		material->setSpecularMaterialProperties(specularMaterialProperties);
+		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 	}
 
 	class OnLoadTexture: public virtual Action
@@ -1521,8 +1511,7 @@ void ModelEditorTabController::onMaterialClearNormalTexture() {
 	if (material == nullptr) return;
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr) {
-		specularMaterialProperties = new SpecularMaterialProperties();
-		material->setSpecularMaterialProperties(specularMaterialProperties);
+		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 	}
 	view->reloadPrototype();
 	specularMaterialProperties->setNormalTexture(
@@ -1560,8 +1549,7 @@ void ModelEditorTabController::setMaterialSpecularTexture(const string& fileName
 	if (material == nullptr) return;
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr) {
-		specularMaterialProperties = new SpecularMaterialProperties();
-		material->setSpecularMaterialProperties(specularMaterialProperties);
+		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 	}
 	//
 	view->reloadPrototype();
@@ -1577,8 +1565,7 @@ void ModelEditorTabController::onMaterialLoadSpecularTexture() {
 	if (material == nullptr) return;
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr) {
-		specularMaterialProperties = new SpecularMaterialProperties();
-		material->setSpecularMaterialProperties(specularMaterialProperties);
+		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 	}
 
 	class OnLoadTexture: public virtual Action
@@ -1623,8 +1610,7 @@ void ModelEditorTabController::onMaterialClearSpecularTexture() {
 	if (material == nullptr) return;
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr) {
-		specularMaterialProperties = new SpecularMaterialProperties();
-		material->setSpecularMaterialProperties(specularMaterialProperties);
+		material->setSpecularMaterialProperties(specularMaterialProperties = (make_unique<SpecularMaterialProperties>()).release());
 	}
 	view->reloadPrototype();
 	specularMaterialProperties->setSpecularTexture(
@@ -2510,22 +2496,22 @@ void ModelEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 							);
 							if (prototype->getLODLevel2() == nullptr) {
 								prototype->setLODLevel2(
-									new PrototypeLODLevel(
+									make_unique<PrototypeLODLevel>(
 										LODObject::LODLEVELTYPE_MODEL,
 										billboardModelPathName + "/" + billboardModelFileName,
 										billboardLODModel,
 										75.0f
-									)
+									).release()
 								);
 							} else
 							if (prototype->getLODLevel2() == nullptr) {
 								prototype->setLODLevel3(
-									new PrototypeLODLevel(
+									make_unique<PrototypeLODLevel>(
 										LODObject::LODLEVELTYPE_MODEL,
 										billboardModelPathName + "/" + billboardModelFileName,
 										billboardLODModel,
 										150.0f
-									)
+									).release()
 								);
 							}
 							modelEditorTabController->getView()->reloadPrototype();
@@ -2564,11 +2550,11 @@ void ModelEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 								imposterLODModels
 							);
 							prototype->setImposterLOD(
-								new PrototypeImposterLOD(
+								make_unique<PrototypeImposterLOD>(
 									imposterLODFileNames,
 									imposterLODModels,
 									75.0f
-								)
+								).release()
 							);
 							modelEditorTabController->getView()->reloadPrototype();
 						} catch (Exception& exception) {

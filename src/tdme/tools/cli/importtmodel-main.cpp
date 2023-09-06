@@ -1,4 +1,4 @@
-#include <cstdlib>
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -20,6 +20,10 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ModelTools.h>
 #include <tdme/utilities/StringTools.h>
+
+using std::make_unique;
+using std::string;
+using std::unique_ptr;
 
 using tdme::application::Application;
 using tdme::engine::fileio::models::ModelReader;
@@ -81,27 +85,30 @@ public:
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values
+	 * @return exit code
 	 */
-	inline static void main(int argc, char** argv) {
+	inline static int main(int argc, char** argv) {
 		auto useBC7TextureCompression = true;
 		if (string(argv[1]) == "-no-texture-compression") useBC7TextureCompression = false;
 		string tModelFileName = argv[1 + (useBC7TextureCompression == false?1:0)];
 		string modelFileName = argv[2 + (useBC7TextureCompression == false?1:0)];
 		string bvsModelFileName = argc >= 4 + (useBC7TextureCompression == false?1:0)?argv[3 + (useBC7TextureCompression == false?1:0)]:"";
 		auto importTModelApplication = new ImportTModelApplication(tModelFileName, modelFileName, bvsModelFileName, useBC7TextureCompression);
-		importTModelApplication->run(argc, argv, "Import TModel Application", nullptr, Application::WINDOW_HINT_INVISIBLE);
+		return importTModelApplication->run(argc, argv, "Import TModel Application", nullptr, Application::WINDOW_HINT_INVISIBLE);
 	}
 
 	// overridden methods
 	void display() override {
 		try {
-			Prototype* prototype = nullptr;
+			unique_ptr<Prototype> prototype;
 			// load model
 			Console::println("Loading model: " + modelFileName);
-			auto model = ModelReader::read(
-				FileSystem::getInstance()->getPathName(modelFileName),
-				FileSystem::getInstance()->getFileName(modelFileName),
-				useBC7TextureCompression
+			auto model = unique_ptr<Model>(
+				ModelReader::read(
+					FileSystem::getInstance()->getPathName(modelFileName),
+					FileSystem::getInstance()->getFileName(modelFileName),
+					useBC7TextureCompression
+				)
 			);
 			// load tmm
 			if (FileSystem::getInstance()->fileExists(tModelFileName) == false) {
@@ -109,7 +116,7 @@ public:
 				auto pathName = FileSystem::getInstance()->getPathName(tModelFileName);
 				auto fileName = FileSystem::getInstance()->getFileName(tModelFileName);
 				auto fileNameWithoutExtension = StringTools::substring(fileName, 0, fileName.rfind('.'));
-				prototype = new Prototype(
+				prototype = make_unique<Prototype>(
 					-1,
 					Prototype_Type::MODEL,
 					fileNameWithoutExtension,
@@ -117,26 +124,28 @@ public:
 					pathName + "/" + fileName,
 					FileSystem::getInstance()->getPathName(modelFileName) + "/" + FileSystem::getInstance()->getFileName(modelFileName),
 					string(),
-					model
+					model.release()
 				);
 			} else {
 				Console::println("Loading tmodel: " + tModelFileName);
-				prototype = PrototypeReader::read(
-					FileSystem::getInstance()->getPathName(tModelFileName),
-					FileSystem::getInstance()->getFileName(tModelFileName),
-					nullptr,
-					useBC7TextureCompression
+				prototype = unique_ptr<Prototype>(
+					PrototypeReader::read(
+						FileSystem::getInstance()->getPathName(tModelFileName),
+						FileSystem::getInstance()->getFileName(tModelFileName),
+						nullptr,
+						useBC7TextureCompression
+					)
 				);
-				prototype->setModel(model);
+				prototype->setModel(model.release());
 			}
 			// remove old bv mesh model files
-			GenerateConvexMeshes::removeConvexMeshes(prototype);
+			GenerateConvexMeshes::removeConvexMeshes(prototype.get());
 			// load new convex meshes bv model
 			if (bvsModelFileName.empty() == false) {
 				Console::println("Loading convex mesh bounding volumes model: " + bvsModelFileName);
 				vector<vector<uint8_t>> convexMeshTMsData;
 				if (GenerateConvexMeshes::generateConvexMeshes(
-						prototype,
+						prototype.get(),
 						GenerateConvexMeshes::MODE_IMPORT,
 						nullptr,
 						FileSystem::getInstance()->getPathName(bvsModelFileName),
@@ -145,9 +154,9 @@ public:
 					for (const auto& convexMeshTMData: convexMeshTMsData) {
 						//
 						try {
-							auto prototypeBoundingVolume = new PrototypeBoundingVolume(prototype->getBoundingVolumeCount(), prototype);
+							auto prototypeBoundingVolume = make_unique<PrototypeBoundingVolume>(prototype.get());
 							prototypeBoundingVolume->setupConvexMesh(convexMeshTMData);
-							prototype->addBoundingVolume(prototypeBoundingVolume->getId(), prototypeBoundingVolume);
+							prototype->addBoundingVolume(prototypeBoundingVolume.release());
 						} catch (Exception& exception) {
 							Console::println(string("An error occurred: ") + exception.what());
 						}
@@ -159,7 +168,7 @@ public:
 			PrototypeWriter::write(
 				FileSystem::getInstance()->getPathName(tModelFileName),
 				FileSystem::getInstance()->getFileName(tModelFileName),
-				prototype,
+				prototype.get(),
 				useBC7TextureCompression
 			);
 		} catch (Exception& exception) {
@@ -194,5 +203,5 @@ int main(int argc, char** argv)
 		Console::println("Usage: importtmodel [-no-texture-compression] model.tmodel modelfile.ext [bvs-model.ext]");
 		Application::exit(1);
 	}
-	tdme::tools::cli::ImportTModelApplication::main(argc, argv);
+	return tdme::tools::cli::ImportTModelApplication::main(argc, argv);
 }

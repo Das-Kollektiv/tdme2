@@ -1,7 +1,8 @@
 #include <tdme/engine/subsystems/rendering/ObjectNode.h>
 
-#include <map>
+#include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -22,12 +23,14 @@
 #include <tdme/engine/subsystems/rendering/ObjectNodeMesh.h>
 #include <tdme/engine/subsystems/rendering/ObjectNodeRenderer.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/math/Matrix4x4.h>
 
-using std::map;
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::Texture;
@@ -48,7 +51,7 @@ using tdme::engine::subsystems::rendering::ObjectNode;
 using tdme::engine::subsystems::rendering::ObjectNodeMesh;
 using tdme::engine::subsystems::rendering::ObjectNodeRenderer;
 using tdme::engine::Engine;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::math::Matrix4x4;
 
 int64_t ObjectNode::counter = 0;
@@ -59,7 +62,6 @@ ObjectNode::ObjectNode()
 
 ObjectNode::~ObjectNode()
 {
-	delete renderer;
 }
 
 void ObjectNode::updateNodeTransformationsMatrix() {
@@ -81,7 +83,7 @@ void ObjectNode::createNodes(ObjectBase* object, bool useManagers, Engine::Anima
 	createNodes(object, model->getSubNodes(), model->hasAnimations(), useManagers, animationProcessingTarget, objectNodes);
 }
 
-void ObjectNode::createNodes(ObjectBase* object, const map<string, Node*>& nodes, bool animated, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget, vector<ObjectNode*>& objectNodes)
+void ObjectNode::createNodes(ObjectBase* object, const unordered_map<string, Node*>& nodes, bool animated, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget, vector<ObjectNode*>& objectNodes)
 {
 	for (const auto& [nodeId, node]: nodes) {
 		// skip on joints
@@ -114,9 +116,9 @@ void ObjectNode::createNodes(ObjectBase* object, const map<string, Node*>& nodes
 			objectNode->object = object;
 			objectNode->node = node;
 			objectNode->animated = animated;
-			objectNode->renderer = new ObjectNodeRenderer(objectNode);
-			vector<map<string, Matrix4x4*>*> instancesTransformMatrices;
-			vector<map<string, Matrix4x4*>*> instancesSkinningNodesMatrices;
+			objectNode->renderer = make_unique<ObjectNodeRenderer>(objectNode);
+			vector<unordered_map<string, Matrix4x4*>*> instancesTransformMatrices;
+			vector<unordered_map<string, Matrix4x4*>*> instancesSkinningNodesMatrices;
 			for (auto animation: object->instanceAnimations) {
 				instancesTransformMatrices.push_back(&animation->transformMatrices[0]);
 				instancesSkinningNodesMatrices.push_back(animation->getSkinningNodesTransformMatrices(objectNode->node));
@@ -126,7 +128,7 @@ void ObjectNode::createNodes(ObjectBase* object, const map<string, Node*>& nodes
 				objectNode->mesh = meshManager->getMesh(objectNode->id);
 				if (objectNode->mesh == nullptr) {
 					objectNode->mesh = new ObjectNodeMesh(
-						objectNode->renderer,
+						objectNode->renderer.get(),
 						animationProcessingTarget,
 						node,
 						instancesTransformMatrices,
@@ -137,7 +139,7 @@ void ObjectNode::createNodes(ObjectBase* object, const map<string, Node*>& nodes
 				}
 			} else {
 				objectNode->mesh = new ObjectNodeMesh(
-					objectNode->renderer,
+					objectNode->renderer.get(),
 					animationProcessingTarget,
 					node,
 					instancesTransformMatrices,

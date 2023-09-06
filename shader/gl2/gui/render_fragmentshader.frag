@@ -16,8 +16,9 @@ uniform int gradientColorCount;
 uniform float gradientColorStarts[10];
 
 // passed from vertex shader
-varying vec2 vsFragTextureUV;
 varying vec4 vsFragColor;
+varying float vsSolidColor;
+varying vec2 vsFragTextureUV;
 varying vec2 vsFragGradientTextureUV;
 
 // main
@@ -26,8 +27,8 @@ void main (void) {
 		vec3 maskColor = texture2D(maskTextureUnit, vsFragTextureUV).rgb;
 		if ((maskColor.r + maskColor.g + maskColor.b) / 3.0 > maskMaxValue) discard;
 	}
-	if (diffuseTextureAvailable == 1) {
-		gl_FragColor = clamp((effectColorAdd + (texture2D(diffuseTextureUnit, vsFragTextureUV)) * vsFragColor * effectColorMul), 0.0, 1.0);
+	if (vsSolidColor > 0.0) {
+		gl_FragColor = clamp(vsFragColor, 0.0, 1.0);
 	} else
 	if (gradientAvailable == 1) {
 		int gradientColorIdx = 0;
@@ -44,6 +45,9 @@ void main (void) {
 		float colorNextBlend = clamp((vsFragGradientTextureUV.x - colorStart) / (colorStartNext - colorStart), 0.0, 1.0);
 		float colorBlend = clamp(1.0 - colorNextBlend, 0.0, 1.0);
 		gl_FragColor = color * colorBlend + colorNext * colorNextBlend;
+	} else
+	if (diffuseTextureAvailable == 1) {
+		gl_FragColor = clamp((effectColorAdd + (texture2D(diffuseTextureUnit, vsFragTextureUV)) * vsFragColor * effectColorMul), 0.0, 1.0);
 	} else {
 		gl_FragColor = clamp(effectColorAdd + vsFragColor, 0.0, 1.0);
 	}

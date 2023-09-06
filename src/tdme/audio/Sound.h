@@ -43,6 +43,12 @@ public:
 		this->fileName = fileName;
 	}
 
+	/**
+	 * Destructor
+	 */
+	inline ~Sound() {
+	}
+
 	// overridden methods
 	bool isPlaying() override;
 	void rewind() override;

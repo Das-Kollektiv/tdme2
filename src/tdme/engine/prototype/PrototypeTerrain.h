@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -9,13 +10,17 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeTerrainBrush.h>
 #include <tdme/engine/Transform.h>
+#include <tdme/utilities/UniquePtrSequenceIterator.h>
 
+using std::make_unique;
+using std::unique_ptr;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeTerrainBrush;
+using tdme::utilities::UniquePtrSequenceIterator;
 
 using tdme::engine::Transform;
 
@@ -35,7 +40,7 @@ private:
 	int foliagePrototypeMapIdx { 0 };
 	unordered_map<int, Prototype*> foliageFoliagePrototypeMap;
 	vector<unordered_map<int, vector<Transform>>> foliageMaps;
-	vector<PrototypeTerrainBrush*> brushes;
+	vector<unique_ptr<PrototypeTerrainBrush>> brushes;
 
 public:
 	// forbid class copy
@@ -54,7 +59,6 @@ public:
 		for (auto& [foliageFoliagePrototypeIdx, foliageFoliagePrototype]: foliageFoliagePrototypeMap) {
 			delete foliageFoliagePrototype;
 		}
-		for (auto brush: brushes) delete brush;
 	}
 
 	/**
@@ -183,7 +187,7 @@ public:
 	 */
 	inline vector<int> getFoliagePrototypeIndices() {
 		vector<int> foliagePrototypeIndices;
-		for (const auto& [foliageFoliagePrototypeMapIdx, foliageFoliagePrototypeMap]: foliageFoliagePrototypeMap) {
+		for (const auto& [foliageFoliagePrototypeMapIdx, foliageFoliagePrototype]: foliageFoliagePrototypeMap) {
 			foliagePrototypeIndices.push_back(foliageFoliagePrototypeMapIdx);
 		}
 		return foliagePrototypeIndices;
@@ -217,15 +221,15 @@ public:
 	inline const vector<string> getFoliagePrototypeEntityIds(int prototypeIdx) {
 		vector<string> foliagePrototypeEntityIds;
 		auto prototypeEntityIdx = 0;
-		for (auto& foliageMapPartition: foliageMaps) {
-			for (auto& foliageMapPartitionIt: foliageMapPartition) {
-				const auto& transformVector = foliageMapPartition[prototypeIdx];
-				if (transformVector.empty() == true) continue;
-				auto foliagePrototype = getFoliagePrototype(prototypeIdx);
-				if (foliagePrototype->isRenderGroups() == false) {
-					for (auto& transform: transformVector) {
-						foliagePrototypeEntityIds.push_back("tdme.foliage." + to_string(prototypeIdx) + "." + to_string(prototypeEntityIdx++));
-					}
+		for (const auto& foliageMapPartition: foliageMaps) {
+			auto foliageMapPartitionIt = foliageMapPartition.find(prototypeIdx);
+			if (foliageMapPartitionIt == foliageMapPartition.end()) continue;
+			const auto& transformVector = foliageMapPartitionIt->second;
+			if (transformVector.empty() == true) continue;
+			auto foliagePrototype = getFoliagePrototype(prototypeIdx);
+			if (foliagePrototype->isRenderGroups() == false) {
+				for (const auto& transform: transformVector) {
+					foliagePrototypeEntityIds.push_back("tdme.foliage." + to_string(prototypeIdx) + "." + to_string(prototypeEntityIdx++));
 				}
 			}
 		}
@@ -240,12 +244,14 @@ public:
 	inline const map<string, Transform> getFoliagePrototypeEntityTransform(int prototypeIdx) {
 		map<string, Transform> foliagePrototypeEntityTransform;
 		auto prototypeEntityIdx = 0;
-		for (auto& foliageMapPartition: foliageMaps) {
-			const auto& transformVector = foliageMapPartition[prototypeIdx];
+		for (const auto& foliageMapPartition: foliageMaps) {
+			auto foliageMapPartitionIt = foliageMapPartition.find(prototypeIdx);
+			if (foliageMapPartitionIt == foliageMapPartition.end()) continue;
+			const auto& transformVector = foliageMapPartitionIt->second;
 			if (transformVector.empty() == true) continue;
 			auto foliagePrototype = getFoliagePrototype(prototypeIdx);
 			if (foliagePrototype->isRenderGroups() == false) {
-				for (auto& transform: transformVector) {
+				for (const auto& transform: transformVector) {
 					foliagePrototypeEntityTransform["tdme.foliage." + to_string(prototypeIdx) + "." + to_string(prototypeEntityIdx++)] = transform;
 				}
 			}
@@ -256,8 +262,16 @@ public:
 	/**
 	 * @return prototype terrain brushes
 	 */
-	inline const vector<PrototypeTerrainBrush*>& getBrushes() const {
-		return brushes;
+	inline UniquePtrSequenceIterator<PrototypeTerrainBrush> getBrushes() {
+		return UniquePtrSequenceIterator<PrototypeTerrainBrush>(&brushes[0], &brushes[brushes.size()]);
+	}
+
+	/**
+	 * Get prototype terrain brush count
+	 * @return prototype terrain brush count
+	 */
+	inline int getBrushCount() {
+		return brushes.size();
 	}
 
 	/**
@@ -267,7 +281,7 @@ public:
 	 */
 	inline PrototypeTerrainBrush* getBrush(int idx) {
 		if (idx < 0 || idx >= brushes.size()) return nullptr;
-		return brushes[idx];
+		return brushes[idx].get();
 	}
 
 	/**
@@ -275,9 +289,8 @@ public:
 	 * @param idx index
 	 */
 	PrototypeTerrainBrush* addBrush() {
-		auto brush = new PrototypeTerrainBrush();
-		brushes.push_back(brush);
-		return brush;
+		brushes.push_back(make_unique<PrototypeTerrainBrush>());
+		return brushes[brushes.size() - 1].get();
 	}
 
 	/**
@@ -286,9 +299,7 @@ public:
 	 */
 	bool removeBrush(int idx) {
 		if (idx < 0 || idx >= brushes.size()) return false;
-		auto brush = brushes[idx];
 		brushes.erase(brushes.begin() + idx);
-		delete brush;
 		return true;
 	}
 

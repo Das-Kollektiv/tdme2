@@ -1,6 +1,7 @@
-#include <tdme/tools/editor/TDMEEditor.h>
+#include <tdme/tools/editor/Editor.h>
 
 #include <cstdlib>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -21,10 +22,12 @@
 #include <tdme/tools/editor/views/View.h>
 #include <tdme/utilities/Console.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
-using tdme::tools::editor::TDMEEditor;
+using tdme::tools::editor::Editor;
 
 using tdme::utilities::Time;
 
@@ -42,58 +45,56 @@ using tdme::tools::editor::views::EditorView;
 using tdme::tools::editor::views::View;
 using tdme::utilities::Console;
 
-TDMEEditor* TDMEEditor::instance = nullptr;
+Editor* Editor::instance = nullptr;
 
-TDMEEditor::TDMEEditor()
+Editor::Editor()
 {
 	Tools::loadSettings(this);
-	TDMEEditor::instance = this;
+	Editor::instance = this;
 	engine = Engine::getInstance();
 	engine->setPartition(new SimplePartition());
 	view = nullptr;
 	viewInitialized = false;
 	viewNew = nullptr;
-	popUps = new PopUps();
+	popUps = make_unique<PopUps>();
 	editorView = nullptr;
 	quitRequested = false;
 }
 
-TDMEEditor::~TDMEEditor() {
-	delete popUps;
-	delete editorView;
+Editor::~Editor() {
 }
 
-void TDMEEditor::main(int argc, char** argv)
+int Editor::main(int argc, char** argv)
 {
-	Console::println(string("TDMEEditor ") + Version::getVersion());
+	Console::println(string("Editor ") + Version::getVersion());
 	Console::println(Version::getCopyright());
 	Console::println();
 
-	auto tdmeEditor = new TDMEEditor();
-	tdmeEditor->run(argc, argv, "TDMEEditor", nullptr, Application::WINDOW_HINT_MAXIMIZED);
+	auto tdmeEditor = new Editor();
+	return tdmeEditor->run(argc, argv, "Editor", nullptr, Application::WINDOW_HINT_MAXIMIZED);
 }
 
-bool TDMEEditor::isFullScreen() {
+bool Editor::isFullScreen() {
 	if (editorView == nullptr) return false;
 	return editorView->getScreenController()->isFullScreen();
 }
 
-void TDMEEditor::setView(View* view)
+void Editor::setView(View* view)
 {
 	viewNew = view;
 }
 
-View* TDMEEditor::getView()
+View* Editor::getView()
 {
 	return view;
 }
 
-void TDMEEditor::quit()
+void Editor::quit()
 {
 	quitRequested = true;
 }
 
-void TDMEEditor::display()
+void Editor::display()
 {
 	if (viewNew != nullptr) {
 		if (view != nullptr && viewInitialized == true) {
@@ -125,7 +126,7 @@ void TDMEEditor::display()
 	}
 }
 
-void TDMEEditor::dispose()
+void Editor::dispose()
 {
 	if (view != nullptr && viewInitialized == true) {
 		view->deactivate();
@@ -137,7 +138,7 @@ void TDMEEditor::dispose()
 	Tools::oseDispose();
 }
 
-void TDMEEditor::initialize()
+void Editor::initialize()
 {
 	engine->initialize();
 	// TODO: settings maybe for the next 2
@@ -147,14 +148,14 @@ void TDMEEditor::initialize()
 	setInputEventHandler(engine->getGUI());
 	Tools::oseInit();
 	popUps->initialize();
-	setView(editorView = new EditorView(popUps));
+	setView((editorView = make_unique<EditorView>(popUps.get())).get());
 }
 
-void TDMEEditor::reshape(int width, int height)
+void Editor::reshape(int width, int height)
 {
 	engine->reshape(width, height);
 }
 
-void TDMEEditor::onDrop(const vector<string>& paths) {
+void Editor::onDrop(const vector<string>& paths) {
 	editorView->onDrop(paths);
 }

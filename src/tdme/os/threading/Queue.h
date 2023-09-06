@@ -44,7 +44,7 @@ public:
 	 */
 	virtual ~Queue() {
 		while (data.size() > 0) {
-			T* element = data.front();
+			auto element = data.front();
 			delete element;
 			data.pop();
 		}
@@ -55,7 +55,7 @@ public:
 	 */
 	void stop() {
 		stopRequested = true;
-		c.signal();
+		c.broadcast();
 	}
 
 	/**
@@ -72,7 +72,7 @@ public:
 			c.signal();
 			return NULL;
 		} else {
-			T* element = data.front();
+			auto element = data.front();
 			data.pop();
 			m.unlock();
 			return element;

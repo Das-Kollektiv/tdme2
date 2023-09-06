@@ -120,8 +120,11 @@ GUIElementNode::GUIElementNode(
 	this->onMouseOutExpression = onMouseOutExpression;
 	this->onChangeExpression = onChangeExpression;
 	this->parentElementId = parentElementId;
-	this->controller = ignoreEvents == true?static_cast<GUINodeController*>(new GUIElementIgnoreEventsController(this)):static_cast<GUINodeController*>(new GUIElementController(this));
-	this->controller->initialize();
+	// controller
+	auto controller = ignoreEvents == true?static_cast<GUINodeController*>(new GUIElementIgnoreEventsController(this)):static_cast<GUINodeController*>(new GUIElementController(this));
+	controller->initialize();
+	setController(controller);
+	//
 	{
 		StringTokenizer t;
 		t.tokenize(StringTools::trim(options), ",");

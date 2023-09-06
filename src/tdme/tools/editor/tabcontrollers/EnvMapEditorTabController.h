@@ -81,11 +81,16 @@ public:
 
 	/**
 	 * Get view
+	 * @return view
 	 */
-	EnvMapEditorTabView* getView();
+	inline EnvMapEditorTabView* getView() {
+		return view;
+	}
 
 	// overridden method
-	GUIScreenNode* getScreenNode() override;
+	inline GUIScreenNode* getScreenNode() override {
+		return screenNode;
+	}
 
 	// overridden methods
 	void initialize(GUIScreenNode* screenNode) override;

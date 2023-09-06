@@ -13,7 +13,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/math/Math.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/MutableString.h>
@@ -31,7 +31,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
 using tdme::math::Math;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::utilities::Console;
 using tdme::utilities::Float;
 using tdme::utilities::MutableString;
@@ -143,5 +143,5 @@ void GUIKnobController::setValue(const MutableString& value) {
 }
 
 void GUIKnobController::updateKnob() {
-	required_dynamic_cast<GUIImageNode*>(knobNode)->setTextureMatrix(Matrix2D3x3::rotateAroundTextureCenter((-valueFloat * (360.0f - 60.0f)) - 210.f));
+	required_dynamic_cast<GUIImageNode*>(knobNode)->setTextureMatrix(Matrix3x3::rotateAroundTextureCenter((-valueFloat * (360.0f - 60.0f)) - 210.f));
 }

@@ -28,26 +28,26 @@ public:
 	~KernelEventMechanism();
 
 	/**
-	 * @brief initializes the kernel event mechanism
-	 * @param maxCCU supported max ccu
+	 * @brief Initializes the kernel event mechanism
+	 * @param maxSockets supported max sockets
 	 * @throws tdme::os::network::NetworkKEMException
 	 */
-	void initKernelEventMechanism(const unsigned int maxCCU) ;
+	void initKernelEventMechanism(const unsigned int maxSockets) ;
 
 	/**
-	 * @brief shutdowns the kernel event mechanism
+	 * @brief Shutdowns the kernel event mechanism
 	 */
 	void shutdownKernelEventMechanism();
 
 	/**
-	 * @brief do the kernel event mechanism
+	 * @brief Do the kernel event mechanism
 	 * @return number of events
 	 * @throws tdme::os::network::NetworkKEMException
 	 */
 	int doKernelEventMechanism();
 
 	/**
-	 * @brief decodes a kernel event
+	 * @brief Decodes a kernel event
 	 * @param index kernel event index
 	 * @param &interest kernel event io interest
 	 * @param cookie kernel event cookie
@@ -56,7 +56,7 @@ public:
 	void decodeKernelEvent(const unsigned int index, NIOInterest &interest, void*& cookie);
 
 	/**
-	 * @brief sets a non blocked socket io interest
+	 * @brief Sets a non blocked socket io interest
 	 * @param &socket socket
 	 * @param lastInterest last nio interest
 	 * @param interest nio interest
@@ -64,6 +64,13 @@ public:
 	 * @throws tdme::os::network::NetworkKEMException
 	 */
 	void setSocketInterest(const NetworkSocket &socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie);
+
+	/**
+	 * @brief Removes a socket
+	 * @param &socket socket
+	 * @throws tdme::os::network::NetworkKEMException
+	 */
+	void removeSocket(const NetworkSocket &socket);
 
 private:
 	//

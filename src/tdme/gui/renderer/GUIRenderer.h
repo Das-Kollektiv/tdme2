@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -12,7 +13,7 @@
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/math/Math.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/FloatBuffer.h>
@@ -21,6 +22,7 @@
 using std::array;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::subsystems::renderer::Renderer;
@@ -30,7 +32,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
 using tdme::math::Math;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
 using tdme::utilities::FloatBuffer;
@@ -73,14 +75,14 @@ private:
 	Renderer* renderer { nullptr };
 	vector<int32_t>* vboIds { nullptr };
 	int quadCount { 0 };
-	ByteBuffer* sbIndicesByteBuffer { nullptr };
-	ByteBuffer* fbVerticesByteBuffer { nullptr };
+	unique_ptr<ByteBuffer> sbIndicesByteBuffer;
+	unique_ptr<ByteBuffer> fbVerticesByteBuffer;
 	FloatBuffer fbVertices;
-	ByteBuffer* fbColorsByteBuffer { nullptr };
+	unique_ptr<ByteBuffer> fbColorsByteBuffer;
 	FloatBuffer fbColors;
-	ByteBuffer* fbSolidColorsByteBuffer;
+	unique_ptr<ByteBuffer> fbSolidColorsByteBuffer;
 	FloatBuffer fbSolidColors;
-	ByteBuffer* fbTextureCoordinatesByteBuffer;
+	unique_ptr<ByteBuffer> fbTextureCoordinatesByteBuffer;
 	FloatBuffer fbTextureCoordinates;
 	float renderAreaLeft;
 	float renderAreaTop;
@@ -628,7 +630,7 @@ public:
 	 * Set texture matrix
 	 * @param textureMatrix texture matrix
 	 */
-	void setTexureMatrix(const Matrix2D3x3& textureMatrix);
+	void setTexureMatrix(const Matrix3x3& textureMatrix);
 
 	/**
 	 * Bind texture

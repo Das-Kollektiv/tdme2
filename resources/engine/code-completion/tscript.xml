@@ -345,17 +345,17 @@
 	</keyword>
 	<keyword name="math.acos" func="yes">
 		<overload return-value="Float" descr="Compute acos">
-			<parameter name="Float $value" />
+			<parameter name="Float $x" />
 		</overload>
 	</keyword>
 	<keyword name="math.asin" func="yes">
 		<overload return-value="Float" descr="Compute asin">
-			<parameter name="Float $value" />
+			<parameter name="Float $x" />
 		</overload>
 	</keyword>
 	<keyword name="math.atan" func="yes">
 		<overload return-value="Float" descr="Compute atan">
-			<parameter name="Float $value" />
+			<parameter name="Float $x" />
 		</overload>
 	</keyword>
 	<keyword name="math.atan2" func="yes">
@@ -378,12 +378,12 @@
 	</keyword>
 	<keyword name="math.cos" func="yes">
 		<overload return-value="Float" descr="Compute acos">
-			<parameter name="Float $value" />
+			<parameter name="Float $x" />
 		</overload>
 	</keyword>
 	<keyword name="math.exp" func="yes">
 		<overload return-value="Float" descr="Compute exp">
-			<parameter name="Float $value" />
+			<parameter name="Float $power" />
 		</overload>
 	</keyword>
 	<keyword name="math.floor" func="yes">
@@ -398,14 +398,14 @@
 	</keyword>
 	<keyword name="math.max" func="yes">
 		<overload return-value="Number" descr="Return maximum number of given values">
-			<parameter name="Number $a" />
-			<parameter name="Number $b" />
+			<parameter name="Number $value1" />
+			<parameter name="Number $value2" />
 		</overload>
 	</keyword>
 	<keyword name="math.min" func="yes">
 		<overload return-value="Number" descr="Return minimum number of given values">
-			<parameter name="Number $a" />
-			<parameter name="Number $b" />
+			<parameter name="Number $value1" />
+			<parameter name="Number $value2" />
 		</overload>
 	</keyword>
 	<keyword name="math.mod" func="yes">
@@ -416,8 +416,8 @@
 	</keyword>
 	<keyword name="math.pow" func="yes">
 		<overload return-value="Number" descr="Compute pow">
-			<parameter name="Number $a" />
-			<parameter name="Number $b" />
+			<parameter name="Number $base" />
+			<parameter name="Number $power" />
 		</overload>
 	</keyword>
 	<keyword name="math.random" func="yes">
@@ -436,7 +436,7 @@
 	</keyword>
 	<keyword name="math.sin" func="yes">
 		<overload return-value="Float" descr="Compute sin">
-			<parameter name="Float $value" />
+			<parameter name="Float $x" />
 		</overload>
 	</keyword>
 	<keyword name="math.sqrt" func="yes">
@@ -451,7 +451,7 @@
 	</keyword>
 	<keyword name="math.tan" func="yes">
 		<overload return-value="Float" descr="Compute tan">
-			<parameter name="Float $value" />
+			<parameter name="Float $x" />
 		</overload>
 	</keyword>
 	<keyword name="mod" func="yes">
@@ -1072,6 +1072,24 @@
 			<parameter name="[Integer $gain]" />
 			<parameter name="[Integer $pitch]" />
 			<parameter name="[Integer $ignoreIfPlaying]" />
+		</overload>
+	</keyword>
+	<keyword name="engine.getAnimationComputationReduction1Distance" func="yes">
+		<overload return-value="Float" descr="Get animation computation reduction 1 distance">
+		</overload>
+	</keyword>
+	<keyword name="engine.setAnimationComputationReduction1Distance" func="yes">
+		<overload return-value="Void" descr="Set animation computation reduction 1 distance">
+			<parameter name="Float $animationComputationReduction1Distance" />
+		</overload>
+	</keyword>
+	<keyword name="engine.getAnimationComputationReduction2Distance" func="yes">
+		<overload return-value="Float" descr="Get animation computation reduction 2 distance">
+		</overload>
+	</keyword>
+	<keyword name="engine.setAnimationComputationReduction2Distance" func="yes">
+		<overload return-value="Void" descr="Set animation computation reduction 2 distance">
+			<parameter name="Float $animationComputationReduction2Distance" />
 		</overload>
 	</keyword>
 	<keyword name="engine.getEntityIdByMousePosition" func="yes">

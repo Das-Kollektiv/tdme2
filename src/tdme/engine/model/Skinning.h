@@ -1,8 +1,7 @@
-
 #pragma once
 
-#include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -11,8 +10,8 @@
 #include <tdme/engine/model/JointWeight.h>
 #include <tdme/utilities/fwd-tdme.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::model::Joint;
@@ -28,7 +27,7 @@ private:
 	vector<float> weights;
 	vector<Joint> joints;
 	vector<vector<JointWeight>> verticesJointsWeights;
-	map<string, Joint*> jointsByName;
+	unordered_map<string, Joint*> jointsByNodeIds;
 
 public:
 	// forbid class copy
@@ -79,16 +78,20 @@ public:
 	void setVerticesJointsWeights(const vector<vector<JointWeight>>& verticesJointsWeights);
 
 	/**
-	 * Get joint by name
-	 * @param name name
-	 * @return joint
+	 * Get joint by node id
+	 * @param nodeId node id
+	 * @return joint or nullptr if not found
 	 */
-	Joint* getJointByName(const string& name);
+	inline Joint* getJointByNodeId(const string& nodeId) {
+		auto jointIt = jointsByNodeIds.find(nodeId);
+		if (jointIt != jointsByNodeIds.end()) return jointIt->second;
+		return nullptr;
+	}
 
 private:
 
 	/**
-	 * Set up joints by name
+	 * Set up joints by node ids hash map
 	 */
-	void setupJointsByName();
+	void setupJointsByNodeIds();
 };

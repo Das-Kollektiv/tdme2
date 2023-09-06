@@ -1,5 +1,7 @@
 #include <tdme/network/httpclient/HTTPDownloadClient.h>
 
+#include <memory>
+#include <filesystem>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -22,11 +24,13 @@
 #include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::make_unique;
 using std::ifstream;
 using std::ios;
 using std::ofstream;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::math::Math;
@@ -78,10 +82,9 @@ uint64_t HTTPDownloadClient::parseHTTPResponseHeaders(ifstream& rawResponse, int
 		rawResponse.get(currentChar);
 		headerSize++;
 		if (lastChar == '\r' && currentChar == '\n') {
-			if (line.size() != 0) {
+			if (line.empty() == false) {
 				httpHeader.push_back(line);
-			}
-			if (line.size() == 0) {
+			} else {
 				returnHeaderSize = headerSize;
 				break;
 			}
@@ -131,31 +134,31 @@ void HTTPDownloadClient::start() {
 				try {
 					if (StringTools::startsWith(downloadClient->url, "http://") == false) throw HTTPClientException("Invalid protocol");
 					auto relativeUrl = StringTools::substring(downloadClient->url, string("http://").size());
-					if (relativeUrl.size() == 0) throw HTTPClientException("No URL given");
+					if (relativeUrl.empty() == true) throw HTTPClientException("No URL given");
 					auto slashIdx = relativeUrl.find('/');
-					auto hostName = relativeUrl;
-					if (slashIdx != -1) hostName = StringTools::substring(relativeUrl, 0, slashIdx);
-					relativeUrl = StringTools::substring(relativeUrl, hostName.size());
+					auto hostname = relativeUrl;
+					if (slashIdx != -1) hostname = StringTools::substring(relativeUrl, 0, slashIdx);
+					relativeUrl = StringTools::substring(relativeUrl, hostname.size());
 
-					Console::println("HTTPDownloadClient::execute(): Hostname: " + hostName);
-					Console::println("HTTPDownloadClient::execute(): RelativeUrl: " + relativeUrl);
-					Console::print("HTTPDownloadClient::execute(): Resolving name to IP: " + hostName + ": ");
-					auto ip = Network::getIpByHostName(hostName);
-					if (ip.size() == 0) {
-						Console::println("HTTPDownloadClient::execute(): Failed");
-						throw HTTPClientException("Could not resolve host IP by host name");
+					Console::println("HTTPDownloadClient::execute(): hostname: " + hostname);
+					Console::println("HTTPDownloadClient::execute(): relative url: " + relativeUrl);
+					Console::print("HTTPDownloadClient::execute(): resolving hostname to IP: " + hostname + ": ");
+					auto ip = Network::getIpByHostname(hostname);
+					if (ip.empty() == true) {
+						Console::println("HTTPDownloadClient::execute(): failed");
+						throw HTTPClientException("Could not resolve host IP by hostname");
 					}
 					Console::println(ip);
 
 					// socket
 					TCPSocket::create(socket, TCPSocket::determineIpVersion(ip));
 					socket.connect(ip, 80);
-					auto request = downloadClient->createHTTPRequestHeaders(hostName, relativeUrl);
+					auto request = downloadClient->createHTTPRequestHeaders(hostname, relativeUrl);
 					socket.write((void*)request.data(), request.length());
 
 					{
 						// output file stream
-						ofstream ofs((downloadClient->file + ".download").c_str(), ofstream::binary);
+						ofstream ofs(std::filesystem::u8path(downloadClient->file + ".download"), ofstream::binary);
 						if (ofs.is_open() == false) {
 							throw HTTPClientException("Unable to open file for writing(" + to_string(errno) + "): " + (downloadClient->file + ".download"));
 						}
@@ -172,7 +175,7 @@ void HTTPDownloadClient::start() {
 									// flush download file to disk
 									ofs.flush();
 									// input file stream
-									ifstream ifs((downloadClient->file + ".download").c_str(), ofstream::binary);
+									ifstream ifs(std::filesystem::u8path(downloadClient->file + ".download"), ofstream::binary);
 									if (ifs.is_open() == false) {
 										throw HTTPClientException("Unable to open file for reading(" + to_string(errno) + "): " + (downloadClient->file + ".download"));
 									}
@@ -205,7 +208,7 @@ void HTTPDownloadClient::start() {
 					// transfer to real file
 					if (downloadClient->httpStatusCode == 200 && isStopRequested() == false) {
 						// input file stream
-						ifstream ifs((downloadClient->file + ".download").c_str(), ofstream::binary);
+						ifstream ifs(std::filesystem::u8path(downloadClient->file + ".download"), ofstream::binary);
 						if (ifs.is_open() == false) {
 							throw HTTPClientException("Unable to open file for reading(" + to_string(errno) + "): " + (downloadClient->file + ".download"));
 						}
@@ -218,7 +221,7 @@ void HTTPDownloadClient::start() {
 						ifs.seekg(ifsHeaderSize, ios::beg);
 
 						// output file stream
-						ofstream ofs(downloadClient->file.c_str(), ofstream::binary);
+						ofstream ofs(std::filesystem::u8path(downloadClient->file), ofstream::binary);
 						if (ofs.is_open() == false) {
 							throw HTTPClientException("Unable to open file for writing(" + to_string(errno) + "): " + downloadClient->file);
 						}
@@ -261,7 +264,7 @@ void HTTPDownloadClient::start() {
 	};
 	downloadThreadMutex.lock();
 	finished = false;
-	this->downloadThread = new DownloadThread(this);
+	this->downloadThread = make_unique<DownloadThread>(this);
 	this->downloadThread->start();
 	downloadThreadMutex.unlock();
 }
@@ -276,7 +279,6 @@ void HTTPDownloadClient::join() {
 	downloadThreadMutex.lock();
 	if (downloadThread != nullptr) {
 		downloadThread->join();
-		delete this->downloadThread;
 		this->downloadThread = nullptr;
 	}
 	downloadThreadMutex.unlock();

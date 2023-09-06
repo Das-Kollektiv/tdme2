@@ -1,5 +1,6 @@
-
 #pragma once
+
+#include <memory>
 
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
@@ -7,15 +8,19 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
 #include <tdme/utilities/ObjectDeleter.h>
+
+using std::unique_ptr;
 
 using tdme::application::Application;
 using tdme::application::InputEventHandler;
 using tdme::engine::model::Model;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
+using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
 using tdme::engine::ObjectModel;
 using tdme::utilities::ObjectDeleter;
@@ -35,7 +40,7 @@ private:
 	static constexpr int32_t CAPSULE_COUNT { 10 };
 	static constexpr int32_t SPHERE_COUNT { 100 };
 	Engine* engine { nullptr };
-	World* world { nullptr };
+	unique_ptr<World> world;
 	bool keyLeft { false };
 	bool keyRight { false };
 	bool keyUp { false };
@@ -47,6 +52,7 @@ private:
 	ObjectDeleter<Model> modelDeleter;
 	ObjectDeleter<BoundingVolume> bvDeleter;
 	ObjectDeleter<ObjectModel> objectModelDeleter;
+	ObjectDeleter<Prototype> prototypeDeleter;
 
 public:
 
@@ -54,8 +60,9 @@ public:
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values
+	 * @return exit code
 	 */
-	static void main(int argc, char** argv);
+	static int main(int argc, char** argv);
 
 	// forbid class copy
 	FORBID_CLASS_COPY(PhysicsTest5)

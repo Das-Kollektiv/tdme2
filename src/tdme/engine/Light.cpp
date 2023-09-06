@@ -57,18 +57,24 @@ Light::Light(Renderer* renderer, int32_t id)
 	quadraticAttenuation = 0.0f;
 	renderSource = false;
 	sourceSize = 0.25f;
-	lightSourceTextureId = 0;
+	lightSourceTextureId = renderer->ID_NONE;
 }
 
 void Light::setSourceTexture(Texture* texture) {
 	if (lightSourceTexture == texture) return;
-	if (lightSourceTexture != nullptr) lightSourceTexture->releaseReference();
+	if (lightSourceTexture != nullptr) {
+		Engine::getInstance()->getTextureManager()->removeTexture(lightSourceTexture);
+		lightSourceTexture->releaseReference();
+		lightSourceTextureId = renderer->ID_NONE;
+	}
 	lightSourceTexture = texture;
-	lightSourceTextureId = Engine::getInstance()->getTextureManager()->addTexture(lightSourceTexture);
+	lightSourceTextureId = texture == nullptr?renderer->ID_NONE:Engine::getInstance()->getTextureManager()->addTexture(lightSourceTexture);
 }
 
 void Light::dispose() {
-	if (lightSourceTexture != nullptr) lightSourceTexture->releaseReference();
+	if (lightSourceTexture == nullptr) return;
+	Engine::getInstance()->getTextureManager()->removeTexture(lightSourceTexture);
+	lightSourceTexture->releaseReference();
 }
 
 void Light::update(int contextIdx) {

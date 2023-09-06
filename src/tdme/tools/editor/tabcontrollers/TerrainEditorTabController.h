@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -27,6 +28,7 @@
 using std::array;
 using std::string;
 using std::unordered_map;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::Texture;
@@ -62,7 +64,7 @@ class tdme::tools::editor::tabcontrollers::TerrainEditorTabController final
 {
 
 private:
-	BasePropertiesSubController* basePropertiesSubController { nullptr };
+	unique_ptr<BasePropertiesSubController> basePropertiesSubController;
 	TerrainEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
@@ -133,11 +135,16 @@ public:
 
 	/**
 	 * Get view
+	 * @return view
 	 */
-	TerrainEditorTabView* getView();
+	inline TerrainEditorTabView* getView() {
+		return view;
+	}
 
 	// overridden method
-	GUIScreenNode* getScreenNode() override;
+	inline GUIScreenNode* getScreenNode() override {
+		return screenNode;
+	}
 
 	/**
 	 * @return current terrain brush operation

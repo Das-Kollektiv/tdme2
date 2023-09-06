@@ -1,18 +1,22 @@
 #pragma once
 
-#include <map>
+#include <memory>
 #include <string>
+#include <unordered_map>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/AnimationSetup.h>
-#include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/fwd-tdme.h>
 
-using std::map;
 using std::string;
+using std::unique_ptr;
+using std::unordered_map;
+using std::vector;
 
 using std::string;
 using tdme::engine::model::AnimationSetup;
@@ -46,14 +50,14 @@ private:
 	UpVector* upVector;
 	RotationOrder* rotationOrder;
 	ShaderModel* shaderModel;
-	map<string, Material*> materials;
-	map<string, Node*> nodes;
-	map<string, Node*> subNodes;
+	unordered_map<string, Material*> materials;
+	unordered_map<string, Node*> nodes;
+	unordered_map<string, Node*> subNodes;
 	bool skinning;
 	float fps;
-	map<string, AnimationSetup*> animationSetups;
+	unordered_map<string, AnimationSetup*> animationSetups;
 	Matrix4x4 importTransformMatrix;
-	BoundingBox* boundingBox;
+	unique_ptr<BoundingBox> boundingBox;
 	bool boundingBoxUpdated;
 
 	bool embedSpecularTextures;
@@ -63,7 +67,7 @@ private:
 	 * Delete sub nodes
 	 * @param subNodes sub nodes
 	 */
-	void deleteSubNodes(const map<string, Node*>& subNodes);
+	void deleteSubNodes(const unordered_map<string, Node*>& subNodes);
 
 	/**
 	 * Set up if model has skinning
@@ -82,7 +86,7 @@ private:
 	 * @param transformMatrix transform matrix
 	 * @return target node transform
 	 */
-	bool computeTransformMatrix(const map<string, Node*>& nodes, const Matrix4x4& parentTransformMatrix, int32_t frame, const string& nodeId, Matrix4x4& transformMatrix);
+	bool computeTransformMatrix(const unordered_map<string, Node*>& nodes, const Matrix4x4& parentTransformMatrix, int32_t frame, const string& nodeId, Matrix4x4& transformMatrix);
 
 public:
 	// forbid class copy
@@ -170,18 +174,29 @@ public:
 	}
 
 	/**
+	 * @return material ids
+	 */
+	const vector<string> getMaterialIds();
+
+	/**
 	 * Returns all object materials
 	 * @return materials
 	 */
-	inline map<string, Material*>& getMaterials() {
+	inline unordered_map<string, Material*>& getMaterials() {
 		return materials;
 	}
+
+	/**
+	 * Returns all object's node ids
+	 * @return all node ids
+	 */
+	const vector<string> getNodeIds();
 
 	/**
 	 * Returns all object's nodes
 	 * @return all nodes
 	 */
-	inline map<string, Node*>& getNodes() {
+	inline unordered_map<string, Node*>& getNodes() {
 		return nodes;
 	}
 
@@ -202,7 +217,7 @@ public:
 	 * Returns object's sub nodes
 	 * @return sub nodes
 	 */
-	inline map<string, Node*>& getSubNodes() {
+	inline unordered_map<string, Node*>& getSubNodes() {
 		return subNodes;
 	}
 
@@ -242,6 +257,29 @@ public:
 	}
 
 	/**
+	 * @return animation setups
+	 */
+	inline const unordered_map<string, AnimationSetup*>& getAnimationSetups() {
+		return animationSetups;
+	}
+
+	/**
+	 * @return animation setup ids
+	 */
+	const vector<string> getAnimationSetupIds();
+
+	/**
+	 * @return animation setup for given id or nullptr
+	 */
+	inline AnimationSetup* getAnimationSetup(const string& id) {
+		auto animationSetupIt = animationSetups.find(id);
+		if (animationSetupIt != animationSetups.end()) {
+			return animationSetupIt->second;
+		}
+		return nullptr;
+	}
+
+	/**
 	 * Adds an base animation setup
 	 * @param id id
 	 * @param startFrame start frame
@@ -265,15 +303,12 @@ public:
 	AnimationSetup* addOverlayAnimationSetup(const string& id, const string& overlayFromNodeId, int32_t startFrame, int32_t endFrame, bool loop, float speed = 1.0f);
 
 	/**
-	 * @return animation setup for given id or null
+	 * Rename animation set up
+	 * @param id id
+	 * @param newId new id
+	 * @return success
 	 */
-	inline AnimationSetup* getAnimationSetup(const string& id) {
-		auto animationSetupIt = animationSetups.find(id);
-		if (animationSetupIt != animationSetups.end()) {
-			return animationSetupIt->second;
-		}
-		return nullptr;
-	}
+	bool renameAnimationSetup(const string& id, const string& newId);
 
 	/**
 	 * Remove animation setup
@@ -283,20 +318,9 @@ public:
 	bool removeAnimationSetup(const string& id);
 
 	/**
-	 * Rename animation set up
-	 * @param id id
-	 * @param newId new id
-	 * @return success
+	 * Clear animation setups
 	 */
-	bool renameAnimationSetup(const string& id, const string& newId);
-
-	/**
-	 * TODO: return const map
-	 * @return animation setup for given id or null
-	 */
-	inline map<string, AnimationSetup*>& getAnimationSetups() {
-		return animationSetups;
-	}
+	void clearAnimationSetups();
 
 	/**
 	 * @return if model has animations

@@ -207,23 +207,23 @@ void DeferredLightingRenderShader::initialize()
 	textureDiffuseEnvSampler =
 		Engine::getInstance()->getTextureManager()->addCubeMapTexture(
 			"pbr-environment-diffuse",
-			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_left.png"),
-			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_right.png"),
-			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_top.png"),
-			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_bottom.png"),
-			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_front.png"),
-			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_back.png"),
+			envDiffuseTextures[0] = TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_left.png"),
+			envDiffuseTextures[1] = TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_right.png"),
+			envDiffuseTextures[2] = TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_top.png"),
+			envDiffuseTextures[3] = TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_bottom.png"),
+			envDiffuseTextures[4] = TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_front.png"),
+			envDiffuseTextures[5] = TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_back.png"),
 			renderer->CONTEXTINDEX_DEFAULT
 		);
 	textureSpecularEnvSampler =
 		Engine::getInstance()->getTextureManager()->addCubeMapTexture(
 			"pbr-environment-specular",
-			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_left.png"),
-			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_right.png"),
-			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_top.png"),
-			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_bottom.png"),
-			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_front.png"),
-			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_back.png"),
+			envSpecularTextures[0] = TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_left.png"),
+			envSpecularTextures[1] = TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_right.png"),
+			envSpecularTextures[2] = TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_top.png"),
+			envSpecularTextures[3] = TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_bottom.png"),
+			envSpecularTextures[4] = TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_front.png"),
+			envSpecularTextures[5] = TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_back.png"),
 			renderer->CONTEXTINDEX_DEFAULT
 		);
 	texturebrdfLUT = Engine::getBRDFLUTShader()->getColorTextureId();
@@ -253,6 +253,24 @@ void DeferredLightingRenderShader::initialize()
 
 	//
 	initialized = true;
+}
+
+void DeferredLightingRenderShader::dispose() {
+	//
+	for (auto i = 0; i < envDiffuseTextures.size(); i++) {
+		if (envDiffuseTextures[i] == nullptr) continue;
+		envDiffuseTextures[i]->releaseReference();
+		envDiffuseTextures[i] = nullptr;
+	}
+	//
+	for (auto i = 0; i < envSpecularTextures.size(); i++) {
+		if (envSpecularTextures[i] == nullptr) continue;
+		envSpecularTextures[i]->releaseReference();
+		envSpecularTextures[i] = nullptr;
+	}
+	//
+	Engine::getInstance()->getTextureManager()->removeTexture("pbr-environment-diffuse");
+	Engine::getInstance()->getTextureManager()->removeTexture("pbr-environment-specular");
 }
 
 void DeferredLightingRenderShader::useProgram(Engine* engine, vector<Decal*>& decalEntities)

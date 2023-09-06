@@ -1,5 +1,9 @@
 #include <tdme/gui/elements/GUIRadioButtonController.h>
 
+#include <string>
+#include <unordered_map>
+#include <vector>
+
 #include <tdme/tdme.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
@@ -10,6 +14,10 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/utilities/MutableString.h>
+
+using std::string;
+using std::unordered_map;
+using std::vector;
 
 using tdme::gui::elements::GUIRadioButtonController;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -27,18 +35,18 @@ string GUIRadioButtonController::CONDITION_UNSELECTED = "unselected";
 string GUIRadioButtonController::CONDITION_DISABLED = "disabled";
 string GUIRadioButtonController::CONDITION_ENABLED = "enabled";
 
-map<string, vector<GUIElementNode*>>* GUIRadioButtonController::radioButtonGroupNodesByName = new map<string, vector<GUIElementNode*>>();
+unordered_map<string, vector<string>> GUIRadioButtonController::radioButtonGroupNodesByName;
 
 GUIRadioButtonController::GUIRadioButtonController(GUINode* node)
 	: GUIElementController(node)
 {
 	this->selected = required_dynamic_cast<GUIElementNode*>(node)->isSelected();
 	this->disabled = required_dynamic_cast<GUIElementNode*>(node)->isDisabled();
-	(*radioButtonGroupNodesByName)[
+	radioButtonGroupNodesByName[
 		node->getScreenNode()->getId() +
 		"_radiobuttongroup_" +
 		required_dynamic_cast<GUIElementNode*>(node)->getName()
-	].push_back(required_dynamic_cast<GUIElementNode*>(node));
+	].push_back(node->getId());
 }
 
 bool GUIRadioButtonController::isSelected()
@@ -48,14 +56,14 @@ bool GUIRadioButtonController::isSelected()
 
 void GUIRadioButtonController::select()
 {
-	auto radioButtonGroupNodesIt = radioButtonGroupNodesByName->find(
+	auto radioButtonGroupNodesIt = radioButtonGroupNodesByName.find(
 		this->node->getScreenNode()->getId() +
 		"_radiobuttongroup_" +
 		required_dynamic_cast<GUIElementNode*>(this->node)->getName()
 	);
-	if (radioButtonGroupNodesIt != radioButtonGroupNodesByName->end()) {
+	if (radioButtonGroupNodesIt != radioButtonGroupNodesByName.end()) {
 		for (auto i = 0; i < radioButtonGroupNodesIt->second.size(); i++) {
-			auto radioButtonNode = required_dynamic_cast<GUIElementNode*>(radioButtonGroupNodesIt->second[i]);
+			auto radioButtonNode = required_dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(radioButtonGroupNodesIt->second[i]));
 			auto& nodeConditions = radioButtonNode->getActiveConditions();
 			auto nodeController = required_dynamic_cast<GUIRadioButtonController*>(radioButtonNode->getController());
 			nodeConditions.remove(nodeController->selected == true?CONDITION_SELECTED:CONDITION_UNSELECTED);
@@ -94,10 +102,10 @@ void GUIRadioButtonController::initialize()
 void GUIRadioButtonController::dispose()
 {
 	GUIElementController::dispose();
-	radioButtonGroupNodesByName->erase(
+	radioButtonGroupNodesByName.erase(
 		this->node->getScreenNode()->getId() +
 		"_radiobuttongroup_" +
-		required_dynamic_cast<GUIElementNode*>(this->node)->getName()
+		this->node->getId()
 	);
 }
 

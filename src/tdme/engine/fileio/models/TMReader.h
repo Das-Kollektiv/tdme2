@@ -3,15 +3,15 @@
 #include <tdme/tdme.h>
 
 #include <array>
-#include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -20,8 +20,8 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 
 using std::array;
-using std::map;
 using std::string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::fileio::models::ModelFileIOException;
@@ -32,7 +32,7 @@ using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
-using tdme::engine::model::TextureCoordinate;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystemException;
 
@@ -267,10 +267,12 @@ private:
 	 * @param fileName file name
 	 * @return material or nullptr
 	 */
-	inline static Texture* getEmbeddedTexture(const map<string, Texture*>& embeddedTextures, const string& fileName) {
+	inline static Texture* getEmbeddedTexture(const unordered_map<string, Texture*>& embeddedTextures, const string& fileName) {
 		auto embeddedTextureIt = embeddedTextures.find(fileName);
 		if (embeddedTextureIt == embeddedTextures.end()) return nullptr;
-		return embeddedTextureIt->second;
+		auto embeddedTexture = embeddedTextureIt->second;
+		embeddedTexture->acquireReference();
+		return embeddedTexture;
 	}
 
 	/**
@@ -283,7 +285,7 @@ private:
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return material
 	 */
-	static void readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture*>& embeddedTextures, const array<uint8_t, 3>& version);
+	static void readEmbeddedTextures(TMReaderInputStream* is, unordered_map<string, Texture*>& embeddedTextures, const array<uint8_t, 3>& version);
 
 	/**
 	 * Read material
@@ -295,7 +297,7 @@ private:
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return material
 	 */
-	static Material* readMaterial(const string& pathName, TMReaderInputStream* is, Model* model, const map<string, Texture*>& embeddedTextures, bool useBC7TextureCompression, const array<uint8_t, 3>& version);
+	static Material* readMaterial(const string& pathName, TMReaderInputStream* is, Model* model, const unordered_map<string, Texture*>& embeddedTextures, bool useBC7TextureCompression, const array<uint8_t, 3>& version);
 
 	/**
 	 * Read animation setup
@@ -320,7 +322,7 @@ private:
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return texture coordinates array
 	 */
-	static const vector<TextureCoordinate> readTextureCoordinates(TMReaderInputStream* is);
+	static const vector<Vector2> readTextureCoordinates(TMReaderInputStream* is);
 
 	/**
 	 * Read indices from input stream
@@ -382,7 +384,7 @@ private:
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return node
 	 */
-	static void readSubNodes(TMReaderInputStream* is, Model* model, Node* parentNode, map<string, Node*>& subNodes);
+	static void readSubNodes(TMReaderInputStream* is, Model* model, Node* parentNode, unordered_map<string, Node*>& subNodes);
 
 	/**
 	 * Write node to output stream

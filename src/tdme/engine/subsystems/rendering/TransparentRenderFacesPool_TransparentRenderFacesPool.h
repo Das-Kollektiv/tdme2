@@ -14,7 +14,7 @@ using tdme::utilities::Pool;
  * @author Andreas Drewke
  */
 class tdme::engine::subsystems::rendering::TransparentRenderFacesPool_TransparentRenderFacesPool
-	: public Pool<TransparentRenderFace*>
+	: public Pool<TransparentRenderFace>
 {
 public:
 	// forbid class copy

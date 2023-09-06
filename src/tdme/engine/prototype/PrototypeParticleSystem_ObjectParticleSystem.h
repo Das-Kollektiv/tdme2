@@ -1,14 +1,16 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/Model.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 
 using std::string;
+using std::unique_ptr;
 
 using tdme::engine::model::Model;
 using tdme::engine::prototype::PrototypeParticleSystem;
@@ -32,7 +34,7 @@ private:
 	Vector3 scale;
 	int maxCount;
 	bool autoEmit;
-	Model* model { nullptr };
+	unique_ptr<Model> model;
 	string modelFileName;
 
 public:
@@ -104,7 +106,7 @@ public:
 	 * @return model
 	 */
 	inline Model* getModel() {
-		return model;
+		return model.get();
 	}
 
 	/**

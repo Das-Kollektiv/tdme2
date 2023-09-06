@@ -124,6 +124,13 @@ void LightingShader::initialize()
 	}
 }
 
+void LightingShader::dispose()
+{
+	for (const auto& [shaderId, shader]: shaders) {
+		shader->unloadTextures();
+	}
+}
+
 void LightingShader::useProgram(Engine* engine)
 {
 	running = true;
@@ -213,6 +220,7 @@ void LightingShader::bindTexture(int contextIdx, int32_t textureId)
 
 void LightingShader::loadTextures(const string& pathName) {
 	for (const auto& [shaderId, shader]: shaders) {
+		shader->unloadTextures();
 		shader->loadTextures(pathName);
 	}
 }

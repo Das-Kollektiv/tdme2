@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <memory>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -16,6 +17,7 @@
 #include <tdme/tools/editor/views/fwd-tdme.h>
 
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::Engine;
@@ -36,14 +38,14 @@ class tdme::tools::editor::tabviews::MarkdownTabView final
 	: public TabView
 {
 protected:
-	Engine* engine { nullptr };
+	unique_ptr<Engine> engine;
 
 private:
 	EditorView* editorView { nullptr };
 	string tabId;
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
-	MarkdownTabController* markdownTabController { nullptr };
+	unique_ptr<MarkdownTabController> markdownTabController;
 	TabView::OutlinerState outlinerState;
 
 	vector<Markdown::TOCEntry> toc;
@@ -77,7 +79,7 @@ public:
 	 * @return associated tab controller
 	 */
 	inline TabController* getTabController() override {
-		return markdownTabController;
+		return markdownTabController.get();
 	}
 
 	/**

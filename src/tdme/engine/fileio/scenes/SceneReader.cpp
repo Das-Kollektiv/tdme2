@@ -1,5 +1,6 @@
 #include <tdme/engine/fileio/scenes/SceneReader.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -38,8 +39,10 @@
 
 #include <ext/rapidjson/document.h>
 
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::models::TMWriter;
@@ -87,15 +90,19 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 
+	//
 	auto jsonContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 	if (progressCallback != nullptr) progressCallback->progress(0.165f);
 
+	//
 	Document jRoot;
 	jRoot.Parse(jsonContent.c_str());
 	if (progressCallback != nullptr) progressCallback->progress(0.33f);
 
 	//
-	auto scene = new Scene(fileName, "");
+	auto progressCallbackUniquePtr = unique_ptr<ProgressCallback>(progressCallback);
+	auto scene = make_unique<Scene>(fileName, "");
+	//
 	scene->setApplicationRootPathName(Tools::getApplicationRootPathName(pathName));
 	// auto version = Float::parseFloat((jRoot["version"].GetString()));
 	scene->setRotationOrder(jRoot.FindMember("ro") != jRoot.MemberEnd()?RotationOrder::valueOf(jRoot["ro"].GetString()):RotationOrder::XYZ);
@@ -166,25 +173,29 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 	auto jPrototypes = jRoot["models"].GetArray();
 	for (auto i = 0; i < jPrototypes.Size(); i++) {
 		const auto& jPrototype = jPrototypes[i];
-		Prototype* prototype = nullptr;
+		unique_ptr<Prototype> prototype;
 		try {
 			auto embedded = jPrototype.FindMember("e") != jPrototype.MemberEnd()?jPrototype["e"].GetBool():true;
 			if (embedded == true) {
-				prototype = PrototypeReader::read(
-					jPrototype["id"].GetInt(),
-					pathName,
-					jPrototype["entity"],
-					prototypeTransformFilter
+				prototype = unique_ptr<Prototype>(
+					PrototypeReader::read(
+						jPrototype["id"].GetInt(),
+						pathName,
+						jPrototype["entity"],
+						prototypeTransformFilter
+					)
 				);
 				prototype->setEmbedded(true);
 			} else {
 				auto externalPrototypePathName = PrototypeReader::getResourcePathName(pathName, jPrototype["pf"].GetString());
 				auto externalPrototypeFileName = FileSystem::getInstance()->getFileName(jPrototype["pf"].GetString());
-				prototype = PrototypeReader::read(
-					jPrototype["id"].GetInt(),
-					externalPrototypePathName,
-					externalPrototypeFileName,
-					prototypeTransformFilter
+				prototype = unique_ptr<Prototype>(
+					PrototypeReader::read(
+						jPrototype["id"].GetInt(),
+						externalPrototypePathName,
+						externalPrototypeFileName,
+						prototypeTransformFilter
+					)
 				);
 				prototype->setEmbedded(false);
 			}
@@ -193,7 +204,7 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 			//
 			string prototypeName = "Missing-Prototype-" + to_string(jPrototype["id"].GetInt());
 			//
-			prototype = new Prototype(
+			prototype = make_unique<Prototype>(
 				jPrototype["id"].GetInt(),
 				Prototype_Type::EMPTY,
 				prototypeName,
@@ -208,7 +219,6 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 			Console::println("SceneReader::read(): Invalid prototype = " + to_string(jPrototype["id"].GetInt()));
 			continue;
 		}
-		scene->getLibrary()->addPrototype(prototype);
 		if (jPrototype.FindMember("properties") != jPrototype.MemberEnd()) {
 			for (auto j = 0; j < jPrototype["properties"].GetArray().Size(); j++) {
 				const auto& jPrototypeProperty = jPrototype["properties"].GetArray()[j];
@@ -218,7 +228,8 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 				);
 			}
 		}
-
+		scene->getLibrary()->addPrototype(prototype.release());
+		//
 		if (progressCallback != nullptr) progressCallback->progress(0.33f + static_cast<float>(progressStepCurrent) / static_cast<float>(jRoot["models"].GetArray().Size()) * 0.33f);
 		progressStepCurrent++;
 	}
@@ -260,7 +271,7 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 		transform.addRotation(scene->getRotationOrder()->getAxis1(), rotation.getArray()[scene->getRotationOrder()->getAxis1VectorIndex()]);
 		transform.addRotation(scene->getRotationOrder()->getAxis2(), rotation.getArray()[scene->getRotationOrder()->getAxis2VectorIndex()]);
 		transform.update();
-		auto sceneEntity = new SceneEntity(
+		auto sceneEntity = make_unique<SceneEntity>(
 			objectIdPrefix != "" ?
 				objectIdPrefix + jSceneEntity["id"].GetString() :
 				(jSceneEntity["id"].GetString()),
@@ -278,7 +289,7 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 			}
 		}
 		sceneEntity->setReflectionEnvironmentMappingId(jSceneEntity.FindMember("r") != jSceneEntity.MemberEnd()?jSceneEntity["r"].GetString():"");
-		scene->addEntity(sceneEntity);
+		scene->addEntity(sceneEntity.release());
 
 		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.66f + static_cast<float>(progressStepCurrent) / static_cast<float>(jRoot["objects"].GetArray().Size()) * 0.33f);
 		progressStepCurrent++;
@@ -310,7 +321,6 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 					)
 				);
 			} catch (Exception& exception) {
-				delete scene;
 				throw exception;
 			}
 		}
@@ -327,11 +337,10 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 	//
 	if (progressCallback != nullptr) {
 		progressCallback->progress(1.0f);
-		delete progressCallback;
 	}
 
 	//
-	return scene;
+	return scene.release();
 }
 
 void SceneReader::determineMeshNodes(Scene* scene, Node* node, const string& parentName, const Matrix4x4& parentTransformMatrix, vector<PrototypeMeshNode>& meshNodes) {
@@ -347,8 +356,7 @@ void SceneReader::determineMeshNodes(Scene* scene, Node* node, const string& par
 			haveName = true;
 			auto modelNameTry = modelName;
 			if (i > 0) modelNameTry+= to_string(i);
-			for (auto entityIdx = 0; entityIdx < sceneLibrary->getPrototypeCount(); entityIdx++) {
-				auto entity = sceneLibrary->getPrototypeAt(entityIdx);
+			for (auto entity: sceneLibrary->getPrototypes()) {
 				if (entity->getName() == modelNameTry) {
 					haveName = false;
 					break;
@@ -402,6 +410,7 @@ void SceneReader::determineMeshNodes(Scene* scene, Node* node, const string& par
 }
 
 Scene* SceneReader::readFromModel(const string& pathName, const string& fileName, ProgressCallback* progressCallback) {
+	// TODO: this method seems to be broken currently, need to check later
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 
 	string modelPathName = pathName + "/" + fileName + "-models";
@@ -410,7 +419,7 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 	}
 	FileSystem::getInstance()->createPath(modelPathName);
 
-	auto sceneModel = ModelReader::read(pathName, fileName);
+	unique_ptr<Model> sceneModel(ModelReader::read(pathName, fileName));
 
 	if (progressCallback != nullptr) progressCallback->progress(0.1f);
 
@@ -418,7 +427,7 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 	RotationOrder* rotationOrder = sceneModel->getRotationOrder();
 
 	//
-	auto scene = new Scene(fileName, "");
+	auto scene = make_unique<Scene>(fileName, "");
 	scene->setRotationOrder(rotationOrder);
 
 	auto sceneLibrary = scene->getLibrary();
@@ -434,9 +443,9 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 	for (const auto& [subNodeId, subNode]: sceneModel->getSubNodes()) {
 		if (progressCallback != nullptr) progressCallback->progress(0.1f + static_cast<float>(progressIdx) / static_cast<float>(progressTotal) * 0.8f);
 		vector<PrototypeMeshNode> meshNodes;
-		determineMeshNodes(scene, subNode, "", (Matrix4x4()).identity(), meshNodes);
+		determineMeshNodes(scene.get(), subNode, "", (Matrix4x4()).identity(), meshNodes);
 		for (const auto& meshNode: meshNodes) {
-			auto model = new Model(
+			auto model = make_unique<Model>(
 				meshNode.name + ".tm",
 				fileName + "-" + meshNode.name,
 				upVector,
@@ -469,12 +478,12 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 			rotation = sceneModelImportRotationMatrix.multiply(rotation);
 			translation = model->getImportTransformMatrix().multiply(translation);
 
-			ModelTools::cloneNode(meshNode.node, model);
+			ModelTools::cloneNode(meshNode.node, model.get());
 			if (model->getSubNodes().begin() != model->getSubNodes().end()) {
 				model->getSubNodes().begin()->second->setTransformMatrix(Matrix4x4().identity());
 			}
 			model->addAnimationSetup(Model::ANIMATIONSETUP_DEFAULT, 0, 0, true);
-			ModelTools::prepareForIndexedRendering(model);
+			ModelTools::prepareForIndexedRendering(model.get());
 			// scale up model if dimension too less, this occurres with importing FBX that was exported by UE
 			// TODO: maybe make this conditional
 			{
@@ -501,19 +510,16 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 			auto prototypeType = Prototype_Type::MODEL;
 			if (meshNode.node->getVertices().size() == 0) {
 				prototypeType = Prototype_Type::EMPTY;
-				delete model;
 				model = nullptr;
 			}
 			Prototype* prototype = nullptr;
 			if (prototypeType == Prototype_Type::MODEL && model != nullptr) {
-				for (auto i = 0; i < scene->getLibrary()->getPrototypeCount(); i++) {
-					auto prototypeCompare = scene->getLibrary()->getPrototypeAt(i);
+				for (auto prototypeCompare: scene->getLibrary()->getPrototypes()) {
 					if (prototypeCompare->getType() != Prototype_Type::MODEL)
 						continue;
 
-					if (ModelUtilities::equals(model, prototypeCompare->getModel()) == true) {
+					if (ModelUtilities::equals(model.get(), prototypeCompare->getModel()) == true) {
 						prototype = prototypeCompare;
-						delete model;
 						model = nullptr;
 						break;
 					}
@@ -522,17 +528,14 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 					auto modelFileName = meshNode.name + ".tm";
 					try {
 						TMWriter::write(
-							model,
+							model.get(),
 							modelPathName,
 							modelFileName
 						);
 					} catch (Exception& exception) {
-						delete model;
-						delete scene;
-						delete sceneModel;
 						throw exception;
 					}
-					prototype = new Prototype(
+					auto newPrototype = make_unique<Prototype>(
 						Prototype::ID_NONE,
 						Prototype_Type::MODEL,
 						Tools::removeFileExtension(fileName),
@@ -540,14 +543,15 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 						modelPathName + "/" + modelFileName,
 						"resources/engine/models/empty.tm",
 						string(),
-						model
+						model.release()
 					);
-					sceneLibrary->addPrototype(prototype);
+					sceneLibrary->addPrototype(newPrototype.get());
+					prototype = newPrototype.release();
 				}
 			} else
 			if (prototypeType == Prototype_Type::EMPTY) {
 				if (emptyPrototype == nullptr) {
-					emptyPrototype = new Prototype(
+					auto newEmptyPrototype = make_unique<Prototype>(
 						nodeIdx++,
 						Prototype_Type::EMPTY,
 						"Default Empty",
@@ -557,13 +561,12 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 						string(),
 						ModelReader::read("resources/engine/models", "empty.tm") // TODO: exception
 					);
-					sceneLibrary->addPrototype(emptyPrototype);
+					sceneLibrary->addPrototype(newEmptyPrototype.get());
+					emptyPrototype = newEmptyPrototype.release();
 				}
 				prototype = emptyPrototype;
 			} else {
-				Console::println(string("DAEReader::readLevel(): unknown entity type. Skipping"));
-				delete model;
-				model = nullptr;
+				Console::println(string("SceneReader::readFromModel(): unknown entity type. Skipping"));
 				continue;
 			}
 			Transform sceneEntityTransform;
@@ -573,13 +576,13 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 			sceneEntityTransform.addRotation(rotationOrder->getAxis2(), rotation.getArray()[rotationOrder->getAxis2VectorIndex()]);
 			sceneEntityTransform.setScale(scale);
 			sceneEntityTransform.update();
-			auto sceneEntity = new SceneEntity(
+			auto sceneEntity = make_unique<SceneEntity>(
 				meshNode.id,
 				meshNode.id,
 				sceneEntityTransform,
 				prototype
 			);
-			scene->addEntity(sceneEntity);
+			scene->addEntity(sceneEntity.release());
 		}
 		//
 		progressIdx++;
@@ -592,20 +595,16 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 		SceneWriter::write(
 			pathName,
 			Tools::removeFileExtension(fileName) + ".tscene",
-			scene
+			scene.get()
 		);
 	} catch (Exception& exception) {
-		delete scene;
-		delete sceneModel;
+		Console::println("SceneReader::readFromModel(): An error occurred: " + string(exception.what()));
 		throw exception;
 	}
-
-	//
-	delete sceneModel;
 
 	//
 	if (progressCallback != nullptr) progressCallback->progress(1.0f);
 
 	//
-	return scene;
+	return scene.release();
 }

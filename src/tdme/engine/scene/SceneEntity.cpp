@@ -28,12 +28,10 @@ SceneEntity::~SceneEntity() {
 const BaseProperties* SceneEntity::getTotalProperties()
 {
 	auto totalProperties = new BaseProperties(name, description);
-	for (auto i = 0; i < getPrototype()->getPropertyCount(); i++) {
-		auto prototypeProperty = getPrototype()->getPropertyByIndex(i);
+	for (auto prototypeProperty: getPrototype()->getProperties()) {
 		totalProperties->addProperty(prototypeProperty->getName(), prototypeProperty->getValue());
 	}
-	for (auto i = 0; i < getPropertyCount(); i++) {
-		auto entityProperty = getPropertyByIndex(i);
+	for (auto entityProperty: getProperties()) {
 		auto totalProperty = totalProperties->getProperty(entityProperty->getName());
 		if (totalProperty != nullptr) {
 			totalProperties->updateProperty(totalProperty->getName(), entityProperty->getName(), entityProperty->getValue());

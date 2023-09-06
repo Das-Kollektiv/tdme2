@@ -311,5 +311,8 @@ void LightingShaderBaseImplementation::bindTexture(Renderer* renderer, int conte
 	}
 }
 
+void LightingShaderBaseImplementation::unloadTextures() {
+}
+
 void LightingShaderBaseImplementation::loadTextures(const string& pathName) {
 }

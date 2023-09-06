@@ -17,14 +17,14 @@ using tdme::utilities::Exception;
 
 int main(int argc, char *argv[]) {
 	Network::initialize();
-
+	//
 	try {
 		HTTPClient httpClient;
 		httpClient.setMethod(HTTPClient::HTTP_METHOD_GET);
 		httpClient.setURL("http://www.drewke.net/tdme2/");
 		httpClient.execute();
 		Console::println("HTTP status code: " + to_string(httpClient.getStatusCode()));
-		for (auto header: httpClient.getResponseHeaders()) {
+		for (const auto& header: httpClient.getResponseHeaders()) {
 			Console::println("Header: " + header);
 		}
 		Console::println("Response: ");
@@ -37,5 +37,8 @@ int main(int argc, char *argv[]) {
 	} catch (Exception& exception) {
 		Console::println(string("Fail: ") + exception.what());
 	}
+	//
+	Console::shutdown();
+	return 0;
 }
 

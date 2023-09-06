@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -17,6 +18,7 @@
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
+using std::unique_ptr;
 
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
@@ -45,8 +47,8 @@ class tdme::tools::editor::tabcontrollers::EmptyEditorTabController final
 {
 
 private:
-	BasePropertiesSubController* basePropertiesSubController { nullptr };
-	PrototypeScriptSubController* prototypeScriptSubController { nullptr };
+	unique_ptr<BasePropertiesSubController> basePropertiesSubController;
+	unique_ptr<PrototypeScriptSubController> prototypeScriptSubController;
 	EmptyEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
@@ -68,11 +70,16 @@ public:
 
 	/**
 	 * Get view
+	 * @return view
 	 */
-	EmptyEditorTabView* getView();
+	inline EmptyEditorTabView* getView() {
+		return view;
+	}
 
 	// overridden method
-	GUIScreenNode* getScreenNode() override;
+	inline GUIScreenNode* getScreenNode() override {
+		return screenNode;
+	}
 
 	// overridden methods
 	void initialize(GUIScreenNode* screenNode) override;

@@ -18,6 +18,7 @@ using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::lighting::LightingShaderImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
+using tdme::engine::Texture;
 using tdme::math::Matrix4x4;
 
 /**
@@ -66,6 +67,9 @@ protected:
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightOuterConeCos;
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightType;
 
+	array<Texture*, 6> envDiffuseTextures;
+	array<Texture*, 6> envSpecularTextures;
+
 	bool initialized { false };
 	Renderer* renderer { nullptr };
 
@@ -91,6 +95,7 @@ public:
 	virtual void updateTextureMatrix(Renderer* renderer, int contextIdx) override;
 	virtual void bindTexture(Renderer* renderer, int contextIdx, int32_t textureId) override;
 	virtual void updateShaderParameters(Renderer* renderer, int contextIdx) override = 0;
+	virtual void unloadTextures() override;
 	virtual void loadTextures(const string& pathName) override;
 
 };

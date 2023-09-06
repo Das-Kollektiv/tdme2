@@ -2,6 +2,7 @@
 
 #include <tdme/tdme.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -9,15 +10,19 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/os/threading/AtomicOperations.h>
 #include <tdme/math/fwd-tdme.h>
 
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::prototype::Prototype;
 using tdme::math::Vector3;
+using tdme::os::threading::AtomicOperations;
+
 
 /**
  * Prototype bounding volume definition
@@ -26,13 +31,22 @@ using tdme::math::Vector3;
 class tdme::engine::prototype::PrototypeBoundingVolume final
 {
 private:
-	int id;
 	Prototype* prototype { nullptr };
 	string convexMeshFile;
-	Model* model { nullptr };
-	BoundingVolume* boundingVolume { nullptr };
+	unique_ptr<Model> model;
+	unique_ptr<BoundingVolume> boundingVolume;
 	bool generated;
 	vector<uint8_t> convexMeshData;
+
+	STATIC_DLL_IMPEXT static uint32_t boundingVolumeIdx;
+
+	/**
+	 * Allocate bounding volume index
+	 * @return bounding volume index
+	 */
+	uint32_t allocateBoundingVolumeIdx() {
+		return AtomicOperations::increment(boundingVolumeIdx);
+	}
 
 public:
 	// forbid class copy
@@ -40,22 +54,14 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param id id
 	 * @param prototype prototype
 	 */
-	PrototypeBoundingVolume(int id, Prototype* prototype);
+	PrototypeBoundingVolume(Prototype* prototype);
 
 	/**
 	 * Destructor
 	 */
 	~PrototypeBoundingVolume();
-
-	/**
-	 * @return id
-	 */
-	inline int getId() {
-		return id;
-	}
 
 	/**
 	 * @return convex mesh file
@@ -68,14 +74,14 @@ public:
 	 * @return model
 	 */
 	inline Model* getModel() {
-		return model;
+		return model.get();
 	}
 
 	/**
 	 * @return bounding volume
 	 */
 	inline BoundingVolume* getBoundingVolume() {
-		return boundingVolume;
+		return boundingVolume.get();
 	}
 
 	/**
@@ -161,12 +167,5 @@ public:
 	inline const vector<uint8_t>& getConvexMeshData() {
 		return convexMeshData;
 	}
-
-private:
-
-	/**
-	 * Update prototype
-	 */
-	void updatePrototype();
 
 };

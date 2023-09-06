@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -9,6 +10,7 @@
 #include <tdme/engine/LODObject.h>
 
 using std::string;
+using std::unique_ptr;
 
 using tdme::engine::Color4;
 using tdme::engine::model::Model;
@@ -23,7 +25,7 @@ class tdme::engine::prototype::PrototypeLODLevel final
 private:
 	LODObject::LODLevelType type;
 	string fileName;
-	Model* model { nullptr };
+	unique_ptr<Model> model;
 	float minDistance;
 	Color4 colorMul;
 	Color4 colorAdd;
@@ -85,7 +87,7 @@ public:
 	 * @return model
 	 */
 	inline Model* getModel() {
-		return model;
+		return model.get();
 	}
 
 	/**
@@ -93,9 +95,7 @@ public:
 	 * @param model model
 	 */
 	inline void setModel(Model* model) {
-		if (this->model == model) return;
-		if (this->model != nullptr) delete this->model;
-		this->model = model;
+		this->model = unique_ptr<Model>(model);
 	}
 
 	/**

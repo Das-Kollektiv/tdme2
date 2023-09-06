@@ -1,5 +1,6 @@
 #include <tdme/gui/elements/GUISelectorHController.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -18,8 +19,10 @@
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::gui::elements::GUISelectorHController;
 using tdme::gui::elements::GUISelectorHOptionController;
@@ -106,7 +109,7 @@ void GUISelectorHController::initialize()
 	//
 	auto const leftArrowNode = dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(node->getId() + "_left"));
 	auto const rightArrowNode = dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(node->getId() + "_right"));
-	node->getScreenNode()->addActionListener(actionListener = new GUISelectorHControllerActionListener(this, leftArrowNode, rightArrowNode));
+	node->getScreenNode()->addActionListener((actionListener = make_unique<GUISelectorHControllerActionListener>(this, leftArrowNode, rightArrowNode)).get());
 }
 
 void GUISelectorHController::dispose()
@@ -116,8 +119,7 @@ void GUISelectorHController::dispose()
 
 	//
 	if (actionListener != nullptr) {
-		node->getScreenNode()->removeActionListener(actionListener);
-		delete actionListener;
+		node->getScreenNode()->removeActionListener(actionListener.get());
 		actionListener = nullptr;
 	}
 }

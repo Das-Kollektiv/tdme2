@@ -1,6 +1,7 @@
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -29,9 +30,10 @@
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
-
+using std::make_unique;
 using std::map;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::prototype::BaseProperties;
@@ -61,13 +63,12 @@ using tdme::utilities::StringTools;
 BasePropertiesSubController::BasePropertiesSubController(EditorView* editorView, const string& rootNode)
 {
 	this->editorView = editorView;
-	this->view = new BasePropertiesSubView(this);
+	this->view = make_unique<BasePropertiesSubView>(this);
 	this->popUps = editorView->getPopUps();
 	this->rootNodeId = rootNode;
 }
 
 BasePropertiesSubController::~BasePropertiesSubController() {
-	delete view;
 }
 
 void BasePropertiesSubController::initialize(GUIScreenNode* screenNode)
@@ -78,8 +79,7 @@ void BasePropertiesSubController::initialize(GUIScreenNode* screenNode)
 void BasePropertiesSubController::createBasePropertiesXML(BaseProperties* prototype, string& xml) {
 	if (prototype->getPropertyCount() > 0) {
 		xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Properties") + "\" value=\"" + GUIParser::escape("properties") + "\">\n";
-		for (auto i = 0; i < prototype->getPropertyCount(); i++) {
-			auto property = prototype->getPropertyByIndex(i);
+		for (auto property: prototype->getProperties()) {
 			xml+= "	<selectbox-option image=\"resources/engine/images/script.png\" text=\"" + GUIParser::escape(property->getName() + ": " + property->getValue()) + "\" id=\"" + GUIParser::escape("properties." + property->getName()) + "\" value=\"" + GUIParser::escape("properties." + property->getName()) + "\" />\n";
 		}
 		xml+= "</selectbox-parent-option>\n";

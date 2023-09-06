@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include <memory>
 #include <string>
 #include <typeinfo>
 #include <unordered_map>
@@ -18,8 +19,10 @@
 #include <tdme/utilities/RTTI.h>
 #include <tdme/utilities/Time.h>
 
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::unordered_map;
 
 using tdme::network::udp::UDPPacket;
@@ -40,11 +43,12 @@ using tdme::utilities::Time;
 
 const uint64_t UDPServerIOThread::MESSAGEACK_RESENDTIMES[UDPServerIOThread::MESSAGEACK_RESENDTIMES_TRIES] = {125L, 250L, 500L, 750L, 1000L, 2000L, 5000L};
 
-UDPServerIOThread::UDPServerIOThread(const unsigned int id, UDPServer *server, const unsigned int maxCCU) :
+UDPServerIOThread::UDPServerIOThread(const unsigned int id, UDPServer *server, const unsigned int maxCCU, Barrier* startUpBarrier) :
 	Thread("nioudpserveriothread"),
 	id(id),
 	server(server),
 	maxCCU(maxCCU),
+	startUpBarrier(startUpBarrier),
 	messageQueueMutex("nioupserveriothread_messagequeue"),
 	messageMapAckMutex("nioupserveriothread_messagequeueack") {
 	//
@@ -69,7 +73,7 @@ void UDPServerIOThread::run() {
 	Console::println("UDPServerIOThread[" + to_string(id) + "]::run(): start");
 
 	// wait on startup barrier
-	server->startUpBarrier->wait();
+	startUpBarrier->wait();
 
 	// catch kernel event and server socket exceptions
 	try {
@@ -121,22 +125,21 @@ void UDPServerIOThread::run() {
 						// process event, catch and handle client related exceptions
 						UDPServerClient* client = nullptr;
 						UDPServerClient* clientNew = nullptr;
-						UDPPacket* packet = nullptr;
 						try {
 							// transfer buffer to string stream
-							packet = new UDPPacket();
+							auto packet = make_unique<UDPPacket>();
 							packet->putBytes((const uint8_t*)message, bytesReceived);
 							packet->reset();
 
 							// validate datagram
-							server->validate(packet);
+							server->validate(packet.get());
 
 							// identify datagram
 							UDPServer::MessageType messageType;
 							uint32_t clientId;
 							uint32_t messageId;
 							uint8_t retries;
-							server->identify(packet, messageType, clientId, messageId, retries);
+							server->identify(packet.get(), messageType, clientId, messageId, retries);
 
 							// process message depending on messageType
 							switch(messageType) {
@@ -149,8 +152,6 @@ void UDPServerIOThread::run() {
 										client = server->getClientByIp(ip, port);
 										if (client != nullptr) {
 											// delete packet
-											delete packet;
-											packet = nullptr;
 											client->sendConnected();
 											client->releaseReference();
 											// we are done
@@ -169,10 +170,6 @@ void UDPServerIOThread::run() {
 
 										// add client to server
 										server->addClient(clientNew);
-
-										// delete packet
-										delete packet;
-										packet = nullptr;
 
 										// switch from client new to client
 										client = clientNew;
@@ -203,24 +200,19 @@ void UDPServerIOThread::run() {
 											throw NetworkServerException("message invalid");
 										}
 										// delegate
-										client->onPacketReceived(packet, messageId, retries);
+										client->onPacketReceived(packet.release(), messageId, retries);
 										break;
 									}
 								case(UDPServer::MESSAGETYPE_ACKNOWLEDGEMENT):
 									{
 										client = server->lookupClient(clientId);
 										server->processAckReceived(client, messageId);
-										delete packet;
-										packet = nullptr;
 										break;
 									}
 								default:
 									throw NetworkServerException("Invalid message type");
 							}
 						} catch(Exception& exception) {
-							// delete packet
-							if (packet != nullptr) delete packet;
-
 							// log
 							Console::println(
 								"UDPServerIOThread[" +
@@ -325,9 +317,9 @@ void UDPServerIOThread::run() {
 	Console::println("UDPServerIOThread[" + to_string(id) + "]::run(): done");
 }
 
-void UDPServerIOThread::sendMessage(const UDPServerClient* client, const uint8_t messageType, const uint32_t messageId, const UDPPacket* packet, const bool safe, const bool deleteFrame) {
+void UDPServerIOThread::sendMessage(const UDPServerClient* client, const uint8_t messageType, const uint32_t messageId, const UDPPacket* packet, const bool safe, const bool deletePacket) {
 	// create message
-	auto message = new Message();
+	auto message = make_unique<Message>();
 	message->ip = client->ip;
 	message->port = client->port;
 	message->time = Time::getCurrentMillis();
@@ -346,7 +338,7 @@ void UDPServerIOThread::sendMessage(const UDPServerClient* client, const uint8_t
 	packet->setPosition(position);
 
 	// delete packet if requested
-	if (deleteFrame == true) delete packet;
+	if (deletePacket == true) delete packet;
 
 	// requires ack and retransmission ?
 	if (safe == true) {
@@ -356,13 +348,11 @@ void UDPServerIOThread::sendMessage(const UDPServerClient* client, const uint8_t
 		if (it != messageMapAck.end()) {
  			// its on ack queue already, so unlock
 			messageMapAckMutex.unlock();
-			delete message;
 			throw NetworkServerException("message already on message queue ack");
 		}
 		//	check if message queue is full
 		if (messageMapAck.size() > maxCCU * 20) {
 			messageMapAckMutex.unlock();
-			delete message;
 			throw NetworkServerException("message queue ack overflow");
 		}
 		// 	push to message queue ack
@@ -379,10 +369,9 @@ void UDPServerIOThread::sendMessage(const UDPServerClient* client, const uint8_t
 	//	check if message queue is full
 	if (messageQueue.size() > maxCCU * 20) {
 		messageQueueMutex.unlock();
-		delete message;
 		throw NetworkServerException("message queue overflow");
 	}
-	messageQueue.push(message);
+	messageQueue.push(message.release());
 
 	// set nio interest
 	if (messageQueue.size() == 1) {

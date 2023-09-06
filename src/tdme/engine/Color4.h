@@ -17,17 +17,35 @@ using tdme::math::Math;
 class tdme::engine::Color4
 {
 protected:
-	array<float, 4> data;
+	array<float, 4> data { 0.0f, 0.0f, 0.0f, 1.0f };
 
 public:
 	/**
 	 * Public constructor
 	 */
 	inline Color4() {
-		data[0] = 0.0f;
-		data[1] = 0.0f;
-		data[2] = 0.0f;
-		data[3] = 1.0f;
+	}
+
+	/**
+	 * Public constructor
+	 * @param r red component
+	 * @param g green component
+	 * @param b blue component
+	 * @param a alpha component
+	 */
+	inline Color4(float r, float g, float b, float a) {
+		data[0] = r;
+		data[1] = g;
+		data[2] = b;
+		data[3] = a;
+	}
+
+	/**
+	 * Public constructor
+	 * @param color color as array
+	 */
+	inline Color4(const array<float, 4>& color) {
+		this->data = color;
 	}
 
 	/**
@@ -39,41 +57,11 @@ public:
 	}
 
 	/**
-	 * Public constructor
-	 * @param color color
-	 */
-	inline Color4(const array<float, 4>& color) {
-		this->data = color;
-	}
-
-	/**
-	 * Public constructor
-	 * @param r red
-	 * @param g green
-	 * @param b blue
-	 * @param a alpha
-	 */
-	inline Color4(float r, float g, float b, float a) {
-		data[0] = r;
-		data[1] = g;
-		data[2] = b;
-		data[3] = a;
-	}
-
-	/**
-	 * Set up color
-	 * @param color color float array
-	 */
-	inline void set(const array<float, 4>& color) {
-		this->data = color;
-	}
-
-	/**
-	 * Set up color
-	 * @param r red
-	 * @param g green
-	 * @param b blue
-	 * @param a alpha
+	 * Sets this color by its components
+	 * @param r red component
+	 * @param g green component
+	 * @param b blue component
+	 * @param a alpha component
 	 */
 	inline void set(float r, float g, float b, float a) {
 		data[0] = r;
@@ -83,25 +71,19 @@ public:
 	}
 
 	/**
-	 * Sets up this color with given color
+	 * Sets this color by array
+	 * @param color color as array
+	 */
+	inline void set(const array<float, 4>& color) {
+		this->data = color;
+	}
+
+	/**
+	 * Sets this color by given color
 	 * @param color color
 	 */
 	inline void set(const Color4& color) {
 		data = color.data;
-	}
-
-	/**
-	 * Add to color
-	 * @param r red
-	 * @param g green
-	 * @param b blue
-	 * @param a alpha
-	 */
-	inline void add(float r, float g, float b, float a) {
-		data[0] += r;
-		data[1] += g;
-		data[2] += b;
-		data[3] += a;
 	}
 
 	/**
@@ -112,6 +94,7 @@ public:
 	}
 
 	/**
+	 * Sets red component
 	 * @param red red component
 	 */
 	inline void setRed(float red) {
@@ -126,6 +109,7 @@ public:
 	}
 
 	/**
+	 * Sets green component
 	 * @param green green component
 	 */
 	inline void setGreen(float green) {
@@ -140,6 +124,7 @@ public:
 	}
 
 	/**
+	 * Sets blue component
 	 * @param blue blue component
 	 */
 	inline void setBlue(float blue) {
@@ -154,6 +139,7 @@ public:
 	}
 
 	/**
+	 * Sets alpha component
 	 * @param alpha alpha component
 	 */
 	inline void setAlpha(float alpha) {
@@ -161,33 +147,20 @@ public:
 	}
 
 	/**
-	 * Scale this color
-	 * @param scale scale
+	 * Adds a scalar
+	 * @param scalar scalar
 	 * @return this color
 	 */
-	inline Color4& scale(float scale) {
-		data[0] *= scale;
-		data[1] *= scale;
-		data[2] *= scale;
-		data[3] *= scale;
+	inline Color4& add(float scalar) {
+		data[0] += scalar;
+		data[1] += scalar;
+		data[2] += scalar;
+		data[3] += scalar;
 		return *this;
 	}
 
 	/**
-	 * Scale this color
-	 * @param scale scale
-	 * @return this color
-	 */
-	inline Color4& scale(const Color4& scale) {
-		data[0] *= scale.data[0];
-		data[1] *= scale.data[1];
-		data[2] *= scale.data[2];
-		data[3] *= scale.data[3];
-		return *this;
-	}
-
-	/**
-	 * Add color to this color
+	 * Adds a color
 	 * @param color color
 	 * @return this color
 	 */
@@ -200,7 +173,20 @@ public:
 	}
 
 	/**
-	 * Subtracts color from this color
+	 * Subtracts a scalar
+	 * @param scalar scalar
+	 * @return this color
+	 */
+	inline Color4& sub(float scalar) {
+		data[0] -= scalar;
+		data[1] -= scalar;
+		data[2] -= scalar;
+		data[3] -= scalar;
+		return *this;
+	}
+
+	/**
+	 * Subtracts a color
 	 * @param color color
 	 * @return this color
 	 */
@@ -213,41 +199,268 @@ public:
 	}
 
 	/**
-	 * @return rgba as float array
+	 * Scales this color
+	 * @param scalar scalar
+	 * @return this color
+	 */
+	inline Color4& scale(float scalar) {
+		data[0] *= scalar;
+		data[1] *= scalar;
+		data[2] *= scalar;
+		data[3] *= scalar;
+		return *this;
+	}
+
+	/**
+	 * Scales this color
+	 * @param color color
+	 * @return this color
+	 */
+	inline Color4& scale(const Color4& color) {
+		data[0] *= color.data[0];
+		data[1] *= color.data[1];
+		data[2] *= color.data[2];
+		data[3] *= color.data[3];
+		return *this;
+	}
+
+	/**
+	 * Compares this color with given color
+	 * @param color color
+	 * @param tolerance tolerance per color component
+	 * @return equality
+	 */
+	inline bool equals(const Color4& color, float tolerance = Math::EPSILON) const {
+		return (this == &color) ||
+			(
+				Math::abs(data[0] - color.data[0]) < tolerance &&
+				Math::abs(data[1] - color.data[1]) < tolerance &&
+				Math::abs(data[2] - color.data[2]) < tolerance &&
+				Math::abs(data[3] - color.data[3]) < tolerance
+			);
+	}
+
+	/**
+	 * Interpolates between a and b by 0f<=t<=1f linearly
+	 * @param a color a
+	 * @param b color b
+	 * @param t t
+	 * @return interpolated color
+	 */
+	inline static Color4 interpolateLinear(const Color4& a, const Color4& b, float t) {
+		return Color4(
+			(b.data[0] * t) + ((1.0f - t) * a.data[0]),
+			(b.data[1] * t) + ((1.0f - t) * a.data[1]),
+			(b.data[2] * t) + ((1.0f - t) * a.data[2]),
+			(b.data[3] * t) + ((1.0f - t) * a.data[3])
+		);
+	}
+
+	/**
+	 * @return color as array
 	 */
 	inline const array<float, 4>& getArray() const {
 		return data;
 	}
 
 	/**
+	 * Clones this color
+	 * @return new cloned color
+	 */
+	inline Color4 clone() const {
+		return Color4(*this);
+	}
+
+	/**
 	 * Array access operator
 	 * @param i index
-	 * @return vector3 component
+	 * @return color component
 	 */
-    inline float& operator[](int i) {
+	inline float& operator[](int i) {
 		return data[i];
-    }
+	}
 
 	/**
 	 * Const array access operator
 	 * @param i index
-	 * @return vector3 component
+	 * @return color component
 	 */
-    inline const float& operator[](int i) const {
+	inline const float& operator[](int i) const {
 		return data[i];
-    }
+	}
 
 	/**
-	 * Compares this color with given color
+	 * Operator + scalar
+	 * @param scalar scalar
+	 * @return new color (this + scalar)
+	 */
+	inline Color4 operator +(const float scalar) const {
+		auto r = this->clone().add(scalar);
+		return r;
+	}
+
+	/**
+	 * Operator + color
+	 * @param color color
+	 * @return new color (this + color)
+	 */
+	inline Color4 operator +(const Color4& color) const {
+		auto r = this->clone().add(color);
+		return r;
+	}
+
+	/**
+	 * Operator - scalar
+	 * @param scalar scalar
+	 * @return new color (this - scalar)
+	 */
+	inline Color4 operator -(const float scalar) const {
+		auto r = this->clone().sub(scalar);
+		return r;
+	}
+
+	/**
+	 * Operator - color
+	 * @param color color
+	 * @return new color (this - color)
+	 */
+	inline Color4 operator -(const Color4& color) const {
+		auto r = this->clone().sub(color);
+		return r;
+	}
+
+	/**
+	 * Operator * scalar
+	 * @param scalar scalar
+	 * @return new color (this * scalar)
+	 */
+	inline Color4 operator *(const float scalar) const {
+		auto r = this->clone().scale(scalar);
+		return r;
+	}
+
+	/**
+	 * Operator * color
+	 * @param color color
+	 * @return new color (this * color)
+	 */
+	inline Color4 operator *(const Color4& color) const {
+		auto r = this->clone().scale(color);
+		return r;
+	}
+
+	/**
+	 * Operator / scalar
+	 * @param scalar scalar
+	 * @return new color (this / scalar)
+	 */
+	inline Color4 operator /(const float scalar) const {
+		auto vInverted = Color4(1.0f / scalar, 1.0f / scalar, 1.0f / scalar, 1.0f / scalar);
+		auto r = this->clone().scale(vInverted);
+		return r;
+	}
+
+	/**
+	 * Operator / color
+	 * @param color color
+	 * @return new color (this / color)
+	 */
+	inline Color4 operator /(const Color4& color) const {
+		auto vInverted = Color4(1.0f / color[0], 1.0f / color[1], 1.0f / color[2], 1.0f / color[3]);
+		auto r = this->clone().scale(vInverted);
+		return r;
+	}
+
+	/**
+	 * Operator += scalar
+	 * @param scalar scalar
+	 * @return this color
+	 */
+	inline Color4& operator +=(const float scalar) {
+		return this->add(scalar);
+	}
+
+	/**
+	 * Operator += color
+	 * @param color color
+	 * @return this color
+	 */
+	inline Color4& operator +=(const Color4& color) {
+		return this->add(color);
+	}
+
+	/**
+	 * Operator -= scalar
+	 * @param scalar scalar
+	 * @return this color
+	 */
+	inline Color4& operator -=(const float scalar) {
+		return this->sub(scalar);
+	}
+
+	/**
+	 * Operator -= color
+	 * @param color color
+	 * @return this color
+	 */
+	inline Color4& operator -=(const Color4& color) {
+		return this->sub(color);
+	}
+
+	/**
+	 * Operator *= scalar
+	 * @param scalar scalar
+	 * @return this color
+	 */
+	inline Color4& operator *=(const float scalar) {
+		return this->scale(scalar);
+	}
+
+	/**
+	 * Operator *= color
+	 * @param color color
+	 * @return this color
+	 */
+	inline Color4& operator *=(const Color4& color) {
+		return this->scale(color);
+	}
+
+	/**
+	 * Operator /= scalar
+	 * @param scalar scalar
+	 * @return this color
+	 */
+	inline Color4& operator /=(const float scalar) {
+		auto vInverted = Color4(1.0f / scalar, 1.0f / scalar, 1.0f / scalar, 1.0f / scalar);
+		return this->scale(vInverted);
+	}
+
+	/**
+	 * Operator /= color
+	 * @param color color
+	 * @return this color
+	 */
+	inline Color4& operator /=(const Color4& color) {
+		auto vInverted = Color4(1.0f / color[0], 1.0f / color[1], 1.0f / color[2], 1.0f / color[3]);
+		return this->scale(vInverted);
+	}
+
+	/**
+	 * Equality comparison operator
+	 * @param color color
 	 * @return equality
 	 */
-	inline bool equals(const Color4& c) const {
-		return (this == &c) || (
-			Math::abs(data[0] - c.data[0]) < Math::EPSILON &&
-			Math::abs(data[1] - c.data[1]) < Math::EPSILON &&
-			Math::abs(data[2] - c.data[2]) < Math::EPSILON &&
-			Math::abs(data[3] - c.data[3]) < Math::EPSILON
-		);
+	inline bool operator ==(const Color4& color) const {
+		return this->equals(color);
+	}
+
+	/**
+	 * Non equality comparison operator
+	 * @param color color
+	 * @return non equality
+	 */
+	inline bool operator !=(const Color4& color) const {
+		return this->equals(color) == false;
 	}
 
 };

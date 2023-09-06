@@ -135,7 +135,8 @@ private:
 
 	/**
 	 * Parse GLTF node
-	 * @param pathName path name
+	 * @param pathName model path name
+	 * @param fileName model file name
 	 * @param gltfModel GLTF mode
 	 * @param gltfNodeIdx GLTF node index
 	 * @param model TDME model
@@ -144,25 +145,30 @@ private:
 	 * @param useBC7TextureCompression use BC7 texture compression
 	 * @return node
 	 */
-	static Node* parseNode(const string& pathName, tinygltf::Model& gltfModel, int gltfNodeIdx, Model* model, Node* parentNode, int& anonymousNodeIdx, bool useBC7TextureCompression);
+	static Node* parseNode(const string& pathName, const string& fileName, tinygltf::Model& gltfModel, int gltfNodeIdx, Model* model, Node* parentNode, int& anonymousNodeIdx, bool useBC7TextureCompression);
 
 	/**
 	 * Parse GLTF node children into TDME node
-	 * @param pathName path name
+	 * @param pathName model path name
+	 * @param fileName model file name
 	 * @param gltfModel GLTF model
 	 * @param gltfNodeChildrenIdx GLTF node children indices
 	 * @param parentNode TDME parent node
 	 * @param anonymousNodeIdx anonymous node index
 	 * @param useBC7TextureCompression use BC7 texture compression
 	 */
-	static void parseNodeChildren(const string& pathName, tinygltf::Model& gltfModel, const vector<int>& gltfNodeChildrenIdx, Node* parentNode, int& anonymousNodeIdx, bool useBC7TextureCompression);
+	static void parseNodeChildren(const string& pathName, const string& fileName, tinygltf::Model& gltfModel, const vector<int>& gltfNodeChildrenIdx, Node* parentNode, int& anonymousNodeIdx, bool useBC7TextureCompression);
 
 	/**
 	 * Determine texture file name
-	 * @param fileName
+	 * @param pathName model path name
+	 * @param fileName model file name
+	 * @param imageName image name
 	 * @return file name
 	 */
-	static string determineTextureFileName(const string& imageName);
+	inline static const string determineTextureFileName(const string& pathName, const string& fileName, const string& imageName) {
+		return pathName + "/" + fileName + "-" + imageName + ".png";
+	}
 
 	/**
 	 * Compute tangents and bitangents

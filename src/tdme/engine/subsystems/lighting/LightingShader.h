@@ -54,9 +54,14 @@ public:
 	bool isInitialized();
 
 	/**
-	 * Initialize renderer
+	 * Initialize
 	 */
 	void initialize();
+
+	/**
+	 * Dispose
+	 */
+	void dispose();
 
 	/**
 	 * Use lighting program
@@ -139,6 +144,12 @@ public:
 		if (shaderIt == shaders.end()) return nullptr;
 		return shaderIt->second;
 	}
+
+	/**
+	 * Unload textures
+	 * @param pathName path name
+	 */
+	void unloadTextures();
 
 	/**
 	 * Load textures

@@ -64,10 +64,10 @@ LODTest::LODTest()
 }
 
 
-void LODTest::main(int argc, char** argv)
+int LODTest::main(int argc, char** argv)
 {
 	auto lodTest = new LODTest();
-	lodTest->run(argc, argv, "LODTest", lodTest);
+	return lodTest->run(argc, argv, "LODTest", lodTest);
 }
 
 void LODTest::display()

@@ -6,14 +6,12 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/utilities/fwd-tdme.h>
-#include <tdme/utilities/VectorIteratorMultiple.h>
 
 using std::vector;
 
 using tdme::engine::Entity;
 using tdme::engine::Frustum;
 using tdme::engine::Partition;
-using tdme::utilities::VectorIteratorMultiple;
 
 /**
  * Bogus/Simple partition implementation
@@ -23,7 +21,6 @@ class tdme::engine::SimplePartition final: public Partition
 {
 private:
 	vector<Entity*> entities;
-	VectorIteratorMultiple<Entity*> arrayListIteratorMultiple;
 
 private:
 	// overridden methods

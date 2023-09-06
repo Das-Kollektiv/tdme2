@@ -1,5 +1,7 @@
 #include <cassert>
+#include <filesystem>
 #include <fstream>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -19,9 +21,11 @@
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
 
+using std::make_unique;
 using std::ofstream;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::application::Application;
@@ -332,7 +336,7 @@ void processFile(const string& fileName, vector<FileInformation>& fileInformatio
 	Console::print(archiveFileName + ": Processing file: " + fileNameToUse);
 
 	// append to archive
-	ofstream ofs(archiveFileName.c_str(), ofstream::binary | ofstream::app);
+	ofstream ofs(std::filesystem::u8path(archiveFileName), ofstream::binary | ofstream::app);
 	ofs.seekp(0, ofstream::end);
 	uint64_t fileOffset = ofs.tellp();
 
@@ -343,7 +347,6 @@ void processFile(const string& fileName, vector<FileInformation>& fileInformatio
 	// always use compression for now
 	if (compressed == 1) {
 		// see: https://www.zlib.net/zpipe.c
-
 		#define CHUNK 	16384
 
 		int ret;
@@ -394,7 +397,7 @@ void processFile(const string& fileName, vector<FileInformation>& fileInformatio
 		assert(ret == Z_STREAM_END); // stream will be complete
 
 		// clean up and return
-		(void) deflateEnd(&strm);
+		(void)deflateEnd(&strm);
 	} else {
 		ofs.write((char*)content.data(), content.size());
 	}
@@ -518,7 +521,7 @@ int main(int argc, char** argv)
 
 		// reset archive
 		{
-			ofstream ofs("installer/" + componentFileName, ofstream::binary | ofstream::trunc);
+			ofstream ofs(std::filesystem::u8path("installer/" + componentFileName), ofstream::binary | ofstream::trunc);
 			ofs.close();
 		}
 
@@ -630,7 +633,7 @@ int main(int argc, char** argv)
 
 		// add file informations
 		{
-			ofstream ofs("installer/" + componentFileName, ofstream::binary | ofstream::app);
+			ofstream ofs(std::filesystem::u8path("installer/" + componentFileName), ofstream::binary | ofstream::app);
 			ofs.seekp(0, ofstream::end);
 			uint32_t fileInformationOffsetEnd = 0LL;
 			uint64_t fileInformationOffset = ofs.tellp();
@@ -650,9 +653,8 @@ int main(int argc, char** argv)
 		}
 
 		// sha256 hash
-		auto archiveFileSystem = new ArchiveFileSystem("installer/" + componentFileName);
+		auto archiveFileSystem = make_unique<ArchiveFileSystem>("installer/" + componentFileName);
 		auto archiveHash = archiveFileSystem->computeSHA256Hash();
-		delete archiveFileSystem;
 		FileSystem::getStandardFileSystem()->setContentFromString("installer", componentFileName + ".sha256", archiveHash);
 		Console::println("Component: " + to_string(componentIdx) + ": component file name: " + componentFileName + ": hash: " + archiveHash);
 	}
@@ -661,7 +663,7 @@ int main(int argc, char** argv)
 	auto completionFileName = os + "-" + cpu + "-upload-" + fileNameTime;
 	// reset archive
 	{
-		ofstream ofs("installer/" + completionFileName, ofstream::binary | ofstream::trunc);
+		ofstream ofs(std::filesystem::u8path("installer/" + completionFileName), ofstream::binary | ofstream::trunc);
 		ofs.close();
 	}
 
@@ -674,4 +676,8 @@ int main(int argc, char** argv)
 		FileSystem::getInstance()->createPath("installer-package");
 		createMacApplication(installerProperties, "bin/tdme/tools/installer/Installer", "installer-package");
 	#endif
+
+	//
+	Console::shutdown();
+	return 0;
 }

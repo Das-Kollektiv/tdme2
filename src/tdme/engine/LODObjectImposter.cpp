@@ -1,5 +1,6 @@
 #include <tdme/engine/LODObjectImposter.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -9,7 +10,9 @@
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/Transform.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::Engine;
@@ -40,10 +43,10 @@ LODObjectImposter::LODObjectImposter(
 	this->effectColorAddLOD2.set(0.0f, 0.0f, 0.0f, 0.0f);
 	this->entityTransformMatrix.identity();
 
-	objectLOD1 = new Object(id + ".lod1", modelLOD1);
+	objectLOD1 = make_unique<Object>(id + ".lod1", modelLOD1);
 	objectLOD1->setParentEntity(this);
 
-	objectLOD2 = new ImposterObject(id + ".lod2", imposterModelsLOD2);
+	objectLOD2 = make_unique<ImposterObject>(id + ".lod2", imposterModelsLOD2);
 	objectLOD2->setParentEntity(this);
 
 	objectLOD1->setRenderPass(renderPass);
@@ -56,9 +59,6 @@ LODObjectImposter::LODObjectImposter(
 }
 
 LODObjectImposter::~LODObjectImposter() {
-	// delegate to LOD objects
-	delete objectLOD1;
-	delete objectLOD2;
 }
 
 void LODObjectImposter::setEngine(Engine* engine)

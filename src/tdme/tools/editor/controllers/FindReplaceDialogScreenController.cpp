@@ -55,12 +55,6 @@ FindReplaceDialogScreenController::FindReplaceDialogScreenController(PopUps* pop
 
 FindReplaceDialogScreenController::~FindReplaceDialogScreenController()
 {
-	screenNode = nullptr;
-	if (findAction != nullptr) delete findAction;
-	if (countAction != nullptr) delete countAction;
-	if (replaceAction != nullptr) delete replaceAction;
-	if (replaceAllAction != nullptr) delete replaceAllAction;
-	if (completeAction != nullptr) delete completeAction;
 }
 
 GUIScreenNode* FindReplaceDialogScreenController::getScreenNode()
@@ -117,11 +111,11 @@ bool FindReplaceDialogScreenController::isInSelectionOnly() {
 
 void FindReplaceDialogScreenController::show(Action* findAction, Action* countAction, Action* replaceAction, Action* replaceAllAction, Action* completeAction)
 {
-	this->findAction = findAction;
-	this->countAction = countAction;
-	this->replaceAction = replaceAction;
-	this->replaceAllAction = replaceAllAction;
-	this->completeAction = completeAction;
+	this->findAction = unique_ptr<Action>(findAction);
+	this->countAction = unique_ptr<Action>(countAction);
+	this->replaceAction = unique_ptr<Action>(replaceAction);
+	this->replaceAllAction = unique_ptr<Action>(replaceAllAction);
+	this->completeAction = unique_ptr<Action>(completeAction);
 	//
 	screenNode->setEnabled(true);
 	Engine::getInstance()->getGUI()->setFoccussedNode(findText);
@@ -130,11 +124,6 @@ void FindReplaceDialogScreenController::show(Action* findAction, Action* countAc
 void FindReplaceDialogScreenController::close()
 {
 	screenNode->setEnabled(false);
-	if (findAction != nullptr) delete findAction;
-	if (countAction != nullptr) delete countAction;
-	if (replaceAction != nullptr) delete replaceAction;
-	if (replaceAllAction != nullptr) delete replaceAllAction;
-	if (completeAction != nullptr) delete completeAction;
 	findAction = nullptr;
 	countAction = nullptr;
 	replaceAction = nullptr;

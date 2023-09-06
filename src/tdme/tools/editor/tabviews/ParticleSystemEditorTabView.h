@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -19,6 +20,7 @@
 #include <tdme/tools/editor/views/PlayableSoundView.h>
 
 using std::string;
+using std::unique_ptr;
 
 using tdme::audio::Audio;
 using tdme::engine::prototype::Prototype;
@@ -46,20 +48,20 @@ using tdme::tools::editor::views::PlayableSoundView;
 class tdme::tools::editor::tabviews::ParticleSystemEditorTabView final
 	: public TabView
 	, public PlayableSoundView
-	, protected CameraRotationInputHandlerEventHandler
+	, public CameraRotationInputHandlerEventHandler
 	, protected Gizmo
 {
 protected:
 	Audio* audio { nullptr };
-	Engine* engine { nullptr };
+	unique_ptr<Engine> engine;
 
 private:
 	EditorView* editorView { nullptr };
 	string tabId;
 	PopUps* popUps { nullptr };
-	Prototype* prototype { nullptr };
-	CameraRotationInputHandler* cameraRotationInputHandler { nullptr };
-	ParticleSystemEditorTabController* particleSystemEditorTabController { nullptr };
+	unique_ptr<Prototype> prototype;
+	unique_ptr<CameraRotationInputHandler> cameraRotationInputHandler;
+	unique_ptr<ParticleSystemEditorTabController> particleSystemEditorTabController;
 	PrototypeDisplaySubView* prototypeDisplayView { nullptr };
 	PrototypePhysicsSubView* prototypePhysicsView { nullptr };
 	PrototypeSoundsSubView* prototypeSoundsView { nullptr };
@@ -111,7 +113,7 @@ public:
 	 * @return associated tab controller
 	 */
 	inline TabController* getTabController() override {
-		return particleSystemEditorTabController;
+		return particleSystemEditorTabController.get();
 	}
 
 	/**
@@ -125,7 +127,7 @@ public:
 	 * @return prototype
 	 */
 	inline Prototype* getPrototype() {
-		return prototype;
+		return prototype.get();
 	}
 
 	// overridden methods

@@ -1,3 +1,4 @@
+#include <memory>
 #include <string>
 #include <unordered_set>
 #include <unordered_map>
@@ -19,9 +20,11 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Time.h>
 
+using std::make_unique;
 using std::remove;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::unordered_set;
 using std::vector;
 
@@ -40,7 +43,7 @@ using tdme::os::threading::Thread;
 using tdme::utilities::Console;
 using tdme::utilities::Time;
 
-ServerThread::ServerThread(Context* context, ApplicationServer* server) : Thread("applicationserverthread", 4 * 1024 * 1024), mutex("applicationserverthread-mutex") {
+ServerThread::ServerThread(Context* context, ApplicationServer* server) : Thread("applicationserverthread"), mutex("applicationserverthread-mutex") {
 	this->context = context;
 	this->server = server;
 }
@@ -52,7 +55,7 @@ Mutex* ServerThread::getMutex() {
 void ServerThread::createDatagrams(vector<LogicNetworkPacket>& safeLogicNetworkPackets, vector<LogicNetworkPacket>& fastLogicNetworkPackets, vector<UDPPacket*>& sendPacketsSafe, vector<UDPPacket*>& sendPacketsFast) {
 	// collect safe messages
 	if (safeLogicNetworkPackets.size() > 0) {
-		auto packet = UDPServerClient::createPacket();
+		auto packet = unique_ptr<UDPPacket>(UDPServerClient::createPacket());
 		// safe packet
 		packet->putBool(true);
 		//
@@ -68,9 +71,9 @@ void ServerThread::createDatagrams(vector<LogicNetworkPacket>& safeLogicNetworkP
 					// no more network packets
 					packet->putByte(0);
 				}
-				sendPacketsSafe.push_back(packet);
+				sendPacketsSafe.push_back(packet.release());
 				//
-				packet = UDPServerClient::createPacket();
+				packet = unique_ptr<UDPPacket>(UDPServerClient::createPacket());
 				// safe packet
 				packet->putBool(true);
 			}
@@ -90,14 +93,12 @@ void ServerThread::createDatagrams(vector<LogicNetworkPacket>& safeLogicNetworkP
 				packet->putByte(0);
 			}
 			//
-			sendPacketsSafe.push_back(packet);
-		} else {
-			delete packet;
+			sendPacketsSafe.push_back(packet.release());
 		}
 	}
 	// collect fast messages
 	if (fastLogicNetworkPackets.size() > 0) {
-		auto packet = UDPServerClient::createPacket();
+		auto packet = unique_ptr<UDPPacket>(UDPServerClient::createPacket());
 		// no safe packet
 		packet->putBool(false);
 		//
@@ -112,8 +113,8 @@ void ServerThread::createDatagrams(vector<LogicNetworkPacket>& safeLogicNetworkP
 					// no more network packets
 					packet->putByte(0);
 				}
-				sendPacketsFast.push_back(packet);
-				packet = UDPServerClient::createPacket();
+				sendPacketsFast.push_back(packet.release());
+				packet = unique_ptr<UDPPacket>(UDPServerClient::createPacket());
 				// no safe packet
 				packet->putBool(false);
 			}
@@ -133,9 +134,7 @@ void ServerThread::createDatagrams(vector<LogicNetworkPacket>& safeLogicNetworkP
 				packet->putByte(0);
 			}
 			//
-			sendPacketsFast.push_back(packet);
-		} else {
-			delete packet;
+			sendPacketsFast.push_back(packet.release());
 		}
 	}
 }

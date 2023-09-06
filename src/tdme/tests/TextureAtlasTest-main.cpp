@@ -169,4 +169,8 @@ int main(int argc, char** argv)
 
 	// write to PNG
 	PNGTextureWriter::write(atlas.getAtlasTexture(), ".", "textureatlastest.png", false, false);
+
+	//
+	Console::shutdown();
+	return 0;
 }

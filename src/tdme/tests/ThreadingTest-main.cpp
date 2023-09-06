@@ -1,6 +1,9 @@
+#include <memory>
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/os/threading/AtomicOperations.h>
 #include <tdme/os/threading/Queue.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/utilities/Console.h>
@@ -10,9 +13,13 @@
 #include "ThreadingTest_SharedData.h"
 #include "ThreadingTest_TestThread.h"
 
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
+using std::vector;
 
+using tdme::os::threading::AtomicOperations;
 using tdme::os::threading::Queue;
 using tdme::os::threading::Thread;
 using tdme::utilities::Console;
@@ -23,10 +30,10 @@ void testthread_test() {
 	// basic thread test
 	SharedData data;
 	Console::println("Hallo World!");
-	TestThread* tt[TESTTHREAD_THREADS_COUNT];
+	vector<unique_ptr<TestThread>> tt(TESTTHREAD_THREADS_COUNT);
 	// start threads
 	for(int i = 0; i < TESTTHREAD_THREADS_COUNT; i++) {
-		tt[i] = new TestThread(i, &data);
+		tt[i] = make_unique<TestThread>(i, &data);
 		tt[i]->start();
 	}
 	// wait until threads are finished
@@ -68,23 +75,22 @@ void pc_test() {
 }
 
 void atomic_test() {
-	#if defined(_WIN32) && defined(_MSC_VER)
-		// need to create some class or definition for atomic add, dec, otherwise this is not portable
-	#else
-		int intValue = 0;
-		// 5 atomic adds
-		for(int i = 0; i < 5; i++) {
-			Console::println("atomic add, result " + to_string(__sync_add_and_fetch(&intValue,1)));
-		}
-		// 5 atomic subs
-		for(int i = 0; i < 5; i++) {
-			Console::println("atomic sub, result " + to_string(__sync_sub_and_fetch(&intValue,1)));
-		}
-	#endif
+	volatile uint32_t intValue = 0;
+	// 5 atomic adds
+	for(int i = 0; i < 5; i++) {
+		Console::println("atomic add, result " + to_string(AtomicOperations::increment(intValue)));
+	}
+	// 5 atomic subs
+	for(int i = 0; i < 5; i++) {
+		Console::println("atomic sub, result " + to_string(AtomicOperations::decrement(intValue)));
+	}
 }
 
 int main(int argc, char *argv[]) {
 	testthread_test();
 	pc_test();
 	atomic_test();
+	//
+	Console::shutdown();
+	return 0;
 }

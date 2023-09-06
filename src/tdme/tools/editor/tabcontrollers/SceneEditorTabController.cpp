@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabcontrollers/SceneEditorTabController.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -46,7 +47,9 @@
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 
 using tdme::tools::editor::tabcontrollers::SceneEditorTabController;
 
@@ -96,20 +99,10 @@ SceneEditorTabController::SceneEditorTabController(SceneEditorTabView* view)
 {
 	this->view = view;
 	this->popUps = view->getPopUps();
-	this->basePropertiesSubController = new BasePropertiesSubController(view->getEditorView(), "scene");
+	this->basePropertiesSubController = make_unique<BasePropertiesSubController>(view->getEditorView(), "scene");
 }
 
 SceneEditorTabController::~SceneEditorTabController() {
-	delete basePropertiesSubController;
-}
-
-SceneEditorTabView* SceneEditorTabController::getView() {
-	return view;
-}
-
-GUIScreenNode* SceneEditorTabController::getScreenNode()
-{
-	return screenNode;
 }
 
 void SceneEditorTabController::initialize(GUIScreenNode* screenNode)
@@ -216,23 +209,22 @@ void SceneEditorTabController::onDrop(const string& payload, int mouseX, int mou
 					//
 					try {
 						// load prototype and mark as non embedded
-						auto prototype = PrototypeReader::read(
-							Tools::getPathName(fileName),
-							Tools::getFileName(fileName)
+						auto prototype = unique_ptr<Prototype>(
+							PrototypeReader::read(
+								Tools::getPathName(fileName),
+								Tools::getFileName(fileName)
+							)
 						);
 						prototype->setEmbedded(false);
 						// check if we have prototype already in library
 						auto libraryPrototype = view->getScene()->getLibrary()->getPrototypeByName(prototype->getName());
-						if (libraryPrototype != nullptr) {
+						if (libraryPrototype == nullptr) {
 							// yep, delete prototype
-							delete prototype;
-							prototype = libraryPrototype;
-						} else {
-							// nope, add it
-							view->addPrototype(prototype);
+							libraryPrototype = prototype.release();
+							view->addPrototype(libraryPrototype);
 						}
 						// and place it
-						if (view->placeEntity(prototype, tabMouseX, tabMouseY) == false) {
+						if (view->placeEntity(libraryPrototype, tabMouseX, tabMouseY) == false) {
 							showInfoPopUp("Warning", "Could not place prototype entity.");
 						}
 					} catch (Exception& exception) {
@@ -1310,17 +1302,17 @@ void SceneEditorTabController::setOutlinerContent() {
 		xml+= "	<selectbox-option image=\"resources/engine/images/sky.png\" text=\"Sky\" value=\"scene.sky\" />\n";
 		{
 			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Lights") + "\" value=\"" + GUIParser::escape("scene.lights") + "\">\n";
-			for (auto i = 0; i < scene->getLightCount(); i++) {
-				auto light = scene->getLightAt(i);
+			auto i = 0;
+			for (auto light: scene->getLights()) {
 				xml+= "	<selectbox-option image=\"resources/engine/images/light.png\" text=\"" + GUIParser::escape("Light " + to_string(i)) + "\" id=\"" + GUIParser::escape("scene.lights.light" + to_string(i)) + "\" value=\"" + GUIParser::escape("scene.lights.light" + to_string(i)) + "\" />\n";
+				i++;
 			}
 			xml+= "</selectbox-parent-option>\n";
 		}
 		{
 			auto sceneLibrary = scene->getLibrary();
 			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Prototypes") + "\" value=\"" + GUIParser::escape("scene.prototypes") + "\">\n";
-			for (auto i = 0; i < sceneLibrary->getPrototypeCount(); i++) {
-				auto prototype = sceneLibrary->getPrototypeAt(i);
+			for (auto prototype: sceneLibrary->getPrototypes()) {
 				auto icon = getPrototypeIcon(prototype->getType());
 				auto prototypeId = prototype->getId();
 				auto prototypeName = prototype->getName();
@@ -1330,8 +1322,7 @@ void SceneEditorTabController::setOutlinerContent() {
 		}
 		{
 			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Entities") + "\" value=\"" + GUIParser::escape("scene.entities") + "\">\n";
-			for (auto i = 0; i < scene->getEntityCount(); i++) {
-				auto entity = scene->getEntityAt(i);
+			for (auto entity: scene->getEntities()) {
 				auto entityName = entity->getName();
 				auto prototype = entity->getPrototype();
 				auto icon = getPrototypeIcon(prototype->getType());

@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabcontrollers/ParticleSystemEditorTabController.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -60,7 +61,9 @@
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 
 using tdme::tools::editor::tabcontrollers::ParticleSystemEditorTabController;
 
@@ -122,28 +125,14 @@ ParticleSystemEditorTabController::ParticleSystemEditorTabController(ParticleSys
 {
 	this->view = view;
 	this->popUps = view->getPopUps();
-	this->basePropertiesSubController = new BasePropertiesSubController(view->getEditorView(), "prototype");
-	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view, false);
-	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEditorView(), view, prototypePhysicsSubController->getView());
-	this->prototypeSoundsSubController = new PrototypeSoundsSubController(view->getEditorView(), view);
-	this->prototypeScriptSubController = new PrototypeScriptSubController(view->getEditorView());
+	this->basePropertiesSubController = make_unique<BasePropertiesSubController>(view->getEditorView(), "prototype");
+	this->prototypePhysicsSubController = make_unique<PrototypePhysicsSubController>(view->getEditorView(), view, false);
+	this->prototypeDisplaySubController = make_unique<PrototypeDisplaySubController>(view->getEditorView(), view, prototypePhysicsSubController->getView());
+	this->prototypeSoundsSubController = make_unique<PrototypeSoundsSubController>(view->getEditorView(), view);
+	this->prototypeScriptSubController = make_unique<PrototypeScriptSubController>(view->getEditorView());
 }
 
 ParticleSystemEditorTabController::~ParticleSystemEditorTabController() {
-	delete basePropertiesSubController;
-	delete prototypePhysicsSubController;
-	delete prototypeDisplaySubController;
-	delete prototypeSoundsSubController;
-	delete prototypeScriptSubController;
-}
-
-ParticleSystemEditorTabView* ParticleSystemEditorTabController::getView() {
-	return view;
-}
-
-GUIScreenNode* ParticleSystemEditorTabController::getScreenNode()
-{
-	return screenNode;
 }
 
 void ParticleSystemEditorTabController::initialize(GUIScreenNode* screenNode)
@@ -296,12 +285,14 @@ void ParticleSystemEditorTabController::onChange(GUIElementNode* node)
 		if (node->getController()->getValue().getString() == "particlesystem") {
 			// TODO: move me into a method as I am using it also in context menu, too lazy right now :D
 			auto prototype = view->getPrototype();
-			auto particleSystem = prototype == nullptr?nullptr:prototype->addParticleSystem();
-			auto particleSystemIdx = particleSystem == nullptr?-1:prototype->getParticleSystemsCount() - 1;
-			if (particleSystemIdx != -1) {
-				view->uninitParticleSystem();
-				view->getEditorView()->reloadTabOutliner("particlesystems." + to_string(particleSystemIdx));
-				view->initParticleSystem();
+			if (prototype != nullptr) {
+				prototype->addParticleSystem(new PrototypeParticleSystem());
+				auto particleSystemIdx = prototype->getParticleSystemsCount() - 1;
+				if (particleSystemIdx != -1) {
+					view->uninitParticleSystem();
+					view->getEditorView()->reloadTabOutliner("particlesystems." + to_string(particleSystemIdx));
+					view->initParticleSystem();
+				}
 			}
 		}
 	} else
@@ -404,8 +395,7 @@ void ParticleSystemEditorTabController::onContextMenuRequest(GUIElementNode* nod
 				void performAction() override {
 					auto prototype = particleSystemEditorTabController->view->getPrototype();
 					if (prototype == nullptr) return;
-					auto particleSystem = prototype->addParticleSystem();
-					if (particleSystem == nullptr) return;
+					prototype->addParticleSystem(new PrototypeParticleSystem());
 					auto particleSystemIdx = prototype->getParticleSystemsCount() - 1;
 					//
 					auto view = particleSystemEditorTabController->view;
@@ -1226,9 +1216,10 @@ void ParticleSystemEditorTabController::setOutlinerContent() {
 			xml+= "<selectbox-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Particle Systems") + "\" value=\"" + GUIParser::escape("particlesystems") + "\" />\n";
 		} else {
 			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Particle Systems") + "\" value=\"" + GUIParser::escape("particlesystems") + "\">\n";
-			for (auto i = 0; i < prototype->getParticleSystemsCount(); i++) {
-				auto particleSystem = prototype->getParticleSystemAt(i);
+			auto i = 0;
+			for (auto particleSystem: prototype->getParticleSystems()) {
 				xml+= "	<selectbox-option image=\"resources/engine/images/particle.png\" text=\"" + GUIParser::escape("Particle System " + to_string(i)) + "\" id=\"" + GUIParser::escape("particlesystems." + to_string(i)) + "\" value=\"" + GUIParser::escape("particlesystems." + to_string(i)) + "\" />\n";
+				i++;
 			}
 			xml+= "</selectbox-parent-option>\n";
 		}

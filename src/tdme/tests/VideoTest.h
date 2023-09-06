@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/application/InputEventHandler.h>
@@ -11,6 +13,8 @@
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/ObjectDeleter.h>
 #include <tdme/video/decoder/MPEG1Decoder.h>
+
+using std::unique_ptr;
 
 using tdme::application::Application;
 using tdme::application::InputEventHandler;
@@ -51,8 +55,8 @@ private:
 	ObjectDeleter<Model> modelDeleter;
 	ObjectDeleter<BoundingVolume> bvDeleter;
 	MPEG1Decoder videoDecoder;
-	DynamicColorTexture* videoTexture { nullptr };
-	ByteBuffer* videoAudioBuffer { nullptr };
+	unique_ptr<DynamicColorTexture> videoTexture;
+	unique_ptr<ByteBuffer> videoAudioBuffer;
 	PacketAudioStream* videoAudioStream { nullptr };
 
 	/**
@@ -73,8 +77,9 @@ public:
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values
+	 * @return exit code
 	 */
-	static void main(int argc, char** argv);
+	static int main(int argc, char** argv);
 
 	// overridden methods
 	void display() override;

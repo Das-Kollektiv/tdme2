@@ -1,5 +1,10 @@
 #include <tdme/os/filesystem/FileSystem.h>
 
+#include <memory>
+
+using std::make_unique;
+using std::unique_ptr;
+
 #include <tdme/tdme.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/os/filesystem/StandardFileSystem.h>
@@ -8,33 +13,27 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::filesystem::StandardFileSystem;
 
-FileSystemInterface* FileSystem::fileSystem = nullptr;
-FileSystemInterface* FileSystem::standardFileSystem = nullptr;
+unique_ptr<FileSystemInterface> FileSystem::fileSystem;
+unique_ptr<FileSystemInterface> FileSystem::standardFileSystem;
 
 FileSystemInterface* FileSystem::getInstance()
 {
-	if (fileSystem == nullptr) {
-		if (standardFileSystem == nullptr) standardFileSystem = new StandardFileSystem();
-		fileSystem = standardFileSystem;
-	}
-	return fileSystem;
+	if (fileSystem == nullptr) return getStandardFileSystem();
+	return fileSystem.get();
 }
 
 FileSystemInterface* FileSystem::getStandardFileSystem()
 {
-	if (standardFileSystem == nullptr) {
-		standardFileSystem = new StandardFileSystem();
-	}
-	return standardFileSystem;
+	if (standardFileSystem == nullptr) standardFileSystem = make_unique<StandardFileSystem>();
+	return standardFileSystem.get();
 }
 
 void FileSystem::setupFileSystem(FileSystemInterface* fileSystem)
 {
-	FileSystem::fileSystem = fileSystem;
+	FileSystem::fileSystem = unique_ptr<FileSystemInterface>(fileSystem);
 }
 
 void FileSystem::unsetFileSystem()
 {
-	if (FileSystem::fileSystem != nullptr) delete FileSystem::fileSystem;
 	FileSystem::fileSystem = nullptr;
 }

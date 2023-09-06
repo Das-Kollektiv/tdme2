@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -28,6 +29,7 @@
 
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::audio::Audio;
@@ -45,7 +47,6 @@ using tdme::math::Vector3;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
 using tdme::utilities::Console;
-using tdme::utilities::PathFinding;
 using tdme::utilities::PathFindingCustomTest;
 using tdme::utilities::StringTools;
 using tdme::utilities::Time;
@@ -124,8 +125,8 @@ public:
 		float flowMapDepth;
 		FlowMap* flowMap;
 		unordered_map<string, FlowMapRequest> flowMapRequests;
-		World* world { nullptr };
-		PathFinding* pathFinding { nullptr };
+		unique_ptr<World> world;
+		unique_ptr<tdme::utilities::PathFinding> pathFinding;
 		Mutex pathFindingMutex;
 		Mutex pathFindingCancelMutex;
 		vector<WorldActionStruct> worldActions;
@@ -225,7 +226,7 @@ public:
 	private:
 		Context* context { nullptr };
 		int threadCount;
-		vector<PathFindingThread*> threads;
+		vector<unique_ptr<PathFindingThread>> threads;
 		unordered_map<string, int> actorThreadMap;
 		int scheduleThreadIdx { 0 };
 		Mutex actorThreadMapMutex;
@@ -356,8 +357,8 @@ private:
 	// context main data
 	volatile bool initialized;
 	Mutex* logicsMutex { nullptr };
-	ContextWorldListener* worldListener { nullptr };
-	Scene* scene { nullptr };
+	unique_ptr<ContextWorldListener> worldListener;
+	unique_ptr<Scene> scene;
 	unordered_map<string, Logic*> logicsById;
 	vector<Logic*> logics;
 	vector<Logic*> newLogics;
@@ -365,10 +366,10 @@ private:
 	int soundPoolSize { 10 };
 
 protected:
-	Engine* engine { nullptr };
-	Engine* guiEngine { nullptr };
+	unique_ptr<Engine> guiEngine;
+	unique_ptr<Engine> engine;
+	unique_ptr<World> world;
 	Audio* audio { nullptr };
-	World* world { nullptr };
 	bool server;
 
 public:
@@ -440,7 +441,7 @@ public:
 	 * @return engine
 	 */
 	inline Engine* getEngine() {
-		return engine;
+		return engine.get();
 	}
 
 	/**
@@ -448,14 +449,22 @@ public:
 	 * @param engine engine
 	 */
 	inline void setEngine(Engine* engine) {
-		this->engine = engine;
+		this->engine = unique_ptr<Engine>(engine);
+	}
+
+	/**
+	 * Unset engine
+	 * @return engine
+	 */
+	inline Engine* unsetEngine() {
+		return this->engine.release();
 	}
 
 	/**
 	 * @return GUI engine
 	 */
 	inline Engine* getGUIEngine() {
-		return guiEngine;
+		return guiEngine.get();
 	}
 
 	/**
@@ -463,7 +472,15 @@ public:
 	 * @param guiEngine engine
 	 */
 	inline void setGUIEngine(Engine* guiEngine) {
-		this->guiEngine = guiEngine;
+		this->guiEngine = unique_ptr<Engine>(guiEngine);
+	}
+
+	/**
+	 * Unset GUI engine
+	 * @return GUI engine
+	 */
+	inline Engine* unsetGUIEngine() {
+		return this->guiEngine.release();
 	}
 
 	/**
@@ -485,7 +502,7 @@ public:
 	 * @return physics world
 	 */
 	inline World* getWorld() {
-		return world;
+		return world.get();
 	}
 
 	/**
@@ -493,14 +510,14 @@ public:
 	 * @param world physics world
 	 */
 	inline void setWorld(World* world) {
-		this->world = world;
+		this->world = unique_ptr<World>(world);
 	}
 
 	/**
 	 * @return scene
 	 */
 	inline Scene* getScene() {
-		return scene;
+		return scene.get();
 	}
 
 	/**
@@ -508,16 +525,15 @@ public:
 	 * @param scene scene
 	 */
 	inline void setScene(Scene* scene) {
-		if (this->scene == scene) return;
-		if (this->scene != nullptr) delete this->scene;
-		this->scene = scene;
+		this->scene = unique_ptr<Scene>(scene);
 	}
 
 	/**
 	 * Unset scene
+	 * @return scene
 	 */
-	inline void unsetScene() {
-		this->scene = nullptr;
+	inline Scene* unsetScene() {
+		return this->scene.release();
 	}
 
 	/**

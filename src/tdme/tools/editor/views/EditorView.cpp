@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/views/EditorView.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -32,14 +33,16 @@
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
-#include <tdme/tools/editor/TDMEEditor.h>
+#include <tdme/tools/editor/Editor.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::make_unique;
 using std::string;
 using std::vector;
+using std::unique_ptr;
 
 using tdme::audio::Audio;
 using tdme::engine::Engine;
@@ -71,7 +74,7 @@ using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
-using tdme::tools::editor::TDMEEditor;
+using tdme::tools::editor::Editor;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -80,12 +83,10 @@ using tdme::utilities::StringTools;
 EditorView::EditorView(PopUps* popUps)
 {
 	this->popUps = popUps;
-	editorScreenController = nullptr;
 	engine = Engine::getInstance();
 }
 
 EditorView::~EditorView() {
-	delete editorScreenController;
 }
 
 PopUps* EditorView::getPopUps()
@@ -346,7 +347,7 @@ void EditorView::updateGUIElements()
 void EditorView::initialize()
 {
 	try {
-		editorScreenController = new EditorScreenController(this);
+		editorScreenController = make_unique<EditorScreenController>(this);
 		editorScreenController->initialize();
 		engine->getGUI()->addScreen(editorScreenController->getScreenNode()->getId(), editorScreenController->getScreenNode());
 		editorScreenController->getScreenNode()->setInputEventHandler(this);

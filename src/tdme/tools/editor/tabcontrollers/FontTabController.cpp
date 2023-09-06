@@ -65,15 +65,6 @@ FontTabController::FontTabController(FontTabView* view)
 FontTabController::~FontTabController() {
 }
 
-FontTabView* FontTabController::getView() {
-	return view;
-}
-
-GUIScreenNode* FontTabController::getScreenNode()
-{
-	return screenNode;
-}
-
 void FontTabController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;

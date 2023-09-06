@@ -1,4 +1,5 @@
 #include <exception>
+#include <memory>
 #include <string>
 #include <typeinfo>
 
@@ -7,25 +8,31 @@
 #include <tdme/network/udpserver/ServerGroup.h>
 #include <tdme/network/udpserver/ServerWorkerThread.h>
 #include <tdme/network/udpserver/ServerWorkerThreadPool.h>
+#include <tdme/os/threading/Barrier.h>
+#include <tdme/os/threading/Thread.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/RTTI.h>
 
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::network::udpserver::ServerClient;
 using tdme::network::udpserver::ServerGroup;
 using tdme::network::udpserver::ServerWorkerThread;
 using tdme::network::udpserver::ServerWorkerThreadPool;
+using tdme::os::threading::Barrier;
+using tdme::os::threading::Thread;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::RTTI;
 
-ServerWorkerThread::ServerWorkerThread(const unsigned int id, ServerWorkerThreadPool* threadPool) :
+ServerWorkerThread::ServerWorkerThread(const unsigned int id, ServerWorkerThreadPool* threadPool, Barrier* startUpBarrier) :
 	Thread("nioworkerthread"),
 	id(id),
-	threadPool(threadPool) {
+	threadPool(threadPool),
+	startUpBarrier(startUpBarrier) {
 	//
 }
 
@@ -36,10 +43,13 @@ void ServerWorkerThread::run() {
 	Console::println("ServerWorkerThread[" + to_string(id) + "]::run(): start");
 
 	// wait on startup barrier
-	threadPool->startUpBarrier->wait();
+	startUpBarrier->wait();
 
-	ServerRequest* request;
-	while ((request = threadPool->getElement()) != nullptr) {
+	//
+	while (true) {
+		// get request
+		auto request = unique_ptr<ServerRequest>(threadPool->getElement());
+		if (request == nullptr) break;
 		// get request parameter
 		auto requestType = request->getRequestType();
 		ServerClient* client = nullptr;
@@ -49,13 +59,13 @@ void ServerWorkerThread::run() {
 		switch(requestType) {
 			case(ServerRequest::REQUESTTYPE_CLIENT_REQUEST): {
 				client = static_cast<ServerClient*>(request->getObject());
-				auto packet = request->getMessagePacket();
+				auto packet = unique_ptr<const UDPPacket>(request->getMessagePacket());
 				auto messageId = request->getMessageId();
 				auto retries = request->getMessageRetries();
 
 				// handle request
 				try {
-					client->onRequest(packet, messageId, retries);
+					client->onRequest(packet.get(), messageId, retries);
 				} catch(Exception& exception) {
 					Console::println(
 						"ServerWorkerThread[" +
@@ -69,9 +79,6 @@ void ServerWorkerThread::run() {
 					// unhandled exception, so shutdown the client
 					client->shutdown();
 				}
-
-				// delete stream
-				delete packet;
 
 				//
 				break;
@@ -183,9 +190,6 @@ void ServerWorkerThread::run() {
 		// release reference
 		if (client != nullptr) client->releaseReference();
 		if (group != nullptr) group->releaseReference();
-
-		// delete request
-		delete(request);
 	}
 
 	//

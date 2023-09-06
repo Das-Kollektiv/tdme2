@@ -1,7 +1,7 @@
-
 #pragma once
 
 #include <array>
+#include <memory>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -15,6 +15,7 @@
 #include <tdme/utilities/ObjectDeleter.h>
 
 using std::array;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::application::Application;
@@ -36,7 +37,7 @@ class tdme::tests::EngineTest final
 
 private:
 	Engine* engine { nullptr };
-	Engine* osEngine { nullptr };
+	unique_ptr<Engine> osEngine;
 	vector<Object*> players;
 	Object* cube { nullptr };
 	Transform circleTransform;
@@ -71,8 +72,9 @@ public:
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values
+	 * @return exit code
 	 */
-	static void main(int argc, char** argv);
+	static int main(int argc, char** argv);
 
 	// forbid class copy
 	FORBID_CLASS_COPY(EngineTest)

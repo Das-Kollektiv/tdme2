@@ -17,11 +17,11 @@ INCLUDES = \
 	/I "ext\glfw3\include" \
 	/I "ext\windows-msc\openal-soft\includes" \
 	/I "ext\windows-msc\glew\include" \
-	/I "ext\windows-msc\dirent\include" \
 	/I "ext\windows-msc\vulkan-sdk\include" \
 	/I "ext\freetype\include" \
 	/I "ext\rapidjson\include" \
-	/I "ext\cpp-spline\src"
+	/I "ext\cpp-spline\src" \
+	/I "ext\zlib"
 
 # For some reason this works only once LOL
 # WINDOWS_SDK_DIR = %WindowsSdkDir%Lib\%WindowsSDKLibVersion%
@@ -424,7 +424,7 @@ SRCS = \
 	src/tdme/tests/SkinningTest.cpp \
 	src/tdme/tests/VideoTest.cpp \
 	src/tdme/tests/WaterTest.cpp \
-	src/tdme/tools/editor/TDMEEditor.cpp \
+	src/tdme/tools/editor/Editor.cpp \
 	src/tdme/tools/editor/controllers/AboutDialogScreenController.cpp \
 	src/tdme/tools/editor/controllers/ColorPickerImageController.cpp \
 	src/tdme/tools/editor/controllers/ColorPickerScreenController.cpp \
@@ -796,6 +796,7 @@ all: \
 	recreatevkcache \
 	generatelicenses \
 	importtmodel \
+	importtscene \
 	fixdoxygen \
 	msclib2dll \
 	makefilegenerator \
@@ -806,7 +807,7 @@ all: \
 	parsehplusplus \
 	scenefixmodelszup2yup \
 	sortincludes \
-	TDMEEditor \
+	Editor \
 	InstallerApp \
 	copy-executables \
 	clean
@@ -1158,6 +1159,11 @@ importtmodel:
 	rc $(MSCBIN)\importtmodel.exe.rc
 	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\importtmodel /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/importtmodel-main.cpp $(MSCBIN)\importtmodel.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
+importtscene:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc importtscene.exe $(MSCBIN)\importtscene.exe.rc
+	rc $(MSCBIN)\importtscene.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\importtscene /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/importtscene-main.cpp $(MSCBIN)\importtscene.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
 fixdoxygen:
 	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc fixdoxygen.exe $(MSCBIN)\fixdoxygen.exe.rc
 	rc $(MSCBIN)\fixdoxygen.exe.rc
@@ -1208,10 +1214,10 @@ sortincludes:
 	rc $(MSCBIN)\sortincludes.exe.rc
 	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\sortincludes /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/sortincludes-main.cpp $(MSCBIN)\sortincludes.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
-TDMEEditor:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc TDMEEditor.exe $(MSCBIN)\TDMEEditor.exe.rc
-	rc $(MSCBIN)\TDMEEditor.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\TDMEEditor /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/editor/TDMEEditor-main.cpp $(MSCBIN)\TDMEEditor.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+Editor:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc Editor.exe $(MSCBIN)\Editor.exe.rc
+	rc $(MSCBIN)\Editor.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\Editor /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/editor/Editor-main.cpp $(MSCBIN)\Editor.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 InstallerApp:
 	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc Installer.exe $(MSCBIN)\Installer.exe.rc
@@ -1293,6 +1299,7 @@ copy-executables:
 	copy $(MSCBIN)\generatelicenses.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\imageprocessor.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\importtmodel.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\importtscene.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\makefilegenerator.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\miniscripttranspiler.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\miniscriptuntranspiler.exe bin\tdme\tools\cli\.
@@ -1305,7 +1312,7 @@ copy-executables:
 	copy $(MSCBIN)\sortincludes.exe bin\tdme\tools\cli\.
 	
 	mkdir bin\tdme\tools\editor
-	copy $(MSCBIN)\TDMEEditor.exe bin\tdme\tools\editor\.
+	copy $(MSCBIN)\Editor.exe bin\tdme\tools\editor\.
 	
 	mkdir bin\tdme\tools\installer
 	copy $(MSCBIN)\Installer.exe bin\tdme\tools\installer\.

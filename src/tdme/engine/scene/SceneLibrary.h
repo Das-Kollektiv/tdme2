@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <unordered_map>
 #include <string>
 #include <vector>
@@ -10,15 +11,18 @@
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/UniquePtrSequenceIterator.h>
 
+using std::make_unique;
 using std::unordered_map;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::math::Vector3;
+using tdme::utilities::UniquePtrSequenceIterator;
 
 /**
  * Scene prototype library definition
@@ -32,7 +36,7 @@ public:
 private:
 	Scene* scene { nullptr };
 	unordered_map<int, Prototype*> prototypesById;
-	vector<Prototype*> prototypes;
+	vector<unique_ptr<Prototype>> prototypes;
 	int prototypeIdx;
 
 public:
@@ -64,10 +68,18 @@ public:
 	void clear();
 
 	/**
-	 * Add a prototype
-	 * @param prototype prototype
+	 * @return prototypes iterator
 	 */
-	void addPrototype(Prototype* prototype);
+	inline UniquePtrSequenceIterator<Prototype> getPrototypes() {
+		return UniquePtrSequenceIterator<Prototype>(&prototypes[0], &prototypes[prototypes.size()]);
+	}
+
+	/**
+	 * @return prototype count
+	 */
+	inline int getPrototypeCount() {
+		return prototypes.size();
+	}
 
 	/**
 	 * Get prototype at given index
@@ -75,7 +87,7 @@ public:
 	 * @return prototype
 	 */
 	inline Prototype* getPrototypeAt(int idx) {
-		return prototypes[idx];
+		return prototypes[idx].get();
 	}
 
 	/**
@@ -97,8 +109,8 @@ public:
 	 * @return prototype
 	 */
 	inline Prototype* getPrototypeByName(const string& name) {
-		for (auto prototype: prototypes) {
-			if (prototype->getName() == name) return prototype;
+		for (const auto& prototype: prototypes) {
+			if (prototype->getName() == name) return prototype.get();
 		}
 		return nullptr;
 	}
@@ -108,23 +120,22 @@ public:
 	 * @return terrain prototype
 	 */
 	inline Prototype* getTerrainPrototype() {
-		for (auto prototype: prototypes) {
-			if (prototype->getType() == Prototype_Type::TERRAIN) return prototype;
+		for (const auto& prototype: prototypes) {
+			if (prototype->getType() == Prototype_Type::TERRAIN) return prototype.get();
 		}
 		return nullptr;
 	}
+
+	/**
+	 * Add a prototype
+	 * @param prototype prototype
+	 */
+	void addPrototype(Prototype* prototype);
 
 	/**
 	 * Remove a prototype
 	 * @param id id
 	 */
 	void removePrototype(int id);
-
-	/**
-	 * @return prototype count
-	 */
-	inline int getPrototypeCount() {
-		return prototypes.size();
-	}
 
 };

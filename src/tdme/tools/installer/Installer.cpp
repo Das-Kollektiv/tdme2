@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include <algorithm>
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -51,11 +52,13 @@
 using tdme::tools::installer::Installer;
 
 using std::distance;
+using std::make_unique;
 using std::reverse;
 using std::sort;
 using std::string;
 using std::to_string;
 using std::unique;
+using std::unique_ptr;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
@@ -104,7 +107,7 @@ Installer::Installer(): installThreadMutex("install-thread-mutex")
 	Application::setLimitFPS(true);
 	Tools::loadSettings(this);
 	this->engine = Engine::getInstance();
-	this->popUps = new PopUps();
+	this->popUps = make_unique<PopUps>();
 	installerMode = INSTALLERMODE_NONE;
 	screen = SCREEN_WELCOME;
 	installed = false;
@@ -294,8 +297,13 @@ void Installer::performScreenAction() {
 						Installer* installer;
 
 						void run() {
+							//
+							auto thisPtr = unique_ptr<CheckForUpdateThread>(this);
+
+							//
 							Console::println("CheckForUpdateThread::run(): init");
 
+							//
 							auto currentTimestamp = installer->timestamp;
 
 							//
@@ -407,7 +415,7 @@ void Installer::performScreenAction() {
 											installer->popUps->getInfoDialogScreenController()->show("An error occurred:", "File not found in repository: " + componentFileName + ".sha256(" + to_string(httpDownloadClient.getStatusCode()) + ")");
 											//
 											Console::println("CheckForUpdateThread::run(): done");
-											delete this;
+											//
 											return;
 										}
 
@@ -433,7 +441,7 @@ void Installer::performScreenAction() {
 											installer->popUps->getInfoDialogScreenController()->show("An error occurred:", "File not found in repository: " + componentFileName + "(" + to_string(httpDownloadClient.getStatusCode()) + ")");
 											//
 											Console::println("CheckForUpdateThread::run(): done");
-											delete this;
+											//
 											return;
 										}
 									}
@@ -445,7 +453,6 @@ void Installer::performScreenAction() {
 								installer->popUps->getInfoDialogScreenController()->show("Information", "No update available");
 								//
 								Console::println("CheckForUpdateThread::run(): done");
-								delete this;
 								//
 								return;
 							}
@@ -458,11 +465,12 @@ void Installer::performScreenAction() {
 
 							//
 							Console::println("CheckForUpdateThread::run(): done");
-							delete this;
 						}
 				};
-				CheckForUpdateThread* checkForUpdateThread = new CheckForUpdateThread(this);
+				//
+				auto checkForUpdateThread = new CheckForUpdateThread(this);
 				checkForUpdateThread->start();
+				//
 				break;
 			}
 		case SCREEN_COMPONENTS:
@@ -485,6 +493,10 @@ void Installer::performScreenAction() {
 						InstallThread(Installer* installer): Thread("install-thread"), installer(installer) {
 						}
 						void run() {
+							//
+							auto thisPtr = unique_ptr<InstallThread>(this);
+
+							//
 							Console::println("InstallThread::run(): init");
 
 							// we can not just overwrite executables on windows specially the installer exe or the libraries of it
@@ -607,12 +619,12 @@ void Installer::performScreenAction() {
 									dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("details"))->setText(MutableString());
 									installer->installThreadMutex.unlock();
 
-									ArchiveFileSystem* archiveFileSystem = nullptr;
+									unique_ptr<ArchiveFileSystem> archiveFileSystem;
 									try {
 										installer->installThreadMutex.lock();
 										dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("message"))->setText(MutableString("Verifying " + componentName));
 										installer->installThreadMutex.unlock();
-										archiveFileSystem = new ArchiveFileSystem("installer/" + componentFileName);
+										archiveFileSystem = make_unique<ArchiveFileSystem>("installer/" + componentFileName);
 										if (archiveFileSystem->computeSHA256Hash() != FileSystem::getStandardFileSystem()->getContentAsString("installer", componentFileName + ".sha256")) {
 											throw ExceptionBase("Failed to verify: " + componentFileName + ", remove files in ./installer/ and try again");
 										}
@@ -620,7 +632,7 @@ void Installer::performScreenAction() {
 										dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("message"))->setText(MutableString("Installing " + componentName));
 										installer->installThreadMutex.unlock();
 										vector<string> files;
-										Installer::scanArchive(archiveFileSystem, files);
+										Installer::scanArchive(archiveFileSystem.get(), files);
 										uint64_t totalSize = 0LL;
 										uint64_t doneSize = 0LL;
 										for (const auto& file: files) {
@@ -780,8 +792,6 @@ void Installer::performScreenAction() {
 											dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(static_cast<float>(doneSize) / static_cast<float>(totalSize), 2));
 											installer->installThreadMutex.unlock();
 										}
-										delete archiveFileSystem;
-										archiveFileSystem = nullptr;
 
 										// delete installer component archive archive
 										if (installer->installerMode == Installer::INSTALLERMODE_UPDATE || installer->installerMode == Installer::INSTALLERMODE_REPAIR) {
@@ -800,7 +810,6 @@ void Installer::performScreenAction() {
 											installer->installThreadMutex.unlock();
 										}
 									} catch (Exception& exception) {
-										if (archiveFileSystem != nullptr) delete archiveFileSystem;
 										installer->popUps->getInfoDialogScreenController()->show("An error occurred:", exception.what());
 										hadException = true;
 										break;
@@ -861,13 +870,14 @@ void Installer::performScreenAction() {
 							}
 							// determine set names
 							Console::println("InstallThread::run(): done");
-							delete this;
 						}
 					private:
 						Installer* installer;
 				};
-				InstallThread* installThread = new InstallThread(this);
+				//
+				auto installThread = new InstallThread(this);
 				installThread->start();
+				//
 				break;
 			}
 		case SCREEN_FINISHED:
@@ -890,6 +900,10 @@ void Installer::performScreenAction() {
 					UninstallThread(Installer* installer): Thread("install-thread"), installer(installer) {
 					}
 					void run() {
+						//
+						auto thisPtr = unique_ptr<UninstallThread>(this);
+
+						//
 						Console::println("UninstallThread::run(): init");
 
 						//
@@ -1064,28 +1078,32 @@ void Installer::performScreenAction() {
 								installer->installThreadMutex.unlock();
 							} else {
 								// TODO: Maybe show a finishing screen
-								string drive;
-								if (installFolder[1] == ':') drive = StringTools::substring(installFolder, 0, 2) + " && ";
-								system(
-									(
-										string() +
-										drive +
-										"cd " +
-										"\"" + installFolder + "/" + "\"" +
-										" && start cmd /c \"uninstall-finish.bat && del uninstall-finish.bat && cd .. && rmdir \"\"\"" + StringTools::replace(installFolder, "/", "\\") + "\"\"\" > nul 2>&1\"").c_str()
-								);
+								#if defined(_WIN32)
+									string drive;
+									if (installFolder[1] == ':') drive = StringTools::substring(installFolder, 0, 2) + " && ";
+									system(
+										(
+											string() +
+											drive +
+											"cd " +
+											"\"" + installFolder + "/" + "\"" +
+											" && start cmd /c \"uninstall-finish.bat && del uninstall-finish.bat && cd .. && rmdir \"\"\"" + StringTools::replace(installFolder, "/", "\\") + "\"\"\" > nul 2>&1\"").c_str()
+									);
+								#endif
+								//
 								Application::exit(0);
 							}
 						}
 						// determine set names
 						Console::println("UninstallThread::run(): done");
-						delete this;
 					}
 				private:
 					Installer* installer;
 			};
+			//
 			UninstallThread* uninstallThread = new UninstallThread(this);
 			uninstallThread->start();
+			//
 			break;
 		}
 		default:
@@ -1335,7 +1353,7 @@ void Installer::mountInstallerFileSystem(const string& timestamp, bool remountIn
 			Application::exit(1);
 		}
 		// file system
-		auto installerFileSystem = new ArchiveFileSystem("installer/" + installerArchiveFileName);
+		auto installerFileSystem = make_unique<ArchiveFileSystem>("installer/" + installerArchiveFileName);
 		if (installerFileSystem->computeSHA256Hash() != FileSystem::getStandardFileSystem()->getContentAsString("installer", installerArchiveFileName + ".sha256")) {
 			throw ExceptionBase("Installer::main(): Failed to verify: " + installerArchiveFileName + ", get new installer and try again");
 		}
@@ -1361,14 +1379,14 @@ void Installer::mountInstallerFileSystem(const string& timestamp, bool remountIn
 			}
 		}
 		Console::println("Installer::mountInstallerFileSystem(): mounting: " + installerArchiveFileName);
-		FileSystem::setupFileSystem(installerFileSystem);
+		FileSystem::setupFileSystem(installerFileSystem.release());
 	} catch (Exception& exception) {
 		Console::println(string("Installer::mountInstallerFileSystem(): ") + exception.what());
 		Application::exit(1);
 	}
 }
 
-void Installer::main(int argc, char** argv)
+int Installer::main(int argc, char** argv)
 {
 	Console::println(string("Installer ") + Version::getVersion());
 	Console::println(Version::getCopyright());
@@ -1389,7 +1407,7 @@ void Installer::main(int argc, char** argv)
 	#endif
 	mountInstallerFileSystem();
 	auto installer = new Installer();
-	installer->run(argc, argv, "Installer", nullptr, Application::WINDOW_HINT_NOTRESIZEABLE);
+	return installer->run(argc, argv, "Installer", nullptr, Application::WINDOW_HINT_NOTRESIZEABLE);
 }
 
 void Installer::scanArchive(ArchiveFileSystem* archiveFileSystem, vector<string>& totalFiles, const string& pathName) {

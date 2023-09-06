@@ -1,5 +1,7 @@
 #include <tdme/engine/prototype/PrototypeParticleSystem.h>
 
+#include <memory>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_BoundingBoxParticleEmitter.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitter.h>
@@ -12,6 +14,9 @@
 #include <tdme/engine/prototype/PrototypeParticleSystem_SphereParticleEmitter.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_Type.h>
 #include <tdme/utilities/Console.h>
+
+using std::make_unique;
+using std::unique_ptr;
 
 using tdme::engine::prototype::PrototypeParticleSystem;
 using tdme::engine::prototype::PrototypeParticleSystem_BoundingBoxParticleEmitter;
@@ -29,15 +34,7 @@ using tdme::utilities::Console;
 PrototypeParticleSystem::PrototypeParticleSystem()
 {
 	type = PrototypeParticleSystem_Type::NONE;
-	ops = nullptr;
-	pps = nullptr;
-	fps = nullptr;
 	emitter = PrototypeParticleSystem_Emitter::NONE;
-	ppe = nullptr;
-	bbpe = nullptr;
-	cpe = nullptr;
-	cpepv = nullptr;
-	spe = nullptr;
 }
 
 PrototypeParticleSystem::~PrototypeParticleSystem() {
@@ -46,19 +43,15 @@ PrototypeParticleSystem::~PrototypeParticleSystem() {
 }
 
 void PrototypeParticleSystem::unsetType() {
-	auto v = this->type;
-	if (v == PrototypeParticleSystem_Type::NONE) {
+	if (type == PrototypeParticleSystem_Type::NONE) {
 	} else
-	if (v == PrototypeParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) {
-		delete ops;
+	if (type == PrototypeParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) {
 		ops = nullptr;
 	} else
-	if (v == PrototypeParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
-		delete pps;
+	if (type == PrototypeParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
 		pps = nullptr;
 	} else
-	if (v == PrototypeParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
-		delete fps;
+	if (type == PrototypeParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
 		fps = nullptr;
 	} else {
 		Console::println(string("PrototypeParticleSystem::setType(): unknown type '" + this->type->getName() + "'"));
@@ -69,49 +62,39 @@ void PrototypeParticleSystem::setType(PrototypeParticleSystem_Type* type)
 {
 	unsetType();
 	this->type = type;
-	{
-		auto v = this->type;
-		if (v == PrototypeParticleSystem_Type::NONE) {
-			// no op
-		} else
-		if (v == PrototypeParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) {
-			ops = new PrototypeParticleSystem_ObjectParticleSystem();
-		} else
-		if (v == PrototypeParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
-			pps = new PrototypeParticleSystem_PointParticleSystem();
-		} else
-		if (v == PrototypeParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
-			fps = new PrototypeParticleSystem_FogParticleSystem();
-		} else {
-			Console::println(string("PrototypeParticleSystem::setType(): unknown type '" + this->type->getName() + "'"));
-		}
+	if (type == PrototypeParticleSystem_Type::NONE) {
+		// no op
+	} else
+	if (type == PrototypeParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) {
+		ops = make_unique<PrototypeParticleSystem_ObjectParticleSystem>();
+	} else
+	if (type == PrototypeParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
+		pps = make_unique<PrototypeParticleSystem_PointParticleSystem>();
+	} else
+	if (type == PrototypeParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
+		fps = make_unique<PrototypeParticleSystem_FogParticleSystem>();
+	} else {
+		Console::println(string("PrototypeParticleSystem::setType(): unknown type '" + this->type->getName() + "'"));
 	}
-
 }
 
 void PrototypeParticleSystem::unsetEmitter() {
-	auto v = this->emitter;
-	if (v == PrototypeParticleSystem_Emitter::NONE) {
+	if (emitter == PrototypeParticleSystem_Emitter::NONE) {
 		// no op
 	} else
-	if (v == PrototypeParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
-		delete ppe;
+	if (emitter == PrototypeParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
 		ppe = nullptr;
 	} else
-	if (v == PrototypeParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
-		delete bbpe;
+	if (emitter == PrototypeParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
 		bbpe = nullptr;
 	} else
-	if (v == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
-		delete cpe;
+	if (emitter == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
 		cpe = nullptr;
 	} else
-	if (v == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
-		delete cpepv;
+	if (emitter == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
 		cpepv = nullptr;
 	} else
-	if (v == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
-		delete spe;
+	if (emitter == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
 		spe = nullptr;
 	} else {
 		Console::println(string("PrototypeParticleSystem::setEmitter(): unknown emitter '" + this->emitter->getName() + "'"));
@@ -122,27 +105,24 @@ void PrototypeParticleSystem::setEmitter(PrototypeParticleSystem_Emitter* emitte
 {
 	unsetEmitter();
 	this->emitter = emitter;
-	{
-		auto v = this->emitter;
-		if (v == PrototypeParticleSystem_Emitter::NONE) {
-			// no op
-		} else
-		if (v == PrototypeParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
-			ppe = new PrototypeParticleSystem_PointParticleEmitter();
-		} else
-		if (v == PrototypeParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
-			bbpe = new PrototypeParticleSystem_BoundingBoxParticleEmitter();
-		} else
-		if (v == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
-			cpe = new PrototypeParticleSystem_CircleParticleEmitter();
-		} else
-		if (v == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
-			cpepv = new PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity();
-		} else
-		if (v == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
-			spe = new PrototypeParticleSystem_SphereParticleEmitter();
-		} else {
-			Console::println(string("PrototypeParticleSystem::setEmitter(): unknown emitter '" + this->emitter->getName() + "'"));
-		}
+	if (emitter == PrototypeParticleSystem_Emitter::NONE) {
+		// no op
+	} else
+	if (emitter == PrototypeParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
+		ppe = make_unique<PrototypeParticleSystem_PointParticleEmitter>();
+	} else
+	if (emitter == PrototypeParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
+		bbpe = make_unique<PrototypeParticleSystem_BoundingBoxParticleEmitter>();
+	} else
+	if (emitter == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
+		cpe = make_unique<PrototypeParticleSystem_CircleParticleEmitter>();
+	} else
+	if (emitter == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
+		cpepv = make_unique<PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity>();
+	} else
+	if (emitter == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
+		spe = make_unique<PrototypeParticleSystem_SphereParticleEmitter>();
+	} else {
+		Console::println(string("PrototypeParticleSystem::setEmitter(): unknown emitter '" + this->emitter->getName() + "'"));
 	}
 }

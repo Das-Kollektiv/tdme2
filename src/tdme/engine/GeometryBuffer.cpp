@@ -32,29 +32,29 @@ GeometryBuffer::GeometryBuffer(int32_t width, int32_t height)
 	this->width = width;
 	this->height = height;
 	this->frameBufferId = -1;
-	this->depthBufferTextureId = Engine::renderer->ID_NONE;
-	this->geometryBufferTextureId1 = Engine::renderer->ID_NONE;
-	this->geometryBufferTextureId2 = Engine::renderer->ID_NONE;
-	this->geometryBufferTextureId3 = Engine::renderer->ID_NONE;
-	this->colorBufferTextureId1 = Engine::renderer->ID_NONE;
-	this->colorBufferTextureId2 = Engine::renderer->ID_NONE;
-	this->colorBufferTextureId3 = Engine::renderer->ID_NONE;
-	this->colorBufferTextureId4 = Engine::renderer->ID_NONE;
-	this->colorBufferTextureId5 = Engine::renderer->ID_NONE;
+	this->depthBufferTextureId = Engine::getRenderer()->ID_NONE;
+	this->geometryBufferTextureId1 = Engine::getRenderer()->ID_NONE;
+	this->geometryBufferTextureId2 = Engine::getRenderer()->ID_NONE;
+	this->geometryBufferTextureId3 = Engine::getRenderer()->ID_NONE;
+	this->colorBufferTextureId1 = Engine::getRenderer()->ID_NONE;
+	this->colorBufferTextureId2 = Engine::getRenderer()->ID_NONE;
+	this->colorBufferTextureId3 = Engine::getRenderer()->ID_NONE;
+	this->colorBufferTextureId4 = Engine::getRenderer()->ID_NONE;
+	this->colorBufferTextureId5 = Engine::getRenderer()->ID_NONE;
 }
 
 void GeometryBuffer::initialize()
 {
-	depthBufferTextureId = Engine::renderer->createDepthBufferTexture(width, height, 0, 0);
-	geometryBufferTextureId1 = Engine::renderer->createGBufferGeometryTexture(width, height);
-	geometryBufferTextureId2 = Engine::renderer->createGBufferGeometryTexture(width, height);
-	geometryBufferTextureId3 = Engine::renderer->createGBufferGeometryTexture(width, height);
-	colorBufferTextureId1 = Engine::renderer->createGBufferColorTexture(width, height);
-	colorBufferTextureId2 = Engine::renderer->createGBufferColorTexture(width, height);
-	colorBufferTextureId3 = Engine::renderer->createGBufferColorTexture(width, height);
-	colorBufferTextureId4 = Engine::renderer->createGBufferColorTexture(width, height);
-	colorBufferTextureId5 = Engine::renderer->createGBufferColorTexture(width, height);
-	frameBufferId = Engine::renderer->createGeometryBufferObject(
+	depthBufferTextureId = Engine::getRenderer()->createDepthBufferTexture(width, height, 0, 0);
+	geometryBufferTextureId1 = Engine::getRenderer()->createGBufferGeometryTexture(width, height);
+	geometryBufferTextureId2 = Engine::getRenderer()->createGBufferGeometryTexture(width, height);
+	geometryBufferTextureId3 = Engine::getRenderer()->createGBufferGeometryTexture(width, height);
+	colorBufferTextureId1 = Engine::getRenderer()->createGBufferColorTexture(width, height);
+	colorBufferTextureId2 = Engine::getRenderer()->createGBufferColorTexture(width, height);
+	colorBufferTextureId3 = Engine::getRenderer()->createGBufferColorTexture(width, height);
+	colorBufferTextureId4 = Engine::getRenderer()->createGBufferColorTexture(width, height);
+	colorBufferTextureId5 = Engine::getRenderer()->createGBufferColorTexture(width, height);
+	frameBufferId = Engine::getRenderer()->createGeometryBufferObject(
 		depthBufferTextureId,
 		geometryBufferTextureId1,
 		geometryBufferTextureId2,
@@ -71,49 +71,49 @@ void GeometryBuffer::reshape(int32_t width, int32_t height)
 {
 	this->width = width;
 	this->height = height;
-	Engine::renderer->resizeDepthBufferTexture(depthBufferTextureId, width, height);
-	Engine::renderer->resizeGBufferGeometryTexture(geometryBufferTextureId1, width, height);
-	Engine::renderer->resizeGBufferGeometryTexture(geometryBufferTextureId2, width, height);
-	Engine::renderer->resizeGBufferGeometryTexture(geometryBufferTextureId3, width, height);
-	Engine::renderer->resizeGBufferColorTexture(colorBufferTextureId1, width, height);
-	Engine::renderer->resizeGBufferColorTexture(colorBufferTextureId2, width, height);
-	Engine::renderer->resizeGBufferColorTexture(colorBufferTextureId3, width, height);
-	Engine::renderer->resizeGBufferColorTexture(colorBufferTextureId4, width, height);
-	Engine::renderer->resizeGBufferColorTexture(colorBufferTextureId5, width, height);
+	Engine::getRenderer()->resizeDepthBufferTexture(depthBufferTextureId, width, height);
+	Engine::getRenderer()->resizeGBufferGeometryTexture(geometryBufferTextureId1, width, height);
+	Engine::getRenderer()->resizeGBufferGeometryTexture(geometryBufferTextureId2, width, height);
+	Engine::getRenderer()->resizeGBufferGeometryTexture(geometryBufferTextureId3, width, height);
+	Engine::getRenderer()->resizeGBufferColorTexture(colorBufferTextureId1, width, height);
+	Engine::getRenderer()->resizeGBufferColorTexture(colorBufferTextureId2, width, height);
+	Engine::getRenderer()->resizeGBufferColorTexture(colorBufferTextureId3, width, height);
+	Engine::getRenderer()->resizeGBufferColorTexture(colorBufferTextureId4, width, height);
+	Engine::getRenderer()->resizeGBufferColorTexture(colorBufferTextureId5, width, height);
 }
 
 void GeometryBuffer::dispose()
 {
-	Engine::renderer->disposeTexture(depthBufferTextureId);
-	Engine::renderer->disposeTexture(geometryBufferTextureId1);
-	Engine::renderer->disposeTexture(geometryBufferTextureId2);
-	Engine::renderer->disposeTexture(geometryBufferTextureId3);
-	Engine::renderer->disposeTexture(colorBufferTextureId1);
-	Engine::renderer->disposeTexture(colorBufferTextureId2);
-	Engine::renderer->disposeTexture(colorBufferTextureId3);
-	Engine::renderer->disposeTexture(colorBufferTextureId4);
-	Engine::renderer->disposeTexture(colorBufferTextureId5);
+	Engine::getRenderer()->disposeTexture(depthBufferTextureId);
+	Engine::getRenderer()->disposeTexture(geometryBufferTextureId1);
+	Engine::getRenderer()->disposeTexture(geometryBufferTextureId2);
+	Engine::getRenderer()->disposeTexture(geometryBufferTextureId3);
+	Engine::getRenderer()->disposeTexture(colorBufferTextureId1);
+	Engine::getRenderer()->disposeTexture(colorBufferTextureId2);
+	Engine::getRenderer()->disposeTexture(colorBufferTextureId3);
+	Engine::getRenderer()->disposeTexture(colorBufferTextureId4);
+	Engine::getRenderer()->disposeTexture(colorBufferTextureId5);
 	// TODO: Vulkan might need a extra method here
-	Engine::renderer->disposeFrameBufferObject(frameBufferId);
+	Engine::getRenderer()->disposeFrameBufferObject(frameBufferId);
 }
 
 void GeometryBuffer::enableGeometryBuffer()
 {
-	Engine::renderer->bindFrameBuffer(frameBufferId);
-	Engine::renderer->setViewPort(width, height);
-	Engine::renderer->updateViewPort();
+	Engine::getRenderer()->bindFrameBuffer(frameBufferId);
+	Engine::getRenderer()->setViewPort(width, height);
+	Engine::getRenderer()->updateViewPort();
 }
 
 void GeometryBuffer::disableGeometryBuffer()
 {
-	Engine::renderer->bindFrameBuffer(Engine::renderer->FRAMEBUFFER_DEFAULT);
-	Engine::renderer->setViewPort(Engine::instance->width, Engine::instance->height);
-	Engine::renderer->updateViewPort();
+	Engine::getRenderer()->bindFrameBuffer(Engine::getRenderer()->FRAMEBUFFER_DEFAULT);
+	Engine::getRenderer()->setViewPort(Engine::instance->width, Engine::instance->height);
+	Engine::getRenderer()->updateViewPort();
 }
 
 void GeometryBuffer::renderToScreen(Engine* engine, vector<Decal*>& decalEntities)
 {
-	auto renderer = Engine::renderer;
+	auto renderer = Engine::getRenderer();
 
 	// use default context
 	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;

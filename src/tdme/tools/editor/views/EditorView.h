@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -16,6 +17,7 @@
 
 using std::string;
 using std::vector;
+using std::unique_ptr;
 
 using tdme::engine::Engine;
 using tdme::gui::events::GUIInputEventHandler;
@@ -37,7 +39,7 @@ class tdme::tools::editor::views::EditorView final
 private:
 	Engine* engine { nullptr };
 	PopUps* popUps { nullptr };
-	EditorScreenController* editorScreenController { nullptr };
+	unique_ptr<EditorScreenController> editorScreenController;
 	string lastSelectedTabId;
 	array<bool, 8> mouseButtonsDown = { false, false, false, false, false, false, false, false };
 
@@ -65,7 +67,7 @@ public:
 	 * @return screen controller
 	 */
 	EditorScreenController* getScreenController() {
-		return editorScreenController;
+		return editorScreenController.get();
 	}
 
 	/**

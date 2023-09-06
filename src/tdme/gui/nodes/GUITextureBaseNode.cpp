@@ -13,7 +13,7 @@
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/StringTools.h>
@@ -32,7 +32,7 @@ using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::math::Vector2;
 using tdme::utilities::Float;
 using tdme::utilities::StringTools;
@@ -77,7 +77,7 @@ GUITextureBaseNode::GUITextureBaseNode(
 	this->maskMaxValue = maskMaxValue;
 	mirrorTextureMatrix.identity();
 	mirrorTextureMatrix.scale(Vector2(mirrorX == true?-1.0f:1.0f, mirrorY == true?-1.0f:1.0f));
-	mirrorTextureMatrix.translate(Vector2(mirrorX == true?1.0f:0.0f, mirrorY == true?1.0f:0.0f));
+	mirrorTextureMatrix.setTranslation(Vector2(mirrorX == true?1.0f:0.0f, mirrorY == true?1.0f:0.0f));
 	setTextureMatrix(textureMatrix);
 }
 
@@ -489,11 +489,11 @@ void GUITextureBaseNode::render(GUIRenderer* guiRenderer)
 			guiRenderer->setMaskMaxValue(1.0f);
 			guiRenderer->bindMask(0);
 		}
-		guiRenderer->setTexureMatrix((Matrix2D3x3()).identity());
+		guiRenderer->setTexureMatrix((Matrix3x3()).identity());
 	}
 }
 
-void GUITextureBaseNode::setTextureMatrix(const Matrix2D3x3& textureMatrix) {
+void GUITextureBaseNode::setTextureMatrix(const Matrix3x3& textureMatrix) {
 	this->textureMatrix.set(mirrorTextureMatrix.multiply(textureMatrix));
 }
 

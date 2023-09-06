@@ -51,6 +51,9 @@ public:
 
 	static constexpr int FPS { 60 };
 
+	static constexpr int EXITCODE_SUCCESS { 0 };
+	static constexpr int EXITCODE_FAILURE { 1 };
+
 	/**
 	 * @return renderer
 	 */
@@ -295,8 +298,9 @@ public:
 	 * @param title title
 	 * @param inputEventHandler application input event handler
 	 * @param windowHints window hints
+	 * @return exit code
 	 */
-	void run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler = nullptr, int windowHints = WINDOW_HINT_NONE);
+	int run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler = nullptr, int windowHints = WINDOW_HINT_NONE);
 
 	/**
 	 * Init
@@ -347,7 +351,7 @@ private:
 	STATIC_DLL_IMPEXT static int64_t timeLast;
 	STATIC_DLL_IMPEXT static bool limitFPS;
 	string title;
-	int exitCode { 0 };
+	int exitCode { EXITCODE_SUCCESS };
 
 	STATIC_DLL_IMPEXT static GLFWwindow* glfwWindow;
 	STATIC_DLL_IMPEXT static array<unsigned int, 10> glfwMouseButtonDownFrames;

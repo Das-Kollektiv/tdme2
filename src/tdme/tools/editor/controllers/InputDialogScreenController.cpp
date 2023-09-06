@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/controllers/InputDialogScreenController.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -22,6 +23,7 @@
 #include <tdme/utilities/StringTools.h>
 
 using std::string;
+using std::unique_ptr;
 
 using tdme::tools::editor::controllers::InputDialogScreenController;
 
@@ -49,8 +51,6 @@ InputDialogScreenController::InputDialogScreenController(PopUps* popUps)
 }
 
 InputDialogScreenController::~InputDialogScreenController() {
-	if (applyAction != nullptr) delete applyAction;
-	if (cancelAction != nullptr) delete cancelAction;
 }
 
 GUIScreenNode* InputDialogScreenController::getScreenNode()
@@ -89,10 +89,8 @@ void InputDialogScreenController::show(const string& captionText, const string& 
 {
 	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsHeaderNode->getId()))->replaceSubNodes("<tab id=\"inputdialog_caption\" image=\"resources/engine/images/attention.png\" text=\"" + GUIParser::escape(captionText)+ "\" closeable=\"true\"/>", true);
 	this->inputNode->getController()->setValue(inputText);
-	if (this->applyAction != nullptr) delete this->applyAction;
-	this->applyAction = applyAction;
-	if (this->cancelAction != nullptr) delete this->cancelAction;
-	this->cancelAction = cancelAction;
+	this->applyAction = unique_ptr<Action>(applyAction);
+	this->cancelAction = unique_ptr<Action>(cancelAction);
 	//
 	screenNode->setEnabled(true);
 	Engine::getInstance()->getGUI()->setFoccussedNode(inputNode);
@@ -101,8 +99,6 @@ void InputDialogScreenController::show(const string& captionText, const string& 
 void InputDialogScreenController::close()
 {
 	screenNode->setEnabled(false);
-	if (applyAction != nullptr) delete applyAction;
-	if (cancelAction != nullptr) delete cancelAction;
 	applyAction = nullptr;
 	cancelAction = nullptr;
 }
@@ -115,19 +111,15 @@ void InputDialogScreenController::onAction(GUIActionListenerType type, GUIElemen
 {
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId() == "inputdialog_apply") {
-			if (applyAction != nullptr) {
-				applyAction->performAction();
-				delete applyAction;
-				applyAction = nullptr;
-			}
+			if (applyAction != nullptr) applyAction->performAction();
+			applyAction = nullptr;
+			cancelAction = nullptr;
 		} else
 		if (node->getId() == "inputdialog_cancel" ||
 			StringTools::startsWith(node->getId(), "inputdialog_caption_close_") == true) { // TODO: a.drewke, check with DH
-			if (cancelAction != nullptr) {
-				cancelAction->performAction();
-				delete cancelAction;
-				cancelAction = nullptr;
-			}
+			if (cancelAction != nullptr) cancelAction->performAction();
+			applyAction = nullptr;
+			cancelAction = nullptr;
 			close();
 		}
 	}

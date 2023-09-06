@@ -15,14 +15,4 @@ struct tdme::engine::subsystems::rendering::TransparentRenderFace final
 	int32_t facesEntityIdx;
 	int32_t faceIdx;
 	float distanceFromCamera;
-
-	/**
-	 * Compare
-	 * @param face1 face 1
-	 * @param face2 face 2
-	 */
-	inline static bool compare(TransparentRenderFace* face1, TransparentRenderFace* face2) {
-		return face1->distanceFromCamera > face2->distanceFromCamera;
-	}
-
 };

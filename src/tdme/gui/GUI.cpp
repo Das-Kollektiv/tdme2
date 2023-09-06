@@ -754,7 +754,7 @@ void GUI::handleEvents(bool clearEvents)
 			continue;
 		}
 		// try to goTo next screen
-		auto nextScreen = screenMiniScript->getNextScreenNode();
+		auto nextScreen = screenMiniScript->releaseNextScreenNode();
 		if (nextScreen == nullptr) continue;
 		auto screenIt = find(renderScreens.begin(), renderScreens.end(), screen);
 		if (screenIt != renderScreens.end()) {

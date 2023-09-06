@@ -30,8 +30,7 @@ using tdme::utilities::Console;
 bool Network::initialize() {
 	#if defined(_WIN32)
 		WSADATA wsaData;
-		int result;
-		result = WSAStartup(MAKEWORD(2,2), &wsaData);
+		auto result = WSAStartup(MAKEWORD(2,2), &wsaData);
 		if (result != 0) {
 			Console::println("WinSock2 initialization failed: " + to_string(result));
 			return false;
@@ -40,8 +39,8 @@ bool Network::initialize() {
 	return true;
 }
 
-const string Network::getIpByHostName(const string& hostName) {
-	struct hostent* hostEnt = gethostbyname(hostName.c_str());
+const string Network::getIpByHostname(const string& hostname) {
+	auto hostEnt = gethostbyname(hostname.c_str());
 
 	if (hostEnt == nullptr) {
 		throw NetworkException("Could not resolve hostname");
@@ -49,16 +48,16 @@ const string Network::getIpByHostName(const string& hostName) {
 
 	switch (hostEnt->h_addrtype) {
 	case AF_INET:
-		for (auto i = 0; hostEnt->h_addr_list[i] != nullptr; i++) {
+		if (hostEnt->h_addr_list[0] != nullptr) {
 			struct in_addr addr;
-			addr.s_addr = *(uint32_t*)hostEnt->h_addr_list[i++];
+			addr.s_addr = *(uint32_t*)hostEnt->h_addr_list[0];
 			return string(inet_ntoa(addr));
 		}
 		break;
 	case AF_INET6:
-		for (auto i = 0; hostEnt->h_addr_list[i] != nullptr; i++) {
+		if (hostEnt->h_addr_list[0] != nullptr) {
 			char ipv6AddressString[46];
-			return string(inet_ntop(AF_INET6, (in6_addr*)hostEnt->h_addr_list[i++], ipv6AddressString, INET6_ADDRSTRLEN) == NULL?"":ipv6AddressString);
+			return string(inet_ntop(AF_INET6, (in6_addr*)hostEnt->h_addr_list[0], ipv6AddressString, INET6_ADDRSTRLEN) == NULL?"":ipv6AddressString);
 		}
 		break;
 	}

@@ -29,6 +29,7 @@
   - https://en.cppreference.com/w/cpp/language/operator_precedence
   - https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
   - https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
+  - https://en.wikipedia.org/wiki/Rotation_matrix
   - https://forum.unity.com/threads/how-do-i-find-the-closest-point-on-a-line.340058/
   - https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
   - https://gist.github.com/Youka/4153f12cf2e17a77314c
@@ -52,6 +53,7 @@
   - https://google.github.io/filament/Filament.md.html#materialsystem/specularbrdf/geometricshadowing(specularg)
   - https://howtorts.github.io/2014/01/04/basic-flow-fields.html
   - https://hub.jmonkeyengine.org/t/depth-only-ssao/37749
+  - https://www.internalpointers.com/post/writing-custom-iterators-modern-cpp
   - https://jayconrod.com/posts/34/water-simulation-in-glsl
   - https://jogamp.org/joal-demos/www/
   - https://jogamp.org/wiki/index.php/Jogl_Tutorial
@@ -76,6 +78,7 @@
   - https://twvideo01.ubm-us.net/o1/vault/gdc2018/presentations/Sobek_Martin_Real-time_Reflections_in_MafiaIII.pdf
   - https://vkguide.dev/docs/chapter-4/storage_buffers/
   - https://vulkan-tutorial.com
+  - https://www.youtube.com/channel/UCxHAlbZQNFU2LgEtiqd2Maw
   - https://www-ui.is.s.u-tokyo.ac.jp/~takeo/papers/i3dg2001.pdf
   - https://www.cs.virginia.edu/~jdl/bib/appearance/analytic%20models/schlick94b.pdf
   - https://www.gamedev.net/forums/topic/478943-stackwalk64-and-x86/

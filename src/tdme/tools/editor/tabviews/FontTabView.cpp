@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabviews/FontTabView.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -13,7 +14,9 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
+using std::unique_ptr;
 using std::string;
+using std::make_unique;
 
 using tdme::tools::editor::tabviews::FontTabView;
 
@@ -32,15 +35,13 @@ FontTabView::FontTabView(EditorView* editorView, const string& tabId, GUIScreenN
 	this->tabId = tabId;
 	this->screenNode = screenNode;
 	this->popUps = editorView->getPopUps();
-	engine = Engine::createOffScreenInstance(512, 512, true, false, false);
+	engine = unique_ptr<Engine>(Engine::createOffScreenInstance(512, 512, true, false, false));
 	engine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
 	engine->getGUI()->addScreen(screenNode->getId(), screenNode);
 	engine->getGUI()->addRenderScreen(screenNode->getId());
 }
 
 FontTabView::~FontTabView() {
-	delete fontTabController;
-	delete engine;
 }
 
 void FontTabView::handleInputEvents()
@@ -57,9 +58,9 @@ void FontTabView::display()
 void FontTabView::initialize()
 {
 	try {
-		fontTabController = new FontTabController(this);
+		fontTabController = make_unique<FontTabController>(this);
 		fontTabController->initialize(editorView->getScreenController()->getScreenNode());
-		screenNode->addTooltipRequestListener(fontTabController);
+		screenNode->addTooltipRequestListener(fontTabController.get());
 	} catch (Exception& exception) {
 		Console::println("FontTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
@@ -76,7 +77,7 @@ void FontTabView::updateRendering() {
 }
 
 Engine* FontTabView::getEngine() {
-	return engine;
+	return engine.get();
 }
 
 void FontTabView::activate() {

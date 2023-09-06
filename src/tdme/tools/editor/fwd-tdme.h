@@ -4,7 +4,7 @@
 namespace tdme {
 namespace tools {
 namespace editor {
-	class TDMEEditor;
+	class Editor;
 }  // namespace editor
 }  // namespace tools
 }  // namespace tdme

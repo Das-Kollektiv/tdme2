@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabviews/SceneEditorTabView.h>
 
+#include <memory>
 #include <string>
 #include <unordered_set>
 
@@ -45,8 +46,10 @@
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::unordered_set;
 
 using tdme::tools::editor::tabviews::SceneEditorTabView;
@@ -96,10 +99,10 @@ SceneEditorTabView::SceneEditorTabView(EditorView* editorView, const string& tab
 	this->editorView = editorView;
 	this->tabId = tabId;
 	this->popUps = editorView->getPopUps();
-	engine = Engine::createOffScreenInstance(512, 512, true, true, true);
+	engine = unique_ptr<Engine>(Engine::createOffScreenInstance(512, 512, true, true, true));
 	engine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
-	this->scene = scene;
-	this->cameraInputHandler = new CameraInputHandler(engine, this);
+	this->scene = unique_ptr<Scene>(scene);
+	this->cameraInputHandler = make_unique<CameraInputHandler>(engine.get(), this);
 	this->keyControl = false;
 	this->keyShift = false;
 	this->keyEscape = false;
@@ -116,10 +119,10 @@ SceneEditorTabView::SceneEditorTabView(EditorView* editorView, const string& tab
 	this->snappingEnabled = false;
 	this->gridEnabled = false;
 	this->gridY = 0.0f;
-	this->gridModel = Tools::createGridModel();
+	this->gridModel = unique_ptr<Model>(Tools::createGridModel());
 
 	//
-	setEngine(engine);
+	setEngine(engine.get());
 
 	//
 	entityColors["red"] = EntityColor(1.5f, 0.8f, 0.8f, 0.5f, 0.0f, 0.0f);
@@ -150,7 +153,8 @@ SceneEditorTabView::SceneEditorTabView(EditorView* editorView, const string& tab
 		private:
 			SceneEditorTabView* sceneEditorTabView;
 		};
-		entityPickingFilterNoGrid = new PrototypePickingFilterNoGrid(this);
+		//
+		entityPickingFilterNoGrid = make_unique<PrototypePickingFilterNoGrid>(this);
 	}
 
 	//
@@ -176,7 +180,8 @@ SceneEditorTabView::SceneEditorTabView(EditorView* editorView, const string& tab
 		private:
 			SceneEditorTabView* sceneEditorTabView;
 		};
-		entityPickingFilterPlacing = new PrototypePickingFilterPlacing(this);
+		//
+		entityPickingFilterPlacing = make_unique<PrototypePickingFilterPlacing>(this);
 	}
 
 	//
@@ -184,9 +189,6 @@ SceneEditorTabView::SceneEditorTabView(EditorView* editorView, const string& tab
 }
 
 SceneEditorTabView::~SceneEditorTabView() {
-	delete gridModel;
-	delete sceneEditorTabController;
-	delete engine;
 }
 
 void SceneEditorTabView::handleInputEvents()
@@ -332,7 +334,7 @@ void SceneEditorTabView::handleInputEvents()
 			if (placeEntityMode == false) {
 				Node* selectedEntityNode = nullptr;
 				Entity* selectedEntity = nullptr;
-				if (getGizmoMode() == GIZMOMODE_NONE) selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), entityPickingFilterNoGrid, &selectedEntityNode);
+				if (getGizmoMode() == GIZMOMODE_NONE) selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), entityPickingFilterNoGrid.get(), &selectedEntityNode);
 				if (mouseDragging == true) {
 					Vector3 deltaTranslation;
 					Vector3 deltaRotation;
@@ -499,7 +501,7 @@ void SceneEditorTabView::display()
 		Vector3 worldCoordinate;
 		placeEntityValid = false;
 		pasteModeValid = false;
-		if ((placeEntityMode == true || pasteMode == true) && engine->getEntityByMousePosition(placeEntityMouseX, placeEntityMouseY, worldCoordinate, entityPickingFilterPlacing) != nullptr) {
+		if ((placeEntityMode == true || pasteMode == true) && engine->getEntityByMousePosition(placeEntityMouseX, placeEntityMouseY, worldCoordinate, entityPickingFilterPlacing.get()) != nullptr) {
 			if (placeEntityMode == true) {
 				Transform transform;
 				transform.setTranslation(worldCoordinate);
@@ -516,7 +518,7 @@ void SceneEditorTabView::display()
 						if (snappingX > Math::EPSILON) worldCoordinate.setX(static_cast<int>(worldCoordinate.getX() / snappingX) * snappingX);
 						if (snappingZ > Math::EPSILON) worldCoordinate.setZ(static_cast<int>(worldCoordinate.getZ() / snappingZ) * snappingZ);
 						Vector3 snappedWorldCoordinate;
-						if (engine->doRayCasting(worldCoordinate.clone().setY(10000.0f), worldCoordinate.clone().setY(-10000.0f), snappedWorldCoordinate, entityPickingFilterPlacing) != nullptr) {
+						if (engine->doRayCasting(worldCoordinate.clone().setY(10000.0f), worldCoordinate.clone().setY(-10000.0f), snappedWorldCoordinate, entityPickingFilterPlacing.get()) != nullptr) {
 							worldCoordinate = snappedWorldCoordinate;
 						}
 					}
@@ -533,7 +535,7 @@ void SceneEditorTabView::display()
 					if (snappingX > Math::EPSILON) worldCoordinate.setX(static_cast<int>(worldCoordinate.getX() / snappingX) * snappingX);
 					if (snappingZ > Math::EPSILON) worldCoordinate.setZ(static_cast<int>(worldCoordinate.getZ() / snappingZ) * snappingZ);
 					Vector3 snappedWorldCoordinate;
-					if (engine->doRayCasting(worldCoordinate.clone().setY(10000.0f), worldCoordinate.clone().setY(-10000.0f), snappedWorldCoordinate, entityPickingFilterPlacing) != nullptr) {
+					if (engine->doRayCasting(worldCoordinate.clone().setY(10000.0f), worldCoordinate.clone().setY(-10000.0f), snappedWorldCoordinate, entityPickingFilterPlacing.get()) != nullptr) {
 						worldCoordinate = snappedWorldCoordinate;
 					}
 				}
@@ -563,7 +565,7 @@ void SceneEditorTabView::display()
 void SceneEditorTabView::initialize()
 {
 	try {
-		sceneEditorTabController = new SceneEditorTabController(this);
+		sceneEditorTabController = make_unique<SceneEditorTabController>(this);
 		sceneEditorTabController->initialize(editorView->getScreenController()->getScreenNode());
 	} catch (Exception& exception) {
 		Console::println("SceneEditorTabView::initialize(): An error occurred: " + string(exception.what()));
@@ -583,8 +585,8 @@ void SceneEditorTabView::initialize()
 	light0->setSpotCutOff(180.0f);
 	light0->setEnabled(true);
 	auto cam = engine->getCamera();
-	SceneConnector::setLights(engine, scene, Vector3());
-	SceneConnector::addScene(engine, scene, true, true, true, true, true);
+	SceneConnector::setLights(engine.get(), scene.get(), Vector3());
+	SceneConnector::addScene(engine.get(), scene.get(), true, true, true, true, true);
 	updateSky();
 	cameraInputHandler->setSceneCenter(scene->getCenter());
 	updateGrid();
@@ -594,6 +596,7 @@ void SceneEditorTabView::initialize()
 void SceneEditorTabView::dispose()
 {
 	shutdownScene();
+	SceneConnector::resetEngine(engine.get(), scene.get());
 	engine->dispose();
 }
 
@@ -601,7 +604,7 @@ void SceneEditorTabView::updateRendering() {
 }
 
 Engine* SceneEditorTabView::getEngine() {
-	return engine;
+	return engine.get();
 }
 
 void SceneEditorTabView::activate() {
@@ -618,7 +621,7 @@ void SceneEditorTabView::deactivate() {
 }
 
 void SceneEditorTabView::clearScene() {
-	SceneConnector::resetEngine(engine, scene);
+	SceneConnector::resetEngine(engine.get(), scene.get());
 	keyControl = false;
 	keyShift = false;
 	keyEscape = false;
@@ -639,7 +642,7 @@ void SceneEditorTabView::clearScene() {
 
 void SceneEditorTabView::reloadScene() {
 	clearScene();
-	SceneConnector::addScene(engine, scene, true, true, true, true, true);
+	SceneConnector::addScene(engine.get(), scene.get(), true, true, true, true, true);
 }
 
 void SceneEditorTabView::reloadOutliner() {
@@ -693,7 +696,7 @@ void SceneEditorTabView::updateSkyPosition() {
 }
 
 void SceneEditorTabView::updateLights() {
-	SceneConnector::setLights(engine, scene, Vector3());
+	SceneConnector::setLights(engine.get(), scene.get(), Vector3());
 }
 
 void SceneEditorTabView::selectEntityInternal(Entity* entity)
@@ -872,7 +875,7 @@ void SceneEditorTabView::placeEntity()
 }
 
 bool SceneEditorTabView::placeEntity(Prototype* prototype, int mouseX, int mouseY) {
-	if (engine->getEntityByMousePosition(mouseX, mouseY, placeEntityTranslation, entityPickingFilterPlacing) != nullptr) {
+	if (engine->getEntityByMousePosition(mouseX, mouseY, placeEntityTranslation, entityPickingFilterPlacing.get()) != nullptr) {
 		setPlaceEntityMode(prototype);
 		placeEntity();
 		unsetPlaceEntityMode(false);
@@ -968,14 +971,6 @@ void SceneEditorTabView::pasteEntities(bool displayOnly)
 		);
 		sceneEntityTransform.update();
 		if (displayOnly == false) {
-			for (auto i = 0; i < scene->getEntityCount(); i++) {
-				auto sceneEntity = scene->getEntityAt(i);
-				if (sceneEntity->getPrototype() == pastePrototype && sceneEntity->getTransform().getTranslation().equals(sceneEntityTransform.getTranslation())) {
-					continue;
-				}
-			}
-		}
-		if (displayOnly == false) {
 			//
 			auto sceneEntityId = pastePrototype->getName() + "_" + to_string(scene->allocateEntityId());
 			auto sceneEntity = new SceneEntity(
@@ -985,8 +980,7 @@ void SceneEditorTabView::pasteEntities(bool displayOnly)
 				pastePrototype
 			 );
 			BaseProperties* properties = copiedEntity;
-			for (int i = 0; i < properties->getPropertyCount(); i++) {
-				auto property = properties->getPropertyByIndex(i);
+			for (auto property: properties->getProperties()) {
 				sceneEntity->addProperty(property->getName(), property->getValue());
 			}
 			scene->addEntity(sceneEntity);
@@ -1085,8 +1079,7 @@ void SceneEditorTabView::selectSameEntities()
 	auto sceneEntity = scene->getEntity(selectedEntityIds[0]);
 	auto prototype = sceneEntity != nullptr?sceneEntity->getPrototype():nullptr;
 	vector<string> entitiesToSelect;
-	for (auto i = 0; i < scene->getEntityCount(); i++) {
-		auto _sceneEntity = scene->getEntityAt(i);
+	for (auto _sceneEntity: scene->getEntities()) {
 		if (_sceneEntity->getPrototype() != prototype) continue;
 		sceneEditorTabController->selectEntity(_sceneEntity->getId());
 		entitiesToSelect.push_back(_sceneEntity->getId());
@@ -1340,7 +1333,7 @@ void SceneEditorTabView::updateGrid()
 	string entityId = "tdme.sceneeditor.grid";
 	auto entity = engine->getEntity(entityId);
 	if (entity == nullptr) {
-		entity = new Object(entityId, gridModel);
+		entity = new Object(entityId, gridModel.get());
 		entity->setFrustumCulling(false);
 		entity->addRotation(scene->getRotationOrder()->getAxis0(), 0.0f);
 		entity->addRotation(scene->getRotationOrder()->getAxis1(), 0.0f);
@@ -1388,8 +1381,7 @@ void SceneEditorTabView::addPrototype(Prototype* prototype) {
 		auto sceneLibrary = scene->getLibrary();
 		if (prototype->getType() == Prototype_Type::TERRAIN) {
 			while (sceneLibrary->getTerrainPrototype() != nullptr) {
-				for (auto i = 0; i < sceneLibrary->getPrototypeCount(); i++) {
-					auto prototype = sceneLibrary->getPrototypeAt(i);
+				for (auto prototype: sceneLibrary->getPrototypes()) {
 					if (prototype->getType() == Prototype_Type::TERRAIN) {
 						sceneLibrary->removePrototype(prototype->getId());
 						break;
@@ -1397,9 +1389,9 @@ void SceneEditorTabView::addPrototype(Prototype* prototype) {
 				}
 			}
 			sceneLibrary->addPrototype(prototype);
-			SceneConnector::resetEngine(engine, scene);
-			SceneConnector::setLights(engine, scene, Vector3());
-			SceneConnector::addScene(engine, scene, true, true, true, true, true);
+			SceneConnector::resetEngine(engine.get(), scene.get());
+			SceneConnector::setLights(engine.get(), scene.get(), Vector3());
+			SceneConnector::addScene(engine.get(), scene.get(), true, true, true, true, true);
 			updateSky();
 			scene->update();
 			cameraInputHandler->setSceneCenter(scene->getCenter());
@@ -1438,17 +1430,19 @@ void SceneEditorTabView::runScene() {
 	removeGizmo();
 
 	// execute scene
-	auto world = new World("applicationclient-world");
-	SceneConnector::addScene(world, scene, true);
-	applicationContext = new Context(false);
-	applicationContext->setApplicationRootPathName(editorView->getScreenController()->getProjectPath());
-	applicationContext->setScene(scene);
-	applicationContext->setEngine(engine);
-	applicationContext->setAudio(Audio::getInstance());
-	applicationContext->setWorld(world);
-	applicationContext->setSoundPoolSize(1);
-	applicationClient = new ApplicationClient(applicationContext);
-	applicationContext->initialize();
+	{
+		auto world = make_unique<World>("applicationclient-world");
+		SceneConnector::addScene(world.get(), scene.get(), true);
+		auto applicationContext = make_unique<Context>(false);
+		applicationContext->setApplicationRootPathName(editorView->getScreenController()->getProjectPath());
+		applicationContext->setScene(scene.get());
+		applicationContext->setEngine(engine.get());
+		applicationContext->setAudio(Audio::getInstance());
+		applicationContext->setWorld(world.release());
+		applicationContext->setSoundPoolSize(1);
+		applicationClient = make_unique<ApplicationClient>(applicationContext.release());
+		applicationClient->getContext()->initialize();
+	}
 
 	// add gui
 	if (scene->getGUIFileName().empty() == false) {
@@ -1458,7 +1452,7 @@ void SceneEditorTabView::runScene() {
 				Tools::getFileName(scene->getGUIFileName()),
 				{},
 				MiniScript::ScriptVariable(),
-				applicationContext
+				applicationClient->getContext()
 			);
 			engine->getGUI()->addScreen(screenNode->getId(), screenNode);
 			engine->getGUI()->addRenderScreen(screenNode->getId());
@@ -1468,13 +1462,13 @@ void SceneEditorTabView::runScene() {
 	}
 
 	// add logics
+	// TODO: exception handling
 	auto valid = true;
 	string invalidScripts;
-	for (auto i = 0; i < scene->getEntityCount(); i++) {
-		auto entity = scene->getEntityAt(i);
+	for (auto entity: scene->getEntities()) {
 		if (entity->getPrototype()->hasScript() == true) {
-			auto miniScript = new LogicMiniScript();
-			miniScript->loadScript(
+			auto miniScript = make_unique<LogicMiniScript>();
+			miniScript->parseScript(
 				Tools::getPathName(entity->getPrototype()->getScript()),
 				Tools::getFileName(entity->getPrototype()->getScript())
 			);
@@ -1498,17 +1492,18 @@ void SceneEditorTabView::runScene() {
 				}
 				//
 				valid = false;
+				//
 				continue;
 			}
-			applicationContext->addLogic(
-				new MiniScriptLogic(
-					applicationContext,
+			applicationClient->getContext()->addLogic(
+				make_unique<MiniScriptLogic>(
+					applicationClient->getContext(),
 					entity->getId(),
 					entity->getPrototype()->isScriptHandlingHID(),
-					miniScript,
+					miniScript.release(),
 					entity->getPrototype(),
 					true
-				)
+				).release()
 			);
 		}
 	}
@@ -1519,21 +1514,15 @@ void SceneEditorTabView::runScene() {
 		//
 		sceneEditorTabController->showInfoPopUp("Error", "Not all scripts are valid to be run:\n\n" + invalidScripts);
 		//
-		delete applicationClient;
-		// shutdown application client context
-		if (applicationContext != nullptr) {
-			applicationContext->unsetScene();
-			applicationContext->shutdown();
-			delete applicationContext;
-		}
+		applicationClient->getContext()->unsetEngine();
+		applicationClient->getContext()->unsetScene();
 		//
 		applicationClient = nullptr;
-		applicationContext = nullptr;
 		// reset scene
 		engine->getGUI()->reset();
-		SceneConnector::resetEngine(engine, scene);
-		SceneConnector::setLights(engine, scene, Vector3());
-		SceneConnector::addScene(engine, scene, true, true, true, true, true);
+		SceneConnector::resetEngine(engine.get(), scene.get());
+		SceneConnector::setLights(engine.get(), scene.get(), Vector3());
+		SceneConnector::addScene(engine.get(), scene.get(), true, true, true, true, true);
 		updateSky();
 		scene->update();
 		cameraInputHandler->setSceneCenter(scene->getCenter());
@@ -1558,9 +1547,9 @@ void SceneEditorTabView::stopScene() {
 
 	// reset scene
 	engine->getGUI()->reset();
-	SceneConnector::resetEngine(engine, scene);
-	SceneConnector::setLights(engine, scene, Vector3());
-	SceneConnector::addScene(engine, scene, true, true, true, true, true);
+	SceneConnector::resetEngine(engine.get(), scene.get());
+	SceneConnector::setLights(engine.get(), scene.get(), Vector3());
+	SceneConnector::addScene(engine.get(), scene.get(), true, true, true, true, true);
 	updateSky();
 	scene->update();
 	cameraInputHandler->setSceneCenter(scene->getCenter());
@@ -1568,24 +1557,14 @@ void SceneEditorTabView::stopScene() {
 }
 
 void SceneEditorTabView::shutdownScene() {
-	// shutdown application client
-	if (applicationClient != nullptr) {
-		applicationClient->stop();
-		applicationClient->join();
-		delete applicationClient;
-	}
-
-	// shutdown application client context
-	if (applicationContext != nullptr) {
-		applicationContext->unsetScene();
-		applicationContext->shutdown();
-		delete applicationContext;
-	}
-
 	//
-	if (applicationClient == nullptr && applicationContext == nullptr) return;
-
+	if (applicationClient == nullptr) return;
+	// shutdown application client
+	applicationClient->stop();
+	applicationClient->join();
+	//
+	applicationClient->getContext()->unsetEngine();
+	applicationClient->getContext()->unsetScene();
 	//
 	applicationClient = nullptr;
-	applicationContext = nullptr;
 }

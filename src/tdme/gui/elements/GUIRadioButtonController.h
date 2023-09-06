@@ -1,7 +1,7 @@
 #pragma once
 
-#include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -11,8 +11,8 @@
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/utilities/MutableString.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::gui::events::GUIKeyboardEvent;
@@ -38,7 +38,7 @@ private:
 	STATIC_DLL_IMPEXT static string CONDITION_ENABLED;
 	bool selected;
 	bool disabled;
-	STATIC_DLL_IMPEXT static map<string, vector<GUIElementNode*>>* radioButtonGroupNodesByName;
+	STATIC_DLL_IMPEXT static unordered_map<string, vector<string>> radioButtonGroupNodesByName;
 	MutableString value;
 
 	// forbid class copy

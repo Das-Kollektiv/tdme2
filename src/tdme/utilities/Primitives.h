@@ -1,7 +1,7 @@
 #pragma once
 
-#include <map>
 #include <string>
+#include <unordered_map>
 
 #include <reactphysics3d/mathematics/Vector3.h>
 
@@ -12,8 +12,8 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
@@ -76,7 +76,7 @@ private:
 	 * @param nodes nodes
 	 * @param material material
 	 */
-	static void setupConvexMeshMaterial(const map<string, Node*>& nodes, Material* material);
+	static void setupConvexMeshMaterial(const unordered_map<string, Node*>& nodes, Material* material);
 
 public:
 	/**

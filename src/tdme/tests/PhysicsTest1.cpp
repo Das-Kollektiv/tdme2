@@ -1,5 +1,6 @@
 #include <tdme/tests/PhysicsTest1.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -31,8 +32,10 @@
 #include <tdme/utilities/ObjectDeleter.h>
 #include <tdme/utilities/Primitives.h>
 
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::tests::PhysicsTest1;
 
@@ -76,18 +79,17 @@ PhysicsTest1::PhysicsTest1()
 	keyS = false;
 	keyD = false;
 	engine = Engine::getInstance();
-	world = new World("world");
+	world = make_unique<World>("world");
 }
 
 PhysicsTest1::~PhysicsTest1()
 {
-	delete world;
 }
 
-void PhysicsTest1::main(int argc, char** argv)
+int PhysicsTest1::main(int argc, char** argv)
 {
 	auto physicsTest1 = new PhysicsTest1();
-	physicsTest1->run(argc, argv, "PhysicsTest1", physicsTest1);
+	return physicsTest1->run(argc, argv, "PhysicsTest1", physicsTest1);
 }
 
 void PhysicsTest1::display()

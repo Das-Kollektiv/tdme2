@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 
 #include <reactphysics3d/collision/PolygonVertexArray.h>
@@ -14,7 +15,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
 
-
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::physics::World;
@@ -41,11 +42,11 @@ private:
 	vector<int> facesVerticesCount;
 	vector<int> indices;
 
-	vector<reactphysics3d::PolygonVertexArray::PolygonFace> faces;
-	reactphysics3d::PolygonVertexArray* polygonVertexArray { nullptr };
 	reactphysics3d::PolyhedronMesh* polyhedronMesh { nullptr };
-	ByteBuffer* verticesByteBuffer { nullptr };
-	ByteBuffer* indicesByteBuffer { nullptr };
+	unique_ptr<reactphysics3d::PolygonVertexArray> polygonVertexArray;
+	unique_ptr<ByteBuffer> verticesByteBuffer;
+	unique_ptr<ByteBuffer> indicesByteBuffer;
+	vector<reactphysics3d::PolygonVertexArray::PolygonFace> faces;
 
 	// forbid class copy
 	FORBID_CLASS_COPY(ConvexMesh)
@@ -58,11 +59,6 @@ private:
 	 * @param scale scale
 	 */
 	ConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
-
-	/**
-	 * Public destructor
-	 */
-	~ConvexMesh();
 
 	/**
 	 * Checks if vertex lives on triangle plane
@@ -127,6 +123,11 @@ public:
 	 * @param scale scale
 	 */
 	ConvexMesh(ObjectModel* model, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
+
+	/**
+	 * Public destructor
+	 */
+	~ConvexMesh();
 
 	// overridden methods
 	void setScale(const Vector3& scale) override;

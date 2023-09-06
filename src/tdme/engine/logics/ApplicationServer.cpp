@@ -1,5 +1,6 @@
 #include <tdme/engine/logics/ApplicationServer.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -11,8 +12,10 @@
 #include <tdme/network/udpserver/UDPServerClient.h>
 #include <tdme/utilities/Console.h>
 
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::engine::logics::ApplicationServer;
 
@@ -41,14 +44,14 @@ void ApplicationServer::start() {
 	Console::println("ApplicationServer::ApplicationServer(): Initializing");
 
 	//
-	context = createContext();
+	context = unique_ptr<Context>(createContext());
 	context->getPathFinding()->setThreadCount(pathFindingThreadCount);
 	context->setWorld(new World("applicationserver-world"));
 	// set up logics
 	setupLogics();
 	//
 	context->addNewLogics();
-	logicsThread = new ServerThread(context, this);
+	logicsThread = make_unique<ServerThread>(context.get(), this);
 	context->setLogicsMutex(this->logicsThread->getMutex());
 
 	// starting game logic thread
@@ -65,13 +68,9 @@ ApplicationServer::~ApplicationServer() {
 	//
 	logicsThread->stop();
 	logicsThread->join();
-	delete logicsThread;
 
 	//
 	context->shutdown();
-
-	//
-	delete context;
 }
 
 UDPServerClient* ApplicationServer::accept(const uint32_t clientId, const std::string& ip, const uint16_t port) {

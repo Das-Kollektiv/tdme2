@@ -1,6 +1,10 @@
 #include <tdme/tools/editor/tabviews/TerrainEditorTabView.h>
 
+#include <memory>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
@@ -35,7 +39,12 @@
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Terrain.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
+using std::unordered_map;
+using std::unordered_set;
+using std::vector;
 
 using tdme::tools::editor::tabviews::TerrainEditorTabView;
 
@@ -75,8 +84,8 @@ TerrainEditorTabView::TerrainEditorTabView(EditorView* editorView, const string&
 	this->editorView = editorView;
 	this->tabId = tabId;
 	this->popUps = editorView->getPopUps();
-	this->prototype = prototype;
-	engine = Engine::createOffScreenInstance(512, 512, true, true, true);
+	this->prototype = unique_ptr<Prototype>(prototype);
+	engine = unique_ptr<Engine>(Engine::createOffScreenInstance(512, 512, true, true, true));
 	engine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
 	for (auto i = 1; i < engine->getLightCount(); i++) engine->getLightAt(i)->setEnabled(false);
 	{
@@ -93,15 +102,11 @@ TerrainEditorTabView::TerrainEditorTabView(EditorView* editorView, const string&
 		light0->setSpotCutOff(180.0f);
 		light0->setEnabled(true);
 	}
-	this->cameraInputHandler = new CameraInputHandler(engine);
+	this->cameraInputHandler = make_unique<CameraInputHandler>(engine.get());
 	outlinerState.expandedOutlinerParentOptionValues.push_back("terrain");
 }
 
 TerrainEditorTabView::~TerrainEditorTabView() {
-	delete cameraInputHandler;
-	delete prototype;
-	delete terrainEditorTabController;
-	delete engine;
 }
 
 void TerrainEditorTabView::handleInputEvents()
@@ -112,11 +117,11 @@ void TerrainEditorTabView::handleInputEvents()
 
 		if (event.getType() == GUIMouseEvent::MOUSEEVENT_WHEEL_MOVED) {
 			if (event.isShiftDown() == true) {
-				setBrushScale(Math::clamp(brushScale + 0.1 * event.getWheelY(), 0.1f, 100.0f));
+				setBrushScale(Math::clamp(brushScale + 0.1f * event.getWheelY(), 0.1f, 100.0f));
 				event.setProcessed(true);
 			}
 			if (event.isControlDown() == true) {
-				setBrushDensityStrength(Math::clamp(brushDensityStrength + 0.1 * event.getWheelY(), 0.1f, 100.0f));
+				setBrushDensityStrength(Math::clamp(brushDensityStrength + 0.1f * event.getWheelY(), 0.1f, 100.0f));
 				event.setProcessed(true);
 			}
 		} else
@@ -287,11 +292,11 @@ void TerrainEditorTabView::display()
 void TerrainEditorTabView::initialize()
 {
 	try {
-		terrainEditorTabController = new TerrainEditorTabController(this);
+		terrainEditorTabController = make_unique<TerrainEditorTabController>(this);
 		terrainEditorTabController->initialize(editorView->getScreenController()->getScreenNode());
-		skySpherePrototype = PrototypeReader::read("resources/engine/models", "sky_sphere.tmodel");
-		skyDomePrototype = PrototypeReader::read("resources/engine/models", "sky_dome.tmodel");
-		skyPanoramaPrototype = PrototypeReader::read("resources/engine/models", "sky_panorama.tmodel");
+		skySpherePrototype = unique_ptr<Prototype>(PrototypeReader::read("resources/engine/models", "sky_sphere.tmodel"));
+		skyDomePrototype = unique_ptr<Prototype>(PrototypeReader::read("resources/engine/models", "sky_dome.tmodel"));
+		skyPanoramaPrototype = unique_ptr<Prototype>(PrototypeReader::read("resources/engine/models", "sky_panorama.tmodel"));
 	} catch (Exception& exception) {
 		Console::println("TerrainEditorTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
@@ -302,13 +307,15 @@ void TerrainEditorTabView::initialize()
 void TerrainEditorTabView::dispose()
 {
 	engine->dispose();
+	unsetTerrain();
+	unsetWater();
 }
 
 void TerrainEditorTabView::updateRendering() {
 }
 
 Engine* TerrainEditorTabView::getEngine() {
-	return engine;
+	return engine.get();
 }
 
 void TerrainEditorTabView::activate() {
@@ -331,7 +338,7 @@ void TerrainEditorTabView::reloadOutliner() {
 
 void TerrainEditorTabView::saveFile(const string& pathName, const string& fileName)
 {
-	PrototypeWriter::write(pathName, fileName, prototype);
+	PrototypeWriter::write(pathName, fileName, prototype.get());
 }
 
 void TerrainEditorTabView::initSky() {
@@ -392,7 +399,7 @@ void TerrainEditorTabView::updateSky() {
 
 	auto skyDome = static_cast<Object*>(engine->getEntity("sky_dome"));
 	skyDome->setTranslation(engine->getCamera()->getLookFrom());
-	skyDome->setTextureMatrix((Matrix2D3x3()).identity().translate(Vector2(0.0f, skyDomeTranslation * 0.01f)));
+	skyDome->setTextureMatrix((Matrix3x3()).identity().setTranslation(Vector2(0.0f, skyDomeTranslation * 0.01f)));
 	skyDome->update();
 
 	auto skyPanorama = engine->getEntity("sky_panorama");
@@ -758,7 +765,10 @@ void TerrainEditorTabView::setTerrain(BoundingBox& terrainBoundingBox, vector<Mo
 
 void TerrainEditorTabView::setBrush(Texture* texture, float scale, float densityStrength) {
 	unsetBrush();
-	if (texture != nullptr) texture->acquireReference();
+	if (brushTexture != nullptr) {
+		engine->getTextureManager()->removeTexture(brushTexture);
+		brushTexture->releaseReference();
+	}
 	brushTexture = texture;
 	//
 	brushScale = scale;

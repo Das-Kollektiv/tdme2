@@ -134,7 +134,13 @@ void TextureAtlas::update() {
 	}
 
 	// sort by height
-	sort(atlasTextures.begin(), atlasTextures.end(), sortAtlasTexturesByHeight);
+	sort(
+		atlasTextures.begin(),
+		atlasTextures.end(),
+		[](const AtlasTexture& atlasTexture1, const AtlasTexture& atlasTexture2) {
+			return atlasTexture1.height > atlasTexture2.height;
+		}
+	);
 
 	//
 	auto atlasTextureWidth = 4096; // TODO: does not seem to work: static_cast<int>(Math::sqrt(static_cast<float>(totalWidth * totalHeight) * 1.2f));

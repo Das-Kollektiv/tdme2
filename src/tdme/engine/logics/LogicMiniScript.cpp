@@ -1,5 +1,6 @@
 #include <tdme/engine/logics/LogicMiniScript.h>
 
+#include <memory>
 #include <span>
 #include <string>
 #include <vector>
@@ -31,7 +32,7 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/tools/editor/misc/Tools.h>
-#include <tdme/tools/editor/TDMEEditor.h>
+#include <tdme/tools/editor/Editor.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -41,6 +42,7 @@
 using std::span;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::logics::LogicMiniScript;
@@ -71,7 +73,7 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::threading::Mutex;
 using tdme::tools::editor::misc::Tools;
-using tdme::tools::editor::TDMEEditor;
+using tdme::tools::editor::Editor;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -82,6 +84,16 @@ LogicMiniScript::LogicMiniScript(): MiniScript(), prototypesToAddMutex("prototyp
 }
 
 LogicMiniScript::~LogicMiniScript() {
+}
+
+const string LogicMiniScript::getBaseClass() {
+	return "tdme::engine::logics::LogicMiniScript";
+}
+
+const vector<string> LogicMiniScript::getTranspilationUnits() {
+	auto transpilationUnits = MiniScript::getTranspilationUnits();
+	transpilationUnits.push_back("src/tdme/engine/logics/LogicMiniScript.cpp");
+	return transpilationUnits;
 }
 
 inline Entity* LogicMiniScript::getEntity(const string& entityId, const string& childEntityId) {
@@ -140,7 +152,7 @@ void LogicMiniScript::registerMethods() {
 				return "application.isFullScreen";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue.setValue(TDMEEditor::getInstance() != nullptr?TDMEEditor::getInstance()->isFullScreen():false);
+				returnValue.setValue(Editor::getInstance() != nullptr?Editor::getInstance()->isFullScreen():false);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -2070,6 +2082,114 @@ void LogicMiniScript::registerMethods() {
 		registerMethod(new ScriptMethodTimingGetAvarageFPS(this));
 	}
 	// engine
+	{
+		//
+		class ScriptMethodEngineGetAnimationComputationReduction1Distance: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEngineGetAnimationComputationReduction1Distance(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.getAnimationComputationReduction1Distance";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue.setValue(Engine::getAnimationComputationReduction1Distance());
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTIONS_ENGINE;
+			}
+		};
+		registerMethod(new ScriptMethodEngineGetAnimationComputationReduction1Distance(this));
+	}
+	{
+		//
+		class ScriptMethodEngineSetAnimationComputationReduction1Distance: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEngineSetAnimationComputationReduction1Distance(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "animationComputationReduction1Distance", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_NULL
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.setAnimationComputationReduction1Distance";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				float animationComputationReduction1Distance;
+				if (miniScript->getFloatValue(argumentValues, 0, animationComputationReduction1Distance) == true) {
+					Engine::setAnimationComputationReduction1Distance(animationComputationReduction1Distance);
+				} else {
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				}
+
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTIONS_ENGINE;
+			}
+		};
+		registerMethod(new ScriptMethodEngineSetAnimationComputationReduction1Distance(this));
+	}
+	{
+		//
+		class ScriptMethodEngineGetAnimationComputationReduction2Distance: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEngineGetAnimationComputationReduction2Distance(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.getAnimationComputationReduction2Distance";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue.setValue(Engine::getAnimationComputationReduction2Distance());
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTIONS_ENGINE;
+			}
+		};
+		registerMethod(new ScriptMethodEngineGetAnimationComputationReduction2Distance(this));
+	}
+	{
+		//
+		class ScriptMethodEngineSetAnimationComputationReduction2Distance: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEngineSetAnimationComputationReduction2Distance(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "animationComputationReduction2Distance", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_NULL
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.setAnimationComputationReduction2Distance";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				float animationComputationReduction2Distance;
+				if (miniScript->getFloatValue(argumentValues, 0, animationComputationReduction2Distance) == true) {
+					Engine::setAnimationComputationReduction2Distance(animationComputationReduction2Distance);
+				} else {
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				}
+
+			}
+			const vector<string>& getContextFunctions() {
+				return CONTEXTFUNCTIONS_ENGINE;
+			}
+		};
+		registerMethod(new ScriptMethodEngineSetAnimationComputationReduction2Distance(this));
+	}
 	{
 		//
 		class ScriptMethodEngineGetWidth: public ScriptMethod {
@@ -5086,12 +5206,12 @@ void LogicMiniScript::registerMethods() {
 						auto prototypeIt = miniScript->prototypes.find(canonicalPath);
 						if (prototypeIt != miniScript->prototypes.end()) {
 							prototypeIt->second.counter++;
-							prototype = prototypeIt->second.prototype;
+							prototype = prototypeIt->second.prototype.get();
 						} else {
 							prototype = PrototypeReader::read(_pathName, fileName);
 							miniScript->prototypes[canonicalPath] = {
 								.counter = 1,
-								.prototype = prototype
+								.prototype = unique_ptr<Prototype>(prototype)
 							};
 						}
 						miniScript->enginePrototypesToAdd.emplace_back(
@@ -5175,12 +5295,12 @@ void LogicMiniScript::registerMethods() {
 						auto prototypeIt = miniScript->prototypes.find(canonicalPath);
 						if (prototypeIt != miniScript->prototypes.end()) {
 							prototypeIt->second.counter++;
-							prototype = prototypeIt->second.prototype;
+							prototype = prototypeIt->second.prototype.get();
 						} else {
 							prototype = PrototypeReader::read(_pathName, fileName);
 							miniScript->prototypes[canonicalPath] = {
 								.counter = 1,
-								.prototype = prototype
+								.prototype = unique_ptr<Prototype>(prototype)
 							};
 						}
 						miniScript->enginePrototypesToAdd.emplace_back(

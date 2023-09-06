@@ -1,6 +1,7 @@
 #include <tdme/tools/editor/tabcontrollers/TextEditorTabController.h>
 
 #include <array>
+#include <memory>
 #include <string>
 #include <unordered_map>
 
@@ -44,7 +45,9 @@
 using tdme::tools::editor::tabcontrollers::TextEditorTabController;
 
 using std::array;
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 using std::unordered_map;
 
 using tdme::engine::Texture;
@@ -96,15 +99,6 @@ TextEditorTabController::TextEditorTabController(TextEditorTabView* view)
 }
 
 TextEditorTabController::~TextEditorTabController() {
-}
-
-TextEditorTabView* TextEditorTabController::getView() {
-	return view;
-}
-
-GUIScreenNode* TextEditorTabController::getScreenNode()
-{
-	return screenNode;
 }
 
 void TextEditorTabController::initialize(GUIScreenNode* screenNode)
@@ -446,64 +440,12 @@ void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx
 		return;
 	}
 
-	// detect MiniScript variant
-	auto logicMiniScript = false;
-	auto guiMiniScript = false;
-	array<string, 2> logicMiniScriptFunctions {
-		"updateEngine",
-		"updateLogic"
-	};
-	array<string, 12> guiMiniScriptFunctions {
-		"onAction",
-		"onChange",
-		"onMouseOver",
-		"onContextMenuRequest",
-		"onFocus",
-		"onUnfocus",
-		"onMove",
-		"onMoveRelease",
-		"onTooltipShowRequest",
-		"onTooltipCloseRequest",
-		"onDragRequest",
-		"onTick"
-	};
-	for (const auto& scriptLine: scriptAsStringArray) {
-		for (const auto& functionName: logicMiniScriptFunctions) {
-			if (StringTools::regexMatch(scriptLine, "^[\\s]*function:[\\s]*" + functionName + "[\\s]*\\(.*\\).*$") == true) {
-				logicMiniScript = true;
-				break;
-			}
-		}
-		if (logicMiniScript == true) break;
-		for (const auto& functionName: guiMiniScriptFunctions) {
-			if (StringTools::regexMatch(scriptLine, "^[\\s]*function:[\\s]*" + functionName + "[\\s]*\\(.*\\).*$") == true) {
-				guiMiniScript = true;
-				break;
-			}
-		}
-		if (guiMiniScript == true) break;
-	}
-
 	// load specific MiniScript
-	if (scriptInstance != nullptr) delete scriptInstance;
-	scriptInstance = nullptr;
-	if (logicMiniScript == true) {
-		Console::println("TextEditorTabController::updateMiniScriptSyntaxTree(): " + scriptFileName + ": Detected Logic MiniScript");
-		scriptInstance = new LogicMiniScript();
-		scriptInstance->loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName));
-	} else
-	if (guiMiniScript == true) {
-		Console::println("TextEditorTabController::updateMiniScriptSyntaxTree(): " + scriptFileName + ": Detected GUI MiniScript");
-		scriptInstance = new GUIMiniScript(nullptr);
-		scriptInstance->loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName));
-	} else {
-		Console::println("TextEditorTabController::updateMiniScriptSyntaxTree(): " + scriptFileName + ": Detected no specific Miniscript, using default MiniScript");
-		scriptInstance = new MiniScript();
-		scriptInstance->loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName));
-	}
+	scriptInstance = unique_ptr<MiniScript>(MiniScript::loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName)));
 
 	//
 	if (scriptInstance->isValid() == false)  {
+		scriptInstance = nullptr;
 		miniScriptSyntaxTrees.clear();
 		view->setMiniScriptMethodOperatorMap({});
 		view->updateMiniScriptSyntaxTree(miniScriptScriptIdx);

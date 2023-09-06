@@ -1,7 +1,7 @@
 #include <tdme/engine/subsystems/rendering/ModelUtilitiesInternal.h>
 
-#include <map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/AnimationSetup.h>
@@ -21,8 +21,8 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Face;
@@ -42,7 +42,7 @@ using tdme::engine::Timing;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-BoundingBox* ModelUtilitiesInternal::createBoundingBox(Model* model, const map<string, Matrix4x4*> overriddenNodeTransformMatrices)
+BoundingBox* ModelUtilitiesInternal::createBoundingBox(Model* model, const unordered_map<string, Matrix4x4*> overriddenNodeTransformMatrices)
 {
 	ObjectModelInternal objectModel(model);
 	objectModel.instanceAnimations[0]->overriddenTransformMatrices = overriddenNodeTransformMatrices;
@@ -155,7 +155,7 @@ void ModelUtilitiesInternal::invertNormals(Model* model)
 	invertNormals(model->getSubNodes());
 }
 
-void ModelUtilitiesInternal::invertNormals(const map<string, Node*>& nodes)
+void ModelUtilitiesInternal::invertNormals(const unordered_map<string, Node*>& nodes)
 {
 	for (const auto& [nodeId, node]: nodes) {
 		auto normals = node->getNormals();
@@ -177,7 +177,7 @@ void ModelUtilitiesInternal::computeModelStatistics(Model* model, ModelStatistic
 
 void ModelUtilitiesInternal::computeModelStatistics(ObjectModelInternal* objectModelInternal, ModelStatistics* modelStatistics)
 {
-	map<string, int32_t> materialCountById;
+	unordered_map<string, int32_t> materialCountById;
 	auto opaqueFaceCount = 0;
 	auto transparentFaceCount = 0;
 	for (auto objectNode : objectModelInternal->objectNodes) {

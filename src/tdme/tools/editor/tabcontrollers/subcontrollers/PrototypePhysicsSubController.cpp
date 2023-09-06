@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.h>
 
+#include <memory>
 #include <string>
 
 #include <VHACD.h>
@@ -50,8 +51,10 @@
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;
 
@@ -104,7 +107,7 @@ PrototypePhysicsSubController::PrototypePhysicsSubController(EditorView* editorV
 {
 	this->editorView = editorView;
 	this->tabView = tabView;
-	this->view = new PrototypePhysicsSubView(tabView->getEngine(), this, editorView->getPopUps(), maxBoundingVolumeCount, boundingVolumeTypeMask);
+	this->view = make_unique<PrototypePhysicsSubView>(tabView->getEngine(), this, editorView->getPopUps(), maxBoundingVolumeCount, boundingVolumeTypeMask);
 	this->popUps = editorView->getPopUps();
 	this->maxBoundingVolumeCount = maxBoundingVolumeCount;
 	this->isModelBoundingVolumes = isModelBoundingVolumes;
@@ -114,16 +117,6 @@ PrototypePhysicsSubController::PrototypePhysicsSubController(EditorView* editorV
 }
 
 PrototypePhysicsSubController::~PrototypePhysicsSubController() {
-	delete view;
-}
-
-PrototypePhysicsSubView* PrototypePhysicsSubController::getView()
-{
-	return view;
-}
-
-GUIScreenNode* PrototypePhysicsSubController::getScreenNode() {
-	return screenNode;
 }
 
 void PrototypePhysicsSubController::initialize(GUIScreenNode* screenNode)
@@ -442,13 +435,11 @@ void PrototypePhysicsSubController::setBoundingVolumeDetails(Prototype* prototyp
 						FileSystem::getInstance()->getThumbnailAttachment(boundingVolume->getConvexMeshData(), thumbnailPNGData) == true)
 						) {
 						thumbnailTexture = PNGTextureReader::read("tdme.editor.physics.convexmeshes." + to_string(thumbnailTextureIdx++), thumbnailPNGData, true);
-						if (thumbnailTexture != nullptr) {
-							thumbnailTexture->acquireReference();
-						}
 					}
 				}
 				required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("boundingvolume_convexmesh_file"))->setTexture(thumbnailTexture);
 				required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("boundingvolume_convexmesh_file"))->setTooltip(thumbnailTooltip);
+				if (thumbnailTexture != nullptr) thumbnailTexture->releaseReference();
 			} else {
 				Console::println("PrototypePhysicsSubController::setBoundingVolumeDetails(): invalid bounding volume@" + to_string(boundingVolumeIdx));
 			}
@@ -553,8 +544,7 @@ void PrototypePhysicsSubController::applyBoundingVolumeConvexMeshDetails(Prototy
 
 void PrototypePhysicsSubController::createBoundingVolume(Prototype* prototype) {
 	auto boundingVolumeIdx = prototype->getBoundingVolumeCount();
-	auto boundingVolume = new PrototypeBoundingVolume(boundingVolumeIdx, prototype);
-	prototype->addBoundingVolume(boundingVolumeIdx, boundingVolume);
+	prototype->addBoundingVolume(new PrototypeBoundingVolume(prototype));
 	setBoundingVolumeDetails(prototype, boundingVolumeIdx);
 	editorView->reloadTabOutliner(string() + "physics.boundingvolumes." + to_string(boundingVolumeIdx));
 }
@@ -938,9 +928,9 @@ void PrototypePhysicsSubController::importBoundingVolumeConvexMeshFile(const str
 			for (auto& convexMeshTMData: convexMeshTMsData) {
 				//
 				try {
-					auto prototypeBoundingVolume = new PrototypeBoundingVolume(prototype->getBoundingVolumeCount(), prototype);
+					auto prototypeBoundingVolume = make_unique<PrototypeBoundingVolume>(prototype);
 					prototypeBoundingVolume->setupConvexMesh(convexMeshTMData);
-					prototype->addBoundingVolume(prototypeBoundingVolume->getId(), prototypeBoundingVolume);
+					prototype->addBoundingVolume(prototypeBoundingVolume.release());
 				} catch (Exception& exception) {
 					Console::println("PrototypePhysicsSubController::importBoundingVolumeConvexMeshFile(): An error occurred: " + string(exception.what()));
 				}
@@ -985,9 +975,9 @@ void PrototypePhysicsSubController::generateBoundingVolumeConvexMeshFiles(const 
 			for (auto& convexMeshTMData: convexMeshTMsData) {
 				//
 				try {
-					auto prototypeBoundingVolume = new PrototypeBoundingVolume(prototype->getBoundingVolumeCount(), prototype);
+					auto prototypeBoundingVolume = make_unique<PrototypeBoundingVolume>(prototype);
 					prototypeBoundingVolume->setupConvexMesh(convexMeshTMData);
-					prototype->addBoundingVolume(prototypeBoundingVolume->getId(), prototypeBoundingVolume);
+					prototype->addBoundingVolume(prototypeBoundingVolume.release());
 				} catch (Exception& exception) {
 					Console::println("PrototypePhysicsSubController::generateBoundingVolumeConvexMeshFiles(): An error occurred: " + string(exception.what()));
 				}

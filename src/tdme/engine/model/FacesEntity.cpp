@@ -7,8 +7,6 @@
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Node.h>
-#include <tdme/engine/model/TextureCoordinate.h>
-#include <tdme/math/Vector3.h>
 
 using std::string;
 using std::vector;
@@ -17,8 +15,6 @@ using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Material;
 using tdme::engine::model::Node;
-using tdme::engine::model::TextureCoordinate;
-using tdme::math::Vector3;
 
 FacesEntity::FacesEntity()
 {

@@ -1,7 +1,9 @@
 #pragma once
 
 #include <array>
+#include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -25,6 +27,8 @@
 using std::array;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::Color4;
@@ -65,9 +69,9 @@ private:
 	BoundingBox worldBoundingBox;
 	float modelLOD2MinDistance;
 	float modelLOD3MinDistance;
-	Entity* combinedEntity;
-	map<Model*, vector<Transform>> transformByModel;
-	vector<Model*> combinedModels;
+	unique_ptr<Entity> combinedEntity;
+	unordered_map<Model*, vector<Transform>> transformByModel;
+	vector<unique_ptr<Model>> combinedModels;
 	RenderPass renderPass { RENDERPASS_STANDARD };
 	string shaderId { "default" };
 	array<int, 3> lodReduceBy;
@@ -164,7 +168,7 @@ public:
 	 * @return entity
 	 */
 	inline Entity* getEntity() {
-		return combinedEntity;
+		return combinedEntity.get();
 	}
 
 	/**
@@ -336,12 +340,12 @@ public:
 		// TODO: put me into entity interface
 		if (combinedEntity == nullptr) return;
 		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_OBJECT) {
-			static_cast<Object*>(combinedEntity)->setShader(id);
-			shaderParameters.setShader(static_cast<Object*>(combinedEntity)->getShader());
+			static_cast<Object*>(combinedEntity.get())->setShader(id);
+			shaderParameters.setShader(static_cast<Object*>(combinedEntity.get())->getShader());
 		} else
 		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_LODOBJECT) {
-			static_cast<LODObject*>(combinedEntity)->setShader(id);
-			shaderParameters.setShader(static_cast<LODObject*>(combinedEntity)->getShader());
+			static_cast<LODObject*>(combinedEntity.get())->setShader(id);
+			shaderParameters.setShader(static_cast<LODObject*>(combinedEntity.get())->getShader());
 		}
 	}
 
@@ -365,10 +369,10 @@ public:
 		shaderParameters.setShaderParameter(parameterName, parameterValue);
 		if (combinedEntity == nullptr) return;
 		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_OBJECT) {
-			static_cast<Object*>(combinedEntity)->setShaderParameter(parameterName, parameterValue);
+			static_cast<Object*>(combinedEntity.get())->setShaderParameter(parameterName, parameterValue);
 		} else
 		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_LODOBJECT) {
-			static_cast<LODObject*>(combinedEntity)->setShaderParameter(parameterName, parameterValue);
+			static_cast<LODObject*>(combinedEntity.get())->setShaderParameter(parameterName, parameterValue);
 		}
 	}
 

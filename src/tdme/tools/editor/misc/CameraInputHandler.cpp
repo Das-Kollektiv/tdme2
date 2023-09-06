@@ -146,7 +146,7 @@ void CameraInputHandler::handleInputEvents() {
 		}
 		auto mouseWheel = event.getWheelY();
 		if (mouseWheel != 0) {
-			camScale += -mouseWheel * 0.1f;
+			camScale += -mouseWheel * 0.25f;
 			if (camScale < camScaleMin) camScale = camScaleMin;
 			if (camScale > camScaleMax) camScale = camScaleMax;
 			if (eventHandler != nullptr) eventHandler->onCameraScale();
@@ -204,7 +204,9 @@ void CameraInputHandler::handleInputEvents() {
 	}
 
 	//
-	if (engine->getTiming()->getDeltaTime() <= 0LL) return;
+	auto deltaTime = engine->getTiming()->getDeltaTime();
+	if (deltaTime <= 0LL) return;
+	if (deltaTime > 33LL) deltaTime = 33LL;
 
 	//
 	Vector3 forwardVector(0.0f, 0.0f, 1.0f);
@@ -212,21 +214,21 @@ void CameraInputHandler::handleInputEvents() {
 	auto forwardVectorTransformed = camLookRotationX.getQuaternion().multiply(forwardVector);
 	forwardVectorTransformed = camLookRotationY.getQuaternion().multiply(forwardVectorTransformed);
 	auto camLookAtToFromVector = forwardVectorTransformed.clone().scale(camScale * 10.0f);
-	auto camForwardVector = camLookRotationY.getQuaternion().multiply(forwardVector).scale(engine->getTiming()->getDeltaTime() * 60.0f / 1000.0f);
-	auto camSideVector = camLookRotationY.getQuaternion().multiply(sideVector).scale(engine->getTiming()->getDeltaTime() * 60.0f / 1000.0f);
+	auto camForwardVector = camLookRotationY.getQuaternion().multiply(forwardVector).scale(30.0f * (deltaTime / 1000.0f));
+	auto camSideVector = camLookRotationY.getQuaternion().multiply(sideVector).scale(30.0f * (deltaTime / 1000.0f));
 
 	auto camLookAt = cam->getLookAt();
-	if (keyUp == true) camLookAt.sub(forwardVectorTransformed.set(camForwardVector).scale(0.1f));
-	if (keyDown == true) camLookAt.add(forwardVectorTransformed.set(camForwardVector).scale(0.1f));
-	if (keyLeft == true) camLookAt.sub(forwardVectorTransformed.set(camSideVector).scale(0.1f));
-	if (keyRight == true) camLookAt.add(forwardVectorTransformed.set(camSideVector).scale(0.1f));
+	if (keyUp == true) camLookAt.sub(forwardVectorTransformed.set(camForwardVector).scale(60.0f * (deltaTime / 1000.0f)));
+	if (keyDown == true) camLookAt.add(forwardVectorTransformed.set(camForwardVector).scale(60.0f * (deltaTime / 1000.0f)));
+	if (keyLeft == true) camLookAt.sub(forwardVectorTransformed.set(camSideVector).scale(60.0f * (deltaTime / 1000.0f)));
+	if (keyRight == true) camLookAt.add(forwardVectorTransformed.set(camSideVector).scale(60.0f * (deltaTime / 1000.0f)));
 	if (mousePanningForward != MOUSE_PANNING_NONE) {
-		camLookAt.sub(forwardVectorTransformed.set(camForwardVector).scale(mousePanningForward / 15.0f));
+		camLookAt.sub(forwardVectorTransformed.set(camForwardVector).scale(mousePanningForward));
 		mousePanningForward = MOUSE_PANNING_NONE;
 		if (eventHandler != nullptr) eventHandler->onCameraTranslation();
 	}
 	if (mousePanningSide != MOUSE_PANNING_NONE) {
-		camLookAt.sub(forwardVectorTransformed.set(camSideVector).scale(mousePanningSide / 15.0f));
+		camLookAt.sub(forwardVectorTransformed.set(camSideVector).scale(mousePanningSide));
 		mousePanningSide = MOUSE_PANNING_NONE;
 		if (eventHandler != nullptr) eventHandler->onCameraTranslation();
 	}

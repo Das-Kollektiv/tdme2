@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
@@ -7,6 +9,8 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
+
+using std::unique_ptr;
 
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Frustum;
@@ -43,7 +47,7 @@ private:
 	Matrix4x4 cameraMatrix;
 	Matrix4x4 mvpMatrix;
 	Matrix4x4 mvpInvertedMatrix;
-	Frustum* frustum { nullptr };
+	unique_ptr<Frustum> frustum;
 
 public:
 	// forbid class copy
@@ -271,7 +275,7 @@ public:
 	 * @return frustum
 	 */
 	inline Frustum* getFrustum() {
-		return frustum;
+		return frustum.get();
 	}
 
 	/**

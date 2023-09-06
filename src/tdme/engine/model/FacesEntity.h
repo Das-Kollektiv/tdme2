@@ -6,8 +6,6 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Node.h>
-#include <tdme/engine/model/TextureCoordinate.h>
-#include <tdme/math/Vector3.h>
 
 using std::string;
 using std::vector;
@@ -15,8 +13,6 @@ using std::vector;
 using tdme::engine::model::Face;
 using tdme::engine::model::Material;
 using tdme::engine::model::Node;
-using tdme::engine::model::TextureCoordinate;
-using tdme::math::Vector3;
 
 /**
  * Node faces entity

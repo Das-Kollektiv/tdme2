@@ -1,5 +1,6 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -17,8 +18,10 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/utilities/Console.h>
 
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::subsystems::renderer::Renderer;
@@ -41,22 +44,11 @@ ShadowMapping::ShadowMapping(Engine* engine, Renderer* renderer, EntityRenderer*
 	this->renderer = renderer;
 	this->entityRenderer = entityRenderer;
 	shadowMaps.resize(engine->getLightCount());
-	for (auto i = 0; i < shadowMaps.size(); i++) {
-		shadowMaps[i] = nullptr;
-	}
 	depthBiasMVPMatrix.identity();
 	runState = ShadowMapping_RunState::NONE;
 }
 
 ShadowMapping::~ShadowMapping() {
-	for (auto i = 0; i < shadowMaps.size(); i++) {
-		if (shadowMaps[i] != nullptr) delete shadowMaps[i];
-	}
-}
-
-Engine* ShadowMapping::getEngine()
-{
-	return engine;
 }
 
 void ShadowMapping::reshape(int32_t width, int32_t height)
@@ -77,9 +69,8 @@ void ShadowMapping::createShadowMaps()
 			light->getSpotDirection().computeLengthSquared() > Math::square(Math::EPSILON)) {
 			// create shadow map for light, if required
 			if (shadowMaps[i] == nullptr) {
-				auto shadowMap = new ShadowMap(this, Engine::getShadowMapWidth(), Engine::getShadowMapHeight());
-				shadowMap->initialize();
-				shadowMaps[i] = shadowMap;
+				shadowMaps[i] = make_unique<ShadowMap>(this, Engine::getShadowMapWidth(), Engine::getShadowMapHeight());
+				shadowMaps[i]->initialize();
 			}
 			// render
 			Engine::getShadowMapCreationShader()->useProgram(engine);
@@ -89,7 +80,6 @@ void ShadowMapping::createShadowMaps()
 			if (shadowMaps[i] != nullptr) {
 				// dispose shadow map
 				shadowMaps[i]->dispose();
-				delete shadowMaps[i];
 				shadowMaps[i] = nullptr;
 			}
 		}
@@ -100,10 +90,6 @@ void ShadowMapping::createShadowMaps()
 	renderer->setCullFace(renderer->CULLFACE_BACK);
 	//
 	runState = ShadowMapping_RunState::NONE;
-}
-
-ShadowMap* ShadowMapping::getShadowMap(int idx) {
-	return shadowMaps[idx];
 }
 
 void ShadowMapping::renderShadowMaps(const vector<Object*>& visibleObjects)
@@ -132,7 +118,7 @@ void ShadowMapping::renderShadowMaps(const vector<Object*>& visibleObjects)
 		if (shadowMaps[i] == nullptr) continue;
 
 		//
-		auto shadowMap = shadowMaps[i];
+		auto shadowMap = shadowMaps[i].get();
 		// set light to render
 		shader->setRenderLightId(i);
 
@@ -199,7 +185,6 @@ void ShadowMapping::dispose()
 	for (auto i = 0; i < shadowMaps.size(); i++) {
 		if (shadowMaps[i] != nullptr) {
 			shadowMaps[i]->dispose();
-			delete shadowMaps[i];
 			shadowMaps[i] = nullptr;
 		}
 	}

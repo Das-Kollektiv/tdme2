@@ -1,6 +1,7 @@
 #include <tdme/tests/EngineTest.h>
 
-#include <cctype>
+#include <array>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -15,7 +16,6 @@
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
-#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/subsystems/particlesystem/BoundingBoxParticleEmitter.h>
@@ -35,7 +35,7 @@
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/Transform.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
@@ -46,7 +46,10 @@
 #include <tdme/utilities/ModelTools.h>
 #include <tdme/utilities/ObjectDeleter.h>
 
+using std::array;
+using std::make_unique;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::application::Application;
@@ -59,7 +62,6 @@ using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::SpecularMaterialProperties;
-using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::subsystems::particlesystem::BoundingBoxParticleEmitter;
@@ -79,7 +81,7 @@ using tdme::engine::PointsParticleSystem;
 using tdme::engine::Rotation;
 using tdme::engine::Timing;
 using tdme::engine::Transform;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::math::Quaternion;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
@@ -99,23 +101,23 @@ EngineTest::EngineTest()
 
 EngineTest::~EngineTest()
 {
-	delete osEngine;
 }
-void EngineTest::main(int argc, char** argv)
+int EngineTest::main(int argc, char** argv)
 {
 	auto engineTest = new EngineTest();
-	engineTest->run(argc, argv, "EngineTest", engineTest);
+	return engineTest->run(argc, argv, "EngineTest", engineTest);
 }
 
 Model* EngineTest::createWallModel()
 {
-	auto wall = new Model("wall", "wall", UpVector::Y_UP, RotationOrder::XYZ, nullptr);
-	auto wallMaterial = new Material("wall");
-	wallMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
+	auto wallModel = make_unique<Model>("wall", "wall", UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	auto wallMaterial = make_unique<Material>("wall");
+	wallMaterial->setSpecularMaterialProperties(make_unique<SpecularMaterialProperties>().release());
 	wallMaterial->getSpecularMaterialProperties()->setAmbientColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	wallMaterial->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	wall->getMaterials()["wall"] = wallMaterial;
-	auto wallNode = new Node(wall, nullptr, "wall", "wall");
+	wallModel->getMaterials()["wall"] = wallMaterial.get();
+	auto wallMaterialPtr = wallMaterial.release();
+	auto wallNode = make_unique<Node>(wallModel.get(), nullptr, "wall", "wall");
 	vector<FacesEntity> nodeFacesEntities;
 	vector<Vector3> vertices;
 	vertices.push_back(Vector3(-4.0f, 0.0f, +4.0f));
@@ -124,26 +126,27 @@ Model* EngineTest::createWallModel()
 	vertices.push_back(Vector3(+4.0f, 0.0f, +4.0f));
 	vector<Vector3> normals;
 	normals.push_back(Vector3(0.0f, 0.0f, -1.0f));
-	vector<TextureCoordinate> textureCoordinates;
-	textureCoordinates.push_back(TextureCoordinate(0.0f, 0.0f));
-	textureCoordinates.push_back(TextureCoordinate(0.0f, 1.0f));
-	textureCoordinates.push_back(TextureCoordinate(1.0f, 1.0f));
-	textureCoordinates.push_back(TextureCoordinate(1.0f, 0.0f));
+	vector<Vector2> textureCoordinates;
+	textureCoordinates.push_back(Vector2(0.0f, 1.0f));
+	textureCoordinates.push_back(Vector2(0.0f, 0.0f));
+	textureCoordinates.push_back(Vector2(1.0f, 0.0f));
+	textureCoordinates.push_back(Vector2(1.0f, 1.0f));
 	vector<Face> facesFarPlane;
-	facesFarPlane.push_back(Face(wallNode, 0, 1, 2, 0, 0, 0, 0, 1, 2));
-	facesFarPlane.push_back(Face(wallNode, 2, 3, 0, 0, 0, 0, 2, 3, 0));
-	FacesEntity nodeFacesEntityFarPlane(wallNode, "wall");
-	nodeFacesEntityFarPlane.setMaterial(wallMaterial);
+	facesFarPlane.push_back(Face(wallNode.get(), 0, 1, 2, 0, 0, 0, 0, 1, 2));
+	facesFarPlane.push_back(Face(wallNode.get(), 2, 3, 0, 0, 0, 0, 2, 3, 0));
+	FacesEntity nodeFacesEntityFarPlane(wallNode.get(), "wall");
+	nodeFacesEntityFarPlane.setMaterial(wallMaterialPtr);
 	nodeFacesEntityFarPlane.setFaces(facesFarPlane);
 	nodeFacesEntities.push_back(nodeFacesEntityFarPlane);
 	wallNode->setVertices(vertices);
 	wallNode->setNormals(normals);
 	wallNode->setTextureCoordinates(textureCoordinates);
 	wallNode->setFacesEntities(nodeFacesEntities);
-	wall->getNodes()["wall"] = wallNode;
-	wall->getSubNodes()["wall"] = wallNode;
-	ModelTools::prepareForIndexedRendering(wall);
-	return wall;
+	wallModel->getNodes()["wall"] = wallNode.get();
+	wallModel->getSubNodes()["wall"] = wallNode.get();
+	wallNode.release();
+	ModelTools::prepareForIndexedRendering(wallModel.get());
+	return wallModel.release();
 }
 
 void EngineTest::display()
@@ -214,8 +217,8 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 
 void EngineTest::dispose()
 {
-	engine->dispose();
 	osEngine->dispose();
+	engine->dispose();
 }
 
 void EngineTest::initialize()
@@ -223,7 +226,7 @@ void EngineTest::initialize()
 	engine->initialize();
 	engine->addPostProcessingProgram("ssao");
 	if (osEngine == nullptr) {
-		osEngine = Engine::createOffScreenInstance(512, 512, false, true, false);
+		osEngine = unique_ptr<Engine>(Engine::createOffScreenInstance(512, 512, false, true, false));
 		auto osLight0 = osEngine->getLightAt(0);
 		osLight0->setAmbient(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 		osLight0->setDiffuse(Color4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -277,7 +280,7 @@ void EngineTest::initialize()
 		auto _farPlane = modelDeleter.add(createWallModel());
 		auto farPlane = new Object("wall", _farPlane);
 		farPlane->setTextureMatrix(
-			(Matrix2D3x3()).identity().scale(Vector2(1.0f, -1.0f)),
+			(Matrix3x3()).identity().scale(Vector2(1.0f, -1.0f)),
 			"wall",
 			"wall"
 		);
@@ -291,7 +294,7 @@ void EngineTest::initialize()
 		grass->setReceivesShadows(true);
 		grass->update();
 		engine->addEntity(grass);
-		auto _player = ModelReader::read("resources/tests/models/mementoman/", "mementoman.dae");
+		auto _player = modelDeleter.add(ModelReader::read("resources/tests/models/mementoman/", "mementoman.dae"));
 		_player->addAnimationSetup("walk", 0, 24, true);
 		_player->addAnimationSetup("still", 25, 99, true);
 		auto player1 = new Object("player1", _player);

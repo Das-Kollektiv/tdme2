@@ -1,8 +1,9 @@
 #include <tdme/engine/fileio/models/TMWriter.h>
 
 #include <array>
-#include <map>
+#include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -25,12 +26,12 @@
 #include <tdme/engine/model/ShaderModel.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
-#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -39,9 +40,11 @@
 #include <tdme/utilities/Exception.h>
 
 using std::array;
-using std::map;
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
+using std::unordered_map;
 using std::vector;
 
 using tdme::application::Application;
@@ -65,12 +68,12 @@ using tdme::engine::model::RotationOrder;
 using tdme::engine::model::ShaderModel;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
-using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::math::Matrix4x4;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
@@ -115,7 +118,7 @@ void TMWriter::write(Model* model, vector<uint8_t>& data, bool useBC7TextureComp
 }
 
 void TMWriter::writeEmbeddedTextures(TMWriterOutputStream* os, Model* m, bool useBC7TextureCompression) {
-	map<string, Texture*> embeddedTextures;
+	unordered_map<string, Texture*> embeddedTextures;
 	for (const auto& [materialId, material]: m->getMaterials()) {
 		auto smp = material->getSpecularMaterialProperties();
 		if (smp != nullptr && m->hasEmbeddedSpecularTextures() == true) {
@@ -243,7 +246,7 @@ void TMWriter::writeVertices(TMWriterOutputStream* os, const vector<Vector3>& v)
 	}
 }
 
-void TMWriter::writeTextureCoordinates(TMWriterOutputStream* os, const vector<TextureCoordinate>& tc) // TODO: change std::vector* argument to std::vector& ?
+void TMWriter::writeTextureCoordinates(TMWriterOutputStream* os, const vector<Vector2>& tc)
 {
 	if (tc.size() == 0) {
 		os->writeBoolean(false);
@@ -335,7 +338,7 @@ void TMWriter::writeSkinning(TMWriterOutputStream* os, Skinning* skinning)
 	}
 }
 
-void TMWriter::writeSubNodes(TMWriterOutputStream* os, const map<string, Node*>& subNodes)
+void TMWriter::writeSubNodes(TMWriterOutputStream* os, const unordered_map<string, Node*>& subNodes)
 {
 	os->writeInt(subNodes.size());
 	for (const auto& [subNodeId, subNode]: subNodes) {
@@ -362,7 +365,7 @@ void TMWriter::writeNode(TMWriterOutputStream* os, Node* g)
 
 void TMWriter::writeThumbnail(TMWriterOutputStream* os, Model* model) {
 	// generate thumbnail
-	auto prototype = new Prototype(
+	auto prototype = make_unique<Prototype>(
 		Prototype::ID_NONE,
 		Prototype_Type::MODEL,
 		model->getId(),
@@ -374,9 +377,8 @@ void TMWriter::writeThumbnail(TMWriterOutputStream* os, Model* model) {
 	);
 	vector<uint8_t> pngData;
 	string base64PNGData;
-	Tools::oseThumbnail(prototype, pngData);
+	Tools::oseThumbnail(prototype.get(), pngData);
 	prototype->unsetModel();
-	delete prototype;
 
 	// write as attachment
 	os->writeUInt8tArray(pngData);

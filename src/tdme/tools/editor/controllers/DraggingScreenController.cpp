@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/controllers/DraggingScreenController.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -24,6 +25,7 @@ using tdme::tools::editor::controllers::DraggingScreenController;
 using std::string;
 using std::to_string;
 using std::unordered_map;
+using std::unique_ptr;
 
 using tdme::engine::Engine;
 using tdme::gui::elements::GUIMoveableController;
@@ -49,7 +51,6 @@ DraggingScreenController::DraggingScreenController()
 DraggingScreenController::~DraggingScreenController()
 {
 	screenNode = nullptr;
-	if (onReleaseAction != nullptr) delete onReleaseAction;
 }
 
 GUIScreenNode* DraggingScreenController::getScreenNode()
@@ -86,7 +87,6 @@ void DraggingScreenController::onRelease(GUINode* node, int mouseX, int mouseY) 
 	close();
 	if (onReleaseAction != nullptr) {
 		onReleaseAction->performAction();
-		delete onReleaseAction;
 		onReleaseAction = nullptr;
 	}
 }
@@ -94,8 +94,7 @@ void DraggingScreenController::onRelease(GUINode* node, int mouseX, int mouseY) 
 void DraggingScreenController::start(int mouseX, int mouseY, const string& xml, const string& payload, Action* onReleaseAction)
 {
 	this->payload = payload;
-	if (this->onReleaseAction != nullptr) delete this->onReleaseAction;
-	this->onReleaseAction = onReleaseAction;
+	this->onReleaseAction = unique_ptr<Action>(onReleaseAction);
 	dragReleaseMouseX = -1;
 	dragReleaseMouseY = -1;
 	//

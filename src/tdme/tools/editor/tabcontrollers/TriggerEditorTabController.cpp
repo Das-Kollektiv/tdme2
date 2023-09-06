@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabcontrollers/TriggerEditorTabController.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -32,7 +33,9 @@
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/MutableString.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 
 using tdme::tools::editor::tabcontrollers::TriggerEditorTabController;
 
@@ -67,26 +70,13 @@ TriggerEditorTabController::TriggerEditorTabController(TriggerEditorTabView* vie
 {
 	this->view = view;
 	this->popUps = view->getPopUps();
-	this->basePropertiesSubController = new BasePropertiesSubController(view->getEditorView(), "prototype");
-	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view, false);
-	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEditorView(), view, this->prototypePhysicsSubController->getView());
-	this->prototypeScriptSubController = new PrototypeScriptSubController(view->getEditorView());
+	this->basePropertiesSubController = make_unique<BasePropertiesSubController>(view->getEditorView(), "prototype");
+	this->prototypePhysicsSubController = make_unique<PrototypePhysicsSubController>(view->getEditorView(), view, false);
+	this->prototypeDisplaySubController = make_unique<PrototypeDisplaySubController>(view->getEditorView(), view, this->prototypePhysicsSubController->getView());
+	this->prototypeScriptSubController = make_unique<PrototypeScriptSubController>(view->getEditorView());
 }
 
 TriggerEditorTabController::~TriggerEditorTabController() {
-	delete prototypeScriptSubController;
-	delete prototypeDisplaySubController;
-	delete prototypePhysicsSubController;
-	delete basePropertiesSubController;
-}
-
-TriggerEditorTabView* TriggerEditorTabController::getView() {
-	return view;
-}
-
-GUIScreenNode* TriggerEditorTabController::getScreenNode()
-{
-	return screenNode;
 }
 
 void TriggerEditorTabController::initialize(GUIScreenNode* screenNode)

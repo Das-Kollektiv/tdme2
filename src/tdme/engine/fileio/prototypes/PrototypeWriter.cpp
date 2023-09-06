@@ -249,8 +249,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 	if (prototype->getType() == Prototype_Type::PARTICLESYSTEM) {
 		Value jParticleSystems;
 		jParticleSystems.SetArray();
-		for (auto i = 0; i < prototype->getParticleSystemsCount(); i++) {
-			auto particleSystem = prototype->getParticleSystemAt(i);
+		for (auto particleSystem: prototype->getParticleSystems()) {
 			Value jParticleSystem;
 			jParticleSystem.SetObject();
 			jParticleSystem.AddMember("t", Value(particleSystem->getType()->getName(), jAllocator), jAllocator);
@@ -506,89 +505,90 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 		}
 		jPrototypeRoot.AddMember("pss", jParticleSystems, jAllocator);
 	}
-	Value jBoundingVolumes;
-	jBoundingVolumes.SetArray();
-	for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
-		auto prototypeBoundingVolume = prototype->getBoundingVolume(i);
-		auto bv = prototypeBoundingVolume->getBoundingVolume();
-		if (bv == nullptr) continue;
-		Value jBoundingVolume;
-		jBoundingVolume.SetObject();
-		if (bv == nullptr) {
-			jBoundingVolume.AddMember("type", Value("none", jAllocator), jAllocator);
-		} else
-		if (dynamic_cast< Sphere* >(bv) != nullptr) {
-			auto sphere = dynamic_cast< Sphere* >(bv);
-			jBoundingVolume.AddMember("type", Value("sphere", jAllocator), jAllocator);
-			jBoundingVolume.AddMember("cx", Value(sphere->getCenter().getX()), jAllocator);
-			jBoundingVolume.AddMember("cy", Value(sphere->getCenter().getY()), jAllocator);
-			jBoundingVolume.AddMember("cz", Value(sphere->getCenter().getZ()), jAllocator);
-			jBoundingVolume.AddMember("r", Value(sphere->getRadius()), jAllocator);
-		} else
-		if (dynamic_cast< Capsule* >(bv) != nullptr) {
-			auto capsule = dynamic_cast< Capsule* >(bv);
-			jBoundingVolume.AddMember("type", Value("capsule", jAllocator), jAllocator);
-			jBoundingVolume.AddMember("ax", Value(capsule->getA().getX()), jAllocator);
-			jBoundingVolume.AddMember("ay", Value(capsule->getA().getY()), jAllocator);
-			jBoundingVolume.AddMember("az", Value(capsule->getA().getZ()), jAllocator);
-			jBoundingVolume.AddMember("bx", Value(capsule->getB().getX()), jAllocator);
-			jBoundingVolume.AddMember("by", Value(capsule->getB().getY()), jAllocator);
-			jBoundingVolume.AddMember("bz", Value(capsule->getB().getZ()), jAllocator);
-			jBoundingVolume.AddMember("r", Value(capsule->getRadius()), jAllocator);
-		} else
-		if (dynamic_cast< BoundingBox* >(bv) != nullptr) {
-			auto aabb = dynamic_cast< BoundingBox* >(bv);
-			jBoundingVolume.AddMember("type", Value("aabb", jAllocator), jAllocator);
-			jBoundingVolume.AddMember("mix", Value(aabb->getMin().getX()), jAllocator);
-			jBoundingVolume.AddMember("miy", Value(aabb->getMin().getY()), jAllocator);
-			jBoundingVolume.AddMember("miz", Value(aabb->getMin().getZ()), jAllocator);
-			jBoundingVolume.AddMember("max", Value(aabb->getMax().getX()), jAllocator);
-			jBoundingVolume.AddMember("may", Value(aabb->getMax().getY()), jAllocator);
-			jBoundingVolume.AddMember("maz", Value(aabb->getMax().getZ()), jAllocator);
-		} else
-		if (dynamic_cast< OrientedBoundingBox* >(bv) != nullptr) {
-			auto obb = dynamic_cast< OrientedBoundingBox* >(bv);
-			jBoundingVolume.AddMember("type", Value("obb", jAllocator), jAllocator);
-			jBoundingVolume.AddMember("cx", Value(obb->getCenter().getX()), jAllocator);
-			jBoundingVolume.AddMember("cy", Value(obb->getCenter().getY()), jAllocator);
-			jBoundingVolume.AddMember("cz", Value(obb->getCenter().getZ()), jAllocator);
-			jBoundingVolume.AddMember("a0x", Value(obb->getAxes()[0].getX()), jAllocator);
-			jBoundingVolume.AddMember("a0y", Value(obb->getAxes()[0].getY()), jAllocator);
-			jBoundingVolume.AddMember("a0z", Value(obb->getAxes()[0].getZ()), jAllocator);
-			jBoundingVolume.AddMember("a1x", Value(obb->getAxes()[1].getX()), jAllocator);
-			jBoundingVolume.AddMember("a1y", Value(obb->getAxes()[1].getY()), jAllocator);
-			jBoundingVolume.AddMember("a1z", Value(obb->getAxes()[1].getZ()), jAllocator);
-			jBoundingVolume.AddMember("a2x", Value(obb->getAxes()[2].getX()), jAllocator);
-			jBoundingVolume.AddMember("a2y", Value(obb->getAxes()[2].getY()), jAllocator);
-			jBoundingVolume.AddMember("a2z", Value(obb->getAxes()[2].getZ()), jAllocator);
-			jBoundingVolume.AddMember("hex", Value(obb->getHalfExtension().getX()), jAllocator);
-			jBoundingVolume.AddMember("hey", Value(obb->getHalfExtension().getY()), jAllocator);
-			jBoundingVolume.AddMember("hez", Value(obb->getHalfExtension().getZ()), jAllocator);
-		} else
-		if (dynamic_cast< ConvexMesh* >(bv) != nullptr) {
-			jBoundingVolume.AddMember("type", Value("convexmesh", jAllocator), jAllocator);
-			if (prototypeBoundingVolume->getConvexMeshData().empty() == false) {
-				string base64TMData;
-				Base64::encode(prototypeBoundingVolume->getConvexMeshData(), base64TMData);
-				jBoundingVolume.AddMember("data", Value(base64TMData, jAllocator), jAllocator);
-			} else {
-				jBoundingVolume.AddMember("file", Value(prototypeBoundingVolume->getConvexMeshFile(), jAllocator), jAllocator);
-				auto convexMeshModel =
-					TMReader::read(
+	{
+		Value jBoundingVolumes;
+		jBoundingVolumes.SetArray();
+		for (auto prototypeBoundingVolume: prototype->getBoundingVolumes()) {
+			auto bv = prototypeBoundingVolume->getBoundingVolume();
+			if (bv == nullptr) continue;
+			Value jBoundingVolume;
+			jBoundingVolume.SetObject();
+			if (bv == nullptr) {
+				jBoundingVolume.AddMember("type", Value("none", jAllocator), jAllocator);
+			} else
+			if (dynamic_cast<Sphere*>(bv) != nullptr) {
+				auto sphere = dynamic_cast<Sphere*>(bv);
+				jBoundingVolume.AddMember("type", Value("sphere", jAllocator), jAllocator);
+				jBoundingVolume.AddMember("cx", Value(sphere->getCenter().getX()), jAllocator);
+				jBoundingVolume.AddMember("cy", Value(sphere->getCenter().getY()), jAllocator);
+				jBoundingVolume.AddMember("cz", Value(sphere->getCenter().getZ()), jAllocator);
+				jBoundingVolume.AddMember("r", Value(sphere->getRadius()), jAllocator);
+			} else
+			if (dynamic_cast<Capsule*>(bv) != nullptr) {
+				auto capsule = dynamic_cast<Capsule*>(bv);
+				jBoundingVolume.AddMember("type", Value("capsule", jAllocator), jAllocator);
+				jBoundingVolume.AddMember("ax", Value(capsule->getA().getX()), jAllocator);
+				jBoundingVolume.AddMember("ay", Value(capsule->getA().getY()), jAllocator);
+				jBoundingVolume.AddMember("az", Value(capsule->getA().getZ()), jAllocator);
+				jBoundingVolume.AddMember("bx", Value(capsule->getB().getX()), jAllocator);
+				jBoundingVolume.AddMember("by", Value(capsule->getB().getY()), jAllocator);
+				jBoundingVolume.AddMember("bz", Value(capsule->getB().getZ()), jAllocator);
+				jBoundingVolume.AddMember("r", Value(capsule->getRadius()), jAllocator);
+			} else
+			if (dynamic_cast<BoundingBox*>(bv) != nullptr) {
+				auto aabb = dynamic_cast<BoundingBox*>(bv);
+				jBoundingVolume.AddMember("type", Value("aabb", jAllocator), jAllocator);
+				jBoundingVolume.AddMember("mix", Value(aabb->getMin().getX()), jAllocator);
+				jBoundingVolume.AddMember("miy", Value(aabb->getMin().getY()), jAllocator);
+				jBoundingVolume.AddMember("miz", Value(aabb->getMin().getZ()), jAllocator);
+				jBoundingVolume.AddMember("max", Value(aabb->getMax().getX()), jAllocator);
+				jBoundingVolume.AddMember("may", Value(aabb->getMax().getY()), jAllocator);
+				jBoundingVolume.AddMember("maz", Value(aabb->getMax().getZ()), jAllocator);
+			} else
+			if (dynamic_cast<OrientedBoundingBox*>(bv) != nullptr) {
+				auto obb = dynamic_cast<OrientedBoundingBox*>(bv);
+				jBoundingVolume.AddMember("type", Value("obb", jAllocator), jAllocator);
+				jBoundingVolume.AddMember("cx", Value(obb->getCenter().getX()), jAllocator);
+				jBoundingVolume.AddMember("cy", Value(obb->getCenter().getY()), jAllocator);
+				jBoundingVolume.AddMember("cz", Value(obb->getCenter().getZ()), jAllocator);
+				jBoundingVolume.AddMember("a0x", Value(obb->getAxes()[0].getX()), jAllocator);
+				jBoundingVolume.AddMember("a0y", Value(obb->getAxes()[0].getY()), jAllocator);
+				jBoundingVolume.AddMember("a0z", Value(obb->getAxes()[0].getZ()), jAllocator);
+				jBoundingVolume.AddMember("a1x", Value(obb->getAxes()[1].getX()), jAllocator);
+				jBoundingVolume.AddMember("a1y", Value(obb->getAxes()[1].getY()), jAllocator);
+				jBoundingVolume.AddMember("a1z", Value(obb->getAxes()[1].getZ()), jAllocator);
+				jBoundingVolume.AddMember("a2x", Value(obb->getAxes()[2].getX()), jAllocator);
+				jBoundingVolume.AddMember("a2y", Value(obb->getAxes()[2].getY()), jAllocator);
+				jBoundingVolume.AddMember("a2z", Value(obb->getAxes()[2].getZ()), jAllocator);
+				jBoundingVolume.AddMember("hex", Value(obb->getHalfExtension().getX()), jAllocator);
+				jBoundingVolume.AddMember("hey", Value(obb->getHalfExtension().getY()), jAllocator);
+				jBoundingVolume.AddMember("hez", Value(obb->getHalfExtension().getZ()), jAllocator);
+			} else
+			if (dynamic_cast<ConvexMesh*>(bv) != nullptr) {
+				jBoundingVolume.AddMember("type", Value("convexmesh", jAllocator), jAllocator);
+				if (prototypeBoundingVolume->getConvexMeshData().empty() == false) {
+					string base64TMData;
+					Base64::encode(prototypeBoundingVolume->getConvexMeshData(), base64TMData);
+					jBoundingVolume.AddMember("data", Value(base64TMData, jAllocator), jAllocator);
+				} else {
+					jBoundingVolume.AddMember("file", Value(prototypeBoundingVolume->getConvexMeshFile(), jAllocator), jAllocator);
+					auto convexMeshModel =
+						TMReader::read(
+							Tools::getPathName(prototypeBoundingVolume->getConvexMeshFile()),
+							Tools::getFileName(prototypeBoundingVolume->getConvexMeshFile())
+						);
+					TMWriter::write(
+						convexMeshModel,
 						Tools::getPathName(prototypeBoundingVolume->getConvexMeshFile()),
 						Tools::getFileName(prototypeBoundingVolume->getConvexMeshFile())
 					);
-				TMWriter::write(
-					convexMeshModel,
-					Tools::getPathName(prototypeBoundingVolume->getConvexMeshFile()),
-					Tools::getFileName(prototypeBoundingVolume->getConvexMeshFile())
-				);
+				}
 			}
+			jBoundingVolume.AddMember("g", Value(prototypeBoundingVolume->isGenerated()), jAllocator);
+			jBoundingVolumes.PushBack(jBoundingVolume, jAllocator);
 		}
-		jBoundingVolume.AddMember("g", Value(prototypeBoundingVolume->isGenerated()), jAllocator);
-		jBoundingVolumes.PushBack(jBoundingVolume, jAllocator);
+		jPrototypeRoot.AddMember("bvs", jBoundingVolumes, jAllocator);
 	}
-	jPrototypeRoot.AddMember("bvs", jBoundingVolumes, jAllocator);
 	auto physics = prototype->getPhysics();
 	if (physics != nullptr) {
 		Value jPhysics;
@@ -605,7 +605,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 	Value jPrototypeProperties;
 	jPrototypeProperties.SetArray();
 	for (auto i = 0; i < prototype->getPropertyCount(); i++) {
-		BaseProperty* modelProperty = prototype->getPropertyByIndex(i);
+		BaseProperty* modelProperty = prototype->getPropertyAt(i);
 		Value jObjectProperty;
 		jObjectProperty.SetObject();
 		jObjectProperty.AddMember("name", Value(modelProperty->getName(), jAllocator), jAllocator);
@@ -625,10 +625,10 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 		}
 		jPrototypeRoot.AddMember("sps", jShaderParameters, jAllocator);
 	}
-	if (prototype->getSounds().size() > 0) {
+	if (prototype->getSoundCount() > 0) {
 		Value jSounds;
 		jSounds.SetArray();
-		for (const auto sound: prototype->getSounds()) {
+		for (auto sound: prototype->getSounds()) {
 			if (sound->getFileName().length() == 0) continue;
 			Value jSound;
 			jSound.SetObject();

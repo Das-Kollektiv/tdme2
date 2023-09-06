@@ -1,4 +1,4 @@
-#include <cstdlib>
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -18,6 +18,9 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/StringTools.h>
+
+using std::string;
+using std::unique_ptr;
 
 using tdme::application::Application;
 using tdme::engine::fileio::models::ModelReader;
@@ -74,8 +77,9 @@ public:
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values
+	 * @return exit code
 	 */
-	inline static void main(int argc, char** argv) {
+	inline static int main(int argc, char** argv) {
 		auto useBC7TextureCompression = true;
 		vector<string> modelFileNames;
 		for (auto i = 1; i < argc; i++) {
@@ -87,7 +91,7 @@ public:
 			modelFileNames.push_back(argumentValue);
 		}
 		auto convertToTMApplication = new ConvertToTMApplication(useBC7TextureCompression, modelFileNames);
-		convertToTMApplication->run(argc, argv, "Convert to tm Application", nullptr, Application::WINDOW_HINT_INVISIBLE);
+		return convertToTMApplication->run(argc, argv, "Convert to tm Application", nullptr, Application::WINDOW_HINT_INVISIBLE);
 	}
 
 	// overridden methods
@@ -101,10 +105,12 @@ public:
 				auto outputFileName = StringTools::substring(inputFileName, 0, inputFileName.rfind('.')) + ".tm";
 				try {
 					Console::println("Loading model: " + inputFileName);
-					auto model = ModelReader::read(
-						FileSystem::getInstance()->getPathName(inputFileName),
-						FileSystem::getInstance()->getFileName(inputFileName),
-						useBC7TextureCompression
+					auto model = unique_ptr<Model>(
+						ModelReader::read(
+							FileSystem::getInstance()->getPathName(inputFileName),
+							FileSystem::getInstance()->getFileName(inputFileName),
+							useBC7TextureCompression
+						)
 					);
 					for (const auto& [materialId, material]: model->getMaterials()) {
 						auto specularMaterialProperties = material->getSpecularMaterialProperties();
@@ -204,7 +210,7 @@ public:
 					//
 					Console::println("Exporting model: " + outputFileName);
 					TMWriter::write(
-						model,
+						model.get(),
 						FileSystem::getInstance()->getPathName(outputFileName),
 						FileSystem::getInstance()->getFileName(outputFileName),
 						useBC7TextureCompression
@@ -245,5 +251,5 @@ int main(int argc, char** argv)
 		Console::println("Usage: converttotm [-no-texture-compression] inputfile1 [inputfileN]");
 		Application::exit(1);
 	}
-	tdme::tools::cli::ConvertToTMApplication::main(argc, argv);
+	return tdme::tools::cli::ConvertToTMApplication::main(argc, argv);
 }

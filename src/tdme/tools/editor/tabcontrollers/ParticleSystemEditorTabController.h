@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -20,6 +21,7 @@
 
 using std::array;
 using std::string;
+using std::unique_ptr;
 
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
@@ -52,11 +54,11 @@ class tdme::tools::editor::tabcontrollers::ParticleSystemEditorTabController fin
 {
 
 private:
-	BasePropertiesSubController* basePropertiesSubController { nullptr };
-	PrototypeDisplaySubController* prototypeDisplaySubController { nullptr };
-	PrototypePhysicsSubController* prototypePhysicsSubController { nullptr };
-	PrototypeSoundsSubController* prototypeSoundsSubController { nullptr };
-	PrototypeScriptSubController* prototypeScriptSubController { nullptr };
+	unique_ptr<BasePropertiesSubController> basePropertiesSubController;
+	unique_ptr<PrototypeDisplaySubController> prototypeDisplaySubController;
+	unique_ptr<PrototypePhysicsSubController> prototypePhysicsSubController;
+	unique_ptr<PrototypeSoundsSubController> prototypeSoundsSubController;
+	unique_ptr<PrototypeScriptSubController> prototypeScriptSubController;
 	ParticleSystemEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
@@ -209,30 +211,35 @@ public:
 	 * @return display sub screen controller
 	 */
 	inline PrototypeDisplaySubController* getPrototypeDisplaySubController() {
-		return prototypeDisplaySubController;
+		return prototypeDisplaySubController.get();
 	}
 
 	/**
 	 * @return pyhsics sub screen controller
 	 */
 	inline PrototypePhysicsSubController* getPrototypePhysicsSubController() {
-		return prototypePhysicsSubController;
+		return prototypePhysicsSubController.get();
 	}
 
 	/**
 	 * @return prototype sounds sub screen controller
 	 */
 	inline PrototypeSoundsSubController* getPrototypeSoundsSubController() {
-		return prototypeSoundsSubController;
+		return prototypeSoundsSubController.get();
 	}
 
 	/**
 	 * Get view
+	 * @return view
 	 */
-	ParticleSystemEditorTabView* getView();
+	inline ParticleSystemEditorTabView* getView() {
+		return view;
+	}
 
 	// overridden method
-	GUIScreenNode* getScreenNode() override;
+	inline GUIScreenNode* getScreenNode() override {
+		return screenNode;
+	}
 
 	// overridden methods
 	void initialize(GUIScreenNode* screenNode) override;

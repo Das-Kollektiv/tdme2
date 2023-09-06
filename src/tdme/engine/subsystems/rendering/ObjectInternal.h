@@ -11,7 +11,7 @@
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/ObjectAnimation.h>
 #include <tdme/engine/subsystems/rendering/ObjectBase.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 
 using std::string;
 
@@ -23,7 +23,7 @@ using tdme::engine::subsystems::rendering::ObjectBase;
 using tdme::engine::ColorTexture;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Transform;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 
 /**
  * Object
@@ -220,7 +220,7 @@ public:
 	 * @param nodeId node id or empty string for all
 	 * @param facesEntityId faces entity id or empty string for all
 	 */
-	void setTextureMatrix(const Matrix2D3x3& textureMatrix, const string& nodeId = string(), const string& facesEntityId = string());
+	void setTextureMatrix(const Matrix3x3& textureMatrix, const string& nodeId = string(), const string& facesEntityId = string());
 
 	// overridden methods
 	inline void initialize() override {

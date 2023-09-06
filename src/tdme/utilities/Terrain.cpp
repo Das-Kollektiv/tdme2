@@ -2,6 +2,7 @@
 
 #include <array>
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <unordered_map>
@@ -25,7 +26,7 @@
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
@@ -35,6 +36,7 @@
 #include <tdme/utilities/ModelTools.h>
 
 using std::array;
+using std::make_unique;
 using std::map;
 using std::set;
 using std::string;
@@ -61,7 +63,7 @@ using tdme::engine::primitives::LineSegment;
 using tdme::engine::Rotation;
 using tdme::engine::Transform;
 using tdme::math::Math;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::math::Vector2;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -262,25 +264,28 @@ void Terrain::createTerrainModels(float width, float depth, float y, vector<floa
 	auto partitionIdx = 0;
 	for (auto partitionIdx = 0; partitionIdx < partitionCount; partitionIdx++) {
 		if (partitionTerrainFaces[partitionIdx].empty() == true) continue;
+		//
 		auto modelId = "terrain." + to_string(partitionIdx);
-		auto terrainModel = new Model(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
-		auto terrainMaterial = new Material("terrain");
-		terrainMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
+		auto terrainModel = make_unique<Model>(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
+		//
+		auto terrainMaterial = make_unique<Material>("terrain");
+		terrainMaterial->setSpecularMaterialProperties(make_unique<SpecularMaterialProperties>().release());
 		// TODO: Fix me! The textures seem to be much too dark
 		terrainMaterial->getSpecularMaterialProperties()->setAmbientColor(Color4(2.0f, 2.0f, 2.0f, 0.0f));
 		terrainMaterial->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 		terrainMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 0.0f));
-		terrainModel->getMaterials()[terrainMaterial->getId()] = terrainMaterial;
-		auto terrainNode = new Node(terrainModel, nullptr, "terrain", "terrain");
-		FacesEntity nodeFacesEntityTerrain(terrainNode, "terrain.facesentity");
-		nodeFacesEntityTerrain.setMaterial(terrainMaterial);
+		//
+		auto terrainNode = make_unique<Node>(terrainModel.get(), nullptr, "terrain", "terrain");
+		FacesEntity nodeFacesEntityTerrain(terrainNode.get(), "terrain.facesentity");
+		nodeFacesEntityTerrain.setMaterial(terrainMaterial.get());
 		vector<FacesEntity> nodeFacesEntities;
 		vector<Face> nodeFaces;
+		//
 		auto trianglesPerX = partitionTerrainTriangles[partitionIdx].begin()->second;
 		auto trianglesPerZ = partitionTerrainTriangles[partitionIdx].size();
-		for (auto& faceIndices: partitionTerrainFaces[partitionIdx]) {
+		for (const auto& faceIndices: partitionTerrainFaces[partitionIdx]) {
 			nodeFaces.emplace_back(
-				terrainNode,
+				terrainNode.get(),
 				faceIndices[0],
 				faceIndices[1],
 				faceIndices[2],
@@ -376,22 +381,31 @@ void Terrain::createTerrainModels(float width, float depth, float y, vector<floa
 				nodeFacesEntityTerrain.setLOD3Distance(192.0f);
 			}
 		}
-
+		//
 		nodeFacesEntityTerrain.setFaces(nodeFaces);
 		nodeFacesEntities.push_back(nodeFacesEntityTerrain);
+		//
 		terrainNode->setVertices(partitionTerrainVertices[partitionIdx]);
 		terrainNode->setNormals(partitionTerrainNormals[partitionIdx]);
 		terrainNode->setFacesEntities(nodeFacesEntities);
-		terrainModel->getNodes()[terrainNode->getId()] = terrainNode;
-		terrainModel->getSubNodes()[terrainNode->getId()] = terrainNode;
+		//
+		terrainModel->getNodes()[terrainNode->getId()] = terrainNode.get();
+		terrainModel->getSubNodes()[terrainNode->getId()] = terrainNode.get();
+		terrainNode.release();
+		//
+		terrainModel->getMaterials()[terrainMaterial->getId()] = terrainMaterial.get();
+		terrainMaterial.release();
+		//
 		terrainModel->invalidateBoundingBox();
 		if (partitionIdx == 0) {
 			terrainBoundingBox = *terrainModel->getBoundingBox();
 		} else {
 			terrainBoundingBox.extend(terrainModel->getBoundingBox());
 		}
-		ModelTools::createDefaultAnimation(terrainModel, 1);
-		terrainModels.push_back(terrainModel);
+		//
+		ModelTools::createDefaultAnimation(terrainModel.get(), 1);
+		//
+		terrainModels.push_back(terrainModel.release());
 	}
 }
 
@@ -864,11 +878,11 @@ void Terrain::applyRampBrushToTerrainModels(
 	auto textureBytePerPixel = brushTexture->getRGBDepthBitsPerPixel() == 32?4:3;
 
 	// brush texture matrix
-	Matrix2D3x3 brushTextureMatrix;
+	Matrix3x3 brushTextureMatrix;
 	brushTextureMatrix.identity();
-	brushTextureMatrix.translate(Vector2(static_cast<float>(textureWidth) / 2.0f, static_cast<float>(textureHeight) / 2.0f));
-	brushTextureMatrix.multiply((Matrix2D3x3()).identity().scale(Vector2(1.0f / brushScale.getX(), 1.0f / brushScale.getY())));
-	brushTextureMatrix.multiply((Matrix2D3x3()).identity().rotate(brushRotation));
+	brushTextureMatrix.setTranslation(Vector2(static_cast<float>(textureWidth) / 2.0f, static_cast<float>(textureHeight) / 2.0f));
+	brushTextureMatrix.multiply((Matrix3x3()).identity().scale(Vector2(1.0f / brushScale.getX(), 1.0f / brushScale.getY())));
+	brushTextureMatrix.multiply((Matrix3x3()).identity().setAxes(brushRotation));
 	auto brushScaleMax = Math::max(brushScale.getX(), brushScale.getY());
 
 	//
@@ -1386,23 +1400,24 @@ void Terrain::createWaterModels(
 	for (auto partitionIdx = 0; partitionIdx < partitionCount; partitionIdx++) {
 		if (partitionWaterFaces[partitionIdx].empty() == true) continue;
 		auto modelId = "water." + to_string(waterModelIdx) + "." + to_string(partitionIdx);
-		auto waterModel = new Model(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
-		auto waterMaterial = new Material("water");
+		auto waterModel = make_unique<Model>(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
+		//
+		auto waterMaterial = make_unique<Material>("water");
 		waterMaterial->setDoubleSided(true);
-		waterMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
+		waterMaterial->setSpecularMaterialProperties(make_unique<SpecularMaterialProperties>().release());
 		waterMaterial->getSpecularMaterialProperties()->setAmbientColor(Color4(0.022f, 0.13f, 0.56f, 1.0f));
 		waterMaterial->getSpecularMaterialProperties()->setDiffuseColor(Color4(0.026f, 0.15f, 0.64f, 1.0f));
 		waterMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 		waterMaterial->getSpecularMaterialProperties()->setShininess(100.0f);
-		waterModel->getMaterials()[waterMaterial->getId()] = waterMaterial;
-		auto waterNode = new Node(waterModel, nullptr, "water", "water");
-		FacesEntity nodeFacesEntityWater(waterNode, "water.facesentity");
-		nodeFacesEntityWater.setMaterial(waterMaterial);
+		//
+		auto waterNode = make_unique<Node>(waterModel.get(), nullptr, "water", "water");
+		FacesEntity nodeFacesEntityWater(waterNode.get(), "water.facesentity");
+		nodeFacesEntityWater.setMaterial(waterMaterial.get());
 		vector<FacesEntity> nodeFacesEntities;
 		vector<Face> nodeFaces;
 		for (auto& faceIndices: partitionWaterFaces[partitionIdx]) {
 			nodeFaces.emplace_back(
-				waterNode,
+				waterNode.get(),
 				faceIndices[0],
 				faceIndices[1],
 				faceIndices[2],
@@ -1413,14 +1428,22 @@ void Terrain::createWaterModels(
 		};
 		nodeFacesEntityWater.setFaces(nodeFaces);
 		nodeFacesEntities.push_back(nodeFacesEntityWater);
+		//
 		waterNode->setVertices(partitionTerrainVertices[partitionIdx]);
 		waterNode->setNormals(partitionTerrainNormals[partitionIdx]);
 		waterNode->setFacesEntities(nodeFacesEntities);
-		waterModel->getNodes()[waterNode->getId()] = waterNode;
-		waterModel->getSubNodes()[waterNode->getId()] = waterNode;
-		ModelTools::prepareForIndexedRendering(waterModel);
-		ModelTools::createDefaultAnimation(waterModel, 1);
-		waterModels.push_back(waterModel);
+		//
+		waterModel->getNodes()[waterNode->getId()] = waterNode.get();
+		waterModel->getSubNodes()[waterNode->getId()] = waterNode.get();
+		waterNode.release();
+		//
+		waterModel->getMaterials()[waterMaterial->getId()] = waterMaterial.get();
+		waterMaterial.release();
+		//
+		ModelTools::prepareForIndexedRendering(waterModel.get());
+		ModelTools::createDefaultAnimation(waterModel.get(), 1);
+		//
+		waterModels.push_back(waterModel.release());
 	}
 }
 
@@ -1675,7 +1698,7 @@ void Terrain::applyFoliageBrush(
 							}
 
 							// slope
-							auto slope = Math::abs(180.0f / 3.14f * Math::acos(Math::clamp(Vector3::computeDotProduct(normal, Vector3(0.0, 1.0, 0.0)), -1.0, 1.0)));
+							auto slope = Math::abs(180.0f / 3.14f * Math::acos(Math::clamp(Vector3::computeDotProduct(normal, Vector3(0.0f, 1.0f, 0.0f)), -1.0f, 1.0f)));
 							if (slope < foliageBrushPrototypes[prototypeIdx].slopeMin || slope > foliageBrushPrototypes[prototypeIdx].slopeMax) continue;
 
 							//
@@ -2035,11 +2058,11 @@ void Terrain::updateFoliageTerrainRampBrush(
 	auto textureBytePerPixel = brushTexture->getRGBDepthBitsPerPixel() == 32?4:3;
 
 	// brush texture matrix
-	Matrix2D3x3 brushTextureMatrix;
+	Matrix3x3 brushTextureMatrix;
 	brushTextureMatrix.identity();
-	brushTextureMatrix.translate(Vector2(static_cast<float>(textureWidth) / 2.0f, static_cast<float>(textureHeight) / 2.0f));
-	brushTextureMatrix.multiply((Matrix2D3x3()).identity().scale(Vector2(1.0f / brushScale.getX(), 1.0f / brushScale.getY())));
-	brushTextureMatrix.multiply((Matrix2D3x3()).identity().rotate(brushRotation));
+	brushTextureMatrix.setTranslation(Vector2(static_cast<float>(textureWidth) / 2.0f, static_cast<float>(textureHeight) / 2.0f));
+	brushTextureMatrix.multiply((Matrix3x3()).identity().scale(Vector2(1.0f / brushScale.getX(), 1.0f / brushScale.getY())));
+	brushTextureMatrix.multiply((Matrix3x3()).identity().setAxes(brushRotation));
 	auto brushScaleMax = Math::max(brushScale.getX(), brushScale.getY());
 
 	//

@@ -63,10 +63,10 @@ EntityHierarchyTest::EntityHierarchyTest()
 }
 
 
-void EntityHierarchyTest::main(int argc, char** argv)
+int EntityHierarchyTest::main(int argc, char** argv)
 {
 	auto entityHierarchyTest = new EntityHierarchyTest();
-	entityHierarchyTest->run(argc, argv, "EntityHierarchyTest");
+	return entityHierarchyTest->run(argc, argv, "EntityHierarchyTest");
 }
 
 void EntityHierarchyTest::display()

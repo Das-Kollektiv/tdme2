@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <map>
+#include <memory>
 #include <span>
 #include <string>
 #include <unordered_map>
@@ -44,12 +45,14 @@
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/Properties.h>
 
+using std::make_unique;
 using std::map;
 using std::remove;
 using std::reverse;
 using std::span;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::unordered_map;
 using std::unordered_set;
 
@@ -134,13 +137,13 @@ GUIScreenNode::GUIScreenNode(
 	this->popUp = popUp;
 	this->foccussedBorderColor = GUIColor(applicationSubPathName == "project"?GUIParser::getProjectThemeProperties()->get("color.focus", "#ff0000"):GUIParser::getEngineThemeProperties()->get("color.focus", "#ff0000"));
 	if (scriptFileName.empty() == false) {
-		this->script = new GUIMiniScript(this);
+		this->script = make_unique<GUIMiniScript>(this);
 		// compute project script path and file name
 		string projectScriptPathName;
 		string projectScriptFileName;
 		getProjectFilePathNameAndFileName(scriptFileName, projectScriptPathName, projectScriptFileName);
 		//
-		this->script->loadScript(
+		this->script->parseScript(
 			projectScriptPathName,
 			projectScriptFileName
 		);
@@ -148,7 +151,6 @@ GUIScreenNode::GUIScreenNode(
 		if (this->script->isValid() == false) {
 			// nope
 			Console::println("GUIScreenNode::GUIScreenNode(): " + projectScriptFileName + ": script not valid. Not using it.");
-			delete this->script;
 			this->script = nullptr;
 		} else {
 			// yup
@@ -201,6 +203,7 @@ GUIScreenNode::~GUIScreenNode() {
 
 	// delete chaches
 	for (const auto& [fontId, font]: fontCache) {
+		font->dispose();
 		delete font;
 	}
 	fontCache.clear();
@@ -208,9 +211,6 @@ GUIScreenNode::~GUIScreenNode() {
 		image->releaseReference();
 	}
 	imageCache.clear();
-
-	// delete miniscript
-	if (script != nullptr) delete script;
 }
 
 void GUIScreenNode::initializeMiniScript() {
@@ -853,20 +853,17 @@ GUIFont* GUIScreenNode::getFont(const string& fileName, int size)
 	getProjectFilePathNameAndFileName(fileName, fontPathName, fontFileName);
 
 	// use cache or load font
-	GUIFont* font = nullptr;
 	auto cacheId = fontPathName + "/" + fontFileName + ":" + to_string(size);
 	auto fontCacheIt = fontCache.find(cacheId);
-	if (fontCacheIt == fontCache.end()) {
+	auto font = fontCacheIt != fontCache.end()?fontCacheIt->second:nullptr;
+	if (font == nullptr) {
 		try {
 			font = GUIFont::parse(fontPathName, fontFileName, size);
 		} catch (Exception& exception) {
-			Console::print(string("GUIScreenNode::getFont(): An error occurred: "));
-			Console::println(string(exception.what()));
+			Console::print("GUIScreenNode::getFont(): An error occurred: " + id + ": " + cacheId + ": " + string(exception.what()));
 			return nullptr;
 		}
 		fontCache[cacheId] = font;
-	} else {
-		font = fontCacheIt->second;
 	}
 	//
 	return font;
@@ -880,8 +877,9 @@ Texture* GUIScreenNode::getImage(const string& fileName)
 	getProjectFilePathNameAndFileName(fileName, imagePathName, imageFileName);
 
 	//
-	auto imageIt = imageCache.find("tdme.gui." + screenNode->getId() + "." + imagePathName + "/" + imageFileName);
-	auto image = imageIt != imageCache.end()?imageIt->second:nullptr;
+	auto cacheId = imagePathName + "/" + imageFileName;
+	auto imageCacheIt = imageCache.find(cacheId);
+	auto image = imageCacheIt != imageCache.end()?imageCacheIt->second:nullptr;
 	if (image == nullptr) {
 		try {
 			image = TextureReader::read(imagePathName, imageFileName, false, false, "tdme.gui." + screenNode->getId() + ".");
@@ -892,10 +890,10 @@ Texture* GUIScreenNode::getImage(const string& fileName)
 				image->setClampMode(Texture::CLAMPMODE_TRANSPARENTPIXEL);
 			}
 		} catch (Exception& exception) {
-			Console::print("GUIScreenNode::getImage(): An error occurred: " + string(exception.what()));
-			throw;
+			Console::print("GUIScreenNode::getImage(): An error occurred: " + id + ": " + cacheId + ": " + string(exception.what()));
+			return nullptr;
 		}
-		if (image != nullptr) imageCache[imagePathName + "/" + imageFileName] = image;
+		if (image != nullptr) imageCache[cacheId] = image;
 	}
 	return image;
 }

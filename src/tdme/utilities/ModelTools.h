@@ -1,8 +1,8 @@
 #pragma once
 
 #include <array>
-#include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -14,12 +14,14 @@
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::array;
-using std::map;
 using std::string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::Texture;
@@ -28,7 +30,9 @@ using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::model::Skinning;
 using tdme::engine::Transform;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
+using tdme::math::Matrix4x4;
 
 /**
  * Model tools functions class
@@ -36,6 +40,39 @@ using tdme::math::Vector3;
  */
 class tdme::utilities::ModelTools final
 {
+private:
+	/**
+	 * Simple class to determine if a transform matrix is right handed
+	 * @author Andreas Drewke
+	 */
+	class RightHandedMatrix4x4
+	{
+	private:
+		Vector3 xAxis;
+		Vector3 yAxis;
+		Vector3 zAxis;
+
+	public:
+		/**
+		 * Public constructor
+		 */
+		inline RightHandedMatrix4x4() {
+		}
+
+		/**
+		 * Check if matrix is negative
+		 * @param matrix matrix
+		 * @return negative
+		 */
+		inline bool isRightHanded(Matrix4x4& matrix) {
+			// copy into x,y,z axes
+			xAxis.set(matrix[0], matrix[1], matrix[2]);
+			yAxis.set(matrix[4], matrix[5], matrix[6]);
+			zAxis.set(matrix[8], matrix[9], matrix[10]);
+			// check if right handed
+			return Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, yAxis), zAxis) < 0.0f;
+		}
+	};
 
 public:
 	enum VertexOrder { VERTEXORDER_CLOCKWISE, VERTEXORDER_COUNTERCLOCKWISE };
@@ -101,7 +138,7 @@ private:
 	 * Prepares this node for indexed rendering
 	 * @param nodes nodes
 	 */
-	static void prepareForIndexedRendering(const map<string, Node*>& nodes);
+	static void prepareForIndexedRendering(const unordered_map<string, Node*>& nodes);
 
 	/**
 	 * Maps original vertices to new vertice mapping
@@ -186,7 +223,7 @@ private:
 	 * @param modelsPosition models position
 	 * @param parentTransformMatrix parent transform matrix
 	 */
-	static void partitionNode(Node* sourceNode, map<string, Model*>& modelsByPartition, map<string, Vector3>& modelsPosition, const Matrix4x4& parentTransformMatrix);
+	static void partitionNode(Node* sourceNode, unordered_map<string, Model*>& modelsByPartition, unordered_map<string, Vector3>& modelsPosition, const Matrix4x4& parentTransformMatrix);
 
 	/**
 	 * Shrink to fit node
@@ -246,7 +283,7 @@ public:
 	 * @param modelsByPartition models by partition
 	 * @param modelsPosition models position
 	 */
-	static void partition(Model* model, const Transform& transform, map<string, Model*>& modelsByPartition, map<string, Vector3>& modelsPosition);
+	static void partition(Model* model, const Transform& transform, unordered_map<string, Model*>& modelsByPartition, unordered_map<string, Vector3>& modelsPosition);
 
 	/**
 	 * Shrink to fit
@@ -329,7 +366,7 @@ private:
 	 * @param materialUseCount material use count
 	 * @param excludeDiffuseTextureFileNamePatterns exclude diffuse texture file name patterns
 	 */
-	static void checkForOptimization(Node* node, map<string, int>& materialUseCount, const vector<string>& excludeDiffuseTextureFileNamePatterns);
+	static void checkForOptimization(Node* node, unordered_map<string, int>& materialUseCount, const vector<string>& excludeDiffuseTextureFileNamePatterns);
 
 	/**
 	 * Prepare for optimization
@@ -347,6 +384,6 @@ private:
 	 * @param diffuseTextureAtlasIndices diffuse texture atlas indices
 	 * @param excludeDiffuseTextureFileNamePatterns exclude diffuse texture file name patterns
 	 */
-	static void optimizeNode(Node* sourceNode, Model* targetModel, int diffuseTextureAtlasSize, const map<string, int>& diffuseTextureAtlasIndices, const vector<string>& excludeDiffuseTextureFileNamePatterns);
+	static void optimizeNode(Node* sourceNode, Model* targetModel, int diffuseTextureAtlasSize, const unordered_map<string, int>& diffuseTextureAtlasIndices, const vector<string>& excludeDiffuseTextureFileNamePatterns);
 
 };

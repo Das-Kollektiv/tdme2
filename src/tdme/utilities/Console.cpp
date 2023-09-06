@@ -1,3 +1,5 @@
+#include <memory>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -15,60 +17,54 @@ using tdme::os::threading::Thread;
 using tdme::utilities::Console;
 using tdme::utilities::Time;
 
-Mutex* Console::mutex = nullptr;
+Mutex Console::mutex("console");
 bool Console::newline = false;
-vector<string>* Console::messages = nullptr;
-Console::LogWriterThread Console::logWriterThread;
+vector<string> Console::messages;
 Console::Logger* Console::logger = nullptr;
+unique_ptr<Console::LogWriterThread> Console::logWriterThread = make_unique<Console::LogWriterThread>();
 
 Console::LogWriterThread::LogWriterThread(): Thread("console-logwriter-thread") {
-	Console::mutex = new Mutex("console");
-	Console::messages = new vector<string>();
-	ofstream ofs("console.log", ofstream::trunc);
+	ofstream ofs(std::filesystem::u8path("console.log"), ofstream::trunc);
 	ofs.close();
 	start();
 }
 
 Console::LogWriterThread::~LogWriterThread() {
-	Console::logWriterThread.stop();
-	Console::logWriterThread.join();
 }
 
 void Console::LogWriterThread::run() {
 	Console::println("Console::LogWriterThread(): start");
 	while (isStopRequested() == false) {
-		Console::mutex->lock();
-		if (Console::messages->size() > 100) flush();
-		Console::mutex->unlock();
+		Console::mutex.lock();
+		if (Console::messages.size() > 100) flush();
+		Console::mutex.unlock();
 		Thread::sleep(1000);
 	}
-	Console::mutex->lock();
-	if (Console::messages->size() > 0) flush();
-	Console::mutex->unlock();
+	Console::mutex.lock();
+	if (Console::messages.size() > 0) flush();
+	Console::mutex.unlock();
 	Console::println("Console::LogWriterThread(): done");
 }
 
 void Console::LogWriterThread::flush() {
-	cout << "Console::LogWriterThread::flush()\n";
-	ofstream ofs("console.log", ofstream::app);
-	for (const auto& message: *Console::messages) {
-		ofs << message;
-		ofs << "\n";
+	ofstream ofs(std::filesystem::u8path("console.log"), ofstream::app);
+	for (const auto& message: Console::messages) {
+		ofs << message << endl;
 	}
 	ofs.close();
-	Console::messages->clear();
+	Console::messages.clear();
 }
 
 void Console::setLogger(Console::Logger* logger) {
+	if (Console::logger == logger) return;
 	if (Console::logger != nullptr) delete Console::logger;
 	Console::logger = logger;
 }
 
 void Console::println(const string& str)
 {
-	mutex->lock();
+	mutex.lock();
 	//
-	auto& messages = *Console::messages;
 	if (messages.empty() == true || newline == true) messages.push_back(string());
 	messages[messages.size() - 1]+= str;
 	if (messages.size() == 100) messages.erase(messages.begin());
@@ -77,14 +73,13 @@ void Console::println(const string& str)
 	if (logger != nullptr) logger->println(str);
 	cout << str << endl;
 	//
-	mutex->unlock();
+	mutex.unlock();
 }
 
 void Console::print(const string& str)
 {
-	mutex->lock();
+	mutex.lock();
 	//
-	auto& messages = *Console::messages;
 	if (messages.empty() == true || newline == true) messages.push_back(string());
 	messages[messages.size() - 1]+= str;
 	if (messages.size() == 100) messages.erase(messages.begin());
@@ -93,14 +88,13 @@ void Console::print(const string& str)
 	if (logger != nullptr) logger->print(str);
 	cout << str;
 	//
-	mutex->unlock();
+	mutex.unlock();
 }
 
 void Console::println()
 {
-	mutex->lock();
+	mutex.lock();
 	//
-	auto& messages = *Console::messages;
 	messages.push_back(string());
 	if (messages.size() == 100) messages.erase(messages.begin());
 	newline = true;
@@ -108,18 +102,12 @@ void Console::println()
 	if (logger != nullptr) logger->println();
 	cout << endl;
 	//
-	mutex->unlock();
+	mutex.unlock();
 }
 
 void Console::shutdown() {
-	mutex->lock();
-	cout << "Console::shutdown()\n";
-	ofstream ofs("console.log", ofstream::app);
-	for (const auto& message: *Console::messages) {
-		ofs << message;
-		ofs << "\n";
-	}
-	ofs.close();
-	Console::messages->clear();
-	mutex->unlock();
+	// shut down logwriter thread
+	Console::logWriterThread->stop();
+	Console::logWriterThread->join();
+	Console::logWriterThread = nullptr;
 }

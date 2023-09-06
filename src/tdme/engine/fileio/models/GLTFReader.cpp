@@ -1,6 +1,7 @@
 #include <tdme/engine/fileio/models/GLTFReader.h>
 
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
@@ -28,7 +29,6 @@
 #include <tdme/engine/model/ShaderModel.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
-#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
@@ -43,10 +43,12 @@
 #include <tdme/utilities/ModelTools.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::make_unique;
 using std::map;
 using std::set;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::fileio::models::GLTFReader;
@@ -66,7 +68,6 @@ using tdme::engine::model::RotationOrder;
 using tdme::engine::model::ShaderModel;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
-using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
@@ -113,7 +114,7 @@ Model* GLTFReader::read(const string& pathName, const string& fileName, bool use
 	}
 
 	// 	create model
-	auto model = new Model(
+	auto model = make_unique<Model>(
 		fileName,
 		fileName,
 		UpVector::Y_UP,
@@ -130,13 +131,13 @@ Model* GLTFReader::read(const string& pathName, const string& fileName, bool use
 	for (const auto& gltfScene: gltfModel.scenes) {
 		for (const auto gltfNodeIdx: gltfScene.nodes) {
 			const auto& glTfNode = gltfModel.nodes[gltfNodeIdx];
-			auto node = parseNode(pathName, gltfModel, gltfNodeIdx, model, nullptr, anonymousNodeIdx, useBC7TextureCompression);
+			auto node = parseNode(pathName, fileName, gltfModel, gltfNodeIdx, model.get(), nullptr, anonymousNodeIdx, useBC7TextureCompression);
 			model->getNodes()[node->getId()] = node;
 			if (model->getSubNodes().find(node->getId()) != model->getSubNodes().end()) {
 				Console::println("GLTFReader::read(): node already exists: " + node->getId());
 			}
 			model->getSubNodes()[node->getId()] = node;
-			if (glTfNode.children.empty() == false) parseNodeChildren(pathName, gltfModel, glTfNode.children, node, anonymousNodeIdx, useBC7TextureCompression);
+			if (glTfNode.children.empty() == false) parseNodeChildren(pathName, fileName, gltfModel, glTfNode.children, node, anonymousNodeIdx, useBC7TextureCompression);
 		}
 	}
 
@@ -197,7 +198,7 @@ Model* GLTFReader::read(const string& pathName, const string& fileName, bool use
 					vector<Matrix4x4> keyFrameMatrices(animationOutputAccessor.count);
 					for (auto i = 0; i < animationOutputAccessor.count; i++) {
 						keyFrameMatrices[i].identity();
-						keyFrameMatrices[i].translate(Vector3(animationOutputBufferData[i * 3 + 0], animationOutputBufferData[i * 3 + 1], animationOutputBufferData[i * 3 + 2]));
+						keyFrameMatrices[i].setTranslation(Vector3(animationOutputBufferData[i * 3 + 0], animationOutputBufferData[i * 3 + 1], animationOutputBufferData[i * 3 + 2]));
 					}
 					interpolateKeyFrames(animationInputAccessor.count, animationInputBufferData, keyFrameMatrices, channelFrames, translationMatrices, maxFrames);
 				} else
@@ -264,14 +265,14 @@ Model* GLTFReader::read(const string& pathName, const string& fileName, bool use
 				animationFinalMatrices[i].multiply(nodeAnimationRotationMatrices[i]);
 				animationFinalMatrices[i].multiply(nodeAnimationTranslationMatrices[i]);
 			}
-			auto animation = new Animation();
+			auto animation = make_unique<Animation>();
 			animation->setTransformMatrices(animationFinalMatrices);
-			node->setAnimation(animation);
+			node->setAnimation(animation.release());
 		}
 	}
 
 	// set up joints
-	ModelTools::setupJoints(model);
+	ModelTools::setupJoints(model.get());
 
 	// check if to compute normals
 	{
@@ -283,7 +284,7 @@ Model* GLTFReader::read(const string& pathName, const string& fileName, bool use
 		}
 		if (computeNormals == true) {
 			Console::println("GLTFReader::read(): Computing normals, as they were missing or mismatching vertex count");
-			ModelTools::computeNormals(model);
+			ModelTools::computeNormals(model.get());
 		}
 	}
 
@@ -293,16 +294,16 @@ Model* GLTFReader::read(const string& pathName, const string& fileName, bool use
 	}
 
 	// lets prepare for indexed rendering, or disable it later, as it makes not much sense with tangents and bitangents
-	ModelTools::prepareForIndexedRendering(model);
+	ModelTools::prepareForIndexedRendering(model.get());
 
 	// create default animations
-	ModelTools::createDefaultAnimation(model, maxFrames);
+	ModelTools::createDefaultAnimation(model.get(), maxFrames);
 
 	// fix animation length
-	ModelTools::fixAnimationLength(model);
+	ModelTools::fixAnimationLength(model.get());
 
 	//
-	return model;
+	return model.release();
 }
 
 void GLTFReader::interpolateKeyFrames(int frameTimeCount, const float* frameTimes, const vector<Matrix4x4>& keyFrameMatrices, int interpolatedMatrixCount, vector<Matrix4x4>& interpolatedMatrices, int frameStartIdx) {
@@ -332,13 +333,13 @@ void GLTFReader::interpolateKeyFrames(int frameTimeCount, const float* frameTime
 	}
 }
 
-Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, int gltfNodeIdx, Model* model, Node* parentNode, int& anonymousNodeIdx, bool useBC7TextureCompression) {
+Node* GLTFReader::parseNode(const string& pathName, const string& fileName, tinygltf::Model& gltfModel, int gltfNodeIdx, Model* model, Node* parentNode, int& anonymousNodeIdx, bool useBC7TextureCompression) {
 	auto& gltfNode = gltfModel.nodes[gltfNodeIdx];
 	// this fixes nodes that have no name
 	auto nodeId = gltfNode.name.empty() == true?"<" + to_string(anonymousNodeIdx++) + ">":gltfNode.name;
 	gltfNode.name = nodeId;
 	//
-	auto node = new Node(model, parentNode, nodeId, nodeId);
+	auto node = make_unique<Node>(model, parentNode, nodeId, nodeId);
 	if (gltfNode.matrix.size() == 16) {
 		node->setTransformMatrix(
 			Matrix4x4(
@@ -375,7 +376,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 			nodeRotationMatrix = rotationQuaternion.computeMatrix();
 		}
 		if (gltfNode.translation.size() == 3) {
-			nodeTranslationMatrix.translate(Vector3(gltfNode.translation[0], gltfNode.translation[1], gltfNode.translation[2]));
+			nodeTranslationMatrix.setTranslation(Vector3(gltfNode.translation[0], gltfNode.translation[1], gltfNode.translation[2]));
 		}
 		Matrix4x4 nodeTransformMatrix;
 		nodeTransformMatrix.set(nodeScaleMatrix);
@@ -383,12 +384,12 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 		nodeTransformMatrix.multiply(nodeTranslationMatrix);
 		node->setTransformMatrix(nodeTransformMatrix);
 	}
-	if (gltfNode.mesh == -1) return node;
+	if (gltfNode.mesh == -1) return node.release();
 	vector<int> joints;
 	vector<float> weights;
 	vector<Vector3> vertices;
 	vector<Vector3> normals;
-	vector<TextureCoordinate> textureCoordinates;
+	vector<Vector2> textureCoordinates;
 	vector<FacesEntity> facesEntities;
 	const auto& mesh = gltfModel.meshes[gltfNode.mesh];
 	int facesEntityIdx = 0;
@@ -401,10 +402,10 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 			if (materialIt != model->getMaterials().end()) {
 				material = materialIt->second;
 			} else {
-				material = new Material(gltfMaterial.name);
-				material->setDoubleSided(false/*TODO: enable me: gltfMaterial.doubleSided*/);
-				auto pbrMaterialProperties = new PBRMaterialProperties();
-				auto specularMaterialProperties = new SpecularMaterialProperties();
+				auto newMaterial = make_unique<Material>(gltfMaterial.name);
+				newMaterial->setDoubleSided(false/*TODO: enable me: gltfMaterial.doubleSided*/);
+				auto pbrMaterialProperties = make_unique<PBRMaterialProperties>();
+				auto specularMaterialProperties = make_unique<SpecularMaterialProperties>();
 				// some adjustment, lets see if we can extract this later
 				specularMaterialProperties->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
 				specularMaterialProperties->setDiffuseColor(Color4(0.2f, 0.2f, 0.2f, 1.0f));
@@ -473,28 +474,36 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 					try {
 						if (image.component != 3 && image.component != 4) throw ExceptionBase("We only support RGB or RGBA textures for now");
 						if (image.bits != 8) throw ExceptionBase("We only support 8 bit channels for now");
-						auto fileName = determineTextureFileName(image.name);
+						auto textureFileName = determineTextureFileName(pathName, fileName, image.name);
 						Console::println("GLTFReader::parseNode(): " + node->getId() + ": have base color texture with " + to_string(image.width) + " x " + to_string(image.height) + " x " + to_string(image.component) + " x " + to_string(image.bits) + ": " + fileName);
 						auto textureData = ByteBuffer(image.width * image.height * image.component * image.bits / 8);
 						for (int y = image.height - 1; y >= 0; y--) {
 							textureData.put(&image.image[y * image.width * image.component * image.bits / 8], image.width * image.component * image.bits / 8);
 						}
-						auto texture = new Texture(
-							fileName,
-							Texture::getRGBDepthByPixelBitsPerPixel(image.bits * image.component),
-							Texture::getPNGFormatByPixelBitsPerPixel(image.bits * image.component),
-							image.width,
-							image.height,
-							image.width,
-							image.height,
-							Texture::getRGBFormatByPixelBitsPerPixel(image.bits * image.component),
-							textureData
+						auto texture =
+							unique_ptr<
+								Texture,
+								decltype([](Texture* texture){ texture->releaseReference(); })
+							>(new Texture(
+								textureFileName,
+								Texture::getRGBDepthByPixelBitsPerPixel(image.bits * image.component),
+								Texture::getPNGFormatByPixelBitsPerPixel(image.bits * image.component),
+								image.width,
+								image.height,
+								image.width,
+								image.height,
+								Texture::getRGBFormatByPixelBitsPerPixel(image.bits * image.component),
+								textureData
+							)
 						);
+						texture->acquireReference();
 						texture->setUseCompression(useBC7TextureCompression);
 						//
-						pbrMaterialProperties->setBaseColorTexture(texture);
+						pbrMaterialProperties->setBaseColorTexture(texture.get());
+						texture->acquireReference();
 						if (pbrMaterialProperties->hasBaseColorTextureTransparency() == true) pbrMaterialProperties->setBaseColorTextureMaskedTransparency(true);
-						specularMaterialProperties->setDiffuseTexture(texture);
+						specularMaterialProperties->setDiffuseTexture(texture.get());
+						texture->acquireReference();
 						if (specularMaterialProperties->hasDiffuseTextureTransparency() == true) specularMaterialProperties->setDiffuseTextureMaskedTransparency(true);
 						//
 						if (gltfTexture.sampler != -1) {
@@ -528,26 +537,33 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 					try {
 						if (image.component != 3 && image.component != 4) throw ExceptionBase("We only support RGB or RGBA textures for now");
 						if (image.bits != 8) throw ExceptionBase("We only support 8 bit channels for now");
-						auto fileName = determineTextureFileName(image.name);
+						auto textureFileName = determineTextureFileName(pathName, fileName, image.name);
 						Console::println("GLTFReader::parseNode(): " + node->getId() + ": have metallic roughness texture with " + to_string(image.width) + " x " + to_string(image.height) + " x " + to_string(image.component) + " x " + to_string(image.bits) + ": " + fileName);
 						auto textureData = ByteBuffer(image.width * image.height * image.component * image.bits / 8);
 						for (int y = image.height - 1; y >= 0; y--) {
 							textureData.put(&image.image[y * image.width * image.component * image.bits / 8], image.width * image.component * image.bits / 8);
 						}
-						auto texture = new Texture(
-							fileName,
-							Texture::getRGBDepthByPixelBitsPerPixel(image.bits * image.component),
-							Texture::getPNGFormatByPixelBitsPerPixel(image.bits * image.component),
-							image.width,
-							image.height,
-							image.width,
-							image.height,
-							Texture::getRGBFormatByPixelBitsPerPixel(image.bits * image.component),
-							textureData
+						auto texture =
+							unique_ptr<
+								Texture,
+								decltype([](Texture* texture){ texture->releaseReference(); })
+							>(new Texture(
+								textureFileName,
+								Texture::getRGBDepthByPixelBitsPerPixel(image.bits * image.component),
+								Texture::getPNGFormatByPixelBitsPerPixel(image.bits * image.component),
+								image.width,
+								image.height,
+								image.width,
+								image.height,
+								Texture::getRGBFormatByPixelBitsPerPixel(image.bits * image.component),
+								textureData
+							)
 						);
+						texture->acquireReference();
 						texture->setUseCompression(useBC7TextureCompression);
 						//
-						pbrMaterialProperties->setMetallicRoughnessTexture(texture);
+						pbrMaterialProperties->setMetallicRoughnessTexture(texture.get());
+						texture->acquireReference();
 						//
 						if (gltfTexture.sampler != -1) {
 							const auto& sampler = gltfModel.samplers[gltfTexture.sampler];
@@ -580,26 +596,33 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 					try {
 						if (image.component != 3 && image.component != 4) throw ExceptionBase("We only support RGB or RGBA textures for now");
 						if (image.bits != 8) throw ExceptionBase("We only support 8 bit channels for now");
-						auto fileName = determineTextureFileName(image.name);
+						auto textureFileName = determineTextureFileName(pathName, fileName, image.name);
 						Console::println("GLTFReader::parseNode(): " + node->getId() + ": have normal texture with " + to_string(image.width) + " x " + to_string(image.height) + " x " + to_string(image.component) + " x " + to_string(image.bits) + ": " + fileName);
 						auto textureData = ByteBuffer(image.width * image.height * image.component * image.bits / 8);
 						for (int y = image.height - 1; y >= 0; y--) {
 							textureData.put(&image.image[y * image.width * image.component * image.bits / 8], image.width * image.component * image.bits / 8);
 						}
-						auto texture = new Texture(
-							fileName,
-							Texture::getRGBDepthByPixelBitsPerPixel(image.bits * image.component),
-							Texture::getPNGFormatByPixelBitsPerPixel(image.bits * image.component),
-							image.width,
-							image.height,
-							image.width,
-							image.height,
-							Texture::getRGBFormatByPixelBitsPerPixel(image.bits * image.component),
-							textureData
+						auto texture =
+							unique_ptr<
+								Texture,
+								decltype([](Texture* texture){ texture->releaseReference(); })
+							>(new Texture(
+								textureFileName,
+								Texture::getRGBDepthByPixelBitsPerPixel(image.bits * image.component),
+								Texture::getPNGFormatByPixelBitsPerPixel(image.bits * image.component),
+								image.width,
+								image.height,
+								image.width,
+								image.height,
+								Texture::getRGBFormatByPixelBitsPerPixel(image.bits * image.component),
+								textureData
+							)
 						);
+						texture->acquireReference();
 						texture->setUseCompression(useBC7TextureCompression);
 						//
-						pbrMaterialProperties->setNormalTexture(texture);
+						pbrMaterialProperties->setNormalTexture(texture.get());
+						texture->acquireReference();
 						//
 						if (gltfTexture.sampler != -1) {
 							const auto& sampler = gltfModel.samplers[gltfTexture.sampler];
@@ -630,27 +653,34 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 					try {
 						if (image.component != 3 && image.component != 4) throw ExceptionBase("We only support RGB or RGBA textures for now");
 						if (image.bits != 8) throw ExceptionBase("We only support 8 bit channels for now");
-						auto fileName = determineTextureFileName(image.name);
+						auto textureFileName = determineTextureFileName(pathName, fileName, image.name);
 						Console::println("GLTFReader::parseNode(): " + node->getId() + ": have emissive texture with " + to_string(image.width) + " x " + to_string(image.height) + " x " + to_string(image.component) + " x " + to_string(image.bits) + ": " + fileName);
 						auto textureData = ByteBuffer(image.width * image.height * image.component * image.bits / 8);
 						for (int y = image.height - 1; y >= 0; y--) {
 							textureData.put(&image.image[y * image.width * image.component * image.bits / 8], image.width * image.component * image.bits / 8);
 						}
-						auto texture = new Texture(
-							fileName,
-							Texture::getRGBDepthByPixelBitsPerPixel(image.bits * image.component),
-							Texture::getPNGFormatByPixelBitsPerPixel(image.bits * image.component),
-							image.width,
-							image.height,
-							image.width,
-							image.height,
-							Texture::getRGBFormatByPixelBitsPerPixel(image.bits * image.component),
-							textureData
+						auto texture =
+							unique_ptr<
+								Texture,
+								decltype([](Texture* texture){ texture->releaseReference(); })
+							>(new Texture(
+								textureFileName,
+								Texture::getRGBDepthByPixelBitsPerPixel(image.bits * image.component),
+								Texture::getPNGFormatByPixelBitsPerPixel(image.bits * image.component),
+								image.width,
+								image.height,
+								image.width,
+								image.height,
+								Texture::getRGBFormatByPixelBitsPerPixel(image.bits * image.component),
+								textureData
+							)
 						);
+						texture->acquireReference();
 						texture->setUseCompression(useBC7TextureCompression);
 						//
 						pbrMaterialProperties->setEmissiveFactor(Color4(gltfMaterial.emissiveFactor[0], gltfMaterial.emissiveFactor[1], gltfMaterial.emissiveFactor[2], 1.0f));
-						pbrMaterialProperties->setEmissiveTexture(texture);
+						pbrMaterialProperties->setEmissiveTexture(texture.get());
+						texture->acquireReference();
 						//
 						if (gltfTexture.sampler != -1) {
 							const auto& sampler = gltfModel.samplers[gltfTexture.sampler];
@@ -675,9 +705,11 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 						Console::println("GLTFReader::parseNode(): " + node->getId() + ": An error occurred: " + exception.what());
 					}
 				}
-				material->setSpecularMaterialProperties(specularMaterialProperties);
-				material->setPBRMaterialProperties(pbrMaterialProperties);
-				model->getMaterials()[material->getId()] = material;
+				newMaterial->setSpecularMaterialProperties(specularMaterialProperties.release());
+				newMaterial->setPBRMaterialProperties(pbrMaterialProperties.release());
+				model->getMaterials()[newMaterial->getId()] = newMaterial.get();
+				//
+				material = newMaterial.release();
 			}
 		}
 		if (gltfPrimitive.mode != TINYGLTF_MODE_TRIANGLES) {
@@ -733,7 +765,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 				if (start + attributeAccessor.count > textureCoordinates.size()) textureCoordinates.resize(start + attributeAccessor.count);
 				auto bufferData = (const float*)(attributeBuffer.data.data() + attributeAccessor.byteOffset + attributeBufferView.byteOffset);
 				for (auto i = 0; i < attributeAccessor.count; i++) {
-					textureCoordinates[start + i] = TextureCoordinate( bufferData[i * stride + 0], bufferData[i * stride + 1]);
+					textureCoordinates[start + i] = Vector2(bufferData[i * stride + 0], 1.0f - bufferData[i * stride + 1]);
 				}
 			} else
 			if (gltfBufferType == "COLOR_0") {
@@ -838,13 +870,13 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 		}
 
 		//
-		FacesEntity facesEntity(node, node->getId() + "-" + to_string(facesEntityIdx));
+		FacesEntity facesEntity(node.get(), node->getId() + "-" + to_string(facesEntityIdx));
 		facesEntity.setMaterial(material);
 		vector<Face> faces;
 		if (haveTextureCoordinates == true) {
 			for (auto i = 0; i < indices.size() / 3; i++) {
 				faces.emplace_back(
-					node,
+					node.get(),
 					start + indices[i * 3 + 0], start + indices[i * 3 + 1], start + indices[i * 3 + 2],
 					start + indices[i * 3 + 0], start + indices[i * 3 + 1], start + indices[i * 3 + 2],
 					start + indices[i * 3 + 0], start + indices[i * 3 + 1], start + indices[i * 3 + 2]
@@ -853,7 +885,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 		} else {
 			for (auto i = 0; i < indices.size() / 3; i++) {
 				faces.emplace_back(
-					node,
+					node.get(),
 					start + indices[i * 3 + 0], start + indices[i * 3 + 1], start + indices[i * 3 + 2],
 					start + indices[i * 3 + 0], start + indices[i * 3 + 1], start + indices[i * 3 + 2]
 				);
@@ -878,7 +910,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 			inverseBindMatricesBufferData = (const float*)(inverseBindMatricesBuffer.data.data() + inverseBindMatricesAccessor.byteOffset + inverseBindMatricesBufferView.byteOffset);
 		}
 		if (inverseBindMatricesBufferData != nullptr) {
-			auto skinning = new Skinning();
+			auto skinning = make_unique<Skinning>();
 			{
 				auto i = 0;
 				vector<Joint> skinningJoints(gltfSkin.joints.size());
@@ -923,7 +955,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 				skinning->setWeights(skinningWeights);
 				skinning->setVerticesJointsWeights(skinningJointWeights);
 			}
-			node->setSkinning(skinning);
+			node->setSkinning(skinning.release());
 		}
 	}
 
@@ -934,42 +966,20 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 	node->setFacesEntities(facesEntities);
 
 	//
-	return node;
+	return node.release();
 }
 
-void GLTFReader::parseNodeChildren(const string& pathName, tinygltf::Model& gltfModel, const vector<int>& gltfNodeChildrenIdx, Node* parentNode, int& anonymousNodeIdx, bool useBC7TextureCompression) {
+void GLTFReader::parseNodeChildren(const string& pathName, const string& fileName, tinygltf::Model& gltfModel, const vector<int>& gltfNodeChildrenIdx, Node* parentNode, int& anonymousNodeIdx, bool useBC7TextureCompression) {
 	for (const auto gltfNodeIdx: gltfNodeChildrenIdx) {
 		const auto& gltfNode = gltfModel.nodes[gltfNodeIdx];
-		auto node = parseNode(pathName, gltfModel, gltfNodeIdx, parentNode->getModel(), parentNode, anonymousNodeIdx, useBC7TextureCompression);
+		auto node = parseNode(pathName, fileName, gltfModel, gltfNodeIdx, parentNode->getModel(), parentNode, anonymousNodeIdx, useBC7TextureCompression);
 		parentNode->getModel()->getNodes()[node->getId()] = node;
 		if (parentNode->getSubNodes().find(node->getId()) != parentNode->getSubNodes().end()) {
 			Console::println("GLTFReader::parseNodeChildren(): node already exists: " + node->getId());
 		}
 		parentNode->getSubNodes()[node->getId()] = node;
-		if (gltfNode.children.empty() == false) parseNodeChildren(pathName, gltfModel, gltfNode.children, node, anonymousNodeIdx, useBC7TextureCompression);
+		if (gltfNode.children.empty() == false) parseNodeChildren(pathName, fileName, gltfModel, gltfNode.children, node, anonymousNodeIdx, useBC7TextureCompression);
 	}
-}
-
-
-string GLTFReader::determineTextureFileName(const string& imageName) {
-	/*
-	// try to avoid double parts in names that can happen when having 2 maps, 1 for colors and 1 for transparency
-	string doubleFileNamePart = "";
-	for (auto i = 3; i < imageName.size(); i++) {
-		auto doubleFileNamePartTest = StringTools::substring(imageName, 0, i);
-		if (imageName.rfind(doubleFileNamePartTest) > i) {
-			doubleFileNamePart = doubleFileNamePartTest;
-		} else {
-			break;
-		}
-	}
-	if (doubleFileNamePart.empty() == false) {
-		return StringTools::replace(imageName, doubleFileNamePart, "", imageName.rfind(doubleFileNamePart)) + ".png";
-	} else {
-		return imageName + ".png";
-	}
-	*/
-	return imageName + ".png";
 }
 
 void GLTFReader::computeTangentsAndBitangents(Node* node) {
@@ -1033,7 +1043,7 @@ const Matrix4x4 GLTFReader::getNodeTranslationMatrix(const tinygltf::Model& gltf
 			foundNode = true;
 			//
 			if (gltfNode.translation.size() == 3) {
-				translationMatrix.translate(Vector3(gltfNode.translation[0], gltfNode.translation[1], gltfNode.translation[2]));
+				translationMatrix.setTranslation(Vector3(gltfNode.translation[0], gltfNode.translation[1], gltfNode.translation[2]));
 			}
 			//
 			break;

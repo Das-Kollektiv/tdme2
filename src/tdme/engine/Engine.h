@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <array>
 #include <map>
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -36,7 +37,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/threading/Queue.h>
 #include <tdme/os/threading/Thread.h>
@@ -44,12 +45,15 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Pool.h>
 #include <tdme/utilities/TextureAtlas.h>
+#include <tdme/utilities/UniquePtrSequenceIterator.h>
 
 using std::array;
+using std::make_unique;
 using std::map;
 using std::remove;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
@@ -105,7 +109,7 @@ using tdme::engine::Timing;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::renderer::GUIShader;
 using tdme::gui::GUI;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
@@ -115,6 +119,7 @@ using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Pool;
 using tdme::utilities::TextureAtlas;
+using tdme::utilities::UniquePtrSequenceIterator;
 
 /**
  * Engine main class
@@ -189,26 +194,26 @@ private:
 	STATIC_DLL_IMPEXT static Engine* instance;
 	STATIC_DLL_IMPEXT static Renderer* renderer;
 
-	STATIC_DLL_IMPEXT static TextureManager* textureManager;
-	STATIC_DLL_IMPEXT static VBOManager* vboManager;
-	STATIC_DLL_IMPEXT static MeshManager* meshManager;
-	STATIC_DLL_IMPEXT static GUIRenderer* guiRenderer;
+	STATIC_DLL_IMPEXT static unique_ptr<TextureManager> textureManager;
+	STATIC_DLL_IMPEXT static unique_ptr<VBOManager> vboManager;
+	STATIC_DLL_IMPEXT static unique_ptr<MeshManager> meshManager;
+	STATIC_DLL_IMPEXT static unique_ptr<GUIRenderer> guiRenderer;
 
 	STATIC_DLL_IMPEXT static AnimationProcessingTarget animationProcessingTarget;
 
-	STATIC_DLL_IMPEXT static ShadowMapCreationShader* shadowMappingShaderPre;
-	STATIC_DLL_IMPEXT static ShadowMapRenderShader* shadowMappingShaderRender;
-	STATIC_DLL_IMPEXT static LightingShader* lightingShader;
-	STATIC_DLL_IMPEXT static ParticlesShader* particlesShader;
-	STATIC_DLL_IMPEXT static LinesShader* linesShader;
-	STATIC_DLL_IMPEXT static SkinningShader* skinningShader;
-	STATIC_DLL_IMPEXT static GUIShader* guiShader;
-	STATIC_DLL_IMPEXT static BRDFLUTShader* brdfLUTShader;
-	STATIC_DLL_IMPEXT static FrameBufferRenderShader* frameBufferRenderShader;
-	STATIC_DLL_IMPEXT static DeferredLightingRenderShader* deferredLightingRenderShader;
-	STATIC_DLL_IMPEXT static PostProcessing* postProcessing;
-	STATIC_DLL_IMPEXT static PostProcessingShader* postProcessingShader;
-	STATIC_DLL_IMPEXT static Texture2DRenderShader* texture2DRenderShader;
+	STATIC_DLL_IMPEXT static unique_ptr<ShadowMapCreationShader> shadowMappingShaderPre;
+	STATIC_DLL_IMPEXT static unique_ptr<ShadowMapRenderShader> shadowMappingShaderRender;
+	STATIC_DLL_IMPEXT static unique_ptr<LightingShader> lightingShader;
+	STATIC_DLL_IMPEXT static unique_ptr<ParticlesShader> particlesShader;
+	STATIC_DLL_IMPEXT static unique_ptr<LinesShader> linesShader;
+	STATIC_DLL_IMPEXT static unique_ptr<SkinningShader> skinningShader;
+	STATIC_DLL_IMPEXT static unique_ptr<GUIShader> guiShader;
+	STATIC_DLL_IMPEXT static unique_ptr<BRDFLUTShader> brdfLUTShader;
+	STATIC_DLL_IMPEXT static unique_ptr<FrameBufferRenderShader> frameBufferRenderShader;
+	STATIC_DLL_IMPEXT static unique_ptr<DeferredLightingRenderShader> deferredLightingRenderShader;
+	STATIC_DLL_IMPEXT static unique_ptr<PostProcessing> postProcessing;
+	STATIC_DLL_IMPEXT static unique_ptr<PostProcessingShader> postProcessingShader;
+	STATIC_DLL_IMPEXT static unique_ptr<Texture2DRenderShader> texture2DRenderShader;
 	STATIC_DLL_IMPEXT static int threadCount;
 	STATIC_DLL_IMPEXT static bool have4K;
 	STATIC_DLL_IMPEXT static float animationBlendingTime;
@@ -255,24 +260,24 @@ private:
 	int32_t height { -1 };
 	int32_t scaledWidth { -1 };
 	int32_t scaledHeight { -1 };
-	GUI* gui { nullptr };
-	Timing* timing { nullptr };
-	Camera* camera { nullptr };
-	Camera* gizmoCamera { nullptr };
+	unique_ptr<GUI> gui;
+	unique_ptr<Timing> timing;
+	unique_ptr<Camera> camera;
+	unique_ptr<Camera> gizmoCamera;
 
-	Partition* partition { nullptr };
+	unique_ptr<Partition> partition;
 
-	array<Light*, LIGHTS_MAX> lights;
+	array<unique_ptr<Light>, LIGHTS_MAX> lights;
 	Color4 sceneColor;
-	GeometryBuffer* geometryBuffer { nullptr };
-	FrameBuffer* frameBuffer { nullptr };
-	FrameBuffer* gizmoFrameBuffer { nullptr };
-	FrameBuffer* postProcessingFrameBuffer1 { nullptr };
-	FrameBuffer* postProcessingFrameBuffer2{ nullptr };
-	FrameBuffer* postProcessingTemporaryFrameBuffer { nullptr };
-	array<FrameBuffer*, EFFECTPASS_COUNT - 1> effectPassFrameBuffers;
+	unique_ptr<GeometryBuffer> geometryBuffer;
+	unique_ptr<FrameBuffer> frameBuffer;
+	unique_ptr<FrameBuffer> gizmoFrameBuffer;
+	unique_ptr<FrameBuffer> postProcessingFrameBuffer1;
+	unique_ptr<FrameBuffer> postProcessingFrameBuffer2;
+	unique_ptr<FrameBuffer> postProcessingTemporaryFrameBuffer;
+	array<unique_ptr<FrameBuffer>, EFFECTPASS_COUNT - 1> effectPassFrameBuffers;
 	array<bool, EFFECTPASS_COUNT - 1> effectPassSkip;
-	ShadowMapping* shadowMapping { nullptr };
+	unique_ptr<ShadowMapping> shadowMapping;
 	float shadowMapLightEyeDistanceScale { 1.0f };
 
 	unordered_map<string, Entity*> entitiesById;
@@ -284,7 +289,7 @@ private:
 
 	DecomposedEntities visibleDecomposedEntities;
 
-	EntityRenderer* entityRenderer { nullptr };
+	unique_ptr<EntityRenderer> entityRenderer;
 
 	STATIC_DLL_IMPEXT static bool skinningShaderEnabled;
 
@@ -304,7 +309,7 @@ private:
 	TextureAtlas ppsTextureAtlas {"tdme.pps.atlas"};
 	TextureAtlas decalsTextureAtlas {"tdme.decals.atlas"};
 
-	vector<Action*> actions;
+	vector<unique_ptr<Action>> actions;
 
 	// TODO: put those limits into tdme.h or use dynamic arrays here
 	static constexpr int UNIQUEMODELID_MAX { 2048 };
@@ -342,11 +347,11 @@ private:
 	private:
 		int idx;
 		Queue<EngineThreadQueueElement>* queue { nullptr };
-		TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
+		unique_ptr<TransparentRenderFacesPool> transparentRenderFacesPool;
 		array<vector<Object*>, Engine::UNIQUEMODELID_MAX> objectsByModels;
 		volatile int elementsProcessed { 0 };
 
-	private:
+	public:
 		/**
 		 * Constructor
 		 * @param idx thread index
@@ -363,7 +368,7 @@ private:
 		 * @return transparent render faces pool
 		 */
 		inline TransparentRenderFacesPool* getTransparentRenderFacesPool() {
-			return transparentRenderFacesPool;
+			return transparentRenderFacesPool.get();
 		}
 
 		/**
@@ -382,7 +387,7 @@ private:
 
 	};
 
-	class EngineThreadQueueElementPool: public Pool<EngineThreadQueueElement*> {
+	class EngineThreadQueueElementPool: public Pool<EngineThreadQueueElement> {
 	public:
 		/**
 		 * Public constructor
@@ -400,78 +405,85 @@ private:
 
 	};
 
-	STATIC_DLL_IMPEXT static vector<EngineThread*> engineThreads;
-	STATIC_DLL_IMPEXT static Queue<EngineThreadQueueElement>* engineThreadsQueue;
+	STATIC_DLL_IMPEXT static vector<unique_ptr<EngineThread>> engineThreads;
+	STATIC_DLL_IMPEXT static unique_ptr<Queue<EngineThreadQueueElement>> engineThreadsQueue;
 	STATIC_DLL_IMPEXT static EngineThreadQueueElementPool engineThreadQueueElementPool;
+
+	/**
+	 * @return engine
+	 */
+	inline static Renderer* getRenderer() {
+		return renderer;
+	}
 
 	/**
 	 * @return mesh manager
 	 */
 	inline static MeshManager* getMeshManager() {
-		return meshManager;
+		return meshManager.get();
 	}
 
 	/**
 	 * @return shadow mapping or nullptr if disabled
 	 */
 	inline ShadowMapping* getShadowMapping() {
-		return shadowMapping;
+		return shadowMapping.get();
 	}
 
 	/**
 	 * @return particles shader
 	 */
 	inline static ParticlesShader* getParticlesShader() {
-		return particlesShader;
+		return particlesShader.get();
 	}
 
 	/**
 	 * @return lines shader
 	 */
 	inline static LinesShader* getLinesShader() {
-		return linesShader;
+		return linesShader.get();
 	}
 
 	/**
 	 * @return skinning shader
 	 */
 	inline static SkinningShader* getSkinningShader() {
-		return skinningShader;
+		return skinningShader.get();
 	}
 
 	/**
 	 * @return GUI shader
 	 */
 	inline static GUIShader* getGUIShader() {
-		return guiShader;
+		return guiShader.get();
 	}
 
 	/**
 	 * @return BRDF LUT shader
 	 */
 	inline static BRDFLUTShader* getBRDFLUTShader() {
-		return brdfLUTShader;
+		return brdfLUTShader.get();
 	}
 
 	/**
 	 * @return frame buffer render shader
 	 */
 	inline static FrameBufferRenderShader* getFrameBufferRenderShader() {
-		return frameBufferRenderShader;
+		return frameBufferRenderShader.get();
 	}
 
 	/**
 	 * @return deferred lighting render shader
 	 */
 	inline static DeferredLightingRenderShader* getDeferredLightingRenderShader() {
-		return deferredLightingRenderShader;
+		return deferredLightingRenderShader.get();
 	}
 
 	/**
 	 * @return entity renderer
 	 */
 	inline EntityRenderer* getEntityRenderer() {
-		return entityRenderer;
+		return entityRenderer.get();;
 	}
 
 	/**
@@ -579,10 +591,15 @@ public:
 	}
 
 	/**
+	 * Shuts down main engine
+	 */
+	static void shutdown();
+
+	/**
 	 * @return texture manager
 	 */
 	inline static TextureManager* getTextureManager() {
-		return Engine::textureManager;
+		return Engine::textureManager.get();
 	}
 
 
@@ -590,35 +607,35 @@ public:
 	 * @return vertex buffer object manager
 	 */
 	inline static VBOManager* getVBOManager() {
-		return vboManager;
+		return vboManager.get();
 	}
 
 	/**
 	 * @return lighting shader
 	 */
 	inline static LightingShader* getLightingShader() {
-		return lightingShader;
+		return lightingShader.get();
 	}
 
 	/**
 	 * @return post processing shader
 	 */
 	inline static PostProcessingShader* getPostProcessingShader() {
-		return postProcessingShader;
+		return postProcessingShader.get();
 	}
 
 	/**
 	 * @return shadow mapping shader
 	 */
 	inline static ShadowMapCreationShader* getShadowMapCreationShader() {
-		return shadowMappingShaderPre;
+		return shadowMappingShaderPre.get();
 	}
 
 	/**
 	 * @return shadow mapping shader
 	 */
 	inline static ShadowMapRenderShader* getShadowMapRenderShader() {
-		return shadowMappingShaderRender;
+		return shadowMappingShaderRender.get();
 	}
 
 	/**
@@ -939,35 +956,35 @@ public:
 	 * @return GUI
 	 */
 	inline GUI* getGUI() {
-		return gui;
+		return gui.get();
 	}
 
 	/**
 	 * @return Timing
 	 */
 	inline Timing* getTiming() {
-		return timing;
+		return timing.get();
 	}
 
 	/**
 	 * @return Camera
 	 */
 	inline Camera* getCamera() {
-		return camera;
+		return camera.get();
 	}
 
 	/**
 	 * @return GIZMO Camera
 	 */
 	inline Camera* getGizmoCamera() {
-		return gizmoCamera;
+		return gizmoCamera.get();
 	}
 
 	/**
 	 * @return partition
 	 */
 	inline Partition* getPartition() {
-		return partition;
+		return partition.get();
 	}
 
 	/**
@@ -980,14 +997,21 @@ public:
 	 * @return frame buffer or nullptr
 	 */
 	inline FrameBuffer* getFrameBuffer() {
-		return frameBuffer;
+		return frameBuffer.get();;
 	}
 
 	/**
 	 * @return geometry buffer or nullptr
 	 */
 	inline GeometryBuffer* getGeometryBuffer() {
-		return geometryBuffer;
+		return geometryBuffer.get();;
+	}
+
+	/**
+	 * @return lights iterator
+	 */
+	inline UniquePtrSequenceIterator<Light> getLights() {
+		return UniquePtrSequenceIterator<Light>(&lights[0], &lights[lights.size()]);
 	}
 
 	/**
@@ -1003,7 +1027,8 @@ public:
 	 * @return Light
 	 */
 	inline Light* getLightAt(int32_t idx) {
-		return lights[idx];
+		if (idx < 0 || idx >= lights.size()) return nullptr;
+		return lights[idx].get();
 	}
 
 	/**
@@ -1101,7 +1126,7 @@ public:
 	 * @return gizmo coordinate
 	 */
 	inline Vector3 computeGizmoCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z) {
-		return computeWorldCoordinateByMousePosition(mouseX, mouseY, z, gizmoCamera);
+		return computeWorldCoordinateByMousePosition(mouseX, mouseY, z, gizmoCamera.get());
 	}
 
 	/**
@@ -1112,7 +1137,7 @@ public:
 	 * @return world coordinate
 	 */
 	inline Vector3 computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z) {
-		return computeWorldCoordinateByMousePosition(mouseX, mouseY, z, camera);
+		return computeWorldCoordinateByMousePosition(mouseX, mouseY, z, camera.get());
 	}
 
 	/**
@@ -1258,7 +1283,7 @@ public:
 	 * @param action action
 	 */
 	inline void enqueueAction(Action* action) {
-		actions.push_back(action);
+		actions.push_back(unique_ptr<Action>(action));
 	}
 
 private:

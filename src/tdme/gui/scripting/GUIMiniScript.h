@@ -1,11 +1,23 @@
 #pragma once
 
+#include <array>
+#include <memory>
+#include <string>
+#include <unordered_set>
+#include <vector>
+
 #include <tdme/tdme.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/scripting/fwd-tdme.h>
 #include <tdme/utilities/MiniScript.h>
+
+using std::array;
+using std::string;
+using std::unique_ptr;
+using std::unordered_set;
+using std::vector;
 
 using tdme::gui::GUI;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -33,15 +45,17 @@ public:
 	virtual ~GUIMiniScript();
 
 	// overridden methods
+	const string getBaseClass();
+	const vector<string> getTranspilationUnits();
 	void registerStateMachineStates() override;
 	void registerMethods() override;
 	void registerVariables() override;
 
 	/**
-	 * @return next screen node
+	 * @return release next screen node
 	 */
-	inline GUIScreenNode* getNextScreenNode() {
-		return nextScreenNode;
+	inline GUIScreenNode* releaseNextScreenNode() {
+		return nextScreenNode.release();
 	}
 
 	/**
@@ -60,7 +74,7 @@ public:
 
 private:
 	GUIScreenNode* screenNode { nullptr };
-	GUIScreenNode* nextScreenNode { nullptr };
+	unique_ptr<GUIScreenNode> nextScreenNode;
 	bool popped { false };
 
 	// keys

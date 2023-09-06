@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -23,6 +24,7 @@
 
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::Color4;
@@ -58,8 +60,8 @@ private:
 	float lodNoneMinDistance;
 
 	string id;
-	Object* objectLOD1 { nullptr };
-	ImposterObject* objectLOD2 { nullptr };
+	unique_ptr<Object> objectLOD1;
+	unique_ptr<ImposterObject> objectLOD2;
 
 	Object* objectLOD { nullptr };
 
@@ -125,14 +127,14 @@ public:
 	 * @return LOD object 1
 	 */
 	inline Object* getLOD1Object() {
-		return objectLOD1;
+		return objectLOD1.get();
 	}
 
 	/**
 	 * @return LOD object 2
 	 */
 	inline ImposterObject* getLOD2Object() {
-		return objectLOD2;
+		return objectLOD2.get();
 	}
 
 	/**
@@ -158,7 +160,7 @@ public:
 			levelLOD = 2;
 			objectLOD = objectLOD2->determineBillboardObject(camera);
 		} else {
-			objectLOD = objectLOD1;
+			objectLOD = objectLOD1.get();
 			levelLOD = 1;
 		}
 

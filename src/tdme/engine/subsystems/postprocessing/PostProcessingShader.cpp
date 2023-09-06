@@ -65,6 +65,13 @@ void PostProcessingShader::initialize()
 	}
 }
 
+void PostProcessingShader::dispose()
+{
+	for (const auto& [shaderId, shader]: shaders) {
+		shader->unloadTextures();
+	}
+}
+
 void PostProcessingShader::useProgram()
 {
 	running = true;
@@ -116,6 +123,7 @@ void PostProcessingShader::setShaderParameters(int contextIdx, Engine* engine) {
 
 void PostProcessingShader::loadTextures(const string& pathName) {
 	for (const auto& [shaderId, shader]: shaders) {
+		shader->unloadTextures();
 		shader->loadTextures(pathName);
 	}
 }

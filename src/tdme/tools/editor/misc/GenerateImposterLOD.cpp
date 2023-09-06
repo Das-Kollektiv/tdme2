@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/misc/GenerateImposterLOD.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -22,6 +23,8 @@
 #include <tdme/engine/Object.h>
 #include <tdme/engine/SimplePartition.h>
 #include <tdme/math/Math.h>
+#include <tdme/math/Vector2.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -31,6 +34,7 @@
 using tdme::tools::editor::misc::GenerateImposterLOD;
 
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::fileio::models::TMWriter;
@@ -51,6 +55,8 @@ using tdme::engine::LODObject;
 using tdme::engine::Object;
 using tdme::engine::SimplePartition;
 using tdme::math::Math;
+using tdme::math::Vector2;
+using tdme::math::Vector3;
 using tdme::tools::editor::misc::Tools;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -65,7 +71,7 @@ void GenerateImposterLOD::generate(
 	vector<string>& imposterModelFileNames,
 	vector<Model*>& imposterModels
 ) {
-	auto osEngine = Engine::createOffScreenInstance(4096, 4096, true, true, false);
+	auto osEngine = unique_ptr<Engine>(Engine::createOffScreenInstance(4096, 4096, true, true, false));
 	osEngine->setPartition(new SimplePartition());
 	osEngine->setSceneColor(Color4(0.0f, 0.0f, 0.0f, 0.0f));
 	//
@@ -120,7 +126,7 @@ void GenerateImposterLOD::generate(
 		auto maxX = -1;
 		auto minY = 10000;
 		auto maxY = -1;
-		auto texture = TextureReader::read(pathName, textureFileName, false, false);
+		auto texture = unique_ptr<Texture, decltype([](Texture* texture){ texture->releaseReference(); })>(TextureReader::read(pathName, textureFileName, false, false));
 		auto textureTextureData = texture->getRGBTextureData();
 		for (auto y = 0; y < texture->getTextureHeight(); y++) {
 			for (auto x = 0; x < texture->getTextureWidth(); x++) {
@@ -152,27 +158,29 @@ void GenerateImposterLOD::generate(
 		}
 
 		//
-		texture->releaseReference();
-
-		//
-		auto croppedTexture = new Texture(
-			"tdme.engine.croppedtexture",
-			Texture::TEXTUREDEPTH_RGBA,
-			Texture::TEXTUREFORMAT_RGBA_PNG,
-			croppedTextureWidth,
-			croppedTextureHeight,
-			croppedTextureWidth,
-			croppedTextureHeight,
-			Texture::TEXTUREFORMAT_RGBA_PNG,
-			croppedTextureByteBuffer
-		);
-		croppedTexture->acquireReference();
-		auto scaledTexture = TextureReader::scale(croppedTexture, 1024, 1024);
-		croppedTexture->releaseReference();
-
-		// save
-		PNGTextureWriter::write(scaledTexture, pathName, textureFileName, false, false);
-		scaledTexture->releaseReference();
+		{
+			auto croppedTexture =
+				unique_ptr<
+					Texture,
+					decltype([](Texture* texture){ texture->releaseReference(); })
+				>(
+					new Texture(
+						"tdme.engine.croppedtexture",
+						Texture::TEXTUREDEPTH_RGBA,
+						Texture::TEXTUREFORMAT_RGBA,
+						croppedTextureWidth,
+						croppedTextureHeight,
+						croppedTextureWidth,
+						croppedTextureHeight,
+						Texture::TEXTUREFORMAT_RGBA,
+						croppedTextureByteBuffer
+					)
+				);
+			croppedTexture->acquireReference();
+			auto scaledTexture = unique_ptr<Texture, decltype([](Texture* texture){ texture->releaseReference(); })>(TextureReader::scale(croppedTexture.get(), 1024, 1024));
+			// save
+			PNGTextureWriter::write(scaledTexture.get(), pathName, textureFileName, false, false);
+		}
 
 		// create model
 		auto left = boundingBox->getMin().getX();
@@ -180,31 +188,33 @@ void GenerateImposterLOD::generate(
 		auto top = boundingBox->getMin().getY();
 		auto bottom = boundingBox->getMax().getY();
 		auto depth = boundingBox->getCenter().getZ();
-		auto billboard = new Model(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
-		auto billboardMaterial = new Material("billboard");
-		billboardMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
+		//
+		auto billboard = make_unique<Model>(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
+		//
+		auto billboardMaterial = make_unique<Material>("billboard");
+		billboardMaterial->setSpecularMaterialProperties(make_unique<SpecularMaterialProperties>().release());
 		billboardMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 		billboardMaterial->getSpecularMaterialProperties()->setDiffuseTexture(pathName, textureFileName);
 		billboardMaterial->getSpecularMaterialProperties()->setDiffuseTextureMaskedTransparency(true);
-		billboard->getMaterials()[billboardMaterial->getId()] = billboardMaterial;
-		auto billboardNode = new Node(billboard, nullptr, "billboard", "billboard");
+		//
+		auto billboardNode = make_unique<Node>(billboard.get(), nullptr, "billboard", "billboard");
 		vector<Vector3> billboardVertices;
-		billboardVertices.push_back(Vector3(left, top, depth));
-		billboardVertices.push_back(Vector3(left, bottom, depth));
-		billboardVertices.push_back(Vector3(right, bottom, depth));
-		billboardVertices.push_back(Vector3(right, top, depth));
+		billboardVertices.emplace_back(left, top, depth);
+		billboardVertices.emplace_back(left, bottom, depth);
+		billboardVertices.emplace_back(right, bottom, depth);
+		billboardVertices.emplace_back(right, top, depth);
 		vector<Vector3> billboardNormals;
-		billboardNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
-		vector<TextureCoordinate> billboardTextureCoordinates;
-		billboardTextureCoordinates.push_back(TextureCoordinate(0.0f, 0.0f));
-		billboardTextureCoordinates.push_back(TextureCoordinate(0.0f, 1.0f));
-		billboardTextureCoordinates.push_back(TextureCoordinate(1.0f, 1.0f));
-		billboardTextureCoordinates.push_back(TextureCoordinate(1.0f, 0.0f));
+		billboardNormals.emplace_back(0.0f, 1.0f, 0.0f);
+		vector<Vector2> billboardTextureCoordinates;
+		billboardTextureCoordinates.emplace_back(0.0f, 1.0f);
+		billboardTextureCoordinates.emplace_back(0.0f, 0.0f);
+		billboardTextureCoordinates.emplace_back(1.0f, 0.0f);
+		billboardTextureCoordinates.emplace_back(1.0f, 1.0f);
 		vector<Face> billboardFacesGround;
-		billboardFacesGround.push_back(Face(billboardNode, 0, 1, 2, 0, 0, 0, 0, 1, 2));
-		billboardFacesGround.push_back(Face(billboardNode, 2, 3, 0, 0, 0, 0, 2, 3, 0));
-		FacesEntity billboardNodeFacesEntity(billboardNode, "billboard.facesentity");
-		billboardNodeFacesEntity.setMaterial(billboardMaterial);
+		billboardFacesGround.emplace_back(billboardNode.get(), 0, 1, 2, 0, 0, 0, 0, 1, 2);
+		billboardFacesGround.emplace_back(billboardNode.get(), 2, 3, 0, 0, 0, 0, 2, 3, 0);
+		FacesEntity billboardNodeFacesEntity(billboardNode.get(), "billboard.facesentity");
+		billboardNodeFacesEntity.setMaterial(billboardMaterial.get());
 		vector<FacesEntity> billboardNodeFacesEntities;
 		billboardNodeFacesEntity.setFaces(billboardFacesGround);
 		billboardNodeFacesEntities.push_back(billboardNodeFacesEntity);
@@ -212,23 +222,27 @@ void GenerateImposterLOD::generate(
 		billboardNode->setNormals(billboardNormals);
 		billboardNode->setTextureCoordinates(billboardTextureCoordinates);
 		billboardNode->setFacesEntities(billboardNodeFacesEntities);
-		billboard->getNodes()["billboard"] = billboardNode;
-		billboard->getSubNodes()["billboard"] = billboardNode;
-		ModelTools::prepareForIndexedRendering(billboard);
+		billboard->getNodes()["billboard"] = billboardNode.get();
+		billboard->getSubNodes()["billboard"] = billboardNode.get();
+		billboardNode.release();
+		//
+		billboard->getMaterials()[billboardMaterial->getId()] = billboardMaterial.get();
+		billboardMaterial.release();
+		//
+		ModelTools::prepareForIndexedRendering(billboard.get());
 
 		//
 		TMWriter::write(
-			billboard,
+			billboard.get(),
 			pathName,
 			modelFileName
 		);
 
 		//
-		imposterModels[i] = billboard;
+		imposterModels[i] = billboard.release();
 		imposterModelFileNames[i] = (pathName.empty() == false?pathName + "/":"") + modelFileName;
 	}
 
 	//
 	osEngine->dispose();
-	delete osEngine;
 }

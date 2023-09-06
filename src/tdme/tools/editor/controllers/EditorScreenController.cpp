@@ -1,6 +1,7 @@
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 
 #include <algorithm>
+#include <memory>
 #include <string>
 #include <unordered_set>
 #include <vector>
@@ -40,7 +41,7 @@
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -78,7 +79,7 @@
 #include <tdme/tools/editor/tabviews/UIEditorTabView.h>
 #include <tdme/tools/editor/tabviews/VideoTabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
-#include <tdme/tools/editor/TDMEEditor.h>
+#include <tdme/tools/editor/Editor.h>
 #include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -87,8 +88,11 @@
 #include <tdme/utilities/Properties.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::make_unique;
+using std::move;
 using std::remove;
 using std::string;
+using std::unique_ptr;
 using std::unordered_set;
 using std::vector;
 
@@ -125,7 +129,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
@@ -163,7 +167,7 @@ using tdme::tools::editor::tabviews::TriggerEditorTabView;
 using tdme::tools::editor::tabviews::UIEditorTabView;
 using tdme::tools::editor::tabviews::VideoTabView;
 using tdme::tools::editor::views::EditorView;
-using tdme::tools::editor::TDMEEditor;
+using tdme::tools::editor::Editor;
 using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -265,6 +269,7 @@ void EditorScreenController::initialize()
 void EditorScreenController::dispose()
 {
 	stopScanFiles();
+	closeProject();
 }
 
 void EditorScreenController::setScreenCaption(const string& text)
@@ -273,7 +278,7 @@ void EditorScreenController::setScreenCaption(const string& text)
 
 void EditorScreenController::onQuit()
 {
-	TDMEEditor::getInstance()->quit();
+	Editor::getInstance()->quit();
 }
 
 void EditorScreenController::showInfoPopUp(const string& caption, const string& message)
@@ -381,7 +386,7 @@ void EditorScreenController::onAction(GUIActionListenerType type, GUIElementNode
 			if (tabIdToClose.empty() == false) closeTab(tabIdToClose);
 		} else
 		if (node->getId() == "menu_file_quit") {
-			TDMEEditor::getInstance()->quit();
+			Editor::getInstance()->quit();
 		}
 	}
 	// forward onAction to active tab tab controller
@@ -821,7 +826,7 @@ void EditorScreenController::onOpenProject() {
 	};
 
 	view->getPopUps()->getFileDialogScreenController()->show(
-		string(),
+		".",
 		"Open project from folder: ",
 		{},
 		string(),
@@ -966,7 +971,7 @@ void EditorScreenController::startScanFiles() {
 	} catch (Exception& exception) {
 		Console::println("EditorScreenController::startScanFiles(): An error occurred: " + string(exception.what()));
 	}
-	scanFilesThread = new ScanFilesThread(this, projectPath + "/" + relativeProjectPath, StringTools::toLowerCase(fileNameSearchTerm));
+	scanFilesThread = make_unique<ScanFilesThread>(this, projectPath + "/" + relativeProjectPath, StringTools::toLowerCase(fileNameSearchTerm));
 	scanFilesThread->start();
 }
 
@@ -974,7 +979,7 @@ void EditorScreenController::addPendingFileEntities() {
 	string scrollToNodeId;
 	string xml;
 	xml+= "<layout alignment=\"horizontal\">\n";
-	for (auto pendingFileEntity: pendingFileEntities) {
+	for (const auto& pendingFileEntity: pendingFileEntities) {
 		xml+= pendingFileEntity->buttonXML;
 		if (pendingFileEntity->scrollTo == true) scrollToNodeId = pendingFileEntity->id;
 	}
@@ -990,7 +995,7 @@ void EditorScreenController::addPendingFileEntities() {
 		Console::println("EditorScreenController::addPendingFileEntities(): An error occurred: " + string(exception.what()));
 	}
 	//
-	for (auto pendingFileEntity: pendingFileEntities) {
+	for (const auto& pendingFileEntity: pendingFileEntities) {
 		if (pendingFileEntity->thumbnailTexture == nullptr) continue;
 		if (screenNode->getNodeById(pendingFileEntity->id + "_texture_normal") == nullptr) continue;
 		try {
@@ -1001,7 +1006,6 @@ void EditorScreenController::addPendingFileEntities() {
 			Console::println("EditorScreenController::addPendingFileEntities(): An error occurred: " + string(exception.what()));
 		}
 		if (pendingFileEntity->thumbnailTexture != nullptr) pendingFileEntity->thumbnailTexture->releaseReference();
-		delete pendingFileEntity;
 	}
 	pendingFileEntities.clear();
 }
@@ -1016,13 +1020,11 @@ void EditorScreenController::stopScanFiles() {
 		scanFilesThread->stop();
 		scanFilesThread->join();
 		lockFileEntities();
-		for (auto fileEntity: getFileEntities()) {
+		for (const auto& fileEntity: getFileEntities()) {
 			if (fileEntity->thumbnailTexture != nullptr) fileEntity->thumbnailTexture->releaseReference();
-			delete fileEntity;
 		}
 		getFileEntities().clear();
 		unlockFileEntities();
-		delete scanFilesThread;
 		scanFilesThread = nullptr;
 	}
 }
@@ -1164,7 +1166,7 @@ void EditorScreenController::ScanFilesThread::run() {
 			string iconBig = "{$icon.type_folder_big}";
 
 			//
-			auto fileEntity = new FileEntity();
+			auto fileEntity = make_unique<FileEntity>();
 			fileEntity->id = "projectpathfiles_file_" + GUIParser::escape(StringTools::replace(Tools::getFileName(fileName), '.', '_'));
 			fileEntity->buttonXML =
 				string() +
@@ -1178,9 +1180,8 @@ void EditorScreenController::ScanFilesThread::run() {
 				"filename=\"" + GUIParser::escape(fileName) + "\" " +
 				"/>\n";
 			editorScreenController->lockFileEntities();
-			editorScreenController->getFileEntities().push_back(fileEntity);
+			editorScreenController->getFileEntities().push_back(move(fileEntity));
 			editorScreenController->unlockFileEntities();
-			Thread::sleep(1LL);
 		}
 		for (const auto& fileName: files) {
 			if (isStopRequested() == true) break;
@@ -1194,7 +1195,7 @@ void EditorScreenController::ScanFilesThread::run() {
 			string iconBig = "{$icon.type_folder_big}";
 
 			//
-			auto fileEntity = new FileEntity();
+			auto fileEntity = make_unique<FileEntity>();
 			fileEntity->id = "projectpathfiles_file_" + GUIParser::escape(StringTools::replace(Tools::getFileName(fileName), '.', '_'));
 
 			//
@@ -1217,9 +1218,8 @@ void EditorScreenController::ScanFilesThread::run() {
 				buttonOnInitialize +
 				"/>\n";
 			editorScreenController->lockFileEntities();
-			editorScreenController->getFileEntities().push_back(fileEntity);
+			editorScreenController->getFileEntities().push_back(move(fileEntity));
 			editorScreenController->unlockFileEntities();
-			Thread::sleep(1LL);
 		}
 		for (const auto& fileName: files) {
 			if (isStopRequested() == true) break;
@@ -1265,7 +1265,6 @@ void EditorScreenController::ScanFilesThread::run() {
 					if (textureWidth != scaledTextureWidth || textureHeight != scaledTextureHeight) {
 						auto thumbnailTextureScaled = TextureReader::scale(thumbnailTexture, scaledTextureWidth, scaledTextureHeight);
 						thumbnailTexture->releaseReference();
-						thumbnailTextureScaled->acquireReference();
 						thumbnailTexture = thumbnailTextureScaled;
 					}
 					iconBig.clear();
@@ -1273,7 +1272,7 @@ void EditorScreenController::ScanFilesThread::run() {
 				if (iconBig.empty() == false) icon.clear();
 
 				//
-				auto fileEntity = new FileEntity();
+				auto fileEntity = make_unique<FileEntity>();
 				fileEntity->id = "projectpathfiles_file_" + GUIParser::escape(StringTools::replace(Tools::getFileName(fileName), '.', '_'));
 
 				//
@@ -1299,7 +1298,7 @@ void EditorScreenController::ScanFilesThread::run() {
 
 				fileEntity->thumbnailTexture = thumbnailTexture;
 				editorScreenController->lockFileEntities();
-				editorScreenController->getFileEntities().push_back(fileEntity);
+				editorScreenController->getFileEntities().push_back(move(fileEntity));
 				editorScreenController->unlockFileEntities();
 				Thread::sleep(1LL);
 			} catch (Exception& exception) {
@@ -1405,10 +1404,10 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			showInfoPopUp("Error", string() + "An error occurred: file type: " + type + ": " + exception.what());
 		}
 	} else {
-		Prototype* prototype = nullptr;
-		Scene* scene = nullptr;
+		unique_ptr<Prototype> prototype;
+		unique_ptr<Scene> scene;
 		if (type == "empty") {
-			prototype = new Prototype(
+			prototype = make_unique<Prototype>(
 				Prototype::ID_NONE,
 				Prototype_Type::EMPTY,
 				Tools::removeFileExtension(fileName),
@@ -1424,7 +1423,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			auto height = 1.0f;
 			auto depth = 1.0f;
 			auto boundingBox = BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
-			prototype = new Prototype(
+			prototype = make_unique<Prototype>(
 				Prototype::ID_NONE,
 				Prototype_Type::TRIGGER,
 				Tools::removeFileExtension(fileName),
@@ -1434,7 +1433,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 				string(),
 				nullptr
 			);
-			prototype->addBoundingVolume(0, new PrototypeBoundingVolume(0, prototype));
+			prototype->addBoundingVolume(new PrototypeBoundingVolume(prototype.get()));
 			prototype->getBoundingVolume(0)->setupAabb(boundingBox.getMin(), boundingBox.getMax());
 		} else
 		if (type == "envmap") {
@@ -1442,7 +1441,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			auto height = 1.0f;
 			auto depth = 1.0f;
 			auto boundingBox = BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
-			prototype = new Prototype(
+			prototype = make_unique<Prototype>(
 				Prototype::ID_NONE,
 				Prototype_Type::ENVIRONMENTMAPPING,
 				Tools::removeFileExtension(fileName),
@@ -1452,7 +1451,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 				string(),
 				nullptr
 			);
-			prototype->addBoundingVolume(0, new PrototypeBoundingVolume(0, prototype));
+			prototype->addBoundingVolume(new PrototypeBoundingVolume(prototype.get()));
 			prototype->getBoundingVolume(0)->setupAabb(boundingBox.getMin(), boundingBox.getMax());
 		} else
 		if (type == "decal") {
@@ -1460,7 +1459,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			auto height = 1.0f;
 			auto depth = 1.0f;
 			auto boundingBox = BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
-			prototype = new Prototype(
+			prototype = make_unique<Prototype>(
 				Prototype::ID_NONE,
 				Prototype_Type::DECAL,
 				Tools::removeFileExtension(fileName),
@@ -1470,11 +1469,11 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 				string(),
 				nullptr
 			);
-			prototype->addBoundingVolume(0, new PrototypeBoundingVolume(0, prototype));
+			prototype->addBoundingVolume(new PrototypeBoundingVolume(prototype.get()));
 			prototype->getBoundingVolume(0)->setupAabb(boundingBox.getMin(), boundingBox.getMax());
 		} else
 		if (type == "model") {
-			prototype = new Prototype(
+			prototype = make_unique<Prototype>(
 				Prototype::ID_NONE,
 				Prototype_Type::MODEL,
 				Tools::removeFileExtension(fileName),
@@ -1486,7 +1485,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			);
 		} else
 		if (type == "terrain") {
-			prototype = new Prototype(
+			prototype = make_unique<Prototype>(
 				Prototype::ID_NONE,
 				Prototype_Type::TERRAIN,
 				Tools::removeFileExtension(fileName),
@@ -1498,7 +1497,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			);
 		} else
 		if (type == "particle") {
-			prototype = new Prototype(
+			prototype = make_unique<Prototype>(
 				Prototype::ID_NONE,
 				Prototype_Type::PARTICLESYSTEM,
 				Tools::removeFileExtension(fileName),
@@ -1510,14 +1509,14 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			);
 		} else
 		if (type == "scene") {
-			scene = new Scene(
+			scene = make_unique<Scene>(
 				Tools::removeFileExtension(fileName),
 				Tools::removeFileExtension(fileName)
 			);
 		}
 		if (prototype != nullptr) {
 			try {
-				PrototypeWriter::write(pathName, fileName, prototype);
+				PrototypeWriter::write(pathName, fileName, prototype.get());
 				browseTo(pathName + "/" + fileName);
 				openFile(pathName + "/" + fileName);
 			} catch (Exception& exception) {
@@ -1527,7 +1526,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 		} else
 		if (scene != nullptr) {
 			try {
-				SceneWriter::write(pathName, fileName, scene);
+				SceneWriter::write(pathName, fileName, scene.get());
 				browseTo(pathName + "/" + fileName);
 				openFile(pathName + "/" + fileName);
 			} catch (Exception& exception) {
@@ -1549,7 +1548,7 @@ void EditorScreenController::FileOpenThread::run() {
 			case FILETYPE_MODEL:
 				{
 					auto model = ModelReader::read(Tools::getPathName(absoluteFileName), Tools::getFileName(absoluteFileName));
-					prototype = new Prototype(
+					prototype = make_unique<Prototype>(
 						Prototype::ID_NONE,
 						Prototype_Type::MODEL,
 						Tools::removeFileExtension(fileName),
@@ -1563,69 +1562,87 @@ void EditorScreenController::FileOpenThread::run() {
 				}
 			case FILETYPE_EMPTYPROTOTYPE:
 				{
-					prototype = PrototypeReader::read(
-						FileSystem::getInstance()->getPathName(absoluteFileName),
-						FileSystem::getInstance()->getFileName(absoluteFileName)
+					prototype = unique_ptr<Prototype>(
+						PrototypeReader::read(
+							FileSystem::getInstance()->getPathName(absoluteFileName),
+							FileSystem::getInstance()->getFileName(absoluteFileName)
+						)
 					);
 					break;
 				}
 			case FILETYPE_TRIGGERPROTOTYPE:
 				{
-					prototype = PrototypeReader::read(
-						FileSystem::getInstance()->getPathName(absoluteFileName),
-						FileSystem::getInstance()->getFileName(absoluteFileName)
+					prototype = unique_ptr<Prototype>(
+						PrototypeReader::read(
+							FileSystem::getInstance()->getPathName(absoluteFileName),
+							FileSystem::getInstance()->getFileName(absoluteFileName)
+						)
 					);
 					break;
 				}
 			case FILETYPE_ENVMAPPROTOTYPE:
 				{
-					scene = SceneReader::read(
-						"resources/engine/scenes/envmap",
-						"envmap.tscene"
+					scene = unique_ptr<Scene>(
+						SceneReader::read(
+							"resources/engine/scenes/envmap",
+							"envmap.tscene"
+						)
 					);
-					prototype = PrototypeReader::read(
-						FileSystem::getInstance()->getPathName(absoluteFileName),
-						FileSystem::getInstance()->getFileName(absoluteFileName)
+					prototype = unique_ptr<Prototype>(
+						PrototypeReader::read(
+							FileSystem::getInstance()->getPathName(absoluteFileName),
+							FileSystem::getInstance()->getFileName(absoluteFileName)
+						)
 					);
 					break;
 				}
 			case FILETYPE_DECALPROTOTYPE:
 				{
-					prototype = PrototypeReader::read(
-						FileSystem::getInstance()->getPathName(absoluteFileName),
-						FileSystem::getInstance()->getFileName(absoluteFileName)
+					prototype = unique_ptr<Prototype>(
+						PrototypeReader::read(
+							FileSystem::getInstance()->getPathName(absoluteFileName),
+							FileSystem::getInstance()->getFileName(absoluteFileName)
+						)
 					);
 					break;
 				}
 			case FILETYPE_MODELPROTOTYPE:
 				{
-					prototype = PrototypeReader::read(
-						FileSystem::getInstance()->getPathName(absoluteFileName),
-						FileSystem::getInstance()->getFileName(absoluteFileName)
+					prototype = unique_ptr<Prototype>(
+						PrototypeReader::read(
+							FileSystem::getInstance()->getPathName(absoluteFileName),
+							FileSystem::getInstance()->getFileName(absoluteFileName)
+						)
 					);
 					break;
 				}
 			case FILETYPE_TERRAINPROTOTYPE:
 				{
-					prototype = PrototypeReader::read(
-						FileSystem::getInstance()->getPathName(absoluteFileName),
-						FileSystem::getInstance()->getFileName(absoluteFileName)
+					prototype = unique_ptr<Prototype>(
+						PrototypeReader::read(
+							FileSystem::getInstance()->getPathName(absoluteFileName),
+							FileSystem::getInstance()->getFileName(absoluteFileName)
+						)
 					);
 					break;
 				}
 			case FILETYPE_PARTICLESYSTEMPROTOTYPE:
 				{
-					prototype = PrototypeReader::read(
-						FileSystem::getInstance()->getPathName(absoluteFileName),
-						FileSystem::getInstance()->getFileName(absoluteFileName)
+					prototype = unique_ptr<Prototype>(
+						PrototypeReader::read(
+							FileSystem::getInstance()->getPathName(absoluteFileName),
+							FileSystem::getInstance()->getFileName(absoluteFileName)
+						)
 					);
 					break;
 				}
 			case FILETYPE_SCENE:
 				{
-					scene = SceneReader::read(
-						FileSystem::getInstance()->getPathName(absoluteFileName),
-						FileSystem::getInstance()->getFileName(absoluteFileName)
+					scene = unique_ptr<Scene>(
+						SceneReader::read(
+							FileSystem::getInstance()->getPathName(absoluteFileName),
+							FileSystem::getInstance()->getFileName(absoluteFileName)
+						)
 					);
 					break;
 				}
@@ -1803,63 +1820,63 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 			case FILETYPE_MODEL:
 				{
 					view->getPopUps()->getProgressBarScreenController()->show("Opening model as prototype ...", false);
-					fileOpenThread = new FileOpenThread(tabId, fileType, absoluteFileName);
+					fileOpenThread = make_unique<FileOpenThread>(tabId, fileType, absoluteFileName);
 					fileOpenThread->start();
 					break;
 				}
 			case FILETYPE_EMPTYPROTOTYPE:
 				{
 					view->getPopUps()->getProgressBarScreenController()->show("Opening empty prototype ...", false);
-					fileOpenThread = new FileOpenThread(tabId, fileType, absoluteFileName);
+					fileOpenThread = make_unique<FileOpenThread>(tabId, fileType, absoluteFileName);
 					fileOpenThread->start();
 					break;
 				}
 			case FILETYPE_TRIGGERPROTOTYPE:
 				{
 					view->getPopUps()->getProgressBarScreenController()->show("Opening trigger prototype ...", false);
-					fileOpenThread = new FileOpenThread(tabId, fileType, absoluteFileName);
+					fileOpenThread = make_unique<FileOpenThread>(tabId, fileType, absoluteFileName);
 					fileOpenThread->start();
 					break;
 				}
 			case FILETYPE_ENVMAPPROTOTYPE:
 				{
 					view->getPopUps()->getProgressBarScreenController()->show("Opening environment map prototype ...", false);
-					fileOpenThread = new FileOpenThread(tabId, fileType, absoluteFileName);
+					fileOpenThread = make_unique<FileOpenThread>(tabId, fileType, absoluteFileName);
 					fileOpenThread->start();
 					break;
 				}
 			case FILETYPE_DECALPROTOTYPE:
 				{
 					view->getPopUps()->getProgressBarScreenController()->show("Opening decal prototype ...", false);
-					fileOpenThread = new FileOpenThread(tabId, fileType, absoluteFileName);
+					fileOpenThread = make_unique<FileOpenThread>(tabId, fileType, absoluteFileName);
 					fileOpenThread->start();
 					break;
 				}
 			case FILETYPE_MODELPROTOTYPE:
 				{
 					view->getPopUps()->getProgressBarScreenController()->show("Opening model prototype...", false);
-					fileOpenThread = new FileOpenThread(tabId, fileType, absoluteFileName);
+					fileOpenThread = make_unique<FileOpenThread>(tabId, fileType, absoluteFileName);
 					fileOpenThread->start();
 					break;
 				}
 			case FILETYPE_TERRAINPROTOTYPE:
 				{
 					view->getPopUps()->getProgressBarScreenController()->show("Opening terrain prototype ...", false);
-					fileOpenThread = new FileOpenThread(tabId, fileType, absoluteFileName);
+					fileOpenThread = make_unique<FileOpenThread>(tabId, fileType, absoluteFileName);
 					fileOpenThread->start();
 					break;
 				}
 			case FILETYPE_PARTICLESYSTEMPROTOTYPE:
 				{
 					view->getPopUps()->getProgressBarScreenController()->show("Opening particle system prototype ...", false);
-					fileOpenThread = new FileOpenThread(tabId, fileType, absoluteFileName);
+					fileOpenThread = make_unique<FileOpenThread>(tabId, fileType, absoluteFileName);
 					fileOpenThread->start();
 					break;
 				}
 			case FILETYPE_SCENE:
 				{
 					view->getPopUps()->getProgressBarScreenController()->show("Opening scene ...", false);
-					fileOpenThread = new FileOpenThread(tabId, fileType, absoluteFileName);
+					fileOpenThread = make_unique<FileOpenThread>(tabId, fileType, absoluteFileName);
 					fileOpenThread->start();
 					break;
 				}
@@ -1909,7 +1926,7 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 	}
 }
 
-void EditorScreenController::onOpenFileFinish(const string& tabId, FileType fileType, const string& absoluteFileName, Prototype* prototype, Scene* scene) {
+void EditorScreenController::onOpenFileFinish(const string& tabId, FileType fileType, const string& absoluteFileName, unique_ptr<Prototype> prototype, unique_ptr<Scene> scene) {
 	auto fileName = FileSystem::getInstance()->getFileName(absoluteFileName);
 	auto fileNameLowerCase = StringTools::toLowerCase(fileName);
 
@@ -1918,7 +1935,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 		string icon;
 		string colorType;
 		EditorTabView::TabType tabType = EditorTabView::TABTYPE_UNKNOWN;
-		TabView* tabView = nullptr;
+		unique_ptr<TabView> tabView;
 		string viewPortTemplate;
 		switch (fileType) {
 			case FILETYPE_MODEL:
@@ -1926,7 +1943,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 					icon = "{$icon.type_mesh}";
 					colorType = "{$color.type_mesh}";
 					tabType = EditorTabView::TABTYPE_MODELEDITOR;
-					tabView = new ModelEditorTabView(view, tabId, prototype);
+					tabView = make_unique<ModelEditorTabView>(view, tabId, prototype.release());
 					viewPortTemplate = "template_viewport_scene.xml";
 					break;
 				}
@@ -1935,7 +1952,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 					icon = "{$icon.type_prototype}";
 					colorType = "{$color.type_prototype}";
 					tabType = EditorTabView::TABTYPE_EMPTYEDITOR;
-					tabView = new EmptyEditorTabView(view, tabId, prototype);
+					tabView = make_unique<EmptyEditorTabView>(view, tabId, prototype.release());
 					viewPortTemplate = "template_viewport_scene.xml";
 					break;
 				}
@@ -1944,7 +1961,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 					icon = "{$icon.type_prototype}";
 					colorType = "{$color.type_prototype}";
 					tabType = EditorTabView::TABTYPE_TRIGGEREDITOR;
-					tabView = new TriggerEditorTabView(view, tabId, prototype);
+					tabView = make_unique<TriggerEditorTabView>(view, tabId, prototype.release());
 					viewPortTemplate = "template_viewport_scene.xml";
 					break;
 				}
@@ -1953,7 +1970,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 					icon = "{$icon.type_scene}";
 					colorType = "{$color.type_scene}";
 					tabType = EditorTabView::TABTYPE_ENVMAPEDITOR;
-					tabView = new EnvMapEditorTabView(view, tabId, scene, prototype);
+					tabView = make_unique<EnvMapEditorTabView>(view, tabId, scene.release(), prototype.release());
 					viewPortTemplate = "template_viewport_scene.xml";
 					break;
 				}
@@ -1962,7 +1979,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 					icon = "{$icon.type_decal}";
 					colorType = "{$color.type_prototype}";
 					tabType = EditorTabView::TABTYPE_DECALEDITOR;
-					tabView = new DecalEditorTabView(view, tabId, prototype);
+					tabView = make_unique<DecalEditorTabView>(view, tabId, prototype.release());
 					viewPortTemplate = "template_viewport_scene.xml";
 					break;
 				}
@@ -1971,7 +1988,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 					icon = "{$icon.type_prototype}";
 					colorType = "{$color.type_prototype}";
 					tabType = EditorTabView::TABTYPE_MODELEDITOR;
-					tabView = new ModelEditorTabView(view, tabId, prototype);
+					tabView = make_unique<ModelEditorTabView>(view, tabId, prototype.release());
 					viewPortTemplate = "template_viewport_scene.xml";
 					break;
 				}
@@ -1980,7 +1997,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 					icon = "{$icon.type_terrain}";
 					colorType = "{$color.type_terrain}";
 					tabType = EditorTabView::TABTYPE_TERRAINEDITOR;
-					tabView = new TerrainEditorTabView(view, tabId, prototype);
+					tabView = make_unique<TerrainEditorTabView>(view, tabId, prototype.release());
 					viewPortTemplate = "template_viewport_terrain.xml";
 					break;
 				}
@@ -1989,7 +2006,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 					icon = "{$icon.type_particle}";
 					colorType = "{$color.type_particle}";
 					tabType = EditorTabView::TABTYPE_PARTICLESYSTEMEDITOR;
-					tabView = new ParticleSystemEditorTabView(view, tabId, prototype);
+					tabView = make_unique<ParticleSystemEditorTabView>(view, tabId, prototype.release());
 					viewPortTemplate = "template_viewport_scene.xml";
 					break;
 				}
@@ -1998,7 +2015,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 					icon = "{$icon.type_scene}";
 					colorType = "{$color.type_scene}";
 					tabType = EditorTabView::TABTYPE_SCENEEDITOR;
-					tabView = new SceneEditorTabView(view, tabId, scene);
+					tabView = make_unique<SceneEditorTabView>(view, tabId, scene.release());
 					viewPortTemplate = "template_viewport_scene.xml";
 					break;
 				}
@@ -2019,7 +2036,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 						icon = "{$icon.type_gui}";
 						colorType = "{$color.type_gui}";
 						tabType = EditorTabView::TABTYPE_UIEDITOR;
-						tabView = new UIEditorTabView(view, tabId, screenNode, absoluteFileName);
+						tabView = make_unique<UIEditorTabView>(view, tabId, screenNode, absoluteFileName);
 						viewPortTemplate = "template_viewport_ui.xml";
 					} else {
 						// nope, xml
@@ -2030,13 +2047,15 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 								FileSystem::getInstance()->getPathName(absoluteFileName),
 								FileSystem::getInstance()->getFileName(absoluteFileName)
 							);
-						auto screenNode = GUIParser::parse(
-							"resources/engine/gui/",
-							"tab_text.xml",
-							{{ "text", StringTools::replace(StringTools::replace(text, "[", "\\["), "]", "\\]") }}
+						auto screenNode = unique_ptr<GUIScreenNode>(
+							GUIParser::parse(
+								"resources/engine/gui/",
+								"tab_text.xml",
+								{{ "text", StringTools::replace(StringTools::replace(text, "[", "\\["), "]", "\\]") }}
+							)
 						);
 						tabType = EditorTabView::TABTYPE_TEXT;
-						tabView = new TextEditorTabView(view, tabId, screenNode, absoluteFileName);
+						tabView = make_unique<TextEditorTabView>(view, tabId, screenNode.release(), absoluteFileName);
 						viewPortTemplate = "template_viewport_plain.xml";
 					}
 					break;
@@ -2045,17 +2064,19 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 				{
 					icon = "{$icon.type_sound}";
 					colorType = "{$color.type_sound}";
-					auto audioStream = new VorbisAudioStream(
+					auto audioStream = make_unique<VorbisAudioStream>(
 						tabId,
 						FileSystem::getInstance()->getPathName(absoluteFileName),
 						FileSystem::getInstance()->getFileName(absoluteFileName)
 					);
-					auto screenNode = GUIParser::parse(
-						"resources/engine/gui/",
-						"tab_sound.xml"
+					auto screenNode = unique_ptr<GUIScreenNode>(
+						GUIParser::parse(
+							"resources/engine/gui/",
+							"tab_sound.xml"
+						)
 					);
 					tabType = EditorTabView::TABTYPE_SOUND;
-					tabView = new SoundTabView(view, tabId, screenNode, audioStream);
+					tabView = make_unique<SoundTabView>(view, tabId, screenNode.release(), audioStream.release());
 					viewPortTemplate = "template_viewport_plain.xml";
 					break;
 				}
@@ -2063,14 +2084,15 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 				{
 					icon = "{$icon.type_texture}";
 					colorType = "{$color.type_texture}";
-					auto screenNode = GUIParser::parse(
-						"resources/engine/gui/",
-						"tab_texture.xml",
-						{{ "texture", absoluteFileName}}
-
+					auto screenNode = unique_ptr<GUIScreenNode>(
+						GUIParser::parse(
+							"resources/engine/gui/",
+							"tab_texture.xml",
+							{{ "texture", absoluteFileName}}
+						)
 					);
 					tabType = EditorTabView::TABTYPE_TEXTURE;
-					tabView = new TextureTabView(view, tabId, screenNode);
+					tabView = make_unique<TextureTabView>(view, tabId, screenNode.release());
 					viewPortTemplate = "template_viewport_plain.xml";
 					break;
 				}
@@ -2078,14 +2100,15 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 				{
 					icon = "{$icon.type_texture}";
 					colorType = "{$color.type_texture}";
-					auto screenNode = GUIParser::parse(
-						"resources/engine/gui/",
-						"tab_video.xml",
-						{{ "video", absoluteFileName}}
-
+					auto screenNode = unique_ptr<GUIScreenNode>(
+						GUIParser::parse(
+							"resources/engine/gui/",
+							"tab_video.xml",
+							{{ "video", absoluteFileName}}
+						)
 					);
 					tabType = EditorTabView::TABTYPE_VIDEO;
-					tabView = new VideoTabView(view, tabId, screenNode);
+					tabView = make_unique<VideoTabView>(view, tabId, screenNode.release());
 					viewPortTemplate = "template_viewport_plain.xml";
 					break;
 				}
@@ -2093,16 +2116,18 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 				{
 					icon = "{$icon.type_font}";
 					colorType = "{$color.type_font}";
-					auto screenNode = GUIParser::parse(
-						"resources/engine/gui/",
-						"tab_font.xml",
-						{
-							{ "font", absoluteFileName },
-							{ "size", "20" }
-						}
+					auto screenNode = unique_ptr<GUIScreenNode>(
+						GUIParser::parse(
+							"resources/engine/gui/",
+							"tab_font.xml",
+							{
+								{ "font", absoluteFileName },
+								{ "size", "20" }
+							}
+						)
 					);
 					tabType = EditorTabView::TABTYPE_FONT;
-					tabView = new FontTabView(view, tabId, screenNode);
+					tabView = make_unique<FontTabView>(view, tabId, screenNode.release());
 					viewPortTemplate = "template_viewport_plain.xml";
 					break;
 				}
@@ -2116,13 +2141,15 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 							FileSystem::getInstance()->getPathName(absoluteFileName),
 							FileSystem::getInstance()->getFileName(absoluteFileName)
 						);
-					auto screenNode = GUIParser::parse(
-						"resources/engine/gui/",
-						hasVisualCode == true?"tab_visualcode.xml":"tab_text.xml",
-						{{ "text", StringTools::replace(StringTools::replace(text, "[", "\\["), "]", "\\]") }}
+					auto screenNode = unique_ptr<GUIScreenNode>(
+						GUIParser::parse(
+							"resources/engine/gui/",
+							hasVisualCode == true?"tab_visualcode.xml":"tab_text.xml",
+							{{ "text", StringTools::replace(StringTools::replace(text, "[", "\\["), "]", "\\]") }}
+						)
 					);
 					tabType = EditorTabView::TABTYPE_TEXT;
-					tabView = new TextEditorTabView(view, tabId, screenNode, absoluteFileName);
+					tabView = make_unique<TextEditorTabView>(view, tabId, screenNode.release(), absoluteFileName);
 					viewPortTemplate = hasVisualCode == true?"template_viewport_visualcode.xml":"template_viewport_plain.xml";
 					break;
 				}
@@ -2131,15 +2158,17 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 					icon = "{$icon.type_script}";
 					colorType = "{$color.type_script}";
 					vector<Markdown::TOCEntry> toc;
-					auto screenNode = GUIParser::parse(
-						Markdown::createGUIXML(
-							FileSystem::getInstance()->getPathName(absoluteFileName),
-							FileSystem::getInstance()->getFileName(absoluteFileName),
-							toc
+					auto screenNode = unique_ptr<GUIScreenNode>(
+						GUIParser::parse(
+							Markdown::createGUIXML(
+								FileSystem::getInstance()->getPathName(absoluteFileName),
+								FileSystem::getInstance()->getFileName(absoluteFileName),
+								toc
+							)
 						)
 					);
 					tabType = EditorTabView::TABTYPE_MARKDOWN;
-					tabView = new MarkdownTabView(view, tabId, screenNode, toc);
+					tabView = make_unique<MarkdownTabView>(view, tabId, screenNode.release(), toc);
 					viewPortTemplate = "template_viewport_plain.xml";
 					break;
 				}
@@ -2172,9 +2201,9 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 		// TODO: move me into GUIFrameBufferNode
 		if (Engine::getInstance()->getGraphicsRendererType() != Renderer::RENDERERTYPE_VULKAN) {
 			auto tabFrameBuffer = dynamic_cast<GUIImageNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"));
-			if (tabFrameBuffer != nullptr) tabFrameBuffer->setTextureMatrix((new Matrix2D3x3())->identity().scale(Vector2(1.0f, -1.0f)));
+			if (tabFrameBuffer != nullptr) tabFrameBuffer->setTextureMatrix(Matrix3x3().identity().scale(Vector2(1.0f, -1.0f)));
 		}
-		tabViews[tabId] = EditorTabView(tabId, Tools::getFileName(absoluteFileName), tabType, tabView, required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
+		tabViews[tabId] = EditorTabView(tabId, Tools::getFileName(absoluteFileName), tabType, tabView.release(), required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
 		tabViewVector.push_back(&tabViews[tabId]);
 		tabs->getController()->setValue(MutableString(tabId));
 	} catch (Exception& exception) {
@@ -2330,8 +2359,8 @@ void EditorScreenController::tick() {
 	}
 	if (scanFilesThread != nullptr) {
 		lockFileEntities();
-		for (auto fileEntity: getFileEntities()) {
-			pendingFileEntities.push_back(fileEntity);
+		for (auto& fileEntity: getFileEntities()) {
+			pendingFileEntities.push_back(move(fileEntity));
 			if (pendingFileEntities.size() == 2) addPendingFileEntities();
 		}
 		getFileEntities().clear();
@@ -2345,7 +2374,6 @@ void EditorScreenController::tick() {
 					showInfoPopUp("Error", string() + "An error occurred: " + scanFilesThread->getErrorMessage());
 				}
 			}
-			delete scanFilesThread;
 			scanFilesThread = nullptr;
 		}
 		unlockFileEntities();
@@ -2366,11 +2394,10 @@ void EditorScreenController::tick() {
 					fileOpenThread->getTabId(),
 					fileOpenThread->getFileType(),
 					fileOpenThread->getAbsoluteFileName(),
-					fileOpenThread->getPrototype(),
-					fileOpenThread->getScene()
+					move(fileOpenThread->getPrototype()),
+					move(fileOpenThread->getScene())
 				);
 			}
-			delete fileOpenThread;
 			fileOpenThread = nullptr;
 		} else {
 			view->getPopUps()->getProgressBarScreenController()->progress2(fileOpenThread->getProgress());

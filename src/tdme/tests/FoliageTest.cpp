@@ -68,10 +68,10 @@ FoliageTest::FoliageTest()
 }
 
 
-void FoliageTest::main(int argc, char** argv)
+int FoliageTest::main(int argc, char** argv)
 {
 	auto foliageTest = new FoliageTest();
-	foliageTest->run(argc, argv, "FoliageTest", foliageTest);
+	return foliageTest->run(argc, argv, "FoliageTest", foliageTest);
 }
 
 void FoliageTest::display()

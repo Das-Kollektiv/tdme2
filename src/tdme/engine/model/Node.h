@@ -1,25 +1,27 @@
 #pragma once
 
-#include <map>
+#include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/math/Vector2.h>
+#include <tdme/math/Vector3.h>
 
-using std::map;
 using std::string;
+using std::unique_ptr;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::model::Animation;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Model;
 using tdme::engine::model::Skinning;
-using tdme::engine::model::TextureCoordinate;
 using tdme::math::Matrix4x4;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 
 /**
@@ -37,14 +39,14 @@ private:
 	Matrix4x4 transformMatrix;
 	vector<Vector3> vertices;
 	vector<Vector3> normals;
-	vector<TextureCoordinate> textureCoordinates;
+	vector<Vector2> textureCoordinates;
 	vector<Vector3> tangents;
 	vector<Vector3> bitangents;
-	Animation* animation;
-	Skinning* skinning;
+	unique_ptr<Animation> animation;
+	unique_ptr<Skinning> skinning;
 	vector<FacesEntity> facesEntities;
 	vector<Vector3> origins;
-	map<string, Node*> subNodes;
+	unordered_map<string, Node*> subNodes;
 
 	bool verticesUpdated;
 	bool normalsUpdated;
@@ -185,7 +187,7 @@ public:
 	/**
 	 * @return texture coordinates or null (optional)
 	 */
-	inline const vector<TextureCoordinate>& getTextureCoordinates() const {
+	inline const vector<Vector2>& getTextureCoordinates() const {
 		return textureCoordinates;
 	}
 
@@ -193,7 +195,7 @@ public:
 	 * Set texture coordinates
 	 * @param textureCoordinates texture coordinates
 	 */
-	void setTextureCoordinates(const vector<TextureCoordinate>& textureCoordinates);
+	void setTextureCoordinates(const vector<Vector2>& textureCoordinates);
 
 	/**
 	 * @return tangents
@@ -225,7 +227,7 @@ public:
 	 * @return animation
 	 */
 	inline Animation* getAnimation() {
-		return animation;
+		return animation.get();
 	}
 
 	/**
@@ -238,7 +240,7 @@ public:
 	 * @return skinning or null
 	 */
 	inline Skinning* getSkinning() {
-		return skinning;
+		return skinning.get();
 	}
 
 	/**
@@ -288,7 +290,7 @@ public:
 	/**
 	 * @return sub sub nodes of this node
 	 */
-	inline map<string, Node*>& getSubNodes() {
+	inline unordered_map<string, Node*>& getSubNodes() {
 		return subNodes;
 	}
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <span>
 #include <string>
 #include <unordered_map>
@@ -19,8 +20,10 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/MiniScript.h>
 
+using std::make_unique;
 using std::span;
 using std::string;
+using std::unique_ptr;
 using std::unordered_map;
 
 using tdme::engine::logics::LogicMiniScript;
@@ -58,7 +61,7 @@ public:
 	 * @param hierarchyParentId hierarchy parent id
 	 */
 	inline MiniScriptLogic(Context* context, const string& id, bool handlingHIDInput, LogicMiniScript* miniScript, Prototype* prototype, bool runsInEditor, const string& hierarchyId = string(), const string& hierarchyParentId = string()):
-		Logic(context, id, handlingHIDInput), miniScript(miniScript), runsInEditor(runsInEditor), hierarchyId(hierarchyId), hierarchyParentId(hierarchyParentId) {
+		Logic(context, id, handlingHIDInput), miniScript(unique_ptr<LogicMiniScript>(miniScript)), runsInEditor(runsInEditor), hierarchyId(hierarchyId), hierarchyParentId(hierarchyParentId) {
 		//
 		enginePrototypes[id] = prototype;
 		logicPrototypes[id] = prototype;
@@ -78,7 +81,7 @@ public:
 	 * @return Returns mini script
 	 */
 	inline LogicMiniScript* getMiniScript() {
-		return miniScript;
+		return miniScript.get();
 	}
 
 	/**
@@ -258,22 +261,22 @@ public:
 				// add logic
 				if (prototypeToAdd.prototype->hasScript() == true) {
 					auto prototype = prototypeToAdd.prototype;
-					auto logicMiniScript = new LogicMiniScript();
-					logicMiniScript->loadScript(
+					auto logicMiniScript = make_unique<LogicMiniScript>();
+					logicMiniScript->parseScript(
 						Tools::getPathName(prototype->getScript()),
 						Tools::getFileName(prototype->getScript())
 					);
 					miniScript->context->addLogic(
-						new MiniScriptLogic(
+						make_unique<MiniScriptLogic>(
 							miniScript->context,
 							prototypeToAdd.id,
 							prototype->isScriptHandlingHID(),
-							logicMiniScript,
+							logicMiniScript.release(),
 							prototypeToAdd.prototype,
 							runsInEditor,
 							prototypeToAdd.hierarchyId,
 							prototypeToAdd.hierarchyParentId
-						)
+						).release()
 					);
 				}
 			}
@@ -326,7 +329,7 @@ public:
 	}
 
 private:
-	LogicMiniScript* miniScript { nullptr };
+	unique_ptr<LogicMiniScript> miniScript;
 	unordered_map<string, Prototype*> enginePrototypes;
 	unordered_map<string, Prototype*> logicPrototypes;
 	bool runsInEditor;

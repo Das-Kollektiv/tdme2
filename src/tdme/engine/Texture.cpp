@@ -283,23 +283,23 @@ ByteBuffer Texture::generateMipMap(int textureWidth, int textureHeight, int byte
 	return generatedTextureByteBuffer;
 }
 
-vector<Texture::MipMapTexture> Texture::getMipMapTextures(bool bc7Encoded) {
+const vector<Texture::MipMapTexture>& Texture::getMipMapTextures(bool bc7Encoded) {
 	// do we have any mip maps stored already?
 	if (mipMapTextures.empty() == false) {
 		// for now we only support stored BC7 mip maps and only return those if bc7 encodeding was requested
 		//	TODO: maybe conversion from BC7 to RGB is required here conditionally, but can also be that decoding BC7 is slower than generating new mip maps
 		auto mipMapFormatBC7 = mipMapTextures[0].format == TEXTUREFORMAT_RGB_BC7 || mipMapTextures[0].format == TEXTUREFORMAT_RGBA_BC7;
-		if (mipMapFormatBC7 == true && bc7Encoded == true) {
-			return mipMapTextures;
+		if (mipMapFormatBC7 == true) {
+			if (bc7Encoded == true) return mipMapTextures;
+		} else {
+			if (bc7Encoded == false) return mipMapTextures;
 		}
+		//
+		mipMapTextures.clear();
 	}
 
 	//
-	vector<Texture::MipMapTexture> generatedMipMapTextures;
-	//
 	auto mipLevels = getMipLevels();
-	auto previousMipmapTexture = static_cast<Texture*>(nullptr);
-	auto mipmapTexture = static_cast<Texture*>(nullptr);
 	auto mipMapTextureWidth = textureWidth;
 	auto mipMapTextureHeight = textureHeight;
 	auto textureTextureData = getRGBTextureData();
@@ -314,7 +314,7 @@ vector<Texture::MipMapTexture> Texture::getMipMapTextures(bool bc7Encoded) {
 			vector<uint8_t> bc7Data;
 			BC7TextureWriter::write(mipMapTextureWidth, mipMapTextureHeight, textureBytePerPixel, textureTextureData, bc7Data);
 			//
-			generatedMipMapTextures.emplace_back(
+			mipMapTextures.emplace_back(
 				getBC7FormatByPixelBitsPerPixel(getRGBDepthBitsPerPixel()),
 				mipMapTextureWidth,
 				mipMapTextureHeight,
@@ -322,7 +322,7 @@ vector<Texture::MipMapTexture> Texture::getMipMapTextures(bool bc7Encoded) {
 			);
 		} else {
 			//
-			generatedMipMapTextures.emplace_back(
+			mipMapTextures.emplace_back(
 				getRGBFormatByPixelBitsPerPixel(getRGBDepthBitsPerPixel()),
 				mipMapTextureWidth,
 				mipMapTextureHeight,
@@ -330,7 +330,7 @@ vector<Texture::MipMapTexture> Texture::getMipMapTextures(bool bc7Encoded) {
 			);
 		}
 	}
-	return generatedMipMapTextures;
+	return mipMapTextures;
 }
 
 void Texture::onDelete() {

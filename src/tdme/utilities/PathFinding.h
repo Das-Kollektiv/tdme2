@@ -331,7 +331,7 @@ private:
 	/**
 	 * Path finding node pool
 	 */
-	class PathFindingNodesPool: public Pool<PathFindingNode*> {
+	class PathFindingNodesPool: public Pool<PathFindingNode> {
 	public:
 		/**
 		 * Public constructor
@@ -420,11 +420,12 @@ private:
 	 * @param stepSize step size
 	 * @param scaleActorBoundingVolumes scale actor bounding volumes
 	 * @param flowMapRequest flow map request
+	 * @param customTest custom test
 	 * @param collisionTypeIds collision type ids or 0 for default
 	 * @param ignoreStepUpMax ignore step up max
 	 * @return if cell is walkable
 	 */
-	bool isWalkableInternal(float x, float y, float z, float& height, float stepSize, float scaleActorBoundingVolumes, bool flowMapRequest, uint16_t collisionTypeIds = 0, bool ignoreStepUpMax = false);
+	bool isWalkableInternal(float x, float y, float z, float& height, float stepSize, float scaleActorBoundingVolumes, bool flowMapRequest, PathFindingCustomTest* customTest = nullptr, uint16_t collisionTypeIds = 0, bool ignoreStepUpMax = false);
 
 	/**
 	 * Checks if a cell is slope walkable
@@ -436,10 +437,11 @@ private:
 	 * @param successorZ z
 	 * @param stepSize step size
 	 * @param scaleActorBoundingVolumes scale actor bounding volumes
+	 * @param customTest custom test
 	 * @param collisionTypeIds collision type ids or 0 for default
 	 * @return if cell is walkable
 	 */
-	bool isSlopeWalkableInternal(float x, float y, float z, float successorX, float successorY, float successorZ, float stepSize, float scaleActorBoundingVolumes, bool flowMapRequest, uint16_t collisionTypeIds = 0);
+	bool isSlopeWalkableInternal(float x, float y, float z, float successorX, float successorY, float successorZ, float stepSize, float scaleActorBoundingVolumes, bool flowMapRequest, PathFindingCustomTest* customTest = nullptr, uint16_t collisionTypeIds = 0);
 
 	/**
 	 * Processes one step in AStar path finding
@@ -448,13 +450,13 @@ private:
 	 * @param scaleActorBoundingVolumes scale actor bounding volumes
 	 * @param nodesToTest nodes to test or nullptr, applies to flow cost map generation
 	 * @param flowMapRequest flow map request
+	 * @param customTest custom test
 	 * @return step status
 	 */
-	void step(PathFindingNode* node, float stepSize, float scaleActorBoundingVolumes, const unordered_set<tuple<int, int, int>, PathFindingNodeId_Hash>* nodesToTest, bool flowMapRequest);
+	void step(PathFindingNode* node, float stepSize, float scaleActorBoundingVolumes, const unordered_set<tuple<int, int, int>, PathFindingNodeId_Hash>* nodesToTest, bool flowMapRequest, PathFindingCustomTest* customTest = nullptr);
 
 	// properties
 	World* world { nullptr };
-	PathFindingCustomTest* customTest { nullptr };
 	bool sloping;
 	int stepsMax;
 	float actorHeight;
@@ -470,8 +472,6 @@ private:
 	unordered_map<tuple<int, int, int>, PathFindingNode*, PathFindingNodeId_Hash> openNodes;
 	unordered_map<tuple<int, int, int>, PathFindingNode*, PathFindingNodeId_Hash> closedNodes;
 	PathFindingNodesPool pathFindingNodesPool;
-	BoundingVolume* actorBoundingVolume { nullptr };
-	BoundingVolume* actorBoundingVolumeSlopeTest { nullptr };
 	unordered_map<tuple<uint8_t, uint8_t, int, int, int, uint16_t, bool>, float, WalkableCache_Hash> walkableCache;
 	unordered_map<tuple<uint8_t, uint8_t, int, int, int, uint16_t, int16_t>, float, WalkableSlopeCache_Hash> walkableSlopeCache;
 	Texture* navigationMap { nullptr };

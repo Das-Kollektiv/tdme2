@@ -55,6 +55,7 @@ public:
 	virtual void setBufferPixelWidth(int contextIdx, float pixelWidth) override;
 	virtual void setBufferPixelHeight(int contextIdx, float pixelHeight) override;
 	virtual void setShaderParameters(int contextIdx, Engine* engine) override = 0;
+	virtual void unloadTextures();
 	virtual void loadTextures(const string& pathName);
 
 };

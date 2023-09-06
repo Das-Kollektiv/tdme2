@@ -1,15 +1,17 @@
 #pragma once
 
 #include <array>
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
 #include <tdme/audio/fwd-tdme.h>
 #include <tdme/audio/AudioEntity.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/ByteBuffer.h>
 
 using std::array;
 using std::string;
+using std::unique_ptr;
 
 using tdme::audio::AudioEntity;
 using tdme::utilities::ByteBuffer;
@@ -25,11 +27,11 @@ class tdme::audio::AudioStream
 
 private:
 	bool initiated { false };
-	array<uint32_t, 2> alBufferIds;
+	array<uint32_t, 2> alBufferIds { 0, 0 };
 	uint32_t alSourceId { 0 };
 	uint32_t sampleRate { 0 };
 	uint8_t channels { 0 };
-	ByteBuffer* data { nullptr };
+	unique_ptr<ByteBuffer> data;
 	int32_t format { 0 };
 	bool playing { false };
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <fstream>
 #include <vector>
 
@@ -12,6 +13,7 @@
 
 using std::ifstream;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::network::httpclient::HTTPClientException;
@@ -34,7 +36,7 @@ private:
 	int16_t httpStatusCode { -1 };
 	vector<string> httpHeader;
 
-	Thread* downloadThread { nullptr };
+	unique_ptr<Thread> downloadThread;
 	Mutex downloadThreadMutex;
 	bool haveHeaders { false };
 	bool haveContentSize { false };

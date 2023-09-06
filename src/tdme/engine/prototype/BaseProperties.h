@@ -1,18 +1,23 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/UniquePtrSequenceIterator.h>
 
 using std::map;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::prototype::BaseProperty;
+
+using tdme::utilities::ConstUniquePtrSequenceIterator;
+using tdme::utilities::UniquePtrSequenceIterator;
 
 /**
  * Base properties
@@ -22,7 +27,7 @@ class tdme::engine::prototype::BaseProperties
 {
 private:
 	map<string, BaseProperty*> propertiesByName;
-	vector<BaseProperty*> properties;
+	vector<unique_ptr<BaseProperty>> properties;
 
 protected:
 	string name;
@@ -94,13 +99,6 @@ public:
 	BaseProperty* getProperty(const string& name);
 
 	/**
-	 * @return property count
-	 */
-	inline int getPropertyCount() {
-		return properties.size();
-	}
-
-	/**
 	 * Get property index
 	 * @param name name
 	 * @return index or -1 if not found
@@ -115,12 +113,24 @@ public:
 	int getPropertyIndex(const string& name);
 
 	/**
-	 * Get property by index
-	 * @param idx idx
-	 * @return property or null
+	 * @return Const properties iterator
 	 */
-	inline const BaseProperty* getPropertyByIndex(int idx) const {
-		return idx >= 0 && idx < properties.size()?properties[idx]:nullptr;
+	inline ConstUniquePtrSequenceIterator<BaseProperty> getProperties() const {
+		return ConstUniquePtrSequenceIterator<BaseProperty>(&properties[0], &properties[properties.size()]);
+	}
+
+	/**
+	 * @return Properties iterator
+	 */
+	inline UniquePtrSequenceIterator<BaseProperty> getProperties() {
+		return UniquePtrSequenceIterator<BaseProperty>(&properties[0], &properties[properties.size()]);
+	}
+
+	/**
+	 * @return property count
+	 */
+	inline int getPropertyCount() {
+		return properties.size();
 	}
 
 	/**
@@ -128,8 +138,17 @@ public:
 	 * @param idx idx
 	 * @return property or null
 	 */
-	inline BaseProperty* getPropertyByIndex(int idx) {
-		return idx >= 0 && idx < properties.size()?properties[idx]:nullptr;
+	inline const BaseProperty* getPropertyAt(int idx) const {
+		return idx >= 0 && idx < properties.size()?properties[idx].get():nullptr;
+	}
+
+	/**
+	 * Get property by index
+	 * @param idx idx
+	 * @return property or null
+	 */
+	inline BaseProperty* getPropertyAt(int idx) {
+		return idx >= 0 && idx < properties.size()?properties[idx].get():nullptr;
 	}
 
 	/**

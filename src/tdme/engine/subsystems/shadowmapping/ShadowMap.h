@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -11,6 +12,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
 
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
@@ -32,8 +34,8 @@ class tdme::engine::subsystems::shadowmapping::ShadowMap final
 private:
 	vector<Object*> visibleObjects;
 	ShadowMapping* shadowMapping { nullptr };
-	Camera* lightCamera { nullptr };
-	FrameBuffer* frameBuffer { nullptr };
+	unique_ptr<Camera> lightCamera;
+	unique_ptr<FrameBuffer> frameBuffer;
 	Matrix4x4 biasMatrix;
 	Matrix4x4 depthBiasMVPMatrix;
 
@@ -119,7 +121,7 @@ public:
 	 * @return frame buffer
 	 */
 	inline FrameBuffer* getFrameBuffer() {
-		return frameBuffer;
+		return frameBuffer.get();
 	}
 
 };

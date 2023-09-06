@@ -5,18 +5,15 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Entity.h>
-#include <tdme/utilities/VectorIteratorMultiple.h>
 
 using std::find;
 using std::vector;
 
 using tdme::engine::Entity;
 using tdme::engine::SimplePartition;
-using tdme::utilities::VectorIteratorMultiple;
 
 SimplePartition::SimplePartition()
 {
-	arrayListIteratorMultiple.addVector(&entities);
 }
 
 void SimplePartition::reset()

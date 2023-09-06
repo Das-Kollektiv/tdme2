@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <deque>
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <unordered_set>
@@ -38,10 +39,12 @@
 
 using std::copy;
 using std::deque;
+using std::make_unique;
 using std::map;
 using std::set;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::unordered_set;
 using std::vector;
 
@@ -74,7 +77,7 @@ using tdme::utilities::Time;
 using tdme::engine::logics::Context;
 
 Context::PathFindingThread::PathFindingThread(Context* context, int idx):
-	Thread("wscontext-pathfindingthread", 4 * 1024 * 1024),
+	Thread("wscontext-pathfindingthread"),
 	context(context),
 	idx(idx),
 	timeStateStarted(-1LL),
@@ -86,13 +89,11 @@ Context::PathFindingThread::PathFindingThread(Context* context, int idx):
 	worldActionsMutex("pathfindingthread-world-actions-mutex")
 {
 	reset();
-	world = context->getWorld()->clone("pathfinding" +  to_string(idx) + "-world-" + (context->isServer() == true?"server":"client"), context->bodyCollisionTypeIdCloneMask);
-	pathFinding = new tdme::utilities::PathFinding(world, true, 1000, 1.8f, 0.4f, 0.81f, 0.4f, context->skipOnBodyCollisionTypeIdMask, 5, 0.5f, 2.0f);
+	world = unique_ptr<World>(context->getWorld()->clone("pathfinding" +  to_string(idx) + "-world-" + (context->isServer() == true?"server":"client"), context->bodyCollisionTypeIdCloneMask));
+	pathFinding = make_unique<tdme::utilities::PathFinding>(world.get(), true, 1000, 1.8f, 0.4f, 0.81f, 0.4f, context->skipOnBodyCollisionTypeIdMask, 5, 0.5f, 2.0f);
 }
 
 Context::PathFindingThread::~PathFindingThread() {
-	delete pathFinding;
-	delete world;
 }
 
 void Context::PathFindingThread::PathFindingThread::reset() {
@@ -407,24 +408,23 @@ void Context::PathFinding::setThreadCount(int threadCount) {
 void Context::PathFinding::start() {
 	threads.resize(threadCount);
 	for (auto i = 0; i < threads.size(); i++) {
-		threads[i] = new PathFindingThread(context, i);
+		threads[i] = make_unique<PathFindingThread>(context, i);
 	}
-	for (auto thread: threads) thread->start();
+	for (const auto& thread: threads) thread->start();
 }
 
 void Context::PathFinding::shutdown() {
-	for (auto thread: threads) thread->stop();
-	for (auto thread: threads) thread->join();
-	for (auto thread: threads) delete thread;
+	for (const auto& thread: threads) thread->stop();
+	for (const auto& thread: threads) thread->join();
 	threads.clear();
 }
 
 void Context::PathFinding::addWorldAction(const Context::PathFindingThread::WorldActionStruct& action) {
-	for (auto thread: threads) thread->addWorldAction(action);
+	for (const auto& thread: threads) thread->addWorldAction(action);
 }
 
 void Context::PathFinding::reset() {
-	for (auto thread: threads) thread->reset();
+	for (const auto& thread: threads) thread->reset();
 }
 
 Context::PathFindingThread::State Context::PathFinding::findPath(
@@ -487,7 +487,7 @@ Context::PathFindingThread::State Context::PathFinding::findPath(
 				return Context::PathFindingThread::STATE_PATHFINDING_SUCCESS;
 		}
 	}
-	for (auto thread: threads) {
+	for (const auto& thread: threads) {
 		auto threadPathFindingState = thread->findPath(
 			logicId,
 			actorId,
@@ -531,7 +531,7 @@ Context::PathFindingThread::State Context::PathFinding::findPath(
 
 bool Context::PathFinding::getFlowMapExtension(const string& actorId, FlowMap** flowMap) {
 	*flowMap = nullptr;
-	for (auto thread: threads) {
+	for (const auto& thread: threads) {
 		auto lastExtensionState = thread->getFlowMapExtension(actorId, flowMap);
 		switch(lastExtensionState) {
 			case Context::PathFindingThread::FLOWMAPEXTENSIONSTATE_TRYLOCK_FAILED: break;
@@ -544,7 +544,7 @@ bool Context::PathFinding::getFlowMapExtension(const string& actorId, FlowMap** 
 }
 
 void Context::PathFinding::cancel(const string& actorId) {
-	for (auto thread: threads) thread->cancel(actorId);
+	for (const auto& thread: threads) thread->cancel(actorId);
 }
 
 void Context::PathFinding::notifyCancel(const string& actorId) {
@@ -599,23 +599,16 @@ Context::Context(bool server): pathFinding(this), world(nullptr), server(server)
 
 Context::~Context() {
 	Console::println("Context::~Context()");
-	if (world != nullptr) delete world;
-	if (scene != nullptr) delete scene;
 }
 
 void Context::initialize() {
-	// TODO: optionally pathfinding should be set enabled in client and/or server
-	// path finding is only required for server
-	// if (server == true) {
-
+	// TODO: pathfinding could be optional
 	// world listener
-	worldListener = new ContextWorldListener(this);
-	world->addWorldListener(worldListener);
+	worldListener = make_unique<ContextWorldListener>(this);
+	world->addWorldListener(worldListener.get());
 
 	// path finding thread
 	pathFinding.start();
-
-	// }
 
 	//
 	timeStarted = Time::getCurrentMillis();
@@ -626,9 +619,9 @@ void Context::initialize() {
 
 void Context::shutdown() {
 	Console::println("Context::shutdown()");
-	// TODO: optionally pathfinding should be set enabled in client and/or server
+	//
+	world->removeWorldListener(worldListener.get());
 	pathFinding.shutdown();
-	world->removeWorldListener(worldListener);
 	//
 	for (auto logic: logics) delete logic;
 	logics.clear();

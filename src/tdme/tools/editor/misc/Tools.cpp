@@ -1,6 +1,7 @@
 #include <tdme/tools/editor/misc/Tools.h>
 
 #include <array>
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -17,7 +18,6 @@
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/ShaderModel.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
-#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
@@ -39,6 +39,7 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -55,8 +56,10 @@
 #include <tdme/utilities/StringTools.h>
 
 using std::array;
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::tools::editor::misc::Tools;
 
@@ -73,7 +76,6 @@ using tdme::engine::model::Node;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::ShaderModel;
 using tdme::engine::model::SpecularMaterialProperties;
-using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::OrientedBoundingBox;
@@ -95,6 +97,7 @@ using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
@@ -190,30 +193,31 @@ float Tools::computeMaxAxisDimension(BoundingBox* boundingBox)
 Model* Tools::createGroundModel(float width, float depth, float y)
 {
 	auto modelId = "tdme.ground" + to_string(static_cast<int>(width * 100)) + "x" + to_string(static_cast<int>(depth * 100)) + "@" + to_string(static_cast<int>(y * 100));
-	auto ground = new Model(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
-	auto groundMaterial = new Material("ground");
-	groundMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
+	auto ground = make_unique<Model>(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
+	//
+	auto groundMaterial = make_unique<Material>("ground");
+	groundMaterial->setSpecularMaterialProperties(make_unique<SpecularMaterialProperties>().release());
 	groundMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	groundMaterial->getSpecularMaterialProperties()->setDiffuseTexture("resources/engine/textures", "groundplate.png");
-	ground->getMaterials()["ground"] = groundMaterial;
-	auto groundNode = new Node(ground, nullptr, "ground", "ground");
+	//
+	auto groundNode = make_unique<Node>(ground.get(), nullptr, "ground", "ground");
 	vector<Vector3> groundVertices;
-	groundVertices.push_back(Vector3(-width/2, y, -depth/2));
-	groundVertices.push_back(Vector3(-width/2, y, +depth/2));
-	groundVertices.push_back(Vector3(+width/2, y, +depth/2));
-	groundVertices.push_back(Vector3(+width/2, y, -depth/2));
+	groundVertices.emplace_back(-width/2, y, -depth/2);
+	groundVertices.emplace_back(-width/2, y, +depth/2);
+	groundVertices.emplace_back(+width/2, y, +depth/2);
+	groundVertices.emplace_back(+width/2, y, -depth/2);
 	vector<Vector3> groundNormals;
-	groundNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
-	vector<TextureCoordinate> groundTextureCoordinates;
-	groundTextureCoordinates.push_back(TextureCoordinate(0.0f, depth));
-	groundTextureCoordinates.push_back(TextureCoordinate(0.0f, 0.0f));
-	groundTextureCoordinates.push_back(TextureCoordinate(width, 0.0f));
-	groundTextureCoordinates.push_back(TextureCoordinate(width, depth));
+	groundNormals.emplace_back(0.0f, 1.0f, 0.0f);
+	vector<Vector2> groundTextureCoordinates;
+	groundTextureCoordinates.emplace_back(0.0f, 0.0f);
+	groundTextureCoordinates.emplace_back(0.0f, depth);
+	groundTextureCoordinates.emplace_back(width, depth);
+	groundTextureCoordinates.emplace_back(width, 0.0f);
 	vector<Face> groundFacesGround;
-	groundFacesGround.push_back(Face(groundNode, 0, 1, 2, 0, 0, 0, 0, 1, 2));
-	groundFacesGround.push_back(Face(groundNode, 2, 3, 0, 0, 0, 0, 2, 3, 0));
-	FacesEntity nodeFacesEntityGround(groundNode, "ground.facesentity");
-	nodeFacesEntityGround.setMaterial(groundMaterial);
+	groundFacesGround.emplace_back(groundNode.get(), 0, 1, 2, 0, 0, 0, 0, 1, 2);
+	groundFacesGround.emplace_back(groundNode.get(), 2, 3, 0, 0, 0, 0, 2, 3, 0);
+	FacesEntity nodeFacesEntityGround(groundNode.get(), "ground.facesentity");
+	nodeFacesEntityGround.setMaterial(groundMaterial.get());
 	vector<FacesEntity> nodeFacesEntities;
 	nodeFacesEntityGround.setFaces(groundFacesGround);
 	nodeFacesEntities.push_back(nodeFacesEntityGround);
@@ -221,17 +225,25 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	groundNode->setNormals(groundNormals);
 	groundNode->setTextureCoordinates(groundTextureCoordinates);
 	groundNode->setFacesEntities(nodeFacesEntities);
-	ground->getNodes()["ground"] = groundNode;
-	ground->getSubNodes()["ground"] = groundNode;
-	ModelTools::prepareForIndexedRendering(ground);
-	return ground;
+	ground->getNodes()["ground"] = groundNode.get();
+	ground->getSubNodes()["ground"] = groundNode.get();
+	groundNode.release();
+	//
+	ground->getMaterials()["ground"] = groundMaterial.get();
+	groundMaterial.release();
+	//
+	ModelTools::prepareForIndexedRendering(ground.get());
+	//
+	return ground.release();
 }
 
 Model* Tools::createGridModel()
 {
-	auto groundPlate = new Model("tdme.grid", "tdme.grid", UpVector::Y_UP, RotationOrder::XYZ, new BoundingBox(Vector3(0.0f, -0.01f, 0.0f), Vector3(10000.0f, +0.01f, 10000.0f)));
-	auto groundPlateMaterial = new Material("ground");
-	groundPlateMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
+	//
+	auto groundPlate = make_unique<Model>("tdme.grid", "tdme.grid", UpVector::Y_UP, RotationOrder::XYZ, make_unique<BoundingBox>(Vector3(0.0f, -0.01f, 0.0f), Vector3(10000.0f, +0.01f, 10000.0f)).release());
+	//
+	auto groundPlateMaterial = make_unique<Material>("ground");
+	groundPlateMaterial->setSpecularMaterialProperties(make_unique<SpecularMaterialProperties>().release());
 	groundPlateMaterial->getSpecularMaterialProperties()->setDiffuseColor(
 		Color4(
 			groundPlateMaterial->getSpecularMaterialProperties()->getDiffuseColor().getRed(),
@@ -242,25 +254,25 @@ Model* Tools::createGridModel()
 	);
 	groundPlateMaterial->getSpecularMaterialProperties()->setDiffuseTexture("resources/engine/textures", "groundplate.png");
 	groundPlateMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	groundPlate->getMaterials()["grid"] = groundPlateMaterial;
-	auto groundNode = new Node(groundPlate, nullptr, "grid", "grid");
+	//
+	auto groundNode = make_unique<Node>(groundPlate.get(), nullptr, "grid", "grid");
 	vector<Vector3> groundVertices;
-	groundVertices.push_back(Vector3(0.0f, 0.0f, 0.0f));
-	groundVertices.push_back(Vector3(0.0f, 0.0f, 10000.0f));
-	groundVertices.push_back(Vector3(10000.0f, 0.0f, 10000.0f));
-	groundVertices.push_back(Vector3(10000.0f, 0.0f, 0.0f));
+	groundVertices.emplace_back(0.0f, 0.0f, 0.0f);
+	groundVertices.emplace_back(0.0f, 0.0f, 10000.0f);
+	groundVertices.emplace_back(10000.0f, 0.0f, 10000.0f);
+	groundVertices.emplace_back(10000.0f, 0.0f, 0.0f);
 	vector<Vector3> groundNormals;
-	groundNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
-	vector<TextureCoordinate> groundTextureCoordinates;
-	groundTextureCoordinates.push_back(TextureCoordinate(0.0f, 10000.0f));
-	groundTextureCoordinates.push_back(TextureCoordinate(0.0f, 0.0f));
-	groundTextureCoordinates.push_back(TextureCoordinate(10000.0f, 0.0f));
-	groundTextureCoordinates.push_back(TextureCoordinate(10000.0f, 10000.0f));
+	groundNormals.emplace_back(0.0f, 1.0f, 0.0f);
+	vector<Vector2> groundTextureCoordinates;
+	groundTextureCoordinates.emplace_back(0.0f, 0.0f);
+	groundTextureCoordinates.emplace_back(0.0f, 10000.0f);
+	groundTextureCoordinates.emplace_back(10000.0f, 10000.0f);
+	groundTextureCoordinates.emplace_back(10000.0f, 0.0f);
 	vector<Face> groundFacesGround;
-	groundFacesGround.push_back(Face(groundNode, 0, 1, 2, 0, 0, 0, 0, 1, 2));
-	groundFacesGround.push_back(Face(groundNode, 2, 3, 0, 0, 0, 0, 2, 3, 0));
-	FacesEntity nodeFacesEntityGround(groundNode, "tdme.sceneeditor.grid.facesentity");
-	nodeFacesEntityGround.setMaterial(groundPlateMaterial);
+	groundFacesGround.emplace_back(groundNode.get(), 0, 1, 2, 0, 0, 0, 0, 1, 2);
+	groundFacesGround.emplace_back(groundNode.get(), 2, 3, 0, 0, 0, 0, 2, 3, 0);
+	FacesEntity nodeFacesEntityGround(groundNode.get(), "tdme.sceneeditor.grid.facesentity");
+	nodeFacesEntityGround.setMaterial(groundPlateMaterial.get());
 	nodeFacesEntityGround.setFaces(groundFacesGround);
 	vector<FacesEntity> nodeFacesEntities;
 	nodeFacesEntities.push_back(nodeFacesEntityGround);
@@ -268,10 +280,16 @@ Model* Tools::createGridModel()
 	groundNode->setNormals(groundNormals);
 	groundNode->setTextureCoordinates(groundTextureCoordinates);
 	groundNode->setFacesEntities(nodeFacesEntities);
-	groundPlate->getNodes()[groundNode->getId()] = groundNode;
-	groundPlate->getSubNodes()[groundNode->getId()] = groundNode;
-	ModelTools::prepareForIndexedRendering(groundPlate);
-	return groundPlate;
+	groundPlate->getNodes()[groundNode->getId()] = groundNode.get();
+	groundPlate->getSubNodes()[groundNode->getId()] = groundNode.get();
+	groundNode.release();
+	//
+	groundPlate->getMaterials()["grid"] = groundPlateMaterial.get();
+	groundPlateMaterial.release();
+	//
+	ModelTools::prepareForIndexedRendering(groundPlate.get());
+	//
+	return groundPlate.release();
 }
 
 void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform& lookFromRotations, int lodLevel, Vector3& objectScale, CameraRotationInputHandler* cameraRotationInputHandler, float scale, bool resetup)
@@ -279,7 +297,7 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 	if (prototype == nullptr) return;
 
 	// create engine entity
-	BoundingBox* entityBoundingBoxFallback = new BoundingBox(Vector3(-2.5f, 0.0f, -2.5f), Vector3(2.5f, 2.0f, 2.5f));
+	auto entityBoundingBoxFallback = make_unique<BoundingBox>(Vector3(-2.5f, 0.0f, -2.5f), Vector3(2.5f, 2.0f, 2.5f));
 	BoundingBox* entityBoundingBox = nullptr;
 	Entity* modelEntity = nullptr;
 	objectScale.set(1.0f, 1.0f, 1.0f);
@@ -288,12 +306,15 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 
 	// bounding volumes
 	auto entityBoundingVolumesHierarchy = new EntityHierarchy("tdme.prototype.bvs");
-	for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
-		auto entityBoundingVolume = prototype->getBoundingVolume(i);
-		if (entityBoundingVolume->getModel() != nullptr) {
-			auto bvObject = new Object("tdme.prototype.bv." + to_string(i), entityBoundingVolume->getModel());
-			bvObject->setEnabled(false);
-			entityBoundingVolumesHierarchy->addEntity(bvObject);
+	{
+		auto i = 0;
+		for (auto prototypeBoundingVolume: prototype->getBoundingVolumes()) {
+			if (prototypeBoundingVolume->getModel() != nullptr) {
+				auto bvObject = new Object("tdme.prototype.bv." + to_string(i), prototypeBoundingVolume->getModel());
+				bvObject->setEnabled(false);
+				entityBoundingVolumesHierarchy->addEntity(bvObject);
+			}
+			i++;
 		}
 	}
 	entityBoundingVolumesHierarchy->update();
@@ -379,7 +400,7 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 	}
 
 	//
-	auto entityBoundingBoxToUse = entityBoundingBox != nullptr?entityBoundingBox:entityBoundingBoxFallback;
+	auto entityBoundingBoxToUse = entityBoundingBox != nullptr?entityBoundingBox:entityBoundingBoxFallback.get();
 
 	// do a feasible scale
 	float maxAxisDimension = Tools::computeMaxAxisDimension(entityBoundingBoxToUse);
@@ -455,9 +476,6 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 			cameraRotationInputHandler->setDefaultScale(maxAxisDimension * scale);
 		}
 	}
-
-	//
-	delete entityBoundingBoxFallback;
 }
 
 const string Tools::getRelativeResourcesFileName(const string& applicationRoot, const string& fileName)

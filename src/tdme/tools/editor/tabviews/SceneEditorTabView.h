@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -22,6 +23,7 @@
 #include <tdme/tools/editor/views/fwd-tdme.h>
 
 using std::string;
+using std::unique_ptr;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
@@ -48,7 +50,7 @@ using tdme::tools::editor::views::EditorView;
  * Scene editor tab view
  * @author Andreas Drewke
  */
-class tdme::tools::editor::tabviews::SceneEditorTabView final: public TabView, protected CameraInputHandlerEventHandler, public Gizmo
+class tdme::tools::editor::tabviews::SceneEditorTabView final: public TabView, public CameraInputHandlerEventHandler, public Gizmo
 {
 private:
 	/**
@@ -96,14 +98,14 @@ private:
 
 	static constexpr int MOUSE_DOWN_LAST_POSITION_NONE { -1 };
 
-	Engine* engine { nullptr };
-	CameraInputHandler* cameraInputHandler { nullptr };
+	unique_ptr<Engine> engine;
+	unique_ptr<CameraInputHandler> cameraInputHandler;
 	EditorView* editorView { nullptr };
 	string tabId;
 	PopUps* popUps { nullptr };
-	SceneEditorTabController* sceneEditorTabController { nullptr };
+	unique_ptr<SceneEditorTabController> sceneEditorTabController;
 	TabView::OutlinerState outlinerState;
-	Scene* scene { nullptr };
+	unique_ptr<Scene> scene;
 
 	STATIC_DLL_IMPEXT static vector<string> ENTITYCOLOR_NAMES;
 	unordered_map<string, EntityColor> entityColors;
@@ -129,8 +131,8 @@ private:
 	vector<string> selectedEntityIds;
 	unordered_set<string> selectedEntityIdsById;
 	vector<SceneEntity*> copiedEntities;
-	EntityPickingFilter* entityPickingFilterNoGrid { nullptr };
-	EntityPickingFilter* entityPickingFilterPlacing { nullptr };
+	unique_ptr<EntityPickingFilter> entityPickingFilterNoGrid;
+	unique_ptr<EntityPickingFilter> entityPickingFilterPlacing;
 	bool needsGizmoUpdate { false };
 
 	Vector3 multipleSelectionTranslation;
@@ -143,10 +145,9 @@ private:
 
 	bool gridEnabled;
 	float gridY;
-	Model* gridModel { nullptr };
+	unique_ptr<Model> gridModel;
 
-	ApplicationClient* applicationClient { nullptr };
-	Context* applicationContext { nullptr };
+	unique_ptr<ApplicationClient> applicationClient;
 
 public:
 	// forbid class copy
@@ -183,7 +184,7 @@ public:
 	 * @return scene
 	 */
 	Scene* getScene() {
-		return scene;
+		return scene.get();
 	}
 
 	// overridden methods
@@ -198,7 +199,7 @@ public:
 	void deactivate() override;
 	Engine* getEngine() override;
 	inline TabController* getTabController() override {
-		return sceneEditorTabController;
+		return sceneEditorTabController.get();
 	}
 	void reloadOutliner() override;
 	void onCameraTranslation() override;

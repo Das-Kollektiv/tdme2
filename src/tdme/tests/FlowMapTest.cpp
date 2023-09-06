@@ -73,22 +73,18 @@ FlowMapTest::FlowMapTest()
 {
 	Application::setLimitFPS(true);
 	engine = Engine::getInstance();
-	world = new World("world");
+	world = make_unique<World>("world");
 	timeLastUpdate = -1;
 }
 
 FlowMapTest::~FlowMapTest() {
 	if (flowMap != nullptr) flowMap->releaseReference();
-	delete world;
-	delete emptyModel;
-	delete playerModelPrototype;
-	delete pathFinding;
 }
 
-void FlowMapTest::main(int argc, char** argv)
+int FlowMapTest::main(int argc, char** argv)
 {
 	auto flowMapTest = new FlowMapTest();
-	flowMapTest->run(argc, argv, "FlowMapTest");
+	return flowMapTest->run(argc, argv, "FlowMapTest");
 }
 
 void FlowMapTest::display()
@@ -120,24 +116,23 @@ void FlowMapTest::display()
 void FlowMapTest::dispose()
 {
 	engine->dispose();
-	delete scene;
 }
 
 void FlowMapTest::initialize()
 {
 	engine->initialize();
-	scene = SceneReader::read("resources/tests/levels/pathfinding", "test.tscene");
-	SceneConnector::setLights(engine, scene);
-	SceneConnector::addScene(engine, scene, false, false, false, false, false);
-	SceneConnector::addScene(world, scene);
+	scene = unique_ptr<Scene>(SceneReader::read("resources/tests/levels/pathfinding", "test.tscene"));
+	SceneConnector::setLights(engine, scene.get());
+	SceneConnector::addScene(engine, scene.get(), false, false, false, false, false);
+	SceneConnector::addScene(world.get(), scene.get());
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(15.0f);
 	cam->setLookFrom(scene->getCenter() + Vector3(0.0f, 10.0f, 0.0f));
 	cam->setLookAt(scene->getCenter());
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
-	emptyModel = ModelReader::read("resources/engine/models", "empty.tm");
-	playerModelPrototype = PrototypeReader::read("resources/tests/models/mementoman", "mementoman.tmodel");
+	emptyModel = unique_ptr<Model>(ModelReader::read("resources/engine/models", "empty.tm"));
+	playerModelPrototype = unique_ptr<Prototype>(PrototypeReader::read("resources/tests/models/mementoman", "mementoman.tmodel"));
 	playerModelPrototype->getModel()->addAnimationSetup("walk", 0, 23, true);
 	playerModelPrototype->getModel()->addAnimationSetup("still", 24, 99, true);
 	playerModelPrototype->getModel()->addAnimationSetup("death", 109, 169, false);
@@ -173,7 +168,7 @@ void FlowMapTest::initialize()
 	pathPositions.push_back(Vector3(-2.5f, 0.25f, 0.5f));
 	pathPositions.push_back(Vector3(2.5f, 0.25f, 0.5f));
 	pathPositions.push_back(Vector3(2.5f, 0.25f, -4.5f));
-	pathFinding = new PathFinding(world, false, 1000, 2.0f, 0.5f, 0.5f);
+	pathFinding = make_unique<PathFinding>(world.get(), false, 1000, 2.0f, 0.5f, 0.5f);
 	doPathFinding();
 }
 
@@ -238,7 +233,7 @@ void FlowMapTest::doPathFinding() {
 		if (cell == nullptr) continue;
 		auto flowDirectionEntityId = "flowdirection." + to_string(i);
 		auto yRotationAngle = Vector3::computeAngle(Vector3(0.0f, 0.0f, 1.0f), cell->getDirection(), Vector3(0.0f, 1.0f, 0.0f));
-		auto cellObject = new Object(flowDirectionEntityId, emptyModel);
+		auto cellObject = new Object(flowDirectionEntityId, emptyModel.get());
 		cellObject->setScale(Vector3(0.5f, 0.5f, 0.5f));
 		cellObject->setTranslation(cellPosition + Vector3(0.0f, 0.25f, 0.0f));
 		cellObject->addRotation(Vector3(0.0f, 1.0f, 0.0f), yRotationAngle - 90.0f);

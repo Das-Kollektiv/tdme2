@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -20,6 +21,7 @@
 #include <ext/tinyxml/tinyxml.h>
 
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::gui::events::GUIActionListener;
@@ -74,7 +76,7 @@ private:
 	int addNodeX { -1 };
 	int addNodeY { -1 };
 
-	MiniScript* scriptInstance { nullptr };
+	unique_ptr<MiniScript> scriptInstance;
 
 public:
 	// forbid class copy
@@ -93,17 +95,22 @@ public:
 
 	/**
 	 * Get view
+	 * @return view
 	 */
-	TextEditorTabView* getView();
+	inline TextEditorTabView* getView() {
+		return view;
+	}
 
 	// overridden method
-	GUIScreenNode* getScreenNode() override;
+	inline GUIScreenNode* getScreenNode() override {
+		return screenNode;
+	}
 
 	/**
 	 * @return MiniScript
 	 */
 	inline MiniScript* getMiniScript() {
-		return scriptInstance;
+		return scriptInstance.get();
 	}
 
 	/**

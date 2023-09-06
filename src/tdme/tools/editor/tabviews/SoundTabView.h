@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -15,6 +16,7 @@
 #include <tdme/tools/editor/views/fwd-tdme.h>
 
 using std::string;
+using std::unique_ptr;
 
 using tdme::audio::Audio;
 using tdme::audio::AudioEntity;
@@ -35,7 +37,7 @@ class tdme::tools::editor::tabviews::SoundTabView final
 	: public TabView
 {
 protected:
-	Engine* engine { nullptr };
+	unique_ptr<Engine> engine;
 	Audio* audio { nullptr };
 
 private:
@@ -43,7 +45,7 @@ private:
 	string tabId;
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
-	SoundTabController* soundTabController { nullptr };
+	unique_ptr<SoundTabController> soundTabController;
 	TabView::OutlinerState outlinerState;
 	AudioEntity* audioEntity { nullptr };
 
@@ -76,7 +78,7 @@ public:
 	 * @return associated tab controller
 	 */
 	inline TabController* getTabController() override {
-		return soundTabController;
+		return soundTabController.get();
 	}
 
 	/**

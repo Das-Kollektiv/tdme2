@@ -220,5 +220,8 @@ void ShadowMapRenderShaderBaseImplementation::setRenderLightId(int32_t lightId) 
 	this->lightId = lightId;
 }
 
+void ShadowMapRenderShaderBaseImplementation::unloadTextures() {
+}
+
 void ShadowMapRenderShaderBaseImplementation::loadTextures(const string& pathName) {
 }

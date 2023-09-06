@@ -220,6 +220,34 @@ public:
 	}
 
 	/**
+	 * @return texture format
+	 */
+	inline TextureFormat getTextureFormat() const {
+		return format;
+	}
+
+	/**
+	 * @return texture has RGB/RGBA raw texture format
+	 */
+	inline bool isRGBTextureFormat() const {
+		return format == TEXTUREFORMAT_RGBA || format == TEXTUREFORMAT_RGB;
+	}
+
+	/**
+	 * @return texture has PNG texture format
+	 */
+	inline bool isPNGTextureFormat() const {
+		return format == TEXTUREFORMAT_RGBA_PNG || format == TEXTUREFORMAT_RGB_PNG;
+	}
+
+	/**
+	 * @return texture has BC7 texture format
+	 */
+	inline bool isBC7TextureFormat() const {
+		return format == TEXTUREFORMAT_RGBA_BC7 || format == TEXTUREFORMAT_RGB_BC7;
+	}
+
+	/**
 	 * @return RGB/RGBA texture data wrapped in a byte buffer
 	 */
 	inline ByteBuffer getRGBTextureData() {
@@ -392,8 +420,9 @@ public:
 	/**
 	 * Get mip map textures
 	 * @param bc7Encoded bc7 encoded if true or RGB/A if false
+	 * @return mip map textures
 	 */
-	vector<MipMapTexture> getMipMapTextures(bool bc7Encoded);
+	const vector<MipMapTexture>& getMipMapTextures(bool bc7Encoded);
 
 	// overridden methods
 	virtual void onDelete() override;

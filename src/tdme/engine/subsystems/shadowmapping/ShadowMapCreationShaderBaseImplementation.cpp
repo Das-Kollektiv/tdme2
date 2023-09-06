@@ -133,7 +133,9 @@ void ShadowMapCreationShaderBaseImplementation::bindTexture(Renderer* renderer, 
 	}
 }
 
-void ShadowMapCreationShaderBaseImplementation::loadTextures(const string& pathName) {
+void ShadowMapCreationShaderBaseImplementation::unloadTextures() {
+}
 
+void ShadowMapCreationShaderBaseImplementation::loadTextures(const string& pathName) {
 }
 

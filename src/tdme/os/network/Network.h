@@ -13,6 +13,7 @@ using std::string;
  */
 class tdme::os::network::Network {
 public:
+
 	/**
 	 * Initialize
 	 * @return success
@@ -20,11 +21,11 @@ public:
 	static bool initialize();
 
 	/**
-	 * Get IP by host name
-	 * @param hostName host name
+	 * Get IP by hostname
+	 * @param hostname hostname
 	 * @throws tdme::os::network::NetworkException
-	 * @return ip of given host
+	 * @return ip address of given host
 	 */
-	static const string getIpByHostName(const string &hostName);
+	static const string getIpByHostname(const string &hostname);
 
 };

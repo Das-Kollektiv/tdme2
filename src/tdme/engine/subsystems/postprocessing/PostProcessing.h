@@ -27,11 +27,19 @@ public:
 	PostProcessing();
 
 	/**
+	 * Destructor
+	 */
+	~PostProcessing();
+
+	/**
 	 * Get post processing program
 	 * @param programId program id
 	 * @return post processing program
 	 */
-	PostProcessingProgram* getPostProcessingProgram(const string& programId);
+	inline PostProcessingProgram* getPostProcessingProgram(const string& programId) {
+		auto programIt = programs.find(programId);
+		return programIt == programs.end()?nullptr:programIt->second;
+	}
 
 private:
 	map<string, PostProcessingProgram*> programs;

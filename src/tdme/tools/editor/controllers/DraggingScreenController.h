@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -9,6 +10,7 @@
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
+using std::unique_ptr;
 
 using tdme::gui::events::GUIMoveListener;
 using tdme::gui::nodes::GUINode;
@@ -35,7 +37,7 @@ private:
 	int dragReleaseMouseX { -1 };
 	int dragReleaseMouseY { -1 };
 
-	Action* onReleaseAction { nullptr };
+	unique_ptr<Action> onReleaseAction;
 
 public:
 	// forbid class copy

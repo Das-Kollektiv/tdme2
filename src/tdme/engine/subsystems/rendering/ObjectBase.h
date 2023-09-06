@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -16,8 +16,8 @@
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Matrix4x4.h>
 
-using std::map;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::model::Model;
@@ -44,7 +44,7 @@ class tdme::engine::subsystems::rendering::ObjectBase
 	friend class tdme::engine::subsystems::skinning::SkinningShader;
 
 private:
-	ObjectBase_TransformedFacesIterator* transformedFacesIterator { nullptr };
+	unique_ptr<ObjectBase_TransformedFacesIterator> transformedFacesIterator;
 
 protected:
 	Model* model;

@@ -6,13 +6,13 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/Color4.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 
 using std::string;
 
 using tdme::engine::Texture;
 using tdme::engine::Color4;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 
 /**
  * Represents specular material properties
@@ -42,7 +42,7 @@ private:
 	string normalTexturePathName;
 	string normalTextureFileName;
 	Texture* normalTexture;
-	Matrix2D3x3 textureMatrix;
+	Matrix3x3 textureMatrix;
 	int textureAtlasSize;
 
 	/**
@@ -425,7 +425,7 @@ public:
 	/**
 	 * @return texture matrix
 	 */
-	const Matrix2D3x3& getTextureMatrix() const {
+	const Matrix3x3& getTextureMatrix() const {
 		return textureMatrix;
 	}
 
@@ -433,7 +433,7 @@ public:
 	 * Set texture matrix
 	 * @param texture matrix
 	 */
-	void setTextureMatrix(const Matrix2D3x3& textureMatrix) {
+	void setTextureMatrix(const Matrix3x3& textureMatrix) {
 		this->textureMatrix = textureMatrix;
 	}
 

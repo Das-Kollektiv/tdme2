@@ -1,7 +1,7 @@
 #include <tdme/tests/MathOperatorTest.h>
 
 #include <tdme/tdme.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector2.h>
@@ -9,7 +9,7 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/utilities/Console.h>
 
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector2;
@@ -22,16 +22,19 @@ MathOperatorTest::MathOperatorTest()
 {
 }
 
-void MathOperatorTest::main()
+int MathOperatorTest::main()
 {
-	auto mt = new MathOperatorTest();
+	MathOperatorTest mt;
 	Console::println(string("Math operator tests:"));
-	mt->testVector2Operators();
-	mt->testVector3Operators();
-	mt->testVector4Operators();
-	mt->testQuaternionOperators();
-	mt->testMatrix2D3x3Operators();
-	mt->testMatrix4x4Operators();
+	mt.testVector2Operators();
+	mt.testVector3Operators();
+	mt.testVector4Operators();
+	mt.testQuaternionOperators();
+	mt.testMatrix3x3Operators();
+	mt.testMatrix4x4Operators();
+	//
+	Console::shutdown();
+	return 0;
 }
 
 void MathOperatorTest::testVector2Operators()
@@ -515,13 +518,13 @@ void MathOperatorTest::testQuaternionOperators() {
 	}
 }
 
-void MathOperatorTest::testMatrix2D3x3Operators() {
-	Matrix2D3x3 m1 = Matrix2D3x3(14.0, 45.3, 0.342, 2.43, 14.0, 45.3, 0.342, 2.43, 4.5);
-	Matrix2D3x3 m2, m3, m4 = Matrix2D3x3(0.48, 19.33, 7.209, 5.905, 9.0, 14.0, 45.3, 0.342, 2.43);
+void MathOperatorTest::testMatrix3x3Operators() {
+	Matrix3x3 m1 = Matrix3x3(14.0, 45.3, 0.342, 2.43, 14.0, 45.3, 0.342, 2.43, 4.5);
+	Matrix3x3 m2, m3, m4 = Matrix3x3(0.48, 19.33, 7.209, 5.905, 9.0, 14.0, 45.3, 0.342, 2.43);
 	float f = 3.4;
 
 
-	Console::println(string("\nMatrix2D3x3 operators\n-----------------"));
+	Console::println(string("\nMatrix3x3 operators\n-----------------"));
 
 	// operator ==
 	Console::print(string("operator ==: "));
@@ -547,7 +550,7 @@ void MathOperatorTest::testMatrix2D3x3Operators() {
 		Console::println(string(this->fail));
 	}
 
-	Console::print(string("operator *(Matrix2D3x3&): "));
+	Console::print(string("operator *(Matrix3x3&): "));
 	if (m2 * m3 == m2.multiply(m3)) {
 		Console::println(string(this->success));
 	} else {

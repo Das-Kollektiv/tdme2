@@ -70,4 +70,8 @@ int main(int argc, char** argv)
 	}
 
 	parseHpp(argv[1]);
+
+	//
+	Console::shutdown();
+	return 0;
 }

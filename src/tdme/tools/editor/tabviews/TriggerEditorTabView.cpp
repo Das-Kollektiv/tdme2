@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabviews/TriggerEditorTabView.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -22,7 +23,9 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 
 using tdme::tools::editor::tabviews::TriggerEditorTabView;
 
@@ -48,26 +51,21 @@ TriggerEditorTabView::TriggerEditorTabView(EditorView* editorView, const string&
 	this->editorView = editorView;
 	this->tabId = tabId;
 	this->popUps = editorView->getPopUps();
-	this->prototype = prototype;
-	engine = Engine::createOffScreenInstance(512, 512, true, true, false);
+	this->prototype = unique_ptr<Prototype>(prototype);
+	engine = unique_ptr<Engine>(Engine::createOffScreenInstance(512, 512, true, true, false));
 	engine->setShadowMapLightEyeDistanceScale(0.1f);
 	engine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
-	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
-	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), 1, objectScale, cameraRotationInputHandler);
+	cameraRotationInputHandler = make_unique<CameraRotationInputHandler>(engine.get()	);
+	Tools::setupPrototype(prototype, engine.get(), cameraRotationInputHandler->getLookFromRotations(), 1, objectScale, cameraRotationInputHandler.get());
 	outlinerState.expandedOutlinerParentOptionValues.push_back("prototype");
 }
 
 TriggerEditorTabView::~TriggerEditorTabView() {
-	delete prototype;
-	delete triggerEditorTabController;
-	delete cameraRotationInputHandler;
-	delete engine;
-
 }
 
 void TriggerEditorTabView::handleInputEvents()
 {
-	prototypePhysicsView->handleInputEvents(prototype);
+	prototypePhysicsView->handleInputEvents(prototype.get());
 	cameraRotationInputHandler->handleInputEvents();
 }
 
@@ -77,15 +75,15 @@ void TriggerEditorTabView::display()
 	triggerEditorTabController->updateInfoText(MutableString(engine->getTiming()->getAvarageFPS()).append(" FPS"));
 
 	//
-	prototypeDisplayView->display(prototype);
-	prototypePhysicsView->display(prototype);
+	prototypeDisplayView->display(prototype.get());
+	prototypePhysicsView->display(prototype.get());
 	engine->display();
 }
 
 void TriggerEditorTabView::initialize()
 {
 	try {
-		triggerEditorTabController = new TriggerEditorTabController(this);
+		triggerEditorTabController = make_unique<TriggerEditorTabController>(this);
 		triggerEditorTabController->initialize(editorView->getScreenController()->getScreenNode());
 		prototypeDisplayView = triggerEditorTabController->getPrototypeDisplaySubController()->getView();
 		prototypePhysicsView = triggerEditorTabController->getPrototypePhysicsSubController()->getView();
@@ -98,14 +96,14 @@ void TriggerEditorTabView::initialize()
 
 void TriggerEditorTabView::dispose()
 {
-	engine->reset();
+	engine->dispose();
 }
 
 void TriggerEditorTabView::updateRendering() {
 }
 
 Engine* TriggerEditorTabView::getEngine() {
-	return engine;
+	return engine.get();
 }
 
 void TriggerEditorTabView::activate() {
@@ -125,13 +123,13 @@ void TriggerEditorTabView::reloadOutliner() {
 }
 
 void TriggerEditorTabView::saveFile(const string& pathName, const string& fileName) {
-	PrototypeWriter::write(pathName, fileName, prototype);
+	PrototypeWriter::write(pathName, fileName, prototype.get());
 }
 
 void TriggerEditorTabView::onCameraRotation() {
-	prototypePhysicsView->updateGizmo(prototype);
+	prototypePhysicsView->updateGizmo(prototype.get());
 }
 
 void TriggerEditorTabView::onCameraScale() {
-	prototypePhysicsView->updateGizmo(prototype);
+	prototypePhysicsView->updateGizmo(prototype.get());
 }

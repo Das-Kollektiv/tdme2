@@ -137,4 +137,8 @@ int main(int argc, char** argv)
 
 	//
 	tdme::tools::cli::MiniscriptUntranspiler::processFile(argv[1], argv[2]);
+
+	//
+	Console::shutdown();
+	return 0;
 }

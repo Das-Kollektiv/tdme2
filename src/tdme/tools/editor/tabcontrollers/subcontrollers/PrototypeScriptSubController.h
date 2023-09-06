@@ -2,6 +2,7 @@
 
 #include <array>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -18,7 +19,9 @@
 
 using std::array;
 using std::map;
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::prototype::Prototype;
@@ -39,7 +42,7 @@ class tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeScriptSubCon
 {
 private:
 	EditorView* editorView { nullptr };
-	PrototypeScriptSubView* view { nullptr };
+	unique_ptr<PrototypeScriptSubView> view;
 	PopUps* popUps { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 

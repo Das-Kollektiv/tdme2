@@ -31,5 +31,6 @@ int main(int argc, char** argv)
 	stream->play();
 	while(stream->isPlaying() == true) { Audio::getInstance()->update(); Thread::sleep(100L); };
 	Console::println(string("Finished playing music"));
-	Audio::getInstance()->shutdown();
+	Audio::shutdown();
+	Console::shutdown();
 }

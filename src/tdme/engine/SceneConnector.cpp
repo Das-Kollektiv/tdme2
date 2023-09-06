@@ -4,6 +4,7 @@
 	#pragma warning(disable:4503)
 #endif
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -84,8 +85,10 @@
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Terrain.h>
 
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::unordered_map;
 using std::vector;
 
@@ -206,7 +209,7 @@ void SceneConnector::setLights(Engine* engine, Scene* scene, const Vector3& tran
 
 Entity* SceneConnector::createParticleSystem(PrototypeParticleSystem* particleSystem, const string& id, bool enableDynamicShadows)
 {
-	ParticleEmitter* engineEmitter = nullptr;
+	unique_ptr<ParticleEmitter> engineEmitter;
 	{
 		auto emitterType = particleSystem->getEmitter();
 		if (emitterType == PrototypeParticleSystem_Emitter::NONE) {
@@ -214,23 +217,23 @@ Entity* SceneConnector::createParticleSystem(PrototypeParticleSystem* particleSy
 		} else
 		if (emitterType == PrototypeParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
 			auto emitter = particleSystem->getPointParticleEmitter();
-			engineEmitter = new PointParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), emitter->getPosition(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
+			engineEmitter = make_unique<PointParticleEmitter>(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), emitter->getPosition(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
 		} else
 		if (emitterType == PrototypeParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
 			auto emitter = particleSystem->getBoundingBoxParticleEmitters();
-			engineEmitter = new BoundingBoxParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), new OrientedBoundingBox(emitter->getObbCenter(), emitter->getObbAxis0(), emitter->getObbAxis1(), emitter->getObbAxis2(), emitter->getObbHalfextension()), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
+			engineEmitter = make_unique<BoundingBoxParticleEmitter>(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), new OrientedBoundingBox(emitter->getObbCenter(), emitter->getObbAxis0(), emitter->getObbAxis1(), emitter->getObbAxis2(), emitter->getObbHalfextension()), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
 		} else
 		if (emitterType == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
 			auto emitter = particleSystem->getCircleParticleEmitter();
-			engineEmitter = new CircleParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getAxis0(), emitter->getAxis1(), emitter->getCenter(), emitter->getRadius(), emitter->getMass(), emitter->getMassRnd(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
+			engineEmitter = make_unique<CircleParticleEmitter>(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getAxis0(), emitter->getAxis1(), emitter->getCenter(), emitter->getRadius(), emitter->getMass(), emitter->getMassRnd(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
 		} else
 		if (emitterType == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
 			auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
-			engineEmitter = new CircleParticleEmitterPlaneVelocity(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getAxis0(), emitter->getAxis1(), emitter->getCenter(), emitter->getRadius(), emitter->getMass(), emitter->getMassRnd(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
+			engineEmitter = make_unique<CircleParticleEmitterPlaneVelocity>(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getAxis0(), emitter->getAxis1(), emitter->getCenter(), emitter->getRadius(), emitter->getMass(), emitter->getMassRnd(), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
 		} else
 		if (emitterType == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
 			auto emitter = particleSystem->getSphereParticleEmitter();
-			engineEmitter = new SphereParticleEmitter(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), new Sphere(emitter->getCenter(), emitter->getRadius()), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
+			engineEmitter = make_unique<SphereParticleEmitter>(emitter->getCount(), emitter->getLifeTime(), emitter->getLifeTimeRnd(), emitter->getMass(), emitter->getMassRnd(), new Sphere(emitter->getCenter(), emitter->getRadius()), emitter->getVelocity(), emitter->getVelocityRnd(), emitter->getColorStart(), emitter->getColorEnd());
 		} else {
 			Console::println(
 				string(
@@ -251,44 +254,46 @@ Entity* SceneConnector::createParticleSystem(PrototypeParticleSystem* particleSy
 		if (particleSystemType == PrototypeParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) {
 			auto objectParticleSystem = particleSystem->getObjectParticleSystem();
 			if (objectParticleSystem->getModel() == nullptr) return nullptr;
-
-			return new ObjectParticleSystem(
-				id,
-				objectParticleSystem->getModel(),
-				objectParticleSystem->getScale(),
-				objectParticleSystem->isAutoEmit(),
-				enableDynamicShadows,
-				enableDynamicShadows,
-				objectParticleSystem->getMaxCount(),
-				engineEmitter
-			);
+			return
+				make_unique<ObjectParticleSystem>(
+					id,
+					objectParticleSystem->getModel(),
+					objectParticleSystem->getScale(),
+					objectParticleSystem->isAutoEmit(),
+					enableDynamicShadows,
+					enableDynamicShadows,
+					objectParticleSystem->getMaxCount(),
+					engineEmitter.release()
+				).release();
 		} else
 		if (particleSystemType == PrototypeParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
 			auto pointParticleSystem = particleSystem->getPointParticleSystem();
-			return new PointsParticleSystem(
-				id,
-				engineEmitter,
-				pointParticleSystem->getMaxPoints(),
-				pointParticleSystem->getPointSize(),
-				pointParticleSystem->isAutoEmit(),
-				pointParticleSystem->getTexture(),
-				pointParticleSystem->getTextureHorizontalSprites(),
-				pointParticleSystem->getTextureVerticalSprites(),
-				pointParticleSystem->getTextureSpritesFPS()
-			);
+			return
+				make_unique<PointsParticleSystem>(
+					id,
+					engineEmitter.release(),
+					pointParticleSystem->getMaxPoints(),
+					pointParticleSystem->getPointSize(),
+					pointParticleSystem->isAutoEmit(),
+					pointParticleSystem->getTexture(),
+					pointParticleSystem->getTextureHorizontalSprites(),
+					pointParticleSystem->getTextureVerticalSprites(),
+					pointParticleSystem->getTextureSpritesFPS()
+				).release();
 		} else
 		if (particleSystemType == PrototypeParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
 			auto fogParticleSystem = particleSystem->getFogParticleSystem();
-			return new FogParticleSystem(
-				id,
-				engineEmitter,
-				fogParticleSystem->getMaxPoints(),
-				fogParticleSystem->getPointSize(),
-				fogParticleSystem->getTexture(),
-				fogParticleSystem->getTextureHorizontalSprites(),
-				fogParticleSystem->getTextureVerticalSprites(),
-				fogParticleSystem->getTextureSpritesFPS()
-			);
+			return
+				make_unique<FogParticleSystem>(
+					id,
+					engineEmitter.release(),
+					fogParticleSystem->getMaxPoints(),
+					fogParticleSystem->getPointSize(),
+					fogParticleSystem->getTexture(),
+					fogParticleSystem->getTextureHorizontalSprites(),
+					fogParticleSystem->getTextureVerticalSprites(),
+					fogParticleSystem->getTextureSpritesFPS()
+				).release();
 		} else {
 			Console::println(
 				string(
@@ -322,13 +327,16 @@ Entity* SceneConnector::createEditorDecalEntity(Prototype* prototype, const stri
 	Entity* entity = nullptr;
 
 	// add decal OBB
-	auto entityHierarchy = new EntityHierarchy(id);
-	for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
-		auto entityBoundingVolume = prototype->getBoundingVolume(i);
-		if (entityBoundingVolume->getModel() != nullptr) {
-			auto bvObject = new Object("tdme.prototype.bv." + to_string(i), entityBoundingVolume->getModel());
-			bvObject->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
-			entityHierarchy->addEntity(bvObject);
+	auto entityHierarchy = make_unique<EntityHierarchy>(id);
+	{
+		auto i = 0;
+		for (auto prototypeBoundingVolume: prototype->getBoundingVolumes()) {
+			if (prototypeBoundingVolume->getModel() != nullptr) {
+				auto bvObject = new Object("tdme.prototype.bv." + to_string(i), prototypeBoundingVolume->getModel());
+				bvObject->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
+				entityHierarchy->addEntity(bvObject);
+			}
+			i++;
 		}
 	}
 	// add decal itself
@@ -351,9 +359,8 @@ Entity* SceneConnector::createEditorDecalEntity(Prototype* prototype, const stri
 	entityHierarchy->update();
 	if (entityHierarchy->getEntities().size() == 0) {
 		entityHierarchy->dispose();
-		delete entityHierarchy;
 	} else {
-		entity = entityHierarchy;
+		entity = entityHierarchy.release();
 	}
 
 	// done
@@ -433,15 +440,15 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 	// particle system
 	if (prototype->getType() == Prototype_Type::PARTICLESYSTEM) {
 		vector<ParticleSystem*> particleSystems;
-		for (auto i = 0; i < prototype->getParticleSystemsCount(); i++) {
+		auto i = 0;
+		for (auto prototypeParticleSystem: prototype->getParticleSystems()) {
 			auto particleSystem = createParticleSystem(
-				prototype->getParticleSystemAt(i),
+				prototypeParticleSystem,
 				id + (i == 0?"":"." + to_string(i)),
 				true
 			);
-			if (particleSystem != nullptr) {
-				particleSystems.push_back(dynamic_cast<ParticleSystem*>(particleSystem));
-			}
+			if (particleSystem != nullptr) particleSystems.push_back(dynamic_cast<ParticleSystem*>(particleSystem));
+			i++;
 		}
 		if (particleSystems.size() == 1) {
 			entity = dynamic_cast<Entity*>(particleSystems[0]);
@@ -472,13 +479,16 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 	if (prototype->getType() == Prototype_Type::TRIGGER ||
 		prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING) {
 		// bounding volumes
-		auto entityHierarchy = new EntityHierarchy(id);
-		for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
-			auto entityBoundingVolume = prototype->getBoundingVolume(i);
-			if (entityBoundingVolume->getModel() != nullptr) {
-				auto bvObject = new Object("tdme.prototype.bv." + to_string(i), entityBoundingVolume->getModel());
-				bvObject->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
-				entityHierarchy->addEntity(bvObject);
+		auto entityHierarchy = make_unique<EntityHierarchy>(id);
+		{
+			auto i = 0;
+			for (auto prototypeBoundingVolume: prototype->getBoundingVolumes()) {
+				if (prototypeBoundingVolume->getModel() != nullptr) {
+					auto bvObject = new Object("tdme.prototype.bv." + to_string(i), prototypeBoundingVolume->getModel());
+					bvObject->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
+					entityHierarchy->addEntity(bvObject);
+				}
+				i++;
 			}
 		}
 		if (prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING &&
@@ -493,9 +503,8 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 		entityHierarchy->update();
 		if (entityHierarchy->getEntities().size() == 0) {
 			entityHierarchy->dispose();
-			delete entityHierarchy;
 		} else {
-			entity = entityHierarchy;
+			entity = entityHierarchy.release();
 		}
 	}
 
@@ -541,7 +550,8 @@ Entity* SceneConnector::createEntity(SceneEntity* sceneEntity, const Vector3& tr
 
 void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool useEditorDecals, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
 {
-	if (progressCallback != nullptr) progressCallback->progress(0.0f);
+	auto progressCallbackPtr = unique_ptr<ProgressCallback>(progressCallback);
+	if (progressCallbackPtr != nullptr) progressCallbackPtr->progress(0.0f);
 	// TODO: progress callbacks for terrain
 
 	// scene library
@@ -696,10 +706,8 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 	unordered_map<string, unordered_map<string, unordered_map<Model*, vector<Transform*>>>> renderGroupEntitiesByShaderPartitionModel;
 	unordered_map<Model*, Prototype*> renderGroupSceneEditorEntities;
 	auto progressStepCurrent = 0;
-	for (auto i = 0; i < scene->getEntityCount(); i++) {
-		auto sceneEntity = scene->getEntityAt(i);
-
-		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene->getEntityCount()) * 0.5f);
+	for (auto sceneEntity: scene->getEntities()) {
+		if (progressCallbackPtr != nullptr && progressStepCurrent % 1000 == 0) progressCallbackPtr->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene->getEntityCount()) * 0.5f);
 		progressStepCurrent++;
 
 		if (addEmpties == false && sceneEntity->getPrototype()->getType() == Prototype_Type::EMPTY) continue;
@@ -753,7 +761,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 		auto idx = 0;
 		progressStepCurrent = 0;
 		auto progressStepMax = 0;
-		if (progressCallback != nullptr) {
+		if (progressCallbackPtr != nullptr) {
 			for (const auto& [shaderId, shaderPartitionModelTranformsMap]: renderGroupEntitiesByShaderPartitionModel) {
 				for (const auto& [partitionId, modelTranformsMap]: shaderPartitionModelTranformsMap) {
 					for (const auto& [model, transformVector]: modelTranformsMap) {
@@ -766,8 +774,8 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 			for (const auto& [partitionId, modelTranformsMap]: shaderPartitionModelTranformsMap) {
 				unordered_map<string, ObjectRenderGroup*> objectRenderGroupsByShaderParameters;
 				for (const auto& [model, transformVector]: modelTranformsMap) {
-					if (progressCallback != nullptr) {
-						progressCallback->progress(0.5f + static_cast<float>(progressStepCurrent) / static_cast<float>(progressStepMax) * 0.5f);
+					if (progressCallbackPtr != nullptr) {
+						progressCallbackPtr->progress(0.5f + static_cast<float>(progressStepCurrent) / static_cast<float>(progressStepMax) * 0.5f);
 					}
 					progressStepCurrent++;
 					auto prototype = renderGroupSceneEditorEntities[model];
@@ -811,9 +819,8 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 	}
 
 	//
-	if (progressCallback != nullptr) {
-		progressCallback->progress(1.0f);
-		delete progressCallback;
+	if (progressCallbackPtr != nullptr) {
+		progressCallbackPtr->progress(1.0f);
 	}
 }
 
@@ -827,9 +834,10 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 	// trigger
 	if (prototype->getType() == Prototype_Type::TRIGGER) {
 		vector<BoundingVolume*> boundingVolumes;
-		for (auto j = 0; j < prototype->getBoundingVolumeCount(); j++) {
-			auto entityBv = prototype->getBoundingVolume(j);
-			if (index == -1 || index == j) boundingVolumes.push_back(entityBv->getBoundingVolume());
+		auto j = 0;
+		for (auto prototypeBoundingVolume: prototype->getBoundingVolumes()) {
+			if (index == -1 || index == j) boundingVolumes.push_back(prototypeBoundingVolume->getBoundingVolume());
+			j++;
 		}
 		if (boundingVolumes.size() == 0) return nullptr;
 		return world->addStaticCollisionBody(
@@ -943,14 +951,15 @@ BodyHierarchy* SceneConnector::createSubBody(World* world, Prototype* prototype,
 		Console::println("SceneConnector::createSubBody(): body hierarchy not found: " + bodyHierarchyId);
 		return nullptr;
 	}
-	bodyHierarchy->addBody(id, transform, prototype->getBoundingVolumePrimitives(), bodyHierarchyParentId);
+	bodyHierarchy->addBody(id, transform, prototype->getBoundingVolumesPrimitives(), bodyHierarchyParentId);
 	bodyHierarchy->update();
 	return bodyHierarchy;
 }
 
 void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
 {
-	if (progressCallback != nullptr) progressCallback->progress(0.0f);
+	auto progressCallbackPtr = unique_ptr<ProgressCallback>(progressCallback);
+	if (progressCallbackPtr != nullptr) progressCallbackPtr->progress(0.0f);
 	auto progressStepCurrent = 0;
 
 	// scene library
@@ -1025,11 +1034,9 @@ void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vec
 	}
 
 	//
-	for (auto i = 0; i < scene->getEntityCount(); i++) {
-		auto sceneEntity = scene->getEntityAt(i);
-
+	for (auto sceneEntity: scene->getEntities()) {
 		//
-		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene->getEntityCount()) * 1.0f);
+		if (progressCallbackPtr != nullptr && progressStepCurrent % 1000 == 0) progressCallbackPtr->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(scene->getEntityCount()) * 1.0f);
 		progressStepCurrent++;
 
 		//
@@ -1045,9 +1052,8 @@ void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vec
 	}
 
 	//
-	if (progressCallback != nullptr) {
-		progressCallback->progress(1.0f);
-		delete progressCallback;
+	if (progressCallbackPtr != nullptr) {
+		progressCallbackPtr->progress(1.0f);
 	}
 }
 
@@ -1105,8 +1111,7 @@ void SceneConnector::disableScene(Engine* engine, Scene* scene)
 	}
 
 	// scene entities
-	for (auto i = 0; i < scene->getEntityCount(); i++) {
-		auto sceneEntity = scene->getEntityAt(i);
+	for (auto sceneEntity: scene->getEntities()) {
 		auto entity = engine->getEntity(sceneEntity->getId());
 		if (entity == nullptr)
 			continue;
@@ -1145,8 +1150,7 @@ void SceneConnector::disableScene(World* world, Scene* scene)
 	}
 
 	// scene entities
-	for (auto i = 0; i < scene->getEntityCount(); i++) {
-		auto sceneEntity = scene->getEntityAt(i);
+	for (auto sceneEntity: scene->getEntities()) {
 		auto body = world->getBody(sceneEntity->getId());
 		if (body == nullptr) continue;
 		body->setEnabled(false);
@@ -1207,8 +1211,7 @@ void SceneConnector::enableScene(Engine* engine, Scene* scene, const Vector3& tr
 	}
 
 	// scene entities
-	for (auto i = 0; i < scene->getEntityCount(); i++) {
-		auto sceneEntity = scene->getEntityAt(i);
+	for (auto sceneEntity: scene->getEntities()) {
 		auto entity = engine->getEntity(sceneEntity->getId());
 		if (entity == nullptr)
 			continue;
@@ -1257,8 +1260,7 @@ void SceneConnector::enableScene(World* world, Scene* scene, const Vector3& tran
 
 	// scene entities
 	Transform transform;
-	for (auto i = 0; i < scene->getEntityCount(); i++) {
-		auto sceneEntity = scene->getEntityAt(i);
+	for (auto sceneEntity: scene->getEntities()) {
 		auto rigidBody = world->getBody(sceneEntity->getId());
 		if (rigidBody == nullptr) continue;
 		transform.setTransform(sceneEntity->getTransform());
@@ -1274,20 +1276,16 @@ void SceneConnector::resetEngine(Engine* engine, Scene* scene) {
 		auto idx = 0;
 		Entity* entity = nullptr;
 		while ((entity = engine->getEntity("tdme.terrain." + to_string(idx++))) != nullptr) {
-			Model* model = nullptr;
-			if (entity->getEntityType() == Entity::ENTITYTYPE_OBJECT) model = static_cast<Object*>(entity)->getModel();
+			auto model = unique_ptr<Model>(entity->getEntityType() == Entity::ENTITYTYPE_OBJECT?static_cast<Object*>(entity)->getModel():nullptr);
 			engine->removeEntity(entity->getId());
-			if (model != nullptr) delete model;
 		}
 	}
 	{
 		auto idx = 0;
 		Entity* entity = nullptr;
 		while ((entity = engine->getEntity("tdme.water." + to_string(idx++))) != nullptr) {
-			Model* model = nullptr;
-			if (entity->getEntityType() == Entity::ENTITYTYPE_OBJECT) model = static_cast<Object*>(entity)->getModel();
+			auto model = unique_ptr<Model>(entity->getEntityType() == Entity::ENTITYTYPE_OBJECT?static_cast<Object*>(entity)->getModel():nullptr);
 			engine->removeEntity(entity->getId());
-			if (model != nullptr) delete model;
 		}
 	}
 	//

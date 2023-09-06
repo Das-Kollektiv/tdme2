@@ -1,5 +1,6 @@
 #include <tdme/gui/nodes/GUIVideoNode.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -25,8 +26,10 @@
 
 using tdme::gui::nodes::GUIVideoNode;
 
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::audio::PacketAudioStream;
 using tdme::engine::DynamicColorTexture;
@@ -125,19 +128,11 @@ const string& GUIVideoNode::getSource() {
 void GUIVideoNode::disposeVideo() {
 	if (videoTexture != nullptr) {
 		videoTexture->dispose();
-		delete videoTexture;
 		videoTexture = nullptr;
 	}
 	if (videoAudioBuffer != nullptr) {
-		delete videoAudioBuffer;
 		videoAudioBuffer = nullptr;
 	}
-	/*
-	if (videoAudioStream != nullptr) {
-		delete videoAudioStream;
-		videoAudioStream = nullptr;
-	}
-	*/
 }
 
 void GUIVideoNode::setSource(const string& source) {
@@ -151,11 +146,11 @@ void GUIVideoNode::setSource(const string& source) {
 		FileSystem::getInstance()->getPathName(source),
 		FileSystem::getInstance()->getFileName(source)
 	);
-	videoTexture = new DynamicColorTexture(videoDecoder.getVideoWidth(), videoDecoder.getVideoHeight());
+	videoTexture = make_unique<DynamicColorTexture>(videoDecoder.getVideoWidth(), videoDecoder.getVideoHeight());
 	videoTexture->initialize();
 
 	// audio
-	videoAudioBuffer = ByteBuffer::allocate(32768);
+	videoAudioBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(32768));
 	/*
 	videoAudioStream = new PacketAudioStream("video");
 	videoAudioStream->setParameters(videoDecoder.getAudioSampleRate(), videoDecoder.getAudioChannels(), 32768);
@@ -184,7 +179,7 @@ void GUIVideoNode::onRenderTexture() {
 		videoTexture->update();
 	}
 	videoAudioBuffer->clear();
-	if (videoDecoder.readAudioFromStream(videoAudioBuffer) > 0) {
+	if (videoDecoder.readAudioFromStream(videoAudioBuffer.get()) > 0) {
 		// videoAudioStream->addPacket(videoAudioBuffer);
 	}
 

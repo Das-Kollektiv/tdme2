@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -14,6 +15,7 @@
 #include <tdme/tools/editor/views/fwd-tdme.h>
 
 using std::string;
+using std::unique_ptr;
 
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
@@ -34,17 +36,17 @@ class tdme::tools::editor::tabviews::EmptyEditorTabView final
 	: public TabView
 {
 protected:
-	Engine* engine { nullptr };
+	unique_ptr<Engine> engine;
 
 private:
 	EditorView* editorView { nullptr };
 	string tabId;
 	PopUps* popUps { nullptr };
-	EmptyEditorTabController* emptyEditorTabController { nullptr };
+	unique_ptr<EmptyEditorTabController> emptyEditorTabController;
 	TabView::OutlinerState outlinerState;
 
-	Prototype* prototype { nullptr };
-	CameraRotationInputHandler* cameraRotationInputHandler { nullptr };
+	unique_ptr<Prototype> prototype;
+	unique_ptr<CameraRotationInputHandler> cameraRotationInputHandler;
 
 public:
 	// forbid class copy
@@ -74,7 +76,7 @@ public:
 	 * @return associated tab controller
 	 */
 	inline TabController* getTabController() override {
-		return emptyEditorTabController;
+		return emptyEditorTabController.get();
 	}
 
 	/**
@@ -88,7 +90,7 @@ public:
 	 * @return prototype
 	 */
 	inline Prototype* getPrototype() {
-		return prototype;
+		return prototype.get();
 	}
 
 	// overridden methods

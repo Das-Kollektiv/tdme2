@@ -1,6 +1,7 @@
 #include <tdme/engine/fileio/models/DAEReader.h>
 
 #include <map>
+#include <memory>
 #include <string>
 #include <unordered_set>
 #include <vector>
@@ -21,7 +22,6 @@
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
-#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/subsystems/rendering/ModelStatistics.h>
 #include <tdme/engine/ModelUtilities.h>
@@ -46,6 +46,7 @@
 #define AVOID_NULLPTR_STRING(arg) (arg == nullptr?"":arg)
 
 using std::array;
+using std::make_unique;
 using std::map;
 using std::string;
 using std::to_string;
@@ -67,7 +68,6 @@ using tdme::engine::model::Node;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
-using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
 using tdme::engine::subsystems::rendering::ModelStatistics;
 using tdme::engine::ModelUtilities;
@@ -112,18 +112,15 @@ Model* DAEReader::read(const string& pathName, const string& fileName, bool useB
 	// up vector and rotation order
 	auto upVector = getUpVector(xmlRoot);
 	RotationOrder* rotationOrder = nullptr;
-	{
-		auto v = upVector;
-		if (v == UpVector::Y_UP) {
-			rotationOrder = RotationOrder::ZYX;
-		} else
-		if (v == UpVector::Z_UP) {
-			rotationOrder = RotationOrder::YZX;
-		}
+	if (upVector == UpVector::Y_UP) {
+		rotationOrder = RotationOrder::ZYX;
+	} else
+	if (upVector == UpVector::Z_UP) {
+		rotationOrder = RotationOrder::XYZ;
 	}
 
 	// 	create model
-	auto model = new Model(
+	auto model = make_unique<Model>(
 		fileName,
 		fileName,
 		upVector,
@@ -133,8 +130,8 @@ Model* DAEReader::read(const string& pathName, const string& fileName, bool useB
 	);
 
 	// import matrix
-	setupModelImportRotationMatrix(xmlRoot, model);
-	setupModelImportScaleMatrix(xmlRoot, model);
+	setupModelImportRotationMatrix(xmlRoot, model.get());
+	setupModelImportScaleMatrix(xmlRoot, model.get());
 
 	// parse scene from xml
 	string xmlSceneId;
@@ -166,7 +163,7 @@ Model* DAEReader::read(const string& pathName, const string& fileName, bool useB
 			model->setFPS(fps);
 			// visual scene root nodes
 			for (auto xmlNode: getChildrenByTagName(xmlLibraryVisualScene, "node")) {
-				auto node = readVisualSceneNode(pathName, model, nullptr, xmlRoot, xmlNode, fps, useBC7TextureCompression);
+				auto node = readVisualSceneNode(pathName, model.get(), nullptr, xmlRoot, xmlNode, fps, useBC7TextureCompression);
 				if (node != nullptr) {
 					model->getSubNodes()[node->getId()] = node;
 					model->getNodes()[node->getId()] = node;
@@ -174,15 +171,15 @@ Model* DAEReader::read(const string& pathName, const string& fileName, bool useB
 			}
 		}
 	}
-	if (ModelTools::hasDefaultAnimation(model) == false) ModelTools::createDefaultAnimation(model, 0);
+	if (ModelTools::hasDefaultAnimation(model.get()) == false) ModelTools::createDefaultAnimation(model.get(), 0);
 	// set up joints
-	ModelTools::setupJoints(model);
+	ModelTools::setupJoints(model.get());
 	// fix animation length
-	ModelTools::fixAnimationLength(model);
+	ModelTools::fixAnimationLength(model.get());
 	// prepare for indexed rendering
-	ModelTools::prepareForIndexedRendering(model);
+	ModelTools::prepareForIndexedRendering(model.get());
 	//
-	return model;
+	return model.release();
 }
 
 Model::AuthoringTool DAEReader::getAuthoringTool(TiXmlElement* xmlRoot)
@@ -230,10 +227,10 @@ void DAEReader::setupModelImportRotationMatrix(TiXmlElement* xmlRoot, Model* mod
 			if (StringTools::equalsIgnoreCase(upAxis, "Y_UP") == true) {
 			} else
 			if (StringTools::equalsIgnoreCase(upAxis, "Z_UP") == true) {
-				model->setImportTransformMatrix(model->getImportTransformMatrix().clone().rotate(Vector3(1.0f, 0.0f, 0.0f), -90.0f));
+				model->setImportTransformMatrix(model->getImportTransformMatrix().clone().setAxes(Vector3(1.0f, 0.0f, 0.0f), -90.0f));
 			} else
 			if (StringTools::equalsIgnoreCase(upAxis, "X_UP") == true) {
-				model->setImportTransformMatrix(model->getImportTransformMatrix().clone().rotate(Vector3(0.0f, 1.0f, 0.0f), -90.0f));
+				model->setImportTransformMatrix(model->getImportTransformMatrix().clone().setAxes(Vector3(0.0f, 1.0f, 0.0f), -90.0f));
 			} else {
 				Console::println(string("Warning: Unknown up axis: " + upAxis));
 			}
@@ -272,7 +269,7 @@ Node* DAEReader::readNode(const string& pathName, Model* model, Node* parentNode
 	if (xmlNodeId.length() == 0) xmlNodeId = xmlNodeName;
 
 	// create node
-	auto node = new Node(model, parentNode, xmlNodeId, xmlNodeName);
+	auto node = make_unique<Node>(model, parentNode, xmlNodeId, xmlNodeName);
 
 	// set up local transform matrix
 	auto xmlMatrixElements = getChildrenByTagName(xmlNode, "matrix");
@@ -373,7 +370,7 @@ Node* DAEReader::readNode(const string& pathName, Model* model, Node* parentNode
 							auto frames = static_cast<int32_t>(Math::ceil(keyFrameTimes[keyFrameTimes.size() - 1] * fps));
 							if (frames > 0) {
 								ModelTools::createDefaultAnimation(model, frames);
-								auto animation = new Animation();
+								auto animation = make_unique<Animation>();
 								vector<Matrix4x4> transformMatrices;
 								transformMatrices.resize(frames);
 								auto tansformationsMatrixLast = &keyFrameMatrices[0];
@@ -398,7 +395,7 @@ Node* DAEReader::readNode(const string& pathName, Model* model, Node* parentNode
 									keyFrameIdx++;
 								}
 								animation->setTransformMatrices(transformMatrices);
-								node->setAnimation(animation);
+								node->setAnimation(animation.release());
 							}
 						}
 					}
@@ -409,7 +406,7 @@ Node* DAEReader::readNode(const string& pathName, Model* model, Node* parentNode
 
 	// parse sub nodes
 	for (auto _xmlNode: getChildrenByTagName(xmlNode, "node")) {
-		auto _node = readVisualSceneNode(pathName, model, node, xmlRoot, _xmlNode, fps, useBC7TextureCompression);
+		auto _node = readVisualSceneNode(pathName, model, node.get(), xmlRoot, _xmlNode, fps, useBC7TextureCompression);
 		if (_node != nullptr) {
 			node->getSubNodes()[_node->getId()] = _node;
 			model->getNodes()[_node->getId()] = _node;
@@ -432,8 +429,9 @@ Node* DAEReader::readNode(const string& pathName, Model* model, Node* parentNode
 				string(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("target")));
 		}
 		// parse geometry
-		readGeometry(pathName, model, node, xmlRoot, xmlInstanceGeometryId, materialSymbols, useBC7TextureCompression);
-		return node;
+		readGeometry(pathName, model, node.get(), xmlRoot, xmlInstanceGeometryId, materialSymbols, useBC7TextureCompression);
+		//
+		return node.release();
 	}
 
 	// otherwise check for "instance_node"
@@ -466,11 +464,12 @@ Node* DAEReader::readNode(const string& pathName, Model* model, Node* parentNode
 						string(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("target")));
 				}
 				// parse geometry
-				readGeometry(pathName, model, node, xmlRoot, xmlGeometryId, materialSymbols, useBC7TextureCompression);
+				readGeometry(pathName, model, node.get(), xmlRoot, xmlGeometryId, materialSymbols, useBC7TextureCompression);
 			}
 		}
 	}
-	return node;
+	//
+	return node.release();
 }
 
 Node* DAEReader::readVisualSceneInstanceController(const string& pathName, Model* model, Node* parentNode, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, bool useBC7TextureCompression)
@@ -528,13 +527,13 @@ Node* DAEReader::readVisualSceneInstanceController(const string& pathName, Model
 	bindShapeMatrix.set(bindShapeMatrixArray).transpose();
 
 	// create node
-	auto node = new Node(model, parentNode, xmlNodeId, xmlNodeName);
+	auto node = make_unique<Node>(model, parentNode, xmlNodeId, xmlNodeName);
 
 	// create skinning
-	auto skinning = new Skinning();
+	auto skinning = make_unique<Skinning>();
 
 	// parse geometry
-	readGeometry(pathName, model, node, xmlRoot, xmlGeometryId, materialSymbols, useBC7TextureCompression);
+	readGeometry(pathName, model, node.get(), xmlRoot, xmlGeometryId, materialSymbols, useBC7TextureCompression);
 
 	// parse joints
 	string xmlJointsSource;
@@ -673,10 +672,9 @@ Node* DAEReader::readVisualSceneInstanceController(const string& pathName, Model
 		verticesJointsWeights.push_back(vertexJointsWeights);
 	}
 	skinning->setVerticesJointsWeights(verticesJointsWeights);
-	node->setSkinning(skinning);
-
+	node->setSkinning(skinning.release());
 	//
-	return node;
+	return node.release();
 }
 
 void DAEReader::readGeometry(const string& pathName, Model* model, Node* node, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>& materialSymbols, bool useBC7TextureCompression)
@@ -840,7 +838,7 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Node* node, T
 							while (t.hasMoreTokens()) {
 								float u = Float::parse(t.nextToken());
 								float v = Float::parse(t.nextToken());
-								textureCoordinates.emplace_back(u, v);
+								textureCoordinates.emplace_back(u, 1.0f - v);
 							}
 						}
 					}
@@ -963,8 +961,8 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 		return nullptr;
 	}
 	// parse effect
-	auto material = new Material(xmlNodeId);
-	auto specularMaterialProperties = new SpecularMaterialProperties();
+	auto material = make_unique<Material>(xmlNodeId);
+	auto specularMaterialProperties = make_unique<SpecularMaterialProperties>();
 	string xmlDiffuseTextureId;
 	string xmlTransparencyTextureId;
 	string xmlSpecularTextureId;
@@ -1225,13 +1223,13 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 	}
 
 	// add specular material properties
-	material->setSpecularMaterialProperties(specularMaterialProperties);
+	material->setSpecularMaterialProperties(specularMaterialProperties.release());
 
 	// add material to library
-	model->getMaterials()[material->getId()] = material;
+	model->getMaterials()[material->getId()] = material.get();
 
 	//
-	return material;
+	return material.release();
 }
 
 const string DAEReader::makeFileNameRelative(const string& fileName)

@@ -1,5 +1,7 @@
 #include <tdme/engine/fileio/textures/PNGTextureReader.h>
 
+#include <memory>
+#include <new>
 #include <string>
 #include <vector>
 
@@ -11,8 +13,10 @@
 
 #include <ext/libpng/png.h>
 
+using std::nothrow;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::fileio::textures::PNGTextureReader;
@@ -213,28 +217,34 @@ bool PNGTextureReader::read(const vector<uint8_t>& pngData, ByteBuffer& textureB
 	png_set_interlace_handling(png);
 	png_read_update_info(png, info);
 
-	// setup array with row pointers into pixel buffer
-	auto rows = new png_bytep[height];
-	auto p = (uint8_t*)textureByteBuffer.getBuffer();
-	for(auto i = 0; i < height; i++) {
-		rows[i] = p;
-		p += width * bytesPerPixel;
+	// read png
+	auto success = false;
+	auto rowPtrs = new(nothrow)png_bytep[height];
+	if (rowPtrs != nullptr) {
+		//
+		success = true;
+		// create pointers to each line beginning in texture byte buffer
+		auto bufferPtr = (uint8_t*)textureByteBuffer.getBuffer();
+		for(auto i = 0; i < height; i++) {
+			rowPtrs[i] = bufferPtr;
+			bufferPtr += width * bytesPerPixel;
+		}
+
+		// read all rows (data goes into 'pixels' buffer)
+		// Note that any decoding errors will jump to the
+		// setjmp point and eventually return nullptr
+		png_read_image(png, rowPtrs);
+		png_read_end(png, nullptr);
+
+		//
+		delete [] rowPtrs;
 	}
-
-	// read all rows (data goes into 'pixels' buffer)
-	// Note that any decoding errors will jump to the
-	// setjmp point and eventually return nullptr
-	png_read_image(png, rows);
-	png_read_end(png, nullptr);
-
-	//
-	delete [] rows;
 
 	// done
 	png_destroy_read_struct(&png, &info, nullptr);
 
 	//
-	return true;
+	return success;
 }
 
 Texture* PNGTextureReader::read(const string& textureId, const vector<uint8_t>& pngData, bool powerOfTwo, const string& idPrefix) {
@@ -278,7 +288,35 @@ Texture* PNGTextureReader::read(const string& textureId, const vector<uint8_t>& 
 				textureY++;
 			}
 			// thats it, return the scaled version
-			auto texture = new Texture(
+			auto texture =
+				unique_ptr<
+					Texture,
+					decltype([](Texture* texture){ texture->releaseReference(); })
+				>(
+					new Texture(
+						idPrefix + textureId,
+						Texture::getRGBDepthByPixelBitsPerPixel(bytesPerPixel * 8),
+						Texture::getPNGFormatByPixelBitsPerPixel(bytesPerPixel * 8),
+						width,
+						height,
+						textureWidth,
+						textureHeight,
+						Texture::getRGBFormatByPixelBitsPerPixel(bytesPerPixel * 8),
+						textureByteBufferScaled
+					)
+				);
+			texture->acquireReference();
+			return texture.release();
+		}
+	}
+
+	// thats it, return unscaled version
+	auto texture =
+		unique_ptr<
+			Texture,
+			decltype([](Texture* texture){ texture->releaseReference(); })
+		>(
+			new Texture(
 				idPrefix + textureId,
 				Texture::getRGBDepthByPixelBitsPerPixel(bytesPerPixel * 8),
 				Texture::getPNGFormatByPixelBitsPerPixel(bytesPerPixel * 8),
@@ -286,27 +324,11 @@ Texture* PNGTextureReader::read(const string& textureId, const vector<uint8_t>& 
 				height,
 				textureWidth,
 				textureHeight,
-				Texture::getRGBFormatByPixelBitsPerPixel(bytesPerPixel * 8),
-				textureByteBufferScaled
-			);
-			texture->acquireReference();
-			return texture;
-		}
-	}
-
-	// thats it, return unscaled version
-	auto texture = new Texture(
-		idPrefix + textureId,
-		Texture::getRGBDepthByPixelBitsPerPixel(bytesPerPixel * 8),
-		Texture::getPNGFormatByPixelBitsPerPixel(bytesPerPixel * 8),
-		width,
-		height,
-		textureWidth,
-		textureHeight,
-		Texture::getPNGFormatByPixelBitsPerPixel(bytesPerPixel * 8),
-		ByteBuffer(pngData)
-	);
+				Texture::getPNGFormatByPixelBitsPerPixel(bytesPerPixel * 8),
+				ByteBuffer(pngData)
+			)
+		);
 	texture->acquireReference();
-	return texture;
+	return texture.release();
 }
 

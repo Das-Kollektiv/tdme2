@@ -57,15 +57,6 @@ VideoTabController::VideoTabController(VideoTabView* view)
 VideoTabController::~VideoTabController() {
 }
 
-VideoTabView* VideoTabController::getView() {
-	return view;
-}
-
-GUIScreenNode* VideoTabController::getScreenNode()
-{
-	return screenNode;
-}
-
 void VideoTabController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;

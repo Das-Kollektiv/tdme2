@@ -1,5 +1,6 @@
 #include <tdme/tests/RayTracingTest.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -41,8 +42,10 @@
 #include <tdme/utilities/Primitives.h>
 #include <tdme/utilities/Time.h>
 
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::tests::RayTracingTest;
 
@@ -90,18 +93,17 @@ RayTracingTest::RayTracingTest()
 {
 	Application::setLimitFPS(true);
 	engine = Engine::getInstance();
-	world = new World("world");
+	world = make_unique<World>("world");
 }
 
 RayTracingTest::~RayTracingTest()
 {
-	delete world;
 }
 
-void RayTracingTest::main(int argc, char** argv)
+int RayTracingTest::main(int argc, char** argv)
 {
 	auto rayTracingTest = new RayTracingTest();
-	rayTracingTest->run(argc, argv, "RayTracingTest", rayTracingTest);
+	return rayTracingTest->run(argc, argv, "RayTracingTest", rayTracingTest);
 }
 
 void RayTracingTest::display()
@@ -273,7 +275,7 @@ void RayTracingTest::initialize()
 
 		// physics
 		SceneConnector::createBody(
-			world,
+			world.get(),
 			interactionTable,
 			id,
 			entity->getTransform(),

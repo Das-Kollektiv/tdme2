@@ -1,3 +1,4 @@
+#include <memory>
 #include <set>
 #include <string>
 #include <unordered_map>
@@ -17,6 +18,7 @@
 
 using std::set;
 using std::string;
+using std::unique_ptr;
 using std::unordered_map;
 using std::vector;
 
@@ -185,15 +187,21 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	unordered_map<string, vector<string>> methodCodeMap;
 
 	//
-	vector<string> _miniScriptExtensionFileNames;
-	_miniScriptExtensionFileNames.push_back("src/tdme/utilities/MiniScript.cpp");
-	_miniScriptExtensionFileNames.push_back("src/tdme/utilities/MiniScriptMath.cpp");
-	for (const auto& miniScriptExtensionFileName: miniScriptExtensionFileNames) _miniScriptExtensionFileNames.push_back(miniScriptExtensionFileName);
-	for (const auto& miniScriptExtensionFileName: _miniScriptExtensionFileNames) {
-		vector<string> miniScriptExtensionsCode;
-		FileSystem::getInstance()->getContentAsStringArray(Tools::getPathName(miniScriptExtensionFileName), Tools::getFileName(miniScriptExtensionFileName), miniScriptExtensionsCode);
-		for (auto i = 0; i < miniScriptExtensionsCode.size(); i++) {
-			const auto& line = miniScriptExtensionsCode[i];
+	auto scriptInstance = unique_ptr<MiniScript>(MiniScript::loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName)));
+	if (scriptInstance == nullptr) {
+		Console::println("No script instance: " + scriptFileName);
+		return;
+	}
+
+	//
+	vector<string> transpilationUnits;
+	for (const auto& transpilationUnit: scriptInstance->getTranspilationUnits()) transpilationUnits.push_back(transpilationUnit);
+	for (const auto& transpilationUnit: miniScriptExtensionFileNames) transpilationUnits.push_back(transpilationUnit);
+	for (const auto& transpilationUnit: transpilationUnits) {
+		vector<string> transpilationUnitCode;
+		FileSystem::getInstance()->getContentAsStringArray(Tools::getPathName(transpilationUnit), Tools::getFileName(transpilationUnit), transpilationUnitCode);
+		for (auto i = 0; i < transpilationUnitCode.size(); i++) {
+			const auto& line = transpilationUnitCode[i];
 			auto trimmedLine = StringTools::trim(line);
 			if (StringTools::startsWith(trimmedLine, "registerMethod") == true ||
 				StringTools::startsWith(trimmedLine, "miniScript->registerMethod") == true) {
@@ -209,15 +217,12 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 						if (c == ' ') continue;
 						className+= c;
 					}
-					gatherMethodCode(miniScriptExtensionsCode, className, i, methodCodeMap);
+					gatherMethodCode(transpilationUnitCode, className, i, methodCodeMap);
 				}
 			}
 		}
 	}
 
-	//
-	MiniScript* scriptInstance = new MiniScript();
-	scriptInstance->loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName));
 	Console::println(scriptInstance->getInformation());
 
 	//
@@ -323,26 +328,26 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "Script(" + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + (script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION?"Script::SCRIPTTYPE_FUNCTION":(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"Script::SCRIPTTYPE_ON":"Script::SCRIPTTYPE_ONENABLED")) + "," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + to_string(script.line) + "," + "\n";
-			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\"" + StringTools::replace(script.condition, "\"", "\\\"") + "\"," + "\n";
-			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\"" + StringTools::replace(script.executableCondition, "\"", "\\\"") + "\"," + "\n";
+			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\"" + StringTools::replace(StringTools::replace(script.condition, "\\", "\\\\"), "\"", "\\\"") + "\"," + "\n";
+			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\"" + StringTools::replace(StringTools::replace(script.executableCondition, "\\", "\\\\"), "\"", "\\\"") + "\"," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "ScriptStatement(" + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + to_string(script.conditionStatement.line) + "," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + to_string(script.conditionStatement.statementIdx) + "," + "\n";
-			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\"" + StringTools::replace(script.conditionStatement.statement, "\"", "\\\"") + "\"," + "\n";
-			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\"" + StringTools::replace(script.conditionStatement.executableStatement, "\"", "\\\"") + "\"," + "\n";
+			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\"" + StringTools::replace(StringTools::replace(script.conditionStatement.statement, "\\", "\\\\"), "\"", "\\\"") + "\"," + "\n";
+			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\"" + StringTools::replace(StringTools::replace(script.conditionStatement.executableStatement, "\\", "\\\\"), "\"", "\\\"") + "\"," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + to_string(script.conditionStatement.gotoStatementIdx) + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ")," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "{}," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\"" + script.name + "\"," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + (script.emitCondition == true?"true":"false") + "," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "{" + "\n";
-			auto statementIdx = 0;
+			auto statementIdx = MiniScript::STATEMENTIDX_FIRST;
 			for (const auto& statement: script.statements) {
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "ScriptStatement(" + "\n";
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + to_string(statement.line) + "," + "\n";
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + to_string(statement.statementIdx) + "," + "\n";
-				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + "\"" + StringTools::replace(statement.statement, "\"", "\\\"") + "\"," + "\n";
-				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + "\"" + StringTools::replace(statement.executableStatement, "\"", "\\\"") + "\"," + "\n";
+				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + "\"" + StringTools::replace(StringTools::replace(statement.statement, "\\", "\\\\"), "\"", "\\\"") + "\"," + "\n";
+				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + "\"" + StringTools::replace(StringTools::replace(statement.executableStatement, "\\", "\\\\"), "\"", "\\\"") + "\"," + "\n";
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + to_string(statement.gotoStatementIdx) + "\n";
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + ")" + (statementIdx < script.statements.size() - 1?",":"") + "\n";
 				statementIdx++;
@@ -418,7 +423,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 			if (script.scriptType == MiniScript::Script::SCRIPTTYPE_ON && StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true) {
 				string emitDefinitionIndent = "\t";
 				emitDefinition+= emitDefinitionIndent + "if (condition == \"" + emitName + "\") {" + "\n";
-				emitDefinition+= emitDefinitionIndent + "\t" + methodName + "(-1);" + "\n";
+				emitDefinition+= emitDefinitionIndent + "\t" + methodName + "(STATEMENTIDX_FIRST);" + "\n";
 				emitDefinition+= emitDefinitionIndent + "} else" + "\n";
 			}
 
@@ -468,7 +473,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	generatedDetermineNamedScriptIdxToStartDefinition+= methodCodeIndent + "}" + "\n";
 	generatedDetermineNamedScriptIdxToStartDefinition+= "\n";
 	generatedDetermineNamedScriptIdxToStartDefinition+= methodCodeIndent + "//" + "\n";
-	generatedDetermineNamedScriptIdxToStartDefinition+= methodCodeIndent + "return -1;" + "\n";
+	generatedDetermineNamedScriptIdxToStartDefinition+= methodCodeIndent + "return SCRIPTIDX_NONE;" + "\n";
 	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "}" + "\n";
 
 	//
@@ -543,7 +548,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 		auto injectedGeneratedCode = false;
 		for (auto i = 0; i < miniScriptClassHeader.size(); i++) {
 			const auto& line = miniScriptClassHeader[i];
-			auto trimmedLine = StringTools::trim(line);
+			const auto trimmedLine = StringTools::trim(line);
 			if (StringTools::startsWith(trimmedLine, "//") == true) {
 				if (reject == false) miniScriptClassHeaderNew.push_back(line);
 				continue;
@@ -600,4 +605,8 @@ int main(int argc, char** argv)
 
 	//
 	tdme::tools::cli::MiniscriptTranspiler::processFile(argv[1], argv[2], miniScriptExtensionFileNames);
+
+	//
+	Console::shutdown();
+	return 0;
 }

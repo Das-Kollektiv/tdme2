@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <array>
+#include <memory>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -31,10 +32,12 @@
 
 using std::array;
 using std::find;
+using std::make_unique;
 using std::map;
 using std::reverse;
 using std::sort;
 using std::unique;
+using std::unique_ptr;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
@@ -352,8 +355,8 @@ void ConvexMesh::setScale(const Vector3& scale) {
 	createConvexMesh(vertices, facesVerticesCount, indices, scale);
 	//
 	// generate vertices and indices buffers
-	verticesByteBuffer = ByteBuffer::allocate(vertices.size() * 3 * sizeof(float));
-	indicesByteBuffer = ByteBuffer::allocate(indices.size() * sizeof(int));
+	verticesByteBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(vertices.size() * 3 * sizeof(float)));
+	indicesByteBuffer = unique_ptr<ByteBuffer>(ByteBuffer::allocate(indices.size() * sizeof(int)));
 	auto verticesBuffer = verticesByteBuffer->asFloatBuffer();
 	auto indicesBuffer = indicesByteBuffer->asIntBuffer();
 	Vector3 vertexTransformed;
@@ -381,14 +384,11 @@ void ConvexMesh::destroyCollisionShape() {
 	if (collisionShape == nullptr) return;
 	this->world->physicsCommon.destroyConvexMeshShape(static_cast<reactphysics3d::ConvexMeshShape*>(collisionShape));
 	this->world->physicsCommon.destroyPolyhedronMesh(polyhedronMesh);
-	delete polygonVertexArray;
-	delete verticesByteBuffer;
-	delete indicesByteBuffer;
-	collisionShape = nullptr;
-	polyhedronMesh = nullptr;
 	polygonVertexArray = nullptr;
 	verticesByteBuffer = nullptr;
 	indicesByteBuffer = nullptr;
+	collisionShape = nullptr;
+	polyhedronMesh = nullptr;
 	world = nullptr;
 }
 
@@ -401,7 +401,7 @@ void ConvexMesh::createCollisionShape(World* world) {
 	//
 	try {
 		//
-		polygonVertexArray = new reactphysics3d::PolygonVertexArray(
+		polygonVertexArray = make_unique<reactphysics3d::PolygonVertexArray>(
 			vertices.size(),
 			verticesByteBuffer->getBuffer(),
 			3 * sizeof(float),
@@ -412,7 +412,7 @@ void ConvexMesh::createCollisionShape(World* world) {
 			reactphysics3d::PolygonVertexArray::VertexDataType::VERTEX_FLOAT_TYPE,
 			reactphysics3d::PolygonVertexArray::IndexDataType::INDEX_INTEGER_TYPE
 		);
-		polyhedronMesh = world->physicsCommon.createPolyhedronMesh(polygonVertexArray);
+		polyhedronMesh = world->physicsCommon.createPolyhedronMesh(polygonVertexArray.get());
 		if (polyhedronMesh == nullptr) {
 			throw ExceptionBase("Invalid polyhedron mesh");
 		}
@@ -428,10 +428,7 @@ void ConvexMesh::createCollisionShape(World* world) {
 			this->world->physicsCommon.destroyPolyhedronMesh(polyhedronMesh);
 			polyhedronMesh = nullptr;
 		}
-		if (polygonVertexArray != nullptr) {
-			delete polygonVertexArray;
-			polygonVertexArray = nullptr;
-		}
+		polygonVertexArray = nullptr;
 		this->world = nullptr;
 	}
 }

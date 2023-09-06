@@ -24,7 +24,7 @@ using std::vector;
 using tdme::os::network::platform::fallback::KernelEventMechanismPSD;
 using tdme::os::network::NIOInterest;
 
-KernelEventMechanism::KernelEventMechanism() : initialized(false), _psd(NULL) {
+KernelEventMechanism::KernelEventMechanism() : initialized(false), _psd(nullptr) {
 	// allocate platform specific data
 	_psd = static_cast<void*>(new KernelEventMechanismPSD());
 
@@ -42,7 +42,7 @@ KernelEventMechanism::~KernelEventMechanism() {
 }
 
 void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie) {
-	// skip if not initialized
+	// exit if not initialized
 	if (initialized == false) return;
 
 	//
@@ -87,23 +87,35 @@ void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const 
 	psd->fdsMutex.unlock();
 }
 
-void KernelEventMechanism::initKernelEventMechanism(const unsigned int maxCCU)  {
-	KernelEventMechanismPSD* psd = static_cast<KernelEventMechanismPSD*>(_psd);
+void KernelEventMechanism::removeSocket(const NetworkSocket &socket) {
+	// exit if not initialized
+	if (initialized == false) return;
 
 	//
-	initialized = true;
+	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
+
+	// synchronize fd set access
+	psd->fdsMutex.lock();
+
+	// remove fd from fds
+	psd->fds.erase(socket.descriptor);
+
+	// remove last read interest
+	FD_CLR(socket.descriptor, &psd->rfds);
+	FD_CLR(socket.descriptor, &psd->wfds);
+
+	// done synchronize fd set access
+	psd->fdsMutex.unlock();
+}
+
+void KernelEventMechanism::initKernelEventMechanism(const unsigned int maxSockets)  {
 }
 
 void KernelEventMechanism::shutdownKernelEventMechanism() {
-	// skip if not initialized
-	if (initialized == false) return;
-
-	// platform specific data
-	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 }
 
 int KernelEventMechanism::doKernelEventMechanism() {
-	// skip if not initialized
+	// exit if not initialized
 	if (initialized == false) return -1;
 
 	// platform specific data
@@ -152,7 +164,7 @@ int KernelEventMechanism::doKernelEventMechanism() {
 }
 
 void KernelEventMechanism::decodeKernelEvent(const unsigned int index, NIOInterest &interest, void*& cookie)  {
-	// skip if not initialized
+	// exit if not initialized
 	if (initialized == false) return;
 
 	// platform specific data

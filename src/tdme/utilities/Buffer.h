@@ -19,46 +19,25 @@ using tdme::math::Math;
  */
 class tdme::utilities::Buffer
 {
+	friend class ByteBuffer;
+	friend class FloatBuffer;
+	friend class IntBuffer;
+	friend class ShortBuffer;
+
 protected:
-	bool createdBuffer;
+	bool ownsBuffer;
 	mutable int64_t position { 0 };
 	vector<uint8_t>* buffer { nullptr };
 
 public:
 	/**
-	 * Assignment operator
-	 * @param buffer buffer
-	 * @return this buffer
+	 * Public constructor
+	 * @param capacity capacity
 	 */
-	inline Buffer& operator=(const Buffer& buffer) {
-		this->createdBuffer = buffer.createdBuffer;
-		this->position = buffer.position;
-		if (createdBuffer == true) {
-			if (buffer.buffer != nullptr) {
-				this->buffer = new vector<uint8_t>(0);
-				*this->buffer = *buffer.buffer;
-			}
-		} else {
-			this->buffer = buffer.buffer;
-		}
-		return *this;
-	}
-
-	/**
-	 * Copy constructor
-	 * @param buffer buffer
-	 */
-	inline Buffer(const Buffer& buffer) {
-		this->createdBuffer = buffer.createdBuffer;
-		this->position = buffer.position;
-		if (createdBuffer == true) {
-			if (buffer.buffer != nullptr) {
-				this->buffer = new vector<uint8_t>(0);
-				*this->buffer = *buffer.buffer;
-			}
-		} else {
-			this->buffer = buffer.buffer;
-		}
+	inline Buffer() {
+		this->ownsBuffer = false;
+		this->position = 0;
+		this->buffer = nullptr;
 	}
 
 	/**
@@ -66,29 +45,9 @@ public:
 	 * @param capacity capacity
 	 */
 	inline Buffer(int64_t capacity) {
-		this->createdBuffer = true;
+		this->ownsBuffer = true;
 		this->position = 0;
 		this->buffer = new vector<uint8_t>(capacity);
-	}
-
-	/**
-	 * Public constructor
-	 * @param buffer buffer
-	 */
-	inline Buffer(Buffer* buffer) {
-		this->createdBuffer = false;
-		this->position = 0;
-		this->buffer = buffer == nullptr?nullptr:buffer->buffer;
-	}
-
-	/**
-	 * Public constructor
-	 * @param data data
-	 */
-	inline Buffer(vector<uint8_t>* data) {
-		this->createdBuffer = false;
-		this->position = 0;
-		this->buffer = data;
 	}
 
 	/**
@@ -96,7 +55,7 @@ public:
 	 * @param data data
 	 */
 	inline Buffer(const vector<uint8_t>& data) {
-		this->createdBuffer = true;
+		this->ownsBuffer = true;
 		this->position = 0;
 		this->buffer = new vector<uint8_t>(0);
 		*this->buffer = data;
@@ -106,9 +65,7 @@ public:
 	 * Destructor
 	 */
 	inline virtual ~Buffer() {
-		if (createdBuffer == true && buffer != nullptr) {
-			delete buffer;
-		}
+		if (ownsBuffer == true && buffer != nullptr) delete buffer;
 	}
 
 	/**

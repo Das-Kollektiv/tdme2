@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -10,6 +11,7 @@
 #include <tdme/utilities/FloatBuffer.h>
 #include <tdme/utilities/ShortBuffer.h>
 
+using std::unique_ptr;
 using std::to_string;
 using std::vector;
 
@@ -34,26 +36,27 @@ private:
 	vector<int32_t>* vboIds { nullptr };
 	int32_t id;
 	bool acquired;
-	ByteBuffer* fbVerticesByteBuffer { nullptr };
+	unique_ptr<ByteBuffer> fbVerticesByteBuffer;
 	FloatBuffer fbVertices;
-	ByteBuffer* sbTextureSpriteIndicesByteBuffer { nullptr };
+	unique_ptr<ByteBuffer> sbTextureSpriteIndicesByteBuffer;
 	ShortBuffer sbTextureSpriteIndices;
-	ByteBuffer* fbColorsByteBuffer { nullptr };
+	unique_ptr<ByteBuffer> fbColorsByteBuffer;
 	FloatBuffer fbColors;
-	ByteBuffer* fbPointSizesByteBuffer { nullptr };
+	unique_ptr<ByteBuffer> fbPointSizesByteBuffer;
 	FloatBuffer fbPointSizes;
-	ByteBuffer* sbSpriteSheetDimensionByteBuffer { nullptr };
+	unique_ptr<ByteBuffer> sbSpriteSheetDimensionByteBuffer;
 	ShortBuffer sbSpriteSheetDimension;
-	ByteBuffer* fbEffectColorMulByteBuffer { nullptr };
+	unique_ptr<ByteBuffer> fbEffectColorMulByteBuffer;
 	FloatBuffer fbEffectColorMul;
-	ByteBuffer* fbEffectColorAddByteBuffer { nullptr };
+	unique_ptr<ByteBuffer> fbEffectColorAddByteBuffer;
 	FloatBuffer fbEffectColorAdd;
 
-	ByteBuffer* fbTextureSpriteIndicesByteBuffer { nullptr };
+	unique_ptr<ByteBuffer> fbTextureSpriteIndicesByteBuffer;
 	FloatBuffer fbTextureSpriteIndices;
-	ByteBuffer* fbSpriteSheetDimensionByteBuffer { nullptr };
+	unique_ptr<ByteBuffer> fbSpriteSheetDimensionByteBuffer;
 	FloatBuffer fbSpriteSheetDimension;
 
+public:
 	// forbid class copy
 	FORBID_CLASS_COPY(BatchRendererPoints)
 
@@ -132,8 +135,6 @@ private:
 	inline int getPointCount() {
 		return fbVertices.getPosition() / 3;
 	}
-
-public:
 
 	/**
 	 * @return acquired

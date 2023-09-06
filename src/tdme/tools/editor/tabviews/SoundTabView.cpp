@@ -1,6 +1,7 @@
 #include <tdme/tools/editor/tabviews/SoundTabView.h>
 
 #include <string>
+#include <memory>
 
 #include <tdme/tdme.h>
 #include <tdme/audio/Audio.h>
@@ -15,7 +16,9 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 
 using tdme::tools::editor::tabviews::SoundTabView;
 
@@ -36,7 +39,7 @@ SoundTabView::SoundTabView(EditorView* editorView, const string& tabId, GUIScree
 	this->tabId = tabId;
 	this->screenNode = screenNode;
 	this->popUps = editorView->getPopUps();
-	engine = Engine::createOffScreenInstance(512, 512, false, false, false);
+	engine = unique_ptr<Engine>(Engine::createOffScreenInstance(512, 512, false, false, false));
 	engine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
 	engine->getGUI()->addScreen(screenNode->getId(), screenNode);
 	engine->getGUI()->addRenderScreen(screenNode->getId());
@@ -46,8 +49,6 @@ SoundTabView::SoundTabView(EditorView* editorView, const string& tabId, GUIScree
 }
 
 SoundTabView::~SoundTabView() {
-	delete soundTabController;
-	delete engine;
 }
 
 void SoundTabView::handleInputEvents()
@@ -64,9 +65,9 @@ void SoundTabView::display()
 void SoundTabView::initialize()
 {
 	try {
-		soundTabController = new SoundTabController(this);
-		screenNode->addActionListener(soundTabController);
-		screenNode->addTooltipRequestListener(soundTabController);
+		soundTabController = make_unique<SoundTabController>(this);
+		screenNode->addActionListener(soundTabController.get());
+		screenNode->addTooltipRequestListener(soundTabController.get());
 		soundTabController->initialize(editorView->getScreenController()->getScreenNode());
 	} catch (Exception& exception) {
 		Console::println("SoundTabView::initialize(): An error occurred: " + string(exception.what()));
@@ -84,7 +85,7 @@ void SoundTabView::updateRendering() {
 }
 
 Engine* SoundTabView::getEngine() {
-	return engine;
+	return engine.get();
 }
 
 void SoundTabView::activate() {

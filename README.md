@@ -251,6 +251,7 @@
     - file system
         - standard file system
         - zlib based compressed archive file system and a tool to generate it from ./resources and ./shader folder
+        - unicode support via UTF8
     - multi threading
         - atomic operations
         - barrier

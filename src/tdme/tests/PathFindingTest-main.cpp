@@ -3,6 +3,5 @@
 
 int main(int argc, char** argv)
 {
-    ::tdme::tests::PathFindingTest::main(argc, argv);
-    return 0;
+    return ::tdme::tests::PathFindingTest::main(argc, argv);
 }

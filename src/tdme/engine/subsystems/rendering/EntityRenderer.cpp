@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <unordered_map>
@@ -18,7 +19,6 @@
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/PBRMaterialProperties.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
-#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
@@ -57,7 +57,6 @@
 #include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/math/Matrix4x4Negative.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/threading/Thread.h>
@@ -67,11 +66,13 @@
 #include <tdme/utilities/Pool.h>
 
 using std::find;
+using std::make_unique;
 using std::map;
 using std::set;
 using std::sort;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
@@ -85,7 +86,6 @@ using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::SpecularMaterialProperties;
-using tdme::engine::model::TextureCoordinate;
 using tdme::engine::physics::CollisionDetection;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
@@ -124,7 +124,7 @@ using tdme::engine::Object;
 using tdme::engine::PointsParticleSystem;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
-using tdme::math::Matrix4x4Negative;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::os::threading::Thread;
 using tdme::utilities::ByteBuffer;
@@ -138,36 +138,22 @@ constexpr int32_t EntityRenderer::INSTANCEDRENDERING_OBJECTS_MAX;
 EntityRenderer::EntityRenderer(Engine* engine, Renderer* renderer) {
 	this->engine = engine;
 	this->renderer = renderer;
-	transparentRenderFacesGroupPool = new EntityRenderer_TransparentRenderFacesGroupPool();
-	transparentRenderFacesPool = new TransparentRenderFacesPool();
-	renderTransparentRenderPointsPool = new RenderTransparentRenderPointsPool(65535);
-	psePointBatchRenderer = new BatchRendererPoints(renderer, 0);
+	transparentRenderFacesGroupPool = make_unique<EntityRenderer_TransparentRenderFacesGroupPool>();
+	transparentRenderFacesPool = make_unique<TransparentRenderFacesPool>();
+	renderTransparentRenderPointsPool = make_unique<RenderTransparentRenderPointsPool>(65535);
+	psePointBatchRenderer = make_unique<BatchRendererPoints>(renderer, 0);
 	threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
 	contexts.resize(threadCount);
 	if (this->renderer->isInstancedRenderingAvailable() == true) {
 		for (auto& contextIdx: contexts) {
-			contextIdx.bbEffectColorMuls = ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
-			contextIdx.bbEffectColorAdds = ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
-			contextIdx.bbMvMatrices = ByteBuffer::allocate(16 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
+			contextIdx.bbEffectColorMuls = unique_ptr<ByteBuffer>(ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX));
+			contextIdx.bbEffectColorAdds = unique_ptr<ByteBuffer>(ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX));
+			contextIdx.bbMvMatrices = unique_ptr<ByteBuffer>(ByteBuffer::allocate(16 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX));
 		}
 	}
 }
 
 EntityRenderer::~EntityRenderer() {
-	if (this->renderer->isInstancedRenderingAvailable() == true) {
-		for (auto& contextIdx: contexts) {
-			delete contextIdx.bbEffectColorMuls;
-			delete contextIdx.bbEffectColorAdds;
-			delete contextIdx.bbMvMatrices;
-		}
-	}
-	for (auto batchRenderer: trianglesBatchRenderers) {
-		delete batchRenderer;
-	}
-	delete transparentRenderFacesGroupPool;
-	delete transparentRenderFacesPool;
-	delete renderTransparentRenderPointsPool;
-	delete psePointBatchRenderer;
 }
 
 void EntityRenderer::initialize()
@@ -187,7 +173,7 @@ void EntityRenderer::dispose()
 		Engine::getInstance()->getVBOManager()->removeVBO("tdme.objectrenderer.instancedrendering." + to_string(i));
 	}
 	// dispose batch vbo renderer
-	for (auto batchRenderer: trianglesBatchRenderers) {
+	for (const auto& batchRenderer: trianglesBatchRenderers) {
 		batchRenderer->dispose();
 		batchRenderer->release();
 	}
@@ -198,16 +184,16 @@ BatchRendererTriangles* EntityRenderer::acquireTrianglesBatchRenderer()
 {
 	// check for free batch vbo renderer
 	auto i = 0;
-	for (auto batchRenderer: trianglesBatchRenderers) {
-		if (batchRenderer->acquire()) return batchRenderer;
+	for (const auto& batchRenderer: trianglesBatchRenderers) {
+		if (batchRenderer->acquire()) return batchRenderer.get();
 		i++;
 	}
 	// try to add one
 	if (i < BATCHRENDERER_MAX) {
-		auto batchRenderer = new BatchRendererTriangles(renderer, i);
+		trianglesBatchRenderers.push_back(make_unique<BatchRendererTriangles>(renderer, i));
+		const auto& batchRenderer = trianglesBatchRenderers[trianglesBatchRenderers.size() - 1];
 		batchRenderer->initialize();
-		trianglesBatchRenderers.push_back(batchRenderer);
-		if (batchRenderer->acquire()) return batchRenderer;
+		if (batchRenderer->acquire()) return batchRenderer.get();
 
 	}
 	Console::println(string("EntityRenderer::acquireTrianglesBatchRenderer()::failed"));
@@ -222,7 +208,7 @@ void EntityRenderer::reset()
 void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object*>& objects, bool renderTransparentFaces, int32_t renderTypes)
 {
 	if (renderer->isSupportingMultithreadedRendering() == false) {
-		renderFunction(0, renderPass, objects, objectsByModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
+		renderFunction(0, renderPass, objects, objectsByModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool.get());
 	} else {
 		auto elementsIssued = 0;
 		auto queueElement = Engine::engineThreadQueueElementPool.allocate();
@@ -253,9 +239,9 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object*>
 		// wait until all elements have been processed
 		while (true == true) {
 			auto elementsProcessed = 0;
-			for (auto engineThread: Engine::engineThreads) elementsProcessed+= engineThread->getProcessedElements();
+			for (const auto& engineThread: Engine::engineThreads) elementsProcessed+= engineThread->getProcessedElements();
 			if (elementsProcessed == elementsIssued) {
-				for (auto engineThread: Engine::engineThreads) engineThread->resetProcessedElements();
+				for (const auto& engineThread: Engine::engineThreads) engineThread->resetProcessedElements();
 				break;
 			}
 		}
@@ -264,8 +250,8 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object*>
 		Engine::engineThreadQueueElementPool.reset();
 
 		//
-		for (auto engineThread: Engine::engineThreads) {
-			transparentRenderFacesPool->merge(engineThread->transparentRenderFacesPool);
+		for (const auto& engineThread: Engine::engineThreads) {
+			transparentRenderFacesPool->merge(engineThread->transparentRenderFacesPool.get());
 			engineThread->transparentRenderFacesPool->reset();
 		}
 	}
@@ -278,7 +264,13 @@ void EntityRenderer::renderTransparentFaces() {
 	auto& transparentRenderFaces = transparentRenderFacesPool->getTransparentRenderFaces();
 	if (transparentRenderFaces.size() > 0) {
 		// sort transparent render faces from far to near
-		sort(transparentRenderFaces.begin(), transparentRenderFaces.end(), TransparentRenderFace::compare);
+		sort(
+			transparentRenderFaces.begin(),
+			transparentRenderFaces.end(),
+			[](const TransparentRenderFace* face1, const TransparentRenderFace* face2) {
+				return face1->distanceFromCamera > face2->distanceFromCamera;
+			}
+		);
 		// second render pass, draw color buffer for transparent objects
 		// 	set up blending, but no culling and no depth buffer
 		//	TODO: enabling depth buffer let shadow disappear
@@ -610,7 +602,7 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object*>& 
 				);
 				renderer->onUpdateModelViewMatrix(contextIdx);
 				// set up front face
-				auto objectFrontFace = objectRenderContext.matrix4x4Negative.isNegative(renderer->getModelViewMatrix()) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
+				auto objectFrontFace = objectRenderContext.rightHandedMatrix.isRightHanded(renderer->getModelViewMatrix()) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
 				if (objectFrontFace != currentFrontFace) {
 					renderer->setFrontFace(contextIdx, objectFrontFace);
 					currentFrontFace = objectFrontFace;
@@ -703,13 +695,16 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 	auto contextIdx = threadIdx;
 
 	//
+	RightHandedMatrix4x4 rightHandedMatrix;
+
+	//
 	auto cameraMatrix = renderer->getCameraMatrix();
 	Vector3 objectCamFromAxis;
 	Matrix4x4 modelViewMatrixTemp;
 	Matrix4x4 modelViewMatrix;
 
 	//
-	auto camera = engine->camera;
+	auto camera = engine->camera.get();
 	auto frontFace = -1;
 	auto cullingMode = 1;
 
@@ -789,7 +784,6 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 			do {
 				auto hadFrontFaceSetup = false;
 				auto hadShaderSetup = false;
-				Matrix4x4Negative matrix4x4Negative;
 
 				Vector3 objectCamFromAxis;
 				Matrix4x4 modelViewMatrixTemp;
@@ -1001,7 +995,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 					);
 
 					// set up front face
-					auto objectFrontFace = matrix4x4Negative.isNegative(modelViewMatrix) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
+					auto objectFrontFace = rightHandedMatrix.isRightHanded(modelViewMatrix) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
 					// if front face changed just render in next step, this all makes only sense if culling is enabled
 					if (cullingMode == 1) {
 						if (hadFrontFaceSetup == false) {
@@ -1446,26 +1440,26 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Lines*>&
 	renderer->enableBlending();
 
 	//
-	for (auto object: linesEntities) {
-		if (object->getRenderPass() != renderPass) continue;
+	for (auto entity: linesEntities) {
+		if (entity->getRenderPass() != renderPass) continue;
 
 		// 	model view matrix
-		renderer->getModelViewMatrix().set(object->getTransformMatrix()).multiply(renderer->getCameraMatrix());
+		renderer->getModelViewMatrix().set(entity->getTransformMatrix()).multiply(renderer->getCameraMatrix());
 		renderer->onUpdateModelViewMatrix(contextIdx);
 
 		// render
 		// issue rendering
-		renderer->getEffectColorAdd(contextIdx) = object->getEffectColorAdd().getArray();
-		renderer->getEffectColorMul(contextIdx) = object->getEffectColorMul().getArray();
+		renderer->getEffectColorAdd(contextIdx) = entity->getEffectColorAdd().getArray();
+		renderer->getEffectColorMul(contextIdx) = entity->getEffectColorMul().getArray();
 		renderer->onUpdateEffect(contextIdx);
 
 		// TODO: maybe use onBindTexture() or onUpdatePointSize()
-		engine->getLinesShader()->setParameters(contextIdx, object->getTextureId(), object->getLineWidth());
+		engine->getLinesShader()->setParameters(contextIdx, entity->getTextureId(), entity->getLineWidth());
 
 		//
-		renderer->bindVerticesBufferObject(contextIdx, (*object->vboIds)[0]);
-		renderer->bindColorsBufferObject(contextIdx, (*object->vboIds)[1]);
-		renderer->drawLinesFromBufferObjects(contextIdx, object->points.size(), 0);
+		renderer->bindVerticesBufferObject(contextIdx, (*entity->vboIds)[0]);
+		renderer->bindColorsBufferObject(contextIdx, (*entity->vboIds)[1]);
+		renderer->drawLinesFromBufferObjects(contextIdx, entity->points.size(), 0);
 	}
 
 	// unbind texture

@@ -1,7 +1,8 @@
 #include <tdme/engine/subsystems/rendering/ObjectBase.h>
 
-#include <map>
+#include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -29,6 +30,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
 
+using std::make_unique;
 using std::map;
 using std::string;
 using std::to_string;
@@ -88,7 +90,6 @@ ObjectBase::~ObjectBase() {
 	for (auto i = 0; i < objectNodes.size(); i++) {
 		delete objectNodes[i];
 	}
-	if (transformedFacesIterator != nullptr) delete transformedFacesIterator;
 }
 
 int ObjectBase::getNodeCount() const {
@@ -128,9 +129,9 @@ void ObjectBase::getTriangles(vector<Triangle>& triangles, int nodeIdx)
 ObjectBase_TransformedFacesIterator* ObjectBase::getTransformedFacesIterator()
 {
 	if (transformedFacesIterator == nullptr) {
-		transformedFacesIterator = new ObjectBase_TransformedFacesIterator(this);
+		transformedFacesIterator = make_unique<ObjectBase_TransformedFacesIterator>(this);
 	}
-	return transformedFacesIterator;
+	return transformedFacesIterator.get();
 }
 
 ObjectNodeMesh* ObjectBase::getMesh(const string& nodeId)
@@ -153,8 +154,8 @@ void ObjectBase::initialize()
 		auto objectNode = objectNodes[i];
 		// initiate mesh if not yet done, happens usually after disposing from engine and readding to engine
 		if (objectNode->mesh == nullptr) {
-			vector<map<string, Matrix4x4*>*> instancesTransformMatrices;
-			vector<map<string, Matrix4x4*>*> instancesSkinningNodesMatrices;
+			vector<unordered_map<string, Matrix4x4*>*> instancesTransformMatrices;
+			vector<unordered_map<string, Matrix4x4*>*> instancesSkinningNodesMatrices;
 			for (auto animation: objectNode->object->instanceAnimations) {
 				instancesTransformMatrices.push_back(&animation->transformMatrices[0]);
 				instancesSkinningNodesMatrices.push_back(animation->getSkinningNodesTransformMatrices(objectNode->node));
@@ -163,7 +164,7 @@ void ObjectBase::initialize()
 				objectNode->mesh = meshManager->getMesh(objectNode->id);
 				if (objectNode->mesh == nullptr) {
 					objectNode->mesh = new ObjectNodeMesh(
-						objectNode->renderer,
+						objectNode->renderer.get(),
 						animationProcessingTarget,
 						objectNode->node,
 						instancesTransformMatrices,
@@ -173,7 +174,7 @@ void ObjectBase::initialize()
 				}
 			} else {
 				objectNode->mesh = new ObjectNodeMesh(
-					objectNode->renderer,
+					objectNode->renderer.get(),
 					animationProcessingTarget,
 					objectNode->node,
 					instancesTransformMatrices,

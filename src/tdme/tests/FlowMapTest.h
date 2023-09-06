@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -15,6 +16,7 @@
 #include <tdme/utilities/FlowMap.h>
 #include <tdme/utilities/PathFinding.h>
 
+using std::unique_ptr;
 using std::vector;
 
 using tdme::application::Application;
@@ -36,17 +38,17 @@ class tdme::tests::FlowMapTest final
 	: public virtual Application
 {
 private:
-	World* world { nullptr };
+	unique_ptr<World> world;
 	Engine* engine { nullptr };
-	Scene* scene { nullptr };
-	Prototype* playerModelPrototype { nullptr };
-	Model* emptyModel { nullptr };
+	unique_ptr<Scene> scene;
+	unique_ptr<Prototype> playerModelPrototype;
+	unique_ptr<Model> emptyModel;
 	Object* startPlayerObject { nullptr };
 	Vector3 startPlayerCellDirection;
 	Vector3 startPlayerCellPosition;
 	Object* endPlayerObject1 { nullptr };
 	Object* endPlayerObject2 { nullptr };
-	PathFinding* pathFinding { nullptr };
+	unique_ptr<PathFinding> pathFinding;
 	vector<Vector3> pathPositions;
 	int64_t timeLastUpdate;
 	FlowMap* flowMap { nullptr };
@@ -74,8 +76,9 @@ public:
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values
+	 * @return exit code
 	 */
-	static void main(int argc, char** argv);
+	static int main(int argc, char** argv);
 
 	// overridden methods
 	void display() override;

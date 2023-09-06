@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <vector>
@@ -20,14 +19,15 @@ template<typename T>
 class Pool
 {
 private:
-	vector<T> freeElements;
-	vector<T> usedElements;
+	vector<T*> freeElements;
+	vector<T*> usedElements;
 
 protected:
 	/**
 	 * Instantiate element
+	 * @return instantiates a new element
 	 */
-	virtual T instantiate() = 0;
+	virtual T* instantiate() = 0;
 
 public:
 	// forbid class copy
@@ -52,14 +52,14 @@ public:
 	 * Allocate a new element from pool
 	 * @return element
 	 */
-	T allocate() {
+	T* allocate() {
 		if (freeElements.empty() == false) {
-			T element = freeElements[freeElements.size() - 1];
+			auto element = freeElements[freeElements.size() - 1];
 			freeElements.erase(freeElements.begin() + freeElements.size() - 1);
 			usedElements.push_back(element);
 			return element;
 		}
-		T element = instantiate();
+		auto element = instantiate();
 		usedElements.push_back(element);
 		return element;
 	}
@@ -68,7 +68,7 @@ public:
 	 * Release element in pool for being reused
 	 * @param element element
 	 */
-	void release(T element) {
+	void release(T* element) {
 		for (auto i = 0; i < usedElements.size(); i++) {
 			if (usedElements[i] == element) {
 				usedElements.erase(usedElements.begin() + i);

@@ -28,7 +28,6 @@ FrameBufferRenderShader::FrameBufferRenderShader(Renderer* renderer)
 
 FrameBufferRenderShader::~FrameBufferRenderShader()
 {
-	Engine::getInstance()->getVBOManager()->removeVBO("framebuffer_render_shader.vbos");
 }
 
 bool FrameBufferRenderShader::isInitialized()
@@ -119,6 +118,11 @@ void FrameBufferRenderShader::initialize()
 
 	//
 	initialized = true;
+}
+
+void FrameBufferRenderShader::dispose()
+{
+	Engine::getInstance()->getVBOManager()->removeVBO("framebuffer_render_shader.vbos");
 }
 
 void FrameBufferRenderShader::useProgram()

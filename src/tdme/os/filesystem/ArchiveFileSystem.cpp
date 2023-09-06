@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <filesystem>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -39,7 +40,7 @@ using tdme::utilities::StringTools;
 ArchiveFileSystem::ArchiveFileSystem(const string& fileName): fileName(fileName), ifsMutex("afs-ifs-mutex")
 {
 	// open
-	ifs.open(fileName.c_str(), ifstream::binary);
+	ifs.open(std::filesystem::u8path(fileName), ifstream::binary);
 	if (ifs.is_open() == false) {
 		throw FileSystemException("Unable to open file for reading(" + to_string(errno) + "): " + fileName);
 	}
@@ -57,10 +58,8 @@ ArchiveFileSystem::ArchiveFileSystem(const string& fileName): fileName(fileName)
 		if (nameSize == 0) break;
 
 		FileInformation fileInformation;
-		auto buffer = new char[nameSize];
-		ifs.read(buffer, nameSize);
-		fileInformation.name.append(buffer, nameSize);
-		delete [] buffer;
+		fileInformation.name.resize(nameSize);
+		ifs.read(fileInformation.name.data(), nameSize);
 		ifs.read((char*)&fileInformation.bytes, sizeof(fileInformation.bytes));
 		ifs.read((char*)&fileInformation.compressed, sizeof(fileInformation.compressed));
 		ifs.read((char*)&fileInformation.bytesCompressed, sizeof(fileInformation.bytesCompressed));
@@ -344,14 +343,14 @@ const string ArchiveFileSystem::getCanonicalPath(const string& pathName, const s
 	for (auto i = 0; i < pathComponents.size(); i++) {
 		auto pathComponent = pathComponents[i];
 		if (pathComponent == ".") {
-			pathComponents[i] = "";
+			pathComponents[i].clear();
 		} else
 		if (pathComponent == "..") {
-			pathComponents[i]= "";
+			pathComponents[i].clear();
 			int j = i - 1;
 			for (int pathComponentReplaced = 0; pathComponentReplaced < 1 && j >= 0; ) {
-				if (pathComponents[j] != "") {
-					pathComponents[j] = "";
+				if (pathComponents[j].empty() == false) {
+					pathComponents[j].clear();
 					pathComponentReplaced++;
 				}
 				j--;
@@ -364,7 +363,7 @@ const string ArchiveFileSystem::getCanonicalPath(const string& pathName, const s
 	bool slash = StringTools::startsWith(pathString, "/");
 	for (auto i = 0; i < pathComponents.size(); i++) {
 		auto pathComponent = pathComponents[i];
-		if (pathComponent == "") {
+		if (pathComponent.empty() == true) {
 			// no op
 		} else {
 			canonicalPath = canonicalPath + (slash == true?"/":"") + pathComponent;
@@ -422,11 +421,11 @@ void ArchiveFileSystem::rename(const string& fileNameFrom, const string& fileNam
 }
 
 bool ArchiveFileSystem::getThumbnailAttachment(const string& pathName, const string& fileName, vector<uint8_t>& thumbnailAttachmentContent) {
-	throw FileSystemException("ArchiveFileSystem::removeFile(): This operation is not supported in archive file system");
+	throw FileSystemException("ArchiveFileSystem::getThumbnailAttachment(): This operation is not supported in archive file system");
 }
 
 bool ArchiveFileSystem::getThumbnailAttachment(const vector<uint8_t>& content, vector<uint8_t>& thumbnailAttachmentContent) {
-	throw FileSystemException("ArchiveFileSystem::removeFile(): This operation is not supported in archive file system");
+	throw FileSystemException("ArchiveFileSystem::getThumbnailAttachment(): This operation is not supported in archive file system");
 }
 
 const string ArchiveFileSystem::computeSHA256Hash() {

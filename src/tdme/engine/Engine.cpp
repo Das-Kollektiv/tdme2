@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <map>
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -82,10 +83,13 @@
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/TextureAtlas.h>
 
+using std::make_unique;
 using std::map;
+using std::move;
 using std::remove;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::application::Application;
 using tdme::engine::fileio::textures::PNGTextureWriter;
@@ -164,24 +168,24 @@ using tdme::utilities::TextureAtlas;
 
 Engine* Engine::instance = nullptr;
 Renderer* Engine::renderer = nullptr;
-TextureManager* Engine::textureManager = nullptr;
-VBOManager* Engine::vboManager = nullptr;
-MeshManager* Engine::meshManager = nullptr;
-GUIRenderer* Engine::guiRenderer = nullptr;
-BRDFLUTShader* Engine::brdfLUTShader = nullptr;
-FrameBufferRenderShader* Engine::frameBufferRenderShader = nullptr;
-DeferredLightingRenderShader* Engine::deferredLightingRenderShader = nullptr;
-PostProcessing* Engine::postProcessing = nullptr;
-PostProcessingShader* Engine::postProcessingShader = nullptr;
-Texture2DRenderShader* Engine::texture2DRenderShader = nullptr;
+unique_ptr<TextureManager> Engine::textureManager;
+unique_ptr<VBOManager> Engine::vboManager;
+unique_ptr<MeshManager> Engine::meshManager;
+unique_ptr<GUIRenderer> Engine::guiRenderer;
+unique_ptr<BRDFLUTShader> Engine::brdfLUTShader;
+unique_ptr<FrameBufferRenderShader> Engine::frameBufferRenderShader;
+unique_ptr<DeferredLightingRenderShader> Engine::deferredLightingRenderShader;
+unique_ptr<PostProcessing> Engine::postProcessing;
+unique_ptr<PostProcessingShader> Engine::postProcessingShader;
+unique_ptr<Texture2DRenderShader> Engine::texture2DRenderShader;
 Engine::AnimationProcessingTarget Engine::animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
-ShadowMapCreationShader* Engine::shadowMappingShaderPre = nullptr;
-ShadowMapRenderShader* Engine::shadowMappingShaderRender = nullptr;
-LightingShader* Engine::lightingShader = nullptr;
-ParticlesShader* Engine::particlesShader = nullptr;
-LinesShader* Engine::linesShader = nullptr;
-SkinningShader* Engine::skinningShader = nullptr;
-GUIShader* Engine::guiShader = nullptr;
+unique_ptr<ShadowMapCreationShader> Engine::shadowMappingShaderPre;
+unique_ptr<ShadowMapRenderShader> Engine::shadowMappingShaderRender;
+unique_ptr<LightingShader> Engine::lightingShader;
+unique_ptr<ParticlesShader> Engine::particlesShader;
+unique_ptr<LinesShader> Engine::linesShader;
+unique_ptr<SkinningShader> Engine::skinningShader;
+unique_ptr<GUIShader> Engine::guiShader;
 Engine* Engine::currentEngine = nullptr;
 bool Engine::skinningShaderEnabled = false;
 int Engine::threadCount = 0;
@@ -197,8 +201,8 @@ float Engine::animationComputationReduction2Distance = 50.0f;
 map<string, Engine::Shader> Engine::shaders;
 unordered_map<string, uint8_t> Engine::uniqueShaderIds;
 
-vector<Engine::EngineThread*> Engine::engineThreads;
-Queue<Engine::EngineThreadQueueElement>* Engine::engineThreadsQueue = nullptr;
+vector<unique_ptr<Engine::EngineThread>> Engine::engineThreads;
+unique_ptr<Queue<Engine::EngineThreadQueueElement>> Engine::engineThreadsQueue;
 Engine::EngineThreadQueueElementPool Engine::engineThreadQueueElementPool;
 
 Engine::EngineThread::EngineThread(int idx, Queue<EngineThreadQueueElement>* queue):
@@ -206,14 +210,14 @@ Engine::EngineThread::EngineThread(int idx, Queue<EngineThreadQueueElement>* que
 	idx(idx),
 	queue(queue) {
 	//
-	transparentRenderFacesPool = new TransparentRenderFacesPool();
+	transparentRenderFacesPool = make_unique<TransparentRenderFacesPool>();
 }
 
 void Engine::EngineThread::run() {
 	Console::println("EngineThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: INIT");
 	while (isStopRequested() == false) {
 		auto element = queue->getElement();
-		if (element == nullptr) continue;
+		if (element == nullptr) break;
 		switch(element->type) {
 			case EngineThreadQueueElement::TYPE_NONE:
 				break;
@@ -241,7 +245,7 @@ void Engine::EngineThread::run() {
 					objectsByModels,
 					element->rendering.collectTransparentFaces,
 					element->rendering.renderTypes,
-					transparentRenderFacesPool
+					transparentRenderFacesPool.get()
 				);
 				element->objects.clear();
 				elementsProcessed++;
@@ -251,65 +255,30 @@ void Engine::EngineThread::run() {
 	Console::println("EngineThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: DONE");
 }
 
+void Engine::shutdown() {
+	if (instance == nullptr) return;
+	delete instance;
+	instance = nullptr;
+}
+
 Engine::Engine() {
-	timing = new Timing();
-	camera = nullptr;
-	gizmoCamera = nullptr;
+	timing = make_unique<Timing>();
 	sceneColor.set(0.0f, 0.0f, 0.0f, 1.0f);
-	frameBuffer = nullptr;
-	gizmoFrameBuffer = nullptr;
 	// shadow mapping
 	shadowMappingEnabled = false;
-	shadowMapping = nullptr;
 	// render process state
 	renderingInitiated = false;
 	preRenderingInitiated = false;
 	//
 	initialized = false;
 	// post processing frame buffers
-	postProcessingFrameBuffer1 = nullptr;
-	postProcessingFrameBuffer2 = nullptr;
-	postProcessingTemporaryFrameBuffer = nullptr;
 	//
 	isUsingPostProcessingTemporaryFrameBuffer = false;
 	//
-	effectPassFrameBuffers.fill(nullptr);
 	effectPassSkip.fill(false);
 }
 
 Engine::~Engine() {
-	delete timing;
-	delete camera;
-	delete gizmoCamera;
-	delete gui;
-	delete partition;
-	for (auto light: lights) delete light;
-	if (frameBuffer != nullptr) delete frameBuffer;
-	if (gizmoFrameBuffer != nullptr) delete gizmoFrameBuffer;
-	if (postProcessingFrameBuffer1 != nullptr) delete postProcessingFrameBuffer1;
-	if (postProcessingFrameBuffer2 != nullptr) delete postProcessingFrameBuffer2;
-	if (postProcessingTemporaryFrameBuffer != nullptr) delete postProcessingTemporaryFrameBuffer;
-	if (shadowMapping != nullptr) delete shadowMapping;
-	delete entityRenderer;
-	if (instance == this) {
-		delete renderer;
-		delete textureManager;
-		delete vboManager;
-		delete meshManager;
-		delete guiRenderer;
-		delete lightingShader;
-		delete particlesShader;
-		delete linesShader;
-		if (brdfLUTShader != nullptr) delete brdfLUTShader;
-		delete frameBufferRenderShader;
-		delete deferredLightingRenderShader;
-		delete postProcessing;
-		delete postProcessingShader;
-		delete texture2DRenderShader;
-		delete guiShader;
-		delete shadowMappingShaderPre;
-		delete shadowMappingShaderRender;
-	}
 	// set current engine
 	if (currentEngine == this) currentEngine = nullptr;
 }
@@ -324,17 +293,16 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 	auto offScreenEngine = new Engine();
 	offScreenEngine->initialized = true;
 	// create GUI
-	offScreenEngine->gui = new GUI(offScreenEngine, guiRenderer);
+	offScreenEngine->gui = make_unique<GUI>(offScreenEngine, guiRenderer.get());
 	// create entity renderer
-	offScreenEngine->entityRenderer = new EntityRenderer(offScreenEngine, renderer);
+	offScreenEngine->entityRenderer = make_unique<EntityRenderer>(offScreenEngine, renderer);
 	offScreenEngine->entityRenderer->initialize();
-	// TODO: geometry buffer
 	// create framebuffers
-	offScreenEngine->frameBuffer = new FrameBuffer(width, height, (enableDepthBuffer == true?FrameBuffer::FRAMEBUFFER_DEPTHBUFFER:0) | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
+	offScreenEngine->frameBuffer = make_unique<FrameBuffer>(width, height, (enableDepthBuffer == true?FrameBuffer::FRAMEBUFFER_DEPTHBUFFER:0) | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
 	offScreenEngine->frameBuffer->initialize();
 	// create camera, frustum partition
-	offScreenEngine->camera = new Camera(renderer);
-	offScreenEngine->gizmoCamera = new Camera(renderer);
+	offScreenEngine->camera = make_unique<Camera>(renderer);
+	offScreenEngine->gizmoCamera = make_unique<Camera>(renderer);
 	offScreenEngine->gizmoCamera->setFrustumMode(Camera::FRUSTUMMODE_ORTHOGRAPHIC);
 	offScreenEngine->gizmoCamera->setCameraMode(Camera::CAMERAMODE_NONE);
 	offScreenEngine->gizmoCamera->setForwardVector(Vector3(0.0f, 0.0f, -1.0f));
@@ -342,19 +310,19 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 	offScreenEngine->gizmoCamera->setUpVector(Vector3(0.0f, 1.0f, 0.0f));
 	offScreenEngine->gizmoCamera->setZNear(1.0f);
 	offScreenEngine->gizmoCamera->setZFar(400.0f);
-	offScreenEngine->partition = new OctTreePartition();
+	offScreenEngine->partition = make_unique<OctTreePartition>();
 	// create lights
 	for (auto i = 0; i < offScreenEngine->lights.size(); i++) {
-		offScreenEngine->lights[i] = new Light(renderer, i);
+		offScreenEngine->lights[i] = make_unique<Light>(renderer, i);
 		offScreenEngine->lights[i]->setSourceTexture(TextureReader::read("resources/engine/textures", "sun.png"));
 	}
 	// create shadow mapping
 	if (instance->shadowMappingEnabled == true && enableShadowMapping == true) {
-		offScreenEngine->shadowMapping = new ShadowMapping(offScreenEngine, renderer, offScreenEngine->entityRenderer);
+		offScreenEngine->shadowMapping = make_unique<ShadowMapping>(offScreenEngine, renderer, offScreenEngine->entityRenderer.get());
 	}
 	// geometry buffer
 	if (renderer->isDeferredShadingAvailable() == true && enableGeometryBuffer == true) {
-		offScreenEngine->geometryBuffer = new GeometryBuffer(width, height);
+		offScreenEngine->geometryBuffer = make_unique<GeometryBuffer>(width, height);
 		offScreenEngine->geometryBuffer->initialize();
 	}
 	//
@@ -372,8 +340,7 @@ const string Engine::getGraphicsRenderer() {
 
 void Engine::setPartition(Partition* partition)
 {
-	if (this->partition != nullptr && this->partition != partition) delete this->partition;
-	this->partition = partition;
+	this->partition = unique_ptr<Partition>(partition);
 }
 
 void Engine::addEntity(Entity* entity)
@@ -795,9 +762,9 @@ void Engine::initialize()
 	ObjectBuffer::initialize();
 
 	// create manager
-	textureManager = new TextureManager(renderer);
-	vboManager = new VBOManager(renderer);
-	meshManager = new MeshManager();
+	textureManager = make_unique<TextureManager>(renderer);
+	vboManager = make_unique<VBOManager>(renderer);
+	meshManager = make_unique<MeshManager>();
 
 	// init
 	initialized = true;
@@ -809,19 +776,19 @@ void Engine::initialize()
 	Console::println(string("TDME2::Renderer::Graphics Renderer: ") + renderer->getRenderer());
 
 	// create entity renderer
-	entityRenderer = new EntityRenderer(this, renderer);
+	entityRenderer = make_unique<EntityRenderer>(this, renderer);
 	entityRenderer->initialize();
 	GUIParser::initialize();
 
 	// create GUI
-	guiRenderer = new GUIRenderer(renderer);
+	guiRenderer = make_unique<GUIRenderer>(renderer);
 	guiRenderer->initialize();
-	gui = new GUI(this, guiRenderer);
+	gui = make_unique<GUI>(this, guiRenderer.get());
 	gui->initialize();
 
 	// create camera
-	camera = new Camera(renderer);
-	gizmoCamera = new Camera(renderer);
+	camera = make_unique<Camera>(renderer);
+	gizmoCamera = make_unique<Camera>(renderer);
 	gizmoCamera->setFrustumMode(Camera::FRUSTUMMODE_ORTHOGRAPHIC);
 	gizmoCamera->setCameraMode(Camera::CAMERAMODE_NONE);
 	gizmoCamera->setForwardVector(Vector3(0.0f, 0.0f, -1.0f));
@@ -832,55 +799,55 @@ void Engine::initialize()
 
 	// create lights
 	for (auto i = 0; i < lights.size(); i++) {
-		lights[i] = new Light(renderer, i);
+		lights[i] = make_unique<Light>(renderer, i);
 		lights[i]->setSourceTexture(TextureReader::read("resources/engine/textures", "sun.png"));
 	}
 
 	// create partition
-	partition = new OctTreePartition();
+	partition = make_unique<OctTreePartition>();
 
 	// create frame buffer render shader
-	frameBufferRenderShader = new FrameBufferRenderShader(renderer);
+	frameBufferRenderShader = make_unique<FrameBufferRenderShader>(renderer);
 	frameBufferRenderShader->initialize();
 
 	// pbr brdf lut
 	if (renderer->isPBRAvailable() == true) {
 		// brdf lut render shader
-		brdfLUTShader = new BRDFLUTShader(renderer);
+		brdfLUTShader = make_unique<BRDFLUTShader>(renderer);
 		brdfLUTShader->initialize();
 	}
 
 	// deferred lighting render shader
 	if (renderer->isDeferredShadingAvailable() == true) {
-		deferredLightingRenderShader = new DeferredLightingRenderShader(renderer);
+		deferredLightingRenderShader = make_unique<DeferredLightingRenderShader>(renderer);
 		deferredLightingRenderShader->initialize();
 	}
 
 	// create lighting shader
-	lightingShader = new LightingShader(renderer);
+	lightingShader = make_unique<LightingShader>(renderer);
 	lightingShader->initialize();
 
 	// create particles shader
-	particlesShader = new ParticlesShader(this, renderer);
+	particlesShader = make_unique<ParticlesShader>(this, renderer);
 	particlesShader->initialize();
 
 	// create particles shader
-	linesShader = new LinesShader(this, renderer);
+	linesShader = make_unique<LinesShader>(this, renderer);
 	linesShader->initialize();
 
 	// create gui shader
-	guiShader = new GUIShader(renderer);
+	guiShader = make_unique<GUIShader>(renderer);
 	guiShader->initialize();
 
 	// create post processing shader
-	postProcessingShader = new PostProcessingShader(renderer);
+	postProcessingShader = make_unique<PostProcessingShader>(renderer);
 	postProcessingShader->initialize();
 
 	// create post processing
-	postProcessing = new PostProcessing();
+	postProcessing = make_unique<PostProcessing>();
 
 	// create post processing shader
-	texture2DRenderShader = new Texture2DRenderShader(renderer);
+	texture2DRenderShader = make_unique<Texture2DRenderShader>(renderer);
 	texture2DRenderShader->initialize();
 
 	// check if texture compression is available
@@ -893,11 +860,11 @@ void Engine::initialize()
 	// initialize shadow mapping
 	if (shadowMappingEnabled == true) {
 		Console::println("TDME2::Using shadow mapping");
-		shadowMappingShaderPre = new ShadowMapCreationShader(renderer);
+		shadowMappingShaderPre = make_unique<ShadowMapCreationShader>(renderer);
 		shadowMappingShaderPre->initialize();
-		shadowMappingShaderRender = new ShadowMapRenderShader(renderer);
+		shadowMappingShaderRender = make_unique<ShadowMapRenderShader>(renderer);
 		shadowMappingShaderRender->initialize();
-		shadowMapping = new ShadowMapping(this, renderer, entityRenderer);
+		shadowMapping = make_unique<ShadowMapping>(this, renderer, entityRenderer.get());
 	} else {
 		Console::println("TDME2::Not using shadow mapping");
 	}
@@ -905,7 +872,7 @@ void Engine::initialize()
 	// initialize skinning shader
 	if (skinningShaderEnabled == true) {
 		Console::println("TDME2::Using skinning compute shader");
-		skinningShader = new SkinningShader(renderer);
+		skinningShader = make_unique<SkinningShader>(renderer);
 		skinningShader->initialize();
 	} else {
 		Console::println("TDME2::Not using skinning compute shader");
@@ -970,12 +937,12 @@ void Engine::initialize()
 
 	//
 	if (renderer->isSupportingMultithreadedRendering() == true) {
-		engineThreadsQueue = new Queue<Engine::EngineThreadQueueElement>(0);
+		engineThreadsQueue = make_unique<Queue<Engine::EngineThreadQueueElement>>(0);
 		engineThreads.resize(threadCount - 1);
 		for (auto i = 0; i < threadCount - 1; i++) {
-			engineThreads[i] = new EngineThread(
+			engineThreads[i] = make_unique<EngineThread>(
 				i + 1,
-				engineThreadsQueue
+				engineThreadsQueue.get()
 			);
 			engineThreads[i]->start();
 		}
@@ -1021,7 +988,7 @@ void Engine::reshape(int32_t width, int32_t height)
 			frameBuffer = nullptr;
 		} else {
 			if (frameBuffer == nullptr) {
-				frameBuffer = new FrameBuffer(_width, _height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
+				frameBuffer = make_unique<FrameBuffer>(_width, _height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
 				frameBuffer->initialize();
 			} else {
 				frameBuffer->reshape(_width, _height);
@@ -1032,7 +999,7 @@ void Engine::reshape(int32_t width, int32_t height)
 	// create geometry buffer if available
 	if (renderer->isDeferredShadingAvailable() == true) {
 		if (geometryBuffer == nullptr) {
-			geometryBuffer = new GeometryBuffer(_width, _height);
+			geometryBuffer = make_unique<GeometryBuffer>(_width, _height);
 			geometryBuffer->initialize();
 		} else {
 			geometryBuffer->reshape(_width, _height);
@@ -1051,7 +1018,7 @@ void Engine::scale(int32_t width, int32_t height)
 	if (frameBuffer != nullptr) frameBuffer->dispose();
 	frameBuffer = nullptr;
 	if (scaledWidth != this->width || scaledHeight != this->height) {
-		frameBuffer = new FrameBuffer(scaledWidth, scaledHeight, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
+		frameBuffer = make_unique<FrameBuffer>(scaledWidth, scaledHeight, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
 		frameBuffer->initialize();
 	}
 	reshape(this->width, this->height);
@@ -1145,7 +1112,7 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 					if (lod2Object != nullptr) decomposeEntityType(lod2Object, decomposedEntities);
 					if (lod3Object != nullptr) decomposeEntityType(lod3Object, decomposedEntities);
 				} else {
-					auto object = lodObject->determineLODObject(camera);
+					auto object = lodObject->determineLODObject(camera.get());
 					if (object != nullptr) decomposeEntityType(object, decomposedEntities, decomposeAllEntities);
 				}
 			}
@@ -1156,7 +1123,7 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 				if (decomposeAllEntities == true) {
 					for (auto subEntity: imposterObject->getBillboardObjects()) decomposeEntityType(subEntity, decomposedEntities);
 				} else {
-					decomposeEntityType(imposterObject->determineBillboardObject(camera), decomposedEntities, decomposeAllEntities);
+					decomposeEntityType(imposterObject->determineBillboardObject(camera.get()), decomposedEntities, decomposeAllEntities);
 				}
 			}
 			break;
@@ -1167,7 +1134,7 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 					decomposeEntityType(lodObjectImposter->getLOD1Object(), decomposedEntities);
 					for (auto subEntity: lodObjectImposter->getLOD2Object()->getBillboardObjects()) decomposeEntityType(subEntity, decomposedEntities);
 				} else {
-					auto object = lodObjectImposter->determineLODObject(camera);
+					auto object = lodObjectImposter->determineLODObject(camera.get());
 					if (object != nullptr) decomposeEntityType(object, decomposedEntities, decomposeAllEntities);
 				}
 			}
@@ -1361,9 +1328,9 @@ void Engine::preRender(Camera* camera, DecomposedEntities& decomposedEntities, b
 		// wait until all elements have been processed
 		while (true == true) {
 			auto elementsProcessed = 0;
-			for (auto engineThread: Engine::engineThreads) elementsProcessed+= engineThread->getProcessedElements();
+			for (const auto& engineThread: Engine::engineThreads) elementsProcessed+= engineThread->getProcessedElements();
 			if (elementsProcessed == elementsIssued) {
-				for (auto engineThread: Engine::engineThreads) engineThread->resetProcessedElements();
+				for (const auto& engineThread: Engine::engineThreads) engineThread->resetProcessedElements();
 				break;
 			}
 		}
@@ -1387,19 +1354,21 @@ void Engine::display()
 
 	// execute enqueued actions
 	if (actions.empty() == false) {
-		auto currentActions = actions;
+		vector<unique_ptr<Action>> currentActions;
+		for (auto& action: actions) {
+			currentActions.push_back(move(action));
+		}
 		actions.clear();
-		for (auto action: currentActions) {
+		for (const auto& action: currentActions) {
 			action->performAction();
-			delete action;
 		}
 	}
 
 	// finish last frame
-	if (this == Engine::instance) Engine::renderer->finishFrame();
+	if (this == Engine::instance) Engine::getRenderer()->finishFrame();
 
 	// init frame
-	if (this == Engine::instance) Engine::renderer->initializeFrame();
+	if (this == Engine::instance) Engine::getRenderer()->initializeFrame();
 
 	//
 	initRendering();
@@ -1417,7 +1386,7 @@ void Engine::display()
 	preRenderingInitiated = false;
 
 	// do pre rendering steps
-	preRender(camera, visibleDecomposedEntities, true, true);
+	preRender(camera.get(), visibleDecomposedEntities, true, true);
 
 	// render environment maps
 	for (auto environmentMappingEntity: visibleDecomposedEntities.environmentMappingEntities) environmentMappingEntity->render();
@@ -1441,7 +1410,7 @@ void Engine::display()
 			auto frameBufferWidth = _width / effectPass.frameBufferWidthDivideFactor;
 			auto frameBufferHeight = _height / effectPass.frameBufferHeightDivideFactor;
 			if (effectPassFrameBuffers[frameBufferIdx] == nullptr) {
-				effectPassFrameBuffers[frameBufferIdx] = new FrameBuffer(frameBufferWidth, frameBufferHeight, FrameBuffer::FRAMEBUFFER_COLORBUFFER); // TODO: types of buffers
+				effectPassFrameBuffers[frameBufferIdx] = make_unique<FrameBuffer>(frameBufferWidth, frameBufferHeight, FrameBuffer::FRAMEBUFFER_COLORBUFFER); // TODO: types of buffers
 				effectPassFrameBuffers[frameBufferIdx]->initialize();
 			} else
 			if (effectPassFrameBuffers[frameBufferIdx]->getWidth() != frameBufferWidth ||
@@ -1452,7 +1421,7 @@ void Engine::display()
 			// enable
 			effectPassFrameBuffers[frameBufferIdx]->enableFrameBuffer();
 			// clear
-			Engine::renderer->setClearColor(
+			Engine::getRenderer()->setClearColor(
 				effectPass.clearColor.getRed(),
 				effectPass.clearColor.getGreen(),
 				effectPass.clearColor.getBlue(),
@@ -1471,9 +1440,9 @@ void Engine::display()
 			} else {
 				// Do the effect render pass
 				render(
-					effectPassFrameBuffers[frameBufferIdx],
+					effectPassFrameBuffers[frameBufferIdx].get(),
 					nullptr, // TODO: we might want to use a deferred shading here for further effects
-					camera,
+					camera.get(),
 					visibleDecomposedEntities,
 					effectPassIdx,
 					Entity::RENDERPASS_ALL,
@@ -1494,7 +1463,6 @@ void Engine::display()
 	for (auto i = 0; i < effectPassFrameBuffersInUse.size(); i++) {
 		if (effectPassFrameBuffersInUse[i] == false && effectPassFrameBuffers[i] != nullptr) {
 			effectPassFrameBuffers[i]->dispose();
-			delete effectPassFrameBuffers[i];
 			effectPassFrameBuffers[i] = nullptr;
 		}
 	}
@@ -1503,30 +1471,28 @@ void Engine::display()
 	FrameBuffer* renderFrameBuffer = nullptr;
 	if (postProcessingPrograms.size() > 0) {
 		if (postProcessingFrameBuffer1 == nullptr) {
-			postProcessingFrameBuffer1 = new FrameBuffer(_width, _height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
+			postProcessingFrameBuffer1 = make_unique<FrameBuffer>(_width, _height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
 			postProcessingFrameBuffer1->initialize();
 		}
 		if (postProcessingFrameBuffer2 == nullptr) {
-			postProcessingFrameBuffer2 = new FrameBuffer(_width, _height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
+			postProcessingFrameBuffer2 = make_unique<FrameBuffer>(_width, _height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
 			postProcessingFrameBuffer2->initialize();
 		}
 		postProcessingFrameBuffer1->enableFrameBuffer();
-		renderFrameBuffer = postProcessingFrameBuffer1;
+		renderFrameBuffer = postProcessingFrameBuffer1.get();
 	} else {
 		if (postProcessingFrameBuffer1 != nullptr) {
 			postProcessingFrameBuffer1->dispose();
-			delete postProcessingFrameBuffer1;
 			postProcessingFrameBuffer1 = nullptr;
 		}
 		if (postProcessingFrameBuffer2 != nullptr) {
 			postProcessingFrameBuffer2->dispose();
-			delete postProcessingFrameBuffer2;
 			postProcessingFrameBuffer2 = nullptr;
 		}
 		// render objects to target frame buffer or screen
 		if (frameBuffer != nullptr) {
 			frameBuffer->enableFrameBuffer();
-			renderFrameBuffer = frameBuffer;
+			renderFrameBuffer = frameBuffer.get();
 		} else {
 			FrameBuffer::disableFrameBuffer();
 		}
@@ -1536,14 +1502,14 @@ void Engine::display()
 	camera->update(renderer->CONTEXTINDEX_DEFAULT, _width, _height);
 
 	// clear previous frame values
-	Engine::renderer->setClearColor(sceneColor.getRed(), sceneColor.getGreen(), sceneColor.getBlue(), sceneColor.getAlpha());
+	Engine::getRenderer()->setClearColor(sceneColor.getRed(), sceneColor.getGreen(), sceneColor.getBlue(), sceneColor.getAlpha());
 	renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
 
 	// do rendering
 	render(
 		renderFrameBuffer,
-		geometryBuffer,
-		camera,
+		geometryBuffer.get(),
+		camera.get(),
 		visibleDecomposedEntities,
 		EFFECTPASS_NONE,
 		Entity::RENDERPASS_ALL,
@@ -1566,7 +1532,6 @@ void Engine::display()
 	// delete post processing termporary buffer if not required anymore
 	if (isUsingPostProcessingTemporaryFrameBuffer == false && postProcessingTemporaryFrameBuffer != nullptr) {
 		postProcessingTemporaryFrameBuffer->dispose();
-		delete postProcessingTemporaryFrameBuffer;
 		postProcessingTemporaryFrameBuffer = nullptr;
 	}
 
@@ -1624,7 +1589,7 @@ Vector3 Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mo
 		FrameBuffer::disableFrameBuffer();
 
 	//
-	return computeWorldCoordinateByMousePosition(mouseX, mouseY, z, camera);
+	return computeWorldCoordinateByMousePosition(mouseX, mouseY, z, camera.get());
 }
 
 Entity* Engine::getEntityByMousePosition(
@@ -2093,7 +2058,7 @@ bool Engine::computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordi
 void Engine::dispose()
 {
 	// finish last frame
-	if (this == Engine::instance) Engine::renderer->finishFrame();
+	if (this == Engine::instance) Engine::getRenderer()->finishFrame();
 
 	// remove entities
 	vector<string> entitiesToRemove;
@@ -2108,10 +2073,16 @@ void Engine::dispose()
 	if (shadowMapping != nullptr) shadowMapping->dispose();
 
 	// dispose frame buffers
+	if (geometryBuffer != nullptr) geometryBuffer->dispose();
 	if (frameBuffer != nullptr) frameBuffer->dispose();
+	if (gizmoFrameBuffer != nullptr) gizmoFrameBuffer->dispose();
 	if (postProcessingFrameBuffer1 != nullptr) postProcessingFrameBuffer1->dispose();
 	if (postProcessingFrameBuffer2 != nullptr) postProcessingFrameBuffer2->dispose();
 	if (postProcessingTemporaryFrameBuffer != nullptr) postProcessingTemporaryFrameBuffer->dispose();
+	for (const auto& effectPassFrameBuffer: effectPassFrameBuffers) if (effectPassFrameBuffer != nullptr) effectPassFrameBuffer->dispose();
+
+	// dispose lights
+	for (const auto& light: lights) light->dispose();
 
 	// dispose GUI
 	gui->dispose();
@@ -2125,6 +2096,16 @@ void Engine::dispose()
 
 	// dispose object buffer if main engine
 	if (this == Engine::instance) {
+		if (renderer->isSupportingMultithreadedRendering() == true) {
+			engineThreadsQueue->stop();
+			for (const auto& engineThread: engineThreads) engineThread->stop();
+			for (const auto& engineThread: engineThreads) engineThread->join();
+		}
+		if (Engine::deferredLightingRenderShader != nullptr) Engine::deferredLightingRenderShader->dispose();
+		frameBufferRenderShader->dispose();
+		texture2DRenderShader->dispose();
+		lightingShader->dispose();
+		postProcessingShader->dispose();
 		ObjectBuffer::dispose();
 	}
 
@@ -2159,30 +2140,32 @@ bool Engine::makeScreenshot(const string& pathName, const string& fileName, bool
 	if (frameBuffer != nullptr) frameBuffer->enableFrameBuffer();
 
 	// fetch pixel
-	auto pixels = renderer->readPixels(0, 0, width, height);
+	auto pixels = unique_ptr<ByteBuffer>(renderer->readPixels(0, 0, width, height));
 	if (pixels == nullptr) {
 		Console::println("Engine::makeScreenshot(): Failed to read pixels");
 		return false;
 	}
 
 	// create texture, write and delete
-	auto texture = new Texture(
-		"tdme.engine.makescreenshot",
-		Texture::TEXTUREDEPTH_RGBA,
-		Texture::TEXTUREFORMAT_RGBA,
-		width,
-		height,
-		width,
-		height,
-		Texture::TEXTUREFORMAT_RGBA,
-		*pixels
-	);
+	auto texture =
+		unique_ptr<
+			Texture,
+			decltype([](Texture* texture){ texture->releaseReference(); })
+		>(
+			new Texture(
+				"tdme.engine.makescreenshot",
+				Texture::TEXTUREDEPTH_RGBA,
+				Texture::TEXTUREFORMAT_RGBA,
+				width,
+				height,
+				width,
+				height,
+				Texture::TEXTUREFORMAT_RGBA,
+				*pixels
+			)
+		);
 	texture->acquireReference();
-	PNGTextureWriter::write(texture, pathName, fileName, removeAlphaChannel);
-	texture->releaseReference();
-
-	//
-	delete pixels;
+	PNGTextureWriter::write(texture.get(), pathName, fileName, removeAlphaChannel);
 
 	// unuse framebuffer if we have one
 	if (frameBuffer != nullptr) FrameBuffer::disableFrameBuffer();
@@ -2197,31 +2180,32 @@ bool Engine::makeScreenshot(vector<uint8_t>& pngData)
 	if (frameBuffer != nullptr) frameBuffer->enableFrameBuffer();
 
 	// fetch pixel
-	auto pixels = renderer->readPixels(0, 0, width, height);
+	auto pixels = unique_ptr<ByteBuffer>(renderer->readPixels(0, 0, width, height));
 	if (pixels == nullptr) {
 		Console::println("Engine::makeScreenshot(): Failed to read pixels");
 		return false;
 	}
 
 	// create texture, write and delete
-	auto texture = new Texture(
-		"tdme.engine.makescreenshot",
-		Texture::TEXTUREDEPTH_RGBA,
-		Texture::TEXTUREFORMAT_RGBA,
-		width,
-		height,
-		width,
-		height,
-		Texture::TEXTUREFORMAT_RGBA,
-		*pixels
-	);
-
+	auto texture =
+		unique_ptr<
+			Texture,
+			decltype([](Texture* texture){ texture->releaseReference(); })
+		>(
+			new Texture(
+				"tdme.engine.makescreenshot",
+				Texture::TEXTUREDEPTH_RGBA,
+				Texture::TEXTUREFORMAT_RGBA,
+				width,
+				height,
+				width,
+				height,
+				Texture::TEXTUREFORMAT_RGBA,
+				*pixels
+			)
+		);
 	texture->acquireReference();
-	PNGTextureWriter::write(texture, pngData);
-	texture->releaseReference();
-
-	//
-	delete pixels;
+	PNGTextureWriter::write(texture.get(), pngData);
 
 	// unuse framebuffer if we have one
 	if (frameBuffer != nullptr) FrameBuffer::disableFrameBuffer();
@@ -2265,7 +2249,7 @@ void Engine::doPostProcessing(PostProcessingProgram::RenderPass renderPass, arra
 					source = postProcessingFrameBuffers[postProcessingFrameBufferIdx];
 					break;
 				default:
-					source = effectPassFrameBuffers[step.source - PostProcessingProgram::FRAMEBUFFERSOURCE_EFFECTPASS0];
+					source = effectPassFrameBuffers[step.source - PostProcessingProgram::FRAMEBUFFERSOURCE_EFFECTPASS0].get();
 					break;
 			}
 			switch(step.target) {
@@ -2275,13 +2259,13 @@ void Engine::doPostProcessing(PostProcessingProgram::RenderPass renderPass, arra
 				case PostProcessingProgram::FRAMEBUFFERTARGET_TEMPORARY:
 					isUsingPostProcessingTemporaryFrameBuffer = true;
 					if (postProcessingTemporaryFrameBuffer == nullptr) {
-						postProcessingTemporaryFrameBuffer = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_COLORBUFFER | FrameBuffer::FRAMEBUFFER_DEPTHBUFFER);
+						postProcessingTemporaryFrameBuffer = make_unique<FrameBuffer>(width, height, FrameBuffer::FRAMEBUFFER_COLORBUFFER | FrameBuffer::FRAMEBUFFER_DEPTHBUFFER);
 						postProcessingTemporaryFrameBuffer->initialize();
 					}
-					target = postProcessingTemporaryFrameBuffer;
+					target = postProcessingTemporaryFrameBuffer.get();
 					break;
 			}
-			FrameBuffer::doPostProcessing(this, target, source, programId, shaderId, step.bindTemporary == true?postProcessingTemporaryFrameBuffer:nullptr, blendToSource);
+			FrameBuffer::doPostProcessing(this, target, source, programId, shaderId, step.bindTemporary == true?postProcessingTemporaryFrameBuffer.get():nullptr, blendToSource);
 			switch(step.target) {
 				case PostProcessingProgram::FRAMEBUFFERTARGET_SCREEN:
 					postProcessingFrameBufferIdx = (postProcessingFrameBufferIdx + 1) % 2;
@@ -2336,8 +2320,8 @@ const map<string, ShaderParameter> Engine::getShaderParameterDefaults(const stri
 
 void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeometryBuffer, Camera* rendererCamera, DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes) {
 	//
-	Engine::renderer->setEffectPass(effectPass);
-	Engine::renderer->setShaderPrefix(shaderPrefix);
+	Engine::getRenderer()->setEffectPass(effectPass);
+	Engine::getRenderer()->setShaderPrefix(shaderPrefix);
 
 	// use lighting shader
 	if (visibleDecomposedEntities.objects.empty() == false || visibleDecomposedEntities.objectsForwardShading.empty() == false) {
@@ -2354,7 +2338,7 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 						renderGeometryBuffer->enableGeometryBuffer();
 						renderer->setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 						renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
-						Engine::renderer->setShaderPrefix("defer_");
+						Engine::getRenderer()->setShaderPrefix("defer_");
 						if (lightingShader != nullptr) lightingShader->useProgram(this);
 					}
 				} else
@@ -2377,7 +2361,7 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 					if (renderGeometryBuffer != nullptr) {
 						if (lightingShader != nullptr) lightingShader->unUseProgram();
 						renderGeometryBuffer->disableGeometryBuffer();
-						Engine::renderer->setShaderPrefix(shaderPrefix);
+						Engine::getRenderer()->setShaderPrefix(shaderPrefix);
 						if (renderFrameBuffer != nullptr) renderFrameBuffer->enableFrameBuffer();
 						renderGeometryBuffer->renderToScreen(this, visibleDecomposedEntities.decalEntities);
 						if (lightingShader != nullptr) lightingShader->useProgram(this);
@@ -2437,7 +2421,7 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 	if (applyPostProcessing == true) {
 		isUsingPostProcessingTemporaryFrameBuffer = false;
 		if (postProcessingPrograms.size() > 0) {
-			doPostProcessing(PostProcessingProgram::RENDERPASS_OBJECTS, {{postProcessingFrameBuffer1, postProcessingFrameBuffer2 }}, postProcessingFrameBuffer1);
+			doPostProcessing(PostProcessingProgram::RENDERPASS_OBJECTS, {{postProcessingFrameBuffer1.get(), postProcessingFrameBuffer2.get() }}, postProcessingFrameBuffer1.get());
 			postProcessingFrameBuffer1->enableFrameBuffer();
 		}
 	}
@@ -2477,7 +2461,7 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 	// render objects and particles together
 	if (applyPostProcessing == true) {
 		if (postProcessingPrograms.size() > 0) {
-			doPostProcessing(PostProcessingProgram::RENDERPASS_FINAL, {{postProcessingFrameBuffer1, postProcessingFrameBuffer2 }}, frameBuffer);
+			doPostProcessing(PostProcessingProgram::RENDERPASS_FINAL, {{postProcessingFrameBuffer1.get(), postProcessingFrameBuffer2.get() }}, frameBuffer.get());
 		}
 	}
 
@@ -2578,7 +2562,7 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 		auto _height = renderFrameBuffer != nullptr?renderFrameBuffer->getHeight():(scaledHeight != -1?scaledHeight:height);
 
 		if (gizmoFrameBuffer == nullptr) {
-			gizmoFrameBuffer = new FrameBuffer(_width, _height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
+			gizmoFrameBuffer = make_unique<FrameBuffer>(_width, _height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
 			gizmoFrameBuffer->setColorBufferTextureId(frameBuffer->getColorBufferTextureId());
 			gizmoFrameBuffer->initialize();
 		} else
@@ -2641,13 +2625,13 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 	}
 
 	//
-	Engine::renderer->setShaderPrefix(string());
-	Engine::renderer->setEffectPass(0);
+	Engine::getRenderer()->setShaderPrefix(string());
+	Engine::getRenderer()->setEffectPass(0);
 }
 
 bool Engine::renderLightSources(int width, int height) {
 	auto lightSourceVisible = false;
-	for (auto light: lights) {
+	for (const auto& light: lights) {
 		if (light->isEnabled() == false || light->isRenderSource() == false) continue;
 		auto lightSourceSize = light->getSourceSize();
 		auto lightSourcePixelSize = width < height?static_cast<float>(lightSourceSize) * static_cast<float>(width):static_cast<float>(lightSourceSize) * static_cast<float>(height);;

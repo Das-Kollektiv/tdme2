@@ -1,15 +1,18 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/environmentmapping/fwd-tdme.h>
+#include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::Camera;
@@ -32,20 +35,17 @@ class tdme::engine::subsystems::environmentmapping::EnvironmentMappingRenderer f
 
 private:
 	Engine* engine { nullptr };
-	Camera* camera { nullptr };
+	unique_ptr<Camera> camera { nullptr };
 	int width { -1 };
 	int height { -1 };
 	array<Vector3, 6> forwardVectors;
 	array<Vector3, 6> sideVectors;
-	array<array<FrameBuffer*, 6>, 2> frameBuffers {{
-		{{ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }},
-		{{ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }}
-	}};
+	array<array<unique_ptr<FrameBuffer>, 6>, 2> frameBuffers;
 	array<int32_t, 2> cubeMapTextureIds { 0, 0 };
 	int64_t timeRenderLast { -1LL };
 	int reflectionCubeMapTextureIdx { 0 };
 	int renderCubeMapTextureIdx { 0 };
-	STATIC_DLL_IMPEXT static GeometryBuffer* geometryBuffer;
+	STATIC_DLL_IMPEXT static unique_ptr<GeometryBuffer> geometryBuffer;
 	int64_t timeRenderUpdateFrequency { 100LL };
 	int32_t renderPassMask { Entity::RENDERPASS_ALL - Entity::RENDERPASS_WATER - Entity::RENDERPASS_GIZMO};
 	Engine::DecomposedEntities visibleDecomposedEntities;

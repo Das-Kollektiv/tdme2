@@ -1,5 +1,6 @@
 #include <tdme/gui/scripting/GUIMiniScript.h>
 
+#include <memory>
 #include <span>
 #include <string>
 #include <unordered_map>
@@ -27,9 +28,11 @@
 #include <tdme/utilities/MiniScript.h>
 #include <tdme/utilities/MutableString.h>
 
+using std::make_unique;
 using std::span;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::unordered_map;
 
 using tdme::engine::logics::Context;
@@ -60,6 +63,16 @@ GUIMiniScript::GUIMiniScript(GUIScreenNode* screenNode): MiniScript(), screenNod
 }
 
 GUIMiniScript::~GUIMiniScript() {
+}
+
+const string GUIMiniScript::getBaseClass() {
+	return "tdme::gui::scripting::GUIMiniScript";
+}
+
+const vector<string> GUIMiniScript::getTranspilationUnits() {
+	auto transpilationUnits = MiniScript::getTranspilationUnits();
+	transpilationUnits.push_back("src/tdme/gui/scripting/GUIMiniScript.cpp");
+	return transpilationUnits;
 }
 
 void GUIMiniScript::registerStateMachineStates() {
@@ -1196,10 +1209,7 @@ void GUIMiniScript::registerMethods() {
 					miniScript->startErrorScript();
 				} else {
 					// delete next screen node if given
-					if (miniScript->nextScreenNode != nullptr) {
-						delete miniScript->nextScreenNode;
-						miniScript->nextScreenNode = nullptr;
-					}
+					miniScript->nextScreenNode = nullptr;
 					// variables
 					unordered_map<string, string> variables;
 					if (argumentValues.size() >= 2) {
@@ -1216,12 +1226,14 @@ void GUIMiniScript::registerMethods() {
 						string screenFileName;
 						miniScript->screenNode->getProjectFilePathNameAndFileName(fileName, screenPathName, screenFileName);
 						//
-						miniScript->nextScreenNode = GUIParser::parse(
-							screenPathName,
-							screenFileName,
-							variables,
-							argumentValues.size() == 3?argumentValues[2]:MiniScript::ScriptVariable(),
-							miniScript->screenNode->getContext()
+						miniScript->nextScreenNode = unique_ptr<GUIScreenNode>(
+							GUIParser::parse(
+								screenPathName,
+								screenFileName,
+								variables,
+								argumentValues.size() == 3?argumentValues[2]:MiniScript::ScriptVariable(),
+								miniScript->screenNode->getContext()
+							)
 						);
 					} catch (Exception& exception) {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": an error occurred with goto screen to '" + fileName + "': " + string(exception.what()));

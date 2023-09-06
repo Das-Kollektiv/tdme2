@@ -20,7 +20,7 @@ ProducerThread::ProducerThread(int id, Queue<int>* queue) : Thread("producer"), 
 void ProducerThread::run() {
 	Console::println("ProducerThread[" + to_string(id) + "]::init()");
 	for(int i = 0; isStopRequested() == false; i++) {
-		int* element = new int;
+		auto element = new int;
 		*element = i;
 		queue->addElement(element, false);
 		Console::println("ProducerThread[" + to_string(id) + "]: added " + to_string(i) + " to queue");

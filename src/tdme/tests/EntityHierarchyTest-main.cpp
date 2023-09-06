@@ -3,6 +3,5 @@
 
 int main(int argc, char** argv)
 {
-    ::tdme::tests::EntityHierarchyTest::main(argc, argv);
-    return 0;
+    return ::tdme::tests::EntityHierarchyTest::main(argc, argv);
 }

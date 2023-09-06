@@ -1,5 +1,6 @@
 #include <tdme/engine/ObjectRenderGroup.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -10,7 +11,6 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/RotationOrder.h>
-#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/Engine.h>
@@ -20,11 +20,14 @@
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/ModelTools.h>
 
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::model::Face;
@@ -33,7 +36,6 @@ using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::model::RotationOrder;
-using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::Engine;
@@ -44,6 +46,7 @@ using tdme::engine::Partition;
 using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::utilities::ModelTools;
 
@@ -76,28 +79,26 @@ ObjectRenderGroup::ObjectRenderGroup(
 }
 
 ObjectRenderGroup::~ObjectRenderGroup() {
-	if (combinedEntity != nullptr) delete combinedEntity;
-	for (auto combinedModel: combinedModels) {
-		if (combinedModel != nullptr) delete combinedModel;
-	}
 }
 
 void ObjectRenderGroup::combineNode(Node* sourceNode, const vector<Vector3>& origins, const vector<Matrix4x4>& objectParentTransformMatrices, Model* combinedModel) {
 	// create node in combined model
 	auto combinedModelNode = combinedModel->getNodeById(sourceNode->getId());
 	if (combinedModelNode == nullptr) {
-		combinedModelNode = new Node(
+		auto newCombinedModelNode = make_unique<Node>(
 			combinedModel,
 			sourceNode->getParentNode() == nullptr?nullptr:combinedModel->getNodeById(sourceNode->getParentNode()->getId()),
 			sourceNode->getId(),
 			sourceNode->getName()
 		);
 		if (sourceNode->getParentNode() == nullptr) {
-			combinedModel->getSubNodes()[combinedModelNode->getId()] = combinedModelNode;
+			combinedModel->getSubNodes()[newCombinedModelNode->getId()] = newCombinedModelNode.get();
 		} else {
-			combinedModelNode->getParentNode()->getSubNodes()[combinedModelNode->getId()] = combinedModelNode;
+			combinedModelNode->getParentNode()->getSubNodes()[newCombinedModelNode->getId()] = newCombinedModelNode.get();
 		}
-		combinedModel->getNodes()[combinedModelNode->getId()] = combinedModelNode;
+		combinedModel->getNodes()[newCombinedModelNode->getId()] = newCombinedModelNode.get();
+		//
+		combinedModelNode = newCombinedModelNode.release();
 	}
 
 	{
@@ -279,16 +280,14 @@ void ObjectRenderGroup::combineObjects(Model* model, const vector<Transform>& ob
 void ObjectRenderGroup::updateRenderGroup() {
 	// dispose old object and combined model
 	if (combinedEntity != nullptr) {
-		if (engine != nullptr) engine->removeEntityFromLists(combinedEntity);
+		if (engine != nullptr) engine->removeEntityFromLists(combinedEntity.get());
 		combinedEntity->dispose();
-		delete combinedEntity;
 		combinedEntity = nullptr;
 	}
 
 	// combine objects to a new model
 	for (auto i = 0; i < combinedModels.size(); i++) {
-		if (combinedModels[i] != nullptr) delete combinedModels[i];
-		combinedModels[i] = new Model(
+		combinedModels[i] = make_unique<Model>(
 			id + ".o3rg.lod." + to_string(i),
 			id + ".o3rg.lod." + to_string(i),
 			UpVector::Y_UP,
@@ -300,7 +299,7 @@ void ObjectRenderGroup::updateRenderGroup() {
 	//
 	for (const auto& [model, objectsTransform]: transformByModel) {
 		auto lodLevel = 0;
-		for (auto combinedModel: combinedModels) {
+		for (const auto& combinedModel: combinedModels) {
 			auto reduceByFactor = lodReduceBy[lodLevel];
 			lodLevel++;
 			auto objectCount = 0;
@@ -313,31 +312,31 @@ void ObjectRenderGroup::updateRenderGroup() {
 				reducedObjectsTransform.push_back(objectTransform);
 				objectCount++;
 			}
-			combineObjects(model, reducedObjectsTransform, combinedModel);
+			combineObjects(model, reducedObjectsTransform, combinedModel.get());
 		}
 	}
 
 	// create new combined object
-	for (auto combinedModel: combinedModels) {
+	for (const auto& combinedModel: combinedModels) {
 		if (combinedModel != nullptr) {
 			// post process combined model
-			ModelTools::shrinkToFit(combinedModel);
-			ModelTools::createDefaultAnimation(combinedModel, 0);
-			ModelTools::setupJoints(combinedModel);
-			ModelTools::fixAnimationLength(combinedModel);
+			ModelTools::shrinkToFit(combinedModel.get());
+			ModelTools::createDefaultAnimation(combinedModel.get(), 0);
+			ModelTools::setupJoints(combinedModel.get());
+			ModelTools::fixAnimationLength(combinedModel.get());
 		}
 	}
 
 	// optimize models
 	if (optimizeModels == true) {
 		for (auto i = 0; i < combinedModels.size(); i++) {
-			combinedModels[i] = ModelTools::optimizeModel(combinedModels[i]);
+			combinedModels[i] = unique_ptr<Model>(ModelTools::optimizeModel(combinedModels[i].release()));
 		}
 	}
 
 	// no lod
 	if (combinedModels.size() == 1) {
-		auto combinedObject = new Object(id + ".o3rg", combinedModels[0]);
+		auto combinedObject = new Object(id + ".o3rg", combinedModels[0].get());
 		combinedObject->setParentEntity(this);
 		combinedObject->setParentTransform(parentTransform);
 		combinedObject->setShader(shaderId);
@@ -346,20 +345,20 @@ void ObjectRenderGroup::updateRenderGroup() {
 		combinedObject->setEngine(engine);
 		combinedObject->shaderParameters = shaderParameters;
 		combinedObject->update();
-		combinedEntity = combinedObject;
+		combinedEntity = unique_ptr<Entity>(combinedObject);
 	} else
 	// lod
 	if (combinedModels.size() > 1) {
 		// create object, initialize and
 		auto combinedLODObject = new LODObject(
 			id + ".o3rg",
-			combinedModels[0],
+			combinedModels[0].get(),
 			combinedModels[1] == nullptr?LODObject::LODLEVELTYPE_NONE:LODObject::LODLEVELTYPE_MODEL,
 			modelLOD2MinDistance,
-			combinedModels[1],
+			combinedModels[1].get(),
 			combinedModels[2] == nullptr?LODObject::LODLEVELTYPE_NONE:LODObject::LODLEVELTYPE_MODEL,
 			modelLOD3MinDistance,
-			combinedModels[2]
+			combinedModels[2].get()
 		);
 		combinedLODObject->setParentEntity(this);
 		combinedLODObject->setParentTransform(parentTransform);
@@ -378,7 +377,7 @@ void ObjectRenderGroup::updateRenderGroup() {
 			combinedLODObject->objectLOD3->shaderParameters = shaderParameters;
 		}
 		combinedLODObject->update();
-		combinedEntity = combinedLODObject;
+		combinedEntity = unique_ptr<Entity>(combinedLODObject);
 	}
 
 	//
@@ -478,16 +477,10 @@ void ObjectRenderGroup::dispose()
 	// delegate to combined object
 	if (combinedEntity != nullptr) {
 		combinedEntity->dispose();
-		delete combinedEntity;
 		combinedEntity = nullptr;
 	}
 	// disose combined model
-	for (auto& combinedModel: combinedModels) {
-		if (combinedModel != nullptr) {
-			delete combinedModel;
-			combinedModel = nullptr;
-		}
-	}
+	combinedModels.clear();
 }
 
 void ObjectRenderGroup::initialize()

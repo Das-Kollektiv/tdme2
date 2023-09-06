@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -12,6 +13,7 @@
 #include <tdme/tools/editor/views/EditorView.h>
 
 using std::string;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::application::Application;
@@ -24,18 +26,18 @@ using tdme::tools::editor::views::View;
  * TDME editor
  * @author andreas.drewke
  */
-class tdme::tools::editor::TDMEEditor final
+class tdme::tools::editor::Editor final
 	: public virtual Application
 {
 private:
-	static TDMEEditor* instance;
+	STATIC_DLL_IMPEXT static Editor* instance;
 	Engine* engine { nullptr };
 	View* view { nullptr };
 	bool viewInitialized;
 	View* viewNew { nullptr };
 	bool quitRequested;
-	PopUps* popUps { nullptr };
-	EditorView* editorView { nullptr };
+	unique_ptr<PopUps> popUps;
+	unique_ptr<EditorView> editorView;
 
 public:
 
@@ -43,28 +45,29 @@ public:
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values
+	 * @return exit code
 	 */
-	static void main(int argc, char** argv);
+	static int main(int argc, char** argv);
 
 	/**
 	 * @return particle system instance
 	 */
-	inline static TDMEEditor* getInstance() {
+	inline static Editor* getInstance() {
 		return instance;
 	}
 
 	// forbid class copy
-	FORBID_CLASS_COPY(TDMEEditor)
+	FORBID_CLASS_COPY(Editor)
 
 	/**
 	 * Public constructor
 	 */
-	TDMEEditor();
+	Editor();
 
 	/**
 	 * Destructor
 	 */
-	~TDMEEditor();
+	~Editor();
 
 	/**
 	 * @return if editor is running in full screen

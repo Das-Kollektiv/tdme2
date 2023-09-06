@@ -1,5 +1,6 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMap.h>
 
+#include <memory>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -26,6 +27,8 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
+using std::make_unique;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::primitives::BoundingBox;
@@ -54,9 +57,9 @@ using tdme::math::Vector3;
 ShadowMap::ShadowMap(ShadowMapping* shadowMapping, int32_t width, int32_t height)
 {
 	this->shadowMapping = shadowMapping;
-	lightCamera = new Camera(shadowMapping->renderer);
+	lightCamera = make_unique<Camera>(shadowMapping->renderer);
 	lightCamera->setCameraMode(Camera::CAMERAMODE_NONE);
-	frameBuffer = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER);
+	frameBuffer = make_unique<FrameBuffer>(width, height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER);
 	if (shadowMapping->renderer->getRendererType() == Renderer::RENDERERTYPE_VULKAN) {
 		biasMatrix.set(
 			0.5f, 0.0f, 0.0f, 0.0f,
@@ -76,8 +79,6 @@ ShadowMap::ShadowMap(ShadowMapping* shadowMapping, int32_t width, int32_t height
 }
 
 ShadowMap::~ShadowMap() {
-	delete lightCamera;
-	delete frameBuffer;
 }
 
 void ShadowMap::initialize()
@@ -101,7 +102,7 @@ void ShadowMap::bindDepthBufferTexture(int contextIdx)
 
 Camera* ShadowMap::getCamera()
 {
-	return lightCamera;
+	return lightCamera.get();
 }
 
 void ShadowMap::createShadowMap(Light* light)

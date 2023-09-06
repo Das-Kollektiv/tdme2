@@ -1,4 +1,4 @@
-#include <cstdlib>
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -12,6 +12,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
+using std::unique_ptr;
 using std::string;
 using std::to_string;
 
@@ -37,9 +38,11 @@ int main(int argc, char** argv)
 	string fileName = string(argv[1]);
 	try {
 		Console::println("Loading source model: " + fileName);
-		auto model = ModelReader::read(
-			FileSystem::getInstance()->getPathName(fileName),
-			FileSystem::getInstance()->getFileName(fileName)
+		auto model = unique_ptr<Model>(
+			ModelReader::read(
+				FileSystem::getInstance()->getPathName(fileName),
+				FileSystem::getInstance()->getFileName(fileName)
+			)
 		);
 		Console::println("Animation setups:");
 		for (const auto& [srcAnimationSetupId, srcAnimationSetup]: model->getAnimationSetups()) {
@@ -65,4 +68,8 @@ int main(int argc, char** argv)
 	} catch (Exception& exception) {
 		Console::println("An error occurred: " + string(exception.what()));
 	}
+
+	//
+	Console::shutdown();
+	return 0;
 }

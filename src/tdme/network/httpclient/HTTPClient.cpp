@@ -75,16 +75,17 @@ string HTTPClient::urlEncode(const string &value) {
 }
 
 
-string HTTPClient::createHTTPRequestHeaders(const string& hostName, const string& method, const string& relativeUrl, const unordered_map<string, string>& getParameters, const unordered_map<string, string>& postParameters, const string& body) {
+string HTTPClient::createHTTPRequestHeaders(const string& hostname, const string& method, const string& relativeUrl, const unordered_map<string, string>& getParameters, const unordered_map<string, string>& postParameters, const string& body) {
 	string query;
 	for (const auto& [parameterName, parameterValue]: getParameters) {
-		if (query.size() == 0) query+= "?"; else query+="&";
+		if (query.empty() == true) query+= "?"; else query+="&";
 		query+= urlEncode(parameterName) + "=" + urlEncode(parameterValue);
 	}
 	auto request =
 		string(method + " " + relativeUrl + query + " HTTP/1.1\r\n") +
 		string("User-Agent: tdme2-httpclient\r\n") +
-		string("Host: " + hostName + "\r\n") +
+		string("Accept-Charset: UTF-8\r\n") +
+		string("Host: " + hostname + "\r\n") +
 		string("Connection: close\r\n");
 	if (username.empty() == false || password.empty() == false) {
 		string base64Pass;
@@ -120,10 +121,11 @@ void HTTPClient::parseHTTPResponseHeaders(stringstream& rawResponse, int16_t& ht
 	while (rawResponse.eof() == false) {
 		rawResponse.get(currentChar);
 		if (lastChar == '\r' && currentChar == '\n') {
-			if (line.size() != 0) {
+			if (line.empty() == false) {
 				httpHeader.push_back(line);
+			} else {
+				break;
 			}
-			if (line.size() == 0) break;
 			line.clear();
 		} else
 		if (currentChar != '\r' && currentChar != '\n') {
@@ -162,26 +164,26 @@ void HTTPClient::execute() {
 	try {
 		if (StringTools::startsWith(url, "http://") == false) throw HTTPClientException("Invalid protocol");
 		auto relativeUrl = StringTools::substring(url, string("http://").size());
-		if (relativeUrl.size() == 0) throw HTTPClientException("No URL given");
+		if (relativeUrl.empty() == true) throw HTTPClientException("No URL given");
 		auto slashIdx = relativeUrl.find('/');
-		auto hostName = relativeUrl;
-		if (slashIdx != -1) hostName = StringTools::substring(relativeUrl, 0, slashIdx);
-		relativeUrl = StringTools::substring(relativeUrl, hostName.size());
+		auto hostname = relativeUrl;
+		if (slashIdx != -1) hostname = StringTools::substring(relativeUrl, 0, slashIdx);
+		relativeUrl = StringTools::substring(relativeUrl, hostname.size());
 
-		Console::println("HTTPClient::execute(): Hostname: " + hostName);
-		Console::println("HTTPClient::execute(): RelativeUrl: " + relativeUrl);
+		Console::println("HTTPClient::execute(): hostname: " + hostname);
+		Console::println("HTTPClient::execute(): relative url: " + relativeUrl);
 
-		Console::print("HTTPClient::execute(): Resolving name to IP: " + hostName + ": ");
-		auto ip = Network::getIpByHostName(hostName);
-		if (ip.size() == 0) {
-			Console::println("HTTPClient::execute(): Failed");
-			throw HTTPClientException("Could not resolve host IP by host name");
+		Console::print("HTTPClient::execute(): resolving hostname to IP: " + hostname + ": ");
+		auto ip = Network::getIpByHostname(hostname);
+		if (ip.empty() == true) {
+			Console::println("HTTPClient::execute(): failed");
+			throw HTTPClientException("Could not resolve host IP by hostname");
 		}
 		Console::println(ip);
 
 		TCPSocket::create(socket, TCPSocket::determineIpVersion(ip));
 		socket.connect(ip, 80);
-		auto request = createHTTPRequestHeaders(hostName, method, relativeUrl, getParameters, postParameters, body);
+		auto request = createHTTPRequestHeaders(hostname, method, relativeUrl, getParameters, postParameters, body);
 		socket.write((void*)request.data(), request.length());
 
 		char rawResponseBuf[16384];

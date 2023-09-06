@@ -61,15 +61,6 @@ MarkdownTabController::MarkdownTabController(MarkdownTabView* view)
 MarkdownTabController::~MarkdownTabController() {
 }
 
-MarkdownTabView* MarkdownTabController::getView() {
-	return view;
-}
-
-GUIScreenNode* MarkdownTabController::getScreenNode()
-{
-	return screenNode;
-}
-
 void MarkdownTabController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;

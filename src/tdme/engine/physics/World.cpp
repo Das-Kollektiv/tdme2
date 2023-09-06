@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <string>
 #include <unordered_set>
 
@@ -41,9 +42,9 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
-#include <tdme/utilities/VectorIteratorMultiple.h>
 
 using std::find;
+using std::make_unique;
 using std::map;
 using std::remove;
 using std::string;
@@ -71,7 +72,6 @@ using tdme::math::Vector3;
 using tdme::utilities::Console;
 using tdme::utilities::StringTools;
 using tdme::utilities::Time;
-using tdme::utilities::VectorIteratorMultiple;
 
 World::World(const string& id)
 {
@@ -86,7 +86,6 @@ World::World(const string& id)
 World::~World()
 {
 	//
-	for (auto worldListener: worldListeners) delete worldListener;
 	worldListeners.clear();
 	reset();
 	physicsCommon.destroyPhysicsWorld(world);
@@ -642,5 +641,4 @@ void World::addWorldListener(WorldListener* listener)
 void World::removeWorldListener(WorldListener* listener)
 {
 	worldListeners.erase(remove(worldListeners.begin(), worldListeners.end(), listener), worldListeners.end());
-	delete listener;
 }

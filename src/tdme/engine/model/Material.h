@@ -1,16 +1,19 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/engine/model/PBRMaterialProperties.h>
+#include <tdme/engine/model/SpecularMaterialProperties.h>
+#include <tdme/math/Matrix3x3.h>
 
 using std::string;
+using std::unique_ptr;
 
 using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::SpecularMaterialProperties;
-using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix3x3;
 
 /**
  * Represents a material
@@ -20,7 +23,7 @@ class tdme::engine::model::Material final
 {
 private:
 	STATIC_DLL_IMPEXT static string defaultMaterialId;
-	STATIC_DLL_IMPEXT static Material* defaultMaterial;
+	STATIC_DLL_IMPEXT static unique_ptr<Material> defaultMaterial;
 
 public:
 
@@ -28,15 +31,15 @@ public:
 	 * @return default material
 	 */
 	inline static Material* getDefaultMaterial() {
-		return defaultMaterial;
+		return defaultMaterial.get();
 	}
 
 private:
 	string id;
-	SpecularMaterialProperties* specularMaterialProperties { nullptr };
-	PBRMaterialProperties* pbrMaterialProperties { nullptr };
+	unique_ptr<SpecularMaterialProperties> specularMaterialProperties;
+	unique_ptr<PBRMaterialProperties> pbrMaterialProperties;
 	bool doubleSided { false };
-	Matrix2D3x3 textureMatrix;
+	Matrix3x3 textureMatrix;
 
 public:
 	// forbid class copy
@@ -49,11 +52,6 @@ public:
 	Material(const string& id);
 
 	/**
-	 * Destructor
-	 */
-	~Material();
-
-	/**
 	 * @return material id
 	 */
 	inline const string& getId() const {
@@ -64,28 +62,28 @@ public:
 	 * @return specular material properties
 	 */
 	inline const SpecularMaterialProperties* getSpecularMaterialProperties() const {
-		return specularMaterialProperties;
+		return specularMaterialProperties.get();
 	}
 
 	/**
 	 * @return specular material properties
 	 */
 	inline SpecularMaterialProperties* getSpecularMaterialProperties() {
-		return specularMaterialProperties;
+		return specularMaterialProperties.get();
 	}
 
 	/**
 	 * @return PBR material properties
 	 */
 	inline const PBRMaterialProperties* getPBRMaterialProperties() const {
-		return pbrMaterialProperties;
+		return pbrMaterialProperties.get();
 	}
 
 	/**
 	 * @return PBR material properties
 	 */
 	inline PBRMaterialProperties* getPBRMaterialProperties() {
-		return pbrMaterialProperties;
+		return pbrMaterialProperties.get();
 	}
 
 	/**
@@ -118,7 +116,7 @@ public:
 	/**
 	 * @return texture matrix
 	 */
-	inline const Matrix2D3x3& getTextureMatrix() const {
+	inline const Matrix3x3& getTextureMatrix() const {
 		return textureMatrix;
 	}
 
@@ -126,7 +124,7 @@ public:
 	 * Set texture matrix
 	 * @param textureMatrix texture matrix
 	 */
-	inline void setTextureMatrix(const Matrix2D3x3& textureMatrix) {
+	inline void setTextureMatrix(const Matrix3x3& textureMatrix) {
 		this->textureMatrix = textureMatrix;
 	}
 

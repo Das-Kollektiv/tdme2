@@ -1,5 +1,6 @@
 #include <tdme/tools/editor/tabviews/ParticleSystemEditorTabView.h>
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -47,7 +48,9 @@
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 
 using tdme::tools::editor::tabviews::ParticleSystemEditorTabView;
 
@@ -99,26 +102,25 @@ ParticleSystemEditorTabView::ParticleSystemEditorTabView(EditorView* editorView,
 	this->editorView = editorView;
 	this->tabId = tabId;
 	this->popUps = editorView->getPopUps();
-	this->prototype = prototype;
+	this->prototype = unique_ptr<Prototype>(prototype);
 	this->audio = Audio::getInstance();
-	this->engine = Engine::createOffScreenInstance(512, 512, true, true, true);
+	this->engine = unique_ptr<Engine>(Engine::createOffScreenInstance(512, 512, true, true, true));
 	this->engine->setShadowMapLightEyeDistanceScale(0.1f);
 	this->engine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
-	this->cameraRotationInputHandler = new CameraRotationInputHandler(engine, this);
+	this->cameraRotationInputHandler = make_unique<CameraRotationInputHandler>(engine.get(), this);
 	this->audioStarted = -1LL;
 	this->audioOffset = -1LL;
-	Gizmo::setEngine(engine);
+	Gizmo::setEngine(engine.get());
 	initParticleSystem();
 	outlinerState.expandedOutlinerParentOptionValues.push_back("prototype");
 }
 
 ParticleSystemEditorTabView::~ParticleSystemEditorTabView() {
-	delete particleSystemEditorTabController;
 }
 
 void ParticleSystemEditorTabView::handleInputEvents()
 {
-	if (prototypePhysicsView->isEditingBoundingVolume(prototype) == false) {
+	if (prototypePhysicsView->isEditingBoundingVolume(prototype.get()) == false) {
 		for (auto& event: engine->getGUI()->getKeyboardEvents()) {
 			if (event.isProcessed() == true) continue;
 			auto isKeyDown = event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
@@ -215,7 +217,7 @@ void ParticleSystemEditorTabView::handleInputEvents()
 			}
 		}
 	} else {
-		prototypePhysicsView->handleInputEvents(prototype);
+		prototypePhysicsView->handleInputEvents(prototype.get());
 	}
 	cameraRotationInputHandler->handleInputEvents();
 }
@@ -233,15 +235,15 @@ void ParticleSystemEditorTabView::display()
 	particleSystemEditorTabController->updateInfoText(MutableString(engine->getTiming()->getAvarageFPS()).append(" FPS"));
 
 	// rendering
-	prototypeDisplayView->display(prototype);
-	prototypePhysicsView->display(prototype);
+	prototypeDisplayView->display(prototype.get());
+	prototypePhysicsView->display(prototype.get());
 	engine->display();
 }
 
 void ParticleSystemEditorTabView::initialize()
 {
 	try {
-		particleSystemEditorTabController = new ParticleSystemEditorTabController(this);
+		particleSystemEditorTabController = make_unique<ParticleSystemEditorTabController>(this);
 		particleSystemEditorTabController->initialize(editorView->getScreenController()->getScreenNode());
 		prototypePhysicsView = particleSystemEditorTabController->getPrototypePhysicsSubController()->getView();
 		prototypeDisplayView = particleSystemEditorTabController->getPrototypeDisplaySubController()->getView();
@@ -255,14 +257,14 @@ void ParticleSystemEditorTabView::initialize()
 
 void ParticleSystemEditorTabView::dispose()
 {
-	engine->reset();
+	engine->dispose();
 }
 
 void ParticleSystemEditorTabView::updateRendering() {
 }
 
 Engine* ParticleSystemEditorTabView::getEngine() {
-	return engine;
+	return engine.get();
 }
 
 void ParticleSystemEditorTabView::activate() {
@@ -282,12 +284,12 @@ void ParticleSystemEditorTabView::reloadOutliner() {
 }
 
 void ParticleSystemEditorTabView::onCameraRotation() {
-	if (prototypePhysicsView->isEditingBoundingVolume(prototype) == true) prototypePhysicsView->updateGizmo(prototype);
+	if (prototypePhysicsView->isEditingBoundingVolume(prototype.get()) == true) prototypePhysicsView->updateGizmo(prototype.get());
 	if (getParticleSystemIndex() != -1) updateGizmo();
 }
 
 void ParticleSystemEditorTabView::onCameraScale() {
-	if (prototypePhysicsView->isEditingBoundingVolume(prototype) == true) prototypePhysicsView->updateGizmo(prototype);
+	if (prototypePhysicsView->isEditingBoundingVolume(prototype.get()) == true) prototypePhysicsView->updateGizmo(prototype.get());
 	if (getParticleSystemIndex() != -1) updateGizmo();
 }
 
@@ -325,7 +327,7 @@ void ParticleSystemEditorTabView::stopSound() {
 }
 
 void ParticleSystemEditorTabView::initParticleSystem() {
-	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), 1, objectScale, cameraRotationInputHandler);
+	Tools::setupPrototype(prototype.get(), engine.get(), cameraRotationInputHandler->getLookFromRotations(), 1, objectScale, cameraRotationInputHandler.get());
 	if (prototypePhysicsView != nullptr) prototypePhysicsView->setObjectScale(objectScale);
 }
 
@@ -530,7 +532,7 @@ void ParticleSystemEditorTabView::applyParticleSystemTransform(ParticleSystem* p
 		Transform transform;
 		transform.setScale(objectScale);
 		transform.update();
-		modelEntity = SceneConnector::createEntity(prototype, "model", transform);
+		modelEntity = SceneConnector::createEntity(prototype.get(), "model", transform);
 		if (modelEntity != nullptr) {
 			modelEntity->setPickable(true);
 			engine->addEntity(modelEntity);
@@ -539,5 +541,5 @@ void ParticleSystemEditorTabView::applyParticleSystemTransform(ParticleSystem* p
 }
 
 void ParticleSystemEditorTabView::saveFile(const string& pathName, const string& fileName) {
-	PrototypeWriter::write(pathName, fileName, prototype);
+	PrototypeWriter::write(pathName, fileName, prototype.get());
 }

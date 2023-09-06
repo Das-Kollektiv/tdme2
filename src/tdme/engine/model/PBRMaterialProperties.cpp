@@ -35,6 +35,7 @@ PBRMaterialProperties::~PBRMaterialProperties() {
 	if (baseColorTexture != nullptr) baseColorTexture->releaseReference();
 	if (metallicRoughnessTexture != nullptr) metallicRoughnessTexture->releaseReference();
 	if (normalTexture != nullptr) normalTexture->releaseReference();
+	if (emissiveTexture != nullptr) emissiveTexture->releaseReference();
 }
 
 void PBRMaterialProperties::setBaseColorTexture(Texture* baseColorTexture) {
@@ -42,7 +43,6 @@ void PBRMaterialProperties::setBaseColorTexture(Texture* baseColorTexture) {
 	if (this->baseColorTexture != nullptr) this->baseColorTexture->releaseReference();
 	baseColorTexturePathName.clear();
 	baseColorTextureFileName = baseColorTexture->getId();
-	baseColorTexture->acquireReference();
 	this->baseColorTexture = baseColorTexture;
 	checkBaseColorTextureTransparency();
 }
@@ -61,7 +61,6 @@ void PBRMaterialProperties::setMetallicRoughnessTexture(Texture* metallicRoughne
 	if (this->metallicRoughnessTexture != nullptr) this->metallicRoughnessTexture->releaseReference();
 	metallicRoughnessTexturePathName.clear();
 	metallicRoughnessTextureFileName = metallicRoughnessTexture->getId();
-	metallicRoughnessTexture->acquireReference();
 	this->metallicRoughnessTexture = metallicRoughnessTexture;
 }
 
@@ -78,7 +77,6 @@ void PBRMaterialProperties::setNormalTexture(Texture* normalTexture) {
 	if (this->normalTexture != nullptr) this->normalTexture->releaseReference();
 	normalTexturePathName.clear();
 	normalTextureFileName = normalTexture->getId();
-	normalTexture->acquireReference();
 	this->normalTexture = normalTexture;
 }
 
@@ -95,7 +93,6 @@ void PBRMaterialProperties::setEmissiveTexture(Texture* emissiveTexture) {
 	if (this->emissiveTexture != nullptr) this->emissiveTexture->releaseReference();
 	emissiveTexturePathName.clear();
 	emissiveTextureFileName = emissiveTexture->getId();
-	emissiveTexture->acquireReference();
 	this->emissiveTexture = emissiveTexture;
 }
 

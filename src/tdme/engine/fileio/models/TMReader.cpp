@@ -1,8 +1,9 @@
 #include <tdme/engine/fileio/models/TMReader.h>
 
 #include <array>
-#include <map>
+#include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -23,20 +24,20 @@
 #include <tdme/engine/model/ShaderModel.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
-#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix3x3.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utilities/ModelTools.h>
 
 using std::array;
-using std::map;
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unordered_map;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::fileio::models::ModelFileIOException;
@@ -58,14 +59,12 @@ using tdme::engine::model::RotationOrder;
 using tdme::engine::model::ShaderModel;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
-using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utilities::ModelTools;
 
 Model* TMReader::read(const string& pathName, const string& fileName, bool useBC7TextureCompression)
 {
@@ -75,6 +74,20 @@ Model* TMReader::read(const string& pathName, const string& fileName, bool useBC
 }
 
 Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const string& fileName, bool useBC7TextureCompression) {
+	//
+	class EmbeddedTexturesRAII {
+	public:
+		EmbeddedTexturesRAII(const unordered_map<string, Texture*>& embeddedTextures): embeddedTextures(embeddedTextures) {}
+		~EmbeddedTexturesRAII() {
+			for (const auto& [embeddedTextureId, embeddedTexture]: embeddedTextures) embeddedTexture->releaseReference();
+		}
+	private:
+		const unordered_map<string, Texture*>& embeddedTextures;
+	};
+	//
+	unordered_map<string, Texture*> embeddedTextures;
+	EmbeddedTexturesRAII embeddedTexturesRAII(embeddedTextures);
+	//
 	TMReaderInputStream is(&data);
 	auto fileId = is.readString();
 	if (fileId.length() == 0 || fileId != "TDME Model") {
@@ -131,13 +144,13 @@ Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const
 	is.readFloatArray(boundingBoxMinXYZ);
 	array<float, 3> boundingBoxMaxXYZ;
 	is.readFloatArray(boundingBoxMaxXYZ);
-	auto boundingBox = new BoundingBox(Vector3(boundingBoxMinXYZ), Vector3(boundingBoxMaxXYZ));
-	auto model = new Model(
+	auto boundingBox = make_unique<BoundingBox>(Vector3(boundingBoxMinXYZ), Vector3(boundingBoxMaxXYZ));
+	auto model = make_unique<Model>(
 		fileName,
 		fileName.empty() == true?name:fileName,
 		upVector,
 		rotationOrder,
-		boundingBox
+		boundingBox.release()
 	);
 	model->setShaderModel(shaderModel);
 	model->setEmbedSpecularTextures(embedSpecularTextures);
@@ -146,7 +159,6 @@ Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const
 	array<float, 16> importTransformMatrixArray;
 	is.readFloatArray(importTransformMatrixArray);
 	model->setImportTransformMatrix(importTransformMatrixArray);
-	map<string, Texture*> embeddedTextures;
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 17) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 18) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 19) ||
@@ -155,21 +167,19 @@ Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const
 	}
 	auto materialCount = is.readInt();
 	for (auto i = 0; i < materialCount; i++) {
-		auto material = readMaterial(pathName, &is, model, embeddedTextures, useBC7TextureCompression, version);
+		auto material = readMaterial(pathName, &is, model.get(), embeddedTextures, useBC7TextureCompression, version);
 		model->getMaterials()[material->getId()] = material;
 	}
-	readSubNodes(&is, model, nullptr, model->getSubNodes());
+	readSubNodes(&is, model.get(), nullptr, model->getSubNodes());
 	auto animationSetupCount = is.readInt();
 	for (auto i = 0; i < animationSetupCount; i++) {
-		readAnimationSetup(&is, model, version);
+		readAnimationSetup(&is, model.get(), version);
 	}
 	if (model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT) == nullptr) {
 		model->addAnimationSetup(Model::ANIMATIONSETUP_DEFAULT, 0, 0, true);
 	}
-	for (const auto& [embeddedTextureId, embeddedTexture]: embeddedTextures) {
-		embeddedTexture->releaseReference();
-	}
-	return model;
+	//
+	return model.release();
 }
 
 const string TMReader::getTexturePath(const string& modelPathName, const string& texturePathName, const string& textureFileName) {
@@ -186,7 +196,7 @@ const string TMReader::getTexturePath(const string& modelPathName, const string&
 	}
 }
 
-void TMReader::readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture*>& embeddedTextures, const array<uint8_t, 3>& version) {
+void TMReader::readEmbeddedTextures(TMReaderInputStream* is, unordered_map<string, Texture*>& embeddedTextures, const array<uint8_t, 3>& version) {
 	auto embeddedTextureCount = is->readInt();
 	for (auto i = 0; i < embeddedTextureCount; i++) {
 		auto embeddedTextureId = is->readString();
@@ -204,16 +214,23 @@ void TMReader::readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture
 			vector<uint8_t> pngData;
 			pngData.resize(textureSize);
 			for (auto j = 0; j < textureSize; j++) pngData[j] = is->readByte();
-			auto embeddedTexture = PNGTextureReader::read(embeddedTextureId, pngData, true);
+			auto embeddedTexture =
+				unique_ptr<
+					Texture,
+					decltype([](Texture* texture){ texture->releaseReference(); })
+				>(
+					PNGTextureReader::read(embeddedTextureId, pngData, true)
+				);
 			if (embeddedTexture != nullptr) {
+				embeddedTexture->acquireReference();
 				if ((version[0] == 1 && version[1] == 9 && version[2] == 19) ||
 					(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 					embeddedTexture->setMinFilter(minFilter);
 					embeddedTexture->setMagFilter(magFilter);
 				}
 				embeddedTexture->setUseCompression(false);
+				embeddedTextures[embeddedTextureId] = embeddedTexture.get();
 				embeddedTexture->acquireReference();
-				embeddedTextures[embeddedTextureId] = embeddedTexture;
 			}
 		} else
 		// bc7
@@ -234,27 +251,33 @@ void TMReader::readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture
 			ByteBuffer bc7Data(textureSize);
 			for (auto j = 0; j < textureSize; j++) bc7Data.put(is->readByte());
 			auto embeddedTexture =
-				new Texture(
-					embeddedTextureId,
-					Texture::getRGBDepthByPixelBitsPerPixel(bitsPerPixel),
-					Texture::getBC7FormatByPixelBitsPerPixel(bitsPerPixel),
-					width,
-					height,
-					textureWidth,
-					textureHeight,
-					Texture::getBC7FormatByPixelBitsPerPixel(bitsPerPixel),
-					bc7Data
+				unique_ptr<
+					Texture,
+					decltype([](Texture* texture){ texture->releaseReference(); })
+				>(
+					new Texture(
+						embeddedTextureId,
+						Texture::getRGBDepthByPixelBitsPerPixel(bitsPerPixel),
+						Texture::getBC7FormatByPixelBitsPerPixel(bitsPerPixel),
+						width,
+						height,
+						textureWidth,
+						textureHeight,
+						Texture::getBC7FormatByPixelBitsPerPixel(bitsPerPixel),
+						bc7Data
+					)
 				);
-			if (embeddedTexture != nullptr) {
-				if ((version[0] == 1 && version[1] == 9 && version[2] == 19) ||
-					(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
-					embeddedTexture->setMinFilter(minFilter);
-					embeddedTexture->setMagFilter(magFilter);
-				}
-				embeddedTexture->setUseCompression(true);
-				embeddedTexture->acquireReference();
-				embeddedTextures[embeddedTextureId] = embeddedTexture;
+			embeddedTexture->acquireReference();
+			//
+			if ((version[0] == 1 && version[1] == 9 && version[2] == 19) ||
+				(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
+				embeddedTexture->setMinFilter(minFilter);
+				embeddedTexture->setMagFilter(magFilter);
 			}
+			//
+			embeddedTexture->setUseCompression(true);
+			embeddedTextures[embeddedTextureId] = embeddedTexture.get();
+			embeddedTexture->acquireReference();
 		} else
 		// bc7 with mip maps
 		if (embeddedTextureType == 3) {
@@ -275,17 +298,24 @@ void TMReader::readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture
 			ByteBuffer bc7Data(textureSize);
 			for (auto j = 0; j < textureSize; j++) bc7Data.put(is->readByte());
 			auto embeddedTexture =
-				new Texture(
-					embeddedTextureId,
-					Texture::getRGBDepthByPixelBitsPerPixel(bitsPerPixel),
-					Texture::getBC7FormatByPixelBitsPerPixel(bitsPerPixel),
-					width,
-					height,
-					textureWidth,
-					textureHeight,
-					Texture::getBC7FormatByPixelBitsPerPixel(bitsPerPixel),
-					bc7Data
+				unique_ptr<
+					Texture,
+					decltype([](Texture* texture){ texture->releaseReference(); })
+				>(
+					new Texture(
+						embeddedTextureId,
+						Texture::getRGBDepthByPixelBitsPerPixel(bitsPerPixel),
+						Texture::getBC7FormatByPixelBitsPerPixel(bitsPerPixel),
+						width,
+						height,
+						textureWidth,
+						textureHeight,
+						Texture::getBC7FormatByPixelBitsPerPixel(bitsPerPixel),
+						bc7Data
+					)
 				);
+			embeddedTexture->acquireReference();
+			//
 			if ((version[0] == 1 && version[1] == 9 && version[2] == 19) ||
 				(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 				embeddedTexture->setMinFilter(minFilter);
@@ -313,21 +343,19 @@ void TMReader::readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture
 			}
 			embeddedTexture->setMipMapTextures(mipMapTextures);
 			//
-			if (embeddedTexture != nullptr) {
-				embeddedTexture->acquireReference();
-				embeddedTexture->setUseCompression(true);
-				embeddedTextures[embeddedTextureId] = embeddedTexture;
-			}
+			embeddedTexture->setUseCompression(true);
+			embeddedTextures[embeddedTextureId] = embeddedTexture.get();
+			embeddedTexture->acquireReference();
 		}
 	}
 }
 
-Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is, Model* model, const map<string, Texture*>& embeddedTextures, bool useBC7TextureCompression, const array<uint8_t, 3>& version)
+Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is, Model* model, const unordered_map<string, Texture*>& embeddedTextures, bool useBC7TextureCompression, const array<uint8_t, 3>& version)
 {
 	// TODO: minFilter, magFilter for non embedded textures
 	auto id = is->readString();
-	auto m = new Material(id);
-	auto smp = new SpecularMaterialProperties();
+	auto m = make_unique<Material>(id);
+	auto smp = make_unique<SpecularMaterialProperties>();
 	auto smpEmbbededTextures = model->hasEmbeddedSpecularTextures();
 	if (version[0] == 1 && version[1] == 9 && version[2] == 17) {
 		smpEmbbededTextures = is->readBoolean();
@@ -430,7 +458,7 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 		(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 		array<float, 9> textureMatrix;
 		is->readFloatArray(textureMatrix);
-		smp->setTextureMatrix(Matrix2D3x3(textureMatrix));
+		smp->setTextureMatrix(Matrix3x3(textureMatrix));
 	}
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 17) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 18) ||
@@ -458,7 +486,7 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 			}
 		}
 	}
-	m->setSpecularMaterialProperties(smp);
+	m->setSpecularMaterialProperties(smp.release());
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 13) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 14) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 15) ||
@@ -468,7 +496,7 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 		(version[0] == 1 && version[1] == 9 && version[2] == 19) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 20)) {
 		if (is->readBoolean() == true) {
-			auto pmp = new PBRMaterialProperties();
+			auto pmp = make_unique<PBRMaterialProperties>();
 			auto pmpEmbeddedTextures = model->hasEmbeddedPBRTextures();
 			if (version[0] == 1 && version[1] == 9 && version[2] == 17) {
 				pmpEmbeddedTextures = is->readBoolean();
@@ -544,10 +572,11 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 					}
 				}
 			}
-			m->setPBRMaterialProperties(pmp);
+			m->setPBRMaterialProperties(pmp.release());
 		}
 	}
-	return m;
+	//
+	return m.release();
 }
 
 void TMReader::readAnimationSetup(TMReaderInputStream* is, Model* model, const array<uint8_t, 3>& version) {
@@ -590,15 +619,15 @@ const vector<Vector3> TMReader::readVertices(TMReaderInputStream* is)
 	return v;
 }
 
-const vector<TextureCoordinate> TMReader::readTextureCoordinates(TMReaderInputStream* is)
+const vector<Vector2> TMReader::readTextureCoordinates(TMReaderInputStream* is)
 {
 	array<float, 2> tcUV;
-	vector<TextureCoordinate> tc;
+	vector<Vector2> tc;
 	if (is->readBoolean() == true) {
 		tc.resize(is->readInt());
 		for (auto i = 0; i < tc.size(); i++) {
 			is->readFloatArray(tcUV);
-			tc[i] = TextureCoordinate(tcUV);
+			tc[i] = Vector2(tcUV);
 		}
 	}
 	return tc;
@@ -627,7 +656,7 @@ Animation* TMReader::readAnimation(TMReaderInputStream* is, Node* g)
 	} else {
 		array<float, 16> matrixArray;
 		auto frames = is->readInt();
-		auto animation = new Animation();
+		auto animation = make_unique<Animation>();
 		vector<Matrix4x4> transformMatrices;
 		transformMatrices.resize(frames);
 		for (auto i = 0; i < transformMatrices.size(); i++) {
@@ -635,7 +664,7 @@ Animation* TMReader::readAnimation(TMReaderInputStream* is, Node* g)
 			transformMatrices[i].set(matrixArray);
 		}
 		animation->setTransformMatrices(transformMatrices);
-		g->setAnimation(animation);
+		g->setAnimation(animation.release());
 		return g->getAnimation();
 	}
 }
@@ -709,7 +738,7 @@ JointWeight TMReader::readSkinningJointWeight(TMReaderInputStream* is)
 void TMReader::readSkinning(TMReaderInputStream* is, Node* g)
 {
 	if (is->readBoolean() == true) {
-		auto skinning = new Skinning();
+		auto skinning = make_unique<Skinning>();
 		skinning->setWeights(is->readFloatVector());
 		vector<Joint> joints;
 		joints.resize(is->readInt());
@@ -726,11 +755,11 @@ void TMReader::readSkinning(TMReaderInputStream* is, Node* g)
 			}
 		}
 		skinning->setVerticesJointsWeights(verticesJointsWeight);
-		g->setSkinning(skinning);
+		g->setSkinning(skinning.release());
 	}
 }
 
-void TMReader::readSubNodes(TMReaderInputStream* is, Model* model, Node* parentNode, map<string, Node*>& subNodes)
+void TMReader::readSubNodes(TMReaderInputStream* is, Model* model, Node* parentNode, unordered_map<string, Node*>& subNodes)
 {
 	auto subNodeCount = is->readInt();
 	for (auto i = 0; i < subNodeCount; i++) {
@@ -745,7 +774,7 @@ Node* TMReader::readNode(TMReaderInputStream* is, Model* model, Node* parentNode
 
 	auto nodeId = is->readString();
 	auto nodeName = is->readString();
-	auto node = new Node(model, parentNode, nodeId, nodeName);
+	auto node = make_unique<Node>(model, parentNode, nodeId, nodeName);
 	node->setJoint(is->readBoolean());
 	array<float, 16> matrixArray;
 	is->readFloatArray(matrixArray);
@@ -754,15 +783,15 @@ Node* TMReader::readNode(TMReaderInputStream* is, Model* model, Node* parentNode
 	node->setVertices(vertices);
 	vector<Vector3> normals = readVertices(is);
 	node->setNormals(normals);
-	vector<TextureCoordinate> textureCoordinates = readTextureCoordinates(is);
+	vector<Vector2> textureCoordinates = readTextureCoordinates(is);
 	node->setTextureCoordinates(textureCoordinates);
 	vector<Vector3> tangents = readVertices(is);
 	node->setTangents(tangents);
 	vector<Vector3> bitangents = readVertices(is);
 	node->setBitangents(bitangents);
-	readAnimation(is, node);
-	readSkinning(is, node);
-	readFacesEntities(is, node);
+	readAnimation(is, node.get());
+	readSkinning(is, node.get());
+	readFacesEntities(is, node.get());
 	readSubNodes(is, model, parentNode, node->getSubNodes());
-	return node;
+	return node.release();
 }

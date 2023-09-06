@@ -1,12 +1,12 @@
 #pragma once
 
 #include <array>
+#include <memory>
 #include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/Color4.h>
-#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
@@ -18,10 +18,10 @@
 #include <tdme/utilities/FloatBuffer.h>
 
 using std::array;
+using std::unique_ptr;
 using std::vector;
 
 using tdme::engine::Color4;
-using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
@@ -45,17 +45,17 @@ private:
 	int32_t id;
 	bool acquired;
 	int32_t vertices;
-	ByteBuffer* fbModelMatricesByteBuffer{ nullptr };
+	unique_ptr<ByteBuffer> fbModelMatricesByteBuffer;
 	FloatBuffer fbModelMatrices;
-	ByteBuffer* fbEffectColorMulsByteBuffer{ nullptr };
+	unique_ptr<ByteBuffer> fbEffectColorMulsByteBuffer;
 	FloatBuffer fbEffectColorMuls;
-	ByteBuffer* fbEffectColorAddsByteBuffer{ nullptr };
+	unique_ptr<ByteBuffer> fbEffectColorAddsByteBuffer;
 	FloatBuffer fbEffectColorAdds;
-	ByteBuffer* fbVerticesByteBuffer{ nullptr };
+	unique_ptr<ByteBuffer> fbVerticesByteBuffer;
 	FloatBuffer fbVertices;
-	ByteBuffer* fbNormalsByteBuffer { nullptr };
+	unique_ptr<ByteBuffer> fbNormalsByteBuffer;
 	FloatBuffer fbNormals;
-	ByteBuffer* fbTextureCoordinatesByteBuffer { nullptr };
+	unique_ptr<ByteBuffer> fbTextureCoordinatesByteBuffer;
 	FloatBuffer fbTextureCoordinates;
 
 	/**

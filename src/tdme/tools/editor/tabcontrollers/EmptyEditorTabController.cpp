@@ -1,6 +1,7 @@
 #include <tdme/tools/editor/tabcontrollers/EmptyEditorTabController.h>
 
 #include <string>
+#include <memory>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -26,7 +27,9 @@
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/MutableString.h>
 
+using std::make_unique;
 using std::string;
+using std::unique_ptr;
 
 using tdme::tools::editor::tabcontrollers::EmptyEditorTabController;
 
@@ -55,22 +58,11 @@ EmptyEditorTabController::EmptyEditorTabController(EmptyEditorTabView* view)
 {
 	this->view = view;
 	this->popUps = view->getPopUps();
-	this->basePropertiesSubController = new BasePropertiesSubController(view->getEditorView(), "prototype");
-	this->prototypeScriptSubController = new PrototypeScriptSubController(view->getEditorView());
+	this->basePropertiesSubController = make_unique<BasePropertiesSubController>(view->getEditorView(), "prototype");
+	this->prototypeScriptSubController = make_unique<PrototypeScriptSubController>(view->getEditorView());
 }
 
 EmptyEditorTabController::~EmptyEditorTabController() {
-	delete prototypeScriptSubController;
-	delete basePropertiesSubController;
-}
-
-EmptyEditorTabView* EmptyEditorTabController::getView() {
-	return view;
-}
-
-GUIScreenNode* EmptyEditorTabController::getScreenNode()
-{
-	return screenNode;
 }
 
 void EmptyEditorTabController::initialize(GUIScreenNode* screenNode)

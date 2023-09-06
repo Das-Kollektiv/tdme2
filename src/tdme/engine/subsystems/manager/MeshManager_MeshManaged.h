@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -7,6 +8,7 @@
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 
 using std::string;
+using std::unique_ptr;
 
 using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::rendering::ObjectNodeMesh;
@@ -21,7 +23,7 @@ class tdme::engine::subsystems::manager::MeshManager_MeshManaged final
 
 private:
 	string id;
-	ObjectNodeMesh* mesh { nullptr };
+	unique_ptr<ObjectNodeMesh> mesh;
 	int32_t referenceCounter { 0 };
 
 private:
@@ -51,7 +53,7 @@ private:
 	 * @return object node mesh
 	 */
 	inline ObjectNodeMesh* getMesh() {
-		return mesh;
+		return mesh.get();
 	}
 
 	/**
