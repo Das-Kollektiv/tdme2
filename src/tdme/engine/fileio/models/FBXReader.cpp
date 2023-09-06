@@ -91,9 +91,12 @@ Model* FBXReader::read(const string& pathName, const string& fileName, bool useB
 
 	// create import and import scene
 	auto fbxImporter = unique_ptr<FbxImporter, decltype([](FbxImporter* fbxImporter){ fbxImporter->Destroy(); })>(FbxImporter::Create(fbxManager.get(), ""));
-	// TODO: use FbxStream
+	//
+	vector<uint8_t> fbxData;
+	FileSystem::getInstance()->getContent(pathName, fileName, fbxData);
+	FBXReaderStream fbxReaderStream(fbxManager.get(), &fbxData);
 	//	see: http://docs.autodesk.com/FBX/2014/ENU/FBX-SDK-Documentation/index.html?url=cpp_ref/class_fbx_stream.html,topicNumber=cpp_ref_class_fbx_stream_html2b5775d9-5d58-4231-a2a1-de97aada1fe6
-	auto fbxImportStatus = fbxImporter->Initialize((pathName + "/" + fileName).c_str(), -1, fbxManager->GetIOSettings());
+	auto fbxImportStatus = fbxImporter->Initialize(&fbxReaderStream, nullptr, -1, fbxManager->GetIOSettings());
 	if (fbxImportStatus == false) {
 		throw ModelFileIOException("FBXReader::read(): Error: Unable to import FBX scene from '" + pathName + "/" + fileName);
 	}
@@ -430,7 +433,7 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 			material = model->getMaterials()["fbx.nomaterial"];
 			if (material == nullptr) {
 				auto newMaterial = make_unique<Material>("fbx.nomaterial");
-				model->getMaterials()[material->getId()] = newMaterial.get();
+				model->getMaterials()[newMaterial->getId()] = newMaterial.get();
 				material = newMaterial.release();
 			}
 		} else {

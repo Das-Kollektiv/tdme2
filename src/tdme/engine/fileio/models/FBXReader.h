@@ -10,7 +10,6 @@
 #include <tdme/engine/fileio/models/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/Color4.h>
-
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 
@@ -23,6 +22,162 @@ using tdme::engine::model::Node;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::UpVector;
 using tdme::os::filesystem::FileSystemException;
+
+namespace tdme {
+namespace engine {
+namespace fileio {
+namespace models {
+
+/**
+ * FBX reader stream
+ * @author Andreas Drewke
+ */
+class FBXReaderStream: public FbxStream {
+public:
+
+	/**
+	 * Constructor
+	 * @param fbxManager FBX manager
+	 * @param data input data array
+	 */
+	inline FBXReaderStream(FbxManager *fbxManager, const vector<uint8_t> *data): data(data), position(0) {
+		readerID = fbxManager->GetIOPluginRegistry()->FindReaderIDByDescription("FBX (*.fbx)");
+	}
+
+	/**
+	 * Destructor
+	 */
+	inline ~FBXReaderStream() {
+		Close();
+	}
+
+	/**
+	 * @return state
+	 */
+	virtual EState GetState() {
+		return opened?eOpen:eClosed;
+	}
+
+	/**
+	 * Open stream
+	 */
+	virtual bool Open(void*) {
+		position = 0LL;
+		opened = true;
+		return true;
+	}
+
+	/**
+	 * Close stream
+	 */
+	virtual bool Close() {
+		position = -1LL;
+		opened = false;
+		return true;
+	}
+
+	/**
+	 * Flush
+	 */
+	virtual bool Flush() {
+		return true;
+	}
+
+	/**
+	 * Write to stream, which is currently not supported
+	 * @param data data
+	 * @param size size
+	 */
+	virtual int Write(const void* data, int size) {
+		return 0;
+	}
+
+	/**
+	 * Read from stream
+	 * @param data data
+	 * @param size size
+	 */
+	virtual int Read(void* data, int size) const {
+		auto i = 0;
+		for (; i < size; i++) {
+			static_cast<uint8_t*>(data)[i] = (*this->data)[position++];
+		}
+		return i;
+	}
+
+	/**
+	 * @return reader id
+	 */
+	virtual int GetReaderID() const {
+		return readerID;
+	}
+
+	/**
+	 * @return writer id
+	 */
+	virtual int GetWriterID() const {
+		return -1;
+	}
+
+	/**
+	 * Seek
+	 * @param offset offset
+	 * @param seekPos seek pos
+	 */
+	void Seek(const FbxInt64& offset, const FbxFile::ESeekPos& seekPos) {
+		switch (seekPos) {
+			case FbxFile::eBegin:
+				position = offset;
+				break;
+			case FbxFile::eCurrent:
+				position += offset;
+				break;
+			case FbxFile::eEnd:
+				position = data->size() - offset;
+				break;
+		}
+	}
+
+	/**
+	 * @return position
+	 */
+	virtual long GetPosition() const {
+		return position;
+	}
+
+	/**
+	 * Set position
+	 * @param position position
+	 */
+	virtual void SetPosition(long position) {
+		this->position = position;
+	}
+
+	/**
+	 * @return error or 0 if no error occurred, we dont support errors, lol
+	 */
+	virtual int GetError() const {
+		return 0;
+	}
+
+	/**
+	 * Clear errors, which we dont support
+	 */
+	virtual void ClearError() {
+	}
+
+private:
+	FbxManager *fbxManager { nullptr };
+	bool opened { false };
+	int readerID { -1 };
+	const vector<uint8_t> *data { nullptr };
+	mutable int position { -1LL };
+};
+
+};
+};
+};
+};
 
 /**
  * FBX model reader
