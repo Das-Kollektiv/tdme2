@@ -2418,16 +2418,22 @@ private:
 		// evaluate array index
 		auto arrayIdxExpressionStringView = StringTools::viewTrim(string_view(&name.data()[arrayAccessOperatorLeftIdx + 1], arrayAccessOperatorRightIdx - arrayAccessOperatorLeftIdx - 2));
 		if (arrayIdxExpressionStringView.empty() == false) {
-			// TODO: as evaluate statement we also might need the expression that had not yet a preprocessor run for error messages and such
-			ScriptVariable statementReturnValue;
-			auto evaluateStatement = string(arrayIdxExpressionStringView);
-			if (evaluateInternal(evaluateStatement, evaluateStatement, statementReturnValue, false) == false || statementReturnValue.getIntegerValue(arrayIdx, false) == false) {
-				if (statement != nullptr) {
-					Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': failed to evaluate expression: '" + string(arrayIdxExpressionStringView) + "'");
-				} else {
-					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': failed to evaluate expression: '" + string(arrayIdxExpressionStringView) + "'");
+			// integer first for performance
+			if (Integer::viewIs(arrayIdxExpressionStringView) == true) {
+				arrayIdx = Integer::viewParse(arrayIdxExpressionStringView);
+			} else {
+				// TODO: as evaluate statement we also might need the expression that had not yet a preprocessor run for error messages and such
+				ScriptVariable statementReturnValue;
+				auto evaluateStatement = string(arrayIdxExpressionStringView);
+				if (evaluateInternal(evaluateStatement, evaluateStatement, statementReturnValue, false) == false || statementReturnValue.getIntegerValue(arrayIdx, false) == false) {
+					if (statement != nullptr) {
+						Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': failed to evaluate expression: '" + string(arrayIdxExpressionStringView) + "'");
+					} else {
+						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': failed to evaluate expression: '" + string(arrayIdxExpressionStringView) + "'");
+					}
+					//
+					return false;
 				}
-				return false;
 			}
 		} else {
 			arrayIdx = ARRAYIDX_ADD;

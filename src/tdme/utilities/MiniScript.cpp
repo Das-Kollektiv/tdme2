@@ -7355,7 +7355,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 								//
 								auto arrayAccessStatementMethod = methodName + "_array_access_statement_" + (scriptConditionIdx != SCRIPTIDX_NONE?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + to_string(subArgumentIdx) + "_" + to_string(arrayAccessStatementIdx) + "_" + to_string(depth);
 								//
-								generatedCode+= minIndentString + depthIndentString + "// we will use here " + arrayAccessStatementMethod + " to determine array access index"+ "\n";
+								generatedCode+= minIndentString + depthIndentString + "// we will use " + arrayAccessStatementMethod + "() to determine array access index"+ "\n";
 								//
 								arrayAccessStatements.emplace_back(
 									subArgumentIdx,

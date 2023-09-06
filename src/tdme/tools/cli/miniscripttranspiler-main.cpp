@@ -283,7 +283,7 @@ static void createArrayAccessMethods(string& generatedDeclarations, string& gene
 													generatedDeclarations+= headerIndent + " * @return array index" + "\n";
 													generatedDeclarations+= headerIndent + " */" + "\n";
 													generatedDeclarations+= headerIndent + "inline ScriptVariable " + methodName + "_array_access_statement_" + (condition == true?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + to_string(argumentIdx) + "_" + to_string(arrayAccessStatementIdx) + "_" + to_string(depth) + "(const ScriptStatement& statement) {" + "\n";
-													generatedDeclarations+= headerIndent + "	return ScriptVariable(" + to_string(floatValue) + "f);" + "\n";
+													generatedDeclarations+= headerIndent + "	return ScriptVariable(static_cast<int64_t>(" + to_string(static_cast<int64_t>(floatValue)) + "ll));" + "\n";
 													generatedDeclarations+= headerIndent + "}" + "\n\n";
 												}
 												// literals

@@ -26,13 +26,27 @@ using tdme::utilities::Integer;
 bool Integer::is(const string& str) {
 	auto trimmedStr = StringTools::trim(str);
 	return
-		trimmedStr.empty() == false && find_if(trimmedStr.begin() + (trimmedStr[0] == '-'?1:0), trimmedStr.end(), [](unsigned char c) { return isdigit(c) == 0; }) == trimmedStr.end();
+		trimmedStr.empty() == false &&
+		find_if(
+			trimmedStr.begin() + (trimmedStr[0] == '-'?1:0),
+			trimmedStr.end(),
+			[](unsigned char c) {
+				return isdigit(c) == 0;
+			}
+		) == trimmedStr.end();
 }
 
 bool Integer::viewIs(const string_view& str) {
 	auto trimmedStr = StringTools::viewTrim(str);
 	return
-		trimmedStr.empty() == false && find_if(trimmedStr.begin() + (trimmedStr[0] == '-'?1:0), trimmedStr.end(), [](unsigned char c) { return isdigit(c) == 0; }) == trimmedStr.end();
+		trimmedStr.empty() == false &&
+		find_if(
+			trimmedStr.begin() + (trimmedStr[0] == '-'?1:0),
+			trimmedStr.end(),
+			[](unsigned char c) {
+				return isdigit(c) == 0;
+			}
+		) == trimmedStr.end();
 }
 
 int Integer::parse(const string& str) {
