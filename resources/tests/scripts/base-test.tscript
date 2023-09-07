@@ -15,6 +15,7 @@ on: nothing
 
 	$array = array(1, 2, 3)
 
+	console.log("array:")
 	$i = 0
 	forCondition($i < array.length($array))
 		console.log($array[$i])
@@ -23,19 +24,20 @@ on: nothing
 
 	console.log("array.length: " + internal.script.evaluateMemberAccess("$array", $array, "length"))
 
-	console.log("array.push")
+	console.log("array.push: 5")
 	internal.script.evaluateMemberAccess("$array", $array, "push", null, 5)
 
+	console.log("array:")
 	$i = 0
 	forCondition($i < array.length($array))
 		console.log($array[$i])
 		++$i
 	end
 
-	$value = -1
-	internal.script.evaluateMemberAccess("$array", $array, "set", null, 0, null, 10, "$value", $value)
-	console.log("value: " + $value)
+	console.log("array.set: 0 = 10")
+	internal.script.evaluateMemberAccess("$array", $array, "set", null, 0, null, 10)
 
+	console.log("array:")
 	$i = 0
 	forCondition($i < array.length($array))
 		console.log($array[$i])

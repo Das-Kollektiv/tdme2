@@ -245,6 +245,7 @@ void MiniScript::executeScriptLine() {
 }
 
 bool MiniScript::parseScriptStatement(const string_view& statement, string_view& methodName, vector<string_view>& arguments) {
+	// TODO: internal.script.evaluateMemberAccess
 	if (VERBOSE == true) Console::println("MiniScript::parseScriptStatement(): '" + scriptFileName + "': '" + string(statement) + "'");
 	auto bracketCount = 0;
 	auto quote = false;
@@ -664,7 +665,6 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& methodName, 
 	// arguments
 	for (const auto& argument: arguments) {
 		// variable
-		// TODO: internal.script.evaluateMemberAccess
 		if (StringTools::viewStartsWith(argument, "$") == true) {
 			//
 			ScriptVariable value;
@@ -6260,8 +6260,7 @@ void MiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .assignBack = true },
 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "index", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "valueAB", .optional = false, .assignBack = true }
+						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -6277,7 +6276,6 @@ void MiniScript::registerMethods() {
 					miniScript->startErrorScript();
 				} else {
 					argumentValues[0].setArrayValue(index, argumentValues[2]);
-					argumentValues[3] = argumentValues[2];
 				}
 			}
 		};
