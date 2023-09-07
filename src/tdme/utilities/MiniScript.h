@@ -2209,9 +2209,10 @@ private:
 	 * @param statement statement 
 	 * @param methodName method name
 	 * @param arguments arguments
+	 * @param accessObjectMember generated access object member statement
 	 * @return success
 	 */
-	bool parseScriptStatement(const string_view& statement, string_view& methodName, vector<string_view>& arguments);
+	bool parseScriptStatement(const string_view& statement, string_view& methodName, vector<string_view>& arguments, string& accessObjectMemberStatement);
 
 	/**
 	 * Execute a script statement
@@ -2662,8 +2663,9 @@ private:
 		//
 		string_view methodName;
 		vector<string_view> arguments;
+		string accessObjectMemberStatement;
 		ScriptSyntaxTreeNode evaluateSyntaxTree;
-		if (parseScriptStatement(scriptEvaluateStatement, methodName, arguments) == false) {
+		if (parseScriptStatement(scriptEvaluateStatement, methodName, arguments, accessObjectMemberStatement) == false) {
 			Console::println("MiniScript::evaluate(): '" + scriptFileName + "': " + evaluateStatement.statement + "@" + to_string(evaluateStatement.line) + ": failed to parse evaluation statement");
 			return false;
 		} else

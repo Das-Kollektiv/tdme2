@@ -299,8 +299,9 @@ static void createArrayAccessMethods(string& generatedDeclarations, string& gene
 									// parse array access statment at current index
 									string_view arrayAccessMethodName;
 									vector<string_view> arrayAccessArguments;
+									string accessObjectMemberStatement;
 									// parse script statement
-									if (scriptInstance->parseScriptStatement(string_view(arrayAccessStatementString), arrayAccessMethodName, arrayAccessArguments) == false) {
+									if (scriptInstance->parseScriptStatement(string_view(arrayAccessStatementString), arrayAccessMethodName, arrayAccessArguments, accessObjectMemberStatement) == false) {
 										Console::println("MiniScript::createScriptStatementSyntaxTree(): " + scriptInstance->getStatementInformation(statement) + ": failed to parse statement");
 										//
 										break;

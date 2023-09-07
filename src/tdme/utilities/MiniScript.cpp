@@ -244,9 +244,23 @@ void MiniScript::executeScriptLine() {
 	}
 }
 
-bool MiniScript::parseScriptStatement(const string_view& statement, string_view& methodName, vector<string_view>& arguments) {
-	// TODO: internal.script.evaluateMemberAccess
+bool MiniScript::parseScriptStatement(const string_view& statement, string_view& methodName, vector<string_view>& arguments, string& accessObjectMemberStatement) {
 	if (VERBOSE == true) Console::println("MiniScript::parseScriptStatement(): '" + scriptFileName + "': '" + string(statement) + "'");
+	auto objectMemberAccess = StringTools::viewStartsWith(statement, "$");
+	string_view objectMemberAccessVariable;
+	int objectMemberAccessStartIdx = 0;
+	if (objectMemberAccess == true) {
+		auto lc = '\0';
+		for (auto i = 0; i < statement.size(); i++) {
+			auto c = statement[i];
+			if (lc == '-' && c == '>') {
+				objectMemberAccessStartIdx = i + 1;
+				objectMemberAccessVariable = string_view(statement.data(), i - 1);
+				break;
+			}
+			lc = c;
+		}
+	}
 	auto bracketCount = 0;
 	auto quote = false;
 	auto methodStart = string::npos;
@@ -255,7 +269,7 @@ bool MiniScript::parseScriptStatement(const string_view& statement, string_view&
 	auto argumentEnd = string::npos;
 	auto quotedArgumentStart = string::npos;
 	auto quotedArgumentEnd = string::npos;
-	for (auto i = 0; i < statement.size(); i++) {
+	for (auto i = objectMemberAccessStartIdx; i < statement.size(); i++) {
 		auto c = statement[i];
 		if (c == '"') {
 			if (bracketCount == 1) {
@@ -362,6 +376,38 @@ bool MiniScript::parseScriptStatement(const string_view& statement, string_view&
 	}
 	if (methodStart != string::npos && methodEnd != string::npos) {
 		methodName = StringTools::viewTrim(string_view(&statement[methodStart], methodEnd - methodStart + 1));
+	}
+	if (objectMemberAccess == true) {
+		// internal.script.evaluateMemberAccess
+		auto objectMember = methodName;
+
+		//
+		Console::print("MiniScript::parseScriptStatement(): '" + scriptFileName + "': method: '" + string(methodName) + "', arguments: ");
+		int variableIdx = 0;
+		for (const auto& argument: arguments) {
+			if (variableIdx > 0) Console::print(", ");
+			Console::print("'" + string(argument) + "'");
+			variableIdx++;
+		}
+		Console::println();
+
+		//
+		accessObjectMemberStatement =
+			string() +
+			"internal.script.evaluateMemberAccess(\"" +
+			string(StringTools::viewStartsWith(objectMemberAccessVariable, "$") == true?objectMemberAccessVariable:"") +
+			"\", " +
+			string(objectMemberAccessVariable) +
+			", \"" + string(methodName) + "\"";
+			for (const auto& argument: arguments) {
+				accessObjectMemberStatement+= ", ";
+				accessObjectMemberStatement+= StringTools::viewStartsWith(argument, "$") == true?"\"" + string(argument) + "\"":"null";
+				accessObjectMemberStatement+= ", ";
+				accessObjectMemberStatement+= string(argument);
+			}
+			accessObjectMemberStatement+= ")";
+		//
+		Console::println(accessObjectMemberStatement);
 	}
 	if (VERBOSE == true) {
 		Console::print("MiniScript::parseScriptStatement(): '" + scriptFileName + "': method: '" + string(methodName) + "', arguments: ");
@@ -711,7 +757,8 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& methodName, 
 			// method call
 			string_view subMethodName;
 			vector<string_view> subArguments;
-			if (parseScriptStatement(argument, subMethodName, subArguments) == true) {
+			string accessObjectMemberStatement;
+			if (parseScriptStatement(argument, subMethodName, subArguments, accessObjectMemberStatement) == true) {
 				ScriptSyntaxTreeNode subSyntaxTree;
 				if (createScriptStatementSyntaxTree(subMethodName, subArguments, statement, subSyntaxTree) == false) {
 					Console::println("MiniScript::createScriptStatementSyntaxTree(): " + getStatementInformation(statement) + ": '" + string(argument) + "': failed to create syntax tree for statement");
@@ -1404,7 +1451,8 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 		if (script.emitCondition == false && script.executableCondition.empty() == false) {
 			string_view method;
 			vector<string_view> arguments;
-			if (parseScriptStatement(script.executableCondition, method, arguments) == false) {
+			string accessObjectMemberStatement;
+			if (parseScriptStatement(script.executableCondition, method, arguments, accessObjectMemberStatement) == false) {
 				//
 				scriptValid = false;
 			} else
@@ -1420,7 +1468,8 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 			auto& syntaxTree = script.syntaxTree[script.syntaxTree.size() - 1];
 			string_view methodName;
 			vector<string_view> arguments;
-			if (parseScriptStatement(statement.executableStatement, methodName, arguments) == false) {
+			string accessObjectMemberStatement;
+			if (parseScriptStatement(statement.executableStatement, methodName, arguments, accessObjectMemberStatement) == false) {
 				//
 				scriptValid = false;
 			} else

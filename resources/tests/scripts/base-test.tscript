@@ -36,6 +36,8 @@ on: nothing
 
 	console.log("array.set: 0 = 10")
 	internal.script.evaluateMemberAccess("$array", $array, "set", null, 0, null, 10)
+	
+	$array->set(0, 11)
 
 	console.log("array:")
 	$i = 0
