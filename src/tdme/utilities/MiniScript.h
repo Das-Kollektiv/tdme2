@@ -1827,7 +1827,12 @@ public:
 	};
 
 	struct ScriptSyntaxTreeNode {
-		enum Type { SCRIPTSYNTAXTREENODE_NONE, SCRIPTSYNTAXTREENODE_LITERAL, SCRIPTSYNTAXTREENODE_EXECUTE_METHOD, SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION };
+		enum Type {
+			SCRIPTSYNTAXTREENODE_NONE,
+			SCRIPTSYNTAXTREENODE_LITERAL,
+			SCRIPTSYNTAXTREENODE_EXECUTE_METHOD,
+			SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION
+		};
 		ScriptSyntaxTreeNode():
 			type(SCRIPTSYNTAXTREENODE_NONE),
 			value(ScriptVariable()),
@@ -3343,7 +3348,7 @@ public:
 	 * @param methodName method name
 	 * @return script method or nullptr
 	 */
-	inline const ScriptMethod* getMethod(const string& methodName) {
+	inline ScriptMethod* getMethod(const string& methodName) {
 		auto scriptMethodIt = scriptMethods.find(methodName);
 		if (scriptMethodIt != scriptMethods.end()) {
 			return scriptMethodIt->second;

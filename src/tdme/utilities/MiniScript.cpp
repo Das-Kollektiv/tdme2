@@ -664,6 +664,7 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& methodName, 
 	// arguments
 	for (const auto& argument: arguments) {
 		// variable
+		// TODO: internal.script.evaluateMemberAccess
 		if (StringTools::viewStartsWith(argument, "$") == true) {
 			//
 			ScriptVariable value;
@@ -2185,6 +2186,126 @@ void MiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodInternalScriptEvaluate(this));
+	}
+	{
+		//
+		class ScriptMethodInternalEvaluateMemberAccess: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInternalEvaluateMemberAccess(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false, .assignBack = false },
+						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "this", .optional = false, .assignBack = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "member", .optional = false, .assignBack = false }
+					},
+					TYPE_PSEUDO_MIXED
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "internal.script.evaluateMemberAccess";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				// Current layout:
+				//	0: variable name of object
+				//	1: variable content of object
+				//	2: method of object to call
+				//	3: argument 0: argument name 0
+				//	4: argument 1: argument content 0
+				//	5: argument 2: argument name 1
+				//	6: argument 3: argument content 1
+				//	7: argument 4: argument name 2
+				//	8: argument 5: argument content 2
+				//
+				//	internal.script.evaluateMemberAccess("$array", $array, "set", null, 0, null, 10, "$value", 0)
+				//
+				string variable;
+				string member;
+				if (argumentValues.size() < 3 ||
+					miniScript->getStringValue(argumentValues, 0, variable, false) == false ||
+					miniScript->getStringValue(argumentValues, 2, member, false) == false) {
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				} else {
+					string className;
+					switch (argumentValues[1].getType()) {
+						case TYPE_NULL: break;
+						case TYPE_BOOLEAN: break;
+						case TYPE_INTEGER: break;
+						case TYPE_FLOAT: break;
+						case TYPE_STRING: className = "string."; break;
+						case TYPE_VECTOR2: className = "vec2."; break;
+						case TYPE_VECTOR3: className = "vec3."; break;
+						case TYPE_VECTOR4: className = "vec4."; break;
+						case TYPE_QUATERNION: className = "quaternion."; break;
+						case TYPE_MATRIX3x3: className = "mat3."; break;
+						case TYPE_MATRIX4x4: className = "mat4."; break;
+						case TYPE_TRANSFORM: className = "transform."; break;
+						case TYPE_ARRAY: className = "array."; break;
+						case TYPE_MAP: className = "map."; break;
+						case TYPE_SET: className = "set."; break;
+					}
+					if (className.empty() == false) {
+						auto methodName = className + member;
+						auto method = miniScript->getMethod(methodName);
+						if (method != nullptr) {
+							// create method call arguments
+							vector<ScriptVariable> callArgumentValues;
+							callArgumentValues.push_back(argumentValues[1]);
+							for (auto i = 3; i < argumentValues.size(); i+=2) callArgumentValues.push_back(argumentValues[i + 1]);
+							span callArgumentValuesSpan(callArgumentValues);
+							method->executeMethod(callArgumentValuesSpan, returnValue, statement);
+							// create assign back indices
+							{
+								auto argumentIdx = 0;
+								for (const auto& argumentType: method->getArgumentTypes()) {
+									if (argumentType.assignBack == false) {
+										argumentIdx++;
+										continue;
+									}
+									//
+									if (argumentIdx == 0) {
+										if (StringTools::startsWith(variable, "$") == true) {
+											miniScript->setVariable(variable, callArgumentValuesSpan[0], &statement);
+										} else {
+											Console::println(miniScript->getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + variable + "'");
+										}
+									} else {
+										auto variableNameArgumentIdx = (argumentIdx * 2) + 1;
+										if (variableNameArgumentIdx >= argumentValues.size() || argumentIdx >= callArgumentValuesSpan.size()) {
+											Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()) + ": invalid member call");
+											miniScript->startErrorScript();
+										} else {
+											auto argumentVariable = argumentValues[variableNameArgumentIdx].getValueString();
+											if (StringTools::startsWith(argumentVariable, "$") == true) {
+												miniScript->setVariable(argumentVariable, callArgumentValuesSpan[argumentIdx], &statement);
+											} else {
+												Console::println(miniScript->getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + argumentVariable + "'");
+											}
+										}
+									}
+									//
+									argumentIdx++;
+								}
+							}
+						}
+					} else {
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()) + ": invalid variable type");
+						miniScript->startErrorScript();
+					}
+				}
+			}
+			bool isVariadic() const override {
+				return true;
+			}
+			/*
+			bool isPrivate() const override {
+				return true;
+			}
+			*/
+		};
+		registerMethod(new ScriptMethodInternalEvaluateMemberAccess(this));
 	}
 	// script base methods
 	{
@@ -6139,7 +6260,8 @@ void MiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .assignBack = true },
 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "index", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "valueAB", .optional = false, .assignBack = true }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -6155,6 +6277,7 @@ void MiniScript::registerMethods() {
 					miniScript->startErrorScript();
 				} else {
 					argumentValues[0].setArrayValue(index, argumentValues[2]);
+					argumentValues[3] = argumentValues[2];
 				}
 			}
 		};
