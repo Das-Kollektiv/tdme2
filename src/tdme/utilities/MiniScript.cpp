@@ -378,10 +378,8 @@ bool MiniScript::parseScriptStatement(const string_view& statement, string_view&
 		methodName = StringTools::viewTrim(string_view(&statement[methodStart], methodEnd - methodStart + 1));
 	}
 	if (objectMemberAccess == true) {
-		// internal.script.evaluateMemberAccess
-		auto objectMember = methodName;
-
 		//
+		/*
 		Console::print("MiniScript::parseScriptStatement(): '" + scriptFileName + "': method: '" + string(methodName) + "', arguments: ");
 		int variableIdx = 0;
 		for (const auto& argument: arguments) {
@@ -390,24 +388,58 @@ bool MiniScript::parseScriptStatement(const string_view& statement, string_view&
 			variableIdx++;
 		}
 		Console::println();
+		*/
 
+		// construct statement and arguments
+		string_view objectMemberAccessMethodName;
+		vector<string_view> objectMemberAccessArguments;
+
+		// construct new method name and argument string views
+		accessObjectMemberStatement.reserve(1024); // TODO: check me later
+		auto idx = accessObjectMemberStatement.size();
+		accessObjectMemberStatement+= "internal.script.evaluateMemberAccess";
+		objectMemberAccessMethodName = string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx);
+		accessObjectMemberStatement+= "(";
+		idx = accessObjectMemberStatement.size();
+		accessObjectMemberStatement+= "\"" + string(StringTools::viewStartsWith(objectMemberAccessVariable, "$") == true?objectMemberAccessVariable:"") + "\"";
+		objectMemberAccessArguments.push_back(string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx));
+		idx = accessObjectMemberStatement.size();
+		accessObjectMemberStatement+= ", ";
+		idx = accessObjectMemberStatement.size();
+		accessObjectMemberStatement+= string(objectMemberAccessVariable);
+		objectMemberAccessArguments.push_back(string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx));
+		accessObjectMemberStatement+= ", ";
+		idx = accessObjectMemberStatement.size();
+		accessObjectMemberStatement+= "\"" + string(methodName) + "\"";
+		objectMemberAccessArguments.push_back(string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx));
+		for (const auto& argument: arguments) {
+			accessObjectMemberStatement+= ", ";
+			idx = accessObjectMemberStatement.size();
+			accessObjectMemberStatement+= StringTools::viewStartsWith(argument, "$") == true?"\"" + string(argument) + "\"":"null";
+			objectMemberAccessArguments.push_back(string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx));
+			accessObjectMemberStatement+= ", ";
+			idx = accessObjectMemberStatement.size();
+			accessObjectMemberStatement+= string(argument);
+			objectMemberAccessArguments.push_back(string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx));
+		}
+		accessObjectMemberStatement+= ")";
+
+		/*
+		Console::println("zzz: " + accessObjectMemberStatement);
 		//
-		accessObjectMemberStatement =
-			string() +
-			"internal.script.evaluateMemberAccess(\"" +
-			string(StringTools::viewStartsWith(objectMemberAccessVariable, "$") == true?objectMemberAccessVariable:"") +
-			"\", " +
-			string(objectMemberAccessVariable) +
-			", \"" + string(methodName) + "\"";
-			for (const auto& argument: arguments) {
-				accessObjectMemberStatement+= ", ";
-				accessObjectMemberStatement+= StringTools::viewStartsWith(argument, "$") == true?"\"" + string(argument) + "\"":"null";
-				accessObjectMemberStatement+= ", ";
-				accessObjectMemberStatement+= string(argument);
-			}
-			accessObjectMemberStatement+= ")";
-		//
-		Console::println(accessObjectMemberStatement);
+		Console::println("aaa: ");
+		variableIdx = 0;
+		for (const auto& argument: objectMemberAccessArguments) {
+			if (variableIdx > 0) Console::print(", ");
+			Console::print("'" + string(argument) + "'");
+			variableIdx++;
+		}
+		Console::println();
+		*/
+
+		// set up new results
+		methodName = objectMemberAccessMethodName;
+		arguments = objectMemberAccessArguments;
 	}
 	if (VERBOSE == true) {
 		Console::print("MiniScript::parseScriptStatement(): '" + scriptFileName + "': method: '" + string(methodName) + "', arguments: ");
@@ -426,6 +458,7 @@ bool MiniScript::parseScriptStatement(const string_view& statement, string_view&
 		//
 		return false;
 	}
+	//
 	return true;
 }
 
@@ -2297,6 +2330,7 @@ void MiniScript::registerMethods() {
 					}
 					if (className.empty() == false) {
 						auto methodName = className + member;
+						// TODO: so dont use a hasmap lookup here, we will create arrays for that
 						auto method = miniScript->getMethod(methodName);
 						if (method != nullptr) {
 							// create method call arguments
@@ -2348,11 +2382,9 @@ void MiniScript::registerMethods() {
 			bool isVariadic() const override {
 				return true;
 			}
-			/*
 			bool isPrivate() const override {
 				return true;
 			}
-			*/
 		};
 		registerMethod(new ScriptMethodInternalEvaluateMemberAccess(this));
 	}
