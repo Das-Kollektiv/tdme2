@@ -746,40 +746,79 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& methodName, 
 		// variable
 		if (StringTools::viewStartsWith(argument, "$") == true) {
 			//
-			ScriptVariable value;
-			value.setValue(string(argument));
-
-			// look up getVariable method
-			string methodName = "getVariable";
-			ScriptMethod* method = nullptr;
+			auto accessObjectMember = false;
 			{
-				auto scriptMethodsIt = scriptMethods.find(methodName);
-				if (scriptMethodsIt != scriptMethods.end()) {
-					method = scriptMethodsIt->second;
-				} else {
-					Console::println("MiniScript::createScriptStatementSyntaxTree(): " + getStatementInformation(statement) + ": unknown method '" + methodName + "'");
+				//
+				auto lc = '\0';
+				for (auto i = 0; i < argument.size(); i++) {
+					auto c = argument[i];
+					if (lc == '-' && c == '>') {
+						accessObjectMember = true;
+						break;
+					} else
+					if (c == '[' || c == '(') {
+						break;
+					}
 					//
-					parseErrors.push_back(getStatementInformation(statement) + ": unknown method '" + methodName + "'");
+					lc = c;
+				}
+			}
+			//
+			if (accessObjectMember == true) {
+				// method call
+				string_view subMethodName;
+				vector<string_view> subArguments;
+				string accessObjectMemberStatement;
+				if (parseScriptStatement(argument, subMethodName, subArguments, accessObjectMemberStatement) == true) {
+					ScriptSyntaxTreeNode subSyntaxTree;
+					if (createScriptStatementSyntaxTree(subMethodName, subArguments, statement, subSyntaxTree) == false) {
+						Console::println("MiniScript::createScriptStatementSyntaxTree(): " + getStatementInformation(statement) + ": '" + string(argument) + "': failed to create syntax tree for statement");
+						//
+						return false;
+					}
+					syntaxTree.arguments.push_back(subSyntaxTree);
+				} else {
+					Console::println("MiniScript::createScriptStatementSyntaxTree(): " + getStatementInformation(statement) + ": '" + string(argument) + "': : failed to parse statement");
 					//
 					return false;
 				}
-			}
+			} else {
+				//
+				ScriptVariable value;
+				value.setValue(string(argument));
 
-			//
-			syntaxTree.arguments.emplace_back(
-				ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD,
-				MiniScript::ScriptVariable(methodName),
-				method,
-				initializer_list<ScriptSyntaxTreeNode>
-					{
-						{
-							ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL,
-							value,
-							nullptr,
-							{}
-						}
+				// look up getVariable method
+				string methodName = "getVariable";
+				ScriptMethod* method = nullptr;
+				{
+					auto scriptMethodsIt = scriptMethods.find(methodName);
+					if (scriptMethodsIt != scriptMethods.end()) {
+						method = scriptMethodsIt->second;
+					} else {
+						Console::println("MiniScript::createScriptStatementSyntaxTree(): " + getStatementInformation(statement) + ": unknown method '" + methodName + "'");
+						//
+						parseErrors.push_back(getStatementInformation(statement) + ": unknown method '" + methodName + "'");
+						//
+						return false;
 					}
-			);
+				}
+
+				//
+				syntaxTree.arguments.emplace_back(
+					ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD,
+					MiniScript::ScriptVariable(methodName),
+					method,
+					initializer_list<ScriptSyntaxTreeNode>
+						{
+							{
+								ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL,
+								value,
+								nullptr,
+								{}
+							}
+						}
+				);
+			}
 		} else
 		// method call
 		if (argument.empty() == false &&
