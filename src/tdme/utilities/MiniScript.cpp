@@ -769,7 +769,7 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& methodName, 
 						accessObjectMember = true;
 						break;
 					} else
-					if (c == '[' || c == '(') {
+					if (c == '(') {
 						break;
 					}
 					//
@@ -7727,7 +7727,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 										auto arrayAccessStatementOffset = 0;
 										for (auto& arrayAccessStatement: arrayAccessStatements) {
 											if (arrayAccessStatement.argumentIdx != subArgumentIdx) continue;
-											string arrayAccessStatementMethodCall = "\" + " + arrayAccessStatement.statementMethod + "(statement).getValueString() + \"";
+											string arrayAccessStatementMethodCall = "\" + " + arrayAccessStatement.statementMethod + "(statement).getValueAsString() + \"";
 											value =
 												StringTools::substring(value, 0, arrayAccessStatement.leftIdx + 1 + arrayAccessStatementOffset) +
 												arrayAccessStatementMethodCall +

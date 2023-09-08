@@ -34,7 +34,6 @@ int main(int argc, char *argv[]) {
 		Console::println();
 		Console::println();
 	}
-	/*
 	// advanced test
 	{
 		auto script = make_unique<MiniScriptAdvancedTest>();
@@ -55,6 +54,7 @@ int main(int argc, char *argv[]) {
 		Console::println();
 		Console::println();
 	}
+	/*
 	// emit test
 	{
 		auto script = make_unique<MiniScriptEmitTest>();
