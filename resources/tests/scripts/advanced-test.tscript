@@ -42,7 +42,7 @@ on: nothing
 	$array[11][] = 60
 	$array[11][$array[11]->length() - 1] = 61
 	console.log("array length: ", $array->length())
-	console.log("array iteration with array.get(): ")
+	console.log("array iteration with $array->get(): ")
 	$i = 0
 	forCondition($i < $array->length())
 		console.log($i + ": " + $array->get($i))
@@ -70,9 +70,9 @@ on: nothing
 	console.log("array indexOf 10 beginning to search from 6: ", $array->indexOf(10, 6))
 	console.log("sorting of array('abc', 'def', 'ghi', 'jkl', 'mno'): ", $array = array("abc", "def", "ghi", "jkl", "mno"))
 	$array->sort("sortFunctionDesc")
-	console.log("array.sort($array, 'sortFunctionDesc'): ", $array)
+	console.log("$array->sort('sortFunctionDesc'): ", $array)
 	$array->sort("sortFunctionAsc")
-	console.log("array.sort($array, 'sortFunctionAsc'): ", $array)
+	console.log("$array->sort('sortFunctionAsc'): ", $array)
 	$array->reverse()
 	console.log("array reverse: ", $array)
 	console.log("---------")
@@ -88,11 +88,11 @@ on: nothing
 	$map->set("test4", array(1,2,3))
 	$map->set("test5", "Yaaaa")
 	console.log("map now looks like: ", $map)
-	console.log("remove test2 via map.remove: ")
+	console.log("remove test2 via $map->remove: ")
 	$map->remove("test2")
 	console.log("map now looks like: ", $map)
 	$map->set("test2", 456)
-	console.log("readding test2: ")
+	console.log("reading map key(+value) pairs: ")
 	console.log("map does have test2 key using $map->has(): ", $map->has("test2"))
 	console.log("map does have test8 key using $map->has(): ", $map->has("test8"))
 	console.log("map value for test1 key using $map->get(): ", $map->get("test1"))
@@ -111,7 +111,7 @@ on: nothing
 	$map.test8 = 890
 	console.log("map keys: ", $map->getKeys())
 	console.log("map values: ", $map->getValues())
-	console.log("iterating keys and values using map.getKeys(): ")
+	console.log("iterating keys and values using $map->getKeys(): ")
 	$mapKeys = $map->getKeys()
 	$i = 0
 	forCondition($i < $mapKeys->length())
@@ -131,7 +131,7 @@ on: nothing
 	$set->insert("test4")
 	$set->insert("test5")
 	console.log("set now looks like: ", $set)
-	console.log("remove test2 via set.remove: ")
+	console.log("remove test2 via $set->remove: ")
 	$set->remove("test2")
 	console.log("set now looks like: ", $set)
 	console.log("set does have test1 key using $set->has(): ", $set->has("test1"))
