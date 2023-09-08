@@ -1216,7 +1216,7 @@ void GUIMiniScript::registerMethods() {
 						auto mapPtr = argumentValues[1].getMapPointer();
 						if (mapPtr != nullptr) {
 							for (const auto& [mapEntryKey, mapEntryValue]: *mapPtr) {
-								variables[mapEntryKey] = mapEntryValue.getValueString();
+								variables[mapEntryKey] = mapEntryValue.getValueAsString();
 							}
 						}
 					}
@@ -1279,7 +1279,7 @@ void GUIMiniScript::registerMethods() {
 						auto mapPtr = argumentValues[1].getMapPointer();
 						if (mapPtr != nullptr) {
 							for (const auto& [mapEntryKey, mapEntryValue]: *mapPtr) {
-								variables[mapEntryKey] = mapEntryValue.getValueString();
+								variables[mapEntryKey] = mapEntryValue.getValueAsString();
 							}
 						}
 					}

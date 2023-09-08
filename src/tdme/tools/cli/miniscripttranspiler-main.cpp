@@ -193,11 +193,11 @@ static void createArrayAccessMethods(string& generatedDeclarations, string& gene
 			}
 		case MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
 			{
-				if (syntaxTree.value.getValueString() == "getVariable" ||
-					syntaxTree.value.getValueString() == "setVariable") {
+				if (syntaxTree.value.getValueAsString() == "getVariable" ||
+					syntaxTree.value.getValueAsString() == "setVariable") {
 					//
 					for (auto argumentIdx = 0; argumentIdx < syntaxTree.arguments.size(); argumentIdx++) {
-						auto argumentString = StringTools::replace(StringTools::replace(syntaxTree.arguments[argumentIdx].value.getValueString(), "\\", "\\\\"), "\"", "\\\"");
+						auto argumentString = StringTools::replace(StringTools::replace(syntaxTree.arguments[argumentIdx].value.getValueAsString(), "\\", "\\\\"), "\"", "\\\"");
 						auto arrayAccessStatementIdx = 0;
 						auto arrayAccessStatementLeftIdx = -1;
 						auto arrayAccessStatementRightIdx = -1;

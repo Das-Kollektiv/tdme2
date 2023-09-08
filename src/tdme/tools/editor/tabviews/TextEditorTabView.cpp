@@ -796,7 +796,7 @@ void TextEditorTabView::createMiniScriptScriptNode(unordered_map<string, string>
 		nodes[flattenedId] = {
 			.id = flattenedId,
 			.type = Node::NODETYPE_ARGUMENT,
-			.value = conditionSyntaxTreeNode->value.getValueString(),
+			.value = conditionSyntaxTreeNode->value.getValueAsString(),
 			.returnValueType = MiniScript::ScriptVariableType::TYPE_NULL,
 			.left = x,
 			.top = y
@@ -939,13 +939,13 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 				nodes[flattenedId] = {
 					.id = flattenedId,
 					.type = nodeType,
-					.value = syntaxTreeNode->value.getValueString(),
+					.value = syntaxTreeNode->value.getValueAsString(),
 					.returnValueType = syntaxTreeNode->method != nullptr?syntaxTreeNode->method->getReturnValueType():MiniScript::ScriptVariableType::TYPE_NULL,
 					.left = x,
 					.top = y
 				};
 				//
-				auto nodeName = syntaxTreeNode->value.getValueString();
+				auto nodeName = syntaxTreeNode->value.getValueAsString();
 				auto nodeTypeColor = string("color.nodetype_method");
 				auto methodOperatorMapIt = methodOperatorMap.find(nodeName);
 				if (methodOperatorMapIt != methodOperatorMap.end()) {
@@ -1011,7 +1011,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 						for (argumentIdx = 0; argumentIdx < argumentTypes.size(); argumentIdx++) {
 							//
 							auto isLiteral = argumentIdx < syntaxTreeNode->arguments.size()?syntaxTreeNode->arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:false;
-							auto literal = isLiteral == true?syntaxTreeNode->arguments[argumentIdx].value.getValueString():string();
+							auto literal = isLiteral == true?syntaxTreeNode->arguments[argumentIdx].value.getValueAsString():string();
 							auto argumentName = argumentTypes[argumentIdx].name;
 							if (argumentName.empty() == false) argumentName[0] = Character::toUpperCase(argumentName[0]);
 							//
@@ -1048,7 +1048,7 @@ void TextEditorTabView::createMiniScriptNodes(unordered_map<string, string>& idM
 					for (; argumentIdx < syntaxTreeNode->arguments.size(); argumentIdx++) {
 						//
 						auto isLiteral = syntaxTreeNode->arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
-						auto literal = isLiteral == true?syntaxTreeNode->arguments[argumentIdx].value.getValueString():string();
+						auto literal = isLiteral == true?syntaxTreeNode->arguments[argumentIdx].value.getValueAsString():string();
 						//
 						string xml =
 							string() +
@@ -1290,13 +1290,13 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 		nodes[flattenedId] = {
 			.id = flattenedId,
 			.type = nodeType,
-			.value = syntaxTreeNode->value.getValueString(),
+			.value = syntaxTreeNode->value.getValueAsString(),
 			.returnValueType = MiniScript::ScriptVariableType::TYPE_NULL,
 			.left = x,
 			.top = y
 		};
 		//
-		string nodeName = syntaxTreeNode->value.getValueString();
+		string nodeName = syntaxTreeNode->value.getValueAsString();
 		string nodeTypeColor = string("color.nodetype_flowcontrol");
 		//
 		{
@@ -1359,7 +1359,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(unordered_map<string, string
 			if (branches[branchIdx].conditionSyntaxTree != nullptr) {
 				//
 				auto isLiteral = branches[branchIdx].conditionSyntaxTree->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
-				auto literal = isLiteral == true?branches[branchIdx].conditionSyntaxTree->value.getValueString():string();
+				auto literal = isLiteral == true?branches[branchIdx].conditionSyntaxTree->value.getValueAsString():string();
 				//
 				string xml =
 					string() +
@@ -1666,16 +1666,16 @@ bool TextEditorTabView::handleMiniScriptBranch(unordered_map<string, string>& id
 	auto syntaxTreeNodeIdx = i;
 	// handle if
 	if (syntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
-		(syntaxTreeNode->value.getValueString() == "if" ||
-		syntaxTreeNode->value.getValueString() == "forCondition" ||
-		syntaxTreeNode->value.getValueString() == "forTime")) {
+		(syntaxTreeNode->value.getValueAsString() == "if" ||
+		syntaxTreeNode->value.getValueAsString() == "forCondition" ||
+		syntaxTreeNode->value.getValueAsString() == "forTime")) {
 		// support if depth
-		auto ifStatement = syntaxTreeNode->value.getValueString() == "if";
+		auto ifStatement = syntaxTreeNode->value.getValueAsString() == "if";
 		auto stackDepth = 1;
 		vector<MiniScriptBranch> branches;
 		branches.push_back(
 			{
-				.name = syntaxTreeNode->value.getValueString(),
+				.name = syntaxTreeNode->value.getValueAsString(),
 				.conditionSyntaxTree = syntaxTreeNode->arguments.empty() == false?&syntaxTreeNode->arguments[0]:nullptr,
 				.syntaxTreeNodes = {}
 			}
@@ -1683,31 +1683,31 @@ bool TextEditorTabView::handleMiniScriptBranch(unordered_map<string, string>& id
 		for (i++; i < syntaxTree.size(); i++) {
 			auto branchSyntaxTreeNode = syntaxTree[i];
 			if (branchSyntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
-				(branchSyntaxTreeNode->value.getValueString() == "if" ||
-				branchSyntaxTreeNode->value.getValueString() == "forCondition" ||
-				branchSyntaxTreeNode->value.getValueString() == "forTime")) {
+				(branchSyntaxTreeNode->value.getValueAsString() == "if" ||
+				branchSyntaxTreeNode->value.getValueAsString() == "forCondition" ||
+				branchSyntaxTreeNode->value.getValueAsString() == "forTime")) {
 				stackDepth++;
 				branches[branches.size() - 1].syntaxTreeNodes.push_back(branchSyntaxTreeNode);
 			} else
-			if (ifStatement == true && stackDepth == 1 && branchSyntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && branchSyntaxTreeNode->value.getValueString() == "elseif") {
+			if (ifStatement == true && stackDepth == 1 && branchSyntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && branchSyntaxTreeNode->value.getValueAsString() == "elseif") {
 				branches.push_back(
 					{
-						.name = branchSyntaxTreeNode->value.getValueString(),
+						.name = branchSyntaxTreeNode->value.getValueAsString(),
 						.conditionSyntaxTree = branchSyntaxTreeNode->arguments.empty() == false?&branchSyntaxTreeNode->arguments[0]:nullptr,
 						.syntaxTreeNodes = {}
 					}
 				);
 			} else
-			if (ifStatement == true && stackDepth == 1 && branchSyntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && branchSyntaxTreeNode->value.getValueString() == "else") {
+			if (ifStatement == true && stackDepth == 1 && branchSyntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && branchSyntaxTreeNode->value.getValueAsString() == "else") {
 				branches.push_back(
 					{
-						.name = branchSyntaxTreeNode->value.getValueString(),
+						.name = branchSyntaxTreeNode->value.getValueAsString(),
 						.conditionSyntaxTree = nullptr,
 						.syntaxTreeNodes = {}
 					}
 				);
 			} else
-			if (branchSyntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && branchSyntaxTreeNode->value.getValueString() == "end") {
+			if (branchSyntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && branchSyntaxTreeNode->value.getValueAsString() == "end") {
 				//
 				stackDepth--;
 				// done?
@@ -1776,7 +1776,7 @@ void TextEditorTabView::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
 		// 	remove end node if we have any
 		if (syntaxTreeNodes.empty() == false &&
 			syntaxTreeNodes[syntaxTreeNodes.size() - 1]->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
-			syntaxTreeNodes[syntaxTreeNodes.size() - 1]->value.getValueString() == "end") {
+			syntaxTreeNodes[syntaxTreeNodes.size() - 1]->value.getValueAsString() == "end") {
 			syntaxTreeNodes.erase(syntaxTreeNodes.begin() + syntaxTreeNodes.size() - 1);
 		}
 		//
