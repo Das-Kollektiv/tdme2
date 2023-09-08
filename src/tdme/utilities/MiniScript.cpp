@@ -92,7 +92,7 @@ using rapidjson::StringBuffer;
 using rapidjson::Value;
 using rapidjson::Writer;
 
-const string MiniScript::OPERATOR_CHARS = "!*/%+-<>&|=";
+const string MiniScript::OPERATOR_CHARS = "+-!~/%<>=&^|";
 const string MiniScript::METHOD_SCRIPTCALL = "script.call";
 const string MiniScript::METHOD_ENABLENAMEDCONDITION = "script.enableNamedCondition";
 const string MiniScript::METHOD_DISABLENAMEDCONDITION = "script.disableNamedCondition";
