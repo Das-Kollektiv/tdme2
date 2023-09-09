@@ -768,9 +768,6 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& methodName, 
 					if (lc == '-' && c == '>') {
 						accessObjectMember = true;
 						break;
-					} else
-					if (c == '(') {
-						break;
 					}
 					//
 					lc = c;
