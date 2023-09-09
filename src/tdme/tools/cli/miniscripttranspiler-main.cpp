@@ -1,8 +1,11 @@
+#include <algorithm>
+#include <map>
 #include <memory>
 #include <set>
 #include <string>
 #include <string_view>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -17,11 +20,14 @@
 #include <tdme/utilities/MiniScript.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::find;
+using std::map;
 using std::set;
 using std::string;
 using std::string_view;
 using std::unique_ptr;
 using std::unordered_map;
+using std::unordered_set;
 using std::vector;
 
 using tdme::application::Application;
@@ -366,6 +372,62 @@ static void createArrayAccessMethods(string& generatedDeclarations, string& gene
 	}
 }
 
+static void generateMiniScriptEvaluateMemberAccessArrays(MiniScript* miniScript, vector<string>& declarations, vector<string>& definitions) {
+	unordered_set<string> categories;
+	set<string> allMethods;
+	auto scriptMethods = miniScript->getMethods();
+	map<string, vector<string>> methodByCategory;
+	for (auto scriptMethod: scriptMethods) {
+		string category;
+		if (scriptMethod->getMethodName().rfind('.') != string::npos) category = StringTools::substring(scriptMethod->getMethodName(), 0, scriptMethod->getMethodName().rfind('.'));
+		string method =
+			StringTools::substring(
+				scriptMethod->getMethodName(),
+				category.empty() == true?0:category.size() + 1,
+				scriptMethod->getMethodName().size());
+		// TODO: improve me
+		if (scriptMethod->getArgumentTypes().empty() == true ||
+			scriptMethod->getArgumentTypes()[0].name != category) continue;
+		//
+		if (category != MiniScript::ScriptVariable::getClassName(scriptMethod->getArgumentTypes()[0].type) ||
+			category != scriptMethod->getArgumentTypes()[0].name) continue;
+		//
+		methodByCategory[category].push_back(method);
+		allMethods.insert(method);
+	}
+	declarations.push_back("// evaluate member access constants");
+	auto methodIdx = 0;
+	for (const auto& method: allMethods) {
+		declarations.push_back("static constexpr int EVALUATEMEMBERACCESSARRAYIDX_" + StringTools::toUpperCase(method) + " { " + to_string(methodIdx) + " };");
+		methodIdx++;
+	}
+	declarations.push_back("");
+	declarations.push_back("// evaluate member access arrays");
+	declarations.push_back(
+		"static array<array<ScriptMethod*, " +
+		to_string(methodIdx) +
+		">, " +
+		to_string((static_cast<int>(MiniScript::TYPE_SET) - static_cast<int>(MiniScript::TYPE_STRING)) + 1) +
+		"> evaluateMemberAccessArrays;"
+	);
+	for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); typeIdx <= static_cast<int>(MiniScript::TYPE_SET); typeIdx++) {
+		auto className = MiniScript::ScriptVariable::getClassName(static_cast<MiniScript::ScriptVariableType>(typeIdx));
+		auto& methods = methodByCategory[className];
+		auto methodIdx = 0;
+		for (const auto& method: allMethods) {
+			//
+			auto methodsByCategory = methodByCategory[className];
+			if (std::find(methodsByCategory.begin(), methodsByCategory.end(), method) == methodsByCategory.end()) {
+				methodIdx++;
+				continue;
+			}
+			//
+			definitions.push_back("evaluateMemberAccessArrays[" + to_string(typeIdx - static_cast<int>(MiniScript::TYPE_STRING)) + "][" + "EVALUATEMEMBERACCESSARRAYIDX_" + StringTools::toUpperCase(method) + "] = getMethod(\"" + className + "." + method + "\");");
+			methodIdx++;
+		}
+	}
+}
+
 static void processFile(const string& scriptFileName, const string& miniscriptTranspilationFileName, const vector<string>& miniScriptExtensionFileNames) {
 	Console::println("Processing script: " + scriptFileName);
 
@@ -454,6 +516,11 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 		}
 	}
 
+	// member access evaluation
+	vector<string> memberAccessEvaluationDeclarations;
+	vector<string> memberAccessEvaluationDefinitions;
+	generateMiniScriptEvaluateMemberAccessArrays(scriptInstance.get(), memberAccessEvaluationDeclarations, memberAccessEvaluationDefinitions);
+
 	//
 	string miniScriptClassName = Tools::removeFileExtension(Tools::getFileName(miniscriptTranspilationFileName));
 	string generatedDeclarations = "\n";
@@ -488,6 +555,14 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	generatedDeclarations+= headerIndent + "};" + "\n";
 	generatedDeclarations+= "\n";
 	generatedDeclarations+= string() + "protected:" + "\n";
+
+	//
+	for (const auto& memberAccessEvaluationDeclaration: memberAccessEvaluationDeclarations) {
+		generatedDeclarations+= headerIndent + memberAccessEvaluationDeclaration + "\n";
+	}
+	generatedDeclarations+= "\n";
+
+	//
 	generatedDeclarations+= headerIndent + "// overridden methods" + "\n";
 	generatedDeclarations+= headerIndent + "void initializeNative() override;" + "\n";
 	generatedDeclarations+= headerIndent + "int determineScriptIdxToStart() override;" + "\n";
@@ -569,6 +644,12 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	}
 	initializeNativeDefinition+= methodCodeIndent + "\t" + "}" + "\n";
 	initializeNativeDefinition+= methodCodeIndent + ");" + "\n";
+
+	//
+	for (const auto& memberAccessEvaluationDefintion: memberAccessEvaluationDefinitions) {
+		initializeNativeDefinition+= methodCodeIndent + memberAccessEvaluationDefintion + "\n";
+	}
+
 	initializeNativeDefinition+= string() + "}" + "\n";
 
 	//
