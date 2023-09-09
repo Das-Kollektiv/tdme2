@@ -404,19 +404,19 @@ static void generateMiniScriptEvaluateMemberAccessArrays(MiniScript* miniScript,
 	declarations.push_back("");
 	declarations.push_back("// evaluate member access arrays");
 	declarations.push_back(
-		"static array<array<ScriptMethod*, " +
+		"array<array<ScriptMethod*, " +
 		to_string(methodIdx) +
 		">, " +
 		to_string((static_cast<int>(MiniScript::TYPE_SET) - static_cast<int>(MiniScript::TYPE_STRING)) + 1) +
-		"> evaluateMemberAccessArrays;"
+		"> evaluateMemberAccessArrays {};"
 	);
 	for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); typeIdx <= static_cast<int>(MiniScript::TYPE_SET); typeIdx++) {
-		auto className = MiniScript::ScriptVariable::getClassName(static_cast<MiniScript::ScriptVariableType>(typeIdx));
-		auto& methods = methodByCategory[className];
+		const auto& className = MiniScript::ScriptVariable::getClassName(static_cast<MiniScript::ScriptVariableType>(typeIdx));
+		const auto& methods = methodByCategory[className];
 		auto methodIdx = 0;
 		for (const auto& method: allMethods) {
 			//
-			auto methodsByCategory = methodByCategory[className];
+			auto& methodsByCategory = methodByCategory[className];
 			if (std::find(methodsByCategory.begin(), methodsByCategory.end(), method) == methodsByCategory.end()) {
 				methodIdx++;
 				continue;

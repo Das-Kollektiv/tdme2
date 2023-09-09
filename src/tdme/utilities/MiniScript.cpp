@@ -2362,7 +2362,11 @@ void MiniScript::registerMethods() {
 					const auto& className = ScriptVariable::getClassName(argumentValues[1].getType());
 					if (className.empty() == false) {
 						// TODO: so dont use a hashmap lookup here, we will create arrays for that
-						auto method = miniScript->getMethod(className + "." + member);
+						#if defined(__MINISCRIPT_TRANSPILATION__)
+							auto method = evaluateMemberAccessArrays[static_cast<int>(argumentValues[1].getType()) - static_cast<int>(MiniScript::TYPE_STRING)][__EVALUATEMEMBERACCESS_MEMBER__];
+						#else
+							auto method = miniScript->getMethod(className + "." + member);
+						#endif
 						if (method != nullptr) {
 							// create method call arguments
 							vector<ScriptVariable> callArgumentValues;
@@ -7659,6 +7663,12 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 	// argument values header
 	generatedCode+= minIndentString + depthIndentString + "{" + "\n";
 
+	// TODO: too early here, check me later
+	// inject __EVALUATEMEMBERACCESS_MEMBER__
+	if (scriptMethod != nullptr && scriptMethod->getMethodName() == "internal.script.evaluateMemberAccess") {
+		generatedCode+= minIndentString + depthIndentString + "\t" + "#define __EVALUATEMEMBERACCESS_MEMBER__ EVALUATEMEMBERACCESSARRAYIDX_" + StringTools::toUpperCase(syntaxTree.arguments[2].value.getValueAsString()) + "\n";
+	}
+
 	// statement
 	if (depth == 0) {
 		generatedCode+= minIndentString + depthIndentString + "\t" + "// statement setup" + "\n";
@@ -7990,6 +8000,12 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 	for (const auto& assignBackCodeLine: assignBackCodeLines) {
 		generatedCode+= minIndentString + depthIndentString + "\t" + assignBackCodeLine + "\n";
 	}
+
+	// deinject __EVALUATEMEMBERACCESS_MEMBER__
+	if (scriptMethod != nullptr && scriptMethod->getMethodName() == "internal.script.evaluateMemberAccess") {
+		generatedCode+= minIndentString + depthIndentString + "\t" + "#undef __EVALUATEMEMBERACCESS_MEMBER__" + "\n";
+	}
+
 	//
 	generatedCode+= minIndentString + depthIndentString + "}" + "\n";
 
