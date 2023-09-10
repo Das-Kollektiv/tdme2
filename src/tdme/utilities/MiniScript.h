@@ -170,6 +170,20 @@ public:
 		ScriptVariableType type { TYPE_NULL };
 		uint64_t valuePtr { 0LL };
 
+		// class names
+		STATIC_DLL_IMPEXT static const string CLASSNAME_NONE;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_STRING;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_VEC2;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_VEC3;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_VEC4;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_QUATERNION;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_MAT3;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_MAT4;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_TRANSFORM;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_ARRAY;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_MAP;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_SET;
+
 		/**
 		 * @return boolean value reference
 		 */
@@ -1416,7 +1430,33 @@ public:
 		}
 
 		/**
-		 * @return string representation of script variable type
+		 * @return class name of given script variable type
+		 */
+		inline static const string& getClassName(ScriptVariableType type) {
+			switch (type) {
+				case TYPE_NULL: return CLASSNAME_NONE;
+				case TYPE_BOOLEAN: return CLASSNAME_NONE;
+				case TYPE_INTEGER: return CLASSNAME_NONE;
+				case TYPE_FLOAT: return CLASSNAME_NONE;
+				case TYPE_STRING: return CLASSNAME_STRING;
+				case TYPE_VECTOR2: return CLASSNAME_VEC2;
+				case TYPE_VECTOR3: return CLASSNAME_VEC3;
+				case TYPE_VECTOR4: return CLASSNAME_VEC4;
+				case TYPE_QUATERNION: return CLASSNAME_QUATERNION;
+				case TYPE_MATRIX3x3: return CLASSNAME_MAT3;
+				case TYPE_MATRIX4x4: return CLASSNAME_MAT4;
+				case TYPE_TRANSFORM: return CLASSNAME_TRANSFORM;
+				case TYPE_ARRAY: return CLASSNAME_ARRAY;
+				case TYPE_MAP: return CLASSNAME_MAP;
+				case TYPE_SET: return CLASSNAME_SET;
+				default: return CLASSNAME_NONE;
+			}
+		}
+
+		/**
+		 * Returns given script variable type as string
+		 * @param type type
+		 * @return script variable type as string
 		 */
 		inline static const string getTypeAsString(ScriptVariableType type) {
 			switch(type) {
@@ -1442,14 +1482,16 @@ public:
 		}
 
 		/**
-		 * @return string representation of script variable type
+		 * @return this script variable type as string
 		 */
 		inline const string getTypeAsString() const {
 			return getTypeAsString(type);
 		}
 
 		/**
-		 * @return return value string representation of script variable type
+		 * Returns given return value variable type string representation
+		 * @param type type
+		 * @return return value variable type string representation
 		 */
 		inline static const string getReturnTypeAsString(ScriptVariableType type) {
 			switch(type) {
@@ -1475,7 +1517,8 @@ public:
 		}
 
 		/**
-		 * @return return value string representation of variable
+		 * Returns this script variable type as return type string representation
+		 * @return this script variable type as return type string representation
 		 */
 		inline const string getReturnTypeAsString() const {
 			return getReturnTypeAsString(type);
@@ -1489,7 +1532,7 @@ public:
 			result+= getTypeAsString();
 			result+= "(";
 			if (type == TYPE_STRING) result+= "\"";
-			result+= getValueString();
+			result+= getValueAsString();
 			if (type == TYPE_STRING) result+= "\"";
 			result+= ")";
 			return result;
@@ -1498,7 +1541,7 @@ public:
 		/**
 		 * @return string representation of script variable type
 		 */
-		inline const string getValueString() const {
+		inline const string getValueAsString() const {
 			string result;
 			switch (type) {
 				case TYPE_NULL:
@@ -1625,7 +1668,7 @@ public:
 						string valuesString;
 						for (const auto& value: arrayValue) {
 							if (valuesString.empty() == false) valuesString+= ", ";
-							valuesString+= value.getValueString();
+							valuesString+= value.getValueAsString();
 						}
 						result+= valuesString;
 						result+="]";
@@ -1638,7 +1681,7 @@ public:
 						string valuesString;
 						for (const auto& [mapEntryName, mapEntryValue]: mapValue) {
 							if (valuesString.empty() == false) valuesString+= ", ";
-							valuesString+= mapEntryName +  " = " + mapEntryValue.getValueString();
+							valuesString+= mapEntryName +  " = " + mapEntryValue.getValueAsString();
 						}
 						result+= valuesString;
 						result+="}";
@@ -1815,11 +1858,11 @@ public:
 		}
 
 	protected:
-		static vector<string> CONTEXTFUNCTIONS_ALL;
-		static vector<string> CONTEXTFUNCTIONS_ENGINE;
-		static vector<string> CONTEXTFUNCTIONS_LOGIC;
-		static vector<string> CONTEXTFUNCTIONS_ENGINELOGIC;
-		static vector<string> CONTEXTFUNCTION_GUI;
+		static const vector<string> CONTEXTFUNCTIONS_ALL;
+		static const vector<string> CONTEXTFUNCTIONS_ENGINE;
+		static const vector<string> CONTEXTFUNCTIONS_LOGIC;
+		static const vector<string> CONTEXTFUNCTIONS_ENGINELOGIC;
+		static const vector<string> CONTEXTFUNCTION_GUI;
 
 	private:
 		vector<ArgumentType> argumentTypes;
@@ -1827,7 +1870,12 @@ public:
 	};
 
 	struct ScriptSyntaxTreeNode {
-		enum Type { SCRIPTSYNTAXTREENODE_NONE, SCRIPTSYNTAXTREENODE_LITERAL, SCRIPTSYNTAXTREENODE_EXECUTE_METHOD, SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION };
+		enum Type {
+			SCRIPTSYNTAXTREENODE_NONE,
+			SCRIPTSYNTAXTREENODE_LITERAL,
+			SCRIPTSYNTAXTREENODE_EXECUTE_METHOD,
+			SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION
+		};
 		ScriptSyntaxTreeNode():
 			type(SCRIPTSYNTAXTREENODE_NONE),
 			value(ScriptVariable()),
@@ -2113,12 +2161,12 @@ private:
 	static constexpr bool VERBOSE { false };
 
 	//
-	STATIC_DLL_IMPEXT static string OPERATOR_CHARS;
+	STATIC_DLL_IMPEXT static const string OPERATOR_CHARS;
 
 	//
-	STATIC_DLL_IMPEXT static string METHOD_SCRIPTCALL;
-	STATIC_DLL_IMPEXT static string METHOD_ENABLENAMEDCONDITION;
-	STATIC_DLL_IMPEXT static string METHOD_DISABLENAMEDCONDITION;
+	STATIC_DLL_IMPEXT static const string METHOD_SCRIPTCALL;
+	STATIC_DLL_IMPEXT static const string METHOD_ENABLENAMEDCONDITION;
+	STATIC_DLL_IMPEXT static const string METHOD_DISABLENAMEDCONDITION;
 
 	// TODO: maybe we need a better naming for this
 	// script functions defined by script itself
@@ -2168,12 +2216,12 @@ private:
 						case TYPE_INTEGER:
 						case TYPE_FLOAT:
 							{
-								argumentsString+= (argumentsString.empty() == false?", ":"") + argument.value.getValueString();
+								argumentsString+= (argumentsString.empty() == false?", ":"") + argument.value.getValueAsString();
 								break;
 							}
 						case TYPE_STRING:
 							{
-								argumentsString+= (argumentsString.empty() == false?", ":"") + string("\"") + argument.value.getValueString() + string("\"");
+								argumentsString+= (argumentsString.empty() == false?", ":"") + string("\"") + argument.value.getValueAsString() + string("\"");
 								break;
 							}
 						default:
@@ -2185,7 +2233,7 @@ private:
 					break;
 				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
 				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
-					argumentsString+= (argumentsString.empty() == false?", ":"") + argument.value.getValueString() + string("(") + getArgumentsAsString(argument.arguments) + string(")");
+					argumentsString+= (argumentsString.empty() == false?", ":"") + argument.value.getValueAsString() + string("(") + getArgumentsAsString(argument.arguments) + string(")");
 					break;
 				default:
 					break;
@@ -2204,9 +2252,10 @@ private:
 	 * @param statement statement 
 	 * @param methodName method name
 	 * @param arguments arguments
+	 * @param accessObjectMember generated access object member statement
 	 * @return success
 	 */
-	bool parseScriptStatement(const string_view& statement, string_view& methodName, vector<string_view>& arguments);
+	bool parseScriptStatement(const string_view& statement, string_view& methodName, vector<string_view>& arguments, string& accessObjectMemberStatement);
 
 	/**
 	 * Execute a script statement
@@ -2657,8 +2706,9 @@ private:
 		//
 		string_view methodName;
 		vector<string_view> arguments;
+		string accessObjectMemberStatement;
 		ScriptSyntaxTreeNode evaluateSyntaxTree;
-		if (parseScriptStatement(scriptEvaluateStatement, methodName, arguments) == false) {
+		if (parseScriptStatement(scriptEvaluateStatement, methodName, arguments, accessObjectMemberStatement) == false) {
 			Console::println("MiniScript::evaluate(): '" + scriptFileName + "': " + evaluateStatement.statement + "@" + to_string(evaluateStatement.line) + ": failed to parse evaluation statement");
 			return false;
 		} else
@@ -3343,7 +3393,7 @@ public:
 	 * @param methodName method name
 	 * @return script method or nullptr
 	 */
-	inline const ScriptMethod* getMethod(const string& methodName) {
+	inline ScriptMethod* getMethod(const string& methodName) {
 		auto scriptMethodIt = scriptMethods.find(methodName);
 		if (scriptMethodIt != scriptMethods.end()) {
 			return scriptMethodIt->second;

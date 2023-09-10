@@ -1352,7 +1352,7 @@ void MiniScriptMath::add(MiniScript* miniScript, const span<MiniScript::ScriptVa
 	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_STRING) == true) {
 		string result;
 		for (auto i = 0; i < argumentValues.size(); i++) {
-			result+= argumentValues[i].getValueString();
+			result+= argumentValues[i].getValueAsString();
 		}
 		returnValue.setValue(result);
 	} else

@@ -1,8 +1,11 @@
+#include <algorithm>
+#include <map>
 #include <memory>
 #include <set>
 #include <string>
 #include <string_view>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -17,11 +20,14 @@
 #include <tdme/utilities/MiniScript.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::find;
+using std::map;
 using std::set;
 using std::string;
 using std::string_view;
 using std::unique_ptr;
 using std::unordered_map;
+using std::unordered_set;
 using std::vector;
 
 using tdme::application::Application;
@@ -193,11 +199,11 @@ static void createArrayAccessMethods(string& generatedDeclarations, string& gene
 			}
 		case MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
 			{
-				if (syntaxTree.value.getValueString() == "getVariable" ||
-					syntaxTree.value.getValueString() == "setVariable") {
+				if (syntaxTree.value.getValueAsString() == "getVariable" ||
+					syntaxTree.value.getValueAsString() == "setVariable") {
 					//
 					for (auto argumentIdx = 0; argumentIdx < syntaxTree.arguments.size(); argumentIdx++) {
-						auto argumentString = StringTools::replace(StringTools::replace(syntaxTree.arguments[argumentIdx].value.getValueString(), "\\", "\\\\"), "\"", "\\\"");
+						auto argumentString = StringTools::replace(StringTools::replace(syntaxTree.arguments[argumentIdx].value.getValueAsString(), "\\", "\\\\"), "\"", "\\\"");
 						auto arrayAccessStatementIdx = 0;
 						auto arrayAccessStatementLeftIdx = -1;
 						auto arrayAccessStatementRightIdx = -1;
@@ -299,8 +305,9 @@ static void createArrayAccessMethods(string& generatedDeclarations, string& gene
 									// parse array access statment at current index
 									string_view arrayAccessMethodName;
 									vector<string_view> arrayAccessArguments;
+									string accessObjectMemberStatement;
 									// parse script statement
-									if (scriptInstance->parseScriptStatement(string_view(arrayAccessStatementString), arrayAccessMethodName, arrayAccessArguments) == false) {
+									if (scriptInstance->parseScriptStatement(string_view(arrayAccessStatementString), arrayAccessMethodName, arrayAccessArguments, accessObjectMemberStatement) == false) {
 										Console::println("MiniScript::createScriptStatementSyntaxTree(): " + scriptInstance->getStatementInformation(statement) + ": failed to parse statement");
 										//
 										break;
@@ -362,6 +369,64 @@ static void createArrayAccessMethods(string& generatedDeclarations, string& gene
 			}
 		default:
 			break;
+	}
+}
+
+static void generateMiniScriptEvaluateMemberAccessArrays(MiniScript* miniScript, vector<string>& declarations, vector<string>& definitions) {
+	unordered_set<string> categories;
+	set<string> allMethods;
+	auto scriptMethods = miniScript->getMethods();
+	map<string, vector<string>> methodByCategory;
+	for (auto scriptMethod: scriptMethods) {
+		string category;
+		if (scriptMethod->getMethodName().rfind('.') != string::npos) category = StringTools::substring(scriptMethod->getMethodName(), 0, scriptMethod->getMethodName().rfind('.'));
+		string method =
+			StringTools::substring(
+				scriptMethod->getMethodName(),
+				category.empty() == true?0:category.size() + 1,
+				scriptMethod->getMethodName().size());
+		// TODO: improve me
+		if (scriptMethod->getArgumentTypes().empty() == true ||
+			scriptMethod->getArgumentTypes()[0].name != category) continue;
+		//
+		if (category != MiniScript::ScriptVariable::getClassName(scriptMethod->getArgumentTypes()[0].type) ||
+			category != scriptMethod->getArgumentTypes()[0].name) continue;
+		//
+		methodByCategory[category].push_back(method);
+		allMethods.insert(method);
+	}
+	declarations.push_back("// evaluate member access constants");
+	auto methodIdx = 0;
+	for (const auto& method: allMethods) {
+		declarations.push_back("static constexpr int EVALUATEMEMBERACCESSARRAYIDX_" + StringTools::toUpperCase(method) + " { " + to_string(methodIdx) + " };");
+		methodIdx++;
+	}
+	declarations.push_back("");
+	declarations.push_back("// evaluate member access arrays");
+	declarations.push_back(
+		"array<array<ScriptMethod*, " +
+		to_string(methodIdx) +
+		">, " +
+		to_string((static_cast<int>(MiniScript::TYPE_SET) - static_cast<int>(MiniScript::TYPE_STRING)) + 1) +
+		"> evaluateMemberAccessArrays {};"
+	);
+	declarations.push_back("// evaluate member access arrays");
+	definitions.push_back("evaluateMemberAccessArrays = {};");
+	for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); typeIdx <= static_cast<int>(MiniScript::TYPE_SET); typeIdx++) {
+		const auto& className = MiniScript::ScriptVariable::getClassName(static_cast<MiniScript::ScriptVariableType>(typeIdx));
+		const auto& methods = methodByCategory[className];
+		auto methodIdx = 0;
+		for (const auto& method: allMethods) {
+			//
+			auto& methodsByCategory = methodByCategory[className];
+			if (std::find(methodsByCategory.begin(), methodsByCategory.end(), method) == methodsByCategory.end()) {
+				methodIdx++;
+				continue;
+			}
+			//
+			definitions.push_back("evaluateMemberAccessArrays[" + to_string(typeIdx - static_cast<int>(MiniScript::TYPE_STRING)) + "][" + "EVALUATEMEMBERACCESSARRAYIDX_" + StringTools::toUpperCase(method) + "] = getMethod(\"" + className + "." + method + "\");");
+			methodIdx++;
+		}
 	}
 }
 
@@ -453,11 +518,17 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 		}
 	}
 
+	// member access evaluation
+	vector<string> memberAccessEvaluationDeclarations;
+	vector<string> memberAccessEvaluationDefinitions;
+	generateMiniScriptEvaluateMemberAccessArrays(scriptInstance.get(), memberAccessEvaluationDeclarations, memberAccessEvaluationDefinitions);
+
 	//
 	string miniScriptClassName = Tools::removeFileExtension(Tools::getFileName(miniscriptTranspilationFileName));
 	string generatedDeclarations = "\n";
 	generatedDeclarations+= string() + "public:" + "\n";
 	generatedDeclarations+= headerIndent + "// overridden methods" + "\n";
+	generatedDeclarations+= headerIndent + "void registerMethods() override;" + "\n";
 	generatedDeclarations+= headerIndent + "void emit(const string& condition) override;" + "\n";
 	generatedDeclarations+= headerIndent + "inline void startScript() override {" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "if (native == false) {" + "\n";
@@ -484,14 +555,32 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	generatedDeclarations+= headerIndent + "\t" + "}" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "if (getScriptState().running == false) return;" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "executeStateMachine();" + "\n";
-	generatedDeclarations+= headerIndent + "};" + "\n";
+	generatedDeclarations+= headerIndent + "}" + "\n";
 	generatedDeclarations+= "\n";
 	generatedDeclarations+= string() + "protected:" + "\n";
+
+	//
+	for (const auto& memberAccessEvaluationDeclaration: memberAccessEvaluationDeclarations) {
+		generatedDeclarations+= headerIndent + memberAccessEvaluationDeclaration + "\n";
+	}
+	generatedDeclarations+= "\n";
+
+	//
 	generatedDeclarations+= headerIndent + "// overridden methods" + "\n";
 	generatedDeclarations+= headerIndent + "void initializeNative() override;" + "\n";
 	generatedDeclarations+= headerIndent + "int determineScriptIdxToStart() override;" + "\n";
 	generatedDeclarations+= headerIndent + "int determineNamedScriptIdxToStart() override;" + "\n";
 	generatedDeclarations+= "\n";
+
+	string registerMethodsDefinitions;
+	registerMethodsDefinitions+= "void " + miniScriptClassName + "::registerMethods() {" + "\n";
+	registerMethodsDefinitions+= methodCodeIndent+ "MiniScript::registerMethods();" + "\n";
+	registerMethodsDefinitions+= methodCodeIndent + "if (native == false) return;" + "\n";
+	//
+	for (const auto& memberAccessEvaluationDefintion: memberAccessEvaluationDefinitions) {
+		registerMethodsDefinitions+= methodCodeIndent + memberAccessEvaluationDefintion + "\n";
+	}
+	registerMethodsDefinitions+= string() + "}" + "\n";
 
 	//
 	string emitDefinition;
@@ -703,6 +792,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	generatedDefinitions =
 		string("\n#define __MINISCRIPT_TRANSPILATION__\n\n") +
 		initializeNativeDefinition +
+		registerMethodsDefinitions +
 		generatedDetermineScriptIdxToStartDefinition +
 		generatedDetermineNamedScriptIdxToStartDefinition + "\n" +
 		emitDefinition +
