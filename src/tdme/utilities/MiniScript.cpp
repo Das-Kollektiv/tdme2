@@ -2285,6 +2285,9 @@ void MiniScript::registerStateMachineStates() {
 }
 
 void MiniScript::registerMethods() {
+	// unregister old registered methods
+	for (const auto& [scriptMethodId, scriptMethod]: scriptMethods) delete scriptMethod;
+	scriptMethods.clear();
 	// script intern base methods
 	{
 		//
@@ -2342,15 +2345,9 @@ void MiniScript::registerMethods() {
 				//	0: variable name of object
 				//	1: variable content of object
 				//	2: method of object to call
-				//	3: argument 0: argument name 0
-				//	4: argument 1: argument content 0
-				//	5: argument 2: argument name 1
-				//	6: argument 3: argument content 1
-				//	7: argument 4: argument name 2
-				//	8: argument 5: argument content 2
-				//
-				//	internal.script.evaluateMemberAccess("$array", $array, "set", null, 0, null, 10, "$value", 0)
-				//
+				//	3: argument 0: variable name of argument 0
+				//	4: argument 1: variable content of argument 0
+				//	..
 				string variable;
 				string member;
 				if (argumentValues.size() < 3 ||
@@ -2361,9 +2358,8 @@ void MiniScript::registerMethods() {
 				} else {
 					const auto& className = ScriptVariable::getClassName(argumentValues[1].getType());
 					if (className.empty() == false) {
-						// TODO: so dont use a hashmap lookup here, we will create arrays for that
 						#if defined(__MINISCRIPT_TRANSPILATION__)
-							auto method = evaluateMemberAccessArrays[static_cast<int>(argumentValues[1].getType()) - static_cast<int>(MiniScript::TYPE_STRING)][__EVALUATEMEMBERACCESS_MEMBER__];
+							auto method = evaluateMemberAccessArrays[static_cast<int>(argumentValues[1].getType()) - static_cast<int>(MiniScript::TYPE_STRING)][EVALUATEMEMBERACCESS_MEMBER];
 						#else
 							auto method = miniScript->getMethod(className + "." + member);
 						#endif
@@ -7663,12 +7659,6 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 	// argument values header
 	generatedCode+= minIndentString + depthIndentString + "{" + "\n";
 
-	// TODO: too early here, check me later
-	// inject __EVALUATEMEMBERACCESS_MEMBER__
-	if (scriptMethod != nullptr && scriptMethod->getMethodName() == "internal.script.evaluateMemberAccess") {
-		generatedCode+= minIndentString + depthIndentString + "\t" + "#define __EVALUATEMEMBERACCESS_MEMBER__ EVALUATEMEMBERACCESSARRAYIDX_" + StringTools::toUpperCase(syntaxTree.arguments[2].value.getValueAsString()) + "\n";
-	}
-
 	// statement
 	if (depth == 0) {
 		generatedCode+= minIndentString + depthIndentString + "\t" + "// statement setup" + "\n";
@@ -7937,6 +7927,11 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 		assignBackCodeLines.insert(assignBackCodeLines.end(), string() + "//");
 	}
 
+	// special case: inject EVALUATEMEMBERACCESS_MEMBER for "internal.script.evaluateMemberAccess"
+	if (scriptMethod != nullptr && scriptMethod->getMethodName() == "internal.script.evaluateMemberAccess") {
+		generatedCode+= minIndentString + depthIndentString + "\t" + "const auto EVALUATEMEMBERACCESS_MEMBER = EVALUATEMEMBERACCESSARRAYIDX_" + StringTools::toUpperCase(syntaxTree.arguments[2].value.getValueAsString()) + ";\n";
+	}
+
 	// generate code
 	generatedCode+= minIndentString + depthIndentString + "\t" + "// method code: " + string(method) + "\n";
 	for (auto codeLine: methodCode) {
@@ -7999,11 +7994,6 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 	// assign back code
 	for (const auto& assignBackCodeLine: assignBackCodeLines) {
 		generatedCode+= minIndentString + depthIndentString + "\t" + assignBackCodeLine + "\n";
-	}
-
-	// deinject __EVALUATEMEMBERACCESS_MEMBER__
-	if (scriptMethod != nullptr && scriptMethod->getMethodName() == "internal.script.evaluateMemberAccess") {
-		generatedCode+= minIndentString + depthIndentString + "\t" + "#undef __EVALUATEMEMBERACCESS_MEMBER__" + "\n";
 	}
 
 	//

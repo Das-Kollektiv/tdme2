@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
 			Console::println("Script not valid. Exiting");
 			return 1;
 		}
-		Console::println(script->getInformation());
+		// Console::println(script->getInformation());
 		while (script->isRunning() == true) {
 			script->execute();
 		}
@@ -54,7 +54,6 @@ int main(int argc, char *argv[]) {
 		Console::println();
 		Console::println();
 	}
-	/*
 	// emit test
 	{
 		auto script = make_unique<MiniScriptEmitTest>();
@@ -95,7 +94,6 @@ int main(int argc, char *argv[]) {
 		Console::println();
 		Console::println();
 	}
-	*/
 	//
 	Console::shutdown();
 	return 0;

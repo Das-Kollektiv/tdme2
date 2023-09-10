@@ -410,6 +410,8 @@ static void generateMiniScriptEvaluateMemberAccessArrays(MiniScript* miniScript,
 		to_string((static_cast<int>(MiniScript::TYPE_SET) - static_cast<int>(MiniScript::TYPE_STRING)) + 1) +
 		"> evaluateMemberAccessArrays {};"
 	);
+	declarations.push_back("// evaluate member access arrays");
+	definitions.push_back("evaluateMemberAccessArrays = {};");
 	for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); typeIdx <= static_cast<int>(MiniScript::TYPE_SET); typeIdx++) {
 		const auto& className = MiniScript::ScriptVariable::getClassName(static_cast<MiniScript::ScriptVariableType>(typeIdx));
 		const auto& methods = methodByCategory[className];
@@ -526,6 +528,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	string generatedDeclarations = "\n";
 	generatedDeclarations+= string() + "public:" + "\n";
 	generatedDeclarations+= headerIndent + "// overridden methods" + "\n";
+	generatedDeclarations+= headerIndent + "void registerMethods() override;" + "\n";
 	generatedDeclarations+= headerIndent + "void emit(const string& condition) override;" + "\n";
 	generatedDeclarations+= headerIndent + "inline void startScript() override {" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "if (native == false) {" + "\n";
@@ -552,7 +555,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	generatedDeclarations+= headerIndent + "\t" + "}" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "if (getScriptState().running == false) return;" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "executeStateMachine();" + "\n";
-	generatedDeclarations+= headerIndent + "};" + "\n";
+	generatedDeclarations+= headerIndent + "}" + "\n";
 	generatedDeclarations+= "\n";
 	generatedDeclarations+= string() + "protected:" + "\n";
 
@@ -568,6 +571,16 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	generatedDeclarations+= headerIndent + "int determineScriptIdxToStart() override;" + "\n";
 	generatedDeclarations+= headerIndent + "int determineNamedScriptIdxToStart() override;" + "\n";
 	generatedDeclarations+= "\n";
+
+	string registerMethodsDefinitions;
+	registerMethodsDefinitions+= "void " + miniScriptClassName + "::registerMethods() {" + "\n";
+	registerMethodsDefinitions+= methodCodeIndent+ "MiniScript::registerMethods();" + "\n";
+	registerMethodsDefinitions+= methodCodeIndent + "if (native == false) return;" + "\n";
+	//
+	for (const auto& memberAccessEvaluationDefintion: memberAccessEvaluationDefinitions) {
+		registerMethodsDefinitions+= methodCodeIndent + memberAccessEvaluationDefintion + "\n";
+	}
+	registerMethodsDefinitions+= string() + "}" + "\n";
 
 	//
 	string emitDefinition;
@@ -644,12 +657,6 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	}
 	initializeNativeDefinition+= methodCodeIndent + "\t" + "}" + "\n";
 	initializeNativeDefinition+= methodCodeIndent + ");" + "\n";
-
-	//
-	for (const auto& memberAccessEvaluationDefintion: memberAccessEvaluationDefinitions) {
-		initializeNativeDefinition+= methodCodeIndent + memberAccessEvaluationDefintion + "\n";
-	}
-
 	initializeNativeDefinition+= string() + "}" + "\n";
 
 	//
@@ -785,6 +792,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	generatedDefinitions =
 		string("\n#define __MINISCRIPT_TRANSPILATION__\n\n") +
 		initializeNativeDefinition +
+		registerMethodsDefinitions +
 		generatedDetermineScriptIdxToStartDefinition +
 		generatedDetermineNamedScriptIdxToStartDefinition + "\n" +
 		emitDefinition +
