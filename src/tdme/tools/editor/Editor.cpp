@@ -159,3 +159,7 @@ void Editor::reshape(int width, int height)
 void Editor::onDrop(const vector<string>& paths) {
 	editorView->onDrop(paths);
 }
+
+void Editor::onClose() {
+	editorView->getScreenController()->closeProject();
+}

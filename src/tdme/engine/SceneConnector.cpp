@@ -983,6 +983,15 @@ void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vec
 				if (heightValue > maxHeight) maxHeight = heightValue;
 			}
 			{
+				// create temporary heightmap, will be cloned by Body::Body()
+				auto heightMap = make_unique<HeightMap>(
+					terrainHeightVectorVerticesPerX,
+					terreinHeightVectorVerticesPerZ,
+					minHeight,
+					maxHeight,
+					terrain->getHeightVector().data()
+				);
+				//
 				Transform transform;
 				transform.setTranslation(Vector3(width / 2.0f, (minHeight + maxHeight) / 2.0f, depth / 2.0f));
 				transform.update();
@@ -993,13 +1002,7 @@ void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vec
 					transform,
 					0.5f,
 					{
-						new HeightMap(
-							terrainHeightVectorVerticesPerX,
-							terreinHeightVectorVerticesPerZ,
-							minHeight,
-							maxHeight,
-							terrain->getHeightVector().data()
-						)
+						heightMap.get()
 					}
 				);
 				rigidBody->setEnabled(enable);
