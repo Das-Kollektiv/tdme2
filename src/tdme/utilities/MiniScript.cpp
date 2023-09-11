@@ -2344,9 +2344,11 @@ void MiniScript::registerMethods() {
 				// Current layout:
 				//	0: variable name of object
 				//	1: variable content of object
-				//	2: method of object to call
-				//	3: argument 0: variable name of argument 0
-				//	4: argument 1: variable content of argument 0
+				//	2: object method to call
+				//	3: variable name of argument 0
+				//	4: variable content of argument 0
+				//	5: variable name of argument 1
+				//	6: variable content of argument 1
 				//	..
 				string variable;
 				string member;
