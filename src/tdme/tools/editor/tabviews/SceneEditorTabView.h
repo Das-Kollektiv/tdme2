@@ -164,7 +164,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	~SceneEditorTabView();
+	virtual ~SceneEditorTabView();
 
 	/**
 	 * @return editor view
@@ -183,7 +183,7 @@ public:
 	/**
 	 * @return scene
 	 */
-	Scene* getScene() {
+	inline Scene* getScene() {
 		return scene.get();
 	}
 

@@ -43,3 +43,8 @@ void PrototypeDecal::setTextureFileName(const string& textureFileName, const str
 PrototypeDecal::~PrototypeDecal() {
 	if (texture != nullptr) texture->releaseReference();;
 }
+
+Texture* PrototypeDecal::getTextureReference() {
+	if (texture != nullptr) texture->acquireReference();
+	return texture;
+}

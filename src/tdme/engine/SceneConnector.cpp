@@ -275,7 +275,7 @@ Entity* SceneConnector::createParticleSystem(PrototypeParticleSystem* particleSy
 					pointParticleSystem->getMaxPoints(),
 					pointParticleSystem->getPointSize(),
 					pointParticleSystem->isAutoEmit(),
-					pointParticleSystem->getTexture(),
+					pointParticleSystem->getTextureReference(),
 					pointParticleSystem->getTextureHorizontalSprites(),
 					pointParticleSystem->getTextureVerticalSprites(),
 					pointParticleSystem->getTextureSpritesFPS()
@@ -289,7 +289,7 @@ Entity* SceneConnector::createParticleSystem(PrototypeParticleSystem* particleSy
 					engineEmitter.release(),
 					fogParticleSystem->getMaxPoints(),
 					fogParticleSystem->getPointSize(),
-					fogParticleSystem->getTexture(),
+					fogParticleSystem->getTextureReference(),
 					fogParticleSystem->getTextureHorizontalSprites(),
 					fogParticleSystem->getTextureVerticalSprites(),
 					fogParticleSystem->getTextureSpritesFPS()
@@ -346,7 +346,7 @@ Entity* SceneConnector::createEditorDecalEntity(Prototype* prototype, const stri
 			new Decal(
 				"decal",
 				dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume()),
-				prototype->getDecal()->getTexture(),
+				prototype->getDecal()->getTextureReference(),
 				prototype->getDecal()->getTextureHorizontalSprites(),
 				prototype->getDecal()->getTextureVerticalSprites(),
 				prototype->getDecal()->getTextureSpritesFPS()
@@ -469,7 +469,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			new Decal(
 				id,
 				dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume()),
-				prototype->getDecal()->getTexture(),
+				prototype->getDecal()->getTextureReference(),
 				prototype->getDecal()->getTextureHorizontalSprites(),
 				prototype->getDecal()->getTextureVerticalSprites(),
 				prototype->getDecal()->getTextureSpritesFPS()

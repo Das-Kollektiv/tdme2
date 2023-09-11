@@ -82,7 +82,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	~Scene();
+	virtual ~Scene();
 
 	/**
 	 * @return application root path name

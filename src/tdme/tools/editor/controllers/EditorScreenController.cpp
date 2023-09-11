@@ -911,16 +911,15 @@ void EditorScreenController::closeTab(const string& tabId) {
 	if (tabIt != tabViews.end()) {
 		auto& tab = tabIt->second;
 		tab.getTabView()->dispose();
-		delete tab.getTabView();
-		tabViewVector.erase(
-			remove(
-				tabViewVector.begin(),
-				tabViewVector.end(),
-				&tab
-			),
-			tabViewVector.end()
-		);
+		//
+		auto tabIdx = 0;
+		for (auto tab: tabViewVector) {
+			if (tab->getId() == tabId) break;
+			tabIdx++;
+		}
+		//
 		tabViews.erase(tabIt);
+		tabViewVector.erase(tabViewVector.begin() + tabIdx);
 	}
 	setDetailsContent(string());
 	setOutlinerContent(string());
@@ -934,10 +933,9 @@ void EditorScreenController::closeTabs() {
 		screenNode->removeNodeById(tab.getId(), false);
 		screenNode->removeNodeById(tab.getId() + "-content", false);
 		tab.getTabView()->dispose();
-		delete tab.getTabView();
 	}
-	tabViewVector.clear();
 	tabViews.clear();
+	tabViewVector.clear();
 	setDetailsContent(string());
 	setOutlinerContent(string());
 	//

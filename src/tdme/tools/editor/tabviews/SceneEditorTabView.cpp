@@ -596,7 +596,6 @@ void SceneEditorTabView::initialize()
 void SceneEditorTabView::dispose()
 {
 	shutdownScene();
-	SceneConnector::resetEngine(engine.get(), scene.get());
 	engine->dispose();
 }
 
@@ -1547,7 +1546,6 @@ void SceneEditorTabView::stopScene() {
 
 	// reset scene
 	engine->getGUI()->reset();
-	SceneConnector::resetEngine(engine.get(), scene.get());
 	SceneConnector::setLights(engine.get(), scene.get(), Vector3());
 	SceneConnector::addScene(engine.get(), scene.get(), true, true, true, true, true);
 	updateSky();
@@ -1562,6 +1560,8 @@ void SceneEditorTabView::shutdownScene() {
 	// shutdown application client
 	applicationClient->stop();
 	applicationClient->join();
+	//
+	SceneConnector::resetEngine(engine.get(), scene.get());
 	//
 	applicationClient->getContext()->unsetEngine();
 	applicationClient->getContext()->unsetScene();

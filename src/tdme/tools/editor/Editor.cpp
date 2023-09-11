@@ -133,8 +133,8 @@ void Editor::dispose()
 		view->dispose();
 		view = nullptr;
 	}
-	engine->dispose();
 	popUps->dispose();
+	engine->dispose();
 	Tools::oseDispose();
 }
 
