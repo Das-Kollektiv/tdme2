@@ -10,6 +10,7 @@
 #include <string_view>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -47,6 +48,7 @@ using std::find;
 using std::initializer_list;
 using std::make_unique;
 using std::map;
+using std::move;
 using std::remove;
 using std::reverse;
 using std::sort;
@@ -813,7 +815,6 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& methodName, 
 					}
 				}
 
-				//
 				syntaxTree.arguments.emplace_back(
 					ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD,
 					MiniScript::ScriptVariable(methodName),
@@ -1971,7 +1972,7 @@ bool MiniScript::call(int scriptIdx, span<ScriptVariable>& argumentValues, Scrip
 			if (argumentIdx == argumentValues.size()) {
 				break;
 			}
-			setVariable(argument.name, ScriptVariable(argumentValues[argumentIdx]));
+			setVariable(argument.name, move(argumentValues[argumentIdx]));
 			argumentIdx++;
 		}
 	}
@@ -2367,30 +2368,19 @@ void MiniScript::registerMethods() {
 						#endif
 						if (method != nullptr) {
 							// create method call arguments
-							vector<ScriptVariable> callArgumentValues;
+							vector<ScriptVariable> callArgumentValues(1 + (argumentValues.size() - 3) / 2);
 							//	this
-							callArgumentValues.push_back(argumentValues[1]);
+							callArgumentValues[0] = move(argumentValues[1]);
 							//	additional method call arguments
 							{
 								auto callArgumentValueIdx = 1;
 								for (auto argumentValueIdx = 3; argumentValueIdx < argumentValues.size(); argumentValueIdx+=2) {
-									callArgumentValues.push_back(argumentValues[argumentValueIdx + 1]);
+									callArgumentValues[callArgumentValueIdx] = move(argumentValues[argumentValueIdx + 1]);
 									callArgumentValueIdx++;
 								}
 							}
 							span callArgumentValuesSpan(callArgumentValues);
 							method->executeMethod(callArgumentValuesSpan, returnValue, statement);
-							// write back arguments from call arguments
-							//	this
-							argumentValues[1] = callArgumentValuesSpan[0];
-							//	additional arguments
-							{
-								auto callArgumentValueIdx = 1;
-								for (auto argumentValueIdx = 3; argumentValueIdx < argumentValues.size(); argumentValueIdx+=2) {
-									argumentValues[argumentValueIdx] = callArgumentValuesSpan[callArgumentValueIdx].getValueAsString();
-									callArgumentValueIdx++;
-								}
-							}
 							// assign back variables
 							{
 								auto argumentIdx = 0;
@@ -2422,6 +2412,17 @@ void MiniScript::registerMethods() {
 									}
 									//
 									argumentIdx++;
+								}
+							}
+							// write back arguments from call arguments
+							//	this
+							argumentValues[1] = move(callArgumentValuesSpan[0]);
+							//	additional arguments
+							{
+								auto callArgumentValueIdx = 1;
+								for (auto argumentValueIdx = 3; argumentValueIdx < argumentValues.size(); argumentValueIdx+=2) {
+									argumentValues[argumentValueIdx] = move(callArgumentValuesSpan[callArgumentValueIdx].getValueAsString());
+									callArgumentValueIdx++;
 								}
 							}
 						}
@@ -2502,12 +2503,13 @@ void MiniScript::registerMethods() {
 					} else {
 						#if defined (__APPLE__)
 							// MACOSX currently does not support initializing span using begin and end iterators,
-							// so we need to make a copy of argumentValues beginning from second element
-							vector<ScriptVariable> callArgumentValues;
-							for (auto i = 1; i < argumentValues.size(); i++) callArgumentValues.push_back(argumentValues[i]);
+							vector<ScriptVariable> callArgumentValues(argumentValues.size() - 1);
+							for (auto i = 1; i < argumentValues.size(); i++) callArgumentValues[i - 1] = move(argumentValues[i]);
 							// call
 							span callArgumentValuesSpan(callArgumentValues);
 							miniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
+							// move back arguments
+							for (auto i = 1; i < argumentValues.size(); i++) argumentValues[i] = move(callArgumentValues[i - 1]);
 						#else
 							span callArgumentValuesSpan(argumentValues.begin() + 1, argumentValues.end());
 							miniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);

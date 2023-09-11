@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <utility>
 
 #include <tdme/tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -9,6 +10,8 @@
 #include <tdme/utilities/IntBuffer.h>
 #include <tdme/utilities/ShortBuffer.h>
 
+using std::exchange;
+using std::swap;
 using std::vector;
 
 using tdme::utilities::Buffer;
@@ -57,14 +60,11 @@ public:
 	 * @return this buffer
 	 */
 	inline ByteBuffer& operator=(ByteBuffer&& fromBuffer) {
-		// delete old buffer
-		if (this->ownsBuffer == true && this->buffer != nullptr && this->buffer != fromBuffer.buffer) delete this->buffer;
-		// do the move
-		this->ownsBuffer = fromBuffer.ownsBuffer;
-		this->buffer = fromBuffer.buffer;
-		this->position = 0;
-		fromBuffer.ownsBuffer = false;
-		fromBuffer.buffer = nullptr;
+		// do the swap
+		swap(ownsBuffer, fromBuffer.ownsBuffer);
+		swap(buffer, fromBuffer.buffer);
+		swap(position, fromBuffer.position);
+		//
 		return *this;
 	}
 
@@ -95,11 +95,9 @@ public:
 	 * @param fromBuffer from buffer
 	 */
 	inline ByteBuffer(ByteBuffer&& fromBuffer) {
-		ownsBuffer = fromBuffer.ownsBuffer;
-		buffer = fromBuffer.buffer;
-		position = 0;
-		fromBuffer.ownsBuffer = false;
-		fromBuffer.buffer = nullptr;
+		ownsBuffer = exchange(fromBuffer.ownsBuffer, false);
+		buffer = exchange(fromBuffer.buffer, nullptr);
+		position = exchange(fromBuffer.position, 0ll);
 	}
 
 	/**
