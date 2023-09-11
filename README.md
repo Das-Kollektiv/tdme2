@@ -221,7 +221,9 @@
 	- sort of event based
 	- how to use:
 	  - each script is attached to a game entity
-	  - communication between script instances is possible by sending signals with arguments
+	  - communication between script instances is possible by
+	    - using callable functions
+	    - sending signals with arguments
 	  - complex logic should still be implemented by a game developer in C++ by extending MiniScript
 	  - game designers can use MiniScript + those methods to implement high level game logic
 	- MiniScript methods/states know about them self, so a whole documentation for MiniScript usage can be generated later
