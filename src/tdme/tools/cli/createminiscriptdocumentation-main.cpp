@@ -156,20 +156,24 @@ static void generateMiniScriptClassesDocumentation(const string& heading, int ma
 		string className;
 		if (scriptMethod->getMethodName().rfind('.') != string::npos) className = StringTools::substring(scriptMethod->getMethodName(), 0, scriptMethod->getMethodName().rfind('.'));
 		// constructors
+		auto _static = false;
 		if (className.empty() == true) {
 			for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); typeIdx <= static_cast<int>(MiniScript::TYPE_SET); typeIdx++) {
 				const auto& possibleClassName = MiniScript::ScriptVariable::getClassName(static_cast<MiniScript::ScriptVariableType>(typeIdx));
 				if (scriptMethod->getMethodName() == possibleClassName) {
 					className = possibleClassName;
+					_static = true;
 					break;
 				}
 			}
 		}
 		//
-		auto _static =
-			scriptMethod->getArgumentTypes().empty() == true ||
-			scriptMethod->getArgumentTypes()[0].name != className;
-			MiniScript::ScriptVariable::getClassName(scriptMethod->getArgumentTypes()[0].type) != className;
+		if (_static == false) {
+			_static =
+				scriptMethod->getArgumentTypes().empty() == true ||
+				scriptMethod->getArgumentTypes()[0].name != className;
+				MiniScript::ScriptVariable::getClassName(scriptMethod->getArgumentTypes()[0].type) != className;
+		}
 		//
 		string description;
 		description+= "| ";
