@@ -560,7 +560,7 @@ Reading all keys as array from set:
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create string                                                                                    |
-| <sub>static string($string: String): String</sub>                                                |
+| <sub><b>STATIC</b> string($string: String): String</sub>                                         |
 | Test if string value is empty                                                                    |
 | <sub>string.isEmpty(): Boolean</sub>                                                             |
 | Test if string value is a float number                                                           |
@@ -570,11 +570,11 @@ Reading all keys as array from set:
 | Return character of string at given position                                                     |
 | <sub>string.charAt($index: Integer): String</sub>                                                |
 | Concatenate strings                                                                              |
-| <sub>static string.concatenate(...): String</sub>                                                |
+| <sub><b>STATIC</b> string.concatenate(...): String</sub>                                         |
 | Test if string ends with specific string                                                         |
 | <sub>string.endsWith($suffix: String): Boolean</sub>                                             |
 | Test if strings matches ignoring case sensitivity                                                |
-| <sub>static string.equalsIgnoreCase($string1: String, $string2: String): Boolean</sub>           |
+| <sub><b>STATIC</b> string.equalsIgnoreCase($string1: String, $string2: String): Boolean</sub>    |
 | Return first index of specific string in string                                                  |
 | <sub>string.firstIndexOf($what: String[, $beginIndex: Integer]): Integer</sub>                   |
 | Return index of specific string in string                                                        |
@@ -584,9 +584,9 @@ Reading all keys as array from set:
 | Return string length                                                                             |
 | <sub>string.length(): Integer</sub>                                                              |
 | Pad string left                                                                                  |
-| <sub>static string.padLeft($src: String, $by: String, $toSize: Integer): String</sub>            |
+| <sub><b>STATIC</b> string.padLeft($src: String, $by: String, $toSize: Integer): String</sub>     |
 | Pad string right                                                                                 |
-| <sub>static string.padRight($src: String, $by: String, $toSize: Integer): String</sub>           |
+| <sub><b>STATIC</b> string.padRight($src: String, $by: String, $toSize: Integer): String</sub>    |
 | RegEx match                                                                                      |
 | <sub>string.regexMatch($pattern: String): Boolean</sub>                                          |
 | RegEx replace                                                                                    |
@@ -594,7 +594,7 @@ Reading all keys as array from set:
 | Replace specific string in string with given string                                              |
 | <sub>string.replace($what: String, $by: String[, $beginIndex: Integer]): String</sub>            |
 | Create spaces as string                                                                          |
-| <sub>static string.space([, $spaces: Integer]): String</sub>                                     |
+| <sub><b>STATIC</b> string.space([, $spaces: Integer]): String</sub>                              |
 | Test if given string starts with specific string                                                 |
 | <sub>string.startsWith($prefix: String): Boolean</sub>                                           |
 | Return substring of string                                                                       |
@@ -613,9 +613,9 @@ Reading all keys as array from set:
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create vector2                                                                                   |
-| <sub>static vec2($x: Float, $y: Float): Vector2</sub>                                            |
+| <sub><b>STATIC</b> vec2($x: Float, $y: Float): Vector2</sub>                                     |
 | Compute vector2 dot product                                                                      |
-| <sub>static vec2.computeDotProduct($a: Vector2, $b: Vector2): Float</sub>                        |
+| <sub><b>STATIC</b> vec2.computeDotProduct($a: Vector2, $b: Vector2): Float</sub>                 |
 | Compute vector2 length                                                                           |
 | <sub>vec2.computeLength(): Float</sub>                                                           |
 | Compute vector2 squared length                                                                   |
@@ -632,13 +632,13 @@ Reading all keys as array from set:
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create vector3                                                                                   |
-| <sub>static vec3($x: Float, $y: Float, $z: Float): Vector3</sub>                                 |
+| <sub><b>STATIC</b> vec3($x: Float, $y: Float, $z: Float): Vector3</sub>                          |
 | Compute angle between two vector3                                                                |
-| <sub>static vec3.computeAngle($a: Vector3, $b: Vector3, $n: Vector3): Float</sub>                |
+| <sub><b>STATIC</b> vec3.computeAngle($a: Vector3, $b: Vector3, $n: Vector3): Float</sub>         |
 | Compute vector3 cross product                                                                    |
-| <sub>static vec3.computeCrossProduct($a: Vector3, $b: Vector3): Vector3</sub>                    |
+| <sub><b>STATIC</b> vec3.computeCrossProduct($a: Vector3, $b: Vector3): Vector3</sub>             |
 | Compute vector3 dot product                                                                      |
-| <sub>static vec3.computeDotProduct($a: Vector3, $b: Vector3): Float</sub>                        |
+| <sub><b>STATIC</b> vec3.computeDotProduct($a: Vector3, $b: Vector3): Float</sub>                 |
 | Compute vector3 length                                                                           |
 | <sub>vec3.computeLength(): Float</sub>                                                           |
 | Compute vector3 squared length                                                                   |
@@ -657,9 +657,9 @@ Reading all keys as array from set:
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create vector4                                                                                   |
-| <sub>static vec4($x: Float, $y: Float, $z: Float, $w: Float): Vector4</sub>                      |
+| <sub><b>STATIC</b> vec4($x: Float, $y: Float, $z: Float, $w: Float): Vector4</sub>               |
 | Compute vector4 dot product                                                                      |
-| <sub>static vec4.computeDotProduct($a: Vector4, $b: Vector4): Float</sub>                        |
+| <sub><b>STATIC</b> vec4.computeDotProduct($a: Vector4, $b: Vector4): Float</sub>                 |
 | Compute vector4 length                                                                           |
 | <sub>vec4.computeLength(): Float</sub>                                                           |
 | Compute vector4 squared length                                                                   |
@@ -684,7 +684,7 @@ Reading all keys as array from set:
 | Compute 4x4 rotation matrix from quaternion                                                      |
 | <sub>quaternion.computeMatrix(): Matrix4x4</sub>                                                 |
 | Create identity quaternion                                                                       |
-| <sub>static quaternion.identity(): Quaternion</sub>                                              |
+| <sub><b>STATIC</b> quaternion.identity(): Quaternion</sub>                                       |
 | Create quaternion inverse                                                                        |
 | <sub>quaternion.invert(): Quaternion</sub>                                                       |
 | Multiply quaternion with quaternion or vector3                                                   |
@@ -692,26 +692,26 @@ Reading all keys as array from set:
 | Normalize quaternion                                                                             |
 | <sub>quaternion.normalize(): Quaternion</sub>                                                    |
 | Create rotation quaternion                                                                       |
-| <sub>static quaternion.rotate($axis: Vector3, $angle: Float): Quaternion</sub>                   |
+| <sub><b>STATIC</b> quaternion.rotate($axis: Vector3, $angle: Float): Quaternion</sub>            |
 
 ## 6.6 Matrix3x3 class
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create identity 3x3 matrix                                                                       |
-| <sub>static mat3.identity(): Matrix3x3</sub>                                                     |
+| <sub><b>STATIC</b> mat3.identity(): Matrix3x3</sub>                                              |
 | Multiply 3x3 matrix with 3x3 matrix or vector2                                                   |
 | <sub>mat3.multiply(, ...): Mixed</sub>                                                           |
 | Create rotation 3x3 matrix                                                                       |
-| <sub>static mat3.rotate($angle: Float): Matrix3x3</sub>                                          |
+| <sub><b>STATIC</b> mat3.rotate($angle: Float): Matrix3x3</sub>                                   |
 | Create 3x3 matrix which rotates around point                                                     |
-| <sub>static mat3.rotateAroundPoint($point: Vector2, $angle: Float): Matrix3x3</sub>              |
+| <sub><b>STATIC</b> mat3.rotateAroundPoint($point: Vector2, $angle: Float): Matrix3x3</sub>       |
 | Create 3x3 matrix which rotates around texture center                                            |
-| <sub>static mat3.rotateAroundTextureCenter($angle: Float): Matrix3x3</sub>                       |
+| <sub><b>STATIC</b> mat3.rotateAroundTextureCenter($angle: Float): Matrix3x3</sub>                |
 | Create scale 3x3 matrix                                                                          |
-| <sub>static mat3.scale(...): Matrix3x3</sub>                                                     |
+| <sub><b>STATIC</b> mat3.scale(...): Matrix3x3</sub>                                              |
 | Create translation 3x3 matrix                                                                    |
-| <sub>static mat3.translate($translation: Vector2): Matrix3x3</sub>                               |
+| <sub><b>STATIC</b> mat3.translate($translation: Vector2): Matrix3x3</sub>                        |
 
 ## 6.7 Matrix4x4 class
 
@@ -720,30 +720,30 @@ Reading all keys as array from set:
 | Compute euler angles from 4x4 matrix                                                             |
 | <sub>mat4.computeEulerAngles(): Vector3</sub>                                                    |
 | Create identity 4x4 matrix                                                                       |
-| <sub>static mat4.identity(): Matrix4x4</sub>                                                     |
+| <sub><b>STATIC</b> mat4.identity(): Matrix4x4</sub>                                              |
 | Create 4x4 matrix inverse                                                                        |
 | <sub>mat4.invert(): Matrix4x4</sub>                                                              |
 | Multiply 4x4 matrix with 4x4 matrix or vector3 or vector4                                        |
 | <sub>mat4.multiply(, ...): Mixed</sub>                                                           |
 | Create rotation 4x4 matrix                                                                       |
-| <sub>static mat4.rotate($axis: Vector3, $angle: Float): Matrix4x4</sub>                          |
+| <sub><b>STATIC</b> mat4.rotate($axis: Vector3, $angle: Float): Matrix4x4</sub>                   |
 | Create scale 4x4 matrix                                                                          |
-| <sub>static mat4.scale(...): Matrix4x4</sub>                                                     |
+| <sub><b>STATIC</b> mat4.scale(...): Matrix4x4</sub>                                              |
 | Create translation 4x4 matrix                                                                    |
-| <sub>static mat4.translate($translation: Vector3): Matrix4x4</sub>                               |
+| <sub><b>STATIC</b> mat4.translate($translation: Vector3): Matrix4x4</sub>                        |
 
 ## 6.8 Transform class
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create transform                                                                                 |
-| <sub>static transform([, $translation: Vector3[, $scale: Vector3[, $rotationZ: Float[, $rotationY: Float[, $rotationX: Float]]]]]): Transform</sub>|
+| <sub><b>STATIC</b> transform([, $translation: Vector3[, $scale: Vector3[, $rotationZ: Float[, $rotationY: Float[, $rotationX: Float]]]]]): Transform</sub>|
 | X axis as vector3                                                                                |
-| <sub>static transform.AXIS_X(): Vector3</sub>                                                    |
+| <sub><b>STATIC</b> transform.AXIS_X(): Vector3</sub>                                             |
 | Y axis as vector3                                                                                |
-| <sub>static transform.AXIS_Y(): Vector3</sub>                                                    |
+| <sub><b>STATIC</b> transform.AXIS_Y(): Vector3</sub>                                             |
 | Z axis as vector3                                                                                |
-| <sub>static transform.AXIS_Z(): Vector3</sub>                                                    |
+| <sub><b>STATIC</b> transform.AXIS_Z(): Vector3</sub>                                             |
 | Get rotation angle of specific rotation of transform                                             |
 | <sub>transform.getRotationAngle($idx: Integer): Float</sub>                                      |
 | Set rotation angle of specific rotation of transform                                             |
@@ -765,9 +765,9 @@ Reading all keys as array from set:
 | Apply a rotation to transform                                                                    |
 | <sub>transform.applyRotation($axis: Vector3, $angle: Float): Void</sub>                          |
 | Create transform from 4x4 matrix                                                                 |
-| <sub>static transform.fromMatrix($transformMatrix: Matrix4x4): Transform</sub>                   |
+| <sub><b>STATIC</b> transform.fromMatrix($transformMatrix: Matrix4x4): Transform</sub>            |
 | Interpolate rotation                                                                             |
-| <sub>static transform.interpolateRotation($currentAngle: Float, $targetAngle: Float, $timePassedSeconds: Float, $degreesPerSeconds: Float, =$interpolatedAngle: Float): Boolean</sub>|
+| <sub><b>STATIC</b> transform.interpolateRotation($currentAngle: Float, $targetAngle: Float, $timePassedSeconds: Float, $degreesPerSeconds: Float, =$interpolatedAngle: Float): Boolean</sub>|
 | Multiply transform with vector3                                                                  |
 | <sub>transform.multiply($vec3: Vector3): Vector3</sub>                                           |
 | Rotate vector3 using transform                                                                   |
@@ -778,7 +778,7 @@ Reading all keys as array from set:
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create array                                                                                     |
-| <sub>static array(...): Array</sub>                                                              |
+| <sub><b>STATIC</b> array(...): Array</sub>                                                       |
 | Get array entry                                                                                  |
 | <sub>array.get($index: Integer): Mixed</sub>                                                     |
 | Set array entry                                                                                  |
@@ -803,7 +803,7 @@ Reading all keys as array from set:
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create map                                                                                       |
-| <sub>static map(): Map</sub>                                                                     |
+| <sub><b>STATIC</b> map(): Map</sub>                                                              |
 | Has entry by key                                                                                 |
 | <sub>map.has($key: String): Boolean</sub>                                                        |
 | Get map value by key                                                                             |
@@ -822,7 +822,7 @@ Reading all keys as array from set:
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Create set                                                                                       |
-| <sub>static set(): Set</sub>                                                                     |
+| <sub><b>STATIC</b> set(): Set</sub>                                                              |
 | Has key in set                                                                                   |
 | <sub>set.has($key: String): Boolean</sub>                                                        |
 | Get set keys                                                                                     |

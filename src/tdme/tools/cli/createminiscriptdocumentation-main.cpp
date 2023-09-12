@@ -184,7 +184,7 @@ static void generateMiniScriptClassesDocumentation(const string& heading, int ma
 		string method;
 		method+= "| <sub>";
 		if (_static == true) {
-			method+= "static ";
+			method+= "<b>STATIC</b> ";
 		}
 		method+= scriptMethod->getMethodName();
 		method+= "(";
