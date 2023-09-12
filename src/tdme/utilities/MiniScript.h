@@ -175,20 +175,6 @@ public:
 		ScriptVariableType type { TYPE_NULL };
 		uint64_t valuePtr { 0LL };
 
-		// class names
-		STATIC_DLL_IMPEXT static const string CLASSNAME_NONE;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_STRING;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_VEC2;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_VEC3;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_VEC4;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_QUATERNION;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_MAT3;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_MAT4;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_TRANSFORM;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_ARRAY;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_MAP;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_SET;
-
 		/**
 		 * @return boolean value reference
 		 */
@@ -386,6 +372,19 @@ public:
 		}
 
 	public:
+		// class names
+		STATIC_DLL_IMPEXT static const string CLASSNAME_NONE;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_STRING;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_VEC2;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_VEC3;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_VEC4;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_QUATERNION;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_MAT3;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_MAT4;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_TRANSFORM;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_ARRAY;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_MAP;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_SET;
 
 		/**
 		 * Copy constructor

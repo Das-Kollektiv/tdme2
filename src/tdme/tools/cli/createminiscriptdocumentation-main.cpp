@@ -129,6 +129,16 @@ static void generateMiniScriptClassesDocumentation(const string& heading, int ma
 		string className;
 		if (scriptMethod->getMethodName().rfind('.') != string::npos) className = StringTools::substring(scriptMethod->getMethodName(), 0, scriptMethod->getMethodName().rfind('.'));
 		if (className.empty() == true && allClassMethods.find(scriptMethod->getMethodName()) == allClassMethods.end()) continue;
+		//
+		auto _class = false;
+		for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); typeIdx <= static_cast<int>(MiniScript::TYPE_SET); typeIdx++) {
+			if (MiniScript::ScriptVariable::getClassName(static_cast<MiniScript::ScriptVariableType>(typeIdx)) == className) {
+				_class = true;
+				break;
+			}
+		}
+		if (_class == false) continue;
+		//
 		string method =
 			StringTools::substring(
 				scriptMethod->getMethodName(),
