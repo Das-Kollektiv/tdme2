@@ -562,51 +562,51 @@ Reading all keys as array from set:
 | Create string                                                                                    |
 | <sub><b>STATIC</b> string($string: String): String</sub>                                         |
 | Test if string value is empty                                                                    |
-| <sub>string.isEmpty(): Boolean</sub>                                                             |
+| <sub>isEmpty(): Boolean</sub>                                                                    |
 | Test if string value is a float number                                                           |
-| <sub>string.isFloat(): Boolean</sub>                                                             |
+| <sub>isFloat(): Boolean</sub>                                                                    |
 | Test if string value is a integer number                                                         |
-| <sub>string.isInteger(): Boolean</sub>                                                           |
+| <sub>isInteger(): Boolean</sub>                                                                  |
 | Return character of string at given position                                                     |
-| <sub>string.charAt($index: Integer): String</sub>                                                |
+| <sub>charAt($index: Integer): String</sub>                                                       |
 | Concatenate strings                                                                              |
 | <sub><b>STATIC</b> string.concatenate(...): String</sub>                                         |
 | Test if string ends with specific string                                                         |
-| <sub>string.endsWith($suffix: String): Boolean</sub>                                             |
+| <sub>endsWith($suffix: String): Boolean</sub>                                                    |
 | Test if strings matches ignoring case sensitivity                                                |
 | <sub><b>STATIC</b> string.equalsIgnoreCase($string1: String, $string2: String): Boolean</sub>    |
 | Return first index of specific string in string                                                  |
-| <sub>string.firstIndexOf($what: String[, $beginIndex: Integer]): Integer</sub>                   |
+| <sub>firstIndexOf($what: String[, $beginIndex: Integer]): Integer</sub>                          |
 | Return index of specific string in string                                                        |
-| <sub>string.indexOf($what: String[, $beginIndex: Integer]): Integer</sub>                        |
+| <sub>indexOf($what: String[, $beginIndex: Integer]): Integer</sub>                               |
 | Return last index of specific string in string                                                   |
-| <sub>string.lastIndexOf($what: String[, $beginIndex: Integer]): Integer</sub>                    |
+| <sub>lastIndexOf($what: String[, $beginIndex: Integer]): Integer</sub>                           |
 | Return string length                                                                             |
-| <sub>string.length(): Integer</sub>                                                              |
+| <sub>length(): Integer</sub>                                                                     |
 | Pad string left                                                                                  |
 | <sub><b>STATIC</b> string.padLeft($src: String, $by: String, $toSize: Integer): String</sub>     |
 | Pad string right                                                                                 |
 | <sub><b>STATIC</b> string.padRight($src: String, $by: String, $toSize: Integer): String</sub>    |
 | RegEx match                                                                                      |
-| <sub>string.regexMatch($pattern: String): Boolean</sub>                                          |
+| <sub>regexMatch($pattern: String): Boolean</sub>                                                 |
 | RegEx replace                                                                                    |
-| <sub>string.regexReplace($pattern: String, $by: String): String</sub>                            |
+| <sub>regexReplace($pattern: String, $by: String): String</sub>                                   |
 | Replace specific string in string with given string                                              |
-| <sub>string.replace($what: String, $by: String[, $beginIndex: Integer]): String</sub>            |
+| <sub>replace($what: String, $by: String[, $beginIndex: Integer]): String</sub>                   |
 | Create spaces as string                                                                          |
 | <sub><b>STATIC</b> string.space([, $spaces: Integer]): String</sub>                              |
 | Test if given string starts with specific string                                                 |
-| <sub>string.startsWith($prefix: String): Boolean</sub>                                           |
+| <sub>startsWith($prefix: String): Boolean</sub>                                                  |
 | Return substring of string                                                                       |
-| <sub>string.substring($beginIndex: Integer[, $endIndex: Integer]): String</sub>                  |
+| <sub>substring($beginIndex: Integer[, $endIndex: Integer]): String</sub>                         |
 | Compute lower case string of string                                                              |
-| <sub>string.toLowerCase(): String</sub>                                                          |
+| <sub>toLowerCase(): String</sub>                                                                 |
 | Compute upper case string of string                                                              |
-| <sub>string.toUpperCase(): String</sub>                                                          |
+| <sub>toUpperCase(): String</sub>                                                                 |
 | Tokenize string                                                                                  |
-| <sub>string.tokenize($delimiters: String): Array</sub>                                           |
+| <sub>tokenize($delimiters: String): Array</sub>                                                  |
 | Trim string                                                                                      |
-| <sub>string.trim(): String</sub>                                                                 |
+| <sub>trim(): String</sub>                                                                        |
 
 ## 6.2 Vector2 class
 
@@ -617,15 +617,15 @@ Reading all keys as array from set:
 | Compute vector2 dot product                                                                      |
 | <sub><b>STATIC</b> vec2.computeDotProduct($a: Vector2, $b: Vector2): Float</sub>                 |
 | Compute vector2 length                                                                           |
-| <sub>vec2.computeLength(): Float</sub>                                                           |
+| <sub>computeLength(): Float</sub>                                                                |
 | Compute vector2 squared length                                                                   |
-| <sub>vec2.computeLengthSquared(): Float</sub>                                                    |
+| <sub>computeLengthSquared(): Float</sub>                                                         |
 | Return vector2 x component                                                                       |
-| <sub>vec2.getX(): Float</sub>                                                                    |
+| <sub>getX(): Float</sub>                                                                         |
 | Return vector2 y component                                                                       |
-| <sub>vec2.getY(): Float</sub>                                                                    |
+| <sub>getY(): Float</sub>                                                                         |
 | Normalize vector2                                                                                |
-| <sub>vec2.normalize(): Vector2</sub>                                                             |
+| <sub>normalize(): Vector2</sub>                                                                  |
 
 ## 6.3 Vector3 class
 
@@ -640,17 +640,17 @@ Reading all keys as array from set:
 | Compute vector3 dot product                                                                      |
 | <sub><b>STATIC</b> vec3.computeDotProduct($a: Vector3, $b: Vector3): Float</sub>                 |
 | Compute vector3 length                                                                           |
-| <sub>vec3.computeLength(): Float</sub>                                                           |
+| <sub>computeLength(): Float</sub>                                                                |
 | Compute vector3 squared length                                                                   |
-| <sub>vec3.computeLengthSquared(): Float</sub>                                                    |
+| <sub>computeLengthSquared(): Float</sub>                                                         |
 | Return vector3 x component                                                                       |
-| <sub>vec3.getX(): Float</sub>                                                                    |
+| <sub>getX(): Float</sub>                                                                         |
 | Return vector3 y component                                                                       |
-| <sub>vec3.getY(): Float</sub>                                                                    |
+| <sub>getY(): Float</sub>                                                                         |
 | Return vector3 z component                                                                       |
-| <sub>vec3.getZ(): Float</sub>                                                                    |
+| <sub>getZ(): Float</sub>                                                                         |
 | Normalize vector3                                                                                |
-| <sub>vec3.normalize(): Vector3</sub>                                                             |
+| <sub>normalize(): Vector3</sub>                                                                  |
 
 ## 6.4 Vector4 class
 
@@ -661,36 +661,36 @@ Reading all keys as array from set:
 | Compute vector4 dot product                                                                      |
 | <sub><b>STATIC</b> vec4.computeDotProduct($a: Vector4, $b: Vector4): Float</sub>                 |
 | Compute vector4 length                                                                           |
-| <sub>vec4.computeLength(): Float</sub>                                                           |
+| <sub>computeLength(): Float</sub>                                                                |
 | Compute vector4 squared length                                                                   |
-| <sub>vec4.computeLengthSquared(): Float</sub>                                                    |
+| <sub>computeLengthSquared(): Float</sub>                                                         |
 | Return vector4 w component                                                                       |
-| <sub>vec4.getW(): Float</sub>                                                                    |
+| <sub>getW(): Float</sub>                                                                         |
 | Return vector4 x component                                                                       |
-| <sub>vec4.getX(): Float</sub>                                                                    |
+| <sub>getX(): Float</sub>                                                                         |
 | Return vector4 y component                                                                       |
-| <sub>vec4.getY(): Float</sub>                                                                    |
+| <sub>getY(): Float</sub>                                                                         |
 | Return vector4 z component                                                                       |
-| <sub>vec4.getZ(): Float</sub>                                                                    |
+| <sub>getZ(): Float</sub>                                                                         |
 | Normalize vector4                                                                                |
-| <sub>vec4.normalize(): Vector4</sub>                                                             |
+| <sub>normalize(): Vector4</sub>                                                                  |
 
 ## 6.5 Quaternion class
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Compute euler angles from quaternion                                                             |
-| <sub>quaternion.computeEulerAngles(): Vector3</sub>                                              |
+| <sub>computeEulerAngles(): Vector3</sub>                                                         |
 | Compute 4x4 rotation matrix from quaternion                                                      |
-| <sub>quaternion.computeMatrix(): Matrix4x4</sub>                                                 |
+| <sub>computeMatrix(): Matrix4x4</sub>                                                            |
 | Create identity quaternion                                                                       |
 | <sub><b>STATIC</b> quaternion.identity(): Quaternion</sub>                                       |
 | Create quaternion inverse                                                                        |
-| <sub>quaternion.invert(): Quaternion</sub>                                                       |
+| <sub>invert(): Quaternion</sub>                                                                  |
 | Multiply quaternion with quaternion or vector3                                                   |
-| <sub>quaternion.multiply(, ...): Mixed</sub>                                                     |
+| <sub>multiply(, ...): Mixed</sub>                                                                |
 | Normalize quaternion                                                                             |
-| <sub>quaternion.normalize(): Quaternion</sub>                                                    |
+| <sub>normalize(): Quaternion</sub>                                                               |
 | Create rotation quaternion                                                                       |
 | <sub><b>STATIC</b> quaternion.rotate($axis: Vector3, $angle: Float): Quaternion</sub>            |
 
@@ -701,7 +701,7 @@ Reading all keys as array from set:
 | Create identity 3x3 matrix                                                                       |
 | <sub><b>STATIC</b> mat3.identity(): Matrix3x3</sub>                                              |
 | Multiply 3x3 matrix with 3x3 matrix or vector2                                                   |
-| <sub>mat3.multiply(, ...): Mixed</sub>                                                           |
+| <sub>multiply(, ...): Mixed</sub>                                                                |
 | Create rotation 3x3 matrix                                                                       |
 | <sub><b>STATIC</b> mat3.rotate($angle: Float): Matrix3x3</sub>                                   |
 | Create 3x3 matrix which rotates around point                                                     |
@@ -718,13 +718,13 @@ Reading all keys as array from set:
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Compute euler angles from 4x4 matrix                                                             |
-| <sub>mat4.computeEulerAngles(): Vector3</sub>                                                    |
+| <sub>computeEulerAngles(): Vector3</sub>                                                         |
 | Create identity 4x4 matrix                                                                       |
 | <sub><b>STATIC</b> mat4.identity(): Matrix4x4</sub>                                              |
 | Create 4x4 matrix inverse                                                                        |
-| <sub>mat4.invert(): Matrix4x4</sub>                                                              |
+| <sub>invert(): Matrix4x4</sub>                                                                   |
 | Multiply 4x4 matrix with 4x4 matrix or vector3 or vector4                                        |
-| <sub>mat4.multiply(, ...): Mixed</sub>                                                           |
+| <sub>multiply(, ...): Mixed</sub>                                                                |
 | Create rotation 4x4 matrix                                                                       |
 | <sub><b>STATIC</b> mat4.rotate($axis: Vector3, $angle: Float): Matrix4x4</sub>                   |
 | Create scale 4x4 matrix                                                                          |
@@ -745,33 +745,33 @@ Reading all keys as array from set:
 | Z axis as vector3                                                                                |
 | <sub><b>STATIC</b> transform.AXIS_Z(): Vector3</sub>                                             |
 | Get rotation angle of specific rotation of transform                                             |
-| <sub>transform.getRotationAngle($idx: Integer): Float</sub>                                      |
+| <sub>getRotationAngle($idx: Integer): Float</sub>                                                |
 | Set rotation angle of specific rotation of transform                                             |
-| <sub>transform.setRotationAngle($idx: Integer, $angle: Float): Void</sub>                        |
+| <sub>setRotationAngle($idx: Integer, $angle: Float): Void</sub>                                  |
 | Set rotation axis of specific rotation of transform                                              |
-| <sub>transform.getRotationAxis($idx: Integer): Vector3</sub>                                     |
+| <sub>getRotationAxis($idx: Integer): Vector3</sub>                                               |
 | Compute transform rotations quaternion                                                           |
-| <sub>transform.getRotationsQuaternion(): Quaternion</sub>                                        |
+| <sub>getRotationsQuaternion(): Quaternion</sub>                                                  |
 | Get transfrom scale                                                                              |
-| <sub>transform.getScale(): Vector3</sub>                                                         |
+| <sub>getScale(): Vector3</sub>                                                                   |
 | Set transfrom scale                                                                              |
-| <sub>transform.setScale($scale: Vector3): Void</sub>                                             |
+| <sub>setScale($scale: Vector3): Void</sub>                                                       |
 | Get 4x4 transform matrix                                                                         |
-| <sub>transform.getTransformMatrix(): Matrix4x4</sub>                                             |
+| <sub>getTransformMatrix(): Matrix4x4</sub>                                                       |
 | Get transform translation                                                                        |
-| <sub>transform.getTranslation(): Vector3</sub>                                                   |
+| <sub>getTranslation(): Vector3</sub>                                                             |
 | Set transform translation                                                                        |
-| <sub>transform.setTranslation($translation: Vector3): Void</sub>                                 |
+| <sub>setTranslation($translation: Vector3): Void</sub>                                           |
 | Apply a rotation to transform                                                                    |
-| <sub>transform.applyRotation($axis: Vector3, $angle: Float): Void</sub>                          |
+| <sub>applyRotation($axis: Vector3, $angle: Float): Void</sub>                                    |
 | Create transform from 4x4 matrix                                                                 |
 | <sub><b>STATIC</b> transform.fromMatrix($transformMatrix: Matrix4x4): Transform</sub>            |
 | Interpolate rotation                                                                             |
 | <sub><b>STATIC</b> transform.interpolateRotation($currentAngle: Float, $targetAngle: Float, $timePassedSeconds: Float, $degreesPerSeconds: Float, =$interpolatedAngle: Float): Boolean</sub>|
 | Multiply transform with vector3                                                                  |
-| <sub>transform.multiply($vec3: Vector3): Vector3</sub>                                           |
+| <sub>multiply($vec3: Vector3): Vector3</sub>                                                     |
 | Rotate vector3 using transform                                                                   |
-| <sub>transform.rotate($vec3: Vector3): Vector3</sub>                                             |
+| <sub>rotate($vec3: Vector3): Vector3</sub>                                                       |
 
 ## 6.9 Array class
 
@@ -780,23 +780,23 @@ Reading all keys as array from set:
 | Create array                                                                                     |
 | <sub><b>STATIC</b> array(...): Array</sub>                                                       |
 | Get array entry                                                                                  |
-| <sub>array.get($index: Integer): Mixed</sub>                                                     |
+| <sub>get($index: Integer): Mixed</sub>                                                           |
 | Set array entry                                                                                  |
-| <sub>array.set($index: Integer, $value: Mixed): Void</sub>                                       |
+| <sub>set($index: Integer, $value: Mixed): Void</sub>                                             |
 | Get array index by value                                                                         |
-| <sub>array.indexOf($value: String[, $beginIndex: Integer]): Integer</sub>                        |
+| <sub>indexOf($value: String[, $beginIndex: Integer]): Integer</sub>                              |
 | Get array length                                                                                 |
-| <sub>array.length(): Integer</sub>                                                               |
+| <sub>length(): Integer</sub>                                                                     |
 | Add entry to array                                                                               |
-| <sub>array.push(, ...): Void</sub>                                                               |
+| <sub>push(, ...): Void</sub>                                                                     |
 | Remove array entry by index                                                                      |
-| <sub>array.remove($index: Integer): Void</sub>                                                   |
+| <sub>remove($index: Integer): Void</sub>                                                         |
 | Remove array entry by value                                                                      |
-| <sub>array.removeOf($value: String[, $beginIndex: Integer]): Void</sub>                          |
+| <sub>removeOf($value: String[, $beginIndex: Integer]): Void</sub>                                |
 | Reverse array                                                                                    |
-| <sub>array.reverse(): Void</sub>                                                                 |
+| <sub>reverse(): Void</sub>                                                                       |
 | Sort array                                                                                       |
-| <sub>array.sort($function: String): Void</sub>                                                   |
+| <sub>sort($function: String): Void</sub>                                                         |
 
 ## 6.10 Map class
 
@@ -805,17 +805,17 @@ Reading all keys as array from set:
 | Create map                                                                                       |
 | <sub><b>STATIC</b> map(): Map</sub>                                                              |
 | Has entry by key                                                                                 |
-| <sub>map.has($key: String): Boolean</sub>                                                        |
+| <sub>has($key: String): Boolean</sub>                                                            |
 | Get map value by key                                                                             |
-| <sub>map.get($key: String): Mixed</sub>                                                          |
+| <sub>get($key: String): Mixed</sub>                                                              |
 | Set map entry                                                                                    |
-| <sub>map.set($key: String, $value: Mixed): Void</sub>                                            |
+| <sub>set($key: String, $value: Mixed): Void</sub>                                                |
 | Get map keys                                                                                     |
-| <sub>map.getKeys(): Array</sub>                                                                  |
+| <sub>getKeys(): Array</sub>                                                                      |
 | Get map values                                                                                   |
-| <sub>map.getValues(): Array</sub>                                                                |
+| <sub>getValues(): Array</sub>                                                                    |
 | Remove map entry                                                                                 |
-| <sub>map.remove($key: String): Void</sub>                                                        |
+| <sub>remove($key: String): Void</sub>                                                            |
 
 ## 6.11 Set class
 
@@ -824,13 +824,13 @@ Reading all keys as array from set:
 | Create set                                                                                       |
 | <sub><b>STATIC</b> set(): Set</sub>                                                              |
 | Has key in set                                                                                   |
-| <sub>set.has($key: String): Boolean</sub>                                                        |
+| <sub>has($key: String): Boolean</sub>                                                            |
 | Get set keys                                                                                     |
-| <sub>set.getKeys(): Array</sub>                                                                  |
+| <sub>getKeys(): Array</sub>                                                                      |
 | Insert key into set                                                                              |
-| <sub>set.insert($key: String): Void</sub>                                                        |
+| <sub>insert($key: String): Void</sub>                                                            |
 | Remove key from set                                                                              |
-| <sub>set.remove($key: String): Void</sub>                                                        |
+| <sub>remove($key: String): Void</sub>                                                            |
 
 # 7. MiniScript base methods
 
