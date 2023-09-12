@@ -1811,7 +1811,7 @@ public:
 				argumentIdx++;
 			}
 			if (isVariadic() == true) {
-				if (argumentIdx > 0) result+= ", ";
+				if (result.empty() == false) result+= ", ";
 				result+="...";
 			}
 			for (auto i = 0; i < optionalArgumentCount; i++) result+= "]";
