@@ -211,9 +211,11 @@ static void generateMiniScriptClassesDocumentation(const string& heading, int ma
 				Console::println("|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|");
 				Console::println("| &nbsp;                                |");
 				Console::println("| <b>Table of static member methods</b> |");
+				Console::println("| --- |");
 			} else {
 				Console::println("| &nbsp;                                    |");
 				Console::println("| <b>Table of non static member methods</b> |");
+				Console::println("| --- |");
 			}
 			//
 			for (const auto& [method, methodMarkup]: methodMarkupByClassName[className][staticIdx]) {
