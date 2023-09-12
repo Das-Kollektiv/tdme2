@@ -373,9 +373,9 @@ static void createArrayAccessMethods(string& generatedDeclarations, string& gene
 }
 
 static void generateMiniScriptEvaluateMemberAccessArrays(MiniScript* miniScript, vector<string>& declarations, vector<string>& definitions) {
-	unordered_set<string> categories;
-	set<string> allMethods;
 	auto scriptMethods = miniScript->getMethods();
+	//
+	set<string> allMethods;
 	map<string, vector<string>> methodByCategory;
 	for (auto scriptMethod: scriptMethods) {
 		string category;
@@ -418,8 +418,7 @@ static void generateMiniScriptEvaluateMemberAccessArrays(MiniScript* miniScript,
 		auto methodIdx = 0;
 		for (const auto& method: allMethods) {
 			//
-			auto& methodsByCategory = methodByCategory[className];
-			if (std::find(methodsByCategory.begin(), methodsByCategory.end(), method) == methodsByCategory.end()) {
+			if (std::find(methods.begin(), methods.end(), method) == methods.end()) {
 				methodIdx++;
 				continue;
 			}
@@ -889,9 +888,9 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 }
 
 };
-}
-}
-}
+};
+};
+};
 
 int main(int argc, char** argv)
 {

@@ -36,11 +36,17 @@ using tdme::utilities::MiniScript;
 using tdme::utilities::Properties;
 using tdme::utilities::StringTools;
 
-static void generateMiniScriptDocumentation(const string& heading, int mainHeadingIdx, MiniScript* miniScript, Properties& descriptions, const string& descriptionPrefix, unordered_set<string>& categories, MiniScript* omitMiniScript = nullptr) {
+namespace tdme {
+namespace tools {
+namespace cli {
+class MiniscriptDocumentation {
+public:
+static void generateMiniScriptMethodsDocumentation(const string& heading, int mainHeadingIdx, MiniScript* miniScript, Properties& descriptions, const string& descriptionPrefix, unordered_set<string>& categories, const set<string>& allClassMethods, MiniScript* omitMiniScript = nullptr) {
 	auto scriptMethods = miniScript->getMethods();
-	map<string, vector<pair<string, string>>> methodByCategory;
+	map<string, vector<pair<string, string>>> methodMarkupByCategory;
 	for (auto scriptMethod: scriptMethods) {
 		if (omitMiniScript != nullptr && omitMiniScript->hasMethod(scriptMethod->getMethodName()) == true) continue;
+		if (allClassMethods.find(scriptMethod->getMethodName()) != allClassMethods.end()) continue;
 		string result;
 		string category;
 		if (scriptMethod->getMethodName().rfind('.') != string::npos) category = StringTools::substring(scriptMethod->getMethodName(), 0, scriptMethod->getMethodName().rfind('.'));
@@ -70,29 +76,29 @@ static void generateMiniScriptDocumentation(const string& heading, int mainHeadi
 		method+= "|";
 		method+= "\n";
 		result+= method;
-		methodByCategory[category].push_back(make_pair(scriptMethod->getMethodName(), result));
+		methodMarkupByCategory[category].push_back(make_pair(scriptMethod->getMethodName(), result));
 	}
 	// collect categories
-	for (const auto& [category, methodMarkup]: methodByCategory) {
+	for (const auto& [category, methodMarkup]: methodMarkupByCategory) {
 		categories.insert(category);
 	}
 	//
-	map<string, vector<string>> methodByCategory2;
-	for (const auto& [category, methods]: methodByCategory) {
+	map<string, vector<string>> methodMarkupByCategory2;
+	for (const auto& [category, methods]: methodMarkupByCategory) {
 		if (category.empty() == true) continue;
 		for (const auto& [methodName, methodMarkup]: methods) {
-			methodByCategory2[category].push_back(methodMarkup);
+			methodMarkupByCategory2[category].push_back(methodMarkup);
 		}
 	}
 	{
-		auto emptyCategoryMethodsIt = methodByCategory.find(string());
-		if (emptyCategoryMethodsIt != methodByCategory.end()) {
+		auto emptyCategoryMethodsIt = methodMarkupByCategory.find(string());
+		if (emptyCategoryMethodsIt != methodMarkupByCategory.end()) {
 			const auto& methods = emptyCategoryMethodsIt->second;
 			for (const auto& [methodName, methodMarkup]: methods) {
 				if (categories.contains(methodName) == true) {
-					methodByCategory2[methodName].insert(methodByCategory2[methodName].begin(), methodMarkup);
+					methodMarkupByCategory2[methodName].insert(methodMarkupByCategory2[methodName].begin(), methodMarkup);
 				} else {
-					methodByCategory2[string()].push_back(methodMarkup);
+					methodMarkupByCategory2[string()].push_back(methodMarkup);
 				}
 			}
 		}
@@ -100,7 +106,7 @@ static void generateMiniScriptDocumentation(const string& heading, int mainHeadi
 	Console::println();
 	Console::println("# " + to_string(mainHeadingIdx) + ". " + heading);
 	auto categoryIdx = 1;
-	for (const auto& [category, methodsMarkup]: methodByCategory2) {
+	for (const auto& [category, methodsMarkup]: methodMarkupByCategory2) {
 		auto categoryName = descriptions.get(descriptionPrefix + "group." + (category.empty() == true?"uncategorized":category), "Not documented");
 		Console::println();
 		Console::println("## " + to_string(mainHeadingIdx) + "." + to_string(categoryIdx++) + " " + categoryName);
@@ -110,6 +116,108 @@ static void generateMiniScriptDocumentation(const string& heading, int mainHeadi
 		for (const auto& methodMarkup: methodsMarkup) Console::print(methodMarkup);
 	}
 }
+
+static void generateMiniScriptClassesDocumentation(const string& heading, int mainHeadingIdx, MiniScript* miniScript, Properties& descriptions, const string& descriptionPrefix, set<string>& allClassMethods) {
+	auto scriptMethods = miniScript->getMethods();
+	//
+	map<string, vector<string>> methodsByClassName;
+	//
+	for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); typeIdx <= static_cast<int>(MiniScript::TYPE_SET); typeIdx++) {
+		const auto& className = MiniScript::ScriptVariable::getClassName(static_cast<MiniScript::ScriptVariableType>(typeIdx));
+		allClassMethods.insert(className);
+		methodsByClassName[className].push_back(className);
+	}
+	//
+	for (auto scriptMethod: scriptMethods) {
+		string className;
+		if (scriptMethod->getMethodName().rfind('.') != string::npos) className = StringTools::substring(scriptMethod->getMethodName(), 0, scriptMethod->getMethodName().rfind('.'));
+		if (className.empty() == true && allClassMethods.find(scriptMethod->getMethodName()) == allClassMethods.end()) continue;
+		string method =
+			StringTools::substring(
+				scriptMethod->getMethodName(),
+				className.empty() == true?0:className.size() + 1,
+				scriptMethod->getMethodName().size());
+		// no arguments or no "this" argument
+		auto _static =
+			scriptMethod->getArgumentTypes().empty() == true ||
+			scriptMethod->getArgumentTypes()[0].name != className;
+			MiniScript::ScriptVariable::getClassName(scriptMethod->getArgumentTypes()[0].type) != className;
+		//
+		methodsByClassName[className].push_back(method);
+		allClassMethods.insert(scriptMethod->getMethodName());
+	}
+	//
+	map<string, map<string, string>> methodMarkupByClassName;
+	for (auto scriptMethod: scriptMethods) {
+		//
+		if (allClassMethods.find(scriptMethod->getMethodName()) == allClassMethods.end()) continue;
+		//
+		string result;
+		string className;
+		if (scriptMethod->getMethodName().rfind('.') != string::npos) className = StringTools::substring(scriptMethod->getMethodName(), 0, scriptMethod->getMethodName().rfind('.'));
+		// constructors
+		if (className.empty() == true) {
+			for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); typeIdx <= static_cast<int>(MiniScript::TYPE_SET); typeIdx++) {
+				const auto& possibleClassName = MiniScript::ScriptVariable::getClassName(static_cast<MiniScript::ScriptVariableType>(typeIdx));
+				if (scriptMethod->getMethodName() == possibleClassName) {
+					className = possibleClassName;
+					break;
+				}
+			}
+		}
+		//
+		auto _static =
+			scriptMethod->getArgumentTypes().empty() == true ||
+			scriptMethod->getArgumentTypes()[0].name != className;
+			MiniScript::ScriptVariable::getClassName(scriptMethod->getArgumentTypes()[0].type) != className;
+		//
+		string description;
+		description+= "| ";
+		description+= descriptions.get(descriptionPrefix + scriptMethod->getMethodName(), "Not documented");
+		while (description.size() < 99) description+= " ";
+		description+= "|";
+		result+= description + "\n";
+		string method;
+		method+= "| <sub>";
+		if (_static == true) {
+			method+= "static ";
+		}
+		method+= scriptMethod->getMethodName();
+		method+= "(";
+		method+= scriptMethod->getArgumentsInformation(_static == true?0:1);
+		method+= "): ";
+		method+= MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType());
+		method+= "</sub>";
+		while (method.size() < 99) method+= " ";
+		method+= "|";
+		method+= "\n";
+		result+= method;
+		methodMarkupByClassName[className][scriptMethod->getMethodName()] = result;
+	}
+	//
+	auto classIdx = 1;
+	for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); typeIdx <= static_cast<int>(MiniScript::TYPE_SET); typeIdx++) {
+		const auto& className = MiniScript::ScriptVariable::getClassName(static_cast<MiniScript::ScriptVariableType>(typeIdx));
+		const auto& methods = methodsByClassName[className];
+		auto classNameDescription = descriptions.get("miniscript.baseclass." + (className.empty() == true?"No class":className), "Not documented");
+		//
+		Console::println();
+		Console::println("## " + to_string(mainHeadingIdx) + "." + to_string(classIdx++) + " " + classNameDescription);
+		Console::println();
+		Console::println("| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of Methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |");
+		Console::println("|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|");
+		//
+		for (const auto& method: methods) {
+			//
+			Console::print(methodMarkupByClassName[className][className == method?method:className + "." + method]);
+		}
+	}
+}
+
+};
+};
+};
+};
 
 int main(int argc, char** argv)
 {
@@ -133,16 +241,20 @@ int main(int argc, char** argv)
 	guiMiniScript->registerMethods();
 
 	//
+	unordered_set<string> baseClassesCategories;
 	unordered_set<string> baseMethodCategories;
 	unordered_set<string> logicMethodCategories;
 	unordered_set<string> guiMethodCategories;
 
+	set<string> allClassMethods;
+	// classes
+	tdme::tools::cli::MiniscriptDocumentation::generateMiniScriptClassesDocumentation("MiniScript Classes", 6, baseMiniScript.get(), descriptions, "miniscript.basemethod.", allClassMethods);
 	// base methods
-	generateMiniScriptDocumentation("MiniScript Base Methods", 6, baseMiniScript.get(), descriptions, "miniscript.basemethod.", baseMethodCategories);
+	tdme::tools::cli::MiniscriptDocumentation::generateMiniScriptMethodsDocumentation("MiniScript Base Methods", 7, baseMiniScript.get(), descriptions, "miniscript.basemethod.", baseMethodCategories, allClassMethods);
 	// logic methods
-	generateMiniScriptDocumentation("MiniScript Logic Methods", 7, logicMiniScript.get(), descriptions, "miniscript.logicmethod.", logicMethodCategories, baseMiniScript.get());
+	tdme::tools::cli::MiniscriptDocumentation::generateMiniScriptMethodsDocumentation("MiniScript Logic Methods", 8, logicMiniScript.get(), descriptions, "miniscript.logicmethod.", logicMethodCategories, allClassMethods, baseMiniScript.get());
 	// gui methods
-	generateMiniScriptDocumentation("MiniScript GUI Methods", 8, guiMiniScript.get(), descriptions, "miniscript.", guiMethodCategories, baseMiniScript.get());
+	tdme::tools::cli::MiniscriptDocumentation::generateMiniScriptMethodsDocumentation("MiniScript GUI Methods", 9, guiMiniScript.get(), descriptions, "miniscript.", guiMethodCategories, allClassMethods, baseMiniScript.get());
 
 	// operators
 	auto scriptOperatorMethods = baseMiniScript->getOperatorMethods();
@@ -164,7 +276,7 @@ int main(int argc, char** argv)
 	}
 	sort(operators.begin(), operators.end());
 	Console::println();
-	Console::println("# 9. Operators");
+	Console::println("# 10. Operators");
 	Console::println();
 	Console::println("| Op | Method                                                                                      |");
 	Console::println("|----|---------------------------------------------------------------------------------------------|");

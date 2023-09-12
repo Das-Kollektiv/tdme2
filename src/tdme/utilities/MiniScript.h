@@ -1788,22 +1788,26 @@ public:
 
 		/**
 		 * Get arguments information
+		 * @param beginIdx begin index
 		 * @return arguments information
 		 */
-		inline const string getArgumentsInformation() const {
+		inline const string getArgumentsInformation(int beginIdx = 0) const {
 			string result;
 			auto optionalArgumentCount = 0;
 			auto argumentIdx = 0;
 			for (const auto& argumentType: argumentTypes) {
+				string argumentResult;
 				if (argumentType.optional == true) {
 					result+= "[";
 					optionalArgumentCount++;
 				}
-				if (argumentIdx > 0) result+= ", ";
-				if (argumentType.assignBack == true) {
-					result+= "=";
+				if (result.empty() == false) result+= ", ";
+				if (optionalArgumentCount > 0 || argumentIdx >= beginIdx) {
+					if (argumentType.assignBack == true) {
+						result+= "=";
+					}
+					result+= "$" + argumentType.name + ": " + ScriptVariable::getTypeAsString(argumentType.type);
 				}
-				result+= "$" + argumentType.name + ": " + ScriptVariable::getTypeAsString(argumentType.type);
 				argumentIdx++;
 			}
 			if (isVariadic() == true) {
