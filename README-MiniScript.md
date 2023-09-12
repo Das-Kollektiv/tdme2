@@ -557,6 +557,8 @@ Reading all keys as array from set:
 
 ## 6.1 String class
 
+## 6.1 String class
+
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | &nbsp;                                    |
@@ -565,12 +567,6 @@ Reading all keys as array from set:
 | <sub><b>static</b> string($string: String): String</sub>                                         |
 | Concatenate strings                                                                              |
 | <sub><b>static</b> string.concatenate(...): String</sub>                                         |
-| Test if strings matches ignoring case sensitivity                                                |
-| <sub><b>static</b> string.equalsIgnoreCase($string1: String, $string2: String): Boolean</sub>    |
-| Pad string left                                                                                  |
-| <sub><b>static</b> string.padLeft($src: String, $by: String, $toSize: Integer): String</sub>     |
-| Pad string right                                                                                 |
-| <sub><b>static</b> string.padRight($src: String, $by: String, $toSize: Integer): String</sub>    |
 | Create spaces as string                                                                          |
 | <sub><b>static</b> string.space([, $spaces: Integer]): String</sub>                              |
 | &nbsp;                                    |
@@ -579,6 +575,8 @@ Reading all keys as array from set:
 | <sub>charAt($index: Integer): String</sub>                                                       |
 | Test if string ends with specific string                                                         |
 | <sub>endsWith($suffix: String): Boolean</sub>                                                    |
+| Test if strings matches ignoring case sensitivity                                                |
+| <sub>equalsIgnoreCase($other: String): Boolean</sub>                                             |
 | Return first index of specific string in string                                                  |
 | <sub>firstIndexOf($what: String[, $beginIndex: Integer]): Integer</sub>                          |
 | Return index of specific string in string                                                        |
@@ -593,6 +591,10 @@ Reading all keys as array from set:
 | <sub>lastIndexOf($what: String[, $beginIndex: Integer]): Integer</sub>                           |
 | Return string length                                                                             |
 | <sub>length(): Integer</sub>                                                                     |
+| Pad string left                                                                                  |
+| <sub>padLeft($by: String, $toSize: Integer): String</sub>                                        |
+| Pad string right                                                                                 |
+| <sub>padRight($by: String, $toSize: Integer): String</sub>                                       |
 | RegEx match                                                                                      |
 | <sub>regexMatch($pattern: String): Boolean</sub>                                                 |
 | RegEx replace                                                                                    |
@@ -709,8 +711,6 @@ Reading all keys as array from set:
 | <sub>computeMatrix(): Matrix4x4</sub>                                                            |
 | Create quaternion inverse                                                                        |
 | <sub>invert(): Quaternion</sub>                                                                  |
-| Multiply quaternion with quaternion or vector3                                                   |
-| <sub>multiply(...): Mixed</sub>                                                                  |
 | Normalize quaternion                                                                             |
 | <sub>normalize(): Quaternion</sub>                                                               |
 
@@ -734,8 +734,6 @@ Reading all keys as array from set:
 | <sub><b>static</b> mat3.translate($translation: Vector2): Matrix3x3</sub>                        |
 | &nbsp;                                    |
 | <b>NON STATIC METHODS</b>                 |
-| Multiply 3x3 matrix with 3x3 matrix or vector2                                                   |
-| <sub>multiply(...): Mixed</sub>                                                                  |
 
 ## 6.7 Matrix4x4 class
 
@@ -757,8 +755,6 @@ Reading all keys as array from set:
 | <sub>computeEulerAngles(): Vector3</sub>                                                         |
 | Create 4x4 matrix inverse                                                                        |
 | <sub>invert(): Matrix4x4</sub>                                                                   |
-| Multiply 4x4 matrix with 4x4 matrix or vector3 or vector4                                        |
-| <sub>multiply(...): Mixed</sub>                                                                  |
 
 ## 6.8 Transform class
 
@@ -794,8 +790,6 @@ Reading all keys as array from set:
 | <sub>getTransformMatrix(): Matrix4x4</sub>                                                       |
 | Get transform translation                                                                        |
 | <sub>getTranslation(): Vector3</sub>                                                             |
-| Multiply transform with vector3                                                                  |
-| <sub>multiply($vec3: Vector3): Vector3</sub>                                                     |
 | Rotate vector3 using transform                                                                   |
 | <sub>rotate($vec3: Vector3): Vector3</sub>                                                       |
 | Set rotation angle of specific rotation of transform                                             |

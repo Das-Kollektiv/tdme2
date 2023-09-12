@@ -4217,51 +4217,6 @@ void MiniScript::registerMethods() {
 	}
 	{
 		//
-		class ScriptMethodQuaternionMultiply: public ScriptMethod {
-		private:
-			MiniScript* miniScript { nullptr };
-		public:
-			ScriptMethodQuaternionMultiply(MiniScript* miniScript):
-				ScriptMethod(
-					{
-						{ .type = ScriptVariableType::TYPE_QUATERNION, .name = "quaternion", .optional = false, .assignBack = false },
-					},
-					ScriptVariableType::TYPE_PSEUDO_MIXED
-				),
-				miniScript(miniScript) {}
-			const string getMethodName() override {
-				return "quaternion.multiply";
-			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				Quaternion quaternion;
-				Quaternion quaternionValue;
-				Vector3 vec3Value;
-				if (argumentValues.size() != 2) {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
-					miniScript->startErrorScript();
-				} else
-				if (MiniScript::getQuaternionValue(argumentValues, 0, quaternion, false) == true) {
-					if (MiniScript::getQuaternionValue(argumentValues, 1, quaternionValue, false) == true) {
-						returnValue.setValue(quaternion.multiply(quaternionValue));
-					} else
-					if (MiniScript::getVector3Value(argumentValues, 1, vec3Value, false) == true) {
-						returnValue.setValue(quaternion.multiply(vec3Value));
-					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
-						miniScript->startErrorScript();
-					}
-				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
-					miniScript->startErrorScript();
-				}
-			}
-			bool isVariadic() const override {
-				return true;
-			}
-		};
-		registerMethod(new ScriptMethodQuaternionMultiply(this));
-	}
-	{ 		//
 		class ScriptMethodQuaternionInvert: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
@@ -4488,52 +4443,6 @@ void MiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodMatrix3x3Scale(this));
 	}
-	{
-		//
-		class ScriptMethodMatrix3x3Multiply: public ScriptMethod {
-		private:
-			MiniScript* miniScript { nullptr };
-		public:
-			ScriptMethodMatrix3x3Multiply(MiniScript* miniScript):
-				ScriptMethod(
-					{
-						{ .type = ScriptVariableType::TYPE_MATRIX3x3, .name = "mat3", .optional = false, .assignBack = false },
-					},
-					ScriptVariableType::TYPE_PSEUDO_MIXED
-				),
-				miniScript(miniScript) {}
-			const string getMethodName() override {
-				return "mat3.multiply";
-			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				Matrix3x3 mat3;
-				Matrix3x3 mat3Value;
-				Vector2 vec2Value;
-				if (argumentValues.size() != 2) {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
-					miniScript->startErrorScript();
-				} else
-				if (MiniScript::getMatrix3x3Value(argumentValues, 0, mat3, false) == true) {
-					if (MiniScript::getMatrix3x3Value(argumentValues, 1, mat3Value, false) == true) {
-						returnValue.setValue(mat3.multiply(mat3Value));
-					} else
-					if (MiniScript::getVector2Value(argumentValues, 1, vec2Value, false) == true) {
-						returnValue.setValue(mat3.multiply(vec2Value));
-					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
-						miniScript->startErrorScript();
-					}
-				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
-					miniScript->startErrorScript();
-				}
-			}
-			bool isVariadic() const override {
-				return true;
-			}
-		};
-		registerMethod(new ScriptMethodMatrix3x3Multiply(this));
-	}
 	// matrix4x4 methods
 	{
 		//
@@ -4703,56 +4612,6 @@ void MiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodMatrix4x4EulerAngles(this));
-	}
-	{
-		//
-		class ScriptMethodMatrix4x4Multiply: public ScriptMethod {
-		private:
-			MiniScript* miniScript { nullptr };
-		public:
-			ScriptMethodMatrix4x4Multiply(MiniScript* miniScript):
-				ScriptMethod(
-					{
-						{ .type = ScriptVariableType::TYPE_MATRIX4x4, .name = "mat4", .optional = false, .assignBack = false },
-					},
-					ScriptVariableType::TYPE_PSEUDO_MIXED
-				),
-				miniScript(miniScript) {}
-			const string getMethodName() override {
-				return "mat4.multiply";
-			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				Matrix4x4 mat4;
-				Matrix4x4 mat4Value;
-				Vector3 vec3Value;
-				Vector4 vec4Value;
-				if (argumentValues.size() != 2) {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
-					miniScript->startErrorScript();
-				} else
-				if (MiniScript::getMatrix4x4Value(argumentValues, 0, mat4, false) == true) {
-					if (MiniScript::getMatrix4x4Value(argumentValues, 1, mat4Value, false) == true) {
-						returnValue.setValue(mat4.multiply(mat4Value));
-					} else
-					if (MiniScript::getVector3Value(argumentValues, 1, vec3Value, false) == true) {
-						returnValue.setValue(mat4.multiply(vec3Value));
-					} else
-					if (MiniScript::getVector4Value(argumentValues, 1, vec4Value, false) == true) {
-						returnValue.setValue(mat4.multiply(vec4Value));
-					} else {
-						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
-						miniScript->startErrorScript();
-					}
-				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
-					miniScript->startErrorScript();
-				}
-			}
-			bool isVariadic() const override {
-				return true;
-			}
-		};
-		registerMethod(new ScriptMethodMatrix4x4Multiply(this));
 	}
 	// transform
 	{
@@ -5104,37 +4963,6 @@ void MiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodTransformSetRotationAngle(this));
-	}
-	{
-		//
-		class ScriptMethodTransformMultiply: public ScriptMethod {
-		private:
-			MiniScript* miniScript { nullptr };
-		public:
-			ScriptMethodTransformMultiply(MiniScript* miniScript):
-				ScriptMethod(
-					{
-						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = false },
-						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "vec3", .optional = false, .assignBack = false },
-					},
-					ScriptVariableType::TYPE_VECTOR3),
-					miniScript(miniScript) {}
-			const string getMethodName() override {
-				return "transform.multiply";
-			}
-			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				Transform transform;
-				Vector3 vec3;
-				if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true &&
-					MiniScript::getVector3Value(argumentValues, 1, vec3, false) == true) {
-					returnValue.setValue(transform.getTransformMatrix() * vec3);
-				} else {
-					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
-					miniScript->startErrorScript();
-				}
-			}
-		};
-		registerMethod(new ScriptMethodTransformMultiply(this));
 	}
 	{
 		//
@@ -5838,8 +5666,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodStringEqualsIgnoreCase(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "string1", .optional = false, .assignBack = false },
-						{.type = ScriptVariableType::TYPE_STRING, .name = "string2", .optional = false, .assignBack = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .assignBack = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "other", .optional = false, .assignBack = false },
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -5848,14 +5676,14 @@ void MiniScript::registerMethods() {
 				return "string.equalsIgnoreCase";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				string string1Value;
-				string string2Value;
-				if (MiniScript::getStringValue(argumentValues, 0, string1Value, false) == false ||
-					MiniScript::getStringValue(argumentValues, 1, string2Value, false) == false) {
+				string stringValue;
+				string other;
+				if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == false ||
+					MiniScript::getStringValue(argumentValues, 1, other, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					returnValue.setValue(StringTools::equalsIgnoreCase(string1Value, string2Value));
+					returnValue.setValue(StringTools::equalsIgnoreCase(stringValue, other));
 				}
 			}
 		};
@@ -6202,7 +6030,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodStringPadLeft(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "src", .optional = false, .assignBack = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .assignBack = false },
 						{.type = ScriptVariableType::TYPE_STRING, .name = "by", .optional = false, .assignBack = false },
 						{.type = ScriptVariableType::TYPE_INTEGER, .name = "toSize", .optional = false, .assignBack = false }
 					},
@@ -6237,7 +6065,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodStringPadRight(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "src", .optional = false, .assignBack = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .assignBack = false },
 						{.type = ScriptVariableType::TYPE_STRING, .name = "by", .optional = false, .assignBack = false },
 						{.type = ScriptVariableType::TYPE_INTEGER, .name = "toSize", .optional = false, .assignBack = false }
 					},
