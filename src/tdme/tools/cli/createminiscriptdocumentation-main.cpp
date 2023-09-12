@@ -217,8 +217,6 @@ static void generateMiniScriptClassesDocumentation(const string& heading, int ma
 			for (const auto& [method, methodMarkup]: methodMarkupByClassName[className][staticIdx]) {
 				Console::print(methodMarkup);
 			}
-			//
-			if (staticIdx == 0) Console::println();
 		}
 	}
 }
