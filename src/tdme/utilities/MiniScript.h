@@ -33,6 +33,7 @@ using std::array;
 using std::exchange;
 using std::remove;
 using std::make_unique;
+using std::move;
 using std::span;
 using std::stack;
 using std::swap;
@@ -2247,13 +2248,14 @@ private:
 
 	/**
 	 * Parse a script statement
-	 * @param statement statement 
+	 * @param executableStatement executable statement
 	 * @param methodName method name
 	 * @param arguments arguments
+	 * @param statement statment
 	 * @param accessObjectMember generated access object member statement
 	 * @return success
 	 */
-	bool parseScriptStatement(const string_view& statement, string_view& methodName, vector<string_view>& arguments, string& accessObjectMemberStatement);
+	bool parseScriptStatement(const string_view& executableStatement, string_view& methodName, vector<string_view>& arguments, const ScriptStatement& statement, string& accessObjectMemberStatement);
 
 	/**
 	 * Execute a script statement
@@ -2312,10 +2314,11 @@ private:
 
 	/**
 	 * Determine next not substituted operator in statement
-	 * @param statement statement
+	 * @param processedStatement statement that is currently being processed
 	 * @param nextOperator next operator
+	 * @param statement statement
 	 */
-	bool getNextStatementOperator(const string& statement, ScriptStatementOperator& nextOperator);
+	bool getNextStatementOperator(const string& processedStatement, ScriptStatementOperator& nextOperator, const ScriptStatement& statement);
 
 	/**
 	 * Trim argument and remove unnessessary parenthesis
@@ -2344,9 +2347,10 @@ private:
 
 	/**
 	 * Do statement pre processing, 1) replace operators with corresponding methods
+	 * @param processedStatement statement that is currently being processed
 	 * @param statement statement
 	 */
-	const string doStatementPreProcessing(const string& statement);
+	const string doStatementPreProcessing(const string& processedStatement, const ScriptStatement& statement);
 
 	/**
 	 * Transpile script statement
@@ -2706,12 +2710,10 @@ private:
 		vector<string_view> arguments;
 		string accessObjectMemberStatement;
 		ScriptSyntaxTreeNode evaluateSyntaxTree;
-		if (parseScriptStatement(scriptEvaluateStatement, methodName, arguments, accessObjectMemberStatement) == false) {
-			Console::println("MiniScript::evaluate(): '" + scriptFileName + "': " + evaluateStatement.statement + "@" + to_string(evaluateStatement.line) + ": failed to parse evaluation statement");
+		if (parseScriptStatement(scriptEvaluateStatement, methodName, arguments, evaluateStatement, accessObjectMemberStatement) == false) {
 			return false;
 		} else
 		if (createScriptStatementSyntaxTree(methodName, arguments, evaluateStatement, evaluateSyntaxTree) == false) {
-			Console::println("MiniScript::evaluate(): '" + scriptFileName + "': " + evaluateStatement.statement + "@" + to_string(evaluateStatement.line) + ": failed to create syntax tree for evaluation statement");
 			return false;
 		} else {
 			//
@@ -3375,8 +3377,15 @@ public:
 	 * @param returnValue script return value
 	 * @return success
 	 */
-	inline bool evaluate(const string& statement, ScriptVariable& returnValue) {
-		return evaluateInternal(statement, doStatementPreProcessing(statement), returnValue);
+	inline bool evaluate(const string& evaluateStatement, ScriptVariable& returnValue) {
+		ScriptStatement evaluateScriptStatement(
+			LINEIDX_NONE,
+			STATEMENTIDX_FIRST,
+			"internal.script.evaluate(" + StringTools::replace(StringTools::replace(evaluateStatement, "\\", "\\\\"), "\"", "\\\"") + ")",
+			"internal.script.evaluate(" + StringTools::replace(StringTools::replace(evaluateStatement, "\\", "\\\\"), "\"", "\\\"") + ")",
+			STATEMENTIDX_NONE
+		);
+		return evaluateInternal(evaluateStatement, doStatementPreProcessing(evaluateStatement, evaluateScriptStatement), returnValue);
 	}
 
 	/**

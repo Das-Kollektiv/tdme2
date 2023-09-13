@@ -306,12 +306,6 @@ static void createArrayAccessMethods(string& generatedDeclarations, string& gene
 									string_view arrayAccessMethodName;
 									vector<string_view> arrayAccessArguments;
 									string accessObjectMemberStatement;
-									// parse script statement
-									if (scriptInstance->parseScriptStatement(string_view(arrayAccessStatementString), arrayAccessMethodName, arrayAccessArguments, accessObjectMemberStatement) == false) {
-										Console::println("MiniScript::createScriptStatementSyntaxTree(): " + scriptInstance->getStatementInformation(statement) + ": failed to parse statement");
-										//
-										break;
-									}
 									// create a pseudo statement (information)
 									MiniScript::ScriptStatement arrayAccessStatement(
 										statement.line,
@@ -320,11 +314,13 @@ static void createArrayAccessMethods(string& generatedDeclarations, string& gene
 										arrayAccessStatementString,
 										MiniScript::STATEMENTIDX_NONE
 									);
+									// parse script statement
+									if (scriptInstance->parseScriptStatement(string_view(arrayAccessStatementString), arrayAccessMethodName, arrayAccessArguments, arrayAccessStatement, accessObjectMemberStatement) == false) {
+										break;
+									}
 									// create syntax tree for this array access
 									MiniScript::ScriptSyntaxTreeNode arrayAccessSyntaxTree;
 									if (scriptInstance->createScriptStatementSyntaxTree(arrayAccessMethodName, arrayAccessArguments, arrayAccessStatement, arrayAccessSyntaxTree) == false) {
-										Console::println("MiniScript::createScriptStatementSyntaxTree(): " + scriptInstance->getStatementInformation(statement) + ": failed to create syntax tree");
-										//
 										break;
 									}
 
