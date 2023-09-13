@@ -208,26 +208,29 @@
         - to implement GUI application flow(WIP)
     - supports position and color based effects in combination with conditions that can also be defined via XML
     - unicode support via UTF8
-- MiniScript
-	- very small implementation of a scripting language
-	- runs on every CPU, OS, ... due to its simplicity, so its highly portable just like TDME2 is
-	- can be easily extended by writing state machine machine states and script methods in C++
-	- works with the following data types: null, boolean, integer, float, string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, array, map and set
-	- when calling script methods/returning from methods it does not use references or pointers but only value by copy
-	- supports user script functions and recursion
-	- supports kind of references by optionally assigning back argument values to variables
-	- supports operators by operator to method mapping by a preprocessor run
-	- supports loops and conditions
-	- sort of event based
-	- how to use:
-	  - each script is attached to a game entity
-	  - communication between script instances is possible by
-	    - using callable functions
-	    - sending signals with arguments
-	  - complex logic should still be implemented by a game developer in C++ by extending MiniScript
-	  - game designers can use MiniScript + those methods to implement high level game logic
-	- MiniScript methods/states know about them self, so a whole documentation for MiniScript usage can be generated later
-	- can be transpiled to C++
+    - MiniScript
+        - very small implementation of a scripting language
+        - runs on every CPU, OS, ... due to its simplicity, so its highly portable just like TDME2 is
+        - can be easily extended by writing state machine machine states and script methods in C++
+        - works with the following data types: null, boolean, integer, float, string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, array, map and set
+        - when calling script methods/returning from methods it does not use references or pointers but only value by copy
+        - supports user script functions and recursion
+        - supports kind of references by optionally assigning back argument values to variables
+        - supports operators by operator to method mapping by a preprocessor run
+        - supports loops and conditions
+        - supports programming with classes style programming
+          - for string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, array, map and set data types
+          - custom data types and custom script classes are planned
+        - supports event like programming
+        - can be transpiled to C++
+        - how to use:
+          - each script is attached to a game entity
+          - communication between script instances is possible by
+            - using callable functions
+            - sending signals with arguments
+          - complex logic should still be implemented by a game developer in C++ by extending MiniScript
+          - game designers can use MiniScript + those methods to implement high level game logic
+        - MiniScript methods/states know about them self, so a whole documentation for MiniScript usage can be generated later
 - Networking module, which consists of
     - UDP server
         - n:m threading model with non blocked IO via kernel event mechanismns(epoll, kqueue or select)

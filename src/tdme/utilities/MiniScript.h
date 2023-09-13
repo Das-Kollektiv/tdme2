@@ -1801,7 +1801,7 @@ public:
 					result+= "[";
 					optionalArgumentCount++;
 				}
-				if (result.empty() == false) result+= ", ";
+				if (argumentIdx > beginIdx) result+= ", ";
 				if (optionalArgumentCount > 0 || argumentIdx >= beginIdx) {
 					if (argumentType.assignBack == true) {
 						result+= "=";
@@ -1811,7 +1811,7 @@ public:
 				argumentIdx++;
 			}
 			if (isVariadic() == true) {
-				if (result.empty() == false) result+= ", ";
+				if (argumentIdx > beginIdx) result+= ", ";
 				result+="...";
 			}
 			for (auto i = 0; i < optionalArgumentCount; i++) result+= "]";
