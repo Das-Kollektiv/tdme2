@@ -733,8 +733,6 @@ Reading all keys as array from set:
 | <sub><b>static</b> mat3.scale(...): Matrix3x3</sub>                                              |
 | Create translation 3x3 matrix                                                                    |
 | <sub><b>static</b> mat3.translate($translation: Vector2): Matrix3x3</sub>                        |
-| &nbsp;                                    |
-| <b>NON STATIC METHODS</b>                 |
 
 ## 6.7 Matrix4x4 class
 
