@@ -1708,8 +1708,6 @@ The boilerplate template code for a MiniScript GUI logic looks like: [gui_script
 
 # 10. Operators
 
-# 10. Operators
-
 | Op | Method                                                                                      |
 |----|---------------------------------------------------------------------------------------------|
 | !  | not($bool: Boolean): Boolean                                                                |
