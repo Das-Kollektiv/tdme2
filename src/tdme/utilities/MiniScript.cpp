@@ -1942,6 +1942,7 @@ const string MiniScript::doStatementPreProcessing(const string& processedStateme
 
 bool MiniScript::getObjectMemberAccess(const string_view& executableStatement, string_view& object, string_view& method, const ScriptStatement& statement) {
 	//
+	auto objectMemberAccess = false;
 	auto objectStartIdx = string::npos;
 	auto objectEndIdx = string::npos;
 	auto memberCallStartIdx = string::npos;
@@ -1988,7 +1989,8 @@ bool MiniScript::getObjectMemberAccess(const string_view& executableStatement, s
 			object = string_view(&executableStatement[objectStartIdx], objectEndIdx - objectStartIdx);
 			method = string_view(&executableStatement[memberCallStartIdx], memberCallEndIdx - memberCallStartIdx);
 			//
-			return true;
+			objectMemberAccess = true;
+			// Dont break here, we can have multiple member access operators here, but we want the last one in this step
 		}
 		//
 		lc = c;
@@ -2008,7 +2010,7 @@ bool MiniScript::getObjectMemberAccess(const string_view& executableStatement, s
 	}
 
 	//
-	return false;
+	return objectMemberAccess;
 }
 
 bool MiniScript::call(int scriptIdx, span<ScriptVariable>& argumentValues, ScriptVariable& returnValue) {
