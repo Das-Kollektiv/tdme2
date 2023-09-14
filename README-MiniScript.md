@@ -524,7 +524,7 @@ Checking if keys exist in map using map.has() and given keys:
 ```
 
 
-Checking if keys exist in map using dot opertator and given keys:
+Checking if keys exist in map using dot operator and given keys:
 ```
 ...
 	console.log("set key for test1 using set dot operator: ", $set.test1)
