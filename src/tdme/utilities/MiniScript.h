@@ -2352,6 +2352,16 @@ private:
 	const string doStatementPreProcessing(const string& processedStatement, const ScriptStatement& statement);
 
 	/**
+	 * Returns if statement has a object member access
+	 * @param executableStatement executable statement
+	 * @param object object
+	 * @param method method
+	 * @param statement statement
+	 * @return statement has a object member access
+	 */
+	bool getObjectMemberAccess(const string_view& executableStatement, string_view& object, string_view& method, const ScriptStatement& statement);
+
+	/**
 	 * Transpile script statement
 	 * @param generatedCode generated code
 	 * @param syntaxTree syntax tree

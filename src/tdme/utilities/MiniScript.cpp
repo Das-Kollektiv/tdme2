@@ -261,21 +261,10 @@ void MiniScript::executeScriptLine() {
 
 bool MiniScript::parseScriptStatement(const string_view& executableStatement, string_view& methodName, vector<string_view>& arguments, const ScriptStatement& statement, string& accessObjectMemberStatement) {
 	if (VERBOSE == true) Console::println("MiniScript::parseScriptStatement(): " + getStatementInformation(statement) + ": '" + string(executableStatement) + "'");
-	auto objectMemberAccess = StringTools::viewStartsWith(executableStatement, "$");
-	string_view objectMemberAccessVariable;
-	int objectMemberAccessStartIdx = 0;
-	if (objectMemberAccess == true) {
-		auto lc = '\0';
-		for (auto i = 0; i < executableStatement.size(); i++) {
-			auto c = executableStatement[i];
-			if (lc == '-' && c == '>') {
-				objectMemberAccessStartIdx = i + 1;
-				objectMemberAccessVariable = string_view(executableStatement.data(), i - 1);
-				break;
-			}
-			lc = c;
-		}
-	}
+	string_view objectMemberAccessObject;
+	string_view objectMemberAccessMethod;
+	auto objectMemberAccess = getObjectMemberAccess(executableStatement, objectMemberAccessObject, objectMemberAccessMethod, statement);
+	auto executableStatementStartIdx = objectMemberAccess == true?objectMemberAccessObject.size() + 2:0;
 	auto bracketCount = 0;
 	auto quote = '\0';
 	auto methodStart = string::npos;
@@ -284,7 +273,8 @@ bool MiniScript::parseScriptStatement(const string_view& executableStatement, st
 	auto argumentEnd = string::npos;
 	auto quotedArgumentStart = string::npos;
 	auto quotedArgumentEnd = string::npos;
-	for (auto i = objectMemberAccessStartIdx; i < executableStatement.size(); i++) {
+	//
+	for (auto i = executableStatementStartIdx; i < executableStatement.size(); i++) {
 		auto c = executableStatement[i];
 		if (c == '"' || c == '\'') {
 			if (bracketCount == 1) {
@@ -393,48 +383,52 @@ bool MiniScript::parseScriptStatement(const string_view& executableStatement, st
 			}
 		}
 	}
+	//
 	if (methodStart != string::npos && methodEnd != string::npos) {
 		methodName = StringTools::viewTrim(string_view(&executableStatement[methodStart], methodEnd - methodStart + 1));
 	}
+	//
 	if (objectMemberAccess == true) {
 		// construct executable statement and arguments
-		string_view objectMemberAccessMethodName;
-		vector<string_view> objectMemberAccessArguments;
+		string_view evaluateMemberAccessMethodName;
+		vector<string_view> evaluateMemberAccessArguments;
 
 		// construct new method name and argument string views
 		accessObjectMemberStatement.reserve(1024); // TODO: check me later
 		auto idx = accessObjectMemberStatement.size();
 		accessObjectMemberStatement+= "internal.script.evaluateMemberAccess";
-		objectMemberAccessMethodName = string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx);
+		evaluateMemberAccessMethodName = string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx);
 		accessObjectMemberStatement+= "(";
 		idx = accessObjectMemberStatement.size();
-		accessObjectMemberStatement+= "\"" + string(StringTools::viewStartsWith(objectMemberAccessVariable, "$") == true?objectMemberAccessVariable:"") + "\"";
-		objectMemberAccessArguments.push_back(string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx));
+		accessObjectMemberStatement+= "\"" + string(StringTools::viewStartsWith(objectMemberAccessObject, "$") == true?objectMemberAccessObject:"") + "\"";
+		evaluateMemberAccessArguments.push_back(string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx));
 		idx = accessObjectMemberStatement.size();
 		accessObjectMemberStatement+= ", ";
 		idx = accessObjectMemberStatement.size();
-		accessObjectMemberStatement+= string(objectMemberAccessVariable);
-		objectMemberAccessArguments.push_back(string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx));
+		accessObjectMemberStatement+= string(objectMemberAccessObject);
+		evaluateMemberAccessArguments.push_back(string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx));
 		accessObjectMemberStatement+= ", ";
 		idx = accessObjectMemberStatement.size();
 		accessObjectMemberStatement+= "\"" + string(methodName) + "\"";
-		objectMemberAccessArguments.push_back(string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx));
+		evaluateMemberAccessArguments.push_back(string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx));
 		for (const auto& argument: arguments) {
 			accessObjectMemberStatement+= ", ";
 			idx = accessObjectMemberStatement.size();
 			accessObjectMemberStatement+= StringTools::viewStartsWith(argument, "$") == true?"\"" + string(argument) + "\"":"null";
-			objectMemberAccessArguments.push_back(string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx));
+			evaluateMemberAccessArguments.push_back(string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx));
 			accessObjectMemberStatement+= ", ";
 			idx = accessObjectMemberStatement.size();
 			accessObjectMemberStatement+= string(argument);
-			objectMemberAccessArguments.push_back(string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx));
+			evaluateMemberAccessArguments.push_back(string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx));
 		}
 		accessObjectMemberStatement+= ")";
 
 		// set up new results
-		methodName = objectMemberAccessMethodName;
-		arguments = objectMemberAccessArguments;
+		methodName = evaluateMemberAccessMethodName;
+		arguments = evaluateMemberAccessArguments;
 	}
+
+	//
 	if (VERBOSE == true) {
 		Console::print("MiniScript::parseScriptStatement(): " + getStatementInformation(statement) + ": method: '" + string(methodName) + "', arguments: ");
 		int variableIdx = 0;
@@ -445,6 +439,8 @@ bool MiniScript::parseScriptStatement(const string_view& executableStatement, st
 		}
 		Console::println();
 	}
+
+	// complain about bracket count
 	if (bracketCount != 0) {
 		Console::println(getStatementInformation(statement) + ": " + string(executableStatement) + "': unbalanced bracket count: " + to_string(Math::abs(bracketCount)) + " " + (bracketCount < 0?"too much closed":"still open"));
 		//
@@ -737,36 +733,10 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& methodName, 
 	if (VERBOSE == true) Console::println("MiniScript::createScriptStatementSyntaxTree(): " + getStatementInformation(statement) + ": " + string(methodName) + "(" + getArgumentsAsString(arguments) + ")");
 	// arguments
 	for (const auto& argument: arguments) {
-		// variable
-		//
-		auto accessObjectMember = false;
-		{
-
-			auto quote = '\0';
-			auto lc = '\0';
-			for (auto i = 0; i < argument.size(); i++) {
-				auto c = argument[i];
-				// handle quotes
-				if (quote != '\0') {
-					// unset quote if closed
-					// also we can ignore content of quote blocks
-					if (c == quote) {
-						quote = '\0';
-					}
-				} else
-				if (c == '"' || c == '\'') {
-					quote = c;
-				} else
-				if (lc == '-' && c == '>') {
-					accessObjectMember = true;
-					break;
-				}
-				//
-				lc = c;
-			}
-		}
-		//
-		if (accessObjectMember == true) {
+		// object member access
+		string_view accessObjectMemberObject;
+		string_view accessObjectMemberMethod;
+		if (getObjectMemberAccess(argument, accessObjectMemberObject, accessObjectMemberMethod, statement) == true) {
 			// method call
 			string_view subMethodName;
 			vector<string_view> subArguments;
@@ -781,6 +751,7 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& methodName, 
 				return false;
 			}
 		} else
+		// plain variable
 		if (StringTools::viewStartsWith(argument, "$") == true) {
 			//
 			ScriptVariable value;
@@ -1967,6 +1938,77 @@ const string MiniScript::doStatementPreProcessing(const string& processedStateme
 	}
 	//
 	return preprocessedStatement;
+}
+
+bool MiniScript::getObjectMemberAccess(const string_view& executableStatement, string_view& object, string_view& method, const ScriptStatement& statement) {
+	//
+	auto objectStartIdx = string::npos;
+	auto objectEndIdx = string::npos;
+	auto memberCallStartIdx = string::npos;
+	auto memberCallEndIdx = string::npos;
+	//
+	auto quote = '\0';
+	auto lc = '\0';
+	auto bracketCount = 0;
+	auto squareBracketCount = 0;
+	for (auto i = 0; i < executableStatement.size(); i++) {
+		auto c = executableStatement[i];
+		// handle quotes
+		if (quote != '\0') {
+			// unset quote if closed
+			// also we can ignore content of quote blocks
+			if (c == quote) {
+				quote = '\0';
+			}
+		} else
+		if (c == '"' || c == '\'') {
+			quote = c;
+		} else
+		if (c == '(') {
+			bracketCount++;
+		} else
+		if (c == ')') {
+			bracketCount--;
+		} else
+		if (c == '[') {
+			squareBracketCount++;
+		} else
+		if (c == ']') {
+			squareBracketCount--;
+		} else
+		if (lc == '-' && c == '>' &&
+			bracketCount == 0 &&
+			squareBracketCount == 0) {
+			//
+			objectStartIdx = 0;
+			objectEndIdx = i - 1;
+			memberCallStartIdx = i + 1;
+			memberCallEndIdx = executableStatement.size();
+			//
+			object = string_view(&executableStatement[objectStartIdx], objectEndIdx - objectStartIdx);
+			method = string_view(&executableStatement[memberCallStartIdx], memberCallEndIdx - memberCallStartIdx);
+			//
+			return true;
+		}
+		//
+		lc = c;
+	}
+
+	// complain about bracket count
+	if (bracketCount != 0) {
+		Console::println(getStatementInformation(statement) + ": " + string(executableStatement) + "': unbalanced bracket count: " + to_string(Math::abs(bracketCount)) + " " + (bracketCount < 0?"too much closed":"still open"));
+		//
+		parseErrors.push_back(string(executableStatement) + ": unbalanced bracket count: " + to_string(Math::abs(bracketCount)) + " " + (bracketCount < 0?"too much closed":"still open"));
+	}
+	// complain about square bracket count
+	if (squareBracketCount != 0) {
+		Console::println(getStatementInformation(statement) + ": " + string(executableStatement) + "': unbalanced square bracket count: " + to_string(Math::abs(bracketCount)) + " " + (bracketCount < 0?"too much closed":"still open"));
+		//
+		parseErrors.push_back(string(executableStatement) + ": unbalanced square bracket count: " + to_string(Math::abs(bracketCount)) + " " + (bracketCount < 0?"too much closed":"still open"));
+	}
+
+	//
+	return false;
 }
 
 bool MiniScript::call(int scriptIdx, span<ScriptVariable>& argumentValues, ScriptVariable& returnValue) {
