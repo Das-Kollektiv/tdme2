@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
 		Console::println();
 		Console::println();
 	}
-	// emit test
+	// function test
 	{
 		auto script = make_unique<MiniScriptFunctionsTest>();
 		script->parseScript("resources/tests/scripts", "functions-test.tscript");

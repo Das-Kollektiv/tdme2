@@ -2246,6 +2246,15 @@ private:
 	void executeScriptLine();
 
 	/**
+	 * Determine next statement from script code
+	 * @param scriptCode script code
+	 * @param i character index
+	 * @param lineIdx line index
+	 * @return next statement
+	 */
+	const string determineNextStatement(const string& scriptCode, int& i, int& lineIdx);
+
+	/**
 	 * Parse a script statement
 	 * @param executableStatement executable statement
 	 * @param methodName method name

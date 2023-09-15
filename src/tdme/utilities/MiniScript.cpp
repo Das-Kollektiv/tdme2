@@ -1052,14 +1052,6 @@ void MiniScript::emit(const string& condition) {
 		return;
 	}
 	//
-	/*
-	 TODO:
-	if (scriptState.scriptIdx == scriptIdxToStart) {
-		Console::println("MiniScript::emit(): '" + scriptFileName + "': script already running: " + condition);
-		return;
-	}
-	*/
-	//
 	getScriptState().running = true;
 	resetScriptExecutationState(scriptIdxToStart, STATEMACHINESTATE_NEXT_STATEMENT);
 }
@@ -1141,6 +1133,102 @@ void MiniScript::execute() {
 	executeStateMachine();
 }
 
+const string MiniScript::determineNextStatement(const string& scriptCode, int& i, int& lineIdx) {
+	string statementCode;
+	vector<string> statementCodeLines;
+	statementCodeLines.emplace_back();
+	auto quote = '\0';
+	auto expectBracket = false;
+	auto bracketCount = 0;
+	auto squareBracketCount = 0;
+	auto hash = false;
+	auto lc = '\0';
+	for (; i < scriptCode.size(); i++) {
+		auto c = scriptCode[i];
+		// handle quotes
+		if (quote != '\0') {
+			// unset quote if closed
+			// also we can ignore content of quote blocks
+			if (c == quote) {
+				quote = '\0';
+			}
+			// add char to script line
+			statementCodeLines[statementCodeLines.size() - 1] += c;
+		} else
+		if (c == '"' || c == '\'') {
+			quote = c;
+			// add char to script line
+			statementCodeLines[statementCodeLines.size() - 1] += c;
+		} else
+		// brackets
+		if (c == '(') {
+			bracketCount++;
+			expectBracket = false;
+			// add char to script line
+			statementCodeLines[statementCodeLines.size() - 1] += c;
+		} else
+		if (c == ')') {
+			bracketCount--;
+			// add char to script line
+			statementCodeLines[statementCodeLines.size() - 1] += c;
+		} else
+		// square brackets
+		if (c == '[') {
+			squareBracketCount++;
+			// add char to script line
+			statementCodeLines[statementCodeLines.size() - 1] += c;
+		} else
+		if (c == ']') {
+			squareBracketCount--;
+			// add char to script line
+			statementCodeLines[statementCodeLines.size() - 1] += c;
+		} else
+		// hash
+		if (c == '#') {
+			// hash
+			hash = true;
+			// add char to script line
+			statementCodeLines[statementCodeLines.size() - 1] += c;
+		} else
+		// new line
+		if (c == '\r') {
+			// ignore
+		} else
+		if (lc == '-' && c == '>') {
+			// we expect a bracket now
+			expectBracket = true;
+			// add char to script line
+			statementCodeLines[statementCodeLines.size() - 1] += c;
+		} else
+		if (((c == '\n' && ++lineIdx) || (hash == false && c == ';')) && (c == ';' || hash == true || (expectBracket == false && bracketCount == 0 && squareBracketCount == 0))) {
+			// break condition
+			bracketCount = 0;
+			squareBracketCount = 0;
+			hash = false;
+			// break here and process script line
+			break;
+		} else
+		if (c == '\n') {
+			// ignore \n but create a new script code line for this statement
+			statementCodeLines.emplace_back();
+		} else {
+			// add char to script line
+			statementCodeLines[statementCodeLines.size() - 1] += c;
+		}
+		//
+		lc = c;
+	}
+
+	//
+	for (const auto& line: statementCodeLines) statementCode+= StringTools::trim(line);
+
+	// add last line index
+	if (i == scriptCode.size() && scriptCode[scriptCode.size() - 1] != '\n') ++lineIdx;
+
+	//
+	return statementCode;
+}
+
 void MiniScript::parseScript(const string& pathName, const string& fileName) {
 	//
 	scriptValid = true;
@@ -1162,9 +1250,9 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 	registerVariables();
 
 	//
-	vector<string> scriptLines;
+	string scriptCode;
 	try {
-		FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, scriptLines);
+		scriptCode = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 	} catch (FileSystemException& fse)	{
 		Console::println("MiniScript::loadScript(): " + pathName + "/" + fileName + ": an error occurred: " + fse.what());
 		//
@@ -1177,9 +1265,7 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 
 	//
 	{
-		string scriptAsString;
-		for (const auto& scriptLine: scriptLines) scriptAsString+= scriptLine + "\n";
-		auto scriptHash = SHA256::encode(scriptAsString);
+		auto scriptHash = SHA256::encode(scriptCode);
 		if (native == true) {
 			if (scriptHash == nativeHash) {
 				scripts = nativeScripts;
@@ -1201,7 +1287,8 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 
 	//
 	auto haveScript = false;
-	auto line = LINEIDX_FIRST;
+	auto lineIdx = LINEIDX_FIRST;
+	auto currentLineIdx = 0;
 	auto statementIdx = STATEMENTIDX_FIRST;
 	enum GotoStatementType { GOTOSTATEMENTTYPE_FOR, GOTOSTATEMENTTYPE_IF, GOTOSTATEMENTTYPE_ELSE, GOTOSTATEMENTTYPE_ELSEIF };
 	struct GotoStatementStruct {
@@ -1209,24 +1296,125 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 		int statementIdx;
 	};
 	stack<GotoStatementStruct> gotoStatementStack;
-	for (auto scriptLine: scriptLines) {
-		scriptLine = StringTools::trim(scriptLine);
-		if (StringTools::startsWith(scriptLine, "#") == true || scriptLine.empty() == true) {
-			line++;
+	for (auto i = 0; i < scriptCode.size(); i++) {
+		//
+		currentLineIdx = lineIdx;
+
+		// try to get next statement code
+		auto statementCode = determineNextStatement(scriptCode, i, lineIdx);
+
+		// add last line index
+		if (i == scriptCode.size() && scriptCode[scriptCode.size() - 1] != '\n') ++lineIdx;
+		//
+		if (StringTools::startsWith(statementCode, "#") == true || statementCode.empty() == true) {
 			continue;
 		}
-		// script type
-		auto callable = false;
-		auto scriptType = Script::SCRIPTTYPE_NONE;
-		if (StringTools::startsWith(scriptLine, "function:") == true) scriptType = Script::SCRIPTTYPE_FUNCTION; else
-		if (StringTools::startsWith(scriptLine, "on:") == true) scriptType = Script::SCRIPTTYPE_ON; else
-		if (StringTools::startsWith(scriptLine, "on-enabled:") == true) scriptType = Script::SCRIPTTYPE_ONENABLED; else
-		if (StringTools::startsWith(scriptLine, "callable:") == true) {
-			callable = true;
-			scriptType = Script::SCRIPTTYPE_FUNCTION;
-		}
+
 		// no script yet
 		if (haveScript == false) {
+			// check if we have to read additional info from code
+			if (statementCode == "function:" ||
+				statementCode == "on:" ||
+				statementCode == "on-enabled:" ||
+				statementCode == "callable:") {
+				//
+				i++;
+				// we need the condition or name
+				for (; i < scriptCode.size(); i++) {
+					auto nextStatementCode = determineNextStatement(scriptCode, i, lineIdx);
+					if (nextStatementCode.empty() == false) {
+						statementCode+= " " + nextStatementCode;
+						break;
+					}
+				}
+			}
+			// check if we need to parse ":= name"
+			//	applies to on: and on-enabled only
+			if (StringTools::startsWith(statementCode, "on:") == true ||
+				StringTools::startsWith(statementCode, "on-enabled:") == true) {
+				//
+				if (statementCode.rfind(":=") == string::npos) {
+					//
+					auto gotName = false;
+					//
+					auto _i = i;
+					auto _lineIdx = lineIdx;
+					auto _statementCode = statementCode;
+					//
+					auto endStack = 0;
+					//
+					i++;
+					//
+					for (; i < scriptCode.size(); i++) {
+						auto nextStatementCode = determineNextStatement(scriptCode, i, lineIdx);
+						if (nextStatementCode.empty() == false) {
+							//
+							if (StringTools::startsWith(nextStatementCode, "function:") == true ||
+								StringTools::startsWith(nextStatementCode, "on:") == true ||
+								StringTools::startsWith(nextStatementCode, "on-enabled:") == true ||
+								StringTools::startsWith(nextStatementCode, "callable:") == true) break;
+							//
+							statementCode+= " " + nextStatementCode;
+							// break here if we got our := or reached next declaration
+							auto lc = '\0';
+							auto quote = '\0';
+							for (auto j = 0; j < statementCode.size(); j++) {
+								auto c = statementCode[j];
+								// handle quotes
+								if (quote != '\0') {
+									// unset quote if closed
+									// also we can ignore content of quote blocks
+									if (c == quote) {
+										quote = '\0';
+									}
+								} else
+								if (c == '"' || c == '\'') {
+									quote = c;
+								} else
+								if (lc == ':' && c == '=') {
+									gotName = true;
+									//
+									break;
+								}
+								//
+								lc = c;
+							}
+							//
+							if (gotName == true) break;
+						}
+					}
+					// did we got our ":= name", nope?
+					if (gotName == false) {
+						// reset
+						i = _i;
+						lineIdx = _lineIdx;
+						statementCode = _statementCode;
+					}
+				}
+				// we still need the name
+				if (StringTools::endsWith(statementCode, ":=") == true) {
+					//
+					i++;
+					//
+					for (; i < scriptCode.size(); i++) {
+						auto nextStatementCode = determineNextStatement(scriptCode, i, lineIdx);
+						if (nextStatementCode.empty() == false) {
+							statementCode+= " " + nextStatementCode;
+							break;
+						}
+					}
+				}
+			}
+			// script type
+			auto callable = false;
+			auto scriptType = Script::SCRIPTTYPE_NONE;
+			if (StringTools::startsWith(statementCode, "function:") == true) scriptType = Script::SCRIPTTYPE_FUNCTION; else
+			if (StringTools::startsWith(statementCode, "on:") == true) scriptType = Script::SCRIPTTYPE_ON; else
+			if (StringTools::startsWith(statementCode, "on-enabled:") == true) scriptType = Script::SCRIPTTYPE_ONENABLED; else
+			if (StringTools::startsWith(statementCode, "callable:") == true) {
+				callable = true;
+				scriptType = Script::SCRIPTTYPE_FUNCTION;
+			}
 			// no, but did we got a new script?
 			if (scriptType != Script::SCRIPTTYPE_NONE) {
 				// yes
@@ -1237,13 +1425,13 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 				string statement;
 				if (scriptType == Script::SCRIPTTYPE_FUNCTION) {
 					statement = callable == true?
-						StringTools::trim(StringTools::substring(scriptLine, string("callable:").size())):
-						StringTools::trim(StringTools::substring(scriptLine, string("function:").size()));
+						StringTools::trim(StringTools::substring(statementCode, string("callable:").size())):
+						StringTools::trim(StringTools::substring(statementCode, string("function:").size()));
 				} else
 				if (scriptType == Script::SCRIPTTYPE_ON)
-					statement = StringTools::trim(StringTools::substring(scriptLine, string("on:").size())); else
+					statement = StringTools::trim(StringTools::substring(statementCode, string("on:").size())); else
 				if (scriptType == Script::SCRIPTTYPE_ONENABLED)
-					statement = StringTools::trim(StringTools::substring(scriptLine, string("on-enabled:").size()));
+					statement = StringTools::trim(StringTools::substring(statementCode, string("on-enabled:").size()));
 				// and name
 				string name;
 				auto scriptLineNameSeparatorIdx = scriptType == Script::SCRIPTTYPE_FUNCTION?statement.rfind("function:"):statement.rfind(":=");
@@ -1256,16 +1444,16 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 					auto rightBracketIdx = statement.find(')');
 					if (leftBracketIdx != string::npos || leftBracketIdx != string::npos) {
 						if (leftBracketIdx == string::npos) {
-							Console::println("MiniScript::MiniScript(): '" + scriptFileName + "': @" + to_string(line) + ": 'function:': unbalanced bracket count");
+							Console::println("MiniScript::MiniScript(): '" + scriptFileName + "': @" + to_string(currentLineIdx) + ": 'function:': unbalanced bracket count");
 							//
-							parseErrors.push_back(to_string(line) + ": 'function:': unbalanced bracket count");
+							parseErrors.push_back(to_string(currentLineIdx) + ": 'function:': unbalanced bracket count");
 							//
 							scriptValid = false;
 						} else
 						if (rightBracketIdx == string::npos) {
-							Console::println("MiniScript::MiniScript(): '" + scriptFileName + "': @" + to_string(line) + ": 'function:': unbalanced bracket count");
+							Console::println("MiniScript::MiniScript(): '" + scriptFileName + "': @" + to_string(currentLineIdx) + ": 'function:': unbalanced bracket count");
 							//
-							parseErrors.push_back(to_string(line) + ": 'function:': unbalanced bracket count");
+							parseErrors.push_back(to_string(currentLineIdx) + ": 'function:': unbalanced bracket count");
 							//
 							scriptValid = false;
 						} else {
@@ -1285,9 +1473,9 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 										assignBack
 									);
 								} else {
-									Console::println("MiniScript::MiniScript(): '" + scriptFileName + "': @" + to_string(line) + ": 'function:': invalid argument name: '" + argumentNameTrimmed + "'");
+									Console::println("MiniScript::MiniScript(): '" + scriptFileName + "': @" + to_string(currentLineIdx) + ": 'function:': invalid argument name: '" + argumentNameTrimmed + "'");
 									//
-									parseErrors.push_back(to_string(line) + ": 'function:': invalid argument name: '" + argumentNameTrimmed + "'");
+									parseErrors.push_back(to_string(currentLineIdx) + ": 'function:': invalid argument name: '" + argumentNameTrimmed + "'");
 									//
 									scriptValid = false;
 								}
@@ -1298,7 +1486,7 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 				}
 				auto trimmedStatement = StringTools::trim(statement);
 				ScriptStatement scriptStatement(
-					line,
+					currentLineIdx,
 					STATEMENTIDX_FIRST,
 					"internal.script.evaluate(" + StringTools::replace(StringTools::replace(trimmedStatement, "\\", "\\\\"), "\"", "\\\"") + ")",
 					"internal.script.evaluate(" + StringTools::replace(StringTools::replace(trimmedStatement, "\\", "\\\\"), "\"", "\\\"") + ")",
@@ -1316,10 +1504,10 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 				// push to scripts
 				scripts.emplace_back(
 					scriptType,
-					line,
+					currentLineIdx,
 					conditionOrName,
 					conditionOrNameExecutable,
-					ScriptStatement(line, statementIdx, conditionOrName, conditionOrNameExecutable, STATEMENTIDX_NONE),
+					ScriptStatement(currentLineIdx, statementIdx, conditionOrName, conditionOrNameExecutable, STATEMENTIDX_NONE),
 					ScriptSyntaxTreeNode(),
 					name,
 					emitCondition,
@@ -1329,56 +1517,60 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 					arguments
 				);
 			} else {
-				Console::println("MiniScript::MiniScript(): '" + scriptFileName + "': @" + to_string(line) + ": expecting 'on:', 'on-enabled:', 'on-function:' script condition");
+				Console::println("MiniScript::MiniScript(): '" + scriptFileName + "': @" + to_string(currentLineIdx) + ": expecting 'on:', 'on-enabled:', 'on-function:' script condition");
 				//
-				parseErrors.push_back(to_string(line) + ": expecting 'on:', 'on-enabled:', 'on-function:' script condition");
+				parseErrors.push_back(to_string(currentLineIdx) + ": expecting 'on:', 'on-enabled:', 'on-function:' script condition");
 				//
 				scriptValid = false;
 			}
 		} else {
-			if (StringTools::startsWith(scriptLine, "on:") == true) {
-				Console::println("MiniScript::loadScript(): '" + scriptFileName + "': @" + to_string(line) + ": unbalanced forXXX/if/elseif/else/end");
+			if (StringTools::startsWith(statementCode, "function:") == true ||
+				StringTools::startsWith(statementCode, "on:") == true ||
+				StringTools::startsWith(statementCode, "on-enabled:") == true ||
+				StringTools::startsWith(statementCode, "callable:") == true
+			) {
+				Console::println("MiniScript::loadScript(): '" + scriptFileName + "': @" + to_string(currentLineIdx) + ": unbalanced forXXX/if/elseif/else/end");
 				//
-				parseErrors.push_back(to_string(line) + ": unbalanced forXXX/if/elseif/else/end");
+				parseErrors.push_back(to_string(currentLineIdx) + ": unbalanced forXXX/if/elseif/else/end");
 				//
 				scriptValid = false;
 			} else
-			if (scriptLine == "end") {
+			if (statementCode == "end") {
 				if (gotoStatementStack.empty() == false) {
 					auto gotoStatementStackElement = gotoStatementStack.top();
 					gotoStatementStack.pop();
 					switch(gotoStatementStackElement.type) {
 						case GOTOSTATEMENTTYPE_FOR:
 							{
-								scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, scriptLine, gotoStatementStackElement.statementIdx);
+								scripts[scripts.size() - 1].statements.emplace_back(currentLineIdx, statementIdx, statementCode, statementCode, gotoStatementStackElement.statementIdx);
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
 							}
 							break;
 						case GOTOSTATEMENTTYPE_IF:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, scriptLine, STATEMENTIDX_NONE);
+								scripts[scripts.size() - 1].statements.emplace_back(currentLineIdx, statementIdx, statementCode, statementCode, STATEMENTIDX_NONE);
 							}
 							break;
 						case GOTOSTATEMENTTYPE_ELSE:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, scriptLine, STATEMENTIDX_NONE);
+								scripts[scripts.size() - 1].statements.emplace_back(currentLineIdx, statementIdx, statementCode, statementCode, STATEMENTIDX_NONE);
 							}
 							break;
 						case GOTOSTATEMENTTYPE_ELSEIF:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, scriptLine, STATEMENTIDX_NONE);
+								scripts[scripts.size() - 1].statements.emplace_back(currentLineIdx, statementIdx, statementCode, statementCode, STATEMENTIDX_NONE);
 							}
 							break;
 					}
 				} else{
-					scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, scriptLine, STATEMENTIDX_NONE);
+					scripts[scripts.size() - 1].statements.emplace_back(currentLineIdx, statementIdx, statementCode, statementCode, STATEMENTIDX_NONE);
 					haveScript = false;
 				}
 			} else
-			if (scriptLine == "else") {
+			if (statementCode == "else") {
 				if (gotoStatementStack.empty() == false) {
 					auto gotoStatementStackElement = gotoStatementStack.top();
 					gotoStatementStack.pop();
@@ -1386,19 +1578,19 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 						case GOTOSTATEMENTTYPE_IF:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, scriptLine, STATEMENTIDX_NONE);
+								scripts[scripts.size() - 1].statements.emplace_back(currentLineIdx, statementIdx, statementCode, statementCode, STATEMENTIDX_NONE);
 							}
 							break;
 						case GOTOSTATEMENTTYPE_ELSEIF:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, scriptLine, STATEMENTIDX_NONE);
+								scripts[scripts.size() - 1].statements.emplace_back(currentLineIdx, statementIdx, statementCode, statementCode, STATEMENTIDX_NONE);
 							}
 							break;
 						default:
-							Console::println("MiniScript::MiniScript(): '" + scriptFileName + ": @" + to_string(line) + ": else without if/elseif");
+							Console::println("MiniScript::MiniScript(): '" + scriptFileName + ": @" + to_string(currentLineIdx) + ": else without if/elseif");
 							//
-							parseErrors.push_back(to_string(line) + ": else without if/elseif");
+							parseErrors.push_back(to_string(currentLineIdx) + ": else without if/elseif");
 							//
 							scriptValid = false;
 							break;
@@ -1410,22 +1602,22 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 						}
 					);
 				} else {
-					Console::println("MiniScript::MiniScript(): '" + scriptFileName + ": @" + to_string(line) + ": else without if");
+					Console::println("MiniScript::MiniScript(): '" + scriptFileName + ": @" + to_string(currentLineIdx) + ": else without if");
 					//
-					parseErrors.push_back(to_string(line) + ": else without if");
+					parseErrors.push_back(to_string(currentLineIdx) + ": else without if");
 					//
 					scriptValid = false;
 				}
 			} else
-			if (StringTools::regexMatch(scriptLine, "^elseif[\\s]*\\(.*\\)$") == true) {
+			if (StringTools::regexMatch(statementCode, "^elseif[\\s]*\\(.*\\)$") == true) {
 				ScriptStatement scriptStatement(
-					line,
+					currentLineIdx,
 					STATEMENTIDX_FIRST,
-					StringTools::replace(StringTools::replace(scriptLine, "\\", "\\\\"), "\"", "\\\""),
-					StringTools::replace(StringTools::replace(scriptLine, "\\", "\\\\"), "\"", "\\\""),
+					StringTools::replace(StringTools::replace(statementCode, "\\", "\\\\"), "\"", "\\\""),
+					StringTools::replace(StringTools::replace(statementCode, "\\", "\\\\"), "\"", "\\\""),
 					STATEMENTIDX_NONE
 				);
-				auto executableStatement = doStatementPreProcessing(scriptLine, scriptStatement);
+				auto executableStatement = doStatementPreProcessing(statementCode, scriptStatement);
 				if (gotoStatementStack.empty() == false) {
 					auto gotoStatementStackElement = gotoStatementStack.top();
 					gotoStatementStack.pop();
@@ -1433,17 +1625,17 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 						case GOTOSTATEMENTTYPE_IF:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, executableStatement, STATEMENTIDX_NONE);
+								scripts[scripts.size() - 1].statements.emplace_back(currentLineIdx, statementIdx, statementCode, executableStatement, STATEMENTIDX_NONE);
 							}
 							break;
 						case GOTOSTATEMENTTYPE_ELSEIF:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, executableStatement, STATEMENTIDX_NONE);
+								scripts[scripts.size() - 1].statements.emplace_back(currentLineIdx, statementIdx, statementCode, executableStatement, STATEMENTIDX_NONE);
 							}
 							break;
 						default:
-							Console::println("MiniScript::MiniScript(): '" + scriptFileName + ": @" + to_string(line) + ": elseif without if");
+							Console::println("MiniScript::MiniScript(): '" + scriptFileName + ": @" + to_string(currentLineIdx) + ": elseif without if");
 							scriptValid = false;
 							break;
 					}
@@ -1454,21 +1646,21 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 						}
 					);
 				} else {
-					Console::println("MiniScript::MiniScript(): '" + scriptFileName + ": @" + to_string(line) + ": elseif without if");
+					Console::println("MiniScript::MiniScript(): '" + scriptFileName + ": @" + to_string(currentLineIdx) + ": elseif without if");
 					//
-					parseErrors.push_back(to_string(line) + ": elseif without if");
+					parseErrors.push_back(to_string(currentLineIdx) + ": elseif without if");
 					//
 					scriptValid = false;
 				}
 			} else {
 				ScriptStatement scriptStatement(
-					line,
+					currentLineIdx,
 					STATEMENTIDX_FIRST,
-					StringTools::replace(StringTools::replace(scriptLine, "\\", "\\\\"), "\"", "\\\""),
-					StringTools::replace(StringTools::replace(scriptLine, "\\", "\\\\"), "\"", "\\\""),
+					StringTools::replace(StringTools::replace(statementCode, "\\", "\\\\"), "\"", "\\\""),
+					StringTools::replace(StringTools::replace(statementCode, "\\", "\\\\"), "\"", "\\\""),
 					STATEMENTIDX_NONE
 				);
-				auto executableStatement = doStatementPreProcessing(scriptLine, scriptStatement);
+				auto executableStatement = doStatementPreProcessing(statementCode, scriptStatement);
 				if (StringTools::regexMatch(executableStatement, "^forTime[\\s]*\\(.*\\)$") == true ||
 					StringTools::regexMatch(executableStatement, "^forCondition[\\s]*\\(.*\\)$") == true) {
 					gotoStatementStack.push(
@@ -1486,11 +1678,10 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 						}
 					);
 				}
-				scripts[scripts.size() - 1].statements.emplace_back(line, statementIdx, scriptLine, executableStatement, STATEMENTIDX_NONE);
+				scripts[scripts.size() - 1].statements.emplace_back(currentLineIdx, statementIdx, statementCode, executableStatement, STATEMENTIDX_NONE);
 			}
 			statementIdx++;
 		}
-		line++;
 	}
 
 	// check for unbalanced forXXX/if/elseif/else/end
@@ -1990,7 +2181,7 @@ bool MiniScript::getObjectMemberAccess(const string_view& executableStatement, s
 			method = string_view(&executableStatement[memberCallStartIdx], memberCallEndIdx - memberCallStartIdx);
 			//
 			objectMemberAccess = true;
-			// Dont break here, we can have multiple member access operators here, but we want the last one in this step
+			// dont break here, we can have multiple member access operators here, but we want the last one in this step
 		}
 		//
 		lc = c;
