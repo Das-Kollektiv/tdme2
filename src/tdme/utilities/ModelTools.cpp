@@ -1184,6 +1184,7 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 	// create optimized material
 	auto optimizedMaterial = make_unique<Material>("tdme.material.optimized");
 	{
+		diffuseAtlas.getAtlasTexture()->acquireReference();
 		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTexture(diffuseAtlas.getAtlasTexture());
 		optimizedMaterial->getSpecularMaterialProperties()->setTextureAtlasSize(diffuseAtlas.getAtlasTexture()->getAtlasSize());
 		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTextureTransparency(false);
