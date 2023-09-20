@@ -290,16 +290,13 @@ void Installer::performScreenAction() {
 				dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(0.0f, 2));
 				class CheckForUpdateThread: public Thread {
 					public:
-						CheckForUpdateThread(Installer* installer): Thread("checkforupdate-thread"), installer(installer) {
+						CheckForUpdateThread(Installer* installer): Thread("checkforupdate-thread", true), installer(installer) {
 						}
 
 					private:
 						Installer* installer;
 
 						void run() {
-							//
-							auto thisPtr = unique_ptr<CheckForUpdateThread>(this);
-
 							//
 							Console::println("CheckForUpdateThread::run(): init");
 
@@ -490,12 +487,9 @@ void Installer::performScreenAction() {
 				engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 				class InstallThread: public Thread {
 					public:
-						InstallThread(Installer* installer): Thread("install-thread"), installer(installer) {
+						InstallThread(Installer* installer): Thread("install-thread", true), installer(installer) {
 						}
 						void run() {
-							//
-							auto thisPtr = unique_ptr<InstallThread>(this);
-
 							//
 							Console::println("InstallThread::run(): init");
 
@@ -897,12 +891,9 @@ void Installer::performScreenAction() {
 			engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 			class UninstallThread: public Thread {
 				public:
-					UninstallThread(Installer* installer): Thread("install-thread"), installer(installer) {
+					UninstallThread(Installer* installer): Thread("install-thread", true), installer(installer) {
 					}
 					void run() {
-						//
-						auto thisPtr = unique_ptr<UninstallThread>(this);
-
 						//
 						Console::println("UninstallThread::run(): init");
 
