@@ -109,9 +109,12 @@ void KernelEventMechanism::removeSocket(const NetworkSocket &socket) {
 }
 
 void KernelEventMechanism::initKernelEventMechanism(const unsigned int maxSockets)  {
+	initialized = true;
+
 }
 
 void KernelEventMechanism::shutdownKernelEventMechanism() {
+	initialized = false;
 }
 
 int KernelEventMechanism::doKernelEventMechanism() {
