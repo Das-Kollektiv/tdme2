@@ -1,5 +1,7 @@
 #version 330 core
 
+precision lowp float;
+
 // passed from vertex shader
 in vec2 vsFragTextureUV;
 

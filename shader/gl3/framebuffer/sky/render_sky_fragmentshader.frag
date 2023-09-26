@@ -1,5 +1,7 @@
 #version 330 core
 
+precision lowp float;
+
 // passed from vertex shader
 in vec2 vsFragTextureUV;
 
@@ -125,7 +127,7 @@ void main(void){
 	vec4 cld = texture(cloud_env_texture, 1.0 - UV); // The axis is inverted on the godot scene for unknown reasons,so gor godrays inverted them!
 	cld.rgb *=attenuation; // lighten the clouds depending on the height of the Sun, calculated in the script
 	cld*=clouds_tint;
-	lowp vec3 sky;
+	vec3 sky;
 	sky = getAtmosphericScattering(rd,SUN_POS);
 	sky += draw_night_sky(max(max(sky.b,sky.r),sky.g),rd,cld.a,TIME);
 	sky = mix(sky, cld.rgb/(0.0001+cld.a), cld.a);

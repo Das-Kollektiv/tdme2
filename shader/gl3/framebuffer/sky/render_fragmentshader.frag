@@ -1,5 +1,7 @@
 #version 330 core
 
+precision lowp float;
+
 // passed from vertex shader
 in vec2 vsFragTextureUV;
 
@@ -32,6 +34,24 @@ void main(void){
 	// Map the polar angle to the [0, 1] range
 	float v = polar / PI;
 
+
+	// determine visibility
+	vec4 color = vec4(0.0);
+	float lookUps = 4;
+	vec2 lookUpUV = vec2(u, v);
+	for (int y = 0; y < lookUps; y++)
+	for (int x = 0; x < lookUps; x++) {
+		color+= texture(
+			sampler,
+			lookUpUV +
+				vec2(
+					(-lookUps / 2.0 + 0.5 + x) * (1.0f / 2048),
+					(-lookUps / 2.0 + 0.5 + y) * (1.0f / 2048)
+				)
+		);
+	}
+	color/= (lookUps * lookUps);
+
 	// Sample the spherical panorama texture
-	outColor = texture(sampler, vec2(u, v));
+	outColor = color * 0.4 + texture(sampler, lookUpUV) * 0.6;
 }

@@ -71,6 +71,8 @@ private:
 	Texture* skyMoonTexture { nullptr };
 	int32_t skyMoonTextureId { 0 };
 
+	int skyFrameIdx { 0 };
+
 	int32_t renderVertexShaderId { -1 };
 	int32_t renderFragmentShaderId { -1 };
 	int32_t renderProgramId { -1 };
@@ -142,7 +144,8 @@ public:
 	 * @param engine engine
 	 */
 	inline void prepare(Engine* engine) {
-		prepareClouds(engine);
+		if (skyFrameIdx == 0) prepareClouds(engine);
+		skyFrameIdx = (skyFrameIdx + 1) % 2;
 		prepareSky(engine);
 	}
 

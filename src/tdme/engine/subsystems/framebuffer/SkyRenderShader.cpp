@@ -99,7 +99,7 @@ void SkyRenderShader::initialize()
 	if (cloudsUniformNoise == -1) return;
 
 	//
-	cloudsFrameBuffer = make_unique<FrameBuffer>(4096, 4096, FrameBuffer::FRAMEBUFFER_COLORBUFFER);
+	cloudsFrameBuffer = make_unique<FrameBuffer>(2048, 2048, FrameBuffer::FRAMEBUFFER_COLORBUFFER);
 	cloudsFrameBuffer->initialize();
 
 	//
@@ -167,7 +167,7 @@ void SkyRenderShader::initialize()
 	if (skyUniformCloudsTint == -1) return;
 
 	//
-	skyFrameBuffer = make_unique<FrameBuffer>(4096, 4096, FrameBuffer::FRAMEBUFFER_COLORBUFFER);
+	skyFrameBuffer = make_unique<FrameBuffer>(2048, 2048, FrameBuffer::FRAMEBUFFER_COLORBUFFER);
 	skyFrameBuffer->initialize();
 
 	//
@@ -253,13 +253,13 @@ void SkyRenderShader::prepareClouds(Engine* engine) {
 	renderer->setTextureUnit(contextIdx, 0);
 	renderer->bindTexture(contextIdx, cloudNoiseTextureId);
 	renderer->setProgramUniformInteger(contextIdx, cloudsUniformNoise, 0);
-	renderer->setProgramUniformFloatVec3(contextIdx, cloudUniformSunPosition, { 0.0f, -1.0f, 0.0});
+	renderer->setProgramUniformFloatVec3(contextIdx, cloudUniformSunPosition, { 0.0f, 1.0f, 0.0});
 	renderer->setProgramUniformFloatVec3(contextIdx, cloudsUniformWind, { 0.01f, 0.0f, 0.0f});
-	renderer->setProgramUniformFloat(contextIdx, cloudsUniformSize, 0.5f);
-	renderer->setProgramUniformFloat(contextIdx, cloudsUniformSoftness, 5.0f);
-	renderer->setProgramUniformFloat(contextIdx, cloudsUniformCoverage, 0.5f);
-	renderer->setProgramUniformFloat(contextIdx, cloudsUniformHeight, 0.0f);
-	renderer->setProgramUniformFloat(contextIdx, cloudsUniformThickness, 0.5f);
+	renderer->setProgramUniformFloat(contextIdx, cloudsUniformSize, 1.0f);
+	renderer->setProgramUniformFloat(contextIdx, cloudsUniformSoftness, 2.0f);
+	renderer->setProgramUniformFloat(contextIdx, cloudsUniformCoverage, 0.60f);
+	renderer->setProgramUniformFloat(contextIdx, cloudsUniformHeight, 0.25f);
+	renderer->setProgramUniformFloat(contextIdx, cloudsUniformThickness, 20.0f);
 	renderer->setProgramUniformFloat(contextIdx, cloudsUniformAbsorption, 1.030725f);
 	renderer->setProgramUniformInteger(contextIdx, cloudsUniformSteps, 25);
 	renderer->setProgramUniformFloat(contextIdx, cloudsUniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
@@ -323,14 +323,14 @@ void SkyRenderShader::prepareSky(Engine* engine) {
 	renderer->setProgramUniformFloat(contextIdx, skyUniformSunRadius, 0.04f);
 	renderer->setProgramUniformFloat(contextIdx, skyUniformAttenuation, 1.0f);
 	renderer->setProgramUniformFloat(contextIdx, skyUniformTone, 3.5f);
-	renderer->setProgramUniformFloat(contextIdx, skyUniformDensity, 0.5f);
+	renderer->setProgramUniformFloat(contextIdx, skyUniformDensity, 0.125f);
 	renderer->setProgramUniformFloat(contextIdx, skyUniformRayleigCoeff, 1.0f);
 	renderer->setProgramUniformFloat(contextIdx, skyUniformMieCoeff, 0.5f);
 	renderer->setProgramUniformFloat(contextIdx, skyUniformMultiScatterPhase, 0.0f);
 	renderer->setProgramUniformFloat(contextIdx, skyUniformAnisotropicIntensity, 1.5f);
 	renderer->setProgramUniformFloatVec4(contextIdx, skyUniformColorSky, { 0.156863f, 0.392157f, 1.0f, 1.0f });
 	renderer->setProgramUniformFloatVec4(contextIdx, skyUniformMoonTint, { 1.0f, 0.7f, 0.35f, 1.0f });
-	renderer->setProgramUniformFloatVec4(contextIdx, skyUniformCloudsTint, { 0.8f, 0.8f, 0.8f, 0.50f });
+	renderer->setProgramUniformFloatVec4(contextIdx, skyUniformCloudsTint, { 0.5f, 0.5f, 0.8f, 1.00f });
 
 	//
 	renderer->disableDepthBufferWriting();
