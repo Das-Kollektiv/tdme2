@@ -99,11 +99,76 @@ void SkyRenderShader::initialize()
 	if (cloudsUniformNoise == -1) return;
 
 	//
-	cloudsFrameBuffer = make_unique<FrameBuffer>(2048, 2048, FrameBuffer::FRAMEBUFFER_COLORBUFFER);
+	cloudsFrameBuffer = make_unique<FrameBuffer>(4096, 4096, FrameBuffer::FRAMEBUFFER_COLORBUFFER);
 	cloudsFrameBuffer->initialize();
 
 	//
-	initialized = true;
+	skyVertexShaderId = renderer->loadShader(
+		renderer->SHADER_VERTEX_SHADER,
+		"shader/" + shaderVersion + "/framebuffer",
+		"render_vertexshader.vert"
+	);
+	if (cloudsVertexShaderId == 0) return;
+
+	skyFragmentShaderId = renderer->loadShader(
+		renderer->SHADER_FRAGMENT_SHADER,
+		"shader/" + shaderVersion + "/framebuffer/sky",
+		"render_sky_fragmentshader.frag"
+	);
+	if (skyFragmentShaderId == 0) return;
+
+	skyProgramId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+	renderer->attachShaderToProgram(skyProgramId, skyVertexShaderId);
+	renderer->attachShaderToProgram(skyProgramId, skyFragmentShaderId);
+	if (renderer->isUsingProgramAttributeLocation() == true) {
+		renderer->setProgramAttributeLocation(skyProgramId, 0, "inVertex");
+		renderer->setProgramAttributeLocation(skyProgramId, 2, "inTextureUV");
+	}
+	if (renderer->linkProgram(skyProgramId) == false) return;
+
+	//
+	skyUniformTime = renderer->getProgramUniformLocation(skyProgramId, "TIME");
+	if (skyUniformTime == -1) return;
+	skyUniformMoon = renderer->getProgramUniformLocation(skyProgramId, "MOON");
+	if (skyUniformMoon == -1) return;
+	skyUniformCloudEnvironment = renderer->getProgramUniformLocation(skyProgramId, "cloud_env_texture");
+	if (skyUniformCloudEnvironment == -1) return;
+	skyUniformSunPosition = renderer->getProgramUniformLocation(skyProgramId, "SUN_POS");
+	if (skyUniformSunPosition == -1) return;
+	skyUniformMoonPosition = renderer->getProgramUniformLocation(skyProgramId, "MOON_POS");
+	if (skyUniformMoonPosition == -1) return;
+	skyUniformMoonTexturePosition = renderer->getProgramUniformLocation(skyProgramId, "MOON_TEX_POS");
+	if (skyUniformMoonTexturePosition == -1) return;
+	skyUniformMoonPhase = renderer->getProgramUniformLocation(skyProgramId, "MOON_PHASE");
+	if (skyUniformMoonPhase == -1) return;
+	skyUniformMoonRadius = renderer->getProgramUniformLocation(skyProgramId, "moon_radius");
+	if (skyUniformMoonRadius == -1) return;
+	skyUniformSunRadius = renderer->getProgramUniformLocation(skyProgramId, "sun_radius");
+	if (skyUniformSunRadius == -1) return;
+	skyUniformAttenuation = renderer->getProgramUniformLocation(skyProgramId, "attenuation");
+	if (skyUniformAttenuation == -1) return;
+	skyUniformTone = renderer->getProgramUniformLocation(skyProgramId, "sky_tone");
+	if (skyUniformTone == -1) return;
+	skyUniformDensity = renderer->getProgramUniformLocation(skyProgramId, "sky_density");
+	if (skyUniformDensity == -1) return;
+	skyUniformRayleigCoeff = renderer->getProgramUniformLocation(skyProgramId, "sky_rayleig_coeff");
+	if (skyUniformRayleigCoeff == -1) return;
+	skyUniformMieCoeff = renderer->getProgramUniformLocation(skyProgramId, "sky_mie_coeff");
+	if (skyUniformMieCoeff == -1) return;
+	skyUniformMultiScatterPhase = renderer->getProgramUniformLocation(skyProgramId, "multiScatterPhase");
+	if (skyUniformMultiScatterPhase == -1) return;
+	skyUniformAnisotropicIntensity = renderer->getProgramUniformLocation(skyProgramId, "anisotropicIntensity");
+	if (skyUniformAnisotropicIntensity == -1) return;
+	skyUniformColorSky = renderer->getProgramUniformLocation(skyProgramId, "color_sky");
+	if (skyUniformColorSky == -1) return;
+	skyUniformMoonTint = renderer->getProgramUniformLocation(skyProgramId, "moon_tint");
+	if (skyUniformMoonTint == -1) return;
+	skyUniformCloudsTint = renderer->getProgramUniformLocation(skyProgramId, "clouds_tint");
+	if (skyUniformCloudsTint == -1) return;
+
+	//
+	skyFrameBuffer = make_unique<FrameBuffer>(4096, 4096, FrameBuffer::FRAMEBUFFER_COLORBUFFER);
+	skyFrameBuffer->initialize();
 
 	//
 	renderVertexShaderId = renderer->loadShader(
@@ -116,7 +181,7 @@ void SkyRenderShader::initialize()
 	renderFragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/framebuffer/sky",
-		"render_sky_fragmentshader.frag"
+		"render_fragmentshader.frag"
 	);
 	if (renderFragmentShaderId == 0) return;
 
@@ -141,28 +206,39 @@ void SkyRenderShader::initialize()
 
 	//
 	loadTextures(".");
+
+	//
+	initialized = true;
 }
 
 void SkyRenderShader::dispose() {
 	unloadTextures();
 	cloudsFrameBuffer->dispose();
+	skyFrameBuffer->dispose();
 }
 
 void SkyRenderShader::unloadTextures() {
 	if (cloudsNoiseTexture != nullptr) {
-		Engine::getInstance()->getTextureManager()->removeTexture(cloudsNoiseTexture->getId());
+		Engine::getInstance()->getTextureManager()->removeTexture(cloudsNoiseTexture);
 		cloudsNoiseTexture->releaseReference();
 		cloudsNoiseTexture = nullptr;
 		cloudNoiseTextureId = renderer->ID_NONE;
+	}
+	if (skyMoonTexture != nullptr) {
+		Engine::getInstance()->getTextureManager()->removeTexture(skyMoonTexture);
+		skyMoonTexture->releaseReference();
+		skyMoonTexture = nullptr;
+		skyMoonTextureId = renderer->ID_NONE;
 	}
 }
 
 void SkyRenderShader::loadTextures(const string& pathName) {
 	cloudNoiseTextureId = Engine::getInstance()->getTextureManager()->addTexture(cloudsNoiseTexture = TextureReader::read(pathName + "/resources/engine/textures", "noise.png"), renderer->CONTEXTINDEX_DEFAULT);
+	skyMoonTextureId = Engine::getInstance()->getTextureManager()->addTexture(skyMoonTexture = TextureReader::read(pathName + "/resources/engine/textures", "moon.png"), renderer->CONTEXTINDEX_DEFAULT);
 }
 
 
-void SkyRenderShader::prepare(Engine* engine) {
+void SkyRenderShader::prepareClouds(Engine* engine) {
 	// use default context
 	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
 
@@ -218,6 +294,77 @@ void SkyRenderShader::prepare(Engine* engine) {
 	cloudsFrameBuffer->disableFrameBuffer();
 }
 
+void SkyRenderShader::prepareSky(Engine* engine) {
+	// use default context
+	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
+
+	//
+	skyFrameBuffer->enableFrameBuffer();
+
+	//
+	renderer->useProgram(contextIdx, skyProgramId);
+	renderer->setLighting(contextIdx, renderer->LIGHTING_NONE);
+
+	//
+	renderer->setTextureUnit(contextIdx, 0);
+	renderer->bindTexture(contextIdx, skyMoonTextureId);
+	renderer->setTextureUnit(contextIdx, 1);
+	renderer->bindTexture(contextIdx, cloudsFrameBuffer->getColorTextureId());
+
+	//
+	renderer->setProgramUniformFloat(contextIdx, skyUniformTime, 0.25f);
+	renderer->setProgramUniformInteger(contextIdx, skyUniformMoon, 0);
+	renderer->setProgramUniformInteger(contextIdx, skyUniformCloudEnvironment, 1);
+	renderer->setProgramUniformFloatVec3(contextIdx, skyUniformSunPosition, { 0.0f, 1.0f, 0.0f });
+	renderer->setProgramUniformFloatVec3(contextIdx, skyUniformMoonPosition, { 0.0f, -1.0f, 0.0f });
+	renderer->setProgramUniformFloatVec3(contextIdx, skyUniformMoonTexturePosition, { 0.0f, -1.0f, 0.0f });
+	renderer->setProgramUniformFloat(contextIdx, skyUniformMoonPhase, -1.0f);
+	renderer->setProgramUniformFloat(contextIdx, skyUniformMoonRadius, 0.05f);
+	renderer->setProgramUniformFloat(contextIdx, skyUniformSunRadius, 0.04f);
+	renderer->setProgramUniformFloat(contextIdx, skyUniformAttenuation, 1.0f);
+	renderer->setProgramUniformFloat(contextIdx, skyUniformTone, 3.5f);
+	renderer->setProgramUniformFloat(contextIdx, skyUniformDensity, 0.5f);
+	renderer->setProgramUniformFloat(contextIdx, skyUniformRayleigCoeff, 1.0f);
+	renderer->setProgramUniformFloat(contextIdx, skyUniformMieCoeff, 0.5f);
+	renderer->setProgramUniformFloat(contextIdx, skyUniformMultiScatterPhase, 0.0f);
+	renderer->setProgramUniformFloat(contextIdx, skyUniformAnisotropicIntensity, 1.5f);
+	renderer->setProgramUniformFloatVec4(contextIdx, skyUniformColorSky, { 0.156863f, 0.392157f, 1.0f, 1.0f });
+	renderer->setProgramUniformFloatVec4(contextIdx, skyUniformMoonTint, { 1.0f, 0.7f, 0.35f, 1.0f });
+	renderer->setProgramUniformFloatVec4(contextIdx, skyUniformCloudsTint, { 0.8f, 0.8f, 0.8f, 0.50f });
+
+	//
+	renderer->disableDepthBufferWriting();
+	renderer->disableDepthBufferTest();
+	renderer->disableCulling(contextIdx);
+
+	// use frame buffer render shader
+	auto frameBufferRenderShader = Engine::getFrameBufferRenderShader();
+
+	//
+	renderer->bindVerticesBufferObject(contextIdx, frameBufferRenderShader->getVBOVertices());
+	renderer->bindTextureCoordinatesBufferObject(contextIdx, frameBufferRenderShader->getVBOTextureCoordinates());
+
+	// draw
+	renderer->drawTrianglesFromBufferObjects(contextIdx, 2, 0);
+
+	// unbind buffers
+	renderer->unbindBufferObjects(contextIdx);
+
+	//
+	renderer->setTextureUnit(contextIdx, 1);
+	renderer->bindTexture(contextIdx, renderer->ID_NONE);
+	renderer->setTextureUnit(contextIdx, 0);
+	renderer->bindTexture(contextIdx, renderer->ID_NONE);
+
+	// unset
+	renderer->enableCulling(contextIdx);
+	renderer->enableDepthBufferTest();
+	renderer->enableDepthBufferWriting();
+
+	//
+	skyFrameBuffer->disableFrameBuffer();
+}
+
 void SkyRenderShader::render(Engine* engine) {
 	// use default context
 	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
@@ -228,7 +375,7 @@ void SkyRenderShader::render(Engine* engine) {
 
 	//
 	renderer->setTextureUnit(contextIdx, 0);
-	renderer->bindTexture(contextIdx, cloudsFrameBuffer->getColorBufferTextureId());
+	renderer->bindTexture(contextIdx, skyFrameBuffer->getColorBufferTextureId());
 	renderer->setProgramUniformInteger(contextIdx, renderUniformSampler, 0);
 	renderer->setProgramUniformFloatVec3(contextIdx, renderUniformSideVector, engine->getCamera()->getSideVector().getArray());
 	renderer->setProgramUniformFloatVec3(contextIdx, renderUniformUpVector, engine->getCamera()->getUpVector().getArray());

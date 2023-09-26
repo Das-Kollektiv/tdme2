@@ -45,6 +45,32 @@ private:
 	Texture* cloudsNoiseTexture { nullptr };
 	int32_t cloudNoiseTextureId { 0 };
 
+	int32_t skyVertexShaderId { -1 };
+	int32_t skyFragmentShaderId { -1 };
+	int32_t skyProgramId { -1 };
+	int32_t skyUniformTime { -1 };
+	int32_t skyUniformMoon { -1 };
+	int32_t skyUniformCloudEnvironment { -1 };
+	int32_t skyUniformSunPosition { -1 };
+	int32_t skyUniformMoonPosition { -1 };
+	int32_t skyUniformMoonTexturePosition { -1 };
+	int32_t skyUniformMoonPhase { -1 };
+	int32_t skyUniformMoonRadius { -1 };
+	int32_t skyUniformSunRadius { -1 };
+	int32_t skyUniformAttenuation { -1 };
+	int32_t skyUniformTone { -1 };
+	int32_t skyUniformDensity { -1 };
+	int32_t skyUniformRayleigCoeff { -1 };
+	int32_t skyUniformMieCoeff { -1 };
+	int32_t skyUniformMultiScatterPhase { -1 };
+	int32_t skyUniformAnisotropicIntensity { -1 };
+	int32_t skyUniformColorSky { -1 };
+	int32_t skyUniformMoonTint { -1 };
+	int32_t skyUniformCloudsTint { -1 };
+
+	Texture* skyMoonTexture { nullptr };
+	int32_t skyMoonTextureId { 0 };
+
 	int32_t renderVertexShaderId { -1 };
 	int32_t renderFragmentShaderId { -1 };
 	int32_t renderProgramId { -1 };
@@ -56,6 +82,19 @@ private:
 	bool initialized { false };
 
 	unique_ptr<FrameBuffer> cloudsFrameBuffer;
+	unique_ptr<FrameBuffer> skyFrameBuffer;
+
+	/**
+	 * Prepare clouds
+	 * @param engine engine
+	 */
+	void prepareClouds(Engine* engine);
+
+	/**
+	 * Prepare sky
+	 * @param engine engine
+	 */
+	void prepareSky(Engine* engine);
 
 public:
 	// forbid class copy
@@ -102,7 +141,10 @@ public:
 	 * Prepare
 	 * @param engine engine
 	 */
-	void prepare(Engine* engine);
+	inline void prepare(Engine* engine) {
+		prepareClouds(engine);
+		prepareSky(engine);
+	}
 
 	/**
 	 * Render

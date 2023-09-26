@@ -6,6 +6,10 @@ in vec2 vsFragTextureUV;
 // passed out
 out vec4 outColor;
 
+//
+#define UV	vsFragTextureUV
+#define COLOR	outColor
+
 // see: https://github.com/Lexpartizan/Godot_4_sky_shader
 // USING https://www.shadertoy.com/view/XtBXDw for 3dclouds and https://www.shadertoy.com/view/4dsXWn for 2d clouds
 uniform float TIME;
@@ -160,7 +164,7 @@ vec4 clouds_2d(vec3 rd, vec3 wind)
 }
 
 void main(void){
-	vec2 uv = vsFragTextureUV;
+	vec2 uv = UV;
 	uv.x = 2.0 * uv.x - 1.0;
 	uv.y = 2.0 * uv.y - 1.0;
 	vec3 rd = normalize(rotate_y(rotate_x(vec3(0.0, 0.0, 1.0),-uv.y*3.1415926535/2.0),-uv.x*3.1415926535)); //transform UV to spherical panorama 3d coords
@@ -179,8 +183,8 @@ void main(void){
 	else
 	{
 		cld.rgb = cube_bot(rd,vec3(1.5,1.49,1.71), vec3(1.1,1.15,1.5),TIME);
-		cld.a=1.;
+		cld.a=0.;
 		cld*=clamp((  1.0 - exp(-1.3 * pow(max((0.0), horizonPow), (2.6)))),0.,1.);
 	}
-	outColor = vec4(cld.rgb/(0.0001+cld.a) * 100.0, 1.0f);
+	COLOR = vec4(cld.rgb/(0.0001+cld.a), cld.a);
 }
