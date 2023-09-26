@@ -318,6 +318,7 @@ SRCS = \
 	src/tdme/engine/subsystems/framebuffer/BRDFLUTShader.cpp \
 	src/tdme/engine/subsystems/framebuffer/DeferredLightingRenderShader.cpp \
 	src/tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.cpp \
+	src/tdme/engine/subsystems/framebuffer/SkyRenderShader.cpp \
 	src/tdme/engine/subsystems/lighting/DeferredLightingShaderDefaultImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/DeferredLightingShaderFoliageImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/DeferredLightingShaderPBRDefaultImplementation.cpp \

@@ -42,6 +42,7 @@
   - https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_lights_punctual/README.md#range-property
   - https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_materials_pbrSpecularGlossiness/examples/convert-between-workflows/js/three.pbrUtilities.js#L34
   - https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_lights_punctual
+  - https://github.com/Lexpartizan/Godot_4_sky_shader
   - https://github.com/SaschaWillems/Vulkan
   - https://github.com/SaschaWillems/Vulkan-glTF-PBR
   - https://github.com/danielscherzer/NotepaddPP-glsl-integration.git

@@ -65,6 +65,7 @@ using tdme::engine::model::Node;
 using tdme::engine::subsystems::framebuffer::BRDFLUTShader;
 using tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader;
 using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
+using tdme::engine::subsystems::framebuffer::SkyRenderShader;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::manager::MeshManager;
@@ -152,6 +153,7 @@ class tdme::engine::Engine final
 	friend class tdme::engine::subsystems::framebuffer::BRDFLUTShader;
 	friend class tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader;
 	friend class tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
+	friend class tdme::engine::subsystems::framebuffer::SkyRenderShader;
 	friend class tdme::engine::subsystems::lighting::LightingShaderPBRBaseImplementation;
 	friend class tdme::engine::subsystems::lines::LinesInternal;
 	friend class tdme::engine::subsystems::rendering::BatchRendererPoints;
@@ -211,6 +213,7 @@ private:
 	STATIC_DLL_IMPEXT static unique_ptr<BRDFLUTShader> brdfLUTShader;
 	STATIC_DLL_IMPEXT static unique_ptr<FrameBufferRenderShader> frameBufferRenderShader;
 	STATIC_DLL_IMPEXT static unique_ptr<DeferredLightingRenderShader> deferredLightingRenderShader;
+	STATIC_DLL_IMPEXT static unique_ptr<SkyRenderShader> skyRenderShader;
 	STATIC_DLL_IMPEXT static unique_ptr<PostProcessing> postProcessing;
 	STATIC_DLL_IMPEXT static unique_ptr<PostProcessingShader> postProcessingShader;
 	STATIC_DLL_IMPEXT static unique_ptr<Texture2DRenderShader> texture2DRenderShader;
@@ -294,9 +297,7 @@ private:
 	STATIC_DLL_IMPEXT static bool skinningShaderEnabled;
 
 	bool shadowMappingEnabled;
-
-	bool preRenderingInitiated;
-	bool renderingInitiated;
+	bool skyShaderEnabled;
 
 	vector<string> postProcessingPrograms;
 
@@ -477,6 +478,13 @@ private:
 	 */
 	inline static DeferredLightingRenderShader* getDeferredLightingRenderShader() {
 		return deferredLightingRenderShader.get();
+	}
+
+	/**
+	 * @return sky shader
+	 */
+	inline static SkyRenderShader* getSkyRenderShader() {
+		return skyRenderShader.get();
 	}
 
 	/**
@@ -1005,6 +1013,21 @@ public:
 	 */
 	inline GeometryBuffer* getGeometryBuffer() {
 		return geometryBuffer.get();;
+	}
+
+	/**
+	 * @return sky shader enabled
+	 */
+	inline bool isSkyShaderEnabled() {
+		return skyShaderEnabled;
+	}
+
+	/**
+	 * Set sky shader enabled
+	 * @param skyShaderEnabled sky shader enabled
+	 */
+	inline void setSkyShaderEnabled(bool skyShaderEnabled) {
+		this->skyShaderEnabled = skyShaderEnabled;
 	}
 
 	/**

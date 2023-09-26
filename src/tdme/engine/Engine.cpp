@@ -19,6 +19,7 @@
 #include <tdme/engine/subsystems/framebuffer/BRDFLUTShader.h>
 #include <tdme/engine/subsystems/framebuffer/DeferredLightingRenderShader.h>
 #include <tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.h>
+#include <tdme/engine/subsystems/framebuffer/SkyRenderShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lines/LinesShader.h>
 #include <tdme/engine/subsystems/manager/MeshManager.h>
@@ -104,6 +105,7 @@ using tdme::engine::subsystems::environmentmapping::EnvironmentMappingRenderer;
 using tdme::engine::subsystems::framebuffer::BRDFLUTShader;
 using tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader;
 using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
+using tdme::engine::subsystems::framebuffer::SkyRenderShader;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::manager::MeshManager;
@@ -175,6 +177,7 @@ unique_ptr<GUIRenderer> Engine::guiRenderer;
 unique_ptr<BRDFLUTShader> Engine::brdfLUTShader;
 unique_ptr<FrameBufferRenderShader> Engine::frameBufferRenderShader;
 unique_ptr<DeferredLightingRenderShader> Engine::deferredLightingRenderShader;
+unique_ptr<SkyRenderShader> Engine::skyRenderShader;
 unique_ptr<PostProcessing> Engine::postProcessing;
 unique_ptr<PostProcessingShader> Engine::postProcessingShader;
 unique_ptr<Texture2DRenderShader> Engine::texture2DRenderShader;
@@ -266,9 +269,7 @@ Engine::Engine() {
 	sceneColor.set(0.0f, 0.0f, 0.0f, 1.0f);
 	// shadow mapping
 	shadowMappingEnabled = false;
-	// render process state
-	renderingInitiated = false;
-	preRenderingInitiated = false;
+	skyShaderEnabled = false;
 	//
 	initialized = false;
 	// post processing frame buffers
@@ -823,6 +824,10 @@ void Engine::initialize()
 		deferredLightingRenderShader->initialize();
 	}
 
+	// create frame buffer render shader
+	skyRenderShader = make_unique<SkyRenderShader>(renderer);
+	skyRenderShader->initialize();
+
 	// create lighting shader
 	lightingShader = make_unique<LightingShader>(renderer);
 	lightingShader->initialize();
@@ -891,6 +896,7 @@ void Engine::initialize()
 		CHECK_INITIALIZED("BRDFLUTShader", brdfLUTShader);
 	}
 	CHECK_INITIALIZED("DeferredLightingRenderShader", deferredLightingRenderShader);
+	CHECK_INITIALIZED("SkyRenderShader", skyRenderShader);
 	CHECK_INITIALIZED("PostProcessingShader", postProcessingShader);
 	CHECK_INITIALIZED("Texture2DRenderShader", texture2DRenderShader);
 
@@ -907,6 +913,7 @@ void Engine::initialize()
 		initialized &= brdfLUTShader->isInitialized();
 	}
 	initialized &= deferredLightingRenderShader != nullptr?deferredLightingRenderShader->isInitialized():true;
+	initialized &= skyRenderShader->isInitialized();
 	initialized &= postProcessingShader->isInitialized();
 	initialized &= texture2DRenderShader->isInitialized();
 
@@ -1065,9 +1072,6 @@ void Engine::initRendering()
 
 	//
 	resetLists(visibleDecomposedEntities);
-
-	//
-	renderingInitiated = true;
 }
 
 void Engine::preRenderFunction(vector<Object*>& objects, int threadIdx) {
@@ -1342,9 +1346,6 @@ void Engine::preRender(Camera* camera, DecomposedEntities& decomposedEntities, b
 	if (skinningShaderEnabled == true) {
 		skinningShader->unUseProgram();
 	}
-
-	//
-	preRenderingInitiated = true;
 }
 
 void Engine::display()
@@ -1381,9 +1382,6 @@ void Engine::display()
 	camera->update(renderer->CONTEXTINDEX_DEFAULT, _width, _height);
 	// frustum
 	camera->getFrustum()->update();
-
-	// clear pre render states
-	preRenderingInitiated = false;
 
 	// do pre rendering steps
 	preRender(camera.get(), visibleDecomposedEntities, true, true);
@@ -1467,6 +1465,8 @@ void Engine::display()
 		}
 	}
 
+	if (skyShaderEnabled == true) skyRenderShader->prepare(this);
+
 	// create post processing frame buffers if having post processing
 	FrameBuffer* renderFrameBuffer = nullptr;
 	if (postProcessingPrograms.size() > 0) {
@@ -1504,6 +1504,7 @@ void Engine::display()
 	// clear previous frame values
 	Engine::getRenderer()->setClearColor(sceneColor.getRed(), sceneColor.getGreen(), sceneColor.getBlue(), sceneColor.getAlpha());
 	renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
+	if (skyShaderEnabled == true) skyRenderShader->render(this);
 
 	// do rendering
 	render(
@@ -1534,10 +1535,6 @@ void Engine::display()
 		postProcessingTemporaryFrameBuffer->dispose();
 		postProcessingTemporaryFrameBuffer = nullptr;
 	}
-
-	// clear pre render states
-	renderingInitiated = false;
-	preRenderingInitiated = false;
 
 	//
 	if (frameBuffer != nullptr) {
@@ -2103,6 +2100,7 @@ void Engine::dispose()
 		}
 		if (Engine::deferredLightingRenderShader != nullptr) Engine::deferredLightingRenderShader->dispose();
 		frameBufferRenderShader->dispose();
+		skyRenderShader->dispose();
 		texture2DRenderShader->dispose();
 		lightingShader->dispose();
 		postProcessingShader->dispose();

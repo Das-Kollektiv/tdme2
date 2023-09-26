@@ -144,9 +144,10 @@ void TreeTest::dispose()
 void TreeTest::initialize()
 {
 	engine->initialize();
-	engine->addPostProcessingProgram("light_scattering");
-	engine->setShaderParameter("light_scattering", "intensity", ShaderParameter(1.0f));
+	//engine->addPostProcessingProgram("light_scattering");
+	//engine->setShaderParameter("light_scattering", "intensity", ShaderParameter(1.0f));
 	engine->setSceneColor(Color4(0.2f, 0.2f, 0.8f, 1.0f));
+	engine->setSkyShaderEnabled(true);
 	Object* entity;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
