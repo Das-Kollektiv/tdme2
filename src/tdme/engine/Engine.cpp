@@ -284,6 +284,14 @@ Engine::~Engine() {
 	if (currentEngine == this) currentEngine = nullptr;
 }
 
+void Engine::loadTextures(const string& pathName) {
+	lightingShader->loadTextures(pathName);
+	postProcessingShader->loadTextures(pathName);
+	skyRenderShader->loadTextures(pathName);
+	if (shadowMappingShaderPre != nullptr) shadowMappingShaderPre->loadTextures(pathName);
+	if (shadowMappingShaderRender != nullptr) shadowMappingShaderRender->loadTextures(pathName);
+}
+
 Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enableShadowMapping, bool enableDepthBuffer, bool enableGeometryBuffer)
 {
 	if (instance == nullptr || instance->initialized == false) {
@@ -1465,8 +1473,6 @@ void Engine::display()
 		}
 	}
 
-	if (skyShaderEnabled == true) skyRenderShader->prepare(this);
-
 	// create post processing frame buffers if having post processing
 	FrameBuffer* renderFrameBuffer = nullptr;
 	if (postProcessingPrograms.size() > 0) {
@@ -1502,9 +1508,13 @@ void Engine::display()
 	camera->update(renderer->CONTEXTINDEX_DEFAULT, _width, _height);
 
 	// clear previous frame values
-	Engine::getRenderer()->setClearColor(sceneColor.getRed(), sceneColor.getGreen(), sceneColor.getBlue(), sceneColor.getAlpha());
-	renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
-	if (skyShaderEnabled == true) skyRenderShader->render(this);
+	if (skyShaderEnabled == true) {
+		renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT);
+		skyRenderShader->render(this);
+	} else {
+		Engine::getRenderer()->setClearColor(sceneColor.getRed(), sceneColor.getGreen(), sceneColor.getBlue(), sceneColor.getAlpha());
+		renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
+	}
 
 	// do rendering
 	render(
@@ -2361,6 +2371,15 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 						renderGeometryBuffer->disableGeometryBuffer();
 						Engine::getRenderer()->setShaderPrefix(shaderPrefix);
 						if (renderFrameBuffer != nullptr) renderFrameBuffer->enableFrameBuffer();
+						// clear previous frame values
+						if (skyShaderEnabled == true) {
+							renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT);
+							skyRenderShader->render(this);
+						} else {
+							Engine::getRenderer()->setClearColor(sceneColor.getRed(), sceneColor.getGreen(), sceneColor.getBlue(), sceneColor.getAlpha());
+							renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
+						}
+						//
 						renderGeometryBuffer->renderToScreen(this, visibleDecomposedEntities.decalEntities);
 						if (lightingShader != nullptr) lightingShader->useProgram(this);
 						if (visibleDecomposedEntities.objectsForwardShading.empty() == false) {

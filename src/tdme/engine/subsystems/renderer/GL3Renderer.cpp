@@ -284,7 +284,7 @@ bool GL3Renderer::isUsingShortIndices() {
 }
 
 bool GL3Renderer::isDeferredShadingAvailable() {
-	return false; // TODO: deferredShadingAvailable with SkyShader
+	return deferredShadingAvailable;
 }
 
 int32_t GL3Renderer::getTextureUnits()

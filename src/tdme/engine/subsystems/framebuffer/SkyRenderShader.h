@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -9,7 +8,6 @@
 #include <tdme/engine/fwd-tdme.h>
 
 using std::string;
-using std::unique_ptr;
 
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
@@ -26,77 +24,24 @@ class tdme::engine::subsystems::framebuffer::SkyRenderShader final
 private:
 	Renderer* renderer { nullptr };
 
-	int32_t cloudsVertexShaderId { -1 };
-	int32_t cloudsFragmentShaderId { -1 };
-	int32_t cloudsProgramId { -1 };
-	int32_t cloudUniformSunPosition { -1 };
-	int32_t cloudsUniformNoise { -1 };
-	int32_t cloudsUniformWind { -1 };
-	int32_t cloudsUniformSize { -1 };
-	int32_t cloudsUniformSoftness { -1 };
-	int32_t cloudsUniformCoverage { -1 };
-	int32_t cloudsUniformHeight { -1 };
-	int32_t cloudsUniformThickness { -1 };
-	int32_t cloudsUniformAbsorption { -1 };
-	int32_t cloudsUniformSteps { -1 };
+	int32_t vertexShaderId { -1 };
+	int32_t fragmentShaderId { -1 };
+	int32_t programId { -1 };
+	int32_t uniformTime { -1 };
+	int32_t uniformSampler { -1 };
+	int32_t uniformSideVector { -1 };
+	int32_t uniformUpVector { -1 };
+	int32_t uniformForwardVector { -1 };
+	int32_t uniformLIGHT0_DIRECTION { -1 };
+	int32_t uniformLIGHT0_ENABLED { -1 };
+	int32_t uniformLIGHT1_DIRECTION { -1 };
+	int32_t uniformLIGHT1_ENABLED { -1 };
+	int32_t uniformStarsTexture { -1 };
 
-	int32_t cloudsUniformTime { -1 };
-
-	Texture* cloudsNoiseTexture { nullptr };
-	int32_t cloudNoiseTextureId { 0 };
-
-	int32_t skyVertexShaderId { -1 };
-	int32_t skyFragmentShaderId { -1 };
-	int32_t skyProgramId { -1 };
-	int32_t skyUniformTime { -1 };
-	int32_t skyUniformMoon { -1 };
-	int32_t skyUniformCloudEnvironment { -1 };
-	int32_t skyUniformSunPosition { -1 };
-	int32_t skyUniformMoonPosition { -1 };
-	int32_t skyUniformMoonTexturePosition { -1 };
-	int32_t skyUniformMoonPhase { -1 };
-	int32_t skyUniformMoonRadius { -1 };
-	int32_t skyUniformSunRadius { -1 };
-	int32_t skyUniformAttenuation { -1 };
-	int32_t skyUniformTone { -1 };
-	int32_t skyUniformDensity { -1 };
-	int32_t skyUniformRayleigCoeff { -1 };
-	int32_t skyUniformMieCoeff { -1 };
-	int32_t skyUniformMultiScatterPhase { -1 };
-	int32_t skyUniformAnisotropicIntensity { -1 };
-	int32_t skyUniformColorSky { -1 };
-	int32_t skyUniformMoonTint { -1 };
-	int32_t skyUniformCloudsTint { -1 };
-
-	Texture* skyMoonTexture { nullptr };
-	int32_t skyMoonTextureId { 0 };
-
-	int skyFrameIdx { 0 };
-
-	int32_t renderVertexShaderId { -1 };
-	int32_t renderFragmentShaderId { -1 };
-	int32_t renderProgramId { -1 };
-	int32_t renderUniformSampler { -1 };
-	int32_t renderUniformSideVector { -1 };
-	int32_t renderUniformUpVector { -1 };
-	int32_t renderUniformForwardVector { -1 };
+	Texture* starsTexture { nullptr };
+	int32_t starsTextureId { 0 };
 
 	bool initialized { false };
-
-	unique_ptr<FrameBuffer> cloudsFrameBuffer;
-	unique_ptr<FrameBuffer> skyFrameBuffer;
-
-	/**
-	 * Prepare clouds
-	 * @param engine engine
-	 */
-	void prepareClouds(Engine* engine);
-
-	/**
-	 * Prepare sky
-	 * @param engine engine
-	 */
-	void prepareSky(Engine* engine);
 
 public:
 	// forbid class copy
@@ -139,15 +84,6 @@ public:
 	 */
 	void loadTextures(const string& pathName);
 
-	/**
-	 * Prepare
-	 * @param engine engine
-	 */
-	inline void prepare(Engine* engine) {
-		if (skyFrameIdx == 0) prepareClouds(engine);
-		skyFrameIdx = (skyFrameIdx + 1) % 2;
-		prepareSky(engine);
-	}
 
 	/**
 	 * Render

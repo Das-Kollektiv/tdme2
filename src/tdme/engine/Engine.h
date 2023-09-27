@@ -895,6 +895,12 @@ public:
 	}
 
 	/**
+	 * Load textures
+	 * @param pathName path name
+	 */
+	void loadTextures(const string& pathName);
+
+	/**
 	 * Creates an offscreen rendering instance
 	 * Note:
 	 * - the root engine must have been initialized before

@@ -797,10 +797,7 @@ void EditorScreenController::openProject(const string& pathName) {
 	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dropdown_outliner_add"))->getController()->setDisabled(false);
 	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("outliner_search"))->getController()->setDisabled(false);
 	//
-	Engine::getInstance()->getLightingShader()->loadTextures(pathName);
-	Engine::getInstance()->getPostProcessingShader()->loadTextures(pathName);
-	if (Engine::getInstance()->getShadowMapCreationShader() != nullptr) Engine::getInstance()->getShadowMapCreationShader()->loadTextures(pathName);
-	if (Engine::getInstance()->getShadowMapRenderShader() != nullptr) Engine::getInstance()->getShadowMapRenderShader()->loadTextures(pathName);
+	Engine::getInstance()->loadTextures(pathName);
 	//
 	GUIParser::loadProjectThemeProperties(projectPath);
 }

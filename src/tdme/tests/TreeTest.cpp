@@ -157,7 +157,7 @@ void TreeTest::initialize()
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
 	auto light0 = engine->getLightAt(0);
 	light0->setDiffuse(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	light0->setRenderSource(true);
+	light0->setRenderSource(false);
 	light0->setEnabled(true);
 
 	/*
