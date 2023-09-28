@@ -35,11 +35,13 @@ const vec3 night_top_color = vec3( 0.02, 0.0, 0.04 );
 const vec3 night_bottom_color = vec3( 0.1, 0.0, 0.2 );
 const vec3 horizon_color = vec3( 0.0, 0.7, 0.8 );
 const float horizon_blur = 0.05;
-const vec3 sun_color = vec3( 10.0 * 20.0, 8.0 * 20.0, 1.0 * 20.0 );
+const float sun_color_factor = 200.0;
+const vec3 sun_color = vec3( 1.0, 0.8, 0.1 );
 const vec3 sun_sunset_color = vec3( 10.0, 0.0, 0.0 );
 const float sun_size = 0.2;
 const float sun_blur = 10.0;
-const vec3 moon_color = vec3( 1.0 * 20.0, 0.95 * 20.0, 0.7 * 20.0 );
+const float moon_color_factor = 20.0;
+const vec3 moon_color = vec3( 1.0, 0.95, 0.7 );
 const float moon_size = 0.06;
 const float moon_blur = 0.1;
 const vec3 clouds_edge_color = vec3( 0.8, 0.8, 0.98 );
@@ -253,7 +255,7 @@ void main(void)
 			float _moon_n_dot_l = pow( clamp( dot( _moon_normal, -LIGHT0_DIRECTION ), 0.05, 1.0 ), 2 );
 			// Hiding the moon behind the horizon
 			_moon_amount *= 1.0 - _horizon_amount;
-			COLOR = mix( COLOR, moon_color, _moon_n_dot_l * _moon_amount );
+			COLOR = mix( COLOR, moon_color * moon_color_factor, _moon_n_dot_l * _moon_amount );
 		}
 	}
 
@@ -272,7 +274,7 @@ void main(void)
 			float _sunset_amount = 1.0;
 			if( LIGHT0_DIRECTION.y > 0.0 )
 				_sunset_amount = clamp( cos( LIGHT0_DIRECTION.y * PI ), 0.0, 1.0 );
-			vec3 _sun_color = mix( sun_color, sun_sunset_color, _sunset_amount );
+			vec3 _sun_color = mix( sun_color * sun_color_factor, sun_sunset_color, _sunset_amount );
 			// Hiding the sun behind the moon
 			_sun_amount = clamp( _sun_amount * ( 1.0 - _moon_amount ), 0.0, 1.0 );
 			// Hiding the sun behind the horizon
@@ -337,7 +339,7 @@ void main(void)
 		// The edge color gives a nice smooth edge, you can try turning this off if you need sharper edges
 		_clouds_color = mix( clouds_edge_color, _clouds_color, _noise_top );
 		// The sun passing through the clouds effect
-		_clouds_color = mix( _clouds_color, clamp( sun_color, 0.0, 1.0 ), pow( 1.0 - clamp( _sun_distance, 0.0, 1.0 ), 5 ));
+		_clouds_color = mix( _clouds_color, clamp( sun_color * sun_color_factor, 0.0, 1.0 ), pow( 1.0 - clamp( _sun_distance, 0.0, 1.0 ), 5 ));
 		// Color combined with sunset condition
 		_clouds_color = mix( _clouds_color, sunset_bottom_color, _sunset_amount * 0.75 );
 		// Color depending on the "progress" of the night.

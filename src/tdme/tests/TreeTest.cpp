@@ -77,7 +77,6 @@ void TreeTest::display()
 	// light
 	if (keyComma == true) sunRotation-= 0.5f;
 	if (keyDot == true) sunRotation+= 0.5f;
-	Console::println("sun rotation: " + to_string(sunRotation));
 	//
 	{
 		Quaternion lightRotationXQuaternion;
@@ -164,7 +163,7 @@ void TreeTest::initialize()
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(150.0f);
-	cam->setLookFrom(Vector3(0.0f, 3.0f, 48.0f));
+	cam->setLookFrom(Vector3(0.0f, 3.0f, -60.0f));
 	cam->setLookAt(Vector3(0.0f, 0.5f, 0.0f));
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
 	auto light0 = engine->getLightAt(0);

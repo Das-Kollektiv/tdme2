@@ -138,18 +138,15 @@ void SkyRenderShader::render(Engine* engine) {
 	auto light1 = engine->getLightAt(1);
 
 	//
-	auto light0SpotDirection4 = light0->getPosition().clone().scale(1.0f / (Math::abs(light0->getPosition().getW()) < Math::EPSILON?1.0:light0->getPosition().getW()));
-	auto light1SpotDirection4 = light1->getPosition().clone().scale(1.0f / (Math::abs(light1->getPosition().getW()) < Math::EPSILON?1.0:light1->getPosition().getW()));
-	auto light0SpotDirection = Vector3(light0SpotDirection4[0], light0SpotDirection4[1], light0SpotDirection4[2]).normalize().scale(-1.0f);
-	auto light1SpotDirection = Vector3(light1SpotDirection4[0], light1SpotDirection4[1], light1SpotDirection4[2]).normalize().scale(-1.0f);
-	//
-	Console::println("sun light direction: " + to_string(light0SpotDirection[0]) + ", " + to_string(light0SpotDirection[1]) + ", " + to_string(light0SpotDirection[1]));
-	Console::println("moon light direction: " + to_string(light1SpotDirection[0]) + ", " + to_string(light1SpotDirection[1]) + ", " + to_string(light1SpotDirection[1]));
+	auto light0Direction4 = light0->getPosition().clone().scale(1.0f / (Math::abs(light0->getPosition().getW()) < Math::EPSILON?1.0:light0->getPosition().getW()));
+	auto light0Direction = Vector3(light0Direction4[0], light0Direction4[1], light0Direction4[2]).normalize().scale(-1.0f);
+	auto light1Direction4 = light1->getPosition().clone().scale(1.0f / (Math::abs(light1->getPosition().getW()) < Math::EPSILON?1.0:light1->getPosition().getW()));
+	auto light1Direction = Vector3(light1Direction4[0], light1Direction4[1], light1Direction4[2]).normalize().scale(-1.0f);
 	//
 	renderer->setProgramUniformInteger(contextIdx, uniformLIGHT0_ENABLED, light0->isEnabled() == true?1:0);
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformLIGHT0_DIRECTION, light0SpotDirection.getArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformLIGHT0_DIRECTION, light0Direction.getArray());
 	renderer->setProgramUniformInteger(contextIdx, uniformLIGHT1_ENABLED, light1->isEnabled() == true?1:0);
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformLIGHT1_DIRECTION, light1SpotDirection.getArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformLIGHT1_DIRECTION, light1Direction.getArray());
 	renderer->setProgramUniformFloat(contextIdx, uniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
 	renderer->setProgramUniformFloatVec3(contextIdx, uniformSideVector, engine->getCamera()->getSideVector().getArray());
 	renderer->setProgramUniformFloatVec3(contextIdx, uniformUpVector, engine->getCamera()->getUpVector().getArray());
