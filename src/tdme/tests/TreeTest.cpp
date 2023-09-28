@@ -75,14 +75,26 @@ int TreeTest::main(int argc, char** argv)
 void TreeTest::display()
 {
 	// light
-	if (keyComma == true) lightRotationX-= 0.5f;
-	if (keyDot == true) lightRotationX+= 0.5f;
-	Quaternion lightRotationXQuaternion;
-	lightRotationXQuaternion.rotate(Vector3(1.0f, 0.0f, 0.0f), lightRotationX);
-	auto light0 = engine->getLightAt(0);
-	auto lightPosition = lightRotationXQuaternion * Vector3(0.0f, 50.0f, 1.0f);
-	light0->setPosition(Vector4(lightPosition.getX(), lightPosition.getY(), lightPosition.getZ(), 0.0f));
-	light0->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ())));
+	if (keyComma == true) sunRotation-= 0.5f;
+	if (keyDot == true) sunRotation+= 0.5f;
+	Console::println("sun rotation: " + to_string(sunRotation));
+	//
+	{
+		Quaternion lightRotationXQuaternion;
+		lightRotationXQuaternion.rotate(Vector3(0.0f, 0.0f, 1.0f), sunRotation);
+		auto light0 = engine->getLightAt(0);
+		auto lightPosition = lightRotationXQuaternion * Vector3(100.0f, 00.0f, 1.0f);
+		light0->setPosition(Vector4(lightPosition.getX(), lightPosition.getY(), lightPosition.getZ(), 0.0f));
+		light0->setSpotDirection(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ()).scale(-1.0f).normalize());
+	}
+	{
+		Quaternion lightRotationXQuaternion;
+		lightRotationXQuaternion.rotate(Vector3(0.0f, 0.0f, 1.0f), sunRotation);
+		auto light1 = engine->getLightAt(1);
+		auto lightPosition = lightRotationXQuaternion * Vector3(-100.0f, 00.0f, 1.0f);
+		light1->setPosition(Vector4(lightPosition.getX(), lightPosition.getY(), lightPosition.getZ(), 0.0f));
+		light1->setSpotDirection(Vector3(light1->getPosition().getX(), light1->getPosition().getY(), light1->getPosition().getZ()).scale(-1.0f).normalize());
+	}
 
 	// camera
 	auto camLookFrom = engine->getCamera()->getLookFrom();
@@ -144,8 +156,8 @@ void TreeTest::dispose()
 void TreeTest::initialize()
 {
 	engine->initialize();
-	//engine->addPostProcessingProgram("light_scattering");
-	//engine->setShaderParameter("light_scattering", "intensity", ShaderParameter(1.0f));
+	engine->addPostProcessingProgram("light_scattering");
+	engine->setShaderParameter("light_scattering", "intensity", ShaderParameter(1.0f));
 	engine->setSceneColor(Color4(0.2f, 0.2f, 0.8f, 1.0f));
 	engine->setSkyShaderEnabled(true);
 	Object* entity;
@@ -159,6 +171,10 @@ void TreeTest::initialize()
 	light0->setDiffuse(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	light0->setRenderSource(false);
 	light0->setEnabled(true);
+	auto light1 = engine->getLightAt(1);
+	light1->setDiffuse(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	light1->setRenderSource(false);
+	light1->setEnabled(true);
 
 	/*
 	auto _grass = modelDeleter.add(ModelReader::read("resources/tests/models/grass", "grass.dae"));

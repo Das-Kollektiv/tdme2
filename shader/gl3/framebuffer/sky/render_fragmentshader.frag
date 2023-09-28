@@ -35,11 +35,11 @@ const vec3 night_top_color = vec3( 0.02, 0.0, 0.04 );
 const vec3 night_bottom_color = vec3( 0.1, 0.0, 0.2 );
 const vec3 horizon_color = vec3( 0.0, 0.7, 0.8 );
 const float horizon_blur = 0.05;
-const vec3 sun_color = vec3( 10.0, 8.0, 1.0 );
+const vec3 sun_color = vec3( 10.0 * 20.0, 8.0 * 20.0, 1.0 * 20.0 );
 const vec3 sun_sunset_color = vec3( 10.0, 0.0, 0.0 );
 const float sun_size = 0.2;
 const float sun_blur = 10.0;
-const vec3 moon_color = vec3( 1.0, 0.95, 0.7 );
+const vec3 moon_color = vec3( 1.0 * 20.0, 0.95 * 20.0, 0.7 * 20.0 );
 const float moon_size = 0.06;
 const float moon_blur = 0.1;
 const vec3 clouds_edge_color = vec3( 0.8, 0.8, 0.98 );
@@ -278,8 +278,11 @@ void main(void)
 			// Hiding the sun behind the horizon
 			_sun_amount *= 1.0 - _horizon_amount;
 			// Leveling the "glow" in color
+			/*
+			// TODO: does not work, need to check (adrewke)
 			if( _sun_color.r > 1.0 || _sun_color.g > 1.0 || _sun_color.b > 1.0 )
 				_sun_color *= _sun_amount;
+			*/
 			COLOR = mix( COLOR, _sun_color, _sun_amount );
 		}
 	}

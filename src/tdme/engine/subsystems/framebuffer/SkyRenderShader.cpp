@@ -14,6 +14,7 @@
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/engine/Timing.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 
@@ -32,6 +33,7 @@ using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
 using tdme::engine::Texture;
 using tdme::engine::Timing;
+using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 
@@ -120,7 +122,7 @@ void SkyRenderShader::unloadTextures() {
 
 void SkyRenderShader::loadTextures(const string& pathName) {
 	unloadTextures();
-	starsTextureId = Engine::getInstance()->getTextureManager()->addTexture(starsTexture = TextureReader::read(pathName + "/resources/engine/textures", "starfield.png"), renderer->CONTEXTINDEX_DEFAULT);
+	starsTextureId = Engine::getInstance()->getTextureManager()->addTexture(starsTexture = TextureReader::read(pathName + "/resources/engine/textures", "stars.png"), renderer->CONTEXTINDEX_DEFAULT);
 }
 
 void SkyRenderShader::render(Engine* engine) {
@@ -133,12 +135,21 @@ void SkyRenderShader::render(Engine* engine) {
 
 	//
 	auto light0 = engine->getLightAt(0);
-	auto light1 = engine->getLightAt(0);
+	auto light1 = engine->getLightAt(1);
+
+	//
+	auto light0SpotDirection4 = light0->getPosition().clone().scale(1.0f / (Math::abs(light0->getPosition().getW()) < Math::EPSILON?1.0:light0->getPosition().getW()));
+	auto light1SpotDirection4 = light1->getPosition().clone().scale(1.0f / (Math::abs(light1->getPosition().getW()) < Math::EPSILON?1.0:light1->getPosition().getW()));
+	auto light0SpotDirection = Vector3(light0SpotDirection4[0], light0SpotDirection4[1], light0SpotDirection4[2]).normalize().scale(-1.0f);
+	auto light1SpotDirection = Vector3(light1SpotDirection4[0], light1SpotDirection4[1], light1SpotDirection4[2]).normalize().scale(-1.0f);
+	//
+	Console::println("sun light direction: " + to_string(light0SpotDirection[0]) + ", " + to_string(light0SpotDirection[1]) + ", " + to_string(light0SpotDirection[1]));
+	Console::println("moon light direction: " + to_string(light1SpotDirection[0]) + ", " + to_string(light1SpotDirection[1]) + ", " + to_string(light1SpotDirection[1]));
 	//
 	renderer->setProgramUniformInteger(contextIdx, uniformLIGHT0_ENABLED, light0->isEnabled() == true?1:0);
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformLIGHT0_DIRECTION, light0->getSpotDirection().getArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformLIGHT0_DIRECTION, light0SpotDirection.getArray());
 	renderer->setProgramUniformInteger(contextIdx, uniformLIGHT1_ENABLED, light1->isEnabled() == true?1:0);
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformLIGHT1_DIRECTION, light1->getSpotDirection().getArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformLIGHT1_DIRECTION, light1SpotDirection.getArray());
 	renderer->setProgramUniformFloat(contextIdx, uniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
 	renderer->setProgramUniformFloatVec3(contextIdx, uniformSideVector, engine->getCamera()->getSideVector().getArray());
 	renderer->setProgramUniformFloatVec3(contextIdx, uniformUpVector, engine->getCamera()->getUpVector().getArray());
