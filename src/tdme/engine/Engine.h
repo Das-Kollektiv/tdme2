@@ -189,6 +189,9 @@ public:
 	static constexpr int ENGINETHREADSQUEUE_PRERENDER_DISPATCH_COUNT { 5 };
 	static constexpr int ENGINETHREADSQUEUE_COMPUTE_DISPATCH_COUNT { 5 };
 
+	static constexpr int LIGHTIDX_SUN { 0 };
+	static constexpr int LIGHTIDX_MOON { 1 };
+
 protected:
 	STATIC_DLL_IMPEXT static Engine* currentEngine;
 

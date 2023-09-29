@@ -81,18 +81,18 @@ void TreeTest::display()
 	{
 		Quaternion lightRotationXQuaternion;
 		lightRotationXQuaternion.rotate(Vector3(0.0f, 0.0f, 1.0f), sunRotation);
-		auto light0 = engine->getLightAt(0);
+		auto sunLight = engine->getLightAt(Engine::LIGHTIDX_SUN);
 		auto lightPosition = lightRotationXQuaternion * Vector3(100.0f, 0.0f, 1.0f);
-		light0->setPosition(Vector4(lightPosition.getX(), lightPosition.getY(), lightPosition.getZ(), 0.0f));
-		light0->setSpotDirection(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ()).scale(-1.0f).normalize());
+		sunLight->setPosition(Vector4(lightPosition.getX(), lightPosition.getY(), lightPosition.getZ(), 0.0f));
+		sunLight->setSpotDirection(Vector3(sunLight->getPosition().getX(), sunLight->getPosition().getY(), sunLight->getPosition().getZ()).scale(-1.0f).normalize());
 	}
 	{
 		Quaternion lightRotationXQuaternion;
 		lightRotationXQuaternion.rotate(Vector3(0.0f, 0.0f, 1.0f), sunRotation);
-		auto light1 = engine->getLightAt(1);
+		auto moonLight = engine->getLightAt(Engine::LIGHTIDX_MOON);
 		auto lightPosition = lightRotationXQuaternion * Vector3(-100.0f, 0.0f, 1.0f);
-		light1->setPosition(Vector4(lightPosition.getX(), lightPosition.getY(), lightPosition.getZ(), 0.0f));
-		light1->setSpotDirection(Vector3(light1->getPosition().getX(), light1->getPosition().getY(), light1->getPosition().getZ()).scale(-1.0f).normalize());
+		moonLight->setPosition(Vector4(lightPosition.getX(), lightPosition.getY(), lightPosition.getZ(), 0.0f));
+		moonLight->setSpotDirection(Vector3(moonLight->getPosition().getX(), moonLight->getPosition().getY(), moonLight->getPosition().getZ()).scale(-1.0f).normalize());
 	}
 
 	// camera
@@ -166,14 +166,14 @@ void TreeTest::initialize()
 	cam->setLookFrom(Vector3(0.0f, 3.0f, -60.0f));
 	cam->setLookAt(Vector3(0.0f, 0.5f, 0.0f));
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
-	auto light0 = engine->getLightAt(0);
-	light0->setDiffuse(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	light0->setRenderSource(false);
-	light0->setEnabled(true);
-	auto light1 = engine->getLightAt(1);
-	light1->setDiffuse(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	light1->setRenderSource(false);
-	light1->setEnabled(true);
+	auto sunLight = engine->getLightAt(Engine::LIGHTIDX_SUN);
+	sunLight->setDiffuse(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	sunLight->setRenderSource(false);
+	sunLight->setEnabled(true);
+	auto moonLight = engine->getLightAt(Engine::LIGHTIDX_MOON);
+	moonLight->setDiffuse(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	moonLight->setRenderSource(false);
+	moonLight->setEnabled(true);
 
 	/*
 	auto _grass = modelDeleter.add(ModelReader::read("resources/tests/models/grass", "grass.dae"));

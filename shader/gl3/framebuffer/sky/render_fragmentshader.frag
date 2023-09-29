@@ -20,6 +20,7 @@ uniform int LIGHT1_ENABLED;
 uniform vec3 LIGHT1_DIRECTION;
 uniform sampler2D stars_texture;
 
+uniform int lightScatteringPass;
 uniform float time;
 uniform float aspectRatio;
 uniform vec3 sideVector;
@@ -230,11 +231,11 @@ void main(void)
 	_sky_color = mix( _sky_color, _sky_night_color, _night_amount );
 
 	// Final sky color
-	COLOR = _sky_color;
+	if (lightScatteringPass == 0) COLOR = _sky_color;
 
 	//////////////////// HORIZON ///////////////////////////////////////////////////////////////////
 	float _horizon_amount = 0.0;
-	if( EYEDIR.y < 0.0 )
+	if( lightScatteringPass == 0 && EYEDIR.y < 0.0 )
 	{
 		_horizon_amount = clamp( abs( EYEDIR.y ) / horizon_blur, 0.0, 1.0 );
 		// Mixing with the color of the night sky to make the horizon darker
@@ -298,7 +299,7 @@ void main(void)
 
 	//////////////////// STARS /////////////////////////////////////////////////////////////////
 	vec2 _sky_uv = EYEDIR.xz / sqrt( EYEDIR.y );
-	if( EYEDIR.y > -0.01 && LIGHT0_DIRECTION.y < 0.0  )
+	if( lightScatteringPass == 0 && EYEDIR.y > -0.01 && LIGHT0_DIRECTION.y < 0.0  )
 	{
 		// Stars UV rotation
 		float _stars_speed_cos = cos( stars_speed * time * 0.005 );
@@ -340,19 +341,33 @@ void main(void)
 		// Fading clouds near the horizon
 		_clouds_amount *= clamp( abs( EYEDIR.y ) / clouds_blur, 0.0, 1.0 );
 
-		vec3 _clouds_color = mix( vec3( 0.0 ), clouds_top_color, _noise_top );
-		_clouds_color = mix( _clouds_color, clouds_middle_color, _noise_middle );
-		_clouds_color = mix( _clouds_color, clouds_bottom_color, _noise_bottom );
-		// The edge color gives a nice smooth edge, you can try turning this off if you need sharper edges
-		_clouds_color = mix( clouds_edge_color, _clouds_color, _noise_top );
-		// The sun passing through the clouds effect
-		_clouds_color = mix( _clouds_color, clamp( sun_color * sun_color_factor, 0.0, 1.0 ), pow( 1.0 - clamp( _sun_distance, 0.0, 1.0 ), 5 ));
-		// Color combined with sunset condition
-		_clouds_color = mix( _clouds_color, sunset_bottom_color, _sunset_amount * 0.75 );
-		// Color depending on the "progress" of the night.
-		_clouds_color = mix( _clouds_color, _sky_color, clamp( _night_amount, 0.0, 0.98 ));
-		_clouds_color = mix( _clouds_color, vec3( 0.0 ), clouds_weight * 0.9 );
-		COLOR = mix( COLOR, _clouds_color, _clouds_amount );
+		if ( lightScatteringPass == 0 ) {
+			vec3 _clouds_color = mix( vec3( 0.0 ), clouds_top_color, _noise_top );
+			_clouds_color = mix( _clouds_color, clouds_middle_color, _noise_middle );
+			_clouds_color = mix( _clouds_color, clouds_bottom_color, _noise_bottom );
+			// The edge color gives a nice smooth edge, you can try turning this off if you need sharper edges
+			_clouds_color = mix( clouds_edge_color, _clouds_color, _noise_top );
+			// The sun passing through the clouds effect
+			_clouds_color = mix( _clouds_color, clamp( sun_color * sun_color_factor, 0.0, 1.0 ), pow( 1.0 - clamp( _sun_distance, 0.0, 1.0 ), 5 ));
+			// Color combined with sunset condition
+			_clouds_color = mix( _clouds_color, sunset_bottom_color, _sunset_amount * 0.75 );
+			// Color depending on the "progress" of the night.
+			_clouds_color = mix( _clouds_color, _sky_color, clamp( _night_amount, 0.0, 0.98 ));
+			_clouds_color = mix( _clouds_color, vec3( 0.0 ), clouds_weight * 0.9 );
+			//
+			COLOR = mix( COLOR, _clouds_color, _clouds_amount );
+		} else {
+			vec3 _clouds_color = vec3( 0.0 );
+			// The sun passing through the clouds effect
+			_clouds_color = mix( _clouds_color, clamp( sun_color * sun_color_factor, 0.0, 1.0 ), pow( 1.0 - clamp( _sun_distance, 0.0, 1.0 ), 5 ));
+			// Color combined with sunset condition
+			_clouds_color = mix( _clouds_color, sunset_bottom_color, _sunset_amount * 0.75 );
+			// Color depending on the "progress" of the night.
+			_clouds_color = mix( _clouds_color, _sky_color, clamp( _night_amount, 0.0, 0.98 ));
+			_clouds_color = mix( _clouds_color, vec3( 0.0 ), clouds_weight * 0.9 );
+			//
+			COLOR = mix( COLOR, _clouds_color, _clouds_amount );
+		}
 	}
 
 	//

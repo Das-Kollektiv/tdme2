@@ -91,6 +91,8 @@ void SkyRenderShader::initialize()
 	if (uniformLIGHT1_DIRECTION == -1) return;
 	uniformStarsTexture = renderer->getProgramUniformLocation(programId, "stars_texture");
 	if (uniformStarsTexture == -1) return;
+	uniformLightScatteringPass = renderer->getProgramUniformLocation(programId, "lightScatteringPass");
+	if (uniformLightScatteringPass == -1) return;
 	uniformTime = renderer->getProgramUniformLocation(programId, "time");
 	if (uniformTime == -1) return;
 	uniformAspectRatio = renderer->getProgramUniformLocation(programId, "aspectRatio");
@@ -127,7 +129,7 @@ void SkyRenderShader::loadTextures(const string& pathName) {
 	starsTextureId = Engine::getInstance()->getTextureManager()->addTexture(starsTexture = TextureReader::read(pathName + "/resources/engine/textures", "stars.png"), renderer->CONTEXTINDEX_DEFAULT);
 }
 
-void SkyRenderShader::render(Engine* engine) {
+void SkyRenderShader::render(Engine* engine, bool lightScatteringPass) {
 	// use default context
 	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
 
@@ -152,6 +154,7 @@ void SkyRenderShader::render(Engine* engine) {
 	renderer->setProgramUniformFloatVec3(contextIdx, uniformLIGHT0_DIRECTION, light0Direction.getArray());
 	renderer->setProgramUniformInteger(contextIdx, uniformLIGHT1_ENABLED, light1->isEnabled() == true?1:0);
 	renderer->setProgramUniformFloatVec3(contextIdx, uniformLIGHT1_DIRECTION, light1Direction.getArray());
+	renderer->setProgramUniformInteger(contextIdx, uniformLightScatteringPass, lightScatteringPass == false?0:1);
 	renderer->setProgramUniformFloat(contextIdx, uniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
 	renderer->setProgramUniformFloat(contextIdx, uniformAspectRatio, static_cast<float>(engine->getWidth()) / static_cast<float>(engine->getHeight()));
 	renderer->setProgramUniformFloatVec3(contextIdx, uniformForwardVector, engine->getCamera()->getForwardVector().getArray());

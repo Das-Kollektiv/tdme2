@@ -1439,7 +1439,9 @@ void Engine::display()
 			//
 			auto lightSourceVisible = false;
 			if (effectPass.renderLightSources == true) {
+				if (skyShaderEnabled == true) skyRenderShader->render(this, true);
 				lightSourceVisible = renderLightSources(frameBufferWidth, frameBufferHeight);
+				if (skyShaderEnabled == true) lightSourceVisible = true;
 			}
 			if (effectPass.skipOnLightSourceNotVisible == true && lightSourceVisible == false) {
 				effectPassSkip[frameBufferIdx] = true;
@@ -1510,7 +1512,7 @@ void Engine::display()
 	// clear previous frame values
 	if (skyShaderEnabled == true) {
 		renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT);
-		skyRenderShader->render(this);
+		skyRenderShader->render(this, false);
 	} else {
 		Engine::getRenderer()->setClearColor(sceneColor.getRed(), sceneColor.getGreen(), sceneColor.getBlue(), sceneColor.getAlpha());
 		renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
@@ -2374,7 +2376,7 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 						// clear previous frame values
 						if (skyShaderEnabled == true) {
 							renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT);
-							skyRenderShader->render(this);
+							skyRenderShader->render(this, false);
 						} else {
 							Engine::getRenderer()->setClearColor(sceneColor.getRed(), sceneColor.getGreen(), sceneColor.getBlue(), sceneColor.getAlpha());
 							renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);

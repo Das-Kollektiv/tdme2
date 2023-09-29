@@ -27,6 +27,7 @@ private:
 	int32_t vertexShaderId { -1 };
 	int32_t fragmentShaderId { -1 };
 	int32_t programId { -1 };
+	int32_t uniformLightScatteringPass { -1 };
 	int32_t uniformTime { -1 };
 	int32_t uniformAspectRatio { -1 };
 	int32_t uniformForwardVector { -1 };
@@ -88,7 +89,8 @@ public:
 	/**
 	 * Render
 	 * @param engine engine
+	 * @param lightScatteringPass light scattering pass
 	 */
-	void render(Engine* engine);
+	void render(Engine* engine, bool lightScatteringPass);
 
 };
