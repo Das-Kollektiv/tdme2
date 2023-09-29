@@ -82,7 +82,7 @@ void TreeTest::display()
 		Quaternion lightRotationXQuaternion;
 		lightRotationXQuaternion.rotate(Vector3(0.0f, 0.0f, 1.0f), sunRotation);
 		auto light0 = engine->getLightAt(0);
-		auto lightPosition = lightRotationXQuaternion * Vector3(100.0f, 00.0f, 1.0f);
+		auto lightPosition = lightRotationXQuaternion * Vector3(100.0f, 0.0f, 1.0f);
 		light0->setPosition(Vector4(lightPosition.getX(), lightPosition.getY(), lightPosition.getZ(), 0.0f));
 		light0->setSpotDirection(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ()).scale(-1.0f).normalize());
 	}
@@ -90,7 +90,7 @@ void TreeTest::display()
 		Quaternion lightRotationXQuaternion;
 		lightRotationXQuaternion.rotate(Vector3(0.0f, 0.0f, 1.0f), sunRotation);
 		auto light1 = engine->getLightAt(1);
-		auto lightPosition = lightRotationXQuaternion * Vector3(-100.0f, 00.0f, 1.0f);
+		auto lightPosition = lightRotationXQuaternion * Vector3(-100.0f, 0.0f, 1.0f);
 		light1->setPosition(Vector4(lightPosition.getX(), lightPosition.getY(), lightPosition.getZ(), 0.0f));
 		light1->setSpotDirection(Vector3(light1->getPosition().getX(), light1->getPosition().getY(), light1->getPosition().getZ()).scale(-1.0f).normalize());
 	}

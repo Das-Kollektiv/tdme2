@@ -93,12 +93,14 @@ void SkyRenderShader::initialize()
 	if (uniformStarsTexture == -1) return;
 	uniformTime = renderer->getProgramUniformLocation(programId, "time");
 	if (uniformTime == -1) return;
+	uniformAspectRatio = renderer->getProgramUniformLocation(programId, "aspectRatio");
+	if (uniformAspectRatio == -1) return;
+	uniformForwardVector = renderer->getProgramUniformLocation(programId, "forwardVector");
+	if (uniformForwardVector == -1) return;
 	uniformSideVector = renderer->getProgramUniformLocation(programId, "sideVector");
 	if (uniformSideVector == -1) return;
 	uniformUpVector = renderer->getProgramUniformLocation(programId, "upVector");
 	if (uniformUpVector == -1) return;
-	uniformForwardVector = renderer->getProgramUniformLocation(programId, "forwardVector");
-	if (uniformForwardVector == -1) return;
 
 	//
 	loadTextures(".");
@@ -138,19 +140,23 @@ void SkyRenderShader::render(Engine* engine) {
 	auto light1 = engine->getLightAt(1);
 
 	//
-	auto light0Direction4 = light0->getPosition().clone().scale(1.0f / (Math::abs(light0->getPosition().getW()) < Math::EPSILON?1.0:light0->getPosition().getW()));
-	auto light0Direction = Vector3(light0Direction4[0], light0Direction4[1], light0Direction4[2]).normalize().scale(-1.0f);
-	auto light1Direction4 = light1->getPosition().clone().scale(1.0f / (Math::abs(light1->getPosition().getW()) < Math::EPSILON?1.0:light1->getPosition().getW()));
-	auto light1Direction = Vector3(light1Direction4[0], light1Direction4[1], light1Direction4[2]).normalize().scale(-1.0f);
+	auto light0Position4 = light0->getPosition().clone().scale(1.0f / (Math::abs(light0->getPosition().getW()) < Math::EPSILON?1.0:light0->getPosition().getW()));
+	auto light0Position = Vector3(light0Position4[0], light0Position4[1], light0Position4[2]);
+	auto light0Direction = light0Position.clone().normalize().scale(-1.0f);
+	//
+	auto light1Position4 = light1->getPosition().clone().scale(1.0f / (Math::abs(light1->getPosition().getW()) < Math::EPSILON?1.0:light1->getPosition().getW()));
+	auto light1Position = Vector3(light1Position4[0], light1Position4[1], light1Position4[2]);
+	auto light1Direction = light1Position.clone().normalize().scale(-1.0f);
 	//
 	renderer->setProgramUniformInteger(contextIdx, uniformLIGHT0_ENABLED, light0->isEnabled() == true?1:0);
 	renderer->setProgramUniformFloatVec3(contextIdx, uniformLIGHT0_DIRECTION, light0Direction.getArray());
 	renderer->setProgramUniformInteger(contextIdx, uniformLIGHT1_ENABLED, light1->isEnabled() == true?1:0);
 	renderer->setProgramUniformFloatVec3(contextIdx, uniformLIGHT1_DIRECTION, light1Direction.getArray());
 	renderer->setProgramUniformFloat(contextIdx, uniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
+	renderer->setProgramUniformFloat(contextIdx, uniformAspectRatio, static_cast<float>(engine->getWidth()) / static_cast<float>(engine->getHeight()));
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformForwardVector, engine->getCamera()->getForwardVector().getArray());
 	renderer->setProgramUniformFloatVec3(contextIdx, uniformSideVector, engine->getCamera()->getSideVector().getArray());
 	renderer->setProgramUniformFloatVec3(contextIdx, uniformUpVector, engine->getCamera()->getUpVector().getArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformForwardVector, engine->getCamera()->getForwardVector().getArray());
 	//
 	renderer->setTextureUnit(contextIdx, 0);
 	renderer->bindTexture(contextIdx, starsTextureId);

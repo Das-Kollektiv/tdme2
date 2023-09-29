@@ -19,7 +19,9 @@ uniform vec3 LIGHT0_DIRECTION;
 uniform int LIGHT1_ENABLED;
 uniform vec3 LIGHT1_DIRECTION;
 uniform sampler2D stars_texture;
+
 uniform float time;
+uniform float aspectRatio;
 uniform vec3 sideVector;
 uniform vec3 upVector;
 uniform vec3 forwardVector;
@@ -202,7 +204,7 @@ void main(void)
 {
 	// Calculate the direction vector based on camera orientation
 	vec2 uv = vsFragTextureUV - 0.5;
-	EYEDIR = normalize(forwardVector + uv.x * sideVector + uv.y * upVector);
+	EYEDIR = normalize(forwardVector + uv.x * (sideVector * aspectRatio) + uv.y * upVector);
 	vec3 COLOR = vec3(0.0);
 
 	//////////////////// SKY ///////////////////////////////////////////////////////////////////////

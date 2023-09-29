@@ -28,10 +28,10 @@ private:
 	int32_t fragmentShaderId { -1 };
 	int32_t programId { -1 };
 	int32_t uniformTime { -1 };
-	int32_t uniformSampler { -1 };
+	int32_t uniformAspectRatio { -1 };
+	int32_t uniformForwardVector { -1 };
 	int32_t uniformSideVector { -1 };
 	int32_t uniformUpVector { -1 };
-	int32_t uniformForwardVector { -1 };
 	int32_t uniformLIGHT0_DIRECTION { -1 };
 	int32_t uniformLIGHT0_ENABLED { -1 };
 	int32_t uniformLIGHT1_DIRECTION { -1 };
