@@ -181,7 +181,7 @@ class tdme::engine::Engine final
 
 public:
 	enum AnimationProcessingTarget { NONE, CPU, CPU_NORENDERING, GPU };
-	enum ShaderType { SHADERTYPE_OBJECT, SHADERTYPE_POSTPROCESSING, SHADERTYPE_MAX };
+	enum ShaderType { SHADERTYPE_OBJECT, SHADERTYPE_POSTPROCESSING, SHADERTYPE_SKY, SHADERTYPE_MAX };
 	enum EffectPass { EFFECTPASS_NONE, EFFECTPASS_LIGHTSCATTERING, EFFECTPASS_COUNT };
 	static constexpr int LIGHTS_MAX { 8 };
 	// TODO: make sure one can set up this parameter also

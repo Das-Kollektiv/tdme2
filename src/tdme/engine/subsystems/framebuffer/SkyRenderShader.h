@@ -39,6 +39,41 @@ private:
 	int32_t uniformLIGHT1_ENABLED { -1 };
 	int32_t uniformStarsTexture { -1 };
 
+	// sky
+	int32_t uniformDayTopColor { -1 };
+	int32_t uniformDayBottomColor { -1 };
+	int32_t uniformSunsetTopColor { -1 };
+	int32_t uniformSunsetBottomColor { -1 };
+	int32_t uniformNightTopColor { -1 };
+	int32_t uniformNightBottomColor { -1 };
+	// horizon
+	int32_t uniformHorizonColor { -1 };
+	int32_t uniformHorizonBlur { -1 };
+	// sun
+	int32_t uniformSunColorFactor { -1 };
+	int32_t uniformSunColor { -1 };
+	int32_t uniformSunSunsetColor { -1 };
+	int32_t uniformSunSize { -1 };
+	int32_t uniformSunBlur { -1 };
+	// moon
+	int32_t uniformMoonColorFactor { -1 };
+	int32_t uniformMoonColor { -1 };
+	int32_t uniformMoonSize { -1 };
+	int32_t uniformMoonBlur { -1 };
+	// clouds
+	int32_t uniformCloudsEdgeColor { -1 };
+	int32_t uniformCloudsTopColor { -1 };
+	int32_t uniformCloudsMiddleColor { -1 };
+	int32_t uniformCloudsBottomColor { -1 };
+	int32_t uniformCloudsSpeed { -1 };
+	int32_t uniformCloudsDirection { -1 };
+	int32_t uniformCloudsScale { -1 };
+	int32_t uniformCloudsCutoff { -1 };
+	int32_t uniformCloudsFuzziness { -1 };
+	int32_t uniformCloudsWeight { -1 };
+	int32_t uniformCloudsBlur { -1 };
+	int32_t uniformStarsSpeed { -1 };
+
 	Texture* starsTexture { nullptr };
 	int32_t starsTextureId { 0 };
 

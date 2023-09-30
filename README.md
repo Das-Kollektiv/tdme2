@@ -111,7 +111,7 @@
       - specular lighting + tree
       - specular lighting + terrain
       - specular lighting + water
-      - sky(no lighting + fragment depth at maximum)
+      - sky
       - PBR lighting
       - PBR lighting + foliage
       - PBR lighting + tree

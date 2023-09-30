@@ -2675,6 +2675,7 @@ void Engine::dumpShaders() {
 		switch (shaderType) {
 			case SHADERTYPE_OBJECT: shaderTypeString = "object"; break;
 			case SHADERTYPE_POSTPROCESSING: shaderTypeString = "postprocessing"; break;
+			case SHADERTYPE_SKY: shaderTypeString = "sky"; break;
 			default: break;
 		}
 		Console::println(string("TDME2::registered " + shaderTypeString + " shader: ") + shaderId);

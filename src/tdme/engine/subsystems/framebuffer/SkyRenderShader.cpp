@@ -103,9 +103,115 @@ void SkyRenderShader::initialize()
 	if (uniformSideVector == -1) return;
 	uniformUpVector = renderer->getProgramUniformLocation(programId, "upVector");
 	if (uniformUpVector == -1) return;
+	//
+	// sky
+	uniformDayTopColor = renderer->getProgramUniformLocation(programId, "day_top_color");
+	if (uniformDayTopColor == -1) return;
+	uniformDayBottomColor = renderer->getProgramUniformLocation(programId, "day_bottom_color");
+	if (uniformDayBottomColor == -1) return;
+	uniformSunsetTopColor = renderer->getProgramUniformLocation(programId, "sunset_top_color");
+	if (uniformSunsetTopColor == -1) return;
+	uniformSunsetBottomColor = renderer->getProgramUniformLocation(programId, "sunset_bottom_color");
+	if (uniformSunsetBottomColor == -1) return;
+	uniformNightTopColor = renderer->getProgramUniformLocation(programId, "night_top_color");
+	if (uniformNightTopColor == -1) return;
+	uniformNightBottomColor = renderer->getProgramUniformLocation(programId, "night_bottom_color");
+	if (uniformNightBottomColor == -1) return;
+	// horizon
+	uniformHorizonColor = renderer->getProgramUniformLocation(programId, "horizon_color");
+	if (uniformHorizonColor == -1) return;
+	uniformHorizonBlur = renderer->getProgramUniformLocation(programId, "horizon_blur");
+	if (uniformHorizonBlur == -1) return;
+	// sun
+	uniformSunColorFactor = renderer->getProgramUniformLocation(programId, "sun_color_factor");
+	if (uniformSunColorFactor == -1) return;
+	uniformSunColor = renderer->getProgramUniformLocation(programId, "sun_color");
+	if (uniformSunColor == -1) return;
+	uniformSunSunsetColor = renderer->getProgramUniformLocation(programId, "sun_sunset_color");
+	if (uniformSunSunsetColor == -1) return;
+	uniformSunSize = renderer->getProgramUniformLocation(programId, "sun_size");
+	if (uniformSunSize == -1) return;
+	uniformSunBlur = renderer->getProgramUniformLocation(programId, "sun_blur");
+	if (uniformSunBlur == -1) return;
+	// moon
+	uniformMoonColorFactor = renderer->getProgramUniformLocation(programId, "moon_color_factor");
+	if (uniformMoonColorFactor == -1) return;
+	uniformMoonColor = renderer->getProgramUniformLocation(programId, "moon_color");
+	if (uniformMoonColor == -1) return;
+	uniformMoonSize = renderer->getProgramUniformLocation(programId, "moon_size");
+	if (uniformMoonSize == -1) return;
+	uniformMoonBlur = renderer->getProgramUniformLocation(programId, "moon_blur");
+	if (uniformMoonBlur == -1) return;
+	// clouds
+	uniformCloudsEdgeColor = renderer->getProgramUniformLocation(programId, "clouds_edge_color");
+	if (uniformCloudsEdgeColor == -1) return;
+	uniformCloudsTopColor = renderer->getProgramUniformLocation(programId, "clouds_top_color");
+	if (uniformCloudsTopColor == -1) return;
+	uniformCloudsMiddleColor = renderer->getProgramUniformLocation(programId, "clouds_middle_color");
+	if (uniformCloudsMiddleColor == -1) return;
+	uniformCloudsBottomColor = renderer->getProgramUniformLocation(programId, "clouds_bottom_color");
+	if (uniformCloudsBottomColor == -1) return;
+	uniformCloudsSpeed = renderer->getProgramUniformLocation(programId, "clouds_speed");
+	if (uniformCloudsSpeed == -1) return;
+	uniformCloudsDirection = renderer->getProgramUniformLocation(programId, "clouds_direction");
+	if (uniformCloudsDirection == -1) return;
+	uniformCloudsScale = renderer->getProgramUniformLocation(programId, "clouds_scale");
+	if (uniformCloudsScale == -1) return;
+	uniformCloudsCutoff = renderer->getProgramUniformLocation(programId, "clouds_cutoff");
+	if (uniformCloudsCutoff == -1) return;
+	uniformCloudsFuzziness = renderer->getProgramUniformLocation(programId, "clouds_fuzziness");
+	if (uniformCloudsFuzziness == -1) return;
+	uniformCloudsWeight = renderer->getProgramUniformLocation(programId, "clouds_weight");
+	if (uniformCloudsWeight == -1) return;
+	uniformCloudsBlur = renderer->getProgramUniformLocation(programId, "clouds_blur");
+	if (uniformCloudsBlur == -1) return;
+	uniformStarsSpeed = renderer->getProgramUniformLocation(programId, "stars_speed");
+	if (uniformStarsSpeed == -1) return;
 
 	//
 	loadTextures(".");
+
+	//
+	Engine::registerShader(
+		Engine::ShaderType::SHADERTYPE_SKY,
+		"sky",
+		{
+			// sky
+			{ "day_top_color", ShaderParameter(Vector3( 0.1f, 0.6f, 1.0f )) },
+			{ "day_bottom_color", ShaderParameter(Vector3( 0.4f, 0.8f, 1.0f )) },
+			{ "sunset_top_color", ShaderParameter(Vector3( 0.7f, 0.75f, 1.0f )) },
+			{ "sunset_bottom_color", ShaderParameter(Vector3( 1.0f, 0.5f, 0.7f )) },
+			{ "night_top_color", ShaderParameter(Vector3( 0.02f, 0.0f, 0.04f )) },
+			{ "night_bottom_color", ShaderParameter(Vector3( 0.1f, 0.0f, 0.2f )) },
+			// horizon
+			{ "horizon_color", ShaderParameter(Vector3( 0.0f, 0.7f, 0.8f )) },
+			{ "horizon_blur", ShaderParameter(0.05f) },
+			// sun
+			{ "sun_color_factor", ShaderParameter(200.0f) },
+			{ "sun_color", ShaderParameter(Vector3( 1.0f, 0.8f, 0.1f )) },
+			{ "sun_sunset_color", ShaderParameter(Vector3( 10.0f, 0.0f, 0.0f )) },
+			{ "sun_size", ShaderParameter(0.2f) },
+			{ "sun_blur", ShaderParameter(10.0f) },
+			// moon
+			{ "moon_color_factor", ShaderParameter(20.0f) },
+			{ "moon_color", ShaderParameter(Vector3( 1.0f, 0.95f, 0.7f )) },
+			{ "moon_size", ShaderParameter(0.06f) },
+			{ "moon_blur", ShaderParameter(0.1f) },
+			// clouds
+			{ "clouds_edge_color", ShaderParameter(Vector3( 0.8f, 0.8f, 0.98f )) },
+			{ "clouds_top_color", ShaderParameter(Vector3( 1.0f, 1.0f, 1.00f )) },
+			{ "clouds_middle_color", ShaderParameter(Vector3( 0.92f, 0.92f, 0.98f )) },
+			{ "clouds_bottom_color", ShaderParameter(Vector3( 0.83f, 0.83f, 0.94f )) },
+			{ "clouds_speed", ShaderParameter(2.0f) },
+			{ "clouds_direction", ShaderParameter(0.2f) },
+			{ "clouds_scale", ShaderParameter(1.0f) },
+			{ "clouds_cutoff", ShaderParameter(0.3f) },
+			{ "clouds_fuzziness", ShaderParameter(0.5f) },
+			{ "clouds_weight", ShaderParameter(0.0f) },
+			{ "clouds_blur", ShaderParameter(0.25f) },
+			{ "stars_speed", ShaderParameter(1.0f) }
+		}
+	);
 
 	//
 	initialized = true;
@@ -163,6 +269,40 @@ void SkyRenderShader::render(Engine* engine, bool lightScatteringPass) {
 	//
 	renderer->setTextureUnit(contextIdx, 0);
 	renderer->bindTexture(contextIdx, starsTextureId);
+	// sky
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformDayTopColor, engine->getShaderParameter("sky", "day_top_color").getVector3Value().getArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformDayBottomColor, engine->getShaderParameter("sky", "day_bottom_color").getVector3Value().getArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformSunsetTopColor, engine->getShaderParameter("sky", "sunset_top_color").getVector3Value().getArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformSunsetBottomColor, engine->getShaderParameter("sky", "sunset_bottom_color").getVector3Value().getArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformNightTopColor, engine->getShaderParameter("sky", "night_top_color").getVector3Value().getArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformNightBottomColor, engine->getShaderParameter("sky", "night_bottom_color").getVector3Value().getArray());
+	// horizon
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformHorizonColor, engine->getShaderParameter("sky", "horizon_color").getVector3Value().getArray());
+	renderer->setProgramUniformFloat(contextIdx, uniformHorizonBlur, engine->getShaderParameter("sky", "horizon_blur").getFloatValue());
+	// sun
+	renderer->setProgramUniformFloat(contextIdx, uniformSunColorFactor, engine->getShaderParameter("sky", "sun_color_factor").getFloatValue());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformSunColor, engine->getShaderParameter("sky", "sun_color").getVector3Value().getArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformSunSunsetColor, engine->getShaderParameter("sky", "sun_sunset_color").getVector3Value().getArray());
+	renderer->setProgramUniformFloat(contextIdx, uniformSunSize, engine->getShaderParameter("sky", "sun_size").getFloatValue());
+	renderer->setProgramUniformFloat(contextIdx, uniformSunBlur, engine->getShaderParameter("sky", "sun_blur").getFloatValue());
+	// moon
+	renderer->setProgramUniformFloat(contextIdx, uniformMoonColorFactor, engine->getShaderParameter("sky", "moon_color_factor").getFloatValue());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformMoonColor, engine->getShaderParameter("sky", "moon_color").getVector3Value().getArray());
+	renderer->setProgramUniformFloat(contextIdx, uniformMoonSize, engine->getShaderParameter("sky", "moon_size").getFloatValue());
+	renderer->setProgramUniformFloat(contextIdx, uniformMoonBlur, engine->getShaderParameter("sky", "moon_blur").getFloatValue());
+	// clouds
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformCloudsEdgeColor, engine->getShaderParameter("sky", "clouds_edge_color").getVector3Value().getArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformCloudsTopColor, engine->getShaderParameter("sky", "clouds_top_color").getVector3Value().getArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformCloudsMiddleColor, engine->getShaderParameter("sky", "clouds_middle_color").getVector3Value().getArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformCloudsBottomColor, engine->getShaderParameter("sky", "clouds_bottom_color").getVector3Value().getArray());
+	renderer->setProgramUniformFloat(contextIdx, uniformCloudsSpeed, engine->getShaderParameter("sky", "clouds_speed").getFloatValue());
+	renderer->setProgramUniformFloat(contextIdx, uniformCloudsDirection, engine->getShaderParameter("sky", "clouds_direction").getFloatValue());
+	renderer->setProgramUniformFloat(contextIdx, uniformCloudsScale, engine->getShaderParameter("sky", "clouds_scale").getFloatValue());
+	renderer->setProgramUniformFloat(contextIdx, uniformCloudsCutoff, engine->getShaderParameter("sky", "clouds_cutoff").getFloatValue());
+	renderer->setProgramUniformFloat(contextIdx, uniformCloudsFuzziness, engine->getShaderParameter("sky", "clouds_fuzziness").getFloatValue());
+	renderer->setProgramUniformFloat(contextIdx, uniformCloudsWeight, engine->getShaderParameter("sky", "clouds_weight").getFloatValue());
+	renderer->setProgramUniformFloat(contextIdx, uniformCloudsBlur, engine->getShaderParameter("sky", "clouds_blur").getFloatValue());
+	renderer->setProgramUniformFloat(contextIdx, uniformStarsSpeed, engine->getShaderParameter("sky", "stars_speed").getFloatValue());
 	//
 	renderer->disableDepthBufferWriting();
 	renderer->disableDepthBufferTest();
