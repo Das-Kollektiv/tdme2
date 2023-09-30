@@ -74,9 +74,6 @@ private:
 		"transform_scale_y",
 		"transform_scale_z"
 	};
-	array<string, 1> applySkyNodes = {
-		"sky_model_scale"
-	};
 	array<string, 1> applyReflectionEnvironmentMappingNodes = {
 		"reflection_environmentmap"
 	};

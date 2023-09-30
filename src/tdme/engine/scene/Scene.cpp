@@ -54,7 +54,6 @@ Scene::Scene(const string& name, const string& description): BaseProperties(name
 	rotationOrder = RotationOrder::XYZ;
 	library = make_unique<SceneLibrary>(this);
 	entityIdx = 0;
-	skyModelScale = Vector3(1.0f, 1.0f, 1.0f);
 }
 
 Scene::~Scene() {
@@ -249,10 +248,6 @@ SceneEntity* Scene::getEntity(const string& id)
 		return entityByIdIt->second;
 	}
 	return nullptr;
-}
-
-void Scene::setSkyModel(Model* model) {
-	this->skyModel = unique_ptr<Model>(model);
 }
 
 void Scene::update() {

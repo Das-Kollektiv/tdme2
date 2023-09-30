@@ -362,26 +362,6 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 				break;
 			}
 		}
-		for (const auto& applySkyNode: applySkyNodes) {
-			if (node->getId() == applySkyNode) {
-				//
-				try {
-					auto scene = view->getScene();
-					scene->setSkyModelScale(
-						Vector3(
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky_model_scale"))->getController()->getValue().getString()),
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky_model_scale"))->getController()->getValue().getString()),
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky_model_scale"))->getController()->getValue().getString())
-						)
-					);
-				} catch (Exception& exception) {
-					Console::println("SceneEditorTabController::onChange(): An error occurred: " + string(exception.what()));
-					showInfoPopUp("Warning", string(exception.what()));
-				}
-				//
-				break;
-			}
-		}
 		for (const auto& applyReflectionEnvironmentMappingNode: applyReflectionEnvironmentMappingNodes) {
 			if (node->getId() == applyReflectionEnvironmentMappingNode) {
 				//

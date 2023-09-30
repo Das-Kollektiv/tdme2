@@ -184,11 +184,7 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene* s
 	{
 		Value jSky;
 		jSky.SetObject();
-		jSky.AddMember("file", Value(scene->getSkyModelFileName(), jAllocator), jAllocator);
-		jSky.AddMember("sx", Value(scene->getSkyModelScale().getX()), jAllocator);
-		jSky.AddMember("sy", Value(scene->getSkyModelScale().getY()), jAllocator);
-		jSky.AddMember("sz", Value(scene->getSkyModelScale().getZ()), jAllocator);
-		jDocument.AddMember("sky", jSky, jAllocator);
+		jDocument.AddMember("skyshader", jSky, jAllocator);
 	}
 	//
 	jDocument.AddMember("gui", Value(scene->getGUIFileName(), jAllocator), jAllocator);

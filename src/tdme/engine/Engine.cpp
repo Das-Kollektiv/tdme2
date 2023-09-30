@@ -1460,7 +1460,8 @@ void Engine::display()
 					false,
 					EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
 					EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
-					EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY
+					EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY,
+					false
 				);
 			}
 		}
@@ -1538,7 +1539,8 @@ void Engine::display()
 			EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
 			EntityRenderer::RENDERTYPE_TEXTURES |
 			EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
-			EntityRenderer::RENDERTYPE_LIGHTS
+			EntityRenderer::RENDERTYPE_LIGHTS,
+		skyShaderEnabled
 	);
 
 	// delete post processing termporary buffer if not required anymore

@@ -299,31 +299,8 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 	scene->update();
 
 	//
-	if (jRoot.FindMember("sky") != jRoot.MemberEnd()) {
-		const auto& jSky = jRoot["sky"];
-		scene->setSkyModelFileName(jSky["file"].GetString());
-		scene->setSkyModelScale(
-			Vector3(
-				jSky["sx"].GetFloat(),
-				jSky["sy"].GetFloat(),
-				jSky["sz"].GetFloat()
-			)
-		);
-		if (scene->getSkyModelFileName().empty() == false) {
-			auto skyModelPathName = PrototypeReader::getResourcePathName(pathName, scene->getSkyModelFileName());
-			auto skyModelFileName = FileSystem::getInstance()->getFileName(scene->getSkyModelFileName());
-			scene->setSkyModelFileName(skyModelPathName + "/" + skyModelFileName);
-			try {
-				scene->setSkyModel(
-					ModelReader::read(
-						skyModelPathName,
-						skyModelFileName
-					)
-				);
-			} catch (Exception& exception) {
-				throw exception;
-			}
-		}
+	if (jRoot.FindMember("skyshader") != jRoot.MemberEnd()) {
+		const auto& jSky = jRoot["skyshader"];
 	}
 
 	//

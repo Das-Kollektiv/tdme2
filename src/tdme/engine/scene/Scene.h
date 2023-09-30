@@ -55,9 +55,6 @@ private:
 	BoundingBox boundingBox;
 	Vector3 dimension;
 	Vector3 center;
-	string skyModelFileName;
-	unique_ptr<Model> skyModel;
-	Vector3 skyModelScale;
 	string guiFileName;
 
 	/**
@@ -306,47 +303,6 @@ public:
 	 * @return success
 	 */
 	bool renameEntity(const string& id, const string& newId);
-
-	/**
-	 * @return sky model file name
-	 */
-	inline const string& getSkyModelFileName() {
-		return skyModelFileName;
-	}
-
-	/**
-	 * Set sky model file name
-	 * @param skyModelFileName sky model file name
-	 */
-	inline void setSkyModelFileName(const string& skyModelFileName) {
-		this->skyModelFileName = skyModelFileName;
-	}
-
-	/**
-	 * @return sky model
-	 */
-	inline Model* getSkyModel() {
-		return skyModel.get();
-	}
-
-	/**
-	 * Set sky model
-	 */
-	void setSkyModel(Model* model);
-
-	/**
-	 * @return sky model scale
-	 */
-	inline const Vector3& getSkyModelScale() {
-		return skyModelScale;
-	}
-
-	/**
-	 * Set sky model scale
-	 */
-	void setSkyModelScale(const Vector3& skyModelScale) {
-		this->skyModelScale = skyModelScale;
-	}
 
 	/**
 	 * @return Scene GUI file name including relative path
