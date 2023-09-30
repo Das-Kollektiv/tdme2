@@ -1,7 +1,6 @@
 #include <tdme/engine/Engine.h>
 
 #include <algorithm>
-#include <map>
 #include <memory>
 #include <string>
 
@@ -85,9 +84,9 @@
 #include <tdme/utilities/TextureAtlas.h>
 
 using std::make_unique;
-using std::map;
 using std::move;
 using std::remove;
+using std::sort;
 using std::string;
 using std::to_string;
 using std::unique_ptr;
@@ -201,7 +200,7 @@ int32_t Engine::environmentMappingWidth = 1024;
 int32_t Engine::environmentMappingHeight = 1024;
 float Engine::animationComputationReduction1Distance = 25.0f;
 float Engine::animationComputationReduction2Distance = 50.0f;
-map<string, Engine::Shader> Engine::shaders;
+unordered_map<string, Engine::Shader> Engine::shaders;
 unordered_map<string, uint8_t> Engine::uniqueShaderIds;
 
 vector<unique_ptr<Engine::EngineThread>> Engine::engineThreads;
@@ -2304,10 +2303,11 @@ const vector<string> Engine::getRegisteredShader(ShaderType type) {
 			result.push_back(shader.id);
 		}
 	}
+	sort(result.begin(), result.end());
 	return result;
 }
 
-void Engine::registerShader(ShaderType type, const string& shaderId, const map<string, ShaderParameter>& parameterDefaults) {
+void Engine::registerShader(ShaderType type, const string& shaderId, const unordered_map<string, ShaderParameter>& parameterDefaults) {
 	if (shaders.find(shaderId) != shaders.end()) {
 		Console::println("Engine::registerShader(): Shader already registered: " + shaderId);
 		return;
@@ -2319,11 +2319,11 @@ void Engine::registerShader(ShaderType type, const string& shaderId, const map<s
 	};
 }
 
-const map<string, ShaderParameter> Engine::getShaderParameterDefaults(const string& shaderId) {
+const unordered_map<string, ShaderParameter> Engine::getShaderParameterDefaults(const string& shaderId) {
 	auto shaderIt = shaders.find(shaderId);
 	if (shaderIt == shaders.end()) {
 		Console::println("Engine::getShaderParameterDefaults(): No registered shader: " + shaderId);
-		return map<string, ShaderParameter>();
+		return unordered_map<string, ShaderParameter>();
 	}
 	return shaderIt->second.parameterDefaults;
 }
@@ -2671,7 +2671,7 @@ bool Engine::renderLightSources(int width, int height) {
 void Engine::dumpShaders() {
 	for (auto shaderType = 0; shaderType < SHADERTYPE_MAX; shaderType++)
 	for (const auto& shaderId: getRegisteredShader(static_cast<ShaderType>(shaderType))) {
-		string shaderTypeString = "unknowm";
+		string shaderTypeString = "unknown";
 		switch (shaderType) {
 			case SHADERTYPE_OBJECT: shaderTypeString = "object"; break;
 			case SHADERTYPE_POSTPROCESSING: shaderTypeString = "postprocessing"; break;
@@ -2681,67 +2681,70 @@ void Engine::dumpShaders() {
 		Console::println(string("TDME2::registered " + shaderTypeString + " shader: ") + shaderId);
 		const auto& defaultShaderParameters = getShaderParameterDefaults(shaderId);
 		if (defaultShaderParameters.size() > 0) {
-			Console::print("\t");
+			vector<string> parameters;
 			for (const auto& [parameterName, parameterValue]: defaultShaderParameters) {
-				Console::print(parameterName);
+				parameters.emplace_back();
+				parameters[parameters.size() - 1]+= parameterName;
 				switch(parameterValue.getType()) {
 					case ShaderParameter::TYPE_NONE:
-						Console::print("=none; ");
+						parameters[parameters.size() - 1]+= " = none";
 						break;
 					case ShaderParameter::TYPE_BOOLEAN:
-						Console::print("=boolean(");
-						Console::print(getShaderParameter(shaderId, parameterName).getBooleanValue() == true?"true":"false");
-						Console::print("); ");
+						parameters[parameters.size() - 1]+= " = boolean(";
+						parameters[parameters.size() - 1]+= getShaderParameter(shaderId, parameterName).getBooleanValue() == true?"true":"false";
+						parameters[parameters.size() - 1]+= ")";
 						break;
 					case ShaderParameter::TYPE_INTEGER:
-						Console::print("=integer(");
-						Console::print(to_string(getShaderParameter(shaderId, parameterName).getIntegerValue()));
-						Console::print("); ");
+						parameters[parameters.size() - 1]+= " = integer(";
+						parameters[parameters.size() - 1]+= to_string(getShaderParameter(shaderId, parameterName).getIntegerValue());
+						parameters[parameters.size() - 1]+= ")";
 						break;
 					case ShaderParameter::TYPE_FLOAT:
-						Console::print("=float(");
-						Console::print(to_string(getShaderParameter(shaderId, parameterName).getFloatValue()));
-						Console::print("); ");
+						parameters[parameters.size() - 1]+= " = float(";
+						parameters[parameters.size() - 1]+= to_string(getShaderParameter(shaderId, parameterName).getFloatValue());
+						parameters[parameters.size() - 1]+= ")";
 						break;
 					case ShaderParameter::TYPE_VECTOR2:
 						{
-							Console::print("=Vector2(");
-							const auto& shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector2Value().getArray();
+							parameters[parameters.size() - 1]+= " = Vector2(";
+							const auto shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector2ValueArray();
 							for (auto i = 0; i < shaderParameterArray.size(); i++) {
-								if (i != 0) Console::print(",");
-								Console::print(to_string(shaderParameterArray[i]));
+								if (i != 0) parameters[parameters.size() - 1]+= ",";
+								parameters[parameters.size() - 1]+= to_string(shaderParameterArray[i]);
 							}
-							Console::print("); ");
+							parameters[parameters.size() - 1]+= ")";
 						}
 						break;
 					case ShaderParameter::TYPE_VECTOR3:
 						{
-							Console::print("=Vector3(");
-							const auto& shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector3Value().getArray();
+							parameters[parameters.size() - 1]+= " = Vector3(";
+							const auto shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector3ValueArray();
 							for (auto i = 0; i < shaderParameterArray.size(); i++) {
-								if (i != 0) Console::print(",");
-								Console::print(to_string(shaderParameterArray[i]));
+								if (i != 0) parameters[parameters.size() - 1]+= ",";
+								parameters[parameters.size() - 1]+= to_string(shaderParameterArray[i]);
 							}
-							Console::print("); ");
+							parameters[parameters.size() - 1]+= ")";
 						}
 						break;
 					case ShaderParameter::TYPE_VECTOR4:
 						{
-							Console::print("=Vector4(");
-							const auto& shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector4Value().getArray();
+							parameters[parameters.size() - 1]+= " = Vector4(";
+							const auto shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector4ValueArray();
 							for (auto i = 0; i < shaderParameterArray.size(); i++) {
-								if (i != 0) Console::print(",");
-								Console::print(to_string(shaderParameterArray[i]));
+								if (i != 0) parameters[parameters.size() - 1]+= ",";
+								parameters[parameters.size() - 1]+= to_string(shaderParameterArray[i]);
 							}
-							Console::print("); ");
+							parameters[parameters.size() - 1]+= ")";
 						}
 						break;
 					default:
-						Console::print("=unknown; ");
+						parameters[parameters.size() - 1]+= " = unknown";
 						break;
 				}
 			}
-			Console::println();
+			//
+			sort(parameters.begin(), parameters.end());
+			for (auto& parameter: parameters) Console::println("\t" + parameter);
 		}
 	}
 }

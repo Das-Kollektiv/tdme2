@@ -178,22 +178,6 @@ public:
 	void unsetGUIFileName();
 
 	/**
-	 * Set sky details
-	 */
-	void setSkyDetails();
-
-	/**
-	 * Set sky model file name
-	 * @param fileName file name
-	 */
-	void setSkyModelFileName(const string& fileName);
-
-	/**
-	 * Unset sky model file name
-	 */
-	void unsetSkyModelFileName();
-
-	/**
 	 * Set light details
 	 * @param lightIdx light index
 	 */

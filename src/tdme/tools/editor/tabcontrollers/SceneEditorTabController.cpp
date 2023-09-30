@@ -179,13 +179,6 @@ void SceneEditorTabController::onDrop(const string& payload, int mouseX, int mou
 		showInfoPopUp("Warning", "Unknown payload in drop");
 	} else {
 		auto fileName = StringTools::substring(payload, string("file:").size());
-		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "sky_model") == true) {
-			if (Tools::hasFileExtension(fileName, ModelReader::getModelExtensions()) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(ModelReader::getModelExtensions()));
-			} else {
-				setSkyModelFileName(fileName);
-			}
-		} else
 		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "gui") == true) {
 			vector<string> guiExtensions = {{ "xml" }};
 			if (Tools::hasFileExtension(fileName, guiExtensions) == false) {
@@ -381,7 +374,6 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky_model_scale"))->getController()->getValue().getString())
 						)
 					);
-					view->updateSky();
 				} catch (Exception& exception) {
 					Console::println("SceneEditorTabController::onChange(): An error occurred: " + string(exception.what()));
 					showInfoPopUp("Warning", string(exception.what()));
@@ -730,58 +722,6 @@ void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 			view->getEditorView()->getScreenController()->browseTo(scene->getGUIFileName());
 		}
 	} else
-	if (node->getId() == "sky_model_open") {
-		class OnLoadSkyModelAction: public virtual Action
-		{
-		public:
-			void performAction() override {
-				try {
-					sceneEditorTabController->setSkyModelFileName(
-						sceneEditorTabController->popUps->getFileDialogScreenController()->getPathName() +
-						"/" +
-						sceneEditorTabController->popUps->getFileDialogScreenController()->getFileName()
-					);
-				} catch (Exception& exception) {
-					Console::println("OnLoadSkyModelAction::performAction(): An error occurred: " + string(exception.what()));
-					sceneEditorTabController->showInfoPopUp("Warning", string(exception.what()));
-				}
-				sceneEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
-			}
-
-			/**
-			 * Public constructor
-			 * @param sceneEditorTabController scene editor tab controller
-			 */
-			OnLoadSkyModelAction(SceneEditorTabController* sceneEditorTabController)
-				: sceneEditorTabController(sceneEditorTabController) {
-				//
-			}
-
-		private:
-			SceneEditorTabController* sceneEditorTabController;
-		};
-
-		auto extensions = ModelReader::getModelExtensions();
-		popUps->getFileDialogScreenController()->show(
-			string(),
-			"Load sky model from: ",
-			extensions,
-			string(),
-			true,
-			new OnLoadSkyModelAction(this)
-		);
-	} else
-	if (node->getId() == "sky_model_remove") {
-		unsetSkyModelFileName();
-	} else
-	if (node->getId() == "sky_model_browseto") {
-		auto scene = view->getScene();
-		if (scene->getSkyModelFileName().empty() == true) {
-			showInfoPopUp("Browse To", "Nothing to browse to");
-		} else {
-			view->getEditorView()->getScreenController()->browseTo(scene->getSkyModelFileName());
-		}
-	} else
 	if (node->getId() == "prototype_place") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		auto prototypeId = Integer::parse(StringTools::substring(outlinerNode, string("scene.prototypes.").size()));
@@ -917,51 +857,6 @@ void SceneEditorTabController::unsetGUIFileName() {
 	if (scene == nullptr) return;
 	scene->setGUIFileName(string());
 	setGUIDetails();
-}
-
-void SceneEditorTabController::setSkyDetails() {
-	auto scene = view->getScene();
-
-	view->getEditorView()->setDetailsContent(
-		string("<template id=\"details_sky\" src=\"resources/engine/gui/template_details_sky.xml\" />")
-	);
-
-	//
-	try {
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_sky"))->getActiveConditions().add("open");
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky_model_scale"))->getController()->setValue(
-			Math::max(scene->getSkyModelScale().getX(), Math::max(scene->getSkyModelScale().getY(), scene->getSkyModelScale().getZ()))
-		);
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sky_model"))->setSource(scene->getSkyModelFileName());
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sky_model"))->setTooltip(scene->getSkyModelFileName());
-	} catch (Exception& exception) {
-		Console::println("SceneEditorTabController::setSkyDetails(): An error occurred: " + string(exception.what()));
-		showInfoPopUp("Warning", string(exception.what()));
-	}
-}
-
-void SceneEditorTabController::setSkyModelFileName(const string& fileName) {
-	view->removeSky();
-	auto scene = view->getScene();
-	scene->setSkyModelFileName(fileName);
-	scene->setSkyModelScale(Vector3(1.0f, 1.0f, 1.0f));
-	scene->setSkyModel(
-		ModelReader::read(
-			Tools::getPathName(scene->getSkyModelFileName()),
-			Tools::getFileName(scene->getSkyModelFileName()))
-	);
-	view->updateSky();
-	setSkyDetails();
-}
-
-void SceneEditorTabController::unsetSkyModelFileName() {
-	view->removeSky();
-	auto scene = view->getScene();
-	scene->setSkyModelFileName(string());
-	scene->setSkyModelScale(Vector3(1.0f, 1.0f, 1.0f));
-	scene->setSkyModel(nullptr);
-	view->updateSky();
-	setSkyDetails();
 }
 
 void SceneEditorTabController::setLightDetails(int lightIdx) {
@@ -1350,7 +1245,7 @@ void SceneEditorTabController::updateDetails(const string& outlinerNode) {
 		setGUIDetails();
 	} else
 	if (outlinerNode == "scene.sky") {
-		setSkyDetails();
+		// TODO
 	} else
 	if (StringTools::startsWith(outlinerNode, "scene.lights.") == true) {
 		auto lightIdx = Integer::parse(StringTools::substring(outlinerNode, string("scene.lights.light").size()));

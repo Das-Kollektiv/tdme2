@@ -101,6 +101,7 @@ SceneEditorTabView::SceneEditorTabView(EditorView* editorView, const string& tab
 	this->popUps = editorView->getPopUps();
 	engine = unique_ptr<Engine>(Engine::createOffScreenInstance(512, 512, true, true, true));
 	engine->setSceneColor(Color4(39.0f / 255.0f, 39.0f / 255.0f, 39.0f / 255.0f, 1.0f));
+	engine->setSkyShaderEnabled(true);
 	this->scene = unique_ptr<Scene>(scene);
 	this->cameraInputHandler = make_unique<CameraInputHandler>(engine.get(), this);
 	this->keyControl = false;
@@ -475,8 +476,6 @@ void SceneEditorTabView::handleInputEvents()
 
 void SceneEditorTabView::display()
 {
-	updateSkyPosition();
-
 	// if scene is running, no not do HID input except camera
 	if (applicationClient != nullptr) {
 		//
@@ -571,23 +570,8 @@ void SceneEditorTabView::initialize()
 		Console::println("SceneEditorTabView::initialize(): An error occurred: " + string(exception.what()));
 	}
 	//
-	for (auto i = 1; i < engine->getLightCount(); i++) engine->getLightAt(i)->setEnabled(false);
-	auto light0 = engine->getLightAt(0);
-	light0->setAmbient(Color4(0.7f, 0.7f, 0.7f, 1.0f));
-	light0->setDiffuse(Color4(0.3f, 0.3f, 0.3f, 1.0f));
-	light0->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	light0->setPosition(Vector4(0.0f, 20000.0f, 0.0f, 0.0f));
-	light0->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ())).normalize());
-	light0->setConstantAttenuation(0.5f);
-	light0->setLinearAttenuation(0.0f);
-	light0->setQuadraticAttenuation(0.0f);
-	light0->setSpotExponent(0.0f);
-	light0->setSpotCutOff(180.0f);
-	light0->setEnabled(true);
-	auto cam = engine->getCamera();
-	SceneConnector::setLights(engine.get(), scene.get(), Vector3());
+	SceneConnector::setLights(engine.get(), scene.get());
 	SceneConnector::addScene(engine.get(), scene.get(), true, true, true, true, true);
-	updateSky();
 	cameraInputHandler->setSceneCenter(scene->getCenter());
 	updateGrid();
 	// TODO: load settings
@@ -667,35 +651,8 @@ void SceneEditorTabView::onCameraScale() {
 	needsGizmoUpdate = true;
 }
 
-void SceneEditorTabView::removeSky() {
-	engine->removeEntity("tdme.sky");
-}
-
-void SceneEditorTabView::updateSky() {
-	engine->removeEntity("tdme.sky");
-	if (scene->getSkyModel() == nullptr) return;
-	auto sky = new Object("tdme.sky", scene->getSkyModel());
-	sky->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
-	sky->setShader("sky");
-	sky->setFrustumCulling(false);
-	sky->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
-	sky->setScale(scene->getSkyModelScale());
-	sky->update();
-	sky->setContributesShadows(false);
-	sky->setReceivesShadows(false);
-	sky->setExcludeEffectPass(Engine::EFFECTPASS_LIGHTSCATTERING);
-	engine->addEntity(sky);
-}
-
-void SceneEditorTabView::updateSkyPosition() {
-	auto sky = engine->getEntity("tdme.sky");
-	if (sky == nullptr) return;
-	sky->setTranslation(engine->getCamera()->getLookAt());
-	sky->update();
-}
-
 void SceneEditorTabView::updateLights() {
-	SceneConnector::setLights(engine.get(), scene.get(), Vector3());
+	SceneConnector::setLights(engine.get(), scene.get());
 }
 
 void SceneEditorTabView::selectEntityInternal(Entity* entity)
@@ -1389,9 +1346,8 @@ void SceneEditorTabView::addPrototype(Prototype* prototype) {
 			}
 			sceneLibrary->addPrototype(prototype);
 			SceneConnector::resetEngine(engine.get(), scene.get());
-			SceneConnector::setLights(engine.get(), scene.get(), Vector3());
+			SceneConnector::setLights(engine.get(), scene.get());
 			SceneConnector::addScene(engine.get(), scene.get(), true, true, true, true, true);
-			updateSky();
 			scene->update();
 			cameraInputHandler->setSceneCenter(scene->getCenter());
 			cameraInputHandler->reset();
@@ -1520,9 +1476,8 @@ void SceneEditorTabView::runScene() {
 		// reset scene
 		engine->getGUI()->reset();
 		SceneConnector::resetEngine(engine.get(), scene.get());
-		SceneConnector::setLights(engine.get(), scene.get(), Vector3());
+		SceneConnector::setLights(engine.get(), scene.get());
 		SceneConnector::addScene(engine.get(), scene.get(), true, true, true, true, true);
-		updateSky();
 		scene->update();
 		cameraInputHandler->setSceneCenter(scene->getCenter());
 		cameraInputHandler->reset();
@@ -1546,9 +1501,8 @@ void SceneEditorTabView::stopScene() {
 
 	// reset scene
 	engine->getGUI()->reset();
-	SceneConnector::setLights(engine.get(), scene.get(), Vector3());
+	SceneConnector::setLights(engine.get(), scene.get());
 	SceneConnector::addScene(engine.get(), scene.get(), true, true, true, true, true);
-	updateSky();
 	scene->update();
 	cameraInputHandler->setSceneCenter(scene->getCenter());
 	cameraInputHandler->reset();

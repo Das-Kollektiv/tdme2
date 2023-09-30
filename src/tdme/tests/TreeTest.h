@@ -39,7 +39,7 @@ private:
 	bool keyDot { false };
 	float camRotationY { 180.0f };
 	float camRotationX { 0.0f };
-	float sunRotation { -55.0f };
+	float t { 0.0f };
 
 	ObjectDeleter<Model> modelDeleter;
 	ObjectDeleter<BoundingVolume> bvDeleter;

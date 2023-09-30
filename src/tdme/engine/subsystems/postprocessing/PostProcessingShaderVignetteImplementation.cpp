@@ -73,5 +73,5 @@ void PostProcessingShaderVignetteImplementation::initialize()
 
 void PostProcessingShaderVignetteImplementation::setShaderParameters(int contextIdx, Engine* engine) {
 	if (uniformIntensity != -1) renderer->setProgramUniformFloat(contextIdx, uniformIntensity, engine->getShaderParameter("vignette", "intensity").getFloatValue());
-	if (uniformBorderColor != -1) renderer->setProgramUniformFloatVec3(contextIdx, uniformBorderColor, engine->getShaderParameter("vignette", "borderColor").getVector3Value().getArray());
+	if (uniformBorderColor != -1) renderer->setProgramUniformFloatVec3(contextIdx, uniformBorderColor, engine->getShaderParameter("vignette", "borderColor").getVector3ValueArray());
 }

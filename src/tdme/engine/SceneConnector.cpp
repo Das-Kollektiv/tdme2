@@ -179,9 +179,39 @@ float SceneConnector::renderGroupsLOD3MinDistance = 50.0;
 int SceneConnector::renderGroupsLOD2ReduceBy = 4;
 int SceneConnector::renderGroupsLOD3ReduceBy = 16;
 
-void SceneConnector::setLights(Engine* engine, Scene* scene, const Vector3& translation)
+void SceneConnector::setNaturalLights(Engine* engine, float t) {
+	// disable all lights
+	for (auto light: engine->getLights()) light->setEnabled(false);
+	// sun
+	auto sunLight = engine->getLightAt(Engine::LIGHTIDX_SUN);
+	auto sunColor = Vector3(1.0f, 1.0f, 1.0f); // engine->getShaderParameter("sky", "sun_color").getVector3Value();
+	auto sunAmbientColor = sunColor * 0.7;
+	auto sunDiffuseColor = sunColor * 0.5;
+	sunLight->setupSun(t);
+	sunLight->setAmbient(Color4(sunAmbientColor[0], sunAmbientColor[1], sunAmbientColor[2], 1.0f));
+	sunLight->setDiffuse(Color4(sunDiffuseColor[0], sunDiffuseColor[1], sunDiffuseColor[2], 1.0f));
+	sunLight->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	sunLight->setEnabled(true);
+	// moon
+	auto moonLight = engine->getLightAt(Engine::LIGHTIDX_MOON);
+	auto moonColor = Vector3(1.0f, 1.0f, 1.0f); // engine->getShaderParameter("sky", "moon_color").getVector3Value();
+	auto moonAmbientColor = moonColor * 0.7 * 0.5;
+	auto moonDiffuseColor = moonColor * 0.5 * 0.5;
+	moonLight->setupMoon(t);
+	moonLight->setAmbient(Color4(moonAmbientColor[0], moonAmbientColor[1], moonAmbientColor[2], 1.0f));
+	moonLight->setDiffuse(Color4(moonDiffuseColor[0], moonDiffuseColor[1], moonDiffuseColor[2], 1.0f));
+	moonLight->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	moonLight->setEnabled(true);
+}
+
+void SceneConnector::setLights(Engine* engine, Scene* scene, float t, const Vector3& translation)
 {
-	for (auto i = 0; i < Engine::LIGHTS_MAX; i++) {
+	//
+	for (auto i = 1; i < engine->getLightCount(); i++) engine->getLightAt(i)->setEnabled(false);
+	//
+	setNaturalLights(engine);
+	// additional lights
+	for (auto i = 2; i < Engine::LIGHTS_MAX; i++) {
 		if (i >= scene->getLightCount()) {
 			engine->getLightAt(i)->setEnabled(false);
 			continue;
@@ -196,14 +226,6 @@ void SceneConnector::setLights(Engine* engine, Scene* scene, const Vector3& tran
 		engine->getLightAt(i)->setLinearAttenuation(scene->getLightAt(i)->getLinearAttenuation());
 		engine->getLightAt(i)->setQuadraticAttenuation(scene->getLightAt(i)->getQuadraticAttenuation());
 		engine->getLightAt(i)->setEnabled(scene->getLightAt(i)->isEnabled());
-		engine->getLightAt(i)->setPosition(
-			Vector4(
-				scene->getLightAt(i)->getPosition().getX() + translation.getX(),
-				scene->getLightAt(i)->getPosition().getY() + translation.getY(),
-				scene->getLightAt(i)->getPosition().getZ() + translation.getZ(),
-				scene->getLightAt(i)->getPosition().getW()
-			)
-		);
 	}
 }
 

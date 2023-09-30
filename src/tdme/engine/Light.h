@@ -11,6 +11,7 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
+#include <tdme/math/Quaternion.h>
 #include <tdme/utilities/Console.h>
 
 using std::to_string;
@@ -21,6 +22,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
+using tdme::math::Quaternion;
 using tdme::utilities::Console;
 
 /**
@@ -323,5 +325,28 @@ public:
 	 */
 	void update(int contextIdx);
 
+	/**
+	 * Set up sun
+	 * @param t time, while 0.0 <= t <= 1.0
+	 */
+	inline void setupSun(float t) {
+		Quaternion lightRotationXQuaternion;
+		lightRotationXQuaternion.rotate(Vector3(0.0f, 0.0f, 1.0f), (1.0f - t) * 360.0f);
+		auto lightPosition = lightRotationXQuaternion * Vector3(1000000.0f, 0.0f, 1.0f);
+		setPosition(Vector4(lightPosition.getX(), lightPosition.getY(), lightPosition.getZ(), 0.0f));
+		setSpotDirection(Vector3(getPosition().getX(), getPosition().getY(), getPosition().getZ()).scale(-1.0f).normalize());
+	}
+
+	/**
+	 * Set up moon
+	 * @param t time, while 0.0 <= t <= 1.0
+	 */
+	inline void setupMoon(float t) {
+		Quaternion lightRotationXQuaternion;
+		lightRotationXQuaternion.rotate(Vector3(0.0f, 0.0f, 1.0f), (1.0f - t) * 360.0f);
+		auto lightPosition = lightRotationXQuaternion * Vector3(-1000000.0f, 0.0f, 1.0f);
+		setPosition(Vector4(lightPosition.getX(), lightPosition.getY(), lightPosition.getZ(), 0.0f));
+		setSpotDirection(Vector3(getPosition().getX(), getPosition().getY(), getPosition().getZ()).scale(-1.0f).normalize());
+	}
 
 };

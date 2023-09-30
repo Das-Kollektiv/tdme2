@@ -8,6 +8,7 @@
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
+#include <tdme/utilities/Console.h>
 
 using std::array;
 using std::string;
@@ -16,11 +17,12 @@ using std::to_string;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
+using tdme::utilities::Console;
 
 /**
  * Shader parameter model class
  */
-class tdme::engine::ShaderParameter {
+class tdme::engine::ShaderParameter final {
 public:
 	enum Type { TYPE_NONE, TYPE_BOOLEAN, TYPE_INTEGER, TYPE_FLOAT, TYPE_VECTOR2, TYPE_VECTOR3, TYPE_VECTOR4 };
 
@@ -122,6 +124,13 @@ public:
 	}
 
 	/**
+	 * @return Vector2 value array
+	 */
+	inline const array<float, 2> getVector2ValueArray() const {
+		return { floatValues[0], floatValues[1] };
+	}
+
+	/**
 	 * @return Vector3 value
 	 */
 	inline const Vector3 getVector3Value() const {
@@ -129,10 +138,24 @@ public:
 	}
 
 	/**
+	 * @return Vector3 value array
+	 */
+	inline const array<float, 3> getVector3ValueArray() const {
+		return { floatValues[0], floatValues[1], floatValues[2] };
+	}
+
+	/**
 	 * @return Vector4 value
 	 */
 	inline const Vector4 getVector4Value() const {
 		return Vector4(floatValues[0], floatValues[1], floatValues[2], floatValues[3]);
+	}
+
+	/**
+	 * @return Vector4 value array
+	 */
+	inline const array<float, 4> getVector4ValueArray() const {
+		return { floatValues[0], floatValues[1], floatValues[2], floatValues[3] };
 	}
 
 	/**

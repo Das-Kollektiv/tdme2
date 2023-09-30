@@ -30,14 +30,9 @@ class tdme::tests::WaterTest final
 private:
 	Engine* engine { nullptr };
 
-	unique_ptr<Prototype> skySpherePrototype;
-	unique_ptr<Prototype> skyDomePrototype;
-	unique_ptr<Prototype> skyPanoramaPrototype;
 	unique_ptr<Prototype> spherePrototype;
 
 	unique_ptr<Scene> scene;
-
-	float skyDomeTranslation { 0.0f };
 
 	bool keyLeft { false };
 	bool keyRight { false };

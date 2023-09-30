@@ -225,21 +225,6 @@ public:
 	void reloadOutliner(const string& outlinerNode);
 
 	/**
-	 * Remove sky
-	 */
-	void removeSky();
-
-	/**
-	 * Update sky
-	 */
-	void updateSky();
-
-	/**
-	 * Update sky position
-	 */
-	void updateSkyPosition();
-
-	/**
 	 * Update lights
 	 */
 	void updateLights();

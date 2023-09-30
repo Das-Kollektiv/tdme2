@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <array>
-#include <map>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -49,7 +48,6 @@
 
 using std::array;
 using std::make_unique;
-using std::map;
 using std::remove;
 using std::string;
 using std::to_string;
@@ -234,10 +232,10 @@ private:
 	struct Shader {
 		ShaderType type;
 		string id;
-		map<string, ShaderParameter> parameterDefaults;
+		unordered_map<string, ShaderParameter> parameterDefaults;
 	};
 
-	STATIC_DLL_IMPEXT static map<string, Shader> shaders;
+	STATIC_DLL_IMPEXT static unordered_map<string, Shader> shaders;
 
 	struct DecomposedEntities {
 		vector<Entity*> noFrustumCullingEntities;
@@ -308,7 +306,7 @@ private:
 
 	bool isUsingPostProcessingTemporaryFrameBuffer;
 
-	map<string, map<string, ShaderParameter>> shaderParameters;
+	unordered_map<string, unordered_map<string, ShaderParameter>> shaderParameters;
 
 	TextureAtlas ppsTextureAtlas {"tdme.pps.atlas"};
 	TextureAtlas decalsTextureAtlas {"tdme.decals.atlas"};
@@ -828,14 +826,14 @@ public:
 	 * @param parameterTypes parameter types
 	 * @param parameterDefault parameter defaults
 	 */
-	static void registerShader(ShaderType type, const string& shaderId, const map<string, ShaderParameter>& parameterDefaults = {});
+	static void registerShader(ShaderType type, const string& shaderId, const unordered_map<string, ShaderParameter>& parameterDefaults = {});
 
 	/**
 	 * Returns parameter defaults of shader with given id
 	 * @param shaderId shader id
 	 * @return shader parameter defaults
 	 */
-	static const map<string, ShaderParameter> getShaderParameterDefaults(const string& shaderId);
+	static const unordered_map<string, ShaderParameter> getShaderParameterDefaults(const string& shaderId);
 
 	/**
 	 * Returns shader parameter default value for given shader id and parameter name
@@ -844,19 +842,23 @@ public:
 	 * @return shader parameter
 	 */
 	static inline const ShaderParameter getDefaultShaderParameter(const string& shaderId, const string& parameterName) {
+		// try to find registered shader
 		auto shaderIt = shaders.find(shaderId);
 		if (shaderIt == shaders.end()) {
+			// not found, return empty shader parameter
 			Console::println("Engine::getDefaultShaderParameter(): no shader registered with id: " + shaderId);
 			return ShaderParameter();
 		}
+		// fetch from defaults
 		const auto& shader = shaderIt->second;
 		auto shaderParameterIt = shader.parameterDefaults.find(parameterName);
 		if (shaderParameterIt == shader.parameterDefaults.end()) {
+			// not found
 			Console::println("Engine::getDefaultShaderParameter(): no default for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
 			return ShaderParameter();
 		}
-		const auto& shaderParameter = shaderParameterIt->second;
-		return shaderParameter;
+		// done
+		return shaderParameterIt->second;
 	}
 
 	/**
@@ -866,17 +868,21 @@ public:
 	 * @return shader parameter
 	 */
 	inline const ShaderParameter getShaderParameter(const string& shaderId, const string& parameterName) {
+		// try to find shader in engine shader parameters
 		auto shaderParameterIt = shaderParameters.find(shaderId);
 		if (shaderParameterIt == shaderParameters.end()) {
+			// not found, use default shader parameter
 			return getDefaultShaderParameter(shaderId, parameterName);
 		}
+		//
 		const auto& shaderParameterMap = shaderParameterIt->second;
+		//
 		auto shaderParameterParameterIt = shaderParameterMap.find(parameterName);
 		if (shaderParameterParameterIt == shaderParameterMap.end()) {
 			return getDefaultShaderParameter(shaderId, parameterName);
 		}
-		const auto& shaderParameter = shaderParameterParameterIt->second;
-		return shaderParameter;
+		// done
+		return shaderParameterParameterIt->second;
 	}
 
 	/**

@@ -75,26 +75,11 @@ int TreeTest::main(int argc, char** argv)
 void TreeTest::display()
 {
 	// light
-	if (keyComma == true) sunRotation-= 0.5f;
-	if (keyDot == true) sunRotation+= 0.5f;
+	if (keyComma == true) t-= 0.001f;
+	if (keyDot == true) t+= 0.001f;
 	//
-	{
-		Quaternion lightRotationXQuaternion;
-		lightRotationXQuaternion.rotate(Vector3(0.0f, 0.0f, 1.0f), sunRotation);
-		auto sunLight = engine->getLightAt(Engine::LIGHTIDX_SUN);
-		auto lightPosition = lightRotationXQuaternion * Vector3(100.0f, 0.0f, 1.0f);
-		sunLight->setPosition(Vector4(lightPosition.getX(), lightPosition.getY(), lightPosition.getZ(), 0.0f));
-		sunLight->setSpotDirection(Vector3(sunLight->getPosition().getX(), sunLight->getPosition().getY(), sunLight->getPosition().getZ()).scale(-1.0f).normalize());
-	}
-	{
-		Quaternion lightRotationXQuaternion;
-		lightRotationXQuaternion.rotate(Vector3(0.0f, 0.0f, 1.0f), sunRotation);
-		auto moonLight = engine->getLightAt(Engine::LIGHTIDX_MOON);
-		auto lightPosition = lightRotationXQuaternion * Vector3(-100.0f, 0.0f, 1.0f);
-		moonLight->setPosition(Vector4(lightPosition.getX(), lightPosition.getY(), lightPosition.getZ(), 0.0f));
-		moonLight->setSpotDirection(Vector3(moonLight->getPosition().getX(), moonLight->getPosition().getY(), moonLight->getPosition().getZ()).scale(-1.0f).normalize());
-	}
-
+	engine->getLightAt(Engine::LIGHTIDX_SUN)->setupSun(t);
+	engine->getLightAt(Engine::LIGHTIDX_MOON)->setupMoon(t);
 	// camera
 	auto camLookFrom = engine->getCamera()->getLookFrom();
 	if (keyMinus == true) camLookFrom.add(Vector3(0.0f, -20.0f / 60.0f, 0.0f));
