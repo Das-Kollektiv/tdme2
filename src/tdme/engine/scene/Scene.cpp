@@ -18,6 +18,8 @@
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/scene/SceneLight.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
@@ -42,6 +44,8 @@ using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::scene::SceneLight;
+using tdme::engine::Engine;
+using tdme::engine::EntityShaderParameters;
 using tdme::engine::Transform;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
@@ -54,6 +58,11 @@ Scene::Scene(const string& name, const string& description): BaseProperties(name
 	rotationOrder = RotationOrder::XYZ;
 	library = make_unique<SceneLibrary>(this);
 	entityIdx = 0;
+	skyShaderParameters.setShader("sky");
+	for (const auto& parameterName: Engine::getShaderParameterNames("sky")) {
+		auto parameterValue = Engine::getDefaultShaderParameter("sky", parameterName);
+		skyShaderParameters.setShaderParameter(parameterName, parameterValue);
+	}
 }
 
 Scene::~Scene() {

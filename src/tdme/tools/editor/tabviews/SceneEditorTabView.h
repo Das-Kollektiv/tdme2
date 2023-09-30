@@ -209,6 +209,11 @@ public:
 	void updateRendering() override;
 
 	/**
+	 * Apply sky shader parameters
+	 */
+	void applySkyShaderParameters();
+
+	/**
 	 * Clear scene
 	 */
 	void clearScene();

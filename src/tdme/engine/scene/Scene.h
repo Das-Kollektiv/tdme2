@@ -14,6 +14,7 @@
 #include <tdme/engine/prototype/BaseProperties.h>
 #include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/engine/scene/SceneLight.h>
+#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/UniquePtrSequenceIterator.h>
@@ -32,6 +33,7 @@ using tdme::engine::prototype::BaseProperties;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::scene::SceneLight;
+using tdme::engine::EntityShaderParameters;
 using tdme::math::Vector3;
 using tdme::utilities::UniquePtrSequenceIterator;
 
@@ -55,6 +57,7 @@ private:
 	BoundingBox boundingBox;
 	Vector3 dimension;
 	Vector3 center;
+	EntityShaderParameters skyShaderParameters;
 	string guiFileName;
 
 	/**
@@ -303,6 +306,22 @@ public:
 	 * @return success
 	 */
 	bool renameEntity(const string& id, const string& newId);
+
+	/**
+	 * Get sky shader parameters
+	 * @return shader parameters
+	 */
+	inline const EntityShaderParameters& getSkyShaderParameters() {
+		return skyShaderParameters;
+	}
+
+	/**
+	 * Set sky shader parameters
+	 * @param parameters shader parameters
+	 */
+	inline void setSkyShaderParameters(EntityShaderParameters& parameters) {
+		skyShaderParameters = parameters;
+	}
 
 	/**
 	 * @return Scene GUI file name including relative path

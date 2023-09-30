@@ -573,6 +573,7 @@ void SceneEditorTabView::initialize()
 	SceneConnector::setLights(engine.get(), scene.get());
 	SceneConnector::addScene(engine.get(), scene.get(), true, true, true, true, true);
 	cameraInputHandler->setSceneCenter(scene->getCenter());
+	applySkyShaderParameters();
 	updateGrid();
 	// TODO: load settings
 }
@@ -603,8 +604,19 @@ void SceneEditorTabView::deactivate() {
 	editorView->getScreenController()->storeOutlinerState(outlinerState);
 }
 
+void SceneEditorTabView::applySkyShaderParameters() {
+	const auto& skyShaderParameters = scene->getSkyShaderParameters();
+	for (const auto& parameterName: Engine::getShaderParameterNames("sky")) {
+		engine->setShaderParameter("sky", parameterName, skyShaderParameters.getShaderParameter(parameterName));
+	}
+}
+
 void SceneEditorTabView::clearScene() {
+	//
 	SceneConnector::resetEngine(engine.get(), scene.get());
+	//
+	applySkyShaderParameters();
+	//
 	keyControl = false;
 	keyShift = false;
 	keyEscape = false;

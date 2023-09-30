@@ -159,6 +159,17 @@ public:
 	void setRunButtonMode(bool running);
 
 	/**
+	 * Set sky shader details
+	 */
+	void setSkyShaderDetails();
+
+	/**
+	 * Apply sky shader details
+	 * @param parameterName parameter name
+	 */
+	void applySkyShaderDetails(const string& parameterName);
+
+	/**
 	 * Set GUI details
 	 */
 	void setGUIDetails();
