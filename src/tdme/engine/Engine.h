@@ -840,6 +840,13 @@ public:
 	static const unordered_map<string, ShaderParameter> getShaderParameterDefaults(const string& shaderId);
 
 	/**
+	 * Returns shader parameter names of shader with given id
+	 * @param shaderId shader id
+	 * @return shader parameter names
+	 */
+	static const vector<string> getShaderParameterNames(const string& shaderId);
+
+	/**
 	 * Returns shader parameter default value for given shader id and parameter name
 	 * @param shaderId shader id
 	 * @param parameterName parameter name

@@ -437,8 +437,7 @@ void TerrainEditorTabView::addFoliage() {
 						foliagePartitionObjectRenderGroup->setContributesShadows(true);
 						foliagePartitionObjectRenderGroup->setReceivesShadows(true);
 						foliagePartitionObjectRenderGroup->setShader(foliagePrototype->getShader());
-						auto shaderParametersDefault = Engine::getShaderParameterDefaults(foliagePrototype->getShader());
-						for (const auto& [parameterName, defaultParameterValue]: shaderParametersDefault) {
+						for (const auto& parameterName: Engine::getShaderParameterNames(foliagePrototype->getShader())) {
 							auto parameterValue = foliagePrototype->getShaderParameters().getShaderParameter(parameterName);
 							foliagePartitionObjectRenderGroup->setShaderParameter(parameterName, parameterValue);
 						}
@@ -621,8 +620,7 @@ void TerrainEditorTabView::recreateFoliage(const unordered_set<int>& partitionId
 						foliagePartitionObjectRenderGroup->setContributesShadows(true);
 						foliagePartitionObjectRenderGroup->setReceivesShadows(true);
 						foliagePartitionObjectRenderGroup->setShader(foliagePrototype->getShader());
-						auto shaderParametersDefault = Engine::getShaderParameterDefaults(foliagePrototype->getShader());
-						for (const auto& [parameterName, defaultParameterValue]: shaderParametersDefault) {
+						for (const auto& parameterName: Engine::getShaderParameterNames(foliagePrototype->getShader())) {
 							auto parameterValue = foliagePrototype->getShaderParameters().getShaderParameter(parameterName);
 							foliagePartitionObjectRenderGroup->setShaderParameter(parameterName, parameterValue);
 						}

@@ -2330,6 +2330,20 @@ const unordered_map<string, ShaderParameter> Engine::getShaderParameterDefaults(
 	return shaderIt->second.parameterDefaults;
 }
 
+const vector<string> Engine::getShaderParameterNames(const string& shaderId) {
+	vector<string> shaderParameterNames;
+	auto shaderIt = shaders.find(shaderId);
+	if (shaderIt == shaders.end()) {
+		Console::println("Engine::getShaderParameterNames(): No registered shader: " + shaderId);
+		return shaderParameterNames;
+	}
+	for (const auto& [shaderParameterName, shaderParameterValue]: shaderIt->second.parameterDefaults) {
+		shaderParameterNames.push_back(shaderParameterName);
+	}
+	sort(shaderParameterNames.begin(), shaderParameterNames.end());
+	return shaderParameterNames;
+}
+
 void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeometryBuffer, Camera* rendererCamera, DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes, bool skyShaderEnabled) {
 	//
 	Engine::getRenderer()->setEffectPass(effectPass);
@@ -2681,7 +2695,7 @@ void Engine::dumpShaders() {
 			default: break;
 		}
 		Console::println(string("TDME2::registered " + shaderTypeString + " shader: ") + shaderId);
-		const auto& defaultShaderParameters = getShaderParameterDefaults(shaderId);
+		const auto defaultShaderParameters = getShaderParameterDefaults(shaderId);
 		if (defaultShaderParameters.size() > 0) {
 			vector<string> parameters;
 			for (const auto& [parameterName, parameterValue]: defaultShaderParameters) {

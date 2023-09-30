@@ -419,8 +419,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			imposterLodObject->setEffectColorMulLOD2(imposterLOD->getColorMul());
 			if (prototype->getShader() == "water" || prototype->getShader() == "pbr-water") imposterLodObject->setRenderPass(Entity::RENDERPASS_WATER);
 			imposterLodObject->setShader(prototype->getShader());
-			auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
-			for (const auto& [parameterName, defaultParameterValue]: shaderParametersDefault) {
+			for (const auto& parameterName: Engine::getShaderParameterNames(prototype->getShader())) {
 				auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 				imposterLodObject->setShaderParameter(parameterName, parameterValue);
 			}
@@ -445,8 +444,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			}
 			if (prototype->getShader() == "water" || prototype->getShader() == "pbr-water") lodObject->setRenderPass(Entity::RENDERPASS_WATER);
 			lodObject->setShader(prototype->getShader());
-			auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
-			for (const auto& [parameterName, defaultParameterValue]: shaderParametersDefault) {
+			for (const auto& parameterName: Engine::getShaderParameterNames(prototype->getShader())) {
 				auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 				lodObject->setShaderParameter(parameterName, parameterValue);
 			}
@@ -461,8 +459,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			object->setAnimationComputationLODEnabled(true);
 			if (prototype->getShader() == "water" || prototype->getShader() == "pbr-water") object->setRenderPass(Entity::RENDERPASS_WATER);
 			object->setShader(prototype->getShader());
-			auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
-			for (const auto& [parameterName, defaultParameterValue]: shaderParametersDefault) {
+			for (const auto& parameterName: Engine::getShaderParameterNames(prototype->getShader())) {
 				auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 				object->setShaderParameter(parameterName, parameterValue);
 			}
@@ -701,8 +698,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 									foliagePartitionObjectRenderGroup->setContributesShadows(contributesShadows);
 									foliagePartitionObjectRenderGroup->setReceivesShadows(receivesShadows);
 									foliagePartitionObjectRenderGroup->setShader(foliagePrototype->getShader());
-									auto shaderParametersDefault = Engine::getShaderParameterDefaults(foliagePrototype->getShader());
-									for (const auto& [parameterName, defaultParameterValue]: shaderParametersDefault) {
+									for (const auto& parameterName: Engine::getShaderParameterNames(foliagePrototype->getShader())) {
 										auto parameterValue = foliagePrototype->getShaderParameters().getShaderParameter(parameterName);
 										foliagePartitionObjectRenderGroup->setShaderParameter(parameterName, parameterValue);
 									}
@@ -826,8 +822,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 						objectRenderNode->setContributesShadows(contributesShadows);
 						objectRenderNode->setReceivesShadows(receivesShadows);
 						objectRenderNode->setShader(prototype->getShader());
-						auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
-						for (const auto& [parameterName, defaultParameterValue]: shaderParametersDefault) {
+						for (const auto& parameterName: Engine::getShaderParameterNames(prototype->getShader())) {
 							auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 							objectRenderNode->setShaderParameter(parameterName, parameterValue);
 						}

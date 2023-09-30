@@ -620,7 +620,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 	{
 		Value jShaderParameters;
 		jShaderParameters.SetObject();
-		for (const auto& [shaderParameterName, shaderParameterValue]: Engine::getShaderParameterDefaults(prototype->getShader())) {
+		for (const auto& shaderParameterName: Engine::getShaderParameterNames(prototype->getShader())) {
 			jShaderParameters.AddMember(Value(shaderParameterName, jAllocator), Value(prototype->getShaderParameters().getShaderParameter(shaderParameterName).toString(), jAllocator), jAllocator);
 		}
 		jPrototypeRoot.AddMember("sps", jShaderParameters, jAllocator);
