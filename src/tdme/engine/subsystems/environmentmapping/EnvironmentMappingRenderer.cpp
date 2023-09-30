@@ -5,6 +5,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/subsystems/framebuffer/SkyRenderShader.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/rendering/EntityRenderer.h>
 #include <tdme/engine/Camera.h>
@@ -32,6 +33,7 @@ using std::vector;
 using tdme::engine::subsystems::environmentmapping::EnvironmentMappingRenderer;
 
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::subsystems::framebuffer::SkyRenderShader;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::Camera;
@@ -167,16 +169,19 @@ void EnvironmentMappingRenderer::render(const Vector3& position)
 			camera->update(engine->getRenderer()->CONTEXTINDEX_DEFAULT, width, height);
 			camera->getFrustum()->update();
 
-			// set up clear color
-			Engine::getRenderer()->setClearColor(
-				engine->sceneColor.getRed(),
-				engine->sceneColor.getGreen(),
-				engine->sceneColor.getBlue(),
-				engine->sceneColor.getAlpha()
-			);
+			// TODO: if we dont use a geometry buffer, we need to clear frame buffer
+			if (geometryBuffer == nullptr) {
+				// set up clear color
+				Engine::getRenderer()->setClearColor(
+					engine->sceneColor.getRed(),
+					engine->sceneColor.getGreen(),
+					engine->sceneColor.getBlue(),
+					engine->sceneColor.getAlpha()
+				);
 
-			// clear previous frame values
-			Engine::getRenderer()->clear(engine->getRenderer()->CLEAR_DEPTH_BUFFER_BIT | engine->getRenderer()->CLEAR_COLOR_BUFFER_BIT);
+				// clear previous frame values
+				Engine::getRenderer()->clear(engine->getRenderer()->CLEAR_DEPTH_BUFFER_BIT | engine->getRenderer()->CLEAR_COLOR_BUFFER_BIT);
+			}
 
 			//
 			engine->preRender(camera.get(), visibleDecomposedEntities, false, false);
@@ -202,7 +207,8 @@ void EnvironmentMappingRenderer::render(const Vector3& position)
 					EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
 					EntityRenderer::RENDERTYPE_TEXTURES |
 					EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
-					EntityRenderer::RENDERTYPE_LIGHTS
+					EntityRenderer::RENDERTYPE_LIGHTS,
+				(renderPassMask & Entity::RENDERPASS_SKY) == Entity::RENDERPASS_SKY
 			);
 
 			//

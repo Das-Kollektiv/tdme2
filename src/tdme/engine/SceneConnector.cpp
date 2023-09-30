@@ -185,8 +185,8 @@ void SceneConnector::setNaturalLights(Engine* engine, float t) {
 	// sun
 	auto sunLight = engine->getLightAt(Engine::LIGHTIDX_SUN);
 	auto sunColor = Vector3(1.0f, 1.0f, 1.0f); // engine->getShaderParameter("sky", "sun_color").getVector3Value();
-	auto sunAmbientColor = sunColor * 0.7;
-	auto sunDiffuseColor = sunColor * 0.5;
+	auto sunAmbientColor = sunColor * 0.5;
+	auto sunDiffuseColor = sunColor * 0.3;
 	sunLight->setupSun(t);
 	sunLight->setAmbient(Color4(sunAmbientColor[0], sunAmbientColor[1], sunAmbientColor[2], 1.0f));
 	sunLight->setDiffuse(Color4(sunDiffuseColor[0], sunDiffuseColor[1], sunDiffuseColor[2], 1.0f));
@@ -195,8 +195,8 @@ void SceneConnector::setNaturalLights(Engine* engine, float t) {
 	// moon
 	auto moonLight = engine->getLightAt(Engine::LIGHTIDX_MOON);
 	auto moonColor = Vector3(1.0f, 1.0f, 1.0f); // engine->getShaderParameter("sky", "moon_color").getVector3Value();
-	auto moonAmbientColor = moonColor * 0.7 * 0.5;
-	auto moonDiffuseColor = moonColor * 0.5 * 0.5;
+	auto moonAmbientColor = moonColor * 0.5 * 0.5;
+	auto moonDiffuseColor = moonColor * 0.3 * 0.5;
 	moonLight->setupMoon(t);
 	moonLight->setAmbient(Color4(moonAmbientColor[0], moonAmbientColor[1], moonAmbientColor[2], 1.0f));
 	moonLight->setDiffuse(Color4(moonDiffuseColor[0], moonDiffuseColor[1], moonDiffuseColor[2], 1.0f));
@@ -211,21 +211,30 @@ void SceneConnector::setLights(Engine* engine, Scene* scene, float t, const Vect
 	//
 	setNaturalLights(engine);
 	// additional lights
-	for (auto i = 2; i < Engine::LIGHTS_MAX; i++) {
-		if (i >= scene->getLightCount()) {
-			engine->getLightAt(i)->setEnabled(false);
-			continue;
-		}
-		engine->getLightAt(i)->setAmbient(Color4(scene->getLightAt(i)->getAmbient()));
-		engine->getLightAt(i)->setDiffuse(Color4(scene->getLightAt(i)->getDiffuse()));
-		engine->getLightAt(i)->setSpecular(Color4(scene->getLightAt(i)->getSpecular()));
-		engine->getLightAt(i)->setSpotDirection(scene->getLightAt(i)->getSpotDirection());
-		engine->getLightAt(i)->setSpotExponent(scene->getLightAt(i)->getSpotExponent());
-		engine->getLightAt(i)->setSpotCutOff(scene->getLightAt(i)->getSpotCutOff());
-		engine->getLightAt(i)->setConstantAttenuation(scene->getLightAt(i)->getConstantAttenuation());
-		engine->getLightAt(i)->setLinearAttenuation(scene->getLightAt(i)->getLinearAttenuation());
-		engine->getLightAt(i)->setQuadraticAttenuation(scene->getLightAt(i)->getQuadraticAttenuation());
-		engine->getLightAt(i)->setEnabled(scene->getLightAt(i)->isEnabled());
+	auto engineLightIdx = static_cast<int>(Engine::LIGHTIDX_OTHERS);
+	for (auto sceneLight: scene->getLights()) {
+		//
+		if (engineLightIdx >= Engine::LIGHTS_MAX) break;
+		//
+		engine->getLightAt(engineLightIdx)->setAmbient(Color4(sceneLight->getAmbient()));
+		engine->getLightAt(engineLightIdx)->setDiffuse(Color4(sceneLight->getDiffuse()));
+		engine->getLightAt(engineLightIdx)->setSpecular(Color4(sceneLight->getSpecular()));
+		engine->getLightAt(engineLightIdx)->setSpotDirection(sceneLight->getSpotDirection());
+		engine->getLightAt(engineLightIdx)->setSpotExponent(sceneLight->getSpotExponent());
+		engine->getLightAt(engineLightIdx)->setSpotCutOff(sceneLight->getSpotCutOff());
+		engine->getLightAt(engineLightIdx)->setConstantAttenuation(sceneLight->getConstantAttenuation());
+		engine->getLightAt(engineLightIdx)->setLinearAttenuation(sceneLight->getLinearAttenuation());
+		engine->getLightAt(engineLightIdx)->setQuadraticAttenuation(sceneLight->getQuadraticAttenuation());
+		engine->getLightAt(engineLightIdx)->setPosition(
+			Vector4(
+				sceneLight->getPosition().getX() + translation.getX(),
+				sceneLight->getPosition().getY() + translation.getY(),
+				sceneLight->getPosition().getZ() + translation.getZ(),
+				sceneLight->getPosition().getW()
+				)
+			);
+		engine->getLightAt(engineLightIdx)->setEnabled(sceneLight->isEnabled());
+		engineLightIdx++;
 	}
 }
 

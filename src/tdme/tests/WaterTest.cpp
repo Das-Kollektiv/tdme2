@@ -101,12 +101,6 @@ void WaterTest::display()
 	engine->getCamera()->setLookAt(camLookFrom.clone().add(camLookAt.scale(25.0f)));
 	engine->getCamera()->setUpVector(Camera::computeUpVector(engine->getCamera()->getLookFrom(), engine->getCamera()->getLookAt()));
 
-	{
-		auto playerSphere = engine->getEntity("playersphere");
-		playerSphere->setTranslation(camLookFrom);
-		playerSphere->update();
-	}
-
 	// rendering
 	auto start = Time::getCurrentMillis();
 	engine->display();
@@ -158,16 +152,6 @@ void WaterTest::initialize()
 		sphere->setReflectionEnvironmentMappingPosition(sphere->getTranslation());
 		sphere->update();
 		engine->addEntity(sphere);
-	}
-
-	{
-		// player sphere
-		auto playerSphere = new Object("playersphere", spherePrototype->getModel());
-		playerSphere->setScale(Vector3(5.0f, 5.0f, 5.0f));
-		playerSphere->setTranslation(Vector3(0.0f, 20.0f, 0.0f));
-		playerSphere->update();
-		playerSphere->setEnabled(false);
-		engine->addEntity(playerSphere);
 	}
 
 	auto cam = engine->getCamera();

@@ -181,14 +181,18 @@ public:
 	enum AnimationProcessingTarget { NONE, CPU, CPU_NORENDERING, GPU };
 	enum ShaderType { SHADERTYPE_OBJECT, SHADERTYPE_POSTPROCESSING, SHADERTYPE_SKY, SHADERTYPE_MAX };
 	enum EffectPass { EFFECTPASS_NONE, EFFECTPASS_LIGHTSCATTERING, EFFECTPASS_COUNT };
-	static constexpr int LIGHTS_MAX { 8 };
+
 	// TODO: make sure one can set up this parameter also
 	static constexpr int ENGINETHREADSQUEUE_RENDER_DISPATCH_COUNT { 200 };
 	static constexpr int ENGINETHREADSQUEUE_PRERENDER_DISPATCH_COUNT { 5 };
 	static constexpr int ENGINETHREADSQUEUE_COMPUTE_DISPATCH_COUNT { 5 };
 
-	static constexpr int LIGHTIDX_SUN { 0 };
-	static constexpr int LIGHTIDX_MOON { 1 };
+	enum LightIdx {
+		LIGHTIDX_SUN,
+		LIGHTIDX_MOON,
+		LIGHTIDX_OTHERS,
+		LIGHTS_MAX = 8
+	};
 
 protected:
 	STATIC_DLL_IMPEXT static Engine* currentEngine;
@@ -1438,7 +1442,7 @@ private:
 	 * @param doRenderParticleSystems if to render particle systems
 	 * @param renderTypes render types
 	 */
-	void render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeometryBuffer, Camera* rendererCamera, DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes);
+	void render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeometryBuffer, Camera* rendererCamera, DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes, bool skyShaderEnabled = true);
 
 	/**
 	 * Render light sources

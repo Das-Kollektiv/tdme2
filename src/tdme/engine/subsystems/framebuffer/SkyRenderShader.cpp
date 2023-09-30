@@ -235,37 +235,40 @@ void SkyRenderShader::loadTextures(const string& pathName) {
 	starsTextureId = Engine::getInstance()->getTextureManager()->addTexture(starsTexture = TextureReader::read(pathName + "/resources/engine/textures", "stars.png"), renderer->CONTEXTINDEX_DEFAULT);
 }
 
-void SkyRenderShader::render(Engine* engine, bool lightScatteringPass) {
+void SkyRenderShader::render(Engine* engine, bool lightScatteringPass, Camera* camera) {
 	// use default context
 	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
+
+	// camera, use engine camera if no camera given
+	if (camera == nullptr) camera = engine->getCamera();
 
 	//
 	renderer->useProgram(contextIdx, programId);
 	renderer->setLighting(contextIdx, renderer->LIGHTING_NONE);
 
 	//
-	auto light0 = engine->getLightAt(0);
-	auto light1 = engine->getLightAt(1);
+	auto sunLight = engine->getLightAt(Engine::LIGHTIDX_SUN);
+	auto moonLight = engine->getLightAt(Engine::LIGHTIDX_MOON);
 
 	//
-	auto light0Position4 = light0->getPosition().clone().scale(1.0f / (Math::abs(light0->getPosition().getW()) < Math::EPSILON?1.0:light0->getPosition().getW()));
-	auto light0Position = Vector3(light0Position4[0], light0Position4[1], light0Position4[2]);
-	auto light0Direction = light0Position.clone().normalize().scale(-1.0f);
+	auto sunLightPosition4 = sunLight->getPosition().clone().scale(1.0f / (Math::abs(sunLight->getPosition().getW()) < Math::EPSILON?1.0:sunLight->getPosition().getW()));
+	auto sunLightPosition = Vector3(sunLightPosition4[0], sunLightPosition4[1], sunLightPosition4[2]);
+	auto sunLightDirection = sunLightPosition.clone().normalize().scale(-1.0f);
 	//
-	auto light1Position4 = light1->getPosition().clone().scale(1.0f / (Math::abs(light1->getPosition().getW()) < Math::EPSILON?1.0:light1->getPosition().getW()));
-	auto light1Position = Vector3(light1Position4[0], light1Position4[1], light1Position4[2]);
-	auto light1Direction = light1Position.clone().normalize().scale(-1.0f);
+	auto moonLightPosition4 = moonLight->getPosition().clone().scale(1.0f / (Math::abs(moonLight->getPosition().getW()) < Math::EPSILON?1.0:moonLight->getPosition().getW()));
+	auto moonLightPosition = Vector3(moonLightPosition4[0], moonLightPosition4[1], moonLightPosition4[2]);
+	auto moonLightDirection = moonLightPosition.clone().normalize().scale(-1.0f);
 	//
-	renderer->setProgramUniformInteger(contextIdx, uniformLIGHT0_ENABLED, light0->isEnabled() == true?1:0);
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformLIGHT0_DIRECTION, light0Direction.getArray());
-	renderer->setProgramUniformInteger(contextIdx, uniformLIGHT1_ENABLED, light1->isEnabled() == true?1:0);
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformLIGHT1_DIRECTION, light1Direction.getArray());
+	renderer->setProgramUniformInteger(contextIdx, uniformLIGHT0_ENABLED, sunLight->isEnabled() == true?1:0);
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformLIGHT0_DIRECTION, sunLightDirection.getArray());
+	renderer->setProgramUniformInteger(contextIdx, uniformLIGHT1_ENABLED, moonLight->isEnabled() == true?1:0);
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformLIGHT1_DIRECTION, moonLightDirection.getArray());
 	renderer->setProgramUniformInteger(contextIdx, uniformLightScatteringPass, lightScatteringPass == false?0:1);
 	renderer->setProgramUniformFloat(contextIdx, uniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
-	renderer->setProgramUniformFloat(contextIdx, uniformAspectRatio, static_cast<float>(engine->getWidth()) / static_cast<float>(engine->getHeight()));
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformForwardVector, engine->getCamera()->getForwardVector().getArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformSideVector, engine->getCamera()->getSideVector().getArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformUpVector, engine->getCamera()->getUpVector().getArray());
+	renderer->setProgramUniformFloat(contextIdx, uniformAspectRatio, static_cast<float>(camera->getWidth()) / static_cast<float>(camera->getHeight()));
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformForwardVector, camera->getForwardVector().getArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformSideVector, camera->getSideVector().getArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformUpVector, camera->getUpVector().getArray());
 	//
 	renderer->setTextureUnit(contextIdx, 0);
 	renderer->bindTexture(contextIdx, starsTextureId);

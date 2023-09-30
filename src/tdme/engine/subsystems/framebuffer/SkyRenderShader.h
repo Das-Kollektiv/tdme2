@@ -125,7 +125,8 @@ public:
 	 * Render
 	 * @param engine engine
 	 * @param lightScatteringPass light scattering pass
+	 * @param camera camera
 	 */
-	void render(Engine* engine, bool lightScatteringPass);
+	void render(Engine* engine, bool lightScatteringPass, Camera* camera = nullptr);
 
 };
