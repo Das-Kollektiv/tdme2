@@ -186,10 +186,11 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene* s
 	}
 	// sky
 	{
+		const auto& skyShaderParameters = scene->getSkyShaderParameters();
 		Value jSkyShaderParameters;
 		jSkyShaderParameters.SetObject();
 		for (const auto& shaderParameterName: Engine::getShaderParameterNames("sky")) {
-			jSkyShaderParameters.AddMember(Value(shaderParameterName, jAllocator), Value(scene->getSkyShaderParameters().getShaderParameter(shaderParameterName).toString(), jAllocator), jAllocator);
+			jSkyShaderParameters.AddMember(Value(shaderParameterName, jAllocator), Value(skyShaderParameters.getShaderParameter(shaderParameterName).toString(), jAllocator), jAllocator);
 		}
 		jDocument.AddMember("skyshader", jSkyShaderParameters, jAllocator);
 	}

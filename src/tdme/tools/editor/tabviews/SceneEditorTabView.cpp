@@ -615,8 +615,6 @@ void SceneEditorTabView::clearScene() {
 	//
 	SceneConnector::resetEngine(engine.get(), scene.get());
 	//
-	applySkyShaderParameters();
-	//
 	keyControl = false;
 	keyShift = false;
 	keyEscape = false;

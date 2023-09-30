@@ -301,12 +301,12 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 	//
 	if (jRoot.FindMember("skyshader") != jRoot.MemberEnd()) {
 		const auto& jSkyShaderParameters = jRoot["skyshader"];
-		EntityShaderParameters shaderParameters;
-		shaderParameters.setShader("sky");
+		EntityShaderParameters skyShaderParameters;
+		skyShaderParameters.setShader("sky");
 		for (auto jShaderParameterIt = jSkyShaderParameters.MemberBegin(); jShaderParameterIt != jSkyShaderParameters.MemberEnd(); ++jShaderParameterIt) {
-			shaderParameters.setShaderParameter(jShaderParameterIt->name.GetString(), string(jShaderParameterIt->value.GetString()));
+			skyShaderParameters.setShaderParameter(jShaderParameterIt->name.GetString(), string(jShaderParameterIt->value.GetString()));
 		}
-		scene->setSkyShaderParameters(shaderParameters);
+		scene->setSkyShaderParameters(skyShaderParameters);
 	}
 
 	//
