@@ -75,15 +75,11 @@ int TreeTest::main(int argc, char** argv)
 void TreeTest::display()
 {
 	// light
-	if (keyComma == true) lightRotationX-= 0.5f;
-	if (keyDot == true) lightRotationX+= 0.5f;
-	Quaternion lightRotationXQuaternion;
-	lightRotationXQuaternion.rotate(Vector3(1.0f, 0.0f, 0.0f), lightRotationX);
-	auto light0 = engine->getLightAt(0);
-	auto lightPosition = lightRotationXQuaternion * Vector3(0.0f, 50.0f, 1.0f);
-	light0->setPosition(Vector4(lightPosition.getX(), lightPosition.getY(), lightPosition.getZ(), 0.0f));
-	light0->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ())));
-
+	if (keyComma == true) t-= 0.001f;
+	if (keyDot == true) t+= 0.001f;
+	//
+	engine->getLightAt(Engine::LIGHTIDX_SUN)->setupSun(t);
+	engine->getLightAt(Engine::LIGHTIDX_MOON)->setupMoon(t);
 	// camera
 	auto camLookFrom = engine->getCamera()->getLookFrom();
 	if (keyMinus == true) camLookFrom.add(Vector3(0.0f, -20.0f / 60.0f, 0.0f));
@@ -147,17 +143,22 @@ void TreeTest::initialize()
 	engine->addPostProcessingProgram("light_scattering");
 	engine->setShaderParameter("light_scattering", "intensity", ShaderParameter(1.0f));
 	engine->setSceneColor(Color4(0.2f, 0.2f, 0.8f, 1.0f));
+	engine->setSkyShaderEnabled(true);
 	Object* entity;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(150.0f);
-	cam->setLookFrom(Vector3(0.0f, 3.0f, 48.0f));
+	cam->setLookFrom(Vector3(0.0f, 3.0f, -60.0f));
 	cam->setLookAt(Vector3(0.0f, 0.5f, 0.0f));
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
-	auto light0 = engine->getLightAt(0);
-	light0->setDiffuse(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	light0->setRenderSource(true);
-	light0->setEnabled(true);
+	auto sunLight = engine->getLightAt(Engine::LIGHTIDX_SUN);
+	sunLight->setDiffuse(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	sunLight->setRenderSource(false);
+	sunLight->setEnabled(true);
+	auto moonLight = engine->getLightAt(Engine::LIGHTIDX_MOON);
+	moonLight->setDiffuse(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	moonLight->setRenderSource(false);
+	moonLight->setEnabled(true);
 
 	/*
 	auto _grass = modelDeleter.add(ModelReader::read("resources/tests/models/grass", "grass.dae"));

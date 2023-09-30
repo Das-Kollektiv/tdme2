@@ -16,7 +16,7 @@ using tdme::engine::ShaderParameter;
  * TDME2 engine entity shader parameters
  * @author Andreas Drewke
  */
-class tdme::engine::EntityShaderParameters
+class tdme::engine::EntityShaderParameters final
 {
 private:
 	unordered_map<string, ShaderParameter> parameters;

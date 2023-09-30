@@ -46,10 +46,6 @@ private:
 	unique_ptr<EnvMapEditorTabController> envMapEditorTabController;
 	TabView::OutlinerState outlinerState;
 	unique_ptr<Scene> scene;
-	float skyDomeTranslation { 0.0f };
-	unique_ptr<Prototype> skySpherePrototype;
-	unique_ptr<Prototype> skyDomePrototype;
-	unique_ptr<Prototype> skyPanoramaPrototype;
 	unique_ptr<Prototype> prototype;
 
 public:
@@ -112,16 +108,6 @@ public:
 	void reloadOutliner() override;
 	void updateRendering() override;
 	inline bool hasFixedSize() override{ return false; };
-
-	/**
-	 * Initialize sky
-	 */
-	void initSky();
-
-	/**
-	 * Update sky
-	 */
-	void updateSky();
 
 	/**
 	 * @return environment map translation

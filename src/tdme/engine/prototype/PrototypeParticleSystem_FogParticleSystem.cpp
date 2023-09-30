@@ -43,3 +43,8 @@ void PrototypeParticleSystem_FogParticleSystem::setTextureFileName(const string&
 PrototypeParticleSystem_FogParticleSystem::~PrototypeParticleSystem_FogParticleSystem() {
 	if (texture != nullptr) texture->releaseReference();
 }
+
+Texture* PrototypeParticleSystem_FogParticleSystem::getTextureReference() {
+	if (texture != nullptr) texture->acquireReference();
+	return texture;
+}

@@ -1,7 +1,6 @@
 #include <tdme/engine/Engine.h>
 
 #include <algorithm>
-#include <map>
 #include <memory>
 #include <string>
 
@@ -19,6 +18,7 @@
 #include <tdme/engine/subsystems/framebuffer/BRDFLUTShader.h>
 #include <tdme/engine/subsystems/framebuffer/DeferredLightingRenderShader.h>
 #include <tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.h>
+#include <tdme/engine/subsystems/framebuffer/SkyRenderShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lines/LinesShader.h>
 #include <tdme/engine/subsystems/manager/MeshManager.h>
@@ -84,9 +84,9 @@
 #include <tdme/utilities/TextureAtlas.h>
 
 using std::make_unique;
-using std::map;
 using std::move;
 using std::remove;
+using std::sort;
 using std::string;
 using std::to_string;
 using std::unique_ptr;
@@ -104,6 +104,7 @@ using tdme::engine::subsystems::environmentmapping::EnvironmentMappingRenderer;
 using tdme::engine::subsystems::framebuffer::BRDFLUTShader;
 using tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader;
 using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
+using tdme::engine::subsystems::framebuffer::SkyRenderShader;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::manager::MeshManager;
@@ -175,6 +176,7 @@ unique_ptr<GUIRenderer> Engine::guiRenderer;
 unique_ptr<BRDFLUTShader> Engine::brdfLUTShader;
 unique_ptr<FrameBufferRenderShader> Engine::frameBufferRenderShader;
 unique_ptr<DeferredLightingRenderShader> Engine::deferredLightingRenderShader;
+unique_ptr<SkyRenderShader> Engine::skyRenderShader;
 unique_ptr<PostProcessing> Engine::postProcessing;
 unique_ptr<PostProcessingShader> Engine::postProcessingShader;
 unique_ptr<Texture2DRenderShader> Engine::texture2DRenderShader;
@@ -198,7 +200,7 @@ int32_t Engine::environmentMappingWidth = 1024;
 int32_t Engine::environmentMappingHeight = 1024;
 float Engine::animationComputationReduction1Distance = 25.0f;
 float Engine::animationComputationReduction2Distance = 50.0f;
-map<string, Engine::Shader> Engine::shaders;
+unordered_map<string, Engine::Shader> Engine::shaders;
 unordered_map<string, uint8_t> Engine::uniqueShaderIds;
 
 vector<unique_ptr<Engine::EngineThread>> Engine::engineThreads;
@@ -266,9 +268,7 @@ Engine::Engine() {
 	sceneColor.set(0.0f, 0.0f, 0.0f, 1.0f);
 	// shadow mapping
 	shadowMappingEnabled = false;
-	// render process state
-	renderingInitiated = false;
-	preRenderingInitiated = false;
+	skyShaderEnabled = false;
 	//
 	initialized = false;
 	// post processing frame buffers
@@ -281,6 +281,14 @@ Engine::Engine() {
 Engine::~Engine() {
 	// set current engine
 	if (currentEngine == this) currentEngine = nullptr;
+}
+
+void Engine::loadTextures(const string& pathName) {
+	lightingShader->loadTextures(pathName);
+	postProcessingShader->loadTextures(pathName);
+	skyRenderShader->loadTextures(pathName);
+	if (shadowMappingShaderPre != nullptr) shadowMappingShaderPre->loadTextures(pathName);
+	if (shadowMappingShaderRender != nullptr) shadowMappingShaderRender->loadTextures(pathName);
 }
 
 Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enableShadowMapping, bool enableDepthBuffer, bool enableGeometryBuffer)
@@ -823,6 +831,10 @@ void Engine::initialize()
 		deferredLightingRenderShader->initialize();
 	}
 
+	// create frame buffer render shader
+	skyRenderShader = make_unique<SkyRenderShader>(renderer);
+	skyRenderShader->initialize();
+
 	// create lighting shader
 	lightingShader = make_unique<LightingShader>(renderer);
 	lightingShader->initialize();
@@ -891,6 +903,7 @@ void Engine::initialize()
 		CHECK_INITIALIZED("BRDFLUTShader", brdfLUTShader);
 	}
 	CHECK_INITIALIZED("DeferredLightingRenderShader", deferredLightingRenderShader);
+	CHECK_INITIALIZED("SkyRenderShader", skyRenderShader);
 	CHECK_INITIALIZED("PostProcessingShader", postProcessingShader);
 	CHECK_INITIALIZED("Texture2DRenderShader", texture2DRenderShader);
 
@@ -907,6 +920,7 @@ void Engine::initialize()
 		initialized &= brdfLUTShader->isInitialized();
 	}
 	initialized &= deferredLightingRenderShader != nullptr?deferredLightingRenderShader->isInitialized():true;
+	initialized &= skyRenderShader->isInitialized();
 	initialized &= postProcessingShader->isInitialized();
 	initialized &= texture2DRenderShader->isInitialized();
 
@@ -1065,9 +1079,6 @@ void Engine::initRendering()
 
 	//
 	resetLists(visibleDecomposedEntities);
-
-	//
-	renderingInitiated = true;
 }
 
 void Engine::preRenderFunction(vector<Object*>& objects, int threadIdx) {
@@ -1342,9 +1353,6 @@ void Engine::preRender(Camera* camera, DecomposedEntities& decomposedEntities, b
 	if (skinningShaderEnabled == true) {
 		skinningShader->unUseProgram();
 	}
-
-	//
-	preRenderingInitiated = true;
 }
 
 void Engine::display()
@@ -1381,9 +1389,6 @@ void Engine::display()
 	camera->update(renderer->CONTEXTINDEX_DEFAULT, _width, _height);
 	// frustum
 	camera->getFrustum()->update();
-
-	// clear pre render states
-	preRenderingInitiated = false;
 
 	// do pre rendering steps
 	preRender(camera.get(), visibleDecomposedEntities, true, true);
@@ -1433,7 +1438,9 @@ void Engine::display()
 			//
 			auto lightSourceVisible = false;
 			if (effectPass.renderLightSources == true) {
+				if (skyShaderEnabled == true) skyRenderShader->render(this, true);
 				lightSourceVisible = renderLightSources(frameBufferWidth, frameBufferHeight);
+				if (skyShaderEnabled == true) lightSourceVisible = true;
 			}
 			if (effectPass.skipOnLightSourceNotVisible == true && lightSourceVisible == false) {
 				effectPassSkip[frameBufferIdx] = true;
@@ -1453,7 +1460,8 @@ void Engine::display()
 					false,
 					EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
 					EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
-					EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY
+					EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY,
+					false
 				);
 			}
 		}
@@ -1502,8 +1510,13 @@ void Engine::display()
 	camera->update(renderer->CONTEXTINDEX_DEFAULT, _width, _height);
 
 	// clear previous frame values
-	Engine::getRenderer()->setClearColor(sceneColor.getRed(), sceneColor.getGreen(), sceneColor.getBlue(), sceneColor.getAlpha());
-	renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
+	if (skyShaderEnabled == true) {
+		renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT);
+		skyRenderShader->render(this, false);
+	} else {
+		Engine::getRenderer()->setClearColor(sceneColor.getRed(), sceneColor.getGreen(), sceneColor.getBlue(), sceneColor.getAlpha());
+		renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
+	}
 
 	// do rendering
 	render(
@@ -1526,7 +1539,8 @@ void Engine::display()
 			EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
 			EntityRenderer::RENDERTYPE_TEXTURES |
 			EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
-			EntityRenderer::RENDERTYPE_LIGHTS
+			EntityRenderer::RENDERTYPE_LIGHTS,
+		skyShaderEnabled
 	);
 
 	// delete post processing termporary buffer if not required anymore
@@ -1534,10 +1548,6 @@ void Engine::display()
 		postProcessingTemporaryFrameBuffer->dispose();
 		postProcessingTemporaryFrameBuffer = nullptr;
 	}
-
-	// clear pre render states
-	renderingInitiated = false;
-	preRenderingInitiated = false;
 
 	//
 	if (frameBuffer != nullptr) {
@@ -2103,6 +2113,7 @@ void Engine::dispose()
 		}
 		if (Engine::deferredLightingRenderShader != nullptr) Engine::deferredLightingRenderShader->dispose();
 		frameBufferRenderShader->dispose();
+		skyRenderShader->dispose();
 		texture2DRenderShader->dispose();
 		lightingShader->dispose();
 		postProcessingShader->dispose();
@@ -2294,10 +2305,11 @@ const vector<string> Engine::getRegisteredShader(ShaderType type) {
 			result.push_back(shader.id);
 		}
 	}
+	sort(result.begin(), result.end());
 	return result;
 }
 
-void Engine::registerShader(ShaderType type, const string& shaderId, const map<string, ShaderParameter>& parameterDefaults) {
+void Engine::registerShader(ShaderType type, const string& shaderId, const unordered_map<string, ShaderParameter>& parameterDefaults) {
 	if (shaders.find(shaderId) != shaders.end()) {
 		Console::println("Engine::registerShader(): Shader already registered: " + shaderId);
 		return;
@@ -2309,16 +2321,30 @@ void Engine::registerShader(ShaderType type, const string& shaderId, const map<s
 	};
 }
 
-const map<string, ShaderParameter> Engine::getShaderParameterDefaults(const string& shaderId) {
+const unordered_map<string, ShaderParameter> Engine::getShaderParameterDefaults(const string& shaderId) {
 	auto shaderIt = shaders.find(shaderId);
 	if (shaderIt == shaders.end()) {
 		Console::println("Engine::getShaderParameterDefaults(): No registered shader: " + shaderId);
-		return map<string, ShaderParameter>();
+		return unordered_map<string, ShaderParameter>();
 	}
 	return shaderIt->second.parameterDefaults;
 }
 
-void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeometryBuffer, Camera* rendererCamera, DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes) {
+const vector<string> Engine::getShaderParameterNames(const string& shaderId) {
+	vector<string> shaderParameterNames;
+	auto shaderIt = shaders.find(shaderId);
+	if (shaderIt == shaders.end()) {
+		Console::println("Engine::getShaderParameterNames(): No registered shader: " + shaderId);
+		return shaderParameterNames;
+	}
+	for (const auto& [shaderParameterName, shaderParameterValue]: shaderIt->second.parameterDefaults) {
+		shaderParameterNames.push_back(shaderParameterName);
+	}
+	sort(shaderParameterNames.begin(), shaderParameterNames.end());
+	return shaderParameterNames;
+}
+
+void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeometryBuffer, Camera* rendererCamera, DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes, bool skyShaderEnabled) {
 	//
 	Engine::getRenderer()->setEffectPass(effectPass);
 	Engine::getRenderer()->setShaderPrefix(shaderPrefix);
@@ -2363,6 +2389,15 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 						renderGeometryBuffer->disableGeometryBuffer();
 						Engine::getRenderer()->setShaderPrefix(shaderPrefix);
 						if (renderFrameBuffer != nullptr) renderFrameBuffer->enableFrameBuffer();
+						// clear previous frame values
+						if (skyShaderEnabled == true) {
+							renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT);
+							skyRenderShader->render(this, false, rendererCamera);
+						} else {
+							Engine::getRenderer()->setClearColor(sceneColor.getRed(), sceneColor.getGreen(), sceneColor.getBlue(), sceneColor.getAlpha());
+							renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
+						}
+						//
 						renderGeometryBuffer->renderToScreen(this, visibleDecomposedEntities.decalEntities);
 						if (lightingShader != nullptr) lightingShader->useProgram(this);
 						if (visibleDecomposedEntities.objectsForwardShading.empty() == false) {
@@ -2652,76 +2687,80 @@ bool Engine::renderLightSources(int width, int height) {
 void Engine::dumpShaders() {
 	for (auto shaderType = 0; shaderType < SHADERTYPE_MAX; shaderType++)
 	for (const auto& shaderId: getRegisteredShader(static_cast<ShaderType>(shaderType))) {
-		string shaderTypeString = "unknowm";
+		string shaderTypeString = "unknown";
 		switch (shaderType) {
 			case SHADERTYPE_OBJECT: shaderTypeString = "object"; break;
 			case SHADERTYPE_POSTPROCESSING: shaderTypeString = "postprocessing"; break;
+			case SHADERTYPE_SKY: shaderTypeString = "sky"; break;
 			default: break;
 		}
 		Console::println(string("TDME2::registered " + shaderTypeString + " shader: ") + shaderId);
-		const auto& defaultShaderParameters = getShaderParameterDefaults(shaderId);
+		const auto defaultShaderParameters = getShaderParameterDefaults(shaderId);
 		if (defaultShaderParameters.size() > 0) {
-			Console::print("\t");
+			vector<string> parameters;
 			for (const auto& [parameterName, parameterValue]: defaultShaderParameters) {
-				Console::print(parameterName);
+				parameters.emplace_back();
+				parameters[parameters.size() - 1]+= parameterName;
 				switch(parameterValue.getType()) {
 					case ShaderParameter::TYPE_NONE:
-						Console::print("=none; ");
+						parameters[parameters.size() - 1]+= " = none";
 						break;
 					case ShaderParameter::TYPE_BOOLEAN:
-						Console::print("=boolean(");
-						Console::print(getShaderParameter(shaderId, parameterName).getBooleanValue() == true?"true":"false");
-						Console::print("); ");
+						parameters[parameters.size() - 1]+= " = boolean(";
+						parameters[parameters.size() - 1]+= getShaderParameter(shaderId, parameterName).getBooleanValue() == true?"true":"false";
+						parameters[parameters.size() - 1]+= ")";
 						break;
 					case ShaderParameter::TYPE_INTEGER:
-						Console::print("=integer(");
-						Console::print(to_string(getShaderParameter(shaderId, parameterName).getIntegerValue()));
-						Console::print("); ");
+						parameters[parameters.size() - 1]+= " = integer(";
+						parameters[parameters.size() - 1]+= to_string(getShaderParameter(shaderId, parameterName).getIntegerValue());
+						parameters[parameters.size() - 1]+= ")";
 						break;
 					case ShaderParameter::TYPE_FLOAT:
-						Console::print("=float(");
-						Console::print(to_string(getShaderParameter(shaderId, parameterName).getFloatValue()));
-						Console::print("); ");
+						parameters[parameters.size() - 1]+= " = float(";
+						parameters[parameters.size() - 1]+= to_string(getShaderParameter(shaderId, parameterName).getFloatValue());
+						parameters[parameters.size() - 1]+= ")";
 						break;
 					case ShaderParameter::TYPE_VECTOR2:
 						{
-							Console::print("=Vector2(");
-							const auto& shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector2Value().getArray();
+							parameters[parameters.size() - 1]+= " = Vector2(";
+							const auto shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector2ValueArray();
 							for (auto i = 0; i < shaderParameterArray.size(); i++) {
-								if (i != 0) Console::print(",");
-								Console::print(to_string(shaderParameterArray[i]));
+								if (i != 0) parameters[parameters.size() - 1]+= ",";
+								parameters[parameters.size() - 1]+= to_string(shaderParameterArray[i]);
 							}
-							Console::print("); ");
+							parameters[parameters.size() - 1]+= ")";
 						}
 						break;
 					case ShaderParameter::TYPE_VECTOR3:
 						{
-							Console::print("=Vector3(");
-							const auto& shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector3Value().getArray();
+							parameters[parameters.size() - 1]+= " = Vector3(";
+							const auto shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector3ValueArray();
 							for (auto i = 0; i < shaderParameterArray.size(); i++) {
-								if (i != 0) Console::print(",");
-								Console::print(to_string(shaderParameterArray[i]));
+								if (i != 0) parameters[parameters.size() - 1]+= ",";
+								parameters[parameters.size() - 1]+= to_string(shaderParameterArray[i]);
 							}
-							Console::print("); ");
+							parameters[parameters.size() - 1]+= ")";
 						}
 						break;
 					case ShaderParameter::TYPE_VECTOR4:
 						{
-							Console::print("=Vector4(");
-							const auto& shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector4Value().getArray();
+							parameters[parameters.size() - 1]+= " = Vector4(";
+							const auto shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector4ValueArray();
 							for (auto i = 0; i < shaderParameterArray.size(); i++) {
-								if (i != 0) Console::print(",");
-								Console::print(to_string(shaderParameterArray[i]));
+								if (i != 0) parameters[parameters.size() - 1]+= ",";
+								parameters[parameters.size() - 1]+= to_string(shaderParameterArray[i]);
 							}
-							Console::print("); ");
+							parameters[parameters.size() - 1]+= ")";
 						}
 						break;
 					default:
-						Console::print("=unknown; ");
+						parameters[parameters.size() - 1]+= " = unknown";
 						break;
 				}
 			}
-			Console::println();
+			//
+			sort(parameters.begin(), parameters.end());
+			for (auto& parameter: parameters) Console::println("\t" + parameter);
 		}
 	}
 }

@@ -25,8 +25,9 @@ public:
 	/**
 	 * @brief Public constructor
 	 * @param name name
+	 * @param autoDelete delete thread after thread execution has been completed
 	 */
-	inline Thread(const string& name): name(name), stopRequested(false) {}
+	inline Thread(const string& name, bool autoDelete = false): name(name), stopRequested(false), autoDelete(autoDelete) {}
 
 	/**
 	 * @brief Public destructor
@@ -52,14 +53,14 @@ public:
 	 * @brief Blocks caller thread until this thread has been terminated
 	 */
 	inline void join() {
-		stlThread->join();
+		stlThread.join();
 	}
 
 	/**
 	 * @brief Starts this objects thread
 	 */
 	inline virtual void start() {
-		stlThread = make_unique<thread>(thread(threadRun, (void*)this));
+		stlThread = thread(threadRun, (void*)this);
 	}
 
 	/**
@@ -85,10 +86,16 @@ protected:
 
 private:
 	inline static void threadRun(void *thread) {
-		static_cast<Thread*>(thread)->run();
+		auto threadPtr = static_cast<Thread*>(thread);
+		threadPtr->run();
+		if (threadPtr->autoDelete == true) {
+			threadPtr->stlThread.detach();
+			delete threadPtr;
+		}
 	}
 
 	string name;
-	unique_ptr<thread> stlThread;
+	thread stlThread;
 	volatile bool stopRequested;
+	bool autoDelete;
 };

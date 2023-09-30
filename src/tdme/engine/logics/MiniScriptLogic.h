@@ -208,8 +208,8 @@ public:
 				auto transform = prototypeToAdd.transform;
 				if (prototypeToAdd.type == LogicMiniScript::PrototypeToAdd::TYPE_ATTACH &&
 					prototypeToAdd.attachNodeId.empty() == false) {
-					auto prototypeIt = enginePrototypes.find(prototypeToAdd.hierarchyParentId);
-					auto prototype = prototypeIt == enginePrototypes.end()?nullptr:prototypeIt->second;
+					auto prototypeIt = logicPrototypes.find(prototypeToAdd.hierarchyParentId);
+					auto prototype = prototypeIt == logicPrototypes.end()?nullptr:prototypeIt->second;
 					Matrix4x4 attachNodeTransformMatrix;
 					if (prototype != nullptr &&
 						prototype->getModel() != nullptr &&

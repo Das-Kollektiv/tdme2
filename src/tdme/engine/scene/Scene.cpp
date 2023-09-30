@@ -18,6 +18,8 @@
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/scene/SceneLight.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
@@ -42,6 +44,8 @@ using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::scene::SceneLight;
+using tdme::engine::Engine;
+using tdme::engine::EntityShaderParameters;
 using tdme::engine::Transform;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
@@ -52,22 +56,13 @@ Scene::Scene(const string& name, const string& description): BaseProperties(name
 	applicationRootPathName = "";
 	fileName = "untitled.tscene";
 	rotationOrder = RotationOrder::XYZ;
-	lights.push_back(make_unique<SceneLight>(0));
-	auto light = getLightAt(0);
-	light->setAmbient(Color4(0.7f, 0.7f, 0.7f, 1.0f));
-	light->setDiffuse(Color4(0.3f, 0.3f, 0.3f, 1.0f));
-	light->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	light->setPosition(Vector4(0.0f, 20000.0f, 0.0f, 1.0f));
-	light->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light->getPosition().getX(), light->getPosition().getY(), light->getPosition().getZ())));
-	light->setConstantAttenuation(0.5f);
-	light->setLinearAttenuation(0.0f);
-	light->setQuadraticAttenuation(0.0f);
-	light->setSpotExponent(0.0f);
-	light->setSpotCutOff(180.0f);
-	light->setEnabled(true);
 	library = make_unique<SceneLibrary>(this);
 	entityIdx = 0;
-	skyModelScale = Vector3(1.0f, 1.0f, 1.0f);
+	skyShaderParameters.setShader("sky");
+	for (const auto& parameterName: Engine::getShaderParameterNames("sky")) {
+		auto parameterValue = Engine::getDefaultShaderParameter("sky", parameterName);
+		skyShaderParameters.setShaderParameter(parameterName, parameterValue);
+	}
 }
 
 Scene::~Scene() {
@@ -262,10 +257,6 @@ SceneEntity* Scene::getEntity(const string& id)
 		return entityByIdIt->second;
 	}
 	return nullptr;
-}
-
-void Scene::setSkyModel(Model* model) {
-	this->skyModel = unique_ptr<Model>(model);
 }
 
 void Scene::update() {

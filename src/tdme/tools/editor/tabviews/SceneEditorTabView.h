@@ -164,7 +164,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	~SceneEditorTabView();
+	virtual ~SceneEditorTabView();
 
 	/**
 	 * @return editor view
@@ -183,7 +183,7 @@ public:
 	/**
 	 * @return scene
 	 */
-	Scene* getScene() {
+	inline Scene* getScene() {
 		return scene.get();
 	}
 
@@ -209,6 +209,11 @@ public:
 	void updateRendering() override;
 
 	/**
+	 * Apply sky shader parameters
+	 */
+	void applySkyShaderParameters();
+
+	/**
 	 * Clear scene
 	 */
 	void clearScene();
@@ -223,21 +228,6 @@ public:
 	 * @param outlinerNode selected outliner node
 	 */
 	void reloadOutliner(const string& outlinerNode);
-
-	/**
-	 * Remove sky
-	 */
-	void removeSky();
-
-	/**
-	 * Update sky
-	 */
-	void updateSky();
-
-	/**
-	 * Update sky position
-	 */
-	void updateSkyPosition();
 
 	/**
 	 * Update lights

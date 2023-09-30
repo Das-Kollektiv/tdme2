@@ -93,6 +93,20 @@ void EntityShaderParameters::setShaderParameter(const string& parameterName, con
 				);
 			}
 			break;
+		case ShaderParameter::TYPE_VECTOR4:
+			{
+				auto parameterValueStringArray = StringTools::tokenize(parameterValueString, ",");
+				if (parameterValueStringArray.size() != 4) break;
+				parameterValue = ShaderParameter(
+					Vector4(
+						Float::parse(StringTools::trim(parameterValueStringArray[0])),
+						Float::parse(StringTools::trim(parameterValueStringArray[1])),
+						Float::parse(StringTools::trim(parameterValueStringArray[2])),
+						Float::parse(StringTools::trim(parameterValueStringArray[3]))
+					)
+				);
+			}
+			break;
 		default:
 			break;
 	}

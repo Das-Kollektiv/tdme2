@@ -61,12 +61,6 @@ private:
 
 	unique_ptr<Prototype> prototype;
 
-	float skyDomeTranslation { 0.0f };
-
-	unique_ptr<Prototype> skySpherePrototype;
-	unique_ptr<Prototype> skyDomePrototype;
-	unique_ptr<Prototype> skyPanoramaPrototype;
-
 	BoundingBox terrainBoundingBox;
 	vector<Model*> terrainModels;
 
@@ -155,16 +149,6 @@ public:
 	 * @param fileName file name
 	 */
 	void saveFile(const string& pathName, const string& fileName);
-
-	/**
-	 * Initialize sky
-	 */
-	void initSky();
-
-	/**
-	 * Update sky
-	 */
-	void updateSky();
 
 	/**
 	 * Reset engine

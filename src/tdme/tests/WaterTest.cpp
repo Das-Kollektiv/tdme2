@@ -72,18 +72,6 @@ int WaterTest::main(int argc, char** argv)
 
 void WaterTest::display()
 {
-	// animate sky dome
-	{
-		auto skyDome = static_cast<Object*>(engine->getEntity("sky_dome"));
-		skyDome->setTextureMatrix((Matrix3x3()).identity().setTranslation(Vector2(0.0f, skyDomeTranslation * 0.01f)));
-
-		auto skyPanorama = engine->getEntity("sky_panorama");
-		skyPanorama->setRotationAngle(0, skyDomeTranslation * 1.0f * 0.1f);
-		skyPanorama->update();
-
-		skyDomeTranslation+= 1.0f / 60.0;
-	}
-
 	// camera
 	auto camLookFrom = engine->getCamera()->getLookFrom();
 	if (keyMinus == true) camLookFrom.add(Vector3(0.0f, -20.0f / 60.0f, 0.0f));
@@ -112,12 +100,6 @@ void WaterTest::display()
 	engine->getCamera()->setLookFrom(camLookFrom);
 	engine->getCamera()->setLookAt(camLookFrom.clone().add(camLookAt.scale(25.0f)));
 	engine->getCamera()->setUpVector(Camera::computeUpVector(engine->getCamera()->getLookFrom(), engine->getCamera()->getLookAt()));
-
-	{
-		auto playerSphere = engine->getEntity("playersphere");
-		playerSphere->setTranslation(camLookFrom);
-		playerSphere->update();
-	}
 
 	// rendering
 	auto start = Time::getCurrentMillis();
@@ -150,62 +132,15 @@ void WaterTest::dispose()
 void WaterTest::initialize()
 {
 	engine->initialize();
+	engine->setSkyShaderEnabled(true);
 
 	//
 	scene = unique_ptr<Scene>(SceneReader::read("resources/tests/levels/water", "Level_WaterShader.tscene"));
 	SceneConnector::setLights(engine, scene.get());
 	SceneConnector::addScene(engine, scene.get(), false, false, false, false, false);
 
-	// load sky
-	skySpherePrototype = unique_ptr<Prototype>(PrototypeReader::read("resources/engine/models", "sky_sphere.tmodel"));
-	skyDomePrototype = unique_ptr<Prototype>(PrototypeReader::read("resources/engine/models", "sky_dome.tmodel"));
-	skyPanoramaPrototype = unique_ptr<Prototype>(PrototypeReader::read("resources/engine/models", "sky_panorama.tmodel"));
+	//
 	spherePrototype = unique_ptr<Prototype>(PrototypeReader::read("resources/tests/levels/water/", "sphere.tmodel"));
-
-	// add sky
-	{
-		// sky sphere
-		auto skySphere = new Object("sky_sphere", skySpherePrototype->getModel());
-		skySphere->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
-		skySphere->setShader("sky");
-		skySphere->setFrustumCulling(false);
-		skySphere->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
-		skySphere->setScale(Vector3(300.0f/200.0f, 300.0f/200.0f, 300.0f/200.0f));
-		skySphere->update();
-		skySphere->setContributesShadows(false);
-		skySphere->setReceivesShadows(false);
-		skySphere->setExcludeEffectPass(Engine::EFFECTPASS_LIGHTSCATTERING);
-		engine->addEntity(skySphere);
-
-		// sky dome
-		auto skyDome = new Object("sky_dome", skyDomePrototype->getModel());
-		skyDome->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
-		skyDome->setShader("sky");
-		skyDome->setFrustumCulling(false);
-		skyDome->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
-		skyDome->setScale(Vector3(295.0f/190.0f, 295.0f/190.0f, 295.0f/190.0f));
-		skyDome->getModel()->getMaterials().begin()->second->getSpecularMaterialProperties()->setDiffuseTextureMaskedTransparency(true);
-		skyDome->update();
-		skyDome->setContributesShadows(false);
-		skyDome->setReceivesShadows(false);
-		skyDome->setEffectColorMul(Color4(1.0f, 1.0f, 1.0f, 0.7f));
-		skyDome->setExcludeEffectPass(Engine::EFFECTPASS_LIGHTSCATTERING);
-		engine->addEntity(skyDome);
-
-		// sky panorama
-		auto skyPanorama = new Object("sky_panorama", skyPanoramaPrototype->getModel());
-		skyPanorama->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
-		skyPanorama->setShader("sky");
-		skyPanorama->setFrustumCulling(false);
-		skyPanorama->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
-		skyPanorama->setScale(Vector3(280.0f/190.0f, 280.0f/180.0f, 280.0f/180.0f));
-		skyPanorama->addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
-		skyPanorama->update();
-		skyPanorama->setContributesShadows(false);
-		skyPanorama->setReceivesShadows(false);
-		skyPanorama->setExcludeEffectPass(Engine::EFFECTPASS_LIGHTSCATTERING);
-		engine->addEntity(skyPanorama);
-	}
 
 	{
 		// sphere
@@ -219,34 +154,12 @@ void WaterTest::initialize()
 		engine->addEntity(sphere);
 	}
 
-	{
-		// player sphere
-		auto playerSphere = new Object("playersphere", spherePrototype->getModel());
-		playerSphere->setScale(Vector3(5.0f, 5.0f, 5.0f));
-		playerSphere->setTranslation(Vector3(0.0f, 20.0f, 0.0f));
-		playerSphere->update();
-		playerSphere->setEnabled(false);
-		engine->addEntity(playerSphere);
-	}
-
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(150.0f);
 	cam->setLookFrom(Vector3(0.0f, 30.0f, 50.0f));
 	cam->setLookAt(Vector3(0.0f, 0.0f, 0.0f));
 	cam->setUpVector(Camera::computeUpVector(cam->getLookFrom(), cam->getLookAt()));
-	auto light0 = engine->getLightAt(0);
-	light0->setAmbient(Color4(0.75f, 0.75f, 0.75f, 1.0f));
-	light0->setDiffuse(Color4(0.40f, 0.40f, 0.40f, 1.0f));
-	light0->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	light0->setPosition(Vector4(0.0f, 20000.0f, 0.0f, 0.0f));
-	light0->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ())));
-	light0->setConstantAttenuation(0.5f);
-	light0->setLinearAttenuation(0.0f);
-	light0->setQuadraticAttenuation(0.0f);
-	light0->setSpotExponent(0.0f);
-	light0->setSpotCutOff(180.0f);
-	light0->setEnabled(true);
 }
 
 void WaterTest::reshape(int32_t width, int32_t height)

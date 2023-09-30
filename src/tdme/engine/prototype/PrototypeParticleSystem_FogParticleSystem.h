@@ -3,8 +3,8 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 
 using std::string;
 
@@ -76,6 +76,11 @@ public:
 	inline Texture* getTexture() {
 		return texture;
 	}
+
+	/**
+	 * @return texture with acquired reference
+	 */
+	Texture* getTextureReference();
 
 	/**
 	 * @return texture file name

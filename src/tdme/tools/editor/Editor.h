@@ -112,9 +112,7 @@ public:
 	 */
 	void reshape(int width, int height);
 
-	/**
-	 * On drop
-	 * @param paths paths of items that were dropped
-	 */
+	// overridden methods
 	void onDrop(const vector<string>& paths);
+	void onClose();
 };

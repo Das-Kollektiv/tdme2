@@ -43,3 +43,8 @@ void PrototypeParticleSystem_PointParticleSystem::setTextureFileName(const strin
 PrototypeParticleSystem_PointParticleSystem::~PrototypeParticleSystem_PointParticleSystem() {
 	if (texture != nullptr) texture->releaseReference();;
 }
+
+Texture* PrototypeParticleSystem_PointParticleSystem::getTextureReference() {
+	if (texture != nullptr) texture->acquireReference();
+	return texture;
+}

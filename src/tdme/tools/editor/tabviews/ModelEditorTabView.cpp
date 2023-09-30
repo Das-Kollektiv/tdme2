@@ -535,8 +535,7 @@ void ModelEditorTabView::updateRendering() {
 void ModelEditorTabView::updateShaderParemeters() {
 	auto object = dynamic_cast<Object*>(engine->getEntity("model"));
 	if (object == nullptr || prototype == nullptr) return;
-	auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
-	for (const auto& [parameterName, defaultParameterValue]: shaderParametersDefault) {
+	for (const auto& parameterName: Engine::getShaderParameterNames(prototype->getShader())) {
 		auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 		object->setShaderParameter(parameterName, parameterValue);
 	}

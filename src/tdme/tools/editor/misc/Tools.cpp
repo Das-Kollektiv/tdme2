@@ -372,8 +372,7 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 					modelEntity->setEffectColorAdd(colorAdd);
 					auto object = dynamic_cast<ImposterObject*>(modelEntity);
 					object->setShader(prototype->getShader());
-					auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
-					for (const auto& [parameterName, defaultParameterValue]: shaderParametersDefault) {
+					for (const auto& parameterName: Engine::getShaderParameterNames(prototype->getShader())) {
 						auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 						object->setShaderParameter(parameterName, parameterValue);
 					}
@@ -390,8 +389,7 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 			modelEntity->setEffectColorAdd(colorAdd);
 			auto object = dynamic_cast<Object*>(modelEntity);
 			object->setShader(prototype->getShader());
-			auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
-			for (const auto& [parameterName, defaultParameterValue]: shaderParametersDefault) {
+			for (const auto& parameterName: Engine::getShaderParameterNames(prototype->getShader())) {
 				auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 				object->setShaderParameter(parameterName, parameterValue);
 			}

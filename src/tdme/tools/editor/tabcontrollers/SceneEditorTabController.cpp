@@ -179,13 +179,6 @@ void SceneEditorTabController::onDrop(const string& payload, int mouseX, int mou
 		showInfoPopUp("Warning", "Unknown payload in drop");
 	} else {
 		auto fileName = StringTools::substring(payload, string("file:").size());
-		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "sky_model") == true) {
-			if (Tools::hasFileExtension(fileName, ModelReader::getModelExtensions()) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(ModelReader::getModelExtensions()));
-			} else {
-				setSkyModelFileName(fileName);
-			}
-		} else
 		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "gui") == true) {
 			vector<string> guiExtensions = {{ "xml" }};
 			if (Tools::hasFileExtension(fileName, guiExtensions) == false) {
@@ -311,6 +304,9 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 			Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_snapping_x"))->getController()->getValue().getString()),
 			Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_snapping_z"))->getController()->getValue().getString())
 		);
+	} else
+	if (StringTools::startsWith(node->getId(), "sky.shader.") == true) {
+		applySkyShaderDetails(StringTools::substring(node->getId(), string("sky.shader.").size(), node->getId().size()));
 	} else {
 		for (const auto& applyTranslationNode: applyTranslationNodes) {
 			if (node->getId() == applyTranslationNode) {
@@ -361,27 +357,6 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transform_scale_z"))->getController()->getValue().getString())
 						)
 					);
-				} catch (Exception& exception) {
-					Console::println("SceneEditorTabController::onChange(): An error occurred: " + string(exception.what()));
-					showInfoPopUp("Warning", string(exception.what()));
-				}
-				//
-				break;
-			}
-		}
-		for (const auto& applySkyNode: applySkyNodes) {
-			if (node->getId() == applySkyNode) {
-				//
-				try {
-					auto scene = view->getScene();
-					scene->setSkyModelScale(
-						Vector3(
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky_model_scale"))->getController()->getValue().getString()),
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky_model_scale"))->getController()->getValue().getString()),
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky_model_scale"))->getController()->getValue().getString())
-						)
-					);
-					view->updateSky();
 				} catch (Exception& exception) {
 					Console::println("SceneEditorTabController::onChange(): An error occurred: " + string(exception.what()));
 					showInfoPopUp("Warning", string(exception.what()));
@@ -730,58 +705,6 @@ void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 			view->getEditorView()->getScreenController()->browseTo(scene->getGUIFileName());
 		}
 	} else
-	if (node->getId() == "sky_model_open") {
-		class OnLoadSkyModelAction: public virtual Action
-		{
-		public:
-			void performAction() override {
-				try {
-					sceneEditorTabController->setSkyModelFileName(
-						sceneEditorTabController->popUps->getFileDialogScreenController()->getPathName() +
-						"/" +
-						sceneEditorTabController->popUps->getFileDialogScreenController()->getFileName()
-					);
-				} catch (Exception& exception) {
-					Console::println("OnLoadSkyModelAction::performAction(): An error occurred: " + string(exception.what()));
-					sceneEditorTabController->showInfoPopUp("Warning", string(exception.what()));
-				}
-				sceneEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
-			}
-
-			/**
-			 * Public constructor
-			 * @param sceneEditorTabController scene editor tab controller
-			 */
-			OnLoadSkyModelAction(SceneEditorTabController* sceneEditorTabController)
-				: sceneEditorTabController(sceneEditorTabController) {
-				//
-			}
-
-		private:
-			SceneEditorTabController* sceneEditorTabController;
-		};
-
-		auto extensions = ModelReader::getModelExtensions();
-		popUps->getFileDialogScreenController()->show(
-			string(),
-			"Load sky model from: ",
-			extensions,
-			string(),
-			true,
-			new OnLoadSkyModelAction(this)
-		);
-	} else
-	if (node->getId() == "sky_model_remove") {
-		unsetSkyModelFileName();
-	} else
-	if (node->getId() == "sky_model_browseto") {
-		auto scene = view->getScene();
-		if (scene->getSkyModelFileName().empty() == true) {
-			showInfoPopUp("Browse To", "Nothing to browse to");
-		} else {
-			view->getEditorView()->getScreenController()->browseTo(scene->getSkyModelFileName());
-		}
-	} else
 	if (node->getId() == "prototype_place") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		auto prototypeId = Integer::parse(StringTools::substring(outlinerNode, string("scene.prototypes.").size()));
@@ -887,6 +810,139 @@ void SceneEditorTabController::setRunButtonMode(bool running) {
 	if (running == true) required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_toolbar"))->getActiveConditions().add("running");
 }
 
+void SceneEditorTabController::setSkyShaderDetails() {
+	view->getEditorView()->setDetailsContent(
+		"<template id=\"details_sky\" src=\"resources/engine/gui/template_details_sky.xml\" />\n"
+	);
+	//
+	string xml;
+	auto scene = view->getScene();
+	for (const auto& parameterName: Engine::getShaderParameterNames("sky")) {
+		auto parameter = scene->getSkyShaderParameters().getShaderParameter(parameterName);
+		auto parameterValue = parameter.toString();
+		auto parameterType = "string";
+		switch (parameter.getType()) {
+		case ShaderParameter::TYPE_FLOAT:
+			xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape("sky.shader." + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_float.xml\" value=\"" + parameterValue + "\" />\n";
+			break;
+		case ShaderParameter::TYPE_INTEGER:
+			xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape("sky.shader." + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_int.xml\" value=\"" + parameterValue + "\" />\n";
+			break;
+		case ShaderParameter::TYPE_BOOLEAN:
+			xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape("sky.shader." + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_bool.xml\" value=\"" + parameterValue + "\" />\n";
+			break;
+		case ShaderParameter::TYPE_VECTOR2:
+			{
+				auto vec2 = parameter.getVector2Value();
+				xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape("sky.shader." + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_vector2.xml\" value_x=\"" + to_string(vec2.getX()) + "\" value_y=\"" + to_string(vec2.getY()) + "\" />\n";
+			}
+			break;
+		case ShaderParameter::TYPE_VECTOR3:
+			{
+				auto vec3 = parameter.getVector3Value();
+				xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape("sky.shader." + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_vector3.xml\" value_x=\"" + to_string(vec3.getX()) + "\" value_y=\"" + to_string(vec3.getY()) + "\" value_z=\"" + to_string(vec3.getZ()) + "\" />\n";
+			}
+			break;
+		case ShaderParameter::TYPE_VECTOR4:
+			{
+				auto vec4 = parameter.getVector4Value();
+				xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape("sky.shader." + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_vector4.xml\" value_x=\"" + to_string(vec4.getX()) + "\" value_y=\"" + to_string(vec4.getY()) + "\" value_z=\"" + to_string(vec4.getZ()) + "\" value_w=\"" + to_string(vec4.getW()) + "\" />\n";
+			}
+			break;
+		case ShaderParameter::TYPE_NONE:
+			break;
+		}
+	}
+	//
+	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_sky"))->getActiveConditions().add("open");
+		required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("rendering_shader_details"))->replaceSubNodes(xml, false);
+	} catch (Exception& exception) {
+		Console::println("SceneEditorTabController::setSkyShaderDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
+	}
+}
+
+void SceneEditorTabController::applySkyShaderDetails(const string& parameterName) {
+	//
+	auto scene = view->getScene();
+	auto shaderParameters = scene->getSkyShaderParameters();
+	//
+	try {
+		auto parameter = shaderParameters.getShaderParameter(parameterName);
+		switch (parameter.getType()) {
+			case ShaderParameter::TYPE_FLOAT:
+				shaderParameters.setShaderParameter(
+					parameterName,
+					ShaderParameter(
+						Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky.shader." + parameterName))->getController()->getValue().getString())
+					)
+				);
+				break;
+			case ShaderParameter::TYPE_INTEGER:
+				shaderParameters.setShaderParameter(
+					parameterName,
+					ShaderParameter(
+						Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky.shader." + parameterName))->getController()->getValue().getString())
+					)
+				);
+				break;
+			case ShaderParameter::TYPE_BOOLEAN:
+				shaderParameters.setShaderParameter(
+					parameterName,
+					ShaderParameter(
+						required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky.shader." + parameterName))->getController()->getValue().getString() == "1"
+					)
+				);
+				break;
+			case ShaderParameter::TYPE_VECTOR2:
+				shaderParameters.setShaderParameter(
+					parameterName,
+					ShaderParameter(
+						Vector2(
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky.shader." + parameterName + "_x"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky.shader." + parameterName + "_y"))->getController()->getValue().getString())
+						)
+					)
+				);
+				break;
+			case ShaderParameter::TYPE_VECTOR3:
+				shaderParameters.setShaderParameter(
+					parameterName,
+					ShaderParameter(
+						Vector3(
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky.shader." + parameterName + "_x"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky.shader." + parameterName + "_y"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky.shader." + parameterName + "_z"))->getController()->getValue().getString())
+						)
+					)
+				);
+				break;
+			case ShaderParameter::TYPE_VECTOR4:
+				shaderParameters.setShaderParameter(
+					parameterName,
+					ShaderParameter(
+						Vector4(
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky.shader." + parameterName + "_x"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky.shader." + parameterName + "_y"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky.shader." + parameterName + "_z"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky.shader." + parameterName + "_w"))->getController()->getValue().getString())
+						)
+					)
+				);
+				break;
+			case ShaderParameter::TYPE_NONE:
+				break;
+		}
+	} catch (Exception& exception) {
+		Console::println("SceneEditorTabController::applySkyShaderDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
+	}
+	//
+	scene->setSkyShaderParameters(shaderParameters);
+	view->applySkyShaderParameters();
+}
+
 void SceneEditorTabController::setGUIDetails() {
 	auto scene = view->getScene();
 
@@ -917,51 +973,6 @@ void SceneEditorTabController::unsetGUIFileName() {
 	if (scene == nullptr) return;
 	scene->setGUIFileName(string());
 	setGUIDetails();
-}
-
-void SceneEditorTabController::setSkyDetails() {
-	auto scene = view->getScene();
-
-	view->getEditorView()->setDetailsContent(
-		string("<template id=\"details_sky\" src=\"resources/engine/gui/template_details_sky.xml\" />")
-	);
-
-	//
-	try {
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_sky"))->getActiveConditions().add("open");
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky_model_scale"))->getController()->setValue(
-			Math::max(scene->getSkyModelScale().getX(), Math::max(scene->getSkyModelScale().getY(), scene->getSkyModelScale().getZ()))
-		);
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sky_model"))->setSource(scene->getSkyModelFileName());
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sky_model"))->setTooltip(scene->getSkyModelFileName());
-	} catch (Exception& exception) {
-		Console::println("SceneEditorTabController::setSkyDetails(): An error occurred: " + string(exception.what()));
-		showInfoPopUp("Warning", string(exception.what()));
-	}
-}
-
-void SceneEditorTabController::setSkyModelFileName(const string& fileName) {
-	view->removeSky();
-	auto scene = view->getScene();
-	scene->setSkyModelFileName(fileName);
-	scene->setSkyModelScale(Vector3(1.0f, 1.0f, 1.0f));
-	scene->setSkyModel(
-		ModelReader::read(
-			Tools::getPathName(scene->getSkyModelFileName()),
-			Tools::getFileName(scene->getSkyModelFileName()))
-	);
-	view->updateSky();
-	setSkyDetails();
-}
-
-void SceneEditorTabController::unsetSkyModelFileName() {
-	view->removeSky();
-	auto scene = view->getScene();
-	scene->setSkyModelFileName(string());
-	scene->setSkyModelScale(Vector3(1.0f, 1.0f, 1.0f));
-	scene->setSkyModel(nullptr);
-	view->updateSky();
-	setSkyDetails();
 }
 
 void SceneEditorTabController::setLightDetails(int lightIdx) {
@@ -1350,7 +1361,7 @@ void SceneEditorTabController::updateDetails(const string& outlinerNode) {
 		setGUIDetails();
 	} else
 	if (outlinerNode == "scene.sky") {
-		setSkyDetails();
+		setSkyShaderDetails();
 	} else
 	if (StringTools::startsWith(outlinerNode, "scene.lights.") == true) {
 		auto lightIdx = Integer::parse(StringTools::substring(outlinerNode, string("scene.lights.light").size()));

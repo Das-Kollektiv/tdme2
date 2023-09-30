@@ -8,6 +8,7 @@ namespace framebuffer {
 	class BRDFLUTShader;
 	class DeferredLightingRenderShader;
 	class FrameBufferRenderShader;
+	class SkyRenderShader;
 }  // namespace framebuffer
 }  // namespace subsystems
 }  // namespace engine

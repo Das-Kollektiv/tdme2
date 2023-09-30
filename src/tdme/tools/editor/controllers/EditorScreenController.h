@@ -109,7 +109,7 @@ public:
 		string id;
 		string name;
 		TabType type { TABTYPE_UNKNOWN };
-		TabView* tabView { nullptr };
+		unique_ptr<TabView> tabView;
 		GUIImageNode* frameBufferNode { nullptr };
 
 	public:
@@ -136,7 +136,7 @@ public:
 			id(id),
 			name(name),
 			type(type),
-			tabView(tabView),
+			tabView(unique_ptr<TabView>(tabView)),
 			frameBufferNode(frameBufferNode)
 		{}
 
@@ -165,7 +165,7 @@ public:
 		 * @return tab view
 		 */
 		inline TabView* getTabView() {
-			return tabView;
+			return tabView.get();
 		}
 
 		/**

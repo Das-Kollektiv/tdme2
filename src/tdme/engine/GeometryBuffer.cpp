@@ -121,10 +121,6 @@ void GeometryBuffer::renderToScreen(Engine* engine, vector<Decal*>& decalEntitie
 	//
 	renderer->disableCulling(contextIdx);
 
-	// clear
-	renderer->setClearColor(engine->sceneColor.getRed(), engine->sceneColor.getGreen(), engine->sceneColor.getBlue(), engine->sceneColor.getAlpha());
-	renderer->clear(renderer->CLEAR_COLOR_BUFFER_BIT | renderer->CLEAR_DEPTH_BUFFER_BIT);
-
 	// use deferred lighting render shader
 	auto frameBufferRenderShader = Engine::getFrameBufferRenderShader();
 	auto deferredLightingRenderShader = Engine::getDeferredLightingRenderShader();

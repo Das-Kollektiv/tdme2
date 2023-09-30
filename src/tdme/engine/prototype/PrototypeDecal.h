@@ -46,6 +46,11 @@ public:
 	}
 
 	/**
+	 * @return texture with acquired reference
+	 */
+	Texture* getTextureReference();
+
+	/**
 	 * @return texture file name
 	 */
 	inline const string& getTextureFileName() {

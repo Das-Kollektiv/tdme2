@@ -133,8 +133,8 @@ void Editor::dispose()
 		view->dispose();
 		view = nullptr;
 	}
-	engine->dispose();
 	popUps->dispose();
+	engine->dispose();
 	Tools::oseDispose();
 }
 
@@ -158,4 +158,8 @@ void Editor::reshape(int width, int height)
 
 void Editor::onDrop(const vector<string>& paths) {
 	editorView->onDrop(paths);
+}
+
+void Editor::onClose() {
+	editorView->getScreenController()->closeProject();
 }

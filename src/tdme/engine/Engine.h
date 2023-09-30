@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <array>
-#include <map>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -49,7 +48,6 @@
 
 using std::array;
 using std::make_unique;
-using std::map;
 using std::remove;
 using std::string;
 using std::to_string;
@@ -65,6 +63,7 @@ using tdme::engine::model::Node;
 using tdme::engine::subsystems::framebuffer::BRDFLUTShader;
 using tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader;
 using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
+using tdme::engine::subsystems::framebuffer::SkyRenderShader;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::manager::MeshManager;
@@ -152,6 +151,7 @@ class tdme::engine::Engine final
 	friend class tdme::engine::subsystems::framebuffer::BRDFLUTShader;
 	friend class tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader;
 	friend class tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
+	friend class tdme::engine::subsystems::framebuffer::SkyRenderShader;
 	friend class tdme::engine::subsystems::lighting::LightingShaderPBRBaseImplementation;
 	friend class tdme::engine::subsystems::lines::LinesInternal;
 	friend class tdme::engine::subsystems::rendering::BatchRendererPoints;
@@ -179,13 +179,20 @@ class tdme::engine::Engine final
 
 public:
 	enum AnimationProcessingTarget { NONE, CPU, CPU_NORENDERING, GPU };
-	enum ShaderType { SHADERTYPE_OBJECT, SHADERTYPE_POSTPROCESSING, SHADERTYPE_MAX };
+	enum ShaderType { SHADERTYPE_OBJECT, SHADERTYPE_POSTPROCESSING, SHADERTYPE_SKY, SHADERTYPE_MAX };
 	enum EffectPass { EFFECTPASS_NONE, EFFECTPASS_LIGHTSCATTERING, EFFECTPASS_COUNT };
-	static constexpr int LIGHTS_MAX { 8 };
+
 	// TODO: make sure one can set up this parameter also
 	static constexpr int ENGINETHREADSQUEUE_RENDER_DISPATCH_COUNT { 200 };
 	static constexpr int ENGINETHREADSQUEUE_PRERENDER_DISPATCH_COUNT { 5 };
 	static constexpr int ENGINETHREADSQUEUE_COMPUTE_DISPATCH_COUNT { 5 };
+
+	enum LightIdx {
+		LIGHTIDX_SUN,
+		LIGHTIDX_MOON,
+		LIGHTIDX_OTHERS,
+		LIGHTS_MAX = 8
+	};
 
 protected:
 	STATIC_DLL_IMPEXT static Engine* currentEngine;
@@ -211,6 +218,7 @@ private:
 	STATIC_DLL_IMPEXT static unique_ptr<BRDFLUTShader> brdfLUTShader;
 	STATIC_DLL_IMPEXT static unique_ptr<FrameBufferRenderShader> frameBufferRenderShader;
 	STATIC_DLL_IMPEXT static unique_ptr<DeferredLightingRenderShader> deferredLightingRenderShader;
+	STATIC_DLL_IMPEXT static unique_ptr<SkyRenderShader> skyRenderShader;
 	STATIC_DLL_IMPEXT static unique_ptr<PostProcessing> postProcessing;
 	STATIC_DLL_IMPEXT static unique_ptr<PostProcessingShader> postProcessingShader;
 	STATIC_DLL_IMPEXT static unique_ptr<Texture2DRenderShader> texture2DRenderShader;
@@ -228,10 +236,10 @@ private:
 	struct Shader {
 		ShaderType type;
 		string id;
-		map<string, ShaderParameter> parameterDefaults;
+		unordered_map<string, ShaderParameter> parameterDefaults;
 	};
 
-	STATIC_DLL_IMPEXT static map<string, Shader> shaders;
+	STATIC_DLL_IMPEXT static unordered_map<string, Shader> shaders;
 
 	struct DecomposedEntities {
 		vector<Entity*> noFrustumCullingEntities;
@@ -294,9 +302,7 @@ private:
 	STATIC_DLL_IMPEXT static bool skinningShaderEnabled;
 
 	bool shadowMappingEnabled;
-
-	bool preRenderingInitiated;
-	bool renderingInitiated;
+	bool skyShaderEnabled;
 
 	vector<string> postProcessingPrograms;
 
@@ -304,7 +310,7 @@ private:
 
 	bool isUsingPostProcessingTemporaryFrameBuffer;
 
-	map<string, map<string, ShaderParameter>> shaderParameters;
+	unordered_map<string, unordered_map<string, ShaderParameter>> shaderParameters;
 
 	TextureAtlas ppsTextureAtlas {"tdme.pps.atlas"};
 	TextureAtlas decalsTextureAtlas {"tdme.decals.atlas"};
@@ -477,6 +483,13 @@ private:
 	 */
 	inline static DeferredLightingRenderShader* getDeferredLightingRenderShader() {
 		return deferredLightingRenderShader.get();
+	}
+
+	/**
+	 * @return sky shader
+	 */
+	inline static SkyRenderShader* getSkyRenderShader() {
+		return skyRenderShader.get();
 	}
 
 	/**
@@ -817,14 +830,21 @@ public:
 	 * @param parameterTypes parameter types
 	 * @param parameterDefault parameter defaults
 	 */
-	static void registerShader(ShaderType type, const string& shaderId, const map<string, ShaderParameter>& parameterDefaults = {});
+	static void registerShader(ShaderType type, const string& shaderId, const unordered_map<string, ShaderParameter>& parameterDefaults = {});
 
 	/**
 	 * Returns parameter defaults of shader with given id
 	 * @param shaderId shader id
 	 * @return shader parameter defaults
 	 */
-	static const map<string, ShaderParameter> getShaderParameterDefaults(const string& shaderId);
+	static const unordered_map<string, ShaderParameter> getShaderParameterDefaults(const string& shaderId);
+
+	/**
+	 * Returns shader parameter names of shader with given id
+	 * @param shaderId shader id
+	 * @return shader parameter names
+	 */
+	static const vector<string> getShaderParameterNames(const string& shaderId);
 
 	/**
 	 * Returns shader parameter default value for given shader id and parameter name
@@ -833,19 +853,23 @@ public:
 	 * @return shader parameter
 	 */
 	static inline const ShaderParameter getDefaultShaderParameter(const string& shaderId, const string& parameterName) {
+		// try to find registered shader
 		auto shaderIt = shaders.find(shaderId);
 		if (shaderIt == shaders.end()) {
+			// not found, return empty shader parameter
 			Console::println("Engine::getDefaultShaderParameter(): no shader registered with id: " + shaderId);
 			return ShaderParameter();
 		}
+		// fetch from defaults
 		const auto& shader = shaderIt->second;
 		auto shaderParameterIt = shader.parameterDefaults.find(parameterName);
 		if (shaderParameterIt == shader.parameterDefaults.end()) {
+			// not found
 			Console::println("Engine::getDefaultShaderParameter(): no default for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
 			return ShaderParameter();
 		}
-		const auto& shaderParameter = shaderParameterIt->second;
-		return shaderParameter;
+		// done
+		return shaderParameterIt->second;
 	}
 
 	/**
@@ -855,17 +879,21 @@ public:
 	 * @return shader parameter
 	 */
 	inline const ShaderParameter getShaderParameter(const string& shaderId, const string& parameterName) {
+		// try to find shader in engine shader parameters
 		auto shaderParameterIt = shaderParameters.find(shaderId);
 		if (shaderParameterIt == shaderParameters.end()) {
+			// not found, use default shader parameter
 			return getDefaultShaderParameter(shaderId, parameterName);
 		}
+		//
 		const auto& shaderParameterMap = shaderParameterIt->second;
+		//
 		auto shaderParameterParameterIt = shaderParameterMap.find(parameterName);
 		if (shaderParameterParameterIt == shaderParameterMap.end()) {
 			return getDefaultShaderParameter(shaderId, parameterName);
 		}
-		const auto& shaderParameter = shaderParameterParameterIt->second;
-		return shaderParameter;
+		// done
+		return shaderParameterParameterIt->second;
 	}
 
 	/**
@@ -885,6 +913,12 @@ public:
 		}
 		shaderParameters[shaderId][parameterName] = parameterValue;
 	}
+
+	/**
+	 * Load textures
+	 * @param pathName path name
+	 */
+	void loadTextures(const string& pathName);
 
 	/**
 	 * Creates an offscreen rendering instance
@@ -1005,6 +1039,21 @@ public:
 	 */
 	inline GeometryBuffer* getGeometryBuffer() {
 		return geometryBuffer.get();;
+	}
+
+	/**
+	 * @return sky shader enabled
+	 */
+	inline bool isSkyShaderEnabled() {
+		return skyShaderEnabled;
+	}
+
+	/**
+	 * Set sky shader enabled
+	 * @param skyShaderEnabled sky shader enabled
+	 */
+	inline void setSkyShaderEnabled(bool skyShaderEnabled) {
+		this->skyShaderEnabled = skyShaderEnabled;
 	}
 
 	/**
@@ -1399,8 +1448,9 @@ private:
 	 * @param doRenderLightSource do render light source
 	 * @param doRenderParticleSystems if to render particle systems
 	 * @param renderTypes render types
+	 * @param skyShaderEnabled sky shader enabled
 	 */
-	void render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeometryBuffer, Camera* rendererCamera, DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes);
+	void render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeometryBuffer, Camera* rendererCamera, DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes, bool skyShaderEnabled);
 
 	/**
 	 * Render light sources

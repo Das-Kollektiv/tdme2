@@ -2,10 +2,12 @@
 
 #include <algorithm>
 #include <array>
+#include <memory>
 #include <span>
 #include <stack>
 #include <string>
 #include <string_view>
+#include <utility>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -28,12 +30,17 @@
 #include <ext/rapidjson/document.h>
 
 using std::array;
+using std::exchange;
 using std::remove;
+using std::make_unique;
+using std::move;
 using std::span;
 using std::stack;
+using std::swap;
 using std::string;
 using std::string_view;
 using std::to_string;
+using std::unique_ptr;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
@@ -166,23 +173,8 @@ public:
 		friend class MiniScript;
 
 	private:
-
 		ScriptVariableType type { TYPE_NULL };
 		uint64_t valuePtr { 0LL };
-
-		// class names
-		STATIC_DLL_IMPEXT static const string CLASSNAME_NONE;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_STRING;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_VEC2;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_VEC3;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_VEC4;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_QUATERNION;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_MAT3;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_MAT4;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_TRANSFORM;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_ARRAY;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_MAP;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_SET;
 
 		/**
 		 * @return boolean value reference
@@ -381,6 +373,19 @@ public:
 		}
 
 	public:
+		// class names
+		STATIC_DLL_IMPEXT static const string CLASSNAME_NONE;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_STRING;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_VEC2;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_VEC3;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_VEC4;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_QUATERNION;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_MAT3;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_MAT4;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_TRANSFORM;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_ARRAY;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_MAP;
+		STATIC_DLL_IMPEXT static const string CLASSNAME_SET;
 
 		/**
 		 * Copy constructor
@@ -440,11 +445,9 @@ public:
 		 * Move constructor
 		 * @param scriptVariable script variable to move from
 		 */
-		inline ScriptVariable(ScriptVariable&& scriptVariable) {
-			type = scriptVariable.type;
-			valuePtr = scriptVariable.valuePtr;
-			scriptVariable.type = TYPE_NULL;
-			scriptVariable.valuePtr = 0LL;
+		inline ScriptVariable(ScriptVariable&& scriptVariable):
+			type(exchange(scriptVariable.type, MiniScript::TYPE_NULL)),
+			valuePtr(exchange(scriptVariable.valuePtr, 0ll)) {
 		}
 
 		/**
@@ -509,10 +512,10 @@ public:
 		 * @return this script variable
 		 */
 		inline ScriptVariable& operator=(ScriptVariable&& scriptVariable) {
-			type = scriptVariable.type;
-			valuePtr = scriptVariable.valuePtr;
-			scriptVariable.type = TYPE_NULL;
-			scriptVariable.valuePtr = 0LL;
+			// do the swap
+			swap(type, scriptVariable.type);
+			swap(valuePtr, scriptVariable.valuePtr);
+			//
 			return *this;
 		}
 
@@ -691,7 +694,7 @@ public:
 			}
 			this->valuePtr = 0LL;
 			this->type = newType;
-			switch(type) {
+			switch(newType) {
 				case TYPE_NULL:
 					break;
 				case TYPE_BOOLEAN:
@@ -1096,7 +1099,6 @@ public:
 		 * @param value value
 		 */
 		inline void setValue(const vector<ScriptVariable>& value) {
-			// TODO: be verbose about misuse
 			setType(TYPE_ARRAY);
 			getArrayValueReference() = value;
 		}
@@ -1106,7 +1108,6 @@ public:
 		 * @param value value
 		 */
 		inline void setValue(const unordered_map<string, ScriptVariable>& value) {
-			// TODO: be verbose about misuse
 			setType(TYPE_MAP);
 			getMapValueReference() = value;
 		}
@@ -1116,7 +1117,6 @@ public:
 		 * @param value value
 		 */
 		inline void setValue(const unordered_set<string>& value) {
-			// TODO: be verbose about misuse
 			setType(TYPE_SET);
 			getSetValueReference() = value;
 		}
@@ -1125,7 +1125,6 @@ public:
 		 * @return pointer to underlying vector or nullptr
 		 */
 		inline vector<MiniScript::ScriptVariable>* getArrayPointer() {
-			// TODO: be verbose about misuse
 			if (type != TYPE_ARRAY) return nullptr;
 			auto& arrayValue = getArrayValueReference();
 			return &arrayValue;
@@ -1136,7 +1135,6 @@ public:
 		 * @return array size
 		 */
 		inline int64_t getArraySize() const {
-			// TODO: be verbose about misuse
 			if (getType() != TYPE_ARRAY) return 0;
 			return getArrayValueReference().size();
 		}
@@ -1147,7 +1145,6 @@ public:
 		 * @return value from array with given index
 		 */
 		inline const ScriptVariable getArrayValue(int idx) const {
-			// TODO: be verbose about misuse
 			if (type != TYPE_ARRAY) return ScriptVariable();
 			const auto& arrayValue = getArrayValueReference();
 			if (idx >= 0 && idx < arrayValue.size()) return arrayValue[idx];
@@ -1159,7 +1156,6 @@ public:
 		 * @param idx index
 		 */
 		inline void setArrayValue(int idx, const ScriptVariable& value) {
-			// TODO: be verbose about misuse
 			setType(TYPE_ARRAY);
 			if (idx < 0) return;
 			auto& arrayValue = getArrayValueReference();
@@ -1172,7 +1168,6 @@ public:
 		 * @param value value
 		 */
 		inline void pushArrayValue(const ScriptVariable& value) {
-			// TODO: be verbose about misuse
 			setType(TYPE_ARRAY);
 			getArrayValueReference().push_back(value);
 		}
@@ -1182,7 +1177,6 @@ public:
 		 * @param idx index
 		 */
 		inline void removeArrayValue(int idx) {
-			// TODO: be verbose about misuse
 			if (type != TYPE_ARRAY) return;
 			auto& arrayValue = getArrayValueReference();
 			if (idx >= 0 && idx < arrayValue.size()) arrayValue.erase(arrayValue.begin() + idx);
@@ -1193,7 +1187,6 @@ public:
 		 * @return pointer to underlying unordered_map or nullptr
 		 */
 		inline unordered_map<string, ScriptVariable>* getMapPointer() {
-			// TODO: be verbose about misuse
 			if (type != TYPE_MAP) return nullptr;
 			auto& mapValue = getMapValueReference();
 			return &mapValue;
@@ -1203,7 +1196,6 @@ public:
 		 * Get map size
 		 */
 		inline int64_t getMapSize() const {
-			// TODO: be verbose about misuse
 			if (getType() != TYPE_MAP) return 0;
 			return getMapValueReference().size();
 		}
@@ -1214,7 +1206,6 @@ public:
 		 * @return key exists
 		 */
 		inline bool hasMapValue(const string& key) const {
-			// TODO: be verbose about misuse
 			if (type != TYPE_MAP) return false;
 			const auto& mapValue = getMapValueReference();
 			auto it = mapValue.find(key);
@@ -1228,7 +1219,6 @@ public:
 		 * @return map value from given key
 		 */
 		inline const ScriptVariable getMapValue(const string& key) const {
-			// TODO: be verbose about misuse
 			if (type != TYPE_MAP) return ScriptVariable();
 			const auto& mapValue = getMapValueReference();
 			auto it = mapValue.find(key);
@@ -1242,7 +1232,6 @@ public:
 		 * @param value value
 		 */
 		inline void setMapValue(const string& key, const ScriptVariable& value) {
-			// TODO: be verbose about misuse
 			setType(TYPE_MAP);
 			getMapValueReference()[key] = value;
 		}
@@ -1252,7 +1241,6 @@ public:
 		 * @param key key
 		 */
 		inline void removeMapValue(const string& key) {
-			// TODO: be verbose about misuse
 			if (type != TYPE_MAP) return;
 			auto& mapValue = getMapValueReference();
 			auto it = mapValue.find(key);
@@ -1267,7 +1255,6 @@ public:
 		 */
 		inline const vector<string> getMapKeys() const {
 			vector<string> keys;
-			// TODO: be verbose about misuse
 			if (type != TYPE_MAP) return keys;
 			const auto& mapValue = getMapValueReference();
 			for (const auto& [mapEntryName, mapEntryValue]: mapValue) {
@@ -1282,7 +1269,6 @@ public:
 		 */
 		inline const vector<ScriptVariable> getMapValues() const {
 			vector<ScriptVariable> values;
-			// TODO: be verbose about misuse
 			if (type != TYPE_MAP) return values;
 			const auto& mapValue = getMapValueReference();
 			for (const auto& [mapEntryKey, mapEntryValue]: mapValue) {
@@ -1295,7 +1281,6 @@ public:
 		 * @return pointer to underlying unordered_set or nullptr
 		 */
 		inline unordered_set<string>* getSetPointer() {
-			// TODO: be verbose about misuse
 			if (type != TYPE_SET) return nullptr;
 			auto& setValue = getSetValueReference();
 			return &setValue;
@@ -1305,7 +1290,6 @@ public:
 		 * Get set size
 		 */
 		inline int64_t getSetSize() const {
-			// TODO: be verbose about misuse
 			if (getType() != TYPE_SET) return 0;
 			return getSetValueReference().size();
 		}
@@ -1316,7 +1300,6 @@ public:
 		 * @return key exists
 		 */
 		inline bool hasSetKey(const string& key) const {
-			// TODO: be verbose about misuse
 			if (type != TYPE_SET) return false;
 			const auto& setValue = getSetValueReference();
 			auto it = setValue.find(key);
@@ -1329,7 +1312,6 @@ public:
 		 * @param key key
 		 */
 		inline void insertSetKey(const string& key) {
-			// TODO: be verbose about misuse
 			setType(TYPE_SET);
 			getSetValueReference().insert(key);
 		}
@@ -1339,7 +1321,6 @@ public:
 		 * @param key key
 		 */
 		inline void removeSetKey(const string& key) {
-			// TODO: be verbose about misuse
 			if (type != TYPE_SET) return;
 			auto& setValue = getSetValueReference();
 			auto it = setValue.find(key);
@@ -1354,7 +1335,6 @@ public:
 		 */
 		inline const vector<string> getSetKeys() const {
 			vector<string> keys;
-			// TODO: be verbose about misuse
 			if (type != TYPE_SET) return keys;
 			const auto& setValue = getSetValueReference();
 			for (const auto& key: setValue) {
@@ -1643,19 +1623,19 @@ public:
 					{
 						const auto& transformValue = getTransformValueReference();
 						result+=
-							"Transform(translation = Vector3(" +
+							"Transform(translation: Vector3(" +
 							to_string(transformValue.getTranslation().getX()) + ", " +
 							to_string(transformValue.getTranslation().getY()) + ", " +
 							to_string(transformValue.getTranslation().getZ()) + "), " +
-							"scale = Vector3(" +
+							"scale: (" +
 							to_string(transformValue.getScale().getX()) + ", " +
 							to_string(transformValue.getScale().getY()) + ", " +
 							to_string(transformValue.getScale().getZ()) + ")";
 						for (auto i = 0; i < transformValue.getRotationCount(); i++) {
-							result+= ", rotations = (axis = Vector3(" +
+							result+= ", rotations: (axis: Vector3(" +
 									to_string(transformValue.getRotationAxis(i).getX()) + ", " +
 									to_string(transformValue.getRotationAxis(i).getY()) + ", " +
-									to_string(transformValue.getRotationAxis(i).getZ()) + "), angle = " +
+									to_string(transformValue.getRotationAxis(i).getZ()) + "), angle: " +
 									to_string(transformValue.getRotationAngle(i)) + ")";
 						}
 						result+= ")";
@@ -1668,7 +1648,13 @@ public:
 						string valuesString;
 						for (const auto& value: arrayValue) {
 							if (valuesString.empty() == false) valuesString+= ", ";
-							valuesString+= value.getValueAsString();
+							if (value.type == TYPE_STRING) {
+								valuesString+= "\"";
+								valuesString+= StringTools::replace(StringTools::replace(value.getValueAsString(), "\\", "\\\\"), "\"", "\\\"");
+								valuesString+= "\"";
+							} else {
+								valuesString+= value.getValueAsString();
+							}
 						}
 						result+= valuesString;
 						result+="]";
@@ -1681,7 +1667,14 @@ public:
 						string valuesString;
 						for (const auto& [mapEntryName, mapEntryValue]: mapValue) {
 							if (valuesString.empty() == false) valuesString+= ", ";
-							valuesString+= mapEntryName +  " = " + mapEntryValue.getValueAsString();
+							valuesString+= "\"" + mapEntryName +  "\": ";
+							if (mapEntryValue.type == TYPE_STRING) {
+								valuesString+= "\"";
+								valuesString+= StringTools::replace(StringTools::replace(mapEntryValue.getValueAsString(), "\\", "\\\\"), "\"", "\\\"");
+								valuesString+= "\"";
+							} else {
+								valuesString+= mapEntryValue.getValueAsString();
+							}
 						}
 						result+= valuesString;
 						result+="}";
@@ -1694,7 +1687,7 @@ public:
 						string valuesString;
 						for (const auto& key: setValue) {
 							if (valuesString.empty() == false) valuesString+= ", ";
-							valuesString+= key;
+							valuesString+= "\"" + StringTools::replace(StringTools::replace(key, "\\", "\\\\"), "\"", "\\\"") + "\"";
 						}
 						result+= valuesString;
 						result+="}";
@@ -1795,26 +1788,30 @@ public:
 
 		/**
 		 * Get arguments information
+		 * @param beginIdx begin index
 		 * @return arguments information
 		 */
-		inline const string getArgumentsInformation() const {
+		inline const string getArgumentsInformation(int beginIdx = 0) const {
 			string result;
 			auto optionalArgumentCount = 0;
 			auto argumentIdx = 0;
 			for (const auto& argumentType: argumentTypes) {
+				string argumentResult;
 				if (argumentType.optional == true) {
 					result+= "[";
 					optionalArgumentCount++;
 				}
-				if (argumentIdx > 0) result+= ", ";
-				if (argumentType.assignBack == true) {
-					result+= "=";
+				if (argumentIdx > beginIdx) result+= ", ";
+				if (optionalArgumentCount > 0 || argumentIdx >= beginIdx) {
+					if (argumentType.assignBack == true) {
+						result+= "=";
+					}
+					result+= "$" + argumentType.name + ": " + ScriptVariable::getTypeAsString(argumentType.type);
 				}
-				result+= "$" + argumentType.name + ": " + ScriptVariable::getTypeAsString(argumentType.type);
 				argumentIdx++;
 			}
 			if (isVariadic() == true) {
-				if (argumentIdx > 0) result+= ", ";
+				if (argumentIdx > beginIdx) result+= ", ";
 				result+="...";
 			}
 			for (auto i = 0; i < optionalArgumentCount; i++) result+= "]";
@@ -2004,7 +2001,7 @@ protected:
 	vector<Script> scripts;
 	string nativeHash;
 	vector<Script> nativeScripts;
-	vector<ScriptState> scriptStateStack;
+	vector<unique_ptr<ScriptState>> scriptStateStack;
 
 	// root context variables
 	vector<string> enabledNamedConditions;
@@ -2133,13 +2130,14 @@ protected:
 	 * Push a new script state
 	 */
 	inline void pushScriptState() {
-		scriptStateStack.emplace_back();
+		scriptStateStack.push_back(make_unique<ScriptState>());
 	}
 
 	/**
 	 * Pop script state
 	 */
 	inline void popScriptState() {
+		if (scriptStateStack.empty() == true) return;
 		const auto& scriptState = getScriptState();
 		for (const auto& [scriptVariableName, scriptVariable]: scriptState.variables) delete scriptVariable;
 		scriptStateStack.erase(scriptStateStack.begin() + scriptStateStack.size() - 1);
@@ -2248,14 +2246,24 @@ private:
 	void executeScriptLine();
 
 	/**
+	 * Determine next statement from script code
+	 * @param scriptCode script code
+	 * @param i character index
+	 * @param lineIdx line index
+	 * @return next statement
+	 */
+	const string determineNextStatement(const string& scriptCode, int& i, int& lineIdx);
+
+	/**
 	 * Parse a script statement
-	 * @param statement statement 
+	 * @param executableStatement executable statement
 	 * @param methodName method name
 	 * @param arguments arguments
+	 * @param statement statment
 	 * @param accessObjectMember generated access object member statement
 	 * @return success
 	 */
-	bool parseScriptStatement(const string_view& statement, string_view& methodName, vector<string_view>& arguments, string& accessObjectMemberStatement);
+	bool parseScriptStatement(const string_view& executableStatement, string_view& methodName, vector<string_view>& arguments, const ScriptStatement& statement, string& accessObjectMemberStatement);
 
 	/**
 	 * Execute a script statement
@@ -2314,10 +2322,11 @@ private:
 
 	/**
 	 * Determine next not substituted operator in statement
-	 * @param statement statement
+	 * @param processedStatement statement that is currently being processed
 	 * @param nextOperator next operator
+	 * @param statement statement
 	 */
-	bool getNextStatementOperator(const string& statement, ScriptStatementOperator& nextOperator);
+	bool getNextStatementOperator(const string& processedStatement, ScriptStatementOperator& nextOperator, const ScriptStatement& statement);
 
 	/**
 	 * Trim argument and remove unnessessary parenthesis
@@ -2346,9 +2355,20 @@ private:
 
 	/**
 	 * Do statement pre processing, 1) replace operators with corresponding methods
+	 * @param processedStatement statement that is currently being processed
 	 * @param statement statement
 	 */
-	const string doStatementPreProcessing(const string& statement);
+	const string doStatementPreProcessing(const string& processedStatement, const ScriptStatement& statement);
+
+	/**
+	 * Returns if statement has a object member access
+	 * @param executableStatement executable statement
+	 * @param object object
+	 * @param method method
+	 * @param statement statement
+	 * @return statement has a object member access
+	 */
+	bool getObjectMemberAccess(const string_view& executableStatement, string_view& object, string_view& method, const ScriptStatement& statement);
 
 	/**
 	 * Transpile script statement
@@ -2708,12 +2728,10 @@ private:
 		vector<string_view> arguments;
 		string accessObjectMemberStatement;
 		ScriptSyntaxTreeNode evaluateSyntaxTree;
-		if (parseScriptStatement(scriptEvaluateStatement, methodName, arguments, accessObjectMemberStatement) == false) {
-			Console::println("MiniScript::evaluate(): '" + scriptFileName + "': " + evaluateStatement.statement + "@" + to_string(evaluateStatement.line) + ": failed to parse evaluation statement");
+		if (parseScriptStatement(scriptEvaluateStatement, methodName, arguments, evaluateStatement, accessObjectMemberStatement) == false) {
 			return false;
 		} else
 		if (createScriptStatementSyntaxTree(methodName, arguments, evaluateStatement, evaluateSyntaxTree) == false) {
-			Console::println("MiniScript::evaluate(): '" + scriptFileName + "': " + evaluateStatement.statement + "@" + to_string(evaluateStatement.line) + ": failed to create syntax tree for evaluation statement");
 			return false;
 		} else {
 			//
@@ -2860,14 +2878,14 @@ public:
 	 * @return script state
 	 */
 	inline ScriptState& getRootScriptState() {
-		return scriptStateStack[0];
+		return *(scriptStateStack[0].get());
 	}
 
 	/**
 	 * @return script state
 	 */
 	inline ScriptState& getScriptState() {
-		return scriptStateStack[scriptStateStack.size() - 1];
+		return *(scriptStateStack[scriptStateStack.size() - 1].get());
 	}
 
 	/**
@@ -3377,8 +3395,15 @@ public:
 	 * @param returnValue script return value
 	 * @return success
 	 */
-	inline bool evaluate(const string& statement, ScriptVariable& returnValue) {
-		return evaluateInternal(statement, doStatementPreProcessing(statement), returnValue);
+	inline bool evaluate(const string& evaluateStatement, ScriptVariable& returnValue) {
+		ScriptStatement evaluateScriptStatement(
+			LINEIDX_NONE,
+			STATEMENTIDX_FIRST,
+			"internal.script.evaluate(" + StringTools::replace(StringTools::replace(evaluateStatement, "\\", "\\\\"), "\"", "\\\"") + ")",
+			"internal.script.evaluate(" + StringTools::replace(StringTools::replace(evaluateStatement, "\\", "\\\\"), "\"", "\\\"") + ")",
+			STATEMENTIDX_NONE
+		);
+		return evaluateInternal(evaluateStatement, doStatementPreProcessing(evaluateStatement, evaluateScriptStatement), returnValue);
 	}
 
 	/**

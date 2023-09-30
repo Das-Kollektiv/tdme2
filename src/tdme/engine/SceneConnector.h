@@ -200,12 +200,20 @@ public:
 	}
 
 	/**
+	 * Set sun/moon lights
+	 * @param engine engine
+	 * @param t time, while 0.0 <= t <= 1.0
+	 */
+	static void setNaturalLights(Engine* engine, float t = 0.15f);
+
+	/**
 	 * Set lights from scene
 	 * @param engine engine
 	 * @param scene scene
+	 * @param t time, while 0.0 <= t <= 1.0
 	 * @param translation translation
 	 */
-	static void setLights(Engine* engine, Scene* scene, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
+	static void setLights(Engine* engine, Scene* scene, float t = 0.15f, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
 
 	/**
 	 * Create particle system

@@ -16,6 +16,8 @@
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/scene/SceneLight.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Vector3.h>
@@ -40,6 +42,8 @@ using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::scene::SceneLight;
+using tdme::engine::Engine;
+using tdme::engine::EntityShaderParameters;
 using tdme::engine::Rotation;
 using tdme::engine::Transform;
 using tdme::math::Vector3;
@@ -182,13 +186,13 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene* s
 	}
 	// sky
 	{
-		Value jSky;
-		jSky.SetObject();
-		jSky.AddMember("file", Value(scene->getSkyModelFileName(), jAllocator), jAllocator);
-		jSky.AddMember("sx", Value(scene->getSkyModelScale().getX()), jAllocator);
-		jSky.AddMember("sy", Value(scene->getSkyModelScale().getY()), jAllocator);
-		jSky.AddMember("sz", Value(scene->getSkyModelScale().getZ()), jAllocator);
-		jDocument.AddMember("sky", jSky, jAllocator);
+		const auto& skyShaderParameters = scene->getSkyShaderParameters();
+		Value jSkyShaderParameters;
+		jSkyShaderParameters.SetObject();
+		for (const auto& shaderParameterName: Engine::getShaderParameterNames("sky")) {
+			jSkyShaderParameters.AddMember(Value(shaderParameterName, jAllocator), Value(skyShaderParameters.getShaderParameter(shaderParameterName).toString(), jAllocator), jAllocator);
+		}
+		jDocument.AddMember("skyshader", jSkyShaderParameters, jAllocator);
 	}
 	//
 	jDocument.AddMember("gui", Value(scene->getGUIFileName(), jAllocator), jAllocator);

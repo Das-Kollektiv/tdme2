@@ -3,6 +3,7 @@
 #include <memory>
 #include <span>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -39,6 +40,7 @@
 #include <tdme/utilities/MiniScript.h>
 #include <tdme/utilities/UTF8CharacterIterator.h>
 
+using std::move;
 using std::span;
 using std::string;
 using std::to_string;
@@ -632,12 +634,13 @@ void LogicMiniScript::registerMethods() {
 						} else {
 							#if defined (__APPLE__)
 								// MACOSX currently does not support initializing span using begin and end iterators,
-								// so we need to make a copy of argumentValues beginning from second element
-								vector<ScriptVariable> callArgumentValues;
-								for (auto i = 2; i < argumentValues.size(); i++) callArgumentValues.push_back(argumentValues[i]);
+								vector<ScriptVariable> callArgumentValues(argumentValues.size() - 2);
+								for (auto i = 2; i < argumentValues.size(); i++) callArgumentValues[i - 2] = move(argumentValues[i]);
 								// call
 								span callArgumentValuesSpan(callArgumentValues);
 								logicMiniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
+								// move back arguments
+								for (auto i = 2; i < argumentValues.size(); i++) argumentValues[i] = move(callArgumentValues[i - 2]);
 							#else
 								span callArgumentValuesSpan(argumentValues.begin() + 2, argumentValues.end());
 								logicMiniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);

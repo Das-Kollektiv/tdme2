@@ -11,7 +11,5 @@ out vec2 vsFragTextureUV;
 void main(void) {
 	// pass to fragment shader
 	vsFragTextureUV = inTextureUV;
-
-	// compute gl position
 	gl_Position = vec4(inVertex, 1.0);
 }

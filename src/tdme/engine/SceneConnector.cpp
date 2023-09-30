@@ -179,31 +179,62 @@ float SceneConnector::renderGroupsLOD3MinDistance = 50.0;
 int SceneConnector::renderGroupsLOD2ReduceBy = 4;
 int SceneConnector::renderGroupsLOD3ReduceBy = 16;
 
-void SceneConnector::setLights(Engine* engine, Scene* scene, const Vector3& translation)
+void SceneConnector::setNaturalLights(Engine* engine, float t) {
+	// disable all lights
+	for (auto light: engine->getLights()) light->setEnabled(false);
+	// sun
+	auto sunLight = engine->getLightAt(Engine::LIGHTIDX_SUN);
+	auto sunColor = Vector3(1.0f, 1.0f, 1.0f); // engine->getShaderParameter("sky", "sun_color").getVector3Value();
+	auto sunAmbientColor = sunColor * 0.5;
+	auto sunDiffuseColor = sunColor * 0.3;
+	sunLight->setupSun(t);
+	sunLight->setAmbient(Color4(sunAmbientColor[0], sunAmbientColor[1], sunAmbientColor[2], 1.0f));
+	sunLight->setDiffuse(Color4(sunDiffuseColor[0], sunDiffuseColor[1], sunDiffuseColor[2], 1.0f));
+	sunLight->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	sunLight->setEnabled(true);
+	// moon
+	auto moonLight = engine->getLightAt(Engine::LIGHTIDX_MOON);
+	auto moonColor = Vector3(1.0f, 1.0f, 1.0f); // engine->getShaderParameter("sky", "moon_color").getVector3Value();
+	auto moonAmbientColor = moonColor * 0.5 * 0.5;
+	auto moonDiffuseColor = moonColor * 0.3 * 0.5;
+	moonLight->setupMoon(t);
+	moonLight->setAmbient(Color4(moonAmbientColor[0], moonAmbientColor[1], moonAmbientColor[2], 1.0f));
+	moonLight->setDiffuse(Color4(moonDiffuseColor[0], moonDiffuseColor[1], moonDiffuseColor[2], 1.0f));
+	moonLight->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	moonLight->setEnabled(true);
+}
+
+void SceneConnector::setLights(Engine* engine, Scene* scene, float t, const Vector3& translation)
 {
-	for (auto i = 0; i < Engine::LIGHTS_MAX; i++) {
-		if (i >= scene->getLightCount()) {
-			engine->getLightAt(i)->setEnabled(false);
-			continue;
-		}
-		engine->getLightAt(i)->setAmbient(Color4(scene->getLightAt(i)->getAmbient()));
-		engine->getLightAt(i)->setDiffuse(Color4(scene->getLightAt(i)->getDiffuse()));
-		engine->getLightAt(i)->setSpecular(Color4(scene->getLightAt(i)->getSpecular()));
-		engine->getLightAt(i)->setSpotDirection(scene->getLightAt(i)->getSpotDirection());
-		engine->getLightAt(i)->setSpotExponent(scene->getLightAt(i)->getSpotExponent());
-		engine->getLightAt(i)->setSpotCutOff(scene->getLightAt(i)->getSpotCutOff());
-		engine->getLightAt(i)->setConstantAttenuation(scene->getLightAt(i)->getConstantAttenuation());
-		engine->getLightAt(i)->setLinearAttenuation(scene->getLightAt(i)->getLinearAttenuation());
-		engine->getLightAt(i)->setQuadraticAttenuation(scene->getLightAt(i)->getQuadraticAttenuation());
-		engine->getLightAt(i)->setEnabled(scene->getLightAt(i)->isEnabled());
-		engine->getLightAt(i)->setPosition(
+	//
+	for (auto i = 1; i < engine->getLightCount(); i++) engine->getLightAt(i)->setEnabled(false);
+	//
+	setNaturalLights(engine);
+	// additional lights
+	auto engineLightIdx = static_cast<int>(Engine::LIGHTIDX_OTHERS);
+	for (auto sceneLight: scene->getLights()) {
+		//
+		if (engineLightIdx >= Engine::LIGHTS_MAX) break;
+		//
+		engine->getLightAt(engineLightIdx)->setAmbient(Color4(sceneLight->getAmbient()));
+		engine->getLightAt(engineLightIdx)->setDiffuse(Color4(sceneLight->getDiffuse()));
+		engine->getLightAt(engineLightIdx)->setSpecular(Color4(sceneLight->getSpecular()));
+		engine->getLightAt(engineLightIdx)->setSpotDirection(sceneLight->getSpotDirection());
+		engine->getLightAt(engineLightIdx)->setSpotExponent(sceneLight->getSpotExponent());
+		engine->getLightAt(engineLightIdx)->setSpotCutOff(sceneLight->getSpotCutOff());
+		engine->getLightAt(engineLightIdx)->setConstantAttenuation(sceneLight->getConstantAttenuation());
+		engine->getLightAt(engineLightIdx)->setLinearAttenuation(sceneLight->getLinearAttenuation());
+		engine->getLightAt(engineLightIdx)->setQuadraticAttenuation(sceneLight->getQuadraticAttenuation());
+		engine->getLightAt(engineLightIdx)->setPosition(
 			Vector4(
-				scene->getLightAt(i)->getPosition().getX() + translation.getX(),
-				scene->getLightAt(i)->getPosition().getY() + translation.getY(),
-				scene->getLightAt(i)->getPosition().getZ() + translation.getZ(),
-				scene->getLightAt(i)->getPosition().getW()
-			)
-		);
+				sceneLight->getPosition().getX() + translation.getX(),
+				sceneLight->getPosition().getY() + translation.getY(),
+				sceneLight->getPosition().getZ() + translation.getZ(),
+				sceneLight->getPosition().getW()
+				)
+			);
+		engine->getLightAt(engineLightIdx)->setEnabled(sceneLight->isEnabled());
+		engineLightIdx++;
 	}
 }
 
@@ -275,7 +306,7 @@ Entity* SceneConnector::createParticleSystem(PrototypeParticleSystem* particleSy
 					pointParticleSystem->getMaxPoints(),
 					pointParticleSystem->getPointSize(),
 					pointParticleSystem->isAutoEmit(),
-					pointParticleSystem->getTexture(),
+					pointParticleSystem->getTextureReference(),
 					pointParticleSystem->getTextureHorizontalSprites(),
 					pointParticleSystem->getTextureVerticalSprites(),
 					pointParticleSystem->getTextureSpritesFPS()
@@ -289,7 +320,7 @@ Entity* SceneConnector::createParticleSystem(PrototypeParticleSystem* particleSy
 					engineEmitter.release(),
 					fogParticleSystem->getMaxPoints(),
 					fogParticleSystem->getPointSize(),
-					fogParticleSystem->getTexture(),
+					fogParticleSystem->getTextureReference(),
 					fogParticleSystem->getTextureHorizontalSprites(),
 					fogParticleSystem->getTextureVerticalSprites(),
 					fogParticleSystem->getTextureSpritesFPS()
@@ -346,7 +377,7 @@ Entity* SceneConnector::createEditorDecalEntity(Prototype* prototype, const stri
 			new Decal(
 				"decal",
 				dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume()),
-				prototype->getDecal()->getTexture(),
+				prototype->getDecal()->getTextureReference(),
 				prototype->getDecal()->getTextureHorizontalSprites(),
 				prototype->getDecal()->getTextureVerticalSprites(),
 				prototype->getDecal()->getTextureSpritesFPS()
@@ -388,8 +419,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			imposterLodObject->setEffectColorMulLOD2(imposterLOD->getColorMul());
 			if (prototype->getShader() == "water" || prototype->getShader() == "pbr-water") imposterLodObject->setRenderPass(Entity::RENDERPASS_WATER);
 			imposterLodObject->setShader(prototype->getShader());
-			auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
-			for (const auto& [parameterName, defaultParameterValue]: shaderParametersDefault) {
+			for (const auto& parameterName: Engine::getShaderParameterNames(prototype->getShader())) {
 				auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 				imposterLodObject->setShaderParameter(parameterName, parameterValue);
 			}
@@ -414,8 +444,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			}
 			if (prototype->getShader() == "water" || prototype->getShader() == "pbr-water") lodObject->setRenderPass(Entity::RENDERPASS_WATER);
 			lodObject->setShader(prototype->getShader());
-			auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
-			for (const auto& [parameterName, defaultParameterValue]: shaderParametersDefault) {
+			for (const auto& parameterName: Engine::getShaderParameterNames(prototype->getShader())) {
 				auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 				lodObject->setShaderParameter(parameterName, parameterValue);
 			}
@@ -430,8 +459,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			object->setAnimationComputationLODEnabled(true);
 			if (prototype->getShader() == "water" || prototype->getShader() == "pbr-water") object->setRenderPass(Entity::RENDERPASS_WATER);
 			object->setShader(prototype->getShader());
-			auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
-			for (const auto& [parameterName, defaultParameterValue]: shaderParametersDefault) {
+			for (const auto& parameterName: Engine::getShaderParameterNames(prototype->getShader())) {
 				auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 				object->setShaderParameter(parameterName, parameterValue);
 			}
@@ -469,7 +497,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			new Decal(
 				id,
 				dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume()),
-				prototype->getDecal()->getTexture(),
+				prototype->getDecal()->getTextureReference(),
 				prototype->getDecal()->getTextureHorizontalSprites(),
 				prototype->getDecal()->getTextureVerticalSprites(),
 				prototype->getDecal()->getTextureSpritesFPS()
@@ -670,8 +698,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 									foliagePartitionObjectRenderGroup->setContributesShadows(contributesShadows);
 									foliagePartitionObjectRenderGroup->setReceivesShadows(receivesShadows);
 									foliagePartitionObjectRenderGroup->setShader(foliagePrototype->getShader());
-									auto shaderParametersDefault = Engine::getShaderParameterDefaults(foliagePrototype->getShader());
-									for (const auto& [parameterName, defaultParameterValue]: shaderParametersDefault) {
+									for (const auto& parameterName: Engine::getShaderParameterNames(foliagePrototype->getShader())) {
 										auto parameterValue = foliagePrototype->getShaderParameters().getShaderParameter(parameterName);
 										foliagePartitionObjectRenderGroup->setShaderParameter(parameterName, parameterValue);
 									}
@@ -795,8 +822,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 						objectRenderNode->setContributesShadows(contributesShadows);
 						objectRenderNode->setReceivesShadows(receivesShadows);
 						objectRenderNode->setShader(prototype->getShader());
-						auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
-						for (const auto& [parameterName, defaultParameterValue]: shaderParametersDefault) {
+						for (const auto& parameterName: Engine::getShaderParameterNames(prototype->getShader())) {
 							auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 							objectRenderNode->setShaderParameter(parameterName, parameterValue);
 						}
@@ -983,6 +1009,15 @@ void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vec
 				if (heightValue > maxHeight) maxHeight = heightValue;
 			}
 			{
+				// create temporary heightmap, will be cloned by Body::Body()
+				auto heightMap = make_unique<HeightMap>(
+					terrainHeightVectorVerticesPerX,
+					terreinHeightVectorVerticesPerZ,
+					minHeight,
+					maxHeight,
+					terrain->getHeightVector().data()
+				);
+				//
 				Transform transform;
 				transform.setTranslation(Vector3(width / 2.0f, (minHeight + maxHeight) / 2.0f, depth / 2.0f));
 				transform.update();
@@ -993,13 +1028,7 @@ void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vec
 					transform,
 					0.5f,
 					{
-						new HeightMap(
-							terrainHeightVectorVerticesPerX,
-							terreinHeightVectorVerticesPerZ,
-							minHeight,
-							maxHeight,
-							terrain->getHeightVector().data()
-						)
+						heightMap.get()
 					}
 				);
 				rigidBody->setEnabled(enable);

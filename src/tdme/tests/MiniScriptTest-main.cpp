@@ -21,11 +21,11 @@ int main(int argc, char *argv[]) {
 		Console::println("---------------------------------------------------------");
 		Console::println("Loaded test script: " + script->getScriptFileName() + ": runs " + (script->isNative() == true?"natively":"interpreted"));
 		Console::println("---------------------------------------------------------");
+		// Console::println(script->getInformation());
 		if (script->isValid() == false) {
 			Console::println("Script not valid. Exiting");
 			return 1;
 		}
-		// Console::println(script->getInformation());
 		while (script->isRunning() == true) {
 			script->execute();
 		}
@@ -41,11 +41,11 @@ int main(int argc, char *argv[]) {
 		Console::println("---------------------------------------------------------");
 		Console::println("Loaded test script: " + script->getScriptFileName() + ": runs " + (script->isNative() == true?"natively":"interpreted"));
 		Console::println("---------------------------------------------------------");
+		// Console::println(script->getInformation());
 		if (script->isValid() == false) {
 			Console::println("Script not valid. Exiting");
 			return 1;
 		}
-		// Console::println(script->getInformation());
 		while (script->isRunning() == true) {
 			script->execute();
 		}
@@ -61,11 +61,11 @@ int main(int argc, char *argv[]) {
 		Console::println("---------------------------------------------------------");
 		Console::println("Loaded test script: " + script->getScriptFileName() + ": runs " + (script->isNative() == true?"natively":"interpreted"));
 		Console::println("---------------------------------------------------------");
+		// Console::println(script->getInformation());
 		if (script->isValid() == false) {
 			Console::println("Script not valid. Exiting");
 			return 1;
 		}
-		// Console::println(script->getInformation());
 		while (script->isRunning() == true) {
 			script->execute();
 		}
@@ -74,18 +74,18 @@ int main(int argc, char *argv[]) {
 		Console::println();
 		Console::println();
 	}
-	// emit test
+	// function test
 	{
 		auto script = make_unique<MiniScriptFunctionsTest>();
 		script->parseScript("resources/tests/scripts", "functions-test.tscript");
 		Console::println("---------------------------------------------------------");
 		Console::println("Loaded test script: " + script->getScriptFileName() + ": runs " + (script->isNative() == true?"natively":"interpreted"));
 		Console::println("---------------------------------------------------------");
+		// Console::println(script->getInformation());
 		if (script->isValid() == false) {
 			Console::println("Script not valid. Exiting");
 			return 1;
 		}
-		// Console::println(script->getInformation());
 		while (script->isRunning() == true) {
 			script->execute();
 		}

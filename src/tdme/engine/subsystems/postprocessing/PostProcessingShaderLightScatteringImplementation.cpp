@@ -76,13 +76,18 @@ void PostProcessingShaderLightScatteringImplementation::setShaderParameters(int 
 	int _height = engine->getScaledHeight() != -1?engine->getScaledHeight():engine->getHeight();
 	for (auto i = 0; i < engine->getLightCount(); i++) {
 		auto light = engine->getLightAt(i);
-		if (light->isEnabled() == false || light->isRenderSource() == false) {
+		//
+		if (light->isEnabled() == false ||
+			(light->isRenderSource() == false && (engine->isSkyShaderEnabled() == false || (i != Engine::LIGHTIDX_SUN && i != Engine::LIGHTIDX_MOON)))) {
 			renderer->setProgramUniformInteger(contextIdx, uniformLightEnabled[i], 0);
 			continue;
 		}
+		//
 		Vector2 lightSourcePosition2D;
 		Vector3 lightSourcePosition = Vector3(light->getPosition().getX(), light->getPosition().getY(), light->getPosition().getZ());
 		if (light->getPosition().getW() > Math::EPSILON) lightSourcePosition.scale(1.0f / light->getPosition().getW());
+		auto lightDistance = lightSourcePosition.computeLength();
+		if (lightDistance < 1000000.0f) lightSourcePosition.scale(1000000.0f / lightDistance);
 		engine->computeScreenCoordinateByWorldCoordinate(lightSourcePosition, lightSourcePosition2D);
 		lightSourcePosition2D.setX(Math::clamp(lightSourcePosition2D.getX() / static_cast<float>(_width), 0.0f, 1.0f));
 		lightSourcePosition2D.setY(Math::clamp(1.0f - (lightSourcePosition2D.getY() / static_cast<float>(_height)), 0.0f, 1.0f));

@@ -14,6 +14,7 @@
 #include <tdme/engine/prototype/BaseProperties.h>
 #include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/engine/scene/SceneLight.h>
+#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/UniquePtrSequenceIterator.h>
@@ -32,6 +33,7 @@ using tdme::engine::prototype::BaseProperties;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::scene::SceneLight;
+using tdme::engine::EntityShaderParameters;
 using tdme::math::Vector3;
 using tdme::utilities::UniquePtrSequenceIterator;
 
@@ -55,9 +57,7 @@ private:
 	BoundingBox boundingBox;
 	Vector3 dimension;
 	Vector3 center;
-	string skyModelFileName;
-	unique_ptr<Model> skyModel;
-	Vector3 skyModelScale;
+	EntityShaderParameters skyShaderParameters;
 	string guiFileName;
 
 	/**
@@ -82,7 +82,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	~Scene();
+	virtual ~Scene();
 
 	/**
 	 * @return application root path name
@@ -308,44 +308,19 @@ public:
 	bool renameEntity(const string& id, const string& newId);
 
 	/**
-	 * @return sky model file name
+	 * Get sky shader parameters
+	 * @return shader parameters
 	 */
-	inline const string& getSkyModelFileName() {
-		return skyModelFileName;
+	inline const EntityShaderParameters& getSkyShaderParameters() {
+		return skyShaderParameters;
 	}
 
 	/**
-	 * Set sky model file name
-	 * @param skyModelFileName sky model file name
+	 * Set sky shader parameters
+	 * @param parameters shader parameters
 	 */
-	inline void setSkyModelFileName(const string& skyModelFileName) {
-		this->skyModelFileName = skyModelFileName;
-	}
-
-	/**
-	 * @return sky model
-	 */
-	inline Model* getSkyModel() {
-		return skyModel.get();
-	}
-
-	/**
-	 * Set sky model
-	 */
-	void setSkyModel(Model* model);
-
-	/**
-	 * @return sky model scale
-	 */
-	inline const Vector3& getSkyModelScale() {
-		return skyModelScale;
-	}
-
-	/**
-	 * Set sky model scale
-	 */
-	void setSkyModelScale(const Vector3& skyModelScale) {
-		this->skyModelScale = skyModelScale;
+	inline void setSkyShaderParameters(EntityShaderParameters& parameters) {
+		skyShaderParameters = parameters;
 	}
 
 	/**

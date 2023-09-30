@@ -74,9 +74,6 @@ private:
 		"transform_scale_y",
 		"transform_scale_z"
 	};
-	array<string, 1> applySkyNodes = {
-		"sky_model_scale"
-	};
 	array<string, 1> applyReflectionEnvironmentMappingNodes = {
 		"reflection_environmentmap"
 	};
@@ -162,6 +159,17 @@ public:
 	void setRunButtonMode(bool running);
 
 	/**
+	 * Set sky shader details
+	 */
+	void setSkyShaderDetails();
+
+	/**
+	 * Apply sky shader details
+	 * @param parameterName parameter name
+	 */
+	void applySkyShaderDetails(const string& parameterName);
+
+	/**
 	 * Set GUI details
 	 */
 	void setGUIDetails();
@@ -176,22 +184,6 @@ public:
 	 * Unset GUI file name
 	 */
 	void unsetGUIFileName();
-
-	/**
-	 * Set sky details
-	 */
-	void setSkyDetails();
-
-	/**
-	 * Set sky model file name
-	 * @param fileName file name
-	 */
-	void setSkyModelFileName(const string& fileName);
-
-	/**
-	 * Unset sky model file name
-	 */
-	void unsetSkyModelFileName();
 
 	/**
 	 * Set light details

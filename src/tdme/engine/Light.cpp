@@ -32,7 +32,7 @@ Light::Light()
 	spotDirection.set(0.0f, 0.0f, -1.0f);
 	spotExponent = 0.0f;
 	spotCutOff = 180.0f;
-	constantAttenuation = 1.0f;
+	constantAttenuation = 0.5f;
 	linearAttenuation = 0.0f;
 	quadraticAttenuation = 0.0f;
 	renderSource = false;
@@ -52,7 +52,7 @@ Light::Light(Renderer* renderer, int32_t id)
 	spotDirection.set(0.0f, 0.0f, -1.0f);
 	spotExponent = 0.0f;
 	spotCutOff = 180.0f;
-	constantAttenuation = 1.0f;
+	constantAttenuation = 0.5f;
 	linearAttenuation = 0.0f;
 	quadraticAttenuation = 0.0f;
 	renderSource = false;
