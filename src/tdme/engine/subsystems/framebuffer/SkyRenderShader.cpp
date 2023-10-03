@@ -9,6 +9,7 @@
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Camera.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/Light.h>
@@ -28,6 +29,7 @@ using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Camera;
+using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
@@ -180,31 +182,31 @@ void SkyRenderShader::initialize()
 			{ "manual_t", ShaderParameter(false) },
 			{ "t", ShaderParameter(0.15f) },
 			// sky
-			{ "day_top_color", ShaderParameter(Vector3(0.1f, 0.6f, 1.0f)) },
-			{ "day_bottom_color", ShaderParameter(Vector3(0.4f, 0.8f, 1.0f)) },
-			{ "sunset_top_color", ShaderParameter(Vector3(0.7f, 0.75f, 1.0f)) },
-			{ "sunset_bottom_color", ShaderParameter(Vector3(1.0f, 0.5f, 0.7f)) },
-			{ "night_top_color", ShaderParameter(Vector3(0.02f, 0.0f, 0.04f)) },
-			{ "night_bottom_color", ShaderParameter(Vector3( 0.1f, 0.0f, 0.2f)) },
+			{ "day_top_color", ShaderParameter(Color4(0.1f, 0.6f, 1.0f, 1.0f)) },
+			{ "day_bottom_color", ShaderParameter(Color4(0.4f, 0.8f, 1.0f, 1.0f)) },
+			{ "sunset_top_color", ShaderParameter(Color4(0.7f, 0.75f, 1.0f, 1.0f)) },
+			{ "sunset_bottom_color", ShaderParameter(Color4(1.0f, 0.5f, 0.7f, 1.0f)) },
+			{ "night_top_color", ShaderParameter(Color4(0.02f, 0.0f, 0.04f, 1.0f)) },
+			{ "night_bottom_color", ShaderParameter(Color4( 0.1f, 0.0f, 0.2f, 1.0f)) },
 			// horizon
-			{ "horizon_color", ShaderParameter(Vector3(0.0f, 0.7f, 0.8f)) },
+			{ "horizon_color", ShaderParameter(Color4(0.0f, 0.7f, 0.8f, 1.0f)) },
 			{ "horizon_blur", ShaderParameter(0.05f) },
 			// sun
 			{ "sun_color_factor", ShaderParameter(200.0f) },
-			{ "sun_color", ShaderParameter(Vector3(1.0f, 0.8f, 0.1f)) },
-			{ "sun_sunset_color", ShaderParameter(Vector3(10.0f, 0.0f, 0.0f)) },
+			{ "sun_color", ShaderParameter(Color4(1.0f, 0.8f, 0.1f, 1.0f)) },
+			{ "sun_sunset_color", ShaderParameter(Color4(10.0f, 0.0f, 0.0f, 1.0f)) },
 			{ "sun_size", ShaderParameter(0.2f) },
 			{ "sun_blur", ShaderParameter(10.0f) },
 			// moon
 			{ "moon_color_factor", ShaderParameter(20.0f) },
-			{ "moon_color", ShaderParameter(Vector3(1.0f, 0.95f, 0.7f)) },
+			{ "moon_color", ShaderParameter(Color4(1.0f, 0.95f, 0.7f, 1.0f)) },
 			{ "moon_size", ShaderParameter(0.06f) },
 			{ "moon_blur", ShaderParameter(0.1f) },
 			// clouds
-			{ "clouds_edge_color", ShaderParameter(Vector3(0.8f, 0.8f, 0.98f)) },
-			{ "clouds_top_color", ShaderParameter(Vector3(1.0f, 1.0f, 1.00f)) },
-			{ "clouds_middle_color", ShaderParameter(Vector3(0.92f, 0.92f, 0.98f)) },
-			{ "clouds_bottom_color", ShaderParameter(Vector3(0.83f, 0.83f, 0.94f)) },
+			{ "clouds_edge_color", ShaderParameter(Color4(0.8f, 0.8f, 0.98f, 1.0f)) },
+			{ "clouds_top_color", ShaderParameter(Color4(1.0f, 1.0f, 1.00f, 1.0f)) },
+			{ "clouds_middle_color", ShaderParameter(Color4(0.92f, 0.92f, 0.98f, 1.0f)) },
+			{ "clouds_bottom_color", ShaderParameter(Color4(0.83f, 0.83f, 0.94f, 1.0f)) },
 			{ "clouds_speed", ShaderParameter(2.0f) },
 			{ "clouds_direction", ShaderParameter(0.2f) },
 			{ "clouds_scale", ShaderParameter(1.0f) },
@@ -283,31 +285,31 @@ void SkyRenderShader::render(Engine* engine, bool lightScatteringPass, Camera* c
 	renderer->setTextureUnit(contextIdx, 0);
 	renderer->bindTexture(contextIdx, starsTextureId);
 	// sky
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformDayTopColor, engine->getShaderParameter("sky", "day_top_color").getVector3ValueArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformDayBottomColor, engine->getShaderParameter("sky", "day_bottom_color").getVector3ValueArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformSunsetTopColor, engine->getShaderParameter("sky", "sunset_top_color").getVector3ValueArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformSunsetBottomColor, engine->getShaderParameter("sky", "sunset_bottom_color").getVector3ValueArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformNightTopColor, engine->getShaderParameter("sky", "night_top_color").getVector3ValueArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformNightBottomColor, engine->getShaderParameter("sky", "night_bottom_color").getVector3ValueArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformDayTopColor, engine->getShaderParameter("sky", "day_top_color").getColor3ValueArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformDayBottomColor, engine->getShaderParameter("sky", "day_bottom_color").getColor3ValueArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformSunsetTopColor, engine->getShaderParameter("sky", "sunset_top_color").getColor3ValueArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformSunsetBottomColor, engine->getShaderParameter("sky", "sunset_bottom_color").getColor3ValueArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformNightTopColor, engine->getShaderParameter("sky", "night_top_color").getColor3ValueArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformNightBottomColor, engine->getShaderParameter("sky", "night_bottom_color").getColor3ValueArray());
 	// horizon
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformHorizonColor, engine->getShaderParameter("sky", "horizon_color").getVector3ValueArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformHorizonColor, engine->getShaderParameter("sky", "horizon_color").getColor3ValueArray());
 	renderer->setProgramUniformFloat(contextIdx, uniformHorizonBlur, engine->getShaderParameter("sky", "horizon_blur").getFloatValue());
 	// sun
 	renderer->setProgramUniformFloat(contextIdx, uniformSunColorFactor, engine->getShaderParameter("sky", "sun_color_factor").getFloatValue());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformSunColor, engine->getShaderParameter("sky", "sun_color").getVector3ValueArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformSunSunsetColor, engine->getShaderParameter("sky", "sun_sunset_color").getVector3ValueArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformSunColor, engine->getShaderParameter("sky", "sun_color").getColor3ValueArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformSunSunsetColor, engine->getShaderParameter("sky", "sun_sunset_color").getColor3ValueArray());
 	renderer->setProgramUniformFloat(contextIdx, uniformSunSize, engine->getShaderParameter("sky", "sun_size").getFloatValue());
 	renderer->setProgramUniformFloat(contextIdx, uniformSunBlur, engine->getShaderParameter("sky", "sun_blur").getFloatValue());
 	// moon
 	renderer->setProgramUniformFloat(contextIdx, uniformMoonColorFactor, engine->getShaderParameter("sky", "moon_color_factor").getFloatValue());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformMoonColor, engine->getShaderParameter("sky", "moon_color").getVector3ValueArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformMoonColor, engine->getShaderParameter("sky", "moon_color").getColor3ValueArray());
 	renderer->setProgramUniformFloat(contextIdx, uniformMoonSize, engine->getShaderParameter("sky", "moon_size").getFloatValue());
 	renderer->setProgramUniformFloat(contextIdx, uniformMoonBlur, engine->getShaderParameter("sky", "moon_blur").getFloatValue());
 	// clouds
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformCloudsEdgeColor, engine->getShaderParameter("sky", "clouds_edge_color").getVector3ValueArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformCloudsTopColor, engine->getShaderParameter("sky", "clouds_top_color").getVector3ValueArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformCloudsMiddleColor, engine->getShaderParameter("sky", "clouds_middle_color").getVector3ValueArray());
-	renderer->setProgramUniformFloatVec3(contextIdx, uniformCloudsBottomColor, engine->getShaderParameter("sky", "clouds_bottom_color").getVector3ValueArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformCloudsEdgeColor, engine->getShaderParameter("sky", "clouds_edge_color").getColor3ValueArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformCloudsTopColor, engine->getShaderParameter("sky", "clouds_top_color").getColor3ValueArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformCloudsMiddleColor, engine->getShaderParameter("sky", "clouds_middle_color").getColor3ValueArray());
+	renderer->setProgramUniformFloatVec3(contextIdx, uniformCloudsBottomColor, engine->getShaderParameter("sky", "clouds_bottom_color").getColor3ValueArray());
 	renderer->setProgramUniformFloat(contextIdx, uniformCloudsSpeed, engine->getShaderParameter("sky", "clouds_speed").getFloatValue());
 	renderer->setProgramUniformFloat(contextIdx, uniformCloudsDirection, engine->getShaderParameter("sky", "clouds_direction").getFloatValue());
 	renderer->setProgramUniformFloat(contextIdx, uniformCloudsScale, engine->getShaderParameter("sky", "clouds_scale").getFloatValue());

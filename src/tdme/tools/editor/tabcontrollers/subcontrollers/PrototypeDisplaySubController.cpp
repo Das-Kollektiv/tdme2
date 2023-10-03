@@ -148,7 +148,7 @@ void PrototypeDisplaySubController::applyDisplayDetails(Prototype* prototype) {
 void PrototypeDisplaySubController::createDisplayShaderDetailsXML(Prototype* prototype, const string& shaderParameterPrefix, const string& shader, const EntityShaderParameters& shaderParameters, string& xml) {
 	for (const auto& parameterName: Engine::getShaderParameterNames(shader)) {
 		auto parameter = shaderParameters.getShaderParameter(parameterName);
-		auto parameterValue = parameter.toString();
+		auto parameterValue = parameter.getValueAsString();
 		auto parameterType = "string";
 		switch (parameter.getType()) {
 		case ShaderParameter::TYPE_FLOAT:
@@ -173,6 +173,12 @@ void PrototypeDisplaySubController::createDisplayShaderDetailsXML(Prototype* pro
 			}
 			break;
 		case ShaderParameter::TYPE_VECTOR4:
+			{
+				auto vec4 = parameter.getVector4Value();
+				xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape(shaderParameterPrefix + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_vector4.xml\" value_x=\"" + to_string(vec4.getX()) + "\" value_y=\"" + to_string(vec4.getY()) + "\" value_z=\"" + to_string(vec4.getZ()) + "\" value_w=\"" + to_string(vec4.getW()) + "\" />\n";
+			}
+			break;
+		case ShaderParameter::TYPE_COLOR4:
 			{
 				auto vec4 = parameter.getVector4Value();
 				xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape(shaderParameterPrefix + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_vector4.xml\" value_x=\"" + to_string(vec4.getX()) + "\" value_y=\"" + to_string(vec4.getY()) + "\" value_z=\"" + to_string(vec4.getZ()) + "\" value_w=\"" + to_string(vec4.getW()) + "\" />\n";
@@ -258,6 +264,19 @@ void PrototypeDisplaySubController::applyDisplayShaderDetails(Prototype* prototy
 					parameterName,
 					ShaderParameter(
 						Vector4(
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_x"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_y"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_z"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_w"))->getController()->getValue().getString())
+						)
+					)
+				);
+				break;
+			case ShaderParameter::TYPE_COLOR4:
+				shaderParameters.setShaderParameter(
+					parameterName,
+					ShaderParameter(
+						Color4(
 							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_x"))->getController()->getValue().getString()),
 							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_y"))->getController()->getValue().getString()),
 							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_z"))->getController()->getValue().getString()),

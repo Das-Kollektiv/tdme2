@@ -4,6 +4,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/ShaderParameter.h>
 #include <tdme/math/Vector2.h>
@@ -18,6 +19,7 @@ using tdme::engine::EntityShaderParameters;
 using std::map;
 using std::string;
 
+using tdme::engine::Color4;
 using tdme::engine::Engine;
 using tdme::engine::ShaderParameter;
 using tdme::math::Vector2;
@@ -103,6 +105,20 @@ void EntityShaderParameters::setShaderParameter(const string& parameterName, con
 						Float::parse(StringTools::trim(parameterValueStringArray[1])),
 						Float::parse(StringTools::trim(parameterValueStringArray[2])),
 						Float::parse(StringTools::trim(parameterValueStringArray[3]))
+					)
+				);
+			}
+			break;
+		case ShaderParameter::TYPE_COLOR4:
+			{
+				auto parameterValueStringArray = StringTools::tokenize(parameterValueString, ",");
+				if (parameterValueStringArray.size() != 3 && parameterValueStringArray.size() != 4) break;
+				parameterValue = ShaderParameter(
+					Color4(
+						Float::parse(StringTools::trim(parameterValueStringArray[0])),
+						Float::parse(StringTools::trim(parameterValueStringArray[1])),
+						Float::parse(StringTools::trim(parameterValueStringArray[2])),
+						parameterValueStringArray.size() == 4?Float::parse(StringTools::trim(parameterValueStringArray[3])):1.0f
 					)
 				);
 			}

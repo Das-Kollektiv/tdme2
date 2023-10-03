@@ -652,6 +652,44 @@ void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 	if (node->getId() == "tdme.entities.rename_input") {
 		renameEntity();
 	} else
+	if (StringTools::startsWith(node->getId(), "sky.shader.") == true &&
+		StringTools::endsWith(node->getId(), "_color_edit") == true) {
+		//
+		auto parameterName = StringTools::substring(node->getId(), string("sky.shader.").size(), node->getId().size() - string("_color_edit").size());
+		auto parameter = view->getScene()->getSkyShaderParameters().getShaderParameter(parameterName);
+		auto color4 = parameter.getColor4Value();
+		//
+		class OnColorChangeAction: public virtual Action
+		{
+		public:
+			void performAction() override {
+				//
+				auto view = sceneEditorTabController->getView();
+				auto scene = view->getScene();
+				auto shaderParameters = scene->getSkyShaderParameters();
+				auto parameter = shaderParameters.getShaderParameter(parameterName);
+				auto color4 = sceneEditorTabController->popUps->getColorPickerScreenController()->getColor();
+				shaderParameters.setShaderParameter(parameterName, color4);
+				try {
+					required_dynamic_cast<GUIImageNode*>(sceneEditorTabController->screenNode->getNodeById("sky.shader." + parameterName + "_color"))->setEffectColorMul(color4);
+				} catch (Exception& exception) {
+					Console::println("SceneEditorTabController::onAction(): An error occurred: " + string(exception.what()));
+					sceneEditorTabController->showInfoPopUp("Warning", string(exception.what()));
+				}
+				//
+				scene->setSkyShaderParameters(shaderParameters);
+				view->applySkyShaderParameters();
+			}
+			OnColorChangeAction(SceneEditorTabController* sceneEditorTabController, const string& parameterName): sceneEditorTabController(sceneEditorTabController), parameterName(parameterName) {
+			}
+		private:
+			SceneEditorTabController* sceneEditorTabController;
+			string parameterName;
+		};
+		//
+		popUps->getColorPickerScreenController()->show(color4, new OnColorChangeAction(this, parameterName));
+		//
+	} else
 	if (node->getId() == "gui_open") {
 		class OnLoadGUIAction: public virtual Action
 		{
@@ -819,43 +857,71 @@ void SceneEditorTabController::setSkyShaderDetails() {
 	auto scene = view->getScene();
 	for (const auto& parameterName: Engine::getShaderParameterNames("sky")) {
 		auto parameter = scene->getSkyShaderParameters().getShaderParameter(parameterName);
-		auto parameterValue = parameter.toString();
 		switch (parameter.getType()) {
-		case ShaderParameter::TYPE_FLOAT:
-			xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape("sky.shader." + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_float.xml\" value=\"" + parameterValue + "\" />\n";
-			break;
-		case ShaderParameter::TYPE_INTEGER:
-			xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape("sky.shader." + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_int.xml\" value=\"" + parameterValue + "\" />\n";
-			break;
-		case ShaderParameter::TYPE_BOOLEAN:
-			xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape("sky.shader." + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_bool.xml\" value=\"" + parameterValue + "\" />\n";
-			break;
-		case ShaderParameter::TYPE_VECTOR2:
-			{
-				auto vec2 = parameter.getVector2Value();
-				xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape("sky.shader." + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_vector2.xml\" value_x=\"" + to_string(vec2.getX()) + "\" value_y=\"" + to_string(vec2.getY()) + "\" />\n";
-			}
-			break;
-		case ShaderParameter::TYPE_VECTOR3:
-			{
-				auto vec3 = parameter.getVector3Value();
-				xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape("sky.shader." + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_vector3.xml\" value_x=\"" + to_string(vec3.getX()) + "\" value_y=\"" + to_string(vec3.getY()) + "\" value_z=\"" + to_string(vec3.getZ()) + "\" />\n";
-			}
-			break;
-		case ShaderParameter::TYPE_VECTOR4:
-			{
-				auto vec4 = parameter.getVector4Value();
-				xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape("sky.shader." + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_vector4.xml\" value_x=\"" + to_string(vec4.getX()) + "\" value_y=\"" + to_string(vec4.getY()) + "\" value_z=\"" + to_string(vec4.getZ()) + "\" value_w=\"" + to_string(vec4.getW()) + "\" />\n";
-			}
-			break;
-		case ShaderParameter::TYPE_NONE:
-			break;
+			case ShaderParameter::TYPE_FLOAT:
+				{
+					auto parameterValue = parameter.getValueAsString();
+					xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape("sky.shader." + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_float.xml\" value=\"" + parameterValue + "\" />\n";
+					break;
+				}
+			case ShaderParameter::TYPE_INTEGER:
+				{
+					auto parameterValue = parameter.getValueAsString();
+					xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape("sky.shader." + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_int.xml\" value=\"" + parameterValue + "\" />\n";
+					break;
+				}
+			case ShaderParameter::TYPE_BOOLEAN:
+				{
+					auto parameterValue = parameter.getValueAsString();
+					xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape("sky.shader." + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_bool.xml\" value=\"" + parameterValue + "\" />\n";
+					break;
+				}
+			case ShaderParameter::TYPE_VECTOR2:
+				{
+					auto vec2 = parameter.getVector2Value();
+					xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape("sky.shader." + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_vector2.xml\" value_x=\"" + to_string(vec2.getX()) + "\" value_y=\"" + to_string(vec2.getY()) + "\" />\n";
+				}
+				break;
+			case ShaderParameter::TYPE_VECTOR3:
+				{
+					auto vec3 = parameter.getVector3Value();
+					xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape("sky.shader." + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_vector3.xml\" value_x=\"" + to_string(vec3.getX()) + "\" value_y=\"" + to_string(vec3.getY()) + "\" value_z=\"" + to_string(vec3.getZ()) + "\" />\n";
+				}
+				break;
+			case ShaderParameter::TYPE_VECTOR4:
+				{
+					auto vec4 = parameter.getVector4Value();
+					xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape("sky.shader." + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_vector4.xml\" value_x=\"" + to_string(vec4.getX()) + "\" value_y=\"" + to_string(vec4.getY()) + "\" value_z=\"" + to_string(vec4.getZ()) + "\" value_w=\"" + to_string(vec4.getW()) + "\" />\n";
+				}
+				break;
+			case ShaderParameter::TYPE_COLOR4:
+				{
+					auto color4 = parameter.getColor4Value();
+					xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape("sky.shader." + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_color4.xml\" />\n";
+				}
+				break;
+			case ShaderParameter::TYPE_NONE:
+				break;
 		}
 	}
 	//
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_sky"))->getActiveConditions().add("open");
 		required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("rendering_shader_details"))->replaceSubNodes(xml, false);
+		//
+		for (const auto& parameterName: Engine::getShaderParameterNames("sky")) {
+			auto parameter = scene->getSkyShaderParameters().getShaderParameter(parameterName);
+			switch (parameter.getType()) {
+				case ShaderParameter::TYPE_COLOR4:
+					{
+						auto color4 = parameter.getColor4Value();
+						required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sky.shader." + parameterName + "_color"))->setEffectColorMul(color4);
+					}
+					break;
+				default:
+					break;
+			}
+		}
 	} catch (Exception& exception) {
 		Console::println("SceneEditorTabController::setSkyShaderDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
@@ -922,6 +988,19 @@ void SceneEditorTabController::applySkyShaderDetails(const string& parameterName
 					parameterName,
 					ShaderParameter(
 						Vector4(
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky.shader." + parameterName + "_x"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky.shader." + parameterName + "_y"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky.shader." + parameterName + "_z"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky.shader." + parameterName + "_w"))->getController()->getValue().getString())
+						)
+					)
+				);
+				break;
+			case ShaderParameter::TYPE_COLOR4:
+				shaderParameters.setShaderParameter(
+					parameterName,
+					ShaderParameter(
+						Color4(
 							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky.shader." + parameterName + "_x"))->getController()->getValue().getString()),
 							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky.shader." + parameterName + "_y"))->getController()->getValue().getString()),
 							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky.shader." + parameterName + "_z"))->getController()->getValue().getString()),

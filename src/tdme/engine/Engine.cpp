@@ -2753,6 +2753,17 @@ void Engine::dumpShaders() {
 							parameters[parameters.size() - 1]+= ")";
 						}
 						break;
+					case ShaderParameter::TYPE_COLOR4:
+						{
+							parameters[parameters.size() - 1]+= " = Color4(";
+							const auto shaderParameterArray = getShaderParameter(shaderId, parameterName).getColor4ValueArray();
+							for (auto i = 0; i < shaderParameterArray.size(); i++) {
+								if (i != 0) parameters[parameters.size() - 1]+= ",";
+								parameters[parameters.size() - 1]+= to_string(shaderParameterArray[i]);
+							}
+							parameters[parameters.size() - 1]+= ")";
+						}
+						break;
 					default:
 						parameters[parameters.size() - 1]+= " = unknown";
 						break;
