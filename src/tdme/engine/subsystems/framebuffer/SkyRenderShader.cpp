@@ -176,6 +176,9 @@ void SkyRenderShader::initialize()
 		Engine::ShaderType::SHADERTYPE_SKY,
 		"sky",
 		{
+			// manual placing of sun and moon via shader parameters
+			{ "manual_t", ShaderParameter(false) },
+			{ "t", ShaderParameter(0.15f) },
 			// sky
 			{ "day_top_color", ShaderParameter(Vector3(0.1f, 0.6f, 1.0f)) },
 			{ "day_bottom_color", ShaderParameter(Vector3(0.4f, 0.8f, 1.0f)) },
@@ -249,6 +252,13 @@ void SkyRenderShader::render(Engine* engine, bool lightScatteringPass, Camera* c
 	//
 	auto sunLight = engine->getLightAt(Engine::LIGHTIDX_SUN);
 	auto moonLight = engine->getLightAt(Engine::LIGHTIDX_MOON);
+
+	// manual placing of sun and moon, by t 0 <= t < 1.0
+	if (engine->getShaderParameter("sky", "manual_t").getBooleanValue() == true) {
+		auto t = engine->getShaderParameter("sky", "t").getFloatValue();
+		sunLight->setupSun(t);
+		moonLight->setupMoon(t);
+	}
 
 	//
 	auto sunLightPosition4 = sunLight->getPosition().clone().scale(1.0f / (Math::abs(sunLight->getPosition().getW()) < Math::EPSILON?1.0:sunLight->getPosition().getW()));

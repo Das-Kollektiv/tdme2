@@ -50,7 +50,7 @@ public:
 	 * Public constructor for boolean value
 	 * @param booleanValue boolean value
 	 */
-	ShaderParameter(bool booleanValue): type(TYPE_BOOLEAN), integerValue(booleanValue) {
+	ShaderParameter(bool booleanValue): type(TYPE_BOOLEAN), integerValue(booleanValue == true?1:0) {
 	}
 
 	/**
@@ -166,7 +166,7 @@ public:
 			case ShaderParameter::TYPE_NONE:
 				return string();
 			case ShaderParameter::TYPE_BOOLEAN:
-				return toString(integerValue);
+				return integerValue == 1?"true":"false";
 			case ShaderParameter::TYPE_INTEGER:
 				return toString(integerValue);
 			case ShaderParameter::TYPE_FLOAT:

@@ -820,7 +820,6 @@ void SceneEditorTabController::setSkyShaderDetails() {
 	for (const auto& parameterName: Engine::getShaderParameterNames("sky")) {
 		auto parameter = scene->getSkyShaderParameters().getShaderParameter(parameterName);
 		auto parameterValue = parameter.toString();
-		auto parameterType = "string";
 		switch (parameter.getType()) {
 		case ShaderParameter::TYPE_FLOAT:
 			xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape("sky.shader." + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_float.xml\" value=\"" + parameterValue + "\" />\n";

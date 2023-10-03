@@ -124,6 +124,7 @@ SceneEditorTabView::SceneEditorTabView(EditorView* editorView, const string& tab
 
 	//
 	setEngine(engine.get());
+	updateLights();
 
 	//
 	entityColors["red"] = EntityColor(1.5f, 0.8f, 0.8f, 0.5f, 0.0f, 0.0f);
