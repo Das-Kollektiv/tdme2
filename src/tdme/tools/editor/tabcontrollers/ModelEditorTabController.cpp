@@ -2781,6 +2781,7 @@ void ModelEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 	auto prototype = view->getPrototype();
 	//
 	if (basePropertiesSubController->onAction(type, node, prototype) == true) return;
+	if (prototypeDisplaySubController->onAction(type, node, prototype) == true) return;
 	if (prototypePhysicsSubController->onAction(type, node, prototype) == true) return;
 	if (prototypeSoundsSubController->onAction(type, node, prototype) == true) return;
 	if (prototypeScriptSubController->onAction(type, node, prototype) == true) return;

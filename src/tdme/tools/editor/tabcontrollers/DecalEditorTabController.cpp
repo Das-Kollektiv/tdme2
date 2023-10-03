@@ -233,6 +233,7 @@ void DecalEditorTabController::onTooltipCloseRequest() {
 void DecalEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (basePropertiesSubController->onAction(type, node, view->getPrototype()) == true) return;
+	if (prototypeDisplaySubController->onAction(type, node, view->getPrototype()) == true) return;
 	if (prototypePhysicsSubController->onAction(type, node, view->getPrototype()) == true) return;
 	if (prototypeScriptSubController->onAction(type, node, view->getPrototype()) == true) return;
 	//

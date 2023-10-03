@@ -896,7 +896,6 @@ void SceneEditorTabController::setSkyShaderDetails() {
 				break;
 			case ShaderParameter::TYPE_COLOR4:
 				{
-					auto color4 = parameter.getColor4Value();
 					xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape("sky.shader." + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_color4.xml\" />\n";
 				}
 				break;
