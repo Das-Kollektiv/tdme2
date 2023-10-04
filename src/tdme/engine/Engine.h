@@ -850,7 +850,8 @@ public:
 	 * Register shader
 	 * @param type shader type
 	 * @param shaderId shader id
-	 * @param parameterTypes parameter types
+	 * @param parameterDefaults parameter defaults
+	 * @param internal internal usage only
 	 */
 	inline static void registerShader(ShaderType type, const string& shaderId, const vector<Shader::ParameterDefaults>& parameterDefaults = {}, bool internal = false) {
 		if (shadersById.find(shaderId) != shadersById.end()) {
