@@ -162,6 +162,7 @@ public:
 		TYPE_ARRAY,
 		TYPE_MAP,
 		TYPE_SET,
+		TYPE_MAP_INITIALIZER,
 		TYPE_PSEUDO_NUMBER,
 		TYPE_PSEUDO_MIXED
 	};
@@ -438,6 +439,9 @@ public:
 				case TYPE_SET:
 					setValue(scriptVariable.getSetValueReference());
 					break;
+				case TYPE_MAP_INITIALIZER:
+					setMapInitializerValue(scriptVariable.getStringValueReference());
+					break;
 			}
 		}
 
@@ -501,6 +505,9 @@ public:
 					break;
 				case TYPE_SET:
 					setValue(scriptVariable.getSetValueReference());
+					break;
+				case TYPE_MAP_INITIALIZER:
+					setMapInitializerValue(scriptVariable.getStringValueReference());
 					break;
 			}
 			return *this;
@@ -691,6 +698,9 @@ public:
 				case TYPE_SET:
 					delete static_cast<unordered_set<string>*>((void*)valuePtr);
 					break;
+				case TYPE_MAP_INITIALIZER:
+					delete static_cast<string*>((void*)valuePtr);
+					break;
 			}
 			this->valuePtr = 0LL;
 			this->type = newType;
@@ -735,6 +745,9 @@ public:
 					break;
 				case TYPE_SET:
 					valuePtr = (uint64_t)(new unordered_set<string>());
+					break;
+				case TYPE_MAP_INITIALIZER:
+					valuePtr = (uint64_t)(new string());
 					break;
 			}
 		}
@@ -1122,6 +1135,15 @@ public:
 		}
 
 		/**
+		 * Set string value from given value into variable
+		 * @param value value
+		 */
+		inline void setMapInitializerValue(const string& value) {
+			setType(TYPE_MAP_INITIALIZER);
+			getStringValueReference() = value;
+		}
+
+		/**
 		 * @return pointer to underlying vector or nullptr
 		 */
 		inline vector<MiniScript::ScriptVariable>* getArrayPointer() {
@@ -1386,6 +1408,11 @@ public:
 			} else
 			if (Float::viewIs(value) == true) {
 				setValue(Float::viewParse(value));
+			} else
+			if (StringTools::viewStartsWith(value, "{") == true &&
+				StringTools::viewEndsWith(value, "}") == true) {
+				//
+				setMapInitializerValue(string(value));
 			} else {
 				setValue(string(value));
 			}

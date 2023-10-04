@@ -260,12 +260,15 @@ void MiniScript::executeScriptLine() {
 }
 
 bool MiniScript::parseScriptStatement(const string_view& executableStatement, string_view& methodName, vector<string_view>& arguments, const ScriptStatement& statement, string& accessObjectMemberStatement) {
+	// TODO: improve me!
 	if (VERBOSE == true) Console::println("MiniScript::parseScriptStatement(): " + getStatementInformation(statement) + ": '" + string(executableStatement) + "'");
 	string_view objectMemberAccessObject;
 	string_view objectMemberAccessMethod;
 	auto objectMemberAccess = getObjectMemberAccess(executableStatement, objectMemberAccessObject, objectMemberAccessMethod, statement);
 	auto executableStatementStartIdx = objectMemberAccess == true?objectMemberAccessObject.size() + 2:0;
 	auto bracketCount = 0;
+	auto squareBracketCount = 0;
+	auto curlyBracketCount = 0;
 	auto quote = '\0';
 	auto methodStart = string::npos;
 	auto methodEnd = string::npos;
@@ -276,7 +279,7 @@ bool MiniScript::parseScriptStatement(const string_view& executableStatement, st
 	//
 	for (auto i = executableStatementStartIdx; i < executableStatement.size(); i++) {
 		auto c = executableStatement[i];
-		if (c == '"' || c == '\'') {
+		if (squareBracketCount == 0 && curlyBracketCount == 0 && (c == '"' || c == '\'')) {
 			if (bracketCount == 1) {
 				if (quote == '\0') {
 					quotedArgumentStart = i;
@@ -346,39 +349,63 @@ bool MiniScript::parseScriptStatement(const string_view& executableStatement, st
 					}
 				}
 			} else
-			if (c == ',') {
-				if (bracketCount == 1) {
-					if (quotedArgumentStart != string::npos) {
-						if (quotedArgumentEnd == string::npos) quotedArgumentEnd = i - 1;
-						auto argumentLength = quotedArgumentEnd - quotedArgumentStart + 1;
-						if (argumentLength > 0) arguments.push_back(StringTools::viewTrim(string_view(&executableStatement[quotedArgumentStart], argumentLength)));
-						quotedArgumentStart = string::npos;
-						quotedArgumentEnd = string::npos;
-					} else
-					if (argumentStart != string::npos) {
-						if (argumentEnd == string::npos) argumentEnd = i - 1;
-						auto argumentLength = argumentEnd - argumentStart + 1;
-						if (argumentLength > 0) arguments.push_back(StringTools::viewTrim(string_view(&executableStatement[argumentStart], argumentEnd - argumentStart + 1)));
-						argumentStart = string::npos;
-						argumentEnd = string::npos;
-					}
-				} else {
+			if (c == '[' && curlyBracketCount == 0) {
+				squareBracketCount++;
+			} else
+			if (c == ']' && curlyBracketCount == 0) {
+				squareBracketCount--;
+			} else
+			if (c == '{') {
+				if (curlyBracketCount == 0) {
 					if (argumentStart == string::npos) {
-						argumentStart = i + 1;
+						argumentStart = i;
 					} else {
 						argumentEnd = i;
 					}
 				}
+				curlyBracketCount++;
 			} else
-			if (bracketCount == 0) {
-				if (methodStart == string::npos) methodStart = i; else methodEnd = i;
-			} else {
-				if (argumentStart == string::npos) {
-					if (Character::isSpace(c) == false) {
-						argumentStart = i;
+			if (c == '}') {
+				curlyBracketCount--;
+				if (curlyBracketCount == 0) {
+					if (methodStart == string::npos) methodStart = i; else methodEnd = i;
+				}
+			} else
+			if (squareBracketCount == 0 && curlyBracketCount == 0) {
+				if (c == ',') {
+					if (bracketCount == 1) {
+						if (quotedArgumentStart != string::npos) {
+							if (quotedArgumentEnd == string::npos) quotedArgumentEnd = i - 1;
+							auto argumentLength = quotedArgumentEnd - quotedArgumentStart + 1;
+							if (argumentLength > 0) arguments.push_back(StringTools::viewTrim(string_view(&executableStatement[quotedArgumentStart], argumentLength)));
+							quotedArgumentStart = string::npos;
+							quotedArgumentEnd = string::npos;
+						} else
+						if (argumentStart != string::npos) {
+							if (argumentEnd == string::npos) argumentEnd = i - 1;
+							auto argumentLength = argumentEnd - argumentStart + 1;
+							if (argumentLength > 0) arguments.push_back(StringTools::viewTrim(string_view(&executableStatement[argumentStart], argumentEnd - argumentStart + 1)));
+							argumentStart = string::npos;
+							argumentEnd = string::npos;
+						}
+					} else {
+						if (argumentStart == string::npos) {
+							argumentStart = i + 1;
+						} else {
+							argumentEnd = i;
+						}
 					}
+				} else
+				if (bracketCount == 0) {
+					if (methodStart == string::npos) methodStart = i; else methodEnd = i;
 				} else {
-					argumentEnd = i;
+					if (argumentStart == string::npos) {
+						if (Character::isSpace(c) == false) {
+							argumentStart = i;
+						}
+					} else {
+						argumentEnd = i;
+					}
 				}
 			}
 		}
@@ -448,6 +475,22 @@ bool MiniScript::parseScriptStatement(const string_view& executableStatement, st
 		//
 		return false;
 	}
+	// complain about square bracket count
+	if (squareBracketCount != 0) {
+		Console::println(getStatementInformation(statement) + ": " + string(executableStatement) + "': unbalanced square bracket count: " + to_string(Math::abs(squareBracketCount)) + " " + (squareBracketCount < 0?"too much closed":"still open"));
+		//
+		parseErrors.push_back(string(executableStatement) + ": unbalanced square bracket count: " + to_string(Math::abs(squareBracketCount)) + " " + (squareBracketCount < 0?"too much closed":"still open"));
+		//
+		return false;
+	}
+	// complain about curly bracket count
+	if (curlyBracketCount != 0) {
+		Console::println(getStatementInformation(statement) + ": " + string(executableStatement) + "': unbalanced curly bracket count: " + to_string(Math::abs(curlyBracketCount)) + " " + (curlyBracketCount < 0?"too much closed":"still open"));
+		//
+		parseErrors.push_back(string(executableStatement) + ": unbalanced curly bracket count: " + to_string(Math::abs(curlyBracketCount)) + " " + (curlyBracketCount < 0?"too much closed":"still open"));
+		//
+		return false;
+	}
 	//
 	return true;
 }
@@ -456,16 +499,19 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 	if (VERBOSE == true) Console::println("MiniScript::executeScriptStatement(): " + getStatementInformation(statement) + "': " + syntaxTree.value.getValueAsString() + "(" + getArgumentsAsString(syntaxTree.arguments) + ")");
 	// return on literal or empty syntaxTree
 	if (syntaxTree.type != ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && syntaxTree.type != ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION) {
+		Console::println("bbb: " + syntaxTree.value.getAsString());
 		return syntaxTree.value;
 	}
 	//
 	vector<ScriptVariable> argumentValues;
 	ScriptVariable returnValue;
 	// construct argument values
+	Console::println("aaa: " + syntaxTree.value.getAsString());
 	for (const auto& argument: syntaxTree.arguments) {
 		switch (argument.type) {
 			case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
 				{
+					Console::println("xxx: " + to_string(argument.value.type) + " / " + argument.value.getStringValueReference());
 					argumentValues.push_back(argument.value);
 					break;
 				}
@@ -732,7 +778,9 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 bool MiniScript::createScriptStatementSyntaxTree(const string_view& methodName, const vector<string_view>& arguments, const ScriptStatement& statement, ScriptSyntaxTreeNode& syntaxTree) {
 	if (VERBOSE == true) Console::println("MiniScript::createScriptStatementSyntaxTree(): " + getStatementInformation(statement) + ": " + string(methodName) + "(" + getArgumentsAsString(arguments) + ")");
 	// arguments
+	Console::println("xxx: " + string(methodName));
 	for (const auto& argument: arguments) {
+		Console::println("\t" + string(argument));
 		// object member access
 		string_view accessObjectMemberObject;
 		string_view accessObjectMemberMethod;
@@ -1141,6 +1189,7 @@ const string MiniScript::determineNextStatement(const string& scriptCode, int& i
 	auto expectBracket = false;
 	auto bracketCount = 0;
 	auto squareBracketCount = 0;
+	auto curlyBracketCount = 0;
 	auto hash = false;
 	auto lc = '\0';
 	for (; i < scriptCode.size(); i++) {
@@ -1183,6 +1232,17 @@ const string MiniScript::determineNextStatement(const string& scriptCode, int& i
 			// add char to script line
 			statementCodeLines[statementCodeLines.size() - 1] += c;
 		} else
+		// curly brackets
+		if (c == '{') {
+			curlyBracketCount++;
+			// add char to script line
+			statementCodeLines[statementCodeLines.size() - 1] += c;
+		} else
+		if (c == '}') {
+			curlyBracketCount--;
+			// add char to script line
+			statementCodeLines[statementCodeLines.size() - 1] += c;
+		} else
 		// hash
 		if (c == '#') {
 			// hash
@@ -1200,10 +1260,11 @@ const string MiniScript::determineNextStatement(const string& scriptCode, int& i
 			// add char to script line
 			statementCodeLines[statementCodeLines.size() - 1] += c;
 		} else
-		if (((c == '\n' && ++lineIdx) || (hash == false && c == ';')) && (c == ';' || hash == true || (expectBracket == false && bracketCount == 0 && squareBracketCount == 0))) {
+		if (((c == '\n' && ++lineIdx) || (hash == false && c == ';')) && (c == ';' || hash == true || (expectBracket == false && bracketCount == 0 && squareBracketCount == 0 && curlyBracketCount == 0))) {
 			// break condition
 			bracketCount = 0;
 			squareBracketCount = 0;
+			curlyBracketCount = 0;
 			hash = false;
 			// break here and process script line
 			break;
@@ -1963,6 +2024,7 @@ const string MiniScript::findRightArgument(const string statement, int position,
 	//
 	auto bracketCount = 0;
 	auto squareBracketCount = 0;
+	auto curlyBracketCount = 0;
 	auto quote = '\0';
 	string argument;
 	length = 0;
@@ -1986,6 +2048,10 @@ const string MiniScript::findRightArgument(const string statement, int position,
 				squareBracketCount++;
 				argument+= c;
 			} else
+			if (c == '{') {
+				curlyBracketCount++;
+				argument+= c;
+			} else
 			if (c == ')') {
 				bracketCount--;
 				if (bracketCount < 0) {
@@ -2002,7 +2068,15 @@ const string MiniScript::findRightArgument(const string statement, int position,
 				}
 				argument+= c;
 			} else
-			if (c == ',') {
+			if (c == '}') {
+				curlyBracketCount--;
+				if (curlyBracketCount < 0) {
+					brackets = "{}";
+					return trimArgument(argument);
+				}
+				argument+= c;
+			} else
+			if (squareBracketCount == 0 && curlyBracketCount == 0 && c == ',') {
 				if (bracketCount == 0) return trimArgument(argument);
 				argument+= c;
 			} else {
@@ -2021,6 +2095,7 @@ const string MiniScript::findLeftArgument(const string statement, int position, 
 	//
 	auto bracketCount = 0;
 	auto squareBracketCount = 0;
+	auto curlyBracketCount = 0;
 	auto quote = '\0';
 	string argument;
 	length = 0;
@@ -2044,6 +2119,10 @@ const string MiniScript::findLeftArgument(const string statement, int position, 
 				squareBracketCount++;
 				argument = c + argument;
 			} else
+			if (c == '}') {
+				curlyBracketCount++;
+				argument = c + argument;
+			} else
 			if (c == '(') {
 				bracketCount--;
 				if (bracketCount < 0) {
@@ -2060,7 +2139,15 @@ const string MiniScript::findLeftArgument(const string statement, int position, 
 				}
 				argument = c + argument;
 			} else
-			if (c == ',') {
+			if (c == '{') {
+				curlyBracketCount--;
+				if (curlyBracketCount < 0) {
+					brackets = "{}";
+					return trimArgument(argument);
+				}
+				argument = c + argument;
+			} else
+			if (squareBracketCount == 0 && curlyBracketCount == 0 && c == ',') {
 				if (bracketCount == 0) return trimArgument(argument);
 				argument = c + argument;
 			} else {
@@ -2143,6 +2230,7 @@ bool MiniScript::getObjectMemberAccess(const string_view& executableStatement, s
 	auto lc = '\0';
 	auto bracketCount = 0;
 	auto squareBracketCount = 0;
+	auto curlyBracketCount = 0;
 	for (auto i = 0; i < executableStatement.size(); i++) {
 		auto c = executableStatement[i];
 		// handle quotes
@@ -2168,9 +2256,16 @@ bool MiniScript::getObjectMemberAccess(const string_view& executableStatement, s
 		if (c == ']') {
 			squareBracketCount--;
 		} else
+		if (c == '{') {
+			curlyBracketCount++;
+		} else
+		if (c == '}') {
+			curlyBracketCount--;
+		} else
 		if (lc == '-' && c == '>' &&
 			bracketCount == 0 &&
-			squareBracketCount == 0) {
+			squareBracketCount == 0 &&
+			curlyBracketCount == 0) {
 			//
 			objectStartIdx = 0;
 			objectEndIdx = i - 1;
@@ -2195,9 +2290,15 @@ bool MiniScript::getObjectMemberAccess(const string_view& executableStatement, s
 	}
 	// complain about square bracket count
 	if (squareBracketCount != 0) {
-		Console::println(getStatementInformation(statement) + ": " + string(executableStatement) + "': unbalanced square bracket count: " + to_string(Math::abs(bracketCount)) + " " + (bracketCount < 0?"too much closed":"still open"));
+		Console::println(getStatementInformation(statement) + ": " + string(executableStatement) + "': unbalanced square bracket count: " + to_string(Math::abs(squareBracketCount)) + " " + (squareBracketCount < 0?"too much closed":"still open"));
 		//
-		parseErrors.push_back(string(executableStatement) + ": unbalanced square bracket count: " + to_string(Math::abs(bracketCount)) + " " + (bracketCount < 0?"too much closed":"still open"));
+		parseErrors.push_back(string(executableStatement) + ": unbalanced square bracket count: " + to_string(Math::abs(squareBracketCount)) + " " + (squareBracketCount < 0?"too much closed":"still open"));
+	}
+	// complain about curly bracket count
+	if (curlyBracketCount != 0) {
+		Console::println(getStatementInformation(statement) + ": " + string(executableStatement) + "': unbalanced curly bracket count: " + to_string(Math::abs(curlyBracketCount)) + " " + (curlyBracketCount < 0?"too much closed":"still open"));
+		//
+		parseErrors.push_back(string(executableStatement) + ": unbalanced curly bracket count: " + to_string(Math::abs(curlyBracketCount)) + " " + (curlyBracketCount < 0?"too much closed":"still open"));
 	}
 
 	//
