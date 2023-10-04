@@ -244,6 +244,7 @@ private:
 			const ShaderParameter max;
 			const ShaderParameter step;
 		};
+		const bool internal;
 		const ShaderType type;
 		const string id;
 		const vector<ParameterDefaults> parameterDefaults;
@@ -836,6 +837,7 @@ public:
 	inline static const vector<string> getRegisteredShader(ShaderType type) {
 		vector<string> result;
 		for (const auto& shader: shaders) {
+			if (shader.internal == true) continue;
 			if (shader.type == type) {
 				result.push_back(shader.id);
 			}
@@ -850,13 +852,14 @@ public:
 	 * @param shaderId shader id
 	 * @param parameterTypes parameter types
 	 */
-	inline static void registerShader(ShaderType type, const string& shaderId, const vector<Shader::ParameterDefaults>& parameterDefaults = {}) {
+	inline static void registerShader(ShaderType type, const string& shaderId, const vector<Shader::ParameterDefaults>& parameterDefaults = {}, bool internal = false) {
 		if (shadersById.find(shaderId) != shadersById.end()) {
 			Console::println("Engine::registerShader(): Shader already registered: " + shaderId);
 			return;
 		}
 		shaders.push_back(
 			{
+				.internal = internal,
 				.type = type,
 				.id = shaderId,
 				.parameterDefaults = parameterDefaults,

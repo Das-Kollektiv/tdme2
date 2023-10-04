@@ -93,7 +93,7 @@ void LightingShaderTreeImplementation::registerShader() {
 		Engine::ShaderType::SHADERTYPE_OBJECT,
 		getId(),
 		{
-			{ "speed", ShaderParameter(1.0f), ShaderParameter(0.0f), ShaderParameter(100.0f), ShaderParameter(5.0f) },
+			{ "speed", ShaderParameter(1.0f), ShaderParameter(0.0f), ShaderParameter(20.0f), ShaderParameter(1.0f) },
 		}
 	);
 }

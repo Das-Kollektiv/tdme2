@@ -62,7 +62,15 @@ void LightingShaderTerrainEditorImplementation::registerShader() {
 	Engine::registerShader(
 		Engine::ShaderType::SHADERTYPE_OBJECT,
 		getId(),
-		{} // no public parameters
+		{
+			{ "brushEnabled", ShaderParameter(true) },
+			{ "brushDimension", ShaderParameter(Vector2(0.0f, 0.0f)) },
+			{ "brushTexture", ShaderParameter(0) },
+			{ "brushRotation", ShaderParameter(0.0f) },
+			{ "brushScale", ShaderParameter(Vector2(1.0f, 1.0f)) },
+			{ "brushPosition", ShaderParameter(Vector2(0.0f, 0.0f)) }
+		},
+		true
 	);
 }
 
