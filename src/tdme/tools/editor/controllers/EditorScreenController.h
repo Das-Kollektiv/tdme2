@@ -28,6 +28,7 @@
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
+#include <tdme/utilities/Console.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::map;
@@ -62,6 +63,7 @@ using tdme::tools::editor::controllers::ScreenController;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
+using tdme::utilities::Console;
 using tdme::utilities::StringTools;
 
 /**
@@ -745,8 +747,10 @@ public:
 	 * @return relative path within project path
 	 */
 	inline const string getRelativePath(const string& absoluteFileName) {
-		if (StringTools::startsWith(absoluteFileName, projectPath + "/") == false) return absoluteFileName;
-		return StringTools::substring(absoluteFileName, projectPath.size() + 1);
+		auto absoluteFileNameUnix = StringTools::replace(absoluteFileName, "\\", "/");
+		auto projectPathUnix = StringTools::replace(projectPath, "\\", "/");
+		if (StringTools::startsWith(absoluteFileNameUnix, projectPathUnix + "/") == false) return absoluteFileNameUnix;
+		return StringTools::substring(absoluteFileNameUnix, projectPathUnix.size() + 1);
 	}
 
 	/**

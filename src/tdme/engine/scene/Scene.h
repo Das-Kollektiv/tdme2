@@ -158,7 +158,7 @@ public:
 	 * @return light
 	 */
 	inline SceneLight* addLight() {
-		lights.push_back(make_unique<SceneLight>(lights.size()));
+		lights.push_back(make_unique<SceneLight>(static_cast<int>(lights.size())));
 		return lights[lights.size() - 1].get();
 	}
 

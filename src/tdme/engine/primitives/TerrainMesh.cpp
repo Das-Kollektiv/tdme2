@@ -93,10 +93,10 @@ void TerrainMesh::createCollisionShape(World* world) {
 
 	// RP3D triangle vertex array
 	triangleVertexArray = make_unique<reactphysics3d::TriangleVertexArray>(
-		vertices.size() / 3,
+		static_cast<uint32_t>(vertices.size() / 3),
 		vertices.data(),
 		3 * sizeof(float),
-		indices.size() / 3,
+		static_cast<uint32_t>(indices.size() / 3),
 		indices.data(),
 		3 * sizeof(int),
 		reactphysics3d::TriangleVertexArray::VertexDataType::VERTEX_FLOAT_TYPE,

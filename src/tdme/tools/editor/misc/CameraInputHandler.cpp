@@ -27,7 +27,7 @@ using tdme::tools::editor::misc::CameraInputHandlerEventHandler;
 using tdme::utilities::Character;
 
 CameraInputHandler::CameraInputHandler(Engine* engine, CameraInputHandlerEventHandler* eventHandler):
-	camLookRotationX(Vector3(1.0f, 0.0f, 0.0f), -45.0f),
+	camLookRotationX(Vector3(1.0f, 0.0f, 0.0f), -15.0f),
 	camLookRotationY(Vector3(0.0f, 1.0f, 0.0f), 0.0f)
 {
 	this->engine = engine;
@@ -41,7 +41,7 @@ CameraInputHandler::~CameraInputHandler() {
 
 void CameraInputHandler::reset() {
 	resetRequested = true;
-	camLookRotationX.setAngle(-45.0f);
+	camLookRotationX.setAngle(-15.0f);
 	camLookRotationX.update();
 	camLookRotationY.setAngle(0.0f);
 	camLookRotationY.update();
@@ -180,11 +180,8 @@ void CameraInputHandler::handleInputEvents() {
 		if (eventHandler != nullptr) eventHandler->onCameraScale();
 	}
 
-	if (keyR == true || resetRequested == true) {
-		camLookRotationX.setAngle(-45.0f);
-		camLookRotationX.update();
-		camLookRotationY.setAngle(0.0f);
-		camLookRotationY.update();
+	if (keyR == true) reset();
+	if (resetRequested == true) {
 		cam->setLookAt(sceneCenter);
 		camScale = 1.0f;
 		if (eventHandler != nullptr) eventHandler->onCameraTranslation();
