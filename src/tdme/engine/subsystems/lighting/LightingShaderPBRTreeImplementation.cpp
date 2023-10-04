@@ -124,7 +124,9 @@ void LightingShaderPBRTreeImplementation::registerShader() {
 	Engine::registerShader(
 		Engine::ShaderType::SHADERTYPE_OBJECT,
 		getId(),
-		{{ "speed", ShaderParameter(1.0f) }}
+		{
+			{ "speed", ShaderParameter(1.0f), ShaderParameter(0.0f), ShaderParameter(100.0f), ShaderParameter(5.0f) }
+		}
 	);
 }
 

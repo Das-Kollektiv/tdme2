@@ -32,7 +32,9 @@ using tdme::utilities::StringTools;
 const ShaderParameter EntityShaderParameters::getShaderParameter(const string& parameterName) const {
 	auto shaderParameterIt = parameters.find(parameterName);
 	if (shaderParameterIt == parameters.end()) {
-		return Engine::getDefaultShaderParameter(shaderId, parameterName);
+		auto defaultShaderParameter = Engine::getDefaultShaderParameter(shaderId, parameterName);
+		if (defaultShaderParameter == nullptr) return ShaderParameter();
+		return defaultShaderParameter->value;
 	}
 	const auto& shaderParameter = shaderParameterIt->second;
 	return shaderParameter;

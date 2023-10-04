@@ -55,20 +55,20 @@ void PostProcessingShaderVignetteImplementation::initialize()
 	//
 	PostProcessingShaderBaseImplementation::initialize();
 
-	//
-	if (initialized == false) return;
-
 	// uniforms
 	uniformIntensity = renderer->getProgramUniformLocation(programId, "intensity");
 	uniformBorderColor = renderer->getProgramUniformLocation(programId, "borderColor");
+
+	//
+	if (initialized == false) return;
 
 	// register shader
 	Engine::registerShader(
 		Engine::ShaderType::SHADERTYPE_POSTPROCESSING,
 		"vignette",
 		{
-			{ "intensity", ShaderParameter(0.0f) },
-			{ "borderColor", ShaderParameter(Color4(1.0f, 1.0f, 1.0f, 1.0f)) }
+			{ "intensity", ShaderParameter(0.0f), ShaderParameter(0.0f), ShaderParameter(1.0f), ShaderParameter(0.05f) },
+			{ "borderColor", ShaderParameter(Color4(1.0f, 1.0f, 1.0f, 1.0f)), ShaderParameter(Color4(0.0f, 0.0f, 0.0f, 1.0f)), ShaderParameter(Color4(1.0f, 1.0f, 1.0f, 1.0f)), ShaderParameter(Color4(0.05f, 0.05f, 0.05f, 0.0f)) }
 		}
 	);
 }

@@ -60,8 +60,9 @@ Scene::Scene(const string& name, const string& description): BaseProperties(name
 	entityIdx = 0;
 	skyShaderParameters.setShader("sky");
 	for (const auto& parameterName: Engine::getShaderParameterNames("sky")) {
-		auto parameterValue = Engine::getDefaultShaderParameter("sky", parameterName);
-		skyShaderParameters.setShaderParameter(parameterName, parameterValue);
+		auto defaultShaderParameter = Engine::getDefaultShaderParameter("sky", parameterName);
+		if (defaultShaderParameter == nullptr) continue;
+		skyShaderParameters.setShaderParameter(parameterName, defaultShaderParameter->value);
 	}
 }
 
