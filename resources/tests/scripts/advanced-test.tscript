@@ -20,7 +20,9 @@ on: nothing
 			test6c: ["x","y","z"]
 		}
 	}
-	console.log("xxx: " + $map)
+	console.log("map: " + $map)
+	$array = [1, 2, 3]
+	console.log("array: " + $array)
 	script.stop()
 end
 

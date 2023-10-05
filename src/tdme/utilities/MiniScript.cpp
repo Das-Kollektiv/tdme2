@@ -2037,7 +2037,7 @@ const string MiniScript::trimArgument(const string& argument) {
 	return processedArgument;
 }
 
-const string MiniScript::findRightArgument(const string statement, int position, int& length, string& brackets) {
+const string MiniScript::findRightArgument(const string& statement, int position, int& length, string& brackets) {
 	//
 	auto bracketCount = 0;
 	auto squareBracketCount = 0;
@@ -2108,7 +2108,7 @@ const string MiniScript::findRightArgument(const string statement, int position,
 	return trimArgument(argument);
 }
 
-const string MiniScript::findLeftArgument(const string statement, int position, int& length, string& brackets) {
+const string MiniScript::findLeftArgument(const string& statement, int position, int& length, string& brackets) {
 	//
 	auto bracketCount = 0;
 	auto squareBracketCount = 0;
@@ -2180,6 +2180,7 @@ const string MiniScript::findLeftArgument(const string statement, int position, 
 }
 
 const string MiniScript::doStatementPreProcessing(const string& processedStatement, const ScriptStatement& statement) {
+	Console::println("MiniScript::doStatementPreProcessing(): pre: " + processedStatement);
 	auto preprocessedStatement = processedStatement;
 	ScriptStatementOperator nextOperators;
 	while (getNextStatementOperator(preprocessedStatement, nextOperators, statement) == true) {
@@ -2232,6 +2233,7 @@ const string MiniScript::doStatementPreProcessing(const string& processedStateme
 		nextOperators = ScriptStatementOperator();
 	}
 	//
+	Console::println("MiniScript::doStatementPreProcessing(): post: " + preprocessedStatement);
 	return preprocessedStatement;
 }
 

@@ -162,7 +162,8 @@ public:
 		TYPE_ARRAY,
 		TYPE_MAP,
 		TYPE_SET,
-		TYPE_MAP_INITIALIZER,
+		TYPE_MAPSET_INITIALIZER,
+		TYPE_ARRAY_INITIALIZER,
 		TYPE_PSEUDO_NUMBER,
 		TYPE_PSEUDO_MIXED
 	};
@@ -439,8 +440,11 @@ public:
 				case TYPE_SET:
 					setValue(scriptVariable.getSetValueReference());
 					break;
-				case TYPE_MAP_INITIALIZER:
-					setMapInitializerValue(scriptVariable.getStringValueReference());
+				case TYPE_MAPSET_INITIALIZER:
+					setMapSetInitializerValue(scriptVariable.getStringValueReference());
+					break;
+				case TYPE_ARRAY_INITIALIZER:
+					setArrayInitializerValue(scriptVariable.getStringValueReference());
 					break;
 			}
 		}
@@ -506,8 +510,11 @@ public:
 				case TYPE_SET:
 					setValue(scriptVariable.getSetValueReference());
 					break;
-				case TYPE_MAP_INITIALIZER:
-					setMapInitializerValue(scriptVariable.getStringValueReference());
+				case TYPE_MAPSET_INITIALIZER:
+					setMapSetInitializerValue(scriptVariable.getStringValueReference());
+					break;
+				case TYPE_ARRAY_INITIALIZER:
+					setArrayInitializerValue(scriptVariable.getStringValueReference());
 					break;
 			}
 			return *this;
@@ -698,7 +705,10 @@ public:
 				case TYPE_SET:
 					delete static_cast<unordered_set<string>*>((void*)valuePtr);
 					break;
-				case TYPE_MAP_INITIALIZER:
+				case TYPE_MAPSET_INITIALIZER:
+					delete static_cast<string*>((void*)valuePtr);
+					break;
+				case TYPE_ARRAY_INITIALIZER:
 					delete static_cast<string*>((void*)valuePtr);
 					break;
 			}
@@ -746,7 +756,10 @@ public:
 				case TYPE_SET:
 					valuePtr = (uint64_t)(new unordered_set<string>());
 					break;
-				case TYPE_MAP_INITIALIZER:
+				case TYPE_MAPSET_INITIALIZER:
+					valuePtr = (uint64_t)(new string());
+					break;
+				case TYPE_ARRAY_INITIALIZER:
 					valuePtr = (uint64_t)(new string());
 					break;
 			}
@@ -1135,11 +1148,20 @@ public:
 		}
 
 		/**
-		 * Set string value from given value into variable
+		 * Set map/set initializer value from given value into variable
 		 * @param value value
 		 */
-		inline void setMapInitializerValue(const string& value) {
-			setType(TYPE_MAP_INITIALIZER);
+		inline void setMapSetInitializerValue(const string& value) {
+			setType(TYPE_MAPSET_INITIALIZER);
+			getStringValueReference() = value;
+		}
+
+		/**
+		 * Set array initializer value from given value into variable
+		 * @param value value
+		 */
+		inline void setArrayInitializerValue(const string& value) {
+			setType(TYPE_ARRAY_INITIALIZER);
 			getStringValueReference() = value;
 		}
 
@@ -1412,8 +1434,13 @@ public:
 			if (StringTools::viewStartsWith(value, "{") == true &&
 				StringTools::viewEndsWith(value, "}") == true) {
 				//
-				setMapInitializerValue(string(value));
-			} else {
+				setMapSetInitializerValue(string(value));
+			} else
+			if (StringTools::viewStartsWith(value, "[") == true &&
+				StringTools::viewEndsWith(value, "]") == true) {
+				//
+				setArrayInitializerValue(string(value));
+			} else{
 				setValue(string(value));
 			}
 		}
@@ -2369,7 +2396,7 @@ private:
 	 * @param length argument length
 	 * @param brackets barrier brackets
 	 */
-	const string findRightArgument(const string statement, int position, int& length, string& brackets);
+	const string findRightArgument(const string& statement, int position, int& length, string& brackets);
 
 	/**
 	 * Find left argument in statement beginning from position
@@ -2378,7 +2405,7 @@ private:
 	 * @param length argument length
 	 * @param brackets barrier brackets
 	 */
-	const string findLeftArgument(const string statement, int position, int& length, string& brackets);
+	const string findLeftArgument(const string& statement, int position, int& length, string& brackets);
 
 	/**
 	 * Do statement pre processing, 1) replace operators with corresponding methods
