@@ -26,6 +26,9 @@ using tdme::os::threading::Thread;
 class tdme::utilities::Console
 {
 public:
+
+	static constexpr int HISTORY_LINECOUNT { 5000 };
+
 	struct Logger
 	{
 		virtual ~Logger() {}

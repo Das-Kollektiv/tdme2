@@ -237,7 +237,7 @@ void EditorScreenController::initialize()
 				auto& messages = editorScreenController->logMessages;
 				if (messages.empty() == true || newline == true) messages.push_back(string());
 				messages[messages.size() - 1]+= str;
-				if (messages.size() == 100) messages.erase(messages.begin());
+				if (messages.size() == Console::HISTORY_LINECOUNT) messages.erase(messages.begin());
 				newline = true;
 				editorScreenController->logUpdateRequired = true;
 			}
@@ -245,14 +245,14 @@ void EditorScreenController::initialize()
 				auto& messages = editorScreenController->logMessages;
 				if (messages.empty() == true || newline == true) messages.push_back(string());
 				messages[messages.size() - 1]+= str;
-				if (messages.size() == 100) messages.erase(messages.begin());
+				if (messages.size() == Console::HISTORY_LINECOUNT) messages.erase(messages.begin());
 				newline = false;
 				editorScreenController->logUpdateRequired = true;
 			}
 			void println() {
 				auto& messages = editorScreenController->logMessages;
 				messages.push_back(string());
-				if (messages.size() == 100) messages.erase(messages.begin());
+				if (messages.size() == Console::HISTORY_LINECOUNT) messages.erase(messages.begin());
 				newline = true;
 				editorScreenController->logUpdateRequired = true;
 			}

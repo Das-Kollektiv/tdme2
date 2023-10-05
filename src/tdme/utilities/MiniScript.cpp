@@ -2030,14 +2030,14 @@ bool MiniScript::getNextStatementOperator(const string& processedStatement, Mini
 
 const string MiniScript::trimArgument(const string& argument) {
 	auto processedArgument = StringTools::trim(argument);
-	if ((StringTools::startsWith(processedArgument, "(") == true && StringTools::endsWith(processedArgument, ")")) == true ||
-		(StringTools::startsWith(processedArgument, "[") == true && StringTools::endsWith(processedArgument, "]")) == true) {
+	if (StringTools::startsWith(processedArgument, "(") == true && StringTools::endsWith(processedArgument, ")") == true) {
 		processedArgument = StringTools::substring(processedArgument, 1, processedArgument.size() - 1);
 	}
 	return processedArgument;
 }
 
 const string MiniScript::findRightArgument(const string& statement, int position, int& length, string& brackets) {
+	Console::println("MiniScript::findRightArgument(): " + statement + "@" + to_string(position));
 	//
 	auto bracketCount = 0;
 	auto squareBracketCount = 0;
@@ -2047,6 +2047,7 @@ const string MiniScript::findRightArgument(const string& statement, int position
 	length = 0;
 	for (auto i = position; i < statement.size(); i++) {
 		auto c = statement[i];
+		// quote?
 		if (c == '"' || c == '\'') {
 			if (quote == '\0') {
 				quote = c;
@@ -2056,6 +2057,7 @@ const string MiniScript::findRightArgument(const string& statement, int position
 			}
 			argument+= c;
 		} else
+		// no quote
 		if (quote == '\0') {
 			if (c == '(') {
 				bracketCount++;
@@ -2079,11 +2081,17 @@ const string MiniScript::findRightArgument(const string& statement, int position
 			} else
 			if (c == ']') {
 				squareBracketCount--;
-				if (squareBracketCount < 0) {
-					brackets = "[]";
-					return trimArgument(argument);
+				// array initializer?
+				if (StringTools::startsWith(argument, "[") == false) {
+					// no
+					if (squareBracketCount < 0) {
+						brackets = "[]";
+						return trimArgument(argument);
+					}
 				}
 				argument+= c;
+				//
+				Console::println("arr: '" + argument + "'");
 			} else
 			if (c == '}') {
 				curlyBracketCount--;
@@ -2095,9 +2103,19 @@ const string MiniScript::findRightArgument(const string& statement, int position
 			} else
 			if (squareBracketCount == 0 && curlyBracketCount == 0 && c == ',') {
 				if (bracketCount == 0) return trimArgument(argument);
-				argument+= c;
+				//
+				if (argument.empty() == true && (c == ' ' || c == '\t' || c == '\n')) {
+					// no op
+				} else {
+					argument+= c;
+				}
 			} else {
-				argument+= c;
+				//
+				if (argument.empty() == true && (c == ' ' || c == '\t' || c == '\n')) {
+					// no op
+				} else {
+					argument+= c;
+				}
 			}
 		} else
 		if (quote != '\0') {
@@ -2105,10 +2123,13 @@ const string MiniScript::findRightArgument(const string& statement, int position
 		}
 		length++;
 	}
+	Console::println("uuuu: " + argument);
+	//
 	return trimArgument(argument);
 }
 
 const string MiniScript::findLeftArgument(const string& statement, int position, int& length, string& brackets) {
+	// adapt code similar to findRightArguument related to array and map/initializer
 	//
 	auto bracketCount = 0;
 	auto squareBracketCount = 0;
@@ -2203,6 +2224,7 @@ const string MiniScript::doStatementPreProcessing(const string& processedStateme
 				StringTools::substring(preprocessedStatement, 0, nextOperators.idx) +
 				method->getMethodName() + "(" + rightArgument + ")" +
 				StringTools::substring(preprocessedStatement, nextOperators.idx + operatorString.size() + rightArgumentLength, preprocessedStatement.size());
+			Console::println("urrrr: " + preprocessedStatement);
 		} else
 		if (method->isVariadic() == true ||
 			method->getArgumentTypes().size() == 2) {
@@ -2211,10 +2233,12 @@ const string MiniScript::doStatementPreProcessing(const string& processedStateme
 			string leftArgumentBrackets;
 			int leftArgumentLength = 0;
 			auto leftArgument = findLeftArgument(preprocessedStatement, nextOperators.idx - 1, leftArgumentLength, leftArgumentBrackets);
+			Console::println("left: " + leftArgument);
 			// find the first argument right
 			string rightArgumentBrackets;
 			int rightArgumentLength = 0;
 			auto rightArgument = findRightArgument(preprocessedStatement, nextOperators.idx + operatorString.size(), rightArgumentLength, rightArgumentBrackets);
+			Console::println("right: " + rightArgument);
 			//
 			if (leftArgumentBrackets.empty() == false && rightArgumentBrackets.empty() == false && leftArgumentBrackets != rightArgumentBrackets) {
 				Console::println(getStatementInformation(statement) + ": " + processedStatement + ": operator found in: '" + preprocessedStatement + "'@" + to_string(nextOperators.idx) + ": unbalanced bracket usage");
@@ -2229,6 +2253,7 @@ const string MiniScript::doStatementPreProcessing(const string& processedStateme
 				StringTools::substring(preprocessedStatement, 0, nextOperators.idx - leftArgumentLength) +
 				method->getMethodName() + "(" + leftArgument + ", " + rightArgument + ")" +
 				StringTools::substring(preprocessedStatement, nextOperators.idx + operatorString.size() + rightArgumentLength, preprocessedStatement.size());
+			Console::println("vrrrr: " + preprocessedStatement);
 		}
 		nextOperators = ScriptStatementOperator();
 	}
