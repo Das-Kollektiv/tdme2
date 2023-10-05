@@ -350,10 +350,24 @@ bool MiniScript::parseScriptStatement(const string_view& executableStatement, st
 				}
 			} else
 			if (c == '[' && curlyBracketCount == 0) {
+				if (squareBracketCount == 0) {
+					if (argumentStart == string::npos) {
+						argumentStart = i;
+					} else {
+						argumentEnd = i;
+					}
+				}
 				squareBracketCount++;
 			} else
 			if (c == ']' && curlyBracketCount == 0) {
 				squareBracketCount--;
+				if (squareBracketCount == 0) {
+					if (argumentStart == string::npos) {
+						argumentStart = i;
+					} else {
+						argumentEnd = i;
+					}
+				}
 			} else
 			if (c == '{') {
 				if (curlyBracketCount == 0) {
@@ -368,7 +382,11 @@ bool MiniScript::parseScriptStatement(const string_view& executableStatement, st
 			if (c == '}') {
 				curlyBracketCount--;
 				if (curlyBracketCount == 0) {
-					if (methodStart == string::npos) methodStart = i; else methodEnd = i;
+					if (argumentStart == string::npos) {
+						argumentStart = i;
+					} else {
+						argumentEnd = i;
+					}
 				}
 			} else
 			if (squareBracketCount == 0 && curlyBracketCount == 0) {
@@ -499,19 +517,20 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 	if (VERBOSE == true) Console::println("MiniScript::executeScriptStatement(): " + getStatementInformation(statement) + "': " + syntaxTree.value.getValueAsString() + "(" + getArgumentsAsString(syntaxTree.arguments) + ")");
 	// return on literal or empty syntaxTree
 	if (syntaxTree.type != ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && syntaxTree.type != ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION) {
-		Console::println("bbb: " + syntaxTree.value.getAsString());
 		return syntaxTree.value;
 	}
+	//
+	Console::println("MiniScript::executeScriptStatement()");
+	Console::println("\t" + syntaxTree.value.getAsString());
 	//
 	vector<ScriptVariable> argumentValues;
 	ScriptVariable returnValue;
 	// construct argument values
-	Console::println("aaa: " + syntaxTree.value.getAsString());
 	for (const auto& argument: syntaxTree.arguments) {
 		switch (argument.type) {
 			case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
 				{
-					Console::println("xxx: " + to_string(argument.value.type) + " / " + argument.value.getStringValueReference());
+					Console::println("\t\t" + to_string(argument.value.type) + " / " + argument.value.getStringValueReference());
 					argumentValues.push_back(argument.value);
 					break;
 				}
@@ -778,9 +797,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 bool MiniScript::createScriptStatementSyntaxTree(const string_view& methodName, const vector<string_view>& arguments, const ScriptStatement& statement, ScriptSyntaxTreeNode& syntaxTree) {
 	if (VERBOSE == true) Console::println("MiniScript::createScriptStatementSyntaxTree(): " + getStatementInformation(statement) + ": " + string(methodName) + "(" + getArgumentsAsString(arguments) + ")");
 	// arguments
-	Console::println("xxx: " + string(methodName));
 	for (const auto& argument: arguments) {
-		Console::println("\t" + string(argument));
 		// object member access
 		string_view accessObjectMemberObject;
 		string_view accessObjectMemberMethod;
