@@ -9,7 +9,7 @@ end
 # if no condition is met, nothing will be executed, lol :D
 on: nothing
 	# array
-	$array = [1, 2, 3, [4, 5, [6, 7, 8, "What?", "Whatssssappp???", 9]]]
+	$array = [1, 2, 3, [4, 5, [6, 7, 8, "What?", "Whatssssappp???", 9]], {test1: "xxx", test2: "yyy", test3: "zzz", test4: 123.456}]
 	console.log("array: " + $array)
 
 	$i = 0
@@ -17,6 +17,8 @@ on: nothing
 		console.log($i + ": " + $array[$i])
 		++$i
 	end
+	
+	console.log("$array[4] map keys: " + $array[4]->getKeys())
 
 	# map
 	$map = {

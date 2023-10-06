@@ -8926,6 +8926,7 @@ const MiniScript::ScriptVariable MiniScript::initializeArrayInitializerVariable(
 	ScriptVariable variable;
 	variable.setType(TYPE_ARRAY);
 	//
+	auto curlyBracketCount = 0;
 	auto squareBracketCount = 0;
 	auto quote = '\0';
 	auto arrayValueStart = string::npos;
@@ -8984,19 +8985,19 @@ const MiniScript::ScriptVariable MiniScript::initializeArrayInitializerVariable(
 		// no quote
 		if (quote == '\0') {
 			// , -> push to array
-			if (squareBracketCount == 1 && c == ',') {
+			if (squareBracketCount == 1 && curlyBracketCount == 0 && c == ',') {
 				// push to array
 				pushToArray();
 			} else
 			// array initializer
-			if (c == '[') {
+			if (c == '[' && curlyBracketCount == 0) {
 				// we have a inner array initializer, mark it
 				if (squareBracketCount == 1) arrayValueStart = i;
 				// increase square bracket count
 				squareBracketCount++;
 			} else
 			// end of array initializer
-			if (c == ']') {
+			if (c == ']' && curlyBracketCount == 0) {
 				squareBracketCount--;
 				// done? push to array
 				if (squareBracketCount == 0) {
@@ -9022,8 +9023,37 @@ const MiniScript::ScriptVariable MiniScript::initializeArrayInitializerVariable(
 					}
 				}
 			} else
+			// map/set initializer
+			if (c == '{' && squareBracketCount == 1) {
+				// we have a inner map/set initializer, mark it
+				if (curlyBracketCount == 0) arrayValueStart = i;
+				// increase curly bracket count
+				curlyBracketCount++;
+			} else
+			// end of map/set initializer
+			if (c == '}' && squareBracketCount == 1) {
+				curlyBracketCount--;
+				// otherwise push inner array initializer
+				if (curlyBracketCount == 0) {
+					// parse and push
+					if (arrayValueStart != string::npos) {
+						arrayValueEnd = i;
+						auto arrayValueLength = arrayValueEnd - arrayValueStart + 1;
+						if (arrayValueLength > 0) {
+							auto arrayValueStringView = StringTools::viewTrim(string_view(&initializerString[arrayValueStart], arrayValueLength));
+							if (arrayValueStringView.empty() == false) {
+								auto arrayValue = initializeMapSetInitializerVariable(arrayValueStringView);
+								variable.pushArrayValue(arrayValue);
+							}
+						}
+						//
+						arrayValueStart = string::npos;
+						arrayValueEnd = string::npos;
+					}
+				}
+			} else
 			// set up argument start
-			if (squareBracketCount == 1 && arrayValueStart == string::npos && c != ' ' && c != '\t' && c != '\n') {
+			if (squareBracketCount == 1 && curlyBracketCount == 0 && arrayValueStart == string::npos && c != ' ' && c != '\t' && c != '\n') {
 				arrayValueStart = i;
 			}
 		}
