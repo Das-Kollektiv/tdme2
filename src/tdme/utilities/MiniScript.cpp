@@ -8926,8 +8926,8 @@ const MiniScript::ScriptVariable MiniScript::initializeArrayInitializerVariable(
 	ScriptVariable variable;
 	variable.setType(TYPE_ARRAY);
 	//
-	auto curlyBracketCount = 0;
 	auto squareBracketCount = 0;
+	auto curlyBracketCount = 0;
 	auto quote = '\0';
 	auto arrayValueStart = string::npos;
 	auto arrayValueEnd = string::npos;
@@ -9069,6 +9069,7 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSetInitializerVariable
 	variable.setType(TYPE_MAP);
 	//
 	auto curlyBracketCount = 0;
+	auto squareBracketCount = 0;
 	auto quote = '\0';
 	auto mapKeyStart = string::npos;
 	auto mapKeyEnd = string::npos;
@@ -9096,7 +9097,6 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSetInitializerVariable
 		} else
 		// unquoted map key
 		if (mapKeyStart != string::npos) {
-			if (mapKeyEnd == string::npos) mapKeyEnd = i - 1;
 			auto mapKeyLength = mapKeyEnd - mapKeyStart + 1;
 			if (mapKeyLength > 0) mapKey = StringTools::viewTrim(string_view(&initializerString[mapKeyStart], mapKeyLength));
 			//
@@ -9145,7 +9145,7 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSetInitializerVariable
 	for (; i < initializerString.size(); i++) {
 		auto c = initializerString[i];
 		// quotes
-		if (curlyBracketCount == 1 && (c == '"' || c == '\'') && lc != '\\') {
+		if (curlyBracketCount == 1 && squareBracketCount == 0 && (c == '"' || c == '\'') && lc != '\\') {
 			// we have a new quote here
 			if (quote == '\0') {
 				quote = c;
@@ -9175,7 +9175,7 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSetInitializerVariable
 		} else
 		// no quote
 		if (quote == '\0') {
-			if (curlyBracketCount == 1 && c == ':' && lc != '\\') {
+			if (curlyBracketCount == 1 && squareBracketCount == 0 && c == ':' && lc != '\\') {
 				if (quotedMapKeyStart != string::npos) {
 					quotedMapKeyEnd = i - 1;
 				} else
@@ -9186,20 +9186,20 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSetInitializerVariable
 				parseMode = PARSEMODE_VALUE;
 			} else
 			// , -> insert map
-			if (curlyBracketCount == 1 && c == ',') {
+			if (curlyBracketCount == 1 && squareBracketCount == 0 && c == ',') {
 				// insert map key value pair
 				insertMapKeyValuePair();
 				// nada
 			} else
 			// map/set initializer
-			if (c == '{') {
+			if (c == '{' && squareBracketCount == 0) {
 				// we have a inner array initializer, mark it
 				if (curlyBracketCount == 1) mapKeyStart = i;
 				// increase square bracket count
 				curlyBracketCount++;
 			} else
 			// end of map/set initializer
-			if (c == '}') {
+			if (c == '}' && squareBracketCount == 0) {
 				curlyBracketCount--;
 				// done? insert into map
 				if (curlyBracketCount == 0) {
@@ -9222,7 +9222,6 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSetInitializerVariable
 					} else
 					// unquoted map key
 					if (mapKeyStart != string::npos) {
-						mapKeyEnd = i - 1;
 						auto mapKeyLength = mapKeyEnd - mapKeyStart + 1;
 						if (mapKeyLength > 0) mapKey = StringTools::viewTrim(string_view(&initializerString[mapKeyStart], mapKeyLength));
 						//
@@ -9250,8 +9249,61 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSetInitializerVariable
 					parseMode = PARSEMODE_KEY;
 				}
 			} else
+			// array initializer
+			if (c == '[' && curlyBracketCount == 1) {
+				// we have a inner array initializer, mark it
+				if (squareBracketCount == 0) mapValueStart = i;
+				// increase square bracket count
+				squareBracketCount++;
+			} else
+			// end of array initializer
+			if (c == ']' && curlyBracketCount == 1) {
+				squareBracketCount--;
+				// otherwise push inner array initializer
+				if (squareBracketCount == 0) {
+					// parse and insert into map
+					string_view mapKey;
+
+					// quoted map key
+					if (quotedMapKeyStart != string::npos) {
+						quotedMapKeyStart++;
+						auto mapKeyLength = quotedMapKeyEnd - quotedMapKeyStart;
+						if (mapKeyLength > 0) mapKey = StringTools::viewTrim(string_view(&initializerString[quotedMapKeyStart], mapKeyLength));
+						//
+						quotedMapKeyStart = string::npos;
+						quotedMapKeyEnd = string::npos;
+					} else
+					// unquoted map key
+					if (mapKeyStart != string::npos) {
+						auto mapKeyLength = mapKeyEnd - mapKeyStart + 1;
+						if (mapKeyLength > 0) mapKey = StringTools::viewTrim(string_view(&initializerString[mapKeyStart], mapKeyLength));
+						//
+						mapKeyStart = string::npos;
+						mapKeyEnd = string::npos;
+					}
+
+					// map value
+					if (mapValueStart != string::npos) {
+						mapValueEnd = i;
+						auto mapValueLength = mapValueEnd - mapValueStart + 1;
+						if (mapValueLength > 0) {
+							auto mapValueStringView = StringTools::viewTrim(string_view(&initializerString[mapValueStart], mapValueLength));
+							if (mapValueStringView.empty() == false) {
+								auto mapValue = initializeArrayInitializerVariable(mapValueStringView);
+								variable.setMapValue(string(mapKey), mapValue);
+							}
+						}
+						//
+						mapValueStart = string::npos;
+						mapValueEnd = string::npos;
+					}
+
+					//
+					parseMode = PARSEMODE_KEY;
+				}
+			} else
 			// set up map key  start
-			if (curlyBracketCount == 1 && c != ' ' && c != '\t' && c != '\n') {
+			if (curlyBracketCount == 1 && squareBracketCount == 0 && c != ' ' && c != '\t' && c != '\n') {
 				if (parseMode == PARSEMODE_KEY && mapKeyStart == string::npos && quotedMapKeyStart == string::npos) {
 					mapKeyStart = i;
 				} else

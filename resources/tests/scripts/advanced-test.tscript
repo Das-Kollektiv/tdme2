@@ -12,19 +12,12 @@ on: nothing
 	$array = [1, 2, 3, [4, 5, [6, 7, 8, "What?", "Whatssssappp???", 9]], {test1: "xxx", test2: "yyy", test3: "zzz", test4: 123.456}]
 	console.log("array: " + $array)
 
-	$i = 0
-	forCondition($i < $array->length())
-		console.log($i + ": " + $array[$i])
-		++$i
-	end
-	
-	console.log("$array[4] map keys: " + $array[4]->getKeys())
-
 	# map
 	$map = {
 		test1: "test1",
 		test2: "test2",
-		test3: 789
+		test3: 789,
+		test4: [1,2,3]
 	}
 	console.log("map: " + $map)
 	console.log("map keys: " + $map->getKeys())
