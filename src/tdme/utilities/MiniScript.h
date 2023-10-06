@@ -2855,6 +2855,36 @@ private:
 	 */
 	static const ScriptVariable deserializeArrayJson(const Value& jArrayValue);
 
+	/**
+	 * Initialize variable
+	 * @param variable variable
+	 * @return initialized variable
+	 */
+	inline static const ScriptVariable initializeVariable(const ScriptVariable& variable) {
+		switch (variable.type) {
+			case TYPE_MAPSET_INITIALIZER:
+				return initializeMapSetInitializerVariable(variable.getStringValueReference());
+			case TYPE_ARRAY_INITIALIZER:
+				return initializeArrayInitializerVariable(variable.getStringValueReference());
+			default:
+				return variable;
+		}
+	}
+
+	/**
+	 * Initialize array initializer variable
+	 * @param initializerString initializer string
+	 * @return initialized variable
+	 */
+	static const ScriptVariable initializeArrayInitializerVariable(const string_view& initializerString);
+
+	/**
+	 * Initialize map/set initializer variable
+	 * @param initializerString initializer string
+	 * @return initialized variable
+	 */
+	static const ScriptVariable initializeMapSetInitializerVariable(const string_view& initializerString);
+
 public:
 	// forbid class copy
 	FORBID_CLASS_COPY(MiniScript)

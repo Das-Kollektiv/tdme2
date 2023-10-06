@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -11,6 +12,7 @@
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
+using std::string_view;
 using std::unique_ptr;
 using std::vector;
 
@@ -32,8 +34,8 @@ public:
 	struct Logger
 	{
 		virtual ~Logger() {}
-		virtual void println(const string& str) = 0;
-		virtual void print(const string& str) = 0;
+		virtual void println(const string_view& str) = 0;
+		virtual void print(const string_view& str) = 0;
 		virtual void println() = 0;
 	};
 
@@ -47,13 +49,13 @@ public:
 	 * Print given string and trailing newline to console
 	 * @param str string
 	 */
-	static void println(const string& str);
+	static void println(const string_view& str);
 
 	/**
 	 * Print given string
 	 * @param str string
 	 */
-	static void print(const string& str);
+	static void print(const string_view& str);
 
 	/**
 	 * Print new line to console

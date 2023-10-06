@@ -61,7 +61,7 @@ void Console::setLogger(Console::Logger* logger) {
 	Console::logger = logger;
 }
 
-void Console::println(const string& str)
+void Console::println(const string_view& str)
 {
 	mutex.lock();
 	//
@@ -76,7 +76,7 @@ void Console::println(const string& str)
 	mutex.unlock();
 }
 
-void Console::print(const string& str)
+void Console::print(const string_view& str)
 {
 	mutex.lock();
 	//

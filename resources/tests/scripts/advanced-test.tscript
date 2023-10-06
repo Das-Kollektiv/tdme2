@@ -8,21 +8,31 @@ end
 
 # if no condition is met, nothing will be executed, lol :D
 on: nothing
-	$map = {
-		test1: "test1",
-		test2: "test2",
-		test3: 789,
-		test4: [1,2,3],
-		test5: "Yaaaa",
-		test6: {
-			test6a: "1230",
-			test6a: "4560",
-			test6c: ["x","y","z"]
-		}
-	}
-	console.log("map: " + $map)
-	$array = [1, 2, 3]
+	# array
+	$array = [1, 2, 3, [4, 5, 6]]
 	console.log("array: " + $array)
+
+	$i = 0
+	forCondition($i < $array->length())
+		console.log($i + ": " + $array[$i])
+		++$i
+	end
+
+	# map
+	# $map = {
+	# 	test1: "test1",
+	# 	test2: "test2",
+	# 	test3: 789,
+	# 	test4: [1,2,3],
+	# 	test5: "Yaaaa",
+	# 	test6: {
+	# 		test6a: "1230",
+	# 		test6a: "4560",
+	# 		test6c: ["x","y","z"]
+	# 	}
+	# }
+	# console.log("map: " + $map)
+	# done
 	script.stop()
 end
 

@@ -517,11 +517,8 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 	if (VERBOSE == true) Console::println("MiniScript::executeScriptStatement(): " + getStatementInformation(statement) + "': " + syntaxTree.value.getValueAsString() + "(" + getArgumentsAsString(syntaxTree.arguments) + ")");
 	// return on literal or empty syntaxTree
 	if (syntaxTree.type != ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && syntaxTree.type != ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION) {
-		return syntaxTree.value;
+		return initializeVariable(syntaxTree.value);
 	}
-	//
-	Console::println("MiniScript::executeScriptStatement()");
-	Console::println("\t" + syntaxTree.value.getAsString());
 	//
 	vector<ScriptVariable> argumentValues;
 	ScriptVariable returnValue;
@@ -530,8 +527,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 		switch (argument.type) {
 			case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
 				{
-					Console::println("\t\t" + to_string(argument.value.type) + " / " + argument.value.getStringValueReference());
-					argumentValues.push_back(argument.value);
+					argumentValues.push_back(initializeVariable(argument.value));
 					break;
 				}
 			case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
@@ -2037,7 +2033,6 @@ const string MiniScript::trimArgument(const string& argument) {
 }
 
 const string MiniScript::findRightArgument(const string& statement, int position, int& length, string& brackets) {
-	Console::println("MiniScript::findRightArgument(): " + statement + "@" + to_string(position));
 	//
 	auto bracketCount = 0;
 	auto squareBracketCount = 0;
@@ -2090,8 +2085,6 @@ const string MiniScript::findRightArgument(const string& statement, int position
 					}
 				}
 				argument+= c;
-				//
-				Console::println("arr: '" + argument + "'");
 			} else
 			if (c == '}') {
 				curlyBracketCount--;
@@ -2123,7 +2116,6 @@ const string MiniScript::findRightArgument(const string& statement, int position
 		}
 		length++;
 	}
-	Console::println("uuuu: " + argument);
 	//
 	return trimArgument(argument);
 }
@@ -2201,7 +2193,6 @@ const string MiniScript::findLeftArgument(const string& statement, int position,
 }
 
 const string MiniScript::doStatementPreProcessing(const string& processedStatement, const ScriptStatement& statement) {
-	Console::println("MiniScript::doStatementPreProcessing(): pre: " + processedStatement);
 	auto preprocessedStatement = processedStatement;
 	ScriptStatementOperator nextOperators;
 	while (getNextStatementOperator(preprocessedStatement, nextOperators, statement) == true) {
@@ -2224,7 +2215,6 @@ const string MiniScript::doStatementPreProcessing(const string& processedStateme
 				StringTools::substring(preprocessedStatement, 0, nextOperators.idx) +
 				method->getMethodName() + "(" + rightArgument + ")" +
 				StringTools::substring(preprocessedStatement, nextOperators.idx + operatorString.size() + rightArgumentLength, preprocessedStatement.size());
-			Console::println("urrrr: " + preprocessedStatement);
 		} else
 		if (method->isVariadic() == true ||
 			method->getArgumentTypes().size() == 2) {
@@ -2233,12 +2223,10 @@ const string MiniScript::doStatementPreProcessing(const string& processedStateme
 			string leftArgumentBrackets;
 			int leftArgumentLength = 0;
 			auto leftArgument = findLeftArgument(preprocessedStatement, nextOperators.idx - 1, leftArgumentLength, leftArgumentBrackets);
-			Console::println("left: " + leftArgument);
 			// find the first argument right
 			string rightArgumentBrackets;
 			int rightArgumentLength = 0;
 			auto rightArgument = findRightArgument(preprocessedStatement, nextOperators.idx + operatorString.size(), rightArgumentLength, rightArgumentBrackets);
-			Console::println("right: " + rightArgument);
 			//
 			if (leftArgumentBrackets.empty() == false && rightArgumentBrackets.empty() == false && leftArgumentBrackets != rightArgumentBrackets) {
 				Console::println(getStatementInformation(statement) + ": " + processedStatement + ": operator found in: '" + preprocessedStatement + "'@" + to_string(nextOperators.idx) + ": unbalanced bracket usage");
@@ -2253,12 +2241,10 @@ const string MiniScript::doStatementPreProcessing(const string& processedStateme
 				StringTools::substring(preprocessedStatement, 0, nextOperators.idx - leftArgumentLength) +
 				method->getMethodName() + "(" + leftArgument + ", " + rightArgument + ")" +
 				StringTools::substring(preprocessedStatement, nextOperators.idx + operatorString.size() + rightArgumentLength, preprocessedStatement.size());
-			Console::println("vrrrr: " + preprocessedStatement);
 		}
 		nextOperators = ScriptStatementOperator();
 	}
 	//
-	Console::println("MiniScript::doStatementPreProcessing(): post: " + preprocessedStatement);
 	return preprocessedStatement;
 }
 
@@ -8936,3 +8922,142 @@ const MiniScript::ScriptVariable MiniScript::deserializeJson(const string& json)
 	}
 }
 
+const MiniScript::ScriptVariable MiniScript::initializeArrayInitializerVariable(const string_view& initializerString) {
+	ScriptVariable variable;
+	variable.setType(TYPE_ARRAY);
+	//
+	auto squareBracketCount = 0;
+	auto curlyBracketCount = 0;
+	auto quote = '\0';
+	auto arrayValueStart = string::npos;
+	auto arrayValueEnd = string::npos;
+	auto quotedArrayValueStart = string::npos;
+	auto quotedArrayValueEnd = string::npos;
+	auto lc = '\0';
+	for (auto i = 0; i < initializerString.size(); i++) {
+		auto c = initializerString[i];
+		// quotes
+		if (squareBracketCount == 1 && (c == '"' || c == '\'') && lc != '\\') {
+			if (quote == '\0') {
+				quote = c;
+				quotedArrayValueStart = i;
+			} else
+			if (quote == c) {
+				quote = '\0';
+				quotedArrayValueEnd = i;
+			}
+		} else
+		// no quote
+		if (quote == '\0') {
+			// , -> push to array
+			if (squareBracketCount == 1 && c == ',') {
+				// quoted value
+				if (quotedArrayValueStart != string::npos) {
+					auto arrayValueLength = quotedArrayValueEnd - quotedArrayValueStart + 1;
+					if (arrayValueLength > 0) {
+						ScriptVariable arrayValue;
+						auto arrayValueStringView = StringTools::viewTrim(string_view(&initializerString[quotedArrayValueStart], arrayValueLength));
+						if (arrayValueStringView.empty() == false) {
+							arrayValue.setImplicitTypedValueFromStringView(arrayValueStringView);
+							variable.pushArrayValue(arrayValue);
+						}
+					}
+					//
+					quotedArrayValueStart = string::npos;
+					quotedArrayValueEnd = string::npos;
+				} else
+				// unquoted value
+				if (arrayValueStart != string::npos) {
+					arrayValueEnd = i - 1;
+					auto arrayValueLength = arrayValueEnd - arrayValueStart + 1;
+					if (arrayValueLength > 0) {
+						auto arrayValueStringView = StringTools::viewTrim(string_view(&initializerString[arrayValueStart], arrayValueLength));
+						if (arrayValueStringView.empty() == false) {
+							ScriptVariable arrayValue;
+							arrayValue.setImplicitTypedValueFromStringView(arrayValueStringView);
+							variable.pushArrayValue(arrayValue);
+						}
+					}
+					//
+					arrayValueStart = string::npos;
+					arrayValueEnd = string::npos;
+				}
+				// nada
+			} else
+			// array initializer
+			if (c == '[') {
+				// we have a inner array initializer, mark it
+				if (squareBracketCount == 1) arrayValueStart = i;
+				// increase square bracket count
+				squareBracketCount++;
+			} else
+			// end of array initializer
+			if (c == ']') {
+				squareBracketCount--;
+				// done? push to array
+				if (squareBracketCount == 0) {
+					if (quotedArrayValueStart != string::npos) {
+						quotedArrayValueEnd = i - 1;
+						auto arrayValueLength = quotedArrayValueEnd - quotedArrayValueStart + 1;
+						if (arrayValueLength > 0) {
+							ScriptVariable arrayValue;
+							auto arrayValueStringView = StringTools::viewTrim(string_view(&initializerString[quotedArrayValueStart], arrayValueLength));
+							if (arrayValueStringView.empty() == false) {
+								arrayValue.setImplicitTypedValueFromStringView(arrayValueStringView);
+								variable.pushArrayValue(arrayValue);
+							}
+						}
+						//
+						quotedArrayValueStart = string::npos;
+						quotedArrayValueEnd = string::npos;
+					} else
+					if (arrayValueStart != string::npos) {
+						arrayValueEnd = i - 1;
+						auto arrayValueLength = arrayValueEnd - arrayValueStart + 1;
+						if (arrayValueLength > 0) {
+							ScriptVariable arrayValue;
+							auto arrayValueStringView = StringTools::viewTrim(string_view(&initializerString[arrayValueStart], arrayValueLength));
+							if (arrayValueStringView.empty() == false) {
+								arrayValue.setImplicitTypedValueFromStringView(arrayValueStringView);
+								variable.pushArrayValue(arrayValue);
+							}
+						}
+						//
+						arrayValueStart = string::npos;
+						arrayValueEnd = string::npos;
+					}
+				} else
+				// otherwise push inner array initializer
+				if (squareBracketCount == 1) {
+					// parse and push
+					if (arrayValueStart != string::npos) {
+						arrayValueEnd = i;
+						auto arrayValueLength = arrayValueEnd - arrayValueStart + 1;
+						if (arrayValueLength > 0) {
+							auto arrayValueStringView = StringTools::viewTrim(string_view(&initializerString[arrayValueStart], arrayValueLength));
+							if (arrayValueStringView.empty() == false) {
+								auto arrayValue = initializeArrayInitializerVariable(arrayValueStringView);
+								variable.pushArrayValue(arrayValue);
+							}
+						}
+						//
+						arrayValueStart = string::npos;
+						arrayValueEnd = string::npos;
+					}
+				}
+			} else
+			// set up argument start
+			if (squareBracketCount == 1 && arrayValueStart == string::npos && c != ' ' && c != '\t' && c != '\n') {
+				arrayValueStart = i;
+			}
+		}
+		//
+		lc = c;
+	}
+	//
+	return variable;
+}
+
+const MiniScript::ScriptVariable MiniScript::initializeMapSetInitializerVariable(const string_view& initializerString) {
+	return ScriptVariable();
+}
