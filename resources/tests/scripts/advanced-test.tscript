@@ -19,19 +19,15 @@ on: nothing
 	end
 
 	# map
-	# $map = {
-	# 	test1: "test1",
-	# 	test2: "test2",
-	# 	test3: 789,
-	# 	test4: [1,2,3],
-	# 	test5: "Yaaaa",
-	# 	test6: {
-	# 		test6a: "1230",
-	# 		test6a: "4560",
-	# 		test6c: ["x","y","z"]
-	# 	}
-	# }
-	# console.log("map: " + $map)
+	$map = {
+		test1: "test1",
+		test2: "test2",
+		test3: 789
+	}
+	console.log("map: " + $map)
+	console.log("map keys: " + $map->getKeys())
+	console.log("map values: " + $map->getValues())
+
 	# done
 	script.stop()
 end
