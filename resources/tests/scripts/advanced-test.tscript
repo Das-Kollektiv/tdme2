@@ -9,7 +9,7 @@ end
 # if no condition is met, nothing will be executed, lol :D
 on: nothing
 	# array
-	$array = [1, 2, 3, [4, 5, 6]]
+	$array = [1, 2, 3, [4, 5, [6, 7, 8, "What?", "Whatssssappp???", 9]]]
 	console.log("array: " + $array)
 
 	$i = 0

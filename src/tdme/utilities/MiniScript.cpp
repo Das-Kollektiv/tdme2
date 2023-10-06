@@ -8953,13 +8953,13 @@ const MiniScript::ScriptVariable MiniScript::initializeArrayInitializerVariable(
 			if (squareBracketCount == 1 && c == ',') {
 				// quoted value
 				if (quotedArrayValueStart != string::npos) {
-					auto arrayValueLength = quotedArrayValueEnd - quotedArrayValueStart + 1;
+					quotedArrayValueStart++;
+					auto arrayValueLength = quotedArrayValueEnd - quotedArrayValueStart;
 					if (arrayValueLength > 0) {
 						ScriptVariable arrayValue;
 						auto arrayValueStringView = StringTools::viewTrim(string_view(&initializerString[quotedArrayValueStart], arrayValueLength));
 						if (arrayValueStringView.empty() == false) {
-							arrayValue.setImplicitTypedValueFromStringView(arrayValueStringView);
-							variable.pushArrayValue(arrayValue);
+							variable.pushArrayValue(string(arrayValueStringView));
 						}
 					}
 					//
@@ -8997,14 +8997,13 @@ const MiniScript::ScriptVariable MiniScript::initializeArrayInitializerVariable(
 				// done? push to array
 				if (squareBracketCount == 0) {
 					if (quotedArrayValueStart != string::npos) {
-						quotedArrayValueEnd = i - 1;
-						auto arrayValueLength = quotedArrayValueEnd - quotedArrayValueStart + 1;
+						quotedArrayValueStart++;
+						auto arrayValueLength = quotedArrayValueEnd - quotedArrayValueStart;
 						if (arrayValueLength > 0) {
 							ScriptVariable arrayValue;
 							auto arrayValueStringView = StringTools::viewTrim(string_view(&initializerString[quotedArrayValueStart], arrayValueLength));
 							if (arrayValueStringView.empty() == false) {
-								arrayValue.setImplicitTypedValueFromStringView(arrayValueStringView);
-								variable.pushArrayValue(arrayValue);
+								variable.pushArrayValue(string(arrayValueStringView));
 							}
 						}
 						//
