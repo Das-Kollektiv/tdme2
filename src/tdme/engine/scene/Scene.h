@@ -133,7 +133,7 @@ public:
 	 * @return Lights iterator
 	 */
 	inline UniquePtrSequenceIterator<SceneLight> getLights() {
-		return UniquePtrSequenceIterator<SceneLight>(&lights[0], &lights[lights.size()]);
+		return UniquePtrSequenceIterator<SceneLight>(&(*lights.begin()), &(*lights.end()));
 	}
 
 	/**
@@ -259,7 +259,7 @@ public:
 	 * @return Entities iterator
 	 */
 	inline UniquePtrSequenceIterator<SceneEntity> getEntities() {
-		return UniquePtrSequenceIterator<SceneEntity>(&entities[0], &entities[entities.size()]);
+		return UniquePtrSequenceIterator<SceneEntity>(&(*entities.begin()), &(*entities.end()));
 	}
 
 	/**

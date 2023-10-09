@@ -207,8 +207,6 @@ void SceneConnector::setNaturalLights(Engine* engine, float t) {
 void SceneConnector::setLights(Engine* engine, Scene* scene, float t, const Vector3& translation)
 {
 	//
-	for (auto i = 1; i < engine->getLightCount(); i++) engine->getLightAt(i)->setEnabled(false);
-	//
 	setNaturalLights(engine);
 	// additional lights
 	auto engineLightIdx = static_cast<int>(Engine::LIGHTIDX_OTHERS);

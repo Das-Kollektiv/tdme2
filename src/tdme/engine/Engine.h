@@ -1125,7 +1125,7 @@ public:
 	 * @return lights iterator
 	 */
 	inline UniquePtrSequenceIterator<Light> getLights() {
-		return UniquePtrSequenceIterator<Light>(&lights[0], &lights[lights.size()]);
+		return UniquePtrSequenceIterator<Light>(&(*lights.begin()), &(*lights.end()));
 	}
 
 	/**

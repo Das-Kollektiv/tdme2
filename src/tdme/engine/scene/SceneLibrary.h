@@ -71,7 +71,7 @@ public:
 	 * @return prototypes iterator
 	 */
 	inline UniquePtrSequenceIterator<Prototype> getPrototypes() {
-		return UniquePtrSequenceIterator<Prototype>(&prototypes[0], &prototypes[prototypes.size()]);
+		return UniquePtrSequenceIterator<Prototype>(&(*prototypes.begin()), &(*prototypes.end()));
 	}
 
 	/**

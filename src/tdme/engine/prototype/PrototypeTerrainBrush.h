@@ -95,7 +95,7 @@ public:
 	 * @return Prototypes iterator
 	 */
 	inline UniquePtrSequenceIterator<PrototypeTerrainBrushPrototype> getPrototypes() {
-		return UniquePtrSequenceIterator<PrototypeTerrainBrushPrototype>(&prototypes[0], &prototypes[prototypes.size()]);
+		return UniquePtrSequenceIterator<PrototypeTerrainBrushPrototype>(&(*prototypes.begin()), &(*prototypes.end()));
 	}
 
 	/**

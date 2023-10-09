@@ -263,7 +263,7 @@ public:
 	 * @return prototype terrain brushes
 	 */
 	inline UniquePtrSequenceIterator<PrototypeTerrainBrush> getBrushes() {
-		return UniquePtrSequenceIterator<PrototypeTerrainBrush>(&brushes[0], &brushes[brushes.size()]);
+		return UniquePtrSequenceIterator<PrototypeTerrainBrush>(&(*brushes.begin()), &(*brushes.end()));
 	}
 
 	/**
