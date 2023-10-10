@@ -214,6 +214,11 @@ public:
 	void applySkyShaderParameters();
 
 	/**
+	 * Apply post processing shader parameters
+	 */
+	void applyPostProcessingShaderParameters();
+
+	/**
 	 * Clear scene
 	 */
 	void clearScene();

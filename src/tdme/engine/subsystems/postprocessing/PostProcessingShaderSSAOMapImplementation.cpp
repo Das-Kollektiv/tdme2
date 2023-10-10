@@ -80,7 +80,7 @@ void PostProcessingShaderSSAOMapImplementation::initialize()
 	loadTextures(".");
 
 	// register shader
-	Engine::registerShader(Engine::ShaderType::SHADERTYPE_POSTPROCESSING, "ssaomap");
+	Engine::registerShader(Engine::ShaderType::SHADERTYPE_POSTPROCESSING, "ssaomap", {}, true);
 }
 
 void PostProcessingShaderSSAOMapImplementation::useProgram(int contextIdx) {

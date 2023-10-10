@@ -241,7 +241,7 @@ SRCS = \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingProgram.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShader.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.cpp \
-	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBlurImplementation.cpp \
+	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDepthBlurImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDefaultImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDesaturationImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderLightScatteringImplementation.cpp \

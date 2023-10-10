@@ -164,10 +164,22 @@ public:
 	void setSkyShaderDetails();
 
 	/**
+	 * Set post processing details
+	 */
+	void setPostProcessingDetails();
+
+	/**
 	 * Apply sky shader details
 	 * @param parameterName parameter name
 	 */
 	void applySkyShaderDetails(const string& parameterName);
+
+	/**
+	 * Apply post processing shader details
+	 * @param shaderId shader id
+	 * @param parameterName parameter name
+	 */
+	void applyPostProcessingDetails(const string& shaderId, const string& parameterName);
 
 	/**
 	 * Set GUI details

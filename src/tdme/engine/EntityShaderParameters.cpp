@@ -36,8 +36,7 @@ const ShaderParameter EntityShaderParameters::getShaderParameter(const string& p
 		if (defaultShaderParameter == nullptr) return ShaderParameter();
 		return defaultShaderParameter->value;
 	}
-	const auto& shaderParameter = shaderParameterIt->second;
-	return shaderParameter;
+	return shaderParameterIt->second;
 }
 
 void EntityShaderParameters::setShaderParameter(const string& parameterName, const ShaderParameter& parameterValue) {

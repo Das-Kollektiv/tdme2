@@ -307,6 +307,24 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 	} else
 	if (StringTools::startsWith(node->getId(), "sky.shader.") == true) {
 		applySkyShaderDetails(StringTools::substring(node->getId(), string("sky.shader.").size(), node->getId().size()));
+	} else
+	if (StringTools::startsWith(node->getId(), "postprocessing.shader.") == true) {
+		auto shaderParameterString = StringTools::substring(node->getId(), string("postprocessing.shader.").size());
+		auto shaderParameterArray = StringTools::tokenize(shaderParameterString, ".");
+		auto shaderId = shaderParameterArray.size() >= 1?shaderParameterArray[0]:string();
+		auto shaderParameterName = shaderParameterArray.size() == 2?shaderParameterArray[1]:string();
+		//
+		if (shaderParameterName.empty() == true) {
+			if (node->getController()->getValue().getString() == "1") {
+				view->getScene()->enablePostProcessingShader(shaderId);
+			} else {
+				view->getScene()->disablePostProcessingShader(shaderId);
+			}
+			//
+			view->applyPostProcessingShaderParameters();
+		} else {
+			applyPostProcessingDetails(shaderId, shaderParameterName);
+		}
 	} else {
 		for (const auto& applyTranslationNode: applyTranslationNodes) {
 			if (node->getId() == applyTranslationNode) {
@@ -637,6 +655,7 @@ void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 	if (basePropertiesSubController->onAction(type, node, view->getScene()) == true) return;
 	//
 	if (type != GUIActionListenerType::PERFORMED) return;
+	//
 	if (node->getId() == view->getTabId() + "_tab_button_play") {
 		view->runScene();
 	} else
@@ -648,16 +667,16 @@ void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 	} else
 	if (node->getId() == "menu_view_scene_stop") {
 		view->stopScene();
-	}
+	} else
 	if (node->getId() == "tdme.entities.rename_input") {
 		renameEntity();
 	} else
 	if (StringTools::startsWith(node->getId(), "sky.shader.") == true &&
 		StringTools::endsWith(node->getId(), "_color_edit") == true) {
 		//
-		auto parameterName = StringTools::substring(node->getId(), string("sky.shader.").size(), node->getId().size() - string("_color_edit").size());
-		auto parameter = view->getScene()->getSkyShaderParameters().getShaderParameter(parameterName);
-		auto color4 = parameter.getColor4Value();
+		auto shaderParameterName = StringTools::substring(node->getId(), string("sky.shader.").size(), node->getId().size() - string("_color_edit").size());
+		auto shaderParameter = view->getScene()->getSkyShaderParameters().getShaderParameter(shaderParameterName);
+		auto color4 = shaderParameter.getColor4Value();
 		//
 		class OnColorChangeAction: public virtual Action
 		{
@@ -667,11 +686,11 @@ void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 				auto view = sceneEditorTabController->getView();
 				auto scene = view->getScene();
 				auto shaderParameters = scene->getSkyShaderParameters();
-				auto parameter = shaderParameters.getShaderParameter(parameterName);
+				auto shaderParameter = shaderParameters.getShaderParameter(shaderParameterName);
 				auto color4 = sceneEditorTabController->popUps->getColorPickerScreenController()->getColor();
-				shaderParameters.setShaderParameter(parameterName, color4);
+				shaderParameters.setShaderParameter(shaderParameterName, color4);
 				try {
-					required_dynamic_cast<GUIImageNode*>(sceneEditorTabController->screenNode->getNodeById("sky.shader." + parameterName + "_color"))->setEffectColorMul(color4);
+					required_dynamic_cast<GUIImageNode*>(sceneEditorTabController->screenNode->getNodeById("sky.shader." + shaderParameterName + "_color"))->setEffectColorMul(color4);
 				} catch (Exception& exception) {
 					Console::println("SceneEditorTabController::onAction(): An error occurred: " + string(exception.what()));
 					sceneEditorTabController->showInfoPopUp("Warning", string(exception.what()));
@@ -680,14 +699,58 @@ void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 				scene->setSkyShaderParameters(shaderParameters);
 				view->applySkyShaderParameters();
 			}
-			OnColorChangeAction(SceneEditorTabController* sceneEditorTabController, const string& parameterName): sceneEditorTabController(sceneEditorTabController), parameterName(parameterName) {
+			OnColorChangeAction(SceneEditorTabController* sceneEditorTabController, const string& shaderParameterName): sceneEditorTabController(sceneEditorTabController), shaderParameterName(shaderParameterName) {
 			}
 		private:
 			SceneEditorTabController* sceneEditorTabController;
+			string shaderParameterName;
+		};
+		//
+		popUps->getColorPickerScreenController()->show(color4, new OnColorChangeAction(this, shaderParameterName));
+		//
+	} else
+	if (StringTools::startsWith(node->getId(), "postprocessing.shader.") == true &&
+		StringTools::endsWith(node->getId(), "_color_edit") == true) {
+		//
+		auto shaderParameterString = StringTools::substring(node->getId(), string("postprocessing.shader.").size(), node->getId().size() - string("_color_edit").size());
+		auto shaderParameterArray = StringTools::tokenize(shaderParameterString, ".");
+		auto shaderId = shaderParameterArray.size() >= 1?shaderParameterArray[0]:string();
+		auto shaderParameterName = shaderParameterArray.size() == 2?shaderParameterArray[1]:string();
+		auto shaderParameters = view->getScene()->getPostProcessingShaderParameters(shaderId);
+		auto parameter = shaderParameters != nullptr?shaderParameters->getShaderParameter(shaderParameterName):Engine::getDefaultShaderParameter(shaderId, shaderParameterName);
+		auto color4 = parameter.getColor4Value();
+		//
+		class OnColorChangeAction: public virtual Action
+		{
+		public:
+			void performAction() override {
+				//
+				auto view = sceneEditorTabController->getView();
+				auto scene = view->getScene();
+				auto shaderParametersPtr = view->getScene()->getPostProcessingShaderParameters(shaderId);
+				auto shaderParameters = shaderParametersPtr != nullptr?*shaderParametersPtr:EntityShaderParameters();
+				auto parameter = shaderParametersPtr != nullptr?shaderParametersPtr->getShaderParameter(parameterName):Engine::getDefaultShaderParameter(shaderId, parameterName);
+				auto color4 = sceneEditorTabController->popUps->getColorPickerScreenController()->getColor();
+				shaderParameters.setShaderParameter(parameterName, color4);
+				try {
+					required_dynamic_cast<GUIImageNode*>(sceneEditorTabController->screenNode->getNodeById("postprocessing.shader." + shaderId + "." + parameterName + "_color"))->setEffectColorMul(color4);
+				} catch (Exception& exception) {
+					Console::println("SceneEditorTabController::onAction(): An error occurred: " + string(exception.what()));
+					sceneEditorTabController->showInfoPopUp("Warning", string(exception.what()));
+				}
+				//
+				scene->setPostProcessingShaderParameters(shaderId, shaderParameters);
+				view->applyPostProcessingShaderParameters();
+			}
+			OnColorChangeAction(SceneEditorTabController* sceneEditorTabController, const string& shaderId, const string& parameterName): sceneEditorTabController(sceneEditorTabController), shaderId(shaderId), parameterName(parameterName) {
+			}
+		private:
+			SceneEditorTabController* sceneEditorTabController;
+			string shaderId;
 			string parameterName;
 		};
 		//
-		popUps->getColorPickerScreenController()->show(color4, new OnColorChangeAction(this, parameterName));
+		popUps->getColorPickerScreenController()->show(color4, new OnColorChangeAction(this, shaderId, shaderParameterName));
 		//
 	} else
 	if (node->getId() == "gui_open") {
@@ -1003,6 +1066,182 @@ void SceneEditorTabController::setSkyShaderDetails() {
 	}
 }
 
+void SceneEditorTabController::setPostProcessingDetails() {
+	view->getEditorView()->setDetailsContent(
+		"<template id=\"details_postprocessing\" src=\"resources/engine/gui/template_details_postprocessing.xml\" />\n"
+	);
+	//
+	auto scene = view->getScene();
+	for (const auto& shaderId: Engine::getRegisteredShader(Engine::SHADERTYPE_POSTPROCESSING, false)) {
+		string xml;
+		//
+		{
+			auto parameterValue = scene->isPostProcessingShaderEnabled(shaderId) == true?"true":"";
+			//
+			xml+=
+				"<template name=\"" + GUIParser::escape(shaderId) + "\" " +
+				"id=\"" + GUIParser::escape("postprocessing.shader." + shaderId) + "\" " +
+				"src=\"resources/engine/gui/template_details_rendering_postprocessing_shader.xml\" " +
+				"value=\"" + parameterValue + "\" " +
+				"/>\n";
+		}
+		//
+		auto shaderParameters = scene->getPostProcessingShaderParameters(shaderId);
+		//
+		for (const auto& parameterName: Engine::getShaderParameterNames(shaderId)) {
+			auto parameterDefaults = Engine::getDefaultShaderParameter(shaderId, parameterName);
+			if (parameterDefaults == nullptr) continue;
+			//
+			auto parameter = shaderParameters != nullptr?shaderParameters->getShaderParameter(parameterName):parameterDefaults->value;
+			//
+			switch (parameter.getType()) {
+				case ShaderParameter::TYPE_FLOAT:
+					{
+						auto parameterValue = parameter.getValueAsString();
+						xml+=
+							"<template name=\"" +
+							GUIParser::escape(parameterName) + "\" " +
+							"id=\"" + GUIParser::escape("postprocessing.shader." + shaderId + "." + parameterName) + "\" " +
+							"src=\"resources/engine/gui/template_details_rendering_shader_float.xml\" " +
+							"value=\"" + parameterValue + "\" " +
+							"min=\"" + to_string(parameterDefaults->min.getFloatValue()) + "\" " +
+							"max=\"" + to_string(parameterDefaults->max.getFloatValue()) + "\" " +
+							"step=\"" + to_string(parameterDefaults->step.getFloatValue()) + "\" " +
+							"/>\n";
+						break;
+					}
+				case ShaderParameter::TYPE_INTEGER:
+					{
+						auto parameterValue = parameter.getValueAsString();
+						xml+=
+							"<template name=\"" + GUIParser::escape(parameterName) + "\" " +
+							"id=\"" + GUIParser::escape("postprocessing.shader." + shaderId + "." + parameterName) + "\" " +
+							"src=\"resources/engine/gui/template_details_rendering_shader_int.xml\" " +
+							"value=\"" + parameterValue + "\" " +
+							"min=\"" + to_string(parameterDefaults->min.getIntegerValue()) + "\" " +
+							"max=\"" + to_string(parameterDefaults->max.getIntegerValue()) + "\" " +
+							"step=\"" + to_string(parameterDefaults->step.getIntegerValue()) + "\" " +
+							"/>\n";
+						break;
+					}
+				case ShaderParameter::TYPE_BOOLEAN:
+					{
+						auto parameterValue = parameter.getValueAsString();
+						xml+=
+							"<template name=\"" + GUIParser::escape(parameterName) + "\" " +
+							"id=\"" + GUIParser::escape("postprocessing.shader." + shaderId + "." + parameterName) + "\" " +
+							"src=\"resources/engine/gui/template_details_rendering_shader_bool.xml\" " +
+							"value=\"" + parameterValue + "\" " +
+							"/>\n";
+						break;
+					}
+				case ShaderParameter::TYPE_VECTOR2:
+					{
+						auto vec2 = parameter.getVector2Value();
+						xml+=
+							"<template name=\"" + GUIParser::escape(parameterName) + "\" " +
+							"id=\"" + GUIParser::escape("postprocessing.shader." + shaderId + "." + parameterName) + "\" " +
+							"src=\"resources/engine/gui/template_details_rendering_shader_vector2.xml\" " +
+							"value_x=\"" + to_string(vec2.getX()) + "\" " +
+							"min_x=\"" + to_string(parameterDefaults->min.getVector2Value().getX()) + "\" " +
+							"max_x=\"" + to_string(parameterDefaults->max.getVector2Value().getX()) + "\" " +
+							"step_x=\"" + to_string(parameterDefaults->step.getVector2Value().getX()) + "\" " +
+							"value_y=\"" + to_string(vec2.getY()) + "\" "+
+							"min_y=\"" + to_string(parameterDefaults->min.getVector2Value().getY()) + "\" " +
+							"max_y=\"" + to_string(parameterDefaults->max.getVector2Value().getY()) + "\" " +
+							"step_y=\"" + to_string(parameterDefaults->step.getVector2Value().getY()) + "\" " +
+							"/>\n";
+					}
+					break;
+				case ShaderParameter::TYPE_VECTOR3:
+					{
+						auto vec3 = parameter.getVector3Value();
+						xml+=
+							"<template name=\"" + GUIParser::escape(parameterName) + "\" " +
+							"id=\"" + GUIParser::escape("postprocessing.shader." + shaderId + "." + parameterName) + "\" " +
+							"src=\"resources/engine/gui/template_details_rendering_shader_vector3.xml\" " +
+							"value_x=\"" + to_string(vec3.getX()) + "\" " +
+							"min_x=\"" + to_string(parameterDefaults->min.getVector3Value().getX()) + "\" " +
+							"max_x=\"" + to_string(parameterDefaults->max.getVector3Value().getX()) + "\" " +
+							"step_x=\"" + to_string(parameterDefaults->step.getVector3Value().getX()) + "\" " +
+							"value_y=\"" + to_string(vec3.getY()) + "\" "+
+							"min_y=\"" + to_string(parameterDefaults->min.getVector3Value().getY()) + "\" " +
+							"max_y=\"" + to_string(parameterDefaults->max.getVector3Value().getY()) + "\" " +
+							"step_y=\"" + to_string(parameterDefaults->step.getVector3Value().getY()) + "\" " +
+							"value_z=\"" + to_string(vec3.getZ()) + "\" "+
+							"min_z=\"" + to_string(parameterDefaults->min.getVector3Value().getZ()) + "\" " +
+							"max_z=\"" + to_string(parameterDefaults->max.getVector3Value().getZ()) + "\" " +
+							"step_z=\"" + to_string(parameterDefaults->step.getVector3Value().getZ()) + "\" " +
+							"/>\n";
+					}
+					break;
+				case ShaderParameter::TYPE_VECTOR4:
+					{
+						auto vec4 = parameter.getVector4Value();
+						xml+=
+							"<template name=\"" + GUIParser::escape(parameterName) + "\" " +
+							"id=\"" + GUIParser::escape("postprocessing.shader." + shaderId + "." + parameterName) + "\" " +
+							"src=\"resources/engine/gui/template_details_rendering_shader_vector4.xml\" " +
+							"value_x=\"" + to_string(vec4.getX()) + "\" " +
+							"min_x=\"" + to_string(parameterDefaults->min.getVector4Value().getX()) + "\" " +
+							"max_x=\"" + to_string(parameterDefaults->max.getVector4Value().getX()) + "\" " +
+							"step_x=\"" + to_string(parameterDefaults->step.getVector4Value().getX()) + "\" " +
+							"value_y=\"" + to_string(vec4.getY()) + "\" "+
+							"min_y=\"" + to_string(parameterDefaults->min.getVector4Value().getY()) + "\" " +
+							"max_y=\"" + to_string(parameterDefaults->max.getVector4Value().getY()) + "\" " +
+							"step_y=\"" + to_string(parameterDefaults->step.getVector4Value().getY()) + "\" " +
+							"value_z=\"" + to_string(vec4.getZ()) + "\" "+
+							"min_z=\"" + to_string(parameterDefaults->min.getVector4Value().getZ()) + "\" " +
+							"max_z=\"" + to_string(parameterDefaults->max.getVector4Value().getZ()) + "\" " +
+							"step_z=\"" + to_string(parameterDefaults->step.getVector4Value().getZ()) + "\" " +
+							"value_w=\"" + to_string(vec4.getW()) + "\" "+
+							"min_w=\"" + to_string(parameterDefaults->min.getVector4Value().getW()) + "\" " +
+							"max_w=\"" + to_string(parameterDefaults->max.getVector4Value().getW()) + "\" " +
+							"step_w=\"" + to_string(parameterDefaults->step.getVector4Value().getW()) + "\" " +
+							"/>\n";
+					}
+					break;
+				case ShaderParameter::TYPE_COLOR4:
+					{
+						xml+=
+							"<template name=\"" + GUIParser::escape(parameterName) + "\" "
+							"id=\"" + GUIParser::escape("postprocessing.shader." + shaderId + "." + parameterName) + "\" " +
+							"src=\"resources/engine/gui/template_details_rendering_shader_color4.xml\" " +
+							"/>\n";
+					}
+					break;
+				case ShaderParameter::TYPE_NONE:
+					break;
+			}
+		}
+		//
+		xml+= "<space height=\"1\" width=\"100%\" border-top=\"1\" border-color=\"{$color.element_frame}\"  />";
+		//
+		try {
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_postprocessing"))->getActiveConditions().add("open");
+			required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("postprocessing_details"))->addSubNodes(xml, false);
+			//
+			for (const auto& parameterName: Engine::getShaderParameterNames(shaderId)) {
+				auto parameterDefaults = Engine::getDefaultShaderParameter(shaderId, parameterName);
+				auto parameter = parameterDefaults->value;
+				switch (parameter.getType()) {
+					case ShaderParameter::TYPE_COLOR4:
+						{
+							auto color4 = parameter.getColor4Value();
+							required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("postprocessing.shader." + shaderId + "." + parameterName + "_color"))->setEffectColorMul(color4);
+						}
+						break;
+					default:
+						break;
+				}
+			}
+		} catch (Exception& exception) {
+			Console::println("SceneEditorTabController::setPostProcessingDetails(): An error occurred: " + string(exception.what()));
+			showInfoPopUp("Warning", string(exception.what()));
+		}
+	}
+}
+
 void SceneEditorTabController::applySkyShaderDetails(const string& parameterName) {
 	//
 	auto scene = view->getScene();
@@ -1072,17 +1311,6 @@ void SceneEditorTabController::applySkyShaderDetails(const string& parameterName
 				);
 				break;
 			case ShaderParameter::TYPE_COLOR4:
-				shaderParameters.setShaderParameter(
-					parameterName,
-					ShaderParameter(
-						Color4(
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky.shader." + parameterName + "_x"))->getController()->getValue().getString()),
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky.shader." + parameterName + "_y"))->getController()->getValue().getString()),
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky.shader." + parameterName + "_z"))->getController()->getValue().getString()),
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky.shader." + parameterName + "_w"))->getController()->getValue().getString())
-						)
-					)
-				);
 				break;
 			case ShaderParameter::TYPE_NONE:
 				break;
@@ -1096,9 +1324,96 @@ void SceneEditorTabController::applySkyShaderDetails(const string& parameterName
 	view->applySkyShaderParameters();
 }
 
+void SceneEditorTabController::applyPostProcessingDetails(const string& shaderId, const string& parameterName) {
+	//
+	auto scene = view->getScene();
+	auto shaderParametersPtr = scene->getPostProcessingShaderParameters(shaderId);
+	auto shaderParameters = shaderParametersPtr != nullptr?*shaderParametersPtr:EntityShaderParameters();
+	shaderParameters.setShader(shaderId);
+	auto shaderParameterDefaults = Engine::getDefaultShaderParameter(shaderId, parameterName);
+	if (shaderParameterDefaults == nullptr) return;
+	//
+	try {
+		auto parameter = shaderParameters.getShaderParameter(parameterName);
+		switch (shaderParameterDefaults->value.getType()) {
+			case ShaderParameter::TYPE_FLOAT:
+				shaderParameters.setShaderParameter(
+					parameterName,
+					ShaderParameter(
+						Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("postprocessing.shader." + shaderId + "." + parameterName))->getController()->getValue().getString())
+					)
+				);
+				break;
+			case ShaderParameter::TYPE_INTEGER:
+				shaderParameters.setShaderParameter(
+					parameterName,
+					ShaderParameter(
+						Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("postprocessing.shader." + shaderId + "." + parameterName))->getController()->getValue().getString())
+					)
+				);
+				break;
+			case ShaderParameter::TYPE_BOOLEAN:
+				shaderParameters.setShaderParameter(
+					parameterName,
+					ShaderParameter(
+						required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("postprocessing.shader." + shaderId + "." + parameterName))->getController()->getValue().getString() == "1"
+					)
+				);
+				break;
+			case ShaderParameter::TYPE_VECTOR2:
+				shaderParameters.setShaderParameter(
+					parameterName,
+					ShaderParameter(
+						Vector2(
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("postprocessing.shader." + shaderId + "." + parameterName))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("postprocessing.shader." + shaderId + "." + parameterName))->getController()->getValue().getString())
+						)
+					)
+				);
+				break;
+			case ShaderParameter::TYPE_VECTOR3:
+				shaderParameters.setShaderParameter(
+					parameterName,
+					ShaderParameter(
+						Vector3(
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("postprocessing.shader." + shaderId + "." + parameterName))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("postprocessing.shader." + shaderId + "." + parameterName))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("postprocessing.shader." + shaderId + "." + parameterName))->getController()->getValue().getString())
+						)
+					)
+				);
+				break;
+			case ShaderParameter::TYPE_VECTOR4:
+				shaderParameters.setShaderParameter(
+					parameterName,
+					ShaderParameter(
+						Vector4(
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("postprocessing.shader." + shaderId + "." + parameterName))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("postprocessing.shader." + shaderId + "." + parameterName))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("postprocessing.shader." + shaderId + "." + parameterName))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("postprocessing.shader." + shaderId + "." + parameterName))->getController()->getValue().getString())
+						)
+					)
+				);
+				break;
+			case ShaderParameter::TYPE_COLOR4:
+				break;
+			case ShaderParameter::TYPE_NONE:
+				break;
+		}
+	} catch (Exception& exception) {
+		Console::println("SceneEditorTabController::applyPostProcessingDetails(): An error occurred: " + string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
+	}
+	//
+	scene->setPostProcessingShaderParameters(shaderId, shaderParameters);
+	view->applyPostProcessingShaderParameters();
+}
+
 void SceneEditorTabController::setGUIDetails() {
 	auto scene = view->getScene();
 
+	//
 	view->getEditorView()->setDetailsContent(
 		string("<template id=\"details_gui\" src=\"resources/engine/gui/template_details_gui.xml\" />")
 	);
@@ -1463,6 +1778,7 @@ void SceneEditorTabController::setOutlinerContent() {
 	if (scene != nullptr) {
 		basePropertiesSubController->createBasePropertiesXML(scene, xml);
 		xml+= "	<selectbox-option image=\"resources/engine/images/gui.png\" text=\"" + GUIParser::escape("GUI") + "\" value=\"" + GUIParser::escape("scene.gui") + "\" />\n";
+		xml+= "	<selectbox-option image=\"resources/engine/images/sky.png\" text=\"Postprocessing\" value=\"scene.postprocessing\" />\n";
 		xml+= "	<selectbox-option image=\"resources/engine/images/sky.png\" text=\"Sky\" value=\"scene.sky\" />\n";
 		{
 			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Lights") + "\" value=\"" + GUIParser::escape("scene.lights") + "\">\n";
@@ -1512,6 +1828,9 @@ void SceneEditorTabController::updateDetails(const string& outlinerNode) {
 	view->getEditorView()->setDetailsContent(string());
 	if (outlinerNode == "scene.gui") {
 		setGUIDetails();
+	} else
+	if (outlinerNode == "scene.postprocessing") {
+		setPostProcessingDetails();
 	} else
 	if (outlinerNode == "scene.sky") {
 		setSkyShaderDetails();

@@ -575,6 +575,7 @@ void SceneEditorTabView::initialize()
 	SceneConnector::addScene(engine.get(), scene.get(), true, true, true, true, true);
 	cameraInputHandler->setSceneCenter(scene->getCenter());
 	applySkyShaderParameters();
+	applyPostProcessingShaderParameters();
 	updateGrid();
 	// TODO: load settings
 }
@@ -609,6 +610,33 @@ void SceneEditorTabView::applySkyShaderParameters() {
 	const auto& skyShaderParameters = scene->getSkyShaderParameters();
 	for (const auto& parameterName: Engine::getShaderParameterNames("sky")) {
 		engine->setShaderParameter("sky", parameterName, skyShaderParameters.getShaderParameter(parameterName));
+	}
+}
+
+void SceneEditorTabView::applyPostProcessingShaderParameters() {
+	//
+	engine->resetPostProcessingPrograms();
+	//
+	for (const auto& shaderId: Engine::getRegisteredShader(Engine::SHADERTYPE_POSTPROCESSING, false)) {
+		//
+		if (scene->isPostProcessingShaderEnabled(shaderId) == true) {
+			engine->addPostProcessingProgram(shaderId);
+		}
+		//
+		for (const auto& parameterName: Engine::getShaderParameterNames(shaderId)) {
+			//
+			auto parameterDefaults = Engine::getDefaultShaderParameter(shaderId, parameterName);
+			if (parameterDefaults == nullptr) {
+				continue;
+			}
+			//
+			auto shaderParameters = scene->getPostProcessingShaderParameters(shaderId);
+			if (shaderParameters == nullptr) {
+				continue;
+			}
+			//
+			engine->setShaderParameter(shaderId, parameterName, shaderParameters->getShaderParameter(parameterName));
+		}
 	}
 }
 

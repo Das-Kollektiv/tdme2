@@ -280,7 +280,8 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 			 prototype
 		);
 		if (jSceneEntity.FindMember("properties") != jSceneEntity.MemberEnd()) {
-			for (auto j = 0; j < jSceneEntity["properties"].GetArray().Size(); j++) {
+			auto jSceneEntities = jSceneEntity["properties"].GetArray();
+			for (auto j = 0; j < jSceneEntities.Size(); j++) {
 				const auto& jSceneEntityProperty = jSceneEntity["properties"].GetArray()[j];
 				sceneEntity->addProperty(
 					jSceneEntityProperty["name"].GetString(),
@@ -298,7 +299,7 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 	scene->setFileName((pathName.empty() == false?pathName + "/":"") + fileName);
 	scene->update();
 
-	//
+	// sky shader parameter
 	if (jRoot.FindMember("skyshader") != jRoot.MemberEnd()) {
 		const auto& jSkyShaderParameters = jRoot["skyshader"];
 		EntityShaderParameters skyShaderParameters;
@@ -307,6 +308,31 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 			skyShaderParameters.setShaderParameter(jShaderParameterIt->name.GetString(), string(jShaderParameterIt->value.GetString()));
 		}
 		scene->setSkyShaderParameters(skyShaderParameters);
+	}
+
+	// post processing shaders
+	if (jRoot.FindMember("postprocessingshaders") != jRoot.MemberEnd()) {
+		//
+		const auto& jPostProcessingShaders = jRoot["postprocessingshaders"];
+		//
+		const auto& jEnabledPostProcessingShaders = jPostProcessingShaders["enabled"].GetArray();
+		for (auto i = 0; i < jEnabledPostProcessingShaders.Size(); i++) {
+			scene->enablePostProcessingShader(jEnabledPostProcessingShaders[i].GetString());
+		}
+		//
+		const auto& jAllPostProcessingShaderParameters = jPostProcessingShaders["parameters"].GetObject();
+		for (auto jAllPostProcessingShaderParameterIt = jAllPostProcessingShaderParameters.MemberBegin(); jAllPostProcessingShaderParameterIt != jAllPostProcessingShaderParameters.MemberEnd(); ++jAllPostProcessingShaderParameterIt) {
+			const auto& jShaderId = jAllPostProcessingShaderParameterIt->name.GetString();
+			const auto& jShaderParameters = jAllPostProcessingShaderParameterIt->value.GetObject();
+			//
+			EntityShaderParameters shaderParameters;
+			shaderParameters.setShader(jShaderId);
+			for (auto jShaderParameterIt = jShaderParameters.MemberBegin(); jShaderParameterIt != jShaderParameters.MemberEnd(); ++jShaderParameterIt) {
+				shaderParameters.setShaderParameter(jShaderParameterIt->name.GetString(), string(jShaderParameterIt->value.GetString()));
+			}
+			//
+			scene->setPostProcessingShaderParameters(jShaderId, shaderParameters);
+		}
 	}
 
 	//
