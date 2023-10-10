@@ -39,6 +39,12 @@
 
 #include <ext/rapidjson/document.h>
 
+// this fixes:
+//	error C2039: 'GetObjectA': is not a member of 'rapidjson::GenericValue<rapidjson::UTF8<char>,rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>>'
+#ifdef GetObject
+	#undef GetObject
+#endif
+
 using std::make_unique;
 using std::string;
 using std::to_string;
