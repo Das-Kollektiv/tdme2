@@ -47,7 +47,7 @@ int main(int argc, char** argv)
 			make_unique<PtrTest>(3)
 		};
 		Console::println("array: iterating entries 1, 2, 3 via SequenceContainerIterator");
-		for (auto v: UniquePtrSequenceIterator<PtrTest>(&array[0], &array[array.size()])) {
+		for (auto v: UniquePtrSequenceIterator<PtrTest>(&(*array.begin()), &(*array.end()))) {
 			Console::println(to_string(v->v));
 		}
 		// vector
@@ -56,7 +56,7 @@ int main(int argc, char** argv)
 		vector.push_back(make_unique<PtrTest>(5));
 		vector.push_back(make_unique<PtrTest>(6));
 		Console::println("vector: iterating entries 4, 5, 6 via SequenceContainerIterator");
-		for (auto v: UniquePtrSequenceIterator<PtrTest>(&vector[0], &vector[vector.size()])) {
+		for (auto v: UniquePtrSequenceIterator<PtrTest>(&(*vector.begin()), &(*vector.end()))) {
 			Console::println(to_string(v->v));
 		}
 	}

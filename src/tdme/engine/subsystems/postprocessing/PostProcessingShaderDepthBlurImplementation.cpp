@@ -2,25 +2,25 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.h>
-#include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBlurImplementation.h>
+#include <tdme/engine/subsystems/postprocessing/PostProcessingShaderDepthBlurImplementation.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
 
 using std::string;
 
-using tdme::engine::subsystems::postprocessing::PostProcessingShaderBlurImplementation;
+using tdme::engine::subsystems::postprocessing::PostProcessingShaderDepthBlurImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 
-bool PostProcessingShaderBlurImplementation::isSupported(Renderer* renderer) {
+bool PostProcessingShaderDepthBlurImplementation::isSupported(Renderer* renderer) {
 	return renderer->getShaderVersion() == "gl3";
 }
 
-PostProcessingShaderBlurImplementation::PostProcessingShaderBlurImplementation(Renderer* renderer): PostProcessingShaderBaseImplementation(renderer)
+PostProcessingShaderDepthBlurImplementation::PostProcessingShaderDepthBlurImplementation(Renderer* renderer): PostProcessingShaderBaseImplementation(renderer)
 {
 }
 
-void PostProcessingShaderBlurImplementation::initialize()
+void PostProcessingShaderDepthBlurImplementation::initialize()
 {
 	auto shaderVersion = renderer->getShaderVersion();
 
@@ -53,10 +53,10 @@ void PostProcessingShaderBlurImplementation::initialize()
 	if (initialized == true) {
 		Engine::registerShader(
 			Engine::ShaderType::SHADERTYPE_POSTPROCESSING,
-			"blur"
+			"depth_blur"
 		);
 	}
 }
 
-void PostProcessingShaderBlurImplementation::setShaderParameters(int contextIdx, Engine* engine) {
+void PostProcessingShaderDepthBlurImplementation::setShaderParameters(int contextIdx, Engine* engine) {
 }

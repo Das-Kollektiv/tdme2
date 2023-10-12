@@ -4,7 +4,7 @@
 #include <unordered_map>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBlurImplementation.h>
+#include <tdme/engine/subsystems/postprocessing/PostProcessingShaderDepthBlurImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderDefaultImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderDesaturationImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderImplementation.h>
@@ -19,7 +19,7 @@ using std::string;
 using std::unordered_map;
 
 using tdme::engine::subsystems::postprocessing::PostProcessingShader;
-using tdme::engine::subsystems::postprocessing::PostProcessingShaderBlurImplementation;
+using tdme::engine::subsystems::postprocessing::PostProcessingShaderDepthBlurImplementation;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderDefaultImplementation;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderDesaturationImplementation;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderImplementation;
@@ -32,7 +32,7 @@ using tdme::engine::Engine;
 
 PostProcessingShader::PostProcessingShader(Renderer* renderer)
 {
-	if (PostProcessingShaderBlurImplementation::isSupported(renderer) == true) shaders["depth_blur"] = new PostProcessingShaderBlurImplementation(renderer);
+	if (PostProcessingShaderDepthBlurImplementation::isSupported(renderer) == true) shaders["depth_blur"] = new PostProcessingShaderDepthBlurImplementation(renderer);
 	if (PostProcessingShaderDefaultImplementation::isSupported(renderer) == true) shaders["default"] = new PostProcessingShaderDefaultImplementation(renderer);
 	if (PostProcessingShaderDesaturationImplementation::isSupported(renderer) == true) shaders["desaturation"] = new PostProcessingShaderDesaturationImplementation(renderer);
 	if (PostProcessingShaderLightScatteringImplementation::isSupported(renderer) == true) shaders["light_scattering"] = new PostProcessingShaderLightScatteringImplementation(renderer);

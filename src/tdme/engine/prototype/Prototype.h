@@ -270,7 +270,7 @@ public:
 	 * @return bounding volumes iterator
 	 */
 	inline UniquePtrSequenceIterator<PrototypeBoundingVolume> getBoundingVolumes() {
-		return UniquePtrSequenceIterator<PrototypeBoundingVolume>(&boundingVolumes[0], &boundingVolumes[boundingVolumes.size()]);
+		return UniquePtrSequenceIterator<PrototypeBoundingVolume>(&(*boundingVolumes.begin()), &(*boundingVolumes.end()));
 	}
 
 	/**
@@ -371,7 +371,7 @@ public:
 	 * @return particle systems iterator
 	 */
 	inline UniquePtrSequenceIterator<PrototypeParticleSystem> getParticleSystems() {
-		return UniquePtrSequenceIterator<PrototypeParticleSystem>(&particleSystems[0], &particleSystems[particleSystems.size()]);
+		return UniquePtrSequenceIterator<PrototypeParticleSystem>(&(*particleSystems.begin()), &(*particleSystems.end()));
 	}
 
 	/**
@@ -510,7 +510,7 @@ public:
 	 * @return sounds iterator
 	 */
 	inline UniquePtrSequenceIterator<PrototypeAudio> getSounds() {
-		return UniquePtrSequenceIterator<PrototypeAudio>(&sounds[0], &sounds[sounds.size()]);
+		return UniquePtrSequenceIterator<PrototypeAudio>(&(*sounds.begin()), &(*sounds.end()));
 	}
 
 	/**

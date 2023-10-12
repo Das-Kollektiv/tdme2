@@ -1,0 +1,14 @@
+<template>	
+	<layout alignment="vertical" width="100%" height="auto" horizontal-align="center">
+
+		<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+			<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Enable '{$name}'" width="*" height="auto"/>
+			<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+				<checkbox id="{$id}" width="25" height="25" value="1" selected="{$value}" />
+			</layout>
+		</layout>
+
+		<space height="5" />
+
+	</layout>
+</template>

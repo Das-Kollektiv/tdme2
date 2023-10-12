@@ -834,7 +834,7 @@ public:
 	 * Returns registered shaders for given type
 	 * @param type type
 	 */
-	inline static const vector<string> getRegisteredShader(ShaderType type) {
+	inline static const vector<string> getRegisteredShader(ShaderType type, bool sort = true) {
 		vector<string> result;
 		for (const auto& shader: shaders) {
 			if (shader.internal == true) continue;
@@ -842,7 +842,7 @@ public:
 				result.push_back(shader.id);
 			}
 		}
-		sort(result.begin(), result.end());
+		if (sort == true) std::sort(result.begin(), result.end());
 		return result;
 	}
 
@@ -1125,7 +1125,7 @@ public:
 	 * @return lights iterator
 	 */
 	inline UniquePtrSequenceIterator<Light> getLights() {
-		return UniquePtrSequenceIterator<Light>(&lights[0], &lights[lights.size()]);
+		return UniquePtrSequenceIterator<Light>(&(*lights.begin()), &(*lights.end()));
 	}
 
 	/**
