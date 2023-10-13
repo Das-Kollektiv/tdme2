@@ -8947,9 +8947,6 @@ const MiniScript::ScriptVariable MiniScript::initializeArrayInitializerVariable(
 					variable.pushArrayValue(string(arrayValueStringView));
 				}
 			}
-			//
-			quotedArrayValueStart = string::npos;
-			quotedArrayValueEnd = string::npos;
 		} else
 		// unquoted value
 		if (arrayValueStart != string::npos) {
@@ -8963,16 +8960,18 @@ const MiniScript::ScriptVariable MiniScript::initializeArrayInitializerVariable(
 					variable.pushArrayValue(arrayValue);
 				}
 			}
-			//
-			arrayValueStart = string::npos;
-			arrayValueEnd = string::npos;
 		}
+		//
+		quotedArrayValueStart = string::npos;
+		quotedArrayValueEnd = string::npos;
+		arrayValueStart = string::npos;
+		arrayValueEnd = string::npos;
 	};
 	//
 	for (; i < initializerString.size(); i++) {
 		auto c = initializerString[i];
 		// quotes
-		if (squareBracketCount == 1 && (c == '"' || c == '\'') && lc != '\\') {
+		if (squareBracketCount == 1 && curlyBracketCount == 0 && (c == '"' || c == '\'') && lc != '\\') {
 			if (quote == '\0') {
 				quote = c;
 				quotedArrayValueStart = i;
@@ -9065,6 +9064,7 @@ const MiniScript::ScriptVariable MiniScript::initializeArrayInitializerVariable(
 }
 
 const MiniScript::ScriptVariable MiniScript::initializeMapSetInitializerVariable(const string_view& initializerString) {
+	//
 	ScriptVariable variable;
 	variable.setType(TYPE_MAP);
 	//
@@ -9082,61 +9082,69 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSetInitializerVariable
 	auto i = 0;
 	enum ParseMode { PARSEMODE_KEY, PARSEMODE_VALUE };
 	auto parseMode = PARSEMODE_KEY;
+	auto hasValues = false;
 	//
 	auto insertMapKeyValuePair = [&]() {
 		string_view mapKey;
-
 		// quoted map key
-		if (quotedMapKeyStart != string::npos) {
+		if (quotedMapKeyStart != string::npos && quotedMapKeyEnd != string::npos) {
 			quotedMapKeyStart++;
 			auto mapKeyLength = quotedMapKeyEnd - quotedMapKeyStart;
 			if (mapKeyLength > 0) mapKey = StringTools::viewTrim(string_view(&initializerString[quotedMapKeyStart], mapKeyLength));
-			//
-			quotedMapKeyStart = string::npos;
-			quotedMapKeyEnd = string::npos;
 		} else
 		// unquoted map key
-		if (mapKeyStart != string::npos) {
+		if (mapKeyStart != string::npos && mapKeyEnd != string::npos) {
 			auto mapKeyLength = mapKeyEnd - mapKeyStart + 1;
-			if (mapKeyLength > 0) mapKey = StringTools::viewTrim(string_view(&initializerString[mapKeyStart], mapKeyLength));
-			//
-			mapKeyStart = string::npos;
-			mapKeyEnd = string::npos;
+			if (mapKeyLength > 0) {
+				mapKey = StringTools::viewTrim(string_view(&initializerString[mapKeyStart], mapKeyLength));
+				if (mapKey.empty() == true) mapKey = string_view();
+			}
 		}
-
+		//
+		quotedMapKeyStart = string::npos;
+		quotedMapKeyEnd = string::npos;
+		mapKeyStart = string::npos;
+		mapKeyEnd = string::npos;
 		//
 		if (mapKey.empty() == false) {
 			// quoted map value
-			if (quotedMapValueStart != string::npos) {
+			if (quotedMapValueStart != string::npos && quotedMapValueEnd != string::npos) {
 				quotedMapValueStart++;
 				auto mapValueLength = quotedMapValueEnd - quotedMapValueStart;
 				if (mapValueLength > 0) {
 					auto mapValueStringView = StringTools::viewTrim(string_view(&initializerString[quotedMapValueStart], mapValueLength));
 					if (mapValueStringView.empty() == false) {
+						//
 						variable.setMapValue(string(mapKey), string(mapValueStringView));
+						//
+						hasValues = true;
 					}
 				}
-				//
-				quotedMapValueStart = string::npos;
-				quotedMapValueEnd = string::npos;
 			} else
 			// unquoted map value
-			if (mapValueStart != string::npos) {
-				if (mapValueEnd == string::npos) mapValueEnd = i - 1;
+			if (mapValueStart != string::npos && mapValueEnd != string::npos) {
 				auto mapValueLength = mapValueEnd - mapValueStart + 1;
 				if (mapValueLength > 0) {
 					auto mapValueStringView = StringTools::viewTrim(string_view(&initializerString[mapValueStart], mapValueLength));
 					if (mapValueStringView.empty() == false) {
 						ScriptVariable mapValue;
 						mapValue.setImplicitTypedValueFromStringView(mapValueStringView);
+						//
 						variable.setMapValue(string(mapKey), mapValue);
+						//
+						hasValues = true;
 					}
 				}
+			} else {
 				//
-				mapValueStart = string::npos;
-				mapValueEnd = string::npos;
+				variable.setMapValue(string(mapKey), ScriptVariable());
 			}
 		}
+		//
+		quotedMapValueStart = string::npos;
+		quotedMapValueEnd = string::npos;
+		mapValueStart = string::npos;
+		mapValueEnd = string::npos;
 		//
 		parseMode = PARSEMODE_KEY;
 	};
@@ -9187,14 +9195,15 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSetInitializerVariable
 			} else
 			// , -> insert map
 			if (curlyBracketCount == 1 && squareBracketCount == 0 && c == ',') {
+				if (mapValueStart != string::npos) mapValueEnd = i - 1;
 				// insert map key value pair
 				insertMapKeyValuePair();
 				// nada
 			} else
 			// map/set initializer
 			if (c == '{' && squareBracketCount == 0) {
-				// we have a inner array initializer, mark it
-				if (curlyBracketCount == 1) mapKeyStart = i;
+				// we have a inner map/set initializer, mark it
+				if (curlyBracketCount == 1) mapValueStart = i;
 				// increase square bracket count
 				curlyBracketCount++;
 			} else
@@ -9203,6 +9212,8 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSetInitializerVariable
 				curlyBracketCount--;
 				// done? insert into map
 				if (curlyBracketCount == 0) {
+					//
+					if (mapValueStart != string::npos) mapValueEnd = i - 1;
 					// insert map key value pair
 					insertMapKeyValuePair();
 				} else
@@ -9216,19 +9227,18 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSetInitializerVariable
 						quotedMapKeyStart++;
 						auto mapKeyLength = quotedMapKeyEnd - quotedMapKeyStart;
 						if (mapKeyLength > 0) mapKey = StringTools::viewTrim(string_view(&initializerString[quotedMapKeyStart], mapKeyLength));
-						//
-						quotedMapKeyStart = string::npos;
-						quotedMapKeyEnd = string::npos;
 					} else
 					// unquoted map key
 					if (mapKeyStart != string::npos) {
+						if (mapKeyEnd == string::npos) mapKeyEnd = i;
 						auto mapKeyLength = mapKeyEnd - mapKeyStart + 1;
 						if (mapKeyLength > 0) mapKey = StringTools::viewTrim(string_view(&initializerString[mapKeyStart], mapKeyLength));
-						//
-						mapKeyStart = string::npos;
-						mapKeyEnd = string::npos;
 					}
-
+					//
+					quotedMapKeyStart = string::npos;
+					quotedMapKeyEnd = string::npos;
+					mapKeyStart = string::npos;
+					mapKeyEnd = string::npos;
 					// map value
 					if (mapValueStart != string::npos) {
 						mapValueEnd = i;
@@ -9244,7 +9254,6 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSetInitializerVariable
 						mapValueStart = string::npos;
 						mapValueEnd = string::npos;
 					}
-
 					//
 					parseMode = PARSEMODE_KEY;
 				}
@@ -9269,19 +9278,17 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSetInitializerVariable
 						quotedMapKeyStart++;
 						auto mapKeyLength = quotedMapKeyEnd - quotedMapKeyStart;
 						if (mapKeyLength > 0) mapKey = StringTools::viewTrim(string_view(&initializerString[quotedMapKeyStart], mapKeyLength));
-						//
-						quotedMapKeyStart = string::npos;
-						quotedMapKeyEnd = string::npos;
 					} else
 					// unquoted map key
 					if (mapKeyStart != string::npos) {
 						auto mapKeyLength = mapKeyEnd - mapKeyStart + 1;
 						if (mapKeyLength > 0) mapKey = StringTools::viewTrim(string_view(&initializerString[mapKeyStart], mapKeyLength));
-						//
-						mapKeyStart = string::npos;
-						mapKeyEnd = string::npos;
 					}
-
+					//
+					quotedMapKeyStart = string::npos;
+					quotedMapKeyEnd = string::npos;
+					mapKeyStart = string::npos;
+					mapKeyEnd = string::npos;
 					// map value
 					if (mapValueStart != string::npos) {
 						mapValueEnd = i;
@@ -9314,6 +9321,16 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSetInitializerVariable
 		}
 		//
 		lc = c;
+	}
+	// convert to set if no values given
+	if (hasValues == false) {
+		ScriptVariable setVariable;
+		setVariable.setType(TYPE_SET);
+		const auto& mapValueReference = variable.getMapValueReference();
+		for (const auto& [mapVariableKey, mapVariableValue]: mapValueReference) {
+			setVariable.insertSetKey(mapVariableKey);
+		}
+		variable = setVariable;
 	}
 	//
 	return variable;
