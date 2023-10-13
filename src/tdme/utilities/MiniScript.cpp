@@ -9203,7 +9203,12 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSetInitializerVariable
 			// map/set initializer
 			if (c == '{' && squareBracketCount == 0) {
 				// we have a inner map/set initializer, mark it
-				if (curlyBracketCount == 1) mapValueStart = i;
+				if (curlyBracketCount == 1) {
+					mapKeyStart = i;
+				} else
+				if (curlyBracketCount == 2) {
+					mapValueStart = i;
+				}
 				// increase square bracket count
 				curlyBracketCount++;
 			} else
@@ -9221,7 +9226,6 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSetInitializerVariable
 				if (curlyBracketCount == 1) {
 					// parse and insert into map
 					string_view mapKey;
-
 					// quoted map key
 					if (quotedMapKeyStart != string::npos) {
 						quotedMapKeyStart++;
@@ -9304,7 +9308,6 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSetInitializerVariable
 						mapValueStart = string::npos;
 						mapValueEnd = string::npos;
 					}
-
 					//
 					parseMode = PARSEMODE_KEY;
 				}
