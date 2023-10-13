@@ -1,3 +1,13 @@
+# sort function for ascending order
+function: sortFunctionDesc($a, $b)
+	return($a > $b)
+end
+
+# sort function for descending order
+function: sortFunctionAsc($a, $b)
+	return($a < $b)
+end
+
 # initialize
 on: initialize
 	console.log("---------------------------")
@@ -8,67 +18,166 @@ end
 
 # if no condition is met, nothing will be executed, lol :D
 on: nothing
-	# array
-	$array = [
-		1, 
-		2, 
-		3, 
-		[
-			4, 
-			5, 
-			[
-				6, 
-				7, 
-				8, 
-				"What?", 
-				"Whatssssappp???", 
-				9
-			]
-		], 
-		{
-			test1: "xxx", 
-			test2: "yyy", 
-			test3: "zzz", 
-			test4: 123.456, 
-			test5: 
-			[
-				1, 
-				2, 
-				3
-			],
-			test6: { 
-				a, 
-				b, 
-				c 
-			}
-		},
-		20 + 20
-	]
-	console.log("array: " + $array)
-
-	# map
-	$map = {
-		test1: "test1",
-		test2: "test2",
-		test3: 789,
-		test4: [1,2,3],
-		test5,
-		test6: 30+30
-	}
-	console.log("map: " + $map)
-	console.log("map keys: " + $map->getKeys())
-	console.log("map values: " + $map->getValues())
-
-	# set
-	$set = { 
-		"test1", 
-		"test2", 
-		"test3" 
-	}
-	console.log("set: " + $set)
-	console.log("set keys: " + $set->getKeys())
-
-	# done
+	console.log("------------------------")
+	console.log("advanced-test: Nothing")
+	console.log("------------------------")
+	console.log()
+	console.log("---------")
+	console.log("Arrays")
+	console.log("---------")
+	$array = array(1,2,3)
+	console.log("array initialized with: $array = array(1,2,3)")
+	console.log("array now looks like: ", $array)
+	$array->push(8, 9, 10, 99, 10)
+	console.log("array pushed values with: $array->push(8, 9, 10, 99, 10)")
+	console.log("array now looks like: ", $array)
+	$array[] = 123
+	$array[] = 1234
+	$array[] = 12345
+	$array[] = array(1,2,3)
+	console.log("array values added with [] operator: 123, 1234, 12345, array(1,2,3)")
+	console.log("array now looks like: ", $array)
+	console.log("array values added with [] operator to push to array of array: 50, 60")
+	$array[11][] = 50
+	$array[11][] = 60
+	$array[11][$array[11]->length() - 1] = 61
+	console.log("array length: ", $array->length())
+	console.log("array iteration with $array->get(): ")
+	$i = 0
+	forCondition($i < $array->length())
+		console.log($i + ": " + $array->get($i))
+		++$i
+	end 
+	console.log("array iteration with [] operator: ")
+	$i = 0
+	forCondition($i < $array->length())
+		console.log($i + ": " + $array[$i])
+		++$i
+	end
+	console.log("array iteration with [] opertator and some index math: ")
+	$i = 0
+	forCondition($i < $array->length() / 2)
+		console.log($i + "-a: " + $array[$i * 2 + 0])
+		console.log($i + "-b: " + $array[$i * 2 + 1])
+		++$i
+	end
+	console.log("array removal of 123, 1234, 12345 using array.removeOf")
+	$array->removeOf(123)
+	$array->removeOf(1234)
+	$array->removeOf(12345)
+	console.log("array now looks like: ", $array)
+	console.log("array indexOf 10: ", $array->indexOf(10))
+	console.log("array indexOf 10 beginning to search from 6: ", $array->indexOf(10, 6))
+	console.log("sorting of array('abc', 'def', 'ghi', 'jkl', 'mno'): ", $array = array("abc", "def", "ghi", "jkl", "mno"))
+	$array->sort("sortFunctionDesc")
+	console.log("$array->sort('sortFunctionDesc'): ", $array)
+	$array->sort("sortFunctionAsc")
+	console.log("$array->sort('sortFunctionAsc'): ", $array)
+	$array->reverse()
+	console.log("array reverse: ", $array)
+	console.log("---------")
+	console.log("Maps")
+	console.log("----------")
+	$map = map()
+	console.log("map initialized with: $map = map()")
+	console.log("map now looks like: ", $map)
+	console.log("put some key value pairs into map: map->set()")
+	$map->set("test1", 123)
+	$map->set("test2", 456)
+	$map->set("test3", 789)
+	$map->set("test4", array(1,2,3))
+	$map->set("test5", "Yaaaa")
+	#
+	#$array = [1,2,3]
+	#$set = { "aaa", "bbb", "ccc" }
+	#$test1 = 123
+	#$test2 = 456 - 123
+	#	 
+	#$map = {
+	#	test1: $test1,
+	#	test2: $test2 + 123,
+	#	test3: 789,
+	#	test4: [1,2,3],
+	#	test5: "Yaaaa"
+	#	test6: {
+	#		test6a: 1230,
+	#		test6a: 4560,
+	#		test6c: ["x","y","z"]
+	#	},
+	#	execute1: functionName1(this)
+	#	execute2: functionName2(this)
+	#	# optional
+	#	execute3: function: ($a, $b, $c) {
+	#		console.log($this.test1 + ": yarrr")
+	#	}
+	#}
+	#$map.test1 = 234
+	#$map->execute1(1,2,3)
+	#$map->execute2(1,2,3)
+	#
+	console.log("map now looks like: ", $map)
+	console.log("remove test2 via $map->remove: ")
+	$map->remove("test2")
+	console.log("map now looks like: ", $map)
+	$map->set("test2", 456)
+	console.log("reading map key(+value) pairs: ")
+	console.log("map does have test2 key using $map->has(): ", $map->has("test2"))
+	console.log("map does have test8 key using $map->has(): ", $map->has("test8"))
+	console.log("map value for test1 key using $map->get(): ", $map->get("test1"))
+	console.log("map value for test2 key using $map->get(): ", $map->get("test2"))
+	console.log("map value for test3 key using $map->get(): ", $map->get("test3"))
+	console.log("map value for test4 key using $map->get(): ", $map->get("test4"))
+	console.log("map value for test5 key using $map->get(): ", $map->get("test5"))
+	console.log("map value for test1 using map dot operator: ", $map.test1)
+	console.log("map value for test2 using map dot operator: ", $map.test2)
+	console.log("map value for test3 using map dot operator: ", $map.test3)
+	console.log("map value for test4 using map dot operator: ", $map.test4)
+	console.log("map value for test5 using map dot operator: ", $map.test5)
+	console.log("adding map values using map dot operator: ")
+	$map.test6 = 666
+	$map.test7 = 770
+	$map.test8 = 890
+	console.log("map keys: ", $map->getKeys())
+	console.log("map values: ", $map->getValues())
+	console.log("iterating keys and values using $map->getKeys(): ")
+	$mapKeys = $map->getKeys()
+	$i = 0
+	forCondition($i < $mapKeys->length())
+		console.log($mapKeys[$i] + " = " + $map->get($mapKeys[$i]))
+		++$i
+	end
+	console.log("---------")
+	console.log("Sets")
+	console.log("----------")
+	$set = set()
+	console.log("set initialized with: $set = set()")
+	console.log("set now looks like: ", $set)
+	console.log("put some keys into set: $set->insert()")
+	$set->insert("test1")
+	$set->insert("test2")
+	$set->insert("test3")
+	$set->insert("test4")
+	$set->insert("test5")
+	console.log("set now looks like: ", $set)
+	console.log("remove test2 via $set->remove: ")
+	$set->remove("test2")
+	console.log("set now looks like: ", $set)
+	console.log("set does have test1 key using $set->has(): ", $set->has("test1"))
+	console.log("set does have test2 key using $set->has(): ", $set->has("test2"))
+	console.log("set does have test3 key using $set->has(): ", $set->has("test3"))
+	console.log("set does have test4 key using $set->has(): ", $set->has("test4"))
+	console.log("set does have test5 key using $set->has(): ", $set->has("test5"))
+	console.log("set key for test1 using set dot operator: ", $set.test1)
+	console.log("set key for test2 using set dot operator: ", $set.test2)
+	console.log("set key for test3 using set dot operator: ", $set.test3)
+	console.log("set key for test4 using set dot operator: ", $set.test4)
+	console.log("set key for test5 using set dot operator: ", $set.test5)
+	console.log("inserting set values using set dot operator: ")
+	$set.test6 = true
+	$set.test7 = true
+	$set.test8 = false
+	$set.test9 = true
+	console.log("set keys: ", $set->getKeys())
 	script.stop()
 end
 
