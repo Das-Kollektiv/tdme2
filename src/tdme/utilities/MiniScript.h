@@ -1365,11 +1365,11 @@ public:
 			} else
 			if (StringTools::startsWith(value, "{") == true &&
 				StringTools::endsWith(value, "}") == true) {
-				*this = initializeMapSetInitializerVariable(string_view(value));
+				*this = initializeMapSet(string_view(value));
 			} else
 			if (StringTools::startsWith(value, "[") == true &&
 				StringTools::endsWith(value, "]") == true) {
-				*this = initializeArrayInitializerVariable(string_view(value));
+				*this = initializeArray(string_view(value));
 			} else{
 				setValue(value);
 			}
@@ -1397,11 +1397,11 @@ public:
 			} else
 			if (StringTools::viewStartsWith(value, "{") == true &&
 				StringTools::viewEndsWith(value, "}") == true) {
-				*this = initializeMapSetInitializerVariable(value);
+				*this = initializeMapSet(value);
 			} else
 			if (StringTools::viewStartsWith(value, "[") == true &&
 				StringTools::viewEndsWith(value, "]") == true) {
-				*this = initializeArrayInitializerVariable(value);
+				*this = initializeArray(value);
 			} else{
 				setValue(string(value));
 			}
@@ -2828,18 +2828,18 @@ private:
 	}
 
 	/**
-	 * Initialize array initializer variable
+	 * Initialize array by initializer string
 	 * @param initializerString initializer string
 	 * @return initialized variable
 	 */
-	static const ScriptVariable initializeArrayInitializerVariable(const string_view& initializerString);
+	static const ScriptVariable initializeArray(const string_view& initializerString);
 
 	/**
-	 * Initialize map/set initializer variable
+	 * Initialize map/set by initializer string
 	 * @param initializerString initializer string
 	 * @return initialized variable
 	 */
-	static const ScriptVariable initializeMapSetInitializerVariable(const string_view& initializerString);
+	static const ScriptVariable initializeMapSet(const string_view& initializerString);
 
 public:
 	// forbid class copy

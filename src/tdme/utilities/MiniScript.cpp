@@ -8922,7 +8922,7 @@ const MiniScript::ScriptVariable MiniScript::deserializeJson(const string& json)
 	}
 }
 
-const MiniScript::ScriptVariable MiniScript::initializeArrayInitializerVariable(const string_view& initializerString) {
+const MiniScript::ScriptVariable MiniScript::initializeArray(const string_view& initializerString) {
 	ScriptVariable variable;
 	variable.setType(TYPE_ARRAY);
 	//
@@ -9012,7 +9012,7 @@ const MiniScript::ScriptVariable MiniScript::initializeArrayInitializerVariable(
 						if (arrayValueLength > 0) {
 							auto arrayValueStringView = StringTools::viewTrim(string_view(&initializerString[arrayValueStart], arrayValueLength));
 							if (arrayValueStringView.empty() == false) {
-								auto arrayValue = initializeArrayInitializerVariable(arrayValueStringView);
+								auto arrayValue = initializeArray(arrayValueStringView);
 								variable.pushArrayValue(arrayValue);
 							}
 						}
@@ -9041,7 +9041,7 @@ const MiniScript::ScriptVariable MiniScript::initializeArrayInitializerVariable(
 						if (arrayValueLength > 0) {
 							auto arrayValueStringView = StringTools::viewTrim(string_view(&initializerString[arrayValueStart], arrayValueLength));
 							if (arrayValueStringView.empty() == false) {
-								auto arrayValue = initializeMapSetInitializerVariable(arrayValueStringView);
+								auto arrayValue = initializeMapSet(arrayValueStringView);
 								variable.pushArrayValue(arrayValue);
 							}
 						}
@@ -9063,7 +9063,7 @@ const MiniScript::ScriptVariable MiniScript::initializeArrayInitializerVariable(
 	return variable;
 }
 
-const MiniScript::ScriptVariable MiniScript::initializeMapSetInitializerVariable(const string_view& initializerString) {
+const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view& initializerString) {
 	//
 	ScriptVariable variable;
 	variable.setType(TYPE_MAP);
@@ -9250,7 +9250,7 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSetInitializerVariable
 						if (mapValueLength > 0) {
 							auto mapValueStringView = StringTools::viewTrim(string_view(&initializerString[mapValueStart], mapValueLength));
 							if (mapValueStringView.empty() == false) {
-								auto mapValue = initializeMapSetInitializerVariable(mapValueStringView);
+								auto mapValue = initializeMapSet(mapValueStringView);
 								variable.setMapValue(string(mapKey), mapValue);
 							}
 						}
@@ -9300,7 +9300,7 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSetInitializerVariable
 						if (mapValueLength > 0) {
 							auto mapValueStringView = StringTools::viewTrim(string_view(&initializerString[mapValueStart], mapValueLength));
 							if (mapValueStringView.empty() == false) {
-								auto mapValue = initializeArrayInitializerVariable(mapValueStringView);
+								auto mapValue = initializeArray(mapValueStringView);
 								variable.setMapValue(string(mapKey), mapValue);
 							}
 						}
