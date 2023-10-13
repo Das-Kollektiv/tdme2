@@ -162,8 +162,9 @@ public:
 		TYPE_ARRAY,
 		TYPE_MAP,
 		TYPE_SET,
+		TYPE_FUNCTION_CALL,
 		TYPE_PSEUDO_NUMBER,
-		TYPE_PSEUDO_MIXED
+		TYPE_PSEUDO_MIXED,
 	};
 
 	/**
@@ -438,6 +439,9 @@ public:
 				case TYPE_SET:
 					setValue(scriptVariable.getSetValueReference());
 					break;
+				case TYPE_FUNCTION_CALL:
+					setFunctionCallValue(scriptVariable.getStringValueReference());
+					break;
 			}
 		}
 
@@ -501,6 +505,9 @@ public:
 					break;
 				case TYPE_SET:
 					setValue(scriptVariable.getSetValueReference());
+					break;
+				case TYPE_FUNCTION_CALL:
+					setFunctionCallValue(scriptVariable.getStringValueReference());
 					break;
 			}
 			return *this;
@@ -691,6 +698,9 @@ public:
 				case TYPE_SET:
 					delete static_cast<unordered_set<string>*>((void*)valuePtr);
 					break;
+				case TYPE_FUNCTION_CALL:
+					delete static_cast<string*>((void*)valuePtr);
+					break;
 			}
 			this->valuePtr = 0LL;
 			this->type = newType;
@@ -735,6 +745,9 @@ public:
 					break;
 				case TYPE_SET:
 					valuePtr = (uint64_t)(new unordered_set<string>());
+					break;
+				case TYPE_FUNCTION_CALL:
+					valuePtr = (uint64_t)(new string());
 					break;
 			}
 		}
@@ -1122,6 +1135,15 @@ public:
 		}
 
 		/**
+		 * @return return const pointer to underlying vector or nullptr
+		 */
+		inline const vector<MiniScript::ScriptVariable>* getArrayPointer() const {
+			if (type != TYPE_ARRAY) return nullptr;
+			auto& arrayValue = getArrayValueReference();
+			return &arrayValue;
+		}
+
+		/**
 		 * @return pointer to underlying vector or nullptr
 		 */
 		inline vector<MiniScript::ScriptVariable>* getArrayPointer() {
@@ -1181,6 +1203,15 @@ public:
 			auto& arrayValue = getArrayValueReference();
 			if (idx >= 0 && idx < arrayValue.size()) arrayValue.erase(arrayValue.begin() + idx);
 			return;
+		}
+
+		/**
+		 * @return return const pointer to underlying unordered_map or nullptr
+		 */
+		inline const unordered_map<string, ScriptVariable>* getMapPointer() const {
+			if (type != TYPE_MAP) return nullptr;
+			auto& mapValue = getMapValueReference();
+			return &mapValue;
 		}
 
 		/**
@@ -1344,8 +1375,18 @@ public:
 		}
 
 		/**
+		 * Set map/set initializer value from given value into variable
+		 * @param value value
+		 */
+		inline void setFunctionCallValue(const string& value) {
+			setType(TYPE_FUNCTION_CALL);
+			getStringValueReference() = value;
+		}
+
+		/**
 		 * Set implicit typed value given by value string
 		 * @param value value
+		 * @param miniScript mini script
 		 */
 		inline void setImplicitTypedValue(const string& value) {
 			if (value == "null") {
@@ -1370,8 +1411,11 @@ public:
 			if (StringTools::startsWith(value, "[") == true &&
 				StringTools::endsWith(value, "]") == true) {
 				*this = initializeArray(string_view(value));
-			} else{
-				setValue(value);
+			} else
+			// function call
+			if (value.find('(') != string::npos &&
+				value.find(')') != string::npos) {
+				setFunctionCallValue(value);
 			}
 		}
 
@@ -1402,7 +1446,12 @@ public:
 			if (StringTools::viewStartsWith(value, "[") == true &&
 				StringTools::viewEndsWith(value, "]") == true) {
 				*this = initializeArray(value);
-			} else{
+			} else
+			// function call
+			if (value.find('(') != string::npos &&
+				value.find(')') != string::npos) {
+				setFunctionCallValue(string(value));
+			} else {
 				setValue(string(value));
 			}
 		}
@@ -2822,8 +2871,46 @@ private:
 	  * @param variable variable
 	  * @return initialized variable
 	  */
-	inline static const ScriptVariable& initializeVariable(const ScriptVariable& variable) {
-		// TODO
+	inline const ScriptVariable initializeVariable(const ScriptVariable& variable) {
+		switch (variable.type) {
+			case TYPE_ARRAY:
+				{
+					ScriptVariable arrayVariable;
+					//
+					arrayVariable.setType(TYPE_ARRAY);
+					auto arrayPointer = variable.getArrayPointer();
+					if (arrayPointer == nullptr) break;
+					for (const auto& arrayValue: *arrayPointer) {
+						arrayVariable.pushArrayValue(initializeVariable(arrayValue));
+					}
+					//
+					return arrayVariable;
+				}
+			case TYPE_MAP:
+				{
+					ScriptVariable mapVariable;
+					//
+					auto mapPointer = variable.getMapPointer();
+					if (mapPointer == nullptr) break;
+					for (const auto& [mapKey, mapValue]: *mapPointer) {
+						mapVariable.setMapValue(mapKey, initializeVariable(mapValue));
+					}
+					//
+					return mapVariable;
+				}
+			case TYPE_FUNCTION_CALL:
+				{
+					ScriptVariable returnValue;
+					if (evaluate(variable.getStringValueReference(), returnValue) == true) {
+						return returnValue;
+					} else {
+						Console::println("MiniScript::MiniScript(): '" + scriptFileName + ": Unable to evaluate: " + variable.getStringValueReference());
+						return ScriptVariable();
+					}
+				}
+			default: break;
+		}
+		//
 		return variable;
 	}
 

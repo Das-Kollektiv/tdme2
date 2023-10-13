@@ -853,6 +853,10 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& methodName, 
 		if (argument.empty() == false &&
 			StringTools::viewStartsWith(argument, "\"") == false &&
 			StringTools::viewEndsWith(argument, "\"") == false &&
+			StringTools::viewStartsWith(argument, "[") == false &&
+			StringTools::viewEndsWith(argument, "]") == false &&
+			StringTools::viewStartsWith(argument, "}") == false &&
+			StringTools::viewEndsWith(argument, "}") == false &&
 			argument.find('(') != string::npos &&
 			argument.find(')') != string::npos) {
 			// method call
@@ -8926,6 +8930,7 @@ const MiniScript::ScriptVariable MiniScript::initializeArray(const string_view& 
 	ScriptVariable variable;
 	variable.setType(TYPE_ARRAY);
 	//
+	auto bracketCount = 0;
 	auto squareBracketCount = 0;
 	auto curlyBracketCount = 0;
 	auto quote = '\0';
@@ -8984,19 +8989,26 @@ const MiniScript::ScriptVariable MiniScript::initializeArray(const string_view& 
 		// no quote
 		if (quote == '\0') {
 			// , -> push to array
-			if (squareBracketCount == 1 && curlyBracketCount == 0 && c == ',') {
+			if (squareBracketCount == 1 && curlyBracketCount == 0 && bracketCount == 0 && c == ',') {
 				// push to array
 				pushToArray();
 			} else
+			// possible function call
+			if (c == '(') {
+				bracketCount++;
+			} else
+			if (c == ')') {
+				bracketCount--;
+			} else
 			// array initializer
-			if (c == '[' && curlyBracketCount == 0) {
+			if (c == '[' && curlyBracketCount == 0 && bracketCount == 0) {
 				// we have a inner array initializer, mark it
 				if (squareBracketCount == 1) arrayValueStart = i;
 				// increase square bracket count
 				squareBracketCount++;
 			} else
 			// end of array initializer
-			if (c == ']' && curlyBracketCount == 0) {
+			if (c == ']' && curlyBracketCount == 0 && bracketCount == 0) {
 				squareBracketCount--;
 				// done? push to array
 				if (squareBracketCount == 0) {
@@ -9023,14 +9035,14 @@ const MiniScript::ScriptVariable MiniScript::initializeArray(const string_view& 
 				}
 			} else
 			// map/set initializer
-			if (c == '{' && squareBracketCount == 1) {
+			if (c == '{' && squareBracketCount == 1 && bracketCount == 0) {
 				// we have a inner map/set initializer, mark it
 				if (curlyBracketCount == 0) arrayValueStart = i;
 				// increase curly bracket count
 				curlyBracketCount++;
 			} else
 			// end of map/set initializer
-			if (c == '}' && squareBracketCount == 1) {
+			if (c == '}' && squareBracketCount == 1 && bracketCount == 0) {
 				curlyBracketCount--;
 				// otherwise push inner array initializer
 				if (curlyBracketCount == 0) {
@@ -9052,7 +9064,7 @@ const MiniScript::ScriptVariable MiniScript::initializeArray(const string_view& 
 				}
 			} else
 			// set up argument start
-			if (squareBracketCount == 1 && curlyBracketCount == 0 && arrayValueStart == string::npos && c != ' ' && c != '\t' && c != '\n') {
+			if (squareBracketCount == 1 && curlyBracketCount == 0 && bracketCount == 0 && arrayValueStart == string::npos && c != ' ' && c != '\t' && c != '\n') {
 				arrayValueStart = i;
 			}
 		}

@@ -41,7 +41,8 @@ on: nothing
 				b, 
 				c 
 			}
-		}
+		},
+		20 + 20
 	]
 	console.log("array: " + $array)
 
