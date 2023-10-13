@@ -162,8 +162,6 @@ public:
 		TYPE_ARRAY,
 		TYPE_MAP,
 		TYPE_SET,
-		TYPE_MAPSET_INITIALIZER,
-		TYPE_ARRAY_INITIALIZER,
 		TYPE_PSEUDO_NUMBER,
 		TYPE_PSEUDO_MIXED
 	};
@@ -440,12 +438,6 @@ public:
 				case TYPE_SET:
 					setValue(scriptVariable.getSetValueReference());
 					break;
-				case TYPE_MAPSET_INITIALIZER:
-					setMapSetInitializerValue(scriptVariable.getStringValueReference());
-					break;
-				case TYPE_ARRAY_INITIALIZER:
-					setArrayInitializerValue(scriptVariable.getStringValueReference());
-					break;
 			}
 		}
 
@@ -509,12 +501,6 @@ public:
 					break;
 				case TYPE_SET:
 					setValue(scriptVariable.getSetValueReference());
-					break;
-				case TYPE_MAPSET_INITIALIZER:
-					setMapSetInitializerValue(scriptVariable.getStringValueReference());
-					break;
-				case TYPE_ARRAY_INITIALIZER:
-					setArrayInitializerValue(scriptVariable.getStringValueReference());
 					break;
 			}
 			return *this;
@@ -705,12 +691,6 @@ public:
 				case TYPE_SET:
 					delete static_cast<unordered_set<string>*>((void*)valuePtr);
 					break;
-				case TYPE_MAPSET_INITIALIZER:
-					delete static_cast<string*>((void*)valuePtr);
-					break;
-				case TYPE_ARRAY_INITIALIZER:
-					delete static_cast<string*>((void*)valuePtr);
-					break;
 			}
 			this->valuePtr = 0LL;
 			this->type = newType;
@@ -755,12 +735,6 @@ public:
 					break;
 				case TYPE_SET:
 					valuePtr = (uint64_t)(new unordered_set<string>());
-					break;
-				case TYPE_MAPSET_INITIALIZER:
-					valuePtr = (uint64_t)(new string());
-					break;
-				case TYPE_ARRAY_INITIALIZER:
-					valuePtr = (uint64_t)(new string());
 					break;
 			}
 		}
@@ -1148,24 +1122,6 @@ public:
 		}
 
 		/**
-		 * Set map/set initializer value from given value into variable
-		 * @param value value
-		 */
-		inline void setMapSetInitializerValue(const string& value) {
-			setType(TYPE_MAPSET_INITIALIZER);
-			getStringValueReference() = value;
-		}
-
-		/**
-		 * Set array initializer value from given value into variable
-		 * @param value value
-		 */
-		inline void setArrayInitializerValue(const string& value) {
-			setType(TYPE_ARRAY_INITIALIZER);
-			getStringValueReference() = value;
-		}
-
-		/**
 		 * @return pointer to underlying vector or nullptr
 		 */
 		inline vector<MiniScript::ScriptVariable>* getArrayPointer() {
@@ -1406,7 +1362,15 @@ public:
 			} else
 			if (Float::is(value) == true) {
 				setValue(Float::parse(value));
-			} else {
+			} else
+			if (StringTools::startsWith(value, "{") == true &&
+				StringTools::endsWith(value, "}") == true) {
+				*this = initializeMapSetInitializerVariable(string_view(value));
+			} else
+			if (StringTools::startsWith(value, "[") == true &&
+				StringTools::endsWith(value, "]") == true) {
+				*this = initializeArrayInitializerVariable(string_view(value));
+			} else{
 				setValue(value);
 			}
 		}
@@ -1433,13 +1397,11 @@ public:
 			} else
 			if (StringTools::viewStartsWith(value, "{") == true &&
 				StringTools::viewEndsWith(value, "}") == true) {
-				//
-				setMapSetInitializerValue(string(value));
+				*this = initializeMapSetInitializerVariable(value);
 			} else
 			if (StringTools::viewStartsWith(value, "[") == true &&
 				StringTools::viewEndsWith(value, "]") == true) {
-				//
-				setArrayInitializerValue(string(value));
+				*this = initializeArrayInitializerVariable(value);
 			} else{
 				setValue(string(value));
 			}
@@ -2856,19 +2818,13 @@ private:
 	static const ScriptVariable deserializeArrayJson(const Value& jArrayValue);
 
 	/**
-	 * Initialize variable
-	 * @param variable variable
-	 * @return initialized variable
-	 */
-	inline static const ScriptVariable initializeVariable(const ScriptVariable& variable) {
-		switch (variable.type) {
-			case TYPE_MAPSET_INITIALIZER:
-				return initializeMapSetInitializerVariable(variable.getStringValueReference());
-			case TYPE_ARRAY_INITIALIZER:
-				return initializeArrayInitializerVariable(variable.getStringValueReference());
-			default:
-				return variable;
-		}
+	  * Initialize variable
+	  * @param variable variable
+	  * @return initialized variable
+	  */
+	inline static const ScriptVariable& initializeVariable(const ScriptVariable& variable) {
+		// TODO
+		return variable;
 	}
 
 	/**
