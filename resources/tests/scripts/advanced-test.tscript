@@ -52,7 +52,8 @@ on: nothing
 		test2: "test2",
 		test3: 789,
 		test4: [1,2,3],
-		test5
+		test5,
+		test6: 30+30
 	}
 	console.log("map: " + $map)
 	console.log("map keys: " + $map->getKeys())

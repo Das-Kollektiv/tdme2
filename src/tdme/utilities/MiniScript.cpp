@@ -2165,6 +2165,14 @@ const string MiniScript::findLeftArgument(const string& statement, int position,
 				}
 				argument = c + argument;
 			} else
+			if (c == ':' &&
+				bracketCount == 0 &&
+				squareBracketCount == 0 &&
+				curlyBracketCount == 0) {
+				//
+				brackets = "";
+				return trimArgument(argument);
+			} else
 			if (c == '[') {
 				squareBracketCount--;
 				if (squareBracketCount < 0) {
@@ -2198,6 +2206,7 @@ const string MiniScript::findLeftArgument(const string& statement, int position,
 
 const string MiniScript::doStatementPreProcessing(const string& processedStatement, const ScriptStatement& statement) {
 	auto preprocessedStatement = processedStatement;
+	//
 	ScriptStatementOperator nextOperators;
 	while (getNextStatementOperator(preprocessedStatement, nextOperators, statement) == true) {
 		auto methodIt = scriptOperators.find(nextOperators.scriptOperator);
@@ -9076,10 +9085,10 @@ const MiniScript::ScriptVariable MiniScript::initializeArray(const string_view& 
 }
 
 const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view& initializerString) {
-	//
 	ScriptVariable variable;
 	variable.setType(TYPE_MAP);
 	//
+	auto bracketCount = 0;
 	auto curlyBracketCount = 0;
 	auto squareBracketCount = 0;
 	auto quote = '\0';
@@ -9195,7 +9204,7 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 		} else
 		// no quote
 		if (quote == '\0') {
-			if (curlyBracketCount == 1 && squareBracketCount == 0 && c == ':' && lc != '\\') {
+			if (curlyBracketCount == 1 && squareBracketCount == 0 && bracketCount == 0 && c == ':' && lc != '\\') {
 				if (quotedMapKeyStart != string::npos) {
 					quotedMapKeyEnd = i - 1;
 				} else
@@ -9206,14 +9215,21 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 				parseMode = PARSEMODE_VALUE;
 			} else
 			// , -> insert map
-			if (curlyBracketCount == 1 && squareBracketCount == 0 && c == ',') {
+			if (curlyBracketCount == 1 && squareBracketCount == 0 && bracketCount == 0 && c == ',') {
 				if (mapValueStart != string::npos) mapValueEnd = i - 1;
 				// insert map key value pair
 				insertMapKeyValuePair();
 				// nada
 			} else
+			// possible function call
+			if (c == '(') {
+				bracketCount++;
+			} else
+			if (c == ')') {
+				bracketCount--;
+			} else
 			// map/set initializer
-			if (c == '{' && squareBracketCount == 0) {
+			if (c == '{' && squareBracketCount == 0 && bracketCount == 0) {
 				// we have a inner map/set initializer, mark it
 				if (curlyBracketCount == 1) {
 					mapKeyStart = i;
@@ -9225,7 +9241,7 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 				curlyBracketCount++;
 			} else
 			// end of map/set initializer
-			if (c == '}' && squareBracketCount == 0) {
+			if (c == '}' && squareBracketCount == 0 && bracketCount == 0) {
 				curlyBracketCount--;
 				// done? insert into map
 				if (curlyBracketCount == 0) {
@@ -9275,14 +9291,14 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 				}
 			} else
 			// array initializer
-			if (c == '[' && curlyBracketCount == 1) {
+			if (c == '[' && curlyBracketCount == 1 && bracketCount == 0) {
 				// we have a inner array initializer, mark it
 				if (squareBracketCount == 0) mapValueStart = i;
 				// increase square bracket count
 				squareBracketCount++;
 			} else
 			// end of array initializer
-			if (c == ']' && curlyBracketCount == 1) {
+			if (c == ']' && curlyBracketCount == 1 && bracketCount == 0) {
 				squareBracketCount--;
 				// otherwise push inner array initializer
 				if (squareBracketCount == 0) {
@@ -9325,7 +9341,7 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 				}
 			} else
 			// set up map key  start
-			if (curlyBracketCount == 1 && squareBracketCount == 0 && c != ' ' && c != '\t' && c != '\n') {
+			if (curlyBracketCount == 1 && squareBracketCount == 0 && bracketCount == 0 && c != ' ' && c != '\t' && c != '\n') {
 				if (parseMode == PARSEMODE_KEY && mapKeyStart == string::npos && quotedMapKeyStart == string::npos) {
 					mapKeyStart = i;
 				} else
