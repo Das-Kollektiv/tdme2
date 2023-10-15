@@ -7469,7 +7469,15 @@ void MiniScript::registerMethods() {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					returnValue = MiniScript::initializeMapSet(json, miniScript, statement);
+					json = StringTools::trim(json);
+					if (StringTools::startsWith(json, "{") == true) {
+						returnValue = MiniScript::initializeMapSet(json, miniScript, statement);
+					} else
+					if (StringTools::startsWith(json, "[") == true) {
+						returnValue = MiniScript::initializeArray(json, miniScript, statement);
+					} else {
+						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": JSON string not valid");
+					}
 				}
 			}
 		};
