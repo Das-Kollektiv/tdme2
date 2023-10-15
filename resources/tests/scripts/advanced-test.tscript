@@ -25,9 +25,10 @@ on: nothing
 	console.log("---------")
 	console.log("Arrays")
 	console.log("---------")
-	$array = array(1,2,3)
-	console.log("array initialized with: $array = array(1,2,3)")
-	console.log("array now looks like: ", $array)
+	$array = [1, 2, 3, [1, 2, 3], {a: xxx, b: yyy, c: zzz}, {a, b, c}]
+	console.log("array initialized with: $array = [1, 2, 3, [1, 2, 3], {a: xxx, b: yyy, c: zzz}, {a, b, c}]: " + $array)
+	$array = array(1, 2, 3)
+	console.log("array initialized with: $array = array(1, 2, 3): " + $array)
 	$array->push(8, 9, 10, 99, 10)
 	console.log("array pushed values with: $array->push(8, 9, 10, 99, 10)")
 	console.log("array now looks like: ", $array)
@@ -78,43 +79,16 @@ on: nothing
 	console.log("---------")
 	console.log("Maps")
 	console.log("----------")
+	$map = {test1: 123, test2: 456, test3: 789, test4: [1, 2, 3], test5: {a: xxx, b: yyy, c: zzz}, test6: {a, b, c}}
+	console.log("map initialized with: $map = {test1: 123, test2: 456, test3: 789, test4: [1, 2, 3], test5: {a: xxx, b: yyy, c: zzz}, test6: {a, b, c}}: " + $map)
 	$map = map()
-	console.log("map initialized with: $map = map()")
-	console.log("map now looks like: ", $map)
+	console.log("map initialized with: $map = map(): " + $map)
 	console.log("put some key value pairs into map: map->set()")
 	$map->set("test1", 123)
 	$map->set("test2", 456)
 	$map->set("test3", 789)
 	$map->set("test4", array(1,2,3))
 	$map->set("test5", "Yaaaa")
-	#
-	#$array = [1,2,3]
-	#$set = { "aaa", "bbb", "ccc" }
-	#$test1 = 123
-	#$test2 = 456 - 123
-	#	 
-	#$map = {
-	#	test1: $test1,
-	#	test2: $test2 + 123,
-	#	test3: 789,
-	#	test4: [1,2,3],
-	#	test5: "Yaaaa"
-	#	test6: {
-	#		test6a: 1230,
-	#		test6a: 4560,
-	#		test6c: ["x","y","z"]
-	#	},
-	#	execute1: functionName1(this)
-	#	execute2: functionName2(this)
-	#	# optional
-	#	execute3: function: ($a, $b, $c) {
-	#		console.log($this.test1 + ": yarrr")
-	#	}
-	#}
-	#$map.test1 = 234
-	#$map->execute1(1,2,3)
-	#$map->execute2(1,2,3)
-	#
 	console.log("map now looks like: ", $map)
 	console.log("remove test2 via $map->remove: ")
 	$map->remove("test2")
@@ -149,9 +123,10 @@ on: nothing
 	console.log("---------")
 	console.log("Sets")
 	console.log("----------")
+	$set = {test1, test2, test3, test4, test5}
+	console.log("set initialized with: $set = {test1, test2, test3, test4, test5}: " + $set)
 	$set = set()
-	console.log("set initialized with: $set = set()")
-	console.log("set now looks like: ", $set)
+	console.log("set initialized with: $set = set(): " + $set)
 	console.log("put some keys into set: $set->insert()")
 	$set->insert("test1")
 	$set->insert("test2")

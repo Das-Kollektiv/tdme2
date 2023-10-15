@@ -34,6 +34,7 @@ using std::exchange;
 using std::remove;
 using std::make_unique;
 using std::move;
+using std::sort;
 using std::span;
 using std::stack;
 using std::swap;
@@ -1728,34 +1729,40 @@ public:
 				case TYPE_MAP:
 					{
 						const auto& mapValue = getMapValueReference();
-						result+="{";
-						string valuesString;
+						vector<string> values;
 						for (const auto& [mapEntryName, mapEntryValue]: mapValue) {
-							if (valuesString.empty() == false) valuesString+= ", ";
-							valuesString+= "\"" + mapEntryName +  "\": ";
+							string value;
+							value+= "\"" + StringTools::replace(StringTools::replace(mapEntryName, "\\", "\\\\"), "\"", "\\\"") +  "\": ";
 							if (mapEntryValue.type == TYPE_STRING) {
-								valuesString+= "\"";
-								valuesString+= StringTools::replace(StringTools::replace(mapEntryValue.getValueAsString(), "\\", "\\\\"), "\"", "\\\"");
-								valuesString+= "\"";
+								value+= "\"";
+								value+= StringTools::replace(StringTools::replace(mapEntryValue.getValueAsString(), "\\", "\\\\"), "\"", "\\\"");
+								value+= "\"";
 							} else {
-								valuesString+= mapEntryValue.getValueAsString();
+								value+= mapEntryValue.getValueAsString();
 							}
+							values.push_back(value);
 						}
-						result+= valuesString;
-						result+="}";
+						sort(values.begin(), values.end());
+						for (const auto& valueString: values) {
+							if (result.empty() == false) result+= ", ";
+							result+= valueString;
+						}
+						result = "{" + result + "}";
 						break;
 					}
 				case TYPE_SET:
 					{
 						const auto& setValue = getSetValueReference();
-						result+="{";
-						string valuesString;
+						vector<string> values;
 						for (const auto& key: setValue) {
-							if (valuesString.empty() == false) valuesString+= ", ";
-							valuesString+= "\"" + StringTools::replace(StringTools::replace(key, "\\", "\\\\"), "\"", "\\\"") + "\"";
+							values.push_back("\"" + StringTools::replace(StringTools::replace(key, "\\", "\\\\"), "\"", "\\\"") + "\"");
 						}
-						result+= valuesString;
-						result+="}";
+						sort(values.begin(), values.end());
+						for (const auto& valueString: values) {
+							if (result.empty() == false) result+= ", ";
+							result+= valueString;
+						}
+						result = "{" + result + "}";
 						break;
 					}
 				case TYPE_PSEUDO_NUMBER:
