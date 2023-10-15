@@ -184,7 +184,7 @@ public:
 		class Initializer {
 			public:
 				/**
-				 * Script variable initializer information
+				 * Constructor
 				 */
 				Initializer():
 					statement(
@@ -201,7 +201,7 @@ public:
 				}
 
 				/**
-				 * Script variable initializer information
+				 * Constructor
 				 * @param statement statement
 				 * @param syntaxTree syntax tree
 				 */
@@ -229,26 +229,10 @@ public:
 				}
 
 				/**
-				 * Set statement
-				 * @param statement statement
-				 */
-				void setStatement(const ScriptStatement& statement) {
-					this->statement = statement;
-				}
-
-				/**
 				 * @return syntax tree node
 				 */
 				const ScriptSyntaxTreeNode* getSyntaxTree() {
 					return syntaxTree;
-				}
-
-				/**
-				 * @return syntax tree node
-				 */
-				void setSyntaxTree(ScriptSyntaxTreeNode* syntaxTree) {
-					if (syntaxTree != nullptr) delete syntaxTree;
-					this->syntaxTree = syntaxTree;
 				}
 
 			private:
@@ -1471,7 +1455,7 @@ public:
 		}
 
 		/**
-		 * Set array/map/set initializer function call statement from given value into variable
+		 * Set array/map values initializer function call statement
 		 * @param miniScript miniscript instance
 		 * @param statement statement
 		 * @param initializerStatement initializer statement
