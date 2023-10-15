@@ -188,7 +188,7 @@ static void gatherMethodCode(const vector<string>& miniScriptExtensionsCode, con
 	methodCodeMap[methodName] = executeMethodCode;
 }
 
-static void createArrayAccessMethods(string& generatedDeclarations, string& generatedDefinitions, const string& miniScriptClassName, MiniScript* scriptInstance, const string& methodName, const MiniScript::ScriptSyntaxTreeNode& syntaxTree, const MiniScript::ScriptStatement& statement, const unordered_map<string, vector<string>>& methodCodeMap, bool condition, int depth = 0) {
+static void createArrayAccessMethods(MiniScript* miniScript, string& generatedDeclarations, string& generatedDefinitions, const string& miniScriptClassName, MiniScript* scriptInstance, const string& methodName, const MiniScript::ScriptSyntaxTreeNode& syntaxTree, const MiniScript::ScriptStatement& statement, const unordered_map<string, vector<string>>& methodCodeMap, bool condition, int depth = 0) {
 	string headerIndent = "\t";
 
 	//
@@ -241,7 +241,8 @@ static void createArrayAccessMethods(string& generatedDeclarations, string& gene
 									}
 									// check if literal
 									MiniScript::ScriptVariable arrayAccessStatementAsScriptVariable;
-									arrayAccessStatementAsScriptVariable.setImplicitTypedValue(arrayAccessStatementString);
+									//
+									arrayAccessStatementAsScriptVariable.setImplicitTypedValue(arrayAccessStatementString, miniScript, statement);
 									switch (arrayAccessStatementAsScriptVariable.getType()) {
 										case MiniScript::TYPE_BOOLEAN:
 											{
@@ -351,14 +352,14 @@ static void createArrayAccessMethods(string& generatedDeclarations, string& gene
 					}
 				}
 				for (const auto& argument: syntaxTree.arguments) {
-					createArrayAccessMethods(generatedDeclarations, generatedDefinitions, miniScriptClassName, scriptInstance, methodName, argument, statement, methodCodeMap, condition, depth + 1);
+					createArrayAccessMethods(miniScript, generatedDeclarations, generatedDefinitions, miniScriptClassName, scriptInstance, methodName, argument, statement, methodCodeMap, condition, depth + 1);
 				}
 			}
 			break;
 		case MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
 			{
 				for (const auto& argument: syntaxTree.arguments) {
-					createArrayAccessMethods(generatedDeclarations, generatedDefinitions, miniScriptClassName, scriptInstance, methodName, argument, statement, methodCodeMap, condition, depth + 1);
+					createArrayAccessMethods(miniScript, generatedDeclarations, generatedDefinitions, miniScriptClassName, scriptInstance, methodName, argument, statement, methodCodeMap, condition, depth + 1);
 				}
 				//
 				break;
@@ -772,9 +773,9 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 						to_string(scriptIdx)
 					)
 				);
-			createArrayAccessMethods(arrayAccessMethodsDeclarations, arrayAccessMethodsDefinitions, miniScriptClassName, scriptInstance.get(), methodName, script.conditionSyntaxTree, script.conditionStatement, methodCodeMap, true);
+			createArrayAccessMethods(scriptInstance.get(), arrayAccessMethodsDeclarations, arrayAccessMethodsDefinitions, miniScriptClassName, scriptInstance.get(), methodName, script.conditionSyntaxTree, script.conditionStatement, methodCodeMap, true);
 			for (auto statementIdx = 0; statementIdx < script.statements.size(); statementIdx++) {
-				createArrayAccessMethods(arrayAccessMethodsDeclarations, arrayAccessMethodsDefinitions, miniScriptClassName, scriptInstance.get(), methodName, script.syntaxTree[statementIdx], script.statements[statementIdx], methodCodeMap, false);
+				createArrayAccessMethods(scriptInstance.get(), arrayAccessMethodsDeclarations, arrayAccessMethodsDefinitions, miniScriptClassName, scriptInstance.get(), methodName, script.syntaxTree[statementIdx], script.statements[statementIdx], methodCodeMap, false);
 			}
 			scriptIdx++;
 		}

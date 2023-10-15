@@ -168,6 +168,9 @@ public:
 		TYPE_PSEUDO_MIXED,
 	};
 
+	//
+	class ScriptSyntaxTreeNode;
+
 	/**
 	 * MiniScript script variable
 	 */
@@ -175,8 +178,88 @@ public:
 		friend class MiniScript;
 
 	private:
+		/**
+		 * MiniScript variable initializer
+		 */
+		class Initializer {
+			public:
+				/**
+				 * Script variable initializer information
+				 */
+				Initializer():
+					statement(
+						MiniScript::ScriptStatement(
+							MiniScript::LINE_NONE,
+							MiniScript::STATEMENTIDX_NONE,
+							string(),
+							string(),
+							MiniScript::STATEMENTIDX_NONE
+						)
+					),
+					syntaxTree(new ScriptSyntaxTreeNode()) {
+					//
+				}
+
+				/**
+				 * Script variable initializer information
+				 * @param statement statement
+				 * @param syntaxTree syntax tree
+				 */
+				Initializer(const ScriptStatement& statement, ScriptSyntaxTreeNode* syntaxTree): statement(statement), syntaxTree(syntaxTree) {}
+
+				/**
+				 * Destructor
+				 */
+				~Initializer() { delete syntaxTree; }
+
+				/**
+				 * Copy from initializer
+				 * @param initializer initializer
+				 */
+				void copy(Initializer* initializer) {
+					*syntaxTree = *initializer->syntaxTree;
+					this->statement = initializer->statement;
+				}
+
+				/**
+				 * @return statement
+				 */
+				const ScriptStatement& getStatement() {
+					return statement;
+				}
+
+				/**
+				 * Set statement
+				 * @param statement statement
+				 */
+				void setStatement(const ScriptStatement& statement) {
+					this->statement = statement;
+				}
+
+				/**
+				 * @return syntax tree node
+				 */
+				const ScriptSyntaxTreeNode* getSyntaxTree() {
+					return syntaxTree;
+				}
+
+				/**
+				 * @return syntax tree node
+				 */
+				void setSyntaxTree(ScriptSyntaxTreeNode* syntaxTree) {
+					if (syntaxTree != nullptr) delete syntaxTree;
+					this->syntaxTree = syntaxTree;
+				}
+
+			private:
+				ScriptStatement statement;
+				ScriptSyntaxTreeNode* syntaxTree;
+		};
+
+		//
 		ScriptVariableType type { TYPE_NULL };
 		uint64_t valuePtr { 0LL };
+		Initializer* initializer { nullptr };
 
 		/**
 		 * @return boolean value reference
@@ -441,7 +524,12 @@ public:
 					setValue(scriptVariable.getSetValueReference());
 					break;
 				case TYPE_FUNCTION_CALL:
-					setFunctionCallValue(scriptVariable.getStringValueReference());
+					setType(TYPE_FUNCTION_CALL);
+					//
+					if (scriptVariable.initializer != nullptr) {
+						initializer->copy(scriptVariable.initializer);
+					}
+					//
 					break;
 			}
 		}
@@ -508,7 +596,12 @@ public:
 					setValue(scriptVariable.getSetValueReference());
 					break;
 				case TYPE_FUNCTION_CALL:
-					setFunctionCallValue(scriptVariable.getStringValueReference());
+					setType(TYPE_FUNCTION_CALL);
+					//
+					if (scriptVariable.initializer != nullptr) {
+						initializer->copy(scriptVariable.initializer);
+					}
+					//
 					break;
 			}
 			return *this;
@@ -701,6 +794,7 @@ public:
 					break;
 				case TYPE_FUNCTION_CALL:
 					delete static_cast<string*>((void*)valuePtr);
+					if (initializer != nullptr) delete initializer;
 					break;
 			}
 			this->valuePtr = 0LL;
@@ -749,6 +843,7 @@ public:
 					break;
 				case TYPE_FUNCTION_CALL:
 					valuePtr = (uint64_t)(new string());
+					initializer = new Initializer();
 					break;
 			}
 		}
@@ -1376,20 +1471,20 @@ public:
 		}
 
 		/**
-		 * Set map/set initializer value from given value into variable
-		 * @param value value
+		 * Set array/map/set initializer function call statement from given value into variable
+		 * @param miniScript miniscript instance
+		 * @param statement statement
+		 * @param initializerStatement initializer statement
 		 */
-		inline void setFunctionCallValue(const string& value) {
-			setType(TYPE_FUNCTION_CALL);
-			getStringValueReference() = value;
-		}
+		void setFunctionCallStatement(const string& initializerStatement, MiniScript* miniScript, const ScriptStatement& statement);
 
 		/**
 		 * Set implicit typed value given by value string
 		 * @param value value
 		 * @param miniScript mini script
+		 * @param statement statement
 		 */
-		inline void setImplicitTypedValue(const string& value) {
+		inline void setImplicitTypedValue(const string& value, MiniScript* miniScript, const ScriptStatement& statement) {
 			if (value == "null") {
 				setNullValue();
 			} else
@@ -1407,24 +1502,26 @@ public:
 			} else
 			if (StringTools::startsWith(value, "{") == true &&
 				StringTools::endsWith(value, "}") == true) {
-				*this = initializeMapSet(string_view(value));
+				*this = initializeMapSet(string_view(value), miniScript, statement);
 			} else
 			if (StringTools::startsWith(value, "[") == true &&
 				StringTools::endsWith(value, "]") == true) {
-				*this = initializeArray(string_view(value));
+				*this = initializeArray(string_view(value), miniScript, statement);
 			} else
 			// function call
 			if (value.find('(') != string::npos &&
 				value.find(')') != string::npos) {
-				setFunctionCallValue(value);
+				setFunctionCallStatement(value, miniScript, statement);
 			}
 		}
 
 		/**
 		 * Set implicit typed value given by value string
 		 * @param value value
+		 * @param miniScript mini script
+		 * @param statement statement
 		 */
-		inline void setImplicitTypedValueFromStringView(const string_view& value) {
+		inline void setImplicitTypedValueFromStringView(const string_view& value, MiniScript* miniScript, const ScriptStatement& statement) {
 			if (value == "null") {
 				setNullValue();
 			} else
@@ -1442,16 +1539,16 @@ public:
 			} else
 			if (StringTools::viewStartsWith(value, "{") == true &&
 				StringTools::viewEndsWith(value, "}") == true) {
-				*this = initializeMapSet(value);
+				*this = initializeMapSet(value, miniScript, statement);
 			} else
 			if (StringTools::viewStartsWith(value, "[") == true &&
 				StringTools::viewEndsWith(value, "]") == true) {
-				*this = initializeArray(value);
+				*this = initializeArray(value, miniScript, statement);
 			} else
 			// function call
 			if (value.find('(') != string::npos &&
 				value.find(')') != string::npos) {
-				setFunctionCallValue(string(value));
+				setFunctionCallStatement(string(value), miniScript, statement);
 			} else {
 				setValue(string(value));
 			}
@@ -2029,6 +2126,8 @@ public:
 	};
 
 	static constexpr int SCRIPTIDX_NONE { -1 };
+	static constexpr int LINE_NONE { -1 };
+	static constexpr int STATEMENTIDX_NONE { -1 };
 
 protected:
 	static constexpr int SETACCESSBOOL_NONE { -1 };
@@ -2037,12 +2136,10 @@ protected:
 	static constexpr int ARRAYIDX_NONE { -1 };
 	static constexpr int ARRAYIDX_ADD { -2 };
 	static constexpr int STATE_NONE { -1 };
-	static constexpr int STATEMENTIDX_NONE { -1 };
 	static constexpr int STATEMENTIDX_FIRST { 0 };
 	static constexpr int ARGUMENTIDX_NONE { -1 };
 	static constexpr int OPERATORIDX_NONE { -1 };
-	static constexpr int LINEIDX_NONE { -1 };
-	static constexpr int LINEIDX_FIRST { 1 };
+	static constexpr int LINE_FIRST { 1 };
 	static constexpr int64_t TIME_NONE { -1LL };
 
 	struct ScriptState {
@@ -2321,10 +2418,10 @@ private:
 	 * Determine next statement from script code
 	 * @param scriptCode script code
 	 * @param i character index
-	 * @param lineIdx line index
+	 * @param line script line
 	 * @return next statement
 	 */
-	const string determineNextStatement(const string& scriptCode, int& i, int& lineIdx);
+	const string determineNextStatement(const string& scriptCode, int& i, int& line);
 
 	/**
 	 * Parse a script statement
@@ -2788,7 +2885,7 @@ private:
 	 */
 	inline bool evaluateInternal(const string& statement, const string& executableStatement, ScriptVariable& returnValue, bool pushOwnScriptState = true) {
 		ScriptStatement evaluateStatement(
-			LINEIDX_NONE,
+			LINE_NONE,
 			0,
 			"internal.script.evaluate(" + statement + ")",
 			"internal.script.evaluate(" + executableStatement + ")",
@@ -2908,12 +3005,13 @@ private:
 			case TYPE_FUNCTION_CALL:
 				{
 					ScriptVariable returnValue;
-					if (evaluate(variable.getStringValueReference(), returnValue) == true) {
-						return returnValue;
-					} else {
-						Console::println("MiniScript::MiniScript(): '" + scriptFileName + ": Unable to evaluate: " + variable.getStringValueReference());
-						return ScriptVariable();
+					if (variable.initializer != nullptr) {
+						returnValue = executeScriptStatement(
+							*variable.initializer->getSyntaxTree(),
+							variable.initializer->getStatement()
+						);
 					}
+					return returnValue;
 				}
 			default: break;
 		}
@@ -2924,16 +3022,20 @@ private:
 	/**
 	 * Initialize array by initializer string
 	 * @param initializerString initializer string
+	 * @param miniScript mini script
+	 * @param statement statement
 	 * @return initialized variable
 	 */
-	static const ScriptVariable initializeArray(const string_view& initializerString);
+	static const ScriptVariable initializeArray(const string_view& initializerString, MiniScript* miniScript, const ScriptStatement& statement);
 
 	/**
 	 * Initialize map/set by initializer string
 	 * @param initializerString initializer string
+	 * @param miniScript mini script
+	 * @param statement statement
 	 * @return initialized variable
 	 */
-	static const ScriptVariable initializeMapSet(const string_view& initializerString);
+	static const ScriptVariable initializeMapSet(const string_view& initializerString, MiniScript* miniScript, const ScriptStatement& statement);
 
 public:
 	// forbid class copy
@@ -3531,7 +3633,7 @@ public:
 	 */
 	inline bool evaluate(const string& evaluateStatement, ScriptVariable& returnValue) {
 		ScriptStatement evaluateScriptStatement(
-			LINEIDX_NONE,
+			LINE_NONE,
 			STATEMENTIDX_FIRST,
 			"internal.script.evaluate(" + StringTools::replace(StringTools::replace(evaluateStatement, "\\", "\\\\"), "\"", "\\\"") + ")",
 			"internal.script.evaluate(" + StringTools::replace(StringTools::replace(evaluateStatement, "\\", "\\\\"), "\"", "\\\"") + ")",

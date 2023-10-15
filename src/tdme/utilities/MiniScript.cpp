@@ -891,7 +891,7 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& methodName, 
 			} else {
 				// implicitely literal
 				ScriptVariable value;
-				value.setImplicitTypedValueFromStringView(argument);
+				value.setImplicitTypedValueFromStringView(argument, this, statement);
 				//
 				syntaxTree.arguments.emplace_back(
 					ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL,
@@ -1198,7 +1198,7 @@ void MiniScript::execute() {
 	executeStateMachine();
 }
 
-const string MiniScript::determineNextStatement(const string& scriptCode, int& i, int& lineIdx) {
+const string MiniScript::determineNextStatement(const string& scriptCode, int& i, int& line) {
 	string statementCode;
 	vector<string> statementCodeLines;
 	statementCodeLines.emplace_back();
@@ -1277,7 +1277,7 @@ const string MiniScript::determineNextStatement(const string& scriptCode, int& i
 			// add char to script line
 			statementCodeLines[statementCodeLines.size() - 1] += c;
 		} else
-		if (((c == '\n' && ++lineIdx) || (hash == false && c == ';')) && (c == ';' || hash == true || (expectBracket == false && bracketCount == 0 && squareBracketCount == 0 && curlyBracketCount == 0))) {
+		if (((c == '\n' && ++line) || (hash == false && c == ';')) && (c == ';' || hash == true || (expectBracket == false && bracketCount == 0 && squareBracketCount == 0 && curlyBracketCount == 0))) {
 			// break condition
 			bracketCount = 0;
 			squareBracketCount = 0;
@@ -1301,7 +1301,7 @@ const string MiniScript::determineNextStatement(const string& scriptCode, int& i
 	for (const auto& line: statementCodeLines) statementCode+= StringTools::trim(line);
 
 	// add last line index
-	if (i == scriptCode.size() && scriptCode[scriptCode.size() - 1] != '\n') ++lineIdx;
+	if (i == scriptCode.size() && scriptCode[scriptCode.size() - 1] != '\n') ++line;
 
 	//
 	return statementCode;
@@ -1365,7 +1365,7 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 
 	//
 	auto haveScript = false;
-	auto lineIdx = LINEIDX_FIRST;
+	auto lineIdx = LINE_FIRST;
 	auto currentLineIdx = 0;
 	auto statementIdx = STATEMENTIDX_FIRST;
 	enum GotoStatementType { GOTOSTATEMENTTYPE_FOR, GOTOSTATEMENTTYPE_IF, GOTOSTATEMENTTYPE_ELSE, GOTOSTATEMENTTYPE_ELSEIF };
@@ -8935,7 +8935,7 @@ const MiniScript::ScriptVariable MiniScript::deserializeJson(const string& json)
 	}
 }
 
-const MiniScript::ScriptVariable MiniScript::initializeArray(const string_view& initializerString) {
+const MiniScript::ScriptVariable MiniScript::initializeArray(const string_view& initializerString, MiniScript* miniScript, const ScriptStatement& statement) {
 	ScriptVariable variable;
 	variable.setType(TYPE_ARRAY);
 	//
@@ -8970,7 +8970,7 @@ const MiniScript::ScriptVariable MiniScript::initializeArray(const string_view& 
 				auto arrayValueStringView = StringTools::viewTrim(string_view(&initializerString[arrayValueStart], arrayValueLength));
 				if (arrayValueStringView.empty() == false) {
 					ScriptVariable arrayValue;
-					arrayValue.setImplicitTypedValueFromStringView(arrayValueStringView);
+					arrayValue.setImplicitTypedValueFromStringView(arrayValueStringView, miniScript, statement);
 					variable.pushArrayValue(arrayValue);
 				}
 			}
@@ -9033,7 +9033,7 @@ const MiniScript::ScriptVariable MiniScript::initializeArray(const string_view& 
 						if (arrayValueLength > 0) {
 							auto arrayValueStringView = StringTools::viewTrim(string_view(&initializerString[arrayValueStart], arrayValueLength));
 							if (arrayValueStringView.empty() == false) {
-								auto arrayValue = initializeArray(arrayValueStringView);
+								auto arrayValue = initializeArray(arrayValueStringView, miniScript, statement);
 								variable.pushArrayValue(arrayValue);
 							}
 						}
@@ -9062,7 +9062,7 @@ const MiniScript::ScriptVariable MiniScript::initializeArray(const string_view& 
 						if (arrayValueLength > 0) {
 							auto arrayValueStringView = StringTools::viewTrim(string_view(&initializerString[arrayValueStart], arrayValueLength));
 							if (arrayValueStringView.empty() == false) {
-								auto arrayValue = initializeMapSet(arrayValueStringView);
+								auto arrayValue = initializeMapSet(arrayValueStringView, miniScript, statement);
 								variable.pushArrayValue(arrayValue);
 							}
 						}
@@ -9084,7 +9084,7 @@ const MiniScript::ScriptVariable MiniScript::initializeArray(const string_view& 
 	return variable;
 }
 
-const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view& initializerString) {
+const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view& initializerString, MiniScript* miniScript, const ScriptStatement& statement) {
 	ScriptVariable variable;
 	variable.setType(TYPE_MAP);
 	//
@@ -9151,7 +9151,7 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 					auto mapValueStringView = StringTools::viewTrim(string_view(&initializerString[mapValueStart], mapValueLength));
 					if (mapValueStringView.empty() == false) {
 						ScriptVariable mapValue;
-						mapValue.setImplicitTypedValueFromStringView(mapValueStringView);
+						mapValue.setImplicitTypedValueFromStringView(mapValueStringView, miniScript, statement);
 						//
 						variable.setMapValue(string(mapKey), mapValue);
 						//
@@ -9258,7 +9258,7 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 						mapValueEnd = i - 1;
 					} else
 					if (mapKeyStart != string::npos) {
-						mapKeyEnd = i - 1; //xxx
+						mapKeyEnd = i - 1;
 					}
 					// insert map key value pair
 					insertMapKeyValuePair();
@@ -9291,7 +9291,7 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 						if (mapValueLength > 0) {
 							auto mapValueStringView = StringTools::viewTrim(string_view(&initializerString[mapValueStart], mapValueLength));
 							if (mapValueStringView.empty() == false) {
-								auto mapValue = initializeMapSet(mapValueStringView);
+								auto mapValue = initializeMapSet(mapValueStringView, miniScript, statement);
 								variable.setMapValue(string(mapKey), mapValue);
 							}
 						}
@@ -9341,7 +9341,7 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 						if (mapValueLength > 0) {
 							auto mapValueStringView = StringTools::viewTrim(string_view(&initializerString[mapValueStart], mapValueLength));
 							if (mapValueStringView.empty() == false) {
-								auto mapValue = initializeArray(mapValueStringView);
+								auto mapValue = initializeArray(mapValueStringView, miniScript, statement);
 								variable.setMapValue(string(mapKey), mapValue);
 							}
 						}
@@ -9378,4 +9378,30 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 	}
 	//
 	return variable;
+}
+
+void MiniScript::ScriptVariable::setFunctionCallStatement(const string& initializerStatement, MiniScript* miniScript, const ScriptStatement& statement) {
+	setType(TYPE_FUNCTION_CALL);
+	getStringValueReference() = initializerStatement;
+	//
+	ScriptStatement initializerScriptStatement(
+		statement.line,
+		statement.statementIdx,
+		initializerStatement,
+		initializerStatement,
+		MiniScript::STATEMENTIDX_NONE
+	);
+	//
+	string_view methodName;
+	vector<string_view> arguments;
+	string accessObjectMemberStatement;
+	ScriptSyntaxTreeNode* evaluateSyntaxTree = new ScriptSyntaxTreeNode();
+	if (miniScript->parseScriptStatement(initializerStatement, methodName, arguments, initializerScriptStatement, accessObjectMemberStatement) == false) {
+		//
+	} else
+	if (miniScript->createScriptStatementSyntaxTree(methodName, arguments, initializerScriptStatement, *evaluateSyntaxTree) == false) {
+		//
+	} else {
+		initializer = new Initializer(statement, evaluateSyntaxTree);
+	}
 }
