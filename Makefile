@@ -950,6 +950,7 @@ MAIN_SRCS = \
 	src/tdme/tools/cli/createrc-main.cpp \
 	src/tdme/tools/cli/dumpmodel-main.cpp \
 	src/tdme/tools/cli/imageprocessor-main.cpp \
+	src/tdme/tools/cli/miniscript-main.cpp \
 	src/tdme/tools/cli/msclib2dll-main.cpp \
 	src/tdme/tools/cli/fixdoxygen-main.cpp \
 	src/tdme/tools/cli/generatelicenses-main.cpp \

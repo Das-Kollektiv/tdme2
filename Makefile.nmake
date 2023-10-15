@@ -797,6 +797,7 @@ all: \
 	importtmodel \
 	importtscene \
 	fixdoxygen \
+	miniscript \
 	msclib2dll \
 	makefilegenerator \
 	miniscripttranspiler \
@@ -1168,6 +1169,11 @@ fixdoxygen:
 	rc $(MSCBIN)\fixdoxygen.exe.rc
 	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\fixdoxygen /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/fixdoxygen-main.cpp $(MSCBIN)\fixdoxygen.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
+miniscript:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc miniscript.exe $(MSCBIN)\miniscript.exe.rc
+	rc $(MSCBIN)\miniscript.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\miniscript /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/miniscript-main.cpp $(MSCBIN)\miniscript.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
 msclib2dll:
 	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc msclib2dll.exe $(MSCBIN)\msclib2dll.exe.rc
 	rc $(MSCBIN)\msclib2dll.exe.rc
@@ -1302,6 +1308,7 @@ copy-executables:
 	copy $(MSCBIN)\makefilegenerator.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\miniscripttranspiler.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\miniscriptuntranspiler.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\miniscript.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\msclib2dll.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\nmakefilegenerator.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\optimizemodel.exe bin\tdme\tools\cli\.
