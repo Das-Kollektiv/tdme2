@@ -89,7 +89,7 @@ public:
 	 */
 	inline static int main(int argc, char** argv) {
 		auto useBC7TextureCompression = true;
-		if (string(argv[1]) == "-no-texture-compression") useBC7TextureCompression = false;
+		if (string(argv[1]) == "--no-texture-compression") useBC7TextureCompression = false;
 		string tModelFileName = argv[1 + (useBC7TextureCompression == false?1:0)];
 		string modelFileName = argv[2 + (useBC7TextureCompression == false?1:0)];
 		string bvsModelFileName = argc >= 4 + (useBC7TextureCompression == false?1:0)?argv[3 + (useBC7TextureCompression == false?1:0)]:"";
@@ -200,7 +200,7 @@ int main(int argc, char** argv)
 	Console::println(Version::getCopyright());
 	Console::println();
 	if (argc < 3) {
-		Console::println("Usage: importtmodel [-no-texture-compression] model.tmodel modelfile.ext [bvs-model.ext]");
+		Console::println("Usage: importtmodel [--no-texture-compression] model.tmodel modelfile.ext [bvs-model.ext]");
 		Application::exit(1);
 	}
 	return tdme::tools::cli::ImportTModelApplication::main(argc, argv);

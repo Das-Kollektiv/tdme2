@@ -67,7 +67,7 @@ int main(int argc, char** argv)
 
 	if (argc != 2) {
 		Console::println("Usage: nmakefilegenerator path_to_source");
-		Application::exit(1);
+		Application::exit(Application::EXITCODE_FAILURE);
 	}
 
 	auto pathToSource = string(argv[1]);
@@ -122,6 +122,5 @@ int main(int argc, char** argv)
 	}
 
 	//
-	Console::shutdown();
-	return 0;
+	Application::exit(Application::EXITCODE_SUCCESS);
 }

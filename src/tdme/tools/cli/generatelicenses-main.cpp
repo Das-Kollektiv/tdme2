@@ -83,12 +83,12 @@ int main(int argc, char** argv)
 	auto pathToHeaders = "."; // we do search in pwd
 	auto indent = argc > 1?string(argv[1]):string();
 
-	if (argc > 2 || (argc == 2 && indent.empty() == false && indent != "indent")) {
-		Console::println("Usage: generatelicenses [indent]");
+	if (argc > 2 || (argc == 2 && indent.empty() == false && indent != "--indent")) {
+		Console::println("Usage: generatelicenses [--indent]");
 		Application::exit(1);
 	}
 
-	if (indent == "indent") indent = "\t";
+	if (indent == "--indent") indent = "\t";
 
 	Console::println("Scanning files");
 	vector<string> files;
@@ -103,6 +103,5 @@ int main(int argc, char** argv)
 	}
 
 	//
-	Console::shutdown();
-	return 0;
+	Application::exit(Application::EXITCODE_SUCCESS);
 }

@@ -897,7 +897,7 @@ int main(int argc, char** argv)
 	//
 	if (argc < 3) {
 		Console::println("Usage: miniscripttranspiler path_to_script_file path_to_cpp_miniscript_transpilation_file [path_to_cpp_miniscript_extension_file1] [path_to_cpp_miniscript_extension_fileN]");
-		Application::exit(1);
+		Application::exit(Application::EXITCODE_FAILURE);
 	}
 
 	vector<string> miniScriptExtensionFileNames;
@@ -907,6 +907,5 @@ int main(int argc, char** argv)
 	tdme::tools::cli::MiniscriptTranspiler::processFile(argv[1], argv[2], miniScriptExtensionFileNames);
 
 	//
-	Console::shutdown();
-	return 0;
+	Application::exit(Application::EXITCODE_SUCCESS);
 }

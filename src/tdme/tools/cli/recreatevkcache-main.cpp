@@ -89,6 +89,8 @@ int main(int argc, char** argv)
 	Console::println(string("recreatevkcache ") + Version::getVersion());
 	Console::println(Version::getCopyright());
 	Console::println();
+
+	//
 	Console::println("Deleting shader/vk folder");
 	try {
 		FileSystem::getInstance()->removePath("shader/vk", true);
@@ -105,4 +107,7 @@ int main(int argc, char** argv)
 	Console::println("Creating shader/vk shader cache");
 	tdme::tools::cli::RecreateVKCacheApplication::main(argc, argv);
 	Console::println("Done");
+
+	//
+	Application::exit(Application::EXITCODE_SUCCESS);
 }

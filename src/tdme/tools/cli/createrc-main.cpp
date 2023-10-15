@@ -29,7 +29,7 @@ int main(int argc, char** argv)
 
 	if (argc != 4) {
 		Console::println("Usage: createrc path_to_rc file path_to_generated_rc");
-		Application::exit(1);
+		Application::exit(Application::EXITCODE_FAILURE);
 	}
 
 	//
@@ -73,6 +73,5 @@ int main(int argc, char** argv)
 	}
 
 	//
-	Console::shutdown();
-	return 0;
+	Application::exit(Application::EXITCODE_SUCCESS);
 }

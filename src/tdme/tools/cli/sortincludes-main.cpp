@@ -179,23 +179,26 @@ int main(int argc, char** argv)
 	Console::println(Version::getCopyright());
 	Console::println();
 
+	//
 	if (argc != 2) {
 		Console::println("Usage: sortincludes path_to_source");
-		Application::exit(1);
+		Application::exit(Application::EXITCODE_FAILURE);
 	}
 
+	//
 	auto pathToSource = string(argv[1]);
 
+	//
 	Console::println("Scanning files");
 	vector<string> files;
 	scanDir(pathToSource, files);
 
+	//
 	Console::println("Processing files");
 	for (const auto& fileName: files) {
 		parseHpp(fileName);
 	}
 
 	//
-	Console::shutdown();
-	return 0;
+	Application::exit(Application::EXITCODE_SUCCESS);
 }

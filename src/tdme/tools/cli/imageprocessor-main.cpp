@@ -32,7 +32,7 @@ int main(int argc, char** argv)
 	//
 	if (argc != 3) {
 		Console::println("Usage: imageprocessor input.png output.png");
-		Application::exit(1);
+		Application::exit(Application::EXITCODE_FAILURE);
 	}
 
 	//
@@ -104,6 +104,5 @@ int main(int argc, char** argv)
 	}
 
 	//
-	Console::shutdown();
-	return 0;
+	Application::exit(Application::EXITCODE_SUCCESS);
 }

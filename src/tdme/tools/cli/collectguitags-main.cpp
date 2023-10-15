@@ -127,7 +127,7 @@ int main(int argc, char** argv)
 
 	if (argc < 2) {
 		Console::println("Usage: collectguitags path_to_xmls [path_to_xmls]");
-		Application::exit(1);
+		Application::exit(Application::EXITCODE_FAILURE);
 	}
 
 	vector<string> files;
@@ -153,6 +153,5 @@ int main(int argc, char** argv)
 	}
 
 	//
-	Console::shutdown();
-	return 0;
+	Application::exit(Application::EXITCODE_SUCCESS);
 }

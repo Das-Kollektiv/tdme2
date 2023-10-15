@@ -796,7 +796,6 @@ all: \
 	generatelicenses \
 	importtmodel \
 	importtscene \
-	fixdoxygen \
 	miniscript \
 	msclib2dll \
 	makefilegenerator \
@@ -1164,11 +1163,6 @@ importtscene:
 	rc $(MSCBIN)\importtscene.exe.rc
 	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\importtscene /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/importtscene-main.cpp $(MSCBIN)\importtscene.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
-fixdoxygen:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc fixdoxygen.exe $(MSCBIN)\fixdoxygen.exe.rc
-	rc $(MSCBIN)\fixdoxygen.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\fixdoxygen /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/fixdoxygen-main.cpp $(MSCBIN)\fixdoxygen.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
-
 miniscript:
 	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc miniscript.exe $(MSCBIN)\miniscript.exe.rc
 	rc $(MSCBIN)\miniscript.exe.rc
@@ -1300,7 +1294,6 @@ copy-executables:
 	copy $(MSCBIN)\createminiscriptdocumentation.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\createrc.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\dumpmodel.exe bin\tdme\tools\cli\.
-	copy $(MSCBIN)\fixdoxygen.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\generatelicenses.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\imageprocessor.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\importtmodel.exe bin\tdme\tools\cli\.

@@ -678,6 +678,5 @@ int main(int argc, char** argv)
 	#endif
 
 	//
-	Console::shutdown();
-	return 0;
+	Application::exit(Application::EXITCODE_SUCCESS);
 }

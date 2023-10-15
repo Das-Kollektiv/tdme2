@@ -952,7 +952,6 @@ MAIN_SRCS = \
 	src/tdme/tools/cli/imageprocessor-main.cpp \
 	src/tdme/tools/cli/miniscript-main.cpp \
 	src/tdme/tools/cli/msclib2dll-main.cpp \
-	src/tdme/tools/cli/fixdoxygen-main.cpp \
 	src/tdme/tools/cli/generatelicenses-main.cpp \
 	src/tdme/tools/cli/importtmodel-main.cpp \
 	src/tdme/tools/cli/importtscene-main.cpp \

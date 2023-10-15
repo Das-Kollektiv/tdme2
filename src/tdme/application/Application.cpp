@@ -134,6 +134,7 @@ void Application::cancelExit() {
 
 void Application::exit(int exitCode) {
 	if (Application::application == nullptr) {
+		Console::shutdown();
 		::exit(exitCode);
 	} else {
 		if (Application::application->initialized == false) {

@@ -33,7 +33,6 @@ Console::LogWriterThread::~LogWriterThread() {
 }
 
 void Console::LogWriterThread::run() {
-	Console::println("Console::LogWriterThread(): start");
 	while (isStopRequested() == false) {
 		Console::mutex.lock();
 		if (Console::messages.size() > HISTORY_LINECOUNT) flush();
@@ -43,7 +42,6 @@ void Console::LogWriterThread::run() {
 	Console::mutex.lock();
 	if (Console::messages.size() > 0) flush();
 	Console::mutex.unlock();
-	Console::println("Console::LogWriterThread(): done");
 }
 
 void Console::LogWriterThread::flush() {

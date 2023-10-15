@@ -36,7 +36,7 @@ int main(int argc, char** argv)
 	Console::println();
 	if (argc < 2) {
 		Console::println("Usage: optimizemodel file.tm [exclude_materials_with_specific_filename1] [exclude_materials_with_specific_filenameN]");
-		Application::exit(1);
+		Application::exit(Application::EXITCODE_FAILURE);
 	}
 	string fileName = string(argv[1]);
 	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tm") == false) {
@@ -81,6 +81,5 @@ int main(int argc, char** argv)
 	}
 
 	//
-	Console::shutdown();
-	return 0;
+	Application::exit(Application::EXITCODE_SUCCESS);
 }

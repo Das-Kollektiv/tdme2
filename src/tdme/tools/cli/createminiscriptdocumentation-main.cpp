@@ -378,6 +378,5 @@ int main(int argc, char** argv)
 	Console::println();
 
 	//
-	Console::shutdown();
-	return 0;
+	Application::exit(Application::EXITCODE_SUCCESS);
 }

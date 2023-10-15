@@ -66,12 +66,11 @@ int main(int argc, char** argv)
 	if (argc != 2) {
 		Console::println("Usage: msclib2dll path_to_file");
 		Console::println("Note: path_to_file can be obtained from dumpbin /LINKERMEMBER xyz.lib");
-		Application::exit(1);
+		Application::exit(Application::EXITCODE_FAILURE);
 	}
 
 	parseHpp(argv[1]);
 
 	//
-	Console::shutdown();
-	return 0;
+	Application::exit(Application::EXITCODE_SUCCESS);
 }
