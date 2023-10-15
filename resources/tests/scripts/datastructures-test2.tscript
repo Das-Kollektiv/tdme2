@@ -1,0 +1,30 @@
+# initialize
+on: initialize
+	console.log("---------------------------------")
+	console.log("datastructures-test: Initialize")
+	console.log("---------------------------------")
+	console.log()
+end
+
+# if no condition is met, nothing will be executed, lol :D
+on: nothing
+	console.log("---------------------------------")
+	console.log("datastructures-test: Initialize")
+	console.log("---------------------------------")
+	console.log()
+	console.log("---------")
+	console.log("Maps")
+	console.log("----------")
+	$map = {"test1": 123, "test2": 456, "test3": 789, "test4": [1, 2, 3], "test5": {"a": "xxx", "b": "yyy", "c": "zzz"}, "test6": {"a", "b", "c"}, test7: 20 * 20}
+	console.log("map initialized with: $map = {test1: 123, test2: 456, test3: 789, test4: [1, 2, 3], test5: {a: xxx, b: yyy, c: zzz}, test6: {a, b, c}, test7: 20 * 20}: " + $map)
+	script.stop()
+end
+
+# an error has occurred
+on: error
+	console.log("----------------------------")
+	console.log("datastructures-test: Error")
+	console.log("----------------------------")
+	console.log("An error occurred")
+	script.wait(1000)
+end
