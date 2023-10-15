@@ -13,20 +13,10 @@ on: nothing
 	console.log("---------------------------------")
 	console.log()
 	console.log("---------")
-	console.log("Arrays")
-	console.log("---------")
-	$array = [1, 2, 3, [1, 2, 3], {a: xxx, b: yyy, c: zzz}, {a, b, c}]
-	console.log("array initialized with: $array = [1, 2, 3, [1, 2, 3], {a: xxx, b: yyy, c: zzz}, {a, b, c}]: " + $array)
-	console.log("---------")
 	console.log("Maps")
 	console.log("----------")
 	$map = {test1: 123, test2: 456, test3: 789, test4: [1, 2, 3], test5: {a: xxx, b: yyy, c: zzz}, test6: {a, b, c}}
 	console.log("map initialized with: $map = {test1: 123, test2: 456, test3: 789, test4: [1, 2, 3], test5: {a: xxx, b: yyy, c: zzz}, test6: {a, b, c}}: " + $map)
-	console.log("---------")
-	console.log("Sets")
-	console.log("----------")
-	$set = {test1, test2, test3, test4, test5}
-	console.log("set initialized with: $set = {test1, test2, test3, test4, test5}: " + $set)
 	script.stop()
 end
 

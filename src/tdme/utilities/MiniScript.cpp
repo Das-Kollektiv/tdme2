@@ -129,7 +129,7 @@ MiniScript* MiniScript::loadScript(const string& pathName, const string& fileNam
 	try {
 		FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, scriptAsStringArray);
 	} catch (Exception& exception) {
-		Console::println("MiniScript::loadScript(): " + pathName + "/" + fileName + ": An error occurred: " + string(exception.what()));
+		Console::println("MiniScript::loadScript(): An error occurred: " + string(exception.what()));
 		return nullptr;
 	}
 
@@ -9106,6 +9106,13 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 	auto hasValues = false;
 	//
 	auto insertMapKeyValuePair = [&]() {
+		//
+		Console::println(
+			"std: " +
+			to_string(mapKeyStart) + " -> " + to_string(mapKeyEnd) + "; " +
+			to_string(quotedMapKeyStart) + " -> " + to_string(quotedMapKeyEnd)
+		);
+		//
 		string_view mapKey;
 		// quoted map key
 		if (quotedMapKeyStart != string::npos && quotedMapKeyEnd != string::npos) {
@@ -9115,6 +9122,7 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 		} else
 		// unquoted map key
 		if (mapKeyStart != string::npos && mapKeyEnd != string::npos) {
+			//
 			auto mapKeyLength = mapKeyEnd - mapKeyStart + 1;
 			if (mapKeyLength > 0) {
 				mapKey = StringTools::viewTrim(string_view(&initializerString[mapKeyStart], mapKeyLength));
@@ -9128,6 +9136,7 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 		mapKeyEnd = string::npos;
 		//
 		if (mapKey.empty() == false) {
+			Console::println(mapKey);
 			// quoted map value
 			if (quotedMapValueStart != string::npos && quotedMapValueEnd != string::npos) {
 				quotedMapValueStart++;
@@ -9216,7 +9225,13 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 			} else
 			// , -> insert map
 			if (curlyBracketCount == 1 && squareBracketCount == 0 && bracketCount == 0 && c == ',') {
-				if (mapValueStart != string::npos) mapValueEnd = i - 1;
+				Console::println(",: " + to_string(curlyBracketCount) + " / " + to_string(squareBracketCount) + " / " + to_string(bracketCount) + ": c = " + c);
+				if (mapValueStart != string::npos) {
+					mapValueEnd = i - 1;
+				} else
+				if (mapKeyStart != string::npos) {
+					mapKeyEnd = i - 1; //xxx
+				}
 				// insert map key value pair
 				insertMapKeyValuePair();
 				// nada
@@ -9230,28 +9245,44 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 			} else
 			// map/set initializer
 			if (c == '{' && squareBracketCount == 0 && bracketCount == 0) {
+				Console::println("pre: {@" + to_string(i) + ": " + to_string(curlyBracketCount));
+				// increase square bracket count
+				curlyBracketCount++;
 				// we have a inner map/set initializer, mark it
 				if (curlyBracketCount == 1) {
-					mapKeyStart = i;
+					mapKeyStart = i + 1;
 				} else
 				if (curlyBracketCount == 2) {
 					mapValueStart = i;
 				}
-				// increase square bracket count
-				curlyBracketCount++;
+				//
+				Console::println("post: }@" + to_string(i) + ": " + to_string(curlyBracketCount));
 			} else
 			// end of map/set initializer
 			if (c == '}' && squareBracketCount == 0 && bracketCount == 0) {
+				Console::println("pre: }@" + to_string(i) + ": " + to_string(curlyBracketCount));
+				//
 				curlyBracketCount--;
 				// done? insert into map
 				if (curlyBracketCount == 0) {
 					//
-					if (mapValueStart != string::npos) mapValueEnd = i - 1;
+					if (mapValueStart != string::npos) {
+						mapValueEnd = i - 1;
+					} else
+					if (mapKeyStart != string::npos) {
+						mapKeyEnd = i - 1; //xxx
+					}
 					// insert map key value pair
 					insertMapKeyValuePair();
 				} else
 				// otherwise push inner array initializer
 				if (curlyBracketCount == 1) {
+					//
+					Console::println(
+						"map: " +
+						to_string(mapKeyStart) + " -> " + to_string(mapKeyEnd) + "; " +
+						to_string(quotedMapKeyStart) + " -> " + to_string(quotedMapKeyEnd)
+					);
 					// parse and insert into map
 					string_view mapKey;
 					// quoted map key
@@ -9289,6 +9320,8 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 					//
 					parseMode = PARSEMODE_KEY;
 				}
+				//
+				Console::println("post: }@" + to_string(i) + ": " + to_string(curlyBracketCount));
 			} else
 			// array initializer
 			if (c == '[' && curlyBracketCount == 1 && bracketCount == 0) {
@@ -9302,6 +9335,13 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 				squareBracketCount--;
 				// otherwise push inner array initializer
 				if (squareBracketCount == 0) {
+					//
+					Console::println(
+						"array: " +
+						to_string(mapKeyStart) + " -> " + to_string(mapKeyEnd) + "; " +
+						to_string(quotedMapKeyStart) + " -> " + to_string(quotedMapKeyEnd)
+					);
+
 					// parse and insert into map
 					string_view mapKey;
 
