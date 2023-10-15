@@ -12,6 +12,11 @@ on: nothing
 	console.log("datastructures-test: Initialize")
 	console.log("---------------------------------")
 	console.log()
+	console.log("-------")
+	console.log("Array")
+	console.log("-------")
+	$array = [1, 2, 3, 20 * 20]
+	console.log("array initialized with: $array = [1, 2, 3, 20 * 20]: " + $array)
 	console.log("---------")
 	console.log("Maps")
 	console.log("----------")

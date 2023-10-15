@@ -27,8 +27,6 @@
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
 
-#include <ext/rapidjson/document.h>
-
 using std::array;
 using std::exchange;
 using std::remove;
@@ -59,9 +57,6 @@ using tdme::utilities::Float;
 using tdme::utilities::Integer;
 using tdme::utilities::StringTools;
 using tdme::utilities::Time;
-
-using rapidjson::Document;
-using rapidjson::Value;
 
 namespace tdme {
 namespace tools {
@@ -2926,35 +2921,6 @@ private:
 	bool transpileScriptCondition(string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap, const string& returnValue, const string& injectCode, int depth = 0);
 
 	/**
-	 * Serialize map as JSON
-	 * @param jParent JSON parent document
-	 * @param variable variable
-	 */
-	static void serializeMapAsJson(Document& jParent, const ScriptVariable& variable);
-
-	/**
-	 * Serialize array as JSON
-	 * @param jDocument JSON document
-	 * @param jParent JSON parent document
-	 * @param variable variable
-	 */
-	static void serializeArrayAsJson(Document& jDocument, Value& jParent, const ScriptVariable& variable);
-
-	/**
-	 * Deserialize map from JSON value
-	 * @param jObjectValue JSON object value
-	 * @return script variable
-	 */
-	static const ScriptVariable deserializeMapJson(const Value& jObjectValue);
-
-	/**
-	 * Deserialize array from JSON value
-	 * @param jArrayValue JSON array value
-	 * @return script variable
-	 */
-	static const ScriptVariable deserializeArrayJson(const Value& jArrayValue);
-
-	/**
 	  * Initialize variable
 	  * @param variable variable
 	  * @return initialized variable
@@ -3692,19 +3658,5 @@ public:
 	 * Create source code for whole script
 	 */
 	const string createSourceCode();
-
-	/**
-	 * Serialize as JSON
-	 * @param variable variable
-	 * @return JSON representation
-	 */
-	static const string serializeAsJson(const ScriptVariable& variable);
-
-	/**
-	 * Deserialize as JSON
-	 * @param variable variable
-	 * @return JSON representation
-	 */
-	static const ScriptVariable deserializeJson(const string& json);
 
 };
