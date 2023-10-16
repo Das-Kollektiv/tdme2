@@ -1888,7 +1888,7 @@ public:
 							auto i = 0;
 							for (const auto& valueString: values) {
 								result+= valueString;
-								if (i != values.size() - 1) result+= ",";
+								if (i != values.size() - 1) result+= ", ";
 								i++;
 							}
 							result = "[" + result + "]";
@@ -1928,7 +1928,7 @@ public:
 							auto i = 0;
 							for (const auto& valueString: values) {
 								result+= valueString;
-								if (i != values.size() - 1) result+= ",";
+								if (i != values.size() - 1) result+= ", ";
 								i++;
 							}
 							result = "{" + result + "}";
@@ -1959,7 +1959,7 @@ public:
 							auto i = 0;
 							for (const auto& valueString: values) {
 								result+= valueString;
-								if (i != values.size() - 1) result+= ",";
+								if (i != values.size() - 1) result+= ", ";
 								i++;
 							}
 							result = "{" + result + "}";
