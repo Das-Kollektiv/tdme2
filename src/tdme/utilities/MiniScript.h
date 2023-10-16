@@ -20,6 +20,7 @@
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
+#include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
@@ -51,6 +52,7 @@ using tdme::math::Quaternion;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
+using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
@@ -1556,7 +1558,7 @@ public:
 				setFunctionCallStatement(value, miniScript, statement);
 			} else
 			// variable
-			if (StringTools::viewStartsWith(value, "$") == true) {
+			if (isVariableAccess(value) == true) {
 				setFunctionCallStatement("getVariable(\"" + value + "\")", miniScript, statement);
 			} else {
 				setValue(value);
@@ -1599,7 +1601,7 @@ public:
 				setFunctionCallStatement(string(value), miniScript, statement);
 			} else
 			// variable
-			if (StringTools::viewStartsWith(value, "$") == true) {
+			if (viewIsVariableAccess(value) == true) {
 				setFunctionCallStatement("getVariable(\"" + string(value) + "\")", miniScript, statement);
 			} else {
 				setValue(string(value));
@@ -2768,7 +2770,7 @@ private:
 	 */
 	inline ScriptVariable* getVariableIntern(const string& name, const string& callerMethod, ScriptVariable*& parentVariable, int64_t& arrayIdx, string& key, int& setAccessBool, const ScriptStatement* statement = nullptr, bool expectVariable = true, bool global = false) {
 		//
-		if (StringTools::startsWith(name, "$") == false) {
+		if (isVariableAccess(name) == false) {
 			if (statement != nullptr) {
 				Console::println(getStatementInformation(*statement) + ": variable: '" + name + "': variable names must start with an $");
 			} else {
@@ -3423,6 +3425,69 @@ public:
 	 * @param scriptMethod script method
 	 */
 	void registerMethod(ScriptMethod* scriptMethod);
+
+	/**
+	 * Returns if a given string is a variable name
+	 * @param string string
+	 * @return if string is a variable name
+	 */
+	inline static bool isVariableAccess(const string& string) {
+		if (string.size() == 0) return false;
+		if (string[0] != '$') return false;
+		auto squareBracketCount = 0;
+		for (auto i = 1; i < string.size(); i++) {
+			auto c = string[i];
+			if (c == '[') {
+				squareBracketCount++;
+			} else
+			if (c == ']') {
+				squareBracketCount--;
+			} else
+			if (squareBracketCount == 0 && Character::isAlphaNumeric(c) == false && c != '_' && c != '.') {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Returns if a given string is a variable name
+	 * @param string string
+	 * @return if string is a variable name
+	 */
+	inline static bool viewIsVariableAccess(const string_view& string) {
+		if (string.size() == 0) return false;
+		if (string[0] != '$') return false;
+		auto squareBracketCount = 0;
+		for (auto i = 1; i < string.size(); i++) {
+			auto c = string[i];
+			if (c == '[') {
+				squareBracketCount++;
+			} else
+			if (c == ']') {
+				squareBracketCount--;
+			} else
+			if (squareBracketCount == 0 && Character::isAlphaNumeric(c) == false && c != '_' && c != '.') {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Returns if a given string is a valid map key name
+	 * @param string string
+	 * @return if string is a valid map key name
+	 */
+	inline bool viewIsKey(const string_view& string) {
+		if (string.size() == 0) return false;
+		if (string[0] == '$') return false;
+		for (auto i = 0; i < string.size(); i++) {
+			auto c = string[i];
+			if (Character::isAlphaNumeric(c) == false && c != '_') return false;
+		}
+		return true;
+	}
 
 	/**
 	 * Returns variable with given name

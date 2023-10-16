@@ -436,7 +436,7 @@ bool MiniScript::parseScriptStatement(const string_view& executableStatement, st
 		evaluateMemberAccessMethodName = string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx);
 		accessObjectMemberStatement+= "(";
 		idx = accessObjectMemberStatement.size();
-		accessObjectMemberStatement+= "\"" + string(StringTools::viewStartsWith(objectMemberAccessObject, "$") == true?objectMemberAccessObject:"") + "\"";
+		accessObjectMemberStatement+= "\"" + string(viewIsVariableAccess(objectMemberAccessObject) == true?objectMemberAccessObject:"") + "\"";
 		evaluateMemberAccessArguments.push_back(string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx));
 		idx = accessObjectMemberStatement.size();
 		accessObjectMemberStatement+= ", ";
@@ -450,7 +450,7 @@ bool MiniScript::parseScriptStatement(const string_view& executableStatement, st
 		for (const auto& argument: arguments) {
 			accessObjectMemberStatement+= ", ";
 			idx = accessObjectMemberStatement.size();
-			accessObjectMemberStatement+= StringTools::viewStartsWith(argument, "$") == true?"\"" + string(argument) + "\"":"null";
+			accessObjectMemberStatement+= viewIsVariableAccess(argument) == true?"\"" + string(argument) + "\"":"null";
 			evaluateMemberAccessArguments.push_back(string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx));
 			accessObjectMemberStatement+= ", ";
 			idx = accessObjectMemberStatement.size();
@@ -563,7 +563,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 						assignBackArgument.arguments.empty() == false) {
 						//
 						auto variableName = assignBackArgument.arguments[0].value.getValueAsString();
-						if (StringTools::startsWith(variableName, "$") == true) {
+						if (viewIsVariableAccess(variableName) == true) {
 							setVariable(variableName, argumentValues[argumentIdx], &statement);
 						} else {
 							Console::println(getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + variableName + "'");
@@ -741,7 +741,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 						assignBackArgument.arguments.empty() == false) {
 						//
 						auto variableName = assignBackArgument.arguments[0].value.getValueAsString();
-						if (StringTools::startsWith(variableName, "$") == true) {
+						if (isVariableAccess(variableName) == true) {
 							setVariable(variableName, argumentValues[argumentIdx], &statement);
 						} else {
 							Console::println(getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + variableName + "'");
@@ -804,7 +804,7 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& methodName, 
 			}
 		} else
 		// plain variable
-		if (StringTools::viewStartsWith(argument, "$") == true) {
+		if (viewIsVariableAccess(argument) == true) {
 			//
 			ScriptVariable value;
 			value.setValue(string(argument));
@@ -2783,7 +2783,7 @@ void MiniScript::registerMethods() {
 									}
 									//
 									if (argumentIdx == 0) {
-										if (StringTools::startsWith(variable, "$") == true) {
+										if (isVariableAccess(variable) == true) {
 											miniScript->setVariable(variable, callArgumentValuesSpan[0], &statement);
 										} else {
 											Console::println(miniScript->getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + variable + "'");
@@ -2795,7 +2795,7 @@ void MiniScript::registerMethods() {
 											miniScript->startErrorScript();
 										} else {
 											auto argumentVariable = argumentValues[variableNameArgumentIdx].getValueAsString();
-											if (StringTools::startsWith(argumentVariable, "$") == true) {
+											if (isVariableAccess(argumentVariable) == true) {
 												miniScript->setVariable(argumentVariable, callArgumentValuesSpan[argumentIdx], &statement);
 											} else {
 												Console::println(miniScript->getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + argumentVariable + "'");
@@ -8100,7 +8100,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 						assignBackArgument.arguments.empty() == false) {
 						//
 						auto variableName = assignBackArgument.arguments[0].value.getValueAsString();
-						if (StringTools::startsWith(variableName, "$") == true) {
+						if (isVariableAccess(variableName) == true) {
 							assignBackCodeLines.push_back("setVariable(\"" + variableName + "\", argumentValues[" + to_string(argumentIdx) + "], &statement);");
 						} else {
 							Console::println("MiniScript::executeScriptStatement(): " + getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + variableName + "'");
@@ -8145,7 +8145,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 					assignBackArgument.arguments.empty() == false) {
 					//
 					auto variableName = assignBackArgument.arguments[0].value.getValueAsString();
-					if (StringTools::startsWith(variableName, "$") == true) {
+					if (isVariableAccess(variableName) == true) {
 						assignBackCodeLines.push_back("setVariable(\"" + variableName + "\", argumentValues[" + to_string(argumentIdx) + "], &statement);");
 					} else {
 						Console::println("MiniScript::transpileScriptStatement(): " + getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + variableName + "'");
