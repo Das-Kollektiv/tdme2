@@ -334,7 +334,15 @@ For more math related methods just look into "6. Methods" section.
 
 An array is a collection/sequence of values which can be accessed by indices.
 
-Initializing an array:
+Initializing an array by array initializer:
+
+```
+...
+	$array = [1, 2, 3]
+...
+```
+
+Initializing an array by constructor:
 
 ```
 ...
@@ -407,7 +415,14 @@ Removing from arrays using a index with array.remove():
 
 A map is key, value pair storage using a underlying hash map. Keys can only exist once in a map.
 
-Initializing maps using map() method:
+Initializing a map by map initializer
+```
+...
+	$map = {"test1": 123, "test2": 456, "test3": [1, 2, 3], "test4": "Yaaaa"}
+...
+```
+
+Initializing a map by map constructor:
 ```
 ...
 	$map = map()
@@ -489,7 +504,14 @@ Reading all keys and values from map using map.get() and map.getKeys()
 
 A set is key storage using a underlying hash set. Keys can only exist once in a set.
 
-Initializing sets using set() method:
+Initializing a set by set initializer
+```
+...
+	$set = {"test1", "test2", "test3"}
+...
+```
+
+Initializing a set by set constructor
 ```
 ...
 	$set = set()
