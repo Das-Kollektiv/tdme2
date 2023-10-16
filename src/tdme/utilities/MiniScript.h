@@ -1554,6 +1554,12 @@ public:
 			if (value.find('(') != string::npos &&
 				value.find(')') != string::npos) {
 				setFunctionCallStatement(value, miniScript, statement);
+			} else
+			// variable
+			if (StringTools::viewStartsWith(value, "$") == true) {
+				setFunctionCallStatement("getVariable(\"" + value + "\")", miniScript, statement);
+			} else {
+				setValue(value);
 			}
 		}
 
@@ -1591,6 +1597,10 @@ public:
 			if (value.find('(') != string::npos &&
 				value.find(')') != string::npos) {
 				setFunctionCallStatement(string(value), miniScript, statement);
+			} else
+			// variable
+			if (StringTools::viewStartsWith(value, "$") == true) {
+				setFunctionCallStatement("getVariable(\"" + string(value) + "\")", miniScript, statement);
 			} else {
 				setValue(string(value));
 			}
@@ -1904,6 +1914,9 @@ public:
 						result = "{" + result + "}";
 						break;
 					}
+				case TYPE_FUNCTION_CALL:
+					result+= "() -> " + getStringValueReference();
+					break;
 				case TYPE_PSEUDO_NUMBER:
 					result+= "Number";
 					break;

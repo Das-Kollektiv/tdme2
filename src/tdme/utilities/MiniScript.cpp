@@ -8795,6 +8795,7 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 		// no quote
 		if (quote == '\0') {
 			if (curlyBracketCount == 1 && squareBracketCount == 0 && bracketCount == 0 && c == ':' && lc != '\\') {
+				//
 				if (quotedMapKeyStart != string::npos) {
 					quotedMapKeyEnd = i - 1;
 				} else
@@ -8803,13 +8804,14 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 				}
 				//
 				parseMode = PARSEMODE_VALUE;
+				//
 			} else
 			// , -> insert map
 			if (curlyBracketCount == 1 && squareBracketCount == 0 && bracketCount == 0 && c == ',') {
 				if (mapValueStart != string::npos) {
 					mapValueEnd = i - 1;
 				} else
-				if (mapKeyStart != string::npos) {
+				if (mapKeyStart != string::npos && mapValueStart == string::npos && quotedMapValueStart == string::npos) {
 					mapKeyEnd = i - 1;
 				}
 				// insert map key value pair
