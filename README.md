@@ -297,6 +297,7 @@
     - generatelicenses tool to generate complete engine or project licenses from ./ext folders
     - importtmodel tool to generate TDME2 tmodel prototype files using model and bounding volumes models
     - makefilegenerator and nmakefilegenerator tool to generate Makefiles for TDME2 based projects
+    - miniscript command line tool to execute MiniScript scripts
     - createminiscriptcodecompletion tool to generate code completion database for MiniScript
     - createminiscriptdocumentation tool to generate documentation for MiniScript methods and operators
     - miniscripttranspiler tool to transpile MiniScript code to C++ code
