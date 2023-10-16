@@ -3381,6 +3381,33 @@ void MiniScript::registerMethods() {
 	}
 	{
 		//
+		class ScriptMethodConsoleDump: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodConsoleDump(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .assignBack = false }
+					}
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "console.dump";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				if (argumentValues.size() != 1) {
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				} else {
+					Console::println(argumentValues[0].getValueAsString(true));
+				}
+			}
+		};
+		registerMethod(new ScriptMethodConsoleDump(this));
+	}
+	{
+		//
 		class ScriptMethodScriptStop: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
@@ -8716,8 +8743,13 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 		quotedMapKeyEnd = string::npos;
 		mapKeyStart = string::npos;
 		mapKeyEnd = string::npos;
-		//
-		if (mapKey.empty() == false) {
+		// validate map key
+		if (mapKey.empty() == true) {
+			// no op
+		} else
+		if (viewIsKey(mapKey) == false) {
+			Console::println(miniScript->getStatementInformation(statement) + ": a invalid key name, ignoring map entry: " + string(mapKey));
+		} else {
 			// quoted map value
 			if (quotedMapValueStart != string::npos && quotedMapValueEnd != string::npos) {
 				quotedMapValueStart++;
@@ -8869,25 +8901,30 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 						auto mapKeyLength = mapKeyEnd - mapKeyStart + 1;
 						if (mapKeyLength > 0) mapKey = StringTools::viewTrim(string_view(&initializerString[mapKeyStart], mapKeyLength));
 					}
-					//
-					quotedMapKeyStart = string::npos;
-					quotedMapKeyEnd = string::npos;
-					mapKeyStart = string::npos;
-					mapKeyEnd = string::npos;
-					// map value
-					if (mapValueStart != string::npos) {
-						mapValueEnd = i;
-						auto mapValueLength = mapValueEnd - mapValueStart + 1;
-						if (mapValueLength > 0) {
-							auto mapValueStringView = StringTools::viewTrim(string_view(&initializerString[mapValueStart], mapValueLength));
-							if (mapValueStringView.empty() == false) {
-								auto mapValue = initializeMapSet(mapValueStringView, miniScript, statement);
-								variable.setMapValue(string(mapKey), mapValue);
-							}
-						}
+					// validate map key
+					if (mapKey.empty() == true || viewIsKey(mapKey) == false) {
+						Console::println(miniScript->getStatementInformation(statement) + ": invalid key name, ignoring map entry: " + string(mapKey));
+					} else {
 						//
-						mapValueStart = string::npos;
-						mapValueEnd = string::npos;
+						quotedMapKeyStart = string::npos;
+						quotedMapKeyEnd = string::npos;
+						mapKeyStart = string::npos;
+						mapKeyEnd = string::npos;
+						// map value
+						if (mapValueStart != string::npos) {
+							mapValueEnd = i;
+							auto mapValueLength = mapValueEnd - mapValueStart + 1;
+							if (mapValueLength > 0) {
+								auto mapValueStringView = StringTools::viewTrim(string_view(&initializerString[mapValueStart], mapValueLength));
+								if (mapValueStringView.empty() == false) {
+									auto mapValue = initializeMapSet(mapValueStringView, miniScript, statement);
+									variable.setMapValue(string(mapKey), mapValue);
+								}
+							}
+							//
+							mapValueStart = string::npos;
+							mapValueEnd = string::npos;
+						}
 					}
 					//
 					parseMode = PARSEMODE_KEY;
@@ -8919,25 +8956,30 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 						auto mapKeyLength = mapKeyEnd - mapKeyStart + 1;
 						if (mapKeyLength > 0) mapKey = StringTools::viewTrim(string_view(&initializerString[mapKeyStart], mapKeyLength));
 					}
-					//
-					quotedMapKeyStart = string::npos;
-					quotedMapKeyEnd = string::npos;
-					mapKeyStart = string::npos;
-					mapKeyEnd = string::npos;
-					// map value
-					if (mapValueStart != string::npos) {
-						mapValueEnd = i;
-						auto mapValueLength = mapValueEnd - mapValueStart + 1;
-						if (mapValueLength > 0) {
-							auto mapValueStringView = StringTools::viewTrim(string_view(&initializerString[mapValueStart], mapValueLength));
-							if (mapValueStringView.empty() == false) {
-								auto mapValue = initializeArray(mapValueStringView, miniScript, statement);
-								variable.setMapValue(string(mapKey), mapValue);
-							}
-						}
+					// validate map key
+					if (mapKey.empty() == true || viewIsKey(mapKey) == false) {
+						Console::println(miniScript->getStatementInformation(statement) + ": invalid key name, ignoring map entry: " + string(mapKey));
+					} else {
 						//
-						mapValueStart = string::npos;
-						mapValueEnd = string::npos;
+						quotedMapKeyStart = string::npos;
+						quotedMapKeyEnd = string::npos;
+						mapKeyStart = string::npos;
+						mapKeyEnd = string::npos;
+						// map value
+						if (mapValueStart != string::npos) {
+							mapValueEnd = i;
+							auto mapValueLength = mapValueEnd - mapValueStart + 1;
+							if (mapValueLength > 0) {
+								auto mapValueStringView = StringTools::viewTrim(string_view(&initializerString[mapValueStart], mapValueLength));
+								if (mapValueStringView.empty() == false) {
+									auto mapValue = initializeArray(mapValueStringView, miniScript, statement);
+									variable.setMapValue(string(mapKey), mapValue);
+								}
+							}
+							//
+							mapValueStart = string::npos;
+							mapValueEnd = string::npos;
+						}
 					}
 					//
 					parseMode = PARSEMODE_KEY;

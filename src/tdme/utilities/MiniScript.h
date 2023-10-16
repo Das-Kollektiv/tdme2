@@ -1736,9 +1736,12 @@ public:
 		}
 
 		/**
+		 * Print string representation of script variable
+		 * @param formatted formatted
+		 * @param depth recursion depth
 		 * @return string representation of script variable type
 		 */
-		inline const string getValueAsString() const {
+		inline const string getValueAsString(bool formatted = false, int depth = 0) const {
 			string result;
 			switch (type) {
 				case TYPE_NULL:
@@ -1889,16 +1892,32 @@ public:
 								value+= StringTools::replace(StringTools::replace(mapEntryValue.getValueAsString(), "\\", "\\\\"), "\"", "\\\"");
 								value+= "\"";
 							} else {
-								value+= mapEntryValue.getValueAsString();
+								value+= mapEntryValue.getValueAsString(formatted, depth + 1);
 							}
 							values.push_back(value);
 						}
 						sort(values.begin(), values.end());
-						for (const auto& valueString: values) {
-							if (result.empty() == false) result+= ", ";
-							result+= valueString;
+						if (formatted == true) {
+							auto i = 0;
+							for (auto& value: values) {
+								if (i != values.size() - 1) value+= ",";
+								i++;
+							}
+							for (const auto& valueString: values) {
+								result+= StringTools::indent(valueString, "\t" , depth + 1);
+								result+= "\n";
+							}
+							result = StringTools::indent("{", "\t", depth) + "\n" + result;
+							result+= StringTools::indent("}", "\t", depth) + (depth == 0?"\n":"");
+						} else {
+							auto i = 0;
+							for (const auto& valueString: values) {
+								result+= valueString;
+								if (i != values.size() - 1) result+= ",";
+								i++;
+							}
+							result = "{" + result + "}";
 						}
-						result = "{" + result + "}";
 						break;
 					}
 				case TYPE_SET:
@@ -3479,7 +3498,7 @@ public:
 	 * @param string string
 	 * @return if string is a valid map key name
 	 */
-	inline bool viewIsKey(const string_view& string) {
+	inline static bool viewIsKey(const string_view& string) {
 		if (string.size() == 0) return false;
 		if (string[0] == '$') return false;
 		for (auto i = 0; i < string.size(); i++) {
