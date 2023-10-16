@@ -1864,20 +1864,35 @@ public:
 				case TYPE_ARRAY:
 					{
 						const auto& arrayValue = getArrayValueReference();
-						result+="[";
-						string valuesString;
-						for (const auto& value: arrayValue) {
-							if (valuesString.empty() == false) valuesString+= ", ";
-							if (value.type == TYPE_STRING) {
-								valuesString+= "\"";
-								valuesString+= StringTools::replace(StringTools::replace(value.getValueAsString(), "\\", "\\\\"), "\"", "\\\"");
-								valuesString+= "\"";
+						vector<string> values;
+						for (const auto& arrayEntry: arrayValue) {
+							if (arrayEntry.type == TYPE_STRING) {
+								values.push_back("\"" + StringTools::replace(StringTools::replace(arrayEntry.getValueAsString(), "\\", "\\\\"), "\"", "\\\"") + "\"" );
 							} else {
-								valuesString+= value.getValueAsString();
+								values.push_back(arrayEntry.getValueAsString(formatted, depth + 1));
 							}
 						}
-						result+= valuesString;
-						result+="]";
+						if (formatted == true) {
+							auto i = 0;
+							for (auto& value: values) {
+								if (i != values.size() - 1) value+= ",";
+								i++;
+							}
+							for (const auto& valueString: values) {
+								result+= StringTools::indent(valueString, "\t" , depth + 1);
+								result+= "\n";
+							}
+							result = (depth == 0?StringTools::indent("[", "\t", depth):"[") + "\n" + result;
+							result+= StringTools::indent("]", "\t", depth) + (depth == 0?"\n":"");
+						} else {
+							auto i = 0;
+							for (const auto& valueString: values) {
+								result+= valueString;
+								if (i != values.size() - 1) result+= ",";
+								i++;
+							}
+							result = "[" + result + "]";
+						}
 						break;
 					}
 				case TYPE_MAP:
@@ -1907,7 +1922,7 @@ public:
 								result+= StringTools::indent(valueString, "\t" , depth + 1);
 								result+= "\n";
 							}
-							result = StringTools::indent("{", "\t", depth) + "\n" + result;
+							result = (depth == 0?StringTools::indent("{", "\t", depth):"{") + "\n" + result;
 							result+= StringTools::indent("}", "\t", depth) + (depth == 0?"\n":"");
 						} else {
 							auto i = 0;
@@ -1928,11 +1943,27 @@ public:
 							values.push_back("\"" + StringTools::replace(StringTools::replace(key, "\\", "\\\\"), "\"", "\\\"") + "\"");
 						}
 						sort(values.begin(), values.end());
-						for (const auto& valueString: values) {
-							if (result.empty() == false) result+= ", ";
-							result+= valueString;
+						if (formatted == true) {
+							auto i = 0;
+							for (auto& value: values) {
+								if (i != values.size() - 1) value+= ",";
+								i++;
+							}
+							for (const auto& valueString: values) {
+								result+= StringTools::indent(valueString, "\t" , depth + 1);
+								result+= "\n";
+							}
+							result = (depth == 0?StringTools::indent("{", "\t", depth):"{") + "\n" + result;
+							result+= StringTools::indent("}", "\t", depth) + (depth == 0?"\n":"");
+						} else {
+							auto i = 0;
+							for (const auto& valueString: values) {
+								result+= valueString;
+								if (i != values.size() - 1) result+= ",";
+								i++;
+							}
+							result = "{" + result + "}";
 						}
-						result = "{" + result + "}";
 						break;
 					}
 				case TYPE_FUNCTION_CALL:
