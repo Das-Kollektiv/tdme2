@@ -197,10 +197,11 @@ public:
 
 				/**
 				 * Constructor
+				 * @param initializerString initializer string
 				 * @param statement statement
 				 * @param syntaxTree syntax tree
 				 */
-				Initializer(const ScriptStatement& statement, ScriptSyntaxTreeNode* syntaxTree): statement(statement), syntaxTree(syntaxTree) {}
+				Initializer(const string& initializerString, const ScriptStatement& statement, ScriptSyntaxTreeNode* syntaxTree): initializerString(initializerString), statement(statement), syntaxTree(syntaxTree) {}
 
 				/**
 				 * Destructor
@@ -212,8 +213,18 @@ public:
 				 * @param initializer initializer
 				 */
 				void copy(Initializer* initializer) {
-					*syntaxTree = *initializer->syntaxTree;
+					this->initializerString = initializer->initializerString;
 					this->statement = initializer->statement;
+					if (syntaxTree != nullptr && initializer->syntaxTree != nullptr) {
+						*syntaxTree = *initializer->syntaxTree;
+					}
+				}
+
+				/**
+				 * @return initializer string
+				 */
+				const string& getInitializerString() {
+					return initializerString;
 				}
 
 				/**
@@ -231,6 +242,7 @@ public:
 				}
 
 			private:
+				string initializerString;
 				ScriptStatement statement;
 				ScriptSyntaxTreeNode* syntaxTree;
 		};
@@ -495,15 +507,34 @@ public:
 					break;
 				case TYPE_ARRAY:
 					setValue(scriptVariable.getArrayValueReference());
+					//
+					if (scriptVariable.initializer != nullptr) {
+						initializer = new Initializer();
+						initializer->copy(scriptVariable.initializer);
+					}
+					//
 					break;
 				case TYPE_MAP:
 					setValue(scriptVariable.getMapValueReference());
+					//
+					if (scriptVariable.initializer != nullptr) {
+						initializer = new Initializer();
+						initializer->copy(scriptVariable.initializer);
+					}
+					//
 					break;
 				case TYPE_SET:
 					setValue(scriptVariable.getSetValueReference());
+					//
+					if (scriptVariable.initializer != nullptr) {
+						initializer = new Initializer();
+						initializer->copy(scriptVariable.initializer);
+					}
+					//
 					break;
 				case TYPE_FUNCTION_CALL:
 					setType(TYPE_FUNCTION_CALL);
+					getStringValueReference() = scriptVariable.getStringValueReference();
 					//
 					if (scriptVariable.initializer != nullptr) {
 						initializer->copy(scriptVariable.initializer);
@@ -567,16 +598,35 @@ public:
 					break;
 				case TYPE_ARRAY:
 					setValue(scriptVariable.getArrayValueReference());
+					// copy initializer if we have any
+					if (scriptVariable.initializer != nullptr) {
+						initializer = new Initializer();
+						initializer->copy(scriptVariable.initializer);
+					}
+					//
 					break;
 				case TYPE_MAP:
 					setValue(scriptVariable.getMapValueReference());
+					// copy initializer if we have any
+					if (scriptVariable.initializer != nullptr) {
+						initializer = new Initializer();
+						initializer->copy(scriptVariable.initializer);
+					}
+					//
 					break;
 				case TYPE_SET:
 					setValue(scriptVariable.getSetValueReference());
+					// copy initializer if we have any
+					if (scriptVariable.initializer != nullptr) {
+						initializer = new Initializer();
+						initializer->copy(scriptVariable.initializer);
+					}
+					//
 					break;
 				case TYPE_FUNCTION_CALL:
 					setType(TYPE_FUNCTION_CALL);
-					//
+					getStringValueReference() = scriptVariable.getStringValueReference();
+					// copy initializer if we have any
 					if (scriptVariable.initializer != nullptr) {
 						initializer->copy(scriptVariable.initializer);
 					}
@@ -764,12 +814,15 @@ public:
 					break;
 				case TYPE_ARRAY:
 					delete static_cast<vector<ScriptVariable>*>((void*)valuePtr);
+					if (initializer != nullptr) delete initializer;
 					break;
 				case TYPE_MAP:
 					delete static_cast<unordered_map<string, ScriptVariable>*>((void*)valuePtr);
+					if (initializer != nullptr) delete initializer;
 					break;
 				case TYPE_SET:
 					delete static_cast<unordered_set<string>*>((void*)valuePtr);
+					if (initializer != nullptr) delete initializer;
 					break;
 				case TYPE_FUNCTION_CALL:
 					delete static_cast<string*>((void*)valuePtr);
@@ -825,6 +878,16 @@ public:
 					initializer = new Initializer();
 					break;
 			}
+		}
+
+		/**
+		 * Return initializer string
+		 * @param value value
+		 * @return initializer string
+		 */
+		inline void getInitializerString(string& value) const {
+			if (initializer == nullptr) return;
+			value = initializer->getInitializerString();
 		}
 
 		/**
@@ -2303,6 +2366,24 @@ protected:
 	 */
 	virtual int determineNamedScriptIdxToStart();
 
+	/**
+	 * Initialize array by initializer string
+	 * @param initializerString initializer string
+	 * @param miniScript mini script
+	 * @param statement statement
+	 * @return initialized variable
+	 */
+	static const ScriptVariable initializeArray(const string_view& initializerString, MiniScript* miniScript, const ScriptStatement& statement);
+
+	/**
+	 * Initialize map/set by initializer string
+	 * @param initializerString initializer string
+	 * @param miniScript mini script
+	 * @param statement statement
+	 * @return initialized variable
+	 */
+	static const ScriptVariable initializeMapSet(const string_view& initializerString, MiniScript* miniScript, const ScriptStatement& statement);
+
 private:
 	static constexpr bool VERBOSE { false };
 
@@ -2968,24 +3049,6 @@ private:
 		//
 		return variable;
 	}
-
-	/**
-	 * Initialize array by initializer string
-	 * @param initializerString initializer string
-	 * @param miniScript mini script
-	 * @param statement statement
-	 * @return initialized variable
-	 */
-	static const ScriptVariable initializeArray(const string_view& initializerString, MiniScript* miniScript, const ScriptStatement& statement);
-
-	/**
-	 * Initialize map/set by initializer string
-	 * @param initializerString initializer string
-	 * @param miniScript mini script
-	 * @param statement statement
-	 * @return initialized variable
-	 */
-	static const ScriptVariable initializeMapSet(const string_view& initializerString, MiniScript* miniScript, const ScriptStatement& statement);
 
 public:
 	// forbid class copy

@@ -204,6 +204,10 @@ static void createArrayAccessMethods(MiniScript* miniScript, string& generatedDe
 					//
 					for (auto argumentIdx = 0; argumentIdx < syntaxTree.arguments.size(); argumentIdx++) {
 						auto argumentString = StringTools::replace(StringTools::replace(syntaxTree.arguments[argumentIdx].value.getValueAsString(), "\\", "\\\\"), "\"", "\\\"");
+						// ignore array and map initializers
+						if (StringTools::startsWith(argumentString, "[") == true ||
+							StringTools::startsWith(argumentString, "{") == true) continue;
+						//
 						auto arrayAccessStatementIdx = 0;
 						auto arrayAccessStatementLeftIdx = -1;
 						auto arrayAccessStatementRightIdx = -1;

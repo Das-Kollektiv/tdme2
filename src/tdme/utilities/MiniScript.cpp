@@ -7967,6 +7967,25 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 										argumentValuesCode.push_back(string() + "\t" +  + "ScriptVariable(string(\"" + value + "\"))" + (lastArgument == false?",":""));
 									}
 									break;
+								case TYPE_ARRAY:
+									{
+										// TODO: initializers may contain function calls as map values or array values, which we can transpile later too
+										string value;
+										argument.value.getInitializerString(value);
+										value = StringTools::replace(StringTools::replace(value, "\\", "\\\\"), "\"", "\\\"");
+										argumentValuesCode.push_back(string() + "\t" + "MiniScript::initializeArray(\"" + value + "\", this, statement)" + (lastArgument == false?",":""));
+									}
+									break;
+								case TYPE_MAP:
+								case TYPE_SET:
+									{
+										// TODO: initializers may contain function calls as map values or array values, which we can transpile later too
+										string value;
+										argument.value.getInitializerString(value);
+										value = StringTools::replace(StringTools::replace(value, "\\", "\\\\"), "\"", "\\\"");
+										argumentValuesCode.push_back(string() + "\t" + "MiniScript::initializeMapSet(\"" + value + "\", this, statement)" + (lastArgument == false?",":""));
+									}
+									break;
 								default:
 									{
 										Console::println("MiniScript::transpileScriptStatement(): " + getStatementInformation(statement) + ": '" + argument.value.getAsString() + "': unknown argument type: " + argument.value.getTypeAsString());
@@ -8648,6 +8667,8 @@ const MiniScript::ScriptVariable MiniScript::initializeArray(const string_view& 
 		lc = c;
 	}
 	//
+	variable.initializer = new MiniScript::ScriptVariable::Initializer(string(initializerString), statement, nullptr);
+	//
 	return variable;
 }
 
@@ -8944,6 +8965,8 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 		variable = setVariable;
 	}
 	//
+	variable.initializer = new MiniScript::ScriptVariable::Initializer(string(initializerString), statement, nullptr);
+	//
 	return variable;
 }
 
@@ -8969,6 +8992,6 @@ void MiniScript::ScriptVariable::setFunctionCallStatement(const string& initiali
 	if (miniScript->createScriptStatementSyntaxTree(methodName, arguments, initializerScriptStatement, *evaluateSyntaxTree) == false) {
 		//
 	} else {
-		initializer = new Initializer(statement, evaluateSyntaxTree);
+		initializer = new Initializer(initializerStatement, statement, evaluateSyntaxTree);
 	}
 }
