@@ -1449,6 +1449,15 @@ public:
 		}
 
 		/**
+		 * @return const pointer to underlying unordered_set or nullptr
+		 */
+		inline const unordered_set<string>* getSetPointer() const {
+			if (type != TYPE_SET) return nullptr;
+			auto& setValue = getSetValueReference();
+			return &setValue;
+		}
+
+		/**
 		 * @return pointer to underlying unordered_set or nullptr
 		 */
 		inline unordered_set<string>* getSetPointer() {
