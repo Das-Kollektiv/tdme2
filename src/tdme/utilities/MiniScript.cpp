@@ -500,6 +500,7 @@ bool MiniScript::parseScriptStatement(const string_view& executableStatement, st
 		//
 		return false;
 	}
+
 	//
 	return true;
 }
@@ -698,6 +699,14 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
 									argumentType.optional:
 									argumentValues[argumentIdx].type == TYPE_MAP;
+							break;
+						}
+					case TYPE_SET:
+						{
+							argumentOk =
+								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
+									argumentType.optional:
+									argumentValues[argumentIdx].type == TYPE_SET;
 							break;
 						}
 					case TYPE_PSEUDO_NUMBER:
@@ -2314,25 +2323,6 @@ bool MiniScript::getObjectMemberAccess(const string_view& executableStatement, s
 		}
 		//
 		lc = c;
-	}
-
-	// complain about bracket count
-	if (bracketCount != 0) {
-		Console::println(getStatementInformation(statement) + ": " + string(executableStatement) + "': unbalanced bracket count: " + to_string(Math::abs(bracketCount)) + " " + (bracketCount < 0?"too much closed":"still open"));
-		//
-		parseErrors.push_back(string(executableStatement) + ": unbalanced bracket count: " + to_string(Math::abs(bracketCount)) + " " + (bracketCount < 0?"too much closed":"still open"));
-	}
-	// complain about square bracket count
-	if (squareBracketCount != 0) {
-		Console::println(getStatementInformation(statement) + ": " + string(executableStatement) + "': unbalanced square bracket count: " + to_string(Math::abs(squareBracketCount)) + " " + (squareBracketCount < 0?"too much closed":"still open"));
-		//
-		parseErrors.push_back(string(executableStatement) + ": unbalanced square bracket count: " + to_string(Math::abs(squareBracketCount)) + " " + (squareBracketCount < 0?"too much closed":"still open"));
-	}
-	// complain about curly bracket count
-	if (curlyBracketCount != 0) {
-		Console::println(getStatementInformation(statement) + ": " + string(executableStatement) + "': unbalanced curly bracket count: " + to_string(Math::abs(curlyBracketCount)) + " " + (curlyBracketCount < 0?"too much closed":"still open"));
-		//
-		parseErrors.push_back(string(executableStatement) + ": unbalanced curly bracket count: " + to_string(Math::abs(curlyBracketCount)) + " " + (curlyBracketCount < 0?"too much closed":"still open"));
 	}
 
 	//
