@@ -267,10 +267,11 @@ bool MiniScript::parseScriptStatement(const string_view& executableStatement, st
 	auto argumentEnd = string::npos;
 	auto quotedArgumentStart = string::npos;
 	auto quotedArgumentEnd = string::npos;
+	auto lc  = '\0';
 	//
 	for (auto i = executableStatementStartIdx; i < executableStatement.size(); i++) {
 		auto c = executableStatement[i];
-		if (squareBracketCount == 0 && curlyBracketCount == 0 && (c == '"' || c == '\'')) {
+		if (squareBracketCount == 0 && curlyBracketCount == 0 && ((c == '"' || c == '\'') && lc != '\\')) {
 			if (bracketCount == 1) {
 				if (quote == '\0') {
 					quotedArgumentStart = i;
@@ -418,6 +419,8 @@ bool MiniScript::parseScriptStatement(const string_view& executableStatement, st
 				}
 			}
 		}
+		//
+		lc = c;
 	}
 	//
 	if (methodStart != string::npos && methodEnd != string::npos) {
@@ -924,9 +927,9 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& methodName, 
 			//
 			return true;
 		} else {
-			Console::println(getStatementInformation(statement) + ": unknown function/method '" + string(methodString) + "'");
+			Console::println(getStatementInformation(statement) + ": unknown function/method: " + string(methodString) + "()");
 			//
-			parseErrors.push_back(getStatementInformation(statement) + ": unknown function/method '" + string(methodString) + "'");
+			parseErrors.push_back(getStatementInformation(statement) + ": unknown function/method: " + string(methodString) + "()");
 			//
 			return false;
 		}
@@ -1212,18 +1215,18 @@ const string MiniScript::determineNextStatement(const string& scriptCode, int& i
 	for (; i < scriptCode.size(); i++) {
 		auto c = scriptCode[i];
 		// handle quotes
-		if (quote != '\0') {
-			// unset quote if closed
-			// also we can ignore content of quote blocks
-			if (c == quote) {
+		if ((c == '"' || c == '\'') && lc != '\\') {
+			if (quote == '\0') {
+				quote = c;
+			} else
+			if (quote == c) {
 				quote = '\0';
 			}
 			// add char to script line
 			statementCodeLines[statementCodeLines.size() - 1] += c;
 		} else
-		if (c == '"' || c == '\'') {
-			quote = c;
-			// add char to script line
+		if (quote != '\0') {
+			// no op
 			statementCodeLines[statementCodeLines.size() - 1] += c;
 		} else
 		// brackets
@@ -1439,15 +1442,16 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 							for (auto j = 0; j < statementCode.size(); j++) {
 								auto c = statementCode[j];
 								// handle quotes
-								if (quote != '\0') {
-									// unset quote if closed
-									// also we can ignore content of quote blocks
-									if (c == quote) {
+								if ((c == '"' || c == '\'') && lc != '\\') {
+									if (quote == '\0') {
+										quote = c;
+									} else
+									if (quote == c) {
 										quote = '\0';
 									}
 								} else
-								if (c == '"' || c == '\'') {
-									quote = c;
+								if (quote != '\0') {
+									// no op
 								} else
 								if (lc == ':' && c == '=') {
 									gotName = true;
@@ -1966,9 +1970,10 @@ bool MiniScript::getNextStatementOperator(const string& processedStatement, Mini
 	//
 	auto bracketCount = 0;
 	auto quote = '\0';
+	auto lc = '\0';
 	for (auto i = 0; i < processedStatement.size(); i++) {
 		auto c = processedStatement[i];
-		if (c == '"' || c == '\'') {
+		if ((c == '"' || c == '\'') && lc != '\\') {
 			if (quote == '\0') {
 				quote = c;
 			} else
@@ -2014,6 +2019,7 @@ bool MiniScript::getNextStatementOperator(const string& processedStatement, Mini
 				}
 			}
 		}
+		lc = c;
 	}
 
 	//
@@ -2042,12 +2048,13 @@ const string MiniScript::findRightArgument(const string& statement, int position
 	auto squareBracketCount = 0;
 	auto curlyBracketCount = 0;
 	auto quote = '\0';
+	auto lc = '\0';
 	string argument;
 	length = 0;
 	for (auto i = position; i < statement.size(); i++) {
 		auto c = statement[i];
 		// quote?
-		if (c == '"' || c == '\'') {
+		if ((c == '"' || c == '\'') && lc != '\\') {
 			if (quote == '\0') {
 				quote = c;
 			} else
@@ -2119,6 +2126,8 @@ const string MiniScript::findRightArgument(const string& statement, int position
 			argument+= c;
 		}
 		length++;
+		//
+		lc = c;
 	}
 	//
 	return trimArgument(argument);
@@ -2131,11 +2140,12 @@ const string MiniScript::findLeftArgument(const string& statement, int position,
 	auto squareBracketCount = 0;
 	auto curlyBracketCount = 0;
 	auto quote = '\0';
+	auto lc = '\0';
 	string argument;
 	length = 0;
 	for (int i = position; i >= 0; i--) {
 		auto c = statement[i];
-		if (c == '"' || c == '\'') {
+		if ((c == '"' || c == '\'') && lc != '\\') {
 			if (quote == '\0') {
 				quote = c;
 			} else
@@ -2200,6 +2210,8 @@ const string MiniScript::findLeftArgument(const string& statement, int position,
 			argument = c + argument;
 		}
 		length++;
+		//
+		lc = c;
 	}
 	return trimArgument(argument);
 }
@@ -2277,15 +2289,16 @@ bool MiniScript::getObjectMemberAccess(const string_view& executableStatement, s
 	for (auto i = 0; i < executableStatement.size(); i++) {
 		auto c = executableStatement[i];
 		// handle quotes
-		if (quote != '\0') {
-			// unset quote if closed
-			// also we can ignore content of quote blocks
-			if (c == quote) {
+		if ((c == '"' || c == '\'') && lc != '\\') {
+			if (quote == '\0') {
+				quote = c;
+			} else
+			if (quote == c) {
 				quote = '\0';
 			}
 		} else
-		if (c == '"' || c == '\'') {
-			quote = c;
+		if (quote != '\0') {
+			// no op
 		} else
 		if (c == '(') {
 			bracketCount++;
@@ -7823,18 +7836,17 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 					auto arrayAccessStatementRightIdx = -1;
 					auto quote = '\0';
 					auto bracketCount = 0;
+					auto lc = '\0';
 					for (auto i = 0; i < argumentString.size(); i++) {
 						auto c = argumentString[i];
 						// handle quotes
-						if (quote != '\0') {
-							// unset quote if closed
-							// also we can ignore content of quote blocks
-							if (c == quote) {
+						if ((c == '"' || c == '\'') && lc != '\\') {
+							if (quote == '\0') {
+								quote = c;
+							} else
+							if (quote == c) {
 								quote = '\0';
 							}
-						} else
-						if (c == '"' || c == '\'') {
-							quote = c;
 						} else
 						if (c == '[') {
 							if (bracketCount == 0) arrayAccessStatementLeftIdx = i;
@@ -7869,6 +7881,8 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 								arrayAccessStatementIdx++;
 							}
 						}
+						//
+						lc = c;
 					}
 				}
 			}
