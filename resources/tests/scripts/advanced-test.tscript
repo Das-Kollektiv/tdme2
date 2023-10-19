@@ -21,6 +21,11 @@ on: nothing
 		[1,2,3],
 		[4,5,6]
 	)
+	console.log(
+		[1,2,3],
+		[4,5,6],
+		[7,8,9]
+	)
 	console.log("array initialized with: $array = [1, 2, 3, [1, 2, 3], {a: xxx, b: yyy, c: zzz}, {a, b, c}, 20 * 20]: " + $array)
 
 	$i = 0

@@ -7815,20 +7815,6 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 				(syntaxTree.value.getValueAsString() == "getVariable" ||
 				syntaxTree.value.getValueAsString() == "setVariable")) {
 				//
-				Script script = scripts[scriptConditionIdx != SCRIPTIDX_NONE?scriptConditionIdx:scriptIdx];
-				// method name
-				string methodName =
-					(script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION?
-						"":
-						(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_")
-					) +
-					(script.name.empty() == false?script.name:(
-						StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true?
-							script.condition:
-							to_string(scriptIdx)
-						)
-					);
-				//
 				for (auto subArgumentIdx = 0; subArgumentIdx < syntaxTree.arguments.size(); subArgumentIdx++) {
 					auto argumentString = StringTools::replace(StringTools::replace(syntaxTree.arguments[subArgumentIdx].value.getValueAsString(), "\\", "\\\\"), "\"", "\\\"");
 					auto arrayAccessStatementIdx = 0;
@@ -7865,6 +7851,19 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 									//
 									continue;
 								}
+								//
+								Script script = scripts[scriptConditionIdx != SCRIPTIDX_NONE?scriptConditionIdx:scriptIdx];
+								string methodName =
+									(script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION?
+										"":
+										(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_")
+									) +
+									(script.name.empty() == false?script.name:(
+										StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true?
+											script.condition:
+											to_string(scriptIdx)
+										)
+									);
 								//
 								auto arrayAccessStatementMethod = methodName + "_array_access_statement_" + (scriptConditionIdx != SCRIPTIDX_NONE?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + to_string(subArgumentIdx) + "_" + to_string(arrayAccessStatementIdx) + "_" + to_string(depth);
 								//
@@ -7999,20 +7998,24 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 									}
 									break;
 								case TYPE_ARRAY:
-									{
-										// TODO: initializers may contain function calls as map values or array values, which we can transpile later too
-										auto value = argument.value.getInitializer() != nullptr?argument.value.getInitializer()->getInitializerString():string();
-										value = StringTools::replace(StringTools::replace(value, "\\", "\\\\"), "\"", "\\\"");
-										argumentValuesCode.push_back(string() + "\t" + "MiniScript::initializeArray(\"" + value + "\", this, statement)" + (lastArgument == false?",":""));
-									}
-									break;
 								case TYPE_MAP:
 								case TYPE_SET:
 									{
-										// TODO: initializers may contain function calls as map values or array values, which we can transpile later too
-										auto value = argument.value.getInitializer() != nullptr?argument.value.getInitializer()->getInitializerString():string();
-										value = StringTools::replace(StringTools::replace(value, "\\", "\\\\"), "\"", "\\\"");
-										argumentValuesCode.push_back(string() + "\t" + "MiniScript::initializeMapSet(\"" + value + "\", this, statement)" + (lastArgument == false?",":""));
+										Script script = scripts[scriptConditionIdx != SCRIPTIDX_NONE?scriptConditionIdx:scriptIdx];
+										string methodName =
+											(script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION?
+												"":
+												(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_")
+											) +
+											(script.name.empty() == false?script.name:(
+												StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true?
+													script.condition:
+													to_string(scriptIdx)
+												)
+											);
+										//
+										auto initializerMethod = methodName + "_initializer_" + (scriptConditionIdx != SCRIPTIDX_NONE?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + to_string(subArgumentIdx);
+										argumentValuesCode.push_back(string() + "\t" + initializerMethod + "(statement)" + (lastArgument == false?",":""));
 									}
 									break;
 								default:

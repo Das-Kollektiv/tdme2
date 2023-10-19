@@ -527,7 +527,6 @@ static void createArrayMapSetVariable(MiniScript* miniScript, const MiniScript::
 		case MiniScript::TYPE_FUNCTION_CALL:
 			{
 				//
-				auto argumentIdx = 0;
 				const auto& statement = variable.getInitializer()->getStatement();
 				string transpiledCode;
 				auto statementIdx = MiniScript::STATEMENTIDX_FIRST;
@@ -593,7 +592,7 @@ static void createArrayMapSetInitializer(MiniScript* miniScript, string& generat
 			}
 		case MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
 			{
-				auto argumentIdx = 0;
+				auto argumentIdx = 1; // TODO: check me!
 				for (const auto& argument: syntaxTree.arguments) {
 					createArrayMapSetInitializer(miniScript, generatedDeclarations, generatedDefinitions, miniScriptClassName, scriptInstance, methodName, argument, statement, methodCodeMap, condition, depth + 1, argumentIdx);
 					argumentIdx++;
