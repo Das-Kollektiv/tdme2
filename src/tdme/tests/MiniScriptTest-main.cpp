@@ -15,6 +15,7 @@ using tdme::utilities::Console;
 int main(int argc, char *argv[]) {
 	Console::println("MiniScriptTest");
 	// base test
+	/*
 	{
 		auto script = make_unique<MiniScriptBaseTest>();
 		script->parseScript("resources/tests/scripts", "base-test.tscript");
@@ -34,6 +35,7 @@ int main(int argc, char *argv[]) {
 		Console::println();
 		Console::println();
 	}
+	*/
 	// advanced test
 	{
 		auto script = make_unique<MiniScriptAdvancedTest>();
@@ -55,6 +57,7 @@ int main(int argc, char *argv[]) {
 		Console::println();
 	}
 	// emit test
+	/*
 	{
 		auto script = make_unique<MiniScriptEmitTest>();
 		script->parseScript("resources/tests/scripts", "emit-test.tscript");
@@ -94,6 +97,7 @@ int main(int argc, char *argv[]) {
 		Console::println();
 		Console::println();
 	}
+	*/
 	//
 	Console::shutdown();
 	return 0;

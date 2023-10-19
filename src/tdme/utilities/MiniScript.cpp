@@ -7776,6 +7776,8 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 	switch (syntaxTree.type) {
 		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
 			{
+				//
+				Console::println(StringTools::indent(string(), "\t", depth) + ": transpile: execute function: " + syntaxTree.value.getValueAsString() + ", depth: " + to_string(depth));
 				// check script user functions
 				auto scriptFunctionsIt = scriptFunctions.find(syntaxTree.value.getValueAsString());
 				if (scriptFunctionsIt != scriptFunctions.end()) {
@@ -7893,6 +7895,8 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 
 	}
 
+	Console::println(StringTools::indent(string(), "\t", depth) + ": transpile: execute method: " + syntaxTree.value.getValueAsString() + ", depth: " + to_string(depth));
+
 	//
 	auto method = syntaxTree.value.getValueAsString();
 
@@ -7949,6 +7953,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 			auto subArgumentIdx = 0;
 			for (const auto& argument: syntaxTree.arguments) {
 				auto lastArgument = subArgumentIdx == syntaxTree.arguments.size() - 1;
+				Console::println(StringTools::indent(string(), "\t", depth) + ": transpile: literal: " + argument.value.getValueAsString() + ", depth: " + to_string(depth));
 				switch (argument.type) {
 					case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
 						{
@@ -8014,7 +8019,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 												)
 											);
 										//
-										auto initializerMethod = methodName + "_initializer_" + (scriptConditionIdx != SCRIPTIDX_NONE?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + to_string(subArgumentIdx);
+										auto initializerMethod = methodName + "_initializer_" + (scriptConditionIdx != SCRIPTIDX_NONE?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + to_string(subArgumentIdx) + "_" + to_string(depth + 1);
 										argumentValuesCode.push_back(string() + "\t" + initializerMethod + "(statement)" + (lastArgument == false?",":""));
 									}
 									break;

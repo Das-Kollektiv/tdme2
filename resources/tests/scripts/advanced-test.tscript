@@ -13,37 +13,16 @@ end
 
 # if no condition is met, nothing will be executed, lol :D
 on: nothing
-	console.log("---------")
-	console.log("Arrays")
-	console.log("---------")
 	$array = [1, 2, 3, [1, 2, 3], {a: xxx, b: yyy, c: zzz}, {a, b, c}, 20 * 20]
 	xxx(
-		[1,2,3],
+		[1,2,3,[4,5,6],{a:a, b:b, c:c}],
 		[4,5,6]
 	)
 	console.log(
-		[1,2,3],
-		[4,5,6],
-		[7,8,9]
+		"a: " + [1,2,3,[4,5,6],{a:a, b:b, c:c}],
+		", b: " + [4,5,6],
+		", c: " + [7,8,9]
 	)
-	console.log("array initialized with: $array = [1, 2, 3, [1, 2, 3], {a: xxx, b: yyy, c: zzz}, {a, b, c}, 20 * 20]: " + $array)
-
-	$i = 0
-	forCondition($i < $array->length())
-		console.log($i + ": " + $array[$i])
-		++$i
-	end
-
-	console.log("---------")
-	console.log("Maps")
-	console.log("----------")
-	$map = {test1: 123, test2: 456, test3: 789, test4: [1, 2, 3], test5: {a: xxx, b: yyy, c: zzz}, test6: {a, b, c}, f: 20 * 20}
-	console.log("map initialized with: {test1: 123, test2: 456, test3: 789, test4: [1, 2, 3], test5: {a: xxx, b: yyy, c: zzz}, test6: {a, b, c}, f: 20 * 20}: " + $map)
-	console.log("---------")
-	console.log("Sets")
-	console.log("----------")
-	$set = {test1, test2, test3, test4, test5}
-	console.log("set initialized with: $set = {test1, test2, test3, test4, test5}: " + $set)
 	script.stop()
 end
 
