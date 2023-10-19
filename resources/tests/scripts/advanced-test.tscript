@@ -11,13 +11,20 @@ on: nothing
 	console.log("---------")
 	console.log("Arrays")
 	console.log("---------")
-	$array = [1, 2, 3, [1, 2, 3], {a: xxx, b: yyy, c: zzz}, {a, b, c}]
-	console.log("array initialized with: $array = [1, 2, 3, [1, 2, 3], {a: xxx, b: yyy, c: zzz}, {a, b, c}]: " + $array)
+	$array = [1, 2, 3, [1, 2, 3], {a: xxx, b: yyy, c: zzz}, {a, b, c}, 20 * 20]
+	console.log("array initialized with: $array = [1, 2, 3, [1, 2, 3], {a: xxx, b: yyy, c: zzz}, {a, b, c}, 20 * 20]: " + $array)
+
+	$i = 0
+	forCondition($i < $array->length())
+		console.log($i + ": " + $array[$i])
+		++$i
+	end
+
 	console.log("---------")
 	console.log("Maps")
 	console.log("----------")
-	$map = {test1: 123, test2: 456, test3: 789, test4: [1, 2, 3], test5: {a: xxx, b: yyy, c: zzz}, test6: {a, b, c}}
-	console.log("map initialized with: $map = {test1: 123, test2: 456, test3: 789, test4: [1, 2, 3], test5: {a: xxx, b: yyy, c: zzz}, test6: {a, b, c}}: " + $map)
+	$map = {test1: 123, test2: 456, test3: 789, test4: [1, 2, 3], test5: {a: xxx, b: yyy, c: zzz}, test6: {a, b, c}, f: 20 * 20}
+	console.log("map initialized with: {test1: 123, test2: 456, test3: 789, test4: [1, 2, 3], test5: {a: xxx, b: yyy, c: zzz}, test6: {a, b, c}, f: 20 * 20}: " + $map)
 	console.log("---------")
 	console.log("Sets")
 	console.log("----------")

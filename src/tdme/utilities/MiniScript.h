@@ -883,13 +883,11 @@ public:
 		}
 
 		/**
-		 * Return initializer string
-		 * @param value value
-		 * @return initializer string
+		 * Return initializer
+		 * @return initializer
 		 */
-		inline void getInitializerString(string& value) const {
-			if (initializer == nullptr) return;
-			value = initializer->getInitializerString();
+		inline Initializer* getInitializer() const {
+			return initializer;
 		}
 
 		/**

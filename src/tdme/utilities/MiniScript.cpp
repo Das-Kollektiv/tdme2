@@ -8001,8 +8001,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 								case TYPE_ARRAY:
 									{
 										// TODO: initializers may contain function calls as map values or array values, which we can transpile later too
-										string value;
-										argument.value.getInitializerString(value);
+										auto value = argument.value.getInitializer() != nullptr?argument.value.getInitializer()->getInitializerString():string();
 										value = StringTools::replace(StringTools::replace(value, "\\", "\\\\"), "\"", "\\\"");
 										argumentValuesCode.push_back(string() + "\t" + "MiniScript::initializeArray(\"" + value + "\", this, statement)" + (lastArgument == false?",":""));
 									}
@@ -8011,8 +8010,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 								case TYPE_SET:
 									{
 										// TODO: initializers may contain function calls as map values or array values, which we can transpile later too
-										string value;
-										argument.value.getInitializerString(value);
+										auto value = argument.value.getInitializer() != nullptr?argument.value.getInitializer()->getInitializerString():string();
 										value = StringTools::replace(StringTools::replace(value, "\\", "\\\\"), "\"", "\\\"");
 										argumentValuesCode.push_back(string() + "\t" + "MiniScript::initializeMapSet(\"" + value + "\", this, statement)" + (lastArgument == false?",":""));
 									}
