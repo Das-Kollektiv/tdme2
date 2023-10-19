@@ -1656,6 +1656,7 @@ inline MiniScript::ScriptVariable MiniScriptAdvancedTest::on_nothing_initializer
 				ScriptVariable variableD2(string("xxx"));
 				variableD1.setMapValue("a", variableD2);
 			}
+			variableD0.pushArrayValue(variableD1);
 		}
 		{
 			ScriptVariable variableD1;
@@ -1731,6 +1732,7 @@ inline MiniScript::ScriptVariable MiniScriptAdvancedTest::on_nothing_initializer
 				ScriptVariable variableD2(string("xxx"));
 				variableD1.setMapValue("a", variableD2);
 			}
+			variableD0.setMapValue("test5", variableD1);
 		}
 		{
 			ScriptVariable variableD1;
@@ -1761,6 +1763,7 @@ inline MiniScript::ScriptVariable MiniScriptAdvancedTest::on_nothing_initializer
 			ScriptVariable variableD1(static_cast<int64_t>(123ll));
 			variableD0.setMapValue("test1", variableD1);
 		}
+		return variableD0;
 	}
 }
 

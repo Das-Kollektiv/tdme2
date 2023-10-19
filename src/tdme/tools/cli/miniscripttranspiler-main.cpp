@@ -505,6 +505,7 @@ static void createArrayMapSetVariable(MiniScript* miniScript, const MiniScript::
 					auto mapEntryNameEscaped = StringTools::replace(StringTools::replace(mapEntryName, "\\", "\\\\"), "\"", "\\\"");
 					createArrayMapSetVariable(miniScript, mapEntryValue, methodCodeMap, methodName, condition, miniScriptClassName, generatedDeclarations, generatedDefinitions, depth + 1, "variableD" + to_string(depth) + ".setMapValue(\"" + mapEntryNameEscaped + "\", variableD" + to_string(depth + 1) + ");");
 				}
+				generatedDefinitions+= indent + "\t" + postStatement + "\n";
 				generatedDefinitions+= indent + "}" + "\n";
 			}
 			break;
