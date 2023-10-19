@@ -6,12 +6,21 @@ on: initialize
 	console.log()
 end
 
+function: xxx($a, $b)
+	console.log($a)
+	console.log($b)
+end
+
 # if no condition is met, nothing will be executed, lol :D
 on: nothing
 	console.log("---------")
 	console.log("Arrays")
 	console.log("---------")
 	$array = [1, 2, 3, [1, 2, 3], {a: xxx, b: yyy, c: zzz}, {a, b, c}, 20 * 20]
+	xxx(
+		[1,2,3],
+		[4,5,6]
+	)
 	console.log("array initialized with: $array = [1, 2, 3, [1, 2, 3], {a: xxx, b: yyy, c: zzz}, {a, b, c}, 20 * 20]: " + $array)
 
 	$i = 0

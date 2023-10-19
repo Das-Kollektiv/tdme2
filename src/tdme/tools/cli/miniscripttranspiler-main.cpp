@@ -430,15 +430,17 @@ static void generateMiniScriptEvaluateMemberAccessArrays(MiniScript* miniScript,
 	}
 }
 
-static void createArrayMapSetVariable(MiniScript* miniScript, const MiniScript::ScriptVariable& variable, const unordered_map<string, vector<string>>& methodCodeMap, const string& methodName, bool condition, const string& miniScriptClassName, string& generatedDeclarations, string& generatedDefinitions, int depth = 0, const string& postStatement = string()) {
+static void createArrayMapSetVariable(MiniScript* miniScript, const MiniScript::ScriptVariable& variable, const unordered_map<string, vector<string>>& methodCodeMap, const string& methodName, bool condition, const string& miniScriptClassName, string& generatedDeclarations, string& generatedDefinitions, int depth = 0, int argumentIdx = 0, const string& postStatement = string()) {
 	string headerIndent = "\t";
 	auto indent = StringTools::indent(string(), "\t", depth + 1);
 	switch (variable.getType()) {
 		case MiniScript::TYPE_NULL:
-			generatedDefinitions+= indent + "{" + "\n";
-			generatedDefinitions+= indent + "\t" + "ScriptVariable variableD" + to_string(depth) + ";" + "\n";
-			generatedDefinitions+= indent + "\t" + postStatement + "\n";
-			generatedDefinitions+= indent + "}" + "\n";
+			{
+				generatedDefinitions+= indent + "{" + "\n";
+				generatedDefinitions+= indent + "\t" + "ScriptVariable variableD" + to_string(depth) + ";" + "\n";
+				generatedDefinitions+= indent + "\t" + postStatement + "\n";
+				generatedDefinitions+= indent + "}" + "\n";
+			}
 			break;
 		case MiniScript::TYPE_BOOLEAN:
 			{
@@ -489,7 +491,7 @@ static void createArrayMapSetVariable(MiniScript* miniScript, const MiniScript::
 				generatedDefinitions+= indent + "\t" + "variableD" + to_string(depth) + ".setType(TYPE_ARRAY);" + "\n";
 				const auto arrayValue = variable.getArrayPointer();
 				for (const auto& arrayEntry: *arrayValue) {
-					createArrayMapSetVariable(miniScript, arrayEntry, methodCodeMap, methodName, condition, miniScriptClassName, generatedDeclarations, generatedDefinitions, depth + 1, "variableD" + to_string(depth) + ".pushArrayValue(variableD" + to_string(depth + 1) + ");");
+					createArrayMapSetVariable(miniScript, arrayEntry, methodCodeMap, methodName, condition, miniScriptClassName, generatedDeclarations, generatedDefinitions, depth + 1, argumentIdx, "variableD" + to_string(depth) + ".pushArrayValue(variableD" + to_string(depth + 1) + ");");
 				}
 				generatedDefinitions+= indent + "\t" + postStatement + "\n";
 				generatedDefinitions+= indent + "}" + "\n";
@@ -503,7 +505,7 @@ static void createArrayMapSetVariable(MiniScript* miniScript, const MiniScript::
 				const auto mapValue = variable.getMapPointer();
 				for (const auto& [mapEntryName, mapEntryValue]: *mapValue) {
 					auto mapEntryNameEscaped = StringTools::replace(StringTools::replace(mapEntryName, "\\", "\\\\"), "\"", "\\\"");
-					createArrayMapSetVariable(miniScript, mapEntryValue, methodCodeMap, methodName, condition, miniScriptClassName, generatedDeclarations, generatedDefinitions, depth + 1, "variableD" + to_string(depth) + ".setMapValue(\"" + mapEntryNameEscaped + "\", variableD" + to_string(depth + 1) + ");");
+					createArrayMapSetVariable(miniScript, mapEntryValue, methodCodeMap, methodName, condition, miniScriptClassName, generatedDeclarations, generatedDefinitions, depth + 1, argumentIdx, "variableD" + to_string(depth) + ".setMapValue(\"" + mapEntryNameEscaped + "\", variableD" + to_string(depth + 1) + ");");
 				}
 				generatedDefinitions+= indent + "\t" + postStatement + "\n";
 				generatedDefinitions+= indent + "}" + "\n";
@@ -540,7 +542,7 @@ static void createArrayMapSetVariable(MiniScript* miniScript, const MiniScript::
 	}
 }
 
-static void createArrayMapSetInitializer(MiniScript* miniScript, string& generatedDeclarations, string& generatedDefinitions, const string& miniScriptClassName, MiniScript* scriptInstance, const string& methodName, const MiniScript::ScriptSyntaxTreeNode& syntaxTree, const MiniScript::ScriptStatement& statement, const unordered_map<string, vector<string>>& methodCodeMap, bool condition, int depth = 0) {
+static void createArrayMapSetInitializer(MiniScript* miniScript, string& generatedDeclarations, string& generatedDefinitions, const string& miniScriptClassName, MiniScript* scriptInstance, const string& methodName, const MiniScript::ScriptSyntaxTreeNode& syntaxTree, const MiniScript::ScriptStatement& statement, const unordered_map<string, vector<string>>& methodCodeMap, bool condition, int depth = 0, int argumentIdx = 0) {
 	string headerIndent = "\t";
 
 	//
@@ -553,7 +555,6 @@ static void createArrayMapSetInitializer(MiniScript* miniScript, string& generat
 					case MiniScript::TYPE_MAP:
 					case MiniScript::TYPE_SET:
 						{
-							auto argumentIdx = 0; // TODO: implement me!
 							generatedDeclarations+= headerIndent + "/**\n";
 							generatedDeclarations+= headerIndent + " * Miniscript transpilation for a " + (condition == true?"condition":"statement") + " array/map/set initializer for method '" + methodName + "', statement index " + to_string(statement.statementIdx) + ", argument index " + to_string(argumentIdx) + "\n";
 							generatedDeclarations+= headerIndent + " * @param statement statement" + "\n";
@@ -564,7 +565,7 @@ static void createArrayMapSetInitializer(MiniScript* miniScript, string& generat
 							string generatedInitializerDeclarations;
 							string generatedInitializerDefinitions;
 							//
-							createArrayMapSetVariable(miniScript, syntaxTree.value, methodCodeMap, methodName, condition, miniScriptClassName, generatedInitializerDeclarations, generatedInitializerDefinitions, 0, "return variableD0;");
+							createArrayMapSetVariable(miniScript, syntaxTree.value, methodCodeMap, methodName, condition, miniScriptClassName, generatedInitializerDeclarations, generatedInitializerDefinitions, 0, argumentIdx, "return variableD0;");
 							//
 							generatedDefinitions+= "\n";
 							generatedDefinitions+= string() + "inline MiniScript::ScriptVariable " + miniScriptClassName + "::" + methodName + "_initializer_" + (condition == true?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + to_string(argumentIdx) + "(const ScriptStatement& statement) {" + "\n";
@@ -583,15 +584,19 @@ static void createArrayMapSetInitializer(MiniScript* miniScript, string& generat
 			}
 		case MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
 			{
+				auto argumentIdx = 0;
 				for (const auto& argument: syntaxTree.arguments) {
-					createArrayMapSetInitializer(miniScript, generatedDeclarations, generatedDefinitions, miniScriptClassName, scriptInstance, methodName, argument, statement, methodCodeMap, condition, depth + 1);
+					createArrayMapSetInitializer(miniScript, generatedDeclarations, generatedDefinitions, miniScriptClassName, scriptInstance, methodName, argument, statement, methodCodeMap, condition, depth + 1, argumentIdx);
+					argumentIdx++;
 				}
 				break;
 			}
 		case MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
 			{
+				auto argumentIdx = 0;
 				for (const auto& argument: syntaxTree.arguments) {
-					createArrayMapSetInitializer(miniScript, generatedDeclarations, generatedDefinitions, miniScriptClassName, scriptInstance, methodName, argument, statement, methodCodeMap, condition, depth + 1);
+					createArrayMapSetInitializer(miniScript, generatedDeclarations, generatedDefinitions, miniScriptClassName, scriptInstance, methodName, argument, statement, methodCodeMap, condition, depth + 1, argumentIdx);
+					argumentIdx++;
 				}
 				//
 				break;
