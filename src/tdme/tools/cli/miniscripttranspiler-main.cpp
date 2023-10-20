@@ -344,7 +344,7 @@ static void createArrayAccessMethods(MiniScript* miniScript, string& generatedDe
 									generatedDeclarations+= headerIndent + " * @param statement statement" + "\n";
 									generatedDeclarations+= headerIndent + " * @return array index" + "\n";
 									generatedDeclarations+= headerIndent + " */" + "\n";
-									generatedDeclarations+= headerIndent + "ScriptVariable " + methodName + "_array_access_statement_" + (condition == true?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + to_string(argumentIdx) + "_" + to_string(arrayAccessStatementIdx) + "(const ScriptStatement& statement);" + "\n\n";
+									generatedDeclarations+= headerIndent + "ScriptVariable " + methodName + "_array_access_statement_" + (condition == true?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + StringTools::toString(nextArgumentIndices, "_") + "_" + to_string(arrayAccessStatementIdx) + "(const ScriptStatement& statement);" + "\n\n";
 									generatedDefinitions+= string() + "inline MiniScript::ScriptVariable " + miniScriptClassName + "::" + methodName + "_array_access_statement_" + (condition == true?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + StringTools::toString(nextArgumentIndices, "_") + "_" + to_string(arrayAccessStatementIdx) + "(const ScriptStatement& statement) {" + "\n";
 									generatedDefinitions+= string() + "	// Miniscript setup" + "\n";
 									generatedDefinitions+= string() + "	auto miniScript = this;" + "\n";
@@ -366,6 +366,8 @@ static void createArrayAccessMethods(MiniScript* miniScript, string& generatedDe
 					nextArgumentIndices.push_back(argumentIdx);
 					//
 					createArrayAccessMethods(miniScript, generatedDeclarations, generatedDefinitions, miniScriptClassName, scriptInstance, methodName, argument, statement, methodCodeMap, condition, nextArgumentIndices, depth + 1);
+					//
+					argumentIdx++;
 				}
 			}
 			break;
@@ -378,6 +380,8 @@ static void createArrayAccessMethods(MiniScript* miniScript, string& generatedDe
 					nextArgumentIndices.push_back(argumentIdx);
 					//
 					createArrayAccessMethods(miniScript, generatedDeclarations, generatedDefinitions, miniScriptClassName, scriptInstance, methodName, argument, statement, methodCodeMap, condition, nextArgumentIndices, depth + 1);
+					//
+					argumentIdx++;
 				}
 				//
 				break;
