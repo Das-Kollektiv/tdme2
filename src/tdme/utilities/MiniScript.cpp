@@ -7869,7 +7869,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 										)
 									);
 								//
-								auto arrayAccessStatementMethod = methodName + "_array_access_statement_" + (scriptConditionIdx != SCRIPTIDX_NONE?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + StringTools::toString(nextArgumentIndices, "_") + "_" + to_string(arrayAccessStatementIdx);
+								auto arrayAccessStatementMethod = methodName + "_array_access_statement_" + (scriptConditionIdx != SCRIPTIDX_NONE?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + (nextArgumentIndices, "_") + "_" + to_string(arrayAccessStatementIdx);
 								//
 								generatedCode+= minIndentString + depthIndentString + "// we will use " + arrayAccessStatementMethod + "() to determine array access index"+ "\n";
 								//
@@ -8026,7 +8026,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 												)
 											);
 										//
-										auto initializerMethod = methodName + "_initializer_" + (scriptConditionIdx != SCRIPTIDX_NONE?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + StringTools::toString(nextArgumentIndices, "_");
+										auto initializerMethod = methodName + "_initializer_" + (scriptConditionIdx != SCRIPTIDX_NONE?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + (nextArgumentIndices, "_");
 										argumentValuesCode.push_back(string() + "\t" + initializerMethod + "(statement)" + (lastArgument == false?",":""));
 									}
 									break;

@@ -3122,6 +3122,22 @@ private:
 	}
 
 public:
+
+	/**
+	 * Returns string representation of given argument indices
+	 * @param argumentIndices argument indices
+	 * @param delimiter delimiter
+	 * @return string representation of given argument indices
+	 */
+	inline static const string getArgumentIndicesAsString(const vector<int>& argumentIndices, const string& delimiter) {
+		string result;
+		for (const auto argumentIdx: argumentIndices) {
+			if (result.empty() == false) result+= delimiter;
+			result+= to_string(argumentIdx);
+		}
+		return result;
+	}
+
 	// forbid class copy
 	FORBID_CLASS_COPY(MiniScript)
 
