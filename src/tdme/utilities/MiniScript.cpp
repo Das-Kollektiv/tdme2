@@ -7815,12 +7815,12 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 				(syntaxTree.value.getValueAsString() == "getVariable" ||
 				syntaxTree.value.getValueAsString() == "setVariable")) {
 				//
-				for (auto subArgumentIdx = 0; subArgumentIdx < syntaxTree.arguments.size(); subArgumentIdx++) {
+				for (auto argumentIdx = 0; argumentIdx < syntaxTree.arguments.size(); argumentIdx++) {
 					//
 					auto nextArgumentIndices = argumentIndices;
-					nextArgumentIndices.push_back(subArgumentIdx);
+					nextArgumentIndices.push_back(argumentIdx);
 					//
-					auto argumentString = StringTools::replace(StringTools::replace(syntaxTree.arguments[subArgumentIdx].value.getValueAsString(), "\\", "\\\\"), "\"", "\\\"");
+					auto argumentString = StringTools::replace(StringTools::replace(syntaxTree.arguments[argumentIdx].value.getValueAsString(), "\\", "\\\\"), "\"", "\\\"");
 					auto arrayAccessStatementIdx = 0;
 					auto arrayAccessStatementLeftIdx = -1;
 					auto arrayAccessStatementRightIdx = -1;
@@ -7874,7 +7874,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 								generatedCode+= minIndentString + depthIndentString + "// we will use " + arrayAccessStatementMethod + "() to determine array access index"+ "\n";
 								//
 								arrayAccessStatements.emplace_back(
-									subArgumentIdx,
+									argumentIdx,
 									arrayAccessStatementIdx,
 									arrayAccessStatementLeftIdx,
 									arrayAccessStatementRightIdx,
@@ -7954,13 +7954,13 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 		// construct argument values
 		if (syntaxTree.arguments.empty() == false) {
 			generatedCode+= minIndentString + depthIndentString + "\t" + "// required method code arguments" + "\n";
-			auto subArgumentIdx = 0;
+			auto argumentIdx = 0;
 			for (const auto& argument: syntaxTree.arguments) {
 				//
 				auto nextArgumentIndices = argumentIndices;
-				nextArgumentIndices.push_back(subArgumentIdx);
+				nextArgumentIndices.push_back(argumentIdx);
 				//
-				auto lastArgument = subArgumentIdx == syntaxTree.arguments.size() - 1;
+				auto lastArgument = argumentIdx == syntaxTree.arguments.size() - 1;
 				switch (argument.type) {
 					case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
 						{
@@ -7997,7 +7997,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 										// take array access statements into account
 										auto arrayAccessStatementOffset = 0;
 										for (auto& arrayAccessStatement: arrayAccessStatements) {
-											if (arrayAccessStatement.argumentIdx != subArgumentIdx) continue;
+											if (arrayAccessStatement.argumentIdx != argumentIdx) continue;
 											string arrayAccessStatementMethodCall = "\" + " + arrayAccessStatement.statementMethod + "(statement).getValueAsString() + \"";
 											value =
 												StringTools::substring(value, 0, arrayAccessStatement.leftIdx + 1 + arrayAccessStatementOffset) +
@@ -8040,19 +8040,19 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 						}
 					case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
 						{
-							argumentValuesCode.push_back(string() + "\t" + "ScriptVariable()" + (lastArgument == false?",":"") + " // argumentValues[" + to_string(subArgumentIdx) + "] --> returnValue of " + argument.value.getValueAsString() + "(" + getArgumentsAsString(argument.arguments) + ")");
+							argumentValuesCode.push_back(string() + "\t" + "ScriptVariable()" + (lastArgument == false?",":"") + " // argumentValues[" + to_string(argumentIdx) + "] --> returnValue of " + argument.value.getValueAsString() + "(" + getArgumentsAsString(argument.arguments) + ")");
 							break;
 						}
 					case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
 						{
-							argumentValuesCode.push_back(string() + "\t" + "ScriptVariable()" + (lastArgument == false?",":"") + " // argumentValues[" + to_string(subArgumentIdx) + "] --> returnValue of " + argument.value.getValueAsString() + "(" + getArgumentsAsString(argument.arguments) + ")");
+							argumentValuesCode.push_back(string() + "\t" + "ScriptVariable()" + (lastArgument == false?",":"") + " // argumentValues[" + to_string(argumentIdx) + "] --> returnValue of " + argument.value.getValueAsString() + "(" + getArgumentsAsString(argument.arguments) + ")");
 							break;
 						}
 					default:
 						break;
 				}
 				//
-				subArgumentIdx++;
+				argumentIdx++;
 			}
 		}
 		// end of arguments initialization
