@@ -262,6 +262,38 @@ public:
 	static const vector<string> tokenize(const string& str, const string& delimiters);
 
 	/**
+	 * Returns string representation of given vector
+	 * @param src source
+	 * @param delimiter
+	 * @return string representation of given vector
+	 */
+	inline static const string toString(const vector<auto>& src, const string& delimiter) {
+		// TODO: improve me to support array and span also
+		string result;
+		for (const auto value: src) {
+			if (result.empty() == false) result+= delimiter;
+			result+= to_string(value);
+		}
+		return result;
+	}
+
+	/**
+	 * Returns string representation of given vector
+	 * @param src source
+	 * @param delimiter
+	 * @return string representation of given vector
+	 */
+	inline static const string toString(const vector<string>& src, const string& delimiter) {
+		// TODO: improve me to support array and span also
+		string result;
+		for (const auto value: src) {
+			if (result.empty() == false) result+= delimiter;
+			result+= value;
+		}
+		return result;
+	}
+
+	/**
 	 * Pad a string left
 	 * @param src source
 	 * @param by by

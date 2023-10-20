@@ -2684,13 +2684,12 @@ private:
 	 * @param scriptStopped script could have been stopped
 	 * @param enabledNamedConditions enabled named conditions
 	 * @param depth depth
-	 * @param argumentIdx argument index
-	 * @param parentArgumentIdx parent argument index
+	 * @param argumentIndices argument indices
 	 * @param returnValue return value
 	 * @param injectCode code to additionally inject
 	 * @param additionalIndent additional indent
 	 */
-	bool transpileScriptStatement(string& generatedCode, const ScriptSyntaxTreeNode& syntaxTree, const ScriptStatement& statement, int scriptConditionIdx, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth = 0, int argumentIdx = ARGUMENTIDX_NONE, int parentArgumentIdx = ARGUMENTIDX_NONE, const string& returnValue = string(), const string& injectCode = string(), int additionalIndent = 0);
+	bool transpileScriptStatement(string& generatedCode, const ScriptSyntaxTreeNode& syntaxTree, const ScriptStatement& statement, int scriptConditionIdx, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth = 0, const vector<int>& argumentIndices = {}, const string& returnValue = string(), const string& injectCode = string(), int additionalIndent = 0);
 
 	/**
 	 * Get access operator left and right indices

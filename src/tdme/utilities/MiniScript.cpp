@@ -7737,7 +7737,7 @@ void MiniScript::registerMethods() {
 void MiniScript::registerVariables() {
 }
 
-bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyntaxTreeNode& syntaxTree, const ScriptStatement& statement, int scriptConditionIdx, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth, int argumentIdx, int parentArgumentIdx, const string& returnValue, const string& injectCode, int additionalIndent) {
+bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyntaxTreeNode& syntaxTree, const ScriptStatement& statement, int scriptConditionIdx, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth, const vector<int>& argumentIndices, const string& returnValue, const string& injectCode, int additionalIndent) {
 	//
 	statementIdx++;
 	auto currentStatementIdx = statementIdx;
@@ -7776,8 +7776,6 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 	switch (syntaxTree.type) {
 		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
 			{
-				//
-				Console::println(StringTools::indent(string(), "\t", depth) + ": transpile: execute function: " + syntaxTree.value.getValueAsString() + ", depth: " + to_string(depth));
 				// check script user functions
 				auto scriptFunctionsIt = scriptFunctions.find(syntaxTree.value.getValueAsString());
 				if (scriptFunctionsIt != scriptFunctions.end()) {
@@ -7802,7 +7800,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 						return false;
 					}
 					callSyntaxTreeNode.method = methodIt->second;
-					return transpileScriptStatement(generatedCode, callSyntaxTreeNode, statement, scriptConditionIdx, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, depth, argumentIdx, parentArgumentIdx, returnValue, injectCode, additionalIndent);
+					return transpileScriptStatement(generatedCode, callSyntaxTreeNode, statement, scriptConditionIdx, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, depth, argumentIndices, returnValue, injectCode, additionalIndent);
 				} else {
 					Console::println("MiniScript::transpileScriptStatement(): function not found: '" + syntaxTree.value.getValueAsString() + "'");
 					return false;
@@ -7818,6 +7816,10 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 				syntaxTree.value.getValueAsString() == "setVariable")) {
 				//
 				for (auto subArgumentIdx = 0; subArgumentIdx < syntaxTree.arguments.size(); subArgumentIdx++) {
+					//
+					auto nextArgumentIndices = argumentIndices;
+					nextArgumentIndices.push_back(subArgumentIdx);
+					//
 					auto argumentString = StringTools::replace(StringTools::replace(syntaxTree.arguments[subArgumentIdx].value.getValueAsString(), "\\", "\\\\"), "\"", "\\\"");
 					auto arrayAccessStatementIdx = 0;
 					auto arrayAccessStatementLeftIdx = -1;
@@ -7867,7 +7869,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 										)
 									);
 								//
-								auto arrayAccessStatementMethod = methodName + "_array_access_statement_" + (scriptConditionIdx != SCRIPTIDX_NONE?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + to_string(subArgumentIdx) + "_" + to_string(arrayAccessStatementIdx) + "_" + to_string(depth);
+								auto arrayAccessStatementMethod = methodName + "_array_access_statement_" + (scriptConditionIdx != SCRIPTIDX_NONE?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + StringTools::toString(nextArgumentIndices, "_") + "_" + to_string(arrayAccessStatementIdx);
 								//
 								generatedCode+= minIndentString + depthIndentString + "// we will use " + arrayAccessStatementMethod + "() to determine array access index"+ "\n";
 								//
@@ -7895,8 +7897,6 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 
 	}
 
-	Console::println(StringTools::indent(string(), "\t", depth) + ": transpile: execute method: " + syntaxTree.value.getValueAsString() + ", depth: " + to_string(depth));
-
 	//
 	auto method = syntaxTree.value.getValueAsString();
 
@@ -7918,12 +7918,16 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 
 	// comment about current statement
 	generatedCode+= minIndentString + depthIndentString;
-	generatedCode+= "// " + (depth > 0?"depth = " + to_string(depth):"") + (depth > 0 && argumentIdx != ARGUMENTIDX_NONE?" / ":"") + (argumentIdx != ARGUMENTIDX_NONE?"argument index = " + to_string(argumentIdx):"") + (depth > 0 || argumentIdx != ARGUMENTIDX_NONE?": ":"");
+	generatedCode+= "// " + (depth > 0?"depth = " + to_string(depth):"") + (argumentIndices.empty() == false?" / argument index = " + to_string(argumentIndices.back()):"");
 	generatedCode+= syntaxTree.value.getValueAsString() + "(" + getArgumentsAsString(syntaxTree.arguments) + ")";
 	generatedCode+= "\n";
 
 	// argument values header
 	generatedCode+= minIndentString + depthIndentString + "{" + "\n";
+
+	// argument indices
+	auto parentArgumentIdx = argumentIndices.size() >= 2?argumentIndices[argumentIndices.size() - 2]:ARGUMENTIDX_NONE;
+	auto argumentIdx = argumentIndices.empty() == false?argumentIndices.back():ARGUMENTIDX_NONE;
 
 	// statement
 	if (depth == 0) {
@@ -7952,8 +7956,11 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 			generatedCode+= minIndentString + depthIndentString + "\t" + "// required method code arguments" + "\n";
 			auto subArgumentIdx = 0;
 			for (const auto& argument: syntaxTree.arguments) {
+				//
+				auto nextArgumentIndices = argumentIndices;
+				nextArgumentIndices.push_back(subArgumentIdx);
+				//
 				auto lastArgument = subArgumentIdx == syntaxTree.arguments.size() - 1;
-				Console::println(StringTools::indent(string(), "\t", depth) + ": transpile: literal: " + argument.value.getValueAsString() + ", depth: " + to_string(depth));
 				switch (argument.type) {
 					case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
 						{
@@ -8019,7 +8026,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 												)
 											);
 										//
-										auto initializerMethod = methodName + "_initializer_" + (scriptConditionIdx != SCRIPTIDX_NONE?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + to_string(subArgumentIdx) + "_" + to_string(depth + 1);
+										auto initializerMethod = methodName + "_initializer_" + (scriptConditionIdx != SCRIPTIDX_NONE?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + StringTools::toString(nextArgumentIndices, "_");
 										argumentValuesCode.push_back(string() + "\t" + initializerMethod + "(statement)" + (lastArgument == false?",":""));
 									}
 									break;
@@ -8095,14 +8102,20 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 
 	// transpile method/function call argument
 	{
-		auto subArgumentIdx = 0;
+		auto argumentIdx = 0;
 		for (const auto& argument: syntaxTree.arguments) {
 			switch (argument.type) {
 				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
 				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
-					//
-					if (transpileScriptStatement(generatedCode, argument, statement, scriptConditionIdx, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, depth + 1, subArgumentIdx, argumentIdx, returnValue) == false) {
- 						Console::println("MiniScript::transpileScriptStatement(): transpileScriptStatement(): " + getStatementInformation(statement) + ": '" + syntaxTree.value.getValueAsString() + "(" + getArgumentsAsString(syntaxTree.arguments) + ")" + "': transpile error");
+					{
+						//
+						auto nextArgumentIndices = argumentIndices;
+						nextArgumentIndices.push_back(argumentIdx);
+
+						//
+						if (transpileScriptStatement(generatedCode, argument, statement, scriptConditionIdx, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, depth + 1, nextArgumentIndices, returnValue) == false) {
+							Console::println("MiniScript::transpileScriptStatement(): transpileScriptStatement(): " + getStatementInformation(statement) + ": '" + syntaxTree.value.getValueAsString() + "(" + getArgumentsAsString(syntaxTree.arguments) + ")" + "': transpile error");
+						}
 					}
 					//
 					break;
@@ -8110,7 +8123,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyn
 					//
 					break;
 			}
-			subArgumentIdx++;
+			argumentIdx++;
 		}
 	}
 
@@ -8418,7 +8431,7 @@ bool MiniScript::transpileScriptCondition(string& generatedCode, int scriptIdx, 
 	auto scriptStateChanged = false;
 	auto scriptStopped = false;
 	vector<string >enabledNamedConditions;
-	transpileScriptStatement(generatedCode, script.conditionSyntaxTree, script.conditionStatement, scriptIdx, SCRIPTIDX_NONE, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, 0, ARGUMENTIDX_NONE, ARGUMENTIDX_NONE, returnValue, injectCode, depth + 1);
+	transpileScriptStatement(generatedCode, script.conditionSyntaxTree, script.conditionStatement, scriptIdx, SCRIPTIDX_NONE, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, 0, {}, returnValue, injectCode, depth + 1);
 
 	//
 	generatedCode+= "\t\n";
