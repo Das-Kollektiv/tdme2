@@ -572,9 +572,9 @@ static void createArrayMapSetInitializer(MiniScript* miniScript, string& generat
 					case MiniScript::TYPE_SET:
 						{
 							generatedDeclarations+= headerIndent + "/**\n";
-							generatedDeclarations+= headerIndent + " * Miniscript transpilation for a " + (condition == true?"condition":"statement") + " array/map/set initializer for method '" + methodName + "', statement index " + to_string(statement.statementIdx) + ", argument indices " + MiniScript::getArgumentIndicesAsString(argumentIndices, ", ")  + ")\n";
+							generatedDeclarations+= headerIndent + " * Miniscript transpilation for a " + (condition == true?"condition":"statement") + " array/map/set initializer for method '" + methodName + "', statement index " + to_string(statement.statementIdx) + ", argument indices " + MiniScript::getArgumentIndicesAsString(argumentIndices, ", ")  + "\n";
 							generatedDeclarations+= headerIndent + " * @param statement statement" + "\n";
-							generatedDeclarations+= headerIndent + " * @return array index" + "\n";
+							generatedDeclarations+= headerIndent + " * @return initialized variable" + "\n";
 							generatedDeclarations+= headerIndent + " */" + "\n";
 							generatedDeclarations+= headerIndent + "ScriptVariable " + methodName + "_initializer_" + (condition == true?"c":"s") + "_" + to_string(statement.statementIdx) + "_" + MiniScript::getArgumentIndicesAsString(argumentIndices, "_") + "(const ScriptStatement& statement);" + "\n\n";
 							//
