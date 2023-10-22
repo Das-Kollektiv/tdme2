@@ -38,7 +38,7 @@ using tdme::math::Vector4;
 using tdme::utilities::Console;
 using tdme::utilities::StringTools;
 
-const vector<string> MiniScriptTranspiler::getAllMethodNames(MiniScript* miniScript) {
+const unordered_set<string> MiniScriptTranspiler::getAllMethodNames(MiniScript* miniScript) {
 	unordered_set<string> allMethods;
 	for (auto scriptMethod: miniScript->getMethods()) {
 		string className;
@@ -57,6 +57,12 @@ const vector<string> MiniScriptTranspiler::getAllMethodNames(MiniScript* miniScr
 		//
 		allMethods.insert(method);
 	}
+	//
+	return allMethods;
+}
+
+const vector<string> MiniScriptTranspiler::getAllMethodNamesSorted(MiniScript* miniScript) {
+	auto allMethods = getAllMethodNames(miniScript);
 	//
 	vector<string> result;
 	for (auto method: allMethods) result.push_back(method);

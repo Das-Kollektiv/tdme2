@@ -25,10 +25,17 @@ public:
 	 * @param miniScript MiniScript instance
 	 * @return all method names
 	 */
-	static const vector<string> getAllMethodNames(MiniScript* miniScript);
+	static const unordered_set<string> getAllMethodNames(MiniScript* miniScript);
 
 	/**
-	 * Get all method names
+	 * Get all method names sorted
+	 * @param miniScript MiniScript instance
+	 * @return all method names sorted
+	 */
+	static const vector<string> getAllMethodNamesSorted(MiniScript* miniScript);
+
+	/**
+	 * Get all method names by class name
 	 * @param miniScript MiniScript instance
 	 * @return all method names
 	 */

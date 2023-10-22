@@ -395,7 +395,7 @@ static void createArrayAccessMethods(MiniScript* miniScript, string& generatedDe
 
 static void generateMiniScriptEvaluateMemberAccessArrays(MiniScript* miniScript, vector<string>& declarations, vector<string>& definitions) {
 	auto scriptMethods = miniScript->getMethods();
-	auto allMethods = MiniScriptTranspiler::getAllMethodNames(miniScript);
+	auto allMethods = MiniScriptTranspiler::getAllMethodNamesSorted(miniScript);
 	auto methodsByClasses = MiniScriptTranspiler::getAllClassesMethodNames(miniScript);
 	declarations.push_back("// evaluate member access constants");
 	declarations.push_back("static constexpr int EVALUATEMEMBERACCESSARRAYIDX_NONE { -1 };");
