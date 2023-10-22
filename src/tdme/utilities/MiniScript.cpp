@@ -2830,7 +2830,7 @@ void MiniScript::registerMethods() {
 								auto argumentIdx = 0;
 
 								//
-								auto assignBack = [&]() {
+								auto assignBack = [&]() -> void {
 									if (argumentIdx == 0) {
 										if (isVariableAccess(variable) == true) {
 											miniScript->setVariable(variable, callArgumentValuesSpan[0], &statement);
@@ -7823,7 +7823,7 @@ const MiniScript::ScriptVariable MiniScript::initializeArray(const string_view& 
 	auto lc = '\0';
 	auto i = 0;
 	//
-	auto pushToArray = [&]() {
+	auto pushToArray = [&]() -> void {
 		// quoted value
 		if (quotedArrayValueStart != string::npos) {
 			quotedArrayValueStart++;
@@ -7980,7 +7980,7 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 	auto parseMode = PARSEMODE_KEY;
 	auto hasValues = false;
 	//
-	auto insertMapKeyValuePair = [&]() {
+	auto insertMapKeyValuePair = [&]() -> void {
 		//
 		string_view mapKey;
 		// quoted map key
