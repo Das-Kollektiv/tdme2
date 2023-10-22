@@ -461,7 +461,6 @@ bool MiniScript::parseScriptStatement(const string_view& executableStatement, st
 			evaluateMemberAccessArguments.push_back(string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx));
 		}
 		accessObjectMemberStatement+= ")";
-
 		// set up new results
 		methodName = evaluateMemberAccessMethodName;
 		arguments = evaluateMemberAccessArguments;
@@ -1207,6 +1206,7 @@ const string MiniScript::determineNextStatement(const string& scriptCode, int& i
 	statementCodeLines.emplace_back();
 	auto quote = '\0';
 	auto expectBracket = false;
+	auto emptyBrackets = false;
 	auto bracketCount = 0;
 	auto squareBracketCount = 0;
 	auto curlyBracketCount = 0;
@@ -1214,6 +1214,7 @@ const string MiniScript::determineNextStatement(const string& scriptCode, int& i
 	auto lc = '\0';
 	for (; i < scriptCode.size(); i++) {
 		auto c = scriptCode[i];
+		auto nc = i + 1 < scriptCode.size()?scriptCode[i + 1]:'\0';
 		// handle quotes
 		if ((c == '"' || c == '\'') && lc != '\\') {
 			if (quote == '\0') {
@@ -1224,6 +1225,8 @@ const string MiniScript::determineNextStatement(const string& scriptCode, int& i
 			}
 			// add char to script line
 			statementCodeLines[statementCodeLines.size() - 1] += c;
+			//
+			emptyBrackets = false;
 		} else
 		if (quote != '\0') {
 			// no op
@@ -1231,34 +1234,55 @@ const string MiniScript::determineNextStatement(const string& scriptCode, int& i
 		} else
 		// brackets
 		if (c == '(') {
+			emptyBrackets = false;
+			//
 			bracketCount++;
 			expectBracket = false;
 			// add char to script line
 			statementCodeLines[statementCodeLines.size() - 1] += c;
 		} else
 		if (c == ')') {
+			//
+			emptyBrackets = false;
+			//
 			bracketCount--;
 			// add char to script line
 			statementCodeLines[statementCodeLines.size() - 1] += c;
+			//
+			if (lc == '(') {
+				emptyBrackets = true;
+			}
 		} else
 		// square brackets
 		if (c == '[') {
+			//
+			emptyBrackets = false;
+			//
 			squareBracketCount++;
 			// add char to script line
 			statementCodeLines[statementCodeLines.size() - 1] += c;
 		} else
 		if (c == ']') {
+			//
+			emptyBrackets = false;
+			//
 			squareBracketCount--;
 			// add char to script line
 			statementCodeLines[statementCodeLines.size() - 1] += c;
 		} else
 		// curly brackets
 		if (c == '{') {
+			//
+			emptyBrackets = false;
+			//
 			curlyBracketCount++;
 			// add char to script line
 			statementCodeLines[statementCodeLines.size() - 1] += c;
 		} else
 		if (c == '}') {
+			//
+			emptyBrackets = false;
+			//
 			curlyBracketCount--;
 			// add char to script line
 			statementCodeLines[statementCodeLines.size() - 1] += c;
@@ -1276,23 +1300,25 @@ const string MiniScript::determineNextStatement(const string& scriptCode, int& i
 		} else
 		if (lc == '-' && c == '>') {
 			// we expect a bracket now
-			expectBracket = true;
+			if (emptyBrackets == false) expectBracket = true;
 			// add char to script line
 			statementCodeLines[statementCodeLines.size() - 1] += c;
 		} else
-		if (((c == '\n' && ++line) || (hash == false && c == ';')) && (c == ';' || hash == true || (expectBracket == false && bracketCount == 0 && squareBracketCount == 0 && curlyBracketCount == 0))) {
-			// break condition
-			bracketCount = 0;
-			squareBracketCount = 0;
-			curlyBracketCount = 0;
-			hash = false;
+		if ((c == '\n' && ++line) || (hash == false && c == ';')) {
 			// break here and process script line
-			break;
-		} else
-		if (c == '\n') {
-			// ignore \n but create a new script code line for this statement
-			statementCodeLines.emplace_back();
+			if (expectBracket == false && bracketCount == 0 && squareBracketCount == 0 && curlyBracketCount == 0) break;
+			// unset hash after newline
+			if (c == '\n') {
+				//
+				hash = false;
+				//
+				statementCodeLines.emplace_back();
+			} else {
+				//
+				emptyBrackets = false;
+			}
 		} else {
+			if (Character::isSpace(c) == false && c != '-' && nc != '>') emptyBrackets = false;
 			// add char to script line
 			statementCodeLines[statementCodeLines.size() - 1] += c;
 		}
@@ -1301,7 +1327,11 @@ const string MiniScript::determineNextStatement(const string& scriptCode, int& i
 	}
 
 	//
-	for (const auto& line: statementCodeLines) statementCode+= StringTools::trim(line);
+	for (const auto& line: statementCodeLines) {
+		auto trimmedLine = StringTools::trim(line);
+		if (trimmedLine.empty() == true || StringTools::startsWith(trimmedLine, "#") == true) continue;
+		statementCode+= trimmedLine;
+	}
 
 	// add last line index
 	if (i == scriptCode.size() && scriptCode[scriptCode.size() - 1] != '\n') ++line;
@@ -1387,7 +1417,7 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 		// add last line index
 		if (i == scriptCode.size() && scriptCode[scriptCode.size() - 1] != '\n') ++lineIdx;
 		//
-		if (StringTools::startsWith(statementCode, "#") == true || statementCode.empty() == true) {
+		if (statementCode.empty() == true) {
 			continue;
 		}
 
@@ -2754,14 +2784,28 @@ void MiniScript::registerMethods() {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
+					// check if map, if so fetch function assignment of member property
+					auto functionIdx = MiniScript::SCRIPTIDX_NONE;
+					if (argumentValues[1].getType() == TYPE_MAP) {
+						string function;
+						auto mapValue = argumentValues[1].getMapValue(member);
+						if (mapValue.getType() == MiniScript::TYPE_FUNCTION_ASSIGNMENT && mapValue.getStringValue(function) == true) {
+							functionIdx = miniScript->getFunctionScriptIdx(function);
+						}
+					}
+					//
 					const auto& className = ScriptVariable::getClassName(argumentValues[1].getType());
-					if (className.empty() == false) {
-						#if defined(__MINISCRIPT_TRANSPILATION__)
-							auto method = evaluateMemberAccessArrays[static_cast<int>(argumentValues[1].getType()) - static_cast<int>(MiniScript::TYPE_STRING)][EVALUATEMEMBERACCESS_MEMBER];
-						#else
-							auto method = miniScript->getMethod(className + "." + member);
-						#endif
-						if (method != nullptr) {
+					//
+					if (className.empty() == false || functionIdx != MiniScript::SCRIPTIDX_NONE) {
+						ScriptMethod* method { nullptr };
+						if (functionIdx == MiniScript::SCRIPTIDX_NONE) {
+							#if defined(__MINISCRIPT_TRANSPILATION__)
+								method = evaluateMemberAccessArrays[static_cast<int>(argumentValues[1].getType()) - static_cast<int>(MiniScript::TYPE_STRING)][EVALUATEMEMBERACCESS_MEMBER];
+							#else
+								method = miniScript->getMethod(className + "." + member);
+							#endif
+						}
+						if (method != nullptr || functionIdx != MiniScript::SCRIPTIDX_NONE) {
 							// create method call arguments
 							vector<ScriptVariable> callArgumentValues(1 + (argumentValues.size() - 3) / 2);
 							//	this
@@ -2775,16 +2819,18 @@ void MiniScript::registerMethods() {
 								}
 							}
 							span callArgumentValuesSpan(callArgumentValues);
-							method->executeMethod(callArgumentValuesSpan, returnValue, statement);
+							if (method != nullptr) {
+								method->executeMethod(callArgumentValuesSpan, returnValue, statement);
+							} else
+							if (functionIdx != MiniScript::SCRIPTIDX_NONE) {
+								miniScript->call(functionIdx, callArgumentValuesSpan, returnValue);
+							}
 							// assign back variables
 							{
 								auto argumentIdx = 0;
-								for (const auto& argumentType: method->getArgumentTypes()) {
-									if (argumentType.assignBack == false) {
-										argumentIdx++;
-										continue;
-									}
-									//
+
+								//
+								auto assignBack = [&]() {
 									if (argumentIdx == 0) {
 										if (isVariableAccess(variable) == true) {
 											miniScript->setVariable(variable, callArgumentValuesSpan[0], &statement);
@@ -2805,8 +2851,33 @@ void MiniScript::registerMethods() {
 											}
 										}
 									}
-									//
-									argumentIdx++;
+								};
+
+								// method
+								if (method != nullptr) {
+									for (const auto& argument: method->getArgumentTypes()) {
+										if (argument.assignBack == false) {
+											argumentIdx++;
+											continue;
+										}
+										//
+										assignBack();
+										//
+										argumentIdx++;
+									}
+								} else
+								if (functionIdx != MiniScript::SCRIPTIDX_NONE) {
+									const auto& script = miniScript->getScripts()[functionIdx];
+									for (const auto& argument: script.arguments) {
+										if (argument.assignBack == false) {
+											argumentIdx++;
+											continue;
+										}
+										//
+										assignBack();
+										//
+										argumentIdx++;
+									}
 								}
 							}
 							// write back arguments from call arguments
@@ -8876,10 +8947,13 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 			} else
 			// possible function call
 			if (c == '(') {
+				//
 				bracketCount++;
 			} else
 			if (c == ')') {
 				bracketCount--;
+				// function assignment
+				if (lc == '(' && bracketCount == 0 && mapValueStart == string::npos) mapValueStart = i - 1;
 			} else
 			// map/set initializer
 			if (c == '{' && squareBracketCount == 0 && bracketCount == 0) {

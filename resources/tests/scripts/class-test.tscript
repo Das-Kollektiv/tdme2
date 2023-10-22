@@ -1,0 +1,53 @@
+# initialize
+on: initialize
+	console.log("------------------------")
+	console.log("class-test: Initialize")
+	console.log("------------------------")
+	console.log()
+end
+
+function: printABC(=$this)
+	console.log(
+		"printABC(): " + 
+		"a: " + $this.a + ", " +
+		"b: " + $this.b + ", " +
+		"c: " + $this.c + ", " +
+		"a*b*c: " + ($this.a * $this.b * $this.c)
+	)
+	$this.c = $this.c + 1 
+end
+
+# if no condition is met, nothing will be executed, lol :D
+on: nothing
+	console.log("---------------------")
+	console.log("class-test: Nothing")
+	console.log("---------------------")
+	console.log()
+	#
+	$class = {
+		# member variables
+		a: 1,
+		b: 2,
+		c: 3,
+		# member methods
+		printABC: () -> printABC
+	};
+	console.dump($class)
+	#
+	$i = 0
+	forCondition($i < 5)
+		$class->printABC()
+		++$i
+	end
+	#
+	script.stop()
+end
+
+# an error has occurred
+on: error
+	console.log("------------------")
+	console.log("class-test: Error")
+	console.log("------------------")
+	console.log("An error occurred")
+	script.wait(1000)
+end

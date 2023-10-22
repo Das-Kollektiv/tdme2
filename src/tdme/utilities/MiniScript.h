@@ -161,6 +161,7 @@ public:
 		TYPE_MAP,
 		TYPE_SET,
 		TYPE_FUNCTION_CALL,
+		TYPE_FUNCTION_ASSIGNMENT,
 		TYPE_PSEUDO_NUMBER,
 		TYPE_PSEUDO_MIXED,
 	};
@@ -543,6 +544,11 @@ public:
 					}
 					//
 					break;
+				case TYPE_FUNCTION_ASSIGNMENT:
+					setFunctionAssignment(scriptVariable.getStringValueReference());
+					break;
+				// pseudo ...
+				default: break;
 			}
 		}
 
@@ -634,6 +640,11 @@ public:
 					}
 					//
 					break;
+				case TYPE_FUNCTION_ASSIGNMENT:
+					setFunctionAssignment(scriptVariable.getStringValueReference());
+					break;
+				// pseudo ...
+				default: break;
 			}
 			return *this;
 		}
@@ -791,6 +802,7 @@ public:
 				case TYPE_FLOAT:
 					break;
 				case TYPE_STRING:
+				case TYPE_FUNCTION_ASSIGNMENT:
 					delete static_cast<string*>((void*)valuePtr);
 					break;
 				case TYPE_VECTOR2:
@@ -843,6 +855,7 @@ public:
 				case TYPE_FLOAT:
 					break;
 				case TYPE_STRING:
+				case TYPE_FUNCTION_ASSIGNMENT:
 					valuePtr = (uint64_t)(new string());
 					break;
 				case TYPE_VECTOR2:
@@ -1011,6 +1024,7 @@ public:
 					value = to_string(getFloatValueReference());
 					return true;
 				case TYPE_STRING:
+				case TYPE_FUNCTION_ASSIGNMENT:
 					value = getStringValueReference();
 					return true;
 				default:
@@ -1530,12 +1544,23 @@ public:
 		void setFunctionCallStatement(const string& initializerStatement, MiniScript* miniScript, const ScriptStatement& statement);
 
 		/**
+		 * Set function assignment from given value into variable
+		 * @param value value
+		 */
+		inline void setFunctionAssignment(const string& value) {
+			setType(TYPE_FUNCTION_ASSIGNMENT);
+			getStringValueReference() = value;
+		}
+
+		/**
 		 * Set implicit typed value given by value string
 		 * @param value value
 		 * @param miniScript mini script
 		 * @param statement statement
 		 */
 		inline void setImplicitTypedValue(const string& value, MiniScript* miniScript, const ScriptStatement& statement) {
+			string function;
+			//
 			if (value == "null") {
 				setNullValue();
 			} else
@@ -1559,6 +1584,9 @@ public:
 				StringTools::endsWith(value, "]") == true) {
 				*this = initializeArray(string_view(value), miniScript, statement);
 			} else
+			if (isFunctionAssignment(value, function) == true) {
+				setFunctionAssignment(function);
+			} else
 			// function call
 			if (value.find('(') != string::npos &&
 				value.find(')') != string::npos) {
@@ -1579,6 +1607,8 @@ public:
 		 * @param statement statement
 		 */
 		inline void setImplicitTypedValueFromStringView(const string_view& value, MiniScript* miniScript, const ScriptStatement& statement) {
+			string function;
+			//
 			if (value == "null") {
 				setNullValue();
 			} else
@@ -1601,6 +1631,9 @@ public:
 			if (StringTools::viewStartsWith(value, "[") == true &&
 				StringTools::viewEndsWith(value, "]") == true) {
 				*this = initializeArray(value, miniScript, statement);
+			} else
+			if (viewIsFunctionAssignment(value, function) == true) {
+				setFunctionAssignment(function);
 			} else
 			// function call
 			if (value.find('(') != string::npos &&
@@ -1974,6 +2007,9 @@ public:
 						break;
 					}
 				case TYPE_FUNCTION_CALL:
+					result+= "{" + getStringValueReference() + "}";
+					break;
+				case TYPE_FUNCTION_ASSIGNMENT:
 					result+= "() -> " + getStringValueReference();
 					break;
 				case TYPE_PSEUDO_NUMBER:
@@ -3499,16 +3535,98 @@ public:
 	void registerMethod(ScriptMethod* scriptMethod);
 
 	/**
+	 * Returns if a given string is a function assignment
+	 * @param candidate candidate
+	 * @param function function
+	 * @return if candidate is a function assignment
+	 */
+	inline static bool isFunctionAssignment(const string& candidate, string& function) {
+		if (candidate.size() == 0) return false;
+		//
+		auto i = 0;
+		// (
+		if (candidate[i++] != '(') return false;
+		//
+		if (i >= candidate.size()) return false;
+		// )
+		if (candidate[i++] != ')') return false;
+		// spaces
+		for (; i < candidate.size() && Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
+		// -
+		if (candidate[i++] != '-') return false;
+		//
+		if (i >= candidate.size()) return false;
+		// >
+		if (candidate[i++] != '>') return false;
+		// spaces
+		for (; i < candidate.size() && Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
+		//
+		string _function;
+		for (; i < candidate.size(); i++) {
+			auto c = candidate[i];
+			if (Character::isAlphaNumeric(c) == false && c != '_') {
+				return false;
+			}
+			_function+= c;
+		}
+		//
+		function = _function;
+		//
+		return true;
+	}
+
+	/**
+	 * Returns if a given string is a function assignment
+	 * @param candidate candidate
+	 * @param function function
+	 * @return if candidate is a function assignment
+	 */
+	inline static bool viewIsFunctionAssignment(const string_view& candidate, string& function) {
+		if (candidate.size() == 0) return false;
+		//
+		auto i = 0;
+		// (
+		if (candidate[i++] != '(') return false;
+		//
+		if (i >= candidate.size()) return false;
+		// )
+		if (candidate[i++] != ')') return false;
+		// spaces
+		for (; i < candidate.size() && Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
+		// -
+		if (candidate[i++] != '-') return false;
+		//
+		if (i >= candidate.size()) return false;
+		// >
+		if (candidate[i++] != '>') return false;
+		// spaces
+		for (; i < candidate.size() && Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
+		//
+		string _function;
+		for (; i < candidate.size(); i++) {
+			auto c = candidate[i];
+			if (Character::isAlphaNumeric(c) == false && c != '_') {
+				return false;
+			}
+			_function+= c;
+		}
+		//
+		function = _function;
+		//
+		return true;
+	}
+
+	/**
 	 * Returns if a given string is a variable name
-	 * @param string string
+	 * @param candidate candidate
 	 * @return if string is a variable name
 	 */
-	inline static bool isVariableAccess(const string& string) {
-		if (string.size() == 0) return false;
-		if (string[0] != '$') return false;
+	inline static bool isVariableAccess(const string& candidate) {
+		if (candidate.size() == 0) return false;
+		if (candidate[0] != '$') return false;
 		auto squareBracketCount = 0;
-		for (auto i = 1; i < string.size(); i++) {
-			auto c = string[i];
+		for (auto i = 1; i < candidate.size(); i++) {
+			auto c = candidate[i];
 			if (c == '[') {
 				squareBracketCount++;
 			} else
@@ -3524,15 +3642,15 @@ public:
 
 	/**
 	 * Returns if a given string is a variable name
-	 * @param string string
+	 * @param candidate candidate
 	 * @return if string is a variable name
 	 */
-	inline static bool viewIsVariableAccess(const string_view& string) {
-		if (string.size() == 0) return false;
-		if (string[0] != '$') return false;
+	inline static bool viewIsVariableAccess(const string_view& candidate) {
+		if (candidate.size() == 0) return false;
+		if (candidate[0] != '$') return false;
 		auto squareBracketCount = 0;
-		for (auto i = 1; i < string.size(); i++) {
-			auto c = string[i];
+		for (auto i = 1; i < candidate.size(); i++) {
+			auto c = candidate[i];
 			if (c == '[') {
 				squareBracketCount++;
 			} else
@@ -3548,14 +3666,14 @@ public:
 
 	/**
 	 * Returns if a given string is a valid map key name
-	 * @param string string
+	 * @param candidate candidate
 	 * @return if string is a valid map key name
 	 */
-	inline static bool viewIsKey(const string_view& string) {
-		if (string.size() == 0) return false;
-		if (string[0] == '$') return false;
-		for (auto i = 0; i < string.size(); i++) {
-			auto c = string[i];
+	inline static bool viewIsKey(const string_view& candidate) {
+		if (candidate.size() == 0) return false;
+		if (candidate[0] == '$') return false;
+		for (auto i = 0; i < candidate.size(); i++) {
+			auto c = candidate[i];
 			if (Character::isAlphaNumeric(c) == false && c != '_') return false;
 		}
 		return true;
@@ -3750,7 +3868,6 @@ public:
 		// lookup function
 		auto scriptFunctionsIt = scriptFunctions.find(function);
 		if (scriptFunctionsIt == scriptFunctions.end()) {
-			Console::println("MiniScript::getFunctionScriptIdx(): Script user function not found: " + function);
 			return SCRIPTIDX_NONE;
 		}
 		//
