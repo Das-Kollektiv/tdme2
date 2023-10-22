@@ -18,6 +18,7 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MiniScript.h>
+#include <tdme/utilities/MiniScriptTranspiler.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::find;
@@ -39,6 +40,7 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Integer;
 using tdme::utilities::MiniScript;
+using tdme::utilities::MiniScriptTranspiler;
 using tdme::utilities::StringTools;
 
 namespace tdme {
@@ -338,7 +340,7 @@ static void createArrayAccessMethods(MiniScript* miniScript, string& generatedDe
 									auto scriptStateChanged = false;
 									auto scriptStopped = false;
 									vector<string >enabledNamedConditions;
-									scriptInstance->transpileScriptStatement(transpiledCode, arrayAccessSyntaxTree, arrayAccessStatement, MiniScript::SCRIPTIDX_NONE, MiniScript::SCRIPTIDX_NONE, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, 0, {}, "ScriptVariable()", "return returnValue;");
+									MiniScriptTranspiler::transpileScriptStatement(scriptInstance, transpiledCode, arrayAccessSyntaxTree, arrayAccessStatement, MiniScript::SCRIPTIDX_NONE, MiniScript::SCRIPTIDX_NONE, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, 0, {}, "ScriptVariable()", "return returnValue;");
 									generatedDeclarations+= headerIndent + "/**\n";
 									generatedDeclarations+= headerIndent + " * Miniscript transpilation for a " + (condition == true?"condition":"statement") + " array access statement for method '" + methodName + "', statement index " + to_string(statement.statementIdx) + ", argument indices " + MiniScript::getArgumentIndicesAsString(nextArgumentIndices, ", ") + ", array access statement index " + to_string(arrayAccessStatementIdx) + "\n";
 									generatedDeclarations+= headerIndent + " * @param statement statement" + "\n";
@@ -415,6 +417,7 @@ static void generateMiniScriptEvaluateMemberAccessArrays(MiniScript* miniScript,
 		allMethods.insert(method);
 	}
 	declarations.push_back("// evaluate member access constants");
+	declarations.push_back("static constexpr int EVALUATEMEMBERACCESSARRAYIDX_NONE { -1 };");
 	auto methodIdx = 0;
 	for (const auto& method: allMethods) {
 		declarations.push_back("static constexpr int EVALUATEMEMBERACCESSARRAYIDX_" + StringTools::toUpperCase(method) + " { " + to_string(methodIdx) + " };");
@@ -551,8 +554,21 @@ static void createArrayMapSetVariable(MiniScript* miniScript, const MiniScript::
 				auto scriptStateChanged = false;
 				auto scriptStopped = false;
 				vector<string>enabledNamedConditions;
-				miniScript->transpileScriptStatement(transpiledCode, *variable.getInitializer()->getSyntaxTree(), statement, MiniScript::SCRIPTIDX_NONE, MiniScript::SCRIPTIDX_NONE, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, 0, {}, "ScriptVariable()", "const auto& variableD" + to_string(initializerDepth) + " = returnValue; " + postStatement + "\n", 1);
+				MiniScriptTranspiler::transpileScriptStatement(miniScript, transpiledCode, *variable.getInitializer()->getSyntaxTree(), statement, MiniScript::SCRIPTIDX_NONE, MiniScript::SCRIPTIDX_NONE, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, 0, {}, "ScriptVariable()", "const auto& variableD" + to_string(initializerDepth) + " = returnValue; " + postStatement + "\n", 1);
 				generatedDefinitions+= transpiledCode;
+			}
+			break;
+		case MiniScript::TYPE_FUNCTION_ASSIGNMENT:
+			{
+				string value;
+				variable.getStringValue(value);
+				value = StringTools::replace(StringTools::replace(value, "\\", "\\\\"), "\"", "\\\"");
+				//
+				generatedDefinitions+= indent + "{" + "\n";
+				generatedDefinitions+= indent + "\t" + "ScriptVariable variableD" + to_string(initializerDepth) + ";" + "\n";
+				generatedDefinitions+= indent + "\t" + "variableD" + to_string(initializerDepth) + ".setFunctionAssignment(\"" + value + "\");" + "\n";
+				generatedDefinitions+= indent + "\t" + postStatement + "\n";
+				generatedDefinitions+= indent + "}" + "\n";
 			}
 			break;
 		default: break;
@@ -914,7 +930,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 			// transpile definition
 			generatedDefinitions+= "void " + miniScriptClassName + "::" + methodName + "(int miniScriptGotoStatementIdx) {" + "\n";
 			string generatedSubCode;
-			scriptInstance->transpile(generatedSubCode, scriptIdx, methodCodeMap);
+			MiniScriptTranspiler::transpile(scriptInstance.get(), generatedSubCode, scriptIdx, methodCodeMap);
 			generatedDefinitions+= generatedSubCode;
 			generatedDefinitions+= string() + "}" + "\n\n";
 
@@ -925,7 +941,8 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 					generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "\t" + "// next statements belong to tested enabled named condition with name \"" + script.name + "\"" + "\n";
 					generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "\t" + "if (enabledNamedCondition == \"" + script.name + "\")" + "\n";
 				}
-				scriptInstance->transpileScriptCondition(
+				MiniScriptTranspiler::transpileScriptCondition(
+					scriptInstance.get(),
 					script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?generatedDetermineScriptIdxToStartDefinition:generatedDetermineNamedScriptIdxToStartDefinition,
 					scriptIdx,
 					methodCodeMap,

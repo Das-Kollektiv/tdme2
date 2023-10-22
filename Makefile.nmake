@@ -405,6 +405,7 @@ SRCS = \
 	src/tdme/tests/MathOperatorTest.cpp \
 	src/tdme/tests/MiniScriptAdvancedTest.cpp \
 	src/tdme/tests/MiniScriptBaseTest.cpp \
+	src/tdme/tests/MiniScriptClassTest.cpp \
 	src/tdme/tests/MiniScriptEmitTest.cpp \
 	src/tdme/tests/MiniScriptFunctionsTest.cpp \
 	src/tdme/tests/PathFindingTest.cpp \
@@ -500,6 +501,7 @@ SRCS = \
 	src/tdme/utilities/Integer.cpp \
 	src/tdme/utilities/MiniScript.cpp \
 	src/tdme/utilities/MiniScriptMath.cpp \
+	src/tdme/utilities/MiniScriptTranspiler.cpp \
 	src/tdme/utilities/ModelTools.cpp \
 	src/tdme/utilities/PathFinding.cpp \
 	src/tdme/utilities/Primitives.cpp \

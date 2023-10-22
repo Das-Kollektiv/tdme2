@@ -15,6 +15,7 @@ namespace tests {
 	class MathOperatorTest;
 	class MiniScriptBaseTest;
 	class MiniScriptAdvancedTest;
+	class MiniScriptClassTest;
 	class MiniScriptEmitTest;
 	class MiniScriptFunctionsTest;
 	class PathFindingTest;

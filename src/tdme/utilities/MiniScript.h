@@ -2278,6 +2278,69 @@ public:
 	static constexpr int SCRIPTIDX_NONE { -1 };
 	static constexpr int LINE_NONE { -1 };
 	static constexpr int STATEMENTIDX_NONE { -1 };
+	static constexpr int STATEMENTIDX_FIRST { 0 };
+	static constexpr int ARGUMENTIDX_NONE { -1 };
+
+	STATIC_DLL_IMPEXT static const string METHOD_SCRIPTCALL;
+	STATIC_DLL_IMPEXT static const string METHOD_ENABLENAMEDCONDITION;
+	STATIC_DLL_IMPEXT static const string METHOD_DISABLENAMEDCONDITION;
+
+	/**
+	 * Returns arguments as string placed in a vector of string_views
+	 * @param arguments arguments
+	 * @return arguments as string
+	 */
+	inline const string getArgumentsAsString(const vector<string_view>& arguments) {
+		string argumentsString;
+		for (const auto& argument: arguments) argumentsString+= (argumentsString.empty() == false?", ":"") + string("'") + string(argument) + string("'");
+		return argumentsString;
+	}
+
+	/**
+	 * Returns arguments as string
+	 * @param arguments arguments
+	 * @return arguments as string
+	 */
+	inline const string getArgumentsAsString(const vector<ScriptSyntaxTreeNode>& arguments) {
+		string argumentsString;
+		for (const auto& argument: arguments) {
+			switch (argument.type) {
+				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
+					switch(argument.value.getType()) {
+						case TYPE_NULL:
+							{
+								argumentsString+= (argumentsString.empty() == false?", ":"") + string("<VOID>");
+								break;
+							}
+						case TYPE_BOOLEAN:
+						case TYPE_INTEGER:
+						case TYPE_FLOAT:
+							{
+								argumentsString+= (argumentsString.empty() == false?", ":"") + argument.value.getValueAsString();
+								break;
+							}
+						case TYPE_STRING:
+							{
+								argumentsString+= (argumentsString.empty() == false?", ":"") + string("\"") + argument.value.getValueAsString() + string("\"");
+								break;
+							}
+						default:
+							{
+								argumentsString+= (argumentsString.empty() == false?", ":"") + string("<COMPLEX DATATYPE>");
+								break;
+							}
+					}
+					break;
+				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
+				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
+					argumentsString+= (argumentsString.empty() == false?", ":"") + argument.value.getValueAsString() + string("(") + getArgumentsAsString(argument.arguments) + string(")");
+					break;
+				default:
+					break;
+			}
+		}
+		return argumentsString;
+	}
 
 protected:
 	static constexpr int SETACCESSBOOL_NONE { -1 };
@@ -2286,8 +2349,6 @@ protected:
 	static constexpr int ARRAYIDX_NONE { -1 };
 	static constexpr int ARRAYIDX_ADD { -2 };
 	static constexpr int STATE_NONE { -1 };
-	static constexpr int STATEMENTIDX_FIRST { 0 };
-	static constexpr int ARGUMENTIDX_NONE { -1 };
 	static constexpr int OPERATORIDX_NONE { -1 };
 	static constexpr int LINE_FIRST { 1 };
 	static constexpr int64_t TIME_NONE { -1LL };
@@ -2498,11 +2559,6 @@ private:
 	//
 	STATIC_DLL_IMPEXT static const string OPERATOR_CHARS;
 
-	//
-	STATIC_DLL_IMPEXT static const string METHOD_SCRIPTCALL;
-	STATIC_DLL_IMPEXT static const string METHOD_ENABLENAMEDCONDITION;
-	STATIC_DLL_IMPEXT static const string METHOD_DISABLENAMEDCONDITION;
-
 	// TODO: maybe we need a better naming for this
 	// script functions defined by script itself
 	unordered_map<string, int> scriptFunctions;
@@ -2520,62 +2576,6 @@ private:
 		ScriptOperator scriptOperator;
 	};
 
-	/**
-	 * Returns arguments as string placed in a vector of string_views
-	 * @param arguments arguments
-	 * @return arguments as string
-	 */
-	inline const string getArgumentsAsString(const vector<string_view>& arguments) {
-		string argumentsString;
-		for (const auto& argument: arguments) argumentsString+= (argumentsString.empty() == false?", ":"") + string("'") + string(argument) + string("'");
-		return argumentsString;
-	}
-
-	/**
-	 * Returns arguments as string
-	 * @param arguments arguments
-	 * @return arguments as string
-	 */
-	inline const string getArgumentsAsString(const vector<ScriptSyntaxTreeNode>& arguments) {
-		string argumentsString;
-		for (const auto& argument: arguments) {
-			switch (argument.type) {
-				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
-					switch(argument.value.getType()) {
-						case TYPE_NULL:
-							{
-								argumentsString+= (argumentsString.empty() == false?", ":"") + string("<VOID>");
-								break;
-							}
-						case TYPE_BOOLEAN:
-						case TYPE_INTEGER:
-						case TYPE_FLOAT:
-							{
-								argumentsString+= (argumentsString.empty() == false?", ":"") + argument.value.getValueAsString();
-								break;
-							}
-						case TYPE_STRING:
-							{
-								argumentsString+= (argumentsString.empty() == false?", ":"") + string("\"") + argument.value.getValueAsString() + string("\"");
-								break;
-							}
-						default:
-							{
-								argumentsString+= (argumentsString.empty() == false?", ":"") + string("<COMPLEX DATATYPE>");
-								break;
-							}
-					}
-					break;
-				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
-				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
-					argumentsString+= (argumentsString.empty() == false?", ":"") + argument.value.getValueAsString() + string("(") + getArgumentsAsString(argument.arguments) + string(")");
-					break;
-				default:
-					break;
-			}
-		}
-		return argumentsString;
-	}
 
 	/**
 	 * Execute a single script line
@@ -2706,26 +2706,6 @@ private:
 	 * @return statement has a object member access
 	 */
 	bool getObjectMemberAccess(const string_view& executableStatement, string_view& object, string_view& method, const ScriptStatement& statement);
-
-	/**
-	 * Transpile script statement
-	 * @param generatedCode generated code
-	 * @param syntaxTree syntax tree
-	 * @param statement script statement
-	 * @param scriptConditionIdx script condition index
-	 * @param scriptIdx script index
-	 * @param statementIdx statement index
-	 * @param methodCodeMap method code map
-	 * @param scriptStateChanged script could have state changed
-	 * @param scriptStopped script could have been stopped
-	 * @param enabledNamedConditions enabled named conditions
-	 * @param depth depth
-	 * @param argumentIndices argument indices
-	 * @param returnValue return value
-	 * @param injectCode code to additionally inject
-	 * @param additionalIndent additional indent
-	 */
-	bool transpileScriptStatement(string& generatedCode, const ScriptSyntaxTreeNode& syntaxTree, const ScriptStatement& statement, int scriptConditionIdx, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth = 0, const vector<int>& argumentIndices = {}, const string& returnValue = string(), const string& injectCode = string(), int additionalIndent = 0);
 
 	/**
 	 * Get access operator left and right indices
@@ -3087,26 +3067,6 @@ private:
 			return true;
 		}
 	}
-
-	/**
-	 * Transpile a script statement
-	 * @param generatedCode generated code
-	 * @param scriptIdx script index
-	 * @param methodCodeMap method code map
-	 * @return success
-	 */
-	bool transpile(string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap);
-
-	/**
-	 * Transpile a script condition
-	 * @param generatedCode generated code
-	 * @param scriptIdx script index
-	 * @param methodCodeMap method code map
-	 * @param returnValue return value
-	 * @param injectCode inject code
-	 * @return success
-	 */
-	bool transpileScriptCondition(string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap, const string& returnValue, const string& injectCode, int depth = 0);
 
 	/**
 	  * Initialize variable
@@ -3966,27 +3926,5 @@ public:
 	 * @return information as string
 	 */
 	const string getInformation();
-
-	/**
-	 * Create source code for given syntax tree node
-	 * @param syntaxTreeNode syntax tree node
-	 */
-	static const string createSourceCode(const ScriptSyntaxTreeNode& syntaxTreeNode);
-
-	/**
-	 * Create source code for given syntax tree
-	 * @param scriptType script type
-	 * @param condition condition
-	 * @param arguments function arguments
-	 * @param name name of named conditions
-	 * @param conditionSyntaxTree condition syntax tree
-	 * @param syntaxTree syntax tree
-	 */
-	static const string createSourceCode(Script::ScriptType scriptType, const string& condition, const vector<Script::ScriptArgument>& arguments, const string& name, const ScriptSyntaxTreeNode& conditionSyntaxTree, const vector<ScriptSyntaxTreeNode>& syntaxTree);
-
-	/**
-	 * Create source code for whole script
-	 */
-	const string createSourceCode();
 
 };
