@@ -21,6 +21,20 @@ using tdme::utilities::MiniScript;
 class tdme::utilities::MiniScriptTranspiler {
 public:
 	/**
+	 * Get all method names
+	 * @param miniScript MiniScript instance
+	 * @return all method names
+	 */
+	static const vector<string> getAllMethodNames(MiniScript* miniScript);
+
+	/**
+	 * Get all method names
+	 * @param miniScript MiniScript instance
+	 * @return all method names
+	 */
+	static const unordered_map<string, vector<string>> getAllClassesMethodNames(MiniScript* miniScript);
+
+	/**
 	 * Transpile script statement
 	 * @param miniScript MiniScript instance
 	 * @param generatedCode generated code

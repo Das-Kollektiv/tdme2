@@ -395,27 +395,8 @@ static void createArrayAccessMethods(MiniScript* miniScript, string& generatedDe
 
 static void generateMiniScriptEvaluateMemberAccessArrays(MiniScript* miniScript, vector<string>& declarations, vector<string>& definitions) {
 	auto scriptMethods = miniScript->getMethods();
-	//
-	set<string> allMethods;
-	map<string, vector<string>> methodByCategory;
-	for (auto scriptMethod: scriptMethods) {
-		string category;
-		if (scriptMethod->getMethodName().rfind('.') != string::npos) category = StringTools::substring(scriptMethod->getMethodName(), 0, scriptMethod->getMethodName().rfind('.'));
-		string method =
-			StringTools::substring(
-				scriptMethod->getMethodName(),
-				category.empty() == true?0:category.size() + 1,
-				scriptMethod->getMethodName().size());
-		// TODO: improve me
-		if (scriptMethod->getArgumentTypes().empty() == true ||
-			scriptMethod->getArgumentTypes()[0].name != category) continue;
-		//
-		if (category != MiniScript::ScriptVariable::getClassName(scriptMethod->getArgumentTypes()[0].type) ||
-			category != scriptMethod->getArgumentTypes()[0].name) continue;
-		//
-		methodByCategory[category].push_back(method);
-		allMethods.insert(method);
-	}
+	auto allMethods = MiniScriptTranspiler::getAllMethodNames(miniScript);
+	auto methodsByClasses = MiniScriptTranspiler::getAllClassesMethodNames(miniScript);
 	declarations.push_back("// evaluate member access constants");
 	declarations.push_back("static constexpr int EVALUATEMEMBERACCESSARRAYIDX_NONE { -1 };");
 	auto methodIdx = 0;
@@ -436,7 +417,7 @@ static void generateMiniScriptEvaluateMemberAccessArrays(MiniScript* miniScript,
 	definitions.push_back("evaluateMemberAccessArrays = {};");
 	for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); typeIdx <= static_cast<int>(MiniScript::TYPE_SET); typeIdx++) {
 		const auto& className = MiniScript::ScriptVariable::getClassName(static_cast<MiniScript::ScriptVariableType>(typeIdx));
-		const auto& methods = methodByCategory[className];
+		const auto& methods = methodsByClasses[className];
 		auto methodIdx = 0;
 		for (const auto& method: allMethods) {
 			//

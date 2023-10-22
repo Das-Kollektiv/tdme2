@@ -20,6 +20,7 @@
 using tdme::utilities::MiniScriptTranspiler;
 
 using std::remove;
+using std::sort;
 using std::string;
 using std::to_string;
 using std::unordered_map;
@@ -36,6 +37,56 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::utilities::Console;
 using tdme::utilities::StringTools;
+
+const vector<string> MiniScriptTranspiler::getAllMethodNames(MiniScript* miniScript) {
+	unordered_set<string> allMethods;
+	for (auto scriptMethod: miniScript->getMethods()) {
+		string className;
+		if (scriptMethod->getMethodName().rfind('.') != string::npos) className = StringTools::substring(scriptMethod->getMethodName(), 0, scriptMethod->getMethodName().rfind('.'));
+		string method =
+			StringTools::substring(
+				scriptMethod->getMethodName(),
+				className.empty() == true?0:className.size() + 1,
+				scriptMethod->getMethodName().size());
+		// first argument name of method must equal the name of the class
+		if (scriptMethod->getArgumentTypes().empty() == true ||
+			scriptMethod->getArgumentTypes()[0].name != className) continue;
+		// first argument of method must be of type of the class
+		if (className != MiniScript::ScriptVariable::getClassName(scriptMethod->getArgumentTypes()[0].type) ||
+			className != scriptMethod->getArgumentTypes()[0].name) continue;
+		//
+		allMethods.insert(method);
+	}
+	//
+	vector<string> result;
+	for (auto method: allMethods) result.push_back(method);
+	sort(result.begin(), result.end());
+	//
+	return result;
+}
+
+const unordered_map<string, vector<string>> MiniScriptTranspiler::getAllClassesMethodNames(MiniScript* miniScript) {
+	unordered_map<string, vector<string>> methodByClasses;
+	for (auto scriptMethod: miniScript->getMethods()) {
+		string className;
+		if (scriptMethod->getMethodName().rfind('.') != string::npos) className = StringTools::substring(scriptMethod->getMethodName(), 0, scriptMethod->getMethodName().rfind('.'));
+		string method =
+			StringTools::substring(
+				scriptMethod->getMethodName(),
+				className.empty() == true?0:className.size() + 1,
+				scriptMethod->getMethodName().size());
+		// first argument name of method must equal the name of the class
+		if (scriptMethod->getArgumentTypes().empty() == true ||
+			scriptMethod->getArgumentTypes()[0].name != className) continue;
+		// first argument of method must be of type of the class
+		if (className != MiniScript::ScriptVariable::getClassName(scriptMethod->getArgumentTypes()[0].type) ||
+			className != scriptMethod->getArgumentTypes()[0].name) continue;
+		//
+		methodByClasses[className].push_back(method);
+	}
+	//
+	return methodByClasses;
+}
 
 bool MiniScriptTranspiler::transpileScriptStatement(MiniScript* miniScript, string& generatedCode, const MiniScript::ScriptSyntaxTreeNode& syntaxTree, const MiniScript::ScriptStatement& statement, int scriptConditionIdx, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth, const vector<int>& argumentIndices, const string& returnValue, const string& injectCode, int additionalIndent) {
 	//
