@@ -94,7 +94,24 @@ const unordered_map<string, vector<string>> MiniScriptTranspiler::getAllClassesM
 	return methodByClasses;
 }
 
-bool MiniScriptTranspiler::transpileScriptStatement(MiniScript* miniScript, string& generatedCode, const MiniScript::ScriptSyntaxTreeNode& syntaxTree, const MiniScript::ScriptStatement& statement, int scriptConditionIdx, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth, const vector<int>& argumentIndices, const string& returnValue, const string& injectCode, int additionalIndent) {
+bool MiniScriptTranspiler::transpileScriptStatement(
+	MiniScript* miniScript,
+	string& generatedCode,
+	const MiniScript::ScriptSyntaxTreeNode& syntaxTree,
+	const MiniScript::ScriptStatement& statement,
+	int scriptConditionIdx,
+	int scriptIdx,
+	int& statementIdx,
+	const unordered_map<string, vector<string>>& methodCodeMap,
+	const unordered_set<string>& allMethods,
+	bool& scriptStateChanged,
+	bool& scriptStopped,
+	vector<string>& enabledNamedConditions,
+	int depth,
+	const vector<int>& argumentIndices,
+	const string& returnValue,
+	const string& injectCode,
+	int additionalIndent) {
 	//
 	statementIdx++;
 	auto currentStatementIdx = statementIdx;
@@ -157,7 +174,25 @@ bool MiniScriptTranspiler::transpileScriptStatement(MiniScript* miniScript, stri
 						return false;
 					}
 					callSyntaxTreeNode.method = method;
-					return transpileScriptStatement(miniScript, generatedCode, callSyntaxTreeNode, statement, scriptConditionIdx, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, depth, argumentIndices, returnValue, injectCode, additionalIndent);
+					return transpileScriptStatement(
+						miniScript,
+						generatedCode,
+						callSyntaxTreeNode,
+						statement,
+						scriptConditionIdx,
+						scriptIdx,
+						statementIdx,
+						methodCodeMap,
+						allMethods,
+						scriptStateChanged,
+						scriptStopped,
+						enabledNamedConditions,
+						depth,
+						argumentIndices,
+						returnValue,
+						injectCode,
+						additionalIndent
+					);
 				} else {
 					Console::println("MiniScriptTranspiler::transpileScriptStatement(): function not found: '" + syntaxTree.value.getValueAsString() + "'");
 					return false;
@@ -470,7 +505,23 @@ bool MiniScriptTranspiler::transpileScriptStatement(MiniScript* miniScript, stri
 						nextArgumentIndices.push_back(argumentIdx);
 
 						//
-						if (transpileScriptStatement(miniScript, generatedCode, argument, statement, scriptConditionIdx, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, depth + 1, nextArgumentIndices, returnValue) == false) {
+						if (transpileScriptStatement(
+							miniScript,
+							generatedCode,
+							argument,
+							statement,
+							scriptConditionIdx,
+							scriptIdx,
+							statementIdx,
+							methodCodeMap,
+							allMethods,
+							scriptStateChanged,
+							scriptStopped,
+							enabledNamedConditions,
+							depth + 1,
+							nextArgumentIndices,
+							returnValue
+						) == false) {
 							Console::println("MiniScriptTranspiler::transpileScriptStatement(): transpileScriptStatement(): " + miniScript->getStatementInformation(statement) + ": '" + syntaxTree.value.getValueAsString() + "(" + miniScript->getArgumentsAsString(syntaxTree.arguments) + ")" + "': transpile error");
 						}
 					}
@@ -585,7 +636,11 @@ bool MiniScriptTranspiler::transpileScriptStatement(MiniScript* miniScript, stri
 
 	// special case: inject EVALUATEMEMBERACCESS_MEMBER for "internal.script.evaluateMemberAccess"
 	if (scriptMethod != nullptr && scriptMethod->getMethodName() == "internal.script.evaluateMemberAccess") {
-		generatedCode+= minIndentString + depthIndentString + "\t" + "const auto EVALUATEMEMBERACCESS_MEMBER = EVALUATEMEMBERACCESSARRAYIDX_" + StringTools::toUpperCase(syntaxTree.arguments[2].value.getValueAsString()) + ";\n";
+		if (allMethods.contains(syntaxTree.arguments[2].value.getValueAsString()) == true) {
+			generatedCode+= minIndentString + depthIndentString + "\t" + "const auto EVALUATEMEMBERACCESS_MEMBER = EVALUATEMEMBERACCESSARRAYIDX_" + StringTools::toUpperCase(syntaxTree.arguments[2].value.getValueAsString()) + ";\n";
+		} else {
+			generatedCode+= minIndentString + depthIndentString + "\t" + "const auto EVALUATEMEMBERACCESS_MEMBER = EVALUATEMEMBERACCESSARRAYIDX_NONE;" + "\n";
+		}
 	}
 
 	// generate code
@@ -659,7 +714,7 @@ bool MiniScriptTranspiler::transpileScriptStatement(MiniScript* miniScript, stri
 	return true;
 }
 
-bool MiniScriptTranspiler::transpile(MiniScript* miniScript, string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap) {
+bool MiniScriptTranspiler::transpile(MiniScript* miniScript, string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap, const unordered_set<string>& allMethods) {
 	if (scriptIdx < 0 || scriptIdx >= miniScript->getScripts().size()) {
 		Console::println("MiniScriptTranspiler::transpile(): invalid script index");
 		return false;
@@ -745,7 +800,20 @@ bool MiniScriptTranspiler::transpile(MiniScript* miniScript, string& generatedCo
 		}
 		scriptStateChanged = false;
 		auto scriptStopped = false;
-		transpileScriptStatement(miniScript, generatedCode, syntaxTree, statement, MiniScript::SCRIPTIDX_NONE, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions);
+		transpileScriptStatement(
+			miniScript,
+			generatedCode,
+			syntaxTree,
+			statement,
+			MiniScript::SCRIPTIDX_NONE,
+			scriptIdx,
+			statementIdx,
+			methodCodeMap,
+			allMethods,
+			scriptStateChanged,
+			scriptStopped,
+			enabledNamedConditions
+		);
 		if (scriptStopped == true) {
 			generatedCode+= methodIndent + "if (getScriptState().running == false) {" + "\n";
 			generatedCode+= methodIndent + "\t" + "return;" + "\n";
@@ -769,7 +837,7 @@ bool MiniScriptTranspiler::transpile(MiniScript* miniScript, string& generatedCo
 	return true;
 }
 
-bool MiniScriptTranspiler::transpileScriptCondition(MiniScript* miniScript, string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap, const string& returnValue, const string& injectCode, int depth) {
+bool MiniScriptTranspiler::transpileScriptCondition(MiniScript* miniScript, string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap, const unordered_set<string>& allMethods, const string& returnValue, const string& injectCode, int depth) {
 	if (scriptIdx < 0 || scriptIdx >= miniScript->getScripts().size()) {
 		Console::println("MiniScriptTranspiler::transpileScriptCondition(): invalid script index");
 		return false;
@@ -786,7 +854,25 @@ bool MiniScriptTranspiler::transpileScriptCondition(MiniScript* miniScript, stri
 	auto scriptStateChanged = false;
 	auto scriptStopped = false;
 	vector<string >enabledNamedConditions;
-	transpileScriptStatement(miniScript, generatedCode, script.conditionSyntaxTree, script.conditionStatement, scriptIdx, MiniScript::SCRIPTIDX_NONE, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, 0, {}, returnValue, injectCode, depth + 1);
+	transpileScriptStatement(
+		miniScript,
+		generatedCode,
+		script.conditionSyntaxTree,
+		script.conditionStatement,
+		scriptIdx,
+		MiniScript::SCRIPTIDX_NONE,
+		statementIdx,
+		methodCodeMap,
+		allMethods,
+		scriptStateChanged,
+		scriptStopped,
+		enabledNamedConditions,
+		0,
+		{},
+		returnValue,
+		injectCode,
+		depth + 1
+	);
 
 	//
 	generatedCode+= "\t\n";

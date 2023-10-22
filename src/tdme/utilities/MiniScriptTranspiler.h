@@ -51,6 +51,7 @@ public:
 	 * @param scriptIdx script index
 	 * @param statementIdx statement index
 	 * @param methodCodeMap method code map
+	 * @param allMethods all methods
 	 * @param scriptStateChanged script could have state changed
 	 * @param scriptStopped script could have been stopped
 	 * @param enabledNamedConditions enabled named conditions
@@ -60,7 +61,25 @@ public:
 	 * @param injectCode code to additionally inject
 	 * @param additionalIndent additional indent
 	 */
-	static bool transpileScriptStatement(MiniScript* miniScript, string& generatedCode, const MiniScript::ScriptSyntaxTreeNode& syntaxTree, const MiniScript::ScriptStatement& statement, int scriptConditionIdx, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth = 0, const vector<int>& argumentIndices = {}, const string& returnValue = string(), const string& injectCode = string(), int additionalIndent = 0);
+	static bool transpileScriptStatement(
+		MiniScript* miniScript,
+		string& generatedCode,
+		const MiniScript::ScriptSyntaxTreeNode& syntaxTree,
+		const MiniScript::ScriptStatement& statement,
+		int scriptConditionIdx,
+		int scriptIdx,
+		int& statementIdx,
+		const unordered_map<string, vector<string>>& methodCodeMap,
+		const unordered_set<string>& allMethods,
+		bool& scriptStateChanged,
+		bool& scriptStopped,
+		vector<string>& enabledNamedConditions,
+		int depth = 0,
+		const vector<int>& argumentIndices = {},
+		const string& returnValue = string(),
+		const string& injectCode = string(),
+		int additionalIndent = 0
+	);
 
 	/**
 	 * Transpile a script statement
@@ -68,9 +87,16 @@ public:
 	 * @param generatedCode generated code
 	 * @param scriptIdx script index
 	 * @param methodCodeMap method code map
+	 * @param allMethods all methods
 	 * @return success
 	 */
-	static bool transpile(MiniScript* miniScript, string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap);
+	static bool transpile(
+		MiniScript* miniScript,
+		string& generatedCode,
+		int scriptIdx,
+		const unordered_map<string, vector<string>>& methodCodeMap,
+		const unordered_set<string>& allMethods
+	);
 
 	/**
 	 * Transpile a script condition
@@ -78,11 +104,21 @@ public:
 	 * @param generatedCode generated code
 	 * @param scriptIdx script index
 	 * @param methodCodeMap method code map
+	 * @param allMethods all methods
 	 * @param returnValue return value
 	 * @param injectCode inject code
 	 * @return success
 	 */
-	static bool transpileScriptCondition(MiniScript* miniScript, string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap, const string& returnValue, const string& injectCode, int depth = 0);
+	static bool transpileScriptCondition(
+		MiniScript* miniScript,
+		string& generatedCode,
+		int scriptIdx,
+		const unordered_map<string, vector<string>>& methodCodeMap,
+		const unordered_set<string>& allMethods,
+		const string& returnValue,
+		const string& injectCode,
+		int depth = 0
+	);
 
 	/**
 	 * Create source code for given syntax tree node
@@ -99,7 +135,14 @@ public:
 	 * @param conditionSyntaxTree condition syntax tree
 	 * @param syntaxTree syntax tree
 	 */
-	static const string createSourceCode(MiniScript::Script::ScriptType scriptType, const string& condition, const vector<MiniScript::Script::ScriptArgument>& arguments, const string& name, const MiniScript::ScriptSyntaxTreeNode& conditionSyntaxTree, const vector<MiniScript::ScriptSyntaxTreeNode>& syntaxTree);
+	static const string createSourceCode(
+		MiniScript::Script::ScriptType scriptType,
+		const string& condition,
+		const vector<MiniScript::Script::ScriptArgument>& arguments,
+		const string& name,
+		const MiniScript::ScriptSyntaxTreeNode& conditionSyntaxTree,
+		const vector<MiniScript::ScriptSyntaxTreeNode>& syntaxTree
+	);
 
 	/**
 	 * Create source code for whole script
