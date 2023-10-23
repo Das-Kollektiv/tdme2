@@ -1559,45 +1559,7 @@ public:
 		 * @param statement statement
 		 */
 		inline void setImplicitTypedValue(const string& value, MiniScript* miniScript, const ScriptStatement& statement) {
-			string function;
-			//
-			if (value == "null") {
-				setNullValue();
-			} else
-			if (value == "true") {
-				setValue(true);
-			} else
-			if (value == "false") {
-				setValue(false);
-			} else
-			if (Integer::is(value) == true) {
-				setValue(static_cast<int64_t>(Integer::parse(value)));
-			} else
-			if (Float::is(value) == true) {
-				setValue(Float::parse(value));
-			} else
-			if (StringTools::startsWith(value, "{") == true &&
-				StringTools::endsWith(value, "}") == true) {
-				*this = initializeMapSet(string_view(value), miniScript, statement);
-			} else
-			if (StringTools::startsWith(value, "[") == true &&
-				StringTools::endsWith(value, "]") == true) {
-				*this = initializeArray(string_view(value), miniScript, statement);
-			} else
-			if (isFunctionAssignment(value, function) == true) {
-				setFunctionAssignment(function);
-			} else
-			// function call
-			if (value.find('(') != string::npos &&
-				value.find(')') != string::npos) {
-				setFunctionCallStatement(value, miniScript, statement);
-			} else
-			// variable
-			if (isVariableAccess(value) == true) {
-				setFunctionCallStatement("getVariable(\"" + value + "\")", miniScript, statement);
-			} else {
-				setValue(value);
-			}
+			setImplicitTypedValueFromStringView(string_view(value), miniScript, statement);
 		}
 
 		/**
@@ -2716,71 +2678,7 @@ private:
 	 * @param statement statement
 	 * @param startIdx startIdx
 	 */
-	inline bool getVariableAccessOperatorLeftRightIndices(const string& name, const string& callerMethod, string::size_type& accessOperatorLeftIdx, string::size_type& accessOperatorRightIdx, const ScriptStatement* statement = nullptr, int startIdx = 0) {
-		accessOperatorLeftIdx = string::npos;
-		accessOperatorRightIdx = string::npos;
-		auto haveKey = false;
-		auto squareBracketsCount = 0;
-		// improve me!
-		if (startIdx > 0) {
-			haveKey = name[startIdx - 1] == '.';
-			if (haveKey == true) accessOperatorLeftIdx = startIdx - 1;
-		}
-		for (auto i = startIdx; i < name.length(); i++) {
-			auto c = name[i];
-			if (haveKey == true) {
-				if (c == '.') {
-					//
-					accessOperatorRightIdx = i;
-					//
-					return true;
-				} else
-				if (c == '[') {
-					//
-					accessOperatorRightIdx = i;
-					//
-					return true;
-				}
-				if (c == ']') {
-					if (statement != nullptr) {
-						Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': unexpected char: ']'");
-					} else {
-						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': variable: '" + name + "': unexpected char: ']'");
-					}
-					return false;
-				}
-			} else
-			if (c == '.' && squareBracketsCount == 0) {
-				haveKey = true;
-				accessOperatorLeftIdx = i;
-			} else
-			if (c == '[') {
-				if (squareBracketsCount == 0) accessOperatorLeftIdx = i;
-				squareBracketsCount++;
-			} else
-			if (c == ']') {
-				squareBracketsCount--;
-				if (squareBracketsCount == 0) {
-					//
-					accessOperatorRightIdx = i + 1;
-					//
-					return true;
-				} else
-				if (squareBracketsCount < 0) {
-					if (statement != nullptr) {
-						Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': unexpected char: ']'");
-					} else {
-						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': variable: '" + name + "': unexpected char: ']'");
-					}
-					return false;
-				}
-			}
-		}
-		//
-		if (haveKey == true) accessOperatorRightIdx = name.size();
-		//
-		return true;
-	}
+	bool getVariableAccessOperatorLeftRightIndices(const string& name, const string& callerMethod, string::size_type& accessOperatorLeftIdx, string::size_type& accessOperatorRightIdx, const ScriptStatement* statement = nullptr, int startIdx = 0);
 
 	/**
 	 * Evaluate access
@@ -2792,40 +2690,7 @@ private:
 	 * @param key map key
 	 * @param statement statement
 	 */
-	inline bool evaluateAccess(const string& name, const string& callerMethod, string::size_type& arrayAccessOperatorLeftIdx, string::size_type& arrayAccessOperatorRightIdx, int64_t& arrayIdx, string& key, const ScriptStatement* statement = nullptr) {
-		key.clear();
-		arrayIdx = ARRAYIDX_NONE;
-		// check for dot access
-		if (name.data()[arrayAccessOperatorLeftIdx] == '.') {
-			key = string(StringTools::viewTrim(string_view(&name.data()[arrayAccessOperatorLeftIdx + 1], arrayAccessOperatorRightIdx - arrayAccessOperatorLeftIdx - 1)));
-			return true;
-		}
-		// evaluate array index
-		auto arrayIdxExpressionStringView = StringTools::viewTrim(string_view(&name.data()[arrayAccessOperatorLeftIdx + 1], arrayAccessOperatorRightIdx - arrayAccessOperatorLeftIdx - 2));
-		if (arrayIdxExpressionStringView.empty() == false) {
-			// integer first for performance
-			if (Integer::viewIs(arrayIdxExpressionStringView) == true) {
-				arrayIdx = Integer::viewParse(arrayIdxExpressionStringView);
-			} else {
-				// TODO: as evaluate statement we also might need the expression that had not yet a preprocessor run for error messages and such
-				ScriptVariable statementReturnValue;
-				auto evaluateStatement = string(arrayIdxExpressionStringView);
-				if (evaluateInternal(evaluateStatement, evaluateStatement, statementReturnValue, false) == false || statementReturnValue.getIntegerValue(arrayIdx, false) == false) {
-					if (statement != nullptr) {
-						Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': failed to evaluate expression: '" + string(arrayIdxExpressionStringView) + "'");
-					} else {
-						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': failed to evaluate expression: '" + string(arrayIdxExpressionStringView) + "'");
-					}
-					//
-					return false;
-				}
-			}
-		} else {
-			arrayIdx = ARRAYIDX_ADD;
-		}
-		//
-		return true;
-	}
+	bool evaluateAccess(const string& name, const string& callerMethod, string::size_type& arrayAccessOperatorLeftIdx, string::size_type& arrayAccessOperatorRightIdx, int64_t& arrayIdx, string& key, const ScriptStatement* statement = nullptr);
 
 	/**
 	 * Returns pointer of variable with given name or nullptr
@@ -2840,187 +2705,7 @@ private:
 	 * @param global use global context instead of current context
 	 * @return pointer to variable
 	 */
-	inline ScriptVariable* getVariableIntern(const string& name, const string& callerMethod, ScriptVariable*& parentVariable, int64_t& arrayIdx, string& key, int& setAccessBool, const ScriptStatement* statement = nullptr, bool expectVariable = true, bool global = false) {
-		//
-		if (isVariableAccess(name) == false) {
-			if (statement != nullptr) {
-				Console::println(getStatementInformation(*statement) + ": variable: '" + name + "': variable names must start with an $");
-			} else {
-				Console::println(scriptFileName + ": variable: '" + name + "': variable names must start with an $");
-			}
-			return nullptr;
-		}
-		// get root variable
-		key.clear();
-		// no array idx by default
-		arrayIdx = ARRAYIDX_NONE;
-		// determine left and right access operator position if there are any
-		auto accessOperatorLeftIdx = string::npos;
-		auto accessOperatorRightIdx = string::npos;
-		if (getVariableAccessOperatorLeftRightIndices(name, callerMethod, accessOperatorLeftIdx, accessOperatorRightIdx, statement) == false) {
-			return nullptr;
-		}
-		// access operator, if we have any, evaluate the array index
-		auto haveAccessOperator = accessOperatorLeftIdx != string::npos && accessOperatorRightIdx != string::npos;
-		auto extractedVariableName = haveAccessOperator == true?StringTools::substring(name, 0, accessOperatorLeftIdx):string();
-		if (haveAccessOperator == true &&
-			evaluateAccess(name, callerMethod, accessOperatorLeftIdx, accessOperatorRightIdx, arrayIdx, key, statement) == false) {
-			return nullptr;
-		}
-		// retrieve variable from function script state
-		ScriptVariable* variablePtr = nullptr;
-		if (global == false) {
-			const auto& scriptState = getScriptState();
-			auto scriptVariableIt = scriptState.variables.find(extractedVariableName.empty() == false?extractedVariableName:name);
-			if (scriptVariableIt == scriptState.variables.end()) {
-				if (isFunctionRunning() == false) {
-					if (expectVariable == true) {
-						if (statement != nullptr) {
-							Console::println(getStatementInformation(*statement) + ": variable: '" + name + "' does not exist");
-						} else {
-							Console::println(scriptFileName + ": variable: '" + name + "' does not exist");
-						}
-					}
-					return nullptr;
-				}
-			} else {
-				variablePtr = scriptVariableIt->second;
-			}
-		}
-		// if no success try to retrieve variable from root script state, but only when expecting variable aka reading variable
-		if (global == true || (expectVariable == true && variablePtr == nullptr)) {
-			const auto& scriptState = getRootScriptState();
-			auto scriptVariableIt = scriptState.variables.find(extractedVariableName.empty() == false?extractedVariableName:name);
-			if (scriptVariableIt == scriptState.variables.end()) {
-				if (expectVariable == true) {
-					if (statement != nullptr) {
-						Console::println(getStatementInformation(*statement) + ": variable: '" + name + "' does not exist");
-					} else {
-						Console::println(scriptFileName + ": variable: '" + name + "' does not exist");
-					}
-				}
-				return nullptr;
-			} else {
-				variablePtr = scriptVariableIt->second;
-			}
-		}
-		//
-		if (variablePtr == nullptr) return nullptr;
-		// get pointer to children variable
-		if (haveAccessOperator == false) {
-			//
-			return variablePtr;
-		} else {
-			// resolve first parsed access pattern and repeat until resolved
-			while (haveAccessOperator == true) {
-				// map key access
-				if (key.empty() == false) {
-					if (variablePtr->getType() == TYPE_MAP) {
-						//
-						auto& mapValueReference = variablePtr->getMapValueReference();
-						// key
-						auto mapIt = mapValueReference.find(key);
-						if (mapIt != mapValueReference.end()) {
-							//
-							parentVariable = variablePtr;
-							//
-							variablePtr = &mapIt->second;
-						} else {
-							if (expectVariable == true) {
-								if (statement != nullptr) {
-									Console::println(getStatementInformation(*statement) + ": variable: '" + name + "': key not found: '" + key + "'");
-								} else {
-									Console::println(scriptFileName + "': variable: '" + name + "': key not found: '" + key + "'");
-								}
-							}
-							// we have our parent
-							parentVariable = variablePtr;
-							//
-							return nullptr;
-						}
-					} else
-					if (variablePtr->getType() == TYPE_SET) {
-						//
-						auto& setValueReference = variablePtr->getSetValueReference();
-						// key
-						auto setIt = setValueReference.find(key);
-						if (setIt != setValueReference.end()) {
-							//
-							setAccessBool = SETACCESSBOOL_TRUE;
-							//
-							parentVariable = variablePtr;
-						} else {
-							//
-							setAccessBool = SETACCESSBOOL_FALSE;
-							// we have our parent
-							parentVariable = variablePtr;
-							//
-							return nullptr;
-						}
-					} else {
-						if (statement != nullptr) {
-							Console::println(getStatementInformation(*statement) + ": variable: '" + name + "': map/set access operator, but variable is not of type map/set");
-						} else {
-							Console::println(scriptFileName + ": variable: '" + name + "': map/set access operator, but variable is not of type map/set");
-						}
-						return nullptr;
-					}
-				} else {
-					if (variablePtr->getType() != TYPE_ARRAY) {
-						if (statement != nullptr) {
-							Console::println(getStatementInformation(*statement) + ": variable: '" + name + "': array access operator, but variable is not of type array");
-						} else {
-							Console::println(scriptFileName + ": variable: '" + name + "': array access operator, but variable is not of type array");
-						}
-						return nullptr;
-					}
-					auto& arrayValueReference = variablePtr->getArrayValueReference();
-					// otherwise array
-					if (arrayIdx == ARRAYIDX_ADD) {
-						// we have our parent
-						parentVariable = variablePtr;
-						//
-						return nullptr;
-					} else
-					if (arrayIdx >= 0 && arrayIdx < arrayValueReference.size()) {
-						//
-						parentVariable = variablePtr;
-						//
-						variablePtr = &arrayValueReference[arrayIdx];
-					} else {
-						if (statement != nullptr) {
-							Console::println(getStatementInformation(*statement) + ": variable: '" + name + "': index out of bounds: 0 <= " + to_string(arrayIdx) + " < " + to_string(arrayValueReference.size()));
-						} else {
-							Console::println(scriptFileName + ": variable: '" + name + "': index out of bounds: 0 <= " + to_string(arrayIdx) + " <= " + to_string(arrayValueReference.size()));
-						}
-						return nullptr;
-					}
-				}
-
-				//
-				auto accessOperatorStartIdx = accessOperatorRightIdx;
-				accessOperatorLeftIdx = string::npos;
-				accessOperatorRightIdx = string::npos;
-				if (getVariableAccessOperatorLeftRightIndices(name, callerMethod, accessOperatorLeftIdx, accessOperatorRightIdx, statement, accessOperatorStartIdx) == false) {
-					// fail
-					return nullptr;
-				}
-
-				// do we have a next array access next to previous one?
-				haveAccessOperator = accessOperatorLeftIdx != string::npos && accessOperatorRightIdx != string::npos;
-				if (haveAccessOperator == false) {
-					return variablePtr;
-				} else {
-					// yep, evaluate it
-					if (evaluateAccess(name, callerMethod, accessOperatorLeftIdx, accessOperatorRightIdx, arrayIdx, key, statement) == false) {
-						return nullptr;
-					}
-				}
-			}
-			//
-			return variablePtr;
-		}
-	}
+	ScriptVariable* getVariableIntern(const string& name, const string& callerMethod, ScriptVariable*& parentVariable, int64_t& arrayIdx, string& key, int& setAccessBool, const ScriptStatement* statement = nullptr, bool expectVariable = true, bool global = false);
 
 	/**
 	 * Evaluate given statement without executing preprocessor run
@@ -3030,92 +2715,36 @@ private:
 	 * @param pushOwnScriptState push own script state
 	 * @return success
 	 */
-	inline bool evaluateInternal(const string& statement, const string& executableStatement, ScriptVariable& returnValue, bool pushOwnScriptState = true) {
-		ScriptStatement evaluateStatement(
-			LINE_NONE,
-			0,
-			"internal.script.evaluate(" + statement + ")",
-			"internal.script.evaluate(" + executableStatement + ")",
-			STATEMENTIDX_NONE
-		);
-		auto scriptEvaluateStatement = "internal.script.evaluate(" + executableStatement + ")";
-		//
-		string_view methodName;
-		vector<string_view> arguments;
-		string accessObjectMemberStatement;
-		ScriptSyntaxTreeNode evaluateSyntaxTree;
-		if (parseScriptStatement(scriptEvaluateStatement, methodName, arguments, evaluateStatement, accessObjectMemberStatement) == false) {
-			return false;
-		} else
-		if (createScriptStatementSyntaxTree(methodName, arguments, evaluateStatement, evaluateSyntaxTree) == false) {
-			return false;
-		} else {
-			//
-			if (pushOwnScriptState == true) {
-				pushScriptState();
-				resetScriptExecutationState(SCRIPTIDX_NONE, STATEMACHINESTATE_NEXT_STATEMENT);
-			}
-			getScriptState().running = true;
-			//
-			returnValue = executeScriptStatement(
-				evaluateSyntaxTree,
-				evaluateStatement
-			);
-			//
-			if (pushOwnScriptState == true) popScriptState();
-			//
-			return true;
-		}
-	}
+	bool evaluateInternal(const string& statement, const string& executableStatement, ScriptVariable& returnValue, bool pushOwnScriptState = true);
 
 	/**
 	  * Initialize variable
 	  * @param variable variable
 	  * @return initialized variable
 	  */
-	inline const ScriptVariable initializeVariable(const ScriptVariable& variable) {
-		switch (variable.type) {
-			case TYPE_ARRAY:
-				{
-					ScriptVariable arrayVariable;
-					//
-					arrayVariable.setType(TYPE_ARRAY);
-					auto arrayPointer = variable.getArrayPointer();
-					if (arrayPointer == nullptr) break;
-					for (const auto& arrayValue: *arrayPointer) {
-						arrayVariable.pushArrayValue(initializeVariable(arrayValue));
-					}
-					//
-					return arrayVariable;
-				}
-			case TYPE_MAP:
-				{
-					ScriptVariable mapVariable;
-					//
-					auto mapPointer = variable.getMapPointer();
-					if (mapPointer == nullptr) break;
-					for (const auto& [mapKey, mapValue]: *mapPointer) {
-						mapVariable.setMapValue(mapKey, initializeVariable(mapValue));
-					}
-					//
-					return mapVariable;
-				}
-			case TYPE_FUNCTION_CALL:
-				{
-					ScriptVariable returnValue;
-					if (variable.initializer != nullptr) {
-						returnValue = executeScriptStatement(
-							*variable.initializer->getSyntaxTree(),
-							variable.initializer->getStatement()
-						);
-					}
-					return returnValue;
-				}
-			default: break;
-		}
-		//
-		return variable;
-	}
+	const ScriptVariable initializeVariable(const ScriptVariable& variable);
+
+	/**
+	 * Returns if a given string is a function assignment
+	 * @param candidate candidate
+	 * @param function function
+	 * @return if candidate is a function assignment
+	 */
+	static bool viewIsFunctionAssignment(const string_view& candidate, string& function);
+
+	/**
+	 * Returns if a given string is a variable name
+	 * @param candidate candidate
+	 * @return if string is a variable name
+	 */
+	static bool viewIsVariableAccess(const string_view& candidate);
+
+	/**
+	 * Returns if a given string is a valid map key name
+	 * @param candidate candidate
+	 * @return if string is a valid map key name
+	 */
+	static bool viewIsKey(const string_view& candidate);
 
 public:
 
@@ -3495,88 +3124,6 @@ public:
 	void registerMethod(ScriptMethod* scriptMethod);
 
 	/**
-	 * Returns if a given string is a function assignment
-	 * @param candidate candidate
-	 * @param function function
-	 * @return if candidate is a function assignment
-	 */
-	inline static bool isFunctionAssignment(const string& candidate, string& function) {
-		if (candidate.size() == 0) return false;
-		//
-		auto i = 0;
-		// (
-		if (candidate[i++] != '(') return false;
-		//
-		if (i >= candidate.size()) return false;
-		// )
-		if (candidate[i++] != ')') return false;
-		// spaces
-		for (; i < candidate.size() && Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
-		// -
-		if (candidate[i++] != '-') return false;
-		//
-		if (i >= candidate.size()) return false;
-		// >
-		if (candidate[i++] != '>') return false;
-		// spaces
-		for (; i < candidate.size() && Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
-		//
-		string _function;
-		for (; i < candidate.size(); i++) {
-			auto c = candidate[i];
-			if (Character::isAlphaNumeric(c) == false && c != '_') {
-				return false;
-			}
-			_function+= c;
-		}
-		//
-		function = _function;
-		//
-		return true;
-	}
-
-	/**
-	 * Returns if a given string is a function assignment
-	 * @param candidate candidate
-	 * @param function function
-	 * @return if candidate is a function assignment
-	 */
-	inline static bool viewIsFunctionAssignment(const string_view& candidate, string& function) {
-		if (candidate.size() == 0) return false;
-		//
-		auto i = 0;
-		// (
-		if (candidate[i++] != '(') return false;
-		//
-		if (i >= candidate.size()) return false;
-		// )
-		if (candidate[i++] != ')') return false;
-		// spaces
-		for (; i < candidate.size() && Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
-		// -
-		if (candidate[i++] != '-') return false;
-		//
-		if (i >= candidate.size()) return false;
-		// >
-		if (candidate[i++] != '>') return false;
-		// spaces
-		for (; i < candidate.size() && Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
-		//
-		string _function;
-		for (; i < candidate.size(); i++) {
-			auto c = candidate[i];
-			if (Character::isAlphaNumeric(c) == false && c != '_') {
-				return false;
-			}
-			_function+= c;
-		}
-		//
-		function = _function;
-		//
-		return true;
-	}
-
-	/**
 	 * Returns if a given string is a variable name
 	 * @param candidate candidate
 	 * @return if string is a variable name
@@ -3596,45 +3143,6 @@ public:
 			if (squareBracketCount == 0 && Character::isAlphaNumeric(c) == false && c != '_' && c != '.') {
 				return false;
 			}
-		}
-		return true;
-	}
-
-	/**
-	 * Returns if a given string is a variable name
-	 * @param candidate candidate
-	 * @return if string is a variable name
-	 */
-	inline static bool viewIsVariableAccess(const string_view& candidate) {
-		if (candidate.size() == 0) return false;
-		if (candidate[0] != '$') return false;
-		auto squareBracketCount = 0;
-		for (auto i = 1; i < candidate.size(); i++) {
-			auto c = candidate[i];
-			if (c == '[') {
-				squareBracketCount++;
-			} else
-			if (c == ']') {
-				squareBracketCount--;
-			} else
-			if (squareBracketCount == 0 && Character::isAlphaNumeric(c) == false && c != '_' && c != '.') {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Returns if a given string is a valid map key name
-	 * @param candidate candidate
-	 * @return if string is a valid map key name
-	 */
-	inline static bool viewIsKey(const string_view& candidate) {
-		if (candidate.size() == 0) return false;
-		if (candidate[0] == '$') return false;
-		for (auto i = 0; i < candidate.size(); i++) {
-			auto c = candidate[i];
-			if (Character::isAlphaNumeric(c) == false && c != '_') return false;
 		}
 		return true;
 	}

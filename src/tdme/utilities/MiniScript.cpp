@@ -2064,7 +2064,7 @@ bool MiniScript::getNextStatementOperator(const string& processedStatement, Mini
 	return nextOperator.idx != OPERATORIDX_NONE;
 }
 
-const string MiniScript::trimArgument(const string& argument) {
+inline const string MiniScript::trimArgument(const string& argument) {
 	auto processedArgument = StringTools::trim(argument);
 	if (StringTools::startsWith(processedArgument, "(") == true && StringTools::endsWith(processedArgument, ")") == true) {
 		processedArgument = StringTools::substring(processedArgument, 1, processedArgument.size() - 1);
@@ -2072,7 +2072,7 @@ const string MiniScript::trimArgument(const string& argument) {
 	return processedArgument;
 }
 
-const string MiniScript::findRightArgument(const string& statement, int position, int& length, string& brackets) {
+inline const string MiniScript::findRightArgument(const string& statement, int position, int& length, string& brackets) {
 	//
 	auto bracketCount = 0;
 	auto squareBracketCount = 0;
@@ -2163,7 +2163,7 @@ const string MiniScript::findRightArgument(const string& statement, int position
 	return trimArgument(argument);
 }
 
-const string MiniScript::findLeftArgument(const string& statement, int position, int& length, string& brackets) {
+inline const string MiniScript::findLeftArgument(const string& statement, int position, int& length, string& brackets) {
 	// adapt code similar to findRightArguument related to array and map/initializer
 	//
 	auto bracketCount = 0;
@@ -2830,7 +2830,7 @@ void MiniScript::registerMethods() {
 								auto argumentIdx = 0;
 
 								//
-								auto assignBack = [&]() -> void {
+								auto assignBack = [&]() -> bool {
 									if (argumentIdx == 0) {
 										if (isVariableAccess(variable) == true) {
 											miniScript->setVariable(variable, callArgumentValuesSpan[0], &statement);
@@ -2840,8 +2840,7 @@ void MiniScript::registerMethods() {
 									} else {
 										auto variableNameArgumentIdx = (argumentIdx * 2) + 1;
 										if (variableNameArgumentIdx >= argumentValues.size() || argumentIdx >= callArgumentValuesSpan.size()) {
-											Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()) + ": invalid member call");
-											miniScript->startErrorScript();
+											return false;
 										} else {
 											auto argumentVariable = argumentValues[variableNameArgumentIdx].getValueAsString();
 											if (isVariableAccess(argumentVariable) == true) {
@@ -2851,6 +2850,8 @@ void MiniScript::registerMethods() {
 											}
 										}
 									}
+									//
+									return true;
 								};
 
 								// method
@@ -2861,7 +2862,10 @@ void MiniScript::registerMethods() {
 											continue;
 										}
 										//
-										assignBack();
+										if (assignBack() == false) {
+											Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()) + ": invalid member call");
+											miniScript->startErrorScript();
+										}
 										//
 										argumentIdx++;
 									}
@@ -2874,7 +2878,10 @@ void MiniScript::registerMethods() {
 											continue;
 										}
 										//
-										assignBack();
+										if (assignBack() == false) {
+											Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()) + ": invalid member call");
+											miniScript->startErrorScript();
+										}
 										//
 										argumentIdx++;
 									}
@@ -8301,4 +8308,433 @@ void MiniScript::ScriptVariable::setFunctionCallStatement(const string& initiali
 	} else {
 		initializer = new Initializer(initializerStatement, statement, evaluateSyntaxTree);
 	}
+}
+
+inline MiniScript::ScriptVariable* MiniScript::getVariableIntern(const string& name, const string& callerMethod, ScriptVariable*& parentVariable, int64_t& arrayIdx, string& key, int& setAccessBool, const ScriptStatement* statement, bool expectVariable, bool global) {
+	//
+	if (isVariableAccess(name) == false) {
+		if (statement != nullptr) {
+			Console::println(getStatementInformation(*statement) + ": variable: '" + name + "': variable names must start with an $");
+		} else {
+			Console::println(scriptFileName + ": variable: '" + name + "': variable names must start with an $");
+		}
+		return nullptr;
+	}
+	// get root variable
+	key.clear();
+	// no array idx by default
+	arrayIdx = ARRAYIDX_NONE;
+	// determine left and right access operator position if there are any
+	auto accessOperatorLeftIdx = string::npos;
+	auto accessOperatorRightIdx = string::npos;
+	if (getVariableAccessOperatorLeftRightIndices(name, callerMethod, accessOperatorLeftIdx, accessOperatorRightIdx, statement) == false) {
+		return nullptr;
+	}
+	// access operator, if we have any, evaluate the array index
+	auto haveAccessOperator = accessOperatorLeftIdx != string::npos && accessOperatorRightIdx != string::npos;
+	auto extractedVariableName = haveAccessOperator == true?StringTools::substring(name, 0, accessOperatorLeftIdx):string();
+	if (haveAccessOperator == true &&
+		evaluateAccess(name, callerMethod, accessOperatorLeftIdx, accessOperatorRightIdx, arrayIdx, key, statement) == false) {
+		return nullptr;
+	}
+	// retrieve variable from function script state
+	ScriptVariable* variablePtr = nullptr;
+	if (global == false) {
+		const auto& scriptState = getScriptState();
+		auto scriptVariableIt = scriptState.variables.find(extractedVariableName.empty() == false?extractedVariableName:name);
+		if (scriptVariableIt == scriptState.variables.end()) {
+			if (isFunctionRunning() == false) {
+				if (expectVariable == true) {
+					if (statement != nullptr) {
+						Console::println(getStatementInformation(*statement) + ": variable: '" + name + "' does not exist");
+					} else {
+						Console::println(scriptFileName + ": variable: '" + name + "' does not exist");
+					}
+				}
+				return nullptr;
+			}
+		} else {
+			variablePtr = scriptVariableIt->second;
+		}
+	}
+	// if no success try to retrieve variable from root script state, but only when expecting variable aka reading variable
+	if (global == true || (expectVariable == true && variablePtr == nullptr)) {
+		const auto& scriptState = getRootScriptState();
+		auto scriptVariableIt = scriptState.variables.find(extractedVariableName.empty() == false?extractedVariableName:name);
+		if (scriptVariableIt == scriptState.variables.end()) {
+			if (expectVariable == true) {
+				if (statement != nullptr) {
+					Console::println(getStatementInformation(*statement) + ": variable: '" + name + "' does not exist");
+				} else {
+					Console::println(scriptFileName + ": variable: '" + name + "' does not exist");
+				}
+			}
+			return nullptr;
+		} else {
+			variablePtr = scriptVariableIt->second;
+		}
+	}
+	//
+	if (variablePtr == nullptr) return nullptr;
+	// get pointer to children variable
+	if (haveAccessOperator == false) {
+		//
+		return variablePtr;
+	} else {
+		// resolve first parsed access pattern and repeat until resolved
+		while (haveAccessOperator == true) {
+			// map key access
+			if (key.empty() == false) {
+				if (variablePtr->getType() == TYPE_MAP) {
+					//
+					auto& mapValueReference = variablePtr->getMapValueReference();
+					// key
+					auto mapIt = mapValueReference.find(key);
+					if (mapIt != mapValueReference.end()) {
+						//
+						parentVariable = variablePtr;
+						//
+						variablePtr = &mapIt->second;
+					} else {
+						if (expectVariable == true) {
+							if (statement != nullptr) {
+								Console::println(getStatementInformation(*statement) + ": variable: '" + name + "': key not found: '" + key + "'");
+							} else {
+								Console::println(scriptFileName + "': variable: '" + name + "': key not found: '" + key + "'");
+							}
+						}
+						// we have our parent
+						parentVariable = variablePtr;
+						//
+						return nullptr;
+					}
+				} else
+				if (variablePtr->getType() == TYPE_SET) {
+					//
+					auto& setValueReference = variablePtr->getSetValueReference();
+					// key
+					auto setIt = setValueReference.find(key);
+					if (setIt != setValueReference.end()) {
+						//
+						setAccessBool = SETACCESSBOOL_TRUE;
+						//
+						parentVariable = variablePtr;
+					} else {
+						//
+						setAccessBool = SETACCESSBOOL_FALSE;
+						// we have our parent
+						parentVariable = variablePtr;
+						//
+						return nullptr;
+					}
+				} else {
+					if (statement != nullptr) {
+						Console::println(getStatementInformation(*statement) + ": variable: '" + name + "': map/set access operator, but variable is not of type map/set");
+					} else {
+						Console::println(scriptFileName + ": variable: '" + name + "': map/set access operator, but variable is not of type map/set");
+					}
+					return nullptr;
+				}
+			} else {
+				if (variablePtr->getType() != TYPE_ARRAY) {
+					if (statement != nullptr) {
+						Console::println(getStatementInformation(*statement) + ": variable: '" + name + "': array access operator, but variable is not of type array");
+					} else {
+						Console::println(scriptFileName + ": variable: '" + name + "': array access operator, but variable is not of type array");
+					}
+					return nullptr;
+				}
+				auto& arrayValueReference = variablePtr->getArrayValueReference();
+				// otherwise array
+				if (arrayIdx == ARRAYIDX_ADD) {
+					// we have our parent
+					parentVariable = variablePtr;
+					//
+					return nullptr;
+				} else
+				if (arrayIdx >= 0 && arrayIdx < arrayValueReference.size()) {
+					//
+					parentVariable = variablePtr;
+					//
+					variablePtr = &arrayValueReference[arrayIdx];
+				} else {
+					if (statement != nullptr) {
+						Console::println(getStatementInformation(*statement) + ": variable: '" + name + "': index out of bounds: 0 <= " + to_string(arrayIdx) + " < " + to_string(arrayValueReference.size()));
+					} else {
+						Console::println(scriptFileName + ": variable: '" + name + "': index out of bounds: 0 <= " + to_string(arrayIdx) + " <= " + to_string(arrayValueReference.size()));
+					}
+					return nullptr;
+				}
+			}
+
+			//
+			auto accessOperatorStartIdx = accessOperatorRightIdx;
+			accessOperatorLeftIdx = string::npos;
+			accessOperatorRightIdx = string::npos;
+			if (getVariableAccessOperatorLeftRightIndices(name, callerMethod, accessOperatorLeftIdx, accessOperatorRightIdx, statement, accessOperatorStartIdx) == false) {
+				// fail
+				return nullptr;
+			}
+
+			// do we have a next array access next to previous one?
+			haveAccessOperator = accessOperatorLeftIdx != string::npos && accessOperatorRightIdx != string::npos;
+			if (haveAccessOperator == false) {
+				return variablePtr;
+			} else {
+				// yep, evaluate it
+				if (evaluateAccess(name, callerMethod, accessOperatorLeftIdx, accessOperatorRightIdx, arrayIdx, key, statement) == false) {
+					return nullptr;
+				}
+			}
+		}
+		//
+		return variablePtr;
+	}
+}
+
+inline bool MiniScript::evaluateInternal(const string& statement, const string& executableStatement, ScriptVariable& returnValue, bool pushOwnScriptState) {
+	ScriptStatement evaluateStatement(
+		LINE_NONE,
+		0,
+		"internal.script.evaluate(" + statement + ")",
+		"internal.script.evaluate(" + executableStatement + ")",
+		STATEMENTIDX_NONE
+	);
+	auto scriptEvaluateStatement = "internal.script.evaluate(" + executableStatement + ")";
+	//
+	string_view methodName;
+	vector<string_view> arguments;
+	string accessObjectMemberStatement;
+	ScriptSyntaxTreeNode evaluateSyntaxTree;
+	if (parseScriptStatement(scriptEvaluateStatement, methodName, arguments, evaluateStatement, accessObjectMemberStatement) == false) {
+		return false;
+	} else
+	if (createScriptStatementSyntaxTree(methodName, arguments, evaluateStatement, evaluateSyntaxTree) == false) {
+		return false;
+	} else {
+		//
+		if (pushOwnScriptState == true) {
+			pushScriptState();
+			resetScriptExecutationState(SCRIPTIDX_NONE, STATEMACHINESTATE_NEXT_STATEMENT);
+		}
+		getScriptState().running = true;
+		//
+		returnValue = executeScriptStatement(
+			evaluateSyntaxTree,
+			evaluateStatement
+		);
+		//
+		if (pushOwnScriptState == true) popScriptState();
+		//
+		return true;
+	}
+}
+
+inline const MiniScript::ScriptVariable MiniScript::initializeVariable(const ScriptVariable& variable) {
+	switch (variable.type) {
+		case TYPE_ARRAY:
+			{
+				ScriptVariable arrayVariable;
+				//
+				arrayVariable.setType(TYPE_ARRAY);
+				auto arrayPointer = variable.getArrayPointer();
+				if (arrayPointer == nullptr) break;
+				for (const auto& arrayValue: *arrayPointer) {
+					arrayVariable.pushArrayValue(initializeVariable(arrayValue));
+				}
+				//
+				return arrayVariable;
+			}
+		case TYPE_MAP:
+			{
+				ScriptVariable mapVariable;
+				//
+				auto mapPointer = variable.getMapPointer();
+				if (mapPointer == nullptr) break;
+				for (const auto& [mapKey, mapValue]: *mapPointer) {
+					mapVariable.setMapValue(mapKey, initializeVariable(mapValue));
+				}
+				//
+				return mapVariable;
+			}
+		case TYPE_FUNCTION_CALL:
+			{
+				ScriptVariable returnValue;
+				if (variable.initializer != nullptr) {
+					returnValue = executeScriptStatement(
+						*variable.initializer->getSyntaxTree(),
+						variable.initializer->getStatement()
+					);
+				}
+				return returnValue;
+			}
+		default: break;
+	}
+	//
+	return variable;
+}
+
+inline bool MiniScript::viewIsFunctionAssignment(const string_view& candidate, string& function) {
+	if (candidate.size() == 0) return false;
+	//
+	auto i = 0;
+	// (
+	if (candidate[i++] != '(') return false;
+	//
+	if (i >= candidate.size()) return false;
+	// )
+	if (candidate[i++] != ')') return false;
+	// spaces
+	for (; i < candidate.size() && Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
+	// -
+	if (candidate[i++] != '-') return false;
+	//
+	if (i >= candidate.size()) return false;
+	// >
+	if (candidate[i++] != '>') return false;
+	// spaces
+	for (; i < candidate.size() && Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
+	//
+	string _function;
+	for (; i < candidate.size(); i++) {
+		auto c = candidate[i];
+		if (Character::isAlphaNumeric(c) == false && c != '_') {
+			return false;
+		}
+		_function+= c;
+	}
+	//
+	function = _function;
+	//
+	return true;
+}
+
+inline bool MiniScript::viewIsVariableAccess(const string_view& candidate) {
+	if (candidate.size() == 0) return false;
+	if (candidate[0] != '$') return false;
+	auto squareBracketCount = 0;
+	for (auto i = 1; i < candidate.size(); i++) {
+		auto c = candidate[i];
+		if (c == '[') {
+			squareBracketCount++;
+		} else
+		if (c == ']') {
+			squareBracketCount--;
+		} else
+		if (squareBracketCount == 0 && Character::isAlphaNumeric(c) == false && c != '_' && c != '.') {
+			return false;
+		}
+	}
+	return true;
+}
+
+inline bool MiniScript::viewIsKey(const string_view& candidate) {
+	if (candidate.size() == 0) return false;
+	if (candidate[0] == '$') return false;
+	for (auto i = 0; i < candidate.size(); i++) {
+		auto c = candidate[i];
+		if (Character::isAlphaNumeric(c) == false && c != '_') return false;
+	}
+	return true;
+}
+
+inline bool MiniScript::getVariableAccessOperatorLeftRightIndices(const string& name, const string& callerMethod, string::size_type& accessOperatorLeftIdx, string::size_type& accessOperatorRightIdx, const ScriptStatement* statement, int startIdx) {
+	accessOperatorLeftIdx = string::npos;
+	accessOperatorRightIdx = string::npos;
+	auto haveKey = false;
+	auto squareBracketsCount = 0;
+	// improve me!
+	if (startIdx > 0) {
+		haveKey = name[startIdx - 1] == '.';
+		if (haveKey == true) accessOperatorLeftIdx = startIdx - 1;
+	}
+	for (auto i = startIdx; i < name.length(); i++) {
+		auto c = name[i];
+		if (haveKey == true) {
+			if (c == '.') {
+				//
+				accessOperatorRightIdx = i;
+				//
+				return true;
+			} else
+			if (c == '[') {
+				//
+				accessOperatorRightIdx = i;
+				//
+				return true;
+			}
+			if (c == ']') {
+				if (statement != nullptr) {
+					Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': unexpected char: ']'");
+				} else {
+					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': variable: '" + name + "': unexpected char: ']'");
+				}
+				return false;
+			}
+		} else
+		if (c == '.' && squareBracketsCount == 0) {
+			haveKey = true;
+			accessOperatorLeftIdx = i;
+		} else
+		if (c == '[') {
+			if (squareBracketsCount == 0) accessOperatorLeftIdx = i;
+			squareBracketsCount++;
+		} else
+		if (c == ']') {
+			squareBracketsCount--;
+			if (squareBracketsCount == 0) {
+				//
+				accessOperatorRightIdx = i + 1;
+				//
+				return true;
+			} else
+			if (squareBracketsCount < 0) {
+				if (statement != nullptr) {
+					Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': unexpected char: ']'");
+				} else {
+					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': variable: '" + name + "': unexpected char: ']'");
+				}
+				return false;
+			}
+		}
+	}
+	//
+	if (haveKey == true) accessOperatorRightIdx = name.size();
+	//
+	return true;
+}
+
+inline bool MiniScript::evaluateAccess(const string& name, const string& callerMethod, string::size_type& arrayAccessOperatorLeftIdx, string::size_type& arrayAccessOperatorRightIdx, int64_t& arrayIdx, string& key, const ScriptStatement* statement) {
+	key.clear();
+	arrayIdx = ARRAYIDX_NONE;
+	// check for dot access
+	if (name.data()[arrayAccessOperatorLeftIdx] == '.') {
+		key = string(StringTools::viewTrim(string_view(&name.data()[arrayAccessOperatorLeftIdx + 1], arrayAccessOperatorRightIdx - arrayAccessOperatorLeftIdx - 1)));
+		return true;
+	}
+	// evaluate array index
+	auto arrayIdxExpressionStringView = StringTools::viewTrim(string_view(&name.data()[arrayAccessOperatorLeftIdx + 1], arrayAccessOperatorRightIdx - arrayAccessOperatorLeftIdx - 2));
+	if (arrayIdxExpressionStringView.empty() == false) {
+		// integer first for performance
+		if (Integer::viewIs(arrayIdxExpressionStringView) == true) {
+			arrayIdx = Integer::viewParse(arrayIdxExpressionStringView);
+		} else {
+			// TODO: as evaluate statement we also might need the expression that had not yet a preprocessor run for error messages and such
+			ScriptVariable statementReturnValue;
+			auto evaluateStatement = string(arrayIdxExpressionStringView);
+			if (evaluateInternal(evaluateStatement, evaluateStatement, statementReturnValue, false) == false || statementReturnValue.getIntegerValue(arrayIdx, false) == false) {
+				if (statement != nullptr) {
+					Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': failed to evaluate expression: '" + string(arrayIdxExpressionStringView) + "'");
+				} else {
+					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': failed to evaluate expression: '" + string(arrayIdxExpressionStringView) + "'");
+				}
+				//
+				return false;
+			}
+		}
+	} else {
+		arrayIdx = ARRAYIDX_ADD;
+	}
+	//
+	return true;
 }
