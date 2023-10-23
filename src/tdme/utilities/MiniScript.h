@@ -63,7 +63,7 @@ using tdme::utilities::Time;
 namespace tdme {
 namespace tools {
 namespace cli {
-	class MiniscriptTranspiler;
+	class MiniScriptTranspilerTool;
 }
 }
 }
@@ -73,7 +73,8 @@ namespace cli {
  * @author Andreas Drewke
  */
 class tdme::utilities::MiniScript {
-	friend class tdme::tools::cli::MiniscriptTranspiler;
+	friend class tdme::tools::cli::MiniScriptTranspilerTool;
+	friend class MiniScriptTranspiler;
 
 public:
 	enum ScriptOperator {
