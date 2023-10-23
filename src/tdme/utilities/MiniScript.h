@@ -2731,7 +2731,40 @@ private:
 	 * @param function function
 	 * @return if candidate is a function assignment
 	 */
-	static bool viewIsFunctionAssignment(const string_view& candidate, string& function);
+	inline static bool viewIsFunctionAssignment(const string_view& candidate, string& function) {
+		if (candidate.size() == 0) return false;
+		//
+		auto i = 0;
+		// (
+		if (candidate[i++] != '(') return false;
+		//
+		if (i >= candidate.size()) return false;
+		// )
+		if (candidate[i++] != ')') return false;
+		// spaces
+		for (; i < candidate.size() && Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
+		// -
+		if (candidate[i++] != '-') return false;
+		//
+		if (i >= candidate.size()) return false;
+		// >
+		if (candidate[i++] != '>') return false;
+		// spaces
+		for (; i < candidate.size() && Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
+		//
+		string _function;
+		for (; i < candidate.size(); i++) {
+			auto c = candidate[i];
+			if (Character::isAlphaNumeric(c) == false && c != '_') {
+				return false;
+			}
+			_function+= c;
+		}
+		//
+		function = _function;
+		//
+		return true;
+	}
 
 	/**
 	 * Returns if a given string is a variable name

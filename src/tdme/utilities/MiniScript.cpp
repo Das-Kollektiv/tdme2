@@ -8574,41 +8574,6 @@ inline const MiniScript::ScriptVariable MiniScript::initializeVariable(const Scr
 	return variable;
 }
 
-inline bool MiniScript::viewIsFunctionAssignment(const string_view& candidate, string& function) {
-	if (candidate.size() == 0) return false;
-	//
-	auto i = 0;
-	// (
-	if (candidate[i++] != '(') return false;
-	//
-	if (i >= candidate.size()) return false;
-	// )
-	if (candidate[i++] != ')') return false;
-	// spaces
-	for (; i < candidate.size() && Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
-	// -
-	if (candidate[i++] != '-') return false;
-	//
-	if (i >= candidate.size()) return false;
-	// >
-	if (candidate[i++] != '>') return false;
-	// spaces
-	for (; i < candidate.size() && Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
-	//
-	string _function;
-	for (; i < candidate.size(); i++) {
-		auto c = candidate[i];
-		if (Character::isAlphaNumeric(c) == false && c != '_') {
-			return false;
-		}
-		_function+= c;
-	}
-	//
-	function = _function;
-	//
-	return true;
-}
-
 inline bool MiniScript::viewIsKey(const string_view& candidate) {
 	if (candidate.size() == 0) return false;
 	if (candidate[0] == '$') return false;
