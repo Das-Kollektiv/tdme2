@@ -8609,25 +8609,6 @@ inline bool MiniScript::viewIsFunctionAssignment(const string_view& candidate, s
 	return true;
 }
 
-inline bool MiniScript::viewIsVariableAccess(const string_view& candidate) {
-	if (candidate.size() == 0) return false;
-	if (candidate[0] != '$') return false;
-	auto squareBracketCount = 0;
-	for (auto i = 1; i < candidate.size(); i++) {
-		auto c = candidate[i];
-		if (c == '[') {
-			squareBracketCount++;
-		} else
-		if (c == ']') {
-			squareBracketCount--;
-		} else
-		if (squareBracketCount == 0 && Character::isAlphaNumeric(c) == false && c != '_' && c != '.') {
-			return false;
-		}
-	}
-	return true;
-}
-
 inline bool MiniScript::viewIsKey(const string_view& candidate) {
 	if (candidate.size() == 0) return false;
 	if (candidate[0] == '$') return false;

@@ -30,7 +30,10 @@ on: nothing
 		b: 2,
 		c: 3,
 		# member methods
-		printABC: () -> printABC
+		printABC: call(printABC)
+		printABC2: function($a, $b) {
+			
+		}
 	};
 	console.dump($class)
 	#
