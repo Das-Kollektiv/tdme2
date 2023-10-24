@@ -6,6 +6,12 @@ on: initialize
 	console.log()
 end
 
+function: increment(=$this)
+	$this.a = $this.a + 1
+	$this.b = $this.b + 1
+	$this.c = $this.c + 1
+end
+
 function: printABC(=$this)
 	console.log(
 		"printABC(): " + 
@@ -14,7 +20,6 @@ function: printABC(=$this)
 		"c: " + $this.c + ", " +
 		"a*b*c: " + ($this.a * $this.b * $this.c)
 	)
-	$this.c = $this.c + 1 
 end
 
 # if no condition is met, nothing will be executed, lol :D
@@ -30,13 +35,19 @@ on: nothing
 		b: 2,
 		c: 3,
 		# member methods
-		printABC: () -> printABC
+		increment: () -> increment,
+		printABC: () -> printABC,
+		printABCD: ($e) -> 
+			{
+				console.log("xxx: " + $this.a * $this.b * $this.c * $e)
+			}
 	};
 	console.dump($class)
 	#
 	$i = 0
 	forCondition($i < 5)
 		$class->printABC()
+		$class->increment()
 		++$i
 	end
 	#

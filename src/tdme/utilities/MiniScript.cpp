@@ -1206,7 +1206,7 @@ const string MiniScript::determineNextStatement(const string& scriptCode, int& i
 	statementCodeLines.emplace_back();
 	auto quote = '\0';
 	auto expectBracket = false;
-	auto emptyBrackets = false;
+	auto inlineFunctionArguments = false;
 	auto bracketCount = 0;
 	auto squareBracketCount = 0;
 	auto curlyBracketCount = 0;
@@ -1226,7 +1226,7 @@ const string MiniScript::determineNextStatement(const string& scriptCode, int& i
 			// add char to script line
 			statementCodeLines[statementCodeLines.size() - 1] += c;
 			//
-			emptyBrackets = false;
+			inlineFunctionArguments = false;
 		} else
 		if (quote != '\0') {
 			// no op
@@ -1234,7 +1234,7 @@ const string MiniScript::determineNextStatement(const string& scriptCode, int& i
 		} else
 		// brackets
 		if (c == '(') {
-			emptyBrackets = false;
+			inlineFunctionArguments = false;
 			//
 			bracketCount++;
 			expectBracket = false;
@@ -1243,20 +1243,18 @@ const string MiniScript::determineNextStatement(const string& scriptCode, int& i
 		} else
 		if (c == ')') {
 			//
-			emptyBrackets = false;
+			inlineFunctionArguments = false;
 			//
 			bracketCount--;
 			// add char to script line
 			statementCodeLines[statementCodeLines.size() - 1] += c;
 			//
-			if (lc == '(') {
-				emptyBrackets = true;
-			}
+			inlineFunctionArguments = true;
 		} else
 		// square brackets
 		if (c == '[') {
 			//
-			emptyBrackets = false;
+			inlineFunctionArguments = false;
 			//
 			squareBracketCount++;
 			// add char to script line
@@ -1264,7 +1262,7 @@ const string MiniScript::determineNextStatement(const string& scriptCode, int& i
 		} else
 		if (c == ']') {
 			//
-			emptyBrackets = false;
+			inlineFunctionArguments = false;
 			//
 			squareBracketCount--;
 			// add char to script line
@@ -1273,7 +1271,7 @@ const string MiniScript::determineNextStatement(const string& scriptCode, int& i
 		// curly brackets
 		if (c == '{') {
 			//
-			emptyBrackets = false;
+			inlineFunctionArguments = false;
 			//
 			curlyBracketCount++;
 			// add char to script line
@@ -1281,7 +1279,7 @@ const string MiniScript::determineNextStatement(const string& scriptCode, int& i
 		} else
 		if (c == '}') {
 			//
-			emptyBrackets = false;
+			inlineFunctionArguments = false;
 			//
 			curlyBracketCount--;
 			// add char to script line
@@ -1300,7 +1298,7 @@ const string MiniScript::determineNextStatement(const string& scriptCode, int& i
 		} else
 		if (lc == '-' && c == '>') {
 			// we expect a bracket now
-			if (emptyBrackets == false) expectBracket = true;
+			if (inlineFunctionArguments == false) expectBracket = true;
 			// add char to script line
 			statementCodeLines[statementCodeLines.size() - 1] += c;
 		} else
@@ -1315,10 +1313,10 @@ const string MiniScript::determineNextStatement(const string& scriptCode, int& i
 				statementCodeLines.emplace_back();
 			} else {
 				//
-				emptyBrackets = false;
+				inlineFunctionArguments = false;
 			}
 		} else {
-			if (Character::isSpace(c) == false && c != '-' && nc != '>') emptyBrackets = false;
+			if (Character::isSpace(c) == false && c != '-' && nc != '>') inlineFunctionArguments = false;
 			// add char to script line
 			statementCodeLines[statementCodeLines.size() - 1] += c;
 		}
