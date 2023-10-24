@@ -1,0 +1,89 @@
+- viewport is seperated by model preview and visual node system if an animation graph is selected in outliner
+
+
+in outliner:
+- create an animation graph
+- delete an animation graph
+- selected animation graph is shown in the viewport
+
+
+in visual node system viewport:
+- at default there is an "Output" node
+- MMB for panning
+- MouseWheel for zooming
+- RMB for context menu
+- add nodes via context menu
+- copy and paste nodes via context menu or shortcuts
+- delete node via context menu or shortcut
+- highlight node and its connections on mouse over
+- node types:
+	- blendspace (2d)
+	- transition
+	- blending
+	- animation
+	- timescale
+	- oneshot
+	- statemachine
+- graph node:
+
+
+in state machine viewport:
+- at default there is a "Start", "End" and "Any State" node
+
+- state machine node:
+	- play button to preview this state
+	- progressbar as indicator for running preview
+	- edit button
+- state machine connector:
+	- icon for switch type
+
+
+
+
+in details panel:
+
+
+
+
+
+
+state machine:
+- link details: fade time, mode (auto, enabled, disabled), condition/bool variable, switch mode (immidiate, at end, synced))
+- the state machine needs an "Any State" node additional to the "Start" and "End"
+
+
+
+
+BlendSpace2D
+	name inputfield
+	edit button
+	x inputfield (-1 to 1)
+	y inputfield (-1 to 1)
+
+Transition
+	name inputfield
+	2-x pins
+	state dropdown
+
+Animation
+	animation dropdown
+
+Blend
+	name inputfield
+	2-x pins
+	2-x bone filter button
+	2-x bone filter checkbox
+	2-x alpha inputfield (0 to 1)
+
+OneShot
+	name inputfield
+	in pin
+	shot pin
+	bone filter button
+	bone filter checkbox
+	bool checkbox
+
+state machine
+	name inputfield
+	edit button
+

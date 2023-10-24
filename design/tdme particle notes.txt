@@ -1,0 +1,24 @@
+
+- drop down collision type (important)
+- bounce
+- stickiness
+- velocity needs negative values
+- placable lights in emitter
+- orientation / lock axis
+- color gradient
+- scale/multiplier for transparency texture
+- loop
+
+- timeline: interpolation type
+- timeline: events, keys setzen
+
+- panning texture (in shader? in material?)
+- spawn particles on particles
+- hierarchy/parenting of particle emitters
+- particle sichtweite
+- spawn type (constant, linear, burst, intervall)(count over time)
+- kill by collision
+- spawn on kill
+- define bounding box
+- emitter type: beam (spline trace)
+- normal mapping?

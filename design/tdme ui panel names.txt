@@ -1,0 +1,19 @@
+Viewport
+
+Outliner
+
+Content Browser
+
+File Dialog
+
+Details Panel
+
+Header Menu
+
+Model Editor
+
+Terrain Editor
+
+Scene Editor
+
+
