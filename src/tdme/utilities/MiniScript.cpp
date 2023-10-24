@@ -1340,63 +1340,9 @@ const string MiniScript::determineNextStatement(const string& scriptCode, int& i
 	return statementCode;
 }
 
-void MiniScript::parseScript(const string& pathName, const string& fileName) {
+bool MiniScript::parseScriptInternal(const string& scriptCode) {
 	//
-	scriptValid = true;
-	scriptPathName = pathName;
-	scriptFileName = fileName;
-
-	//
-	for (const auto& [scriptMethodId, scriptMethod]: scriptMethods) delete scriptMethod;
-	for (const auto& [scriptStateMachineStateId, scriptStateMachineState]: scriptStateMachineStates) delete scriptStateMachineState;
-	scriptMethods.clear();
-	scriptStateMachineStates.clear();
-	while (scriptStateStack.empty() == false) popScriptState();
-
-	// shutdown script state
-	pushScriptState();
-	resetScriptExecutationState(SCRIPTIDX_NONE, STATEMACHINESTATE_WAIT_FOR_CONDITION);
-
-	//
-	registerVariables();
-
-	//
-	string scriptCode;
-	try {
-		scriptCode = FileSystem::getInstance()->getContentAsString(pathName, fileName);
-	} catch (FileSystemException& fse)	{
-		Console::println("MiniScript::loadScript(): " + pathName + "/" + fileName + ": an error occurred: " + fse.what());
-		//
-		scriptValid = true;
-		//
-		parseErrors.push_back("An error occurred: " + string(fse.what()));
-		//
-		return;
-	}
-
-	//
-	{
-		auto scriptHash = SHA256::encode(scriptCode);
-		if (native == true) {
-			if (scriptHash == nativeHash) {
-				scripts = nativeScripts;
-				registerStateMachineStates();
-				registerMethods();
-				startScript();
-				return;
-			} else {
-				Console::println("MiniScript::loadScript(): " + pathName + "/" + fileName + ": Script has changed. Script will be run in interpreted mode. Retranspile and recompile your script if you want to run it natively.");
-				native = false;
-			}
-		}
-		nativeHash = scriptHash;
-	}
-
-	//
-	registerStateMachineStates();
-	registerMethods();
-
-	//
+	auto scriptCount = scripts.size();
 	auto haveScript = false;
 	auto lineIdx = LINE_FIRST;
 	auto currentLineIdx = 0;
@@ -1407,6 +1353,7 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 		int statementIdx;
 	};
 	stack<GotoStatementStruct> gotoStatementStack;
+	//
 	for (auto i = 0; i < scriptCode.size(); i++) {
 		//
 		currentLineIdx = lineIdx;
@@ -1556,14 +1503,14 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 					auto rightBracketIdx = statement.find(')');
 					if (leftBracketIdx != string::npos || leftBracketIdx != string::npos) {
 						if (leftBracketIdx == string::npos) {
-							Console::println("MiniScript::MiniScript(): '" + scriptFileName + "': @" + to_string(currentLineIdx) + ": 'function:': unbalanced bracket count");
+							Console::println("MiniScript::parseScriptInternal(): '" + scriptFileName + "': @" + to_string(currentLineIdx) + ": 'function:': unbalanced bracket count");
 							//
 							parseErrors.push_back(to_string(currentLineIdx) + ": 'function:': unbalanced bracket count");
 							//
 							scriptValid = false;
 						} else
 						if (rightBracketIdx == string::npos) {
-							Console::println("MiniScript::MiniScript(): '" + scriptFileName + "': @" + to_string(currentLineIdx) + ": 'function:': unbalanced bracket count");
+							Console::println("MiniScript::parseScriptInternal(): '" + scriptFileName + "': @" + to_string(currentLineIdx) + ": 'function:': unbalanced bracket count");
 							//
 							parseErrors.push_back(to_string(currentLineIdx) + ": 'function:': unbalanced bracket count");
 							//
@@ -1585,7 +1532,7 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 										assignBack
 									);
 								} else {
-									Console::println("MiniScript::MiniScript(): '" + scriptFileName + "': @" + to_string(currentLineIdx) + ": 'function:': invalid argument name: '" + argumentNameTrimmed + "'");
+									Console::println("MiniScript::parseScriptInternal(): '" + scriptFileName + "': @" + to_string(currentLineIdx) + ": 'function:': invalid argument name: '" + argumentNameTrimmed + "'");
 									//
 									parseErrors.push_back(to_string(currentLineIdx) + ": 'function:': invalid argument name: '" + argumentNameTrimmed + "'");
 									//
@@ -1629,7 +1576,7 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 					arguments
 				);
 			} else {
-				Console::println("MiniScript::MiniScript(): '" + scriptFileName + "': @" + to_string(currentLineIdx) + ": expecting 'on:', 'on-enabled:', 'on-function:' script condition");
+				Console::println("MiniScript::parseScriptInternal(): '" + scriptFileName + "': @" + to_string(currentLineIdx) + ": expecting 'on:', 'on-enabled:', 'on-function:' script condition");
 				//
 				parseErrors.push_back(to_string(currentLineIdx) + ": expecting 'on:', 'on-enabled:', 'on-function:' script condition");
 				//
@@ -1641,7 +1588,7 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 				StringTools::startsWith(statementCode, "on-enabled:") == true ||
 				StringTools::startsWith(statementCode, "callable:") == true
 			) {
-				Console::println("MiniScript::loadScript(): '" + scriptFileName + "': @" + to_string(currentLineIdx) + ": unbalanced forXXX/if/elseif/else/end");
+				Console::println("MiniScript::parseScriptInternal(): '" + scriptFileName + "': @" + to_string(currentLineIdx) + ": unbalanced forXXX/if/elseif/else/end");
 				//
 				parseErrors.push_back(to_string(currentLineIdx) + ": unbalanced forXXX/if/elseif/else/end");
 				//
@@ -1700,7 +1647,7 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 							}
 							break;
 						default:
-							Console::println("MiniScript::MiniScript(): '" + scriptFileName + ": @" + to_string(currentLineIdx) + ": else without if/elseif");
+							Console::println("MiniScript::parseScriptInternal(): '" + scriptFileName + ": @" + to_string(currentLineIdx) + ": else without if/elseif");
 							//
 							parseErrors.push_back(to_string(currentLineIdx) + ": else without if/elseif");
 							//
@@ -1714,7 +1661,7 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 						}
 					);
 				} else {
-					Console::println("MiniScript::MiniScript(): '" + scriptFileName + ": @" + to_string(currentLineIdx) + ": else without if");
+					Console::println("MiniScript::parseScriptInternal(): '" + scriptFileName + ": @" + to_string(currentLineIdx) + ": else without if");
 					//
 					parseErrors.push_back(to_string(currentLineIdx) + ": else without if");
 					//
@@ -1747,7 +1694,7 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 							}
 							break;
 						default:
-							Console::println("MiniScript::MiniScript(): '" + scriptFileName + ": @" + to_string(currentLineIdx) + ": elseif without if");
+							Console::println("MiniScript::parseScriptInternal(): '" + scriptFileName + ": @" + to_string(currentLineIdx) + ": elseif without if");
 							scriptValid = false;
 							break;
 					}
@@ -1758,7 +1705,7 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 						}
 					);
 				} else {
-					Console::println("MiniScript::MiniScript(): '" + scriptFileName + ": @" + to_string(currentLineIdx) + ": elseif without if");
+					Console::println("MiniScript::parseScriptInternal(): '" + scriptFileName + ": @" + to_string(currentLineIdx) + ": elseif without if");
 					//
 					parseErrors.push_back(to_string(currentLineIdx) + ": elseif without if");
 					//
@@ -1798,17 +1745,18 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 
 	// check for unbalanced forXXX/if/elseif/else/end
 	if (scriptValid == true && gotoStatementStack.empty() == false) {
-		Console::println("MiniScript::loadScript(): '" + scriptFileName + ": unbalanced forXXX/if/elseif/else/end");
+		Console::println("MiniScript::parseScriptInternal(): '" + scriptFileName + ": unbalanced forXXX/if/elseif/else/end");
 		//
 		parseErrors.push_back("Unbalanced forXXX/if/elseif/else/end");
 		//
 		scriptValid = false;
 		//
-		return;
+		return false;
 	}
 
 	// create syntax tree
-	for (auto& script: scripts) {
+	for (auto i = scriptCount; i < scripts.size(); i++) {
+		auto& script = scripts[i];
 		// create syntax tree of executable condition if we have any
 		if (script.emitCondition == false && script.executableCondition.empty() == false) {
 			string_view method;
@@ -1841,6 +1789,69 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 			}
 		}
 	}
+
+	//
+	return scriptValid;
+}
+
+void MiniScript::parseScript(const string& pathName, const string& fileName) {
+	//
+	scriptValid = true;
+	scriptPathName = pathName;
+	scriptFileName = fileName;
+
+	//
+	for (const auto& [scriptMethodId, scriptMethod]: scriptMethods) delete scriptMethod;
+	for (const auto& [scriptStateMachineStateId, scriptStateMachineState]: scriptStateMachineStates) delete scriptStateMachineState;
+	scriptMethods.clear();
+	scriptStateMachineStates.clear();
+	while (scriptStateStack.empty() == false) popScriptState();
+
+	// shutdown script state
+	pushScriptState();
+	resetScriptExecutationState(SCRIPTIDX_NONE, STATEMACHINESTATE_WAIT_FOR_CONDITION);
+
+	//
+	registerVariables();
+
+	//
+	string scriptCode;
+	try {
+		scriptCode = FileSystem::getInstance()->getContentAsString(pathName, fileName);
+	} catch (FileSystemException& fse)	{
+		Console::println("MiniScript::parseScript(): " + pathName + "/" + fileName + ": an error occurred: " + fse.what());
+		//
+		scriptValid = true;
+		//
+		parseErrors.push_back("An error occurred: " + string(fse.what()));
+		//
+		return;
+	}
+
+	//
+	{
+		auto scriptHash = SHA256::encode(scriptCode);
+		if (native == true) {
+			if (scriptHash == nativeHash) {
+				scripts = nativeScripts;
+				registerStateMachineStates();
+				registerMethods();
+				startScript();
+				return;
+			} else {
+				Console::println("MiniScript::parseScript(): " + pathName + "/" + fileName + ": Script has changed. Script will be run in interpreted mode. Retranspile and recompile your script if you want to run it natively.");
+				native = false;
+			}
+		}
+		nativeHash = scriptHash;
+	}
+
+	//
+	registerStateMachineStates();
+	registerMethods();
+
+	//
+	if (parseScriptInternal(scriptCode) == false) return;
 
 	// validate method call context functions
 	for (const auto& script: scripts) {
@@ -1880,7 +1891,7 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 		}
 	}
 	if (haveErrorScript == false) {
-		Console::println("MiniScript::loadScript(): '" + scriptFileName + ": script needs to define an error condition");
+		Console::println("MiniScript::parseScript(): '" + scriptFileName + ": script needs to define an error condition");
 		//
 		parseErrors.push_back("Script needs to define an error condition");
 		//

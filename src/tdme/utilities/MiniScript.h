@@ -2539,6 +2539,13 @@ private:
 		ScriptOperator scriptOperator;
 	};
 
+	/**
+	 * Parse script additional into MiniScript instance
+	 * @param scriptCode script code
+	 * @return success
+	 */
+	bool parseScriptInternal(const string& scriptCode);
+
 
 	/**
 	 * Execute a single script line
@@ -3334,7 +3341,7 @@ public:
 	}
 
 	/**
-	 * Parse script into MiniScript instance
+	 * Parse script
 	 * @param pathName path name
 	 * @param fileName file name
 	 */
