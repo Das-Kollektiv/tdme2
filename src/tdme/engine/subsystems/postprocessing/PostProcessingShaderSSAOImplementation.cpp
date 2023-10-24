@@ -54,7 +54,18 @@ void PostProcessingShaderSSAOImplementation::initialize()
 	if (initialized == false) return;
 
 	//
-	Engine::registerShader(Engine::ShaderType::SHADERTYPE_POSTPROCESSING, "ssao");
+	Engine::registerShader(
+		Engine::ShaderType::SHADERTYPE_POSTPROCESSING,
+		"ssao",
+		{
+			{ "strength", ShaderParameter(0.25f), ShaderParameter(0.0f), ShaderParameter(1.0f), ShaderParameter(0.05f) },
+			{ "area", ShaderParameter(0.0075f), ShaderParameter(0.0f), ShaderParameter(1.0f), ShaderParameter(0.05f) },
+			{ "falloff", ShaderParameter(0.1f), ShaderParameter(0.0f), ShaderParameter(1.0f), ShaderParameter(0.05f) },
+			{ "radius", ShaderParameter(0.02f), ShaderParameter(0.0f), ShaderParameter(1.0f), ShaderParameter(0.05f) },
+			{ "samples", ShaderParameter(8), ShaderParameter(1), ShaderParameter(16), ShaderParameter(1) }
+
+		}
+	);
 }
 
 void PostProcessingShaderSSAOImplementation::setShaderParameters(int contextIdx, Engine* engine) {

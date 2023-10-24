@@ -65,16 +65,20 @@ void PostProcessingShaderSSAOMapImplementation::initialize()
 	// custom initialization
 	for (auto i = 0; i < uniformSphere.size(); i++) {
 		uniformSphere[i] = renderer->getProgramUniformLocation(programId, "sphere[" + to_string(i) + "]");
-		if (uniformSphere[i] == -1) {
-			initialized = false;
-			return;
-		}
+		if (uniformSphere[i] == -1) return;
 	}
 	uniformRandomTextureUnit = renderer->getProgramUniformLocation(programId, "randomTextureUnit");
-	if (uniformRandomTextureUnit == -1) {
-		initialized = false;
-		return;
-	}
+	if (uniformRandomTextureUnit == -1) return;
+	uniformStrength = renderer->getProgramUniformLocation(programId, "strength");
+	if (uniformStrength == -1) return;
+	uniformArea = renderer->getProgramUniformLocation(programId, "area");
+	if (uniformArea == -1) return;
+	uniformFallOff = renderer->getProgramUniformLocation(programId, "falloff");
+	if (uniformFallOff == -1) return;
+	uniformRadius = renderer->getProgramUniformLocation(programId, "radius");
+	if (uniformRadius == -1) return;
+	uniformSamples = renderer->getProgramUniformLocation(programId, "samples");
+	if (uniformSamples == -1) return;
 
 	//
 	loadTextures(".");
@@ -107,6 +111,11 @@ void PostProcessingShaderSSAOMapImplementation::useProgram(int contextIdx) {
 }
 
 void PostProcessingShaderSSAOMapImplementation::setShaderParameters(int contextIdx, Engine* engine) {
+	renderer->setProgramUniformFloat(contextIdx, uniformStrength, engine->getShaderParameter("ssao", "strength").getFloatValue());
+	renderer->setProgramUniformFloat(contextIdx, uniformArea, engine->getShaderParameter("ssao", "area").getFloatValue());
+	renderer->setProgramUniformFloat(contextIdx, uniformFallOff, engine->getShaderParameter("ssao", "falloff").getFloatValue() / 100000.0f);
+	renderer->setProgramUniformFloat(contextIdx, uniformRadius, engine->getShaderParameter("ssao", "radius").getFloatValue());
+	renderer->setProgramUniformInteger(contextIdx, uniformSamples, engine->getShaderParameter("ssao", "samples").getIntegerValue());
 }
 
 void PostProcessingShaderSSAOMapImplementation::unloadTextures() {
