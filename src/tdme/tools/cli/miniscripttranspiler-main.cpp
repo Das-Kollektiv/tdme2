@@ -111,7 +111,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 					(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_")
 				) +
 				(script.name.empty() == false?script.name:(
-					StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true?
+					StringTools::regexMatch(script.condition, "[a-zA-Z0-9_]+") == true?
 						script.condition:
 						to_string(scriptIdx)
 					)
@@ -130,7 +130,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 		auto scriptIdx = 0;
 		for (const auto& script: scripts) {
 			//
-			if (StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true) {
+			if (StringTools::regexMatch(script.condition, "[a-zA-Z0-9_]+") == true) {
 				if (script.condition == "nothing") nothingScriptIdx = scriptIdx;
 				if (script.condition == "initialize") initializeScriptIdx = scriptIdx;
 			}
@@ -300,7 +300,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 					(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_")
 				) +
 				(script.name.empty() == false?script.name:(
-					StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true?
+					StringTools::regexMatch(script.condition, "[a-zA-Z0-9_]+") == true?
 						script.condition:
 						to_string(scriptIdx)
 					)
@@ -308,14 +308,14 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 
 			string emitName =
 				(script.name.empty() == false?script.name:(
-					StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true?
+					StringTools::regexMatch(script.condition, "[a-zA-Z0-9_]+") == true?
 						script.condition:
 						to_string(scriptIdx)
 					)
 				);
 
 			// emit code
-			if (script.scriptType == MiniScript::Script::SCRIPTTYPE_ON && StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true) {
+			if (script.scriptType == MiniScript::Script::SCRIPTTYPE_ON && StringTools::regexMatch(script.condition, "[a-zA-Z0-9_]+") == true) {
 				string emitDefinitionIndent = "\t";
 				emitDefinition+= emitDefinitionIndent + "if (condition == \"" + emitName + "\") {" + "\n";
 				emitDefinition+= emitDefinitionIndent + "\t" + methodName + "(STATEMENTIDX_FIRST);" + "\n";
@@ -399,7 +399,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 					(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_")
 				) +
 				(script.name.empty() == false?script.name:(
-					StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true?
+					StringTools::regexMatch(script.condition, "[a-zA-Z0-9_]+") == true?
 						script.condition:
 						to_string(scriptIdx)
 					)

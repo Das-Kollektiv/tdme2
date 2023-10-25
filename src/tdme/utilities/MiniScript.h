@@ -2351,6 +2351,7 @@ protected:
 	int64_t timeEnabledConditionsCheckLast { TIME_NONE };
 
 	vector<string> parseErrors;
+	vector<string> deferredFunctionScriptCodes;
 
 	int inlineFunctionIdx { 0 };
 

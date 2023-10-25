@@ -29,33 +29,46 @@ on: nothing
 	console.log("---------------------")
 	console.log()
 	#
-	$class = {
+	$car = {
 		# member variables
-		a: 1,
-		b: 2,
-		c: 3,
+		wheelCount: 4,
+		color: "blue",
+		horsePower: 75,
 		# member methods
-		increment: () -> increment,
-		printABC: () -> printABC,
-		printABCD: ($d) -> 
+		setWheelCount: ($wheelCount) -> 
 			{
-				console.log("xxx: " + $this.a * $this.b * $this.c * $d)
+				$this.wheelCount = $wheelCount
 			},
-		printABCDE: ($d, $e) -> 
+		setColor: ($color) ->
 			{
-				console.log("yyy: " + $this.a * $this.b * $this.c * $d * $e)
+				$this.color = $color
+			},
+		setHorsePower: ($horsePower) -> 
+			{
+				$this.horsePower = $horsePower
+			},
+		showMeWhatYouGot: () ->
+			{
+				console.log(
+					"This amazing car has ", 
+					$this.wheelCount,
+					" wheels, is colored ", 
+					$this.color,
+					" with super nice ", 
+					$this.horsePower,
+					" horses in it"
+				)
 			}
-	};
-	console.dump($class)
+	}
 	#
-	$i = 0
-	forCondition($i < 5)
-		$class->printABC()
-		$class->printABCD($i)
-		$class->printABCDE($i, 2)
-		$class->increment()
-		++$i
-	end
+	console.dump($car)
+	# arrr, lets see what kind of car we got
+	$car->showMeWhatYouGot()
+	# i want it in red with 3 wheels
+	$car->setColor("red")
+	$car->setWheelCount(3)
+	# arrr, lets see what kind of car we got now!
+	$car->showMeWhatYouGot()
 	#
 	script.stop()
 end

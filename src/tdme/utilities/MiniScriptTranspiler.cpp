@@ -1013,7 +1013,7 @@ bool MiniScriptTranspiler::transpileScriptStatement(
 										(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_")
 									) +
 									(script.name.empty() == false?script.name:(
-										StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true?
+										StringTools::regexMatch(script.condition, "[a-zA-Z0-9_]+") == true?
 											script.condition:
 											to_string(scriptIdx)
 										)
@@ -1170,7 +1170,7 @@ bool MiniScriptTranspiler::transpileScriptStatement(
 												(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_")
 											) +
 											(script.name.empty() == false?script.name:(
-												StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true?
+												StringTools::regexMatch(script.condition, "[a-zA-Z0-9_]+") == true?
 													script.condition:
 													to_string(scriptIdx)
 												)
@@ -1515,7 +1515,7 @@ bool MiniScriptTranspiler::transpile(MiniScript* miniScript, string& generatedCo
 			(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_")
 		) +
 		(script.name.empty() == false?script.name:(
-			StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true?
+			StringTools::regexMatch(script.condition, "[a-zA-Z0-9_]+") == true?
 				script.condition:
 				to_string(scriptIdx)
 			)

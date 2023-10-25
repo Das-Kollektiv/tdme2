@@ -1551,7 +1551,7 @@ bool MiniScript::parseScriptInternal(const string& scriptCode) {
 				);
 				auto conditionOrNameExecutable = doStatementPreProcessing(trimmedStatement, scriptStatement);
 				auto conditionOrName = trimmedStatement;
-				auto emitCondition = StringTools::regexMatch(conditionOrName, "[a-zA-Z0-9]+");
+				auto emitCondition = StringTools::regexMatch(conditionOrName, "[a-zA-Z0-9_]+");
 				statementIdx = STATEMENTIDX_FIRST;
 				// add to user functions
 				if (scriptType == Script::SCRIPTTYPE_FUNCTION) {
@@ -1898,6 +1898,16 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 		return;
 
 	}
+
+	// parse deferred function script codes,
+	//	which are created by parsing map initializers and possible map inline functions
+	do {
+		auto deferredFunctionScriptCodesCopy = deferredFunctionScriptCodes;
+		deferredFunctionScriptCodes.clear();
+		for (const auto& functionScriptCode: deferredFunctionScriptCodesCopy) {
+			parseScriptInternal(functionScriptCode);
+		}
+	} while (deferredFunctionScriptCodes.empty() == false);
 
 	//
 	startScript();
@@ -8208,28 +8218,31 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 								if (mapValueStringView.empty() == false) {
 									//
 									vector<string_view> arguments;
-									string_view functionScriptCode;
-									if (viewIsInlineFunction(mapValueStringView, arguments, functionScriptCode) == true) {
-										string functionScriptCodeString;
+									string_view functionScriptCodeStringView;
+									if (viewIsInlineFunction(mapValueStringView, arguments, functionScriptCodeStringView) == true) {
+										string functionScriptCode;
+										// function declaration
 										auto functionName = string() + "map_inline_function_" + to_string(miniScript->inlineFunctionIdx++);
-										functionScriptCodeString = "function: " + functionName + "(=$this";
+										functionScriptCode = "function: " + functionName + "(=$this";
 										auto argumentIdx = 0;
 										for (const auto& argument: arguments) {
-											functionScriptCodeString+= ",";
-											functionScriptCodeString+= argument;
+											functionScriptCode+= ",";
+											functionScriptCode+= argument;
 											argumentIdx++;
 										}
-										functionScriptCodeString+= string() + ")" + "\n";
-										functionScriptCodeString+= functionScriptCode;
-										functionScriptCodeString+= "\n";
-										functionScriptCodeString+= string() + "end" + "\n";
-										//
-										miniScript->parseScriptInternal(functionScriptCodeString);
+										functionScriptCode+= string() + ")" + "\n";
+										// function definition
+										functionScriptCode+= functionScriptCodeStringView;
+										functionScriptCode+= "\n";
+										functionScriptCode+= string() + "end" + "\n";
+										// store it to be parsed later
+										miniScript->deferredFunctionScriptCodes.push_back(functionScriptCode);
 										//
 										ScriptVariable mapValue;
 										mapValue.setFunctionAssignment(functionName);
 										variable.setMapValue(string(mapKey), mapValue);
 									} else {
+										// map/set
 										auto mapValue = initializeMapSet(mapValueStringView, miniScript, statement);
 										variable.setMapValue(string(mapKey), mapValue);
 									}
