@@ -633,14 +633,14 @@ If you want to assign a class member function later, see this example.
 
 ```
 ...
-function: setCabrio(=$this, $cabrio)
-	$this.cabrio = $cabrio
+function: setConvertible(=$this, $convertible)
+	$this.convertible = $convertible
 end
 
 function: showMeWhatYouGot($this)
 	$carType = "car"
-	if ($this.cabrio == true)
-		$carType = "cabrio"
+	if ($this.convertible == true)
+		$carType = "convertible"
 	end
 	console.log(
 		"This amazing ", 
@@ -656,11 +656,13 @@ function: showMeWhatYouGot($this)
 end
 	...
 	#
-	$car.cabrio = false
-	$car.setCabrio = () -> setCabrio
+	$car.convertible = false
+	$car.setConvertible = () -> setConvertible
 	$car.showMeWhatYouGot = () -> showMeWhatYouGot
 	#
 	console.dump($car)
+	# I want a convertible, who doesn't?
+	$car->setConvertible(true)
 	# arrr, lets see what kind of car we got
 	$car->showMeWhatYouGot()
 	#...
