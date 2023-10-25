@@ -16,7 +16,8 @@ Introduction to MiniScript language features:
 - supports loops and conditions
 - supports programming with classes style programming
   - for string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, array, map and set data types
-  - custom data types and custom script classes are planned
+  - via script classes
+  - custom data types are planned
 - supports event like programming
 - can be transpiled to C++
 
@@ -572,6 +573,97 @@ Reading all keys as array from set:
 ...
 	console.log("set keys: ", $set->getKeys())
 ...
+```
+
+## 4.6. Classes
+
+Classes in MiniScript are basically maps, see map section in 4.4
+
+Creating a class in MiniScript works by using map initializer plus () -> methodName function assignment, or () -> { console.dump($this) } inline function definition.
+Please see a example below.
+
+```
+...
+	#
+	$car = {
+		# member variables
+		wheelCount: 4,
+		color: "blue",
+		horsePower: 75,
+		# member methods
+		setWheelCount: ($wheelCount) -> 
+			{
+				$this.wheelCount = $wheelCount
+			},
+		setColor: ($color) ->
+			{
+				$this.color = $color
+			},
+		setHorsePower: ($horsePower) -> 
+			{
+				$this.horsePower = $horsePower
+			},
+		showMeWhatYouGot: () ->
+			{
+				console.log(
+					"This amazing car has ", 
+					$this.wheelCount,
+					" wheels, is colored ", 
+					$this.color,
+					" with super nice ", 
+					$this.horsePower,
+					" horses in it"
+				)
+			}
+	}
+	#
+	console.dump($car)
+	# arrr, lets see what kind of car we got
+	$car->showMeWhatYouGot()
+	# i want it in red with 3 wheels and 25 mighty horse power
+	$car->setColor("red")
+	$car->setWheelCount(3)
+	$car->setHorsePower(25)
+	# arrr, lets see what kind of car we got now!
+	$car->showMeWhatYouGot()
+	#...
+```
+
+If you want to assign a class member function later, see this example.
+
+```
+...
+function: setCabrio(=$this, $cabrio)
+	$this.cabrio = $cabrio
+end
+
+function: showMeWhatYouGot($this)
+	$carType = "car"
+	if ($this.cabrio == true)
+		$carType = "cabrio"
+	end
+	console.log(
+		"This amazing ", 
+		$carType,
+		" has ", 
+		$this.wheelCount,
+		" wheels, is colored ", 
+		$this.color,
+		" with super nice ", 
+		$this.horsePower,
+		" horses in it"
+	)
+end
+	...
+	#
+	$car.cabrio = false
+	$car.setCabrio = () -> setCabrio
+	$car.showMeWhatYouGot = () -> showMeWhatYouGot
+	#
+	console.dump($car)
+	# arrr, lets see what kind of car we got
+	$car->showMeWhatYouGot()
+	#...
 ```
 
 # 5. Program structure and flow

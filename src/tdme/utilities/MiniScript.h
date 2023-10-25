@@ -2543,7 +2543,7 @@ private:
 	};
 
 	/**
-	 * Parse script additional into MiniScript instance
+	 * Parse additional script code into this MiniScript instance
 	 * @param scriptCode script code
 	 * @return success
 	 */

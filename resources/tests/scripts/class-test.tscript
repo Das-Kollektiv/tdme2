@@ -64,9 +64,10 @@ on: nothing
 	console.dump($car)
 	# arrr, lets see what kind of car we got
 	$car->showMeWhatYouGot()
-	# i want it in red with 3 wheels
+	# i want it in red with 3 wheels and 25 mighty horse power
 	$car->setColor("red")
 	$car->setWheelCount(3)
+	$car->setHorsePower(25)
 	# arrr, lets see what kind of car we got now!
 	$car->showMeWhatYouGot()
 	#
