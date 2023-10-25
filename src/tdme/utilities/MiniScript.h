@@ -1570,7 +1570,7 @@ public:
 		 * @param statement statement
 		 */
 		inline void setImplicitTypedValueFromStringView(const string_view& value, MiniScript* miniScript, const ScriptStatement& statement) {
-			string function;
+			string_view function;
 			//
 			if (value == "null") {
 				setNullValue();
@@ -1596,7 +1596,7 @@ public:
 				*this = initializeArray(value, miniScript, statement);
 			} else
 			if (viewIsFunctionAssignment(value, function) == true) {
-				setFunctionAssignment(function);
+				setFunctionAssignment(string(function));
 			} else
 			// function call
 			if (value.find('(') != string::npos &&
@@ -2352,6 +2352,8 @@ protected:
 
 	vector<string> parseErrors;
 
+	int inlineFunctionIdx { 0 };
+
 	/**
 	 * Initialize native mini script
 	 */
@@ -2738,7 +2740,7 @@ private:
 	 * @param function function
 	 * @return if candidate is a function assignment
 	 */
-	inline static bool viewIsFunctionAssignment(const string_view& candidate, string& function) {
+	inline static bool viewIsFunctionAssignment(const string_view& candidate, string_view& function) {
 		if (candidate.size() == 0) return false;
 		//
 		auto i = 0;
@@ -2759,16 +2761,99 @@ private:
 		// spaces
 		for (; i < candidate.size() && Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
 		//
-		string _function;
+		auto functionStartIdx = i;
 		for (; i < candidate.size(); i++) {
 			auto c = candidate[i];
 			if (Character::isAlphaNumeric(c) == false && c != '_') {
 				return false;
 			}
-			_function+= c;
 		}
 		//
-		function = _function;
+		function = string_view(&candidate[functionStartIdx], i - functionStartIdx);
+		//
+		return true;
+	}
+
+	/**
+	 * Returns if a given string is a inline function
+	 * @param candidate candidate
+	 * @param arguments arguments
+	 * @param functionScriptCode function script code
+	 * @return if candidate is a inline function
+	 */
+	inline static bool viewIsInlineFunction(const string_view& candidate, vector<string_view>& arguments, string_view& functionScriptCode) {
+		if (candidate.size() == 0) return false;
+		//
+		auto i = 0;
+		// (
+		if (candidate[i++] != '(') return false;
+		// spaces
+		for (; i < candidate.size() && Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
+		//
+		auto argumentStartIdx = string::npos;
+		auto argumentEndIdx = string::npos;
+		//
+		for (; i < candidate.size(); i++) {
+			auto c = candidate[i];
+			if (c == '$') {
+				if (argumentStartIdx == string::npos) {
+					argumentStartIdx = i;
+				} else {
+					return false;
+				}
+			} else
+			if (c == ',' || c == ')') {
+				if (argumentEndIdx == string::npos) {
+					if (argumentStartIdx != string::npos) {
+						argumentEndIdx = i;
+						arguments.push_back(string_view(&candidate[argumentStartIdx], argumentEndIdx - argumentStartIdx));
+					}
+					//
+					argumentStartIdx = string::npos;
+					argumentEndIdx = string::npos;
+				} else {
+					return false;
+				}
+				if (c == ')') {
+					i++;
+					break;
+				}
+			} else
+			if (argumentStartIdx != string::npos && Character::isAlphaNumeric(candidate[i]) == false && c != '_') {
+				return false;
+			}
+		}
+		//
+		if (i >= candidate.size()) return false;
+		// spaces
+		for (; i < candidate.size() && Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
+		// -
+		if (candidate[i++] != '-') return false;
+		//
+		if (i >= candidate.size()) return false;
+		// >
+		if (candidate[i++] != '>') return false;
+		// spaces
+		for (; i < candidate.size() && Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
+		//
+		if (candidate[i++] != '{') return false;
+		//
+		auto scriptCodeStartIdx = i;
+		auto scriptCodeEndIdx = string::npos;
+		//
+		for (auto j = candidate.size() - 1; j > i; j--) {
+			if (candidate[j] == '}') {
+				scriptCodeEndIdx = j;
+				break;
+			} else
+			if (Character::isSpace(candidate[j]) == false) {
+				return false;
+			}
+		}
+		//
+		if (scriptCodeEndIdx == string::npos) return false;
+		//
+		functionScriptCode = string_view(&candidate[scriptCodeStartIdx], scriptCodeEndIdx - scriptCodeStartIdx);
 		//
 		return true;
 	}

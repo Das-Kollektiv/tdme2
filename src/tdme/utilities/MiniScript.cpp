@@ -7995,6 +7995,8 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 	enum ParseMode { PARSEMODE_KEY, PARSEMODE_VALUE };
 	auto parseMode = PARSEMODE_KEY;
 	auto hasValues = false;
+	auto inlineFunctionSignatureStart = string::npos;
+
 	//
 	auto insertMapKeyValuePair = [&]() -> void {
 		//
@@ -8064,6 +8066,8 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 		quotedMapValueEnd = string::npos;
 		mapValueStart = string::npos;
 		mapValueEnd = string::npos;
+		inlineFunctionSignatureStart = string::npos;
+
 		//
 		parseMode = PARSEMODE_KEY;
 	};
@@ -8130,11 +8134,15 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 			if (c == '(') {
 				//
 				bracketCount++;
+				//
+				if (bracketCount == 1) inlineFunctionSignatureStart = i;
 			} else
 			if (c == ')') {
 				bracketCount--;
 				// function assignment
-				if (lc == '(' && bracketCount == 0 && mapValueStart == string::npos) mapValueStart = i - 1;
+				if (inlineFunctionSignatureStart != string::npos && bracketCount == 0 && mapValueStart == string::npos) mapValueStart = inlineFunctionSignatureStart;
+				//
+				inlineFunctionSignatureStart = string::npos;
 			} else
 			// map/set initializer
 			if (c == '{' && squareBracketCount == 0 && bracketCount == 0) {
@@ -8145,7 +8153,7 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 					mapKeyStart = i + 1;
 				} else
 				if (curlyBracketCount == 2) {
-					mapValueStart = i;
+					if (mapValueStart == string::npos) mapValueStart = i;
 				}
 			} else
 			// end of map/set initializer
@@ -8189,6 +8197,8 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 						quotedMapKeyEnd = string::npos;
 						mapKeyStart = string::npos;
 						mapKeyEnd = string::npos;
+						inlineFunctionSignatureStart = string::npos;
+
 						// map value
 						if (mapValueStart != string::npos) {
 							mapValueEnd = i;
@@ -8196,8 +8206,33 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 							if (mapValueLength > 0) {
 								auto mapValueStringView = StringTools::viewTrim(string_view(&initializerString[mapValueStart], mapValueLength));
 								if (mapValueStringView.empty() == false) {
-									auto mapValue = initializeMapSet(mapValueStringView, miniScript, statement);
-									variable.setMapValue(string(mapKey), mapValue);
+									//
+									vector<string_view> arguments;
+									string_view functionScriptCode;
+									if (viewIsInlineFunction(mapValueStringView, arguments, functionScriptCode) == true) {
+										string functionScriptCodeString;
+										auto functionName = string() + "map_inline_function_" + to_string(miniScript->inlineFunctionIdx++);
+										functionScriptCodeString = "function: " + functionName + "(=$this";
+										auto argumentIdx = 0;
+										for (const auto& argument: arguments) {
+											functionScriptCodeString+= ",";
+											functionScriptCodeString+= argument;
+											argumentIdx++;
+										}
+										functionScriptCodeString+= string() + ")" + "\n";
+										functionScriptCodeString+= functionScriptCode;
+										functionScriptCodeString+= "\n";
+										functionScriptCodeString+= string() + "end" + "\n";
+										//
+										miniScript->parseScriptInternal(functionScriptCodeString);
+										//
+										ScriptVariable mapValue;
+										mapValue.setFunctionAssignment(functionName);
+										variable.setMapValue(string(mapKey), mapValue);
+									} else {
+										auto mapValue = initializeMapSet(mapValueStringView, miniScript, statement);
+										variable.setMapValue(string(mapKey), mapValue);
+									}
 								}
 							}
 							//
@@ -8244,6 +8279,8 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 						quotedMapKeyEnd = string::npos;
 						mapKeyStart = string::npos;
 						mapKeyEnd = string::npos;
+						inlineFunctionSignatureStart = string::npos;
+
 						// map value
 						if (mapValueStart != string::npos) {
 							mapValueEnd = i;

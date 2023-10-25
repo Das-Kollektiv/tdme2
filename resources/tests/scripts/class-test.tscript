@@ -37,9 +37,13 @@ on: nothing
 		# member methods
 		increment: () -> increment,
 		printABC: () -> printABC,
-		printABCD: ($e) -> 
+		printABCD: ($d) -> 
 			{
-				console.log("xxx: " + $this.a * $this.b * $this.c * $e)
+				console.log("xxx: " + $this.a * $this.b * $this.c * $d)
+			},
+		printABCDE: ($d, $e) -> 
+			{
+				console.log("yyy: " + $this.a * $this.b * $this.c * $d * $e)
 			}
 	};
 	console.dump($class)
@@ -47,6 +51,8 @@ on: nothing
 	$i = 0
 	forCondition($i < 5)
 		$class->printABC()
+		$class->printABCD($i)
+		$class->printABCDE($i, 2)
 		$class->increment()
 		++$i
 	end
