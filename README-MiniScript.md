@@ -614,6 +614,12 @@ Please see a example below.
 					$this.horsePower,
 					" horses in it"
 				)
+			},
+		getProperties: (=$wheelCount, =$color, =$horsePower) -> 
+			{
+				$wheelCount = $this.wheelCount
+				$color = $this.color
+				$horsePower = $this.horsePower
 			}
 	}
 	#
@@ -626,6 +632,19 @@ Please see a example below.
 	$car->setHorsePower(25)
 	# arrr, lets see what kind of car we got now!
 	$car->showMeWhatYouGot()
+	# lets get the properties
+	$wheelCount = null
+	$color = null
+	$horsePower = null
+	$car->getProperties($wheelCount, $color, $horsePower)
+	console.log(
+		"Car properties, wheels: ", 
+		$wheelCount,
+		", color: ", 
+		$color,
+		", horse power: ", 
+		$horsePower
+	)
 	#...
 ```
 
