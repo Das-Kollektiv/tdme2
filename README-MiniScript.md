@@ -648,7 +648,7 @@ Please see a example below.
 	#...
 ```
 
-If you want to assign a class member function later, see this example.
+If you want to assign a class member function later, see this example. Note that the first argument needs to be a (const) $this variable, or a "assigned back" $this variable. This argument maps to the class that your code is operating on in your class member function.
 
 ```
 ...
