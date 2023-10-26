@@ -10,6 +10,7 @@ Introduction to MiniScript language features:
 - can be easily extended by writing state machine machine states and script methods in C++
 - works with the following data types: null, boolean, integer, float, string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, array, map and set
 - when calling script methods/returning from methods it does not use references or pointers but only value by copy
+  - references are planned
 - supports user script functions and recursion
 - supports kind of references by optionally assigning back argument values to variables
 - supports operators by operator to method mapping by a preprocessor run
