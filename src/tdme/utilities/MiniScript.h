@@ -2556,13 +2556,13 @@ private:
 	void executeScriptLine();
 
 	/**
-	 * Determine next statement from script code
+	 * Get next statement from script code
 	 * @param scriptCode script code
 	 * @param i character index
 	 * @param line script line
 	 * @return next statement
 	 */
-	const string determineNextStatement(const string& scriptCode, int& i, int& line);
+	const string getNextStatement(const string& scriptCode, int& i, int& line);
 
 	/**
 	 * Parse a script statement
@@ -2796,9 +2796,19 @@ private:
 		//
 		for (; i < candidate.size(); i++) {
 			auto c = candidate[i];
+			if (c == '=') {
+				if (argumentStartIdx == string::npos) {
+					argumentStartIdx = i;
+				} else {
+					return false;
+				}
+			} else
 			if (c == '$') {
 				if (argumentStartIdx == string::npos) {
 					argumentStartIdx = i;
+				} else
+				if (argumentStartIdx == i - 1 && candidate[argumentStartIdx] == '=') {
+					// no op
 				} else {
 					return false;
 				}

@@ -42,7 +42,13 @@ on: nothing
 					$this.horsePower,
 					" horses in it"
 				)
-			}
+			},
+		getProperties: (=$wheelCount, =$color, =$horsePower) -> 
+			{
+				$wheelCount = $this.wheelCount
+				$color = $this.color
+				$horsePower = $this.horsePower
+			},
 	}
 	#
 	console.dump($car)
@@ -54,6 +60,19 @@ on: nothing
 	$car->setHorsePower(25)
 	# arrr, lets see what kind of car we got now!
 	$car->showMeWhatYouGot()
+	#
+	$wheelCount = null
+	$color = null
+	$horsePower = null
+	$car->getProperties($wheelCount, $color, $horsePower)
+	console.log(
+		"Car properties, wheels: ", 
+		$wheelCount,
+		", color: ", 
+		$color,
+		", horse power: ", 
+		$horsePower
+	)
 	#
 	script.stop()
 end

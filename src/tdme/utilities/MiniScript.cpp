@@ -1200,7 +1200,7 @@ void MiniScript::execute() {
 	executeStateMachine();
 }
 
-const string MiniScript::determineNextStatement(const string& scriptCode, int& i, int& line) {
+const string MiniScript::getNextStatement(const string& scriptCode, int& i, int& line) {
 	string statementCode;
 	vector<string> statementCodeLines;
 	statementCodeLines.emplace_back();
@@ -1325,10 +1325,13 @@ const string MiniScript::determineNextStatement(const string& scriptCode, int& i
 	}
 
 	//
+	auto lineIdx = 0;
 	for (const auto& line: statementCodeLines) {
 		auto trimmedLine = StringTools::trim(line);
 		if (trimmedLine.empty() == true || StringTools::startsWith(trimmedLine, "#") == true) continue;
 		statementCode+= trimmedLine;
+		if (lineIdx != statementCodeLines.size() - 1) statementCode+= "\n";
+		lineIdx++;
 	}
 
 	// add last line index
@@ -1357,7 +1360,7 @@ bool MiniScript::parseScriptInternal(const string& scriptCode) {
 		currentLineIdx = lineIdx;
 
 		// try to get next statement code
-		auto statementCode = determineNextStatement(scriptCode, i, lineIdx);
+		auto statementCode = getNextStatement(scriptCode, i, lineIdx);
 
 		// add last line index
 		if (i == scriptCode.size() && scriptCode[scriptCode.size() - 1] != '\n') ++lineIdx;
@@ -1377,7 +1380,7 @@ bool MiniScript::parseScriptInternal(const string& scriptCode) {
 				i++;
 				// we need the condition or name
 				for (; i < scriptCode.size(); i++) {
-					auto nextStatementCode = determineNextStatement(scriptCode, i, lineIdx);
+					auto nextStatementCode = getNextStatement(scriptCode, i, lineIdx);
 					if (nextStatementCode.empty() == false) {
 						statementCode+= " " + nextStatementCode;
 						break;
@@ -1402,7 +1405,7 @@ bool MiniScript::parseScriptInternal(const string& scriptCode) {
 					i++;
 					//
 					for (; i < scriptCode.size(); i++) {
-						auto nextStatementCode = determineNextStatement(scriptCode, i, lineIdx);
+						auto nextStatementCode = getNextStatement(scriptCode, i, lineIdx);
 						if (nextStatementCode.empty() == false) {
 							//
 							if (StringTools::startsWith(nextStatementCode, "function:") == true ||
@@ -1454,7 +1457,7 @@ bool MiniScript::parseScriptInternal(const string& scriptCode) {
 					i++;
 					//
 					for (; i < scriptCode.size(); i++) {
-						auto nextStatementCode = determineNextStatement(scriptCode, i, lineIdx);
+						auto nextStatementCode = getNextStatement(scriptCode, i, lineIdx);
 						if (nextStatementCode.empty() == false) {
 							statementCode+= " " + nextStatementCode;
 							break;
@@ -2017,6 +2020,7 @@ int MiniScript::determineNamedScriptIdxToStart() {
 
 bool MiniScript::getNextStatementOperator(const string& processedStatement, MiniScript::ScriptStatementOperator& nextOperator, const ScriptStatement& statement) {
 	//
+	auto curlyBracketCount = 0;
 	auto bracketCount = 0;
 	auto quote = '\0';
 	auto lc = '\0';
@@ -2036,7 +2040,14 @@ bool MiniScript::getNextStatementOperator(const string& processedStatement, Mini
 			} else
 			if (c == ')') {
 				bracketCount--;
-			} else {
+			} else
+			if (c == '{') {
+				curlyBracketCount++;
+			} else
+			if (c == '}') {
+				curlyBracketCount--;
+			} else
+			if (curlyBracketCount == 0) {
 				for (int j = OPERATOR_NONE + 1; j < OPERATOR_MAX; j++) {
 					auto priorizedOperator = static_cast<ScriptOperator>(j);
 					string operatorCandidate;
@@ -2555,7 +2566,7 @@ const string MiniScript::getScriptInformation(int scriptIdx, bool includeStateme
 	}
 	if (includeStatements == true) {
 		for (const auto& scriptStatement: script.statements) {
-			result+= "\t" + to_string(scriptStatement.statementIdx) + ": " + scriptStatement.executableStatement + (scriptStatement.gotoStatementIdx != STATEMENTIDX_NONE?" (gotoStatement " + to_string(scriptStatement.gotoStatementIdx) + ")":"") + "\n";
+			result+= "\t" + to_string(scriptStatement.statementIdx) + ": " + StringTools::replace(scriptStatement.executableStatement, "\n", "\n\t\t") + (scriptStatement.gotoStatementIdx != STATEMENTIDX_NONE?" (gotoStatement " + to_string(scriptStatement.gotoStatementIdx) + ")":"") + "\n";
 		}
 		result+= "\n";
 	}
@@ -8232,7 +8243,19 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 										}
 										functionScriptCode+= string() + ")" + "\n";
 										// function definition
-										functionScriptCode+= functionScriptCodeStringView;
+										auto scriptCode = string(functionScriptCodeStringView);
+										auto lineIdx = MiniScript::LINE_FIRST;
+										auto currentLineIdx = MiniScript::LINE_FIRST;
+										for (auto i = 0; i < scriptCode.size(); i++) {
+											//
+											currentLineIdx = lineIdx;
+
+											// try to get next statement code
+											auto statementCode = miniScript->getNextStatement(scriptCode, i, lineIdx);
+											//
+											functionScriptCode+= miniScript->doStatementPreProcessing(statementCode, statement) + "\n";
+										}
+										//
 										functionScriptCode+= "\n";
 										functionScriptCode+= string() + "end" + "\n";
 										// store it to be parsed later
