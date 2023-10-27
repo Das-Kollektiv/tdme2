@@ -1778,7 +1778,7 @@ void SceneEditorTabController::setOutlinerContent() {
 	if (scene != nullptr) {
 		basePropertiesSubController->createBasePropertiesXML(scene, xml);
 		xml+= "	<selectbox-option image=\"resources/engine/images/gui.png\" text=\"" + GUIParser::escape("GUI") + "\" value=\"" + GUIParser::escape("scene.gui") + "\" />\n";
-		xml+= "	<selectbox-option image=\"resources/engine/images/sky.png\" text=\"Postprocessing\" value=\"scene.postprocessing\" />\n";
+		xml+= "	<selectbox-option image=\"resources/engine/images/rendering.png\" text=\"Postprocessing\" value=\"scene.postprocessing\" />\n";
 		xml+= "	<selectbox-option image=\"resources/engine/images/sky.png\" text=\"Sky\" value=\"scene.sky\" />\n";
 		{
 			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escape("Lights") + "\" value=\"" + GUIParser::escape("scene.lights") + "\">\n";
