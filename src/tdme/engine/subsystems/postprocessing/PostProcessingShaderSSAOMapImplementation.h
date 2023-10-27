@@ -49,6 +49,11 @@ public:
 private:
 	array<int32_t, 16> uniformSphere;
 	int32_t uniformRandomTextureUnit { -1 };
+	int32_t uniformStrength { -1 };
+	int32_t uniformArea { -1 };
+	int32_t uniformFallOff { -1 };
+	int32_t uniformRadius { -1 };
+	int32_t uniformSamples { -1 };
 	Texture* randomTexture { nullptr };
 	int32_t randomTextureId { -1 };
 };

@@ -20,6 +20,7 @@ namespace utilities {
 	class Integer;
 	class MiniScript;
 	class MiniScriptMath;
+	class MiniScriptTranspiler;
 	class MutableString;
 	class ModelTools;
 	class PathFinding;

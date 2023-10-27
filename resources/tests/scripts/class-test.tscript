@@ -6,17 +6,6 @@ on: initialize
 	console.log()
 end
 
-function: printABC(=$this)
-	console.log(
-		"printABC(): " + 
-		"a: " + $this.a + ", " +
-		"b: " + $this.b + ", " +
-		"c: " + $this.c + ", " +
-		"a*b*c: " + ($this.a * $this.b * $this.c)
-	)
-	$this.c = $this.c + 1 
-end
-
 # if no condition is met, nothing will be executed, lol :D
 on: nothing
 	console.log("---------------------")
@@ -24,21 +13,66 @@ on: nothing
 	console.log("---------------------")
 	console.log()
 	#
-	$class = {
+	$car = {
 		# member variables
-		a: 1,
-		b: 2,
-		c: 3,
+		wheelCount: 4,
+		color: "blue",
+		horsePower: 75,
 		# member methods
-		printABC: () -> printABC
-	};
-	console.dump($class)
+		setWheelCount: ($wheelCount) -> 
+			{
+				$this.wheelCount = $wheelCount
+			},
+		setColor: ($color) ->
+			{
+				$this.color = $color
+			},
+		setHorsePower: ($horsePower) -> 
+			{
+				$this.horsePower = $horsePower
+			},
+		showMeWhatYouGot: () ->
+			{
+				console.log(
+					"This amazing car has ", 
+					$this.wheelCount,
+					" wheels, is colored ", 
+					$this.color,
+					" with super nice ", 
+					$this.horsePower,
+					" horses in it"
+				)
+			},
+		getProperties: (=$wheelCount, =$color, =$horsePower) -> 
+			{
+				$wheelCount = $this.wheelCount
+				$color = $this.color
+				$horsePower = $this.horsePower
+			},
+	}
 	#
-	$i = 0
-	forCondition($i < 5)
-		$class->printABC()
-		++$i
-	end
+	console.dump($car)
+	# arrr, lets see what kind of car we got
+	$car->showMeWhatYouGot()
+	# i want it in red with 3 wheels and 25 mighty horse power
+	$car->setColor("red")
+	$car->setWheelCount(3)
+	$car->setHorsePower(25)
+	# arrr, lets see what kind of car we got now!
+	$car->showMeWhatYouGot()
+	#
+	$wheelCount = null
+	$color = null
+	$horsePower = null
+	$car->getProperties($wheelCount, $color, $horsePower)
+	console.log(
+		"Car properties, wheels: ", 
+		$wheelCount,
+		", color: ", 
+		$color,
+		", horse power: ", 
+		$horsePower
+	)
 	#
 	script.stop()
 end

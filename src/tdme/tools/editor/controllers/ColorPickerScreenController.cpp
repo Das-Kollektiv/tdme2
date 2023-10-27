@@ -88,6 +88,8 @@ void ColorPickerScreenController::initialize()
 		alphaInput = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("colorpicker_alpha"));
 		hexInput = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("colorpicker_hex"));
 		brightnessSlider = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("slider_colorpicker_brightness"));
+		colorNew = required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("colorpicker_color_new"));
+		colorOld = required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("colorpicker_color_old"));
 		auto colorPickerImage = dynamic_cast<GUIImageNode*>(screenNode->getNodeById("colorpicker_image"));
 		colorPickerImage->setController(new ColorPickerImageController(colorPickerImage, this));
 	} catch (Exception& exception) {
@@ -102,6 +104,7 @@ void ColorPickerScreenController::dispose()
 
 void ColorPickerScreenController::show(const Color4& color, Action* onColorChangeAction)
 {
+	this->initialColor = color;
 	this->color = color;
 	this->onColorChangeAction = unique_ptr<Action>(onColorChangeAction);
 	//
@@ -172,6 +175,16 @@ void ColorPickerScreenController::onChange(GUIElementNode* node) {
 void ColorPickerScreenController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
+		if (node->getId() == "colorpicker_reset") {
+			color = initialColor;
+			updateColor();
+			updateColorHex();
+			if (onColorChangeAction != nullptr) onColorChangeAction->performAction();
+		} else
+		if (node->getId() == "colorpicker_apply") {
+			if (onColorChangeAction != nullptr) onColorChangeAction->performAction();
+			close();
+		} else
 		if (StringTools::startsWith(node->getId(), "colorpicker_caption_close_") == true) { // TODO: a.drewke, check with DH) {
 			close();
 		}
@@ -188,13 +201,14 @@ void ColorPickerScreenController::onUnfocus(GUIElementNode* node) {
 	}
 }
 
-
 void ColorPickerScreenController::updateColor() {
 	redInput->getController()->setValue(MutableString((int)(color.getRed() * 255.0f)));
 	greenInput->getController()->setValue(MutableString((int)(color.getGreen() * 255.0f)));
 	blueInput->getController()->setValue(MutableString((int)(color.getBlue() * 255.0f)));
 	alphaInput->getController()->setValue(MutableString((int)(color.getAlpha() * 255.0f)));
 	brightnessSlider->getController()->setValue(MutableString((color.getRed() + color.getGreen() + color.getBlue()) / 3.0f));
+	colorOld->setEffectColorMul(initialColor);
+	colorNew->setEffectColorMul(color);
 }
 
 void ColorPickerScreenController::updateColorHex() {

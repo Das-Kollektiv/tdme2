@@ -10,13 +10,15 @@ Introduction to MiniScript language features:
 - can be easily extended by writing state machine machine states and script methods in C++
 - works with the following data types: null, boolean, integer, float, string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, array, map and set
 - when calling script methods/returning from methods it does not use references or pointers but only value by copy
+  - references are planned
 - supports user script functions and recursion
 - supports kind of references by optionally assigning back argument values to variables
 - supports operators by operator to method mapping by a preprocessor run
 - supports loops and conditions
 - supports programming with classes style programming
   - for string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, array, map and set data types
-  - custom data types and custom script classes are planned
+  - via script classes
+  - custom data types are planned
 - supports event like programming
 - can be transpiled to C++
 
@@ -572,6 +574,118 @@ Reading all keys as array from set:
 ...
 	console.log("set keys: ", $set->getKeys())
 ...
+```
+
+## 4.6. Classes
+
+Classes in MiniScript are basically maps, see map section in 4.4
+
+Creating a class in MiniScript works by using map initializer plus () -> methodName function assignment, or () -> { console.dump($this) } inline function definition.
+Please see a example below.
+
+```
+...
+	#
+	$car = {
+		# member variables
+		wheelCount: 4,
+		color: "blue",
+		horsePower: 75,
+		# member methods
+		setWheelCount: ($wheelCount) -> 
+			{
+				$this.wheelCount = $wheelCount
+			},
+		setColor: ($color) ->
+			{
+				$this.color = $color
+			},
+		setHorsePower: ($horsePower) -> 
+			{
+				$this.horsePower = $horsePower
+			},
+		showMeWhatYouGot: () ->
+			{
+				console.log(
+					"This amazing car has ", 
+					$this.wheelCount,
+					" wheels, is colored ", 
+					$this.color,
+					" with super nice ", 
+					$this.horsePower,
+					" horses in it"
+				)
+			},
+		getProperties: (=$wheelCount, =$color, =$horsePower) -> 
+			{
+				$wheelCount = $this.wheelCount
+				$color = $this.color
+				$horsePower = $this.horsePower
+			}
+	}
+	#
+	console.dump($car)
+	# arrr, lets see what kind of car we got
+	$car->showMeWhatYouGot()
+	# i want it in red with 3 wheels and 25 mighty horse power
+	$car->setColor("red")
+	$car->setWheelCount(3)
+	$car->setHorsePower(25)
+	# arrr, lets see what kind of car we got now!
+	$car->showMeWhatYouGot()
+	# lets get the properties
+	$wheelCount = null
+	$color = null
+	$horsePower = null
+	$car->getProperties($wheelCount, $color, $horsePower)
+	console.log(
+		"Car properties, wheels: ", 
+		$wheelCount,
+		", color: ", 
+		$color,
+		", horse power: ", 
+		$horsePower
+	)
+	#...
+```
+
+If you want to assign a class member function later, see this example. Note that the first argument needs to be a (const) $this variable, or a "assigned back" $this variable. This argument maps to the class that your code is operating on in your class member function.
+
+```
+...
+function: setConvertible(=$this, $convertible)
+	$this.convertible = $convertible
+end
+
+function: showMeWhatYouGot($this)
+	$carType = "car"
+	if ($this.convertible == true)
+		$carType = "convertible"
+	end
+	console.log(
+		"This amazing ", 
+		$carType,
+		" has ", 
+		$this.wheelCount,
+		" wheels, is colored ", 
+		$this.color,
+		" with super nice ", 
+		$this.horsePower,
+		" horses in it"
+	)
+end
+	...
+	#
+	$car.convertible = false
+	$car.setConvertible = () -> setConvertible
+	$car.showMeWhatYouGot = () -> showMeWhatYouGot
+	#
+	console.dump($car)
+	# I want a convertible, who doesn't?
+	$car->setConvertible(true)
+	# arrr, lets see what kind of car we got
+	$car->showMeWhatYouGot()
+	#...
 ```
 
 # 5. Program structure and flow
