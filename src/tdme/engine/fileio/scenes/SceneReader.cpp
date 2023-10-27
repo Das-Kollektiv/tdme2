@@ -397,7 +397,7 @@ void SceneReader::determineMeshNodes(Scene* scene, Node* node, const string& par
 	// compute animation matrix if animation setups exist
 	auto animation = node->getAnimation();
 	if (animation != nullptr) {
-		const auto& animationMatrices = animation->getTransformMatrices();
+		const auto animationMatrices = animation->getTransformMatrices();
 		transformMatrix.set(animationMatrices[0 % animationMatrices.size()]);
 	} else {
 		// no animation matrix, set up local transform matrix up as node matrix

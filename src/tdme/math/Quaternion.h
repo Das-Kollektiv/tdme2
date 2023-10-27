@@ -1,19 +1,24 @@
 #pragma once
 
 #include <array>
+#include <string>
 
 #include <tdme/tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/utilities/Console.h>
 #include <tdme/utilities/Float.h>
 
 using std::array;
+using std::string;
+using std::to_string;
 
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
+using tdme::utilities::Console;
 using tdme::utilities::Float;
 
 /**
@@ -421,11 +426,49 @@ public:
 	}
 
 	/**
-	 * Clones this quaternion
-	 * @return new cloned quaternion
+	 * Interpolates between a and b by 0f<=t<=1f linearly
+	 * @param a quaternion b
+	 * @param b quaternion b
+	 * @param t t
+	 * @return interpolated quaternion
 	 */
-	inline Quaternion clone() const {
-		return Quaternion(*this);
+	inline static Quaternion interpolateLinear(const Quaternion& a, const Quaternion& b, const float t) {
+		// see: http://www.codewee.com/view.php?idx=42 + ChatGPT
+		auto dotProduct = a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3];
+		auto b2 = b;
+		// shorter rotation
+		/*
+		if (dotProduct < 0.0f) {
+			b2.invert();
+			dotProduct = -dotProduct;
+		}
+		*/
+		// if quaternions are really close use linear interpolation
+		if (Math::abs(dotProduct) > 0.99f) {
+			auto r = Quaternion(
+				(b[0] * t) + ((1.0f - t) * a[0]),
+				(b[1] * t) + ((1.0f - t) * a[1]),
+				(b[2] * t) + ((1.0f - t) * a[2]),
+				(b[3] * t) + ((1.0f - t) * a[3])
+			);
+			r.normalize();
+			//
+			return r;
+		}
+		// otherwise use spherical interpolation
+		auto theta = Math::acos(dotProduct);
+		auto factorA = Math::sin((1.0f - t) * theta) / Math::sin(theta);
+		auto factorB = Math::sin(t * theta) / Math::sin(theta);
+		//
+		auto r = Quaternion(
+			factorA * a[0] + factorB * b2[0],
+			factorA * a[1] + factorB * b2[1],
+			factorA * a[2] + factorB * b2[2],
+			factorA * a[3] + factorB * b2[3]
+		);
+		r.normalize();
+		//
+		return r;
 	}
 
 	/**
@@ -433,6 +476,14 @@ public:
 	 */
 	inline const array<float, 4>& getArray() const {
 		return data;
+	}
+
+	/**
+	 * Clones this quaternion
+	 * @return new cloned quaternion
+	 */
+	inline Quaternion clone() const {
+		return Quaternion(*this);
 	}
 
 	/**

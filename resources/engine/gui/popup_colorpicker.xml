@@ -4,14 +4,17 @@
 		<moveable width="auto" height="auto">
 			<tabs width="220" height="515">
 				<tabs-header id="colorpicker_tabs-header">
-					<tab id="colorpicker_caption" image="resources/engine/images/attention.png" text="Color Picker" closeable="true"/>
+					<tab id="colorpicker_caption" image="resources/engine/images/attention.png" text="Color Picker xxx" closeable="true"/>
 				</tabs-header>
 				<tabs-content>
 					<tab-content tab-id="colorpicker_caption">
 					
 						<layout padding="5" border="0" border-color="{$color.element_frame}" width="auto" height="auto" alignment="vertical" background-color="{$color.element_foreground}">
 							<layout alignment="horizontal" width="200" height="auto">
-								<image id="colorpicker_image" src="resources/engine/images/colorpicker.png" />
+								<element width="auto" height="auto"  horizontal-align="none" vertical-align="none" >
+									<image id="colorpicker_image" src="resources/engine/images/colorpicker.png" />
+									<image id="colorpicker_picker" src="resources/engine/images/picker.png" left="50" top="50" />
+								</element>
 								<space width="5" />
 								<space width="*" />
 								<slider-vertical template="slider-v_template_gradient.xml" id="slider_colorpicker_brightness" value="0.5" height="175" />

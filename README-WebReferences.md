@@ -16,6 +16,7 @@
   - http://stackoverflow.com/questions/7692988/opengl-math-projecting-screen-space-to-world-space-coords-solved
   - http://theorangeduck.com/page/pure-depth-ssao
   - http://www.ambrsoft.com/TrigoCalc/Plan3D/PointsCoplanar.htm
+  - http://www.codewee.com/view.php?idx=42
   - http://www.crownandcutlass.com/features/technicaldetails/frustum.html
   - http://www.felixgers.de/teaching/jogl/vertexBufferObject.html
   - http://www.gamedev.net/topic/552906-closest-point-on-triangle/

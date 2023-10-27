@@ -231,6 +231,7 @@ void ModelTools::fixAnimationLength(Model* model)
 
 void ModelTools::fixAnimationLength(Node* root, int32_t frames)
 {
+	/*
 	auto animation = root->getAnimation();
 	if (animation != nullptr) {
 		vector<Matrix4x4> newTransformMatrices;
@@ -250,6 +251,7 @@ void ModelTools::fixAnimationLength(Node* root, int32_t frames)
 	for (const auto& [subNodeId, subNode]: root->getSubNodes()) {
 		fixAnimationLength(subNode, frames);
 	}
+	*/
 }
 
 bool ModelTools::hasDefaultAnimation(Model* model) {

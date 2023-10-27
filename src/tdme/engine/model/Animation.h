@@ -4,10 +4,14 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/RotationOrder.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Matrix4x4.h>
 
 using std::vector;
 
+using tdme::engine::model::RotationOrder;
+using tdme::engine::Transform;
 using tdme::math::Matrix4x4;
 
 /**
@@ -17,7 +21,7 @@ using tdme::math::Matrix4x4;
 class tdme::engine::model::Animation final
 {
 private:
-	vector<Matrix4x4> transformMatrices;
+	vector<Transform> transforms;
 
 public:
 	// forbid class copy
@@ -33,23 +37,52 @@ public:
 	 * @return number of frames
 	 */
 	inline int getFrames() const {
-		return transformMatrices.size();
+		return transforms.size();
 	}
 
 	/**
 	 * Returns transform matrices
 	 * @return transform matrices
 	 */
-	inline const vector<Matrix4x4>& getTransformMatrices() const {
-		return transformMatrices;
+	inline const vector<Transform>& getTransforms() const {
+		return transforms;
+	}
+
+	/**
+	 * Set transforms
+	 * @param transforms transforms
+	 */
+	inline void setTransforms(const vector<Transform>& transforms) {
+		this->transforms.resize(transforms.size());
+		auto i = 0;
+		for (const auto& transform: transforms) {
+			this->transforms[i++] = transform;
+		}
 	}
 
 	/**
 	 * Set transform matrices
-	 * @return transformMatrices transform matrices
+	 * @param transformMatrices transform matrices
 	 */
 	inline void setTransformMatrices(const vector<Matrix4x4>& transformMatrices) {
-		this->transformMatrices = transformMatrices;
+		transforms.resize(transformMatrices.size());
+		auto i = 0;
+		for (const auto& matrix: transformMatrices) {
+			transforms[i++].fromMatrix(matrix, RotationOrder::ZYX);
+		}
+	}
+
+	/**
+	 * Get transform matrices
+	 * @return transformMatrices transform matrices
+	 */
+	inline const vector<Matrix4x4> getTransformMatrices() const {
+		vector<Matrix4x4> transformMatrices(transforms.size());
+		auto i = 0;
+		for (const auto& matrix: transformMatrices) {
+			transformMatrices[i] = transforms[i++].getTransformMatrix();
+		}
+		return transformMatrices;
 	}
 
 };

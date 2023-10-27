@@ -9,6 +9,8 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Quaternion.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
@@ -22,6 +24,8 @@ using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::math::Matrix4x4;
+using tdme::math::Quaternion;
+using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystemException;
 
 /**
@@ -123,15 +127,26 @@ private:
 	}
 
 	/**
-	 * Interpolate key frames to our internal 30fps format
+	 * Interpolate key frame vectors to our internal 30fps format
 	 * @param frameTimeCount frame time count
 	 * @param frameTimes frameTimes
-	 * @param keyFrameMatrices key frame matrices
-	 * @param interpolatedMatrixCount interpolated matrix count
-	 * @param interpolatedMatrices interpolated matrices
+	 * @param keyFrameVectors key frame vectors
+	 * @param interpolatedVectorCount interpolated vector count
+	 * @param interpolatedVectors interpolated vectors
 	 * @param frameStartIdx frame start idx
 	 */
-	static void interpolateKeyFrames(int frameTimeCount, const float* frameTimes, const vector<Matrix4x4>& keyFrameMatrices, int interpolatedMatrixCount, vector<Matrix4x4>& interpolatedMatrices, int frameStartIdx);
+	static void interpolateKeyFrames(int frameTimeCount, const float* frameTimes, const vector<Vector3>& keyFrameVectors, int interpolatedVectorCount, vector<Vector3>& interpolatedVectors, int frameStartIdx);
+
+	/**
+	 * Interpolate key frame quaternions to our internal 30fps format
+	 * @param frameTimeCount frame time count
+	 * @param frameTimes frameTimes
+	 * @param keyFrameQuaternions key frame quaternions
+	 * @param interpolatedQuaternionsCount interpolated quaternions count
+	 * @param interpolatedQuaternions interpolated quaternions
+	 * @param frameStartIdx frame start idx
+	 */
+	static void interpolateKeyFrames(int frameTimeCount, const float* frameTimes, const vector<Quaternion>& keyFrameQuaternions, int interpolatedQuaternionCount, vector<Quaternion>& interpolatedQuaternions, int frameStartIdx);
 
 	/**
 	 * Parse GLTF node
@@ -177,27 +192,27 @@ private:
 	static void computeTangentsAndBitangents(Node* node);
 
 	/**
-	 * Get node scale matrix
+	 * Get node scale vector
 	 * @param gltfModel GLTF model
 	 * @param nodeId node id
-	 * @return scale matrix of given node
+	 * @return scale vector of given node
 	 */
-	static const Matrix4x4 getNodeScaleMatrix(const tinygltf::Model& gltfModel, const string& nodeId);
+	static const Vector3 getNodeScaleVector(const tinygltf::Model& gltfModel, const string& nodeId);
 
 	/**
-	 * Get node rotation matrix
+	 * Get node rotation quaternion
 	 * @param gltfModel GLTF model
 	 * @param nodeId node id
-	 * @return rotation matrix of given node
+	 * @return rotation quaternion of given node
 	 */
-	static const Matrix4x4 getNodeRotationMatrix(const tinygltf::Model& gltfModel, const string& nodeId);
+	static const Quaternion getNodeRotationQuaternion(const tinygltf::Model& gltfModel, const string& nodeId);
 
 	/**
-	 * Get node translation matrix
+	 * Get node translation vector
 	 * @param gltfModel GLTF model
 	 * @param nodeId node id
-	 * @return translation matrix of given node
+	 * @return translation vector of given node
 	 */
-	static const Matrix4x4 getNodeTranslationMatrix(const tinygltf::Model& gltfModel, const string& nodeId);
+	static const Vector3 getNodeTranslationVector(const tinygltf::Model& gltfModel, const string& nodeId);
 
 };

@@ -578,9 +578,9 @@ Reading all keys as array from set:
 
 ## 4.6. Classes
 
-Classes in MiniScript are basically maps, see map section in 4.4
+Classes in MiniScript are basically maps, see map section in 4.4.
 
-Creating a class in MiniScript works by using map initializer plus () -> methodName function assignment, or () -> { console.dump($this) } inline function definition.
+Creating a class in MiniScript works by using map initializer plus (...) -> methodName function assignment, or (...) -> { console.dump($this) } inline function definition, whereas The (...) is the function signature. xxx
 Please see a example below.
 
 ```

@@ -14,9 +14,11 @@
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/subsystems/rendering/AnimationState.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/Rotation.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
 
@@ -34,9 +36,11 @@ using tdme::engine::model::Skinning;
 using tdme::engine::subsystems::rendering::AnimationState;
 using tdme::engine::subsystems::rendering::ObjectAnimation;
 using tdme::engine::Engine;
+using tdme::engine::Rotation;
 using tdme::engine::Timing;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
+using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
 
@@ -370,7 +374,7 @@ void ObjectAnimation::computeNodesTransformMatrices(vector<FlattenedNode>& nodeL
 		auto animation = flattenedNode.nodeAnimation;
 		// TODO: check if its better to not compute animation matrix if finished
 		if (animation != nullptr && nodeAnimationState != nullptr && nodeAnimationState->setup != nullptr) {
-			const auto& animationMatrices = animation->getTransformMatrices();
+			const auto& animationTransforms = animation->getTransforms();
 			auto frames = nodeAnimationState->setup->getFrames();
 			auto fps = model->getFPS();
 			// determine current and last matrix
@@ -398,13 +402,23 @@ void ObjectAnimation::computeNodesTransformMatrices(vector<FlattenedNode>& nodeL
 						}
 					}
 				}
-				transformMatrix = Matrix4x4::interpolateLinear(
-					animationMatrices[matrixAtLast + nodeAnimationState->setup->getStartFrame()],
-					animationMatrices[matrixAtCurrent + nodeAnimationState->setup->getStartFrame()],
-					t
+				const auto& a = animationTransforms[matrixAtLast + nodeAnimationState->setup->getStartFrame()];
+				const auto& b = animationTransforms[matrixAtCurrent + nodeAnimationState->setup->getStartFrame()];
+				const auto& ta = a.getTranslation();
+				const auto& sa = a.getScale();
+				const auto& qa = a.getRotationsQuaternion();
+				const auto& tb = b.getTranslation();
+				const auto& sb = b.getScale();
+				const auto& qb = b.getRotationsQuaternion();
+				transformMatrix.set(
+					Transform::computeMatrix(
+						Vector3::interpolateLinear(ta, tb, t),
+						Vector3::interpolateLinear(sa, sb, t),
+						Quaternion::interpolateLinear(qa, qb, t)
+					)
 				);
 			} else {
-				transformMatrix.set(animationMatrices[matrixAtCurrent + nodeAnimationState->setup->getStartFrame()]);
+				transformMatrix.set(animationTransforms[matrixAtCurrent + nodeAnimationState->setup->getStartFrame()].getTransformMatrix());
 			}
 		} else {
 			if (flattenedNode.nodeOverriddenTransformMatrix != nullptr) {
@@ -486,12 +500,20 @@ void ObjectAnimation::computeAnimation(int contextIdx, const Matrix4x4& instance
 			if (baseAnimationIdxLast != -1 &&
 				baseAnimations[baseAnimationIdxLast].endAtTime != -1LL) {
 				auto blendingAnimationDuration = static_cast<float>(baseAnimations[baseAnimationIdxLast].currentAtTime - baseAnimations[baseAnimationIdxLast].endAtTime) / Engine::getAnimationBlendingTime();
-				*nodeLists[0][i].transformMatrix = Matrix4x4::interpolateLinear(
-					*nodeLists[1 + baseAnimationIdxLast][i].transformMatrix,
-					*nodeLists[1 + baseAnimationIdx][i].transformMatrix,
-					Math::min(
-						blendingAnimationDuration,
-						1.0f
+				auto t = Math::min(blendingAnimationDuration, 1.0f);
+				Transform a; a.fromMatrix(*(nodeLists[1 + baseAnimationIdxLast][i].transformMatrix), RotationOrder::ZYX);
+				Transform b; b.fromMatrix(*(nodeLists[1 + baseAnimationIdx][i].transformMatrix), RotationOrder::ZYX);
+				const auto& ta = a.getTranslation();
+				const auto& sa = a.getScale();
+				const auto& qa = a.getRotationsQuaternion();
+				const auto& tb = b.getTranslation();
+				const auto& sb = b.getScale();
+				const auto& qb = b.getRotationsQuaternion();
+				(*nodeLists[0][i].transformMatrix).set(
+					Transform::computeMatrix(
+						Vector3::interpolateLinear(ta, tb, t),
+						Vector3::interpolateLinear(sa, sb, t),
+						Quaternion::interpolateLinear(qa, qb, t)
 					)
 				);
 				if (blendingAnimationDuration >= 1.0f) {

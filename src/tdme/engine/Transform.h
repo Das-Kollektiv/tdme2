@@ -11,6 +11,7 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/utilities/Console.h>
 
 using std::vector;
 using std::string;
@@ -21,6 +22,7 @@ using tdme::engine::Rotation;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
+using tdme::utilities::Console;
 
 /**
  * Transform which contain scale, rotations and translation
@@ -35,6 +37,33 @@ private:
 	Matrix4x4 transformMatrix;
 
 public:
+	/**
+	 * Compute matrix
+	 * @param translation translation
+	 * @param scale scale
+	 * @param rotationsQuaternion rotations quaternion
+	 * @return transform matrix
+	 */
+	inline static Matrix4x4 computeMatrix(const Vector3& translation, const Vector3& scale, const Quaternion& rotationsQuaternion) {
+		// matrices
+		Matrix4x4 translationMatrix;
+		Matrix4x4 scaleMatrix;
+		Matrix4x4 transformMatrix;
+
+		// transform matrix identity
+		transformMatrix.identity();
+		// set up translation matrix
+		translationMatrix.identity().setTranslation(translation);
+		// set up scale matrix
+		scaleMatrix.identity().scale(scale);
+		// apply to transform matrix
+		transformMatrix.multiply(scaleMatrix);
+		transformMatrix.multiply(rotationsQuaternion.computeMatrix());
+		transformMatrix.multiply(translationMatrix);
+		//
+		return transformMatrix;
+	};
+
 	/**
 	 * Public constructor
 	 */
@@ -107,6 +136,14 @@ public:
 
 	/**
 	 * Add rotation
+	 * @param rotation rotation
+	 */
+	inline void addRotation(const Rotation& rotation) {
+		rotations.emplace_back(rotation);
+	}
+
+	/**
+	 * Add rotation
 	 * @param axis axis
 	 * @param angle angle
 	 */
@@ -161,6 +198,14 @@ public:
 	 */
 	inline const Quaternion& getRotationsQuaternion() const {
 		return rotationsQuaternion;
+	}
+
+	/**
+	 * Set rotations quaternion
+	 * @param rotationsQuaternion rotations quaternion
+	 */
+	inline void setRotationsQuaternion(const Quaternion& rotationsQuaternion) {
+		this->rotationsQuaternion = rotationsQuaternion;
 	}
 
 	/**
