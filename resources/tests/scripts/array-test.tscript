@@ -1,0 +1,89 @@
+# sort function for ascending order
+function: sortFunctionDesc($a, $b)
+	return($a > $b)
+end
+
+# sort function for descending order
+function: sortFunctionAsc($a, $b)
+	return($a < $b)
+end
+
+# initialize
+on: initialize
+	console.log("---------------------------")
+	console.log("array-test: Initialize")
+	console.log("--------------------------")
+	console.log()
+end
+
+# if no condition is met, nothing will be executed, lol :D
+on: nothing
+	console.log("------------------------")
+	console.log("array-test: Nothing")
+	console.log("------------------------")
+	console.log()
+	console.log("---------")
+	console.log("Arrays")
+	console.log("---------")
+	$array = [1, 2, 3, [1, 2, 3], {a: xxx, b: yyy, c: zzz}, {a, b, c}]
+	console.log("array initialized with: $array = [1, 2, 3, [1, 2, 3], {a: xxx, b: yyy, c: zzz}, {a, b, c}]: " + $array)
+	$array = array(1, 2, 3)
+	console.log("array initialized with: $array = array(1, 2, 3): " + $array)
+	$array->push(8, 9, 10, 99, 10)
+	console.log("array pushed values with: $array->push(8, 9, 10, 99, 10)")
+	#console.log("array now looks like: ", $array)
+	#$array[] = 123
+	#$array[] = 1234
+	#$array[] = 12345
+	#$array[] = array(1,2,3)
+	#console.log("array values added with [] operator: 123, 1234, 12345, array(1,2,3)")
+	#console.log("array now looks like: ", $array)
+	#console.log("array values added with [] operator to push to array of array: 50, 60")
+	#$array[11][] = 50
+	#$array[11][] = 60
+	#$array[11][$array[11]->length() - 1] = 61
+	#console.log("array length: ", $array->length())
+	#console.log("array iteration with $array->get(): ")
+	#$i = 0
+	#forCondition($i < $array->length())
+	#	console.log($i + ": " + $array->get($i))
+	#	++$i
+	#end 
+	#console.log("array iteration with [] operator: ")
+	#$i = 0
+	#forCondition($i < $array->length())
+	#	console.log($i + ": " + $array[$i])
+	#	++$i
+	#end
+	#console.log("array iteration with [] opertator and some index math: ")
+	#$i = 0
+	#forCondition($i < $array->length() / 2)
+	#	console.log($i + "-a: " + $array[$i * 2 + 0])
+	#	console.log($i + "-b: " + $array[$i * 2 + 1])
+	#	++$i
+	#end
+	#console.log("array removal of 123, 1234, 12345 using array.removeOf")
+	#$array->removeOf(123)
+	#$array->removeOf(1234)
+	#$array->removeOf(12345)
+	#console.log("array now looks like: ", $array)
+	#console.log("array indexOf 10: ", $array->indexOf(10))
+	#console.log("array indexOf 10 beginning to search from 6: ", $array->indexOf(10, 6))
+	#console.log("sorting of array('abc', 'def', 'ghi', 'jkl', 'mno'): ", $array = array("abc", "def", "ghi", "jkl", "mno"))
+	#$array->sort("sortFunctionDesc")
+	#console.log("$array->sort('sortFunctionDesc'): ", $array)
+	#$array->sort("sortFunctionAsc")
+	#console.log("$array->sort('sortFunctionAsc'): ", $array)
+	#$array->reverse()
+	#console.log("array reverse: ", $array)
+	script.stop()
+end
+
+# an error has occurred
+on: error
+	console.log("----------------------")
+	console.log("array-test: Error")
+	console.log("----------------------")
+	console.log("An error occurred")
+	script.wait(1000)
+end

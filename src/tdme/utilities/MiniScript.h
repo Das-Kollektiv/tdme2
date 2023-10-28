@@ -255,201 +255,233 @@ public:
 		ScriptVariableType type { TYPE_NULL };
 		uint64_t valuePtr { 0LL };
 		Initializer* initializer { nullptr };
+		ScriptVariable* reference { nullptr };
+		int referenceCounter { 1 };
+
+		/**
+		 * Acquire reference
+		 */
+		inline void acquireReference() {
+			referenceCounter++;
+		}
+
+		/**
+		 * Release reference
+		 */
+		inline void releaseReference() {
+			if (--referenceCounter == 0) setType(TYPE_NULL);
+		}
+
+		/**
+		 * Return const value pointer
+		 * @return value ptr
+		 */
+		inline const uint64_t& getValuePtrReference() const {
+			return reference != nullptr?reference->valuePtr:valuePtr;
+		}
+
+		/**
+		 * Return value pointer
+		 * @return value ptr
+		 */
+		inline uint64_t& getValuePtrReference() {
+			return reference != nullptr?reference->valuePtr:valuePtr;
+		}
 
 		/**
 		 * @return boolean value reference
 		 */
 		inline bool& getBooleanValueReference() {
-			return *(bool*)(&valuePtr);
+			return *(bool*)(&getValuePtrReference());
 		}
 
 		/**
 		 * @return const boolean value reference
 		 */
 		inline const bool& getBooleanValueReference() const {
-			return *(bool*)(&valuePtr);
+			return *(bool*)(&getValuePtrReference());
 		}
 
 		/**
 		 * @return integer value reference
 		 */
 		inline int64_t& getIntegerValueReference() {
-			return *(int64_t*)(&valuePtr);
+			return *(int64_t*)(&getValuePtrReference());
 		}
 
 		/**
 		 * @return const integer value reference
 		 */
 		inline const int64_t& getIntegerValueReference() const {
-			return *(int64_t*)(&valuePtr);
+			return *(int64_t*)(&getValuePtrReference());
 		}
 
 		/**
 		 * @return float value reference
 		 */
 		inline float& getFloatValueReference() {
-			return *(float*)(&valuePtr);
+			return *(float*)(&getValuePtrReference());
 		}
 
 		/**
 		 * @return const float value reference
 		 */
 		inline const float& getFloatValueReference() const {
-			return *(float*)(&valuePtr);
+			return *(float*)(&getValuePtrReference());
 		}
 
 		/**
 		 * @return string value reference
 		 */
 		inline string& getStringValueReference() {
-			return *static_cast<string*>((void*)valuePtr);
+			return *static_cast<string*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return const string value reference
 		 */
 		inline const string& getStringValueReference() const {
-			return *static_cast<string*>((void*)valuePtr);
+			return *static_cast<string*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return vector2 value reference
 		 */
 		inline Vector2& getVector2ValueReference() {
-			return *static_cast<Vector2*>((void*)valuePtr);
+			return *static_cast<Vector2*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return const vector2 value reference
 		 */
 		inline const Vector2& getVector2ValueReference() const {
-			return *static_cast<Vector2*>((void*)valuePtr);
+			return *static_cast<Vector2*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return vector3 value reference
 		 */
 		inline Vector3& getVector3ValueReference() {
-			return *static_cast<Vector3*>((void*)valuePtr);
+			return *static_cast<Vector3*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return const vector3 value reference
 		 */
 		inline const Vector3& getVector3ValueReference() const {
-			return *static_cast<Vector3*>((void*)valuePtr);
+			return *static_cast<Vector3*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return vector4 value reference
 		 */
 		inline Vector4& getVector4ValueReference() {
-			return *static_cast<Vector4*>((void*)valuePtr);
+			return *static_cast<Vector4*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return const vector4 value reference
 		 */
 		inline const Vector4& getVector4ValueReference() const {
-			return *static_cast<Vector4*>((void*)valuePtr);
+			return *static_cast<Vector4*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return quaternion value reference
 		 */
 		inline Quaternion& getQuaternionValueReference() {
-			return *static_cast<Quaternion*>((void*)valuePtr);
+			return *static_cast<Quaternion*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return const quaternion value reference
 		 */
 		inline const Quaternion& getQuaternionValueReference() const {
-			return *static_cast<Quaternion*>((void*)valuePtr);
+			return *static_cast<Quaternion*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return matrix3x3 value reference
 		 */
 		inline Matrix3x3& getMatrix3x3ValueReference() {
-			return *static_cast<Matrix3x3*>((void*)valuePtr);
+			return *static_cast<Matrix3x3*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return const matrix3x3 value reference
 		 */
 		inline const Matrix3x3& getMatrix3x3ValueReference() const {
-			return *static_cast<Matrix3x3*>((void*)valuePtr);
+			return *static_cast<Matrix3x3*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return matrix4x4 value reference
 		 */
 		inline Matrix4x4& getMatrix4x4ValueReference() {
-			return *static_cast<Matrix4x4*>((void*)valuePtr);
+			return *static_cast<Matrix4x4*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return const matrix4x4 value reference
 		 */
 		inline const Matrix4x4& getMatrix4x4ValueReference() const {
-			return *static_cast<Matrix4x4*>((void*)valuePtr);
+			return *static_cast<Matrix4x4*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return transform value reference
 		 */
 		inline Transform& getTransformValueReference() {
-			return *static_cast<Transform*>((void*)valuePtr);
+			return *static_cast<Transform*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return const transform value reference
 		 */
 		inline const Transform& getTransformValueReference() const {
-			return *static_cast<Transform*>((void*)valuePtr);
+			return *static_cast<Transform*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return array value reference
 		 */
-		inline vector<ScriptVariable>& getArrayValueReference() {
-			return *static_cast<vector<ScriptVariable>*>((void*)valuePtr);
+		inline vector<ScriptVariable*>& getArrayValueReference() {
+			return *static_cast<vector<ScriptVariable*>*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return const array value reference
 		 */
-		inline const vector<ScriptVariable>& getArrayValueReference() const {
-			return *static_cast<vector<ScriptVariable>*>((void*)valuePtr);
+		inline const vector<ScriptVariable*>& getArrayValueReference() const {
+			return *static_cast<vector<ScriptVariable*>*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return map value reference
 		 */
-		inline unordered_map<string, ScriptVariable>& getMapValueReference() {
-			return *static_cast<unordered_map<string, ScriptVariable>*>((void*)valuePtr);
+		inline unordered_map<string, ScriptVariable*>& getMapValueReference() {
+			return *static_cast<unordered_map<string, ScriptVariable*>*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return const map value reference
 		 */
-		inline const unordered_map<string, ScriptVariable>& getMapValueReference() const {
-			return *static_cast<unordered_map<string, ScriptVariable>*>((void*)valuePtr);
+		inline const unordered_map<string, ScriptVariable*>& getMapValueReference() const {
+			return *static_cast<unordered_map<string, ScriptVariable*>*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return set value reference
 		 */
 		inline unordered_set<string>& getSetValueReference() {
-			return *static_cast<unordered_set<string>*>((void*)valuePtr);
+			return *static_cast<unordered_set<string>*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return const set value reference
 		 */
 		inline const unordered_set<string>& getSetValueReference() const {
-			return *static_cast<unordered_set<string>*>((void*)valuePtr);
+			return *static_cast<unordered_set<string>*>((void*)getValuePtrReference());
 		}
 
 	public:
@@ -472,7 +504,7 @@ public:
 		 * @param scriptVariable script variable to copy
 		 */
 		inline ScriptVariable(const ScriptVariable& scriptVariable) {
-			switch(scriptVariable.type) {
+			switch(scriptVariable.getType()) {
 				case TYPE_NULL:
 					setNullValue();
 					break;
@@ -558,8 +590,8 @@ public:
 		 * @param scriptVariable script variable to move from
 		 */
 		inline ScriptVariable(ScriptVariable&& scriptVariable):
-			type(exchange(scriptVariable.type, MiniScript::TYPE_NULL)),
-			valuePtr(exchange(scriptVariable.valuePtr, 0ll)) {
+			type(exchange(scriptVariable.reference != nullptr?scriptVariable.reference->type:scriptVariable.type, MiniScript::TYPE_NULL)),
+			valuePtr(exchange(scriptVariable.getValuePtrReference(), 0ll)) {
 		}
 
 		/**
@@ -568,7 +600,7 @@ public:
 		 * @return this script variable
 		 */
 		inline ScriptVariable& operator=(const ScriptVariable& scriptVariable) {
-			switch(scriptVariable.type) {
+			switch(scriptVariable.getType()) {
 				case TYPE_NULL:
 					setNullValue();
 					break;
@@ -657,8 +689,8 @@ public:
 		 */
 		inline ScriptVariable& operator=(ScriptVariable&& scriptVariable) {
 			// do the swap
-			swap(type, scriptVariable.type);
-			swap(valuePtr, scriptVariable.valuePtr);
+			swap(type, scriptVariable.reference != nullptr?scriptVariable.reference->type:scriptVariable.type);
+			swap(getValuePtrReference(), scriptVariable.getValuePtrReference());
 			//
 			return *this;
 		}
@@ -673,7 +705,7 @@ public:
 		 * Destructor
 		 */
 		inline ~ScriptVariable() {
-			setType(TYPE_NULL);
+			releaseReference();
 		}
 
 		/**
@@ -768,7 +800,7 @@ public:
 		 * Constructor
 		 * @param value value
 		 */
-		inline ScriptVariable(const vector<ScriptVariable>& value) {
+		inline ScriptVariable(const vector<ScriptVariable*>& value) {
 			setValue(value);
 		}
 
@@ -776,7 +808,7 @@ public:
 		 * Constructor
 		 * @param value value
 		 */
-		inline ScriptVariable(const unordered_map<string, ScriptVariable>& value) {
+		inline ScriptVariable(const unordered_map<string, ScriptVariable*>& value) {
 			setValue(value);
 		}
 
@@ -784,7 +816,7 @@ public:
 		 * @return type
 		 */
 		inline ScriptVariableType getType() const {
-			return type;
+			return reference != nullptr?reference->type:type;
 		}
 
 		/**
@@ -792,7 +824,7 @@ public:
 		 * @param newType new type
 		 */
 		inline void setType(ScriptVariableType newType) {
-			if (type == newType) return;
+			if (getType() == newType) return;
 			switch(type) {
 				case TYPE_NULL:
 					break;
@@ -804,48 +836,56 @@ public:
 					break;
 				case TYPE_STRING:
 				case TYPE_FUNCTION_ASSIGNMENT:
-					delete static_cast<string*>((void*)valuePtr);
+					delete static_cast<string*>((void*)getValuePtrReference());
 					break;
 				case TYPE_VECTOR2:
-					delete static_cast<Vector2*>((void*)valuePtr);
+					delete static_cast<Vector2*>((void*)getValuePtrReference());
 					break;
 				case TYPE_VECTOR3:
-					delete static_cast<Vector3*>((void*)valuePtr);
+					delete static_cast<Vector3*>((void*)getValuePtrReference());
 					break;
 				case TYPE_VECTOR4:
-					delete static_cast<Vector4*>((void*)valuePtr);
+					delete static_cast<Vector4*>((void*)getValuePtrReference());
 					break;
 				case TYPE_QUATERNION:
-					delete static_cast<Quaternion*>((void*)valuePtr);
+					delete static_cast<Quaternion*>((void*)getValuePtrReference());
 					break;
 				case TYPE_MATRIX3x3:
-					delete static_cast<Matrix3x3*>((void*)valuePtr);
+					delete static_cast<Matrix3x3*>((void*)getValuePtrReference());
 					break;
 				case TYPE_MATRIX4x4:
-					delete static_cast<Matrix4x4*>((void*)valuePtr);
+					delete static_cast<Matrix4x4*>((void*)getValuePtrReference());
 					break;
 				case TYPE_TRANSFORM:
-					delete static_cast<Transform*>((void*)valuePtr);
+					delete static_cast<Transform*>((void*)getValuePtrReference());
 					break;
 				case TYPE_ARRAY:
-					delete static_cast<vector<ScriptVariable>*>((void*)valuePtr);
+					for (auto arrayValue: getArrayValueReference()) arrayValue->releaseReference();
+					delete static_cast<vector<ScriptVariable*>*>((void*)getValuePtrReference());
 					if (initializer != nullptr) delete initializer;
 					break;
 				case TYPE_MAP:
-					delete static_cast<unordered_map<string, ScriptVariable>*>((void*)valuePtr);
+					for (const auto& [mapEntryName, mapEntryValue]: getMapValueReference()) mapEntryValue->releaseReference();
+					delete static_cast<unordered_map<string, ScriptVariable*>*>((void*)getValuePtrReference());
 					if (initializer != nullptr) delete initializer;
 					break;
 				case TYPE_SET:
-					delete static_cast<unordered_set<string>*>((void*)valuePtr);
+					delete static_cast<unordered_set<string>*>((void*)getValuePtrReference());
 					if (initializer != nullptr) delete initializer;
 					break;
 				case TYPE_FUNCTION_CALL:
-					delete static_cast<string*>((void*)valuePtr);
+					delete static_cast<string*>((void*)getValuePtrReference());
 					if (initializer != nullptr) delete initializer;
 					break;
 			}
-			this->valuePtr = 0LL;
-			this->type = newType;
+			this->getValuePtrReference() = 0LL;
+			//
+			if (reference != nullptr) {
+				reference->type = newType;
+			} else {
+				type = newType;
+			}
+			//
 			switch(newType) {
 				case TYPE_NULL:
 					break;
@@ -857,40 +897,40 @@ public:
 					break;
 				case TYPE_STRING:
 				case TYPE_FUNCTION_ASSIGNMENT:
-					valuePtr = (uint64_t)(new string());
+					getValuePtrReference() = (uint64_t)(new string());
 					break;
 				case TYPE_VECTOR2:
-					valuePtr = (uint64_t)(new Vector2());
+					getValuePtrReference() = (uint64_t)(new Vector2());
 					break;
 				case TYPE_VECTOR3:
-					valuePtr = (uint64_t)(new Vector3());
+					getValuePtrReference() = (uint64_t)(new Vector3());
 					break;
 				case TYPE_VECTOR4:
-					valuePtr = (uint64_t)(new Vector4());
+					getValuePtrReference() = (uint64_t)(new Vector4());
 					break;
 				case TYPE_QUATERNION:
-					valuePtr = (uint64_t)(new Quaternion());
+					getValuePtrReference() = (uint64_t)(new Quaternion());
 					break;
 				case TYPE_MATRIX3x3:
-					valuePtr = (uint64_t)(new Matrix3x3());
+					getValuePtrReference() = (uint64_t)(new Matrix3x3());
 					break;
 				case TYPE_MATRIX4x4:
-					valuePtr = (uint64_t)(new Matrix4x4());
+					getValuePtrReference() = (uint64_t)(new Matrix4x4());
 					break;
 				case TYPE_TRANSFORM:
-					valuePtr = (uint64_t)(new Transform());
+					getValuePtrReference() = (uint64_t)(new Transform());
 					break;
 				case TYPE_ARRAY:
-					valuePtr = (uint64_t)(new vector<ScriptVariable>());
+					getValuePtrReference() = (uint64_t)(new vector<ScriptVariable*>());
 					break;
 				case TYPE_MAP:
-					valuePtr = (uint64_t)(new unordered_map<string, ScriptVariable>());
+					getValuePtrReference() = (uint64_t)(new unordered_map<string, ScriptVariable*>());
 					break;
 				case TYPE_SET:
-					valuePtr = (uint64_t)(new unordered_set<string>());
+					getValuePtrReference() = (uint64_t)(new unordered_set<string>());
 					break;
 				case TYPE_FUNCTION_CALL:
-					valuePtr = (uint64_t)(new string());
+					getValuePtrReference() = (uint64_t)(new string());
 					initializer = new Initializer();
 					break;
 			}
@@ -1264,7 +1304,7 @@ public:
 		 * Set array value from given value into variable
 		 * @param value value
 		 */
-		inline void setValue(const vector<ScriptVariable>& value) {
+		inline void setValue(const vector<ScriptVariable*>& value) {
 			setType(TYPE_ARRAY);
 			getArrayValueReference() = value;
 		}
@@ -1273,7 +1313,7 @@ public:
 		 * Set map value from given value into variable
 		 * @param value value
 		 */
-		inline void setValue(const unordered_map<string, ScriptVariable>& value) {
+		inline void setValue(const unordered_map<string, ScriptVariable*>& value) {
 			setType(TYPE_MAP);
 			getMapValueReference() = value;
 		}
@@ -1290,7 +1330,7 @@ public:
 		/**
 		 * @return return const pointer to underlying vector or nullptr
 		 */
-		inline const vector<MiniScript::ScriptVariable>* getArrayPointer() const {
+		inline const vector<ScriptVariable*>* getArrayPointer() const {
 			if (type != TYPE_ARRAY) return nullptr;
 			auto& arrayValue = getArrayValueReference();
 			return &arrayValue;
@@ -1299,7 +1339,7 @@ public:
 		/**
 		 * @return pointer to underlying vector or nullptr
 		 */
-		inline vector<MiniScript::ScriptVariable>* getArrayPointer() {
+		inline vector<ScriptVariable*>* getArrayPointer() {
 			if (type != TYPE_ARRAY) return nullptr;
 			auto& arrayValue = getArrayValueReference();
 			return &arrayValue;
@@ -1335,7 +1375,7 @@ public:
 			if (idx < 0) return;
 			auto& arrayValue = getArrayValueReference();
 			while (arrayValue.size() <= idx) pushArrayValue(ScriptVariable());
-			arrayValue[idx] = value;
+			arrayValue[idx] = new ScriptVariable(value);
 		}
 
 		/**
@@ -1344,7 +1384,7 @@ public:
 		 */
 		inline void pushArrayValue(const ScriptVariable& value) {
 			setType(TYPE_ARRAY);
-			getArrayValueReference().push_back(value);
+			getArrayValueReference().push_back(new ScriptVariable(value));
 		}
 
 		/**
@@ -1361,7 +1401,7 @@ public:
 		/**
 		 * @return return const pointer to underlying unordered_map or nullptr
 		 */
-		inline const unordered_map<string, ScriptVariable>* getMapPointer() const {
+		inline const unordered_map<string, ScriptVariable*>* getMapPointer() const {
 			if (type != TYPE_MAP) return nullptr;
 			auto& mapValue = getMapValueReference();
 			return &mapValue;
@@ -1370,7 +1410,7 @@ public:
 		/**
 		 * @return pointer to underlying unordered_map or nullptr
 		 */
-		inline unordered_map<string, ScriptVariable>* getMapPointer() {
+		inline unordered_map<string, ScriptVariable*>* getMapPointer() {
 			if (type != TYPE_MAP) return nullptr;
 			auto& mapValue = getMapValueReference();
 			return &mapValue;
@@ -1406,7 +1446,7 @@ public:
 			if (type != TYPE_MAP) return ScriptVariable();
 			const auto& mapValue = getMapValueReference();
 			auto it = mapValue.find(key);
-			if (it != mapValue.end()) return it->second;
+			if (it != mapValue.end()) return *it->second;
 			return ScriptVariable();
 		}
 
@@ -1417,7 +1457,7 @@ public:
 		 */
 		inline void setMapValue(const string& key, const ScriptVariable& value) {
 			setType(TYPE_MAP);
-			getMapValueReference()[key] = value;
+			getMapValueReference()[key] = new ScriptVariable(value);
 		}
 
 		/**
@@ -1451,8 +1491,8 @@ public:
 		 * Get map values
 		 * @return values
 		 */
-		inline const vector<ScriptVariable> getMapValues() const {
-			vector<ScriptVariable> values;
+		inline const vector<ScriptVariable*> getMapValues() const {
+			vector<ScriptVariable*> values;
 			if (type != TYPE_MAP) return values;
 			const auto& mapValue = getMapValueReference();
 			for (const auto& [mapEntryKey, mapEntryValue]: mapValue) {
@@ -1869,10 +1909,10 @@ public:
 						const auto& arrayValue = getArrayValueReference();
 						vector<string> values;
 						for (const auto& arrayEntry: arrayValue) {
-							if (arrayEntry.type == TYPE_STRING) {
-								values.push_back("\"" + StringTools::replace(StringTools::replace(arrayEntry.getValueAsString(), "\\", "\\\\"), "\"", "\\\"") + "\"" );
+							if (arrayEntry->getType() == TYPE_STRING) {
+								values.push_back("\"" + StringTools::replace(StringTools::replace(arrayEntry->getValueAsString(), "\\", "\\\\"), "\"", "\\\"") + "\"" );
 							} else {
-								values.push_back(arrayEntry.getValueAsString(formatted, depth + 1));
+								values.push_back(arrayEntry->getValueAsString(formatted, depth + 1));
 							}
 						}
 						if (formatted == true) {
@@ -1905,12 +1945,12 @@ public:
 						for (const auto& [mapEntryName, mapEntryValue]: mapValue) {
 							string value;
 							value+= "\"" + StringTools::replace(StringTools::replace(mapEntryName, "\\", "\\\\"), "\"", "\\\"") +  "\": ";
-							if (mapEntryValue.type == TYPE_STRING) {
+							if (mapEntryValue->getType() == TYPE_STRING) {
 								value+= "\"";
-								value+= StringTools::replace(StringTools::replace(mapEntryValue.getValueAsString(), "\\", "\\\\"), "\"", "\\\"");
+								value+= StringTools::replace(StringTools::replace(mapEntryValue->getValueAsString(), "\\", "\\\\"), "\"", "\\\"");
 								value+= "\"";
 							} else {
-								value+= mapEntryValue.getValueAsString(formatted, depth + 1);
+								value+= mapEntryValue->getValueAsString(formatted, depth + 1);
 							}
 							values.push_back(value);
 						}
@@ -3410,7 +3450,7 @@ public:
 			} else {
 				// all checks passed, push variable to array
 				auto& arrayValueReference = parentVariable->getArrayValueReference();
-				arrayValueReference.push_back(variable);
+				arrayValueReference.push_back(new ScriptVariable(variable));
 			}
 			//
 			return;

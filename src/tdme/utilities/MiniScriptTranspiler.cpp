@@ -619,7 +619,7 @@ void MiniScriptTranspiler::generateArrayMapSetVariable(
 				generatedDefinitions+= indent + "\t" + "ScriptVariable variableD" + to_string(initializerDepth) + ";" + "\n";
 				generatedDefinitions+= indent + "\t" + "variableD" + to_string(initializerDepth) + ".setType(TYPE_ARRAY);" + "\n";
 				const auto arrayValue = variable.getArrayPointer();
-				for (const auto& arrayEntry: *arrayValue) {
+				for (const auto arrayEntry: *arrayValue) {
 					generateArrayMapSetVariable(
 						miniScript,
 						arrayEntry,

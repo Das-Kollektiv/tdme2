@@ -7539,7 +7539,7 @@ void MiniScript::registerMethods() {
 					xml+= "<" + name;
 					if (mapPtr != nullptr && mapPtr->empty() == false) {
 						for(const auto& [mapEntryName, mapEntryValue]: *mapPtr) {
-							xml+= " " + mapEntryName + "=\"" + GUIParser::escape(mapEntryValue.getValueAsString()) + "\"";
+							xml+= " " + mapEntryName + "=\"" + GUIParser::escape(mapEntryValue->getValueAsString()) + "\"";
 						}
 					}
 					if (innerXML.empty() == true) {
@@ -8476,7 +8476,7 @@ inline MiniScript::ScriptVariable* MiniScript::getVariableIntern(const string& n
 						//
 						parentVariable = variablePtr;
 						//
-						variablePtr = &mapIt->second;
+						variablePtr = mapIt->second;
 					} else {
 						if (expectVariable == true) {
 							if (statement != nullptr) {
@@ -8538,7 +8538,7 @@ inline MiniScript::ScriptVariable* MiniScript::getVariableIntern(const string& n
 					//
 					parentVariable = variablePtr;
 					//
-					variablePtr = &arrayValueReference[arrayIdx];
+					variablePtr = arrayValueReference[arrayIdx];
 				} else {
 					if (statement != nullptr) {
 						Console::println(getStatementInformation(*statement) + ": variable: '" + name + "': index out of bounds: 0 <= " + to_string(arrayIdx) + " < " + to_string(arrayValueReference.size()));
@@ -8621,7 +8621,7 @@ inline const MiniScript::ScriptVariable MiniScript::initializeVariable(const Scr
 				arrayVariable.setType(TYPE_ARRAY);
 				auto arrayPointer = variable.getArrayPointer();
 				if (arrayPointer == nullptr) break;
-				for (const auto& arrayValue: *arrayPointer) {
+				for (const auto arrayValue: *arrayPointer) {
 					arrayVariable.pushArrayValue(initializeVariable(arrayValue));
 				}
 				//
