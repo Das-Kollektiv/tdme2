@@ -1700,7 +1700,7 @@ void GUIMiniScript::registerMethods() {
 						auto conditions = elementNode->getActiveConditions().getConditions();
 						returnValue.setType(TYPE_ARRAY);
 						for (const auto& condition: conditions) {
-							returnValue.pushArrayValue(condition);
+							returnValue.pushArrayEntry(condition);
 						}
 					} else {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no element node found for given node id '" + elementNodeId + "'");
@@ -1826,7 +1826,7 @@ void GUIMiniScript::registerMethods() {
 						vector<string> conditions;
 						for (auto i = 0; i < argumentValues[1].getArraySize(); i++) {
 							string condition;
-							if (argumentValues[1].getArrayValue(i).getStringValue(condition, false) == false) {
+							if (argumentValues[1].getArrayEntry(i).getStringValue(condition, false) == false) {
 								Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 							} else {
 								conditions.push_back(condition);

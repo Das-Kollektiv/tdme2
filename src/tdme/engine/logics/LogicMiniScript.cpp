@@ -241,7 +241,7 @@ void LogicMiniScript::registerMethods() {
 				const auto& contextLogics = miniScript->logic->getContext()->getLogics();
 				returnValue.setType(MiniScript::TYPE_ARRAY);
 				for (auto contextLogic: contextLogics) {
-					returnValue.pushArrayValue(MiniScript::ScriptVariable(contextLogic->getId()));
+					returnValue.pushArrayEntry(MiniScript::ScriptVariable(contextLogic->getId()));
 				}
 			}
 			const vector<string>& getContextFunctions() {
@@ -4911,7 +4911,7 @@ void LogicMiniScript::registerMethods() {
 						miniScript->context->getWorld()->doesCollideWith(collisionTypeIds, body, collisionBodies);
 						returnValue.setType(MiniScript::TYPE_ARRAY);
 						for (auto collisionBody: collisionBodies) {
-							returnValue.pushArrayValue(collisionBody->getId());
+							returnValue.pushArrayEntry(collisionBody->getId());
 						}
 					}
 				} else {
@@ -5085,7 +5085,7 @@ void LogicMiniScript::registerMethods() {
 					auto pathFindingState = miniScript->context->getPathFinding()->findPath(logicId, logicId, startPosition, endPosition, path);
 					returnValue = static_cast<int64_t>(pathFindingState);
 					for (const auto& position: path) {
-						argumentValues[3].pushArrayValue(position);
+						argumentValues[3].pushArrayEntry(position);
 					};
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));

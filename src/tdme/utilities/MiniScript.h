@@ -269,6 +269,10 @@ public:
 		 * Release reference
 		 */
 		inline void releaseReference() {
+			if (reference != nullptr) {
+				reference->releaseReference();
+				--referenceCounter;
+			} else
 			if (--referenceCounter == 0) setType(TYPE_NULL);
 		}
 
@@ -543,7 +547,7 @@ public:
 					break;
 				case TYPE_ARRAY:
 					setValue(scriptVariable.getArrayValueReference());
-					//
+					// copy initializer if we have any
 					if (scriptVariable.initializer != nullptr) {
 						initializer = new Initializer();
 						initializer->copy(scriptVariable.initializer);
@@ -552,16 +556,15 @@ public:
 					break;
 				case TYPE_MAP:
 					setValue(scriptVariable.getMapValueReference());
-					//
+					// copy initializer if we have any
 					if (scriptVariable.initializer != nullptr) {
 						initializer = new Initializer();
 						initializer->copy(scriptVariable.initializer);
 					}
-					//
 					break;
 				case TYPE_SET:
 					setValue(scriptVariable.getSetValueReference());
-					//
+					// copy initializer if we have any
 					if (scriptVariable.initializer != nullptr) {
 						initializer = new Initializer();
 						initializer->copy(scriptVariable.initializer);
@@ -571,7 +574,7 @@ public:
 				case TYPE_FUNCTION_CALL:
 					setType(TYPE_FUNCTION_CALL);
 					getStringValueReference() = scriptVariable.getStringValueReference();
-					//
+					// copy initializer if we have any
 					if (scriptVariable.initializer != nullptr) {
 						initializer->copy(scriptVariable.initializer);
 					}
@@ -600,9 +603,11 @@ public:
 		 * @return this script variable
 		 */
 		inline ScriptVariable& operator=(const ScriptVariable& scriptVariable) {
+			//
+			setNullValue();
+			//
 			switch(scriptVariable.getType()) {
 				case TYPE_NULL:
-					setNullValue();
 					break;
 				case TYPE_BOOLEAN:
 					setValue(scriptVariable.getBooleanValueReference());
@@ -825,7 +830,7 @@ public:
 		 */
 		inline void setType(ScriptVariableType newType) {
 			if (getType() == newType) return;
-			switch(type) {
+			switch(getType()) {
 				case TYPE_NULL:
 					break;
 				case TYPE_BOOLEAN:
@@ -922,12 +927,15 @@ public:
 					break;
 				case TYPE_ARRAY:
 					getValuePtrReference() = (uint64_t)(new vector<ScriptVariable*>());
+					initializer = new Initializer();
 					break;
 				case TYPE_MAP:
 					getValuePtrReference() = (uint64_t)(new unordered_map<string, ScriptVariable*>());
+					initializer = new Initializer();
 					break;
 				case TYPE_SET:
 					getValuePtrReference() = (uint64_t)(new unordered_set<string>());
+					initializer = new Initializer();
 					break;
 				case TYPE_FUNCTION_CALL:
 					getValuePtrReference() = (uint64_t)(new string());
@@ -1306,7 +1314,10 @@ public:
 		 */
 		inline void setValue(const vector<ScriptVariable*>& value) {
 			setType(TYPE_ARRAY);
-			getArrayValueReference() = value;
+			auto& arrayValue = getArrayValueReference();
+			for (const auto arrayEntry: value) {
+				arrayValue.push_back(new ScriptVariable(*arrayEntry));
+			}
 		}
 
 		/**
@@ -1315,7 +1326,10 @@ public:
 		 */
 		inline void setValue(const unordered_map<string, ScriptVariable*>& value) {
 			setType(TYPE_MAP);
-			getMapValueReference() = value;
+			auto& mapValue = getMapValueReference();
+			for (const auto& [mapEntryName, mapEntryValue]: value) {
+				mapValue[mapEntryName] = new ScriptVariable(*mapEntryValue);
+			}
 		}
 
 		/**
@@ -1355,43 +1369,44 @@ public:
 		}
 
 		/**
-		 * Get value from array with given index
+		 * Get entry from array with given index
 		 * @param idx index
-		 * @return value from array with given index
+		 * @return entry from array with given index
 		 */
-		inline const ScriptVariable getArrayValue(int idx) const {
+		inline const ScriptVariable getArrayEntry(int idx) const {
 			if (type != TYPE_ARRAY) return ScriptVariable();
 			const auto& arrayValue = getArrayValueReference();
-			if (idx >= 0 && idx < arrayValue.size()) return arrayValue[idx];
+			if (idx >= 0 && idx < arrayValue.size()) return *arrayValue[idx];
 			return ScriptVariable();
 		}
 
 		/**
-		 * Set value to array with given index
+		 * Set entry in array with given index
 		 * @param idx index
 		 */
-		inline void setArrayValue(int idx, const ScriptVariable& value) {
+		inline void setArrayEntry(int idx, const ScriptVariable& value) {
 			setType(TYPE_ARRAY);
 			if (idx < 0) return;
 			auto& arrayValue = getArrayValueReference();
-			while (arrayValue.size() <= idx) pushArrayValue(ScriptVariable());
+			while (arrayValue.size() <= idx) pushArrayEntry(ScriptVariable());
+			arrayValue[idx]->releaseReference();
 			arrayValue[idx] = new ScriptVariable(value);
 		}
 
 		/**
-		 * Push value to array
+		 * Push entry to array
 		 * @param value value
 		 */
-		inline void pushArrayValue(const ScriptVariable& value) {
+		inline void pushArrayEntry(const ScriptVariable& value) {
 			setType(TYPE_ARRAY);
 			getArrayValueReference().push_back(new ScriptVariable(value));
 		}
 
 		/**
-		 * Remove array value at given index
+		 * Remove array entry at given index
 		 * @param idx index
 		 */
-		inline void removeArrayValue(int idx) {
+		inline void removeArrayEntry(int idx) {
 			if (type != TYPE_ARRAY) return;
 			auto& arrayValue = getArrayValueReference();
 			if (idx >= 0 && idx < arrayValue.size()) arrayValue.erase(arrayValue.begin() + idx);
@@ -1425,11 +1440,11 @@ public:
 		}
 
 		/**
-		 * Map has value with given key
+		 * Map has entry with given key
 		 * @param key key
 		 * @return key exists
 		 */
-		inline bool hasMapValue(const string& key) const {
+		inline bool hasMapEntry(const string& key) const {
 			if (type != TYPE_MAP) return false;
 			const auto& mapValue = getMapValueReference();
 			auto it = mapValue.find(key);
@@ -1438,11 +1453,11 @@ public:
 		}
 
 		/**
-		 * Get value from map with given key
+		 * Get entry from map with given key
 		 * @param key key
-		 * @return map value from given key
+		 * @return map entry from given key
 		 */
-		inline const ScriptVariable getMapValue(const string& key) const {
+		inline const ScriptVariable getMapEntry(const string& key) const {
 			if (type != TYPE_MAP) return ScriptVariable();
 			const auto& mapValue = getMapValueReference();
 			auto it = mapValue.find(key);
@@ -1451,25 +1466,28 @@ public:
 		}
 
 		/**
-		 * Set value in map with given key
+		 * Set entry in map with given key
 		 * @param key key
 		 * @param value value
 		 */
-		inline void setMapValue(const string& key, const ScriptVariable& value) {
+		inline void setMapEntry(const string& key, const ScriptVariable& value) {
 			setType(TYPE_MAP);
+			auto mapValueIt = getMapValueReference().find(key);
+			if (mapValueIt != getMapValueReference().end()) mapValueIt->second->releaseReference();
 			getMapValueReference()[key] = new ScriptVariable(value);
 		}
 
 		/**
-		 * Remove value in map with given key
+		 * Remove entry in map with given key
 		 * @param key key
 		 */
-		inline void removeMapValue(const string& key) {
+		inline void removeMapEntry(const string& key) {
 			if (type != TYPE_MAP) return;
 			auto& mapValue = getMapValueReference();
-			auto it = mapValue.find(key);
-			if (it != mapValue.end()) {
-				mapValue.erase(it);
+			auto mapValueIt = mapValue.find(key);
+			if (mapValueIt != mapValue.end()) {
+				mapValueIt->second->releaseReference();
+				mapValue.erase(mapValueIt);
 			}
 		}
 
@@ -1908,7 +1926,7 @@ public:
 					{
 						const auto& arrayValue = getArrayValueReference();
 						vector<string> values;
-						for (const auto& arrayEntry: arrayValue) {
+						for (const auto arrayEntry: arrayValue) {
 							if (arrayEntry->getType() == TYPE_STRING) {
 								values.push_back("\"" + StringTools::replace(StringTools::replace(arrayEntry->getValueAsString(), "\\", "\\\\"), "\"", "\\\"") + "\"" );
 							} else {
@@ -3406,7 +3424,7 @@ public:
 			} else
 			// all checks passed, push to map
 			if (parentVariable->getType() == MiniScript::TYPE_MAP) {
-				parentVariable->setMapValue(key, variable);
+				parentVariable->setMapEntry(key, variable);
 			} else
 			if (parentVariable->getType() == MiniScript::TYPE_SET) {
 				bool booleanValue;

@@ -2417,7 +2417,7 @@ bool MiniScript::call(int scriptIdx, span<ScriptVariable>& argumentValues, Scrip
 		functionArguments.setType(MiniScript::TYPE_ARRAY);
 		// push arguments in function context
 		for (const auto& argumentValue: argumentValues) {
-			functionArguments.pushArrayValue(argumentValue);
+			functionArguments.pushArrayEntry(argumentValue);
 		}
 		// have $arguments
 		setVariable("$arguments", functionArguments);
@@ -2818,7 +2818,7 @@ void MiniScript::registerMethods() {
 					auto functionIdx = MiniScript::SCRIPTIDX_NONE;
 					if (argumentValues[1].getType() == TYPE_MAP) {
 						string function;
-						auto mapValue = argumentValues[1].getMapValue(member);
+						auto mapValue = argumentValues[1].getMapEntry(member);
 						if (mapValue.getType() == MiniScript::TYPE_FUNCTION_ASSIGNMENT && mapValue.getStringValue(function) == true) {
 							functionIdx = miniScript->getFunctionScriptIdx(function);
 						}
@@ -3076,7 +3076,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue.setType(TYPE_MAP);
 				for (const auto& [variableName, variableValue]: miniScript->getScriptState().variables) {
-					returnValue.setMapValue(variableName, *variableValue);
+					returnValue.setMapEntry(variableName, *variableValue);
 				}
 			}
 		};
@@ -6345,7 +6345,7 @@ void MiniScript::registerMethods() {
 					//
 					returnValue.setType(MiniScript::TYPE_ARRAY);
 					for (const auto& tokenizedString: tokenizedStringVector) {
-						returnValue.pushArrayValue(tokenizedString);
+						returnValue.pushArrayEntry(tokenizedString);
 					}
 				}
 			}
@@ -6643,7 +6643,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue.setType(MiniScript::TYPE_ARRAY);
 				for (const auto& argumentValue: argumentValues) {
-					returnValue.pushArrayValue(argumentValue);
+					returnValue.pushArrayEntry(argumentValue);
 				}
 			}
 		};
@@ -6704,7 +6704,7 @@ void MiniScript::registerMethods() {
 					miniScript->startErrorScript();
 				} else {
 					for (auto i = 1; i < argumentValues.size(); i++) {
-						argumentValues[0].pushArrayValue(argumentValues[i]);
+						argumentValues[0].pushArrayEntry(argumentValues[i]);
 					}
 				}
 			}
@@ -6736,7 +6736,7 @@ void MiniScript::registerMethods() {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					returnValue = argumentValues[0].getArrayValue(index);
+					returnValue = argumentValues[0].getArrayEntry(index);
 				}
 			}
 		};
@@ -6768,7 +6768,7 @@ void MiniScript::registerMethods() {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					argumentValues[0].setArrayValue(index, argumentValues[2]);
+					argumentValues[0].setArrayEntry(index, argumentValues[2]);
 				}
 			}
 		};
@@ -6799,7 +6799,7 @@ void MiniScript::registerMethods() {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					argumentValues[0].removeArrayValue(index);
+					argumentValues[0].removeArrayEntry(index);
 				}
 			}
 		};
@@ -6836,9 +6836,9 @@ void MiniScript::registerMethods() {
 				} else {
 					auto& array = argumentValues[0];
 					for (auto i = beginIndex; i < array.getArraySize(); i++) {
-						auto arrayValue = array.getArrayValue(i);
+						auto arrayValue = array.getArrayEntry(i);
 						if (arrayValue.getValueAsString() == stringValue) {
-							array.removeArrayValue(i);
+							array.removeArrayEntry(i);
 							i--;
 						}
 					}
@@ -6879,7 +6879,7 @@ void MiniScript::registerMethods() {
 					const auto& array = argumentValues[0];
 					returnValue.setValue(static_cast<int64_t>(-1));
 					for (auto i = beginIndex; i < array.getArraySize(); i++) {
-						auto arrayValue = array.getArrayValue(i);
+						auto arrayValue = array.getArrayEntry(i);
 						if (arrayValue.getValueAsString() == stringValue) {
 							returnValue.setValue(static_cast<int64_t>(i));
 							break;
@@ -6926,8 +6926,8 @@ void MiniScript::registerMethods() {
 							public:
 								SortClass(MiniScript* miniScript, const string& function): miniScript(miniScript), function(function) {
 								}
-								bool operator()(const MiniScript::ScriptVariable& a, const MiniScript::ScriptVariable& b) const {
-									vector<MiniScript::ScriptVariable> sortArgumentValues { a, b };
+								bool operator()(const MiniScript::ScriptVariable* a, const MiniScript::ScriptVariable* b) const {
+									vector<MiniScript::ScriptVariable> sortArgumentValues { *a, *b };
 									span sortArgumentValuesSpan(sortArgumentValues);
 									MiniScript::ScriptVariable sortReturnValue;
 									miniScript->call(function, sortArgumentValuesSpan, sortReturnValue);
@@ -7026,7 +7026,7 @@ void MiniScript::registerMethods() {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					argumentValues[0].setMapValue(key, argumentValues[2]);
+					argumentValues[0].setMapEntry(key, argumentValues[2]);
 				}
 			}
 		};
@@ -7059,7 +7059,7 @@ void MiniScript::registerMethods() {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					returnValue.setValue(argumentValues[0].hasMapValue(key));
+					returnValue.setValue(argumentValues[0].hasMapEntry(key));
 				}
 			}
 		};
@@ -7092,7 +7092,7 @@ void MiniScript::registerMethods() {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					returnValue = argumentValues[0].getMapValue(key);
+					returnValue = argumentValues[0].getMapEntry(key);
 				}
 			}
 		};
@@ -7125,7 +7125,7 @@ void MiniScript::registerMethods() {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					argumentValues[0].removeMapValue(key);
+					argumentValues[0].removeMapEntry(key);
 				}
 			}
 		};
@@ -7158,7 +7158,7 @@ void MiniScript::registerMethods() {
 					auto keys = argumentValues[0].getMapKeys();
 					returnValue.setType(TYPE_ARRAY);
 					for (const auto& key: keys) {
-						returnValue.pushArrayValue(key);
+						returnValue.pushArrayEntry(key);
 					}
 				}
 			}
@@ -7191,8 +7191,8 @@ void MiniScript::registerMethods() {
 				} else {
 					auto values = argumentValues[0].getMapValues();
 					returnValue.setType(TYPE_ARRAY);
-					for (const auto& value: values) {
-						returnValue.pushArrayValue(value);
+					for (const auto value: values) {
+						returnValue.pushArrayEntry(*value);
 					}
 				}
 			}
@@ -7347,7 +7347,7 @@ void MiniScript::registerMethods() {
 					auto keys = argumentValues[0].getSetKeys();
 					returnValue.setType(TYPE_ARRAY);
 					for (const auto& key: keys) {
-						returnValue.pushArrayValue(key);
+						returnValue.pushArrayEntry(key);
 					}
 				}
 			}
@@ -7868,7 +7868,7 @@ const MiniScript::ScriptVariable MiniScript::initializeArray(const string_view& 
 			if (arrayValueLength > 0) {
 				auto arrayValueStringView = StringTools::viewTrim(string_view(&initializerString[quotedArrayValueStart], arrayValueLength));
 				if (arrayValueStringView.empty() == false) {
-					variable.pushArrayValue(string(arrayValueStringView));
+					variable.pushArrayEntry(string(arrayValueStringView));
 				}
 			}
 		} else
@@ -7881,7 +7881,7 @@ const MiniScript::ScriptVariable MiniScript::initializeArray(const string_view& 
 				if (arrayValueStringView.empty() == false) {
 					ScriptVariable arrayValue;
 					arrayValue.setImplicitTypedValueFromStringView(arrayValueStringView, miniScript, statement);
-					variable.pushArrayValue(arrayValue);
+					variable.pushArrayEntry(arrayValue);
 				}
 			}
 		}
@@ -7944,7 +7944,7 @@ const MiniScript::ScriptVariable MiniScript::initializeArray(const string_view& 
 							auto arrayValueStringView = StringTools::viewTrim(string_view(&initializerString[arrayValueStart], arrayValueLength));
 							if (arrayValueStringView.empty() == false) {
 								auto arrayValue = initializeArray(arrayValueStringView, miniScript, statement);
-								variable.pushArrayValue(arrayValue);
+								variable.pushArrayEntry(arrayValue);
 							}
 						}
 						//
@@ -7973,7 +7973,7 @@ const MiniScript::ScriptVariable MiniScript::initializeArray(const string_view& 
 							auto arrayValueStringView = StringTools::viewTrim(string_view(&initializerString[arrayValueStart], arrayValueLength));
 							if (arrayValueStringView.empty() == false) {
 								auto arrayValue = initializeMapSet(arrayValueStringView, miniScript, statement);
-								variable.pushArrayValue(arrayValue);
+								variable.pushArrayEntry(arrayValue);
 							}
 						}
 						//
@@ -8057,7 +8057,7 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 					auto mapValueStringView = StringTools::viewTrim(string_view(&initializerString[quotedMapValueStart], mapValueLength));
 					if (mapValueStringView.empty() == false) {
 						//
-						variable.setMapValue(string(mapKey), string(mapValueStringView));
+						variable.setMapEntry(string(mapKey), string(mapValueStringView));
 						//
 						hasValues = true;
 					}
@@ -8072,14 +8072,14 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 						ScriptVariable mapValue;
 						mapValue.setImplicitTypedValueFromStringView(mapValueStringView, miniScript, statement);
 						//
-						variable.setMapValue(string(mapKey), mapValue);
+						variable.setMapEntry(string(mapKey), mapValue);
 						//
 						hasValues = true;
 					}
 				}
 			} else {
 				//
-				variable.setMapValue(string(mapKey), ScriptVariable());
+				variable.setMapEntry(string(mapKey), ScriptVariable());
 			}
 		}
 		//
@@ -8263,11 +8263,11 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 										//
 										ScriptVariable mapValue;
 										mapValue.setFunctionAssignment(functionName);
-										variable.setMapValue(string(mapKey), mapValue);
+										variable.setMapEntry(string(mapKey), mapValue);
 									} else {
 										// map/set
 										auto mapValue = initializeMapSet(mapValueStringView, miniScript, statement);
-										variable.setMapValue(string(mapKey), mapValue);
+										variable.setMapEntry(string(mapKey), mapValue);
 									}
 								}
 							}
@@ -8325,7 +8325,7 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 								auto mapValueStringView = StringTools::viewTrim(string_view(&initializerString[mapValueStart], mapValueLength));
 								if (mapValueStringView.empty() == false) {
 									auto mapValue = initializeArray(mapValueStringView, miniScript, statement);
-									variable.setMapValue(string(mapKey), mapValue);
+									variable.setMapEntry(string(mapKey), mapValue);
 								}
 							}
 							//
@@ -8621,8 +8621,8 @@ inline const MiniScript::ScriptVariable MiniScript::initializeVariable(const Scr
 				arrayVariable.setType(TYPE_ARRAY);
 				auto arrayPointer = variable.getArrayPointer();
 				if (arrayPointer == nullptr) break;
-				for (const auto arrayValue: *arrayPointer) {
-					arrayVariable.pushArrayValue(initializeVariable(arrayValue));
+				for (const auto arrayEntry: *arrayPointer) {
+					arrayVariable.pushArrayEntry(initializeVariable(*arrayEntry));
 				}
 				//
 				return arrayVariable;
@@ -8634,7 +8634,7 @@ inline const MiniScript::ScriptVariable MiniScript::initializeVariable(const Scr
 				auto mapPointer = variable.getMapPointer();
 				if (mapPointer == nullptr) break;
 				for (const auto& [mapKey, mapValue]: *mapPointer) {
-					mapVariable.setMapValue(mapKey, initializeVariable(mapValue));
+					mapVariable.setMapEntry(mapKey, initializeVariable(*mapValue));
 				}
 				//
 				return mapVariable;
