@@ -2,7 +2,7 @@
 	<layout padding-left="20" padding-right="20" padding-top="20" border="1" border-color="{$color.element_frame}" width="auto" height="auto" alignment="vertical" horizontal-align="center" background-color="{$color.element_foreground}">
 		<image src="resources/engine/images/tdme_fontlogo_white.png"/>
 		<space height="20"/>
-		<progress-bar id="progressbar_splashscreen" width="100%" text-on="true" value="0.5" />
+		<progress-bar id="progressbar_splashscreen" width="100%" heigth="25" text-on="true" value="0.5" />
 		<space height="5"/>
 		<layout alignment="horizontal" horizontal-align="right" vertical-align="center" width="100%" height="auto">
 			<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="v1.9.99" width="auto" height="25" />						
