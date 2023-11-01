@@ -616,7 +616,7 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodInputKeyboardIsKeyDown(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "keyCode", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "keyCode", .optional = false, .reference = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -648,7 +648,7 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodInputKeyboardIsCharDown(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "charAsString", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "charAsString", .optional = false, .reference = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -851,7 +851,7 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodInputMouseIsButtonDown(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "button", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "button", .optional = false, .reference = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN),
 				miniScript(miniScript) {}
@@ -882,7 +882,7 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodInputMouseIsButtonUp(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "button", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "button", .optional = false, .reference = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN),
 				miniScript(miniScript) {}
@@ -913,7 +913,7 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodInputMouseIsDragging(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "button", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "button", .optional = false, .reference = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN),
 				miniScript(miniScript) {}
@@ -1113,8 +1113,8 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUIScreenSetEnabled(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "screenId", .optional = false, .assignBack = false },
-						{.type = ScriptVariableType::TYPE_BOOLEAN, .name = "enabled", .optional = false, .assignBack = false }
+						{.type = ScriptVariableType::TYPE_STRING, .name = "screenId", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_BOOLEAN, .name = "enabled", .optional = false, .reference = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -1154,7 +1154,7 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUIScreenIsEnabled(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "screenId", .optional = false, .assignBack = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "screenId", .optional = false, .reference = false },
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -1191,9 +1191,9 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUIScreenGoto(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "fileName", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_MAP, .name = "variables", .optional = true, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "arguments", .optional = true, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "fileName", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_MAP, .name = "variables", .optional = true, .reference = false },
+						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "arguments", .optional = true, .reference = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -1256,9 +1256,9 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUIScreenPush(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "fileName", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_MAP, .name = "variables", .optional = true, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "arguments", .optional = true, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "fileName", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_MAP, .name = "variables", .optional = true, .reference = false },
+						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "arguments", .optional = true, .reference = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -1344,8 +1344,8 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUIScreenCall(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "screenId", .optional = false, .assignBack = false },
-						{.type = ScriptVariableType::TYPE_STRING, .name = "function", .optional = false, .assignBack = false }
+						{.type = ScriptVariableType::TYPE_STRING, .name = "screenId", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "function", .optional = false, .reference = false }
 					},
 					ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
@@ -1472,7 +1472,7 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUINodeControllerGetValue(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .reference = false }
 					},
 					ScriptVariableType::TYPE_STRING
 				),
@@ -1511,8 +1511,8 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUINodeControllerSetValue(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "value", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "value", .optional = false, .reference = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -1553,7 +1553,7 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUITextNodeGetText(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "textNodeId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "textNodeId", .optional = false, .reference = false },
 					},
 					ScriptVariableType::TYPE_STRING
 				),
@@ -1595,8 +1595,8 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUITextNodeSetText(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "textNodeId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "text", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "textNodeId", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "text", .optional = false, .reference = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -1640,8 +1640,8 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUIElementNodeConditionsHas(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "condition", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "condition", .optional = false, .reference = false },
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -1681,7 +1681,7 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUIElementNodeConditionsGet(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .reference = false }
 					},
 					ScriptVariableType::TYPE_ARRAY
 				),
@@ -1723,8 +1723,8 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUIElementNodeConditionsSet(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "condition", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "condition", .optional = false, .reference = false },
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -1764,8 +1764,8 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUIElementNodeConditionsAdd(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "condition", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "condition", .optional = false, .reference = false },
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -1805,8 +1805,8 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUIElementNodeConditionsSetAll(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "conditions", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "conditions", .optional = false, .reference = false },
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -1854,8 +1854,8 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUIElementNodeConditionsRemove(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "condition", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "condition", .optional = false, .reference = false },
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -1895,7 +1895,7 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUIElementNodeConditionsRemoveAll(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "elementNodeId", .optional = false, .reference = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -1933,7 +1933,7 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUIImageNodeGetSource(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "imageNodeId", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "imageNodeId", .optional = false, .reference = false }
 					},
 					ScriptVariableType::TYPE_STRING
 				),
@@ -1971,8 +1971,8 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUIImageNodeSetSource(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "imageNodeId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "source", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "imageNodeId", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "source", .optional = false, .reference = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -2012,7 +2012,7 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUIVideoNodeGetSource(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "videoNodeId", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "videoNodeId", .optional = false, .reference = false }
 					},
 					ScriptVariableType::TYPE_STRING
 				),
@@ -2050,8 +2050,8 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUIVideoNodeSetSource(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "videoNodeId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "source", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "videoNodeId", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "source", .optional = false, .reference = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -2091,7 +2091,7 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUIParentNodeClearSubNodes(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "parentNodeId", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "parentNodeId", .optional = false, .reference = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -2129,9 +2129,9 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUIParentNodeAddSubNodes(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "parentNodeId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "xml", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "resetScrollOffsets", .optional = true, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "parentNodeId", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "xml", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "resetScrollOffsets", .optional = true, .reference = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -2173,9 +2173,9 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUIParentNodeReplaceSubNodes(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "parentNodeId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "xml", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "resetScrollOffsets", .optional = true, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "parentNodeId", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "xml", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "resetScrollOffsets", .optional = true, .reference = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -2216,8 +2216,8 @@ void GUIMiniScript::registerMethods() {
 		public:
 			ScriptMethodLogicSignalSend(GUIMiniScript* miniScript):
 				ScriptMethod({
-					{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false, .assignBack = false },
-					{ .type = ScriptVariableType::TYPE_STRING, .name = "signal", .optional = false, .assignBack = false }
+					{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false, .reference = false },
+					{ .type = ScriptVariableType::TYPE_STRING, .name = "signal", .optional = false, .reference = false }
 				}),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -2268,8 +2268,8 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodLogicHas(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "callable", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "callable", .optional = false, .reference = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -2322,8 +2322,8 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodLogicCall(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "callable", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "callable", .optional = false, .reference = false }
 					},
 					ScriptVariableType::TYPE_PSEUDO_MIXED
 				),

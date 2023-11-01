@@ -87,7 +87,7 @@ int main(int argc, char** argv)
 				string argumentValueString;
 				if (argumentType.optional == true) argumentValueString+= "[";
 				argumentValueString+= MiniScript::ScriptVariable::getTypeAsString(argumentType.type) + " ";
-				argumentValueString+= string() + (argumentType.assignBack == true?"=":"") + "$" + argumentType.name;
+				argumentValueString+= string() + (argumentType.reference == true?"=":"") + "$" + argumentType.name;
 				if (argumentType.optional == true) argumentValueString+= "]";
 				lines.push_back("			<parameter name=\"" + argumentValueString + "\" />");
 			}

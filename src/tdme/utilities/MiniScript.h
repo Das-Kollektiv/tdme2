@@ -2089,7 +2089,7 @@ public:
 			ScriptVariableType type;
 			string name;
 			bool optional;
-			bool assignBack;
+			bool reference;
 		};
 
 		// forbid class copy
@@ -2144,7 +2144,7 @@ public:
 				}
 				if (argumentIdx > beginIdx) result+= ", ";
 				if (optionalArgumentCount > 0 || argumentIdx >= beginIdx) {
-					if (argumentType.assignBack == true) {
+					if (argumentType.reference == true) {
 						result+= "=";
 					}
 					result+= "$" + argumentType.name + ": " + ScriptVariable::getTypeAsString(argumentType.type);
@@ -2244,13 +2244,13 @@ public:
 		struct ScriptArgument {
 			ScriptArgument(
 				const string& name,
-				bool assignBack
+				bool reference
 			):
 				name(name),
-				assignBack(assignBack)
+				reference(reference)
 			{}
 			string name;
-			bool assignBack;
+			bool reference;
 		};
 		enum ScriptType { SCRIPTTYPE_NONE, SCRIPTTYPE_FUNCTION, SCRIPTTYPE_ON, SCRIPTTYPE_ONENABLED };
 		Script(

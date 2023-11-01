@@ -622,7 +622,7 @@ void MiniScriptTranspiler::generateArrayMapSetVariable(
 				for (const auto arrayEntry: *arrayValue) {
 					generateArrayMapSetVariable(
 						miniScript,
-						arrayEntry,
+						*arrayEntry,
 						methodCodeMap,
 						allMethods,
 						methodName,
@@ -632,7 +632,7 @@ void MiniScriptTranspiler::generateArrayMapSetVariable(
 						generatedDefinitions,
 						depth,
 						initializerDepth + 1,
-						"variableD" + to_string(initializerDepth) + ".pushArrayValue(variableD" + to_string(initializerDepth + 1) + ");"
+						"variableD" + to_string(initializerDepth) + ".pushArrayEntry(variableD" + to_string(initializerDepth + 1) + ");"
 					);
 				}
 				generatedDefinitions+= indent + "\t" + postStatement + "\n";
@@ -649,7 +649,7 @@ void MiniScriptTranspiler::generateArrayMapSetVariable(
 					auto mapEntryNameEscaped = StringTools::replace(StringTools::replace(mapEntryName, "\\", "\\\\"), "\"", "\\\"");
 					generateArrayMapSetVariable(
 						miniScript,
-						mapEntryValue,
+						*mapEntryValue,
 						methodCodeMap,
 						allMethods,
 						methodName,
@@ -659,7 +659,7 @@ void MiniScriptTranspiler::generateArrayMapSetVariable(
 						generatedDefinitions,
 						depth,
 						initializerDepth + 1,
-						"variableD" + to_string(initializerDepth) + ".setMapValue(\"" + mapEntryNameEscaped + "\", variableD" + to_string(initializerDepth + 1) + ");"
+						"variableD" + to_string(initializerDepth) + ".setMapEntry(\"" + mapEntryNameEscaped + "\", variableD" + to_string(initializerDepth + 1) + ");"
 					);
 				}
 				generatedDefinitions+= indent + "\t" + postStatement + "\n";
@@ -1294,7 +1294,7 @@ bool MiniScriptTranspiler::transpileScriptStatement(
 	}
 
 	// assign back arguments code for functions
-	vector<string> assignBackCodeLines;
+	vector<string> referenceCodeLines;
 	if (method == MiniScript::METHOD_SCRIPTCALL && syntaxTree.arguments.empty() == false) {
 		// check script user functions
 		auto scriptIdx = miniScript->getFunctionScriptIdx(syntaxTree.arguments[0].value.getValueAsString());
@@ -1307,15 +1307,15 @@ bool MiniScriptTranspiler::transpileScriptStatement(
 					break;
 				}
 				//
-				if (argument.assignBack == true) {
-					const auto& assignBackArgument = syntaxTree.arguments[argumentIdx];
-					if (assignBackArgument.type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
-						assignBackArgument.value.getValueAsString() == "getVariable" &&
-						assignBackArgument.arguments.empty() == false) {
+				if (argument.reference == true) {
+					const auto& referenceArgument = syntaxTree.arguments[argumentIdx];
+					if (referenceArgument.type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
+						referenceArgument.value.getValueAsString() == "getVariable" &&
+						referenceArgument.arguments.empty() == false) {
 						//
-						auto variableName = assignBackArgument.arguments[0].value.getValueAsString();
+						auto variableName = referenceArgument.arguments[0].value.getValueAsString();
 						if (miniScript->isVariableAccess(variableName) == true) {
-							assignBackCodeLines.push_back("setVariable(\"" + variableName + "\", argumentValues[" + to_string(argumentIdx) + "], &statement);");
+							referenceCodeLines.push_back("setVariable(\"" + variableName + "\", argumentValues[" + to_string(argumentIdx) + "], &statement);");
 						} else {
 							Console::println("MiniScriptTranspiler::executeScriptStatement(): " + miniScript->getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + variableName + "'");
 						}
@@ -1326,10 +1326,10 @@ bool MiniScriptTranspiler::transpileScriptStatement(
 							": Can not assign back argument value @ " +
 							to_string(argumentIdx) +
 							" to variable '" +
-							assignBackArgument.value.getValueAsString() +
+							referenceArgument.value.getValueAsString() +
 							(
-								assignBackArgument.type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD ||
-								assignBackArgument.type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION
+								referenceArgument.type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD ||
+								referenceArgument.type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION
 									?"(...)"
 									:""
 							) +
@@ -1352,15 +1352,15 @@ bool MiniScriptTranspiler::transpileScriptStatement(
 				break;
 			}
 			//
-			if (argumentType.assignBack == true) {
-				const auto& assignBackArgument = syntaxTree.arguments[argumentIdx];
-				if (assignBackArgument.type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
-					assignBackArgument.value.getValueAsString() == "getVariable" &&
-					assignBackArgument.arguments.empty() == false) {
+			if (argumentType.reference == true) {
+				const auto& referenceArgument = syntaxTree.arguments[argumentIdx];
+				if (referenceArgument.type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
+					referenceArgument.value.getValueAsString() == "getVariable" &&
+					referenceArgument.arguments.empty() == false) {
 					//
-					auto variableName = assignBackArgument.arguments[0].value.getValueAsString();
+					auto variableName = referenceArgument.arguments[0].value.getValueAsString();
 					if (miniScript->isVariableAccess(variableName) == true) {
-						assignBackCodeLines.push_back("setVariable(\"" + variableName + "\", argumentValues[" + to_string(argumentIdx) + "], &statement);");
+						referenceCodeLines.push_back("setVariable(\"" + variableName + "\", argumentValues[" + to_string(argumentIdx) + "], &statement);");
 					} else {
 						Console::println("MiniScriptTranspiler::transpileScriptStatement(): " + miniScript->getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + variableName + "'");
 					}
@@ -1371,10 +1371,10 @@ bool MiniScriptTranspiler::transpileScriptStatement(
 						": Can not assign back argument value @ " +
 						to_string(argumentIdx) +
 						" to variable '" +
-						assignBackArgument.value.getValueAsString() +
+						referenceArgument.value.getValueAsString() +
 						(
-							assignBackArgument.type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD ||
-							assignBackArgument.type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION
+							referenceArgument.type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD ||
+							referenceArgument.type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION
 								?"(...)"
 								:""
 						) +
@@ -1387,9 +1387,9 @@ bool MiniScriptTranspiler::transpileScriptStatement(
 	}
 
 	//
-	if (assignBackCodeLines.empty() == false) {
-		assignBackCodeLines.insert(assignBackCodeLines.begin(), string() + "// assign back");
-		assignBackCodeLines.insert(assignBackCodeLines.end(), string() + "//");
+	if (referenceCodeLines.empty() == false) {
+		referenceCodeLines.insert(referenceCodeLines.begin(), string() + "// assign back");
+		referenceCodeLines.insert(referenceCodeLines.end(), string() + "//");
 	}
 
 	// special case: inject EVALUATEMEMBERACCESS_MEMBER for "internal.script.evaluateMemberAccess"
@@ -1429,7 +1429,7 @@ bool MiniScriptTranspiler::transpileScriptStatement(
 		} else
 		if (StringTools::regexMatch(codeLine, "[\\ \\t]*miniScript[\\ \\t]*->startErrorScript[\\ \\t]*\\([\\ \\t]*\\)[\\ \\t]*;[\\ \\t]*") == true ||
 			StringTools::regexMatch(codeLine, "[\\ \\t]*miniScript[\\ \\t]*->emit[\\ \\t]*\\([\\ \\t]*[a-zA-Z0-9]*[\\ \\t]*\\)[\\ \\t]*;[\\ \\t]*") == true) {
-			for (const auto& assignBackCodeLine: assignBackCodeLines) {
+			for (const auto& referenceCodeLine: referenceCodeLines) {
 				generatedCode+= minIndentString + depthIndentString + "\t";
 				for (auto i = 0; i < codeLine.size(); i++) {
 					if (codeLine[i] == ' ' || codeLine[i] == '\t') {
@@ -1438,7 +1438,7 @@ bool MiniScriptTranspiler::transpileScriptStatement(
 						break;
 					}
 				}
-				generatedCode+= assignBackCodeLine + "\n";
+				generatedCode+= referenceCodeLine + "\n";
 			}
 			generatedCode+= minIndentString + depthIndentString + "\t" + codeLine + " return" + (returnValue.empty() == false?" " + returnValue:"") + ";\n";
 		} else {
@@ -1461,8 +1461,8 @@ bool MiniScriptTranspiler::transpileScriptStatement(
 	}
 
 	// assign back code
-	for (const auto& assignBackCodeLine: assignBackCodeLines) {
-		generatedCode+= minIndentString + depthIndentString + "\t" + assignBackCodeLine + "\n";
+	for (const auto& referenceCodeLine: referenceCodeLines) {
+		generatedCode+= minIndentString + depthIndentString + "\t" + referenceCodeLine + "\n";
 	}
 
 	//
@@ -1706,7 +1706,7 @@ const string MiniScriptTranspiler::createSourceCode(MiniScript::Script::ScriptTy
 			result+= "(";
 			for (const auto& argument: arguments) {
 				if (argumentIdx > 0) result+= ", ";
-				if (argument.assignBack == true) result+= "=";
+				if (argument.reference == true) result+= "=";
 				result+= argument.name;
 				argumentIdx++;
 			}
