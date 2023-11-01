@@ -271,9 +271,12 @@ public:
 		inline void releaseReference() {
 			if (reference != nullptr) {
 				reference->releaseReference();
-				--referenceCounter;
-			} else
-			if (--referenceCounter == 0) setType(TYPE_NULL);
+			}
+			if (--referenceCounter == 0) {
+				reference = nullptr;
+				setType(TYPE_NULL);
+				delete this;
+			}
 		}
 
 		/**
@@ -548,36 +551,26 @@ public:
 				case TYPE_ARRAY:
 					setValue(scriptVariable.getArrayValueReference());
 					// copy initializer if we have any
-					if (scriptVariable.initializer != nullptr) {
-						initializer = new Initializer();
-						initializer->copy(scriptVariable.initializer);
-					}
+					initializer->copy(scriptVariable.initializer);
 					//
 					break;
 				case TYPE_MAP:
 					setValue(scriptVariable.getMapValueReference());
 					// copy initializer if we have any
-					if (scriptVariable.initializer != nullptr) {
-						initializer = new Initializer();
-						initializer->copy(scriptVariable.initializer);
-					}
+					initializer->copy(scriptVariable.initializer);
+					//
 					break;
 				case TYPE_SET:
 					setValue(scriptVariable.getSetValueReference());
 					// copy initializer if we have any
-					if (scriptVariable.initializer != nullptr) {
-						initializer = new Initializer();
-						initializer->copy(scriptVariable.initializer);
-					}
+					initializer->copy(scriptVariable.initializer);
 					//
 					break;
 				case TYPE_FUNCTION_CALL:
 					setType(TYPE_FUNCTION_CALL);
 					getStringValueReference() = scriptVariable.getStringValueReference();
 					// copy initializer if we have any
-					if (scriptVariable.initializer != nullptr) {
-						initializer->copy(scriptVariable.initializer);
-					}
+					initializer->copy(scriptVariable.initializer);
 					//
 					break;
 				case TYPE_FUNCTION_ASSIGNMENT:
@@ -593,8 +586,12 @@ public:
 		 * @param scriptVariable script variable to move from
 		 */
 		inline ScriptVariable(ScriptVariable&& scriptVariable):
-			type(exchange(scriptVariable.reference != nullptr?scriptVariable.reference->type:scriptVariable.type, MiniScript::TYPE_NULL)),
-			valuePtr(exchange(scriptVariable.getValuePtrReference(), 0ll)) {
+			type(exchange(scriptVariable.type, MiniScript::TYPE_NULL)),
+			valuePtr(exchange(scriptVariable.valuePtr, 0ll)),
+			initializer(exchange(scriptVariable.initializer, nullptr)),
+			reference(exchange(scriptVariable.reference, nullptr)),
+			referenceCounter(exchange(scriptVariable.referenceCounter, 1)) {
+			//
 		}
 
 		/**
@@ -645,37 +642,26 @@ public:
 				case TYPE_ARRAY:
 					setValue(scriptVariable.getArrayValueReference());
 					// copy initializer if we have any
-					if (scriptVariable.initializer != nullptr) {
-						initializer = new Initializer();
-						initializer->copy(scriptVariable.initializer);
-					}
+					initializer->copy(scriptVariable.initializer);
 					//
 					break;
 				case TYPE_MAP:
 					setValue(scriptVariable.getMapValueReference());
 					// copy initializer if we have any
-					if (scriptVariable.initializer != nullptr) {
-						initializer = new Initializer();
-						initializer->copy(scriptVariable.initializer);
-					}
+					initializer->copy(scriptVariable.initializer);
 					//
 					break;
 				case TYPE_SET:
 					setValue(scriptVariable.getSetValueReference());
 					// copy initializer if we have any
-					if (scriptVariable.initializer != nullptr) {
-						initializer = new Initializer();
-						initializer->copy(scriptVariable.initializer);
-					}
+					initializer->copy(scriptVariable.initializer);
 					//
 					break;
 				case TYPE_FUNCTION_CALL:
 					setType(TYPE_FUNCTION_CALL);
 					getStringValueReference() = scriptVariable.getStringValueReference();
 					// copy initializer if we have any
-					if (scriptVariable.initializer != nullptr) {
-						initializer->copy(scriptVariable.initializer);
-					}
+					initializer->copy(scriptVariable.initializer);
 					//
 					break;
 				case TYPE_FUNCTION_ASSIGNMENT:
@@ -693,9 +679,11 @@ public:
 		 * @return this script variable
 		 */
 		inline ScriptVariable& operator=(ScriptVariable&& scriptVariable) {
-			// do the swap
-			swap(type, scriptVariable.reference != nullptr?scriptVariable.reference->type:scriptVariable.type);
-			swap(getValuePtrReference(), scriptVariable.getValuePtrReference());
+			swap(type, scriptVariable.type);
+			swap(valuePtr, scriptVariable.valuePtr);
+			swap(initializer, scriptVariable.initializer);
+			swap(reference, scriptVariable.reference);
+			swap(referenceCounter, scriptVariable.referenceCounter);
 			//
 			return *this;
 		}
@@ -710,7 +698,13 @@ public:
 		 * Destructor
 		 */
 		inline ~ScriptVariable() {
-			releaseReference();
+			if (reference != nullptr) {
+				reference->releaseReference();
+			}
+			if (--referenceCounter == 0) {
+				reference = nullptr;
+				setType(TYPE_NULL);
+			}
 		}
 
 		/**
@@ -867,20 +861,24 @@ public:
 				case TYPE_ARRAY:
 					for (auto arrayValue: getArrayValueReference()) arrayValue->releaseReference();
 					delete static_cast<vector<ScriptVariable*>*>((void*)getValuePtrReference());
-					if (initializer != nullptr) delete initializer;
+					delete initializer;
+					initializer = nullptr;
 					break;
 				case TYPE_MAP:
 					for (const auto& [mapEntryName, mapEntryValue]: getMapValueReference()) mapEntryValue->releaseReference();
 					delete static_cast<unordered_map<string, ScriptVariable*>*>((void*)getValuePtrReference());
-					if (initializer != nullptr) delete initializer;
+					delete initializer;
+					initializer = nullptr;
 					break;
 				case TYPE_SET:
 					delete static_cast<unordered_set<string>*>((void*)getValuePtrReference());
-					if (initializer != nullptr) delete initializer;
+					delete initializer;
+					initializer = nullptr;
 					break;
 				case TYPE_FUNCTION_CALL:
 					delete static_cast<string*>((void*)getValuePtrReference());
-					if (initializer != nullptr) delete initializer;
+					delete initializer;
+					initializer = nullptr;
 					break;
 			}
 			this->getValuePtrReference() = 0LL;
@@ -891,7 +889,7 @@ public:
 				type = newType;
 			}
 			//
-			switch(newType) {
+			switch(getType()) {
 				case TYPE_NULL:
 					break;
 				case TYPE_BOOLEAN:
@@ -1409,7 +1407,10 @@ public:
 		inline void removeArrayEntry(int idx) {
 			if (type != TYPE_ARRAY) return;
 			auto& arrayValue = getArrayValueReference();
-			if (idx >= 0 && idx < arrayValue.size()) arrayValue.erase(arrayValue.begin() + idx);
+			if (idx >= 0 && idx < arrayValue.size()) {
+				arrayValue[idx]->releaseReference();
+				arrayValue.erase(arrayValue.begin() + idx);
+			}
 			return;
 		}
 

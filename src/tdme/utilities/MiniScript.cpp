@@ -7991,7 +7991,8 @@ const MiniScript::ScriptVariable MiniScript::initializeArray(const string_view& 
 		lc = c;
 	}
 	//
-	variable.initializer = new MiniScript::ScriptVariable::Initializer(string(initializerString), statement, nullptr);
+	auto initalizer = make_unique<MiniScript::ScriptVariable::Initializer>(string(initializerString), statement, nullptr);
+	variable.initializer->copy(initalizer.get());
 	//
 	return variable;
 }
@@ -8361,7 +8362,8 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 		variable = setVariable;
 	}
 	//
-	variable.initializer = new MiniScript::ScriptVariable::Initializer(string(initializerString), statement, nullptr);
+	auto initalizer = make_unique<MiniScript::ScriptVariable::Initializer>(string(initializerString), statement, nullptr);
+	variable.initializer->copy(initalizer.get());
 	//
 	return variable;
 }
