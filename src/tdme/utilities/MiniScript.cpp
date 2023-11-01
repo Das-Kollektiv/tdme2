@@ -8643,14 +8643,10 @@ inline const MiniScript::ScriptVariable MiniScript::initializeVariable(const Scr
 			}
 		case TYPE_FUNCTION_CALL:
 			{
-				ScriptVariable returnValue;
-				if (variable.getInitializer() != nullptr) {
-					returnValue = executeScriptStatement(
-						*variable.getInitializer()->getSyntaxTree(),
-						variable.getInitializer()->getStatement()
-					);
-				}
-				return returnValue;
+				return executeScriptStatement(
+					*variable.getInitializer()->getSyntaxTree(),
+					variable.getInitializer()->getStatement()
+				);
 			}
 		default: break;
 	}
