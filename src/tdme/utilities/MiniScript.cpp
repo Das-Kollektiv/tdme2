@@ -8390,7 +8390,7 @@ void MiniScript::ScriptVariable::setFunctionCallStatement(const string& initiali
 	if (miniScript->createScriptStatementSyntaxTree(methodName, arguments, initializerScriptStatement, *evaluateSyntaxTree) == false) {
 		//
 	} else {
-		initializer = new Initializer(initializerStatement, statement, evaluateSyntaxTree);
+		getInitializerReference() = new Initializer(initializerStatement, statement, evaluateSyntaxTree);
 	}
 }
 
@@ -8644,10 +8644,10 @@ inline const MiniScript::ScriptVariable MiniScript::initializeVariable(const Scr
 		case TYPE_FUNCTION_CALL:
 			{
 				ScriptVariable returnValue;
-				if (variable.initializer != nullptr) {
+				if (variable.getInitializer() != nullptr) {
 					returnValue = executeScriptStatement(
-						*variable.initializer->getSyntaxTree(),
-						variable.initializer->getStatement()
+						*variable.getInitializer()->getSyntaxTree(),
+						variable.getInitializer()->getStatement()
 					);
 				}
 				return returnValue;

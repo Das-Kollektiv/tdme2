@@ -280,6 +280,14 @@ public:
 		}
 
 		/**
+		 * Return initializer
+		 * @return initializer
+		 */
+		inline Initializer*& getInitializerReference() {
+			return reference != nullptr?reference->initializer:initializer;
+		}
+
+		/**
 		 * Return const value pointer
 		 * @return value ptr
 		 */
@@ -507,6 +515,18 @@ public:
 		STATIC_DLL_IMPEXT static const string CLASSNAME_SET;
 
 		/**
+		 * Create reference variable
+		 * @param variable variable
+		 * @returns reference variable
+		 */
+		inline static ScriptVariable createReferenceVariable(const ScriptVariable& variable) {
+			ScriptVariable referenceVariable;
+			referenceVariable.reference = &referenceVariable;
+			referenceVariable.referenceCounter++;
+			return referenceVariable;
+		}
+
+		/**
 		 * Copy constructor
 		 * @param scriptVariable script variable to copy
 		 */
@@ -551,26 +571,26 @@ public:
 				case TYPE_ARRAY:
 					setValue(scriptVariable.getArrayValueReference());
 					// copy initializer if we have any
-					initializer->copy(scriptVariable.initializer);
+					getInitializer()->copy(scriptVariable.initializer);
 					//
 					break;
 				case TYPE_MAP:
 					setValue(scriptVariable.getMapValueReference());
 					// copy initializer if we have any
-					initializer->copy(scriptVariable.initializer);
+					getInitializer()->copy(scriptVariable.initializer);
 					//
 					break;
 				case TYPE_SET:
 					setValue(scriptVariable.getSetValueReference());
 					// copy initializer if we have any
-					initializer->copy(scriptVariable.initializer);
+					getInitializer()->copy(scriptVariable.initializer);
 					//
 					break;
 				case TYPE_FUNCTION_CALL:
 					setType(TYPE_FUNCTION_CALL);
 					getStringValueReference() = scriptVariable.getStringValueReference();
 					// copy initializer if we have any
-					initializer->copy(scriptVariable.initializer);
+					getInitializer()->copy(scriptVariable.initializer);
 					//
 					break;
 				case TYPE_FUNCTION_ASSIGNMENT:
@@ -642,26 +662,26 @@ public:
 				case TYPE_ARRAY:
 					setValue(scriptVariable.getArrayValueReference());
 					// copy initializer if we have any
-					initializer->copy(scriptVariable.initializer);
+					getInitializer()->copy(scriptVariable.initializer);
 					//
 					break;
 				case TYPE_MAP:
 					setValue(scriptVariable.getMapValueReference());
 					// copy initializer if we have any
-					initializer->copy(scriptVariable.initializer);
+					getInitializer()->copy(scriptVariable.initializer);
 					//
 					break;
 				case TYPE_SET:
 					setValue(scriptVariable.getSetValueReference());
 					// copy initializer if we have any
-					initializer->copy(scriptVariable.initializer);
+					getInitializer()->copy(scriptVariable.initializer);
 					//
 					break;
 				case TYPE_FUNCTION_CALL:
 					setType(TYPE_FUNCTION_CALL);
 					getStringValueReference() = scriptVariable.getStringValueReference();
 					// copy initializer if we have any
-					initializer->copy(scriptVariable.initializer);
+					getInitializer()->copy(scriptVariable.initializer);
 					//
 					break;
 				case TYPE_FUNCTION_ASSIGNMENT:
@@ -861,24 +881,24 @@ public:
 				case TYPE_ARRAY:
 					for (auto arrayValue: getArrayValueReference()) arrayValue->releaseReference();
 					delete static_cast<vector<ScriptVariable*>*>((void*)getValuePtrReference());
-					delete initializer;
-					initializer = nullptr;
+					delete getInitializerReference();
+					getInitializerReference() = nullptr;
 					break;
 				case TYPE_MAP:
 					for (const auto& [mapEntryName, mapEntryValue]: getMapValueReference()) mapEntryValue->releaseReference();
 					delete static_cast<unordered_map<string, ScriptVariable*>*>((void*)getValuePtrReference());
-					delete initializer;
-					initializer = nullptr;
+					delete getInitializerReference();
+					getInitializerReference() = nullptr;
 					break;
 				case TYPE_SET:
 					delete static_cast<unordered_set<string>*>((void*)getValuePtrReference());
-					delete initializer;
-					initializer = nullptr;
+					delete getInitializerReference();
+					getInitializerReference() = nullptr;
 					break;
 				case TYPE_FUNCTION_CALL:
 					delete static_cast<string*>((void*)getValuePtrReference());
-					delete initializer;
-					initializer = nullptr;
+					delete getInitializerReference();
+					getInitializerReference() = nullptr;
 					break;
 			}
 			this->getValuePtrReference() = 0LL;
@@ -925,19 +945,19 @@ public:
 					break;
 				case TYPE_ARRAY:
 					getValuePtrReference() = (uint64_t)(new vector<ScriptVariable*>());
-					initializer = new Initializer();
+					getInitializerReference() = new Initializer();
 					break;
 				case TYPE_MAP:
 					getValuePtrReference() = (uint64_t)(new unordered_map<string, ScriptVariable*>());
-					initializer = new Initializer();
+					getInitializerReference() = new Initializer();
 					break;
 				case TYPE_SET:
 					getValuePtrReference() = (uint64_t)(new unordered_set<string>());
-					initializer = new Initializer();
+					getInitializerReference() = new Initializer();
 					break;
 				case TYPE_FUNCTION_CALL:
 					getValuePtrReference() = (uint64_t)(new string());
-					initializer = new Initializer();
+					getInitializerReference() = new Initializer();
 					break;
 			}
 		}
@@ -947,7 +967,7 @@ public:
 		 * @return initializer
 		 */
 		inline Initializer* getInitializer() const {
-			return initializer;
+			return reference != nullptr?reference->initializer:initializer;
 		}
 
 		/**
