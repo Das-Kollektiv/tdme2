@@ -525,10 +525,6 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 					break;
 				}
 			case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
-				{
-					argumentValues.push_back(executeScriptStatement(argument, statement));
-					break;
-				}
 			case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
 				{
 					argumentValues.push_back(executeScriptStatement(argument, statement));
@@ -551,45 +547,6 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 			// call
 			span argumentValuesSpan(argumentValues);
 			call(scriptIdx, argumentValuesSpan, returnValue);
-			// assign back arguments
-			auto argumentIdx = 0;
-			for (const auto& argument: scripts[scriptIdx].arguments) {
-				//
-				if (argumentIdx == argumentValues.size()) {
-					break;
-				}
-				//
-				if (argument.reference == true) {
-					const auto& referenceArgument = syntaxTree.arguments[argumentIdx];
-					if (referenceArgument.type == ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
-						referenceArgument.value.getValueAsString() == "getVariable" &&
-						referenceArgument.arguments.empty() == false) {
-						//
-						auto variableName = referenceArgument.arguments[0].value.getValueAsString();
-						if (viewIsVariableAccess(variableName) == true) {
-							setVariable(variableName, argumentValues[argumentIdx], &statement);
-						} else {
-							Console::println(getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + variableName + "'");
-						}
-					} else {
-						Console::println(
-							getStatementInformation(statement) +
-							": Can not assign back argument value @ " +
-							to_string(argumentIdx) +
-							" to variable '" +
-							referenceArgument.value.getValueAsString() +
-							(
-								referenceArgument.type == ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD ||
-								referenceArgument.type == ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION
-									?"(...)"
-									:""
-							) +
-							"'"
-						);
-					}
-				}
-				argumentIdx++;
-			}
 			//
 			return returnValue;
 		} else {
@@ -636,7 +593,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 							argumentOk =
 								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
 									argumentType.optional:
-									argumentValues[argumentIdx].type == TYPE_VECTOR2;
+									argumentValues[argumentIdx].getType() == TYPE_VECTOR2;
 							break;
 						}
 					case TYPE_VECTOR3:
@@ -644,7 +601,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 							argumentOk =
 								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
 									argumentType.optional:
-									argumentValues[argumentIdx].type == TYPE_VECTOR3;
+									argumentValues[argumentIdx].getType() == TYPE_VECTOR3;
 							break;
 						}
 					case TYPE_VECTOR4:
@@ -652,7 +609,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 							argumentOk =
 								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
 									argumentType.optional:
-									argumentValues[argumentIdx].type == TYPE_VECTOR4;
+									argumentValues[argumentIdx].getType() == TYPE_VECTOR4;
 							break;
 						}
 					case TYPE_QUATERNION:
@@ -660,7 +617,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 							argumentOk =
 								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
 									argumentType.optional:
-									argumentValues[argumentIdx].type == TYPE_QUATERNION;
+									argumentValues[argumentIdx].getType() == TYPE_QUATERNION;
 							break;
 						}
 					case TYPE_MATRIX3x3:
@@ -668,7 +625,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 							argumentOk =
 								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
 									argumentType.optional:
-									argumentValues[argumentIdx].type == TYPE_MATRIX3x3;
+									argumentValues[argumentIdx].getType() == TYPE_MATRIX3x3;
 							break;
 						}
 					case TYPE_MATRIX4x4:
@@ -676,7 +633,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 							argumentOk =
 								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
 									argumentType.optional:
-									argumentValues[argumentIdx].type == TYPE_MATRIX4x4;
+									argumentValues[argumentIdx].getType() == TYPE_MATRIX4x4;
 							break;
 						}
 					case TYPE_TRANSFORM:
@@ -684,7 +641,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 							argumentOk =
 								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
 									argumentType.optional:
-									argumentValues[argumentIdx].type == TYPE_TRANSFORM;
+									argumentValues[argumentIdx].getType() == TYPE_TRANSFORM;
 							break;
 						}
 					case TYPE_ARRAY:
@@ -692,7 +649,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 							argumentOk =
 								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
 									argumentType.optional:
-									argumentValues[argumentIdx].type == TYPE_ARRAY;
+									argumentValues[argumentIdx].getType() == TYPE_ARRAY;
 							break;
 						}
 					case TYPE_MAP:
@@ -700,7 +657,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 							argumentOk =
 								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
 									argumentType.optional:
-									argumentValues[argumentIdx].type == TYPE_MAP;
+									argumentValues[argumentIdx].getType() == TYPE_MAP;
 							break;
 						}
 					case TYPE_SET:
@@ -708,7 +665,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 							argumentOk =
 								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
 									argumentType.optional:
-									argumentValues[argumentIdx].type == TYPE_SET;
+									argumentValues[argumentIdx].getType() == TYPE_SET;
 							break;
 						}
 					case TYPE_PSEUDO_NUMBER:
@@ -736,48 +693,6 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 		// execute method
 		span argumentValuesSpan(argumentValues);
 		scriptMethod->executeMethod(argumentValuesSpan, returnValue, statement);
-		// assign back arguments
-		{
-			auto argumentIdx = 0;
-			for (const auto& argumentType: scriptMethod->getArgumentTypes()) {
-				//
-				if (argumentIdx == argumentValues.size()) {
-					break;
-				}
-				//
-				if (argumentType.reference == true) {
-					const auto& referenceArgument = syntaxTree.arguments[argumentIdx];
-					if (referenceArgument.type == ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
-						referenceArgument.value.getValueAsString() == "getVariable" &&
-						referenceArgument.arguments.empty() == false) {
-						//
-						auto variableName = referenceArgument.arguments[0].value.getValueAsString();
-						if (isVariableAccess(variableName) == true) {
-							setVariable(variableName, argumentValues[argumentIdx], &statement);
-						} else {
-							Console::println(getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + variableName + "'");
-						}
-					} else {
-						Console::println(
-							getStatementInformation(statement) +
-							": Can not assign back argument value @ " +
-							to_string(argumentIdx) +
-							" to variable '" +
-							referenceArgument.value.getValueAsString() +
-							(
-								referenceArgument.type == ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD ||
-								referenceArgument.type == ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION
-									?"(...)"
-									:""
-							) +
-							"'"
-						);
-					}
-
-				}
-				argumentIdx++;
-			}
-		}
 		// check return type
 		if (MiniScript::ScriptVariable::isExpectedType(returnValue.getType(), scriptMethod->getReturnValueType()) == false) {
 			Console::println(
@@ -794,7 +709,37 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 
 bool MiniScript::createScriptStatementSyntaxTree(const string_view& methodName, const vector<string_view>& arguments, const ScriptStatement& statement, ScriptSyntaxTreeNode& syntaxTree) {
 	if (VERBOSE == true) Console::println("MiniScript::createScriptStatementSyntaxTree(): " + getStatementInformation(statement) + ": " + string(methodName) + "(" + getArgumentsAsString(arguments) + ")");
+	// method/function
+	auto scriptFunctionIdx = SCRIPTIDX_NONE;
+	ScriptMethod* scriptMethod = nullptr;
+	// try first user functions
+	{
+		auto scriptFunctionsIt = scriptFunctions.find(string(methodName));
+		if (scriptFunctionsIt != scriptFunctions.end()) {
+			scriptFunctionIdx = scriptFunctionsIt->second;
+		}
+	}
+	// try methods next
+	{
+		auto scriptMethodsIt = scriptMethods.find(string(methodName));
+		if (scriptMethodsIt != scriptMethods.end()) {
+			scriptMethod = scriptMethodsIt->second;
+		}
+	}
+
 	// arguments
+	vector<bool> argumentReferences;
+	if (scriptFunctionIdx != SCRIPTIDX_NONE) {
+		for (const auto& argument: scripts[scriptFunctionIdx].arguments) {
+			argumentReferences.push_back(argument.reference);
+		}
+	} else
+	if (scriptMethod != nullptr) {
+		for (const auto argument: scriptMethod->getArgumentTypes()) {
+			argumentReferences.push_back(argument.reference);
+		}
+	}
+	auto argumentIdx = 0;
 	for (const auto& argument: arguments) {
 		// object member access
 		string_view accessObjectMemberObject;
@@ -821,7 +766,7 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& methodName, 
 			value.setValue(string(argument));
 
 			// look up getVariable method
-			string methodName = "getVariable";
+			string methodName = argumentIdx >= argumentReferences.size() || argumentReferences[argumentIdx] == false?"getVariable":"getVariableReference";
 			ScriptMethod* method = nullptr;
 			{
 				auto scriptMethodsIt = scriptMethods.find(methodName);
@@ -903,35 +848,29 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& methodName, 
 				);
 			}
 		}
+		//
+		argumentIdx++;
 	}
 	// try first user functions
-	{
-		auto functionString = string(methodName);
-		auto scriptFunctionsIt = scriptFunctions.find(functionString);
-		if (scriptFunctionsIt != scriptFunctions.end()) {
-			syntaxTree.type = ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION;
-			syntaxTree.value = functionString;
-			//
-			return true;
-		}
-	}
+	if (scriptFunctionIdx != SCRIPTIDX_NONE) {
+		syntaxTree.type = ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION;
+		syntaxTree.value = string(methodName);
+		//
+		return true;
+	} else
 	// try methods next
-	{
-		string methodString = string(methodName);
-		auto scriptMethodsIt = scriptMethods.find(methodString);
-		if (scriptMethodsIt != scriptMethods.end()) {
-			syntaxTree.type = ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD;
-			syntaxTree.value = methodString;
-			syntaxTree.method = scriptMethodsIt->second;
-			//
-			return true;
-		} else {
-			Console::println(getStatementInformation(statement) + ": unknown function/method: " + string(methodString) + "()");
-			//
-			parseErrors.push_back(getStatementInformation(statement) + ": unknown function/method: " + string(methodString) + "()");
-			//
-			return false;
-		}
+	if (scriptMethod != nullptr) {
+		syntaxTree.type = ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD;
+		syntaxTree.value = string(methodName);
+		syntaxTree.method = scriptMethod;
+		//
+		return true;
+	} else {
+		Console::println(getStatementInformation(statement) + ": unknown function/method: " + string(methodName) + "()");
+		//
+		parseErrors.push_back(getStatementInformation(statement) + ": unknown function/method: " + string(methodName) + "()");
+		//
+		return false;
 	}
 	//
 	return false;
@@ -2427,7 +2366,7 @@ bool MiniScript::call(int scriptIdx, span<ScriptVariable>& argumentValues, Scrip
 			if (argumentIdx == argumentValues.size()) {
 				break;
 			}
-			setVariable(argument.name, move(argumentValues[argumentIdx]));
+			setVariable(argument.name, move(argumentValues[argumentIdx]), nullptr, argument.reference);
 			argumentIdx++;
 		}
 	}
@@ -2444,19 +2383,6 @@ bool MiniScript::call(int scriptIdx, span<ScriptVariable>& argumentValues, Scrip
 		execute();
 		// run this function dude
 		if (getScriptState().running == false) break;
-	}
-	// also put named arguments from state context variables back into argumentValues
-	{
-		auto argumentIdx = 0;
-		for (const auto& argument: scripts[scriptIdx].arguments) {
-			if (argumentIdx == argumentValues.size()) {
-				break;
-			}
-			if (argument.reference == true) {
-				argumentValues[argumentIdx] = getVariable(argument.name);
-			}
-			argumentIdx++;
-		}
 	}
 	// get return value
 	{
@@ -2797,6 +2723,7 @@ void MiniScript::registerMethods() {
 				return "internal.script.evaluateMemberAccess";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				// TODO: references
 				// Current layout:
 				//	0: variable name of object
 				//	1: variable content of object
@@ -5605,7 +5532,7 @@ void MiniScript::registerMethods() {
 					MiniScript::getFloatValue(argumentValues, 2, timePassedSeconds) == true &&
 					MiniScript::getFloatValue(argumentValues, 3, degreesPerSeconds) == true) {
 					returnValue = Rotation::interpolate(currentAngle, targetAngle, timePassedSeconds, degreesPerSeconds, interpolatedAngle);
-					argumentValues[4] = interpolatedAngle;
+					argumentValues[4].setValue(interpolatedAngle);
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -7385,6 +7312,39 @@ void MiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodGetVariable(this));
 	}
+	// get variable reference
+	{
+		//
+		class ScriptMethodGetVariableReference: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodGetVariableReference(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false, .reference = false }
+					},
+					ScriptVariableType::TYPE_PSEUDO_MIXED
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "getVariableReference";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable, &statement, true);
+				} else {
+					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
+					miniScript->startErrorScript();
+				}
+			}
+			bool isPrivate() const override {
+				return true;
+			}
+		};
+		registerMethod(new ScriptMethodGetVariableReference(this));
+	}
 	// set variable
 	{
 		//
@@ -7645,7 +7605,7 @@ void MiniScript::registerMethods() {
 					miniScript->startErrorScript();
 				} else {
 					++value;
-					argumentValues[0] = value;
+					argumentValues[0].setValue(value);
 					returnValue.setValue(value);
 				}
 			}
@@ -7679,7 +7639,7 @@ void MiniScript::registerMethods() {
 					miniScript->startErrorScript();
 				} else {
 					--value;
-					argumentValues[0] = value;
+					argumentValues[0].setValue(value);
 					returnValue.setValue(value);
 				}
 			}

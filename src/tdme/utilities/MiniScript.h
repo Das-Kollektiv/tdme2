@@ -519,10 +519,22 @@ public:
 		 * @param variable variable
 		 * @returns reference variable
 		 */
-		inline static ScriptVariable createReferenceVariable(const ScriptVariable& variable) {
+		inline static ScriptVariable createReferenceVariable(const ScriptVariable* variable) {
 			ScriptVariable referenceVariable;
-			referenceVariable.reference = &referenceVariable;
-			referenceVariable.referenceCounter++;
+			referenceVariable.reference = (ScriptVariable*)variable; // TODO: improve me!
+			referenceVariable.reference->acquireReference();
+			return referenceVariable;
+		}
+
+		/**
+		 * Create reference variable pointer
+		 * @param variable variable
+		 * @returns reference variable
+		 */
+		inline static ScriptVariable* createReferenceVariablePointer(const ScriptVariable* variable) {
+			ScriptVariable* referenceVariable = new ScriptVariable();
+			referenceVariable->reference = (ScriptVariable*)variable; // TODO: improve me!
+			referenceVariable->reference->acquireReference();
 			return referenceVariable;
 		}
 
@@ -531,73 +543,78 @@ public:
 		 * @param scriptVariable script variable to copy
 		 */
 		inline ScriptVariable(const ScriptVariable& scriptVariable) {
-			switch(scriptVariable.getType()) {
-				case TYPE_NULL:
-					setNullValue();
-					break;
-				case TYPE_BOOLEAN:
-					setValue(scriptVariable.getBooleanValueReference());
-					break;
-				case TYPE_INTEGER:
-					setValue(scriptVariable.getIntegerValueReference());
-					break;
-				case TYPE_FLOAT:
-					setValue(scriptVariable.getFloatValueReference());
-					break;
-				case TYPE_STRING:
-					setValue(scriptVariable.getStringValueReference());
-					break;
-				case TYPE_VECTOR2:
-					setValue(scriptVariable.getVector2ValueReference());
-					break;
-				case TYPE_VECTOR3:
-					setValue(scriptVariable.getVector3ValueReference());
-					break;
-				case TYPE_VECTOR4:
-					setValue(scriptVariable.getVector4ValueReference());
-					break;
-				case TYPE_QUATERNION:
-					setValue(scriptVariable.getQuaternionValueReference());
-					break;
-				case TYPE_MATRIX3x3:
-					setValue(scriptVariable.getMatrix3x3ValueReference());
-					break;
-				case TYPE_MATRIX4x4:
-					setValue(scriptVariable.getMatrix4x4ValueReference());
-					break;
-				case TYPE_TRANSFORM:
-					setValue(scriptVariable.getTransformValueReference());
-					break;
-				case TYPE_ARRAY:
-					setValue(scriptVariable.getArrayValueReference());
-					// copy initializer if we have any
-					getInitializer()->copy(scriptVariable.initializer);
-					//
-					break;
-				case TYPE_MAP:
-					setValue(scriptVariable.getMapValueReference());
-					// copy initializer if we have any
-					getInitializer()->copy(scriptVariable.initializer);
-					//
-					break;
-				case TYPE_SET:
-					setValue(scriptVariable.getSetValueReference());
-					// copy initializer if we have any
-					getInitializer()->copy(scriptVariable.initializer);
-					//
-					break;
-				case TYPE_FUNCTION_CALL:
-					setType(TYPE_FUNCTION_CALL);
-					getStringValueReference() = scriptVariable.getStringValueReference();
-					// copy initializer if we have any
-					getInitializer()->copy(scriptVariable.initializer);
-					//
-					break;
-				case TYPE_FUNCTION_ASSIGNMENT:
-					setFunctionAssignment(scriptVariable.getStringValueReference());
-					break;
-				// pseudo ...
-				default: break;
+			if (scriptVariable.reference != nullptr) {
+				reference = scriptVariable.reference;
+				scriptVariable.reference->acquireReference();
+			} else {
+				switch(scriptVariable.getType()) {
+					case TYPE_NULL:
+						setNullValue();
+						break;
+					case TYPE_BOOLEAN:
+						setValue(scriptVariable.getBooleanValueReference());
+						break;
+					case TYPE_INTEGER:
+						setValue(scriptVariable.getIntegerValueReference());
+						break;
+					case TYPE_FLOAT:
+						setValue(scriptVariable.getFloatValueReference());
+						break;
+					case TYPE_STRING:
+						setValue(scriptVariable.getStringValueReference());
+						break;
+					case TYPE_VECTOR2:
+						setValue(scriptVariable.getVector2ValueReference());
+						break;
+					case TYPE_VECTOR3:
+						setValue(scriptVariable.getVector3ValueReference());
+						break;
+					case TYPE_VECTOR4:
+						setValue(scriptVariable.getVector4ValueReference());
+						break;
+					case TYPE_QUATERNION:
+						setValue(scriptVariable.getQuaternionValueReference());
+						break;
+					case TYPE_MATRIX3x3:
+						setValue(scriptVariable.getMatrix3x3ValueReference());
+						break;
+					case TYPE_MATRIX4x4:
+						setValue(scriptVariable.getMatrix4x4ValueReference());
+						break;
+					case TYPE_TRANSFORM:
+						setValue(scriptVariable.getTransformValueReference());
+						break;
+					case TYPE_ARRAY:
+						setValue(scriptVariable.getArrayValueReference());
+						// copy initializer if we have any
+						getInitializer()->copy(scriptVariable.initializer);
+						//
+						break;
+					case TYPE_MAP:
+						setValue(scriptVariable.getMapValueReference());
+						// copy initializer if we have any
+						getInitializer()->copy(scriptVariable.initializer);
+						//
+						break;
+					case TYPE_SET:
+						setValue(scriptVariable.getSetValueReference());
+						// copy initializer if we have any
+						getInitializer()->copy(scriptVariable.initializer);
+						//
+						break;
+					case TYPE_FUNCTION_CALL:
+						setType(TYPE_FUNCTION_CALL);
+						getStringValueReference() = scriptVariable.getStringValueReference();
+						// copy initializer if we have any
+						getInitializer()->copy(scriptVariable.initializer);
+						//
+						break;
+					case TYPE_FUNCTION_ASSIGNMENT:
+						setFunctionAssignment(scriptVariable.getStringValueReference());
+						break;
+					// pseudo ...
+					default: break;
+				}
 			}
 		}
 
@@ -620,76 +637,82 @@ public:
 		 * @return this script variable
 		 */
 		inline ScriptVariable& operator=(const ScriptVariable& scriptVariable) {
-			//
-			setNullValue();
-			//
-			switch(scriptVariable.getType()) {
-				case TYPE_NULL:
-					break;
-				case TYPE_BOOLEAN:
-					setValue(scriptVariable.getBooleanValueReference());
-					break;
-				case TYPE_INTEGER:
-					setValue(scriptVariable.getIntegerValueReference());
-					break;
-				case TYPE_FLOAT:
-					setValue(scriptVariable.getFloatValueReference());
-					break;
-				case TYPE_STRING:
-					setValue(scriptVariable.getStringValueReference());
-					break;
-				case TYPE_VECTOR2:
-					setValue(scriptVariable.getVector2ValueReference());
-					break;
-				case TYPE_VECTOR3:
-					setValue(scriptVariable.getVector3ValueReference());
-					break;
-				case TYPE_VECTOR4:
-					setValue(scriptVariable.getVector4ValueReference());
-					break;
-				case TYPE_QUATERNION:
-					setValue(scriptVariable.getQuaternionValueReference());
-					break;
-				case TYPE_MATRIX3x3:
-					setValue(scriptVariable.getMatrix3x3ValueReference());
-					break;
-				case TYPE_MATRIX4x4:
-					setValue(scriptVariable.getMatrix4x4ValueReference());
-					break;
-				case TYPE_TRANSFORM:
-					setValue(scriptVariable.getTransformValueReference());
-					break;
-				case TYPE_ARRAY:
-					setValue(scriptVariable.getArrayValueReference());
-					// copy initializer if we have any
-					getInitializer()->copy(scriptVariable.initializer);
-					//
-					break;
-				case TYPE_MAP:
-					setValue(scriptVariable.getMapValueReference());
-					// copy initializer if we have any
-					getInitializer()->copy(scriptVariable.initializer);
-					//
-					break;
-				case TYPE_SET:
-					setValue(scriptVariable.getSetValueReference());
-					// copy initializer if we have any
-					getInitializer()->copy(scriptVariable.initializer);
-					//
-					break;
-				case TYPE_FUNCTION_CALL:
-					setType(TYPE_FUNCTION_CALL);
-					getStringValueReference() = scriptVariable.getStringValueReference();
-					// copy initializer if we have any
-					getInitializer()->copy(scriptVariable.initializer);
-					//
-					break;
-				case TYPE_FUNCTION_ASSIGNMENT:
-					setFunctionAssignment(scriptVariable.getStringValueReference());
-					break;
-				// pseudo ...
-				default: break;
+			if (scriptVariable.reference != nullptr) {
+				reference = scriptVariable.reference;
+				scriptVariable.reference->acquireReference();
+			} else {
+				//
+				setNullValue();
+				//
+				switch(scriptVariable.getType()) {
+					case TYPE_NULL:
+						break;
+					case TYPE_BOOLEAN:
+						setValue(scriptVariable.getBooleanValueReference());
+						break;
+					case TYPE_INTEGER:
+						setValue(scriptVariable.getIntegerValueReference());
+						break;
+					case TYPE_FLOAT:
+						setValue(scriptVariable.getFloatValueReference());
+						break;
+					case TYPE_STRING:
+						setValue(scriptVariable.getStringValueReference());
+						break;
+					case TYPE_VECTOR2:
+						setValue(scriptVariable.getVector2ValueReference());
+						break;
+					case TYPE_VECTOR3:
+						setValue(scriptVariable.getVector3ValueReference());
+						break;
+					case TYPE_VECTOR4:
+						setValue(scriptVariable.getVector4ValueReference());
+						break;
+					case TYPE_QUATERNION:
+						setValue(scriptVariable.getQuaternionValueReference());
+						break;
+					case TYPE_MATRIX3x3:
+						setValue(scriptVariable.getMatrix3x3ValueReference());
+						break;
+					case TYPE_MATRIX4x4:
+						setValue(scriptVariable.getMatrix4x4ValueReference());
+						break;
+					case TYPE_TRANSFORM:
+						setValue(scriptVariable.getTransformValueReference());
+						break;
+					case TYPE_ARRAY:
+						setValue(scriptVariable.getArrayValueReference());
+						// copy initializer if we have any
+						getInitializer()->copy(scriptVariable.initializer);
+						//
+						break;
+					case TYPE_MAP:
+						setValue(scriptVariable.getMapValueReference());
+						// copy initializer if we have any
+						getInitializer()->copy(scriptVariable.initializer);
+						//
+						break;
+					case TYPE_SET:
+						setValue(scriptVariable.getSetValueReference());
+						// copy initializer if we have any
+						getInitializer()->copy(scriptVariable.initializer);
+						//
+						break;
+					case TYPE_FUNCTION_CALL:
+						setType(TYPE_FUNCTION_CALL);
+						getStringValueReference() = scriptVariable.getStringValueReference();
+						// copy initializer if we have any
+						getInitializer()->copy(scriptVariable.initializer);
+						//
+						break;
+					case TYPE_FUNCTION_ASSIGNMENT:
+						setFunctionAssignment(scriptVariable.getStringValueReference());
+						break;
+					// pseudo ...
+					default: break;
+				}
 			}
+			//
 			return *this;
 		}
 
@@ -977,7 +1000,7 @@ public:
 		 * @return success
 		 */
 		inline bool getBooleanValue(bool& value, bool optional = false) const {
-			switch(type) {
+			switch(getType()) {
 				case TYPE_BOOLEAN:
 					value = getBooleanValueReference();
 					return true;
@@ -1009,7 +1032,7 @@ public:
 		 * @return success
 		 */
 		inline bool getIntegerValue(int64_t& value, bool optional = false) const {
-			switch(type) {
+			switch(getType()) {
 				case TYPE_BOOLEAN:
 					value = getBooleanValueReference() == true?1:0;
 					return true;
@@ -1049,7 +1072,7 @@ public:
 		 * @return success
 		 */
 		inline bool getFloatValue(float& value, bool optional = false) const {
-			switch(type) {
+			switch(getType()) {
 				case TYPE_BOOLEAN:
 					value = getBooleanValueReference() == true?1.0f:0.0f;
 					return true;
@@ -1080,7 +1103,7 @@ public:
 		 * @return success
 		 */
 		inline bool getStringValue(string& value, bool optional = false) const {
-			switch(type) {
+			switch(getType()) {
 				case TYPE_BOOLEAN:
 					value = getBooleanValueReference() == true?"true":"false";
 					return true;
@@ -1107,7 +1130,7 @@ public:
 		 * @return success
 		 */
 		inline bool getVector2Value(Vector2& value, bool optional = false) const {
-			switch(type) {
+			switch(getType()) {
 				case TYPE_VECTOR2:
 					value = getVector2ValueReference();
 					return true;
@@ -1124,7 +1147,7 @@ public:
 		 * @return success
 		 */
 		inline bool getVector3Value(Vector3& value, bool optional = false) const {
-			switch(type) {
+			switch(getType()) {
 				case TYPE_VECTOR3:
 					value = getVector3ValueReference();
 					return true;
@@ -1141,7 +1164,7 @@ public:
 		 * @return success
 		 */
 		inline bool getVector4Value(Vector4& value, bool optional = false) const {
-			switch(type) {
+			switch(getType()) {
 				case TYPE_VECTOR4:
 					value = getVector4ValueReference();
 					return true;
@@ -1158,7 +1181,7 @@ public:
 		 * @return success
 		 */
 		inline bool getQuaternionValue(Quaternion& value, bool optional = false) const {
-			switch(type) {
+			switch(getType()) {
 				case TYPE_QUATERNION:
 					value = getQuaternionValueReference();
 					return true;
@@ -1175,7 +1198,7 @@ public:
 		 * @return success
 		 */
 		inline bool getMatrix3x3Value(Matrix3x3& value, bool optional = false) const {
-			switch(type) {
+			switch(getType()) {
 				case TYPE_MATRIX3x3:
 					value = getMatrix3x3ValueReference();
 					return true;
@@ -1192,7 +1215,7 @@ public:
 		 * @return success
 		 */
 		inline bool getMatrix4x4Value(Matrix4x4& value, bool optional = false) const {
-			switch(type) {
+			switch(getType()) {
 				case TYPE_MATRIX4x4:
 					value = getMatrix4x4ValueReference();
 					return true;
@@ -1209,7 +1232,7 @@ public:
 		 * @return success
 		 */
 		inline bool getTransformValue(Transform& value, bool optional = false) const {
-			switch(type) {
+			switch(getType()) {
 				case TYPE_TRANSFORM:
 					value = getTransformValueReference();
 					return true;
@@ -1363,7 +1386,7 @@ public:
 		 * @return return const pointer to underlying vector or nullptr
 		 */
 		inline const vector<ScriptVariable*>* getArrayPointer() const {
-			if (type != TYPE_ARRAY) return nullptr;
+			if (getType() != TYPE_ARRAY) return nullptr;
 			auto& arrayValue = getArrayValueReference();
 			return &arrayValue;
 		}
@@ -1372,7 +1395,7 @@ public:
 		 * @return pointer to underlying vector or nullptr
 		 */
 		inline vector<ScriptVariable*>* getArrayPointer() {
-			if (type != TYPE_ARRAY) return nullptr;
+			if (getType() != TYPE_ARRAY) return nullptr;
 			auto& arrayValue = getArrayValueReference();
 			return &arrayValue;
 		}
@@ -1392,7 +1415,7 @@ public:
 		 * @return entry from array with given index
 		 */
 		inline const ScriptVariable getArrayEntry(int idx) const {
-			if (type != TYPE_ARRAY) return ScriptVariable();
+			if (getType() != TYPE_ARRAY) return ScriptVariable();
 			const auto& arrayValue = getArrayValueReference();
 			if (idx >= 0 && idx < arrayValue.size()) return *arrayValue[idx];
 			return ScriptVariable();
@@ -1425,7 +1448,7 @@ public:
 		 * @param idx index
 		 */
 		inline void removeArrayEntry(int idx) {
-			if (type != TYPE_ARRAY) return;
+			if (getType() != TYPE_ARRAY) return;
 			auto& arrayValue = getArrayValueReference();
 			if (idx >= 0 && idx < arrayValue.size()) {
 				arrayValue[idx]->releaseReference();
@@ -1438,7 +1461,7 @@ public:
 		 * @return return const pointer to underlying unordered_map or nullptr
 		 */
 		inline const unordered_map<string, ScriptVariable*>* getMapPointer() const {
-			if (type != TYPE_MAP) return nullptr;
+			if (getType() != TYPE_MAP) return nullptr;
 			auto& mapValue = getMapValueReference();
 			return &mapValue;
 		}
@@ -1447,7 +1470,7 @@ public:
 		 * @return pointer to underlying unordered_map or nullptr
 		 */
 		inline unordered_map<string, ScriptVariable*>* getMapPointer() {
-			if (type != TYPE_MAP) return nullptr;
+			if (getType() != TYPE_MAP) return nullptr;
 			auto& mapValue = getMapValueReference();
 			return &mapValue;
 		}
@@ -1466,7 +1489,7 @@ public:
 		 * @return key exists
 		 */
 		inline bool hasMapEntry(const string& key) const {
-			if (type != TYPE_MAP) return false;
+			if (getType() != TYPE_MAP) return false;
 			const auto& mapValue = getMapValueReference();
 			auto it = mapValue.find(key);
 			if (it != mapValue.end()) return true;
@@ -1479,7 +1502,7 @@ public:
 		 * @return map entry from given key
 		 */
 		inline const ScriptVariable getMapEntry(const string& key) const {
-			if (type != TYPE_MAP) return ScriptVariable();
+			if (getType() != TYPE_MAP) return ScriptVariable();
 			const auto& mapValue = getMapValueReference();
 			auto it = mapValue.find(key);
 			if (it != mapValue.end()) return *it->second;
@@ -1503,7 +1526,7 @@ public:
 		 * @param key key
 		 */
 		inline void removeMapEntry(const string& key) {
-			if (type != TYPE_MAP) return;
+			if (getType() != TYPE_MAP) return;
 			auto& mapValue = getMapValueReference();
 			auto mapValueIt = mapValue.find(key);
 			if (mapValueIt != mapValue.end()) {
@@ -1518,7 +1541,7 @@ public:
 		 */
 		inline const vector<string> getMapKeys() const {
 			vector<string> keys;
-			if (type != TYPE_MAP) return keys;
+			if (getType() != TYPE_MAP) return keys;
 			const auto& mapValue = getMapValueReference();
 			for (const auto& [mapEntryName, mapEntryValue]: mapValue) {
 				keys.push_back(mapEntryName);
@@ -1532,7 +1555,7 @@ public:
 		 */
 		inline const vector<ScriptVariable*> getMapValues() const {
 			vector<ScriptVariable*> values;
-			if (type != TYPE_MAP) return values;
+			if (getType() != TYPE_MAP) return values;
 			const auto& mapValue = getMapValueReference();
 			for (const auto& [mapEntryKey, mapEntryValue]: mapValue) {
 				values.push_back(mapEntryValue);
@@ -1544,7 +1567,7 @@ public:
 		 * @return const pointer to underlying unordered_set or nullptr
 		 */
 		inline const unordered_set<string>* getSetPointer() const {
-			if (type != TYPE_SET) return nullptr;
+			if (getType() != TYPE_SET) return nullptr;
 			auto& setValue = getSetValueReference();
 			return &setValue;
 		}
@@ -1553,7 +1576,7 @@ public:
 		 * @return pointer to underlying unordered_set or nullptr
 		 */
 		inline unordered_set<string>* getSetPointer() {
-			if (type != TYPE_SET) return nullptr;
+			if (getType() != TYPE_SET) return nullptr;
 			auto& setValue = getSetValueReference();
 			return &setValue;
 		}
@@ -1572,7 +1595,7 @@ public:
 		 * @return key exists
 		 */
 		inline bool hasSetKey(const string& key) const {
-			if (type != TYPE_SET) return false;
+			if (getType() != TYPE_SET) return false;
 			const auto& setValue = getSetValueReference();
 			auto it = setValue.find(key);
 			if (it != setValue.end()) return true;
@@ -1593,7 +1616,7 @@ public:
 		 * @param key key
 		 */
 		inline void removeSetKey(const string& key) {
-			if (type != TYPE_SET) return;
+			if (getType() != TYPE_SET) return;
 			auto& setValue = getSetValueReference();
 			auto it = setValue.find(key);
 			if (it != setValue.end()) {
@@ -1607,7 +1630,7 @@ public:
 		 */
 		inline const vector<string> getSetKeys() const {
 			vector<string> keys;
-			if (type != TYPE_SET) return keys;
+			if (getType() != TYPE_SET) return keys;
 			const auto& setValue = getSetValueReference();
 			for (const auto& key: setValue) {
 				keys.push_back(key);
@@ -1764,7 +1787,7 @@ public:
 		 * @return this script variable type as string
 		 */
 		inline const string getTypeAsString() const {
-			return getTypeAsString(type);
+			return getTypeAsString(getType());
 		}
 
 		/**
@@ -1800,7 +1823,7 @@ public:
 		 * @return this script variable type as return type string representation
 		 */
 		inline const string getReturnTypeAsString() const {
-			return getReturnTypeAsString(type);
+			return getReturnTypeAsString(getType());
 		}
 
 		/**
@@ -1810,9 +1833,9 @@ public:
 			string result;
 			result+= getTypeAsString();
 			result+= "(";
-			if (type == TYPE_STRING) result+= "\"";
+			if (getType() == TYPE_STRING) result+= "\"";
 			result+= getValueAsString();
-			if (type == TYPE_STRING) result+= "\"";
+			if (getType() == TYPE_STRING) result+= "\"";
 			result+= ")";
 			return result;
 		}
@@ -1825,7 +1848,7 @@ public:
 		 */
 		inline const string getValueAsString(bool formatted = false, int depth = 0) const {
 			string result;
-			switch (type) {
+			switch (getType()) {
 				case TYPE_NULL:
 					result+= "<Null>";
 					break;
@@ -3384,9 +3407,10 @@ public:
 	 * Returns variable with given name
 	 * @param name name
 	 * @param statement optional statement the variable is read in
+	 * @param createReference optional flag for creating variable references
 	 * @return variable
 	 */
-	inline const ScriptVariable getVariable(const string& name, const ScriptStatement* statement = nullptr) {
+	inline const ScriptVariable getVariable(const string& name, const ScriptStatement* statement = nullptr, bool createReference = false) {
 		// global accessor
 		string globalVariableName;
 		if (StringTools::startsWith(name, "$GLOBAL.") == true) {
@@ -3403,7 +3427,7 @@ public:
 			return ScriptVariable(setAccessBool == SETACCESSBOOL_TRUE);
 		} else
 		if (variablePtr != nullptr) {
-			return *variablePtr;
+			return createReference == false?*variablePtr:ScriptVariable::createReferenceVariable(variablePtr);
 		} else {
 			return ScriptVariable();
 		}
@@ -3414,8 +3438,9 @@ public:
 	 * @param name name
 	 * @param variable variable
 	 * @param statement optional statement the variable is written in
+	 * @param createReference optional flag for creating variable references
 	 */
-	inline void setVariable(const string& name, const ScriptVariable& variable, const ScriptStatement* statement = nullptr) {
+	inline void setVariable(const string& name, const ScriptVariable& variable, const ScriptStatement* statement = nullptr, bool createReference = false) {
 		// global accessor
 		string globalVariableName;
 		if (StringTools::startsWith(name, "$GLOBAL.") == true) {
@@ -3430,7 +3455,7 @@ public:
 		auto variablePtr = getVariableIntern(globalVariableName.empty() == true?name:globalVariableName, __FUNCTION__, parentVariable, arrayIdx, key, setAccessBool, statement, false, globalVariableName.empty() == false);
 		// common case
 		if (variablePtr != nullptr) {
-			*variablePtr = variable;
+			*variablePtr = createReference == false?variable:ScriptVariable::createReferenceVariable(&variable);
 			return;
 		} else
 		// array add operator
@@ -3502,7 +3527,10 @@ public:
 			*scriptVariableIt->second = variable;
 			return;
 		} else {
-			scriptState.variables[globalVariableName.empty() == true?name:globalVariableName] = new ScriptVariable(variable);
+			scriptState.variables[globalVariableName.empty() == true?name:globalVariableName] =
+				createReference == false?
+					new ScriptVariable(variable):
+					ScriptVariable::createReferenceVariablePointer(&variable);
 		}
 	}
 
