@@ -1,4 +1,4 @@
-![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/github/tdme2-logo.png)
+![LOGO](https://raw.githubusercontent.com/Mindty-Kollektiv/tdme2/master/resources/github/tdme2-logo.png)
 
 This is the documentation of supported TDME2-GUI XML elements and their attributes. This document is WIP (It misses effects, some more descriptions and maybe even some graphical presentation and for sure examples).
 

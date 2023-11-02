@@ -1,4 +1,4 @@
-![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/github/tdme2-logo.png)
+![LOGO](https://raw.githubusercontent.com/Mindty-Kollektiv/tdme2/master/resources/github/tdme2-logo.png)
 
 This is the documentation of MiniScript language. This document is WIP.
 
@@ -1196,7 +1196,7 @@ end
 
 # 8. MiniScript logic methods
 
-The boilerplate template code for a MiniScript logic looks like: [logic_script_template.tscript](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/engine/templates/tscript/logic_script_template.tscript)
+The boilerplate template code for a MiniScript logic looks like: [logic_script_template.tscript](https://raw.githubusercontent.com/Mindty-Kollektiv/tdme2/master/resources/engine/templates/tscript/logic_script_template.tscript)
 
 ## 8.1 Application methods
 
@@ -1621,7 +1621,7 @@ The boilerplate template code for a MiniScript logic looks like: [logic_script_t
 
 # 9. MiniScript GUI methods
 
-The boilerplate template code for a MiniScript GUI logic looks like: [gui_script_template.tscript](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/engine/templates/tscript/gui_script_template.tscript)
+The boilerplate template code for a MiniScript GUI logic looks like: [gui_script_template.tscript](https://raw.githubusercontent.com/Mindty-Kollektiv/tdme2/master/resources/engine/templates/tscript/gui_script_template.tscript)
 
 ## 9.1 Element node condition methods
 

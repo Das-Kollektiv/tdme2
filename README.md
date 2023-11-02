@@ -1,19 +1,19 @@
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/andreasdr/tdme2/blob/master/LICENSE)
-[![NIX Build Status](https://github.com/andreasdr/tdme2/actions/workflows/nix.yml/badge.svg)](https://github.com/andreasdr/tdme2/actions)
-[![MacOSX Build Status](https://github.com/andreasdr/tdme2/actions/workflows/macosx.yml/badge.svg)](https://github.com/andreasdr/tdme2/actions)
-[![Windows/MINGW Build Status](https://github.com/andreasdr/tdme2/actions/workflows/windows-mingw.yml/badge.svg)](https://github.com/andreasdr/tdme2/actions)
-[![Windows/MSC Build Status](https://github.com/andreasdr/tdme2/actions/workflows/windows-msc.yml/badge.svg)](https://github.com/andreasdr/tdme2/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/Mindty-Kollektiv/tdme2/blob/master/LICENSE)
+[![NIX Build Status](https://github.com/Mindty-Kollektiv/tdme2/actions/workflows/nix.yml/badge.svg)](https://github.com/Mindty-Kollektiv/tdme2/actions)
+[![MacOSX Build Status](https://github.com/Mindty-Kollektiv/tdme2/actions/workflows/macosx.yml/badge.svg)](https://github.com/Mindty-Kollektiv/tdme2/actions)
+[![Windows/MINGW Build Status](https://github.com/Mindty-Kollektiv/tdme2/actions/workflows/windows-mingw.yml/badge.svg)](https://github.com/Mindty-Kollektiv/tdme2/actions)
+[![Windows/MSC Build Status](https://github.com/Mindty-Kollektiv/tdme2/actions/workflows/windows-msc.yml/badge.svg)](https://github.com/Mindty-Kollektiv/tdme2/actions)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/15611/badge.svg)](https://scan.coverity.com/projects/andreasdr-tdme2)  
   
-![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/github/tdme2-logo.png)
+![LOGO](https://raw.githubusercontent.com/Mindty-Kollektiv/tdme2/master/resources/github/tdme2-logo.png)
 
 # 1. What is TDME2?
 - ThreeDeeMiniEngine2 is a lightweight, multiplatform 3D engine including tools
   - Read about the [philosophy](./README-Philosophy.md) if interested
   - See [screenshots](./README-Screenshots.md), if you want to quickly know where we are and where we will go :) 
 - TDME2 is open source
-  - please check the [license](https://github.com/andreasdr/tdme2/blob/master/LICENSE)
-  - you find the source code at [https://github.com/andreasdr/tdme2](https://github.com/andreasdr/tdme2) 
+  - please check the [license](https://github.com/Mindty-Kollektiv/tdme2/blob/master/LICENSE)
+  - you find the source code at [https://github.com/Mindty-Kollektiv/tdme2](https://github.com/Mindty-Kollektiv/tdme2) 
   - you find binary alpha builds at [http://drewke.net/tdme2](http://drewke.net/tdme2)
   - here you find developer documentation including collaboration graphs and [private API](http://drewke.net/tdme2-documentation/alpha/private) as well as [public API](http://drewke.net/tdme2-documentation/alpha/public) for current alpha build
     - RapidJSON is included, but not yet integrated into documentation, please see [http://rapidjson.org/](http://rapidjson.org/)
@@ -407,7 +407,7 @@
 - Dominik Hepp
 
 # 8. Collaboration
-- Interested in collaboration? Then drop me a line via mail or use the issues section on [tdme2@github](https://github.com/andreasdr/tdme2/issues) or on [tdme2@codecks](https://open.codecks.io/tdme2)
+- Interested in collaboration? Then drop me a line via mail or use the issues section on [tdme2@github](https://github.com/Mindty-Kollektiv/tdme2/issues) or on [tdme2@codecks](https://open.codecks.io/tdme2)
     - You can help with testing and reporting bugs 
     - I have easy to hard task regarding engine/tools development
     - I have tasks regarding documentation
