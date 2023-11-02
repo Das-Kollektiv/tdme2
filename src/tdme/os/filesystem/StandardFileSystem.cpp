@@ -74,7 +74,7 @@ void StandardFileSystem::list(const string& pathName, vector<string>& files, Fil
 
 	//
 	if (isDrive(_pathName) == false && _pathName.empty() == false && _pathName != "/") {
-		files.insert(files.begin(), "..");
+		if (filter == nullptr || filter->accept(pathName, "..") == true) files.insert(files.begin(), "..");
 	}
 
 	#if defined(_WIN32)

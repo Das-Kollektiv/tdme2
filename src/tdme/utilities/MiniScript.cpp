@@ -565,119 +565,127 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 			auto argumentIdx = 0;
 			for (const auto& argumentType: scriptMethod->getArgumentTypes()) {
 				auto argumentOk = true;
-				switch(argumentType.type) {
-					case TYPE_NULL:
-						break;
-					case TYPE_BOOLEAN:
-						{
-							bool booleanValue;
-							argumentOk = getBooleanValue(argumentValues, argumentIdx, booleanValue, argumentType.optional);
-						}
-						break;
-					case TYPE_INTEGER:
-						{
-							int64_t integerValue;
-							argumentOk = getIntegerValue(argumentValues, argumentIdx, integerValue, argumentType.optional);
-						}
-						break;
-					case TYPE_FLOAT:
-						{
-							float floatValue;
-							argumentOk = getFloatValue(argumentValues, argumentIdx, floatValue, argumentType.optional);
-						}
-						break;
-					case TYPE_STRING:
-						{
-							string stringValue;
-							argumentOk = getStringValue(argumentValues, argumentIdx, stringValue, argumentType.optional);
-						}
-						break;
-					case TYPE_VECTOR2:
-						{
-							argumentOk =
-								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
-									argumentType.optional:
-									argumentValues[argumentIdx].getType() == TYPE_VECTOR2;
+				// nullable and NULL argument
+				if (argumentType.nullable == true &&
+					argumentIdx >= 0 && argumentIdx < argumentValues.size() &&
+					argumentValues[argumentIdx].getType() == TYPE_NULL) {
+					argumentOk = true;
+				} else {
+					// otherwise check the argument
+					switch(argumentType.type) {
+						case TYPE_NULL:
 							break;
-						}
-					case TYPE_VECTOR3:
-						{
-							argumentOk =
-								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
-									argumentType.optional:
-									argumentValues[argumentIdx].getType() == TYPE_VECTOR3;
+						case TYPE_BOOLEAN:
+							{
+								bool booleanValue;
+								argumentOk = getBooleanValue(argumentValues, argumentIdx, booleanValue, argumentType.optional);
+							}
 							break;
-						}
-					case TYPE_VECTOR4:
-						{
-							argumentOk =
-								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
-									argumentType.optional:
-									argumentValues[argumentIdx].getType() == TYPE_VECTOR4;
+						case TYPE_INTEGER:
+							{
+								int64_t integerValue;
+								argumentOk = getIntegerValue(argumentValues, argumentIdx, integerValue, argumentType.optional);
+							}
 							break;
-						}
-					case TYPE_QUATERNION:
-						{
-							argumentOk =
-								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
-									argumentType.optional:
-									argumentValues[argumentIdx].getType() == TYPE_QUATERNION;
+						case TYPE_FLOAT:
+							{
+								float floatValue;
+								argumentOk = getFloatValue(argumentValues, argumentIdx, floatValue, argumentType.optional);
+							}
 							break;
-						}
-					case TYPE_MATRIX3x3:
-						{
-							argumentOk =
-								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
-									argumentType.optional:
-									argumentValues[argumentIdx].getType() == TYPE_MATRIX3x3;
+						case TYPE_STRING:
+							{
+								string stringValue;
+								argumentOk = getStringValue(argumentValues, argumentIdx, stringValue, argumentType.optional);
+							}
 							break;
-						}
-					case TYPE_MATRIX4x4:
-						{
-							argumentOk =
-								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
-									argumentType.optional:
-									argumentValues[argumentIdx].getType() == TYPE_MATRIX4x4;
-							break;
-						}
-					case TYPE_TRANSFORM:
-						{
-							argumentOk =
-								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
-									argumentType.optional:
-									argumentValues[argumentIdx].getType() == TYPE_TRANSFORM;
-							break;
-						}
-					case TYPE_ARRAY:
-						{
-							argumentOk =
-								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
-									argumentType.optional:
-									argumentValues[argumentIdx].getType() == TYPE_ARRAY;
-							break;
-						}
-					case TYPE_MAP:
-						{
-							argumentOk =
-								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
-									argumentType.optional:
-									argumentValues[argumentIdx].getType() == TYPE_MAP;
-							break;
-						}
-					case TYPE_SET:
-						{
-							argumentOk =
-								argumentIdx < 0 || argumentIdx >= argumentValues.size()?
-									argumentType.optional:
-									argumentValues[argumentIdx].getType() == TYPE_SET;
-							break;
-						}
-					case TYPE_PSEUDO_NUMBER:
-						{
-							float floatValue;
-							argumentOk = getFloatValue(argumentValues, argumentIdx, floatValue, argumentType.optional);
-							break;
-						}
+						case TYPE_VECTOR2:
+							{
+								argumentOk =
+									argumentIdx < 0 || argumentIdx >= argumentValues.size()?
+										argumentType.optional:
+										argumentValues[argumentIdx].getType() == TYPE_VECTOR2;
+								break;
+							}
+						case TYPE_VECTOR3:
+							{
+								argumentOk =
+									argumentIdx < 0 || argumentIdx >= argumentValues.size()?
+										argumentType.optional:
+										argumentValues[argumentIdx].getType() == TYPE_VECTOR3;
+								break;
+							}
+						case TYPE_VECTOR4:
+							{
+								argumentOk =
+									argumentIdx < 0 || argumentIdx >= argumentValues.size()?
+										argumentType.optional:
+										argumentValues[argumentIdx].getType() == TYPE_VECTOR4;
+								break;
+							}
+						case TYPE_QUATERNION:
+							{
+								argumentOk =
+									argumentIdx < 0 || argumentIdx >= argumentValues.size()?
+										argumentType.optional:
+										argumentValues[argumentIdx].getType() == TYPE_QUATERNION;
+								break;
+							}
+						case TYPE_MATRIX3x3:
+							{
+								argumentOk =
+									argumentIdx < 0 || argumentIdx >= argumentValues.size()?
+										argumentType.optional:
+										argumentValues[argumentIdx].getType() == TYPE_MATRIX3x3;
+								break;
+							}
+						case TYPE_MATRIX4x4:
+							{
+								argumentOk =
+									argumentIdx < 0 || argumentIdx >= argumentValues.size()?
+										argumentType.optional:
+										argumentValues[argumentIdx].getType() == TYPE_MATRIX4x4;
+								break;
+							}
+						case TYPE_TRANSFORM:
+							{
+								argumentOk =
+									argumentIdx < 0 || argumentIdx >= argumentValues.size()?
+										argumentType.optional:
+										argumentValues[argumentIdx].getType() == TYPE_TRANSFORM;
+								break;
+							}
+						case TYPE_ARRAY:
+							{
+								argumentOk =
+									argumentIdx < 0 || argumentIdx >= argumentValues.size()?
+										argumentType.optional:
+										argumentValues[argumentIdx].getType() == TYPE_ARRAY;
+								break;
+							}
+						case TYPE_MAP:
+							{
+								argumentOk =
+									argumentIdx < 0 || argumentIdx >= argumentValues.size()?
+										argumentType.optional:
+										argumentValues[argumentIdx].getType() == TYPE_MAP;
+								break;
+							}
+						case TYPE_SET:
+							{
+								argumentOk =
+									argumentIdx < 0 || argumentIdx >= argumentValues.size()?
+										argumentType.optional:
+										argumentValues[argumentIdx].getType() == TYPE_SET;
+								break;
+							}
+						case TYPE_PSEUDO_NUMBER:
+							{
+								float floatValue;
+								argumentOk = getFloatValue(argumentValues, argumentIdx, floatValue, argumentType.optional);
+								break;
+							}
+					}
 				}
 				if (argumentOk == false) {
 					Console::println(
@@ -698,11 +706,14 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 		span argumentValuesSpan(argumentValues);
 		scriptMethod->executeMethod(argumentValuesSpan, returnValue, statement);
 		// check return type
+		if (scriptMethod->isReturnValueNullable() == true && returnValue.getType() == TYPE_NULL) {
+			// no op, this is a valid return value
+		} else
 		if (MiniScript::ScriptVariable::isExpectedType(returnValue.getType(), scriptMethod->getReturnValueType()) == false) {
 			Console::println(
 				getStatementInformation(statement) +
 				": method '" + string(syntaxTree.value.getValueAsString()) + "'" +
-				": return value: expected " + ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType()) + ", but got: " + ScriptVariable::getReturnTypeAsString(returnValue.getType()));
+				": return value: expected " + ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable()) + ", but got: " + ScriptVariable::getReturnTypeAsString(returnValue.getType(), false));
 		}
 		//
 		return returnValue;
@@ -2535,7 +2546,7 @@ const string MiniScript::getInformation() {
 				method+= "(";
 				method+= scriptMethod->getArgumentsInformation();
 				method+= "): ";
-				method+= ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType());
+				method+= ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable());
 				methods.push_back(method);
 			}
 			sort(methods.begin(), methods.end());
@@ -2555,7 +2566,7 @@ const string MiniScript::getInformation() {
 				operatorString+= "(";
 				operatorString+= scriptMethod->getArgumentsInformation();
 				operatorString+= "): ";
-				operatorString+= ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType());
+				operatorString+= ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable());
 				operators.push_back(operatorString);
 			}
 			sort(operators.begin(), operators.end());
@@ -2679,7 +2690,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodInternalScriptEvaluate(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "statement", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "statement", .optional = false, .reference = false, .nullable = false }
 					},
 					TYPE_PSEUDO_MIXED
 				),
@@ -2711,11 +2722,12 @@ void MiniScript::registerMethods() {
 			ScriptMethodInternalEvaluateMemberAccess(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "this", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_STRING, .name = "member", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false, .reference = false, .nullable = true },
+						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "this", .optional = false, .reference = false, .nullable = true },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "member", .optional = false, .reference = false, .nullable = false }
 					},
-					TYPE_PSEUDO_MIXED
+					TYPE_PSEUDO_MIXED,
+					true
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -2838,7 +2850,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodScriptEvaluate(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "statement", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_STRING, .name = "statement", .optional = false, .reference = false, .nullable = false }
 					},
 					TYPE_PSEUDO_MIXED
 				),
@@ -2869,7 +2881,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodScriptCall(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "function", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_STRING, .name = "function", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
@@ -2920,7 +2932,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodReturn(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = true, .reference = false }
+						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = true, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -3014,7 +3026,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodForTime(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "time", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "time", .optional = false, .reference = false, .nullable = false }
 					}
 				),
 				miniScript(miniScript) {}
@@ -3058,7 +3070,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodForCondition(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_BOOLEAN, .name = "condition", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_BOOLEAN, .name = "condition", .optional = false, .reference = false, .nullable = false }
 					}
 				),
 				miniScript(miniScript) {}
@@ -3093,7 +3105,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodIfCondition(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_BOOLEAN, .name = "condition", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_BOOLEAN, .name = "condition", .optional = false, .reference = false, .nullable = false }
 					}
 				),
 				miniScript(miniScript) {}
@@ -3128,7 +3140,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodElseIfCondition(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_BOOLEAN, .name = "condition", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_BOOLEAN, .name = "condition", .optional = false, .reference = false, .nullable = false }
 					}
 				),
 				miniScript(miniScript) {}
@@ -3212,7 +3224,7 @@ void MiniScript::registerMethods() {
 		public:
 			ScriptMethodScriptWait(MiniScript* miniScript):
 				ScriptMethod({
-					{.type = ScriptVariableType::TYPE_INTEGER, .name = "time", .optional = false, .reference = false }
+					{.type = ScriptVariableType::TYPE_INTEGER, .name = "time", .optional = false, .reference = false, .nullable = false }
 				}),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -3240,7 +3252,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodScriptEmit(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "condition", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_STRING, .name = "condition", .optional = false, .reference = false, .nullable = false }
 					}
 				),
 				miniScript(miniScript) {}
@@ -3268,7 +3280,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodScriptEnableNamedCondition(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "name", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_STRING, .name = "name", .optional = false, .reference = false, .nullable = false }
 					}
 				),
 				miniScript(miniScript) {}
@@ -3304,7 +3316,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodScriptDisableNamedCondition(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "name", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_STRING, .name = "name", .optional = false, .reference = false, .nullable = false }
 					}
 				),
 				miniScript(miniScript) {}
@@ -3383,7 +3395,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodConsoleDump(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .reference = false }
+						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .reference = false, .nullable = false }
 					}
 				),
 				miniScript(miniScript) {}
@@ -3429,8 +3441,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodEquals(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false },
-						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false }
+						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -3467,8 +3479,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodNotEqual(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false },
-						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false }
+						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -3506,7 +3518,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodInt(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "int", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "int", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_INTEGER
 				),
@@ -3536,7 +3548,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodFloat(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_FLOAT, .name = "float", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_FLOAT, .name = "float", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_FLOAT
 				),
@@ -3566,8 +3578,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodGreater(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN),
 					miniScript(miniScript) {}
@@ -3612,8 +3624,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodGreaterEquals(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN),
 					miniScript(miniScript) {}
@@ -3658,8 +3670,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodLesser(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN),
 					miniScript(miniScript) {}
@@ -3704,8 +3716,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodLesserEquals(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN),
 					miniScript(miniScript) {}
@@ -3751,8 +3763,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec2(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_FLOAT, .name = "x", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_FLOAT, .name = "y", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_FLOAT, .name = "x", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_FLOAT, .name = "y", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_VECTOR2
 				),
@@ -3784,7 +3796,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec2ComputeLength(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_VECTOR2, .name = "vec2", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_VECTOR2, .name = "vec2", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_FLOAT),
 					miniScript(miniScript) {}
@@ -3813,7 +3825,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec2ComputeLengthSquared(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_VECTOR2, .name = "vec2", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_VECTOR2, .name = "vec2", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_FLOAT),
 					miniScript(miniScript) {}
@@ -3841,8 +3853,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec2ComputeDotProduct(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_VECTOR2, .name = "a", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_VECTOR2, .name = "b", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_VECTOR2, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_VECTOR2, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_FLOAT),
 					miniScript(miniScript) {}
@@ -3872,7 +3884,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec2Normalize(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_VECTOR2, .name = "vec2", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_VECTOR2, .name = "vec2", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_VECTOR2),
 					miniScript(miniScript) {}
@@ -3901,7 +3913,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec2GetX(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_VECTOR2, .name = "vec2", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_VECTOR2, .name = "vec2", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_FLOAT),
 					miniScript(miniScript) {}
@@ -3929,7 +3941,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec2GetY(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_VECTOR2, .name = "vec2", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_VECTOR2, .name = "vec2", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_FLOAT),
 					miniScript(miniScript) {}
@@ -3958,9 +3970,9 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec3(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_FLOAT, .name = "x", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_FLOAT, .name = "y", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_FLOAT, .name = "z", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_FLOAT, .name = "x", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_FLOAT, .name = "y", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_FLOAT, .name = "z", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_VECTOR3
 				),
@@ -3994,7 +4006,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec3ComputeLength(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "vec3", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "vec3", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_FLOAT),
 					miniScript(miniScript) {}
@@ -4023,7 +4035,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec3ComputeLengthSquared(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "vec3", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "vec3", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_FLOAT),
 					miniScript(miniScript) {}
@@ -4051,8 +4063,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec3ComputeDotProduct(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "a", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "b", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_FLOAT),
 					miniScript(miniScript) {}
@@ -4082,8 +4094,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec3ComputeCrossProduct(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "a", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "b", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_VECTOR3),
 					miniScript(miniScript) {}
@@ -4113,7 +4125,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec3Normalize(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "vec3", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "vec3", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_VECTOR3),
 					miniScript(miniScript) {}
@@ -4142,9 +4154,9 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec3ComputeAngle(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "a", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "b", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "n", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "b", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "n", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_FLOAT),
 					miniScript(miniScript) {}
@@ -4176,7 +4188,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec3GetX(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "vec3", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "vec3", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_FLOAT),
 					miniScript(miniScript) {}
@@ -4204,7 +4216,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec3GetY(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "vec3", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "vec3", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_FLOAT),
 					miniScript(miniScript) {}
@@ -4232,7 +4244,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec3GetZ(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "vec3", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "vec3", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_FLOAT),
 					miniScript(miniScript) {}
@@ -4261,10 +4273,10 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec4(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_FLOAT, .name = "x", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_FLOAT, .name = "y", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_FLOAT, .name = "z", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_FLOAT, .name = "w", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_FLOAT, .name = "x", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_FLOAT, .name = "y", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_FLOAT, .name = "z", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_FLOAT, .name = "w", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_VECTOR4
 				),
@@ -4300,7 +4312,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec4ComputeLength(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_VECTOR4, .name = "vec4", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_VECTOR4, .name = "vec4", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_FLOAT),
 					miniScript(miniScript) {}
@@ -4329,7 +4341,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec4ComputeLengthSquared(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_VECTOR4, .name = "vec4", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_VECTOR4, .name = "vec4", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_FLOAT),
 					miniScript(miniScript) {}
@@ -4357,8 +4369,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec4ComputeDotProduct(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_VECTOR4, .name = "a", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_VECTOR4, .name = "b", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_VECTOR4, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_VECTOR4, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_FLOAT),
 					miniScript(miniScript) {}
@@ -4388,7 +4400,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec4Normalize(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_VECTOR4, .name = "vec4", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_VECTOR4, .name = "vec4", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_VECTOR4),
 					miniScript(miniScript) {}
@@ -4417,7 +4429,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec4GetX(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_VECTOR4, .name = "vec4", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_VECTOR4, .name = "vec4", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_FLOAT),
 					miniScript(miniScript) {}
@@ -4445,7 +4457,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec4GetY(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_VECTOR4, .name = "vec4", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_VECTOR4, .name = "vec4", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_FLOAT),
 					miniScript(miniScript) {}
@@ -4473,7 +4485,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec4GetZ(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_VECTOR4, .name = "vec4", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_VECTOR4, .name = "vec4", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_FLOAT),
 					miniScript(miniScript) {}
@@ -4501,7 +4513,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec4GetW(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_VECTOR4, .name = "vec4", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR4, .name = "vec4", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_FLOAT),
 					miniScript(miniScript) {}
@@ -4548,7 +4560,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodQuaternionInvert(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_QUATERNION, .name = "quaternion", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_QUATERNION, .name = "quaternion", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_QUATERNION
 				),
@@ -4577,8 +4589,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodQuaternionRotate(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "axis", .optional = false, .reference = false },
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false, .reference = false }
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "axis", .optional = false, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_QUATERNION
 				),
@@ -4609,7 +4621,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodQuaternionNormalize(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_QUATERNION, .name = "quaternion", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_QUATERNION, .name = "quaternion", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_QUATERNION
 				),
@@ -4638,7 +4650,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodQuaternionInvert(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_QUATERNION, .name = "quaternion", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_QUATERNION, .name = "quaternion", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_VECTOR3
 				),
@@ -4667,7 +4679,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodQuaternionComputeMatrix(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_QUATERNION, .name = "quaternion", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_QUATERNION, .name = "quaternion", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_MATRIX4x4
 				),
@@ -4715,7 +4727,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodMatrix3x3Translate(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_VECTOR2, .name = "translation", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR2, .name = "translation", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_MATRIX3x3
 				),
@@ -4744,7 +4756,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodMatrix3x3Rotate(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_MATRIX3x3
 				),
@@ -4773,7 +4785,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodMatrix3x3RotateAroundTextureCenter(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_MATRIX3x3
 				),
@@ -4802,8 +4814,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodMatrix3x3RotateAroundPoint(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_VECTOR2, .name = "point", .optional = false, .reference = false },
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR2, .name = "point", .optional = false, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_MATRIX3x3
 				),
@@ -4885,7 +4897,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodMatrix4x4Translate(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "translation", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "translation", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_MATRIX4x4
 				),
@@ -4914,8 +4926,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodMatrix4x4Rotate(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "axis", .optional = false, .reference = false },
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "axis", .optional = false, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_MATRIX4x4
 				),
@@ -4978,7 +4990,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodMatrix4x4Invert(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_MATRIX4x4, .name = "mat4", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_MATRIX4x4, .name = "mat4", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_MATRIX4x4
 				),
@@ -5007,7 +5019,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodMatrix4x4EulerAngles(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_MATRIX4x4, .name = "mat4", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_MATRIX4x4, .name = "mat4", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_VECTOR3
 				),
@@ -5091,11 +5103,11 @@ void MiniScript::registerMethods() {
 			ScriptMethodTransform(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "translation", .optional = true, .reference = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "scale", .optional = true, .reference = false },
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "rotationZ", .optional = true, .reference = false },
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "rotationY", .optional = true, .reference = false },
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "rotationX", .optional = true, .reference = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "translation", .optional = true, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "scale", .optional = true, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "rotationZ", .optional = true, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "rotationY", .optional = true, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "rotationX", .optional = true, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_TRANSFORM),
 					miniScript(miniScript) {}
@@ -5152,7 +5164,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodTransformGetTranslation(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_VECTOR3),
 					miniScript(miniScript) {}
@@ -5180,8 +5192,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodTransformSetTranslation(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = true },
-						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "translation", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = true, .nullable = false },
+						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "translation", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_NULL),
 					miniScript(miniScript) {}
@@ -5213,7 +5225,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodTransformGetScale(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_VECTOR3),
 					miniScript(miniScript) {}
@@ -5241,8 +5253,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodTransformSetScale(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = true },
-						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "scale", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = true, .nullable = false },
+						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "scale", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_NULL),
 					miniScript(miniScript) {}
@@ -5274,8 +5286,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodTransformGetRotationAxis(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "idx", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "idx", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_VECTOR3),
 					miniScript(miniScript) {}
@@ -5310,8 +5322,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodTransformGetRotationAngle(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "idx", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "idx", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_FLOAT),
 					miniScript(miniScript) {}
@@ -5346,9 +5358,9 @@ void MiniScript::registerMethods() {
 			ScriptMethodTransformSetRotationAngle(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = true },
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "idx", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = true, .nullable = false },
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "idx", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_NULL),
 					miniScript(miniScript) {}
@@ -5387,8 +5399,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodTransformRotate(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "vec3", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "vec3", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_VECTOR3),
 					miniScript(miniScript) {}
@@ -5418,9 +5430,9 @@ void MiniScript::registerMethods() {
 			ScriptMethodTransformApplyRotation(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = true },
-						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "axis", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = true, .nullable = false },
+						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "axis", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_NULL),
 					miniScript(miniScript) {}
@@ -5466,11 +5478,11 @@ void MiniScript::registerMethods() {
 			ScriptMethodTransformInterpolateRotation(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "currentAngle", .optional = false, .reference = false },
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "targetAngle", .optional = false, .reference = false },
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "timePassedSeconds", .optional = false, .reference = false },
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "degreesPerSeconds", .optional = false, .reference = false },
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "interpolatedAngle", .optional = false, .reference = true },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "currentAngle", .optional = false, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "targetAngle", .optional = false, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "timePassedSeconds", .optional = false, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "degreesPerSeconds", .optional = false, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "interpolatedAngle", .optional = false, .reference = true, .nullable = false },
 					},
 					ScriptVariableType::TYPE_BOOLEAN),
 					miniScript(miniScript) {}
@@ -5507,7 +5519,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodTransformGetTransformMatrix(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_MATRIX4x4),
 					miniScript(miniScript) {}
@@ -5535,7 +5547,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodTransformGetRotationsQuaternion(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_QUATERNION),
 					miniScript(miniScript) {}
@@ -5563,7 +5575,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodTransformFromMatrix(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_MATRIX4x4, .name = "transformMatrix", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_MATRIX4x4, .name = "transformMatrix", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_TRANSFORM),
 					miniScript(miniScript) {}
@@ -5594,7 +5606,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodBool(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_BOOLEAN, .name = "bool", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_BOOLEAN, .name = "bool", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -5624,7 +5636,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodNot(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_BOOLEAN, .name = "bool", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_BOOLEAN, .name = "bool", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN), miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -5655,8 +5667,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodAnd(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "a", .optional = false, .reference = false },
-						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "b", .optional = false, .reference = false }
+						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -5699,8 +5711,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodOr(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "a", .optional = false, .reference = false },
-						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "b", .optional = false, .reference = false }
+						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -5744,7 +5756,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodString(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_STRING
 				),
@@ -5773,7 +5785,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodStringLength(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_INTEGER
 				),
@@ -5802,8 +5814,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodStringCharAt(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "index", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "index", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_STRING
 				),
@@ -5834,8 +5846,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodStringStartsWith(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_STRING, .name = "prefix", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "prefix", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -5866,8 +5878,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodStringEndsWith(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_STRING, .name = "suffix", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "suffix", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -5898,10 +5910,10 @@ void MiniScript::registerMethods() {
 			ScriptMethodStringReplace(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_STRING, .name = "what", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_STRING, .name = "by", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "beginIndex", .optional = true, .reference = false }
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "what", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "by", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "beginIndex", .optional = true, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_STRING
 				),
@@ -5936,9 +5948,9 @@ void MiniScript::registerMethods() {
 			ScriptMethodStringIndexOf(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_STRING, .name = "what", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "beginIndex", .optional = true, .reference = false }
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "what", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "beginIndex", .optional = true, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_INTEGER
 				),
@@ -5971,9 +5983,9 @@ void MiniScript::registerMethods() {
 			ScriptMethodStringFirstIndexOf(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_STRING, .name = "what", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "beginIndex", .optional = true, .reference = false }
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "what", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "beginIndex", .optional = true, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_INTEGER
 				),
@@ -6006,9 +6018,9 @@ void MiniScript::registerMethods() {
 			ScriptMethodStringLastIndexOf(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_STRING, .name = "what", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "beginIndex", .optional = true, .reference = false }
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "what", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "beginIndex", .optional = true, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_INTEGER
 				),
@@ -6041,9 +6053,9 @@ void MiniScript::registerMethods() {
 			ScriptMethodStringSubString(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "beginIndex", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "endIndex", .optional = true, .reference = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "beginIndex", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "endIndex", .optional = true, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_STRING
 				),
@@ -6080,8 +6092,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodStringEqualsIgnoreCase(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_STRING, .name = "other", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "other", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -6112,7 +6124,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodStringTrim(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_STRING
 				),
@@ -6141,8 +6153,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodStringRegexMatch(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_STRING, .name = "pattern", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "pattern", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -6173,9 +6185,9 @@ void MiniScript::registerMethods() {
 			ScriptMethodStringRegexReplace(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_STRING, .name = "pattern", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_STRING, .name = "by", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "pattern", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "by", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_STRING
 				),
@@ -6208,8 +6220,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodStringTokenize(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_STRING, .name = "delimiters", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "delimiters", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_ARRAY
 				),
@@ -6245,7 +6257,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodStringSpace(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "spaces", .optional = true, .reference = false }
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "spaces", .optional = true, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_STRING
 				),
@@ -6299,7 +6311,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodToStringUpperCase(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_STRING
 				),
@@ -6328,7 +6340,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodToStringLowerCase(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_STRING
 				),
@@ -6357,7 +6369,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodStringIsEmpty(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -6386,7 +6398,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodStringIsFloat(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -6415,7 +6427,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodStringIsInteger(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -6444,9 +6456,9 @@ void MiniScript::registerMethods() {
 			ScriptMethodStringPadLeft(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_STRING, .name = "by", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "toSize", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "by", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "toSize", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_STRING
 				),
@@ -6479,9 +6491,9 @@ void MiniScript::registerMethods() {
 			ScriptMethodStringPadRight(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_STRING, .name = "by", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "toSize", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "by", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "toSize", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_STRING
 				),
@@ -6542,7 +6554,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodArrayLength(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_INTEGER
 				),
@@ -6570,7 +6582,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodArrayPush(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .reference = true }
+						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .reference = true, .nullable = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -6604,8 +6616,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodArrayGet(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .reference = false },
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "index", .optional = false, .reference = false }
+						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "index", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
@@ -6635,9 +6647,9 @@ void MiniScript::registerMethods() {
 			ScriptMethodArraySet(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .reference = true },
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "index", .optional = false, .reference = false },
-						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .reference = false }
+						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .reference = true, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "index", .optional = false, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -6667,8 +6679,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodArrayRemove(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .reference = true },
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "index", .optional = false, .reference = false }
+						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .reference = true, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "index", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -6698,9 +6710,9 @@ void MiniScript::registerMethods() {
 			ScriptMethodArrayRemoveOf(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .reference = true },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "value", .optional = false, .reference = false },
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "beginIndex", .optional = true, .reference = false },
+						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .reference = true, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "value", .optional = false, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "beginIndex", .optional = true, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -6740,9 +6752,9 @@ void MiniScript::registerMethods() {
 			ScriptMethodArrayIndexOf(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .reference = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "value", .optional = false, .reference = false },
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "beginIndex", .optional = true, .reference = false },
+						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "value", .optional = false, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "beginIndex", .optional = true, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_INTEGER
 				),
@@ -6783,8 +6795,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodArraySort(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .reference = true },
-						{.type = ScriptVariableType::TYPE_STRING, .name = "function", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .reference = true, .nullable = false },
+						{.type = ScriptVariableType::TYPE_STRING, .name = "function", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -6836,7 +6848,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodArrayReverse(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .reference = true }
+						{.type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .reference = true, .nullable = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -6891,9 +6903,9 @@ void MiniScript::registerMethods() {
 			ScriptMethodMapSet(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_MAP, .name = "map", .optional = false, .reference = true },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .reference = false },
-						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .reference = false }
+						{ .type = ScriptVariableType::TYPE_MAP, .name = "map", .optional = false, .reference = true, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -6925,8 +6937,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodMapHas(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_MAP, .name = "map", .optional = false, .reference = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .reference = false }
+						{ .type = ScriptVariableType::TYPE_MAP, .name = "map", .optional = false, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -6958,8 +6970,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodMapGet(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_MAP, .name = "map", .optional = false, .reference = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .reference = false }
+						{ .type = ScriptVariableType::TYPE_MAP, .name = "map", .optional = false, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
@@ -6991,8 +7003,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodMapRemove(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_MAP, .name = "map", .optional = false, .reference = true },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .reference = false }
+						{ .type = ScriptVariableType::TYPE_MAP, .name = "map", .optional = false, .reference = true, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -7024,7 +7036,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodMapGetKeys(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_MAP, .name = "map", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_MAP, .name = "map", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_ARRAY
 				),
@@ -7058,7 +7070,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodMapGetValues(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_MAP, .name = "map", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_MAP, .name = "map", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_ARRAY
 				),
@@ -7114,8 +7126,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodSetInsert(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_SET, .name = "set", .optional = false, .reference = true },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .reference = false }
+						{ .type = ScriptVariableType::TYPE_SET, .name = "set", .optional = false, .reference = true, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -7147,8 +7159,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodSetHas(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_SET, .name = "set", .optional = false, .reference = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .reference = false }
+						{ .type = ScriptVariableType::TYPE_SET, .name = "set", .optional = false, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -7180,8 +7192,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodSetRemove(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_SET, .name = "set", .optional = false, .reference = true },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .reference = false }
+						{ .type = ScriptVariableType::TYPE_SET, .name = "set", .optional = false, .reference = true, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -7213,7 +7225,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodSetGetKeys(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_SET, .name = "set", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_SET, .name = "set", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_ARRAY
 				),
@@ -7248,7 +7260,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodGetVariable(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false, .reference = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
@@ -7279,7 +7291,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodGetVariableReference(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false, .reference = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
@@ -7312,8 +7324,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodSetVariable(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false, .reference = false },
-						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .reference = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
@@ -7350,7 +7362,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodUnsetVariable(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false, .reference = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -7401,7 +7413,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodTimeGetAsString(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "format", .optional = true, .reference = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "format", .optional = true, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_STRING
 				),
@@ -7431,9 +7443,9 @@ void MiniScript::registerMethods() {
 			ScriptMethodXMLCreateTag(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "name", .optional = false, .reference = false },
-						{ .type = ScriptVariableType::TYPE_MAP, .name = "attributes", .optional = true, .reference = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "innerXML", .optional = true, .reference = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "name", .optional = false, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_MAP, .name = "attributes", .optional = true, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "innerXML", .optional = true, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_STRING
 				),
@@ -7481,7 +7493,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodJSONSerialize(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_STRING
 				),
@@ -7510,7 +7522,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodJSONDeserialize(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "json", .optional = false, .reference = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "json", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
@@ -7547,7 +7559,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodIncrement(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "variable", .optional = false, .reference = true },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "variable", .optional = false, .reference = true, .nullable = false },
 					},
 					ScriptVariableType::TYPE_INTEGER
 				),
@@ -7581,7 +7593,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodDecrement(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "variable", .optional = false, .reference = true },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "variable", .optional = false, .reference = true, .nullable = false },
 					},
 					ScriptVariableType::TYPE_INTEGER
 				),
@@ -7616,7 +7628,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodBitwiseNot(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "value", .optional = false, .reference = false },
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "value", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_INTEGER),
 					miniScript(miniScript) {}
@@ -7647,8 +7659,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodBitwiseAnd(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "a", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "b", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_INTEGER),
 					miniScript(miniScript) {}
@@ -7681,8 +7693,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodBitwiseOr(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "a", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "b", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_INTEGER),
 					miniScript(miniScript) {}
@@ -7715,8 +7727,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodBitwiseXor(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "a", .optional = false, .reference = false },
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "b", .optional = false, .reference = false }
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{.type = ScriptVariableType::TYPE_INTEGER, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_INTEGER),
 					miniScript(miniScript) {}

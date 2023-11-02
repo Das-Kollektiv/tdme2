@@ -82,7 +82,7 @@ int main(int argc, char** argv)
 			if (description.empty() == true) description = methodDescriptions.get("miniscript." + scriptMethod->getMethodName(), string());
 			Console::println("Adding method: " + scriptMethod->getMethodName());
 			lines.push_back("	<keyword name=\"" + scriptMethod->getMethodName() + "\" func=\"yes\">");
-			lines.push_back("		<overload return-value=\"" + MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType()) + "\" descr=\"" + GUIParser::escape(description) + "\">");
+			lines.push_back("		<overload return-value=\"" + MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable()) + "\" descr=\"" + GUIParser::escape(description) + "\">");
 			for (const auto& argumentType: scriptMethod->getArgumentTypes()) {
 				string argumentValueString;
 				if (argumentType.optional == true) argumentValueString+= "[";
