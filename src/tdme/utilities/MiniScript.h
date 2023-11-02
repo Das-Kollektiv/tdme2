@@ -520,6 +520,9 @@ public:
 		 * @returns reference variable
 		 */
 		inline static ScriptVariable createReferenceVariable(const ScriptVariable* variable) {
+			// copy a reference variable is cheap
+			if (variable->reference != nullptr) return *variable;
+			//
 			ScriptVariable referenceVariable;
 			referenceVariable.reference = (ScriptVariable*)variable; // TODO: improve me!
 			referenceVariable.reference->acquireReference();
@@ -532,6 +535,9 @@ public:
 		 * @returns reference variable
 		 */
 		inline static ScriptVariable* createReferenceVariablePointer(const ScriptVariable* variable) {
+			// copy a reference variable is cheap
+			if (variable->reference != nullptr) return new ScriptVariable(*variable);
+			//
 			ScriptVariable* referenceVariable = new ScriptVariable();
 			referenceVariable->reference = (ScriptVariable*)variable; // TODO: improve me!
 			referenceVariable->reference->acquireReference();
@@ -539,78 +545,242 @@ public:
 		}
 
 		/**
-		 * Copy constructor
-		 * @param scriptVariable script variable to copy
+		 * Create none reference variable
+		 * @param variable variable
+		 * @returns reference variable
 		 */
-		inline ScriptVariable(const ScriptVariable& scriptVariable) {
-			if (scriptVariable.reference != nullptr) {
-				reference = scriptVariable.reference;
-				scriptVariable.reference->acquireReference();
+		inline static ScriptVariable createNonReferenceVariable(const ScriptVariable* variable) {
+			// copy a non reference variable is cheap
+			if (variable->reference == nullptr) return *variable;
+			// otherwise do the copy
+			ScriptVariable nonReferenceVariable;
+			switch(variable->getType()) {
+				case TYPE_NULL:
+					nonReferenceVariable.setNullValue();
+					break;
+				case TYPE_BOOLEAN:
+					nonReferenceVariable.setValue(variable->getBooleanValueReference());
+					break;
+				case TYPE_INTEGER:
+					nonReferenceVariable.setValue(variable->getIntegerValueReference());
+					break;
+				case TYPE_FLOAT:
+					nonReferenceVariable.setValue(variable->getFloatValueReference());
+					break;
+				case TYPE_STRING:
+					nonReferenceVariable.setValue(variable->getStringValueReference());
+					break;
+				case TYPE_VECTOR2:
+					nonReferenceVariable.setValue(variable->getVector2ValueReference());
+					break;
+				case TYPE_VECTOR3:
+					nonReferenceVariable.setValue(variable->getVector3ValueReference());
+					break;
+				case TYPE_VECTOR4:
+					nonReferenceVariable.setValue(variable->getVector4ValueReference());
+					break;
+				case TYPE_QUATERNION:
+					nonReferenceVariable.setValue(variable->getQuaternionValueReference());
+					break;
+				case TYPE_MATRIX3x3:
+					nonReferenceVariable.setValue(variable->getMatrix3x3ValueReference());
+					break;
+				case TYPE_MATRIX4x4:
+					nonReferenceVariable.setValue(variable->getMatrix4x4ValueReference());
+					break;
+				case TYPE_TRANSFORM:
+					nonReferenceVariable.setValue(variable->getTransformValueReference());
+					break;
+				case TYPE_ARRAY:
+					nonReferenceVariable.setValue(variable->getArrayValueReference());
+					// copy initializer if we have any
+					nonReferenceVariable.getInitializer()->copy(variable->initializer);
+					//
+					break;
+				case TYPE_MAP:
+					nonReferenceVariable.setValue(variable->getMapValueReference());
+					// copy initializer if we have any
+					nonReferenceVariable.getInitializer()->copy(variable->initializer);
+					//
+					break;
+				case TYPE_SET:
+					nonReferenceVariable.setValue(variable->getSetValueReference());
+					// copy initializer if we have any
+					nonReferenceVariable.getInitializer()->copy(variable->initializer);
+					//
+					break;
+				case TYPE_FUNCTION_CALL:
+					nonReferenceVariable.setType(TYPE_FUNCTION_CALL);
+					nonReferenceVariable.getStringValueReference() = variable->getStringValueReference();
+					// copy initializer if we have any
+					nonReferenceVariable.getInitializer()->copy(variable->initializer);
+					//
+					break;
+				case TYPE_FUNCTION_ASSIGNMENT:
+					nonReferenceVariable.setFunctionAssignment(variable->getStringValueReference());
+					break;
+				// pseudo ...
+				default: break;
+			}
+			//
+			return nonReferenceVariable;
+		}
+
+		/**
+		 * Create none reference variable pointer
+		 * @param variable variable
+		 * @returns reference variable
+		 */
+		inline static ScriptVariable* createNonReferenceVariablePointer(const ScriptVariable* variable) {
+			// copy a non reference variable is cheap
+			if (variable->reference == nullptr) return new ScriptVariable(*variable);
+			// otherwise do the copy
+			ScriptVariable* nonReferenceVariable = new ScriptVariable();
+			switch(variable->getType()) {
+				case TYPE_NULL:
+					nonReferenceVariable->setNullValue();
+					break;
+				case TYPE_BOOLEAN:
+					nonReferenceVariable->setValue(variable->getBooleanValueReference());
+					break;
+				case TYPE_INTEGER:
+					nonReferenceVariable->setValue(variable->getIntegerValueReference());
+					break;
+				case TYPE_FLOAT:
+					nonReferenceVariable->setValue(variable->getFloatValueReference());
+					break;
+				case TYPE_STRING:
+					nonReferenceVariable->setValue(variable->getStringValueReference());
+					break;
+				case TYPE_VECTOR2:
+					nonReferenceVariable->setValue(variable->getVector2ValueReference());
+					break;
+				case TYPE_VECTOR3:
+					nonReferenceVariable->setValue(variable->getVector3ValueReference());
+					break;
+				case TYPE_VECTOR4:
+					nonReferenceVariable->setValue(variable->getVector4ValueReference());
+					break;
+				case TYPE_QUATERNION:
+					nonReferenceVariable->setValue(variable->getQuaternionValueReference());
+					break;
+				case TYPE_MATRIX3x3:
+					nonReferenceVariable->setValue(variable->getMatrix3x3ValueReference());
+					break;
+				case TYPE_MATRIX4x4:
+					nonReferenceVariable->setValue(variable->getMatrix4x4ValueReference());
+					break;
+				case TYPE_TRANSFORM:
+					nonReferenceVariable->setValue(variable->getTransformValueReference());
+					break;
+				case TYPE_ARRAY:
+					nonReferenceVariable->setValue(variable->getArrayValueReference());
+					// copy initializer if we have any
+					nonReferenceVariable->getInitializer()->copy(variable->initializer);
+					//
+					break;
+				case TYPE_MAP:
+					nonReferenceVariable->setValue(variable->getMapValueReference());
+					// copy initializer if we have any
+					nonReferenceVariable->getInitializer()->copy(variable->initializer);
+					//
+					break;
+				case TYPE_SET:
+					nonReferenceVariable->setValue(variable->getSetValueReference());
+					// copy initializer if we have any
+					nonReferenceVariable->getInitializer()->copy(variable->initializer);
+					//
+					break;
+				case TYPE_FUNCTION_CALL:
+					nonReferenceVariable->setType(TYPE_FUNCTION_CALL);
+					nonReferenceVariable->getStringValueReference() = variable->getStringValueReference();
+					// copy initializer if we have any
+					nonReferenceVariable->getInitializer()->copy(variable->initializer);
+					//
+					break;
+				case TYPE_FUNCTION_ASSIGNMENT:
+					nonReferenceVariable->setFunctionAssignment(variable->getStringValueReference());
+					break;
+				// pseudo ...
+				default: break;
+			}
+			//
+			return nonReferenceVariable;
+		}
+
+		/**
+		 * Copy constructor
+		 * @param variable variable to copy
+		 */
+		inline ScriptVariable(const ScriptVariable& variable) {
+			if (variable.reference != nullptr) {
+				reference = variable.reference;
+				variable.reference->acquireReference();
 			} else {
-				switch(scriptVariable.getType()) {
+				switch(variable.getType()) {
 					case TYPE_NULL:
 						setNullValue();
 						break;
 					case TYPE_BOOLEAN:
-						setValue(scriptVariable.getBooleanValueReference());
+						setValue(variable.getBooleanValueReference());
 						break;
 					case TYPE_INTEGER:
-						setValue(scriptVariable.getIntegerValueReference());
+						setValue(variable.getIntegerValueReference());
 						break;
 					case TYPE_FLOAT:
-						setValue(scriptVariable.getFloatValueReference());
+						setValue(variable.getFloatValueReference());
 						break;
 					case TYPE_STRING:
-						setValue(scriptVariable.getStringValueReference());
+						setValue(variable.getStringValueReference());
 						break;
 					case TYPE_VECTOR2:
-						setValue(scriptVariable.getVector2ValueReference());
+						setValue(variable.getVector2ValueReference());
 						break;
 					case TYPE_VECTOR3:
-						setValue(scriptVariable.getVector3ValueReference());
+						setValue(variable.getVector3ValueReference());
 						break;
 					case TYPE_VECTOR4:
-						setValue(scriptVariable.getVector4ValueReference());
+						setValue(variable.getVector4ValueReference());
 						break;
 					case TYPE_QUATERNION:
-						setValue(scriptVariable.getQuaternionValueReference());
+						setValue(variable.getQuaternionValueReference());
 						break;
 					case TYPE_MATRIX3x3:
-						setValue(scriptVariable.getMatrix3x3ValueReference());
+						setValue(variable.getMatrix3x3ValueReference());
 						break;
 					case TYPE_MATRIX4x4:
-						setValue(scriptVariable.getMatrix4x4ValueReference());
+						setValue(variable.getMatrix4x4ValueReference());
 						break;
 					case TYPE_TRANSFORM:
-						setValue(scriptVariable.getTransformValueReference());
+						setValue(variable.getTransformValueReference());
 						break;
 					case TYPE_ARRAY:
-						setValue(scriptVariable.getArrayValueReference());
+						setValue(variable.getArrayValueReference());
 						// copy initializer if we have any
-						getInitializer()->copy(scriptVariable.initializer);
+						getInitializer()->copy(variable.initializer);
 						//
 						break;
 					case TYPE_MAP:
-						setValue(scriptVariable.getMapValueReference());
+						setValue(variable.getMapValueReference());
 						// copy initializer if we have any
-						getInitializer()->copy(scriptVariable.initializer);
+						getInitializer()->copy(variable.initializer);
 						//
 						break;
 					case TYPE_SET:
-						setValue(scriptVariable.getSetValueReference());
+						setValue(variable.getSetValueReference());
 						// copy initializer if we have any
-						getInitializer()->copy(scriptVariable.initializer);
+						getInitializer()->copy(variable.initializer);
 						//
 						break;
 					case TYPE_FUNCTION_CALL:
 						setType(TYPE_FUNCTION_CALL);
-						getStringValueReference() = scriptVariable.getStringValueReference();
+						getStringValueReference() = variable.getStringValueReference();
 						// copy initializer if we have any
-						getInitializer()->copy(scriptVariable.initializer);
+						getInitializer()->copy(variable.initializer);
 						//
 						break;
 					case TYPE_FUNCTION_ASSIGNMENT:
-						setFunctionAssignment(scriptVariable.getStringValueReference());
+						setFunctionAssignment(variable.getStringValueReference());
 						break;
 					// pseudo ...
 					default: break;
@@ -620,93 +790,93 @@ public:
 
 		/**
 		 * Move constructor
-		 * @param scriptVariable script variable to move from
+		 * @param variable variable to move from
 		 */
-		inline ScriptVariable(ScriptVariable&& scriptVariable):
-			type(exchange(scriptVariable.type, MiniScript::TYPE_NULL)),
-			valuePtr(exchange(scriptVariable.valuePtr, 0ll)),
-			initializer(exchange(scriptVariable.initializer, nullptr)),
-			reference(exchange(scriptVariable.reference, nullptr)),
-			referenceCounter(exchange(scriptVariable.referenceCounter, 1)) {
+		inline ScriptVariable(ScriptVariable&& variable):
+			type(exchange(variable.type, MiniScript::TYPE_NULL)),
+			valuePtr(exchange(variable.valuePtr, 0ll)),
+			initializer(exchange(variable.initializer, nullptr)),
+			reference(exchange(variable.reference, nullptr)),
+			referenceCounter(exchange(variable.referenceCounter, 1)) {
 			//
 		}
 
 		/**
 		 * Assignment operator
-		 * @param scriptVariable script variable to copy
-		 * @return this script variable
+		 * @param variable variable to copy
+		 * @return this variable
 		 */
-		inline ScriptVariable& operator=(const ScriptVariable& scriptVariable) {
-			if (scriptVariable.reference != nullptr) {
-				reference = scriptVariable.reference;
-				scriptVariable.reference->acquireReference();
+		inline ScriptVariable& operator=(const ScriptVariable& variable) {
+			if (variable.reference != nullptr) {
+				reference = variable.reference;
+				variable.reference->acquireReference();
 			} else {
 				//
 				setNullValue();
 				//
-				switch(scriptVariable.getType()) {
+				switch(variable.getType()) {
 					case TYPE_NULL:
 						break;
 					case TYPE_BOOLEAN:
-						setValue(scriptVariable.getBooleanValueReference());
+						setValue(variable.getBooleanValueReference());
 						break;
 					case TYPE_INTEGER:
-						setValue(scriptVariable.getIntegerValueReference());
+						setValue(variable.getIntegerValueReference());
 						break;
 					case TYPE_FLOAT:
-						setValue(scriptVariable.getFloatValueReference());
+						setValue(variable.getFloatValueReference());
 						break;
 					case TYPE_STRING:
-						setValue(scriptVariable.getStringValueReference());
+						setValue(variable.getStringValueReference());
 						break;
 					case TYPE_VECTOR2:
-						setValue(scriptVariable.getVector2ValueReference());
+						setValue(variable.getVector2ValueReference());
 						break;
 					case TYPE_VECTOR3:
-						setValue(scriptVariable.getVector3ValueReference());
+						setValue(variable.getVector3ValueReference());
 						break;
 					case TYPE_VECTOR4:
-						setValue(scriptVariable.getVector4ValueReference());
+						setValue(variable.getVector4ValueReference());
 						break;
 					case TYPE_QUATERNION:
-						setValue(scriptVariable.getQuaternionValueReference());
+						setValue(variable.getQuaternionValueReference());
 						break;
 					case TYPE_MATRIX3x3:
-						setValue(scriptVariable.getMatrix3x3ValueReference());
+						setValue(variable.getMatrix3x3ValueReference());
 						break;
 					case TYPE_MATRIX4x4:
-						setValue(scriptVariable.getMatrix4x4ValueReference());
+						setValue(variable.getMatrix4x4ValueReference());
 						break;
 					case TYPE_TRANSFORM:
-						setValue(scriptVariable.getTransformValueReference());
+						setValue(variable.getTransformValueReference());
 						break;
 					case TYPE_ARRAY:
-						setValue(scriptVariable.getArrayValueReference());
+						setValue(variable.getArrayValueReference());
 						// copy initializer if we have any
-						getInitializer()->copy(scriptVariable.initializer);
+						getInitializer()->copy(variable.initializer);
 						//
 						break;
 					case TYPE_MAP:
-						setValue(scriptVariable.getMapValueReference());
+						setValue(variable.getMapValueReference());
 						// copy initializer if we have any
-						getInitializer()->copy(scriptVariable.initializer);
+						getInitializer()->copy(variable.initializer);
 						//
 						break;
 					case TYPE_SET:
-						setValue(scriptVariable.getSetValueReference());
+						setValue(variable.getSetValueReference());
 						// copy initializer if we have any
-						getInitializer()->copy(scriptVariable.initializer);
+						getInitializer()->copy(variable.initializer);
 						//
 						break;
 					case TYPE_FUNCTION_CALL:
 						setType(TYPE_FUNCTION_CALL);
-						getStringValueReference() = scriptVariable.getStringValueReference();
+						getStringValueReference() = variable.getStringValueReference();
 						// copy initializer if we have any
-						getInitializer()->copy(scriptVariable.initializer);
+						getInitializer()->copy(variable.initializer);
 						//
 						break;
 					case TYPE_FUNCTION_ASSIGNMENT:
-						setFunctionAssignment(scriptVariable.getStringValueReference());
+						setFunctionAssignment(variable.getStringValueReference());
 						break;
 					// pseudo ...
 					default: break;
@@ -718,15 +888,15 @@ public:
 
 		/**
 		 * Move operator
-		 * @param scriptVariable script variable to move from
+		 * @param variable variable to move from
 		 * @return this script variable
 		 */
-		inline ScriptVariable& operator=(ScriptVariable&& scriptVariable) {
-			swap(type, scriptVariable.type);
-			swap(valuePtr, scriptVariable.valuePtr);
-			swap(initializer, scriptVariable.initializer);
-			swap(reference, scriptVariable.reference);
-			swap(referenceCounter, scriptVariable.referenceCounter);
+		inline ScriptVariable& operator=(ScriptVariable&& variable) {
+			swap(type, variable.type);
+			swap(valuePtr, variable.valuePtr);
+			swap(initializer, variable.initializer);
+			swap(reference, variable.reference);
+			swap(referenceCounter, variable.referenceCounter);
 			//
 			return *this;
 		}
@@ -2587,7 +2757,7 @@ protected:
 	inline void popScriptState() {
 		if (scriptStateStack.empty() == true) return;
 		const auto& scriptState = getScriptState();
-		for (const auto& [scriptVariableName, scriptVariable]: scriptState.variables) delete scriptVariable;
+		for (const auto& [variableName, variable]: scriptState.variables) delete variable;
 		scriptStateStack.erase(scriptStateStack.begin() + scriptStateStack.size() - 1);
 	}
 
@@ -3455,7 +3625,7 @@ public:
 		auto variablePtr = getVariableIntern(globalVariableName.empty() == true?name:globalVariableName, __FUNCTION__, parentVariable, arrayIdx, key, setAccessBool, statement, false, globalVariableName.empty() == false);
 		// common case
 		if (variablePtr != nullptr) {
-			*variablePtr = createReference == false?variable:ScriptVariable::createReferenceVariable(&variable);
+			*variablePtr = variable;
 			return;
 		} else
 		// array add operator
@@ -3470,7 +3640,7 @@ public:
 			} else
 			// all checks passed, push to map
 			if (parentVariable->getType() == MiniScript::TYPE_MAP) {
-				parentVariable->setMapEntry(key, variable);
+				parentVariable->setMapEntry(key, createReference == false?ScriptVariable::createNonReferenceVariable(&variable):ScriptVariable::createReferenceVariable(&variable));
 			} else
 			if (parentVariable->getType() == MiniScript::TYPE_SET) {
 				bool booleanValue;
@@ -3514,7 +3684,7 @@ public:
 			} else {
 				// all checks passed, push variable to array
 				auto& arrayValueReference = parentVariable->getArrayValueReference();
-				arrayValueReference.push_back(new ScriptVariable(variable));
+				arrayValueReference.push_back(createReference == false?ScriptVariable::createNonReferenceVariablePointer(&variable):ScriptVariable::createReferenceVariablePointer(&variable));
 			}
 			//
 			return;
@@ -3528,9 +3698,7 @@ public:
 			return;
 		} else {
 			scriptState.variables[globalVariableName.empty() == true?name:globalVariableName] =
-				createReference == false?
-					new ScriptVariable(variable):
-					ScriptVariable::createReferenceVariablePointer(&variable);
+				createReference == false?ScriptVariable::createNonReferenceVariablePointer(&variable):ScriptVariable::createReferenceVariablePointer(&variable);
 		}
 	}
 

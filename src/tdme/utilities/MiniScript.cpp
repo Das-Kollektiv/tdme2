@@ -432,6 +432,9 @@ bool MiniScript::parseScriptStatement(const string_view& executableStatement, st
 		string_view evaluateMemberAccessMethodName;
 		vector<string_view> evaluateMemberAccessArguments;
 
+		//
+		auto objectMemberAccessObjectVariable = viewIsVariableAccess(objectMemberAccessObject);
+
 		// construct new method name and argument string views
 		accessObjectMemberStatement.reserve(1024); // TODO: check me later
 		auto idx = accessObjectMemberStatement.size();
@@ -439,25 +442,26 @@ bool MiniScript::parseScriptStatement(const string_view& executableStatement, st
 		evaluateMemberAccessMethodName = string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx);
 		accessObjectMemberStatement+= "(";
 		idx = accessObjectMemberStatement.size();
-		accessObjectMemberStatement+= "\"" + string(viewIsVariableAccess(objectMemberAccessObject) == true?objectMemberAccessObject:"") + "\"";
+		accessObjectMemberStatement+= "\"" + string(objectMemberAccessObjectVariable == true?objectMemberAccessObject:"") + "\"";
 		evaluateMemberAccessArguments.push_back(string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx));
 		idx = accessObjectMemberStatement.size();
 		accessObjectMemberStatement+= ", ";
 		idx = accessObjectMemberStatement.size();
-		accessObjectMemberStatement+= string(objectMemberAccessObject);
+		accessObjectMemberStatement+= objectMemberAccessObjectVariable == true?"null":string(objectMemberAccessObject);
 		evaluateMemberAccessArguments.push_back(string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx));
 		accessObjectMemberStatement+= ", ";
 		idx = accessObjectMemberStatement.size();
 		accessObjectMemberStatement+= "\"" + string(methodName) + "\"";
 		evaluateMemberAccessArguments.push_back(string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx));
 		for (const auto& argument: arguments) {
+			auto argumentVariable = viewIsVariableAccess(argument);
 			accessObjectMemberStatement+= ", ";
 			idx = accessObjectMemberStatement.size();
-			accessObjectMemberStatement+= viewIsVariableAccess(argument) == true?"\"" + string(argument) + "\"":"null";
+			accessObjectMemberStatement+= argumentVariable == true?"\"" + string(argument) + "\"":"null";
 			evaluateMemberAccessArguments.push_back(string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx));
 			accessObjectMemberStatement+= ", ";
 			idx = accessObjectMemberStatement.size();
-			accessObjectMemberStatement+= string(argument);
+			accessObjectMemberStatement+= argumentVariable == true?"null":string(argument);
 			evaluateMemberAccessArguments.push_back(string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx));
 		}
 		accessObjectMemberStatement+= ")";
@@ -735,7 +739,7 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& methodName, 
 		}
 	} else
 	if (scriptMethod != nullptr) {
-		for (const auto argument: scriptMethod->getArgumentTypes()) {
+		for (const auto& argument: scriptMethod->getArgumentTypes()) {
 			argumentReferences.push_back(argument.reference);
 		}
 	}
@@ -1862,7 +1866,7 @@ void MiniScript::startScript() {
 		return;
 	}
 	auto& scriptState = getScriptState();
-	for (const auto& [scriptVariableName, scriptVariable]: scriptState.variables) delete scriptVariable;
+	for (const auto& [variableName, variable]: scriptState.variables) delete variable;
 	scriptState.variables.clear();
 	scriptState.running = true;
 	registerVariables();
@@ -2351,22 +2355,13 @@ bool MiniScript::call(int scriptIdx, span<ScriptVariable>& argumentValues, Scrip
 	// script state vector could get modified, so
 	{
 		auto& scriptState = getScriptState();
-		// function arguments
-		ScriptVariable functionArguments;
-		functionArguments.setType(MiniScript::TYPE_ARRAY);
-		// push arguments in function context
-		for (const auto& argumentValue: argumentValues) {
-			functionArguments.pushArrayEntry(argumentValue);
-		}
-		// have $arguments
-		setVariable("$arguments", functionArguments);
 		// also put named arguments into state context variables
 		auto argumentIdx = 0;
 		for (const auto& argument: scripts[scriptIdx].arguments) {
 			if (argumentIdx == argumentValues.size()) {
 				break;
 			}
-			setVariable(argument.name, move(argumentValues[argumentIdx]), nullptr, argument.reference);
+			setVariable(argument.name, argumentValues[argumentIdx], nullptr, argument.reference);
 			argumentIdx++;
 		}
 	}
@@ -2725,22 +2720,28 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				// TODO: references
 				// Current layout:
-				//	0: variable name of object
-				//	1: variable content of object
+				//	0: variable name of object, 1: variable content of object
 				//	2: object method to call
-				//	3: variable name of argument 0
-				//	4: variable content of argument 0
-				//	5: variable name of argument 1
-				//	6: variable content of argument 1
+				//	3: variable name of argument 0; 4: variable content of argument 0
+				//	5: variable name of argument 1; 6: variable content of argument 1
 				//	..
 				string variable;
 				string member;
+				//
 				if (argumentValues.size() < 3 ||
 					miniScript->getStringValue(argumentValues, 0, variable, false) == false ||
 					miniScript->getStringValue(argumentValues, 2, member, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
+					// do we have a this variable name?
+					{
+						string thisVariableName;
+						if (argumentValues[0].getType() != MiniScript::TYPE_NULL && argumentValues[0].getStringValue(thisVariableName) == true) {
+							// yep, looks like that, we always use a reference here
+							argumentValues[1] = miniScript->getVariable(thisVariableName, &statement, true);
+						}
+					}
 					// check if map, if so fetch function assignment of member property
 					auto functionIdx = MiniScript::SCRIPTIDX_NONE;
 					if (argumentValues[1].getType() == TYPE_MAP) {
@@ -2754,6 +2755,7 @@ void MiniScript::registerMethods() {
 					const auto& className = ScriptVariable::getClassName(argumentValues[1].getType());
 					//
 					if (className.empty() == false || functionIdx != MiniScript::SCRIPTIDX_NONE) {
+						//
 						ScriptMethod* method { nullptr };
 						if (functionIdx == MiniScript::SCRIPTIDX_NONE) {
 							#if defined(__MINISCRIPT_TRANSPILATION__)
@@ -2771,78 +2773,30 @@ void MiniScript::registerMethods() {
 							{
 								auto callArgumentValueIdx = 1;
 								for (auto argumentValueIdx = 3; argumentValueIdx < argumentValues.size(); argumentValueIdx+=2) {
+									// do we have a this variable name?
+									string argumentVariableName;
+									if (argumentValues[argumentValueIdx].getType() != MiniScript::TYPE_NULL && argumentValues[argumentValueIdx].getStringValue(argumentVariableName) == true) {
+										// yep, looks like that
+										if (method != nullptr) {
+											argumentValues[argumentValueIdx + 1] = miniScript->getVariable(argumentVariableName, &statement, callArgumentValueIdx >= method->getArgumentTypes().size()?false:method->getArgumentTypes()[callArgumentValueIdx].reference);
+										} else
+										if (functionIdx != MiniScript::SCRIPTIDX_NONE) {
+											argumentValues[argumentValueIdx + 1] = miniScript->getVariable(argumentVariableName, &statement, callArgumentValueIdx >= miniScript->getScripts()[functionIdx].arguments.size()?false:miniScript->getScripts()[functionIdx].arguments[callArgumentValueIdx].reference);
+										}
+									}
+									//
 									callArgumentValues[callArgumentValueIdx] = move(argumentValues[argumentValueIdx + 1]);
 									callArgumentValueIdx++;
 								}
 							}
+							//
 							span callArgumentValuesSpan(callArgumentValues);
+							//
 							if (method != nullptr) {
 								method->executeMethod(callArgumentValuesSpan, returnValue, statement);
 							} else
 							if (functionIdx != MiniScript::SCRIPTIDX_NONE) {
 								miniScript->call(functionIdx, callArgumentValuesSpan, returnValue);
-							}
-							// assign back variables
-							{
-								auto argumentIdx = 0;
-
-								//
-								auto reference = [&]() -> bool {
-									if (argumentIdx == 0) {
-										if (isVariableAccess(variable) == true) {
-											miniScript->setVariable(variable, callArgumentValuesSpan[0], &statement);
-										} else {
-											Console::println(miniScript->getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + variable + "'");
-										}
-									} else {
-										auto variableNameArgumentIdx = (argumentIdx * 2) + 1;
-										if (variableNameArgumentIdx >= argumentValues.size() || argumentIdx >= callArgumentValuesSpan.size()) {
-											return false;
-										} else {
-											auto argumentVariable = argumentValues[variableNameArgumentIdx].getValueAsString();
-											if (isVariableAccess(argumentVariable) == true) {
-												miniScript->setVariable(argumentVariable, callArgumentValuesSpan[argumentIdx], &statement);
-											} else {
-												Console::println(miniScript->getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + argumentVariable + "'");
-											}
-										}
-									}
-									//
-									return true;
-								};
-
-								// method
-								if (method != nullptr) {
-									for (const auto& argument: method->getArgumentTypes()) {
-										if (argument.reference == false) {
-											argumentIdx++;
-											continue;
-										}
-										//
-										if (reference() == false) {
-											Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()) + ": invalid member call");
-											miniScript->startErrorScript();
-										}
-										//
-										argumentIdx++;
-									}
-								} else
-								if (functionIdx != MiniScript::SCRIPTIDX_NONE) {
-									const auto& script = miniScript->getScripts()[functionIdx];
-									for (const auto& argument: script.arguments) {
-										if (argument.reference == false) {
-											argumentIdx++;
-											continue;
-										}
-										//
-										if (reference() == false) {
-											Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()) + ": invalid member call");
-											miniScript->startErrorScript();
-										}
-										//
-										argumentIdx++;
-									}
-								}
 							}
 							// write back arguments from call arguments
 							//	this
