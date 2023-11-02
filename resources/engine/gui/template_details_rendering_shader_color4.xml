@@ -1,0 +1,16 @@
+<template>	
+	<layout alignment="vertical" width="100%" height="auto" horizontal-align="center">
+
+		<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+			<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="{$name}" width="*" height="auto"/>
+			<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+				<image id="{$id}_color" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
+				<space width="5" />						
+				<button id="{$id}_color_edit" width="25" height="25" image="resources/engine/images/edit.png"/>
+			</layout>
+		</layout>
+
+		<space height="5" />
+		
+	</layout>
+</template>

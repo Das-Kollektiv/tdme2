@@ -1,0 +1,13 @@
+<template>	
+	<element id="{$id}" width="100%" height="auto">
+		<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
+			<button width="100%" height="25" text="Postprocessing Shader" on-mouse-click="{$id}.condition!=open"/>
+			<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="left">			
+
+				<layout id="postprocessing_details" alignment="vertical" width="100%" height="auto" horizontal-align="center">
+				</layout>
+				
+			</layout>		
+		</layout>
+	</element>
+</template>

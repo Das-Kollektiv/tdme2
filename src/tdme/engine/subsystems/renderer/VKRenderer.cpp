@@ -1067,7 +1067,7 @@ void VKRenderer::initialize()
 				instanceValidationLayers,
 				instanceLayers
 			);
-			if (validationFound == true) {
+			if (validationFound == VK_SUCCESS) {
 				enabledLayerCount = ARRAY_SIZE(instanceValidationLayersAlt1);
 				enabledLayers[0] = "VK_LAYER_LUNARG_standard_validation";
 				validationLayerCount = 1;
@@ -1241,7 +1241,7 @@ void VKRenderer::initialize()
 	vkGetPhysicalDeviceFeatures(physicalDevice, &gpuFeatures);
 
 	//
-	textureCompressionAvailable == gpuFeatures.textureCompressionBC == VK_TRUE;
+	textureCompressionAvailable = gpuFeatures.textureCompressionBC == VK_TRUE;
 
 	// Create a WSI surface for the window:
 	err = glfwCreateWindowSurface(instance, Application::glfwWindow, nullptr, &surface);

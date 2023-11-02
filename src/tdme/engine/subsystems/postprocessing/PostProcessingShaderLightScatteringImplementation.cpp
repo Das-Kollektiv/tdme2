@@ -54,15 +54,15 @@ void PostProcessingShaderLightScatteringImplementation::initialize()
 	//
 	PostProcessingShaderBaseImplementation::initialize();
 
-	// register shader
-	if (initialized == false) return;
-
 	//	lights
 	for (auto i = 0; i < Engine::LIGHTS_MAX; i++) {
 		uniformLightEnabled[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) +"].enabled");
 		uniformLightPosition[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) +"].position");
 		uniformLightIntensity[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) +"].intensity");
 	}
+
+	// register shader
+	if (initialized == false) return;
 
 	//
 	Engine::registerShader(

@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <unordered_set>
 #include <vector>
 
@@ -92,6 +93,7 @@ using std::make_unique;
 using std::move;
 using std::remove;
 using std::string;
+using std::string_view;
 using std::unique_ptr;
 using std::unordered_set;
 using std::vector;
@@ -233,26 +235,26 @@ void EditorScreenController::initialize()
 		public:
 			EditorLogger(EditorScreenController* editorScreenController): editorScreenController(editorScreenController) {
 			}
-			void println(const string& str) {
+			void println(const string_view& str) {
 				auto& messages = editorScreenController->logMessages;
 				if (messages.empty() == true || newline == true) messages.push_back(string());
 				messages[messages.size() - 1]+= str;
-				if (messages.size() == 100) messages.erase(messages.begin());
+				if (messages.size() == Console::HISTORY_LINECOUNT) messages.erase(messages.begin());
 				newline = true;
 				editorScreenController->logUpdateRequired = true;
 			}
-			void print(const string& str) {
+			void print(const string_view& str) {
 				auto& messages = editorScreenController->logMessages;
 				if (messages.empty() == true || newline == true) messages.push_back(string());
 				messages[messages.size() - 1]+= str;
-				if (messages.size() == 100) messages.erase(messages.begin());
+				if (messages.size() == Console::HISTORY_LINECOUNT) messages.erase(messages.begin());
 				newline = false;
 				editorScreenController->logUpdateRequired = true;
 			}
 			void println() {
 				auto& messages = editorScreenController->logMessages;
 				messages.push_back(string());
-				if (messages.size() == 100) messages.erase(messages.begin());
+				if (messages.size() == Console::HISTORY_LINECOUNT) messages.erase(messages.begin());
 				newline = true;
 				editorScreenController->logUpdateRequired = true;
 			}

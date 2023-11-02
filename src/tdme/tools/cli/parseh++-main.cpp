@@ -313,13 +313,12 @@ int main(int argc, char** argv)
 	//
 	if (argc < 2) {
 		Console::println("Usage: parseh++ path/to/file.h");
-		Application::exit(1);
+		Application::exit(Application::EXITCODE_FAILURE);
 	}
 
 	//
 	parseHpp(argv[1]);
 
 	//
-	Console::shutdown();
-	return 0;
+	Application::exit(Application::EXITCODE_SUCCESS);
 }

@@ -1,4 +1,4 @@
-![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/github/tdme2-logo.png)
+![LOGO](https://raw.githubusercontent.com/Mindty-Kollektiv/tdme2/master/resources/github/tdme2-logo.png)
 
 This is the documentation of MiniScript language. This document is WIP.
 
@@ -9,14 +9,14 @@ Introduction to MiniScript language features:
 - runs on every CPU, OS, ... due to its simplicity, so its highly portable just like TDME2 is
 - can be easily extended by writing state machine machine states and script methods in C++
 - works with the following data types: null, boolean, integer, float, string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, array, map and set
-- when calling script methods/returning from methods it does not use references or pointers but only value by copy
+- when calling script C++ methods or script functions with arguments it does optionally use references or value by copy
 - supports user script functions and recursion
-- supports kind of references by optionally assigning back argument values to variables
 - supports operators by operator to method mapping by a preprocessor run
 - supports loops and conditions
 - supports programming with classes style programming
   - for string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, array, map and set data types
-  - custom data types and custom script classes are planned
+  - via script classes
+  - custom data types are planned
 - supports event like programming
 - can be transpiled to C++
 
@@ -334,7 +334,15 @@ For more math related methods just look into "6. Methods" section.
 
 An array is a collection/sequence of values which can be accessed by indices.
 
-Initializing an array:
+Initializing an array by array initializer:
+
+```
+...
+	$array = [1, 2, 3]
+...
+```
+
+Initializing an array by constructor:
 
 ```
 ...
@@ -407,7 +415,14 @@ Removing from arrays using a index with array.remove():
 
 A map is key, value pair storage using a underlying hash map. Keys can only exist once in a map.
 
-Initializing maps using map() method:
+Initializing a map by map initializer
+```
+...
+	$map = {"test1": 123, "test2": 456, "test3": [1, 2, 3], "test4": "Yaaaa"}
+...
+```
+
+Initializing a map by map constructor:
 ```
 ...
 	$map = map()
@@ -489,7 +504,14 @@ Reading all keys and values from map using map.get() and map.getKeys()
 
 A set is key storage using a underlying hash set. Keys can only exist once in a set.
 
-Initializing sets using set() method:
+Initializing a set by set initializer
+```
+...
+	$set = {"test1", "test2", "test3"}
+...
+```
+
+Initializing a set by set constructor
 ```
 ...
 	$set = set()
@@ -550,6 +572,118 @@ Reading all keys as array from set:
 ...
 	console.log("set keys: ", $set->getKeys())
 ...
+```
+
+## 4.6. Classes
+
+Classes in MiniScript are basically maps, see map section in 4.4
+
+Creating a class in MiniScript works by using map initializer plus () -> methodName function assignment, or () -> { console.dump($this) } inline function definition.
+Please see a example below.
+
+```
+...
+	#
+	$car = {
+		# member variables
+		wheelCount: 4,
+		color: "blue",
+		horsePower: 75,
+		# member methods
+		setWheelCount: ($wheelCount) -> 
+			{
+				$this.wheelCount = $wheelCount
+			},
+		setColor: ($color) ->
+			{
+				$this.color = $color
+			},
+		setHorsePower: ($horsePower) -> 
+			{
+				$this.horsePower = $horsePower
+			},
+		showMeWhatYouGot: () ->
+			{
+				console.log(
+					"This amazing car has ", 
+					$this.wheelCount,
+					" wheels, is colored ", 
+					$this.color,
+					" with super nice ", 
+					$this.horsePower,
+					" horses in it"
+				)
+			},
+		getProperties: (=$wheelCount, =$color, =$horsePower) -> 
+			{
+				$wheelCount = $this.wheelCount
+				$color = $this.color
+				$horsePower = $this.horsePower
+			}
+	}
+	#
+	console.dump($car)
+	# arrr, lets see what kind of car we got
+	$car->showMeWhatYouGot()
+	# i want it in red with 3 wheels and 25 mighty horse power
+	$car->setColor("red")
+	$car->setWheelCount(3)
+	$car->setHorsePower(25)
+	# arrr, lets see what kind of car we got now!
+	$car->showMeWhatYouGot()
+	# lets get the properties
+	$wheelCount = null
+	$color = null
+	$horsePower = null
+	$car->getProperties($wheelCount, $color, $horsePower)
+	console.log(
+		"Car properties, wheels: ", 
+		$wheelCount,
+		", color: ", 
+		$color,
+		", horse power: ", 
+		$horsePower
+	)
+	#...
+```
+
+If you want to assign a class member function later, see this example. Note that the first argument needs to be a (const) $this variable, or a "assigned back" $this variable. This argument maps to the class that your code is operating on in your class member function.
+
+```
+...
+function: setConvertible(=$this, $convertible)
+	$this.convertible = $convertible
+end
+
+function: showMeWhatYouGot($this)
+	$carType = "car"
+	if ($this.convertible == true)
+		$carType = "convertible"
+	end
+	console.log(
+		"This amazing ", 
+		$carType,
+		" has ", 
+		$this.wheelCount,
+		" wheels, is colored ", 
+		$this.color,
+		" with super nice ", 
+		$this.horsePower,
+		" horses in it"
+	)
+end
+	...
+	#
+	$car.convertible = false
+	$car.setConvertible = () -> setConvertible
+	$car.showMeWhatYouGot = () -> showMeWhatYouGot
+	#
+	console.dump($car)
+	# I want a convertible, who doesn't?
+	$car->setConvertible(true)
+	# arrr, lets see what kind of car we got
+	$car->showMeWhatYouGot()
+	#...
 ```
 
 # 5. Program structure and flow
@@ -946,6 +1080,8 @@ Reading all keys as array from set:
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Pretty print variable to console                                                                 |
+| <sub>console.dump($value: Mixed): Void</sub>                                                     |
 | Print to console                                                                                 |
 | <sub>console.log(...): Void</sub>                                                                |
 
@@ -1060,7 +1196,7 @@ Reading all keys as array from set:
 
 # 8. MiniScript logic methods
 
-The boilerplate template code for a MiniScript logic looks like: [logic_script_template.tscript](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/engine/templates/tscript/logic_script_template.tscript)
+The boilerplate template code for a MiniScript logic looks like: [logic_script_template.tscript](https://raw.githubusercontent.com/Mindty-Kollektiv/tdme2/master/resources/engine/templates/tscript/logic_script_template.tscript)
 
 ## 8.1 Application methods
 
@@ -1485,7 +1621,7 @@ The boilerplate template code for a MiniScript logic looks like: [logic_script_t
 
 # 9. MiniScript GUI methods
 
-The boilerplate template code for a MiniScript GUI logic looks like: [gui_script_template.tscript](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/engine/templates/tscript/gui_script_template.tscript)
+The boilerplate template code for a MiniScript GUI logic looks like: [gui_script_template.tscript](https://raw.githubusercontent.com/Mindty-Kollektiv/tdme2/master/resources/engine/templates/tscript/gui_script_template.tscript)
 
 ## 9.1 Element node condition methods
 

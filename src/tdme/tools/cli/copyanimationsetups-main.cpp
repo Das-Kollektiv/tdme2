@@ -34,7 +34,7 @@ int main(int argc, char** argv)
 	Console::println();
 	if (argc != 3) {
 		Console::println("Usage: copyanimationsetups sourcefile targetfile.tm");
-		Application::exit(1);
+		Application::exit(Application::EXITCODE_FAILURE);
 	}
 	string sourceFileName = string(argv[1]);
 	string targetFileName = string(argv[2]);
@@ -88,6 +88,5 @@ int main(int argc, char** argv)
 	}
 
 	//
-	Console::shutdown();
-	return 0;
+	Application::exit(Application::EXITCODE_SUCCESS);
 }

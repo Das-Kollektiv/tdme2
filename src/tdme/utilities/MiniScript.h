@@ -20,6 +20,7 @@
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
+#include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
@@ -27,13 +28,12 @@
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
 
-#include <ext/rapidjson/document.h>
-
 using std::array;
 using std::exchange;
 using std::remove;
 using std::make_unique;
 using std::move;
+using std::sort;
 using std::span;
 using std::stack;
 using std::swap;
@@ -52,6 +52,7 @@ using tdme::math::Quaternion;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
+using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
@@ -59,13 +60,10 @@ using tdme::utilities::Integer;
 using tdme::utilities::StringTools;
 using tdme::utilities::Time;
 
-using rapidjson::Document;
-using rapidjson::Value;
-
 namespace tdme {
 namespace tools {
 namespace cli {
-	class MiniscriptTranspiler;
+	class MiniScriptTranspilerTool;
 }
 }
 }
@@ -75,7 +73,8 @@ namespace cli {
  * @author Andreas Drewke
  */
 class tdme::utilities::MiniScript {
-	friend class tdme::tools::cli::MiniscriptTranspiler;
+	friend class tdme::tools::cli::MiniScriptTranspilerTool;
+	friend class MiniScriptTranspiler;
 
 public:
 	enum ScriptOperator {
@@ -162,9 +161,14 @@ public:
 		TYPE_ARRAY,
 		TYPE_MAP,
 		TYPE_SET,
+		TYPE_FUNCTION_CALL,
+		TYPE_FUNCTION_ASSIGNMENT,
 		TYPE_PSEUDO_NUMBER,
-		TYPE_PSEUDO_MIXED
+		TYPE_PSEUDO_MIXED,
 	};
+
+	//
+	class ScriptSyntaxTreeNode;
 
 	/**
 	 * MiniScript script variable
@@ -173,203 +177,326 @@ public:
 		friend class MiniScript;
 
 	private:
+		/**
+		 * MiniScript variable initializer
+		 */
+		class Initializer {
+			public:
+				/**
+				 * Constructor
+				 */
+				Initializer():
+					statement(
+						MiniScript::ScriptStatement(
+							MiniScript::LINE_NONE,
+							MiniScript::STATEMENTIDX_NONE,
+							string(),
+							string(),
+							MiniScript::STATEMENTIDX_NONE
+						)
+					),
+					syntaxTree(new ScriptSyntaxTreeNode()) {
+					//
+				}
+
+				/**
+				 * Constructor
+				 * @param initializerString initializer string
+				 * @param statement statement
+				 * @param syntaxTree syntax tree
+				 */
+				Initializer(const string& initializerString, const ScriptStatement& statement, ScriptSyntaxTreeNode* syntaxTree): initializerString(initializerString), statement(statement), syntaxTree(syntaxTree) {}
+
+				/**
+				 * Destructor
+				 */
+				~Initializer() { delete syntaxTree; }
+
+				/**
+				 * Copy from initializer
+				 * @param initializer initializer
+				 */
+				void copy(Initializer* initializer) {
+					this->initializerString = initializer->initializerString;
+					this->statement = initializer->statement;
+					if (syntaxTree != nullptr && initializer->syntaxTree != nullptr) {
+						*syntaxTree = *initializer->syntaxTree;
+					}
+				}
+
+				/**
+				 * @return initializer string
+				 */
+				const string& getInitializerString() {
+					return initializerString;
+				}
+
+				/**
+				 * @return statement
+				 */
+				const ScriptStatement& getStatement() {
+					return statement;
+				}
+
+				/**
+				 * @return syntax tree node
+				 */
+				const ScriptSyntaxTreeNode* getSyntaxTree() {
+					return syntaxTree;
+				}
+
+			private:
+				string initializerString;
+				ScriptStatement statement;
+				ScriptSyntaxTreeNode* syntaxTree;
+		};
+
+		//
 		ScriptVariableType type { TYPE_NULL };
 		uint64_t valuePtr { 0LL };
+		Initializer* initializer { nullptr };
+		ScriptVariable* reference { nullptr };
+		int referenceCounter { 1 };
+
+		/**
+		 * Acquire reference
+		 */
+		inline void acquireReference() {
+			referenceCounter++;
+		}
+
+		/**
+		 * Release reference
+		 */
+		inline void releaseReference() {
+			if (reference != nullptr) {
+				reference->releaseReference();
+			}
+			if (--referenceCounter == 0) {
+				reference = nullptr;
+				setType(TYPE_NULL);
+				delete this;
+			}
+		}
+
+		/**
+		 * Return initializer
+		 * @return initializer
+		 */
+		inline Initializer*& getInitializerReference() {
+			return reference != nullptr?reference->initializer:initializer;
+		}
+
+		/**
+		 * Return const value pointer
+		 * @return value ptr
+		 */
+		inline const uint64_t& getValuePtrReference() const {
+			return reference != nullptr?reference->valuePtr:valuePtr;
+		}
+
+		/**
+		 * Return value pointer
+		 * @return value ptr
+		 */
+		inline uint64_t& getValuePtrReference() {
+			return reference != nullptr?reference->valuePtr:valuePtr;
+		}
 
 		/**
 		 * @return boolean value reference
 		 */
 		inline bool& getBooleanValueReference() {
-			return *(bool*)(&valuePtr);
+			return *(bool*)(&getValuePtrReference());
 		}
 
 		/**
 		 * @return const boolean value reference
 		 */
 		inline const bool& getBooleanValueReference() const {
-			return *(bool*)(&valuePtr);
+			return *(bool*)(&getValuePtrReference());
 		}
 
 		/**
 		 * @return integer value reference
 		 */
 		inline int64_t& getIntegerValueReference() {
-			return *(int64_t*)(&valuePtr);
+			return *(int64_t*)(&getValuePtrReference());
 		}
 
 		/**
 		 * @return const integer value reference
 		 */
 		inline const int64_t& getIntegerValueReference() const {
-			return *(int64_t*)(&valuePtr);
+			return *(int64_t*)(&getValuePtrReference());
 		}
 
 		/**
 		 * @return float value reference
 		 */
 		inline float& getFloatValueReference() {
-			return *(float*)(&valuePtr);
+			return *(float*)(&getValuePtrReference());
 		}
 
 		/**
 		 * @return const float value reference
 		 */
 		inline const float& getFloatValueReference() const {
-			return *(float*)(&valuePtr);
+			return *(float*)(&getValuePtrReference());
 		}
 
 		/**
 		 * @return string value reference
 		 */
 		inline string& getStringValueReference() {
-			return *static_cast<string*>((void*)valuePtr);
+			return *static_cast<string*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return const string value reference
 		 */
 		inline const string& getStringValueReference() const {
-			return *static_cast<string*>((void*)valuePtr);
+			return *static_cast<string*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return vector2 value reference
 		 */
 		inline Vector2& getVector2ValueReference() {
-			return *static_cast<Vector2*>((void*)valuePtr);
+			return *static_cast<Vector2*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return const vector2 value reference
 		 */
 		inline const Vector2& getVector2ValueReference() const {
-			return *static_cast<Vector2*>((void*)valuePtr);
+			return *static_cast<Vector2*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return vector3 value reference
 		 */
 		inline Vector3& getVector3ValueReference() {
-			return *static_cast<Vector3*>((void*)valuePtr);
+			return *static_cast<Vector3*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return const vector3 value reference
 		 */
 		inline const Vector3& getVector3ValueReference() const {
-			return *static_cast<Vector3*>((void*)valuePtr);
+			return *static_cast<Vector3*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return vector4 value reference
 		 */
 		inline Vector4& getVector4ValueReference() {
-			return *static_cast<Vector4*>((void*)valuePtr);
+			return *static_cast<Vector4*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return const vector4 value reference
 		 */
 		inline const Vector4& getVector4ValueReference() const {
-			return *static_cast<Vector4*>((void*)valuePtr);
+			return *static_cast<Vector4*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return quaternion value reference
 		 */
 		inline Quaternion& getQuaternionValueReference() {
-			return *static_cast<Quaternion*>((void*)valuePtr);
+			return *static_cast<Quaternion*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return const quaternion value reference
 		 */
 		inline const Quaternion& getQuaternionValueReference() const {
-			return *static_cast<Quaternion*>((void*)valuePtr);
+			return *static_cast<Quaternion*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return matrix3x3 value reference
 		 */
 		inline Matrix3x3& getMatrix3x3ValueReference() {
-			return *static_cast<Matrix3x3*>((void*)valuePtr);
+			return *static_cast<Matrix3x3*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return const matrix3x3 value reference
 		 */
 		inline const Matrix3x3& getMatrix3x3ValueReference() const {
-			return *static_cast<Matrix3x3*>((void*)valuePtr);
+			return *static_cast<Matrix3x3*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return matrix4x4 value reference
 		 */
 		inline Matrix4x4& getMatrix4x4ValueReference() {
-			return *static_cast<Matrix4x4*>((void*)valuePtr);
+			return *static_cast<Matrix4x4*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return const matrix4x4 value reference
 		 */
 		inline const Matrix4x4& getMatrix4x4ValueReference() const {
-			return *static_cast<Matrix4x4*>((void*)valuePtr);
+			return *static_cast<Matrix4x4*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return transform value reference
 		 */
 		inline Transform& getTransformValueReference() {
-			return *static_cast<Transform*>((void*)valuePtr);
+			return *static_cast<Transform*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return const transform value reference
 		 */
 		inline const Transform& getTransformValueReference() const {
-			return *static_cast<Transform*>((void*)valuePtr);
+			return *static_cast<Transform*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return array value reference
 		 */
-		inline vector<ScriptVariable>& getArrayValueReference() {
-			return *static_cast<vector<ScriptVariable>*>((void*)valuePtr);
+		inline vector<ScriptVariable*>& getArrayValueReference() {
+			return *static_cast<vector<ScriptVariable*>*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return const array value reference
 		 */
-		inline const vector<ScriptVariable>& getArrayValueReference() const {
-			return *static_cast<vector<ScriptVariable>*>((void*)valuePtr);
+		inline const vector<ScriptVariable*>& getArrayValueReference() const {
+			return *static_cast<vector<ScriptVariable*>*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return map value reference
 		 */
-		inline unordered_map<string, ScriptVariable>& getMapValueReference() {
-			return *static_cast<unordered_map<string, ScriptVariable>*>((void*)valuePtr);
+		inline unordered_map<string, ScriptVariable*>& getMapValueReference() {
+			return *static_cast<unordered_map<string, ScriptVariable*>*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return const map value reference
 		 */
-		inline const unordered_map<string, ScriptVariable>& getMapValueReference() const {
-			return *static_cast<unordered_map<string, ScriptVariable>*>((void*)valuePtr);
+		inline const unordered_map<string, ScriptVariable*>& getMapValueReference() const {
+			return *static_cast<unordered_map<string, ScriptVariable*>*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return set value reference
 		 */
 		inline unordered_set<string>& getSetValueReference() {
-			return *static_cast<unordered_set<string>*>((void*)valuePtr);
+			return *static_cast<unordered_set<string>*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return const set value reference
 		 */
 		inline const unordered_set<string>& getSetValueReference() const {
-			return *static_cast<unordered_set<string>*>((void*)valuePtr);
+			return *static_cast<unordered_set<string>*>((void*)getValuePtrReference());
 		}
 
 	public:
@@ -388,133 +515,333 @@ public:
 		STATIC_DLL_IMPEXT static const string CLASSNAME_SET;
 
 		/**
-		 * Copy constructor
-		 * @param scriptVariable script variable to copy
+		 * Create reference variable
+		 * @param variable variable
+		 * @returns reference variable
 		 */
-		inline ScriptVariable(const ScriptVariable& scriptVariable) {
-			switch(scriptVariable.type) {
+		inline static ScriptVariable createReferenceVariable(const ScriptVariable* variable) {
+			// copy a reference variable is cheap
+			if (variable->reference != nullptr) return *variable;
+			//
+			ScriptVariable referenceVariable;
+			referenceVariable.reference = (ScriptVariable*)variable; // TODO: improve me!
+			referenceVariable.reference->acquireReference();
+			return referenceVariable;
+		}
+
+		/**
+		 * Create reference variable pointer
+		 * @param variable variable
+		 * @returns reference variable
+		 */
+		inline static ScriptVariable* createReferenceVariablePointer(const ScriptVariable* variable) {
+			// copy a reference variable is cheap
+			if (variable->reference != nullptr) return new ScriptVariable(*variable);
+			//
+			ScriptVariable* referenceVariable = new ScriptVariable();
+			referenceVariable->reference = (ScriptVariable*)variable; // TODO: improve me!
+			referenceVariable->reference->acquireReference();
+			return referenceVariable;
+		}
+
+		/**
+		 * Create non reference variable
+		 * @param nonReferenceVariable non reference variable
+		 * @param variable variable
+		 */
+		inline static void createNonReferenceVariable(ScriptVariable& nonReferenceVariable, const ScriptVariable* variable) {
+			// do the copy
+			switch(variable->getType()) {
 				case TYPE_NULL:
-					setNullValue();
+					nonReferenceVariable.setNullValue();
 					break;
 				case TYPE_BOOLEAN:
-					setValue(scriptVariable.getBooleanValueReference());
+					nonReferenceVariable.setValue(variable->getBooleanValueReference());
 					break;
 				case TYPE_INTEGER:
-					setValue(scriptVariable.getIntegerValueReference());
+					nonReferenceVariable.setValue(variable->getIntegerValueReference());
 					break;
 				case TYPE_FLOAT:
-					setValue(scriptVariable.getFloatValueReference());
+					nonReferenceVariable.setValue(variable->getFloatValueReference());
 					break;
 				case TYPE_STRING:
-					setValue(scriptVariable.getStringValueReference());
+					nonReferenceVariable.setValue(variable->getStringValueReference());
 					break;
 				case TYPE_VECTOR2:
-					setValue(scriptVariable.getVector2ValueReference());
+					nonReferenceVariable.setValue(variable->getVector2ValueReference());
 					break;
 				case TYPE_VECTOR3:
-					setValue(scriptVariable.getVector3ValueReference());
+					nonReferenceVariable.setValue(variable->getVector3ValueReference());
 					break;
 				case TYPE_VECTOR4:
-					setValue(scriptVariable.getVector4ValueReference());
+					nonReferenceVariable.setValue(variable->getVector4ValueReference());
 					break;
 				case TYPE_QUATERNION:
-					setValue(scriptVariable.getQuaternionValueReference());
+					nonReferenceVariable.setValue(variable->getQuaternionValueReference());
 					break;
 				case TYPE_MATRIX3x3:
-					setValue(scriptVariable.getMatrix3x3ValueReference());
+					nonReferenceVariable.setValue(variable->getMatrix3x3ValueReference());
 					break;
 				case TYPE_MATRIX4x4:
-					setValue(scriptVariable.getMatrix4x4ValueReference());
+					nonReferenceVariable.setValue(variable->getMatrix4x4ValueReference());
 					break;
 				case TYPE_TRANSFORM:
-					setValue(scriptVariable.getTransformValueReference());
+					nonReferenceVariable.setValue(variable->getTransformValueReference());
 					break;
 				case TYPE_ARRAY:
-					setValue(scriptVariable.getArrayValueReference());
+					nonReferenceVariable.setValue(variable->getArrayValueReference());
+					// copy initializer if we have any
+					nonReferenceVariable.getInitializer()->copy(variable->initializer);
+					//
 					break;
 				case TYPE_MAP:
-					setValue(scriptVariable.getMapValueReference());
+					nonReferenceVariable.setValue(variable->getMapValueReference());
+					// copy initializer if we have any
+					nonReferenceVariable.getInitializer()->copy(variable->initializer);
+					//
 					break;
 				case TYPE_SET:
-					setValue(scriptVariable.getSetValueReference());
+					nonReferenceVariable.setValue(variable->getSetValueReference());
+					// copy initializer if we have any
+					nonReferenceVariable.getInitializer()->copy(variable->initializer);
+					//
 					break;
+				case TYPE_FUNCTION_CALL:
+					nonReferenceVariable.setType(TYPE_FUNCTION_CALL);
+					nonReferenceVariable.getStringValueReference() = variable->getStringValueReference();
+					// copy initializer if we have any
+					nonReferenceVariable.getInitializer()->copy(variable->initializer);
+					//
+					break;
+				case TYPE_FUNCTION_ASSIGNMENT:
+					nonReferenceVariable.setFunctionAssignment(variable->getStringValueReference());
+					break;
+				// pseudo ...
+				default: break;
+			}
+		}
+
+		/**
+		 * Create none reference variable
+		 * @param variable variable
+		 * @returns reference variable
+		 */
+		inline static ScriptVariable createNonReferenceVariable(const ScriptVariable* variable) {
+			// copy a non reference variable is cheap
+			if (variable->reference == nullptr) return *variable;
+			// otherwise do the copy
+			ScriptVariable nonReferenceVariable;
+			//
+			createNonReferenceVariable(nonReferenceVariable, variable);
+			//
+			return nonReferenceVariable;
+		}
+
+		/**
+		 * Create none reference variable pointer
+		 * @param variable variable
+		 * @returns reference variable
+		 */
+		inline static ScriptVariable* createNonReferenceVariablePointer(const ScriptVariable* variable) {
+			// copy a non reference variable is cheap
+			if (variable->reference == nullptr) return new ScriptVariable(*variable);
+			// otherwise do the copy
+			ScriptVariable* nonReferenceVariable = new ScriptVariable();
+			//
+			createNonReferenceVariable(*nonReferenceVariable, variable);
+			//
+			return nonReferenceVariable;
+		}
+
+		/**
+		 * Copy constructor
+		 * @param variable variable to copy
+		 */
+		inline ScriptVariable(const ScriptVariable& variable) {
+			if (variable.reference != nullptr) {
+				reference = variable.reference;
+				variable.reference->acquireReference();
+			} else {
+				switch(variable.getType()) {
+					case TYPE_NULL:
+						setNullValue();
+						break;
+					case TYPE_BOOLEAN:
+						setValue(variable.getBooleanValueReference());
+						break;
+					case TYPE_INTEGER:
+						setValue(variable.getIntegerValueReference());
+						break;
+					case TYPE_FLOAT:
+						setValue(variable.getFloatValueReference());
+						break;
+					case TYPE_STRING:
+						setValue(variable.getStringValueReference());
+						break;
+					case TYPE_VECTOR2:
+						setValue(variable.getVector2ValueReference());
+						break;
+					case TYPE_VECTOR3:
+						setValue(variable.getVector3ValueReference());
+						break;
+					case TYPE_VECTOR4:
+						setValue(variable.getVector4ValueReference());
+						break;
+					case TYPE_QUATERNION:
+						setValue(variable.getQuaternionValueReference());
+						break;
+					case TYPE_MATRIX3x3:
+						setValue(variable.getMatrix3x3ValueReference());
+						break;
+					case TYPE_MATRIX4x4:
+						setValue(variable.getMatrix4x4ValueReference());
+						break;
+					case TYPE_TRANSFORM:
+						setValue(variable.getTransformValueReference());
+						break;
+					case TYPE_ARRAY:
+						setValue(variable.getArrayValueReference());
+						// copy initializer if we have any
+						getInitializer()->copy(variable.initializer);
+						//
+						break;
+					case TYPE_MAP:
+						setValue(variable.getMapValueReference());
+						// copy initializer if we have any
+						getInitializer()->copy(variable.initializer);
+						//
+						break;
+					case TYPE_SET:
+						setValue(variable.getSetValueReference());
+						// copy initializer if we have any
+						getInitializer()->copy(variable.initializer);
+						//
+						break;
+					case TYPE_FUNCTION_CALL:
+						setType(TYPE_FUNCTION_CALL);
+						getStringValueReference() = variable.getStringValueReference();
+						// copy initializer if we have any
+						getInitializer()->copy(variable.initializer);
+						//
+						break;
+					case TYPE_FUNCTION_ASSIGNMENT:
+						setFunctionAssignment(variable.getStringValueReference());
+						break;
+					// pseudo ...
+					default: break;
+				}
 			}
 		}
 
 		/**
 		 * Move constructor
-		 * @param scriptVariable script variable to move from
+		 * @param variable variable to move from
 		 */
-		inline ScriptVariable(ScriptVariable&& scriptVariable):
-			type(exchange(scriptVariable.type, MiniScript::TYPE_NULL)),
-			valuePtr(exchange(scriptVariable.valuePtr, 0ll)) {
+		inline ScriptVariable(ScriptVariable&& variable):
+			type(exchange(variable.type, MiniScript::TYPE_NULL)),
+			valuePtr(exchange(variable.valuePtr, 0ll)),
+			initializer(exchange(variable.initializer, nullptr)),
+			reference(exchange(variable.reference, nullptr)),
+			referenceCounter(exchange(variable.referenceCounter, 1)) {
+			//
 		}
 
 		/**
 		 * Assignment operator
-		 * @param scriptVariable script variable to copy
-		 * @return this script variable
+		 * @param variable variable to copy
+		 * @return this variable
 		 */
-		inline ScriptVariable& operator=(const ScriptVariable& scriptVariable) {
-			switch(scriptVariable.type) {
-				case TYPE_NULL:
-					setNullValue();
-					break;
-				case TYPE_BOOLEAN:
-					setValue(scriptVariable.getBooleanValueReference());
-					break;
-				case TYPE_INTEGER:
-					setValue(scriptVariable.getIntegerValueReference());
-					break;
-				case TYPE_FLOAT:
-					setValue(scriptVariable.getFloatValueReference());
-					break;
-				case TYPE_STRING:
-					setValue(scriptVariable.getStringValueReference());
-					break;
-				case TYPE_VECTOR2:
-					setValue(scriptVariable.getVector2ValueReference());
-					break;
-				case TYPE_VECTOR3:
-					setValue(scriptVariable.getVector3ValueReference());
-					break;
-				case TYPE_VECTOR4:
-					setValue(scriptVariable.getVector4ValueReference());
-					break;
-				case TYPE_QUATERNION:
-					setValue(scriptVariable.getQuaternionValueReference());
-					break;
-				case TYPE_MATRIX3x3:
-					setValue(scriptVariable.getMatrix3x3ValueReference());
-					break;
-				case TYPE_MATRIX4x4:
-					setValue(scriptVariable.getMatrix4x4ValueReference());
-					break;
-				case TYPE_TRANSFORM:
-					setValue(scriptVariable.getTransformValueReference());
-					break;
-				case TYPE_ARRAY:
-					setValue(scriptVariable.getArrayValueReference());
-					break;
-				case TYPE_MAP:
-					setValue(scriptVariable.getMapValueReference());
-					break;
-				case TYPE_SET:
-					setValue(scriptVariable.getSetValueReference());
-					break;
+		inline ScriptVariable& operator=(const ScriptVariable& variable) {
+			if (variable.reference != nullptr) {
+				reference = variable.reference;
+				variable.reference->acquireReference();
+			} else {
+				//
+				setNullValue();
+				//
+				switch(variable.getType()) {
+					case TYPE_NULL:
+						break;
+					case TYPE_BOOLEAN:
+						setValue(variable.getBooleanValueReference());
+						break;
+					case TYPE_INTEGER:
+						setValue(variable.getIntegerValueReference());
+						break;
+					case TYPE_FLOAT:
+						setValue(variable.getFloatValueReference());
+						break;
+					case TYPE_STRING:
+						setValue(variable.getStringValueReference());
+						break;
+					case TYPE_VECTOR2:
+						setValue(variable.getVector2ValueReference());
+						break;
+					case TYPE_VECTOR3:
+						setValue(variable.getVector3ValueReference());
+						break;
+					case TYPE_VECTOR4:
+						setValue(variable.getVector4ValueReference());
+						break;
+					case TYPE_QUATERNION:
+						setValue(variable.getQuaternionValueReference());
+						break;
+					case TYPE_MATRIX3x3:
+						setValue(variable.getMatrix3x3ValueReference());
+						break;
+					case TYPE_MATRIX4x4:
+						setValue(variable.getMatrix4x4ValueReference());
+						break;
+					case TYPE_TRANSFORM:
+						setValue(variable.getTransformValueReference());
+						break;
+					case TYPE_ARRAY:
+						setValue(variable.getArrayValueReference());
+						// copy initializer if we have any
+						getInitializer()->copy(variable.initializer);
+						//
+						break;
+					case TYPE_MAP:
+						setValue(variable.getMapValueReference());
+						// copy initializer if we have any
+						getInitializer()->copy(variable.initializer);
+						//
+						break;
+					case TYPE_SET:
+						setValue(variable.getSetValueReference());
+						// copy initializer if we have any
+						getInitializer()->copy(variable.initializer);
+						//
+						break;
+					case TYPE_FUNCTION_CALL:
+						setType(TYPE_FUNCTION_CALL);
+						getStringValueReference() = variable.getStringValueReference();
+						// copy initializer if we have any
+						getInitializer()->copy(variable.initializer);
+						//
+						break;
+					case TYPE_FUNCTION_ASSIGNMENT:
+						setFunctionAssignment(variable.getStringValueReference());
+						break;
+					// pseudo ...
+					default: break;
+				}
 			}
+			//
 			return *this;
 		}
 
 		/**
 		 * Move operator
-		 * @param scriptVariable script variable to move from
+		 * @param variable variable to move from
 		 * @return this script variable
 		 */
-		inline ScriptVariable& operator=(ScriptVariable&& scriptVariable) {
-			// do the swap
-			swap(type, scriptVariable.type);
-			swap(valuePtr, scriptVariable.valuePtr);
+		inline ScriptVariable& operator=(ScriptVariable&& variable) {
+			swap(type, variable.type);
+			swap(valuePtr, variable.valuePtr);
+			swap(initializer, variable.initializer);
+			swap(reference, variable.reference);
+			swap(referenceCounter, variable.referenceCounter);
 			//
 			return *this;
 		}
@@ -529,7 +856,13 @@ public:
 		 * Destructor
 		 */
 		inline ~ScriptVariable() {
-			setType(TYPE_NULL);
+			if (reference != nullptr) {
+				reference->releaseReference();
+			}
+			if (--referenceCounter == 0) {
+				reference = nullptr;
+				setType(TYPE_NULL);
+			}
 		}
 
 		/**
@@ -624,7 +957,7 @@ public:
 		 * Constructor
 		 * @param value value
 		 */
-		inline ScriptVariable(const vector<ScriptVariable>& value) {
+		inline ScriptVariable(const vector<ScriptVariable*>& value) {
 			setValue(value);
 		}
 
@@ -632,7 +965,7 @@ public:
 		 * Constructor
 		 * @param value value
 		 */
-		inline ScriptVariable(const unordered_map<string, ScriptVariable>& value) {
+		inline ScriptVariable(const unordered_map<string, ScriptVariable*>& value) {
 			setValue(value);
 		}
 
@@ -640,7 +973,7 @@ public:
 		 * @return type
 		 */
 		inline ScriptVariableType getType() const {
-			return type;
+			return reference != nullptr?reference->type:type;
 		}
 
 		/**
@@ -648,8 +981,8 @@ public:
 		 * @param newType new type
 		 */
 		inline void setType(ScriptVariableType newType) {
-			if (type == newType) return;
-			switch(type) {
+			if (getType() == newType) return;
+			switch(getType()) {
 				case TYPE_NULL:
 					break;
 				case TYPE_BOOLEAN:
@@ -659,42 +992,62 @@ public:
 				case TYPE_FLOAT:
 					break;
 				case TYPE_STRING:
-					delete static_cast<string*>((void*)valuePtr);
+				case TYPE_FUNCTION_ASSIGNMENT:
+					delete static_cast<string*>((void*)getValuePtrReference());
 					break;
 				case TYPE_VECTOR2:
-					delete static_cast<Vector2*>((void*)valuePtr);
+					delete static_cast<Vector2*>((void*)getValuePtrReference());
 					break;
 				case TYPE_VECTOR3:
-					delete static_cast<Vector3*>((void*)valuePtr);
+					delete static_cast<Vector3*>((void*)getValuePtrReference());
 					break;
 				case TYPE_VECTOR4:
-					delete static_cast<Vector4*>((void*)valuePtr);
+					delete static_cast<Vector4*>((void*)getValuePtrReference());
 					break;
 				case TYPE_QUATERNION:
-					delete static_cast<Quaternion*>((void*)valuePtr);
+					delete static_cast<Quaternion*>((void*)getValuePtrReference());
 					break;
 				case TYPE_MATRIX3x3:
-					delete static_cast<Matrix3x3*>((void*)valuePtr);
+					delete static_cast<Matrix3x3*>((void*)getValuePtrReference());
 					break;
 				case TYPE_MATRIX4x4:
-					delete static_cast<Matrix4x4*>((void*)valuePtr);
+					delete static_cast<Matrix4x4*>((void*)getValuePtrReference());
 					break;
 				case TYPE_TRANSFORM:
-					delete static_cast<Transform*>((void*)valuePtr);
+					delete static_cast<Transform*>((void*)getValuePtrReference());
 					break;
 				case TYPE_ARRAY:
-					delete static_cast<vector<ScriptVariable>*>((void*)valuePtr);
+					for (auto arrayValue: getArrayValueReference()) arrayValue->releaseReference();
+					delete static_cast<vector<ScriptVariable*>*>((void*)getValuePtrReference());
+					delete getInitializerReference();
+					getInitializerReference() = nullptr;
 					break;
 				case TYPE_MAP:
-					delete static_cast<unordered_map<string, ScriptVariable>*>((void*)valuePtr);
+					for (const auto& [mapEntryName, mapEntryValue]: getMapValueReference()) mapEntryValue->releaseReference();
+					delete static_cast<unordered_map<string, ScriptVariable*>*>((void*)getValuePtrReference());
+					delete getInitializerReference();
+					getInitializerReference() = nullptr;
 					break;
 				case TYPE_SET:
-					delete static_cast<unordered_set<string>*>((void*)valuePtr);
+					delete static_cast<unordered_set<string>*>((void*)getValuePtrReference());
+					delete getInitializerReference();
+					getInitializerReference() = nullptr;
+					break;
+				case TYPE_FUNCTION_CALL:
+					delete static_cast<string*>((void*)getValuePtrReference());
+					delete getInitializerReference();
+					getInitializerReference() = nullptr;
 					break;
 			}
-			this->valuePtr = 0LL;
-			this->type = newType;
-			switch(newType) {
+			this->getValuePtrReference() = 0LL;
+			//
+			if (reference != nullptr) {
+				reference->type = newType;
+			} else {
+				type = newType;
+			}
+			//
+			switch(getType()) {
 				case TYPE_NULL:
 					break;
 				case TYPE_BOOLEAN:
@@ -704,39 +1057,55 @@ public:
 				case TYPE_FLOAT:
 					break;
 				case TYPE_STRING:
-					valuePtr = (uint64_t)(new string());
+				case TYPE_FUNCTION_ASSIGNMENT:
+					getValuePtrReference() = (uint64_t)(new string());
 					break;
 				case TYPE_VECTOR2:
-					valuePtr = (uint64_t)(new Vector2());
+					getValuePtrReference() = (uint64_t)(new Vector2());
 					break;
 				case TYPE_VECTOR3:
-					valuePtr = (uint64_t)(new Vector3());
+					getValuePtrReference() = (uint64_t)(new Vector3());
 					break;
 				case TYPE_VECTOR4:
-					valuePtr = (uint64_t)(new Vector4());
+					getValuePtrReference() = (uint64_t)(new Vector4());
 					break;
 				case TYPE_QUATERNION:
-					valuePtr = (uint64_t)(new Quaternion());
+					getValuePtrReference() = (uint64_t)(new Quaternion());
 					break;
 				case TYPE_MATRIX3x3:
-					valuePtr = (uint64_t)(new Matrix3x3());
+					getValuePtrReference() = (uint64_t)(new Matrix3x3());
 					break;
 				case TYPE_MATRIX4x4:
-					valuePtr = (uint64_t)(new Matrix4x4());
+					getValuePtrReference() = (uint64_t)(new Matrix4x4());
 					break;
 				case TYPE_TRANSFORM:
-					valuePtr = (uint64_t)(new Transform());
+					getValuePtrReference() = (uint64_t)(new Transform());
 					break;
 				case TYPE_ARRAY:
-					valuePtr = (uint64_t)(new vector<ScriptVariable>());
+					getValuePtrReference() = (uint64_t)(new vector<ScriptVariable*>());
+					getInitializerReference() = new Initializer();
 					break;
 				case TYPE_MAP:
-					valuePtr = (uint64_t)(new unordered_map<string, ScriptVariable>());
+					getValuePtrReference() = (uint64_t)(new unordered_map<string, ScriptVariable*>());
+					getInitializerReference() = new Initializer();
 					break;
 				case TYPE_SET:
-					valuePtr = (uint64_t)(new unordered_set<string>());
+					getValuePtrReference() = (uint64_t)(new unordered_set<string>());
+					getInitializerReference() = new Initializer();
+					break;
+				case TYPE_FUNCTION_CALL:
+					getValuePtrReference() = (uint64_t)(new string());
+					getInitializerReference() = new Initializer();
 					break;
 			}
+		}
+
+		/**
+		 * Return initializer
+		 * @return initializer
+		 */
+		inline Initializer* getInitializer() const {
+			return reference != nullptr?reference->initializer:initializer;
 		}
 
 		/**
@@ -746,7 +1115,7 @@ public:
 		 * @return success
 		 */
 		inline bool getBooleanValue(bool& value, bool optional = false) const {
-			switch(type) {
+			switch(getType()) {
 				case TYPE_BOOLEAN:
 					value = getBooleanValueReference();
 					return true;
@@ -778,7 +1147,7 @@ public:
 		 * @return success
 		 */
 		inline bool getIntegerValue(int64_t& value, bool optional = false) const {
-			switch(type) {
+			switch(getType()) {
 				case TYPE_BOOLEAN:
 					value = getBooleanValueReference() == true?1:0;
 					return true;
@@ -818,7 +1187,7 @@ public:
 		 * @return success
 		 */
 		inline bool getFloatValue(float& value, bool optional = false) const {
-			switch(type) {
+			switch(getType()) {
 				case TYPE_BOOLEAN:
 					value = getBooleanValueReference() == true?1.0f:0.0f;
 					return true;
@@ -849,7 +1218,7 @@ public:
 		 * @return success
 		 */
 		inline bool getStringValue(string& value, bool optional = false) const {
-			switch(type) {
+			switch(getType()) {
 				case TYPE_BOOLEAN:
 					value = getBooleanValueReference() == true?"true":"false";
 					return true;
@@ -860,6 +1229,7 @@ public:
 					value = to_string(getFloatValueReference());
 					return true;
 				case TYPE_STRING:
+				case TYPE_FUNCTION_ASSIGNMENT:
 					value = getStringValueReference();
 					return true;
 				default:
@@ -875,7 +1245,7 @@ public:
 		 * @return success
 		 */
 		inline bool getVector2Value(Vector2& value, bool optional = false) const {
-			switch(type) {
+			switch(getType()) {
 				case TYPE_VECTOR2:
 					value = getVector2ValueReference();
 					return true;
@@ -892,7 +1262,7 @@ public:
 		 * @return success
 		 */
 		inline bool getVector3Value(Vector3& value, bool optional = false) const {
-			switch(type) {
+			switch(getType()) {
 				case TYPE_VECTOR3:
 					value = getVector3ValueReference();
 					return true;
@@ -909,7 +1279,7 @@ public:
 		 * @return success
 		 */
 		inline bool getVector4Value(Vector4& value, bool optional = false) const {
-			switch(type) {
+			switch(getType()) {
 				case TYPE_VECTOR4:
 					value = getVector4ValueReference();
 					return true;
@@ -926,7 +1296,7 @@ public:
 		 * @return success
 		 */
 		inline bool getQuaternionValue(Quaternion& value, bool optional = false) const {
-			switch(type) {
+			switch(getType()) {
 				case TYPE_QUATERNION:
 					value = getQuaternionValueReference();
 					return true;
@@ -943,7 +1313,7 @@ public:
 		 * @return success
 		 */
 		inline bool getMatrix3x3Value(Matrix3x3& value, bool optional = false) const {
-			switch(type) {
+			switch(getType()) {
 				case TYPE_MATRIX3x3:
 					value = getMatrix3x3ValueReference();
 					return true;
@@ -960,7 +1330,7 @@ public:
 		 * @return success
 		 */
 		inline bool getMatrix4x4Value(Matrix4x4& value, bool optional = false) const {
-			switch(type) {
+			switch(getType()) {
 				case TYPE_MATRIX4x4:
 					value = getMatrix4x4ValueReference();
 					return true;
@@ -977,7 +1347,7 @@ public:
 		 * @return success
 		 */
 		inline bool getTransformValue(Transform& value, bool optional = false) const {
-			switch(type) {
+			switch(getType()) {
 				case TYPE_TRANSFORM:
 					value = getTransformValueReference();
 					return true;
@@ -1098,18 +1468,24 @@ public:
 		 * Set array value from given value into variable
 		 * @param value value
 		 */
-		inline void setValue(const vector<ScriptVariable>& value) {
+		inline void setValue(const vector<ScriptVariable*>& value) {
 			setType(TYPE_ARRAY);
-			getArrayValueReference() = value;
+			auto& arrayValue = getArrayValueReference();
+			for (const auto arrayEntry: value) {
+				arrayValue.push_back(new ScriptVariable(*arrayEntry));
+			}
 		}
 
 		/**
 		 * Set map value from given value into variable
 		 * @param value value
 		 */
-		inline void setValue(const unordered_map<string, ScriptVariable>& value) {
+		inline void setValue(const unordered_map<string, ScriptVariable*>& value) {
 			setType(TYPE_MAP);
-			getMapValueReference() = value;
+			auto& mapValue = getMapValueReference();
+			for (const auto& [mapEntryName, mapEntryValue]: value) {
+				mapValue[mapEntryName] = new ScriptVariable(*mapEntryValue);
+			}
 		}
 
 		/**
@@ -1122,10 +1498,19 @@ public:
 		}
 
 		/**
+		 * @return return const pointer to underlying vector or nullptr
+		 */
+		inline const vector<ScriptVariable*>* getArrayPointer() const {
+			if (getType() != TYPE_ARRAY) return nullptr;
+			auto& arrayValue = getArrayValueReference();
+			return &arrayValue;
+		}
+
+		/**
 		 * @return pointer to underlying vector or nullptr
 		 */
-		inline vector<MiniScript::ScriptVariable>* getArrayPointer() {
-			if (type != TYPE_ARRAY) return nullptr;
+		inline vector<ScriptVariable*>* getArrayPointer() {
+			if (getType() != TYPE_ARRAY) return nullptr;
 			auto& arrayValue = getArrayValueReference();
 			return &arrayValue;
 		}
@@ -1140,54 +1525,67 @@ public:
 		}
 
 		/**
-		 * Get value from array with given index
+		 * Get entry from array with given index
 		 * @param idx index
-		 * @return value from array with given index
+		 * @return entry from array with given index
 		 */
-		inline const ScriptVariable getArrayValue(int idx) const {
-			if (type != TYPE_ARRAY) return ScriptVariable();
+		inline const ScriptVariable getArrayEntry(int idx) const {
+			if (getType() != TYPE_ARRAY) return ScriptVariable();
 			const auto& arrayValue = getArrayValueReference();
-			if (idx >= 0 && idx < arrayValue.size()) return arrayValue[idx];
+			if (idx >= 0 && idx < arrayValue.size()) return *arrayValue[idx];
 			return ScriptVariable();
 		}
 
 		/**
-		 * Set value to array with given index
+		 * Set entry in array with given index
 		 * @param idx index
 		 */
-		inline void setArrayValue(int idx, const ScriptVariable& value) {
+		inline void setArrayEntry(int idx, const ScriptVariable& value) {
 			setType(TYPE_ARRAY);
 			if (idx < 0) return;
 			auto& arrayValue = getArrayValueReference();
-			while (arrayValue.size() <= idx) pushArrayValue(ScriptVariable());
-			arrayValue[idx] = value;
+			while (arrayValue.size() <= idx) pushArrayEntry(ScriptVariable());
+			arrayValue[idx]->releaseReference();
+			arrayValue[idx] = new ScriptVariable(value);
 		}
 
 		/**
-		 * Push value to array
+		 * Push entry to array
 		 * @param value value
 		 */
-		inline void pushArrayValue(const ScriptVariable& value) {
+		inline void pushArrayEntry(const ScriptVariable& value) {
 			setType(TYPE_ARRAY);
-			getArrayValueReference().push_back(value);
+			getArrayValueReference().push_back(new ScriptVariable(value));
 		}
 
 		/**
-		 * Remove array value at given index
+		 * Remove array entry at given index
 		 * @param idx index
 		 */
-		inline void removeArrayValue(int idx) {
-			if (type != TYPE_ARRAY) return;
+		inline void removeArrayEntry(int idx) {
+			if (getType() != TYPE_ARRAY) return;
 			auto& arrayValue = getArrayValueReference();
-			if (idx >= 0 && idx < arrayValue.size()) arrayValue.erase(arrayValue.begin() + idx);
+			if (idx >= 0 && idx < arrayValue.size()) {
+				arrayValue[idx]->releaseReference();
+				arrayValue.erase(arrayValue.begin() + idx);
+			}
 			return;
+		}
+
+		/**
+		 * @return return const pointer to underlying unordered_map or nullptr
+		 */
+		inline const unordered_map<string, ScriptVariable*>* getMapPointer() const {
+			if (getType() != TYPE_MAP) return nullptr;
+			auto& mapValue = getMapValueReference();
+			return &mapValue;
 		}
 
 		/**
 		 * @return pointer to underlying unordered_map or nullptr
 		 */
-		inline unordered_map<string, ScriptVariable>* getMapPointer() {
-			if (type != TYPE_MAP) return nullptr;
+		inline unordered_map<string, ScriptVariable*>* getMapPointer() {
+			if (getType() != TYPE_MAP) return nullptr;
 			auto& mapValue = getMapValueReference();
 			return &mapValue;
 		}
@@ -1201,12 +1599,12 @@ public:
 		}
 
 		/**
-		 * Map has value with given key
+		 * Map has entry with given key
 		 * @param key key
 		 * @return key exists
 		 */
-		inline bool hasMapValue(const string& key) const {
-			if (type != TYPE_MAP) return false;
+		inline bool hasMapEntry(const string& key) const {
+			if (getType() != TYPE_MAP) return false;
 			const auto& mapValue = getMapValueReference();
 			auto it = mapValue.find(key);
 			if (it != mapValue.end()) return true;
@@ -1214,38 +1612,41 @@ public:
 		}
 
 		/**
-		 * Get value from map with given key
+		 * Get entry from map with given key
 		 * @param key key
-		 * @return map value from given key
+		 * @return map entry from given key
 		 */
-		inline const ScriptVariable getMapValue(const string& key) const {
-			if (type != TYPE_MAP) return ScriptVariable();
+		inline const ScriptVariable getMapEntry(const string& key) const {
+			if (getType() != TYPE_MAP) return ScriptVariable();
 			const auto& mapValue = getMapValueReference();
 			auto it = mapValue.find(key);
-			if (it != mapValue.end()) return it->second;
+			if (it != mapValue.end()) return *it->second;
 			return ScriptVariable();
 		}
 
 		/**
-		 * Set value in map with given key
+		 * Set entry in map with given key
 		 * @param key key
 		 * @param value value
 		 */
-		inline void setMapValue(const string& key, const ScriptVariable& value) {
+		inline void setMapEntry(const string& key, const ScriptVariable& value) {
 			setType(TYPE_MAP);
-			getMapValueReference()[key] = value;
+			auto mapValueIt = getMapValueReference().find(key);
+			if (mapValueIt != getMapValueReference().end()) mapValueIt->second->releaseReference();
+			getMapValueReference()[key] = new ScriptVariable(value);
 		}
 
 		/**
-		 * Remove value in map with given key
+		 * Remove entry in map with given key
 		 * @param key key
 		 */
-		inline void removeMapValue(const string& key) {
-			if (type != TYPE_MAP) return;
+		inline void removeMapEntry(const string& key) {
+			if (getType() != TYPE_MAP) return;
 			auto& mapValue = getMapValueReference();
-			auto it = mapValue.find(key);
-			if (it != mapValue.end()) {
-				mapValue.erase(it);
+			auto mapValueIt = mapValue.find(key);
+			if (mapValueIt != mapValue.end()) {
+				mapValueIt->second->releaseReference();
+				mapValue.erase(mapValueIt);
 			}
 		}
 
@@ -1255,7 +1656,7 @@ public:
 		 */
 		inline const vector<string> getMapKeys() const {
 			vector<string> keys;
-			if (type != TYPE_MAP) return keys;
+			if (getType() != TYPE_MAP) return keys;
 			const auto& mapValue = getMapValueReference();
 			for (const auto& [mapEntryName, mapEntryValue]: mapValue) {
 				keys.push_back(mapEntryName);
@@ -1267,9 +1668,9 @@ public:
 		 * Get map values
 		 * @return values
 		 */
-		inline const vector<ScriptVariable> getMapValues() const {
-			vector<ScriptVariable> values;
-			if (type != TYPE_MAP) return values;
+		inline const vector<ScriptVariable*> getMapValues() const {
+			vector<ScriptVariable*> values;
+			if (getType() != TYPE_MAP) return values;
 			const auto& mapValue = getMapValueReference();
 			for (const auto& [mapEntryKey, mapEntryValue]: mapValue) {
 				values.push_back(mapEntryValue);
@@ -1278,10 +1679,19 @@ public:
 		}
 
 		/**
+		 * @return const pointer to underlying unordered_set or nullptr
+		 */
+		inline const unordered_set<string>* getSetPointer() const {
+			if (getType() != TYPE_SET) return nullptr;
+			auto& setValue = getSetValueReference();
+			return &setValue;
+		}
+
+		/**
 		 * @return pointer to underlying unordered_set or nullptr
 		 */
 		inline unordered_set<string>* getSetPointer() {
-			if (type != TYPE_SET) return nullptr;
+			if (getType() != TYPE_SET) return nullptr;
 			auto& setValue = getSetValueReference();
 			return &setValue;
 		}
@@ -1300,7 +1710,7 @@ public:
 		 * @return key exists
 		 */
 		inline bool hasSetKey(const string& key) const {
-			if (type != TYPE_SET) return false;
+			if (getType() != TYPE_SET) return false;
 			const auto& setValue = getSetValueReference();
 			auto it = setValue.find(key);
 			if (it != setValue.end()) return true;
@@ -1321,7 +1731,7 @@ public:
 		 * @param key key
 		 */
 		inline void removeSetKey(const string& key) {
-			if (type != TYPE_SET) return;
+			if (getType() != TYPE_SET) return;
 			auto& setValue = getSetValueReference();
 			auto it = setValue.find(key);
 			if (it != setValue.end()) {
@@ -1335,7 +1745,7 @@ public:
 		 */
 		inline const vector<string> getSetKeys() const {
 			vector<string> keys;
-			if (type != TYPE_SET) return keys;
+			if (getType() != TYPE_SET) return keys;
 			const auto& setValue = getSetValueReference();
 			for (const auto& key: setValue) {
 				keys.push_back(key);
@@ -1344,34 +1754,41 @@ public:
 		}
 
 		/**
-		 * Set implicit typed value given by value string
+		 * Set array/map values initializer function call statement
+		 * @param miniScript miniscript instance
+		 * @param statement statement
+		 * @param initializerStatement initializer statement
+		 */
+		void setFunctionCallStatement(const string& initializerStatement, MiniScript* miniScript, const ScriptStatement& statement);
+
+		/**
+		 * Set function assignment from given value into variable
 		 * @param value value
 		 */
-		inline void setImplicitTypedValue(const string& value) {
-			if (value == "null") {
-				setNullValue();
-			} else
-			if (value == "true") {
-				setValue(true);
-			} else
-			if (value == "false") {
-				setValue(false);
-			} else
-			if (Integer::is(value) == true) {
-				setValue(static_cast<int64_t>(Integer::parse(value)));
-			} else
-			if (Float::is(value) == true) {
-				setValue(Float::parse(value));
-			} else {
-				setValue(value);
-			}
+		inline void setFunctionAssignment(const string& value) {
+			setType(TYPE_FUNCTION_ASSIGNMENT);
+			getStringValueReference() = value;
 		}
 
 		/**
 		 * Set implicit typed value given by value string
 		 * @param value value
+		 * @param miniScript mini script
+		 * @param statement statement
 		 */
-		inline void setImplicitTypedValueFromStringView(const string_view& value) {
+		inline void setImplicitTypedValue(const string& value, MiniScript* miniScript, const ScriptStatement& statement) {
+			setImplicitTypedValueFromStringView(string_view(value), miniScript, statement);
+		}
+
+		/**
+		 * Set implicit typed value given by value string
+		 * @param value value
+		 * @param miniScript mini script
+		 * @param statement statement
+		 */
+		inline void setImplicitTypedValueFromStringView(const string_view& value, MiniScript* miniScript, const ScriptStatement& statement) {
+			string_view function;
+			//
 			if (value == "null") {
 				setNullValue();
 			} else
@@ -1386,6 +1803,26 @@ public:
 			} else
 			if (Float::viewIs(value) == true) {
 				setValue(Float::viewParse(value));
+			} else
+			if (StringTools::viewStartsWith(value, "{") == true &&
+				StringTools::viewEndsWith(value, "}") == true) {
+				*this = initializeMapSet(value, miniScript, statement);
+			} else
+			if (StringTools::viewStartsWith(value, "[") == true &&
+				StringTools::viewEndsWith(value, "]") == true) {
+				*this = initializeArray(value, miniScript, statement);
+			} else
+			if (viewIsFunctionAssignment(value, function) == true) {
+				setFunctionAssignment(string(function));
+			} else
+			// function call
+			if (value.find('(') != string::npos &&
+				value.find(')') != string::npos) {
+				setFunctionCallStatement(string(value), miniScript, statement);
+			} else
+			// variable
+			if (viewIsVariableAccess(value) == true) {
+				setFunctionCallStatement("getVariable(\"" + string(value) + "\")", miniScript, statement);
 			} else {
 				setValue(string(value));
 			}
@@ -1465,7 +1902,7 @@ public:
 		 * @return this script variable type as string
 		 */
 		inline const string getTypeAsString() const {
-			return getTypeAsString(type);
+			return getTypeAsString(getType());
 		}
 
 		/**
@@ -1501,7 +1938,7 @@ public:
 		 * @return this script variable type as return type string representation
 		 */
 		inline const string getReturnTypeAsString() const {
-			return getReturnTypeAsString(type);
+			return getReturnTypeAsString(getType());
 		}
 
 		/**
@@ -1511,19 +1948,22 @@ public:
 			string result;
 			result+= getTypeAsString();
 			result+= "(";
-			if (type == TYPE_STRING) result+= "\"";
+			if (getType() == TYPE_STRING) result+= "\"";
 			result+= getValueAsString();
-			if (type == TYPE_STRING) result+= "\"";
+			if (getType() == TYPE_STRING) result+= "\"";
 			result+= ")";
 			return result;
 		}
 
 		/**
+		 * Print string representation of script variable
+		 * @param formatted formatted
+		 * @param depth recursion depth
 		 * @return string representation of script variable type
 		 */
-		inline const string getValueAsString() const {
+		inline const string getValueAsString(bool formatted = false, int depth = 0) const {
 			string result;
-			switch (type) {
+			switch (getType()) {
 				case TYPE_NULL:
 					result+= "<Null>";
 					break;
@@ -1644,55 +2084,114 @@ public:
 				case TYPE_ARRAY:
 					{
 						const auto& arrayValue = getArrayValueReference();
-						result+="[";
-						string valuesString;
-						for (const auto& value: arrayValue) {
-							if (valuesString.empty() == false) valuesString+= ", ";
-							if (value.type == TYPE_STRING) {
-								valuesString+= "\"";
-								valuesString+= StringTools::replace(StringTools::replace(value.getValueAsString(), "\\", "\\\\"), "\"", "\\\"");
-								valuesString+= "\"";
+						vector<string> values;
+						for (const auto arrayEntry: arrayValue) {
+							if (arrayEntry->getType() == TYPE_STRING) {
+								values.push_back("\"" + StringTools::replace(StringTools::replace(arrayEntry->getValueAsString(), "\\", "\\\\"), "\"", "\\\"") + "\"" );
 							} else {
-								valuesString+= value.getValueAsString();
+								values.push_back(arrayEntry->getValueAsString(formatted, depth + 1));
 							}
 						}
-						result+= valuesString;
-						result+="]";
+						if (formatted == true) {
+							auto i = 0;
+							for (auto& value: values) {
+								if (i != values.size() - 1) value+= ",";
+								i++;
+							}
+							for (const auto& valueString: values) {
+								result+= StringTools::indent(valueString, "\t" , depth + 1);
+								result+= "\n";
+							}
+							result = (depth == 0?StringTools::indent("[", "\t", depth):"[") + "\n" + result;
+							result+= StringTools::indent("]", "\t", depth) + (depth == 0?"\n":"");
+						} else {
+							auto i = 0;
+							for (const auto& valueString: values) {
+								result+= valueString;
+								if (i != values.size() - 1) result+= ", ";
+								i++;
+							}
+							result = "[" + result + "]";
+						}
 						break;
 					}
 				case TYPE_MAP:
 					{
 						const auto& mapValue = getMapValueReference();
-						result+="{";
-						string valuesString;
+						vector<string> values;
 						for (const auto& [mapEntryName, mapEntryValue]: mapValue) {
-							if (valuesString.empty() == false) valuesString+= ", ";
-							valuesString+= "\"" + mapEntryName +  "\": ";
-							if (mapEntryValue.type == TYPE_STRING) {
-								valuesString+= "\"";
-								valuesString+= StringTools::replace(StringTools::replace(mapEntryValue.getValueAsString(), "\\", "\\\\"), "\"", "\\\"");
-								valuesString+= "\"";
+							string value;
+							value+= "\"" + StringTools::replace(StringTools::replace(mapEntryName, "\\", "\\\\"), "\"", "\\\"") +  "\": ";
+							if (mapEntryValue->getType() == TYPE_STRING) {
+								value+= "\"";
+								value+= StringTools::replace(StringTools::replace(mapEntryValue->getValueAsString(), "\\", "\\\\"), "\"", "\\\"");
+								value+= "\"";
 							} else {
-								valuesString+= mapEntryValue.getValueAsString();
+								value+= mapEntryValue->getValueAsString(formatted, depth + 1);
 							}
+							values.push_back(value);
 						}
-						result+= valuesString;
-						result+="}";
+						sort(values.begin(), values.end());
+						if (formatted == true) {
+							auto i = 0;
+							for (auto& value: values) {
+								if (i != values.size() - 1) value+= ",";
+								i++;
+							}
+							for (const auto& valueString: values) {
+								result+= StringTools::indent(valueString, "\t" , depth + 1);
+								result+= "\n";
+							}
+							result = (depth == 0?StringTools::indent("{", "\t", depth):"{") + "\n" + result;
+							result+= StringTools::indent("}", "\t", depth) + (depth == 0?"\n":"");
+						} else {
+							auto i = 0;
+							for (const auto& valueString: values) {
+								result+= valueString;
+								if (i != values.size() - 1) result+= ", ";
+								i++;
+							}
+							result = "{" + result + "}";
+						}
 						break;
 					}
 				case TYPE_SET:
 					{
 						const auto& setValue = getSetValueReference();
-						result+="{";
-						string valuesString;
+						vector<string> values;
 						for (const auto& key: setValue) {
-							if (valuesString.empty() == false) valuesString+= ", ";
-							valuesString+= "\"" + StringTools::replace(StringTools::replace(key, "\\", "\\\\"), "\"", "\\\"") + "\"";
+							values.push_back("\"" + StringTools::replace(StringTools::replace(key, "\\", "\\\\"), "\"", "\\\"") + "\"");
 						}
-						result+= valuesString;
-						result+="}";
+						sort(values.begin(), values.end());
+						if (formatted == true) {
+							auto i = 0;
+							for (auto& value: values) {
+								if (i != values.size() - 1) value+= ",";
+								i++;
+							}
+							for (const auto& valueString: values) {
+								result+= StringTools::indent(valueString, "\t" , depth + 1);
+								result+= "\n";
+							}
+							result = (depth == 0?StringTools::indent("{", "\t", depth):"{") + "\n" + result;
+							result+= StringTools::indent("}", "\t", depth) + (depth == 0?"\n":"");
+						} else {
+							auto i = 0;
+							for (const auto& valueString: values) {
+								result+= valueString;
+								if (i != values.size() - 1) result+= ", ";
+								i++;
+							}
+							result = "{" + result + "}";
+						}
 						break;
 					}
+				case TYPE_FUNCTION_CALL:
+					result+= "{" + getStringValueReference() + "}";
+					break;
+				case TYPE_FUNCTION_ASSIGNMENT:
+					result+= "() -> " + getStringValueReference();
+					break;
 				case TYPE_PSEUDO_NUMBER:
 					result+= "Number";
 					break;
@@ -1748,7 +2247,7 @@ public:
 			ScriptVariableType type;
 			string name;
 			bool optional;
-			bool assignBack;
+			bool reference;
 		};
 
 		// forbid class copy
@@ -1803,7 +2302,7 @@ public:
 				}
 				if (argumentIdx > beginIdx) result+= ", ";
 				if (optionalArgumentCount > 0 || argumentIdx >= beginIdx) {
-					if (argumentType.assignBack == true) {
+					if (argumentType.reference == true) {
 						result+= "=";
 					}
 					result+= "$" + argumentType.name + ": " + ScriptVariable::getTypeAsString(argumentType.type);
@@ -1903,13 +2402,13 @@ public:
 		struct ScriptArgument {
 			ScriptArgument(
 				const string& name,
-				bool assignBack
+				bool reference
 			):
 				name(name),
-				assignBack(assignBack)
+				reference(reference)
 			{}
 			string name;
-			bool assignBack;
+			bool reference;
 		};
 		enum ScriptType { SCRIPTTYPE_NONE, SCRIPTTYPE_FUNCTION, SCRIPTTYPE_ON, SCRIPTTYPE_ONENABLED };
 		Script(
@@ -1957,6 +2456,71 @@ public:
 	};
 
 	static constexpr int SCRIPTIDX_NONE { -1 };
+	static constexpr int LINE_NONE { -1 };
+	static constexpr int STATEMENTIDX_NONE { -1 };
+	static constexpr int STATEMENTIDX_FIRST { 0 };
+	static constexpr int ARGUMENTIDX_NONE { -1 };
+
+	STATIC_DLL_IMPEXT static const string METHOD_SCRIPTCALL;
+	STATIC_DLL_IMPEXT static const string METHOD_ENABLENAMEDCONDITION;
+	STATIC_DLL_IMPEXT static const string METHOD_DISABLENAMEDCONDITION;
+
+	/**
+	 * Returns arguments as string placed in a vector of string_views
+	 * @param arguments arguments
+	 * @return arguments as string
+	 */
+	inline const string getArgumentsAsString(const vector<string_view>& arguments) {
+		string argumentsString;
+		for (const auto& argument: arguments) argumentsString+= (argumentsString.empty() == false?", ":"") + string("'") + string(argument) + string("'");
+		return argumentsString;
+	}
+
+	/**
+	 * Returns arguments as string
+	 * @param arguments arguments
+	 * @return arguments as string
+	 */
+	inline const string getArgumentsAsString(const vector<ScriptSyntaxTreeNode>& arguments) {
+		string argumentsString;
+		for (const auto& argument: arguments) {
+			switch (argument.type) {
+				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
+					switch(argument.value.getType()) {
+						case TYPE_NULL:
+							{
+								argumentsString+= (argumentsString.empty() == false?", ":"") + string("<VOID>");
+								break;
+							}
+						case TYPE_BOOLEAN:
+						case TYPE_INTEGER:
+						case TYPE_FLOAT:
+							{
+								argumentsString+= (argumentsString.empty() == false?", ":"") + argument.value.getValueAsString();
+								break;
+							}
+						case TYPE_STRING:
+							{
+								argumentsString+= (argumentsString.empty() == false?", ":"") + string("\"") + argument.value.getValueAsString() + string("\"");
+								break;
+							}
+						default:
+							{
+								argumentsString+= (argumentsString.empty() == false?", ":"") + string("<COMPLEX DATATYPE>");
+								break;
+							}
+					}
+					break;
+				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
+				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
+					argumentsString+= (argumentsString.empty() == false?", ":"") + argument.value.getValueAsString() + string("(") + getArgumentsAsString(argument.arguments) + string(")");
+					break;
+				default:
+					break;
+			}
+		}
+		return argumentsString;
+	}
 
 protected:
 	static constexpr int SETACCESSBOOL_NONE { -1 };
@@ -1965,12 +2529,8 @@ protected:
 	static constexpr int ARRAYIDX_NONE { -1 };
 	static constexpr int ARRAYIDX_ADD { -2 };
 	static constexpr int STATE_NONE { -1 };
-	static constexpr int STATEMENTIDX_NONE { -1 };
-	static constexpr int STATEMENTIDX_FIRST { 0 };
-	static constexpr int ARGUMENTIDX_NONE { -1 };
 	static constexpr int OPERATORIDX_NONE { -1 };
-	static constexpr int LINEIDX_NONE { -1 };
-	static constexpr int LINEIDX_FIRST { 1 };
+	static constexpr int LINE_FIRST { 1 };
 	static constexpr int64_t TIME_NONE { -1LL };
 
 	struct ScriptState {
@@ -2008,6 +2568,9 @@ protected:
 	int64_t timeEnabledConditionsCheckLast { TIME_NONE };
 
 	vector<string> parseErrors;
+	vector<string> deferredFunctionScriptCodes;
+
+	int inlineFunctionIdx { 0 };
 
 	/**
 	 * Initialize native mini script
@@ -2139,7 +2702,7 @@ protected:
 	inline void popScriptState() {
 		if (scriptStateStack.empty() == true) return;
 		const auto& scriptState = getScriptState();
-		for (const auto& [scriptVariableName, scriptVariable]: scriptState.variables) delete scriptVariable;
+		for (const auto& [variableName, variable]: scriptState.variables) delete variable;
 		scriptStateStack.erase(scriptStateStack.begin() + scriptStateStack.size() - 1);
 	}
 
@@ -2155,16 +2718,29 @@ protected:
 	 */
 	virtual int determineNamedScriptIdxToStart();
 
+	/**
+	 * Initialize array by initializer string
+	 * @param initializerString initializer string
+	 * @param miniScript mini script
+	 * @param statement statement
+	 * @return initialized variable
+	 */
+	static const ScriptVariable initializeArray(const string_view& initializerString, MiniScript* miniScript, const ScriptStatement& statement);
+
+	/**
+	 * Initialize map/set by initializer string
+	 * @param initializerString initializer string
+	 * @param miniScript mini script
+	 * @param statement statement
+	 * @return initialized variable
+	 */
+	static const ScriptVariable initializeMapSet(const string_view& initializerString, MiniScript* miniScript, const ScriptStatement& statement);
+
 private:
 	static constexpr bool VERBOSE { false };
 
 	//
 	STATIC_DLL_IMPEXT static const string OPERATOR_CHARS;
-
-	//
-	STATIC_DLL_IMPEXT static const string METHOD_SCRIPTCALL;
-	STATIC_DLL_IMPEXT static const string METHOD_ENABLENAMEDCONDITION;
-	STATIC_DLL_IMPEXT static const string METHOD_DISABLENAMEDCONDITION;
 
 	// TODO: maybe we need a better naming for this
 	// script functions defined by script itself
@@ -2184,61 +2760,12 @@ private:
 	};
 
 	/**
-	 * Returns arguments as string placed in a vector of string_views
-	 * @param arguments arguments
-	 * @return arguments as string
+	 * Parse additional script code into this MiniScript instance
+	 * @param scriptCode script code
+	 * @return success
 	 */
-	inline const string getArgumentsAsString(const vector<string_view>& arguments) {
-		string argumentsString;
-		for (const auto& argument: arguments) argumentsString+= (argumentsString.empty() == false?", ":"") + string("'") + string(argument) + string("'");
-		return argumentsString;
-	}
+	bool parseScriptInternal(const string& scriptCode);
 
-	/**
-	 * Returns arguments as string
-	 * @param arguments arguments
-	 * @return arguments as string
-	 */
-	inline const string getArgumentsAsString(const vector<ScriptSyntaxTreeNode>& arguments) {
-		string argumentsString;
-		for (const auto& argument: arguments) {
-			switch (argument.type) {
-				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
-					switch(argument.value.getType()) {
-						case TYPE_NULL:
-							{
-								argumentsString+= (argumentsString.empty() == false?", ":"") + string("<VOID>");
-								break;
-							}
-						case TYPE_BOOLEAN:
-						case TYPE_INTEGER:
-						case TYPE_FLOAT:
-							{
-								argumentsString+= (argumentsString.empty() == false?", ":"") + argument.value.getValueAsString();
-								break;
-							}
-						case TYPE_STRING:
-							{
-								argumentsString+= (argumentsString.empty() == false?", ":"") + string("\"") + argument.value.getValueAsString() + string("\"");
-								break;
-							}
-						default:
-							{
-								argumentsString+= (argumentsString.empty() == false?", ":"") + string("<COMPLEX DATATYPE>");
-								break;
-							}
-					}
-					break;
-				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
-				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
-					argumentsString+= (argumentsString.empty() == false?", ":"") + argument.value.getValueAsString() + string("(") + getArgumentsAsString(argument.arguments) + string(")");
-					break;
-				default:
-					break;
-			}
-		}
-		return argumentsString;
-	}
 
 	/**
 	 * Execute a single script line
@@ -2246,13 +2773,13 @@ private:
 	void executeScriptLine();
 
 	/**
-	 * Determine next statement from script code
+	 * Get next statement from script code
 	 * @param scriptCode script code
 	 * @param i character index
-	 * @param lineIdx line index
+	 * @param line script line
 	 * @return next statement
 	 */
-	const string determineNextStatement(const string& scriptCode, int& i, int& lineIdx);
+	const string getNextStatement(const string& scriptCode, int& i, int& line);
 
 	/**
 	 * Parse a script statement
@@ -2342,7 +2869,7 @@ private:
 	 * @param length argument length
 	 * @param brackets barrier brackets
 	 */
-	const string findRightArgument(const string statement, int position, int& length, string& brackets);
+	const string findRightArgument(const string& statement, int position, int& length, string& brackets);
 
 	/**
 	 * Find left argument in statement beginning from position
@@ -2351,7 +2878,7 @@ private:
 	 * @param length argument length
 	 * @param brackets barrier brackets
 	 */
-	const string findLeftArgument(const string statement, int position, int& length, string& brackets);
+	const string findLeftArgument(const string& statement, int position, int& length, string& brackets);
 
 	/**
 	 * Do statement pre processing, 1) replace operators with corresponding methods
@@ -2371,27 +2898,6 @@ private:
 	bool getObjectMemberAccess(const string_view& executableStatement, string_view& object, string_view& method, const ScriptStatement& statement);
 
 	/**
-	 * Transpile script statement
-	 * @param generatedCode generated code
-	 * @param syntaxTree syntax tree
-	 * @param statement script statement
-	 * @param scriptConditionIdx script condition index
-	 * @param scriptIdx script index
-	 * @param statementIdx statement index
-	 * @param methodCodeMap method code map
-	 * @param scriptStateChanged script could have state changed
-	 * @param scriptStopped script could have been stopped
-	 * @param enabledNamedConditions enabled named conditions
-	 * @param depth depth
-	 * @param argumentIdx argument index
-	 * @param parentArgumentIdx parent argument index
-	 * @param returnValue return value
-	 * @param injectCode code to additionally inject
-	 * @param additionalIndent additional indent
-	 */
-	bool transpileScriptStatement(string& generatedCode, const ScriptSyntaxTreeNode& syntaxTree, const ScriptStatement& statement, int scriptConditionIdx, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth = 0, int argumentIdx = ARGUMENTIDX_NONE, int parentArgumentIdx = ARGUMENTIDX_NONE, const string& returnValue = string(), const string& injectCode = string(), int additionalIndent = 0);
-
-	/**
 	 * Get access operator left and right indices
 	 * @param name name
 	 * @param callerMethod caller method
@@ -2400,71 +2906,7 @@ private:
 	 * @param statement statement
 	 * @param startIdx startIdx
 	 */
-	inline bool getVariableAccessOperatorLeftRightIndices(const string& name, const string& callerMethod, string::size_type& accessOperatorLeftIdx, string::size_type& accessOperatorRightIdx, const ScriptStatement* statement = nullptr, int startIdx = 0) {
-		accessOperatorLeftIdx = string::npos;
-		accessOperatorRightIdx = string::npos;
-		auto haveKey = false;
-		auto squareBracketsCount = 0;
-		// improve me!
-		if (startIdx > 0) {
-			haveKey = name[startIdx - 1] == '.';
-			if (haveKey == true) accessOperatorLeftIdx = startIdx - 1;
-		}
-		for (auto i = startIdx; i < name.length(); i++) {
-			auto c = name[i];
-			if (haveKey == true) {
-				if (c == '.') {
-					//
-					accessOperatorRightIdx = i;
-					//
-					return true;
-				} else
-				if (c == '[') {
-					//
-					accessOperatorRightIdx = i;
-					//
-					return true;
-				}
-				if (c == ']') {
-					if (statement != nullptr) {
-						Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': unexpected char: ']'");
-					} else {
-						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': variable: '" + name + "': unexpected char: ']'");
-					}
-					return false;
-				}
-			} else
-			if (c == '.' && squareBracketsCount == 0) {
-				haveKey = true;
-				accessOperatorLeftIdx = i;
-			} else
-			if (c == '[') {
-				if (squareBracketsCount == 0) accessOperatorLeftIdx = i;
-				squareBracketsCount++;
-			} else
-			if (c == ']') {
-				squareBracketsCount--;
-				if (squareBracketsCount == 0) {
-					//
-					accessOperatorRightIdx = i + 1;
-					//
-					return true;
-				} else
-				if (squareBracketsCount < 0) {
-					if (statement != nullptr) {
-						Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': unexpected char: ']'");
-					} else {
-						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': variable: '" + name + "': unexpected char: ']'");
-					}
-					return false;
-				}
-			}
-		}
-		//
-		if (haveKey == true) accessOperatorRightIdx = name.size();
-		//
-		return true;
-	}
+	bool getVariableAccessOperatorLeftRightIndices(const string& name, const string& callerMethod, string::size_type& accessOperatorLeftIdx, string::size_type& accessOperatorRightIdx, const ScriptStatement* statement = nullptr, int startIdx = 0);
 
 	/**
 	 * Evaluate access
@@ -2476,40 +2918,7 @@ private:
 	 * @param key map key
 	 * @param statement statement
 	 */
-	inline bool evaluateAccess(const string& name, const string& callerMethod, string::size_type& arrayAccessOperatorLeftIdx, string::size_type& arrayAccessOperatorRightIdx, int64_t& arrayIdx, string& key, const ScriptStatement* statement = nullptr) {
-		key.clear();
-		arrayIdx = ARRAYIDX_NONE;
-		// check for dot access
-		if (name.data()[arrayAccessOperatorLeftIdx] == '.') {
-			key = string(StringTools::viewTrim(string_view(&name.data()[arrayAccessOperatorLeftIdx + 1], arrayAccessOperatorRightIdx - arrayAccessOperatorLeftIdx - 1)));
-			return true;
-		}
-		// evaluate array index
-		auto arrayIdxExpressionStringView = StringTools::viewTrim(string_view(&name.data()[arrayAccessOperatorLeftIdx + 1], arrayAccessOperatorRightIdx - arrayAccessOperatorLeftIdx - 2));
-		if (arrayIdxExpressionStringView.empty() == false) {
-			// integer first for performance
-			if (Integer::viewIs(arrayIdxExpressionStringView) == true) {
-				arrayIdx = Integer::viewParse(arrayIdxExpressionStringView);
-			} else {
-				// TODO: as evaluate statement we also might need the expression that had not yet a preprocessor run for error messages and such
-				ScriptVariable statementReturnValue;
-				auto evaluateStatement = string(arrayIdxExpressionStringView);
-				if (evaluateInternal(evaluateStatement, evaluateStatement, statementReturnValue, false) == false || statementReturnValue.getIntegerValue(arrayIdx, false) == false) {
-					if (statement != nullptr) {
-						Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': failed to evaluate expression: '" + string(arrayIdxExpressionStringView) + "'");
-					} else {
-						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': failed to evaluate expression: '" + string(arrayIdxExpressionStringView) + "'");
-					}
-					//
-					return false;
-				}
-			}
-		} else {
-			arrayIdx = ARRAYIDX_ADD;
-		}
-		//
-		return true;
-	}
+	bool evaluateAccess(const string& name, const string& callerMethod, string::size_type& arrayAccessOperatorLeftIdx, string::size_type& arrayAccessOperatorRightIdx, int64_t& arrayIdx, string& key, const ScriptStatement* statement = nullptr);
 
 	/**
 	 * Returns pointer of variable with given name or nullptr
@@ -2524,187 +2933,7 @@ private:
 	 * @param global use global context instead of current context
 	 * @return pointer to variable
 	 */
-	inline ScriptVariable* getVariableIntern(const string& name, const string& callerMethod, ScriptVariable*& parentVariable, int64_t& arrayIdx, string& key, int& setAccessBool, const ScriptStatement* statement = nullptr, bool expectVariable = true, bool global = false) {
-		//
-		if (StringTools::startsWith(name, "$") == false) {
-			if (statement != nullptr) {
-				Console::println(getStatementInformation(*statement) + ": variable: '" + name + "': variable names must start with an $");
-			} else {
-				Console::println(scriptFileName + ": variable: '" + name + "': variable names must start with an $");
-			}
-			return nullptr;
-		}
-		// get root variable
-		key.clear();
-		// no array idx by default
-		arrayIdx = ARRAYIDX_NONE;
-		// determine left and right access operator position if there are any
-		auto accessOperatorLeftIdx = string::npos;
-		auto accessOperatorRightIdx = string::npos;
-		if (getVariableAccessOperatorLeftRightIndices(name, callerMethod, accessOperatorLeftIdx, accessOperatorRightIdx, statement) == false) {
-			return nullptr;
-		}
-		// access operator, if we have any, evaluate the array index
-		auto haveAccessOperator = accessOperatorLeftIdx != string::npos && accessOperatorRightIdx != string::npos;
-		auto extractedVariableName = haveAccessOperator == true?StringTools::substring(name, 0, accessOperatorLeftIdx):string();
-		if (haveAccessOperator == true &&
-			evaluateAccess(name, callerMethod, accessOperatorLeftIdx, accessOperatorRightIdx, arrayIdx, key, statement) == false) {
-			return nullptr;
-		}
-		// retrieve variable from function script state
-		ScriptVariable* variablePtr = nullptr;
-		if (global == false) {
-			const auto& scriptState = getScriptState();
-			auto scriptVariableIt = scriptState.variables.find(extractedVariableName.empty() == false?extractedVariableName:name);
-			if (scriptVariableIt == scriptState.variables.end()) {
-				if (isFunctionRunning() == false) {
-					if (expectVariable == true) {
-						if (statement != nullptr) {
-							Console::println(getStatementInformation(*statement) + ": variable: '" + name + "' does not exist");
-						} else {
-							Console::println(scriptFileName + ": variable: '" + name + "' does not exist");
-						}
-					}
-					return nullptr;
-				}
-			} else {
-				variablePtr = scriptVariableIt->second;
-			}
-		}
-		// if no success try to retrieve variable from root script state, but only when expecting variable aka reading variable
-		if (global == true || (expectVariable == true && variablePtr == nullptr)) {
-			const auto& scriptState = getRootScriptState();
-			auto scriptVariableIt = scriptState.variables.find(extractedVariableName.empty() == false?extractedVariableName:name);
-			if (scriptVariableIt == scriptState.variables.end()) {
-				if (expectVariable == true) {
-					if (statement != nullptr) {
-						Console::println(getStatementInformation(*statement) + ": variable: '" + name + "' does not exist");
-					} else {
-						Console::println(scriptFileName + ": variable: '" + name + "' does not exist");
-					}
-				}
-				return nullptr;
-			} else {
-				variablePtr = scriptVariableIt->second;
-			}
-		}
-		//
-		if (variablePtr == nullptr) return nullptr;
-		// get pointer to children variable
-		if (haveAccessOperator == false) {
-			//
-			return variablePtr;
-		} else {
-			// resolve first parsed access pattern and repeat until resolved
-			while (haveAccessOperator == true) {
-				// map key access
-				if (key.empty() == false) {
-					if (variablePtr->getType() == TYPE_MAP) {
-						//
-						auto& mapValueReference = variablePtr->getMapValueReference();
-						// key
-						auto mapIt = mapValueReference.find(key);
-						if (mapIt != mapValueReference.end()) {
-							//
-							parentVariable = variablePtr;
-							//
-							variablePtr = &mapIt->second;
-						} else {
-							if (expectVariable == true) {
-								if (statement != nullptr) {
-									Console::println(getStatementInformation(*statement) + ": variable: '" + name + "': key not found: '" + key + "'");
-								} else {
-									Console::println(scriptFileName + "': variable: '" + name + "': key not found: '" + key + "'");
-								}
-							}
-							// we have our parent
-							parentVariable = variablePtr;
-							//
-							return nullptr;
-						}
-					} else
-					if (variablePtr->getType() == TYPE_SET) {
-						//
-						auto& setValueReference = variablePtr->getSetValueReference();
-						// key
-						auto setIt = setValueReference.find(key);
-						if (setIt != setValueReference.end()) {
-							//
-							setAccessBool = SETACCESSBOOL_TRUE;
-							//
-							parentVariable = variablePtr;
-						} else {
-							//
-							setAccessBool = SETACCESSBOOL_FALSE;
-							// we have our parent
-							parentVariable = variablePtr;
-							//
-							return nullptr;
-						}
-					} else {
-						if (statement != nullptr) {
-							Console::println(getStatementInformation(*statement) + ": variable: '" + name + "': map/set access operator, but variable is not of type map/set");
-						} else {
-							Console::println(scriptFileName + ": variable: '" + name + "': map/set access operator, but variable is not of type map/set");
-						}
-						return nullptr;
-					}
-				} else {
-					if (variablePtr->getType() != TYPE_ARRAY) {
-						if (statement != nullptr) {
-							Console::println(getStatementInformation(*statement) + ": variable: '" + name + "': array access operator, but variable is not of type array");
-						} else {
-							Console::println(scriptFileName + ": variable: '" + name + "': array access operator, but variable is not of type array");
-						}
-						return nullptr;
-					}
-					auto& arrayValueReference = variablePtr->getArrayValueReference();
-					// otherwise array
-					if (arrayIdx == ARRAYIDX_ADD) {
-						// we have our parent
-						parentVariable = variablePtr;
-						//
-						return nullptr;
-					} else
-					if (arrayIdx >= 0 && arrayIdx < arrayValueReference.size()) {
-						//
-						parentVariable = variablePtr;
-						//
-						variablePtr = &arrayValueReference[arrayIdx];
-					} else {
-						if (statement != nullptr) {
-							Console::println(getStatementInformation(*statement) + ": variable: '" + name + "': index out of bounds: 0 <= " + to_string(arrayIdx) + " < " + to_string(arrayValueReference.size()));
-						} else {
-							Console::println(scriptFileName + ": variable: '" + name + "': index out of bounds: 0 <= " + to_string(arrayIdx) + " <= " + to_string(arrayValueReference.size()));
-						}
-						return nullptr;
-					}
-				}
-
-				//
-				auto accessOperatorStartIdx = accessOperatorRightIdx;
-				accessOperatorLeftIdx = string::npos;
-				accessOperatorRightIdx = string::npos;
-				if (getVariableAccessOperatorLeftRightIndices(name, callerMethod, accessOperatorLeftIdx, accessOperatorRightIdx, statement, accessOperatorStartIdx) == false) {
-					// fail
-					return nullptr;
-				}
-
-				// do we have a next array access next to previous one?
-				haveAccessOperator = accessOperatorLeftIdx != string::npos && accessOperatorRightIdx != string::npos;
-				if (haveAccessOperator == false) {
-					return variablePtr;
-				} else {
-					// yep, evaluate it
-					if (evaluateAccess(name, callerMethod, accessOperatorLeftIdx, accessOperatorRightIdx, arrayIdx, key, statement) == false) {
-						return nullptr;
-					}
-				}
-			}
-			//
-			return variablePtr;
-		}
-	}
+	ScriptVariable* getVariableIntern(const string& name, const string& callerMethod, ScriptVariable*& parentVariable, int64_t& arrayIdx, string& key, int& setAccessBool, const ScriptStatement* statement = nullptr, bool expectVariable = true, bool global = false);
 
 	/**
 	 * Evaluate given statement without executing preprocessor run
@@ -2714,94 +2943,197 @@ private:
 	 * @param pushOwnScriptState push own script state
 	 * @return success
 	 */
-	inline bool evaluateInternal(const string& statement, const string& executableStatement, ScriptVariable& returnValue, bool pushOwnScriptState = true) {
-		ScriptStatement evaluateStatement(
-			LINEIDX_NONE,
-			0,
-			"internal.script.evaluate(" + statement + ")",
-			"internal.script.evaluate(" + executableStatement + ")",
-			STATEMENTIDX_NONE
-		);
-		auto scriptEvaluateStatement = "internal.script.evaluate(" + executableStatement + ")";
+	bool evaluateInternal(const string& statement, const string& executableStatement, ScriptVariable& returnValue, bool pushOwnScriptState = true);
+
+	/**
+	  * Initialize variable
+	  * @param variable variable
+	  * @return initialized variable
+	  */
+	const ScriptVariable initializeVariable(const ScriptVariable& variable);
+
+	/**
+	 * Returns if a given string is a function assignment
+	 * @param candidate candidate
+	 * @param function function
+	 * @return if candidate is a function assignment
+	 */
+	inline static bool viewIsFunctionAssignment(const string_view& candidate, string_view& function) {
+		if (candidate.size() == 0) return false;
 		//
-		string_view methodName;
-		vector<string_view> arguments;
-		string accessObjectMemberStatement;
-		ScriptSyntaxTreeNode evaluateSyntaxTree;
-		if (parseScriptStatement(scriptEvaluateStatement, methodName, arguments, evaluateStatement, accessObjectMemberStatement) == false) {
-			return false;
-		} else
-		if (createScriptStatementSyntaxTree(methodName, arguments, evaluateStatement, evaluateSyntaxTree) == false) {
-			return false;
-		} else {
-			//
-			if (pushOwnScriptState == true) {
-				pushScriptState();
-				resetScriptExecutationState(SCRIPTIDX_NONE, STATEMACHINESTATE_NEXT_STATEMENT);
+		auto i = 0;
+		// (
+		if (candidate[i++] != '(') return false;
+		//
+		if (i >= candidate.size()) return false;
+		// )
+		if (candidate[i++] != ')') return false;
+		// spaces
+		for (; i < candidate.size() && Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
+		// -
+		if (candidate[i++] != '-') return false;
+		//
+		if (i >= candidate.size()) return false;
+		// >
+		if (candidate[i++] != '>') return false;
+		// spaces
+		for (; i < candidate.size() && Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
+		//
+		auto functionStartIdx = i;
+		for (; i < candidate.size(); i++) {
+			auto c = candidate[i];
+			if (Character::isAlphaNumeric(c) == false && c != '_') {
+				return false;
 			}
-			getScriptState().running = true;
-			//
-			returnValue = executeScriptStatement(
-				evaluateSyntaxTree,
-				evaluateStatement
-			);
-			//
-			if (pushOwnScriptState == true) popScriptState();
-			//
-			return true;
 		}
+		//
+		function = string_view(&candidate[functionStartIdx], i - functionStartIdx);
+		//
+		return true;
 	}
 
 	/**
-	 * Transpile a script statement
-	 * @param generatedCode generated code
-	 * @param scriptIdx script index
-	 * @param methodCodeMap method code map
-	 * @return success
+	 * Returns if a given string is a inline function
+	 * @param candidate candidate
+	 * @param arguments arguments
+	 * @param functionScriptCode function script code
+	 * @return if candidate is a inline function
 	 */
-	bool transpile(string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap);
+	inline static bool viewIsInlineFunction(const string_view& candidate, vector<string_view>& arguments, string_view& functionScriptCode) {
+		if (candidate.size() == 0) return false;
+		//
+		auto i = 0;
+		// (
+		if (candidate[i++] != '(') return false;
+		// spaces
+		for (; i < candidate.size() && Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
+		//
+		auto argumentStartIdx = string::npos;
+		auto argumentEndIdx = string::npos;
+		//
+		for (; i < candidate.size(); i++) {
+			auto c = candidate[i];
+			if (c == '=') {
+				if (argumentStartIdx == string::npos) {
+					argumentStartIdx = i;
+				} else {
+					return false;
+				}
+			} else
+			if (c == '$') {
+				if (argumentStartIdx == string::npos) {
+					argumentStartIdx = i;
+				} else
+				if (argumentStartIdx == i - 1 && candidate[argumentStartIdx] == '=') {
+					// no op
+				} else {
+					return false;
+				}
+			} else
+			if (c == ',' || c == ')') {
+				if (argumentEndIdx == string::npos) {
+					if (argumentStartIdx != string::npos) {
+						argumentEndIdx = i;
+						arguments.push_back(string_view(&candidate[argumentStartIdx], argumentEndIdx - argumentStartIdx));
+					}
+					//
+					argumentStartIdx = string::npos;
+					argumentEndIdx = string::npos;
+				} else {
+					return false;
+				}
+				if (c == ')') {
+					i++;
+					break;
+				}
+			} else
+			if (argumentStartIdx != string::npos && Character::isAlphaNumeric(candidate[i]) == false && c != '_') {
+				return false;
+			}
+		}
+		//
+		if (i >= candidate.size()) return false;
+		// spaces
+		for (; i < candidate.size() && Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
+		// -
+		if (candidate[i++] != '-') return false;
+		//
+		if (i >= candidate.size()) return false;
+		// >
+		if (candidate[i++] != '>') return false;
+		// spaces
+		for (; i < candidate.size() && Character::isSpace(candidate[i]) == true; i++); if (i >= candidate.size()) return false;
+		//
+		if (candidate[i++] != '{') return false;
+		//
+		auto scriptCodeStartIdx = i;
+		auto scriptCodeEndIdx = string::npos;
+		//
+		for (auto j = candidate.size() - 1; j > i; j--) {
+			if (candidate[j] == '}') {
+				scriptCodeEndIdx = j;
+				break;
+			} else
+			if (Character::isSpace(candidate[j]) == false) {
+				return false;
+			}
+		}
+		//
+		if (scriptCodeEndIdx == string::npos) return false;
+		//
+		functionScriptCode = string_view(&candidate[scriptCodeStartIdx], scriptCodeEndIdx - scriptCodeStartIdx);
+		//
+		return true;
+	}
 
 	/**
-	 * Transpile a script condition
-	 * @param generatedCode generated code
-	 * @param scriptIdx script index
-	 * @param methodCodeMap method code map
-	 * @param returnValue return value
-	 * @param injectCode inject code
-	 * @return success
+	 * Returns if a given string is a variable name
+	 * @param candidate candidate
+	 * @return if string is a variable name
 	 */
-	bool transpileScriptCondition(string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap, const string& returnValue, const string& injectCode, int depth = 0);
+	inline static bool viewIsVariableAccess(const string_view& candidate) {
+		if (candidate.size() == 0) return false;
+		if (candidate[0] != '$') return false;
+		auto squareBracketCount = 0;
+		for (auto i = 1; i < candidate.size(); i++) {
+			auto c = candidate[i];
+			if (c == '[') {
+				squareBracketCount++;
+			} else
+			if (c == ']') {
+				squareBracketCount--;
+			} else
+			if (squareBracketCount == 0 && Character::isAlphaNumeric(c) == false && c != '_' && c != '.') {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	/**
-	 * Serialize map as JSON
-	 * @param jParent JSON parent document
-	 * @param variable variable
+	 * Returns if a given string is a valid map key name
+	 * @param candidate candidate
+	 * @return if string is a valid map key name
 	 */
-	static void serializeMapAsJson(Document& jParent, const ScriptVariable& variable);
-
-	/**
-	 * Serialize array as JSON
-	 * @param jDocument JSON document
-	 * @param jParent JSON parent document
-	 * @param variable variable
-	 */
-	static void serializeArrayAsJson(Document& jDocument, Value& jParent, const ScriptVariable& variable);
-
-	/**
-	 * Deserialize map from JSON value
-	 * @param jObjectValue JSON object value
-	 * @return script variable
-	 */
-	static const ScriptVariable deserializeMapJson(const Value& jObjectValue);
-
-	/**
-	 * Deserialize array from JSON value
-	 * @param jArrayValue JSON array value
-	 * @return script variable
-	 */
-	static const ScriptVariable deserializeArrayJson(const Value& jArrayValue);
+	static bool viewIsKey(const string_view& candidate);
 
 public:
+
+	/**
+	 * Returns string representation of given argument indices
+	 * @param argumentIndices argument indices
+	 * @param delimiter delimiter
+	 * @return string representation of given argument indices
+	 */
+	inline static const string getArgumentIndicesAsString(const vector<int>& argumentIndices, const string& delimiter) {
+		string result;
+		for (const auto argumentIdx: argumentIndices) {
+			if (result.empty() == false) result+= delimiter;
+			result+= to_string(argumentIdx);
+		}
+		return result;
+	}
+
 	// forbid class copy
 	FORBID_CLASS_COPY(MiniScript)
 
@@ -3163,12 +3495,37 @@ public:
 	void registerMethod(ScriptMethod* scriptMethod);
 
 	/**
+	 * Returns if a given string is a variable name
+	 * @param candidate candidate
+	 * @return if string is a variable name
+	 */
+	inline static bool isVariableAccess(const string& candidate) {
+		if (candidate.size() == 0) return false;
+		if (candidate[0] != '$') return false;
+		auto squareBracketCount = 0;
+		for (auto i = 1; i < candidate.size(); i++) {
+			auto c = candidate[i];
+			if (c == '[') {
+				squareBracketCount++;
+			} else
+			if (c == ']') {
+				squareBracketCount--;
+			} else
+			if (squareBracketCount == 0 && Character::isAlphaNumeric(c) == false && c != '_' && c != '.') {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
 	 * Returns variable with given name
 	 * @param name name
 	 * @param statement optional statement the variable is read in
+	 * @param createReference optional flag for creating variable references
 	 * @return variable
 	 */
-	inline const ScriptVariable getVariable(const string& name, const ScriptStatement* statement = nullptr) {
+	inline const ScriptVariable getVariable(const string& name, const ScriptStatement* statement = nullptr, bool createReference = false) {
 		// global accessor
 		string globalVariableName;
 		if (StringTools::startsWith(name, "$GLOBAL.") == true) {
@@ -3185,7 +3542,7 @@ public:
 			return ScriptVariable(setAccessBool == SETACCESSBOOL_TRUE);
 		} else
 		if (variablePtr != nullptr) {
-			return *variablePtr;
+			return createReference == false?*variablePtr:ScriptVariable::createReferenceVariable(variablePtr);
 		} else {
 			return ScriptVariable();
 		}
@@ -3196,8 +3553,9 @@ public:
 	 * @param name name
 	 * @param variable variable
 	 * @param statement optional statement the variable is written in
+	 * @param createReference optional flag for creating variable references
 	 */
-	inline void setVariable(const string& name, const ScriptVariable& variable, const ScriptStatement* statement = nullptr) {
+	inline void setVariable(const string& name, const ScriptVariable& variable, const ScriptStatement* statement = nullptr, bool createReference = false) {
 		// global accessor
 		string globalVariableName;
 		if (StringTools::startsWith(name, "$GLOBAL.") == true) {
@@ -3227,7 +3585,7 @@ public:
 			} else
 			// all checks passed, push to map
 			if (parentVariable->getType() == MiniScript::TYPE_MAP) {
-				parentVariable->setMapValue(key, variable);
+				parentVariable->setMapEntry(key, createReference == false?ScriptVariable::createNonReferenceVariable(&variable):ScriptVariable::createReferenceVariable(&variable));
 			} else
 			if (parentVariable->getType() == MiniScript::TYPE_SET) {
 				bool booleanValue;
@@ -3271,7 +3629,7 @@ public:
 			} else {
 				// all checks passed, push variable to array
 				auto& arrayValueReference = parentVariable->getArrayValueReference();
-				arrayValueReference.push_back(variable);
+				arrayValueReference.push_back(createReference == false?ScriptVariable::createNonReferenceVariablePointer(&variable):ScriptVariable::createReferenceVariablePointer(&variable));
 			}
 			//
 			return;
@@ -3284,7 +3642,8 @@ public:
 			*scriptVariableIt->second = variable;
 			return;
 		} else {
-			scriptState.variables[globalVariableName.empty() == true?name:globalVariableName] = new ScriptVariable(variable);
+			scriptState.variables[globalVariableName.empty() == true?name:globalVariableName] =
+				createReference == false?ScriptVariable::createNonReferenceVariablePointer(&variable):ScriptVariable::createReferenceVariablePointer(&variable);
 		}
 	}
 
@@ -3298,7 +3657,7 @@ public:
 	}
 
 	/**
-	 * Parse script into MiniScript instance
+	 * Parse script
 	 * @param pathName path name
 	 * @param fileName file name
 	 */
@@ -3351,7 +3710,6 @@ public:
 		// lookup function
 		auto scriptFunctionsIt = scriptFunctions.find(function);
 		if (scriptFunctionsIt == scriptFunctions.end()) {
-			Console::println("MiniScript::getFunctionScriptIdx(): Script user function not found: " + function);
 			return SCRIPTIDX_NONE;
 		}
 		//
@@ -3397,7 +3755,7 @@ public:
 	 */
 	inline bool evaluate(const string& evaluateStatement, ScriptVariable& returnValue) {
 		ScriptStatement evaluateScriptStatement(
-			LINEIDX_NONE,
+			LINE_NONE,
 			STATEMENTIDX_FIRST,
 			"internal.script.evaluate(" + StringTools::replace(StringTools::replace(evaluateStatement, "\\", "\\\\"), "\"", "\\\"") + ")",
 			"internal.script.evaluate(" + StringTools::replace(StringTools::replace(evaluateStatement, "\\", "\\\\"), "\"", "\\\"") + ")",
@@ -3450,41 +3808,5 @@ public:
 	 * @return information as string
 	 */
 	const string getInformation();
-
-	/**
-	 * Create source code for given syntax tree node
-	 * @param syntaxTreeNode syntax tree node
-	 */
-	static const string createSourceCode(const ScriptSyntaxTreeNode& syntaxTreeNode);
-
-	/**
-	 * Create source code for given syntax tree
-	 * @param scriptType script type
-	 * @param condition condition
-	 * @param arguments function arguments
-	 * @param name name of named conditions
-	 * @param conditionSyntaxTree condition syntax tree
-	 * @param syntaxTree syntax tree
-	 */
-	static const string createSourceCode(Script::ScriptType scriptType, const string& condition, const vector<Script::ScriptArgument>& arguments, const string& name, const ScriptSyntaxTreeNode& conditionSyntaxTree, const vector<ScriptSyntaxTreeNode>& syntaxTree);
-
-	/**
-	 * Create source code for whole script
-	 */
-	const string createSourceCode();
-
-	/**
-	 * Serialize as JSON
-	 * @param variable variable
-	 * @return JSON representation
-	 */
-	static const string serializeAsJson(const ScriptVariable& variable);
-
-	/**
-	 * Deserialize as JSON
-	 * @param variable variable
-	 * @return JSON representation
-	 */
-	static const ScriptVariable deserializeJson(const string& json);
 
 };

@@ -26,6 +26,7 @@ using tdme::gui::events::GUIFocusListener;
 using tdme::gui::events::GUITooltipRequestListener;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::editor::controllers::ScreenController;
 using tdme::tools::editor::misc::PopUps;
@@ -52,6 +53,9 @@ private:
 	GUIElementNode* alphaInput { nullptr };
 	GUIElementNode* hexInput { nullptr };
 	GUIElementNode* brightnessSlider { nullptr };
+	GUIImageNode* colorNew { nullptr };
+	GUIImageNode* colorOld { nullptr };
+	Color4 initialColor;
 	Color4 color;
 	unique_ptr<Action> onColorChangeAction;
 

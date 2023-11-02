@@ -184,15 +184,69 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene* s
 		jDocument.AddMember("objects", jEntities, jAllocator);
 		jDocument.AddMember("objects_eidx", Value(scene->getEntityIdx()), jAllocator);
 	}
-	// sky
+	// sky shader parameters
 	{
 		const auto& skyShaderParameters = scene->getSkyShaderParameters();
 		Value jSkyShaderParameters;
 		jSkyShaderParameters.SetObject();
 		for (const auto& shaderParameterName: Engine::getShaderParameterNames("sky")) {
-			jSkyShaderParameters.AddMember(Value(shaderParameterName, jAllocator), Value(skyShaderParameters.getShaderParameter(shaderParameterName).toString(), jAllocator), jAllocator);
+			jSkyShaderParameters.AddMember(
+				Value(shaderParameterName, jAllocator),
+				Value(skyShaderParameters.getShaderParameter(shaderParameterName).getValueAsString(), jAllocator),
+				jAllocator
+			);
 		}
 		jDocument.AddMember("skyshader", jSkyShaderParameters, jAllocator);
+	}
+	// post processing shaders
+	{
+		const auto& postProcessingShaderParameters = scene->getEnabledPostProcessingShader();
+		//
+		Value jEnabledPostProcessingShaders;
+		jEnabledPostProcessingShaders.SetArray();
+		for (const auto& shaderId: Engine::getRegisteredShader(Engine::SHADERTYPE_POSTPROCESSING, false)) {
+			if (scene->isPostProcessingShaderEnabled(shaderId) == false) continue;
+			jEnabledPostProcessingShaders.PushBack(Value(shaderId, jAllocator), jAllocator);
+		}
+		//
+		Value jAllPostProcessingShaderParameters;
+		jAllPostProcessingShaderParameters.SetObject();
+		for (const auto& shaderId: Engine::getRegisteredShader(Engine::SHADERTYPE_POSTPROCESSING, false)) {
+			//
+			const auto& shaderParameters = scene->getPostProcessingShaderParameters(shaderId);
+			if (shaderParameters == nullptr) continue;
+			//
+			Value jShaderParameters;
+			jShaderParameters.SetObject();
+			for (const auto& shaderParameterName: Engine::getShaderParameterNames(shaderId)) {
+				jShaderParameters.AddMember(
+					Value(shaderParameterName, jAllocator),
+					Value(shaderParameters->getShaderParameter(shaderParameterName).getValueAsString(), jAllocator),
+					jAllocator
+				);
+			}
+			//
+			jAllPostProcessingShaderParameters.AddMember(
+				Value(shaderId, jAllocator),
+				jShaderParameters,
+				jAllocator
+			);
+		}
+		//
+		Value jPostProcessingShaderParameters;
+		jPostProcessingShaderParameters.SetObject();
+		jPostProcessingShaderParameters.AddMember(
+			Value("enabled", jAllocator),
+			jEnabledPostProcessingShaders,
+			jAllocator
+		);
+		jPostProcessingShaderParameters.AddMember(
+			Value("parameters", jAllocator),
+			jAllPostProcessingShaderParameters,
+			jAllocator
+		);
+		//
+		jDocument.AddMember("postprocessingshaders", jPostProcessingShaderParameters, jAllocator);
 	}
 	//
 	jDocument.AddMember("gui", Value(scene->getGUIFileName(), jAllocator), jAllocator);

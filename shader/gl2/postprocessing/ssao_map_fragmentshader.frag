@@ -7,19 +7,19 @@
 precision highp sampler2D;
 precision highp float;
 
-#define strength		0.25
-#define area			0.0075
-#define falloff		0.000001
-#define radius		0.02
-#define samples		8
-
 // uniforms
 uniform sampler2D colorBufferTextureUnit;
 uniform sampler2D depthBufferTextureUnit;
 uniform sampler2D randomTextureUnit;
 uniform float bufferTexturePixelWidth;
 uniform float bufferTexturePixelHeight;
-uniform vec3 sphere[samples];
+uniform vec3 sphere[16];
+
+uniform float strength;
+uniform float area;
+uniform float falloff;
+uniform float radius;
+uniform int samples;
 
 // passed from vertex shader
 varying vec2 vsFragTextureUV;

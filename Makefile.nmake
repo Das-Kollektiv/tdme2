@@ -185,7 +185,6 @@ SRCS = \
 	src/tdme/engine/subsystems/lighting/DeferredLightingShaderPBRDefaultImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/DeferredLightingShaderPBRFoliageImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/DeferredLightingShaderPBRTreeImplementation.cpp \
-	src/tdme/engine/subsystems/lighting/DeferredLightingShaderSkyImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/DeferredLightingShaderSolidImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/DeferredLightingShaderTerrainImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/DeferredLightingShaderTreeImplementation.cpp \
@@ -200,7 +199,6 @@ SRCS = \
 	src/tdme/engine/subsystems/lighting/LightingShaderPBRDefaultImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderPBRFoliageImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderPBRTreeImplementation.cpp \
-	src/tdme/engine/subsystems/lighting/LightingShaderSkyImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderSolidImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderTerrainEditorImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderTerrainImplementation.cpp \
@@ -243,7 +241,7 @@ SRCS = \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingProgram.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShader.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.cpp \
-	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBlurImplementation.cpp \
+	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDepthBlurImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDefaultImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDesaturationImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderLightScatteringImplementation.cpp \
@@ -407,6 +405,7 @@ SRCS = \
 	src/tdme/tests/MathOperatorTest.cpp \
 	src/tdme/tests/MiniScriptAdvancedTest.cpp \
 	src/tdme/tests/MiniScriptBaseTest.cpp \
+	src/tdme/tests/MiniScriptClassTest.cpp \
 	src/tdme/tests/MiniScriptEmitTest.cpp \
 	src/tdme/tests/MiniScriptFunctionsTest.cpp \
 	src/tdme/tests/PathFindingTest.cpp \
@@ -502,6 +501,7 @@ SRCS = \
 	src/tdme/utilities/Integer.cpp \
 	src/tdme/utilities/MiniScript.cpp \
 	src/tdme/utilities/MiniScriptMath.cpp \
+	src/tdme/utilities/MiniScriptTranspiler.cpp \
 	src/tdme/utilities/ModelTools.cpp \
 	src/tdme/utilities/PathFinding.cpp \
 	src/tdme/utilities/Primitives.cpp \
@@ -798,7 +798,7 @@ all: \
 	generatelicenses \
 	importtmodel \
 	importtscene \
-	fixdoxygen \
+	miniscript \
 	msclib2dll \
 	makefilegenerator \
 	miniscripttranspiler \
@@ -1165,10 +1165,10 @@ importtscene:
 	rc $(MSCBIN)\importtscene.exe.rc
 	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\importtscene /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/importtscene-main.cpp $(MSCBIN)\importtscene.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
-fixdoxygen:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc fixdoxygen.exe $(MSCBIN)\fixdoxygen.exe.rc
-	rc $(MSCBIN)\fixdoxygen.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\fixdoxygen /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/fixdoxygen-main.cpp $(MSCBIN)\fixdoxygen.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+miniscript:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc miniscript.exe $(MSCBIN)\miniscript.exe.rc
+	rc $(MSCBIN)\miniscript.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\miniscript /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/miniscript-main.cpp $(MSCBIN)\miniscript.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 msclib2dll:
 	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc msclib2dll.exe $(MSCBIN)\msclib2dll.exe.rc
@@ -1296,7 +1296,6 @@ copy-executables:
 	copy $(MSCBIN)\createminiscriptdocumentation.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\createrc.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\dumpmodel.exe bin\tdme\tools\cli\.
-	copy $(MSCBIN)\fixdoxygen.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\generatelicenses.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\imageprocessor.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\importtmodel.exe bin\tdme\tools\cli\.
@@ -1304,6 +1303,7 @@ copy-executables:
 	copy $(MSCBIN)\makefilegenerator.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\miniscripttranspiler.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\miniscriptuntranspiler.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\miniscript.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\msclib2dll.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\nmakefilegenerator.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\optimizemodel.exe bin\tdme\tools\cli\.

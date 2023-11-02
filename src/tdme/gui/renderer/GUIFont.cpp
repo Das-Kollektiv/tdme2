@@ -71,7 +71,7 @@ GUIFont::GUIFont(const string& pathName, const string& fileName, int size): text
 		.num_params = 0,
 		.params = nullptr
 	};
-	if (FT_Open_Face(ftLibrary, &ftOpenArgs, 0, &ftFace) == true) {
+	if (FT_Open_Face(ftLibrary, &ftOpenArgs, 0, &ftFace) != 0) {
 		Console::println("GUIFont::parse(): Could not load font: " + pathName + "/" + fileName);
 		return;
 	}
@@ -94,7 +94,7 @@ GUIFont* GUIFont::parse(const string& pathName, const string& fileName, int size
 {
 	// init freetype library if not yet done
 	if (ftInitialized == false) {
-		if (FT_Init_FreeType(&ftLibrary) == true) {
+		if (FT_Init_FreeType(&ftLibrary) != 0) {
 			Console::println("GUIFont::parse(): Could not initialize freetype library");
 			return nullptr;
 		}

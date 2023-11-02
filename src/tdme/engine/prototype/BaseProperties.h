@@ -116,14 +116,14 @@ public:
 	 * @return Const properties iterator
 	 */
 	inline ConstUniquePtrSequenceIterator<BaseProperty> getProperties() const {
-		return ConstUniquePtrSequenceIterator<BaseProperty>(&properties[0], &properties[properties.size()]);
+		return ConstUniquePtrSequenceIterator<BaseProperty>(&(*properties.begin()), &(*properties.end()));
 	}
 
 	/**
 	 * @return Properties iterator
 	 */
 	inline UniquePtrSequenceIterator<BaseProperty> getProperties() {
-		return UniquePtrSequenceIterator<BaseProperty>(&properties[0], &properties[properties.size()]);
+		return UniquePtrSequenceIterator<BaseProperty>(&(*properties.begin()), &(*properties.end()));
 	}
 
 	/**

@@ -23,7 +23,7 @@
 				</layer>
 				<layout width="100%" height="auto" alignment="horizontal" horizontal-align="right" vertical-align="center">
 					<layout width="auto" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
-						<checkbox template="checkbox_template_toolbar.xml" id="{$id}_checkbox_grid" width="30" height="30" image-unchecked="resources/engine/images/checkbox_gridoff.png" image-checked="resources/engine/images/checkbox_gridon.png" value="1" selected="true" />
+						<checkbox template="checkbox_template_toolbar.xml" id="{$id}_checkbox_grid" width="30" height="30" image-unchecked="resources/engine/images/checkbox_gridoff.png" image-checked="resources/engine/images/checkbox_gridon.png" value="1" selected="false" />
 						<layout show-on="bvs" width="auto" height="auto" alignment="vertical">
 							<checkbox template="checkbox_template_toolbar.xml" id="{$id}_checkbox_bvs" width="30" height="30" image-unchecked="resources/engine/images/checkbox_bvoff.png" image-checked="resources/engine/images/checkbox_bvon.png" value="1" />
 						</layout>

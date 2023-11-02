@@ -8,7 +8,6 @@ end
 
 # user script function of recursive factorial computation 
 function: factorial($value)
-	console.log("factorial(): $arguments = " + $arguments + " / $value = " + $value)
 	if ($value == 0) 
 		return(1)
 	end

@@ -132,13 +132,12 @@ int main(int argc, char** argv)
 	//
 	if (argc < 3) {
 		Console::println("Usage: miniscriptuntranspiler path_to_script_file path_to_cpp_miniscript_transpilation_file");
-		Application::exit(1);
+		Application::exit(Application::EXITCODE_FAILURE);
 	}
 
 	//
 	tdme::tools::cli::MiniscriptUntranspiler::processFile(argv[1], argv[2]);
 
 	//
-	Console::shutdown();
-	return 0;
+	Application::exit(Application::EXITCODE_SUCCESS);
 }

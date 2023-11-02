@@ -65,13 +65,16 @@ int main(int argc, char** argv)
 	Console::println(Version::getCopyright());
 	Console::println();
 
+	//
 	if (argc != 2) {
 		Console::println("Usage: makefilegenerator path_to_source");
-		Application::exit(1);
+		Application::exit(Application::EXITCODE_FAILURE);
 	}
 
+	//
 	auto pathToSource = string(argv[1]);
 
+	//
 	try {
 		Console::println("Scanning source files");
 		vector<string> sourceFiles;
@@ -100,6 +103,5 @@ int main(int argc, char** argv)
 	}
 
 	//
-	Console::shutdown();
-	return 0;
+	Application::exit(Application::EXITCODE_SUCCESS);
 }

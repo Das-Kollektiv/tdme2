@@ -39,7 +39,7 @@
 					<radiobutton template="radiobutton_template_toolbar.xml" id="{$id}_foliage_delete" name="brush" width="30" height="30" value="1" image="resources/engine/images/delete.png" />
 				</layout>
 				<layout width="100%" height="auto" alignment="horizontal" horizontal-align="right" vertical-align="center">
-					<checkbox template="checkbox_template_toolbar.xml" id="{$id}_checkbox_grid" image-unchecked="resources/engine/images/checkbox_gridoff.png" width="30" height="30" image-checked="resources/engine/images/checkbox_gridon.png" value="1" selected="true" />
+					<checkbox template="checkbox_template_toolbar.xml" id="{$id}_checkbox_grid" image-unchecked="resources/engine/images/checkbox_gridoff.png" width="30" height="30" image-checked="resources/engine/images/checkbox_gridon.png" value="1" selected="false" />
 				</layout>
 			</layer>
 		</element>

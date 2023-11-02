@@ -69,7 +69,8 @@ void LightingShaderTerrainEditorImplementation::registerShader() {
 			{ "brushRotation", ShaderParameter(0.0f) },
 			{ "brushScale", ShaderParameter(Vector2(1.0f, 1.0f)) },
 			{ "brushPosition", ShaderParameter(Vector2(0.0f, 0.0f)) }
-		}
+		},
+		true
 	);
 }
 

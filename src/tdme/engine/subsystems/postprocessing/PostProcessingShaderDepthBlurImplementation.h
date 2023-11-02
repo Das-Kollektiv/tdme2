@@ -10,10 +10,10 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 
 /**
- * Post processing shader blur implementation
+ * Post processing shader depth blur implementation
  * @author Andreas Drewke
  */
-class tdme::engine::subsystems::postprocessing::PostProcessingShaderBlurImplementation: public PostProcessingShaderBaseImplementation
+class tdme::engine::subsystems::postprocessing::PostProcessingShaderDepthBlurImplementation: public PostProcessingShaderBaseImplementation
 {
 public:
 	/**
@@ -24,13 +24,13 @@ public:
 	static bool isSupported(Renderer* renderer);
 
 	// forbid class copy
-	FORBID_CLASS_COPY(PostProcessingShaderBlurImplementation)
+	FORBID_CLASS_COPY(PostProcessingShaderDepthBlurImplementation)
 
 	/**
 	 * Public constructor
 	 * @param renderer renderer
 	 */
-	PostProcessingShaderBlurImplementation(Renderer* renderer);
+	PostProcessingShaderDepthBlurImplementation(Renderer* renderer);
 
 	// overridden methods
 	virtual void initialize() override;

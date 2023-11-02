@@ -116,15 +116,3 @@ const vector<string> StringTools::tokenize(const string& str, const string& deli
 	t.tokenize(str, delimiters);
 	return t.getTokens();
 }
-
-const string StringTools::padLeft(const string& src, const string& by, int toSize) {
-	auto result = src;
-	while (result.size() < toSize) result = by + result;
-	return result;
-}
-
-const string StringTools::padRight(const string& src, const string& by, int toSize) {
-	auto result = src;
-	while (result.size() < toSize) result = result + by;
-	return result;
-}

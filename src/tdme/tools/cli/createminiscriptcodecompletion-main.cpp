@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/application/Application.h>
 #include <tdme/engine/logics/LogicMiniScript.h>
 #include <tdme/engine/Version.h>
 #include <tdme/gui/scripting/GUIMiniScript.h>
@@ -19,6 +20,7 @@ using std::make_unique;
 using std::string;
 using std::vector;
 
+using tdme::application::Application;
 using tdme::engine::logics::LogicMiniScript;
 using tdme::engine::Version;
 using tdme::gui::scripting::GUIMiniScript;
@@ -85,7 +87,7 @@ int main(int argc, char** argv)
 				string argumentValueString;
 				if (argumentType.optional == true) argumentValueString+= "[";
 				argumentValueString+= MiniScript::ScriptVariable::getTypeAsString(argumentType.type) + " ";
-				argumentValueString+= string() + (argumentType.assignBack == true?"=":"") + "$" + argumentType.name;
+				argumentValueString+= string() + (argumentType.reference == true?"=":"") + "$" + argumentType.name;
 				if (argumentType.optional == true) argumentValueString+= "]";
 				lines.push_back("			<parameter name=\"" + argumentValueString + "\" />");
 			}
@@ -118,6 +120,5 @@ int main(int argc, char** argv)
 	FileSystem::getInstance()->setContentFromStringArray("resources/engine/code-completion", "tscript.xml", lines);
 
 	//
-	Console::shutdown();
-	return 0;
+	Application::exit(Application::EXITCODE_SUCCESS);
 }

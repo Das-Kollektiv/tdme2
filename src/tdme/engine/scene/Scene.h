@@ -4,6 +4,8 @@
 #include <memory>
 #include <set>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -24,6 +26,8 @@ using std::map;
 using std::set;
 using std::string;
 using std::unique_ptr;
+using std::unordered_map;
+using std::unordered_set;
 using std::vector;
 
 using tdme::engine::model::Model;
@@ -58,6 +62,8 @@ private:
 	Vector3 dimension;
 	Vector3 center;
 	EntityShaderParameters skyShaderParameters;
+	unordered_set<string> enabledPostProcessingShaders;
+	unordered_map<string, EntityShaderParameters> postProcessingShaderParameters;
 	string guiFileName;
 
 	/**
@@ -133,7 +139,7 @@ public:
 	 * @return Lights iterator
 	 */
 	inline UniquePtrSequenceIterator<SceneLight> getLights() {
-		return UniquePtrSequenceIterator<SceneLight>(&lights[0], &lights[lights.size()]);
+		return UniquePtrSequenceIterator<SceneLight>(&(*lights.begin()), &(*lights.end()));
 	}
 
 	/**
@@ -158,7 +164,7 @@ public:
 	 * @return light
 	 */
 	inline SceneLight* addLight() {
-		lights.push_back(make_unique<SceneLight>(lights.size()));
+		lights.push_back(make_unique<SceneLight>(static_cast<int>(lights.size())));
 		return lights[lights.size() - 1].get();
 	}
 
@@ -259,7 +265,7 @@ public:
 	 * @return Entities iterator
 	 */
 	inline UniquePtrSequenceIterator<SceneEntity> getEntities() {
-		return UniquePtrSequenceIterator<SceneEntity>(&entities[0], &entities[entities.size()]);
+		return UniquePtrSequenceIterator<SceneEntity>(&(*entities.begin()), &(*entities.end()));
 	}
 
 	/**
@@ -321,6 +327,58 @@ public:
 	 */
 	inline void setSkyShaderParameters(EntityShaderParameters& parameters) {
 		skyShaderParameters = parameters;
+	}
+
+	/**
+	 * Return enabled processing shader
+	 * @return enabled post processing shader
+	 */
+	inline unordered_set<string> getEnabledPostProcessingShader() {
+		return enabledPostProcessingShaders;
+	}
+
+	/**
+	 * Is post processing shader enabled
+	 * @param shaderId shader id
+	 * @return processing shader enabled
+	 */
+	inline bool isPostProcessingShaderEnabled(const string& shaderId) {
+		return enabledPostProcessingShaders.contains(shaderId);
+	}
+
+	/**
+	 * Enable post processing shader
+	 * @param shaderId shader id
+	 */
+	inline void enablePostProcessingShader(const string& shaderId) {
+		enabledPostProcessingShaders.insert(shaderId);
+	}
+
+	/**
+	 * Disable post processing shader
+	 * @param shaderId shader id
+	 */
+	inline void disablePostProcessingShader(const string& shaderId) {
+		enabledPostProcessingShaders.erase(shaderId);
+	}
+
+	/**
+	 * Get post processing shader parameters
+	 * @param shaderId shader id
+	 * @return shader parameters
+	 */
+	inline const EntityShaderParameters* getPostProcessingShaderParameters(const string& shaderId) {
+		auto postProcessingShaderParametersIt = postProcessingShaderParameters.find(shaderId);
+		if (postProcessingShaderParametersIt == postProcessingShaderParameters.end()) return nullptr;
+		return &postProcessingShaderParametersIt->second;
+	}
+
+	/**
+	 * Set post processing shader parameters
+	 * @param parameters shader parameters
+	 */
+	inline void setPostProcessingShaderParameters(const string& shaderId, const EntityShaderParameters& parameters) {
+		postProcessingShaderParameters[shaderId] = parameters;
 	}
 
 	/**

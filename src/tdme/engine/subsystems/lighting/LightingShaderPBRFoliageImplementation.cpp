@@ -129,9 +129,9 @@ void LightingShaderPBRFoliageImplementation::registerShader() {
 		Engine::ShaderType::SHADERTYPE_OBJECT,
 		getId(),
 		{
-			{ "speed", ShaderParameter(1.0f) },
-			{ "amplitudeDefault", ShaderParameter(0.0f) },
-			{ "amplitudeMax", ShaderParameter(20.0f) }
+			{ "speed", ShaderParameter(1.0f), ShaderParameter(0.0f), ShaderParameter(20.0f), ShaderParameter(1.0f) },
+			{ "amplitudeDefault", ShaderParameter(0.0f), ShaderParameter(-45.0f), ShaderParameter(45.0f), ShaderParameter(4.5f) },
+			{ "amplitudeMax", ShaderParameter(20.0f), ShaderParameter(-45.0f), ShaderParameter(45.0f), ShaderParameter(4.5f) },
 		}
 	);
 }

@@ -33,7 +33,7 @@ int main(int argc, char** argv)
 	Console::println();
 	if (argc != 2) {
 		Console::println("Usage: dumpmodel sourcefile");
-		Application::exit(1);
+		Application::exit(Application::EXITCODE_FAILURE);
 	}
 	string fileName = string(argv[1]);
 	try {
@@ -70,6 +70,5 @@ int main(int argc, char** argv)
 	}
 
 	//
-	Console::shutdown();
-	return 0;
+	Application::exit(Application::EXITCODE_SUCCESS);
 }

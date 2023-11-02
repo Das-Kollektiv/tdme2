@@ -12,6 +12,7 @@
 #include <tdme/engine/ShaderParameter.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUIImageNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -20,6 +21,7 @@
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
+#include <tdme/tools/editor/controllers/ColorPickerScreenController.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
@@ -27,6 +29,7 @@
 #include <tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
+#include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
@@ -45,6 +48,7 @@ using tdme::engine::EntityShaderParameters;
 using tdme::engine::ShaderParameter;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
@@ -52,13 +56,16 @@ using tdme::gui::GUIParser;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
+using tdme::tools::editor::controllers::ColorPickerScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
+using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
 using tdme::tools::editor::tabviews::subviews::PrototypeDisplaySubView;
 using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
+using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
@@ -145,41 +152,131 @@ void PrototypeDisplaySubController::applyDisplayDetails(Prototype* prototype) {
 	setDisplayShaderDetails(prototype);
 }
 
-void PrototypeDisplaySubController::createDisplayShaderDetailsXML(Prototype* prototype, const string& shaderParameterPrefix, const string& shader, const EntityShaderParameters& shaderParameters, string& xml) {
-	for (const auto& parameterName: Engine::getShaderParameterNames(shader)) {
+void PrototypeDisplaySubController::setDisplayShaderDetails(Prototype* prototype) {
+	string xml;
+	const auto& shaderParameters = prototype->getShaderParameters();
+	for (const auto& parameterName: Engine::getShaderParameterNames(prototype->getShader())) {
+		auto parameterDefaults = Engine::getDefaultShaderParameter(prototype->getShader(), parameterName);
+		if (parameterDefaults == nullptr) continue;
 		auto parameter = shaderParameters.getShaderParameter(parameterName);
-		auto parameterValue = parameter.toString();
-		auto parameterType = "string";
 		switch (parameter.getType()) {
-		case ShaderParameter::TYPE_FLOAT:
-			xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape(shaderParameterPrefix + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_float.xml\" value=\"" + parameterValue + "\" />\n";
-			break;
-		case ShaderParameter::TYPE_INTEGER:
-			xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape(shaderParameterPrefix + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_int.xml\" value=\"" + parameterValue + "\" />\n";
-			break;
-		case ShaderParameter::TYPE_BOOLEAN:
-			xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape(shaderParameterPrefix + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_bool.xml\" value=\"" + parameterValue + "\" />\n";
-			break;
-		case ShaderParameter::TYPE_VECTOR2:
-			{
-				auto vec2 = parameter.getVector2Value();
-				xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape(shaderParameterPrefix + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_vector2.xml\" value_x=\"" + to_string(vec2.getX()) + "\" value_y=\"" + to_string(vec2.getY()) + "\" />\n";
-			}
-			break;
-		case ShaderParameter::TYPE_VECTOR3:
-			{
-				auto vec3 = parameter.getVector3Value();
-				xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape(shaderParameterPrefix + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_vector3.xml\" value_x=\"" + to_string(vec3.getX()) + "\" value_y=\"" + to_string(vec3.getY()) + "\" value_z=\"" + to_string(vec3.getZ()) + "\" />\n";
-			}
-			break;
-		case ShaderParameter::TYPE_VECTOR4:
-			{
-				auto vec4 = parameter.getVector4Value();
-				xml+= "<template name=\"" + GUIParser::escape(parameterName) + "\" id=\"" + GUIParser::escape(shaderParameterPrefix + parameterName) + "\" src=\"resources/engine/gui/template_details_rendering_shader_vector4.xml\" value_x=\"" + to_string(vec4.getX()) + "\" value_y=\"" + to_string(vec4.getY()) + "\" value_z=\"" + to_string(vec4.getZ()) + "\" value_w=\"" + to_string(vec4.getW()) + "\" />\n";
-			}
-			break;
-		case ShaderParameter::TYPE_NONE:
-			break;
+			case ShaderParameter::TYPE_FLOAT:
+				{
+					auto parameterValue = parameter.getValueAsString();
+					xml+=
+						"<template name=\"" +
+						GUIParser::escape(parameterName) + "\" " +
+						"id=\"" + GUIParser::escape("rendering.shader." + parameterName) + "\" " +
+						"src=\"resources/engine/gui/template_details_rendering_shader_float.xml\" " +
+						"value=\"" + parameterValue + "\" " +
+						"min=\"" + to_string(parameterDefaults->min.getFloatValue()) + "\" " +
+						"max=\"" + to_string(parameterDefaults->max.getFloatValue()) + "\" " +
+						"step=\"" + to_string(parameterDefaults->step.getFloatValue()) + "\" " +
+						"/>\n";
+					break;
+				}
+			case ShaderParameter::TYPE_INTEGER:
+				{
+					auto parameterValue = parameter.getValueAsString();
+					xml+=
+						"<template name=\"" + GUIParser::escape(parameterName) + "\" " +
+						"id=\"" + GUIParser::escape("rendering.shader." + parameterName) + "\" " +
+						"src=\"resources/engine/gui/template_details_rendering_shader_int.xml\" " +
+						"value=\"" + parameterValue + "\" " +
+						"min=\"" + to_string(parameterDefaults->min.getIntegerValue()) + "\" " +
+						"max=\"" + to_string(parameterDefaults->max.getIntegerValue()) + "\" " +
+						"step=\"" + to_string(parameterDefaults->step.getIntegerValue()) + "\" " +
+						"/>\n";
+					break;
+				}
+			case ShaderParameter::TYPE_BOOLEAN:
+				{
+					auto parameterValue = parameter.getValueAsString();
+					xml+=
+						"<template name=\"" + GUIParser::escape(parameterName) + "\" " +
+						"id=\"" + GUIParser::escape("rendering.shader." + parameterName) + "\" " +
+						"src=\"resources/engine/gui/template_details_rendering_shader_bool.xml\" " +
+						"value=\"" + parameterValue + "\" " +
+						"/>\n";
+					break;
+				}
+			case ShaderParameter::TYPE_VECTOR2:
+				{
+					auto vec2 = parameter.getVector2Value();
+					xml+=
+						"<template name=\"" + GUIParser::escape(parameterName) + "\" " +
+						"id=\"" + GUIParser::escape("rendering.shader." + parameterName) + "\" " +
+						"src=\"resources/engine/gui/template_details_rendering_shader_vector2.xml\" " +
+						"value_x=\"" + to_string(vec2.getX()) + "\" " +
+						"min_x=\"" + to_string(parameterDefaults->min.getVector2Value().getX()) + "\" " +
+						"max_x=\"" + to_string(parameterDefaults->max.getVector2Value().getX()) + "\" " +
+						"step_x=\"" + to_string(parameterDefaults->step.getVector2Value().getX()) + "\" " +
+						"value_y=\"" + to_string(vec2.getY()) + "\" "+
+						"min_y=\"" + to_string(parameterDefaults->min.getVector2Value().getY()) + "\" " +
+						"max_y=\"" + to_string(parameterDefaults->max.getVector2Value().getY()) + "\" " +
+						"step_y=\"" + to_string(parameterDefaults->step.getVector2Value().getY()) + "\" " +
+						"/>\n";
+				}
+				break;
+			case ShaderParameter::TYPE_VECTOR3:
+				{
+					auto vec3 = parameter.getVector3Value();
+					xml+=
+						"<template name=\"" + GUIParser::escape(parameterName) + "\" " +
+						"id=\"" + GUIParser::escape("rendering.shader." + parameterName) + "\" " +
+						"src=\"resources/engine/gui/template_details_rendering_shader_vector3.xml\" " +
+						"value_x=\"" + to_string(vec3.getX()) + "\" " +
+						"min_x=\"" + to_string(parameterDefaults->min.getVector3Value().getX()) + "\" " +
+						"max_x=\"" + to_string(parameterDefaults->max.getVector3Value().getX()) + "\" " +
+						"step_x=\"" + to_string(parameterDefaults->step.getVector3Value().getX()) + "\" " +
+						"value_y=\"" + to_string(vec3.getY()) + "\" "+
+						"min_y=\"" + to_string(parameterDefaults->min.getVector3Value().getY()) + "\" " +
+						"max_y=\"" + to_string(parameterDefaults->max.getVector3Value().getY()) + "\" " +
+						"step_y=\"" + to_string(parameterDefaults->step.getVector3Value().getY()) + "\" " +
+						"value_z=\"" + to_string(vec3.getZ()) + "\" "+
+						"min_z=\"" + to_string(parameterDefaults->min.getVector3Value().getZ()) + "\" " +
+						"max_z=\"" + to_string(parameterDefaults->max.getVector3Value().getZ()) + "\" " +
+						"step_z=\"" + to_string(parameterDefaults->step.getVector3Value().getZ()) + "\" " +
+						"/>\n";
+				}
+				break;
+			case ShaderParameter::TYPE_VECTOR4:
+				{
+					auto vec4 = parameter.getVector4Value();
+					xml+=
+						"<template name=\"" + GUIParser::escape(parameterName) + "\" " +
+						"id=\"" + GUIParser::escape("rendering.shader." + parameterName) + "\" " +
+						"src=\"resources/engine/gui/template_details_rendering_shader_vector4.xml\" " +
+						"value_x=\"" + to_string(vec4.getX()) + "\" " +
+						"min_x=\"" + to_string(parameterDefaults->min.getVector4Value().getX()) + "\" " +
+						"max_x=\"" + to_string(parameterDefaults->max.getVector4Value().getX()) + "\" " +
+						"step_x=\"" + to_string(parameterDefaults->step.getVector4Value().getX()) + "\" " +
+						"value_y=\"" + to_string(vec4.getY()) + "\" "+
+						"min_y=\"" + to_string(parameterDefaults->min.getVector4Value().getY()) + "\" " +
+						"max_y=\"" + to_string(parameterDefaults->max.getVector4Value().getY()) + "\" " +
+						"step_y=\"" + to_string(parameterDefaults->step.getVector4Value().getY()) + "\" " +
+						"value_z=\"" + to_string(vec4.getZ()) + "\" "+
+						"min_z=\"" + to_string(parameterDefaults->min.getVector4Value().getZ()) + "\" " +
+						"max_z=\"" + to_string(parameterDefaults->max.getVector4Value().getZ()) + "\" " +
+						"step_z=\"" + to_string(parameterDefaults->step.getVector4Value().getZ()) + "\" " +
+						"value_w=\"" + to_string(vec4.getW()) + "\" "+
+						"min_w=\"" + to_string(parameterDefaults->min.getVector4Value().getW()) + "\" " +
+						"max_w=\"" + to_string(parameterDefaults->max.getVector4Value().getW()) + "\" " +
+						"step_w=\"" + to_string(parameterDefaults->step.getVector4Value().getW()) + "\" " +
+						"/>\n";
+				}
+				break;
+			case ShaderParameter::TYPE_COLOR4:
+				{
+					xml+=
+						"<template name=\"" + GUIParser::escape(parameterName) + "\" "
+						"id=\"" + GUIParser::escape("rendering.shader." + parameterName) + "\" " +
+						"src=\"resources/engine/gui/template_details_rendering_shader_color4.xml\" " +
+						"/>\n";
+				}
+				break;
+			case ShaderParameter::TYPE_NONE:
+				break;
 		}
 	}
 	if (xml.empty() == false) {
@@ -189,20 +286,30 @@ void PrototypeDisplaySubController::createDisplayShaderDetailsXML(Prototype* pro
 			string("<space height=\"5\" />") + string("\n");
 
 	}
-}
-
-void PrototypeDisplaySubController::setDisplayShaderDetails(Prototype* prototype) {
-	string xml;
-	createDisplayShaderDetailsXML(prototype, "rendering.shader.", prototype->getShader(), prototype->getShaderParameters(), xml);
 	try {
 		required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("rendering_shader_details"))->replaceSubNodes(xml, false);
+		//
+		for (const auto& parameterName: Engine::getShaderParameterNames(prototype->getShader())) {
+			auto parameter = shaderParameters.getShaderParameter(parameterName);
+			switch (parameter.getType()) {
+				case ShaderParameter::TYPE_COLOR4:
+					{
+						auto color4 = parameter.getColor4Value();
+						required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("rendering.shader." + parameterName + "_color"))->setEffectColorMul(color4);
+					}
+					break;
+				default:
+					break;
+			}
+		}
+
 	} catch (Exception& exception) {
 		Console::println("PrototypeDisplaySubController::setDisplayShaderDetails(): An error occurred: " + string(exception.what()));
 		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
 
-void PrototypeDisplaySubController::applyDisplayShaderDetails(Prototype* prototype, const string& shaderParameterPrefix, const string& parameterName, EntityShaderParameters& shaderParameters) {
+void PrototypeDisplaySubController::applyDisplayShaderDetails(Prototype* prototype, const string& parameterName, EntityShaderParameters& shaderParameters) {
 	try {
 		auto parameter = shaderParameters.getShaderParameter(parameterName);
 		switch (parameter.getType()) {
@@ -210,7 +317,7 @@ void PrototypeDisplaySubController::applyDisplayShaderDetails(Prototype* prototy
 				shaderParameters.setShaderParameter(
 					parameterName,
 					ShaderParameter(
-						Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName))->getController()->getValue().getString())
+						Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering.shader." + parameterName))->getController()->getValue().getString())
 					)
 				);
 				break;
@@ -218,7 +325,7 @@ void PrototypeDisplaySubController::applyDisplayShaderDetails(Prototype* prototy
 				shaderParameters.setShaderParameter(
 					parameterName,
 					ShaderParameter(
-						Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName))->getController()->getValue().getString())
+						Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering.shader." + parameterName))->getController()->getValue().getString())
 					)
 				);
 				break;
@@ -226,7 +333,7 @@ void PrototypeDisplaySubController::applyDisplayShaderDetails(Prototype* prototy
 				shaderParameters.setShaderParameter(
 					parameterName,
 					ShaderParameter(
-						required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName))->getController()->getValue().getString() == "1"
+						required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering.shader." + parameterName))->getController()->getValue().getString() == "1"
 					)
 				);
 				break;
@@ -235,8 +342,8 @@ void PrototypeDisplaySubController::applyDisplayShaderDetails(Prototype* prototy
 					parameterName,
 					ShaderParameter(
 						Vector2(
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_x"))->getController()->getValue().getString()),
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_y"))->getController()->getValue().getString())
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering.shader." + parameterName + "_x"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering.shader." + parameterName + "_y"))->getController()->getValue().getString())
 						)
 					)
 				);
@@ -246,9 +353,9 @@ void PrototypeDisplaySubController::applyDisplayShaderDetails(Prototype* prototy
 					parameterName,
 					ShaderParameter(
 						Vector3(
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_x"))->getController()->getValue().getString()),
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_y"))->getController()->getValue().getString()),
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_z"))->getController()->getValue().getString())
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering.shader." + parameterName + "_x"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering.shader." + parameterName + "_y"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering.shader." + parameterName + "_z"))->getController()->getValue().getString())
 						)
 					)
 				);
@@ -258,10 +365,23 @@ void PrototypeDisplaySubController::applyDisplayShaderDetails(Prototype* prototy
 					parameterName,
 					ShaderParameter(
 						Vector4(
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_x"))->getController()->getValue().getString()),
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_y"))->getController()->getValue().getString()),
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_z"))->getController()->getValue().getString()),
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_w"))->getController()->getValue().getString())
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering.shader." + parameterName + "_x"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering.shader." + parameterName + "_y"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering.shader." + parameterName + "_z"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering.shader." + parameterName + "_w"))->getController()->getValue().getString())
+						)
+					)
+				);
+				break;
+			case ShaderParameter::TYPE_COLOR4:
+				shaderParameters.setShaderParameter(
+					parameterName,
+					ShaderParameter(
+						Color4(
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering.shader." + parameterName + "_x"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering.shader." + parameterName + "_y"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering.shader." + parameterName + "_z"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering.shader." + parameterName + "_w"))->getController()->getValue().getString())
 						)
 					)
 				);
@@ -290,9 +410,56 @@ bool PrototypeDisplaySubController::onChange(GUIElementNode* node, Prototype* pr
 	} else
 	if (StringTools::startsWith(node->getId(), "rendering.shader.") == true) {
 		auto shaderParameters = prototype->getShaderParameters();
-		applyDisplayShaderDetails(prototype, "rendering.shader.", StringTools::substring(node->getId(), string("rendering.shader.").size(), node->getId().size()), shaderParameters);
+		applyDisplayShaderDetails(prototype, StringTools::substring(node->getId(), string("rendering.shader.").size(), node->getId().size()), shaderParameters);
 		prototype->setShaderParameters(shaderParameters);
 		view->updateShaderParameters(prototype);
+		//
+		return true;
+	}
+	//
+	return false;
+}
+
+bool PrototypeDisplaySubController::onAction(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype) {
+	if (type != GUIActionListenerType::PERFORMED) return false;
+	//
+	if (StringTools::startsWith(node->getId(), "rendering.shader.") == true &&
+		StringTools::endsWith(node->getId(), "_color_edit") == true) {
+		//
+		auto parameterName = StringTools::substring(node->getId(), string("rendering.shader.").size(), node->getId().size() - string("_color_edit").size());
+		const auto& shaderParameters = prototype->getShaderParameters();
+		auto parameter = shaderParameters.getShaderParameter(parameterName);
+		auto color4 = parameter.getColor4Value();
+		//
+		class OnColorChangeAction: public virtual Action
+		{
+		public:
+			void performAction() override {
+				//
+				auto view = prototypeDisplaySubController->getView();
+				auto shaderParameters = prototype->getShaderParameters();
+				auto parameter = shaderParameters.getShaderParameter(parameterName);
+				auto color4 = prototypeDisplaySubController->popUps->getColorPickerScreenController()->getColor();
+				shaderParameters.setShaderParameter(parameterName, color4);
+				try {
+					required_dynamic_cast<GUIImageNode*>(prototypeDisplaySubController->screenNode->getNodeById("rendering.shader." + parameterName + "_color"))->setEffectColorMul(color4);
+				} catch (Exception& exception) {
+					Console::println("PrototypeDisplaySubController::onAction(): An error occurred: " + string(exception.what()));
+					prototypeDisplaySubController->showInfoPopUp("Warning", string(exception.what()));
+				}
+				//
+				prototype->setShaderParameters(shaderParameters);
+				prototypeDisplaySubController->view->updateShaderParameters(prototype);
+			}
+			OnColorChangeAction(PrototypeDisplaySubController* prototypeDisplaySubController, Prototype* prototype, const string& parameterName): prototypeDisplaySubController(prototypeDisplaySubController), prototype(prototype), parameterName(parameterName) {
+			}
+		private:
+			PrototypeDisplaySubController* prototypeDisplaySubController;
+			Prototype* prototype;
+			string parameterName;
+		};
+		//
+		popUps->getColorPickerScreenController()->show(color4, new OnColorChangeAction(this, prototype, parameterName));
 		//
 		return true;
 	}

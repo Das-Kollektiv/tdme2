@@ -1,0 +1,33 @@
+<template>
+	<layout width="*" height="auto" alignment="vertical" horizontal-align="center" vertical-align="center" background-color="#00000000">
+	
+		<space height="10"/>
+		<menu-separator width="*"/>
+
+		<template
+			id="{$id}_input"
+			src="resources/engine/gui/template_visualcode_input.xml"
+						
+			pin_type_connected="resources/engine/images/visualcode_flow_connected.png"
+			pin_type_unconnected="resources/engine/images/visualcode_flow_unconnected.png"
+						
+			text="{$text}"
+		/>
+					
+		<template
+			id="{$id}_slider"
+			src="resources/engine/gui/template_visualcode_input.xml"
+			on-initialize="{$id}_slider_input_type_panel.condition=slider"
+		/>
+					
+		<template
+			id="{$id}_filter"
+			src="resources/engine/gui/template_visualcode_input.xml"
+			on-initialize="{$id}_filter_input_type_panel.condition=button"
+						
+			button_image="resources/engine/images/bone.png"
+			button_text="Filter"
+		/>
+		
+	</layout>
+</template>

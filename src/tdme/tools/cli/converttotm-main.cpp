@@ -84,7 +84,7 @@ public:
 		vector<string> modelFileNames;
 		for (auto i = 1; i < argc; i++) {
 			string argumentValue = argv[i];
-			if (argumentValue == "-no-texture-compression") {
+			if (argumentValue == "--no-texture-compression") {
 				useBC7TextureCompression = false;
 				continue;
 			}
@@ -248,8 +248,8 @@ int main(int argc, char** argv)
 	Console::println(Version::getCopyright());
 	Console::println();
 	if (argc < 2) {
-		Console::println("Usage: converttotm [-no-texture-compression] inputfile1 [inputfileN]");
-		Application::exit(1);
+		Console::println("Usage: converttotm [--no-texture-compression] inputfile1 [inputfileN]");
+		Application::exit(Application::EXITCODE_FAILURE);
 	}
 	return tdme::tools::cli::ConvertToTMApplication::main(argc, argv);
 }

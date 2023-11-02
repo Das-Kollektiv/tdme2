@@ -10,12 +10,24 @@
 			<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="{$text}" width="auto" height="auto"/>
 			<space hide-on="empty('{$text}')" width="10"/>
 			<element id="{$id}_input_type_panel" width="*" horizontal-align="left">
-				<input id="{$id}_input" show-on="input" width="*" height="auto" text="{$input_text}" unit="{$input_unit}" options="{$input_options}"/>
+
+				<dropdown show-on="dropdown" id="{$id}_dropdown" width="*" value="1">
+				</dropdown>
+						
+				<layout show-on="slider" width="*" horizontal-align="center" vertical-align="center" alignment="horizontal">
+					<slider-horizontal id="{$id}_slider" value="0.5" width="*"on-change="{$id}_sliderinput.value={$id}_slider.value"/>
+					<space width="10"/>
+					<input id="{$id}_sliderinput" width="50" height="auto" text="0.5" options="type=float,min=0,max=1,decimals=2" on-change="{$id}_slider.value={$id}_sliderinput.value"/>
+				</layout>
+					
+				<input id="{$id}_input" show-on="input" width="*" height="auto" text="{$input_text}" unit="{$input_unit}" options="{$input_options}" image="{$input_image}"/>
+					
 				<checkbox id="{$id}_checkbox" show-on="checkbox" width="25" height="25" value="1"/>
-				<layer show-on="dropdown">
-					<dropdown id="{$id}_dropdown" width="*" value="1">
-					</dropdown>
-				</layer>
+					
+				<button id="{$id}_button" show-on="button" width="*" height="25" text="{$button_text}" image="{$button_image}"/>
+				
+				<progress-bar id="{$id}_progressbar" show-on="progressbar" width="*" heigth="14"  value="0.5"/>
+					
 			</element>
 		</layout>
 	</element>

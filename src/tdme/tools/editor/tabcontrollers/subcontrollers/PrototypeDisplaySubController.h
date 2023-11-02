@@ -138,16 +138,6 @@ public:
 	void applyDisplayDetails(Prototype* prototype);
 
 	/**
-	 * Create display shader details XML
-	 * @param prototype prototype
-	 * @param shaderParameterPrefix shader parameter prefix
-	 * @param shader shader
-	 * @param shaderParameters shader parameters
-	 * @param xml xml
-	 */
-	void createDisplayShaderDetailsXML(Prototype* prototype, const string& shaderParameterPrefix, const string& shader, const EntityShaderParameters& shaderParameters, string& xml);
-
-	/**
 	 * Set display shader details
 	 * @param prototype prototype
 	 */
@@ -156,11 +146,11 @@ public:
 	/**
 	 * Apply display shader details
 	 * @param prototype prototype
-	 * @param shaderParameterPrefix shader parameter prefix
 	 * @param parameterName parameter name
 	 * @param shaderParameters shader parameters
 	 */
-	void applyDisplayShaderDetails(Prototype* prototype, const string& shaderParameterPrefix, const string& parameterName, EntityShaderParameters& shaderParameters);
+	void applyDisplayShaderDetails(Prototype* prototype, const string& parameterName, EntityShaderParameters& shaderParameters);
+
 	/**
 	 * On value changed
 	 * @param node node
@@ -168,6 +158,14 @@ public:
 	 * @return if this event has been handled
 	 */
 	bool onChange(GUIElementNode* node, Prototype* prototype);
+
+	/**
+	 * On action
+	 * @param type type
+	 * @param node element node
+	 * @param prototype prototype
+	 */
+	bool onAction(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype);
 
 	/**
 	 * Show the information pop up / modal

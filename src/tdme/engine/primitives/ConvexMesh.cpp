@@ -402,12 +402,12 @@ void ConvexMesh::createCollisionShape(World* world) {
 	try {
 		//
 		polygonVertexArray = make_unique<reactphysics3d::PolygonVertexArray>(
-			vertices.size(),
+			static_cast<uint32_t>(vertices.size()),
 			verticesByteBuffer->getBuffer(),
 			3 * sizeof(float),
 			indicesByteBuffer->getBuffer(),
 			sizeof(int),
-			faces.size(),
+			static_cast<uint32_t>(faces.size()),
 			faces.data(),
 			reactphysics3d::PolygonVertexArray::VertexDataType::VERTEX_FLOAT_TYPE,
 			reactphysics3d::PolygonVertexArray::IndexDataType::INDEX_INTEGER_TYPE

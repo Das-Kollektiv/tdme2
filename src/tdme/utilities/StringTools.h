@@ -267,7 +267,11 @@ public:
 	 * @param by by
 	 * @param toSize to size
 	 */
-	static const string padLeft(const string& src, const string& by, int toSize);
+	inline static const string padLeft(const string& src, const string& by, int toSize) {
+		auto result = src;
+		while (result.size() < toSize) result = by + result;
+		return result;
+	}
 
 	/**
 	 * Pad a string right
@@ -275,7 +279,23 @@ public:
 	 * @param by by
 	 * @param toSize to size
 	 */
-	static const string padRight(const string& src, const string& by, int toSize);
+	inline static const string padRight(const string& src, const string& by, int toSize) {
+		auto result = src;
+		while (result.size() < toSize) result = result + by;
+		return result;
+	}
+
+	/**
+	 * Indent a string
+	 * @param src source
+	 * @param with with
+	 * @param count count
+	 */
+	inline static const string indent(const string& src, const string& with, int count) {
+		string indentString;
+		for (auto i = 0; i < count; i++) indentString+= with;
+		return indentString + src;
+	}
 
 	/**
 	 * Get Utf8 string length

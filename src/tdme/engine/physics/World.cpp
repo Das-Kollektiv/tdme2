@@ -517,7 +517,7 @@ bool World::doesCollideWith(uint16_t collisionTypeIds, Body* body, vector<Body*>
 }
 
 bool World::doesCollideWith(uint16_t collisionTypeIds, const Transform& transform, vector<BoundingVolume*> boundingVolumes, vector<Body*>& collisionBodies) {
-	auto collisionBody = addStaticCollisionBody("tdme.world->doescollidewith", true, 32768, transform, boundingVolumes);
+	auto collisionBody = addStaticCollisionBody("tdme.world->doescollidewith", 32768, true, transform, boundingVolumes);
 	doesCollideWith(collisionTypeIds, collisionBody, collisionBodies);
 	removeBody("tdme.world->doescollidewith");
 	return collisionBodies.size() > 0;

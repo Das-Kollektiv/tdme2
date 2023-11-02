@@ -14,6 +14,7 @@
 #define MOUSE_CURSOR_HAND 2
 
 #include <array>
+#include <cstdlib>
 #include <string>
 #include <vector>
 
@@ -51,8 +52,8 @@ public:
 
 	static constexpr int FPS { 60 };
 
-	static constexpr int EXITCODE_SUCCESS { 0 };
-	static constexpr int EXITCODE_FAILURE { 1 };
+	static constexpr int EXITCODE_SUCCESS { EXIT_SUCCESS };
+	static constexpr int EXITCODE_FAILURE { EXIT_FAILURE };
 
 	/**
 	 * @return renderer

@@ -62,7 +62,9 @@ void PostProcessingShaderDesaturationImplementation::initialize()
 	Engine::registerShader(
 		Engine::ShaderType::SHADERTYPE_POSTPROCESSING,
 		"desaturation",
-		{{ "intensity", ShaderParameter(0.0f) }}
+		{
+			{ "intensity", ShaderParameter(0.0f), ShaderParameter(0.0f), ShaderParameter(1.0f), ShaderParameter(0.05f) },
+		}
 	);
 }
 

@@ -2064,9 +2064,15 @@ void TextEditorTabView::createSourceCodeFromNode(string& sourceCode, const Node*
 					auto literalInputValue = literalInput->getController()->getValue().getString();
 					if (argumentsSourceCode.empty() == false) argumentsSourceCode+= ", ";
 					// implicitely literal
-					//	TODO: first version, improve me
 					MiniScript::ScriptVariable value;
-					value.setImplicitTypedValueFromStringView(literalInputValue);
+					MiniScript::ScriptStatement scriptStatement(
+						MiniScript::LINE_NONE,
+						MiniScript::STATEMENTIDX_NONE,
+						string(),
+						string(),
+						MiniScript::STATEMENTIDX_NONE
+					);
+					value.setImplicitTypedValueFromStringView(literalInputValue, textEditorTabController->getMiniScript(), scriptStatement);
 					if (value.getType() == MiniScript::TYPE_STRING) {
 						argumentsSourceCode+= "\"" + StringTools::replace(literalInputValue, "\"", "\\\"") + "\"";
 					} else {

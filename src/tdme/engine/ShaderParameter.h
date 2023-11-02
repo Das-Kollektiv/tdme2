@@ -4,7 +4,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Color4.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
@@ -14,6 +14,7 @@ using std::array;
 using std::string;
 using std::to_string;
 
+using tdme::engine::Color4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
@@ -24,7 +25,7 @@ using tdme::utilities::Console;
  */
 class tdme::engine::ShaderParameter final {
 public:
-	enum Type { TYPE_NONE, TYPE_BOOLEAN, TYPE_INTEGER, TYPE_FLOAT, TYPE_VECTOR2, TYPE_VECTOR3, TYPE_VECTOR4 };
+	enum Type { TYPE_NONE, TYPE_BOOLEAN, TYPE_INTEGER, TYPE_FLOAT, TYPE_VECTOR2, TYPE_VECTOR3, TYPE_VECTOR4, TYPE_COLOR4 };
 
 private:
 	Type type { TYPE_NONE };
@@ -50,7 +51,7 @@ public:
 	 * Public constructor for boolean value
 	 * @param booleanValue boolean value
 	 */
-	ShaderParameter(bool booleanValue): type(TYPE_BOOLEAN), integerValue(booleanValue) {
+	ShaderParameter(bool booleanValue): type(TYPE_BOOLEAN), integerValue(booleanValue == true?1:0) {
 	}
 
 	/**
@@ -86,6 +87,13 @@ public:
 	 * @param vector4Value Vector4 value
 	 */
 	ShaderParameter(const Vector4& vector4Value): type(TYPE_VECTOR4), floatValues( { vector4Value[0], vector4Value[1], vector4Value[2], vector4Value[3]} ) {
+	}
+
+	/**
+	 * Public constructor for Color4 value
+	 * @param color4Value Color4 value
+	 */
+	ShaderParameter(const Color4& color4Value): type(TYPE_COLOR4), floatValues( { color4Value[0], color4Value[1], color4Value[2], color4Value[3]} ) {
 	}
 
 	/**
@@ -159,14 +167,35 @@ public:
 	}
 
 	/**
-	 * @return string representation
+	 * @return Color4 value
 	 */
-	inline const string toString() const {
+	inline const Color4 getColor4Value() const {
+		return Color4(floatValues[0], floatValues[1], floatValues[2], floatValues[3]);
+	}
+
+	/**
+	 * @return Color3 value array
+	 */
+	inline const array<float, 3> getColor3ValueArray() const {
+		return { floatValues[0], floatValues[1], floatValues[2] };
+	}
+
+	/**
+	 * @return Color4 value array
+	 */
+	inline const array<float, 4> getColor4ValueArray() const {
+		return { floatValues[0], floatValues[1], floatValues[2], floatValues[3] };
+	}
+
+	/**
+	 * @return string representation of value
+	 */
+	inline const string getValueAsString() const {
 		switch(type) {
 			case ShaderParameter::TYPE_NONE:
 				return string();
 			case ShaderParameter::TYPE_BOOLEAN:
-				return toString(integerValue);
+				return integerValue == 1?"true":"false";
 			case ShaderParameter::TYPE_INTEGER:
 				return toString(integerValue);
 			case ShaderParameter::TYPE_FLOAT:
@@ -190,6 +219,7 @@ public:
 				return result;
 			}
 			case ShaderParameter::TYPE_VECTOR4:
+			case ShaderParameter::TYPE_COLOR4:
 				{
 					string result;
 					for (auto i = 0; i < 4; i++) {

@@ -118,6 +118,7 @@ public:
 						}
 						break;
 					case ShaderParameter::TYPE_VECTOR4:
+					case ShaderParameter::TYPE_COLOR4:
 						{
 							const auto& shaderParameterArray = parameterValue.getVector4Value().getArray();
 							for (auto i = 0; i < shaderParameterArray.size(); i++) {

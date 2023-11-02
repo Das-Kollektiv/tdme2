@@ -324,7 +324,6 @@ SRCS = \
 	src/tdme/engine/subsystems/lighting/DeferredLightingShaderPBRDefaultImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/DeferredLightingShaderPBRFoliageImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/DeferredLightingShaderPBRTreeImplementation.cpp \
-	src/tdme/engine/subsystems/lighting/DeferredLightingShaderSkyImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/DeferredLightingShaderSolidImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/DeferredLightingShaderTerrainImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/DeferredLightingShaderTreeImplementation.cpp \
@@ -339,7 +338,6 @@ SRCS = \
 	src/tdme/engine/subsystems/lighting/LightingShaderPBRDefaultImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderPBRFoliageImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderPBRTreeImplementation.cpp \
-	src/tdme/engine/subsystems/lighting/LightingShaderSkyImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderSolidImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderTerrainEditorImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderTerrainImplementation.cpp \
@@ -382,7 +380,7 @@ SRCS = \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingProgram.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShader.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.cpp \
-	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBlurImplementation.cpp \
+	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDepthBlurImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDefaultImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDesaturationImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderLightScatteringImplementation.cpp \
@@ -546,6 +544,7 @@ SRCS = \
 	src/tdme/tests/MathOperatorTest.cpp \
 	src/tdme/tests/MiniScriptAdvancedTest.cpp \
 	src/tdme/tests/MiniScriptBaseTest.cpp \
+	src/tdme/tests/MiniScriptClassTest.cpp \
 	src/tdme/tests/MiniScriptEmitTest.cpp \
 	src/tdme/tests/MiniScriptFunctionsTest.cpp \
 	src/tdme/tests/PathFindingTest.cpp \
@@ -641,6 +640,7 @@ SRCS = \
 	src/tdme/utilities/Integer.cpp \
 	src/tdme/utilities/MiniScript.cpp \
 	src/tdme/utilities/MiniScriptMath.cpp \
+	src/tdme/utilities/MiniScriptTranspiler.cpp \
 	src/tdme/utilities/ModelTools.cpp \
 	src/tdme/utilities/PathFinding.cpp \
 	src/tdme/utilities/Primitives.cpp \
@@ -953,8 +953,8 @@ MAIN_SRCS = \
 	src/tdme/tools/cli/createrc-main.cpp \
 	src/tdme/tools/cli/dumpmodel-main.cpp \
 	src/tdme/tools/cli/imageprocessor-main.cpp \
+	src/tdme/tools/cli/miniscript-main.cpp \
 	src/tdme/tools/cli/msclib2dll-main.cpp \
-	src/tdme/tools/cli/fixdoxygen-main.cpp \
 	src/tdme/tools/cli/generatelicenses-main.cpp \
 	src/tdme/tools/cli/importtmodel-main.cpp \
 	src/tdme/tools/cli/importtscene-main.cpp \

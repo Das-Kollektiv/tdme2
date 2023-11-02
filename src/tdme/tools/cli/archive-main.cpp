@@ -222,7 +222,7 @@ int main(int argc, char** argv)
 
 	if (argc != 1) {
 		Console::println("Usage: archive");
-		Application::exit(1);
+		Application::exit(Application::EXITCODE_FAILURE);
 	}
 
 	// scan files
@@ -268,6 +268,5 @@ int main(int argc, char** argv)
 	}
 
 	//
-	Console::shutdown();
-	return 0;
+	Application::exit(Application::EXITCODE_SUCCESS);
 }

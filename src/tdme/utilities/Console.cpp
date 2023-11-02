@@ -33,17 +33,15 @@ Console::LogWriterThread::~LogWriterThread() {
 }
 
 void Console::LogWriterThread::run() {
-	Console::println("Console::LogWriterThread(): start");
 	while (isStopRequested() == false) {
 		Console::mutex.lock();
-		if (Console::messages.size() > 100) flush();
+		if (Console::messages.size() > HISTORY_LINECOUNT) flush();
 		Console::mutex.unlock();
 		Thread::sleep(1000);
 	}
 	Console::mutex.lock();
 	if (Console::messages.size() > 0) flush();
 	Console::mutex.unlock();
-	Console::println("Console::LogWriterThread(): done");
 }
 
 void Console::LogWriterThread::flush() {
@@ -61,13 +59,13 @@ void Console::setLogger(Console::Logger* logger) {
 	Console::logger = logger;
 }
 
-void Console::println(const string& str)
+void Console::println(const string_view& str)
 {
 	mutex.lock();
 	//
 	if (messages.empty() == true || newline == true) messages.push_back(string());
 	messages[messages.size() - 1]+= str;
-	if (messages.size() == 100) messages.erase(messages.begin());
+	if (messages.size() == HISTORY_LINECOUNT) messages.erase(messages.begin());
 	newline = true;
 	//
 	if (logger != nullptr) logger->println(str);
@@ -76,13 +74,13 @@ void Console::println(const string& str)
 	mutex.unlock();
 }
 
-void Console::print(const string& str)
+void Console::print(const string_view& str)
 {
 	mutex.lock();
 	//
 	if (messages.empty() == true || newline == true) messages.push_back(string());
 	messages[messages.size() - 1]+= str;
-	if (messages.size() == 100) messages.erase(messages.begin());
+	if (messages.size() == HISTORY_LINECOUNT) messages.erase(messages.begin());
 	newline = false;
 	//
 	if (logger != nullptr) logger->print(str);
@@ -96,7 +94,7 @@ void Console::println()
 	mutex.lock();
 	//
 	messages.push_back(string());
-	if (messages.size() == 100) messages.erase(messages.begin());
+	if (messages.size() == HISTORY_LINECOUNT) messages.erase(messages.begin());
 	newline = true;
 	//
 	if (logger != nullptr) logger->println();

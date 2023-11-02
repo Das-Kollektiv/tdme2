@@ -28,8 +28,8 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 			ScriptMethodAdd(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .assignBack = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .assignBack = false }
+						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false },
+						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false }
 					},
 					MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
@@ -55,8 +55,8 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 			ScriptMethodSub(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .assignBack = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .assignBack = false }
+						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false },
+						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false }
 					},
 					MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
@@ -82,8 +82,8 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 			ScriptMethodMul(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .assignBack = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .assignBack = false }
+						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false },
+						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false }
 					},
 					MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
@@ -109,8 +109,8 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 			ScriptMethodDiv(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .assignBack = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .assignBack = false }
+						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false },
+						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false }
 					},
 					MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
@@ -135,8 +135,8 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodMod(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false, .assignBack = false },
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "range", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false, .reference = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "range", .optional = false, .reference = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER
 			), miniScript(miniScript) {}
@@ -245,7 +245,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodAcos(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "x", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "x", .optional = false, .reference = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -271,7 +271,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodAsin(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "x", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "x", .optional = false, .reference = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -297,7 +297,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodAtan(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "x", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "x", .optional = false, .reference = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -323,8 +323,8 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodAtan2(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "y", .optional = false, .assignBack = false },
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "x", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "y", .optional = false, .reference = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "x", .optional = false, .reference = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -352,7 +352,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodTan(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "x", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "x", .optional = false, .reference = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -378,7 +378,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodCos(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "x", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "x", .optional = false, .reference = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -404,7 +404,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodSin(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "x", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "x", .optional = false, .reference = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -430,7 +430,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodFloor(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false, .reference = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -456,7 +456,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodCeil(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false, .reference = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -482,7 +482,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodRound(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false, .reference = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -508,7 +508,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodSqrt(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false, .reference = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -550,7 +550,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodExp(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "power", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "power", .optional = false, .reference = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -576,7 +576,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodLog(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false, .reference = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -602,7 +602,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodSign(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false, .reference = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER),
 				miniScript(miniScript) {}
@@ -633,7 +633,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodSquare(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false, .reference = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER),
 				miniScript(miniScript) {}
@@ -664,8 +664,8 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodMin(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value1", .optional = false, .assignBack = false },
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value2", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value1", .optional = false, .reference = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value2", .optional = false, .reference = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER),
 				miniScript(miniScript) {}
@@ -705,8 +705,8 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodMax(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value1", .optional = false, .assignBack = false },
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value2", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value1", .optional = false, .reference = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value2", .optional = false, .reference = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER),
 				miniScript(miniScript) {}
@@ -746,7 +746,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodAbs(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false, .reference = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER),
 				miniScript(miniScript) {}
@@ -777,9 +777,9 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodClamp(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false, .assignBack = false },
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "min", .optional = false, .assignBack = false },
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "max", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false, .reference = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "min", .optional = false, .reference = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "max", .optional = false, .reference = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER),
 				miniScript(miniScript) {}
@@ -823,8 +823,8 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodPow(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "base", .optional = false, .assignBack = false },
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "power", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "base", .optional = false, .reference = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "power", .optional = false, .reference = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER),
 				miniScript(miniScript) {}
@@ -864,8 +864,8 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodMod(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false, .assignBack = false },
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "range", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false, .reference = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "range", .optional = false, .reference = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER
 			), miniScript(miniScript) {}
@@ -906,8 +906,8 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodAbsMod(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false, .assignBack = false },
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "range", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false, .reference = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "range", .optional = false, .reference = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER
 			), miniScript(miniScript) {}

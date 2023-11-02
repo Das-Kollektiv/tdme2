@@ -2,6 +2,7 @@
 
 #include "MiniScriptAdvancedTest.h"
 #include "MiniScriptBaseTest.h"
+#include "MiniScriptClassTest.h"
 #include "MiniScriptEmitTest.h"
 #include "MiniScriptFunctionsTest.h"
 
@@ -18,6 +19,26 @@ int main(int argc, char *argv[]) {
 	{
 		auto script = make_unique<MiniScriptBaseTest>();
 		script->parseScript("resources/tests/scripts", "base-test.tscript");
+		Console::println("---------------------------------------------------------");
+		Console::println("Loaded test script: " + script->getScriptFileName() + ": runs " + (script->isNative() == true?"natively":"interpreted"));
+		Console::println("---------------------------------------------------------");
+		// Console::println(script->getInformation());
+		if (script->isValid() == false) {
+			Console::println("Script not valid. Exiting");
+			return 1;
+		}
+		while (script->isRunning() == true) {
+			script->execute();
+		}
+		//
+		Console::println();
+		Console::println();
+		Console::println();
+	}
+	// class test
+	{
+		auto script = make_unique<MiniScriptClassTest>();
+		script->parseScript("resources/tests/scripts", "class-test.tscript");
 		Console::println("---------------------------------------------------------");
 		Console::println("Loaded test script: " + script->getScriptFileName() + ": runs " + (script->isNative() == true?"natively":"interpreted"));
 		Console::println("---------------------------------------------------------");
@@ -98,4 +119,3 @@ int main(int argc, char *argv[]) {
 	Console::shutdown();
 	return 0;
 }
-
