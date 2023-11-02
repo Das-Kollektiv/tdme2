@@ -436,13 +436,13 @@ bool MiniScript::parseScriptStatement(const string_view& executableStatement, st
 		auto objectMemberAccessObjectVariable = viewIsVariableAccess(objectMemberAccessObject);
 
 		// construct new method name and argument string views
-		accessObjectMemberStatement.reserve(1024); // TODO: check me later
+		accessObjectMemberStatement.reserve(16384); // TODO: check me later
 		auto idx = accessObjectMemberStatement.size();
 		accessObjectMemberStatement+= "internal.script.evaluateMemberAccess";
 		evaluateMemberAccessMethodName = string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx);
 		accessObjectMemberStatement+= "(";
 		idx = accessObjectMemberStatement.size();
-		accessObjectMemberStatement+= "\"" + string(objectMemberAccessObjectVariable == true?objectMemberAccessObject:"") + "\"";
+		accessObjectMemberStatement+= objectMemberAccessObjectVariable == true?"\"" + string(objectMemberAccessObject) + "\"":"null";
 		evaluateMemberAccessArguments.push_back(string_view(&accessObjectMemberStatement.data()[idx], accessObjectMemberStatement.size() - idx));
 		idx = accessObjectMemberStatement.size();
 		accessObjectMemberStatement+= ", ";
@@ -2729,11 +2729,11 @@ void MiniScript::registerMethods() {
 				//	3: variable name of argument 0; 4: variable content of argument 0
 				//	5: variable name of argument 1; 6: variable content of argument 1
 				//	..
+				//
 				string variable;
 				string member;
 				//
 				if (argumentValues.size() < 3 ||
-					miniScript->getStringValue(argumentValues, 0, variable, false) == false ||
 					miniScript->getStringValue(argumentValues, 2, member, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();

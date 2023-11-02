@@ -2372,7 +2372,7 @@ void LogicMiniScript::registerMethods() {
 					miniScript->getVector3Value(argumentValues, 0, worldCoodinate) == true) {
 					Vector2 screenCoordinate;
 					if (miniScript->context->getEngine()->computeScreenCoordinateByWorldCoordinate(worldCoodinate, screenCoordinate) == true) {
-						argumentValues[1] = screenCoordinate;
+						argumentValues[1].setValue(screenCoordinate);
 						returnValue = true;
 					} else {
 						returnValue = false;
@@ -4768,8 +4768,8 @@ void LogicMiniScript::registerMethods() {
 					miniScript->getFloatValue(argumentValues, 6, maxHeight, true) == true) {
 					auto body = miniScript->context->getWorld()->determineHeight(collisionTypeIds, stepUpMax, point, heightPoint, minHeight, maxHeight);
 					if (body != nullptr) {
-						argumentValues[3] = heightPoint;
-						if (argumentValues.size() >= 5) argumentValues[4] = body->getId();
+						argumentValues[3].setValue(heightPoint);
+						if (argumentValues.size() >= 5) argumentValues[4].setValue(body->getId());
 						returnValue = true;
 					} else {
 						returnValue = false;
@@ -4819,8 +4819,8 @@ void LogicMiniScript::registerMethods() {
 					miniScript->getStringValue(argumentValues, 5, actorId, true) == true) {
 					auto body = miniScript->context->getWorld()->doRayCasting(collisionTypeIds, start, end, hitPoint, actorId);
 					if (body != nullptr) {
-						argumentValues[3] = hitPoint;
-						if (argumentValues.size() >= 5) argumentValues[4] = body->getId();
+						argumentValues[3].setValue(hitPoint);
+						if (argumentValues.size() >= 5) argumentValues[4].setValue(body->getId());
 						returnValue.setValue(true);
 					} else {
 						returnValue.setValue(false);
