@@ -2722,7 +2722,6 @@ void MiniScript::registerMethods() {
 				return "internal.script.evaluateMemberAccess";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				// TODO: references
 				// Current layout:
 				//	0: variable name of object, 1: variable content of object
 				//	2: object method to call
