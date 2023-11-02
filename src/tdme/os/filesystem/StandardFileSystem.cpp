@@ -50,14 +50,13 @@ const string StandardFileSystem::getFileName(const string& pathName, const strin
 void StandardFileSystem::list(const string& pathName, vector<string>& files, FileNameFilter* filter, bool addDrives)
 {
 	auto _pathName = pathName;
-	if (StringTools::endsWith(pathName, "/") == false) _pathName+= "/";
+	if (StringTools::endsWith(_pathName, "/") == false) _pathName+= "/";
 
 	try {
 		for (const auto& entry: std::filesystem::directory_iterator(std::filesystem::u8path(_pathName))) {
 			auto u8FileName = entry.path().filename().u8string();
 			string fileName(u8FileName.size(), 0);
 			for (auto i = 0; i < u8FileName.size(); i++) fileName[i] = u8FileName[i];
-			if (fileName == ".") continue;
 			try {
 				if (filter != nullptr && filter->accept(pathName, fileName) == false) continue;
 			} catch (Exception& exception) {
@@ -70,7 +69,13 @@ void StandardFileSystem::list(const string& pathName, vector<string>& files, Fil
 		throw FileSystemException("Unable to list path: " + pathName + ": " + string(exception.what()));
 	}
 
+	//
 	sort(files.begin(), files.end());
+
+	//
+	if (isDrive(_pathName) == false && _pathName.empty() == false && _pathName != "/") {
+		if (filter == nullptr || filter->accept(pathName, "..") == true) files.insert(files.begin(), "..");
+	}
 
 	#if defined(_WIN32)
 		if (addDrives == true) {
@@ -227,6 +232,7 @@ const string StandardFileSystem::getCanonicalPath(const string& pathName, const 
 	string unixPathName = StringTools::replace(pathName, "\\", "/");
 	string unixFileName = StringTools::replace(fileName, "\\", "/");
 
+	//
 	auto pathString = getFileName(unixPathName, unixFileName);
 
 	// separate into path components
@@ -270,12 +276,14 @@ const string StandardFileSystem::getCanonicalPath(const string& pathName, const 
 	}
 
 	// add cwd if required
-	auto canonicalPathString = canonicalPath;
+	auto canonicalPathString = canonicalPath.empty() == true?"/":canonicalPath;
+	/*
 	if (canonicalPathString.length() == 0 ||
 		(StringTools::startsWith(canonicalPathString, "/") == false &&
 		StringTools::regexMatch(canonicalPathString, "^[a-zA-Z]\\:.*$") == false)) {
 		canonicalPathString = getCurrentWorkingPathName() + "/" + canonicalPathString;
 	}
+	*/
 
 	//
 	return canonicalPathString;

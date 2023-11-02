@@ -1908,37 +1908,39 @@ public:
 		/**
 		 * Returns given return value variable type string representation
 		 * @param type type
+		 * @param nullable nullable
 		 * @return return value variable type string representation
 		 */
-		inline static const string getReturnTypeAsString(ScriptVariableType type) {
+		inline static const string getReturnTypeAsString(ScriptVariableType type, bool nullable) {
 			switch(type) {
 				case TYPE_NULL: return "Void";
-				case TYPE_BOOLEAN: return "Boolean";
-				case TYPE_INTEGER: return "Integer";
-				case TYPE_FLOAT: return "Float";
-				case TYPE_STRING: return "String";
-				case TYPE_VECTOR2: return "Vector2";
-				case TYPE_VECTOR3: return "Vector3";
-				case TYPE_VECTOR4: return "Vector4";
-				case TYPE_QUATERNION: return "Quaternion";
-				case TYPE_MATRIX3x3: return "Matrix3x3";
-				case TYPE_MATRIX4x4: return "Matrix4x4";
-				case TYPE_TRANSFORM: return "Transform";
-				case TYPE_ARRAY: return "Array";
-				case TYPE_MAP: return "Map";
-				case TYPE_SET: return "Set";
-				case TYPE_PSEUDO_NUMBER: return "Number";
-				case TYPE_PSEUDO_MIXED: return "Mixed";
+				case TYPE_BOOLEAN: return string(nullable?"?":"") + "Boolean";
+				case TYPE_INTEGER: return string(nullable?"?":"") + "Integer";
+				case TYPE_FLOAT: return string(nullable?"?":"") + "Float";
+				case TYPE_STRING: return string(nullable?"?":"") + "String";
+				case TYPE_VECTOR2: return string(nullable?"?":"") + "Vector2";
+				case TYPE_VECTOR3: return string(nullable?"?":"") + "Vector3";
+				case TYPE_VECTOR4: return string(nullable?"?":"") + "Vector4";
+				case TYPE_QUATERNION: return string(nullable?"?":"") + "Quaternion";
+				case TYPE_MATRIX3x3: return string(nullable?"?":"") + "Matrix3x3";
+				case TYPE_MATRIX4x4: return string(nullable?"?":"") + "Matrix4x4";
+				case TYPE_TRANSFORM: return string(nullable?"?":"") + "Transform";
+				case TYPE_ARRAY: return string(nullable?"?":"") + "Array";
+				case TYPE_MAP: return string(nullable?"?":"") + "Map";
+				case TYPE_SET: return string(nullable?"?":"") + "Set";
+				case TYPE_PSEUDO_NUMBER: return string(nullable?"?":"") + "Number";
+				case TYPE_PSEUDO_MIXED: return string(nullable?"?":"") + "Mixed";
 			}
 			return string();
 		}
 
 		/**
 		 * Returns this script variable type as return type string representation
+		 * @param nullable nullable
 		 * @return this script variable type as return type string representation
 		 */
-		inline const string getReturnTypeAsString() const {
-			return getReturnTypeAsString(getType());
+		inline const string getReturnTypeAsString(bool nullable) const {
+			return getReturnTypeAsString(getType(), nullable);
 		}
 
 		/**
@@ -2248,6 +2250,7 @@ public:
 			string name;
 			bool optional;
 			bool reference;
+			bool nullable;
 		};
 
 		// forbid class copy
@@ -2258,7 +2261,16 @@ public:
 		 * @param argumentTypes argument types
 		 * @param returnValueType return value type
 		 */
-		ScriptMethod(const vector<ArgumentType>& argumentTypes = {}, ScriptVariableType returnValueType = ScriptVariableType::TYPE_NULL): returnValueType(returnValueType), argumentTypes(argumentTypes) {}
+		ScriptMethod(
+			const vector<ArgumentType>& argumentTypes = {},
+			ScriptVariableType returnValueType = ScriptVariableType::TYPE_NULL,
+			bool returnValueNullable = false
+		):
+			argumentTypes(argumentTypes),
+			returnValueType(returnValueType),
+			returnValueNullable(returnValueNullable) {
+			//
+		}
 
 		/**
 		 * Destructor
@@ -2305,7 +2317,7 @@ public:
 					if (argumentType.reference == true) {
 						result+= "=";
 					}
-					result+= "$" + argumentType.name + ": " + ScriptVariable::getTypeAsString(argumentType.type);
+					result+= "$" + argumentType.name + ": " + (argumentType.nullable == true?"?":"") + ScriptVariable::getTypeAsString(argumentType.type);
 				}
 				argumentIdx++;
 			}
@@ -2323,6 +2335,13 @@ public:
 		 */
 		const ScriptVariableType& getReturnValueType() const {
 			return returnValueType;
+		}
+
+		/**
+		 * @return if return value can be null
+		 */
+		bool isReturnValueNullable() const {
+			return returnValueNullable;
 		}
 
 		/**
@@ -2363,6 +2382,7 @@ public:
 	private:
 		vector<ArgumentType> argumentTypes;
 		ScriptVariableType returnValueType;
+		bool returnValueNullable;
 	};
 
 	struct ScriptSyntaxTreeNode {

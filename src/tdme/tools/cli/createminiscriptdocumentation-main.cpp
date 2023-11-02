@@ -70,7 +70,7 @@ static void generateMiniScriptMethodsDocumentation(const string& heading, int ma
 		method+= "(";
 		method+= scriptMethod->getArgumentsInformation();
 		method+= "): ";
-		method+= MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType());
+		method+= MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable());
 		method+= "</sub>";
 		while (method.size() < 99) method+= " ";
 		method+= "|";
@@ -196,7 +196,7 @@ static void generateMiniScriptClassesDocumentation(const string& heading, int ma
 		method+= "(";
 		method+= scriptMethod->getArgumentsInformation(_static == true?0:1);
 		method+= "): ";
-		method+= MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType());
+		method+= MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable());
 		method+= "</sub>";
 		while (method.size() < 99) method+= " ";
 		method+= "|";
@@ -290,7 +290,7 @@ int main(int argc, char** argv)
 		operatorString+= "(";
 		operatorString+= scriptMethod->getArgumentsInformation();
 		operatorString+= "): ";
-		operatorString+= MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType());
+		operatorString+= MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable());
 		while (operatorString.size() < 99) operatorString+= " ";
 		operatorString+= "|";
 		operators.push_back(operatorString);

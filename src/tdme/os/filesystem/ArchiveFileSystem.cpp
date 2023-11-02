@@ -329,6 +329,7 @@ const string ArchiveFileSystem::getCanonicalPath(const string& pathName, const s
 	string unixPathName = StringTools::replace(pathName, "\\", "/");
 	string unixFileName = StringTools::replace(fileName, "\\", "/");
 
+	//
 	auto pathString = getFileName(unixPathName, unixFileName);
 
 	// separate into path components
@@ -372,12 +373,14 @@ const string ArchiveFileSystem::getCanonicalPath(const string& pathName, const s
 	}
 
 	// add cwd if required
-	auto canonicalPathString = canonicalPath;
+	auto canonicalPathString = canonicalPath.empty() == true?"/":canonicalPath;
+	/*
 	if (canonicalPathString.length() == 0 ||
 		(StringTools::startsWith(canonicalPathString, "/") == false &&
 		StringTools::regexMatch(canonicalPathString, "^[a-zA-Z]\\:.*$") == false)) {
 		canonicalPathString = getCurrentWorkingPathName() + "/" + canonicalPathString;
 	}
+	*/
 
 	//
 	return canonicalPathString;
