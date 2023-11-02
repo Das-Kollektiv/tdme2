@@ -732,15 +732,19 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& methodName, 
 	}
 
 	// arguments
-	vector<bool> argumentReferences;
+	vector<bool> argumentReferences(0);
 	if (scriptFunctionIdx != SCRIPTIDX_NONE) {
+		argumentReferences.resize(scripts[scriptFunctionIdx].arguments.size());
+		auto argumentIdx = 0;
 		for (const auto& argument: scripts[scriptFunctionIdx].arguments) {
-			argumentReferences.push_back(argument.reference);
+			argumentReferences[argumentIdx++] = argument.reference;
 		}
 	} else
 	if (scriptMethod != nullptr) {
+		argumentReferences.resize(scriptMethod->getArgumentTypes().size());
+		auto argumentIdx = 0;
 		for (const auto& argument: scriptMethod->getArgumentTypes()) {
-			argumentReferences.push_back(argument.reference);
+			argumentReferences[argumentIdx++] = argument.reference;
 		}
 	}
 	auto argumentIdx = 0;
