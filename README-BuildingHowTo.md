@@ -1,4 +1,4 @@
-![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/github/tdme2-logo.png)
+![LOGO](https://raw.githubusercontent.com/Mindty-Kollektiv/tdme2/master/resources/github/tdme2-logo.png)
 
 # 1. How to build TDME2?
 
@@ -28,7 +28,7 @@ exit
 ### 1.1.2. Clone repository
 
 ```bash
-git clone https://github.com/andreasdr/tdme2
+git clone https://github.com/Mindty-Kollektiv/tdme2
 cd tdme2
 ```
 
@@ -59,7 +59,7 @@ exit
 ### 1.2.2. Clone repository
 
 ```bash
-git clone https://github.com/andreasdr/tdme2
+git clone https://github.com/Mindty-Kollektiv/tdme2
 cd tdme2
 ```
 
@@ -95,7 +95,7 @@ sudo apt-get install libvulkan-dev
 ### 1.3.2. Clone repository
 
 ```bash
-git clone https://github.com/andreasdr/tdme2
+git clone https://github.com/Mindty-Kollektiv/tdme2
 cd tdme2
 ```
 
@@ -121,7 +121,7 @@ For Metal via Vulkan you need to install Vulkan SDK for MacOSX using the install
 ### 1.4.2. Clone repository
 
 ```bash
-git clone https://github.com/andreasdr/tdme2
+git clone https://github.com/Mindty-Kollektiv/tdme2
 cd tdme2
 ```
 
@@ -165,7 +165,7 @@ pacman -S mingw-w64-x86_64-vulkan-loader
 ### 1.5.2. Clone repository
 
 ```bash
-git clone https://github.com/andreasdr/tdme2
+git clone https://github.com/Mindty-Kollektiv/tdme2
 cd tdme2
 ```
 
@@ -186,8 +186,8 @@ Be aware that the makefile uses the default installation paths for libraries and
 
 ### 1.6.2. Download or clone repository
 
-Use a GIT client with the following URL: https://github.com/andreasdr/tdme2 and clone to a folder into your home folder like "tdme2" OR 
-send your browser to "https://github.com/andreasdr/tdme2" and click "Clone or download/Download ZIP" and extract ZIP somewhere in your home folder, e.g. "tdme2".
+Use a GIT client with the following URL: https://github.com/Mindty-Kollektiv/tdme2 and clone to a folder into your home folder like "tdme2" OR 
+send your browser to "https://github.com/Mindty-Kollektiv/tdme2" and click "Clone or download/Download ZIP" and extract ZIP somewhere in your home folder, e.g. "tdme2".
 
 ### 1.6.3. Build
 
@@ -206,12 +206,9 @@ You need to adjust "tdme2" if you used a different folder.
 
 ```
 cd %HOMEPATH%\tdme2
-copy ext\fbx\win64\lib\libfbxsdk.dll .
-copy ext\glfw3\lib\win64\glfw3.dll .
-copy ext\windows-msc\glew\libs\glew32.dll .
-copy ext\windows-msc\openal-soft\libs\OpenAl32.dll .
-copy ext\windows-msc\pthread\libs\pthreadVC2.dll .
-copy ext\freetype\lib\win64\freetype.dll .
+.\scripts\windows-prepare-platform-libs.bat
+copy .\platform\libs\* .
+copy .\lib\* .
 ```
 
 ### 1.6.4. Note

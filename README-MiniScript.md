@@ -1,4 +1,4 @@
-![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/github/tdme2-logo.png)
+![LOGO](https://raw.githubusercontent.com/Mindty-Kollektiv/tdme2/master/resources/github/tdme2-logo.png)
 
 This is the documentation of MiniScript language. This document is WIP.
 
@@ -9,10 +9,8 @@ Introduction to MiniScript language features:
 - runs on every CPU, OS, ... due to its simplicity, so its highly portable just like TDME2 is
 - can be easily extended by writing state machine machine states and script methods in C++
 - works with the following data types: null, boolean, integer, float, string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, array, map and set
-- when calling script methods/returning from methods it does not use references or pointers but only value by copy
-  - references are planned
+- when calling script C++ methods or script functions with arguments it does optionally use references or value by copy
 - supports user script functions and recursion
-- supports kind of references by optionally assigning back argument values to variables
 - supports operators by operator to method mapping by a preprocessor run
 - supports loops and conditions
 - supports programming with classes style programming
@@ -1198,7 +1196,7 @@ end
 
 # 8. MiniScript logic methods
 
-The boilerplate template code for a MiniScript logic looks like: [logic_script_template.tscript](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/engine/templates/tscript/logic_script_template.tscript)
+The boilerplate template code for a MiniScript logic looks like: [logic_script_template.tscript](https://raw.githubusercontent.com/Mindty-Kollektiv/tdme2/master/resources/engine/templates/tscript/logic_script_template.tscript)
 
 ## 8.1 Application methods
 
@@ -1623,7 +1621,7 @@ The boilerplate template code for a MiniScript logic looks like: [logic_script_t
 
 # 9. MiniScript GUI methods
 
-The boilerplate template code for a MiniScript GUI logic looks like: [gui_script_template.tscript](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/engine/templates/tscript/gui_script_template.tscript)
+The boilerplate template code for a MiniScript GUI logic looks like: [gui_script_template.tscript](https://raw.githubusercontent.com/Mindty-Kollektiv/tdme2/master/resources/engine/templates/tscript/gui_script_template.tscript)
 
 ## 9.1 Element node condition methods
 

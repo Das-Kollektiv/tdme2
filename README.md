@@ -5,7 +5,7 @@
 [![Windows/MSC Build Status](https://github.com/Mindty-Kollektiv/tdme2/actions/workflows/windows-msc.yml/badge.svg)](https://github.com/Mindty-Kollektiv/tdme2/actions)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/15611/badge.svg)](https://scan.coverity.com/projects/andreasdr-tdme2)  
   
-![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/github/tdme2-logo.png)
+![LOGO](https://raw.githubusercontent.com/Mindty-Kollektiv/tdme2/master/resources/github/tdme2-logo.png)
 
 # 1. What is TDME2?
 - ThreeDeeMiniEngine2 is a lightweight, multiplatform 3D engine including tools
@@ -13,7 +13,7 @@
   - See [screenshots](./README-Screenshots.md), if you want to quickly know where we are and where we will go :) 
 - TDME2 is open source
   - please check the [license](https://github.com/Mindty-Kollektiv/tdme2/blob/master/LICENSE)
-  - you find the source code at [https://github.com/andreasdr/tdme2](https://github.com/andreasdr/tdme2) 
+  - you find the source code at [https://github.com/Mindty-Kollektiv/tdme2](https://github.com/Mindty-Kollektiv/tdme2) 
   - you find binary alpha builds at [http://drewke.net/tdme2](http://drewke.net/tdme2)
   - here you find developer documentation including collaboration graphs and [private API](http://drewke.net/tdme2-documentation/alpha/private) as well as [public API](http://drewke.net/tdme2-documentation/alpha/public) for current alpha build
     - RapidJSON is included, but not yet integrated into documentation, please see [http://rapidjson.org/](http://rapidjson.org/)
@@ -213,14 +213,14 @@
         - runs on every CPU, OS, ... due to its simplicity, so its highly portable just like TDME2 is
         - can be easily extended by writing state machine machine states and script methods in C++
         - works with the following data types: null, boolean, integer, float, string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, array, map and set
-        - when calling script methods/returning from methods it does not use references or pointers but only value by copy
+        - when calling script C++ methods or script functions with arguments it does optionally use references or value by copy
         - supports user script functions and recursion
-        - supports kind of references by optionally assigning back argument values to variables
         - supports operators by operator to method mapping by a preprocessor run
         - supports loops and conditions
         - supports programming with classes style programming
           - for string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, array, map and set data types
-          - custom data types and custom script classes are planned
+          - via script classes
+          - custom data types are planned
         - supports event like programming
         - can be transpiled to C++
         - how to use:
