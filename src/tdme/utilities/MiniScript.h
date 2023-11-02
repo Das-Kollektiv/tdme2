@@ -545,15 +545,12 @@ public:
 		}
 
 		/**
-		 * Create none reference variable
+		 * Create non reference variable
+		 * @param nonReferenceVariable non reference variable
 		 * @param variable variable
-		 * @returns reference variable
 		 */
-		inline static ScriptVariable createNonReferenceVariable(const ScriptVariable* variable) {
-			// copy a non reference variable is cheap
-			if (variable->reference == nullptr) return *variable;
-			// otherwise do the copy
-			ScriptVariable nonReferenceVariable;
+		inline static void createNonReferenceVariable(ScriptVariable& nonReferenceVariable, const ScriptVariable* variable) {
+			// do the copy
 			switch(variable->getType()) {
 				case TYPE_NULL:
 					nonReferenceVariable.setNullValue();
@@ -622,6 +619,20 @@ public:
 				// pseudo ...
 				default: break;
 			}
+		}
+
+		/**
+		 * Create none reference variable
+		 * @param variable variable
+		 * @returns reference variable
+		 */
+		inline static ScriptVariable createNonReferenceVariable(const ScriptVariable* variable) {
+			// copy a non reference variable is cheap
+			if (variable->reference == nullptr) return *variable;
+			// otherwise do the copy
+			ScriptVariable nonReferenceVariable;
+			//
+			createNonReferenceVariable(nonReferenceVariable, variable);
 			//
 			return nonReferenceVariable;
 		}
@@ -636,74 +647,8 @@ public:
 			if (variable->reference == nullptr) return new ScriptVariable(*variable);
 			// otherwise do the copy
 			ScriptVariable* nonReferenceVariable = new ScriptVariable();
-			switch(variable->getType()) {
-				case TYPE_NULL:
-					nonReferenceVariable->setNullValue();
-					break;
-				case TYPE_BOOLEAN:
-					nonReferenceVariable->setValue(variable->getBooleanValueReference());
-					break;
-				case TYPE_INTEGER:
-					nonReferenceVariable->setValue(variable->getIntegerValueReference());
-					break;
-				case TYPE_FLOAT:
-					nonReferenceVariable->setValue(variable->getFloatValueReference());
-					break;
-				case TYPE_STRING:
-					nonReferenceVariable->setValue(variable->getStringValueReference());
-					break;
-				case TYPE_VECTOR2:
-					nonReferenceVariable->setValue(variable->getVector2ValueReference());
-					break;
-				case TYPE_VECTOR3:
-					nonReferenceVariable->setValue(variable->getVector3ValueReference());
-					break;
-				case TYPE_VECTOR4:
-					nonReferenceVariable->setValue(variable->getVector4ValueReference());
-					break;
-				case TYPE_QUATERNION:
-					nonReferenceVariable->setValue(variable->getQuaternionValueReference());
-					break;
-				case TYPE_MATRIX3x3:
-					nonReferenceVariable->setValue(variable->getMatrix3x3ValueReference());
-					break;
-				case TYPE_MATRIX4x4:
-					nonReferenceVariable->setValue(variable->getMatrix4x4ValueReference());
-					break;
-				case TYPE_TRANSFORM:
-					nonReferenceVariable->setValue(variable->getTransformValueReference());
-					break;
-				case TYPE_ARRAY:
-					nonReferenceVariable->setValue(variable->getArrayValueReference());
-					// copy initializer if we have any
-					nonReferenceVariable->getInitializer()->copy(variable->initializer);
-					//
-					break;
-				case TYPE_MAP:
-					nonReferenceVariable->setValue(variable->getMapValueReference());
-					// copy initializer if we have any
-					nonReferenceVariable->getInitializer()->copy(variable->initializer);
-					//
-					break;
-				case TYPE_SET:
-					nonReferenceVariable->setValue(variable->getSetValueReference());
-					// copy initializer if we have any
-					nonReferenceVariable->getInitializer()->copy(variable->initializer);
-					//
-					break;
-				case TYPE_FUNCTION_CALL:
-					nonReferenceVariable->setType(TYPE_FUNCTION_CALL);
-					nonReferenceVariable->getStringValueReference() = variable->getStringValueReference();
-					// copy initializer if we have any
-					nonReferenceVariable->getInitializer()->copy(variable->initializer);
-					//
-					break;
-				case TYPE_FUNCTION_ASSIGNMENT:
-					nonReferenceVariable->setFunctionAssignment(variable->getStringValueReference());
-					break;
-				// pseudo ...
-				default: break;
-			}
+			//
+			createNonReferenceVariable(*nonReferenceVariable, variable);
 			//
 			return nonReferenceVariable;
 		}
