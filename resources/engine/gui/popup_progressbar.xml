@@ -9,7 +9,7 @@
 					<tab-content tab-id="progressbar_caption">
 						<element id="progressbar_parent" width="100%" height="100%">
 							<layout padding="10" alignment="vertical" horizontal-align="left" vertical-align="center" width="100%" height="100%">
-								<progress-bar show-on="show-progressbar" id="progressbar" width="100%" text-on="true" value="0.5" />
+								<progress-bar show-on="show-progressbar" id="progressbar" width="100%" heigth="25" text-on="true" value="0.5" />
 								<space show-on="show-progressbar" height="5"/>
 								<text id="progress_message" height="25" font="{$font.default}" size="{$fontsize.default}" text="Loading Scene Files.." color="{$color.font_normal}" />
 							</layout>

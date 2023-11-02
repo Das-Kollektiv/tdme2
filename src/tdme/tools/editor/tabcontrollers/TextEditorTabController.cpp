@@ -472,7 +472,7 @@ void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx
 			case MiniScript::Script::SCRIPTTYPE_FUNCTION: {
 				for (const auto& argument: script.arguments) {
 					if (argumentsString.empty() == false) argumentsString+= ", ";
-					if (argument.assignBack == true) argumentsString+= "=";
+					if (argument.reference == true) argumentsString+= "=";
 					argumentsString+= argument.name;
 				}
 				argumentsString = "(" + argumentsString + ")";

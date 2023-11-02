@@ -1,0 +1,86 @@
+<template>
+	<moveable id="{$id}" horizontal-align="center" vertical-align="center" left="{$left}" top="{$top}" width="auto" height="auto">	
+
+		<element width="265" height="auto" horizontal-align="center" value="node_{$id}">
+
+			<layout border-right="1" border-bottom="1" border-color="{$color.element_frame}" width="250" height="*" alignment="vertical" vertical-align="top" background-color="{$color.element_foreground}">
+
+				<layer border-bottom="1" border-color="{$color.element_frame}" width="100%" height="auto" >
+					<layout width="100%" height="30" background-color="{$node-type-color}"/>
+					<layout width="100%" height="30" background-color="#00000080"/>
+				</layer>
+
+			</layout>
+
+			<layout padding="5" alignment="horizontal" horizontal-align="left" vertical-align="center" width="250" height="auto">
+				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="BlendSpace2D" width="*" height="auto"/>
+				<space width="*"/>
+				<button id="{$id}_edit_button" template="button_template_toolbar.xml" image="resources/engine/images/edit.png"/>
+			</layout>
+			
+			<layout padding-top="40" padding-bottom="10" alignment="horizontal" width="100%" height="auto">
+			
+				<!-- input container -->
+				<layout id="{$id}_input_container" alignment="vertical" width="85%" height="auto">
+					
+					<template
+						id="input_name"
+						src="resources/engine/gui/template_visualcode_input.xml"
+						on-initialize="input_name_input_type_panel.condition=input"
+
+						text="Name"
+
+						input_text=""
+						input_unit=""
+						input_options=""
+					/>
+
+					<space height="20"/>
+
+					<template
+						id="input_x"
+						src="resources/engine/gui/template_visualcode_input.xml"
+						on-initialize="input_x_input_type_panel.condition=input"
+						
+						text="X"
+						
+						input_text="1"
+						input_unit=""
+						input_options=""
+					/>
+					
+					<template
+						id="input_y"
+						src="resources/engine/gui/template_visualcode_input.xml"
+						on-initialize="input_y_input_type_panel.condition=input"
+						
+						text="Y"
+						
+						input_text="1"
+						input_unit=""
+						input_options=""
+					/>
+					
+				</layout>
+				<!-- --------------- -->
+
+				<!-- output container -->			
+				<layout id="{$id}_output_container" alignment="vertical" width="15%" height="auto">
+				
+					<template
+						id="output1"
+						src="resources/engine/gui/template_visualcode_output.xml"
+					
+						pin_type_connected="resources/engine/images/visualcode_flow_connected.png"
+						pin_type_unconnected="resources/engine/images/visualcode_flow_unconnected.png"
+					/>
+					
+				</layout>
+				<!-- --------------- -->
+
+			</layout>		
+		
+		</element>
+				
+	</moveable>
+</template>
