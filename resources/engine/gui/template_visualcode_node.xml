@@ -3,22 +3,69 @@
 
 		<element width="315" height="auto" horizontal-align="center" value="node_{$id}">
 
-			<layout border-right="1" border-bottom="1" border-color="{$color.element_frame}" width="300" height="*" alignment="vertical" vertical-align="top" background-color="{$color.element_foreground}">
+			<element border="3" border-color="#00000000" focusable="true" width="306" height="*" horizontal-align="center">
+				<layout border-right="1" border-bottom="1" border-color="{$color.element_frame}" width="300" height="*" alignment="vertical" vertical-align="top" background-color="{$color.element_foreground}">
 
-				<layer border-bottom="1" border-color="{$color.element_frame}" width="100%" height="auto" >
-					<layout width="100%" height="30" background-color="{$node-type-color}"/>
-					<layout width="100%" height="30" background-color="#00000080"/>
-				</layer>
-
-			</layout>
+					<layer border-bottom="1" border-color="{$color.element_frame}" width="100%" height="auto" >
+						<layout width="100%" height="30" background-color="{$node-type-color}"/>
+						<layout width="100%" height="30" background-color="#00000080"/>
+					</layer>
+			
+				</layout>
+			</element>
 
 			<layout padding="5" alignment="horizontal" horizontal-align="left" vertical-align="center" width="300" height="auto">
-				<image src="resources/engine/images/arrow_down.png"/>
-				<space width="10"/>
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="{$node-name}" width="*" height="auto"/>
+				<text font="resources/engine/fonts/RobotoMono-Bold.ttf" size="14" color="#F0F0F0" text="{$node-name}" width="*" height="auto"/>
+				<space width="*"/>
+				<button show-on="editable" id="{$id}_edit_button" template="button_template_toolbar.xml" image="resources/engine/images/edit.png"/>
 			</layout>
 			
 			<layout padding-top="40" padding-bottom="10" alignment="horizontal" width="100%" height="auto">
+			
+				<!-- fullsize container -->			
+				<layout id="{$id}_fullsize_container" alignment="vertical" width="100%" height="auto">
+				
+					<!-- <template -->
+						<!-- id="blend" -->
+						<!-- src="resources/engine/gui/template_animationgraph_node_blend.xml" -->
+					<!-- /> -->
+					
+					<!-- <template -->
+						<!-- id="blendinput1" -->
+						<!-- src="resources/engine/gui/template_animationgraph_blendinput.xml" -->
+						
+						<!-- text="Blend 1" -->
+					<!-- /> -->
+					
+					<!-- <template -->
+						<!-- id="blendinput2" -->
+						<!-- src="resources/engine/gui/template_animationgraph_blendinput.xml" -->
+						
+						<!-- text="Blend 2" -->
+					<!-- /> -->
+					
+					<!-- <template -->
+						<!-- id="state1" -->
+						<!-- src="resources/engine/gui/template_visualcode_input.xml" -->
+						
+						<!-- pin_type_connected="resources/engine/images/visualcode_flow_connected.png" -->
+						<!-- pin_type_unconnected="resources/engine/images/visualcode_flow_unconnected.png" -->
+						
+						<!-- text="State 1" -->
+					<!-- /> -->
+					
+					<!-- <template -->
+						<!-- id="state2" -->
+						<!-- src="resources/engine/gui/template_visualcode_input.xml" -->
+						
+						<!-- pin_type_connected="resources/engine/images/visualcode_flow_connected.png" -->
+						<!-- pin_type_unconnected="resources/engine/images/visualcode_flow_unconnected.png" -->
+						
+						<!-- text="State 2" -->
+					<!-- /> -->
+				
+				</layout>
+				<!-- --------------- -->
 			
 				<!-- input container -->
 				<layout id="{$id}_input_container" alignment="vertical" width="60%" height="auto">
@@ -38,7 +85,7 @@
 
 						<!-- pin_type_connected="resources/engine/images/visualcode_value_connected.png"  -->
 						<!-- pin_type_unconnected="resources/engine/images/visualcode_value_unconnected.png"  -->
-						<!-- pin_color="{$color.pintype_integer}" -->
+						<!-- pin_color="#27AE60" -->
 						
 						<!-- text="A" -->
 						
@@ -67,14 +114,14 @@
 
 						<!-- pin_type_connected="resources/engine/images/visualcode_value_connected.png"  -->
 						<!-- pin_type_unconnected="resources/engine/images/visualcode_value_unconnected.png"  -->
-						<!-- pin_color="{$color.pintype_integer}" -->
+						<!-- pin_color="#27AE60" -->
 						
 						<!-- text="Result"	 -->
 					<!-- /> -->
 					
 				</layout>
 				<!-- --------------- -->
-
+				
 			</layout>		
 		
 		</element>

@@ -1,5 +1,5 @@
 <template>
-	<layout width="*" height="auto" alignment="vertical" horizontal-align="center" vertical-align="center" background-color="#00000000">
+	<layout width="85%" height="auto" alignment="vertical" horizontal-align="center" vertical-align="center">
 	
 		<space height="10"/>
 		<menu-separator width="*"/>
