@@ -1,68 +1,16 @@
 <template>
-	<moveable id="{$id}" horizontal-align="center" vertical-align="center" left="{$left}" top="{$top}" width="auto" height="auto">	
-
-		<element width="215" height="auto" horizontal-align="center" value="node_{$id}">
-
-			<layout border-right="1" border-bottom="1" border-color="{$color.element_frame}" width="200" height="*" alignment="vertical" vertical-align="top" background-color="{$color.element_foreground}">
-
-				<layer border-bottom="1" border-color="{$color.element_frame}" width="100%" height="auto" >
-					<layout width="100%" height="30" background-color="{$node-type-color}"/>
-					<layout width="100%" height="30" background-color="#00000080"/>
-				</layer>
-
-			</layout>
-
-			<layout padding="5" alignment="horizontal" horizontal-align="left" vertical-align="center" width="200" height="auto">
-				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Transition" width="*" height="auto"/>
-			</layout>
 			
-			<layout padding-top="40" padding-bottom="10" alignment="horizontal" width="100%" height="auto">
+			<layout alignment="horizontal" width="100%" height="auto">
 			
 				<!-- input container -->
 				<layout id="{$id}_input_container" alignment="vertical" width="85%" height="auto">
 					
 					<template
-						id="input_name"
-						src="resources/engine/gui/template_visualcode_input.xml"
-						on-initialize="input_name_input_type_panel.condition=input"
-
-						text="Name"
-					/>
-
-					<space height="20"/>
-					
-					<template
 						id="dropdown_state"
 						src="resources/engine/gui/template_visualcode_input.xml"
 						on-initialize="dropdown_state_input_type_panel.condition=dropdown"
-					/>
-					
-					<template
-						id="state1"
-						src="resources/engine/gui/template_visualcode_input.xml"
 						
-						pin_type_connected="resources/engine/images/visualcode_flow_connected.png"
-						pin_type_unconnected="resources/engine/images/visualcode_flow_unconnected.png"
-						
-						text="State 1"
-					/>
-					<template
-						id="state2"
-						src="resources/engine/gui/template_visualcode_input.xml"
-						
-						pin_type_connected="resources/engine/images/visualcode_flow_connected.png"
-						pin_type_unconnected="resources/engine/images/visualcode_flow_unconnected.png"
-						
-						text="State 2"
-					/>
-					<template
-						id="state3"
-						src="resources/engine/gui/template_visualcode_input.xml"
-						
-						pin_type_connected="resources/engine/images/visualcode_flow_connected.png"
-						pin_type_unconnected="resources/engine/images/visualcode_flow_unconnected.png"
-						
-						text="State 3"
+						text="Current"
 					/>
 					
 				</layout>
@@ -83,8 +31,5 @@
 				<!-- --------------- -->
 
 			</layout>		
-		
-		</element>
 				
-	</moveable>
 </template>
