@@ -1,5 +1,5 @@
 <template>	
-	<element id="{$id}" width="100%" height="auto">
+	<element id="{$id}" width="100%" height="auto" ignore-events="true">
 		<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
 
 			<space height="5" />

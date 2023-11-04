@@ -11,6 +11,7 @@
 #include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/math/Math.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/MutableString.h>
 
@@ -24,6 +25,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
+using tdme::math::Math;
 using tdme::utilities::Console;
 using tdme::utilities::MutableString;
 
@@ -55,19 +57,19 @@ void GUIMoveableController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 		event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED == true &&
 		event->getButton() == MOUSE_BUTTON_LEFT) {
 		//
-		event->setProcessed(true);
-		//
-		dragging = false;
+		if (dragging == true) {
+			event->setProcessed(true);
+			dragging = false;
+		}
 		//
 		node->getScreenNode()->forwardMoveRelease(this->node, event->getXUnscaled(), event->getYUnscaled());
 	} else
 	if (node == this->node && node->isEventBelongingToNode(event) == true &&
 		event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED == true &&
-		event->getButton() == MOUSE_BUTTON_LEFT) {
+		event->getButton() == MOUSE_BUTTON_LEFT &&
+		(Math::abs(event->getX() - mouseLastX) > 5 ||
+		Math::abs(event->getY() - mouseLastY) > 5)) {
 		if (node->getScreenNode()->isMoveAccepted(node) == true) {
-			//
-			mouseLastX = event->getX();
-			mouseLastY = event->getY();
 			//
 			dragging = true;
 		}
@@ -100,11 +102,11 @@ void GUIMoveableController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 		//
 		node->getScreenNode()->invalidateLayout(this->node);
 		//
-		mouseLastX = event->getX();
-		mouseLastY = event->getY();
-		//
 		event->setProcessed(true);
 	}
+	//
+	mouseLastX = event->getX();
+	mouseLastY = event->getY();
 }
 
 void GUIMoveableController::handleKeyboardEvent(GUIKeyboardEvent* event) {

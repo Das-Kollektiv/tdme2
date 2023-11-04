@@ -735,7 +735,6 @@ Currently supported BBCode like tags are:
 | width                             | width in %, pixel or rest(*) or auto for computed width                                | 100%              |
 | height                            | height in %, pixel or rest(*) or auto for computed height                              | *                 |
 | alignment                         | none \| horizontal \| vertical                                                         | none              |
-| ignore-events                     | true \| false                                                                          | false             |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 This element supports \<tabs-header\>,  \<tabs-content\> and others as sub elements.
@@ -781,7 +780,6 @@ This element supports \<tab\> and others as sub elements.
 | id                                | the unique node id within screen                                                       | auto generated id |
 | show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
 | hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
-| ignore-events                     | true \| false                                                                          | false             |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 This element supports \<tab-content\> and others as sub elements.

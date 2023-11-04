@@ -1,5 +1,5 @@
 <template>	
-	<element id="{$id}" width="100%" height="auto">
+	<element id="{$id}" width="100%" height="auto" ignore-events="true">
 		<layout width="100%" height="auto" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
 			<button width="100%" height="25" text="Bounding Volume" on-mouse-click="{$id}.condition!=open"/>
 			<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="center">			

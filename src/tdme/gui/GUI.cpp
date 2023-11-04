@@ -700,6 +700,9 @@ void GUI::handleEvents(bool clearEvents)
 				mouseDraggingEventNodeIds.erase(screen->getId());
 				mousePressedEventNodeIds.erase(screen->getId());
 			}
+			// unfocus foccussed node, if GUIMouseEvent::MOUSEEVENT_RELEASED event with left mouse button was not processed,
+			//	means you were not clicking on a element,button,...
+			if (event.getButton() == GUIMouseEvent::MOUSEEVENT_BUTTON_LEFT && event.isProcessed() == false) setFoccussedNode(nullptr);
 		}
 	}
 
