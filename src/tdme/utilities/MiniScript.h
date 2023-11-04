@@ -1960,10 +1960,11 @@ public:
 		/**
 		 * Print string representation of script variable
 		 * @param formatted formatted
+		 * @param jsonCompatible json compatible
 		 * @param depth recursion depth
 		 * @return string representation of script variable type
 		 */
-		inline const string getValueAsString(bool formatted = false, int depth = 0) const {
+		inline const string getValueAsString(bool formatted = false, bool jsonCompatible = false, int depth = 0) const {
 			string result;
 			switch (getType()) {
 				case TYPE_NULL:
@@ -2089,9 +2090,9 @@ public:
 						vector<string> values;
 						for (const auto arrayEntry: arrayValue) {
 							if (arrayEntry->getType() == TYPE_STRING) {
-								values.push_back("\"" + StringTools::replace(StringTools::replace(arrayEntry->getValueAsString(), "\\", "\\\\"), "\"", "\\\"") + "\"" );
+								values.push_back("\"" + StringTools::replace(StringTools::replace(arrayEntry->getValueAsString(formatted, jsonCompatible, depth + 1), "\\", "\\\\"), "\"", "\\\"") + "\"" );
 							} else {
-								values.push_back(arrayEntry->getValueAsString(formatted, depth + 1));
+								values.push_back(arrayEntry->getValueAsString(formatted, jsonCompatible, depth + 1));
 							}
 						}
 						if (formatted == true) {
@@ -2126,10 +2127,10 @@ public:
 							value+= "\"" + StringTools::replace(StringTools::replace(mapEntryName, "\\", "\\\\"), "\"", "\\\"") +  "\": ";
 							if (mapEntryValue->getType() == TYPE_STRING) {
 								value+= "\"";
-								value+= StringTools::replace(StringTools::replace(mapEntryValue->getValueAsString(), "\\", "\\\\"), "\"", "\\\"");
+								value+= StringTools::replace(StringTools::replace(mapEntryValue->getValueAsString(formatted, jsonCompatible, depth + 1), "\\", "\\\\"), "\"", "\\\"");
 								value+= "\"";
 							} else {
-								value+= mapEntryValue->getValueAsString(formatted, depth + 1);
+								value+= mapEntryValue->getValueAsString(formatted, jsonCompatible, depth + 1);
 							}
 							values.push_back(value);
 						}
@@ -2162,7 +2163,12 @@ public:
 						const auto& setValue = getSetValueReference();
 						vector<string> values;
 						for (const auto& key: setValue) {
-							values.push_back("\"" + StringTools::replace(StringTools::replace(key, "\\", "\\\\"), "\"", "\\\"") + "\"");
+							values.push_back(
+								"\"" + StringTools::replace(StringTools::replace(key, "\\", "\\\\"), "\"", "\\\"") + "\""
+							);
+							if (jsonCompatible == true) {
+								values.back() += ": true";
+							}
 						}
 						sort(values.begin(), values.end());
 						if (formatted == true) {

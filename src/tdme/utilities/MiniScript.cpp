@@ -7507,7 +7507,7 @@ void MiniScript::registerMethods() {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
-					returnValue.setValue(argumentValues[0].getValueAsString());
+					returnValue.setValue(argumentValues[0].getValueAsString(false, true));
 				}
 			}
 		};
