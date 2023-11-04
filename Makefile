@@ -38,7 +38,7 @@ SRCS_PLATFORM =
 CPPVERSION = -std=c++2a
 OFLAGS =
 EXTRAFLAGS = -DRAPIDJSON_HAS_STDSTRING
-INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/gainput-1.0.0/lib/include/
+INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib
 
 #
 CXX := $(CXX) -fPIC
@@ -191,7 +191,6 @@ OGLCOMPILERSDLL = vulkan/OGLCompilersDLL
 VMA = vulkan/vma
 CPPSPLINE = cpp-spline
 BC7 = bc7enc_rdo
-GAINPUT = gainput-1.0.0
 
 SRCS_DEBUG =
 
@@ -823,38 +822,6 @@ EXT_BC7_SRCS = \
 	ext/bc7enc_rdo/bc7decomp.cpp \
 	ext/bc7enc_rdo/bc7enc.cpp
 
-EXT_GAINPUT_SRCS = \
-	ext/gainput-1.0.0/lib/source/gainput/keyboard/GainputInputDeviceKeyboard.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/keyboard/GainputInputDeviceKeyboardMac.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/gestures/GainputTapGesture.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/gestures/GainputPinchGesture.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/gestures/GainputButtonStickGesture.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/gestures/GainputHoldGesture.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/gestures/GainputDoubleClickGesture.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/gestures/GainputSimultaneouslyDownGesture.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/gestures/GainputRotateGesture.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/builtin/GainputInputDeviceBuiltIn.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/GainputInputDevice.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/GainputAllocator.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/GainputMapFilters.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/touch/GainputInputDeviceTouch.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/pad/GainputInputDevicePadMac.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/pad/GainputInputDevicePad.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/mouse/GainputInputDeviceMouse.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/dev/GainputMemoryStream.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/dev/GainputNetConnection.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/dev/GainputNetAddress.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/dev/GainputNetListener.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/dev/GainputDev.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/GainputInputMap.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/GainputInputDeltaState.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/GainputInputManager.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/recorder/GainputInputRecording.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/recorder/GainputInputPlayer.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/recorder/GainputInputRecorder.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/GainputInputState.cpp \
-	ext/gainput-1.0.0/lib/source/gainput/gainput.cpp
-
 OPENGL2_RENDERER_LIB_SRCS = \
 	src/tdme/engine/subsystems/renderer/EngineGL2Renderer.cpp \
 	src/tdme/engine/subsystems/renderer/GL2Renderer.cpp
@@ -1013,7 +980,6 @@ EXT_SHA256_OBJS = $(EXT_SHA256_SRCS:ext/$(SHA256)/%.cpp=$(OBJ)/%.o)
 EXT_REACTPHYSICS3D_OBJS = $(EXT_REACTPHYSICS3D_SRCS:ext/$(REACTPHYSICS3D)/%.cpp=$(OBJ)/%.o)
 EXT_CPPSPLINE_OBJS = $(EXT_CPPSPLINE_SRCS:ext/$(CPPSPLINE)/%.cpp=$(OBJ)/%.o)
 EXT_BC7_OBJS = $(EXT_BC7_SRCS:ext/$(BC7)/%.cpp=$(OBJ)/%.o)
-EXT_GAINPUT_OBJS = $(EXT_GAINPUT_SRCS:ext/$(GAINPUT)/%.cpp=$(OBJ)/%.o)
 EXT_SPIRV_OBJS = $(EXT_SPIRV_SRCS:ext/$(SPIRV)/%.cpp=$(OBJ)/vulkan/%.o)
 EXT_GLSLANG_OBJS = $(EXT_GLSLANG_SRCS:ext/$(GLSLANG)/%.cpp=$(OBJ)/vulkan/%.o)
 EXT_OGLCOMPILERSDLL_OBJS = $(EXT_OGLCOMPILERSDLL_SRCS:ext/$(OGLCOMPILERSDLL)/%.cpp=$(OBJ)/vulkan/%.o)
@@ -1080,9 +1046,6 @@ $(EXT_CPPSPLINE_OBJS):$(OBJ)/%.o: ext/$(CPPSPLINE)/%.cpp | print-opts
 	$(cpp-command)
 
 $(EXT_BC7_OBJS):$(OBJ)/%.o: ext/$(BC7)/%.cpp | print-opts
-	$(cpp-command)
-
-$(EXT_GAINPUT_OBJS):$(OBJ)/%.o: ext/$(GAINPUT)/%.cpp | print-opts
 	$(cpp-command)
 
 $(EXT_SPIRV_OBJS):$(OBJ)/vulkan/%.o: ext/$(SPIRV)/%.cpp | print-opts
@@ -1207,7 +1170,7 @@ endif
 
 $(LIB_DIR)/$(LIB): $(OBJS) $(OBJS_DEBUG)
 
-$(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_SHA256_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_CPPSPLINE_OBJS) $(EXT_BC7_OBJS) $(EXT_GAINPUT_OBJS)
+$(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_SHA256_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_CPPSPLINE_OBJS) $(EXT_BC7_OBJS)
 
 $(LIB_DIR)/$(OPENGL2_RENDERER_LIB): $(OPENGL2_RENDERER_LIB_OBJS)
 
