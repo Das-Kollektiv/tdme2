@@ -49,7 +49,7 @@ void ApplicationServerClient::onRequest(const UDPPacket* packet, const uint32_t 
 		// game logic type id
 		auto logicTypeId = packet->getInt();
 		// create network packet
-		LogicNetworkPacket gameNetworkPacket(
+		LogicNetworkPacket logicNetworkPacket(
 			messageId,
 			safe,
 			retries,
@@ -57,8 +57,8 @@ void ApplicationServerClient::onRequest(const UDPPacket* packet, const uint32_t 
 			packet,
 			size
 		);
-		gameNetworkPacket.setSender(getKey());
-		networkPackets.push_back(gameNetworkPacket);
+		logicNetworkPacket.setSender(getKey());
+		networkPackets.push_back(logicNetworkPacket);
 	}
 	networkPacketsMutex.unlock();
 }

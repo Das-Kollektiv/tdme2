@@ -1913,7 +1913,7 @@ public:
 		 */
 		inline static const string getReturnTypeAsString(ScriptVariableType type, bool nullable) {
 			switch(type) {
-				case TYPE_NULL: return "Void";
+				case TYPE_NULL: return "Null";
 				case TYPE_BOOLEAN: return string(nullable?"?":"") + "Boolean";
 				case TYPE_INTEGER: return string(nullable?"?":"") + "Integer";
 				case TYPE_FLOAT: return string(nullable?"?":"") + "Float";
@@ -2260,6 +2260,7 @@ public:
 		 * Constructor
 		 * @param argumentTypes argument types
 		 * @param returnValueType return value type
+		 * @param returnValueNullable true if return value can also be a null value
 		 */
 		ScriptMethod(
 			const vector<ArgumentType>& argumentTypes = {},
@@ -2509,7 +2510,7 @@ public:
 					switch(argument.value.getType()) {
 						case TYPE_NULL:
 							{
-								argumentsString+= (argumentsString.empty() == false?", ":"") + string("<VOID>");
+								argumentsString+= (argumentsString.empty() == false?", ":"") + string("<Null>");
 								break;
 							}
 						case TYPE_BOOLEAN:

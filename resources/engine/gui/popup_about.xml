@@ -39,7 +39,7 @@
 								
 								<layout alignment="vertical" horizontal-align="left" vertical-align="top" width="auto" height="125">
 									<!-- 
-									<element id="about_releasenotes_element" width="auto" height="auto" on-mouse-click="https://github.com/andreasdr/tdme2/commits/master" options="mouse-cursor=hand">
+									<element id="about_releasenotes_element" width="auto" height="auto" on-mouse-click="https://github.com/Mindty-Kollektiv/tdme2/commits/master" options="mouse-cursor=hand">
 										<layout alignment="horizontal" horizontal-align="left" vertical-align="center" width="auto" height="25">
 											<image src="resources/engine/images/weblink.png"/>
 											<space width="5"/>
@@ -47,7 +47,7 @@
 										</layout>
 									</element>
 									 -->
-									<element id="about_github_element" width="auto" height="auto" on-mouse-click="https://github.com/andreasdr/tdme2" options="mouse-cursor=hand">
+									<element id="about_github_element" width="auto" height="auto" on-mouse-click="https://github.com/Mindty-Kollektiv/tdme2" options="mouse-cursor=hand">
 										<layout alignment="horizontal" horizontal-align="left" vertical-align="center" width="auto" height="25">
 											<image src="resources/engine/images/weblink.png"/>
 											<space width="5"/>
@@ -61,7 +61,7 @@
 											<text id="about_discord" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Discord" width="auto" />
 										</layout>
 									</element>
-									<element id="about_license_element" width="auto" height="auto" on-mouse-click="https://github.com/andreasdr/tdme2/blob/master/LICENSE" options="mouse-cursor=hand">
+									<element id="about_license_element" width="auto" height="auto" on-mouse-click="https://github.com/Mindty-Kollektiv/tdme2/blob/master/LICENSE" options="mouse-cursor=hand">
 										<layout alignment="horizontal" horizontal-align="left" vertical-align="center" width="auto" height="25">
 											<image src="resources/engine/images/weblink.png"/>
 											<space width="5"/>

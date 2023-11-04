@@ -12,7 +12,7 @@
 		</overload>
 	</keyword>
 	<keyword name="unsetVariable" func="yes">
-		<overload return-value="Void" descr="Unset variable">
+		<overload return-value="Null" descr="Unset variable">
 			<parameter name="String $variable" />
 		</overload>
 	</keyword>
@@ -40,7 +40,7 @@
 		</overload>
 	</keyword>
 	<keyword name="array.set" func="yes">
-		<overload return-value="Void" descr="Set array entry">
+		<overload return-value="Null" descr="Set array entry">
 			<parameter name="Array =$array" />
 			<parameter name="Integer $index" />
 			<parameter name="Mixed $value" />
@@ -59,31 +59,31 @@
 		</overload>
 	</keyword>
 	<keyword name="array.push" func="yes">
-		<overload return-value="Void" descr="Add entry to array">
+		<overload return-value="Null" descr="Add entry to array">
 			<parameter name="Array =$array" />
 			<parameter name="..." />
 		</overload>
 	</keyword>
 	<keyword name="array.remove" func="yes">
-		<overload return-value="Void" descr="Remove array entry by index">
+		<overload return-value="Null" descr="Remove array entry by index">
 			<parameter name="Array =$array" />
 			<parameter name="Integer $index" />
 		</overload>
 	</keyword>
 	<keyword name="array.removeOf" func="yes">
-		<overload return-value="Void" descr="Remove array entry by value">
+		<overload return-value="Null" descr="Remove array entry by value">
 			<parameter name="Array =$array" />
 			<parameter name="String $value" />
 			<parameter name="[Integer $beginIndex]" />
 		</overload>
 	</keyword>
 	<keyword name="array.reverse" func="yes">
-		<overload return-value="Void" descr="Reverse array">
+		<overload return-value="Null" descr="Reverse array">
 			<parameter name="Array =$array" />
 		</overload>
 	</keyword>
 	<keyword name="array.sort" func="yes">
-		<overload return-value="Void" descr="Sort array">
+		<overload return-value="Null" descr="Sort array">
 			<parameter name="Array =$array" />
 			<parameter name="String $function" />
 		</overload>
@@ -117,12 +117,12 @@
 		</overload>
 	</keyword>
 	<keyword name="console.dump" func="yes">
-		<overload return-value="Void" descr="Pretty print variable to console">
+		<overload return-value="Null" descr="Pretty print variable to console">
 			<parameter name="Mixed $value" />
 		</overload>
 	</keyword>
 	<keyword name="console.log" func="yes">
-		<overload return-value="Void" descr="Print to console">
+		<overload return-value="Null" descr="Print to console">
 			<parameter name="..." />
 		</overload>
 	</keyword>
@@ -133,16 +133,16 @@
 		</overload>
 	</keyword>
 	<keyword name="else" func="yes">
-		<overload return-value="Void" descr="Else">
+		<overload return-value="Null" descr="Else">
 		</overload>
 	</keyword>
 	<keyword name="elseif" func="yes">
-		<overload return-value="Void" descr="Else if">
+		<overload return-value="Null" descr="Else if">
 			<parameter name="Boolean $condition" />
 		</overload>
 	</keyword>
 	<keyword name="end" func="yes">
-		<overload return-value="Void" descr="End">
+		<overload return-value="Null" descr="End">
 		</overload>
 	</keyword>
 	<keyword name="equals" func="yes">
@@ -157,12 +157,12 @@
 		</overload>
 	</keyword>
 	<keyword name="forCondition" func="yes">
-		<overload return-value="Void" descr="For condition">
+		<overload return-value="Null" descr="For condition">
 			<parameter name="Boolean $condition" />
 		</overload>
 	</keyword>
 	<keyword name="forTime" func="yes">
-		<overload return-value="Void" descr="For time">
+		<overload return-value="Null" descr="For time">
 			<parameter name="Integer $time" />
 		</overload>
 	</keyword>
@@ -179,7 +179,7 @@
 		</overload>
 	</keyword>
 	<keyword name="if" func="yes">
-		<overload return-value="Void" descr="If">
+		<overload return-value="Null" descr="If">
 			<parameter name="Boolean $condition" />
 		</overload>
 	</keyword>
@@ -227,7 +227,7 @@
 		</overload>
 	</keyword>
 	<keyword name="map.set" func="yes">
-		<overload return-value="Void" descr="Set map entry">
+		<overload return-value="Null" descr="Set map entry">
 			<parameter name="Map =$map" />
 			<parameter name="String $key" />
 			<parameter name="Mixed $value" />
@@ -244,7 +244,7 @@
 		</overload>
 	</keyword>
 	<keyword name="map.remove" func="yes">
-		<overload return-value="Void" descr="Remove map entry">
+		<overload return-value="Null" descr="Remove map entry">
 			<parameter name="Map =$map" />
 			<parameter name="String $key" />
 		</overload>
@@ -517,7 +517,7 @@
 		</overload>
 	</keyword>
 	<keyword name="return" func="yes">
-		<overload return-value="Void" descr="Return from function with optional return value">
+		<overload return-value="Null" descr="Return from function with optional return value">
 			<parameter name="[Mixed $value]" />
 		</overload>
 	</keyword>
@@ -536,17 +536,17 @@
 		</overload>
 	</keyword>
 	<keyword name="script.disableNamedCondition" func="yes">
-		<overload return-value="Void" descr="Disable a specific named condition">
+		<overload return-value="Null" descr="Disable a specific named condition">
 			<parameter name="String $name" />
 		</overload>
 	</keyword>
 	<keyword name="script.emit" func="yes">
-		<overload return-value="Void" descr="Emit a condition">
+		<overload return-value="Null" descr="Emit a condition">
 			<parameter name="String $condition" />
 		</overload>
 	</keyword>
 	<keyword name="script.enableNamedCondition" func="yes">
-		<overload return-value="Void" descr="Enable a specific named condition">
+		<overload return-value="Null" descr="Enable a specific named condition">
 			<parameter name="String $name" />
 		</overload>
 	</keyword>
@@ -556,16 +556,16 @@
 		</overload>
 	</keyword>
 	<keyword name="script.stop" func="yes">
-		<overload return-value="Void" descr="Stop script">
+		<overload return-value="Null" descr="Stop script">
 		</overload>
 	</keyword>
 	<keyword name="script.wait" func="yes">
-		<overload return-value="Void" descr="Wait for given milliseconds">
+		<overload return-value="Null" descr="Wait for given milliseconds">
 			<parameter name="Integer $time" />
 		</overload>
 	</keyword>
 	<keyword name="script.waitForCondition" func="yes">
-		<overload return-value="Void" descr="Wait for condition to happen">
+		<overload return-value="Null" descr="Wait for condition to happen">
 		</overload>
 	</keyword>
 	<keyword name="set" func="yes">
@@ -584,13 +584,13 @@
 		</overload>
 	</keyword>
 	<keyword name="set.insert" func="yes">
-		<overload return-value="Void" descr="Insert key into set">
+		<overload return-value="Null" descr="Insert key into set">
 			<parameter name="Set =$set" />
 			<parameter name="String $key" />
 		</overload>
 	</keyword>
 	<keyword name="set.remove" func="yes">
-		<overload return-value="Void" descr="Remove key from set">
+		<overload return-value="Null" descr="Remove key from set">
 			<parameter name="Set =$set" />
 			<parameter name="String $key" />
 		</overload>
@@ -781,7 +781,7 @@
 		</overload>
 	</keyword>
 	<keyword name="transform.setRotationAngle" func="yes">
-		<overload return-value="Void" descr="Set rotation angle of specific rotation of transform">
+		<overload return-value="Null" descr="Set rotation angle of specific rotation of transform">
 			<parameter name="Transform =$transform" />
 			<parameter name="Integer $idx" />
 			<parameter name="Float $angle" />
@@ -804,7 +804,7 @@
 		</overload>
 	</keyword>
 	<keyword name="transform.setScale" func="yes">
-		<overload return-value="Void" descr="Set transfrom scale">
+		<overload return-value="Null" descr="Set transfrom scale">
 			<parameter name="Transform =$transform" />
 			<parameter name="Vector3 $scale" />
 		</overload>
@@ -820,13 +820,13 @@
 		</overload>
 	</keyword>
 	<keyword name="transform.setTranslation" func="yes">
-		<overload return-value="Void" descr="Set transform translation">
+		<overload return-value="Null" descr="Set transform translation">
 			<parameter name="Transform =$transform" />
 			<parameter name="Vector3 $translation" />
 		</overload>
 	</keyword>
 	<keyword name="transform.applyRotation" func="yes">
-		<overload return-value="Void" descr="Apply a rotation to transform">
+		<overload return-value="Null" descr="Apply a rotation to transform">
 			<parameter name="Transform =$transform" />
 			<parameter name="Vector3 $axis" />
 			<parameter name="Float $angle" />
@@ -1014,7 +1014,7 @@
 		</overload>
 	</keyword>
 	<keyword name="audio.setListenerOrientationAt" func="yes">
-		<overload return-value="Void" descr="Set listener orientation at">
+		<overload return-value="Null" descr="Set listener orientation at">
 			<parameter name="Vector3 $orientation" />
 		</overload>
 	</keyword>
@@ -1023,7 +1023,7 @@
 		</overload>
 	</keyword>
 	<keyword name="audio.setListenerOrientationUp" func="yes">
-		<overload return-value="Void" descr="Set listener orientation up">
+		<overload return-value="Null" descr="Set listener orientation up">
 			<parameter name="Vector3 $orientation" />
 		</overload>
 	</keyword>
@@ -1032,12 +1032,12 @@
 		</overload>
 	</keyword>
 	<keyword name="audio.setListenerPosition" func="yes">
-		<overload return-value="Void" descr="Set listener position">
+		<overload return-value="Null" descr="Set listener position">
 			<parameter name="Vector3 $position" />
 		</overload>
 	</keyword>
 	<keyword name="audio.play" func="yes">
-		<overload return-value="Void" descr="Play audio at engine entity position">
+		<overload return-value="Null" descr="Play audio at engine entity position">
 			<parameter name="String $id" />
 			<parameter name="[Integer $delay]" />
 			<parameter name="[Integer $gain]" />
@@ -1046,7 +1046,7 @@
 		</overload>
 	</keyword>
 	<keyword name="audio.playAtPosition" func="yes">
-		<overload return-value="Void" descr="Play audio at custom position">
+		<overload return-value="Null" descr="Play audio at custom position">
 			<parameter name="String $id" />
 			<parameter name="Vector3 $position" />
 			<parameter name="[Integer $delay]" />
@@ -1060,7 +1060,7 @@
 		</overload>
 	</keyword>
 	<keyword name="engine.setAnimationComputationReduction1Distance" func="yes">
-		<overload return-value="Void" descr="Set animation computation reduction 1 distance">
+		<overload return-value="Null" descr="Set animation computation reduction 1 distance">
 			<parameter name="Float $animationComputationReduction1Distance" />
 		</overload>
 	</keyword>
@@ -1069,7 +1069,7 @@
 		</overload>
 	</keyword>
 	<keyword name="engine.setAnimationComputationReduction2Distance" func="yes">
-		<overload return-value="Void" descr="Set animation computation reduction 2 distance">
+		<overload return-value="Null" descr="Set animation computation reduction 2 distance">
 			<parameter name="Float $animationComputationReduction2Distance" />
 		</overload>
 	</keyword>
@@ -1104,7 +1104,7 @@
 		</overload>
 	</keyword>
 	<keyword name="engine.camera.setFovX" func="yes">
-		<overload return-value="Void" descr="Set camera horizontal field of view">
+		<overload return-value="Null" descr="Set camera horizontal field of view">
 			<parameter name="Float $fovX" />
 		</overload>
 	</keyword>
@@ -1113,7 +1113,7 @@
 		</overload>
 	</keyword>
 	<keyword name="engine.camera.setLookAt" func="yes">
-		<overload return-value="Void" descr="Set camera look at">
+		<overload return-value="Null" descr="Set camera look at">
 			<parameter name="Vector3 $lookAt" />
 		</overload>
 	</keyword>
@@ -1122,7 +1122,7 @@
 		</overload>
 	</keyword>
 	<keyword name="engine.camera.setLookFrom" func="yes">
-		<overload return-value="Void" descr="Set camera look from">
+		<overload return-value="Null" descr="Set camera look from">
 			<parameter name="Vector3 $lookFrom" />
 		</overload>
 	</keyword>
@@ -1131,7 +1131,7 @@
 		</overload>
 	</keyword>
 	<keyword name="engine.camera.setUpVector" func="yes">
-		<overload return-value="Void" descr="Set camera up vector">
+		<overload return-value="Null" descr="Set camera up vector">
 			<parameter name="Vector3 $upVector" />
 		</overload>
 	</keyword>
@@ -1142,11 +1142,11 @@
 		</overload>
 	</keyword>
 	<keyword name="engine.dumpEntities" func="yes">
-		<overload return-value="Void" descr="Dump engine entities">
+		<overload return-value="Null" descr="Dump engine entities">
 		</overload>
 	</keyword>
 	<keyword name="engine.dumpShaders" func="yes">
-		<overload return-value="Void" descr="Dump engine shaders">
+		<overload return-value="Null" descr="Dump engine shaders">
 		</overload>
 	</keyword>
 	<keyword name="engine.entity.getAnimation" func="yes">
@@ -1156,7 +1156,7 @@
 		</overload>
 	</keyword>
 	<keyword name="engine.entity.setAnimation" func="yes">
-		<overload return-value="Void" descr="Set engine entity animation">
+		<overload return-value="Null" descr="Set engine entity animation">
 			<parameter name="String $entityId" />
 			<parameter name="String $animation" />
 			<parameter name="[Float $speed]" />
@@ -1164,7 +1164,7 @@
 		</overload>
 	</keyword>
 	<keyword name="engine.entity.setAnimationSpeed" func="yes">
-		<overload return-value="Void" descr="Get engine entity animation speed">
+		<overload return-value="Null" descr="Get engine entity animation speed">
 			<parameter name="String $entityId" />
 			<parameter name="Float $speed" />
 			<parameter name="[String $childEntityId]" />
@@ -1183,7 +1183,7 @@
 		</overload>
 	</keyword>
 	<keyword name="engine.entity.setEffectColorAdd" func="yes">
-		<overload return-value="Void" descr="Set engine entity additive effect color">
+		<overload return-value="Null" descr="Set engine entity additive effect color">
 			<parameter name="String $entityId" />
 			<parameter name="Vector4 $effectColorAdd" />
 			<parameter name="[String $childEntityId]" />
@@ -1196,7 +1196,7 @@
 		</overload>
 	</keyword>
 	<keyword name="engine.entity.setEffectColorMul" func="yes">
-		<overload return-value="Void" descr="Set engine entity multiplicative effect color">
+		<overload return-value="Null" descr="Set engine entity multiplicative effect color">
 			<parameter name="String $entityId" />
 			<parameter name="Vector4 $effectColorMul" />
 			<parameter name="[String $childEntityId]" />
@@ -1209,7 +1209,7 @@
 		</overload>
 	</keyword>
 	<keyword name="engine.entity.setEnabled" func="yes">
-		<overload return-value="Void" descr="Set engine entity enabled/disabled">
+		<overload return-value="Null" descr="Set engine entity enabled/disabled">
 			<parameter name="String $entityId" />
 			<parameter name="Boolean $enabled" />
 			<parameter name="[String $childEntityId]" />
@@ -1223,7 +1223,7 @@
 		</overload>
 	</keyword>
 	<keyword name="engine.entity.setNodeTransform" func="yes">
-		<overload return-value="Void" descr="Set engine entity node transform">
+		<overload return-value="Null" descr="Set engine entity node transform">
 			<parameter name="String $entityId" />
 			<parameter name="String $nodeId" />
 			<parameter name="Transform $transform" />
@@ -1231,7 +1231,7 @@
 		</overload>
 	</keyword>
 	<keyword name="engine.entity.unsetNodeTransform" func="yes">
-		<overload return-value="Void" descr="Unset engine entity node transform">
+		<overload return-value="Null" descr="Unset engine entity node transform">
 			<parameter name="String $entityId" />
 			<parameter name="String $nodeId" />
 			<parameter name="[String $childEntityId]" />
@@ -1245,7 +1245,7 @@
 		</overload>
 	</keyword>
 	<keyword name="engine.entity.setNodeTransformMatrix" func="yes">
-		<overload return-value="Void" descr="Set engine entity node transform matrix">
+		<overload return-value="Null" descr="Set engine entity node transform matrix">
 			<parameter name="String $entityId" />
 			<parameter name="String $nodeId" />
 			<parameter name="Matrix4x4 $matrix" />
@@ -1253,7 +1253,7 @@
 		</overload>
 	</keyword>
 	<keyword name="engine.entity.unsetNodeTransformMatrix" func="yes">
-		<overload return-value="Void" descr="Unset engine entity node transform matrix">
+		<overload return-value="Null" descr="Unset engine entity node transform matrix">
 			<parameter name="String $entityId" />
 			<parameter name="String $nodeId" />
 			<parameter name="[String $childEntityId]" />
@@ -1280,7 +1280,7 @@
 		</overload>
 	</keyword>
 	<keyword name="engine.entity.setPickable" func="yes">
-		<overload return-value="Void" descr="Set engine entity pickable">
+		<overload return-value="Null" descr="Set engine entity pickable">
 			<parameter name="String $entityId" />
 			<parameter name="Boolean $pickable" />
 			<parameter name="[String $childEntityId]" />
@@ -1293,14 +1293,14 @@
 		</overload>
 	</keyword>
 	<keyword name="engine.entity.setTransform" func="yes">
-		<overload return-value="Void" descr="Set engine entity transform">
+		<overload return-value="Null" descr="Set engine entity transform">
 			<parameter name="String $entityId" />
 			<parameter name="Transform $transform" />
 			<parameter name="[String $childEntityId]" />
 		</overload>
 	</keyword>
 	<keyword name="engine.entity.addOverlayAnimation" func="yes">
-		<overload return-value="Void" descr="Add engine entity overlay animation">
+		<overload return-value="Null" descr="Add engine entity overlay animation">
 			<parameter name="String $entityId" />
 			<parameter name="String $animation" />
 			<parameter name="[String $childEntityId]" />
@@ -1313,20 +1313,20 @@
 		</overload>
 	</keyword>
 	<keyword name="engine.entity.removeFinishedOverlayAnimations" func="yes">
-		<overload return-value="Void" descr="Remove finished overlay animations">
+		<overload return-value="Null" descr="Remove finished overlay animations">
 			<parameter name="String $entityId" />
 			<parameter name="[String $childEntityId]" />
 		</overload>
 	</keyword>
 	<keyword name="engine.entity.removeOverlayAnimation" func="yes">
-		<overload return-value="Void" descr="Remove specific overlay animation">
+		<overload return-value="Null" descr="Remove specific overlay animation">
 			<parameter name="String $entityId" />
 			<parameter name="String $animation" />
 			<parameter name="[String $childEntityId]" />
 		</overload>
 	</keyword>
 	<keyword name="engine.entity.removeOverlayAnimations" func="yes">
-		<overload return-value="Void" descr="Remove overlay animations">
+		<overload return-value="Null" descr="Remove overlay animations">
 			<parameter name="String $entityId" />
 			<parameter name="[String $childEntityId]" />
 		</overload>
@@ -1575,11 +1575,11 @@
 		</overload>
 	</keyword>
 	<keyword name="logic.signal.next" func="yes">
-		<overload return-value="Void" descr="Advance to next signal">
+		<overload return-value="Null" descr="Advance to next signal">
 		</overload>
 	</keyword>
 	<keyword name="logic.signal.send" func="yes">
-		<overload return-value="Void" descr="Send signal">
+		<overload return-value="Null" descr="Send signal">
 			<parameter name="String $logicId" />
 			<parameter name="String $signal" />
 			<parameter name="..." />
@@ -1630,7 +1630,7 @@
 		</overload>
 	</keyword>
 	<keyword name="sceneconnector.attachPrototype" func="yes">
-		<overload return-value="Void" descr="Attach prototype to the logic hierarchy">
+		<overload return-value="Null" descr="Attach prototype to the logic hierarchy">
 			<parameter name="String $pathName" />
 			<parameter name="String $fileName" />
 			<parameter name="String $id" />
@@ -1640,7 +1640,7 @@
 		</overload>
 	</keyword>
 	<keyword name="sceneconnector.spawnPrototype" func="yes">
-		<overload return-value="Void" descr="Spawn prototype in scene">
+		<overload return-value="Null" descr="Spawn prototype in scene">
 			<parameter name="String $pathName" />
 			<parameter name="String $fileName" />
 			<parameter name="String $id" />
@@ -1655,7 +1655,7 @@
 		</overload>
 	</keyword>
 	<keyword name="world.body.setAngularDamping" func="yes">
-		<overload return-value="Void" descr="Set physics world entity angular damping">
+		<overload return-value="Null" descr="Set physics world entity angular damping">
 			<parameter name="String $bodyId" />
 			<parameter name="Float $angularDamping" />
 		</overload>
@@ -1666,7 +1666,7 @@
 		</overload>
 	</keyword>
 	<keyword name="world.body.setAngularVelocity" func="yes">
-		<overload return-value="Void" descr="Set physics world entity angular velocity">
+		<overload return-value="Null" descr="Set physics world entity angular velocity">
 			<parameter name="String $bodyId" />
 			<parameter name="Vector3 $angularVelocity" />
 		</overload>
@@ -1745,7 +1745,7 @@
 		</overload>
 	</keyword>
 	<keyword name="world.body.setCollisionTypeId" func="yes">
-		<overload return-value="Void" descr="Set Physics world entity own collision type id">
+		<overload return-value="Null" descr="Set Physics world entity own collision type id">
 			<parameter name="String $bodyId" />
 			<parameter name="Integer $collisionTypeId" />
 		</overload>
@@ -1756,7 +1756,7 @@
 		</overload>
 	</keyword>
 	<keyword name="world.body.setCollisionTypeIds" func="yes">
-		<overload return-value="Void" descr="Set Physics world entity enabled collision type ids">
+		<overload return-value="Null" descr="Set Physics world entity enabled collision type ids">
 			<parameter name="String $bodyId" />
 			<parameter name="Integer $collisionTypeIds" />
 		</overload>
@@ -1767,7 +1767,7 @@
 		</overload>
 	</keyword>
 	<keyword name="world.body.setEnabled" func="yes">
-		<overload return-value="Void" descr="Set physics world entity enabled/disabled">
+		<overload return-value="Null" descr="Set physics world entity enabled/disabled">
 			<parameter name="String $bodyId" />
 			<parameter name="Boolean $enabled" />
 		</overload>
@@ -1778,7 +1778,7 @@
 		</overload>
 	</keyword>
 	<keyword name="world.body.setLinearDamping" func="yes">
-		<overload return-value="Void" descr="Set physics world entity linear damping">
+		<overload return-value="Null" descr="Set physics world entity linear damping">
 			<parameter name="String $bodyId" />
 			<parameter name="Float $linearDamping" />
 		</overload>
@@ -1789,7 +1789,7 @@
 		</overload>
 	</keyword>
 	<keyword name="world.body.setLinearVelocity" func="yes">
-		<overload return-value="Void" descr="Set physics world entity linear velocity">
+		<overload return-value="Null" descr="Set physics world entity linear velocity">
 			<parameter name="String $bodyId" />
 			<parameter name="Vector3 $linearVelocity" />
 		</overload>
@@ -1816,7 +1816,7 @@
 		</overload>
 	</keyword>
 	<keyword name="world.body.setTransform" func="yes">
-		<overload return-value="Void" descr="Set physics world entity transform">
+		<overload return-value="Null" descr="Set physics world entity transform">
 			<parameter name="String $bodyId" />
 			<parameter name="Transform $transform" />
 		</overload>
@@ -1827,14 +1827,14 @@
 		</overload>
 	</keyword>
 	<keyword name="world.body.addForce" func="yes">
-		<overload return-value="Void" descr="Add force to physics world entity">
+		<overload return-value="Null" descr="Add force to physics world entity">
 			<parameter name="String $bodyId" />
 			<parameter name="Vector3 $force" />
 			<parameter name="[Vector3 $origin]" />
 		</overload>
 	</keyword>
 	<keyword name="world.body.addTorque" func="yes">
-		<overload return-value="Void" descr="Add torque to physics world entity">
+		<overload return-value="Null" descr="Add torque to physics world entity">
 			<parameter name="String $bodyId" />
 			<parameter name="Vector3 $torque" />
 		</overload>
@@ -1884,31 +1884,31 @@
 		</overload>
 	</keyword>
 	<keyword name="gui.elementnode.conditions.set" func="yes">
-		<overload return-value="Void" descr="Set enabled GUI element node condition">
+		<overload return-value="Null" descr="Set enabled GUI element node condition">
 			<parameter name="String $elementNodeId" />
 			<parameter name="String $condition" />
 		</overload>
 	</keyword>
 	<keyword name="gui.elementnode.conditions.setAll" func="yes">
-		<overload return-value="Void" descr="Set array of enabled GUI element node conditions">
+		<overload return-value="Null" descr="Set array of enabled GUI element node conditions">
 			<parameter name="String $elementNodeId" />
 			<parameter name="Array $conditions" />
 		</overload>
 	</keyword>
 	<keyword name="gui.elementnode.conditions.add" func="yes">
-		<overload return-value="Void" descr="Add enabled GUI element node condition">
+		<overload return-value="Null" descr="Add enabled GUI element node condition">
 			<parameter name="String $elementNodeId" />
 			<parameter name="String $condition" />
 		</overload>
 	</keyword>
 	<keyword name="gui.elementnode.conditions.remove" func="yes">
-		<overload return-value="Void" descr="Remove enabled GUI element node condition">
+		<overload return-value="Null" descr="Remove enabled GUI element node condition">
 			<parameter name="String $elementNodeId" />
 			<parameter name="String $condition" />
 		</overload>
 	</keyword>
 	<keyword name="gui.elementnode.conditions.removeAll" func="yes">
-		<overload return-value="Void" descr="Remove all enabled GUI element node conditions">
+		<overload return-value="Null" descr="Remove all enabled GUI element node conditions">
 			<parameter name="String $elementNodeId" />
 		</overload>
 	</keyword>
@@ -1926,7 +1926,7 @@
 		</overload>
 	</keyword>
 	<keyword name="gui.imagenode.setSource" func="yes">
-		<overload return-value="Void" descr="Set image source of GUI image node">
+		<overload return-value="Null" descr="Set image source of GUI image node">
 			<parameter name="String $imageNodeId" />
 			<parameter name="String $source" />
 		</overload>
@@ -1937,25 +1937,25 @@
 		</overload>
 	</keyword>
 	<keyword name="gui.node.controller.setValue" func="yes">
-		<overload return-value="Void" descr="Set GUI node controller value">
+		<overload return-value="Null" descr="Set GUI node controller value">
 			<parameter name="String $nodeId" />
 			<parameter name="String $value" />
 		</overload>
 	</keyword>
 	<keyword name="gui.parentnode.addSubNodes" func="yes">
-		<overload return-value="Void" descr="Add sub nodes using XML to GUI parent node">
+		<overload return-value="Null" descr="Add sub nodes using XML to GUI parent node">
 			<parameter name="String $parentNodeId" />
 			<parameter name="String $xml" />
 			<parameter name="[Boolean $resetScrollOffsets]" />
 		</overload>
 	</keyword>
 	<keyword name="gui.parentnode.clearSubNodes" func="yes">
-		<overload return-value="Void" descr="Clear sub nodes of GUI parent node">
+		<overload return-value="Null" descr="Clear sub nodes of GUI parent node">
 			<parameter name="String $parentNodeId" />
 		</overload>
 	</keyword>
 	<keyword name="gui.parentnode.replaceSubNodes" func="yes">
-		<overload return-value="Void" descr="Replace sub nodes using XML of GUI parent node">
+		<overload return-value="Null" descr="Replace sub nodes using XML of GUI parent node">
 			<parameter name="String $parentNodeId" />
 			<parameter name="String $xml" />
 			<parameter name="[Boolean $resetScrollOffsets]" />
@@ -1967,7 +1967,7 @@
 		</overload>
 	</keyword>
 	<keyword name="gui.screen.setEnabled" func="yes">
-		<overload return-value="Void" descr="Set GUI screen enabled/disabled">
+		<overload return-value="Null" descr="Set GUI screen enabled/disabled">
 			<parameter name="String $screenId" />
 			<parameter name="Boolean $enabled" />
 		</overload>
@@ -1980,18 +1980,18 @@
 		</overload>
 	</keyword>
 	<keyword name="gui.screen.goto" func="yes">
-		<overload return-value="Void" descr="Goto current screen to specific screen">
+		<overload return-value="Null" descr="Goto current screen to specific screen">
 			<parameter name="String $fileName" />
 			<parameter name="[Map $variables]" />
 			<parameter name="[Mixed $arguments]" />
 		</overload>
 	</keyword>
 	<keyword name="gui.screen.pop" func="yes">
-		<overload return-value="Void" descr="Pop current screen from screen stack">
+		<overload return-value="Null" descr="Pop current screen from screen stack">
 		</overload>
 	</keyword>
 	<keyword name="gui.screen.push" func="yes">
-		<overload return-value="Void" descr="Push screen to current screen stack">
+		<overload return-value="Null" descr="Push screen to current screen stack">
 			<parameter name="String $fileName" />
 			<parameter name="[Map $variables]" />
 			<parameter name="[Mixed $arguments]" />
@@ -2007,7 +2007,7 @@
 		</overload>
 	</keyword>
 	<keyword name="gui.textnode.setText" func="yes">
-		<overload return-value="Void" descr="Set text of GUI text node">
+		<overload return-value="Null" descr="Set text of GUI text node">
 			<parameter name="String $textNodeId" />
 			<parameter name="String $text" />
 		</overload>
@@ -2018,7 +2018,7 @@
 		</overload>
 	</keyword>
 	<keyword name="gui.videonode.setSource" func="yes">
-		<overload return-value="Void" descr="Set video source of GUI video node">
+		<overload return-value="Null" descr="Set video source of GUI video node">
 			<parameter name="String $videoNodeId" />
 			<parameter name="String $source" />
 		</overload>

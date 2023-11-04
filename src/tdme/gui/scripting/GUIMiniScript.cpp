@@ -1113,8 +1113,8 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUIScreenSetEnabled(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "screenId", .optional = false, .reference = false, .nullable = false },
-						{.type = ScriptVariableType::TYPE_BOOLEAN, .name = "enabled", .optional = false, .reference = false, .nullable = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "screenId", .optional = false, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "enabled", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -1154,7 +1154,7 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUIScreenIsEnabled(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "screenId", .optional = false, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "screenId", .optional = false, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -1344,8 +1344,8 @@ void GUIMiniScript::registerMethods() {
 			ScriptMethodGUIScreenCall(GUIMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "screenId", .optional = false, .reference = false, .nullable = false },
-						{.type = ScriptVariableType::TYPE_STRING, .name = "function", .optional = false, .reference = false, .nullable = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "screenId", .optional = false, .reference = false, .nullable = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "function", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
