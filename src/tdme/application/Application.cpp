@@ -27,6 +27,9 @@
 	#include <dlfcn.h>
 #endif
 
+// experimental
+#include <gainput/gainput.h>
+
 #include <stdlib.h>
 
 #include <array>
@@ -54,6 +57,12 @@
 #include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
+
+// experimental
+using gainput::DeviceId;
+using gainput::InputDevicePad;
+using gainput::InputManager;
+using gainput::InputMap;
 
 using std::array;
 using std::shared_ptr;
@@ -338,7 +347,7 @@ void Application::exit(int exitCode) {
 	}
 #endif
 
-Application::Application() {
+Application::Application(): gaInputMap(gaInputManager) {
 	Application::application = this;
 	installExceptionHandler();
 }
@@ -699,10 +708,27 @@ int Application::run(int argc, char** argv, const string& title, InputEventHandl
 			FileSystem::getStandardFileSystem()->changePath(workingPathName);
 		}
 	#endif
+
+	// experimental
+	auto padId = gaInputManager.CreateDevice<gainput::InputDevicePad>();
+	gaInputManager.SetDisplaySize(getWindowWidth(), getWindowHeight());
+	gaInputMap.MapBool(GAMEPADBUTTON_LEFT, padId, gainput::PadButtonLeft);
+	gaInputMap.MapBool(GAMEPADBUTTON_RIGHT, padId, gainput::PadButtonRight);
+	gaInputMap.MapBool(GAMEPADBUTTON_UP, padId, gainput::PadButtonUp);
+	gaInputMap.MapBool(GAMEPADBUTTON_DOWN, padId, gainput::PadButtonDown);
+	gaInputMap.MapBool(GAMEPADBUTTON_SHIFTTAB, padId, gainput::PadButtonL1);
+	gaInputMap.MapBool(GAMEPADBUTTON_TAB, padId, gainput::PadButtonR1);
+	gaInputMap.MapBool(GAMEPADBUTTON_RETURN, padId, gainput::PadButtonX);
+	gaInputMap.MapBool(GAMEPADBUTTON_ESCAPE, padId, gainput::PadButtonB);
+
+	//
 	while (glfwWindowShouldClose(glfwWindow) == false) {
 		displayInternal();
 		if (Engine::getRenderer()->getRendererType() != Renderer::RENDERERTYPE_VULKAN) glfwSwapBuffers(glfwWindow);
+		//
 		glfwPollEvents();
+		// experimental
+		updatePadInput();
 	}
 	glfwTerminate();
 	//
@@ -772,13 +798,15 @@ void Application::reshapeInternal(int width, int height) {
 		Application::application->initialized = true;
 	}
 	Application::application->reshape(width, height);
+	// experimental
+	Application::application->gaInputManager.SetDisplaySize(width, height);
 }
 
 void Application::glfwOnChar(GLFWwindow* window, unsigned int key) {
 	if (Application::inputEventHandler == nullptr) return;
 	double mouseX, mouseY;
 	glfwGetCursorPos(window, &mouseX, &mouseY);
-	Application::inputEventHandler->onChar(key, (int)mouseX, (int)mouseY);
+	Application::inputEventHandler->onChar(key, static_cast<int>(mouseX), static_cast<int>(mouseY));
 }
 
 void Application::glfwOnKey(GLFWwindow* window, int key, int scanCode, int action, int mods) {
@@ -796,8 +824,8 @@ void Application::glfwOnKey(GLFWwindow* window, int key, int scanCode, int actio
 		Application::inputEventHandler->onKeyDown(
 			keyName == nullptr?-1:((mods & GLFW_MOD_SHIFT) == 0 && glfwCapsLockEnabled == false?Character::toLowerCase(keyName[0]):keyName[0]),
 			key,
-			(int)mouseX,
-			(int)mouseY,
+			static_cast<int>(mouseX),
+			static_cast<int>(mouseY),
 			action == GLFW_REPEAT,
 			mods
 		);
@@ -816,9 +844,9 @@ void Application::glfwOnKey(GLFWwindow* window, int key, int scanCode, int actio
 void Application::glfwOnMouseMoved(GLFWwindow* window, double x, double y) {
 	if (Application::inputEventHandler == nullptr) return;
 	if (glfwMouseButtonLast != -1 && glfwMouseButtonDownFrames[glfwMouseButtonLast] > 0) {
-		Application::inputEventHandler->onMouseDragged((int)x, (int)y);
+		Application::inputEventHandler->onMouseDragged(static_cast<int>(x), static_cast<int>(y));
 	} else {
-		Application::inputEventHandler->onMouseMoved((int)x, (int)y);
+		Application::inputEventHandler->onMouseMoved(static_cast<int>(x), static_cast<int>(y));
 	}
 }
 
@@ -826,7 +854,7 @@ void Application::glfwOnMouseButton(GLFWwindow* window, int button, int action, 
 	if (Application::inputEventHandler == nullptr) return;
 	double mouseX, mouseY;
 	glfwGetCursorPos(window, &mouseX, &mouseY);
-	Application::inputEventHandler->onMouseButton(button, action == GLFW_PRESS?MOUSE_BUTTON_DOWN:MOUSE_BUTTON_UP, (int)mouseX, (int)mouseY);
+	Application::inputEventHandler->onMouseButton(button, action == GLFW_PRESS?MOUSE_BUTTON_DOWN:MOUSE_BUTTON_UP, static_cast<int>(mouseX), static_cast<int>(mouseY));
 	if (action == GLFW_PRESS) {
 		glfwMouseButtonDownFrames[button]++;
 	} else {
@@ -839,8 +867,8 @@ void Application::glfwOnMouseWheel(GLFWwindow* window, double x, double y) {
 	if (Application::inputEventHandler == nullptr) return;
 	double mouseX, mouseY;
 	glfwGetCursorPos(window, &mouseX, &mouseY);
-	if (x != 0.0) Application::inputEventHandler->onMouseWheel(0, (int)x, (int)mouseX, (int)mouseY);
-	if (y != 0.0) Application::inputEventHandler->onMouseWheel(1, (int)y, (int)mouseX, (int)mouseY);
+	if (x != 0.0) Application::inputEventHandler->onMouseWheel(0, static_cast<int>(x), static_cast<int>(mouseX), static_cast<int>(mouseY));
+	if (y != 0.0) Application::inputEventHandler->onMouseWheel(1, static_cast<int>(y), static_cast<int>(mouseX), static_cast<int>(mouseY));
 }
 
 void Application::glfwOnWindowResize(GLFWwindow* window, int width, int height) {
@@ -861,8 +889,51 @@ void Application::glfwOnDrop(GLFWwindow* window, int count, const char** paths) 
 	Application::application->onDrop(pathsVector);
 }
 
+void Application::updatePadInput() {
+	if (Application::inputEventHandler == nullptr) return;
+	//
+	gaInputManager.Update();
+	//
+	double mouseX, mouseY;
+	glfwGetCursorPos(glfwWindow, &mouseX, &mouseY);
+	//
+	if (gaInputMap.GetBoolWasDown(GAMEPADBUTTON_LEFT) == true) {
+		Console::println("\tLEFT");
+		Application::inputEventHandler->onKeyDown(-1, KEYBOARD_KEYCODE_LEFT, static_cast<int>(mouseX), static_cast<int>(mouseY), false, KEYBOARD_MODIFIER_NONE);
+	}
+	if (gaInputMap.GetBoolWasDown(GAMEPADBUTTON_RIGHT) == true) {
+		Console::println("\tRIGHT");
+		Application::inputEventHandler->onKeyDown(-1, KEYBOARD_KEYCODE_RIGHT, static_cast<int>(mouseX), static_cast<int>(mouseY), false, KEYBOARD_MODIFIER_NONE);
+	}
+	if (gaInputMap.GetBoolWasDown(GAMEPADBUTTON_UP) == true) {
+		Console::println("\tUP");
+		Application::inputEventHandler->onKeyDown(-1, KEYBOARD_KEYCODE_UP, static_cast<int>(mouseX), static_cast<int>(mouseY), false, KEYBOARD_MODIFIER_NONE);
+	}
+	if (gaInputMap.GetBoolWasDown(GAMEPADBUTTON_DOWN) == true) {
+		Console::println("\tDOWN");
+		Application::inputEventHandler->onKeyDown(-1, KEYBOARD_KEYCODE_DOWN, static_cast<int>(mouseX), static_cast<int>(mouseY), false, KEYBOARD_MODIFIER_NONE);
+	}
+	if (gaInputMap.GetBoolWasDown(GAMEPADBUTTON_SHIFTTAB) == true) {
+		Console::println("\tSHIFTAB");
+		Application::inputEventHandler->onKeyDown(-1, KEYBOARD_KEYCODE_TAB, static_cast<int>(mouseX), static_cast<int>(mouseY), false, KEYBOARD_MODIFIER_SHIFT);
+	}
+	if (gaInputMap.GetBoolWasDown(GAMEPADBUTTON_TAB) == true) {
+		Console::println("\tTAB");
+		Application::inputEventHandler->onKeyDown(-1, KEYBOARD_KEYCODE_TAB, static_cast<int>(mouseX), static_cast<int>(mouseY), false, KEYBOARD_MODIFIER_NONE);
+	}
+	if (gaInputMap.GetBoolWasDown(GAMEPADBUTTON_RETURN) == true) {
+		Console::println("\tRETURN");
+		Application::inputEventHandler->onKeyDown(-1, KEYBOARD_KEYCODE_RETURN, static_cast<int>(mouseX), static_cast<int>(mouseY), false, KEYBOARD_MODIFIER_NONE);
+	}
+	if (gaInputMap.GetBoolWasDown(GAMEPADBUTTON_ESCAPE) == true) {
+		Console::println("\tCANCEL");
+		Application::inputEventHandler->onKeyDown(-1, KEYBOARD_KEYCODE_ESCAPE, static_cast<int>(mouseX), static_cast<int>(mouseY), false, KEYBOARD_MODIFIER_NONE);
+	}
+}
+
 void Application::onClose() {
 }
 
 void Application::onDrop(const vector<string>& paths) {
 }
+

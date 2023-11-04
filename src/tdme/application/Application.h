@@ -13,6 +13,9 @@
 #define MOUSE_CURSOR_NORMAL 1
 #define MOUSE_CURSOR_HAND 2
 
+// experimental
+#include <gainput/gainput.h>
+
 #include <array>
 #include <cstdlib>
 #include <string>
@@ -23,6 +26,9 @@
 #include <tdme/application/InputEventHandler.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+
+using gainput::InputManager;
+using gainput::InputMap;
 
 using std::array;
 using std::string;
@@ -362,6 +368,20 @@ private:
 
 	STATIC_DLL_IMPEXT static int mouseCursor;
 
+	// experimental
+	enum GamePadButton {
+		GAMEPADBUTTON_LEFT,
+		GAMEPADBUTTON_RIGHT,
+		GAMEPADBUTTON_UP,
+		GAMEPADBUTTON_DOWN,
+		GAMEPADBUTTON_SHIFTTAB,
+		GAMEPADBUTTON_TAB,
+		GAMEPADBUTTON_RETURN,
+		GAMEPADBUTTON_ESCAPE,
+	};
+	InputManager gaInputManager;
+	InputMap gaInputMap;
+
 	/**
 	 * Set application icon
 	 */
@@ -442,4 +462,8 @@ private:
 	 */
 	static void glfwOnDrop(GLFWwindow* window, int count, const char** paths);
 
+	/**
+	 * Update pad input
+	 */
+	void updatePadInput();
 };
