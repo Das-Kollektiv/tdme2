@@ -26,6 +26,7 @@ private:
 	int mouseLastX { -1 };
 	int mouseLastY { -1 };
 	bool dragging { false };
+	bool clicked { false };
 
 	// forbid class copy
 	FORBID_CLASS_COPY(GUIMoveableController)

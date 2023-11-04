@@ -58,55 +58,66 @@ void GUIMoveableController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 		event->getButton() == MOUSE_BUTTON_LEFT) {
 		//
 		if (dragging == true) {
-			event->setProcessed(true);
+			clicked = false;
 			dragging = false;
+			event->setProcessed(true);
+			//
+			node->getScreenNode()->forwardMoveRelease(this->node, event->getXUnscaled(), event->getYUnscaled());
 		}
-		//
-		node->getScreenNode()->forwardMoveRelease(this->node, event->getXUnscaled(), event->getYUnscaled());
 	} else
 	if (node == this->node && node->isEventBelongingToNode(event) == true &&
 		event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED == true &&
-		event->getButton() == MOUSE_BUTTON_LEFT &&
-		(Math::abs(event->getX() - mouseLastX) > 5 ||
-		Math::abs(event->getY() - mouseLastY) > 5)) {
-		if (node->getScreenNode()->isMoveAccepted(node) == true) {
-			//
-			dragging = true;
-		}
+		event->getButton() == MOUSE_BUTTON_LEFT) {
 		//
-		event->setProcessed(true);
+		mouseLastX = event->getX();
+		mouseLastY = event->getY();
+		// we clicked our node
+		clicked = true;
 	} else
-	if (dragging == true &&
+	if (clicked == true &&
 		event->getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED == true &&
 		event->getButton() == MOUSE_BUTTON_LEFT) {
+		//
 		auto movedX = event->getX() - mouseLastX;
 		auto movedY = event->getY() - mouseLastY;
-		// switch to positioning by pixels if not yet done
-		//	horizontal
-		if (this->node->getRequestsConstraints().leftType != GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
-			this->node->getRequestsConstraints().leftType = GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL;
-			this->node->getRequestsConstraints().left = this->node->getComputedConstraints().left;
+		//
+		if (dragging == true) {
+			// switch to positioning by pixels if not yet done
+			//	horizontal
+			if (this->node->getRequestsConstraints().leftType != GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
+				this->node->getRequestsConstraints().leftType = GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL;
+				this->node->getRequestsConstraints().left = this->node->getComputedConstraints().left;
+			}
+			//	vertical
+			if (this->node->getRequestsConstraints().topType != GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
+				this->node->getRequestsConstraints().topType = GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL;
+				this->node->getRequestsConstraints().top = this->node->getComputedConstraints().top;
+			}
+			// move it, move it
+			this->node->getRequestsConstraints().left+= movedX;
+			this->node->getRequestsConstraints().top+= movedY;
+			this->node->getComputedConstraints().left+= movedX;
+			this->node->getComputedConstraints().top+= movedY;
+			//
+			node->getScreenNode()->forwardMove(this->node);
+			//
+			node->getScreenNode()->invalidateLayout(this->node);
+			//
+			mouseLastX = event->getX();
+			mouseLastY = event->getY();
+			//
+			event->setProcessed(true);
+		} else
+		if (node->getScreenNode()->isMoveAccepted(node) == true) {
+			//
+			mouseLastX = event->getX();
+			mouseLastY = event->getY();
+			//
+			dragging = true;
+			//
+			event->setProcessed(true);
 		}
-		//	vertical
-		if (this->node->getRequestsConstraints().topType != GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
-			this->node->getRequestsConstraints().topType = GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL;
-			this->node->getRequestsConstraints().top = this->node->getComputedConstraints().top;
-		}
-		// move it, move it
-		this->node->getRequestsConstraints().left+= movedX;
-		this->node->getRequestsConstraints().top+= movedY;
-		this->node->getComputedConstraints().left+= movedX;
-		this->node->getComputedConstraints().top+= movedY;
-		//
-		node->getScreenNode()->forwardMove(this->node);
-		//
-		node->getScreenNode()->invalidateLayout(this->node);
-		//
-		event->setProcessed(true);
 	}
-	//
-	mouseLastX = event->getX();
-	mouseLastY = event->getY();
 }
 
 void GUIMoveableController::handleKeyboardEvent(GUIKeyboardEvent* event) {

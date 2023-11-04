@@ -216,8 +216,9 @@ void SceneEditorTabController::onDrop(const string& payload, int mouseX, int mou
 							libraryPrototype = prototype.release();
 							view->addPrototype(libraryPrototype);
 						}
-						// and place it
-						if (view->placeEntity(libraryPrototype, tabMouseX, tabMouseY) == false) {
+						// and place it (except terrain, which is automatically placed at origin
+						if (libraryPrototype->getType() != Prototype_Type::TERRAIN &&
+							view->placeEntity(libraryPrototype, tabMouseX, tabMouseY) == false) {
 							showInfoPopUp("Warning", "Could not place prototype entity.");
 						}
 					} catch (Exception& exception) {
