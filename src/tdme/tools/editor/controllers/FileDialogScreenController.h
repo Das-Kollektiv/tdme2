@@ -127,7 +127,9 @@ public:
 	virtual ~FileDialogScreenController();
 
 	// overridden methods
-	GUIScreenNode* getScreenNode() override;
+	inline GUIScreenNode* getScreenNode() override {
+		return screenNode;
+	}
 
 	/**
 	 * @return default current working directory
@@ -140,12 +142,16 @@ public:
 	 * Set default current working directory
 	 * @param defaultCWD default current working directory
 	 */
-	void setDefaultCWD(const string& defaultCwd);
+	inline void setDefaultCWD(const string& defaultCwd) {
+		this->defaultCwd = defaultCwd;
+	}
 
 	/**
 	 * @return path name
 	 */
-	const string& getPathName();
+	inline const string& getPathName() {
+		return cwd;
+	}
 
 	/**
 	 * @return file name

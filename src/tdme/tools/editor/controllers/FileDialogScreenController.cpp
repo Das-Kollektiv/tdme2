@@ -73,23 +73,9 @@ FileDialogScreenController::FileDialogScreenController(PopUps* popUps)
 FileDialogScreenController::~FileDialogScreenController() {
 }
 
-GUIScreenNode* FileDialogScreenController::getScreenNode()
-{
-	return screenNode;
-}
-
-const string& FileDialogScreenController::getPathName()
-{
-	return cwd;
-}
-
 const string FileDialogScreenController::getFileName()
 {
 	return fileNameNode->getController()->getValue().getString();
-}
-
-void FileDialogScreenController::setDefaultCWD(const string& defaultCwd) {
-	this->defaultCwd = defaultCwd;
 }
 
 void FileDialogScreenController::initialize()
