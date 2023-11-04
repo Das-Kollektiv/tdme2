@@ -124,5 +124,5 @@ void TextureManager::removeTexture(const string& textureId)
 		return;
 	}
 	mutex.unlock();
-	Console::println(string("Warning: texture not loaded by texture manager"));
+	Console::println(string("Warning: texture not loaded by texture manager: " + textureId));
 }

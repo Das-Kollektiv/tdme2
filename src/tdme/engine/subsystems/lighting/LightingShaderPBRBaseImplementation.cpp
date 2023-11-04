@@ -253,7 +253,7 @@ void LightingShaderPBRBaseImplementation::unloadTextures() {
 	}
 	//
 	Engine::getInstance()->getTextureManager()->removeTexture("pbr-environment-diffuse");
-	Engine::getInstance()->getTextureManager()->removeTexture("pbr-specular-diffuse");
+	Engine::getInstance()->getTextureManager()->removeTexture("pbr-environment-specular");
 }
 
 void LightingShaderPBRBaseImplementation::loadTextures(const string& pathName) {
