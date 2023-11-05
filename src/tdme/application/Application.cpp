@@ -704,6 +704,7 @@ int Application::run(int argc, char** argv, const string& title, InputEventHandl
 		}
 	#endif
 
+	//
 	try {
 		auto gameControllerDatabase = FileSystem::getInstance()->getContentAsString("resources/engine/misc", "gamecontrollerdb.txt");
 		glfwUpdateGamepadMappings(gameControllerDatabase.c_str());
