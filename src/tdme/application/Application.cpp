@@ -950,7 +950,7 @@ void Application::updateGamepadInput(int joystickIdx) {
 		handleButton(GLFW_GAMEPAD_BUTTON_LEFT_BUMPER, KEYBOARD_KEYCODE_TAB, KEYBOARD_MODIFIER_SHIFT);
 		// tab
 		handleButton(GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, KEYBOARD_KEYCODE_TAB);
-		// return
+		// space
 		handleButton(GLFW_GAMEPAD_BUTTON_CROSS, KEYBOARD_KEYCODE_SPACE);
 		// back
 		handleButton(GLFW_GAMEPAD_BUTTON_CIRCLE, KEYBOARD_KEYCODE_ESCAPE);
