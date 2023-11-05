@@ -591,6 +591,7 @@ int Application::run(int argc, char** argv, const string& title, InputEventHandl
 		}
 	}
 
+	//
 	Console::println("Application::run(): Opening renderer library: " + rendererLibrary);
 
 	// load renderer library
@@ -902,7 +903,7 @@ void Application::glfwOnJoystickConnect(int joystickIdx, int event) {
 
 void Application::updateJoystickInput(int joystickIdx) {
 	if (Application::inputEventHandler == nullptr) return;
-	// no joystick support yet
+	// no joystick support yet, as I just dont have a joystick :DDD
 }
 
 void Application::updateGamepadInput(int joystickIdx) {
