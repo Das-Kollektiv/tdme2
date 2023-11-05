@@ -883,65 +883,37 @@ void Application::updateJoystickInput() {
 	// TODO:  finish me!!!
 	// Console::println(glfwGetJoystickName(GLFW_JOYSTICK_1));
 	GLFWgamepadstate gamepadState;
+	//
+	auto handleButton = [&](int button, int keyCode, int modifier = KEYBOARD_MODIFIER_NONE) -> void {
+		if (gamepadState.buttons[button] == GLFW_PRESS &&
+			this->gamepadState.buttons[button] != GLFW_PRESS) {
+			Application::inputEventHandler->onKeyDown(-1, keyCode, static_cast<int>(mouseX), static_cast<int>(mouseY), false, modifier);
+			this->gamepadState.buttons[button] = GLFW_PRESS;
+		} else
+		if (gamepadState.buttons[button] == GLFW_RELEASE &&
+			this->gamepadState.buttons[button] == GLFW_PRESS) {
+			Application::inputEventHandler->onKeyUp(-1, keyCode, static_cast<int>(mouseX), static_cast<int>(mouseY));
+			this->gamepadState.buttons[button] = GLFW_RELEASE;
+		}
+	};
+	//
 	if (glfwGetGamepadState(GLFW_JOYSTICK_1, &gamepadState) == true) {
 		// left
-		if (gamepadState.buttons[GLFW_GAMEPAD_BUTTON_DPAD_LEFT] == true) {
-			Application::inputEventHandler->onKeyDown(-1, KEYBOARD_KEYCODE_LEFT, static_cast<int>(mouseX), static_cast<int>(mouseY), false, KEYBOARD_MODIFIER_NONE);
-		} else
-		if (lastGamepadState.buttons[GLFW_GAMEPAD_BUTTON_DPAD_LEFT] == true) {
-			Application::inputEventHandler->onKeyUp(-1, KEYBOARD_KEYCODE_LEFT, static_cast<int>(mouseX), static_cast<int>(mouseY));
-		}
+		handleButton(GLFW_GAMEPAD_BUTTON_DPAD_LEFT, KEYBOARD_KEYCODE_LEFT);
 		// right
-		if (gamepadState.buttons[GLFW_GAMEPAD_BUTTON_DPAD_RIGHT] == true) {
-			Application::inputEventHandler->onKeyDown(-1, KEYBOARD_KEYCODE_RIGHT, static_cast<int>(mouseX), static_cast<int>(mouseY), false, KEYBOARD_MODIFIER_NONE);
-		} else
-		if (lastGamepadState.buttons[GLFW_GAMEPAD_BUTTON_DPAD_RIGHT] == true) {
-			Application::inputEventHandler->onKeyUp(-1, KEYBOARD_KEYCODE_RIGHT, static_cast<int>(mouseX), static_cast<int>(mouseY));
-		}
+		handleButton(GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, KEYBOARD_KEYCODE_RIGHT);
 		// up
-		if (gamepadState.buttons[GLFW_GAMEPAD_BUTTON_DPAD_UP] == true) {
-			Application::inputEventHandler->onKeyDown(-1, KEYBOARD_KEYCODE_UP, static_cast<int>(mouseX), static_cast<int>(mouseY), false, KEYBOARD_MODIFIER_NONE);
-		} else
-		if (lastGamepadState.buttons[GLFW_GAMEPAD_BUTTON_DPAD_UP] == true) {
-			Application::inputEventHandler->onKeyUp(-1, KEYBOARD_KEYCODE_UP, static_cast<int>(mouseX), static_cast<int>(mouseY));
-		}
+		handleButton(GLFW_GAMEPAD_BUTTON_DPAD_UP, KEYBOARD_KEYCODE_UP);
 		// down
-		if (gamepadState.buttons[GLFW_GAMEPAD_BUTTON_DPAD_DOWN] == true) {
-			Application::inputEventHandler->onKeyDown(-1, KEYBOARD_KEYCODE_DOWN, static_cast<int>(mouseX), static_cast<int>(mouseY), false, KEYBOARD_MODIFIER_NONE);
-		} else
-		if (lastGamepadState.buttons[GLFW_GAMEPAD_BUTTON_DPAD_DOWN] == true) {
-			Application::inputEventHandler->onKeyUp(-1, KEYBOARD_KEYCODE_DOWN, static_cast<int>(mouseX), static_cast<int>(mouseY));
-		}
+		handleButton(GLFW_GAMEPAD_BUTTON_DPAD_DOWN, KEYBOARD_KEYCODE_DOWN);
 		// shift/tab
-		if (gamepadState.buttons[GLFW_GAMEPAD_BUTTON_LEFT_BUMPER] == true) {
-			Application::inputEventHandler->onKeyDown(-1, KEYBOARD_KEYCODE_TAB, static_cast<int>(mouseX), static_cast<int>(mouseY), false, KEYBOARD_MODIFIER_SHIFT);
-		} else
-		if (lastGamepadState.buttons[GLFW_GAMEPAD_BUTTON_LEFT_BUMPER] == true) {
-			Application::inputEventHandler->onKeyUp(-1, KEYBOARD_KEYCODE_TAB, static_cast<int>(mouseX), static_cast<int>(mouseY));
-		}
+		handleButton(GLFW_GAMEPAD_BUTTON_LEFT_BUMPER, KEYBOARD_KEYCODE_TAB, KEYBOARD_MODIFIER_SHIFT);
 		// tab
-		if (gamepadState.buttons[GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER] == true) {
-			Application::inputEventHandler->onKeyDown(-1, KEYBOARD_KEYCODE_TAB, static_cast<int>(mouseX), static_cast<int>(mouseY), false, KEYBOARD_MODIFIER_NONE);
-		} else
-		if (lastGamepadState.buttons[GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER] == true) {
-			Application::inputEventHandler->onKeyUp(-1, KEYBOARD_KEYCODE_TAB, static_cast<int>(mouseX), static_cast<int>(mouseY));
-		}
+		handleButton(GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, KEYBOARD_KEYCODE_TAB);
 		// return
-		if (gamepadState.buttons[GLFW_GAMEPAD_BUTTON_CROSS] == true) {
-			Application::inputEventHandler->onKeyDown(-1, KEYBOARD_KEYCODE_RETURN, static_cast<int>(mouseX), static_cast<int>(mouseY), false, KEYBOARD_MODIFIER_NONE);
-		} else
-		if (lastGamepadState.buttons[GLFW_GAMEPAD_BUTTON_CROSS] == true) {
-			Application::inputEventHandler->onKeyUp(-1, KEYBOARD_KEYCODE_RETURN, static_cast<int>(mouseX), static_cast<int>(mouseY));
-		}
+		handleButton(GLFW_GAMEPAD_BUTTON_CROSS, KEYBOARD_KEYCODE_SPACE);
 		// back
-		if (gamepadState.buttons[GLFW_GAMEPAD_BUTTON_CIRCLE] == true) {
-			Application::inputEventHandler->onKeyDown(-1, KEYBOARD_KEYCODE_ESCAPE, static_cast<int>(mouseX), static_cast<int>(mouseY), false, KEYBOARD_MODIFIER_NONE);
-		} else
-		if (lastGamepadState.buttons[GLFW_GAMEPAD_BUTTON_CIRCLE] == true) {
-			Application::inputEventHandler->onKeyUp(-1, KEYBOARD_KEYCODE_ESCAPE, static_cast<int>(mouseX), static_cast<int>(mouseY));
-		}
-		//
-		lastGamepadState = gamepadState;
+		handleButton(GLFW_GAMEPAD_BUTTON_CIRCLE, KEYBOARD_KEYCODE_ESCAPE);
 	}
 }
 

@@ -362,7 +362,7 @@ private:
 
 	STATIC_DLL_IMPEXT static int mouseCursor;
 
-	GLFWgamepadstate lastGamepadState;
+	GLFWgamepadstate gamepadState;
 
 	/**
 	 * Set application icon

@@ -338,40 +338,6 @@ void FileDialogScreenController::onChange(GUIElementNode* node)
 	if (node->getId() == typeDropDownNode->getId()) {
 		setupFiles();
 	} else
-	if (node->getId() == filesNode->getId()) {
-		try {
-			auto selectedFile = node->getController()->getValue().getString();
-			if (FileSystem::getStandardFileSystem()->isDrive(selectedFile) == true) {
-				auto lastCwd = cwd;
-				cwd = selectedFile;
-				if (setupFiles() == false) {
-					cwd = lastCwd;
-					setupFiles();
-				}
-			} else
-			if (FileSystem::getStandardFileSystem()->isPath(cwd + "/" + selectedFile) == true) {
-				auto lastCwd = cwd;
-				try {
-					cwd = FileSystem::getStandardFileSystem()->getCanonicalPath(cwd, selectedFile);
-				} catch (Exception& exception) {
-					Console::println("FileDialogScreenController::onChange(): An error occurred: " + string(exception.what()));
-				}
-				if (setupFiles() == false) {
-					cwd = lastCwd;
-					setupFiles();
-				}
-			} else {
-				if (filtered == true) {
-					setupFiles(fileList, selectedFile);
-					filtered = false;
-				}
-				fileNameNode->getController()->setValue(selectedFile);
-			}
-		} catch (Exception& exception) {
-			Console::println("FileDialogScreenController::onChange(): An error occurred: " + string(exception.what()));
-			fileNameNode->getController()->setValue(MutableString());
-		}
-	} else
 	if (node->getId() == fileNameNode->getId()) {
 		try {
 			if (enableFilter == true) {
@@ -401,6 +367,40 @@ void FileDialogScreenController::onChange(GUIElementNode* node)
 void FileDialogScreenController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
+		if (node->getId() == filesNode->getId()) {
+			try {
+				auto selectedFile = node->getController()->getValue().getString();
+				if (FileSystem::getStandardFileSystem()->isDrive(selectedFile) == true) {
+					auto lastCwd = cwd;
+					cwd = selectedFile;
+					if (setupFiles() == false) {
+						cwd = lastCwd;
+						setupFiles();
+					}
+				} else
+				if (FileSystem::getStandardFileSystem()->isPath(cwd + "/" + selectedFile) == true) {
+					auto lastCwd = cwd;
+					try {
+						cwd = FileSystem::getStandardFileSystem()->getCanonicalPath(cwd, selectedFile);
+					} catch (Exception& exception) {
+						Console::println("FileDialogScreenController::onAction(): An error occurred: " + string(exception.what()));
+					}
+					if (setupFiles() == false) {
+						cwd = lastCwd;
+						setupFiles();
+					}
+				} else {
+					if (filtered == true) {
+						setupFiles(fileList, selectedFile);
+						filtered = false;
+					}
+					fileNameNode->getController()->setValue(selectedFile);
+				}
+			} catch (Exception& exception) {
+				Console::println("FileDialogScreenController::onAction(): An error occurred: " + string(exception.what()));
+				fileNameNode->getController()->setValue(MutableString());
+			}
+		} else
 		if (node->getId() == pathNode->getId()) {
 			if (StringTools::endsWith(cwd, "/") == true) cwd = StringTools::substring(cwd, 0, cwd.size() - 1);
 			auto lastCwd = cwd;
