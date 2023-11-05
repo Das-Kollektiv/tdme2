@@ -683,6 +683,7 @@ int Application::run(int argc, char** argv, const string& title, InputEventHandl
 	glfwSetKeyCallback(glfwWindow, Application::glfwOnKey);
 	glfwSetCursorPosCallback(glfwWindow, Application::glfwOnMouseMoved);
 	glfwSetMouseButtonCallback(glfwWindow, Application::glfwOnMouseButton);
+	glfwSetJoystickCallback(Application::glfwOnJoystickConnect);
 	glfwSetScrollCallback(glfwWindow, Application::glfwOnMouseWheel);
 	glfwSetWindowSizeCallback(glfwWindow, Application::glfwOnWindowResize);
 	glfwSetWindowCloseCallback(glfwWindow, Application::glfwOnClose);
@@ -710,13 +711,19 @@ int Application::run(int argc, char** argv, const string& title, InputEventHandl
 	}
 
 	//
+	for (auto joystickIdx = GLFW_JOYSTICK_1; joystickIdx <= GLFW_JOYSTICK_16; joystickIdx++) {
+		if (glfwJoystickPresent(joystickIdx) == true) glfwOnJoystickConnect(joystickIdx, GLFW_CONNECTED);
+	}
+
+	//
 	while (glfwWindowShouldClose(glfwWindow) == false) {
 		displayInternal();
 		if (Engine::getRenderer()->getRendererType() != Renderer::RENDERERTYPE_VULKAN) glfwSwapBuffers(glfwWindow);
 		//
 		glfwPollEvents();
 		//
-		updateJoystickInput();
+		for (const auto gamepadIdx: connectedGamepads) updateGamepadInput(gamepadIdx);
+		for (const auto joystickIdx: connectedJoysticks) updateJoystickInput(joystickIdx);
 	}
 	glfwTerminate();
 	//
@@ -875,25 +882,56 @@ void Application::glfwOnDrop(GLFWwindow* window, int count, const char** paths) 
 	Application::application->onDrop(pathsVector);
 }
 
-void Application::updateJoystickInput() {
+void Application::glfwOnJoystickConnect(int joystickIdx, int event) {
+	if (Application::application == nullptr) return;
+	//
+	if (event == GLFW_CONNECTED) {
+		if (glfwJoystickIsGamepad(joystickIdx) == true) {
+			Console::println("Application::glfwOnJoystickConnect(): connected gamepad with idx = " + to_string(joystickIdx) + ", name = " + glfwGetJoystickName(joystickIdx));
+			Application::application->connectedGamepads.insert(joystickIdx);
+		} else {
+			Console::println("Application::glfwOnJoystickConnect(): connected joystick with idx = " + to_string(joystickIdx) + ", name = " + glfwGetJoystickName(joystickIdx));
+			Application::application->connectedJoysticks.insert(joystickIdx);
+		}
+	} else if (event == GLFW_DISCONNECTED) {
+		Console::println("Application::glfwOnJoystickConnect(): disconnected joystick/gamepad with idx = " + to_string(joystickIdx));
+		Application::application->connectedGamepads.erase(joystickIdx);
+		Application::application->connectedJoysticks.erase(joystickIdx);
+	}
+}
+
+void Application::updateJoystickInput(int joystickIdx) {
+	if (Application::inputEventHandler == nullptr) return;
+	// no joystick support yet
+}
+
+void Application::updateGamepadInput(int joystickIdx) {
 	if (Application::inputEventHandler == nullptr) return;
 	//
 	double mouseX, mouseY;
 	glfwGetCursorPos(glfwWindow, &mouseX, &mouseY);
-	// TODO:  finish me!!!
-	// Console::println(glfwGetJoystickName(GLFW_JOYSTICK_1));
 	GLFWgamepadstate gamepadState;
 	//
-	auto handleButton = [&](int button, int keyCode, int modifier = KEYBOARD_MODIFIER_NONE) -> void {
-		if (gamepadState.buttons[button] == GLFW_PRESS &&
-			this->gamepadState.buttons[button] != GLFW_PRESS) {
+	auto now = Time::getCurrentMillis();
+	auto handleButton = [&](int buttonIdx, int keyCode, int modifier = KEYBOARD_MODIFIER_NONE) -> void {
+		// press
+		if (gamepadState.buttons[buttonIdx] == GLFW_PRESS &&
+			joystickButtons[joystickIdx][buttonIdx] == -1LL) {
 			Application::inputEventHandler->onKeyDown(-1, keyCode, static_cast<int>(mouseX), static_cast<int>(mouseY), false, modifier);
-			this->gamepadState.buttons[button] = GLFW_PRESS;
+			joystickButtons[joystickIdx][buttonIdx] = now;
 		} else
-		if (gamepadState.buttons[button] == GLFW_RELEASE &&
-			this->gamepadState.buttons[button] == GLFW_PRESS) {
+		// release
+		if (gamepadState.buttons[buttonIdx] == GLFW_RELEASE &&
+			joystickButtons[joystickIdx][buttonIdx] != -1LL) {
 			Application::inputEventHandler->onKeyUp(-1, keyCode, static_cast<int>(mouseX), static_cast<int>(mouseY));
-			this->gamepadState.buttons[button] = GLFW_RELEASE;
+			joystickButtons[joystickIdx][buttonIdx] = -1LL;
+		} else
+		// repeat
+		if (gamepadState.buttons[buttonIdx] == GLFW_PRESS &&
+			joystickButtons[joystickIdx][buttonIdx] != 0LL &&
+			now - joystickButtons[joystickIdx][buttonIdx] >= JOYSTICK_BUTTON_TIME_REPEAT) {
+			Application::inputEventHandler->onKeyDown(-1, keyCode, static_cast<int>(mouseX), static_cast<int>(mouseY), true, modifier);
+			joystickButtons[joystickIdx][buttonIdx] = now;
 		}
 	};
 	//

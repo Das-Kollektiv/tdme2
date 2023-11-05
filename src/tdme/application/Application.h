@@ -16,6 +16,7 @@
 #include <array>
 #include <cstdlib>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -26,6 +27,7 @@
 
 using std::array;
 using std::string;
+using std::unordered_set;
 using std::vector;
 
 using tdme::application::InputEventHandler;
@@ -55,6 +57,7 @@ public:
 	static constexpr int EXITCODE_SUCCESS { EXIT_SUCCESS };
 	static constexpr int EXITCODE_FAILURE { EXIT_FAILURE };
 
+	static constexpr int64_t JOYSTICK_BUTTON_TIME_REPEAT { 150LL };
 	/**
 	 * @return renderer
 	 */
@@ -362,7 +365,9 @@ private:
 
 	STATIC_DLL_IMPEXT static int mouseCursor;
 
-	GLFWgamepadstate gamepadState;
+	unordered_set<int> connectedJoysticks;
+	unordered_set<int> connectedGamepads;
+	array<array<int64_t, 16>, 16> joystickButtons;
 
 	/**
 	 * Set application icon
@@ -370,9 +375,16 @@ private:
 	void setIcon();
 
 	/**
-	 * Update joystick support
+	 * Update joystick input for given joystick index
+	 * @param joystickIdx joystick index
 	 */
-	void updateJoystickInput();
+	void updateJoystickInput(int joystickIdx);
+
+	/**
+	 * Update gamepad input for given gamepad index
+	 * @param gamepadIdx gamepad index
+	 */
+	void updateGamepadInput(int gamepadIdx);
 
 	/**
 	 * Display function
@@ -448,5 +460,12 @@ private:
 	 * @param paths paths
 	 */
 	static void glfwOnDrop(GLFWwindow* window, int count, const char** paths);
+
+	/**
+	 * GLFW on joystick connect/disconnect
+	 * @param joystickIdx joystick index
+	 * @param event event
+	 */
+	static void glfwOnJoystickConnect(int joystickIdx, int event);
 
 };
