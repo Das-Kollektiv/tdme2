@@ -935,7 +935,7 @@ void Application::updateGamepadInput(int joystickIdx) {
 		}
 	};
 	//
-	if (glfwGetGamepadState(GLFW_JOYSTICK_1, &gamepadState) == true) {
+	if (glfwGetGamepadState(joystickIdx, &gamepadState) == true) {
 		// left
 		handleButton(GLFW_GAMEPAD_BUTTON_DPAD_LEFT, KEYBOARD_KEYCODE_LEFT);
 		// right
