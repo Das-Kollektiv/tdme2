@@ -52,7 +52,7 @@ const unordered_set<string> MiniScriptTranspiler::getAllMethodNames(MiniScript* 
 		if (scriptMethod->getArgumentTypes().empty() == true ||
 			scriptMethod->getArgumentTypes()[0].name != className) continue;
 		// first argument of method must be of type of the class
-		if (className != MiniScript::ScriptVariable::getClassName(scriptMethod->getArgumentTypes()[0].type) ||
+		if (className != MiniScript::ScriptVariable::getClassName(miniScript, scriptMethod->getArgumentTypes()[0].type) ||
 			className != scriptMethod->getArgumentTypes()[0].name) continue;
 		//
 		allMethods.insert(method);
@@ -85,7 +85,7 @@ const unordered_map<string, vector<string>> MiniScriptTranspiler::getAllClassesM
 		if (scriptMethod->getArgumentTypes().empty() == true ||
 			scriptMethod->getArgumentTypes()[0].name != className) continue;
 		// first argument of method must be of type of the class
-		if (className != MiniScript::ScriptVariable::getClassName(scriptMethod->getArgumentTypes()[0].type) ||
+		if (className != MiniScript::ScriptVariable::getClassName(miniScript, scriptMethod->getArgumentTypes()[0].type) ||
 			className != scriptMethod->getArgumentTypes()[0].name) continue;
 		//
 		methodByClasses[className].push_back(method);
@@ -530,7 +530,7 @@ void MiniScriptTranspiler::generateMiniScriptEvaluateMemberAccessArrays(
 	generatedDeclarations.push_back("// evaluate member access arrays");
 	generatedDefinitions.push_back("evaluateMemberAccessArrays = {};");
 	for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); typeIdx <= static_cast<int>(MiniScript::TYPE_SET); typeIdx++) {
-		const auto& className = MiniScript::ScriptVariable::getClassName(static_cast<MiniScript::ScriptVariableType>(typeIdx));
+		const auto& className = MiniScript::ScriptVariable::getClassName(miniScript, static_cast<MiniScript::ScriptVariableType>(typeIdx));
 		const auto& methods = methodsByClasses[className];
 		auto methodIdx = 0;
 		for (const auto& method: allMethods) {

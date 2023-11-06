@@ -222,6 +222,12 @@ void MiniScript::registerMethod(ScriptMethod* scriptMethod) {
 	scriptMethods[scriptMethod->getMethodName()] = scriptMethod;
 }
 
+void MiniScript::registerDataType(ScriptDataType* scriptDataType) {
+	scriptDataType->setType(TYPE_PSEUDO_CUSTOM_DATATYPES + scriptDataTypes.size());
+	scriptDataTypes.push_back(scriptDataType);
+	scriptDataType->registerMethods(this);
+}
+
 void MiniScript::executeScriptLine() {
 	auto& scriptState = getScriptState();
 	if (scriptState.scriptIdx == SCRIPTIDX_NONE || scriptState.statementIdx == STATEMENTIDX_NONE || scriptState.running == false) return;
@@ -691,7 +697,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 					Console::println(
 						getStatementInformation(statement) +
 						": method '" + string(syntaxTree.value.getValueAsString()) + "'" +
-						": argument value @ " + to_string(argumentIdx) + ": expected " + ScriptVariable::getTypeAsString(argumentType.type) + ", but got: " + (argumentIdx < argumentValues.size()?argumentValues[argumentIdx].getAsString():"nothing"));
+						": argument value @ " + to_string(argumentIdx) + ": expected " + ScriptVariable::getTypeAsString(this, argumentType.type) + ", but got: " + (argumentIdx < argumentValues.size()?argumentValues[argumentIdx].getAsString():"nothing"));
 				}
 				argumentIdx++;
 			}
@@ -713,7 +719,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 			Console::println(
 				getStatementInformation(statement) +
 				": method '" + string(syntaxTree.value.getValueAsString()) + "'" +
-				": return value: expected " + ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable()) + ", but got: " + ScriptVariable::getReturnTypeAsString(returnValue.getType(), false));
+				": return value: expected " + ScriptVariable::getReturnTypeAsString(this, scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable()) + ", but got: " + ScriptVariable::getReturnTypeAsString(this, returnValue.getType(), false));
 		}
 		//
 		return returnValue;
@@ -2544,9 +2550,9 @@ const string MiniScript::getInformation() {
 				string method;
 				method+= scriptMethod->getMethodName();
 				method+= "(";
-				method+= scriptMethod->getArgumentsInformation();
+				method+= scriptMethod->getArgumentsInformation(this);
 				method+= "): ";
-				method+= ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable());
+				method+= ScriptVariable::getReturnTypeAsString(this, scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable());
 				methods.push_back(method);
 			}
 			sort(methods.begin(), methods.end());
@@ -2564,9 +2570,9 @@ const string MiniScript::getInformation() {
 				operatorString+= " --> ";
 				operatorString+= scriptMethod->getMethodName();
 				operatorString+= "(";
-				operatorString+= scriptMethod->getArgumentsInformation();
+				operatorString+= scriptMethod->getArgumentsInformation(this);
 				operatorString+= "): ";
-				operatorString+= ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable());
+				operatorString+= ScriptVariable::getReturnTypeAsString(this, scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable());
 				operators.push_back(operatorString);
 			}
 			sort(operators.begin(), operators.end());
@@ -2767,7 +2773,7 @@ void MiniScript::registerMethods() {
 						}
 					}
 					//
-					const auto& className = ScriptVariable::getClassName(argumentValues[1].getType());
+					const auto& className = argumentValues[1].getClassName();
 					//
 					if (className.empty() == false || functionIdx != MiniScript::SCRIPTIDX_NONE) {
 						//
@@ -7771,7 +7777,13 @@ void MiniScript::registerMethods() {
 	}
 }
 
+void MiniScript::registerDataTypes() {
+	for (const auto scriptDataType: scriptDataTypes) delete scriptDataType;
+	scriptDataTypes.clear();
+}
+
 void MiniScript::registerVariables() {
+	for (const auto& [variableName, variable]: getRootScriptState().variables) delete variable;
 }
 
 const MiniScript::ScriptVariable MiniScript::initializeArray(const string_view& initializerString, MiniScript* miniScript, const ScriptStatement& statement) {
