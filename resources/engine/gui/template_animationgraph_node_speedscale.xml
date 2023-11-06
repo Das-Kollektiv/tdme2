@@ -1,12 +1,12 @@
 <template>
-			
+
+	<template id="{$id}" src="resources/engine/gui/template_visualcode_node.xml" node-name="Speed Scale" node-type-color="{$node-type-color}">
+
+			<!-- ----------- -->	
 			<layout alignment="horizontal" width="100%" height="auto">
-			
-				<!-- input container -->
-				<layout id="{$id}_input_container" alignment="vertical" width="85%" height="auto">
-					
+				<layout alignment="vertical" width="85%" height="auto">
 					<template
-						id="base"
+						id="{$id}_input"
 						src="resources/engine/gui/template_visualcode_input.xml"
 						
 						pin_type_connected="resources/engine/images/visualcode_flow_connected.png"
@@ -14,11 +14,10 @@
 						
 						text="In"
 					/>
-					
 					<template
-						id="speed"
+						id="{$id}_speed"
 						src="resources/engine/gui/template_visualcode_input.xml"
-						on-initialize="speed_input_type_panel.condition=input"
+						on-initialize="{$id}_speed_input_type_panel.condition=input"
 						
 						text="Scale"
 
@@ -26,24 +25,19 @@
 						input_options="type=float,,step=0.01,decimals=2"
 						input_image="resources/engine/images/inputslider.png"
 					/>
-					
-				</layout>
-				<!-- --------------- -->
-
-				<!-- output container -->			
-				<layout id="{$id}_output_container" alignment="vertical" width="15%" height="auto">
-				
+				</layout>		
+				<layout alignment="vertical" width="15%" height="auto">
 					<template
-						id="output1"
+						id="{$id}_output"
 						src="resources/engine/gui/template_visualcode_output.xml"
 					
 						pin_type_connected="resources/engine/images/visualcode_flow_connected.png"
 						pin_type_unconnected="resources/engine/images/visualcode_flow_unconnected.png"
 					/>
-					
 				</layout>
-				<!-- --------------- -->
-
-			</layout>		
-				
+			</layout>
+			<!-- --------------- -->
+	
+	</template>
+		
 </template>

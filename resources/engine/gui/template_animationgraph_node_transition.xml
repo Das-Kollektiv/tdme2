@@ -1,35 +1,42 @@
 <template>
-			
+
+	<template id="{$id}" src="resources/engine/gui/template_visualcode_node.xml" node-name="Transition" node-type-color="{$node-type-color}">
+
+			<!-- base -->	
 			<layout alignment="horizontal" width="100%" height="auto">
-			
-				<!-- input container -->
-				<layout id="{$id}_input_container" alignment="vertical" width="85%" height="auto">
-					
+				<layout alignment="vertical" width="85%" height="auto">
 					<template
-						id="dropdown_state"
+						id="{$id}_dropdown"
 						src="resources/engine/gui/template_visualcode_input.xml"
-						on-initialize="dropdown_state_input_type_panel.condition=dropdown"
+						on-initialize="{$id}_dropdown_input_type_panel.condition=dropdown"
 						
 						text="Current"
 					/>
-					
-				</layout>
-				<!-- --------------- -->
-
-				<!-- output container -->			
-				<layout id="{$id}_output_container" alignment="vertical" width="15%" height="auto">
-				
+				</layout>			
+				<layout alignment="vertical" width="15%" height="auto">
 					<template
-						id="output1"
+						id="{$id}_output"
 						src="resources/engine/gui/template_visualcode_output.xml"
 					
 						pin_type_connected="resources/engine/images/visualcode_flow_connected.png"
 						pin_type_unconnected="resources/engine/images/visualcode_flow_unconnected.png"
 					/>
-					
 				</layout>
-				<!-- --------------- -->
-
-			</layout>		
-				
+			</layout>
+			<!-- --------------- -->
+			
+			<!-- first state input -->
+			<template
+				id="{$id}_state1"
+				src="resources/engine/gui/template_visualcode_input.xml"
+						
+				pin_type_connected="resources/engine/images/visualcode_flow_connected.png"
+				pin_type_unconnected="resources/engine/images/visualcode_flow_unconnected.png"
+						
+				text="State 1"
+			/>			
+			<!-- --------------- -->
+	
+	</template>
+		
 </template>

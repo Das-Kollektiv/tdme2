@@ -1,37 +1,41 @@
 <template>
 
+	<template id="{$id}" src="resources/engine/gui/template_visualcode_node.xml" node-name="Blend" node-type-color="{$node-type-color}">
+	
+			<!-- base -->
 			<layout alignment="horizontal" width="100%" height="auto">
-			
-				<!-- input container -->
-				<layout id="{$id}_input_container" alignment="vertical" width="85%" height="auto">
-					
+				<layout alignment="vertical" width="85%" height="auto">
 					<template
-						id="base"
+						id="{$id}_input"
 						src="resources/engine/gui/template_visualcode_input.xml"
 						
 						pin_type_connected="resources/engine/images/visualcode_flow_connected.png"
 						pin_type_unconnected="resources/engine/images/visualcode_flow_unconnected.png"
 						
 						text="Base"
-					/>
-					
-				</layout>
-				<!-- --------------- -->
-
-				<!-- output container -->			
-				<layout id="{$id}_output_container" alignment="vertical" width="15%" height="auto">
-				
+					/>	
+				</layout>		
+				<layout alignment="vertical" width="15%" height="auto">
 					<template
-						id="output"
+						id="{$id}_output"
 						src="resources/engine/gui/template_visualcode_output.xml"
 					
 						pin_type_connected="resources/engine/images/visualcode_flow_connected.png"
 						pin_type_unconnected="resources/engine/images/visualcode_flow_unconnected.png"
-					/>
-					
+					/>	
 				</layout>
-				<!-- --------------- -->
-
-			</layout>		
+			</layout>
+			<!-- --------------- -->
+			
+			<!-- first blend input -->
+			<template
+				id="{$id}_blendinput1"  
+				src="resources/engine/gui/template_animationgraph_blendinput.xml" 
+				
+				text="Blend 1"
+			/>
+			<!-- --------------- -->
+	
+	</template>
 		
 </template>

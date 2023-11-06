@@ -1,39 +1,33 @@
 <template>
-			
-			<layout alignment="horizontal" width="100%" height="auto">
-			
-				<!-- input container -->
-				<layout id="{$id}_input_container" alignment="vertical" width="85%" height="auto">
-					
-					<template
-						id="dropdown_state"
-						src="resources/engine/gui/template_visualcode_input.xml"
-						on-initialize="dropdown_state_input_type_panel.condition=dropdown"
-					/>
-					
-					<template
-						id="progressbar_state"
-						src="resources/engine/gui/template_visualcode_input.xml"
-						on-initialize="progressbar_state_input_type_panel.condition=progressbar"
-					/>
-					
-				</layout>
-				<!-- --------------- -->
 
-				<!-- output container -->			
-				<layout id="{$id}_output_container" alignment="vertical" width="15%" height="auto">
-				
+	<template id="{$id}" src="resources/engine/gui/template_visualcode_node.xml" node-name="State Machine" node-type-color="{$node-type-color}">
+
+			<!-- ----------- -->	
+			<layout alignment="horizontal" width="100%" height="auto">
+				<layout alignment="vertical" width="85%" height="auto">
 					<template
-						id="output1"
+						id="{$id}_dropdown"
+						src="resources/engine/gui/template_visualcode_input.xml"
+						on-initialize="{$id}_dropdown_input_type_panel.condition=dropdown"
+					/>
+					<template
+						id="{$id}_progressbar"
+						src="resources/engine/gui/template_visualcode_input.xml"
+						on-initialize="{$id}_progressbar_input_type_panel.condition=progressbar"
+					/>
+				</layout>			
+				<layout alignment="vertical" width="15%" height="auto">
+					<template
+						id="{$id}_output"
 						src="resources/engine/gui/template_visualcode_output.xml"
 					
 						pin_type_connected="resources/engine/images/visualcode_flow_connected.png"
 						pin_type_unconnected="resources/engine/images/visualcode_flow_unconnected.png"
 					/>
-					
 				</layout>
-				<!-- --------------- -->
-
-			</layout>		
-				
+			</layout>
+			<!-- --------------- -->
+	
+	</template>
+		
 </template>

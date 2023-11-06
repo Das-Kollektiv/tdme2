@@ -1,11 +1,13 @@
 <template>
 	<element width="100%" height="auto" on-initialize="{$on-initialize}">
 		<layout id="{$id}" width="100%" height="30" alignment="horizontal" vertical-align="center" horizontal-align="left">
+			<!-- TODO: why is this a moveable? -->
 			<moveable id="{$id}_pin_type_panel" width="15">
 				<image src="{$pin_type_connected}" effect-color-mul="{$color.element_foreground}"/>
 				<image src="{$pin_type_unconnected}" effect-color-mul="{$pin_color}"/>
 				<image show-on="connected" src="{$pin_type_connected}" effect-color-mul="{$pin_color}"/>
 			</moveable>
+			<!-- -->
 			<space width="10"/>
 			<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="{$text}" width="auto" height="auto"/>
 			<space hide-on="empty('{$text}')" width="10"/>
