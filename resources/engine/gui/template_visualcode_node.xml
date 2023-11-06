@@ -4,9 +4,9 @@
 		<element width="315" height="auto" horizontal-align="center" value="node_{$id}">
 
 			<element border="3" border-color="#00000000" focusable="true" width="306" height="*" horizontal-align="center">
-				<layout border-right="1" border-bottom="1" border-color="{$color.element_frame}" width="300" height="*" alignment="vertical" vertical-align="top" background-color="{$color.element_foreground}">
+				<layout border-right="1" border-bottom="1" border-color="#202020" width="300" height="*" alignment="vertical" vertical-align="top" background-color="#585858">
 
-					<layer border-bottom="1" border-color="{$color.element_frame}" width="100%" height="auto" >
+					<layer border-bottom="1" border-color="#202020" width="100%" height="auto" >
 						<layout width="100%" height="30" background-color="{$node-type-color}"/>
 						<layout width="100%" height="30" background-color="#00000080"/>
 					</layer>
@@ -15,12 +15,12 @@
 			</element>
 
 			<layout padding="5" alignment="horizontal" horizontal-align="left" vertical-align="center" width="300" height="auto">
-				<text font="resources/engine/fonts/RobotoMono-Bold.ttf" size="14" color="#F0F0F0" text="{$node-name}" width="*" height="auto"/>
+				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="{$node-name}" width="*" height="auto"/>
 				<space width="*"/>
 				<button show-on="editable" id="{$id}_edit_button" template="button_template_toolbar.xml" image="resources/engine/images/edit.png"/>
 			</layout>
 			
-			<layout padding-top="40" padding-bottom="10" alignment="horizontal" width="100%" height="auto">
+			<layout padding-top="40" padding-bottom="10" alignment="vertical" width="100%" height="auto">
 			
 				<!-- fullsize container -->			
 				<layout id="{$id}_fullsize_container" alignment="vertical" width="100%" height="auto">
@@ -66,9 +66,9 @@
 				
 				</layout>
 				<!-- --------------- -->
-			
-				<!-- input container -->
-				<layout id="{$id}_input_container" alignment="vertical" width="60%" height="auto">
+				<layout alignment="horizontal" width="100%" height="auto">
+					<!-- input container -->
+					<layout id="{$id}_input_container" alignment="vertical" width="60%" height="auto">
 					
 					<!-- <template  -->
 						<!-- id="input1"  -->
@@ -94,11 +94,11 @@
 						<!-- input_options="" -->
 					<!-- /> -->
 					
-				</layout>
-				<!-- --------------- -->
+					</layout>
+					<!-- --------------- -->
 
-				<!-- output container -->			
-				<layout id="{$id}_output_container" alignment="vertical" width="40%" height="auto">
+					<!-- output container -->			
+					<layout id="{$id}_output_container" alignment="vertical" width="40%" height="auto">
 				
 					<!-- <template  -->
 						<!-- id="output1"  -->
@@ -119,8 +119,9 @@
 						<!-- text="Result"	 -->
 					<!-- /> -->
 					
+					</layout>
+					<!-- --------------- -->
 				</layout>
-				<!-- --------------- -->
 				
 			</layout>		
 		
