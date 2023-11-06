@@ -196,13 +196,13 @@ public:
 		virtual void registerMethods(MiniScript* miniScript) const = 0;
 
 		/**
-		 * Unset script variable
+		 * Unset script variable value
 		 * @param variable variable
 		 */
 		virtual void unsetScriptVariableValue(ScriptVariable& variable) const = 0;
 
 		/**
-		 * Unset script variable
+		 * Set script variable value
 		 * @param variable variable
 		 * @param value value
 		 */
@@ -210,8 +210,8 @@ public:
 
 		/**
 		 * Copy script variable
-		 * @param from from
 		 * @param to to
+		 * @param from from
 		 */
 		virtual void copyScriptVariable(ScriptVariable& to, const ScriptVariable& from) const = 0;
 
@@ -635,7 +635,6 @@ public:
 
 		/**
 		 * Copy script variable
-		 * @param miniScr
 		 * @param from from
 		 * @param to to
 		 */
@@ -1901,7 +1900,7 @@ public:
 		 * @param type type
 		 * @return script variable type as string
 		 */
-		inline static const string getTypeAsString(const MiniScript* miniScript, ScriptVariableType type) {
+		inline static const string getTypeAsString(MiniScript* miniScript, ScriptVariableType type) {
 			switch(type) {
 				case TYPE_NULL: return "Null";
 				case TYPE_BOOLEAN: return "Boolean";
@@ -1957,21 +1956,11 @@ public:
 		}
 		/**
 		 * Returns given return value variable type string representation
-		 * @param type type
 		 * @param nullable nullable
 		 * @return return value variable type string representation
 		 */
-		inline const string getReturnTypeAsString(ScriptVariableType type, bool nullable) const {
-			return getReturnTypeAsString(miniScript, type, nullable);
-		}
-
-		/**
-		 * Returns this script variable type as return type string representation
-		 * @param nullable nullable
-		 * @return this script variable type as return type string representation
-		 */
 		inline const string getReturnTypeAsString(bool nullable) const {
-			return getReturnTypeAsString(getType(), nullable);
+			return getReturnTypeAsString(miniScript, getType(), nullable);
 		}
 
 		/**
@@ -2345,7 +2334,7 @@ public:
 
 		/**
 		 * Get arguments information
-		 * @param miniScript mini script
+		 * @param miniScript mini script instance
 		 * @param beginIdx begin index
 		 * @return arguments information
 		 */
