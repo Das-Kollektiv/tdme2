@@ -1,14 +1,14 @@
 <template>
-			
-			<layout alignment="horizontal" width="100%" height="auto">
-			
-				<!-- input container -->
-				<layout id="{$id}_input_container" alignment="vertical" width="85%" height="auto">
 
+	<template id="{$id}" src="resources/engine/gui/template_visualcode_node.xml" node-name="Blend Space 2D" node-type-color="{$node-type-color}">
+
+			<!-- ----------- -->	
+			<layout alignment="horizontal" width="100%" height="auto">
+				<layout alignment="vertical" width="85%" height="auto">
 					<template
-						id="input_x"
+						id="{$id}_inputx"
 						src="resources/engine/gui/template_visualcode_input.xml"
-						on-initialize="input_x_input_type_panel.condition=input"
+						on-initialize="{$id}_inputx_input_type_panel.condition=input"
 						
 						text="X"
 						
@@ -16,11 +16,10 @@
 						input_unit=""
 						input_options=""
 					/>
-					
 					<template
-						id="input_y"
+						id="{$id}_inputy"
 						src="resources/engine/gui/template_visualcode_input.xml"
-						on-initialize="input_y_input_type_panel.condition=input"
+						on-initialize="{$id}_inputy_input_type_panel.condition=input"
 						
 						text="Y"
 						
@@ -28,24 +27,19 @@
 						input_unit=""
 						input_options=""
 					/>
-					
-				</layout>
-				<!-- --------------- -->
-
-				<!-- output container -->			
-				<layout id="{$id}_output_container" alignment="vertical" width="15%" height="auto">
-				
+				</layout>			
+				<layout alignment="vertical" width="15%" height="auto">
 					<template
-						id="output1"
+						id="{$id}_output"
 						src="resources/engine/gui/template_visualcode_output.xml"
 					
 						pin_type_connected="resources/engine/images/visualcode_flow_connected.png"
 						pin_type_unconnected="resources/engine/images/visualcode_flow_unconnected.png"
 					/>
-					
 				</layout>
-				<!-- --------------- -->
-
-			</layout>		
-				
+			</layout>
+			<!-- --------------- -->
+	
+	</template>
+		
 </template>

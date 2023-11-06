@@ -25,33 +25,13 @@
 				<!-- fullsize container -->			
 				<layout id="{$id}_fullsize_container" alignment="vertical" width="100%" height="auto">
 				
-					<!-- <template -->
-						<!-- id="blend" -->
-						<!-- src="resources/engine/gui/template_animationgraph_node_blend.xml" -->
-					<!-- /> -->
-					
-					<!-- <template -->
-						<!-- id="blendinput1" -->
-						<!-- src="resources/engine/gui/template_animationgraph_blendinput.xml" -->
-						
-						<!-- text="Blend 1" -->
-					<!-- /> -->
+					{__InnerXML__}
 					
 					<!-- <template -->
 						<!-- id="blendinput2" -->
 						<!-- src="resources/engine/gui/template_animationgraph_blendinput.xml" -->
 						
 						<!-- text="Blend 2" -->
-					<!-- /> -->
-					
-					<!-- <template -->
-						<!-- id="state1" -->
-						<!-- src="resources/engine/gui/template_visualcode_input.xml" -->
-						
-						<!-- pin_type_connected="resources/engine/images/visualcode_flow_connected.png" -->
-						<!-- pin_type_unconnected="resources/engine/images/visualcode_flow_unconnected.png" -->
-						
-						<!-- text="State 1" -->
 					<!-- /> -->
 					
 					<!-- <template -->
