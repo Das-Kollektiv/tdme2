@@ -196,19 +196,6 @@ public:
 		virtual void registerMethods(MiniScript* miniScript) const = 0;
 
 		/**
-		 * Set value from given value into variable
-		 * @param value value
-		 */
-		virtual void setValue(ScriptVariable& variable, const void* value) const = 0;
-
-		/**
-		 * Copy script variable
-		 * @param from from
-		 * @param to to
-		 */
-		virtual void copyScriptVariable(ScriptVariable& to, const ScriptVariable& from) const = 0;
-
-		/**
 		 * Unset script variable
 		 * @param variable variable
 		 */
@@ -220,6 +207,13 @@ public:
 		 * @param value value
 		 */
 		virtual void setScriptVariableValue(ScriptVariable& variable, const void* value) = 0;
+
+		/**
+		 * Copy script variable
+		 * @param from from
+		 * @param to to
+		 */
+		virtual void copyScriptVariable(ScriptVariable& to, const ScriptVariable& from) const = 0;
 
 	public:
 		// forbid class copy
