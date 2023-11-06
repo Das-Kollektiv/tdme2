@@ -169,6 +169,22 @@ public:
 
 	//
 	class ScriptSyntaxTreeNode;
+	class ScriptVariable;
+
+	/**
+	 * Script data type
+	 */
+	class ScriptDataType {
+	public:
+		int type { TYPE_NULL };
+
+		/**
+		 * Copy script variable
+		 * @param from from
+		 * @param to to
+		 */
+		static void copyScriptVariable(ScriptVariable& to, const ScriptVariable& from);
+	};
 
 	/**
 	 * MiniScript script variable
@@ -545,76 +561,77 @@ public:
 		}
 
 		/**
-		 * Create non reference variable
-		 * @param nonReferenceVariable non reference variable
-		 * @param variable variable
+		 * Copy script variable
+		 * @param from from
+		 * @param to to
 		 */
-		inline static void createNonReferenceVariable(ScriptVariable& nonReferenceVariable, const ScriptVariable* variable) {
+		inline static void copyScriptVariable(ScriptVariable& to, const ScriptVariable& from) {
+			to.setNullValue();
 			// do the copy
-			switch(variable->getType()) {
+			switch(from.getType()) {
 				case TYPE_NULL:
-					nonReferenceVariable.setNullValue();
+					// no op
 					break;
 				case TYPE_BOOLEAN:
-					nonReferenceVariable.setValue(variable->getBooleanValueReference());
+					to.setValue(from.getBooleanValueReference());
 					break;
 				case TYPE_INTEGER:
-					nonReferenceVariable.setValue(variable->getIntegerValueReference());
+					to.setValue(from.getIntegerValueReference());
 					break;
 				case TYPE_FLOAT:
-					nonReferenceVariable.setValue(variable->getFloatValueReference());
+					to.setValue(from.getFloatValueReference());
 					break;
 				case TYPE_STRING:
-					nonReferenceVariable.setValue(variable->getStringValueReference());
+					to.setValue(from.getStringValueReference());
 					break;
 				case TYPE_VECTOR2:
-					nonReferenceVariable.setValue(variable->getVector2ValueReference());
+					to.setValue(from.getVector2ValueReference());
 					break;
 				case TYPE_VECTOR3:
-					nonReferenceVariable.setValue(variable->getVector3ValueReference());
+					to.setValue(from.getVector3ValueReference());
 					break;
 				case TYPE_VECTOR4:
-					nonReferenceVariable.setValue(variable->getVector4ValueReference());
+					to.setValue(from.getVector4ValueReference());
 					break;
 				case TYPE_QUATERNION:
-					nonReferenceVariable.setValue(variable->getQuaternionValueReference());
+					to.setValue(from.getQuaternionValueReference());
 					break;
 				case TYPE_MATRIX3x3:
-					nonReferenceVariable.setValue(variable->getMatrix3x3ValueReference());
+					to.setValue(from.getMatrix3x3ValueReference());
 					break;
 				case TYPE_MATRIX4x4:
-					nonReferenceVariable.setValue(variable->getMatrix4x4ValueReference());
+					to.setValue(from.getMatrix4x4ValueReference());
 					break;
 				case TYPE_TRANSFORM:
-					nonReferenceVariable.setValue(variable->getTransformValueReference());
+					to.setValue(from.getTransformValueReference());
 					break;
 				case TYPE_ARRAY:
-					nonReferenceVariable.setValue(variable->getArrayValueReference());
+					to.setValue(from.getArrayValueReference());
 					// copy initializer if we have any
-					nonReferenceVariable.getInitializer()->copy(variable->initializer);
+					to.getInitializer()->copy(from.initializer);
 					//
 					break;
 				case TYPE_MAP:
-					nonReferenceVariable.setValue(variable->getMapValueReference());
+					to.setValue(from.getMapValueReference());
 					// copy initializer if we have any
-					nonReferenceVariable.getInitializer()->copy(variable->initializer);
+					to.getInitializer()->copy(from.initializer);
 					//
 					break;
 				case TYPE_SET:
-					nonReferenceVariable.setValue(variable->getSetValueReference());
+					to.setValue(from.getSetValueReference());
 					// copy initializer if we have any
-					nonReferenceVariable.getInitializer()->copy(variable->initializer);
+					to.getInitializer()->copy(from.initializer);
 					//
 					break;
 				case TYPE_FUNCTION_CALL:
-					nonReferenceVariable.setType(TYPE_FUNCTION_CALL);
-					nonReferenceVariable.getStringValueReference() = variable->getStringValueReference();
+					to.setType(TYPE_FUNCTION_CALL);
+					to.getStringValueReference() = from.getStringValueReference();
 					// copy initializer if we have any
-					nonReferenceVariable.getInitializer()->copy(variable->initializer);
+					to.getInitializer()->copy(from.initializer);
 					//
 					break;
 				case TYPE_FUNCTION_ASSIGNMENT:
-					nonReferenceVariable.setFunctionAssignment(variable->getStringValueReference());
+					to.setFunctionAssignment(from.getStringValueReference());
 					break;
 				// pseudo ...
 				default: break;
@@ -632,7 +649,7 @@ public:
 			// otherwise do the copy
 			ScriptVariable nonReferenceVariable;
 			//
-			createNonReferenceVariable(nonReferenceVariable, variable);
+			copyScriptVariable(nonReferenceVariable, *variable);
 			//
 			return nonReferenceVariable;
 		}
@@ -648,7 +665,7 @@ public:
 			// otherwise do the copy
 			ScriptVariable* nonReferenceVariable = new ScriptVariable();
 			//
-			createNonReferenceVariable(*nonReferenceVariable, variable);
+			copyScriptVariable(*nonReferenceVariable, *variable);
 			//
 			return nonReferenceVariable;
 		}
@@ -662,74 +679,7 @@ public:
 				reference = variable.reference;
 				variable.reference->acquireReference();
 			} else {
-				switch(variable.getType()) {
-					case TYPE_NULL:
-						setNullValue();
-						break;
-					case TYPE_BOOLEAN:
-						setValue(variable.getBooleanValueReference());
-						break;
-					case TYPE_INTEGER:
-						setValue(variable.getIntegerValueReference());
-						break;
-					case TYPE_FLOAT:
-						setValue(variable.getFloatValueReference());
-						break;
-					case TYPE_STRING:
-						setValue(variable.getStringValueReference());
-						break;
-					case TYPE_VECTOR2:
-						setValue(variable.getVector2ValueReference());
-						break;
-					case TYPE_VECTOR3:
-						setValue(variable.getVector3ValueReference());
-						break;
-					case TYPE_VECTOR4:
-						setValue(variable.getVector4ValueReference());
-						break;
-					case TYPE_QUATERNION:
-						setValue(variable.getQuaternionValueReference());
-						break;
-					case TYPE_MATRIX3x3:
-						setValue(variable.getMatrix3x3ValueReference());
-						break;
-					case TYPE_MATRIX4x4:
-						setValue(variable.getMatrix4x4ValueReference());
-						break;
-					case TYPE_TRANSFORM:
-						setValue(variable.getTransformValueReference());
-						break;
-					case TYPE_ARRAY:
-						setValue(variable.getArrayValueReference());
-						// copy initializer if we have any
-						getInitializer()->copy(variable.initializer);
-						//
-						break;
-					case TYPE_MAP:
-						setValue(variable.getMapValueReference());
-						// copy initializer if we have any
-						getInitializer()->copy(variable.initializer);
-						//
-						break;
-					case TYPE_SET:
-						setValue(variable.getSetValueReference());
-						// copy initializer if we have any
-						getInitializer()->copy(variable.initializer);
-						//
-						break;
-					case TYPE_FUNCTION_CALL:
-						setType(TYPE_FUNCTION_CALL);
-						getStringValueReference() = variable.getStringValueReference();
-						// copy initializer if we have any
-						getInitializer()->copy(variable.initializer);
-						//
-						break;
-					case TYPE_FUNCTION_ASSIGNMENT:
-						setFunctionAssignment(variable.getStringValueReference());
-						break;
-					// pseudo ...
-					default: break;
-				}
+				copyScriptVariable(*this, variable);
 			}
 		}
 
@@ -756,76 +706,7 @@ public:
 				reference = variable.reference;
 				variable.reference->acquireReference();
 			} else {
-				//
-				setNullValue();
-				//
-				switch(variable.getType()) {
-					case TYPE_NULL:
-						break;
-					case TYPE_BOOLEAN:
-						setValue(variable.getBooleanValueReference());
-						break;
-					case TYPE_INTEGER:
-						setValue(variable.getIntegerValueReference());
-						break;
-					case TYPE_FLOAT:
-						setValue(variable.getFloatValueReference());
-						break;
-					case TYPE_STRING:
-						setValue(variable.getStringValueReference());
-						break;
-					case TYPE_VECTOR2:
-						setValue(variable.getVector2ValueReference());
-						break;
-					case TYPE_VECTOR3:
-						setValue(variable.getVector3ValueReference());
-						break;
-					case TYPE_VECTOR4:
-						setValue(variable.getVector4ValueReference());
-						break;
-					case TYPE_QUATERNION:
-						setValue(variable.getQuaternionValueReference());
-						break;
-					case TYPE_MATRIX3x3:
-						setValue(variable.getMatrix3x3ValueReference());
-						break;
-					case TYPE_MATRIX4x4:
-						setValue(variable.getMatrix4x4ValueReference());
-						break;
-					case TYPE_TRANSFORM:
-						setValue(variable.getTransformValueReference());
-						break;
-					case TYPE_ARRAY:
-						setValue(variable.getArrayValueReference());
-						// copy initializer if we have any
-						getInitializer()->copy(variable.initializer);
-						//
-						break;
-					case TYPE_MAP:
-						setValue(variable.getMapValueReference());
-						// copy initializer if we have any
-						getInitializer()->copy(variable.initializer);
-						//
-						break;
-					case TYPE_SET:
-						setValue(variable.getSetValueReference());
-						// copy initializer if we have any
-						getInitializer()->copy(variable.initializer);
-						//
-						break;
-					case TYPE_FUNCTION_CALL:
-						setType(TYPE_FUNCTION_CALL);
-						getStringValueReference() = variable.getStringValueReference();
-						// copy initializer if we have any
-						getInitializer()->copy(variable.initializer);
-						//
-						break;
-					case TYPE_FUNCTION_ASSIGNMENT:
-						setFunctionAssignment(variable.getStringValueReference());
-						break;
-					// pseudo ...
-					default: break;
-				}
+				copyScriptVariable(*this, variable);
 			}
 			//
 			return *this;
