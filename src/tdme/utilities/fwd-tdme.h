@@ -23,6 +23,7 @@ namespace utilities {
 	class MiniScriptTranspiler;
 	class MiniScriptVector2;
 	class MiniScriptVector3;
+	class MiniScriptVector4;
 	class MutableString;
 	class ModelTools;
 	class PathFinding;
