@@ -1143,36 +1143,6 @@ void MiniScriptMath::mul(const span<MiniScript::ScriptVariable>& argumentValues,
 			return;
 		}
 	} else
-	// vector2
-	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR2) == true) {
-		float f;
-		// a
-		Vector2 a;
-		if (argumentValues[0].getType() == MiniScript::TYPE_VECTOR2) {
-			argumentValues[0].getVector2Value(a, false);
-		} else
-		if (MiniScript::getFloatValue(argumentValues, 0, f, false) == true) {
-			a = Vector2(f, f);
-		} else {
-			Console::println("mul(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("mul"));
-			miniScript->startErrorScript();
-			return;
-		}
-		// b
-		Vector2 b;
-		if (argumentValues[1].getType() == MiniScript::TYPE_VECTOR2) {
-			argumentValues[1].getVector2Value(b);
-		} else
-		if (MiniScript::getFloatValue(argumentValues, 1, f, false) == true) {
-			b = Vector2(f, f);
-		} else {
-			Console::println("mul(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("mul"));
-			miniScript->startErrorScript();
-			return;
-		}
-		//
-		returnValue.setValue(a.clone().scale(b));
-	} else
 	// vector4
 	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR4) == true) {
 		float f;
@@ -1240,27 +1210,6 @@ void MiniScriptMath::div(const span<MiniScript::ScriptVariable>& argumentValues,
 	for (const auto scriptDataType: scriptDataTypes) {
 		if (scriptDataType->div(argumentValues, returnValue, statement) == true) return;
 	}
-	// vector2
-	if (argumentValues[0].getType() == MiniScript::TYPE_VECTOR2) {
-		Vector2 a;
-		Vector2 b;
-		float f;
-		// a
-		MiniScript::getVector2Value(argumentValues, 0, a, false);
-		// b
-		if (argumentValues[1].getType() == MiniScript::TYPE_VECTOR2 &&
-			MiniScript::getVector2Value(argumentValues, 1, b, false) == true) {
-			// nop
-		} else
-		if (MiniScript::getFloatValue(argumentValues, 1, f, false) == true) {
-			b = Vector2(f, f);
-		} else {
-			Console::println("div(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("div"));
-			miniScript->startErrorScript();
-			return;
-		}
-		returnValue.setValue(a / b);
-	} else
 	// vector4
 	if (argumentValues[0].getType() == MiniScript::TYPE_VECTOR4) {
 		Vector4 a;
@@ -1327,19 +1276,6 @@ void MiniScriptMath::add(const span<MiniScript::ScriptVariable>& argumentValues,
 		}
 		returnValue.setValue(result);
 	} else
-	// vector2
-	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR2) == true) {
-		Vector2 a;
-		Vector2 b;
-		if (MiniScript::getVector2Value(argumentValues, 0, a, false) == true &&
-			MiniScript::getVector2Value(argumentValues, 1, b, false) == true) {
-			returnValue.setValue(a.clone().add(b));
-		} else  {
-			Console::println("add(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("add"));
-			miniScript->startErrorScript();
-			return;
-		}
-	} else
 	// vector4
 	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR4) == true) {
 		Vector4 a;
@@ -1403,19 +1339,6 @@ void MiniScriptMath::sub(const span<MiniScript::ScriptVariable>& argumentValues,
 	for (const auto scriptDataType: scriptDataTypes) {
 		if (scriptDataType->sub(argumentValues, returnValue, statement) == true) return;
 	}
-	// vector2
-	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR2) == true) {
-		Vector2 a;
-		Vector2 b;
-		if (MiniScript::getVector2Value(argumentValues, 0, a, false) == true &&
-			MiniScript::getVector2Value(argumentValues, 1, b, false) == true) {
-			returnValue.setValue(a.clone().sub(b));
-		} else  {
-			Console::println("sub(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("sub"));
-			miniScript->startErrorScript();
-			return;
-		}
-	} else
 	// vector4
 	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR4) == true) {
 		Vector4 a;

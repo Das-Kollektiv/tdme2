@@ -36,7 +36,7 @@ void MiniScriptVector3::registerMethods() const {
 						{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "y", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "z", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_VECTOR3
+					TYPE_VECTOR3
 				),
 				miniScript(miniScript),
 				TYPE_VECTOR3(TYPE_VECTOR3) {
