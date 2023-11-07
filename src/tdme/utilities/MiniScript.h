@@ -179,9 +179,10 @@ public:
 		friend class MiniScript;
 		friend class MiniScriptMath;
 
-	private:
+	protected:
+		MiniScript* miniScript;
+		bool mathDataType { false };
 		int type { TYPE_NULL };
-		bool math { false };
 
 		/**
 		 * Set type
@@ -192,17 +193,16 @@ public:
 		}
 
 		/**
-		 * @return has math
+		 * @return is math data type
 		 */
-		inline bool hasMath() {
-			return math;
+		inline bool isMathDataType() {
+			return mathDataType;
 		}
 
 		/**
 		 * Register methods
-		 * @param miniScript mini script instance
 		 */
-		virtual void registerMethods(MiniScript* miniScript) const = 0;
+		virtual void registerMethods() const = 0;
 
 		/**
 		 * Unset script variable value
@@ -267,12 +267,19 @@ public:
 		/**
 		 * Script data type
 		 */
-		ScriptDataType() {
+		ScriptDataType(MiniScript* miniScript, bool mathDataType): miniScript(miniScript), mathDataType(mathDataType) {
 			//
 		}
 
 		virtual ~ScriptDataType() {
 			//
+		}
+
+		/**
+		 * @return mini script instance
+		 */
+		inline MiniScript* getMiniScript() {
+			return miniScript;
 		}
 
 		/**
@@ -983,6 +990,21 @@ public:
 		}
 
 		/**
+		 * @return mini script instance
+		 */
+		inline MiniScript* getMiniScript() {
+			return miniScript;
+		}
+
+		/**
+		 * Set mini script instance
+		 * @param miniScript mini script instance
+		 */
+		inline void setMiniScript(MiniScript* miniScript) {
+			this->miniScript = miniScript;
+		}
+
+		/**
 		 * @return type
 		 */
 		inline ScriptVariableType getType() const {
@@ -1140,6 +1162,25 @@ public:
 		 */
 		inline Initializer* getInitializer() const {
 			return reference != nullptr?reference->initializer:initializer;
+		}
+
+		/**
+		 * Return value pointer
+		 */
+		inline const uint64_t getValuePtr() const {
+			return reference != nullptr?reference->valuePtr:valuePtr;
+		}
+
+		/**
+		 * Set value pointer
+		 * @param valuePtr value pointer
+		 */
+		inline void setValuePtr(uint64_t valuePtr) {
+			if (reference != nullptr) {
+				reference->valuePtr = valuePtr;
+			} else {
+				this->valuePtr = valuePtr;
+			}
 		}
 
 		/**

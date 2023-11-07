@@ -3,19 +3,11 @@
 #include <span>
 
 #include <tdme/tdme.h>
-#include <tdme/math/Math.h>
-#include <tdme/math/Vector2.h>
-#include <tdme/math/Vector3.h>
-#include <tdme/math/Vector4.h>
 #include <tdme/utilities/fwd-tdme.h>
-#include <tdme/utilities/MiniScript.h>
 
 using std::span;
 
 using tdme::math::Math;
-using tdme::math::Vector2;
-using tdme::math::Vector3;
-using tdme::math::Vector4;
 using tdme::utilities::MiniScript;
 using tdme::utilities::MiniScriptMath;
 

@@ -1,7 +1,10 @@
 #include <span>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
+#include <tdme/math/Matrix3x3.h>
+#include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
@@ -10,7 +13,10 @@
 
 using std::span;
 
+using tdme::engine::Transform;
 using tdme::math::Math;
+using tdme::math::Matrix3x3;
+using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
@@ -1167,36 +1173,6 @@ void MiniScriptMath::mul(const span<MiniScript::ScriptVariable>& argumentValues,
 		//
 		returnValue.setValue(a.clone().scale(b));
 	} else
-	// vector3
-	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
-		float f;
-		// a
-		Vector3 a;
-		if (argumentValues[0].getType() == MiniScript::TYPE_VECTOR3) {
-			argumentValues[0].getVector3Value(a, false);
-		} else
-		if (MiniScript::getFloatValue(argumentValues, 0, f, false) == true) {
-			a = Vector3(f, f, f);
-		} else {
-			Console::println("mul(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("mul"));
-			miniScript->startErrorScript();
-			return;
-		}
-		// b
-		Vector3 b;
-		if (argumentValues[1].getType() == MiniScript::TYPE_VECTOR3) {
-			argumentValues[1].getVector3Value(b);
-		} else
-		if (MiniScript::getFloatValue(argumentValues, 1, f, false) == true) {
-			b = Vector3(f, f, f);
-		} else {
-			Console::println("mul(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("mul"));
-			miniScript->startErrorScript();
-			return;
-		}
-		//
-		returnValue.setValue(a.clone().scale(b));
-	} else
 	// vector4
 	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR4) == true) {
 		float f;
@@ -1285,27 +1261,6 @@ void MiniScriptMath::div(const span<MiniScript::ScriptVariable>& argumentValues,
 		}
 		returnValue.setValue(a / b);
 	} else
-	// vector3
-	if (argumentValues[0].getType() == MiniScript::TYPE_VECTOR3) {
-		Vector3 a;
-		Vector3 b;
-		float f;
-		// a
-		MiniScript::getVector3Value(argumentValues, 0, a, false);
-		// b
-		if (argumentValues[1].getType() == MiniScript::TYPE_VECTOR3 &&
-			MiniScript::getVector3Value(argumentValues, 1, b, false) == true) {
-			// nop
-		} else
-		if (MiniScript::getFloatValue(argumentValues, 1, f, false) == true) {
-			b = Vector3(f, f, f);
-		} else {
-			Console::println("div(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("div"));
-			miniScript->startErrorScript();
-			return;
-		}
-		returnValue.setValue(a / b);
-	} else
 	// vector4
 	if (argumentValues[0].getType() == MiniScript::TYPE_VECTOR4) {
 		Vector4 a;
@@ -1385,19 +1340,6 @@ void MiniScriptMath::add(const span<MiniScript::ScriptVariable>& argumentValues,
 			return;
 		}
 	} else
-	// vector3
-	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
-		Vector3 a;
-		Vector3 b;
-		if (MiniScript::getVector3Value(argumentValues, 0, a, false) == true &&
-			MiniScript::getVector3Value(argumentValues, 1, b, false) == true) {
-			returnValue.setValue(a.clone().add(b));
-		} else  {
-			Console::println("add(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("add"));
-			miniScript->startErrorScript();
-			return;
-		}
-	} else
 	// vector4
 	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR4) == true) {
 		Vector4 a;
@@ -1467,19 +1409,6 @@ void MiniScriptMath::sub(const span<MiniScript::ScriptVariable>& argumentValues,
 		Vector2 b;
 		if (MiniScript::getVector2Value(argumentValues, 0, a, false) == true &&
 			MiniScript::getVector2Value(argumentValues, 1, b, false) == true) {
-			returnValue.setValue(a.clone().sub(b));
-		} else  {
-			Console::println("sub(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("sub"));
-			miniScript->startErrorScript();
-			return;
-		}
-	} else
-	// vector3
-	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
-		Vector3 a;
-		Vector3 b;
-		if (MiniScript::getVector3Value(argumentValues, 0, a, false) == true &&
-			MiniScript::getVector3Value(argumentValues, 1, b, false) == true) {
 			returnValue.setValue(a.clone().sub(b));
 		} else  {
 			Console::println("sub(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("sub"));
