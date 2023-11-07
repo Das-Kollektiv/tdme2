@@ -177,16 +177,25 @@ public:
 	 */
 	class ScriptDataType {
 		friend class MiniScript;
+		friend class MiniScriptMath;
 
 	private:
 		int type { TYPE_NULL };
+		bool math { false };
 
 		/**
 		 * Set type
 		 * @param type type
 		 */
-		void setType(int type) {
+		inline void setType(int type) {
 			this->type = type;
+		}
+
+		/**
+		 * @return has math
+		 */
+		inline bool hasMath() {
+			return math;
 		}
 
 		/**
@@ -215,6 +224,42 @@ public:
 		 */
 		virtual void copyScriptVariable(ScriptVariable& to, const ScriptVariable& from) const = 0;
 
+		/**
+		 * Multiply
+		 * @param argumentValues argument values
+		 * @param returnValue return value
+		 * @param statement statement
+		 * @return mul was executed
+		 */
+		virtual bool mul(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const = 0;
+
+		/**
+		 * Division
+		 * @param argumentValues argument values
+		 * @param returnValue return value
+		 * @param statement statement
+		 * @return div was executed
+		 */
+		virtual bool div(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const = 0;
+
+		/**
+		 * Addition
+		 * @param argumentValues argument values
+		 * @param returnValue return value
+		 * @param statement statement
+		 * @return add was executed
+		 */
+		virtual bool add(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const = 0;
+
+		/**
+		 * Subtraction
+		 * @param argumentValues argument values
+		 * @param returnValue return value
+		 * @param statement statement
+		 * @return sub was executed
+		 */
+		virtual bool sub(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const = 0;
+
 	public:
 		// forbid class copy
 		FORBID_CLASS_COPY(ScriptDataType)
@@ -233,7 +278,7 @@ public:
 		/**
 		 * @return type
 		 */
-		int getType() const {
+		inline int getType() const {
 			return type;
 		}
 
@@ -313,21 +358,21 @@ public:
 				/**
 				 * @return initializer string
 				 */
-				const string& getInitializerString() {
+				const string& getInitializerString() const {
 					return initializerString;
 				}
 
 				/**
 				 * @return statement
 				 */
-				const ScriptStatement& getStatement() {
+				const ScriptStatement& getStatement() const {
 					return statement;
 				}
 
 				/**
 				 * @return syntax tree node
 				 */
-				const ScriptSyntaxTreeNode* getSyntaxTree() {
+				const ScriptSyntaxTreeNode* getSyntaxTree() const {
 					return syntaxTree;
 				}
 
@@ -2628,6 +2673,8 @@ protected:
 
 	int inlineFunctionIdx { 0 };
 
+	unique_ptr<MiniScriptMath> miniScriptMath;
+
 	/**
 	 * Initialize native mini script
 	 */
@@ -3275,6 +3322,13 @@ public:
 	 */
 	inline ScriptState& getScriptState() {
 		return *(scriptStateStack[scriptStateStack.size() - 1].get());
+	}
+
+	/**
+	 * @return mini script math
+	 */
+	inline MiniScriptMath* getMiniScriptMath() {
+		return miniScriptMath.get();
 	}
 
 	/**

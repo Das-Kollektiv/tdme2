@@ -25,46 +25,58 @@ using tdme::utilities::MiniScriptMath;
  */
 class tdme::utilities::MiniScriptMath {
 public:
+	/**
+	 * Constructor
+	 * @param miniScript miniScript
+	 */
+	MiniScriptMath(MiniScript* miniScript): miniScript(miniScript) {}
+
+	/**
+	 * Register script data type
+	 * @param scriptDataType script data type
+	 */
+	void registerDataType(MiniScript::ScriptDataType* scriptDataType);
 
 	/**
 	 * Register methods
 	 * @param miniScript mini script instance
 	 */
-	static void registerMethods(MiniScript* miniScript);
+	void registerMethods();
 
 	/**
 	 * Multiply
-	 * @param miniScript mini script instance
 	 * @param argumentValues argument values
 	 * @param returnValue return value
 	 * @param statement statement
 	 */
-	static void mul(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement);
+	void mul(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement);
 
 	/**
 	 * Division
-	 * @param miniScript mini script instance
 	 * @param argumentValues argument values
 	 * @param returnValue return value
 	 * @param statement statement
 	 */
-	static void div(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement);
+	void div(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement);
 
 	/**
 	 * Addition
-	 * @param miniScript mini script instance
 	 * @param argumentValues argument values
 	 * @param returnValue return value
 	 * @param statement statement
 	 */
-	static void add(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement);
+	void add(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement);
 
 	/**
 	 * Subtraction
-	 * @param miniScript mini script instance
 	 * @param argumentValues argument values
 	 * @param returnValue return value
 	 * @param statement statement
 	 */
-	static void sub(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement);
+	void sub(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement);
+
+private:
+	MiniScript* miniScript;
+	vector<MiniScript::ScriptDataType*> scriptDataTypes;
+
 };

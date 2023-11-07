@@ -226,6 +226,7 @@ void MiniScript::registerDataType(ScriptDataType* scriptDataType) {
 	scriptDataType->setType(TYPE_PSEUDO_CUSTOM_DATATYPES + scriptDataTypes.size());
 	scriptDataTypes.push_back(scriptDataType);
 	scriptDataType->registerMethods(this);
+	if (scriptDataType->hasMath() == true) miniScriptMath->registerDataType(scriptDataType);
 }
 
 void MiniScript::executeScriptLine() {
@@ -7760,7 +7761,8 @@ void MiniScript::registerMethods() {
 	}
 
 	// register math functions
-	MiniScriptMath::registerMethods(this);
+	miniScriptMath = make_unique<MiniScriptMath>(this);
+	miniScriptMath->registerMethods();
 
 	// determine operators
 	for (const auto& [scriptMethodName, scriptMethod]: scriptMethods) {

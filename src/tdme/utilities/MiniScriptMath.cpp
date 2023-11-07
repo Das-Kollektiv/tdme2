@@ -17,7 +17,11 @@ using tdme::math::Vector4;
 using tdme::utilities::MiniScript;
 using tdme::utilities::MiniScriptMath;
 
-void MiniScriptMath::registerMethods(MiniScript* miniScript) {
+void MiniScriptMath::registerDataType(MiniScript::ScriptDataType* scriptDataType) {
+	scriptDataTypes.push_back(scriptDataType);
+}
+
+void MiniScriptMath::registerMethods() {
 	// operator methods
 	{
 		//
@@ -38,7 +42,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 				return "add";
 			}
 			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
-				MiniScriptMath::add(miniScript, argumentValues, returnValue, statement);
+				miniScript->getMiniScriptMath()->add(argumentValues, returnValue, statement);
 			}
 			MiniScript::ScriptOperator getOperator() const override {
 				return MiniScript::OPERATOR_ADDITION;
@@ -65,7 +69,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 				return "sub";
 			}
 			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
-				MiniScriptMath::sub(miniScript, argumentValues, returnValue, statement);
+				miniScript->getMiniScriptMath()->sub(argumentValues, returnValue, statement);
 			}
 			MiniScript::ScriptOperator getOperator() const override {
 				return MiniScript::OPERATOR_SUBTRACTION;
@@ -92,7 +96,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 				return "mul";
 			}
 			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
-				MiniScriptMath::mul(miniScript, argumentValues, returnValue, statement);
+				miniScript->getMiniScriptMath()->mul(argumentValues, returnValue, statement);
 			}
 			MiniScript::ScriptOperator getOperator() const override {
 				return MiniScript::OPERATOR_MULTIPLICATION;
@@ -119,7 +123,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 				return "div";
 			}
 			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
-				MiniScriptMath::div(miniScript, argumentValues, returnValue, statement);
+				miniScript->getMiniScriptMath()->div(argumentValues, returnValue, statement);
 			}
 			MiniScript::ScriptOperator getOperator() const override {
 				return MiniScript::OPERATOR_DIVISION;
@@ -942,11 +946,15 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 	}
 }
 
-void MiniScriptMath::mul(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) {
+void MiniScriptMath::mul(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) {
 	if (argumentValues.size() != 2) {
 		Console::println("mul(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("mul"));
 		miniScript->startErrorScript();
 		return;
+	}
+	// custom data types
+	for (const auto scriptDataType: scriptDataTypes) {
+		if (scriptDataType->mul(argumentValues, returnValue, statement) == true) return;
 	}
 	// transform
 	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_TRANSFORM) == true) {
@@ -1246,11 +1254,15 @@ void MiniScriptMath::mul(MiniScript* miniScript, const span<MiniScript::ScriptVa
 	}
 }
 
-void MiniScriptMath::div(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) {
+void MiniScriptMath::div(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) {
 	if (argumentValues.size() != 2) {
 		Console::println("div(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("div"));
 		miniScript->startErrorScript();
 		return;
+	}
+	// custom data types
+	for (const auto scriptDataType: scriptDataTypes) {
+		if (scriptDataType->div(argumentValues, returnValue, statement) == true) return;
 	}
 	// vector2
 	if (argumentValues[0].getType() == MiniScript::TYPE_VECTOR2) {
@@ -1342,11 +1354,15 @@ void MiniScriptMath::div(MiniScript* miniScript, const span<MiniScript::ScriptVa
 	}
 }
 
-void MiniScriptMath::add(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) {
+void MiniScriptMath::add(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) {
 	if (argumentValues.size() != 2) {
 		Console::println(miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("add"));
 		miniScript->startErrorScript();
 		return;
+	}
+	// custom data types
+	for (const auto scriptDataType: scriptDataTypes) {
+		if (scriptDataType->add(argumentValues, returnValue, statement) == true) return;
 	}
 	// string concatenation
 	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_STRING) == true) {
@@ -1435,11 +1451,15 @@ void MiniScriptMath::add(MiniScript* miniScript, const span<MiniScript::ScriptVa
 	}
 }
 
-void MiniScriptMath::sub(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) {
+void MiniScriptMath::sub(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) {
 	if (argumentValues.size() != 2) {
 		Console::println("sub(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("sub"));
 		miniScript->startErrorScript();
 		return;
+	}
+	// custom data types
+	for (const auto scriptDataType: scriptDataTypes) {
+		if (scriptDataType->sub(argumentValues, returnValue, statement) == true) return;
 	}
 	// vector2
 	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR2) == true) {
