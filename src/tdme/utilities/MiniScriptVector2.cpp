@@ -19,6 +19,7 @@ const string MiniScriptVector2::CLASS_NAME = "vec2";
 const string MiniScriptVector2::TYPE_NAME = "Vector2";
 
 void MiniScriptVector2::registerMethods() const {
+	const auto TYPE_VECTOR2 = static_cast<MiniScript::ScriptVariableType>(getType());
 	{
 		//
 		class ScriptMethodVec2: public MiniScript::ScriptMethod {
@@ -59,7 +60,7 @@ void MiniScriptVector2::registerMethods() const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodVec2(miniScript, static_cast<MiniScript::ScriptVariableType>(getType())));
+		miniScript->registerMethod(new ScriptMethodVec2(miniScript, TYPE_VECTOR2));
 	}
 	{
 		//
@@ -96,7 +97,7 @@ void MiniScriptVector2::registerMethods() const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodVec2ComputeLength(miniScript, static_cast<MiniScript::ScriptVariableType>(getType())));
+		miniScript->registerMethod(new ScriptMethodVec2ComputeLength(miniScript, TYPE_VECTOR2));
 	}
 	{
 		//
@@ -132,7 +133,7 @@ void MiniScriptVector2::registerMethods() const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodVec2ComputeLengthSquared(miniScript, static_cast<MiniScript::ScriptVariableType>(getType())));
+		miniScript->registerMethod(new ScriptMethodVec2ComputeLengthSquared(miniScript, TYPE_VECTOR2));
 	}
 	{
 		//
@@ -171,7 +172,7 @@ void MiniScriptVector2::registerMethods() const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodVec2ComputeDotProduct(miniScript, static_cast<MiniScript::ScriptVariableType>(getType())));
+		miniScript->registerMethod(new ScriptMethodVec2ComputeDotProduct(miniScript, TYPE_VECTOR2));
 	}
 	{
 		//
@@ -210,7 +211,7 @@ void MiniScriptVector2::registerMethods() const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodVec2Normalize(miniScript, static_cast<MiniScript::ScriptVariableType>(getType())));
+		miniScript->registerMethod(new ScriptMethodVec2Normalize(miniScript, TYPE_VECTOR2));
 	}
 	{
 		//
@@ -246,7 +247,7 @@ void MiniScriptVector2::registerMethods() const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodVec2GetX(miniScript, static_cast<MiniScript::ScriptVariableType>(getType())));
+		miniScript->registerMethod(new ScriptMethodVec2GetX(miniScript, TYPE_VECTOR2));
 	}
 	{
 		//
@@ -282,7 +283,7 @@ void MiniScriptVector2::registerMethods() const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodVec2GetY(miniScript, static_cast<MiniScript::ScriptVariableType>(getType())));
+		miniScript->registerMethod(new ScriptMethodVec2GetY(miniScript, TYPE_VECTOR2));
 	}
 }
 
@@ -317,7 +318,8 @@ void MiniScriptVector2::copyScriptVariable(MiniScript::ScriptVariable& to, const
 		vector2Value = *static_cast<Vector2*>((void*)from.getValuePtr());
 	}
 	//
-	to.setType(static_cast<MiniScript::ScriptVariableType>(getType()));
+	const auto TYPE_VECTOR2 = static_cast<MiniScript::ScriptVariableType>(getType());
+	to.setType(TYPE_VECTOR2);
 	*static_cast<Vector2*>((void*)to.getValuePtr()) = vector2Value;
 }
 
