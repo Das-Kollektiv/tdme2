@@ -416,7 +416,7 @@ void MiniScriptVector3::unsetScriptVariableValue(MiniScript::MiniScript::ScriptV
 	variable.setValuePtr(0ll);
 }
 
-void MiniScriptVector3::setScriptVariableValue(MiniScript::MiniScript::ScriptVariable& variable, const void* value) {
+void MiniScriptVector3::setScriptVariableValue(MiniScript::MiniScript::ScriptVariable& variable, const void* value) const {
 	if (variable.getType() != getType()) return;
 	//
 	Vector3 vector3Value;

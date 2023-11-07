@@ -215,7 +215,7 @@ public:
 		 * @param variable variable
 		 * @param value value
 		 */
-		virtual void setScriptVariableValue(ScriptVariable& variable, const void* value) = 0;
+		virtual void setScriptVariableValue(ScriptVariable& variable, const void* value) const = 0;
 
 		/**
 		 * Copy script variable

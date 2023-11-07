@@ -43,7 +43,7 @@ private:
 	// overridden methods
 	void registerMethods() const override;
 	void unsetScriptVariableValue(MiniScript::ScriptVariable& variable) const override;
-	void setScriptVariableValue(MiniScript::ScriptVariable& variable, const void* value) override;
+	void setScriptVariableValue(MiniScript::ScriptVariable& variable, const void* value) const override;
 	void copyScriptVariable(MiniScript::ScriptVariable& to, const MiniScript::ScriptVariable& from) const override;
 	bool mul(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const override;
 	bool div(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const override;
