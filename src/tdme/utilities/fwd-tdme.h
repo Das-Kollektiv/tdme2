@@ -21,6 +21,7 @@ namespace utilities {
 	class MiniScript;
 	class MiniScriptMath;
 	class MiniScriptTranspiler;
+	class MiniScriptVector2;
 	class MiniScriptVector3;
 	class MutableString;
 	class ModelTools;

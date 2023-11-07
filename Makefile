@@ -641,6 +641,7 @@ SRCS = \
 	src/tdme/utilities/MiniScript.cpp \
 	src/tdme/utilities/MiniScriptMath.cpp \
 	src/tdme/utilities/MiniScriptTranspiler.cpp \
+	src/tdme/utilities/MiniScriptVector2.cpp \
 	src/tdme/utilities/MiniScriptVector3.cpp \
 	src/tdme/utilities/ModelTools.cpp \
 	src/tdme/utilities/PathFinding.cpp \
