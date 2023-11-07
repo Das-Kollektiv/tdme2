@@ -21,16 +21,17 @@ private:
 
 	/**
 	 * Get vector3 value from given variable
+	 * @param TYPE_VECTOR3 custom data type for vector3
 	 * @param arguments arguments
 	 * @param idx argument index
 	 * @param value value
 	 * @param optional optional
 	 * @return success
 	 */
-	static inline bool getVector3Value(MiniScript::ScriptVariableType type, const span<MiniScript::ScriptVariable>& arguments, int idx, Vector3& value, bool optional = false) {
+	static inline bool getVector3Value(MiniScript::ScriptVariableType TYPE_VECTOR3, const span<MiniScript::ScriptVariable>& arguments, int idx, Vector3& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		const auto& argument = arguments[idx];
-		if (argument.getType() == type) {
+		if (argument.getType() == TYPE_VECTOR3) {
 			if (argument.getValuePtr() == 0ll) return optional;
 			value = *static_cast<Vector3*>((void*)argument.getValuePtr());
 			return true;

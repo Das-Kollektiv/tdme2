@@ -266,6 +266,8 @@ public:
 
 		/**
 		 * Script data type
+		 * @param miniScript mini script instance
+		 * @param mathDataType is math data type and provides math methods
 		 */
 		ScriptDataType(MiniScript* miniScript, bool mathDataType): miniScript(miniScript), mathDataType(mathDataType) {
 			//
@@ -990,21 +992,6 @@ public:
 		}
 
 		/**
-		 * @return mini script instance
-		 */
-		inline MiniScript* getMiniScript() {
-			return miniScript;
-		}
-
-		/**
-		 * Set mini script instance
-		 * @param miniScript mini script instance
-		 */
-		inline void setMiniScript(MiniScript* miniScript) {
-			this->miniScript = miniScript;
-		}
-
-		/**
 		 * @return type
 		 */
 		inline ScriptVariableType getType() const {
@@ -1165,7 +1152,7 @@ public:
 		}
 
 		/**
-		 * Return value pointer
+		 * @return value pointer
 		 */
 		inline const uint64_t getValuePtr() const {
 			return reference != nullptr?reference->valuePtr:valuePtr;
