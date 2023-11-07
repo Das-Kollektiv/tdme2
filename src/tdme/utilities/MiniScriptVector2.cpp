@@ -353,7 +353,11 @@ bool MiniScriptVector2::mul(const span<MiniScript::ScriptVariable>& argumentValu
 			return false;
 		}
 		//
-		returnValue.setValue(a.clone().scale(b));
+		auto result = a.clone().scale(b);
+		returnValue.setType(TYPE_VECTOR2);
+		returnValue.setValue(&result);
+		//
+		return true;
 	}
 	//
 	return false;
@@ -381,7 +385,12 @@ bool MiniScriptVector2::div(const span<MiniScript::ScriptVariable>& argumentValu
 			//
 			return false;
 		}
-		returnValue.setValue(a / b);
+		//
+		auto result = a / b;
+		returnValue.setType(TYPE_VECTOR2);
+		returnValue.setValue(&result);
+		//
+		return true;
 	}
 	//
 	return false;
@@ -395,7 +404,12 @@ bool MiniScriptVector2::add(const span<MiniScript::ScriptVariable>& argumentValu
 		Vector2 b;
 		if (MiniScriptVector2::getVector2Value(TYPE_VECTOR2, argumentValues, 0, a, false) == true &&
 			MiniScriptVector2::getVector2Value(TYPE_VECTOR2, argumentValues, 1, b, false) == true) {
-			returnValue.setValue(a.clone().add(b));
+			//
+			auto result = a.clone().add(b);
+			returnValue.setType(TYPE_VECTOR2);
+			returnValue.setValue(&result);
+			//
+			return true;
 		} else  {
 			Console::println("add(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("add"));
 			miniScript->startErrorScript();
@@ -415,7 +429,12 @@ bool MiniScriptVector2::sub(const span<MiniScript::ScriptVariable>& argumentValu
 		Vector2 b;
 		if (MiniScriptVector2::getVector2Value(TYPE_VECTOR2, argumentValues, 0, a, false) == true &&
 			MiniScriptVector2::getVector2Value(TYPE_VECTOR2, argumentValues, 1, b, false) == true) {
-			returnValue.setValue(a.clone().sub(b));
+			//
+			auto result = a.clone().sub(b);
+			returnValue.setType(TYPE_VECTOR2);
+			returnValue.setValue(&result);
+			//
+			return true;
 		} else  {
 			Console::println("sub(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("sub"));
 			miniScript->startErrorScript();
