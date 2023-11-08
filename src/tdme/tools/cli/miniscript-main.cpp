@@ -8,7 +8,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/TDMEMiniScript.h>
+#include <tdme/utilities/EngineMiniScript.h>
 
 using std::string;
 using std::unique_ptr;
@@ -18,7 +18,7 @@ using tdme::engine::Version;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
-using tdme::utilities::TDMEMiniScript;
+using tdme::utilities::EngineMiniScript;
 
 static void printInformation() {
 	Console::println(string("miniscript ") + Version::getVersion());
@@ -63,11 +63,11 @@ int main(int argc, char** argv)
 	}
 
 	// run script
-	unique_ptr<TDMEMiniScript> script;
+	unique_ptr<EngineMiniScript> script;
 	if (pathToScript.empty() == false) {
 		//
-		script = unique_ptr<TDMEMiniScript>(
-			TDMEMiniScript::loadScript(
+		script = unique_ptr<EngineMiniScript>(
+			EngineMiniScript::loadScript(
 				FileSystem::getInstance()->getPathName(pathToScript),
 				FileSystem::getInstance()->getFileName(pathToScript)
 			)

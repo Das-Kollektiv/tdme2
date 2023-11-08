@@ -10,6 +10,7 @@ namespace utilities {
 	class Character;
 	class Console;
 	class ExceptionBase;
+	class EngineMiniScript;
 	class Enum;
 	class Float;
 	class FloatBuffer;
@@ -42,7 +43,6 @@ namespace utilities {
 	class ShortBuffer;
 	class StringTokenizer;
 	class StringTools;
-	class TDMEMiniScript;
 	class TextureAtlas;
 	class Time;
 	class Terrain;

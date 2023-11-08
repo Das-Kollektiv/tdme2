@@ -11,7 +11,7 @@
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/scripting/fwd-tdme.h>
-#include <tdme/utilities/TDMEMiniScript.h>
+#include <tdme/utilities/EngineMiniScript.h>
 
 using std::array;
 using std::string;
@@ -23,12 +23,12 @@ using tdme::gui::GUI;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::utilities::TDMEMiniScript;
+using tdme::utilities::EngineMiniScript;
 
 /**
  * GUI mini script
  */
-class tdme::gui::scripting::GUIMiniScript: public TDMEMiniScript {
+class tdme::gui::scripting::GUIMiniScript: public EngineMiniScript {
 public:
 	// forbid class copy
 	FORBID_CLASS_COPY(GUIMiniScript)

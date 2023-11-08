@@ -8,7 +8,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
-#include <tdme/utilities/TDMEMiniScript.h>
+#include <tdme/utilities/EngineMiniScript.h>
 #include <tdme/utilities/Time.h>
 
 using std::vector;
@@ -18,7 +18,7 @@ using tdme::engine::physics::World;
 using tdme::engine::Engine;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
-using tdme::utilities::TDMEMiniScript;
+using tdme::utilities::EngineMiniScript;
 using tdme::utilities::Time;
 
 /**
@@ -60,10 +60,10 @@ public:
 	struct SignalStruct {
 		SignalStruct(
 			const string& signal,
-			const vector<TDMEMiniScript::ScriptVariable>& arguments
+			const vector<EngineMiniScript::ScriptVariable>& arguments
 		): signal(signal), arguments(arguments) {}
 		string signal;
-		vector<TDMEMiniScript::ScriptVariable> arguments;
+		vector<EngineMiniScript::ScriptVariable> arguments;
 	};
 	vector<SignalStruct> signals;
 
@@ -211,7 +211,7 @@ public:
 	 * @param signal signal
 	 * @param arguments arguments
 	 */
-	inline void addSignal(const string& signal, const vector<TDMEMiniScript::ScriptVariable>& arguments) {
+	inline void addSignal(const string& signal, const vector<EngineMiniScript::ScriptVariable>& arguments) {
 		signals.emplace_back(
 			signal,
 			arguments
@@ -240,9 +240,9 @@ public:
 	 * Get signal argument
 	 * @return signal argument at given index
 	 */
-	inline TDMEMiniScript::ScriptVariable getSignalArgument(int idx) {
-		if (signals.empty() == true) return TDMEMiniScript::ScriptVariable();
-		if (idx >= signals[0].arguments.size()) return TDMEMiniScript::ScriptVariable();
+	inline EngineMiniScript::ScriptVariable getSignalArgument(int idx) {
+		if (signals.empty() == true) return EngineMiniScript::ScriptVariable();
+		if (idx >= signals[0].arguments.size()) return EngineMiniScript::ScriptVariable();
 		return signals[0].arguments[idx];
 	}
 

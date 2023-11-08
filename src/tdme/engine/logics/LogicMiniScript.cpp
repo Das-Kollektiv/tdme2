@@ -37,7 +37,7 @@
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
-#include <tdme/utilities/TDMEMiniScript.h>
+#include <tdme/utilities/EngineMiniScript.h>
 #include <tdme/utilities/UTF8CharacterIterator.h>
 
 using std::move;
@@ -79,10 +79,10 @@ using tdme::tools::editor::Editor;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
-using tdme::utilities::TDMEMiniScript;
+using tdme::utilities::EngineMiniScript;
 using tdme::utilities::UTF8CharacterIterator;
 
-LogicMiniScript::LogicMiniScript(): TDMEMiniScript(), prototypesToAddMutex("prototypetoadd-mutex") {
+LogicMiniScript::LogicMiniScript(): EngineMiniScript(), prototypesToAddMutex("prototypetoadd-mutex") {
 }
 
 LogicMiniScript::~LogicMiniScript() {
@@ -93,7 +93,7 @@ const string LogicMiniScript::getBaseClass() {
 }
 
 const vector<string> LogicMiniScript::getTranspilationUnits() {
-	auto transpilationUnits = TDMEMiniScript::getTranspilationUnits();
+	auto transpilationUnits = EngineMiniScript::getTranspilationUnits();
 	transpilationUnits.push_back("src/tdme/engine/logics/LogicMiniScript.cpp");
 	return transpilationUnits;
 }
@@ -115,11 +115,11 @@ inline Entity* LogicMiniScript::getEntity(const string& entityId, const string& 
 }
 
 void LogicMiniScript::registerStateMachineStates() {
-	TDMEMiniScript::registerStateMachineStates();
+	EngineMiniScript::registerStateMachineStates();
 }
 
 void LogicMiniScript::registerMethods() {
-	TDMEMiniScript::registerMethods();
+	EngineMiniScript::registerMethods();
 	/*
 	{
 		//
@@ -240,9 +240,9 @@ void LogicMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				const auto& contextLogics = miniScript->logic->getContext()->getLogics();
-				returnValue.setType(TDMEMiniScript::TYPE_ARRAY);
+				returnValue.setType(EngineMiniScript::TYPE_ARRAY);
 				for (auto contextLogic: contextLogics) {
-					returnValue.pushArrayEntry(TDMEMiniScript::ScriptVariable(contextLogic->getId()));
+					returnValue.pushArrayEntry(EngineMiniScript::ScriptVariable(contextLogic->getId()));
 				}
 			}
 			const vector<string>& getContextFunctions() {
@@ -574,8 +574,8 @@ void LogicMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string logicId;
 				string callable;
-				if (TDMEMiniScript::getStringValue(argumentValues, 0, logicId) == false ||
-					TDMEMiniScript::getStringValue(argumentValues, 1, callable) == false) {
+				if (EngineMiniScript::getStringValue(argumentValues, 0, logicId) == false ||
+					EngineMiniScript::getStringValue(argumentValues, 1, callable) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -617,8 +617,8 @@ void LogicMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string logicId;
 				string callable;
-				if (TDMEMiniScript::getStringValue(argumentValues, 0, logicId) == false ||
-					TDMEMiniScript::getStringValue(argumentValues, 1, callable) == false) {
+				if (EngineMiniScript::getStringValue(argumentValues, 0, logicId) == false ||
+					EngineMiniScript::getStringValue(argumentValues, 1, callable) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -4910,7 +4910,7 @@ void LogicMiniScript::registerMethods() {
 					} else {
 						vector<Body*> collisionBodies;
 						miniScript->context->getWorld()->doesCollideWith(collisionTypeIds, body, collisionBodies);
-						returnValue.setType(TDMEMiniScript::TYPE_ARRAY);
+						returnValue.setType(EngineMiniScript::TYPE_ARRAY);
 						for (auto collisionBody: collisionBodies) {
 							returnValue.pushArrayEntry(collisionBody->getId());
 						}
@@ -5081,7 +5081,7 @@ void LogicMiniScript::registerMethods() {
 					miniScript->getStringValue(argumentValues, 0, logicId) == true &&
 					miniScript->getVector3Value(argumentValues, 1, startPosition) == true &&
 					miniScript->getVector3Value(argumentValues, 2, endPosition) == true) {
-					argumentValues[3].setType(TDMEMiniScript::TYPE_ARRAY);
+					argumentValues[3].setType(EngineMiniScript::TYPE_ARRAY);
 					vector<Vector3> path;
 					auto pathFindingState = miniScript->context->getPathFinding()->findPath(logicId, logicId, startPosition, endPosition, path);
 					returnValue = static_cast<int64_t>(pathFindingState);

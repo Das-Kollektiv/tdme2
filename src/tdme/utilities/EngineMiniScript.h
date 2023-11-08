@@ -10,26 +10,27 @@ using std::string;
 
 using tdme::utilities::Console;
 using tdme::utilities::MiniScript;
-using tdme::utilities::TDMEMiniScript;
+using tdme::utilities::EngineMiniScript;
 
 /**
- * TDME MiniScript
+ * Engine MiniScript
+ * @author Andreas Drewke
  */
-class TDMEMiniScript: public MiniScript {
+class EngineMiniScript: public MiniScript {
 public:
 	// forbid class copy
-	FORBID_CLASS_COPY(TDMEMiniScript)
+	FORBID_CLASS_COPY(EngineMiniScript)
 
 	/**
 	 * Load script
 	 * @param pathName path name
 	 * @param fileName file name
 	 */
-	static TDMEMiniScript* loadScript(const string& pathName, const string& fileName);
+	static EngineMiniScript* loadScript(const string& pathName, const string& fileName);
 
 	/**
 	 * Public constructor
 	 */
-	TDMEMiniScript();
+	EngineMiniScript();
 
 };

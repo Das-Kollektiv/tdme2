@@ -15,7 +15,7 @@
 #include <tdme/tools/editor/tabcontrollers/TextEditorTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
-#include <tdme/utilities/TDMEMiniScript.h>
+#include <tdme/utilities/EngineMiniScript.h>
 
 using std::string;
 using std::to_string;
@@ -35,7 +35,7 @@ using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::TextEditorTabController;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
-using tdme::utilities::TDMEMiniScript;
+using tdme::utilities::EngineMiniScript;
 
 /**
  * Text editor tab view
@@ -87,7 +87,7 @@ private:
 		string id;
 		NodeType type { NODETYPE_NONE };
 		string value;
-		TDMEMiniScript::ScriptVariableType returnValueType;
+		EngineMiniScript::ScriptVariableType returnValueType;
 		int left;
 		int top;
 	};
@@ -109,8 +109,8 @@ private:
 
 	struct MiniScriptBranch {
 		string name;
-		TDMEMiniScript::ScriptSyntaxTreeNode* conditionSyntaxTree { nullptr };
-		vector<TDMEMiniScript::ScriptSyntaxTreeNode*> syntaxTreeNodes;
+		EngineMiniScript::ScriptSyntaxTreeNode* conditionSyntaxTree { nullptr };
+		vector<EngineMiniScript::ScriptSyntaxTreeNode*> syntaxTreeNodes;
 	};
 
 	unordered_map<string, string> methodOperatorMap;
@@ -295,35 +295,35 @@ private:
 	 * @param type type
 	 * @return string with color property name from theme
 	 */
-	inline const string getScriptVariableTypePinColor(TDMEMiniScript::ScriptVariableType type) {
+	inline const string getScriptVariableTypePinColor(EngineMiniScript::ScriptVariableType type) {
 		switch (type) {
-			case TDMEMiniScript::ScriptVariableType::TYPE_BOOLEAN:
+			case EngineMiniScript::ScriptVariableType::TYPE_BOOLEAN:
 				return string("color.pintype_boolean");
-			case TDMEMiniScript::ScriptVariableType::TYPE_INTEGER:
+			case EngineMiniScript::ScriptVariableType::TYPE_INTEGER:
 				return string("color.pintype_integer");
-			case TDMEMiniScript::ScriptVariableType::TYPE_FLOAT:
+			case EngineMiniScript::ScriptVariableType::TYPE_FLOAT:
 				return string("color.pintype_float");
-			case TDMEMiniScript::ScriptVariableType::TYPE_STRING:
+			case EngineMiniScript::ScriptVariableType::TYPE_STRING:
 				return string("color.pintype_string");
 			/*
 			// TODO: a.drewke
-			case TDMEMiniScript::ScriptVariableType::TYPE_VECTOR2:
-			case TDMEMiniScript::ScriptVariableType::TYPE_VECTOR3:
-			case TDMEMiniScript::ScriptVariableType::TYPE_VECTOR4:
+			case EngineMiniScript::ScriptVariableType::TYPE_VECTOR2:
+			case EngineMiniScript::ScriptVariableType::TYPE_VECTOR3:
+			case EngineMiniScript::ScriptVariableType::TYPE_VECTOR4:
 				return string("color.pintype_vector");
-			case TDMEMiniScript::ScriptVariableType::TYPE_QUATERNION:
-			case TDMEMiniScript::ScriptVariableType::TYPE_MATRIX3x3:
-			case TDMEMiniScript::ScriptVariableType::TYPE_MATRIX4x4:
-			case TDMEMiniScript::ScriptVariableType::TYPE_TRANSFORM:
+			case EngineMiniScript::ScriptVariableType::TYPE_QUATERNION:
+			case EngineMiniScript::ScriptVariableType::TYPE_MATRIX3x3:
+			case EngineMiniScript::ScriptVariableType::TYPE_MATRIX4x4:
+			case EngineMiniScript::ScriptVariableType::TYPE_TRANSFORM:
 				return string("color.pintype_transform");
 			*/
-			case TDMEMiniScript::ScriptVariableType::TYPE_ARRAY:
-			case TDMEMiniScript::ScriptVariableType::TYPE_MAP:
-			case TDMEMiniScript::ScriptVariableType::TYPE_SET:
-			case TDMEMiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED:
-			case TDMEMiniScript::ScriptVariableType::TYPE_NULL:
+			case EngineMiniScript::ScriptVariableType::TYPE_ARRAY:
+			case EngineMiniScript::ScriptVariableType::TYPE_MAP:
+			case EngineMiniScript::ScriptVariableType::TYPE_SET:
+			case EngineMiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED:
+			case EngineMiniScript::ScriptVariableType::TYPE_NULL:
 				return string("color.pintype_undefined");
-			case TDMEMiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER:
+			case EngineMiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER:
 				return string("color.pintype_float");
 		}
 		return string("color.pintype_undefined");
@@ -446,7 +446,7 @@ public:
 	void setCodeEditor();
 
 	/**
-	 * Create TDMEMiniScript node
+	 * Create EngineMiniScript node
 	 * @param methodName method name
 	 * @param id id
 	 * @param x x
@@ -455,7 +455,7 @@ public:
 	void createMiniScriptNode(const string& methodName, int x, int y);
 
 	/**
-	 * Get TDMEMiniScript node flattened id from hierarchical id
+	 * Get EngineMiniScript node flattened id from hierarchical id
 	 * @param hierarchicalId hierarchical id
 	 * @return flattened id
 	 */
@@ -476,10 +476,10 @@ public:
 	 * @param syntaxTreeNode syntax tree node
 	 * @param deltaX delta X
 	 */
-	void addMiniScriptNodeDeltaX(unordered_map<string, string>& idMapping, const string& id, const TDMEMiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, int deltaX);
+	void addMiniScriptNodeDeltaX(unordered_map<string, string>& idMapping, const string& id, const EngineMiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, int deltaX);
 
 	/**
-	 * Create UI nodes for TDMEMiniScript script node syntax tree, which matches a event or function in TDMEMiniScript
+	 * Create UI nodes for EngineMiniScript script node syntax tree, which matches a event or function in EngineMiniScript
 	 * @param idMapping id mapping
 	 * @param id id
 	 * @param scriptType script type
@@ -492,7 +492,7 @@ public:
 	 * @param height height
 	 * @param createdNodeIds created node ids
 	 */
-	void createMiniScriptScriptNode(unordered_map<string, string>& idMapping, const string& id, TDMEMiniScript::Script::ScriptType scriptType, const string& condition, const string& readableName, const TDMEMiniScript::ScriptSyntaxTreeNode* conditionSyntaxTreeNode, int x, int y, int& width, int& height);
+	void createMiniScriptScriptNode(unordered_map<string, string>& idMapping, const string& id, EngineMiniScript::Script::ScriptType scriptType, const string& condition, const string& readableName, const EngineMiniScript::ScriptSyntaxTreeNode* conditionSyntaxTreeNode, int x, int y, int& width, int& height);
 
 	/**
 	 * Create UI nodes for given statement syntax tree, which matches a statement in miniscript
@@ -509,7 +509,7 @@ public:
 	 * @oaram createdNodeIds created node ids
 	 * @param depth depth
 	 */
-	void createMiniScriptNodes(unordered_map<string, string>& idMapping, const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const TDMEMiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, Node::NodeType nodeType, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth = 0);
+	void createMiniScriptNodes(unordered_map<string, string>& idMapping, const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const EngineMiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, Node::NodeType nodeType, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth = 0);
 
 	/**
 	 * Create UI nodes for branch nodes like if, elseif, else, end; forTime, end; forCondition, end
@@ -527,10 +527,10 @@ public:
 	 * @oaram createdNodeIds created node ids
 	 * @param depth depth
 	 */
-	void createMiniScriptBranchNodes(unordered_map<string, string>& idMapping, const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const TDMEMiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, Node::NodeType nodeType, const vector<MiniScriptBranch>& branches, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth = 0);
+	void createMiniScriptBranchNodes(unordered_map<string, string>& idMapping, const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const EngineMiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, Node::NodeType nodeType, const vector<MiniScriptBranch>& branches, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth = 0);
 
 	/**
-	 * @return TDMEMiniScript script index
+	 * @return EngineMiniScript script index
 	 */
 	inline int getMiniScriptScriptIdx() {
 		return miniScriptScriptIdx;
@@ -545,7 +545,7 @@ public:
 	}
 
 	/**
-	 * Handle TDMEMiniScript branch
+	 * Handle EngineMiniScript branch
 	 * @param idMapping id mapping
 	 * @param idPrefix id prefix
 	 * @param syntaxTree syntax tree
@@ -556,11 +556,11 @@ public:
 	 * @param height height
 	 * @oaram createdNodeIds created node ids
 	 */
-	bool handleMiniScriptBranch(unordered_map<string, string>& idMapping, const string& idPrefix, const vector<TDMEMiniScript::ScriptSyntaxTreeNode*>& syntaxTree, int& i, int x, int y, int& width, int& height, vector<string>& createdNodeIds);
+	bool handleMiniScriptBranch(unordered_map<string, string>& idMapping, const string& idPrefix, const vector<EngineMiniScript::ScriptSyntaxTreeNode*>& syntaxTree, int& i, int x, int y, int& width, int& height, vector<string>& createdNodeIds);
 
 	/**
 	 * Update miniscript syntax tree
-	 * @param miniScriptScriptIdx TDMEMiniScript script index
+	 * @param miniScriptScriptIdx EngineMiniScript script index
 	 */
 	void updateMiniScriptSyntaxTree(int miniScriptScriptIdx);
 

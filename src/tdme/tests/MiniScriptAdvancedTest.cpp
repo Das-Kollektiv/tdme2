@@ -5,17 +5,17 @@
 
 #include <tdme/tdme.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/TDMEMiniScript.h>
+#include <tdme/utilities/EngineMiniScript.h>
 #include <tdme/utilities/MiniScriptMath.h>
 
 using std::array;
 using std::move;
 
 using tdme::utilities::Console;
-using tdme::utilities::TDMEMiniScript;
+using tdme::utilities::EngineMiniScript;
 using tdme::utilities::MiniScriptMath;
 
-MiniScriptAdvancedTest::MiniScriptAdvancedTest(): TDMEMiniScript() {
+MiniScriptAdvancedTest::MiniScriptAdvancedTest(): EngineMiniScript() {
 	initializeNative();
 }
 

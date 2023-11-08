@@ -1,4 +1,4 @@
-#include <tdme/utilities/TDMEMiniScript.h>
+#include <tdme/utilities/EngineMiniScript.h>
 
 #include <memory>
 #include <string>
@@ -13,7 +13,7 @@
 #include <tdme/utilities/MiniScript.h>
 #include <tdme/utilities/StringTools.h>
 
-using tdme::utilities::TDMEMiniScript;
+using tdme::utilities::EngineMiniScript;
 
 using std::make_unique;
 using std::string;
@@ -28,7 +28,7 @@ using tdme::utilities::Console;
 using tdme::utilities::MiniScript;
 using tdme::utilities::StringTools;
 
-TDMEMiniScript* TDMEMiniScript::loadScript(const string& pathName, const string& fileName) {
+EngineMiniScript* EngineMiniScript::loadScript(const string& pathName, const string& fileName) {
 	// we need to detect MiniScript variant
 	vector<string> scriptAsStringArray;
 	try {
@@ -77,7 +77,7 @@ TDMEMiniScript* TDMEMiniScript::loadScript(const string& pathName, const string&
 	}
 
 	// load specific MiniScript
-	unique_ptr<TDMEMiniScript> scriptInstance;
+	unique_ptr<EngineMiniScript> scriptInstance;
 	if (logicMiniScript == true) {
 		scriptInstance = make_unique<LogicMiniScript>();
 		scriptInstance->parseScript(pathName, fileName);
@@ -86,12 +86,12 @@ TDMEMiniScript* TDMEMiniScript::loadScript(const string& pathName, const string&
 		scriptInstance = make_unique<GUIMiniScript>(nullptr);
 		scriptInstance->parseScript(pathName, fileName);
 	} else {
-		scriptInstance = make_unique<TDMEMiniScript>();
+		scriptInstance = make_unique<EngineMiniScript>();
 		scriptInstance->parseScript(pathName, fileName);
 	}
 	//
 	return scriptInstance.release();
 }
 
-TDMEMiniScript::TDMEMiniScript(): MiniScript() {
+EngineMiniScript::EngineMiniScript(): MiniScript() {
 }
