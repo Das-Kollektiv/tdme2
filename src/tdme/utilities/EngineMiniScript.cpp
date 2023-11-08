@@ -122,3 +122,23 @@ EngineMiniScript* EngineMiniScript::loadScript(const string& pathName, const str
 
 EngineMiniScript::EngineMiniScript(): MiniScript() {
 }
+
+const string EngineMiniScript::getBaseClass() {
+	return "tdme::utilities::EngineMiniScript";
+}
+
+const vector<string> EngineMiniScript::getTranspilationUnits() {
+	return {
+		"src/tdme/utilities/MiniScript.cpp",
+		"src/tdme/utilities/MiniScriptMath.cpp",
+		"src/tdme/utilities/MiniScriptMatrix3x3.cpp",
+		"src/tdme/utilities/MiniScriptMatrix4x4.cpp",
+		"src/tdme/utilities/MiniScriptQuaternion.cpp",
+		"src/tdme/utilities/MiniScriptTransform.cpp",
+		"src/tdme/utilities/MiniScriptTranspiler.cpp",
+		"src/tdme/utilities/MiniScriptVector2.cpp",
+		"src/tdme/utilities/MiniScriptVector3.cpp",
+		"src/tdme/utilities/MiniScriptVector4.cpp"
+	};
+}
+

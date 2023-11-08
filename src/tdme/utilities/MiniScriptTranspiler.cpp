@@ -523,12 +523,12 @@ void MiniScriptTranspiler::generateMiniScriptEvaluateMemberAccessArrays(
 		"array<array<ScriptMethod*, " +
 		to_string(methodIdx) +
 		">, " +
-		to_string((static_cast<int>(MiniScript::TYPE_SET) - static_cast<int>(MiniScript::TYPE_STRING)) + 1) +
+		to_string((static_cast<int>(MiniScript::TYPE_PSEUDO_CUSTOM_DATATYPES + MiniScript::getDataTypes().size()) - static_cast<int>(MiniScript::TYPE_STRING))) +
 		"> evaluateMemberAccessArrays {};"
 	);
 	generatedDeclarations.push_back("// evaluate member access arrays");
 	generatedDefinitions.push_back("evaluateMemberAccessArrays = {};");
-	for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); typeIdx <= static_cast<int>(MiniScript::TYPE_SET); typeIdx++) {
+	for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); typeIdx < static_cast<int>(MiniScript::TYPE_PSEUDO_CUSTOM_DATATYPES + MiniScript::getDataTypes().size()); typeIdx++) {
 		const auto& className = MiniScript::ScriptVariable::getClassName(static_cast<MiniScript::ScriptVariableType>(typeIdx));
 		const auto& methods = methodsByClasses[className];
 		auto methodIdx = 0;
@@ -597,6 +597,49 @@ void MiniScriptTranspiler::generateArrayMapSetVariable(
 				variable.getFloatValue(value);
 				generatedDefinitions+= indent + "{" + "\n";
 				generatedDefinitions+= indent + "\t" + "ScriptVariable variableD" + to_string(initializerDepth) + "(" + to_string(value) + "f);" + "\n";
+				generatedDefinitions+= indent + "\t" + postStatement + "\n";
+				generatedDefinitions+= indent + "}" + "\n";
+			}
+			break;
+		case MiniScript::TYPE_FUNCTION_CALL:
+			{
+				//
+				const auto& statement = variable.getInitializer()->getStatement();
+				string transpiledCode;
+				auto statementIdx = MiniScript::STATEMENTIDX_FIRST;
+				auto scriptStateChanged = false;
+				auto scriptStopped = false;
+				vector<string>enabledNamedConditions;
+				MiniScriptTranspiler::transpileScriptStatement(
+					miniScript,
+					transpiledCode,
+					*variable.getInitializer()->getSyntaxTree(),
+					statement,
+					MiniScript::SCRIPTIDX_NONE,
+					MiniScript::SCRIPTIDX_NONE,
+					statementIdx,
+					methodCodeMap,
+					allMethods,
+					scriptStateChanged,
+					scriptStopped,
+					enabledNamedConditions,
+					0,
+					{},
+					"ScriptVariable()",
+					"const auto& variableD" + to_string(initializerDepth) + " = returnValue; " + postStatement + "\n", 1
+				);
+				generatedDefinitions+= transpiledCode;
+			}
+			break;
+		case MiniScript::TYPE_FUNCTION_ASSIGNMENT:
+			{
+				string value;
+				variable.getStringValue(value);
+				value = StringTools::replace(StringTools::replace(value, "\\", "\\\\"), "\"", "\\\"");
+				//
+				generatedDefinitions+= indent + "{" + "\n";
+				generatedDefinitions+= indent + "\t" + "ScriptVariable variableD" + to_string(initializerDepth) + ";" + "\n";
+				generatedDefinitions+= indent + "\t" + "variableD" + to_string(initializerDepth) + ".setFunctionAssignment(\"" + value + "\");" + "\n";
 				generatedDefinitions+= indent + "\t" + postStatement + "\n";
 				generatedDefinitions+= indent + "}" + "\n";
 			}
@@ -675,49 +718,6 @@ void MiniScriptTranspiler::generateArrayMapSetVariable(
 				for (const auto& key: *setValue) {
 					generatedDefinitions+= indent + "\t" + "variableD" + to_string(initializerDepth) + ".insertSetKey(\"" + key + "\");" + "\n";
 				}
-				generatedDefinitions+= indent + "\t" + postStatement + "\n";
-				generatedDefinitions+= indent + "}" + "\n";
-			}
-			break;
-		case MiniScript::TYPE_FUNCTION_CALL:
-			{
-				//
-				const auto& statement = variable.getInitializer()->getStatement();
-				string transpiledCode;
-				auto statementIdx = MiniScript::STATEMENTIDX_FIRST;
-				auto scriptStateChanged = false;
-				auto scriptStopped = false;
-				vector<string>enabledNamedConditions;
-				MiniScriptTranspiler::transpileScriptStatement(
-					miniScript,
-					transpiledCode,
-					*variable.getInitializer()->getSyntaxTree(),
-					statement,
-					MiniScript::SCRIPTIDX_NONE,
-					MiniScript::SCRIPTIDX_NONE,
-					statementIdx,
-					methodCodeMap,
-					allMethods,
-					scriptStateChanged,
-					scriptStopped,
-					enabledNamedConditions,
-					0,
-					{},
-					"ScriptVariable()",
-					"const auto& variableD" + to_string(initializerDepth) + " = returnValue; " + postStatement + "\n", 1
-				);
-				generatedDefinitions+= transpiledCode;
-			}
-			break;
-		case MiniScript::TYPE_FUNCTION_ASSIGNMENT:
-			{
-				string value;
-				variable.getStringValue(value);
-				value = StringTools::replace(StringTools::replace(value, "\\", "\\\\"), "\"", "\\\"");
-				//
-				generatedDefinitions+= indent + "{" + "\n";
-				generatedDefinitions+= indent + "\t" + "ScriptVariable variableD" + to_string(initializerDepth) + ";" + "\n";
-				generatedDefinitions+= indent + "\t" + "variableD" + to_string(initializerDepth) + ".setFunctionAssignment(\"" + value + "\");" + "\n";
 				generatedDefinitions+= indent + "\t" + postStatement + "\n";
 				generatedDefinitions+= indent + "}" + "\n";
 			}

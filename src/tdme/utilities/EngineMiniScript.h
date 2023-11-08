@@ -91,6 +91,16 @@ public:
 	EngineMiniScript();
 
 	/**
+	 * @return base class
+	 */
+	const string getBaseClass();
+
+	/**
+	 * @return transpilation units
+	 */
+	const vector<string> getTranspilationUnits();
+
+	/**
 	 * Get vector2 value from given variable
 	 * @param arguments arguments
 	 * @param idx argument index

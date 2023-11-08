@@ -506,6 +506,17 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 								argumentOk = getFloatValue(argumentValues, argumentIdx, floatValue, argumentType.optional);
 							}
 							break;
+						case TYPE_PSEUDO_NUMBER:
+							{
+								float floatValue;
+								argumentOk = getFloatValue(argumentValues, argumentIdx, floatValue, argumentType.optional);
+								break;
+							}
+						case TYPE_PSEUDO_MIXED:
+							{
+								argumentOk = true;
+								break;
+							}
 						case TYPE_STRING:
 							{
 								string stringValue;
@@ -534,17 +545,6 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 									argumentIdx < 0 || argumentIdx >= argumentValues.size()?
 										argumentType.optional:
 										argumentValues[argumentIdx].getType() == TYPE_SET;
-								break;
-							}
-						case TYPE_PSEUDO_NUMBER:
-							{
-								float floatValue;
-								argumentOk = getFloatValue(argumentValues, argumentIdx, floatValue, argumentType.optional);
-								break;
-							}
-						case TYPE_PSEUDO_MIXED:
-							{
-								argumentOk = true;
 								break;
 							}
 						default:

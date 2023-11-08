@@ -132,18 +132,22 @@ public:
 	};
 
 	enum ScriptVariableType {
+		// primitives
 		TYPE_NULL,
 		TYPE_BOOLEAN,
 		TYPE_INTEGER,
 		TYPE_FLOAT,
+		// special
+		TYPE_FUNCTION_CALL,
+		TYPE_FUNCTION_ASSIGNMENT,
+		// pseudo
+		TYPE_PSEUDO_NUMBER,
+		TYPE_PSEUDO_MIXED,
+		// classes
 		TYPE_STRING,
 		TYPE_ARRAY,
 		TYPE_MAP,
 		TYPE_SET,
-		TYPE_FUNCTION_CALL,
-		TYPE_FUNCTION_ASSIGNMENT,
-		TYPE_PSEUDO_NUMBER,
-		TYPE_PSEUDO_MIXED,
 		TYPE_PSEUDO_CUSTOM_DATATYPES,
 	};
 
@@ -577,6 +581,18 @@ public:
 				case TYPE_FLOAT:
 					to.setValue(from.getFloatValueReference());
 					break;
+				case TYPE_FUNCTION_CALL:
+					to.setType(TYPE_FUNCTION_CALL);
+					to.getStringValueReference() = from.getStringValueReference();
+					// copy initializer if we have any
+					to.getInitializer()->copy(from.initializer);
+					//
+					break;
+				case TYPE_FUNCTION_ASSIGNMENT:
+					to.setFunctionAssignment(from.getStringValueReference());
+					break;
+				case TYPE_PSEUDO_NUMBER: break;
+				case TYPE_PSEUDO_MIXED: break;
 				case TYPE_STRING:
 					to.setValue(from.getStringValueReference());
 					break;
@@ -598,18 +614,6 @@ public:
 					to.getInitializer()->copy(from.initializer);
 					//
 					break;
-				case TYPE_FUNCTION_CALL:
-					to.setType(TYPE_FUNCTION_CALL);
-					to.getStringValueReference() = from.getStringValueReference();
-					// copy initializer if we have any
-					to.getInitializer()->copy(from.initializer);
-					//
-					break;
-				case TYPE_FUNCTION_ASSIGNMENT:
-					to.setFunctionAssignment(from.getStringValueReference());
-					break;
-				case TYPE_PSEUDO_NUMBER: break;
-				case TYPE_PSEUDO_MIXED: break;
 				default:
 					// custom data type
 					auto dataTypeIdx = static_cast<int>(from.getType()) - TYPE_PSEUDO_CUSTOM_DATATYPES;
@@ -800,6 +804,13 @@ public:
 					break;
 				case TYPE_FLOAT:
 					break;
+				case TYPE_FUNCTION_CALL:
+					delete static_cast<string*>((void*)getValuePtrReference());
+					delete getInitializerReference();
+					getInitializerReference() = nullptr;
+					break;
+				case TYPE_PSEUDO_NUMBER: break;
+				case TYPE_PSEUDO_MIXED: break;
 				case TYPE_STRING:
 				case TYPE_FUNCTION_ASSIGNMENT:
 					delete static_cast<string*>((void*)getValuePtrReference());
@@ -821,13 +832,6 @@ public:
 					delete getInitializerReference();
 					getInitializerReference() = nullptr;
 					break;
-				case TYPE_FUNCTION_CALL:
-					delete static_cast<string*>((void*)getValuePtrReference());
-					delete getInitializerReference();
-					getInitializerReference() = nullptr;
-					break;
-				case TYPE_PSEUDO_NUMBER: break;
-				case TYPE_PSEUDO_MIXED: break;
 				default:
 					// custom data type
 					auto dataTypeIdx = static_cast<int>(this->getType()) - TYPE_PSEUDO_CUSTOM_DATATYPES;
@@ -855,6 +859,8 @@ public:
 					break;
 				case TYPE_FLOAT:
 					break;
+				case TYPE_PSEUDO_NUMBER: break;
+				case TYPE_PSEUDO_MIXED: break;
 				case TYPE_STRING:
 				case TYPE_FUNCTION_ASSIGNMENT:
 					getValuePtrReference() = (uint64_t)(new string());
@@ -875,8 +881,6 @@ public:
 					getValuePtrReference() = (uint64_t)(new string());
 					getInitializerReference() = new Initializer();
 					break;
-				case TYPE_PSEUDO_NUMBER: break;
-				case TYPE_PSEUDO_MIXED: break;
 				default:
 					// custom data type
 					auto dataTypeIdx = static_cast<int>(this->getType()) - TYPE_PSEUDO_CUSTOM_DATATYPES;
@@ -1503,14 +1507,14 @@ public:
 				case TYPE_BOOLEAN: return CLASSNAME_NONE;
 				case TYPE_INTEGER: return CLASSNAME_NONE;
 				case TYPE_FLOAT: return CLASSNAME_NONE;
-				case TYPE_STRING: return CLASSNAME_STRING;
-				case TYPE_ARRAY: return CLASSNAME_ARRAY;
-				case TYPE_MAP: return CLASSNAME_MAP;
-				case TYPE_SET: return CLASSNAME_SET;
 				case TYPE_FUNCTION_CALL: return CLASSNAME_NONE;
 				case TYPE_FUNCTION_ASSIGNMENT: return CLASSNAME_NONE;
 				case TYPE_PSEUDO_NUMBER: return CLASSNAME_NONE;
 				case TYPE_PSEUDO_MIXED: return CLASSNAME_NONE;
+				case TYPE_STRING: return CLASSNAME_STRING;
+				case TYPE_ARRAY: return CLASSNAME_ARRAY;
+				case TYPE_MAP: return CLASSNAME_MAP;
+				case TYPE_SET: return CLASSNAME_SET;
 				default:
 					// custom data types
 					auto dataTypeIdx = static_cast<int>(type) - TYPE_PSEUDO_CUSTOM_DATATYPES;
@@ -1533,14 +1537,14 @@ public:
 				case TYPE_BOOLEAN: return "Boolean";
 				case TYPE_INTEGER: return "Integer";
 				case TYPE_FLOAT: return "Float";
-				case TYPE_STRING: return "String";
-				case TYPE_ARRAY: return "Array";
-				case TYPE_MAP: return "Map";
-				case TYPE_SET: return "Set";
 				case TYPE_FUNCTION_CALL: return string();
 				case TYPE_FUNCTION_ASSIGNMENT: return string();
 				case TYPE_PSEUDO_NUMBER: return string();
 				case TYPE_PSEUDO_MIXED: return string();
+				case TYPE_STRING: return "String";
+				case TYPE_ARRAY: return "Array";
+				case TYPE_MAP: return "Map";
+				case TYPE_SET: return "Set";
 				default:
 					// custom data types
 					auto dataTypeIdx = static_cast<int>(type) - TYPE_PSEUDO_CUSTOM_DATATYPES;
@@ -1618,6 +1622,18 @@ public:
 					break;
 				case TYPE_FLOAT:
 					result+= to_string(getFloatValueReference());
+					break;
+				case TYPE_FUNCTION_CALL:
+					result+= "{" + getStringValueReference() + "}";
+					break;
+				case TYPE_FUNCTION_ASSIGNMENT:
+					result+= "() -> " + getStringValueReference();
+					break;
+				case TYPE_PSEUDO_NUMBER:
+					result+= "Number";
+					break;
+				case TYPE_PSEUDO_MIXED:
+					result+= "Mixed";
 					break;
 				case TYPE_STRING:
 					result+= getStringValueReference();
@@ -1732,18 +1748,6 @@ public:
 						}
 						break;
 					}
-				case TYPE_FUNCTION_CALL:
-					result+= "{" + getStringValueReference() + "}";
-					break;
-				case TYPE_FUNCTION_ASSIGNMENT:
-					result+= "() -> " + getStringValueReference();
-					break;
-				case TYPE_PSEUDO_NUMBER:
-					result+= "Number";
-					break;
-				case TYPE_PSEUDO_MIXED:
-					result+= "Mixed";
-					break;
 				default:
 					// custom data types
 					auto dataTypeIdx = static_cast<int>(type) - TYPE_PSEUDO_CUSTOM_DATATYPES;
@@ -2708,6 +2712,13 @@ public:
 			result+= to_string(argumentIdx);
 		}
 		return result;
+	}
+
+	/**
+	 * @return data types
+	 */
+	inline static const vector<ScriptDataType*>& getDataTypes() {
+		return scriptDataTypes;
 	}
 
 	/**

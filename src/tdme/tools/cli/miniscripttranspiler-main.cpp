@@ -585,6 +585,9 @@ int main(int argc, char** argv)
 	for (auto i = 3; i < argc; i++) miniScriptExtensionFileNames.push_back(argv[i]);
 
 	//
+	EngineMiniScript::registerDataTypes();
+
+	//
 	tdme::tools::cli::MiniScriptTranspilerTool::processFile(argv[1], argv[2], miniScriptExtensionFileNames);
 
 	//
