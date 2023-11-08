@@ -24,7 +24,7 @@ private:
 	float maxHeight;
 	float* heightValues;
 
-	// overriden methods
+	// overridden methods
 	void destroyCollisionShape() override;
 	void createCollisionShape(World* world) override;
 

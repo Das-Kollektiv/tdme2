@@ -136,7 +136,7 @@ protected:
 		const string& options
 	);
 
-	// overriden methods
+	// overridden methods
 	const string getNodeType() override;
 	bool isContentNode() override;
 
