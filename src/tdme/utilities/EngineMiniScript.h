@@ -47,13 +47,15 @@ public:
 	// forbid class copy
 	FORBID_CLASS_COPY(EngineMiniScript)
 
-	static constexpr ScriptVariableType TYPE_VECTOR2 { static_cast<ScriptVariableType>(-1) };
-	static constexpr ScriptVariableType TYPE_VECTOR3 { static_cast<ScriptVariableType>(-1) };
-	static constexpr ScriptVariableType TYPE_VECTOR4 { static_cast<ScriptVariableType>(-1) };
-	static constexpr ScriptVariableType TYPE_QUATERNION { static_cast<ScriptVariableType>(-1) };
-	static constexpr ScriptVariableType TYPE_MATRIX3x3 { static_cast<ScriptVariableType>(-1) };
-	static constexpr ScriptVariableType TYPE_MATRIX4x4 { static_cast<ScriptVariableType>(-1) };
-	static constexpr ScriptVariableType TYPE_TRANSFORM { static_cast<ScriptVariableType>(-1) };
+	// custom data types, which needs to be created in this particular order
+	//	we could also read the types dynamically, but this works for now :)
+	static constexpr ScriptVariableType TYPE_TRANSFORM { static_cast<ScriptVariableType>(ScriptVariableType::TYPE_PSEUDO_CUSTOM_DATATYPES) };
+	static constexpr ScriptVariableType TYPE_MATRIX4x4 { static_cast<ScriptVariableType>(ScriptVariableType::TYPE_PSEUDO_CUSTOM_DATATYPES + 1) };
+	static constexpr ScriptVariableType TYPE_MATRIX3x3 { static_cast<ScriptVariableType>(ScriptVariableType::TYPE_PSEUDO_CUSTOM_DATATYPES + 2) };
+	static constexpr ScriptVariableType TYPE_QUATERNION { static_cast<ScriptVariableType>(ScriptVariableType::TYPE_PSEUDO_CUSTOM_DATATYPES + 3) };
+	static constexpr ScriptVariableType TYPE_VECTOR2 { static_cast<ScriptVariableType>(ScriptVariableType::TYPE_PSEUDO_CUSTOM_DATATYPES + 4) };
+	static constexpr ScriptVariableType TYPE_VECTOR3 { static_cast<ScriptVariableType>(ScriptVariableType::TYPE_PSEUDO_CUSTOM_DATATYPES + 5) };
+	static constexpr ScriptVariableType TYPE_VECTOR4 { static_cast<ScriptVariableType>(ScriptVariableType::TYPE_PSEUDO_CUSTOM_DATATYPES + 6) };
 
 	/**
 	 * Load script

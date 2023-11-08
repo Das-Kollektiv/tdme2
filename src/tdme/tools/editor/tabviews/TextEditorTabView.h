@@ -305,18 +305,15 @@ private:
 				return string("color.pintype_float");
 			case EngineMiniScript::ScriptVariableType::TYPE_STRING:
 				return string("color.pintype_string");
-			/*
-			// TODO: a.drewke
-			case EngineMiniScript::ScriptVariableType::TYPE_VECTOR2:
-			case EngineMiniScript::ScriptVariableType::TYPE_VECTOR3:
-			case EngineMiniScript::ScriptVariableType::TYPE_VECTOR4:
+			case EngineMiniScript::TYPE_VECTOR2:
+			case EngineMiniScript::TYPE_VECTOR3:
+			case EngineMiniScript::TYPE_VECTOR4:
 				return string("color.pintype_vector");
-			case EngineMiniScript::ScriptVariableType::TYPE_QUATERNION:
-			case EngineMiniScript::ScriptVariableType::TYPE_MATRIX3x3:
-			case EngineMiniScript::ScriptVariableType::TYPE_MATRIX4x4:
-			case EngineMiniScript::ScriptVariableType::TYPE_TRANSFORM:
+			case EngineMiniScript::TYPE_QUATERNION:
+			case EngineMiniScript::TYPE_MATRIX3x3:
+			case EngineMiniScript::TYPE_MATRIX4x4:
+			case EngineMiniScript::TYPE_TRANSFORM:
 				return string("color.pintype_transform");
-			*/
 			case EngineMiniScript::ScriptVariableType::TYPE_ARRAY:
 			case EngineMiniScript::ScriptVariableType::TYPE_MAP:
 			case EngineMiniScript::ScriptVariableType::TYPE_SET:
