@@ -25,7 +25,7 @@
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/MiniScript.h>
+#include <tdme/utilities/TDMEMiniScript.h>
 #include <tdme/utilities/MutableString.h>
 
 using std::make_unique;
@@ -56,10 +56,10 @@ using tdme::os::threading::Mutex;
 using tdme::gui::scripting::GUIMiniScript;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
-using tdme::utilities::MiniScript;
+using tdme::utilities::TDMEMiniScript;
 using tdme::utilities::MutableString;
 
-GUIMiniScript::GUIMiniScript(GUIScreenNode* screenNode): MiniScript(), screenNode(screenNode) {
+GUIMiniScript::GUIMiniScript(GUIScreenNode* screenNode): TDMEMiniScript(), screenNode(screenNode) {
 }
 
 GUIMiniScript::~GUIMiniScript() {
@@ -70,17 +70,17 @@ const string GUIMiniScript::getBaseClass() {
 }
 
 const vector<string> GUIMiniScript::getTranspilationUnits() {
-	auto transpilationUnits = MiniScript::getTranspilationUnits();
+	auto transpilationUnits = TDMEMiniScript::getTranspilationUnits();
 	transpilationUnits.push_back("src/tdme/gui/scripting/GUIMiniScript.cpp");
 	return transpilationUnits;
 }
 
 void GUIMiniScript::registerStateMachineStates() {
-	MiniScript::registerStateMachineStates();
+	TDMEMiniScript::registerStateMachineStates();
 }
 
 void GUIMiniScript::registerMethods() {
-	MiniScript::registerMethods();
+	TDMEMiniScript::registerMethods();
 	/*
 	// input
 	{
@@ -1205,7 +1205,7 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string fileName;
 				if (argumentValues.size() > 3 ||
-					MiniScript::getStringValue(argumentValues, 0, fileName, false) == false) {
+					TDMEMiniScript::getStringValue(argumentValues, 0, fileName, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1232,7 +1232,7 @@ void GUIMiniScript::registerMethods() {
 								screenPathName,
 								screenFileName,
 								variables,
-								argumentValues.size() == 3?argumentValues[2]:MiniScript::ScriptVariable(),
+								argumentValues.size() == 3?argumentValues[2]:TDMEMiniScript::ScriptVariable(),
 								miniScript->screenNode->getContext()
 							)
 						);
@@ -1270,7 +1270,7 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string fileName;
 				if (argumentValues.size() > 3 ||
-					MiniScript::getStringValue(argumentValues, 0, fileName, false) == false) {
+					TDMEMiniScript::getStringValue(argumentValues, 0, fileName, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1294,7 +1294,7 @@ void GUIMiniScript::registerMethods() {
 							screenPathName,
 							screenFileName,
 							variables,
-							argumentValues.size() == 3?argumentValues[2]:MiniScript::ScriptVariable(),
+							argumentValues.size() == 3?argumentValues[2]:TDMEMiniScript::ScriptVariable(),
 							miniScript->screenNode->getContext()
 						);
 						miniScript->screenNode->getGUI()->addScreen(screenNode->getId(), screenNode);
@@ -1483,7 +1483,7 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string nodeId;
-				if (MiniScript::getStringValue(argumentValues, 0, nodeId, false) == false) {
+				if (TDMEMiniScript::getStringValue(argumentValues, 0, nodeId, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1524,8 +1524,8 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string nodeId;
 				string value;
-				if (MiniScript::getStringValue(argumentValues, 0, nodeId, false) == false ||
-					MiniScript::getStringValue(argumentValues, 1, value, false) == false) {
+				if (TDMEMiniScript::getStringValue(argumentValues, 0, nodeId, false) == false ||
+					TDMEMiniScript::getStringValue(argumentValues, 1, value, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1564,7 +1564,7 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string textNodeId;
-				if (MiniScript::getStringValue(argumentValues, 0, textNodeId, false) == false) {
+				if (TDMEMiniScript::getStringValue(argumentValues, 0, textNodeId, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1608,8 +1608,8 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string textNodeId;
 				string text;
-				if (MiniScript::getStringValue(argumentValues, 0, textNodeId, false) == false ||
-					MiniScript::getStringValue(argumentValues, 1, text, false) == false) {
+				if (TDMEMiniScript::getStringValue(argumentValues, 0, textNodeId, false) == false ||
+					TDMEMiniScript::getStringValue(argumentValues, 1, text, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1653,8 +1653,8 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string elementNodeId;
 				string condition;
-				if (MiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
-					MiniScript::getStringValue(argumentValues, 1, condition, false) == false) {
+				if (TDMEMiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
+					TDMEMiniScript::getStringValue(argumentValues, 1, condition, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1692,7 +1692,7 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string elementNodeId;
-				if (MiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false) {
+				if (TDMEMiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1736,8 +1736,8 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string elementNodeId;
 				string condition;
-				if (MiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
-					MiniScript::getStringValue(argumentValues, 1, condition, false) == false) {
+				if (TDMEMiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
+					TDMEMiniScript::getStringValue(argumentValues, 1, condition, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1777,8 +1777,8 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string elementNodeId;
 				string condition;
-				if (MiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
-					MiniScript::getStringValue(argumentValues, 1, condition, false) == false) {
+				if (TDMEMiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
+					TDMEMiniScript::getStringValue(argumentValues, 1, condition, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1817,7 +1817,7 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string elementNodeId;
-				if (MiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
+				if (TDMEMiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
 					argumentValues.size() <= 1 || argumentValues[1].getType() != ScriptVariableType::TYPE_ARRAY) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -1867,8 +1867,8 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string elementNodeId;
 				string condition;
-				if (MiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
-					MiniScript::getStringValue(argumentValues, 1, condition, false) == false) {
+				if (TDMEMiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
+					TDMEMiniScript::getStringValue(argumentValues, 1, condition, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1906,7 +1906,7 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string elementNodeId;
-				if (MiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false) {
+				if (TDMEMiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1944,7 +1944,7 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string imageNodeId;
-				if (MiniScript::getStringValue(argumentValues, 0, imageNodeId, false) == false) {
+				if (TDMEMiniScript::getStringValue(argumentValues, 0, imageNodeId, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1984,8 +1984,8 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string imageNodeId;
 				string source;
-				if (MiniScript::getStringValue(argumentValues, 0, imageNodeId, false) == false ||
-					MiniScript::getStringValue(argumentValues, 1, source, false) == false) {
+				if (TDMEMiniScript::getStringValue(argumentValues, 0, imageNodeId, false) == false ||
+					TDMEMiniScript::getStringValue(argumentValues, 1, source, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -2023,7 +2023,7 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string videoNodeId;
-				if (MiniScript::getStringValue(argumentValues, 0, videoNodeId, false) == false) {
+				if (TDMEMiniScript::getStringValue(argumentValues, 0, videoNodeId, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -2063,8 +2063,8 @@ void GUIMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string videoNodeId;
 				string source;
-				if (MiniScript::getStringValue(argumentValues, 0, videoNodeId, false) == false ||
-					MiniScript::getStringValue(argumentValues, 1, source, false) == false) {
+				if (TDMEMiniScript::getStringValue(argumentValues, 0, videoNodeId, false) == false ||
+					TDMEMiniScript::getStringValue(argumentValues, 1, source, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -2102,7 +2102,7 @@ void GUIMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string parentNodeId;
-				if (MiniScript::getStringValue(argumentValues, 0, parentNodeId, false) == false) {
+				if (TDMEMiniScript::getStringValue(argumentValues, 0, parentNodeId, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -2144,9 +2144,9 @@ void GUIMiniScript::registerMethods() {
 				string parentNodeId;
 				string xml;
 				bool resetScrollOffsets = true;
-				if (MiniScript::getStringValue(argumentValues, 0, parentNodeId, false) == false ||
-					MiniScript::getStringValue(argumentValues, 1, xml, false) == false ||
-					MiniScript::getBooleanValue(argumentValues, 2, resetScrollOffsets, true) == false) {
+				if (TDMEMiniScript::getStringValue(argumentValues, 0, parentNodeId, false) == false ||
+					TDMEMiniScript::getStringValue(argumentValues, 1, xml, false) == false ||
+					TDMEMiniScript::getBooleanValue(argumentValues, 2, resetScrollOffsets, true) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -2188,9 +2188,9 @@ void GUIMiniScript::registerMethods() {
 				string parentNodeId;
 				string xml;
 				bool resetScrollOffsets = true;
-				if (MiniScript::getStringValue(argumentValues, 0, parentNodeId, false) == false ||
-					MiniScript::getStringValue(argumentValues, 1, xml, false) == false ||
-					MiniScript::getBooleanValue(argumentValues, 2, resetScrollOffsets, true) == false) {
+				if (TDMEMiniScript::getStringValue(argumentValues, 0, parentNodeId, false) == false ||
+					TDMEMiniScript::getStringValue(argumentValues, 1, xml, false) == false ||
+					TDMEMiniScript::getBooleanValue(argumentValues, 2, resetScrollOffsets, true) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -2229,8 +2229,8 @@ void GUIMiniScript::registerMethods() {
 				if (context != nullptr) {
 					string logicId;
 					string signal;
-					if (MiniScript::getStringValue(argumentValues, 0, logicId) == true &&
-						MiniScript::getStringValue(argumentValues, 1, signal) == true) {
+					if (TDMEMiniScript::getStringValue(argumentValues, 0, logicId) == true &&
+						TDMEMiniScript::getStringValue(argumentValues, 1, signal) == true) {
 						context->getLogicsMutex()->lock();
 						auto logic = static_cast<Logic*>(context->getLogic(logicId));
 						if (logic == nullptr) {
@@ -2283,8 +2283,8 @@ void GUIMiniScript::registerMethods() {
 				if (context != nullptr) {
 					string logicId;
 					string callable;
-					if (MiniScript::getStringValue(argumentValues, 0, logicId) == false ||
-						MiniScript::getStringValue(argumentValues, 1, callable) == false) {
+					if (TDMEMiniScript::getStringValue(argumentValues, 0, logicId) == false ||
+						TDMEMiniScript::getStringValue(argumentValues, 1, callable) == false) {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 						miniScript->startErrorScript();
 					} else {
@@ -2337,8 +2337,8 @@ void GUIMiniScript::registerMethods() {
 				if (context != nullptr) {
 					string logicId;
 					string callable;
-					if (MiniScript::getStringValue(argumentValues, 0, logicId) == false ||
-						MiniScript::getStringValue(argumentValues, 1, callable) == false) {
+					if (TDMEMiniScript::getStringValue(argumentValues, 0, logicId) == false ||
+						TDMEMiniScript::getStringValue(argumentValues, 1, callable) == false) {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 						miniScript->startErrorScript();
 					} else {

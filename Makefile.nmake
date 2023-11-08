@@ -518,6 +518,7 @@ SRCS = \
 	src/tdme/utilities/SHA256.cpp \
 	src/tdme/utilities/StringTools.cpp \
 	src/tdme/utilities/StringTokenizer.cpp \
+	src/tdme/utilities/TDMEMiniScript.cpp \
 	src/tdme/utilities/Terrain.cpp \
 	src/tdme/utilities/TextureAtlas.cpp \
 	src/tdme/video/decoder/MPEG1Decoder.cpp \

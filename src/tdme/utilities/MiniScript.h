@@ -2727,13 +2727,6 @@ public:
 	FORBID_CLASS_COPY(MiniScript)
 
 	/**
-	 * Load script
-	 * @param pathName path name
-	 * @param fileName file name
-	 */
-	static MiniScript* loadScript(const string& pathName, const string& fileName);
-
-	/**
 	 * Default constructor
 	 */
 	MiniScript();

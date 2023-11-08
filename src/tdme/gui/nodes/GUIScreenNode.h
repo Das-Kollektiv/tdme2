@@ -18,7 +18,7 @@
 #include <tdme/gui/nodes/GUIScreenNode_SizeConstraints.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/gui/scripting/fwd-tdme.h>
-#include <tdme/utilities/MiniScript.h>
+#include <tdme/utilities/TDMEMiniScript.h>
 #include <tdme/utilities/MutableString.h>
 
 using std::string;
@@ -60,7 +60,7 @@ using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::scripting::GUIMiniScript;
 using tdme::gui::GUI;
-using tdme::utilities::MiniScript;
+using tdme::utilities::TDMEMiniScript;
 using tdme::utilities::MutableString;
 
 /**
@@ -179,7 +179,7 @@ private:
 	bool scriptOnDragRequestAvailable { false };
 	bool scriptOnTickAvailable { false };
 
-	MiniScript::ScriptVariable miniScriptArguments;
+	TDMEMiniScript::ScriptVariable miniScriptArguments;
 
 	Context* context { nullptr };
 
@@ -356,7 +356,7 @@ public:
 	 * @param tooltip tooltip
 	 * @param scrollable scrollable
 	 * @param popUp pop up
-	 * @param scriptFileName MiniScript script file name
+	 * @param scriptFileName TDMEMiniScript script file name
 	 * @param miniScriptArguments mini script arguments
 	 * @param context application logic context
 	 * @throws tdme::gui::GUIParserException
@@ -385,7 +385,7 @@ public:
 		bool scrollable,
 		bool popUp,
 		const string& scriptFileName,
-		const MiniScript::ScriptVariable& miniScriptArguments,
+		const TDMEMiniScript::ScriptVariable& miniScriptArguments,
 		Context* context
 	);
 

@@ -2,14 +2,14 @@
 
 #include <tdme/tdme.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/MiniScript.h>
+#include <tdme/utilities/TDMEMiniScript.h>
 #include <tdme/utilities/MiniScriptMath.h>
 
 using tdme::utilities::Console;
-using tdme::utilities::MiniScript;
+using tdme::utilities::TDMEMiniScript;
 using tdme::utilities::MiniScriptMath;
 
-MiniScriptFunctionsTest::MiniScriptFunctionsTest(): MiniScript() {
+MiniScriptFunctionsTest::MiniScriptFunctionsTest(): TDMEMiniScript() {
 	initializeNative();
 }
 

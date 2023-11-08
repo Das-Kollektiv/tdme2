@@ -42,6 +42,7 @@ namespace utilities {
 	class ShortBuffer;
 	class StringTokenizer;
 	class StringTools;
+	class TDMEMiniScript;
 	class TextureAtlas;
 	class Time;
 	class Terrain;
