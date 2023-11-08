@@ -1109,40 +1109,6 @@ void MiniScriptMath::mul(const span<MiniScript::ScriptVariable>& argumentValues,
 			return;
 		}
 	} else
-	// quaternion
-	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_QUATERNION) == true) {
-		// quaternion * quaternion
-		if (argumentValues[0].getType() == MiniScript::TYPE_QUATERNION &&
-			argumentValues[1].getType() == MiniScript::TYPE_QUATERNION) {
-			Quaternion a;
-			Quaternion b;
-			MiniScript::getQuaternionValue(argumentValues, 0, a, false);
-			MiniScript::getQuaternionValue(argumentValues, 1, b, false);
-			returnValue.setValue(a * b);
-		} else
-		// quaternion * vec3
-		if (argumentValues[0].getType() == MiniScript::TYPE_QUATERNION &&
-			argumentValues[1].getType() == MiniScript::TYPE_VECTOR3) {
-			Quaternion a;
-			Vector3 b;
-			MiniScript::getQuaternionValue(argumentValues, 0, a, false);
-			MiniScript::getVector3Value(argumentValues, 1, b, false);
-			returnValue.setValue(a * b);
-		} else
-		// vec3 * quaternion
-		if (argumentValues[0].getType() == MiniScript::TYPE_VECTOR3 &&
-			argumentValues[1].getType() == MiniScript::TYPE_QUATERNION) {
-			Vector3 a;
-			Quaternion b;
-			MiniScript::getVector3Value(argumentValues, 0, a, false);
-			MiniScript::getQuaternionValue(argumentValues, 1, b, false);
-			returnValue.setValue(b * a);
-		} else {
-			Console::println("mul(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("mul"));
-			miniScript->startErrorScript();
-			return;
-		}
-	} else
 	// float
 	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true) {
 		float a;
@@ -1225,19 +1191,6 @@ void MiniScriptMath::add(const span<MiniScript::ScriptVariable>& argumentValues,
 		}
 		returnValue.setValue(result);
 	} else
-	// quaternion
-	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_QUATERNION) == true) {
-		Quaternion a;
-		Quaternion b;
-		if (MiniScript::getQuaternionValue(argumentValues, 0, a, false) == true &&
-			MiniScript::getQuaternionValue(argumentValues, 1, b, false) == true) {
-			returnValue.setValue(a.clone().add(b));
-		} else  {
-			Console::println("add(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("add"));
-			miniScript->startErrorScript();
-			return;
-		}
-	} else
 	// float
 	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true) {
 		float a;
@@ -1275,19 +1228,6 @@ void MiniScriptMath::sub(const span<MiniScript::ScriptVariable>& argumentValues,
 	for (const auto scriptDataType: scriptDataTypes) {
 		if (scriptDataType->sub(argumentValues, returnValue, statement) == true) return;
 	}
-	// quaternion
-	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_QUATERNION) == true) {
-		Quaternion a;
-		Quaternion b;
-		if (MiniScript::getQuaternionValue(argumentValues, 0, a, false) == true &&
-			MiniScript::getQuaternionValue(argumentValues, 1, b, false) == true) {
-			returnValue.setValue(a.clone().sub(b));
-		} else  {
-			Console::println("sub(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("sub"));
-			miniScript->startErrorScript();
-			return;
-		}
-	} else
 	// float
 	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true) {
 		float a;

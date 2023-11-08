@@ -290,24 +290,111 @@ void MiniScriptQuaternion::copyScriptVariable(MiniScript::ScriptVariable& to, co
 
 bool MiniScriptQuaternion::mul(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
 	const auto TYPE_QUATERNION = static_cast<MiniScript::ScriptVariableType>(getType());
+	const auto TYPE_VECTOR3 = static_cast<MiniScript::ScriptVariableType>(miniScript->getDataTypeByClassName("vec3")->getType());
+	// quaternion
+	if (MiniScript::hasType(argumentValues, TYPE_QUATERNION) == true) {
+		// quaternion * quaternion
+		if (argumentValues[0].getType() == TYPE_QUATERNION &&
+			argumentValues[1].getType() == TYPE_QUATERNION) {
+			Quaternion a;
+			Quaternion b;
+			MiniScriptQuaternion::getQuaternionValue(TYPE_QUATERNION, argumentValues, 0, a, false);
+			MiniScriptQuaternion::getQuaternionValue(TYPE_QUATERNION, argumentValues, 1, b, false);
+			//
+			auto result = a * b;
+			returnValue.setType(TYPE_QUATERNION);
+			returnValue.setValue(&result);
+			//
+			return true;
+		} else
+		// quaternion * vec3
+		if (argumentValues[0].getType() == TYPE_QUATERNION &&
+			argumentValues[1].getType() == MiniScript::TYPE_VECTOR3) {
+			Quaternion a;
+			Vector3 b;
+			MiniScriptQuaternion::getQuaternionValue(TYPE_QUATERNION, argumentValues, 0, a, false);
+			MiniScriptVector3::getVector3Value(TYPE_VECTOR3, argumentValues, 1, b, false);
+			//
+			auto result = a * b;
+			returnValue.setType(TYPE_VECTOR3);
+			returnValue.setValue(&result);
+			//
+			return true;
+		} else
+		// vec3 * quaternion
+		if (argumentValues[0].getType() == MiniScript::TYPE_VECTOR3 &&
+			argumentValues[1].getType() == TYPE_QUATERNION) {
+			Vector3 a;
+			Quaternion b;
+			MiniScriptVector3::getVector3Value(TYPE_VECTOR3, argumentValues, 0, a, false);
+			MiniScriptQuaternion::getQuaternionValue(TYPE_QUATERNION, argumentValues, 1, b, false);
+			//
+			auto result = b * a;
+			returnValue.setType(TYPE_VECTOR3);
+			returnValue.setValue(&result);
+			//
+			return true;
+		} else {
+			Console::println("mul(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("mul"));
+			miniScript->startErrorScript();
+			//
+			return false;
+		}
+	}
 	//
 	return false;
 }
 
 bool MiniScriptQuaternion::div(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
-	const auto TYPE_QUATERNION = static_cast<MiniScript::ScriptVariableType>(getType());
-	//
 	return false;
 }
 
 bool MiniScriptQuaternion::add(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
 	const auto TYPE_QUATERNION = static_cast<MiniScript::ScriptVariableType>(getType());
 	//
+	if (MiniScript::hasType(argumentValues, TYPE_QUATERNION) == true) {
+		Quaternion a;
+		Quaternion b;
+		if (MiniScriptQuaternion::getQuaternionValue(TYPE_QUATERNION, argumentValues, 0, a, false) == true &&
+			MiniScriptQuaternion::getQuaternionValue(TYPE_QUATERNION, argumentValues, 1, b, false) == true) {
+			//
+			auto result = a.clone().add(b);
+			returnValue.setType(TYPE_QUATERNION);
+			returnValue.setValue(&result);
+			//
+			return true;
+		} else  {
+			Console::println("add(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("add"));
+			miniScript->startErrorScript();
+			//
+			return false;
+		}
+	}
+	//
 	return false;
 }
 
 bool MiniScriptQuaternion::sub(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
 	const auto TYPE_QUATERNION = static_cast<MiniScript::ScriptVariableType>(getType());
+	//
+	if (MiniScript::hasType(argumentValues, TYPE_QUATERNION) == true) {
+		Quaternion a;
+		Quaternion b;
+		if (MiniScriptQuaternion::getQuaternionValue(TYPE_QUATERNION, argumentValues, 0, a, false) == true &&
+			MiniScriptQuaternion::getQuaternionValue(TYPE_QUATERNION, argumentValues, 1, b, false) == true) {
+			//
+			auto result = a.clone().sub(b);
+			returnValue.setType(TYPE_QUATERNION);
+			returnValue.setValue(&result);
+			//
+			return true;
+		} else  {
+			Console::println("sub(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("sub"));
+			miniScript->startErrorScript();
+			//
+			return false;
+		}
+	}
 	//
 	return false;
 }
