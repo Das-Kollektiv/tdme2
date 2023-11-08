@@ -17,8 +17,6 @@ using tdme::utilities::MiniScript;
  */
 class tdme::utilities::MiniScriptMatrix3x3 final: public MiniScript::ScriptDataType {
 private:
-	MiniScript* miniScript { nullptr };
-
 	// overridden methods
 	void registerMethods() const override;
 	void unsetScriptVariableValue(MiniScript::ScriptVariable& variable) const override;

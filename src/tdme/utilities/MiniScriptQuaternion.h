@@ -17,8 +17,6 @@ using tdme::utilities::MiniScript;
  */
 class tdme::utilities::MiniScriptQuaternion final: public MiniScript::ScriptDataType {
 private:
-	MiniScript* miniScript { nullptr };
-
 	// overridden methods
 	void registerMethods() const override;
 	void unsetScriptVariableValue(MiniScript::ScriptVariable& variable) const override;

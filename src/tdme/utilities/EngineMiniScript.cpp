@@ -113,7 +113,9 @@ EngineMiniScript::EngineMiniScript(): MiniScript() {
 }
 
 void EngineMiniScript::registerDataTypes() {
+	//
 	MiniScript::registerDataTypes();
+	//
 	registerDataType(new MiniScriptTransform(this));
 	registerDataType(new MiniScriptMatrix4x4(this));
 	registerDataType(new MiniScriptMatrix3x3(this));

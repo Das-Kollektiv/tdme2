@@ -19,7 +19,7 @@ using tdme::utilities::MiniScriptMatrix4x4;
 using tdme::utilities::MiniScriptVector3;
 using tdme::utilities::MiniScriptVector4;
 
-const string MiniScriptMatrix4x4::CLASS_NAME = "mat3";
+const string MiniScriptMatrix4x4::CLASS_NAME = "mat4";
 const string MiniScriptMatrix4x4::TYPE_NAME = "Matrix4x4";
 
 void MiniScriptMatrix4x4::registerMethods() const {
