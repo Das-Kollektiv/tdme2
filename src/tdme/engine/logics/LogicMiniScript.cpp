@@ -120,7 +120,6 @@ void LogicMiniScript::registerStateMachineStates() {
 
 void LogicMiniScript::registerMethods() {
 	EngineMiniScript::registerMethods();
-	/*
 	{
 		//
 		class ScriptMethodApplicationRunsInEditor: public ScriptMethod {
@@ -134,7 +133,7 @@ void LogicMiniScript::registerMethods() {
 				return "application.runsInEditor";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue.setValue(miniScript->logic->isRunningInEditor());
+				miniScript->setValue(returnValue, miniScript->logic->isRunningInEditor());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -155,7 +154,7 @@ void LogicMiniScript::registerMethods() {
 				return "application.isFullScreen";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue.setValue(Editor::getInstance() != nullptr?Editor::getInstance()->isFullScreen():false);
+				miniScript->setValue(returnValue, Editor::getInstance() != nullptr?Editor::getInstance()->isFullScreen():false);
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -176,7 +175,7 @@ void LogicMiniScript::registerMethods() {
 				return "logic.getId";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue.setValue(miniScript->logic->getId());
+				miniScript->setValue(returnValue, miniScript->logic->getId());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINELOGIC;
@@ -197,7 +196,7 @@ void LogicMiniScript::registerMethods() {
 				return "logic.getHierarchyId";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue.setValue(miniScript->logic->getHierarchyId());
+				miniScript->setValue(returnValue, miniScript->logic->getHierarchyId());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINELOGIC;
@@ -218,7 +217,7 @@ void LogicMiniScript::registerMethods() {
 				return "logic.getHierarchyParentId";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue.setValue(miniScript->logic->getHierarchyParentId());
+				miniScript->setValue(returnValue, miniScript->logic->getHierarchyParentId());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINELOGIC;
@@ -260,14 +259,14 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodAudioGetListenerPosition(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{},
-					ScriptVariableType::TYPE_VECTOR3
+					TYPE_VECTOR3
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "audio.getListenerPosition";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue.setValue(miniScript->logic->getContext()->getAudio()->getListenerPosition());
+				miniScript->setValue(returnValue, miniScript->logic->getContext()->getAudio()->getListenerPosition());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
@@ -284,7 +283,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodAudioSetListenerPosition(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "position", .optional = false, .reference = false, .nullable = false }
+						{ .type = TYPE_VECTOR3, .name = "position", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -316,14 +315,14 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodAudioGetListenerOrientationUp(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{},
-					ScriptVariableType::TYPE_VECTOR3
+					TYPE_VECTOR3
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "audio.getListenerOrientationUp";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue.setValue(miniScript->logic->getContext()->getAudio()->getListenerOrientationUp());
+				miniScript->setValue(returnValue, miniScript->logic->getContext()->getAudio()->getListenerOrientationUp());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
@@ -340,7 +339,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodAudioSetListenerOrientationUp(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "orientation", .optional = false, .reference = false, .nullable = false }
+						{ .type = TYPE_VECTOR3, .name = "orientation", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -372,14 +371,14 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodAudioGetListenerOrientationAt(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{},
-					ScriptVariableType::TYPE_VECTOR3
+					TYPE_VECTOR3
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "audio.getListenerOrientationAt";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue.setValue(miniScript->logic->getContext()->getAudio()->getListenerOrientationAt());
+				miniScript->setValue(returnValue, miniScript->logic->getContext()->getAudio()->getListenerOrientationAt());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
@@ -396,7 +395,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodAudioSetListenerOrientationAt(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "orientation", .optional = false, .reference = false, .nullable = false }
+						{ .type = TYPE_VECTOR3, .name = "orientation", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -473,7 +472,7 @@ void LogicMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "id", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "position", .optional = false, .reference = false, .nullable = false },
+						{ .type = TYPE_VECTOR3, .name = "position", .optional = false, .reference = false, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "delay", .optional = true, .reference = false, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "gain", .optional = true, .reference = false, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "pitch", .optional = true, .reference = false, .nullable = false },
@@ -581,14 +580,14 @@ void LogicMiniScript::registerMethods() {
 				} else {
 					auto logic = dynamic_cast<MiniScriptLogic*>(miniScript->context->getLogic(logicId));
 					if (logic == nullptr || logic->getMiniScript() == nullptr) {
-						returnValue.setValue(false);
+						miniScript->setValue(returnValue, false);
 					} else {
 						auto logicMiniScript = logic->getMiniScript();
 						auto scriptIdx = logicMiniScript->getFunctionScriptIdx(callable);
 						if (scriptIdx == SCRIPTIDX_NONE || logicMiniScript->getScripts()[scriptIdx].callable == false) {
-							returnValue.setValue(false);
+							miniScript->setValue(returnValue, false);
 						} else {
-							returnValue.setValue(true);
+							miniScript->setValue(returnValue, true);
 						}
 					}
 				}
@@ -669,7 +668,7 @@ void LogicMiniScript::registerMethods() {
 				return "logic.signal.has";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue.setValue(miniScript->logic->hasSignal());
+				miniScript->setValue(returnValue, miniScript->logic->hasSignal());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -690,7 +689,7 @@ void LogicMiniScript::registerMethods() {
 				return "logic.signal.getName";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue.setValue(miniScript->logic->getSignalName());
+				miniScript->setValue(returnValue, miniScript->logic->getSignalName());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -1781,13 +1780,13 @@ void LogicMiniScript::registerMethods() {
 			LogicMiniScript* miniScript { nullptr };
 		public:
 			ScriptMethodCameraGetLookFrom(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_VECTOR3),
+				ScriptMethod({}, TYPE_VECTOR3),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.camera.getLookFrom";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue = miniScript->context->getEngine()->getCamera()->getLookFrom();
+				miniScript->setValue(returnValue, miniScript->context->getEngine()->getCamera()->getLookFrom());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
@@ -1804,7 +1803,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodCameraSetLookFrom(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "lookFrom", .optional = false, .reference = false, .nullable = false }
+						{ .type = TYPE_VECTOR3, .name = "lookFrom", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -1834,13 +1833,13 @@ void LogicMiniScript::registerMethods() {
 			LogicMiniScript* miniScript { nullptr };
 		public:
 			ScriptMethodCameraGetLookAt(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_VECTOR3),
+				ScriptMethod({}, TYPE_VECTOR3),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.camera.getLookAt";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue = miniScript->context->getEngine()->getCamera()->getLookAt();
+				miniScript->setValue(returnValue, miniScript->context->getEngine()->getCamera()->getLookAt());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
@@ -1857,7 +1856,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodCameraSetLookAt(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "lookAt", .optional = false, .reference = false, .nullable = false }
+						{ .type = TYPE_VECTOR3, .name = "lookAt", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -1887,13 +1886,13 @@ void LogicMiniScript::registerMethods() {
 			LogicMiniScript* miniScript { nullptr };
 		public:
 			ScriptMethodCameraGetUpVector(LogicMiniScript* miniScript):
-				ScriptMethod({}, ScriptVariableType::TYPE_VECTOR3),
+				ScriptMethod({}, TYPE_VECTOR3),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "engine.camera.getUpVector";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue = miniScript->context->getEngine()->getCamera()->getUpVector();
+				miniScript->setValue(returnValue, miniScript->context->getEngine()->getCamera()->getUpVector());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
@@ -1910,7 +1909,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodCameraSetUpVector(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "upVector", .optional = false, .reference = false, .nullable = false }
+						{ .type = TYPE_VECTOR3, .name = "upVector", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -1942,10 +1941,10 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodCameraComputeUpVector(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "lookFrom", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "lookAt", .optional = false, .reference = false, .nullable = false }
+						{ .type = TYPE_VECTOR3, .name = "lookFrom", .optional = false, .reference = false, .nullable = false },
+						{ .type = TYPE_VECTOR3, .name = "lookAt", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_VECTOR3
+					TYPE_VECTOR3
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1956,7 +1955,7 @@ void LogicMiniScript::registerMethods() {
 				Vector3 lookAt;
 				if (miniScript->getVector3Value(argumentValues, 0, lookFrom) == true &&
 					miniScript->getVector3Value(argumentValues, 1, lookAt) == true) {
-					returnValue = Camera::computeUpVector(lookFrom, lookAt);
+					miniScript->setValue(returnValue, Camera::computeUpVector(lookFrom, lookAt));
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -2099,7 +2098,7 @@ void LogicMiniScript::registerMethods() {
 				return "engine.getAnimationComputationReduction1Distance";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue.setValue(Engine::getAnimationComputationReduction1Distance());
+				miniScript->setValue(returnValue, Engine::getAnimationComputationReduction1Distance());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
@@ -2153,7 +2152,7 @@ void LogicMiniScript::registerMethods() {
 				return "engine.getAnimationComputationReduction2Distance";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue.setValue(Engine::getAnimationComputationReduction2Distance());
+				miniScript->setValue(returnValue, Engine::getAnimationComputationReduction2Distance());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ENGINE;
@@ -2326,7 +2325,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "mouseX", .optional = false, .reference = false, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "mouseY", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_VECTOR3
+					TYPE_VECTOR3
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -2337,7 +2336,7 @@ void LogicMiniScript::registerMethods() {
 				int64_t mouseY;
 				if (miniScript->getIntegerValue(argumentValues, 0, mouseX) == true &&
 					miniScript->getIntegerValue(argumentValues, 1, mouseY) == true) {
-					returnValue = miniScript->context->getEngine()->computeWorldCoordinateByMousePosition(mouseX, mouseY);
+					miniScript->setValue(returnValue, miniScript->context->getEngine()->computeWorldCoordinateByMousePosition(mouseX, mouseY));
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -2358,8 +2357,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEngineComputeScreenCoordinateByWorldCoordinate(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "worldCoodinate", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR2, .name = "screenCoordinate", .optional = false, .reference = true, .nullable = false }
+						{ .type = TYPE_VECTOR3, .name = "worldCoodinate", .optional = false, .reference = false, .nullable = false },
+						{ .type = TYPE_VECTOR2, .name = "screenCoordinate", .optional = false, .reference = true, .nullable = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -2373,7 +2372,7 @@ void LogicMiniScript::registerMethods() {
 					miniScript->getVector3Value(argumentValues, 0, worldCoodinate) == true) {
 					Vector2 screenCoordinate;
 					if (miniScript->context->getEngine()->computeScreenCoordinateByWorldCoordinate(worldCoodinate, screenCoordinate) == true) {
-						argumentValues[1].setValue(screenCoordinate);
+						miniScript->setValue(argumentValues[1], screenCoordinate);
 						returnValue = true;
 					} else {
 						returnValue = false;
@@ -2401,7 +2400,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_TRANSFORM
+					TYPE_TRANSFORM
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -2414,7 +2413,7 @@ void LogicMiniScript::registerMethods() {
 					miniScript->getStringValue(argumentValues, 1, childEntityId, true) == true) {
 					auto entity = miniScript->getEntity(entityId, childEntityId);
 					if (entity != nullptr) {
-						returnValue = entity->getTransform();
+						miniScript->setValue(returnValue, entity->getTransform());
 					} else {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
@@ -2439,7 +2438,7 @@ void LogicMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
+						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_NULL
@@ -2650,7 +2649,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_VECTOR4
+					TYPE_VECTOR4
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -2664,7 +2663,7 @@ void LogicMiniScript::registerMethods() {
 					auto entity = miniScript->getEntity(entityId, childEntityId);
 					if (entity != nullptr) {
 						auto effectColorMul = entity->getEffectColorMul();
-						returnValue.setValue(Vector4(effectColorMul.getRed(), effectColorMul.getGreen(), effectColorMul.getBlue(), effectColorMul.getAlpha()));
+						miniScript->setValue(returnValue, Vector4(effectColorMul.getRed(), effectColorMul.getGreen(), effectColorMul.getBlue(), effectColorMul.getAlpha()));
 					} else {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
@@ -2689,7 +2688,7 @@ void LogicMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR4, .name = "effectColorMul", .optional = false, .reference = false, .nullable = false },
+						{ .type = TYPE_VECTOR4, .name = "effectColorMul", .optional = false, .reference = false, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_NULL
@@ -2734,7 +2733,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_VECTOR4
+					TYPE_VECTOR4
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -2748,7 +2747,7 @@ void LogicMiniScript::registerMethods() {
 					auto entity = miniScript->getEntity(entityId, childEntityId);
 					if (entity != nullptr) {
 						auto effectColorAdd = entity->getEffectColorAdd();
-						returnValue.setValue(Vector4(effectColorAdd.getRed(), effectColorAdd.getGreen(), effectColorAdd.getBlue(), effectColorAdd.getAlpha()));
+						miniScript->setValue(returnValue, Vector4(effectColorAdd.getRed(), effectColorAdd.getGreen(), effectColorAdd.getBlue(), effectColorAdd.getAlpha()));
 					} else {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
@@ -2773,7 +2772,7 @@ void LogicMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR4, .name = "effectColorAdd", .optional = false, .reference = false, .nullable = false },
+						{ .type = TYPE_VECTOR4, .name = "effectColorAdd", .optional = false, .reference = false, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_NULL
@@ -2831,7 +2830,7 @@ void LogicMiniScript::registerMethods() {
 					miniScript->getStringValue(argumentValues, 1, childEntityId, true) == true) {
 					auto object = dynamic_cast<Object*>(miniScript->getEntity(entityId, childEntityId));
 					if (object != nullptr) {
-						returnValue.setValue(object->getAnimation());
+						miniScript->setValue(returnValue, object->getAnimation());
 					} else {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
@@ -2960,7 +2959,7 @@ void LogicMiniScript::registerMethods() {
 					miniScript->getStringValue(argumentValues, 1, childEntityId, true) == true) {
 					auto object = dynamic_cast<Object*>(miniScript->getEntity(entityId, childEntityId));
 					if (object != nullptr) {
-						returnValue.setValue(object->getAnimationTime());
+						miniScript->setValue(returnValue, object->getAnimationTime());
 					} else {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
@@ -3212,7 +3211,7 @@ void LogicMiniScript::registerMethods() {
 					miniScript->getStringValue(argumentValues, 2, childEntityId, true) == true) {
 					auto object = dynamic_cast<Object*>(miniScript->getEntity(entityId, childEntityId));
 					if (object != nullptr) {
-						returnValue.setValue(object->getOverlayAnimationTime(animation));
+						miniScript->setValue(returnValue, object->getOverlayAnimationTime(animation));
 					} else {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
@@ -3240,7 +3239,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .reference = false, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
 					},
-					ScriptVariableType::TYPE_MATRIX4x4
+					TYPE_MATRIX4x4
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -3255,7 +3254,7 @@ void LogicMiniScript::registerMethods() {
 					miniScript->getStringValue(argumentValues, 2, childEntityId, true) == true) {
 					auto object = dynamic_cast<Object*>(miniScript->getEntity(entityId, childEntityId));
 					if (object != nullptr) {
-						returnValue.setValue(object->getNodeTransformMatrix(nodeId));
+						miniScript->setValue(returnValue, object->getNodeTransformMatrix(nodeId));
 					} else {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
@@ -3283,7 +3282,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .reference = false, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
 					},
-					ScriptVariableType::TYPE_TRANSFORM
+					TYPE_TRANSFORM
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -3300,7 +3299,7 @@ void LogicMiniScript::registerMethods() {
 					if (object != nullptr) {
 						Transform transform;
 						transform.fromMatrix(object->getNodeTransformMatrix(nodeId), RotationOrder::ZYX);
-						returnValue.setValue(transform);
+						miniScript->setValue(returnValue, transform);
 					} else {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + (childEntityId.empty() == true?entityId:childEntityId + "@" + entityId));
 					}
@@ -3326,7 +3325,7 @@ void LogicMiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_MATRIX4x4, .name = "matrix", .optional = false, .reference = false, .nullable = false },
+						{ .type = TYPE_MATRIX4x4, .name = "matrix", .optional = false, .reference = false, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_NULL
@@ -3372,7 +3371,7 @@ void LogicMiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .reference = false, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
+						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_NULL
@@ -4408,7 +4407,7 @@ void LogicMiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_VECTOR3
+					TYPE_VECTOR3
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -4419,7 +4418,7 @@ void LogicMiniScript::registerMethods() {
 				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true) {
 					auto body = miniScript->context->getWorld()->getBody(bodyId);
 					if (body != nullptr) {
-						returnValue = body->getLinearVelocity();
+						miniScript->setValue(returnValue, body->getLinearVelocity());
 					} else {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
@@ -4444,7 +4443,7 @@ void LogicMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "linearVelocity", .optional = false, .reference = false, .nullable = false }
+						{ .type = TYPE_VECTOR3, .name = "linearVelocity", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -4485,7 +4484,7 @@ void LogicMiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_VECTOR3
+					TYPE_VECTOR3
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -4496,7 +4495,7 @@ void LogicMiniScript::registerMethods() {
 				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true) {
 					auto body = miniScript->context->getWorld()->getBody(bodyId);
 					if (body != nullptr) {
-						returnValue = body->getAngularVelocity();
+						miniScript->setValue(returnValue, body->getAngularVelocity());
 					} else {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
@@ -4521,7 +4520,7 @@ void LogicMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "angularVelocity", .optional = false, .reference = false, .nullable = false }
+						{ .type = TYPE_VECTOR3, .name = "angularVelocity", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -4561,8 +4560,8 @@ void LogicMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "force", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "origin", .optional = true, .reference = false, .nullable = false }
+						{ .type = TYPE_VECTOR3, .name = "force", .optional = false, .reference = false, .nullable = false },
+						{ .type = TYPE_VECTOR3, .name = "origin", .optional = true, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -4612,7 +4611,7 @@ void LogicMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "torque", .optional = false, .reference = false, .nullable = false }
+						{ .type = TYPE_VECTOR3, .name = "torque", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -4653,7 +4652,7 @@ void LogicMiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false }
 					},
-					ScriptVariableType::TYPE_TRANSFORM
+					TYPE_TRANSFORM
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -4676,7 +4675,7 @@ void LogicMiniScript::registerMethods() {
 						transform.setRotationAngle(1, euler.getY());
 						transform.setRotationAngle(2, euler.getX());
 						transform.update();
-						returnValue = transform;
+						miniScript->setValue(returnValue, transform);
 					} else {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
 					}
@@ -4701,7 +4700,7 @@ void LogicMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false }
+						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false }
 					},
 					ScriptVariableType::TYPE_NULL
 				),
@@ -4742,8 +4741,8 @@ void LogicMiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "collisionTypeIds", .optional = false, .reference = false, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "stepUpMax", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "point", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "heightPoint", .optional = false, .reference = true, .nullable = false },
+						{ .type = TYPE_VECTOR3, .name = "point", .optional = false, .reference = false, .nullable = false },
+						{ .type = TYPE_VECTOR3, .name = "heightPoint", .optional = false, .reference = true, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = true, .reference = true, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "minHeight", .optional = true, .reference = false, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "maxHeight", .optional = true, .reference = false, .nullable = false }
@@ -4769,7 +4768,7 @@ void LogicMiniScript::registerMethods() {
 					miniScript->getFloatValue(argumentValues, 6, maxHeight, true) == true) {
 					auto body = miniScript->context->getWorld()->determineHeight(collisionTypeIds, stepUpMax, point, heightPoint, minHeight, maxHeight);
 					if (body != nullptr) {
-						argumentValues[3].setValue(heightPoint);
+						miniScript->setValue(argumentValues[3], heightPoint);
 						if (argumentValues.size() >= 5) argumentValues[4].setValue(body->getId());
 						returnValue = true;
 					} else {
@@ -4796,9 +4795,9 @@ void LogicMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "collisionTypeIds", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "start", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "end", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "hitPoint", .optional = false, .reference = true, .nullable = false },
+						{ .type = TYPE_VECTOR3, .name = "start", .optional = false, .reference = false, .nullable = false },
+						{ .type = TYPE_VECTOR3, .name = "end", .optional = false, .reference = false, .nullable = false },
+						{ .type = TYPE_VECTOR3, .name = "hitPoint", .optional = false, .reference = true, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = true, .reference = true, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "actorId", .optional = true, .reference = false, .nullable = false },
 					},
@@ -4820,11 +4819,11 @@ void LogicMiniScript::registerMethods() {
 					miniScript->getStringValue(argumentValues, 5, actorId, true) == true) {
 					auto body = miniScript->context->getWorld()->doRayCasting(collisionTypeIds, start, end, hitPoint, actorId);
 					if (body != nullptr) {
-						argumentValues[3].setValue(hitPoint);
+						miniScript->setValue(argumentValues[3], hitPoint);
 						if (argumentValues.size() >= 5) argumentValues[4].setValue(body->getId());
-						returnValue.setValue(true);
+						miniScript->setValue(returnValue, true);
 					} else {
-						returnValue.setValue(false);
+						miniScript->setValue(returnValue, false);
 					}
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -5063,8 +5062,8 @@ void LogicMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "startPosition", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "endPosition", .optional = false, .reference = false, .nullable = false },
+						{ .type = TYPE_VECTOR3, .name = "startPosition", .optional = false, .reference = false, .nullable = false },
+						{ .type = TYPE_VECTOR3, .name = "endPosition", .optional = false, .reference = false, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "path", .optional = false, .reference = true, .nullable = false },
 					},
 					ScriptVariableType::TYPE_INTEGER
@@ -5086,7 +5085,9 @@ void LogicMiniScript::registerMethods() {
 					auto pathFindingState = miniScript->context->getPathFinding()->findPath(logicId, logicId, startPosition, endPosition, path);
 					returnValue = static_cast<int64_t>(pathFindingState);
 					for (const auto& position: path) {
-						argumentValues[3].pushArrayEntry(position);
+						MiniScript::ScriptVariable positionVariable;
+						miniScript->setValue(positionVariable, position);
+						argumentValues[3].pushArrayEntry(positionVariable);
 					};
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -5113,7 +5114,7 @@ void LogicMiniScript::registerMethods() {
 				return "scene.getWidth";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue = miniScript->context->getScene()->getBoundingBox()->getDimensions().getX();
+				miniScript->setValue(returnValue, miniScript->context->getScene()->getBoundingBox()->getDimensions().getX());
 			}
 			const vector<string>& getContextFunctions() {
 				return CONTEXTFUNCTIONS_ALL;
@@ -5176,7 +5177,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "pathName", .optional = false, .reference = false, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "fileName", .optional = false, .reference = false, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "id", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
+						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "hierarchyId", .optional = true, .reference = false, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "hierarchyParentId", .optional = true, .reference = false, .nullable = false },
 					},
@@ -5266,7 +5267,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "fileName", .optional = false, .reference = false, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "id", .optional = false, .reference = false, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "attachNodeId", .optional = false, .reference = false, .nullable = false },
-						{ .type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
+						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "parentId", .optional = true, .reference = false, .nullable = false },
 					},
 					ScriptVariableType::TYPE_NULL
@@ -5342,7 +5343,6 @@ void LogicMiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodSceneConnectorAttachPrototype(this));
 	}
-	*/
 }
 
 void LogicMiniScript::registerVariables() {
