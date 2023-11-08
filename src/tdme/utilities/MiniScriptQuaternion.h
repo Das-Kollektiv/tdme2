@@ -18,14 +18,14 @@ using tdme::utilities::MiniScript;
 class tdme::utilities::MiniScriptQuaternion final: public MiniScript::ScriptDataType {
 private:
 	// overridden methods
-	void registerMethods() const override;
+	void registerMethods(MiniScript* miniScript) const override;
 	void unsetScriptVariableValue(MiniScript::ScriptVariable& variable) const override;
 	void setScriptVariableValue(MiniScript::ScriptVariable& variable, const void* value) const override;
 	void copyScriptVariable(MiniScript::ScriptVariable& to, const MiniScript::ScriptVariable& from) const override;
-	bool mul(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const override;
-	bool div(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const override;
-	bool add(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const override;
-	bool sub(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const override;
+	bool mul(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const override;
+	bool div(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const override;
+	bool add(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const override;
+	bool sub(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const override;
 
 public:
 	static const string CLASS_NAME;
@@ -57,9 +57,8 @@ public:
 
 	/**
 	 * MiniScript Quaternion data type
-	 * @param miniScript mini script instance
 	 */
-	MiniScriptQuaternion(MiniScript* miniScript): MiniScript::ScriptDataType(miniScript, true) {
+	MiniScriptQuaternion(): MiniScript::ScriptDataType(true) {
 		//
 	}
 

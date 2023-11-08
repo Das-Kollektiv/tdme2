@@ -24,7 +24,7 @@ using tdme::utilities::MiniScriptVector3;
 const string MiniScriptTransform::CLASS_NAME = "transform";
 const string MiniScriptTransform::TYPE_NAME = "Transform";
 
-void MiniScriptTransform::registerMethods() const {
+void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 	const auto TYPE_TRANSFORM = static_cast<MiniScript::ScriptVariableType>(getType());
 	const auto TYPE_MATRIX4x4 = static_cast<MiniScript::ScriptVariableType>(miniScript->getDataTypeByClassName("mat4")->getType());
 	const auto TYPE_QUATERNION = static_cast<MiniScript::ScriptVariableType>(miniScript->getDataTypeByClassName("quaternion")->getType());
@@ -746,7 +746,7 @@ void MiniScriptTransform::copyScriptVariable(MiniScript::ScriptVariable& to, con
 	*static_cast<Transform*>((void*)to.getValuePtr()) = transformValue;
 }
 
-bool MiniScriptTransform::mul(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
+bool MiniScriptTransform::mul(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
 	const auto TYPE_TRANSFORM = static_cast<MiniScript::ScriptVariableType>(getType());
 	const auto TYPE_VECTOR3 = static_cast<MiniScript::ScriptVariableType>(miniScript->getDataTypeByClassName("vec3")->getType());
 	// transform
@@ -789,15 +789,15 @@ bool MiniScriptTransform::mul(const span<MiniScript::ScriptVariable>& argumentVa
 	return false;
 }
 
-bool MiniScriptTransform::div(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
+bool MiniScriptTransform::div(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
 	return false;
 }
 
-bool MiniScriptTransform::add(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
+bool MiniScriptTransform::add(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
 	return false;
 }
 
-bool MiniScriptTransform::sub(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
+bool MiniScriptTransform::sub(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
 	return false;
 }
 

@@ -159,7 +159,6 @@ public:
 		friend class MiniScriptMath;
 
 	protected:
-		MiniScript* miniScript;
 		bool mathDataType { false };
 		int type { TYPE_NULL };
 
@@ -180,8 +179,9 @@ public:
 
 		/**
 		 * Register methods
+		 * @param miniScript mini script instance
 		 */
-		virtual void registerMethods() const = 0;
+		virtual void registerMethods(MiniScript* miniScript) const = 0;
 
 		/**
 		 * Unset script variable value
@@ -205,39 +205,43 @@ public:
 
 		/**
 		 * Multiply
+		 * @param miniScript mini script instance
 		 * @param argumentValues argument values
 		 * @param returnValue return value
 		 * @param statement statement
 		 * @return mul was executed
 		 */
-		virtual bool mul(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const = 0;
+		virtual bool mul(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const = 0;
 
 		/**
 		 * Division
+		 * @param miniScript mini script instance
 		 * @param argumentValues argument values
 		 * @param returnValue return value
 		 * @param statement statement
 		 * @return div was executed
 		 */
-		virtual bool div(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const = 0;
+		virtual bool div(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const = 0;
 
 		/**
 		 * Addition
+		 * @param miniScript mini script instance
 		 * @param argumentValues argument values
 		 * @param returnValue return value
 		 * @param statement statement
 		 * @return add was executed
 		 */
-		virtual bool add(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const = 0;
+		virtual bool add(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const = 0;
 
 		/**
 		 * Subtraction
+		 * @param miniScript mini script instance
 		 * @param argumentValues argument values
 		 * @param returnValue return value
 		 * @param statement statement
 		 * @return sub was executed
 		 */
-		virtual bool sub(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const = 0;
+		virtual bool sub(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const = 0;
 
 	public:
 		// forbid class copy
@@ -245,22 +249,14 @@ public:
 
 		/**
 		 * Script data type
-		 * @param miniScript mini script instance
 		 * @param mathDataType is math data type and provides math methods
 		 */
-		ScriptDataType(MiniScript* miniScript, bool mathDataType): miniScript(miniScript), mathDataType(mathDataType) {
+		ScriptDataType(bool mathDataType): mathDataType(mathDataType) {
 			//
 		}
 
 		virtual ~ScriptDataType() {
 			//
-		}
-
-		/**
-		 * @return mini script instance
-		 */
-		inline MiniScript* getMiniScript() {
-			return miniScript;
 		}
 
 		/**
@@ -371,12 +367,12 @@ public:
 		};
 
 		//
-		MiniScript* miniScript { nullptr };
-		ScriptVariableType type { TYPE_NULL };
-		uint64_t valuePtr { 0LL };
-		Initializer* initializer { nullptr };
-		ScriptVariable* reference { nullptr };
-		int referenceCounter { 1 };
+		ScriptVariableType type { TYPE_NULL };	// 4, maybe use a int16_t here
+		uint64_t valuePtr { 0LL };				// 8
+		// TODO: union initializer/reference
+		Initializer* initializer { nullptr };	// 8
+		ScriptVariable* reference { nullptr };	// 8
+		int referenceCounter { 1 };				// 4, maybe use a int16_t here
 
 		/**
 		 * Acquire reference
@@ -541,7 +537,6 @@ public:
 			ScriptVariable referenceVariable;
 			referenceVariable.reference = (ScriptVariable*)variable; // TODO: improve me!
 			referenceVariable.reference->acquireReference();
-			referenceVariable.miniScript = referenceVariable.reference->miniScript;
 			return referenceVariable;
 		}
 
@@ -557,7 +552,6 @@ public:
 			ScriptVariable* referenceVariable = new ScriptVariable();
 			referenceVariable->reference = (ScriptVariable*)variable; // TODO: improve me!
 			referenceVariable->reference->acquireReference();
-			referenceVariable->miniScript = referenceVariable->reference->miniScript;
 			return referenceVariable;
 		}
 
@@ -568,7 +562,6 @@ public:
 		 */
 		inline static void copyScriptVariable(ScriptVariable& to, const ScriptVariable& from) {
 			// initial setup
-			to.miniScript = from.miniScript;
 			to.setNullValue();
 			// do the copy
 			switch(from.getType()) {
@@ -620,11 +613,11 @@ public:
 				default:
 					// custom data type
 					auto dataTypeIdx = static_cast<int>(from.getType()) - TYPE_PSEUDO_CUSTOM_DATATYPES;
-					if (dataTypeIdx < 0 || dataTypeIdx >= to.miniScript->scriptDataTypes.size()) {
+					if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::scriptDataTypes.size()) {
 						Console::println("ScriptVariable::copyScriptVariable(): unknown custom data type with id " + to_string(dataTypeIdx));
 						return;
 					}
-					to.miniScript->scriptDataTypes[dataTypeIdx]->copyScriptVariable(to, from);
+					MiniScript::scriptDataTypes[dataTypeIdx]->copyScriptVariable(to, from);
 			}
 
 		}
@@ -667,7 +660,6 @@ public:
 		 */
 		inline ScriptVariable(const ScriptVariable& variable) {
 			if (variable.reference != nullptr) {
-				miniScript = variable.miniScript;
 				reference = variable.reference;
 				variable.reference->acquireReference();
 			} else {
@@ -680,7 +672,6 @@ public:
 		 * @param variable variable to move from
 		 */
 		inline ScriptVariable(ScriptVariable&& variable):
-			miniScript(exchange(variable.miniScript, nullptr)),
 			type(exchange(variable.type, MiniScript::TYPE_NULL)),
 			valuePtr(exchange(variable.valuePtr, 0ll)),
 			initializer(exchange(variable.initializer, nullptr)),
@@ -696,7 +687,6 @@ public:
 		 */
 		inline ScriptVariable& operator=(const ScriptVariable& variable) {
 			if (variable.reference != nullptr) {
-				miniScript = variable.miniScript;
 				reference = variable.reference;
 				variable.reference->acquireReference();
 			} else {
@@ -712,7 +702,6 @@ public:
 		 * @return this script variable
 		 */
 		inline ScriptVariable& operator=(ScriptVariable&& variable) {
-			swap(miniScript, variable.miniScript);
 			swap(type, variable.type);
 			swap(valuePtr, variable.valuePtr);
 			swap(initializer, variable.initializer);
@@ -842,11 +831,11 @@ public:
 				default:
 					// custom data type
 					auto dataTypeIdx = static_cast<int>(this->getType()) - TYPE_PSEUDO_CUSTOM_DATATYPES;
-					if (dataTypeIdx < 0 || dataTypeIdx >= miniScript->scriptDataTypes.size()) {
+					if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::scriptDataTypes.size()) {
 						Console::println("ScriptVariable::setType(): unknown custom data type with id " + to_string(dataTypeIdx));
 						return;
 					}
-					miniScript->scriptDataTypes[dataTypeIdx]->unsetScriptVariableValue(*this);
+					MiniScript::scriptDataTypes[dataTypeIdx]->unsetScriptVariableValue(*this);
 
 			}
 			this->getValuePtrReference() = 0LL;
@@ -891,11 +880,11 @@ public:
 				default:
 					// custom data type
 					auto dataTypeIdx = static_cast<int>(this->getType()) - TYPE_PSEUDO_CUSTOM_DATATYPES;
-					if (dataTypeIdx < 0 || dataTypeIdx >= miniScript->scriptDataTypes.size()) {
+					if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::scriptDataTypes.size()) {
 						Console::println("ScriptVariable::setType(): unknown custom data type with id " + to_string(dataTypeIdx));
 						return;
 					}
-					miniScript->scriptDataTypes[dataTypeIdx]->setScriptVariableValue(*this, nullptr);
+					MiniScript::scriptDataTypes[dataTypeIdx]->setScriptVariableValue(*this, nullptr);
 			}
 		}
 
@@ -1140,11 +1129,11 @@ public:
 		inline void setValue(const void* value) {
 			// custom data type
 			auto dataTypeIdx = static_cast<int>(this->getType()) - TYPE_PSEUDO_CUSTOM_DATATYPES;
-			if (dataTypeIdx < 0 || dataTypeIdx >= miniScript->scriptDataTypes.size()) {
+			if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::scriptDataTypes.size()) {
 				Console::println("ScriptVariable::setValue(): unknown custom data type with id " + to_string(dataTypeIdx));
 				return;
 			}
-			miniScript->scriptDataTypes[dataTypeIdx]->setScriptVariableValue(*this, value);
+			MiniScript::scriptDataTypes[dataTypeIdx]->setScriptVariableValue(*this, value);
 		}
 
 		/**
@@ -1500,16 +1489,15 @@ public:
 		 * @return class name of given script variable type
 		 */
 		inline const string& getClassName() {
-			return getClassName(miniScript, getType());
+			return getClassName(getType());
 		}
 
 		/**
 		 * Return class name of given script variable type
-		 * @param miniScript mini script instance
 		 * @param type type
 		 * @return class name of given script variable type
 		 */
-		inline static const string& getClassName(MiniScript* miniScript, ScriptVariableType type) {
+		inline static const string& getClassName(ScriptVariableType type) {
 			switch (type) {
 				case TYPE_NULL: return CLASSNAME_NONE;
 				case TYPE_BOOLEAN: return CLASSNAME_NONE;
@@ -1526,21 +1514,20 @@ public:
 				default:
 					// custom data types
 					auto dataTypeIdx = static_cast<int>(type) - TYPE_PSEUDO_CUSTOM_DATATYPES;
-					if (dataTypeIdx < 0 || dataTypeIdx >= miniScript->scriptDataTypes.size()) {
+					if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::scriptDataTypes.size()) {
 						Console::println("ScriptVariable::getClassName(): unknown custom data type with id " + to_string(dataTypeIdx));
 						return CLASSNAME_NONE;
 					}
-					return miniScript->scriptDataTypes[dataTypeIdx]->getClassName();
+					return MiniScript::scriptDataTypes[dataTypeIdx]->getClassName();
 			}
 		}
 
 		/**
 		 * Returns given script variable type as string
-		 * @param miniScript mini script instance
 		 * @param type type
 		 * @return script variable type as string
 		 */
-		inline static const string getTypeAsString(MiniScript* miniScript, ScriptVariableType type) {
+		inline static const string getTypeAsString(ScriptVariableType type) {
 			switch(type) {
 				case TYPE_NULL: return "Null";
 				case TYPE_BOOLEAN: return "Boolean";
@@ -1557,11 +1544,11 @@ public:
 				default:
 					// custom data types
 					auto dataTypeIdx = static_cast<int>(type) - TYPE_PSEUDO_CUSTOM_DATATYPES;
-					if (dataTypeIdx < 0 || dataTypeIdx >= miniScript->scriptDataTypes.size()) {
+					if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::scriptDataTypes.size()) {
 						Console::println("ScriptVariable::getTypeAsString(): unknown custom data type with id " + to_string(dataTypeIdx));
 						return CLASSNAME_NONE;
 					}
-					return miniScript->scriptDataTypes[dataTypeIdx]->getTypeAsString();
+					return MiniScript::scriptDataTypes[dataTypeIdx]->getTypeAsString();
 			}
 			return string();
 		}
@@ -1570,30 +1557,30 @@ public:
 		 * @return this script variable type as string
 		 */
 		inline const string getTypeAsString() const {
-			return getTypeAsString(miniScript, getType());
+			return getTypeAsString(getType());
 		}
 
 		/**
 		 * Returns given return value variable type string representation
-		 * @param miniScript mini script instance
 		 * @param type type
 		 * @param nullable nullable
 		 * @return return value variable type string representation
 		 */
-		inline static const string getReturnTypeAsString(MiniScript* miniScript, ScriptVariableType type, bool nullable) {
+		inline static const string getReturnTypeAsString(ScriptVariableType type, bool nullable) {
 			switch(type) {
 				case TYPE_NULL: return "Null";
-				default: return string(nullable?"?":"") + getTypeAsString(miniScript, type);
+				default: return string(nullable?"?":"") + getTypeAsString(type);
 			}
 			return string();
 		}
+
 		/**
 		 * Returns given return value variable type string representation
 		 * @param nullable nullable
 		 * @return return value variable type string representation
 		 */
 		inline const string getReturnTypeAsString(bool nullable) const {
-			return getReturnTypeAsString(miniScript, getType(), nullable);
+			return getReturnTypeAsString(getType(), nullable);
 		}
 
 		/**
@@ -1760,11 +1747,11 @@ public:
 				default:
 					// custom data types
 					auto dataTypeIdx = static_cast<int>(type) - TYPE_PSEUDO_CUSTOM_DATATYPES;
-					if (dataTypeIdx < 0 || dataTypeIdx >= miniScript->scriptDataTypes.size()) {
+					if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::scriptDataTypes.size()) {
 						Console::println("ScriptVariable::getValueAsString(): unknown custom data type with id " + to_string(dataTypeIdx));
 						return CLASSNAME_NONE;
 					}
-					return miniScript->scriptDataTypes[dataTypeIdx]->getValueAsString(this);
+					return MiniScript::scriptDataTypes[dataTypeIdx]->getValueAsString(this);
 
 			}
 			return result;
@@ -1865,11 +1852,10 @@ public:
 
 		/**
 		 * Get arguments information
-		 * @param miniScript mini script instance
 		 * @param beginIdx begin index
 		 * @return arguments information
 		 */
-		inline const string getArgumentsInformation(MiniScript* miniScript, int beginIdx = 0) const {
+		inline const string getArgumentsInformation(int beginIdx = 0) const {
 			string result;
 			auto optionalArgumentCount = 0;
 			auto argumentIdx = 0;
@@ -1884,7 +1870,7 @@ public:
 					if (argumentType.reference == true) {
 						result+= "=";
 					}
-					result+= "$" + argumentType.name + ": " + (argumentType.nullable == true?"?":"") + ScriptVariable::getTypeAsString(miniScript, argumentType.type);
+					result+= "$" + argumentType.name + ": " + (argumentType.nullable == true?"?":"") + ScriptVariable::getTypeAsString(argumentType.type);
 				}
 				argumentIdx++;
 			}
@@ -2330,6 +2316,7 @@ private:
 
 	//
 	STATIC_DLL_IMPEXT static const string OPERATOR_CHARS;
+	STATIC_DLL_IMPEXT static vector<ScriptDataType*> scriptDataTypes;
 
 	// TODO: maybe we need a better naming for this
 	// script functions defined by script itself
@@ -2338,7 +2325,6 @@ private:
 	unordered_map<string, ScriptMethod*> scriptMethods;
 	unordered_map<int, ScriptStateMachineState*> scriptStateMachineStates;
 	unordered_map<uint8_t, ScriptMethod*> scriptOperators;
-	vector<ScriptDataType*> scriptDataTypes;
 	string scriptPathName;
 	string scriptFileName;
 	bool scriptValid { false };
@@ -2724,6 +2710,24 @@ public:
 		return result;
 	}
 
+	/**
+	 * Returns data type by class name or nullptr
+	 * @param className class name
+	 * @return script data type
+	 */
+	inline static ScriptDataType* getDataTypeByClassName(const string& className) {
+		for (const auto scriptDataType: scriptDataTypes) {
+			if (scriptDataType->getClassName() == className) return scriptDataType;
+		}
+		return nullptr;
+	}
+
+	/**
+	 * Register script data type
+	 * @param scriptDataType script data type
+	 */
+	static void registerDataType(ScriptDataType* scriptDataType);
+
 	// forbid class copy
 	FORBID_CLASS_COPY(MiniScript)
 
@@ -2846,11 +2850,6 @@ public:
 	virtual void registerMethods();
 
 	/**
-	 * Register data types
-	 */
-	virtual void registerDataTypes();
-
-	/**
 	 * Register variables
 	 */
 	virtual void registerVariables();
@@ -2875,7 +2874,7 @@ public:
 			Console::println("MiniScript::getArgumentInformation(): method not found: " + methodName);
 			return "No information available";
 		}
-		return scriptMethod->getArgumentsInformation(this);
+		return scriptMethod->getArgumentsInformation();
 	}
 
 	/**
@@ -2990,24 +2989,6 @@ public:
 	 * @param scriptMethod script method
 	 */
 	void registerMethod(ScriptMethod* scriptMethod);
-
-	/**
-	 * Returns data type by class name or nullptr
-	 * @param className class name
-	 * @return script data type
-	 */
-	inline ScriptDataType* getDataTypeByClassName(const string& className) {
-		for (const auto scriptDataType: scriptDataTypes) {
-			if (scriptDataType->getClassName() == className) return scriptDataType;
-		}
-		return nullptr;
-	}
-
-	/**
-	 * Register script data type
-	 * @param scriptDataType script data type
-	 */
-	void registerDataType(ScriptDataType* scriptDataType);
 
 	/**
 	 * Returns if a given string is a variable name

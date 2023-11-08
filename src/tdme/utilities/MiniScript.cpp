@@ -64,6 +64,7 @@ using tdme::utilities::SHA256;
 using tdme::utilities::Time;
 
 const string MiniScript::OPERATOR_CHARS = "+-!~/%<>=&^|";
+vector<MiniScript::ScriptDataType*> MiniScript::scriptDataTypes;
 const string MiniScript::METHOD_SCRIPTCALL = "script.call";
 const string MiniScript::METHOD_ENABLENAMEDCONDITION = "script.enableNamedCondition";
 const string MiniScript::METHOD_DISABLENAMEDCONDITION = "script.disableNamedCondition";
@@ -562,7 +563,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 					Console::println(
 						getStatementInformation(statement) +
 						": method '" + string(syntaxTree.value.getValueAsString()) + "'" +
-						": argument value @ " + to_string(argumentIdx) + ": expected " + ScriptVariable::getTypeAsString(this, argumentType.type) + ", but got: " + (argumentIdx < argumentValues.size()?argumentValues[argumentIdx].getAsString():"nothing"));
+						": argument value @ " + to_string(argumentIdx) + ": expected " + ScriptVariable::getTypeAsString(argumentType.type) + ", but got: " + (argumentIdx < argumentValues.size()?argumentValues[argumentIdx].getAsString():"nothing"));
 				}
 				argumentIdx++;
 			}
@@ -584,7 +585,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 			Console::println(
 				getStatementInformation(statement) +
 				": method '" + string(syntaxTree.value.getValueAsString()) + "'" +
-				": return value: expected " + ScriptVariable::getReturnTypeAsString(this, scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable()) + ", but got: " + ScriptVariable::getReturnTypeAsString(this, returnValue.getType(), false));
+				": return value: expected " + ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable()) + ", but got: " + ScriptVariable::getReturnTypeAsString(returnValue.getType(), false));
 		}
 		//
 		return returnValue;
@@ -1664,12 +1665,11 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 		if (native == true) {
 			if (scriptHash == nativeHash) {
 				scripts = nativeScripts;
-				registerDataTypes();
 				registerStateMachineStates();
 				registerMethods();
 				for (const auto scriptDataType: scriptDataTypes) {
 					if (scriptDataType->isMathDataType() == true) miniScriptMath->registerDataType(scriptDataType);
-					scriptDataType->registerMethods();
+					scriptDataType->registerMethods(this);
 				}
 				startScript();
 				return;
@@ -1682,12 +1682,11 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 	}
 
 	//
-	registerDataTypes();
 	registerStateMachineStates();
 	registerMethods();
 	for (const auto scriptDataType: scriptDataTypes) {
 		if (scriptDataType->isMathDataType() == true) miniScriptMath->registerDataType(scriptDataType);
-		scriptDataType->registerMethods();
+		scriptDataType->registerMethods(this);
 	}
 
 	//
@@ -2425,9 +2424,9 @@ const string MiniScript::getInformation() {
 				string method;
 				method+= scriptMethod->getMethodName();
 				method+= "(";
-				method+= scriptMethod->getArgumentsInformation(this);
+				method+= scriptMethod->getArgumentsInformation();
 				method+= "): ";
-				method+= ScriptVariable::getReturnTypeAsString(this, scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable());
+				method+= ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable());
 				methods.push_back(method);
 			}
 			sort(methods.begin(), methods.end());
@@ -2445,9 +2444,9 @@ const string MiniScript::getInformation() {
 				operatorString+= " --> ";
 				operatorString+= scriptMethod->getMethodName();
 				operatorString+= "(";
-				operatorString+= scriptMethod->getArgumentsInformation(this);
+				operatorString+= scriptMethod->getArgumentsInformation();
 				operatorString+= "): ";
-				operatorString+= ScriptVariable::getReturnTypeAsString(this, scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable());
+				operatorString+= ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable());
 				operators.push_back(operatorString);
 			}
 			sort(operators.begin(), operators.end());
@@ -5808,11 +5807,6 @@ void MiniScript::registerMethods() {
 			scriptOperators[static_cast<uint8_t>(methodOperator)] = scriptMethod;
 		}
 	}
-}
-
-void MiniScript::registerDataTypes() {
-	for (const auto scriptDataType: scriptDataTypes) delete scriptDataType;
-	scriptDataTypes.clear();
 }
 
 void MiniScript::registerVariables() {

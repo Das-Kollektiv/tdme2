@@ -10,11 +10,15 @@ using std::make_unique;
 
 #include <tdme/tdme.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/EngineMiniScript.h>
 
 using tdme::utilities::Console;
+using tdme::utilities::EngineMiniScript;
 
 int main(int argc, char *argv[]) {
 	Console::println("MiniScriptTest");
+	//
+	EngineMiniScript::registerDataTypes();
 	// base test
 	{
 		auto script = make_unique<MiniScriptBaseTest>();

@@ -24,7 +24,7 @@ using tdme::utilities::MiniScriptVector3;
 const string MiniScriptQuaternion::CLASS_NAME = "quaternion";
 const string MiniScriptQuaternion::TYPE_NAME = "Quaternion";
 
-void MiniScriptQuaternion::registerMethods() const {
+void MiniScriptQuaternion::registerMethods(MiniScript* miniScript) const {
 	const auto TYPE_QUATERNION = static_cast<MiniScript::ScriptVariableType>(getType());
 	const auto TYPE_VECTOR3 = static_cast<MiniScript::ScriptVariableType>(miniScript->getDataTypeByClassName("vec3")->getType());
 	const auto TYPE_MATRIX4x4 = static_cast<MiniScript::ScriptVariableType>(miniScript->getDataTypeByClassName("mat4")->getType());
@@ -288,7 +288,7 @@ void MiniScriptQuaternion::copyScriptVariable(MiniScript::ScriptVariable& to, co
 	*static_cast<Quaternion*>((void*)to.getValuePtr()) = quaternionValue;
 }
 
-bool MiniScriptQuaternion::mul(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
+bool MiniScriptQuaternion::mul(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
 	const auto TYPE_QUATERNION = static_cast<MiniScript::ScriptVariableType>(getType());
 	const auto TYPE_VECTOR3 = static_cast<MiniScript::ScriptVariableType>(miniScript->getDataTypeByClassName("vec3")->getType());
 	// quaternion
@@ -345,11 +345,11 @@ bool MiniScriptQuaternion::mul(const span<MiniScript::ScriptVariable>& argumentV
 	return false;
 }
 
-bool MiniScriptQuaternion::div(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
+bool MiniScriptQuaternion::div(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
 	return false;
 }
 
-bool MiniScriptQuaternion::add(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
+bool MiniScriptQuaternion::add(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
 	const auto TYPE_QUATERNION = static_cast<MiniScript::ScriptVariableType>(getType());
 	//
 	if (MiniScript::hasType(argumentValues, TYPE_QUATERNION) == true) {
@@ -374,7 +374,7 @@ bool MiniScriptQuaternion::add(const span<MiniScript::ScriptVariable>& argumentV
 	return false;
 }
 
-bool MiniScriptQuaternion::sub(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
+bool MiniScriptQuaternion::sub(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
 	const auto TYPE_QUATERNION = static_cast<MiniScript::ScriptVariableType>(getType());
 	//
 	if (MiniScript::hasType(argumentValues, TYPE_QUATERNION) == true) {

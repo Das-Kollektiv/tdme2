@@ -44,6 +44,17 @@ using tdme::utilities::MiniScriptVector3;
 using tdme::utilities::MiniScriptVector4;
 using tdme::utilities::StringTools;
 
+void EngineMiniScript::registerDataTypes() {
+	//
+	registerDataType(new MiniScriptTransform());
+	registerDataType(new MiniScriptMatrix4x4());
+	registerDataType(new MiniScriptMatrix3x3());
+	registerDataType(new MiniScriptQuaternion());
+	registerDataType(new MiniScriptVector2());
+	registerDataType(new MiniScriptVector3());
+	registerDataType(new MiniScriptVector4());
+}
+
 EngineMiniScript* EngineMiniScript::loadScript(const string& pathName, const string& fileName) {
 	// we need to detect MiniScript variant
 	vector<string> scriptAsStringArray;
@@ -110,17 +121,4 @@ EngineMiniScript* EngineMiniScript::loadScript(const string& pathName, const str
 }
 
 EngineMiniScript::EngineMiniScript(): MiniScript() {
-}
-
-void EngineMiniScript::registerDataTypes() {
-	//
-	MiniScript::registerDataTypes();
-	//
-	registerDataType(new MiniScriptTransform(this));
-	registerDataType(new MiniScriptMatrix4x4(this));
-	registerDataType(new MiniScriptMatrix3x3(this));
-	registerDataType(new MiniScriptQuaternion(this));
-	registerDataType(new MiniScriptVector2(this));
-	registerDataType(new MiniScriptVector3(this));
-	registerDataType(new MiniScriptVector4(this));
 }

@@ -22,7 +22,7 @@ using tdme::utilities::MiniScriptVector4;
 const string MiniScriptMatrix4x4::CLASS_NAME = "mat4";
 const string MiniScriptMatrix4x4::TYPE_NAME = "Matrix4x4";
 
-void MiniScriptMatrix4x4::registerMethods() const {
+void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 	const auto TYPE_MATRIX4x4 = static_cast<MiniScript::ScriptVariableType>(getType());
 	const auto TYPE_VECTOR3 = static_cast<MiniScript::ScriptVariableType>(miniScript->getDataTypeByClassName("vec3")->getType());
 	//
@@ -279,7 +279,7 @@ void MiniScriptMatrix4x4::copyScriptVariable(MiniScript::ScriptVariable& to, con
 	*static_cast<Matrix4x4*>((void*)to.getValuePtr()) = matrix4x4Value;
 }
 
-bool MiniScriptMatrix4x4::mul(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
+bool MiniScriptMatrix4x4::mul(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
 	const auto TYPE_MATRIX4x4 = static_cast<MiniScript::ScriptVariableType>(getType());
 	const auto TYPE_VECTOR3 = static_cast<MiniScript::ScriptVariableType>(miniScript->getDataTypeByClassName("vec3")->getType());
 	const auto TYPE_VECTOR4 = static_cast<MiniScript::ScriptVariableType>(miniScript->getDataTypeByClassName("vec4")->getType());
@@ -395,15 +395,15 @@ bool MiniScriptMatrix4x4::mul(const span<MiniScript::ScriptVariable>& argumentVa
 	return false;
 }
 
-bool MiniScriptMatrix4x4::div(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
+bool MiniScriptMatrix4x4::div(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
 	return false;
 }
 
-bool MiniScriptMatrix4x4::add(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
+bool MiniScriptMatrix4x4::add(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
 	return false;
 }
 
-bool MiniScriptMatrix4x4::sub(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
+bool MiniScriptMatrix4x4::sub(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
 	return false;
 }
 

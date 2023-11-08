@@ -18,7 +18,7 @@ using tdme::utilities::MiniScriptVector3;
 const string MiniScriptVector3::CLASS_NAME = "vec3";
 const string MiniScriptVector3::TYPE_NAME = "Vector3";
 
-void MiniScriptVector3::registerMethods() const {
+void MiniScriptVector3::registerMethods(MiniScript* miniScript) const {
 	const auto TYPE_VECTOR3 = static_cast<MiniScript::ScriptVariableType>(getType());
 	{
 		//
@@ -445,7 +445,7 @@ void MiniScriptVector3::copyScriptVariable(MiniScript::MiniScript::ScriptVariabl
 	*static_cast<Vector3*>((void*)to.getValuePtr()) = vector3Value;
 }
 
-bool MiniScriptVector3::mul(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
+bool MiniScriptVector3::mul(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
 	const auto TYPE_VECTOR3 = static_cast<MiniScript::ScriptVariableType>(getType());
 	// vector3
 	if (MiniScript::hasType(argumentValues, TYPE_VECTOR3) == true) {
@@ -485,7 +485,7 @@ bool MiniScriptVector3::mul(const span<MiniScript::ScriptVariable>& argumentValu
 	return false;
 }
 
-bool MiniScriptVector3::div(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
+bool MiniScriptVector3::div(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
 	const auto TYPE_VECTOR3 = static_cast<MiniScript::ScriptVariableType>(getType());
 	// vector3
 	if (argumentValues[0].getType() == TYPE_VECTOR3) {
@@ -517,7 +517,7 @@ bool MiniScriptVector3::div(const span<MiniScript::ScriptVariable>& argumentValu
 	return false;
 }
 
-bool MiniScriptVector3::add(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
+bool MiniScriptVector3::add(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
 	const auto TYPE_VECTOR3 = static_cast<MiniScript::ScriptVariableType>(getType());
 	// vector3
 	if (MiniScript::hasType(argumentValues, TYPE_VECTOR3) == true) {
@@ -541,7 +541,7 @@ bool MiniScriptVector3::add(const span<MiniScript::ScriptVariable>& argumentValu
 	return false;
 }
 
-bool MiniScriptVector3::sub(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
+bool MiniScriptVector3::sub(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
 	const auto TYPE_VECTOR3 = static_cast<MiniScript::ScriptVariableType>(getType());
 	// vector3
 	if (MiniScript::hasType(argumentValues, TYPE_VECTOR3) == true) {

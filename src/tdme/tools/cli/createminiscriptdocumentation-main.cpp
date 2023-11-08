@@ -68,9 +68,9 @@ static void generateMiniScriptMethodsDocumentation(const string& heading, int ma
 		method+= "| <sub>";
 		method+= scriptMethod->getMethodName();
 		method+= "(";
-		method+= scriptMethod->getArgumentsInformation(miniScript);
+		method+= scriptMethod->getArgumentsInformation();
 		method+= "): ";
-		method+= EngineMiniScript::ScriptVariable::getReturnTypeAsString(miniScript, scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable());
+		method+= EngineMiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable());
 		method+= "</sub>";
 		while (method.size() < 99) method+= " ";
 		method+= "|";
@@ -121,7 +121,7 @@ static void generateMiniScriptClassesDocumentation(const string& heading, int ma
 	auto scriptMethods = miniScript->getMethods();
 	//
 	for (auto typeIdx = static_cast<int>(EngineMiniScript::TYPE_STRING); typeIdx <= static_cast<int>(EngineMiniScript::TYPE_SET); typeIdx++) {
-		const auto& className = EngineMiniScript::ScriptVariable::getClassName(miniScript, static_cast<EngineMiniScript::ScriptVariableType>(typeIdx));
+		const auto& className = EngineMiniScript::ScriptVariable::getClassName(static_cast<EngineMiniScript::ScriptVariableType>(typeIdx));
 		allClassMethods.insert(className);
 	}
 	//
@@ -132,7 +132,7 @@ static void generateMiniScriptClassesDocumentation(const string& heading, int ma
 		//
 		auto _class = false;
 		for (auto typeIdx = static_cast<int>(EngineMiniScript::TYPE_STRING); typeIdx <= static_cast<int>(EngineMiniScript::TYPE_SET); typeIdx++) {
-			if (EngineMiniScript::ScriptVariable::getClassName(miniScript, static_cast<EngineMiniScript::ScriptVariableType>(typeIdx)) == className) {
+			if (EngineMiniScript::ScriptVariable::getClassName(static_cast<EngineMiniScript::ScriptVariableType>(typeIdx)) == className) {
 				_class = true;
 				break;
 			}
@@ -148,7 +148,7 @@ static void generateMiniScriptClassesDocumentation(const string& heading, int ma
 		auto _static =
 			scriptMethod->getArgumentTypes().empty() == true ||
 			scriptMethod->getArgumentTypes()[0].name != className;
-			EngineMiniScript::ScriptVariable::getClassName(miniScript, scriptMethod->getArgumentTypes()[0].type) != className;
+			EngineMiniScript::ScriptVariable::getClassName(scriptMethod->getArgumentTypes()[0].type) != className;
 		//
 		allClassMethods.insert(scriptMethod->getMethodName());
 	}
@@ -165,7 +165,7 @@ static void generateMiniScriptClassesDocumentation(const string& heading, int ma
 		auto _static = false;
 		if (className.empty() == true) {
 			for (auto typeIdx = static_cast<int>(EngineMiniScript::TYPE_STRING); typeIdx <= static_cast<int>(EngineMiniScript::TYPE_SET); typeIdx++) {
-				const auto& possibleClassName = EngineMiniScript::ScriptVariable::getClassName(miniScript, static_cast<EngineMiniScript::ScriptVariableType>(typeIdx));
+				const auto& possibleClassName = EngineMiniScript::ScriptVariable::getClassName(static_cast<EngineMiniScript::ScriptVariableType>(typeIdx));
 				if (scriptMethod->getMethodName() == possibleClassName) {
 					className = possibleClassName;
 					_static = true;
@@ -178,7 +178,7 @@ static void generateMiniScriptClassesDocumentation(const string& heading, int ma
 			_static =
 				scriptMethod->getArgumentTypes().empty() == true ||
 				scriptMethod->getArgumentTypes()[0].name != className;
-				EngineMiniScript::ScriptVariable::getClassName(miniScript, scriptMethod->getArgumentTypes()[0].type) != className;
+				EngineMiniScript::ScriptVariable::getClassName(scriptMethod->getArgumentTypes()[0].type) != className;
 		}
 		//
 		string description;
@@ -194,9 +194,9 @@ static void generateMiniScriptClassesDocumentation(const string& heading, int ma
 		}
 		method+= _static == true?scriptMethod->getMethodName():StringTools::substring(scriptMethod->getMethodName(), className.size() + 1, scriptMethod->getMethodName().size());
 		method+= "(";
-		method+= scriptMethod->getArgumentsInformation(miniScript, _static == true?0:1);
+		method+= scriptMethod->getArgumentsInformation(_static == true?0:1);
 		method+= "): ";
-		method+= EngineMiniScript::ScriptVariable::getReturnTypeAsString(miniScript, scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable());
+		method+= EngineMiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable());
 		method+= "</sub>";
 		while (method.size() < 99) method+= " ";
 		method+= "|";
@@ -207,7 +207,7 @@ static void generateMiniScriptClassesDocumentation(const string& heading, int ma
 	//
 	auto classIdx = 1;
 	for (auto typeIdx = static_cast<int>(EngineMiniScript::TYPE_STRING); typeIdx <= static_cast<int>(EngineMiniScript::TYPE_SET); typeIdx++) {
-		const auto& className = EngineMiniScript::ScriptVariable::getClassName(miniScript, static_cast<EngineMiniScript::ScriptVariableType>(typeIdx));
+		const auto& className = EngineMiniScript::ScriptVariable::getClassName(static_cast<EngineMiniScript::ScriptVariableType>(typeIdx));
 		auto classNameDescription = descriptions.get("miniscript.baseclass." + (className.empty() == true?"No class":className), "Not documented");
 		//
 		Console::println();
@@ -250,6 +250,9 @@ int main(int argc, char** argv)
 	descriptions.load("resources/engine/code-completion", "tscript-methods.properties");
 
 	//
+	EngineMiniScript::registerDataTypes();
+
+	//
 	auto baseMiniScript = make_unique<EngineMiniScript>();
 	baseMiniScript->registerMethods();
 
@@ -288,9 +291,9 @@ int main(int argc, char** argv)
 		operatorString+= "| ";
 		operatorString+= scriptMethod->getMethodName();
 		operatorString+= "(";
-		operatorString+= scriptMethod->getArgumentsInformation(baseMiniScript.get());
+		operatorString+= scriptMethod->getArgumentsInformation();
 		operatorString+= "): ";
-		operatorString+= EngineMiniScript::ScriptVariable::getReturnTypeAsString(baseMiniScript.get(), scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable());
+		operatorString+= EngineMiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable());
 		while (operatorString.size() < 99) operatorString+= " ";
 		operatorString+= "|";
 		operators.push_back(operatorString);

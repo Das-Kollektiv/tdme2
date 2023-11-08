@@ -54,6 +54,8 @@ int main(int argc, char** argv)
 	lines.push_back("<code-completion>");
 
 	//
+	EngineMiniScript::registerDataTypes();
+	//
 	auto baseMiniScript = make_unique<EngineMiniScript>();
 	baseMiniScript->registerMethods();
 
@@ -82,11 +84,11 @@ int main(int argc, char** argv)
 			if (description.empty() == true) description = methodDescriptions.get("miniscript." + scriptMethod->getMethodName(), string());
 			Console::println("Adding method: " + scriptMethod->getMethodName());
 			lines.push_back("	<keyword name=\"" + scriptMethod->getMethodName() + "\" func=\"yes\">");
-			lines.push_back("		<overload return-value=\"" + EngineMiniScript::ScriptVariable::getReturnTypeAsString(miniScriptFlavour, scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable()) + "\" descr=\"" + GUIParser::escape(description) + "\">");
+			lines.push_back("		<overload return-value=\"" + EngineMiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable()) + "\" descr=\"" + GUIParser::escape(description) + "\">");
 			for (const auto& argumentType: scriptMethod->getArgumentTypes()) {
 				string argumentValueString;
 				if (argumentType.optional == true) argumentValueString+= "[";
-				argumentValueString+= EngineMiniScript::ScriptVariable::getTypeAsString(miniScriptFlavour, argumentType.type) + " ";
+				argumentValueString+= EngineMiniScript::ScriptVariable::getTypeAsString(argumentType.type) + " ";
 				argumentValueString+= string() + (argumentType.reference == true?"=":"") + "$" + argumentType.name;
 				if (argumentType.optional == true) argumentValueString+= "]";
 				lines.push_back("			<parameter name=\"" + argumentValueString + "\" />");

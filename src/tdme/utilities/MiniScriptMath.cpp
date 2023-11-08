@@ -960,7 +960,7 @@ void MiniScriptMath::mul(const span<MiniScript::ScriptVariable>& argumentValues,
 	}
 	// custom data types
 	for (const auto scriptDataType: scriptDataTypes) {
-		if (scriptDataType->mul(argumentValues, returnValue, statement) == true) return;
+		if (scriptDataType->mul(miniScript, argumentValues, returnValue, statement) == true) return;
 	}
 	// float
 	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true) {
@@ -997,7 +997,7 @@ void MiniScriptMath::div(const span<MiniScript::ScriptVariable>& argumentValues,
 	}
 	// custom data types
 	for (const auto scriptDataType: scriptDataTypes) {
-		if (scriptDataType->div(argumentValues, returnValue, statement) == true) return;
+		if (scriptDataType->div(miniScript, argumentValues, returnValue, statement) == true) return;
 	}
 	// float
 	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true) {
@@ -1034,7 +1034,7 @@ void MiniScriptMath::add(const span<MiniScript::ScriptVariable>& argumentValues,
 	}
 	// custom data types
 	for (const auto scriptDataType: scriptDataTypes) {
-		if (scriptDataType->add(argumentValues, returnValue, statement) == true) return;
+		if (scriptDataType->add(miniScript, argumentValues, returnValue, statement) == true) return;
 	}
 	// string concatenation
 	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_STRING) == true) {
@@ -1079,7 +1079,7 @@ void MiniScriptMath::sub(const span<MiniScript::ScriptVariable>& argumentValues,
 	}
 	// custom data types
 	for (const auto scriptDataType: scriptDataTypes) {
-		if (scriptDataType->sub(argumentValues, returnValue, statement) == true) return;
+		if (scriptDataType->sub(miniScript, argumentValues, returnValue, statement) == true) return;
 	}
 	// float
 	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true) {

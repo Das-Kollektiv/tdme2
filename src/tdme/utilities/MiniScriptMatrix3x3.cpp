@@ -22,7 +22,7 @@ using tdme::utilities::MiniScriptVector2;
 const string MiniScriptMatrix3x3::CLASS_NAME = "mat3";
 const string MiniScriptMatrix3x3::TYPE_NAME = "Matrix3x3";
 
-void MiniScriptMatrix3x3::registerMethods() const {
+void MiniScriptMatrix3x3::registerMethods(MiniScript* miniScript) const {
 	const auto TYPE_MATRIX3x3 = static_cast<MiniScript::ScriptVariableType>(getType());
 	const auto TYPE_VECTOR2 = static_cast<MiniScript::ScriptVariableType>(miniScript->getDataTypeByClassName("vec2")->getType());
 	//
@@ -277,7 +277,7 @@ void MiniScriptMatrix3x3::copyScriptVariable(MiniScript::ScriptVariable& to, con
 	*static_cast<Matrix3x3*>((void*)to.getValuePtr()) = matrix3x3Value;
 }
 
-bool MiniScriptMatrix3x3::mul(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
+bool MiniScriptMatrix3x3::mul(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
 	const auto TYPE_MATRIX3x3 = static_cast<MiniScript::ScriptVariableType>(getType());
 	const auto TYPE_VECTOR2 = static_cast<MiniScript::ScriptVariableType>(miniScript->getDataTypeByClassName("vec2")->getType());
 	//
@@ -362,15 +362,15 @@ bool MiniScriptMatrix3x3::mul(const span<MiniScript::ScriptVariable>& argumentVa
 	return false;
 }
 
-bool MiniScriptMatrix3x3::div(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
+bool MiniScriptMatrix3x3::div(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
 	return false;
 }
 
-bool MiniScriptMatrix3x3::add(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
+bool MiniScriptMatrix3x3::add(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
 	return false;
 }
 
-bool MiniScriptMatrix3x3::sub(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
+bool MiniScriptMatrix3x3::sub(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const {
 	return false;
 }
 

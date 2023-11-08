@@ -18,14 +18,14 @@ using tdme::utilities::MiniScript;
 class tdme::utilities::MiniScriptVector3 final: public MiniScript::ScriptDataType {
 private:
 	// overridden methods
-	void registerMethods() const override;
+	void registerMethods(MiniScript* miniScript) const override;
 	void unsetScriptVariableValue(MiniScript::ScriptVariable& variable) const override;
 	void setScriptVariableValue(MiniScript::ScriptVariable& variable, const void* value) const override;
 	void copyScriptVariable(MiniScript::ScriptVariable& to, const MiniScript::ScriptVariable& from) const override;
-	bool mul(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const override;
-	bool div(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const override;
-	bool add(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const override;
-	bool sub(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const override;
+	bool mul(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const override;
+	bool div(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const override;
+	bool add(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const override;
+	bool sub(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const override;
 
 public:
 	static const string CLASS_NAME;
@@ -52,25 +52,13 @@ public:
 
 	}
 
-	/**
-	 * Set vector3 value
-	 * @param TYPE_VECTOR3 custom data type for vector3
-	 * @param variable variable
-	 * @param value value
-	 */
-	static inline void setVector3Value(MiniScript::ScriptVariableType TYPE_VECTOR3, MiniScript::ScriptVariable& variable, const Vector3& value) {
-		variable.setType(TYPE_VECTOR3);
-		variable.setValue(&value);
-	}
-
 	// forbid class copy
 	FORBID_CLASS_COPY(MiniScriptVector3)
 
 	/**
 	 * MiniScript Vector3 data type
-	 * @param miniScript mini script instance
 	 */
-	MiniScriptVector3(MiniScript* miniScript): MiniScript::ScriptDataType(miniScript, true) {
+	MiniScriptVector3(): MiniScript::ScriptDataType(true) {
 		//
 	}
 

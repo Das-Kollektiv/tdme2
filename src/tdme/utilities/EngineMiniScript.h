@@ -74,6 +74,11 @@ public:
 	static constexpr ScriptVariableType TYPE_VECTOR4 { static_cast<ScriptVariableType>(ScriptVariableType::TYPE_PSEUDO_CUSTOM_DATATYPES + 6) };
 
 	/**
+	 * Register data types
+	 */
+	static void registerDataTypes();
+
+	/**
 	 * Load script
 	 * @param pathName path name
 	 * @param fileName file name
@@ -84,11 +89,6 @@ public:
 	 * Public constructor
 	 */
 	EngineMiniScript();
-
-	/**
-	 * Register data types
-	 */
-	void registerDataTypes();
 
 	/**
 	 * Get vector2 value from given variable
