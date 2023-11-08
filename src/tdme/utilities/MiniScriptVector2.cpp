@@ -46,7 +46,6 @@ void MiniScriptVector2::registerMethods() const {
 				return "vec2";
 			}
 			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
-				Vector3 result;
 				float xValue;
 				float yValue;
 				if (MiniScript::getFloatValue(argumentValues, 0, xValue, false) == true &&

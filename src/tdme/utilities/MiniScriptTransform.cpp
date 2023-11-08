@@ -652,7 +652,7 @@ void MiniScriptTransform::registerMethods() const {
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_QUATERNION),
+					TYPE_QUATERNION),
 					miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_QUATERNION(TYPE_QUATERNION) {}
 			const string getMethodName() override {
 				return "transform.getRotationsQuaternion";
@@ -695,7 +695,7 @@ void MiniScriptTransform::registerMethods() const {
 			}
 			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				Matrix4x4 transformMatrix;
-				if (MiniScript::getMatrix4x4Value(argumentValues, 0, transformMatrix, false) == true) {
+				if (MiniScriptMatrix4x4::getMatrix4x4Value(TYPE_TRANSFORM, argumentValues, 0, transformMatrix, false) == true) {
 					Transform result;
 					result.fromMatrix(transformMatrix, RotationOrder::ZYX);
 					returnValue.setType(TYPE_TRANSFORM);

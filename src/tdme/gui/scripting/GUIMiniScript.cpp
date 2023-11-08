@@ -81,6 +81,7 @@ void GUIMiniScript::registerStateMachineStates() {
 
 void GUIMiniScript::registerMethods() {
 	MiniScript::registerMethods();
+	/*
 	// input
 	{
 		//
@@ -2383,6 +2384,7 @@ void GUIMiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodLogicCall(this));
 	}
+	*/
 }
 
 void GUIMiniScript::registerVariables() {

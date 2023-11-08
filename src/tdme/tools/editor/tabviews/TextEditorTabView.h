@@ -305,6 +305,8 @@ private:
 				return string("color.pintype_float");
 			case MiniScript::ScriptVariableType::TYPE_STRING:
 				return string("color.pintype_string");
+			/*
+			// TODO: a.drewke
 			case MiniScript::ScriptVariableType::TYPE_VECTOR2:
 			case MiniScript::ScriptVariableType::TYPE_VECTOR3:
 			case MiniScript::ScriptVariableType::TYPE_VECTOR4:
@@ -314,6 +316,7 @@ private:
 			case MiniScript::ScriptVariableType::TYPE_MATRIX4x4:
 			case MiniScript::ScriptVariableType::TYPE_TRANSFORM:
 				return string("color.pintype_transform");
+			*/
 			case MiniScript::ScriptVariableType::TYPE_ARRAY:
 			case MiniScript::ScriptVariableType::TYPE_MAP:
 			case MiniScript::ScriptVariableType::TYPE_SET:

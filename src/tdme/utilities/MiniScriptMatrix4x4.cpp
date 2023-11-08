@@ -7,6 +7,7 @@
 #include <tdme/utilities/MiniScript.h>
 #include <tdme/utilities/MiniScriptMatrix4x4.h>
 #include <tdme/utilities/MiniScriptVector3.h>
+#include <tdme/utilities/MiniScriptVector4.h>
 
 using std::span;
 using std::string;
@@ -16,6 +17,7 @@ using tdme::utilities::Float;
 using tdme::utilities::MiniScript;
 using tdme::utilities::MiniScriptMatrix4x4;
 using tdme::utilities::MiniScriptVector3;
+using tdme::utilities::MiniScriptVector4;
 
 const string MiniScriptMatrix4x4::CLASS_NAME = "mat3";
 const string MiniScriptMatrix4x4::TYPE_NAME = "Matrix4x4";
@@ -282,10 +284,10 @@ bool MiniScriptMatrix4x4::mul(const span<MiniScript::ScriptVariable>& argumentVa
 	const auto TYPE_VECTOR3 = static_cast<MiniScript::ScriptVariableType>(miniScript->getDataTypeByClassName("vec3")->getType());
 	const auto TYPE_VECTOR4 = static_cast<MiniScript::ScriptVariableType>(miniScript->getDataTypeByClassName("vec4")->getType());
 	//
-	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_MATRIX4x4) == true) {
+	if (MiniScript::hasType(argumentValues, TYPE_MATRIX4x4) == true) {
 		// matrix4x4 * matrix
-		if (argumentValues[0].getType() == MiniScript::TYPE_MATRIX4x4 &&
-			argumentValues[1].getType() == MiniScript::TYPE_MATRIX4x4) {
+		if (argumentValues[0].getType() == TYPE_MATRIX4x4 &&
+			argumentValues[1].getType() == TYPE_MATRIX4x4) {
 			Matrix4x4 a;
 			Matrix4x4 b;
 			MiniScriptMatrix4x4::getMatrix4x4Value(TYPE_MATRIX4x4, argumentValues, 0, a, false);
@@ -298,12 +300,12 @@ bool MiniScriptMatrix4x4::mul(const span<MiniScript::ScriptVariable>& argumentVa
 			return true;
 		} else
 		// matrix4x4 * vec4
-		if (argumentValues[0].getType() == MiniScript::TYPE_MATRIX4x4 &&
-			argumentValues[1].getType() == MiniScript::TYPE_VECTOR4) {
+		if (argumentValues[0].getType() == TYPE_MATRIX4x4 &&
+			argumentValues[1].getType() == TYPE_VECTOR4) {
 			Matrix4x4 a;
 			Vector4 b;
 			MiniScriptMatrix4x4::getMatrix4x4Value(TYPE_MATRIX4x4, argumentValues, 0, a, false);
-			MiniScript::getVector4Value(argumentValues, 1, b, false);
+			MiniScriptVector4::getVector4Value(TYPE_VECTOR4, argumentValues, 1, b, false);
 			//
 			const auto result = a * b;
 			returnValue.setType(TYPE_VECTOR4);
@@ -312,11 +314,11 @@ bool MiniScriptMatrix4x4::mul(const span<MiniScript::ScriptVariable>& argumentVa
 			return true;
 		} else
 		// vec4 * matrix4x4
-		if (argumentValues[0].getType() == MiniScript::TYPE_VECTOR4 &&
-			argumentValues[1].getType() == MiniScript::TYPE_MATRIX4x4) {
+		if (argumentValues[0].getType() == TYPE_VECTOR4 &&
+			argumentValues[1].getType() == TYPE_MATRIX4x4) {
 			Vector4 a;
 			Matrix4x4 b;
-			MiniScript::getVector4Value(argumentValues, 0, a, false);
+			MiniScriptVector4::getVector4Value(TYPE_VECTOR4, argumentValues, 0, a, false);
 			MiniScriptMatrix4x4::getMatrix4x4Value(TYPE_MATRIX4x4, argumentValues, 1, b, false);
 			//
 			const auto result = b * a;
@@ -327,8 +329,8 @@ bool MiniScriptMatrix4x4::mul(const span<MiniScript::ScriptVariable>& argumentVa
 
 		} else
 		// matrix4x4 * vec3
-		if (argumentValues[0].getType() == MiniScript::TYPE_MATRIX4x4 &&
-			argumentValues[1].getType() == MiniScript::TYPE_VECTOR3) {
+		if (argumentValues[0].getType() == TYPE_MATRIX4x4 &&
+			argumentValues[1].getType() == TYPE_VECTOR3) {
 			Matrix4x4 a;
 			Vector3 b;
 			MiniScriptMatrix4x4::getMatrix4x4Value(TYPE_MATRIX4x4, argumentValues, 0, a, false);
@@ -341,8 +343,8 @@ bool MiniScriptMatrix4x4::mul(const span<MiniScript::ScriptVariable>& argumentVa
 			return true;
 		} else
 		// vec3 * matrix4x4
-		if (argumentValues[0].getType() == MiniScript::TYPE_VECTOR3 &&
-			argumentValues[1].getType() == MiniScript::TYPE_MATRIX4x4) {
+		if (argumentValues[0].getType() == TYPE_VECTOR3 &&
+			argumentValues[1].getType() == TYPE_MATRIX4x4) {
 			Vector3 a;
 			Matrix4x4 b;
 			MiniScriptVector3::getVector3Value(TYPE_VECTOR3, argumentValues, 0, a, false);
@@ -355,7 +357,7 @@ bool MiniScriptMatrix4x4::mul(const span<MiniScript::ScriptVariable>& argumentVa
 			return true;
 		} else
 		// matrix4x4 * float
-		if (argumentValues[0].getType() == MiniScript::TYPE_MATRIX4x4 &&
+		if (argumentValues[0].getType() == TYPE_MATRIX4x4 &&
 			MiniScript::ScriptVariable::isExpectedType(argumentValues[1].getType(), MiniScript::TYPE_PSEUDO_NUMBER) == true) {
 			Matrix4x4 a;
 			float b;
@@ -371,7 +373,7 @@ bool MiniScriptMatrix4x4::mul(const span<MiniScript::ScriptVariable>& argumentVa
 		} else
 		// float * matrix4x4
 		if (MiniScript::ScriptVariable::isExpectedType(argumentValues[0].getType(), MiniScript::TYPE_PSEUDO_NUMBER) == true &&
-			argumentValues[1].getType() == MiniScript::TYPE_MATRIX4x4) {
+			argumentValues[1].getType() == TYPE_MATRIX4x4) {
 			float a;
 			Matrix4x4 b;
 			MiniScript::getFloatValue(argumentValues, 0, a, false);

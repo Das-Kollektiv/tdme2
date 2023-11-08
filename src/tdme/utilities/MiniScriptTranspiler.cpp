@@ -27,7 +27,6 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
-using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Matrix3x3;
 using tdme::math::Matrix4x4;

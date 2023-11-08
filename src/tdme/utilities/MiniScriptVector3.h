@@ -54,6 +54,17 @@ public:
 
 	}
 
+	/**
+	 * Set vector3 value
+	 * @param TYPE_VECTOR3 custom data type for vector3
+	 * @param variable variable
+	 * @param value value
+	 */
+	static inline void setVector3Value(MiniScript::ScriptVariableType TYPE_VECTOR3, MiniScript::ScriptVariable& variable, const Vector3& value) {
+		variable.setType(TYPE_VECTOR3);
+		variable.setValue(&value);
+	}
+
 	// forbid class copy
 	FORBID_CLASS_COPY(MiniScriptVector3)
 

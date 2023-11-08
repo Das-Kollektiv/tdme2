@@ -53,6 +53,17 @@ public:
 		return optional;
 	}
 
+	/**
+	 * Set vector2 value
+	 * @param TYPE_VECTOR2 custom data type for vector2
+	 * @param variable variable
+	 * @param value value
+	 */
+	static inline void setVector2Value(MiniScript::ScriptVariableType TYPE_VECTOR2, MiniScript::ScriptVariable& variable, const Vector2& value) {
+		variable.setType(TYPE_VECTOR2);
+		variable.setValue(&value);
+	}
+
 	// forbid class copy
 	FORBID_CLASS_COPY(MiniScriptVector2)
 

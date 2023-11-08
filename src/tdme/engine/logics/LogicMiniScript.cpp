@@ -120,6 +120,7 @@ void LogicMiniScript::registerStateMachineStates() {
 
 void LogicMiniScript::registerMethods() {
 	MiniScript::registerMethods();
+	/*
 	{
 		//
 		class ScriptMethodApplicationRunsInEditor: public ScriptMethod {
@@ -5341,6 +5342,7 @@ void LogicMiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodSceneConnectorAttachPrototype(this));
 	}
+	*/
 }
 
 void LogicMiniScript::registerVariables() {

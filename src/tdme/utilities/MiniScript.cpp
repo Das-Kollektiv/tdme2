@@ -15,18 +15,9 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/logics/LogicMiniScript.h>
-#include <tdme/engine/model/RotationOrder.h>
-#include <tdme/engine/Rotation.h>
-#include <tdme/engine/Transform.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/scripting/GUIMiniScript.h>
 #include <tdme/math/Math.h>
-#include <tdme/math/Matrix3x3.h>
-#include <tdme/math/Matrix4x4.h>
-#include <tdme/math/Quaternion.h>
-#include <tdme/math/Vector2.h>
-#include <tdme/math/Vector3.h>
-#include <tdme/math/Vector4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -59,18 +50,11 @@ using std::unordered_set;
 using std::vector;
 
 using tdme::engine::logics::LogicMiniScript;
-using tdme::engine::model::RotationOrder;
 using tdme::engine::Rotation;
 using tdme::engine::Transform;
 using tdme::gui::GUIParser;
 using tdme::gui::scripting::GUIMiniScript;
 using tdme::math::Math;
-using tdme::math::Matrix3x3;
-using tdme::math::Matrix4x4;
-using tdme::math::Quaternion;
-using tdme::math::Vector2;
-using tdme::math::Vector3;
-using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
@@ -92,13 +76,6 @@ const string MiniScript::METHOD_DISABLENAMEDCONDITION = "script.disableNamedCond
 
 const string MiniScript::ScriptVariable::CLASSNAME_NONE = "";
 const string MiniScript::ScriptVariable::CLASSNAME_STRING = "string";
-const string MiniScript::ScriptVariable::CLASSNAME_VEC2 = "vec2";
-const string MiniScript::ScriptVariable::CLASSNAME_VEC3 = "vec3";
-const string MiniScript::ScriptVariable::CLASSNAME_VEC4 = "vec4";
-const string MiniScript::ScriptVariable::CLASSNAME_QUATERNION = "quaternion";
-const string MiniScript::ScriptVariable::CLASSNAME_MAT3 = "mat3";
-const string MiniScript::ScriptVariable::CLASSNAME_MAT4 = "mat4";
-const string MiniScript::ScriptVariable::CLASSNAME_TRANSFORM = "transform";
 const string MiniScript::ScriptVariable::CLASSNAME_ARRAY = "array";
 const string MiniScript::ScriptVariable::CLASSNAME_MAP = "map";
 const string MiniScript::ScriptVariable::CLASSNAME_SET = "set";
@@ -606,62 +583,6 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 								argumentOk = getStringValue(argumentValues, argumentIdx, stringValue, argumentType.optional);
 							}
 							break;
-						case TYPE_VECTOR2:
-							{
-								argumentOk =
-									argumentIdx < 0 || argumentIdx >= argumentValues.size()?
-										argumentType.optional:
-										argumentValues[argumentIdx].getType() == TYPE_VECTOR2;
-								break;
-							}
-						case TYPE_VECTOR3:
-							{
-								argumentOk =
-									argumentIdx < 0 || argumentIdx >= argumentValues.size()?
-										argumentType.optional:
-										argumentValues[argumentIdx].getType() == TYPE_VECTOR3;
-								break;
-							}
-						case TYPE_VECTOR4:
-							{
-								argumentOk =
-									argumentIdx < 0 || argumentIdx >= argumentValues.size()?
-										argumentType.optional:
-										argumentValues[argumentIdx].getType() == TYPE_VECTOR4;
-								break;
-							}
-						case TYPE_QUATERNION:
-							{
-								argumentOk =
-									argumentIdx < 0 || argumentIdx >= argumentValues.size()?
-										argumentType.optional:
-										argumentValues[argumentIdx].getType() == TYPE_QUATERNION;
-								break;
-							}
-						case TYPE_MATRIX3x3:
-							{
-								argumentOk =
-									argumentIdx < 0 || argumentIdx >= argumentValues.size()?
-										argumentType.optional:
-										argumentValues[argumentIdx].getType() == TYPE_MATRIX3x3;
-								break;
-							}
-						case TYPE_MATRIX4x4:
-							{
-								argumentOk =
-									argumentIdx < 0 || argumentIdx >= argumentValues.size()?
-										argumentType.optional:
-										argumentValues[argumentIdx].getType() == TYPE_MATRIX4x4;
-								break;
-							}
-						case TYPE_TRANSFORM:
-							{
-								argumentOk =
-									argumentIdx < 0 || argumentIdx >= argumentValues.size()?
-										argumentType.optional:
-										argumentValues[argumentIdx].getType() == TYPE_TRANSFORM;
-								break;
-							}
 						case TYPE_ARRAY:
 							{
 								argumentOk =
@@ -692,7 +613,21 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 								argumentOk = getFloatValue(argumentValues, argumentIdx, floatValue, argumentType.optional);
 								break;
 							}
-						// TODO: custom data types
+						case TYPE_PSEUDO_MIXED:
+							{
+								argumentOk = true;
+								break;
+							}
+						default:
+							{
+								// custom data types
+								argumentOk =
+									argumentIdx < 0 || argumentIdx >= argumentValues.size()?
+										argumentType.optional:
+										argumentValues[argumentIdx].getType() == argumentType.type;
+								break;
+							}
+
 					}
 				}
 				if (argumentOk == false) {

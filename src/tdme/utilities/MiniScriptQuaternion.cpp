@@ -309,7 +309,7 @@ bool MiniScriptQuaternion::mul(const span<MiniScript::ScriptVariable>& argumentV
 		} else
 		// quaternion * vec3
 		if (argumentValues[0].getType() == TYPE_QUATERNION &&
-			argumentValues[1].getType() == MiniScript::TYPE_VECTOR3) {
+			argumentValues[1].getType() == TYPE_VECTOR3) {
 			Quaternion a;
 			Vector3 b;
 			MiniScriptQuaternion::getQuaternionValue(TYPE_QUATERNION, argumentValues, 0, a, false);
@@ -322,7 +322,7 @@ bool MiniScriptQuaternion::mul(const span<MiniScript::ScriptVariable>& argumentV
 			return true;
 		} else
 		// vec3 * quaternion
-		if (argumentValues[0].getType() == MiniScript::TYPE_VECTOR3 &&
+		if (argumentValues[0].getType() == TYPE_VECTOR3 &&
 			argumentValues[1].getType() == TYPE_QUATERNION) {
 			Vector3 a;
 			Quaternion b;
