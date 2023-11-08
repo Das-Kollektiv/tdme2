@@ -17,11 +17,11 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/MiniScript.h>
-#include <tdme/utilities/MiniScriptTransform.h>
 #include <tdme/utilities/MiniScriptMatrix3x3.h>
 #include <tdme/utilities/MiniScriptMatrix4x4.h>
 #include <tdme/utilities/MiniScriptMatrix4x4.h>
 #include <tdme/utilities/MiniScriptQuaternion.h>
+#include <tdme/utilities/MiniScriptTransform.h>
 #include <tdme/utilities/MiniScriptVector2.h>
 #include <tdme/utilities/MiniScriptVector3.h>
 #include <tdme/utilities/MiniScriptVector4.h>
@@ -42,11 +42,11 @@ using tdme::math::Quaternion;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::utilities::MiniScriptTransform;
 using tdme::utilities::MiniScriptMatrix3x3;
 using tdme::utilities::MiniScriptMatrix4x4;
 using tdme::utilities::MiniScriptMatrix4x4;
 using tdme::utilities::MiniScriptQuaternion;
+using tdme::utilities::MiniScriptTransform;
 using tdme::utilities::MiniScriptVector2;
 using tdme::utilities::MiniScriptVector3;
 using tdme::utilities::MiniScriptVector4;
@@ -85,6 +85,10 @@ public:
 	 */
 	EngineMiniScript();
 
+	/**
+	 * Register data types
+	 */
+	void registerDataTypes();
 
 	/**
 	 * Get vector2 value from given variable

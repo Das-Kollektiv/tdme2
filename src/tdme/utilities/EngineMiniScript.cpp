@@ -11,6 +11,14 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/MiniScript.h>
+#include <tdme/utilities/MiniScriptMatrix3x3.h>
+#include <tdme/utilities/MiniScriptMatrix4x4.h>
+#include <tdme/utilities/MiniScriptMatrix4x4.h>
+#include <tdme/utilities/MiniScriptQuaternion.h>
+#include <tdme/utilities/MiniScriptTransform.h>
+#include <tdme/utilities/MiniScriptVector2.h>
+#include <tdme/utilities/MiniScriptVector3.h>
+#include <tdme/utilities/MiniScriptVector4.h>
 #include <tdme/utilities/StringTools.h>
 
 using tdme::utilities::EngineMiniScript;
@@ -26,6 +34,14 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
 using tdme::utilities::MiniScript;
+using tdme::utilities::MiniScriptMatrix3x3;
+using tdme::utilities::MiniScriptMatrix4x4;
+using tdme::utilities::MiniScriptMatrix4x4;
+using tdme::utilities::MiniScriptQuaternion;
+using tdme::utilities::MiniScriptTransform;
+using tdme::utilities::MiniScriptVector2;
+using tdme::utilities::MiniScriptVector3;
+using tdme::utilities::MiniScriptVector4;
 using tdme::utilities::StringTools;
 
 EngineMiniScript* EngineMiniScript::loadScript(const string& pathName, const string& fileName) {
@@ -94,4 +110,15 @@ EngineMiniScript* EngineMiniScript::loadScript(const string& pathName, const str
 }
 
 EngineMiniScript::EngineMiniScript(): MiniScript() {
+}
+
+void EngineMiniScript::registerDataTypes() {
+	MiniScript::registerDataTypes();
+	registerDataType(new MiniScriptTransform(this));
+	registerDataType(new MiniScriptMatrix4x4(this));
+	registerDataType(new MiniScriptMatrix3x3(this));
+	registerDataType(new MiniScriptQuaternion(this));
+	registerDataType(new MiniScriptVector2(this));
+	registerDataType(new MiniScriptVector3(this));
+	registerDataType(new MiniScriptVector4(this));
 }

@@ -132,7 +132,6 @@ void MiniScript::registerMethod(ScriptMethod* scriptMethod) {
 void MiniScript::registerDataType(ScriptDataType* scriptDataType) {
 	scriptDataType->setType(TYPE_PSEUDO_CUSTOM_DATATYPES + scriptDataTypes.size());
 	scriptDataTypes.push_back(scriptDataType);
-	scriptDataType->registerMethods();
 	if (scriptDataType->isMathDataType() == true) miniScriptMath->registerDataType(scriptDataType);
 }
 
@@ -1666,6 +1665,8 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 		if (native == true) {
 			if (scriptHash == nativeHash) {
 				scripts = nativeScripts;
+				registerDataTypes();
+				for (const auto scriptDataType: scriptDataTypes) scriptDataType->registerMethods();
 				registerStateMachineStates();
 				registerMethods();
 				startScript();
@@ -1679,6 +1680,8 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 	}
 
 	//
+	registerDataTypes();
+	for (const auto scriptDataType: scriptDataTypes) scriptDataType->registerMethods();
 	registerStateMachineStates();
 	registerMethods();
 
