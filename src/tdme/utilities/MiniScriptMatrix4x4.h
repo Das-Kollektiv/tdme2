@@ -42,7 +42,7 @@ public:
 	 * @param optional optional
 	 * @return success
 	 */
-	static inline bool getMatrix3x3Value(MiniScript::ScriptVariableType TYPE_MATRIX4x4, const span<MiniScript::ScriptVariable>& arguments, int idx, Matrix4x4& value, bool optional = false) {
+	static inline bool getMatrix4x4Value(MiniScript::ScriptVariableType TYPE_MATRIX4x4, const span<MiniScript::ScriptVariable>& arguments, int idx, Matrix4x4& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		const auto& argument = arguments[idx];
 		if (argument.getType() == TYPE_MATRIX4x4) {
@@ -51,7 +51,6 @@ public:
 			return true;
 		}
 		return optional;
-
 	}
 
 	// forbid class copy
