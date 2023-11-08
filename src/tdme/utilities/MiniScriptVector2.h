@@ -19,6 +19,20 @@ class tdme::utilities::MiniScriptVector2 final: public MiniScript::ScriptDataTyp
 private:
 	MiniScript* miniScript { nullptr };
 
+	// overridden methods
+	void registerMethods() const override;
+	void unsetScriptVariableValue(MiniScript::ScriptVariable& variable) const override;
+	void setScriptVariableValue(MiniScript::ScriptVariable& variable, const void* value) const override;
+	void copyScriptVariable(MiniScript::ScriptVariable& to, const MiniScript::ScriptVariable& from) const override;
+	bool mul(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const override;
+	bool div(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const override;
+	bool add(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const override;
+	bool sub(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const override;
+
+public:
+	static const string CLASS_NAME;
+	static const string TYPE_NAME;
+
 	/**
 	 * Get vector2 value from given variable
 	 * @param TYPE_VECTOR2 custom data type for vector3
@@ -37,22 +51,7 @@ private:
 			return true;
 		}
 		return optional;
-
 	}
-
-	// overridden methods
-	void registerMethods() const override;
-	void unsetScriptVariableValue(MiniScript::ScriptVariable& variable) const override;
-	void setScriptVariableValue(MiniScript::ScriptVariable& variable, const void* value) const override;
-	void copyScriptVariable(MiniScript::ScriptVariable& to, const MiniScript::ScriptVariable& from) const override;
-	bool mul(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const override;
-	bool div(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const override;
-	bool add(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const override;
-	bool sub(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const override;
-
-public:
-	static const string CLASS_NAME;
-	static const string TYPE_NAME;
 
 	// forbid class copy
 	FORBID_CLASS_COPY(MiniScriptVector2)

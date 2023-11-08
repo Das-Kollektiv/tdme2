@@ -3639,6 +3639,18 @@ public:
 	void registerMethod(ScriptMethod* scriptMethod);
 
 	/**
+	 * Returns data type by class name or nullptr
+	 * @param className class name
+	 * @return script data type
+	 */
+	inline ScriptDataType* getDataTypeByClassName(const string& className) {
+		for (const auto scriptDataType: scriptDataTypes) {
+			if (scriptDataType->getClassName() == className) return scriptDataType;
+		}
+		return nullptr;
+	}
+
+	/**
 	 * Register script data type
 	 * @param scriptDataType script data type
 	 */
