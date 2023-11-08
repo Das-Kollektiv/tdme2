@@ -1032,58 +1032,6 @@ void MiniScriptMath::mul(const span<MiniScript::ScriptVariable>& argumentValues,
 			return;
 		}
 	} else
-	// matrix3x3
-	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_MATRIX3x3) == true) {
-		// matrix3x3 * matrix
-		if (argumentValues[0].getType() == MiniScript::TYPE_MATRIX3x3 &&
-			argumentValues[1].getType() == MiniScript::TYPE_MATRIX3x3) {
-			Matrix3x3 a;
-			Matrix3x3 b;
-			MiniScript::getMatrix3x3Value(argumentValues, 0, a, false);
-			MiniScript::getMatrix3x3Value(argumentValues, 1, b, false);
-			returnValue.setValue(a * b);
-		} else
-		// matrix3x3 * vec2
-		if (argumentValues[0].getType() == MiniScript::TYPE_MATRIX3x3 &&
-			argumentValues[1].getType() == MiniScript::TYPE_VECTOR2) {
-			Matrix3x3 a;
-			Vector2 b;
-			MiniScript::getMatrix3x3Value(argumentValues, 0, a, false);
-			MiniScript::getVector2Value(argumentValues, 1, b, false);
-			returnValue.setValue(a * b);
-		} else
-		// vec2 * matrix3x3
-		if (argumentValues[0].getType() == MiniScript::TYPE_VECTOR2 &&
-			argumentValues[1].getType() == MiniScript::TYPE_MATRIX3x3) {
-			Vector2 a;
-			Matrix3x3 b;
-			MiniScript::getVector2Value(argumentValues, 0, a, false);
-			MiniScript::getMatrix3x3Value(argumentValues, 1, b, false);
-			returnValue.setValue(b * a);
-		} else
-		// matrix3x3 * float
-		if (argumentValues[0].getType() == MiniScript::TYPE_MATRIX3x3 &&
-			MiniScript::ScriptVariable::isExpectedType(argumentValues[1].getType(), MiniScript::TYPE_PSEUDO_NUMBER) == true) {
-			Matrix3x3 a;
-			float b;
-			MiniScript::getMatrix3x3Value(argumentValues, 0, a, false);
-			MiniScript::getFloatValue(argumentValues, 1, b, false);
-			returnValue.setValue(a * b);
-		} else
-		// float * matrix3x3
-		if (MiniScript::ScriptVariable::isExpectedType(argumentValues[0].getType(), MiniScript::TYPE_PSEUDO_NUMBER) == true &&
-			argumentValues[1].getType() == MiniScript::TYPE_MATRIX3x3) {
-			float a;
-			Matrix3x3 b;
-			MiniScript::getFloatValue(argumentValues, 0, a, false);
-			MiniScript::getMatrix3x3Value(argumentValues, 1, b, false);
-			returnValue.setValue(b * a);
-		} else {
-			Console::println("mul(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation("mul"));
-			miniScript->startErrorScript();
-			return;
-		}
-	} else
 	// float
 	if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true) {
 		float a;
