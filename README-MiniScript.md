@@ -14,9 +14,9 @@ Introduction to MiniScript language features:
 - supports operators by operator to method mapping by a preprocessor run
 - supports loops and conditions
 - supports programming with classes style programming
-  - for string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, array, map and set data types
-  - via script classes
-  - custom data types are planned
+  - for string, array, map and set data types
+  - via script classes/objects
+  - custom data types (vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, roll your own)
 - supports event like programming
 - can be transpiled to C++
 
