@@ -620,7 +620,7 @@ public:
 				default:
 					// custom data type
 					auto dataTypeIdx = static_cast<int>(from.getType()) - TYPE_PSEUDO_CUSTOM_DATATYPES;
-					if (dataTypeIdx < TYPE_PSEUDO_CUSTOM_DATATYPES || dataTypeIdx >= to.miniScript->scriptDataTypes.size()) {
+					if (dataTypeIdx < 0 || dataTypeIdx >= to.miniScript->scriptDataTypes.size()) {
 						Console::println("ScriptVariable::copyScriptVariable(): unknown custom data type with id " + to_string(dataTypeIdx));
 						return;
 					}
@@ -667,6 +667,7 @@ public:
 		 */
 		inline ScriptVariable(const ScriptVariable& variable) {
 			if (variable.reference != nullptr) {
+				miniScript = variable.miniScript;
 				reference = variable.reference;
 				variable.reference->acquireReference();
 			} else {
@@ -695,8 +696,8 @@ public:
 		 */
 		inline ScriptVariable& operator=(const ScriptVariable& variable) {
 			if (variable.reference != nullptr) {
-				reference = variable.reference;
 				miniScript = variable.miniScript;
+				reference = variable.reference;
 				variable.reference->acquireReference();
 			} else {
 				copyScriptVariable(*this, variable);
@@ -841,7 +842,7 @@ public:
 				default:
 					// custom data type
 					auto dataTypeIdx = static_cast<int>(this->getType()) - TYPE_PSEUDO_CUSTOM_DATATYPES;
-					if (dataTypeIdx < TYPE_PSEUDO_CUSTOM_DATATYPES || dataTypeIdx >= miniScript->scriptDataTypes.size()) {
+					if (dataTypeIdx < 0 || dataTypeIdx >= miniScript->scriptDataTypes.size()) {
 						Console::println("ScriptVariable::setType(): unknown custom data type with id " + to_string(dataTypeIdx));
 						return;
 					}
@@ -890,7 +891,7 @@ public:
 				default:
 					// custom data type
 					auto dataTypeIdx = static_cast<int>(this->getType()) - TYPE_PSEUDO_CUSTOM_DATATYPES;
-					if (dataTypeIdx < TYPE_PSEUDO_CUSTOM_DATATYPES || dataTypeIdx >= miniScript->scriptDataTypes.size()) {
+					if (dataTypeIdx < 0 || dataTypeIdx >= miniScript->scriptDataTypes.size()) {
 						Console::println("ScriptVariable::setType(): unknown custom data type with id " + to_string(dataTypeIdx));
 						return;
 					}
@@ -1139,7 +1140,7 @@ public:
 		inline void setValue(const void* value) {
 			// custom data type
 			auto dataTypeIdx = static_cast<int>(this->getType()) - TYPE_PSEUDO_CUSTOM_DATATYPES;
-			if (dataTypeIdx < TYPE_PSEUDO_CUSTOM_DATATYPES || dataTypeIdx >= miniScript->scriptDataTypes.size()) {
+			if (dataTypeIdx < 0 || dataTypeIdx >= miniScript->scriptDataTypes.size()) {
 				Console::println("ScriptVariable::setValue(): unknown custom data type with id " + to_string(dataTypeIdx));
 				return;
 			}
@@ -1525,7 +1526,7 @@ public:
 				default:
 					// custom data types
 					auto dataTypeIdx = static_cast<int>(type) - TYPE_PSEUDO_CUSTOM_DATATYPES;
-					if (dataTypeIdx < TYPE_PSEUDO_CUSTOM_DATATYPES || dataTypeIdx >= miniScript->scriptDataTypes.size()) {
+					if (dataTypeIdx < 0 || dataTypeIdx >= miniScript->scriptDataTypes.size()) {
 						Console::println("ScriptVariable::getClassName(): unknown custom data type with id " + to_string(dataTypeIdx));
 						return CLASSNAME_NONE;
 					}
@@ -1556,7 +1557,7 @@ public:
 				default:
 					// custom data types
 					auto dataTypeIdx = static_cast<int>(type) - TYPE_PSEUDO_CUSTOM_DATATYPES;
-					if (dataTypeIdx < TYPE_PSEUDO_CUSTOM_DATATYPES || dataTypeIdx >= miniScript->scriptDataTypes.size()) {
+					if (dataTypeIdx < 0 || dataTypeIdx >= miniScript->scriptDataTypes.size()) {
 						Console::println("ScriptVariable::getTypeAsString(): unknown custom data type with id " + to_string(dataTypeIdx));
 						return CLASSNAME_NONE;
 					}
@@ -1759,7 +1760,7 @@ public:
 				default:
 					// custom data types
 					auto dataTypeIdx = static_cast<int>(type) - TYPE_PSEUDO_CUSTOM_DATATYPES;
-					if (dataTypeIdx < TYPE_PSEUDO_CUSTOM_DATATYPES || dataTypeIdx >= miniScript->scriptDataTypes.size()) {
+					if (dataTypeIdx < 0 || dataTypeIdx >= miniScript->scriptDataTypes.size()) {
 						Console::println("ScriptVariable::getValueAsString(): unknown custom data type with id " + to_string(dataTypeIdx));
 						return CLASSNAME_NONE;
 					}
