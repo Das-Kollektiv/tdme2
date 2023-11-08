@@ -20,7 +20,11 @@ namespace utilities {
 	class Integer;
 	class MiniScript;
 	class MiniScriptMath;
+	class MiniScriptTransform;
 	class MiniScriptTranspiler;
+	class MiniScriptMatrix3x3;
+	class MiniScriptMatrix4x4;
+	class MiniScriptQuaternion;
 	class MiniScriptVector2;
 	class MiniScriptVector3;
 	class MiniScriptVector4;

@@ -692,6 +692,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntax
 								argumentOk = getFloatValue(argumentValues, argumentIdx, floatValue, argumentType.optional);
 								break;
 							}
+						// TODO: custom data types
 					}
 				}
 				if (argumentOk == false) {
