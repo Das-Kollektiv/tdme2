@@ -123,8 +123,9 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 						{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "rotationY", .optional = true, .reference = false, .nullable = false },
 						{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "rotationX", .optional = true, .reference = false, .nullable = false },
 					},
-					TYPE_TRANSFORM),
-					miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
+					TYPE_TRANSFORM
+				),
+				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
 			const string getMethodName() override {
 				return "transform";
 			}
@@ -189,8 +190,9 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
 					},
-					TYPE_VECTOR3),
-					miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
+					TYPE_VECTOR3
+				),
+				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
 			const string getMethodName() override {
 				return "transform.getTranslation";
 			}
@@ -227,8 +229,9 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = true, .nullable = false },
 						{ .type = TYPE_VECTOR3, .name = "translation", .optional = false, .reference = false, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_NULL),
-					miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
+					MiniScript::ScriptVariableType::TYPE_NULL
+				),
+				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
 			const string getMethodName() override {
 				return "transform.setTranslation";
 			}
@@ -268,8 +271,9 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
 					},
-					TYPE_VECTOR3),
-					miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
+					TYPE_VECTOR3
+				),
+				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
 			const string getMethodName() override {
 				return "transform.getScale";
 			}
@@ -306,8 +310,9 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = true, .nullable = false },
 						{ .type = TYPE_VECTOR3, .name = "scale", .optional = false, .reference = false, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_NULL),
-					miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
+					MiniScript::ScriptVariableType::TYPE_NULL
+				),
+				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
 			const string getMethodName() override {
 				return "transform.setScale";
 			}
@@ -347,8 +352,9 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "idx", .optional = false, .reference = false, .nullable = false },
 					},
-					TYPE_VECTOR3),
-					miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
+					TYPE_VECTOR3
+				),
+				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
 			const string getMethodName() override {
 				return "transform.getRotationAxis";
 			}
@@ -390,8 +396,9 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "idx", .optional = false, .reference = false, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_FLOAT),
-					miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM) {}
+					MiniScript::ScriptVariableType::TYPE_FLOAT
+				),
+				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM) {}
 			const string getMethodName() override {
 				return "transform.getRotationAngle";
 			}
@@ -431,8 +438,9 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "idx", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false, .reference = false, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_NULL),
-					miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM) {}
+					MiniScript::ScriptVariableType::TYPE_NULL
+				),
+				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM) {}
 			const string getMethodName() override {
 				return "transform.setRotationAngle";
 			}
@@ -479,8 +487,9 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
 						{ .type = TYPE_VECTOR3, .name = "vec3", .optional = false, .reference = false, .nullable = false },
 					},
-					TYPE_VECTOR3),
-					miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
+					TYPE_VECTOR3
+				),
+				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
 			const string getMethodName() override {
 				return "transform.rotate";
 			}
@@ -521,8 +530,9 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 						{ .type = TYPE_VECTOR3, .name = "axis", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false, .reference = false, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_NULL),
-					miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
+					MiniScript::ScriptVariableType::TYPE_NULL
+				),
+				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_VECTOR3(TYPE_VECTOR3) {}
 			const string getMethodName() override {
 				return "transform.applyRotation";
 			}
@@ -573,8 +583,9 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 						{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "degreesPerSeconds", .optional = false, .reference = false, .nullable = false },
 						{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "interpolatedAngle", .optional = false, .reference = true, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_BOOLEAN),
-					miniScript(miniScript) {}
+					MiniScript::ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "transform.interpolateRotation";
 			}
@@ -616,8 +627,9 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
 					},
-					TYPE_MATRIX4x4),
-					miniScript(miniScript),TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_MATRIX4x4(TYPE_MATRIX4x4) {}
+					TYPE_MATRIX4x4
+				),
+				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_MATRIX4x4(TYPE_MATRIX4x4) {}
 			const string getMethodName() override {
 				return "transform.getTransformMatrix";
 			}
@@ -625,6 +637,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 				Transform transform;
 				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, argumentValues, 0, transform, false) == true) {
 					const auto& result = transform.getTransformMatrix();
+					//
 					returnValue.setType(TYPE_MATRIX4x4);
 					returnValue.setValue(&result);
 				} else {
@@ -652,8 +665,9 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					{
 						{ .type = TYPE_TRANSFORM, .name = "transform", .optional = false, .reference = false, .nullable = false },
 					},
-					TYPE_QUATERNION),
-					miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_QUATERNION(TYPE_QUATERNION) {}
+					TYPE_QUATERNION
+				),
+				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_QUATERNION(TYPE_QUATERNION) {}
 			const string getMethodName() override {
 				return "transform.getRotationsQuaternion";
 			}
@@ -661,6 +675,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 				Transform transform;
 				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, argumentValues, 0, transform, false) == true) {
 					const auto& result = transform.getRotationsQuaternion();
+					//
 					returnValue.setType(TYPE_QUATERNION);
 					returnValue.setValue(&result);
 				} else {
@@ -688,8 +703,9 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					{
 						{ .type = TYPE_MATRIX4x4, .name = "transformMatrix", .optional = false, .reference = false, .nullable = false },
 					},
-					TYPE_TRANSFORM),
-					miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_MATRIX4x4(TYPE_MATRIX4x4) {}
+					TYPE_TRANSFORM
+				),
+				miniScript(miniScript), TYPE_TRANSFORM(TYPE_TRANSFORM), TYPE_MATRIX4x4(TYPE_MATRIX4x4) {}
 			const string getMethodName() override {
 				return "transform.fromMatrix";
 			}

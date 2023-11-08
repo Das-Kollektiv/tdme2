@@ -90,14 +90,8 @@ public:
 	 */
 	EngineMiniScript();
 
-	/**
-	 * @return base class
-	 */
+	// overriden methods
 	const string getBaseClass();
-
-	/**
-	 * @return transpilation units
-	 */
 	const vector<string> getTranspilationUnits();
 
 	/**
