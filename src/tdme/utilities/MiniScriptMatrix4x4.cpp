@@ -434,6 +434,7 @@ const string MiniScriptMatrix4x4::getValueAsString(const MiniScript::ScriptVaria
 		to_string(matrix4x4Value[8]) + ", " +
 		to_string(matrix4x4Value[9]) + ", " +
 		to_string(matrix4x4Value[10]) + ", " +
+		to_string(matrix4x4Value[11]) + ", " +
 		to_string(matrix4x4Value[12]) + ", " +
 		to_string(matrix4x4Value[13]) + ", " +
 		to_string(matrix4x4Value[14]) + ", " +

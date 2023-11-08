@@ -48,6 +48,7 @@ public:
 			value = *static_cast<Vector2*>((void*)argument.getValuePtr());
 			return true;
 		}
+		//
 		return optional;
 	}
 

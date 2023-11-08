@@ -1749,9 +1749,9 @@ public:
 					auto dataTypeIdx = static_cast<int>(type) - TYPE_PSEUDO_CUSTOM_DATATYPES;
 					if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::scriptDataTypes.size()) {
 						Console::println("ScriptVariable::getValueAsString(): unknown custom data type with id " + to_string(dataTypeIdx));
-						return CLASSNAME_NONE;
+						return result;
 					}
-					return MiniScript::scriptDataTypes[dataTypeIdx]->getValueAsString(this);
+					return MiniScript::scriptDataTypes[dataTypeIdx]->getValueAsString(*this);
 
 			}
 			return result;

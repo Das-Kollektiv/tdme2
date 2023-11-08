@@ -63,6 +63,7 @@ int main(int argc, char** argv)
 	}
 
 	// run script
+	EngineMiniScript::registerDataTypes();
 	unique_ptr<EngineMiniScript> script;
 	if (pathToScript.empty() == false) {
 		//
