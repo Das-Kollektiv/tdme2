@@ -32,8 +32,6 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
-using tdme::utilities::EngineMiniScript;
-
 using tdme::engine::Transform;
 using tdme::math::Matrix3x3;
 using tdme::math::Matrix4x4;
@@ -58,7 +56,7 @@ using tdme::utilities::MiniScript;
  * Engine MiniScript
  * @author Andreas Drewke
  */
-class EngineMiniScript: public MiniScript {
+class tdme::utilities::EngineMiniScript: public MiniScript {
 public:
 	// forbid class copy
 	FORBID_CLASS_COPY(EngineMiniScript)
