@@ -37,7 +37,7 @@ private:
 	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE11_INDICES;
 	STATIC_DLL_IMPEXT static const array<array<int32_t,3>,12> facesVerticesIndexes;
 
-	// overriden methods
+	// overridden methods
 	void destroyCollisionShape() override;
 	void createCollisionShape(World* world) override;
 

@@ -11,7 +11,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/GUIParserException.h>
 #include <tdme/os/filesystem/FileSystemException.h>
-#include <tdme/utilities/MiniScript.h>
+#include <tdme/utilities/EngineMiniScript.h>
 #include <tdme/utilities/Properties.h>
 
 #include <ext/tinyxml/tinyxml.h>
@@ -27,7 +27,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUIParserException;
 using tdme::os::filesystem::FileSystemException;
-using tdme::utilities::MiniScript;
+using tdme::utilities::EngineMiniScript;
 using tdme::utilities::Properties;
 
 using tinyxml::TiXmlElement;
@@ -89,7 +89,7 @@ public:
 	 * @throws tdme::gui::GUIParserException
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	static GUIScreenNode* parse(const string& pathName, const string& fileName, const unordered_map<string, string>& variables = {}, const MiniScript::ScriptVariable& miniScriptArguments = MiniScript::ScriptVariable(), Context* context = nullptr);
+	static GUIScreenNode* parse(const string& pathName, const string& fileName, const unordered_map<string, string>& variables = {}, const EngineMiniScript::ScriptVariable& miniScriptArguments = EngineMiniScript::ScriptVariable(), Context* context = nullptr);
 
 	/**
 	 * Parses a GUI XML content
@@ -103,7 +103,7 @@ public:
 	 * @throws tdme::gui::GUIParserException
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	static GUIScreenNode* parse(const string& xml, const unordered_map<string, string>& variables = {}, const string& pathName = string(), const string& fileName = string(), const MiniScript::ScriptVariable& miniScriptArguments = MiniScript::ScriptVariable(), Context* context = nullptr);
+	static GUIScreenNode* parse(const string& xml, const unordered_map<string, string>& variables = {}, const string& pathName = string(), const string& fileName = string(), const EngineMiniScript::ScriptVariable& miniScriptArguments = EngineMiniScript::ScriptVariable(), Context* context = nullptr);
 
 	/**
 	 * Parses a GUI XML file into parent node

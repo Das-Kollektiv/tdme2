@@ -13,7 +13,7 @@
 #include <tdme/engine/Version.h>
 #include <tdme/gui/scripting/GUIMiniScript.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/MiniScript.h>
+#include <tdme/utilities/EngineMiniScript.h>
 #include <tdme/utilities/Properties.h>
 #include <tdme/utilities/StringTools.h>
 
@@ -32,7 +32,7 @@ using tdme::engine::logics::LogicMiniScript;
 using tdme::engine::Version;
 using tdme::gui::scripting::GUIMiniScript;
 using tdme::utilities::Console;
-using tdme::utilities::MiniScript;
+using tdme::utilities::EngineMiniScript;
 using tdme::utilities::Properties;
 using tdme::utilities::StringTools;
 
@@ -41,7 +41,7 @@ namespace tools {
 namespace cli {
 class MiniscriptDocumentation {
 public:
-static void generateMiniScriptMethodsDocumentation(const string& heading, int mainHeadingIdx, MiniScript* miniScript, Properties& descriptions, const string& descriptionPrefix, unordered_set<string>& categories, const set<string>& allClassMethods, MiniScript* omitMiniScript = nullptr) {
+static void generateMiniScriptMethodsDocumentation(const string& heading, int mainHeadingIdx, EngineMiniScript* miniScript, Properties& descriptions, const string& descriptionPrefix, unordered_set<string>& categories, const set<string>& allClassMethods, EngineMiniScript* omitMiniScript = nullptr) {
 	auto scriptMethods = miniScript->getMethods();
 	map<string, vector<pair<string, string>>> methodMarkupByCategory;
 	for (auto scriptMethod: scriptMethods) {
@@ -68,9 +68,9 @@ static void generateMiniScriptMethodsDocumentation(const string& heading, int ma
 		method+= "| <sub>";
 		method+= scriptMethod->getMethodName();
 		method+= "(";
-		method+= scriptMethod->getArgumentsInformation(miniScript);
+		method+= scriptMethod->getArgumentsInformation();
 		method+= "): ";
-		method+= MiniScript::ScriptVariable::getReturnTypeAsString(miniScript, scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable());
+		method+= EngineMiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable());
 		method+= "</sub>";
 		while (method.size() < 99) method+= " ";
 		method+= "|";
@@ -117,11 +117,11 @@ static void generateMiniScriptMethodsDocumentation(const string& heading, int ma
 	}
 }
 
-static void generateMiniScriptClassesDocumentation(const string& heading, int mainHeadingIdx, MiniScript* miniScript, Properties& descriptions, const string& descriptionPrefix, set<string>& allClassMethods) {
+static void generateMiniScriptClassesDocumentation(const string& heading, int mainHeadingIdx, EngineMiniScript* miniScript, Properties& descriptions, const string& descriptionPrefix, set<string>& allClassMethods) {
 	auto scriptMethods = miniScript->getMethods();
 	//
-	for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); typeIdx <= static_cast<int>(MiniScript::TYPE_SET); typeIdx++) {
-		const auto& className = MiniScript::ScriptVariable::getClassName(miniScript, static_cast<MiniScript::ScriptVariableType>(typeIdx));
+	for (auto typeIdx = static_cast<int>(EngineMiniScript::TYPE_STRING); typeIdx <= static_cast<int>(EngineMiniScript::TYPE_SET); typeIdx++) {
+		const auto& className = EngineMiniScript::ScriptVariable::getClassName(static_cast<EngineMiniScript::ScriptVariableType>(typeIdx));
 		allClassMethods.insert(className);
 	}
 	//
@@ -131,8 +131,8 @@ static void generateMiniScriptClassesDocumentation(const string& heading, int ma
 		if (className.empty() == true && allClassMethods.find(scriptMethod->getMethodName()) == allClassMethods.end()) continue;
 		//
 		auto _class = false;
-		for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); typeIdx <= static_cast<int>(MiniScript::TYPE_SET); typeIdx++) {
-			if (MiniScript::ScriptVariable::getClassName(miniScript, static_cast<MiniScript::ScriptVariableType>(typeIdx)) == className) {
+		for (auto typeIdx = static_cast<int>(EngineMiniScript::TYPE_STRING); typeIdx <= static_cast<int>(EngineMiniScript::TYPE_SET); typeIdx++) {
+			if (EngineMiniScript::ScriptVariable::getClassName(static_cast<EngineMiniScript::ScriptVariableType>(typeIdx)) == className) {
 				_class = true;
 				break;
 			}
@@ -148,7 +148,7 @@ static void generateMiniScriptClassesDocumentation(const string& heading, int ma
 		auto _static =
 			scriptMethod->getArgumentTypes().empty() == true ||
 			scriptMethod->getArgumentTypes()[0].name != className;
-			MiniScript::ScriptVariable::getClassName(miniScript, scriptMethod->getArgumentTypes()[0].type) != className;
+			EngineMiniScript::ScriptVariable::getClassName(scriptMethod->getArgumentTypes()[0].type) != className;
 		//
 		allClassMethods.insert(scriptMethod->getMethodName());
 	}
@@ -164,8 +164,8 @@ static void generateMiniScriptClassesDocumentation(const string& heading, int ma
 		// constructors
 		auto _static = false;
 		if (className.empty() == true) {
-			for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); typeIdx <= static_cast<int>(MiniScript::TYPE_SET); typeIdx++) {
-				const auto& possibleClassName = MiniScript::ScriptVariable::getClassName(miniScript, static_cast<MiniScript::ScriptVariableType>(typeIdx));
+			for (auto typeIdx = static_cast<int>(EngineMiniScript::TYPE_STRING); typeIdx <= static_cast<int>(EngineMiniScript::TYPE_SET); typeIdx++) {
+				const auto& possibleClassName = EngineMiniScript::ScriptVariable::getClassName(static_cast<EngineMiniScript::ScriptVariableType>(typeIdx));
 				if (scriptMethod->getMethodName() == possibleClassName) {
 					className = possibleClassName;
 					_static = true;
@@ -178,7 +178,7 @@ static void generateMiniScriptClassesDocumentation(const string& heading, int ma
 			_static =
 				scriptMethod->getArgumentTypes().empty() == true ||
 				scriptMethod->getArgumentTypes()[0].name != className;
-				MiniScript::ScriptVariable::getClassName(miniScript, scriptMethod->getArgumentTypes()[0].type) != className;
+				EngineMiniScript::ScriptVariable::getClassName(scriptMethod->getArgumentTypes()[0].type) != className;
 		}
 		//
 		string description;
@@ -194,9 +194,9 @@ static void generateMiniScriptClassesDocumentation(const string& heading, int ma
 		}
 		method+= _static == true?scriptMethod->getMethodName():StringTools::substring(scriptMethod->getMethodName(), className.size() + 1, scriptMethod->getMethodName().size());
 		method+= "(";
-		method+= scriptMethod->getArgumentsInformation(miniScript, _static == true?0:1);
+		method+= scriptMethod->getArgumentsInformation(_static == true?0:1);
 		method+= "): ";
-		method+= MiniScript::ScriptVariable::getReturnTypeAsString(miniScript, scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable());
+		method+= EngineMiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable());
 		method+= "</sub>";
 		while (method.size() < 99) method+= " ";
 		method+= "|";
@@ -206,8 +206,8 @@ static void generateMiniScriptClassesDocumentation(const string& heading, int ma
 	}
 	//
 	auto classIdx = 1;
-	for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); typeIdx <= static_cast<int>(MiniScript::TYPE_SET); typeIdx++) {
-		const auto& className = MiniScript::ScriptVariable::getClassName(miniScript, static_cast<MiniScript::ScriptVariableType>(typeIdx));
+	for (auto typeIdx = static_cast<int>(EngineMiniScript::TYPE_STRING); typeIdx <= static_cast<int>(EngineMiniScript::TYPE_SET); typeIdx++) {
+		const auto& className = EngineMiniScript::ScriptVariable::getClassName(static_cast<EngineMiniScript::ScriptVariableType>(typeIdx));
 		auto classNameDescription = descriptions.get("miniscript.baseclass." + (className.empty() == true?"No class":className), "Not documented");
 		//
 		Console::println();
@@ -250,7 +250,10 @@ int main(int argc, char** argv)
 	descriptions.load("resources/engine/code-completion", "tscript-methods.properties");
 
 	//
-	auto baseMiniScript = make_unique<MiniScript>();
+	EngineMiniScript::registerDataTypes();
+
+	//
+	auto baseMiniScript = make_unique<EngineMiniScript>();
 	baseMiniScript->registerMethods();
 
 	//
@@ -269,13 +272,13 @@ int main(int argc, char** argv)
 
 	set<string> allClassMethods;
 	// classes
-	tdme::tools::cli::MiniscriptDocumentation::generateMiniScriptClassesDocumentation("MiniScript Classes", 6, baseMiniScript.get(), descriptions, "miniscript.basemethod.", allClassMethods);
+	tdme::tools::cli::MiniscriptDocumentation::generateMiniScriptClassesDocumentation("EngineMiniScript Classes", 6, baseMiniScript.get(), descriptions, "miniscript.basemethod.", allClassMethods);
 	// base methods
-	tdme::tools::cli::MiniscriptDocumentation::generateMiniScriptMethodsDocumentation("MiniScript Base Methods", 7, baseMiniScript.get(), descriptions, "miniscript.basemethod.", baseMethodCategories, allClassMethods);
+	tdme::tools::cli::MiniscriptDocumentation::generateMiniScriptMethodsDocumentation("EngineMiniScript Base Methods", 7, baseMiniScript.get(), descriptions, "miniscript.basemethod.", baseMethodCategories, allClassMethods);
 	// logic methods
-	tdme::tools::cli::MiniscriptDocumentation::generateMiniScriptMethodsDocumentation("MiniScript Logic Methods", 8, logicMiniScript.get(), descriptions, "miniscript.logicmethod.", logicMethodCategories, allClassMethods, baseMiniScript.get());
+	tdme::tools::cli::MiniscriptDocumentation::generateMiniScriptMethodsDocumentation("EngineMiniScript Logic Methods", 8, logicMiniScript.get(), descriptions, "miniscript.logicmethod.", logicMethodCategories, allClassMethods, baseMiniScript.get());
 	// gui methods
-	tdme::tools::cli::MiniscriptDocumentation::generateMiniScriptMethodsDocumentation("MiniScript GUI Methods", 9, guiMiniScript.get(), descriptions, "miniscript.", guiMethodCategories, allClassMethods, baseMiniScript.get());
+	tdme::tools::cli::MiniscriptDocumentation::generateMiniScriptMethodsDocumentation("EngineMiniScript GUI Methods", 9, guiMiniScript.get(), descriptions, "miniscript.", guiMethodCategories, allClassMethods, baseMiniScript.get());
 
 	// operators
 	auto scriptOperatorMethods = baseMiniScript->getOperatorMethods();
@@ -283,14 +286,14 @@ int main(int argc, char** argv)
 	for (auto scriptMethod: scriptOperatorMethods) {
 		string operatorString;
 		operatorString = "| ";
-		operatorString+= StringTools::replace(MiniScript::getOperatorAsString(scriptMethod->getOperator()), "|", "\\|");
+		operatorString+= StringTools::replace(EngineMiniScript::getOperatorAsString(scriptMethod->getOperator()), "|", "\\|");
 		while (operatorString.size() < 5) operatorString+= " ";
 		operatorString+= "| ";
 		operatorString+= scriptMethod->getMethodName();
 		operatorString+= "(";
-		operatorString+= scriptMethod->getArgumentsInformation(baseMiniScript.get());
+		operatorString+= scriptMethod->getArgumentsInformation();
 		operatorString+= "): ";
-		operatorString+= MiniScript::ScriptVariable::getReturnTypeAsString(baseMiniScript.get(), scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable());
+		operatorString+= EngineMiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable());
 		while (operatorString.size() < 99) operatorString+= " ";
 		operatorString+= "|";
 		operators.push_back(operatorString);

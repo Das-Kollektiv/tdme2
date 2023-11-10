@@ -15,7 +15,7 @@
 #include <tdme/tools/editor/tabcontrollers/TextEditorTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
-#include <tdme/utilities/MiniScript.h>
+#include <tdme/utilities/EngineMiniScript.h>
 
 using std::string;
 using std::to_string;
@@ -35,7 +35,7 @@ using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::TextEditorTabController;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
-using tdme::utilities::MiniScript;
+using tdme::utilities::EngineMiniScript;
 
 /**
  * Text editor tab view
@@ -87,7 +87,7 @@ private:
 		string id;
 		NodeType type { NODETYPE_NONE };
 		string value;
-		MiniScript::ScriptVariableType returnValueType;
+		EngineMiniScript::ScriptVariableType returnValueType;
 		int left;
 		int top;
 	};
@@ -109,8 +109,8 @@ private:
 
 	struct MiniScriptBranch {
 		string name;
-		MiniScript::ScriptSyntaxTreeNode* conditionSyntaxTree { nullptr };
-		vector<MiniScript::ScriptSyntaxTreeNode*> syntaxTreeNodes;
+		EngineMiniScript::ScriptSyntaxTreeNode* conditionSyntaxTree { nullptr };
+		vector<EngineMiniScript::ScriptSyntaxTreeNode*> syntaxTreeNodes;
 	};
 
 	unordered_map<string, string> methodOperatorMap;
@@ -295,32 +295,32 @@ private:
 	 * @param type type
 	 * @return string with color property name from theme
 	 */
-	inline const string getScriptVariableTypePinColor(MiniScript::ScriptVariableType type) {
+	inline const string getScriptVariableTypePinColor(EngineMiniScript::ScriptVariableType type) {
 		switch (type) {
-			case MiniScript::ScriptVariableType::TYPE_BOOLEAN:
+			case EngineMiniScript::ScriptVariableType::TYPE_BOOLEAN:
 				return string("color.pintype_boolean");
-			case MiniScript::ScriptVariableType::TYPE_INTEGER:
+			case EngineMiniScript::ScriptVariableType::TYPE_INTEGER:
 				return string("color.pintype_integer");
-			case MiniScript::ScriptVariableType::TYPE_FLOAT:
+			case EngineMiniScript::ScriptVariableType::TYPE_FLOAT:
 				return string("color.pintype_float");
-			case MiniScript::ScriptVariableType::TYPE_STRING:
+			case EngineMiniScript::ScriptVariableType::TYPE_STRING:
 				return string("color.pintype_string");
-			case MiniScript::ScriptVariableType::TYPE_VECTOR2:
-			case MiniScript::ScriptVariableType::TYPE_VECTOR3:
-			case MiniScript::ScriptVariableType::TYPE_VECTOR4:
+			case EngineMiniScript::TYPE_VECTOR2:
+			case EngineMiniScript::TYPE_VECTOR3:
+			case EngineMiniScript::TYPE_VECTOR4:
 				return string("color.pintype_vector");
-			case MiniScript::ScriptVariableType::TYPE_QUATERNION:
-			case MiniScript::ScriptVariableType::TYPE_MATRIX3x3:
-			case MiniScript::ScriptVariableType::TYPE_MATRIX4x4:
-			case MiniScript::ScriptVariableType::TYPE_TRANSFORM:
+			case EngineMiniScript::TYPE_QUATERNION:
+			case EngineMiniScript::TYPE_MATRIX3x3:
+			case EngineMiniScript::TYPE_MATRIX4x4:
+			case EngineMiniScript::TYPE_TRANSFORM:
 				return string("color.pintype_transform");
-			case MiniScript::ScriptVariableType::TYPE_ARRAY:
-			case MiniScript::ScriptVariableType::TYPE_MAP:
-			case MiniScript::ScriptVariableType::TYPE_SET:
-			case MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED:
-			case MiniScript::ScriptVariableType::TYPE_NULL:
+			case EngineMiniScript::ScriptVariableType::TYPE_ARRAY:
+			case EngineMiniScript::ScriptVariableType::TYPE_MAP:
+			case EngineMiniScript::ScriptVariableType::TYPE_SET:
+			case EngineMiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED:
+			case EngineMiniScript::ScriptVariableType::TYPE_NULL:
 				return string("color.pintype_undefined");
-			case MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER:
+			case EngineMiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER:
 				return string("color.pintype_float");
 		}
 		return string("color.pintype_undefined");
@@ -443,7 +443,7 @@ public:
 	void setCodeEditor();
 
 	/**
-	 * Create MiniScript node
+	 * Create EngineMiniScript node
 	 * @param methodName method name
 	 * @param id id
 	 * @param x x
@@ -452,7 +452,7 @@ public:
 	void createMiniScriptNode(const string& methodName, int x, int y);
 
 	/**
-	 * Get MiniScript node flattened id from hierarchical id
+	 * Get EngineMiniScript node flattened id from hierarchical id
 	 * @param hierarchicalId hierarchical id
 	 * @return flattened id
 	 */
@@ -473,10 +473,10 @@ public:
 	 * @param syntaxTreeNode syntax tree node
 	 * @param deltaX delta X
 	 */
-	void addMiniScriptNodeDeltaX(unordered_map<string, string>& idMapping, const string& id, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, int deltaX);
+	void addMiniScriptNodeDeltaX(unordered_map<string, string>& idMapping, const string& id, const EngineMiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, int deltaX);
 
 	/**
-	 * Create UI nodes for MiniScript script node syntax tree, which matches a event or function in MiniScript
+	 * Create UI nodes for EngineMiniScript script node syntax tree, which matches a event or function in EngineMiniScript
 	 * @param idMapping id mapping
 	 * @param id id
 	 * @param scriptType script type
@@ -489,7 +489,7 @@ public:
 	 * @param height height
 	 * @param createdNodeIds created node ids
 	 */
-	void createMiniScriptScriptNode(unordered_map<string, string>& idMapping, const string& id, MiniScript::Script::ScriptType scriptType, const string& condition, const string& readableName, const MiniScript::ScriptSyntaxTreeNode* conditionSyntaxTreeNode, int x, int y, int& width, int& height);
+	void createMiniScriptScriptNode(unordered_map<string, string>& idMapping, const string& id, EngineMiniScript::Script::ScriptType scriptType, const string& condition, const string& readableName, const EngineMiniScript::ScriptSyntaxTreeNode* conditionSyntaxTreeNode, int x, int y, int& width, int& height);
 
 	/**
 	 * Create UI nodes for given statement syntax tree, which matches a statement in miniscript
@@ -506,7 +506,7 @@ public:
 	 * @oaram createdNodeIds created node ids
 	 * @param depth depth
 	 */
-	void createMiniScriptNodes(unordered_map<string, string>& idMapping, const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, Node::NodeType nodeType, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth = 0);
+	void createMiniScriptNodes(unordered_map<string, string>& idMapping, const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const EngineMiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, Node::NodeType nodeType, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth = 0);
 
 	/**
 	 * Create UI nodes for branch nodes like if, elseif, else, end; forTime, end; forCondition, end
@@ -524,10 +524,10 @@ public:
 	 * @oaram createdNodeIds created node ids
 	 * @param depth depth
 	 */
-	void createMiniScriptBranchNodes(unordered_map<string, string>& idMapping, const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, Node::NodeType nodeType, const vector<MiniScriptBranch>& branches, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth = 0);
+	void createMiniScriptBranchNodes(unordered_map<string, string>& idMapping, const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const EngineMiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, Node::NodeType nodeType, const vector<MiniScriptBranch>& branches, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth = 0);
 
 	/**
-	 * @return MiniScript script index
+	 * @return EngineMiniScript script index
 	 */
 	inline int getMiniScriptScriptIdx() {
 		return miniScriptScriptIdx;
@@ -542,7 +542,7 @@ public:
 	}
 
 	/**
-	 * Handle MiniScript branch
+	 * Handle EngineMiniScript branch
 	 * @param idMapping id mapping
 	 * @param idPrefix id prefix
 	 * @param syntaxTree syntax tree
@@ -553,11 +553,11 @@ public:
 	 * @param height height
 	 * @oaram createdNodeIds created node ids
 	 */
-	bool handleMiniScriptBranch(unordered_map<string, string>& idMapping, const string& idPrefix, const vector<MiniScript::ScriptSyntaxTreeNode*>& syntaxTree, int& i, int x, int y, int& width, int& height, vector<string>& createdNodeIds);
+	bool handleMiniScriptBranch(unordered_map<string, string>& idMapping, const string& idPrefix, const vector<EngineMiniScript::ScriptSyntaxTreeNode*>& syntaxTree, int& i, int x, int y, int& width, int& height, vector<string>& createdNodeIds);
 
 	/**
 	 * Update miniscript syntax tree
-	 * @param miniScriptScriptIdx MiniScript script index
+	 * @param miniScriptScriptIdx EngineMiniScript script index
 	 */
 	void updateMiniScriptSyntaxTree(int miniScriptScriptIdx);
 

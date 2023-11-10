@@ -634,13 +634,21 @@ SRCS = \
 	src/tdme/tools/installer/Installer.cpp \
 	src/tdme/utilities/Base64.cpp \
 	src/tdme/utilities/Console.cpp \
+	src/tdme/utilities/EngineMiniScript.cpp \
 	src/tdme/utilities/ExceptionBase.cpp \
 	src/tdme/utilities/Float.cpp \
 	src/tdme/utilities/Hex.cpp \
 	src/tdme/utilities/Integer.cpp \
 	src/tdme/utilities/MiniScript.cpp \
 	src/tdme/utilities/MiniScriptMath.cpp \
+	src/tdme/utilities/MiniScriptTransform.cpp \
 	src/tdme/utilities/MiniScriptTranspiler.cpp \
+	src/tdme/utilities/MiniScriptMatrix3x3.cpp \
+	src/tdme/utilities/MiniScriptMatrix4x4.cpp \
+	src/tdme/utilities/MiniScriptQuaternion.cpp \
+	src/tdme/utilities/MiniScriptVector2.cpp \
+	src/tdme/utilities/MiniScriptVector3.cpp \
+	src/tdme/utilities/MiniScriptVector4.cpp \
 	src/tdme/utilities/ModelTools.cpp \
 	src/tdme/utilities/PathFinding.cpp \
 	src/tdme/utilities/Primitives.cpp \

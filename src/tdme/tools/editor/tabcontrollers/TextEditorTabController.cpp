@@ -37,7 +37,7 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/Integer.h>
-#include <tdme/utilities/MiniScript.h>
+#include <tdme/utilities/EngineMiniScript.h>
 #include <tdme/utilities/StringTools.h>
 
 #include <ext/tinyxml/tinyxml.h>
@@ -80,7 +80,7 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::Integer;
-using tdme::utilities::MiniScript;
+using tdme::utilities::EngineMiniScript;
 using tdme::utilities::StringTools;
 
 using tinyxml::TiXmlAttribute;
@@ -409,7 +409,7 @@ void TextEditorTabController::onTooltipCloseRequest() {
 
 void TextEditorTabController::setOutlinerContent() {
 	string xml;
-	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"MiniScript\" value=\"miniscript.script." + to_string(-1) + "\">\n";
+	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"EngineMiniScript\" value=\"miniscript.script." + to_string(-1) + "\">\n";
 	auto scriptIdx = 0;
 	for (const auto& miniScriptSyntaxTree: miniScriptSyntaxTrees) {
 		xml+= "<selectbox-option text=\"" + GUIParser::escape(miniScriptSyntaxTree.name) + "\" value=\"miniscript.script." + to_string(scriptIdx) + "\" />\n";
@@ -426,7 +426,7 @@ void TextEditorTabController::setOutlinerAddDropDownContent() {
 void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
 	auto scriptFileName = view->getFileName();
 
-	// we need to detect MiniScript variant
+	// we need to detect EngineMiniScript variant
 	vector<string> scriptAsStringArray;
 	try {
 		FileSystem::getInstance()->getContentAsStringArray(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName), scriptAsStringArray);
@@ -440,8 +440,8 @@ void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx
 		return;
 	}
 
-	// load specific MiniScript
-	scriptInstance = unique_ptr<MiniScript>(MiniScript::loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName)));
+	// load specific EngineMiniScript
+	scriptInstance = unique_ptr<EngineMiniScript>(EngineMiniScript::loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName)));
 
 	//
 	if (scriptInstance->isValid() == false)  {
@@ -458,7 +458,7 @@ void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx
 	//
 	unordered_map<string, string> methodOperatorMap;
 	for (auto operatorMethod: scriptInstance->getOperatorMethods()) {
-		methodOperatorMap[operatorMethod->getMethodName()] = MiniScript::getOperatorAsString(operatorMethod->getOperator());
+		methodOperatorMap[operatorMethod->getMethodName()] = EngineMiniScript::getOperatorAsString(operatorMethod->getOperator());
 	}
 
 	//
@@ -469,7 +469,7 @@ void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx
 		string name;
 		string argumentsString;
 		switch(script.scriptType) {
-			case MiniScript::Script::SCRIPTTYPE_FUNCTION: {
+			case EngineMiniScript::Script::SCRIPTTYPE_FUNCTION: {
 				for (const auto& argument: script.arguments) {
 					if (argumentsString.empty() == false) argumentsString+= ", ";
 					if (argument.reference == true) argumentsString+= "=";
@@ -478,8 +478,8 @@ void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx
 				argumentsString = "(" + argumentsString + ")";
 				name+= "function: "; break;
 			}
-			case MiniScript::Script::SCRIPTTYPE_ON: name+= "on: "; break;
-			case MiniScript::Script::SCRIPTTYPE_ONENABLED: name+= "on-enabled: "; break;
+			case EngineMiniScript::Script::SCRIPTTYPE_ON: name+= "on: "; break;
+			case EngineMiniScript::Script::SCRIPTTYPE_ONENABLED: name+= "on-enabled: "; break;
 		}
 		if (script.name.empty() == false) {
 			name+= script.name;

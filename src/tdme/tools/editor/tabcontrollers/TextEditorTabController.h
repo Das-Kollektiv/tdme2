@@ -16,7 +16,7 @@
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
-#include <tdme/utilities/MiniScript.h>
+#include <tdme/utilities/EngineMiniScript.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
@@ -38,7 +38,7 @@ using tdme::gui::nodes::GUITextNode;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::TextEditorTabView;
-using tdme::utilities::MiniScript;
+using tdme::utilities::EngineMiniScript;
 
 using tinyxml::TiXmlAttribute;
 using tinyxml::TiXmlDocument;
@@ -53,11 +53,11 @@ class tdme::tools::editor::tabcontrollers::TextEditorTabController final
 {
 public:
 	struct MiniScriptScriptSyntaxTree {
-		MiniScript::Script::ScriptType type;
+		EngineMiniScript::Script::ScriptType type;
 		string condition;
 		string name;
-		MiniScript::ScriptSyntaxTreeNode conditionSyntaxTree;
-		vector<MiniScript::ScriptSyntaxTreeNode> syntaxTree;
+		EngineMiniScript::ScriptSyntaxTreeNode conditionSyntaxTree;
+		vector<EngineMiniScript::ScriptSyntaxTreeNode> syntaxTree;
 	};
 
 	enum ContextMenuType { CONTEXTMENUTYPE_NONE, CONTEXTMENUTYPE_NODE, CONTEXTMENUTYPE_CANVAS };
@@ -76,7 +76,7 @@ private:
 	int addNodeX { -1 };
 	int addNodeY { -1 };
 
-	unique_ptr<MiniScript> scriptInstance;
+	unique_ptr<EngineMiniScript> scriptInstance;
 
 public:
 	// forbid class copy
@@ -107,9 +107,9 @@ public:
 	}
 
 	/**
-	 * @return MiniScript
+	 * @return EngineMiniScript
 	 */
-	inline MiniScript* getMiniScript() {
+	inline EngineMiniScript* getMiniScript() {
 		return scriptInstance.get();
 	}
 
@@ -196,8 +196,8 @@ public:
 	}
 
 	/**
-	 * Update MiniScript syntax tree
-	 * @param miniScriptScriptIdx MiniScript script index
+	 * Update EngineMiniScript syntax tree
+	 * @param miniScriptScriptIdx EngineMiniScript script index
 	 */
 	void updateMiniScriptSyntaxTree(int miniScriptScriptIdx);
 

@@ -17,7 +17,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Integer.h>
-#include <tdme/utilities/MiniScript.h>
+#include <tdme/utilities/EngineMiniScript.h>
 #include <tdme/utilities/MiniScriptTranspiler.h>
 #include <tdme/utilities/StringTools.h>
 
@@ -39,7 +39,7 @@ using tdme::tools::editor::misc::Tools;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Integer;
-using tdme::utilities::MiniScript;
+using tdme::utilities::EngineMiniScript;
 using tdme::utilities::MiniScriptTranspiler;
 using tdme::utilities::StringTools;
 
@@ -54,7 +54,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 
 
 	//
-	auto miniScript = unique_ptr<MiniScript>(MiniScript::loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName)));
+	auto miniScript = unique_ptr<EngineMiniScript>(EngineMiniScript::loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName)));
 	if (miniScript == nullptr) {
 		Console::println("No script instance: " + scriptFileName);
 		return;
@@ -79,7 +79,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 				auto bracketCount = 0;
 				string className;
 				if (StringTools::firstIndexOf(StringTools::substring(trimmedLine, 14), "new") == string::npos) {
-					Console::println("src/tdme/utilities/MiniScript.cpp: registerMethod @ " + to_string(i) + ": '" + trimmedLine + "': unable to determine class name");
+					Console::println("src/tdme/utilities/EngineMiniScript.cpp: registerMethod @ " + to_string(i) + ": '" + trimmedLine + "': unable to determine class name");
 				} else {
 					auto classNameStartIdx = trimmedLine.find("registerMethod") + 14 + 5;
 					for (auto j = classNameStartIdx; j < trimmedLine.size(); j++) {
@@ -106,9 +106,9 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 		for (const auto& script: scripts) {
 			// method name
 			string methodName =
-				(script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION?
+				(script.scriptType == EngineMiniScript::Script::SCRIPTTYPE_FUNCTION?
 					"":
-					(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_")
+					(script.scriptType == EngineMiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_")
 				) +
 				(script.name.empty() == false?script.name:(
 					StringTools::regexMatch(script.condition, "[a-zA-Z0-9_]+") == true?
@@ -153,7 +153,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	generatedDeclarations+= headerIndent + "void emit(const string& condition) override;" + "\n";
 	generatedDeclarations+= headerIndent + "inline void startScript() override {" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "if (native == false) {" + "\n";
-	generatedDeclarations+= headerIndent + "\t" + "\t" + "MiniScript::startScript();" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "\t" + "EngineMiniScript::startScript();" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "\t" + "return;" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "}" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "auto& scriptState = getScriptState();" + "\n";
@@ -165,7 +165,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	generatedDeclarations+= headerIndent + "}" + "\n";
 	generatedDeclarations+= headerIndent + "inline void execute() override {" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "if (native == false) {" + "\n";
-	generatedDeclarations+= headerIndent + "\t" + "\t" + "MiniScript::execute();" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "\t" + "EngineMiniScript::execute();" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "\t" + "return;" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "}" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "auto& scriptState = getScriptState();" + "\n";
@@ -195,7 +195,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 
 	string registerMethodsDefinitions;
 	registerMethodsDefinitions+= "void " + miniScriptClassName + "::registerMethods() {" + "\n";
-	registerMethodsDefinitions+= methodCodeIndent+ "MiniScript::registerMethods();" + "\n";
+	registerMethodsDefinitions+= methodCodeIndent+ "EngineMiniScript::registerMethods();" + "\n";
 	registerMethodsDefinitions+= methodCodeIndent + "if (native == false) return;" + "\n";
 	//
 	for (const auto& memberAccessEvaluationDefintion: memberAccessEvaluationDefinitions) {
@@ -207,7 +207,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	string emitDefinition;
 	emitDefinition+= "void " + miniScriptClassName + "::emit(const string& condition) {" + "\n";
 	emitDefinition+= methodCodeIndent + "if (native == false) {" + "\n";
-	emitDefinition+= methodCodeIndent + "\t" + "MiniScript::emit(condition);" + "\n";
+	emitDefinition+= methodCodeIndent + "\t" + "EngineMiniScript::emit(condition);" + "\n";
 	emitDefinition+= methodCodeIndent + "\t" + "return;" + "\n";
 	emitDefinition+= methodCodeIndent + "}" + "\n";
 	string generatedDefinitions = "\n";
@@ -221,7 +221,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 		auto scriptIdx = 0;
 		for (const auto& script: scripts) {
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "Script(" + "\n";
-			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + (script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION?"Script::SCRIPTTYPE_FUNCTION":(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"Script::SCRIPTTYPE_ON":"Script::SCRIPTTYPE_ONENABLED")) + "," + "\n";
+			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + (script.scriptType == EngineMiniScript::Script::SCRIPTTYPE_FUNCTION?"Script::SCRIPTTYPE_FUNCTION":(script.scriptType == EngineMiniScript::Script::SCRIPTTYPE_ON?"Script::SCRIPTTYPE_ON":"Script::SCRIPTTYPE_ONENABLED")) + "," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + to_string(script.line) + "," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\"" + StringTools::replace(StringTools::replace(script.condition, "\\", "\\\\"), "\"", "\\\"") + "\"," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\"" + StringTools::replace(StringTools::replace(script.executableCondition, "\\", "\\\\"), "\"", "\\\"") + "\"," + "\n";
@@ -236,7 +236,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\"" + script.name + "\"," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + (script.emitCondition == true?"true":"false") + "," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "{" + "\n";
-			auto statementIdx = MiniScript::STATEMENTIDX_FIRST;
+			auto statementIdx = EngineMiniScript::STATEMENTIDX_FIRST;
 			for (const auto& statement: script.statements) {
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "ScriptStatement(" + "\n";
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + to_string(statement.line) + "," + "\n";
@@ -283,11 +283,11 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	//
 	string generatedDetermineScriptIdxToStartDefinition = "\n";
 	generatedDetermineScriptIdxToStartDefinition+= "int " + miniScriptClassName + "::determineScriptIdxToStart() {" + "\n";
-	generatedDetermineScriptIdxToStartDefinition+= string() + "\t" + "if (native == false) return MiniScript::determineScriptIdxToStart();" + "\n";
+	generatedDetermineScriptIdxToStartDefinition+= string() + "\t" + "if (native == false) return EngineMiniScript::determineScriptIdxToStart();" + "\n";
 	generatedDetermineScriptIdxToStartDefinition+= string() + "\t" + "auto miniScript = this;" + "\n";
 	string generatedDetermineNamedScriptIdxToStartDefinition = "\n";
 	generatedDetermineNamedScriptIdxToStartDefinition+= "int " + miniScriptClassName + "::determineNamedScriptIdxToStart() {" + "\n";
-	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "if (native == false) return MiniScript::determineNamedScriptIdxToStart();" + "\n";
+	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "if (native == false) return EngineMiniScript::determineNamedScriptIdxToStart();" + "\n";
 	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "auto miniScript = this;" + "\n";
 	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "for (const auto& enabledNamedCondition: enabledNamedConditions) {" + "\n";
 	{
@@ -295,9 +295,9 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 		for (const auto& script: scripts) {
 			// method name
 			string methodName =
-				(script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION?
+				(script.scriptType == EngineMiniScript::Script::SCRIPTTYPE_FUNCTION?
 					"":
-					(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_")
+					(script.scriptType == EngineMiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_")
 				) +
 				(script.name.empty() == false?script.name:(
 					StringTools::regexMatch(script.condition, "[a-zA-Z0-9_]+") == true?
@@ -315,7 +315,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 				);
 
 			// emit code
-			if (script.scriptType == MiniScript::Script::SCRIPTTYPE_ON && StringTools::regexMatch(script.condition, "[a-zA-Z0-9_]+") == true) {
+			if (script.scriptType == EngineMiniScript::Script::SCRIPTTYPE_ON && StringTools::regexMatch(script.condition, "[a-zA-Z0-9_]+") == true) {
 				string emitDefinitionIndent = "\t";
 				emitDefinition+= emitDefinitionIndent + "if (condition == \"" + emitName + "\") {" + "\n";
 				emitDefinition+= emitDefinitionIndent + "\t" + methodName + "(STATEMENTIDX_FIRST);" + "\n";
@@ -324,8 +324,8 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 
 			// declaration
 			generatedDeclarations+= headerIndent + "/**" + "\n";
-			generatedDeclarations+= headerIndent + " * Miniscript transpilation of: " + (script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION?"function":(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"on":"on-enabled")) + ": " + script.condition + (script.name.empty() == false?" (" + script.name + ")":"") + "\n";
-			generatedDeclarations+= headerIndent + " * @param miniScriptGotoStatementIdx MiniScript goto statement index" + "\n";
+			generatedDeclarations+= headerIndent + " * Miniscript transpilation of: " + (script.scriptType == EngineMiniScript::Script::SCRIPTTYPE_FUNCTION?"function":(script.scriptType == EngineMiniScript::Script::SCRIPTTYPE_ON?"on":"on-enabled")) + ": " + script.condition + (script.name.empty() == false?" (" + script.name + ")":"") + "\n";
+			generatedDeclarations+= headerIndent + " * @param miniScriptGotoStatementIdx EngineMiniScript goto statement index" + "\n";
 			generatedDeclarations+= headerIndent + " */" + "\n";
 			generatedDeclarations+= headerIndent + "void " + methodName + "(int miniScriptGotoStatementIdx);" + "\n";
 			generatedDeclarations+= "\n";
@@ -339,20 +339,20 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 
 			//
 			if (script.emitCondition == false) {
-				if (script.scriptType == MiniScript::Script::SCRIPTTYPE_ONENABLED) {
+				if (script.scriptType == EngineMiniScript::Script::SCRIPTTYPE_ONENABLED) {
 					generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\n";
 					generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "\t" + "// next statements belong to tested enabled named condition with name \"" + script.name + "\"" + "\n";
 					generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "\t" + "if (enabledNamedCondition == \"" + script.name + "\")" + "\n";
 				}
 				MiniScriptTranspiler::transpileScriptCondition(
 					miniScript.get(),
-					script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?generatedDetermineScriptIdxToStartDefinition:generatedDetermineNamedScriptIdxToStartDefinition,
+					script.scriptType == EngineMiniScript::Script::SCRIPTTYPE_ON?generatedDetermineScriptIdxToStartDefinition:generatedDetermineNamedScriptIdxToStartDefinition,
 					scriptIdx,
 					methodCodeMap,
 					allMethods,
 					"-1",
 					"bool returnValueBool; returnValue.getBooleanValue(returnValueBool); if (returnValueBool == true) return " + to_string(scriptIdx) + ";",
-					script.scriptType == MiniScript::Script::SCRIPTTYPE_ONENABLED?1:0
+					script.scriptType == EngineMiniScript::Script::SCRIPTTYPE_ONENABLED?1:0
 				);
 			}
 
@@ -394,9 +394,9 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 		for (const auto& script: scripts) {
 			// method name
 			string methodName =
-				(script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION?
+				(script.scriptType == EngineMiniScript::Script::SCRIPTTYPE_FUNCTION?
 					"":
-					(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_")
+					(script.scriptType == EngineMiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_")
 				) +
 				(script.name.empty() == false?script.name:(
 					StringTools::regexMatch(script.condition, "[a-zA-Z0-9_]+") == true?
@@ -583,6 +583,9 @@ int main(int argc, char** argv)
 
 	vector<string> miniScriptExtensionFileNames;
 	for (auto i = 3; i < argc; i++) miniScriptExtensionFileNames.push_back(argv[i]);
+
+	//
+	EngineMiniScript::registerDataTypes();
 
 	//
 	tdme::tools::cli::MiniScriptTranspilerTool::processFile(argv[1], argv[2], miniScriptExtensionFileNames);

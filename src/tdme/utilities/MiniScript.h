@@ -13,13 +13,6 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Transform.h>
-#include <tdme/math/Matrix3x3.h>
-#include <tdme/math/Matrix4x4.h>
-#include <tdme/math/Quaternion.h>
-#include <tdme/math/Vector2.h>
-#include <tdme/math/Vector3.h>
-#include <tdme/math/Vector4.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -45,13 +38,6 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
-using tdme::engine::Transform;
-using tdme::math::Matrix3x3;
-using tdme::math::Matrix4x4;
-using tdme::math::Quaternion;
-using tdme::math::Vector2;
-using tdme::math::Vector3;
-using tdme::math::Vector4;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -146,25 +132,22 @@ public:
 	};
 
 	enum ScriptVariableType {
+		// primitives
 		TYPE_NULL,
 		TYPE_BOOLEAN,
 		TYPE_INTEGER,
 		TYPE_FLOAT,
+		// special
+		TYPE_FUNCTION_CALL,
+		TYPE_FUNCTION_ASSIGNMENT,
+		// pseudo
+		TYPE_PSEUDO_NUMBER,
+		TYPE_PSEUDO_MIXED,
+		// classes
 		TYPE_STRING,
-		TYPE_VECTOR2,
-		TYPE_VECTOR3,
-		TYPE_VECTOR4,
-		TYPE_QUATERNION,
-		TYPE_MATRIX3x3,
-		TYPE_MATRIX4x4,
-		TYPE_TRANSFORM,
 		TYPE_ARRAY,
 		TYPE_MAP,
 		TYPE_SET,
-		TYPE_FUNCTION_CALL,
-		TYPE_FUNCTION_ASSIGNMENT,
-		TYPE_PSEUDO_NUMBER,
-		TYPE_PSEUDO_MIXED,
 		TYPE_PSEUDO_CUSTOM_DATATYPES,
 	};
 
@@ -179,9 +162,9 @@ public:
 		friend class MiniScript;
 		friend class MiniScriptMath;
 
-	private:
+	protected:
+		bool mathDataType { false };
 		int type { TYPE_NULL };
-		bool math { false };
 
 		/**
 		 * Set type
@@ -192,10 +175,10 @@ public:
 		}
 
 		/**
-		 * @return has math
+		 * @return is math data type
 		 */
-		inline bool hasMath() {
-			return math;
+		inline bool isMathDataType() {
+			return mathDataType;
 		}
 
 		/**
@@ -215,7 +198,7 @@ public:
 		 * @param variable variable
 		 * @param value value
 		 */
-		virtual void setScriptVariableValue(ScriptVariable& variable, const void* value) = 0;
+		virtual void setScriptVariableValue(ScriptVariable& variable, const void* value) const = 0;
 
 		/**
 		 * Copy script variable
@@ -226,39 +209,43 @@ public:
 
 		/**
 		 * Multiply
+		 * @param miniScript mini script instance
 		 * @param argumentValues argument values
 		 * @param returnValue return value
 		 * @param statement statement
 		 * @return mul was executed
 		 */
-		virtual bool mul(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const = 0;
+		virtual bool mul(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const = 0;
 
 		/**
 		 * Division
+		 * @param miniScript mini script instance
 		 * @param argumentValues argument values
 		 * @param returnValue return value
 		 * @param statement statement
 		 * @return div was executed
 		 */
-		virtual bool div(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const = 0;
+		virtual bool div(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const = 0;
 
 		/**
 		 * Addition
+		 * @param miniScript mini script instance
 		 * @param argumentValues argument values
 		 * @param returnValue return value
 		 * @param statement statement
 		 * @return add was executed
 		 */
-		virtual bool add(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const = 0;
+		virtual bool add(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const = 0;
 
 		/**
 		 * Subtraction
+		 * @param miniScript mini script instance
 		 * @param argumentValues argument values
 		 * @param returnValue return value
 		 * @param statement statement
 		 * @return sub was executed
 		 */
-		virtual bool sub(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const = 0;
+		virtual bool sub(MiniScript* miniScript, const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) const = 0;
 
 	public:
 		// forbid class copy
@@ -266,8 +253,9 @@ public:
 
 		/**
 		 * Script data type
+		 * @param mathDataType is math data type and provides math methods
 		 */
-		ScriptDataType() {
+		ScriptDataType(bool mathDataType): mathDataType(mathDataType) {
 			//
 		}
 
@@ -383,12 +371,12 @@ public:
 		};
 
 		//
-		MiniScript* miniScript { nullptr };
-		ScriptVariableType type { TYPE_NULL };
-		uint64_t valuePtr { 0LL };
-		Initializer* initializer { nullptr };
-		ScriptVariable* reference { nullptr };
-		int referenceCounter { 1 };
+		ScriptVariableType type { TYPE_NULL };	// 4, maybe use a int16_t here
+		uint64_t valuePtr { 0LL };				// 8
+		// TODO: union initializer/reference
+		Initializer* initializer { nullptr };	// 8
+		ScriptVariable* reference { nullptr };	// 8
+		int referenceCounter { 1 };				// 4, maybe use a int16_t here
 
 		/**
 		 * Acquire reference
@@ -492,104 +480,6 @@ public:
 		}
 
 		/**
-		 * @return vector2 value reference
-		 */
-		inline Vector2& getVector2ValueReference() {
-			return *static_cast<Vector2*>((void*)getValuePtrReference());
-		}
-
-		/**
-		 * @return const vector2 value reference
-		 */
-		inline const Vector2& getVector2ValueReference() const {
-			return *static_cast<Vector2*>((void*)getValuePtrReference());
-		}
-
-		/**
-		 * @return vector3 value reference
-		 */
-		inline Vector3& getVector3ValueReference() {
-			return *static_cast<Vector3*>((void*)getValuePtrReference());
-		}
-
-		/**
-		 * @return const vector3 value reference
-		 */
-		inline const Vector3& getVector3ValueReference() const {
-			return *static_cast<Vector3*>((void*)getValuePtrReference());
-		}
-
-		/**
-		 * @return vector4 value reference
-		 */
-		inline Vector4& getVector4ValueReference() {
-			return *static_cast<Vector4*>((void*)getValuePtrReference());
-		}
-
-		/**
-		 * @return const vector4 value reference
-		 */
-		inline const Vector4& getVector4ValueReference() const {
-			return *static_cast<Vector4*>((void*)getValuePtrReference());
-		}
-
-		/**
-		 * @return quaternion value reference
-		 */
-		inline Quaternion& getQuaternionValueReference() {
-			return *static_cast<Quaternion*>((void*)getValuePtrReference());
-		}
-
-		/**
-		 * @return const quaternion value reference
-		 */
-		inline const Quaternion& getQuaternionValueReference() const {
-			return *static_cast<Quaternion*>((void*)getValuePtrReference());
-		}
-
-		/**
-		 * @return matrix3x3 value reference
-		 */
-		inline Matrix3x3& getMatrix3x3ValueReference() {
-			return *static_cast<Matrix3x3*>((void*)getValuePtrReference());
-		}
-
-		/**
-		 * @return const matrix3x3 value reference
-		 */
-		inline const Matrix3x3& getMatrix3x3ValueReference() const {
-			return *static_cast<Matrix3x3*>((void*)getValuePtrReference());
-		}
-
-		/**
-		 * @return matrix4x4 value reference
-		 */
-		inline Matrix4x4& getMatrix4x4ValueReference() {
-			return *static_cast<Matrix4x4*>((void*)getValuePtrReference());
-		}
-
-		/**
-		 * @return const matrix4x4 value reference
-		 */
-		inline const Matrix4x4& getMatrix4x4ValueReference() const {
-			return *static_cast<Matrix4x4*>((void*)getValuePtrReference());
-		}
-
-		/**
-		 * @return transform value reference
-		 */
-		inline Transform& getTransformValueReference() {
-			return *static_cast<Transform*>((void*)getValuePtrReference());
-		}
-
-		/**
-		 * @return const transform value reference
-		 */
-		inline const Transform& getTransformValueReference() const {
-			return *static_cast<Transform*>((void*)getValuePtrReference());
-		}
-
-		/**
 		 * @return array value reference
 		 */
 		inline vector<ScriptVariable*>& getArrayValueReference() {
@@ -635,13 +525,6 @@ public:
 		// class names
 		STATIC_DLL_IMPEXT static const string CLASSNAME_NONE;
 		STATIC_DLL_IMPEXT static const string CLASSNAME_STRING;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_VEC2;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_VEC3;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_VEC4;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_QUATERNION;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_MAT3;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_MAT4;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_TRANSFORM;
 		STATIC_DLL_IMPEXT static const string CLASSNAME_ARRAY;
 		STATIC_DLL_IMPEXT static const string CLASSNAME_MAP;
 		STATIC_DLL_IMPEXT static const string CLASSNAME_SET;
@@ -658,7 +541,6 @@ public:
 			ScriptVariable referenceVariable;
 			referenceVariable.reference = (ScriptVariable*)variable; // TODO: improve me!
 			referenceVariable.reference->acquireReference();
-			referenceVariable.miniScript = referenceVariable.reference->miniScript;
 			return referenceVariable;
 		}
 
@@ -674,7 +556,6 @@ public:
 			ScriptVariable* referenceVariable = new ScriptVariable();
 			referenceVariable->reference = (ScriptVariable*)variable; // TODO: improve me!
 			referenceVariable->reference->acquireReference();
-			referenceVariable->miniScript = referenceVariable->reference->miniScript;
 			return referenceVariable;
 		}
 
@@ -685,7 +566,6 @@ public:
 		 */
 		inline static void copyScriptVariable(ScriptVariable& to, const ScriptVariable& from) {
 			// initial setup
-			to.miniScript = from.miniScript;
 			to.setNullValue();
 			// do the copy
 			switch(from.getType()) {
@@ -701,29 +581,20 @@ public:
 				case TYPE_FLOAT:
 					to.setValue(from.getFloatValueReference());
 					break;
+				case TYPE_FUNCTION_CALL:
+					to.setType(TYPE_FUNCTION_CALL);
+					to.getStringValueReference() = from.getStringValueReference();
+					// copy initializer if we have any
+					to.getInitializer()->copy(from.initializer);
+					//
+					break;
+				case TYPE_FUNCTION_ASSIGNMENT:
+					to.setFunctionAssignment(from.getStringValueReference());
+					break;
+				case TYPE_PSEUDO_NUMBER: break;
+				case TYPE_PSEUDO_MIXED: break;
 				case TYPE_STRING:
 					to.setValue(from.getStringValueReference());
-					break;
-				case TYPE_VECTOR2:
-					to.setValue(from.getVector2ValueReference());
-					break;
-				case TYPE_VECTOR3:
-					to.setValue(from.getVector3ValueReference());
-					break;
-				case TYPE_VECTOR4:
-					to.setValue(from.getVector4ValueReference());
-					break;
-				case TYPE_QUATERNION:
-					to.setValue(from.getQuaternionValueReference());
-					break;
-				case TYPE_MATRIX3x3:
-					to.setValue(from.getMatrix3x3ValueReference());
-					break;
-				case TYPE_MATRIX4x4:
-					to.setValue(from.getMatrix4x4ValueReference());
-					break;
-				case TYPE_TRANSFORM:
-					to.setValue(from.getTransformValueReference());
 					break;
 				case TYPE_ARRAY:
 					to.setValue(from.getArrayValueReference());
@@ -743,26 +614,14 @@ public:
 					to.getInitializer()->copy(from.initializer);
 					//
 					break;
-				case TYPE_FUNCTION_CALL:
-					to.setType(TYPE_FUNCTION_CALL);
-					to.getStringValueReference() = from.getStringValueReference();
-					// copy initializer if we have any
-					to.getInitializer()->copy(from.initializer);
-					//
-					break;
-				case TYPE_FUNCTION_ASSIGNMENT:
-					to.setFunctionAssignment(from.getStringValueReference());
-					break;
-				case TYPE_PSEUDO_NUMBER: break;
-				case TYPE_PSEUDO_MIXED: break;
 				default:
 					// custom data type
 					auto dataTypeIdx = static_cast<int>(from.getType()) - TYPE_PSEUDO_CUSTOM_DATATYPES;
-					if (dataTypeIdx < TYPE_PSEUDO_CUSTOM_DATATYPES || dataTypeIdx >= to.miniScript->scriptDataTypes.size()) {
+					if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::scriptDataTypes.size()) {
 						Console::println("ScriptVariable::copyScriptVariable(): unknown custom data type with id " + to_string(dataTypeIdx));
 						return;
 					}
-					to.miniScript->scriptDataTypes[dataTypeIdx]->copyScriptVariable(to, from);
+					MiniScript::scriptDataTypes[dataTypeIdx]->copyScriptVariable(to, from);
 			}
 
 		}
@@ -817,7 +676,6 @@ public:
 		 * @param variable variable to move from
 		 */
 		inline ScriptVariable(ScriptVariable&& variable):
-			miniScript(exchange(variable.miniScript, nullptr)),
 			type(exchange(variable.type, MiniScript::TYPE_NULL)),
 			valuePtr(exchange(variable.valuePtr, 0ll)),
 			initializer(exchange(variable.initializer, nullptr)),
@@ -834,7 +692,6 @@ public:
 		inline ScriptVariable& operator=(const ScriptVariable& variable) {
 			if (variable.reference != nullptr) {
 				reference = variable.reference;
-				miniScript = variable.miniScript;
 				variable.reference->acquireReference();
 			} else {
 				copyScriptVariable(*this, variable);
@@ -849,7 +706,6 @@ public:
 		 * @return this script variable
 		 */
 		inline ScriptVariable& operator=(ScriptVariable&& variable) {
-			swap(miniScript, variable.miniScript);
 			swap(type, variable.type);
 			swap(valuePtr, variable.valuePtr);
 			swap(initializer, variable.initializer);
@@ -914,62 +770,6 @@ public:
 		 * Constructor
 		 * @param value value
 		 */
-		inline ScriptVariable(const Vector2& value) {
-			setValue(value);
-		}
-
-		/**
-		 * Constructor
-		 * @param value value
-		 */
-		inline ScriptVariable(const Vector3& value) {
-			setValue(value);
-		}
-
-		/**
-		 * Constructor
-		 * @param value value
-		 */
-		inline ScriptVariable(const Vector4& value) {
-			setValue(value);
-		}
-
-		/**
-		 * Constructor
-		 * @param value value
-		 */
-		inline ScriptVariable(const Quaternion& value) {
-			setValue(value);
-		}
-
-		/**
-		 * Constructor
-		 * @param value value
-		 */
-		inline ScriptVariable(const Matrix3x3& value) {
-			setValue(value);
-		}
-
-		/**
-		 * Constructor
-		 * @param value value
-		 */
-		inline ScriptVariable(const Matrix4x4& value) {
-			setValue(value);
-		}
-
-		/**
-		 * Constructor
-		 * @param value value
-		 */
-		inline ScriptVariable(const Transform& value) {
-			setValue(value);
-		}
-
-		/**
-		 * Constructor
-		 * @param value value
-		 */
 		inline ScriptVariable(const vector<ScriptVariable*>& value) {
 			setValue(value);
 		}
@@ -1004,30 +804,16 @@ public:
 					break;
 				case TYPE_FLOAT:
 					break;
+				case TYPE_FUNCTION_CALL:
+					delete static_cast<string*>((void*)getValuePtrReference());
+					delete getInitializerReference();
+					getInitializerReference() = nullptr;
+					break;
+				case TYPE_PSEUDO_NUMBER: break;
+				case TYPE_PSEUDO_MIXED: break;
 				case TYPE_STRING:
 				case TYPE_FUNCTION_ASSIGNMENT:
 					delete static_cast<string*>((void*)getValuePtrReference());
-					break;
-				case TYPE_VECTOR2:
-					delete static_cast<Vector2*>((void*)getValuePtrReference());
-					break;
-				case TYPE_VECTOR3:
-					delete static_cast<Vector3*>((void*)getValuePtrReference());
-					break;
-				case TYPE_VECTOR4:
-					delete static_cast<Vector4*>((void*)getValuePtrReference());
-					break;
-				case TYPE_QUATERNION:
-					delete static_cast<Quaternion*>((void*)getValuePtrReference());
-					break;
-				case TYPE_MATRIX3x3:
-					delete static_cast<Matrix3x3*>((void*)getValuePtrReference());
-					break;
-				case TYPE_MATRIX4x4:
-					delete static_cast<Matrix4x4*>((void*)getValuePtrReference());
-					break;
-				case TYPE_TRANSFORM:
-					delete static_cast<Transform*>((void*)getValuePtrReference());
 					break;
 				case TYPE_ARRAY:
 					for (auto arrayValue: getArrayValueReference()) arrayValue->releaseReference();
@@ -1046,21 +832,14 @@ public:
 					delete getInitializerReference();
 					getInitializerReference() = nullptr;
 					break;
-				case TYPE_FUNCTION_CALL:
-					delete static_cast<string*>((void*)getValuePtrReference());
-					delete getInitializerReference();
-					getInitializerReference() = nullptr;
-					break;
-				case TYPE_PSEUDO_NUMBER: break;
-				case TYPE_PSEUDO_MIXED: break;
 				default:
 					// custom data type
 					auto dataTypeIdx = static_cast<int>(this->getType()) - TYPE_PSEUDO_CUSTOM_DATATYPES;
-					if (dataTypeIdx < TYPE_PSEUDO_CUSTOM_DATATYPES || dataTypeIdx >= miniScript->scriptDataTypes.size()) {
+					if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::scriptDataTypes.size()) {
 						Console::println("ScriptVariable::setType(): unknown custom data type with id " + to_string(dataTypeIdx));
 						return;
 					}
-					miniScript->scriptDataTypes[dataTypeIdx]->unsetScriptVariableValue(*this);
+					MiniScript::scriptDataTypes[dataTypeIdx]->unsetScriptVariableValue(*this);
 
 			}
 			this->getValuePtrReference() = 0LL;
@@ -1080,30 +859,11 @@ public:
 					break;
 				case TYPE_FLOAT:
 					break;
+				case TYPE_PSEUDO_NUMBER: break;
+				case TYPE_PSEUDO_MIXED: break;
 				case TYPE_STRING:
 				case TYPE_FUNCTION_ASSIGNMENT:
 					getValuePtrReference() = (uint64_t)(new string());
-					break;
-				case TYPE_VECTOR2:
-					getValuePtrReference() = (uint64_t)(new Vector2());
-					break;
-				case TYPE_VECTOR3:
-					getValuePtrReference() = (uint64_t)(new Vector3());
-					break;
-				case TYPE_VECTOR4:
-					getValuePtrReference() = (uint64_t)(new Vector4());
-					break;
-				case TYPE_QUATERNION:
-					getValuePtrReference() = (uint64_t)(new Quaternion());
-					break;
-				case TYPE_MATRIX3x3:
-					getValuePtrReference() = (uint64_t)(new Matrix3x3());
-					break;
-				case TYPE_MATRIX4x4:
-					getValuePtrReference() = (uint64_t)(new Matrix4x4());
-					break;
-				case TYPE_TRANSFORM:
-					getValuePtrReference() = (uint64_t)(new Transform());
 					break;
 				case TYPE_ARRAY:
 					getValuePtrReference() = (uint64_t)(new vector<ScriptVariable*>());
@@ -1121,16 +881,14 @@ public:
 					getValuePtrReference() = (uint64_t)(new string());
 					getInitializerReference() = new Initializer();
 					break;
-				case TYPE_PSEUDO_NUMBER: break;
-				case TYPE_PSEUDO_MIXED: break;
 				default:
 					// custom data type
 					auto dataTypeIdx = static_cast<int>(this->getType()) - TYPE_PSEUDO_CUSTOM_DATATYPES;
-					if (dataTypeIdx < TYPE_PSEUDO_CUSTOM_DATATYPES || dataTypeIdx >= miniScript->scriptDataTypes.size()) {
+					if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::scriptDataTypes.size()) {
 						Console::println("ScriptVariable::setType(): unknown custom data type with id " + to_string(dataTypeIdx));
 						return;
 					}
-					miniScript->scriptDataTypes[dataTypeIdx]->setScriptVariableValue(*this, nullptr);
+					MiniScript::scriptDataTypes[dataTypeIdx]->setScriptVariableValue(*this, nullptr);
 			}
 		}
 
@@ -1140,6 +898,25 @@ public:
 		 */
 		inline Initializer* getInitializer() const {
 			return reference != nullptr?reference->initializer:initializer;
+		}
+
+		/**
+		 * @return value pointer
+		 */
+		inline const uint64_t getValuePtr() const {
+			return reference != nullptr?reference->valuePtr:valuePtr;
+		}
+
+		/**
+		 * Set value pointer
+		 * @param valuePtr value pointer
+		 */
+		inline void setValuePtr(uint64_t valuePtr) {
+			if (reference != nullptr) {
+				reference->valuePtr = valuePtr;
+			} else {
+				this->valuePtr = valuePtr;
+			}
 		}
 
 		/**
@@ -1273,125 +1050,6 @@ public:
 		}
 
 		/**
-		 * Get vector2 value from given variable
-		 * @param value value
-		 * @param optional optional
-		 * @return success
-		 */
-		inline bool getVector2Value(Vector2& value, bool optional = false) const {
-			switch(getType()) {
-				case TYPE_VECTOR2:
-					value = getVector2ValueReference();
-					return true;
-				default:
-					return optional;
-			}
-			return false;
-		}
-
-		/**
-		 * Get vector3 value from given variable
-		 * @param value value
-		 * @param optional optional
-		 * @return success
-		 */
-		inline bool getVector3Value(Vector3& value, bool optional = false) const {
-			switch(getType()) {
-				case TYPE_VECTOR3:
-					value = getVector3ValueReference();
-					return true;
-				default:
-					return optional;
-			}
-			return false;
-		}
-
-		/**
-		 * Get vector4 value from given variable
-		 * @param value value
-		 * @param optional optional
-		 * @return success
-		 */
-		inline bool getVector4Value(Vector4& value, bool optional = false) const {
-			switch(getType()) {
-				case TYPE_VECTOR4:
-					value = getVector4ValueReference();
-					return true;
-				default:
-					return optional;
-			}
-			return false;
-		}
-
-		/**
-		 * Get quaternion value from given variable
-		 * @param value value
-		 * @param optional optional
-		 * @return success
-		 */
-		inline bool getQuaternionValue(Quaternion& value, bool optional = false) const {
-			switch(getType()) {
-				case TYPE_QUATERNION:
-					value = getQuaternionValueReference();
-					return true;
-				default:
-					return optional;
-			}
-			return false;
-		}
-
-		/**
-		 * Get matrix3x3 value from given variable
-		 * @param value value
-		 * @param optional optional
-		 * @return success
-		 */
-		inline bool getMatrix3x3Value(Matrix3x3& value, bool optional = false) const {
-			switch(getType()) {
-				case TYPE_MATRIX3x3:
-					value = getMatrix3x3ValueReference();
-					return true;
-				default:
-					return optional;
-			}
-			return false;
-		}
-
-		/**
-		 * Get matrix4x4 value from given variable
-		 * @param value value
-		 * @param optional optional
-		 * @return success
-		 */
-		inline bool getMatrix4x4Value(Matrix4x4& value, bool optional = false) const {
-			switch(getType()) {
-				case TYPE_MATRIX4x4:
-					value = getMatrix4x4ValueReference();
-					return true;
-				default:
-					return optional;
-			}
-			return false;
-		}
-
-		/**
-		 * Get transform value from given variable
-		 * @param value value
-		 * @param optional optional
-		 * @return success
-		 */
-		inline bool getTransformValue(Transform& value, bool optional = false) const {
-			switch(getType()) {
-				case TYPE_TRANSFORM:
-					value = getTransformValueReference();
-					return true;
-				default:
-					return optional;
-			}
-			return false;
-		}
-
-		/**
 		 * Set boolean value from given value into variable
 		 * @param value value
 		 */
@@ -1436,69 +1094,6 @@ public:
 		}
 
 		/**
-		 * Set vector2 value from given value into variable
-		 * @param value value
-		 */
-		inline void setValue(const Vector2& value) {
-			setType(TYPE_VECTOR2);
-			getVector2ValueReference() = value;
-		}
-
-		/**
-		 * Set vector3 value from given value into variable
-		 * @param value value
-		 */
-		inline void setValue(const Vector3& value) {
-			setType(TYPE_VECTOR3);
-			getVector3ValueReference() = value;
-		}
-
-		/**
-		 * Set vector3 value from given value into variable
-		 * @param value value
-		 */
-		inline void setValue(const Vector4& value) {
-			setType(TYPE_VECTOR4);
-			getVector4ValueReference() = value;
-		}
-
-		/**
-		 * Set vector3 value from given value into variable
-		 * @param value value
-		 */
-		inline void setValue(const Quaternion& value) {
-			setType(TYPE_QUATERNION);
-			getQuaternionValueReference() = value;
-		}
-
-		/**
-		 * Set matrix3x3 value from given value into variable
-		 * @param value value
-		 */
-		inline void setValue(const Matrix3x3& value) {
-			setType(TYPE_MATRIX3x3);
-			getMatrix3x3ValueReference() = value;
-		}
-
-		/**
-		 * Set matrix4x4 value from given value into variable
-		 * @param value value
-		 */
-		inline void setValue(const Matrix4x4& value) {
-			setType(TYPE_MATRIX4x4);
-			getMatrix4x4ValueReference() = value;
-		}
-
-		/**
-		 * Set transform value from given value into variable
-		 * @param value value
-		 */
-		inline void setValue(const Transform& value) {
-			setType(TYPE_TRANSFORM);
-			getTransformValueReference() = value;
-		}
-
-		/**
 		 * Set array value from given value into variable
 		 * @param value value
 		 */
@@ -1538,11 +1133,11 @@ public:
 		inline void setValue(const void* value) {
 			// custom data type
 			auto dataTypeIdx = static_cast<int>(this->getType()) - TYPE_PSEUDO_CUSTOM_DATATYPES;
-			if (dataTypeIdx < TYPE_PSEUDO_CUSTOM_DATATYPES || dataTypeIdx >= miniScript->scriptDataTypes.size()) {
+			if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::scriptDataTypes.size()) {
 				Console::println("ScriptVariable::setValue(): unknown custom data type with id " + to_string(dataTypeIdx));
 				return;
 			}
-			miniScript->scriptDataTypes[dataTypeIdx]->setScriptVariableValue(*this, value);
+			MiniScript::scriptDataTypes[dataTypeIdx]->setScriptVariableValue(*this, value);
 		}
 
 		/**
@@ -1898,82 +1493,66 @@ public:
 		 * @return class name of given script variable type
 		 */
 		inline const string& getClassName() {
-			return getClassName(miniScript, getType());
+			return getClassName(getType());
 		}
 
 		/**
 		 * Return class name of given script variable type
-		 * @param miniScript mini script instance
 		 * @param type type
 		 * @return class name of given script variable type
 		 */
-		inline static const string& getClassName(MiniScript* miniScript, ScriptVariableType type) {
+		inline static const string& getClassName(ScriptVariableType type) {
 			switch (type) {
 				case TYPE_NULL: return CLASSNAME_NONE;
 				case TYPE_BOOLEAN: return CLASSNAME_NONE;
 				case TYPE_INTEGER: return CLASSNAME_NONE;
 				case TYPE_FLOAT: return CLASSNAME_NONE;
-				case TYPE_STRING: return CLASSNAME_STRING;
-				case TYPE_VECTOR2: return CLASSNAME_VEC2;
-				case TYPE_VECTOR3: return CLASSNAME_VEC3;
-				case TYPE_VECTOR4: return CLASSNAME_VEC4;
-				case TYPE_QUATERNION: return CLASSNAME_QUATERNION;
-				case TYPE_MATRIX3x3: return CLASSNAME_MAT3;
-				case TYPE_MATRIX4x4: return CLASSNAME_MAT4;
-				case TYPE_TRANSFORM: return CLASSNAME_TRANSFORM;
-				case TYPE_ARRAY: return CLASSNAME_ARRAY;
-				case TYPE_MAP: return CLASSNAME_MAP;
-				case TYPE_SET: return CLASSNAME_SET;
 				case TYPE_FUNCTION_CALL: return CLASSNAME_NONE;
 				case TYPE_FUNCTION_ASSIGNMENT: return CLASSNAME_NONE;
 				case TYPE_PSEUDO_NUMBER: return CLASSNAME_NONE;
 				case TYPE_PSEUDO_MIXED: return CLASSNAME_NONE;
+				case TYPE_STRING: return CLASSNAME_STRING;
+				case TYPE_ARRAY: return CLASSNAME_ARRAY;
+				case TYPE_MAP: return CLASSNAME_MAP;
+				case TYPE_SET: return CLASSNAME_SET;
 				default:
 					// custom data types
 					auto dataTypeIdx = static_cast<int>(type) - TYPE_PSEUDO_CUSTOM_DATATYPES;
-					if (dataTypeIdx < TYPE_PSEUDO_CUSTOM_DATATYPES || dataTypeIdx >= miniScript->scriptDataTypes.size()) {
+					if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::scriptDataTypes.size()) {
 						Console::println("ScriptVariable::getClassName(): unknown custom data type with id " + to_string(dataTypeIdx));
 						return CLASSNAME_NONE;
 					}
-					return miniScript->scriptDataTypes[dataTypeIdx]->getClassName();
+					return MiniScript::scriptDataTypes[dataTypeIdx]->getClassName();
 			}
 		}
 
 		/**
 		 * Returns given script variable type as string
-		 * @param miniScript mini script instance
 		 * @param type type
 		 * @return script variable type as string
 		 */
-		inline static const string getTypeAsString(MiniScript* miniScript, ScriptVariableType type) {
+		inline static const string getTypeAsString(ScriptVariableType type) {
 			switch(type) {
 				case TYPE_NULL: return "Null";
 				case TYPE_BOOLEAN: return "Boolean";
 				case TYPE_INTEGER: return "Integer";
 				case TYPE_FLOAT: return "Float";
+				case TYPE_FUNCTION_CALL: return string();
+				case TYPE_FUNCTION_ASSIGNMENT: return string();
+				case TYPE_PSEUDO_NUMBER: return "Number";
+				case TYPE_PSEUDO_MIXED: return "Mixed";
 				case TYPE_STRING: return "String";
-				case TYPE_VECTOR2: return "Vector2";
-				case TYPE_VECTOR3: return "Vector3";
-				case TYPE_VECTOR4: return "Vector4";
-				case TYPE_QUATERNION: return "Quaternion";
-				case TYPE_MATRIX3x3: return "Matrix3x3";
-				case TYPE_MATRIX4x4: return "Matrix4x4";
-				case TYPE_TRANSFORM: return "Transform";
 				case TYPE_ARRAY: return "Array";
 				case TYPE_MAP: return "Map";
 				case TYPE_SET: return "Set";
-				case TYPE_FUNCTION_CALL: return string();
-				case TYPE_FUNCTION_ASSIGNMENT: return string();
-				case TYPE_PSEUDO_NUMBER: return string();
-				case TYPE_PSEUDO_MIXED: return string();
 				default:
 					// custom data types
 					auto dataTypeIdx = static_cast<int>(type) - TYPE_PSEUDO_CUSTOM_DATATYPES;
-					if (dataTypeIdx < TYPE_PSEUDO_CUSTOM_DATATYPES || dataTypeIdx >= miniScript->scriptDataTypes.size()) {
+					if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::scriptDataTypes.size()) {
 						Console::println("ScriptVariable::getTypeAsString(): unknown custom data type with id " + to_string(dataTypeIdx));
 						return CLASSNAME_NONE;
 					}
-					return miniScript->scriptDataTypes[dataTypeIdx]->getTypeAsString();
+					return MiniScript::scriptDataTypes[dataTypeIdx]->getTypeAsString();
 			}
 			return string();
 		}
@@ -1982,30 +1561,30 @@ public:
 		 * @return this script variable type as string
 		 */
 		inline const string getTypeAsString() const {
-			return getTypeAsString(miniScript, getType());
+			return getTypeAsString(getType());
 		}
 
 		/**
 		 * Returns given return value variable type string representation
-		 * @param miniScript mini script instance
 		 * @param type type
 		 * @param nullable nullable
 		 * @return return value variable type string representation
 		 */
-		inline static const string getReturnTypeAsString(MiniScript* miniScript, ScriptVariableType type, bool nullable) {
+		inline static const string getReturnTypeAsString(ScriptVariableType type, bool nullable) {
 			switch(type) {
 				case TYPE_NULL: return "Null";
-				default: return string(nullable?"?":"") + getTypeAsString(miniScript, type);
+				default: return string(nullable?"?":"") + getTypeAsString(type);
 			}
 			return string();
 		}
+
 		/**
 		 * Returns given return value variable type string representation
 		 * @param nullable nullable
 		 * @return return value variable type string representation
 		 */
 		inline const string getReturnTypeAsString(bool nullable) const {
-			return getReturnTypeAsString(miniScript, getType(), nullable);
+			return getReturnTypeAsString(getType(), nullable);
 		}
 
 		/**
@@ -2044,110 +1623,20 @@ public:
 				case TYPE_FLOAT:
 					result+= to_string(getFloatValueReference());
 					break;
+				case TYPE_FUNCTION_CALL:
+					result+= "{" + getStringValueReference() + "}";
+					break;
+				case TYPE_FUNCTION_ASSIGNMENT:
+					result+= "() -> " + getStringValueReference();
+					break;
+				case TYPE_PSEUDO_NUMBER:
+					result+= "Number";
+					break;
+				case TYPE_PSEUDO_MIXED:
+					result+= "Mixed";
+					break;
 				case TYPE_STRING:
 					result+= getStringValueReference();
-					break;
-				case TYPE_VECTOR2:
-					{
-						const auto& vector2Value = getVector2ValueReference();
-						result+=
-							"Vector2(" +
-							to_string(vector2Value.getX()) + ", " +
-							to_string(vector2Value.getY()) + ")";
-					}
-					break;
-				case TYPE_VECTOR3:
-					{
-						const auto& vector3Value = getVector3ValueReference();
-						result+=
-							"Vector3(" +
-							to_string(vector3Value.getX()) + ", " +
-							to_string(vector3Value.getY()) + ", " +
-							to_string(vector3Value.getZ()) + ")";
-					}
-					break;
-				case TYPE_VECTOR4:
-					{
-						const auto& vector4Value = getVector4ValueReference();
-						result+=
-							"Vector4(" +
-							to_string(vector4Value.getX()) + ", " +
-							to_string(vector4Value.getY()) + ", " +
-							to_string(vector4Value.getZ()) + ", " +
-							to_string(vector4Value.getW()) + ")";
-					}
-					break;
-				case TYPE_QUATERNION:
-					{
-						const auto& quaternionValue = getQuaternionValueReference();
-						result+=
-							"Quaternion(" +
-							to_string(quaternionValue.getX()) + ", " +
-							to_string(quaternionValue.getY()) + ", " +
-							to_string(quaternionValue.getZ()) + ", " +
-							to_string(quaternionValue.getW()) + ")";
-					}
-					break;
-				case TYPE_MATRIX3x3:
-					{
-						const auto& matrix3x3Value = getMatrix3x3ValueReference();
-						result+=
-							"Matrix3x3(" +
-							to_string(matrix3x3Value[0]) + ", " +
-							to_string(matrix3x3Value[1]) + ", " +
-							to_string(matrix3x3Value[2]) + ", " +
-							to_string(matrix3x3Value[3]) + ", " +
-							to_string(matrix3x3Value[4]) + ", " +
-							to_string(matrix3x3Value[5]) + ", " +
-							to_string(matrix3x3Value[6]) + ", " +
-							to_string(matrix3x3Value[7]) + ", " +
-							to_string(matrix3x3Value[8]) + ")";
-					}
-					break;
-				case TYPE_MATRIX4x4:
-					{
-						const auto& matrix4x4Value = getMatrix4x4ValueReference();
-						result+=
-							"Matrix4x4(" +
-							to_string(matrix4x4Value[0]) + ", " +
-							to_string(matrix4x4Value[1]) + ", " +
-							to_string(matrix4x4Value[2]) + ", " +
-							to_string(matrix4x4Value[3]) + ", " +
-							to_string(matrix4x4Value[4]) + ", " +
-							to_string(matrix4x4Value[5]) + ", " +
-							to_string(matrix4x4Value[6]) + ", " +
-							to_string(matrix4x4Value[7]) + ", " +
-							to_string(matrix4x4Value[8]) + ", " +
-							to_string(matrix4x4Value[9]) + ", " +
-							to_string(matrix4x4Value[10]) + ", " +
-							to_string(matrix4x4Value[11]) + ", " +
-							to_string(matrix4x4Value[12]) + ", " +
-							to_string(matrix4x4Value[13]) + ", " +
-							to_string(matrix4x4Value[14]) + ", " +
-							to_string(matrix4x4Value[15]) + ")";
-					}
-					break;
-				case TYPE_TRANSFORM:
-					{
-						const auto& transformValue = getTransformValueReference();
-						result+=
-							"Transform(translation: Vector3(" +
-							to_string(transformValue.getTranslation().getX()) + ", " +
-							to_string(transformValue.getTranslation().getY()) + ", " +
-							to_string(transformValue.getTranslation().getZ()) + "), " +
-							"scale: (" +
-							to_string(transformValue.getScale().getX()) + ", " +
-							to_string(transformValue.getScale().getY()) + ", " +
-							to_string(transformValue.getScale().getZ()) + ")";
-						for (auto i = 0; i < transformValue.getRotationCount(); i++) {
-							result+= ", rotations: (axis: Vector3(" +
-									to_string(transformValue.getRotationAxis(i).getX()) + ", " +
-									to_string(transformValue.getRotationAxis(i).getY()) + ", " +
-									to_string(transformValue.getRotationAxis(i).getZ()) + "), angle: " +
-									to_string(transformValue.getRotationAngle(i)) + ")";
-						}
-						result+= ")";
-					}
 					break;
 				case TYPE_ARRAY:
 					{
@@ -2259,26 +1748,14 @@ public:
 						}
 						break;
 					}
-				case TYPE_FUNCTION_CALL:
-					result+= "{" + getStringValueReference() + "}";
-					break;
-				case TYPE_FUNCTION_ASSIGNMENT:
-					result+= "() -> " + getStringValueReference();
-					break;
-				case TYPE_PSEUDO_NUMBER:
-					result+= "Number";
-					break;
-				case TYPE_PSEUDO_MIXED:
-					result+= "Mixed";
-					break;
 				default:
 					// custom data types
 					auto dataTypeIdx = static_cast<int>(type) - TYPE_PSEUDO_CUSTOM_DATATYPES;
-					if (dataTypeIdx < TYPE_PSEUDO_CUSTOM_DATATYPES || dataTypeIdx >= miniScript->scriptDataTypes.size()) {
+					if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::scriptDataTypes.size()) {
 						Console::println("ScriptVariable::getValueAsString(): unknown custom data type with id " + to_string(dataTypeIdx));
-						return CLASSNAME_NONE;
+						return result;
 					}
-					return miniScript->scriptDataTypes[dataTypeIdx]->getValueAsString(this);
+					return MiniScript::scriptDataTypes[dataTypeIdx]->getValueAsString(*this);
 
 			}
 			return result;
@@ -2379,11 +1856,10 @@ public:
 
 		/**
 		 * Get arguments information
-		 * @param miniScript mini script instance
 		 * @param beginIdx begin index
 		 * @return arguments information
 		 */
-		inline const string getArgumentsInformation(MiniScript* miniScript, int beginIdx = 0) const {
+		inline const string getArgumentsInformation(int beginIdx = 0) const {
 			string result;
 			auto optionalArgumentCount = 0;
 			auto argumentIdx = 0;
@@ -2396,9 +1872,9 @@ public:
 				if (argumentIdx > beginIdx) result+= ", ";
 				if (optionalArgumentCount > 0 || argumentIdx >= beginIdx) {
 					if (argumentType.reference == true) {
-						result+= "=";
+						result+= "&";
 					}
-					result+= "$" + argumentType.name + ": " + (argumentType.nullable == true?"?":"") + ScriptVariable::getTypeAsString(miniScript, argumentType.type);
+					result+= "$" + argumentType.name + ": " + (argumentType.nullable == true?"?":"") + ScriptVariable::getTypeAsString(argumentType.type);
 				}
 				argumentIdx++;
 			}
@@ -2844,6 +2320,7 @@ private:
 
 	//
 	STATIC_DLL_IMPEXT static const string OPERATOR_CHARS;
+	STATIC_DLL_IMPEXT static vector<ScriptDataType*> scriptDataTypes;
 
 	// TODO: maybe we need a better naming for this
 	// script functions defined by script itself
@@ -2852,7 +2329,6 @@ private:
 	unordered_map<string, ScriptMethod*> scriptMethods;
 	unordered_map<int, ScriptStateMachineState*> scriptStateMachineStates;
 	unordered_map<uint8_t, ScriptMethod*> scriptOperators;
-	vector<ScriptDataType*> scriptDataTypes;
 	string scriptPathName;
 	string scriptFileName;
 	bool scriptValid { false };
@@ -3238,15 +2714,33 @@ public:
 		return result;
 	}
 
-	// forbid class copy
-	FORBID_CLASS_COPY(MiniScript)
+	/**
+	 * @return data types
+	 */
+	inline static const vector<ScriptDataType*>& getDataTypes() {
+		return scriptDataTypes;
+	}
 
 	/**
-	 * Load script
-	 * @param pathName path name
-	 * @param fileName file name
+	 * Returns data type by class name or nullptr
+	 * @param className class name
+	 * @return script data type
 	 */
-	static MiniScript* loadScript(const string& pathName, const string& fileName);
+	inline static ScriptDataType* getDataTypeByClassName(const string& className) {
+		for (const auto scriptDataType: scriptDataTypes) {
+			if (scriptDataType->getClassName() == className) return scriptDataType;
+		}
+		return nullptr;
+	}
+
+	/**
+	 * Register script data type
+	 * @param scriptDataType script data type
+	 */
+	static void registerDataType(ScriptDataType* scriptDataType);
+
+	// forbid class copy
+	FORBID_CLASS_COPY(MiniScript)
 
 	/**
 	 * Default constructor
@@ -3367,11 +2861,6 @@ public:
 	virtual void registerMethods();
 
 	/**
-	 * Register data types
-	 */
-	virtual void registerDataTypes();
-
-	/**
 	 * Register variables
 	 */
 	virtual void registerVariables();
@@ -3396,7 +2885,7 @@ public:
 			Console::println("MiniScript::getArgumentInformation(): method not found: " + methodName);
 			return "No information available";
 		}
-		return scriptMethod->getArgumentsInformation(this);
+		return scriptMethod->getArgumentsInformation();
 	}
 
 	/**
@@ -3501,104 +2990,6 @@ public:
 	}
 
 	/**
-	 * Get vector2 value from given variable
-	 * @param arguments arguments
-	 * @param idx argument index
-	 * @param value value
-	 * @param optional optional
-	 * @return success
-	 */
-	inline static bool getVector2Value(const span<ScriptVariable>& arguments, int idx, Vector2& value, bool optional = false) {
-		if (idx >= arguments.size()) return optional;
-		const auto& argument = arguments[idx];
-		return argument.getVector2Value(value, optional);
-	}
-
-	/**
-	 * Get vector3 value from given variable
-	 * @param arguments arguments
-	 * @param idx argument index
-	 * @param value value
-	 * @param optional optional
-	 * @return success
-	 */
-	inline static bool getVector3Value(const span<ScriptVariable>& arguments, int idx, Vector3& value, bool optional = false) {
-		if (idx >= arguments.size()) return optional;
-		const auto& argument = arguments[idx];
-		return argument.getVector3Value(value, optional);
-	}
-
-	/**
-	 * Get vector4 value from given variable
-	 * @param arguments arguments
-	 * @param idx argument index
-	 * @param value value
-	 * @param optional optional
-	 * @return success
-	 */
-	inline static bool getVector4Value(const span<ScriptVariable>& arguments, int idx, Vector4& value, bool optional = false) {
-		if (idx >= arguments.size()) return optional;
-		const auto& argument = arguments[idx];
-		return argument.getVector4Value(value, optional);
-	}
-
-	/**
-	 * Get vector4 value from given variable
-	 * @param arguments arguments
-	 * @param idx argument index
-	 * @param value value
-	 * @param optional optional
-	 * @return success
-	 */
-	inline static bool getQuaternionValue(const span<ScriptVariable>& arguments, int idx, Quaternion& value, bool optional = false) {
-		if (idx >= arguments.size()) return optional;
-		const auto& argument = arguments[idx];
-		return argument.getQuaternionValue(value, optional);
-	}
-
-	/**
-	 * Get matrix3x3 value from given variable
-	 * @param arguments arguments
-	 * @param idx argument index
-	 * @param value value
-	 * @param optional optional
-	 * @return success
-	 */
-	inline static bool getMatrix3x3Value(const span<ScriptVariable>& arguments, int idx, Matrix3x3& value, bool optional = false) {
-		if (idx >= arguments.size()) return optional;
-		const auto& argument = arguments[idx];
-		return argument.getMatrix3x3Value(value, optional);
-	}
-
-	/**
-	 * Get matrix4x4 value from given variable
-	 * @param arguments arguments
-	 * @param idx argument index
-	 * @param value value
-	 * @param optional optional
-	 * @return success
-	 */
-	inline static bool getMatrix4x4Value(const span<ScriptVariable>& arguments, int idx, Matrix4x4& value, bool optional = false) {
-		if (idx >= arguments.size()) return optional;
-		const auto& argument = arguments[idx];
-		return argument.getMatrix4x4Value(value, optional);
-	}
-
-	/**
-	 * Get transform value from given variable
-	 * @param arguments arguments
-	 * @param idx argument index
-	 * @param value value
-	 * @param optional optional
-	 * @return success
-	 */
-	inline static bool getTransformValue(const span<ScriptVariable>& arguments, int idx, Transform& value, bool optional = false) {
-		if (idx >= arguments.size()) return optional;
-		const auto& argument = arguments[idx];
-		return argument.getTransformValue(value, optional);
-	}
-
-	/**
 	 * Register script state machine state
 	 * @param state state
 	 */
@@ -3609,12 +3000,6 @@ public:
 	 * @param scriptMethod script method
 	 */
 	void registerMethod(ScriptMethod* scriptMethod);
-
-	/**
-	 * Register script data type
-	 * @param scriptDataType script data type
-	 */
-	void registerDataType(ScriptDataType* scriptDataType);
 
 	/**
 	 * Returns if a given string is a variable name
