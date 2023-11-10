@@ -43,7 +43,7 @@ on: nothing
 					" horses in it"
 				)
 			},
-		getProperties: (=$wheelCount, =$color, =$horsePower) -> 
+		getProperties: (&$wheelCount, &$color, &$horsePower) -> 
 			{
 				$wheelCount = $this.wheelCount
 				$color = $this.color

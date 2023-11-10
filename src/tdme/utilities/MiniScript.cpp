@@ -1353,7 +1353,7 @@ bool MiniScript::parseScriptInternal(const string& scriptCode) {
 							for (const auto& argumentName: argumentNamesTokenized) {
 								auto argumentNameTrimmed = StringTools::trim(argumentName);
 								auto reference = false;
-								if (StringTools::startsWith(argumentNameTrimmed, "=") == true) {
+								if (StringTools::startsWith(argumentNameTrimmed, "&") == true) {
 									reference = true;
 									argumentNameTrimmed = StringTools::trim(StringTools::substring(argumentNameTrimmed, 1));
 								}
@@ -1667,10 +1667,6 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 				scripts = nativeScripts;
 				registerStateMachineStates();
 				registerMethods();
-				for (const auto scriptDataType: scriptDataTypes) {
-					if (scriptDataType->isMathDataType() == true) miniScriptMath->registerDataType(scriptDataType);
-					scriptDataType->registerMethods(this);
-				}
 				startScript();
 				return;
 			} else {
@@ -1684,10 +1680,6 @@ void MiniScript::parseScript(const string& pathName, const string& fileName) {
 	//
 	registerStateMachineStates();
 	registerMethods();
-	for (const auto scriptDataType: scriptDataTypes) {
-		if (scriptDataType->isMathDataType() == true) miniScriptMath->registerDataType(scriptDataType);
-		scriptDataType->registerMethods(this);
-	}
 
 	//
 	if (parseScriptInternal(scriptCode) == false) return;
@@ -2364,7 +2356,7 @@ const string MiniScript::getScriptInformation(int scriptIdx, bool includeStateme
 		case Script::SCRIPTTYPE_FUNCTION: {
 			for (const auto& argument: script.arguments) {
 				if (argumentsString.empty() == false) argumentsString+= ", ";
-				if (argument.reference == true) argumentsString+= "=";
+				if (argument.reference == true) argumentsString+= "&";
 				argumentsString+= argument.name;
 			}
 			argumentsString = "(" + argumentsString + ")";
@@ -5794,6 +5786,12 @@ void MiniScript::registerMethods() {
 	miniScriptMath = make_unique<MiniScriptMath>(this);
 	miniScriptMath->registerMethods();
 
+	//
+	for (const auto scriptDataType: scriptDataTypes) {
+		if (scriptDataType->isMathDataType() == true) miniScriptMath->registerDataType(scriptDataType);
+		scriptDataType->registerMethods(this);
+	}
+
 	// determine operators
 	for (const auto& [scriptMethodName, scriptMethod]: scriptMethods) {
 		auto methodOperator = scriptMethod->getOperator();
@@ -6203,7 +6201,7 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 										string functionScriptCode;
 										// function declaration
 										auto functionName = string() + "map_inline_function_" + to_string(miniScript->inlineFunctionIdx++);
-										functionScriptCode = "function: " + functionName + "(=$this";
+										functionScriptCode = "function: " + functionName + "(&$this";
 										auto argumentIdx = 0;
 										for (const auto& argument: arguments) {
 											functionScriptCode+= ",";

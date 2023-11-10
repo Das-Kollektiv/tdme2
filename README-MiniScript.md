@@ -7,16 +7,16 @@ This is the documentation of MiniScript language. This document is WIP.
 Introduction to MiniScript language features:
 - very small implementation of a scripting language
 - runs on every CPU, OS, ... due to its simplicity, so its highly portable just like TDME2 is
-- can be easily extended by writing state machine machine states and script methods in C++
-- works with the following data types: null, boolean, integer, float, string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, array, map and set
+- can be easily extended by writing state machine machine states and script methods in C++ as well as custom data types
+- built-in data types: null, boolean, integer, float, string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, array, map and set
 - when calling script C++ methods or script functions with arguments it does optionally use references or value by copy
 - supports user script functions and recursion
 - supports operators by operator to method mapping by a preprocessor run
 - supports loops and conditions
 - supports programming with classes style programming
-  - for string, array, map and set data types
-  - via script classes/objects
-  - custom data types (vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, roll your own)
+  - for built-in datatypes: null, boolean, integer, float, string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, array, map and set
+  - for script classes/objects
+  - for custom data types
 - supports event like programming
 - can be transpiled to C++
 
@@ -116,11 +116,13 @@ end
 ...
 ```
 
-If a argument variable is prefixed with a = operator in function declaration, this variable will be assigned back after the function returns. See =$b and =$c.
+If a argument(variable) is prefixed with a & operator in the function declaration, the variable will not be copied into the function arguments, 
+but a reference will be created, means if this variable changes within the function it will also change in the parent variable scope. 
+See &$b and &$c.
 ```
 ...
 # user script function to test assign back in user functions
-function: assignTest($a, =$b, =$c)
+function: assignTest($a, &$b, &$c)
 	$a = "a"
 	$b = "b"
 	$c = "c"
@@ -614,7 +616,7 @@ Please see a example below.
 					" horses in it"
 				)
 			},
-		getProperties: (=$wheelCount, =$color, =$horsePower) -> 
+		getProperties: (&$wheelCount, &$color, &$horsePower) -> 
 			{
 				$wheelCount = $this.wheelCount
 				$color = $this.color
@@ -651,7 +653,7 @@ If you want to assign a class member function later, see this example. Note that
 
 ```
 ...
-function: setConvertible(=$this, $convertible)
+function: setConvertible(&$this, $convertible)
 	$this.convertible = $convertible
 end
 
@@ -906,7 +908,7 @@ end
 | Create transform from 4x4 matrix                                                                 |
 | <sub><b>static</b> transform.fromMatrix($transformMatrix: Matrix4x4): Transform</sub>            |
 | Interpolate rotation                                                                             |
-| <sub><b>static</b> transform.interpolateRotation($currentAngle: Float, $targetAngle: Float, $timePassedSeconds: Float, $degreesPerSeconds: Float, =$interpolatedAngle: Float): Boolean</sub>|
+| <sub><b>static</b> transform.interpolateRotation($currentAngle: Float, $targetAngle: Float, $timePassedSeconds: Float, $degreesPerSeconds: Float, &$interpolatedAngle: Float): Boolean</sub>|
 | &nbsp;                                    |
 | <b>NON STATIC METHODS</b>                 |
 | Apply a rotation to transform                                                                    |
@@ -1068,9 +1070,9 @@ end
 | Logical or                                                                                       |
 | <sub>or($a: Boolean, $b: Boolean): Boolean</sub>                                                 |
 | Prefix decrement                                                                                 |
-| <sub>prefixDecrement(=$variable: Integer): Integer</sub>                                         |
+| <sub>prefixDecrement(&$variable: Integer): Integer</sub>                                         |
 | Prefix increment                                                                                 |
-| <sub>prefixIncrement(=$variable: Integer): Integer</sub>                                         |
+| <sub>prefixIncrement(&$variable: Integer): Integer</sub>                                         |
 | Return from function with optional return value                                                  |
 | <sub>return([$value: Mixed]): Null</sub>                                                         |
 | Subtract                                                                                         |
@@ -1245,7 +1247,7 @@ The boilerplate template code for a MiniScript logic looks like: [logic_script_t
 | Get engine height - <i>available in initializeEngine(), updateEngine()</i>                       |
 | <sub>engine.getHeight(): Integer</sub>                                                           |
 | Compute engine screen coordinate by world coordinate - <i>available in initializeEngine(), updateEngine()</i>|
-| <sub>engine.computeScreenCoordinateByWorldCoordinate($worldCoodinate: Vector3, =$screenCoordinate: Vector2): Boolean</sub>|
+| <sub>engine.computeScreenCoordinateByWorldCoordinate($worldCoodinate: Vector3, &$screenCoordinate: Vector2): Boolean</sub>|
 | Get engine width - <i>available in initializeEngine(), updateEngine()</i>                        |
 | <sub>engine.getWidth(): Integer</sub>                                                            |
 | Compute engine world coordinate by mouse position - <i>available in initializeEngine(), updateEngine()</i>|
@@ -1499,7 +1501,7 @@ The boilerplate template code for a MiniScript logic looks like: [logic_script_t
 | Pathfinding try/lock failed integer code - <i>available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()</i>|
 | <sub>pathfinding.STATE_TRYLOCK_FAILED(): Integer</sub>                                           |
 | Issue pathfinding - <i>available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()</i>|
-| <sub>pathfinding.findPath($logicId: String, $startPosition: Vector3, $endPosition: Vector3, =$path: Array): Integer</sub>|
+| <sub>pathfinding.findPath($logicId: String, $startPosition: Vector3, $endPosition: Vector3, &$path: Array): Integer</sub>|
 
 ## 8.12 Scene methods
 
@@ -1526,11 +1528,11 @@ The boilerplate template code for a MiniScript logic looks like: [logic_script_t
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Determine height at specific position in physics world - <i>available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()</i>|
-| <sub>world.determineHeight($collisionTypeIds: Integer, $stepUpMax: Float, $point: Vector3, =$heightPoint: Vector3[, =$bodyId: String[, $minHeight: Float[, $maxHeight: Float]]]): Boolean</sub>|
+| <sub>world.determineHeight($collisionTypeIds: Integer, $stepUpMax: Float, $point: Vector3, &$heightPoint: Vector3[, &$bodyId: String[, $minHeight: Float[, $maxHeight: Float]]]): Boolean</sub>|
 | Determine collision of two specific bodies in physics world - <i>available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()</i>|
 | <sub>world.doCollide($bodyId1: String, $bodyId2: String): Boolean</sub>                          |
 | Compute ray casting in physics world - <i>available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()</i>|
-| <sub>world.doRayCasting($collisionTypeIds: Integer, $start: Vector3, $end: Vector3, =$hitPoint: Vector3[, =$bodyId: String[, $actorId: String]]): Boolean</sub>|
+| <sub>world.doRayCasting($collisionTypeIds: Integer, $start: Vector3, $end: Vector3, &$hitPoint: Vector3[, &$bodyId: String[, $actorId: String]]): Boolean</sub>|
 | Determine collision of specific body in physics world - <i>available in initializeLogic(), updateLogic(), onLogicAdded(), onLogicsProcessed()</i>|
 | <sub>world.doesCollideWith($collisionTypeIds: Integer, $bodyId: String): Array</sub>             |
 
@@ -1851,9 +1853,9 @@ The boilerplate template code for a MiniScript GUI logic looks like: [gui_script
 | && | and($a: Boolean, $b: Boolean): Boolean                                                      |
 | *  | mul($a: Mixed, $b: Mixed): Mixed                                                            |
 | +  | add($a: Mixed, $b: Mixed): Mixed                                                            |
-| ++ | prefixIncrement(=$variable: Integer): Integer                                               |
+| ++ | prefixIncrement(&$variable: Integer): Integer                                               |
 | -  | sub($a: Mixed, $b: Mixed): Mixed                                                            |
-| -- | prefixDecrement(=$variable: Integer): Integer                                               |
+| -- | prefixDecrement(&$variable: Integer): Integer                                               |
 | /  | div($a: Mixed, $b: Mixed): Mixed                                                            |
 | <  | lesser($a: Mixed, $b: Mixed): Boolean                                                       |
 | <= | lesserEquals($a: Mixed, $b: Mixed): Boolean                                                 |

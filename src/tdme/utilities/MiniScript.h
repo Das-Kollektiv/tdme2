@@ -1539,8 +1539,8 @@ public:
 				case TYPE_FLOAT: return "Float";
 				case TYPE_FUNCTION_CALL: return string();
 				case TYPE_FUNCTION_ASSIGNMENT: return string();
-				case TYPE_PSEUDO_NUMBER: return string();
-				case TYPE_PSEUDO_MIXED: return string();
+				case TYPE_PSEUDO_NUMBER: return "Number";
+				case TYPE_PSEUDO_MIXED: return "Mixed";
 				case TYPE_STRING: return "String";
 				case TYPE_ARRAY: return "Array";
 				case TYPE_MAP: return "Map";
@@ -1872,7 +1872,7 @@ public:
 				if (argumentIdx > beginIdx) result+= ", ";
 				if (optionalArgumentCount > 0 || argumentIdx >= beginIdx) {
 					if (argumentType.reference == true) {
-						result+= "=";
+						result+= "&";
 					}
 					result+= "$" + argumentType.name + ": " + (argumentType.nullable == true?"?":"") + ScriptVariable::getTypeAsString(argumentType.type);
 				}
