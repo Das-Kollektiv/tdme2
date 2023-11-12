@@ -118,8 +118,9 @@ end
 
 If a argument(variable) is prefixed with a & operator in the function declaration, the variable will not be copied into the function arguments, 
 but a reference will be created, means if this variable changes within the function it will also change in the parent variable scope.
-Be aware that value by copy variables usually require more instantiation time due to the copy that needs to be made of the variable from parent variable scope to function variable scope. 
 See &$b and &$c.
+
+Be aware that value by copy variables usually require more instantiation time due to the copy that needs to be made of the variable from parent variable scope to function variable scope. 
 ```
 ...
 # user script function to test assign back in user functions
@@ -579,9 +580,9 @@ Reading all keys as array from set:
 
 ## 4.6. Classes
 
-Classes in MiniScript are basically maps, see map section in 4.4.
+Classes in MiniScript can be represented by maps, a constructed map with function assignments and/or definitions can be called object, see map section in 4.4.
 
-Creating a class in MiniScript works by using map initializer plus () -> methodName function assignment, or () -> { console.dump($this) } inline function definition.
+Creating a object in MiniScript works by using map initializer plus () -> methodName function assignment, or () -> { console.dump($this) } inline function definition.
 Please see a example below.
 
 ```
@@ -650,8 +651,8 @@ Please see a example below.
 	#...
 ```
 
-If you want to assign a class member function later, see this example. Note that the first argument needs to be a reference or value by copy $this variable.
-This argument maps to the class that your code is operating on in your class member function.
+If you want to assign a object member function later, see this example. Note that the first argument needs to be a reference or value by copy $this variable.
+This argument maps to the object that your code is operating on in your object member function.
  
 Be aware that value by copy variables usually require more instantiation time due to the copy that needs to be made of the variable from parent variable scope to function variable scope.  
 
