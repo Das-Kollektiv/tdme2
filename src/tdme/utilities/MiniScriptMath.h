@@ -9,7 +9,6 @@ using std::span;
 
 using tdme::math::Math;
 using tdme::utilities::MiniScript;
-using tdme::utilities::MiniScriptMath;
 
 /**
  * MiniScript Math
@@ -31,7 +30,6 @@ public:
 
 	/**
 	 * Register methods
-	 * @param miniScript mini script instance
 	 */
 	void registerMethods();
 

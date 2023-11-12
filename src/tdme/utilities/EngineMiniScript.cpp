@@ -130,7 +130,17 @@ const string EngineMiniScript::getBaseClass() {
 const vector<string> EngineMiniScript::getTranspilationUnits() {
 	return {
 		"src/tdme/utilities/MiniScript.cpp",
+		"src/tdme/utilities/MiniScriptArray.cpp",
+		"src/tdme/utilities/MiniScriptBase.cpp",
+		"src/tdme/utilities/MiniScriptConsole.cpp",
+		"src/tdme/utilities/MiniScriptJSON.cpp",
+		"src/tdme/utilities/MiniScriptMap.cpp",
 		"src/tdme/utilities/MiniScriptMath.cpp",
+		"src/tdme/utilities/MiniScriptScript.cpp",
+		"src/tdme/utilities/MiniScriptSet.cpp",
+		"src/tdme/utilities/MiniScriptString.cpp",
+		"src/tdme/utilities/MiniScriptTime.cpp",
+		"src/tdme/utilities/MiniScriptXML.cpp",
 		"src/tdme/utilities/MiniScriptMatrix3x3.cpp",
 		"src/tdme/utilities/MiniScriptMatrix4x4.cpp",
 		"src/tdme/utilities/MiniScriptQuaternion.cpp",

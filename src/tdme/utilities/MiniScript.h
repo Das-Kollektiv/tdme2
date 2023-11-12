@@ -60,6 +60,9 @@ namespace cli {
  */
 class tdme::utilities::MiniScript {
 	friend class tdme::tools::cli::MiniScriptTranspilerTool;
+	friend class MiniScriptBase;
+	friend class MiniScriptJSON;
+	friend class MiniScriptScript;
 	friend class MiniScriptTranspiler;
 
 public:
@@ -2593,7 +2596,7 @@ private:
 		//
 		for (; i < candidate.size(); i++) {
 			auto c = candidate[i];
-			if (c == '=') {
+			if (c == '&') {
 				if (argumentStartIdx == string::npos) {
 					argumentStartIdx = i;
 				} else {
@@ -2604,7 +2607,7 @@ private:
 				if (argumentStartIdx == string::npos) {
 					argumentStartIdx = i;
 				} else
-				if (argumentStartIdx == i - 1 && candidate[argumentStartIdx] == '=') {
+				if (argumentStartIdx == i - 1 && candidate[argumentStartIdx] == '&') {
 					// no op
 				} else {
 					return false;

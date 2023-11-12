@@ -117,7 +117,8 @@ end
 ```
 
 If a argument(variable) is prefixed with a & operator in the function declaration, the variable will not be copied into the function arguments, 
-but a reference will be created, means if this variable changes within the function it will also change in the parent variable scope. 
+but a reference will be created, means if this variable changes within the function it will also change in the parent variable scope.
+Be aware that value by copy variables usually require more instantiation time due to the copy that needs to be made of the variable from parent variable scope to function variable scope. 
 See &$b and &$c.
 ```
 ...
@@ -649,7 +650,10 @@ Please see a example below.
 	#...
 ```
 
-If you want to assign a class member function later, see this example. Note that the first argument needs to be a (const) $this variable, or a "assigned back" $this variable. This argument maps to the class that your code is operating on in your class member function.
+If you want to assign a class member function later, see this example. Note that the first argument needs to be a reference or value by copy $this variable.
+This argument maps to the class that your code is operating on in your class member function.
+ 
+Be aware that value by copy variables usually require more instantiation time due to the copy that needs to be made of the variable from parent variable scope to function variable scope.  
 
 ```
 ...

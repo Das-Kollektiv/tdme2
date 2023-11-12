@@ -20,7 +20,15 @@ namespace utilities {
 	class IntBuffer;
 	class Integer;
 	class MiniScript;
+	class MiniScriptArray;
+	class MiniScriptBase;
+	class MiniScriptConsole;
+	class MiniScriptJSON;
 	class MiniScriptMath;
+	class MiniScriptMap;
+	class MiniScriptScript;
+	class MiniScriptSet;
+	class MiniScriptString;
 	class MiniScriptTransform;
 	class MiniScriptTranspiler;
 	class MiniScriptMatrix3x3;
@@ -29,6 +37,8 @@ namespace utilities {
 	class MiniScriptVector2;
 	class MiniScriptVector3;
 	class MiniScriptVector4;
+	class MiniScriptTime;
+	class MiniScriptXML;
 	class MutableString;
 	class ModelTools;
 	class PathFinding;
