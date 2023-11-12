@@ -6,7 +6,7 @@
 using tdme::utilities::MiniScript;
 
 /**
- * MiniScript JSON
+ * MiniScript JSON functions
  * @author Andreas Drewke
  */
 class tdme::utilities::MiniScriptJSON {

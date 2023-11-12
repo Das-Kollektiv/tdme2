@@ -23,11 +23,11 @@ void MiniScriptXML::registerMethods(MiniScript* miniScript) {
 			ScriptMethodXMLCreateTag(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "name", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_MAP, .name = "attributes", .optional = true, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "innerXML", .optional = true, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "name", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_MAP, .name = "attributes", .optional = true, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "innerXML", .optional = true, .reference = false, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_STRING
+					MiniScript::TYPE_STRING
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -38,7 +38,7 @@ void MiniScriptXML::registerMethods(MiniScript* miniScript) {
 				string name;
 				string innerXML;
 				if (MiniScript::getStringValue(argumentValues, 0, name, false) == false ||
-					(argumentValues.size() >= 2 && argumentValues[1].getType() != MiniScript::ScriptVariableType::TYPE_MAP) ||
+					(argumentValues.size() >= 2 && argumentValues[1].getType() != MiniScript::TYPE_MAP) ||
 					MiniScript::getStringValue(argumentValues, 2, innerXML, true) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();

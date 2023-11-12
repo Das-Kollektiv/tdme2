@@ -6,7 +6,7 @@
 using tdme::utilities::MiniScript;
 
 /**
- * MiniScript Array
+ * MiniScript script array class
  * @author Andreas Drewke
  */
 class tdme::utilities::MiniScriptArray {

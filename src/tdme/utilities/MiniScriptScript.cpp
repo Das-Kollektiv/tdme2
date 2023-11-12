@@ -38,7 +38,7 @@ void MiniScriptScript::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodScriptWait(MiniScript* miniScript):
 				MiniScript::ScriptMethod({
-					{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "time", .optional = false, .reference = false, .nullable = false }
+					{ .type = MiniScript::TYPE_INTEGER, .name = "time", .optional = false, .reference = false, .nullable = false }
 				}),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -66,7 +66,7 @@ void MiniScriptScript::registerMethods(MiniScript* miniScript) {
 			ScriptMethodScriptEmit(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "condition", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "condition", .optional = false, .reference = false, .nullable = false }
 					}
 				),
 				miniScript(miniScript) {}
@@ -94,7 +94,7 @@ void MiniScriptScript::registerMethods(MiniScript* miniScript) {
 			ScriptMethodScriptEnableNamedCondition(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "name", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "name", .optional = false, .reference = false, .nullable = false }
 					}
 				),
 				miniScript(miniScript) {}
@@ -130,7 +130,7 @@ void MiniScriptScript::registerMethods(MiniScript* miniScript) {
 			ScriptMethodScriptDisableNamedCondition(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "name", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "name", .optional = false, .reference = false, .nullable = false }
 					}
 				),
 				miniScript(miniScript) {}
@@ -163,7 +163,7 @@ void MiniScriptScript::registerMethods(MiniScript* miniScript) {
 			MiniScript* miniScript { nullptr };
 		public:
 			ScriptMethodScriptGetNamedConditions(MiniScript* miniScript):
-				MiniScript::ScriptMethod({}, MiniScript::ScriptVariableType::TYPE_STRING),
+				MiniScript::ScriptMethod({}, MiniScript::TYPE_STRING),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "script.getNamedConditions";
@@ -187,9 +187,9 @@ void MiniScriptScript::registerMethods(MiniScript* miniScript) {
 			ScriptMethodScriptEvaluate(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "statement", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "statement", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED
+					MiniScript::TYPE_PSEUDO_MIXED
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -218,9 +218,9 @@ void MiniScriptScript::registerMethods(MiniScript* miniScript) {
 			ScriptMethodScriptCall(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "function", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "function", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED
+					MiniScript::TYPE_PSEUDO_MIXED
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {

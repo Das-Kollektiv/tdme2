@@ -11,7 +11,7 @@ using tdme::math::Math;
 using tdme::utilities::MiniScript;
 
 /**
- * MiniScript Math
+ * MiniScript math functions
  * @author Andreas Drewke
  */
 class tdme::utilities::MiniScriptMath {

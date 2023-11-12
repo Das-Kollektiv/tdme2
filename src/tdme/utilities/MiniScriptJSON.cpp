@@ -21,9 +21,9 @@ void MiniScriptJSON::registerMethods(MiniScript* miniScript) {
 			ScriptMethodJSONSerialize(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .reference = false, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_STRING
+					MiniScript::TYPE_STRING
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -50,9 +50,9 @@ void MiniScriptJSON::registerMethods(MiniScript* miniScript) {
 			ScriptMethodJSONDeserialize(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "json", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "json", .optional = false, .reference = false, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED
+					MiniScript::TYPE_PSEUDO_MIXED
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {

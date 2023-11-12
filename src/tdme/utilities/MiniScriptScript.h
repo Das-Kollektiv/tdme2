@@ -6,7 +6,7 @@
 using tdme::utilities::MiniScript;
 
 /**
- * MiniScript Script
+ * MiniScript script script functions
  * @author Andreas Drewke
  */
 class tdme::utilities::MiniScriptScript {

@@ -6,7 +6,7 @@
 using tdme::utilities::MiniScript;
 
 /**
- * MiniScript XML
+ * MiniScript xml functions
  * @author Andreas Drewke
  */
 class tdme::utilities::MiniScriptXML {

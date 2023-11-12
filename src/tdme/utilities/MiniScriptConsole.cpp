@@ -45,7 +45,7 @@ void MiniScriptConsole::registerMethods(MiniScript* miniScript) {
 			ScriptMethodConsoleDump(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .reference = false, .nullable = false }
 					}
 				),
 				miniScript(miniScript) {}

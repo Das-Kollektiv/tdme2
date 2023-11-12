@@ -23,7 +23,7 @@ void MiniScriptTime::registerMethods(MiniScript* miniScript) {
 			MiniScript* miniScript { nullptr };
 		public:
 			ScriptMethodTimeGetCurrentMillis(MiniScript* miniScript):
-				MiniScript::ScriptMethod({}, MiniScript::ScriptVariableType::TYPE_INTEGER),
+				MiniScript::ScriptMethod({}, MiniScript::TYPE_INTEGER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "time.getCurrentMillis";
@@ -43,9 +43,9 @@ void MiniScriptTime::registerMethods(MiniScript* miniScript) {
 			ScriptMethodTimeGetAsString(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "format", .optional = true, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "format", .optional = true, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_STRING
+					MiniScript::TYPE_STRING
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {

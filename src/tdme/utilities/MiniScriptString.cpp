@@ -26,9 +26,9 @@ void MiniScriptString::registerMethods(MiniScript* miniScript) {
 			ScriptMethodString(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_STRING
+					MiniScript::TYPE_STRING
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -55,9 +55,9 @@ void MiniScriptString::registerMethods(MiniScript* miniScript) {
 			ScriptMethodStringLength(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_INTEGER
+					MiniScript::TYPE_INTEGER
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -84,10 +84,10 @@ void MiniScriptString::registerMethods(MiniScript* miniScript) {
 			ScriptMethodStringCharAt(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "index", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_INTEGER, .name = "index", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_STRING
+					MiniScript::TYPE_STRING
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -116,10 +116,10 @@ void MiniScriptString::registerMethods(MiniScript* miniScript) {
 			ScriptMethodStringStartsWith(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "prefix", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "prefix", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_BOOLEAN
+					MiniScript::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -148,10 +148,10 @@ void MiniScriptString::registerMethods(MiniScript* miniScript) {
 			ScriptMethodStringEndsWith(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "suffix", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "suffix", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_BOOLEAN
+					MiniScript::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -180,12 +180,12 @@ void MiniScriptString::registerMethods(MiniScript* miniScript) {
 			ScriptMethodStringReplace(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "what", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "by", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "beginIndex", .optional = true, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "what", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "by", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_INTEGER, .name = "beginIndex", .optional = true, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_STRING
+					MiniScript::TYPE_STRING
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -218,11 +218,11 @@ void MiniScriptString::registerMethods(MiniScript* miniScript) {
 			ScriptMethodStringIndexOf(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "what", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "beginIndex", .optional = true, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "what", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_INTEGER, .name = "beginIndex", .optional = true, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_INTEGER
+					MiniScript::TYPE_INTEGER
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -253,11 +253,11 @@ void MiniScriptString::registerMethods(MiniScript* miniScript) {
 			ScriptMethodStringFirstIndexOf(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "what", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "beginIndex", .optional = true, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "what", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_INTEGER, .name = "beginIndex", .optional = true, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_INTEGER
+					MiniScript::TYPE_INTEGER
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -288,11 +288,11 @@ void MiniScriptString::registerMethods(MiniScript* miniScript) {
 			ScriptMethodStringLastIndexOf(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "what", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "beginIndex", .optional = true, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "what", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_INTEGER, .name = "beginIndex", .optional = true, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_INTEGER
+					MiniScript::TYPE_INTEGER
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -323,11 +323,11 @@ void MiniScriptString::registerMethods(MiniScript* miniScript) {
 			ScriptMethodStringSubString(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "beginIndex", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "endIndex", .optional = true, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_INTEGER, .name = "beginIndex", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_INTEGER, .name = "endIndex", .optional = true, .reference = false, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_STRING
+					MiniScript::TYPE_STRING
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -362,10 +362,10 @@ void MiniScriptString::registerMethods(MiniScript* miniScript) {
 			ScriptMethodStringEqualsIgnoreCase(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "other", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "other", .optional = false, .reference = false, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_BOOLEAN
+					MiniScript::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -394,9 +394,9 @@ void MiniScriptString::registerMethods(MiniScript* miniScript) {
 			ScriptMethodStringTrim(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_STRING
+					MiniScript::TYPE_STRING
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -423,10 +423,10 @@ void MiniScriptString::registerMethods(MiniScript* miniScript) {
 			ScriptMethodStringRegexMatch(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "pattern", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "pattern", .optional = false, .reference = false, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_BOOLEAN
+					MiniScript::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -455,11 +455,11 @@ void MiniScriptString::registerMethods(MiniScript* miniScript) {
 			ScriptMethodStringRegexReplace(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "pattern", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "by", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "pattern", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "by", .optional = false, .reference = false, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_STRING
+					MiniScript::TYPE_STRING
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -490,10 +490,10 @@ void MiniScriptString::registerMethods(MiniScript* miniScript) {
 			ScriptMethodStringTokenize(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "delimiters", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "delimiters", .optional = false, .reference = false, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_ARRAY
+					MiniScript::TYPE_ARRAY
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -527,9 +527,9 @@ void MiniScriptString::registerMethods(MiniScript* miniScript) {
 			ScriptMethodStringSpace(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "spaces", .optional = true, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_INTEGER, .name = "spaces", .optional = true, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_STRING
+					MiniScript::TYPE_STRING
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -555,7 +555,7 @@ void MiniScriptString::registerMethods(MiniScript* miniScript) {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodStringConcatenate(MiniScript* miniScript): MiniScript::ScriptMethod({}, MiniScript::ScriptVariableType::TYPE_STRING), miniScript(miniScript) {}
+			ScriptMethodStringConcatenate(MiniScript* miniScript): MiniScript::ScriptMethod({}, MiniScript::TYPE_STRING), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "string.concatenate";
 			}
@@ -581,9 +581,9 @@ void MiniScriptString::registerMethods(MiniScript* miniScript) {
 			ScriptMethodToStringUpperCase(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_STRING
+					MiniScript::TYPE_STRING
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -610,9 +610,9 @@ void MiniScriptString::registerMethods(MiniScript* miniScript) {
 			ScriptMethodToStringLowerCase(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_STRING
+					MiniScript::TYPE_STRING
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -639,9 +639,9 @@ void MiniScriptString::registerMethods(MiniScript* miniScript) {
 			ScriptMethodStringIsEmpty(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_BOOLEAN
+					MiniScript::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -668,9 +668,9 @@ void MiniScriptString::registerMethods(MiniScript* miniScript) {
 			ScriptMethodStringIsFloat(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_BOOLEAN
+					MiniScript::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -697,9 +697,9 @@ void MiniScriptString::registerMethods(MiniScript* miniScript) {
 			ScriptMethodStringIsInteger(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_BOOLEAN
+					MiniScript::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -726,11 +726,11 @@ void MiniScriptString::registerMethods(MiniScript* miniScript) {
 			ScriptMethodStringPadLeft(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "by", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "toSize", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "by", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_INTEGER, .name = "toSize", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_STRING
+					MiniScript::TYPE_STRING
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -761,11 +761,11 @@ void MiniScriptString::registerMethods(MiniScript* miniScript) {
 			ScriptMethodStringPadRight(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "by", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "toSize", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "string", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "by", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_INTEGER, .name = "toSize", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_STRING
+					MiniScript::TYPE_STRING
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {

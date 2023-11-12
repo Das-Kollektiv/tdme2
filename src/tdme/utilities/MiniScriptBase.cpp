@@ -20,9 +20,9 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodReturn(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = true, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_PSEUDO_MIXED, .name = "value", .optional = true, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_NULL
+					MiniScript::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -95,7 +95,7 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodForTime(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "time", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_INTEGER, .name = "time", .optional = false, .reference = false, .nullable = false }
 					}
 				),
 				miniScript(miniScript) {}
@@ -139,7 +139,7 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodForCondition(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_BOOLEAN, .name = "condition", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_BOOLEAN, .name = "condition", .optional = false, .reference = false, .nullable = false }
 					}
 				),
 				miniScript(miniScript) {}
@@ -174,7 +174,7 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodIfCondition(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_BOOLEAN, .name = "condition", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_BOOLEAN, .name = "condition", .optional = false, .reference = false, .nullable = false }
 					}
 				),
 				miniScript(miniScript) {}
@@ -209,7 +209,7 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodElseIfCondition(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_BOOLEAN, .name = "condition", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_BOOLEAN, .name = "condition", .optional = false, .reference = false, .nullable = false }
 					}
 				),
 				miniScript(miniScript) {}
@@ -276,10 +276,10 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodEquals(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_BOOLEAN
+					MiniScript::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -314,10 +314,10 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodNotEqual(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_BOOLEAN
+					MiniScript::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -353,9 +353,9 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodInt(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "int", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_INTEGER, .name = "int", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_INTEGER
+					MiniScript::TYPE_INTEGER
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -383,9 +383,9 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodFloat(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "float", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_FLOAT, .name = "float", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_FLOAT
+					MiniScript::TYPE_FLOAT
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -413,10 +413,10 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodGreater(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_BOOLEAN),
+					MiniScript::TYPE_BOOLEAN),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "greater";
@@ -459,10 +459,10 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodGreaterEquals(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_BOOLEAN),
+					MiniScript::TYPE_BOOLEAN),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "greaterEquals";
@@ -505,10 +505,10 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodLesser(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_BOOLEAN),
+					MiniScript::TYPE_BOOLEAN),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "lesser";
@@ -551,10 +551,10 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodLesserEquals(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_BOOLEAN),
+					MiniScript::TYPE_BOOLEAN),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "lesserEquals";
@@ -598,9 +598,9 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodBool(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_BOOLEAN, .name = "bool", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_BOOLEAN, .name = "bool", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_BOOLEAN
+					MiniScript::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -628,9 +628,9 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodNot(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_BOOLEAN, .name = "bool", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_BOOLEAN, .name = "bool", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_BOOLEAN), miniScript(miniScript) {}
+					MiniScript::TYPE_BOOLEAN), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "not";
 			}
@@ -659,10 +659,10 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodAnd(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_BOOLEAN, .name = "a", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_BOOLEAN, .name = "b", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_BOOLEAN, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_BOOLEAN, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_BOOLEAN
+					MiniScript::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -703,10 +703,10 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodOr(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_BOOLEAN, .name = "a", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_BOOLEAN, .name = "b", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_BOOLEAN, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_BOOLEAN, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_BOOLEAN
+					MiniScript::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -748,9 +748,9 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodGetVariable(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "variable", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED
+					MiniScript::TYPE_PSEUDO_MIXED
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -779,9 +779,9 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodGetVariableReference(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "variable", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED
+					MiniScript::TYPE_PSEUDO_MIXED
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -812,10 +812,10 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodSetVariable(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "variable", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED
+					MiniScript::TYPE_PSEUDO_MIXED
 				),
 				miniScript(miniScript) {
 				//
@@ -850,9 +850,9 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodUnsetVariable(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_STRING, .name = "variable", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_NULL
+					MiniScript::TYPE_NULL
 				),
 				miniScript(miniScript) {
 				//
@@ -882,9 +882,9 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodIncrement(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "variable", .optional = false, .reference = true, .nullable = false },
+						{ .type = MiniScript::TYPE_INTEGER, .name = "variable", .optional = false, .reference = true, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_INTEGER
+					MiniScript::TYPE_INTEGER
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -916,9 +916,9 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodDecrement(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "variable", .optional = false, .reference = true, .nullable = false },
+						{ .type = MiniScript::TYPE_INTEGER, .name = "variable", .optional = false, .reference = true, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_INTEGER
+					MiniScript::TYPE_INTEGER
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -951,9 +951,9 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodBitwiseNot(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "value", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_INTEGER, .name = "value", .optional = false, .reference = false, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_INTEGER),
+					MiniScript::TYPE_INTEGER),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "bitwiseNot";
@@ -982,10 +982,10 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodBitwiseAnd(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "a", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "b", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_INTEGER, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_INTEGER, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_INTEGER),
+					MiniScript::TYPE_INTEGER),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "bitwiseAnd";
@@ -1016,10 +1016,10 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodBitwiseOr(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "a", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "b", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_INTEGER, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_INTEGER, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_INTEGER),
+					MiniScript::TYPE_INTEGER),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "bitwiseOr";
@@ -1050,10 +1050,10 @@ void MiniScriptBase::registerMethods(MiniScript* miniScript) {
 			ScriptMethodBitwiseXor(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "a", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_INTEGER, .name = "b", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_INTEGER, .name = "a", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_INTEGER, .name = "b", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_INTEGER),
+					MiniScript::TYPE_INTEGER),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "bitwiseXor";

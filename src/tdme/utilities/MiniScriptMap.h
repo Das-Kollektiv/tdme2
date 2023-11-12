@@ -6,7 +6,7 @@
 using tdme::utilities::MiniScript;
 
 /**
- * MiniScript Map
+ * MiniScript script map class
  * @author Andreas Drewke
  */
 class tdme::utilities::MiniScriptMap {

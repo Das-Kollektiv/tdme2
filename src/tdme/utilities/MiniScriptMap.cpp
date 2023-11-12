@@ -21,7 +21,7 @@ void MiniScriptMap::registerMethods(MiniScript* miniScript) {
 			ScriptMethodMap(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{},
-					MiniScript::ScriptVariableType::TYPE_MAP
+					MiniScript::TYPE_MAP
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -42,11 +42,11 @@ void MiniScriptMap::registerMethods(MiniScript* miniScript) {
 			ScriptMethodMapSet(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_MAP, .name = "map", .optional = false, .reference = true, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_MAP, .name = "map", .optional = false, .reference = true, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "key", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_NULL
+					MiniScript::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -56,7 +56,7 @@ void MiniScriptMap::registerMethods(MiniScript* miniScript) {
 				//
 				string key;
 				if (argumentValues.size() != 3 ||
-					argumentValues[0].getType() != MiniScript::ScriptVariableType::TYPE_MAP ||
+					argumentValues[0].getType() != MiniScript::TYPE_MAP ||
 					MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -76,10 +76,10 @@ void MiniScriptMap::registerMethods(MiniScript* miniScript) {
 			ScriptMethodMapHas(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_MAP, .name = "map", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_MAP, .name = "map", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "key", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_BOOLEAN
+					MiniScript::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -89,7 +89,7 @@ void MiniScriptMap::registerMethods(MiniScript* miniScript) {
 				//
 				string key;
 				if (argumentValues.size() < 2 ||
-					argumentValues[0].getType() != MiniScript::ScriptVariableType::TYPE_MAP ||
+					argumentValues[0].getType() != MiniScript::TYPE_MAP ||
 					MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -109,10 +109,10 @@ void MiniScriptMap::registerMethods(MiniScript* miniScript) {
 			ScriptMethodMapGet(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_MAP, .name = "map", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_MAP, .name = "map", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "key", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED
+					MiniScript::TYPE_PSEUDO_MIXED
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -122,7 +122,7 @@ void MiniScriptMap::registerMethods(MiniScript* miniScript) {
 				//
 				string key;
 				if (argumentValues.size() < 2 ||
-					argumentValues[0].getType() != MiniScript::ScriptVariableType::TYPE_MAP ||
+					argumentValues[0].getType() != MiniScript::TYPE_MAP ||
 					MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -142,10 +142,10 @@ void MiniScriptMap::registerMethods(MiniScript* miniScript) {
 			ScriptMethodMapRemove(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_MAP, .name = "map", .optional = false, .reference = true, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_MAP, .name = "map", .optional = false, .reference = true, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "key", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_NULL
+					MiniScript::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -155,7 +155,7 @@ void MiniScriptMap::registerMethods(MiniScript* miniScript) {
 				//
 				string key;
 				if (argumentValues.size() < 2 ||
-					argumentValues[0].getType() != MiniScript::ScriptVariableType::TYPE_MAP ||
+					argumentValues[0].getType() != MiniScript::TYPE_MAP ||
 					MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -175,9 +175,9 @@ void MiniScriptMap::registerMethods(MiniScript* miniScript) {
 			ScriptMethodMapGetKeys(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_MAP, .name = "map", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_MAP, .name = "map", .optional = false, .reference = false, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_ARRAY
+					MiniScript::TYPE_ARRAY
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -186,7 +186,7 @@ void MiniScriptMap::registerMethods(MiniScript* miniScript) {
 			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				//
 				if (argumentValues.size() != 1 ||
-					argumentValues[0].getType() != MiniScript::ScriptVariableType::TYPE_MAP) {
+					argumentValues[0].getType() != MiniScript::TYPE_MAP) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -209,9 +209,9 @@ void MiniScriptMap::registerMethods(MiniScript* miniScript) {
 			ScriptMethodMapGetValues(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_MAP, .name = "map", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_MAP, .name = "map", .optional = false, .reference = false, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_ARRAY
+					MiniScript::TYPE_ARRAY
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -220,7 +220,7 @@ void MiniScriptMap::registerMethods(MiniScript* miniScript) {
 			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				//
 				if (argumentValues.size() != 1 ||
-					argumentValues[0].getType() != MiniScript::ScriptVariableType::TYPE_MAP) {
+					argumentValues[0].getType() != MiniScript::TYPE_MAP) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {

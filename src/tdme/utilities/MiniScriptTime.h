@@ -6,7 +6,7 @@
 using tdme::utilities::MiniScript;
 
 /**
- * MiniScript Time
+ * MiniScript time functions
  * @author Andreas Drewke
  */
 class tdme::utilities::MiniScriptTime {

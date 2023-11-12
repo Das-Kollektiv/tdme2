@@ -21,7 +21,7 @@ void MiniScriptSet::registerMethods(MiniScript* miniScript) {
 			ScriptMethodSet(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{},
-					MiniScript::ScriptVariableType::TYPE_SET
+					MiniScript::TYPE_SET
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -42,10 +42,10 @@ void MiniScriptSet::registerMethods(MiniScript* miniScript) {
 			ScriptMethodSetInsert(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_SET, .name = "set", .optional = false, .reference = true, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_SET, .name = "set", .optional = false, .reference = true, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "key", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_NULL
+					MiniScript::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -55,7 +55,7 @@ void MiniScriptSet::registerMethods(MiniScript* miniScript) {
 				//
 				string key;
 				if (argumentValues.size() != 2 ||
-					argumentValues[0].getType() != MiniScript::ScriptVariableType::TYPE_SET ||
+					argumentValues[0].getType() != MiniScript::TYPE_SET ||
 					MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -75,10 +75,10 @@ void MiniScriptSet::registerMethods(MiniScript* miniScript) {
 			ScriptMethodSetHas(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_SET, .name = "set", .optional = false, .reference = false, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_SET, .name = "set", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "key", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_BOOLEAN
+					MiniScript::TYPE_BOOLEAN
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -88,7 +88,7 @@ void MiniScriptSet::registerMethods(MiniScript* miniScript) {
 				//
 				string key;
 				if (argumentValues.size() < 2 ||
-					argumentValues[0].getType() != MiniScript::ScriptVariableType::TYPE_SET ||
+					argumentValues[0].getType() != MiniScript::TYPE_SET ||
 					MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -108,10 +108,10 @@ void MiniScriptSet::registerMethods(MiniScript* miniScript) {
 			ScriptMethodSetRemove(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_SET, .name = "set", .optional = false, .reference = true, .nullable = false },
-						{ .type = MiniScript::ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .reference = false, .nullable = false }
+						{ .type = MiniScript::TYPE_SET, .name = "set", .optional = false, .reference = true, .nullable = false },
+						{ .type = MiniScript::TYPE_STRING, .name = "key", .optional = false, .reference = false, .nullable = false }
 					},
-					MiniScript::ScriptVariableType::TYPE_NULL
+					MiniScript::TYPE_NULL
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -121,7 +121,7 @@ void MiniScriptSet::registerMethods(MiniScript* miniScript) {
 				//
 				string key;
 				if (argumentValues.size() < 2 ||
-					argumentValues[0].getType() != MiniScript::ScriptVariableType::TYPE_SET ||
+					argumentValues[0].getType() != MiniScript::TYPE_SET ||
 					MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -141,9 +141,9 @@ void MiniScriptSet::registerMethods(MiniScript* miniScript) {
 			ScriptMethodSetGetKeys(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{ .type = MiniScript::ScriptVariableType::TYPE_SET, .name = "set", .optional = false, .reference = false, .nullable = false },
+						{ .type = MiniScript::TYPE_SET, .name = "set", .optional = false, .reference = false, .nullable = false },
 					},
-					MiniScript::ScriptVariableType::TYPE_ARRAY
+					MiniScript::TYPE_ARRAY
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -152,7 +152,7 @@ void MiniScriptSet::registerMethods(MiniScript* miniScript) {
 			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				//
 				if (argumentValues.size() != 1 ||
-					argumentValues[0].getType() != MiniScript::ScriptVariableType::TYPE_SET) {
+					argumentValues[0].getType() != MiniScript::TYPE_SET) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
