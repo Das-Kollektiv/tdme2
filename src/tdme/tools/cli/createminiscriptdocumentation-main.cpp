@@ -147,7 +147,7 @@ static void generateMiniScriptClassesDocumentation(const string& heading, int ma
 		// no arguments or no "this" argument
 		auto _static =
 			scriptMethod->getArgumentTypes().empty() == true ||
-			scriptMethod->getArgumentTypes()[0].name != className;
+			scriptMethod->getArgumentTypes()[0].name != className ||
 			EngineMiniScript::ScriptVariable::getClassName(scriptMethod->getArgumentTypes()[0].type) != className;
 		//
 		allClassMethods.insert(scriptMethod->getMethodName());
@@ -177,7 +177,7 @@ static void generateMiniScriptClassesDocumentation(const string& heading, int ma
 		if (_static == false) {
 			_static =
 				scriptMethod->getArgumentTypes().empty() == true ||
-				scriptMethod->getArgumentTypes()[0].name != className;
+				scriptMethod->getArgumentTypes()[0].name != className ||
 				EngineMiniScript::ScriptVariable::getClassName(scriptMethod->getArgumentTypes()[0].type) != className;
 		}
 		//
