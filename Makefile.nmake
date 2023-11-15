@@ -686,6 +686,33 @@ EXT_CPPSPLINE_SRCS = \
 EXT_BC7_SRCS = \
 	ext/bc7enc_rdo/bc7decomp.cpp \
 	ext/bc7enc_rdo/bc7enc.cpp
+	
+EXT_MINISCRIPT_SRCS = \
+	src/miniscript/utilities/Base64.cpp \
+	src/miniscript/utilities/Console.cpp \
+	src/miniscript/utilities/ExceptionBase.cpp \
+	src/miniscript/utilities/FileSystem.cpp \
+	src/miniscript/utilities/Float.cpp \
+	src/miniscript/utilities/Hex.cpp \
+	src/miniscript/utilities/Integer.cpp \
+	src/miniscript/utilities/Properties.cpp \
+	src/miniscript/utilities/SHA256.cpp \
+	src/miniscript/utilities/StringTools.cpp \
+	src/miniscript/utilities/StringTokenizer.cpp \
+	src/miniscript/miniscript/ArrayMethods.cpp \
+	src/miniscript/miniscript/BaseMethods.cpp \
+	src/miniscript/miniscript/ConsoleMethods.cpp \
+	src/miniscript/miniscript/JSONMethods.cpp \
+	src/miniscript/miniscript/MapMethods.cpp \
+	src/miniscript/miniscript/MathMethods.cpp \
+	src/miniscript/miniscript/MiniScript.cpp \
+	src/miniscript/miniscript/ScriptMethods.cpp \
+	src/miniscript/miniscript/SetMethods.cpp \
+	src/miniscript/miniscript/StringMethods.cpp \
+	src/miniscript/miniscript/TimeMethods.cpp \
+	src/miniscript/miniscript/Transpiler.cpp \
+	src/miniscript/miniscript/XMLMethods.cpp \
+	src/miniscript/miniscript/Version.cpp
 
 EXT_SRCS = \
 	$(EXT_TINYXML_SRCS) \
@@ -697,6 +724,7 @@ EXT_SRCS = \
 	$(EXT_REACTPHYSICS3D_SRCS) \
 	$(EXT_CPPSPLINE_SRCS) \
 	$(EXT_BC7_SRCS) \
+	$(EXT_MINISCRIPT_SRCS)
 
 OPENGL3CORE_RENDERER_LIB_SRCS = \
 	src/tdme/engine/subsystems/renderer/EngineGL3Renderer.cpp \
@@ -799,7 +827,6 @@ all: \
 	generatelicenses \
 	importtmodel \
 	importtscene \
-	miniscript \
 	msclib2dll \
 	makefilegenerator \
 	nmakefilegenerator \
@@ -1290,9 +1317,6 @@ copy-executables:
 	copy $(MSCBIN)\importtmodel.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\importtscene.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\makefilegenerator.exe bin\tdme\tools\cli\.
-	copy $(MSCBIN)\miniscripttranspiler.exe bin\tdme\tools\cli\.
-	copy $(MSCBIN)\miniscriptuntranspiler.exe bin\tdme\tools\cli\.
-	copy $(MSCBIN)\miniscript.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\msclib2dll.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\nmakefilegenerator.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\optimizemodel.exe bin\tdme\tools\cli\.
