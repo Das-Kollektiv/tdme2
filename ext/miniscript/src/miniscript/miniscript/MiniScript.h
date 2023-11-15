@@ -373,12 +373,45 @@ public:
 		};
 
 		//
-		ScriptVariableType type { TYPE_NULL };	// 4, maybe use a int16_t here
-		uint64_t valuePtr { 0LL };				// 8
-		// TODO: union initializer/reference
-		Initializer* initializer { nullptr };	// 8
-		ScriptVariable* reference { nullptr };	// 8
-		int referenceCounter { 1 };				// 4, maybe use a int16_t here
+		static constexpr uint16_t REFERENCE_BIT_VALUE { 32768 };
+		static constexpr uint16_t TYPE_BITS_VALUE { 32767 };
+
+		//
+		union ir {
+			Initializer* initializer;
+			ScriptVariable* reference;
+		};
+
+		// 24 bytes
+		uint16_t typeAndReference { TYPE_NULL };	// 4 bytes
+		int16_t referenceCounter { 1 };				// 4 bytes
+		uint64_t valuePtr { 0LL };					// 8 bytes
+		ir ir {};									// 8 bytes
+
+		/**
+		 * @return is reference
+		 */
+		inline bool isReference() const {
+			return (typeAndReference & REFERENCE_BIT_VALUE) == REFERENCE_BIT_VALUE;
+		}
+
+		/**
+		 * @return unset reference
+		 */
+		inline void unsetReference() {
+			typeAndReference&= TYPE_BITS_VALUE;
+			ir.reference = nullptr;
+		}
+
+		/**
+		 * Set reference
+		 * @param variable variable
+		 */
+		inline void setReference(ScriptVariable* variable) {
+			typeAndReference|= REFERENCE_BIT_VALUE;
+			ir.reference = (ScriptVariable*)variable;
+			ir.reference->acquireReference();
+		}
 
 		/**
 		 * Acquire reference
@@ -391,11 +424,11 @@ public:
 		 * Release reference
 		 */
 		inline void releaseReference() {
-			if (reference != nullptr) {
-				reference->releaseReference();
+			if (isReference() == true) {
+				ir.reference->releaseReference();
 			}
 			if (--referenceCounter == 0) {
-				reference = nullptr;
+				if (isReference() == true) unsetReference();
 				setType(TYPE_NULL);
 				delete this;
 			}
@@ -406,7 +439,7 @@ public:
 		 * @return initializer
 		 */
 		inline Initializer*& getInitializerReference() {
-			return reference != nullptr?reference->initializer:initializer;
+			return isReference() == true?ir.reference->ir.initializer:ir.initializer;
 		}
 
 		/**
@@ -414,7 +447,7 @@ public:
 		 * @return value ptr
 		 */
 		inline const uint64_t& getValuePtrReference() const {
-			return reference != nullptr?reference->valuePtr:valuePtr;
+			return isReference() == true?ir.reference->valuePtr:valuePtr;
 		}
 
 		/**
@@ -422,7 +455,7 @@ public:
 		 * @return value ptr
 		 */
 		inline uint64_t& getValuePtrReference() {
-			return reference != nullptr?reference->valuePtr:valuePtr;
+			return isReference() == true?ir.reference->valuePtr:valuePtr;
 		}
 
 		/**
@@ -538,11 +571,10 @@ public:
 		 */
 		inline static ScriptVariable createReferenceVariable(const ScriptVariable* variable) {
 			// copy a reference variable is cheap
-			if (variable->reference != nullptr) return *variable;
+			if (variable->isReference() == true) return *variable;
 			//
 			ScriptVariable referenceVariable;
-			referenceVariable.reference = (ScriptVariable*)variable; // TODO: improve me!
-			referenceVariable.reference->acquireReference();
+			referenceVariable.setReference((ScriptVariable*)variable);
 			return referenceVariable;
 		}
 
@@ -553,11 +585,10 @@ public:
 		 */
 		inline static ScriptVariable* createReferenceVariablePointer(const ScriptVariable* variable) {
 			// copy a reference variable is cheap
-			if (variable->reference != nullptr) return new ScriptVariable(*variable);
+			if (variable->isReference() == true) return new ScriptVariable(*variable);
 			//
 			ScriptVariable* referenceVariable = new ScriptVariable();
-			referenceVariable->reference = (ScriptVariable*)variable; // TODO: improve me!
-			referenceVariable->reference->acquireReference();
+			referenceVariable->setReference((ScriptVariable*)variable);
 			return referenceVariable;
 		}
 
@@ -587,7 +618,7 @@ public:
 					to.setType(TYPE_FUNCTION_CALL);
 					to.getStringValueReference() = from.getStringValueReference();
 					// copy initializer if we have any
-					to.getInitializer()->copy(from.initializer);
+					to.getInitializer()->copy(from.getInitializer());
 					//
 					break;
 				case TYPE_FUNCTION_ASSIGNMENT:
@@ -601,19 +632,19 @@ public:
 				case TYPE_ARRAY:
 					to.setValue(from.getArrayValueReference());
 					// copy initializer if we have any
-					to.getInitializer()->copy(from.initializer);
+					to.getInitializer()->copy(from.getInitializer());
 					//
 					break;
 				case TYPE_MAP:
 					to.setValue(from.getMapValueReference());
 					// copy initializer if we have any
-					to.getInitializer()->copy(from.initializer);
+					to.getInitializer()->copy(from.getInitializer());
 					//
 					break;
 				case TYPE_SET:
 					to.setValue(from.getSetValueReference());
 					// copy initializer if we have any
-					to.getInitializer()->copy(from.initializer);
+					to.getInitializer()->copy(from.getInitializer());
 					//
 					break;
 				default:
@@ -635,7 +666,7 @@ public:
 		 */
 		inline static ScriptVariable createNonReferenceVariable(const ScriptVariable* variable) {
 			// copy a non reference variable is cheap
-			if (variable->reference == nullptr) return *variable;
+			if (variable->isReference() == false) return *variable;
 			// otherwise do the copy
 			ScriptVariable nonReferenceVariable;
 			//
@@ -651,7 +682,7 @@ public:
 		 */
 		inline static ScriptVariable* createNonReferenceVariablePointer(const ScriptVariable* variable) {
 			// copy a non reference variable is cheap
-			if (variable->reference == nullptr) return new ScriptVariable(*variable);
+			if (variable->isReference() == false) return new ScriptVariable(*variable);
 			// otherwise do the copy
 			ScriptVariable* nonReferenceVariable = new ScriptVariable();
 			//
@@ -665,9 +696,8 @@ public:
 		 * @param variable variable to copy
 		 */
 		inline ScriptVariable(const ScriptVariable& variable) {
-			if (variable.reference != nullptr) {
-				reference = variable.reference;
-				variable.reference->acquireReference();
+			if (variable.isReference() == true) {
+				setReference(variable.ir.reference);
 			} else {
 				copyScriptVariable(*this, variable);
 			}
@@ -678,12 +708,12 @@ public:
 		 * @param variable variable to move from
 		 */
 		inline ScriptVariable(ScriptVariable&& variable):
-			type(exchange(variable.type, MiniScript::TYPE_NULL)),
+			typeAndReference(exchange(variable.typeAndReference, static_cast<int>(MiniScript::TYPE_NULL))),
 			valuePtr(exchange(variable.valuePtr, 0ll)),
-			initializer(exchange(variable.initializer, nullptr)),
-			reference(exchange(variable.reference, nullptr)),
 			referenceCounter(exchange(variable.referenceCounter, 1)) {
-			//
+			// TODO: improve me
+			ir.initializer = variable.ir.initializer;
+			variable.ir.initializer = nullptr;
 		}
 
 		/**
@@ -692,9 +722,17 @@ public:
 		 * @return this variable
 		 */
 		inline ScriptVariable& operator=(const ScriptVariable& variable) {
-			if (variable.reference != nullptr) {
-				reference = variable.reference;
-				variable.reference->acquireReference();
+			// set up new variable
+			if (variable.isReference() == true) {
+				// release current reference
+				if (isReference() == true) {
+					ir.reference->releaseReference();
+					unsetReference();
+				}
+				//
+				setType(TYPE_NULL);
+				//
+				setReference(variable.ir.reference);
 			} else {
 				copyScriptVariable(*this, variable);
 			}
@@ -708,10 +746,9 @@ public:
 		 * @return this script variable
 		 */
 		inline ScriptVariable& operator=(ScriptVariable&& variable) {
-			swap(type, variable.type);
+			swap(typeAndReference, variable.typeAndReference);
 			swap(valuePtr, variable.valuePtr);
-			swap(initializer, variable.initializer);
-			swap(reference, variable.reference);
+			swap(ir, variable.ir);
 			swap(referenceCounter, variable.referenceCounter);
 			//
 			return *this;
@@ -727,11 +764,11 @@ public:
 		 * Destructor
 		 */
 		inline ~ScriptVariable() {
-			if (reference != nullptr) {
-				reference->releaseReference();
+			if (isReference() == true) {
+				ir.reference->releaseReference();
 			}
 			if (--referenceCounter == 0) {
-				reference = nullptr;
+				if (isReference() == true) unsetReference();
 				setType(TYPE_NULL);
 			}
 		}
@@ -788,7 +825,7 @@ public:
 		 * @return type
 		 */
 		inline ScriptVariableType getType() const {
-			return reference != nullptr?reference->type:type;
+			return static_cast<ScriptVariableType>((isReference() == true?ir.reference->typeAndReference:typeAndReference) & TYPE_BITS_VALUE);
 		}
 
 		/**
@@ -846,10 +883,10 @@ public:
 			}
 			this->getValuePtrReference() = 0LL;
 			//
-			if (reference != nullptr) {
-				reference->type = newType;
+			if (isReference() == true) {
+				ir.reference->typeAndReference = newType;
 			} else {
-				type = newType;
+				typeAndReference = newType;
 			}
 			//
 			switch(getType()) {
@@ -899,14 +936,14 @@ public:
 		 * @return initializer
 		 */
 		inline Initializer* getInitializer() const {
-			return reference != nullptr?reference->initializer:initializer;
+			return isReference() == true?ir.reference->ir.initializer:ir.initializer;
 		}
 
 		/**
 		 * @return value pointer
 		 */
 		inline const uint64_t getValuePtr() const {
-			return reference != nullptr?reference->valuePtr:valuePtr;
+			return isReference() == true?ir.reference->valuePtr:valuePtr;
 		}
 
 		/**
@@ -914,8 +951,8 @@ public:
 		 * @param valuePtr value pointer
 		 */
 		inline void setValuePtr(uint64_t valuePtr) {
-			if (reference != nullptr) {
-				reference->valuePtr = valuePtr;
+			if (isReference() == true) {
+				ir.reference->valuePtr = valuePtr;
 			} else {
 				this->valuePtr = valuePtr;
 			}
@@ -1755,7 +1792,7 @@ public:
 					}
 				default:
 					// custom data types
-					auto dataTypeIdx = static_cast<int>(type) - TYPE_PSEUDO_CUSTOM_DATATYPES;
+					auto dataTypeIdx = static_cast<int>(getType()) - TYPE_PSEUDO_CUSTOM_DATATYPES;
 					if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::scriptDataTypes.size()) {
 						_Console::println("ScriptVariable::getValueAsString(): unknown custom data type with id " + to_string(dataTypeIdx));
 						return result;

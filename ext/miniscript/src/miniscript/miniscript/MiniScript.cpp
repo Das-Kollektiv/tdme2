@@ -2939,7 +2939,7 @@ const MiniScript::ScriptVariable MiniScript::initializeArray(const string_view& 
 	}
 	//
 	auto initalizer = make_unique<MiniScript::ScriptVariable::Initializer>(string(initializerString), statement, nullptr);
-	variable.initializer->copy(initalizer.get());
+	variable.ir.initializer->copy(initalizer.get());
 	//
 	return variable;
 }
@@ -3310,7 +3310,7 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 	}
 	//
 	auto initalizer = make_unique<MiniScript::ScriptVariable::Initializer>(string(initializerString), statement, nullptr);
-	variable.initializer->copy(initalizer.get());
+	variable.ir.initializer->copy(initalizer.get());
 	//
 	return variable;
 }
@@ -3562,7 +3562,7 @@ inline bool MiniScript::evaluateInternal(const string& statement, const string& 
 }
 
 inline const MiniScript::ScriptVariable MiniScript::initializeVariable(const ScriptVariable& variable) {
-	switch (variable.type) {
+	switch (variable.getType()) {
 		case TYPE_ARRAY:
 			{
 				ScriptVariable arrayVariable;
