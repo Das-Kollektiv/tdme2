@@ -688,31 +688,31 @@ EXT_BC7_SRCS = \
 	ext/bc7enc_rdo/bc7enc.cpp
 	
 EXT_MINISCRIPT_SRCS = \
-	src/miniscript/utilities/Base64.cpp \
-	src/miniscript/utilities/Console.cpp \
-	src/miniscript/utilities/ExceptionBase.cpp \
-	src/miniscript/utilities/FileSystem.cpp \
-	src/miniscript/utilities/Float.cpp \
-	src/miniscript/utilities/Hex.cpp \
-	src/miniscript/utilities/Integer.cpp \
-	src/miniscript/utilities/Properties.cpp \
-	src/miniscript/utilities/SHA256.cpp \
-	src/miniscript/utilities/StringTools.cpp \
-	src/miniscript/utilities/StringTokenizer.cpp \
-	src/miniscript/miniscript/ArrayMethods.cpp \
-	src/miniscript/miniscript/BaseMethods.cpp \
-	src/miniscript/miniscript/ConsoleMethods.cpp \
-	src/miniscript/miniscript/JSONMethods.cpp \
-	src/miniscript/miniscript/MapMethods.cpp \
-	src/miniscript/miniscript/MathMethods.cpp \
-	src/miniscript/miniscript/MiniScript.cpp \
-	src/miniscript/miniscript/ScriptMethods.cpp \
-	src/miniscript/miniscript/SetMethods.cpp \
-	src/miniscript/miniscript/StringMethods.cpp \
-	src/miniscript/miniscript/TimeMethods.cpp \
-	src/miniscript/miniscript/Transpiler.cpp \
-	src/miniscript/miniscript/XMLMethods.cpp \
-	src/miniscript/miniscript/Version.cpp
+	ext/miniscript/src/miniscript/utilities/Base64.cpp \
+	ext/miniscript/src/miniscript/utilities/Console.cpp \
+	ext/miniscript/src/miniscript/utilities/ExceptionBase.cpp \
+	ext/miniscript/src/miniscript/utilities/FileSystem.cpp \
+	ext/miniscript/src/miniscript/utilities/Float.cpp \
+	ext/miniscript/src/miniscript/utilities/Hex.cpp \
+	ext/miniscript/src/miniscript/utilities/Integer.cpp \
+	ext/miniscript/src/miniscript/utilities/Properties.cpp \
+	ext/miniscript/src/miniscript/utilities/SHA256.cpp \
+	ext/miniscript/src/miniscript/utilities/StringTools.cpp \
+	ext/miniscript/src/miniscript/utilities/StringTokenizer.cpp \
+	ext/miniscript/src/miniscript/miniscript/ArrayMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/BaseMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/ConsoleMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/JSONMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/MapMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/MathMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/MiniScript.cpp \
+	ext/miniscript/src/miniscript/miniscript/ScriptMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/SetMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/StringMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/TimeMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/Transpiler.cpp \
+	ext/miniscript/src/miniscript/miniscript/XMLMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/Version.cpp
 
 EXT_SRCS = \
 	$(EXT_TINYXML_SRCS) \
