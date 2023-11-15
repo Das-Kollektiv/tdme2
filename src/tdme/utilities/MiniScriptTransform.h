@@ -2,14 +2,17 @@
 
 #include <span>
 
+#include <miniscript/miniscript/MiniScript.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/Transform.h>
-#include <tdme/utilities/MiniScript.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 using std::span;
 
+using miniscript::miniscript::MiniScript;
+
 using tdme::engine::Transform;
-using tdme::utilities::MiniScript;
 
 /**
  * MiniScript Transform data type

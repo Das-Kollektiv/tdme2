@@ -40,7 +40,7 @@ LIBS_LDFLAGS = \
 	/LIBPATH "ext\freetype\lib\win64\freetype.lib" \
 	/LIBPATH "ext\fbx\win64\lib\libfbxsdk.lib"
 
-FLAGS = /MT /MP /EHsc /O2 /std:c++20 /Zi /F 8388608 /D RAPIDJSON_HAS_STDSTRING /D GLFW_DLL
+FLAGS = /MT /MP /EHsc /O2 /std:c++20 /Zi /D RAPIDJSON_HAS_STDSTRING /D GLFW_DLL
 # /NODEFAULTLIB:msvcrt
 
 LD_FLAGS =
@@ -404,10 +404,6 @@ SRCS = \
 	src/tdme/tests/FoliageTest.cpp \
 	src/tdme/tests/MathOperatorTest.cpp \
 	src/tdme/tests/MiniScriptAdvancedTest.cpp \
-	src/tdme/tests/MiniScriptBaseTest.cpp \
-	src/tdme/tests/MiniScriptClassTest.cpp \
-	src/tdme/tests/MiniScriptEmitTest.cpp \
-	src/tdme/tests/MiniScriptFunctionsTest.cpp \
 	src/tdme/tests/PathFindingTest.cpp \
 	src/tdme/tests/PhysicsTest1.cpp \
 	src/tdme/tests/PhysicsTest2.cpp \
@@ -500,26 +496,13 @@ SRCS = \
 	src/tdme/utilities/Float.cpp \
 	src/tdme/utilities/Hex.cpp \
 	src/tdme/utilities/Integer.cpp \
-	src/tdme/utilities/MiniScript.cpp \
-	src/tdme/utilities/MiniScriptArray.cpp \
-	src/tdme/utilities/MiniScriptBase.cpp \
-	src/tdme/utilities/MiniScriptConsole.cpp \
-	src/tdme/utilities/MiniScriptJSON.cpp \
-	src/tdme/utilities/MiniScriptMap.cpp \
-	src/tdme/utilities/MiniScriptMath.cpp \
-	src/tdme/utilities/MiniScriptScript.cpp \
-	src/tdme/utilities/MiniScriptSet.cpp \
-	src/tdme/utilities/MiniScriptString.cpp \
 	src/tdme/utilities/MiniScriptTransform.cpp \
-	src/tdme/utilities/MiniScriptTranspiler.cpp \
 	src/tdme/utilities/MiniScriptMatrix3x3.cpp \
 	src/tdme/utilities/MiniScriptMatrix4x4.cpp \
 	src/tdme/utilities/MiniScriptQuaternion.cpp \
 	src/tdme/utilities/MiniScriptVector2.cpp \
 	src/tdme/utilities/MiniScriptVector3.cpp \
 	src/tdme/utilities/MiniScriptVector4.cpp \
-	src/tdme/utilities/MiniScriptTime.cpp \
-	src/tdme/utilities/MiniScriptXML.cpp \
 	src/tdme/utilities/ModelTools.cpp \
 	src/tdme/utilities/PathFinding.cpp \
 	src/tdme/utilities/Primitives.cpp \
@@ -819,8 +802,6 @@ all: \
 	miniscript \
 	msclib2dll \
 	makefilegenerator \
-	miniscripttranspiler \
-	miniscriptuntranspiler \
 	nmakefilegenerator \
 	optimizemodel \
 	parsehplusplus \
@@ -1023,15 +1004,15 @@ FoliageTest:
 	rc $(MSCBIN)\FoliageTest.exe.rc
 	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\FoliageTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FoliageTest-main.cpp $(MSCBIN)\FoliageTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
-MathOperatorTest:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc MathOperatorTest.exe $(MSCBIN)\MathOperatorTest.exe.rc
-	rc $(MSCBIN)\MathOperatorTest.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\MathOperatorTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/MathOperatorTest-main.cpp $(MSCBIN)\MathOperatorTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
-
 MiniScriptTest:
 	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc MiniScriptTest.exe $(MSCBIN)\MiniScriptTest.exe.rc
 	rc $(MSCBIN)\MiniScriptTest.exe.rc
 	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\MiniScriptTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/MiniScriptTest-main.cpp $(MSCBIN)\MiniScriptTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+MathOperatorTest:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc MathOperatorTest.exe $(MSCBIN)\MathOperatorTest.exe.rc
+	rc $(MSCBIN)\MathOperatorTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\MathOperatorTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/MathOperatorTest-main.cpp $(MSCBIN)\MathOperatorTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 PathFindingTest:
 	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc PathFindingTest.exe $(MSCBIN)\PathFindingTest.exe.rc
@@ -1197,16 +1178,6 @@ makefilegenerator:
 	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc makefilegenerator.exe $(MSCBIN)\makefilegenerator.exe.rc
 	rc $(MSCBIN)\makefilegenerator.exe.rc
 	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\makefilegenerator $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/makefilegenerator-main.cpp $(MSCBIN)\makefilegenerator.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
-
-miniscripttranspiler:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc miniscripttranspiler.exe $(MSCBIN)\miniscripttranspiler.exe.rc
-	rc $(MSCBIN)\miniscripttranspiler.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\miniscripttranspiler $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/miniscripttranspiler-main.cpp $(MSCBIN)\miniscripttranspiler.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
-
-miniscriptuntranspiler:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc miniscriptuntranspiler.exe $(MSCBIN)\miniscriptuntranspiler.exe.rc
-	rc $(MSCBIN)\miniscriptuntranspiler.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\miniscriptuntranspiler $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/miniscriptuntranspiler-main.cpp $(MSCBIN)\miniscriptuntranspiler.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 nmakefilegenerator:
 	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc nmakefilegenerator.exe $(MSCBIN)\nmakefilegenerator.exe.rc

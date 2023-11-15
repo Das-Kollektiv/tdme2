@@ -2,14 +2,17 @@
 
 #include <span>
 
+#include <miniscript/miniscript/MiniScript.h>
+
 #include <tdme/tdme.h>
 #include <tdme/math/Matrix3x3.h>
-#include <tdme/utilities/MiniScript.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 using std::span;
 
+using miniscript::miniscript::MiniScript;
+
 using tdme::math::Matrix3x3;
-using tdme::utilities::MiniScript;
 
 /**
  * MiniScript Matrix3x3 data type

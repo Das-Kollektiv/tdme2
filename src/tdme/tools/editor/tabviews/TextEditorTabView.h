@@ -16,6 +16,7 @@
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
 #include <tdme/utilities/EngineMiniScript.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::string;
 using std::to_string;
@@ -36,6 +37,7 @@ using tdme::tools::editor::tabcontrollers::TextEditorTabController;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
 using tdme::utilities::EngineMiniScript;
+using tdme::utilities::StringTools;
 
 /**
  * Text editor tab view

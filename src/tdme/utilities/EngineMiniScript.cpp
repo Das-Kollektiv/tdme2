@@ -4,13 +4,14 @@
 #include <string>
 #include <vector>
 
+#include <miniscript/miniscript/MiniScript.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/logics/LogicMiniScript.h>
 #include <tdme/gui/scripting/GUIMiniScript.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/MiniScript.h>
 #include <tdme/utilities/MiniScriptMatrix3x3.h>
 #include <tdme/utilities/MiniScriptMatrix4x4.h>
 #include <tdme/utilities/MiniScriptMatrix4x4.h>
@@ -19,6 +20,7 @@
 #include <tdme/utilities/MiniScriptVector2.h>
 #include <tdme/utilities/MiniScriptVector3.h>
 #include <tdme/utilities/MiniScriptVector4.h>
+#include <tdme/utilities/Exception.h>
 #include <tdme/utilities/StringTools.h>
 
 using tdme::utilities::EngineMiniScript;
@@ -28,12 +30,13 @@ using std::string;
 using std::unique_ptr;
 using std::vector;
 
+using miniscript::miniscript::MiniScript;
+
 using tdme::engine::logics::LogicMiniScript;
 using tdme::gui::scripting::GUIMiniScript;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
-using tdme::utilities::MiniScript;
 using tdme::utilities::MiniScriptMatrix3x3;
 using tdme::utilities::MiniScriptMatrix4x4;
 using tdme::utilities::MiniScriptMatrix4x4;
@@ -42,6 +45,7 @@ using tdme::utilities::MiniScriptTransform;
 using tdme::utilities::MiniScriptVector2;
 using tdme::utilities::MiniScriptVector3;
 using tdme::utilities::MiniScriptVector4;
+using tdme::utilities::Exception;
 using tdme::utilities::StringTools;
 
 void EngineMiniScript::registerDataTypes() {

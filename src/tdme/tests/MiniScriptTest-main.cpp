@@ -1,11 +1,5 @@
 #include <memory>
 
-#include "MiniScriptAdvancedTest.h"
-#include "MiniScriptBaseTest.h"
-#include "MiniScriptClassTest.h"
-#include "MiniScriptEmitTest.h"
-#include "MiniScriptFunctionsTest.h"
-
 using std::make_unique;
 
 #include <tdme/tdme.h>
@@ -21,7 +15,7 @@ int main(int argc, char *argv[]) {
 	EngineMiniScript::registerDataTypes();
 	// base test
 	{
-		auto script = make_unique<MiniScriptBaseTest>();
+		auto script = make_unique<EngineMiniScript>();
 		script->parseScript("resources/tests/scripts", "base-test.tscript");
 		Console::println("---------------------------------------------------------");
 		Console::println("Loaded test script: " + script->getScriptFileName() + ": runs " + (script->isNative() == true?"natively":"interpreted"));
@@ -41,7 +35,7 @@ int main(int argc, char *argv[]) {
 	}
 	// class test
 	{
-		auto script = make_unique<MiniScriptClassTest>();
+		auto script = make_unique<EngineMiniScript>();
 		script->parseScript("resources/tests/scripts", "class-test.tscript");
 		Console::println("---------------------------------------------------------");
 		Console::println("Loaded test script: " + script->getScriptFileName() + ": runs " + (script->isNative() == true?"natively":"interpreted"));
@@ -61,7 +55,7 @@ int main(int argc, char *argv[]) {
 	}
 	// advanced test
 	{
-		auto script = make_unique<MiniScriptAdvancedTest>();
+		auto script = make_unique<EngineMiniScript>();
 		script->parseScript("resources/tests/scripts", "advanced-test.tscript");
 		Console::println("---------------------------------------------------------");
 		Console::println("Loaded test script: " + script->getScriptFileName() + ": runs " + (script->isNative() == true?"natively":"interpreted"));
@@ -81,7 +75,7 @@ int main(int argc, char *argv[]) {
 	}
 	// emit test
 	{
-		auto script = make_unique<MiniScriptEmitTest>();
+		auto script = make_unique<EngineMiniScript>();
 		script->parseScript("resources/tests/scripts", "emit-test.tscript");
 		Console::println("---------------------------------------------------------");
 		Console::println("Loaded test script: " + script->getScriptFileName() + ": runs " + (script->isNative() == true?"natively":"interpreted"));
@@ -101,7 +95,7 @@ int main(int argc, char *argv[]) {
 	}
 	// function test
 	{
-		auto script = make_unique<MiniScriptFunctionsTest>();
+		auto script = make_unique<EngineMiniScript>();
 		script->parseScript("resources/tests/scripts", "functions-test.tscript");
 		Console::println("---------------------------------------------------------");
 		Console::println("Loaded test script: " + script->getScriptFileName() + ": runs " + (script->isNative() == true?"natively":"interpreted"));

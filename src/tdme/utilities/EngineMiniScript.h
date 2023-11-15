@@ -6,6 +6,8 @@
 #include <unordered_set>
 #include <vector>
 
+#include <miniscript/miniscript/MiniScript.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Matrix3x3.h>
@@ -16,7 +18,6 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/utilities/fwd-tdme.h>
-#include <tdme/utilities/MiniScript.h>
 #include <tdme/utilities/MiniScriptMatrix3x3.h>
 #include <tdme/utilities/MiniScriptMatrix4x4.h>
 #include <tdme/utilities/MiniScriptMatrix4x4.h>
@@ -31,6 +32,8 @@ using std::string;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
+
+using miniscript::miniscript::MiniScript;
 
 using tdme::engine::Transform;
 using tdme::math::Matrix3x3;
@@ -50,7 +53,6 @@ using tdme::utilities::MiniScriptVector3;
 using tdme::utilities::MiniScriptVector4;
 
 using tdme::utilities::Console;
-using tdme::utilities::MiniScript;
 
 /**
  * Engine MiniScript

@@ -25,6 +25,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
+#include <tdme/utilities/StringTools.h>
 
 using tdme::tools::editor::tabcontrollers::MarkdownTabController;
 
@@ -51,6 +52,7 @@ using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
+using tdme::utilities::StringTools;
 
 MarkdownTabController::MarkdownTabController(MarkdownTabView* view)
 {

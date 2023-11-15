@@ -1,18 +1,22 @@
 #include <span>
 #include <string>
 
+#include <miniscript/miniscript/MiniScript.h>
+
 #include <tdme/tdme.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/utilities/Console.h>
 #include <tdme/utilities/Float.h>
-#include <tdme/utilities/MiniScript.h>
 #include <tdme/utilities/MiniScriptVector3.h>
+
+using miniscript::miniscript::MiniScript;
 
 using std::span;
 using std::string;
 
 using tdme::math::Vector3;
+using tdme::utilities::Console;
 using tdme::utilities::Float;
-using tdme::utilities::MiniScript;
 using tdme::utilities::MiniScriptVector3;
 
 const string MiniScriptVector3::CLASS_NAME = "vec3";

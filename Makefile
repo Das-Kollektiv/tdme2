@@ -38,7 +38,7 @@ SRCS_PLATFORM =
 CPPVERSION = -std=c++2a
 OFLAGS =
 EXTRAFLAGS = -DRAPIDJSON_HAS_STDSTRING
-INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib
+INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/miniscript/src
 
 #
 CXX := $(CXX) -fPIC
@@ -191,6 +191,7 @@ OGLCOMPILERSDLL = vulkan/OGLCompilersDLL
 VMA = vulkan/vma
 CPPSPLINE = cpp-spline
 BC7 = bc7enc_rdo
+MINISCRIPT = miniscript
 
 SRCS_DEBUG =
 
@@ -542,11 +543,6 @@ SRCS = \
 	src/tdme/tests/FlowMapTest2.cpp \
 	src/tdme/tests/FoliageTest.cpp \
 	src/tdme/tests/MathOperatorTest.cpp \
-	src/tdme/tests/MiniScriptAdvancedTest.cpp \
-	src/tdme/tests/MiniScriptBaseTest.cpp \
-	src/tdme/tests/MiniScriptClassTest.cpp \
-	src/tdme/tests/MiniScriptEmitTest.cpp \
-	src/tdme/tests/MiniScriptFunctionsTest.cpp \
 	src/tdme/tests/PathFindingTest.cpp \
 	src/tdme/tests/PhysicsTest1.cpp \
 	src/tdme/tests/PhysicsTest2.cpp \
@@ -639,26 +635,13 @@ SRCS = \
 	src/tdme/utilities/Float.cpp \
 	src/tdme/utilities/Hex.cpp \
 	src/tdme/utilities/Integer.cpp \
-	src/tdme/utilities/MiniScript.cpp \
-	src/tdme/utilities/MiniScriptArray.cpp \
-	src/tdme/utilities/MiniScriptBase.cpp \
-	src/tdme/utilities/MiniScriptConsole.cpp \
-	src/tdme/utilities/MiniScriptJSON.cpp \
-	src/tdme/utilities/MiniScriptMap.cpp \
-	src/tdme/utilities/MiniScriptMath.cpp \
-	src/tdme/utilities/MiniScriptScript.cpp \
-	src/tdme/utilities/MiniScriptSet.cpp \
-	src/tdme/utilities/MiniScriptString.cpp \
 	src/tdme/utilities/MiniScriptTransform.cpp \
-	src/tdme/utilities/MiniScriptTranspiler.cpp \
 	src/tdme/utilities/MiniScriptMatrix3x3.cpp \
 	src/tdme/utilities/MiniScriptMatrix4x4.cpp \
 	src/tdme/utilities/MiniScriptQuaternion.cpp \
 	src/tdme/utilities/MiniScriptVector2.cpp \
 	src/tdme/utilities/MiniScriptVector3.cpp \
 	src/tdme/utilities/MiniScriptVector4.cpp \
-	src/tdme/utilities/MiniScriptTime.cpp \
-	src/tdme/utilities/MiniScriptXML.cpp \
 	src/tdme/utilities/ModelTools.cpp \
 	src/tdme/utilities/PathFinding.cpp \
 	src/tdme/utilities/Primitives.cpp \
@@ -840,6 +823,33 @@ EXT_BC7_SRCS = \
 	ext/bc7enc_rdo/bc7decomp.cpp \
 	ext/bc7enc_rdo/bc7enc.cpp
 
+EXT_MINISCRIPT_SRCS = \
+	ext/miniscript/src/miniscript/utilities/Base64.cpp \
+	ext/miniscript/src/miniscript/utilities/Console.cpp \
+	ext/miniscript/src/miniscript/utilities/ExceptionBase.cpp \
+	ext/miniscript/src/miniscript/utilities/FileSystem.cpp \
+	ext/miniscript/src/miniscript/utilities/Float.cpp \
+	ext/miniscript/src/miniscript/utilities/Hex.cpp \
+	ext/miniscript/src/miniscript/utilities/Integer.cpp \
+	ext/miniscript/src/miniscript/utilities/Properties.cpp \
+	ext/miniscript/src/miniscript/utilities/SHA256.cpp \
+	ext/miniscript/src/miniscript/utilities/StringTools.cpp \
+	ext/miniscript/src/miniscript/utilities/StringTokenizer.cpp \
+	ext/miniscript/src/miniscript/miniscript/ArrayMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/BaseMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/ConsoleMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/JSONMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/MapMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/MathMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/MiniScript.cpp \
+	ext/miniscript/src/miniscript/miniscript/ScriptMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/SetMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/StringMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/TimeMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/Transpiler.cpp \
+	ext/miniscript/src/miniscript/miniscript/XMLMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/Version.cpp
+
 OPENGL2_RENDERER_LIB_SRCS = \
 	src/tdme/engine/subsystems/renderer/EngineGL2Renderer.cpp \
 	src/tdme/engine/subsystems/renderer/GL2Renderer.cpp
@@ -970,14 +980,11 @@ MAIN_SRCS = \
 	src/tdme/tools/cli/createrc-main.cpp \
 	src/tdme/tools/cli/dumpmodel-main.cpp \
 	src/tdme/tools/cli/imageprocessor-main.cpp \
-	src/tdme/tools/cli/miniscript-main.cpp \
 	src/tdme/tools/cli/msclib2dll-main.cpp \
 	src/tdme/tools/cli/generatelicenses-main.cpp \
 	src/tdme/tools/cli/importtmodel-main.cpp \
 	src/tdme/tools/cli/importtscene-main.cpp \
 	src/tdme/tools/cli/makefilegenerator-main.cpp \
-	src/tdme/tools/cli/miniscripttranspiler-main.cpp \
-	src/tdme/tools/cli/miniscriptuntranspiler-main.cpp \
 	src/tdme/tools/cli/nmakefilegenerator-main.cpp \
 	src/tdme/tools/cli/optimizemodel-main.cpp \
 	src/tdme/tools/cli/parseh++-main.cpp \
@@ -998,6 +1005,7 @@ EXT_SHA256_OBJS = $(EXT_SHA256_SRCS:ext/$(SHA256)/%.cpp=$(OBJ)/%.o)
 EXT_REACTPHYSICS3D_OBJS = $(EXT_REACTPHYSICS3D_SRCS:ext/$(REACTPHYSICS3D)/%.cpp=$(OBJ)/%.o)
 EXT_CPPSPLINE_OBJS = $(EXT_CPPSPLINE_SRCS:ext/$(CPPSPLINE)/%.cpp=$(OBJ)/%.o)
 EXT_BC7_OBJS = $(EXT_BC7_SRCS:ext/$(BC7)/%.cpp=$(OBJ)/%.o)
+EXT_MINISCRIPT_OBJS = $(EXT_MINISCRIPT_SRCS:ext/$(MINISCRIPT)/%.cpp=$(OBJ)/%.o)
 EXT_SPIRV_OBJS = $(EXT_SPIRV_SRCS:ext/$(SPIRV)/%.cpp=$(OBJ)/vulkan/%.o)
 EXT_GLSLANG_OBJS = $(EXT_GLSLANG_SRCS:ext/$(GLSLANG)/%.cpp=$(OBJ)/vulkan/%.o)
 EXT_OGLCOMPILERSDLL_OBJS = $(EXT_OGLCOMPILERSDLL_SRCS:ext/$(OGLCOMPILERSDLL)/%.cpp=$(OBJ)/vulkan/%.o)
@@ -1064,6 +1072,9 @@ $(EXT_CPPSPLINE_OBJS):$(OBJ)/%.o: ext/$(CPPSPLINE)/%.cpp | print-opts
 	$(cpp-command)
 
 $(EXT_BC7_OBJS):$(OBJ)/%.o: ext/$(BC7)/%.cpp | print-opts
+	$(cpp-command)
+
+$(EXT_MINISCRIPT_OBJS):$(OBJ)/%.o: ext/$(MINISCRIPT)/%.cpp | print-opts
 	$(cpp-command)
 
 $(EXT_SPIRV_OBJS):$(OBJ)/vulkan/%.o: ext/$(SPIRV)/%.cpp | print-opts
@@ -1188,7 +1199,7 @@ endif
 
 $(LIB_DIR)/$(LIB): $(OBJS) $(OBJS_DEBUG)
 
-$(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_SHA256_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_CPPSPLINE_OBJS) $(EXT_BC7_OBJS)
+$(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_SHA256_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_CPPSPLINE_OBJS) $(EXT_BC7_OBJS) $(EXT_MINISCRIPT_OBJS)
 
 $(LIB_DIR)/$(OPENGL2_RENDERER_LIB): $(OPENGL2_RENDERER_LIB_OBJS)
 
@@ -1216,7 +1227,6 @@ mains: $(MAINS)
 
 all: mains
 
-# TODO make sure that always directory obj and obj-debug are removed
 clean:
 	rm -rf obj obj-debug $(LIB_DIR) $(BIN)
 

@@ -1,25 +1,31 @@
 #include <span>
 #include <string>
 
+#include <tdme/utilities/MiniScriptTransform.h>
+
+#include <miniscript/miniscript/MiniScript.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/utilities/Float.h>
-#include <tdme/utilities/MiniScript.h>
 #include <tdme/utilities/MiniScriptMatrix4x4.h>
 #include <tdme/utilities/MiniScriptQuaternion.h>
-#include <tdme/utilities/MiniScriptTransform.h>
 #include <tdme/utilities/MiniScriptVector3.h>
+#include <tdme/utilities/Console.h>
 
 using std::span;
 using std::string;
 
+using miniscript::miniscript::MiniScript;
+
+using tdme::utilities::MiniScriptTransform;
+
 using tdme::engine::Transform;
 using tdme::utilities::Float;
-using tdme::utilities::MiniScript;
 using tdme::utilities::MiniScriptMatrix4x4;
 using tdme::utilities::MiniScriptQuaternion;
-using tdme::utilities::MiniScriptTransform;
 using tdme::utilities::MiniScriptVector3;
+using tdme::utilities::Console;
 
 const string MiniScriptTransform::CLASS_NAME = "transform";
 const string MiniScriptTransform::TYPE_NAME = "Transform";

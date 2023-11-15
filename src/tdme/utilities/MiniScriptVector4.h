@@ -2,14 +2,17 @@
 
 #include <span>
 
+#include <miniscript/miniscript/MiniScript.h>
+
 #include <tdme/tdme.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/utilities/MiniScript.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 using std::span;
 
+using miniscript::miniscript::MiniScript;
+
 using tdme::math::Vector4;
-using tdme::utilities::MiniScript;
 
 /**
  * MiniScript Vector4 data type

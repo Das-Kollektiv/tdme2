@@ -1,18 +1,22 @@
 #include <span>
 #include <string>
 
+#include <miniscript/miniscript/MiniScript.h>
+
 #include <tdme/tdme.h>
 #include <tdme/math/Vector2.h>
+#include <tdme/utilities/Console.h>
 #include <tdme/utilities/Float.h>
-#include <tdme/utilities/MiniScript.h>
 #include <tdme/utilities/MiniScriptVector2.h>
 
 using std::span;
 using std::string;
 
+using miniscript::miniscript::MiniScript;
+
 using tdme::math::Vector2;
+using tdme::utilities::Console;
 using tdme::utilities::Float;
-using tdme::utilities::MiniScript;
 using tdme::utilities::MiniScriptVector2;
 
 const string MiniScriptVector2::CLASS_NAME = "vec2";
