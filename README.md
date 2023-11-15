@@ -18,7 +18,9 @@
   - here you find developer documentation including collaboration graphs and [private API](http://drewke.net/tdme2-documentation/alpha/private) as well as [public API](http://drewke.net/tdme2-documentation/alpha/public) for current alpha build
     - RapidJSON is included, but not yet integrated into documentation, please see [http://rapidjson.org/](http://rapidjson.org/)
     - For TDME2 GUI XML documentation see [README-GUI-XML.md](./README-GUI-XML.md)
-    - For TDME2 MiniScript documentation see [README-MiniScript.md](./README-MiniScript.md)
+    - For TDME2 MiniScript documentation 
+      - see [README-MiniScript.md](./README-MiniScript.md)
+      - here you find base MiniScript [documentation including collaboration graphs and API](https://www.mindty.com/products/miniscript/documentation/1.0.0-BETA/)
 
 # 2. Features
 - Application
@@ -415,4 +417,4 @@
     - I even might have system administrator tasks
 
 # 9. Donation 
-- I have to pay my bills, beer and stuff, so if you have any use for this open source project, like educational, productive or fun, ..., consider a donation here https://www.paypal.me/andreasdrewke, here https://github.com/sponsors/andreasdr or via https://www.amazon.de/hz/wishlist/ls/250IBUL4JSZVR?ref_=wl_share
+- I have to pay my bills, beer and stuff, so if you have any use for this open source project, like educational, productive or fun, ..., consider a donation here [PayPal](https://www.paypal.me/andreasdrewke), here [GitHub Sponsors](https://github.com/sponsors/andreasdr) or via [Amazon Wishlist](https://www.amazon.de/hz/wishlist/ls/250IBUL4JSZVR?ref_=wl_share)
