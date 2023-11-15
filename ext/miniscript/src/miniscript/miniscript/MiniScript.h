@@ -525,11 +525,11 @@ public:
 
 	public:
 		// class names
-		STATIC_DLL_IMPEXT static const string CLASSNAME_NONE;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_STRING;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_ARRAY;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_MAP;
-		STATIC_DLL_IMPEXT static const string CLASSNAME_SET;
+		MINISCRIPT_STATIC_DLL_IMPEXT static const string CLASSNAME_NONE;
+		MINISCRIPT_STATIC_DLL_IMPEXT static const string CLASSNAME_STRING;
+		MINISCRIPT_STATIC_DLL_IMPEXT static const string CLASSNAME_ARRAY;
+		MINISCRIPT_STATIC_DLL_IMPEXT static const string CLASSNAME_MAP;
+		MINISCRIPT_STATIC_DLL_IMPEXT static const string CLASSNAME_SET;
 
 		/**
 		 * Create reference variable
@@ -1935,11 +1935,11 @@ public:
 		}
 
 	protected:
-		STATIC_DLL_IMPEXT static const vector<string> CONTEXTFUNCTIONS_ALL;
-		STATIC_DLL_IMPEXT static const vector<string> CONTEXTFUNCTIONS_ENGINE;
-		STATIC_DLL_IMPEXT static const vector<string> CONTEXTFUNCTIONS_LOGIC;
-		STATIC_DLL_IMPEXT static const vector<string> CONTEXTFUNCTIONS_ENGINELOGIC;
-		STATIC_DLL_IMPEXT static const vector<string> CONTEXTFUNCTION_GUI;
+		MINISCRIPT_STATIC_DLL_IMPEXT static const vector<string> CONTEXTFUNCTIONS_ALL;
+		MINISCRIPT_STATIC_DLL_IMPEXT static const vector<string> CONTEXTFUNCTIONS_ENGINE;
+		MINISCRIPT_STATIC_DLL_IMPEXT static const vector<string> CONTEXTFUNCTIONS_LOGIC;
+		MINISCRIPT_STATIC_DLL_IMPEXT static const vector<string> CONTEXTFUNCTIONS_ENGINELOGIC;
+		MINISCRIPT_STATIC_DLL_IMPEXT static const vector<string> CONTEXTFUNCTION_GUI;
 
 	private:
 		vector<ArgumentType> argumentTypes;
@@ -2043,9 +2043,9 @@ public:
 	static constexpr int STATEMENTIDX_FIRST { 0 };
 	static constexpr int ARGUMENTIDX_NONE { -1 };
 
-	STATIC_DLL_IMPEXT static const string METHOD_SCRIPTCALL;
-	STATIC_DLL_IMPEXT static const string METHOD_ENABLENAMEDCONDITION;
-	STATIC_DLL_IMPEXT static const string METHOD_DISABLENAMEDCONDITION;
+	MINISCRIPT_STATIC_DLL_IMPEXT static const string METHOD_SCRIPTCALL;
+	MINISCRIPT_STATIC_DLL_IMPEXT static const string METHOD_ENABLENAMEDCONDITION;
+	MINISCRIPT_STATIC_DLL_IMPEXT static const string METHOD_DISABLENAMEDCONDITION;
 
 	/**
 	 * Returns arguments as string placed in a vector of string_views
@@ -2324,8 +2324,8 @@ private:
 	static constexpr bool VERBOSE { false };
 
 	//
-	STATIC_DLL_IMPEXT static const string OPERATOR_CHARS;
-	STATIC_DLL_IMPEXT static vector<ScriptDataType*> scriptDataTypes;
+	MINISCRIPT_STATIC_DLL_IMPEXT static const string OPERATOR_CHARS;
+	MINISCRIPT_STATIC_DLL_IMPEXT static vector<ScriptDataType*> scriptDataTypes;
 
 	// TODO: maybe we need a better naming for this
 	// script functions defined by script itself
