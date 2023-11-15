@@ -318,10 +318,10 @@ void ArrayMethods::registerMethods(MiniScript* miniScript) {
 							public:
 								SortClass(MiniScript* miniScript, const string& function): miniScript(miniScript), function(function) {
 								}
-								bool operator()(const MiniScript::MiniScript::ScriptVariable* a, const MiniScript::MiniScript::ScriptVariable* b) const {
-									vector<MiniScript::MiniScript::ScriptVariable> sortArgumentValues { *a, *b };
+								bool operator()(const MiniScript::ScriptVariable* a, const MiniScript::ScriptVariable* b) const {
+									vector<MiniScript::ScriptVariable> sortArgumentValues { *a, *b };
 									span sortArgumentValuesSpan(sortArgumentValues);
-									MiniScript::MiniScript::ScriptVariable sortReturnValue;
+									MiniScript::ScriptVariable sortReturnValue;
 									miniScript->call(function, sortArgumentValuesSpan, sortReturnValue);
 									bool result = false;
 									sortReturnValue.getBooleanValue(result, false);
