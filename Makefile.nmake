@@ -1004,15 +1004,15 @@ FoliageTest:
 	rc $(MSCBIN)\FoliageTest.exe.rc
 	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\FoliageTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FoliageTest-main.cpp $(MSCBIN)\FoliageTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
-MiniScriptTest:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc MiniScriptTest.exe $(MSCBIN)\MiniScriptTest.exe.rc
-	rc $(MSCBIN)\MiniScriptTest.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\MiniScriptTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/MiniScriptTest-main.cpp $(MSCBIN)\MiniScriptTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
-
 MathOperatorTest:
 	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc MathOperatorTest.exe $(MSCBIN)\MathOperatorTest.exe.rc
 	rc $(MSCBIN)\MathOperatorTest.exe.rc
 	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\MathOperatorTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/MathOperatorTest-main.cpp $(MSCBIN)\MathOperatorTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+MiniScriptTest:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc MiniScriptTest.exe $(MSCBIN)\MiniScriptTest.exe.rc
+	rc $(MSCBIN)\MiniScriptTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\MiniScriptTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/MiniScriptTest-main.cpp $(MSCBIN)\MiniScriptTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 PathFindingTest:
 	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc PathFindingTest.exe $(MSCBIN)\PathFindingTest.exe.rc
