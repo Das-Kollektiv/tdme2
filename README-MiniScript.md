@@ -123,7 +123,7 @@ See &$b and &$c.
 Be aware that value by copy variables usually require more instantiation time due to the copy that needs to be made of the variable from parent variable scope to function variable scope. 
 ```
 ...
-# user script function to test assign back in user functions
+# user script function to test references in user functions
 function: assignTest($a, &$b, &$c)
 	$a = "a"
 	$b = "b"
