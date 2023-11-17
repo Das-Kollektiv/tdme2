@@ -1028,20 +1028,22 @@ define cpp-command-debug
 @echo Compile $<; $(CXX) $(CPPFLAGS) $(CXXFLAGS_DEBUG) -c -o $@ $<
 endef
 
-define cpp-command-ext-rp3d
-@mkdir -p $(dir $@);
-@echo Compile $<; $(CXX) $(CPPFLAGS) $(CXXFLAGS_EXT_RP3D) -c -o $@ $<
-endef
-
 define c-command
 @mkdir -p $(dir $@);
 @echo Compile $<; $(CXX) -x c $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
 endef
 
-define m-command
-@mkdir -p $(dir $@);
-@echo Compile $<; $(CXX) -fobjc-arc -fmodules $(CPPFLAGS) $(CFLAGS)  -c -o $@ $<
-endef
+$(LIB_DIR)/$(LIB): $(OBJS) $(OBJS_DEBUG)
+
+$(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_SHA256_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_CPPSPLINE_OBJS) $(EXT_BC7_OBJS) $(EXT_MINISCRIPT_OBJS)
+
+$(LIB_DIR)/$(OPENGL2_RENDERER_LIB): $(OPENGL2_RENDERER_LIB_OBJS)
+
+$(LIB_DIR)/$(OPENGL3CORE_RENDERER_LIB): $(OPENGL3CORE_RENDERER_LIB_OBJS)
+
+$(LIB_DIR)/$(VULKAN_RENDERER_LIB): $(EXT_SPIRV_OBJS) $(EXT_GLSLANG_OBJS) $(EXT_OGLCOMPILERSDLL_OBJS) $(EXT_VMA_OBJS) $(VULKAN_RENDERER_LIB_OBJS)
+
+$(LIB_DIR)/$(OPENGLES2_RENDERER_LIB): $(OPENGLES2_RENDERER_LIB_OBJS)
 
 $(OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
 	$(cpp-command)
@@ -1068,7 +1070,7 @@ $(EXT_SHA256_OBJS):$(OBJ)/%.o: ext/$(SHA256)/%.cpp | print-opts
 	$(cpp-command)
 
 $(EXT_REACTPHYSICS3D_OBJS):$(OBJ)/%.o: ext/$(REACTPHYSICS3D)/%.cpp | print-opts
-	$(cpp-command-ext-rp3d)
+	$(cpp-command)
 
 $(EXT_CPPSPLINE_OBJS):$(OBJ)/%.o: ext/$(CPPSPLINE)/%.cpp | print-opts
 	$(cpp-command)
@@ -1102,12 +1104,6 @@ $(VULKAN_RENDERER_LIB_OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
 
 $(OPENGLES2_RENDERER_LIB_OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
 	$(cpp-command)
-
-%.a:
-	@echo Creating archive $@
-	@mkdir -p $(dir $@)
-	@rm -f $@
-	@ar rcs $@ $^
 
 $(LIB_DIR)/$(EXT_LIB):
 	@echo Creating shared library $@
@@ -1198,18 +1194,6 @@ else
 	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $(OPENGLES2_RENDERER_LDFLAGS) -L$(LIB_DIR) -l$(LDFLAG_EXT_LIB) -l$(LDFLAG_LIB)
 endif
 	@echo Done $@
-
-$(LIB_DIR)/$(LIB): $(OBJS) $(OBJS_DEBUG)
-
-$(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_SHA256_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_CPPSPLINE_OBJS) $(EXT_BC7_OBJS) $(EXT_MINISCRIPT_OBJS)
-
-$(LIB_DIR)/$(OPENGL2_RENDERER_LIB): $(OPENGL2_RENDERER_LIB_OBJS)
-
-$(LIB_DIR)/$(OPENGL3CORE_RENDERER_LIB): $(OPENGL3CORE_RENDERER_LIB_OBJS)
-
-$(LIB_DIR)/$(VULKAN_RENDERER_LIB): $(EXT_SPIRV_OBJS) $(EXT_GLSLANG_OBJS) $(EXT_OGLCOMPILERSDLL_OBJS) $(EXT_VMA_OBJS) $(VULKAN_RENDERER_LIB_OBJS)
-
-$(LIB_DIR)/$(OPENGLES2_RENDERER_LIB): $(OPENGLES2_RENDERER_LIB_OBJS)
 
 ifeq ($(OSSHORT), Msys)
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
