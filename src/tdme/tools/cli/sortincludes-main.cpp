@@ -63,7 +63,7 @@ void scanDir(const string& folder, vector<string>& totalFiles) {
 	}
 }
 
-static int string_compare(const string& lhs, const string& rhs) {
+static int compare_includes(const string& lhs, const string& rhs) {
 	if (StringTools::startsWith(lhs, "#include <tdme/tdme.h>") == true) return true; else
 	if (StringTools::startsWith(rhs, "#include <tdme/tdme.h>") == true) return false;
 	auto charCount = Math::min((int32_t)lhs.size(), (int32_t)rhs.size());
@@ -116,7 +116,7 @@ void parseHpp(const string& fileName) {
 				if (hadTDMEHInclude == false) hadTDMEHInclude = StringTools::trim(line) == "#include <tdme/tdme.h>";
 			} else
 			if (startLineIdx != -1 && endLineIdx != -1) {
-				sort(newFileContent.begin() + startLineIdx, newFileContent.begin() + endLineIdx + 1, string_compare);
+				sort(newFileContent.begin() + startLineIdx, newFileContent.begin() + endLineIdx + 1, compare_includes);
 				startLineIdx = -1;
 				endLineIdx = -1;
 			}
@@ -150,7 +150,7 @@ void parseHpp(const string& fileName) {
 				}
 			} else
 			if (startLineIdx != -1 && endLineIdx != -1) {
-				sort(newFileContent.begin() + startLineIdx, newFileContent.begin() + endLineIdx + 1, string_compare);
+				sort(newFileContent.begin() + startLineIdx, newFileContent.begin() + endLineIdx + 1, compare_includes);
 				startLineIdx = -1;
 				endLineIdx = -1;
 			}
