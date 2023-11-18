@@ -257,9 +257,10 @@ public:
 	 * Tokenize
 	 * @param str string to tokenize
 	 * @param delimiters delimiters
+	 * @param emptyToken include empty token
 	 * @return tokens
 	 */
-	static const vector<string> tokenize(const string& str, const string& delimiters);
+	static const vector<string> tokenize(const string& str, const string& delimiters, bool emptyToken = false);
 
 	/**
 	 * Pad a string left
