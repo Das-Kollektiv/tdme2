@@ -11,7 +11,7 @@ using tdme::utilities::StringTokenizer;
 StringTokenizer::StringTokenizer() {
 }
 
-void StringTokenizer::tokenize(const string& str, const string& delimiters, bool emptyToken)
+void StringTokenizer::tokenize(const string& str, const string& delimiters, bool emptyTokens)
 {
 	idx = 0;
 	tokens.clear();
@@ -20,7 +20,7 @@ void StringTokenizer::tokenize(const string& str, const string& delimiters, bool
 		// got a delimiter?
 		if (delimiters.find(str[i]) != string::npos) {
 			// yep, add token to elements if we have any
-			if (emptyToken == true || token.empty() == false) {
+			if (emptyTokens == true || token.empty() == false) {
 				tokens.push_back(token);
 				token.clear();
 			}
@@ -30,7 +30,7 @@ void StringTokenizer::tokenize(const string& str, const string& delimiters, bool
 		}
 	}
 	// do we have a token still? add it to elements
-	if (emptyToken == true || token.empty() == false) {
+	if (emptyTokens == true || token.empty() == false) {
 		tokens.push_back(token);
 	}
 }

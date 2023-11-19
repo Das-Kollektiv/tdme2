@@ -31,9 +31,9 @@ public:
 	 * Tokenize
 	 * @param str string to tokenize
 	 * @param delimiters delimiters
-	 * @param emptyToken include empty token
+	 * @param emptyTokens include empty tokens
 	 */
-	void tokenize(const string& str, const string& delimiters, bool emptyToken = false);
+	void tokenize(const string& str, const string& delimiters, bool emptyTokens = false);
 
 	/**
 	 * @return number of tokens
