@@ -48,7 +48,7 @@
 					<menu-header-item text="Help">
 						<menu-item id="menu_help_guixml_documentation" image="resources/engine/images/weblink.png" text="GUI Documentation" />
 						<menu-item id="menu_help_miniscript_documentation" image="resources/engine/images/weblink.png" text="MiniScript Documentation" />
-						<menu-item id="menu_help_api_documentation" image="resources/engine/images/weblink.png" text="API Documentation" on-mouse-click="http://drewke.net/tdme2-documentation/alpha/public" />
+						<menu-item id="menu_help_api_documentation" image="resources/engine/images/weblink.png" text="API Documentation" on-mouse-click="https://www.mindty.com/products/tdme2/documentation/alpha/public/" />
 						<menu-separator />
 						<menu-item id="menu_help_community" image="resources/engine/images/weblink.png" text="Community" on-mouse-click="https://discord.gg/tMqrmcp23Q" />
 						<menu-item id="menu_help_bugtracker" image="resources/engine/images/weblink.png" text="Bug Tracker" on-mouse-click="https://open.codecks.io/tdme2" />

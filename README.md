@@ -14,8 +14,8 @@
 - TDME2 is open source
   - please check the [license](https://github.com/Mindty-Kollektiv/tdme2/blob/master/LICENSE)
   - you find the source code at [https://github.com/Mindty-Kollektiv/tdme2](https://github.com/Mindty-Kollektiv/tdme2) 
-  - you find binary alpha builds at [http://drewke.net/tdme2](http://drewke.net/tdme2)
-  - here you find developer documentation including collaboration graphs and [private API](http://drewke.net/tdme2-documentation/alpha/private) as well as [public API](http://drewke.net/tdme2-documentation/alpha/public) for current alpha build
+  - you find binary alpha builds at [https://www.mindty.com/products/tdme2/builds/](https://www.mindty.com/products/tdme2/builds/)
+  - here you find developer documentation including collaboration graphs and [private API](https://www.mindty.com/products/tdme2/documentation/alpha/private/) as well as [public API](https://www.mindty.com/products/tdme2/documentation/alpha/public/) for current alpha build
     - RapidJSON is included, but not yet integrated into documentation, please see [http://rapidjson.org/](http://rapidjson.org/)
     - For TDME2 GUI XML documentation see [README-GUI-XML.md](./README-GUI-XML.md)
     - For TDME2 MiniScript documentation 
