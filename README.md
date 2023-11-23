@@ -20,7 +20,7 @@
     - For TDME2 GUI XML documentation see [README-GUI-XML.md](./README-GUI-XML.md)
     - For TDME2 MiniScript documentation 
       - see [README-MiniScript.md](./README-MiniScript.md)
-      - here you find base MiniScript [documentation including collaboration graphs and API](https://www.mindty.com/products/miniscript/documentation/1.0.0-BETA/)
+      - here you find base MiniScript [documentation including collaboration graphs and API](https://www.mindty.com/products/miniscript/documentation/)
 
 # 2. Features
 - Application
