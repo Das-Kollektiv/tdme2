@@ -51,6 +51,7 @@ const string HTTPClient::HTTP_METHOD_PUT = "PUT";
 const string HTTPClient::HTTP_METHOD_DELETE = "DELETE";
 
 string HTTPClient::urlEncode(const string &value) {
+	// TODO: put me into utilities
 	// see: https://stackoverflow.com/questions/154536/encode-decode-urls-in-c
 	ostringstream escaped;
 	escaped.fill('0');
@@ -74,8 +75,7 @@ string HTTPClient::urlEncode(const string &value) {
 	return escaped.str();
 }
 
-
-string HTTPClient::createHTTPRequestHeaders(const string& hostname, const string& method, const string& relativeUrl, const unordered_map<string, string>& getParameters, const unordered_map<string, string>& postParameters, const string& body) {
+string HTTPClient::createHTTPRequestHeaders(const string& hostname, const string& relativeUrl, const string& body) {
 	string query;
 	for (const auto& [parameterName, parameterValue]: getParameters) {
 		if (query.empty() == true) query+= "?"; else query+="&";
@@ -96,6 +96,9 @@ string HTTPClient::createHTTPRequestHeaders(const string& hostname, const string
 		request+=
 			string("Content-Type: " + contentType + "\r\n");
 	}
+	for (const auto& [headerName, headerValue]: headers) {
+		request+= headerName + ": " + headerValue + "\r\n";
+	}
 	if (method == HTTP_METHOD_POST || method == HTTP_METHOD_PUT) {
 		string _body;
 		if (postParameters.size() > 0) {
@@ -114,7 +117,9 @@ string HTTPClient::createHTTPRequestHeaders(const string& hostname, const string
 	return request;
 }
 
-void HTTPClient::parseHTTPResponseHeaders(stringstream& rawResponse, int16_t& httpStatusCode, vector<string>& httpHeader) {
+void HTTPClient::parseHTTPResponseHeaders(stringstream& rawResponse, int16_t& statusCode, unordered_map<string, string>& responseHeaders) {
+	int headerIdx = 0;
+	string statusHeader;
 	string line;
 	char lastChar = -1;
 	char currentChar;
@@ -122,7 +127,14 @@ void HTTPClient::parseHTTPResponseHeaders(stringstream& rawResponse, int16_t& ht
 		rawResponse.get(currentChar);
 		if (lastChar == '\r' && currentChar == '\n') {
 			if (line.empty() == false) {
-				httpHeader.push_back(line);
+				if (headerIdx == 0) {
+					statusHeader = line;
+					headerIdx++;
+				} else {
+					auto headerNameValueSeparator = StringTools::indexOf(line, ':');
+					responseHeaders[StringTools::trim(StringTools::substring(line, 0, headerNameValueSeparator))] =
+						StringTools::trim(StringTools::substring(line, headerNameValueSeparator + 1));
+				}
 			} else {
 				break;
 			}
@@ -133,13 +145,13 @@ void HTTPClient::parseHTTPResponseHeaders(stringstream& rawResponse, int16_t& ht
 		}
 		lastChar = currentChar;
 	}
-	if (httpHeader.size() > 0) {
+	if (statusHeader.empty() == false) {
 		StringTokenizer t;
-		t.tokenize(httpHeader[0], " ");
+		t.tokenize(statusHeader, " ");
 		for (auto i = 0; i < 3 && t.hasMoreTokens(); i++) {
 			auto token = t.nextToken();
 			if (i == 1) {
-				httpStatusCode = Integer::parse(token);
+				statusCode = Integer::parse(token);
 			}
 		}
 	}
@@ -148,14 +160,15 @@ void HTTPClient::parseHTTPResponseHeaders(stringstream& rawResponse, int16_t& ht
 void HTTPClient::reset() {
 	url.clear();
 	method.clear();
+	headers.clear();
 	getParameters.clear();
 	postParameters.clear();
 	body.clear();
 	contentType.clear();
 
 	rawResponse.clear();
-	httpStatusCode = -1;
-	httpHeader.clear();
+	statusCode = -1;
+	responseHeaders.clear();
 }
 
 void HTTPClient::execute() {
@@ -183,7 +196,7 @@ void HTTPClient::execute() {
 
 		TCPSocket::create(socket, TCPSocket::determineIpVersion(ip));
 		socket.connect(ip, 80);
-		auto request = createHTTPRequestHeaders(hostname, method, relativeUrl, getParameters, postParameters, body);
+		auto request = createHTTPRequestHeaders(hostname, relativeUrl, body);
 		socket.write((void*)request.data(), request.length());
 
 		char rawResponseBuf[16384];
@@ -198,7 +211,7 @@ void HTTPClient::execute() {
 		}
 
 		//
-		parseHTTPResponseHeaders(rawResponse, httpStatusCode, httpHeader);
+		parseHTTPResponseHeaders(rawResponse, statusCode, responseHeaders);
 
 		//
 		socket.shutdown();
