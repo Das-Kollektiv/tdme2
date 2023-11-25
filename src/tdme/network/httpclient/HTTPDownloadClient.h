@@ -67,11 +67,9 @@ private:
 	/**
 	 * Parse HTTP response headers
 	 * @param rawResponse raw response
-	 * @param httpStatusCode HTTP status code
-	 * @param httpHeader HTTP header
 	 * @return http header size or 0 if not yet completely submitted
 	 */
-	uint64_t parseHTTPResponseHeaders(ifstream& rawResponse, int16_t& statusCode, unordered_map<string, string>& responseHeaders);
+	uint64_t parseHTTPResponseHeaders(ifstream& rawResponse);
 
 public:
 
@@ -115,16 +113,16 @@ public:
 	}
 
 	/**
-	 * Get headers
-	 * @return headers
+	 * Get request headers
+	 * @return request headers
 	 */
 	inline const unordered_map<string, string>& getHeaders() {
 		return headers;
 	}
 
 	/**
-	 * Set headers
-	 * @param headers headers
+	 * Set request headers
+	 * @param headers request headers
 	 */
 	inline void setHeaders(const unordered_map<string, string>& headers) {
 		this->headers = headers;

@@ -56,10 +56,8 @@ private:
 	/**
 	 * Parse HTTP response headers
 	 * @param rawResponse raw response
-	 * @param statusCode HTTP status code
-	 * @param responseHeaders HTTP response headers
 	 */
-	void parseHTTPResponseHeaders(stringstream& rawResponse, int16_t& statusCode, unordered_map<string, string>& responseHeaders);
+	void parseHTTPResponseHeaders(stringstream& rawResponse);
 
 public:
 	static const constexpr int16_t HTTP_STATUSCODE_OK { 200 };
@@ -135,16 +133,16 @@ public:
 	}
 
 	/**
-	 * Get headers
-	 * @return headers
+	 * Get request headers
+	 * @return request headers
 	 */
 	inline const unordered_map<string, string>& getHeaders() {
 		return headers;
 	}
 
 	/**
-	 * Set headers
-	 * @param headers headers
+	 * Set request headers
+	 * @param headers request headers
 	 */
 	inline void setHeaders(const unordered_map<string, string>& headers) {
 		this->headers = headers;

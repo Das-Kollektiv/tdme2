@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
 		httpClient.execute();
 		Console::println("HTTP status code: " + to_string(httpClient.getStatusCode()));
 		for (const auto& [headerName, headerValue]: httpClient.getResponseHeaders()) {
-			Console::println("Header: " + headerName + ": " + headerValue);
+			Console::println("Response Header: " + headerName + ": " + headerValue);
 		}
 		Console::println("Response: ");
 		char c;

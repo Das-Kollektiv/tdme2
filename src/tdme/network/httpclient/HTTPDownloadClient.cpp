@@ -113,7 +113,7 @@ string HTTPDownloadClient::createHTTPRequestHeaders(const string& hostName, cons
 	return request;
 }
 
-uint64_t HTTPDownloadClient::parseHTTPResponseHeaders(ifstream& rawResponse, int16_t& statusCode, unordered_map<string, string>& responseHeaders) {
+uint64_t HTTPDownloadClient::parseHTTPResponseHeaders(ifstream& rawResponse) {
 	responseHeaders.clear();
 	auto headerSize = 0ll;
 	auto returnHeaderSize = 0ll;
@@ -194,17 +194,12 @@ void HTTPDownloadClient::start() {
 					auto hostname = relativeUrl;
 					if (slashIdx != -1) hostname = StringTools::substring(relativeUrl, 0, slashIdx);
 					relativeUrl = StringTools::substring(relativeUrl, hostname.size());
-
-					Console::println("HTTPDownloadClient::execute(): hostname: " + hostname);
-					Console::println("HTTPDownloadClient::execute(): relative url: " + relativeUrl);
-					Console::print("HTTPDownloadClient::execute(): resolving hostname to IP: " + hostname + ": ");
+					//
 					auto ip = Network::getIpByHostname(hostname);
 					if (ip.empty() == true) {
 						Console::println("HTTPDownloadClient::execute(): failed");
 						throw HTTPClientException("Could not resolve host IP by hostname");
 					}
-					Console::println(ip);
-
 					// socket
 					TCPSocket::create(socket, TCPSocket::determineIpVersion(ip));
 					socket.connect(ip, 80);
@@ -236,7 +231,7 @@ void HTTPDownloadClient::start() {
 									}
 									// try to read headers
 									downloadClient->responseHeaders.clear();
-									if ((downloadClient->headerSize = downloadClient->parseHTTPResponseHeaders(ifs, downloadClient->statusCode, downloadClient->responseHeaders)) > 0) {
+									if ((downloadClient->headerSize = downloadClient->parseHTTPResponseHeaders(ifs)) > 0) {
 										downloadClient->haveHeaders = true;
 										auto contentLengthHeaderIt = downloadClient->responseHeaders.find("Content-Length");
 										if (contentLengthHeaderIt != downloadClient->responseHeaders.end()) {

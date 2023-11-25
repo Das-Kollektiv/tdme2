@@ -117,7 +117,7 @@ string HTTPClient::createHTTPRequestHeaders(const string& hostname, const string
 	return request;
 }
 
-void HTTPClient::parseHTTPResponseHeaders(stringstream& rawResponse, int16_t& statusCode, unordered_map<string, string>& responseHeaders) {
+void HTTPClient::parseHTTPResponseHeaders(stringstream& rawResponse) {
 	int headerIdx = 0;
 	string statusHeader;
 	string line;
@@ -182,18 +182,13 @@ void HTTPClient::execute() {
 		auto hostname = relativeUrl;
 		if (slashIdx != -1) hostname = StringTools::substring(relativeUrl, 0, slashIdx);
 		relativeUrl = StringTools::substring(relativeUrl, hostname.size());
-
-		Console::println("HTTPClient::execute(): hostname: " + hostname);
-		Console::println("HTTPClient::execute(): relative url: " + relativeUrl);
-
-		Console::print("HTTPClient::execute(): resolving hostname to IP: " + hostname + ": ");
+		//
 		auto ip = Network::getIpByHostname(hostname);
 		if (ip.empty() == true) {
 			Console::println("HTTPClient::execute(): failed");
 			throw HTTPClientException("Could not resolve host IP by hostname");
 		}
-		Console::println(ip);
-
+		//
 		TCPSocket::create(socket, TCPSocket::determineIpVersion(ip));
 		socket.connect(ip, 80);
 		auto request = createHTTPRequestHeaders(hostname, relativeUrl, body);
@@ -211,7 +206,7 @@ void HTTPClient::execute() {
 		}
 
 		//
-		parseHTTPResponseHeaders(rawResponse, statusCode, responseHeaders);
+		parseHTTPResponseHeaders(rawResponse);
 
 		//
 		socket.shutdown();
