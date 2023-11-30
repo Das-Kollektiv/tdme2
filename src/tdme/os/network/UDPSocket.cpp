@@ -12,13 +12,16 @@
 	#define BUF_CAST(buf) ((void*)buf)
 #endif
 
+#include <memory>
 #include <string>
 
 #include <tdme/tdme.h>
 #include <tdme/os/network/UDPSocket.h>
 
+using std::make_unique;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 
 using tdme::os::network::UDPSocket;
 
@@ -33,7 +36,66 @@ using tdme::os::network::UDPSocket;
 	#define SO_REUSEOPTION	SO_REUSEPORT
 #endif
 
+UDPSocket::UDPSocket(IpVersion ipVersion) {
+	this->ipVersion = ipVersion;
+}
+
 UDPSocket::~UDPSocket() {
+}
+
+UDPSocket* UDPSocket::create(IpVersion ipVersion) {
+	auto socket = make_unique<UDPSocket>(ipVersion);
+	socket->descriptor = ::socket(ipVersion == IPV6?AF_INET6:AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	if (socket->descriptor == -1) {
+		throw NetworkSocketException("Could not create socket: " + string(strerror(errno)));
+	}
+	#ifdef __APPLE__
+		int flag = 1;
+		if (setsockopt(socket.descriptor, SOL_SOCKET, SO_NOSIGPIPE, (void*)&flag, sizeof(flag)) == -1) {
+			throw NetworkSocketException("Could not set no sig pipe on socket: " + string(strerror(errno)));
+		}
+	#endif
+	//
+	return socket.release();
+}
+
+UDPSocket* UDPSocket::createServerSocket(const string& ip, const unsigned int port) {
+	// create socket
+	auto socket = unique_ptr<UDPSocket>(UDPSocket::create(determineIpVersion(ip)));
+	//
+	try {
+		// set non blocked
+		socket->setNonBlocked();
+
+		// enable socket reuse port
+		int flag = 1;
+		if (setsockopt(socket->descriptor, SOL_SOCKET, SO_REUSEOPTION, BUF_CAST(&flag), sizeof(flag)) == -1) {
+			throw NetworkSocketException("Could not set reuse port on socket: " + string(strerror(errno)));
+		}
+
+		// bind socket to host
+		socket->bind(ip, port);
+	} catch (NetworkSocketException &exception) {
+		socket->close();
+		throw exception;
+	}
+	//
+	return socket.release();
+}
+
+UDPSocket* UDPSocket::createClientSocket(IpVersion ipVersion) {
+	// create socket
+	auto socket = unique_ptr<UDPSocket>(UDPSocket::create(ipVersion));
+
+	try {
+		// set non blocked
+		socket->setNonBlocked();
+	} catch (NetworkSocketException &exception) {
+		socket->close();
+		throw exception;
+	}
+	//
+	return socket.release();
 }
 
 ssize_t UDPSocket::read(string& from, unsigned int& port, void* buf, const size_t bytes) {
@@ -65,18 +127,14 @@ ssize_t UDPSocket::read(string& from, unsigned int& port, void* buf, const size_
 				wsaError == WSAECONNRESET) {
 				return -1;
 			} else {
-				string msg = "error while reading from socket: ";
-				msg+= to_string(wsaError);
-				throw NetworkIOException(msg);
+				throw NetworkIOException("Error while reading from socket: " + to_string(wsaError));
 			}
 		#else
 			// nope throw an exception
 			if (errno == EAGAIN) {
 				return -1;
 			} else {
-				string msg = "error while reading from socket: ";
-				msg+= strerror(errno);
-				throw NetworkIOException(msg);
+				throw NetworkIOException("Error while reading from socket: " + string(strerror(errno)));
 			}
 		#endif
 	}
@@ -145,78 +203,18 @@ ssize_t UDPSocket::write(const string& to, const unsigned int port, void* buf, c
 			if (wsaError == WSAEWOULDBLOCK) {
 				return -1;
 			} else {
-				string msg = "error while writing to socket: ";
-				msg+= to_string(wsaError);
-				throw NetworkIOException(msg);
+				throw NetworkIOException("Error while writing to socket: " + to_string(wsaError));
 			}
 		#else
 			// nope throw an exception
 			if (errno == EAGAIN) {
 				return -1;
 			} else {
-				string msg = "error while writing to socket: ";
-				msg+= strerror(errno);
-				throw NetworkIOException(msg);
+				throw NetworkIOException("Error while writing to socket: " + string(strerror(errno)));
 			}
 		#endif
 	}
 
 	// return bytes written
 	return bytesWritten;
-}
-
-void UDPSocket::create(UDPSocket& socket, IpVersion ipVersion) {
-	socket.ipVersion = ipVersion;
-	socket.descriptor = ::socket(ipVersion == IPV6?AF_INET6:AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	if (socket.descriptor == -1) {
-		string msg = "Could not create socket: ";
-		msg+= strerror(errno);
-		throw NetworkSocketException(msg);
-	}
-	#ifdef __APPLE__
-		int flag = 1;
-		if (setsockopt(socket.descriptor, SOL_SOCKET, SO_NOSIGPIPE, (void*)&flag, sizeof(flag)) == -1) {
-			string msg = "Could not set no sig pipe on socket: ";
-			msg+= strerror(errno);
-			throw NetworkSocketException(msg);
-		}
-	#endif
-}
-
-void UDPSocket::createServerSocket(UDPSocket& socket, const string& ip, const unsigned int port) {
-	// create socket
-	UDPSocket::create(socket, determineIpVersion(ip));
-
-	try {
-		// set non blocked
-		socket.setNonBlocked();
-
-		// enable socket reuse port
-		int flag = 1;
-		if (setsockopt(socket.descriptor, SOL_SOCKET, SO_REUSEOPTION, BUF_CAST(&flag), sizeof(flag)) == -1) {
-			string msg = "Could not set reuse port on socket: ";
-			msg+= strerror(errno);
-			throw NetworkSocketException(msg);
-		}
-
-		// bind socket to host
-		socket.bind(ip, port);
-
-	} catch (NetworkSocketException &exception) {
-		socket.close();
-		throw exception;
-	}
-}
-
-void UDPSocket::createClientSocket(UDPSocket& socket, IpVersion ipVersion) {
-	// create socket
-	UDPSocket::create(socket, ipVersion);
-
-	try {
-		// set non blocked
-		socket.setNonBlocked();
-	} catch (NetworkSocketException &exception) {
-		socket.close();
-		throw exception;
-	}
 }

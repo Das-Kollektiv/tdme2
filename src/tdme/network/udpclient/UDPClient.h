@@ -4,6 +4,7 @@
 	#define ssize_t int
 #endif
 
+#include <memory>
 #include <queue>
 #include <string>
 #include <unordered_map>
@@ -19,6 +20,7 @@
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/Thread.h>
 
+using std::unique_ptr;
 using std::queue;
 using std::string;
 using std::unordered_map;
@@ -218,7 +220,7 @@ private:
 	Mutex messageMapSafeMutex;
 	MessageMapSafe messageMapSafe;
 
-	UDPSocket socket;
+	unique_ptr<UDPSocket> socket;
 
 	UDPClient_Statistics statistics;
 };

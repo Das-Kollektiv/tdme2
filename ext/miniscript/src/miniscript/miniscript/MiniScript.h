@@ -14,6 +14,7 @@
 
 #include <miniscript/miniscript.h>
 #include <miniscript/miniscript/fwd-miniscript.h>
+#include <miniscript/miniscript/Context.h>
 #include <miniscript/utilities/Character.h>
 #include <miniscript/utilities/Console.h>
 #include <miniscript/utilities/Exception.h>
@@ -21,6 +22,7 @@
 #include <miniscript/utilities/Integer.h>
 #include <miniscript/utilities/StringTools.h>
 #include <miniscript/utilities/Time.h>
+#include <miniscript/utilities/UTF8CharacterIterator.h>
 
 using std::array;
 using std::exchange;
@@ -46,6 +48,8 @@ using _Float = miniscript::utilities::Float;
 using _Integer = miniscript::utilities::Integer;
 using _StringTools = miniscript::utilities::StringTools;
 using _Time = miniscript::utilities::Time;
+using _UTF8CharacterIterator = miniscript::utilities::UTF8CharacterIterator;
+using _Context = miniscript::miniscript::Context;
 
 namespace miniscript {
 namespace tools {
@@ -373,8 +377,8 @@ public:
 		};
 
 		//
-		static constexpr uint16_t REFERENCE_BIT_VALUE { 32768 };
-		static constexpr uint16_t TYPE_BITS_VALUE { 32767 };
+		static constexpr uint32_t REFERENCE_BIT_VALUE { 2147483648 }; // 2 ^ 31
+		static constexpr uint32_t TYPE_BITS_VALUE { 2147483647 }; // 2 ^ 31 - 1
 
 		//
 		union ir {
@@ -382,9 +386,69 @@ public:
 			ScriptVariable* reference;
 		};
 
+		/**
+		 * String value
+		 */
+		class StringValue {
+			friend class ScriptVariable;
+		public:
+			/**
+			 * Constructor
+			 */
+			StringValue(): cache(_UTF8CharacterIterator::UTF8PositionCache()) {}
+
+			/**
+			 * Constructor
+			 * @param value value
+			 */
+			StringValue(const string& value): value(value) {}
+
+			/**
+			 * @return value
+			 */
+			const string& getValue() const {
+				return value;
+			}
+
+			/**
+			 * Set value
+			 * @param value value
+			 */
+			void setValue(const string& value) {
+				this->value = value;
+				cache.removeCache();
+			}
+
+			/**
+			 * @return const cache
+			 */
+			const _UTF8CharacterIterator::UTF8PositionCache& getCache() const {
+				return cache;
+			}
+
+			/**
+			 * @return cache
+			 */
+			_UTF8CharacterIterator::UTF8PositionCache& getCache() {
+				return cache;
+			}
+
+			/**
+			 * Set cache
+			 * @param cache cache
+			 */
+			void setCache(const _UTF8CharacterIterator::UTF8PositionCache& cache) {
+				this->cache = cache;
+			}
+
+		private:
+			string value;
+			_UTF8CharacterIterator::UTF8PositionCache cache;
+		};
+
 		// 24 bytes
-		uint16_t typeAndReference { TYPE_NULL };	// 4 bytes
-		int16_t referenceCounter { 1 };				// 4 bytes
+		uint32_t typeAndReference { TYPE_NULL };	// 4 bytes
+		int32_t referenceCounter { 1 };				// 4 bytes
 		uint64_t valuePtr { 0LL };					// 8 bytes
 		ir ir {};									// 8 bytes
 
@@ -503,15 +567,15 @@ public:
 		/**
 		 * @return string value reference
 		 */
-		inline string& getStringValueReference() {
-			return *static_cast<string*>((void*)getValuePtrReference());
+		inline StringValue& getStringValueReference() {
+			return *static_cast<StringValue*>((void*)getValuePtrReference());
 		}
 
 		/**
 		 * @return const string value reference
 		 */
-		inline const string& getStringValueReference() const {
-			return *static_cast<string*>((void*)getValuePtrReference());
+		inline const StringValue& getStringValueReference() const {
+			return *static_cast<StringValue*>((void*)getValuePtrReference());
 		}
 
 		/**
@@ -599,7 +663,7 @@ public:
 		 */
 		inline static void copyScriptVariable(ScriptVariable& to, const ScriptVariable& from) {
 			// initial setup
-			to.setNullValue();
+			to.setType(from.getType());
 			// do the copy
 			switch(from.getType()) {
 				case TYPE_NULL:
@@ -616,18 +680,19 @@ public:
 					break;
 				case TYPE_FUNCTION_CALL:
 					to.setType(TYPE_FUNCTION_CALL);
-					to.getStringValueReference() = from.getStringValueReference();
+					to.getStringValueReference().setValue(from.getStringValueReference().getValue());
 					// copy initializer if we have any
 					to.getInitializer()->copy(from.getInitializer());
 					//
 					break;
 				case TYPE_FUNCTION_ASSIGNMENT:
-					to.setFunctionAssignment(from.getStringValueReference());
+					to.setFunctionAssignment(from.getStringValueReference().getValue());
 					break;
 				case TYPE_PSEUDO_NUMBER: break;
 				case TYPE_PSEUDO_MIXED: break;
 				case TYPE_STRING:
-					to.setValue(from.getStringValueReference());
+					to.getStringValueReference().setValue(from.getStringValueReference().getValue());
+					to.getStringValueReference().setCache(from.getStringValueReference().getCache());
 					break;
 				case TYPE_ARRAY:
 					to.setValue(from.getArrayValueReference());
@@ -844,7 +909,7 @@ public:
 				case TYPE_FLOAT:
 					break;
 				case TYPE_FUNCTION_CALL:
-					delete static_cast<string*>((void*)getValuePtrReference());
+					delete static_cast<StringValue*>((void*)getValuePtrReference());
 					delete getInitializerReference();
 					getInitializerReference() = nullptr;
 					break;
@@ -852,7 +917,7 @@ public:
 				case TYPE_PSEUDO_MIXED: break;
 				case TYPE_STRING:
 				case TYPE_FUNCTION_ASSIGNMENT:
-					delete static_cast<string*>((void*)getValuePtrReference());
+					delete static_cast<StringValue*>((void*)getValuePtrReference());
 					break;
 				case TYPE_ARRAY:
 					for (auto arrayValue: getArrayValueReference()) arrayValue->releaseReference();
@@ -902,7 +967,7 @@ public:
 				case TYPE_PSEUDO_MIXED: break;
 				case TYPE_STRING:
 				case TYPE_FUNCTION_ASSIGNMENT:
-					getValuePtrReference() = (uint64_t)(new string());
+					getValuePtrReference() = (uint64_t)(new StringValue());
 					break;
 				case TYPE_ARRAY:
 					getValuePtrReference() = (uint64_t)(new vector<ScriptVariable*>());
@@ -917,7 +982,7 @@ public:
 					getInitializerReference() = new Initializer();
 					break;
 				case TYPE_FUNCTION_CALL:
-					getValuePtrReference() = (uint64_t)(new string());
+					getValuePtrReference() = (uint64_t)(new StringValue());
 					getInitializerReference() = new Initializer();
 					break;
 				default:
@@ -978,8 +1043,7 @@ public:
 					return true;
 				case TYPE_STRING:
 					{
-						const auto& stringValue = getStringValueReference();
-						auto lowerCaseString = _StringTools::toLowerCase(stringValue);
+						auto lowerCaseString = _StringTools::toLowerCase(getStringValueReference().getValue());
 						if (lowerCaseString != "false" && lowerCaseString != "true" && lowerCaseString != "1" && lowerCaseString != "0") return optional;
 						value = lowerCaseString == "true" || lowerCaseString == "1";
 						return true;
@@ -1011,7 +1075,7 @@ public:
 					return true;
 				case TYPE_STRING:
 					{
-						const auto& stringValue = getStringValueReference();
+						const auto& stringValue = getStringValueReference().getValue();
 						if (_Integer::is(stringValue) == true) {
 							value = _Integer::parse(stringValue);
 							return true;
@@ -1050,7 +1114,7 @@ public:
 					return true;
 				case TYPE_STRING:
 					{
-						const auto& stringValue = getStringValueReference();
+						const auto& stringValue = getStringValueReference().getValue();
 						if (_Float::is(stringValue) == false) return optional;
 						value = _Float::parse(stringValue);
 					}
@@ -1080,12 +1144,26 @@ public:
 					return true;
 				case TYPE_STRING:
 				case TYPE_FUNCTION_ASSIGNMENT:
-					value = getStringValueReference();
+					value = getStringValueReference().getValue();
 					return true;
 				default:
 					return false;
 			}
 			return false;
+		}
+
+		/**
+		 * Get string value UTF8 position cache from given variable
+		 * @return UTF8 position cache or nullptr if not available
+		 */
+		inline _UTF8CharacterIterator::UTF8PositionCache* getStringValueCache() {
+			switch(getType()) {
+				case TYPE_STRING:
+				case TYPE_FUNCTION_ASSIGNMENT:
+					return &getStringValueReference().getCache();
+				default:
+					return nullptr;
+			}
 		}
 
 		/**
@@ -1129,7 +1207,7 @@ public:
 		 */
 		inline void setValue(const string& value) {
 			setType(TYPE_STRING);
-			getStringValueReference() = value;
+			getStringValueReference().setValue(value);
 		}
 
 		/**
@@ -1449,7 +1527,7 @@ public:
 		 */
 		inline void setFunctionAssignment(const string& value) {
 			setType(TYPE_FUNCTION_ASSIGNMENT);
-			getStringValueReference() = value;
+			getStringValueReference().setValue(value);
 		}
 
 		/**
@@ -1666,10 +1744,10 @@ public:
 					result+= to_string(getFloatValueReference());
 					break;
 				case TYPE_FUNCTION_CALL:
-					result+= "{" + getStringValueReference() + "}";
+					result+= "{" + getStringValueReference().getValue() + "}";
 					break;
 				case TYPE_FUNCTION_ASSIGNMENT:
-					result+= "() -> " + getStringValueReference();
+					result+= "() -> " + getStringValueReference().getValue();
 					break;
 				case TYPE_PSEUDO_NUMBER:
 					result+= "Number";
@@ -1678,7 +1756,7 @@ public:
 					result+= "Mixed";
 					break;
 				case TYPE_STRING:
-					result+= getStringValueReference();
+					result+= getStringValueReference().getValue();
 					break;
 				case TYPE_ARRAY:
 					{
@@ -1973,10 +2051,6 @@ public:
 
 	protected:
 		MINISCRIPT_STATIC_DLL_IMPEXT static const vector<string> CONTEXTFUNCTIONS_ALL;
-		MINISCRIPT_STATIC_DLL_IMPEXT static const vector<string> CONTEXTFUNCTIONS_ENGINE;
-		MINISCRIPT_STATIC_DLL_IMPEXT static const vector<string> CONTEXTFUNCTIONS_LOGIC;
-		MINISCRIPT_STATIC_DLL_IMPEXT static const vector<string> CONTEXTFUNCTIONS_ENGINELOGIC;
-		MINISCRIPT_STATIC_DLL_IMPEXT static const vector<string> CONTEXTFUNCTION_GUI;
 
 	private:
 		vector<ArgumentType> argumentTypes;
@@ -2177,6 +2251,7 @@ protected:
 	};
 
 	bool native;
+	_Context* context { nullptr };
 	vector<Script> scripts;
 	string nativeHash;
 	vector<Script> nativeScripts;
@@ -2740,6 +2815,20 @@ private:
 	static bool viewIsKey(const string_view& candidate);
 
 public:
+	/**
+	 * @return context
+	 */
+	inline _Context* getContext() {
+		return context;
+	}
+
+	/**
+	 * Set context
+	 * @param context context
+	 */
+	inline void setContext(_Context* context) {
+		this->context = context;
+	}
 
 	/**
 	 * Returns string representation of given argument indices

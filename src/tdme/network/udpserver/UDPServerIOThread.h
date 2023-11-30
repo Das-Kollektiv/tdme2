@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <queue>
 #include <unordered_map>
 
@@ -17,6 +18,7 @@
 #include <tdme/network/udpserver/UDPServerClient.h>
 
 using std::queue;
+using std::unique_ptr;
 using std::unordered_map;
 
 using tdme::network::udp::UDPPacket;
@@ -54,7 +56,7 @@ private:
 	};
 	typedef queue<Message*> MessageQueue;
 	typedef unordered_map<uint32_t, Message*> MessageMapAck;
-	Barrier* startUpBarrier;
+	unique_ptr<Barrier> startUpBarrier;
 
 public:
 	// forbid class copy
@@ -116,6 +118,6 @@ public:
 	Mutex messageMapAckMutex;
 	MessageMapAck messageMapAck;
 
-	UDPSocket socket;
+	unique_ptr<UDPSocket> socket;
 };
 

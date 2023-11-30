@@ -82,6 +82,15 @@ using tdme::utilities::Exception;
 using tdme::utilities::EngineMiniScript;
 using tdme::utilities::UTF8CharacterIterator;
 
+const vector<string> LogicMiniScript::CONTEXTFUNCTIONS_ENGINE = { "initializeEngine", "updateEngine" };
+const vector<string> LogicMiniScript::CONTEXTFUNCTIONS_LOGIC = { "initializeLogic", "updateLogic", "onLogicAdded", "onLogicsProcessed" };
+const vector<string> LogicMiniScript::CONTEXTFUNCTIONS_ENGINELOGIC = {
+	// engine
+	"initializeEngine", "updateEngine",
+	// logic
+	"initializeLogic", "updateLogic", "onLogicAdded", "onLogicsProcessed"
+};
+
 LogicMiniScript::LogicMiniScript(): EngineMiniScript(), prototypesToAddMutex("prototypetoadd-mutex") {
 }
 

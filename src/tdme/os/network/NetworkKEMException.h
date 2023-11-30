@@ -15,7 +15,7 @@ using std::string;
 class tdme::os::network::NetworkKEMException: public NetworkException {
 public:
 	/**
-	 * @brief public constructor
+	 * Constructor
 	 * @param &message message exception message
 	 */
 	NetworkKEMException(const string &message) throw();

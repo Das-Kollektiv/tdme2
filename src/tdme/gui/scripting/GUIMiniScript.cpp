@@ -4,6 +4,7 @@
 #include <span>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/logics/Context.h>
@@ -34,6 +35,7 @@ using std::string;
 using std::to_string;
 using std::unique_ptr;
 using std::unordered_map;
+using std::vector;
 
 using tdme::engine::logics::Context;
 using tdme::engine::logics::Logic;
@@ -58,6 +60,8 @@ using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::EngineMiniScript;
 using tdme::utilities::MutableString;
+
+const vector<string> GUIMiniScript::CONTEXTFUNCTION_GUI = {};
 
 GUIMiniScript::GUIMiniScript(GUIScreenNode* screenNode): EngineMiniScript(), screenNode(screenNode) {
 }

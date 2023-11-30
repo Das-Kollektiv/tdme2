@@ -74,15 +74,16 @@ void UDPServerIOThread::run() {
 
 	// wait on startup barrier
 	startUpBarrier->wait();
+	startUpBarrier = nullptr;
 
 	// catch kernel event and server socket exceptions
 	try {
 		// create server socket
-		UDPSocket::createServerSocket(socket, server->host, server->port);
+		socket = unique_ptr<UDPSocket>(UDPSocket::createServerSocket(server->host, server->port));
 
 		// initialize kernel event mechanismn
 		kem.initKernelEventMechanism(1);
-		kem.setSocketInterest(socket, NIO_INTEREST_NONE, NIO_INTEREST_READ, nullptr);
+		kem.setSocketInterest(socket.get(), NIO_INTEREST_NONE, NIO_INTEREST_READ, nullptr);
 
 		// do event loop
 		auto lastMessageQueueAckTime = Time::getCurrentMillis();
@@ -118,7 +119,7 @@ void UDPServerIOThread::run() {
 					char message[512];
 
 					// receive datagrams as long as its size > 0 and read would not block
-					while ((bytesReceived = socket.read(ip, port, (void*)message, sizeof(message))) > 0) {
+					while ((bytesReceived = socket->read(ip, port, (void*)message, sizeof(message))) > 0) {
 						//
 						AtomicOperations::increment(server->statistics.received);
 
@@ -252,7 +253,7 @@ void UDPServerIOThread::run() {
 					// try to send batch
 					while (messageQueueBatch.empty() == false) {
 						auto message = messageQueueBatch.front();
-						if (socket.write(message->ip, message->port, (void*)message->message, message->bytes) == -1) {
+						if (socket->write(message->ip, message->port, (void*)message->message, message->bytes) == -1) {
 							// sending would block, stop trying to sendin
 							AtomicOperations::increment(server->statistics.errors);
 							break;
@@ -270,7 +271,7 @@ void UDPServerIOThread::run() {
 						messageQueueMutex.lock();
 						if (messageQueue.empty() == true) {
 							kem.setSocketInterest(
-								socket,
+								socket.get(),
 								NIO_INTEREST_READ | NIO_INTEREST_WRITE,
 								NIO_INTEREST_READ,
 								nullptr
@@ -311,7 +312,7 @@ void UDPServerIOThread::run() {
 
 	// exit gracefully
 	kem.shutdownKernelEventMechanism();
-	socket.close();
+	socket->close();
 
 	// log
 	Console::println("UDPServerIOThread[" + to_string(id) + "]::run(): done");
@@ -376,7 +377,7 @@ void UDPServerIOThread::sendMessage(const UDPServerClient* client, const uint8_t
 	// set nio interest
 	if (messageQueue.size() == 1) {
 		kem.setSocketInterest(
-			socket,
+			socket.get(),
 			NIO_INTEREST_READ,
 			NIO_INTEREST_READ | NIO_INTEREST_WRITE,
 			nullptr
@@ -467,7 +468,7 @@ void UDPServerIOThread::processAckMessages() {
 			// set nio interest
 			if (messageQueue.size() == 1) {
 				kem.setSocketInterest(
-					socket,
+					socket.get(),
 					NIO_INTEREST_READ,
 					NIO_INTEREST_READ | NIO_INTEREST_WRITE,
 					nullptr

@@ -16,7 +16,7 @@ using tdme::utilities::ExceptionBase;
 class tdme::os::network::NetworkException: public ExceptionBase {
 public:
 	/**
-	 * @brief public constructor
+	 * Constructor
 	 * @param &message message exception message
 	 */
 	NetworkException(const string &message) throw();

@@ -41,7 +41,7 @@ KernelEventMechanism::~KernelEventMechanism() {
 	delete static_cast<KernelEventMechanismPSD*>(_psd);
 }
 
-void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie) {
+void KernelEventMechanism::setSocketInterest(NetworkSocket* socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie) {
 	// exit if not initialized
 	if (initialized == false) return;
 
@@ -52,15 +52,15 @@ void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const 
 	psd->fdsMutex.lock();
 
 	// remove fd from fds
-	psd->fds.erase(socket.descriptor);
+	psd->fds.erase(socket->descriptor);
 
 	// remove last read interest
 	if ((lastInterest & NIO_INTEREST_READ) == NIO_INTEREST_READ) {
-		FD_CLR(socket.descriptor, &psd->rfds);
+		FD_CLR(socket->descriptor, &psd->rfds);
 	}
 	// remove last write interest
 	if ((lastInterest & NIO_INTEREST_WRITE) == NIO_INTEREST_WRITE) {
-		FD_CLR(socket.descriptor, &psd->wfds);
+		FD_CLR(socket->descriptor, &psd->wfds);
 	}
 
 	// have interest?
@@ -68,26 +68,26 @@ void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const 
 
 	// add read interest
 	if ((interest & NIO_INTEREST_READ) == NIO_INTEREST_READ) {
-		FD_SET(socket.descriptor, &psd->rfds);
+		FD_SET(socket->descriptor, &psd->rfds);
 		haveInterest = true;
 	}
 	// add write interest
 	if ((interest & NIO_INTEREST_WRITE) == NIO_INTEREST_WRITE) {
-		FD_SET(socket.descriptor, &psd->wfds);
+		FD_SET(socket->descriptor, &psd->wfds);
 		haveInterest = true;
 	}
 
 	// add fd to fds
 	if (haveInterest == true) {
-		if (socket.descriptor > psd->maxFd) psd->maxFd = socket.descriptor;
-		psd->fds[socket.descriptor] = (void*)cookie;
+		if (socket->descriptor > psd->maxFd) psd->maxFd = socket->descriptor;
+		psd->fds[socket->descriptor] = (void*)cookie;
 	}
 
 	// done synchronize fd set access
 	psd->fdsMutex.unlock();
 }
 
-void KernelEventMechanism::removeSocket(const NetworkSocket &socket) {
+void KernelEventMechanism::removeSocket(NetworkSocket* socket) {
 	// exit if not initialized
 	if (initialized == false) return;
 
@@ -98,11 +98,11 @@ void KernelEventMechanism::removeSocket(const NetworkSocket &socket) {
 	psd->fdsMutex.lock();
 
 	// remove fd from fds
-	psd->fds.erase(socket.descriptor);
+	psd->fds.erase(socket->descriptor);
 
 	// remove last read interest
-	FD_CLR(socket.descriptor, &psd->rfds);
-	FD_CLR(socket.descriptor, &psd->wfds);
+	FD_CLR(socket->descriptor, &psd->rfds);
+	FD_CLR(socket->descriptor, &psd->wfds);
 
 	// done synchronize fd set access
 	psd->fdsMutex.unlock();

@@ -20,12 +20,18 @@
 
 #include <miniscript/miniscript.h>
 #include <miniscript/math/Math.h>
+#include <miniscript/os/filesystem/FileSystem.h>
+#include <miniscript/miniscript/ApplicationMethods.h>
 #include <miniscript/miniscript/ArrayMethods.h>
 #include <miniscript/miniscript/BaseMethods.h>
+#include <miniscript/miniscript/CryptographyMethods.h>
 #include <miniscript/miniscript/ConsoleMethods.h>
+#include <miniscript/miniscript/ContextMethods.h>
+#include <miniscript/miniscript/FileSystemMethods.h>
 #include <miniscript/miniscript/JSONMethods.h>
 #include <miniscript/miniscript/MapMethods.h>
 #include <miniscript/miniscript/MathMethods.h>
+#include <miniscript/miniscript/NetworkMethods.h>
 #include <miniscript/miniscript/ScriptMethods.h>
 #include <miniscript/miniscript/SetMethods.h>
 #include <miniscript/miniscript/StringMethods.h>
@@ -33,7 +39,6 @@
 #include <miniscript/miniscript/XMLMethods.h>
 #include <miniscript/utilities/Character.h>
 #include <miniscript/utilities/Console.h>
-#include <miniscript/utilities/FileSystem.h>
 #include <miniscript/utilities/Integer.h>
 #include <miniscript/utilities/StringTokenizer.h>
 #include <miniscript/utilities/StringTools.h>
@@ -63,20 +68,25 @@ using std::vector;
 using miniscript::miniscript::MiniScript;
 
 using miniscript::math::Math;
+using miniscript::miniscript::ApplicationMethods;
 using miniscript::miniscript::ArrayMethods;
 using miniscript::miniscript::BaseMethods;
+using miniscript::miniscript::CryptographyMethods;
 using miniscript::miniscript::ConsoleMethods;
+using miniscript::miniscript::ContextMethods;
+using miniscript::miniscript::FileSystemMethods;
 using miniscript::miniscript::JSONMethods;
 using miniscript::miniscript::MapMethods;
 using miniscript::miniscript::MathMethods;
+using miniscript::miniscript::NetworkMethods;
 using miniscript::miniscript::ScriptMethods;
 using miniscript::miniscript::SetMethods;
 using miniscript::miniscript::StringMethods;
 using miniscript::miniscript::TimeMethods;
 using miniscript::miniscript::XMLMethods;
+using miniscript::os::filesystem::FileSystem;
 using miniscript::utilities::Character;
 using miniscript::utilities::Console;
-using miniscript::utilities::FileSystem;
 using miniscript::utilities::Integer;
 using miniscript::utilities::StringTokenizer;
 using miniscript::utilities::StringTools;
@@ -96,15 +106,6 @@ const string MiniScript::ScriptVariable::CLASSNAME_MAP = "map";
 const string MiniScript::ScriptVariable::CLASSNAME_SET = "set";
 
 const vector<string> MiniScript::ScriptMethod::CONTEXTFUNCTIONS_ALL = {};
-const vector<string> MiniScript::ScriptMethod::CONTEXTFUNCTIONS_ENGINE = { "initializeEngine", "updateEngine" };
-const vector<string> MiniScript::ScriptMethod::CONTEXTFUNCTIONS_LOGIC = { "initializeLogic", "updateLogic", "onLogicAdded", "onLogicsProcessed" };
-const vector<string> MiniScript::ScriptMethod::CONTEXTFUNCTIONS_ENGINELOGIC = {
-	// engine
-	"initializeEngine", "updateEngine",
-	// logic
-	"initializeLogic", "updateLogic", "onLogicAdded", "onLogicsProcessed"
-};
-const vector<string> MiniScript::ScriptMethod::CONTEXTFUNCTION_GUI = {};
 
 
 const string MiniScript::getBaseClass() {
@@ -113,8 +114,22 @@ const string MiniScript::getBaseClass() {
 
 const vector<string> MiniScript::getTranspilationUnits() {
 	return {
-		"src/miniscript/miniscript/MiniScript.cpp",
-		"src/miniscript/miniscript/MathMethods.cpp"
+		"src/miniscript/miniscript/ApplicationMethods.cpp",
+		"src/miniscript/miniscript/ArrayMethods.cpp",
+		"src/miniscript/miniscript/BaseMethods.cpp",
+		"src/miniscript/miniscript/ConsoleMethods.cpp",
+		"src/miniscript/miniscript/ContextMethods.cpp",
+		"src/miniscript/miniscript/CryptographyMethods.cpp",
+		"src/miniscript/miniscript/FileSystemMethods.cpp",
+		"src/miniscript/miniscript/JSONMethods.cpp",
+		"src/miniscript/miniscript/MapMethods.cpp",
+		"src/miniscript/miniscript/MathMethods.cpp",
+		"src/miniscript/miniscript/NetworkMethods.cpp",
+		"src/miniscript/miniscript/ScriptMethods.cpp",
+		"src/miniscript/miniscript/SetMethods.cpp",
+		"src/miniscript/miniscript/StringMethods.cpp",
+		"src/miniscript/miniscript/TimeMethods.cpp",
+		"src/miniscript/miniscript/XMLMethods.cpp"
 	};
 }
 
@@ -711,6 +726,8 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& methodName, 
 		if (argument.empty() == false &&
 			StringTools::viewStartsWith(argument, "\"") == false &&
 			StringTools::viewEndsWith(argument, "\"") == false &&
+			StringTools::viewStartsWith(argument, "'") == false &&
+			StringTools::viewEndsWith(argument, "'") == false &&
 			StringTools::viewStartsWith(argument, "[") == false &&
 			StringTools::viewEndsWith(argument, "]") == false &&
 			StringTools::viewStartsWith(argument, "}") == false &&
@@ -734,8 +751,10 @@ bool MiniScript::createScriptStatementSyntaxTree(const string_view& methodName, 
 		} else {
 			// string literal
 			ScriptVariable argumentValue;
-			if (StringTools::viewStartsWith(argument, "\"") == true &&
-				StringTools::viewEndsWith(argument, "\"") == true) {
+			if ((StringTools::viewStartsWith(argument, "\"") == true &&
+				StringTools::viewEndsWith(argument, "\"") == true) ||
+				(StringTools::viewStartsWith(argument, "'") == true &&
+				StringTools::viewEndsWith(argument, "'") == true)) {
 				//
 				ScriptVariable value;
 				value.setValue(string(StringTools::viewSubstring(argument, 1, argument.size() - 1)));
@@ -2737,35 +2756,52 @@ void MiniScript::registerMethods() {
 	miniScriptMath = make_unique<MathMethods>(this);
 	miniScriptMath->registerMethods();
 
-	// register base methods
+	// base script methods
+	// 	register base methods
 	BaseMethods::registerMethods(this);
 
-	// register string methods
+	// 	register string methods
 	StringMethods::registerMethods(this);
 
-	// register array methods
+	// 	register array methods
 	ArrayMethods::registerMethods(this);
 
-	// register map methods
+	// 	register map methods
 	MapMethods::registerMethods(this);
 
-	// register set methods
+	// 	register set methods
 	SetMethods::registerMethods(this);
 
-	// register script methods
+	// 	register script methods
 	ScriptMethods::registerMethods(this);
 
-	// register script methods
-	TimeMethods::registerMethods(this);
+	// additional script methods
+	// register application methods
+	ApplicationMethods::registerMethods(this);
+
+	// register console methods
+	ConsoleMethods::registerMethods(this);
+
+	// register context methods
+	ContextMethods::registerMethods(this);
+
+	// register cryptography methods
+	CryptographyMethods::registerMethods(this);
+
+	// register file system methods
+	FileSystemMethods::registerMethods(this);
 
 	// register JSON methods
 	JSONMethods::registerMethods(this);
 
+	// register network methods
+	NetworkMethods::registerMethods(this);
+
+	// register time methods
+	TimeMethods::registerMethods(this);
+
 	// register XML methods
 	XMLMethods::registerMethods(this);
-
-	// register console methods
-	ConsoleMethods::registerMethods(this);
 
 	//
 	for (const auto scriptDataType: scriptDataTypes) {
@@ -3317,7 +3353,7 @@ const MiniScript::ScriptVariable MiniScript::initializeMapSet(const string_view&
 
 void MiniScript::ScriptVariable::setFunctionCallStatement(const string& initializerStatement, MiniScript* miniScript, const ScriptStatement& statement) {
 	setType(TYPE_FUNCTION_CALL);
-	getStringValueReference() = initializerStatement;
+	getStringValueReference().setValue(initializerStatement);
 	//
 	ScriptStatement initializerScriptStatement(
 		statement.line,

@@ -40,6 +40,10 @@ class tdme::engine::logics::LogicMiniScript: public EngineMiniScript {
 	friend class MiniScriptLogic;
 
 protected:
+	STATIC_DLL_IMPEXT static const vector<string> CONTEXTFUNCTIONS_ENGINE;
+	STATIC_DLL_IMPEXT static const vector<string> CONTEXTFUNCTIONS_LOGIC;
+	STATIC_DLL_IMPEXT static const vector<string> CONTEXTFUNCTIONS_ENGINELOGIC;
+
 	Context* context { nullptr };
 	MiniScriptLogic* logic { nullptr };
 

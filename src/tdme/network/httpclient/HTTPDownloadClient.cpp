@@ -16,6 +16,7 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/os/network/Network.h>
 #include <tdme/os/network/NetworkSocketClosedException.h>
+#include <tdme/os/network/SecureTCPSocket.h>
 #include <tdme/os/network/TCPSocket.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/Thread.h>
@@ -48,6 +49,7 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::network::Network;
 using tdme::os::network::NetworkSocketClosedException;
+using tdme::os::network::SecureTCPSocket;
 using tdme::os::network::TCPSocket;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
@@ -185,26 +187,38 @@ void HTTPDownloadClient::start() {
 			void run() {
 				downloadClient->finished = false;
 				downloadClient->progress = 0.0f;
-				TCPSocket socket;
+				unique_ptr<TCPSocket> socket;
 				try {
-					if (StringTools::startsWith(downloadClient->url, "http://") == false) throw HTTPClientException("Invalid protocol");
-					auto relativeUrl = StringTools::substring(downloadClient->url, string("http://").size());
+					// TODO: we might need a class to determine protocol, hostname and port, yaaar
+					auto protocolSeparatorIdx = StringTools::indexOf(downloadClient->url, string("://"));
+					if (protocolSeparatorIdx == -1) throw HTTPClientException("Invalid URL");
+					auto relativeUrl = StringTools::substring(downloadClient->url, protocolSeparatorIdx + 3);
 					if (relativeUrl.empty() == true) throw HTTPClientException("No URL given");
 					auto slashIdx = relativeUrl.find('/');
 					auto hostname = relativeUrl;
 					if (slashIdx != -1) hostname = StringTools::substring(relativeUrl, 0, slashIdx);
 					relativeUrl = StringTools::substring(relativeUrl, hostname.size());
-					//
-					auto ip = Network::getIpByHostname(hostname);
-					if (ip.empty() == true) {
-						Console::println("HTTPDownloadClient::execute(): failed");
-						throw HTTPClientException("Could not resolve host IP by hostname");
-					}
 					// socket
-					TCPSocket::create(socket, TCPSocket::determineIpVersion(ip));
-					socket.connect(ip, 80);
+					if (StringTools::startsWith(downloadClient->url, "http://") == true) {
+						//
+						auto ip = Network::getIpByHostname(hostname);
+						if (ip.empty() == true) {
+							Console::println("HTTPDownloadClient::execute(): failed");
+							throw HTTPClientException("Could not resolve host IP by hostname");
+						}
+						//
+						socket = make_unique<TCPSocket>();
+						socket->connect(ip, 80);
+					} else
+					if (StringTools::startsWith(downloadClient->url, "https://") == true) {
+						socket = make_unique<SecureTCPSocket>();
+						socket->connect(hostname, 443);
+					} else {
+						throw HTTPClientException("Invalid protocol");
+					}
+					//
 					auto request = downloadClient->createHTTPRequestHeaders(hostname, relativeUrl);
-					socket.write((void*)request.data(), request.length());
+					socket->write((void*)request.data(), request.length());
 
 					{
 						// output file stream
@@ -219,7 +233,7 @@ void HTTPDownloadClient::start() {
 						uint64_t bytesRead = 0;
 						try {
 							for (;isStopRequested() == false;) {
-								auto rawResponseBytesRead = socket.read(rawResponseBuf, sizeof(rawResponseBuf));
+								auto rawResponseBytesRead = socket->read(rawResponseBuf, sizeof(rawResponseBuf));
 								ofs.write(rawResponseBuf, rawResponseBytesRead);
 								if (downloadClient->haveHeaders == false) {
 									// flush download file to disk
@@ -298,13 +312,13 @@ void HTTPDownloadClient::start() {
 					FileSystem::getStandardFileSystem()->removeFile(".", downloadClient->file + ".download");
 
 					//
-					socket.shutdown();
+					socket->shutdown();
 
 					//
 					downloadClient->finished = true;
 					downloadClient->progress = 1.0f;
 				} catch (Exception& exception) {
-					socket.shutdown();
+					socket->shutdown();
 					downloadClient->finished = true;
 					Console::println(string("HTTPDownloadClient::execute(): performed HTTP request: FAILED: ") + exception.what());
 				}

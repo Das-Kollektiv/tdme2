@@ -21,9 +21,14 @@ public:
 	enum IpVersion {IPV4, IPV6};
 
 	/**
-	 * @brief assignment operator
+	 * Determine IP version
+	 * @param ip ip
+	 * @returns ip version
 	 */
-	NetworkSocket& operator=(const NetworkSocket& socket);
+	static IpVersion determineIpVersion(const string& ip);
+
+	// forbid class copy
+	FORBID_CLASS_COPY(NetworkSocket)
 
 	/**
 	 * Protected constructor
@@ -48,11 +53,6 @@ public:
 	const unsigned int getPort();
 
 	/**
-	 * @brief shuts socket down for reading and writing
-	 */
-	void shutdown();
-
-	/**
 	 * Binds a socket to local ip and port
 	 * @param ip ip
 	 * @param port port
@@ -67,19 +67,16 @@ public:
 	void setNonBlocked();
 
 	/**
-	 * Closes the socket
+	 * @brief shuts socket down for reading and writing
 	 */
-	void close();
+	virtual void shutdown();
 
 	/**
-	 * Determine IP version
-	 * @param ip ip
-	 * @returns ip version
+	 * Closes the socket
 	 */
-	static IpVersion determineIpVersion(const string& ip);
+	virtual void close();
 
 protected:
-	IpVersion ipVersion;
 	int descriptor;
 	string ip;
 	unsigned int port;

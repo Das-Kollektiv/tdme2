@@ -73,6 +73,8 @@ public:
 	void collectHIDEvents(vector<GUIMouseEvent>& mouseEvents, vector<GUIKeyboardEvent>& keyEvents);
 
 private:
+	STATIC_DLL_IMPEXT static const vector<string> CONTEXTFUNCTION_GUI;
+
 	GUIScreenNode* screenNode { nullptr };
 	unique_ptr<GUIScreenNode> nextScreenNode;
 	bool popped { false };

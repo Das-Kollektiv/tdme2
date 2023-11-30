@@ -57,20 +57,20 @@ public:
 
 	/**
 	 * @brief Sets a non blocked socket io interest
-	 * @param &socket socket
+	 * @param socket socket
 	 * @param lastInterest last nio interest
 	 * @param interest nio interest
 	 * @param cookie cookie
 	 * @throws tdme::os::network::NetworkKEMException
 	 */
-	void setSocketInterest(const NetworkSocket &socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie);
+	void setSocketInterest(NetworkSocket* socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie);
 
 	/**
 	 * @brief Removes a socket
-	 * @param &socket socket
+	 * @param socket socket
 	 * @throws tdme::os::network::NetworkKEMException
 	 */
-	void removeSocket(const NetworkSocket &socket);
+	void removeSocket(NetworkSocket* socket);
 
 private:
 	//

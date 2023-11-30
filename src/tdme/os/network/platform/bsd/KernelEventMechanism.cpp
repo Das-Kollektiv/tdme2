@@ -43,7 +43,7 @@ KernelEventMechanism::~KernelEventMechanism() {
 	delete static_cast<KernelEventMechanismPSD*>(_psd);
 }
 
-void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie) {
+void KernelEventMechanism::setSocketInterest(NetworkSocket* socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie) {
 	// exit if not initialized
 	if (initialized == false) return;
 
@@ -59,7 +59,7 @@ void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const 
 	// handle read interest
 	if ((interest & NIO_INTEREST_READ) == NIO_INTEREST_READ) {
 		auto& ke = psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
-		ke.ident = socket.descriptor;
+		ke.ident = socket->descriptor;
 		ke.filter = EVFILT_READ;
 		ke.flags = EV_ADD;
 		ke.fflags = 0;
@@ -67,7 +67,7 @@ void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const 
 		ke.udata = (void*)cookie;
 	} else {
 		auto& ke = psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
-		ke.ident = socket.descriptor;
+		ke.ident = socket->descriptor;
 		ke.filter = EVFILT_READ;
 		ke.flags = EV_DELETE;
 		ke.fflags = 0;
@@ -77,7 +77,7 @@ void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const 
 	// handle write interest
 	if ((interest & NIO_INTEREST_WRITE) == NIO_INTEREST_WRITE) {
 		auto& ke = psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
-		ke.ident = socket.descriptor;
+		ke.ident = socket->descriptor;
 		ke.filter = EVFILT_WRITE;
 		ke.flags = EV_ADD;
 		ke.fflags = 0;
@@ -85,7 +85,7 @@ void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const 
 		ke.udata = (void*)cookie;
 	} else {
 		auto& ke = psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
-		ke.ident = socket.descriptor;
+		ke.ident = socket->descriptor;
 		ke.filter = EVFILT_WRITE;
 		ke.flags = EV_DELETE;
 		ke.fflags = 0;
@@ -96,7 +96,7 @@ void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const 
 	psd->kqMutex.unlock();
 }
 
-void KernelEventMechanism::removeSocket(const NetworkSocket &socket) {
+void KernelEventMechanism::removeSocket(NetworkSocket* socket) {
 	// exit if not initialized
 	if (initialized == false) return;
 
@@ -112,7 +112,7 @@ void KernelEventMechanism::removeSocket(const NetworkSocket &socket) {
 	// remove read interest
 	{
 		auto& ke = psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
-		ke.ident = socket.descriptor;
+		ke.ident = socket->descriptor;
 		ke.filter = EVFILT_READ;
 		ke.flags = EV_DELETE;
 		ke.fflags = 0;
@@ -122,7 +122,7 @@ void KernelEventMechanism::removeSocket(const NetworkSocket &socket) {
 	// remove write interest
 	{
 		auto& ke = psd->kqChangeList[psd->kqChangeListBuffer][psd->kqChangeListCurrent++];
-		ke.ident = socket.descriptor;
+		ke.ident = socket->descriptor;
 		ke.filter = EVFILT_WRITE;
 		ke.flags = EV_DELETE;
 		ke.fflags = 0;

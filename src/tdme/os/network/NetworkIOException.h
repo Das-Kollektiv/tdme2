@@ -16,7 +16,7 @@ using tdme::os::network::NetworkException;
 class tdme::os::network::NetworkIOException: public NetworkException {
 public:
 	/**
-	 * @brief public constructor
+	 * Constructor
 	 * @param &message message exception message
 	 */
 	NetworkIOException(const string &message) throw();

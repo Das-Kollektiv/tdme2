@@ -2,6 +2,9 @@
 
 #include <string.h>
 
+#include <openssl/ssl.h>
+#include <openssl/err.h>
+
 #if defined(_WIN32)
 	#include <winsock2.h>
 	#include <ws2tcpip.h>
@@ -21,6 +24,7 @@
 
 using tdme::os::network::Network;
 
+using std::string;
 using std::to_string;
 
 using tdme::os::network::NetworkException;
@@ -28,6 +32,11 @@ using tdme::os::network::NetworkSocket;
 using tdme::utilities::Console;
 
 bool Network::initialize() {
+	// https support
+	SSL_library_init();
+	SSL_load_error_strings();
+	ERR_load_crypto_strings();
+	//
 	#if defined(_WIN32)
 		WSADATA wsaData;
 		auto result = WSAStartup(MAKEWORD(2,2), &wsaData);

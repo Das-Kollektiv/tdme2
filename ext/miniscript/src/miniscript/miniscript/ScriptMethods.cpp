@@ -1,5 +1,7 @@
 #include <span>
 
+#include <memory>
+
 #include <miniscript/miniscript.h>
 #include <miniscript/miniscript/MiniScript.h>
 #include <miniscript/miniscript/ScriptMethods.h>
@@ -7,6 +9,7 @@
 #include <miniscript/utilities/Time.h>
 
 using std::span;
+using std::make_unique;
 
 using miniscript::miniscript::ScriptMethods;
 

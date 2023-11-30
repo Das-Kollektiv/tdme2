@@ -3,12 +3,18 @@
 
 namespace miniscript {
 namespace miniscript {
+	class ApplicationMethods;
 	class ArrayMethods;
 	class BaseMethods;
 	class ConsoleMethods;
+	class ContextMethods;
+	class Context;
+	class CryptographyMethods;
+	class FileSystemMethods;
 	class JSONMethods;
 	class MathMethods;
 	class MapMethods;
+	class NetworkMethods;
 	class MiniScript;
 	class ScriptMethods;
 	class SetMethods;

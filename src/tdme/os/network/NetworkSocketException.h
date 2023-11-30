@@ -14,7 +14,7 @@ using tdme::os::network::NetworkException;
 class tdme::os::network::NetworkSocketException: public NetworkException {
 public:
 	/**
-	 * @brief public constructor
+	 * Constructor
 	 * @param &message message exception message
 	 */
 	NetworkSocketException(const string &message) throw();
