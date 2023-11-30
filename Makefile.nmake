@@ -22,7 +22,7 @@ INCLUDES = \
 	/I "ext\rapidjson\include" \
 	/I "ext\cpp-spline\src" \
 	/I "ext\zlib" \
-	/I "ext\miniscript\src"
+	/I "ext\miniscript\src" \
 	/I "ext\windows-msc\openssl\include"
 
 # For some reason this works only once LOL
