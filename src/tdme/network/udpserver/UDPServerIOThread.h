@@ -56,7 +56,7 @@ private:
 	};
 	typedef queue<Message*> MessageQueue;
 	typedef unordered_map<uint32_t, Message*> MessageMapAck;
-	unique_ptr<Barrier> startUpBarrier;
+	Barrier* startUpBarrier;
 
 public:
 	// forbid class copy
