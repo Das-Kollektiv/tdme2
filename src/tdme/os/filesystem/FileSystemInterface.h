@@ -27,19 +27,19 @@ struct tdme::os::filesystem::FileSystemInterface
 	virtual ~FileSystemInterface() {}
 
 	/**
-	 * Get file name
+	 * Compose URI from path name and file name
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @return complete filename with path and file
-	 * @throws tdme::os::filesystem::FileSystemException
+	 * @return complete file URI with path name and file name
 	 */
-	virtual const string getFileName(const string& pathName, const string& fileName) = 0;
+	virtual const string composeURI(const string& pathName, const string& fileName) = 0;
 
 	/**
 	 * Return file size of given file
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @return file size
+	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	virtual uint64_t getFileSize(const string& pathName, const string& fileName) = 0;
 
@@ -105,29 +105,32 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @param filter filter or null, this filter can be created on stack as ownership will not be taken over
 	 * @param addDrives add drives to list(applies to Microsoft Windows only)
 	 * @return file names
+	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	virtual void list(const string& pathName, vector<string>& files, FileNameFilter* filter = nullptr, bool addDrives = false) = 0;
 
 	/**
 	 * Check if file is a path
-	 * @param pathName path name
+	 * @param uri uniform resource identifier
 	 * @return if file is a path
+	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	virtual bool isPath(const string& pathName) = 0;
+	virtual bool isPath(const string& uri) = 0;
 
 	/**
 	 * Check if file is a drive (applies to Microsoft Windows only)
-	 * @param pathName path name
+	 * @param uri uniform resource identifier
 	 * @return if file is a drive
 	 */
-	virtual bool isDrive(const string& pathName) = 0;
+	virtual bool isDrive(const string& uri) = 0;
 
 	/**
 	 * Check if file exists
-	 * @param fileName file name
+	 * @param uri uniform resource identifier
 	 * @return bool if file exists
+	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	virtual bool fileExists(const string& fileName) = 0;
+	virtual bool exists(const string& uri) = 0;
 
 	/**
 	 * Returns if file is a executable file
@@ -147,42 +150,52 @@ struct tdme::os::filesystem::FileSystemInterface
 	virtual void setExecutable(const string& pathName, const string& fileName) = 0;
 
 	/**
-	 * Get canonical path name
+	 * Get canonical URI from given path name and file name
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @return canonical path
+	 * @return canonical URI
 	 */
-	virtual const string getCanonicalPath(const string& pathName, const string& fileName) = 0;
+	virtual const string getCanonicalURI(const string& pathName, const string& fileName) = 0;
 
 	/**
 	 * Get current working path name
 	 * @return current working path
+	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	virtual const string getCurrentWorkingPathName() = 0;
 
 	/**
 	 * Change path
 	 * @param pathName path name
+	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	virtual void changePath(const string& pathName) = 0;
 
 	/**
 	 * Get path name
-	 * @param fileName file name
+	 * @param uri uniform resource identifier
 	 * @return canonical path
 	 */
-	virtual const string getPathName(const string& fileName) = 0;
+	virtual const string getPathName(const string& uri) = 0;
 
 	/**
 	 * Get file name
-	 * @param fileName file name
+	 * @param uri uniform resource identifier
 	 * @return canonical path
 	 */
-	virtual const string getFileName(const string& fileName) = 0;
+	virtual const string getFileName(const string& uri) = 0;
+
+	/**
+	 * Remove file extension, e.g. .dae, .fbx, ...
+	 * @param fileName file name
+	 * @return file name
+	 */
+	virtual const string removeFileExtension(const string& fileName) = 0;
 
 	/**
 	 * Create path
 	 * @param pathName path name
+	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	virtual void createPath(const string& pathName) = 0;
 
@@ -191,6 +204,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @param pathName path name
 	 * @param recursive remove recursive
 	 * @return success
+	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	virtual void removePath(const string& pathName, bool recursive) = 0;
 
@@ -199,6 +213,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @return success
+	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	virtual void removeFile(const string& pathName, const string& fileName) = 0;
 
@@ -206,6 +221,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * Rename file
 	 * @param fileNameFrom file name from
 	 * @param fileNameTo file name to
+	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	virtual void rename(const string& fileNameFrom, const string& fileNameTo) = 0;
 

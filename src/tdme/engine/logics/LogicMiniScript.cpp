@@ -5213,10 +5213,10 @@ void LogicMiniScript::registerMethods() {
 					try {
 						auto _pathName = pathName;
 						if (miniScript->context->getApplicationRootPathName().empty() == false) {
-							_pathName = FileSystem::getInstance()->getCanonicalPath(miniScript->context->getApplicationRootPathName(), pathName);
+							_pathName = FileSystem::getInstance()->getCanonicalURI(miniScript->context->getApplicationRootPathName(), pathName);
 						}
 						Prototype* prototype = nullptr;
-						auto canonicalPath = FileSystem::getInstance()->getCanonicalPath(_pathName, fileName);
+						auto canonicalPath = FileSystem::getInstance()->getCanonicalURI(_pathName, fileName);
 						auto prototypeIt = miniScript->prototypes.find(canonicalPath);
 						if (prototypeIt != miniScript->prototypes.end()) {
 							prototypeIt->second.counter++;
@@ -5302,10 +5302,10 @@ void LogicMiniScript::registerMethods() {
 					try {
 						auto _pathName = pathName;
 						if (miniScript->context->getApplicationRootPathName().empty() == false) {
-							_pathName = FileSystem::getInstance()->getCanonicalPath(miniScript->context->getApplicationRootPathName(), pathName);
+							_pathName = FileSystem::getInstance()->getCanonicalURI(miniScript->context->getApplicationRootPathName(), pathName);
 						}
 						Prototype* prototype = nullptr;
-						auto canonicalPath = FileSystem::getInstance()->getCanonicalPath(_pathName, fileName);
+						auto canonicalPath = FileSystem::getInstance()->getCanonicalURI(_pathName, fileName);
 						auto prototypeIt = miniScript->prototypes.find(canonicalPath);
 						if (prototypeIt != miniScript->prototypes.end()) {
 							prototypeIt->second.counter++;

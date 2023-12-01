@@ -98,7 +98,7 @@ int main(int argc, char** argv)
 		Console::println(string() + "An error occurred: " + exception.what());
 	}
 	try {
-		if (FileSystem::getInstance()->fileExists("shader/vk") == false) {
+		if (FileSystem::getInstance()->exists("shader/vk") == false) {
 			FileSystem::getInstance()->createPath("shader/vk");
 		}
 	} catch (Exception& exception) {

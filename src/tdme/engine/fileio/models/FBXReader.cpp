@@ -608,12 +608,12 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 				}
 				if (diffuseTextureFileName.length() > 0) {
 					specularMaterialProperties->setDiffuseTexture(
-						FileSystem::getInstance()->fileExists(
-							FileSystem::getInstance()->getCanonicalPath(pathName, FileSystem::getInstance()->getFileName(diffuseTextureFileName))
+						FileSystem::getInstance()->exists(
+							FileSystem::getInstance()->composeURI(pathName, FileSystem::getInstance()->getFileName(diffuseTextureFileName))
 						)?pathName:FileSystem::getInstance()->getPathName(diffuseTextureFileName),
 						FileSystem::getInstance()->getFileName(diffuseTextureFileName),
-						FileSystem::getInstance()->fileExists(
-							FileSystem::getInstance()->getCanonicalPath(pathName, FileSystem::getInstance()->getFileName(diffuseTransparencyTextureFileName))
+						FileSystem::getInstance()->exists(
+							FileSystem::getInstance()->composeURI(pathName, FileSystem::getInstance()->getFileName(diffuseTransparencyTextureFileName))
 						)?pathName:FileSystem::getInstance()->getPathName(diffuseTransparencyTextureFileName),
 						FileSystem::getInstance()->getFileName(diffuseTransparencyTextureFileName)
 					);
@@ -630,8 +630,8 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 						FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxLayeredTexture>(0))->GetFileName();
 				if (normalTextureFileName.length() > 0) {
 					specularMaterialProperties->setNormalTexture(
-						FileSystem::getInstance()->fileExists(
-							FileSystem::getInstance()->getCanonicalPath(pathName, FileSystem::getInstance()->getFileName(normalTextureFileName))
+						FileSystem::getInstance()->exists(
+							FileSystem::getInstance()->composeURI(pathName, FileSystem::getInstance()->getFileName(normalTextureFileName))
 						)?pathName:FileSystem::getInstance()->getPathName(normalTextureFileName),
 						FileSystem::getInstance()->getFileName(normalTextureFileName)
 					);
@@ -647,8 +647,8 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 						FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxLayeredTexture>(0))->GetFileName();
 				if (specularTextureFileName.length() > 0) {
 					specularMaterialProperties->setSpecularTexture(
-						FileSystem::getInstance()->fileExists(
-							FileSystem::getInstance()->getCanonicalPath(pathName, FileSystem::getInstance()->getFileName(specularTextureFileName))
+						FileSystem::getInstance()->exists(
+							FileSystem::getInstance()->composeURI(pathName, FileSystem::getInstance()->getFileName(specularTextureFileName))
 						)?pathName:FileSystem::getInstance()->getPathName(specularTextureFileName),
 						FileSystem::getInstance()->getFileName(specularTextureFileName)
 					);

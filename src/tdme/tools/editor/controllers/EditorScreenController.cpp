@@ -872,7 +872,7 @@ void EditorScreenController::scanProjectPaths(const string& path, string& xml) {
 	ListFilter listFilter;
 	vector<string> files;
 
-	if (FileSystem::getInstance()->fileExists(path) == false) {
+	if (FileSystem::getInstance()->exists(path) == false) {
 		Console::println("EditorScreenController::scanProject(): Error: file does not exist: " + path);
 	} else
 	if (FileSystem::getInstance()->isPath(path) == false) {
@@ -1141,7 +1141,7 @@ void EditorScreenController::ScanFilesThread::run() {
 	ListFilter listFilter(searchTerm);
 	vector<string> files;
 
-	if (FileSystem::getInstance()->fileExists(pathName) == false) {
+	if (FileSystem::getInstance()->exists(pathName) == false) {
 		Console::println("EditorScreenController::ScanFilesThread::run(): Error: file does not exist: " + pathName);
 	} else
 	if (FileSystem::getInstance()->isPath(pathName) == false) {

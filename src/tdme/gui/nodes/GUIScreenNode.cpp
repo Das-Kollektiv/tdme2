@@ -1128,10 +1128,10 @@ void GUIScreenNode::forwardEvents() {
 void GUIScreenNode::getProjectFilePathNameAndFileName(const string &fileName, string& projectFilePathName, string& projectFileFileName) {
 	try {
 		string projectFileCanonicalFileName;
-		if (FileSystem::getInstance()->fileExists(fileName) == true) {
+		if (FileSystem::getInstance()->exists(fileName) == true) {
 			projectFileCanonicalFileName = fileName;
 		} else {
-			projectFileCanonicalFileName = FileSystem::getInstance()->getCanonicalPath(applicationRootPathName, fileName);
+			projectFileCanonicalFileName = FileSystem::getInstance()->getCanonicalURI(applicationRootPathName, fileName);
 		}
 		projectFilePathName = FileSystem::getInstance()->getPathName(projectFileCanonicalFileName);
 		projectFileFileName = FileSystem::getInstance()->getFileName(projectFileCanonicalFileName);

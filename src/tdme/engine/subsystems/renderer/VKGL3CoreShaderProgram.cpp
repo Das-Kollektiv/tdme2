@@ -450,7 +450,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 	shader.hash = SHA256::encode(shader.cacheId + "." + to_string(type) + definitions + functions);
 
 	// do we have a cached shader already?
-	if (FileSystem::getInstance()->fileExists("shader/vk/" + shader.cacheId + ".properties") == true) {
+	if (FileSystem::getInstance()->exists("shader/vk/" + shader.cacheId + ".properties") == true) {
 		Properties vkShaderCache;
 		vkShaderCache.load("shader/vk", shader.cacheId + ".properties");
 		if (shader.hash != vkShaderCache.get("shader.hash", "")) {
@@ -887,7 +887,7 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 	}
 
 	// check if we can use a cache
-	if (FileSystem::getInstance()->fileExists("shader/vk/program-" + to_string(program.id) + ".properties") == true) {
+	if (FileSystem::getInstance()->exists("shader/vk/program-" + to_string(program.id) + ".properties") == true) {
 		// use cache
 		useCache = true;
 

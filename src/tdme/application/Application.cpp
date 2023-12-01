@@ -748,7 +748,7 @@ int Application::run(int argc, char** argv, const string& title, InputEventHandl
 
 void Application::setIcon() {
 	auto logoFileName = StringTools::replace(StringTools::toLowerCase(executableFileName), ".exe", "") + "-icon.png";
-	if (FileSystem::getInstance()->fileExists("resources/platforms/icons/" + logoFileName) == false) logoFileName = "default-icon.png";
+	if (FileSystem::getInstance()->exists("resources/platforms/icons/" + logoFileName) == false) logoFileName = "default-icon.png";
 	auto texture = TextureReader::read("resources/platforms/icons", logoFileName, false, false);
 	if (texture != nullptr) {
 		auto textureData = texture->getRGBTextureData();

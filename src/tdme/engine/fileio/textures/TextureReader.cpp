@@ -50,7 +50,7 @@ Texture* TextureReader::read(const string& pathName, const string& fileName, boo
 	Texture* texture = nullptr;
 
 	// make canonical
-	auto canonicalFilePath = FileSystem::getInstance()->getCanonicalPath(pathName, fileName);
+	auto canonicalFilePath = FileSystem::getInstance()->getCanonicalURI(pathName, fileName);
 	auto canonicalPathName = FileSystem::getInstance()->getPathName(canonicalFilePath);
 	auto canonicalFileName = FileSystem::getInstance()->getFileName(canonicalFilePath);
 
@@ -94,7 +94,7 @@ Texture* TextureReader::read(const string& pathName, const string& fileName, boo
 
 Texture* TextureReader::read2(const string& texturePathName, const string& textureFileName, const string& transparencyTexturePathName, const string& transparencyTextureFileName, bool useCache, bool powerOfTwo, const string& idPrefix) {
 	// make canonical
-	auto canonicalFile = FileSystem::getInstance()->getCanonicalPath(texturePathName, textureFileName);
+	auto canonicalFile = FileSystem::getInstance()->getCanonicalURI(texturePathName, textureFileName);
 	auto canonicalPathName = FileSystem::getInstance()->getPathName(canonicalFile);
 	auto canonicalFileName = FileSystem::getInstance()->getFileName(canonicalFile);
 	auto cacheId = idPrefix + canonicalPathName + "/" + canonicalFileName + "/transparency";

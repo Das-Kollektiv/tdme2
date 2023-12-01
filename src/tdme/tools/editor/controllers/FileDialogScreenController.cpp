@@ -250,7 +250,7 @@ void FileDialogScreenController::setupDrives() {
 			fileName+= drive;
 			fileName+= ":";
 			try {
-				if (FileSystem::getStandardFileSystem()->fileExists(fileName + "/") == true) drives.push_back(fileName);
+				if (FileSystem::getStandardFileSystem()->exists(fileName + "/") == true) drives.push_back(fileName);
 			} catch (Exception& exception) {
 				Console::println("FileDialogScreenController::setupDrives(): " + string(exception.what()));
 			}
@@ -300,7 +300,7 @@ void FileDialogScreenController::show(const string& cwd, const string& captionTe
 		}
 	}
 	try {
-		this->cwd = FileSystem::getStandardFileSystem()->getCanonicalPath(_cwd, "");
+		this->cwd = FileSystem::getStandardFileSystem()->getCanonicalURI(_cwd, "");
 		if (this->cwd.empty() == true || FileSystem::getStandardFileSystem()->isPath(this->cwd) == false) {
 			this->cwd = FileSystem::getStandardFileSystem()->getCurrentWorkingPathName();
 		}
@@ -342,7 +342,7 @@ void FileDialogScreenController::onChange(GUIElementNode* node)
 		try {
 			if (enableFilter == true) {
 				auto filterString = StringTools::toLowerCase(node->getController()->getValue().getString());
-				if (FileSystem::getStandardFileSystem()->fileExists(cwd + "/" + filterString) == true) {
+				if (FileSystem::getStandardFileSystem()->exists(cwd + "/" + filterString) == true) {
 					auto selectedFile = node->getController()->getValue().getString();
 					setupFiles(fileList, selectedFile);
 				} else
@@ -381,7 +381,7 @@ void FileDialogScreenController::onAction(GUIActionListenerType type, GUIElement
 				if (FileSystem::getStandardFileSystem()->isPath(cwd + "/" + selectedFile) == true) {
 					auto lastCwd = cwd;
 					try {
-						cwd = FileSystem::getStandardFileSystem()->getCanonicalPath(cwd, selectedFile);
+						cwd = FileSystem::getStandardFileSystem()->getCanonicalURI(cwd, selectedFile);
 					} catch (Exception& exception) {
 						Console::println("FileDialogScreenController::onAction(): An error occurred: " + string(exception.what()));
 					}

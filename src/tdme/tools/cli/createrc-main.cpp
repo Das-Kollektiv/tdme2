@@ -49,7 +49,7 @@ int main(int argc, char** argv)
 			auto executable = StringTools::substring(fileName, fileName.rfind('/') + 1, fileName.find(".exe"));
 			auto executableLowerCase = StringTools::toLowerCase(executable);
 			rc = StringTools::replace(rc, "{__EXECUTABLE__}", executable);
-			if (FileSystem::getInstance()->fileExists("resources/platforms/win32/" + executableLowerCase + "-icon.ico") == true) {
+			if (FileSystem::getInstance()->exists("resources/platforms/win32/" + executableLowerCase + "-icon.ico") == true) {
 				rc = StringTools::replace(rc, "{__ICON__}", "resources/platforms/win32/" + executableLowerCase + "-icon.ico");
 			} else {
 				rc = StringTools::replace(rc, "{__ICON__}", "resources/platforms/win32/default-icon.ico");

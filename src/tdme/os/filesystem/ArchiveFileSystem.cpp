@@ -78,7 +78,7 @@ const string& ArchiveFileSystem::getArchiveFileName() {
 	return fileName;
 }
 
-const string ArchiveFileSystem::getFileName(const string& pathName, const string& fileName) {
+const string ArchiveFileSystem::composeURI(const string& pathName, const string& fileName) {
 	return pathName + "/" + fileName;
 }
 
@@ -113,7 +113,7 @@ bool ArchiveFileSystem::isDrive(const string& pathName) {
 	return false;
 }
 
-bool ArchiveFileSystem::fileExists(const string& fileName) {
+bool ArchiveFileSystem::exists(const string& fileName) {
 	// compose relative file name and remove ./
 	auto relativeFileName = fileName;
 	if (StringTools::startsWith(relativeFileName, "./")  == true) relativeFileName = StringTools::substring(relativeFileName, 2);
@@ -325,12 +325,12 @@ void ArchiveFileSystem::setContentFromStringArray(const string& pathName, const 
 	throw FileSystemException("ArchiveFileSystem::setContentFromStringArray(): This operation is not supported in archive file system");
 }
 
-const string ArchiveFileSystem::getCanonicalPath(const string& pathName, const string& fileName) {
+const string ArchiveFileSystem::getCanonicalURI(const string& pathName, const string& fileName) {
 	string unixPathName = StringTools::replace(pathName, "\\", "/");
 	string unixFileName = StringTools::replace(fileName, "\\", "/");
 
 	//
-	auto pathString = getFileName(unixPathName, unixFileName);
+	auto pathString = composeURI(unixPathName, unixFileName);
 
 	// separate into path components
 	vector<string> pathComponents;
@@ -405,6 +405,15 @@ const string ArchiveFileSystem::getFileName(const string& fileName) {
 	int32_t lastPathSeparator = StringTools::lastIndexOf(unixFileName, L'/');
 	if (lastPathSeparator == -1) return fileName;
 	return StringTools::substring(unixFileName, lastPathSeparator + 1, unixFileName.length());
+}
+
+const string ArchiveFileSystem::removeFileExtension(const string& fileName) {
+	auto idx = fileName.rfind('.');
+	if (idx == string::npos) {
+		return fileName;
+	} else {
+		return fileName.substr(0, idx);
+	}
 }
 
 void ArchiveFileSystem::createPath(const string& pathName) {

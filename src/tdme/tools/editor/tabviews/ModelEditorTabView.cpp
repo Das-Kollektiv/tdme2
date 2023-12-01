@@ -207,7 +207,7 @@ void ModelEditorTabView::updateLODLevel() {
 void ModelEditorTabView::loadModel(const string& pathName, const string& fileName)
 {
 	// new model file
-	prototypeFileName = FileSystem::getInstance()->getFileName(pathName, fileName);
+	prototypeFileName = FileSystem::getInstance()->composeURI(pathName, fileName);
 	try {
 		// set model in entity
 		prototype->setModel(
@@ -244,7 +244,7 @@ void ModelEditorTabView::reimportModel(const string& pathName, const string& fil
 		};
 	}
 	// new model file
-	prototypeFileName = FileSystem::getInstance()->getFileName(pathName, fileName);
+	prototypeFileName = FileSystem::getInstance()->composeURI(pathName, fileName);
 	string log;
 	try {
 		// load model

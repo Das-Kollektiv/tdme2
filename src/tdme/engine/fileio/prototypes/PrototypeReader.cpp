@@ -496,7 +496,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, const Value& jP
 }
 
 const string PrototypeReader::getResourcePathName(const string& pathName, const string& fileName) {
-	string resourceFile = FileSystem::getInstance()->getCanonicalPath(
+	string resourceFile = FileSystem::getInstance()->getCanonicalURI(
 		StringTools::startsWith(FileSystem::getInstance()->getPathName(fileName), "/") == true?
 			FileSystem::getInstance()->getPathName(fileName):
 			pathName + "/" +  FileSystem::getInstance()->getPathName(fileName),

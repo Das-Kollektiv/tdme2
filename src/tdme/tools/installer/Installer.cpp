@@ -691,8 +691,8 @@ void Installer::performScreenAction() {
 														auto executablePathName = FileSystem::getInstance()->getPathName(generatedFileName);
 														auto executableFileName = FileSystem::getInstance()->getFileName(generatedFileName);
 														auto iconFileName = StringTools::toLowerCase(executableFileName) + "-icon.png";
-														if (archiveFileSystem->fileExists("resources/platforms/icons/" + iconFileName) == false &&
-															FileSystem::getInstance()->fileExists(executablePathName + "/resources/platforms/icons/" + iconFileName) == false) iconFileName = "default-icon.png";
+														if (archiveFileSystem->exists("resources/platforms/icons/" + iconFileName) == false &&
+															FileSystem::getInstance()->exists(executablePathName + "/resources/platforms/icons/" + iconFileName) == false) iconFileName = "default-icon.png";
 														FileSystem::getStandardFileSystem()->setContentFromString(
 															installer->homeFolder + "/" + ".local/share/applications",
 															launcherName + ".desktop",
@@ -736,8 +736,8 @@ void Installer::performScreenAction() {
 														auto executablePathName = FileSystem::getInstance()->getPathName(generatedFileName);
 														auto executableFileName = FileSystem::getInstance()->getFileName(generatedFileName);
 														auto iconFileName = StringTools::replace(StringTools::toLowerCase(executableFileName), ".exe", "") + "-icon.ico";
-														if (FileSystem::getInstance()->fileExists("resources/platforms/win32/" + iconFileName) == false &&
-															FileSystem::getInstance()->fileExists(executablePathName + "/resources/platforms/win32/" + iconFileName) == false) iconFileName = "default-icon.ico";
+														if (FileSystem::getInstance()->exists("resources/platforms/win32/" + iconFileName) == false &&
+															FileSystem::getInstance()->exists(executablePathName + "/resources/platforms/win32/" + iconFileName) == false) iconFileName = "default-icon.ico";
 														Console::println(
 															StringTools::replace(StringTools::replace(installFolder, "/", "\\"), " ", "^ ") + "\\windows-create-shortcut.bat " +
 															"\"" + StringTools::replace(generatedFileName, "/", "\\") + "\" " +
@@ -932,7 +932,7 @@ void Installer::performScreenAction() {
 									dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_uninstalling")->getNodeById("details"))->setText(MutableString(log[i]));
 									dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_uninstalling")->getNodeById("progressbar"))->getController()->setValue(MutableString(static_cast<float>(i) / static_cast<float>(log.size()), 2));
 									installer->installThreadMutex.unlock();
-									if (FileSystem::getStandardFileSystem()->fileExists(log[i]) == true) {
+									if (FileSystem::getStandardFileSystem()->exists(log[i]) == true) {
 										FileSystem::getStandardFileSystem()->removeFile(
 											FileSystem::getStandardFileSystem()->getPathName(log[i]),
 											FileSystem::getStandardFileSystem()->getFileName(log[i])
@@ -1109,9 +1109,9 @@ void Installer::initialize()
 {
 	try {
 		installed =
-			FileSystem::getStandardFileSystem()->fileExists("install.files.db") == true &&
-			FileSystem::getStandardFileSystem()->fileExists("install.components.db") == true &&
-			FileSystem::getStandardFileSystem()->fileExists("install.version.db") == true;
+			FileSystem::getStandardFileSystem()->exists("install.files.db") == true &&
+			FileSystem::getStandardFileSystem()->exists("install.components.db") == true &&
+			FileSystem::getStandardFileSystem()->exists("install.version.db") == true;
 		if (installed == true) screen = SCREEN_WELCOME2;
 		engine->initialize();
 		engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
@@ -1269,7 +1269,7 @@ void Installer::onAction(GUIActionListenerType type, GUIElementNode* node) {
 			vector<string> extensions;
 			auto pathToShow = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("installer_folder")->getNodeById("install_folder"))->getController()->getValue().getString();
 			pathToShow = StringTools::replace(pathToShow, "\\", "/");
-			while (FileSystem::getStandardFileSystem()->fileExists(pathToShow) == false || FileSystem::getStandardFileSystem()->isPath(pathToShow) == false) {
+			while (FileSystem::getStandardFileSystem()->exists(pathToShow) == false || FileSystem::getStandardFileSystem()->isPath(pathToShow) == false) {
 				pathToShow = FileSystem::getStandardFileSystem()->getPathName(pathToShow);
 			}
 			if (StringTools::startsWith(pathToShow, "/") == false) pathToShow = homeFolder;
@@ -1425,7 +1425,7 @@ void Installer::createPathRecursively(const string& pathName) {
 		#else
 			pathCreating+= "/" + pathComponent;
 		#endif
-		if (FileSystem::getStandardFileSystem()->isDrive(pathCreating) == false && FileSystem::getStandardFileSystem()->fileExists(pathCreating) == false) {
+		if (FileSystem::getStandardFileSystem()->isDrive(pathCreating) == false && FileSystem::getStandardFileSystem()->exists(pathCreating) == false) {
 			Console::println("Creating: " + pathCreating);
 			FileSystem::getStandardFileSystem()->createPath(pathCreating);
 		}

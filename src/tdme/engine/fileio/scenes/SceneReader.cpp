@@ -429,7 +429,7 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 
 	string modelPathName = pathName + "/" + fileName + "-models";
-	if (FileSystem::getInstance()->fileExists(modelPathName)) {
+	if (FileSystem::getInstance()->exists(modelPathName)) {
 		FileSystem::getInstance()->removePath(modelPathName, true);
 	}
 	FileSystem::getInstance()->createPath(modelPathName);
