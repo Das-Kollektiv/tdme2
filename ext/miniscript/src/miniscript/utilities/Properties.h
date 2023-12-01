@@ -1,13 +1,13 @@
 #pragma once
 
-#include <map>
 #include <string>
+#include <unordered_map>
 
 #include <miniscript/miniscript.h>
 #include <miniscript/utilities/fwd-miniscript.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 /**
  * Properties class, which helps out with storeing or loading key value pairs from/to property files
@@ -16,7 +16,7 @@ using std::string;
 class miniscript::utilities::Properties
 {
 private:
-	map<string, string> properties;
+	unordered_map<string, string> properties;
 
 public:
 	/**
@@ -72,7 +72,7 @@ public:
 	/**
 	 * @return properties map
 	 */
-	inline const map<string, string>& getProperties() {
+	inline const unordered_map<string, string>& getProperties() {
 		return properties;
 	}
 

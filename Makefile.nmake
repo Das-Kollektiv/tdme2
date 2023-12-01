@@ -730,7 +730,6 @@ EXT_MINISCRIPT_SRCS = \
 	ext/miniscript/src/miniscript/utilities/Base64.cpp \
 	ext/miniscript/src/miniscript/utilities/Console.cpp \
 	ext/miniscript/src/miniscript/utilities/ExceptionBase.cpp \
-	ext/miniscript/src/miniscript/utilities/FileSystem.cpp \
 	ext/miniscript/src/miniscript/utilities/Float.cpp \
 	ext/miniscript/src/miniscript/utilities/Hex.cpp \
 	ext/miniscript/src/miniscript/utilities/Integer.cpp \

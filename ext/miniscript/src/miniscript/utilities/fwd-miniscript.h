@@ -7,7 +7,6 @@ namespace utilities {
 	class Character;
 	class Console;
 	class ExceptionBase;
-	class FileSystem;
 	class Float;
 	class Hex;
 	class Integer;

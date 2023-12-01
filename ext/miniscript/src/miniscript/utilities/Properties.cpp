@@ -1,20 +1,22 @@
 #include <miniscript/utilities/Properties.h>
 
-#include <map>
+#include <algorithm>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <miniscript/miniscript.h>
-#include <miniscript/utilities/FileSystem.h>
+#include <miniscript/os/filesystem/FileSystem.h>
 #include <miniscript/utilities/StringTools.h>
 
-using std::map;
+using std::sort;
 using std::string;
+using std::unordered_map;
 using std::vector;
 
 using miniscript::utilities::Properties;
 
-using miniscript::utilities::FileSystem;
+using miniscript::os::filesystem::FileSystem;
 using miniscript::utilities::StringTools;
 
 void Properties::load(const string& pathName, const string& fileName)
@@ -39,5 +41,6 @@ void Properties::store(const string& pathName, const string& fileName) const {
 	for (const auto& [key, value]: properties) {
 		result.push_back(key + "=" + value);
 	}
+	sort(result.begin(), result.end());
 	FileSystem::setContentFromStringArray(pathName, fileName, result);
 }
