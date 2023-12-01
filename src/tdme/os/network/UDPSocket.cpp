@@ -51,7 +51,7 @@ UDPSocket* UDPSocket::create(IpVersion ipVersion) {
 	}
 	#ifdef __APPLE__
 		int flag = 1;
-		if (setsockopt(socket.descriptor, SOL_SOCKET, SO_NOSIGPIPE, (void*)&flag, sizeof(flag)) == -1) {
+		if (setsockopt(socket->descriptor, SOL_SOCKET, SO_NOSIGPIPE, (void*)&flag, sizeof(flag)) == -1) {
 			throw NetworkSocketException("Could not set no sig pipe on socket: " + string(strerror(errno)));
 		}
 	#endif
