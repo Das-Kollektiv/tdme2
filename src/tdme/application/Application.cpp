@@ -173,7 +173,7 @@ void Application::exit(int exitCode) {
 
 		#if defined(_MSC_VER) == false
 			auto addr2lineToolCmd = StringTools::substring(pathToExecutable, 0, StringTools::lastIndexOf(pathToExecutable, '\\')) + "\\addr2line.exe";
-			if (FileSystem::getInstance()->fileExists(addr2lineToolCmd) == false) {
+			if (FileSystem::getInstance()->exists(addr2lineToolCmd) == false) {
 				Console::println("handler(): " + addr2lineToolCmd + ": not found! Please copy addr2line utility to binary location!");
 				mutex.unlock();
 
