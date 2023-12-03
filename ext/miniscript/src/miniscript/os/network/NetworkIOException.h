@@ -16,7 +16,7 @@ using miniscript::os::network::NetworkException;
 class miniscript::os::network::NetworkIOException: public NetworkException {
 public:
 	/**
-	 * @brief public constructor
+	 * Public constructor
 	 * @param &message message exception message
 	 */
 	NetworkIOException(const string &message) throw();

@@ -9,6 +9,7 @@
 #include <vector>
 
 #include <miniscript/miniscript.h>
+#include <miniscript/miniscript/Context.h>
 #include <miniscript/miniscript/MiniScript.h>
 #include <miniscript/miniscript/Version.h>
 #include <miniscript/utilities/Console.h>
@@ -26,6 +27,7 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
+using miniscript::miniscript::Context;
 using miniscript::miniscript::MiniScript;
 using miniscript::miniscript::Version;
 using miniscript::utilities::Console;
@@ -105,7 +107,7 @@ static void generateMiniScriptMethodsDocumentation(const string& heading, int ma
 	for (const auto& [category, methodsMarkup]: methodMarkupByCategory2) {
 		auto categoryName = descriptions.get(descriptionPrefix + "group." + (category.empty() == true?"uncategorized":category), "Not documented");
 		Console::println();
-		Console::println("## " + to_string(mainHeadingIdx) + "." + to_string(categoryIdx++) + " " + categoryName);
+		Console::println("## " + to_string(mainHeadingIdx) + "." + to_string(categoryIdx++) + ". " + categoryName);
 		Console::println();
 		Console::println("| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Table of methods &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |");
 		Console::println("|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|");
@@ -116,8 +118,9 @@ static void generateMiniScriptMethodsDocumentation(const string& heading, int ma
 static void generateMiniScriptClassesDocumentation(const string& heading, int mainHeadingIdx, MiniScript* miniScript, Properties& descriptions, const string& descriptionPrefix, set<string>& allClassMethods) {
 	auto scriptMethods = miniScript->getMethods();
 	//
-	for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); typeIdx <= static_cast<int>(MiniScript::TYPE_SET); typeIdx++) {
+	for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); ; typeIdx++) {
 		const auto& className = MiniScript::ScriptVariable::getClassName(static_cast<MiniScript::ScriptVariableType>(typeIdx));
+		if (className.empty() == true) break;
 		allClassMethods.insert(className);
 	}
 	//
@@ -127,8 +130,10 @@ static void generateMiniScriptClassesDocumentation(const string& heading, int ma
 		if (className.empty() == true && allClassMethods.find(scriptMethod->getMethodName()) == allClassMethods.end()) continue;
 		//
 		auto _class = false;
-		for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); typeIdx <= static_cast<int>(MiniScript::TYPE_SET); typeIdx++) {
-			if (MiniScript::ScriptVariable::getClassName(static_cast<MiniScript::ScriptVariableType>(typeIdx)) == className) {
+		for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); ; typeIdx++) {
+			const auto& classNameCandidate = MiniScript::ScriptVariable::getClassName(static_cast<MiniScript::ScriptVariableType>(typeIdx));
+			if (classNameCandidate.empty() == true) break;
+			if (classNameCandidate == className) {
 				_class = true;
 				break;
 			}
@@ -160,10 +165,11 @@ static void generateMiniScriptClassesDocumentation(const string& heading, int ma
 		// constructors
 		auto _static = false;
 		if (className.empty() == true) {
-			for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); typeIdx <= static_cast<int>(MiniScript::TYPE_SET); typeIdx++) {
-				const auto& possibleClassName = MiniScript::ScriptVariable::getClassName(static_cast<MiniScript::ScriptVariableType>(typeIdx));
-				if (scriptMethod->getMethodName() == possibleClassName) {
-					className = possibleClassName;
+			for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); ; typeIdx++) {
+				const auto& classNameCandidate = MiniScript::ScriptVariable::getClassName(static_cast<MiniScript::ScriptVariableType>(typeIdx));
+				if (classNameCandidate.empty() == true) break;
+				if (scriptMethod->getMethodName() == classNameCandidate) {
+					className = classNameCandidate;
 					_static = true;
 					break;
 				}
@@ -202,12 +208,13 @@ static void generateMiniScriptClassesDocumentation(const string& heading, int ma
 	}
 	//
 	auto classIdx = 1;
-	for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); typeIdx <= static_cast<int>(MiniScript::TYPE_SET); typeIdx++) {
+	for (auto typeIdx = static_cast<int>(MiniScript::TYPE_STRING); ; typeIdx++) {
 		const auto& className = MiniScript::ScriptVariable::getClassName(static_cast<MiniScript::ScriptVariableType>(typeIdx));
+		if (className.empty() == true) break;
 		auto classNameDescription = descriptions.get("miniscript.baseclass." + (className.empty() == true?"No class":className), "Not documented");
 		//
 		Console::println();
-		Console::println("## " + to_string(mainHeadingIdx) + "." + to_string(classIdx++) + " " + classNameDescription);
+		Console::println("## " + to_string(mainHeadingIdx) + "." + to_string(classIdx++) + ". " + classNameDescription);
 		Console::println();
 		//
 		for (auto staticIdx = 0; staticIdx < 2; staticIdx++) {
@@ -244,13 +251,15 @@ int main(int argc, char** argv)
 
 	//
 	Properties descriptions;
-	descriptions.load("resources/engine/code-completion", "method-descriptions.properties");
+	descriptions.load("resources/documentation", "method-descriptions.properties");
 
 	//
 	// MiniScript::registerDataTypes();
 
 	//
+	auto context = make_unique<Context>();
 	auto miniScript = make_unique<MiniScript>();
+	miniScript->setContext(context.get());
 	miniScript->registerMethods();
 
 	//
@@ -260,7 +269,7 @@ int main(int argc, char** argv)
 	// classes
 	miniscript::tools::cli::MiniscriptDocumentation::generateMiniScriptClassesDocumentation("MiniScript Classes", 6, miniScript.get(), descriptions, "miniscript.basemethod.", allClassMethods);
 	// base methods
-	miniscript::tools::cli::MiniscriptDocumentation::generateMiniScriptMethodsDocumentation("MiniScript Base Methods", 7, miniScript.get(), descriptions, "miniscript.basemethod.", baseMethodCategories, allClassMethods);
+	miniscript::tools::cli::MiniscriptDocumentation::generateMiniScriptMethodsDocumentation("MiniScript Methods", 7, miniScript.get(), descriptions, "miniscript.basemethod.", baseMethodCategories, allClassMethods);
 
 	// operators
 	auto scriptOperatorMethods = miniScript->getOperatorMethods();

@@ -144,14 +144,6 @@ void SecureTCPSocket::connect(const string& hostname, const unsigned int port) {
 		throw NetworkSocketException("Could not connect socket: " + openSSLGetErrors());
 }
 
-void SecureTCPSocket::createServerSocket(SecureTCPSocket& socket, const string& ip, const unsigned int port, const int backlog) {
-	throw new NetworkSocketException("Could not create secure server socket: not implemented");
-}
-
-bool SecureTCPSocket::accept(SecureTCPSocket &_socket) {
-	throw new NetworkSocketException("Could not accept: not implemented");
-}
-
 void SecureTCPSocket::shutdown() {
 	if (bio != nullptr) BIO_free_all(bio);
 	if (ctx != nullptr) SSL_CTX_free(ctx);

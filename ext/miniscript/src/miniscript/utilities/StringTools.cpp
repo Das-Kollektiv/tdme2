@@ -99,7 +99,7 @@ const string StringTools::toUpperCase(const string& src) {
 
 bool StringTools::regexMatch(const string& src, const string& pattern) {
 	// TODO: return found groups
-	return regex_match(src, regex(pattern));
+	return regex_match(src, regex(pattern, std::regex::ECMAScript));
 }
 
 bool StringTools::regexSearch(const string& src, const string& pattern) {
@@ -111,8 +111,8 @@ const string StringTools::regexReplace(const string& src, const string& pattern,
 	return regex_replace(src, regex(pattern, std::regex::ECMAScript), by);
 }
 
-const vector<string> StringTools::tokenize(const string& str, const string& delimiters) {
+const vector<string> StringTools::tokenize(const string& str, const string& delimiters, bool emptyTokens) {
 	StringTokenizer t;
-	t.tokenize(str, delimiters);
+	t.tokenize(str, delimiters, emptyTokens);
 	return t.getTokens();
 }

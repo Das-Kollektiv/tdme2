@@ -10,12 +10,14 @@
 #include <vector>
 
 #include <miniscript/miniscript.h>
+#include <miniscript/math/Math.h>
+#include <miniscript/os/filesystem/FileSystem.h>
 #include <miniscript/miniscript/MiniScript.h>
 #include <miniscript/miniscript/Transpiler.h>
 #include <miniscript/miniscript/Version.h>
+#include <miniscript/utilities/Character.h>
 #include <miniscript/utilities/Console.h>
 #include <miniscript/utilities/Exception.h>
-#include <miniscript/utilities/FileSystem.h>
 #include <miniscript/utilities/Integer.h>
 #include <miniscript/utilities/StringTools.h>
 
@@ -26,17 +28,20 @@ using std::map;
 using std::set;
 using std::string;
 using std::string_view;
+using std::unique;
 using std::unique_ptr;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
+using miniscript::math::Math;
 using miniscript::miniscript::MiniScript;
 using miniscript::miniscript::Transpiler;
 using miniscript::miniscript::Version;
+using miniscript::os::filesystem::FileSystem;
+using miniscript::utilities::Character;
 using miniscript::utilities::Console;
 using miniscript::utilities::Exception;
-using miniscript::utilities::FileSystem;
 using miniscript::utilities::Integer;
 using miniscript::utilities::StringTools;
 
@@ -45,7 +50,61 @@ namespace tools {
 class TranspilerTool {
 public:
 
-static void processFile(const string& scriptFileName, const string& miniscriptTranspilationFileName, const vector<string>& miniScriptExtensionFileNames) {
+static int compare_includes(const string& lhs, const string& rhs) {
+	if (StringTools::startsWith(lhs, "#include <tdme/tdme.h>") == true) return true; else
+	if (StringTools::startsWith(rhs, "#include <tdme/tdme.h>") == true) return false;
+	auto charCount = Math::min((int32_t)lhs.size(), (int32_t)rhs.size());
+	for (auto i = 0; i < charCount; i++) {
+		if (lhs[i] == rhs[i]) {
+			// no op
+		} else {
+			auto charLHS = lhs[i];
+			auto charLCLHS = Character::toLowerCase(lhs[i]);
+			auto charLHSLowerCase = charLHS == charLCLHS;
+			auto charRHS = rhs[i];
+			auto charLCRHS = Character::toLowerCase(rhs[i]);
+			auto charRHSLowerCase = charRHS == charLCRHS;
+			if (charLHSLowerCase == true && charRHSLowerCase == false) {
+				return true;
+			} else
+			if (charLHSLowerCase == false && charRHSLowerCase == true) {
+				return false;
+			} else {
+				return lhs < rhs;
+			}
+		}
+	}
+	return lhs.size() < rhs.size();
+}
+
+static bool replace(const vector<string> input, const string& startTag, const string& endTag, const string& replacement, vector<string>& output) {
+	auto reject = false;
+	auto replaceSuccess = false;
+	for (auto i = 0; i < input.size(); i++) {
+		const auto& line = input[i];
+		auto trimmedLine = StringTools::trim(line);
+		if (StringTools::startsWith(trimmedLine, "//") == true) {
+			if (reject == false) output.push_back(line);
+			continue;
+		}
+		if (trimmedLine == startTag) {
+			reject = true;
+			output.push_back(line);
+		} else
+		if (trimmedLine == endTag) {
+			reject = false;
+			replaceSuccess = true;
+			output.push_back(replacement);
+			output.push_back(line);
+		} else {
+			if (reject == false) output.push_back(line);
+		}
+	}
+	//
+	return replaceSuccess;
+}
+
+static void processFile(const string& scriptFileName, const string& transpilationFileName, const vector<string>& miniScriptExtensionFileNames) {
 	Console::println("Processing script: " + scriptFileName);
 
 
@@ -65,6 +124,10 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	auto allMethods = Transpiler::getAllMethodNames(miniScript.get());
 
 	//
+	vector<string> transpilationUnitIncludes;
+	vector<string> transpilationUnitUsings;
+
+	//
 	vector<string> transpilationUnits;
 	for (const auto& transpilationUnit: miniScript->getTranspilationUnits()) transpilationUnits.push_back(transpilationUnit);
 	for (const auto& transpilationUnit: miniScriptExtensionFileNames) transpilationUnits.push_back(transpilationUnit);
@@ -74,6 +137,12 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 		for (auto i = 0; i < transpilationUnitCode.size(); i++) {
 			const auto& line = transpilationUnitCode[i];
 			auto trimmedLine = StringTools::trim(line);
+			if (StringTools::startsWith(trimmedLine, "#include ") == true) {
+				transpilationUnitIncludes.push_back(trimmedLine);
+			} else
+			if (StringTools::startsWith(trimmedLine, "using ") == true) {
+				transpilationUnitUsings.push_back(trimmedLine);
+			}
 			if (StringTools::startsWith(trimmedLine, "registerMethod") == true ||
 				StringTools::startsWith(trimmedLine, "miniScript->registerMethod") == true) {
 				auto bracketCount = 0;
@@ -94,6 +163,15 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 		}
 	}
 
+	//
+	sort(transpilationUnitIncludes.begin(), transpilationUnitIncludes.end(), compare_includes);
+	transpilationUnitIncludes.erase(unique(transpilationUnitIncludes.begin(), transpilationUnitIncludes.end()), transpilationUnitIncludes.end());
+
+	//
+	sort(transpilationUnitUsings.begin(), transpilationUnitUsings.end(), compare_includes);
+	transpilationUnitUsings.erase(unique(transpilationUnitUsings.begin(), transpilationUnitUsings.end()), transpilationUnitUsings.end());
+
+	//
 	Console::println(miniScript->getInformation());
 
 	//
@@ -145,7 +223,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	Transpiler::generateMiniScriptEvaluateMemberAccessArrays(miniScript.get(), memberAccessEvaluationDeclarations, memberAccessEvaluationDefinitions);
 
 	//
-	string miniScriptClassName = FileSystem::removeFileExtension(FileSystem::getFileName(miniscriptTranspilationFileName));
+	string miniScriptClassName = FileSystem::getFileName(transpilationFileName);
 	string generatedDeclarations = "\n";
 	generatedDeclarations+= string() + "public:" + "\n";
 	generatedDeclarations+= headerIndent + "// overridden methods" + "\n";
@@ -477,44 +555,85 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 
 	// inject C++ definition code
 	{
-		vector<string> miniScriptClass;
-		vector<string> miniScriptClassNew;
-		FileSystem::getContentAsStringArray(FileSystem::getPathName(miniscriptTranspilationFileName), FileSystem::getFileName(miniscriptTranspilationFileName), miniScriptClass);
-		auto reject = false;
-		auto injectedGeneratedCode = false;
-		for (auto i = 0; i < miniScriptClass.size(); i++) {
-			const auto& line = miniScriptClass[i];
-			auto trimmedLine = StringTools::trim(line);
-			if (StringTools::startsWith(trimmedLine, "//") == true) {
-				if (reject == false) miniScriptClassNew.push_back(line);
-				continue;
-			}
-			if (trimmedLine == "/*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_START__*/") {
-				reject = true;
-				miniScriptClassNew.push_back(line);
-			} else
-			if (trimmedLine == "/*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_END__*/") {
-				reject = false;
-				injectedGeneratedCode = true;
-				miniScriptClassNew.push_back(generatedDefinitions);
-				miniScriptClassNew.push_back(line);
+		//
+		auto injectedGeneratedCode = true;
+		//
+		vector<string> miniScriptCPP;
+		vector<string> generatedMiniScriptCPP;
+		auto miniscriptTranspilationCPPFileName = FileSystem::getPathName(transpilationFileName) + "/" + FileSystem::getFileName(transpilationFileName) + ".cpp";
+		if (FileSystem::exists(miniscriptTranspilationCPPFileName) == false) {
+			auto miniScriptCPPString = FileSystem::getContentAsString("./resources/templates/transpilation", "Transpilation.cpp");
+			miniScriptCPPString = StringTools::replace(miniScriptCPPString, "{$script}", scriptFileName);
+			miniScriptCPPString = StringTools::replace(miniScriptCPPString, "{$class-name}", miniScriptClassName);
+			miniScriptCPPString = StringTools::replace(miniScriptCPPString, "{$base-class}", miniScript->getBaseClass());
+			miniScriptCPP = StringTools::tokenize(miniScriptCPPString, "\n", true);
+		} else {
+			FileSystem::getContentAsStringArray(FileSystem::getPathName(miniscriptTranspilationCPPFileName), FileSystem::getFileName(miniscriptTranspilationCPPFileName), miniScriptCPP);
+		}
+		//
+		if (injectedGeneratedCode == true) {
+			//
+			string includes;
+			for (const auto& include: transpilationUnitIncludes) includes+= include + "\n";
+			//
+			injectedGeneratedCode = replace(
+				miniScriptCPP,
+				"/*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_INCLUDES_START__*/",
+				"/*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_INCLUDES_END__*/",
+				includes,
+				generatedMiniScriptCPP
+			);
+			if (injectedGeneratedCode == false) {
+				Console::println(scriptFileName + ": Could not inject generated C++ code, are you missing the /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_INCLUDES_START__*/ and /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_INCLUDES_END__*/ tags in file " + transpilationFileName + "?");
 			} else {
-				if (reject == false) miniScriptClassNew.push_back(line);
+				miniScriptCPP = generatedMiniScriptCPP;
+				generatedMiniScriptCPP.clear();
 			}
 		}
-
 		//
-		if (injectedGeneratedCode == false) {
-			Console::println(scriptFileName + ": Could not inject generated C++ code, are you missing the /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_START__*/ and /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_END__*/ markers in file " + miniscriptTranspilationFileName + "?");
-		} else {
+		if (injectedGeneratedCode == true) {
 			//
+			string usings;
+			for (const auto& _using: transpilationUnitUsings) usings+= _using + "\n";
+			//
+			injectedGeneratedCode = replace(
+				miniScriptCPP,
+				"/*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_USINGS_START__*/",
+				"/*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_USINGS_END__*/",
+				usings,
+				generatedMiniScriptCPP
+			);
+			if (injectedGeneratedCode == false) {
+				Console::println(scriptFileName + ": Could not inject generated C++ code, are you missing the /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_USINGS_START__*/ and /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_USINGS_END__*/ tags in file " + transpilationFileName + "?");
+			} else {
+				miniScriptCPP = generatedMiniScriptCPP;
+				generatedMiniScriptCPP.clear();
+			}
+		}
+		//
+		if (injectedGeneratedCode == true) {
+			injectedGeneratedCode = replace(
+				miniScriptCPP,
+				"/*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_START__*/",
+				"/*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_END__*/",
+				generatedDefinitions,
+				generatedMiniScriptCPP
+			);
+			if (injectedGeneratedCode == false) {
+				Console::println(scriptFileName + ": Could not inject generated C++ code, are you missing the /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_START__*/ and /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_END__*/ tags in file " + transpilationFileName + "?");
+			} else {
+				miniScriptCPP.clear();
+			}
+		}
+		//
+		if (injectedGeneratedCode == true) {
 			FileSystem::setContentFromStringArray(
-				FileSystem::getPathName(miniscriptTranspilationFileName),
-				FileSystem::getFileName(miniscriptTranspilationFileName),
-				miniScriptClassNew
+				FileSystem::getPathName(miniscriptTranspilationCPPFileName),
+				FileSystem::getFileName(miniscriptTranspilationCPPFileName),
+				generatedMiniScriptCPP
 			);
 			//
-			Console::println(scriptFileName + ": Injected generated C++ code in file " + miniscriptTranspilationFileName + ". Dont forget to rebuild your sources.");
+			Console::println(scriptFileName + ": Injected generated C++ code in file " + miniscriptTranspilationCPPFileName + ". Dont forget to rebuild your sources.");
 		}
 	}
 
@@ -522,41 +641,34 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	// inject C++ declaration code / header
 	{
 		vector<string> miniScriptClassHeader;
-		vector<string> miniScriptClassHeaderNew;
-		auto miniscriptTranspilationHeaderFileName = FileSystem::getPathName(miniscriptTranspilationFileName) + "/" + FileSystem::removeFileExtension(FileSystem::getFileName(miniscriptTranspilationFileName)) + ".h";
-		FileSystem::getContentAsStringArray(FileSystem::getPathName(miniscriptTranspilationHeaderFileName), FileSystem::getFileName(miniscriptTranspilationHeaderFileName), miniScriptClassHeader);
-		auto reject = false;
-		auto injectedGeneratedCode = false;
-		for (auto i = 0; i < miniScriptClassHeader.size(); i++) {
-			const auto& line = miniScriptClassHeader[i];
-			const auto trimmedLine = StringTools::trim(line);
-			if (StringTools::startsWith(trimmedLine, "//") == true) {
-				if (reject == false) miniScriptClassHeaderNew.push_back(line);
-				continue;
-			}
-			if (trimmedLine == "/*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DECLARATIONS_START__*/") {
-				reject = true;
-				miniScriptClassHeaderNew.push_back(line);
-			} else
-			if (trimmedLine == "/*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DECLARATIONS_END__*/") {
-				reject = false;
-				injectedGeneratedCode = true;
-				miniScriptClassHeaderNew.push_back(generatedDeclarations);
-				miniScriptClassHeaderNew.push_back(line);
-			} else {
-				if (reject == false) miniScriptClassHeaderNew.push_back(line);
-			}
+		vector<string> generatedMiniScriptClassHeader;
+		auto miniscriptTranspilationHeaderFileName = FileSystem::getPathName(transpilationFileName) + "/" + FileSystem::getFileName(transpilationFileName) + ".h";
+		if (FileSystem::exists(miniscriptTranspilationHeaderFileName) == false) {
+			auto miniScriptHeaderString = FileSystem::getContentAsString("./resources/templates/transpilation", "Transpilation.h");
+			miniScriptHeaderString = StringTools::replace(miniScriptHeaderString, "{$script}", scriptFileName);
+			miniScriptHeaderString = StringTools::replace(miniScriptHeaderString, "{$class-name}", miniScriptClassName);
+			miniScriptHeaderString = StringTools::replace(miniScriptHeaderString, "{$base-class}", miniScript->getBaseClass());
+			miniScriptClassHeader = StringTools::tokenize(miniScriptHeaderString, "\n", true);
+		} else {
+			FileSystem::getContentAsStringArray(FileSystem::getPathName(miniscriptTranspilationHeaderFileName), FileSystem::getFileName(miniscriptTranspilationHeaderFileName), miniScriptClassHeader);
 		}
-
+		//
+		auto injectedGeneratedCode = replace(
+			miniScriptClassHeader,
+			"/*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DECLARATIONS_START__*/",
+			"/*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DECLARATIONS_END__*/",
+			generatedDeclarations,
+			generatedMiniScriptClassHeader
+		);
 		//
 		if (injectedGeneratedCode == false) {
-			Console::println(scriptFileName + ": Could not inject generated C++ code, are you missing the /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DECLARATIONS_START__*/ and /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DECLARATIONS_END__*/ markers in file " + miniscriptTranspilationFileName + "?");
+			Console::println(scriptFileName + ": Could not inject generated C++ code, are you missing the /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DECLARATIONS_START__*/ and /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DECLARATIONS_END__*/ tags in file " + transpilationFileName + "?");
 		} else {
 			//
 			FileSystem::setContentFromStringArray(
 				FileSystem::getPathName(miniscriptTranspilationHeaderFileName),
 				FileSystem::getFileName(miniscriptTranspilationHeaderFileName),
-				miniScriptClassHeaderNew
+				generatedMiniScriptClassHeader
 			);
 			//
 			Console::println(scriptFileName + ": Injected generated C++ code in header file " + miniscriptTranspilationHeaderFileName + ". Dont forget to rebuild your sources.");
@@ -576,7 +688,7 @@ int main(int argc, char** argv)
 
 	//
 	if (argc < 3) {
-		Console::println("Usage: miniscripttranspiler path_to_script_file path_to_cpp_miniscript_transpilation_file [path_to_cpp_miniscript_extension_file1] [path_to_cpp_miniscript_extension_fileN]");
+		Console::println("Usage: miniscripttranspiler script_filename transpilation_filename [miniscript_extension_file1] [miniscript_extension_fileN]");
 		exit(EXIT_FAILURE);
 	}
 

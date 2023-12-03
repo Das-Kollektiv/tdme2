@@ -40,45 +40,57 @@ using miniscript::os::network::NetworkSocket;
 using miniscript::os::network::NetworkSocketClosedException;
 using miniscript::os::network::NetworkSocketException;
 
+TCPSocket* TCPSocket::createServerSocket(const string& ip, const unsigned int port, const int backlog) {
+	// create socket
+	auto socket = make_unique<TCPSocket>();
+	auto ipVersion = determineIpVersion(ip);
+	socket->descriptor = ::socket(ipVersion == IPV6?PF_INET6:PF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (socket->descriptor == -1) {
+		throw NetworkSocketException("Could not create socket: " + string(strerror(errno)));
+	}
+	#if defined(__APPLE__)
+		int flag = 1;
+		if (setsockopt(socket->descriptor, SOL_SOCKET, SO_NOSIGPIPE, (void*)&flag, sizeof(flag)) == -1) {
+			throw NetworkSocketException("Could not set no sig pipe on socket: " + string(strerror(errno)));
+		}
+	#endif
+
+	//
+	try {
+		// set non blocked
+		socket->setNonBlocked();
+
+		// bind
+		socket->bind(ip, port);
+
+		// make socket listen, backlog is 10% of max CCU
+		if (listen(socket->descriptor, backlog) == -1) {
+			throw NetworkSocketException("Could not set socket to listen: " + string(strerror(errno)));
+		}
+		//
+	} catch (NetworkSocketException &exception) {
+		socket->close();
+		throw;
+	}
+	//
+	return socket.release();
+}
+
 TCPSocket::TCPSocket(): NetworkSocket() {
 }
 
 TCPSocket::~TCPSocket() {
 }
 
-size_t TCPSocket::read(void* buf, const size_t bytes) {
-	ssize_t bytesRead = ::recv(descriptor, BUF_CAST(buf), bytes, 0);
-	if (bytesRead == -1) {
-		std::string msg = "error while reading from socket: ";
-		msg+= strerror(errno);
-		throw NetworkIOException(msg);
-	} else
-	if (bytesRead == 0) {
-		throw NetworkSocketClosedException("end of stream");
-	}
-	//
-	return (size_t)bytesRead;
-}
-
-size_t TCPSocket::write(void* buf, const size_t bytes) {
-	#if defined(__APPLE__) || defined(_WIN32)
-		ssize_t bytesWritten = ::send(descriptor, BUF_CAST(buf), bytes, 0);
+void TCPSocket::setTCPNoDelay() {
+	int flag = 1;
+	#if defined(_WIN32)
+		if (setsockopt(descriptor, IPPROTO_TCP, TCP_NODELAY, (const char*)&flag, sizeof(flag)) == -1) {
 	#else
-		ssize_t bytesWritten = ::send(descriptor, BUF_CAST(buf), bytes, MSG_NOSIGNAL);
+		if (setsockopt(descriptor, IPPROTO_TCP, TCP_NODELAY, (void*)&flag, sizeof(flag)) == -1) {
 	#endif
-	if (bytesWritten == -1) {
-		if (errno == ECONNRESET || errno == EPIPE) {
-			std::string msg = "end of stream: ";
-			msg+= strerror(errno);
-			throw NetworkSocketClosedException(msg);
-		} else {
-			std::string msg = "error while writing to socket: ";
-			msg+= strerror(errno);
-			throw NetworkIOException(msg);
-		}
+		throw NetworkSocketException("Could not set tcp no delay: " + string(strerror(errno)));
 	}
-	//
-	return (size_t)bytesWritten;
 }
 
 void TCPSocket::connect(const string& ip, const unsigned int port) {
@@ -88,16 +100,12 @@ void TCPSocket::connect(const string& ip, const unsigned int port) {
 	//
 	descriptor = ::socket(ipVersion == IPV6?PF_INET6:PF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (descriptor == -1) {
-		std::string msg = "Could not create socket: ";
-		msg+= strerror(errno);
-		throw NetworkSocketException(msg);
+		throw NetworkSocketException("Could not create socket: " + string(strerror(errno)));
 	}
 	#if defined(__APPLE__)
 		int flag = 1;
 		if (setsockopt(descriptor, SOL_SOCKET, SO_NOSIGPIPE, (void*)&flag, sizeof(flag)) == -1) {
-			std::string msg = "Could not set no sig pipe on socket: ";
-			msg+= strerror(errno);
-			throw NetworkSocketException(msg);
+			throw NetworkSocketException("Could not set no sig pipe on socket: " + string(strerror(errno)));
 		}
 	#endif
 
@@ -131,13 +139,11 @@ void TCPSocket::connect(const string& ip, const unsigned int port) {
 
 	// bind
 	if (::connect(descriptor, (const struct sockaddr*)sin, sinLen) == -1) {
-		std::string msg = "Could not connect socket: ";
 		#if defined(_WIN32)
-			msg+= to_string(WSAGetLastError());
+			throw NetworkSocketException("Could not connect socket: " + to_string(WSAGetLastError()));
 		#else
-			msg+= strerror(errno);
+			throw NetworkSocketException("Could not connect socket: " + string(strerror(errno)));
 		#endif
-		throw NetworkSocketException(msg);
 	}
 
 	// set address
@@ -145,62 +151,7 @@ void TCPSocket::connect(const string& ip, const unsigned int port) {
 	this->port = port;
 }
 
-TCPSocket* TCPSocket::createServerSocket(const string& ip, const unsigned int port, const int backlog) {
-	// create socket
-	auto socket = make_unique<TCPSocket>();
-	auto ipVersion = determineIpVersion(ip);
-	descriptor = ::socket(ipVersion == IPV6?PF_INET6:PF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (descriptor == -1) {
-		std::string msg = "Could not create socket: ";
-		msg+= strerror(errno);
-		throw NetworkSocketException(msg);
-	}
-	#if defined(__APPLE__)
-		int flag = 1;
-		if (setsockopt(descriptor, SOL_SOCKET, SO_NOSIGPIPE, (void*)&flag, sizeof(flag)) == -1) {
-			std::string msg = "Could not set no sig pipe on socket: ";
-			msg+= strerror(errno);
-			throw NetworkSocketException(msg);
-		}
-	#endif
-
-	//
-	try {
-		// set non blocked
-		socket->setNonBlocked();
-
-		// bind
-		socket->bind(ip, port);
-
-		// make socket listen, backlog is 10% of max CCU
-		if (listen(socket->descriptor, backlog) == -1) {
-			std::string msg = "Could not set socket to listen: ";
-			msg+= strerror(errno);
-			throw NetworkSocketException(msg);
-		}
-		//
-	} catch (NetworkSocketException &exception) {
-		socket->close();
-		throw;
-	}
-	//
-	return socket.release();
-}
-
-void TCPSocket::setTCPNoDelay() {
-	int flag = 1;
-	#if defined(_WIN32)
-		if (setsockopt(descriptor, IPPROTO_TCP, TCP_NODELAY, (const char*)&flag, sizeof(flag)) == -1) {
-	#else
-		if (setsockopt(descriptor, IPPROTO_TCP, TCP_NODELAY, (void*)&flag, sizeof(flag)) == -1) {
-	#endif
-		std::string msg = "Could not set tcp no delay: ";
-		msg+= strerror(errno);
-		throw NetworkSocketException(msg);
-	}
-}
-
-bool TCPSocket::accept(TCPSocket &_socket) {
+bool TCPSocket::accept(TCPSocket *_socket) {
 	struct sockaddr_in _sin;
 	socklen_t _sinSize = sizeof(_sin);
 
@@ -212,18 +163,46 @@ bool TCPSocket::accept(TCPSocket &_socket) {
 			errno == EWOULDBLOCK) {
 			return false;
 		}
-		std::string msg = "Could not accept socket: ";
-		msg+= strerror(errno);
-		throw NetworkSocketException(msg);
+		throw NetworkSocketException("Could not accept socket: " + string(strerror(errno)));
 	}
 
 	// create client socket, return it
-	_socket.descriptor = _descriptor;
-	_socket.ip = inet_ntoa(_sin.sin_addr);
-	_socket.port = ntohs(_sin.sin_port);
-	_socket.setNonBlocked();
-	_socket.setTCPNoDelay();
+	_socket->descriptor = _descriptor;
+	_socket->ip = inet_ntoa(_sin.sin_addr);
+	_socket->port = ntohs(_sin.sin_port);
+	_socket->setNonBlocked();
+	_socket->setTCPNoDelay();
 
 	// success
 	return true;
 }
+
+size_t TCPSocket::read(void* buf, const size_t bytes) {
+	ssize_t bytesRead = ::recv(descriptor, BUF_CAST(buf), bytes, 0);
+	if (bytesRead == -1) {
+		throw NetworkIOException("Error while reading from socket: " + string(strerror(errno)));
+	} else
+	if (bytesRead == 0) {
+		throw NetworkSocketClosedException("End of stream");
+	}
+	//
+	return (size_t)bytesRead;
+}
+
+size_t TCPSocket::write(void* buf, const size_t bytes) {
+	#if defined(__APPLE__) || defined(_WIN32)
+		ssize_t bytesWritten = ::send(descriptor, BUF_CAST(buf), bytes, 0);
+	#else
+		ssize_t bytesWritten = ::send(descriptor, BUF_CAST(buf), bytes, MSG_NOSIGNAL);
+	#endif
+	if (bytesWritten == -1) {
+		if (errno == ECONNRESET || errno == EPIPE) {
+			throw NetworkSocketClosedException("End of stream: " + string(strerror(errno)));
+		} else {
+			throw NetworkIOException("Error while writing to socket: " + string(strerror(errno)));
+		}
+	}
+	//
+	return (size_t)bytesWritten;
+}
+

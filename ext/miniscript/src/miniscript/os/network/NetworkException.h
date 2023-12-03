@@ -16,7 +16,7 @@ using miniscript::utilities::ExceptionBase;
 class miniscript::os::network::NetworkException: public ExceptionBase {
 public:
 	/**
-	 * @brief public constructor
+	 * Constructor
 	 * @param &message message exception message
 	 */
 	NetworkException(const string &message) throw();

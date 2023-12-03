@@ -11,7 +11,7 @@
 class miniscript::os::network::NetworkSocketClosedException: public NetworkIOException {
 	public:
 		/**
-		 * @brief public constructor
+		 * Constructor
 		 * @param message exception message
 		 */
 		NetworkSocketClosedException(const string &message) throw();

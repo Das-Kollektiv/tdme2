@@ -830,6 +830,7 @@ EXT_MINISCRIPT_SRCS = \
 	ext/miniscript/src/miniscript/miniscript/ApplicationMethods.cpp \
 	ext/miniscript/src/miniscript/miniscript/ArrayMethods.cpp \
 	ext/miniscript/src/miniscript/miniscript/BaseMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/ByteArrayMethods.cpp \
 	ext/miniscript/src/miniscript/miniscript/CryptographyMethods.cpp \
 	ext/miniscript/src/miniscript/miniscript/ConsoleMethods.cpp \
 	ext/miniscript/src/miniscript/miniscript/ContextMethods.cpp \

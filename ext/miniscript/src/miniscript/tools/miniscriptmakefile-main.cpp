@@ -4,9 +4,9 @@
 
 #include <miniscript/miniscript.h>
 #include <miniscript/miniscript/Version.h>
+#include <miniscript/os/filesystem/FileSystem.h>
 #include <miniscript/utilities/Console.h>
 #include <miniscript/utilities/Exception.h>
-#include <miniscript/utilities/FileSystem.h>
 #include <miniscript/utilities/StringTools.h>
 
 using std::exit;
@@ -15,9 +15,9 @@ using std::to_string;
 using std::vector;
 
 using miniscript::miniscript::Version;
+using miniscript::os::filesystem::FileSystem;
 using miniscript::utilities::Console;
 using miniscript::utilities::Exception;
-using miniscript::utilities::FileSystem;
 using miniscript::utilities::StringTools;
 
 void scanDir(const string& folder, vector<string>& sourceFiles, vector<string>& mainSourceFiles) {
@@ -62,13 +62,14 @@ int main(int argc, char** argv)
 	Console::println();
 
 	//
-	if (argc != 2) {
-		Console::println("Usage: miniscriptmakefile path_to_source");
+	if (argc != 3) {
+		Console::println("Usage: miniscriptmakefile source_pathname makefile_filename");
 		exit(EXIT_FAILURE);
 	}
 
 	//
 	auto pathToSource = string(argv[1]);
+	auto pathToMakefile = string(argv[2]);
 
 	//
 	try {
@@ -88,9 +89,10 @@ int main(int argc, char** argv)
 		Console::println("Generating Makefile");
 
 		auto makefileSource = FileSystem::getContentAsString("./resources/templates/makefiles", "Makefile");
+		makefileSource = StringTools::replace(makefileSource, "{$source-folder}", pathToSource);
 		makefileSource = StringTools::replace(makefileSource, "{$source-files}", sourceFilesVariable);
 		makefileSource = StringTools::replace(makefileSource, "{$main-source-files}", mainSourceFilesVariable);
-		FileSystem::setContentFromString(".", "Makefile", makefileSource);
+		FileSystem::setContentFromString(FileSystem::getPathName(pathToMakefile), FileSystem::getFileName(pathToMakefile), makefileSource);
 	} catch (Exception& exception) {
 		Console::println("An error occurred: " + string(exception.what()));
 	}

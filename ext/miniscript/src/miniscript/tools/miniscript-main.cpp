@@ -2,21 +2,30 @@
 #include <memory>
 #include <string>
 
+// Windows MSC: required for OpenSSL to work when having OpenSSL embedded in a DLL which is used here
+#if defined(_MSC_VER)
+	#include <openssl/applink.c>
+#endif
+
 #include <miniscript/miniscript.h>
+#include <miniscript/miniscript/Context.h>
 #include <miniscript/miniscript/MiniScript.h>
 #include <miniscript/miniscript/Version.h>
+#include <miniscript/os/filesystem/FileSystem.h>
+#include <miniscript/os/network/Network.h>
 #include <miniscript/utilities/Console.h>
-#include <miniscript/utilities/FileSystem.h>
 
 using std::exit;
 using std::make_unique;
 using std::string;
 using std::unique_ptr;
 
+using miniscript::miniscript::Context;
 using miniscript::miniscript::MiniScript;
 using miniscript::miniscript::Version;
+using miniscript::os::filesystem::FileSystem;
+using miniscript::os::network::Network;
 using miniscript::utilities::Console;
-using miniscript::utilities::FileSystem;
 
 static void printInformation() {
 	Console::println(string("miniscript ") + Version::getVersion());
@@ -63,9 +72,12 @@ int main(int argc, char** argv)
 	// run script
 	// EngineMiniScript::registerDataTypes();
 	unique_ptr<MiniScript> script;
+	unique_ptr<Context> context;
 	if (pathToScript.empty() == false) {
 		//
+		context = make_unique<Context>();
 		script = make_unique<MiniScript>();
+		script->setContext(context.get());
 		script->parseScript(
 			FileSystem::getPathName(pathToScript),
 			FileSystem::getFileName(pathToScript)
@@ -77,8 +89,18 @@ int main(int argc, char** argv)
 			if (script->isValid() == false) {
 				Console::println("Script not valid. Exiting");
 			} else {
-				while (script->isRunning() == true) {
-					script->execute();
+				// TODO: we need a MiniScript startup routine
+				Network::initialize();
+				// Windows MSC: required for OpenSSL to work when having OpenSSL embedded in a DLL which is used here
+				#if defined(_MSC_VER)
+					OPENSSL_Applink();
+				#endif
+				// add script to context
+				auto scriptPtr = script.get();
+				context->addScript("main", script.release());
+				//
+				while (scriptPtr->isRunning() == true) {
+					scriptPtr->execute();
 				}
 			}
 		}

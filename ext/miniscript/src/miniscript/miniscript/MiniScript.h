@@ -151,6 +151,7 @@ public:
 		TYPE_PSEUDO_MIXED,
 		// classes
 		TYPE_STRING,
+		TYPE_BYTEARRAY,
 		TYPE_ARRAY,
 		TYPE_MAP,
 		TYPE_SET,
@@ -579,6 +580,20 @@ public:
 		}
 
 		/**
+		 * @return byte array value reference
+		 */
+		inline vector<uint8_t>& getByteArrayValueReference() {
+			return *static_cast<vector<uint8_t>*>((void*)getValuePtrReference());
+		}
+
+		/**
+		 * @return const byte array value reference
+		 */
+		inline const vector<uint8_t>& getByteArrayValueReference() const {
+			return *static_cast<vector<uint8_t>*>((void*)getValuePtrReference());
+		}
+
+		/**
 		 * @return array value reference
 		 */
 		inline vector<ScriptVariable*>& getArrayValueReference() {
@@ -624,6 +639,7 @@ public:
 		// class names
 		MINISCRIPT_STATIC_DLL_IMPEXT static const string CLASSNAME_NONE;
 		MINISCRIPT_STATIC_DLL_IMPEXT static const string CLASSNAME_STRING;
+		MINISCRIPT_STATIC_DLL_IMPEXT static const string CLASSNAME_BYTEARRAY;
 		MINISCRIPT_STATIC_DLL_IMPEXT static const string CLASSNAME_ARRAY;
 		MINISCRIPT_STATIC_DLL_IMPEXT static const string CLASSNAME_MAP;
 		MINISCRIPT_STATIC_DLL_IMPEXT static const string CLASSNAME_SET;
@@ -693,6 +709,9 @@ public:
 				case TYPE_STRING:
 					to.getStringValueReference().setValue(from.getStringValueReference().getValue());
 					to.getStringValueReference().setCache(from.getStringValueReference().getCache());
+					break;
+				case TYPE_BYTEARRAY:
+					to.setValue(from.getByteArrayValueReference());
 					break;
 				case TYPE_ARRAY:
 					to.setValue(from.getArrayValueReference());
@@ -799,6 +818,8 @@ public:
 				//
 				setReference(variable.ir.reference);
 			} else {
+				setType(TYPE_NULL);
+				//
 				copyScriptVariable(*this, variable);
 			}
 			//
@@ -919,6 +940,9 @@ public:
 				case TYPE_FUNCTION_ASSIGNMENT:
 					delete static_cast<StringValue*>((void*)getValuePtrReference());
 					break;
+				case TYPE_BYTEARRAY:
+					delete static_cast<vector<uint8_t>*>((void*)getValuePtrReference());
+					break;
 				case TYPE_ARRAY:
 					for (auto arrayValue: getArrayValueReference()) arrayValue->releaseReference();
 					delete static_cast<vector<ScriptVariable*>*>((void*)getValuePtrReference());
@@ -968,6 +992,9 @@ public:
 				case TYPE_STRING:
 				case TYPE_FUNCTION_ASSIGNMENT:
 					getValuePtrReference() = (uint64_t)(new StringValue());
+					break;
+				case TYPE_BYTEARRAY:
+					getValuePtrReference() = (uint64_t)(new vector<uint8_t>());
 					break;
 				case TYPE_ARRAY:
 					getValuePtrReference() = (uint64_t)(new vector<ScriptVariable*>());
@@ -1153,6 +1180,28 @@ public:
 		}
 
 		/**
+		 * Get byte value from given variable
+		 * @param miniScript mini script
+		 * @param value value
+		 * @param statement statement
+		 * @return success
+		 */
+		inline bool getByteValue(MiniScript* miniScript, uint8_t& value, const ScriptStatement* statement = nullptr) const {
+			int64_t intValue;
+			if (getIntegerValue(intValue, false) == true && value >= 0 && value <= 255) {
+				value = intValue;
+				return true;
+			} else {
+				if (statement != nullptr) {
+					_Console::println(miniScript->getStatementInformation(*statement) + ": expected byte integer value (0 <= value <= 255), but got " + getValueAsString());
+				} else {
+					_Console::println(miniScript->getScriptFileName() + ": expected byte integer value (0 <= value <= 255), but got " + getValueAsString());
+				}
+			}
+			return false;
+		}
+
+		/**
 		 * Get string value UTF8 position cache from given variable
 		 * @return UTF8 position cache or nullptr if not available
 		 */
@@ -1214,6 +1263,18 @@ public:
 		 * Set array value from given value into variable
 		 * @param value value
 		 */
+		inline void setValue(const vector<uint8_t>& value) {
+			setType(TYPE_BYTEARRAY);
+			auto& byteArrayValue = getByteArrayValueReference();
+			for (const auto arrayEntry: value) {
+				 byteArrayValue.push_back(arrayEntry);
+			}
+		}
+
+		/**
+		 * Set array value from given value into variable
+		 * @param value value
+		 */
 		inline void setValue(const vector<ScriptVariable*>& value) {
 			setType(TYPE_ARRAY);
 			auto& arrayValue = getArrayValueReference();
@@ -1258,6 +1319,89 @@ public:
 		}
 
 		/**
+		 * @return return const pointer to underlying byte vector or nullptr
+		 */
+		inline const vector<uint8_t>* getByteArrayPointer() const {
+			if (getType() != TYPE_BYTEARRAY) return nullptr;
+			auto& byteArrayValue = getByteArrayValueReference();
+			return &byteArrayValue;
+		}
+
+		/**
+		 * @return pointer to underlying byte vector or nullptr
+		 */
+		inline vector<uint8_t>* getByteArrayPointer() {
+			if (getType() != TYPE_BYTEARRAY) return nullptr;
+			auto& byteArrayValue = getByteArrayValueReference();
+			return &byteArrayValue;
+		}
+
+		/**
+		 * Get byte array size
+		 * @return byte array size
+		 */
+		inline int64_t getByteArraySize() const {
+			if (getType() != TYPE_BYTEARRAY) return 0;
+			return getByteArrayValueReference().size();
+		}
+
+		/**
+		 * Get entry from byte array with given index
+		 * @param idx index
+		 * @return entry from byte array with given index
+		 */
+		inline const uint8_t getByteArrayEntry(int64_t idx) const {
+			if (getType() != TYPE_BYTEARRAY) return 0;
+			const auto& byteArrayValue = getByteArrayValueReference();
+			if (idx >= 0 && idx < byteArrayValue.size()) return byteArrayValue[idx];
+			return 0;
+		}
+
+		/**
+		 * Set entry in byte array with given index
+		 * @param idx index
+		 */
+		inline void setByteArrayEntry(int64_t idx, uint8_t value) {
+			setType(TYPE_BYTEARRAY);
+			if (idx < 0) return;
+			auto& byteArrayValue = getByteArrayValueReference();
+			while (byteArrayValue.size() <= idx) pushByteArrayEntry(0);
+			byteArrayValue[idx] = value;
+		}
+
+		/**
+		 * Push entry to byte array
+		 * @param value value
+		 */
+		inline void pushByteArrayEntry(uint8_t value) {
+			setType(TYPE_BYTEARRAY);
+			getByteArrayValueReference().push_back(value);
+		}
+
+		/**
+		 * Remove byte array entry at given index
+		 * @param idx index
+		 */
+		inline void removeByteArrayEntry(int64_t idx) {
+			if (getType() != TYPE_BYTEARRAY) return;
+			auto& byteArrayValue = getByteArrayValueReference();
+			if (idx >= 0 && idx < byteArrayValue.size()) {
+				byteArrayValue.erase(byteArrayValue.begin() + idx);
+			}
+			return;
+		}
+
+		/**
+		 * Clear byte array
+		 */
+		inline void clearByteArray() {
+			if (getType() != TYPE_BYTEARRAY) return;
+			auto& byteArrayValue = getByteArrayValueReference();
+			byteArrayValue.clear();
+			return;
+		}
+
+		/**
 		 * @return return const pointer to underlying vector or nullptr
 		 */
 		inline const vector<ScriptVariable*>* getArrayPointer() const {
@@ -1289,7 +1433,7 @@ public:
 		 * @param idx index
 		 * @return entry from array with given index
 		 */
-		inline const ScriptVariable getArrayEntry(int idx) const {
+		inline const ScriptVariable getArrayEntry(int64_t idx) const {
 			if (getType() != TYPE_ARRAY) return ScriptVariable();
 			const auto& arrayValue = getArrayValueReference();
 			if (idx >= 0 && idx < arrayValue.size()) return *arrayValue[idx];
@@ -1300,7 +1444,7 @@ public:
 		 * Set entry in array with given index
 		 * @param idx index
 		 */
-		inline void setArrayEntry(int idx, const ScriptVariable& value) {
+		inline void setArrayEntry(int64_t idx, const ScriptVariable& value) {
 			setType(TYPE_ARRAY);
 			if (idx < 0) return;
 			auto& arrayValue = getArrayValueReference();
@@ -1322,13 +1466,24 @@ public:
 		 * Remove array entry at given index
 		 * @param idx index
 		 */
-		inline void removeArrayEntry(int idx) {
+		inline void removeArrayEntry(int64_t idx) {
 			if (getType() != TYPE_ARRAY) return;
 			auto& arrayValue = getArrayValueReference();
 			if (idx >= 0 && idx < arrayValue.size()) {
 				arrayValue[idx]->releaseReference();
 				arrayValue.erase(arrayValue.begin() + idx);
 			}
+			return;
+		}
+
+		/**
+		 * Clear array
+		 */
+		inline void clearArray() {
+			if (getType() != TYPE_ARRAY) return;
+			auto& arrayValue = getArrayValueReference();
+			for (auto i = 0; i < arrayValue.size(); i++) arrayValue[i]->releaseReference();
+			arrayValue.clear();
 			return;
 		}
 
@@ -1632,6 +1787,7 @@ public:
 				case TYPE_PSEUDO_NUMBER: return CLASSNAME_NONE;
 				case TYPE_PSEUDO_MIXED: return CLASSNAME_NONE;
 				case TYPE_STRING: return CLASSNAME_STRING;
+				case TYPE_BYTEARRAY: return CLASSNAME_BYTEARRAY;
 				case TYPE_ARRAY: return CLASSNAME_ARRAY;
 				case TYPE_MAP: return CLASSNAME_MAP;
 				case TYPE_SET: return CLASSNAME_SET;
@@ -1639,7 +1795,6 @@ public:
 					// custom data types
 					auto dataTypeIdx = static_cast<int>(type) - TYPE_PSEUDO_CUSTOM_DATATYPES;
 					if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::scriptDataTypes.size()) {
-						_Console::println("ScriptVariable::getClassName(): unknown custom data type with id " + to_string(dataTypeIdx));
 						return CLASSNAME_NONE;
 					}
 					return MiniScript::scriptDataTypes[dataTypeIdx]->getClassName();
@@ -1662,6 +1817,7 @@ public:
 				case TYPE_PSEUDO_NUMBER: return "Number";
 				case TYPE_PSEUDO_MIXED: return "Mixed";
 				case TYPE_STRING: return "String";
+				case TYPE_BYTEARRAY: return "ByteArray";
 				case TYPE_ARRAY: return "Array";
 				case TYPE_MAP: return "Map";
 				case TYPE_SET: return "Set";
@@ -1669,7 +1825,6 @@ public:
 					// custom data types
 					auto dataTypeIdx = static_cast<int>(type) - TYPE_PSEUDO_CUSTOM_DATATYPES;
 					if (dataTypeIdx < 0 || dataTypeIdx >= MiniScript::scriptDataTypes.size()) {
-						_Console::println("ScriptVariable::getTypeAsString(): unknown custom data type with id " + to_string(dataTypeIdx));
 						return CLASSNAME_NONE;
 					}
 					return MiniScript::scriptDataTypes[dataTypeIdx]->getTypeAsString();
@@ -1758,6 +1913,22 @@ public:
 				case TYPE_STRING:
 					result+= getStringValueReference().getValue();
 					break;
+				case TYPE_BYTEARRAY:
+					{
+						const auto& byteArrayValue = getByteArrayValueReference();
+						vector<string> values;
+						for (const auto arrayEntry: byteArrayValue) {
+							values.push_back(to_string(arrayEntry));
+						}
+						auto i = 0;
+						for (const auto& valueString: values) {
+							result+= valueString;
+							if (i != values.size() - 1) result+= ", ";
+							i++;
+						}
+						result = "ByteArray([" + result + "], size: " + to_string(byteArrayValue.size()) + ", capacity: " + to_string(byteArrayValue.capacity()) + ")";
+						break;
+					}
 				case TYPE_ARRAY:
 					{
 						const auto& arrayValue = getArrayValueReference();
@@ -2221,6 +2392,7 @@ protected:
 	static constexpr int SETACCESSBOOL_FALSE { 1 };
 	static constexpr int ARRAYIDX_NONE { -1 };
 	static constexpr int ARRAYIDX_ADD { -2 };
+	static constexpr int ARRAYIDX_FIRST { 0 };
 	static constexpr int STATE_NONE { -1 };
 	static constexpr int OPERATORIDX_NONE { -1 };
 	static constexpr int LINE_FIRST { 1 };
@@ -3176,13 +3348,21 @@ public:
 		int64_t arrayIdx = ARRAYIDX_NONE;
 		int setAccessBool = SETACCESSBOOL_NONE;
 		auto variablePtr = getVariableIntern(globalVariableName.empty() == true?name:globalVariableName, __FUNCTION__, parentVariable, arrayIdx, key, setAccessBool, statement, true, globalVariableName.empty() == false);
+		// set '.' operator
 		if (setAccessBool != SETACCESSBOOL_NONE) {
 			return ScriptVariable(setAccessBool == SETACCESSBOOL_TRUE);
 		} else
+		// we have a pointer to a ordinary script variable
 		if (variablePtr != nullptr) {
 			return createReference == false?*variablePtr:ScriptVariable::createReferenceVariable(variablePtr);
 		} else {
-			return ScriptVariable();
+			// special case for accessing byte array entries at given array index
+			if (parentVariable != nullptr && parentVariable->getType() == TYPE_BYTEARRAY && arrayIdx >= ARRAYIDX_FIRST) {
+				return ScriptVariable(static_cast<int64_t>(parentVariable->getByteArrayEntry(arrayIdx)));
+			} else {
+				// nothing to return
+				return ScriptVariable();
+			}
 		}
 	}
 
@@ -3257,20 +3437,42 @@ public:
 					_Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': [] array push operator without array");
 				}
 			} else
-			if (parentVariable->getType() != MiniScript::TYPE_ARRAY) {
-				string callerMethod = __FUNCTION__;
-				if (statement != nullptr) {
-					_Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': [] array push operator: expected array , but got " + parentVariable->getTypeAsString());
-				} else {
-					_Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': [] array push operator: expected array, but got " + parentVariable->getTypeAsString());
+			if (parentVariable->getType() == MiniScript::TYPE_BYTEARRAY) {
+				// all checks passed, push variable to array
+				auto& arrayValueReference = parentVariable->getByteArrayValueReference();
+				uint8_t value;
+				if (variable.getByteValue(this, value, statement) == true) {
+					arrayValueReference.push_back(value);
 				}
-			} else {
+			} else
+			if (parentVariable->getType() == MiniScript::TYPE_ARRAY) {
 				// all checks passed, push variable to array
 				auto& arrayValueReference = parentVariable->getArrayValueReference();
 				arrayValueReference.push_back(createReference == false?ScriptVariable::createNonReferenceVariablePointer(&variable):ScriptVariable::createReferenceVariablePointer(&variable));
+			} else {
+				string callerMethod = __FUNCTION__;
+				if (statement != nullptr) {
+					_Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': [] array push operator: expected byte array or array, but got " + parentVariable->getTypeAsString());
+				} else {
+					_Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': [] array push operator: expected byte array or array, but got " + parentVariable->getTypeAsString());
+				}
 			}
 			//
 			return;
+		} else
+		// special case for accessing byte array entries at given array index
+		if (arrayIdx >= ARRAYIDX_FIRST && parentVariable != nullptr && parentVariable->getType() == TYPE_BYTEARRAY) {
+			int64_t value;
+			if (variable.getIntegerValue(value, false) == true && value >= 0 && value <= 255) {
+				parentVariable->pushByteArrayEntry(value);
+			} else {
+				string callerMethod = __FUNCTION__;
+				if (statement != nullptr) {
+					_Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': [] byte array push operator: expected byte integer value (0 <= byte <= 255), but got " + variable.getTypeAsString());
+				} else {
+					_Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': [] byte array push operator: expected byte integer value (0 <= byte <= 255), but got " + variable.getTypeAsString());
+				}
+			}
 		}
 
 		// default

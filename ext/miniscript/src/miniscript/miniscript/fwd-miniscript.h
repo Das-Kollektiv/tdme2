@@ -6,6 +6,7 @@ namespace miniscript {
 	class ApplicationMethods;
 	class ArrayMethods;
 	class BaseMethods;
+	class ByteArrayMethods;
 	class ConsoleMethods;
 	class ContextMethods;
 	class Context;
