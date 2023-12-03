@@ -338,7 +338,7 @@ Those variables can be created the following ways:
 
 For more math related methods just look into "6. Methods" section. 
 
-## 4.2. Byte arrays
+## 4.3. Byte arrays
 
 A byte array is a collection/sequence of byte values which can be accessed by indices. Bytes are the smallest atomic values a CPU does handle.
 A byte has a value of 0...255. Using bit math you can also manipulate byte values at bit scope.
@@ -406,7 +406,7 @@ Removing from byte arrays using a index with bytearray.remove():
 ...
 ```
 
-## 4.3. Arrays
+## 4.4. Arrays
 
 An array is a collection/sequence of values which can be accessed by indices.
 
@@ -487,7 +487,7 @@ Removing from arrays using a index with array.remove():
 ```
 
 
-## 4.4. Maps
+## 4.5. Maps
 
 A map is key, value pair storage using a underlying hash map. Keys can only exist once in a map.
 
@@ -576,7 +576,7 @@ Reading all keys and values from map using map.get() and map.getKeys()
 ...
 ```
 
-## 4.5. Sets
+## 4.6. Sets
 
 A set is key storage using a underlying hash set. Keys can only exist once in a set.
 
@@ -650,9 +650,9 @@ Reading all keys as array from set:
 ...
 ```
 
-## 4.6. Classes
+## 4.7. Classes
 
-Classes in MiniScript can be represented by maps, a constructed map with function assignments and/or definitions can be called object, see map section in 4.4.
+Classes in MiniScript can be represented by maps, a constructed map with function assignments and/or definitions can be called object, see map section in 4.5.
 
 Creating a object in MiniScript works by using map initializer plus () -> methodName function assignment, or () -> { console.dump($this) } inline function definition.
 Please see a example below.
