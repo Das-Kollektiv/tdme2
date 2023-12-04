@@ -168,9 +168,9 @@
 							</layout>
 						</element>
 						<layout alignment="horizontal" width="100%" height="auto">
-							<checkbox id="log_checkbox" template="checkbox_template_logpanel.xml" width="auto" value="1" text="Log" image-unchecked="" image-checked="" on-change="log_panel.condition!=log;log_panel.condition-=animationgraph;animationgraph_checkbox.value=1"/>
+							<radiobutton id="log_radiobutton" template="radiobutton_template_toolbar.xml" name="logpanel" value="1" text="Log" on-change="log_panel.condition!=log;log_panel.condition-=animationgraph"/>/>
 							<space width="20"/>
-							<checkbox id="animationgraph_checkbox" template="checkbox_template_logpanel.xml" width="auto" value="1" text="AnimationGraph" image-unchecked="" image-checked="" on-change="log_panel.condition!=animationgraph;log_panel.condition-=log;log_checkbox.value=1"/>
+							<radiobutton id="animationgraph_radiobutton" template="radiobutton_template_toolbar.xml" name="logpanel" value="1" text="AnimationGraph" on-change="log_panel.condition!=animationgraph;log_panel.condition-=log"/>
 						</layout>				
 					</layout>
 					<!------------------------------------------------------------------->	
