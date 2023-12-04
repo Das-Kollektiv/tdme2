@@ -13,6 +13,7 @@ pkg install openal-soft
 pkg install glfw
 pkg install glew
 pkg install freetype2
+pkg install openssl
 exit
 ```
 
@@ -53,6 +54,7 @@ pkg_add glew
 pkg_add openal
 pkg_add glfw
 pkg_add freetype2
+pkg_add openssl
 exit
 ```
 
@@ -83,6 +85,7 @@ sudo apt-get install libglfw3-dev
 sudo apt-get install libglew-dev
 sudo apt-get install libfreetype-dev
 sudo apt-get install libxml2-dev
+sudo apt-get install libssl-dev
 ```
 
 #### 1.3.1.1 Vulkan
@@ -153,6 +156,7 @@ pacman -S mingw-w64-x86_64-glfw
 pacman -S mingw-w64-x86_64-glew
 pacman -S mingw-w64-x86_64-dlfcn
 pacman -S mingw-w64-x86_64-freetype
+pacman -S mingw-w64-x86_64-openssl
 ```
 
 #### 1.5.1.1 Vulkan
