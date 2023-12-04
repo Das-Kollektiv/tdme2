@@ -215,13 +215,13 @@
     - very small implementation of a scripting language
     - runs on every CPU, OS, ... due to its simplicity, so its highly portable just like TDME2 is
     - can be easily extended by writing state machine machine states and script methods in C++ as well as custom data types
-    - built-in data types: null, boolean, integer, float, string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, array, map and set 
+    - built-in data types: null, boolean, integer, float, string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, bytearray, array, map and set 
     - when calling script C++ methods or script functions with arguments it does optionally use references or value by copy
     - supports user script functions and recursion
     - supports operators by operator to method mapping by a preprocessor run
     - supports loops and conditions
     - supports programming with classes style programming
-      - for built-in datatypes: string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, array, map and set
+      - for built-in datatypes: string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, byte array, array, map and set
       - for script classes/objects
       - for custom data types 
     - supports event like programming
