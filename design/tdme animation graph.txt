@@ -24,6 +24,8 @@ in visual node system viewport:
 	- timescale
 	- oneshot
 	- statemachine
+	- output
+	- input
 - graph node:
 
 
