@@ -105,7 +105,7 @@ Argument variables, parsed in function declarations are populated in function co
 ...
 # user script function of recursive factorial computation
 function: factorial($value)
-	console.log("factorial(): $arguments = " + $arguments + " / $value = " + $value)
+	console.log("factorial(): $value = " + $value)
 	if ($value == 0) 
 		return(1)
 	end
