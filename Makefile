@@ -38,7 +38,7 @@ SRCS_PLATFORM =
 CPPVERSION = -std=c++2a
 OFLAGS =
 EXTRAFLAGS = -DRAPIDJSON_HAS_STDSTRING
-INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib
+INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/vhacd/include/ -Iext/cpp-spline/src -Iext/zlib -Iext/miniscript/src
 
 #
 CXX := $(CXX) -fPIC
@@ -57,7 +57,7 @@ ifeq ($(OS), Darwin)
 			src/tdme/engine/fileio/models/FBXReader.cpp \
 			src/tdme/engine/fileio/models/ModelReaderFBX.cpp
 		INCLUDES := $(INCLUDES) -Iext/fbx/macosx/include -Iext/glfw3/include -Iext/freetype/include
-		LIBS_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -framework OpenAL -Lext/glfw3/lib/macosx/x64 -lglfw.3  -Lext/freetype/lib/macosx/x64 -lfreetype.6 -Lext/fbx/macosx/lib -lfbxsdk
+		LIBS_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -framework OpenAL -Lext/glfw3/lib/macosx/x64 -lglfw.3  -Lext/freetype/lib/macosx/x64 -lfreetype.6 -Lext/fbx/macosx/lib -lfbxsdk -lssl -lcrypto
 		OPENGL_RENDERER_LDFLAGS := $(OPENGL_RENDERER_LDFLAGS) -Lext/glfw3/lib/macosx/x64 -lglfw.3
 		VULKAN_RENDERER_LDFLAGS := $(VULKAN_RENDERER_LDFLAGS) -Lext/glfw3/lib/macosx/x64 -lglfw.3
 		OPENGLES2_RENDERER_LDFLAGS := $(OPENGLES2_RENDERER_LDFLAGS) -Lext/glfw3/lib/macosx/x64 -lglfw.3
@@ -65,7 +65,7 @@ ifeq ($(OS), Darwin)
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/engine/fileio/models/ModelReader.cpp
 		INCLUDES := $(INCLUDES) -Iext/glfw3/include -Iext/freetype/include
-		LIBS_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -framework OpenAL -Lext/glfw3/lib/macosx/arm64 -lglfw.3  -Lext/freetype/lib/macosx/arm64 -lfreetype.6
+		LIBS_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -framework OpenAL -Lext/glfw3/lib/macosx/arm64 -lglfw.3  -Lext/freetype/lib/macosx/arm64 -lfreetype.6 -lssl -lcrypto
 		OPENGL_RENDERER_LDFLAGS := $(OPENGL_RENDERER_LDFLAGS) -Lext/glfw3/lib/macosx/arm64 -lglfw.3
 		VULKAN_RENDERER_LDFLAGS := $(VULKAN_RENDERER_LDFLAGS) -Lext/glfw3/lib/macosx/arm64 -lglfw.3
 		OPENGLES2_RENDERER_LDFLAGS := $(OPENGLES2_RENDERER_LDFLAGS) -Lext/glfw3/lib/macosx/arm64 -lglfw.3
@@ -80,7 +80,7 @@ else ifeq ($(OS), FreeBSD)
 	OPENGL_RENDERER_LDFLAGS := -L/usr/local/lib -lGLEW -lGL -lglfw
 	VULKAN_RENDERER_LDFLAGS := -L/usr/local/lib -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -L/usr/local/lib -lGLESv2 -lEGL -lglfw
-	LIBS_LDFLAGS := -L/usr/local/lib -ldl -lglfw -lopenal -lexecinfo
+	LIBS_LDFLAGS := -L/usr/local/lib -ldl -lglfw -lopenal -lexecinfo -lssl -lcrypto
 	OFLAGS := -O3
 else ifeq ($(OS), NetBSD)
 	# NetBSD
@@ -91,7 +91,7 @@ else ifeq ($(OS), NetBSD)
 	OPENGL_RENDERER_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lGLEW -lGL -lglfw
 	VULKAN_RENDERER_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lGLESv2 -lEGL -lglfw
-	LIBS_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lglfw -lopenal -lexecinfo -lfreetype
+	LIBS_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lglfw -lopenal -lexecinfo -lfreetype -lssl -lcrypto
 	OFLAGS := -O3
 else ifeq ($(OS), OpenBSD)
 	# OpenBSD
@@ -102,7 +102,7 @@ else ifeq ($(OS), OpenBSD)
 	OPENGL_RENDERER_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -lGLEW -lGL -lglfw
 	VULKAN_RENDERER_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -lGLESv2 -lEGL -lglfw
-	LIBS_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -ldl -lglfw -lopenal
+	LIBS_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -ldl -lglfw -lopenal -lssl -lcrypto
 	OFLAGS := -O3
 else ifeq ($(OS), Haiku)
 	# Haiku
@@ -113,7 +113,7 @@ else ifeq ($(OS), Haiku)
 	OPENGL_RENDERER_LDFLAGS := -lGLEW -lGL -lglfw
 	VULKAN_RENDERER_LDFLAGS := -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -lGLESv2 -lEGL -lglfw
-	LIBS_LDFLAGS := -lnetwork -lglfw -lopenal -lfreetype
+	LIBS_LDFLAGS := -lnetwork -lglfw -lopenal -lfreetype -lssl -lcrypto
 	OFLAGS := -O3
 else ifeq ($(OS), Linux)
 	# Linux
@@ -121,8 +121,8 @@ else ifeq ($(OS), Linux)
 	OPENGL_RENDERER_LDFLAGS := -L/usr/lib64 -lGLEW -lGL -lglfw
 	VULKAN_RENDERER_LDFLAGS := -L/usr/lib64 -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -L/usr/lib64 -lGLESv2 -lEGL -lglfw
-	LIBS_LDFLAGS := -L/usr/lib64 -ldl -lglfw -lopenal -lfreetype
-	OFLAGS := -O2
+	LIBS_LDFLAGS := -L/usr/lib64 -ldl -lglfw -lopenal -lfreetype -lssl -lcrypto
+	OFLAGS := -O3
 	ifeq ($(MACHINE), x86_64)
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/linux/KernelEventMechanism.cpp \
@@ -146,7 +146,7 @@ else
 	INCLUDES := $(INCLUDES) -I/mingw64/include -I/mingw64/include/freetype2
 	OPENGL_RENDERER_LDFLAGS := -L/mingw64/lib -lglfw3 -lglew32 -lopengl32
 	VULKAN_RENDERER_LDFLAGS := -L/mingw64/lib -lglfw3 -Lext/vulkan/runtime/mingw64 -lvulkan-1
-	LIBS_LDFLAGS := -L/mingw64/lib -lws2_32 -ldl -lglfw3 -lopenal -lfreetype -ldbghelp
+	LIBS_LDFLAGS := -L/mingw64/lib -lws2_32 -ldl -lglfw3 -lopenal -lfreetype -ldbghelp -lssl -lcrypto
 	LDFLAG_LIB := $(NAME)$(LIB_EXT)
 	LDFLAG_EXT_LIB := $(EXT_NAME)$(LIB_EXT)
 	OFLAGS := -O3
@@ -191,6 +191,7 @@ OGLCOMPILERSDLL = vulkan/OGLCompilersDLL
 VMA = vulkan/vma
 CPPSPLINE = cpp-spline
 BC7 = bc7enc_rdo
+MINISCRIPT = miniscript
 
 SRCS_DEBUG =
 
@@ -533,6 +534,7 @@ SRCS = \
 	src/tdme/os/network/NetworkSocket.cpp \
 	src/tdme/os/network/NetworkSocketException.cpp \
 	src/tdme/os/network/UDPSocket.cpp \
+	src/tdme/os/network/SecureTCPSocket.cpp \
 	src/tdme/os/network/TCPSocket.cpp \
 	src/tdme/os/threading/Barrier.cpp \
 	src/tdme/tests/EngineTest.cpp \
@@ -542,11 +544,6 @@ SRCS = \
 	src/tdme/tests/FlowMapTest2.cpp \
 	src/tdme/tests/FoliageTest.cpp \
 	src/tdme/tests/MathOperatorTest.cpp \
-	src/tdme/tests/MiniScriptAdvancedTest.cpp \
-	src/tdme/tests/MiniScriptBaseTest.cpp \
-	src/tdme/tests/MiniScriptClassTest.cpp \
-	src/tdme/tests/MiniScriptEmitTest.cpp \
-	src/tdme/tests/MiniScriptFunctionsTest.cpp \
 	src/tdme/tests/PathFindingTest.cpp \
 	src/tdme/tests/PhysicsTest1.cpp \
 	src/tdme/tests/PhysicsTest2.cpp \
@@ -634,13 +631,18 @@ SRCS = \
 	src/tdme/tools/installer/Installer.cpp \
 	src/tdme/utilities/Base64.cpp \
 	src/tdme/utilities/Console.cpp \
+	src/tdme/utilities/EngineMiniScript.cpp \
 	src/tdme/utilities/ExceptionBase.cpp \
 	src/tdme/utilities/Float.cpp \
 	src/tdme/utilities/Hex.cpp \
 	src/tdme/utilities/Integer.cpp \
-	src/tdme/utilities/MiniScript.cpp \
-	src/tdme/utilities/MiniScriptMath.cpp \
-	src/tdme/utilities/MiniScriptTranspiler.cpp \
+	src/tdme/utilities/MiniScriptTransform.cpp \
+	src/tdme/utilities/MiniScriptMatrix3x3.cpp \
+	src/tdme/utilities/MiniScriptMatrix4x4.cpp \
+	src/tdme/utilities/MiniScriptQuaternion.cpp \
+	src/tdme/utilities/MiniScriptVector2.cpp \
+	src/tdme/utilities/MiniScriptVector3.cpp \
+	src/tdme/utilities/MiniScriptVector4.cpp \
 	src/tdme/utilities/ModelTools.cpp \
 	src/tdme/utilities/PathFinding.cpp \
 	src/tdme/utilities/Primitives.cpp \
@@ -724,8 +726,10 @@ EXT_OGG_SRCS = \
 	ext/ogg/bitwise.c \
 	ext/ogg/framing.c
 
+# workaround: ext-sha256.cpp was sha256.cpp, but ext/miniscript also comes with sha256.cpp,
+#	which collides on Windows as we dont have subfolders for ext objects
 EXT_SHA256_SRCS = \
-	ext/sha256/sha256.cpp
+	ext/sha256/ext-sha256.cpp
 
 EXT_REACTPHYSICS3D_SRCS = \
 	ext/reactphysics3d/src/body/CollisionBody.cpp \
@@ -821,6 +825,51 @@ EXT_CPPSPLINE_SRCS = \
 EXT_BC7_SRCS = \
 	ext/bc7enc_rdo/bc7decomp.cpp \
 	ext/bc7enc_rdo/bc7enc.cpp
+
+EXT_MINISCRIPT_SRCS = \
+	ext/miniscript/src/miniscript/miniscript/ApplicationMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/ArrayMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/BaseMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/ByteArrayMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/CryptographyMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/ConsoleMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/ContextMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/Context.cpp \
+	ext/miniscript/src/miniscript/miniscript/FileSystemMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/JSONMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/MapMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/MathMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/MiniScript.cpp \
+	ext/miniscript/src/miniscript/miniscript/NetworkMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/ScriptMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/SetMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/StringMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/TimeMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/Transpiler.cpp \
+	ext/miniscript/src/miniscript/miniscript/XMLMethods.cpp \
+	ext/miniscript/src/miniscript/miniscript/Version.cpp \
+	ext/miniscript/src/miniscript/network/httpclient/HTTPClient.cpp \
+	ext/miniscript/src/miniscript/network/httpclient/HTTPClientException.cpp \
+	ext/miniscript/src/miniscript/network/httpclient/HTTPDownloadClient.cpp \
+	ext/miniscript/src/miniscript/os/filesystem/FileSystem.cpp \
+	ext/miniscript/src/miniscript/os/network/Network.cpp \
+	ext/miniscript/src/miniscript/os/network/NetworkException.cpp \
+	ext/miniscript/src/miniscript/os/network/NetworkIOException.cpp \
+	ext/miniscript/src/miniscript/os/network/NetworkSocket.cpp \
+	ext/miniscript/src/miniscript/os/network/NetworkSocketClosedException.cpp \
+	ext/miniscript/src/miniscript/os/network/NetworkSocketException.cpp \
+	ext/miniscript/src/miniscript/os/network/SecureTCPSocket.cpp \
+	ext/miniscript/src/miniscript/os/network/TCPSocket.cpp \
+	ext/miniscript/src/miniscript/utilities/Base64.cpp \
+	ext/miniscript/src/miniscript/utilities/Console.cpp \
+	ext/miniscript/src/miniscript/utilities/ExceptionBase.cpp \
+	ext/miniscript/src/miniscript/utilities/Float.cpp \
+	ext/miniscript/src/miniscript/utilities/Hex.cpp \
+	ext/miniscript/src/miniscript/utilities/Integer.cpp \
+	ext/miniscript/src/miniscript/utilities/Properties.cpp \
+	ext/miniscript/src/miniscript/utilities/SHA256.cpp \
+	ext/miniscript/src/miniscript/utilities/StringTools.cpp \
+	ext/miniscript/src/miniscript/utilities/StringTokenizer.cpp
 
 OPENGL2_RENDERER_LIB_SRCS = \
 	src/tdme/engine/subsystems/renderer/EngineGL2Renderer.cpp \
@@ -952,14 +1001,11 @@ MAIN_SRCS = \
 	src/tdme/tools/cli/createrc-main.cpp \
 	src/tdme/tools/cli/dumpmodel-main.cpp \
 	src/tdme/tools/cli/imageprocessor-main.cpp \
-	src/tdme/tools/cli/miniscript-main.cpp \
 	src/tdme/tools/cli/msclib2dll-main.cpp \
 	src/tdme/tools/cli/generatelicenses-main.cpp \
 	src/tdme/tools/cli/importtmodel-main.cpp \
 	src/tdme/tools/cli/importtscene-main.cpp \
 	src/tdme/tools/cli/makefilegenerator-main.cpp \
-	src/tdme/tools/cli/miniscripttranspiler-main.cpp \
-	src/tdme/tools/cli/miniscriptuntranspiler-main.cpp \
 	src/tdme/tools/cli/nmakefilegenerator-main.cpp \
 	src/tdme/tools/cli/optimizemodel-main.cpp \
 	src/tdme/tools/cli/parseh++-main.cpp \
@@ -980,6 +1026,7 @@ EXT_SHA256_OBJS = $(EXT_SHA256_SRCS:ext/$(SHA256)/%.cpp=$(OBJ)/%.o)
 EXT_REACTPHYSICS3D_OBJS = $(EXT_REACTPHYSICS3D_SRCS:ext/$(REACTPHYSICS3D)/%.cpp=$(OBJ)/%.o)
 EXT_CPPSPLINE_OBJS = $(EXT_CPPSPLINE_SRCS:ext/$(CPPSPLINE)/%.cpp=$(OBJ)/%.o)
 EXT_BC7_OBJS = $(EXT_BC7_SRCS:ext/$(BC7)/%.cpp=$(OBJ)/%.o)
+EXT_MINISCRIPT_OBJS = $(EXT_MINISCRIPT_SRCS:ext/$(MINISCRIPT)/%.cpp=$(OBJ)/%.o)
 EXT_SPIRV_OBJS = $(EXT_SPIRV_SRCS:ext/$(SPIRV)/%.cpp=$(OBJ)/vulkan/%.o)
 EXT_GLSLANG_OBJS = $(EXT_GLSLANG_SRCS:ext/$(GLSLANG)/%.cpp=$(OBJ)/vulkan/%.o)
 EXT_OGLCOMPILERSDLL_OBJS = $(EXT_OGLCOMPILERSDLL_SRCS:ext/$(OGLCOMPILERSDLL)/%.cpp=$(OBJ)/vulkan/%.o)
@@ -1000,20 +1047,22 @@ define cpp-command-debug
 @echo Compile $<; $(CXX) $(CPPFLAGS) $(CXXFLAGS_DEBUG) -c -o $@ $<
 endef
 
-define cpp-command-ext-rp3d
-@mkdir -p $(dir $@);
-@echo Compile $<; $(CXX) $(CPPFLAGS) $(CXXFLAGS_EXT_RP3D) -c -o $@ $<
-endef
-
 define c-command
 @mkdir -p $(dir $@);
 @echo Compile $<; $(CXX) -x c $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
 endef
 
-define m-command
-@mkdir -p $(dir $@);
-@echo Compile $<; $(CXX) -fobjc-arc -fmodules $(CPPFLAGS) $(CFLAGS)  -c -o $@ $<
-endef
+$(LIB_DIR)/$(LIB): $(OBJS) $(OBJS_DEBUG)
+
+$(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_SHA256_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_CPPSPLINE_OBJS) $(EXT_BC7_OBJS) $(EXT_MINISCRIPT_OBJS)
+
+$(LIB_DIR)/$(OPENGL2_RENDERER_LIB): $(OPENGL2_RENDERER_LIB_OBJS)
+
+$(LIB_DIR)/$(OPENGL3CORE_RENDERER_LIB): $(OPENGL3CORE_RENDERER_LIB_OBJS)
+
+$(LIB_DIR)/$(VULKAN_RENDERER_LIB): $(EXT_SPIRV_OBJS) $(EXT_GLSLANG_OBJS) $(EXT_OGLCOMPILERSDLL_OBJS) $(EXT_VMA_OBJS) $(VULKAN_RENDERER_LIB_OBJS)
+
+$(LIB_DIR)/$(OPENGLES2_RENDERER_LIB): $(OPENGLES2_RENDERER_LIB_OBJS)
 
 $(OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
 	$(cpp-command)
@@ -1040,12 +1089,15 @@ $(EXT_SHA256_OBJS):$(OBJ)/%.o: ext/$(SHA256)/%.cpp | print-opts
 	$(cpp-command)
 
 $(EXT_REACTPHYSICS3D_OBJS):$(OBJ)/%.o: ext/$(REACTPHYSICS3D)/%.cpp | print-opts
-	$(cpp-command-ext-rp3d)
+	$(cpp-command)
 
 $(EXT_CPPSPLINE_OBJS):$(OBJ)/%.o: ext/$(CPPSPLINE)/%.cpp | print-opts
 	$(cpp-command)
 
 $(EXT_BC7_OBJS):$(OBJ)/%.o: ext/$(BC7)/%.cpp | print-opts
+	$(cpp-command)
+
+$(EXT_MINISCRIPT_OBJS):$(OBJ)/%.o: ext/$(MINISCRIPT)/%.cpp | print-opts
 	$(cpp-command)
 
 $(EXT_SPIRV_OBJS):$(OBJ)/vulkan/%.o: ext/$(SPIRV)/%.cpp | print-opts
@@ -1071,12 +1123,6 @@ $(VULKAN_RENDERER_LIB_OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
 
 $(OPENGLES2_RENDERER_LIB_OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
 	$(cpp-command)
-
-%.a:
-	@echo Creating archive $@
-	@mkdir -p $(dir $@)
-	@rm -f $@
-	@ar rcs $@ $^
 
 $(LIB_DIR)/$(EXT_LIB):
 	@echo Creating shared library $@
@@ -1168,18 +1214,6 @@ else
 endif
 	@echo Done $@
 
-$(LIB_DIR)/$(LIB): $(OBJS) $(OBJS_DEBUG)
-
-$(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_SHA256_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_CPPSPLINE_OBJS) $(EXT_BC7_OBJS)
-
-$(LIB_DIR)/$(OPENGL2_RENDERER_LIB): $(OPENGL2_RENDERER_LIB_OBJS)
-
-$(LIB_DIR)/$(OPENGL3CORE_RENDERER_LIB): $(OPENGL3CORE_RENDERER_LIB_OBJS)
-
-$(LIB_DIR)/$(VULKAN_RENDERER_LIB): $(EXT_SPIRV_OBJS) $(EXT_GLSLANG_OBJS) $(EXT_OGLCOMPILERSDLL_OBJS) $(EXT_VMA_OBJS) $(VULKAN_RENDERER_LIB_OBJS)
-
-$(LIB_DIR)/$(OPENGLES2_RENDERER_LIB): $(OPENGLES2_RENDERER_LIB_OBJS)
-
 ifeq ($(OSSHORT), Msys)
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@);
@@ -1198,7 +1232,6 @@ mains: $(MAINS)
 
 all: mains
 
-# TODO make sure that always directory obj and obj-debug are removed
 clean:
 	rm -rf obj obj-debug $(LIB_DIR) $(BIN)
 

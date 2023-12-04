@@ -1,7 +1,8 @@
 #pragma once
 
-#include <memory>
 #include <fstream>
+#include <memory>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -14,6 +15,7 @@
 using std::ifstream;
 using std::string;
 using std::unique_ptr;
+using std::unordered_map;
 using std::vector;
 
 using tdme::network::httpclient::HTTPClientException;
@@ -33,8 +35,11 @@ private:
 	string username;
 	string password;
 
-	int16_t httpStatusCode { -1 };
-	vector<string> httpHeader;
+	unordered_map<string, string> headers;
+	unordered_map<string, string> getParameters;
+
+	int16_t statusCode { -1 };
+	unordered_map<string, string> responseHeaders;
 
 	unique_ptr<Thread> downloadThread;
 	Mutex downloadThreadMutex;
@@ -46,6 +51,13 @@ private:
 	volatile float progress { 0.0f };
 
 	/**
+	 * Returns a URL encoded representation of value
+	 * @param value value
+	 * @return URL encoded value
+	 */
+	static string urlEncode(const string& value);
+
+	/**
 	 * Create HTTP request headers
 	 * @param hostName host name
 	 * @param relativeUrl url relative to server root
@@ -55,11 +67,9 @@ private:
 	/**
 	 * Parse HTTP response headers
 	 * @param rawResponse raw response
-	 * @param httpStatusCode HTTP status code
-	 * @param httpHeader HTTP header
 	 * @return http header size or 0 if not yet completely submitted
 	 */
-	uint64_t parseHTTPResponseHeaders(ifstream& rawResponse, int16_t& httpStatusCode, vector<string>& httpHeader);
+	uint64_t parseHTTPResponseHeaders(ifstream& rawResponse);
 
 public:
 
@@ -100,6 +110,38 @@ public:
 	 */
 	inline void setPassword(const string& password) {
 		this->password = password;
+	}
+
+	/**
+	 * Get request headers
+	 * @return request headers
+	 */
+	inline const unordered_map<string, string>& getHeaders() {
+		return headers;
+	}
+
+	/**
+	 * Set request headers
+	 * @param headers request headers
+	 */
+	inline void setHeaders(const unordered_map<string, string>& headers) {
+		this->headers = headers;
+	}
+
+	/**
+	 * Get GET parameter
+	 * @return GET parameter
+	 */
+	inline const unordered_map<string, string>& getGETParameters() {
+		return getParameters;
+	}
+
+	/**
+	 * Set GET parameter
+	 * @param GET parameter
+	 */
+	inline void setGETParameters(const unordered_map<string, string>& parameters) {
+		this->getParameters = parameters;
 	}
 
 	/**
@@ -148,16 +190,19 @@ public:
 	 * @return HTTP status code
 	 */
 	inline int16_t getStatusCode() {
-		return httpStatusCode;
+		return statusCode;
 	}
 
 	/**
 	 * @return HTTP response headers
 	 */
-	inline const vector<string>& getResponseHeaders() {
-		return httpHeader;
+	inline const unordered_map<string, string>& getResponseHeaders() {
+		return headers;
 	}
 
+	/**
+	 * @return is finished
+	 */
 	inline bool isFinished() {
 		return finished;
 	}

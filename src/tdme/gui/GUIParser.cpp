@@ -222,7 +222,7 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 	//
 	guiScreenNode = new GUIScreenNode(
 		(pathName.empty() == false?pathName + "/":"") + fileName,
-		applicationRootPath.empty() == true?".":FileSystem::getInstance()->getCanonicalPath(applicationRootPath, ""),
+		applicationRootPath.empty() == true?".":FileSystem::getInstance()->getCanonicalURI(applicationRootPath, ""),
 		applicationSubPathName,
 		string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("id"))),
 		GUINode::createFlow(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("flow")))),

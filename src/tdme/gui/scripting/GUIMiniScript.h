@@ -11,7 +11,7 @@
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/scripting/fwd-tdme.h>
-#include <tdme/utilities/MiniScript.h>
+#include <tdme/utilities/EngineMiniScript.h>
 
 using std::array;
 using std::string;
@@ -23,12 +23,12 @@ using tdme::gui::GUI;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::utilities::MiniScript;
+using tdme::utilities::EngineMiniScript;
 
 /**
  * GUI mini script
  */
-class tdme::gui::scripting::GUIMiniScript: public MiniScript {
+class tdme::gui::scripting::GUIMiniScript: public EngineMiniScript {
 public:
 	// forbid class copy
 	FORBID_CLASS_COPY(GUIMiniScript)
@@ -73,6 +73,8 @@ public:
 	void collectHIDEvents(vector<GUIMouseEvent>& mouseEvents, vector<GUIKeyboardEvent>& keyEvents);
 
 private:
+	STATIC_DLL_IMPEXT static const vector<string> CONTEXTFUNCTION_GUI;
+
 	GUIScreenNode* screenNode { nullptr };
 	unique_ptr<GUIScreenNode> nextScreenNode;
 	bool popped { false };

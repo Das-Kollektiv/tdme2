@@ -26,13 +26,38 @@ using tdme::os::network::NetworkSocketException;
  */
 class tdme::os::network::UDPSocket : public NetworkSocket {
 public:
+	// forbid class copy
+	FORBID_CLASS_COPY(UDPSocket)
+
 	/**
-	 * @brief public destructor
+	 * Creates a UDP server socket
+	 * @param ip ip
+	 * @param port port
+	 * @return UDP socket
+	 * @throws tdme::os::network::NetworkSocketException
+	 */
+	static UDPSocket* createServerSocket(const string& ip, const unsigned int port);
+
+	/**
+	 * Creates a UDP client socket
+	 * @param ipVersion IP version
+	 * @return UDP socket
+	 * @throws tdme::os::network::NetworkSocketException
+	 */
+	static UDPSocket* createClientSocket(IpVersion ipVersion);
+
+	/**
+	 * Constructor
+	 */
+	UDPSocket(IpVersion ipVersion);
+
+	/**
+	 * Destructor
 	 */
 	virtual ~UDPSocket();
 
 	/**
-	 * @brief reads a datagram from socket
+	 * Reads a datagram from socket
 	 * @param from from host
 	 * @param port from port
 	 * @param buf buf
@@ -43,7 +68,7 @@ public:
 	ssize_t read(string& from, unsigned int& port, void* buf, const size_t bytes);
 
 	/**
-	 * @brief writes up to "bytes" bytes to socket
+	 * Writes a datagram to socket
 	 * @throws tdme::os::network::NetworkIOException
 	 * @param to to host
 	 * @param port to port
@@ -54,29 +79,15 @@ public:
 	 */
 	ssize_t write(const string& to, const unsigned int port, void* buf, const size_t bytes);
 
-	/**
-	 * @brief creates a udp socket
-	 * @param socket socket
-	 * @param ipVersion IP version
-	 * @throws tdme::os::network::NetworkSocketException
-	 */
-	static void create(UDPSocket& socket, IpVersion ipVersion);
+private:
+	IpVersion ipVersion;
 
 	/**
-	 * @brief creates a udp server socket
-	 * @param socket socket
-	 * @param ip ip
-	 * @param port port
-	 * @throws tdme::os::network::NetworkSocketException
-	 */
-	static void createServerSocket(UDPSocket& socket, const std::string& ip, const unsigned int port);
-
-	/**
-	 * @brief creates a udp client socket
-	 * @param socket socket
+	 * Creates a UDP socket
 	 * @param ipVersion IP version
+	 * @return UDP socket
 	 * @throws tdme::os::network::NetworkSocketException
 	 */
-	static void createClientSocket(UDPSocket& socket, IpVersion ipVersion);
+	static UDPSocket* create(IpVersion ipVersion);
 };
 

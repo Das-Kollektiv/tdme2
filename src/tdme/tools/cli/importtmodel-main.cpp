@@ -111,7 +111,7 @@ public:
 				)
 			);
 			// load tmm
-			if (FileSystem::getInstance()->fileExists(tModelFileName) == false) {
+			if (FileSystem::getInstance()->exists(tModelFileName) == false) {
 				Console::println("Creating tmodel: " + tModelFileName);
 				auto pathName = FileSystem::getInstance()->getPathName(tModelFileName);
 				auto fileName = FileSystem::getInstance()->getFileName(tModelFileName);

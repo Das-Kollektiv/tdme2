@@ -14,7 +14,7 @@
 #include <tdme/engine/Transform.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/os/threading/Mutex.h>
-#include <tdme/utilities/MiniScript.h>
+#include <tdme/utilities/EngineMiniScript.h>
 
 using std::array;
 using std::string;
@@ -31,15 +31,19 @@ using tdme::engine::Transform;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::os::threading::Mutex;
-using tdme::utilities::MiniScript;
+using tdme::utilities::EngineMiniScript;
 
 /**
  * Logic mini script
  */
-class tdme::engine::logics::LogicMiniScript: public MiniScript {
+class tdme::engine::logics::LogicMiniScript: public EngineMiniScript {
 	friend class MiniScriptLogic;
 
 protected:
+	STATIC_DLL_IMPEXT static const vector<string> CONTEXTFUNCTIONS_ENGINE;
+	STATIC_DLL_IMPEXT static const vector<string> CONTEXTFUNCTIONS_LOGIC;
+	STATIC_DLL_IMPEXT static const vector<string> CONTEXTFUNCTIONS_ENGINELOGIC;
+
 	Context* context { nullptr };
 	MiniScriptLogic* logic { nullptr };
 

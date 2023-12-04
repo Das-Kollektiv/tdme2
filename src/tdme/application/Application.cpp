@@ -173,7 +173,7 @@ void Application::exit(int exitCode) {
 
 		#if defined(_MSC_VER) == false
 			auto addr2lineToolCmd = StringTools::substring(pathToExecutable, 0, StringTools::lastIndexOf(pathToExecutable, '\\')) + "\\addr2line.exe";
-			if (FileSystem::getInstance()->fileExists(addr2lineToolCmd) == false) {
+			if (FileSystem::getInstance()->exists(addr2lineToolCmd) == false) {
 				Console::println("handler(): " + addr2lineToolCmd + ": not found! Please copy addr2line utility to binary location!");
 				mutex.unlock();
 
@@ -748,7 +748,7 @@ int Application::run(int argc, char** argv, const string& title, InputEventHandl
 
 void Application::setIcon() {
 	auto logoFileName = StringTools::replace(StringTools::toLowerCase(executableFileName), ".exe", "") + "-icon.png";
-	if (FileSystem::getInstance()->fileExists("resources/platforms/icons/" + logoFileName) == false) logoFileName = "default-icon.png";
+	if (FileSystem::getInstance()->exists("resources/platforms/icons/" + logoFileName) == false) logoFileName = "default-icon.png";
 	auto texture = TextureReader::read("resources/platforms/icons", logoFileName, false, false);
 	if (texture != nullptr) {
 		auto textureData = texture->getRGBTextureData();

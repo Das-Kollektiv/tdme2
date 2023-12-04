@@ -1,7 +1,7 @@
 #pragma once
 
-#include <map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 
@@ -9,8 +9,8 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
@@ -22,7 +22,7 @@ using tdme::os::filesystem::FileSystemInterface;
 class tdme::utilities::Properties
 {
 private:
-	map<string, string> properties;
+	unordered_map<string, string> properties;
 
 public:
 	/**
@@ -80,7 +80,7 @@ public:
 	/**
 	 * @return properties map
 	 */
-	inline const map<string, string>& getProperties() {
+	inline const unordered_map<string, string>& getProperties() {
 		return properties;
 	}
 

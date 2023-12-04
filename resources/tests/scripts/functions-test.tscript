@@ -20,7 +20,7 @@ function: helloWorldFunction()
 end
 
 # user script function to test assign back in user functions
-function: assignTest($a, =$b, =$c)
+function: assignTest($a, &$b, &$c)
 	$a = "a"
 	$b = "b"
 	$c = "c"

@@ -94,11 +94,11 @@ void UDPClient::run() {
 	// catch kernel event and server socket exceptions
 	try {
 		// create client socket
-		UDPSocket::createClientSocket(socket, NetworkSocket::determineIpVersion(ip));
+		socket = unique_ptr<UDPSocket>(UDPSocket::createClientSocket(NetworkSocket::determineIpVersion(ip)));
 
 		// initialize kernel event mechanismn
 		kem.initKernelEventMechanism(1);
-		kem.setSocketInterest(socket, NIO_INTEREST_NONE, NIO_INTEREST_READ, nullptr);
+		kem.setSocketInterest(socket.get(), NIO_INTEREST_NONE, NIO_INTEREST_READ, nullptr);
 
 		// initialized
 		initialized = true;
@@ -152,7 +152,7 @@ void UDPClient::run() {
 					char message[512];
 
 					// receive datagrams as long as its size > 0 and read would not block
-					while ((bytesReceived = socket.read(fromIp, fromPort, (void*)message, sizeof(message))) > 0) {
+					while ((bytesReceived = socket->read(fromIp, fromPort, (void*)message, sizeof(message))) > 0) {
 						//
 						statistics.received++;
 						//
@@ -241,7 +241,7 @@ void UDPClient::run() {
 					// try to send batch
 					while (messageQueueBatch.empty() == false) {
 						auto message = messageQueueBatch.front();
-						if (socket.write(ip, port, (void*)message->message, message->bytes) == -1) {
+						if (socket->write(ip, port, (void*)message->message, message->bytes) == -1) {
 							// sending would block, stop trying to sendin
 							statistics.errors++;
 							//
@@ -261,7 +261,7 @@ void UDPClient::run() {
 						messageQueueMutex.lock();
 						if (messageQueue.empty() == true) {
 							kem.setSocketInterest(
-								socket,
+								socket.get(),
 								NIO_INTEREST_READ | NIO_INTEREST_WRITE,
 								NIO_INTEREST_READ,
 								nullptr
@@ -300,7 +300,7 @@ void UDPClient::run() {
 
 	// exit gracefully
 	kem.shutdownKernelEventMechanism();
-	socket.close();
+	socket->close();
 
 	// log
 	Console::println("UDPClient::run(): done");
@@ -352,7 +352,7 @@ void UDPClient::sendMessage(UDPClientMessage* clientMessage, bool safe) {
 	// set nio interest
 	if (messageQueue.size() == 1) {
 		kem.setSocketInterest(
-			socket,
+			socket.get(),
 			NIO_INTEREST_READ,
 			NIO_INTEREST_READ | NIO_INTEREST_WRITE,
 			nullptr
@@ -440,7 +440,7 @@ void UDPClient::processAckMessages() {
 			// set nio interest
 			if (messageQueue.size() == 1) {
 				kem.setSocketInterest(
-					socket,
+					socket.get(),
 					NIO_INTEREST_READ,
 					NIO_INTEREST_READ | NIO_INTEREST_WRITE,
 					nullptr

@@ -130,7 +130,7 @@ static void scanPathResources(const string& path, vector<string>& totalFiles) {
 	ListFilter listFilter;
 	vector<string> files;
 
-	if (FileSystem::getInstance()->fileExists(path) == false) {
+	if (FileSystem::getInstance()->exists(path) == false) {
 		Console::println("Error: scanPathResources: file does not exist: " + path);
 	} else
 	if (FileSystem::getInstance()->isPath(path) == false) {
@@ -187,7 +187,7 @@ static void scanPathLibraries(const string& path, vector<string>& totalFiles) {
 	ListFilter listFilter;
 	vector<string> files;
 
-	if (FileSystem::getInstance()->fileExists(path) == false) {
+	if (FileSystem::getInstance()->exists(path) == false) {
 		Console::println("Error: scanPathLibraries: file does not exist: " + path);
 	} else
 	if (FileSystem::getInstance()->isPath(path) == false) {
@@ -227,7 +227,7 @@ static void scanPathHeaders(const string& path, vector<string>& totalFiles) {
 	ListFilter listFilter;
 	vector<string> files;
 
-	if (FileSystem::getInstance()->fileExists(path) == false) {
+	if (FileSystem::getInstance()->exists(path) == false) {
 		Console::println("Error: scanPathHeaders: file does not exist: " + path);
 	} else
 	if (FileSystem::getInstance()->isPath(path) == false) {
@@ -297,7 +297,7 @@ static void scanPathExecutables(const string& path, vector<string>& totalFiles) 
 	ListFilter listFilter;
 	vector<string> files;
 
-	if (FileSystem::getInstance()->fileExists(path) == false) {
+	if (FileSystem::getInstance()->exists(path) == false) {
 		Console::println("Error: scanPathExecutables: file does not exist: " + path);
 	} else
 	if (FileSystem::getInstance()->isPath(path) == false) {
@@ -427,8 +427,8 @@ void createMacApplication(const Properties& installerProperties, const string& f
 		auto executablePathName = FileSystem::getInstance()->getPathName(fileName);
 		auto executableFileName = FileSystem::getInstance()->getFileName(fileName);
 		auto iconFileName = StringTools::toLowerCase(executableFileName) + "-icon.icns";
-		if (FileSystem::getInstance()->fileExists("resources/platforms/macos/" + iconFileName) == false &&
-			FileSystem::getInstance()->fileExists(executablePathName + "/resources/platforms/macos/" + iconFileName) == false) iconFileName = "default-icon.icns";
+		if (FileSystem::getInstance()->exists("resources/platforms/macos/" + iconFileName) == false &&
+			FileSystem::getInstance()->exists(executablePathName + "/resources/platforms/macos/" + iconFileName) == false) iconFileName = "default-icon.icns";
 		auto infoplistFile = FileSystem::getInstance()->getContentAsString("resources/platforms/macos", "Info.plist");
 		infoplistFile = StringTools::replace(infoplistFile, "{__EXECUTABLE__}", executableFileName);
 		infoplistFile = StringTools::replace(infoplistFile, "{__EXECUTABLE_LOWERCASE__}", StringTools::toLowerCase(executableFileName));
@@ -515,7 +515,7 @@ int main(int argc, char** argv)
 		//
 		Console::println("Component: " + to_string(componentIdx) + ": component file name: " + componentFileName);
 
-		if (FileSystem::getInstance()->fileExists("installer") == false) {
+		if (FileSystem::getInstance()->exists("installer") == false) {
 			FileSystem::getInstance()->createPath("installer");
 		}
 
@@ -669,7 +669,7 @@ int main(int argc, char** argv)
 
 	//
 	#if defined(__APPLE__)
-		if (FileSystem::getInstance()->fileExists("installer-package") == true &&
+		if (FileSystem::getInstance()->exists("installer-package") == true &&
 			FileSystem::getInstance()->isPath("installer-package") == true) {
 			FileSystem::getInstance()->removePath("installer-package", true);
 		}

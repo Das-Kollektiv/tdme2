@@ -183,13 +183,13 @@ Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const
 }
 
 const string TMReader::getTexturePath(const string& modelPathName, const string& texturePathName, const string& textureFileName) {
-	if (FileSystem::getInstance()->fileExists(texturePathName + "/" + textureFileName) == true) {
+	if (FileSystem::getInstance()->exists(texturePathName + "/" + textureFileName) == true) {
 		return texturePathName;
 	} else
-	if (FileSystem::getInstance()->fileExists(modelPathName + "/" + textureFileName) == true) {
+	if (FileSystem::getInstance()->exists(modelPathName + "/" + textureFileName) == true) {
 		return modelPathName;
 	} else
-	if (FileSystem::getInstance()->fileExists(FileSystem::getInstance()->getPathName(modelPathName) + "/" + textureFileName) == true) {
+	if (FileSystem::getInstance()->exists(FileSystem::getInstance()->getPathName(modelPathName) + "/" + textureFileName) == true) {
 		return FileSystem::getInstance()->getPathName(modelPathName);
 	} else {
 		return texturePathName;

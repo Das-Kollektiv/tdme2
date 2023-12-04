@@ -1,6 +1,7 @@
 #include <tdme/network/httpclient/HTTPClient.h>
 
 #include <iomanip>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <unordered_map>
@@ -10,6 +11,7 @@
 #include <tdme/network/httpclient/HTTPClientException.h>
 #include <tdme/os/network/Network.h>
 #include <tdme/os/network/NetworkSocketClosedException.h>
+#include <tdme/os/network/SecureTCPSocket.h>
 #include <tdme/os/network/TCPSocket.h>
 #include <tdme/utilities/Base64.h>
 #include <tdme/utilities/Character.h>
@@ -20,12 +22,14 @@
 #include <tdme/utilities/StringTools.h>
 
 using std::hex;
+using std::make_unique;
 using std::nouppercase;
 using std::ostringstream;
 using std::setw;
 using std::string;
 using std::stringstream;
 using std::to_string;
+using std::unique_ptr;
 using std::unordered_map;
 using std::uppercase;
 using std::vector;
@@ -33,6 +37,7 @@ using std::vector;
 using tdme::network::httpclient::HTTPClientException;
 using tdme::os::network::Network;
 using tdme::os::network::NetworkSocketClosedException;
+using tdme::os::network::SecureTCPSocket;
 using tdme::os::network::TCPSocket;
 using tdme::utilities::Base64;
 using tdme::utilities::Character;
@@ -51,6 +56,7 @@ const string HTTPClient::HTTP_METHOD_PUT = "PUT";
 const string HTTPClient::HTTP_METHOD_DELETE = "DELETE";
 
 string HTTPClient::urlEncode(const string &value) {
+	// TODO: put me into utilities
 	// see: https://stackoverflow.com/questions/154536/encode-decode-urls-in-c
 	ostringstream escaped;
 	escaped.fill('0');
@@ -74,8 +80,7 @@ string HTTPClient::urlEncode(const string &value) {
 	return escaped.str();
 }
 
-
-string HTTPClient::createHTTPRequestHeaders(const string& hostname, const string& method, const string& relativeUrl, const unordered_map<string, string>& getParameters, const unordered_map<string, string>& postParameters, const string& body) {
+string HTTPClient::createHTTPRequestHeaders(const string& hostname, const string& relativeUrl, const string& body) {
 	string query;
 	for (const auto& [parameterName, parameterValue]: getParameters) {
 		if (query.empty() == true) query+= "?"; else query+="&";
@@ -96,6 +101,9 @@ string HTTPClient::createHTTPRequestHeaders(const string& hostname, const string
 		request+=
 			string("Content-Type: " + contentType + "\r\n");
 	}
+	for (const auto& [headerName, headerValue]: headers) {
+		request+= headerName + ": " + headerValue + "\r\n";
+	}
 	if (method == HTTP_METHOD_POST || method == HTTP_METHOD_PUT) {
 		string _body;
 		if (postParameters.size() > 0) {
@@ -114,7 +122,9 @@ string HTTPClient::createHTTPRequestHeaders(const string& hostname, const string
 	return request;
 }
 
-void HTTPClient::parseHTTPResponseHeaders(stringstream& rawResponse, int16_t& httpStatusCode, vector<string>& httpHeader) {
+void HTTPClient::parseHTTPResponseHeaders(stringstream& rawResponse) {
+	int headerIdx = 0;
+	string statusHeader;
 	string line;
 	char lastChar = -1;
 	char currentChar;
@@ -122,7 +132,14 @@ void HTTPClient::parseHTTPResponseHeaders(stringstream& rawResponse, int16_t& ht
 		rawResponse.get(currentChar);
 		if (lastChar == '\r' && currentChar == '\n') {
 			if (line.empty() == false) {
-				httpHeader.push_back(line);
+				if (headerIdx == 0) {
+					statusHeader = line;
+					headerIdx++;
+				} else {
+					auto headerNameValueSeparator = StringTools::indexOf(line, ':');
+					responseHeaders[StringTools::trim(StringTools::substring(line, 0, headerNameValueSeparator))] =
+						StringTools::trim(StringTools::substring(line, headerNameValueSeparator + 1));
+				}
 			} else {
 				break;
 			}
@@ -133,13 +150,13 @@ void HTTPClient::parseHTTPResponseHeaders(stringstream& rawResponse, int16_t& ht
 		}
 		lastChar = currentChar;
 	}
-	if (httpHeader.size() > 0) {
+	if (statusHeader.empty() == false) {
 		StringTokenizer t;
-		t.tokenize(httpHeader[0], " ");
+		t.tokenize(statusHeader, " ");
 		for (auto i = 0; i < 3 && t.hasMoreTokens(); i++) {
 			auto token = t.nextToken();
 			if (i == 1) {
-				httpStatusCode = Integer::parse(token);
+				statusCode = Integer::parse(token);
 			}
 		}
 	}
@@ -148,49 +165,56 @@ void HTTPClient::parseHTTPResponseHeaders(stringstream& rawResponse, int16_t& ht
 void HTTPClient::reset() {
 	url.clear();
 	method.clear();
+	headers.clear();
 	getParameters.clear();
 	postParameters.clear();
 	body.clear();
 	contentType.clear();
 
 	rawResponse.clear();
-	httpStatusCode = -1;
-	httpHeader.clear();
+	statusCode = -1;
+	responseHeaders.clear();
 }
 
 void HTTPClient::execute() {
 	//
-	TCPSocket socket;
+	unique_ptr<TCPSocket> socket;
 	try {
-		if (StringTools::startsWith(url, "http://") == false) throw HTTPClientException("Invalid protocol");
-		auto relativeUrl = StringTools::substring(url, string("http://").size());
+		// TODO: we might need a class to determine protocol, hostname and port, yaaar
+		auto protocolSeparatorIdx = StringTools::indexOf(url, string("://"));
+		if (protocolSeparatorIdx == -1) throw HTTPClientException("Invalid URL");
+		auto relativeUrl = StringTools::substring(url, protocolSeparatorIdx + 3);
 		if (relativeUrl.empty() == true) throw HTTPClientException("No URL given");
 		auto slashIdx = relativeUrl.find('/');
 		auto hostname = relativeUrl;
 		if (slashIdx != -1) hostname = StringTools::substring(relativeUrl, 0, slashIdx);
 		relativeUrl = StringTools::substring(relativeUrl, hostname.size());
-
-		Console::println("HTTPClient::execute(): hostname: " + hostname);
-		Console::println("HTTPClient::execute(): relative url: " + relativeUrl);
-
-		Console::print("HTTPClient::execute(): resolving hostname to IP: " + hostname + ": ");
-		auto ip = Network::getIpByHostname(hostname);
-		if (ip.empty() == true) {
-			Console::println("HTTPClient::execute(): failed");
-			throw HTTPClientException("Could not resolve host IP by hostname");
+		//
+		if (StringTools::startsWith(url, "http://") == true) {
+			auto ip = Network::getIpByHostname(hostname);
+			if (ip.empty() == true) {
+				Console::println("HTTPClient::execute(): failed");
+				throw HTTPClientException("Could not resolve host IP by hostname");
+			}
+			//
+			socket = make_unique<TCPSocket>();
+			socket->connect(ip, 80);
+		} else
+		if (StringTools::startsWith(url, "https://") == true) {
+			socket = make_unique<SecureTCPSocket>();
+			socket->connect(hostname, 443);
+		} else {
+			throw HTTPClientException("Invalid protocol");
 		}
-		Console::println(ip);
-
-		TCPSocket::create(socket, TCPSocket::determineIpVersion(ip));
-		socket.connect(ip, 80);
-		auto request = createHTTPRequestHeaders(hostname, method, relativeUrl, getParameters, postParameters, body);
-		socket.write((void*)request.data(), request.length());
+		//
+		auto request = createHTTPRequestHeaders(hostname, relativeUrl, body);
+		socket->write((void*)request.data(), request.length());
 
 		char rawResponseBuf[16384];
 		auto rawResponseBytesRead = 0;
 		try {
 			for (;true;) {
-				auto rawResponseBytesRead = socket.read(rawResponseBuf, sizeof(rawResponseBuf));
+				auto rawResponseBytesRead = socket->read(rawResponseBuf, sizeof(rawResponseBuf));
 				rawResponse.write(rawResponseBuf, rawResponseBytesRead);
 			};
 		} catch (NetworkSocketClosedException& sce) {
@@ -198,12 +222,12 @@ void HTTPClient::execute() {
 		}
 
 		//
-		parseHTTPResponseHeaders(rawResponse, httpStatusCode, httpHeader);
+		parseHTTPResponseHeaders(rawResponse);
 
 		//
-		socket.shutdown();
+		socket->shutdown();
 	} catch (Exception& exception) {
-		socket.shutdown();
+		socket->shutdown();
 		//
 		Console::println(string("HTTPClient::execute(): performed HTTP request: FAILED: ") + exception.what());
 		// rethrow

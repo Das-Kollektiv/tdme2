@@ -26,6 +26,7 @@ class tdme::network::httpclient::HTTPClient {
 private:
 	string url;
 	string method;
+	unordered_map<string, string> headers;
 	unordered_map<string, string> getParameters;
 	unordered_map<string, string> postParameters;
 	string body;
@@ -34,27 +35,29 @@ private:
 	string password;
 
 	stringstream rawResponse;
-	int16_t httpStatusCode { -1 };
-	vector<string> httpHeader;
+	int16_t statusCode { -1 };
+	unordered_map<string, string> responseHeaders;
+
+	/**
+	 * Returns a URL encoded representation of value
+	 * @param value value
+	 * @return URL encoded value
+	 */
+	static string urlEncode(const string& value);
 
 	/**
 	 * Create HTTP request headers
 	 * @param hostname hostname
-	 * @param method method
 	 * @param relativeUrl url relative to server root
-	 * @param getParameters get parameters
-	 * @param postParameter post parameters
 	 * @param body body
 	 */
-	string createHTTPRequestHeaders(const string& hostname, const string& method, const string& relativeUrl, const unordered_map<string, string>& getParameters, const unordered_map<string, string>& postParameters, const string& body);
+	string createHTTPRequestHeaders(const string& hostname, const string& relativeUrl, const string& body);
 
 	/**
 	 * Parse HTTP response headers
 	 * @param rawResponse raw response
-	 * @param httpStatusCode HTTP status code
-	 * @param httpHeader HTTP header
 	 */
-	void parseHTTPResponseHeaders(stringstream& rawResponse, int16_t& httpStatusCode, vector<string>& httpHeader);
+	void parseHTTPResponseHeaders(stringstream& rawResponse);
 
 public:
 	static const constexpr int16_t HTTP_STATUSCODE_OK { 200 };
@@ -127,6 +130,22 @@ public:
 	 */
 	inline void setPassword(const string& password) {
 		this->password = password;
+	}
+
+	/**
+	 * Get request headers
+	 * @return request headers
+	 */
+	inline const unordered_map<string, string>& getHeaders() {
+		return headers;
+	}
+
+	/**
+	 * Set request headers
+	 * @param headers request headers
+	 */
+	inline void setHeaders(const unordered_map<string, string>& headers) {
+		this->headers = headers;
 	}
 
 	/**
@@ -219,20 +238,14 @@ public:
 	 * @return HTTP status code
 	 */
 	inline int16_t getStatusCode() {
-		return httpStatusCode;
+		return statusCode;
 	}
 
 	/**
-	 * @return HTTP response headers
+	 * @return response headers
 	 */
-	inline const vector<string>& getResponseHeaders() {
-		return httpHeader;
+	inline const unordered_map<string, string>& getResponseHeaders() {
+		return responseHeaders;
 	}
-
-	/**
-	 * Returns a URL encoded representation of value
-	 * @return URL encoded value
-	 */
-	static string urlEncode(const string& value);
 
 };

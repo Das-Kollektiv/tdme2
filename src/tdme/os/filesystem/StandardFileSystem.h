@@ -33,32 +33,33 @@ public:
 	/**
 	 * Public destructor
 	 */
-	virtual ~StandardFileSystem();
+	~StandardFileSystem();
 
 	// overridden methods
-	const string getFileName(const string& path, const string& fileName) override;
-	void list(const string& pathName, vector<string>& files, FileNameFilter* filter = nullptr, bool addDrives = false) override;
-	bool isPath(const string& pathName) override;
-	bool isDrive(const string& pathName) override;
-	bool fileExists(const string& fileName) override;
+	const string composeURI(const string& pathName, const string& fileName);
+	uint64_t getFileSize(const string& pathName, const string& fileName);
+	const string getContentAsString(const string& pathName, const string& fileName);
+	void setContentFromString(const string& pathName, const string& fileName, const string& content);
+	void getContent(const string& pathName, const string& fileName, vector<uint8_t>& content);
+	void setContent(const string& pathName, const string& fileName, const vector<uint8_t>& content);
+	void getContentAsStringArray(const string& pathName, const string& fileName, vector<string>& content);
+	void setContentFromStringArray(const string& pathName, const string& fileName, const vector<string>& content);
+	void list(const string& pathName, vector<string>& files, FileNameFilter* filter = nullptr, bool addDrives = false);
+	bool isPath(const string& uri);
+	bool isDrive(const string& uri);
+	bool exists(const string& uri);
 	bool isExecutable(const string& pathName, const string& fileName) override;
 	void setExecutable(const string& pathName, const string& fileName) override;
-	uint64_t getFileSize(const string& pathName, const string& fileName) override;
-	const string getContentAsString(const string& pathName, const string& fileName) override;
-	void setContentFromString(const string& pathName, const string& fileName, const string& content) override;
-	void getContent(const string& pathName, const string& fileName, vector<uint8_t>& content) override;
-	void setContent(const string& pathName, const string& fileName, const vector<uint8_t>& content) override;
-	void getContentAsStringArray(const string& pathName, const string& fileName, vector<string>& content) override;
-	void setContentFromStringArray(const string& pathName, const string& fileName, const vector<string>& content) override;
-	const string getCanonicalPath(const string& pathName, const string& fileName) override;
-	const string getCurrentWorkingPathName() override;
-	void changePath(const string& pathName) override;
-	const string getPathName(const string& fileName) override;
-	const string getFileName(const string& fileName) override;
-	void createPath(const string& pathName) override;
-	void removePath(const string& pathName, bool recursive) override;
-	void removeFile(const string& pathName, const string& fileName) override;
-	void rename(const string& fileNameFrom, const string& fileNameTo) override;
-	bool getThumbnailAttachment(const string& pathName, const string& fileName, vector<uint8_t>& thumbnailAttachmentContent) override;
-	bool getThumbnailAttachment(const vector<uint8_t>& content, vector<uint8_t>& thumbnailAttachmentContent) override;
+	const string getCanonicalURI(const string& pathName, const string& fileName);
+	const string getCurrentWorkingPathName();
+	void changePath(const string& pathName);
+	const string getPathName(const string& uri);
+	const string getFileName(const string& uri);
+	const string removeFileExtension(const string& fileName);
+	void createPath(const string& pathName);
+	void removePath(const string& pathName, bool recursive);
+	void removeFile(const string& pathName, const string& fileName);
+	void rename(const string& fileNameFrom, const string& fileNameTo);
+	bool getThumbnailAttachment(const string& pathName, const string& fileName, vector<uint8_t>& thumbnailAttachmentContent);
+	bool getThumbnailAttachment(const vector<uint8_t>& content, vector<uint8_t>& thumbnailAttachmentContent);
 };

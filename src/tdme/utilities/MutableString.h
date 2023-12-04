@@ -94,8 +94,7 @@ public:
 	 */
 	inline MutableString& reset() {
 		data.clear();
-		cache.binaryCache.clear();
-		cache.characterCache.clear();
+		cache.removeCache();
 		utf8Length = -1;
 		return *this;
 	}
@@ -349,8 +348,7 @@ public:
 			beginIndex += by.length();
 		}
 		// TODO: could be improved
-		cache.binaryCache.clear();
-		cache.characterCache.clear();
+		cache.removeCache();
 		utf8Length = -1;
 	}
 
@@ -432,29 +430,8 @@ private:
 	 * @param idx binary index
 	 */
 	inline void removeCache(int binaryIdx, int characterIdx) {
-		// Console::println("MutableString::removeCache(): binary: " + to_string(binaryIdx) + ", character: " + to_string(characterIdx));
-		// remove succeeding entries from binary cache
-		if (binaryIdx >= UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE) {
-			auto& _cache = cache.binaryCache;
-			auto removeFromCacheEntryIdx = (binaryIdx / UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE) - 1;
-			// Console::println("\tRemoving binary: " + to_string(removeFromCacheEntryIdx) + " / " + to_string(_cache.size() - 1) + " = " + to_string((removeFromCacheEntryIdx + 1) * UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE));
-			if (removeFromCacheEntryIdx < _cache.size()) {
-				_cache.erase(_cache.begin() + removeFromCacheEntryIdx, _cache.end());
-			}
-		} else {
-			cache.binaryCache.clear();
-		}
-		// remove succeeding entries from character position cache
-		if (characterIdx >= UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE) {
-			auto& _cache = cache.characterCache;
-			auto removeFromCacheEntryIdx = (characterIdx / UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE) - 1;
-			// Console::println("\tRemoving character: " + to_string(removeFromCacheEntryIdx) + " / " + to_string(_cache.size() - 1) + " = " + to_string((removeFromCacheEntryIdx + 1) * UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE));
-			if (removeFromCacheEntryIdx < _cache.size()) {
-				_cache.erase(_cache.begin() + removeFromCacheEntryIdx, _cache.end());
-			}
-		} else {
-			cache.characterCache.clear();
-		}
+		//
+		cache.removeCache(binaryIdx, characterIdx);
 		// we also cache the length
 		utf8Length = -1;
 	}

@@ -18,7 +18,7 @@ class tdme::engine::primitives::Capsule final
 	: public BoundingVolume
 {
 private:
-	// overriden methods
+	// overridden methods
 	void destroyCollisionShape() override;
 	void createCollisionShape(World* world) override;
 

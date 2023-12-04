@@ -35,7 +35,7 @@ private:
 	unique_ptr<reactphysics3d::TriangleVertexArray> triangleVertexArray;
 	reactphysics3d::TriangleMesh* triangleMesh { nullptr };
 
-	// overriden methods
+	// overridden methods
 	void destroyCollisionShape() override;
 	void createCollisionShape(World* world) override;
 

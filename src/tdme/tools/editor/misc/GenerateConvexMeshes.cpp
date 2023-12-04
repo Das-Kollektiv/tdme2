@@ -92,7 +92,7 @@ void GenerateConvexMeshes::removeConvexMeshes(Prototype* prototype)
 			continue;
 		} else {
 			if (boundingVolume->getConvexMeshFile().empty() == false &&
-				FileSystem::getInstance()->fileExists(boundingVolume->getConvexMeshFile()) == true) {
+				FileSystem::getInstance()->exists(boundingVolume->getConvexMeshFile()) == true) {
 				FileSystem::getInstance()->removeFile(
 					FileSystem::getInstance()->getPathName(boundingVolume->getConvexMeshFile()),
 					FileSystem::getInstance()->getFileName(boundingVolume->getConvexMeshFile())

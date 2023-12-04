@@ -29,7 +29,7 @@ KernelEventMechanism::~KernelEventMechanism() {
 	delete static_cast<KernelEventMechanismPSD*>(_psd);
 }
 
-void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie) {
+void KernelEventMechanism::setSocketInterest(NetworkSocket* socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie) {
 	// exit if not initialized
 	if (initialized == false) return;
 
@@ -54,7 +54,7 @@ void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const 
 	if (epoll_ctl(
 		psd->ep,
 		lastInterest == NIO_INTEREST_NONE?EPOLL_CTL_ADD:EPOLL_CTL_MOD,
-		socket.descriptor,
+		socket->descriptor,
 		&event) == -1) {
 		//
 		std::string msg = "Could not add epoll event: ";
@@ -63,7 +63,7 @@ void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const 
 	}
 }
 
-void KernelEventMechanism::removeSocket(const NetworkSocket &socket) {
+void KernelEventMechanism::removeSocket(NetworkSocket* socket) {
 	// exit if not initialized
 	if (initialized == false) return;
 
@@ -74,7 +74,7 @@ void KernelEventMechanism::removeSocket(const NetworkSocket &socket) {
 	if (epoll_ctl(
 		psd->ep,
 		EPOLL_CTL_DEL,
-		socket.descriptor,
+		socket->descriptor,
 		nullptr) == -1) {
 		//
 		std::string msg = "Could not remove socket: ";

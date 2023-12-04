@@ -1011,7 +1011,7 @@ void VKRenderer::initialize()
 
 	// create VK shader cache folder
 	try {
-		if (FileSystem::getInstance()->fileExists("shader/vk") == false) {
+		if (FileSystem::getInstance()->exists("shader/vk") == false) {
 			FileSystem::getInstance()->createPath("shader/vk");
 		}
 	} catch (Exception& exception) {

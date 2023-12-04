@@ -107,7 +107,7 @@ private:
 	 */
 	void createConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, const Vector3& scale);
 
-	// overriden methods
+	// overridden methods
 	void destroyCollisionShape() override;
 	void createCollisionShape(World* world) override;
 

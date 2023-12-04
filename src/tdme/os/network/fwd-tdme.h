@@ -13,8 +13,9 @@ namespace network {
 	class NetworkSocket;
 	class NetworkServerException;
 	class NetworkSocketException;
-	class UDPSocket;
+	class SecureTCPSocket;
 	class TCPSocket;
+	class UDPSocket;
 } // namespace network
 } // namespace os
 } // namespace tdme

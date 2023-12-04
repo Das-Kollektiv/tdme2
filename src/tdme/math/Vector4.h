@@ -4,12 +4,14 @@
 
 #include <tdme/tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/math/Math.h>
 #include <tdme/utilities/Float.h>
 
 using std::array;
 
 using tdme::math::Math;
+using tdme::math::Vector3;
 using tdme::utilities::Float;
 
 /**

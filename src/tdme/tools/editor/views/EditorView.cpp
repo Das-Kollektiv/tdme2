@@ -219,7 +219,7 @@ void EditorView::handleInputEvents()
 				case GUIKeyboardEvent::KEYCODE_F12:
 					if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 						try {
-							if (FileSystem::getStandardFileSystem()->fileExists("./screenshots") == false) FileSystem::getStandardFileSystem()->createPath("./screenshots");
+							if (FileSystem::getStandardFileSystem()->exists("./screenshots") == false) FileSystem::getStandardFileSystem()->createPath("./screenshots");
 							Engine::getInstance()->makeScreenshot("./screenshots", "TDME2-Screenshot-" + StringTools::replace(Time::getAsString(), ':', '-') + ".png");
 						} catch (Exception& exception) {
 							Console::println("EditorView::handleInputEvents(): Could not create screenshot: " + string(exception.what()));

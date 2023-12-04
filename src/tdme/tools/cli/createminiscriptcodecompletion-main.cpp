@@ -12,7 +12,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/MiniScript.h>
+#include <tdme/utilities/EngineMiniScript.h>
 #include <tdme/utilities/Properties.h>
 
 using std::array;
@@ -28,7 +28,7 @@ using tdme::gui::GUIParser;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
-using tdme::utilities::MiniScript;
+using tdme::utilities::EngineMiniScript;
 using tdme::utilities::Properties;
 
 int main(int argc, char** argv)
@@ -54,7 +54,9 @@ int main(int argc, char** argv)
 	lines.push_back("<code-completion>");
 
 	//
-	auto baseMiniScript = make_unique<MiniScript>();
+	EngineMiniScript::registerDataTypes();
+	//
+	auto baseMiniScript = make_unique<EngineMiniScript>();
 	baseMiniScript->registerMethods();
 
 	auto logicMiniScript = make_unique<LogicMiniScript>();
@@ -64,8 +66,8 @@ int main(int argc, char** argv)
 	guiMiniScript->registerMethods();
 
 	//
-	array<MiniScript*, 3> miniScriptFlavours = { baseMiniScript.get(), logicMiniScript.get(), guiMiniScript.get() };
-	for (const auto& miniScriptFlavour: miniScriptFlavours) {
+	array<EngineMiniScript*, 3> miniScriptFlavours = { baseMiniScript.get(), logicMiniScript.get(), guiMiniScript.get() };
+	for (const auto miniScriptFlavour: miniScriptFlavours) {
 		// methods
 		auto scriptMethods = miniScriptFlavour->getMethods();
 		vector<string> methods;
@@ -82,11 +84,11 @@ int main(int argc, char** argv)
 			if (description.empty() == true) description = methodDescriptions.get("miniscript." + scriptMethod->getMethodName(), string());
 			Console::println("Adding method: " + scriptMethod->getMethodName());
 			lines.push_back("	<keyword name=\"" + scriptMethod->getMethodName() + "\" func=\"yes\">");
-			lines.push_back("		<overload return-value=\"" + MiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable()) + "\" descr=\"" + GUIParser::escape(description) + "\">");
+			lines.push_back("		<overload return-value=\"" + EngineMiniScript::ScriptVariable::getReturnTypeAsString(scriptMethod->getReturnValueType(), scriptMethod->isReturnValueNullable()) + "\" descr=\"" + GUIParser::escape(description) + "\">");
 			for (const auto& argumentType: scriptMethod->getArgumentTypes()) {
 				string argumentValueString;
 				if (argumentType.optional == true) argumentValueString+= "[";
-				argumentValueString+= MiniScript::ScriptVariable::getTypeAsString(argumentType.type) + " ";
+				argumentValueString+= EngineMiniScript::ScriptVariable::getTypeAsString(argumentType.type) + " ";
 				argumentValueString+= string() + (argumentType.reference == true?"=":"") + "$" + argumentType.name;
 				if (argumentType.optional == true) argumentValueString+= "]";
 				lines.push_back("			<parameter name=\"" + argumentValueString + "\" />");

@@ -14,11 +14,13 @@
 - TDME2 is open source
   - please check the [license](https://github.com/Mindty-Kollektiv/tdme2/blob/master/LICENSE)
   - you find the source code at [https://github.com/Mindty-Kollektiv/tdme2](https://github.com/Mindty-Kollektiv/tdme2) 
-  - you find binary alpha builds at [http://drewke.net/tdme2](http://drewke.net/tdme2)
-  - here you find developer documentation including collaboration graphs and [private API](http://drewke.net/tdme2-documentation/alpha/private) as well as [public API](http://drewke.net/tdme2-documentation/alpha/public) for current alpha build
+  - you find binary alpha builds at [https://www.mindty.com/products/tdme2/builds/](https://www.mindty.com/products/tdme2/builds/)
+  - here you find developer documentation including collaboration graphs and [private API](https://www.mindty.com/products/tdme2/documentation/alpha/private/) as well as [public API](https://www.mindty.com/products/tdme2/documentation/alpha/public/) for current alpha build
     - RapidJSON is included, but not yet integrated into documentation, please see [http://rapidjson.org/](http://rapidjson.org/)
     - For TDME2 GUI XML documentation see [README-GUI-XML.md](./README-GUI-XML.md)
-    - For TDME2 MiniScript documentation see [README-MiniScript.md](./README-MiniScript.md)
+    - For TDME2 MiniScript documentation 
+      - see [README-MiniScript.md](./README-MiniScript.md)
+      - here you find base MiniScript [documentation including collaboration graphs and API](https://www.mindty.com/products/miniscript/documentation/)
 
 # 2. Features
 - Application
@@ -212,16 +214,16 @@
 - MiniScript
     - very small implementation of a scripting language
     - runs on every CPU, OS, ... due to its simplicity, so its highly portable just like TDME2 is
-    - can be easily extended by writing state machine machine states and script methods in C++
-    - works with the following data types: null, boolean, integer, float, string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, array, map and set
+    - can be easily extended by writing state machine machine states and script methods in C++ as well as custom data types
+    - built-in data types: null, boolean, integer, float, string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, byte array, array, map and set 
     - when calling script C++ methods or script functions with arguments it does optionally use references or value by copy
     - supports user script functions and recursion
     - supports operators by operator to method mapping by a preprocessor run
     - supports loops and conditions
     - supports programming with classes style programming
-      - for string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, array, map and set data types
-      - via script classes
-      - custom data types are planned
+      - for built-in datatypes: string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, byte array, array, map and set
+      - for script classes/objects
+      - for custom data types 
     - supports event like programming
     - can be transpiled to C++
     - how to use:
@@ -415,4 +417,4 @@
     - I even might have system administrator tasks
 
 # 9. Donation 
-- I have to pay my bills and beer, so if you have any use for this open source project, like educational, productive or fun, ..., consider a donation here https://www.paypal.me/andreasdrewke or here https://github.com/sponsors/andreasdr
+- I have to pay my bills, beer and stuff, so if you have any use for this open source project, like educational, productive or fun, ..., consider a donation here [PayPal](https://www.paypal.me/andreasdrewke), here [GitHub Sponsors](https://github.com/sponsors/andreasdr) or via [Amazon Wishlist](https://www.amazon.de/hz/wishlist/ls/250IBUL4JSZVR?ref_=wl_share)

@@ -20,7 +20,7 @@ class tdme::engine::primitives::Sphere final
 private:
 	float radius;
 
-	// overriden methods
+	// overridden methods
 	void destroyCollisionShape() override;
 	void createCollisionShape(World* world) override;
 
