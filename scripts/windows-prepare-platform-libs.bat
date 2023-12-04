@@ -9,4 +9,6 @@ copy ext\fbx\win64\lib\libfbxsdk.dll platform\libs\.
 copy ext\glfw3\lib\win64\glfw3.dll platform\libs\.
 copy ext\windows-msc\glew\libs\glew32.dll platform\libs\.
 copy ext\windows-msc\openal-soft\libs\OpenAl32.dll platform\libs\.
+copy ext\windows-msc\openssl\lib\libcrypto-3-x64.dll platform\libs\.
+copy ext\windows-msc\openssl\lib\libssl-3-x64.dll platform\libs\.
 copy ext\freetype\lib\win64\freetype.dll platform\libs\.
