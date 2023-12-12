@@ -36,9 +36,12 @@ private:
 	STATIC_DLL_IMPEXT static string CONDITION_UNSELECTED;
 	STATIC_DLL_IMPEXT static string CONDITION_DISABLED;
 	STATIC_DLL_IMPEXT static string CONDITION_ENABLED;
+	//
+	STATIC_DLL_IMPEXT static unordered_map<string, vector<string>> radioButtonGroupNodesByName;
+	//
 	bool selected;
 	bool disabled;
-	STATIC_DLL_IMPEXT static unordered_map<string, vector<string>> radioButtonGroupNodesByName;
+	bool deselectable;
 	MutableString value;
 
 	// forbid class copy

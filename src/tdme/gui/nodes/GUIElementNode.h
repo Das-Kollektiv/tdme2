@@ -144,63 +144,86 @@ public:
 	/**
 	 * @return focusable
 	 */
-	bool isFocusable();
+	inline bool isFocusable() {
+		return focusable;
+	}
 
 	/**
 	 * @return name
 	 */
-	const string& getName();
+	inline const string& getName() {
+		return name;
+	}
 
 	/**
 	 * @return value
 	 */
-	const string& getValue();
+	inline const string& getValue() {
+		return value;
+	}
 
 	/**
 	 * @return is selected
 	 */
-	bool isSelected();
+	inline bool isSelected() {
+		return selected;
+	}
 
 	/**
 	 * @return is disabled
 	 */
-	bool isDisabled();
-
+	inline bool isDisabled() {
+		return disabled;
+	}
 
 	/**
 	 * @return on initialize expression
 	 */
-	const string& getOnInitializeExpression();
+	inline const string& getOnInitializeExpression() {
+		return onInitializeExpression;
+	}
 
 	/**
 	 * @return on mouse click expression
 	 */
-	const string& getOnMouseClickExpression();
+	inline const string& getOnMouseClickExpression() {
+		return onMouseClickExpression;
+	}
 
 	/**
 	 * @return on mouse double click expression
 	 */
-	const string& getOnMouseDoubleClickExpression();
+	inline const string& getOnMouseDoubleClickExpression() {
+		return onMouseDoubleClickExpression;
+	}
 
 	/**
 	 * @return on mouse over expression
 	 */
-	const string& getOnMouseOverExpression();
+	inline const string& getOnMouseOverExpression() {
+		return onMouseOverExpression;
+	}
 
 	/**
 	 * @return on mouse out expression
 	 */
-	const string& getOnMouseOutExpression();
+	inline const string& getOnMouseOutExpression() {
+		return onMouseOutExpression;
+	}
 
 	/**
 	 * @return on change expression
 	 */
-	const string& getOnChangeExpression();
+	inline const string& getOnChangeExpression() {
+		return onChangeExpression;
+	}
 
 	/**
 	 * Execute on change expression
 	 */
-	void executeOnChangeExpression();
+	inline void executeOnChangeExpression() {
+		if (onChangeExpression.size() > 0) executeExpression(getScreenNode(), onChangeExpression);
+	}
 
 	/**
 	 * Execute expression
@@ -212,12 +235,23 @@ public:
 	/**
 	 * @return parent element id
 	 */
-	const string& getParentElementNodeId();
+	inline const string& getParentElementNodeId() {
+		return parentElementId;
+	}
+
+	/**
+	 * @return options
+	 */
+	inline const vector<string> getOptions() {
+		return options;
+	}
 
 	/**
 	 * @returns if option is among given options
 	 */
-	bool hasOption(const string& option);
+	inline bool hasOption(const string& option) {
+		return find(begin(options), end(options), option) != end(options);
+	}
 
 	/**
 	 * @returns an option value, like <... options="type=float,min=0.0,max=1.0,step=0.1" /> or empty string if option does not exist
@@ -227,7 +261,9 @@ public:
 	/**
 	 * @return active conditions
 	 */
-	GUINodeConditions& getActiveConditions();
+	inline GUINodeConditions& getActiveConditions() {
+		return activeConditions;
+	}
 
 	/**
 	 * Handle keyboard event

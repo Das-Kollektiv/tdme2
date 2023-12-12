@@ -42,6 +42,7 @@ GUIRadioButtonController::GUIRadioButtonController(GUINode* node)
 {
 	this->selected = required_dynamic_cast<GUIElementNode*>(node)->isSelected();
 	this->disabled = required_dynamic_cast<GUIElementNode*>(node)->isDisabled();
+	this->deselectable = required_dynamic_cast<GUIElementNode*>(node)->hasOption("deselectable");
 	radioButtonGroupNodesByName[
 		node->getScreenNode()->getId() +
 		"_radiobuttongroup_" +
@@ -61,6 +62,9 @@ void GUIRadioButtonController::select()
 		"_radiobuttongroup_" +
 		required_dynamic_cast<GUIElementNode*>(this->node)->getName()
 	);
+	//
+	auto wasSelected = selected;
+	// deselect radio buttons of same group, determined by element name
 	if (radioButtonGroupNodesIt != radioButtonGroupNodesByName.end()) {
 		for (auto i = 0; i < radioButtonGroupNodesIt->second.size(); i++) {
 			auto radioButtonNode = required_dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(radioButtonGroupNodesIt->second[i]));
@@ -71,10 +75,11 @@ void GUIRadioButtonController::select()
 			nodeConditions.add(nodeController->selected == true?CONDITION_SELECTED:CONDITION_UNSELECTED);
 		}
 	}
+	//
 	auto& nodeConditions = required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions();
-	nodeConditions.remove(this->selected == true?CONDITION_SELECTED:CONDITION_UNSELECTED);
-	this->selected = true;
-	nodeConditions.add(this->selected == true?CONDITION_SELECTED:CONDITION_UNSELECTED);
+	nodeConditions.remove(selected == true?CONDITION_SELECTED:CONDITION_UNSELECTED);
+	selected = wasSelected == true?(deselectable == true?false:true):true;
+	nodeConditions.add(selected == true?CONDITION_SELECTED:CONDITION_UNSELECTED);
 }
 
 bool GUIRadioButtonController::isDisabled()

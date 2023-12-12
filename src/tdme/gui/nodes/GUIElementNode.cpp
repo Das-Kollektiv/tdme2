@@ -143,55 +143,6 @@ bool GUIElementNode::isContentNode()
 	return false;
 }
 
-bool GUIElementNode::isFocusable()
-{
-	return focusable;
-}
-
-const string& GUIElementNode::getName()
-{
-	return name;
-}
-
-const string& GUIElementNode::getValue()
-{
-	return value;
-}
-
-bool GUIElementNode::isSelected()
-{
-	return selected;
-}
-
-bool GUIElementNode::isDisabled()
-{
-	return disabled;
-}
-
-const string& GUIElementNode::getOnInitializeExpression() {
-	return onInitializeExpression;
-}
-
-const string& GUIElementNode::getOnMouseClickExpression() {
-	return onMouseClickExpression;
-}
-
-const string& GUIElementNode::getOnMouseDoubleClickExpression() {
-	return onMouseDoubleClickExpression;
-}
-
-const string& GUIElementNode::getOnMouseOverExpression() {
-	return onMouseOverExpression;
-}
-
-const string& GUIElementNode::getOnMouseOutExpression() {
-	return onMouseOutExpression;
-}
-
-const string& GUIElementNode::getOnChangeExpression() {
-	return onChangeExpression;
-}
-
 void GUIElementNode::executeExpression(GUIScreenNode* screenNode, const string& expression) {
 	if (StringTools::startsWith(expression, "http://") == true || StringTools::startsWith(expression, "https://") == true) {
 		Application::openBrowser(expression);
@@ -329,18 +280,6 @@ void GUIElementNode::executeExpression(GUIScreenNode* screenNode, const string& 
 	}
 }
 
-void GUIElementNode::executeOnChangeExpression() {
-	if (onChangeExpression.size() > 0) executeExpression(getScreenNode(), onChangeExpression);
-}
-
-const string& GUIElementNode::getParentElementNodeId() {
-	return parentElementId;
-}
-
-bool GUIElementNode::hasOption(const string& option) {
-	return find(begin(options), end(options), option) != end(options);
-}
-
 const string GUIElementNode::getOptionValue(const string& option) {
 	StringTokenizer t;
 	for (const auto& v: options) {
@@ -352,11 +291,6 @@ const string GUIElementNode::getOptionValue(const string& option) {
 		return StringTools::trim(t.nextToken());
 	}
 	return string();
-}
-
-GUINodeConditions& GUIElementNode::getActiveConditions()
-{
-	return activeConditions;
 }
 
 void GUIElementNode::handleKeyboardEvent(GUIKeyboardEvent* event)

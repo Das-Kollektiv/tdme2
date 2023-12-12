@@ -1,5 +1,5 @@
 <template>	
-	<element id="{$id}" name="{$name}" value="{$value}" selected="{$selected}" disabled="{$disabled}" focusable="true" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" on-change="{$on-change}" tooltip="{$tooltip}">
+	<element id="{$id}" name="{$name}" value="{$value}" selected="{$selected}" disabled="{$disabled}" focusable="true" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" options="{$options}" on-mouse-out="{$on-mouse-out}" on-change="{$on-change}" tooltip="{$tooltip}">
 
 		<!-- unselected -->
 		<layout width="{$width}" height="{$height}" padding="5" alignment="horizontal" horizontal-align="center" vertical-align="center" hide-on="disabled,selected,mouseover" >

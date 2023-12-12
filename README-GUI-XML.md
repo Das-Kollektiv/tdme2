@@ -511,6 +511,7 @@ This element supports all other elements as sub elements.
 | image                             | radiobutton image location                                                             | YES               |
 | text                              | text to render related to radiobutton representation itself                            | YES               |
 | selected                          | true \| false                                                                          | false             |
+| options                           | deselectable, e.g. options="deselectable"                                              | none              |
 | on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
 | on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     | none              |
 | on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |

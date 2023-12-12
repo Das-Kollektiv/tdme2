@@ -168,9 +168,9 @@
 							</layout>
 						</element>
 						<layout alignment="horizontal" width="100%" height="auto">
-							<radiobutton id="log_radiobutton" template="radiobutton_template_toolbar.xml" name="logpanel" value="1" text="Log" on-change="log_panel.condition!=log;log_panel.condition-=animationgraph"/>/>
+							<radiobutton id="log_radiobutton" template="radiobutton_template_toolbar.xml" name="logpanel" value="log" text="Log" on-change="log_panel.condition!=log;log_panel.condition-=animationgraph" options="deselectable" />/>
 							<space width="20"/>
-							<radiobutton id="animationgraph_radiobutton" template="radiobutton_template_toolbar.xml" name="logpanel" value="1" text="AnimationGraph" on-change="log_panel.condition!=animationgraph;log_panel.condition-=log"/>
+							<radiobutton id="animationgraph_radiobutton" template="radiobutton_template_toolbar.xml" name="logpanel" value="animationgraph" text="AnimationGraph" on-change="log_panel.condition!=animationgraph;log_panel.condition-=log" options="deselectable"/>
 						</layout>				
 					</layout>
 					<!------------------------------------------------------------------->	
