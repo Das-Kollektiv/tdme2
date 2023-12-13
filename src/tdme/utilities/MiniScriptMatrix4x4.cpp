@@ -33,12 +33,12 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 	//
 	{
 		//
-		class ScriptMethodMatrix4x4Identity: public MiniScript::Method {
+		class MethodMatrix4x4Identity: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 			MiniScript::VariableType TYPE_MATRIX4x4;
 		public:
-			ScriptMethodMatrix4x4Identity(
+			MethodMatrix4x4Identity(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_MATRIX4x4
 			):
@@ -53,17 +53,17 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 				returnValue.setValue(&result);
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodMatrix4x4Identity(miniScript, TYPE_MATRIX4x4));
+		miniScript->registerMethod(new MethodMatrix4x4Identity(miniScript, TYPE_MATRIX4x4));
 	}
 	{
 		//
-		class ScriptMethodMatrix4x4Translate: public MiniScript::Method {
+		class MethodMatrix4x4Translate: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 			MiniScript::VariableType TYPE_MATRIX4x4;
 			MiniScript::VariableType TYPE_VECTOR3;
 		public:
-			ScriptMethodMatrix4x4Translate(
+			MethodMatrix4x4Translate(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_MATRIX4x4,
 				MiniScript::VariableType TYPE_VECTOR3
@@ -90,17 +90,17 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodMatrix4x4Translate(miniScript, TYPE_MATRIX4x4, TYPE_VECTOR3));
+		miniScript->registerMethod(new MethodMatrix4x4Translate(miniScript, TYPE_MATRIX4x4, TYPE_VECTOR3));
 	}
 	{
 		//
-		class ScriptMethodMatrix4x4Rotate: public MiniScript::Method {
+		class MethodMatrix4x4Rotate: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 			MiniScript::VariableType TYPE_MATRIX4x4;
 			MiniScript::VariableType TYPE_VECTOR3;
 		public:
-			ScriptMethodMatrix4x4Rotate(
+			MethodMatrix4x4Rotate(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_MATRIX4x4,
 				MiniScript::VariableType TYPE_VECTOR3
@@ -130,17 +130,17 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodMatrix4x4Rotate(miniScript, TYPE_MATRIX4x4, TYPE_VECTOR3));
+		miniScript->registerMethod(new MethodMatrix4x4Rotate(miniScript, TYPE_MATRIX4x4, TYPE_VECTOR3));
 	}
 	{
 		//
-		class ScriptMethodMatrix4x4Scale: public MiniScript::Method {
+		class MethodMatrix4x4Scale: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 			MiniScript::VariableType TYPE_MATRIX4x4;
 			MiniScript::VariableType TYPE_VECTOR3;
 		public:
-			ScriptMethodMatrix4x4Scale(
+			MethodMatrix4x4Scale(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_MATRIX4x4,
 				MiniScript::VariableType TYPE_VECTOR3
@@ -172,16 +172,16 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 			}
 
 		};
-		miniScript->registerMethod(new ScriptMethodMatrix4x4Scale(miniScript, TYPE_MATRIX4x4, TYPE_VECTOR3));
+		miniScript->registerMethod(new MethodMatrix4x4Scale(miniScript, TYPE_MATRIX4x4, TYPE_VECTOR3));
 	}
 	{
 		//
-		class ScriptMethodMatrix4x4Invert: public MiniScript::Method {
+		class MethodMatrix4x4Invert: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 			MiniScript::VariableType TYPE_MATRIX4x4;
 		public:
-			ScriptMethodMatrix4x4Invert(
+			MethodMatrix4x4Invert(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_MATRIX4x4
 			):
@@ -207,17 +207,17 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodMatrix4x4Invert(miniScript, TYPE_MATRIX4x4));
+		miniScript->registerMethod(new MethodMatrix4x4Invert(miniScript, TYPE_MATRIX4x4));
 	}
 	{
 		//
-		class ScriptMethodMatrix4x4EulerAngles: public MiniScript::Method {
+		class MethodMatrix4x4EulerAngles: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 			MiniScript::VariableType TYPE_MATRIX4x4;
 			MiniScript::VariableType TYPE_VECTOR3;
 		public:
-			ScriptMethodMatrix4x4EulerAngles(
+			MethodMatrix4x4EulerAngles(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_MATRIX4x4,
 				MiniScript::VariableType TYPE_VECTOR3
@@ -244,7 +244,7 @@ void MiniScriptMatrix4x4::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodMatrix4x4EulerAngles(miniScript, TYPE_MATRIX4x4, TYPE_VECTOR3));
+		miniScript->registerMethod(new MethodMatrix4x4EulerAngles(miniScript, TYPE_MATRIX4x4, TYPE_VECTOR3));
 	}
 }
 

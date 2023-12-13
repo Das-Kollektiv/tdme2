@@ -33,12 +33,12 @@ void MiniScriptMatrix3x3::registerMethods(MiniScript* miniScript) const {
 	//
 	{
 		//
-		class ScriptMethodMatrix3x3Identity: public MiniScript::Method {
+		class MethodMatrix3x3Identity: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 			MiniScript::VariableType TYPE_MATRIX3x3;
 		public:
-			ScriptMethodMatrix3x3Identity(
+			MethodMatrix3x3Identity(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_MATRIX3x3
 			):
@@ -53,17 +53,17 @@ void MiniScriptMatrix3x3::registerMethods(MiniScript* miniScript) const {
 				returnValue.setValue(&result);
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodMatrix3x3Identity(miniScript, TYPE_MATRIX3x3));
+		miniScript->registerMethod(new MethodMatrix3x3Identity(miniScript, TYPE_MATRIX3x3));
 	}
 	{
 		//
-		class ScriptMethodMatrix3x3Translate: public MiniScript::Method {
+		class MethodMatrix3x3Translate: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 			MiniScript::VariableType TYPE_MATRIX3x3;
 			MiniScript::VariableType TYPE_VECTOR2;
 		public:
-			ScriptMethodMatrix3x3Translate(
+			MethodMatrix3x3Translate(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_MATRIX3x3,
 				MiniScript::VariableType TYPE_VECTOR2
@@ -90,16 +90,16 @@ void MiniScriptMatrix3x3::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodMatrix3x3Translate(miniScript, TYPE_MATRIX3x3, TYPE_VECTOR2));
+		miniScript->registerMethod(new MethodMatrix3x3Translate(miniScript, TYPE_MATRIX3x3, TYPE_VECTOR2));
 	}
 	{
 		//
-		class ScriptMethodMatrix3x3Rotate: public MiniScript::Method {
+		class MethodMatrix3x3Rotate: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 			MiniScript::VariableType TYPE_MATRIX3x3;
 		public:
-			ScriptMethodMatrix3x3Rotate(
+			MethodMatrix3x3Rotate(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_MATRIX3x3
 			):
@@ -125,16 +125,16 @@ void MiniScriptMatrix3x3::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodMatrix3x3Rotate(miniScript, TYPE_MATRIX3x3));
+		miniScript->registerMethod(new MethodMatrix3x3Rotate(miniScript, TYPE_MATRIX3x3));
 	}
 	{
 		//
-		class ScriptMethodMatrix3x3RotateAroundTextureCenter: public MiniScript::Method {
+		class MethodMatrix3x3RotateAroundTextureCenter: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 			MiniScript::VariableType TYPE_MATRIX3x3;
 		public:
-			ScriptMethodMatrix3x3RotateAroundTextureCenter(
+			MethodMatrix3x3RotateAroundTextureCenter(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_MATRIX3x3
 			):
@@ -160,17 +160,17 @@ void MiniScriptMatrix3x3::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodMatrix3x3RotateAroundTextureCenter(miniScript, TYPE_MATRIX3x3));
+		miniScript->registerMethod(new MethodMatrix3x3RotateAroundTextureCenter(miniScript, TYPE_MATRIX3x3));
 	}
 	{
 		//
-		class ScriptMethodMatrix3x3RotateAroundPoint: public MiniScript::Method {
+		class MethodMatrix3x3RotateAroundPoint: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 			MiniScript::VariableType TYPE_MATRIX3x3;
 			MiniScript::VariableType TYPE_VECTOR2;
 		public:
-			ScriptMethodMatrix3x3RotateAroundPoint(
+			MethodMatrix3x3RotateAroundPoint(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_MATRIX3x3,
 				MiniScript::VariableType TYPE_VECTOR2
@@ -200,17 +200,17 @@ void MiniScriptMatrix3x3::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodMatrix3x3RotateAroundPoint(miniScript, TYPE_MATRIX3x3, TYPE_VECTOR2));
+		miniScript->registerMethod(new MethodMatrix3x3RotateAroundPoint(miniScript, TYPE_MATRIX3x3, TYPE_VECTOR2));
 	}
 	{
 		//
-		class ScriptMethodMatrix3x3Scale: public MiniScript::Method {
+		class MethodMatrix3x3Scale: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 			MiniScript::VariableType TYPE_MATRIX3x3;
 			MiniScript::VariableType TYPE_VECTOR2;
 		public:
-			ScriptMethodMatrix3x3Scale(
+			MethodMatrix3x3Scale(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_MATRIX3x3,
 				MiniScript::VariableType TYPE_VECTOR2
@@ -242,7 +242,7 @@ void MiniScriptMatrix3x3::registerMethods(MiniScript* miniScript) const {
 			}
 
 		};
-		miniScript->registerMethod(new ScriptMethodMatrix3x3Scale(miniScript, TYPE_MATRIX3x3, TYPE_VECTOR2));
+		miniScript->registerMethod(new MethodMatrix3x3Scale(miniScript, TYPE_MATRIX3x3, TYPE_VECTOR2));
 	}
 }
 

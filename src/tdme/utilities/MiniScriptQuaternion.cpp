@@ -33,12 +33,12 @@ void MiniScriptQuaternion::registerMethods(MiniScript* miniScript) const {
 	const auto TYPE_MATRIX4x4 = static_cast<MiniScript::VariableType>(miniScript->getDataTypeByClassName("Matrix4x4")->getType());
 	{
 		//
-		class ScriptMethodQuaternionIdentity: public MiniScript::Method {
+		class MethodQuaternionIdentity: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 			MiniScript::VariableType TYPE_QUATERNION;
 		public:
-			ScriptMethodQuaternionIdentity(
+			MethodQuaternionIdentity(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_QUATERNION
 			):
@@ -55,16 +55,16 @@ void MiniScriptQuaternion::registerMethods(MiniScript* miniScript) const {
 				returnValue.setValue(&result);
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodQuaternionIdentity(miniScript, TYPE_QUATERNION));
+		miniScript->registerMethod(new MethodQuaternionIdentity(miniScript, TYPE_QUATERNION));
 	}
 	{
 		//
-		class ScriptMethodQuaternionInvert: public MiniScript::Method {
+		class MethodQuaternionInvert: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 			MiniScript::VariableType TYPE_QUATERNION;
 		public:
-			ScriptMethodQuaternionInvert(
+			MethodQuaternionInvert(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_QUATERNION
 			):
@@ -92,17 +92,17 @@ void MiniScriptQuaternion::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodQuaternionInvert(miniScript, TYPE_QUATERNION));
+		miniScript->registerMethod(new MethodQuaternionInvert(miniScript, TYPE_QUATERNION));
 	}
 	{
 		//
-		class ScriptMethodQuaternionRotate: public MiniScript::Method {
+		class MethodQuaternionRotate: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 			MiniScript::VariableType TYPE_QUATERNION;
 			MiniScript::VariableType TYPE_VECTOR3;
 		public:
-			ScriptMethodQuaternionRotate(
+			MethodQuaternionRotate(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_QUATERNION,
 				MiniScript::VariableType TYPE_VECTOR3
@@ -136,16 +136,16 @@ void MiniScriptQuaternion::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodQuaternionRotate(miniScript, TYPE_QUATERNION, TYPE_VECTOR3));
+		miniScript->registerMethod(new MethodQuaternionRotate(miniScript, TYPE_QUATERNION, TYPE_VECTOR3));
 	}
 	{
 		//
-		class ScriptMethodQuaternionNormalize: public MiniScript::Method {
+		class MethodQuaternionNormalize: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 			MiniScript::VariableType TYPE_QUATERNION;
 		public:
-			ScriptMethodQuaternionNormalize(
+			MethodQuaternionNormalize(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_QUATERNION
 			):
@@ -171,17 +171,17 @@ void MiniScriptQuaternion::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodQuaternionNormalize(miniScript, TYPE_QUATERNION));
+		miniScript->registerMethod(new MethodQuaternionNormalize(miniScript, TYPE_QUATERNION));
 	}
 	{
 		//
-		class ScriptMethodQuaternionInvert: public MiniScript::Method {
+		class MethodQuaternionInvert: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 			MiniScript::VariableType TYPE_QUATERNION;
 			MiniScript::VariableType TYPE_VECTOR3;
 		public:
-			ScriptMethodQuaternionInvert(
+			MethodQuaternionInvert(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_QUATERNION,
 				MiniScript::VariableType TYPE_VECTOR3
@@ -212,17 +212,17 @@ void MiniScriptQuaternion::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodQuaternionInvert(miniScript, TYPE_QUATERNION, TYPE_VECTOR3));
+		miniScript->registerMethod(new MethodQuaternionInvert(miniScript, TYPE_QUATERNION, TYPE_VECTOR3));
 	}
 	{
 		//
-		class ScriptMethodQuaternionComputeMatrix: public MiniScript::Method {
+		class MethodQuaternionComputeMatrix: public MiniScript::Method {
 		private:
 			MiniScript::VariableType TYPE_QUATERNION;
 			MiniScript::VariableType TYPE_MATRIX4x4;
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodQuaternionComputeMatrix(
+			MethodQuaternionComputeMatrix(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_QUATERNION,
 				MiniScript::VariableType TYPE_MATRIX4x4
@@ -251,7 +251,7 @@ void MiniScriptQuaternion::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodQuaternionComputeMatrix(miniScript, TYPE_QUATERNION, TYPE_MATRIX4x4));
+		miniScript->registerMethod(new MethodQuaternionComputeMatrix(miniScript, TYPE_QUATERNION, TYPE_MATRIX4x4));
 	}
 }
 

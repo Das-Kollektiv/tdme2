@@ -25,12 +25,12 @@ void MiniScriptVector4::registerMethods(MiniScript* miniScript) const {
 	const auto TYPE_VECTOR4 = static_cast<MiniScript::VariableType>(getType());
 	{
 		//
-		class ScriptMethodVec4: public MiniScript::Method {
+		class MethodVec4: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 			MiniScript::VariableType TYPE_VECTOR4;
 		public:
-			ScriptMethodVec4(
+			MethodVec4(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_VECTOR4
 			):
@@ -70,16 +70,16 @@ void MiniScriptVector4::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodVec4(miniScript, TYPE_VECTOR4));
+		miniScript->registerMethod(new MethodVec4(miniScript, TYPE_VECTOR4));
 	}
 	{
 		//
-		class ScriptMethodVec4ComputeLength: public MiniScript::Method {
+		class MethodVec4ComputeLength: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 			MiniScript::VariableType TYPE_VECTOR4;
 		public:
-			ScriptMethodVec4ComputeLength(
+			MethodVec4ComputeLength(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_VECTOR4
 			):
@@ -107,16 +107,16 @@ void MiniScriptVector4::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodVec4ComputeLength(miniScript, TYPE_VECTOR4));
+		miniScript->registerMethod(new MethodVec4ComputeLength(miniScript, TYPE_VECTOR4));
 	}
 	{
 		//
-		class ScriptMethodVec4ComputeLengthSquared: public MiniScript::Method {
+		class MethodVec4ComputeLengthSquared: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 			MiniScript::VariableType TYPE_VECTOR4;
 		public:
-			ScriptMethodVec4ComputeLengthSquared(
+			MethodVec4ComputeLengthSquared(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_VECTOR4
 			):
@@ -143,16 +143,16 @@ void MiniScriptVector4::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodVec4ComputeLengthSquared(miniScript, TYPE_VECTOR4));
+		miniScript->registerMethod(new MethodVec4ComputeLengthSquared(miniScript, TYPE_VECTOR4));
 	}
 	{
 		//
-		class ScriptMethodVec4ComputeDotProduct: public MiniScript::Method {
+		class MethodVec4ComputeDotProduct: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 			MiniScript::VariableType TYPE_VECTOR4;
 		public:
-			ScriptMethodVec4ComputeDotProduct(
+			MethodVec4ComputeDotProduct(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_VECTOR4
 			):
@@ -182,16 +182,16 @@ void MiniScriptVector4::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodVec4ComputeDotProduct(miniScript, TYPE_VECTOR4));
+		miniScript->registerMethod(new MethodVec4ComputeDotProduct(miniScript, TYPE_VECTOR4));
 	}
 	{
 		//
-		class ScriptMethodVec4Normalize: public MiniScript::Method {
+		class MethodVec4Normalize: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 			MiniScript::VariableType TYPE_VECTOR4;
 		public:
-			ScriptMethodVec4Normalize(
+			MethodVec4Normalize(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_VECTOR4
 			):
@@ -221,16 +221,16 @@ void MiniScriptVector4::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodVec4Normalize(miniScript, TYPE_VECTOR4));
+		miniScript->registerMethod(new MethodVec4Normalize(miniScript, TYPE_VECTOR4));
 	}
 	{
 		//
-		class ScriptMethodVec4GetX: public MiniScript::Method {
+		class MethodVec4GetX: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 			MiniScript::VariableType TYPE_VECTOR4;
 		public:
-			ScriptMethodVec4GetX(
+			MethodVec4GetX(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_VECTOR4
 			):
@@ -257,16 +257,16 @@ void MiniScriptVector4::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodVec4GetX(miniScript, TYPE_VECTOR4));
+		miniScript->registerMethod(new MethodVec4GetX(miniScript, TYPE_VECTOR4));
 	}
 	{
 		//
-		class ScriptMethodVec4GetY: public MiniScript::Method {
+		class MethodVec4GetY: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 			MiniScript::VariableType TYPE_VECTOR4;
 		public:
-			ScriptMethodVec4GetY(
+			MethodVec4GetY(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_VECTOR4
 			):
@@ -293,16 +293,16 @@ void MiniScriptVector4::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodVec4GetY(miniScript, TYPE_VECTOR4));
+		miniScript->registerMethod(new MethodVec4GetY(miniScript, TYPE_VECTOR4));
 	}
 	{
 		//
-		class ScriptMethodVec4GetZ: public MiniScript::Method {
+		class MethodVec4GetZ: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 			MiniScript::VariableType TYPE_VECTOR4;
 		public:
-			ScriptMethodVec4GetZ(
+			MethodVec4GetZ(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_VECTOR4
 			):
@@ -329,16 +329,16 @@ void MiniScriptVector4::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodVec4GetZ(miniScript, TYPE_VECTOR4));
+		miniScript->registerMethod(new MethodVec4GetZ(miniScript, TYPE_VECTOR4));
 	}
 	{
 		//
-		class ScriptMethodVec4GetW: public MiniScript::Method {
+		class MethodVec4GetW: public MiniScript::Method {
 		private:
 			MiniScript* miniScript { nullptr };
 			MiniScript::VariableType TYPE_VECTOR4;
 		public:
-			ScriptMethodVec4GetW(
+			MethodVec4GetW(
 				MiniScript* miniScript,
 				MiniScript::VariableType TYPE_VECTOR4
 			):
@@ -365,7 +365,7 @@ void MiniScriptVector4::registerMethods(MiniScript* miniScript) const {
 				}
 			}
 		};
-		miniScript->registerMethod(new ScriptMethodVec4GetW(miniScript, TYPE_VECTOR4));
+		miniScript->registerMethod(new MethodVec4GetW(miniScript, TYPE_VECTOR4));
 	}
 }
 
