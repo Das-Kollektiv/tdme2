@@ -714,7 +714,7 @@ int Application::run(int argc, char** argv, const string& title, InputEventHandl
 
 	//
 	for (auto joystickIdx = GLFW_JOYSTICK_1; joystickIdx <= GLFW_JOYSTICK_16; joystickIdx++) {
-		if (glfwJoystickPresent(joystickIdx) == true) glfwOnJoystickConnect(joystickIdx, GLFW_CONNECTED);
+		if (glfwJoystickPresent(joystickIdx) == GLFW_TRUE) glfwOnJoystickConnect(joystickIdx, GLFW_CONNECTED);
 	}
 
 	//
@@ -888,7 +888,7 @@ void Application::glfwOnJoystickConnect(int joystickIdx, int event) {
 	if (Application::application == nullptr) return;
 	//
 	if (event == GLFW_CONNECTED) {
-		if (glfwJoystickIsGamepad(joystickIdx) == true) {
+		if (glfwJoystickIsGamepad(joystickIdx) == GLFW_TRUE) {
 			Console::println("Application::glfwOnJoystickConnect(): connected gamepad with idx = " + to_string(joystickIdx) + ", name = " + glfwGetJoystickName(joystickIdx));
 			Application::application->connectedGamepads.insert(joystickIdx);
 		} else {
@@ -937,7 +937,7 @@ void Application::updateGamepadInput(int joystickIdx) {
 		}
 	};
 	//
-	if (glfwGetGamepadState(joystickIdx, &gamepadState) == true) {
+	if (glfwGetGamepadState(joystickIdx, &gamepadState) == GLFW_TRUE) {
 		// left
 		handleButton(GLFW_GAMEPAD_BUTTON_DPAD_LEFT, KEYBOARD_KEYCODE_LEFT);
 		// right

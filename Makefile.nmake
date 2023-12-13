@@ -45,7 +45,7 @@ LIBS_LDFLAGS = \
 	/LIBPATH "ext\windows-msc\openssl\lib\libssl.lib"
 	
 
-FLAGS = /MT /MP /EHsc /O2 /std:c++20 /Zi /D RAPIDJSON_HAS_STDSTRING /D GLFW_DLL
+FLAGS = /MT /MP /EHsc /O2 /std:c++20 /Zi /F 10485760 /D RAPIDJSON_HAS_STDSTRING /D GLFW_DLL
 # /NODEFAULTLIB:msvcrt
 
 LD_FLAGS =
