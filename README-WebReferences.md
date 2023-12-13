@@ -94,3 +94,4 @@
 - TDME2 Editor, see [README-Editor.md](./README-Editor.md)
 - TDME2 How to build, see [README-BuildingHowTo.md](./README-BuildingHowTo.md)
 - TDME2 Screenshots, see [README-Screenshots.md](./README-Screenshots.md)
+- The Mindty Kollektiv [Discord Server](https://discord.gg/tMqrmcp23Q)
