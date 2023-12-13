@@ -1380,17 +1380,17 @@ void GUIMiniScript::registerMethods() {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": screen: " + screenId + ", function not found: " + function);
 						miniScript->startErrorScript();
 					} else {
-						#if defined (__APPLE__)
+						#if defined (__clang__)
 							// MACOSX currently does not support initializing span using begin and end iterators,
 							// so we need to make a copy of arguments beginning from second element
-							vector<Variable> callArgumentValues;
-							for (auto i = 2; i < arguments.size(); i++) callArgumentValues.push_back(arguments[i]);
+							vector<Variable> callArguments;
+							for (auto i = 2; i < arguments.size(); i++) callArguments.push_back(arguments[i]);
 							// call
-							span callArgumentValuesSpan(callArgumentValues);
-							screenMiniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
+							span callArgumentsSpan(callArguments);
+							screenMiniScript->call(scriptIdx, callArgumentsSpan, returnValue);
 						#else
-							span callArgumentValuesSpan(arguments.begin() + 2, arguments.end());
-							screenMiniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
+							span callArgumentsSpan(arguments.begin() + 2, arguments.end());
+							screenMiniScript->call(scriptIdx, callArgumentsSpan, returnValue);
 						#endif
 					}
 				}
@@ -2357,17 +2357,17 @@ void GUIMiniScript::registerMethods() {
 								Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": callable not found: " + callable);
 								miniScript->startErrorScript();
 							} else {
-								#if defined (__APPLE__)
+								#if defined (__clang__)
 									// MACOSX currently does not support initializing span using begin and end iterators,
 									// so we need to make a copy of arguments beginning from second element
-									vector<Variable> callArgumentValues;
-									for (auto i = 2; i < arguments.size(); i++) callArgumentValues.push_back(arguments[i]);
+									vector<Variable> callArguments;
+									for (auto i = 2; i < arguments.size(); i++) callArguments.push_back(arguments[i]);
 									// call
-									span callArgumentValuesSpan(callArgumentValues);
-									logicMiniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
+									span callArgumentsSpan(callArguments);
+									logicMiniScript->call(scriptIdx, callArgumentsSpan, returnValue);
 								#else
-									span callArgumentValuesSpan(arguments.begin() + 2, arguments.end());
-									logicMiniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
+									span callArgumentsSpan(arguments.begin() + 2, arguments.end());
+									logicMiniScript->call(scriptIdx, callArgumentsSpan, returnValue);
 								#endif
 							}
 						}

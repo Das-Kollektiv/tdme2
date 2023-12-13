@@ -641,18 +641,18 @@ void LogicMiniScript::registerMethods() {
 							Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": callable not found: " + callable);
 							miniScript->startErrorScript();
 						} else {
-							#if defined (__APPLE__)
+							#if defined (__clang__)
 								// MACOSX currently does not support initializing span using begin and end iterators,
-								vector<Variable> callArgumentValues(arguments.size() - 2);
-								for (auto i = 2; i < arguments.size(); i++) callArgumentValues[i - 2] = move(arguments[i]);
+								vector<Variable> callArguments(arguments.size() - 2);
+								for (auto i = 2; i < arguments.size(); i++) callArguments[i - 2] = move(arguments[i]);
 								// call
-								span callArgumentValuesSpan(callArgumentValues);
-								logicMiniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
+								span callArgumentsSpan(callArguments);
+								logicMiniScript->call(scriptIdx, callArgumentsSpan, returnValue);
 								// move back arguments
-								for (auto i = 2; i < arguments.size(); i++) arguments[i] = move(callArgumentValues[i - 2]);
+								for (auto i = 2; i < arguments.size(); i++) arguments[i] = move(callArguments[i - 2]);
 							#else
-								span callArgumentValuesSpan(arguments.begin() + 2, arguments.end());
-								logicMiniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
+								span callArgumentsSpan(arguments.begin() + 2, arguments.end());
+								logicMiniScript->call(scriptIdx, callArgumentsSpan, returnValue);
 							#endif
 						}
 					}
