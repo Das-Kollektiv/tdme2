@@ -47,7 +47,7 @@ void MiniScriptMatrix3x3::registerMethods(MiniScript* miniScript) const {
 			const string getMethodName() override {
 				return "Matrix3x3::identity";
 			}
-			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				const auto result = Matrix3x3().identity();
 				returnValue.setType(TYPE_MATRIX3x3);
 				returnValue.setValue(&result);
@@ -78,9 +78,9 @@ void MiniScriptMatrix3x3::registerMethods(MiniScript* miniScript) const {
 			const string getMethodName() override {
 				return "Matrix3x3::translate";
 			}
-			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector2 translation;
-				if (MiniScriptVector2::getVector2Value(TYPE_VECTOR2, argumentValues, 0, translation, false) == true) {
+				if (MiniScriptVector2::getVector2Value(TYPE_VECTOR2, arguments, 0, translation, false) == true) {
 					const auto result = Matrix3x3().identity().setTranslation(translation);
 					returnValue.setType(TYPE_MATRIX3x3);
 					returnValue.setValue(&result);
@@ -113,9 +113,9 @@ void MiniScriptMatrix3x3::registerMethods(MiniScript* miniScript) const {
 			const string getMethodName() override {
 				return "Matrix3x3::rotate";
 			}
-			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				float angle;
-				if (MiniScript::getFloatValue(argumentValues, 0, angle, false) == true) {
+				if (MiniScript::getFloatValue(arguments, 0, angle, false) == true) {
 					const auto result = Matrix3x3().identity().setAxes(angle);
 					returnValue.setType(TYPE_MATRIX3x3);
 					returnValue.setValue(&result);
@@ -148,9 +148,9 @@ void MiniScriptMatrix3x3::registerMethods(MiniScript* miniScript) const {
 			const string getMethodName() override {
 				return "Matrix3x3::rotateAroundTextureCenter";
 			}
-			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				float angle;
-				if (MiniScript::getFloatValue(argumentValues, 0, angle, false) == true) {
+				if (MiniScript::getFloatValue(arguments, 0, angle, false) == true) {
 					const auto result = Matrix3x3::rotateAroundTextureCenter(angle);
 					returnValue.setType(TYPE_MATRIX3x3);
 					returnValue.setValue(&result);
@@ -186,11 +186,11 @@ void MiniScriptMatrix3x3::registerMethods(MiniScript* miniScript) const {
 			const string getMethodName() override {
 				return "Matrix3x3::rotateAroundPoint";
 			}
-			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector2 point;
 				float angle;
-				if (MiniScriptVector2::getVector2Value(TYPE_VECTOR2, argumentValues, 0, point, false) == true &&
-					MiniScript::getFloatValue(argumentValues, 1, angle, false) == true) {
+				if (MiniScriptVector2::getVector2Value(TYPE_VECTOR2, arguments, 0, point, false) == true &&
+					MiniScript::getFloatValue(arguments, 1, angle, false) == true) {
 					const auto result = Matrix3x3().rotateAroundPoint(point, angle);
 					returnValue.setType(TYPE_MATRIX3x3);
 					returnValue.setValue(&result);
@@ -220,15 +220,15 @@ void MiniScriptMatrix3x3::registerMethods(MiniScript* miniScript) const {
 			const string getMethodName() override {
 				return "Matrix3x3::scale";
 			}
-			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Vector2 vec2Value;
 				float floatValue;
-				if (MiniScriptVector2::getVector2Value(TYPE_VECTOR2, argumentValues, 0, vec2Value, false) == true) {
+				if (MiniScriptVector2::getVector2Value(TYPE_VECTOR2, arguments, 0, vec2Value, false) == true) {
 					const auto result = Matrix3x3().identity().scale(vec2Value);
 					returnValue.setType(TYPE_MATRIX3x3);
 					returnValue.setValue(&result);
 				} else
-				if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
+				if (MiniScript::getFloatValue(arguments, 0, floatValue, false) == true) {
 					const auto result = Matrix3x3().identity().scale(floatValue);
 					returnValue.setType(TYPE_MATRIX3x3);
 					returnValue.setValue(&result);
@@ -282,18 +282,18 @@ void MiniScriptMatrix3x3::copyVariable(MiniScript::Variable& to, const MiniScrip
 	*static_cast<Matrix3x3*>((void*)to.getValuePtr()) = matrix3x3Value;
 }
 
-bool MiniScriptMatrix3x3::mul(MiniScript* miniScript, const span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
+bool MiniScriptMatrix3x3::mul(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
 	const auto TYPE_MATRIX3x3 = static_cast<MiniScript::VariableType>(getType());
 	const auto TYPE_VECTOR2 = static_cast<MiniScript::VariableType>(miniScript->getDataTypeByClassName("Vector2")->getType());
 	//
-	if (MiniScript::hasType(argumentValues, TYPE_MATRIX3x3) == true) {
+	if (MiniScript::hasType(arguments, TYPE_MATRIX3x3) == true) {
 		// matrix3x3 * matrix
-		if (argumentValues[0].getType() == TYPE_MATRIX3x3 &&
-			argumentValues[1].getType() == TYPE_MATRIX3x3) {
+		if (arguments[0].getType() == TYPE_MATRIX3x3 &&
+			arguments[1].getType() == TYPE_MATRIX3x3) {
 			Matrix3x3 a;
 			Matrix3x3 b;
-			MiniScriptMatrix3x3::getMatrix3x3Value(TYPE_MATRIX3x3, argumentValues, 0, a, false);
-			MiniScriptMatrix3x3::getMatrix3x3Value(TYPE_MATRIX3x3, argumentValues, 1, b, false);
+			MiniScriptMatrix3x3::getMatrix3x3Value(TYPE_MATRIX3x3, arguments, 0, a, false);
+			MiniScriptMatrix3x3::getMatrix3x3Value(TYPE_MATRIX3x3, arguments, 1, b, false);
 			//
 			const auto result = a * b;
 			returnValue.setType(TYPE_MATRIX3x3);
@@ -302,12 +302,12 @@ bool MiniScriptMatrix3x3::mul(MiniScript* miniScript, const span<MiniScript::Var
 			return true;
 		} else
 		// matrix3x3 * vec2
-		if (argumentValues[0].getType() == TYPE_MATRIX3x3 &&
-			argumentValues[1].getType() == TYPE_VECTOR2) {
+		if (arguments[0].getType() == TYPE_MATRIX3x3 &&
+			arguments[1].getType() == TYPE_VECTOR2) {
 			Matrix3x3 a;
 			Vector2 b;
-			MiniScriptMatrix3x3::getMatrix3x3Value(TYPE_MATRIX3x3, argumentValues, 0, a, false);
-			MiniScriptVector2::getVector2Value(TYPE_VECTOR2, argumentValues, 1, b, false);
+			MiniScriptMatrix3x3::getMatrix3x3Value(TYPE_MATRIX3x3, arguments, 0, a, false);
+			MiniScriptVector2::getVector2Value(TYPE_VECTOR2, arguments, 1, b, false);
 			//
 			const auto result = a * b;
 			returnValue.setType(TYPE_VECTOR2);
@@ -316,12 +316,12 @@ bool MiniScriptMatrix3x3::mul(MiniScript* miniScript, const span<MiniScript::Var
 			return true;
 		} else
 		// vec2 * matrix3x3
-		if (argumentValues[0].getType() == TYPE_VECTOR2 &&
-			argumentValues[1].getType() == TYPE_MATRIX3x3) {
+		if (arguments[0].getType() == TYPE_VECTOR2 &&
+			arguments[1].getType() == TYPE_MATRIX3x3) {
 			Vector2 a;
 			Matrix3x3 b;
-			MiniScriptVector2::getVector2Value(TYPE_VECTOR2, argumentValues, 0, a, false);
-			MiniScriptMatrix3x3::getMatrix3x3Value(TYPE_MATRIX3x3, argumentValues, 1, b, false);
+			MiniScriptVector2::getVector2Value(TYPE_VECTOR2, arguments, 0, a, false);
+			MiniScriptMatrix3x3::getMatrix3x3Value(TYPE_MATRIX3x3, arguments, 1, b, false);
 			//
 			const auto result = b * a;
 			returnValue.setType(TYPE_VECTOR2);
@@ -330,12 +330,12 @@ bool MiniScriptMatrix3x3::mul(MiniScript* miniScript, const span<MiniScript::Var
 			return true;
 		} else
 		// matrix3x3 * float
-		if (argumentValues[0].getType() == TYPE_MATRIX3x3 &&
-			MiniScript::Variable::isExpectedType(argumentValues[1].getType(), MiniScript::TYPE_PSEUDO_NUMBER) == true) {
+		if (arguments[0].getType() == TYPE_MATRIX3x3 &&
+			MiniScript::Variable::isExpectedType(arguments[1].getType(), MiniScript::TYPE_PSEUDO_NUMBER) == true) {
 			Matrix3x3 a;
 			float b;
-			MiniScriptMatrix3x3::getMatrix3x3Value(TYPE_MATRIX3x3, argumentValues, 0, a, false);
-			MiniScript::getFloatValue(argumentValues, 1, b, false);
+			MiniScriptMatrix3x3::getMatrix3x3Value(TYPE_MATRIX3x3, arguments, 0, a, false);
+			MiniScript::getFloatValue(arguments, 1, b, false);
 			//
 			const auto result = a * b;
 			returnValue.setType(TYPE_MATRIX3x3);
@@ -344,12 +344,12 @@ bool MiniScriptMatrix3x3::mul(MiniScript* miniScript, const span<MiniScript::Var
 			return true;
 		} else
 		// float * matrix3x3
-		if (MiniScript::Variable::isExpectedType(argumentValues[0].getType(), MiniScript::TYPE_PSEUDO_NUMBER) == true &&
-			argumentValues[1].getType() == TYPE_MATRIX3x3) {
+		if (MiniScript::Variable::isExpectedType(arguments[0].getType(), MiniScript::TYPE_PSEUDO_NUMBER) == true &&
+			arguments[1].getType() == TYPE_MATRIX3x3) {
 			float a;
 			Matrix3x3 b;
-			MiniScript::getFloatValue(argumentValues, 0, a, false);
-			MiniScriptMatrix3x3::getMatrix3x3Value(TYPE_MATRIX3x3, argumentValues, 1, b, false);
+			MiniScript::getFloatValue(arguments, 0, a, false);
+			MiniScriptMatrix3x3::getMatrix3x3Value(TYPE_MATRIX3x3, arguments, 1, b, false);
 			//
 			const auto result = b * a;
 			returnValue.setType(TYPE_MATRIX3x3);
@@ -367,15 +367,15 @@ bool MiniScriptMatrix3x3::mul(MiniScript* miniScript, const span<MiniScript::Var
 	return false;
 }
 
-bool MiniScriptMatrix3x3::div(MiniScript* miniScript, const span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
+bool MiniScriptMatrix3x3::div(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
 	return false;
 }
 
-bool MiniScriptMatrix3x3::add(MiniScript* miniScript, const span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
+bool MiniScriptMatrix3x3::add(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
 	return false;
 }
 
-bool MiniScriptMatrix3x3::sub(MiniScript* miniScript, const span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
+bool MiniScriptMatrix3x3::sub(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
 	return false;
 }
 

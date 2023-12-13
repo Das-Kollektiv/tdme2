@@ -51,7 +51,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 			const string getMethodName() override {
 				return "Transform::AXIS_Z";
 			}
-			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				auto result = Vector3(0.0f, 0.0f, 1.0f);
 				returnValue.setType(TYPE_VECTOR3);
 				returnValue.setValue(&result);
@@ -75,7 +75,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 			const string getMethodName() override {
 				return "Transform::AXIS_Y";
 			}
-			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				auto result = Vector3(0.0f, 1.0f, 0.0f);
 				returnValue.setType(TYPE_VECTOR3);
 				returnValue.setValue(&result);
@@ -99,7 +99,7 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 			const string getMethodName() override {
 				return "Transform::AXIS_X";
 			}
-			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				auto result = Vector3(1.0f, 0.0f, 0.0f);
 				returnValue.setType(TYPE_VECTOR3);
 				returnValue.setValue(&result);
@@ -134,13 +134,13 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 			const string getMethodName() override {
 				return "transform";
 			}
-			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Transform result;
 				Vector3 vec3Value;
 				float floatValue;
 				// translation
-				if (argumentValues.size() >= 1) {
-					if (MiniScriptVector3::getVector3Value(TYPE_VECTOR3, argumentValues, 0, vec3Value, true) == true) {
+				if (arguments.size() >= 1) {
+					if (MiniScriptVector3::getVector3Value(TYPE_VECTOR3, arguments, 0, vec3Value, true) == true) {
 						result.setTranslation(vec3Value);
 					} else {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -148,8 +148,8 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					}
 				}
 				// scale
-				if (argumentValues.size() >= 2) {
-					if (MiniScriptVector3::getVector3Value(TYPE_VECTOR3, argumentValues, 1, vec3Value, true) == true) {
+				if (arguments.size() >= 2) {
+					if (MiniScriptVector3::getVector3Value(TYPE_VECTOR3, arguments, 1, vec3Value, true) == true) {
 						result.setScale(vec3Value);
 					} else {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -161,8 +161,8 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 				result.addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
 				result.addRotation(Vector3(1.0f, 0.0f, 0.0f), 0.0f);
 				//
-				for (auto i = 2; i < argumentValues.size() && i < 5; i++) {
-					if (MiniScript::getFloatValue(argumentValues, i, floatValue, true) == true) {
+				for (auto i = 2; i < arguments.size() && i < 5; i++) {
+					if (MiniScript::getFloatValue(arguments, i, floatValue, true) == true) {
 						result.setRotationAngle(i - 2, floatValue);
 					} else {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -201,9 +201,9 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 			const string getMethodName() override {
 				return "Transform::getTranslation";
 			}
-			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Transform transform;
-				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, argumentValues, 0, transform, false) == true) {
+				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, arguments, 0, transform, false) == true) {
 					const auto& result = transform.getTranslation();
 					//
 					returnValue.setType(TYPE_VECTOR3);
@@ -240,16 +240,16 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 			const string getMethodName() override {
 				return "Transform::setTranslation";
 			}
-			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Transform transform;
 				Vector3 translation;
-				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, argumentValues, 0, transform, false) == true &&
-					MiniScriptVector3::getVector3Value(TYPE_VECTOR3, argumentValues, 1, translation, false) == true) {
+				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, arguments, 0, transform, false) == true &&
+					MiniScriptVector3::getVector3Value(TYPE_VECTOR3, arguments, 1, translation, false) == true) {
 					transform.setTranslation(translation);
 					transform.update();
 					//
-					argumentValues[0].setType(TYPE_TRANSFORM);
-					argumentValues[0].setValue(&transform);
+					arguments[0].setType(TYPE_TRANSFORM);
+					arguments[0].setValue(&transform);
 
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -282,9 +282,9 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 			const string getMethodName() override {
 				return "Transform::getScale";
 			}
-			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Transform transform;
-				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, argumentValues, 0, transform, false) == true) {
+				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, arguments, 0, transform, false) == true) {
 					const auto& result = transform.getScale();
 					//
 					returnValue.setType(TYPE_VECTOR3);
@@ -321,16 +321,16 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 			const string getMethodName() override {
 				return "Transform::setScale";
 			}
-			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Transform transform;
 				Vector3 scale;
-				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, argumentValues, 0, transform, false) == true &&
-					MiniScriptVector3::getVector3Value(TYPE_VECTOR3, argumentValues, 1, scale, false) == true) {
+				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, arguments, 0, transform, false) == true &&
+					MiniScriptVector3::getVector3Value(TYPE_VECTOR3, arguments, 1, scale, false) == true) {
 					transform.setScale(scale);
 					transform.update();
 					//
-					argumentValues[0].setType(TYPE_TRANSFORM);
-					argumentValues[0].setValue(&transform);
+					arguments[0].setType(TYPE_TRANSFORM);
+					arguments[0].setValue(&transform);
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -363,11 +363,11 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 			const string getMethodName() override {
 				return "Transform::getRotationAxis";
 			}
-			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				int64_t idx;
 				Transform transform;
-				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, argumentValues, 0, transform, false) == true &&
-					MiniScript::getIntegerValue(argumentValues, 1, idx, false) == true) {
+				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, arguments, 0, transform, false) == true &&
+					MiniScript::getIntegerValue(arguments, 1, idx, false) == true) {
 					if (idx < transform.getRotationCount()) {
 						auto result = transform.getRotationAxis(idx);
 						//
@@ -407,11 +407,11 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 			const string getMethodName() override {
 				return "Transform::getRotationAngle";
 			}
-			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				int64_t idx;
 				Transform transform;
-				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, argumentValues, 0, transform, false) == true &&
-					MiniScript::getIntegerValue(argumentValues, 1, idx, false) == true) {
+				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, arguments, 0, transform, false) == true &&
+					MiniScript::getIntegerValue(arguments, 1, idx, false) == true) {
 					if (idx < transform.getRotationCount()) {
 						returnValue.setValue(transform.getRotationAngle(idx));
 					} else {
@@ -449,19 +449,19 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 			const string getMethodName() override {
 				return "Transform::setRotationAngle";
 			}
-			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				int64_t idx;
 				Transform transform;
 				float angle;
-				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, argumentValues, 0, transform, false) == true &&
-					MiniScript::getIntegerValue(argumentValues, 1, idx, false) == true &&
-					MiniScript::getFloatValue(argumentValues, 2, angle, false) == true) {
+				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, arguments, 0, transform, false) == true &&
+					MiniScript::getIntegerValue(arguments, 1, idx, false) == true &&
+					MiniScript::getFloatValue(arguments, 2, angle, false) == true) {
 					if (idx < transform.getRotationCount()) {
 						transform.setRotationAngle(idx, angle);
 						transform.update();
 						//
-						argumentValues[0].setType(TYPE_TRANSFORM);
-						argumentValues[0].setValue(&transform);
+						arguments[0].setType(TYPE_TRANSFORM);
+						arguments[0].setValue(&transform);
 					} else {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": rotation index invalid: " + to_string(idx) + " / " + to_string(transform.getRotationCount()));
 						miniScript->startErrorScript();
@@ -498,11 +498,11 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 			const string getMethodName() override {
 				return "Transform::rotate";
 			}
-			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Transform transform;
 				Vector3 vec3;
-				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, argumentValues, 0, transform, false) == true &&
-					MiniScriptVector3::getVector3Value(TYPE_VECTOR3, argumentValues, 1, vec3, false) == true) {
+				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, arguments, 0, transform, false) == true &&
+					MiniScriptVector3::getVector3Value(TYPE_VECTOR3, arguments, 1, vec3, false) == true) {
 					//
 					auto result = transform.getRotationsQuaternion() * vec3;
 					//
@@ -541,13 +541,13 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 			const string getMethodName() override {
 				return "Transform::applyRotation";
 			}
-			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Transform transform;
 				Vector3 axis;
 				float angle;
-				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, argumentValues, 0, transform, false) == true &&
-					MiniScriptVector3::getVector3Value(TYPE_VECTOR3, argumentValues, 1, axis, false) == true &&
-					MiniScript::getFloatValue(argumentValues, 2, angle, false) == true) {
+				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, arguments, 0, transform, false) == true &&
+					MiniScriptVector3::getVector3Value(TYPE_VECTOR3, arguments, 1, axis, false) == true &&
+					MiniScript::getFloatValue(arguments, 2, angle, false) == true) {
 					//
 					transform.addRotation(axis, angle);
 					transform.update();
@@ -563,8 +563,8 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 					transform.setRotationAngle(2, euler.getX());
 					transform.update();
 					//
-					argumentValues[0].setType(TYPE_TRANSFORM);
-					argumentValues[0].setValue(&transform);
+					arguments[0].setType(TYPE_TRANSFORM);
+					arguments[0].setValue(&transform);
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -594,19 +594,19 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 			const string getMethodName() override {
 				return "Transform::interpolateRotation";
 			}
-			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				float currentAngle;
 				float targetAngle;
 				float timePassedSeconds;
 				float degreesPerSeconds;
 				float interpolatedAngle = 0.0f;
-				if (argumentValues.size() == 5 &&
-					MiniScript::getFloatValue(argumentValues, 0, currentAngle) == true &&
-					MiniScript::getFloatValue(argumentValues, 1, targetAngle) == true &&
-					MiniScript::getFloatValue(argumentValues, 2, timePassedSeconds) == true &&
-					MiniScript::getFloatValue(argumentValues, 3, degreesPerSeconds) == true) {
+				if (arguments.size() == 5 &&
+					MiniScript::getFloatValue(arguments, 0, currentAngle) == true &&
+					MiniScript::getFloatValue(arguments, 1, targetAngle) == true &&
+					MiniScript::getFloatValue(arguments, 2, timePassedSeconds) == true &&
+					MiniScript::getFloatValue(arguments, 3, degreesPerSeconds) == true) {
 					returnValue = Rotation::interpolate(currentAngle, targetAngle, timePassedSeconds, degreesPerSeconds, interpolatedAngle);
-					argumentValues[4].setValue(interpolatedAngle);
+					arguments[4].setValue(interpolatedAngle);
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
@@ -638,9 +638,9 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 			const string getMethodName() override {
 				return "Transform::getTransformMatrix";
 			}
-			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Transform transform;
-				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, argumentValues, 0, transform, false) == true) {
+				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, arguments, 0, transform, false) == true) {
 					const auto& result = transform.getTransformMatrix();
 					//
 					returnValue.setType(TYPE_MATRIX4x4);
@@ -676,9 +676,9 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 			const string getMethodName() override {
 				return "Transform::getRotationsQuaternion";
 			}
-			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Transform transform;
-				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, argumentValues, 0, transform, false) == true) {
+				if (MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, arguments, 0, transform, false) == true) {
 					const auto& result = transform.getRotationsQuaternion();
 					//
 					returnValue.setType(TYPE_QUATERNION);
@@ -714,9 +714,9 @@ void MiniScriptTransform::registerMethods(MiniScript* miniScript) const {
 			const string getMethodName() override {
 				return "Transform::fromMatrix";
 			}
-			void executeMethod(span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
+			void executeMethod(span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) override {
 				Matrix4x4 transformMatrix;
-				if (MiniScriptMatrix4x4::getMatrix4x4Value(TYPE_TRANSFORM, argumentValues, 0, transformMatrix, false) == true) {
+				if (MiniScriptMatrix4x4::getMatrix4x4Value(TYPE_TRANSFORM, arguments, 0, transformMatrix, false) == true) {
 					Transform result;
 					result.fromMatrix(transformMatrix, RotationOrder::ZYX);
 					returnValue.setType(TYPE_TRANSFORM);
@@ -767,18 +767,18 @@ void MiniScriptTransform::copyVariable(MiniScript::Variable& to, const MiniScrip
 	*static_cast<Transform*>((void*)to.getValuePtr()) = transformValue;
 }
 
-bool MiniScriptTransform::mul(MiniScript* miniScript, const span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
+bool MiniScriptTransform::mul(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
 	const auto TYPE_TRANSFORM = static_cast<MiniScript::VariableType>(getType());
 	const auto TYPE_VECTOR3 = static_cast<MiniScript::VariableType>(miniScript->getDataTypeByClassName("Vector3")->getType());
 	// transform
-	if (MiniScript::hasType(argumentValues, TYPE_TRANSFORM) == true) {
+	if (MiniScript::hasType(arguments, TYPE_TRANSFORM) == true) {
 		// transform * vec3
-		if (argumentValues[0].getType() == TYPE_TRANSFORM &&
-			argumentValues[1].getType() == TYPE_VECTOR3) {
+		if (arguments[0].getType() == TYPE_TRANSFORM &&
+			arguments[1].getType() == TYPE_VECTOR3) {
 			Transform a;
 			Vector3 b;
-			MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, argumentValues, 0, a, false);
-			MiniScriptVector3::getVector3Value(TYPE_VECTOR3, argumentValues, 1, b, false);
+			MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, arguments, 0, a, false);
+			MiniScriptVector3::getVector3Value(TYPE_VECTOR3, arguments, 1, b, false);
 			//
 			auto result = a * b;
 			returnValue.setType(TYPE_VECTOR3);
@@ -787,12 +787,12 @@ bool MiniScriptTransform::mul(MiniScript* miniScript, const span<MiniScript::Var
 			return true;
 		} else
 		// vec3 * transform
-		if (argumentValues[0].getType() == TYPE_VECTOR3 &&
-			argumentValues[1].getType() == TYPE_TRANSFORM) {
+		if (arguments[0].getType() == TYPE_VECTOR3 &&
+			arguments[1].getType() == TYPE_TRANSFORM) {
 			Vector3 a;
 			Transform b;
-			MiniScriptVector3::getVector3Value(TYPE_VECTOR3, argumentValues, 0, a, false);
-			MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, argumentValues, 1, b, false);
+			MiniScriptVector3::getVector3Value(TYPE_VECTOR3, arguments, 0, a, false);
+			MiniScriptTransform::getTransformValue(TYPE_TRANSFORM, arguments, 1, b, false);
 			//
 			auto result = b * a;
 			returnValue.setType(TYPE_VECTOR3);
@@ -810,15 +810,15 @@ bool MiniScriptTransform::mul(MiniScript* miniScript, const span<MiniScript::Var
 	return false;
 }
 
-bool MiniScriptTransform::div(MiniScript* miniScript, const span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
+bool MiniScriptTransform::div(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
 	return false;
 }
 
-bool MiniScriptTransform::add(MiniScript* miniScript, const span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
+bool MiniScriptTransform::add(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
 	return false;
 }
 
-bool MiniScriptTransform::sub(MiniScript* miniScript, const span<MiniScript::Variable>& argumentValues, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
+bool MiniScriptTransform::sub(MiniScript* miniScript, const span<MiniScript::Variable>& arguments, MiniScript::Variable& returnValue, const MiniScript::Statement& statement) const {
 	return false;
 }
 

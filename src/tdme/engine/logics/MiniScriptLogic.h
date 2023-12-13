@@ -177,20 +177,20 @@ public:
 				SceneConnector::addSounds(context->getAudio(), prototypeIt->second, id);
 			}
 			// execute initializeEngine() function
-			vector<EngineMiniScript::Variable> argumentValues(0);
+			vector<EngineMiniScript::Variable> arguments(0);
 			EngineMiniScript::Variable returnValue;
-			span argumentValuesSpan(argumentValues);
-			if (miniScript->call("initializeEngine", argumentValuesSpan, returnValue) == false) {
+			span argumentsSpan(arguments);
+			if (miniScript->call("initializeEngine", argumentsSpan, returnValue) == false) {
 				// Console::println("MiniScriptLogic::updateEngine(): Failed to call initializeEngine() function");
 			}
 			//
 			engineInitialized = true;
 		}
 		// execute updateEngine() function
-		vector<EngineMiniScript::Variable> argumentValues(0);
+		vector<EngineMiniScript::Variable> arguments(0);
 		EngineMiniScript::Variable returnValue;
-		span argumentValuesSpan(argumentValues);
-		if (miniScript->call("updateEngine", argumentValuesSpan, returnValue) == false) {
+		span argumentsSpan(arguments);
+		if (miniScript->call("updateEngine", argumentsSpan, returnValue) == false) {
 			// Console::println("MiniScriptLogic::updateEngine(): Failed to call updateEngine() function");
 		}
 	}
@@ -288,10 +288,10 @@ public:
 		//
 		if (logicInitialized == false) {
 			// execute initializeLogic() function
-			vector<EngineMiniScript::Variable> argumentValues(0);
+			vector<EngineMiniScript::Variable> arguments(0);
 			EngineMiniScript::Variable returnValue;
-			span argumentValuesSpan(argumentValues);
-			if (miniScript->call("initializeLogic", argumentValuesSpan, returnValue) == false) {
+			span argumentsSpan(arguments);
+			if (miniScript->call("initializeLogic", argumentsSpan, returnValue) == false) {
 				// Console::println("MiniScriptLogic::updateLogic(): Failed to call initializeLogic() function");
 			}
 			//
@@ -300,30 +300,30 @@ public:
 		// execute on: nothing and other event polling and execution
 		miniScript->execute();
 		// execute updateLogic() function
-		vector<EngineMiniScript::Variable> argumentValues(0);
+		vector<EngineMiniScript::Variable> arguments(0);
 		EngineMiniScript::Variable returnValue;
-		span argumentValuesSpan(argumentValues);
-		if (miniScript->call("updateLogic", argumentValuesSpan, returnValue) == false) {
+		span argumentsSpan(arguments);
+		if (miniScript->call("updateLogic", argumentsSpan, returnValue) == false) {
 			// Console::println("MiniScriptLogic::updateLogic(): Failed to call updateLogic() function");
 		}
 	}
 
 	inline void onLogicAdded() override {
 		// execute onLogicAdded() function
-		vector<EngineMiniScript::Variable> argumentValues(0);
+		vector<EngineMiniScript::Variable> arguments(0);
 		EngineMiniScript::Variable returnValue;
-		span argumentValuesSpan(argumentValues);
-		if (miniScript->call("onLogicAdded", argumentValuesSpan, returnValue) == false) {
+		span argumentsSpan(arguments);
+		if (miniScript->call("onLogicAdded", argumentsSpan, returnValue) == false) {
 			// Console::println("MiniScriptLogic::onLogicAdded(): Failed to call onLogicAdded() function");
 		}
 	}
 
 	inline void onLogicsProcessed() override {
 		// execute onLogicsProcessed() function
-		vector<EngineMiniScript::Variable> argumentValues(0);
+		vector<EngineMiniScript::Variable> arguments(0);
 		EngineMiniScript::Variable returnValue;
-		span argumentValuesSpan(argumentValues);
-		if (miniScript->call("onLogicsProcessed", argumentValuesSpan, returnValue) == false) {
+		span argumentsSpan(arguments);
+		if (miniScript->call("onLogicsProcessed", argumentsSpan, returnValue) == false) {
 			// Console::println("MiniScriptLogic::onLogicsProcessed(): Failed to call onLogicsProcessed() function");
 		}
 	}

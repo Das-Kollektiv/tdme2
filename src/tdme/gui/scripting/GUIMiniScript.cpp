@@ -98,7 +98,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_LEFT";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_LEFT);
 			}
 			const vector<string>& getContextFunctions() {
@@ -119,7 +119,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_RIGHT";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_RIGHT);
 			}
 			const vector<string>& getContextFunctions() {
@@ -140,7 +140,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_UP";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_UP);
 			}
 			const vector<string>& getContextFunctions() {
@@ -161,7 +161,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_DOWN";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_DOWN);
 			}
 			const vector<string>& getContextFunctions() {
@@ -182,7 +182,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_POS1";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_POS1);
 			}
 			const vector<string>& getContextFunctions() {
@@ -203,7 +203,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_END";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_END);
 			}
 			const vector<string>& getContextFunctions() {
@@ -224,7 +224,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_PAGEUP";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_PAGE_UP);
 			}
 			const vector<string>& getContextFunctions() {
@@ -245,7 +245,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_PAGEDOWN";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_PAGE_DOWN);
 			}
 			const vector<string>& getContextFunctions() {
@@ -266,7 +266,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_BACKSPACE";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_BACKSPACE);
 			}
 			const vector<string>& getContextFunctions() {
@@ -287,7 +287,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_DELETE";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_DELETE);
 			}
 			const vector<string>& getContextFunctions() {
@@ -308,7 +308,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_SPACE";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_SPACE);
 			}
 			const vector<string>& getContextFunctions() {
@@ -329,7 +329,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_RETURN";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_RETURN);
 			}
 			const vector<string>& getContextFunctions() {
@@ -350,7 +350,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_ESCAPE";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_ESCAPE);
 			}
 			const vector<string>& getContextFunctions() {
@@ -371,7 +371,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F1";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F1);
 			}
 			const vector<string>& getContextFunctions() {
@@ -392,7 +392,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F2";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F2);
 			}
 			const vector<string>& getContextFunctions() {
@@ -413,7 +413,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F3";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F3);
 			}
 			const vector<string>& getContextFunctions() {
@@ -434,7 +434,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F4";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F4);
 			}
 			const vector<string>& getContextFunctions() {
@@ -455,7 +455,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F5";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F5);
 			}
 			const vector<string>& getContextFunctions() {
@@ -476,7 +476,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F6";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F6);
 			}
 			const vector<string>& getContextFunctions() {
@@ -497,7 +497,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F7";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F7);
 			}
 			const vector<string>& getContextFunctions() {
@@ -518,7 +518,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F8";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F8);
 			}
 			const vector<string>& getContextFunctions() {
@@ -539,7 +539,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F9";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F9);
 			}
 			const vector<string>& getContextFunctions() {
@@ -560,7 +560,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F10";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F10);
 			}
 			const vector<string>& getContextFunctions() {
@@ -581,7 +581,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F11";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F11);
 			}
 			const vector<string>& getContextFunctions() {
@@ -602,7 +602,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.KEYCODE_F12";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_F12);
 			}
 			const vector<string>& getContextFunctions() {
@@ -628,9 +628,9 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.isKeyDown";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				int64_t keyCode;
-				if (miniScript->getIntegerValue(argumentValues, 0, keyCode) == true) {
+				if (miniScript->getIntegerValue(arguments, 0, keyCode) == true) {
 					returnValue = miniScript->keyboardKeys.find(keyCode) != miniScript->keyboardKeys.end();
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -660,9 +660,9 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.isCharDown";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				string charAsString;
-				if (miniScript->getStringValue(argumentValues, 0, charAsString) == true) {
+				if (miniScript->getStringValue(arguments, 0, charAsString) == true) {
 					UTF8CharacterIterator u8It(charAsString);
 					auto keyChar = u8It.hasNext() == true?u8It.next():-1;
 					returnValue = miniScript->keyboardChars.find(keyChar) != miniScript->keyboardChars.end();
@@ -689,7 +689,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.getTypedString";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->keyboardTypedChars;
 			}
 			const vector<string>& getContextFunctions() {
@@ -710,7 +710,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.isControlDown";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->keyboardControlDown == true;
 			}
 			const vector<string>& getContextFunctions() {
@@ -731,7 +731,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.isMetaDown";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->keyboardControlDown == true;
 			}
 			const vector<string>& getContextFunctions() {
@@ -752,7 +752,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.isAltDown";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->keyboardAltDown == true;
 			}
 			const vector<string>& getContextFunctions() {
@@ -773,7 +773,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.keyboard.isShiftDown";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->keyboardShiftDown == true;
 			}
 			const vector<string>& getContextFunctions() {
@@ -795,7 +795,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.mouse.BUTTON_LEFT";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_LEFT - 1);
 			}
 			const vector<string>& getContextFunctions() {
@@ -816,7 +816,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.mouse.BUTTON_MIDDLE";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_MIDDLE - 1);
 			}
 			const vector<string>& getContextFunctions() {
@@ -837,7 +837,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.mouse.BUTTON_RIGHT";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_RIGHT - 1);
 			}
 			const vector<string>& getContextFunctions() {
@@ -862,9 +862,9 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.mouse.isButtonDown";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				int64_t button;
-				if (miniScript->getIntegerValue(argumentValues, 0, button) == true) {
+				if (miniScript->getIntegerValue(arguments, 0, button) == true) {
 					returnValue = button >= 0 && button <= 3?miniScript->mouseDown[button]:false;
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -893,9 +893,9 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.mouse.isButtonUp";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				int64_t button;
-				if (miniScript->getIntegerValue(argumentValues, 0, button) == true) {
+				if (miniScript->getIntegerValue(arguments, 0, button) == true) {
 					returnValue = button >= 0 && button <= 3?miniScript->mouseUp[button]:false;
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -924,9 +924,9 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.mouse.isDragging";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				int64_t button;
-				if (miniScript->getIntegerValue(argumentValues, 0, button) == true) {
+				if (miniScript->getIntegerValue(arguments, 0, button) == true) {
 					returnValue = button >= 0 && button <= 3?miniScript->mouseDragging[button]:false;
 				} else {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
@@ -951,7 +951,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.mouse.hasMoved";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->mouseMoved;
 			}
 			const vector<string>& getContextFunctions() {
@@ -972,7 +972,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.mouse.getX";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(miniScript->mouseX);
 			}
 			const vector<string>& getContextFunctions() {
@@ -993,7 +993,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.mouse.getXUnscaled";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(miniScript->mouseXUnscaled);
 			}
 			const vector<string>& getContextFunctions() {
@@ -1014,7 +1014,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.mouse.getY";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(miniScript->mouseY);
 			}
 			const vector<string>& getContextFunctions() {
@@ -1035,7 +1035,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.mouse.getYUnscaled";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = static_cast<int64_t>(miniScript->mouseYUnscaled);
 			}
 			const vector<string>& getContextFunctions() {
@@ -1056,7 +1056,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.mouse.getWheelX";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->mouseWheelX;
 			}
 			const vector<string>& getContextFunctions() {
@@ -1077,7 +1077,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.mouse.getWheelY";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->mouseWheelY;
 			}
 			const vector<string>& getContextFunctions() {
@@ -1098,7 +1098,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "input.mouse.getWheelZ";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue = miniScript->mouseWheelZ;
 			}
 			const vector<string>& getContextFunctions() {
@@ -1126,11 +1126,11 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "gui.screen.setEnabled";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				string screenId;
 				bool enabled;
-				if (miniScript->getStringValue(argumentValues, 0, screenId, false) == false ||
-					miniScript->getBooleanValue(argumentValues, 1, enabled, false) == false) {
+				if (miniScript->getStringValue(arguments, 0, screenId, false) == false ||
+					miniScript->getBooleanValue(arguments, 1, enabled, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1166,9 +1166,9 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "gui.screen.isEnabled";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				string screenId;
-				if (miniScript->getStringValue(argumentValues, 0, screenId, false) == false) {
+				if (miniScript->getStringValue(arguments, 0, screenId, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1205,10 +1205,10 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "gui.screen.goto";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				string fileName;
-				if (argumentValues.size() > 3 ||
-					EngineMiniScript::getStringValue(argumentValues, 0, fileName, false) == false) {
+				if (arguments.size() > 3 ||
+					EngineMiniScript::getStringValue(arguments, 0, fileName, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1216,8 +1216,8 @@ void GUIMiniScript::registerMethods() {
 					miniScript->nextScreenNode = nullptr;
 					// variables
 					unordered_map<string, string> variables;
-					if (argumentValues.size() >= 2) {
-						auto mapPtr = argumentValues[1].getMapPointer();
+					if (arguments.size() >= 2) {
+						auto mapPtr = arguments[1].getMapPointer();
 						if (mapPtr != nullptr) {
 							for (const auto& [mapEntryKey, mapEntryValue]: *mapPtr) {
 								variables[mapEntryKey] = mapEntryValue->getValueAsString();
@@ -1235,7 +1235,7 @@ void GUIMiniScript::registerMethods() {
 								screenPathName,
 								screenFileName,
 								variables,
-								argumentValues.size() == 3?argumentValues[2]:EngineMiniScript::Variable(),
+								arguments.size() == 3?arguments[2]:EngineMiniScript::Variable(),
 								miniScript->screenNode->getContext()
 							)
 						);
@@ -1270,17 +1270,17 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "gui.screen.push";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				string fileName;
-				if (argumentValues.size() > 3 ||
-					EngineMiniScript::getStringValue(argumentValues, 0, fileName, false) == false) {
+				if (arguments.size() > 3 ||
+					EngineMiniScript::getStringValue(arguments, 0, fileName, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					// variables
 					unordered_map<string, string> variables;
-					if (argumentValues.size() >= 2) {
-						auto mapPtr = argumentValues[1].getMapPointer();
+					if (arguments.size() >= 2) {
+						auto mapPtr = arguments[1].getMapPointer();
 						if (mapPtr != nullptr) {
 							for (const auto& [mapEntryKey, mapEntryValue]: *mapPtr) {
 								variables[mapEntryKey] = mapEntryValue->getValueAsString();
@@ -1297,7 +1297,7 @@ void GUIMiniScript::registerMethods() {
 							screenPathName,
 							screenFileName,
 							variables,
-							argumentValues.size() == 3?argumentValues[2]:EngineMiniScript::Variable(),
+							arguments.size() == 3?arguments[2]:EngineMiniScript::Variable(),
 							miniScript->screenNode->getContext()
 						);
 						miniScript->screenNode->getGUI()->addScreen(screenNode->getId(), screenNode);
@@ -1330,7 +1330,7 @@ void GUIMiniScript::registerMethods() {
 				// mark as popped
 				return "gui.screen.pop";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				miniScript->popped = true;
 			}
 			const vector<string>& getContextFunctions() {
@@ -1357,11 +1357,11 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "gui.screen.call";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				string screenId;
 				string function;
-				if (miniScript->getStringValue(argumentValues, 0, screenId) == false ||
-					miniScript->getStringValue(argumentValues, 1, function) == false) {
+				if (miniScript->getStringValue(arguments, 0, screenId) == false ||
+					miniScript->getStringValue(arguments, 1, function) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1382,14 +1382,14 @@ void GUIMiniScript::registerMethods() {
 					} else {
 						#if defined (__APPLE__)
 							// MACOSX currently does not support initializing span using begin and end iterators,
-							// so we need to make a copy of argumentValues beginning from second element
+							// so we need to make a copy of arguments beginning from second element
 							vector<Variable> callArgumentValues;
-							for (auto i = 2; i < argumentValues.size(); i++) callArgumentValues.push_back(argumentValues[i]);
+							for (auto i = 2; i < arguments.size(); i++) callArgumentValues.push_back(arguments[i]);
 							// call
 							span callArgumentValuesSpan(callArgumentValues);
 							screenMiniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
 						#else
-							span callArgumentValuesSpan(argumentValues.begin() + 2, argumentValues.end());
+							span callArgumentValuesSpan(arguments.begin() + 2, arguments.end());
 							screenMiniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
 						#endif
 					}
@@ -1416,7 +1416,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "gui.screennode.getId";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue.setValue(miniScript->screenNode->getId());
 			}
 			const vector<string>& getContextFunctions() {
@@ -1437,7 +1437,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "gui.event.ACTIONTYPE_PERFORMING";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue.setValue(static_cast<int64_t>(GUIActionListenerType::PERFORMING));
 			}
 			const vector<string>& getContextFunctions() {
@@ -1458,7 +1458,7 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "gui.event.ACTIONTYPE_PERFORMED";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				returnValue.setValue(static_cast<int64_t>(GUIActionListenerType::PERFORMED));
 			}
 			const vector<string>& getContextFunctions() {
@@ -1484,9 +1484,9 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "gui.node.controller.getValue";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				string nodeId;
-				if (EngineMiniScript::getStringValue(argumentValues, 0, nodeId, false) == false) {
+				if (EngineMiniScript::getStringValue(arguments, 0, nodeId, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1524,11 +1524,11 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "gui.node.controller.setValue";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				string nodeId;
 				string value;
-				if (EngineMiniScript::getStringValue(argumentValues, 0, nodeId, false) == false ||
-					EngineMiniScript::getStringValue(argumentValues, 1, value, false) == false) {
+				if (EngineMiniScript::getStringValue(arguments, 0, nodeId, false) == false ||
+					EngineMiniScript::getStringValue(arguments, 1, value, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1565,9 +1565,9 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "gui.textnode.getText";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				string textNodeId;
-				if (EngineMiniScript::getStringValue(argumentValues, 0, textNodeId, false) == false) {
+				if (EngineMiniScript::getStringValue(arguments, 0, textNodeId, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1608,11 +1608,11 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "gui.textnode.setText";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				string textNodeId;
 				string text;
-				if (EngineMiniScript::getStringValue(argumentValues, 0, textNodeId, false) == false ||
-					EngineMiniScript::getStringValue(argumentValues, 1, text, false) == false) {
+				if (EngineMiniScript::getStringValue(arguments, 0, textNodeId, false) == false ||
+					EngineMiniScript::getStringValue(arguments, 1, text, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1653,11 +1653,11 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "gui.elementnode.conditions.has";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				string elementNodeId;
 				string condition;
-				if (EngineMiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
-					EngineMiniScript::getStringValue(argumentValues, 1, condition, false) == false) {
+				if (EngineMiniScript::getStringValue(arguments, 0, elementNodeId, false) == false ||
+					EngineMiniScript::getStringValue(arguments, 1, condition, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1693,9 +1693,9 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "gui.elementnode.conditions.get";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				string elementNodeId;
-				if (EngineMiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false) {
+				if (EngineMiniScript::getStringValue(arguments, 0, elementNodeId, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1736,11 +1736,11 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "gui.elementnode.conditions.set";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				string elementNodeId;
 				string condition;
-				if (EngineMiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
-					EngineMiniScript::getStringValue(argumentValues, 1, condition, false) == false) {
+				if (EngineMiniScript::getStringValue(arguments, 0, elementNodeId, false) == false ||
+					EngineMiniScript::getStringValue(arguments, 1, condition, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1777,11 +1777,11 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "gui.elementnode.conditions.add";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				string elementNodeId;
 				string condition;
-				if (EngineMiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
-					EngineMiniScript::getStringValue(argumentValues, 1, condition, false) == false) {
+				if (EngineMiniScript::getStringValue(arguments, 0, elementNodeId, false) == false ||
+					EngineMiniScript::getStringValue(arguments, 1, condition, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1818,19 +1818,19 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "gui.elementnode.conditions.setAll";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				string elementNodeId;
-				if (EngineMiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
-					argumentValues.size() <= 1 || argumentValues[1].getType() != VariableType::TYPE_ARRAY) {
+				if (EngineMiniScript::getStringValue(arguments, 0, elementNodeId, false) == false ||
+					arguments.size() <= 1 || arguments[1].getType() != VariableType::TYPE_ARRAY) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
 					auto elementNode = dynamic_cast<GUIElementNode*>(miniScript->screenNode->getNodeById(elementNodeId));
 					if (elementNode != nullptr) {
 						vector<string> conditions;
-						for (auto i = 0; i < argumentValues[1].getArraySize(); i++) {
+						for (auto i = 0; i < arguments[1].getArraySize(); i++) {
 							string condition;
-							if (argumentValues[1].getArrayEntry(i).getStringValue(condition, false) == false) {
+							if (arguments[1].getArrayEntry(i).getStringValue(condition, false) == false) {
 								Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 							} else {
 								conditions.push_back(condition);
@@ -1867,11 +1867,11 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "gui.elementnode.conditions.remove";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				string elementNodeId;
 				string condition;
-				if (EngineMiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false ||
-					EngineMiniScript::getStringValue(argumentValues, 1, condition, false) == false) {
+				if (EngineMiniScript::getStringValue(arguments, 0, elementNodeId, false) == false ||
+					EngineMiniScript::getStringValue(arguments, 1, condition, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1907,9 +1907,9 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "gui.elementnode.conditions.removeAll";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				string elementNodeId;
-				if (EngineMiniScript::getStringValue(argumentValues, 0, elementNodeId, false) == false) {
+				if (EngineMiniScript::getStringValue(arguments, 0, elementNodeId, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1945,9 +1945,9 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "gui.imagenode.getSource";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				string imageNodeId;
-				if (EngineMiniScript::getStringValue(argumentValues, 0, imageNodeId, false) == false) {
+				if (EngineMiniScript::getStringValue(arguments, 0, imageNodeId, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -1984,11 +1984,11 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "gui.imagenode.setSource";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				string imageNodeId;
 				string source;
-				if (EngineMiniScript::getStringValue(argumentValues, 0, imageNodeId, false) == false ||
-					EngineMiniScript::getStringValue(argumentValues, 1, source, false) == false) {
+				if (EngineMiniScript::getStringValue(arguments, 0, imageNodeId, false) == false ||
+					EngineMiniScript::getStringValue(arguments, 1, source, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -2024,9 +2024,9 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "gui.videonode.getSource";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				string videoNodeId;
-				if (EngineMiniScript::getStringValue(argumentValues, 0, videoNodeId, false) == false) {
+				if (EngineMiniScript::getStringValue(arguments, 0, videoNodeId, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -2063,11 +2063,11 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "gui.videonode.setSource";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				string videoNodeId;
 				string source;
-				if (EngineMiniScript::getStringValue(argumentValues, 0, videoNodeId, false) == false ||
-					EngineMiniScript::getStringValue(argumentValues, 1, source, false) == false) {
+				if (EngineMiniScript::getStringValue(arguments, 0, videoNodeId, false) == false ||
+					EngineMiniScript::getStringValue(arguments, 1, source, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -2103,9 +2103,9 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "gui.parentnode.clearSubNodes";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				string parentNodeId;
-				if (EngineMiniScript::getStringValue(argumentValues, 0, parentNodeId, false) == false) {
+				if (EngineMiniScript::getStringValue(arguments, 0, parentNodeId, false) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -2143,13 +2143,13 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "gui.parentnode.addSubNodes";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				string parentNodeId;
 				string xml;
 				bool resetScrollOffsets = true;
-				if (EngineMiniScript::getStringValue(argumentValues, 0, parentNodeId, false) == false ||
-					EngineMiniScript::getStringValue(argumentValues, 1, xml, false) == false ||
-					EngineMiniScript::getBooleanValue(argumentValues, 2, resetScrollOffsets, true) == false) {
+				if (EngineMiniScript::getStringValue(arguments, 0, parentNodeId, false) == false ||
+					EngineMiniScript::getStringValue(arguments, 1, xml, false) == false ||
+					EngineMiniScript::getBooleanValue(arguments, 2, resetScrollOffsets, true) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -2187,13 +2187,13 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "gui.parentnode.replaceSubNodes";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				string parentNodeId;
 				string xml;
 				bool resetScrollOffsets = true;
-				if (EngineMiniScript::getStringValue(argumentValues, 0, parentNodeId, false) == false ||
-					EngineMiniScript::getStringValue(argumentValues, 1, xml, false) == false ||
-					EngineMiniScript::getBooleanValue(argumentValues, 2, resetScrollOffsets, true) == false) {
+				if (EngineMiniScript::getStringValue(arguments, 0, parentNodeId, false) == false ||
+					EngineMiniScript::getStringValue(arguments, 1, xml, false) == false ||
+					EngineMiniScript::getBooleanValue(arguments, 2, resetScrollOffsets, true) == false) {
 					Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 					miniScript->startErrorScript();
 				} else {
@@ -2227,21 +2227,21 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "logic.signal.send";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				auto context = miniScript->screenNode->getContext();
 				if (context != nullptr) {
 					string logicId;
 					string signal;
-					if (EngineMiniScript::getStringValue(argumentValues, 0, logicId) == true &&
-						EngineMiniScript::getStringValue(argumentValues, 1, signal) == true) {
+					if (EngineMiniScript::getStringValue(arguments, 0, logicId) == true &&
+						EngineMiniScript::getStringValue(arguments, 1, signal) == true) {
 						context->getLogicsMutex()->lock();
 						auto logic = static_cast<Logic*>(context->getLogic(logicId));
 						if (logic == nullptr) {
 							Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no logic with given id: " + logicId);
 							miniScript->startErrorScript();
 						} else {
-							vector<Variable> arguments(argumentValues.size() - 2);
-							for (auto i = 2; i < argumentValues.size(); i++) arguments.push_back(argumentValues[i]);
+							vector<Variable> arguments(arguments.size() - 2);
+							for (auto i = 2; i < arguments.size(); i++) arguments.push_back(arguments[i]);
 							logic->addSignal(signal, arguments);
 						}
 						context->getLogicsMutex()->unlock();
@@ -2281,13 +2281,13 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "logic.has";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				auto context = miniScript->screenNode->getContext();
 				if (context != nullptr) {
 					string logicId;
 					string callable;
-					if (EngineMiniScript::getStringValue(argumentValues, 0, logicId) == false ||
-						EngineMiniScript::getStringValue(argumentValues, 1, callable) == false) {
+					if (EngineMiniScript::getStringValue(arguments, 0, logicId) == false ||
+						EngineMiniScript::getStringValue(arguments, 1, callable) == false) {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 						miniScript->startErrorScript();
 					} else {
@@ -2335,13 +2335,13 @@ void GUIMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "logic.call";
 			}
-			void executeMethod(span<Variable>& argumentValues, Variable& returnValue, const Statement& statement) override {
+			void executeMethod(span<Variable>& arguments, Variable& returnValue, const Statement& statement) override {
 				auto context = miniScript->screenNode->getContext();
 				if (context != nullptr) {
 					string logicId;
 					string callable;
-					if (EngineMiniScript::getStringValue(argumentValues, 0, logicId) == false ||
-						EngineMiniScript::getStringValue(argumentValues, 1, callable) == false) {
+					if (EngineMiniScript::getStringValue(arguments, 0, logicId) == false ||
+						EngineMiniScript::getStringValue(arguments, 1, callable) == false) {
 						Console::println(getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": argument mismatch: expected arguments: " + miniScript->getArgumentInformation(getMethodName()));
 						miniScript->startErrorScript();
 					} else {
@@ -2359,14 +2359,14 @@ void GUIMiniScript::registerMethods() {
 							} else {
 								#if defined (__APPLE__)
 									// MACOSX currently does not support initializing span using begin and end iterators,
-									// so we need to make a copy of argumentValues beginning from second element
+									// so we need to make a copy of arguments beginning from second element
 									vector<Variable> callArgumentValues;
-									for (auto i = 2; i < argumentValues.size(); i++) callArgumentValues.push_back(argumentValues[i]);
+									for (auto i = 2; i < arguments.size(); i++) callArgumentValues.push_back(arguments[i]);
 									// call
 									span callArgumentValuesSpan(callArgumentValues);
 									logicMiniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
 								#else
-									span callArgumentValuesSpan(argumentValues.begin() + 2, argumentValues.end());
+									span callArgumentValuesSpan(arguments.begin() + 2, arguments.end());
 									logicMiniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
 								#endif
 							}
